@@ -1,7 +1,7 @@
 # Beanconqueror
 ## Getting Started
 
-If you're not familiar with Ionic or Cordova [read through the introduction](http://ionicframework.com/docs/intro/installation/).
+If you're not familiar with Ionic or Cordova [read through the introduction](http://ionicframework.com/docs/intro/installation/).  
 To get started with anything you need [Node.js](https://nodejs.org/en/download/) installed.
 
 ```bash
