@@ -1,46 +1,39 @@
-An open source project for coffee enthusiasts.
+# Beanconqueror
+## Getting Started
 
-
-## Start
-
-If you're not familiar with Ionic or cordova, get started here: http://ionicframework.com/docs/intro/installation/
-
-After this run, to install all dependencies
+If you're not familiar with Ionic or Cordova [read through the introduction](http://ionicframework.com/docs/intro/installation/).
+To get started with anything you need [Node.js](https://nodejs.org/en/download/) installed.
 
 ```bash
-cd beanconqueror
-npm install --save
-```
-
-## Plugin Requirements
-
-https://ionicframework.com/docs/storage/
-```bash
+git clone https://github.com/graphefruit/Beanconqueror  # clone repository
+cd Beanconqueror
+npm install -g ionic cordova  # install ionic and cordova
+npm install --save  # install node modules
+# Add the pluign requirements
 ionic cordova plugin add cordova-sqlite-storage
 npm install --save @ionic/storage
-```
-
-
-https://stackoverflow.com/questions/39893257/using-moment-js-package-in-ionic-2-project
-```bash
 npm install moment --save
-```
-
-http://ionicframework.com/docs/native/app-minimize/
-```bash
 ionic cordova plugin add cordova-plugin-appminimize
 npm install --save @ionic-native/app-minimize
-```
-
-http://ionicframework.com/docs/native/media-capture/
-```bash
 ionic cordova plugin add cordova-plugin-media-capture
 npm install --save @ionic-native/media-capture
-```
-
-http://ionicframework.com/docs/native/image-picker/
-```bash
 ionic cordova plugin add cordova-plugin-telerik-imagepicker --variable PHOTO_LIBRARY_USAGE_DESCRIPTION="Bitte um Freigabe"
 npm install --save @ionic-native/image-picker
 ```
+
+## Plugin Requirements
+##### [Ionic Storage](https://ionicframework.com/docs/storage/)
+Enables the storage of data in a local sqlite database.
+
+##### [Moment](https://stackoverflow.com/questions/39893257/using-moment-js-package-in-ionic-2-project)
+Library to handle time and dates.
+
+##### [Ionic App-Minimize](http://ionicframework.com/docs/native/app-minimize/)
+Reduce apk size for android devices.
+
+##### [Ionic Media-Capture](http://ionicframework.com/docs/native/media-capture/)
+Access the devices audio, photo and video capture capabilities.
+
+##### [Ionic Image-Picker](http://ionicframework.com/docs/native/image-picker/)
+Plugin for multiple image selection.
 
