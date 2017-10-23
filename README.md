@@ -13,6 +13,11 @@ You can still use the App though, through the PWA. Check *Getting The App / Anyt
 The App ist available with any modern internet browser at (link will be added soon (tm)).  
 If your system is up for it you can load Beanconqueror as a PWA for a sweet offline experience.
 
+## Support
+Buy us a coffee :  
+- [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/LarsSaalbach) Graphefruit (Ionic Masterhead and PWA Guru) 
+- [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/DeastinY) DeastinY (Original Developer and Design Fetishist) 
+
 ## Development & Building it Yourself
 
 If you're not familiar with Ionic or Cordova [read through the introduction](http://ionicframework.com/docs/intro/installation/).  
