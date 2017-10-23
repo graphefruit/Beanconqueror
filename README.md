@@ -1,4 +1,4 @@
-[![license](https://img.shields.io/badge/license-GPL%203.0-brightgreen.svg)]()
+[![license](https://img.shields.io/badge/license-GPL%203.0-brightgreen.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html) [![Github All Releases](https://img.shields.io/github/downloads/atom/atom/total.svg)](https://github.com/graphefruit/beanconqueror) [![GitHub (Pre-)Release Date](https://img.shields.io/github/release-date-pre/Cockatrice/Cockatrice.svg)](https://github.com/graphefruit/beanconqueror)
 # Beanconqueror
 ## Getting the App
 The App is basically a Website. (Don't run away yet, it's smooth as hell !)  
