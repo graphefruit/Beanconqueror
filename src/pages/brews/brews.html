@@ -1,0 +1,85 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Brühungen</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <!-- Real floating action button, fixed. It will not scroll with the content -->
+  <ion-fab top right edge #fab1>
+    <button ion-fab mini (click)="addBrew()">
+      <ion-icon name="add"></ion-icon>
+    </button>
+  </ion-fab>
+
+  <ion-list  *ngFor="let brewView of brewsView">
+    <ion-list-header class="brews-header">
+      {{brewView.title}}
+    </ion-list-header>
+    <ion-card  *ngFor="let brew of brewView.brews">
+
+      <ion-card-header>
+        {{brew.title}}
+      </ion-card-header>
+      <div>
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <i class="fa fa-th"></i>&nbsp;{{brew.grindSize}}
+            </ion-col>
+            <ion-col>
+              <i class="fa fa-balance-scale"></i>&nbsp;{{brew.weight}}
+            </ion-col>
+            <ion-col>
+              <i class="fa fa-thermometer-half "></i>&nbsp;{{brew.temperature}}
+            </ion-col>
+            <ion-col>
+              <i class="fa fa-clock-o "></i>&nbsp;{{brew.brew_time}}
+            </ion-col>
+            <ion-col>
+              <i class="fa fa-smile-o"></i>&nbsp;{{brew.rating}}
+            </ion-col>
+            <ion-col>
+              <ion-icon name="beaker"></ion-icon>&nbsp;{{brew.brew_quantity}}
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <i class="fa fa-flask"></i>&nbsp;{{getPreparationName(brew.methodOfPreparation)}}
+            </ion-col>
+            <ion-col>
+              <i class="fa fa-pagelines"></i>&nbsp;{{getBeanName(brew.bean)}}
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <ion-list *ngIf="brew.note !=''">
+          <ion-item>
+            Notizen:&nbsp;{{brew.note}}
+          </ion-item>
+        </ion-list>
+      </div>
+      <ion-list>
+        <button *ngIf="brew?.attachments.length > 0" ion-item (click)="viewPhotos(brew)">
+          <ion-icon name="md-eye" item-start></ion-icon>
+          <span>Fotogalerie</span>
+        </button>
+        <button ion-item (click)="editBrew(brew)">
+          <ion-icon name="md-create" item-start></ion-icon>
+          <span>Editieren</span>
+        </button>
+        <button ion-item (click)="deleteBrew(brew)">
+          <ion-icon name="trash" item-start></ion-icon>
+          <span>Löschen</span>
+        </button>
+      </ion-list>
+
+    </ion-card>
+  </ion-list>
+
+
+
+</ion-content>
+

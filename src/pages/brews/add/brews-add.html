@@ -1,0 +1,119 @@
+<ion-header>
+  <ion-navbar>
+    <ion-buttons start>
+      <button ion-button icon-only (click)="dismiss()">
+        <ion-icon name="arrow-back"></ion-icon>
+        &nbsp;Zurück
+      </button>
+    </ion-buttons>
+
+  </ion-navbar>
+</ion-header>
+<ion-content>
+
+
+    <div *ngIf="activeIndex == 0">
+      <ion-list>
+        <ion-item>
+          <ion-label stacked>Titel</ion-label>
+          <ion-textarea autocomplete="true" spellcheck="true" autocorrect="true"  [(ngModel)]="data.title" rows="2"></ion-textarea>
+        </ion-item>
+        <ion-item>
+          <ion-label stacked>Mahlgrad</ion-label>
+          <ion-input type="text" [(ngModel)]="data.grindSize"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label stacked>Gewicht</ion-label>
+          <ion-input type="number" [(ngModel)]="data.weight"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label stacked>Temperatur</ion-label>
+          <ion-input type="number" [(ngModel)]="data.temperature"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label>Zubereitungsmethode</ion-label>
+          <ion-select [(ngModel)]="data.methodOfPreparation">
+            <ion-option value="Standard">Standard</ion-option>
+
+            <ion-option *ngFor="let method of methodOfPreparations" value="{{method.config.uuid}}">{{method.name}}
+            </ion-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-label>Bohnen</ion-label>
+          <ion-select [(ngModel)]="data.bean">
+            <ion-option value="Standard">Standard</ion-option>
+            <ion-option *ngFor="let bean of beans" value="{{bean.config.uuid}}">{{bean.name}}
+            </ion-option>
+          </ion-select>
+        </ion-item>
+        <button margin-top ion-button block icon-right (click)="nextPage()">
+            Bezug starten
+            <ion-icon name="arrow-forward"></ion-icon>
+          </button>
+
+
+
+      </ion-list>
+
+
+    </div>
+
+
+    <div *ngIf="activeIndex == 1">
+     <h2 style="text-align:center">Zeit</h2>
+      <timer #timer timeInSeconds="0"></timer>
+      <button margin-top ion-button block icon-right (click)="stopTimer();nextPage()">
+        Bezug abschließen
+        <ion-icon name="arrow-forward"></ion-icon>
+      </button>
+
+    </div>
+
+    <div *ngIf="activeIndex == 2">
+      <ion-list>
+        <ion-item>
+          <ion-label stacked>Bezugsmenge</ion-label>
+          <ion-input type="number" [(ngModel)]="data.brew_quantity" ></ion-input>
+        </ion-item>
+      </ion-list>
+      <ion-list>
+        <ion-list-header>
+          Bewertung
+          <ion-badge item-end color="secondary">{{data.rating}}</ion-badge>
+        </ion-list-header>
+        <ion-item>
+          <ion-range min="0" max="10" step="1" pin="true" snaps="true" debounce="1000" [(ngModel)]="data.rating">
+            <ion-icon range-left small name="sad"></ion-icon>
+            <ion-icon range-right name="happy"></ion-icon>
+          </ion-range>
+        </ion-item>
+      </ion-list>
+      <ion-list>
+        <ion-item>
+          <ion-label stacked>Notizen</ion-label>
+          <ion-textarea autocomplete="true" spellcheck="true" autocorrect="true" [(ngModel)]="data.note" rows="5"></ion-textarea>
+        </ion-item>
+      </ion-list>
+      <button ion-item (click)="addImage()">
+        Foto hinzufügen
+      </button>
+      <div  *ngIf="data?.attachments && data.attachments.length > 0">
+      <ion-slides #photoSlides pager="true">
+        <ion-slide *ngFor="let attachment of data.attachments;let i = index">
+          <ion-buttons end>
+            <button ion-button color="primary" (click)="deleteImage(i)">Löschen</button>
+          </ion-buttons>
+
+          <img [src]="attachment" class="brew-image">
+        </ion-slide>
+      </ion-slides>
+      </div>
+      <button margin-top ion-button block icon-right (click)="finish()">
+        Speichern & Abschließen
+        <ion-icon name="arrow-forward"></ion-icon>
+      </button>
+
+    </div>
+
+</ion-content>

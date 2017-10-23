@@ -1,0 +1,34 @@
+<ion-header>
+  <ion-navbar>
+    <ion-buttons start>
+      <button ion-button icon-only (click)="dismiss()">
+        <ion-icon name="arrow-back"></ion-icon>
+        &nbsp;Zurück
+      </button>
+    </ion-buttons>
+
+  </ion-navbar>
+</ion-header>
+<ion-content>
+  <form #editBeanForm="ngForm" novalidate>
+    <ion-item>
+      <ion-label fixed >Name*</ion-label>
+      <ion-input [(ngModel)]="data.name" name="name" type="text" #name="ngModel" spellcheck="false"
+                 autocapitalize="off" required>
+      </ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label fixed>Notizen</ion-label>
+      <ion-textarea autocomplete="true" spellcheck="true" autocorrect="true" name="note" #note="ngModel" rows="5"  [(ngModel)]="data.note"></ion-textarea>
+    </ion-item>
+    <ion-row>
+      <ion-col>
+        <button ion-button (click)="dismiss()" dark outline block>Abbrechen</button>
+      </ion-col>
+      <ion-col>
+        <button ion-button (click)="editBean(editBeanForm)" type="submit" block>Speichern</button>
+      </ion-col>
+
+    </ion-row>
+  </form>
+</ion-content>

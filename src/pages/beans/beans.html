@@ -1,0 +1,43 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Bohnen</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <!-- Real floating action button, fixed. It will not scroll with the content -->
+  <ion-fab top right edge #fab1>
+    <button ion-fab mini (click)="addBean()">
+      <ion-icon name="add"></ion-icon>
+    </button>
+  </ion-fab>
+  <ion-card *ngFor="let bean of beans">
+    <img class="card-image" *ngIf="bean.filePath" [src]="bean.filePath"/>
+    <ion-card-header>
+      {{bean.name}}
+    </ion-card-header>
+    <ion-card-content *ngIf="bean.note != ''">
+      {{bean.note}}
+    </ion-card-content>
+    <ion-list>
+      <ion-item>
+        <ion-icon name="calendar" item-start></ion-icon>
+        <span>Röstdatum: {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}</span>
+      </ion-item>
+      <button ion-item (click)="editBean(bean)">
+        <ion-icon name="md-create" item-start></ion-icon>
+        <span>Editieren</span>
+      </button>
+      <button ion-item (click)="deleteBean(bean)">
+        <ion-icon name="trash" item-start></ion-icon>
+        <span>Löschen</span>
+      </button>
+    </ion-list>
+
+  </ion-card>
+
+
+</ion-content>

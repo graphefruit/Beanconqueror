@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-navbar>
+    <ion-buttons start>
+      <button ion-button icon-only (click)="dismiss()">
+        <ion-icon name="arrow-back"></ion-icon>
+        &nbsp;Zurück
+      </button>
+    </ion-buttons>
+
+  </ion-navbar>
+</ion-header>
+<ion-content>
+  <div *ngIf="data?.attachments && data.attachments.length > 0">
+    <ion-slides #photoSlides pager="true" zoom="true">
+      <ion-slide *ngFor="let attachment of data.attachments;let i = index">
+        <div class="swiper-zoom-container">
+          <img [src]="attachment">
+        </div>
+      </ion-slide>
+    </ion-slides>
+  </div>
+
+
+</ion-content>

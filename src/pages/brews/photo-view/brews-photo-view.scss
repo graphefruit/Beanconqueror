@@ -1,0 +1,13 @@
+brews-photo-view {
+  ion-slide {
+    align-items: start!important;
+    overflow:scroll;
+    img {
+      height: calc(100vh - 56px )!important;
+    }
+  }
+
+
+
+
+}

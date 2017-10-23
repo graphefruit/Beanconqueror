@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Einstellungen</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-card>
+    <ion-card-header class="card-header">
+      Einstellungen
+    </ion-card-header>
+    <ion-card-content margin-top>
+      <p>Hier findest du alle spezifischen Einstellungen der App</p>
+    </ion-card-content>
+  </ion-card>
+  <ion-item>
+    <ion-label>Zeit</ion-label>
+    <ion-checkbox [(ngModel)]="settings.time"></ion-checkbox>
+  </ion-item>
+  <ion-item>
+    <ion-label>Mahlgrad</ion-label>
+    <ion-checkbox [(ngModel)]="settings.grind_size"></ion-checkbox>
+  </ion-item>
+  <ion-item>
+    <ion-label>Output: Gewicht/Menge</ion-label>
+    <ion-checkbox [(ngModel)]="settings.weight"></ion-checkbox>
+  </ion-item>
+  <ion-item>
+    <ion-label>Notizen</ion-label>
+    <ion-checkbox [(ngModel)]="settings.note"></ion-checkbox>
+  </ion-item>
+  <ion-item>
+    <ion-label>Zubereitungsmethode</ion-label>
+    <ion-checkbox [(ngModel)]="settings.method_of_preparation"></ion-checkbox>
+  </ion-item>
+  <ion-item>
+    <ion-label>Wassermenge</ion-label>
+    <ion-checkbox [(ngModel)]="settings.water_flow"></ion-checkbox>
+  </ion-item>
+  <ion-item>
+    <ion-label>Bohnensorte</ion-label>
+    <ion-checkbox [(ngModel)]="settings.bean_type"></ion-checkbox>
+  </ion-item>
+  <ion-item>
+    <ion-label>Brühtemperatur</ion-label>
+    <ion-checkbox [(ngModel)]="settings.brew_temperature"></ion-checkbox>
+  </ion-item>
+
+</ion-content>
