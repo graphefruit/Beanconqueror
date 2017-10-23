@@ -1,3 +1,4 @@
+[![license](https://img.shields.io/badge/license-GPL%203.0-brightgreen.svg)]()
 # Beanconqueror
 ## Getting Started
 
@@ -29,7 +30,7 @@ Enables the storage of data in a local sqlite database.
 Library to handle time and dates.
 
 ##### [Ionic App-Minimize](http://ionicframework.com/docs/native/app-minimize/)
-Reduce apk size for android devices.
+Enable minimizing the App on Android.
 
 ##### [Ionic Media-Capture](http://ionicframework.com/docs/native/media-capture/)
 Access the devices audio, photo and video capture capabilities.
