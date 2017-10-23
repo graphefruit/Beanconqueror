@@ -15,8 +15,8 @@ If your system is up for it you can load Beanconqueror as a PWA for a sweet offl
 
 ## Support
 Buy us a coffee :  
-- [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/LarsSaalbach) Graphefruit (Ionic Masterhead and PWA Guru) 
-- [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/DeastinY) DeastinY (Original Developer and Design Fetishist) 
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/LarsSaalbach) Graphefruit (Ionic Masterhead and PWA Guru)   
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/DeastinY) DeastinY (Original Developer and Design Fetishist) 
 
 ## Development & Building it Yourself
 
