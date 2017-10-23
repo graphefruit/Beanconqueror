@@ -1,26 +1,46 @@
-This is a starter template for [Ionic](http://ionicframework.com/docs/) projects.
+An open source project for coffee enthusiasts.
 
-## How to use this template
 
-*This template does not work on its own*. The shared files for each starter are found in the [ionic2-app-base repo](https://github.com/ionic-team/ionic2-app-base).
+## Start
 
-To use this template, either create a new ionic project using the ionic node.js utility, or copy the files from this repository into the [Starter App Base](https://github.com/ionic-team/ionic2-app-base).
+If you're not familiar with Ionic or cordova, get started here: http://ionicframework.com/docs/intro/installation/
 
-### With the Ionic CLI:
-
-Take the name after `ionic2-starter-`, and that is the name of the template to be used when using the `ionic start` command below:
+After this run, to install all dependencies
 
 ```bash
-$ sudo npm install -g ionic cordova
-$ ionic start mySideMenu sidemenu
+cd beanconqueror
+npm install --save
 ```
 
-Then, to run it, cd into `mySideMenu` and run:
+## Plugin Requirements
 
+https://ionicframework.com/docs/storage/
 ```bash
-$ ionic cordova platform add ios
-$ ionic cordova run ios
+ionic cordova plugin add cordova-sqlite-storage
+npm install --save @ionic/storage
 ```
 
-Substitute ios for android if not on a Mac.
+
+https://stackoverflow.com/questions/39893257/using-moment-js-package-in-ionic-2-project
+```bash
+npm install moment --save
+```
+
+http://ionicframework.com/docs/native/app-minimize/
+```bash
+ionic cordova plugin add cordova-plugin-appminimize
+npm install --save @ionic-native/app-minimize
+```
+
+http://ionicframework.com/docs/native/media-capture/
+```bash
+ionic cordova plugin add cordova-plugin-media-capture
+npm install --save @ionic-native/media-capture
+```
+
+http://ionicframework.com/docs/native/image-picker/
+```bash
+ionic cordova plugin add cordova-plugin-telerik-imagepicker --variable PHOTO_LIBRARY_USAGE_DESCRIPTION="Bitte um Freigabe"
+npm install --save @ionic-native/image-picker
+```
 
