@@ -10,7 +10,7 @@
   </ion-navbar>
 </ion-header>
 <ion-content>
-<div *ngIf="settings.brew_view === BREW_VIEW_ENUM.SINGLE_PAGE">
+<div *ngIf="settings.brew_view == BREW_VIEW_ENUM.SINGLE_PAGE">
   <ion-list>
     <ion-item *ngIf="settings.grind_size === true">
       <ion-label floating>Mahlgrad</ion-label>
