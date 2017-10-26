@@ -9,10 +9,16 @@ import {UIBeanStorage} from '../../services/uiBeanStorage';
 import {UIPreparationStorage} from '../../services/uiPreparationStorage';
 import {UIAlert} from '../../services/uiAlert';
 import {UIHelper} from '../../services/uiHelper';
+import {UISettingsStorage} from '../../services/uiSettingsStorage';
+
 /**Interfaces**/
 import {IBrew} from '../../interfaces/brew/iBrew';
+import {ISettings} from '../../interfaces/settings/iSettings';
+/**Classes**/
+import {Brew} from '../../classes/brew/brew';
 /**Classes**/
 import {BrewView} from '../../classes/brew/brewView';
+
 /**Modals**/
 import {BrewsAddModal} from '../brews/add/brews-add';
 import {BrewsEditModal} from '../brews/edit/brews-edit';
@@ -23,14 +29,16 @@ import {BrewsPhotoView} from '../brews/photo-view/brews-photo-view';
 })
 export class BrewsPage {
 
-  public brews: Array<IBrew>;
+  public brews: Array<Brew>;
   public brewsView: Array<BrewView> = [];
+
+  public settings:ISettings;
 
   constructor(private modalCtrl: ModalController, private uiBrewStorage: UIBrewStorage,
               private changeDetectorRef: ChangeDetectorRef, private uiAlert: UIAlert,
               private uiBeanStorage: UIBeanStorage, private uiPreparationStorage: UIPreparationStorage,
-              private uiHelper: UIHelper) {
-
+              private uiHelper: UIHelper, private uiSettingsStorage:UISettingsStorage) {
+    this.settings = this.uiSettingsStorage.getSettings();
   }
 
 
@@ -90,7 +98,7 @@ export class BrewsPage {
 
 
   private __initializeBrews() {
-    this.brews = this.uiBrewStorage.getAllEntries();
+    this.brews =  this.uiBrewStorage.getAllEntries();
     this.brewsView = [];
 
     //sort latest to top.
@@ -107,7 +115,7 @@ export class BrewsPage {
     let collection = {};
     //Create collection
     for (let i = 0; i < sortedBrews.length; i++) {
-      let day:string = this.uiHelper.formateDate(sortedBrews[i].config.unix_timestamp,"DD.MM.YYYY");
+      let day:string = this.uiHelper.formateDate(sortedBrews[i].config.unix_timestamp,"dddd - DD.MM.YYYY");
       if (collection[day] === undefined){
         collection[day] = {
           "BREWS":[]

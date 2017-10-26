@@ -34,7 +34,7 @@ import {BrewsPhotoView} from '../pages/brews/photo-view/brews-photo-view';
 
 /**Services**/
 import {UIStorage} from '../services/uiStorage';
-import {UISettings} from '../services/uiSettings';
+import {UISettingsStorage} from '../services/uiSettingsStorage';
 import {UIHelper} from '../services/uiHelper';
 import {UIBeanStorage} from '../services/uiBeanStorage';
 import {UIBrewStorage} from '../services/uiBrewStorage';
@@ -42,6 +42,7 @@ import {UILog} from '../services/uiLog';
 import {UIPreparationStorage} from '../services/uiPreparationStorage';
 import {UIAlert} from '../services/uiAlert';
 import {UIImage} from '../services/uiImage';
+import {UIStatistic} from '../services/uiStatistic';
 /**Pipes**/
 import {FormatDatePipe} from '../pipes/formatDate';
 import {KeysPipe} from '../pipes/keys';
@@ -97,14 +98,14 @@ import {TimerComponent} from '../components/timer/timer';
     StatusBar,
     SplashScreen,
     UIStorage,
-    UISettings,
+    UISettingsStorage,
     UIHelper,
     UILog,
     UIPreparationStorage,
     UIAlert,
     UIImage,
     UIBeanStorage, AppMinimize, {provide: ErrorHandler, useClass: IonicErrorHandler},
-    MediaCapture, ImagePicker, UIBrewStorage
+    MediaCapture, ImagePicker, UIBrewStorage,UIStatistic
   ]
 })
 export class AppModule {

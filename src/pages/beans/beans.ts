@@ -1,7 +1,7 @@
 /**Core**/
 import {Component, ChangeDetectorRef} from '@angular/core';
 /**Ionic**/
-import {NavController, ModalController} from 'ionic-angular';
+import {ModalController} from 'ionic-angular';
 /**Services**/
 import {UIBeanStorage} from '../../services/uiBeanStorage';
 import {UIAlert} from '../../services/uiAlert';

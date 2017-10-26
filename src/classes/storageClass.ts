@@ -1,4 +1,3 @@
-import {Injectable} from '@angular/core';
 import {UIHelper} from '../services/uiHelper';
 import {UILog} from '../services/uiLog';
 import {UIStorage} from  '../services/uiStorage';
@@ -6,7 +5,7 @@ import {UIStorage} from  '../services/uiStorage';
 export abstract class StorageClass {
 
   DB_PATH:string = "";
-  private storedData: Array<any> = [];
+  protected storedData: Array<any> = [];
 
   /**
    * -1 = Nothing started

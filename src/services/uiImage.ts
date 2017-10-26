@@ -6,8 +6,7 @@ import {AlertController, Platform} from 'ionic-angular';
 import {MediaCapture, MediaFile, CaptureError, CaptureImageOptions} from '@ionic-native/media-capture';
 import {ImagePicker} from '@ionic-native/image-picker';
 
-/**Third party**/
-declare var console;
+
 @Injectable()
 export class UIImage {
   constructor(private mediaCapture: MediaCapture, private imagePicker: ImagePicker, private alertController: AlertController, private platform: Platform) {

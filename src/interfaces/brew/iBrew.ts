@@ -3,7 +3,7 @@
  */
 import {IConfig} from '../objectConfig/iObjectConfig';
 export interface IBrew {
-  title: string,
+ //Properties
   grindSize:string,
   weight:number,
   methodOfPreparation:string,
@@ -15,6 +15,10 @@ export interface IBrew {
   rating:number,
   attachments:Array<string>
   config:IConfig;
+
+  //Functions
+  formateDate():string;
+
 }
 
 

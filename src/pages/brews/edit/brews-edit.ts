@@ -8,6 +8,7 @@ import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {UIBrewStorage} from '../../../services/uiBrewStorage';
 import {UIHelper} from '../../../services/uiHelper';
 import {UIImage} from '../../../services/uiImage';
+
 /**Classes**/
 import {Brew} from '../../../classes/brew/brew';
 
@@ -15,6 +16,7 @@ import {Brew} from '../../../classes/brew/brew';
 import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 import {IBean} from '../../../interfaces/bean/iBean';
 import {IBrew} from '../../../interfaces/brew/iBrew';
+
 
 @Component({
   selector: 'brews-edit',
@@ -27,6 +29,7 @@ export class BrewsEditModal {
 
   private brew: IBrew;
 
+
   methodOfPreparations: Array<IPreparation> = [];
   beans: Array<IBean> = [];
   activeIndex: number = 0;
@@ -37,6 +40,7 @@ export class BrewsEditModal {
     //Initialize to standard in dropdowns
     this.data.bean = "Standard";
     this.data.methodOfPreparation = "Standard";
+
   }
 
   ionViewWillEnter() {

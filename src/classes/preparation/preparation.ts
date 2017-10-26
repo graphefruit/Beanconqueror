@@ -13,4 +13,10 @@ export class Preparation implements IPreparation {
     this.note = "";
     this.config = new Config();
   }
+
+  public initializeByObject(preparationObj: IPreparation) {
+    Object.assign(this, preparationObj)
+  }
+
+
 }

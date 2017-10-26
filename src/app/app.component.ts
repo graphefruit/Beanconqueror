@@ -21,6 +21,7 @@ import {LicencesPage} from '../pages/info/licences/licences';
 import {UILog} from '../services/uiLog';
 import {UIBeanStorage} from '../services/uiBeanStorage';
 import {UIPreparationStorage} from '../services/uiPreparationStorage';
+import {UISettingsStorage} from '../services/uiSettingsStorage';
 
 
 @Component({
@@ -49,7 +50,7 @@ export class MyApp {
   constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, private uiLog: UILog,
               private uiBeanStorage: UIBeanStorage, private uiPreparationStorage: UIPreparationStorage,
               private ionicApp: IonicApp, private menuCtrl: MenuController,
-              private appMinimize: AppMinimize) {
+              private appMinimize: AppMinimize, private uiSettingsStorage:UISettingsStorage) {
 
 
 
@@ -75,9 +76,11 @@ export class MyApp {
       //Wait for every necessary service to be ready before starting the app
       let beanStorageReadyCallback = this.uiBeanStorage.storageReady();
       let preparationStorageReadyCallback = this.uiPreparationStorage.storageReady();
+      let uiSettingsStorageReadyCallback = this.uiSettingsStorage.storageReady();
       Promise.all([
         beanStorageReadyCallback,
-        preparationStorageReadyCallback
+        preparationStorageReadyCallback,
+        uiSettingsStorageReadyCallback
       ]).then(() => {
         this.uiLog.log("App finished loading");
         this.__initApp();

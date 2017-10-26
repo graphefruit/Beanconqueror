@@ -17,4 +17,9 @@ export class Bean implements IBean {
     this.filePath = "";
     this.config = new Config();
   }
+
+  public initializeByObject(beanObj: IBean) {
+    Object.assign(this, beanObj)
+  }
+
 }

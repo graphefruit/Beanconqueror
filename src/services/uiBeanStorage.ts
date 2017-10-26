@@ -2,6 +2,9 @@
 import {Injectable} from '@angular/core';
 /**Ionic native**/
 
+/**Classes**/
+import {Bean} from '../classes/bean/bean';
+
 /**Interfaces**/
 import {IBean} from '../interfaces/bean/iBean';
 
@@ -37,5 +40,18 @@ export class UIBeanStorage extends StorageClass {
 
       return "_nicht gefunden_";
     }
+  }
+
+  public getAllEntries(): Array<Bean> {
+    let beanEntries:Array<any> = super.getAllEntries();
+    let beans:Array<Bean> = [];
+
+    for (let i=0;i<beanEntries.length;i++){
+      let beanObj:Bean = new Bean();
+      beanObj.initializeByObject(beanEntries[i]);
+      beans.push(beanObj);
+
+    }
+    return beans;
   }
 }

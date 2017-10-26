@@ -8,8 +8,13 @@ import {UIBeanStorage} from '../../../services/uiBeanStorage';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {UIBrewStorage} from '../../../services/uiBrewStorage';
 import {UIImage} from '../../../services/uiImage';
+import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 /**Components**/
 import {TimerComponent} from '../../../components/timer/timer';
+
+/**Enums**/
+import {BREW_VIEW_ENUM} from '../../../enums/settings/brewView';
+
 
 /**Classes**/
 import {Brew} from '../../../classes/brew/brew';
@@ -17,6 +22,7 @@ import {Brew} from '../../../classes/brew/brew';
 /**Interfaces**/
 import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 import {IBean} from '../../../interfaces/bean/iBean';
+import {ISettings} from '../../../interfaces/settings/iSettings';
 
 @Component({
   selector: 'brews-add',
@@ -28,15 +34,18 @@ export class BrewsAddModal {
 
   public data: Brew = new Brew();
 
+  public BREW_VIEW_ENUM = BREW_VIEW_ENUM;
+  public settings:ISettings;
+
   methodOfPreparations: Array<IPreparation> = [];
   beans: Array<IBean> = [];
-  activeIndex: number = 0;
 
   constructor(private viewCtrl: ViewController, private uiBeanStorage: UIBeanStorage, private uiPreparationStorage: UIPreparationStorage,
-              private uiBrewStorage: UIBrewStorage, private uiImage: UIImage) {
+              private uiBrewStorage: UIBrewStorage, private uiImage: UIImage, private uiSettingsStorage:UISettingsStorage) {
     //Initialize to standard in dropdowns
     this.data.bean = "Standard";
     this.data.methodOfPreparation = "Standard";
+    this.settings = this.uiSettingsStorage.getSettings();
   }
 
   ionViewDidEnter() {
@@ -53,6 +62,7 @@ export class BrewsAddModal {
   }
 
   public finish() {
+    this.stopTimer();
     this.uiBrewStorage.add(this.data);
     this.dismiss();
   }
@@ -94,13 +104,17 @@ export class BrewsAddModal {
   }
 
   public stopTimer() {
-    this.timer.pauseTimer();
-    this.data.brew_time = this.timer.getSeconds();
+    if (this.timer){
+      this.timer.pauseTimer();
+      this.data.brew_time = this.timer.getSeconds();
+    }
+    else{
+      this.data.brew_time = 0;
+    }
+
   }
 
-  public nextPage() {
-    this.activeIndex++;
-  }
+
 
 
 }

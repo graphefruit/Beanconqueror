@@ -1,7 +1,8 @@
 /**Core**/
-import {Injectable, Component} from '@angular/core';
+import {Injectable} from '@angular/core';
 /**Ionic native**/
-
+/**Classes**/
+import {Preparation} from '../classes/preparation/preparation';
 /**Interfaces**/
 import {IPreparation} from '../interfaces/preparation/iPreparation';
 /**Services**/
@@ -36,6 +37,20 @@ export class UIPreparationStorage extends StorageClass {
 
       return "_nicht gefunden_";
     }
+  }
+
+
+  public getAllEntries(): Array<Preparation> {
+    let preparationEntries:Array<any> = super.getAllEntries();
+    let preparations:Array<Preparation> = [];
+
+    for (let i=0;i<preparationEntries.length;i++){
+      let preparationObj:Preparation = new Preparation();
+      preparationObj.initializeByObject(preparationEntries[i]);
+      preparations.push(preparationObj);
+
+    }
+    return preparations;
   }
 
 }

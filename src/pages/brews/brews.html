@@ -15,70 +15,82 @@
     </button>
   </ion-fab>
 
-  <ion-list  *ngFor="let brewView of brewsView">
+  <ion-list *ngFor="let brewView of brewsView">
     <ion-list-header class="brews-header">
       {{brewView.title}}
     </ion-list-header>
-    <ion-card  *ngFor="let brew of brewView.brews">
+    <ion-card *ngFor="let brew of brewView.brews">
 
       <ion-card-header>
-        {{brew.title}}
+        {{brew.formateDate("HH:mm")}}
       </ion-card-header>
       <div>
         <ion-grid>
           <ion-row>
-            <ion-col>
+            <ion-col *ngIf="settings.grind_size === true">
               <i class="fa fa-th"></i>&nbsp;{{brew.grindSize}}
             </ion-col>
-            <ion-col>
+            <ion-col  *ngIf="settings.weight === true">
               <i class="fa fa-balance-scale"></i>&nbsp;{{brew.weight}}
             </ion-col>
-            <ion-col>
+            <ion-col  *ngIf="settings.brew_temperature === true">
               <i class="fa fa-thermometer-half "></i>&nbsp;{{brew.temperature}}
             </ion-col>
-            <ion-col>
+            <ion-col  *ngIf="settings.time === true">
               <i class="fa fa-clock-o "></i>&nbsp;{{brew.brew_time}}
             </ion-col>
-            <ion-col>
+            <ion-col  *ngIf="settings.rating === true">
               <i class="fa fa-smile-o"></i>&nbsp;{{brew.rating}}
             </ion-col>
-            <ion-col>
+            <ion-col  *ngIf="settings.water_flow === true">
               <ion-icon name="beaker"></ion-icon>&nbsp;{{brew.brew_quantity}}
             </ion-col>
           </ion-row>
           <ion-row>
-            <ion-col>
+            <ion-col  *ngIf="settings.method_of_preparation === true">
               <i class="fa fa-flask"></i>&nbsp;{{getPreparationName(brew.methodOfPreparation)}}
             </ion-col>
-            <ion-col>
+            <ion-col  *ngIf="settings.bean_type === true">
               <i class="fa fa-pagelines"></i>&nbsp;{{getBeanName(brew.bean)}}
             </ion-col>
           </ion-row>
         </ion-grid>
-        <ion-list *ngIf="brew.note !=''">
+        <ion-list *ngIf="settings.note === true && brew.note !=''">
           <ion-item>
-            Notizen:&nbsp;{{brew.note}}
+            <span style="font-size:0.8em;" text-italic>Notizen:</span><br/>
+            {{brew.note}}
           </ion-item>
         </ion-list>
       </div>
-      <ion-list>
-        <button *ngIf="brew?.attachments.length > 0" ion-item (click)="viewPhotos(brew)">
-          <ion-icon name="md-eye" item-start></ion-icon>
-          <span>Fotogalerie</span>
-        </button>
-        <button ion-item (click)="editBrew(brew)">
-          <ion-icon name="md-create" item-start></ion-icon>
-          <span>Editieren</span>
-        </button>
-        <button ion-item (click)="deleteBrew(brew)">
-          <ion-icon name="trash" item-start></ion-icon>
-          <span>Löschen</span>
-        </button>
-      </ion-list>
+      <ion-row *ngIf="settings.attachments === true">
+        <ion-col>
+          <button color="dark" clear *ngIf="brew?.attachments.length > 0" ion-button block small icon-left (click)="viewPhotos(brew)">
+            <ion-icon name="md-eye" item-start></ion-icon>
+            <span>Fotogalerie</span>
+          </button>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <button justify-content-start color="dark" clear ion-button small block icon-left (click)="editBrew(brew)">
+            <ion-icon name="md-create" item-start></ion-icon>
+            <span>Editieren</span>
+          </button>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <button justify-content-start color="dark" clear ion-button small block icon-left (click)="deleteBrew(brew)">
+            <ion-icon name="trash" item-start></ion-icon>
+            <span>Löschen</span>
+          </button>
+        </ion-col>
+
+      </ion-row>
+
 
     </ion-card>
   </ion-list>
-
 
 
 </ion-content>

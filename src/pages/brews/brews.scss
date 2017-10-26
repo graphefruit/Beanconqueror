@@ -10,4 +10,8 @@ brews {
   ion-list:first-child{
     margin-top:0px!important;
   }
+
+  button[justify-content-start] .button-inner{
+    justify-content: flex-start;
+  }
 }

@@ -1,26 +1,29 @@
 /**Core**/
 import {Component} from '@angular/core';
-/**Ionic**/
-import {NavController} from 'ionic-angular';
 
+/**Interfaces**/
+import {ISettings} from '../../interfaces/settings/iSettings';
+/**Enums**/
+import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
+
+/**Services**/
+import {UISettingsStorage} from '../../services/uiSettingsStorage';
 @Component({
   templateUrl: 'settings.html'
 })
 export class SettingsPage {
 
-  settings = {
-    time: true,
-    grind_size: true,
-    weight: true,
-    method_of_preparation: true,
-    water_flow: true,
-    bean_type: true,
-    brew_temperature:true,
-    note: true,
-  };
+  settings:ISettings;
 
-  constructor(public navCtrl: NavController) {
+  public BREW_VIEWS = BREW_VIEW_ENUM;
+  constructor(public uiSettingsStorage:UISettingsStorage) {
+    this.settings = this.uiSettingsStorage.getSettings();
 
+
+  }
+
+  public saveSettings(_event:any){
+    this.uiSettingsStorage.saveSettings(this.settings);
   }
 
 }

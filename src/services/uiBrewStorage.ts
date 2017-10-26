@@ -1,7 +1,7 @@
 /**Core**/
 import {Injectable} from '@angular/core';
-/**Ionic native**/
-
+/**Class**/
+import {Brew} from '../classes/brew/brew';
 
 /**Services**/
 import {UIHelper} from '../services/uiHelper';
@@ -19,5 +19,19 @@ export class UIBrewStorage extends StorageClass {
     super(uiStorage,uiHelper,uiLog,"BREWS");
 
   }
+
+  public getAllEntries(): Array<Brew> {
+    let brewEntries:Array<any> = super.getAllEntries();
+    let brews:Array<Brew> = [];
+
+    for (let i=0;i<brewEntries.length;i++){
+      let brewObj:Brew = new Brew();
+      brewObj.initializeByObject(brewEntries[i]);
+      brews.push(brewObj);
+
+    }
+    return brews;
+  }
+
 
 }

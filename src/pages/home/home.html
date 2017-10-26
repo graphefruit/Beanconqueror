@@ -9,6 +9,44 @@
 
 <ion-content>
 
-  <h1>Los gehts! :)</h1>
+
+  <ion-card>
+    <ion-card-header>
+      Statistiken:
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <h2>Bezüge:</h2>
+          <p>{{uiStatistic.getBrewsDrunk()}}</p>
+        </ion-item>
+        <ion-item>
+          <h2>Letzer Bezug:</h2>
+          <p>{{uiStatistic.getLastDrunkBrewTimestamp()}}</p>
+        </ion-item>
+        <ion-item>
+          <h2>Zeit seit dem letzten Bezug vergangen:</h2>
+          <p>{{uiStatistic.getTimePassedSinceLastBrew()}}</p>
+        </ion-item>
+        <ion-item>
+          <h2>Verschiedene Bohnentypen:</h2>
+          <p>{{uiStatistic.getBeansCount()}}</p>
+        </ion-item>
+        <ion-item>
+          <h2>Letzte Bohnensorte:</h2>
+          <p>{{uiStatistic.getLastBeanUsed()}}</p>
+        </ion-item>
+        <ion-item>
+          <h2>Verschiedene Zubereitungsmethoden:</h2>
+          <p>{{uiStatistic.getPreparationsCount()}}</p>
+        </ion-item>
+        <ion-item>
+          <h2>Letzte Zubereitungsmethoden:</h2>
+          <p>{{uiStatistic.getLastPreparationMethodUsed()}}</p>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
 
 </ion-content>

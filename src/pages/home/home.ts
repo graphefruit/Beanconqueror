@@ -1,24 +1,27 @@
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
-import { Storage } from '@ionic/storage';
+
 /**Services **/
-import {UIStorage} from '../../services/uiStorage';
-import {UIPreparationStorage} from '../../services/uiPreparationStorage';
+
+import {UIStatistic} from '../../services/uiStatistic';
+
 
 @Component({
   templateUrl: 'home.html'
 })
 export class HomePage {
 
-  constructor(public navCtrl: NavController, private uiStorage:UIStorage,private storage: Storage,private uiPre:UIPreparationStorage) {
+  public brews:number=0;
+  public beans:number=0;
+  public preparations:number=0;
+  constructor(public navCtrl: NavController,
+              public uiStatistic:UIStatistic) {
 
-    console.log(uiPre.getDBPath());
+
+
 
 
   }
 
-  public startBrew(){
-
-  }
 
 }
