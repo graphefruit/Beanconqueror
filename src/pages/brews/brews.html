@@ -64,7 +64,7 @@
       </div>
       <ion-row *ngIf="settings.attachments === true">
         <ion-col>
-          <button color="dark" clear *ngIf="brew?.attachments.length > 0" ion-button block small icon-left (click)="viewPhotos(brew)">
+          <button justify-content-start  color="dark" clear *ngIf="brew?.attachments.length > 0" ion-button block small icon-left (click)="viewPhotos(brew)">
             <ion-icon name="md-eye" item-start></ion-icon>
             <span>Fotogalerie</span>
           </button>
