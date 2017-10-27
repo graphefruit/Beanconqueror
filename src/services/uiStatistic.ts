@@ -46,16 +46,24 @@ export class UIStatistic {
     if (lastBrew != null) {
       return this.uiHelper.formateDate(lastBrew.config.unix_timestamp, "HH:mm:ss, DD.MM.YYYY");
     }
-    return "-";
+    return "";
   }
 
   public getTimePassedSinceLastBrew():string{
     let lastBrew:IBrew = this.getLastBrew();
     if (lastBrew != null) {
       let timeDiff = this.uiHelper.timeDifference(lastBrew.config.unix_timestamp);
-      return "Minuten: " + timeDiff.MINUTES ;
+      return timeDiff.MINUTES + " Minuten" ;
     }
     return "";
+  }
+
+  public getSloganTimePassedSinceLastBrew():string{
+    let timePassed = this.getTimePassedSinceLastBrew();
+    if (timePassed != "") {
+      return timePassed + " ohne Kaffee"
+    }
+    return "Noch kein Kaffee getrunken."
   }
 
   public getLastBeanUsed(): string {
@@ -72,6 +80,31 @@ export class UIStatistic {
       return lastBrew.methodOfPreparation;
     }
     return "";
+  }
+
+  public getTotalGround(): number {
+    let brews: Array<IBrew> = this.uiBrewStorage.getAllEntries();
+    if (brews.length > 0) {
+      let sum = 0;
+      for (let brew of brews) {
+        sum += +brew.weight;
+      }
+      return sum;
+    }
+    return 0;
+  }
+
+  public getTotalDrunk(): number {
+    let brews: Array<IBrew> = this.uiBrewStorage.getAllEntries();
+    if (brews.length > 0) {
+      let sum = 0;
+      for (let brew of brews) {
+        //TODO: fill with settings.brew_quantity
+        //sum += brew.;
+      }
+      return sum;
+    }
+    return 0;
   }
 
 

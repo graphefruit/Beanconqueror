@@ -9,44 +9,75 @@
 
 <ion-content>
 
-
-  <ion-card>
-    <ion-card-header>
-      Statistiken:
-    </ion-card-header>
-    <ion-card-content>
-      <ion-list>
-        <ion-item>
-          <h2>Bezüge:</h2>
-          <p>{{uiStatistic.getBrewsDrunk()}}</p>
-        </ion-item>
-        <ion-item>
-          <h2>Letzer Bezug:</h2>
-          <p>{{uiStatistic.getLastDrunkBrewTimestamp()}}</p>
-        </ion-item>
-        <ion-item>
-          <h2>Zeit seit dem letzten Bezug vergangen:</h2>
-          <p>{{uiStatistic.getTimePassedSinceLastBrew()}}</p>
-        </ion-item>
-        <ion-item>
-          <h2>Verschiedene Bohnentypen:</h2>
-          <p>{{uiStatistic.getBeansCount()}}</p>
-        </ion-item>
-        <ion-item>
-          <h2>Letzte Bohnensorte:</h2>
-          <p>{{uiStatistic.getLastBeanUsed()}}</p>
-        </ion-item>
-        <ion-item>
-          <h2>Verschiedene Zubereitungsmethoden:</h2>
-          <p>{{uiStatistic.getPreparationsCount()}}</p>
-        </ion-item>
-        <ion-item>
-          <h2>Letzte Zubereitungsmethoden:</h2>
-          <p>{{uiStatistic.getLastPreparationMethodUsed()}}</p>
-        </ion-item>
-      </ion-list>
-    </ion-card-content>
-  </ion-card>
-
+  <ion-grid>
+    <ion-row>
+      <ion-col col-3 text-center>
+          <ion-img width="80px" src="img/icon.png" style="background:transparent;"></ion-img>
+      </ion-col>
+      <ion-col col-9 text-center>
+              <h1>Beanconqueror</h1>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-6 text-center>
+        <ion-card style="height: 100%;">
+          <ion-card-header style="font-size: 2em;">
+              <ion-icon name="cafe" item-start></ion-icon> {{uiStatistic.getBrewsDrunk()}}
+          </ion-card-header>
+          <ion-card-content>
+              Brühungen Gesamt
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col col-6 text-center>
+          <ion-card style="height: 100%;">
+            <ion-card-header style="font-size: 2em;">
+                {{uiStatistic.getBeansCount()}}
+            </ion-card-header>
+            <ion-card-content>
+              Bohnen Erkundet
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+    </ion-row>
+    <ion-row *ngIf="uiStatistic.getLastDrunkBrewTimestamp()">
+      <ion-col col-12 text-center>
+        <ion-card>
+            <ion-card-header style="font-size: 2em;">{{uiStatistic.getSloganTimePassedSinceLastBrew()}}</ion-card-header>
+            <ion-card-content>
+              Letzter Bezug: {{uiStatistic.getLastDrunkBrewTimestamp()}}<br>
+              ({{uiStatistic.getLastBeanUsed()}}, {{uiStatistic.getLastPreparationMethodUsed()}})
+            </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="uiStatistic.getPreparationsCount()>2">
+      <ion-col col-12 text-center>
+        <ion-card>
+          <ion-card-content>
+              <strong>Unterschiedliche Zubereitungsmethoden:</strong> {{uiStatistic.getPreparationsCount()}} 
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="uiStatistic.getTotalGround()!=0">
+      <ion-col col-12 text-center>
+        <ion-card>
+          <ion-card-content>
+            <strong>Gesamt Gemahlen:</strong> {{uiStatistic.getTotalGround()}}
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="uiStatistic.getTotalDrunk()!=0">
+        <ion-col col-12 text-center>
+          <ion-card>
+            <ion-card-content>
+              <strong>Gesamt Getrunken:</strong> {{uiStatistic.getTotalDrunk()}}
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+  </ion-grid>
 
 </ion-content>

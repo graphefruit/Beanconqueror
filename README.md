@@ -40,6 +40,8 @@ ionic cordova plugin add cordova-plugin-telerik-imagepicker --variable PHOTO_LIB
 npm install --save @ionic-native/image-picker
 ```
 
+Build for Android using `ionic cordova build --prod --release android`
+
 ## Plugin Requirements
 ##### [Ionic Storage](https://ionicframework.com/docs/storage/)
 Enables the storage of data in a local sqlite database.
