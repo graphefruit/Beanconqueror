@@ -25,7 +25,7 @@
   </ion-item>
   <ion-item>
     <ion-label>Zeit</ion-label>
-    <ion-checkbox [(ngModel)]="settings.time" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+    <ion-checkbox [(ngModel)]="settings.brew_time" (ngModelChange)="saveSettings($event)"></ion-checkbox>
   </ion-item>
   <ion-item>
     <ion-label>Mahlgrad</ion-label>
@@ -33,7 +33,7 @@
   </ion-item>
   <ion-item>
     <ion-label>Output: Gewicht/Menge</ion-label>
-    <ion-checkbox [(ngModel)]="settings.weight" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+    <ion-checkbox [(ngModel)]="settings.brew_weight" (ngModelChange)="saveSettings($event)"></ion-checkbox>
   </ion-item>
   <ion-item>
     <ion-label>Notizen</ion-label>
@@ -45,7 +45,7 @@
   </ion-item>
   <ion-item>
     <ion-label>Wassermenge</ion-label>
-    <ion-checkbox [(ngModel)]="settings.water_flow" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+    <ion-checkbox [(ngModel)]="settings.brew_quantity" (ngModelChange)="saveSettings($event)"></ion-checkbox>
   </ion-item>
   <ion-item>
     <ion-label>Bohnensorte</ion-label>
@@ -63,5 +63,15 @@
     <ion-label>Bewertung</ion-label>
     <ion-checkbox [(ngModel)]="settings.rating" (ngModelChange)="saveSettings($event)"></ion-checkbox>
   </ion-item>
+
+  <ion-card>
+    <ion-card-header class="card-header">
+      Voreinstellungen
+    </ion-card-header>
+    <ion-card-content margin-top>
+      <p>Damit nicht jedes mal die selben Daten eingegeben werden müssen, kann hier der vorausgewählte Wert eingestellt werden</p>
+    </ion-card-content>
+  </ion-card>
+
 
 </ion-content>

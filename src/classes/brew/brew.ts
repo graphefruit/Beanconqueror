@@ -7,11 +7,11 @@ import {Config} from "../objectConfig/objectConfig";
 /**Third party**/
 import moment from 'moment';
 export class Brew implements IBrew {
-  public grindSize: string;
-  public weight: number;
-  public methodOfPreparation: string;
+  public grind_size: string;
+  public brew_weight: number;
+  public method_of_preparation: string;
   public bean: string;
-  public temperature: number;
+  public brew_temperature: number;
   public brew_time: number;
   public brew_quantity: number;
   public note: string;
@@ -25,11 +25,11 @@ export class Brew implements IBrew {
   }
 
   constructor() {
-    this.grindSize = "";
-    this.weight = 0;
-    this.methodOfPreparation = "";
+    this.grind_size = "";
+    this.brew_weight = 0;
+    this.method_of_preparation = "";
     this.bean = "";
-    this.temperature = 0;
+    this.brew_temperature = 0;
     this.brew_time = 0;
     this.brew_quantity = 0;
     this.note = "";

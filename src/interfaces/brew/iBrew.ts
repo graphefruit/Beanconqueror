@@ -4,11 +4,11 @@
 import {IConfig} from '../objectConfig/iObjectConfig';
 export interface IBrew {
  //Properties
-  grindSize:string,
-  weight:number,
-  methodOfPreparation:string,
+  grind_size:string,
+  brew_weight:number,
+  method_of_preparation:string,
   bean:string,
-  temperature:number,
+  brew_temperature:number,
   brew_time:number,
   brew_quantity:number,
   note:string,

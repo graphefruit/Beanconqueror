@@ -6,16 +6,17 @@ import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
 export interface ISettings {
  //Properties
   brew_view:BREW_VIEW_ENUM,
-  time: boolean,
+  brew_time: boolean,
   grind_size: boolean,
-  weight: boolean,
+  brew_weight: boolean,
   method_of_preparation: boolean,
-  water_flow: boolean,
+  brew_quantity: boolean,
   bean_type: boolean,
   brew_temperature:boolean,
   note: boolean,
   attachments:boolean;
   rating:boolean;
+
   config:IConfig;
 }
 

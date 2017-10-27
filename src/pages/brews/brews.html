@@ -28,27 +28,27 @@
         <ion-grid>
           <ion-row>
             <ion-col *ngIf="settings.grind_size === true">
-              <i class="fa fa-th"></i>&nbsp;{{brew.grindSize}}
+              <i class="fa fa-th"></i>&nbsp;{{brew.grind_size}}
             </ion-col>
-            <ion-col  *ngIf="settings.weight === true">
-              <i class="fa fa-balance-scale"></i>&nbsp;{{brew.weight}}
+            <ion-col  *ngIf="settings.brew_weight === true">
+              <i class="fa fa-balance-scale"></i>&nbsp;{{brew.brew_weight}}
             </ion-col>
             <ion-col  *ngIf="settings.brew_temperature === true">
-              <i class="fa fa-thermometer-half "></i>&nbsp;{{brew.temperature}}
+              <i class="fa fa-thermometer-half "></i>&nbsp;{{brew.brew_temperature}}
             </ion-col>
-            <ion-col  *ngIf="settings.time === true">
+            <ion-col  *ngIf="settings.brew_time === true">
               <i class="fa fa-clock-o "></i>&nbsp;{{brew.brew_time}}
             </ion-col>
             <ion-col  *ngIf="settings.rating === true">
               <i class="fa fa-smile-o"></i>&nbsp;{{brew.rating}}
             </ion-col>
-            <ion-col  *ngIf="settings.water_flow === true">
+            <ion-col  *ngIf="settings.brew_quantity === true">
               <ion-icon name="beaker"></ion-icon>&nbsp;{{brew.brew_quantity}}
             </ion-col>
           </ion-row>
           <ion-row>
             <ion-col  *ngIf="settings.method_of_preparation === true">
-              <i class="fa fa-flask"></i>&nbsp;{{getPreparationName(brew.methodOfPreparation)}}
+              <i class="fa fa-flask"></i>&nbsp;{{getPreparationName(brew.method_of_preparation)}}
             </ion-col>
             <ion-col  *ngIf="settings.bean_type === true">
               <i class="fa fa-pagelines"></i>&nbsp;{{getBeanName(brew.bean)}}

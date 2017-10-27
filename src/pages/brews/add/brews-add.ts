@@ -37,20 +37,20 @@ export class BrewsAddModal {
   public BREW_VIEW_ENUM = BREW_VIEW_ENUM;
   public settings:ISettings;
 
-  methodOfPreparations: Array<IPreparation> = [];
+  public method_of_preparations: Array<IPreparation> = [];
   beans: Array<IBean> = [];
 
   constructor(private viewCtrl: ViewController, private uiBeanStorage: UIBeanStorage, private uiPreparationStorage: UIPreparationStorage,
               private uiBrewStorage: UIBrewStorage, private uiImage: UIImage, private uiSettingsStorage:UISettingsStorage) {
     //Initialize to standard in dropdowns
     this.data.bean = "Standard";
-    this.data.methodOfPreparation = "Standard";
+    this.data.method_of_preparation = "Standard";
     this.settings = this.uiSettingsStorage.getSettings();
   }
 
   ionViewDidEnter() {
 
-    this.methodOfPreparations = this.uiPreparationStorage.getAllEntries();
+    this.method_of_preparations = this.uiPreparationStorage.getAllEntries();
     this.beans = this.uiBeanStorage.getAllEntries();
     //this.data.attachments.push("http://www.bilder-katzen.de/wp-content/uploads/2014/01/Katzenbilder-Set4_Bild7.jpg");
    // this.data.attachments.push("http://www.bilder-katzen.de/wp-content/uploads/2014/01/Katzenbilder-Set4_Bild7.jpg");

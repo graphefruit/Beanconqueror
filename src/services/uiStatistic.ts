@@ -77,7 +77,7 @@ export class UIStatistic {
   public getLastPreparationMethodUsed(): string {
     let lastBrew:IBrew = this.getLastBrew();
     if (lastBrew != null) {
-      return lastBrew.methodOfPreparation;
+      return lastBrew.method_of_preparation;
     }
     return "";
   }
@@ -87,7 +87,7 @@ export class UIStatistic {
     if (brews.length > 0) {
       let sum = 0;
       for (let brew of brews) {
-        sum += +brew.weight;
+        sum += +brew.brew_weight;
       }
       return sum;
     }

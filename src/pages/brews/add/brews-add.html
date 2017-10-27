@@ -14,22 +14,22 @@
   <ion-list>
     <ion-item *ngIf="settings.grind_size === true">
       <ion-label floating>Mahlgrad</ion-label>
-      <ion-input type="text" [(ngModel)]="data.grindSize"></ion-input>
+      <ion-input type="text" [(ngModel)]="data.grind_size"></ion-input>
     </ion-item>
-    <ion-item *ngIf="settings.weight === true">
+    <ion-item *ngIf="settings.brew_weight === true">
       <ion-label floating>Gewicht</ion-label>
-      <ion-input type="number" [(ngModel)]="data.weight"></ion-input>
+      <ion-input type="number" [(ngModel)]="data.brew_weight"></ion-input>
     </ion-item>
     <ion-item *ngIf="settings.brew_temperature === true">
       <ion-label floating>Temperatur</ion-label>
-      <ion-input type="number" [(ngModel)]="data.temperature"></ion-input>
+      <ion-input type="number" [(ngModel)]="data.brew_temperature"></ion-input>
     </ion-item>
     <ion-item *ngIf="settings.method_of_preparation === true">
       <ion-label floating>Zubereitungsmethode</ion-label>
-      <ion-select [(ngModel)]="data.methodOfPreparation">
+      <ion-select [(ngModel)]="data.method_of_preparation">
         <ion-option value="Standard">Standard</ion-option>
 
-        <ion-option *ngFor="let method of methodOfPreparations" value="{{method.config.uuid}}">{{method.name}}
+        <ion-option *ngFor="let method of method_of_preparations" value="{{method.config.uuid}}">{{method.name}}
         </ion-option>
       </ion-select>
     </ion-item>
@@ -41,8 +41,8 @@
         </ion-option>
       </ion-select>
     </ion-item>
-    <timer #timer timeInSeconds="0" *ngIf="settings.time === true"></timer>
-    <ion-item *ngIf="settings.water_flow === true">
+    <timer #timer timeInSeconds="0" *ngIf="settings.brew_time === true"></timer>
+    <ion-item *ngIf="settings.brew_quantity === true">
       <ion-label floating>Bezugsmenge</ion-label>
       <ion-input type="number" [(ngModel)]="data.brew_quantity"></ion-input>
     </ion-item>

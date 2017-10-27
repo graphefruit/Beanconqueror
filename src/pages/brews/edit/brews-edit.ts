@@ -30,7 +30,7 @@ export class BrewsEditModal {
   private brew: IBrew;
 
 
-  methodOfPreparations: Array<IPreparation> = [];
+  method_of_preparation: Array<IPreparation> = [];
   beans: Array<IBean> = [];
   activeIndex: number = 0;
 
@@ -39,14 +39,14 @@ export class BrewsEditModal {
               private uiHelper: UIHelper, private uiImage:UIImage) {
     //Initialize to standard in dropdowns
     this.data.bean = "Standard";
-    this.data.methodOfPreparation = "Standard";
+    this.data.method_of_preparation = "Standard";
 
   }
 
   ionViewWillEnter() {
     this.brew = this.navParams.get('BREW');
     this.data = this.uiHelper.copyData(this.brew);
-    this.methodOfPreparations = this.uiPreparationStorage.getAllEntries();
+    this.method_of_preparation = this.uiPreparationStorage.getAllEntries();
     this.beans = this.uiBeanStorage.getAllEntries();
   }
 

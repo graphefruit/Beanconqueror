@@ -6,11 +6,11 @@ import {Config} from "../objectConfig/objectConfig";
 import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
 export class Settings implements ISettings {
   public brew_view:BREW_VIEW_ENUM;
-  public time: boolean;
+  public brew_time: boolean;
   public grind_size: boolean;
-  public weight: boolean;
+  public brew_weight: boolean;
   public method_of_preparation: boolean;
-  public water_flow: boolean;
+  public brew_quantity: boolean;
   public bean_type: boolean;
   public brew_temperature: boolean;
   public note: boolean;
@@ -19,17 +19,18 @@ export class Settings implements ISettings {
   public config: Config;
 
 
+
   public initializeByObject(brewObj: ISettings) {
     Object.assign(this, brewObj)
   }
 
   constructor() {
     this.brew_view = BREW_VIEW_ENUM.SINGLE_PAGE;
-    this.time = true;
+    this.brew_time = true;
     this.grind_size = true;
-    this.weight = true;
+    this.brew_weight = true;
     this.method_of_preparation = true;
-    this.water_flow = true;
+    this.brew_quantity = true;
     this.bean_type = true;
     this.brew_temperature = true;
     this.note = true;
