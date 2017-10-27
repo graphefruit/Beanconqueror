@@ -18,3 +18,7 @@ npm install --save @ionic-native/media-capture
 http://ionicframework.com/docs/native/image-picker/
 ionic cordova plugin add cordova-plugin-telerik-imagepicker --variable PHOTO_LIBRARY_USAGE_DESCRIPTION="Bitte um Freigabe"
 npm install --save @ionic-native/image-picker
+
+
+https://github.com/macdonst/cordova-plugin-allow-backup
+ionic cordova plugin add cordova-plugin-allow-backup --variable BACKUP=true

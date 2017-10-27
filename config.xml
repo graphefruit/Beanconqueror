@@ -80,6 +80,9 @@
     <plugin name="com.synconset.imagepicker" spec="~2.1.8">
         <variable name="PHOTO_LIBRARY_USAGE_DESCRIPTION" value="Bitte um Freigabe" />
     </plugin>
+    <plugin name="cordova-plugin-allow-backup" spec="0.0.2">
+        <variable name="BACKUP" value="true" />
+    </plugin>
     <plugin name="cordova-plugin-appminimize" spec="^1.0.0" />
     <plugin name="cordova-plugin-device" spec="^1.1.4" />
     <plugin name="cordova-plugin-ionic-webview" spec="^1.1.11" />

@@ -33,6 +33,7 @@
         "@ionic/storage": "^2.0.1",
         "com.synconset.imagepicker": "~2.1.8",
         "cordova-android": "^6.2.3",
+        "cordova-plugin-allow-backup": "0.0.2",
         "cordova-plugin-appminimize": "^1.0.0",
         "cordova-plugin-compat": "^1.0.0",
         "cordova-plugin-device": "^1.1.4",
@@ -70,6 +71,9 @@
             "ionic-plugin-keyboard": {},
             "com.synconset.imagepicker": {
                 "PHOTO_LIBRARY_USAGE_DESCRIPTION": "Bitte um Freigabe"
+            },
+            "cordova-plugin-allow-backup": {
+                "BACKUP": "true"
             }
         },
         "platforms": [
