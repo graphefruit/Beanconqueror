@@ -38,6 +38,7 @@ ionic cordova plugin add cordova-plugin-media-capture
 npm install --save @ionic-native/media-capture
 ionic cordova plugin add cordova-plugin-telerik-imagepicker --variable PHOTO_LIBRARY_USAGE_DESCRIPTION="Bitte um Freigabe"
 npm install --save @ionic-native/image-picker
+ionic cordova plugin add cordova-plugin-allow-backup --variable BACKUP=true
 ```
 
 Build for Android using `ionic cordova build --prod --release android`
@@ -58,3 +59,5 @@ Access the devices audio, photo and video capture capabilities.
 ##### [Ionic Image-Picker](http://ionicframework.com/docs/native/image-picker/)
 Plugin for multiple image selection.
 
+##### [Allow Backup](https://github.com/macdonst/cordova-plugin-allow-backup)
+Plugin for backing up data
