@@ -1,83 +1,86 @@
 {
-  "name": "beanconqueror",
-  "version": "0.0.6",
-  "author": "Lars Saalbach, Richard Polzin",
-  "homepage": "https://github.com/graphefruit/beanconqueror",
-  "private": true,
-  "scripts": {
-    "clean": "ionic-app-scripts clean",
-    "build": "ionic-app-scripts build",
-    "lint": "ionic-app-scripts lint",
-    "ionic:build": "ionic-app-scripts build",
-    "ionic:serve": "ionic-app-scripts serve"
-  },
-  "config": {
-    "ionic_generate_source_map": false,
-    "ionic_sass": "./compile/sass.js"
-  },
-  "dependencies": {
-    "@angular/common": "5.0.0",
-    "@angular/compiler": "5.0.0",
-    "@angular/compiler-cli": "5.0.0",
-    "@angular/core": "5.0.0",
-    "@angular/forms": "5.0.0",
-    "@angular/http": "5.0.0",
-    "@angular/platform-browser": "5.0.0",
-    "@angular/platform-browser-dynamic": "5.0.0",
-    "@ionic-native/app-minimize": "^4.3.1",
-    "@ionic-native/core": "4.3.0",
-    "@ionic-native/image-picker": "^4.3.1",
-    "@ionic-native/media-capture": "^4.3.1",
-    "@ionic-native/splash-screen": "4.3.0",
-    "@ionic-native/status-bar": "4.3.0",
-    "@ionic/storage": "2.1.3",
-    "com.synconset.imagepicker": "~2.1.8",
-    "cordova-android": "^6.2.3",
-    "cordova-plugin-allow-backup": "0.0.2",
-    "cordova-plugin-appminimize": "^1.0.0",
-    "cordova-plugin-compat": "^1.0.0",
-    "cordova-plugin-device": "^1.1.4",
-    "cordova-plugin-file": "^4.0.0",
-    "cordova-plugin-ionic-webview": "^1.1.11",
-    "cordova-plugin-media-capture": "^1.4.3",
-    "cordova-plugin-splashscreen": "^4.0.3",
-    "cordova-plugin-statusbar": "https://github.com/apache/cordova-plugin-statusbar.git",
-    "cordova-plugin-telerik-imagepicker": "^2.1.8",
-    "cordova-plugin-whitelist": "^1.3.1",
-    "cordova-sqlite-storage": "^2.0.4",
-    "ionic-angular": "^3.9.2",
-    "ionic-plugin-keyboard": "^2.2.1",
-    "ionicons": "3.0.0",
-    "moment": "^2.19.1",
-    "rxjs": "5.5.2",
-    "sw-toolbox": "3.6.0",
-    "zone.js": "0.8.18"
-  },
-  "devDependencies": {
-    "@ionic/app-scripts": "3.1.0",
-    "typescript": "2.4.2"
-  },
-  "description": "App for Coffee Enthusiasts",
-  "cordova": {
-    "plugins": {
-      "cordova-sqlite-storage": {},
-      "cordova-plugin-appminimize": {},
-      "cordova-plugin-media-capture": {},
-      "cordova-plugin-device": {},
-      "cordova-plugin-ionic-webview": {},
-      "cordova-plugin-splashscreen": {},
-      "cordova-plugin-statusbar": {},
-      "cordova-plugin-whitelist": {},
-      "ionic-plugin-keyboard": {},
-      "com.synconset.imagepicker": {
-        "PHOTO_LIBRARY_USAGE_DESCRIPTION": "Bitte um Freigabe"
-      },
-      "cordova-plugin-allow-backup": {
-        "BACKUP": "true"
-      }
+    "name": "beanconqueror",
+    "version": "0.0.6",
+    "author": "Lars Saalbach, Richard Polzin",
+    "homepage": "https://github.com/graphefruit/beanconqueror",
+    "private": true,
+    "scripts": {
+        "clean": "ionic-app-scripts clean",
+        "build": "ionic-app-scripts build",
+        "lint": "ionic-app-scripts lint",
+        "ionic:build": "ionic-app-scripts build",
+        "ionic:serve": "ionic-app-scripts serve"
     },
-    "platforms": [
-      "android"
-    ]
-  }
+    "config": {
+        "ionic_generate_source_map": false,
+        "ionic_sass": "./compile/sass.js"
+    },
+    "dependencies": {
+        "@angular/common": "5.0.0",
+        "@angular/compiler": "5.0.0",
+        "@angular/compiler-cli": "5.0.0",
+        "@angular/core": "5.0.0",
+        "@angular/forms": "5.0.0",
+        "@angular/http": "5.0.0",
+        "@angular/platform-browser": "5.0.0",
+        "@angular/platform-browser-dynamic": "5.0.0",
+        "@ionic-native/android-permissions": "^4.4.2",
+        "@ionic-native/app-minimize": "^4.3.1",
+        "@ionic-native/core": "4.3.0",
+        "@ionic-native/image-picker": "^4.4.2",
+        "@ionic-native/media-capture": "^4.3.1",
+        "@ionic-native/splash-screen": "4.3.0",
+        "@ionic-native/status-bar": "4.3.0",
+        "@ionic/storage": "2.1.3",
+        "com.synconset.imagepicker": "~2.1.8",
+        "cordova-android": "^6.2.3",
+        "cordova-plugin-allow-backup": "0.0.2",
+        "cordova-plugin-android-permissions": "^1.0.0",
+        "cordova-plugin-appminimize": "^1.0.0",
+        "cordova-plugin-compat": "^1.0.0",
+        "cordova-plugin-device": "^1.1.4",
+        "cordova-plugin-file": "^4.0.0",
+        "cordova-plugin-ionic-webview": "^1.1.11",
+        "cordova-plugin-media-capture": "^1.4.3",
+        "cordova-plugin-splashscreen": "^4.0.3",
+        "cordova-plugin-statusbar": "git+https://github.com/apache/cordova-plugin-statusbar.git",
+        "cordova-plugin-telerik-imagepicker": "^2.1.8",
+        "cordova-plugin-whitelist": "^1.3.1",
+        "cordova-sqlite-storage": "^2.0.4",
+        "ionic-angular": "^3.9.2",
+        "ionic-plugin-keyboard": "^2.2.1",
+        "ionicons": "3.0.0",
+        "moment": "^2.19.1",
+        "rxjs": "5.5.2",
+        "sw-toolbox": "3.6.0",
+        "zone.js": "0.8.18"
+    },
+    "devDependencies": {
+        "@ionic/app-scripts": "3.1.0",
+        "typescript": "2.4.2"
+    },
+    "description": "App for Coffee Enthusiasts",
+    "cordova": {
+        "plugins": {
+            "cordova-sqlite-storage": {},
+            "cordova-plugin-appminimize": {},
+            "cordova-plugin-media-capture": {},
+            "cordova-plugin-device": {},
+            "cordova-plugin-ionic-webview": {},
+            "cordova-plugin-splashscreen": {},
+            "cordova-plugin-statusbar": {},
+            "cordova-plugin-whitelist": {},
+            "ionic-plugin-keyboard": {},
+            "cordova-plugin-allow-backup": {
+                "BACKUP": "true"
+            },
+            "com.synconset.imagepicker": {
+                "PHOTO_LIBRARY_USAGE_DESCRIPTION": "Bitte um Freigabe"
+            },
+            "cordova-plugin-android-permissions": {}
+        },
+        "platforms": [
+            "android"
+        ]
+    }
 }

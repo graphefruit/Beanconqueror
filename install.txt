@@ -22,3 +22,7 @@ npm install --save @ionic-native/image-picker
 
 https://github.com/macdonst/cordova-plugin-allow-backup
 ionic cordova plugin add cordova-plugin-allow-backup --variable BACKUP=true
+
+http://ionicframework.com/docs/native/android-permissions/
+ionic cordova plugin add cordova-plugin-android-permissions
+npm install --save @ionic-native/android-permissions

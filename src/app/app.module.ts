@@ -11,6 +11,7 @@ import {SplashScreen} from '@ionic-native/splash-screen';
 import {AppMinimize} from '@ionic-native/app-minimize';
 import {MediaCapture} from '@ionic-native/media-capture';
 import {ImagePicker} from '@ionic-native/image-picker';
+import { AndroidPermissions } from '@ionic-native/android-permissions';
 /**Pages**/
 import {MyApp} from './app.component';
 import {HomePage} from '../pages/home/home';
@@ -105,7 +106,7 @@ import {TimerComponent} from '../components/timer/timer';
     UIAlert,
     UIImage,
     UIBeanStorage, AppMinimize, {provide: ErrorHandler, useClass: IonicErrorHandler},
-    MediaCapture, ImagePicker, UIBrewStorage,UIStatistic
+    MediaCapture, ImagePicker,AndroidPermissions, UIBrewStorage,UIStatistic
   ]
 })
 export class AppModule {

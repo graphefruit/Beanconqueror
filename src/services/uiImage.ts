@@ -5,18 +5,23 @@ import {AlertController, Platform} from 'ionic-angular';
 /**Ionic native **/
 import {MediaCapture, MediaFile, CaptureError, CaptureImageOptions} from '@ionic-native/media-capture';
 import {ImagePicker} from '@ionic-native/image-picker';
+import {AndroidPermissions} from '@ionic-native/android-permissions';
 
 
 @Injectable()
 export class UIImage {
-  constructor(private mediaCapture: MediaCapture, private imagePicker: ImagePicker, private alertController: AlertController, private platform: Platform) {
+  constructor(private mediaCapture: MediaCapture, private imagePicker: ImagePicker, private alertController: AlertController, private platform: Platform, private androidPermissions: AndroidPermissions) {
   }
 
 
   private __requestGaleryPermission(_success: any, _error: any) {
-    this.imagePicker.requestReadPermission().then(() => {
-
-      _success();
+    this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE).then((_status) => {
+      if (_status.hasPermission === true) {
+        _success();
+      }
+      else {
+        _error();
+      }
     }, () => {
       _error();
     });
@@ -29,8 +34,8 @@ export class UIImage {
         let isCordova: boolean = this.platform.is('cordova');
         let isAndroid: boolean = this.platform.is('android');
         if (isCordova && isAndroid) {
-          this.imagePicker.hasReadPermission().then((_permission) => {
-            if (_permission === false) {
+          this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE).then((_status) => {
+            if (_status.hasPermission === false) {
               this.__requestGaleryPermission(_success, _error)
             }
             else {
