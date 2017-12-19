@@ -16,9 +16,9 @@
       <ion-label floating>Mahlgrad</ion-label>
       <ion-input type="text" [(ngModel)]="data.grind_size"></ion-input>
     </ion-item>
-    <ion-item *ngIf="settings.brew_weight === true">
+    <ion-item *ngIf="settings.grind_weight === true">
       <ion-label floating>Gewicht</ion-label>
-      <ion-input type="number" [(ngModel)]="data.brew_weight"></ion-input>
+      <ion-input type="number" [(ngModel)]="data.grind_weight"></ion-input>
     </ion-item>
     <ion-item *ngIf="settings.brew_temperature === true">
       <ion-label floating>Temperatur</ion-label>

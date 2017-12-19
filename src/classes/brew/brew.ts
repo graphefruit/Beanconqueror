@@ -8,7 +8,7 @@ import {Config} from "../objectConfig/objectConfig";
 import moment from 'moment';
 export class Brew implements IBrew {
   public grind_size: string;
-  public brew_weight: number;
+  public grind_weight: number;
   public method_of_preparation: string;
   public bean: string;
   public brew_temperature: number;
@@ -26,7 +26,7 @@ export class Brew implements IBrew {
 
   constructor() {
     this.grind_size = "";
-    this.brew_weight = 0;
+    this.grind_weight = 0;
     this.method_of_preparation = "";
     this.bean = "";
     this.brew_temperature = 0;

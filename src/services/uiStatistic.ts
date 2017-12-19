@@ -87,7 +87,7 @@ export class UIStatistic {
     if (brews.length > 0) {
       let sum = 0;
       for (let brew of brews) {
-        sum += +brew.brew_weight;
+        sum += +brew.grind_weight;
       }
       return sum;
     }
@@ -100,7 +100,7 @@ export class UIStatistic {
       let sum = 0;
       for (let brew of brews) {
         //TODO: fill with settings.brew_quantity
-        //sum += brew.;
+        sum += brew.brew_quantity;
       }
       return sum;
     }

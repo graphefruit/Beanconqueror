@@ -8,7 +8,7 @@ export interface ISettings {
   brew_view:BREW_VIEW_ENUM,
   brew_time: boolean,
   grind_size: boolean,
-  brew_weight: boolean,
+  grind_weight: boolean,
   method_of_preparation: boolean,
   brew_quantity: boolean,
   bean_type: boolean,
