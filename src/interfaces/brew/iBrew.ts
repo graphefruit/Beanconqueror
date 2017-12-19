@@ -4,17 +4,48 @@
 import {IConfig} from '../objectConfig/iObjectConfig';
 export interface IBrew {
  //Properties
+  /**
+   * Inherits the grind size set on your hand/electric grinder
+   */
   grind_size:string,
-  brew_weight:number,
+  /**
+   * Inherits the actualy grinded size when starting a new brew
+   */
+  grind_weight:number,
+  /**
+   * Inherits the specific preparation method for a brew, default: Standard
+   * E.g. "Chemex","Portafilter","Aeropress"
+   */
   method_of_preparation:string,
+  /**
+   * Inherits the used bean for a brew, default: Standard
+   */
   bean:string,
+  /**
+   * Inherits the brew temperature for a brew
+   */
   brew_temperature:number,
+  /**
+   * Inherits the brewing time for the coffee, shot-time, infusion-time etc.
+   */
   brew_time:number,
+  /**
+   * Inherits the output (user specific in g or ml)
+   */
   brew_quantity:number,
+  /**
+   * Inherits the notes the user doing during or after the shot
+   */
   note:string,
+  /**
+   * Taste rating
+   */
   rating:number,
-  attachments:Array<string>
-  config:IConfig;
+  /**
+   * Image attachments
+   */
+  attachments:Array<string>,
+  config:IConfig,
 
   //Functions
   formateDate():string;

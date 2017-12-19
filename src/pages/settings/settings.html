@@ -33,7 +33,7 @@
   </ion-item>
   <ion-item>
     <ion-label>Output: Gewicht/Menge</ion-label>
-    <ion-checkbox [(ngModel)]="settings.brew_weight" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+    <ion-checkbox [(ngModel)]="settings.grind_weight" (ngModelChange)="saveSettings($event)"></ion-checkbox>
   </ion-item>
   <ion-item>
     <ion-label>Notizen</ion-label>
@@ -44,7 +44,7 @@
     <ion-checkbox [(ngModel)]="settings.method_of_preparation" (ngModelChange)="saveSettings($event)"></ion-checkbox>
   </ion-item>
   <ion-item>
-    <ion-label>Wassermenge</ion-label>
+    <ion-label>Bezugsmenge</ion-label>
     <ion-checkbox [(ngModel)]="settings.brew_quantity" (ngModelChange)="saveSettings($event)"></ion-checkbox>
   </ion-item>
   <ion-item>

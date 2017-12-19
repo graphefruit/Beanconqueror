@@ -8,7 +8,7 @@ export class Settings implements ISettings {
   public brew_view:BREW_VIEW_ENUM;
   public brew_time: boolean;
   public grind_size: boolean;
-  public brew_weight: boolean;
+  public grind_weight: boolean;
   public method_of_preparation: boolean;
   public brew_quantity: boolean;
   public bean_type: boolean;
@@ -28,7 +28,7 @@ export class Settings implements ISettings {
     this.brew_view = BREW_VIEW_ENUM.SINGLE_PAGE;
     this.brew_time = true;
     this.grind_size = true;
-    this.brew_weight = true;
+    this.grind_weight = true;
     this.method_of_preparation = true;
     this.brew_quantity = true;
     this.bean_type = true;
