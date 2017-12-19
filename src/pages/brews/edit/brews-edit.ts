@@ -49,6 +49,15 @@ export class BrewsEditModal {
     this.method_of_preparation = this.uiPreparationStorage.getAllEntries();
     this.beans = this.uiBeanStorage.getAllEntries();
   }
+  public showRating(){
+    console.log("test");
+    if (this.data != null && this.data.rating >=0){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
 
   public addImage() {
     this.uiImage.showOptionChooser().then((_option) => {

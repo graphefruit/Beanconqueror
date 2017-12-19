@@ -74,7 +74,6 @@ import {TimerComponent} from '../components/timer/timer';
       scrollAssist: false,
       autoFocusAssist: false,
       platform:'android',
-
     }),
     IonicStorageModule.forRoot({
       name: '__baristaDB',

@@ -56,8 +56,8 @@
       <ion-badge item-end color="secondary">{{data.rating}}</ion-badge>
     </ion-list-header>
     <ion-item>
-      <ion-range min="0" max="10" step="1" pin="true" snaps="true" debounce="1000" [(ngModel)]="data.rating">
-        <ion-icon range-left small name="sad"></ion-icon>
+      <ion-range min="1" max="10" step="1" snaps="true" debounce="1000" [(ngModel)]="data.rating">
+        <ion-icon range-left  name="sad"></ion-icon>
         <ion-icon range-right name="happy"></ion-icon>
       </ion-range>
     </ion-item>
