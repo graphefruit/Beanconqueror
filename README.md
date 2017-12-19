@@ -29,8 +29,8 @@ cd Beanconqueror
 npm install -g ionic cordova  # install ionic and cordova
 npm install --save  # install node modules
 # Add the pluign requirements
-ionic cordova plugin add cordova-sqlite-storage
 npm install --save @ionic/storage
+ionic cordova plugin add cordova-sqlite-storage
 npm install moment --save
 ionic cordova plugin add cordova-plugin-appminimize
 npm install --save @ionic-native/app-minimize
@@ -39,6 +39,8 @@ npm install --save @ionic-native/media-capture
 ionic cordova plugin add cordova-plugin-telerik-imagepicker --variable PHOTO_LIBRARY_USAGE_DESCRIPTION="Bitte um Freigabe"
 npm install --save @ionic-native/image-picker
 ionic cordova plugin add cordova-plugin-allow-backup --variable BACKUP=true
+npm install --save @ionic-native/android-permissions
+ionic cordova plugin add cordova-plugin-android-permissions
 ```
 
 Build for Android using `ionic cordova build --prod --release android`
