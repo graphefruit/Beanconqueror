@@ -61,3 +61,6 @@ Plugin for multiple image selection.
 
 ##### [Allow Backup](https://github.com/macdonst/cordova-plugin-allow-backup)
 Plugin for backing up data
+
+##### [Android Permissions](https://github.com/NeoLSN/cordova-plugin-android-permissions)
+Plugin for permission handling on android
