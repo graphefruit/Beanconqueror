@@ -95,3 +95,10 @@ ion-list.no-label-margin ion-label {
 [text-italic]{
   font-style:italic;
 }
+[justify-content-start] .button-inner{
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
+}
+
