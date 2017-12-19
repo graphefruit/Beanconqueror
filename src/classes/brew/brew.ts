@@ -33,7 +33,7 @@ export class Brew implements IBrew {
     this.brew_time = 0;
     this.brew_quantity = 0;
     this.note = "";
-    this.rating = 0;
+    this.rating = 1;
     this.attachments = [];
     this.config = new Config();
 

@@ -9,6 +9,7 @@ import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {UIBrewStorage} from '../../../services/uiBrewStorage';
 import {UIImage} from '../../../services/uiImage';
 import {UISettingsStorage} from '../../../services/uiSettingsStorage';
+import {UIHelper} from '../../../services/uiHelper';
 /**Components**/
 import {TimerComponent} from '../../../components/timer/timer';
 
@@ -41,7 +42,7 @@ export class BrewsAddModal {
   beans: Array<IBean> = [];
 
   constructor(private viewCtrl: ViewController, private uiBeanStorage: UIBeanStorage, private uiPreparationStorage: UIPreparationStorage,
-              private uiBrewStorage: UIBrewStorage, private uiImage: UIImage, private uiSettingsStorage:UISettingsStorage) {
+              private uiBrewStorage: UIBrewStorage, private uiImage: UIImage, private uiSettingsStorage:UISettingsStorage, public uiHelper:UIHelper) {
     //Initialize to standard in dropdowns
     this.data.bean = "Standard";
     this.data.method_of_preparation = "Standard";

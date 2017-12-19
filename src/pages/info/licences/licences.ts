@@ -54,6 +54,12 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`
 
 
     },
+    "weihnachtsmuetze":{
+      "TITLE":"Weihnachtsmütze",
+      "LINK":"https://de.vector.me/browse/134790/clothing_santa_hat_clip_art",
+      "ACTIVE":false,
+      "DESCRIPTION":`Für kommerzielle und private Nutzung freigegeben. `
+    },
   }
 
   constructor(private uiHelper:UIHelper) {

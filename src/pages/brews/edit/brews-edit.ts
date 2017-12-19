@@ -30,13 +30,13 @@ export class BrewsEditModal {
   private brew: IBrew;
 
 
-  method_of_preparation: Array<IPreparation> = [];
+  method_of_preparations: Array<IPreparation> = [];
   beans: Array<IBean> = [];
   activeIndex: number = 0;
 
   constructor(private viewCtrl: ViewController, private navParams: NavParams, private uiBeanStorage: UIBeanStorage,
               private uiPreparationStorage: UIPreparationStorage, private uiBrewStorage: UIBrewStorage,
-              private uiHelper: UIHelper, private uiImage:UIImage) {
+              public uiHelper: UIHelper, private uiImage:UIImage) {
     //Initialize to standard in dropdowns
     this.data.bean = "Standard";
     this.data.method_of_preparation = "Standard";
@@ -46,7 +46,7 @@ export class BrewsEditModal {
   ionViewWillEnter() {
     this.brew = this.navParams.get('BREW');
     this.data = this.uiHelper.copyData(this.brew);
-    this.method_of_preparation = this.uiPreparationStorage.getAllEntries();
+    this.method_of_preparations = this.uiPreparationStorage.getAllEntries();
     this.beans = this.uiBeanStorage.getAllEntries();
   }
   public showRating(){

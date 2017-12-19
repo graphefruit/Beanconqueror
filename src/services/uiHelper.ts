@@ -73,6 +73,10 @@ return timeDifference;
     return this.platform.ready()
   }
 
+  public convertToNumber(event):number{
+    return +event;
+  }
+
   public openExternalWebpage(_url: string) {
     if (_url.indexOf("http") == -1) {
       //Saftey

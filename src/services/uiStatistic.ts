@@ -9,6 +9,7 @@ import {UIHelper}  from '../services/uiHelper';
 
 /**Interfaces**/
 import {IBrew} from '../interfaces/brew/iBrew';
+
 @Injectable()
 export class UIStatistic {
 
@@ -53,7 +54,13 @@ export class UIStatistic {
     let lastBrew:IBrew = this.getLastBrew();
     if (lastBrew != null) {
       let timeDiff = this.uiHelper.timeDifference(lastBrew.config.unix_timestamp);
-      return timeDiff.MINUTES + " Minuten" ;
+      if (timeDiff.MINUTES === 1){
+        return timeDiff.MINUTES + " Minute" ;
+      }
+      else{
+        return timeDiff.MINUTES + " Minuten" ;
+      }
+
     }
     return "";
   }
@@ -69,17 +76,17 @@ export class UIStatistic {
   public getLastBeanUsed(): string {
     let lastBrew:IBrew = this.getLastBrew();
     if (lastBrew != null) {
-      return lastBrew.bean;
+      return this.uiBeanStorage.getBeanNameByUUID(lastBrew.bean);
     }
-    return "";
+    return "_nicht gefunden_";
   }
 
   public getLastPreparationMethodUsed(): string {
     let lastBrew:IBrew = this.getLastBrew();
     if (lastBrew != null) {
-      return lastBrew.method_of_preparation;
+      return this.uiPreparationStorage.getPreparationNameByUUID(lastBrew.method_of_preparation);
     }
-    return "";
+    return "_nicht gefunden_";
   }
 
   public getTotalGround(): number {
