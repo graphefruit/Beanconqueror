@@ -14,7 +14,9 @@
       <ion-icon name="add"></ion-icon>
     </button>
   </ion-fab>
-
+  <ion-card padding *ngIf="preparations?.length == 0">
+    Du hast leider noch keine Brühmethoden hinterlegt!
+  </ion-card>
   <ion-card *ngFor="let preparation of preparations">
     <ion-card-header>
       {{preparation.name}}
@@ -32,8 +34,6 @@
           <span>Editieren</span>
         </button>
       </ion-col>
-    </ion-row>
-    <ion-row>
       <ion-col>
         <button button justify-content-start color="dark" clear ion-button small block icon-left
                 (click)="deletePreparation(preparation)">
@@ -42,6 +42,7 @@
         </button>
       </ion-col>
     </ion-row>
+
 
   </ion-card>
 

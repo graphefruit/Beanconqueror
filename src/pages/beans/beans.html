@@ -14,6 +14,10 @@
       <ion-icon name="add"></ion-icon>
     </button>
   </ion-fab>
+
+  <ion-card padding *ngIf="beans?.length == 0">
+    Du hast leider noch keine Bohnen hinterlegt!
+  </ion-card>
   <ion-card *ngFor="let bean of beans">
     <img class="card-image" *ngIf="bean.filePath" [src]="bean.filePath"/>
     <ion-card-header>
@@ -37,8 +41,6 @@
           <span>Editieren</span>
         </button>
       </ion-col>
-    </ion-row>
-    <ion-row>
       <ion-col>
         <button justify-content-start color="dark" clear ion-button block small icon-left (click)="deleteBean(bean)">
           <ion-icon name="trash" item-start></ion-icon>
@@ -46,6 +48,7 @@
         </button>
       </ion-col>
     </ion-row>
+
 
   </ion-card>
 

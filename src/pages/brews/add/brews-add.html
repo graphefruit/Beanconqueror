@@ -18,11 +18,11 @@
     </ion-item>
     <ion-item *ngIf="settings.grind_weight === true">
       <ion-label floating>Gewicht</ion-label>
-      <ion-input type="number" [(ngModel)]="data.grind_weight"></ion-input>
+      <ion-input type="number" [ngModel]="data.grind_weight" (ngModelChange)="data.grind_weight = uiHelper.convertToNumber($event)"></ion-input>
     </ion-item>
     <ion-item *ngIf="settings.brew_temperature === true">
       <ion-label floating>Temperatur</ion-label>
-      <ion-input type="number" [(ngModel)]="data.brew_temperature"></ion-input>
+      <ion-input type="number" [ngModel]="data.brew_temperature" (ngModelChange)="data.brew_temperature = uiHelper.convertToNumber($event)"></ion-input>
     </ion-item>
     <ion-item *ngIf="settings.method_of_preparation === true">
       <ion-label floating>Zubereitungsmethode</ion-label>
@@ -44,7 +44,7 @@
     <timer #timer timeInSeconds="0" *ngIf="settings.brew_time === true"></timer>
     <ion-item *ngIf="settings.brew_quantity === true">
       <ion-label floating>Bezugsmenge</ion-label>
-      <ion-input type="number" [(ngModel)]="data.brew_quantity"></ion-input>
+      <ion-input type="number" [ngModel]="data.brew_quantity"  (ngModelChange)="data.brew_quantity = uiHelper.convertToNumber($event)"></ion-input>
     </ion-item>
     <ion-list-header *ngIf="settings.rating === true">
       Bewertung
