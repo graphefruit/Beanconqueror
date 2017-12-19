@@ -10,7 +10,9 @@
 <ion-content>
   <!-- Real floating action button, fixed. It will not scroll with the content -->
   <ion-fab top right edge #fab1>
-    <button ion-fab mini (click)="addPreparation()"><ion-icon name="add"></ion-icon></button>
+    <button ion-fab mini (click)="addPreparation()">
+      <ion-icon name="add"></ion-icon>
+    </button>
   </ion-fab>
 
   <ion-card *ngFor="let preparation of preparations">
@@ -20,17 +22,26 @@
     <ion-card-content *ngIf="preparation.note != ''">
       {{preparation.note}}
     </ion-card-content>
-    <ion-list>
+    
 
-      <button ion-item (click)="editPreparation(preparation)">
-        <ion-icon name="md-create" item-start></ion-icon>
-        <span>Editieren</span>
-      </button>
-      <button ion-item (click)="deletePreparation(preparation)">
-        <ion-icon name="trash" item-start></ion-icon>
-        <span>Löschen</span>
-      </button>
-    </ion-list>
+    <ion-row>
+      <ion-col>
+        <button button justify-content-start color="dark" clear ion-button small block icon-left
+                (click)="editPreparation(preparation)">
+          <ion-icon name="md-create" item-start></ion-icon>
+          <span>Editieren</span>
+        </button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <button button justify-content-start color="dark" clear ion-button small block icon-left
+                (click)="deletePreparation(preparation)">
+          <ion-icon name="trash" item-start></ion-icon>
+          <span>Löschen</span>
+        </button>
+      </ion-col>
+    </ion-row>
 
   </ion-card>
 

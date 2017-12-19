@@ -22,20 +22,30 @@
     <ion-card-content *ngIf="bean.note != ''">
       {{bean.note}}
     </ion-card-content>
-    <ion-list>
-      <ion-item>
-        <ion-icon name="calendar" item-start></ion-icon>
-        <span>Röstdatum: {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}</span>
-      </ion-item>
-      <button ion-item (click)="editBean(bean)">
-        <ion-icon name="md-create" item-start></ion-icon>
-        <span>Editieren</span>
-      </button>
-      <button ion-item (click)="deleteBean(bean)">
-        <ion-icon name="trash" item-start></ion-icon>
-        <span>Löschen</span>
-      </button>
-    </ion-list>
+    <ion-row>
+      <ion-col>
+        <div style="padding:0 0.9em;" justify-content-start color="dark" clear block small icon-left>
+          <ion-icon name="calendar" item-start></ion-icon>
+          <span>Röstdatum: {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}</span>
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <button justify-content-start color="dark" clear ion-button block small icon-left (click)="editBean(bean)">
+          <ion-icon name="md-create" item-start></ion-icon>
+          <span>Editieren</span>
+        </button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <button justify-content-start color="dark" clear ion-button block small icon-left (click)="deleteBean(bean)">
+          <ion-icon name="trash" item-start></ion-icon>
+          <span>Löschen</span>
+        </button>
+      </ion-col>
+    </ion-row>
 
   </ion-card>
 
