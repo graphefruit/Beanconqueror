@@ -56,6 +56,24 @@
     <ion-checkbox [(ngModel)]="settings.brew_temperature" (ngModelChange)="saveSettings($event)"></ion-checkbox>
   </ion-item>
   <ion-item>
+    <ion-label>Kaffeetyp</ion-label>
+    <ion-checkbox [(ngModel)]="settings.coffee_type" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+  </ion-item>
+  <ion-item>
+    <ion-label>Kaffee-Konzentration</ion-label>
+    <ion-checkbox [(ngModel)]="settings.coffee_concentration" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+  </ion-item>
+  <ion-item>
+    <ion-label>Erster Kaffeetropfen</ion-label>
+    <ion-checkbox [(ngModel)]="settings.coffee_first_drip_time" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+  </ion-item>
+  <ion-item>
+    <ion-label>Blooming-Zeit / Preinfusion</ion-label>
+    <ion-checkbox [(ngModel)]="settings.coffee_blooming_time" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+  </ion-item>
+
+
+  <ion-item>
     <ion-label>Anhänge</ion-label>
     <ion-checkbox [(ngModel)]="settings.attachments" (ngModelChange)="saveSettings($event)"></ion-checkbox>
   </ion-item>

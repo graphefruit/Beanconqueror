@@ -9,6 +9,8 @@ import {UIImage} from '../../../services/uiImage';
 /**Classes**/
 import {Bean} from '../../../classes/bean/bean';
 
+/**Enums**/
+import {ROASTS_ENUM} from '../../../enums/beans/roasts';
 
 @Component({
   templateUrl: 'beans-add.html',
@@ -17,6 +19,8 @@ export class BeansAddModal {
 
 
   public data: Bean = new Bean();
+
+  public roastsEnum = ROASTS_ENUM;
 
   constructor(private viewCtrl: ViewController, private uiBeanStorage: UIBeanStorage, private uiImage: UIImage) {
     this.data.roastingDate = new Date().toISOString();

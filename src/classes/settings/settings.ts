@@ -5,7 +5,7 @@ import {Config} from "../objectConfig/objectConfig";
 /**Enums**/
 import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
 export class Settings implements ISettings {
-  public brew_view:BREW_VIEW_ENUM;
+  public brew_view: BREW_VIEW_ENUM;
   public brew_time: boolean;
   public grind_size: boolean;
   public grind_weight: boolean;
@@ -14,10 +14,13 @@ export class Settings implements ISettings {
   public bean_type: boolean;
   public brew_temperature: boolean;
   public note: boolean;
-  public attachments:boolean;
-  public rating:boolean;
+  public attachments: boolean;
+  public rating: boolean;
+  public coffee_type: boolean;
+  public coffee_concentration: boolean;
+  public coffee_first_drip_time: boolean;
+  public coffee_blooming_time: boolean;
   public config: Config;
-
 
 
   public initializeByObject(brewObj: ISettings) {
@@ -33,9 +36,13 @@ export class Settings implements ISettings {
     this.brew_quantity = true;
     this.bean_type = true;
     this.brew_temperature = true;
+    this.coffee_type = true;
+    this.coffee_concentration = true;
+    this.coffee_first_drip_time = true;
+    this.coffee_blooming_time = true;
     this.note = true;
-    this.attachments= true;
-    this.rating= true;
+    this.attachments = true;
+    this.rating = true;
     this.config = new Config();
   }
 

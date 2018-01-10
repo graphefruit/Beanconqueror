@@ -1,4 +1,3 @@
-
 /**Interfaces**/
 import {IBrew} from "../../interfaces/brew/iBrew";
 
@@ -16,6 +15,10 @@ export class Brew implements IBrew {
   public brew_quantity: number;
   public note: string;
   public rating: number;
+  public coffee_type: string;
+  public coffee_concentration: string;
+  public coffee_first_drip_time: number;
+  public coffee_blooming_time: number;
   public attachments: Array<string>;
   public config: Config;
 
@@ -34,15 +37,17 @@ export class Brew implements IBrew {
     this.brew_quantity = 0;
     this.note = "";
     this.rating = 1;
+    this.coffee_type = "";
+    this.coffee_concentration = "";
+    this.coffee_first_drip_time = 0;
+    this.coffee_blooming_time = 0;
     this.attachments = [];
     this.config = new Config();
-
-
   }
 
-  public formateDate(_format?:string):string{
-    let format:string = "DD.MM.YYYY, HH:mm:ss";
-    if (_format){
+  public formateDate(_format?: string): string {
+    let format: string = "DD.MM.YYYY, HH:mm:ss";
+    if (_format) {
       format = _format;
 
     }

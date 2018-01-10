@@ -41,16 +41,16 @@ export class BrewsEditModal {
     this.data.bean = "Standard";
     this.data.method_of_preparation = "Standard";
 
-  }
-
-  ionViewWillEnter() {
+    //Moved from ionViewDidEnter, because of Ionic issues with ion-range
     this.brew = this.navParams.get('BREW');
-    this.data = this.uiHelper.copyData(this.brew);
+    let copy:IBrew = this.uiHelper.copyData(this.brew);
+    this.data.initializeByObject(copy);
     this.method_of_preparations = this.uiPreparationStorage.getAllEntries();
     this.beans = this.uiBeanStorage.getAllEntries();
   }
+
+
   public showRating(){
-    console.log("test");
     if (this.data != null && this.data.rating >=0){
       return true;
     }

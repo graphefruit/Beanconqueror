@@ -41,6 +41,26 @@ export interface IBrew {
    * Taste rating
    */
   rating:number,
+
+  /**
+   * Inherits the brewn type of coffee: Espresso, Ristretto, Long Black, Americano, Pour Over
+   */
+  coffee_type:string,
+
+  /**
+   * Inherits the extraction concentration
+   */
+  coffee_concentration:string,
+
+  /**
+   * Inherits the first drip in seconds
+   */
+  coffee_first_drip_time:number,
+
+  /**
+   * Inherits the blooming / pid time
+   */
+  coffee_blooming_time:number,
   /**
    * Image attachments
    */

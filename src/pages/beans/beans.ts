@@ -10,13 +10,15 @@ import {BeansAddModal} from '../beans/add/beans-add';
 import {BeansEditModal} from '../beans/edit/beans-edit';
 /**Interfaces**/
 import {IBean} from '../../interfaces/bean/iBean';
+/**Classes**/
+import {Bean} from '../../classes/bean/bean';
 @Component({
   templateUrl: 'beans.html',
   selector: 'beans-list',
 })
 export class BeansPage {
 
-  beans: Array<IBean> = null;
+  beans: Array<Bean> = null;
 
   constructor(public modalCtrl: ModalController, private changeDetectorRef: ChangeDetectorRef, private uiBeanStorage: UIBeanStorage, private uiAlert: UIAlert) {
 
