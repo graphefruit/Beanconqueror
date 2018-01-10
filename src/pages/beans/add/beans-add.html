@@ -17,6 +17,15 @@
                  autocapitalize="off" required>
       </ion-input>
     </ion-item>
+     <ion-item>
+
+      <ion-label>Röstgrad*</ion-label>
+      <ion-select  [(ngModel)]="data.roast"  name="roast" #roast="ngModel">
+        <ion-option *ngFor="let key of roastsEnum | keys" value="{{key}}">{{roastsEnum[key]}}</ion-option>
+
+      </ion-select>
+    </ion-item>
+
     <ion-item>
       <ion-label fixed >Röstdatum*</ion-label>
       <ion-datetime min="2000-01-01" max="2999-12-31" displayFormat="DD.MM.YYYY" [(ngModel)]="data.roastingDate" name="roastingDate"

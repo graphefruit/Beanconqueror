@@ -14,6 +14,10 @@ export interface ISettings {
   bean_type: boolean,
   brew_temperature:boolean,
   note: boolean,
+  coffee_type:boolean,
+  coffee_concentration:boolean,
+  coffee_first_drip_time:boolean,
+  coffee_blooming_time:boolean,
   attachments:boolean;
   rating:boolean;
 

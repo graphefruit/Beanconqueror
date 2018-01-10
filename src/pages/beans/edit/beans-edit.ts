@@ -11,12 +11,17 @@ import {UIImage} from '../../../services/uiImage';
 import {Bean} from '../../../classes/bean/bean';
 /**Interfaces**/
 import {IBean} from '../../../interfaces/bean/iBean';
+
+/**Enums**/
+import {ROASTS_ENUM} from '../../../enums/beans/roasts';
+
 @Component({
   templateUrl: 'beans-edit.html',
 })
 export class BeansEditModal {
 
   public data:Bean = new Bean();
+  public roastsEnum = ROASTS_ENUM;
 
   private bean:IBean;
   constructor(private navParams: NavParams,private viewCtrl: ViewController, private uiBeanStorage:UIBeanStorage, private uiImage:UIImage, private uiHelper:UIHelper) {

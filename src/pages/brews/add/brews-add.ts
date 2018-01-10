@@ -69,6 +69,17 @@ export class BrewsAddModal {
   }
 
 
+  public getTime():number{
+    return this.timer.getSeconds();
+  }
+
+  public setCoffeeDripTime(){
+    this.data.coffee_first_drip_time = this.getTime();
+  }
+  public setCoffeeBloomingTime(){
+    this.data.coffee_blooming_time = this.getTime();
+  }
+
   public addImage() {
     this.uiImage.showOptionChooser().then((_option) => {
       if (_option === "CHOOSE") {
