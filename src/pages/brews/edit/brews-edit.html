@@ -29,7 +29,6 @@
   <ion-item>
     <ion-label>Zubereitungsmethode</ion-label>
     <ion-select [(ngModel)]="data.method_of_preparation">
-      <ion-option value="Standard">Standard</ion-option>
       <ion-option *ngFor="let method of method_of_preparations" value="{{method.config.uuid}}">{{method.name}}
       </ion-option>
     </ion-select>
@@ -37,7 +36,6 @@
   <ion-item>
     <ion-label>Bohnen</ion-label>
     <ion-select [(ngModel)]="data.bean">
-      <ion-option value="Standard">Standard</ion-option>
       <ion-option *ngFor="let bean of beans" value="{{bean.config.uuid}}">{{bean.name}}
       </ion-option>
     </ion-select>

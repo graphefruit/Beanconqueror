@@ -44,18 +44,16 @@ export class BrewsAddModal {
   constructor(private viewCtrl: ViewController, private uiBeanStorage: UIBeanStorage, private uiPreparationStorage: UIPreparationStorage,
               private uiBrewStorage: UIBrewStorage, private uiImage: UIImage, private uiSettingsStorage:UISettingsStorage, public uiHelper:UIHelper) {
     //Initialize to standard in dropdowns
-    this.data.bean = "Standard";
-    this.data.method_of_preparation = "Standard";
+
     this.settings = this.uiSettingsStorage.getSettings();
-  }
-
-  ionViewDidEnter() {
-
     this.method_of_preparations = this.uiPreparationStorage.getAllEntries();
     this.beans = this.uiBeanStorage.getAllEntries();
-    //this.data.attachments.push("http://www.bilder-katzen.de/wp-content/uploads/2014/01/Katzenbilder-Set4_Bild7.jpg");
-   // this.data.attachments.push("http://www.bilder-katzen.de/wp-content/uploads/2014/01/Katzenbilder-Set4_Bild7.jpg");
+
+    //Get first entry
+    this.data.bean = this.beans[0].config.uuid;
+    this.data.method_of_preparation = this.method_of_preparations[0].config.uuid;
   }
+
 
 
   dismiss() {

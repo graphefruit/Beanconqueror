@@ -20,6 +20,7 @@ import {LicencesPage} from '../pages/info/licences/licences';
 /**Serivces **/
 import {UILog} from '../services/uiLog';
 import {UIBeanStorage} from '../services/uiBeanStorage';
+import {UIBrewStorage} from '../services/uiBrewStorage';
 import {UIPreparationStorage} from '../services/uiPreparationStorage';
 import {UISettingsStorage} from '../services/uiSettingsStorage';
 
@@ -48,7 +49,9 @@ export class MyApp {
   toggleAbout: boolean = false;
 
   constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, private uiLog: UILog,
-              private uiBeanStorage: UIBeanStorage, private uiPreparationStorage: UIPreparationStorage,
+              private uiBeanStorage: UIBeanStorage,
+              private uiBrewStorage:UIBrewStorage,
+              private uiPreparationStorage: UIPreparationStorage,
               private ionicApp: IonicApp, private menuCtrl: MenuController,
               private appMinimize: AppMinimize, private uiSettingsStorage:UISettingsStorage) {
 
@@ -77,10 +80,12 @@ export class MyApp {
       let beanStorageReadyCallback = this.uiBeanStorage.storageReady();
       let preparationStorageReadyCallback = this.uiPreparationStorage.storageReady();
       let uiSettingsStorageReadyCallback = this.uiSettingsStorage.storageReady();
+      let brewStorageReadyCallback = this.uiBrewStorage.storageReady();
       Promise.all([
         beanStorageReadyCallback,
         preparationStorageReadyCallback,
-        uiSettingsStorageReadyCallback
+        brewStorageReadyCallback,
+        uiSettingsStorageReadyCallback,
       ]).then(() => {
         this.uiLog.log("App finished loading");
         this.__initApp();
@@ -94,6 +99,7 @@ export class MyApp {
 
   private __initApp() {
     this.__registerBack();
+
     this.rootPage = this.ROOT_PAGE;
   }
 

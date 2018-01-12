@@ -37,9 +37,6 @@ export class BrewsEditModal {
   constructor(private viewCtrl: ViewController, private navParams: NavParams, private uiBeanStorage: UIBeanStorage,
               private uiPreparationStorage: UIPreparationStorage, private uiBrewStorage: UIBrewStorage,
               public uiHelper: UIHelper, private uiImage:UIImage) {
-    //Initialize to standard in dropdowns
-    this.data.bean = "Standard";
-    this.data.method_of_preparation = "Standard";
 
     //Moved from ionViewDidEnter, because of Ionic issues with ion-range
     this.brew = this.navParams.get('BREW');

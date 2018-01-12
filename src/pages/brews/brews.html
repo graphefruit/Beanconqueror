@@ -4,17 +4,23 @@
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-title>Brühungen</ion-title>
+    <ion-buttons end>
+      <button [disabled]="!hasBeans || !hasPreparationMethods" ion-button icon-only (click)="addBrew()">
+        <ion-icon name="add"></ion-icon>
+      </button>
+      <button ion-button icon-only (click)="showMore($event)">
+        <ion-icon name="more"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 <ion-content>
-  <!-- Real floating action button, fixed. It will not scroll with the content -->
-  <ion-fab top right edge #fab1>
-    <button ion-fab mini (click)="addBrew()">
-      <ion-icon name="add"></ion-icon>
-    </button>
-  </ion-fab>
-  <ion-card padding *ngIf="brewsView?.length == 0">
+
+  <ion-card  padding *ngIf="!hasBeans || !hasPreparationMethods">
+    <h2 class="error-text">Um einen Bezug zu starten, lege bitte eine <b>Bohnensorte</b> sowie eine <b>Zubereitungsmethode</b> an.</h2>
+  </ion-card>
+  <ion-card padding *ngIf="brewsView?.length == 0 && hasBeans && hasPreparationMethods">
     Du hast leider noch keinen Kaffee, seit der Benutzung dieser App getrunken (schon etwas schade oder?)
   </ion-card>
   <ion-list *ngFor="let brewView of brewsView">
@@ -32,28 +38,28 @@
             <ion-col *ngIf="settings.grind_size === true">
               <i class="fa fa-th"></i>&nbsp;{{brew.grind_size}}
             </ion-col>
-            <ion-col  *ngIf="settings.grind_weight === true">
+            <ion-col *ngIf="settings.grind_weight === true">
               <i class="fa fa-balance-scale"></i>&nbsp;{{brew.grind_weight}}
             </ion-col>
-            <ion-col  *ngIf="settings.brew_temperature === true">
+            <ion-col *ngIf="settings.brew_temperature === true">
               <i class="fa fa-thermometer-half "></i>&nbsp;{{brew.brew_temperature}}
             </ion-col>
-            <ion-col  *ngIf="settings.brew_time === true">
+            <ion-col *ngIf="settings.brew_time === true">
               <i class="fa fa-clock-o "></i>&nbsp;{{brew.brew_time}}
             </ion-col>
-            <ion-col  *ngIf="settings.rating === true">
+            <ion-col *ngIf="settings.rating === true">
               <i class="fa fa-smile-o"></i>&nbsp;{{brew.rating}}
             </ion-col>
-            <ion-col  *ngIf="settings.brew_quantity === true">
+            <ion-col *ngIf="settings.brew_quantity === true">
               <ion-icon name="beaker"></ion-icon>&nbsp;{{brew.brew_quantity}}
             </ion-col>
           </ion-row>
           <ion-row>
-            <ion-col  *ngIf="settings.method_of_preparation === true">
-              <i class="fa fa-flask"></i>&nbsp;{{getPreparationName(brew.method_of_preparation)}}
+            <ion-col *ngIf="settings.method_of_preparation === true">
+              <i class="fa fa-flask"></i>&nbsp;{{brew.getPreparation().name}}
             </ion-col>
-            <ion-col  *ngIf="settings.bean_type === true">
-              <i class="fa fa-pagelines"></i>&nbsp;{{getBeanName(brew.bean)}}
+            <ion-col *ngIf="settings.bean_type === true">
+              <i class="fa fa-pagelines"></i>&nbsp;{{brew.getBean().name}}
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -66,13 +72,21 @@
       </div>
       <ion-row *ngIf="settings.attachments === true">
         <ion-col>
-          <button justify-content-start  color="dark" clear *ngIf="brew?.attachments.length > 0" ion-button block small icon-left (click)="viewPhotos(brew)">
+          <button justify-content-start color="dark" clear *ngIf="brew?.attachments.length > 0" ion-button block small
+                  icon-left (click)="viewPhotos(brew)">
             <ion-icon name="md-eye" item-start></ion-icon>
             <span>Fotogalerie</span>
           </button>
         </ion-col>
       </ion-row>
       <ion-row>
+        <ion-col>
+          <button justify-content-start color="dark" clear ion-button small block icon-left (click)="detailBrew(brew)">
+            <ion-icon name="list" item-start></ion-icon>
+            <span>Details</span>
+          </button>
+        </ion-col>
+
         <ion-col>
           <button justify-content-start color="dark" clear ion-button small block icon-left (click)="editBrew(brew)">
             <ion-icon name="md-create" item-start></ion-icon>

@@ -15,12 +15,18 @@ export abstract class StorageClass {
    */
   private isInitialized: number = -1;
 
+
+
   constructor(protected uiStorage: UIStorage,
               protected uiHelper: UIHelper,
               protected uiLog: UILog, protected dbPath:string) {
-    this.DB_PATH = dbPath;
-    this.__initializeStorage();
+
+      this.DB_PATH = dbPath;
+      this.__initializeStorage();
+
+
   }
+
 
 
   public storageReady(): Promise<any> {
@@ -93,6 +99,17 @@ export abstract class StorageClass {
     return false;
   }
 
+  public getByUUID(_uuid:string):any{
+    if (_uuid !== null && _uuid !== undefined && _uuid != "") {
+      let findUUID = _uuid;
+      for (let i = 0; i < this.storedData.length; i++) {
+        if (this.storedData[i].config.uuid === findUUID) {
+          return this.storedData[i];
+        }
+      }
+    }
+  }
+
   public removeByUUID(_beanUUID: string): boolean {
     if (_beanUUID !== null && _beanUUID !== undefined && _beanUUID != "") {
       return this.__delete(_beanUUID);
@@ -118,9 +135,9 @@ export abstract class StorageClass {
   }
 
   private __save() {
-    this.uiStorage.set(this.DB_PATH, this.storedData).then(() => {
+    this.uiStorage.set(this.DB_PATH, this.storedData).then((e) => {
         this.uiLog.log("Storage - Save - Successfully");
-      }, () => {
+      }, (e) => {
         this.uiLog.log("Storage - Save - Unsuccessfully");
       }
     )
@@ -129,6 +146,11 @@ export abstract class StorageClass {
   public getDBPath(){
     return this.DB_PATH;
   }
+
+
+
+
+
 
 
 
