@@ -10,7 +10,9 @@ import {BeansAddModal} from '../beans/add/beans-add';
 import {BeansEditModal} from '../beans/edit/beans-edit';
 /**Interfaces**/
 import {IBean} from '../../interfaces/bean/iBean';
-/**Classes**/
+/**
+ * Classes
+ */
 import {Bean} from '../../classes/bean/bean';
 @Component({
   templateUrl: 'beans.html',

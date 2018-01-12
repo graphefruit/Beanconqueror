@@ -31,7 +31,9 @@ import {PreparationsEditModal} from '../pages/preparations/edit/preparations-edi
 
 import {BrewsAddModal} from '../pages/brews/add/brews-add';
 import {BrewsEditModal} from '../pages/brews/edit/brews-edit';
+import {BrewsDetailsModal} from '../pages/brews/details/brews-details';
 import {BrewsPhotoView} from '../pages/brews/photo-view/brews-photo-view';
+import { BrewsPopover } from '../pages/brews/popover/brews-popover';
 
 /**Services**/
 import {UIStorage} from '../services/uiStorage';
@@ -64,8 +66,8 @@ import {TimerComponent} from '../components/timer/timer';
     FormatDatePipe,
     KeysPipe,
     BrewsPage,
-    BrewsAddModal, TimerComponent, BrewsEditModal,BrewsPhotoView,
-    AboutPage, ContactPage, LicencesPage,
+    BrewsAddModal, TimerComponent, BrewsEditModal,BrewsPhotoView,BrewsDetailsModal,BrewsPopover,
+    AboutPage, ContactPage, LicencesPage
   ],
 
   imports: [
@@ -92,7 +94,7 @@ import {TimerComponent} from '../components/timer/timer';
     PreparationsPage,
     PreparationsAddModal,
     PreparationsEditModal,
-    BrewsPage, BrewsAddModal, TimerComponent, BrewsEditModal,BrewsPhotoView,
+    BrewsPage, BrewsAddModal, TimerComponent, BrewsEditModal,BrewsPhotoView,BrewsDetailsModal,BrewsPopover,
     AboutPage, ContactPage, LicencesPage,
   ],
   providers: [

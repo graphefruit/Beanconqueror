@@ -17,12 +17,26 @@ import {StorageClass} from  '../classes/storageClass';
 @Injectable()
 export class UIBeanStorage extends StorageClass {
 
+  /**
+   * Singelton instance
+   */
+  private static instance: UIBeanStorage;
+
   constructor(protected uiStorage: UIStorage,
               protected uiHelper: UIHelper,
               protected uiLog: UILog) {
 
     super(uiStorage,uiHelper,uiLog,"BEANS");
+    if (UIBeanStorage.instance == null){
+      UIBeanStorage.instance = this;
+    }
+  }
 
+  public static getInstance():UIBeanStorage {
+    if (UIBeanStorage.instance) {
+      return UIBeanStorage.instance;
+    }
+    return null;
   }
 
   public getBeanNameByUUID(_uuid: string):string {

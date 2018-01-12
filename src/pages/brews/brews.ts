@@ -1,5 +1,6 @@
 /**Core**/
 import {Component, ChangeDetectorRef} from '@angular/core';
+import {PopoverController, NavParams} from 'ionic-angular';
 /**Ionic**/
 import {ModalController} from 'ionic-angular';
 
@@ -16,38 +17,58 @@ import {IBrew} from '../../interfaces/brew/iBrew';
 import {ISettings} from '../../interfaces/settings/iSettings';
 /**Classes**/
 import {Brew} from '../../classes/brew/brew';
-/**Classes**/
 import {BrewView} from '../../classes/brew/brewView';
+
+
+import {BrewsPopover} from '../brews/popover/brews-popover';
 
 /**Modals**/
 import {BrewsAddModal} from '../brews/add/brews-add';
 import {BrewsEditModal} from '../brews/edit/brews-edit';
+import {BrewsDetailsModal} from '../brews/details/brews-details';
+
 import {BrewsPhotoView} from '../brews/photo-view/brews-photo-view';
 @Component({
   templateUrl: 'brews.html',
-  selector:'brews'
+  selector: 'brews'
 })
 export class BrewsPage {
 
   public brews: Array<Brew>;
   public brewsView: Array<BrewView> = [];
 
-  public settings:ISettings;
+  public settings: ISettings;
+
+  public hasBeans: boolean = false;
+  public hasPreparationMethods: boolean = false;
 
   constructor(private modalCtrl: ModalController, private uiBrewStorage: UIBrewStorage,
               private changeDetectorRef: ChangeDetectorRef, private uiAlert: UIAlert,
               private uiBeanStorage: UIBeanStorage, private uiPreparationStorage: UIPreparationStorage,
-              private uiHelper: UIHelper, private uiSettingsStorage:UISettingsStorage) {
+              private uiHelper: UIHelper, private uiSettingsStorage: UISettingsStorage, private popoverCtrl: PopoverController) {
     this.settings = this.uiSettingsStorage.getSettings();
+
+
   }
 
 
-  ionViewDidEnter() {
+  ionViewWillEnter() {
     this.loadBrews();
+    //If we don't have beans, we cant do a brew from now on, because of roasting degree and the age of beans.
+    this.hasBeans = (this.uiBeanStorage.getAllEntries().length > 0);
+    this.hasPreparationMethods = (this.uiPreparationStorage.getAllEntries().length > 0);
   }
 
   public editBrew(_brew: IBrew) {
     let editBrewModal = this.modalCtrl.create(BrewsEditModal, {'BREW': _brew});
+    editBrewModal.onDidDismiss(() => {
+      this.loadBrews();
+    });
+    editBrewModal.present({animate: false});
+  }
+
+  public detailBrew(_brew: IBrew) {
+    let editBrewModal = this.modalCtrl.create(BrewsDetailsModal, {'BREW': _brew});
     editBrewModal.onDidDismiss(() => {
       this.loadBrews();
     });
@@ -80,12 +101,21 @@ export class BrewsPage {
 
   }
 
-  public getPreparationName(_uuid: string) {
-    return this.uiPreparationStorage.getPreparationNameByUUID(_uuid);
+  private downloadCSV() {
+
   }
 
-  public getBeanName(_uuid: string) {
-    return this.uiBeanStorage.getBeanNameByUUID(_uuid);
+  public showMore(event) {
+    let popover = this.popoverCtrl.create(BrewsPopover, {});
+    popover.onDidDismiss(data => {
+      if (data == BrewsPopover.ACTIONS.DOWNLOAD) {
+        this.downloadCSV();
+      }
+    });
+
+    popover.present({
+      ev: event
+    });
   }
 
   public addBrew() {
@@ -98,7 +128,7 @@ export class BrewsPage {
 
 
   private __initializeBrews() {
-    this.brews =  this.uiBrewStorage.getAllEntries();
+    this.brews = this.uiBrewStorage.getAllEntries();
     this.brewsView = [];
 
     //sort latest to top.
@@ -115,17 +145,17 @@ export class BrewsPage {
     let collection = {};
     //Create collection
     for (let i = 0; i < sortedBrews.length; i++) {
-      let day:string = this.uiHelper.formateDate(sortedBrews[i].config.unix_timestamp,"dddd - DD.MM.YYYY");
-      if (collection[day] === undefined){
+      let day: string = this.uiHelper.formateDate(sortedBrews[i].config.unix_timestamp, "dddd - DD.MM.YYYY");
+      if (collection[day] === undefined) {
         collection[day] = {
-          "BREWS":[]
+          "BREWS": []
         }
       }
       collection[day]["BREWS"].push(sortedBrews[i]);
     }
 
-    for (let key in collection){
-      let viewObj:BrewView = new BrewView();
+    for (let key in collection) {
+      let viewObj: BrewView = new BrewView();
       viewObj.title = key;
       viewObj.brews = collection[key].BREWS;
       this.brewsView.push(viewObj);

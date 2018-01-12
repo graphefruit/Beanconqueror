@@ -1,0 +1,77 @@
+<ion-header>
+  <ion-navbar>
+    <ion-buttons start>
+      <button ion-button icon-only (click)="dismiss()">
+        <ion-icon name="arrow-back"></ion-icon>
+        &nbsp;Zurück
+      </button>
+    </ion-buttons>
+
+  </ion-navbar>
+</ion-header>
+<ion-content>
+
+  <ion-list>
+    <ion-item *ngIf="settings.grind_size === true">
+      <span class="header-label">Mahlgrad:</span><br/>
+      {{data.grind_size}}
+    </ion-item>
+    <ion-item *ngIf="settings.grind_weight === true">
+      <span class="header-label">Gewicht:</span><br/>
+      {{data.grind_weight}}
+    </ion-item>
+    <ion-item *ngIf="settings.brew_temperature === true">
+      <span class="header-label">Temperatur:</span><br/>
+      {{data.brew_temperature}}
+    </ion-item>
+    <ion-item *ngIf="settings.method_of_preparation === true">
+      <span class="header-label">Zubereitungsmethode</span>:<br/>
+      &nbsp;{{data.getPreparation().name}}
+    </ion-item>
+    <ion-item *ngIf="settings.bean_type === true">
+      <span class="header-label">Bohnen:</span><br/>
+      &nbsp;{{data.getBean().name}}
+    </ion-item>
+    <ion-item *ngIf="settings.brew_time === true">
+      <span class="header-label">Zeit:</span><br/>
+      {{data.brew_time}}
+    </ion-item>
+    <ion-item *ngIf="settings.coffee_blooming_time === true">
+      <span class="header-label">Blooming-Zeit / Preinfusion:</span><br/>
+      {{data.coffee_blooming_time}}
+    </ion-item>
+    <ion-item *ngIf="settings.coffee_first_drip_time === true">
+      <span class="header-label">Erster Kaffeetropfen:</span><br/>
+      {{data.coffee_first_drip_time}}
+    </ion-item>
+    <ion-item *ngIf="settings.brew_quantity === true">
+      <span class="header-label">Bezugsmenge:</span><br/>
+      {{data.brew_quantity}}
+    </ion-item>
+    <ion-item *ngIf="settings.coffee_type=== true">
+      <span class="header-label">Kaffeetyp:</span><br/>
+      {{data.coffee_type}}
+    </ion-item>
+    <ion-item *ngIf="settings.coffee_concentration=== true">
+      <span class="header-label">Kaffee-Konzentration:</span><br/>
+      {{data.coffee_concentration}}
+    </ion-item>
+    <ion-item *ngIf="settings.rating === true">
+      <span class="header-label">Bewertung:</span><br/>
+      {{data.rating}}
+    </ion-item>
+    <ion-item *ngIf="settings.note === true">
+      <span class="header-label">Notizen:</span><br/>
+      {{data.note}}
+    </ion-item>
+  </ion-list>
+
+
+  <ion-row>
+    <ion-col>
+      <button ion-button (click)="dismiss()" dark outline block>Schließen</button>
+    </ion-col>
+  </ion-row>
+
+
+</ion-content>
