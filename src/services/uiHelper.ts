@@ -6,7 +6,9 @@ import {Platform} from 'ionic-angular';
 import moment from 'moment';
 import 'moment/locale/de';
 
-
+declare var cordova: any;
+declare var device: any;
+declare var window: any;
 /**
  * Handles every helping functionalities
  */
@@ -38,34 +40,35 @@ export class UIHelper {
     return moment().unix();
   }
 
-  public isToday(_unix:number): boolean {
+  public isToday(_unix: number): boolean {
     return moment.unix(moment().unix()).isSame(moment.unix(_unix), 'd');
   }
-  public formateDate(_unix:number,_format?:string):string{
 
-    let format:string = "DD.MM.YYYY, HH:mm:ss";
-    if (_format){
+  public formateDate(_unix: number, _format?: string): string {
+
+    let format: string = "DD.MM.YYYY, HH:mm:ss";
+    if (_format) {
       format = _format;
 
     }
     return moment.unix(_unix).format(format);
   }
 
-  public timeDifference(_unix:number):any{
-    let now = moment.unix(this.getUnixTimestamp())
+  public timeDifference(_unix: number): any {
+    let now = moment.unix(this.getUnixTimestamp());
     let toDiff = moment(moment.unix(_unix));
     let timeDifference = {
-        "MILLISECONDS":0,
-        "SECONDS":0,
-        "MINUTES":0,
-        "DAYS":0,
+      "MILLISECONDS": 0,
+      "SECONDS": 0,
+      "MINUTES": 0,
+      "DAYS": 0,
     };
 
-    timeDifference.MILLISECONDS = now.diff(toDiff,'milliseconds');
-    timeDifference.SECONDS = now.diff(toDiff,'seconds');
-    timeDifference.MINUTES = now.diff(toDiff,'minutes');
-    timeDifference.DAYS = now.diff(toDiff,'days');
-return timeDifference;
+    timeDifference.MILLISECONDS = now.diff(toDiff, 'milliseconds');
+    timeDifference.SECONDS = now.diff(toDiff, 'seconds');
+    timeDifference.MINUTES = now.diff(toDiff, 'minutes');
+    timeDifference.DAYS = now.diff(toDiff, 'days');
+    return timeDifference;
   }
 
 
@@ -73,7 +76,7 @@ return timeDifference;
     return this.platform.ready()
   }
 
-  public convertToNumber(event):number{
+  public convertToNumber(event): number {
     return +event;
   }
 
@@ -84,6 +87,57 @@ return timeDifference;
     }
 
     window.open(_url, "_system");
+
+  }
+
+  public exportCSV(fileName: string, csvContent: string) {
+    let errorCallback = (e) => {
+      console.log("Error: " + e);
+    };
+
+    let storageLocation: string = "";
+    var blob = new Blob([csvContent], {type: 'text/csv;charset=UTF-8'});
+    switch (device.platform) {
+
+      case "Android":
+        storageLocation = 'file:///storage/emulated/0/';
+        break;
+      case "iOS":
+        storageLocation = cordova.file.documentsDirectory;
+        break;
+
+    }
+
+    window.resolveLocalFileSystemURL(storageLocation,
+      function (fileSystem) {
+
+        fileSystem.getDirectory('Download', {
+            create: true,
+            exclusive: false
+          },
+          function (directory) {
+
+            //You need to put the name you would like to use for the file here.
+            directory.getFile(fileName, {
+                create: true,
+                exclusive: false
+              },
+              function (fileEntry) {
+
+
+                fileEntry.createWriter(function (writer) {
+                  writer.onwriteend = function () {
+                    console.log("File written to downloads")
+                  };
+
+                  writer.seek(0);
+                  writer.write(blob); //You need to put the file, blob or base64 representation here.
+
+                }, errorCallback);
+              }, errorCallback);
+          }, errorCallback);
+      }, errorCallback);
+
 
   }
 
