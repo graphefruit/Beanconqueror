@@ -102,6 +102,87 @@ export class BrewsPage {
   }
 
   private downloadCSV() {
+    var me = this;
+
+    function exportToCsv(filename, rows) {
+      var processRow = function (row) {
+        var finalVal = '';
+        for (var j = 0; j < row.length; j++) {
+          var innerValue = row[j] === null ? '' : row[j].toString();
+          if (row[j] instanceof Date) {
+            innerValue = row[j].toLocaleString();
+          }
+          ;
+          var result = innerValue.replace(/"/g, '""');
+          if (result.search(/("|,|\n)/g) >= 0)
+            result = '"' + result + '"';
+          if (j > 0)
+            finalVal += ';';
+          finalVal += result;
+        }
+        return finalVal + '\n';
+      };
+
+      var csvFile = '';
+      for (var i = 0; i < rows.length; i++) {
+        csvFile += processRow(rows[i]);
+      }
+
+      me.uiHelper.exportCSV(filename, csvFile);
+
+    }
+
+
+    let entries: Array<Array<{ VALUE: any, LABEL: string }>> = [];
+    for (var i = 0; i < this.brews.length; i++) {
+      let brew: Brew = this.brews[i];
+
+      let entry: Array<{ VALUE: any, LABEL: string }> = [
+        {"VALUE": brew.grind_size, "LABEL": "Mahlgrad"},
+        {"VALUE": brew.grind_weight, "LABEL": "Output: Gewicht/Menge"},
+        {"VALUE": brew.getPreparation().name, "LABEL": "Zubereitungsmethode"},
+        {"VALUE": brew.getBean().name, "LABEL": "Bohne"},
+        {"VALUE": brew.brew_temperature, "LABEL": "Brühtemperatur"},
+        {"VALUE": brew.brew_time, "LABEL": "Brühzeit"},
+        {"VALUE": brew.brew_quantity, "LABEL": "Bezugsmenge"},
+        {"VALUE": brew.note, "LABEL": "Notizen"},
+        {"VALUE": brew.rating, "LABEL": "Bewertung"},
+        {"VALUE": brew.coffee_type, "LABEL": "Kaffeetyp"},
+        {"VALUE": brew.coffee_concentration, "LABEL": "Kaffee-Konzentration"},
+        {"VALUE": brew.coffee_first_drip_time, "LABEL": "Erster Kaffeetropfen"},
+        {"VALUE": brew.coffee_blooming_time, "LABEL": "Blooming-Zeit / Preinfusion"},
+      ];
+      entries.push(entry);
+    }
+
+    //create CSV header labels
+    let exportData: Array<Array<{ VALUE: any, LABEL: string }>> = [];
+
+    let headersSet: boolean = false;
+    for (let i = 0; i < entries.length; i++) {
+      let entry: Array<{ VALUE: any, LABEL: string }> = entries[i];
+
+      let addValues: Array<any> = [];
+      if (headersSet == false) {
+        for (let z = 0; z < entry.length; z++) {
+          addValues.push(entry[z].LABEL);
+        }
+        headersSet = true;
+        exportData.push(addValues);
+      }
+      addValues = [];
+      for (let z = 0; z < entry.length; z++) {
+        addValues.push(entry[z].VALUE);
+      }
+
+      exportData.push(addValues);
+    }
+
+    var now = new Date();
+    var currentDateTimeString = now.getMonth() + 1 + '-' + now.getDate() + '-' + now.getFullYear() + '-' + now.getHours() + now.getMinutes() + now.getSeconds();
+
+//generate file
+    exportToCsv('Beanconqueror-' + currentDateTimeString + '.csv', exportData);
 
   }
 
@@ -110,6 +191,7 @@ export class BrewsPage {
     popover.onDidDismiss(data => {
       if (data == BrewsPopover.ACTIONS.DOWNLOAD) {
         this.downloadCSV();
+
       }
     });
 
