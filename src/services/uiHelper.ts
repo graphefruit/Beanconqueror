@@ -91,54 +91,80 @@ export class UIHelper {
   }
 
   public exportCSV(fileName: string, csvContent: string) {
-    let errorCallback = (e) => {
-      console.log("Error: " + e);
-    };
 
-    let storageLocation: string = "";
-    var blob = new Blob([csvContent], {type: 'text/csv;charset=UTF-8'});
-    switch (device.platform) {
+    let promise = new Promise((resolve, reject) => {
+      let errorCallback = (e) => {
+        console.log("Error: " + e);
+        reject();
+      };
+      var blob = new Blob([csvContent], {type: 'text/csv;charset=UTF-8'});
+      if (this.platform.is("android")) {
+        let storageLocation: string = "";
 
-      case "Android":
-        storageLocation = 'file:///storage/emulated/0/';
-        break;
-      case "iOS":
-        storageLocation = cordova.file.documentsDirectory;
-        break;
+        switch (device.platform) {
 
-    }
+          case "Android":
+            storageLocation = 'file:///storage/emulated/0/';
+            break;
+          case "iOS":
+            storageLocation = cordova.file.documentsDirectory;
+            break;
 
-    window.resolveLocalFileSystemURL(storageLocation,
-      function (fileSystem) {
+        }
 
-        fileSystem.getDirectory('Download', {
-            create: true,
-            exclusive: false
-          },
-          function (directory) {
+        window.resolveLocalFileSystemURL(storageLocation,
+          function (fileSystem) {
 
-            //You need to put the name you would like to use for the file here.
-            directory.getFile(fileName, {
+            fileSystem.getDirectory('Download', {
                 create: true,
                 exclusive: false
               },
-              function (fileEntry) {
+              function (directory) {
+
+                //You need to put the name you would like to use for the file here.
+                directory.getFile(fileName, {
+                    create: true,
+                    exclusive: false
+                  },
+                  function (fileEntry) {
 
 
-                fileEntry.createWriter(function (writer) {
-                  writer.onwriteend = function () {
-                    console.log("File written to downloads")
-                  };
+                    fileEntry.createWriter(function (writer) {
+                      writer.onwriteend = function () {
+                        resolve();
 
-                  writer.seek(0);
-                  writer.write(blob); //You need to put the file, blob or base64 representation here.
+                      };
 
-                }, errorCallback);
+                      writer.seek(0);
+                      writer.write(blob); //You need to put the file, blob or base64 representation here.
+
+                    }, errorCallback);
+                  }, errorCallback);
               }, errorCallback);
           }, errorCallback);
-      }, errorCallback);
+      }
+      else {
+        setTimeout(() => {
+          if (navigator.msSaveBlob) { // IE 10+
+            navigator.msSaveBlob(blob, fileName);
+          } else {
+            var link = document.createElement("a");
+            if (link.download !== undefined) { // feature detection
+              // Browsers that support HTML5 download attribute
+              var url = URL.createObjectURL(blob);
+              link.setAttribute("href", url);
+              link.setAttribute("download", fileName);
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
 
+            }
+          }
+        }, 250);
+      }
 
+    });
+    return promise;
   }
 
 

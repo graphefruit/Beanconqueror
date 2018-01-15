@@ -128,7 +128,9 @@ export class BrewsPage {
         csvFile += processRow(rows[i]);
       }
 
-      me.uiHelper.exportCSV(filename, csvFile);
+      me.uiHelper.exportCSV(filename, csvFile).then(() => {
+        alert('Datei wurde erfolgreich heruntergeladen');
+      });
 
     }
 
@@ -151,6 +153,7 @@ export class BrewsPage {
         {"VALUE": brew.coffee_concentration, "LABEL": "Kaffee-Konzentration"},
         {"VALUE": brew.coffee_first_drip_time, "LABEL": "Erster Kaffeetropfen"},
         {"VALUE": brew.coffee_blooming_time, "LABEL": "Blooming-Zeit / Preinfusion"},
+        {"VALUE":brew.getCalculatedBeanAge(),"LABEL":"Bohnenalter"},
       ];
       entries.push(entry);
     }
