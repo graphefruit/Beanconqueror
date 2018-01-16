@@ -4,22 +4,25 @@ import {Component, ChangeDetectorRef} from '@angular/core';
 import {ModalController} from 'ionic-angular';
 /**Services**/
 import {UIPreparationStorage} from '../../services/uiPreparationStorage';
+import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {UIAlert} from '../../services/uiAlert';
 /**Modals**/
 import {PreparationsAddModal} from '../preparations/add/preparations-add';
 import {PreparationsEditModal} from '../preparations/edit/preparations-edit';
 
-/**Interfaces**/
-import {IPreparation} from '../../interfaces/preparation/iPreparation';
-
+/**
+ * Classes
+ */
+import {Brew} from '../../classes/brew/brew';
+import {Preparation} from '../../classes/preparation/preparation';
 @Component({
   templateUrl: 'preparations.html'
 })
 export class PreparationsPage {
 
-  preparations: Array<IPreparation> = [];
+  preparations: Array<Preparation> = [];
 
-  constructor(public modalCtrl: ModalController, private changeDetectorRef: ChangeDetectorRef, private uiPreparationStorage:UIPreparationStorage, private uiAlert:UIAlert) {
+  constructor(public modalCtrl: ModalController, private changeDetectorRef: ChangeDetectorRef, private uiPreparationStorage:UIPreparationStorage, private uiAlert:UIAlert, private uiBrewStorage:UIBrewStorage) {
 
   }
 
@@ -52,8 +55,8 @@ export class PreparationsPage {
   }
 
 
-  public deletePreparation(_preparation: IPreparation) {
-    this.uiAlert.showConfirm("Zubereitungsmethode löschen?", "Sicher?").then(() => {
+  public deletePreparation(_preparation: Preparation) {
+    this.uiAlert.showConfirm("Zubereitungsmethode löschen? Alle zugehörigen Brühungen werden mit entfernt.", "Sicher?").then(() => {
         //Yes
         this.__deletePreparation(_preparation)
       },
@@ -63,7 +66,20 @@ export class PreparationsPage {
 
   }
 
-  private __deletePreparation(_preparation: IPreparation) {
+  private __deletePreparation(_preparation: Preparation) {
+    let brews:Array<Brew> =  this.uiBrewStorage.getAllEntries();
+    let deletingBrewIndex:Array<number> = [];
+    for (let i=0;i<brews.length;i++){
+      if (brews[i].method_of_preparation === _preparation.config.uuid){
+        deletingBrewIndex.push(i);
+      }
+    }
+    for(let i = deletingBrewIndex.length; i--;)
+    {
+      this.uiBrewStorage.removeByUUID(brews[deletingBrewIndex[i]].config.uuid);
+    }
+
+
     this.uiPreparationStorage.removeByObject(_preparation);
     this.loadPreparations();
 

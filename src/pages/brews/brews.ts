@@ -2,7 +2,8 @@
 import {Component, ChangeDetectorRef} from '@angular/core';
 import {PopoverController, NavParams} from 'ionic-angular';
 /**Ionic**/
-import {ModalController} from 'ionic-angular';
+import {ModalController, AlertController} from 'ionic-angular';
+
 
 /**Services**/
 import {UIBrewStorage} from '../../services/uiBrewStorage';
@@ -45,7 +46,7 @@ export class BrewsPage {
   constructor(private modalCtrl: ModalController, private uiBrewStorage: UIBrewStorage,
               private changeDetectorRef: ChangeDetectorRef, private uiAlert: UIAlert,
               private uiBeanStorage: UIBeanStorage, private uiPreparationStorage: UIPreparationStorage,
-              private uiHelper: UIHelper, private uiSettingsStorage: UISettingsStorage, private popoverCtrl: PopoverController) {
+              private uiHelper: UIHelper, private uiSettingsStorage: UISettingsStorage, private popoverCtrl: PopoverController, public alertCtrl: AlertController) {
     this.settings = this.uiSettingsStorage.getSettings();
 
 
@@ -102,22 +103,21 @@ export class BrewsPage {
   }
 
   private downloadCSV() {
-    var me = this;
 
-    function exportToCsv(filename, rows) {
-      var processRow = function (row) {
+    var exportToCsv = (filename, rows) => {
+      var processRow = (row) => {
         var finalVal = '';
         for (var j = 0; j < row.length; j++) {
           var innerValue = row[j] === null ? '' : row[j].toString();
           if (row[j] instanceof Date) {
             innerValue = row[j].toLocaleString();
           }
-          ;
+
           var result = innerValue.replace(/"/g, '""');
           if (result.search(/("|,|\n)/g) >= 0)
             result = '"' + result + '"';
           if (j > 0)
-            finalVal += ';';
+            finalVal += ',';
           finalVal += result;
         }
         return finalVal + '\n';
@@ -128,11 +128,16 @@ export class BrewsPage {
         csvFile += processRow(rows[i]);
       }
 
-      me.uiHelper.exportCSV(filename, csvFile).then(() => {
-        alert('Datei wurde erfolgreich heruntergeladen');
+      this.uiHelper.exportCSV(filename, csvFile).then((_downloadedFileName) => {
+        let alert = this.alertCtrl.create({
+          title: 'Heruntergeladen!',
+          subTitle: `CSV-Datei '${_downloadedFileName}' wurde erfolgreich in den Download-Ordner heruntergeladen!`,
+          buttons: ['OK']
+        });
+        alert.present();
       });
 
-    }
+    };
 
 
     let entries: Array<Array<{ VALUE: any, LABEL: string }>> = [];
@@ -153,7 +158,7 @@ export class BrewsPage {
         {"VALUE": brew.coffee_concentration, "LABEL": "Kaffee-Konzentration"},
         {"VALUE": brew.coffee_first_drip_time, "LABEL": "Erster Kaffeetropfen"},
         {"VALUE": brew.coffee_blooming_time, "LABEL": "Blooming-Zeit / Preinfusion"},
-        {"VALUE":brew.getCalculatedBeanAge(),"LABEL":"Bohnenalter"},
+        {"VALUE": brew.getCalculatedBeanAge(), "LABEL": "Bohnenalter"},
       ];
       entries.push(entry);
     }
