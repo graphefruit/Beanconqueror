@@ -4,6 +4,7 @@ import {Component, ChangeDetectorRef} from '@angular/core';
 import {ModalController} from 'ionic-angular';
 /**Services**/
 import {UIBeanStorage} from '../../services/uiBeanStorage';
+import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {UIAlert} from '../../services/uiAlert';
 /**Modals**/
 import {BeansAddModal} from '../beans/add/beans-add';
@@ -14,6 +15,7 @@ import {IBean} from '../../interfaces/bean/iBean';
  * Classes
  */
 import {Bean} from '../../classes/bean/bean';
+import {Brew} from '../../classes/brew/brew';
 @Component({
   templateUrl: 'beans.html',
   selector: 'beans-list',
@@ -22,7 +24,7 @@ export class BeansPage {
 
   beans: Array<Bean> = null;
 
-  constructor(public modalCtrl: ModalController, private changeDetectorRef: ChangeDetectorRef, private uiBeanStorage: UIBeanStorage, private uiAlert: UIAlert) {
+  constructor(public modalCtrl: ModalController, private changeDetectorRef: ChangeDetectorRef, private uiBeanStorage: UIBeanStorage, private uiAlert: UIAlert, private uiBrewStorage:UIBrewStorage) {
 
   }
 
@@ -56,9 +58,10 @@ export class BeansPage {
   }
 
   public deleteBean(_bean: IBean) {
-    this.uiAlert.showConfirm("Bohne löschen?", "Sicher?").then(() => {
+    this.uiAlert.showConfirm("Bohne löschen? Alle zugehörigen Brühungen werden mit entfernt.", "Sicher?").then(() => {
         //Yes
-        this.__deleteBean(_bean)
+        this.__deleteBean(_bean);
+
       },
       () => {
         //No
@@ -67,6 +70,19 @@ export class BeansPage {
   }
 
   private __deleteBean(_bean: IBean) {
+    let brews:Array<Brew> =  this.uiBrewStorage.getAllEntries();
+
+    let deletingBrewIndex:Array<number> = [];
+    for (let i=0;i<brews.length;i++){
+      if (brews[i].bean === _bean.config.uuid){
+        deletingBrewIndex.push(i);
+      }
+    }
+    for(let i = deletingBrewIndex.length; i--;)
+    {
+      this.uiBrewStorage.removeByUUID(brews[deletingBrewIndex[i]].config.uuid);
+    }
+
     this.uiBeanStorage.removeByObject(_bean);
     this.loadBeans();
 

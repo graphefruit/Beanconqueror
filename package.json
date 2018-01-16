@@ -1,6 +1,6 @@
 {
     "name": "beanconqueror",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "author": "Lars Saalbach, Richard Polzin",
     "homepage": "https://github.com/graphefruit/beanconqueror",
     "private": true,
@@ -26,6 +26,7 @@
         "@angular/platform-browser-dynamic": "5.0.0",
         "@ionic-native/android-permissions": "^4.4.2",
         "@ionic-native/app-minimize": "^4.3.1",
+        "@ionic-native/app-version": "^4.5.2",
         "@ionic-native/core": "4.3.0",
         "@ionic-native/image-picker": "^4.4.2",
         "@ionic-native/media-capture": "^4.3.1",
@@ -36,6 +37,7 @@
         "cordova-android": "^6.2.3",
         "cordova-plugin-allow-backup": "0.0.2",
         "cordova-plugin-android-permissions": "^1.0.0",
+        "cordova-plugin-app-version": "^0.1.9",
         "cordova-plugin-appminimize": "^1.0.0",
         "cordova-plugin-compat": "^1.0.0",
         "cordova-plugin-device": "^1.1.4",
@@ -77,7 +79,8 @@
             "com.synconset.imagepicker": {
                 "PHOTO_LIBRARY_USAGE_DESCRIPTION": "Bitte um Freigabe"
             },
-            "cordova-plugin-android-permissions": {}
+            "cordova-plugin-android-permissions": {},
+            "cordova-plugin-app-version": {}
         },
         "platforms": [
             "android"

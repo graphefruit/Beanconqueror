@@ -131,7 +131,7 @@ export class UIHelper {
 
                     fileEntry.createWriter(function (writer) {
                       writer.onwriteend = function () {
-                        resolve();
+                        resolve(fileName);
 
                       };
 
@@ -157,6 +157,7 @@ export class UIHelper {
               document.body.appendChild(link);
               link.click();
               document.body.removeChild(link);
+              resolve('test.csv');
 
             }
           }

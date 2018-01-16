@@ -2,6 +2,7 @@
 import {Component, ViewChild} from '@angular/core';
 /**Ionic**/
 import {Nav, Platform, IonicApp, MenuController} from 'ionic-angular';
+import { AppVersion } from '@ionic-native/app-version';
 /**Ionic native**/
 import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
