@@ -76,8 +76,15 @@ export class UIHelper {
     return this.platform.ready()
   }
 
-  public convertToNumber(event): number {
-    return +event;
+  public convertToNumber(event) {
+
+    if (event == ""){
+      return event;
+    }
+
+    return parseFloat(event);
+    // return parseFloat(event);
+
   }
 
   public openExternalWebpage(_url: string) {

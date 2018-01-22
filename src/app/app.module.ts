@@ -50,6 +50,7 @@ import {UIStatistic} from '../services/uiStatistic';
 /**Pipes**/
 import {FormatDatePipe} from '../pipes/formatDate';
 import {KeysPipe} from '../pipes/keys';
+import {ToDecimalPipe} from '../pipes/toDecimal';
 /**Components**/
 import {TimerComponent} from '../components/timer/timer';
 
@@ -66,6 +67,7 @@ import {TimerComponent} from '../components/timer/timer';
     PreparationsEditModal,
     FormatDatePipe,
     KeysPipe,
+    ToDecimalPipe,
     BrewsPage,
     BrewsAddModal, TimerComponent, BrewsEditModal,BrewsPhotoView,BrewsDetailsModal,BrewsPopover,
     AboutPage, ContactPage, LicencesPage
