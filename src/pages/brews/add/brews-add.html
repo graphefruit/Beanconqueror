@@ -19,12 +19,11 @@
     <ion-item *ngIf="settings.grind_weight === true">
       <ion-label floating>Gewicht</ion-label>
       <ion-input type="number" [ngModel]="data.grind_weight"
-                 (ngModelChange)="data.grind_weight = uiHelper.convertToNumber($event)"></ion-input>
+                 (ngModelChange)="data.grind_weight = uiHelper.convertToNumber($event)" step="0.1" pattern="[0-9,.]*" step="any"></ion-input>
     </ion-item>
     <ion-item *ngIf="settings.brew_temperature === true">
       <ion-label floating>Temperatur</ion-label>
-      <ion-input type="number" [ngModel]="data.brew_temperature"
-                 (ngModelChange)="data.brew_temperature = uiHelper.convertToNumber($event)"></ion-input>
+      <ion-input type="number" [ngModel]="data.brew_temperature" (ngModelChange)="data.brew_temperature = uiHelper.convertToNumber($event)" step="0.1" pattern="[0-9,.]*" step="any"></ion-input>
     </ion-item>
     <ion-item *ngIf="settings.method_of_preparation === true">
       <ion-label floating>Zubereitungsmethode</ion-label>
@@ -63,7 +62,7 @@
     <ion-item *ngIf="settings.brew_quantity === true">
       <ion-label floating>Bezugsmenge</ion-label>
       <ion-input type="number" [ngModel]="data.brew_quantity"
-                 (ngModelChange)="data.brew_quantity = uiHelper.convertToNumber($event)"></ion-input>
+                 (ngModelChange)="data.brew_quantity = uiHelper.convertToNumber($event)" step="0.1" pattern="[0-9,.]*" step="any"></ion-input>
     </ion-item>
     <ion-item *ngIf="settings.coffee_type=== true">
       <ion-label floating>Kaffeetyp</ion-label>

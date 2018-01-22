@@ -19,12 +19,12 @@
   <ion-item>
     <ion-label stacked>Gewicht</ion-label>
     <ion-input type="number" [ngModel]="data.grind_weight"
-               (ngModelChange)="data.grind_weight = uiHelper.convertToNumber($event)"></ion-input>
+               (ngModelChange)="data.grind_weight = uiHelper.convertToNumber($event)"  step="0.1" pattern="[0-9,.]*" step="any"></ion-input>
   </ion-item>
   <ion-item>
     <ion-label stacked>Temperatur</ion-label>
     <ion-input type="number" [ngModel]="data.brew_temperature"
-               (ngModelChange)="data.brew_temperature = uiHelper.convertToNumber($event)"></ion-input>
+               (ngModelChange)="data.brew_temperature = uiHelper.convertToNumber($event)"  step="0.1" pattern="[0-9,.]*" step="any"></ion-input>
   </ion-item>
   <ion-item>
     <ion-label>Zubereitungsmethode</ion-label>
@@ -58,7 +58,7 @@
   <ion-item>
     <ion-label stacked>Bezugsmenge</ion-label>
     <ion-input type="number" [ngModel]="data.brew_quantity"
-               (ngModelChange)="data.brew_quantity = uiHelper.convertToNumber($event)"></ion-input>
+               (ngModelChange)="data.brew_quantity = uiHelper.convertToNumber($event)"  step="0.1" pattern="[0-9,.]*" step="any"></ion-input>
   </ion-item>
   <ion-item>
     <ion-label stacked>Kaffeetyp</ion-label>
