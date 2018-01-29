@@ -42,7 +42,10 @@ export class HomePage {
 
     let year: number = moment().year();
     let month: number = moment().month()+1;
-    let day: number = moment().day();
+    //Bug .day always returned 1.
+    let day: number  =parseInt(moment().format("DD"));
+
+
     if (year === 2018) {
       if (month == 1 && day == 1) {
         return "Wir wünschen dir ein frohes neues Jahr 2018 und natürlich ganz viel Kaffeegenuss!";
