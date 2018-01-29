@@ -37,7 +37,7 @@
             <span *ngIf="uiStatistic.getBrewsDrunk() != 1">
                   Brühungen gesamt
             </span>
-            <div style="max-width:200px;margin:0 auto;">
+            <div *ngIf="uiStatistic.getBrewsDrunk() >0" style="max-width:200px;margin:0 auto;">
             <button margin-top outline  ion-button block small
                     icon-left (click)="addBrew()" >
               <ion-icon name="md-add" item-start></ion-icon>
