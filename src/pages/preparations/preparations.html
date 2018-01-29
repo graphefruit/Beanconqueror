@@ -4,16 +4,15 @@
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-title>Zubereitungsmethoden</ion-title>
+    <ion-buttons end>
+      <button  ion-button icon-only (click)="addPreparation()">
+        <ion-icon name="add"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 <ion-content>
-  <!-- Real floating action button, fixed. It will not scroll with the content -->
-  <ion-fab top right edge #fab1>
-    <button ion-fab mini (click)="addPreparation()">
-      <ion-icon name="add"></ion-icon>
-    </button>
-  </ion-fab>
   <ion-card padding *ngIf="preparations?.length == 0">
     Du hast leider noch keine Brühmethoden hinterlegt!
   </ion-card>

@@ -7,10 +7,10 @@ home-page {
       height: 150px;
     }
   }
-}
+  button[justify-content-start] .button-inner{
+    justify-content: flex-start;
+  }
 
-
-home-page {
   .logo-icon-christmas {
     width: 110px;
     height: 150px;
@@ -20,3 +20,8 @@ home-page {
     }
   }
 }
+
+
+
+
+

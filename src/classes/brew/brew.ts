@@ -54,35 +54,36 @@ export class Brew implements IBrew {
     this.config = new Config();
   }
 
-  private getBeanStorageInstance():UIBeanStorage{
+  private getBeanStorageInstance(): UIBeanStorage {
     let uiBeanStorage: UIBeanStorage;
     uiBeanStorage = <UIBeanStorage>UIBeanStorage.getInstance();
     return uiBeanStorage;
   }
 
-  private getPreparationStorageInstance():UIPreparationStorage{
+  private getPreparationStorageInstance(): UIPreparationStorage {
     let uiPreparationStorage: UIPreparationStorage;
     uiPreparationStorage = <UIPreparationStorage>UIPreparationStorage.getInstance();
     return uiPreparationStorage;
   }
 
-  public getBean():Bean{
+  public getBean(): Bean {
     let iBean: IBean = <IBean>this.getBeanStorageInstance().getByUUID(this.bean);
-    let bean:Bean = new Bean();
+    let bean: Bean = new Bean();
     bean.initializeByObject(iBean);
 
     return bean;
 
   }
 
-  public getPreparation():Preparation{
+  public getPreparation(): Preparation {
     let iPreparation: IPreparation = <IPreparation>this.getPreparationStorageInstance().getByUUID(this.method_of_preparation);
-    let preparation:Preparation = new Preparation();
+    let preparation: Preparation = new Preparation();
     preparation.initializeByObject(iPreparation);
 
     return preparation;
 
   }
+
   /**
    * Get the calculated bean age for this brew
    */
@@ -95,6 +96,24 @@ export class Brew implements IBrew {
       return brewTime.diff(roastingDate, 'days');
     }
     return 0;
+  }
+
+
+  public getBrewRatio(): string {
+    let grindWeight: number = this.grind_weight;
+    let brewQuantity: number = this.brew_quantity;
+    let ratio: string = "1 / ";
+
+    if (brewQuantity>0 && grindWeight > 0){
+      ratio +=(brewQuantity / grindWeight).toFixed(2);
+    }
+    else
+    {
+      ratio +="?";
+    }
+
+    return ratio;
+
   }
 
   public formateDate(_format?: string): string {
