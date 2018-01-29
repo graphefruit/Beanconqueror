@@ -159,6 +159,7 @@ export class BrewsPage {
         {"VALUE": brew.coffee_first_drip_time, "LABEL": "Erster Kaffeetropfen"},
         {"VALUE": brew.coffee_blooming_time, "LABEL": "Blooming-Zeit / Preinfusion"},
         {"VALUE": brew.getCalculatedBeanAge(), "LABEL": "Bohnenalter"},
+        {"VALUE": brew.getBrewRatio(), "LABEL": "Brührate"},
       ];
       entries.push(entry);
     }

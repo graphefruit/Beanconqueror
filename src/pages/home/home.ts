@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {NavController} from 'ionic-angular';
+import {NavController,ModalController} from 'ionic-angular';
 
 /**Services **/
 import {UIStatistic} from '../../services/uiStatistic';
@@ -7,6 +7,7 @@ import {UIStatistic} from '../../services/uiStatistic';
 /**Third party**/
 import moment from 'moment';
 import 'moment/locale/de';
+import {BrewsAddModal} from "../brews/add/brews-add";
 
 
 @Component({
@@ -21,11 +22,20 @@ export class HomePage {
   public beans: number = 0;
   public preparations: number = 0;
 
-  constructor(public navCtrl: NavController,
+  constructor(public navCtrl: NavController,private modalCtrl: ModalController,
               public uiStatistic: UIStatistic) {
 
 
   }
+
+  public addBrew() {
+    let addBrewsModal = this.modalCtrl.create(BrewsAddModal, {});
+    addBrewsModal.onDidDismiss(() => {
+
+    });
+    addBrewsModal.present({animate: false});
+  }
+
 
   public isChristmasTime():boolean {
     let month: number = moment().month()+1;

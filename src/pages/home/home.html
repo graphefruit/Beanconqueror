@@ -37,6 +37,13 @@
             <span *ngIf="uiStatistic.getBrewsDrunk() != 1">
                   Brühungen gesamt
             </span>
+            <div style="max-width:200px;margin:0 auto;">
+            <button margin-top outline  ion-button block small
+                    icon-left (click)="addBrew()" >
+              <ion-icon name="md-add" item-start></ion-icon>
+              <span>Brühen</span>
+            </button>
+            </div>
           </ion-card-content>
         </ion-card>
       </ion-col>
@@ -57,6 +64,7 @@
         </ion-card>
       </ion-col>
     </ion-row>
+
     <ion-row *ngIf="uiStatistic.getLastDrunkBrewTimestamp()">
       <ion-col col-12 text-center>
         <ion-card>

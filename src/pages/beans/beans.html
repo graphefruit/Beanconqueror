@@ -4,17 +4,16 @@
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-title>Bohnen</ion-title>
+    <ion-buttons end>
+      <button  ion-button icon-only (click)="addBean()">
+        <ion-icon name="add"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
+
 </ion-header>
 
 <ion-content>
-  <!-- Real floating action button, fixed. It will not scroll with the content -->
-  <ion-fab top right edge #fab1>
-    <button ion-fab mini (click)="addBean()">
-      <ion-icon name="add"></ion-icon>
-    </button>
-  </ion-fab>
-
   <ion-card padding *ngIf="beans?.length == 0">
     Du hast leider noch keine Bohnen hinterlegt!
   </ion-card>

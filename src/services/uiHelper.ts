@@ -164,7 +164,7 @@ export class UIHelper {
               document.body.appendChild(link);
               link.click();
               document.body.removeChild(link);
-              resolve('test.csv');
+              resolve(fileName);
 
             }
           }
