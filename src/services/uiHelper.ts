@@ -81,6 +81,11 @@ export class UIHelper {
     if (event == ""){
       return event;
     }
+    if (event.indexOf(','))
+    {
+      event =  event.replace(/,/g,'.');
+    }
+
 
     return parseFloat(event);
     // return parseFloat(event);
