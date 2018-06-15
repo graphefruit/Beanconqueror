@@ -41,6 +41,11 @@ export class BrewsAddModal {
   public method_of_preparations: Array<IPreparation> = [];
   beans: Array<IBean> = [];
 
+  public keyDownHandler(event: Event) {
+
+    //  event.preventDefault();
+  }
+
   constructor(private viewCtrl: ViewController, private uiBeanStorage: UIBeanStorage, private uiPreparationStorage: UIPreparationStorage,
               private uiBrewStorage: UIBrewStorage, private uiImage: UIImage, private uiSettingsStorage:UISettingsStorage, public uiHelper:UIHelper) {
     //Initialize to standard in dropdowns
@@ -61,6 +66,8 @@ export class BrewsAddModal {
   }
 
   public finish() {
+    console.log("finish");
+    console.log(this.data);
     this.stopTimer();
     this.uiBrewStorage.add(this.data);
     this.dismiss();
