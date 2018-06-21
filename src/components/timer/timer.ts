@@ -22,6 +22,12 @@ export class TimerComponent {
     return this.timer.hasFinished;
   }
 
+  public setTime(seconds:number){
+    this.timer.seconds = seconds;
+
+    this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
+  }
+
   initTimer() {
     if(!this.timeInSeconds) { this.timeInSeconds = 0; }
 

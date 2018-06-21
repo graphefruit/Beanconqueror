@@ -1,6 +1,6 @@
 <ion-item class="no-bottom-border item">
   <ion-label stacked>Zeit</ion-label>
-  <ion-input type="number"  [(ngModel)]="timer.seconds"></ion-input>
+  <ion-input [prevent-characters] type="number" [(ngModel)]="timer.seconds"></ion-input>
   <button ion-button icon-left clear color="danger" small (click)="initTimer()" item-right
           *ngIf="!timer.runTimer && (timer.hasStarted || timer.hasFinished) || timer.hasFinished">
     <ion-icon name="refresh"></ion-icon>

@@ -81,6 +81,11 @@ export class UIHelper {
     if (event == ""){
       return event;
     }
+    if (event.indexOf(','))
+    {
+      event =  event.replace(/,/g,'.');
+    }
+
 
     return parseFloat(event);
     // return parseFloat(event);
@@ -104,8 +109,11 @@ export class UIHelper {
         console.log("Error: " + e);
         reject();
       };
-      var blob = new Blob([csvContent], {type: 'text/csv;charset=UTF-8'});
-      if (this.platform.is("android")) {
+
+      //Fixed umlaut issue
+      //Thanks to: https://stackoverflow.com/questions/31959487/utf-8-encoidng-issue-when-exporting-csv-file-javascript
+      var blob = new Blob(["\ufeff"+ csvContent], {type: 'text/csv;charset=UTF-8;'});
+      if (this.platform.is("android") || this.platform.is("ios")) {
         let storageLocation: string = "";
 
         switch (device.platform) {

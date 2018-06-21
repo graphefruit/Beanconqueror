@@ -2,6 +2,7 @@
 import {IConfig} from '../objectConfig/iObjectConfig';
 /**Enums**/
 import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
+import {IDefaultLastCoffeeParameters} from "./iDefaultLastCoffeeParameters";
 
 export interface ISettings {
  //Properties
@@ -18,8 +19,11 @@ export interface ISettings {
   coffee_concentration:boolean,
   coffee_first_drip_time:boolean,
   coffee_blooming_time:boolean,
+  set_last_coffee_brew:boolean,
   attachments:boolean;
   rating:boolean;
+
+  default_last_coffee_parameters:IDefaultLastCoffeeParameters;
 
   config:IConfig;
 }
