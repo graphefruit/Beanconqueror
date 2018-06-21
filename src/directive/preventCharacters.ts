@@ -1,22 +1,24 @@
 /**Core**/
-import {Directive, Input, NgZone,EventEmitter,Output,ElementRef} from '@angular/core';
+import {Directive} from '@angular/core';
 import {NgModel} from '@angular/forms';
 
 @Directive({
-  selector: '[prevent-characters]',
-  providers: [(NgModel)],
+  selector: '[ngModel][prevent-characters]',
+  providers: [NgModel],
   host: {
     '(keydown)': 'onKeyDown($event)',
-    '(blur)': 'blur()',
+    "(ionBlur)": 'blur()'
   }
 })
 export class PreventCharacterDirective {
-  constructor(private model: NgModel, private _ngZone: NgZone, public _el:
-    ElementRef) {
+
+
+  //@Output() ngModelChange:EventEmitter<any> = new EventEmitter();
+
+  constructor(private model: NgModel) {
 
   }
 
-  @Input() get inputModel;
 
   onKeyDown($event) {
     let pressedKeyCode: number = $event.keyCode;
@@ -39,7 +41,7 @@ export class PreventCharacterDirective {
 
   }
 
-  blur() {
+  blur(){
 
     let val: any = this.model.control.value;
     val = val + "";
@@ -51,14 +53,10 @@ export class PreventCharacterDirective {
       val = val.replace(/,/g, '.');
     }
 
-    console.log("set new value");
-    this._ngZone.run(() => {
-      this._el.nativeElement.value=parseFloat(val);
-     // this.model.control.setValue(parseFloat(val));
-     // this.model.viewToModelUpdate(parseFloat(val));
-     // this.model.valueAccessor.writeValue(parseFloat(val));
+    //Emit worked aswell but I don't know what its doing in depth
+    //this.ngModelChange.emit(parseFloat(val));
 
-     // this.model.valueAccessor.writeValue(parseFloat(val) + "");
-    });
+    this.model.control.setValue(parseFloat(val));
+
   }
 }

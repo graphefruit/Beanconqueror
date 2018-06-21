@@ -18,8 +18,6 @@ export class SettingsPage {
   public BREW_VIEWS = BREW_VIEW_ENUM;
   constructor(public uiSettingsStorage:UISettingsStorage) {
     this.settings = this.uiSettingsStorage.getSettings();
-
-
   }
 
   public saveSettings(_event:any){

@@ -4,6 +4,8 @@ import {ISettings} from "../../interfaces/settings/iSettings";
 import {Config} from "../objectConfig/objectConfig";
 /**Enums**/
 import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
+
+import {DefaultLastCoffeeParameters} from "./settingsDefaultLastCoffeeParameter";
 export class Settings implements ISettings {
   public brew_view: BREW_VIEW_ENUM;
   public brew_time: boolean;
@@ -20,6 +22,8 @@ export class Settings implements ISettings {
   public coffee_concentration: boolean;
   public coffee_first_drip_time: boolean;
   public coffee_blooming_time: boolean;
+  public set_last_coffee_brew:boolean;
+  public default_last_coffee_parameters:DefaultLastCoffeeParameters;
   public config: Config;
 
 
@@ -43,7 +47,11 @@ export class Settings implements ISettings {
     this.note = true;
     this.attachments = true;
     this.rating = true;
+    this.set_last_coffee_brew = false;
     this.config = new Config();
+
+    this.default_last_coffee_parameters = new DefaultLastCoffeeParameters();
+
   }
 
 

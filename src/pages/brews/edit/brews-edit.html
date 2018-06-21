@@ -18,13 +18,11 @@
   </ion-item>
   <ion-item>
     <ion-label stacked>Gewicht</ion-label>
-    <ion-input type="number" [ngModel]="data.grind_weight"
-               (ngModelChange)="data.grind_weight = uiHelper.convertToNumber($event)"  step="0.1" pattern="[0-9,.]*" step="any"></ion-input>
+    <ion-input [prevent-characters] [(ngModel)]="data.grind_weight" type="text"></ion-input>
   </ion-item>
   <ion-item>
     <ion-label stacked>Temperatur</ion-label>
-    <ion-input type="number" [ngModel]="data.brew_temperature"
-               (ngModelChange)="data.brew_temperature = uiHelper.convertToNumber($event)"  step="0.1" pattern="[0-9,.]*" step="any"></ion-input>
+    <ion-input [prevent-characters] [(ngModel)]="data.brew_temperature" type="text"></ion-input>
   </ion-item>
   <ion-item>
     <ion-label>Zubereitungsmethode</ion-label>
@@ -42,23 +40,19 @@
   </ion-item>
   <ion-item>
     <ion-label stacked>Zeit</ion-label>
-    <ion-input type="number" [ngModel]="data.brew_time"
-               (ngModelChange)="data.brew_time = uiHelper.convertToNumber($event)"></ion-input>
+    <ion-input [prevent-characters] [(ngModel)]="data.brew_time" type="text"></ion-input>
   </ion-item>
   <ion-item>
     <ion-label stacked>Blooming-Zeit / Preinfusion</ion-label>
-    <ion-input type="number" [ngModel]="data.coffee_blooming_time"
-               (ngModelChange)="data.coffee_blooming_time = uiHelper.convertToNumber($event)"></ion-input>
+    <ion-input [prevent-characters] [(ngModel)]="data.coffee_blooming_time" type="text"></ion-input>
   </ion-item>
   <ion-item>
     <ion-label stacked>Erster Kaffeetropfen</ion-label>
-    <ion-input type="number" [ngModel]="data.coffee_first_drip_time"
-               (ngModelChange)="data.coffee_first_drip_time = uiHelper.convertToNumber($event)"></ion-input>
+    <ion-input [prevent-characters] [(ngModel)]="data.coffee_first_drip_time" type="text"></ion-input>
   </ion-item>
   <ion-item>
     <ion-label stacked>Bezugsmenge</ion-label>
-    <ion-input type="number" [ngModel]="data.brew_quantity"
-               (ngModelChange)="data.brew_quantity = uiHelper.convertToNumber($event)"  step="0.1" pattern="[0-9,.]*" step="any"></ion-input>
+    <ion-input [prevent-characters] [(ngModel)]="data.brew_quantity" type="text"></ion-input>
   </ion-item>
   <ion-item>
     <ion-label stacked>Kaffeetyp</ion-label>
