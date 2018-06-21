@@ -1,6 +1,6 @@
 /**Core**/
 import {BrowserModule} from '@angular/platform-browser';
-import {ErrorHandler, NgModule} from '@angular/core';
+import {ErrorHandler, NgModule,CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 /**Ionic**/
 import {IonicApp, IonicErrorHandler, IonicModule} from 'ionic-angular';
 import {IonicStorageModule} from '@ionic/storage';
@@ -51,6 +51,9 @@ import {UIStatistic} from '../services/uiStatistic';
 import {FormatDatePipe} from '../pipes/formatDate';
 import {KeysPipe} from '../pipes/keys';
 import {ToDecimalPipe} from '../pipes/toDecimal';
+
+/**Directive**/
+import {PreventCharacterDirective} from '../directive/preventCharacters'
 /**Components**/
 import {TimerComponent} from '../components/timer/timer';
 
@@ -68,6 +71,7 @@ import {TimerComponent} from '../components/timer/timer';
     FormatDatePipe,
     KeysPipe,
     ToDecimalPipe,
+    PreventCharacterDirective,
     BrewsPage,
     BrewsAddModal, TimerComponent, BrewsEditModal,BrewsPhotoView,BrewsDetailsModal,BrewsPopover,
     AboutPage, ContactPage, LicencesPage
@@ -113,7 +117,8 @@ import {TimerComponent} from '../components/timer/timer';
     UIImage,
     UIBeanStorage, AppMinimize, {provide: ErrorHandler, useClass: IonicErrorHandler},
     MediaCapture, ImagePicker,AndroidPermissions, UIBrewStorage,UIStatistic
-  ]
+  ],exports:[PreventCharacterDirective],
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
 export class AppModule {
 }
