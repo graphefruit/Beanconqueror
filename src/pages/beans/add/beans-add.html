@@ -12,14 +12,13 @@
 <ion-content>
   <form #addBeanForm="ngForm" novalidate>
     <ion-item>
-      <ion-label fixed >Name*</ion-label>
+      <ion-label floating >Name*</ion-label>
       <ion-input [(ngModel)]="data.name" name="name" type="text" #name="ngModel" spellcheck="false"
                  autocapitalize="off" required>
       </ion-input>
     </ion-item>
      <ion-item>
-
-      <ion-label>Röstgrad*</ion-label>
+      <ion-label floating>Röstgrad*</ion-label>
       <ion-select  [(ngModel)]="data.roast"  name="roast" #roast="ngModel">
         <ion-option *ngFor="let key of roastsEnum | keys" value="{{key}}">{{roastsEnum[key]}}</ion-option>
 
@@ -27,12 +26,12 @@
     </ion-item>
 
     <ion-item>
-      <ion-label fixed >Röstdatum*</ion-label>
+      <ion-label floating>Röstdatum*</ion-label>
       <ion-datetime min="2000-01-01" max="2999-12-31" displayFormat="DD.MM.YYYY" [(ngModel)]="data.roastingDate" name="roastingDate"
                     #roastingDate="ngModel"></ion-datetime>
     </ion-item>
     <ion-item>
-      <ion-label fixed>Notizen</ion-label>
+      <ion-label floating>Notizen</ion-label>
       <ion-textarea autocomplete="true" spellcheck="true" autocorrect="true" name="note" #note="ngModel" rows="5" [(ngModel)]="data.note"></ion-textarea>
     </ion-item>
     <button ion-item (click)="addImage()">
