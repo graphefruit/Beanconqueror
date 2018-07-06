@@ -29,6 +29,7 @@ import {BrewsEditModal} from '../brews/edit/brews-edit';
 import {BrewsDetailsModal} from '../brews/details/brews-details';
 
 import {BrewsPhotoView} from '../brews/photo-view/brews-photo-view';
+import {BrewsTableModal} from "./table/brews-table";
 @Component({
   templateUrl: 'brews.html',
   selector: 'brews'
@@ -145,6 +146,7 @@ export class BrewsPage {
       let brew: Brew = this.brews[i];
 
       let entry: Array<{ VALUE: any, LABEL: string }> = [
+        {"VALUE": this.uiHelper.formateDate(brew.config.unix_timestamp, "DD.MM.YYYY HH:mm"), "LABEL":"Tag"},
         {"VALUE": brew.grind_size, "LABEL": "Mahlgrad"},
         {"VALUE": brew.grind_weight, "LABEL": "Output: Gewicht/Menge"},
         {"VALUE": brew.getPreparation().name, "LABEL": "Zubereitungsmethode"},
@@ -152,6 +154,7 @@ export class BrewsPage {
         {"VALUE": brew.brew_temperature, "LABEL": "Brühtemperatur"},
         {"VALUE": brew.brew_time, "LABEL": "Brühzeit"},
         {"VALUE": brew.brew_quantity, "LABEL": "Bezugsmenge"},
+        {"VALUE": brew.getBrewQuantityTypeName(), "LABEL": "Bezugsmenge-Typ"},
         {"VALUE": brew.note, "LABEL": "Notizen"},
         {"VALUE": brew.rating, "LABEL": "Bewertung"},
         {"VALUE": brew.coffee_type, "LABEL": "Kaffeetyp"},
@@ -201,6 +204,13 @@ export class BrewsPage {
       if (data == BrewsPopover.ACTIONS.DOWNLOAD) {
         this.downloadCSV();
 
+      }
+      else if (data == BrewsPopover.ACTIONS.TABLE){
+        let tableModal = this.modalCtrl.create(BrewsTableModal, {});
+        tableModal.onDidDismiss(() => {
+
+        });
+        tableModal.present({animate: false});
       }
     });
 

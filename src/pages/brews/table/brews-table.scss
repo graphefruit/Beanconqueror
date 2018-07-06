@@ -1,0 +1,34 @@
+brews-table {
+table{
+  margin:10px;
+  border-left: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+
+}
+thead{
+  tr{
+
+    th{
+      padding-right:3px;
+      text-align: left;
+      padding-left:3px;
+
+    }
+  }
+}
+  tbody{
+    tr{
+
+      td{
+        text-align:left;
+        padding-left:3px;
+      }
+    }
+  }
+  th, td {
+    border-bottom: 1px solid #ddd;
+    border-right:  1px solid #ddd;
+  }
+
+
+}

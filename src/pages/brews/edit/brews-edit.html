@@ -50,10 +50,21 @@
     <ion-label stacked>Erster Kaffeetropfen</ion-label>
     <ion-input [prevent-characters] [(ngModel)]="data.coffee_first_drip_time" type="text"></ion-input>
   </ion-item>
-  <ion-item>
-    <ion-label stacked>Bezugsmenge</ion-label>
-    <ion-input [prevent-characters] [(ngModel)]="data.brew_quantity" type="text"></ion-input>
-  </ion-item>
+  <ion-row>
+    <ion-col col-8 col-sm-10>
+      <ion-item>
+        <ion-label floating>Bezugsmenge</ion-label>
+        <ion-input [prevent-characters] [(ngModel)]="data.brew_quantity" type="text"></ion-input>
+      </ion-item>
+    </ion-col>
+    <ion-col col-4 col-sm-2 align-self-end>
+      <ion-item>
+        <ion-select style="max-width:100%;"  [(ngModel)]="data.brew_quantity_type"  name="brewQuantityType" #brewQuantityType="ngModel">
+          <ion-option *ngFor="let key of brewQuantityTypeEnums | keys" value="{{key}}">{{brewQuantityTypeEnums[key]}}</ion-option>
+        </ion-select>
+      </ion-item>
+    </ion-col>
+  </ion-row>
   <ion-item>
     <ion-label stacked>Kaffeetyp</ion-label>
     <ion-input type="text" [(ngModel)]="data.coffee_type"></ion-input>
@@ -91,6 +102,9 @@
     </ion-slides>
   </div>
 
+</ion-content>
+
+<ion-footer>
   <ion-row>
     <ion-col>
       <button ion-button (click)="dismiss()" dark outline block>Abbrechen</button>
@@ -98,8 +112,6 @@
     <ion-col>
       <button ion-button (click)="updateBrew()" type="submit" block>Speichern</button>
     </ion-col>
-
   </ion-row>
+</ion-footer>
 
-
-</ion-content>

@@ -24,6 +24,9 @@ import {Brew} from '../../../classes/brew/brew';
 import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 import {IBean} from '../../../interfaces/bean/iBean';
 import {ISettings} from '../../../interfaces/settings/iSettings';
+/**Enums**/
+
+import {BREW_QUANTITY_TYPES_ENUM} from '../../../enums/brews/brewQuantityTypes';
 
 @Component({
   selector: 'brews-add',
@@ -37,6 +40,8 @@ export class BrewsAddModal {
 
   public BREW_VIEW_ENUM = BREW_VIEW_ENUM;
   public settings: ISettings;
+
+  public brewQuantityTypeEnums = BREW_QUANTITY_TYPES_ENUM;
 
   public method_of_preparations: Array<IPreparation> = [];
   beans: Array<IBean> = [];
@@ -57,6 +62,8 @@ export class BrewsAddModal {
     //Get first entry
     this.data.bean = this.beans[0].config.uuid;
     this.data.method_of_preparation = this.method_of_preparations[0].config.uuid;
+
+
 
 
   }
@@ -98,6 +105,7 @@ export class BrewsAddModal {
 
         if (this.settings.default_last_coffee_parameters.brew_quantity===true) {
           this.data.brew_quantity = lastBrew.brew_quantity;
+          this.data.brew_quantity_type = lastBrew.brew_quantity_type;
         }
         if (this.settings.default_last_coffee_parameters.coffee_type===true) {
           this.data.coffee_type = lastBrew.coffee_type;
@@ -119,6 +127,8 @@ export class BrewsAddModal {
         if (this.settings.default_last_coffee_parameters.note===true) {
           this.data.note = lastBrew.note;
         }
+
+
 
       }
     }

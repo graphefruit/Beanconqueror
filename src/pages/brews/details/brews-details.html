@@ -46,7 +46,7 @@
     </ion-item>
     <ion-item *ngIf="settings.brew_quantity === true">
       <span class="header-label">Bezugsmenge:</span><br/>
-      {{data.brew_quantity}}
+      {{data.brew_quantity}} ({{data.getBrewQuantityTypeName()}})
     </ion-item>
     <ion-item *ngIf="settings.coffee_type=== true">
       <span class="header-label">Kaffeetyp:</span><br/>
@@ -62,7 +62,7 @@
     </ion-item>
     <ion-item *ngIf="settings.note === true">
       <span class="header-label">Notizen:</span><br/>
-      {{data.note}}
+      <pre>{{data.note}}</pre>
     </ion-item>
     <ion-item>
       <span class="header-label">Bohnenalter:</span><br/>

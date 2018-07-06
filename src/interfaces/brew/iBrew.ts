@@ -2,6 +2,7 @@
  * Created by lars on 10/18/2017.
  */
 import {IConfig} from '../objectConfig/iObjectConfig';
+import {BREW_QUANTITY_TYPES_ENUM} from '../../enums/brews/brewQuantityTypes';
 export interface IBrew {
  //Properties
   /**
@@ -33,6 +34,11 @@ export interface IBrew {
    * Inherits the output (user specific in g or ml)
    */
   brew_quantity:number,
+
+  /**
+   * Inherits the type of the brew quantity
+   */
+  brew_quantity_type:BREW_QUANTITY_TYPES_ENUM,
   /**
    * Inherits the notes the user doing during or after the shot
    */
