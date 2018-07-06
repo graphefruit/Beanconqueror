@@ -17,6 +17,9 @@ import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 import {IBean} from '../../../interfaces/bean/iBean';
 import {IBrew} from '../../../interfaces/brew/iBrew';
 
+/**Enums**/
+import {BREW_QUANTITY_TYPES_ENUM} from "../../../enums/brews/brewQuantityTypes";
+
 
 @Component({
   selector: 'brews-edit',
@@ -29,7 +32,7 @@ export class BrewsEditModal {
 
   private brew: IBrew;
 
-
+  public brewQuantityTypeEnums = BREW_QUANTITY_TYPES_ENUM;
   method_of_preparations: Array<IPreparation> = [];
   beans: Array<IBean> = [];
   activeIndex: number = 0;

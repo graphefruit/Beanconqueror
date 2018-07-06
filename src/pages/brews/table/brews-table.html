@@ -1,0 +1,140 @@
+<ion-header>
+  <ion-navbar>
+    <ion-buttons start>
+      <button ion-button icon-only (click)="dismiss()">
+        <ion-icon name="arrow-back"></ion-icon>
+        &nbsp;Zurück
+      </button>
+    </ion-buttons>
+    <ion-buttons end>
+      <button  ion-button icon-only (click)="scaleFontSmaller()">
+        <ion-icon name="remove"></ion-icon>
+      </button>
+      <button ion-button icon-only (click)="scaleFontBigger()">
+        <ion-icon name="add"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+<ion-content>
+<div style="overflow:scroll;">
+  <table style="font-size: 14px;" #tableEl>
+    <thead>
+   <tr>
+     <th>
+       Tag
+     </th>
+     <th *ngIf="settings.grind_size === true">
+       Mahlgrad
+     </th>
+     <th *ngIf="settings.grind_weight === true">
+       Gewicht
+     </th>
+     <th *ngIf="settings.method_of_preparation === true">
+       Zubereitungs-<br/>methode
+     </th>
+     <th  *ngIf="settings.bean_type === true">
+       Bohne
+     </th>
+     <th  *ngIf="settings.brew_temperature === true">
+       Brüh-<br/>
+       temperatur
+     </th>
+     <th *ngIf="settings.brew_time === true">
+       Brühzeit
+     </th>
+     <th *ngIf="settings.brew_quantity === true">
+       Bezugsmenge
+     </th>
+     <th  *ngIf="settings.note === true">
+       Notizen
+     </th>
+     <th *ngIf="settings.rating === true">
+       Bewertung
+     </th>
+     <th *ngIf="settings.coffee_type=== true">
+       Kaffeetyp
+     </th>
+     <th *ngIf="settings.coffee_concentration=== true">
+       Kaffee-<br/>
+       Konzentration
+     </th>
+     <th *ngIf="settings.coffee_first_drip_time === true">
+       Erster<br/>
+       Kaffeetropfen
+     </th>
+     <th  *ngIf="settings.coffee_blooming_time === true">
+       Blooming-Zeit <br/>
+       / Preinfusion
+     </th>
+     <th *ngIf="settings.bean_type === true">
+       Bohnenalter
+     </th>
+     <th *ngIf="settings.grind_weight === true && settings.brew_quantity === true">
+       Brührate
+     </th>
+   </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let brew of brews">
+      <td>
+        {{brew.config.unix_timestamp | formatDate:["DD.MM.YYYY HH:mm"] }}
+      </td>
+      <td *ngIf="settings.grind_size === true">
+        {{ brew.grind_size}}
+      </td>
+      <td *ngIf="settings.grind_weight === true">
+        {{ brew.grind_weight}}
+      </td>
+      <td *ngIf="settings.method_of_preparation === true">
+        {{ brew.getPreparation().name}}
+      </td>
+      <td  *ngIf="settings.bean_type === true">
+        {{ brew.getBean().name}}
+      </td>
+      <td  *ngIf="settings.brew_temperature === true">
+        {{ brew.brew_temperature}}
+      </td>
+      <td *ngIf="settings.brew_time === true">
+        {{ brew.brew_time}}
+      </td>
+      <td *ngIf="settings.brew_quantity === true">
+        {{ brew.brew_quantity}} (  {{ brew.getBrewQuantityTypeName()}})
+      </td>
+      <td  *ngIf="settings.note === true">
+        <pre>{{ brew.note}}</pre>
+      </td>
+      <td *ngIf="settings.rating === true">
+        {{ brew.rating}}
+      </td>
+      <td *ngIf="settings.coffee_type=== true">
+        {{ brew.coffee_type}}
+      </td>
+      <td  *ngIf="settings.coffee_concentration=== true">
+        {{ brew.coffee_concentration}}
+      </td>
+      <td  *ngIf="settings.coffee_first_drip_time === true">
+        {{ brew.coffee_first_drip_time}}
+      </td>
+      <td  *ngIf="settings.coffee_blooming_time === true">
+        {{ brew.coffee_blooming_time}}
+      </td>
+      <td *ngIf="settings.bean_type === true">
+        {{ brew.getCalculatedBeanAge()}}
+      </td>
+      <td *ngIf="settings.grind_weight === true && settings.brew_quantity === true">
+        {{brew.getBrewRatio()}}
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+</ion-content>
+<ion-footer>
+  <ion-row>
+    <ion-col>
+      <button ion-button (click)="dismiss()" dark outline block>Schließen</button>
+    </ion-col>
+  </ion-row>
+</ion-footer>

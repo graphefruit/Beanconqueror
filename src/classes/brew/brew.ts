@@ -12,6 +12,8 @@ import moment from 'moment';
 /**Services**/
 import {UIBeanStorage} from '../../services/uiBeanStorage';
 import {UIPreparationStorage} from '../../services/uiPreparationStorage';
+import {BREW_QUANTITY_TYPES_ENUM} from "../../enums/brews/brewQuantityTypes";
+
 
 export class Brew implements IBrew {
   public grind_size: string;
@@ -21,6 +23,7 @@ export class Brew implements IBrew {
   public brew_temperature: number;
   public brew_time: number;
   public brew_quantity: number;
+  public brew_quantity_type:BREW_QUANTITY_TYPES_ENUM;
   public note: string;
   public rating: number;
   public coffee_type: string;
@@ -44,6 +47,7 @@ export class Brew implements IBrew {
     this.brew_temperature = 0;
     this.brew_time = 0;
     this.brew_quantity = 0;
+    this.brew_quantity_type = <BREW_QUANTITY_TYPES_ENUM>"GR";
     this.note = "";
     this.rating = 1;
     this.coffee_type = "";
@@ -64,6 +68,10 @@ export class Brew implements IBrew {
     let uiPreparationStorage: UIPreparationStorage;
     uiPreparationStorage = <UIPreparationStorage>UIPreparationStorage.getInstance();
     return uiPreparationStorage;
+  }
+
+  public getBrewQuantityTypeName():string{
+    return BREW_QUANTITY_TYPES_ENUM[this.brew_quantity_type];
   }
 
   public getBean(): Bean {

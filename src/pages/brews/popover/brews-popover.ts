@@ -8,7 +8,8 @@ import {ViewController, NavParams} from 'ionic-angular';
 export class BrewsPopover {
 
   public static ACTIONS: any = {
-    "DOWNLOAD": "DOWNLOAD"
+    "DOWNLOAD": "DOWNLOAD",
+    "TABLE":"TABLE",
   };
 
   constructor(private navParams: NavParams, public viewCtrl: ViewController) {
@@ -18,6 +19,10 @@ export class BrewsPopover {
   public download() {
     this.viewCtrl.dismiss(BrewsPopover.ACTIONS.DOWNLOAD);
 
+  }
+
+  public table(){
+    this.viewCtrl.dismiss(BrewsPopover.ACTIONS.TABLE);
   }
 
 
