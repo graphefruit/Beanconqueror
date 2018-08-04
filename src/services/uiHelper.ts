@@ -102,6 +102,85 @@ export class UIHelper {
 
   }
 
+  public exportJSON(fileName:string, jsonContent:string){
+     let promise = new Promise((resolve, reject) => {
+      let errorCallback = (e) => {
+        console.log("Error: " + e);
+        reject();
+      };
+
+      //Fixed umlaut issue
+      //Thanks to: https://stackoverflow.com/questions/31959487/utf-8-encoidng-issue-when-exporting-csv-file-javascript
+      var blob = new Blob([jsonContent], {type: 'application/json;charset=UTF-8;'});
+      if (this.platform.is("android") || this.platform.is("ios")) {
+        let storageLocation: string = "";
+
+        switch (device.platform) {
+
+          case "Android":
+            storageLocation = 'file:///storage/emulated/0/';
+            break;
+          case "iOS":
+            storageLocation = cordova.file.documentsDirectory;
+            break;
+
+        }
+
+        window.resolveLocalFileSystemURL(storageLocation,
+          function (fileSystem) {
+
+            fileSystem.getDirectory('Download', {
+                create: true,
+                exclusive: false
+              },
+              function (directory) {
+
+                //You need to put the name you would like to use for the file here.
+                directory.getFile(fileName, {
+                    create: true,
+                    exclusive: false
+                  },
+                  function (fileEntry) {
+
+
+                    fileEntry.createWriter(function (writer) {
+                      writer.onwriteend = function () {
+                        resolve(fileName);
+                      };
+
+                      writer.seek(0);
+                      writer.write(blob); //You need to put the file, blob or base64 representation here.
+
+                    }, errorCallback);
+                  }, errorCallback);
+              }, errorCallback);
+          }, errorCallback);
+      }
+      else {
+        setTimeout(() => {
+          if (navigator.msSaveBlob) { // IE 10+
+            navigator.msSaveBlob(blob, fileName);
+          } else {
+            var link = document.createElement("a");
+            if (link.download !== undefined) { // feature detection
+              // Browsers that support HTML5 download attribute
+              var url = URL.createObjectURL(blob);
+              link.setAttribute("href", url);
+              link.setAttribute("download", fileName);
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              resolve(fileName);
+
+            }
+          }
+        }, 250);
+      }
+
+    });
+    return promise;
+  }
+
   public exportCSV(fileName: string, csvContent: string) {
 
     let promise = new Promise((resolve, reject) => {

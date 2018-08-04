@@ -13,6 +13,9 @@ import {MediaCapture} from '@ionic-native/media-capture';
 import {ImagePicker} from '@ionic-native/image-picker';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { AppVersion } from '@ionic-native/app-version';
+import { FileChooser } from '@ionic-native/file-chooser';
+import {FilePath} from "@ionic-native/file-path";
+import {File} from "@ionic-native/file";
 /**Pages**/
 import {MyApp} from './app.component';
 import {HomePage} from '../pages/home/home';
@@ -108,6 +111,9 @@ import {TimerComponent} from '../components/timer/timer';
   providers: [
     StatusBar,
     AppVersion,
+    FileChooser,
+    FilePath,
+    File,
     SplashScreen,
     UIStorage,
     UISettingsStorage,
