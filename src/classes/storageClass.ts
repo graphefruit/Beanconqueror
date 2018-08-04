@@ -49,6 +49,10 @@ export abstract class StorageClass {
     return promise;
   }
 
+  public __reinitlizeStorage(){
+    this.isInitialized = -1;
+    this.__initializeStorage();
+  }
   private __initializeStorage() {
     this.uiStorage.get(this.DB_PATH).then((_data) => {
       if (_data === null || _data === undefined) {

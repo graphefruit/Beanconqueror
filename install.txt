@@ -26,3 +26,15 @@ ionic cordova plugin add cordova-plugin-allow-backup --variable BACKUP=true
 http://ionicframework.com/docs/native/android-permissions/
 ionic cordova plugin add cordova-plugin-android-permissions
 npm install --save @ionic-native/android-permissions
+
+https://ionicframework.com/docs/native/file-chooser/
+ionic cordova plugin add cordova-plugin-filechooser
+npm install --save @ionic-native/file-chooser
+
+https://ionicframework.com/docs/native/file-path/
+ionic cordova plugin add cordova-plugin-filepath
+npm install --save @ionic-native/file-path
+
+https://ionicframework.com/docs/native/file/
+ionic cordova plugin add cordova-plugin-file
+npm install --save @ionic-native/file
