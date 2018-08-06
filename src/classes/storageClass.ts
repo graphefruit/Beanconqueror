@@ -53,7 +53,7 @@ export abstract class StorageClass {
     this.isInitialized = -1;
     this.__initializeStorage();
   }
-  private __initializeStorage() {
+  protected __initializeStorage() {
     this.uiStorage.get(this.DB_PATH).then((_data) => {
       if (_data === null || _data === undefined) {
         //No beans have been added yet
