@@ -49,6 +49,7 @@ export class SettingsPage {
   }
 
   public import() {
+
     if (this.platform.is("android")) {
       this.fileChooser.open()
         .then((uri) => {
@@ -74,30 +75,36 @@ export class SettingsPage {
 
   }
 
-  private test(){
-    this.uiStorage.export().then((_back)=>{
+  private test() {
+    this.uiStorage.export().then((_back) => {
       let parsedContent = _back;
-       if (parsedContent[this.uiPreparationStorage.getDBPath()] &&
-            parsedContent[this.uiBeanStorage.getDBPath()] &&
-            parsedContent[this.uiBrewStorage.getDBPath()] &&
-            parsedContent[this.uiSettingsStorage.getDBPath()]) {
+      if (parsedContent[this.uiPreparationStorage.getDBPath()] &&
+        parsedContent[this.uiBeanStorage.getDBPath()] &&
+        parsedContent[this.uiBrewStorage.getDBPath()] &&
+        parsedContent[this.uiSettingsStorage.getDBPath()]) {
 
-            this.__cleanupImportBeanData(parsedContent[this.uiBeanStorage.getDBPath()]);
-            this.__cleanupImportBrewData(parsedContent[this.uiBrewStorage.getDBPath()]);
+        this.__cleanupImportBeanData(parsedContent[this.uiBeanStorage.getDBPath()]);
+        this.__cleanupImportBrewData(parsedContent[this.uiBrewStorage.getDBPath()]);
 
-            this.uiStorage.import(parsedContent).then((_data)=>{
-              if (_data.BACKUP === false){
-                this.uiAlert.showMessage("Import erfolgreich");
-              }
-              else {
-                this.uiAlert.showMessage("Import unerfolgreich, Daten wurden nicht verändert");
-              }
-
-            }, ()=>{
-                this.uiAlert.showMessage("Import unerfolgreich, Daten wurden nicht verändert");
+        this.uiStorage.import(parsedContent).then((_data) => {
+          if (_data.BACKUP === false) {
+            this.__reinitializeStorages().then(() => {
+              this.uiAlert.showMessage("Import erfolgreich");
             })
 
           }
+          else {
+            this.uiAlert.showMessage("Import unerfolgreich, Daten wurden nicht verändert");
+          }
+
+        }, () => {
+          this.uiAlert.showMessage("Import unerfolgreich, Daten wurden nicht verändert");
+        })
+
+      }
+      else {
+        this.uiAlert.showMessage("Invalider Dateiinhalt");
+      }
     })
   }
 
@@ -114,16 +121,19 @@ export class SettingsPage {
             this.__cleanupImportBeanData(parsedContent[this.uiBeanStorage.getDBPath()]);
             this.__cleanupImportBrewData(parsedContent[this.uiBrewStorage.getDBPath()]);
 
-            this.uiStorage.import(parsedContent).then((_data)=>{
-              if (_data.BACKUP === false){
-                this.uiAlert.showMessage("Import erfolgreich");
+            this.uiStorage.import(parsedContent).then((_data) => {
+              if (_data.BACKUP === false) {
+                this.__reinitializeStorages().then(() => {
+                  this.uiAlert.showMessage("Import erfolgreich");
+                })
+
               }
               else {
                 this.uiAlert.showMessage("Import unerfolgreich, Daten wurden nicht verändert");
               }
 
-            }, ()=>{
-                this.uiAlert.showMessage("Import unerfolgreich, Daten wurden nicht verändert");
+            }, () => {
+              this.uiAlert.showMessage("Import unerfolgreich, Daten wurden nicht verändert");
             })
 
           }
@@ -139,6 +149,32 @@ export class SettingsPage {
 
     return promise;
 
+  }
+
+  private __reinitializeStorages() {
+    var promise = new Promise((resolve, reject) => {
+
+      this.uiBeanStorage.reinitializeStorage();
+      this.uiBrewStorage.reinitializeStorage();
+      this.uiPreparationStorage.reinitializeStorage();
+      this.uiSettingsStorage.reinitializeStorage();
+
+      let beanStorageReadyCallback = this.uiBeanStorage.storageReady();
+      let preparationStorageReadyCallback = this.uiPreparationStorage.storageReady();
+      let uiSettingsStorageReadyCallback = this.uiSettingsStorage.storageReady();
+      let brewStorageReadyCallback = this.uiBrewStorage.storageReady();
+      Promise.all([
+        beanStorageReadyCallback,
+        preparationStorageReadyCallback,
+        brewStorageReadyCallback,
+        uiSettingsStorageReadyCallback,
+      ]).then(() => {
+        resolve();
+      }, () => {
+        resolve();
+      })
+    });
+    return promise;
   }
 
   private __cleanupImportBeanData(_data: Array<IBean>) {

@@ -49,7 +49,7 @@ export abstract class StorageClass {
     return promise;
   }
 
-  public __reinitlizeStorage(){
+  public reinitializeStorage(){
     this.isInitialized = -1;
     this.__initializeStorage();
   }
