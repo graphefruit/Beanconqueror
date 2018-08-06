@@ -118,7 +118,7 @@ export class UIHelper {
         switch (device.platform) {
 
           case "Android":
-            storageLocation = 'file:///storage/emulated/0/';
+            storageLocation = cordova.file.externalRootDirectory;
             break;
           case "iOS":
             storageLocation = cordova.file.documentsDirectory;
@@ -198,7 +198,7 @@ export class UIHelper {
         switch (device.platform) {
 
           case "Android":
-            storageLocation = 'file:///storage/emulated/0/';
+            storageLocation = cordova.file.externalRootDirectory;
             break;
           case "iOS":
             storageLocation = cordova.file.documentsDirectory;
