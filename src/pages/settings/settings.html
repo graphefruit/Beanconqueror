@@ -17,6 +17,15 @@
     </ion-card-content>
   </ion-card>
   <ion-list>
+    <ion-item-divider color="light">Datenübertragen</ion-item-divider>
+       <button ion-item (click)="import()">
+            Import
+         </button>
+        <button ion-item (click)="export()">
+            Export
+         </button>
+  </ion-list>
+  <ion-list>
     <ion-item-divider color="light">Allgemeine Einstellungen</ion-item-divider>
     <ion-item>
       <ion-label>Ansicht</ion-label>
@@ -87,8 +96,6 @@
     </ion-item>
     </div>
   </ion-list>
-
-
   <ion-list>
 
 

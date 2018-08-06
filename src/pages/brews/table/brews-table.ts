@@ -1,7 +1,7 @@
 /**Core**/
-import {Component, ViewChild, ElementRef,Renderer2} from '@angular/core';
+import {Component, ViewChild, ElementRef, Renderer2} from '@angular/core';
 /**Ionic**/
-import {ViewController, NavParams, Slides} from 'ionic-angular';
+import {ViewController, NavParams, Slides, ModalController} from 'ionic-angular';
 /**Services**/
 import {UIBeanStorage} from '../../../services/uiBeanStorage';
 import {UISettingsStorage} from '../../../services/uiSettingsStorage';
@@ -19,6 +19,7 @@ import {IBean} from '../../../interfaces/bean/iBean';
 import {IBrew} from '../../../interfaces/brew/iBrew';
 import {BrewView} from "../../../classes/brew/brewView";
 import {UIBrewStorage} from "../../../services/uiBrewStorage";
+import {BrewsAddModal} from "../add/brews-add";
 
 
 @Component({
@@ -27,44 +28,58 @@ import {UIBrewStorage} from "../../../services/uiBrewStorage";
 })
 export class BrewsTableModal {
 
-  @ViewChild("tableEl", ) tableEl: ElementRef;
-  public brews: Array<Brew>=[];
+  @ViewChild("tableEl",) tableEl: ElementRef;
+  public brews: Array<Brew> = [];
 
 
-
-  private startingFontSize:number=14;
+  private startingFontSize: number = 14;
 
   method_of_preparations: Array<IPreparation> = [];
   beans: Array<IBean> = [];
 
-  public settings:Settings;
+  public settings: Settings;
 
+  public hasBeans: boolean = false;
+  public hasPreparationMethods: boolean = false;
 
   constructor(private viewCtrl: ViewController, private navParams: NavParams, private uiBeanStorage: UIBeanStorage,
               private uiPreparationStorage: UIPreparationStorage,
-              public uiHelper: UIHelper, private uiImage: UIImage, private uiSettingsStorage:UISettingsStorage, private uiBrewStorage:UIBrewStorage, private renderer:Renderer2) {
+              public uiHelper: UIHelper, private uiImage: UIImage,
+              private uiSettingsStorage: UISettingsStorage, private uiBrewStorage: UIBrewStorage,
+              private renderer: Renderer2, private modalCtrl:ModalController) {
     this.settings = this.uiSettingsStorage.getSettings();
 
     //Moved from ionViewDidEnter, because of Ionic issues with ion-range
 
     this.method_of_preparations = this.uiPreparationStorage.getAllEntries();
     this.beans = this.uiBeanStorage.getAllEntries();
+    this.hasBeans = (this.uiBeanStorage.getAllEntries().length > 0);
+    this.hasPreparationMethods = (this.uiPreparationStorage.getAllEntries().length > 0);
     this.__initializeBrews();
   }
 
 
-  scaleFontBigger(){
-    this.startingFontSize ++;
-    this.renderer.setStyle(this.tableEl.nativeElement,"fontSize",this.startingFontSize + "px");
+
+  public addBrew() {
+    let addBrewsModal = this.modalCtrl.create(BrewsAddModal, {});
+    addBrewsModal.onDidDismiss(() => {
+      this.__initializeBrews();
+    });
+    addBrewsModal.present({animate: false});
+  }
+
+  scaleFontBigger() {
+    this.startingFontSize++;
+    this.renderer.setStyle(this.tableEl.nativeElement, "fontSize", this.startingFontSize + "px");
 
   }
-  scaleFontSmaller(){
+
+  scaleFontSmaller() {
     this.startingFontSize--;
-    if (this.startingFontSize <6)
-    {
+    if (this.startingFontSize < 6) {
       this.startingFontSize = 6;
     }
-    this.renderer.setStyle(this.tableEl.nativeElement,"fontSize",this.startingFontSize + "px");
+    this.renderer.setStyle(this.tableEl.nativeElement, "fontSize", this.startingFontSize + "px");
   }
 
   dismiss() {
