@@ -19,10 +19,10 @@
       <ion-label floating>Gewicht</ion-label>
       <ion-input [prevent-characters] [(ngModel)]="data.grind_weight" type="text"></ion-input>
     </ion-item>
-    <ion-row>
+    <ion-row ngIf="settings.brew_temperature === true">
 
       <ion-col no-padding col-4>
-        <ion-item *ngIf="settings.brew_temperature === true">
+        <ion-item>
           <ion-label floating>Temperatur</ion-label>
           <ion-input [prevent-characters] [(ngModel)]="data.brew_temperature" type="text"></ion-input>
         </ion-item>

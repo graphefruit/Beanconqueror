@@ -41,6 +41,10 @@ export class SettingsPage {
               private uiPreparationStorage: UIPreparationStorage,
               private uiBeanStorage: UIBeanStorage,
               private uiBrewStorage: UIBrewStorage) {
+this.__initializeSettings();
+  }
+
+  private __initializeSettings(){
     this.settings = this.uiSettingsStorage.getSettings();
   }
 
@@ -75,39 +79,6 @@ export class SettingsPage {
 
   }
 
-  private test() {
-    this.uiStorage.export().then((_back) => {
-      let parsedContent = _back;
-      if (parsedContent[this.uiPreparationStorage.getDBPath()] &&
-        parsedContent[this.uiBeanStorage.getDBPath()] &&
-        parsedContent[this.uiBrewStorage.getDBPath()] &&
-        parsedContent[this.uiSettingsStorage.getDBPath()]) {
-
-        this.__cleanupImportBeanData(parsedContent[this.uiBeanStorage.getDBPath()]);
-        this.__cleanupImportBrewData(parsedContent[this.uiBrewStorage.getDBPath()]);
-
-        this.uiStorage.import(parsedContent).then((_data) => {
-          if (_data.BACKUP === false) {
-            this.__reinitializeStorages().then(() => {
-              this.uiAlert.showMessage("Import erfolgreich");
-            })
-
-          }
-          else {
-            this.uiAlert.showMessage("Import unerfolgreich, Daten wurden nicht verändert");
-          }
-
-        }, () => {
-          this.uiAlert.showMessage("Import unerfolgreich, Daten wurden nicht verändert");
-        })
-
-      }
-      else {
-        this.uiAlert.showMessage("Invalider Dateiinhalt");
-      }
-    })
-  }
-
   private __readJSONFile(path, file) {
     var promise = new Promise((resolve, reject) => {
       this.file.readAsText(path, file)
@@ -124,6 +95,7 @@ export class SettingsPage {
             this.uiStorage.import(parsedContent).then((_data) => {
               if (_data.BACKUP === false) {
                 this.__reinitializeStorages().then(() => {
+                  this.__initializeSettings();
                   this.uiAlert.showMessage("Import erfolgreich");
                 })
 

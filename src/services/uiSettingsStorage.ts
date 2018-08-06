@@ -38,6 +38,23 @@ export class UISettingsStorage extends StorageClass {
     })
   }
 
+  public reinitializeStorage(){
+    super.reinitializeStorage();
+
+    super.storageReady().then(() => {
+      let entries: Array<any> = this.getAllEntries();
+      if (entries.length > 0) {
+        //We already had some settings here.
+        this.settings.initializeByObject(entries[0]);
+      }
+      else {
+        //Take the new settings obj.
+        super.add(this.settings);
+      }
+    }, () => {
+      //Outsch, cant do much.
+    })
+  }
   public getSettings(): Settings {
     return this.settings;
   }
