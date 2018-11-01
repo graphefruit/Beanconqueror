@@ -7,6 +7,7 @@ import {IDefaultLastCoffeeParameters} from "./iDefaultLastCoffeeParameters";
 export interface ISettings {
  //Properties
   brew_view:BREW_VIEW_ENUM,
+  brew_temperature_time:boolean,
   brew_time: boolean,
   grind_size: boolean,
   grind_weight: boolean,

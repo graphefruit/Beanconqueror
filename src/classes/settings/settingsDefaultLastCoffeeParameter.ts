@@ -3,8 +3,9 @@
 import {IDefaultLastCoffeeParameters} from "../../interfaces/settings/iDefaultLastCoffeeParameters";
 
 export class DefaultLastCoffeeParameters implements IDefaultLastCoffeeParameters {
- public brew_time: boolean;
-  public  grind_size: boolean;
+  public brew_time: boolean;
+  public brew_temperature_time:boolean;
+  public grind_size: boolean;
   public grind_weight: boolean;
   public method_of_preparation: boolean;
   public brew_quantity: boolean;
@@ -19,6 +20,7 @@ export class DefaultLastCoffeeParameters implements IDefaultLastCoffeeParameters
 
   constructor() {
     this.bean_type = true;
+    this.brew_temperature_time = false;
     this.brew_time = true;
     this.grind_size = true;
     this.grind_weight = true;

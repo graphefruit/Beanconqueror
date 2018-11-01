@@ -3,6 +3,7 @@
 
 export interface IDefaultLastCoffeeParameters {
  //Properties
+  brew_temperature_time:boolean;
   brew_time: boolean,
   grind_size: boolean,
   grind_weight: boolean,

@@ -21,6 +21,7 @@ export class Brew implements IBrew {
   public method_of_preparation: string;
   public bean: string;
   public brew_temperature: number;
+  public brew_temperature_time:number;
   public brew_time: number;
   public brew_quantity: number;
   public brew_quantity_type:BREW_QUANTITY_TYPES_ENUM;
@@ -44,6 +45,7 @@ export class Brew implements IBrew {
     this.grind_weight = 0;
     this.method_of_preparation = "";
     this.bean = "";
+    this.brew_temperature_time = 0;
     this.brew_temperature = 0;
     this.brew_time = 0;
     this.brew_quantity = 0;
