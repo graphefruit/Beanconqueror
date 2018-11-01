@@ -32,6 +32,10 @@
       <span class="header-label">Bohnen:</span><br/>
       &nbsp;{{data.getBean().name}}
     </ion-item>
+    <ion-item *ngIf="settings.brew_temperature_time === true">
+      <span class="header-label">Temperatur Zeit:</span><br/>
+      {{data.brew_temperature_time}}
+    </ion-item>
     <ion-item *ngIf="settings.brew_time === true">
       <span class="header-label">Zeit:</span><br/>
       {{data.brew_time}}

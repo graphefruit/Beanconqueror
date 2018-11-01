@@ -152,6 +152,7 @@ export class BrewsPage {
         {"VALUE": brew.getPreparation().name, "LABEL": "Zubereitungsmethode"},
         {"VALUE": brew.getBean().name, "LABEL": "Bohne"},
         {"VALUE": brew.brew_temperature, "LABEL": "Brühtemperatur"},
+        {"VALUE": brew.brew_temperature_time, "LABEL": "Temperatur Zeit"},
         {"VALUE": brew.brew_time, "LABEL": "Brühzeit"},
         {"VALUE": brew.brew_quantity, "LABEL": "Bezugsmenge"},
         {"VALUE": brew.getBrewQuantityTypeName(), "LABEL": "Bezugsmenge-Typ"},

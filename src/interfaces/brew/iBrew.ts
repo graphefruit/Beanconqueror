@@ -27,6 +27,10 @@ export interface IBrew {
    */
   brew_temperature:number,
   /**
+   * Inherits the temperature surfing time for the coffee-
+   */
+   brew_temperature_time:number,
+  /**
    * Inherits the brewing time for the coffee, shot-time, infusion-time etc.
    */
   brew_time:number,

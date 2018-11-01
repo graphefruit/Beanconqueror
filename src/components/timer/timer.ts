@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output,} from '@angular/core';
 import {ITimer} from '../../interfaces/timer/iTimer';
 
 
@@ -8,7 +8,9 @@ import {ITimer} from '../../interfaces/timer/iTimer';
 })
 export class TimerComponent {
 
+  @Input() label:string;
   @Input() timeInSeconds: number;
+  @Output() timerStarted =new EventEmitter();
   public timer: ITimer;
 
   constructor() {
@@ -44,6 +46,7 @@ export class TimerComponent {
   startTimer() {
     this.timer.hasStarted = true;
     this.timer.runTimer = true;
+    this.timerStarted.emit();
     this.timerTick();
   }
 
