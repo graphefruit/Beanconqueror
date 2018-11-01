@@ -9,6 +9,7 @@ import {DefaultLastCoffeeParameters} from "./settingsDefaultLastCoffeeParameter"
 export class Settings implements ISettings {
   public brew_view: BREW_VIEW_ENUM;
   public brew_time: boolean;
+  public brew_temperature_time:boolean;
   public grind_size: boolean;
   public grind_weight: boolean;
   public method_of_preparation: boolean;
@@ -33,6 +34,7 @@ export class Settings implements ISettings {
 
   constructor() {
     this.brew_view = BREW_VIEW_ENUM.SINGLE_PAGE;
+    this.brew_temperature_time = false;
     this.brew_time = true;
     this.grind_size = true;
     this.grind_weight = true;

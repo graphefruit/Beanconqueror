@@ -34,7 +34,9 @@ import {BREW_QUANTITY_TYPES_ENUM} from '../../../enums/brews/brewQuantityTypes';
 })
 export class BrewsAddModal {
   @ViewChild('photoSlides') photoSlides: Slides;
-  @ViewChild(TimerComponent) timer: TimerComponent;
+  @ViewChild('timer') timer: TimerComponent;
+  @ViewChild('brewTemperatureTime') brewTemperatureTime: TimerComponent;
+
 
   public data: Brew = new Brew();
 
@@ -64,11 +66,9 @@ export class BrewsAddModal {
     this.data.method_of_preparation = this.method_of_preparations[0].config.uuid;
 
 
-
-
   }
 
-  ionViewDidEnter(){
+  ionViewDidEnter() {
     this.__loadLastBrew();
   }
 
@@ -79,55 +79,60 @@ export class BrewsAddModal {
         let lastBrew: Brew = brews[brews.length - 1];
 
 
-        if (this.settings.default_last_coffee_parameters.bean_type===true){
+        if (this.settings.default_last_coffee_parameters.bean_type === true) {
           this.data.bean = lastBrew.bean;
         }
 
-        if (this.settings.default_last_coffee_parameters.grind_size===true) {
+        if (this.settings.default_last_coffee_parameters.grind_size === true) {
           this.data.grind_size = lastBrew.grind_size;
         }
-        if (this.settings.default_last_coffee_parameters.grind_weight===true) {
+        if (this.settings.default_last_coffee_parameters.grind_weight === true) {
           this.data.grind_weight = lastBrew.grind_weight;
         }
-        if (this.settings.default_last_coffee_parameters.method_of_preparation===true) {
+        if (this.settings.default_last_coffee_parameters.method_of_preparation === true) {
           this.data.method_of_preparation = lastBrew.method_of_preparation;
         }
-        if (this.settings.default_last_coffee_parameters.brew_temperature===true) {
+        if (this.settings.default_last_coffee_parameters.brew_temperature === true) {
           this.data.brew_temperature = lastBrew.brew_temperature;
         }
-
-        if (this.timer){
-          if (this.settings.default_last_coffee_parameters.brew_time===true) {
+        debugger;
+        if (this.brewTemperatureTime) {
+          if (this.settings.default_last_coffee_parameters.brew_temperature_time === true) {
+            this.data.brew_temperature_time = lastBrew.brew_temperature_time;
+            this.brewTemperatureTime.setTime(this.data.brew_temperature_time);
+          }
+        }
+        if (this.timer) {
+          if (this.settings.default_last_coffee_parameters.brew_time === true) {
             this.data.brew_time = lastBrew.brew_time;
             this.timer.setTime(this.data.brew_time);
           }
         }
 
-        if (this.settings.default_last_coffee_parameters.brew_quantity===true) {
+        if (this.settings.default_last_coffee_parameters.brew_quantity === true) {
           this.data.brew_quantity = lastBrew.brew_quantity;
           this.data.brew_quantity_type = lastBrew.brew_quantity_type;
         }
-        if (this.settings.default_last_coffee_parameters.coffee_type===true) {
+        if (this.settings.default_last_coffee_parameters.coffee_type === true) {
           this.data.coffee_type = lastBrew.coffee_type;
         }
-        if (this.settings.default_last_coffee_parameters.coffee_concentration===true) {
+        if (this.settings.default_last_coffee_parameters.coffee_concentration === true) {
           this.data.coffee_concentration = lastBrew.coffee_concentration;
         }
-        if (this.settings.default_last_coffee_parameters.coffee_first_drip_time===true) {
+        if (this.settings.default_last_coffee_parameters.coffee_first_drip_time === true) {
           this.data.coffee_first_drip_time = lastBrew.coffee_first_drip_time;
         }
-        if (this.settings.default_last_coffee_parameters.coffee_blooming_time===true) {
+        if (this.settings.default_last_coffee_parameters.coffee_blooming_time === true) {
           this.data.coffee_blooming_time = lastBrew.coffee_blooming_time;
         }
 
 
-        if (this.settings.default_last_coffee_parameters.rating===true) {
+        if (this.settings.default_last_coffee_parameters.rating === true) {
           this.data.rating = lastBrew.rating;
         }
-        if (this.settings.default_last_coffee_parameters.note===true) {
+        if (this.settings.default_last_coffee_parameters.note === true) {
           this.data.note = lastBrew.note;
         }
-
 
 
       }
@@ -146,9 +151,14 @@ export class BrewsAddModal {
     this.dismiss();
   }
 
+  public brewTimeStarted(_event) {
+    if (this.brewTemperatureTime) {
+      this.brewTemperatureTime.pauseTimer();
+    }
+  }
 
   public getTime(): number {
-    if (this.timer){
+    if (this.timer) {
       return this.timer.getSeconds();
     }
     return 0;
@@ -199,6 +209,13 @@ export class BrewsAddModal {
   }
 
   public stopTimer() {
+    if (this.brewTemperatureTime) {
+      this.brewTemperatureTime.pauseTimer();
+      this.data.brew_temperature_time = this.brewTemperatureTime.getSeconds();
+    }
+    else {
+      this.data.brew_temperature_time = 0;
+    }
     if (this.timer) {
       this.timer.pauseTimer();
       this.data.brew_time = this.timer.getSeconds();

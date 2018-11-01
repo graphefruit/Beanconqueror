@@ -48,7 +48,8 @@
         </ion-option>
       </ion-select>
     </ion-item>
-    <timer #timer timeInSeconds="0" *ngIf="settings.brew_time === true"></timer>
+    <timer #brewTemperatureTime timeInSeconds="0" label="Temperatur Zeit" *ngIf="settings.brew_temperature_time === true"></timer>
+    <timer #timer timeInSeconds="0" label="Zeit" (timerStarted)="brewTimeStarted($event)" *ngIf="settings.brew_time === true"></timer>
     <ion-item *ngIf="settings.coffee_blooming_time === true">
       <ion-label stacked>Blooming-Zeit / Preinfusion</ion-label>
       <ion-input [prevent-characters] [(ngModel)]="data.coffee_blooming_time" type="text"></ion-input>
