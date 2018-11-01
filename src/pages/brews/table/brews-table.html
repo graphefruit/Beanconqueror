@@ -43,6 +43,9 @@
        Brüh-<br/>
        temperatur
      </th>
+    <th *ngIf="settings.brew_temperature_time === true">
+       Temperatur Zeit
+     </th>
      <th *ngIf="settings.brew_time === true">
        Brühzeit
      </th>
@@ -97,6 +100,9 @@
       </td>
       <td  *ngIf="settings.brew_temperature === true">
         {{ brew.brew_temperature}}
+      </td>
+         <td *ngIf="settings.brew_temperature_time === true">
+        {{ brew.brew_temperature_time}}
       </td>
       <td *ngIf="settings.brew_time === true">
         {{ brew.brew_time}}

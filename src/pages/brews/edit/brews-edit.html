@@ -39,6 +39,10 @@
     </ion-select>
   </ion-item>
   <ion-item>
+    <ion-label stacked>Temperatur Zeit</ion-label>
+    <ion-input [prevent-characters] [(ngModel)]="data.brew_temperature_time" type="text"></ion-input>
+  </ion-item>
+  <ion-item>
     <ion-label stacked>Zeit</ion-label>
     <ion-input [prevent-characters] [(ngModel)]="data.brew_time" type="text"></ion-input>
   </ion-item>
