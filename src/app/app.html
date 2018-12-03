@@ -48,6 +48,15 @@
           {{pages.contact.title}}
         </button>
 
+        <button ion-item (click)="openPage($event,pages.privacy)" [class.active]="pages.privacy.active">
+          <ion-icon class="menu-icon" name="{{pages.privacy.icon}}"></ion-icon>
+          {{pages.privacy.title}}
+        </button>
+        <button ion-item (click)="openPage($event,pages.terms)" [class.active]="pages.terms.active">
+          <ion-icon class="menu-icon" name="{{pages.terms.icon}}"></ion-icon>
+          {{pages.terms.title}}
+        </button>
+
       </ion-list>
       <button ion-item (click)="openPage($event,pages.settings)" [class.active]="pages.settings.active">
         <ion-icon class="menu-icon" name="{{pages.settings.icon}}"></ion-icon>

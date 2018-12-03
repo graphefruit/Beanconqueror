@@ -5,6 +5,7 @@ import {Platform} from 'ionic-angular';
 /**Third party**/
 import moment from 'moment';
 import 'moment/locale/de';
+import { SocialSharing } from '@ionic-native/social-sharing';
 
 declare var cordova: any;
 declare var device: any;
@@ -16,7 +17,7 @@ declare var window: any;
 export class UIHelper {
 
 
-  constructor(private platform: Platform) {
+  constructor(private platform: Platform, private socialSharing: SocialSharing) {
     moment.locale('de');
   }
 
@@ -127,25 +128,25 @@ export class UIHelper {
         }
 
         window.resolveLocalFileSystemURL(storageLocation,
-          function (fileSystem) {
+           (fileSystem)  => {
 
             fileSystem.getDirectory('Download', {
                 create: true,
                 exclusive: false
               },
-              function (directory) {
+               (directory) => {
 
                 //You need to put the name you would like to use for the file here.
                 directory.getFile(fileName, {
                     create: true,
                     exclusive: false
                   },
-                  function (fileEntry) {
+                   (fileEntry) => {
 
 
-                    fileEntry.createWriter(function (writer) {
-                      writer.onwriteend = function () {
-                        resolve(fileName);
+                    fileEntry.createWriter( (writer) => {
+                      writer.onwriteend =  () => {
+                        resolve(fileEntry);
                       };
 
                       writer.seek(0);
@@ -201,31 +202,31 @@ export class UIHelper {
             storageLocation = cordova.file.externalRootDirectory;
             break;
           case "iOS":
-            storageLocation = cordova.file.documentsDirectory;
+            storageLocation = cordova.file.syncedDataDirectory;
             break;
 
         }
 
         window.resolveLocalFileSystemURL(storageLocation,
-          function (fileSystem) {
+           (fileSystem) => {
 
             fileSystem.getDirectory('Download', {
                 create: true,
                 exclusive: false
               },
-              function (directory) {
+               (directory) => {
 
                 //You need to put the name you would like to use for the file here.
                 directory.getFile(fileName, {
                     create: true,
                     exclusive: false
                   },
-                  function (fileEntry) {
+                   (fileEntry) => {
 
 
-                    fileEntry.createWriter(function (writer) {
-                      writer.onwriteend = function () {
-                        resolve(fileName);
+                    fileEntry.createWriter( (writer) =>{
+                      writer.onwriteend =  () =>{
+                        resolve(fileEntry);
 
                       };
 

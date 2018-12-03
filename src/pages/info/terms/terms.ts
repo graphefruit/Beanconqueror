@@ -3,9 +3,9 @@ import {Component} from '@angular/core';
 /**Services**/
 import {UIHelper} from '../../../services/uiHelper';
 @Component({
-  templateUrl: 'privacy.html',
+  templateUrl: 'terms.html',
 })
-export class PrivacyPage {
+export class TermsPage {
 
   constructor(private uiHelper:UIHelper) {
   }

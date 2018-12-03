@@ -16,6 +16,10 @@ import { AppVersion } from '@ionic-native/app-version';
 import { FileChooser } from '@ionic-native/file-chooser';
 import {FilePath} from "@ionic-native/file-path";
 import {File} from "@ionic-native/file";
+import { SocialSharing } from '@ionic-native/social-sharing';
+import { Keyboard } from '@ionic-native/keyboard';
+import { IOSFilePicker } from '@ionic-native/file-picker';
+import { ThreeDeeTouch} from '@ionic-native/three-dee-touch';
 /**Pages**/
 import {MyApp} from './app.component';
 import {HomePage} from '../pages/home/home';
@@ -26,6 +30,8 @@ import {PreparationsPage} from '../pages/preparations/preparations';
 import {AboutPage} from '../pages/info/about/about';
 import {ContactPage} from '../pages/info/contact/contact';
 import {LicencesPage} from '../pages/info/licences/licences';
+import {TermsPage} from "../pages/info/terms/terms";
+import {PrivacyPage} from "../pages/info/privacy/privacy";
 /**Modals**/
 import {BeansAddModal} from '../pages/beans/add/beans-add';
 import {BeansEditModal} from '../pages/beans/edit/beans-edit';
@@ -78,7 +84,7 @@ import {TimerComponent} from '../components/timer/timer';
     PreventCharacterDirective,
     BrewsPage,
     BrewsAddModal, TimerComponent, BrewsEditModal,BrewsPhotoView,BrewsDetailsModal,BrewsTableModal,BrewsPopover,
-    AboutPage, ContactPage, LicencesPage
+    AboutPage, ContactPage, LicencesPage,TermsPage,PrivacyPage,
   ],
 
   imports: [
@@ -106,7 +112,7 @@ import {TimerComponent} from '../components/timer/timer';
     PreparationsAddModal,
     PreparationsEditModal,
     BrewsPage, BrewsAddModal, TimerComponent, BrewsEditModal,BrewsPhotoView,BrewsDetailsModal,BrewsTableModal,BrewsPopover,
-    AboutPage, ContactPage, LicencesPage,
+    AboutPage, ContactPage, LicencesPage,TermsPage,PrivacyPage,
   ],
   providers: [
     StatusBar,
@@ -114,6 +120,10 @@ import {TimerComponent} from '../components/timer/timer';
     FileChooser,
     FilePath,
     File,
+    SocialSharing,
+    IOSFilePicker,
+    ThreeDeeTouch,
+    Keyboard,
     SplashScreen,
     UIStorage,
     UISettingsStorage,
