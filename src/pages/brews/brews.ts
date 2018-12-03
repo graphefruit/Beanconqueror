@@ -1,8 +1,6 @@
 /**Core**/
 import {Component, ChangeDetectorRef} from '@angular/core';
-import {PopoverController, NavParams} from 'ionic-angular';
-/**Ionic**/
-import {ModalController, AlertController} from 'ionic-angular';
+import {PopoverController, NavParams, Platform,ModalController, AlertController} from 'ionic-angular';
 
 
 /**Services**/
@@ -30,6 +28,8 @@ import {BrewsDetailsModal} from '../brews/details/brews-details';
 
 import {BrewsPhotoView} from '../brews/photo-view/brews-photo-view';
 import {BrewsTableModal} from "./table/brews-table";
+import {FileEntry} from "@ionic-native/file";
+import {SocialSharing} from "@ionic-native/social-sharing";
 @Component({
   templateUrl: 'brews.html',
   selector: 'brews'
@@ -44,7 +44,10 @@ export class BrewsPage {
   public hasBeans: boolean = false;
   public hasPreparationMethods: boolean = false;
 
-  constructor(private modalCtrl: ModalController, private uiBrewStorage: UIBrewStorage,
+  constructor(private modalCtrl: ModalController,
+              private platform: Platform,
+              private socialSharing: SocialSharing,
+              private uiBrewStorage: UIBrewStorage,
               private changeDetectorRef: ChangeDetectorRef, private uiAlert: UIAlert,
               private uiBeanStorage: UIBeanStorage, private uiPreparationStorage: UIPreparationStorage,
               private uiHelper: UIHelper, private uiSettingsStorage: UISettingsStorage, private popoverCtrl: PopoverController, public alertCtrl: AlertController) {
@@ -129,13 +132,22 @@ export class BrewsPage {
         csvFile += processRow(rows[i]);
       }
 
-      this.uiHelper.exportCSV(filename, csvFile).then((_downloadedFileName) => {
-        let alert = this.alertCtrl.create({
-          title: 'Heruntergeladen!',
-          subTitle: `CSV-Datei '${_downloadedFileName}' wurde erfolgreich in den Download-Ordner heruntergeladen!`,
-          buttons: ['OK']
-        });
-        alert.present();
+      this.uiHelper.exportCSV(filename, csvFile).then((_savedFile:FileEntry) => {
+        if (this.platform.is("android"))
+        {
+          let alert = this.alertCtrl.create({
+            title: 'Heruntergeladen!',
+            subTitle: `CSV-Datei '${_savedFile.name}' wurde erfolgreich in den Download-Ordner heruntergeladen!`,
+            buttons: ['OK']
+          });
+          alert.present();
+        }
+        else
+        {
+          this.socialSharing.share(null,null,_savedFile.nativeURL);
+
+        }
+
       });
 
     };
