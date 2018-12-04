@@ -28,6 +28,12 @@
       <ion-datetime min="2000-01-01" max="2999-12-31" displayFormat="DD.MM.YYYY" [(ngModel)]="data.roastingDate" name="roastingDate"
                     #roastingDate="ngModel"></ion-datetime>
     </ion-item>
+  <ion-item>
+    <ion-label floating >Röster</ion-label>
+    <ion-input [(ngModel)]="data.roaster" name="roaster" type="text" #roaster="ngModel" spellcheck="false"
+               autocapitalize="off" required>
+    </ion-input>
+  </ion-item>
     <ion-item>
       <ion-label floating>Notizen</ion-label>
       <ion-textarea autocomplete="true" spellcheck="true" autocorrect="true" name="note" #note="ngModel" rows="5" [(ngModel)]="data.note"></ion-textarea>

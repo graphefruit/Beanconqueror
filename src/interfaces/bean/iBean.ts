@@ -11,6 +11,7 @@ export interface IBean {
   roastingDate: string;
   note: string;
   filePath: string;
+  roaster:string;
   roast:ROASTS_ENUM;
   config:IConfig;
 }
