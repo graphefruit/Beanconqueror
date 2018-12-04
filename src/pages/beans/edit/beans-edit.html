@@ -10,7 +10,7 @@
   </ion-navbar>
 </ion-header>
 <ion-content>
-  <form #editBeanForm="ngForm" novalidate>
+
     <ion-item>
       <ion-label floating>Name*</ion-label>
       <ion-input [(ngModel)]="data.name" name="name" type="text" #name="ngModel" spellcheck="false"
@@ -42,14 +42,17 @@
       <img [src]="data.filePath" style="padding: 0px 20px;">
     </div>
 
-    <ion-row>
-      <ion-col>
-        <button ion-button (click)="dismiss()" dark outline block>Abbrechen</button>
-      </ion-col>
-      <ion-col>
-        <button ion-button (click)="editBean(editBeanForm)" type="submit" block>Speichern</button>
-      </ion-col>
 
-    </ion-row>
-  </form>
+
 </ion-content>
+<ion-footer>
+  <ion-row>
+    <ion-col>
+      <button ion-button (click)="dismiss()" dark outline block>Abbrechen</button>
+    </ion-col>
+    <ion-col>
+      <button ion-button (click)="editBean(editBeanForm)" type="submit" block>Speichern</button>
+    </ion-col>
+
+  </ion-row>
+</ion-footer>

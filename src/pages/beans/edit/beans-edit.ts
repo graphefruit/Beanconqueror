@@ -34,9 +34,16 @@ export class BeansEditModal {
 
 
   }
-
-  public editBean(form) {
-    if (form.valid) {
+  private __formValid():boolean{
+    let valid:boolean = true;
+    let name:string = this.data.name;
+    if (name == undefined || name == null || name.trim() == ""){
+      valid = false;
+    }
+    return valid;
+  }
+  public editBean() {
+    if (this.__formValid()) {
       this.__editBean();
     }
   }
