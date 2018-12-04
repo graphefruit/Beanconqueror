@@ -1,7 +1,7 @@
 /**Core**/
 import {Component, ViewChild} from '@angular/core';
 /**Ionic**/
-import {Nav, Platform, IonicApp, MenuController} from 'ionic-angular';
+import {Nav, Platform, IonicApp, MenuController, ModalController} from 'ionic-angular';
 import { AppVersion } from '@ionic-native/app-version';
 import { ThreeDeeTouch, ThreeDeeTouchQuickAction, ThreeDeeTouchForceTouch } from '@ionic-native/three-dee-touch';
 /**Ionic native**/
@@ -28,6 +28,7 @@ import {UIPreparationStorage} from '../services/uiPreparationStorage';
 import {UISettingsStorage} from '../services/uiSettingsStorage';
 import {PrivacyPage} from "../pages/info/privacy/privacy";
 import {TermsPage} from "../pages/info/terms/terms";
+import {BrewsAddModal} from "../pages/brews/add/brews-add";
 
 
 @Component({
@@ -61,7 +62,7 @@ export class MyApp {
               private uiPreparationStorage: UIPreparationStorage,
               private ionicApp: IonicApp, private menuCtrl: MenuController,
               private appMinimize: AppMinimize, private uiSettingsStorage:UISettingsStorage, private keyboard:Keyboard,
-              private threeDeeTouch: ThreeDeeTouch) {
+              private threeDeeTouch: ThreeDeeTouch, private modalCtrl:ModalController) {
 
 
 
@@ -121,12 +122,28 @@ export class MyApp {
 
     this.rootPage = this.ROOT_PAGE;
 
+    if (this.platform.is("ios"))
     this.threeDeeTouch.onHomeIconPressed().subscribe(
       (payload) => {
         // returns an object that is the button you presed
-        this.openPage(null,this.pages.brews);
+        this.__trackNewBrew();
       }
     )
+  }
+
+  private __trackNewBrew(){
+    let hasBeans = (this.uiBeanStorage.getAllEntries().length > 0);
+    let hasPreparationMethods = (this.uiPreparationStorage.getAllEntries().length > 0);
+
+    if (hasBeans && hasPreparationMethods)
+    {
+      let addBrewsModal = this.modalCtrl.create(BrewsAddModal, {});
+      addBrewsModal.onDidDismiss(() => {
+
+      });
+      addBrewsModal.present({animate: false});
+    }
+
   }
 
   private __registerBack() {

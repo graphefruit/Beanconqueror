@@ -63,7 +63,8 @@ import {KeysPipe} from '../pipes/keys';
 import {ToDecimalPipe} from '../pipes/toDecimal';
 
 /**Directive**/
-import {PreventCharacterDirective} from '../directive/preventCharacters'
+import {PreventCharacterDirective} from '../directive/preventCharacters';
+import {RemoveEmptyNumberDirective} from "../directive/removeEmptyNumber";
 /**Components**/
 import {TimerComponent} from '../components/timer/timer';
 
@@ -82,6 +83,7 @@ import {TimerComponent} from '../components/timer/timer';
     KeysPipe,
     ToDecimalPipe,
     PreventCharacterDirective,
+    RemoveEmptyNumberDirective,
     BrewsPage,
     BrewsAddModal, TimerComponent, BrewsEditModal,BrewsPhotoView,BrewsDetailsModal,BrewsTableModal,BrewsPopover,
     AboutPage, ContactPage, LicencesPage,TermsPage,PrivacyPage,
@@ -90,7 +92,7 @@ import {TimerComponent} from '../components/timer/timer';
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp, {
-      scrollAssist: false,
+      scrollAssist: true,
       autoFocusAssist: false,
       platform:'android',
       mode:'md',

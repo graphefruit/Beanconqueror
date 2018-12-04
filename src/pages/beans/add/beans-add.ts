@@ -22,13 +22,22 @@ export class BeansAddModal {
 
   public roastsEnum = ROASTS_ENUM;
 
+
   constructor(private viewCtrl: ViewController, private uiBeanStorage: UIBeanStorage, private uiImage: UIImage) {
     this.data.roastingDate = new Date().toISOString();
   }
 
+  private __formValid():boolean{
+    let valid:boolean = true;
+    let name:string = this.data.name;
+    if (name == undefined || name == null || name.trim() == ""){
+      valid = false;
+    }
+    return valid;
+  }
   public addBean(form) {
 
-    if (form.valid) {
+    if (this.__formValid()) {
       this.__addBean();
     }
   }
@@ -43,12 +52,7 @@ export class BeansAddModal {
       if (_option === "CHOOSE") {
         //CHOSE
         this.uiImage.choosePhoto().then((_path) => {
-          console.log(_path);
-
-          if (_path) {
-            this.data.filePath = _path.toString();
-          }
-
+          this.data.filePath = _path.toString();
         }, () => {
 
         })
@@ -63,6 +67,7 @@ export class BeansAddModal {
       }
     });
   }
+
 
 
   dismiss() {
