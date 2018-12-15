@@ -18,11 +18,11 @@
   </ion-item>
   <ion-item>
     <ion-label stacked>Gewicht</ion-label>
-    <ion-input [prevent-characters] [(ngModel)]="data.grind_weight" type="text"></ion-input>
+    <ion-input [remove-empty-number] [prevent-characters] [(ngModel)]="data.grind_weight" type="text"></ion-input>
   </ion-item>
   <ion-item>
     <ion-label stacked>Temperatur</ion-label>
-    <ion-input [prevent-characters] [(ngModel)]="data.brew_temperature" type="text"></ion-input>
+    <ion-input [remove-empty-number] [prevent-characters] [(ngModel)]="data.brew_temperature" type="text"></ion-input>
   </ion-item>
   <ion-item>
     <ion-label>Zubereitungsmethode</ion-label>
@@ -40,25 +40,25 @@
   </ion-item>
   <ion-item>
     <ion-label stacked>Temperatur Zeit</ion-label>
-    <ion-input [prevent-characters] [(ngModel)]="data.brew_temperature_time" type="text"></ion-input>
+    <ion-input [remove-empty-number] [prevent-characters] [(ngModel)]="data.brew_temperature_time" type="text"></ion-input>
   </ion-item>
   <ion-item>
     <ion-label stacked>Zeit</ion-label>
-    <ion-input [prevent-characters] [(ngModel)]="data.brew_time" type="text"></ion-input>
+    <ion-input [remove-empty-number] [prevent-characters] [(ngModel)]="data.brew_time" type="text"></ion-input>
   </ion-item>
   <ion-item>
     <ion-label stacked>Blooming-Zeit / Preinfusion</ion-label>
-    <ion-input [prevent-characters] [(ngModel)]="data.coffee_blooming_time" type="text"></ion-input>
+    <ion-input [remove-empty-number] [prevent-characters] [(ngModel)]="data.coffee_blooming_time" type="text"></ion-input>
   </ion-item>
   <ion-item>
     <ion-label stacked>Erster Kaffeetropfen</ion-label>
-    <ion-input [prevent-characters] [(ngModel)]="data.coffee_first_drip_time" type="text"></ion-input>
+    <ion-input [remove-empty-number] [prevent-characters] [(ngModel)]="data.coffee_first_drip_time" type="text"></ion-input>
   </ion-item>
   <ion-row>
     <ion-col col-8 col-sm-10>
       <ion-item>
         <ion-label floating>Bezugsmenge</ion-label>
-        <ion-input [prevent-characters] [(ngModel)]="data.brew_quantity" type="text"></ion-input>
+        <ion-input [remove-empty-number] [prevent-characters] [(ngModel)]="data.brew_quantity" type="text"></ion-input>
       </ion-item>
     </ion-col>
     <ion-col col-4 col-sm-2 align-self-end>
