@@ -10,7 +10,7 @@
   </ion-navbar>
 </ion-header>
 <ion-content>
-  <form #editBeanForm="ngForm" novalidate>
+
     <ion-item>
       <ion-label floating>Name*</ion-label>
       <ion-input [(ngModel)]="data.name" name="name" type="text" #name="ngModel" spellcheck="false"
@@ -30,6 +30,12 @@
                     name="roastingDate"
                     #roastingDate="ngModel"></ion-datetime>
     </ion-item>
+  <ion-item>
+    <ion-label floating >Röster</ion-label>
+    <ion-input [(ngModel)]="data.roaster" name="roaster" type="text" #roaster="ngModel" spellcheck="false"
+               autocapitalize="off" required>
+    </ion-input>
+  </ion-item>
     <ion-item>
       <ion-label floating>Notizen</ion-label>
       <ion-textarea autocomplete="true" spellcheck="true" autocorrect="true" name="note" #note="ngModel" rows="5"
@@ -42,14 +48,17 @@
       <img [src]="data.filePath" style="padding: 0px 20px;">
     </div>
 
-    <ion-row>
-      <ion-col>
-        <button ion-button (click)="dismiss()" dark outline block>Abbrechen</button>
-      </ion-col>
-      <ion-col>
-        <button ion-button (click)="editBean(editBeanForm)" type="submit" block>Speichern</button>
-      </ion-col>
 
-    </ion-row>
-  </form>
+
 </ion-content>
+<ion-footer>
+  <ion-row>
+    <ion-col>
+      <button ion-button (click)="dismiss()" dark outline block>Abbrechen</button>
+    </ion-col>
+    <ion-col>
+      <button ion-button (click)="editBean(editBeanForm)" type="submit" block>Speichern</button>
+    </ion-col>
+
+  </ion-row>
+</ion-footer>

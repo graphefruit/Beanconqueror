@@ -9,6 +9,7 @@ export class Bean implements IBean {
   public roastingDate: string;
   public note: string;
   public filePath: string;
+  public roaster:string;
   public config: Config;
   public roast:ROASTS_ENUM;
 
@@ -17,6 +18,7 @@ export class Bean implements IBean {
     this.roastingDate = "";
     this.note = "";
     this.filePath = "";
+    this.roaster="";
     this.config = new Config();
     this.roast = <ROASTS_ENUM>"UNKNOWN";
   }

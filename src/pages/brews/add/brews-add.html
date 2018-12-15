@@ -17,22 +17,15 @@
     </ion-item>
     <ion-item *ngIf="settings.grind_weight === true">
       <ion-label floating>Gewicht</ion-label>
-      <ion-input [prevent-characters] [(ngModel)]="data.grind_weight" type="text"></ion-input>
+      <ion-input [remove-empty-number] [prevent-characters] [(ngModel)]="data.grind_weight" type="text"></ion-input>
     </ion-item>
-    <ion-row *ngIf="settings.brew_temperature === true">
-      <ion-col no-padding col-4>
-        <ion-item>
-          <ion-label floating>Temperatur</ion-label>
-          <ion-input [prevent-characters] [(ngModel)]="data.brew_temperature" type="text"></ion-input>
-        </ion-item>
-      </ion-col>
-      <ion-col  no-padding col-8 align-self-end>
-        <ion-item no-lines>
-          <ion-range [(ngModel)]="data.brew_temperature" min="0" step="1" max="100" ></ion-range>
-        </ion-item>
-      </ion-col>
 
-    </ion-row>
+    <ion-item *ngIf="settings.brew_temperature === true">
+      <ion-label floating>Temperatur</ion-label>
+      <ion-input [prevent-characters] [remove-empty-number]  [(ngModel)]="data.brew_temperature"  type="text"></ion-input>
+    </ion-item>
+
+
     <ion-item *ngIf="settings.method_of_preparation === true">
       <ion-label floating>Zubereitungsmethode</ion-label>
       <ion-select [(ngModel)]="data.method_of_preparation">
@@ -48,11 +41,13 @@
         </ion-option>
       </ion-select>
     </ion-item>
-    <timer #brewTemperatureTime timeInSeconds="0" label="Temperatur Zeit" *ngIf="settings.brew_temperature_time === true"></timer>
-    <timer #timer timeInSeconds="0" label="Zeit" (timerStarted)="brewTimeStarted($event)" *ngIf="settings.brew_time === true"></timer>
+    <timer #brewTemperatureTime timeInSeconds="0" label="Temperatur Zeit"
+           *ngIf="settings.brew_temperature_time === true"></timer>
+    <timer #timer timeInSeconds="0" label="Zeit" (timerStarted)="brewTimeStarted($event)"
+           *ngIf="settings.brew_time === true"></timer>
     <ion-item *ngIf="settings.coffee_blooming_time === true">
       <ion-label stacked>Blooming-Zeit / Preinfusion</ion-label>
-      <ion-input [prevent-characters] [(ngModel)]="data.coffee_blooming_time" type="text"></ion-input>
+      <ion-input [remove-empty-number] [prevent-characters] [(ngModel)]="data.coffee_blooming_time" type="text"></ion-input>
       <button ion-button icon-left clear small color="primary" (click)="setCoffeeBloomingTime()" item-right>
         <ion-icon name="time"></ion-icon>
         Zeit!
@@ -60,17 +55,17 @@
     </ion-item>
     <ion-item *ngIf="settings.coffee_first_drip_time === true">
       <ion-label stacked>Erster Kaffeetropfen</ion-label>
-      <ion-input [prevent-characters] [(ngModel)]="data.coffee_first_drip_time" type="text"></ion-input>
+      <ion-input [remove-empty-number] [prevent-characters] [(ngModel)]="data.coffee_first_drip_time" type="text"></ion-input>
       <button ion-button icon-left clear small color="primary" (click)="setCoffeeDripTime()" item-right>
         <ion-icon name="time"></ion-icon>
         Zeit!
       </button>
     </ion-item>
     <ion-row *ngIf="settings.brew_quantity === true">
-      <ion-col  no-padding col-8 col-sm-10>
+      <ion-col no-padding col-8 col-sm-10>
         <ion-item>
           <ion-label floating>Bezugsmenge</ion-label>
-          <ion-input [prevent-characters] [(ngModel)]="data.brew_quantity" type="text"></ion-input>
+          <ion-input [remove-empty-number] [prevent-characters] [(ngModel)]="data.brew_quantity" type="text"></ion-input>
         </ion-item>
       </ion-col>
       <ion-col no-padding col-4 col-sm-2 align-self-end>

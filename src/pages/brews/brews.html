@@ -23,6 +23,7 @@
   <ion-card padding *ngIf="brewsView?.length == 0 && hasBeans && hasPreparationMethods">
     Du hast leider noch keinen Kaffee, seit der Benutzung dieser App getrunken (schon etwas schade oder?)
   </ion-card>
+
   <ion-list *ngFor="let brewView of brewsView">
     <ion-list-header class="brews-header">
       {{brewView.title}}

@@ -12,7 +12,7 @@ import {UIStorage} from "../../services/uiStorage";
 import {UIHelper} from "../../services/uiHelper";
 
 /**Native imports**/
-import {File} from "@ionic-native/file";
+import {File, FileEntry} from "@ionic-native/file";
 import {FileChooser} from '@ionic-native/file-chooser';
 import {AlertController, Platform} from "ionic-angular";
 import {FilePath} from "@ionic-native/file-path";
@@ -24,6 +24,8 @@ import {UIBrewStorage} from "../../services/uiBrewStorage";
 
 import {IBean} from "../../interfaces/bean/iBean";
 import {IBrew} from "../../interfaces/brew/iBrew";
+import {IOSFilePicker} from "@ionic-native/file-picker";
+import {SocialSharing} from "@ionic-native/social-sharing";
 @Component({
   templateUrl: 'settings.html'
 })
@@ -40,7 +42,9 @@ export class SettingsPage {
               private uiAlert: UIAlert,
               private uiPreparationStorage: UIPreparationStorage,
               private uiBeanStorage: UIBeanStorage,
-              private uiBrewStorage: UIBrewStorage) {
+              private uiBrewStorage: UIBrewStorage,
+              private iosFilePicker: IOSFilePicker,
+              private socialSharing:SocialSharing) {
 this.__initializeSettings();
   }
 
@@ -74,6 +78,27 @@ this.__initializeSettings();
           }
         });
 
+
+    }
+    else {
+      this.iosFilePicker.pickFile().then((uri) => {
+        if (uri && uri.endsWith(".json")) {
+
+            let path = uri.substring(0, uri.lastIndexOf('/'));
+            let file = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
+            if (path.indexOf("file://") !== 0)
+            {
+              path = "file://" + path;
+            }
+            this.__readJSONFile(path, file).then(() => {
+
+          }).catch(_err => {
+            this.uiAlert.showMessage("Datei konnte nicht gefunden werden (" + JSON.stringify(_err) + ")");
+          });
+        } else {
+          this.uiAlert.showMessage("Invalides Dateiformat");
+        }
+      });
 
     }
 
@@ -165,18 +190,33 @@ this.__initializeSettings();
     }
   }
 
+  public isAndroid() {
+    if (this.platform.is("android") === true)
+    {
+      return true;
+    }
+    else {
+      return true;
+    }
+  }
   public export() {
 
     this.uiStorage.export().then((_data) => {
 
-      this.uiHelper.exportJSON("Beanconqueror.json", JSON.stringify(_data)).then((_downloadedFilename) => {
-
+      this.uiHelper.exportJSON("Beanconqueror.json", JSON.stringify(_data)).then((_fileEntry:FileEntry) => {
+      if (this.platform.is("android"))
+      {
         let alert = this.alertCtrl.create({
           title: 'Heruntergeladen!',
-          subTitle: `JSON-Datei '${_downloadedFilename}' wurde erfolgreich in den Download-Ordner heruntergeladen!`,
+          subTitle: `JSON-Datei '${_fileEntry.name}' wurde erfolgreich in den Download-Ordner heruntergeladen!`,
           buttons: ['OK']
         });
         alert.present();
+      }
+      else {
+        this.socialSharing.share(null,null,_fileEntry.nativeURL);
+      }
+
 
       })
     })

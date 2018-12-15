@@ -16,7 +16,7 @@
       <p>Hier findest du alle spezifischen Einstellungen der App</p>
     </ion-card-content>
   </ion-card>
-  <ion-list>
+  <ion-list *ngIf="isAndroid()">
     <ion-item-divider color="light">Datenübertragen</ion-item-divider>
        <button ion-item (click)="import()">
             Import
