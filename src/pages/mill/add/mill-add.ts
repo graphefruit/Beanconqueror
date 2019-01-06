@@ -3,29 +3,31 @@ import {Component} from '@angular/core';
 /**Ionic**/
 import {ViewController} from 'ionic-angular';
 /**Services**/
-import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
+
 /**Classes**/
-import {Preparation} from '../../../classes/preparation/preparation';
+
+import {Mill} from "../../../classes/mill/mill";
+import {UIMillStorage} from "../../../services/uiMillStorage";
 
 @Component({
-  templateUrl: 'preparations-add.html',
+  templateUrl: 'mill-add.html',
 })
-export class PreparationsAddModal {
+export class MillAddModal {
 
-  public data:Preparation = new Preparation();
-  constructor(private viewCtrl: ViewController, private uiPreparationStorage:UIPreparationStorage) {
+  public data:Mill = new Mill();
+  constructor(private viewCtrl: ViewController, private uiMillStorage:UIMillStorage) {
 
   }
 
-  public addBean(form) {
+  public addMill(form) {
 
     if (form.valid) {
-      this.__addBean();
+      this.__addMill();
     }
   }
 
-  public __addBean(){
-    this.uiPreparationStorage.add(this.data);
+  public __addMill(){
+    this.uiMillStorage.add(this.data);
     this.dismiss();
   }
 

@@ -7,6 +7,7 @@ export interface IDefaultLastCoffeeParameters {
   brew_time: boolean,
   grind_size: boolean,
   grind_weight: boolean,
+  mill: boolean,
   method_of_preparation: boolean,
   brew_quantity: boolean,
   bean_type: boolean,

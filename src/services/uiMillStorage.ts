@@ -10,29 +10,31 @@ import {UIHelper} from '../services/uiHelper';
 import {UILog} from '../services/uiLog';
 import {UIStorage} from  '../services/uiStorage';
 import {StorageClass} from  '../classes/storageClass';
+import {Mill} from "../classes/mill/mill";
+import {IMill} from "../interfaces/mill/iMill";
 
 
 @Injectable()
-export class UIPreparationStorage extends StorageClass {
+export class UIMillStorage extends StorageClass {
   /**
    * Singelton instance
    */
-  public static instance: UIPreparationStorage;
+  public static instance: UIMillStorage;
   constructor(protected uiStorage: UIStorage,
               protected uiHelper: UIHelper,
               protected uiLog: UILog) {
-    super(uiStorage, uiHelper, uiLog, "PREPARATION");
-    if (UIPreparationStorage.instance == null) {
-      UIPreparationStorage.instance = this;
+    super(uiStorage, uiHelper, uiLog, "MILL");
+    if (UIMillStorage.instance == null) {
+      UIMillStorage.instance = this;
     }
   }
 
-  public getPreparationNameByUUID(_uuid: string):string {
+  public getMillNameByUUID(_uuid: string):string {
     if (_uuid.toLowerCase() === "standard") {
       return "Standard";
     }
     else {
-      let entries: Array<IPreparation> = this.getAllEntries();
+      let entries: Array<IMill> = this.getAllEntries();
       for (let i = 0; i < entries.length; i++) {
         if (entries[i].config.uuid === _uuid) {
           return entries[i].name;
@@ -45,24 +47,24 @@ export class UIPreparationStorage extends StorageClass {
   }
 
 
-  public static getInstance(): UIPreparationStorage {
-    if (UIPreparationStorage.instance) {
-      return UIPreparationStorage.instance;
+  public static getInstance(): UIMillStorage {
+    if (UIMillStorage.instance) {
+      return UIMillStorage.instance;
     }
     return null;
   }
 
-  public getAllEntries(): Array<Preparation> {
-    let preparationEntries:Array<any> = super.getAllEntries();
-    let preparations:Array<Preparation> = [];
+  public getAllEntries(): Array<Mill> {
+    let entries:Array<any> = super.getAllEntries();
+    let entry:Array<Mill> = [];
 
-    for (let i=0;i<preparationEntries.length;i++){
+    for (let i=0;i<entries.length;i++){
       let preparationObj:Preparation = new Preparation();
-      preparationObj.initializeByObject(preparationEntries[i]);
-      preparations.push(preparationObj);
+      preparationObj.initializeByObject(entries[i]);
+      entry.push(preparationObj);
 
     }
-    return preparations;
+    return entry;
   }
 
 }

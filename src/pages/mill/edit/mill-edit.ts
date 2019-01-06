@@ -3,38 +3,37 @@ import {Component} from '@angular/core';
 /**Ionic**/
 import {NavParams, ViewController} from 'ionic-angular';
 /**Services**/
-import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
+
 import {UIHelper} from '../../../services/uiHelper';
-/**Classes**/
-import {Preparation} from '../../../classes/preparation/preparation';
-/**Interfaces**/
-import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 
+import {IMill} from "../../../interfaces/mill/iMill";
+import {Mill} from "../../../classes/mill/mill";
+import {UIMillStorage} from "../../../services/uiMillStorage";
 @Component({
-  templateUrl: 'preparations-edit.html',
+  templateUrl: 'mill-edit.html',
 })
-export class PreparationsEditModal {
+export class MillEditModal {
 
-  public data:Preparation = new Preparation();
+  public data:Mill = new Mill();
 
-  private preparation:IPreparation;
-  constructor(private navParams: NavParams,private viewCtrl: ViewController, private uiPreparationStorage:UIPreparationStorage, private uiHelper:UIHelper) {
+  private mill:IMill;
+  constructor(private navParams: NavParams,private viewCtrl: ViewController, private uiMillStorage:UIMillStorage, private uiHelper:UIHelper) {
 
   }
 
   ionViewWillEnter() {
-    this.preparation = this.navParams.get('PREPARATION');
-    this.data = this.uiHelper.copyData(this.preparation);
+    this.mill = this.navParams.get('MILL');
+    this.data = this.uiHelper.copyData(this.mill);
   }
 
-  public editBean(form) {
+  public editMill(form) {
     if (form.valid) {
-      this.__editBean();
+      this.__editMill();
     }
   }
 
-  public __editBean(){
-    this.uiPreparationStorage.update(this.data);
+  public __editMill(){
+    this.uiMillStorage.update(this.data);
     this.dismiss();
   }
 

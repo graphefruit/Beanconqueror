@@ -39,6 +39,13 @@
     </ion-select>
   </ion-item>
   <ion-item>
+    <ion-label>Mühle</ion-label>
+    <ion-select [(ngModel)]="data.mill">
+      <ion-option *ngFor="let mill of mills" value="{{mill.config.uuid}}">{{mill.name}}
+      </ion-option>
+    </ion-select>
+  </ion-item>
+  <ion-item>
     <ion-label stacked>Temperatur Zeit</ion-label>
     <ion-input [remove-empty-number] [prevent-characters] [(ngModel)]="data.brew_temperature_time" type="text"></ion-input>
   </ion-item>

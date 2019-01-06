@@ -13,7 +13,7 @@
       <button ion-button icon-only (click)="scaleFontBigger()">
         <ion-icon class="fa fa-search-plus"></ion-icon>
       </button>
-         <button [disabled]="!hasBeans || !hasPreparationMethods" ion-button icon-only (click)="addBrew()">
+         <button [disabled]="!hasBeans || !hasPreparationMethods || !hasMills" ion-button icon-only (click)="addBrew()">
         <ion-icon name="add"></ion-icon>
       </button>
     </ion-buttons>

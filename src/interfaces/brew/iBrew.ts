@@ -19,6 +19,11 @@ export interface IBrew {
    */
   method_of_preparation:string,
   /**
+   * Inherits the specific mill for a brew, default: Standard.
+   * E.g. C40, Kinu M47, Mazzer, Eureka Mignon
+   */
+  mill:string,
+  /**
    * Inherits the used bean for a brew, default: Standard
    */
   bean:string,

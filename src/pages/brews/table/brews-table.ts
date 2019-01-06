@@ -20,6 +20,7 @@ import {IBrew} from '../../../interfaces/brew/iBrew';
 import {BrewView} from "../../../classes/brew/brewView";
 import {UIBrewStorage} from "../../../services/uiBrewStorage";
 import {BrewsAddModal} from "../add/brews-add";
+import {UIMillStorage} from "../../../services/uiMillStorage";
 
 
 @Component({
@@ -41,12 +42,14 @@ export class BrewsTableModal {
 
   public hasBeans: boolean = false;
   public hasPreparationMethods: boolean = false;
+  public hasMills: boolean = false;
 
   constructor(private viewCtrl: ViewController, private navParams: NavParams, private uiBeanStorage: UIBeanStorage,
               private uiPreparationStorage: UIPreparationStorage,
               public uiHelper: UIHelper, private uiImage: UIImage,
               private uiSettingsStorage: UISettingsStorage, private uiBrewStorage: UIBrewStorage,
-              private renderer: Renderer2, private modalCtrl:ModalController) {
+              private renderer: Renderer2, private modalCtrl:ModalController,
+              private uiMillStorage:UIMillStorage) {
     this.settings = this.uiSettingsStorage.getSettings();
 
     //Moved from ionViewDidEnter, because of Ionic issues with ion-range
@@ -55,6 +58,7 @@ export class BrewsTableModal {
     this.beans = this.uiBeanStorage.getAllEntries();
     this.hasBeans = (this.uiBeanStorage.getAllEntries().length > 0);
     this.hasPreparationMethods = (this.uiPreparationStorage.getAllEntries().length > 0);
+    this.hasMills = (this.uiMillStorage.getAllEntries().length > 0);
     this.__initializeBrews();
   }
 

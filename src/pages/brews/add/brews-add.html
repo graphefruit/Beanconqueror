@@ -41,6 +41,13 @@
         </ion-option>
       </ion-select>
     </ion-item>
+    <ion-item *ngIf="settings.mill === true">
+      <ion-label floating>Mühle</ion-label>
+      <ion-select [(ngModel)]="data.mill">
+        <ion-option *ngFor="let method of mills" value="{{method.config.uuid}}">{{method.name}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
     <timer #brewTemperatureTime timeInSeconds="0" label="Temperatur Zeit"
            *ngIf="settings.brew_temperature_time === true"></timer>
     <timer #timer timeInSeconds="0" label="Zeit" (timerStarted)="brewTimeStarted($event)"
