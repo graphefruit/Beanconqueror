@@ -19,6 +19,8 @@ import {IBrew} from '../../../interfaces/brew/iBrew';
 
 /**Enums**/
 import {BREW_QUANTITY_TYPES_ENUM} from "../../../enums/brews/brewQuantityTypes";
+import {UIMillStorage} from "../../../services/uiMillStorage";
+import {IMill} from "../../../interfaces/mill/iMill";
 
 
 @Component({
@@ -30,23 +32,23 @@ export class BrewsEditModal {
   @ViewChild('photoSlides') photoSlides: Slides;
   public data: Brew = new Brew();
 
-  private brew: IBrew;
-
   public brewQuantityTypeEnums = BREW_QUANTITY_TYPES_ENUM;
-  method_of_preparations: Array<IPreparation> = [];
-  beans: Array<IBean> = [];
-  activeIndex: number = 0;
+  public method_of_preparations: Array<IPreparation> = [];
+  public beans: Array<IBean> = [];
+  public mills: Array<IMill> = [];
 
   constructor(private viewCtrl: ViewController, private navParams: NavParams, private uiBeanStorage: UIBeanStorage,
               private uiPreparationStorage: UIPreparationStorage, private uiBrewStorage: UIBrewStorage,
-              public uiHelper: UIHelper, private uiImage:UIImage) {
+              public uiHelper: UIHelper, private uiImage:UIImage,
+              private uiMillStorage: UIMillStorage) {
 
     //Moved from ionViewDidEnter, because of Ionic issues with ion-range
-    this.brew = this.navParams.get('BREW');
-    let copy:IBrew = this.uiHelper.copyData(this.brew);
-    this.data.initializeByObject(copy);
+    let brew:IBrew = this.uiHelper.copyData(this.navParams.get('BREW'));
+
+    this.data.initializeByObject(brew);
     this.method_of_preparations = this.uiPreparationStorage.getAllEntries();
     this.beans = this.uiBeanStorage.getAllEntries();
+    this.mills = this.uiMillStorage.getAllEntries();
   }
 
 
@@ -102,12 +104,5 @@ export class BrewsEditModal {
     this.uiBrewStorage.update(this.data);
     this.dismiss();
   }
-
-
-  public nextPage() {
-
-    this.activeIndex++;
-  }
-
 
 }

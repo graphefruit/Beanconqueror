@@ -7,6 +7,7 @@ export class DefaultLastCoffeeParameters implements IDefaultLastCoffeeParameters
   public brew_temperature_time:boolean;
   public grind_size: boolean;
   public grind_weight: boolean;
+  public mill: boolean;
   public method_of_preparation: boolean;
   public brew_quantity: boolean;
   public bean_type: boolean;
@@ -24,6 +25,7 @@ export class DefaultLastCoffeeParameters implements IDefaultLastCoffeeParameters
     this.brew_time = true;
     this.grind_size = true;
     this.grind_weight = true;
+    this.mill = true;
     this.method_of_preparation = true;
     this.brew_quantity = true;
     this.bean_type = true;

@@ -1,34 +1,22 @@
 /**Interfaces**/
-import {IBean} from "../../interfaces/bean/iBean";
+import {IMill} from "../../interfaces/mill/iMill";
 /**Classes**/
 import {Config} from "../objectConfig/objectConfig";
-/**Enums**/
-import {ROASTS_ENUM} from '../../enums/beans/roasts';
-export class Bean implements IBean {
+export class Mill implements IMill {
   public name: string;
-  public roastingDate: string;
-  public note: string;
-  public filePath: string;
-  public roaster:string;
+  public note:string;
   public config: Config;
-  public roast:ROASTS_ENUM;
+
 
   constructor() {
     this.name = "";
-    this.roastingDate = "";
-    this.note = "";
-    this.filePath = "";
-    this.roaster="";
+    this.note ="";
     this.config = new Config();
-    this.roast = <ROASTS_ENUM>"UNKNOWN";
+
   }
 
-  public getRoastName():string{
-    return ROASTS_ENUM[this.roast];
-  }
-
-  public initializeByObject(beanObj: IBean) {
-    Object.assign(this, beanObj)
+  public initializeByObject(millObj: IMill) {
+    Object.assign(this, millObj)
   }
 
 }

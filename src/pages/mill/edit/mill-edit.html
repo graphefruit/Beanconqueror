@@ -10,7 +10,7 @@
   </ion-navbar>
 </ion-header>
 <ion-content>
-  <form #editBeanForm="ngForm" novalidate>
+  <form #editMillForm="ngForm" novalidate>
     <ion-item>
       <ion-label floating>Name*</ion-label>
       <ion-input [(ngModel)]="data.name" name="name" type="text" #name="ngModel" spellcheck="false"
@@ -26,7 +26,7 @@
         <button ion-button (click)="dismiss()" dark outline block>Abbrechen</button>
       </ion-col>
       <ion-col>
-        <button ion-button (click)="editBean(editBeanForm)" type="submit" block>Speichern</button>
+        <button ion-button (click)="editMill(editMillForm)" type="submit" block>Speichern</button>
       </ion-col>
 
     </ion-row>

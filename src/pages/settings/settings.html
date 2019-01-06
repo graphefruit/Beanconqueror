@@ -16,7 +16,7 @@
       <p>Hier findest du alle spezifischen Einstellungen der App</p>
     </ion-card-content>
   </ion-card>
-  <ion-list *ngIf="isAndroid()">
+  <ion-list *ngIf="isMobile()">
     <ion-item-divider color="light">Datenübertragen</ion-item-divider>
        <button ion-item (click)="import()">
             Import
@@ -66,6 +66,10 @@
       <ion-label>Zubereitungsmethode</ion-label>
       <ion-checkbox [(ngModel)]="settings.default_last_coffee_parameters.method_of_preparation" (ngModelChange)="saveSettings($event)"></ion-checkbox>
     </ion-item>
+      <ion-item>
+        <ion-label>Mühle</ion-label>
+        <ion-checkbox [(ngModel)]="settings.default_last_coffee_parameters.mill" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+      </ion-item>
     <ion-item>
       <ion-label>Bezugsmenge</ion-label>
       <ion-checkbox [(ngModel)]="settings.default_last_coffee_parameters.brew_quantity" (ngModelChange)="saveSettings($event)"></ion-checkbox>
@@ -127,6 +131,10 @@
     <ion-item>
       <ion-label>Zubereitungsmethode</ion-label>
       <ion-checkbox [(ngModel)]="settings.method_of_preparation" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label>Mühle</ion-label>
+      <ion-checkbox [(ngModel)]="settings.mill" (ngModelChange)="saveSettings($event)"></ion-checkbox>
     </ion-item>
     <ion-item>
       <ion-label>Bezugsmenge</ion-label>

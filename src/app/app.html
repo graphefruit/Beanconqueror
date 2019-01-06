@@ -23,6 +23,10 @@
         <i class="menu-icon fa {{pages.preparation.icon}}"></i>
         {{pages.preparation.title}}
       </button>
+      <button ion-item (click)="openPage($event,pages.mill)" [class.active]="pages.mill.active">
+        <ion-icon class="menu-icon"  name="{{pages.mill.icon}}"></ion-icon>
+        {{pages.mill.title}}
+      </button>
       <ion-item class="no-border" (click)="toggleAbout =!toggleAbout">
         <div>
           <ion-icon style="margin-right: 0px;" class="menu-icon" item-left name="md-information-circle"></ion-icon>

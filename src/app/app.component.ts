@@ -29,6 +29,11 @@ import {UISettingsStorage} from '../services/uiSettingsStorage';
 import {PrivacyPage} from "../pages/info/privacy/privacy";
 import {TermsPage} from "../pages/info/terms/terms";
 import {BrewsAddModal} from "../pages/brews/add/brews-add";
+import {MillsPage} from "../pages/mill/mills";
+import {UIMillStorage} from "../services/uiMillStorage";
+import {Mill} from "../classes/mill/mill";
+import {IBrew} from "../interfaces/brew/iBrew";
+import {Brew} from "../classes/brew/brew";
 
 
 @Component({
@@ -46,6 +51,7 @@ export class MyApp {
     "brews": {title: 'Brühungen', component: BrewsPage, icon: 'fa-coffee', active: false},
     "beans": {title: 'Bohnen', component: BeansPage, icon: 'fa-pagelines', active: false},
     "preparation": {title: 'Zubereitungsmethoden', component: PreparationsPage, icon: 'fa-flask', active: false},
+    "mill": {title: 'Mühlen', component: MillsPage, icon: 'md-cut', active: false},
     "about": {title: 'Über uns', component: AboutPage, icon: 'md-information', active: false},
     "contact": {title: 'Kontakt', component: ContactPage, icon: 'md-mail', active: false},
     "privacy": {title: 'Privacy', component: PrivacyPage, icon: 'md-document', active: false},
@@ -60,6 +66,7 @@ export class MyApp {
               private uiBeanStorage: UIBeanStorage,
               private uiBrewStorage:UIBrewStorage,
               private uiPreparationStorage: UIPreparationStorage,
+              private uiMillStorage:UIMillStorage,
               private ionicApp: IonicApp, private menuCtrl: MenuController,
               private appMinimize: AppMinimize, private uiSettingsStorage:UISettingsStorage, private keyboard:Keyboard,
               private threeDeeTouch: ThreeDeeTouch, private modalCtrl:ModalController) {
@@ -98,16 +105,17 @@ export class MyApp {
       let preparationStorageReadyCallback = this.uiPreparationStorage.storageReady();
       let uiSettingsStorageReadyCallback = this.uiSettingsStorage.storageReady();
       let brewStorageReadyCallback = this.uiBrewStorage.storageReady();
+      let millStorageReadyCallback = this.uiMillStorage.storageReady();
       Promise.all([
         beanStorageReadyCallback,
         preparationStorageReadyCallback,
         brewStorageReadyCallback,
         uiSettingsStorageReadyCallback,
+        millStorageReadyCallback,
       ]).then(() => {
         this.uiLog.log("App finished loading");
+        this.__checkUpdate();
         this.__initApp();
-
-
 
       }, () => {
         this.uiLog.log("App finished loading");
@@ -115,6 +123,24 @@ export class MyApp {
       })
     });
 
+  }
+
+  private __checkUpdate() {
+    if (this.uiBrewStorage.getAllEntries().length > 0 && this.uiMillStorage.getAllEntries().length <=0)
+    {
+      //We got an update and we got no mills yet, therefore we add a Standard mill.
+      let data:Mill = new Mill();
+      data.name = "Standard";
+      this.uiMillStorage.add(data);
+
+      let brews:Array<Brew> = this.uiBrewStorage.getAllEntries();
+      for (let i=0;i<brews.length;i++)
+      {
+        brews[i].mill = data.config.uuid;
+
+        this.uiBrewStorage.update(brews[i]);
+      }
+    }
   }
 
   private __initApp() {

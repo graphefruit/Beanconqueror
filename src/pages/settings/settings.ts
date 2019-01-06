@@ -26,6 +26,7 @@ import {IBean} from "../../interfaces/bean/iBean";
 import {IBrew} from "../../interfaces/brew/iBrew";
 import {IOSFilePicker} from "@ionic-native/file-picker";
 import {SocialSharing} from "@ionic-native/social-sharing";
+import {UIMillStorage} from "../../services/uiMillStorage";
 @Component({
   templateUrl: 'settings.html'
 })
@@ -35,7 +36,10 @@ export class SettingsPage {
 
   public BREW_VIEWS = BREW_VIEW_ENUM;
 
-  constructor(public platform: Platform, public uiSettingsStorage: UISettingsStorage, public uiStorage: UIStorage, public uiHelper: UIHelper,
+  constructor(public platform: Platform,
+              public uiSettingsStorage: UISettingsStorage,
+              public uiStorage: UIStorage,
+              public uiHelper: UIHelper,
               private fileChooser: FileChooser,
               private filePath: FilePath,
               private file: File, private alertCtrl: AlertController,
@@ -43,9 +47,10 @@ export class SettingsPage {
               private uiPreparationStorage: UIPreparationStorage,
               private uiBeanStorage: UIBeanStorage,
               private uiBrewStorage: UIBrewStorage,
+              private uiMillStorage: UIMillStorage,
               private iosFilePicker: IOSFilePicker,
               private socialSharing:SocialSharing) {
-this.__initializeSettings();
+      this.__initializeSettings();
   }
 
   private __initializeSettings(){
@@ -117,6 +122,7 @@ this.__initializeSettings();
             this.__cleanupImportBeanData(parsedContent[this.uiBeanStorage.getDBPath()]);
             this.__cleanupImportBrewData(parsedContent[this.uiBrewStorage.getDBPath()]);
 
+
             this.uiStorage.import(parsedContent).then((_data) => {
               if (_data.BACKUP === false) {
                 this.__reinitializeStorages().then(() => {
@@ -155,15 +161,18 @@ this.__initializeSettings();
       this.uiBrewStorage.reinitializeStorage();
       this.uiPreparationStorage.reinitializeStorage();
       this.uiSettingsStorage.reinitializeStorage();
+      this.uiMillStorage.reinitializeStorage();
 
       let beanStorageReadyCallback = this.uiBeanStorage.storageReady();
       let preparationStorageReadyCallback = this.uiPreparationStorage.storageReady();
       let uiSettingsStorageReadyCallback = this.uiSettingsStorage.storageReady();
       let brewStorageReadyCallback = this.uiBrewStorage.storageReady();
+      let millStorageReadyCallback = this.uiMillStorage.storageReady();
       Promise.all([
         beanStorageReadyCallback,
         preparationStorageReadyCallback,
         brewStorageReadyCallback,
+        millStorageReadyCallback,
         uiSettingsStorageReadyCallback,
       ]).then(() => {
         resolve();
@@ -190,13 +199,13 @@ this.__initializeSettings();
     }
   }
 
-  public isAndroid() {
-    if (this.platform.is("android") === true)
+  public isMobile() {
+    if (this.platform.is("android") === true || this.platform.is("ios") === true)
     {
       return true;
     }
     else {
-      return true;
+      return false;
     }
   }
   public export() {

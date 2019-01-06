@@ -12,6 +12,7 @@ export interface ISettings {
   grind_size: boolean,
   grind_weight: boolean,
   method_of_preparation: boolean,
+  mill:boolean,
   brew_quantity: boolean,
   bean_type: boolean,
   brew_temperature:boolean,

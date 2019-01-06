@@ -67,6 +67,10 @@ import {PreventCharacterDirective} from '../directive/preventCharacters';
 import {RemoveEmptyNumberDirective} from "../directive/removeEmptyNumber";
 /**Components**/
 import {TimerComponent} from '../components/timer/timer';
+import {UIMillStorage} from "../services/uiMillStorage";
+import {MillsPage} from "../pages/mill/mills";
+import {MillAddModal} from "../pages/mill/add/mill-add";
+import {MillEditModal} from "../pages/mill/edit/mill-edit";
 
 @NgModule({
   declarations: [
@@ -79,6 +83,9 @@ import {TimerComponent} from '../components/timer/timer';
     PreparationsPage,
     PreparationsAddModal,
     PreparationsEditModal,
+    MillsPage,
+    MillAddModal,
+    MillEditModal,
     FormatDatePipe,
     KeysPipe,
     ToDecimalPipe,
@@ -113,6 +120,9 @@ import {TimerComponent} from '../components/timer/timer';
     PreparationsPage,
     PreparationsAddModal,
     PreparationsEditModal,
+    MillsPage,
+    MillAddModal,
+    MillEditModal,
     BrewsPage, BrewsAddModal, TimerComponent, BrewsEditModal,BrewsPhotoView,BrewsDetailsModal,BrewsTableModal,BrewsPopover,
     AboutPage, ContactPage, LicencesPage,TermsPage,PrivacyPage,
   ],
@@ -132,6 +142,7 @@ import {TimerComponent} from '../components/timer/timer';
     UIHelper,
     UILog,
     UIPreparationStorage,
+    UIMillStorage,
     UIAlert,
     UIImage,
     UIBeanStorage, AppMinimize, {provide: ErrorHandler, useClass: IonicErrorHandler},
