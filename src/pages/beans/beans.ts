@@ -22,8 +22,9 @@ import {Brew} from '../../classes/brew/brew';
 })
 export class BeansPage {
 
-  beans: Array<Bean> = null;
+  beans: Array<Bean> = [];
 
+  bean_segment:string ="open";
   constructor(public modalCtrl: ModalController, private changeDetectorRef: ChangeDetectorRef, private uiBeanStorage: UIBeanStorage, private uiAlert: UIAlert, private uiBrewStorage:UIBrewStorage) {
 
   }
@@ -34,6 +35,19 @@ export class BeansPage {
 
   private __initializeBeans() {
     this.beans = this.uiBeanStorage.getAllEntries()
+  }
+
+  public getOpenBeans()
+  {
+
+    return this.beans.filter(
+      bean => bean.finished === false);
+  }
+  public getFinishedBeans()
+  {
+
+    return this.beans.filter(
+      bean => bean.finished === true);
   }
 
   public loadBeans() {
