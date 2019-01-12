@@ -60,6 +60,24 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`
       "ACTIVE":false,
       "DESCRIPTION":`Für kommerzielle und private Nutzung freigegeben. `
     },
+    "icon-muehle":{
+      "TITLE":"Icon Mühle",
+      "LINK":"https://www.flaticon.com/authors/photo3idea-studio",
+      "ACTIVE":false,
+      "DESCRIPTION":`<div>Icons made by <a href="https://www.flaticon.com/authors/photo3idea-studio" title="photo3idea_studio">photo3idea_studio</a> from <a href="https://www.flaticon.com/" 			    title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" 			    title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>`
+    },
+    "icon-filter":{
+      "TITLE":"Icon Filter",
+      "LINK":"https://www.flaticon.com/authors/ddara",
+      "ACTIVE":false,
+      "DESCRIPTION":`<div>Icons made by <a href="https://www.flaticon.com/authors/ddara" title="dDara">dDara</a> from <a href="https://www.flaticon.com/" 			    title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" 			    title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>`
+    },
+    "icon-bean":{
+      "TITLE":"Icon Bean",
+      "LINK":"https://www.freepik.com/",
+      "ACTIVE":false,
+      "DESCRIPTION":`<div>Icons made by <a href="https://www.freepik.com/" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" 			    title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" 			    title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>`
+    }
   }
 
   constructor(private uiHelper:UIHelper) {

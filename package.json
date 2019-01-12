@@ -16,6 +16,7 @@
         "ionic_sass": "./compile/sass.js"
     },
     "dependencies": {
+        "@angular/animations": "5.2.11",
         "@angular/common": "5.2.11",
         "@angular/compiler": "5.2.11",
         "@angular/compiler-cli": "5.2.11",
@@ -33,6 +34,7 @@
         "@ionic-native/file-path": "^4.19.0",
         "@ionic-native/file-picker": "^4.19.0",
         "@ionic-native/image-picker": "4.9.0",
+        "@ionic-native/in-app-browser": "^4.19.0",
         "@ionic-native/keyboard": "^4.19.0",
         "@ionic-native/media-capture": "^4.19.0",
         "@ionic-native/social-sharing": "^4.19.0",
@@ -52,6 +54,7 @@
         "cordova-plugin-filechooser": "^1.2.0",
         "cordova-plugin-filepath": "^1.5.1",
         "cordova-plugin-filepicker": "1.1.5",
+        "cordova-plugin-inappbrowser": "3.0.0",
         "cordova-plugin-ionic-keyboard": "2.1.3",
         "cordova-plugin-ionic-webview": "^1.2.1",
         "cordova-plugin-media-capture": "3.0.2",
@@ -97,7 +100,8 @@
             "cordova-plugin-telerik-imagepicker": {
                 "PHOTO_LIBRARY_USAGE_DESCRIPTION": "Access to library needed to choose photos"
             },
-            "cordova-plugin-media-capture": {}
+            "cordova-plugin-media-capture": {},
+            "cordova-plugin-inappbrowser": {}
         },
         "platforms": [
             "ios",

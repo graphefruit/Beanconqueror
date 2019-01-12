@@ -36,7 +36,7 @@ export class PreparationsPage {
   }
 
   private __initializePreparations() {
-    this.preparations = this.uiPreparationStorage.getAllEntries()
+    this.preparations = this.uiPreparationStorage.getAllEntries().sort((a, b) => a.name.localeCompare(b.name));
   }
 
   public addPreparation() {

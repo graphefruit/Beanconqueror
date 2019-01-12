@@ -24,6 +24,14 @@ export interface IBrew {
    */
   mill:string,
   /**
+   * Inherits the used mill speed (rounds per minute), default: 0
+   */
+  mill_speed:number;
+  /**
+   * Inherits the actual used pressure profile (name and number)
+   */
+  pressure_profile:string;
+  /**
    * Inherits the used bean for a brew, default: Standard
    */
   bean:string,

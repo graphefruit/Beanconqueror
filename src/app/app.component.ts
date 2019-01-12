@@ -34,6 +34,10 @@ import {UIMillStorage} from "../services/uiMillStorage";
 import {Mill} from "../classes/mill/mill";
 import {IBrew} from "../interfaces/brew/iBrew";
 import {Brew} from "../classes/brew/brew";
+import {UIBrewHelper} from "../services/uiBrewHelper";
+import {BeansAddModal} from "../pages/beans/add/beans-add";
+import {PreparationsAddModal} from "../pages/preparations/add/preparations-add";
+import {MillAddModal} from "../pages/mill/add/mill-add";
 
 
 @Component({
@@ -67,6 +71,7 @@ export class MyApp {
               private uiBrewStorage:UIBrewStorage,
               private uiPreparationStorage: UIPreparationStorage,
               private uiMillStorage:UIMillStorage,
+              private uiBrewHelper:UIBrewHelper,
               private ionicApp: IonicApp, private menuCtrl: MenuController,
               private appMinimize: AppMinimize, private uiSettingsStorage:UISettingsStorage, private keyboard:Keyboard,
               private threeDeeTouch: ThreeDeeTouch, private modalCtrl:ModalController) {
@@ -151,18 +156,33 @@ export class MyApp {
     if (this.platform.is("ios"))
     this.threeDeeTouch.onHomeIconPressed().subscribe(
       (payload) => {
+        console.log(payload);
+        if (payload.type =="Brew")
+        {
+          this.__trackNewBrew();
+        }
+        else if (payload.type == "Bean")
+        {
+          this.__trackNewBean();
+        }
+        else if (payload.type == "Preparation")
+        {
+          this.__trackNewPreparation();
+        }
+        else if (payload.type =="Mill")
+        {
+          this.__trackNewMill();
+        }
         // returns an object that is the button you presed
-        this.__trackNewBrew();
+
       }
     )
   }
 
   private __trackNewBrew(){
-    let hasBeans = (this.uiBeanStorage.getAllEntries().length > 0);
-    let hasPreparationMethods = (this.uiPreparationStorage.getAllEntries().length > 0);
-    let hasMills = (this.uiMillStorage.getAllEntries().length > 0);
 
-    if (hasBeans && hasPreparationMethods && hasMills)
+
+    if (this.uiBrewHelper.canBrew())
     {
       let addBrewsModal = this.modalCtrl.create(BrewsAddModal, {});
       addBrewsModal.onDidDismiss(() => {
@@ -170,6 +190,39 @@ export class MyApp {
       });
       addBrewsModal.present({animate: false});
     }
+
+  }
+  private __trackNewBean(){
+
+
+      let modal = this.modalCtrl.create(BeansAddModal, {});
+      modal.onDidDismiss(() => {
+
+      });
+      modal.present({animate: false});
+
+
+  }
+  private __trackNewPreparation(){
+
+      let modal = this.modalCtrl.create(PreparationsAddModal, {});
+      modal.onDidDismiss(() => {
+
+      });
+      modal.present({animate: false});
+
+
+  }
+  private __trackNewMill(){
+
+
+
+      let modal = this.modalCtrl.create(MillAddModal, {});
+      modal.onDidDismiss(() => {
+
+      });
+      modal.present({animate: false});
+
 
   }
 

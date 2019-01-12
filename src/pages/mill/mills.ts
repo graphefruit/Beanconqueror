@@ -40,7 +40,7 @@ export class MillsPage {
   }
 
   private __initializeMills() {
-    this.mills = this.uiMillStorage.getAllEntries()
+    this.mills = this.uiMillStorage.getAllEntries().sort((a, b) => a.name.localeCompare(b.name));
   }
 
   public add() {

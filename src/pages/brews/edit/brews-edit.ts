@@ -46,9 +46,9 @@ export class BrewsEditModal {
     let brew:IBrew = this.uiHelper.copyData(this.navParams.get('BREW'));
 
     this.data.initializeByObject(brew);
-    this.method_of_preparations = this.uiPreparationStorage.getAllEntries();
-    this.beans = this.uiBeanStorage.getAllEntries();
-    this.mills = this.uiMillStorage.getAllEntries();
+    this.method_of_preparations = this.uiPreparationStorage.getAllEntries().sort((a, b) => a.name.localeCompare(b.name));
+    this.beans = this.uiBeanStorage.getAllEntries().sort((a, b) => a.name.localeCompare(b.name));
+    this.mills = this.uiMillStorage.getAllEntries().sort((a, b) => a.name.localeCompare(b.name));
   }
 
 

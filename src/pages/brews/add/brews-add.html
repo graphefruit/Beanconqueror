@@ -29,7 +29,6 @@
     <ion-item *ngIf="settings.method_of_preparation === true">
       <ion-label floating>Zubereitungsmethode</ion-label>
       <ion-select [(ngModel)]="data.method_of_preparation">
-
         <ion-option *ngFor="let method of method_of_preparations" value="{{method.config.uuid}}">{{method.name}}
         </ion-option>
       </ion-select>
@@ -47,6 +46,14 @@
         <ion-option *ngFor="let method of mills" value="{{method.config.uuid}}">{{method.name}}
         </ion-option>
       </ion-select>
+    </ion-item>
+    <ion-item *ngIf="settings.mill_speed === true">
+      <ion-label floating>Mühlengeschwindikeit (rpm)</ion-label>
+      <ion-input [prevent-characters] [remove-empty-number]  [(ngModel)]="data.mill_speed"  type="text"></ion-input>
+    </ion-item>
+    <ion-item *ngIf="settings.pressure_profile === true">
+      <ion-label floating>Druckprofil</ion-label>
+      <ion-input [(ngModel)]="data.pressure_profile"  type="text"></ion-input>
     </ion-item>
     <timer #brewTemperatureTime timeInSeconds="0" label="Temperatur Zeit"
            *ngIf="settings.brew_temperature_time === true"></timer>

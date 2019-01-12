@@ -64,9 +64,9 @@ export class BrewsAddModal {
     //Initialize to standard in dropdowns
 
     this.settings = this.uiSettingsStorage.getSettings();
-    this.method_of_preparations = this.uiPreparationStorage.getAllEntries();
-    this.beans = this.uiBeanStorage.getAllEntries();
-    this.mills = this.uiMillStorage.getAllEntries();
+    this.method_of_preparations = this.uiPreparationStorage.getAllEntries().sort((a, b) => a.name.localeCompare(b.name));
+    this.beans = this.uiBeanStorage.getAllEntries().filter(bean =>bean.finished === false).sort((a, b) => a.name.localeCompare(b.name));
+    this.mills = this.uiMillStorage.getAllEntries().sort((a, b) => a.name.localeCompare(b.name));
 
     //Get first entry
     this.data.bean = this.beans[0].config.uuid;
@@ -88,7 +88,12 @@ export class BrewsAddModal {
 
 
         if (this.settings.default_last_coffee_parameters.bean_type === true) {
-          this.data.bean = lastBrew.bean;
+          let lastBrewBean:IBean = this.uiBeanStorage.getByUUID(lastBrew.bean);
+          if (lastBrewBean.finished == false)
+          {
+            this.data.bean = lastBrewBean.config.uuid;
+          }
+
         }
 
         if (this.settings.default_last_coffee_parameters.grind_size === true) {
@@ -102,6 +107,12 @@ export class BrewsAddModal {
         }
         if (this.settings.default_last_coffee_parameters.mill === true) {
           this.data.mill = lastBrew.mill;
+        }
+        if (this.settings.default_last_coffee_parameters.mill_speed === true) {
+          this.data.mill_speed = lastBrew.mill_speed;
+        }
+        if (this.settings.default_last_coffee_parameters.pressure_profile === true) {
+          this.data.pressure_profile = lastBrew.pressure_profile;
         }
         if (this.settings.default_last_coffee_parameters.brew_temperature === true) {
           this.data.brew_temperature = lastBrew.brew_temperature;

@@ -34,7 +34,7 @@ export class BeansPage {
   }
 
   private __initializeBeans() {
-    this.beans = this.uiBeanStorage.getAllEntries()
+    this.beans = this.uiBeanStorage.getAllEntries().sort((a, b) => a.name.localeCompare(b.name));
   }
 
   public getOpenBeans()
