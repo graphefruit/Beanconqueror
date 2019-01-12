@@ -20,9 +20,15 @@
       <ion-label floating>Röstgrad*</ion-label>
       <ion-select [(ngModel)]="data.roast"  name="roast" #roast="ngModel">
         <ion-option *ngFor="let key of roastsEnum | keys" value="{{key}}">{{roastsEnum[key]}}</ion-option>
-
       </ion-select>
     </ion-item>
+  <ion-item *ngIf="data.roast == 'CUSTOM_ROAST'">
+    <ion-label floating >Custom Roast</ion-label>
+    <ion-input [(ngModel)]="data.roast_custom" name="roast_custom" type="text" #roast_custom="ngModel" spellcheck="false"
+               autocapitalize="off" required>
+    </ion-input>
+
+  </ion-item>
     <ion-item>
       <ion-label floating>Röstdatum*</ion-label>
       <ion-datetime min="2000-01-01" max="2999-12-31" displayFormat="DD.MM.YYYY" [(ngModel)]="data.roastingDate" name="roastingDate"
@@ -31,6 +37,24 @@
   <ion-item>
     <ion-label floating >Röster</ion-label>
     <ion-input [(ngModel)]="data.roaster" name="roaster" type="text" #roaster="ngModel" spellcheck="false"
+               autocapitalize="off" required>
+    </ion-input>
+  </ion-item>
+    <ion-item>
+      <ion-label floating >Länder, Sorten, Mischung</ion-label>
+      <ion-input [(ngModel)]="data.beanMix" name="beanMix" type="text" #beanMix="ngModel" spellcheck="false"
+                 autocapitalize="off" required>
+      </ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label floating >Geschmack</ion-label>
+    <ion-input [(ngModel)]="data.aromatics" name="aromatics" type="text" #aromatics="ngModel" spellcheck="false"
+               autocapitalize="off" required>
+    </ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label floating >Gewicht</ion-label>
+    <ion-input [(ngModel)]="data.weight" name="weight" [remove-empty-number] [prevent-characters] type="text" #weight="ngModel" spellcheck="false"
                autocapitalize="off" required>
     </ion-input>
   </ion-item>

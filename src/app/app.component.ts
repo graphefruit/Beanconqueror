@@ -160,8 +160,9 @@ export class MyApp {
   private __trackNewBrew(){
     let hasBeans = (this.uiBeanStorage.getAllEntries().length > 0);
     let hasPreparationMethods = (this.uiPreparationStorage.getAllEntries().length > 0);
+    let hasMills = (this.uiMillStorage.getAllEntries().length > 0);
 
-    if (hasBeans && hasPreparationMethods)
+    if (hasBeans && hasPreparationMethods && hasMills)
     {
       let addBrewsModal = this.modalCtrl.create(BrewsAddModal, {});
       addBrewsModal.onDidDismiss(() => {

@@ -12,6 +12,12 @@ export class Bean implements IBean {
   public roaster:string;
   public config: Config;
   public roast:ROASTS_ENUM;
+  public beanMix:string;
+  public roast_custom:string;
+  public aromatics:string;
+  public weight:number;
+  public finished:boolean;
+
 
   constructor() {
     this.name = "";
@@ -21,6 +27,11 @@ export class Bean implements IBean {
     this.roaster="";
     this.config = new Config();
     this.roast = <ROASTS_ENUM>"UNKNOWN";
+    this.roast_custom ="";
+    this.beanMix = "";
+    this.aromatics = "";
+    this.weight=0;
+    this.finished = false;
   }
 
   public getRoastName():string{
