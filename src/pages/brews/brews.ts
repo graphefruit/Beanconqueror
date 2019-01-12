@@ -31,6 +31,7 @@ import {BrewsTableModal} from "./table/brews-table";
 import {FileEntry} from "@ionic-native/file";
 import {SocialSharing} from "@ionic-native/social-sharing";
 import {UIMillStorage} from "../../services/uiMillStorage";
+import {UIBrewHelper} from "../../services/uiBrewHelper";
 @Component({
   templateUrl: 'brews.html',
   selector: 'brews'
@@ -42,9 +43,6 @@ export class BrewsPage {
 
   public settings: ISettings;
 
-  public hasBeans: boolean = false;
-  public hasPreparationMethods: boolean = false;
-  public hasMills: boolean = false;
 
   constructor(private modalCtrl: ModalController,
               private platform: Platform,
@@ -52,7 +50,9 @@ export class BrewsPage {
               private uiBrewStorage: UIBrewStorage,
               private changeDetectorRef: ChangeDetectorRef, private uiAlert: UIAlert,
               private uiBeanStorage: UIBeanStorage, private uiPreparationStorage: UIPreparationStorage,
-              private uiHelper: UIHelper, private uiSettingsStorage: UISettingsStorage,
+              public uiHelper: UIHelper,
+              public uiBrewHelper:UIBrewHelper,
+              private uiSettingsStorage: UISettingsStorage,
               private popoverCtrl: PopoverController, public alertCtrl: AlertController,
               private uiMillStorage:UIMillStorage) {
     this.settings = this.uiSettingsStorage.getSettings();
@@ -64,9 +64,6 @@ export class BrewsPage {
   ionViewWillEnter() {
     this.loadBrews();
     //If we don't have beans, we cant do a brew from now on, because of roasting degree and the age of beans.
-    this.hasBeans = (this.uiBeanStorage.getAllEntries().length > 0);
-    this.hasPreparationMethods = (this.uiPreparationStorage.getAllEntries().length > 0);
-    this.hasMills = (this.uiMillStorage.getAllEntries().length > 0);
   }
 
   public editBrew(_brew: IBrew) {

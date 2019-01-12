@@ -11,6 +11,7 @@
     <allow-intent href="sms:*" />
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
+    <allow-navigation href="*" />
     <preference name="android-minSdkVersion" value="16" />
     <preference name="BackupWebStorage" value="Cloud" />
     <preference name="SplashMaintainAspectRatio" value="true" />
@@ -47,37 +48,61 @@
                     <key>UIApplicationShortcutItemIconType</key>
                     <string>UIApplicationShortcutIconTypeAdd</string>
                     <key>UIApplicationShortcutItemTitle</key>
-                    <string>Add</string>
+                    <string>Brühen</string>
                     <key>UIApplicationShortcutItemType</key>
-                    <string>Add</string>
+                    <string>Brew</string>
+                </dict>
+                <dict>
+                    <key>UIApplicationShortcutItemIconType</key>
+                    <string>UIApplicationShortcutIconTypeAdd</string>
+                    <key>UIApplicationShortcutItemTitle</key>
+                    <string>Bohne</string>
+                    <key>UIApplicationShortcutItemType</key>
+                    <string>Bean</string>
+                </dict>
+                <dict>
+                    <key>UIApplicationShortcutItemIconType</key>
+                    <string>UIApplicationShortcutIconTypeAdd</string>
+                    <key>UIApplicationShortcutItemTitle</key>
+                    <string>Zubereitungsmethode</string>
+                    <key>UIApplicationShortcutItemType</key>
+                    <string>Preparation</string>
+                </dict>
+                <dict>
+                    <key>UIApplicationShortcutItemIconType</key>
+                    <string>UIApplicationShortcutIconTypeAdd</string>
+                    <key>UIApplicationShortcutItemTitle</key>
+                    <string>Mühle</string>
+                    <key>UIApplicationShortcutItemType</key>
+                    <string>Mill</string>
                 </dict>
             </array>
         </edit-config>
-        <edit-config file="*-Info.plist" mode="merge" target="UIRequiresFullScreen">
+        <edit-file file="*-Info.plist" mode="merge" target="UIRequiresFullScreen">
             <false />
-        </edit-config>
-        <edit-config file="*-Info.plist" mode="merge" target="UISupportedInterfaceOrientations">
+        </edit-file>
+        <edit-file file="*-Info.plist" mode="merge" target="UISupportedInterfaceOrientations">
             <array>
                 <string>UIInterfaceOrientationPortrait</string>
                 <string>UIInterfaceOrientationPortraitUpsideDown</string>
                 <string>UIInterfaceOrientationLandscapeLeft</string>
                 <string>UIInterfaceOrientationLandscapeRight</string>
             </array>
-        </edit-config>
-        <edit-config file="*-Info.plist" mode="merge" target="UISupportedInterfaceOrientations~ipad">
+        </edit-file>
+        <edit-file file="*-Info.plist" mode="merge" target="UISupportedInterfaceOrientations~ipad">
             <array>
                 <string>UIInterfaceOrientationPortrait</string>
                 <string>UIInterfaceOrientationPortraitUpsideDown</string>
                 <string>UIInterfaceOrientationLandscapeLeft</string>
                 <string>UIInterfaceOrientationLandscapeRight</string>
             </array>
-        </edit-config>
-        <edit-config file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
+        </edit-file>
+        <edit-file file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
             <string>Need camera access to take pictures</string>
-        </edit-config>
-        <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryUsageDescription">
+        </edit-file>
+        <edit-file file="*-Info.plist" mode="merge" target="NSPhotoLibraryUsageDescription">
             <string>Need photo library access to get pictures from there</string>
-        </edit-config>
+        </edit-file>
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
         <icon height="57" src="resources/ios/icon/icon.png" width="57" />
@@ -129,7 +154,8 @@
     <plugin name="cordova-plugin-telerik-imagepicker" spec="2.2.2">
         <variable name="PHOTO_LIBRARY_USAGE_DESCRIPTION" value="Access to library needed to choose photos" />
     </plugin>
+    <plugin name="cordova-plugin-media-capture" spec="3.0.2" />
+    <plugin name="cordova-plugin-inappbrowser" spec="3.0.0" />
     <engine name="ios" spec="4.5.5" />
     <engine name="android" spec="7.1.4" />
-    <plugin name="cordova-plugin-media-capture" spec="3.0.2" />
 </widget>

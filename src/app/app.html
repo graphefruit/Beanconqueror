@@ -16,15 +16,15 @@
         {{pages.brews.title}}
       </button>
       <button ion-item (click)="openPage($event,pages.beans)" [class.active]="pages.beans.active">
-        <i class="menu-icon fa {{pages.beans.icon}}"></i>
+        <ion-icon class="custom-coffee-beans"></ion-icon>
         {{pages.beans.title}}
       </button>
       <button ion-item (click)="openPage($event,pages.preparation)" [class.active]="pages.preparation.active">
-        <i class="menu-icon fa {{pages.preparation.icon}}"></i>
+        <ion-icon class="custom-filter"></ion-icon>
         {{pages.preparation.title}}
       </button>
       <button ion-item (click)="openPage($event,pages.mill)" [class.active]="pages.mill.active">
-        <ion-icon class="menu-icon"  name="{{pages.mill.icon}}"></ion-icon>
+        <ion-icon class="custom-mill"></ion-icon>
         {{pages.mill.title}}
       </button>
       <ion-item class="no-border" (click)="toggleAbout =!toggleAbout">

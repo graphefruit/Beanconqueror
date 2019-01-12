@@ -13,6 +13,8 @@ export class Settings implements ISettings {
   public grind_size: boolean;
   public grind_weight: boolean;
   public mill:boolean;
+  public mill_speed:boolean;
+  public pressure_profile:boolean;
   public method_of_preparation: boolean;
   public brew_quantity: boolean;
   public bean_type: boolean;
@@ -52,6 +54,8 @@ export class Settings implements ISettings {
     this.attachments = true;
     this.rating = true;
     this.set_last_coffee_brew = false;
+    this.mill_speed = false;
+    this.pressure_profile = false;
     this.config = new Config();
 
     this.default_last_coffee_parameters = new DefaultLastCoffeeParameters();

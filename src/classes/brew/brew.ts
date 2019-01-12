@@ -21,8 +21,14 @@ import {IMill} from "../../interfaces/mill/iMill";
 export class Brew implements IBrew {
   public grind_size: string;
   public grind_weight: number;
+  //UUID
   public method_of_preparation: string;
+  //UUID
   public mill:string;
+
+  public mill_speed:number;
+  public pressure_profile:string;
+  //UUID
   public bean: string;
   public brew_temperature: number;
   public brew_temperature_time:number;
@@ -49,6 +55,8 @@ export class Brew implements IBrew {
     this.grind_weight = 0;
     this.method_of_preparation = "";
     this.mill = "";
+    this.mill_speed = 0;
+    this.pressure_profile = "";
     this.bean = "";
     this.brew_temperature_time = 0;
     this.brew_temperature = 0;

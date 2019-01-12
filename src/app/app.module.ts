@@ -20,6 +20,7 @@ import { SocialSharing } from '@ionic-native/social-sharing';
 import { Keyboard } from '@ionic-native/keyboard';
 import { IOSFilePicker } from '@ionic-native/file-picker';
 import { ThreeDeeTouch} from '@ionic-native/three-dee-touch';
+import { InAppBrowser} from '@ionic-native/in-app-browser';
 /**Pages**/
 import {MyApp} from './app.component';
 import {HomePage} from '../pages/home/home';
@@ -50,6 +51,7 @@ import { BrewsPopover } from '../pages/brews/popover/brews-popover';
 import {UIStorage} from '../services/uiStorage';
 import {UISettingsStorage} from '../services/uiSettingsStorage';
 import {UIHelper} from '../services/uiHelper';
+import {UIBrewHelper} from '../services/uiBrewHelper';
 import {UIBeanStorage} from '../services/uiBeanStorage';
 import {UIBrewStorage} from '../services/uiBrewStorage';
 import {UILog} from '../services/uiLog';
@@ -71,6 +73,7 @@ import {UIMillStorage} from "../services/uiMillStorage";
 import {MillsPage} from "../pages/mill/mills";
 import {MillAddModal} from "../pages/mill/add/mill-add";
 import {MillEditModal} from "../pages/mill/edit/mill-edit";
+
 
 @NgModule({
   declarations: [
@@ -108,6 +111,7 @@ import {MillEditModal} from "../pages/mill/edit/mill-edit";
       name: '__baristaDB',
       driverOrder: ['indexeddb', 'sqlite', 'websql'],
     }),
+
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -135,11 +139,13 @@ import {MillEditModal} from "../pages/mill/edit/mill-edit";
     SocialSharing,
     IOSFilePicker,
     ThreeDeeTouch,
+    InAppBrowser,
     Keyboard,
     SplashScreen,
     UIStorage,
     UISettingsStorage,
     UIHelper,
+    UIBrewHelper,
     UILog,
     UIPreparationStorage,
     UIMillStorage,

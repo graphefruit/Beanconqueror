@@ -21,6 +21,7 @@ import {BrewView} from "../../../classes/brew/brewView";
 import {UIBrewStorage} from "../../../services/uiBrewStorage";
 import {BrewsAddModal} from "../add/brews-add";
 import {UIMillStorage} from "../../../services/uiMillStorage";
+import {UIBrewHelper} from "../../../services/uiBrewHelper";
 
 
 @Component({
@@ -47,6 +48,7 @@ export class BrewsTableModal {
   constructor(private viewCtrl: ViewController, private navParams: NavParams, private uiBeanStorage: UIBeanStorage,
               private uiPreparationStorage: UIPreparationStorage,
               public uiHelper: UIHelper, private uiImage: UIImage,
+              public uiBrewHelper:UIBrewHelper,
               private uiSettingsStorage: UISettingsStorage, private uiBrewStorage: UIBrewStorage,
               private renderer: Renderer2, private modalCtrl:ModalController,
               private uiMillStorage:UIMillStorage) {

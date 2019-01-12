@@ -107,3 +107,23 @@ pre{
   margin:0px!important;
   white-space: pre-wrap;
 }
+ion-icon {
+  &[class*="custom-"] {
+    mask-size: contain;
+    mask-position: 50% 50%;
+    mask-repeat: no-repeat;
+    background: currentColor;
+    width: 1em;
+    height: 1em;
+  }
+
+  &[class*="custom-mill"] {
+    mask-image: url(../assets/svg/mill.svg);
+  }
+  &[class*="custom-filter"] {
+    mask-image: url(../assets/svg/filter.svg);
+  }
+  &[class*="custom-coffee-beans"] {
+    mask-image: url(../assets/svg/coffee-beans.svg);
+  }
+}

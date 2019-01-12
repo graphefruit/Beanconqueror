@@ -5,7 +5,7 @@
     </button>
     <ion-title>Brühungen</ion-title>
     <ion-buttons end>
-      <button [disabled]="!hasBeans || !hasPreparationMethods|| !hasMills" ion-button icon-only (click)="addBrew()">
+      <button [disabled]="!uiBrewHelper.canBrew()" ion-button icon-only (click)="addBrew()">
         <ion-icon name="add"></ion-icon>
       </button>
       <button ion-button icon-only (click)="showMore($event)">
@@ -15,11 +15,10 @@
   </ion-navbar>
 </ion-header>
 <ion-content>
-
-  <ion-card  padding *ngIf="!hasBeans || !hasPreparationMethods || !hasMills">
+  <ion-card  padding *ngIf="!uiBrewHelper.canBrew()">
     <h2 class="error-text">Um einen Bezug zu starten, lege bitte eine <b>Bohnensorte</b> sowie eine <b>Zubereitungsmethode</b> und <b>Mühle</b> an.</h2>
   </ion-card>
-  <ion-card padding *ngIf="brewsView?.length == 0 && hasBeans && hasPreparationMethods && hasMills">
+  <ion-card padding *ngIf="brewsView?.length == 0 && uiBrewHelper.canBrew()">
     Du hast leider noch keinen Kaffee, seit der Benutzung dieser App getrunken (schon etwas schade oder?)
   </ion-card>
 
