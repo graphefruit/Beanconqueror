@@ -76,6 +76,10 @@ export class UIImage {
       this.camera.getPicture(options)
         .then(
           (imageData) => {
+            let isIos: boolean = this.platform.is('ios');
+            if (isIos) {
+              imageData = imageData.replace(/^file:\/\//, '');
+            }
             resolve(imageData);
           },
           (err) => {
