@@ -9,7 +9,7 @@ import {IonicStorageModule} from '@ionic/storage';
 import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
 import {AppMinimize} from '@ionic-native/app-minimize';
-import {MediaCapture} from '@ionic-native/media-capture';
+import {Camera} from '@ionic-native/camera';
 import {ImagePicker} from '@ionic-native/image-picker';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { AppVersion } from '@ionic-native/app-version';
@@ -20,6 +20,7 @@ import { SocialSharing } from '@ionic-native/social-sharing';
 import { Keyboard } from '@ionic-native/keyboard';
 import { IOSFilePicker } from '@ionic-native/file-picker';
 import { ThreeDeeTouch} from '@ionic-native/three-dee-touch';
+import { InAppBrowser} from '@ionic-native/in-app-browser';
 /**Pages**/
 import {MyApp} from './app.component';
 import {HomePage} from '../pages/home/home';
@@ -32,6 +33,7 @@ import {ContactPage} from '../pages/info/contact/contact';
 import {LicencesPage} from '../pages/info/licences/licences';
 import {TermsPage} from "../pages/info/terms/terms";
 import {PrivacyPage} from "../pages/info/privacy/privacy";
+import {CreditsPage} from "../pages/info/credits/credits";
 /**Modals**/
 import {BeansAddModal} from '../pages/beans/add/beans-add';
 import {BeansEditModal} from '../pages/beans/edit/beans-edit';
@@ -50,6 +52,7 @@ import { BrewsPopover } from '../pages/brews/popover/brews-popover';
 import {UIStorage} from '../services/uiStorage';
 import {UISettingsStorage} from '../services/uiSettingsStorage';
 import {UIHelper} from '../services/uiHelper';
+import {UIBrewHelper} from '../services/uiBrewHelper';
 import {UIBeanStorage} from '../services/uiBeanStorage';
 import {UIBrewStorage} from '../services/uiBrewStorage';
 import {UILog} from '../services/uiLog';
@@ -67,6 +70,11 @@ import {PreventCharacterDirective} from '../directive/preventCharacters';
 import {RemoveEmptyNumberDirective} from "../directive/removeEmptyNumber";
 /**Components**/
 import {TimerComponent} from '../components/timer/timer';
+import {UIMillStorage} from "../services/uiMillStorage";
+import {MillsPage} from "../pages/mill/mills";
+import {MillAddModal} from "../pages/mill/add/mill-add";
+import {MillEditModal} from "../pages/mill/edit/mill-edit";
+
 
 @NgModule({
   declarations: [
@@ -79,6 +87,10 @@ import {TimerComponent} from '../components/timer/timer';
     PreparationsPage,
     PreparationsAddModal,
     PreparationsEditModal,
+    CreditsPage,
+    MillsPage,
+    MillAddModal,
+    MillEditModal,
     FormatDatePipe,
     KeysPipe,
     ToDecimalPipe,
@@ -101,6 +113,7 @@ import {TimerComponent} from '../components/timer/timer';
       name: '__baristaDB',
       driverOrder: ['indexeddb', 'sqlite', 'websql'],
     }),
+
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -113,6 +126,10 @@ import {TimerComponent} from '../components/timer/timer';
     PreparationsPage,
     PreparationsAddModal,
     PreparationsEditModal,
+    MillsPage,
+    CreditsPage,
+    MillAddModal,
+    MillEditModal,
     BrewsPage, BrewsAddModal, TimerComponent, BrewsEditModal,BrewsPhotoView,BrewsDetailsModal,BrewsTableModal,BrewsPopover,
     AboutPage, ContactPage, LicencesPage,TermsPage,PrivacyPage,
   ],
@@ -125,17 +142,20 @@ import {TimerComponent} from '../components/timer/timer';
     SocialSharing,
     IOSFilePicker,
     ThreeDeeTouch,
+    InAppBrowser,
     Keyboard,
     SplashScreen,
     UIStorage,
     UISettingsStorage,
     UIHelper,
+    UIBrewHelper,
     UILog,
     UIPreparationStorage,
+    UIMillStorage,
     UIAlert,
     UIImage,
     UIBeanStorage, AppMinimize, {provide: ErrorHandler, useClass: IonicErrorHandler},
-    MediaCapture, ImagePicker,AndroidPermissions, UIBrewStorage,UIStatistic
+    Camera, ImagePicker,AndroidPermissions, UIBrewStorage,UIStatistic
   ],exports:[PreventCharacterDirective],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })

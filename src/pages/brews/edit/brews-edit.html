@@ -34,12 +34,27 @@
   <ion-item>
     <ion-label>Bohnen</ion-label>
     <ion-select [(ngModel)]="data.bean">
-      <ion-option *ngFor="let bean of beans" value="{{bean.config.uuid}}">{{bean.name}}
+      <ion-option *ngFor="let bean of beans" value="{{bean.config.uuid}}">{{bean.name}}  / {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}
       </ion-option>
     </ion-select>
   </ion-item>
   <ion-item>
-    <ion-label stacked>Temperatur Zeit</ion-label>
+    <ion-label>Mühle</ion-label>
+    <ion-select [(ngModel)]="data.mill">
+      <ion-option *ngFor="let mill of mills" value="{{mill.config.uuid}}">{{mill.name}}
+      </ion-option>
+    </ion-select>
+  </ion-item>
+  <ion-item>
+    <ion-label stacked>Mühlengeschwindikeit (rpm)</ion-label>
+    <ion-input [prevent-characters] [remove-empty-number]  [(ngModel)]="data.mill_speed"  type="text"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label stacked>Druckprofil</ion-label>
+    <ion-input [(ngModel)]="data.pressure_profile"  type="text"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label stacked>Temperatur Zeit / Surf Zeit</ion-label>
     <ion-input [remove-empty-number] [prevent-characters] [(ngModel)]="data.brew_temperature_time" type="text"></ion-input>
   </ion-item>
   <ion-item>
@@ -57,7 +72,7 @@
   <ion-row>
     <ion-col col-8 col-sm-10>
       <ion-item>
-        <ion-label floating>Bezugsmenge</ion-label>
+        <ion-label stacked>Bezugsmenge</ion-label>
         <ion-input [remove-empty-number] [prevent-characters] [(ngModel)]="data.brew_quantity" type="text"></ion-input>
       </ion-item>
     </ion-col>

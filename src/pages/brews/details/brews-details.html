@@ -32,6 +32,18 @@
       <span class="header-label">Bohnen:</span><br/>
       &nbsp;{{data.getBean().name}}
     </ion-item>
+    <ion-item *ngIf="settings.mill === true">
+      <span class="header-label">Mühle:</span><br/>
+      &nbsp;{{data.getMill().name}}
+    </ion-item>
+    <ion-item *ngIf="settings.mill_speed === true">
+      <span class="header-label">Mühlengeschwindigkeit (rpm)</span><br/>
+      &nbsp;{{data.mill_speed}}
+    </ion-item>
+    <ion-item *ngIf="settings.pressure_profile === true">
+      <span class="header-label">Druckprofil</span><br/>
+      &nbsp;{{data.pressure_profile}}
+    </ion-item>
     <ion-item *ngIf="settings.brew_temperature_time === true">
       <span class="header-label">Temperatur Zeit:</span><br/>
       {{data.brew_temperature_time}}

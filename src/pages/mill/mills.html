@@ -1,0 +1,48 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Mühlen</ion-title>
+    <ion-buttons end>
+      <button  ion-button icon-only (click)="add()">
+        <ion-icon name="add"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-card padding *ngIf="mills?.length == 0">
+    Du hast leider noch keine Mühlen hinterlegt!
+  </ion-card>
+  <ion-card *ngFor="let mill of mills">
+    <ion-card-header>
+      {{mill.name}}
+    </ion-card-header>
+    <ion-card-content *ngIf="mill.note != ''">
+      <pre>{{mill.note}}</pre>
+    </ion-card-content>
+
+
+    <ion-row>
+      <ion-col>
+        <button button justify-content-start color="dark" clear ion-button small block icon-left
+                (click)="edit(mill)">
+          <ion-icon name="md-create" item-start></ion-icon>
+          <span>Editieren</span>
+        </button>
+      </ion-col>
+      <ion-col>
+        <button button justify-content-start color="dark" clear ion-button small block icon-left
+                (click)="delete(mill)">
+          <ion-icon name="trash" item-start></ion-icon>
+          <span>Löschen</span>
+        </button>
+      </ion-col>
+    </ion-row>
+
+
+  </ion-card>
+
+</ion-content>

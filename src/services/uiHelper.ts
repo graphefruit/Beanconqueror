@@ -6,6 +6,11 @@ import {Platform} from 'ionic-angular';
 import moment from 'moment';
 import 'moment/locale/de';
 import { SocialSharing } from '@ionic-native/social-sharing';
+import {UIBeanStorage} from "./uiBeanStorage";
+import {UIMillStorage} from "./uiMillStorage";
+import {UIPreparationStorage} from "./uiPreparationStorage";
+import {InAppBrowser} from "@ionic-native/in-app-browser";
+
 
 declare var cordova: any;
 declare var device: any;
@@ -17,7 +22,7 @@ declare var window: any;
 export class UIHelper {
 
 
-  constructor(private platform: Platform, private socialSharing: SocialSharing) {
+  constructor(private platform: Platform, private socialSharing: SocialSharing,private inAppBrowser: InAppBrowser){
     moment.locale('de');
   }
 
@@ -99,7 +104,9 @@ export class UIHelper {
       _url = "http://" + _url;
     }
 
-    window.open(_url, "_system");
+    this.inAppBrowser.create(_url,"_system");
+
+   // window.open(_url, "_system");
 
   }
 

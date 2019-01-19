@@ -4,6 +4,7 @@ import {IBean} from "../../interfaces/bean/iBean";
 import {Config} from "../objectConfig/objectConfig";
 /**Enums**/
 import {ROASTS_ENUM} from '../../enums/beans/roasts';
+import {BEAN_MIX_ENUM} from "../../enums/beans/mix";
 export class Bean implements IBean {
   public name: string;
   public roastingDate: string;
@@ -12,6 +13,14 @@ export class Bean implements IBean {
   public roaster:string;
   public config: Config;
   public roast:ROASTS_ENUM;
+  public beanMix:BEAN_MIX_ENUM;
+  public variety:string;
+  public country:string;
+  public roast_custom:string;
+  public aromatics:string;
+  public weight:number;
+  public finished:boolean;
+
 
   constructor() {
     this.name = "";
@@ -21,6 +30,13 @@ export class Bean implements IBean {
     this.roaster="";
     this.config = new Config();
     this.roast = <ROASTS_ENUM>"UNKNOWN";
+    this.roast_custom ="";
+    this.beanMix = <BEAN_MIX_ENUM>"SINGLE_ORIGIN";
+    this.variety ="";
+    this.country ="";
+    this.aromatics = "";
+    this.weight=0;
+    this.finished = false;
   }
 
   public getRoastName():string{

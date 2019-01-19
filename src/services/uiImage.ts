@@ -3,14 +3,14 @@ import {Injectable} from '@angular/core';
 /**Ionic**/
 import {AlertController, Platform} from 'ionic-angular';
 /**Ionic native **/
-import {MediaCapture, MediaFile, CaptureError, CaptureImageOptions} from '@ionic-native/media-capture';
+import {Camera,CameraOptions} from '@ionic-native/camera';
 import {ImagePicker} from '@ionic-native/image-picker';
 import {AndroidPermissions} from '@ionic-native/android-permissions';
 
 
 @Injectable()
 export class UIImage {
-  constructor(private mediaCapture: MediaCapture, private imagePicker: ImagePicker, private alertController: AlertController, private platform: Platform, private androidPermissions: AndroidPermissions) {
+  constructor(private camera: Camera, private imagePicker: ImagePicker, private alertController: AlertController, private platform: Platform, private androidPermissions: AndroidPermissions) {
   }
 
 
@@ -66,13 +66,23 @@ export class UIImage {
 
   public takePhoto() {
     var promise = new Promise((resolve, reject) => {
-      let options: CaptureImageOptions = {limit: 1};
-      this.mediaCapture.captureImage(options)
+      const options: CameraOptions = {
+        quality: 100,
+        destinationType: this.camera.DestinationType.FILE_URI,
+        encodingType: this.camera.EncodingType.JPEG,
+        mediaType: this.camera.MediaType.PICTURE,
+        correctOrientation:true,
+      };
+      this.camera.getPicture(options)
         .then(
-          (data: MediaFile[]) => {
-            resolve(data[0].fullPath);
+          (imageData) => {
+            let isIos: boolean = this.platform.is('ios');
+            if (isIos) {
+              imageData = imageData.replace(/^file:\/\//, '');
+            }
+            resolve(imageData);
           },
-          (err: CaptureError) => {
+          (err) => {
             reject();
           }
         );

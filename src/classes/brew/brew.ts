@@ -13,12 +13,22 @@ import moment from 'moment';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
 import {UIPreparationStorage} from '../../services/uiPreparationStorage';
 import {BREW_QUANTITY_TYPES_ENUM} from "../../enums/brews/brewQuantityTypes";
+import {UIMillStorage} from "../../services/uiMillStorage";
+import {Mill} from "../mill/mill";
+import {IMill} from "../../interfaces/mill/iMill";
 
 
 export class Brew implements IBrew {
   public grind_size: string;
   public grind_weight: number;
+  //UUID
   public method_of_preparation: string;
+  //UUID
+  public mill:string;
+
+  public mill_speed:number;
+  public pressure_profile:string;
+  //UUID
   public bean: string;
   public brew_temperature: number;
   public brew_temperature_time:number;
@@ -44,6 +54,9 @@ export class Brew implements IBrew {
     this.grind_size = "";
     this.grind_weight = 0;
     this.method_of_preparation = "";
+    this.mill = "";
+    this.mill_speed = 0;
+    this.pressure_profile = "";
     this.bean = "";
     this.brew_temperature_time = 0;
     this.brew_temperature = 0;
@@ -71,6 +84,11 @@ export class Brew implements IBrew {
     uiPreparationStorage = <UIPreparationStorage>UIPreparationStorage.getInstance();
     return uiPreparationStorage;
   }
+  private getMillStorageInstance():UIMillStorage  {
+    let uiMillStorage: UIMillStorage;
+    uiMillStorage = <UIMillStorage>UIMillStorage.getInstance();
+    return uiMillStorage;
+  }
 
   public getBrewQuantityTypeName():string{
     return BREW_QUANTITY_TYPES_ENUM[this.brew_quantity_type];
@@ -91,6 +109,15 @@ export class Brew implements IBrew {
     preparation.initializeByObject(iPreparation);
 
     return preparation;
+
+  }
+
+  public getMill(): Mill {
+    let iMill: IMill = <IMill>this.getMillStorageInstance().getByUUID(this.mill);
+    let mill: Mill = new Mill();
+    mill.initializeByObject(iMill);
+
+    return mill;
 
   }
 

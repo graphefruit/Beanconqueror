@@ -27,6 +27,8 @@ import {ISettings} from '../../../interfaces/settings/iSettings';
 /**Enums**/
 
 import {BREW_QUANTITY_TYPES_ENUM} from '../../../enums/brews/brewQuantityTypes';
+import {IMill} from "../../../interfaces/mill/iMill";
+import {UIMillStorage} from "../../../services/uiMillStorage";
 
 @Component({
   selector: 'brews-add',
@@ -46,7 +48,8 @@ export class BrewsAddModal {
   public brewQuantityTypeEnums = BREW_QUANTITY_TYPES_ENUM;
 
   public method_of_preparations: Array<IPreparation> = [];
-  beans: Array<IBean> = [];
+  public beans: Array<IBean> = [];
+  public mills: Array<IMill> = [];
 
   public keyDownHandler(event: Event) {
 
@@ -54,16 +57,21 @@ export class BrewsAddModal {
   }
 
   constructor(private viewCtrl: ViewController, private uiBeanStorage: UIBeanStorage, private uiPreparationStorage: UIPreparationStorage,
-              private uiBrewStorage: UIBrewStorage, private uiImage: UIImage, private uiSettingsStorage: UISettingsStorage, public uiHelper: UIHelper) {
+              private uiBrewStorage: UIBrewStorage, private uiImage: UIImage,
+              private uiSettingsStorage: UISettingsStorage,
+              public uiHelper: UIHelper,
+              private uiMillStorage:UIMillStorage) {
     //Initialize to standard in dropdowns
 
     this.settings = this.uiSettingsStorage.getSettings();
-    this.method_of_preparations = this.uiPreparationStorage.getAllEntries();
-    this.beans = this.uiBeanStorage.getAllEntries();
+    this.method_of_preparations = this.uiPreparationStorage.getAllEntries().sort((a, b) => a.name.localeCompare(b.name));
+    this.beans = this.uiBeanStorage.getAllEntries().filter(bean =>bean.finished === false).sort((a, b) => a.name.localeCompare(b.name));
+    this.mills = this.uiMillStorage.getAllEntries().sort((a, b) => a.name.localeCompare(b.name));
 
     //Get first entry
     this.data.bean = this.beans[0].config.uuid;
     this.data.method_of_preparation = this.method_of_preparations[0].config.uuid;
+    this.data.mill = this.mills[0].config.uuid;
 
 
   }
@@ -80,7 +88,12 @@ export class BrewsAddModal {
 
 
         if (this.settings.default_last_coffee_parameters.bean_type === true) {
-          this.data.bean = lastBrew.bean;
+          let lastBrewBean:IBean = this.uiBeanStorage.getByUUID(lastBrew.bean);
+          if (lastBrewBean.finished == false)
+          {
+            this.data.bean = lastBrewBean.config.uuid;
+          }
+
         }
 
         if (this.settings.default_last_coffee_parameters.grind_size === true) {
@@ -92,10 +105,19 @@ export class BrewsAddModal {
         if (this.settings.default_last_coffee_parameters.method_of_preparation === true) {
           this.data.method_of_preparation = lastBrew.method_of_preparation;
         }
+        if (this.settings.default_last_coffee_parameters.mill === true) {
+          this.data.mill = lastBrew.mill;
+        }
+        if (this.settings.default_last_coffee_parameters.mill_speed === true) {
+          this.data.mill_speed = lastBrew.mill_speed;
+        }
+        if (this.settings.default_last_coffee_parameters.pressure_profile === true) {
+          this.data.pressure_profile = lastBrew.pressure_profile;
+        }
         if (this.settings.default_last_coffee_parameters.brew_temperature === true) {
           this.data.brew_temperature = lastBrew.brew_temperature;
         }
-        debugger;
+
         if (this.brewTemperatureTime) {
           if (this.settings.default_last_coffee_parameters.brew_temperature_time === true) {
             this.data.brew_temperature_time = lastBrew.brew_temperature_time;
