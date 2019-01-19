@@ -5,12 +5,15 @@ import {IConfig} from '../objectConfig/iObjectConfig';
 
 /**Enums**/
 import {ROASTS_ENUM} from '../../enums/beans/roasts';
+import {BEAN_MIX_ENUM} from "../../enums/beans/mix";
 
 export interface IBean {
   name: string;
   roastingDate: string;
-  //Which Countries, sorts etc.
-  beanMix:string;
+  //Blend / Single Origin.
+  beanMix:BEAN_MIX_ENUM;
+  variety:string;
+  country:string;
   //Aromatics
   aromatics:string;
   note: string;

@@ -38,6 +38,7 @@ import {UIBrewHelper} from "../services/uiBrewHelper";
 import {BeansAddModal} from "../pages/beans/add/beans-add";
 import {PreparationsAddModal} from "../pages/preparations/add/preparations-add";
 import {MillAddModal} from "../pages/mill/add/mill-add";
+import {CreditsPage} from "../pages/info/credits/credits";
 
 
 @Component({
@@ -59,6 +60,7 @@ export class MyApp {
     "about": {title: 'Über uns', component: AboutPage, icon: 'md-information', active: false},
     "contact": {title: 'Kontakt', component: ContactPage, icon: 'md-mail', active: false},
     "privacy": {title: 'Privacy', component: PrivacyPage, icon: 'md-document', active: false},
+    "credits": {title: 'Credits', component: CreditsPage, icon: 'md-document', active: false},
     "terms": {title: 'Terms & Conditions', component: TermsPage, icon: 'md-document', active: false},
     "licences": {title: 'Open-Source-Lizenzen', component: LicencesPage, icon: 'md-copy', active: false},
     "settings": {title: 'Einstellungen', component: SettingsPage, icon: 'md-settings', active: false},

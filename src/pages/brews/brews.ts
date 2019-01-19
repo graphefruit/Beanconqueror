@@ -39,8 +39,9 @@ import {UIBrewHelper} from "../../services/uiBrewHelper";
 export class BrewsPage {
 
   public brews: Array<Brew>;
-  public brewsView: Array<BrewView> = [];
-
+  public openBrewsView: Array<BrewView> = [];
+  public archiveBrewsView: Array<BrewView> = [];
+public brew_segment:string ="open";
   public settings: ISettings;
 
 
@@ -165,9 +166,13 @@ export class BrewsPage {
         {"VALUE": brew.grind_weight, "LABEL": "Output: Gewicht/Menge"},
         {"VALUE": brew.getPreparation().name, "LABEL": "Zubereitungsmethode"},
         {"VALUE": brew.getBean().name, "LABEL": "Bohne"},
+        {"VALUE": brew.getBean().roaster, "LABEL": "Röster"},
         {"VALUE": brew.brew_temperature, "LABEL": "Brühtemperatur"},
         {"VALUE": brew.brew_temperature_time, "LABEL": "Temperatur Zeit"},
         {"VALUE": brew.brew_time, "LABEL": "Brühzeit"},
+        {"VALUE": brew.pressure_profile, "LABEL": "Druckprofil"},
+        {"VALUE": brew.mill_speed, "LABEL": "Mühlengeschwindigkeit"},
+        {"VALUE": brew.getMill().name, "LABEL": "Mühle"},
         {"VALUE": brew.brew_quantity, "LABEL": "Bezugsmenge"},
         {"VALUE": brew.getBrewQuantityTypeName(), "LABEL": "Bezugsmenge-Typ"},
         {"VALUE": brew.note, "LABEL": "Notizen"},
@@ -178,6 +183,7 @@ export class BrewsPage {
         {"VALUE": brew.coffee_blooming_time, "LABEL": "Blooming-Zeit / Preinfusion"},
         {"VALUE": brew.getCalculatedBeanAge(), "LABEL": "Bohnenalter"},
         {"VALUE": brew.getBrewRatio(), "LABEL": "Brührate"},
+        {"VALUE": brew.getBean().finished, "LABEL": "Fertig?"},
       ];
       entries.push(entry);
     }
@@ -245,10 +251,29 @@ export class BrewsPage {
 
   private __initializeBrews() {
     this.brews = this.uiBrewStorage.getAllEntries();
-    this.brewsView = [];
+    this.openBrewsView = [];
+    this.archiveBrewsView = [];
 
-    //sort latest to top.
-    let sortedBrews: Array<IBrew> = this.brews.sort((obj1, obj2) => {
+    this.__initializeBrewView('open');
+    this.__initializeBrewView('archiv');
+  }
+  private __initializeBrewView(_type:string)
+  {
+//sort latest to top.
+    let brewsCopy:Array<Brew> = [...this.brews];
+
+    debugger;
+    if (_type === 'open')
+    {
+      brewsCopy = brewsCopy.filter(e=>e.getBean().finished == false);
+    }else {
+      brewsCopy = brewsCopy.filter(e=>e.getBean().finished == true);
+    }
+
+
+
+
+    let sortedBrews: Array<IBrew> = brewsCopy.sort((obj1, obj2) => {
       if (obj1.config.unix_timestamp < obj2.config.unix_timestamp) {
         return 1;
       }
@@ -274,9 +299,19 @@ export class BrewsPage {
       let viewObj: BrewView = new BrewView();
       viewObj.title = key;
       viewObj.brews = collection[key].BREWS;
-      this.brewsView.push(viewObj);
+      if (_type==='open')
+      {
+        this.openBrewsView.push(viewObj);
+      }
+      else
+      {
+        this.archiveBrewsView.push(viewObj);
+      }
+
     }
   }
+
+
 
   public loadBrews() {
     this.__initializeBrews();
