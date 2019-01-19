@@ -27,6 +27,8 @@ import {IBrew} from "../../interfaces/brew/iBrew";
 import {IOSFilePicker} from "@ionic-native/file-picker";
 import {SocialSharing} from "@ionic-native/social-sharing";
 import {UIMillStorage} from "../../services/uiMillStorage";
+import {Mill} from "../../classes/mill/mill";
+import {Brew} from "../../classes/brew/brew";
 @Component({
   templateUrl: 'settings.html'
 })
@@ -127,6 +129,23 @@ export class SettingsPage {
               if (_data.BACKUP === false) {
                 this.__reinitializeStorages().then(() => {
                   this.__initializeSettings();
+
+                  if (this.uiBrewStorage.getAllEntries().length > 0 && this.uiMillStorage.getAllEntries().length <=0)
+                  {
+                    //We got an update and we got no mills yet, therefore we add a Standard mill.
+                    let data:Mill = new Mill();
+                    data.name = "Standard";
+                    this.uiMillStorage.add(data);
+
+                    let brews:Array<Brew> = this.uiBrewStorage.getAllEntries();
+                    for (let i=0;i<brews.length;i++)
+                    {
+                      brews[i].mill = data.config.uuid;
+
+                      this.uiBrewStorage.update(brews[i]);
+                    }
+                  }
+
                   this.uiAlert.showMessage("Import erfolgreich");
                 })
 

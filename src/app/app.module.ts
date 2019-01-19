@@ -9,7 +9,7 @@ import {IonicStorageModule} from '@ionic/storage';
 import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
 import {AppMinimize} from '@ionic-native/app-minimize';
-import {MediaCapture} from '@ionic-native/media-capture';
+import {Camera} from '@ionic-native/camera';
 import {ImagePicker} from '@ionic-native/image-picker';
 import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { AppVersion } from '@ionic-native/app-version';
@@ -33,6 +33,7 @@ import {ContactPage} from '../pages/info/contact/contact';
 import {LicencesPage} from '../pages/info/licences/licences';
 import {TermsPage} from "../pages/info/terms/terms";
 import {PrivacyPage} from "../pages/info/privacy/privacy";
+import {CreditsPage} from "../pages/info/credits/credits";
 /**Modals**/
 import {BeansAddModal} from '../pages/beans/add/beans-add';
 import {BeansEditModal} from '../pages/beans/edit/beans-edit';
@@ -86,6 +87,7 @@ import {MillEditModal} from "../pages/mill/edit/mill-edit";
     PreparationsPage,
     PreparationsAddModal,
     PreparationsEditModal,
+    CreditsPage,
     MillsPage,
     MillAddModal,
     MillEditModal,
@@ -125,6 +127,7 @@ import {MillEditModal} from "../pages/mill/edit/mill-edit";
     PreparationsAddModal,
     PreparationsEditModal,
     MillsPage,
+    CreditsPage,
     MillAddModal,
     MillEditModal,
     BrewsPage, BrewsAddModal, TimerComponent, BrewsEditModal,BrewsPhotoView,BrewsDetailsModal,BrewsTableModal,BrewsPopover,
@@ -152,7 +155,7 @@ import {MillEditModal} from "../pages/mill/edit/mill-edit";
     UIAlert,
     UIImage,
     UIBeanStorage, AppMinimize, {provide: ErrorHandler, useClass: IonicErrorHandler},
-    MediaCapture, ImagePicker,AndroidPermissions, UIBrewStorage,UIStatistic
+    Camera, ImagePicker,AndroidPermissions, UIBrewStorage,UIStatistic
   ],exports:[PreventCharacterDirective],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })

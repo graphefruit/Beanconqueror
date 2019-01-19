@@ -43,7 +43,7 @@
     <div *ngIf="settings.set_last_coffee_brew==true">
     <ion-item-divider color="light">Welche Parameter sollen vorbelegt werden?</ion-item-divider>
      <ion-item>
-      <ion-label>Temperatur Zeit</ion-label>
+      <ion-label>Temperatur Zeit / Surf Zeit</ion-label>
       <ion-checkbox [(ngModel)]="settings.default_last_coffee_parameters.brew_temperature_time" (ngModelChange)="saveSettings($event)"></ion-checkbox>
     </ion-item>
     <ion-item>
@@ -117,7 +117,7 @@
 
     <ion-item-divider color="light">Anzuzeigende Bezugsparameter</ion-item-divider>
   <ion-item>
-      <ion-label>Temperatur Zeit</ion-label>
+      <ion-label>Temperatur Zeit / Surf Zeit</ion-label>
       <ion-checkbox [(ngModel)]="settings.brew_temperature_time" (ngModelChange)="saveSettings($event)"></ion-checkbox>
     </ion-item>
     <ion-item>

@@ -44,10 +44,22 @@
     </ion-input>
   </ion-item>
   <ion-item>
-    <ion-label floating >Länder, Sorten, Mischung</ion-label>
-    <ion-input [(ngModel)]="data.beanMix" name="beanMix" type="text" #beanMix="ngModel" spellcheck="false"
+    <ion-label floating >Varietät</ion-label>
+    <ion-input [(ngModel)]="data.variety" name="variety" type="text" #variety="ngModel" spellcheck="false"
                autocapitalize="off" required>
     </ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label floating >Herkunftsland</ion-label>
+    <ion-input [(ngModel)]="data.country" name="country" type="text" #country="ngModel" spellcheck="false"
+               autocapitalize="off" required>
+    </ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label floating >Mischung</ion-label>
+    <ion-select [(ngModel)]="data.beanMix"  name="beanMix" #beanMix="ngModel">
+      <ion-option *ngFor="let key of mixEnum | keys" value="{{key}}">{{mixEnum[key]}}</ion-option>
+    </ion-select>
   </ion-item>
   <ion-item>
     <ion-label floating >Geschmack</ion-label>

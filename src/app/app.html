@@ -43,6 +43,10 @@
           <ion-icon class="menu-icon" name="{{pages.licences.icon}}"></ion-icon>
           {{pages.licences.title}}
         </button>
+        <button ion-item (click)="openPage($event,pages.credits)" [class.active]="pages.credits.active">
+          <ion-icon class="menu-icon" name="{{pages.credits.icon}}"></ion-icon>
+          {{pages.credits.title}}
+        </button>
         <button ion-item (click)="openPage($event,pages.about)" [class.active]="pages.about.active">
           <ion-icon class="menu-icon" name="{{pages.about.icon}}"></ion-icon>
           {{pages.about.title}}

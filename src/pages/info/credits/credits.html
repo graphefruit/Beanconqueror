@@ -1,0 +1,22 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Open-Source-Lizenzen</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-card *ngFor="let key of credits | keys">
+    <ion-item>
+      <h2>{{ credits[key].TITLE }}</h2>
+      <button ion-button (click)="openLink($event,credits[key].LINK)">Credit-Page</button>
+    </ion-item>
+    <ion-card-content style="border-top: 1px solid rgba(0, 0, 0, 0.3);padding-top: 10px;"
+                      class="white-space-normal"
+                      [innerHTML]="credits[key].DESCRIPTION">
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>
