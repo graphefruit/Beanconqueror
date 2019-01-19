@@ -14,50 +14,111 @@
 </ion-header>
 
 <ion-content>
-  <ion-card padding *ngIf="beans?.length == 0">
-    Du hast leider noch keine Bohnen hinterlegt!
-  </ion-card>
-  <ion-card *ngFor="let bean of beans">
-    <img class="card-image" *ngIf="bean.filePath" [src]="bean.filePath"/>
-    <ion-card-header>
-      {{bean.name}}
-    </ion-card-header>
-    <ion-card-content *ngIf="bean.note != ''">
-      <pre>{{bean.note}}</pre>
-    </ion-card-content>
-    <ion-row>
-      <ion-col>
-        <div style="padding:0 0.9em;" justify-content-start color="dark" clear block small icon-left>
-          <ion-icon name="thermometer" item-start></ion-icon>
-          <span>Röstgrad: {{bean.getRoastName()}}</span>
-        </div>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col>
-        <div style="padding:0 0.9em;" justify-content-start color="dark" clear block small icon-left>
-          <ion-icon name="calendar" item-start></ion-icon>
-          <span>Röstdatum: {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}</span>
-        </div>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col>
-        <button justify-content-start color="dark" clear ion-button block small icon-left (click)="editBean(bean)">
-          <ion-icon name="md-create" item-start></ion-icon>
-          <span>Editieren</span>
-        </button>
-      </ion-col>
-      <ion-col>
-        <button justify-content-start color="dark" clear ion-button block small icon-left (click)="deleteBean(bean)">
-          <ion-icon name="trash" item-start></ion-icon>
-          <span>Löschen</span>
-        </button>
-      </ion-col>
-    </ion-row>
+  <div padding>
+    <ion-segment [(ngModel)]="bean_segment">
+      <ion-segment-button value="open">
+        Beziehbar
+      </ion-segment-button>
+      <ion-segment-button value="finished">
+        Fertig
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+  <div [ngSwitch]="bean_segment">
+    <div *ngSwitchCase="'open'">
+      <ion-card padding *ngIf="getOpenBeans()?.length == 0">
+        Du hast leider keine frischen Bohnen mehr!
+      </ion-card>
+      <ion-card *ngFor="let bean of getOpenBeans()">
+        <img class="card-image" *ngIf="bean.filePath" [src]="bean.filePath"/>
+        <ion-card-header>
+          {{bean.name}}
+        </ion-card-header>
+        <ion-card-content *ngIf="bean.note != ''">
+          <pre>{{bean.note}}</pre>
+        </ion-card-content>
+        <ion-row>
+          <ion-col>
+            <div style="padding:0 0.9em;" justify-content-start color="dark" clear block small icon-left>
+              <ion-icon name="thermometer" item-start></ion-icon>
+              <span>Röstgrad: {{bean.getRoastName()}}</span>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <div style="padding:0 0.9em;" justify-content-start color="dark" clear block small icon-left>
+              <ion-icon name="calendar" item-start></ion-icon>
+              <span>Röstdatum: {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}</span>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <button justify-content-start color="dark" clear ion-button block small icon-left (click)="editBean(bean)">
+              <ion-icon name="md-create" item-start></ion-icon>
+              <span>Editieren</span>
+            </button>
+          </ion-col>
+          <ion-col>
+            <button justify-content-start color="dark" clear ion-button block small icon-left (click)="deleteBean(bean)">
+              <ion-icon name="trash" item-start></ion-icon>
+              <span>Löschen</span>
+            </button>
+          </ion-col>
+        </ion-row>
 
 
-  </ion-card>
+      </ion-card>
+    </div>
+    <div *ngSwitchCase="'finished'">
+      <ion-card padding *ngIf="getFinishedBeans()?.length == 0">
+        Du hast keine aufgebrauchten Bohnen!
+      </ion-card>
+      <ion-card *ngFor="let bean of getFinishedBeans()">
+        <img class="card-image" *ngIf="bean.filePath" [src]="bean.filePath"/>
+        <ion-card-header>
+          {{bean.name}}
+        </ion-card-header>
+        <ion-card-content *ngIf="bean.note != ''">
+          <pre>{{bean.note}}</pre>
+        </ion-card-content>
+        <ion-row>
+          <ion-col>
+            <div style="padding:0 0.9em;" justify-content-start color="dark" clear block small icon-left>
+              <ion-icon name="thermometer" item-start></ion-icon>
+              <span>Röstgrad: {{bean.getRoastName()}}</span>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <div style="padding:0 0.9em;" justify-content-start color="dark" clear block small icon-left>
+              <ion-icon name="calendar" item-start></ion-icon>
+              <span>Röstdatum: {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}</span>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <button justify-content-start color="dark" clear ion-button block small icon-left (click)="editBean(bean)">
+              <ion-icon name="md-create" item-start></ion-icon>
+              <span>Editieren</span>
+            </button>
+          </ion-col>
+          <ion-col>
+            <button justify-content-start color="dark" clear ion-button block small icon-left (click)="deleteBean(bean)">
+              <ion-icon name="trash" item-start></ion-icon>
+              <span>Löschen</span>
+            </button>
+          </ion-col>
+        </ion-row>
+
+
+      </ion-card>
+    </div>
+  </div>
+
 
 
 </ion-content>

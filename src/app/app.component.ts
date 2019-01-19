@@ -29,6 +29,16 @@ import {UISettingsStorage} from '../services/uiSettingsStorage';
 import {PrivacyPage} from "../pages/info/privacy/privacy";
 import {TermsPage} from "../pages/info/terms/terms";
 import {BrewsAddModal} from "../pages/brews/add/brews-add";
+import {MillsPage} from "../pages/mill/mills";
+import {UIMillStorage} from "../services/uiMillStorage";
+import {Mill} from "../classes/mill/mill";
+import {IBrew} from "../interfaces/brew/iBrew";
+import {Brew} from "../classes/brew/brew";
+import {UIBrewHelper} from "../services/uiBrewHelper";
+import {BeansAddModal} from "../pages/beans/add/beans-add";
+import {PreparationsAddModal} from "../pages/preparations/add/preparations-add";
+import {MillAddModal} from "../pages/mill/add/mill-add";
+import {CreditsPage} from "../pages/info/credits/credits";
 
 
 @Component({
@@ -46,9 +56,11 @@ export class MyApp {
     "brews": {title: 'Brühungen', component: BrewsPage, icon: 'fa-coffee', active: false},
     "beans": {title: 'Bohnen', component: BeansPage, icon: 'fa-pagelines', active: false},
     "preparation": {title: 'Zubereitungsmethoden', component: PreparationsPage, icon: 'fa-flask', active: false},
+    "mill": {title: 'Mühlen', component: MillsPage, icon: 'md-cut', active: false},
     "about": {title: 'Über uns', component: AboutPage, icon: 'md-information', active: false},
     "contact": {title: 'Kontakt', component: ContactPage, icon: 'md-mail', active: false},
     "privacy": {title: 'Privacy', component: PrivacyPage, icon: 'md-document', active: false},
+    "credits": {title: 'Credits', component: CreditsPage, icon: 'md-document', active: false},
     "terms": {title: 'Terms & Conditions', component: TermsPage, icon: 'md-document', active: false},
     "licences": {title: 'Open-Source-Lizenzen', component: LicencesPage, icon: 'md-copy', active: false},
     "settings": {title: 'Einstellungen', component: SettingsPage, icon: 'md-settings', active: false},
@@ -60,6 +72,8 @@ export class MyApp {
               private uiBeanStorage: UIBeanStorage,
               private uiBrewStorage:UIBrewStorage,
               private uiPreparationStorage: UIPreparationStorage,
+              private uiMillStorage:UIMillStorage,
+              private uiBrewHelper:UIBrewHelper,
               private ionicApp: IonicApp, private menuCtrl: MenuController,
               private appMinimize: AppMinimize, private uiSettingsStorage:UISettingsStorage, private keyboard:Keyboard,
               private threeDeeTouch: ThreeDeeTouch, private modalCtrl:ModalController) {
@@ -98,16 +112,17 @@ export class MyApp {
       let preparationStorageReadyCallback = this.uiPreparationStorage.storageReady();
       let uiSettingsStorageReadyCallback = this.uiSettingsStorage.storageReady();
       let brewStorageReadyCallback = this.uiBrewStorage.storageReady();
+      let millStorageReadyCallback = this.uiMillStorage.storageReady();
       Promise.all([
         beanStorageReadyCallback,
         preparationStorageReadyCallback,
         brewStorageReadyCallback,
         uiSettingsStorageReadyCallback,
+        millStorageReadyCallback,
       ]).then(() => {
         this.uiLog.log("App finished loading");
+        this.__checkUpdate();
         this.__initApp();
-
-
 
       }, () => {
         this.uiLog.log("App finished loading");
@@ -115,6 +130,24 @@ export class MyApp {
       })
     });
 
+  }
+
+  private __checkUpdate() {
+    if (this.uiBrewStorage.getAllEntries().length > 0 && this.uiMillStorage.getAllEntries().length <=0)
+    {
+      //We got an update and we got no mills yet, therefore we add a Standard mill.
+      let data:Mill = new Mill();
+      data.name = "Standard";
+      this.uiMillStorage.add(data);
+
+      let brews:Array<Brew> = this.uiBrewStorage.getAllEntries();
+      for (let i=0;i<brews.length;i++)
+      {
+        brews[i].mill = data.config.uuid;
+
+        this.uiBrewStorage.update(brews[i]);
+      }
+    }
   }
 
   private __initApp() {
@@ -125,17 +158,33 @@ export class MyApp {
     if (this.platform.is("ios"))
     this.threeDeeTouch.onHomeIconPressed().subscribe(
       (payload) => {
+        console.log(payload);
+        if (payload.type =="Brew")
+        {
+          this.__trackNewBrew();
+        }
+        else if (payload.type == "Bean")
+        {
+          this.__trackNewBean();
+        }
+        else if (payload.type == "Preparation")
+        {
+          this.__trackNewPreparation();
+        }
+        else if (payload.type =="Mill")
+        {
+          this.__trackNewMill();
+        }
         // returns an object that is the button you presed
-        this.__trackNewBrew();
+
       }
     )
   }
 
   private __trackNewBrew(){
-    let hasBeans = (this.uiBeanStorage.getAllEntries().length > 0);
-    let hasPreparationMethods = (this.uiPreparationStorage.getAllEntries().length > 0);
 
-    if (hasBeans && hasPreparationMethods)
+
+    if (this.uiBrewHelper.canBrew())
     {
       let addBrewsModal = this.modalCtrl.create(BrewsAddModal, {});
       addBrewsModal.onDidDismiss(() => {
@@ -143,6 +192,39 @@ export class MyApp {
       });
       addBrewsModal.present({animate: false});
     }
+
+  }
+  private __trackNewBean(){
+
+
+      let modal = this.modalCtrl.create(BeansAddModal, {});
+      modal.onDidDismiss(() => {
+
+      });
+      modal.present({animate: false});
+
+
+  }
+  private __trackNewPreparation(){
+
+      let modal = this.modalCtrl.create(PreparationsAddModal, {});
+      modal.onDidDismiss(() => {
+
+      });
+      modal.present({animate: false});
+
+
+  }
+  private __trackNewMill(){
+
+
+
+      let modal = this.modalCtrl.create(MillAddModal, {});
+      modal.onDidDismiss(() => {
+
+      });
+      modal.present({animate: false});
+
 
   }
 

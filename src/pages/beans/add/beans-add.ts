@@ -11,6 +11,7 @@ import {Bean} from '../../../classes/bean/bean';
 
 /**Enums**/
 import {ROASTS_ENUM} from '../../../enums/beans/roasts';
+import {BEAN_MIX_ENUM} from "../../../enums/beans/mix";
 
 @Component({
   templateUrl: 'beans-add.html',
@@ -21,6 +22,7 @@ export class BeansAddModal {
   public data: Bean = new Bean();
 
   public roastsEnum = ROASTS_ENUM;
+  public mixEnum = BEAN_MIX_ENUM;
 
 
   constructor(private viewCtrl: ViewController, private uiBeanStorage: UIBeanStorage, private uiImage: UIImage) {

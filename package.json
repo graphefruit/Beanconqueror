@@ -16,6 +16,7 @@
         "ionic_sass": "./compile/sass.js"
     },
     "dependencies": {
+        "@angular/animations": "5.2.11",
         "@angular/common": "5.2.11",
         "@angular/compiler": "5.2.11",
         "@angular/compiler-cli": "5.2.11",
@@ -27,18 +28,19 @@
         "@ionic-native/android-permissions": "4.9.0",
         "@ionic-native/app-minimize": "4.9.0",
         "@ionic-native/app-version": "4.9.0",
-        "@ionic-native/core": "4.9.0",
-        "@ionic-native/file": "^4.11.0",
-        "@ionic-native/file-chooser": "^4.11.0",
-        "@ionic-native/file-path": "^4.11.0",
-        "@ionic-native/file-picker": "^4.17.0",
+        "@ionic-native/camera": "^4.19.0",
+        "@ionic-native/core": "^4.19.0",
+        "@ionic-native/file": "^4.19.0",
+        "@ionic-native/file-chooser": "^4.19.0",
+        "@ionic-native/file-path": "^4.19.0",
+        "@ionic-native/file-picker": "^4.19.0",
         "@ionic-native/image-picker": "4.9.0",
-        "@ionic-native/keyboard": "^4.17.0",
-        "@ionic-native/media-capture": "4.9.0",
-        "@ionic-native/social-sharing": "^4.17.0",
+        "@ionic-native/in-app-browser": "^4.19.0",
+        "@ionic-native/keyboard": "^4.19.0",
+        "@ionic-native/social-sharing": "^4.19.0",
         "@ionic-native/splash-screen": "4.9.0",
         "@ionic-native/status-bar": "4.9.0",
-        "@ionic-native/three-dee-touch": "^4.18.0",
+        "@ionic-native/three-dee-touch": "^4.19.0",
         "@ionic/storage": "2.1.3",
         "cordova-android": "7.1.4",
         "cordova-browser": "5.0.3",
@@ -46,34 +48,34 @@
         "cordova-plugin-3dtouch": "1.3.5",
         "cordova-plugin-android-permissions": "^1.0.0",
         "cordova-plugin-app-version": "^0.1.9",
-        "cordova-plugin-appminimize": "^1.0.0",
-        "cordova-plugin-compat": "^1.2.0",
+        "cordova-plugin-appminimize": "^1.0.1",
+        "cordova-plugin-camera": "4.0.3",
         "cordova-plugin-device": "^1.1.7",
-        "cordova-plugin-file": "^4.3.3",
-        "cordova-plugin-filechooser": "^1.0.1",
-        "cordova-plugin-filepath": "^1.4.2",
+        "cordova-plugin-file": "6.0.1",
+        "cordova-plugin-filechooser": "^1.2.0",
+        "cordova-plugin-filepath": "^1.5.1",
         "cordova-plugin-filepicker": "1.1.5",
+        "cordova-plugin-inappbrowser": "3.0.0",
         "cordova-plugin-ionic-keyboard": "2.1.3",
         "cordova-plugin-ionic-webview": "^1.2.1",
-        "cordova-plugin-media-capture": "^1.4.3",
         "cordova-plugin-splashscreen": "^4.1.0",
         "cordova-plugin-statusbar": "^2.4.2",
         "cordova-plugin-telerik-imagepicker": "2.2.2",
         "cordova-plugin-whitelist": "^1.3.3",
         "cordova-plugin-x-socialsharing": "5.4.3",
-        "cordova-sqlite-storage": "^2.5.2",
+        "cordova-sqlite-storage": "^2.6.0",
         "es6-promise-plugin": "4.2.2",
         "ionic": "4.5.0",
         "ionic-angular": "3.9.2",
         "ionicons": "3.0.0",
         "ios-deploy": "1.9.4",
-        "moment": "^2.19.1",
+        "moment": "^2.23.0",
         "rxjs": "5.5.11",
         "sw-toolbox": "3.6.0",
         "zone.js": "0.8.26"
     },
     "devDependencies": {
-        "@ionic/app-scripts": "^3.1.10",
+        "@ionic/app-scripts": "^3.2.1",
         "typescript": "~2.6.2"
     },
     "description": "App for Coffee Enthusiasts",
@@ -81,11 +83,6 @@
         "plugins": {
             "cordova-sqlite-storage": {},
             "cordova-plugin-appminimize": {},
-            "cordova-plugin-media-capture": {
-                "CAMERA_USAGE_DESCRIPTION": " ",
-                "MICROPHONE_USAGE_DESCRIPTION": " ",
-                "PHOTOLIBRARY_USAGE_DESCRIPTION": " "
-            },
             "cordova-plugin-device": {},
             "cordova-plugin-ionic-webview": {},
             "cordova-plugin-splashscreen": {},
@@ -95,18 +92,20 @@
             "cordova-plugin-app-version": {},
             "cordova-plugin-filechooser": {},
             "cordova-plugin-filepath": {},
-            "cordova-plugin-file": {},
             "cordova-plugin-x-socialsharing": {},
             "cordova-plugin-ionic-keyboard": {},
             "cordova-plugin-filepicker": {},
             "cordova-plugin-3dtouch": {},
             "cordova-plugin-telerik-imagepicker": {
                 "PHOTO_LIBRARY_USAGE_DESCRIPTION": "Access to library needed to choose photos"
-            }
+            },
+            "cordova-plugin-inappbrowser": {},
+            "cordova-plugin-camera": {},
+            "cordova-plugin-file": {}
         },
         "platforms": [
-            "ios",
-            "android"
+            "android",
+            "ios"
         ]
     }
 }
