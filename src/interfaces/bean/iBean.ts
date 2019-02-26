@@ -25,6 +25,7 @@ export interface IBean {
   config:IConfig;
   weight:number;
   finished:boolean;
+  cost:number;
 }
 
 

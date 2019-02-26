@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Statistiken</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-list-header>
+      Statistikauflistung
+    </ion-list-header>
+    <ion-item>Mühlen: {{uiStatistic.getMillsCount()}}</ion-item>
+    <ion-item>Zubereitungsmethoden: {{uiStatistic.getPreparationsCount()}}</ion-item>
+    <ion-item>Vermahlene Bohnen: {{uiStatistic.getTotalGround()}}</ion-item>
+    <ion-item>Geld für Kaffeebohnen: {{uiStatistic.getSpentMoneyForCoffeeBeans()}} €</ion-item>
+    <ion-item>Getrunkene Tassen: {{uiStatistic.getBrewsDrunk()}} </ion-item>
+
+  </ion-list>
+  <ion-card>
+    <ion-card-content>
+      <canvas #drinkChart></canvas>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

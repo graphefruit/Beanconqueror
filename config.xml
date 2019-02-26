@@ -108,6 +108,8 @@
         <icon height="57" src="resources/ios/icon/icon.png" width="57" />
         <icon height="114" src="resources/ios/icon/icon@2x.png" width="114" />
         <icon height="40" src="resources/ios/icon/icon-40.png" width="40" />
+        <icon height="50" src="resources/ios/icon/icon-50.png" width="50" />
+        <icon height="100" src="resources/ios/icon/icon-50@2x.png" width="100" />
         <icon height="80" src="resources/ios/icon/icon-40@2x.png" width="80" />
         <icon height="120" src="resources/ios/icon/icon-40@3x.png" width="120" />
         <icon height="120" src="resources/ios/icon/icon-60@2x.png" width="120" />
