@@ -34,6 +34,7 @@ import {LicencesPage} from '../pages/info/licences/licences';
 import {TermsPage} from "../pages/info/terms/terms";
 import {PrivacyPage} from "../pages/info/privacy/privacy";
 import {CreditsPage} from "../pages/info/credits/credits";
+import {StatisticsPage} from "../pages/statistics/statistics";
 /**Modals**/
 import {BeansAddModal} from '../pages/beans/add/beans-add';
 import {BeansEditModal} from '../pages/beans/edit/beans-edit';
@@ -81,6 +82,7 @@ import {MillEditModal} from "../pages/mill/edit/mill-edit";
     MyApp,
     HomePage,
     SettingsPage,
+    StatisticsPage,
     BeansPage,
     BeansAddModal,
     BeansEditModal,
@@ -120,6 +122,7 @@ import {MillEditModal} from "../pages/mill/edit/mill-edit";
     MyApp,
     HomePage,
     SettingsPage,
+    StatisticsPage,
     BeansPage,
     BeansAddModal,
     BeansEditModal,

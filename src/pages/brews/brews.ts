@@ -262,7 +262,6 @@ public brew_segment:string ="open";
 //sort latest to top.
     let brewsCopy:Array<Brew> = [...this.brews];
 
-    debugger;
     if (_type === 'open')
     {
       brewsCopy = brewsCopy.filter(e=>e.getBean().finished == false);

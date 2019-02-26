@@ -9,13 +9,15 @@ import {UIHelper}  from '../services/uiHelper';
 
 /**Interfaces**/
 import {IBrew} from '../interfaces/brew/iBrew';
+import {Bean} from "../classes/bean/bean";
+import {UIMillStorage} from "./uiMillStorage";
 
 @Injectable()
 export class UIStatistic {
 
   constructor(private uiPreparationStorage: UIPreparationStorage,
               private uiBeanStorage: UIBeanStorage,
-              private uiBrewStorage: UIBrewStorage, private uiHelper: UIHelper) {
+              private uiBrewStorage: UIBrewStorage, private uiMillStorage:UIMillStorage, private uiHelper: UIHelper) {
   }
 
 
@@ -30,6 +32,25 @@ export class UIStatistic {
 
   }
 
+
+  public getSpentMoneyForCoffeeBeans()
+  {
+
+      let costs:number = 0;
+      let beans:Array<Bean> = this.uiBeanStorage.getAllEntries();
+      for (let i=0;i<beans.length;i++)
+      {
+        let cost:number = beans[i].cost;
+        if (cost != null && cost != undefined && cost > 0)
+        {
+         costs+=cost;
+        }
+      }
+    return costs;
+
+
+  }
+
   public getBrewsDrunk(): number {
     return this.uiBrewStorage.getAllEntries().length;
   }
@@ -41,6 +62,11 @@ export class UIStatistic {
   public getPreparationsCount(): number {
     return this.uiPreparationStorage.getAllEntries().length;
   }
+  public getMillsCount(): number
+  {
+    return this.uiMillStorage.getAllEntries().length;
+  }
+
 
   public getLastDrunkBrewTimestamp(): string {
     let lastBrew:IBrew = this.getLastBrew();
@@ -106,7 +132,6 @@ export class UIStatistic {
     if (brews.length > 0) {
       let sum = 0;
       for (let brew of brews) {
-        //TODO: fill with settings.brew_quantity
         sum += brew.brew_quantity;
       }
       return sum;

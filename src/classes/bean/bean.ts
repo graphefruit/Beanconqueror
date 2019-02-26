@@ -20,7 +20,7 @@ export class Bean implements IBean {
   public aromatics:string;
   public weight:number;
   public finished:boolean;
-
+  public cost:number;
 
   constructor() {
     this.name = "";
@@ -37,6 +37,7 @@ export class Bean implements IBean {
     this.aromatics = "";
     this.weight=0;
     this.finished = false;
+    this.cost=0;
   }
 
   public getRoastName():string{

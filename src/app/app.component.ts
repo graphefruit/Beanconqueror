@@ -28,6 +28,7 @@ import {UIPreparationStorage} from '../services/uiPreparationStorage';
 import {UISettingsStorage} from '../services/uiSettingsStorage';
 import {PrivacyPage} from "../pages/info/privacy/privacy";
 import {TermsPage} from "../pages/info/terms/terms";
+import {StatisticsPage} from "../pages/statistics/statistics";
 import {BrewsAddModal} from "../pages/brews/add/brews-add";
 import {MillsPage} from "../pages/mill/mills";
 import {UIMillStorage} from "../services/uiMillStorage";
@@ -64,6 +65,7 @@ export class MyApp {
     "terms": {title: 'Terms & Conditions', component: TermsPage, icon: 'md-document', active: false},
     "licences": {title: 'Open-Source-Lizenzen', component: LicencesPage, icon: 'md-copy', active: false},
     "settings": {title: 'Einstellungen', component: SettingsPage, icon: 'md-settings', active: false},
+    "statistics": {title: 'Statistiken', component: StatisticsPage, icon: 'md-analytics', active: false},
   };
 
   toggleAbout: boolean = false;
