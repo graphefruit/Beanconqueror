@@ -1,6 +1,6 @@
-/**Core**/
+/** Core */
 import {Pipe, PipeTransform} from '@angular/core';
-/**Third party**/
+/** Third party */
 @Pipe({name: 'toDecimal'})
 export class ToDecimalPipe implements PipeTransform {
   transform(value, args?: string[]): any {

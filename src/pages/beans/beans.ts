@@ -1,15 +1,15 @@
-/**Core**/
+/** Core */
 import {Component, ChangeDetectorRef} from '@angular/core';
-/**Ionic**/
+/** Ionic */
 import {ModalController} from 'ionic-angular';
-/**Services**/
+/** Services */
 import {UIBeanStorage} from '../../services/uiBeanStorage';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {UIAlert} from '../../services/uiAlert';
-/**Modals**/
+/** Modals */
 import {BeansAddModal} from '../beans/add/beans-add';
 import {BeansEditModal} from '../beans/edit/beans-edit';
-/**Interfaces**/
+/** Interfaces */
 import {IBean} from '../../interfaces/bean/iBean';
 /**
  * Classes

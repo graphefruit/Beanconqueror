@@ -1,9 +1,15 @@
 {
+  //"extends": ["angular-tslint-rules"],
   "rules": {
     "no-duplicate-variable": true,
     "no-unused-variable": [
       true
-    ]
+    ],
+    "no-any":false,
+    //"member-access": true,
+    "arrow-parens":true,
+    "no-inferrable-types":false,
+    "no-console": false
   },
   "rulesDirectory": [
     "node_modules/tslint-eslint-rules/dist/rules"

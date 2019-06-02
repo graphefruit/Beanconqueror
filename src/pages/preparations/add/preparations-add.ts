@@ -1,10 +1,10 @@
-/**Core**/
+/** Core */
 import {Component} from '@angular/core';
-/**Ionic**/
+/** Ionic */
 import {ViewController} from 'ionic-angular';
-/**Services**/
+/** Services */
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
-/**Classes**/
+/** Classes */
 import {Preparation} from '../../../classes/preparation/preparation';
 
 @Component({

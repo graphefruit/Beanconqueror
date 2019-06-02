@@ -1,6 +1,6 @@
-/**Core**/
+/** Core */
 import {Component} from '@angular/core';
-/**Services**/
+/** Services */
 import {UIHelper} from '../../../services/uiHelper';
 @Component({
   templateUrl: 'licences.html',

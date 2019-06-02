@@ -10,14 +10,14 @@
 <ion-content>
   <ion-list>
     <ion-list-header>
-      Statistikauflistung
+      Statistiken für Nerds.
     </ion-list-header>
-    <ion-item>Mühlen: {{uiStatistic.getMillsCount()}}</ion-item>
-    <ion-item>Zubereitungsmethoden: {{uiStatistic.getPreparationsCount()}}</ion-item>
-    <ion-item>Vermahlene Bohnen: {{uiStatistic.getTotalGround()}}</ion-item>
-    <ion-item>Geld für Kaffeebohnen: {{uiStatistic.getSpentMoneyForCoffeeBeans()}} €</ion-item>
+    <ion-item>Mühlenfuhrpark: {{uiStatistic.getMillsCount()}} Stück</ion-item>
+    <ion-item>Zubereitungsmethoden: {{uiStatistic.getPreparationsCount()}} Stück</ion-item>
+    <ion-item>Vermahlene Bohnen: {{uiStatistic.getTotalGround()}} g</ion-item>
+    <ion-item>Geld für Kaffee ausgegeben: {{uiStatistic.getSpentMoneyForCoffeeBeans()}} €</ion-item>
     <ion-item>Getrunkene Tassen: {{uiStatistic.getBrewsDrunk()}} </ion-item>
-
+    <ion-item>Getrunkene Menge: {{uiStatistic.getTotalDrunk()}} gr/ml</ion-item>
   </ion-list>
   <ion-card>
     <ion-card-content>

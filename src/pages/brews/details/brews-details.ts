@@ -1,19 +1,16 @@
-/**Core**/
+/** Core */
 import {Component, ViewChild} from '@angular/core';
-/**Ionic**/
+/** Ionic */
 import {ViewController, NavParams, Slides} from 'ionic-angular';
-/**Services**/
-import {UIBeanStorage} from '../../../services/uiBeanStorage';
+/** Services */
 import {UISettingsStorage} from '../../../services/uiSettingsStorage';
-import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {UIHelper} from '../../../services/uiHelper';
-import {UIImage} from '../../../services/uiImage';
 
-/**Classes**/
+/** Classes */
 import {Brew} from '../../../classes/brew/brew';
 import {Settings} from '../../../classes/settings/settings';
 
-/**Interfaces**/
+/** Interfaces */
 
 import {IBrew} from '../../../interfaces/brew/iBrew';
 
@@ -35,7 +32,6 @@ export class BrewsDetailsModal {
   constructor(private viewCtrl: ViewController,
               private navParams: NavParams,
               public uiHelper: UIHelper,
-              private uiImage: UIImage,
               private uiSettingsStorage:UISettingsStorage) {
 
     this.settings = this.uiSettingsStorage.getSettings();

@@ -1,30 +1,30 @@
-/**Core**/
+/** Core */
 import {Component, ViewChild} from '@angular/core';
-/**Ionic**/
+/** Ionic */
 import {ViewController, Slides} from 'ionic-angular';
 
-/**Services**/
+/** Services */
 import {UIBeanStorage} from '../../../services/uiBeanStorage';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {UIBrewStorage} from '../../../services/uiBrewStorage';
 import {UIImage} from '../../../services/uiImage';
 import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 import {UIHelper} from '../../../services/uiHelper';
-/**Components**/
+/** Components */
 import {TimerComponent} from '../../../components/timer/timer';
 
-/**Enums**/
+/** Enums */
 import {BREW_VIEW_ENUM} from '../../../enums/settings/brewView';
 
 
-/**Classes**/
+/** Classes */
 import {Brew} from '../../../classes/brew/brew';
 
-/**Interfaces**/
+/** Interfaces */
 import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 import {IBean} from '../../../interfaces/bean/iBean';
 import {ISettings} from '../../../interfaces/settings/iSettings';
-/**Enums**/
+/** Enums */
 
 import {BREW_QUANTITY_TYPES_ENUM} from '../../../enums/brews/brewQuantityTypes';
 import {IMill} from "../../../interfaces/mill/iMill";

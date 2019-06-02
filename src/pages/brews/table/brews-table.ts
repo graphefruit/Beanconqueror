@@ -1,23 +1,19 @@
-/**Core**/
+/** Core */
 import {Component, ViewChild, ElementRef, Renderer2} from '@angular/core';
-/**Ionic**/
-import {ViewController, NavParams, Slides, ModalController} from 'ionic-angular';
-/**Services**/
+/** Ionic */
+import {ViewController, ModalController} from 'ionic-angular';
+/** Services */
 import {UIBeanStorage} from '../../../services/uiBeanStorage';
 import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {UIHelper} from '../../../services/uiHelper';
-import {UIImage} from '../../../services/uiImage';
-
-/**Classes**/
+/** Classes */
 import {Brew} from '../../../classes/brew/brew';
 import {Settings} from '../../../classes/settings/settings';
 
-/**Interfaces**/
+/** Interfaces */
 import {IPreparation} from '../../../interfaces/preparation/iPreparation';
-import {IBean} from '../../../interfaces/bean/iBean';
-import {IBrew} from '../../../interfaces/brew/iBrew';
-import {BrewView} from "../../../classes/brew/brewView";
+import {IBean} from '../../../interfaces/bean/iBean';;
 import {UIBrewStorage} from "../../../services/uiBrewStorage";
 import {BrewsAddModal} from "../add/brews-add";
 import {UIMillStorage} from "../../../services/uiMillStorage";
@@ -45,9 +41,9 @@ export class BrewsTableModal {
   public hasPreparationMethods: boolean = false;
   public hasMills: boolean = false;
 
-  constructor(private viewCtrl: ViewController, private navParams: NavParams, private uiBeanStorage: UIBeanStorage,
+  constructor(private viewCtrl: ViewController,  private uiBeanStorage: UIBeanStorage,
               private uiPreparationStorage: UIPreparationStorage,
-              public uiHelper: UIHelper, private uiImage: UIImage,
+              public uiHelper: UIHelper,
               public uiBrewHelper:UIBrewHelper,
               private uiSettingsStorage: UISettingsStorage, private uiBrewStorage: UIBrewStorage,
               private renderer: Renderer2, private modalCtrl:ModalController,

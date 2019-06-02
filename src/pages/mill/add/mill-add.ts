@@ -1,10 +1,10 @@
-/**Core**/
+/** Core */
 import {Component} from '@angular/core';
-/**Ionic**/
+/** Ionic */
 import {ViewController} from 'ionic-angular';
-/**Services**/
+/** Services */
 
-/**Classes**/
+/** Classes */
 
 import {Mill} from "../../../classes/mill/mill";
 import {UIMillStorage} from "../../../services/uiMillStorage";

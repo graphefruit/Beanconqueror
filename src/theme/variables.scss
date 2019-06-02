@@ -87,5 +87,14 @@ $colors: (
 @import "roboto";
 @import "noto-sans";
 
+$card-md-border-radius: 5px;
+$card-md-header-color:rgba(8,66,138,0.77);
+$toolbar-background: #7189a7;
+$segment-button-md-text-color-activated:black;
+$segment-button-md-border-color-activated:rgb(160,176,196);
+$list-md-header-color:rgb(160,176,196);
 
-$toolbar-background: rgb(225,217,207);
+
+$button-md-text-color:white;
+$button-md-background-color:rgb(160,176,196);
+$button-md-outline-text-color: rgb(160,176,196);

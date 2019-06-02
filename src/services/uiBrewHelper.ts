@@ -1,11 +1,9 @@
-/**Core**/
+/** Core */
 import {Injectable} from '@angular/core';
 
 import {UIBeanStorage} from "./uiBeanStorage";
 import {UIMillStorage} from "./uiMillStorage";
 import {UIPreparationStorage} from "./uiPreparationStorage";
-import {Platform} from "ionic-angular";
-import {SocialSharing} from "@ionic-native/social-sharing";
 
 
 /**
@@ -14,7 +12,7 @@ import {SocialSharing} from "@ionic-native/social-sharing";
 @Injectable()
 export class UIBrewHelper {
 
-  constructor(private platform: Platform, private uiBeanStorage:UIBeanStorage, private uiMillStorage:UIMillStorage, private uiPreparationStorage:UIPreparationStorage){
+  constructor(private uiBeanStorage:UIBeanStorage, private uiMillStorage:UIMillStorage, private uiPreparationStorage:UIPreparationStorage){
 
   }
 

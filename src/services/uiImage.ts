@@ -1,8 +1,8 @@
-/**Core**/
+/** Core */
 import {Injectable} from '@angular/core';
-/**Ionic**/
+/** Ionic */
 import {AlertController, Platform} from 'ionic-angular';
-/**Ionic native **/
+/** Ionic native  */
 import {Camera,CameraOptions} from '@ionic-native/camera';
 import {ImagePicker} from '@ionic-native/image-picker';
 import {AndroidPermissions} from '@ionic-native/android-permissions';
@@ -71,6 +71,8 @@ export class UIImage {
         destinationType: this.camera.DestinationType.FILE_URI,
         encodingType: this.camera.EncodingType.JPEG,
         mediaType: this.camera.MediaType.PICTURE,
+        sourceType: this.camera.PictureSourceType.CAMERA,
+        saveToPhotoAlbum: true,
         correctOrientation:true,
       };
       this.camera.getPicture(options)

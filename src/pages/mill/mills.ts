@@ -1,20 +1,16 @@
-/**Core**/
+/** Core */
 import {Component, ChangeDetectorRef} from '@angular/core';
-/**Ionic**/
+/** Ionic */
 import {ModalController} from 'ionic-angular';
-/**Services**/
-import {UIPreparationStorage} from '../../services/uiPreparationStorage';
+/** Services */
 import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {UIAlert} from '../../services/uiAlert';
-/**Modals**/
-import {PreparationsAddModal} from '../preparations/add/preparations-add';
-import {PreparationsEditModal} from '../preparations/edit/preparations-edit';
+
 
 /**
  * Classes
  */
 import {Brew} from '../../classes/brew/brew';
-import {Preparation} from '../../classes/preparation/preparation';
 import {Mill} from "../../classes/mill/mill";
 import {UIMillStorage} from "../../services/uiMillStorage";
 import {MillAddModal} from "./add/mill-add";

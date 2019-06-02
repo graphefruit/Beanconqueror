@@ -1,9 +1,9 @@
-/**Core**/
+/** Core */
 import {Injectable} from '@angular/core';
-/**Class**/
+/** Class */
 import {Brew} from '../classes/brew/brew';
 
-/**Services**/
+/** Services */
 import {UIHelper} from '../services/uiHelper';
 import {UILog} from '../services/uiLog';
 import {UIStorage} from  '../services/uiStorage';

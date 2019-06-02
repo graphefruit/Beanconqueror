@@ -1,8 +1,8 @@
-/**Interfaces**/
+/** Interfaces */
 import {ISettings} from "../../interfaces/settings/iSettings";
-/**Classes**/
+/** Classes */
 import {Config} from "../objectConfig/objectConfig";
-/**Enums**/
+/** Enums */
 import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
 
 import {DefaultLastCoffeeParameters} from "./settingsDefaultLastCoffeeParameter";

@@ -1,6 +1,6 @@
-/**Interfaces**/
+/** Interfaces */
 import {IPreparation} from "../../interfaces/preparation/iPreparation";
-/**Classes**/
+/** Classes */
 import {Config} from "../objectConfig/objectConfig";
 
 export class Preparation implements IPreparation {

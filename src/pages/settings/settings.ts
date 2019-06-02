@@ -1,17 +1,17 @@
-/**Core**/
+/** Core */
 import {Component} from '@angular/core';
 
-/**Interfaces**/
+/** Interfaces */
 import {ISettings} from '../../interfaces/settings/iSettings';
-/**Enums**/
+/** Enums */
 import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
 
-/**Services**/
+/** Services */
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {UIStorage} from "../../services/uiStorage";
 import {UIHelper} from "../../services/uiHelper";
 
-/**Native imports**/
+/** Native imports */
 import {File, FileEntry} from "@ionic-native/file";
 import {FileChooser} from '@ionic-native/file-chooser';
 import {AlertController, Platform} from "ionic-angular";

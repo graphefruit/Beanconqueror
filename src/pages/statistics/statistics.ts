@@ -1,4 +1,4 @@
-/**Core**/
+/** Core */
 import {Component, ViewChild} from '@angular/core';
 import {UIStatistic} from "../../services/uiStatistic";
 
@@ -93,7 +93,7 @@ export class StatisticsPage {
         drinkingData.datasets[0].data.push(lastBrewViews[y].brews.length);
       }
     }
-    var chartOptions = {
+    let chartOptions = {
       legend: {
         display: true,
         position: 'top',
@@ -101,7 +101,7 @@ export class StatisticsPage {
       }
     };
 
-    let renderedChart = new Chart(this.drinkChart.nativeElement, {
+    const renderedChart = new Chart(this.drinkChart.nativeElement, {
       type: 'line',
       data: drinkingData,
       options: chartOptions

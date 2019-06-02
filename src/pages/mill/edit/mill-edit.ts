@@ -1,8 +1,8 @@
-/**Core**/
+/** Core */
 import {Component} from '@angular/core';
-/**Ionic**/
+/** Ionic */
 import {NavParams, ViewController} from 'ionic-angular';
-/**Services**/
+/** Services */
 
 import {UIHelper} from '../../../services/uiHelper';
 

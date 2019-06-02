@@ -1,4 +1,4 @@
-/**Core**/
+/** Core */
 import {Directive} from '@angular/core';
 import {NgModel} from '@angular/forms';
 

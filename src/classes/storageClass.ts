@@ -32,7 +32,7 @@ export abstract class StorageClass {
   public storageReady(): Promise<any> {
     let promise = new Promise((resolve, reject) => {
 
-      let intV = setInterval(() => {
+      let intV:any= setInterval(() => {
         if (this.isInitialized === 1) {
           this.uiLog.log("Storage initialized");
           window.clearInterval(intV);

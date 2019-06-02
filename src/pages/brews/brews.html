@@ -71,11 +71,14 @@
                 </ion-col>
               </ion-row>
               <ion-row>
-                <ion-col *ngIf="settings.method_of_preparation === true">
-                  <i class="fa fa-flask"></i>&nbsp;{{brew.getPreparation().name}}
-                </ion-col>
                 <ion-col *ngIf="settings.bean_type === true">
-                  <i class="fa fa-pagelines"></i>&nbsp;{{brew.getBean().name}}
+                  <ion-icon class="custom-coffee-beans"></ion-icon>&nbsp;{{brew.getBean().name}}
+                </ion-col>
+                <ion-col *ngIf="settings.method_of_preparation === true">
+                  <ion-icon class="custom-filter"></ion-icon>&nbsp;{{brew.getPreparation().name}}
+                </ion-col>
+                <ion-col *ngIf="settings.mill === true">
+                  <ion-icon class="custom-mill"></ion-icon>&nbsp;{{brew.getMill().name}}
                 </ion-col>
               </ion-row>
             </ion-grid>
@@ -86,8 +89,15 @@
               </ion-item>
             </ion-list>
           </div>
-          <ion-row *ngIf="settings.attachments === true">
+          <ion-row >
             <ion-col>
+              <button justify-content-start color="dark" clear  ion-button block small
+                      icon-left (click)="postBrew(brew)">
+                <ion-icon name="md-clipboard" item-start></ion-icon>
+                <span>Posten</span>
+              </button>
+            </ion-col>
+            <ion-col *ngIf="settings.attachments === true">
               <button justify-content-start color="dark" clear *ngIf="brew?.attachments.length > 0" ion-button block small
                       icon-left (click)="viewPhotos(brew)">
                 <ion-icon name="md-eye" item-start></ion-icon>
@@ -155,11 +165,14 @@
                 </ion-col>
               </ion-row>
               <ion-row>
-                <ion-col *ngIf="settings.method_of_preparation === true">
-                  <i class="fa fa-flask"></i>&nbsp;{{brew.getPreparation().name}}
-                </ion-col>
                 <ion-col *ngIf="settings.bean_type === true">
-                  <i class="fa fa-pagelines"></i>&nbsp;{{brew.getBean().name}}
+                  <ion-icon class="custom-coffee-beans"></ion-icon>&nbsp;{{brew.getBean().name}}
+                </ion-col>
+                <ion-col *ngIf="settings.method_of_preparation === true">
+                  <ion-icon class="custom-filter"></ion-icon>&nbsp;{{brew.getPreparation().name}}
+                </ion-col>
+                <ion-col *ngIf="settings.mill === true">
+                  <ion-icon class="custom-mill"></ion-icon>&nbsp;{{brew.getMill().name}}
                 </ion-col>
               </ion-row>
             </ion-grid>
@@ -170,8 +183,15 @@
               </ion-item>
             </ion-list>
           </div>
-          <ion-row *ngIf="settings.attachments === true">
+          <ion-row>
             <ion-col>
+              <button justify-content-start color="dark" clear  ion-button block small
+                      icon-left (click)="postBrew(brew)">
+                <ion-icon name="md-clipboard" item-start></ion-icon>
+                <span>Posten</span>
+              </button>
+            </ion-col>
+            <ion-col *ngIf="settings.attachments === true">
               <button justify-content-start color="dark" clear *ngIf="brew?.attachments.length > 0" ion-button block small
                       icon-left (click)="viewPhotos(brew)">
                 <ion-icon name="md-eye" item-start></ion-icon>

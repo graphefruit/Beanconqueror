@@ -1,6 +1,6 @@
-/**Core**/
+/** Core */
 import {Injectable} from '@angular/core';
-/**Third party**/
+/** Third party */
 declare var console;
 @Injectable()
 export class UILog {
