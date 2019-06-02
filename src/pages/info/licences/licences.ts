@@ -1,18 +1,18 @@
 /** Core */
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 /** Services */
-import {UIHelper} from '../../../services/uiHelper';
+import { UIHelper } from '../../../services/uiHelper';
 @Component({
-  templateUrl: 'licences.html',
+  templateUrl: 'licences.html'
 })
 export class LicencesPage {
 
-  licences: any = {
-    "ionic": {
-      "TITLE": "Ionic Framework V2",
-      "LINK": "http://ionicframework.com/",
-      "ACTIVE": false,
-      "DESCRIPTION": `Copyright 2015-present Drifty Co.
+  public licences: any = {
+    ionic: {
+      TITLE: 'Ionic Framework V2',
+      LINK: 'http://ionicframework.com/',
+      ACTIVE: false,
+      DESCRIPTION: `Copyright 2015-present Drifty Co.
 http://drifty.com/
 
 MIT License
@@ -36,11 +36,11 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`
     },
-    "fontawesome": {
-      "TITLE": "Font Awesome",
-      "LINK": "https://github.com/FortAwesome/Font-Awesome",
-      "ACTIVE": false,
-      "DESCRIPTION": `
+    fontawesome: {
+      TITLE: 'Font Awesome',
+      LINK: 'https://github.com/FortAwesome/Font-Awesome',
+      ACTIVE: false,
+      DESCRIPTION: `
       The Font Awesome font is licensed under the SIL OFL 1.1:<br/>
       http://scripts.sil.org/OFL<br/>
       Font Awesome CSS, LESS, and Sass files are licensed under the MIT License:<br/>
@@ -53,22 +53,21 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`
       `
 
     },
-    "weihnachtsmuetze":{
-      "TITLE":"Weihnachtsmütze",
-      "LINK":"https://de.vector.me/browse/134790/clothing_santa_hat_clip_art",
-      "ACTIVE":false,
-      "DESCRIPTION":`Für kommerzielle und private Nutzung freigegeben. `
+    weihnachtsmuetze: {
+      TITLE: 'Weihnachtsmütze',
+      LINK: 'https://de.vector.me/browse/134790/clothing_santa_hat_clip_art',
+      ACTIVE: false,
+      DESCRIPTION: 'Für kommerzielle und private Nutzung freigegeben. '
     }
+  };
+
+  constructor(private uiHelper: UIHelper) {
   }
 
-  constructor(private uiHelper:UIHelper) {
-  }
-
-  public openLink(event, _link: string) {
+  public openLink(event, _link: string): void {
     event.cancelBubble = true;
     event.preventDefault();
     this.uiHelper.openExternalWebpage(_link);
 
   }
 }
-

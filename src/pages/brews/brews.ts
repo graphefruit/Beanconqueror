@@ -1,35 +1,33 @@
 /** Core */
-import {Component, ChangeDetectorRef} from '@angular/core';
-import {PopoverController, Platform,ModalController, AlertController} from 'ionic-angular';
-
+import { ChangeDetectorRef, Component } from '@angular/core';
+import { AlertController, ModalController, Platform, PopoverController } from 'ionic-angular';
 
 /** Services */
-import {UIBrewStorage} from '../../services/uiBrewStorage';
-import {UIAlert} from '../../services/uiAlert';
-import {UIHelper} from '../../services/uiHelper';
-import {UISettingsStorage} from '../../services/uiSettingsStorage';
+import { UIAlert } from '../../services/uiAlert';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { UIHelper } from '../../services/uiHelper';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
 
 /** Interfaces */
-import {IBrew} from '../../interfaces/brew/iBrew';
-import {ISettings} from '../../interfaces/settings/iSettings';
 /** Classes */
-import {Brew} from '../../classes/brew/brew';
-import {BrewView} from '../../classes/brew/brewView';
+import { Brew } from '../../classes/brew/brew';
+import { BrewView } from '../../classes/brew/brewView';
+import { IBrew } from '../../interfaces/brew/iBrew';
+import { ISettings } from '../../interfaces/settings/iSettings';
 
-
-import {BrewsPopover} from '../brews/popover/brews-popover';
+import { BrewsPopover } from '../brews/popover/brews-popover';
 
 /** Modals */
-import {BrewsAddModal} from '../brews/add/brews-add';
-import {BrewsEditModal} from '../brews/edit/brews-edit';
-import {BrewsDetailsModal} from '../brews/details/brews-details';
+import { BrewsAddModal } from '../brews/add/brews-add';
+import { BrewsDetailsModal } from '../brews/details/brews-details';
+import { BrewsEditModal } from '../brews/edit/brews-edit';
 
-import {BrewsPhotoView} from '../brews/photo-view/brews-photo-view';
-import {BrewsTableModal} from "./table/brews-table";
-import {FileEntry} from "@ionic-native/file";
-import {SocialSharing} from "@ionic-native/social-sharing";
-import {UIBrewHelper} from "../../services/uiBrewHelper";
-import {BrewsTextModal} from "./text/brews-text";
+import { FileEntry } from '@ionic-native/file';
+import { SocialSharing } from '@ionic-native/social-sharing';
+import { UIBrewHelper } from '../../services/uiBrewHelper';
+import { BrewsPhotoView } from '../brews/photo-view/brews-photo-view';
+import { BrewsTableModal } from './table/brews-table';
+import { BrewsTextModal } from './text/brews-text';
 @Component({
   templateUrl: 'brews.html',
   selector: 'brews'
@@ -39,9 +37,8 @@ export class BrewsPage {
   public brews: Array<Brew>;
   public openBrewsView: Array<BrewView> = [];
   public archiveBrewsView: Array<BrewView> = [];
-public brew_segment:string ="open";
+  public brew_segment: string = 'open';
   public settings: ISettings;
-
 
   constructor(private modalCtrl: ModalController,
               private platform: Platform,
@@ -49,192 +46,63 @@ public brew_segment:string ="open";
               private uiBrewStorage: UIBrewStorage,
               private changeDetectorRef: ChangeDetectorRef, private uiAlert: UIAlert,
               public uiHelper: UIHelper,
-              public uiBrewHelper:UIBrewHelper,
+              public uiBrewHelper: UIBrewHelper,
               private uiSettingsStorage: UISettingsStorage,
               private popoverCtrl: PopoverController, public alertCtrl: AlertController) {
     this.settings = this.uiSettingsStorage.getSettings();
 
-
   }
 
-
-  ionViewWillEnter() {
+  public ionViewWillEnter(): void {
     this.loadBrews();
-    //If we don't have beans, we cant do a brew from now on, because of roasting degree and the age of beans.
+    // If we don't have beans, we cant do a brew from now on, because of roasting degree and the age of beans.
   }
 
-  public editBrew(_brew: IBrew) {
-    let editBrewModal = this.modalCtrl.create(BrewsEditModal, {'BREW': _brew});
+  public editBrew(_brew: IBrew): void {
+    const editBrewModal = this.modalCtrl.create(BrewsEditModal, {BREW: _brew});
     editBrewModal.onDidDismiss(() => {
       this.loadBrews();
     });
     editBrewModal.present({animate: false});
   }
 
-  public detailBrew(_brew: IBrew) {
-    let editBrewModal = this.modalCtrl.create(BrewsDetailsModal, {'BREW': _brew});
+  public detailBrew(_brew: IBrew): void {
+    const editBrewModal = this.modalCtrl.create(BrewsDetailsModal, {BREW: _brew});
     editBrewModal.onDidDismiss(() => {
       this.loadBrews();
     });
     editBrewModal.present({animate: false});
   }
 
-  public viewPhotos(_brew: IBrew) {
-    let brewsPhotoViewModal = this.modalCtrl.create(BrewsPhotoView, {'BREW': _brew});
-    brewsPhotoViewModal.onDidDismiss(() => {
-
-    });
+  public viewPhotos(_brew: IBrew): void {
+    const brewsPhotoViewModal = this.modalCtrl.create(BrewsPhotoView, {BREW: _brew});
     brewsPhotoViewModal.present({animate: false});
   }
 
-
-  public deleteBrew(_brew: IBrew) {
-    this.uiAlert.showConfirm("Brühung löschen?", "Sicher?").then(() => {
-        //Yes
-        this.__deleteBrew(_brew)
+  public deleteBrew(_brew: IBrew): void {
+    this.uiAlert.showConfirm('Brühung löschen?', 'Sicher?').
+    then(() => {
+        // Yes
+        this.__deleteBrew(_brew);
       },
       () => {
-        //No
+        // No
       });
 
   }
-
-  private __deleteBrew(_brew: IBrew) {
-    this.uiBrewStorage.removeByObject(_brew);
-    this.loadBrews();
-
-  }
-  public postBrew(_brew: IBrew)
-  {
-    let textBrewsModal = this.modalCtrl.create(BrewsTextModal, {'BREW': _brew});
-    textBrewsModal.onDidDismiss(() => {
-
-    });
+  public postBrew(_brew: IBrew): void {
+    const textBrewsModal = this.modalCtrl.create(BrewsTextModal, {BREW: _brew});
     textBrewsModal.present({animate: false});
   }
 
-  private downloadCSV() {
-
-    var exportToCsv = (filename, rows) => {
-      var processRow = (row) => {
-        var finalVal = '';
-        for (var j = 0; j < row.length; j++) {
-          var innerValue = row[j] === null ? '' : row[j].toString();
-          if (row[j] instanceof Date) {
-            innerValue = row[j].toLocaleString();
-          }
-
-          var result = innerValue.replace(/"/g, '""');
-          if (result.search(/("|,|\n)/g) >= 0)
-            result = '"' + result + '"';
-          if (j > 0)
-            finalVal += ',';
-          finalVal += result;
-        }
-        return finalVal + '\n';
-      };
-
-      var csvFile = '';
-      for (var i = 0; i < rows.length; i++) {
-        csvFile += processRow(rows[i]);
-      }
-
-      this.uiHelper.exportCSV(filename, csvFile).then((_savedFile:FileEntry) => {
-        if (this.platform.is("android"))
-        {
-          let alert = this.alertCtrl.create({
-            title: 'Heruntergeladen!',
-            subTitle: `CSV-Datei '${_savedFile.name}' wurde erfolgreich in den Download-Ordner heruntergeladen!`,
-            buttons: ['OK']
-          });
-          alert.present();
-        }
-        else
-        {
-          this.socialSharing.share(null,null,_savedFile.nativeURL);
-
-        }
-
-      });
-
-    };
-
-
-    let entries: Array<Array<{ VALUE: any, LABEL: string }>> = [];
-    for (var i = 0; i < this.brews.length; i++) {
-      let brew: Brew = this.brews[i];
-
-      let entry: Array<{ VALUE: any, LABEL: string }> = [
-        {"VALUE": this.uiHelper.formateDate(brew.config.unix_timestamp, "DD.MM.YYYY HH:mm"), "LABEL":"Tag"},
-        {"VALUE": brew.grind_size, "LABEL": "Mahlgrad"},
-        {"VALUE": brew.grind_weight, "LABEL": "Output: Gewicht/Menge"},
-        {"VALUE": brew.getPreparation().name, "LABEL": "Zubereitungsmethode"},
-        {"VALUE": brew.getBean().name, "LABEL": "Bohne"},
-        {"VALUE": brew.getBean().roaster, "LABEL": "Röster"},
-        {"VALUE": brew.brew_temperature, "LABEL": "Brühtemperatur"},
-        {"VALUE": brew.brew_temperature_time, "LABEL": "Temperatur Zeit"},
-        {"VALUE": brew.brew_time, "LABEL": "Brühzeit"},
-        {"VALUE": brew.pressure_profile, "LABEL": "Druckprofil"},
-        {"VALUE": brew.mill_speed, "LABEL": "Mühlengeschwindigkeit"},
-        {"VALUE": brew.getMill().name, "LABEL": "Mühle"},
-        {"VALUE": brew.brew_quantity, "LABEL": "Bezugsmenge"},
-        {"VALUE": brew.getBrewQuantityTypeName(), "LABEL": "Bezugsmenge-Typ"},
-        {"VALUE": brew.note, "LABEL": "Notizen"},
-        {"VALUE": brew.rating, "LABEL": "Bewertung"},
-        {"VALUE": brew.coffee_type, "LABEL": "Kaffeetyp"},
-        {"VALUE": brew.coffee_concentration, "LABEL": "Kaffee-Konzentration"},
-        {"VALUE": brew.coffee_first_drip_time, "LABEL": "Erster Kaffeetropfen"},
-        {"VALUE": brew.coffee_blooming_time, "LABEL": "Blooming-Zeit / Preinfusion"},
-        {"VALUE": brew.getCalculatedBeanAge(), "LABEL": "Bohnenalter"},
-        {"VALUE": brew.getBrewRatio(), "LABEL": "Brührate"},
-        {"VALUE": brew.getBean().finished, "LABEL": "Fertig?"},
-      ];
-      entries.push(entry);
-    }
-
-    //create CSV header labels
-    let exportData: Array<Array<{ VALUE: any, LABEL: string }>> = [];
-
-    let headersSet: boolean = false;
-    for (let i = 0; i < entries.length; i++) {
-      let entry: Array<{ VALUE: any, LABEL: string }> = entries[i];
-
-      let addValues: Array<any> = [];
-      if (headersSet == false) {
-        for (let z = 0; z < entry.length; z++) {
-          addValues.push(entry[z].LABEL);
-        }
-        headersSet = true;
-        exportData.push(addValues);
-      }
-      addValues = [];
-      for (let z = 0; z < entry.length; z++) {
-        addValues.push(entry[z].VALUE);
-      }
-
-      exportData.push(addValues);
-    }
-
-    var now = new Date();
-    var currentDateTimeString = now.getMonth() + 1 + '-' + now.getDate() + '-' + now.getFullYear() + '-' + now.getHours() + now.getMinutes() + now.getSeconds();
-
-//generate file
-    exportToCsv('Beanconqueror-' + currentDateTimeString + '.csv', exportData);
-
-  }
-
-  public showMore(event) {
-    let popover = this.popoverCtrl.create(BrewsPopover, {});
-    popover.onDidDismiss(data => {
-      if (data == BrewsPopover.ACTIONS.DOWNLOAD) {
+  public showMore(event): void {
+    const popover = this.popoverCtrl.create(BrewsPopover, {});
+    popover.onDidDismiss((data) => {
+      if (data === BrewsPopover.ACTIONS.DOWNLOAD) {
         this.downloadCSV();
 
-      }
-      else if (data == BrewsPopover.ACTIONS.TABLE){
-        let tableModal = this.modalCtrl.create(BrewsTableModal, {});
-        tableModal.onDidDismiss(() => {
-
-        });
+      } else if (data === BrewsPopover.ACTIONS.TABLE) {
+        const tableModal = this.modalCtrl.create(BrewsTableModal, {});
         tableModal.present({animate: false});
       }
     });
@@ -244,16 +112,133 @@ public brew_segment:string ="open";
     });
   }
 
-  public addBrew() {
-    let addBrewsModal = this.modalCtrl.create(BrewsAddModal, {});
+  public addBrew(): void {
+    const addBrewsModal = this.modalCtrl.create(BrewsAddModal, {});
     addBrewsModal.onDidDismiss(() => {
       this.loadBrews();
     });
     addBrewsModal.present({animate: false});
   }
 
+  public loadBrews(): void {
+    this.__initializeBrews();
+    this.changeDetectorRef.detectChanges();
+  }
 
-  private __initializeBrews() {
+  private __deleteBrew(_brew: IBrew): void {
+    this.uiBrewStorage.removeByObject(_brew);
+    this.loadBrews();
+
+  }
+
+  private downloadCSV(): void {
+
+    const exportToCsv = (filename, rows) => {
+      const processRow = (row) => {
+        let finalVal = '';
+        for (let j = 0; j < row.length; j++) {
+          let innerValue = row[j] === null ? '' : row[j].toString();
+          if (row[j] instanceof Date) {
+            innerValue = row[j].toLocaleString();
+          }
+
+          let result = innerValue.replace(/"/g, '""');
+          if (result.search(/("|,|\n)/g) >= 0)
+            result = '"' + result + '"';
+          if (j > 0)
+            finalVal += ',';
+          finalVal += result;
+        }
+        return finalVal + '\n';
+      };
+
+      let csvFile = '';
+      for (const i of  rows) {
+        csvFile += processRow(i);
+      }
+
+      this.uiHelper.exportCSV(filename, csvFile).then((_savedFile: FileEntry) => {
+        if (this.platform.is('android')) {
+          const alert = this.alertCtrl.create({
+            title: 'Heruntergeladen!',
+            subTitle: `CSV-Datei '${_savedFile.name}' wurde erfolgreich in den Download-Ordner heruntergeladen!`,
+            buttons: ['OK']
+          });
+          alert.present();
+        } else {
+          this.socialSharing.share(undefined, undefined, _savedFile.nativeURL);
+
+        }
+
+      });
+
+    };
+
+    const entries: Array<Array<{ VALUE: any, LABEL: string }>> = [];
+    for (const i of this.brews) {
+      const brew: Brew = i;
+
+      const entry: Array<{ VALUE: any, LABEL: string }> = [
+        {VALUE: this.uiHelper.formateDate(brew.config.unix_timestamp, 'DD.MM.YYYY HH:mm'), LABEL: 'Tag'},
+        {VALUE: brew.grind_size, LABEL: 'Mahlgrad'},
+        {VALUE: brew.grind_weight, LABEL: 'Output: Gewicht/Menge'},
+        {VALUE: brew.getPreparation().name, LABEL: 'Zubereitungsmethode'},
+        {VALUE: brew.getBean().name, LABEL: 'Bohne'},
+        {VALUE: brew.getBean().roaster, LABEL: 'Röster'},
+        {VALUE: brew.brew_temperature, LABEL: 'Brühtemperatur'},
+        {VALUE: brew.brew_temperature_time, LABEL: 'Temperatur Zeit'},
+        {VALUE: brew.brew_time, LABEL: 'Brühzeit'},
+        {VALUE: brew.pressure_profile, LABEL: 'Druckprofil'},
+        {VALUE: brew.mill_speed, LABEL: 'Mühlengeschwindigkeit'},
+        {VALUE: brew.getMill().name, LABEL: 'Mühle'},
+        {VALUE: brew.brew_quantity, LABEL: 'Bezugsmenge'},
+        {VALUE: brew.getBrewQuantityTypeName(), LABEL: 'Bezugsmenge-Typ'},
+        {VALUE: brew.note, LABEL: 'Notizen'},
+        {VALUE: brew.rating, LABEL: 'Bewertung'},
+        {VALUE: brew.coffee_type, LABEL: 'Kaffeetyp'},
+        {VALUE: brew.coffee_concentration, LABEL: 'Kaffee-Konzentration'},
+        {VALUE: brew.coffee_first_drip_time, LABEL: 'Erster Kaffeetropfen'},
+        {VALUE: brew.coffee_blooming_time, LABEL: 'Blooming-Zeit / Preinfusion'},
+        {VALUE: brew.getCalculatedBeanAge(), LABEL: 'Bohnenalter'},
+        {VALUE: brew.getBrewRatio(), LABEL: 'Brührate'},
+        {VALUE: brew.getBean().finished, LABEL: 'Fertig?'}
+      ];
+      entries.push(entry);
+    }
+
+    // create CSV header labels
+    const exportData: Array<Array<{ VALUE: any, LABEL: string }>> = [];
+
+    let headersSet: boolean = false;
+    for (const i of entries) {
+      const entry: Array<{ VALUE: any, LABEL: string }> = i;
+
+      let addValues: Array<any> = [];
+      if (headersSet === false) {
+        for (const z of entry) {
+          addValues.push(z.LABEL);
+        }
+        headersSet = true;
+        exportData.push(addValues);
+      }
+      addValues = [];
+      for (const z of entry) {
+        addValues.push(z.VALUE);
+      }
+      exportData.push(addValues);
+    }
+
+    const now = new Date();
+    const currentDateTimeString = now.getMonth() + 1 +
+     '-' + now.getDate() + '-' + now.getFullYear() + '-' +
+      now.getHours() + now.getMinutes() + now.getSeconds();
+
+// generate file
+    exportToCsv('Beanconqueror-' + currentDateTimeString + '.csv', exportData);
+
+  }
+
+  private __initializeBrews(): void {
     this.brews = this.uiBrewStorage.getAllEntries();
     this.openBrewsView = [];
     this.archiveBrewsView = [];
@@ -261,22 +246,12 @@ public brew_segment:string ="open";
     this.__initializeBrewView('open');
     this.__initializeBrewView('archiv');
   }
-  private __initializeBrewView(_type:string)
-  {
-//sort latest to top.
-    let brewsCopy:Array<Brew> = [...this.brews];
-
-    if (_type === 'open')
-    {
-      brewsCopy = brewsCopy.filter(e=>e.getBean().finished == false);
-    }else {
-      brewsCopy = brewsCopy.filter(e=>e.getBean().finished == true);
-    }
-
-
-
-
-    let sortedBrews: Array<IBrew> = brewsCopy.sort((obj1, obj2) => {
+  private __initializeBrewView(_type: string): void {
+// sort latest to top.
+    const brewsCopy: Array<Brew> = [...this.brews];
+    let brewsFilteres: Array<Brew>;
+    brewsFilteres = brewsCopy.filter((e) => e.getBean().finished === !(_type === 'open'));
+    const sortedBrews: Array<IBrew> = brewsFilteres.sort((obj1, obj2) => {
       if (obj1.config.unix_timestamp < obj2.config.unix_timestamp) {
         return 1;
       }
@@ -286,38 +261,28 @@ public brew_segment:string ="open";
       return 0;
     });
 
-    let collection = {};
-    //Create collection
+    const collection = {};
+    // Create collection
     for (let i = 0; i < sortedBrews.length; i++) {
-      let day: string = this.uiHelper.formateDate(sortedBrews[i].config.unix_timestamp, "dddd - DD.MM.YYYY");
+      const day: string = this.uiHelper.formateDate(sortedBrews[i].config.unix_timestamp, 'dddd - DD.MM.YYYY');
       if (collection[day] === undefined) {
         collection[day] = {
-          "BREWS": []
-        }
+          BREWS: []
+        };
       }
-      collection[day]["BREWS"].push(sortedBrews[i]);
+      collection[day].BREWS.push(sortedBrews[i]);
     }
 
-    for (let key in collection) {
-      let viewObj: BrewView = new BrewView();
+    for (const key in collection) {
+      const viewObj: BrewView = new BrewView();
       viewObj.title = key;
       viewObj.brews = collection[key].BREWS;
-      if (_type==='open')
-      {
+      if (_type === 'open') {
         this.openBrewsView.push(viewObj);
-      }
-      else
-      {
+      } else {
         this.archiveBrewsView.push(viewObj);
       }
 
     }
-  }
-
-
-
-  public loadBrews() {
-    this.__initializeBrews();
-    this.changeDetectorRef.detectChanges();
   }
 }

@@ -1,18 +1,18 @@
 /** Core */
-import {Component, ViewChild} from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 /** Ionic */
-import {ViewController, NavParams,Slides} from 'ionic-angular';
+import { NavParams, Slides, ViewController } from 'ionic-angular';
 
 /** Interfaces */
-import {IBrew} from '../../../interfaces/brew/iBrew';
+import { IBrew } from '../../../interfaces/brew/iBrew';
 
 @Component({
   selector: 'brews-photo-view',
-  templateUrl: 'brews-photo-view.html',
+  templateUrl: 'brews-photo-view.html'
 })
 export class BrewsPhotoView {
 
-  @ViewChild('photoSlides') photoSlides: Slides;
+  @ViewChild('photoSlides') public photoSlides: Slides;
 
   public data: IBrew;
 
@@ -20,16 +20,13 @@ export class BrewsPhotoView {
 
   }
 
-  ionViewWillEnter() {
+  public ionViewWillEnter(): void {
     this.data = this.navParams.get('BREW');
 
   }
 
-
-  dismiss() {
-    this.viewCtrl.dismiss("", null, {animate: false});
+  public dismiss(): void {
+    this.viewCtrl.dismiss('', undefined, {animate: false});
   }
-
-
 
 }

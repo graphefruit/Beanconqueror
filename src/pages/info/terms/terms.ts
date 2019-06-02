@@ -1,13 +1,13 @@
 /** Core */
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 /** Services */
-import {UIHelper} from '../../../services/uiHelper';
+import { UIHelper } from '../../../services/uiHelper';
 @Component({
-  templateUrl: 'terms.html',
+  templateUrl: 'terms.html'
 })
 export class TermsPage {
 
-  constructor(private uiHelper:UIHelper) {
+  constructor(private uiHelper: UIHelper) {
   }
 
   public openLink(event, _link: string) {
@@ -17,4 +17,3 @@ export class TermsPage {
 
   }
 }
-

@@ -3,7 +3,5 @@
  */
 export interface IConfig {
   uuid: string;
-  unix_timestamp:number
+  unix_timestamp: number;
 }
-
-

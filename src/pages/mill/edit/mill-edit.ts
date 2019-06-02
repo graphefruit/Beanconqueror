@@ -1,46 +1,47 @@
 /** Core */
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 /** Ionic */
-import {NavParams, ViewController} from 'ionic-angular';
+import { NavParams, ViewController } from 'ionic-angular';
 /** Services */
 
-import {UIHelper} from '../../../services/uiHelper';
+import { UIHelper } from '../../../services/uiHelper';
 
-import {IMill} from "../../../interfaces/mill/iMill";
-import {Mill} from "../../../classes/mill/mill";
-import {UIMillStorage} from "../../../services/uiMillStorage";
+import { Mill } from '../../../classes/mill/mill';
+import { IMill } from '../../../interfaces/mill/iMill';
+import { UIMillStorage } from '../../../services/uiMillStorage';
 @Component({
-  templateUrl: 'mill-edit.html',
+  templateUrl: 'mill-edit.html'
 })
 export class MillEditModal {
 
-  public data:Mill = new Mill();
+  public data: Mill = new Mill();
 
-  private mill:IMill;
-  constructor(private navParams: NavParams,private viewCtrl: ViewController, private uiMillStorage:UIMillStorage, private uiHelper:UIHelper) {
+  private mill: IMill;
+  constructor(private navParams: NavParams,
+              private viewCtrl: ViewController,
+              private uiMillStorage: UIMillStorage,
+              private uiHelper: UIHelper) {
 
   }
 
-  ionViewWillEnter() {
+  public ionViewWillEnter(): void {
     this.mill = this.navParams.get('MILL');
     this.data = this.uiHelper.copyData(this.mill);
   }
 
-  public editMill(form) {
+  public editMill(form): void {
     if (form.valid) {
       this.__editMill();
     }
   }
 
-  public __editMill(){
+  public __editMill(): void {
     this.uiMillStorage.update(this.data);
     this.dismiss();
   }
 
-
-  dismiss() {
-    this.viewCtrl.dismiss("", null, {animate: false});
+  public dismiss(): void {
+    this.viewCtrl.dismiss('', undefined, {animate: false});
   }
-
 
 }

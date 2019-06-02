@@ -1,12 +1,11 @@
 /** Core */
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
 /** Ionic */
-import {Platform} from 'ionic-angular';
+import { Platform } from 'ionic-angular';
 /** Third party */
 import moment from 'moment';
 import 'moment/locale/de';
-import {InAppBrowser} from "@ionic-native/in-app-browser";
-
 
 declare var cordova: any;
 declare var device: any;
@@ -17,63 +16,65 @@ declare var window: any;
 @Injectable()
 export class UIHelper {
 
-
-  constructor(private platform: Platform,private inAppBrowser: InAppBrowser){
+  constructor(private platform: Platform, private inAppBrowser: InAppBrowser) {
     moment.locale('de');
   }
 
-  public copyData(_value: any) {
-    if (_value.constructor == Array) {
-      return Object.assign([], _value);
+  public copyData(_value: any): void {
+    if (_value.constructor === Array) {
+      return {...[], ..._value};
     }
-    else {
-      return Object.assign({}, _value);
-    }
+    return {..._value};
   }
 
-  public generateUUID() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-      var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+  public generateUUID(): string {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
       return v.toString(16);
     });
   }
 
   public getUnixTimestamp(): number {
-    return moment().unix();
+    return moment()
+      .unix();
   }
 
   public isToday(_unix: number): boolean {
-    return moment.unix(moment().unix()).isSame(moment.unix(_unix), 'd');
+    return moment.unix(moment()
+      .unix())
+      .isSame(moment.unix(_unix), 'd');
   }
 
   public formateDatestr(_unix: string, _format?: string): string {
 
-    let format: string = "DD.MM.YYYY, HH:mm:ss";
+    let format: string = 'DD.MM.YYYY, HH:mm:ss';
     if (_format) {
       format = _format;
 
     }
-    return moment(_unix).format(format);
+    return moment(_unix)
+      .format(format);
   }
 
   public formateDate(_unix: number, _format?: string): string {
 
-    let format: string = "DD.MM.YYYY, HH:mm:ss";
+    let format: string = 'DD.MM.YYYY, HH:mm:ss';
     if (_format) {
       format = _format;
 
     }
-    return moment.unix(_unix).format(format);
+    return moment.unix(_unix)
+      .format(format);
   }
 
   public timeDifference(_unix: number): any {
-    let now = moment.unix(this.getUnixTimestamp());
-    let toDiff = moment(moment.unix(_unix));
-    let timeDifference = {
-      "MILLISECONDS": 0,
-      "SECONDS": 0,
-      "MINUTES": 0,
-      "DAYS": 0,
+    const now = moment.unix(this.getUnixTimestamp());
+    const toDiff = moment(moment.unix(_unix));
+    const timeDifference = {
+      MILLISECONDS: 0,
+      SECONDS: 0,
+      MINUTES: 0,
+      DAYS: 0
     };
 
     timeDifference.MILLISECONDS = now.diff(toDiff, 'milliseconds');
@@ -83,21 +84,18 @@ export class UIHelper {
     return timeDifference;
   }
 
-
-  public attachOnPlatformReady() {
-    return this.platform.ready()
+  public attachOnPlatformReady(): Promise<any> {
+    return this.platform.ready();
   }
 
-  public convertToNumber(event) {
+  public convertToNumber(event: any): number {
 
-    if (event == ""){
+    if (event === '') {
       return event;
     }
-    if (event.indexOf(','))
-    {
-      event =  event.replace(/,/g,'.');
+    if (event.indexOf(',')) {
+      event =  event.replace(/,/g, '.');
     }
-
 
     return parseFloat(event);
     // return parseFloat(event);
@@ -105,36 +103,36 @@ export class UIHelper {
   }
 
   public openExternalWebpage(_url: string) {
-    if (_url.indexOf("http") == -1) {
-      //Saftey
-      _url = "http://" + _url;
+    if (_url.indexOf('http') == -1) {
+      // Saftey
+      _url = 'http://' + _url;
     }
 
-    this.inAppBrowser.create(_url,"_system");
+    this.inAppBrowser.create(_url, '_system');
 
    // window.open(_url, "_system");
 
   }
 
-  public exportJSON(fileName:string, jsonContent:string){
-     let promise = new Promise((resolve, reject) => {
-      let errorCallback = (e) => {
-        console.log("Error: " + e);
+  public exportJSON(fileName: string, jsonContent: string) {
+     const promise = new Promise((resolve, reject) => {
+      const errorCallback = (e) => {
+        console.log('Error: ' + e);
         reject();
       };
 
-      //Fixed umlaut issue
-      //Thanks to: https://stackoverflow.com/questions/31959487/utf-8-encoidng-issue-when-exporting-csv-file-javascript
-      var blob = new Blob([jsonContent], {type: 'application/json;charset=UTF-8;'});
-      if (this.platform.is("android") || this.platform.is("ios")) {
-        let storageLocation: string = "";
+      // Fixed umlaut issue
+      // Thanks to: https://stackoverflow.com/questions/31959487/utf-8-encoidng-issue-when-exporting-csv-file-javascript
+      const blob = new Blob([jsonContent], {type: 'application/json;charset=UTF-8;'});
+      if (this.platform.is('android') || this.platform.is('ios')) {
+        let storageLocation: string = '';
 
         switch (device.platform) {
 
-          case "Android":
+          case 'Android':
             storageLocation = cordova.file.externalRootDirectory;
             break;
-          case "iOS":
+          case 'iOS':
             storageLocation = cordova.file.documentsDirectory;
             break;
 
@@ -149,38 +147,36 @@ export class UIHelper {
               },
                (directory) => {
 
-                //You need to put the name you would like to use for the file here.
+                // You need to put the name you would like to use for the file here.
                 directory.getFile(fileName, {
                     create: true,
                     exclusive: false
                   },
                    (fileEntry) => {
 
-
-                    fileEntry.createWriter( (writer) => {
+                    fileEntry.createWriter((writer) => {
                       writer.onwriteend =  () => {
                         resolve(fileEntry);
                       };
 
                       writer.seek(0);
-                      writer.write(blob); //You need to put the file, blob or base64 representation here.
+                      writer.write(blob); // You need to put the file, blob or base64 representation here.
 
                     }, errorCallback);
                   }, errorCallback);
               }, errorCallback);
           }, errorCallback);
-      }
-      else {
+      } else {
         setTimeout(() => {
           if (navigator.msSaveBlob) { // IE 10+
             navigator.msSaveBlob(blob, fileName);
           } else {
-            var link = document.createElement("a");
+            const link = document.createElement('a');
             if (link.download !== undefined) { // feature detection
               // Browsers that support HTML5 download attribute
-              var url = URL.createObjectURL(blob);
-              link.setAttribute("href", url);
-              link.setAttribute("download", fileName);
+              const url = URL.createObjectURL(blob);
+              link.setAttribute('href', url);
+              link.setAttribute('download', fileName);
               document.body.appendChild(link);
               link.click();
               document.body.removeChild(link);
@@ -192,29 +188,29 @@ export class UIHelper {
       }
 
     });
-    return promise;
+     return promise;
   }
 
   public exportCSV(fileName: string, csvContent: string) {
 
-    let promise = new Promise((resolve, reject) => {
-      let errorCallback = (e) => {
-        console.log("Error: " + e);
+    const promise = new Promise((resolve, reject) => {
+      const errorCallback = (e) => {
+        console.log('Error: ' + e);
         reject();
       };
 
-      //Fixed umlaut issue
-      //Thanks to: https://stackoverflow.com/questions/31959487/utf-8-encoidng-issue-when-exporting-csv-file-javascript
-      var blob = new Blob(["\ufeff"+ csvContent], {type: 'text/csv;charset=UTF-8;'});
-      if (this.platform.is("android") || this.platform.is("ios")) {
-        let storageLocation: string = "";
+      // Fixed umlaut issue
+      // Thanks to: https://stackoverflow.com/questions/31959487/utf-8-encoidng-issue-when-exporting-csv-file-javascript
+      const blob = new Blob(['\ufeff' + csvContent], {type: 'text/csv;charset=UTF-8;'});
+      if (this.platform.is('android') || this.platform.is('ios')) {
+        let storageLocation: string = '';
 
         switch (device.platform) {
 
-          case "Android":
+          case 'Android':
             storageLocation = cordova.file.externalRootDirectory;
             break;
-          case "iOS":
+          case 'iOS':
             storageLocation = cordova.file.syncedDataDirectory;
             break;
 
@@ -229,39 +225,37 @@ export class UIHelper {
               },
                (directory) => {
 
-                //You need to put the name you would like to use for the file here.
+                // You need to put the name you would like to use for the file here.
                 directory.getFile(fileName, {
                     create: true,
                     exclusive: false
                   },
                    (fileEntry) => {
 
-
-                    fileEntry.createWriter( (writer) =>{
-                      writer.onwriteend =  () =>{
+                    fileEntry.createWriter((writer) => {
+                      writer.onwriteend =  () => {
                         resolve(fileEntry);
 
                       };
 
                       writer.seek(0);
-                      writer.write(blob); //You need to put the file, blob or base64 representation here.
+                      writer.write(blob); // You need to put the file, blob or base64 representation here.
 
                     }, errorCallback);
                   }, errorCallback);
               }, errorCallback);
           }, errorCallback);
-      }
-      else {
+      } else {
         setTimeout(() => {
           if (navigator.msSaveBlob) { // IE 10+
             navigator.msSaveBlob(blob, fileName);
           } else {
-            var link = document.createElement("a");
+            const link = document.createElement('a');
             if (link.download !== undefined) { // feature detection
               // Browsers that support HTML5 download attribute
-              var url = URL.createObjectURL(blob);
-              link.setAttribute("href", url);
-              link.setAttribute("download", fileName);
+              const url = URL.createObjectURL(blob);
+              link.setAttribute('href', url);
+              link.setAttribute('download', fileName);
               document.body.appendChild(link);
               link.click();
               document.body.removeChild(link);
@@ -275,6 +269,5 @@ export class UIHelper {
     });
     return promise;
   }
-
 
 }

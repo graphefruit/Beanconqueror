@@ -1,7 +1,7 @@
 /** Interfaces */
-import {IPreparation} from "../../interfaces/preparation/iPreparation";
+import { IPreparation } from '../../interfaces/preparation/iPreparation';
 /** Classes */
-import {Config} from "../objectConfig/objectConfig";
+import { Config } from '../objectConfig/objectConfig';
 
 export class Preparation implements IPreparation {
   public name: string;
@@ -9,14 +9,13 @@ export class Preparation implements IPreparation {
   public config: Config;
 
   constructor() {
-    this.name = "";
-    this.note = "";
+    this.name = '';
+    this.note = '';
     this.config = new Config();
   }
 
   public initializeByObject(preparationObj: IPreparation) {
-    Object.assign(this, preparationObj)
+    Object.assign(this, preparationObj);
   }
-
 
 }

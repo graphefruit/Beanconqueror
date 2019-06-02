@@ -1,44 +1,42 @@
 /** Core */
-import {Component, ViewChild} from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 /** Ionic */
-import {ViewController, Slides} from 'ionic-angular';
+import { Slides, ViewController } from 'ionic-angular';
 
 /** Services */
-import {UIBeanStorage} from '../../../services/uiBeanStorage';
-import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
-import {UIBrewStorage} from '../../../services/uiBrewStorage';
-import {UIImage} from '../../../services/uiImage';
-import {UISettingsStorage} from '../../../services/uiSettingsStorage';
-import {UIHelper} from '../../../services/uiHelper';
 /** Components */
-import {TimerComponent} from '../../../components/timer/timer';
+import { TimerComponent } from '../../../components/timer/timer';
+import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { UIHelper } from '../../../services/uiHelper';
+import { UIImage } from '../../../services/uiImage';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 /** Enums */
-import {BREW_VIEW_ENUM} from '../../../enums/settings/brewView';
-
+import { BREW_VIEW_ENUM } from '../../../enums/settings/brewView';
 
 /** Classes */
-import {Brew} from '../../../classes/brew/brew';
+import { Brew } from '../../../classes/brew/brew';
 
 /** Interfaces */
-import {IPreparation} from '../../../interfaces/preparation/iPreparation';
-import {IBean} from '../../../interfaces/bean/iBean';
-import {ISettings} from '../../../interfaces/settings/iSettings';
+import { IBean } from '../../../interfaces/bean/iBean';
+import { IPreparation } from '../../../interfaces/preparation/iPreparation';
+import { ISettings } from '../../../interfaces/settings/iSettings';
 /** Enums */
 
-import {BREW_QUANTITY_TYPES_ENUM} from '../../../enums/brews/brewQuantityTypes';
-import {IMill} from "../../../interfaces/mill/iMill";
-import {UIMillStorage} from "../../../services/uiMillStorage";
+import { BREW_QUANTITY_TYPES_ENUM } from '../../../enums/brews/brewQuantityTypes';
+import { IMill } from '../../../interfaces/mill/iMill';
+import { UIMillStorage } from '../../../services/uiMillStorage';
 
 @Component({
   selector: 'brews-add',
-  templateUrl: 'brews-add.html',
+  templateUrl: 'brews-add.html'
 })
 export class BrewsAddModal {
-  @ViewChild('photoSlides') photoSlides: Slides;
-  @ViewChild('timer') timer: TimerComponent;
-  @ViewChild('brewTemperatureTime') brewTemperatureTime: TimerComponent;
-
+  @ViewChild('photoSlides') public photoSlides: Slides;
+  @ViewChild('timer') public timer: TimerComponent;
+  @ViewChild('brewTemperatureTime') public brewTemperatureTime: TimerComponent;
 
   public data: Brew = new Brew();
 
@@ -51,46 +49,132 @@ export class BrewsAddModal {
   public beans: Array<IBean> = [];
   public mills: Array<IMill> = [];
 
-  public keyDownHandler(event: Event) {
+  public keyDownHandler(event: Event): void {
 
     //  event.preventDefault();
   }
 
-  constructor(private viewCtrl: ViewController, private uiBeanStorage: UIBeanStorage, private uiPreparationStorage: UIPreparationStorage,
-              private uiBrewStorage: UIBrewStorage, private uiImage: UIImage,
+  constructor(private viewCtrl: ViewController,
+              private uiBeanStorage: UIBeanStorage,
+              private uiPreparationStorage: UIPreparationStorage,
+              private uiBrewStorage: UIBrewStorage,
+              private uiImage: UIImage,
               private uiSettingsStorage: UISettingsStorage,
               public uiHelper: UIHelper,
-              private uiMillStorage:UIMillStorage) {
-    //Initialize to standard in dropdowns
+              private uiMillStorage: UIMillStorage) {
+    // Initialize to standard in dropdowns
 
     this.settings = this.uiSettingsStorage.getSettings();
-    this.method_of_preparations = this.uiPreparationStorage.getAllEntries().sort((a, b) => a.name.localeCompare(b.name));
-    this.beans = this.uiBeanStorage.getAllEntries().filter(bean =>bean.finished === false).sort((a, b) => a.name.localeCompare(b.name));
-    this.mills = this.uiMillStorage.getAllEntries().sort((a, b) => a.name.localeCompare(b.name));
+    this.method_of_preparations = this.uiPreparationStorage.getAllEntries()
+      .sort((a, b) => a.name.localeCompare(b.name));
+    this.beans = this.uiBeanStorage.getAllEntries()
+      .filter((bean) => bean.finished === false)
+      .sort((a, b) => a.name.localeCompare(b.name));
+    this.mills = this.uiMillStorage.getAllEntries()
+      .sort((a, b) => a.name.localeCompare(b.name));
 
-    //Get first entry
+    // Get first entry
     this.data.bean = this.beans[0].config.uuid;
     this.data.method_of_preparation = this.method_of_preparations[0].config.uuid;
     this.data.mill = this.mills[0].config.uuid;
 
-
   }
 
-  ionViewDidEnter() {
+  public ionViewDidEnter(): void {
     this.__loadLastBrew();
   }
 
-  private __loadLastBrew() {
-    if (this.settings.set_last_coffee_brew === true) {
-      let brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
-      if (brews.length > 0) {
-        let lastBrew: Brew = brews[brews.length - 1];
+  public dismiss(): void {
+    this.viewCtrl.dismiss('', undefined, {animate: false});
+  }
 
+  public finish(): void {
+
+    this.stopTimer();
+    this.uiBrewStorage.add(this.data);
+    this.dismiss();
+  }
+
+  public brewTimeStarted(_event): void {
+    if (this.brewTemperatureTime) {
+      this.brewTemperatureTime.pauseTimer();
+    }
+  }
+
+  public getTime(): number {
+    if (this.timer) {
+      return this.timer.getSeconds();
+    }
+    return 0;
+
+  }
+
+  public setCoffeeDripTime(): void {
+    this.data.coffee_first_drip_time = this.getTime();
+  }
+
+  public setCoffeeBloomingTime(): void {
+    this.data.coffee_blooming_time = this.getTime();
+  }
+
+  public addImage(): void {
+    this.uiImage.showOptionChooser()
+      .then((_option) => {
+      if (_option === 'CHOOSE') {
+        // CHOSE
+        this.uiImage.choosePhoto()
+          .then((_path) => {
+          console.log(_path);
+
+          if (_path) {
+            this.data.attachments.push(_path.toString());
+          }
+
+        });
+      } else {
+        // TAKE
+        this.uiImage.takePhoto()
+          .then((_path) => {
+          this.data.attachments.push(_path.toString());
+        });
+      }
+    });
+  }
+
+  public deleteImage(_index: number): void {
+    this.data.attachments.splice(_index, 1);
+    if (this.data.attachments.length > 0) {
+      // Slide to one item before
+      this.photoSlides.slideTo(_index - 1, 0);
+    }
+
+  }
+
+  public stopTimer(): void {
+    if (this.brewTemperatureTime) {
+      this.brewTemperatureTime.pauseTimer();
+      this.data.brew_temperature_time = this.brewTemperatureTime.getSeconds();
+    } else {
+      this.data.brew_temperature_time = 0;
+    }
+    if (this.timer) {
+      this.timer.pauseTimer();
+      this.data.brew_time = this.timer.getSeconds();
+    } else {
+      this.data.brew_time = 0;
+    }
+
+  }
+
+  private __loadLastBrew(): void {
+    if (this.settings.set_last_coffee_brew === true) {
+      const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
+      if (brews.length > 0) {
+        const lastBrew: Brew = brews[brews.length - 1];
 
         if (this.settings.default_last_coffee_parameters.bean_type === true) {
-          let lastBrewBean:IBean = this.uiBeanStorage.getByUUID(lastBrew.bean);
-          if (lastBrewBean.finished == false)
-          {
+          const lastBrewBean: IBean = this.uiBeanStorage.getByUUID(lastBrew.bean);
+          if (lastBrewBean.finished === false) {
             this.data.bean = lastBrewBean.config.uuid;
           }
 
@@ -148,7 +232,6 @@ export class BrewsAddModal {
           this.data.coffee_blooming_time = lastBrew.coffee_blooming_time;
         }
 
-
         if (this.settings.default_last_coffee_parameters.rating === true) {
           this.data.rating = lastBrew.rating;
         }
@@ -156,97 +239,8 @@ export class BrewsAddModal {
           this.data.note = lastBrew.note;
         }
 
-
       }
     }
   }
-
-
-  dismiss() {
-    this.viewCtrl.dismiss("", null, {animate: false});
-  }
-
-  public finish() {
-
-    this.stopTimer();
-    this.uiBrewStorage.add(this.data);
-    this.dismiss();
-  }
-
-  public brewTimeStarted(_event) {
-    if (this.brewTemperatureTime) {
-      this.brewTemperatureTime.pauseTimer();
-    }
-  }
-
-  public getTime(): number {
-    if (this.timer) {
-      return this.timer.getSeconds();
-    }
-    return 0;
-
-  }
-
-  public setCoffeeDripTime() {
-    this.data.coffee_first_drip_time = this.getTime();
-  }
-
-  public setCoffeeBloomingTime() {
-    this.data.coffee_blooming_time = this.getTime();
-  }
-
-  public addImage() {
-    this.uiImage.showOptionChooser().then((_option) => {
-      if (_option === "CHOOSE") {
-        //CHOSE
-        this.uiImage.choosePhoto().then((_path) => {
-          console.log(_path);
-
-          if (_path) {
-            this.data.attachments.push(_path.toString());
-          }
-
-        }, () => {
-
-        })
-      }
-      else {
-        //TAKE
-        this.uiImage.takePhoto().then((_path) => {
-          this.data.attachments.push(_path.toString());
-        }, () => {
-
-        })
-      }
-    });
-  }
-
-  public deleteImage(_index: number) {
-    this.data.attachments.splice(_index, 1);
-    if (this.data.attachments.length > 0) {
-      //Slide to one item before
-      this.photoSlides.slideTo(_index - 1, 0);
-    }
-
-  }
-
-  public stopTimer() {
-    if (this.brewTemperatureTime) {
-      this.brewTemperatureTime.pauseTimer();
-      this.data.brew_temperature_time = this.brewTemperatureTime.getSeconds();
-    }
-    else {
-      this.data.brew_temperature_time = 0;
-    }
-    if (this.timer) {
-      this.timer.pauseTimer();
-      this.data.brew_time = this.timer.getSeconds();
-    }
-    else {
-      this.data.brew_time = 0;
-    }
-
-  }
-
 
 }

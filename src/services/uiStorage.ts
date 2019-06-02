@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 
 /**
  * Ionic native
- * **/
+ *
+ */
 import { Storage  } from '@ionic/storage';
 
 @Injectable()
@@ -12,9 +13,8 @@ export class UIStorage {
   constructor(private storage: Storage) {
   }
 
-
   public set(_key: string, _val: any): Promise<any> {
-    return this.storage.set(_key, _val)
+    return this.storage.set(_key, _val);
   }
 
   public get(_key): Promise<any> {
@@ -35,6 +35,34 @@ export class UIStorage {
     });
 
     return promise;
+  }
+
+  public import(_data: any): Promise<any> {
+
+    // Before we import, we do a saftey backup
+    const promise = new Promise((resolve, reject) => {
+
+      this.__safteyBackup()
+        .then((_backup) => {
+
+        this.__importBackup(_data)
+          .then(() => {
+          // Successfully imported backup
+          resolve({BACKUP: false});
+        }, () => {
+          this.__importBackup(_backup)
+            .then(() => {
+            resolve({BACKUP: true});
+          }, () => {
+            reject({BACKUP: true});
+          });
+        });
+      });
+
+    });
+
+    return promise;
+
   }
 
   private __safteyBackup(): Promise<any> {
@@ -68,31 +96,5 @@ export class UIStorage {
     });
     return promise;
   }
-
-  public import(_data: any): Promise<any> {
-
-    //Before we import, we do a saftey backup
-    var promise = new Promise((resolve, reject) => {
-
-      this.__safteyBackup().then((_backup) => {
-
-        this.__importBackup(_data).then(() => {
-          //Successfully imported backup
-          resolve({"BACKUP": false});
-        }, () => {
-          this.__importBackup(_backup).then(() => {
-            resolve({"BACKUP": true});
-          }, () => {
-            reject({"BACKUP": true})
-          })
-        })
-      });
-
-    });
-
-    return promise;
-
-  }
-
 
 }
