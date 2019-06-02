@@ -1,4 +1,4 @@
-/**Interfacdes**/
+/** Interfacdes */
 
 import {IDefaultLastCoffeeParameters} from "../../interfaces/settings/iDefaultLastCoffeeParameters";
 

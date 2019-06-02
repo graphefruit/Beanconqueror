@@ -1,13 +1,13 @@
-/**Core**/
+/** Core */
 import {Component} from '@angular/core';
-/**Ionic**/
+/** Ionic */
 import {NavParams, ViewController} from 'ionic-angular';
-/**Services**/
+/** Services */
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {UIHelper} from '../../../services/uiHelper';
-/**Classes**/
+/** Classes */
 import {Preparation} from '../../../classes/preparation/preparation';
-/**Interfaces**/
+/** Interfaces */
 import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 
 @Component({

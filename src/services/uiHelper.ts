@@ -1,14 +1,10 @@
-/**Core**/
+/** Core */
 import {Injectable} from '@angular/core';
-/**Ionic**/
+/** Ionic */
 import {Platform} from 'ionic-angular';
-/**Third party**/
+/** Third party */
 import moment from 'moment';
 import 'moment/locale/de';
-import { SocialSharing } from '@ionic-native/social-sharing';
-import {UIBeanStorage} from "./uiBeanStorage";
-import {UIMillStorage} from "./uiMillStorage";
-import {UIPreparationStorage} from "./uiPreparationStorage";
 import {InAppBrowser} from "@ionic-native/in-app-browser";
 
 
@@ -22,7 +18,7 @@ declare var window: any;
 export class UIHelper {
 
 
-  constructor(private platform: Platform, private socialSharing: SocialSharing,private inAppBrowser: InAppBrowser){
+  constructor(private platform: Platform,private inAppBrowser: InAppBrowser){
     moment.locale('de');
   }
 
@@ -48,6 +44,16 @@ export class UIHelper {
 
   public isToday(_unix: number): boolean {
     return moment.unix(moment().unix()).isSame(moment.unix(_unix), 'd');
+  }
+
+  public formateDatestr(_unix: string, _format?: string): string {
+
+    let format: string = "DD.MM.YYYY, HH:mm:ss";
+    if (_format) {
+      format = _format;
+
+    }
+    return moment(_unix).format(format);
   }
 
   public formateDate(_unix: number, _format?: string): string {

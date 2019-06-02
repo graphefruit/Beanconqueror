@@ -1,18 +1,18 @@
-/**Core**/
+/** Core */
 import {Component} from '@angular/core';
-/**Ionic**/
+/** Ionic */
 import {NavParams, ViewController} from 'ionic-angular';
-/**Services**/
+/** Services */
 import {UIBeanStorage} from '../../../services/uiBeanStorage';
 import {UIHelper} from '../../../services/uiHelper';
-/**Ionic native**/
+/** Ionic native */
 import {UIImage} from '../../../services/uiImage';
-/**Classes**/
+/** Classes */
 import {Bean} from '../../../classes/bean/bean';
-/**Interfaces**/
+/** Interfaces */
 import {IBean} from '../../../interfaces/bean/iBean';
 
-/**Enums**/
+/** Enums */
 import {ROASTS_ENUM} from '../../../enums/beans/roasts';
 import {BEAN_MIX_ENUM} from "../../../enums/beans/mix";
 

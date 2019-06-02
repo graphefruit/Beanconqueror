@@ -1,9 +1,9 @@
-/**Core**/
+/** Core */
 import {Component, ViewChild} from '@angular/core';
-/**Ionic**/
+/** Ionic */
 import {ViewController, NavParams,Slides} from 'ionic-angular';
 
-/**Interfaces**/
+/** Interfaces */
 import {IBrew} from '../../../interfaces/brew/iBrew';
 
 @Component({

@@ -1,10 +1,10 @@
 import {Component} from '@angular/core';
 import {NavController,ModalController} from 'ionic-angular';
 
-/**Services **/
+/** Services  */
 import {UIStatistic} from '../../services/uiStatistic';
 
-/**Third party**/
+/** Third party */
 import moment from 'moment';
 import 'moment/locale/de';
 import {BrewsAddModal} from "../brews/add/brews-add";
@@ -16,7 +16,7 @@ import {BrewsAddModal} from "../brews/add/brews-add";
 })
 export class HomePage {
 
-  /**Needed app minimize for android**/
+  /** Needed app minimize for android */
   public isHome: boolean = true;
   public brews: number = 0;
   public beans: number = 0;

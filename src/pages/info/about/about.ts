@@ -1,4 +1,4 @@
-/**Core**/
+/** Core */
 import { Component } from '@angular/core';
 
 @Component({
@@ -6,8 +6,6 @@ import { Component } from '@angular/core';
 })
 export class AboutPage {
 
-
-  public actual_year:string;
   constructor() {
 
   }

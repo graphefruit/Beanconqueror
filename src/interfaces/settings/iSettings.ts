@@ -1,6 +1,6 @@
-/**Interfaces**/
+/** Interfaces */
 import {IConfig} from '../objectConfig/iObjectConfig';
-/**Enums**/
+/** Enums */
 import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
 import {IDefaultLastCoffeeParameters} from "./iDefaultLastCoffeeParameters";
 

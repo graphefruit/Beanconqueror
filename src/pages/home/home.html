@@ -50,7 +50,7 @@
       <ion-col col-6 text-center>
         <ion-card style="height: 100%;">
           <ion-card-header style="font-size: 2em;">
-            <i class="menu-icon fa fa-pagelines"></i>
+            <ion-icon class="custom-coffee-beans"></ion-icon>
             {{uiStatistic.getBeansCount()}}
           </ion-card-header>
           <ion-card-content>
@@ -71,7 +71,9 @@
           <ion-card-header style="font-size: 2em;">{{uiStatistic.getSloganTimePassedSinceLastBrew()}}</ion-card-header>
           <ion-card-content>
             Letzter Bezug: {{uiStatistic.getLastDrunkBrewTimestamp()}}<br>
-            (<i class="menu-icon fa fa-pagelines"></i>&nbsp;{{uiStatistic.getLastBeanUsed()}},&nbsp;<i class="menu-icon fa fa-flask"></i>&nbsp;{{uiStatistic.getLastPreparationMethodUsed()}})
+            <ion-icon class="custom-coffee-beans"></ion-icon>&nbsp;{{uiStatistic.getLastBeanUsed()}}<br/>
+            <ion-icon class="custom-filter"></ion-icon>&nbsp;{{uiStatistic.getLastPreparationMethodUsed()}}<br/>
+            <ion-icon class="custom-mill"></ion-icon>&nbsp;{{uiStatistic.getLastMillUsed()}}
           </ion-card-content>
         </ion-card>
       </ion-col>
@@ -85,7 +87,7 @@
         </ion-card>
       </ion-col>
     </ion-row>
-    <ion-row *ngIf="uiStatistic.getTotalGround()!=0">
+    <!--<ion-row *ngIf="uiStatistic.getTotalGround()!=0">
       <ion-col col-12 text-center>
         <ion-card>
           <ion-card-content>
@@ -93,8 +95,8 @@
           </ion-card-content>
         </ion-card>
       </ion-col>
-    </ion-row>
-    <ion-row *ngIf="uiStatistic.getTotalDrunk()!=0">
+    </ion-row>-->
+    <!--<ion-row *ngIf="uiStatistic.getTotalDrunk()!=0">
       <ion-col col-12 text-center>
         <ion-card>
           <ion-card-content>
@@ -102,7 +104,7 @@
           </ion-card-content>
         </ion-card>
       </ion-col>
-    </ion-row>
+    </ion-row>-->
   </ion-grid>
 
 </ion-content>

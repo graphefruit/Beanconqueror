@@ -1,27 +1,25 @@
-/**Core**/
+/** Core */
 import {Component, ChangeDetectorRef} from '@angular/core';
-import {PopoverController, NavParams, Platform,ModalController, AlertController} from 'ionic-angular';
+import {PopoverController, Platform,ModalController, AlertController} from 'ionic-angular';
 
 
-/**Services**/
+/** Services */
 import {UIBrewStorage} from '../../services/uiBrewStorage';
-import {UIBeanStorage} from '../../services/uiBeanStorage';
-import {UIPreparationStorage} from '../../services/uiPreparationStorage';
 import {UIAlert} from '../../services/uiAlert';
 import {UIHelper} from '../../services/uiHelper';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
 
-/**Interfaces**/
+/** Interfaces */
 import {IBrew} from '../../interfaces/brew/iBrew';
 import {ISettings} from '../../interfaces/settings/iSettings';
-/**Classes**/
+/** Classes */
 import {Brew} from '../../classes/brew/brew';
 import {BrewView} from '../../classes/brew/brewView';
 
 
 import {BrewsPopover} from '../brews/popover/brews-popover';
 
-/**Modals**/
+/** Modals */
 import {BrewsAddModal} from '../brews/add/brews-add';
 import {BrewsEditModal} from '../brews/edit/brews-edit';
 import {BrewsDetailsModal} from '../brews/details/brews-details';
@@ -30,8 +28,8 @@ import {BrewsPhotoView} from '../brews/photo-view/brews-photo-view';
 import {BrewsTableModal} from "./table/brews-table";
 import {FileEntry} from "@ionic-native/file";
 import {SocialSharing} from "@ionic-native/social-sharing";
-import {UIMillStorage} from "../../services/uiMillStorage";
 import {UIBrewHelper} from "../../services/uiBrewHelper";
+import {BrewsTextModal} from "./text/brews-text";
 @Component({
   templateUrl: 'brews.html',
   selector: 'brews'
@@ -50,12 +48,10 @@ public brew_segment:string ="open";
               private socialSharing: SocialSharing,
               private uiBrewStorage: UIBrewStorage,
               private changeDetectorRef: ChangeDetectorRef, private uiAlert: UIAlert,
-              private uiBeanStorage: UIBeanStorage, private uiPreparationStorage: UIPreparationStorage,
               public uiHelper: UIHelper,
               public uiBrewHelper:UIBrewHelper,
               private uiSettingsStorage: UISettingsStorage,
-              private popoverCtrl: PopoverController, public alertCtrl: AlertController,
-              private uiMillStorage:UIMillStorage) {
+              private popoverCtrl: PopoverController, public alertCtrl: AlertController) {
     this.settings = this.uiSettingsStorage.getSettings();
 
 
@@ -107,6 +103,14 @@ public brew_segment:string ="open";
     this.uiBrewStorage.removeByObject(_brew);
     this.loadBrews();
 
+  }
+  public postBrew(_brew: IBrew)
+  {
+    let textBrewsModal = this.modalCtrl.create(BrewsTextModal, {'BREW': _brew});
+    textBrewsModal.onDidDismiss(() => {
+
+    });
+    textBrewsModal.present({animate: false});
   }
 
   private downloadCSV() {

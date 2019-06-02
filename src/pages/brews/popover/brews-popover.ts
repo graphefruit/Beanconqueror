@@ -1,6 +1,6 @@
-import {Component, ViewChild, ElementRef} from '@angular/core';
+import {Component} from '@angular/core';
 
-import {ViewController, NavParams} from 'ionic-angular';
+import {ViewController} from 'ionic-angular';
 @Component({
   templateUrl: 'brews-popover.html',
   selector: 'brews-popover'
@@ -12,7 +12,7 @@ export class BrewsPopover {
     "TABLE":"TABLE",
   };
 
-  constructor(private navParams: NavParams, public viewCtrl: ViewController) {
+  constructor(public viewCtrl: ViewController) {
 
   }
 

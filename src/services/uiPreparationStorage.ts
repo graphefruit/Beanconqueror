@@ -1,11 +1,11 @@
-/**Core**/
+/** Core */
 import {Injectable} from '@angular/core';
-/**Ionic native**/
-/**Classes**/
+/** Ionic native */
+/** Classes */
 import {Preparation} from '../classes/preparation/preparation';
-/**Interfaces**/
+/** Interfaces */
 import {IPreparation} from '../interfaces/preparation/iPreparation';
-/**Services**/
+/** Services */
 import {UIHelper} from '../services/uiHelper';
 import {UILog} from '../services/uiLog';
 import {UIStorage} from  '../services/uiStorage';

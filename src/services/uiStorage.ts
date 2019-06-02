@@ -1,7 +1,10 @@
-/**Core**/
-import {Injectable} from '@angular/core';
-/**Ionic native**/
-import {Storage} from '@ionic/storage';
+/**  Core */
+import { Injectable } from '@angular/core';
+
+/**
+ * Ionic native
+ * **/
+import { Storage  } from '@ionic/storage';
 
 @Injectable()
 export class UIStorage {
@@ -20,43 +23,47 @@ export class UIStorage {
 
   public export(): Promise<any> {
 
-    var promise = new Promise((resolve, reject) => {
-      let exportObj = {};
+    const promise = new Promise((resolve, reject) => {
+      const exportObj = {};
       this.storage.forEach((_value, _key, _index) => {
         exportObj[_key] = _value;
 
-      }).then(() => {
-        resolve(exportObj);
-      });
-    });
-
-    return promise;
-  }
-
-  private __safteyBackup() {
-    var promise = new Promise((resolve, reject) => {
-      this.export().then((_data) => {
-        resolve(_data);
       })
+        .then(() => {
+          resolve(exportObj);
+        });
+    });
+
+    return promise;
+  }
+
+  private __safteyBackup(): Promise<any> {
+    const promise = new Promise((resolve, reject) => {
+      this.export()
+        .then(
+          (_data) => {
+            resolve(_data);
+          });
     });
     return promise;
 
   }
 
-  private __importBackup(_data) {
-    var promise = new Promise((resolve, reject) => {
+  private __importBackup(_data): Promise<any> {
+    const promise = new Promise((resolve, reject) => {
 
-      let keysCount: number = Object.keys(_data).length;
+      const keysCount: number = Object.keys(_data).length;
       let finishedImport: number = 0;
-      for (let key in _data) {
-        this.storage.set(key, _data[key]).then(() => {
-          finishedImport++;
-          if (keysCount == finishedImport) {
-            resolve();
-          }
-        }, () => {
-          reject();
-        });
+      for (const key of _data) {
+        this.storage.set(key, _data[key])
+          .then(() => {
+            finishedImport++;
+            if (keysCount === finishedImport) {
+              resolve();
+            }
+          }, () => {
+            reject();
+          });
       }
     });
     return promise;
@@ -69,14 +76,14 @@ export class UIStorage {
 
       this.__safteyBackup().then((_backup) => {
 
-        this.__importBackup(_data).then( ()=>{
+        this.__importBackup(_data).then(() => {
           //Successfully imported backup
-           resolve({"BACKUP":false});
-        }, ()=>{
-          this.__importBackup(_backup).then( ()=>{
-            resolve({"BACKUP":true});
-          }, ()=>{
-            reject({"BACKUP":true})
+          resolve({"BACKUP": false});
+        }, () => {
+          this.__importBackup(_backup).then(() => {
+            resolve({"BACKUP": true});
+          }, () => {
+            reject({"BACKUP": true})
           })
         })
       });

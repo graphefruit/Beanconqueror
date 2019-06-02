@@ -1,23 +1,24 @@
-/**Core**/
+/** Core */
 import {Injectable} from '@angular/core';
-/**Services **/
+/** Services  */
 
 import {UIPreparationStorage} from '../services/uiPreparationStorage';
 import {UIBeanStorage}  from '../services/uiBeanStorage';
 import {UIBrewStorage}  from '../services/uiBrewStorage';
 import {UIHelper}  from '../services/uiHelper';
 
-/**Interfaces**/
+/** Interfaces */
 import {IBrew} from '../interfaces/brew/iBrew';
 import {Bean} from "../classes/bean/bean";
 import {UIMillStorage} from "./uiMillStorage";
+import {UISettingsStorage} from "./uiSettingsStorage";
 
 @Injectable()
 export class UIStatistic {
 
   constructor(private uiPreparationStorage: UIPreparationStorage,
               private uiBeanStorage: UIBeanStorage,
-              private uiBrewStorage: UIBrewStorage, private uiMillStorage:UIMillStorage, private uiHelper: UIHelper) {
+              private uiBrewStorage: UIBrewStorage, private uiMillStorage:UIMillStorage, private uiHelper: UIHelper, private uiSettings:UISettingsStorage) {
   }
 
 
@@ -71,7 +72,7 @@ export class UIStatistic {
   public getLastDrunkBrewTimestamp(): string {
     let lastBrew:IBrew = this.getLastBrew();
     if (lastBrew != null) {
-      return this.uiHelper.formateDate(lastBrew.config.unix_timestamp, "HH:mm:ss, DD.MM.YYYY");
+      return this.uiHelper.formateDate(lastBrew.config.unix_timestamp, "DD.MM.YYYY, HH:mm:ss");
     }
     return "";
   }
@@ -114,27 +115,38 @@ export class UIStatistic {
     }
     return "_nicht gefunden_";
   }
+  public getLastMillUsed(): string {
+    let lastBrew:IBrew = this.getLastBrew();
+    if (lastBrew != null) {
+      return this.uiMillStorage.getMillNameByUUID(lastBrew.mill);
+    }
+    return "_nicht gefunden_";
+  }
 
   public getTotalGround(): number {
-    let brews: Array<IBrew> = this.uiBrewStorage.getAllEntries();
-    if (brews.length > 0) {
-      let sum = 0;
-      for (let brew of brews) {
-        sum += +brew.grind_weight;
+    if (this.uiSettings.getSettings().grind_weight === true) {
+      let brews: Array<IBrew> = this.uiBrewStorage.getAllEntries();
+      if (brews.length > 0) {
+        let sum = 0;
+        for (let brew of brews) {
+          sum += +brew.grind_weight;
+        }
+        return sum;
       }
-      return sum;
     }
     return 0;
   }
 
   public getTotalDrunk(): number {
-    let brews: Array<IBrew> = this.uiBrewStorage.getAllEntries();
-    if (brews.length > 0) {
-      let sum = 0;
-      for (let brew of brews) {
-        sum += brew.brew_quantity;
+    if (this.uiSettings.getSettings().brew_quantity === true) {
+      let brews: Array<IBrew> = this.uiBrewStorage.getAllEntries();
+      if (brews.length > 0) {
+        let sum = 0;
+        for (let brew of brews) {
+          sum += brew.brew_quantity;
+        }
+        return sum;
       }
-      return sum;
     }
     return 0;
   }

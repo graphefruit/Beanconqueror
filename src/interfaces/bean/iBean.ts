@@ -3,7 +3,7 @@
  */
 import {IConfig} from '../objectConfig/iObjectConfig';
 
-/**Enums**/
+/** Enums */
 import {ROASTS_ENUM} from '../../enums/beans/roasts';
 import {BEAN_MIX_ENUM} from "../../enums/beans/mix";
 

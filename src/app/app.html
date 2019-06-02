@@ -59,7 +59,10 @@
           <ion-icon class="menu-icon" name="{{pages.contact.icon}}"></ion-icon>
           {{pages.contact.title}}
         </button>
-
+        <button ion-item (click)="openPage($event,pages.thanks)" [class.active]="pages.thanks.active">
+          <ion-icon class="menu-icon" name="{{pages.thanks.icon}}"></ion-icon>
+          {{pages.thanks.title}}
+        </button>
         <button ion-item (click)="openPage($event,pages.privacy)" [class.active]="pages.privacy.active">
           <ion-icon class="menu-icon" name="{{pages.privacy.icon}}"></ion-icon>
           {{pages.privacy.title}}

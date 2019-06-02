@@ -1,23 +1,23 @@
-/**Core**/
+/** Core */
 import {Component, ViewChild} from '@angular/core';
-/**Ionic**/
+/** Ionic */
 import {ViewController, NavParams,Slides} from 'ionic-angular';
-/**Services**/
+/** Services */
 import {UIBeanStorage} from '../../../services/uiBeanStorage';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {UIBrewStorage} from '../../../services/uiBrewStorage';
 import {UIHelper} from '../../../services/uiHelper';
 import {UIImage} from '../../../services/uiImage';
 
-/**Classes**/
+/** Classes */
 import {Brew} from '../../../classes/brew/brew';
 
-/**Interfaces**/
+/** Interfaces */
 import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 import {IBean} from '../../../interfaces/bean/iBean';
 import {IBrew} from '../../../interfaces/brew/iBrew';
 
-/**Enums**/
+/** Enums */
 import {BREW_QUANTITY_TYPES_ENUM} from "../../../enums/brews/brewQuantityTypes";
 import {UIMillStorage} from "../../../services/uiMillStorage";
 import {IMill} from "../../../interfaces/mill/iMill";

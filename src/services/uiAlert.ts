@@ -1,6 +1,6 @@
-/**Core**/
+/** Core */
 import {Injectable} from '@angular/core';
-/**Ionic**/
+/** Ionic */
 import {AlertController} from 'ionic-angular';
 
 @Injectable()

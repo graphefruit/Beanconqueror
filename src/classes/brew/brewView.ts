@@ -1,4 +1,4 @@
-/**Classes**/
+/** Classes */
 import {Brew} from "../brew/brew";
 export class BrewView {
   public title: string;

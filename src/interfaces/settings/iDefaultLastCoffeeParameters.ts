@@ -1,4 +1,4 @@
-/**Interfaces**/
+/** Interfaces */
 
 
 export interface IDefaultLastCoffeeParameters {
