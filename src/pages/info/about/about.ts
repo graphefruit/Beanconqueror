@@ -2,13 +2,8 @@
 import { Component } from '@angular/core';
 
 @Component({
-  templateUrl: 'about.html',
+  templateUrl: 'about.html'
 })
 export class AboutPage {
-
-  constructor() {
-
-  }
-
 
 }

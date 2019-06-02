@@ -1,13 +1,13 @@
 /** Core */
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 /** Class */
-import {Brew} from '../classes/brew/brew';
+import { Brew } from '../classes/brew/brew';
 
 /** Services */
-import {UIHelper} from '../services/uiHelper';
-import {UILog} from '../services/uiLog';
-import {UIStorage} from  '../services/uiStorage';
-import {StorageClass} from  '../classes/storageClass';
+import { StorageClass } from '../classes/storageClass';
+import { UIHelper } from '../services/uiHelper';
+import { UILog } from '../services/uiLog';
+import { UIStorage } from '../services/uiStorage';
 
 @Injectable()
 export class UIBrewStorage extends StorageClass {
@@ -17,36 +17,35 @@ export class UIBrewStorage extends StorageClass {
    */
   public static instance: UIBrewStorage;
 
-  constructor(protected uiStorage: UIStorage,
-              protected uiHelper: UIHelper,
-              protected uiLog: UILog) {
-
-    super(uiStorage, uiHelper, uiLog, "BREWS");
-
-    if (UIBrewStorage.instance == null) {
-      UIBrewStorage.instance = this;
-    }
-  }
-
   public static getInstance(): UIBrewStorage {
     if (UIBrewStorage.instance) {
       return UIBrewStorage.instance;
     }
-    return null;
+    return undefined;
+  }
+
+  constructor(protected uiStorage: UIStorage,
+              protected uiHelper: UIHelper,
+              protected uiLog: UILog) {
+
+    super(uiStorage, uiHelper, uiLog, 'BREWS');
+
+    if (UIBrewStorage.instance === undefined) {
+      UIBrewStorage.instance = this;
+    }
   }
 
   public getAllEntries(): Array<Brew> {
-    let brewEntries: Array<any> = super.getAllEntries();
-    let brews: Array<Brew> = [];
+    const brewEntries: Array<any> = super.getAllEntries();
+    const brews: Array<Brew> = [];
 
     for (let i = 0; i < brewEntries.length; i++) {
-      let brewObj: Brew = new Brew();
+      const brewObj: Brew = new Brew();
       brewObj.initializeByObject(brewEntries[i]);
       brews.push(brewObj);
 
     }
     return brews;
   }
-
 
 }

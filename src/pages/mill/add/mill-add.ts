@@ -1,41 +1,38 @@
 /** Core */
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 /** Ionic */
-import {ViewController} from 'ionic-angular';
+import { ViewController } from 'ionic-angular';
 /** Services */
 
 /** Classes */
 
-import {Mill} from "../../../classes/mill/mill";
-import {UIMillStorage} from "../../../services/uiMillStorage";
+import { Mill } from '../../../classes/mill/mill';
+import { UIMillStorage } from '../../../services/uiMillStorage';
 
 @Component({
-  templateUrl: 'mill-add.html',
+  templateUrl: 'mill-add.html'
 })
 export class MillAddModal {
 
-  public data:Mill = new Mill();
-  constructor(private viewCtrl: ViewController, private uiMillStorage:UIMillStorage) {
+  public data: Mill = new Mill();
+  constructor(private viewCtrl: ViewController, private uiMillStorage: UIMillStorage) {
 
   }
 
-  public addMill(form) {
+  public addMill(form): void {
 
     if (form.valid) {
       this.__addMill();
     }
   }
 
-  public __addMill(){
+  public __addMill(): void {
     this.uiMillStorage.add(this.data);
     this.dismiss();
   }
 
-
-
-  dismiss() {
-    this.viewCtrl.dismiss("", null, {animate: false});
+  public dismiss(): void {
+    this.viewCtrl.dismiss('', undefined, {animate: false});
   }
-
 
 }

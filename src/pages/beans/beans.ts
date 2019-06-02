@@ -1,62 +1,60 @@
 /** Core */
-import {Component, ChangeDetectorRef} from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 /** Ionic */
-import {ModalController} from 'ionic-angular';
-/** Services */
-import {UIBeanStorage} from '../../services/uiBeanStorage';
-import {UIBrewStorage} from '../../services/uiBrewStorage';
-import {UIAlert} from '../../services/uiAlert';
-/** Modals */
-import {BeansAddModal} from '../beans/add/beans-add';
-import {BeansEditModal} from '../beans/edit/beans-edit';
-/** Interfaces */
-import {IBean} from '../../interfaces/bean/iBean';
+import { ModalController } from 'ionic-angular';
 /**
  * Classes
  */
-import {Bean} from '../../classes/bean/bean';
-import {Brew} from '../../classes/brew/brew';
+import { Bean } from '../../classes/bean/bean';
+import { Brew } from '../../classes/brew/brew';
+/** Interfaces */
+import { IBean } from '../../interfaces/bean/iBean';
+import { UIAlert } from '../../services/uiAlert';
+/** Services */
+import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
+/** Modals */
+import { BeansAddModal } from '../beans/add/beans-add';
+import { BeansEditModal } from '../beans/edit/beans-edit';
 @Component({
   templateUrl: 'beans.html',
-  selector: 'beans-list',
+  selector: 'beans-list'
 })
 export class BeansPage {
 
-  beans: Array<Bean> = [];
+  public beans: Array<Bean> = [];
 
-  bean_segment:string ="open";
-  constructor(public modalCtrl: ModalController, private changeDetectorRef: ChangeDetectorRef, private uiBeanStorage: UIBeanStorage, private uiAlert: UIAlert, private uiBrewStorage:UIBrewStorage) {
+  public bean_segment: string = 'open';
+  constructor(public modalCtrl: ModalController,
+              private changeDetectorRef: ChangeDetectorRef,
+              private uiBeanStorage: UIBeanStorage,
+              private uiAlert: UIAlert,
+              private uiBrewStorage: UIBrewStorage) {
 
   }
 
-  ionViewWillEnter() {
+  public ionViewWillEnter(): void {
     this.loadBeans();
   }
 
-  private __initializeBeans() {
-    this.beans = this.uiBeanStorage.getAllEntries().sort((a, b) => a.name.localeCompare(b.name));
-  }
-
-  public getOpenBeans()
-  {
+  public getOpenBeans(): Array<Bean> {
 
     return this.beans.filter(
-      bean => bean.finished === false);
+      (bean) => bean.finished === false);
   }
-  public getFinishedBeans()
-  {
+  public getFinishedBeans(): Array<Bean> {
 
     return this.beans.filter(
-      bean => bean.finished === true);
+      (bean) => bean.finished === true);
   }
 
-  public loadBeans() {
+  public loadBeans(): void {
     this.__initializeBeans();
     this.changeDetectorRef.detectChanges();
   }
 
-  public addBean() {
-    let addBeanModal = this.modalCtrl.create(BeansAddModal, {});
+  public addBean(): void {
+    const addBeanModal = this.modalCtrl.create(BeansAddModal, {});
     addBeanModal.onDidDismiss(() => {
       this.loadBeans();
     });
@@ -64,36 +62,40 @@ export class BeansPage {
   }
 
   public editBean(_bean: IBean) {
-    let editBeansModal = this.modalCtrl.create(BeansEditModal, {'BEAN': _bean});
+    const editBeansModal = this.modalCtrl.create(BeansEditModal, {BEAN: _bean});
     editBeansModal.onDidDismiss(() => {
       this.loadBeans();
     });
     editBeansModal.present({animate: false});
   }
 
-  public deleteBean(_bean: IBean) {
-    this.uiAlert.showConfirm("Bohne löschen? Alle zugehörigen Brühungen werden mit entfernt.", "Sicher?").then(() => {
-        //Yes
+  public deleteBean(_bean: IBean): void {
+    this.uiAlert.showConfirm('Bohne löschen? Alle zugehörigen Brühungen werden mit entfernt.', 'Sicher?')
+      .then(() => {
+        // Yes
         this.__deleteBean(_bean);
-
       },
       () => {
-        //No
-      })
+        // No
+      });
 
   }
 
-  private __deleteBean(_bean: IBean) {
-    let brews:Array<Brew> =  this.uiBrewStorage.getAllEntries();
+  private __initializeBeans(): void {
+    this.beans = this.uiBeanStorage.getAllEntries()
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }
 
-    let deletingBrewIndex:Array<number> = [];
-    for (let i=0;i<brews.length;i++){
-      if (brews[i].bean === _bean.config.uuid){
+  private __deleteBean(_bean: IBean): void {
+    const brews: Array<Brew> =  this.uiBrewStorage.getAllEntries();
+
+    const deletingBrewIndex: Array<number> = [];
+    for (let i = 0; i < brews.length; i++) {
+      if (brews[i].bean === _bean.config.uuid) {
         deletingBrewIndex.push(i);
       }
     }
-    for(let i = deletingBrewIndex.length; i--;)
-    {
+    for (let i = deletingBrewIndex.length; i--;) {
       this.uiBrewStorage.removeByUUID(brews[deletingBrewIndex[i]].config.uuid);
     }
 
@@ -101,6 +103,5 @@ export class BeansPage {
     this.loadBeans();
 
   }
-
 
 }

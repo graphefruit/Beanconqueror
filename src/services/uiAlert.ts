@@ -1,7 +1,7 @@
 /** Core */
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 /** Ionic */
-import {AlertController} from 'ionic-angular';
+import { AlertController } from 'ionic-angular';
 
 @Injectable()
 export class UIAlert {
@@ -9,16 +9,15 @@ export class UIAlert {
   constructor(private alertController: AlertController) {
   }
 
-
   /**
    * @method showMessage
    */
-  public showMessage(_message: string, _title?: string,_ok?:string) {
-    if (!_ok){
-      _ok ="OK";
+  public showMessage(_message: string, _title?: string, _ok?: string) {
+    if (!_ok) {
+      _ok = 'OK';
     }
-    var promise = new Promise((resolve, reject) => {
-      let alert = this.alertController.create({
+    let promise = new Promise((resolve, reject) => {
+      const alert = this.alertController.create({
         title: _title,
         subTitle: _message,
         buttons: [
@@ -30,20 +29,18 @@ export class UIAlert {
           }
         ]
       });
-      alert.present({animate:false});
+      alert.present({animate: false});
     });
     return promise;
   }
 
+  public showConfirm(_message: string, _title?: string) {
 
-
-   public showConfirm(_message: string, _title?: string) {
-
-    var promise = new Promise((resolve, reject) => {
-      let alert = this.alertController.create({
+    let promise = new Promise((resolve, reject) => {
+      const alert = this.alertController.create({
         title: _title,
         subTitle: _message,
-       buttons: [
+        buttons: [
           {
             text: 'Nein',
             role: 'cancel',
@@ -59,11 +56,9 @@ export class UIAlert {
           }
         ]
       });
-      alert.present({animate:false});
+      alert.present({animate: false});
     });
     return promise;
   }
-
-
 
 }

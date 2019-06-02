@@ -1,6 +1,6 @@
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 
-import {ViewController} from 'ionic-angular';
+import { ViewController } from 'ionic-angular';
 @Component({
   templateUrl: 'brews-popover.html',
   selector: 'brews-popover'
@@ -8,22 +8,21 @@ import {ViewController} from 'ionic-angular';
 export class BrewsPopover {
 
   public static ACTIONS: any = {
-    "DOWNLOAD": "DOWNLOAD",
-    "TABLE":"TABLE",
+    DOWNLOAD: 'DOWNLOAD',
+    TABLE: 'TABLE'
   };
 
   constructor(public viewCtrl: ViewController) {
 
   }
 
-  public download() {
+  public download(): void {
     this.viewCtrl.dismiss(BrewsPopover.ACTIONS.DOWNLOAD);
 
   }
 
-  public table(){
+  public table(): void {
     this.viewCtrl.dismiss(BrewsPopover.ACTIONS.TABLE);
   }
-
 
 }

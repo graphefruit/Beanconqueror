@@ -1,37 +1,32 @@
 /** Core */
-import {Directive} from '@angular/core';
-import {NgModel} from '@angular/forms';
+import { Directive } from '@angular/core';
+import { NgModel } from '@angular/forms';
 
 @Directive({
   selector: '[ngModel][remove-empty-number]',
   providers: [NgModel],
   host: {
-    "(ionFocus)": 'focus()'
+    '(ionFocus)': 'focus()'
   }
 })
 export class RemoveEmptyNumberDirective {
 
-
-  //@Output() ngModelChange:EventEmitter<any> = new EventEmitter();
+  // @Output() ngModelChange:EventEmitter<any> = new EventEmitter();
 
   constructor(private model: NgModel) {
 
   }
 
+  public focus() {
 
+    const val: any = this.model.control.value;
+    // Emit worked aswell but I don't know what its doing in depth
+    // this.ngModelChange.emit(parseFloat(val));
 
-  focus(){
-
-    let val: any = this.model.control.value;
-    //Emit worked aswell but I don't know what its doing in depth
-    //this.ngModelChange.emit(parseFloat(val));
-
-    if (val === null || val === undefined || val === 0)
-    {
-      this.model.control.setValue("");
+    if (val === null || val === undefined || val === 0) {
+      this.model.control.setValue('');
 
     }
-
 
   }
 }

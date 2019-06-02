@@ -1,16 +1,16 @@
 /** Core */
 import { Component } from '@angular/core';
 /** Services */
-import {UIHelper} from '../../../services/uiHelper';
+import { UIHelper } from '../../../services/uiHelper';
 @Component({
-templateUrl: 'contact.html',
+templateUrl: 'contact.html'
 })
 export class ContactPage {
 
-  constructor(private uiHelper:UIHelper) {
+  constructor(private uiHelper: UIHelper) {
   }
 
-  public openLink(event, _link: string) {
+  public openLink(event, _link: string): void {
     event.cancelBubble = true;
     event.preventDefault();
     this.uiHelper.openExternalWebpage(_link);

@@ -1,11 +1,11 @@
 /** Core */
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 /** Third party */
 declare var console;
 @Injectable()
 export class UILog {
 
-  disabled: boolean = true;
+  public disabled: boolean = true;
 
   constructor() {
     this.disabled = false;
@@ -14,8 +14,7 @@ export class UILog {
   public enable() {
     this.disabled = false;
   }
-  public disable()
-  {
+  public disable() {
     this.disabled = false;
   }
 
@@ -43,6 +42,5 @@ export class UILog {
       console.warn(_message);
     }
   }
-
 
 }

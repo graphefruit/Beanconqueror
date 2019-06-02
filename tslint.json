@@ -1,15 +1,20 @@
 {
-  //"extends": ["angular-tslint-rules"],
+  "extends": ["angular-tslint-rules"],
   "rules": {
     "no-duplicate-variable": true,
     "no-unused-variable": [
       true
     ],
     "no-any":false,
-    //"member-access": true,
+    "member-access": true,
+    "prefer-function-over-method": false,
+    "file-name-casing": false,
     "arrow-parens":true,
     "no-inferrable-types":false,
-    "no-console": false
+    "no-console": false,
+    "variable-name": false,
+    "prefer-template": false,
+    "interface-name": false
   },
   "rulesDirectory": [
     "node_modules/tslint-eslint-rules/dist/rules"

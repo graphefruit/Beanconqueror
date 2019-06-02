@@ -89,7 +89,8 @@ export class Brew implements IBrew {
   }
 
   public getBean(): Bean {
-    const iBean: IBean = this.getBeanStorageInstance().getByUUID(this.bean) as IBean;
+    const iBean: IBean = this.getBeanStorageInstance()
+      .getByUUID(this.bean) as IBean;
     const bean: Bean = new Bean();
     bean.initializeByObject(iBean);
 
@@ -98,7 +99,8 @@ export class Brew implements IBrew {
   }
 
   public getPreparation(): Preparation {
-    const iPreparation: IPreparation = this.getPreparationStorageInstance().getByUUID(this.method_of_preparation) as IPreparation;
+    const iPreparation: IPreparation = this.getPreparationStorageInstance()
+      .getByUUID(this.method_of_preparation) as IPreparation;
     const preparation: Preparation = new Preparation();
     preparation.initializeByObject(iPreparation);
 
@@ -121,7 +123,8 @@ export class Brew implements IBrew {
    */
   public getCalculatedBeanAge(): number {
 
-    const bean: IBean = this.getBeanStorageInstance().getByUUID(this.bean) as IBean;
+    const bean: IBean = this.getBeanStorageInstance()
+      .getByUUID(this.bean) as IBean;
     if (bean) {
       const roastingDate = moment(bean.roastingDate);
       const brewTime = moment.unix(this.config.unix_timestamp);
@@ -151,7 +154,8 @@ export class Brew implements IBrew {
       format = _format;
 
     }
-    return moment.unix(this.config.unix_timestamp).format(format);
+    return moment.unix(this.config.unix_timestamp)
+      .format(format);
   }
 
   private getBeanStorageInstance(): UIBeanStorage {

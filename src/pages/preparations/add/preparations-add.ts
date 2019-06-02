@@ -1,19 +1,19 @@
 /** Core */
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 /** Ionic */
-import {ViewController} from 'ionic-angular';
-/** Services */
-import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
+import { ViewController } from 'ionic-angular';
 /** Classes */
-import {Preparation} from '../../../classes/preparation/preparation';
+import { Preparation } from '../../../classes/preparation/preparation';
+/** Services */
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 
 @Component({
-  templateUrl: 'preparations-add.html',
+  templateUrl: 'preparations-add.html'
 })
 export class PreparationsAddModal {
 
-  public data:Preparation = new Preparation();
-  constructor(private viewCtrl: ViewController, private uiPreparationStorage:UIPreparationStorage) {
+  public data: Preparation = new Preparation();
+  constructor(private viewCtrl: ViewController, private uiPreparationStorage: UIPreparationStorage) {
 
   }
 
@@ -24,16 +24,13 @@ export class PreparationsAddModal {
     }
   }
 
-  public __addBean(){
+  public __addBean() {
     this.uiPreparationStorage.add(this.data);
     this.dismiss();
   }
 
-
-
-  dismiss() {
-    this.viewCtrl.dismiss("", null, {animate: false});
+  public dismiss() {
+    this.viewCtrl.dismiss('', null, {animate: false});
   }
-
 
 }

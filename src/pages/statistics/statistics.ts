@@ -1,41 +1,39 @@
 /** Core */
-import {Component, ViewChild} from '@angular/core';
-import {UIStatistic} from "../../services/uiStatistic";
+import { Component, ViewChild } from '@angular/core';
+import { UIStatistic } from '../../services/uiStatistic';
 
 import { Chart } from 'chart.js';
-import {UIBrewStorage} from "../../services/uiBrewStorage";
-import {Brew} from "../../classes/brew/brew";
-import {IBrew} from "../../interfaces/brew/iBrew";
-import {BrewView} from "../../classes/brew/brewView";
-import {UIHelper} from "../../services/uiHelper";
+import { Brew } from '../../classes/brew/brew';
+import { BrewView } from '../../classes/brew/brewView';
+import { IBrew } from '../../interfaces/brew/iBrew';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { UIHelper } from '../../services/uiHelper';
 @Component({
   templateUrl: 'statistics.html'
 })
 export class StatisticsPage {
 
-  @ViewChild('drinkChart') drinkChart;
-
+  @ViewChild('drinkChart') public drinkChart;
 
   constructor(
-    public uiStatistic:UIStatistic,
-    private uiBrewStorage:UIBrewStorage,
-    private uiHelper:UIHelper,
+    public uiStatistic: UIStatistic,
+    private uiBrewStorage: UIBrewStorage,
+    private uiHelper: UIHelper
 
   ) {
 
   }
+  public ionViewDidLoad() {
+    this.__loadDrinkingChart();
+  }
 
-  private __getBrewsSortedForMonth():Array<BrewView>{
-    let  brewViews: Array<BrewView> = [];
-    let brews:Array<Brew> = this.uiBrewStorage.getAllEntries();
-//sort latest to top.
-      let brewsCopy:Array<Brew> = [...brews];
+  private __getBrewsSortedForMonth(): Array<BrewView> {
+    const  brewViews: Array<BrewView> = [];
+    const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
+// sort latest to top.
+    const brewsCopy: Array<Brew> = [...brews];
 
-
-
-
-
-      let sortedBrews: Array<IBrew> = brewsCopy.sort((obj1, obj2) => {
+    const sortedBrews: Array<IBrew> = brewsCopy.sort((obj1, obj2) => {
         if (obj1.config.unix_timestamp < obj2.config.unix_timestamp) {
           return -1;
         }
@@ -45,58 +43,54 @@ export class StatisticsPage {
         return 0;
       });
 
-      let collection = {};
-      //Create collection
-      for (let i = 0; i < sortedBrews.length; i++) {
-        let month: string = this.uiHelper.formateDate(sortedBrews[i].config.unix_timestamp, 'MMMM');
-        let year: string = this.uiHelper.formateDate(sortedBrews[i].config.unix_timestamp, 'YYYY');
-        if (collection[month + " - " + year] === undefined) {
-          collection[month + " - " + year] = {
-            "BREWS": []
-          }
+    const collection = {};
+      // Create collection
+    for (let i = 0; i < sortedBrews.length; i++) {
+        const month: string = this.uiHelper.formateDate(sortedBrews[i].config.unix_timestamp, 'MMMM');
+        const year: string = this.uiHelper.formateDate(sortedBrews[i].config.unix_timestamp, 'YYYY');
+        if (collection[month + ' - ' + year] === undefined) {
+          collection[month + ' - ' + year] = {
+            BREWS: []
+          };
         }
-        collection[month + " - " + year]["BREWS"].push(sortedBrews[i]);
+        collection[month + ' - ' + year].BREWS.push(sortedBrews[i]);
       }
 
-      for (let key in collection) {
-        let viewObj: BrewView = new BrewView();
+    for (const key in collection) {
+        const viewObj: BrewView = new BrewView();
         viewObj.title = key;
         viewObj.brews = collection[key].BREWS;
 
-          brewViews.push(viewObj);
+        brewViews.push(viewObj);
 
       }
-      return brewViews;
+    return brewViews;
 
   }
-  private __loadDrinkingChart()
-  {
-    let brewView:Array<BrewView> = this.__getBrewsSortedForMonth();
-    //Take the last 12 Months
-    let lastBrewViews:Array<BrewView> = brewView.slice(-12);
+  private __loadDrinkingChart() {
+    const brewView: Array<BrewView> = this.__getBrewsSortedForMonth();
+    // Take the last 12 Months
+    const lastBrewViews: Array<BrewView> = brewView.slice(-12);
 
-    var drinkingData = {
+    let drinkingData = {
       labels: [],
       datasets: [{
-        label: "Getrunkene Tassen",
-        data: [],
+        label: 'Getrunkene Tassen',
+        data: []
       }]
     };
 
-
-
-    for (let i=0;i<lastBrewViews.length;i++){
+    for (let i = 0; i < lastBrewViews.length; i++) {
       drinkingData.labels.push(lastBrewViews[i].title);
 
-      for (let y=0;y<lastBrewViews.length;y++)
-      {
+      for (let y = 0; y < lastBrewViews.length; y++) {
         drinkingData.datasets[0].data.push(lastBrewViews[y].brews.length);
       }
     }
-    let chartOptions = {
+    const chartOptions = {
       legend: {
         display: true,
-        position: 'top',
+        position: 'top'
 
       }
     };
@@ -107,11 +101,5 @@ export class StatisticsPage {
       options: chartOptions
     });
   }
-  ionViewDidLoad() {
-    this.__loadDrinkingChart();
-  }
-
-
 
 }
-

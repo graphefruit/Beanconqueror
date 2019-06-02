@@ -1,25 +1,25 @@
 /** Interfacdes */
 
-import {IDefaultLastCoffeeParameters} from "../../interfaces/settings/iDefaultLastCoffeeParameters";
+import { IDefaultLastCoffeeParameters } from '../../interfaces/settings/iDefaultLastCoffeeParameters';
 
 export class DefaultLastCoffeeParameters implements IDefaultLastCoffeeParameters {
   public brew_time: boolean;
-  public brew_temperature_time:boolean;
+  public brew_temperature_time: boolean;
   public grind_size: boolean;
   public grind_weight: boolean;
   public mill: boolean;
-  public mill_speed:boolean;
-  public pressure_profile:boolean;
+  public mill_speed: boolean;
+  public pressure_profile: boolean;
   public method_of_preparation: boolean;
   public brew_quantity: boolean;
   public bean_type: boolean;
-  public brew_temperature:boolean;
+  public brew_temperature: boolean;
   public note: boolean;
-  public coffee_type:boolean;
-  public coffee_concentration:boolean;
-  public coffee_first_drip_time:boolean;
-  public coffee_blooming_time:boolean;
-  public rating:boolean;
+  public coffee_type: boolean;
+  public coffee_concentration: boolean;
+  public coffee_first_drip_time: boolean;
+  public coffee_blooming_time: boolean;
+  public rating: boolean;
 
   constructor() {
     this.bean_type = true;

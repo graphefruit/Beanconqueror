@@ -1,20 +1,20 @@
 /** Interfaces */
-import {ISettings} from "../../interfaces/settings/iSettings";
-/** Classes */
-import {Config} from "../objectConfig/objectConfig";
 /** Enums */
-import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
+import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
+import { ISettings } from '../../interfaces/settings/iSettings';
+/** Classes */
+import { Config } from '../objectConfig/objectConfig';
 
-import {DefaultLastCoffeeParameters} from "./settingsDefaultLastCoffeeParameter";
+import { DefaultLastCoffeeParameters } from './settingsDefaultLastCoffeeParameter';
 export class Settings implements ISettings {
   public brew_view: BREW_VIEW_ENUM;
   public brew_time: boolean;
-  public brew_temperature_time:boolean;
+  public brew_temperature_time: boolean;
   public grind_size: boolean;
   public grind_weight: boolean;
-  public mill:boolean;
-  public mill_speed:boolean;
-  public pressure_profile:boolean;
+  public mill: boolean;
+  public mill_speed: boolean;
+  public pressure_profile: boolean;
   public method_of_preparation: boolean;
   public brew_quantity: boolean;
   public bean_type: boolean;
@@ -26,13 +26,12 @@ export class Settings implements ISettings {
   public coffee_concentration: boolean;
   public coffee_first_drip_time: boolean;
   public coffee_blooming_time: boolean;
-  public set_last_coffee_brew:boolean;
-  public default_last_coffee_parameters:DefaultLastCoffeeParameters;
+  public set_last_coffee_brew: boolean;
+  public default_last_coffee_parameters: DefaultLastCoffeeParameters;
   public config: Config;
 
-
   public initializeByObject(brewObj: ISettings) {
-    Object.assign(this, brewObj)
+    Object.assign(this, brewObj);
   }
 
   constructor() {
@@ -61,6 +60,5 @@ export class Settings implements ISettings {
     this.default_last_coffee_parameters = new DefaultLastCoffeeParameters();
 
   }
-
 
 }

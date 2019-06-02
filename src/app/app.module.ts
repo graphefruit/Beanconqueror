@@ -43,6 +43,7 @@ import { PreparationsAddModal } from '../pages/preparations/add/preparations-add
 import { PreparationsEditModal } from '../pages/preparations/edit/preparations-edit';
 
 /** Components */
+
 import { TimerComponent } from '../components/timer/timer';
 /** Directive */
 import { PreventCharacterDirective } from '../directive/preventCharacters';
@@ -97,8 +98,20 @@ import { UIStorage } from '../services/uiStorage';
     PreventCharacterDirective,
     RemoveEmptyNumberDirective,
     BrewsPage,
-    BrewsAddModal, TimerComponent, BrewsEditModal, BrewsPhotoView, BrewsDetailsModal, BrewsTableModal, BrewsPopover, BrewsTextModal,
-    AboutPage, ThanksPage, ContactPage, LicencesPage, TermsPage, PrivacyPage
+    BrewsAddModal,
+    TimerComponent,
+    BrewsEditModal,
+    BrewsPhotoView,
+    BrewsDetailsModal,
+    BrewsTableModal,
+    BrewsPopover,
+    BrewsTextModal,
+    AboutPage,
+    ThanksPage,
+    ContactPage,
+    LicencesPage,
+    TermsPage,
+    PrivacyPage
   ],
 
   imports: [
@@ -131,8 +144,21 @@ import { UIStorage } from '../services/uiStorage';
     CreditsPage,
     MillAddModal,
     MillEditModal,
-    BrewsPage, BrewsAddModal, TimerComponent, BrewsEditModal, BrewsPhotoView, BrewsDetailsModal, BrewsTableModal, BrewsPopover, BrewsTextModal,
-    AboutPage, ThanksPage, ContactPage, LicencesPage, TermsPage, PrivacyPage
+    BrewsPage,
+    BrewsAddModal,
+    TimerComponent,
+    BrewsEditModal,
+    BrewsPhotoView,
+    BrewsDetailsModal,
+    BrewsTableModal,
+    BrewsPopover,
+    BrewsTextModal,
+    AboutPage,
+    ThanksPage,
+    ContactPage,
+    LicencesPage,
+    TermsPage,
+    PrivacyPage
   ],
   providers: [
     StatusBar,
@@ -155,9 +181,19 @@ import { UIStorage } from '../services/uiStorage';
     UIMillStorage,
     UIAlert,
     UIImage,
-    UIBeanStorage, AppMinimize, {provide: ErrorHandler, useClass: IonicErrorHandler},
-    Camera, ImagePicker, AndroidPermissions, UIBrewStorage, UIStatistic
-  ], exports: [PreventCharacterDirective],
+    UIBeanStorage,
+    AppMinimize,
+    {
+      provide: ErrorHandler,
+      useClass: IonicErrorHandler
+    },
+    Camera,
+    ImagePicker,
+    AndroidPermissions,
+    UIBrewStorage,
+    UIStatistic
+  ],
+  exports: [PreventCharacterDirective],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppModule {
