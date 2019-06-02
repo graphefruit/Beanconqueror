@@ -12,17 +12,18 @@ export class UIAlert {
   /**
    * @method showMessage
    */
-  public showMessage(_message: string, _title?: string, _ok?: string) {
-    if (!_ok) {
-      _ok = 'OK';
+  public showMessage(_message: string, _title?: string, _ok?: string): Promise<any> {
+    let okText: string = 'OK';
+    if (_ok) {
+      okText = _ok;
     }
-    let promise = new Promise((resolve, reject) => {
+    const promise = new Promise((resolve, reject) => {
       const alert = this.alertController.create({
         title: _title,
         subTitle: _message,
         buttons: [
           {
-            text: _ok,
+            text: okText,
             handler: () => {
               resolve();
             }
@@ -34,9 +35,9 @@ export class UIAlert {
     return promise;
   }
 
-  public showConfirm(_message: string, _title?: string) {
+  public showConfirm(_message: string, _title?: string): Promise<any> {
 
-    let promise = new Promise((resolve, reject) => {
+    const promise = new Promise((resolve, reject) => {
       const alert = this.alertController.create({
         title: _title,
         subTitle: _message,

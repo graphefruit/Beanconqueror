@@ -7,11 +7,11 @@ import { Preparation } from '../classes/preparation/preparation';
 
 /** Services */
 import { Mill } from '../classes/mill/mill';
-import { StorageClass } from  '../classes/storageClass';
+import { StorageClass } from '../classes/storageClass';
 import { IMill } from '../interfaces/mill/iMill';
 import { UIHelper } from '../services/uiHelper';
 import { UILog } from '../services/uiLog';
-import { UIStorage } from  '../services/uiStorage';
+import { UIStorage } from '../services/uiStorage';
 
 @Injectable()
 export class UIMillStorage extends StorageClass {

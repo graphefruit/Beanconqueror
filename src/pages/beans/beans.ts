@@ -61,7 +61,7 @@ export class BeansPage {
     addBeanModal.present({animate: false});
   }
 
-  public editBean(_bean: IBean) {
+  public editBean(_bean: IBean): void {
     const editBeansModal = this.modalCtrl.create(BeansEditModal, {BEAN: _bean});
     editBeansModal.onDidDismiss(() => {
       this.loadBeans();

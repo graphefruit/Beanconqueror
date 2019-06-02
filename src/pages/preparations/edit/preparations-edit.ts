@@ -16,8 +16,7 @@ import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 export class PreparationsEditModal {
 
   public data: Preparation = new Preparation();
-
-  private preparation: IPreparation;
+  private preparation: IPreparation = undefined;
   constructor(private navParams: NavParams,
               private viewCtrl: ViewController,
               private uiPreparationStorage: UIPreparationStorage,
@@ -25,24 +24,27 @@ export class PreparationsEditModal {
 
   }
 
-  public ionViewWillEnter() {
+  public ionViewWillEnter(): void {
     this.preparation = this.navParams.get('PREPARATION');
-    this.data = this.uiHelper.copyData(this.preparation);
+    if (this.preparation !== undefined) {
+      this.data = this.uiHelper.copyData(this.preparation);
+    }
+
   }
 
-  public editBean(form) {
+  public editBean(form): void {
     if (form.valid) {
       this.__editBean();
     }
   }
 
-  public __editBean() {
+  public __editBean(): void {
     this.uiPreparationStorage.update(this.data);
     this.dismiss();
   }
 
-  public dismiss() {
-    this.viewCtrl.dismiss('', null, {animate: false});
+  public dismiss(): void {
+    this.viewCtrl.dismiss('', undefined, {animate: false});
   }
 
 }
