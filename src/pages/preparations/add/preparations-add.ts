@@ -17,20 +17,20 @@ export class PreparationsAddModal {
 
   }
 
-  public addBean(form) {
+  public addBean(form): void {
 
     if (form.valid) {
       this.__addBean();
     }
   }
 
-  public __addBean() {
+  public __addBean(): void {
     this.uiPreparationStorage.add(this.data);
     this.dismiss();
   }
 
-  public dismiss() {
-    this.viewCtrl.dismiss('', null, {animate: false});
+  public dismiss(): void {
+    this.viewCtrl.dismiss('', undefined, {animate: false});
   }
 
 }

@@ -3,13 +3,13 @@ import { Injectable } from '@angular/core';
 /** Ionic native */
 /** Classes */
 import { Preparation } from '../classes/preparation/preparation';
-import { StorageClass } from  '../classes/storageClass';
+import { StorageClass } from '../classes/storageClass';
 /** Interfaces */
 import { IPreparation } from '../interfaces/preparation/iPreparation';
 /** Services */
 import { UIHelper } from '../services/uiHelper';
 import { UILog } from '../services/uiLog';
-import { UIStorage } from  '../services/uiStorage';
+import { UIStorage } from '../services/uiStorage';
 
 @Injectable()
 export class UIPreparationStorage extends StorageClass {

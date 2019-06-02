@@ -6,6 +6,7 @@ import { UIStatistic } from '../../services/uiStatistic';
 
 /** Third party */
 import moment from 'moment';
+
 import 'moment/locale/de';
 import { BrewsAddModal } from '../brews/add/brews-add';
 

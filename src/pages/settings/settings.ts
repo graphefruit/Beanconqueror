@@ -123,7 +123,7 @@ export class SettingsPage {
         });
         alert.present();
       } else {
-        this.socialSharing.share(null, null, _fileEntry.nativeURL);
+        this.socialSharing.share(undefined, undefined, _fileEntry.nativeURL);
       }
 
       });
@@ -131,12 +131,12 @@ export class SettingsPage {
 
   }
 
-  private __initializeSettings() {
+  private __initializeSettings(): void {
     this.settings = this.uiSettingsStorage.getSettings();
   }
 
-  private __readJSONFile(path, file) {
-    let promise = new Promise((resolve, reject) => {
+  private __readJSONFile(path, file): Promise<any> {
+    const promise = new Promise((resolve, reject) => {
       this.file.readAsText(path, file)
         .then((content) => {
           const parsedContent = JSON.parse(content);
@@ -192,8 +192,8 @@ export class SettingsPage {
 
   }
 
-  private __reinitializeStorages() {
-    let promise = new Promise((resolve, reject) => {
+  private __reinitializeStorages(): Promise<any> {
+    const promise = new Promise((resolve, reject) => {
 
       this.uiBeanStorage.reinitializeStorage();
       this.uiBrewStorage.reinitializeStorage();
@@ -221,16 +221,16 @@ export class SettingsPage {
     return promise;
   }
 
-  private __cleanupImportBeanData(_data: Array<IBean>) {
-    if (_data != undefined && _data != undefined && _data.length > 0) {
+  private __cleanupImportBeanData(_data: Array<IBean>): any {
+    if (_data !== undefined && _data !== undefined && _data.length > 0) {
       for (let i = 0; i < _data.length; i++) {
         _data[i].filePath = '';
       }
     }
   }
 
-  private __cleanupImportBrewData(_data: Array<IBrew>) {
-    if (_data != undefined && _data != undefined && _data.length > 0) {
+  private __cleanupImportBrewData(_data: Array<IBrew>): void {
+    if (_data !== undefined && _data !== undefined && _data.length > 0) {
       for (let i = 0; i < _data.length; i++) {
         _data[i].attachments = [];
       }

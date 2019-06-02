@@ -9,10 +9,10 @@ import { Bean } from '../classes/bean/bean';
 import { IBean } from '../interfaces/bean/iBean';
 
 /** Services */
-import { StorageClass } from  '../classes/storageClass';
+import { StorageClass } from '../classes/storageClass';
 import { UIHelper } from '../services/uiHelper';
 import { UILog } from '../services/uiLog';
-import { UIStorage } from  '../services/uiStorage';
+import { UIStorage } from '../services/uiStorage';
 
 @Injectable()
 export class UIBeanStorage extends StorageClass {
@@ -35,7 +35,7 @@ export class UIBeanStorage extends StorageClass {
               protected uiLog: UILog) {
 
     super(uiStorage, uiHelper, uiLog, 'BEANS');
-    if (UIBeanStorage.instance == undefined) {
+    if (UIBeanStorage.instance === undefined) {
       UIBeanStorage.instance = this;
     }
   }

@@ -21,28 +21,31 @@ import { Preparation } from '../../classes/preparation/preparation';
 export class PreparationsPage {
 
   public preparations: Array<Preparation> = [];
-
-  constructor(public modalCtrl: ModalController, private changeDetectorRef: ChangeDetectorRef, private uiPreparationStorage: UIPreparationStorage, private uiAlert: UIAlert, private uiBrewStorage: UIBrewStorage) {
+  constructor(public modalCtrl: ModalController,
+              private changeDetectorRef: ChangeDetectorRef,
+              private uiPreparationStorage: UIPreparationStorage,
+              private uiAlert: UIAlert,
+              private uiBrewStorage: UIBrewStorage) {
 
   }
 
-  public ionViewWillEnter() {
+  public ionViewWillEnter(): void {
     this.__initializePreparations();
   }
 
-  public loadPreparations() {
+  public loadPreparations(): void {
     this.__initializePreparations();
     this.changeDetectorRef.detectChanges();
   }
 
-  public addPreparation() {
+  public addPreparation(): void {
     const addPreparationModal = this.modalCtrl.create(PreparationsAddModal, {});
     addPreparationModal.onDidDismiss(() => {
       this.loadPreparations();
     });
     addPreparationModal.present({animate: false});
   }
-  public editPreparation(_bean: any) {
+  public editPreparation(_bean: any): void {
     const editPreparationModal = this.modalCtrl.create(PreparationsEditModal, {PREPARATION: _bean});
     editPreparationModal.onDidDismiss(() => {
       this.loadPreparations();
@@ -50,7 +53,7 @@ export class PreparationsPage {
     editPreparationModal.present({animate: false});
   }
 
-  public deletePreparation(_preparation: Preparation) {
+  public deletePreparation(_preparation: Preparation): void {
     this.uiAlert.showConfirm('Zubereitungsmethode löschen? Alle zugehörigen Brühungen werden mit entfernt.', 'Sicher?').then(() => {
         // Yes
         this.__deletePreparation(_preparation);
@@ -61,11 +64,12 @@ export class PreparationsPage {
 
   }
 
-  private __initializePreparations() {
-    this.preparations = this.uiPreparationStorage.getAllEntries().sort((a, b) => a.name.localeCompare(b.name));
+  private __initializePreparations(): void {
+    this.preparations = this.uiPreparationStorage.getAllEntries()
+      .sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  private __deletePreparation(_preparation: Preparation) {
+  private __deletePreparation(_preparation: Preparation): void {
     const brews: Array<Brew> =  this.uiBrewStorage.getAllEntries();
     const deletingBrewIndex: Array<number> = [];
     for (let i = 0; i < brews.length; i++) {

@@ -20,7 +20,7 @@ export class UIHelper {
     moment.locale('de');
   }
 
-  public copyData(_value: any): void {
+  public copyData(_value: any): any {
     if (_value.constructor === Array) {
       return {...[], ..._value};
     }
@@ -29,6 +29,7 @@ export class UIHelper {
 
   public generateUUID(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      // tslint:disable
       const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
       return v.toString(16);
     });
@@ -89,32 +90,31 @@ export class UIHelper {
   }
 
   public convertToNumber(event: any): number {
-
-    if (event === '') {
-      return event;
+    let eventInput:any = event;
+    if (eventInput === '') {
+      return eventInput;
     }
-    if (event.indexOf(',')) {
-      event =  event.replace(/,/g, '.');
+    if (eventInput.indexOf(',')) {
+      eventInput =  eventInput.replace(/,/g, '.');
     }
 
-    return parseFloat(event);
-    // return parseFloat(event);
-
+    return parseFloat(eventInput);
   }
 
   public openExternalWebpage(_url: string) {
-    if (_url.indexOf('http') == -1) {
+    let url:string = _url;
+    if (url.indexOf('http') === -1) {
       // Saftey
-      _url = 'http://' + _url;
+      url = 'http://' + url;
     }
 
-    this.inAppBrowser.create(_url, '_system');
+    this.inAppBrowser.create(url, '_system');
 
    // window.open(_url, "_system");
 
   }
 
-  public exportJSON(fileName: string, jsonContent: string) {
+  public exportJSON(fileName: string, jsonContent: string): Promise<any> {
      const promise = new Promise((resolve, reject) => {
       const errorCallback = (e) => {
         console.log('Error: ' + e);
@@ -191,7 +191,7 @@ export class UIHelper {
      return promise;
   }
 
-  public exportCSV(fileName: string, csvContent: string) {
+  public exportCSV(fileName: string, csvContent: string): Promise<any> {
 
     const promise = new Promise((resolve, reject) => {
       const errorCallback = (e) => {

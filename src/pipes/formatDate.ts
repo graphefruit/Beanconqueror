@@ -6,18 +6,13 @@ import moment from 'moment';
 export class FormatDatePipe implements PipeTransform {
   public transform(value, format, args?: Array<string>): any {
     // SAMPLE - http://jsfiddle.net/kunycrkb/
-    let m;
-    if (typeof(value) === 'number') {
-       m = moment.unix(value);
-    } else {
-      m = moment(value);
-    }
+    let m: any;
 
-    if (format != undefined) {
+    m = typeof(value) === 'number' ? moment.unix(value) : moment(value);
+
+    if (format !== undefined) {
       return m.format(format[0]).toString();
-    } else {
-
-      return m.format('llll').toString();
     }
+    return m.format('llll').toString();
   }
 }

@@ -9,11 +9,15 @@ import { AlertController, Platform } from 'ionic-angular';
 
 @Injectable()
 export class UIImage {
-  constructor(private camera: Camera, private imagePicker: ImagePicker, private alertController: AlertController, private platform: Platform, private androidPermissions: AndroidPermissions) {
+  constructor(private camera: Camera,
+              private imagePicker: ImagePicker,
+              private alertController: AlertController,
+              private platform: Platform,
+              private androidPermissions: AndroidPermissions) {
   }
 
-  public takePhoto() {
-    let promise = new Promise((resolve, reject) => {
+  public takePhoto(): Promise<any> {
+    const promise = new Promise((resolve, reject) => {
       const options: CameraOptions = {
         quality: 100,
         destinationType: this.camera.DestinationType.FILE_URI,
@@ -26,11 +30,12 @@ export class UIImage {
       this.camera.getPicture(options)
         .then(
           (imageData) => {
+            let imageStr: string = imageData;
             const isIos: boolean = this.platform.is('ios');
             if (isIos) {
-              imageData = imageData.replace(/^file:\/\//, '');
+              imageStr = imageStr.replace(/^file:\/\//, '');
             }
-            resolve(imageData);
+            resolve(imageStr);
           },
           (err) => {
             reject();
@@ -40,17 +45,13 @@ export class UIImage {
     return promise;
   }
 
-  /**
-   *
-   * @returns {Promise<T>}
-   */
-  public choosePhoto() {
-    let promise = new Promise((resolve, reject) => {
+  public choosePhoto(): Promise<any> {
+    const promise = new Promise((resolve, reject) => {
       this.__checkPermission(() => {
           setTimeout(() => {
             this.imagePicker.getPictures({maximumImagesCount: 1}).then((results) => {
-              if (results && results.length > 0 && results[0] != 0 && results[0] != '' && results[0] != 'OK' && results[0].length > 5) {
-                let imagePath = results[0];
+              if (results && results.length > 0 && results[0] !== 0 && results[0] !== '' && results[0] !== 'OK' && results[0].length > 5) {
+                const imagePath = results[0];
                 resolve(imagePath);
               } else {
                 reject();
@@ -69,8 +70,8 @@ export class UIImage {
     return promise;
   }
 
-  public showOptionChooser() {
-    let promise = new Promise((resolve, reject) => {
+  public showOptionChooser(): Promise<any> {
+    const promise = new Promise((resolve, reject) => {
       const alert = this.alertController.create({
         title: 'Auswählen',
         subTitle: 'Foto aufnehmen oder aus Bibliothek auswählen',
@@ -94,7 +95,7 @@ export class UIImage {
     return promise;
   }
 
-  private __requestGaleryPermission(_success: any, _error: any) {
+  private __requestGaleryPermission(_success: any, _error: any): void {
     this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE).then((_status) => {
       if (_status.hasPermission === true) {
         _success();
@@ -106,7 +107,7 @@ export class UIImage {
     });
   }
 
-  private __checkPermission(_success: any, _error: any) {
+  private __checkPermission(_success: any, _error: any): void {
     this.platform.ready().then(
       () => {
 
@@ -138,7 +139,7 @@ export class UIImage {
      * Request permission to read images
      * @returns {Promise<any>}
      */
-    /// requestReadPermission(): Promise<any>;
+    // requestReadPermission(): Promise<any>;
   }
 
 }

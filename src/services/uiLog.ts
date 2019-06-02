@@ -11,34 +11,34 @@ export class UILog {
     this.disabled = false;
   }
 
-  public enable() {
+  public enable(): void {
     this.disabled = false;
   }
-  public disable() {
+  public disable(): void {
     this.disabled = false;
   }
 
-  public log(_message: string) {
-    if (this.disabled == false) {
+  public log(_message: string): void {
+    if (this.disabled === false) {
       console.log(_message);
     }
 
   }
 
-  public info(_message: string) {
-    if (this.disabled == false && console.info) {
+  public info(_message: string): void {
+    if (this.disabled === false && console.info) {
       console.info(_message);
     }
   }
 
-  public error(_message: string) {
-    if (this.disabled == false && console.error) {
+  public error(_message: string): void {
+    if (this.disabled === false && console.error) {
       console.error(_message);
     }
   }
 
-  public warn(_message: string) {
-    if (this.disabled == false && console.warn) {
+  public warn(_message: string): void {
+    if (this.disabled === false && console.warn) {
       console.warn(_message);
     }
   }
