@@ -58,7 +58,7 @@ export class BeansEditModal {
         this.uiImage.takePhoto()
           .then((_path) => {
           this.data.filePath = _path.toString();
-        };
+        });
       }
     });
   }
