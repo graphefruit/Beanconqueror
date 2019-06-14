@@ -1,42 +1,42 @@
 /** Core */
-import { Component, ViewChild } from '@angular/core';
-import { AppMinimize } from '@ionic-native/app-minimize';
-import { Keyboard } from '@ionic-native/keyboard';
-import { SplashScreen } from '@ionic-native/splash-screen';
+import {Component, ViewChild} from '@angular/core';
+import {AppMinimize} from '@ionic-native/app-minimize';
+import {Keyboard} from '@ionic-native/keyboard';
+import {SplashScreen} from '@ionic-native/splash-screen';
 /** Ionic native */
-import { StatusBar } from '@ionic-native/status-bar';
-import { ThreeDeeTouch } from '@ionic-native/three-dee-touch';
+import {StatusBar} from '@ionic-native/status-bar';
+import {ThreeDeeTouch} from '@ionic-native/three-dee-touch';
 /**  Ionic */
-import { IonicApp, MenuController, ModalController, Nav, Platform } from 'ionic-angular';
-import { Brew } from '../classes/brew/brew';
-import { Mill } from '../classes/mill/mill';
-import { BeansAddModal } from '../pages/beans/add/beans-add';
-import { BeansPage } from '../pages/beans/beans';
-import { BrewsAddModal } from '../pages/brews/add/brews-add';
-import { BrewsPage } from '../pages/brews/brews';
+import {IonicApp, MenuController, ModalController, Nav, Platform} from 'ionic-angular';
+import {Brew} from '../classes/brew/brew';
+import {Mill} from '../classes/mill/mill';
+import {BeansAddModal} from '../pages/beans/add/beans-add';
+import {BeansPage} from '../pages/beans/beans';
+import {BrewsAddModal} from '../pages/brews/add/brews-add';
+import {BrewsPage} from '../pages/brews/brews';
 /**  Pages */
-import { HomePage } from '../pages/home/home';
-import { AboutPage } from '../pages/info/about/about';
-import { ContactPage } from '../pages/info/contact/contact';
-import { CreditsPage } from '../pages/info/credits/credits';
-import { LicencesPage } from '../pages/info/licences/licences';
-import { PrivacyPage } from '../pages/info/privacy/privacy';
-import { TermsPage } from '../pages/info/terms/terms';
-import { ThanksPage } from '../pages/info/thanks/thanks';
-import { MillAddModal } from '../pages/mill/add/mill-add';
-import { MillsPage } from '../pages/mill/mills';
-import { PreparationsAddModal } from '../pages/preparations/add/preparations-add';
-import { PreparationsPage } from '../pages/preparations/preparations';
-import { SettingsPage } from '../pages/settings/settings';
-import { StatisticsPage } from '../pages/statistics/statistics';
-import { UIBeanStorage } from '../services/uiBeanStorage';
-import { UIBrewHelper } from '../services/uiBrewHelper';
-import { UIBrewStorage } from '../services/uiBrewStorage';
+import {HomePage} from '../pages/home/home';
+import {AboutPage} from '../pages/info/about/about';
+import {ContactPage} from '../pages/info/contact/contact';
+import {CreditsPage} from '../pages/info/credits/credits';
+import {LicencesPage} from '../pages/info/licences/licences';
+import {PrivacyPage} from '../pages/info/privacy/privacy';
+import {TermsPage} from '../pages/info/terms/terms';
+import {ThanksPage} from '../pages/info/thanks/thanks';
+import {MillAddModal} from '../pages/mill/add/mill-add';
+import {MillsPage} from '../pages/mill/mills';
+import {PreparationsAddModal} from '../pages/preparations/add/preparations-add';
+import {PreparationsPage} from '../pages/preparations/preparations';
+import {SettingsPage} from '../pages/settings/settings';
+import {StatisticsPage} from '../pages/statistics/statistics';
+import {UIBeanStorage} from '../services/uiBeanStorage';
+import {UIBrewHelper} from '../services/uiBrewHelper';
+import {UIBrewStorage} from '../services/uiBrewStorage';
 /** Serivces */
-import { UILog } from '../services/uiLog';
-import { UIMillStorage } from '../services/uiMillStorage';
-import { UIPreparationStorage } from '../services/uiPreparationStorage';
-import { UISettingsStorage } from '../services/uiSettingsStorage';
+import {UILog} from '../services/uiLog';
+import {UIMillStorage} from '../services/uiMillStorage';
+import {UIPreparationStorage} from '../services/uiPreparationStorage';
+import {UISettingsStorage} from '../services/uiSettingsStorage';
 
 @Component({
   templateUrl: 'app.html'
@@ -70,19 +70,19 @@ export class MyApp {
   constructor(public platform: Platform,
               public statusBar: StatusBar,
               public splashScreen: SplashScreen,
-              private uiLog: UILog,
-              private uiBeanStorage: UIBeanStorage,
-              private uiBrewStorage: UIBrewStorage,
-              private uiPreparationStorage: UIPreparationStorage,
-              private uiMillStorage: UIMillStorage,
-              private uiBrewHelper: UIBrewHelper,
-              private ionicApp: IonicApp,
-              private menuCtrl: MenuController,
-              private appMinimize: AppMinimize,
-              private uiSettingsStorage: UISettingsStorage,
-              private keyboard: Keyboard,
-              private threeDeeTouch: ThreeDeeTouch,
-              private modalCtrl: ModalController) {
+              private readonly uiLog: UILog,
+              private readonly uiBeanStorage: UIBeanStorage,
+              private readonly uiBrewStorage: UIBrewStorage,
+              private readonly uiPreparationStorage: UIPreparationStorage,
+              private readonly uiMillStorage: UIMillStorage,
+              private readonly uiBrewHelper: UIBrewHelper,
+              private readonly ionicApp: IonicApp,
+              private readonly menuCtrl: MenuController,
+              private readonly appMinimize: AppMinimize,
+              private readonly uiSettingsStorage: UISettingsStorage,
+              private readonly keyboard: Keyboard,
+              private readonly threeDeeTouch: ThreeDeeTouch,
+              private readonly modalCtrl: ModalController) {
 
   }
 
@@ -170,7 +170,7 @@ export class MyApp {
 
     this.rootPage = this.ROOT_PAGE;
 
-    if (this.platform.is('ios'))
+    if (this.platform.is('ios')) {
     this.threeDeeTouch.onHomeIconPressed()
       .subscribe(
       (payload) => {
@@ -187,6 +187,7 @@ export class MyApp {
 
       }
     );
+    }
   }
 
   private __trackNewBrew(): void {
@@ -229,6 +230,7 @@ export class MyApp {
       if (activePortal) {
 
         activePortal.dismiss({animate: false});
+
         // Logger.log("handled with portal");
         return;
       }
@@ -243,12 +245,12 @@ export class MyApp {
       const view = this.nav.getActive();
       const page = view ? this.nav.getActive().instance : undefined;
 
-      if (page && this.nav.canGoBack() === false && page.isHome !== undefined && page.isHome === true) {
+      if (page && !this.nav.canGoBack() && page.isHome !== undefined && page.isHome) {
         // Minimize app, that it don't need to start again.
         this.appMinimize.minimize();
         // old window['plugins'].appMinimize.minimize();
 
-      } else if (page && this.nav.canGoBack() === false) {
+      } else if (page && !this.nav.canGoBack()) {
         // isn'T realy root.
         // this.__unregisterBack();
         this.nav.setRoot(this.ROOT_PAGE);

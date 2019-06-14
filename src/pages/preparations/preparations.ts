@@ -1,20 +1,20 @@
 /** Core */
-import { ChangeDetectorRef, Component } from '@angular/core';
+import {ChangeDetectorRef, Component} from '@angular/core';
 /** Ionic */
-import { ModalController } from 'ionic-angular';
-import { UIAlert } from '../../services/uiAlert';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
+import {ModalController} from 'ionic-angular';
+import {UIAlert} from '../../services/uiAlert';
+import {UIBrewStorage} from '../../services/uiBrewStorage';
 /** Services */
-import { UIPreparationStorage } from '../../services/uiPreparationStorage';
+import {UIPreparationStorage} from '../../services/uiPreparationStorage';
 /** Modals */
-import { PreparationsAddModal } from '../preparations/add/preparations-add';
-import { PreparationsEditModal } from '../preparations/edit/preparations-edit';
-
+import {PreparationsAddModal} from './add/preparations-add';
+import {PreparationsEditModal} from './edit/preparations-edit';
 /**
  * Classes
  */
-import { Brew } from '../../classes/brew/brew';
-import { Preparation } from '../../classes/preparation/preparation';
+import {Brew} from '../../classes/brew/brew';
+import {Preparation} from '../../classes/preparation/preparation';
+
 @Component({
   templateUrl: 'preparations.html'
 })
@@ -22,10 +22,10 @@ export class PreparationsPage {
 
   public preparations: Array<Preparation> = [];
   constructor(public modalCtrl: ModalController,
-              private changeDetectorRef: ChangeDetectorRef,
-              private uiPreparationStorage: UIPreparationStorage,
-              private uiAlert: UIAlert,
-              private uiBrewStorage: UIBrewStorage) {
+              private readonly changeDetectorRef: ChangeDetectorRef,
+              private readonly uiPreparationStorage: UIPreparationStorage,
+              private readonly uiAlert: UIAlert,
+              private readonly uiBrewStorage: UIBrewStorage) {
 
   }
 

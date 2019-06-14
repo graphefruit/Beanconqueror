@@ -1,7 +1,8 @@
 /** Core */
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 /** Services */
-import { UIHelper } from '../../../services/uiHelper';
+import {UIHelper} from '../../../services/uiHelper';
+
 @Component({
   templateUrl: 'licences.html'
 })
@@ -61,7 +62,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`
     }
   };
 
-  constructor(private uiHelper: UIHelper) {
+  constructor (private readonly uiHelper: UIHelper) {
   }
 
   public openLink(event, _link: string): void {

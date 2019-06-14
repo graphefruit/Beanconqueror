@@ -1,7 +1,8 @@
 /** Core */
-import { Pipe, PipeTransform } from '@angular/core';
+import {Pipe, PipeTransform} from '@angular/core';
 /** Third party */
 import moment from 'moment';
+
 @Pipe({name: 'formatDate'})
 export class FormatDatePipe implements PipeTransform {
   public transform(value, format, args?: Array<string>): any {
@@ -13,6 +14,7 @@ export class FormatDatePipe implements PipeTransform {
     if (format !== undefined) {
       return m.format(format[0]).toString();
     }
+
     return m.format('llll').toString();
   }
 }

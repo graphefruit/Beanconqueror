@@ -1,18 +1,16 @@
 /** Core */
-import { Injectable } from '@angular/core';
-/** Ionic native */
-
+import {Injectable} from '@angular/core';
 /** Classes */
-import { Bean } from '../classes/bean/bean';
-
+import {Bean} from '../classes/bean/bean';
 /** Interfaces */
-import { IBean } from '../interfaces/bean/iBean';
-
+import {IBean} from '../interfaces/bean/iBean';
 /** Services */
-import { StorageClass } from '../classes/storageClass';
-import { UIHelper } from '../services/uiHelper';
-import { UILog } from '../services/uiLog';
-import { UIStorage } from '../services/uiStorage';
+import {StorageClass} from '../classes/storageClass';
+import {UIHelper} from './uiHelper';
+import {UILog} from './uiLog';
+import {UIStorage} from './uiStorage';
+
+/** Ionic native */
 
 @Injectable()
 export class UIBeanStorage extends StorageClass {
@@ -27,6 +25,7 @@ export class UIBeanStorage extends StorageClass {
       return UIBeanStorage.instance;
     }
     // noinspection TsLint
+
     return undefined;
   }
 
@@ -43,28 +42,29 @@ export class UIBeanStorage extends StorageClass {
   public getBeanNameByUUID(_uuid: string): string {
     if (_uuid.toLowerCase() === 'standard') {
       return 'Standard';
-    } else {
-      const entries: Array<IBean> = this.getAllEntries();
-      for (let i = 0; i < entries.length; i++) {
-        if (entries[i].config.uuid === _uuid) {
-          return entries[i].name;
-        }
-      }
-
-      return '_nicht gefunden_';
     }
+
+    const entries: Array<IBean> = this.getAllEntries();
+    for (const bean of entries) {
+      if (bean.config.uuid === _uuid) {
+        return bean.name;
+      }
+    }
+
+    return '_nicht gefunden_';
   }
 
   public getAllEntries(): Array<Bean> {
     const beanEntries: Array<any> = super.getAllEntries();
     const beans: Array<Bean> = [];
 
-    for (let i = 0; i < beanEntries.length; i++) {
+    for (const bean of beanEntries) {
       const beanObj: Bean = new Bean();
-      beanObj.initializeByObject(beanEntries[i]);
+      beanObj.initializeByObject(bean);
       beans.push(beanObj);
 
     }
+
     return beans;
   }
 }

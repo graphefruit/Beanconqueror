@@ -1,11 +1,12 @@
 /** Interfaces */
 /** Enums */
-import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
-import { ISettings } from '../../interfaces/settings/iSettings';
+import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
+import {ISettings} from '../../interfaces/settings/iSettings';
 /** Classes */
-import { Config } from '../objectConfig/objectConfig';
+import {Config} from '../objectConfig/objectConfig';
 
-import { DefaultLastCoffeeParameters } from './settingsDefaultLastCoffeeParameter';
+import {DefaultLastCoffeeParameters} from './settingsDefaultLastCoffeeParameter';
+
 export class Settings implements ISettings {
   public brew_view: BREW_VIEW_ENUM;
   public brew_time: boolean;
@@ -30,7 +31,7 @@ export class Settings implements ISettings {
   public default_last_coffee_parameters: DefaultLastCoffeeParameters;
   public config: Config;
 
-  public initializeByObject(brewObj: ISettings) {
+  public initializeByObject (brewObj: ISettings): void {
     Object.assign(this, brewObj);
   }
 

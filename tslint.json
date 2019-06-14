@@ -1,5 +1,8 @@
 {
   "extends": ["angular-tslint-rules"],
+  "rulesDirectory": [
+    "node_modules/tslint-eslint-rules/dist/rules"
+  ],
   "rules": {
     "no-duplicate-variable": true,
     "no-unused-variable": [
@@ -15,9 +18,12 @@
     "variable-name": false,
     "prefer-template": false,
     "interface-name": false,
-    "newline-per-chained-call": false
-  },
-  "rulesDirectory": [
-    "node_modules/tslint-eslint-rules/dist/rules"
-  ]
+    "newline-per-chained-call": false,
+    "no-unused-expression": true,
+    "no-floating-promises": true,
+    "whitespace": false,
+    "space-before-function-paren": false,
+    "ordered-imports": false
+  }
+
 }

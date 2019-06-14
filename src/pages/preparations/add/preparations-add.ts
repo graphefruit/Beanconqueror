@@ -1,11 +1,11 @@
 /** Core */
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 /** Ionic */
-import { ViewController } from 'ionic-angular';
+import {ViewController} from 'ionic-angular';
 /** Classes */
-import { Preparation } from '../../../classes/preparation/preparation';
+import {Preparation} from '../../../classes/preparation/preparation';
 /** Services */
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 
 @Component({
   templateUrl: 'preparations-add.html'
@@ -13,7 +13,9 @@ import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 export class PreparationsAddModal {
 
   public data: Preparation = new Preparation();
-  constructor(private viewCtrl: ViewController, private uiPreparationStorage: UIPreparationStorage) {
+
+  constructor (private readonly viewCtrl: ViewController,
+               private readonly uiPreparationStorage: UIPreparationStorage) {
 
   }
 

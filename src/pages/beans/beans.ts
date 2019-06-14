@@ -1,21 +1,22 @@
 /** Core */
-import { ChangeDetectorRef, Component } from '@angular/core';
+import {ChangeDetectorRef, Component} from '@angular/core';
 /** Ionic */
-import { ModalController } from 'ionic-angular';
+import {ModalController} from 'ionic-angular';
 /**
  * Classes
  */
-import { Bean } from '../../classes/bean/bean';
-import { Brew } from '../../classes/brew/brew';
+import {Bean} from '../../classes/bean/bean';
+import {Brew} from '../../classes/brew/brew';
 /** Interfaces */
-import { IBean } from '../../interfaces/bean/iBean';
-import { UIAlert } from '../../services/uiAlert';
+import {IBean} from '../../interfaces/bean/iBean';
+import {UIAlert} from '../../services/uiAlert';
 /** Services */
-import { UIBeanStorage } from '../../services/uiBeanStorage';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
+import {UIBeanStorage} from '../../services/uiBeanStorage';
+import {UIBrewStorage} from '../../services/uiBrewStorage';
 /** Modals */
-import { BeansAddModal } from '../beans/add/beans-add';
-import { BeansEditModal } from '../beans/edit/beans-edit';
+import {BeansAddModal} from './add/beans-add';
+import {BeansEditModal} from './edit/beans-edit';
+
 @Component({
   templateUrl: 'beans.html',
   selector: 'beans-list'
@@ -26,10 +27,10 @@ export class BeansPage {
 
   public bean_segment: string = 'open';
   constructor(public modalCtrl: ModalController,
-              private changeDetectorRef: ChangeDetectorRef,
-              private uiBeanStorage: UIBeanStorage,
-              private uiAlert: UIAlert,
-              private uiBrewStorage: UIBrewStorage) {
+              private readonly changeDetectorRef: ChangeDetectorRef,
+              private readonly uiBeanStorage: UIBeanStorage,
+              private readonly uiAlert: UIAlert,
+              private readonly uiBrewStorage: UIBrewStorage) {
 
   }
 
@@ -40,12 +41,12 @@ export class BeansPage {
   public getOpenBeans(): Array<Bean> {
 
     return this.beans.filter(
-      (bean) => bean.finished === false);
+      (bean) => !bean.finished);
   }
   public getFinishedBeans(): Array<Bean> {
 
     return this.beans.filter(
-      (bean) => bean.finished === true);
+      (bean) => bean.finished);
   }
 
   public loadBeans(): void {

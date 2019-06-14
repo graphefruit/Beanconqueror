@@ -1,17 +1,17 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 /** Ionic native */
 /** Classes */
-import { Preparation } from '../classes/preparation/preparation';
-/** Interfaces */
-
+import {Preparation} from '../classes/preparation/preparation';
 /** Services */
-import { Mill } from '../classes/mill/mill';
-import { StorageClass } from '../classes/storageClass';
-import { IMill } from '../interfaces/mill/iMill';
-import { UIHelper } from '../services/uiHelper';
-import { UILog } from '../services/uiLog';
-import { UIStorage } from '../services/uiStorage';
+import {Mill} from '../classes/mill/mill';
+import {StorageClass} from '../classes/storageClass';
+import {IMill} from '../interfaces/mill/iMill';
+import {UIHelper} from './uiHelper';
+import {UILog} from './uiLog';
+import {UIStorage} from './uiStorage';
+
+/** Interfaces */
 
 @Injectable()
 export class UIMillStorage extends StorageClass {
@@ -24,6 +24,7 @@ export class UIMillStorage extends StorageClass {
     if (UIMillStorage.instance) {
       return UIMillStorage.instance;
     }
+
     return undefined;
   }
   constructor(protected uiStorage: UIStorage,
@@ -38,28 +39,29 @@ export class UIMillStorage extends StorageClass {
   public getMillNameByUUID(_uuid: string): string {
     if (_uuid.toLowerCase() === 'standard') {
       return 'Standard';
-    } else {
-      const entries: Array<IMill> = this.getAllEntries();
-      for (let i = 0; i < entries.length; i++) {
-        if (entries[i].config.uuid === _uuid) {
-          return entries[i].name;
-        }
-      }
-
-      return '_nicht gefunden_';
     }
+
+    const entries: Array<IMill> = this.getAllEntries();
+    for (const mill of entries) {
+      if (mill.config.uuid === _uuid) {
+        return mill.name;
+      }
+    }
+
+    return '_nicht gefunden_';
   }
 
   public getAllEntries(): Array<Mill> {
     const entries: Array<any> = super.getAllEntries();
     const entry: Array<Mill> = [];
 
-    for (let i = 0; i < entries.length; i++) {
+    for (const mill of entries) {
       const preparationObj: Preparation = new Preparation();
-      preparationObj.initializeByObject(entries[i]);
+      preparationObj.initializeByObject(mill);
       entry.push(preparationObj);
 
     }
+
     return entry;
   }
 

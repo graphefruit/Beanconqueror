@@ -1,11 +1,13 @@
 /** Core */
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 /** Services */
-import { UIHelper } from '../../../services/uiHelper';
+import {UIHelper} from '../../../services/uiHelper';
+
 @Component({
   templateUrl: 'credits.html'
 })
 export class CreditsPage {
+  // tslint:disable
   public credits: any = {
     'icon-muehle': {
       TITLE: 'Icon Mühle',
@@ -24,7 +26,9 @@ export class CreditsPage {
     }
   };
 
-  constructor(private uiHelper: UIHelper) {
+  // tslint:enable
+
+  constructor (private readonly uiHelper: UIHelper) {
   }
 
   public openLink(event, _link: string): void {

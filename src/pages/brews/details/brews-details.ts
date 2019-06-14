@@ -1,18 +1,16 @@
 /** Core */
-import { Component, ViewChild } from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 /** Ionic */
-import { NavParams, Slides, ViewController } from 'ionic-angular';
-import { UIHelper } from '../../../services/uiHelper';
+import {NavParams, Slides, ViewController} from 'ionic-angular';
+import {UIHelper} from '../../../services/uiHelper';
 /** Services */
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-
+import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 /** Classes */
-import { Brew } from '../../../classes/brew/brew';
-import { Settings } from '../../../classes/settings/settings';
+import {Brew} from '../../../classes/brew/brew';
+import {Settings} from '../../../classes/settings/settings';
+import {IBrew} from '../../../interfaces/brew/iBrew';
 
 /** Interfaces */
-
-import { IBrew } from '../../../interfaces/brew/iBrew';
 
 @Component({
   selector: 'brews-details',
@@ -24,12 +22,12 @@ export class BrewsDetailsModal {
   public data: Brew = new Brew();
   public settings: Settings;
 
-  private brew: IBrew;
+  private readonly brew: IBrew;
 
-  constructor(private viewCtrl: ViewController,
-              private navParams: NavParams,
-              public uiHelper: UIHelper,
-              private uiSettingsStorage: UISettingsStorage) {
+  constructor (private readonly viewCtrl: ViewController,
+               private readonly navParams: NavParams,
+               public uiHelper: UIHelper,
+               private readonly uiSettingsStorage: UISettingsStorage) {
 
     this.settings = this.uiSettingsStorage.getSettings();
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range

@@ -12,15 +12,14 @@
   <ion-grid>
     <ion-row>
       <ion-col col-5 text-center>
-        <ion-img *ngIf="isChristmasTime()"class="logo-icon-christmas" src="assets/img/icon_christmas.png"
+        <ion-img *ngIf="isChristmasTime()" class="logo-icon-christmas" src="assets/img/icon_christmas.png"
                  style="background:transparent;"></ion-img>
-        <ion-img *ngIf="!isChristmasTime()"class="logo-icon" src="assets/img/icon.png"
+        <ion-img *ngIf="!isChristmasTime()" class="logo-icon" src="assets/img/icon.png"
                  style="background:transparent;"></ion-img>
       </ion-col>
       <ion-col col-7 text-center>
         <h1 style="font-size:2rem;">Beanconqueror</h1>
         <p style="font-size:1.2rem;">Schön dass du hier bist!</p>
-        <p style="font-size:1.2rem;">{{getGeneratedText()}}</p>
       </ion-col>
     </ion-row>
     <ion-row>

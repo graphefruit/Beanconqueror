@@ -1,33 +1,30 @@
 /** Core */
-import { ChangeDetectorRef, Component } from '@angular/core';
-import { AlertController, ModalController, Platform, PopoverController } from 'ionic-angular';
-
-/** Services */
-import { UIAlert } from '../../services/uiAlert';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
-import { UIHelper } from '../../services/uiHelper';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
-
+import {ChangeDetectorRef, Component} from '@angular/core';
+import {AlertController, ModalController, Platform, PopoverController} from 'ionic-angular';
 /** Interfaces */
 /** Classes */
-import { Brew } from '../../classes/brew/brew';
-import { BrewView } from '../../classes/brew/brewView';
-import { IBrew } from '../../interfaces/brew/iBrew';
-import { ISettings } from '../../interfaces/settings/iSettings';
-
-import { BrewsPopover } from '../brews/popover/brews-popover';
-
+import {Brew} from '../../classes/brew/brew';
+import {BrewView} from '../../classes/brew/brewView';
+import {IBrew} from '../../interfaces/brew/iBrew';
+import {ISettings} from '../../interfaces/settings/iSettings';
+/** Services */
+import {UIAlert} from '../../services/uiAlert';
+import {UIBrewStorage} from '../../services/uiBrewStorage';
+import {UIHelper} from '../../services/uiHelper';
+import {UISettingsStorage} from '../../services/uiSettingsStorage';
 /** Modals */
-import { BrewsAddModal } from '../brews/add/brews-add';
-import { BrewsDetailsModal } from '../brews/details/brews-details';
-import { BrewsEditModal } from '../brews/edit/brews-edit';
+import {BrewsAddModal} from './add/brews-add';
+import {BrewsDetailsModal} from './details/brews-details';
+import {BrewsEditModal} from './edit/brews-edit';
+import {BrewsPopover} from './popover/brews-popover';
 
-import { FileEntry } from '@ionic-native/file';
-import { SocialSharing } from '@ionic-native/social-sharing';
-import { UIBrewHelper } from '../../services/uiBrewHelper';
-import { BrewsPhotoView } from '../brews/photo-view/brews-photo-view';
-import { BrewsTableModal } from './table/brews-table';
-import { BrewsTextModal } from './text/brews-text';
+import {FileEntry} from '@ionic-native/file';
+import {SocialSharing} from '@ionic-native/social-sharing';
+import {UIBrewHelper} from '../../services/uiBrewHelper';
+import {BrewsPhotoView} from './photo-view/brews-photo-view';
+import {BrewsTableModal} from './table/brews-table';
+import {BrewsTextModal} from './text/brews-text';
+
 @Component({
   templateUrl: 'brews.html',
   selector: 'brews'
@@ -40,15 +37,17 @@ export class BrewsPage {
   public brew_segment: string = 'open';
   public settings: ISettings;
 
-  constructor(private modalCtrl: ModalController,
-              private platform: Platform,
-              private socialSharing: SocialSharing,
-              private uiBrewStorage: UIBrewStorage,
-              private changeDetectorRef: ChangeDetectorRef, private uiAlert: UIAlert,
-              public uiHelper: UIHelper,
-              public uiBrewHelper: UIBrewHelper,
-              private uiSettingsStorage: UISettingsStorage,
-              private popoverCtrl: PopoverController, public alertCtrl: AlertController) {
+  constructor (private readonly modalCtrl: ModalController,
+               private readonly platform: Platform,
+               private readonly socialSharing: SocialSharing,
+               private readonly uiBrewStorage: UIBrewStorage,
+               private readonly changeDetectorRef: ChangeDetectorRef,
+               private readonly uiAlert: UIAlert,
+               public uiHelper: UIHelper,
+               public uiBrewHelper: UIBrewHelper,
+               private readonly uiSettingsStorage: UISettingsStorage,
+               private readonly popoverCtrl: PopoverController,
+               public alertCtrl: AlertController) {
     this.settings = this.uiSettingsStorage.getSettings();
 
   }
@@ -80,8 +79,7 @@ export class BrewsPage {
   }
 
   public deleteBrew(_brew: IBrew): void {
-    this.uiAlert.showConfirm('Brühung löschen?', 'Sicher?').
-    then(() => {
+    this.uiAlert.showConfirm('Brühung löschen?', 'Sicher?').then(() => {
         // Yes
         this.__deleteBrew(_brew);
       },
@@ -90,6 +88,7 @@ export class BrewsPage {
       });
 
   }
+
   public postBrew(_brew: IBrew): void {
     const textBrewsModal = this.modalCtrl.create(BrewsTextModal, {BREW: _brew});
     textBrewsModal.present({animate: false});
@@ -143,12 +142,16 @@ export class BrewsPage {
           }
 
           let result = innerValue.replace(/"/g, '""');
-          if (result.search(/("|,|\n)/g) >= 0)
-            result = '"' + result + '"';
-          if (j > 0)
+          if (result.search(/("|,|\n)/g) >= 0) {
+            result = `"${result}"`;
+          }
+
+          if (j > 0) {
             finalVal += ',';
+          }
           finalVal += result;
         }
+
         return finalVal + '\n';
       };
 
@@ -170,6 +173,14 @@ export class BrewsPage {
 
         }
 
+      }, () => {
+        // No export possible.
+        const alert = this.alertCtrl.create({
+          title: 'Fehler aufgetreten!',
+          subTitle: 'CSV-Datei kann leider nicht heruntergeladen werden!',
+          buttons: ['OK']
+        });
+        alert.present();
       });
 
     };
@@ -214,7 +225,7 @@ export class BrewsPage {
       const entry: Array<{ VALUE: any, LABEL: string }> = i;
 
       let addValues: Array<any> = [];
-      if (headersSet === false) {
+      if (!headersSet) {
         for (const z of entry) {
           addValues.push(z.LABEL);
         }
@@ -229,11 +240,10 @@ export class BrewsPage {
     }
 
     const now = new Date();
-    const currentDateTimeString = now.getMonth() + 1 +
-     '-' + now.getDate() + '-' + now.getFullYear() + '-' +
-      now.getHours() + now.getMinutes() + now.getSeconds();
+    const currentDateTimeString = `${now.getMonth()}-${now.getDate()}-${now.getFullYear()}-
+    ${now.getHours()}${now.getMinutes()}${now.getSeconds()}`;
 
-// generate file
+    // generate file
     exportToCsv('Beanconqueror-' + currentDateTimeString + '.csv', exportData);
 
   }
@@ -246,6 +256,7 @@ export class BrewsPage {
     this.__initializeBrewView('open');
     this.__initializeBrewView('archiv');
   }
+
   private __initializeBrewView(_type: string): void {
 // sort latest to top.
     const brewsCopy: Array<Brew> = [...this.brews];
@@ -258,31 +269,33 @@ export class BrewsPage {
       if (obj1.config.unix_timestamp > obj2.config.unix_timestamp) {
         return -1;
       }
+
       return 0;
     });
 
     const collection = {};
     // Create collection
-    for (let i = 0; i < sortedBrews.length; i++) {
-      const day: string = this.uiHelper.formateDate(sortedBrews[i].config.unix_timestamp, 'dddd - DD.MM.YYYY');
+    for (const forBrew of sortedBrews) {
+      const day: string = this.uiHelper.formateDate(forBrew.config.unix_timestamp, 'dddd - DD.MM.YYYY');
       if (collection[day] === undefined) {
         collection[day] = {
           BREWS: []
         };
       }
-      collection[day].BREWS.push(sortedBrews[i]);
+      collection[day].BREWS.push(forBrew);
     }
 
     for (const key in collection) {
-      const viewObj: BrewView = new BrewView();
-      viewObj.title = key;
-      viewObj.brews = collection[key].BREWS;
-      if (_type === 'open') {
-        this.openBrewsView.push(viewObj);
-      } else {
-        this.archiveBrewsView.push(viewObj);
+      if (collection.hasOwnProperty(key)) {
+        const viewObj: BrewView = new BrewView();
+        viewObj.title = key;
+        viewObj.brews = collection[key].BREWS;
+        if (_type === 'open') {
+          this.openBrewsView.push(viewObj);
+        } else {
+          this.archiveBrewsView.push(viewObj);
+        }
       }
-
     }
   }
 }

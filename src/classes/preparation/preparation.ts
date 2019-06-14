@@ -1,7 +1,7 @@
 /** Interfaces */
-import { IPreparation } from '../../interfaces/preparation/iPreparation';
+import {IPreparation} from '../../interfaces/preparation/iPreparation';
 /** Classes */
-import { Config } from '../objectConfig/objectConfig';
+import {Config} from '../objectConfig/objectConfig';
 
 export class Preparation implements IPreparation {
   public name: string;
@@ -14,7 +14,7 @@ export class Preparation implements IPreparation {
     this.config = new Config();
   }
 
-  public initializeByObject(preparationObj: IPreparation) {
+  public initializeByObject (preparationObj: IPreparation): void {
     Object.assign(this, preparationObj);
   }
 

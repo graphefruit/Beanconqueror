@@ -1,26 +1,23 @@
 /** Core */
-import { Component, ViewChild } from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 /** Ionic */
-import { NavParams, Slides, ViewController } from 'ionic-angular';
+import {NavParams, Slides, ViewController} from 'ionic-angular';
 /** Services */
-import { UIBeanStorage } from '../../../services/uiBeanStorage';
-import { UIBrewStorage } from '../../../services/uiBrewStorage';
-import { UIHelper } from '../../../services/uiHelper';
-import { UIImage } from '../../../services/uiImage';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
-
+import {UIBeanStorage} from '../../../services/uiBeanStorage';
+import {UIBrewStorage} from '../../../services/uiBrewStorage';
+import {UIHelper} from '../../../services/uiHelper';
+import {UIImage} from '../../../services/uiImage';
+import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 /** Classes */
-import { Brew } from '../../../classes/brew/brew';
-
+import {Brew} from '../../../classes/brew/brew';
 /** Interfaces */
-import { IBean } from '../../../interfaces/bean/iBean';
-import { IBrew } from '../../../interfaces/brew/iBrew';
-import { IPreparation } from '../../../interfaces/preparation/iPreparation';
-
+import {IBean} from '../../../interfaces/bean/iBean';
+import {IBrew} from '../../../interfaces/brew/iBrew';
+import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 /** Enums */
-import { BREW_QUANTITY_TYPES_ENUM } from '../../../enums/brews/brewQuantityTypes';
-import { IMill } from '../../../interfaces/mill/iMill';
-import { UIMillStorage } from '../../../services/uiMillStorage';
+import {BREW_QUANTITY_TYPES_ENUM} from '../../../enums/brews/brewQuantityTypes';
+import {IMill} from '../../../interfaces/mill/iMill';
+import {UIMillStorage} from '../../../services/uiMillStorage';
 
 @Component({
   selector: 'brews-edit',
@@ -36,10 +33,14 @@ export class BrewsEditModal {
   public beans: Array<IBean> = [];
   public mills: Array<IMill> = [];
 
-  constructor(private viewCtrl: ViewController, private navParams: NavParams, private uiBeanStorage: UIBeanStorage,
-              private uiPreparationStorage: UIPreparationStorage, private uiBrewStorage: UIBrewStorage,
-              public uiHelper: UIHelper, private uiImage: UIImage,
-              private uiMillStorage: UIMillStorage) {
+  constructor (private readonly viewCtrl: ViewController,
+               private readonly navParams: NavParams,
+               private readonly uiBeanStorage: UIBeanStorage,
+               private readonly uiPreparationStorage: UIPreparationStorage,
+               private readonly uiBrewStorage: UIBrewStorage,
+               public uiHelper: UIHelper,
+               private readonly uiImage: UIImage,
+               private readonly uiMillStorage: UIMillStorage) {
 
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
     const brew: IBrew = this.uiHelper.copyData(this.navParams.get('BREW'));
@@ -57,6 +58,7 @@ export class BrewsEditModal {
     if (this.data !== undefined && this.data.rating >= 0) {
       return true;
     }
+
     return false;
   }
 

@@ -1,14 +1,14 @@
 /** Core */
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 /** Ionic */
-import { NavParams, ViewController } from 'ionic-angular';
+import {NavParams, ViewController} from 'ionic-angular';
+import {UIHelper} from '../../../services/uiHelper';
+
+import {Mill} from '../../../classes/mill/mill';
+import {IMill} from '../../../interfaces/mill/iMill';
+import {UIMillStorage} from '../../../services/uiMillStorage';
+
 /** Services */
-
-import { UIHelper } from '../../../services/uiHelper';
-
-import { Mill } from '../../../classes/mill/mill';
-import { IMill } from '../../../interfaces/mill/iMill';
-import { UIMillStorage } from '../../../services/uiMillStorage';
 @Component({
   templateUrl: 'mill-edit.html'
 })
@@ -17,10 +17,11 @@ export class MillEditModal {
   public data: Mill = new Mill();
 
   private mill: IMill;
-  constructor(private navParams: NavParams,
-              private viewCtrl: ViewController,
-              private uiMillStorage: UIMillStorage,
-              private uiHelper: UIHelper) {
+
+  constructor (private readonly navParams: NavParams,
+               private readonly viewCtrl: ViewController,
+               private readonly uiMillStorage: UIMillStorage,
+               private readonly uiHelper: UIHelper) {
 
   }
 

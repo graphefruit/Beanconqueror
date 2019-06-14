@@ -1,5 +1,5 @@
 /** Classes */
-import { Brew } from '../brew/brew';
+import {Brew} from './brew';
 
 export class BrewView {
   public title: string;

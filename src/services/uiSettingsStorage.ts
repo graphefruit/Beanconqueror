@@ -1,16 +1,15 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 /** Ionic native */
 /** Classes */
-import { Settings } from '../classes/settings/settings';
+import {Settings} from '../classes/settings/settings';
 /** Interfaces */
-import { ISettings } from '../interfaces/settings/iSettings';
-
+import {ISettings} from '../interfaces/settings/iSettings';
 /** Services */
-import { StorageClass } from '../classes/storageClass';
-import { UIHelper } from '../services/uiHelper';
-import { UILog } from '../services/uiLog';
-import { UIStorage } from '../services/uiStorage';
+import {StorageClass} from '../classes/storageClass';
+import {UIHelper} from './uiHelper';
+import {UILog} from './uiLog';
+import {UIStorage} from './uiStorage';
 
 @Injectable()
 export class UISettingsStorage extends StorageClass {

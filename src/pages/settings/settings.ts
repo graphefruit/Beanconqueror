@@ -1,33 +1,31 @@
 /** Core */
-import { Component } from '@angular/core';
-
+import {Component} from '@angular/core';
 /** Interfaces */
 /** Enums */
-import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
-import { ISettings } from '../../interfaces/settings/iSettings';
-
+import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
+import {ISettings} from '../../interfaces/settings/iSettings';
 /** Services */
-import { UIHelper } from '../../services/uiHelper';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { UIStorage } from '../../services/uiStorage';
-
+import {UIHelper} from '../../services/uiHelper';
+import {UISettingsStorage} from '../../services/uiSettingsStorage';
+import {UIStorage} from '../../services/uiStorage';
 /** Native imports */
-import { File, FileEntry } from '@ionic-native/file';
-import { FileChooser } from '@ionic-native/file-chooser';
-import { FilePath } from '@ionic-native/file-path';
-import { AlertController, Platform } from 'ionic-angular';
-import { UIAlert } from '../../services/uiAlert';
-import { UIBeanStorage } from '../../services/uiBeanStorage';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
-import { UIPreparationStorage } from '../../services/uiPreparationStorage';
+import {File, FileEntry} from '@ionic-native/file';
+import {FileChooser} from '@ionic-native/file-chooser';
+import {FilePath} from '@ionic-native/file-path';
+import {AlertController, Platform} from 'ionic-angular';
+import {UIAlert} from '../../services/uiAlert';
+import {UIBeanStorage} from '../../services/uiBeanStorage';
+import {UIBrewStorage} from '../../services/uiBrewStorage';
+import {UIPreparationStorage} from '../../services/uiPreparationStorage';
 
-import { IOSFilePicker } from '@ionic-native/file-picker';
-import { SocialSharing } from '@ionic-native/social-sharing';
-import { Brew } from '../../classes/brew/brew';
-import { Mill } from '../../classes/mill/mill';
-import { IBean } from '../../interfaces/bean/iBean';
-import { IBrew } from '../../interfaces/brew/iBrew';
-import { UIMillStorage } from '../../services/uiMillStorage';
+import {IOSFilePicker} from '@ionic-native/file-picker';
+import {SocialSharing} from '@ionic-native/social-sharing';
+import {Brew} from '../../classes/brew/brew';
+import {Mill} from '../../classes/mill/mill';
+import {IBean} from '../../interfaces/bean/iBean';
+import {IBrew} from '../../interfaces/brew/iBrew';
+import {UIMillStorage} from '../../services/uiMillStorage';
+
 @Component({
   templateUrl: 'settings.html'
 })
@@ -37,28 +35,29 @@ export class SettingsPage {
 
   public BREW_VIEWS = BREW_VIEW_ENUM;
 
-  constructor(public platform: Platform,
-              public uiSettingsStorage: UISettingsStorage,
-              public uiStorage: UIStorage,
-              public uiHelper: UIHelper,
-              private fileChooser: FileChooser,
-              private filePath: FilePath,
-              private file: File, private alertCtrl: AlertController,
-              private uiAlert: UIAlert,
-              private uiPreparationStorage: UIPreparationStorage,
-              private uiBeanStorage: UIBeanStorage,
-              private uiBrewStorage: UIBrewStorage,
-              private uiMillStorage: UIMillStorage,
-              private iosFilePicker: IOSFilePicker,
-              private socialSharing: SocialSharing) {
+  constructor (private readonly platform: Platform,
+               public uiSettingsStorage: UISettingsStorage,
+               public uiStorage: UIStorage,
+               public uiHelper: UIHelper,
+               private readonly fileChooser: FileChooser,
+               private readonly filePath: FilePath,
+               private readonly file: File,
+               private readonly alertCtrl: AlertController,
+               private readonly uiAlert: UIAlert,
+               private readonly uiPreparationStorage: UIPreparationStorage,
+               private readonly uiBeanStorage: UIBeanStorage,
+               private readonly uiBrewStorage: UIBrewStorage,
+               private readonly uiMillStorage: UIMillStorage,
+               private readonly iosFilePicker: IOSFilePicker,
+               private readonly socialSharing: SocialSharing) {
       this.__initializeSettings();
   }
 
-  public saveSettings(_event: any) {
+  public saveSettings (_event: any): void {
     this.uiSettingsStorage.saveSettings(this.settings);
   }
 
-  public import() {
+  public import (): void {
 
     if (this.platform.is('android')) {
       this.fileChooser.open()
@@ -68,6 +67,7 @@ export class SettingsPage {
               const path = resolvedFilePath.substring(0, resolvedFilePath.lastIndexOf('/'));
               const file = resolvedFilePath.substring(resolvedFilePath.lastIndexOf('/') + 1, resolvedFilePath.length);
               this.__readJSONFile(path, file).then(() => {
+                // nothing todo
               }, (_err) => {
                 this.uiAlert.showMessage('Fehler beim Dateiauslesen (' + JSON.stringify(_err) + ')');
               });
@@ -90,7 +90,7 @@ export class SettingsPage {
               path = 'file://' + path;
             }
             this.__readJSONFile(path, file).then(() => {
-
+              // nothing todo
           }).catch((_err) => {
             this.uiAlert.showMessage('Datei konnte nicht gefunden werden (' + JSON.stringify(_err) + ')');
           });
@@ -103,14 +103,15 @@ export class SettingsPage {
 
   }
 
-  public isMobile() {
-    if (this.platform.is('android') === true || this.platform.is('ios') === true) {
+  public isMobile (): boolean {
+    if (this.platform.is('android') || this.platform.is('ios')) {
       return true;
-    } else {
-      return false;
     }
+
+    return false;
   }
-  public export() {
+
+  public export (): void {
 
     this.uiStorage.export().then((_data) => {
 
@@ -135,7 +136,7 @@ export class SettingsPage {
     this.settings = this.uiSettingsStorage.getSettings();
   }
 
-  private __readJSONFile(path, file): Promise<any> {
+  private async __readJSONFile (path, file): Promise<any> {
     const promise = new Promise((resolve, reject) => {
       this.file.readAsText(path, file)
         .then((content) => {
@@ -160,10 +161,9 @@ export class SettingsPage {
                     this.uiMillStorage.add(data);
 
                     const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
-                    for (let i = 0; i < brews.length; i++) {
-                      brews[i].mill = data.config.uuid;
-
-                      this.uiBrewStorage.update(brews[i]);
+                    for (const brew of brews) {
+                      brew.mill = data.config.uuid;
+                      this.uiBrewStorage.update(brew);
                     }
                   }
 
@@ -192,7 +192,7 @@ export class SettingsPage {
 
   }
 
-  private __reinitializeStorages(): Promise<any> {
+  private async __reinitializeStorages (): Promise<any> {
     const promise = new Promise((resolve, reject) => {
 
       this.uiBeanStorage.reinitializeStorage();
@@ -218,21 +218,22 @@ export class SettingsPage {
         resolve();
       });
     });
+
     return promise;
   }
 
   private __cleanupImportBeanData(_data: Array<IBean>): any {
     if (_data !== undefined && _data !== undefined && _data.length > 0) {
-      for (let i = 0; i < _data.length; i++) {
-        _data[i].filePath = '';
+      for (const bean of _data) {
+        bean.filePath = '';
       }
     }
   }
 
   private __cleanupImportBrewData(_data: Array<IBrew>): void {
     if (_data !== undefined && _data !== undefined && _data.length > 0) {
-      for (let i = 0; i < _data.length; i++) {
-        _data[i].attachments = [];
+      for (const brew of _data) {
+        brew.attachments = [];
       }
     }
   }

@@ -1,14 +1,14 @@
 /** Core */
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 /** Ionic */
-import { NavParams, ViewController } from 'ionic-angular';
+import {NavParams, ViewController} from 'ionic-angular';
 /** Classes */
-import { Preparation } from '../../../classes/preparation/preparation';
+import {Preparation} from '../../../classes/preparation/preparation';
 /** Interfaces */
-import { IPreparation } from '../../../interfaces/preparation/iPreparation';
-import { UIHelper } from '../../../services/uiHelper';
+import {IPreparation} from '../../../interfaces/preparation/iPreparation';
+import {UIHelper} from '../../../services/uiHelper';
 /** Services */
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 
 @Component({
   templateUrl: 'preparations-edit.html'
@@ -17,10 +17,11 @@ export class PreparationsEditModal {
 
   public data: Preparation = new Preparation();
   private preparation: IPreparation = undefined;
-  constructor(private navParams: NavParams,
-              private viewCtrl: ViewController,
-              private uiPreparationStorage: UIPreparationStorage,
-              private uiHelper: UIHelper) {
+
+  constructor (private readonly navParams: NavParams,
+               private readonly viewCtrl: ViewController,
+               private readonly uiPreparationStorage: UIPreparationStorage,
+               private readonly uiHelper: UIHelper) {
 
   }
 

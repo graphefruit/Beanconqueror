@@ -1,6 +1,6 @@
-import { UIHelper } from '../services/uiHelper';
-import { UILog } from '../services/uiLog';
-import { UIStorage } from  '../services/uiStorage';
+import {UIHelper} from '../services/uiHelper';
+import {UILog} from '../services/uiLog';
+import {UIStorage} from '../services/uiStorage';
 
 export abstract class StorageClass {
 
@@ -11,20 +11,19 @@ export abstract class StorageClass {
    * -1 = Nothing started
    * 0 = Error occured
    * 1 = Initialized
-   * @type {number}
    */
   private isInitialized: number = -1;
 
-  constructor(protected uiStorage: UIStorage,
-              protected uiHelper: UIHelper,
-              protected uiLog: UILog, protected dbPath: string) {
+  protected constructor (protected uiStorage: UIStorage,
+                         protected uiHelper: UIHelper,
+                         protected uiLog: UILog, protected dbPath: string) {
 
       this.DB_PATH = dbPath;
       this.__initializeStorage();
 
   }
 
-  public storageReady(): Promise<any> {
+  public async storageReady (): Promise<any> {
     const promise = new Promise((resolve, reject) => {
 
       const intV: any = setInterval(() => {
@@ -43,11 +42,71 @@ export abstract class StorageClass {
     return promise;
   }
 
-  public reinitializeStorage() {
+  public reinitializeStorage (): void {
     this.isInitialized = -1;
     this.__initializeStorage();
   }
-  protected __initializeStorage() {
+
+  public add (_entry): void {
+    _entry.config.uuid = this.uiHelper.generateUUID();
+    _entry.config.unix_timestamp = this.uiHelper.getUnixTimestamp();
+    this.storedData.push(_entry);
+    this.__save();
+  }
+
+  public getAllEntries (): Array<any> {
+    return this.storedData;
+  }
+
+  public update (_obj): boolean {
+    for (let i = 0; i < this.storedData.length; i++) {
+      if (this.storedData[i].config.uuid === _obj.config.uuid) {
+        this.uiLog.log(`Storage - Update  - Successfully - ${ _obj.config.uuid}`);
+        this.storedData[i] = _obj;
+        this.__save();
+
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  public removeByObject(_obj: any): boolean {
+    if (_obj !== null && _obj !== undefined && _obj.config.uuid) {
+      const deleteUUID = _obj.config.uuid;
+
+      return this.__delete(deleteUUID);
+    }
+
+    return false;
+  }
+
+  public getByUUID(_uuid: string): any {
+    if (_uuid !== null && _uuid !== undefined && _uuid !== '') {
+      const findUUID = _uuid;
+      for (const data of this.storedData) {
+        if (data.config.uuid === findUUID) {
+          return data;
+        }
+      }
+    }
+  }
+
+  public removeByUUID(_beanUUID: string): boolean {
+    if (_beanUUID !== null && _beanUUID !== undefined && _beanUUID !== '') {
+      return this.__delete(_beanUUID);
+    }
+
+    return false;
+  }
+
+  public getDBPath (): string {
+
+    return this.DB_PATH;
+  }
+
+  protected __initializeStorage (): void {
     this.uiStorage.get(this.DB_PATH).then((_data) => {
       if (_data === null || _data === undefined) {
         // No beans have been added yet
@@ -64,77 +123,26 @@ export abstract class StorageClass {
     });
   }
 
-  public getAllEntries(): Array<any> {
-    return this.storedData;
-  }
-
-  public add(_entry) {
-    _entry.config.uuid = this.uiHelper.generateUUID();
-    _entry.config.unix_timestamp = this.uiHelper.getUnixTimestamp();
-    this.storedData.push(_entry);
-    this.__save();
-  }
-
-  public update(_obj) {
-    for (let i = 0; i < this.storedData.length; i++) {
-      if (this.storedData[i].config.uuid === _obj.config.uuid) {
-        this.uiLog.log('Storage - Update  - Successfully - ' + _obj.config.uuid);
-        this.storedData[i] = _obj;
-        this.__save();
-        return true;
-      }
-    }
-    return false;
-  }
-
-  public removeByObject(_obj: any): boolean {
-    if (_obj !== null && _obj !== undefined && _obj.config.uuid) {
-      const deleteUUID = _obj.config.uuid;
-      return this.__delete(deleteUUID);
-    }
-    return false;
-  }
-
-  public getByUUID(_uuid: string): any {
-    if (_uuid !== null && _uuid !== undefined && _uuid != '') {
-      const findUUID = _uuid;
-      for (let i = 0; i < this.storedData.length; i++) {
-        if (this.storedData[i].config.uuid === findUUID) {
-          return this.storedData[i];
-        }
-      }
-    }
-  }
-
-  public removeByUUID(_beanUUID: string): boolean {
-    if (_beanUUID !== null && _beanUUID !== undefined && _beanUUID != '') {
-      return this.__delete(_beanUUID);
-    }
-    return false;
-  }
-
-  public getDBPath() {
-    return this.DB_PATH;
-  }
-
   private __delete(_uuid: string): boolean {
-    if (_uuid !== null && _uuid !== undefined && _uuid != '') {
+    if (_uuid !== null && _uuid !== undefined && _uuid !== '') {
       const deleteUUID = _uuid;
       for (let i = 0; i < this.storedData.length; i++) {
         if (this.storedData[i].config.uuid === deleteUUID) {
-          this.uiLog.log('Storage - Delete - Successfully - ' + deleteUUID);
+          this.uiLog.log(`Storage - Delete - Successfully -${deleteUUID}`);
           this.storedData.splice(i, 1);
           this.__save();
+
           return true;
         }
       }
     }
     this.uiLog.error('Storage - Delete - Unsuccessfully');
+
     return false;
 
   }
 
-  private __save() {
+  private __save (): void {
     this.uiStorage.set(this.DB_PATH, this.storedData).then((e) => {
         this.uiLog.log('Storage - Save - Successfully');
       }, (e) => {

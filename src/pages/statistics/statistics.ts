@@ -1,13 +1,14 @@
 /** Core */
-import { Component, ViewChild } from '@angular/core';
-import { UIStatistic } from '../../services/uiStatistic';
+import {Component, ViewChild} from '@angular/core';
+import {UIStatistic} from '../../services/uiStatistic';
 
-import { Chart } from 'chart.js';
-import { Brew } from '../../classes/brew/brew';
-import { BrewView } from '../../classes/brew/brewView';
-import { IBrew } from '../../interfaces/brew/iBrew';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
-import { UIHelper } from '../../services/uiHelper';
+import {Chart} from 'chart.js';
+import {Brew} from '../../classes/brew/brew';
+import {BrewView} from '../../classes/brew/brewView';
+import {IBrew} from '../../interfaces/brew/iBrew';
+import {UIBrewStorage} from '../../services/uiBrewStorage';
+import {UIHelper} from '../../services/uiHelper';
+
 @Component({
   templateUrl: 'statistics.html'
 })
@@ -17,13 +18,14 @@ export class StatisticsPage {
 
   constructor(
     public uiStatistic: UIStatistic,
-    private uiBrewStorage: UIBrewStorage,
-    private uiHelper: UIHelper
+    private readonly uiBrewStorage: UIBrewStorage,
+    private readonly uiHelper: UIHelper
 
   ) {
 
   }
-  public ionViewDidLoad() {
+
+  public ionViewDidLoad (): void {
     this.__loadDrinkingChart();
   }
 
@@ -40,39 +42,43 @@ export class StatisticsPage {
         if (obj1.config.unix_timestamp > obj2.config.unix_timestamp) {
           return 1;
         }
+
         return 0;
       });
 
     const collection = {};
       // Create collection
-    for (let i = 0; i < sortedBrews.length; i++) {
-        const month: string = this.uiHelper.formateDate(sortedBrews[i].config.unix_timestamp, 'MMMM');
-        const year: string = this.uiHelper.formateDate(sortedBrews[i].config.unix_timestamp, 'YYYY');
-        if (collection[month + ' - ' + year] === undefined) {
+    for (const brew of sortedBrews) {
+      const month: string = this.uiHelper.formateDate(brew.config.unix_timestamp, 'MMMM');
+      const year: string = this.uiHelper.formateDate(brew.config.unix_timestamp, 'YYYY');
+      if (collection[month + ' - ' + year] === undefined) {
           collection[month + ' - ' + year] = {
             BREWS: []
           };
         }
-        collection[month + ' - ' + year].BREWS.push(sortedBrews[i]);
+      collection[month + ' - ' + year].BREWS.push(brew);
       }
 
     for (const key in collection) {
+      if (collection.hasOwnProperty(key)) {
         const viewObj: BrewView = new BrewView();
         viewObj.title = key;
         viewObj.brews = collection[key].BREWS;
 
         brewViews.push(viewObj);
-
       }
+    }
+
     return brewViews;
 
   }
-  private __loadDrinkingChart() {
+
+  private __loadDrinkingChart (): void {
     const brewView: Array<BrewView> = this.__getBrewsSortedForMonth();
     // Take the last 12 Months
     const lastBrewViews: Array<BrewView> = brewView.slice(-12);
 
-    let drinkingData = {
+    const drinkingData = {
       labels: [],
       datasets: [{
         label: 'Getrunkene Tassen',
@@ -80,12 +86,11 @@ export class StatisticsPage {
       }]
     };
 
-    for (let i = 0; i < lastBrewViews.length; i++) {
-      drinkingData.labels.push(lastBrewViews[i].title);
-
-      for (let y = 0; y < lastBrewViews.length; y++) {
-        drinkingData.datasets[0].data.push(lastBrewViews[y].brews.length);
-      }
+    for (const forBrew of lastBrewViews) {
+      drinkingData.labels.push(forBrew.title);
+    }
+    for (const forBrew of lastBrewViews) {
+      drinkingData.datasets[0].data.push(forBrew.brews.length);
     }
     const chartOptions = {
       legend: {

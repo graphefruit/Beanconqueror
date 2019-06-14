@@ -1,10 +1,9 @@
 /** Core */
-import { Component, ViewChild } from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 /** Ionic */
-import { NavParams, Slides, ViewController } from 'ionic-angular';
-
+import {NavParams, Slides, ViewController} from 'ionic-angular';
 /** Interfaces */
-import { IBrew } from '../../../interfaces/brew/iBrew';
+import {IBrew} from '../../../interfaces/brew/iBrew';
 
 @Component({
   selector: 'brews-photo-view',
@@ -16,7 +15,8 @@ export class BrewsPhotoView {
 
   public data: IBrew;
 
-  constructor(private viewCtrl: ViewController, private navParams: NavParams) {
+  constructor (private readonly viewCtrl: ViewController,
+               private readonly navParams: NavParams) {
 
   }
 

@@ -1,22 +1,20 @@
 /** Core */
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 /** Ionic */
-import { NavParams, ViewController } from 'ionic-angular';
-import { UIHelper } from '../../../services/uiHelper';
+import {NavParams, ViewController} from 'ionic-angular';
+import {UIHelper} from '../../../services/uiHelper';
 /** Services */
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-
+import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 /** Classes */
-import { Brew } from '../../../classes/brew/brew';
-import { Settings } from '../../../classes/settings/settings';
-
+import {Brew} from '../../../classes/brew/brew';
+import {Settings} from '../../../classes/settings/settings';
 /** Interfaces */
-import { Bean } from '../../../classes/bean/bean';
-import { Preparation } from '../../../classes/preparation/preparation';
-import { IBean } from '../../../interfaces/bean/iBean';
-import { IBrew } from '../../../interfaces/brew/iBrew';
-import { IPreparation } from '../../../interfaces/preparation/iPreparation';
-import { UIBrewHelper } from '../../../services/uiBrewHelper';
+import {Bean} from '../../../classes/bean/bean';
+import {Preparation} from '../../../classes/preparation/preparation';
+import {IBean} from '../../../interfaces/bean/iBean';
+import {IBrew} from '../../../interfaces/brew/iBrew';
+import {IPreparation} from '../../../interfaces/preparation/iPreparation';
+import {UIBrewHelper} from '../../../services/uiBrewHelper';
 
 @Component({
   selector: 'brews-text',
@@ -80,39 +78,39 @@ Zubereitung: ${prep.name}
 Bezug:
 `;
 
-    if (this.settings.grind_size === true) {
+    if (this.settings.grind_size) {
     buildText += `Mahlgrad: ${brew.grind_size}\n`;
   }
 
-    if (this.settings.grind_weight === true) {
+    if (this.settings.grind_weight) {
       buildText += `Gewicht: ${brew.grind_weight}\n`;
     }
-    if (this.settings.brew_temperature === true) {
+    if (this.settings.brew_temperature) {
       buildText += `Brühtemperatur: ${brew.brew_temperature}\n`;
     }
-    if (this.settings.brew_temperature_time === true) {
+    if (this.settings.brew_temperature_time) {
       buildText += `Temperaturzeit: ${brew.brew_temperature_time}\n`;
     }
-    if (this.settings.brew_time === true) {
+    if (this.settings.brew_time) {
       buildText += `Brühzeit: ${brew.brew_time}\n`;
     }
-    if (this.settings.brew_quantity === true) {
+    if (this.settings.brew_quantity) {
       buildText += `Bezugsmenge: ${brew.brew_quantity}\n`;
     }
-    if (this.settings.coffee_blooming_time === true) {
+    if (this.settings.coffee_blooming_time) {
       buildText += `Blooming-Zeit Preinfusion: ${brew.coffee_blooming_time}\n`;
     }
-    if (this.settings.bean_type === true) {
+    if (this.settings.bean_type) {
       buildText += `Bohnenalter: ${brew.getCalculatedBeanAge()}\n`;
     }
-    if (this.settings.grind_weight === true && this.settings.brew_quantity) {
+    if (this.settings.grind_weight && this.settings.brew_quantity) {
       buildText += `Brührate: ${brew.getBrewRatio()}\n`;
     }
 
-    if (this.settings.rating === true) {
+    if (this.settings.rating) {
       buildText += `Bewertung: ${brew.rating} / 10\n`;
     }
-    if (this.settings.note === true) {
+    if (this.settings.note) {
       buildText += `Notizen: ${brew.note}\n`;
     }
 
