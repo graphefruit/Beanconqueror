@@ -1,13 +1,13 @@
 /** Core */
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 /** Ionic */
-import { ViewController } from 'ionic-angular';
+import {ViewController} from 'ionic-angular';
+import {Mill} from '../../../classes/mill/mill';
+import {UIMillStorage} from '../../../services/uiMillStorage';
+
 /** Services */
 
 /** Classes */
-
-import { Mill } from '../../../classes/mill/mill';
-import { UIMillStorage } from '../../../services/uiMillStorage';
 
 @Component({
   templateUrl: 'mill-add.html'
@@ -15,7 +15,9 @@ import { UIMillStorage } from '../../../services/uiMillStorage';
 export class MillAddModal {
 
   public data: Mill = new Mill();
-  constructor(private viewCtrl: ViewController, private uiMillStorage: UIMillStorage) {
+
+  constructor (private readonly viewCtrl: ViewController,
+               private readonly uiMillStorage: UIMillStorage) {
 
   }
 

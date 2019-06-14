@@ -1,21 +1,20 @@
 /** Interfaces */
-import { IBean } from '../../interfaces/bean/iBean';
-import { IBrew } from '../../interfaces/brew/iBrew';
-import { IPreparation } from '../../interfaces/preparation/iPreparation';
-
+import {IBean} from '../../interfaces/bean/iBean';
+import {IBrew} from '../../interfaces/brew/iBrew';
+import {IPreparation} from '../../interfaces/preparation/iPreparation';
 /** Classes */
 /** Third party */
 import moment from 'moment';
-import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
-import { IMill } from '../../interfaces/mill/iMill';
+import {BREW_QUANTITY_TYPES_ENUM} from '../../enums/brews/brewQuantityTypes';
+import {IMill} from '../../interfaces/mill/iMill';
 /** Services */
-import { UIBeanStorage } from '../../services/uiBeanStorage';
-import { UIMillStorage } from '../../services/uiMillStorage';
-import { UIPreparationStorage } from '../../services/uiPreparationStorage';
-import { Bean } from '../bean/bean';
-import { Mill } from '../mill/mill';
-import { Config } from '../objectConfig/objectConfig';
-import { Preparation } from '../preparation/preparation';
+import {UIBeanStorage} from '../../services/uiBeanStorage';
+import {UIMillStorage} from '../../services/uiMillStorage';
+import {UIPreparationStorage} from '../../services/uiPreparationStorage';
+import {Bean} from '../bean/bean';
+import {Mill} from '../mill/mill';
+import {Config} from '../objectConfig/objectConfig';
+import {Preparation} from '../preparation/preparation';
 
 export class Brew implements IBrew {
   // tslint:disable-next-line
@@ -128,8 +127,10 @@ export class Brew implements IBrew {
     if (bean) {
       const roastingDate = moment(bean.roastingDate);
       const brewTime = moment.unix(this.config.unix_timestamp);
+
       return brewTime.diff(roastingDate, 'days');
     }
+
     return 0;
   }
 
@@ -154,6 +155,7 @@ export class Brew implements IBrew {
       format = _format;
 
     }
+
     return moment.unix(this.config.unix_timestamp)
       .format(format);
   }
@@ -161,17 +163,20 @@ export class Brew implements IBrew {
   private getBeanStorageInstance(): UIBeanStorage {
     let uiBeanStorage: UIBeanStorage;
     uiBeanStorage = UIBeanStorage.getInstance() as UIBeanStorage;
+
     return uiBeanStorage;
   }
 
   private getPreparationStorageInstance(): UIPreparationStorage {
     let uiPreparationStorage: UIPreparationStorage;
     uiPreparationStorage = UIPreparationStorage.getInstance() as UIPreparationStorage;
+
     return uiPreparationStorage;
   }
   private getMillStorageInstance(): UIMillStorage  {
     let uiMillStorage: UIMillStorage;
     uiMillStorage = UIMillStorage.getInstance() as UIMillStorage;
+
     return uiMillStorage;
   }
 

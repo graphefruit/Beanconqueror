@@ -1,14 +1,13 @@
-import { Component } from '@angular/core';
-import { ModalController, NavController } from 'ionic-angular';
-
+import {Component} from '@angular/core';
+import {ModalController, NavController} from 'ionic-angular';
 /** Services  */
-import { UIStatistic } from '../../services/uiStatistic';
-
+import {UIStatistic} from '../../services/uiStatistic';
 /** Third party */
 import moment from 'moment';
-
+// tslint:disable-next-line
 import 'moment/locale/de';
-import { BrewsAddModal } from '../brews/add/brews-add';
+
+import {BrewsAddModal} from '../brews/add/brews-add';
 
 @Component({
   templateUrl: 'home.html',
@@ -22,8 +21,9 @@ export class HomePage {
   public beans: number = 0;
   public preparations: number = 0;
 
-  constructor(public navCtrl: NavController, private modalCtrl: ModalController,
-              public uiStatistic: UIStatistic) {
+  constructor (public navCtrl: NavController,
+               private readonly modalCtrl: ModalController,
+               public uiStatistic: UIStatistic) {
 
   }
 
@@ -33,26 +33,12 @@ export class HomePage {
   }
 
   public isChristmasTime(): boolean {
-    const month: number = moment()
-      .month() + 1;
+    const month: number = moment().month() + 1;
     if (month === 12) {
       return true;
     }
+
     return false;
-  }
-
-  public getGeneratedText(): string {
-
-    const year: number = moment()
-      .year();
-    const month: number = moment()
-      .month() + 1;
-    // Bug .day always returned 1.
-    const day: number  = parseInt(moment()
-      .format('DD'), 0);
-
-    // Todo calculate
-    return '';
   }
 
 }

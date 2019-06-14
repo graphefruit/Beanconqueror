@@ -1,10 +1,11 @@
 /** Core */
-import { Injectable } from '@angular/core';
-import { InAppBrowser } from '@ionic-native/in-app-browser';
+import {Injectable} from '@angular/core';
+import {InAppBrowser} from '@ionic-native/in-app-browser';
 /** Ionic */
-import { Platform } from 'ionic-angular';
+import {Platform} from 'ionic-angular';
 /** Third party */
 import moment from 'moment';
+// tslint:disable-next-line
 import 'moment/locale/de';
 
 declare var cordova: any;
@@ -16,7 +17,8 @@ declare var window: any;
 @Injectable()
 export class UIHelper {
 
-  constructor(private platform: Platform, private inAppBrowser: InAppBrowser) {
+  constructor (private readonly platform: Platform,
+               private readonly inAppBrowser: InAppBrowser) {
     moment.locale('de');
   }
 
@@ -24,6 +26,7 @@ export class UIHelper {
     if (_value.constructor === Array) {
       return {...[], ..._value};
     }
+
     return {..._value};
   }
 
@@ -85,7 +88,7 @@ export class UIHelper {
     return timeDifference;
   }
 
-  public attachOnPlatformReady(): Promise<any> {
+  public async attachOnPlatformReady (): Promise<any> {
     return this.platform.ready();
   }
 
@@ -114,7 +117,7 @@ export class UIHelper {
 
   }
 
-  public exportJSON(fileName: string, jsonContent: string): Promise<any> {
+  public async exportJSON (fileName: string, jsonContent: string): Promise<any> {
      const promise = new Promise((resolve, reject) => {
       const errorCallback = (e) => {
         console.log('Error: ' + e);

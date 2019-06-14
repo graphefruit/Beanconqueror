@@ -1,15 +1,15 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 /** Ionic native */
 /** Classes */
-import { Preparation } from '../classes/preparation/preparation';
-import { StorageClass } from '../classes/storageClass';
+import {Preparation} from '../classes/preparation/preparation';
+import {StorageClass} from '../classes/storageClass';
 /** Interfaces */
-import { IPreparation } from '../interfaces/preparation/iPreparation';
+import {IPreparation} from '../interfaces/preparation/iPreparation';
 /** Services */
-import { UIHelper } from '../services/uiHelper';
-import { UILog } from '../services/uiLog';
-import { UIStorage } from '../services/uiStorage';
+import {UIHelper} from './uiHelper';
+import {UILog} from './uiLog';
+import {UIStorage} from './uiStorage';
 
 @Injectable()
 export class UIPreparationStorage extends StorageClass {
@@ -22,6 +22,7 @@ export class UIPreparationStorage extends StorageClass {
     if (UIPreparationStorage.instance) {
       return UIPreparationStorage.instance;
     }
+
     return undefined;
   }
   constructor(protected uiStorage: UIStorage,
@@ -36,28 +37,29 @@ export class UIPreparationStorage extends StorageClass {
   public getPreparationNameByUUID(_uuid: string): string {
     if (_uuid.toLowerCase() === 'standard') {
       return 'Standard';
-    } else {
-      const entries: Array<IPreparation> = this.getAllEntries();
-      for (let i = 0; i < entries.length; i++) {
-        if (entries[i].config.uuid === _uuid) {
-          return entries[i].name;
-        }
-      }
-
-      return '_nicht gefunden_';
     }
+
+    const entries: Array<IPreparation> = this.getAllEntries();
+    for (const prep of entries) {
+      if (prep.config.uuid === _uuid) {
+        return prep.name;
+      }
+    }
+
+    return '_nicht gefunden_';
   }
 
   public getAllEntries(): Array<Preparation> {
     const preparationEntries: Array<any> = super.getAllEntries();
     const preparations: Array<Preparation> = [];
 
-    for (let i = 0; i < preparationEntries.length; i++) {
+    for (const prep of preparationEntries) {
       const preparationObj: Preparation = new Preparation();
-      preparationObj.initializeByObject(preparationEntries[i]);
+      preparationObj.initializeByObject(prep);
       preparations.push(preparationObj);
 
     }
+
     return preparations;
   }
 

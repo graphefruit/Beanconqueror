@@ -1,5 +1,6 @@
 /** Core */
-import { Pipe, PipeTransform } from '@angular/core';
+import {Pipe, PipeTransform} from '@angular/core';
+
 /** Third party */
 @Pipe({name: 'toDecimal'})
 export class ToDecimalPipe implements PipeTransform {
@@ -7,6 +8,5 @@ export class ToDecimalPipe implements PipeTransform {
     // SAMPLE - http://jsfiddle.net/kunycrkb/
 
     return parseFloat(value);
-
   }
 }

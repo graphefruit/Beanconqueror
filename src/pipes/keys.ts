@@ -1,5 +1,6 @@
 /** Core */
-import { Pipe, PipeTransform } from '@angular/core';
+import {Pipe, PipeTransform} from '@angular/core';
+
 @Pipe({name: 'keys'})
 export class KeysPipe implements PipeTransform {
   public transform(value, args?: Array<string>): any {
@@ -7,6 +8,7 @@ export class KeysPipe implements PipeTransform {
     for (const key of value) {
       keys.push(key);
     }
+
     return keys;
   }
 }

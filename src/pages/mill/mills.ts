@@ -1,19 +1,19 @@
 /** Core */
-import { ChangeDetectorRef, Component } from '@angular/core';
+import {ChangeDetectorRef, Component} from '@angular/core';
 /** Ionic */
-import { ModalController } from 'ionic-angular';
-import { UIAlert } from '../../services/uiAlert';
+import {ModalController} from 'ionic-angular';
+import {UIAlert} from '../../services/uiAlert';
 /** Services */
-import { UIBrewStorage } from '../../services/uiBrewStorage';
-
+import {UIBrewStorage} from '../../services/uiBrewStorage';
 /**
  * Classes
  */
-import { Brew } from '../../classes/brew/brew';
-import { Mill } from '../../classes/mill/mill';
-import { UIMillStorage } from '../../services/uiMillStorage';
-import { MillAddModal } from './add/mill-add';
-import { MillEditModal } from './edit/mill-edit';
+import {Brew} from '../../classes/brew/brew';
+import {Mill} from '../../classes/mill/mill';
+import {UIMillStorage} from '../../services/uiMillStorage';
+import {MillAddModal} from './add/mill-add';
+import {MillEditModal} from './edit/mill-edit';
+
 @Component({
   templateUrl: 'mills.html'
 })
@@ -21,7 +21,11 @@ export class MillsPage {
 
   public mills: Array<Mill> = [];
 
-  constructor(public modalCtrl: ModalController, private changeDetectorRef: ChangeDetectorRef, private uiMillStorage: UIMillStorage, private uiAlert: UIAlert, private uiBrewStorage: UIBrewStorage) {
+  constructor (public modalCtrl: ModalController,
+               private readonly changeDetectorRef: ChangeDetectorRef,
+               private readonly uiMillStorage: UIMillStorage,
+               private readonly uiAlert: UIAlert,
+               private readonly uiBrewStorage: UIBrewStorage) {
 
   }
 

@@ -1,27 +1,26 @@
 /**  Core */
-import { Injectable } from '@angular/core';
-
+import {Injectable} from '@angular/core';
 /**
  * Ionic native
  *
  */
-import { Storage  } from '@ionic/storage';
+import {Storage} from '@ionic/storage';
 
 @Injectable()
 export class UIStorage {
 
-  constructor(private storage: Storage) {
+  constructor (private readonly storage: Storage) {
   }
 
-  public set(_key: string, _val: any): Promise<any> {
+  public async set (_key: string, _val: any): Promise<any> {
     return this.storage.set(_key, _val);
   }
 
-  public get(_key): Promise<any> {
+  public async get (_key): Promise<any> {
     return this.storage.get(_key);
   }
 
-  public export(): Promise<any> {
+  public async export (): Promise<any> {
 
     const promise = new Promise((resolve, reject) => {
       const exportObj = {};
@@ -37,7 +36,7 @@ export class UIStorage {
     return promise;
   }
 
-  public import(_data: any): Promise<any> {
+  public async import (_data: any): Promise<any> {
 
     // Before we import, we do a saftey backup
     const promise = new Promise((resolve, reject) => {
@@ -65,7 +64,7 @@ export class UIStorage {
 
   }
 
-  private __safteyBackup(): Promise<any> {
+  private async __safteyBackup (): Promise<any> {
     const promise = new Promise((resolve, reject) => {
       this.export()
         .then(
@@ -73,11 +72,12 @@ export class UIStorage {
             resolve(_data);
           });
     });
+
     return promise;
 
   }
 
-  private __importBackup(_data): Promise<any> {
+  private async __importBackup (_data): Promise<any> {
     const promise = new Promise((resolve, reject) => {
 
       const keysCount: number = Object.keys(_data).length;
@@ -94,6 +94,7 @@ export class UIStorage {
           });
       }
     });
+
     return promise;
   }
 

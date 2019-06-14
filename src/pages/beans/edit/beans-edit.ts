@@ -1,20 +1,19 @@
 /** Core */
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 /** Ionic */
-import { NavParams, ViewController } from 'ionic-angular';
+import {NavParams, ViewController} from 'ionic-angular';
 /** Classes */
-import { Bean } from '../../../classes/bean/bean';
+import {Bean} from '../../../classes/bean/bean';
 /** Interfaces */
-import { IBean } from '../../../interfaces/bean/iBean';
+import {IBean} from '../../../interfaces/bean/iBean';
 /** Services */
-import { UIBeanStorage } from '../../../services/uiBeanStorage';
-import { UIHelper } from '../../../services/uiHelper';
+import {UIBeanStorage} from '../../../services/uiBeanStorage';
+import {UIHelper} from '../../../services/uiHelper';
 /** Ionic native */
-import { UIImage } from '../../../services/uiImage';
-
+import {UIImage} from '../../../services/uiImage';
 /** Enums */
-import { BEAN_MIX_ENUM } from '../../../enums/beans/mix';
-import { ROASTS_ENUM } from '../../../enums/beans/roasts';
+import {BEAN_MIX_ENUM} from '../../../enums/beans/mix';
+import {ROASTS_ENUM} from '../../../enums/beans/roasts';
 
 @Component({
   templateUrl: 'beans-edit.html'
@@ -25,11 +24,12 @@ export class BeansEditModal {
   public roastsEnum = ROASTS_ENUM;
   public mixEnum = BEAN_MIX_ENUM;
   private bean: IBean;
-  constructor(private navParams: NavParams,
-              private viewCtrl: ViewController,
-              private uiBeanStorage: UIBeanStorage,
-              private uiImage: UIImage,
-              private uiHelper: UIHelper) {
+
+  constructor (private readonly navParams: NavParams,
+               private readonly viewCtrl: ViewController,
+               private readonly uiBeanStorage: UIBeanStorage,
+               private readonly uiImage: UIImage,
+               private readonly uiHelper: UIHelper) {
     this.data.roastingDate = new Date().toISOString();
   }
 
@@ -72,6 +72,7 @@ export class BeansEditModal {
     if (name === undefined || name === undefined || name.trim() === '') {
       valid = false;
     }
+
     return valid;
   }
   private __editBean(): void {

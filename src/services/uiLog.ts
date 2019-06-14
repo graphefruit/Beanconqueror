@@ -1,5 +1,6 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
+
 /** Third party */
 declare var console;
 @Injectable()
@@ -19,26 +20,26 @@ export class UILog {
   }
 
   public log(_message: string): void {
-    if (this.disabled === false) {
+    if (!this.disabled) {
       console.log(_message);
     }
 
   }
 
   public info(_message: string): void {
-    if (this.disabled === false && console.info) {
+    if (!this.disabled && console.info) {
       console.info(_message);
     }
   }
 
   public error(_message: string): void {
-    if (this.disabled === false && console.error) {
+    if (!this.disabled && console.error) {
       console.error(_message);
     }
   }
 
   public warn(_message: string): void {
-    if (this.disabled === false && console.warn) {
+    if (!this.disabled && console.warn) {
       console.warn(_message);
     }
   }

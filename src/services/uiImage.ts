@@ -1,22 +1,22 @@
 /** Core */
-import { Injectable } from '@angular/core';
-import { AndroidPermissions } from '@ionic-native/android-permissions';
+import {Injectable} from '@angular/core';
+import {AndroidPermissions} from '@ionic-native/android-permissions';
 /** Ionic native  */
-import { Camera, CameraOptions } from '@ionic-native/camera';
-import { ImagePicker } from '@ionic-native/image-picker';
+import {Camera, CameraOptions} from '@ionic-native/camera';
+import {ImagePicker} from '@ionic-native/image-picker';
 /** Ionic */
-import { AlertController, Platform } from 'ionic-angular';
+import {AlertController, Platform} from 'ionic-angular';
 
 @Injectable()
 export class UIImage {
-  constructor(private camera: Camera,
-              private imagePicker: ImagePicker,
-              private alertController: AlertController,
-              private platform: Platform,
-              private androidPermissions: AndroidPermissions) {
+  constructor (private readonly camera: Camera,
+               private readonly imagePicker: ImagePicker,
+               private readonly alertController: AlertController,
+               private readonly platform: Platform,
+               private readonly androidPermissions: AndroidPermissions) {
   }
 
-  public takePhoto(): Promise<any> {
+  public async takePhoto (): Promise<any> {
     const promise = new Promise((resolve, reject) => {
       const options: CameraOptions = {
         quality: 100,
@@ -42,10 +42,11 @@ export class UIImage {
           }
         );
     });
+
     return promise;
   }
 
-  public choosePhoto(): Promise<any> {
+  public async choosePhoto (): Promise<any> {
     const promise = new Promise((resolve, reject) => {
       this.__checkPermission(() => {
           setTimeout(() => {
@@ -67,10 +68,11 @@ export class UIImage {
         }
       );
     });
+
     return promise;
   }
 
-  public showOptionChooser(): Promise<any> {
+  public async showOptionChooser (): Promise<any> {
     const promise = new Promise((resolve, reject) => {
       const alert = this.alertController.create({
         title: 'Auswählen',
@@ -92,12 +94,13 @@ export class UIImage {
       });
       alert.present({animate: false});
     });
+
     return promise;
   }
 
   private __requestGaleryPermission(_success: any, _error: any): void {
     this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE).then((_status) => {
-      if (_status.hasPermission === true) {
+      if (_status.hasPermission) {
         _success();
       } else {
         _error();

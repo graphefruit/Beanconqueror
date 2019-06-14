@@ -1,13 +1,14 @@
 /** Core */
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 /** Services */
-import { UIHelper } from '../../../services/uiHelper';
+import {UIHelper} from '../../../services/uiHelper';
+
 @Component({
 templateUrl: 'contact.html'
 })
 export class ContactPage {
 
-  constructor(private uiHelper: UIHelper) {
+  constructor (private readonly uiHelper: UIHelper) {
   }
 
   public openLink(event, _link: string): void {

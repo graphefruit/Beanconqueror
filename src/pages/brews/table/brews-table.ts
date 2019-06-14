@@ -1,23 +1,22 @@
 /** Core */
-import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
+import {Component, ElementRef, Renderer2, ViewChild} from '@angular/core';
 /** Ionic */
-import { ModalController, ViewController } from 'ionic-angular';
+import {ModalController, ViewController} from 'ionic-angular';
 /** Classes */
-import { Brew } from '../../../classes/brew/brew';
-import { Settings } from '../../../classes/settings/settings';
+import {Brew} from '../../../classes/brew/brew';
+import {Settings} from '../../../classes/settings/settings';
 /** Services */
-import { UIBeanStorage } from '../../../services/uiBeanStorage';
-import { UIHelper } from '../../../services/uiHelper';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
-import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-
+import {UIBeanStorage} from '../../../services/uiBeanStorage';
+import {UIHelper} from '../../../services/uiHelper';
+import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
+import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 /** Interfaces */
-import { IBean } from '../../../interfaces/bean/iBean';
-import { IPreparation } from '../../../interfaces/preparation/iPreparation';
-import { UIBrewHelper } from '../../../services/uiBrewHelper';
-import { UIBrewStorage } from '../../../services/uiBrewStorage';
-import { UIMillStorage } from '../../../services/uiMillStorage';
-import { BrewsAddModal } from '../add/brews-add';
+import {IBean} from '../../../interfaces/bean/iBean';
+import {IPreparation} from '../../../interfaces/preparation/iPreparation';
+import {UIBrewHelper} from '../../../services/uiBrewHelper';
+import {UIBrewStorage} from '../../../services/uiBrewStorage';
+import {UIMillStorage} from '../../../services/uiMillStorage';
+import {BrewsAddModal} from '../add/brews-add';
 
 @Component({
   selector: 'brews-table',
@@ -39,13 +38,16 @@ export class BrewsTableModal {
 
   private startingFontSize: number = 14;
 
-  constructor(private viewCtrl: ViewController,  private uiBeanStorage: UIBeanStorage,
-              private uiPreparationStorage: UIPreparationStorage,
-              public uiHelper: UIHelper,
-              public uiBrewHelper: UIBrewHelper,
-              private uiSettingsStorage: UISettingsStorage, private uiBrewStorage: UIBrewStorage,
-              private renderer: Renderer2, private modalCtrl: ModalController,
-              private uiMillStorage: UIMillStorage) {
+  constructor (private readonly viewCtrl: ViewController,
+               private readonly uiBeanStorage: UIBeanStorage,
+               private readonly uiPreparationStorage: UIPreparationStorage,
+               public uiHelper: UIHelper,
+               public uiBrewHelper: UIBrewHelper,
+               private readonly uiSettingsStorage: UISettingsStorage,
+               private readonly uiBrewStorage: UIBrewStorage,
+               private readonly renderer: Renderer2,
+               private readonly modalCtrl: ModalController,
+               private readonly uiMillStorage: UIMillStorage) {
     this.settings = this.uiSettingsStorage.getSettings();
 
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
@@ -95,6 +97,7 @@ export class BrewsTableModal {
       if (obj1.config.unix_timestamp > obj2.config.unix_timestamp) {
         return -1;
       }
+
       return 0;
     });
 

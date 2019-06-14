@@ -1,18 +1,18 @@
 /** Core */
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 /** Ionic */
-import { AlertController } from 'ionic-angular';
+import {AlertController} from 'ionic-angular';
 
 @Injectable()
 export class UIAlert {
 
-  constructor(private alertController: AlertController) {
+  constructor (private readonly alertController: AlertController) {
   }
 
   /**
    * @method showMessage
    */
-  public showMessage(_message: string, _title?: string, _ok?: string): Promise<any> {
+  public async showMessage (_message: string, _title?: string, _ok?: string): Promise<any> {
     let okText: string = 'OK';
     if (_ok) {
       okText = _ok;
@@ -32,10 +32,11 @@ export class UIAlert {
       });
       alert.present({animate: false});
     });
+
     return promise;
   }
 
-  public showConfirm(_message: string, _title?: string): Promise<any> {
+  public async showConfirm (_message: string, _title?: string): Promise<any> {
 
     const promise = new Promise((resolve, reject) => {
       const alert = this.alertController.create({
@@ -59,6 +60,7 @@ export class UIAlert {
       });
       alert.present({animate: false});
     });
+
     return promise;
   }
 

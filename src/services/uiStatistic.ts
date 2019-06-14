@@ -1,39 +1,39 @@
 /** Core */
-import { Injectable } from '@angular/core';
-/** Services  */
-
-import { UIBeanStorage } from '../services/uiBeanStorage';
-import { UIBrewStorage } from '../services/uiBrewStorage';
-import { UIHelper } from '../services/uiHelper';
-import { UIPreparationStorage } from '../services/uiPreparationStorage';
-
+import {Injectable} from '@angular/core';
+import {UIBeanStorage} from './uiBeanStorage';
+import {UIBrewStorage} from './uiBrewStorage';
+import {UIHelper} from './uiHelper';
+import {UIPreparationStorage} from './uiPreparationStorage';
 /** Interfaces */
-import { Bean } from '../classes/bean/bean';
-import { IBrew } from '../interfaces/brew/iBrew';
-import { UIMillStorage } from './uiMillStorage';
-import { UISettingsStorage } from './uiSettingsStorage';
+import {Bean} from '../classes/bean/bean';
+import {IBrew} from '../interfaces/brew/iBrew';
+import {UIMillStorage} from './uiMillStorage';
+import {UISettingsStorage} from './uiSettingsStorage';
+
+/** Services  */
 
 @Injectable()
 export class UIStatistic {
 
-  constructor(private uiPreparationStorage: UIPreparationStorage,
-              private uiBeanStorage: UIBeanStorage,
-              private uiBrewStorage: UIBrewStorage,
-              private uiMillStorage: UIMillStorage,
-              private uiHelper: UIHelper,
-              private uiSettings: UISettingsStorage) {
+  constructor (private readonly uiPreparationStorage: UIPreparationStorage,
+               private readonly uiBeanStorage: UIBeanStorage,
+               private readonly uiBrewStorage: UIBrewStorage,
+               private readonly uiMillStorage: UIMillStorage,
+               private readonly uiHelper: UIHelper,
+               private readonly uiSettings: UISettingsStorage) {
   }
 
   public getSpentMoneyForCoffeeBeans(): number {
 
-      let costs: number = 0;
-      const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
-      for (const i of beans) {
-        if (i.cost !== undefined && i.cost !== undefined && i.cost > 0) {
-         costs += i.cost;
-        }
+    let costs: number = 0;
+    const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
+    for (const i of beans) {
+      if (i.cost !== undefined && i.cost !== undefined && i.cost > 0) {
+        costs += i.cost;
       }
-      return costs;
+    }
+
+    return costs;
   }
 
   public getBrewsDrunk(): number {
@@ -47,6 +47,7 @@ export class UIStatistic {
   public getPreparationsCount(): number {
     return this.uiPreparationStorage.getAllEntries().length;
   }
+
   public getMillsCount(): number {
     return this.uiMillStorage.getAllEntries().length;
   }
@@ -56,6 +57,7 @@ export class UIStatistic {
     if (lastBrew !== undefined) {
       return this.uiHelper.formateDate(lastBrew.config.unix_timestamp, 'DD.MM.YYYY, HH:mm:ss');
     }
+
     return '';
   }
 
@@ -66,8 +68,10 @@ export class UIStatistic {
       if (timeDiff.MINUTES === 1) {
         return timeDiff.MINUTES + ' Minute';
       }
+
       return timeDiff.MINUTES + ' Minuten';
     }
+
     return '';
   }
 
@@ -76,6 +80,7 @@ export class UIStatistic {
     if (timePassed !== '') {
       return timePassed + ' ohne Kaffee';
     }
+
     return 'Noch kein Kaffee getrunken.';
   }
 
@@ -84,6 +89,7 @@ export class UIStatistic {
     if (lastBrew !== undefined) {
       return this.uiBeanStorage.getBeanNameByUUID(lastBrew.bean);
     }
+
     return '_nicht gefunden_';
   }
 
@@ -92,41 +98,48 @@ export class UIStatistic {
     if (lastBrew !== undefined) {
       return this.uiPreparationStorage.getPreparationNameByUUID(lastBrew.method_of_preparation);
     }
+
     return '_nicht gefunden_';
   }
+
   public getLastMillUsed(): string {
     const lastBrew: IBrew = this.getLastBrew();
     if (lastBrew !== undefined) {
       return this.uiMillStorage.getMillNameByUUID(lastBrew.mill);
     }
+
     return '_nicht gefunden_';
   }
 
   public getTotalGround(): number {
-    if (this.uiSettings.getSettings().grind_weight === true) {
+    if (this.uiSettings.getSettings().grind_weight) {
       const brews: Array<IBrew> = this.uiBrewStorage.getAllEntries();
       if (brews.length > 0) {
         let sum = 0;
         for (const brew of brews) {
           sum += +brew.grind_weight;
         }
+
         return sum;
       }
     }
+
     return 0;
   }
 
   public getTotalDrunk(): number {
-    if (this.uiSettings.getSettings().brew_quantity === true) {
+    if (this.uiSettings.getSettings().brew_quantity) {
       const brews: Array<IBrew> = this.uiBrewStorage.getAllEntries();
       if (brews.length > 0) {
         let sum = 0;
         for (const brew of brews) {
           sum += brew.brew_quantity;
         }
+
         return sum;
       }
     }
+
     return 0;
   }
 
@@ -135,8 +148,10 @@ export class UIStatistic {
     if (brews.length > 0) {
       const lastIndex: number = brews.length - 1;
       const lastBrew: IBrew = brews[lastIndex];
+
       return lastBrew;
     }
+
     return undefined;
 
   }

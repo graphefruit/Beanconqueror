@@ -1,6 +1,6 @@
 /** Core */
-import { Directive } from '@angular/core';
-import { NgModel } from '@angular/forms';
+import {Directive} from '@angular/core';
+import {NgModel} from '@angular/forms';
 
 @Directive({
   selector: '[ngModel][prevent-characters]',
@@ -12,21 +12,21 @@ import { NgModel } from '@angular/forms';
 })
 export class PreventCharacterDirective {
 
-  // @Output() ngModelChange:EventEmitter<any> = new EventEmitter();
-
-  constructor(private model: NgModel) {
+  constructor (private readonly model: NgModel) {
 
   }
 
-  public onKeyDown($event) {
+  // @Output() ngModelChange:EventEmitter<any> = new EventEmitter();
+  public onKeyDown ($event): void {
     const pressedKeyCode: number = $event.keyCode;
 
-    if ($event.shiftKey == false && $event.ctrlKey == false && (pressedKeyCode >= 48 && pressedKeyCode <= 57) || (pressedKeyCode >= 96 && pressedKeyCode <= 105)) {
+    if (!$event.shiftKey && !$event.ctrlKey && (pressedKeyCode >= 48 && pressedKeyCode <= 57) ||
+      (pressedKeyCode >= 96 && pressedKeyCode <= 105)) {
       // 0-9 only
       // Its okay
-    } else if (pressedKeyCode == 8) {
+    } else if (pressedKeyCode === 8) {
       // Delete backspace ok
-    } else if (pressedKeyCode == 190 || pressedKeyCode == 188) {
+    } else if (pressedKeyCode === 190 || pressedKeyCode === 188) {
       // Comma, Point support
     } else {
       // Everything else we block
@@ -36,12 +36,12 @@ export class PreventCharacterDirective {
 
   }
 
-  public blur() {
+  public blur (): void {
 
     let val: any = this.model.control.value;
     val = val + '';
     console.log(val);
-    if (val == '') {
+    if (val === '') {
       val = '0';
     }
     if (val.indexOf(',')) {
