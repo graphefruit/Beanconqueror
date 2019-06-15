@@ -66,10 +66,10 @@ export class UIStatistic {
     if (lastBrew !== undefined) {
       const timeDiff = this.uiHelper.timeDifference(lastBrew.config.unix_timestamp);
       if (timeDiff.MINUTES === 1) {
-        return timeDiff.MINUTES + ' Minute';
+        return `${timeDiff.MINUTES} Minute`;
       }
 
-      return timeDiff.MINUTES + ' Minuten';
+      return `${timeDiff.MINUTES} Minuten`;
     }
 
     return '';
@@ -78,7 +78,7 @@ export class UIStatistic {
   public getSloganTimePassedSinceLastBrew(): string {
     const timePassed = this.getTimePassedSinceLastBrew();
     if (timePassed !== '') {
-      return timePassed + ' ohne Kaffee';
+      return `${timePassed} ohne Kaffee`;
     }
 
     return 'Noch kein Kaffee getrunken.';

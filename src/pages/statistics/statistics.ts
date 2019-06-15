@@ -96,11 +96,10 @@ export class StatisticsPage {
       legend: {
         display: true,
         position: 'top'
-
       }
     };
 
-    const renderedChart = new Chart(this.drinkChart.nativeElement, {
+    const drinkChart = new Chart(this.drinkChart.nativeElement, {
       type: 'line',
       data: drinkingData,
       options: chartOptions

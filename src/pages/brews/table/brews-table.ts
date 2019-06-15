@@ -70,7 +70,7 @@ export class BrewsTableModal {
 
   public scaleFontBigger(): void {
     this.startingFontSize++;
-    this.renderer.setStyle(this.tableEl.nativeElement, 'fontSize', this.startingFontSize + 'px');
+    this.renderer.setStyle(this.tableEl.nativeElement, 'fontSize', `${this.startingFontSize}px`);
 
   }
 
@@ -79,7 +79,7 @@ export class BrewsTableModal {
     if (this.startingFontSize < 6) {
       this.startingFontSize = 6;
     }
-    this.renderer.setStyle(this.tableEl.nativeElement, 'fontSize', this.startingFontSize + 'px');
+    this.renderer.setStyle(this.tableEl.nativeElement, 'fontSize', `${this.startingFontSize}px`);
   }
 
   public dismiss(): void {
