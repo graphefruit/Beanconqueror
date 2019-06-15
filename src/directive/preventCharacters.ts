@@ -39,6 +39,9 @@ export class PreventCharacterDirective {
   public blur (): void {
 
     let val: any = this.model.control.value;
+
+    // Value needs to be combined as a string
+    // tslint:disable-next-line
     val = val + '';
     console.log(val);
     if (val === '') {

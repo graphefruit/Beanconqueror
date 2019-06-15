@@ -33,10 +33,11 @@ export class BrewsTextModal {
   public selectedBrew: Brew = new Brew();
   public postText: string = '';
 
-  constructor(private viewCtrl: ViewController, private navParams: NavParams,
-              public uiHelper: UIHelper,
-              public uiBrewHelper: UIBrewHelper,
-              private uiSettingsStorage: UISettingsStorage) {
+  constructor (private readonly viewCtrl: ViewController,
+               private readonly navParams: NavParams,
+               public uiHelper: UIHelper,
+               public uiBrewHelper: UIBrewHelper,
+               private readonly uiSettingsStorage: UISettingsStorage) {
     this.settings = this.uiSettingsStorage.getSettings();
 
   }

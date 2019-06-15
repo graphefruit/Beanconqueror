@@ -13,8 +13,7 @@ import {UIStorage} from './uiStorage';
 
 @Injectable()
 export class UISettingsStorage extends StorageClass {
-
-  private settings: Settings = new Settings();
+  private readonly settings: Settings = new Settings();
 
   constructor(protected uiStorage: UIStorage,
               protected uiHelper: UIHelper,

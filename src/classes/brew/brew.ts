@@ -162,20 +162,20 @@ export class Brew implements IBrew {
 
   private getBeanStorageInstance(): UIBeanStorage {
     let uiBeanStorage: UIBeanStorage;
-    uiBeanStorage = UIBeanStorage.getInstance() as UIBeanStorage;
+    uiBeanStorage = UIBeanStorage.getInstance();
 
     return uiBeanStorage;
   }
 
   private getPreparationStorageInstance(): UIPreparationStorage {
     let uiPreparationStorage: UIPreparationStorage;
-    uiPreparationStorage = UIPreparationStorage.getInstance() as UIPreparationStorage;
+    uiPreparationStorage = UIPreparationStorage.getInstance();
 
     return uiPreparationStorage;
   }
   private getMillStorageInstance(): UIMillStorage  {
     let uiMillStorage: UIMillStorage;
-    uiMillStorage = UIMillStorage.getInstance() as UIMillStorage;
+    uiMillStorage = UIMillStorage.getInstance();
 
     return uiMillStorage;
   }
