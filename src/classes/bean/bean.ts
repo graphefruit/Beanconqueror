@@ -49,4 +49,13 @@ export class Bean implements IBean {
     Object.assign(this, beanObj);
   }
 
+  public beanAgeInDays(): number {
+    const today = Date.now();
+    let millisecondsSinceRoasting = today - Date.parse(this.roastingDate);
+    if (isNaN(millisecondsSinceRoasting)) {
+      millisecondsSinceRoasting = 0;
+    }
+    return Math.floor(millisecondsSinceRoasting / ( 1000 * 60 * 60 * 24));
+  }
+
 }
