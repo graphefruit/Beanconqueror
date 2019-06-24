@@ -34,7 +34,7 @@
   <ion-item>
     <ion-label>Bohnen</ion-label>
     <ion-select [(ngModel)]="data.bean">
-      <ion-option *ngFor="let bean of beans" value="{{bean.config.uuid}}">{{bean.name}}  / {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}
+      <ion-option *ngFor="let bean of beans" value="{{bean.config.uuid}}">{{bean.name}}  / {{data.getCalculatedBeanAge()}} Tage ({{bean.roastingDate | formatDate:["DD.MM.YYYY"]}})
       </ion-option>
     </ion-select>
   </ion-item>
