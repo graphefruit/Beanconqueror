@@ -60,6 +60,7 @@ import { MillEditModal } from '../pages/mill/edit/mill-edit';
 import { MillsPage } from '../pages/mill/mills';
 /** Pipes */
 import { FormatDatePipe } from '../pipes/formatDate';
+import { SearchPipe } from '../pipes/search';
 import { KeysPipe } from '../pipes/keys';
 import { ToDecimalPipe } from '../pipes/toDecimal';
 import { UIAlert } from '../services/uiAlert';
@@ -93,6 +94,7 @@ import { UIStorage } from '../services/uiStorage';
     MillAddModal,
     MillEditModal,
     FormatDatePipe,
+    SearchPipe,
     KeysPipe,
     ToDecimalPipe,
     PreventCharacterDirective,
