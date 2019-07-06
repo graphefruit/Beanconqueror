@@ -14,10 +14,14 @@ The App ist available with any modern internet browser at (link will be added so
 If your system is up for it you can load Beanconqueror as a PWA for a sweet offline experience.
 
 ## Support
-Buy us a coffee :  
+Buy me a coffee :  
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/LarsSaalbach) Graphefruit
 
 ## Development & Building it Yourself
 
 If you're not familiar with Ionic or Cordova [read through the introduction](http://ionicframework.com/docs/intro/installation/).  
 To get started with anything you need [Node.js](https://nodejs.org/en/download/) installed
+
+
+## Compile iOS
+ionic cordova run ios -- --buildFlag="-UseModernBuildSystem=0"

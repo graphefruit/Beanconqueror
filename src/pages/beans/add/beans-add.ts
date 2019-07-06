@@ -10,6 +10,7 @@ import {Bean} from '../../../classes/bean/bean';
 /** Enums */
 import {BEAN_MIX_ENUM} from '../../../enums/beans/mix';
 import {ROASTS_ENUM} from '../../../enums/beans/roasts';
+import {UIHelper} from '../../../services/uiHelper';
 
 @Component({
   templateUrl: 'beans-add.html'
@@ -23,7 +24,8 @@ export class BeansAddModal {
 
   constructor (private readonly viewCtrl: ViewController,
                private readonly uiBeanStorage: UIBeanStorage,
-               private readonly uiImage: UIImage) {
+               private readonly uiImage: UIImage,
+               public uiHelper: UIHelper) {
     this.data.roastingDate = new Date().toISOString();
   }
   public addBean(form): void {
