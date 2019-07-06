@@ -23,7 +23,8 @@
     "no-floating-promises": false,
     "whitespace": false,
     "space-before-function-paren": false,
-    "ordered-imports": false
+    "ordered-imports": false,
+    "prefer-conditional-expression": false
   }
 
 }
