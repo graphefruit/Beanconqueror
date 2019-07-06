@@ -29,6 +29,10 @@
     </ion-segment>
   </div>
   <div [ngSwitch]="brew_segment">
+      <ion-item>
+        <ion-label stacked>Filter (Bohnen, Methode, Mühle)</ion-label>
+        <ion-input [(ngModel)]="query" type="text"></ion-input>
+      </ion-item>
     <div *ngSwitchCase="'open'">
       <ion-card  padding *ngIf="!uiBrewHelper.canBrew()">
         <h2 class="error-text">Um einen Bezug zu starten, lege bitte eine <b>Bohnensorte</b> sowie eine <b>Zubereitungsmethode</b> und <b>Mühle</b> an.</h2>
@@ -44,8 +48,7 @@
           {{brewView.title}}
         </ion-list-header>
 
-        <input [(ngModel)]="query">
-        <ion-card *ngFor="let brew of brewView.brews | search:'bean,method_of_preparation':query">
+        <ion-card *ngFor="let brew of brewView.brews | search:'bean,method_of_preparation,mill':query">
           <ion-card-header>
             {{brew.formateDate("HH:mm")}}
           </ion-card-header>
