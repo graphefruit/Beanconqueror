@@ -65,8 +65,23 @@ export class UIStatistic {
     const lastBrew: IBrew = this.getLastBrew();
     if (lastBrew !== undefined) {
       const timeDiff = this.uiHelper.timeDifference(lastBrew.config.unix_timestamp);
+
+      if (timeDiff.DAYS === 1) {
+        return "Ein Tag";
+      }
+      if (timeDiff.DAYS > 1) {
+        return `${timeDiff.DAYS} Tage`;
+      }
+
+      if (timeDiff.HOURS === 1) {
+        return "Eine Stunde"
+      }
+      if (timeDiff.HOURS > 1) {
+        return `${timeDiff.HOURS} Stunden`;
+      }
+
       if (timeDiff.MINUTES === 1) {
-        return `${timeDiff.MINUTES} Minute`;
+        return "Eine Minute";
       }
 
       return `${timeDiff.MINUTES} Minuten`;

@@ -78,12 +78,14 @@ export class UIHelper {
       MILLISECONDS: 0,
       SECONDS: 0,
       MINUTES: 0,
+      HOURS: 0,
       DAYS: 0
     };
 
     timeDifference.MILLISECONDS = now.diff(toDiff, 'milliseconds');
     timeDifference.SECONDS = now.diff(toDiff, 'seconds');
     timeDifference.MINUTES = now.diff(toDiff, 'minutes');
+    timeDifference.HOURS = now.diff(toDiff, 'hours');
     timeDifference.DAYS = now.diff(toDiff, 'days');
     return timeDifference;
   }
