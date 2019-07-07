@@ -97,6 +97,13 @@
                 <span>Posten</span>
               </button>
             </ion-col>
+            <ion-col>
+              <button justify-content-start color="dark" clear  ion-button block small
+                      icon-left (click)="repeatBrew(brew)">
+                <ion-icon name="md-repeat" item-start></ion-icon>
+                <span>Wiederholen</span>
+              </button>
+            </ion-col>
             <ion-col *ngIf="settings.attachments === true">
               <button justify-content-start color="dark" clear *ngIf="brew?.attachments.length > 0" ion-button block small
                       icon-left (click)="viewPhotos(brew)">
@@ -189,6 +196,13 @@
                       icon-left (click)="postBrew(brew)">
                 <ion-icon name="md-clipboard" item-start></ion-icon>
                 <span>Posten</span>
+              </button>
+            </ion-col>
+            <ion-col>
+              <button justify-content-start color="dark" clear  ion-button block small
+                      icon-left (click)="repeatBrew(brew)">
+                <ion-icon name="md-repeat" item-start></ion-icon>
+                <span>Wiederholen</span>
               </button>
             </ion-col>
             <ion-col *ngIf="settings.attachments === true">
