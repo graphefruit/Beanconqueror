@@ -111,6 +111,14 @@ export class BrewsPage {
     });
   }
 
+  public repeatBrew(brew: Brew): void {
+    const repeatBrewModel = this.modalCtrl.create(BrewsAddModal, {brew_template: brew});
+    repeatBrewModel.onDidDismiss(() => {
+      this.loadBrews();
+    });
+    repeatBrewModel.present({animate: false});
+  }
+
   public addBrew(): void {
     const addBrewsModal = this.modalCtrl.create(BrewsAddModal, {});
     addBrewsModal.onDidDismiss(() => {
