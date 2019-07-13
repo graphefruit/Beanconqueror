@@ -54,8 +54,8 @@ export class UIImage {
           (imageData) => {
             const imageStr: string = 'data:image/jpeg;base64,' + imageData;
             this.uiFileHelper.saveBase64File('beanconqueror_image', '.png', imageStr).then((_newURL) => {
-              const filePath = _newURL.replace(/^file:\/\//, '');
-              resolve(filePath);
+              // const filePath = _newURL.replace(/^file:\/\//, '');
+              resolve(_newURL);
             });
           },
           (_err: any) => {

@@ -1,7 +1,7 @@
 /** Core */
 import {Injectable} from '@angular/core';
 import {File} from '@ionic-native/file';
-import {unescape} from "querystring";
+import {unescape} from 'querystring';
 
 declare var cordova: any;
 declare var device: any;
@@ -30,6 +30,22 @@ export class UIFileHelper {
             reject();
           });
         }
+      });
+
+    });
+  }
+
+  public async getBase64File (_filePath: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      let filePath: string = '';
+      filePath = _filePath;
+      let path: string = '';
+      let fileName: string = '';
+      path = filePath.slice(0, filePath.lastIndexOf('/'));
+      fileName = filePath.slice(filePath.lastIndexOf('/') + 1);
+
+      this.file.readAsDataURL(path, fileName).then((_dataUrl: string) => {
+        resolve(_dataUrl);
       });
 
     });
