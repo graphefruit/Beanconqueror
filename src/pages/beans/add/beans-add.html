@@ -84,7 +84,7 @@
       Foto hinzufügen
     </button>
     <ion-item *ngIf="data.filePath != ''">
-      <img [src]="uiHelper.sanitizeImagePath(data.filePath)" style="padding: 0px 20px;">
+      <async-image filename="{{data.filePath}}"></async-image>
     </ion-item>
 
 </ion-content>

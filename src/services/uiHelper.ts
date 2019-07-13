@@ -9,6 +9,7 @@ import moment from 'moment';
 import 'moment/locale/de';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {File} from '@ionic-native/file';
+import {UIFileHelper} from "./uiFileHelper";
 
 declare var cordova: any;
 declare var device: any;
@@ -22,7 +23,8 @@ export class UIHelper {
   constructor (private readonly platform: Platform,
                private readonly inAppBrowser: InAppBrowser,
                private readonly sanitizer: DomSanitizer,
-               private readonly file: File) {
+               private readonly file: File,
+               private readonly uiFileHelper: UIFileHelper) {
     moment.locale('de');
   }
 
@@ -125,6 +127,10 @@ export class UIHelper {
 
   public sanitizeImagePath (imagePath: string): SafeUrl {
     return this.sanitizer.bypassSecurityTrustUrl(imagePath);
+  }
+
+  public getBase64Data (imagePath: string) {
+    return this.uiFileHelper.getBase64File(imagePath);
   }
 
 

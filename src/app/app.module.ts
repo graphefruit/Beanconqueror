@@ -73,6 +73,7 @@ import {UIStatistic} from '../services/uiStatistic';
 /** Services */
 import {UIStorage} from '../services/uiStorage';
 import {UIFileHelper} from '../services/uiFileHelper';
+import {AsyncImageComponent} from '../components/async-image/async-image';
 
 /** Components */
 
@@ -100,6 +101,7 @@ import {UIFileHelper} from '../services/uiFileHelper';
     BrewsPage,
     BrewsAddModal,
     TimerComponent,
+    AsyncImageComponent,
     BrewsEditModal,
     BrewsPhotoView,
     BrewsDetailsModal,
@@ -147,6 +149,7 @@ import {UIFileHelper} from '../services/uiFileHelper';
     BrewsPage,
     BrewsAddModal,
     TimerComponent,
+    AsyncImageComponent,
     BrewsEditModal,
     BrewsPhotoView,
     BrewsDetailsModal,
