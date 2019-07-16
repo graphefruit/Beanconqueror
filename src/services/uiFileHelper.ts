@@ -3,10 +3,6 @@ import {Injectable} from '@angular/core';
 import {File} from '@ionic-native/file';
 import {unescape} from 'querystring';
 
-declare var cordova: any;
-declare var device: any;
-declare var window: any;
-
 /**
  * Handles every helping functionalities
  */
@@ -25,7 +21,7 @@ export class UIFileHelper {
           reject();
         } else {
           this.file.writeFile(this.file.dataDirectory, _newName, newBlob).then((_t) => {
-            resolve(_t.nativeURL);
+            resolve(_t.fullPath);
           }, () => {
             reject();
           });
@@ -37,12 +33,15 @@ export class UIFileHelper {
 
   public async getBase64File (_filePath: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
-      let filePath: string = '';
-      filePath = _filePath;
-      let path: string = '';
-      let fileName: string = '';
-      path = filePath.slice(0, filePath.lastIndexOf('/'));
-      fileName = filePath.slice(filePath.lastIndexOf('/') + 1);
+      // let filePath: string;
+      // filePath = _filePath;
+      let path: string;
+      let fileName: string;
+      path = this.file.dataDirectory; // filePath.slice(0, filePath.lastIndexOf('/'));
+      fileName = _filePath;
+      if (fileName.startsWith('/')) {
+        fileName = fileName.slice(1);
+      }
 
       this.file.readAsDataURL(path, fileName).then((_dataUrl: string) => {
         resolve(_dataUrl);
@@ -64,7 +63,7 @@ export class UIFileHelper {
           const ret = await this.file.checkFile(passedPath, fileName);
           doesExist = ret;
 
-          if (doesExist === false) {
+          if (!doesExist) {
             resolve(fileName);
           } else {
             fileName = `${passedFilename}${counter}${passedExtension}`;

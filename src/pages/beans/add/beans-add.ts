@@ -28,7 +28,8 @@ export class BeansAddModal {
                public uiHelper: UIHelper) {
     this.data.roastingDate = new Date().toISOString();
   }
-  public addBean(form): void {
+
+  public addBean (): void {
 
     if (this.__formValid()) {
       this.__addBean();

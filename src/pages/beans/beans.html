@@ -30,7 +30,9 @@
         Du hast leider keine frischen Bohnen mehr!
       </ion-card>
       <ion-card *ngFor="let bean of getOpenBeans()">
-        <img class="card-image" *ngIf="bean.filePath" [src]="bean.filePath"/>
+        <div *ngIf="bean.filePath">
+          <async-image filename="{{bean.filePath}}"></async-image>
+        </div>
         <ion-card-header>
           {{bean.name}}
         </ion-card-header>
@@ -76,7 +78,10 @@
         Du hast keine aufgebrauchten Bohnen!
       </ion-card>
       <ion-card *ngFor="let bean of getFinishedBeans()">
-        <img class="card-image" *ngIf="bean.filePath" [src]="bean.filePath"/>
+        <div *ngIf="bean.filePath">
+          <async-image filename="{{bean.filePath}}"></async-image>
+        </div>
+        <!-- <img class="card-image" *ngIf="bean.filePath" [src]="bean.filePath"/>-->
         <ion-card-header>
           {{bean.name}}
         </ion-card-header>

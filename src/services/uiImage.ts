@@ -23,7 +23,7 @@ export class UIImage {
                private readonly uiFileHelper: UIFileHelper) {
   }
 
-  public takePhoto (): Promise<any> {
+  public async takePhoto (): Promise<any> {
     const promise = new Promise((resolve, reject) => {
       const isIos: boolean = this.platform.is('ios');
       let options: CameraOptions = {};
@@ -49,10 +49,9 @@ export class UIImage {
         };
       }
 
-      this.camera.getPicture(options)
-        .then(
+      this.camera.getPicture(options).then(
           (imageData) => {
-            const imageStr: string = 'data:image/jpeg;base64,' + imageData;
+            const imageStr: string = `data:image/jpeg;base64,${imageData}`;
             this.uiFileHelper.saveBase64File('beanconqueror_image', '.png', imageStr).then((_newURL) => {
               // const filePath = _newURL.replace(/^file:\/\//, '');
               resolve(_newURL);
@@ -67,7 +66,7 @@ export class UIImage {
     return promise;
   }
 
-  public choosePhoto (): Promise<any> {
+  public async choosePhoto (): Promise<any> {
     const promise = new Promise((resolve, reject) => {
       this.__checkPermission(() => {
           setTimeout(() => {
