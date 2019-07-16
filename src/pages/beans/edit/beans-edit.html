@@ -92,7 +92,7 @@
       Foto hinzufügen
     </button>
     <div *ngIf="data.filePath != ''">
-      <img [src]="data.filePath" style="padding: 0px 20px;">
+      <async-image filename="{{data.filePath}}"></async-image>
     </div>
 
 
