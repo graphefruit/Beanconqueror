@@ -3,13 +3,13 @@ import {UIFileHelper} from '../../services/uiFileHelper';
 
 @Component({
   selector: 'async-image',
-  template: '<img [src]="img" />'
+  templateUrl: 'async-image.html'
 })
 export class AsyncImageComponent {
 
-  @Input() public filename: string;
+  @Input() public filePath: string;
 
-  public img: any;
+  public img: string;
 
   constructor (
     public uiFileHelper: UIFileHelper
@@ -17,12 +17,22 @@ export class AsyncImageComponent {
   }
 
   public async ngOnInit (): Promise<void> {
-    this.img = await this.uiFileHelper.getBase64File(this.filename);
+    if (this.filePath === undefined || this.filePath === null || this.filePath === '') {
+      this.img = '';
+    } else {
+      this.img = await this.uiFileHelper.getBase64File(this.filePath);
+    }
+
   }
 
   public async ngOnChanges (): Promise<void> {
 
-    this.img = await this.uiFileHelper.getBase64File(this.filename);
+    if (this.filePath === undefined || this.filePath === null || this.filePath === '') {
+      this.img = ''
+    } else {
+      this.img = await this.uiFileHelper.getBase64File(this.filePath);
+    }
+
     // You can also use categoryId.previousValue and
     // categoryId.firstChange for comparing old and new values
 

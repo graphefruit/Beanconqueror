@@ -2,6 +2,7 @@
 import {Injectable} from '@angular/core';
 import {File} from '@ionic-native/file';
 import {unescape} from 'querystring';
+import {Platform} from 'ionic-angular';
 
 /**
  * Handles every helping functionalities
@@ -9,7 +10,7 @@ import {unescape} from 'querystring';
 @Injectable()
 export class UIFileHelper {
 
-  constructor (private readonly file: File) {
+  constructor (private readonly file: File, private readonly platform: Platform) {
   }
 
   public async saveBase64File (_fileName: string, _fileExtension: string, _base64: string): Promise<any> {
@@ -33,19 +34,23 @@ export class UIFileHelper {
 
   public async getBase64File (_filePath: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
-      // let filePath: string;
-      // filePath = _filePath;
-      let path: string;
-      let fileName: string;
-      path = this.file.dataDirectory; // filePath.slice(0, filePath.lastIndexOf('/'));
-      fileName = _filePath;
-      if (fileName.startsWith('/')) {
-        fileName = fileName.slice(1);
-      }
+      if (this.platform.is('cordova')) {
+        // let filePath: string;
+        // filePath = _filePath;
+        let path: string;
+        let fileName: string;
+        path = this.file.dataDirectory; // filePath.slice(0, filePath.lastIndexOf('/'));
+        fileName = _filePath;
+        if (fileName.startsWith('/')) {
+          fileName = fileName.slice(1);
+        }
 
-      this.file.readAsDataURL(path, fileName).then((_dataUrl: string) => {
-        resolve(_dataUrl);
-      });
+        this.file.readAsDataURL(path, fileName).then((_dataUrl: string) => {
+          resolve(_dataUrl);
+        });
+      } else {
+        resolve('');
+      }
 
     });
   }
