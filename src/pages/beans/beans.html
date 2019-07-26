@@ -31,7 +31,7 @@
       </ion-card>
       <ion-card *ngFor="let bean of getOpenBeans()">
         <div *ngIf="bean.filePath">
-          <async-image filename="{{bean.filePath}}"></async-image>
+          <async-image filePath="{{bean.filePath}}"></async-image>
         </div>
         <ion-card-header>
           {{bean.name}}

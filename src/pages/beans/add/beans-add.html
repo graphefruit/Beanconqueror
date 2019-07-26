@@ -84,8 +84,10 @@
       Foto hinzufügen
     </button>
     <ion-item *ngIf="data.filePath != ''">
-      <async-image filename="{{data.filePath}}"></async-image>
+      <async-image filePath="{{data.filePath}}"></async-image>
     </ion-item>
+  test
+  <async-image class="brew-image" filePath="{{data.filePath}}"></async-image>
 
 </ion-content>
 <ion-footer>
