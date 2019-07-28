@@ -44,11 +44,11 @@
         Keine Einträge vorhanden.
       </ion-card>
       <ion-list *ngFor="let brewView of openBrewsView">
-        <ion-list-header class="brews-header">
+        <ion-list-header class="brews-header" *ngIf="(brewView.brews | searchBrews:query).length > 0">
           {{brewView.title}}
         </ion-list-header>
 
-        <ion-card *ngFor="let brew of brewView.brews | searchBrew:query">
+        <ion-card *ngFor="let brew of brewView.brews | searchBrews:query">
           <ion-card-header>
             {{brew.formateDate("HH:mm")}}
           </ion-card-header>
@@ -141,7 +141,7 @@
         <ion-list-header class="brews-header">
           {{brewView.title}}
         </ion-list-header>
-        <ion-card *ngFor="let brew of brewView.brews">
+        <ion-card *ngFor="let brew of brewView.brews | searchBrews:query">
 
           <ion-card-header>
             {{brew.formateDate("HH:mm")}}
