@@ -48,7 +48,7 @@
           {{brewView.title}}
         </ion-list-header>
 
-        <ion-card *ngFor="let brew of brewView.brews | search:'bean,method_of_preparation,mill':query">
+        <ion-card *ngFor="let brew of brewView.brews | searchBrew:query">
           <ion-card-header>
             {{brew.formateDate("HH:mm")}}
           </ion-card-header>
