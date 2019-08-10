@@ -62,3 +62,6 @@ npm install @ionic-native/keyboard
 #3DTouch
 ionic cordova plugin add cordova-plugin-3dtouch
 npm install @ionic-native/three-dee-touch
+
+#ChartJS
+npm install chart.js --save

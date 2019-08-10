@@ -1,22 +1,21 @@
 import {Component, ViewChild} from '@angular/core';
 
 import {IonRouterOutlet, MenuController, ModalController, Platform} from '@ionic/angular';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { Storage } from '@ionic/storage';
-import {UIStorage} from '../services/uiStorage';
+import {SplashScreen} from '@ionic-native/splash-screen/ngx';
+import {StatusBar} from '@ionic-native/status-bar/ngx';
 import {UILog} from '../services/uiLog';
 import {UIBeanStorage} from '../services/uiBeanStorage';
 import {UIBrewStorage} from '../services/uiBrewStorage';
 import {UIPreparationStorage} from '../services/uiPreparationStorage';
 import {UIMillStorage} from '../services/uiMillStorage';
 import {UISettingsStorage} from '../services/uiSettingsStorage';
-import { AppMinimize } from '@ionic-native/app-minimize/ngx';
-import { Keyboard } from '@ionic-native/keyboard/ngx';
+import {AppMinimize} from '@ionic-native/app-minimize/ngx';
+import {Keyboard} from '@ionic-native/keyboard/ngx';
 import {ThreeDeeTouch} from '@ionic-native/three-dee-touch/ngx';
 import {Mill} from '../classes/mill/mill';
 import {Brew} from '../classes/brew/brew';
 import {Router} from '@angular/router';
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html'
@@ -41,7 +40,7 @@ export class AppComponent {
     thanks: {title: 'Dankeschön!', url: '/info/thanks', icon: 'md-happy', active: false},
     licences: {title: 'Open-Source-Lizenzen', url: '/info/licences', icon: 'md-copy', active: false},
 
-
+    statistic: {title: 'Statistiken', url: '/statistic', icon: 'md-analytics', active: false}
   };
 
 
