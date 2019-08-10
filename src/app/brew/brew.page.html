@@ -93,42 +93,45 @@
           </div>
           <ion-row >
             <ion-col>
-              <ion-button fill="clear" color="dark" (click)="postBrew(brew)">
+              <ion-button (click)="postBrew(brew)" color="dark" fill="clear" size="small">
                 <ion-icon name="md-clipboard" slot="start"></ion-icon>
                 <span>Posten</span>
               </ion-button>
             </ion-col>
-            <ion-col col-6>
-              <ion-button fill="clear" color="dark" (click)="repeatBrew(brew)">
+            <ion-col>
+              <ion-button (click)="repeatBrew(brew)" color="dark" fill="clear" size="small">
                 <ion-icon name="md-repeat" slot="start"></ion-icon>
                 <span>Wiederholen</span>
-              </ion-button>
-            </ion-col>
-            <ion-col *ngIf="settings.attachments === true">
-              <ion-button fill="clear" color="dark" (click)="viewPhotos(brew)" *ngIf="brew?.attachments.length > 0">
-                <ion-icon name="md-eye" slot="start"></ion-icon>
-                <span>Fotogalerie</span>
               </ion-button>
             </ion-col>
           </ion-row>
           <ion-row>
             <ion-col>
-              <ion-button fill="clear" color="dark" (click)="detailBrew(brew)">
+              <ion-button (click)="detailBrew(brew)" color="dark" fill="clear" size="small">
                 <ion-icon name="list" slot="start"></ion-icon>
                 <span>Details</span>
               </ion-button>
             </ion-col>
 
             <ion-col>
-              <ion-button fill="clear" color="dark" (click)="editBrew(brew)">
+              <ion-button (click)="editBrew(brew)" color="dark" fill="clear" size="small">
                 <ion-icon name="md-create" slot="start"></ion-icon>
                 <span>Editieren</span>
               </ion-button>
             </ion-col>
+          </ion-row>
+          <ion-row>
             <ion-col>
-              <ion-button fill="clear" color="dark" (click)="deleteBrew(brew)">
+              <ion-button (click)="deleteBrew(brew)" color="dark" fill="clear" size="small">
                 <ion-icon name="trash" slot="start"></ion-icon>
                 <span>Löschen</span>
+              </ion-button>
+            </ion-col>
+            <ion-col *ngIf="settings.attachments === true">
+              <ion-button (click)="viewPhotos(brew)" *ngIf="brew?.attachments.length > 0" color="dark" fill="clear"
+                          size="small">
+                <ion-icon name="md-eye" slot="start"></ion-icon>
+                <span>Fotogalerie</span>
               </ion-button>
             </ion-col>
           </ion-row>
@@ -191,42 +194,45 @@
           </div>
           <ion-row >
             <ion-col>
-              <ion-button fill="clear" color="dark" (click)="postBrew(brew)">
+              <ion-button (click)="postBrew(brew)" color="dark" fill="clear" size="small">
                 <ion-icon name="md-clipboard" slot="start"></ion-icon>
                 <span>Posten</span>
               </ion-button>
             </ion-col>
-            <ion-col col-6>
-              <ion-button fill="clear" color="dark" (click)="repeatBrew(brew)">
+            <ion-col>
+              <ion-button (click)="repeatBrew(brew)" color="dark" fill="clear" size="small">
                 <ion-icon name="md-repeat" slot="start"></ion-icon>
                 <span>Wiederholen</span>
-              </ion-button>
-            </ion-col>
-            <ion-col *ngIf="settings.attachments === true">
-              <ion-button fill="clear" color="dark" (click)="viewPhotos(brew)" *ngIf="brew?.attachments.length > 0">
-                <ion-icon name="md-eye" slot="start"></ion-icon>
-                <span>Fotogalerie</span>
               </ion-button>
             </ion-col>
           </ion-row>
           <ion-row>
             <ion-col>
-              <ion-button fill="clear" color="dark" (click)="detailBrew(brew)">
+              <ion-button (click)="detailBrew(brew)" color="dark" fill="clear" size="small">
                 <ion-icon name="list" slot="start"></ion-icon>
                 <span>Details</span>
               </ion-button>
             </ion-col>
 
             <ion-col>
-              <ion-button fill="clear" color="dark" (click)="editBrew(brew)">
+              <ion-button (click)="editBrew(brew)" color="dark" fill="clear" size="small">
                 <ion-icon name="md-create" slot="start"></ion-icon>
                 <span>Editieren</span>
               </ion-button>
             </ion-col>
+          </ion-row>
+          <ion-row>
             <ion-col>
-              <ion-button fill="clear" color="dark" (click)="deleteBrew(brew)">
+              <ion-button (click)="deleteBrew(brew)" color="dark" fill="clear" size="small">
                 <ion-icon name="trash" slot="start"></ion-icon>
                 <span>Löschen</span>
+              </ion-button>
+            </ion-col>
+            <ion-col *ngIf="settings.attachments === true">
+              <ion-button (click)="viewPhotos(brew)" *ngIf="brew?.attachments.length > 0" color="dark" fill="clear"
+                          size="small">
+                <ion-icon name="md-eye" slot="start"></ion-icon>
+                <span>Fotogalerie</span>
               </ion-button>
             </ion-col>
           </ion-row>

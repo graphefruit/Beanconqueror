@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
-import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import {NgModule} from '@angular/core';
+import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 import {IonicStorageModule} from '@ionic/storage';
 
 const routes: Routes = [
@@ -21,6 +21,7 @@ const routes: Routes = [
   { path: 'beans', loadChildren: './beans/beans.module#BeansPageModule' },
   { path: 'preparation', loadChildren: './preparation/preparation.module#PreparationPageModule' },
   { path: 'brew', loadChildren: './brew/brew.module#BrewPageModule' },
+  {path: 'statistic', loadChildren: './statistic/statistic.module#StatisticPageModule'},
 ];
 
 @NgModule({
