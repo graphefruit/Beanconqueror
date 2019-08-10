@@ -1,8 +1,8 @@
 /** Core */
 import {Injectable} from '@angular/core';
-import {File} from '@ionic-native/file';
+import { File } from '@ionic-native/file/ngx';
 import {unescape} from 'querystring';
-import {Platform} from 'ionic-angular';
+import { Platform } from '@ionic/angular';
 
 /**
  * Handles every helping functionalities

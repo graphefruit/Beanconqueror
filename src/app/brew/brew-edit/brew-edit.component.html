@@ -1,0 +1,135 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Zurück</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+
+
+  <ion-item>
+    <ion-label stacked>Mahlgrad</ion-label>
+    <ion-input type="text" [(ngModel)]="data.grind_size"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label stacked>Gewicht</ion-label>
+    <ion-input remove-empty-number prevent-characters [(ngModel)]="data.grind_weight" type="text"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label stacked>Temperatur</ion-label>
+    <ion-input remove-empty-number prevent-characters [(ngModel)]="data.brew_temperature" type="text"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label>Zubereitungsmethode</ion-label>
+    <ion-select [(ngModel)]="data.method_of_preparation">
+      <ion-select-option *ngFor="let method of method_of_preparations" value="{{method.config.uuid}}">{{method.name}}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-item>
+    <ion-label>Bohnen</ion-label>
+    <ion-select [(ngModel)]="data.bean">
+      <ion-select-option *ngFor="let bean of beans" value="{{bean.config.uuid}}">{{bean.name}}  / {{data.getCalculatedBeanAge()}} Tage ({{bean.roastingDate | formatDate:["DD.MM.YYYY"]}})
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-item>
+    <ion-label>Mühle</ion-label>
+    <ion-select [(ngModel)]="data.mill">
+      <ion-select-option *ngFor="let mill of mills" value="{{mill.config.uuid}}">{{mill.name}}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-item>
+    <ion-label stacked>Mühlengeschwindikeit (rpm)</ion-label>
+    <ion-input remove-empty-number prevent-characters [(ngModel)]="data.mill_speed"  type="text"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label stacked>Druckprofil</ion-label>
+    <ion-input [(ngModel)]="data.pressure_profile"  type="text"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label stacked>Temperatur Zeit / Surf Zeit</ion-label>
+    <ion-input remove-empty-number prevent-characters [(ngModel)]="data.brew_temperature_time" type="text"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label stacked>Zeit</ion-label>
+    <ion-input remove-empty-number prevent-characters [(ngModel)]="data.brew_time" type="text"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label stacked>Blooming-Zeit / Preinfusion</ion-label>
+    <ion-input remove-empty-number prevent-characters [(ngModel)]="data.coffee_blooming_time" type="text"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label stacked>Erster Kaffeetropfen</ion-label>
+    <ion-input remove-empty-number prevent-characters [(ngModel)]="data.coffee_first_drip_time" type="text"></ion-input>
+  </ion-item>
+  <ion-row>
+    <ion-col col-8 col-sm-10>
+      <ion-item>
+        <ion-label stacked>Bezugsmenge</ion-label>
+        <ion-input remove-empty-number prevent-characters [(ngModel)]="data.brew_quantity" type="text"></ion-input>
+      </ion-item>
+    </ion-col>
+    <ion-col col-4 col-sm-2 align-self-end>
+      <ion-item>
+        <ion-select style="max-width:100%;"  [(ngModel)]="data.brew_quantity_type"  name="brewQuantityType" #brewQuantityType="ngModel">
+          <ion-select-option *ngFor="let key of brewQuantityTypeEnums | keys" value="{{key}}">{{brewQuantityTypeEnums[key]}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+  <ion-item>
+    <ion-label stacked>Kaffeetyp</ion-label>
+    <ion-input type="text" [(ngModel)]="data.coffee_type"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label stacked>Kaffee-Konzentration</ion-label>
+    <ion-input type="text" [(ngModel)]="data.coffee_concentration"></ion-input>
+  </ion-item>
+  <ion-item *ngIf="showRating()">
+    <ion-label stacked>Bewertung&nbsp;<ion-badge style="float:right;" color="secondary">{{data.rating}}</ion-badge>
+    </ion-label>
+    <!-- debounce="1000"  made an issue here -->
+    <ion-range *ngIf="data.rating" [(ngModel)]="data.rating"  min="1" max="10" step="1" snaps="true">
+      <ion-icon range-left  name="sad"></ion-icon>
+      <ion-icon range-right name="happy"></ion-icon>
+    </ion-range>
+  </ion-item>
+  <ion-item>
+    <ion-label stacked>Notizen</ion-label>
+    <ion-textarea autocomplete="true" spellcheck="true" autocorrect="true" [(ngModel)]="data.note"
+                  rows="5"></ion-textarea>
+  </ion-item>
+  <ion-item button (click)="addImage()">
+    Foto hinzufügen
+  </ion-item>
+  <div *ngIf="data?.attachments && data.attachments.length > 0">
+    <ion-slides #photoSlides pager="true">
+      <ion-slide *ngFor="let attachment of data.attachments;let i = index">
+        <ion-buttons end>
+          <ion-button color="primary" (click)="deleteImage(i)">Löschen</ion-button>
+        </ion-buttons>
+
+        <img [src]="attachment" class="brew-image">
+      </ion-slide>
+    </ion-slides>
+  </div>
+
+</ion-content>
+
+<ion-footer>
+  <ion-row>
+    <ion-col>
+      <ion-button (click)="dismiss()" fill="outline" expand="block">Abbrechen</ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button (click)="updateBrew()" type="submit" expand="block">Speichern</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>
+

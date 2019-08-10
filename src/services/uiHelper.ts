@@ -1,14 +1,14 @@
 /** Core */
 import {Injectable} from '@angular/core';
-import {InAppBrowser} from '@ionic-native/in-app-browser';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 /** Ionic */
-import {Platform} from 'ionic-angular';
+import { Platform } from '@ionic/angular';
 /** Third party */
-import moment from 'moment';
+import * as moment from 'moment';
 // tslint:disable-next-line
 import 'moment/locale/de';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import {File} from '@ionic-native/file';
+import { File } from '@ionic-native/file/ngx';
 import {UIFileHelper} from "./uiFileHelper";
 
 declare var cordova: any;

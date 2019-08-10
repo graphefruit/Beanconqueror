@@ -1,0 +1,24 @@
+<ion-item class="no-bottom-border item">
+  <ion-label stacked>{{ label }}</ion-label>
+  <ion-input prevent-characters type="number" [(ngModel)]="timer.seconds"></ion-input>
+  <button ion-button icon-left clear color="danger" small (click)="initTimer()" item-right
+          *ngIf="!timer.runTimer && (timer.hasStarted || timer.hasFinished) || timer.hasFinished">
+    <ion-icon name="refresh"></ion-icon>
+    Reset
+  </button>
+  <button ion-button icon-left clear small color="primary" (click)="pauseTimer()" item-right
+          *ngIf="timer.runTimer && timer.hasStarted && !timer.hasFinished">
+    <ion-icon name="pause"></ion-icon>
+    Pause
+  </button>
+  <button ion-button icon-left clear small color="primary" (click)="resumeTimer()" item-right
+          *ngIf="!timer.runTimer && timer.hasStarted && !timer.hasFinished">
+    <ion-icon name="play"></ion-icon>
+    Resume
+  </button>
+  <button ion-button icon-left clear small color="primary" (click)="startTimer()" item-right *ngIf="!timer.hasStarted">
+    <ion-icon name="play"></ion-icon>
+    Start
+  </button>
+</ion-item>
+

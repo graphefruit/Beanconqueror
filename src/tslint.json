@@ -1,0 +1,39 @@
+{
+  "extends": "../tslint.json",
+  "rules": {
+    "no-duplicate-variable": true,
+    "no-unused-variable": [
+      true
+    ],
+    "no-any":false,
+    "member-access": true,
+    "prefer-function-over-method": false,
+    "file-name-casing": false,
+    "arrow-parens":true,
+    "no-inferrable-types":false,
+    "no-console": false,
+    "variable-name": false,
+    "prefer-template": false,
+    "interface-name": false,
+    "newline-per-chained-call": false,
+    "no-unused-expression": true,
+    "no-floating-promises": false,
+    "whitespace": false,
+    "space-before-function-paren": false,
+    "ordered-imports": false,
+    "prefer-conditional-expression": false,
+    "directive-selector": [
+      true,
+      "attribute",
+      "app",
+      "camelCase"
+    ],
+    "component-selector": [
+      true,
+      "element",
+      "app",
+      "page",
+      "kebab-case"
+    ]
+  }
+}
