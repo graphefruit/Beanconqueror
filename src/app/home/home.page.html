@@ -1,0 +1,111 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      Home
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content>
+
+  <ion-grid>
+    <ion-row>
+      <ion-col col-5 text-center>
+        <ion-img *ngIf="isChristmasTime()" class="logo-icon-christmas" src="assets/img/icon_christmas.png"
+                 style="background:transparent;"></ion-img>
+        <ion-img *ngIf="!isChristmasTime()" class="logo-icon" src="assets/img/icon.png"
+                 style="background:transparent;"></ion-img>
+      </ion-col>
+      <ion-col col-7 text-center>
+        <h1 style="font-size:2rem;">Beanconqueror</h1>
+        <p style="font-size:1.2rem;">Schön dass du hier bist!</p>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-6 text-center>
+        <ion-card style="height: 100%;">
+          <ion-card-header style="font-size: 2em;">
+            <ion-icon name="cafe" slot="start"></ion-icon>
+            {{uiStatistic.getBrewsDrunk()}}
+          </ion-card-header>
+          <ion-card-content>
+            <span *ngIf="uiStatistic.getBrewsDrunk() == 1">
+                    Brühung gesamt
+            </span>
+            <span *ngIf="uiStatistic.getBrewsDrunk() != 1">
+                  Brühungen gesamt
+            </span>
+            <div *ngIf="uiStatistic.getBrewsDrunk() >0" style="max-width:200px;margin:0 auto;">
+              <ion-button fill="outline" size="small" (click)="addBrew()" >
+                <ion-icon name="md-add" slot="start"></ion-icon>
+                <span>Brühen</span>
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col col-6 text-center>
+        <ion-card style="height: 100%;">
+          <ion-card-header style="font-size: 2em;">
+            <ion-icon class="custom-coffee-beans"></ion-icon>
+            {{uiStatistic.getBeansCount()}}
+          </ion-card-header>
+          <ion-card-content>
+              <span *ngIf="uiStatistic.getBeansCount() == 1">
+                     Bohne erkundet
+              </span>
+            <span *ngIf="uiStatistic.getBeansCount() != 1">
+                     Bohnen erkundet
+              </span>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <ion-row *ngIf="uiStatistic.getLastDrunkBrewTimestamp()">
+      <ion-col col-12 text-center>
+        <ion-card>
+          <ion-card-header style="font-size: 2em;">{{uiStatistic.getSloganTimePassedSinceLastBrew()}}</ion-card-header>
+          <ion-card-content>
+            Letzter Bezug: {{uiStatistic.getLastDrunkBrewTimestamp()}}<br>
+            <ion-icon class="custom-coffee-beans"></ion-icon>&nbsp;{{uiStatistic.getLastBeanUsed()}}<br/>
+            <ion-icon class="custom-filter"></ion-icon>&nbsp;{{uiStatistic.getLastPreparationMethodUsed()}}<br/>
+            <ion-icon class="custom-mill"></ion-icon>&nbsp;{{uiStatistic.getLastMillUsed()}}
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="uiStatistic.getPreparationsCount()>2">
+      <ion-col col-12 text-center>
+        <ion-card>
+          <ion-card-content>
+            <strong>Unterschiedliche Zubereitungsmethoden:</strong> {{uiStatistic.getPreparationsCount()}}
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <!--<ion-row *ngIf="uiStatistic.getTotalGround()!=0">
+      <ion-col col-12 text-center>
+        <ion-card>
+          <ion-card-content>
+            <strong>Gesamt gemahlen:</strong> {{uiStatistic.getTotalGround()}}&nbsp;g
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>-->
+    <!--<ion-row *ngIf="uiStatistic.getTotalDrunk()!=0">
+      <ion-col col-12 text-center>
+        <ion-card>
+          <ion-card-content>
+            <strong>Gesamt getrunken:</strong> {{uiStatistic.getTotalDrunk()}} ml/g
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>-->
+  </ion-grid>
+
+</ion-content>

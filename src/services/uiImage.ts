@@ -1,12 +1,11 @@
 /** Core */
 import {Injectable} from '@angular/core';
-import {AndroidPermissions} from '@ionic-native/android-permissions';
+import {AndroidPermissions} from  '@ionic-native/android-permissions/ngx';
 /** Ionic native  */
-import {Camera, CameraOptions} from '@ionic-native/camera';
-import {ImagePicker} from '@ionic-native/image-picker';
+import {Camera, CameraOptions} from '@ionic-native/camera/ngx';
+import {ImagePicker} from '@ionic-native/image-picker/ngx';
 /** Ionic */
-import {AlertController, Platform} from 'ionic-angular';
-import {File} from '@ionic-native/file';
+import {AlertController, Platform} from '@ionic/angular';
 import {UIHelper} from './uiHelper';
 import {any} from 'codelyzer/util/function';
 import {UIFileHelper} from './uiFileHelper';
@@ -18,7 +17,6 @@ export class UIImage {
                private readonly alertController: AlertController,
                private readonly platform: Platform,
                private readonly androidPermissions: AndroidPermissions,
-               private readonly file: File,
                private readonly uiHelper: UIHelper,
                private readonly uiFileHelper: UIFileHelper) {
   }
@@ -94,10 +92,10 @@ export class UIImage {
   }
 
   public async showOptionChooser (): Promise<any> {
-    const promise = new Promise((resolve, reject) => {
-      const alert = this.alertController.create({
-        title: 'Auswählen',
-        subTitle: 'Foto aufnehmen oder aus Bibliothek auswählen',
+    const promise = new Promise(async (resolve, reject) => {
+      const alert = await this.alertController.create({
+        header: 'Auswählen',
+        subHeader: 'Foto aufnehmen oder aus Bibliothek auswählen',
         buttons: [
           {
             text: 'Aufnehmen',
@@ -113,7 +111,7 @@ export class UIImage {
           }
         ]
       });
-      alert.present({animate: false});
+      await alert.present();
     });
 
     return promise;
