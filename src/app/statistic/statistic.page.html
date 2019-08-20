@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      Statistik
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-list>
+    <ion-list-header>
+      Statistiken für Nerds.
+    </ion-list-header>
+    <ion-item>Mühlenfuhrpark: {{uiStatistic.getMillsCount()}} Stück</ion-item>
+    <ion-item>Zubereitungsmethoden: {{uiStatistic.getPreparationsCount()}} Stück</ion-item>
+    <ion-item>Vermahlene Bohnen: {{uiStatistic.getTotalGround()}} g</ion-item>
+    <ion-item>Geld für Kaffee ausgegeben: {{uiStatistic.getSpentMoneyForCoffeeBeans()}} €</ion-item>
+    <ion-item>Getrunkene Tassen: {{uiStatistic.getBrewsDrunk()}} </ion-item>
+    <ion-item>Getrunkene Menge: {{uiStatistic.getTotalDrunk()}} gr/ml</ion-item>
+  </ion-list>
+  <ion-card>
+    <ion-card-content>
+      <canvas #drinkChart></canvas>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>
