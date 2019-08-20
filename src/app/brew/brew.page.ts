@@ -10,7 +10,6 @@ import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {UIBrewHelper} from '../../services/uiBrewHelper';
 import {Brew} from '../../classes/brew/brew';
 import {SocialSharing} from '@ionic-native/social-sharing/ngx';
-import {PreparationAddComponent} from '../preparation/preparation-add/preparation-add.component';
 import {BrewAddComponent} from './brew-add/brew-add.component';
 import {FileEntry} from '@ionic-native/file';
 import {BrewDetailComponent} from './brew-detail/brew-detail.component';
@@ -33,6 +32,7 @@ export class BrewPage implements OnInit {
   public archiveBrewsView: Array<BrewView> = [];
   public brew_segment: string = 'open';
   public settings: ISettings;
+  public query: string = '';
 
   constructor (private readonly modalCtrl: ModalController,
                private readonly platform: Platform,
