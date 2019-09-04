@@ -1,4 +1,4 @@
-import {Component, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ViewChild} from '@angular/core';
 
 import {IonRouterOutlet, MenuController, ModalController, Platform} from '@ionic/angular';
 import {SplashScreen} from '@ionic-native/splash-screen/ngx';
@@ -15,12 +15,17 @@ import {ThreeDeeTouch} from '@ionic-native/three-dee-touch/ngx';
 import {Mill} from '../classes/mill/mill';
 import {Brew} from '../classes/brew/brew';
 import {Router} from '@angular/router';
+import {BeansAddComponent} from './beans/beans-add/beans-add.component';
+import {PreparationAddComponent} from './preparation/preparation-add/preparation-add.component';
+import {MillAddComponent} from './mill/mill-add/mill-add.component';
+import {UIBrewHelper} from '../services/uiBrewHelper';
+import {BrewAddComponent} from './brew/brew-add/brew-add.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html'
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit {
   public toggleAbout: boolean = false;
   public registerBackFunction: any;
    @ViewChild(IonRouterOutlet) public routerOutlet: IonRouterOutlet;
@@ -45,22 +50,22 @@ export class AppComponent {
 
 
   constructor(
-      private readonly router: Router,
-      public platform: Platform,
-      public statusBar: StatusBar,
-      public splashScreen: SplashScreen,
-      private readonly uiLog: UILog,
-      private readonly uiBeanStorage: UIBeanStorage,
-      private readonly uiBrewStorage: UIBrewStorage,
-      private readonly uiPreparationStorage: UIPreparationStorage,
-      private readonly uiMillStorage: UIMillStorage,
-      private readonly uiBrewHelper: UIBrewStorage,
-      private readonly menuCtrl: MenuController,
-      private readonly appMinimize: AppMinimize,
-      private readonly uiSettingsStorage: UISettingsStorage,
-      private readonly keyboard: Keyboard,
-      private readonly threeDeeTouch: ThreeDeeTouch,
-      private readonly modalCtrl: ModalController
+    private readonly router: Router,
+    public platform: Platform,
+    public statusBar: StatusBar,
+    public splashScreen: SplashScreen,
+    private readonly uiLog: UILog,
+    private readonly uiBeanStorage: UIBeanStorage,
+    private readonly uiBrewStorage: UIBrewStorage,
+    private readonly uiPreparationStorage: UIPreparationStorage,
+    private readonly uiMillStorage: UIMillStorage,
+    private readonly uiBrewHelper: UIBrewHelper,
+    private readonly menuCtrl: MenuController,
+    private readonly appMinimize: AppMinimize,
+    private readonly uiSettingsStorage: UISettingsStorage,
+    private readonly keyboard: Keyboard,
+    private readonly threeDeeTouch: ThreeDeeTouch,
+    private readonly modalCtrl: ModalController
   ) {
 
   }
@@ -131,20 +136,18 @@ export class AppComponent {
   private __initApp(): void {
     this.__registerBack();
 
-
-
     if (this.platform.is('ios')) {
       this.threeDeeTouch.onHomeIconPressed()
           .subscribe(
-              (payload) => {
+            async (payload) => {
                 if (payload.type === 'Brew') {
-                  this.__trackNewBrew();
+                  await this.__trackNewBrew();
                 } else if (payload.type === 'Bean') {
-                  this.__trackNewBean();
+                  await this.__trackNewBean();
                 } else if (payload.type === 'Preparation') {
-                  this.__trackNewPreparation();
+                  await this.__trackNewPreparation();
                 } else if (payload.type === 'Mill') {
-                  this.__trackNewMill();
+                  await this.__trackNewMill();
                 }
                 // returns an object that is the button you presed
 
@@ -153,42 +156,46 @@ export class AppComponent {
     }
   }
 
-  private __trackNewBrew(): void {
+  private async __trackNewBrew() {
 
-    /*if (this.uiBrewHelper.canBrew()) {
-      const addBrewsModal = this.modalCtrl.create(BrewsAddModal, {});
-      addBrewsModal.present({animate: false});
-    }*/
-
-  }
-  private __trackNewBean(): void {
-
-    //const modal = await this.modalCtrl.create(BeansAddModal, {});
-    //await modal.present();
-
-  }
-  private __trackNewPreparation(): void {
-
-    //const modal = await this.modalCtrl.create(PreparationsAddModal, {});
-    //await modal.present();
-
-  }
-  private __trackNewMill(): void {
-
-    //const modal = await this.modalCtrl.create(MillAddModal, {});
-   //await modal.present();
+    if (this.uiBrewHelper.canBrew()) {
+      const modal = await this.modalCtrl.create({component: BrewAddComponent});
+      await modal.present();
+      await modal.onWillDismiss();
+    }
 
   }
 
-  private __registerBack(): void{
+  private async __trackNewBean() {
+
+    const modal = await this.modalCtrl.create({component: BeansAddComponent});
+    await modal.present();
+    await modal.onWillDismiss();
+
+  }
+
+  private async __trackNewPreparation() {
+    const modal = await this.modalCtrl.create({component: PreparationAddComponent});
+    await modal.present();
+    await modal.onWillDismiss();
+
+  }
+
+  private async __trackNewMill() {
+    const modal = await this.modalCtrl.create({component: MillAddComponent});
+    await modal.present();
+    await modal.onWillDismiss();
+
+  }
+
+  private __registerBack() {
     this.platform.backButton.subscribeWithPriority(0, () => {
       if (this.routerOutlet && this.routerOutlet.canGoBack()) {
         this.routerOutlet.pop();
-      } else if (this.router.url === '/LoginPage') {
+      } else if (this.router.url === '/home') {
         this.appMinimize.minimize();
-
         // or if that doesn't work, try
-        navigator['app'].exitApp();
+        // navigator['app'].exitApp();
       } else {
         // this.generic.showAlert("Exit", "Do you want to exit the app?", this.onYesHandler, this.onNoHandler, "backPress");
       }

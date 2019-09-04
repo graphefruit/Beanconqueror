@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {ModalController, NavController} from '@ionic/angular';
 import {UIStatistic} from '../../services/uiStatistic';
 import * as moment from 'moment';
+import {BrewAddComponent} from '../brew/brew-add/brew-add.component';
 
 
 @Component({
@@ -25,7 +26,9 @@ export class HomePage {
   }
 
   public async addBrew() {
-
+    const modal = await this.modalCtrl.create({component: BrewAddComponent});
+    await modal.present();
+    await modal.onWillDismiss();
   }
 
   public isChristmasTime(): boolean {

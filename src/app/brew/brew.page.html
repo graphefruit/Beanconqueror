@@ -4,7 +4,7 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button icon-only (click)="add()">
+      <ion-button (click)="add()" [disabled]="!uiBrewHelper.canBrew()" icon-only>
         <ion-icon name="add"></ion-icon>
       </ion-button>
       <ion-button icon-only (click)="showMore($event)">
