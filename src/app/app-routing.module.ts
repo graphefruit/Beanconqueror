@@ -10,18 +10,20 @@ const routes: Routes = [
   },
   {
     path: 'home',
-    loadChildren: './home/home.module#HomePageModule'
+    loadChildren: './home/home.module#HomePageModule',
+    pathMatch: 'full'
   },
   {
     path: 'info',
-    loadChildren: './info/info.module#InfoModule'
+    loadChildren: './info/info.module#InfoModule',
+    pathMatch: 'full'
   },
-  { path: 'settings', loadChildren: './settings/settings.module#SettingsPageModule' },
-  { path: 'mill', loadChildren: './mill/mill.module#MillPageModule' },
-  { path: 'beans', loadChildren: './beans/beans.module#BeansPageModule' },
-  { path: 'preparation', loadChildren: './preparation/preparation.module#PreparationPageModule' },
-  { path: 'brew', loadChildren: './brew/brew.module#BrewPageModule' },
-  {path: 'statistic', loadChildren: './statistic/statistic.module#StatisticPageModule'},
+  {path: 'settings', loadChildren: './settings/settings.module#SettingsPageModule', pathMatch: 'full'},
+  {path: 'mill', loadChildren: './mill/mill.module#MillPageModule', pathMatch: 'full'},
+  {path: 'beans', loadChildren: './beans/beans.module#BeansPageModule', pathMatch: 'full'},
+  {path: 'preparation', loadChildren: './preparation/preparation.module#PreparationPageModule', pathMatch: 'full'},
+  {path: 'brew', loadChildren: './brew/brew.module#BrewPageModule', pathMatch: 'full'},
+  {path: 'statistic', loadChildren: './statistic/statistic.module#StatisticPageModule', pathMatch: 'full'},
 ];
 
 @NgModule({

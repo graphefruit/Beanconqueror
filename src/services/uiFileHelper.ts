@@ -1,8 +1,8 @@
 /** Core */
 import {Injectable} from '@angular/core';
-import { File } from '@ionic-native/file/ngx';
+import {File} from '@ionic-native/file/ngx';
 import {unescape} from 'querystring';
-import { Platform } from '@ionic/angular';
+import {Platform} from '@ionic/angular';
 
 /**
  * Handles every helping functionalities
@@ -10,6 +10,7 @@ import { Platform } from '@ionic/angular';
 @Injectable()
 export class UIFileHelper {
 
+  private cachedBase64: any = {};
   constructor (private readonly file: File, private readonly platform: Platform) {
   }
 
@@ -35,6 +36,9 @@ export class UIFileHelper {
   public async getBase64File (_filePath: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       if (this.platform.is('cordova')) {
+        if (this.cachedBase64[_filePath]) {
+          resolve(this.cachedBase64[_filePath]);
+        }
         // let filePath: string;
         // filePath = _filePath;
         let path: string;
@@ -46,6 +50,7 @@ export class UIFileHelper {
         }
 
         this.file.readAsDataURL(path, fileName).then((_dataUrl: string) => {
+          this.cachedBase64[_filePath] = _dataUrl;
           resolve(_dataUrl);
         });
       } else {

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {UIFileHelper} from '../../services/uiFileHelper';
 
 @Component({
@@ -9,7 +9,8 @@ import {UIFileHelper} from '../../services/uiFileHelper';
 export class AsyncImageComponent implements OnInit {
   @Input() public filePath: string;
 
-  public img: string;
+  public img: string = '';
+  public preloadImg: string = 'assets/img/coffee_loader.gif';
   constructor( private uiFileHelper: UIFileHelper) { }
 
   public async ngOnInit(): Promise<void> {

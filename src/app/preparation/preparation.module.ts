@@ -1,15 +1,12 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Routes, RouterModule } from '@angular/router';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {RouterModule, Routes} from '@angular/router';
 
-import { IonicModule } from '@ionic/angular';
+import {IonicModule} from '@ionic/angular';
 
-import { PreparationPage } from './preparation.page';
-import {PreparationAddComponent} from './preparation-add/preparation-add.component';
-import {PreparationEditComponent} from './preparation-edit/preparation-edit.component';
-import {BeansAddComponent} from '../beans/beans-add/beans-add.component';
-import {BeansEditComponent} from '../beans/beans-edit/beans-edit.component';
+import {PreparationPage} from './preparation.page';
+import {SharedModule} from '../shared/shared.module';
 
 const routes: Routes = [
   {
@@ -23,9 +20,10 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    SharedModule
   ],
-  declarations: [PreparationPage,PreparationAddComponent,PreparationEditComponent],
-  entryComponents:[PreparationAddComponent,PreparationEditComponent],
+  declarations: [],
+  entryComponents: [],
 })
 export class PreparationPageModule {}

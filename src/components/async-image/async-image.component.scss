@@ -1,6 +1,12 @@
-async-image {
+:host {
   .brew-image img {
     max-width: 50%;
     max-height: 200px;
   }
+
+  .preload-img {
+    width: 64px;
+    margin: 0 auto;
+  }
 }
+

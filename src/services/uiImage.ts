@@ -1,6 +1,6 @@
 /** Core */
 import {Injectable} from '@angular/core';
-import {AndroidPermissions} from  '@ionic-native/android-permissions/ngx';
+import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
 /** Ionic native  */
 import {Camera, CameraOptions} from '@ionic-native/camera/ngx';
 import {ImagePicker} from '@ionic-native/image-picker/ngx';
@@ -68,11 +68,16 @@ export class UIImage {
     const promise = new Promise((resolve, reject) => {
       this.__checkPermission(() => {
           setTimeout(() => {
-            this.imagePicker.getPictures({maximumImagesCount: 1}).then((results) => {
+            this.imagePicker.getPictures({maximumImagesCount: 1, outputType: 1}).then((results) => {
               if (results && results.length > 0 && results[0] !== 0 && results[0] !== '' && results[0] !== 'OK' && results[0].length > 5) {
-                const imagePath = results[0];
-                console.log(`Choose Photo Path ${imagePath}`);
-                resolve(imagePath);
+                const imageStr: string = `data:image/jpeg;base64,${results[0]}`;
+                this.uiFileHelper.saveBase64File('beanconqueror_image', '.png', imageStr).then((_newURL) => {
+                  // const filePath = _newURL.replace(/^file:\/\//, '');
+                  resolve(_newURL);
+                });
+                // const imagePath = results[0];
+                // console.log(`Choose Photo Path ${imagePath}`);
+                // resolve(imagePath);
               } else {
                 reject();
               }
@@ -103,12 +108,12 @@ export class UIImage {
               resolve('TAKE');
             }
           },
-          {
-            text: 'Auswählen',
-            handler: () => {
-              resolve('CHOOSE');
-            }
-          }
+          /* {
+             text: 'Auswählen',
+             handler: () => {
+               resolve('CHOOSE');
+             }
+           }*/
         ]
       });
       await alert.present();

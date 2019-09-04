@@ -32,7 +32,7 @@
         Du hast leider keine frischen Bohnen mehr!
       </ion-card>
       <ion-card *ngFor="let bean of getOpenBeans()">
-        <div *ngIf="bean.filePath">
+        <div>
          <async-image filePath="{{bean.filePath}}"></async-image>
         </div>
         <ion-card-header>
