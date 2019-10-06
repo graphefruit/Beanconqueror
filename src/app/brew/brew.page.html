@@ -19,8 +19,7 @@
 <ion-content>
 
 
-
-  <div padding>
+  <div class="ion-padding" s>
     <ion-segment [(ngModel)]="brew_segment">
       <ion-segment-button value="open">
         Aktuell
@@ -36,13 +35,13 @@
       <ion-input [(ngModel)]="query" type="text"></ion-input>
     </ion-item>
     <div *ngSwitchCase="'open'">
-      <ion-card  padding *ngIf="!uiBrewHelper.canBrew()">
+      <ion-card *ngIf="!uiBrewHelper.canBrew()" class="ion-padding">
         <h2 class="error-text">Um einen Bezug zu starten, lege bitte eine <b>Bohnensorte</b> sowie eine <b>Zubereitungsmethode</b> und <b>Mühle</b> an.</h2>
       </ion-card>
-      <ion-card padding *ngIf="brews?.length == 0 && uiBrewHelper.canBrew()">
+      <ion-card *ngIf="brews?.length == 0 && uiBrewHelper.canBrew()" class="ion-padding">
         Du hast leider noch keinen Kaffee, seit der Benutzung dieser App getrunken (schon etwas schade oder?)
       </ion-card>
-      <ion-card padding *ngIf="openBrewsView?.length == 0">
+      <ion-card *ngIf="openBrewsView?.length == 0" class="ion-padding">
         Keine Einträge vorhanden.
       </ion-card>
       <ion-list *ngFor="let brewView of openBrewsView">
@@ -143,7 +142,7 @@
       </ion-list>
     </div>
     <div *ngSwitchCase="'archive'">
-      <ion-card padding *ngIf="archiveBrewsView?.length == 0">
+      <ion-card *ngIf="archiveBrewsView?.length == 0" class="ion-padding" s>
         Keine Einträge vorhanden.
       </ion-card>
       <ion-list *ngFor="let brewView of archiveBrewsView">

@@ -16,7 +16,6 @@ const routes: Routes = [
   {
     path: 'info',
     loadChildren: './info/info.module#InfoModule',
-    pathMatch: 'full'
   },
   {path: 'settings', loadChildren: './settings/settings.module#SettingsPageModule', pathMatch: 'full'},
   {path: 'mill', loadChildren: './mill/mill.module#MillPageModule', pathMatch: 'full'},

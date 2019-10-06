@@ -24,6 +24,7 @@
     <platform name="android">
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
             <application android:networkSecurityConfig="@xml/network_security_config" />
+          <application android:allowBackup="false"/>
         </edit-config>
         <resource-file src="resources/android/xml/network_security_config.xml" target="app/src/main/res/xml/network_security_config.xml" />
         <allow-intent href="market:*" />
@@ -163,7 +164,8 @@
       <variable name="ANDROID_SUPPORT_V4_VERSION" value="27.+"/>
     </plugin>
     <plugin name="cordova-plugin-appminimize" spec="~1.0.1" />
-    <plugin name="cordova-plugin-3dtouch" spec="~1.3.6" />
-    <engine name="android" spec="^7.1.4" />
+  <plugin name="cordova-android-support-gradle-release" spec="^3.0.1"/>
+  <plugin name="cordova-plugin-3dtouch" spec="^1.3.7"/>
     <engine name="ios" spec="^4.5.5" />
+  <engine name="android" spec="^7.1.4"/>
 </widget>

@@ -6,7 +6,6 @@ import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {IBean} from '../../interfaces/bean/iBean';
 import {Brew} from '../../classes/brew/brew';
 import {Bean} from '../../classes/bean/bean';
-import {MillAddComponent} from '../mill/mill-add/mill-add.component';
 import {BeansAddComponent} from './beans-add/beans-add.component';
 import {BeansEditComponent} from './beans-edit/beans-edit.component';
 
@@ -56,6 +55,7 @@ export class BeansPage implements OnInit {
   }
 
   public async editBean(_bean: IBean) {
+
     const modal = await this.modalCtrl.create({component:BeansEditComponent,  componentProps: {'bean' : _bean}});
     await modal.present();
     await modal.onWillDismiss();
