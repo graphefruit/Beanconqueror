@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ViewChild, ViewEncapsulation} from '@angular/core';
 
 import {IonRouterOutlet, MenuController, ModalController, Platform} from '@ionic/angular';
 import {SplashScreen} from '@ionic-native/splash-screen/ngx';
@@ -23,7 +23,8 @@ import {BrewAddComponent} from './brew/brew-add/brew-add.component';
 
 @Component({
   selector: 'app-root',
-  templateUrl: 'app.component.html'
+  templateUrl: 'app.component.html',
+  encapsulation: ViewEncapsulation.None,
 })
 export class AppComponent implements AfterViewInit {
   public toggleAbout: boolean = false;

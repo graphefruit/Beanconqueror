@@ -65,3 +65,7 @@ npm install @ionic-native/three-dee-touch
 
 #ChartJS
 npm install chart.js --save
+
+##Support grade release
+ionic cordova plugin add cordova-android-support-gradle-release
+

@@ -108,12 +108,12 @@ export class UIImage {
               resolve('TAKE');
             }
           },
-          /* {
+          {
              text: 'Auswählen',
              handler: () => {
                resolve('CHOOSE');
              }
-           }*/
+          }
         ]
       });
       await alert.present();

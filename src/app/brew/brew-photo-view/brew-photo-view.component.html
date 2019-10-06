@@ -13,7 +13,7 @@
     <ion-slides #photoSlides pager="true" zoom="true">
       <ion-slide *ngFor="let attachment of data.attachments;let i = index">
         <div class="swiper-zoom-container">
-          <img [src]="attachment">
+          <async-image class="brew-image" filePath="{{attachment}}"></async-image>
         </div>
       </ion-slide>
     </ion-slides>

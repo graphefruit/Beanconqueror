@@ -16,7 +16,7 @@
 
 
 <ion-content>
-  <div padding>
+  <div class="ion-padding">
     <ion-segment [(ngModel)]="bean_segment">
       <ion-segment-button value="open">
         Beziehbar
@@ -28,7 +28,7 @@
   </div>
   <div [ngSwitch]="bean_segment" >
     <div *ngSwitchCase="'open'">
-      <ion-card padding *ngIf="getOpenBeans()?.length == 0">
+      <ion-card *ngIf="getOpenBeans()?.length == 0" class="ion-padding">
         Du hast leider keine frischen Bohnen mehr!
       </ion-card>
       <ion-card *ngFor="let bean of getOpenBeans()">
@@ -76,13 +76,11 @@
       </ion-card>
     </div>
     <div *ngSwitchCase="'finished'">
-      <ion-card padding *ngIf="getFinishedBeans()?.length == 0">
+      <ion-card *ngIf="getFinishedBeans()?.length == 0" class="ion-padding">
         Du hast keine aufgebrauchten Bohnen!
       </ion-card>
       <ion-card *ngFor="let bean of getFinishedBeans()">
-        <div *ngIf="bean.filePath">
-          <async-image filePath="{{bean.filePath}}"></async-image>
-        </div>
+        <async-image filePath="{{bean.filePath}}"></async-image>
         <!-- <img class="card-image" *ngIf="bean.filePath" [src]="bean.filePath"/>-->
         <ion-card-header>
           {{bean.name}}

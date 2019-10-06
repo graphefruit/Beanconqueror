@@ -24,22 +24,108 @@ import {MillAddComponent} from '../mill/mill-add/mill-add.component';
 import {PreparationPage} from '../preparation/preparation.page';
 import {PreparationAddComponent} from '../preparation/preparation-add/preparation-add.component';
 import {PreparationEditComponent} from '../preparation/preparation-edit/preparation-edit.component';
+import {AboutComponent} from '../info/about/about.component';
+import {ContactComponent} from '../info/contact/contact.component';
+import {CreditsComponent} from '../info/credits/credits.component';
+import {LicencesComponent} from '../info/licences/licences.component';
+import {PrivacyComponent} from '../info/privacy/privacy.component';
+import {TermsComponent} from '../info/terms/terms.component';
+import {ThanksComponent} from '../info/thanks/thanks.component';
+import {UIStorage} from '../../services/uiStorage';
+import {UISettingsStorage} from '../../services/uiSettingsStorage';
+import {UIHelper} from '../../services/uiHelper';
+import {InAppBrowser} from '@ionic-native/in-app-browser/ngx';
+import {UIPreparationStorage} from '../../services/uiPreparationStorage';
+import {File} from '@ionic-native/file/ngx';
+import {UIFileHelper} from '../../services/uiFileHelper';
+import {UILog} from '../../services/uiLog';
+import {FileChooser} from '@ionic-native/file-chooser/ngx';
+import {FilePath} from '@ionic-native/file-path/ngx';
+import {UIAlert} from '../../services/uiAlert';
+import {UIBeanStorage} from '../../services/uiBeanStorage';
+import {UIBrewStorage} from '../../services/uiBrewStorage';
+import {UIMillStorage} from '../../services/uiMillStorage';
+import {IOSFilePicker} from '@ionic-native/file-picker/ngx';
+import {SocialSharing} from '@ionic-native/social-sharing/ngx';
+import {AppMinimize} from '@ionic-native/app-minimize/ngx';
+import {Keyboard} from '@ionic-native/keyboard/ngx';
+import {ThreeDeeTouch} from '@ionic-native/three-dee-touch/ngx';
+import {UIImage} from '../../services/uiImage';
+import {Camera} from '@ionic-native/camera/ngx';
+import {ImagePicker} from '@ionic-native/image-picker/ngx';
+import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
+import {UIBrewHelper} from '../../services/uiBrewHelper';
+import {UIStatistic} from '../../services/uiStatistic';
+import {StatusBar} from '@ionic-native/status-bar/ngx';
+import {SplashScreen} from '@ionic-native/splash-screen/ngx';
 
 
 @NgModule({
-  declarations: [PreparationPage, PreparationAddComponent, PreparationEditComponent, MillPage, MillEditComponent, MillAddComponent, BrewAddComponent, FormatDatePipe, KeysPipe, AsyncImageComponent, SearchPipe, RemoveEmptyNumberDirective, PreventCharacterDirective, BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent, BrewPopoverComponent, BrewTableComponent, BrewTextComponent, TimerComponent],
-  entryComponents: [PreparationPage, PreparationAddComponent, PreparationEditComponent, MillPage, MillEditComponent, MillAddComponent, BrewAddComponent, BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent, BrewPopoverComponent, BrewTableComponent, BrewTextComponent, TimerComponent],
+  declarations: [AboutComponent,
+    ContactComponent,
+    CreditsComponent,
+    LicencesComponent,
+    PrivacyComponent,
+    TermsComponent,
+    ThanksComponent, PreparationPage, PreparationAddComponent,
+    PreparationEditComponent, MillPage, MillEditComponent, MillAddComponent, BrewAddComponent,
+    FormatDatePipe, KeysPipe, AsyncImageComponent, SearchPipe, RemoveEmptyNumberDirective,
+    PreventCharacterDirective, BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent,
+    BrewPopoverComponent, BrewTableComponent, BrewTextComponent, TimerComponent],
+  entryComponents: [AboutComponent,
+    ContactComponent,
+    CreditsComponent,
+    LicencesComponent,
+    PrivacyComponent,
+    TermsComponent,
+    ThanksComponent, PreparationPage,
+    PreparationAddComponent, PreparationEditComponent, MillPage, MillEditComponent,
+    MillAddComponent, BrewAddComponent, BrewPage, BrewDetailComponent, BrewEditComponent,
+    BrewPhotoViewComponent, BrewPopoverComponent, BrewTableComponent, BrewTextComponent, TimerComponent],
   imports: [
     CommonModule,
     IonicModule,
     FormsModule,
   ],
   providers: [
-    RemoveEmptyNumberDirective, PreventCharacterDirective, FormatDatePipe, KeysPipe
+    StatusBar,
+    SplashScreen,
+    RemoveEmptyNumberDirective, PreventCharacterDirective, FormatDatePipe, KeysPipe,
+    UIStorage,
+    UISettingsStorage,
+    UIHelper,
+    InAppBrowser,
+    UIPreparationStorage,
+    File,
+    UIFileHelper,
+    UILog,
+    FileChooser,
+    FilePath,
+    UIAlert,
+    UIBeanStorage,
+    UIBrewStorage,
+    UIMillStorage,
+    IOSFilePicker,
+    SocialSharing,
+    AppMinimize,
+    Keyboard,
+    ThreeDeeTouch,
+    UIImage, Camera, ImagePicker, AndroidPermissions, UIBrewHelper,
+    UIHelper, InAppBrowser, File, UIFileHelper, UIStatistic
   ],
 
-  exports: [PreparationPage, PreparationAddComponent, PreparationEditComponent, MillPage, MillEditComponent, MillAddComponent, BrewAddComponent, FormatDatePipe,
-    KeysPipe, AsyncImageComponent, SearchPipe, RemoveEmptyNumberDirective, PreventCharacterDirective, BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent, BrewPopoverComponent, BrewTableComponent, BrewTextComponent, TimerComponent],
+  exports: [AboutComponent,
+    ContactComponent,
+    CreditsComponent,
+    LicencesComponent,
+    PrivacyComponent,
+    TermsComponent,
+    ThanksComponent, PreparationPage, PreparationAddComponent,
+    PreparationEditComponent, MillPage, MillEditComponent, MillAddComponent,
+    BrewAddComponent, FormatDatePipe,
+    KeysPipe, AsyncImageComponent, SearchPipe, RemoveEmptyNumberDirective,
+    PreventCharacterDirective, BrewPage, BrewDetailComponent, BrewEditComponent,
+    BrewPhotoViewComponent, BrewPopoverComponent, BrewTableComponent, BrewTextComponent, TimerComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule {

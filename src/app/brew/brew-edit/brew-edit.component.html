@@ -115,7 +115,7 @@
           <ion-button color="primary" (click)="deleteImage(i)">Löschen</ion-button>
         </ion-buttons>
 
-        <img [src]="attachment" class="brew-image">
+        <async-image class="brew-image" filePath="{{attachment}}"></async-image>
       </ion-slide>
     </ion-slides>
   </div>

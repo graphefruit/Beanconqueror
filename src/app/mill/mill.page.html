@@ -15,7 +15,7 @@
 </ion-header>
 
 <ion-content>
-  <ion-card padding *ngIf="mills?.length == 0">
+  <ion-card *ngIf="mills?.length == 0" class="ion-padding">
     Du hast leider noch keine Mühlen hinterlegt!
   </ion-card>
   <ion-card *ngFor="let mill of mills">

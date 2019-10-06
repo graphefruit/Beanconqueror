@@ -10,6 +10,7 @@ export class Bean implements IBean {
   public name: string;
   public roastingDate: string;
   public note: string;
+  /** @deprecated use attachments instead */
   public filePath: string;
   public roaster: string;
   public config: Config;
@@ -23,6 +24,7 @@ export class Bean implements IBean {
   public weight: number;
   public finished: boolean;
   public cost: number;
+  public attachments: Array<string>;
 
   constructor() {
     this.name = '';
@@ -40,6 +42,7 @@ export class Bean implements IBean {
     this.weight = 0;
     this.finished = false;
     this.cost = 0;
+    this.attachments = [];
   }
 
   public getRoastName(): string {

@@ -21,7 +21,7 @@
       <ion-select-option *ngFor="let key of roastsEnum | keys" value="{{key}}">{{roastsEnum[key]}}</ion-select-option>
     </ion-select>
   </ion-item>
-  <ion-item *ngIf="data.roast == 'CUSTOM_ROAST'">
+  <ion-item *ngIf="data.roast.toString() =='CUSTOM_ROAST'">
     <ion-label floating >Custom Roast</ion-label>
     <ion-input [(ngModel)]="data.roast_custom" name="roast_custom" type="text" #roast_custom="ngModel" spellcheck="false"
                autocapitalize="off" required>

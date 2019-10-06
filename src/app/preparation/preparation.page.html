@@ -17,7 +17,7 @@
 
 
 <ion-content>
-  <ion-card padding *ngIf="preparations?.length == 0">
+  <ion-card *ngIf="preparations?.length == 0" class="ion-padding">
     Du hast leider noch keine Brühmethoden hinterlegt!
   </ion-card>
   <ion-card *ngFor="let preparation of preparations">

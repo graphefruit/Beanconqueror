@@ -4,11 +4,9 @@
 The App is basically a Website. (Don't run away yet, it's smooth as hell !)  
 To get it up and running on your system check below:
 ### Android
-Download a Release [here](https://github.com/graphefruit/Beanconqueror/releases).  
-Later on you might be able to get the app through the Playstore check. (Check back [here](https://github.com/graphefruit/Beanconqueror/issues/3))
+Download the latest version [here](https://play.google.com/store/apps/details?id=com.beanconqueror.app).  
 ### iOS
-Building an iOS app is pretty darn expensive, so unless someone volunteers it's not going to happen.
-You can still use the App though, through the PWA. Check *Getting The App / Anything Else*.
+Download the latest version [here](https://apps.apple.com/de/app/beanconqueror/id1445297158).
 ### Anything else
 The App ist available with any modern internet browser at (link will be added soon (tm)).  
 If your system is up for it you can load Beanconqueror as a PWA for a sweet offline experience.
