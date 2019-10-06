@@ -1,88 +1,73 @@
-/** Core */
-import {Component, ViewChild} from '@angular/core';
-import {AppMinimize} from '@ionic-native/app-minimize';
-import {Keyboard} from '@ionic-native/keyboard';
-import {SplashScreen} from '@ionic-native/splash-screen';
-/** Ionic native */
-import {StatusBar} from '@ionic-native/status-bar';
-import {ThreeDeeTouch} from '@ionic-native/three-dee-touch';
-/**  Ionic */
-import {IonicApp, MenuController, ModalController, Nav, Platform} from 'ionic-angular';
-import {Brew} from '../classes/brew/brew';
-import {Mill} from '../classes/mill/mill';
-import {BeansAddModal} from '../pages/beans/add/beans-add';
-import {BeansPage} from '../pages/beans/beans';
-import {BrewsAddModal} from '../pages/brews/add/brews-add';
-import {BrewsPage} from '../pages/brews/brews';
-/**  Pages */
-import {HomePage} from '../pages/home/home';
-import {AboutPage} from '../pages/info/about/about';
-import {ContactPage} from '../pages/info/contact/contact';
-import {CreditsPage} from '../pages/info/credits/credits';
-import {LicencesPage} from '../pages/info/licences/licences';
-import {PrivacyPage} from '../pages/info/privacy/privacy';
-import {TermsPage} from '../pages/info/terms/terms';
-import {ThanksPage} from '../pages/info/thanks/thanks';
-import {MillAddModal} from '../pages/mill/add/mill-add';
-import {MillsPage} from '../pages/mill/mills';
-import {PreparationsAddModal} from '../pages/preparations/add/preparations-add';
-import {PreparationsPage} from '../pages/preparations/preparations';
-import {SettingsPage} from '../pages/settings/settings';
-import {StatisticsPage} from '../pages/statistics/statistics';
-import {UIBeanStorage} from '../services/uiBeanStorage';
-import {UIBrewHelper} from '../services/uiBrewHelper';
-import {UIBrewStorage} from '../services/uiBrewStorage';
-/** Serivces */
+import {AfterViewInit, Component, ViewChild, ViewEncapsulation} from '@angular/core';
+
+import {IonRouterOutlet, MenuController, ModalController, Platform} from '@ionic/angular';
+import {SplashScreen} from '@ionic-native/splash-screen/ngx';
+import {StatusBar} from '@ionic-native/status-bar/ngx';
 import {UILog} from '../services/uiLog';
-import {UIMillStorage} from '../services/uiMillStorage';
+import {UIBeanStorage} from '../services/uiBeanStorage';
+import {UIBrewStorage} from '../services/uiBrewStorage';
 import {UIPreparationStorage} from '../services/uiPreparationStorage';
+import {UIMillStorage} from '../services/uiMillStorage';
 import {UISettingsStorage} from '../services/uiSettingsStorage';
+import {AppMinimize} from '@ionic-native/app-minimize/ngx';
+import {Keyboard} from '@ionic-native/keyboard/ngx';
+import {ThreeDeeTouch} from '@ionic-native/three-dee-touch/ngx';
+import {Mill} from '../classes/mill/mill';
+import {Brew} from '../classes/brew/brew';
+import {Router} from '@angular/router';
+import {BeansAddComponent} from './beans/beans-add/beans-add.component';
+import {PreparationAddComponent} from './preparation/preparation-add/preparation-add.component';
+import {MillAddComponent} from './mill/mill-add/mill-add.component';
+import {UIBrewHelper} from '../services/uiBrewHelper';
+import {BrewAddComponent} from './brew/brew-add/brew-add.component';
 
 @Component({
-  templateUrl: 'app.html'
+  selector: 'app-root',
+  templateUrl: 'app.component.html',
+  encapsulation: ViewEncapsulation.None,
 })
-export class MyApp {
-  @ViewChild(Nav) public nav: Nav;
-
-  public rootPage: any;
-  public ROOT_PAGE: any = HomePage;
+export class AppComponent implements AfterViewInit {
+  public toggleAbout: boolean = false;
   public registerBackFunction: any;
+   @ViewChild(IonRouterOutlet) public routerOutlet: IonRouterOutlet;
 
   public pages = {
-    home: {title: 'Home', component: HomePage, icon: 'md-home', active: true},
-    brews: {title: 'Brühungen', component: BrewsPage, icon: 'fa-coffee', active: false},
-    beans: {title: 'Bohnen', component: BeansPage, icon: 'fa-pagelines', active: false},
-    preparation: {title: 'Zubereitungsmethoden', component: PreparationsPage, icon: 'fa-flask', active: false},
-    mill: {title: 'Mühlen', component: MillsPage, icon: 'md-cut', active: false},
-    about: {title: 'Über uns', component: AboutPage, icon: 'md-information', active: false},
-    contact: {title: 'Kontakt', component: ContactPage, icon: 'md-mail', active: false},
-    privacy: {title: 'Privacy', component: PrivacyPage, icon: 'md-document', active: false},
-    credits: {title: 'Credits', component: CreditsPage, icon: 'md-document', active: false},
-    terms: {title: 'Terms & Conditions', component: TermsPage, icon: 'md-document', active: false},
-    thanks: {title: 'Dankeschön!', component: ThanksPage, icon: 'md-happy', active: false},
-    licences: {title: 'Open-Source-Lizenzen', component: LicencesPage, icon: 'md-copy', active: false},
-    settings: {title: 'Einstellungen', component: SettingsPage, icon: 'md-settings', active: false},
-    statistics: {title: 'Statistiken', component: StatisticsPage, icon: 'md-analytics', active: false}
+    home: {title: 'Home',   url: '/home', icon: 'md-home', active: true},
+    settings: {title: 'Einstellungen',   url: '/settings', icon: 'md-settings', active: false},
+      brew: {title: 'Brühungen',   url: '/brew', icon: 'fa-coffee', active: false},
+      beans: {title: 'Bohnnen',   url: '/beans', icon: 'fa-pagelines', active: false},
+      preparation: {title: 'Zubereitungsmethoden',   url: '/preparation', icon: 'fa-flask', active: false},
+      mill: {title: 'Mühlen',   url: '/mill', icon: 'md-cut', active: false},
+    about: {title: 'Über uns', url: '/info/about', icon: 'md-information', active: false},
+    contact: {title: 'Kontakt', url: '/info/contact', icon: 'md-mail', active: false},
+    privacy: {title: 'Privacy', url: '/info/privacy', icon: 'md-document', active: false},
+    credits: {title: 'Credits', url: '/info/credits', icon: 'md-document', active: false},
+    terms: {title: 'Terms & Conditions', url: '/info/terms', icon: 'md-document', active: false},
+    thanks: {title: 'Dankeschön!', url: '/info/thanks', icon: 'md-happy', active: false},
+    licences: {title: 'Open-Source-Lizenzen', url: '/info/licences', icon: 'md-copy', active: false},
+
+    statistic: {title: 'Statistiken', url: '/statistic', icon: 'md-analytics', active: false}
   };
 
-  public toggleAbout: boolean = false;
 
-  constructor(public platform: Platform,
-              public statusBar: StatusBar,
-              public splashScreen: SplashScreen,
-              private readonly uiLog: UILog,
-              private readonly uiBeanStorage: UIBeanStorage,
-              private readonly uiBrewStorage: UIBrewStorage,
-              private readonly uiPreparationStorage: UIPreparationStorage,
-              private readonly uiMillStorage: UIMillStorage,
-              private readonly uiBrewHelper: UIBrewHelper,
-              private readonly ionicApp: IonicApp,
-              private readonly menuCtrl: MenuController,
-              private readonly appMinimize: AppMinimize,
-              private readonly uiSettingsStorage: UISettingsStorage,
-              private readonly keyboard: Keyboard,
-              private readonly threeDeeTouch: ThreeDeeTouch,
-              private readonly modalCtrl: ModalController) {
+  constructor(
+    private readonly router: Router,
+    public platform: Platform,
+    public statusBar: StatusBar,
+    public splashScreen: SplashScreen,
+    private readonly uiLog: UILog,
+    private readonly uiBeanStorage: UIBeanStorage,
+    private readonly uiBrewStorage: UIBrewStorage,
+    private readonly uiPreparationStorage: UIPreparationStorage,
+    private readonly uiMillStorage: UIMillStorage,
+    private readonly uiBrewHelper: UIBrewHelper,
+    private readonly menuCtrl: MenuController,
+    private readonly appMinimize: AppMinimize,
+    private readonly uiSettingsStorage: UISettingsStorage,
+    private readonly keyboard: Keyboard,
+    private readonly threeDeeTouch: ThreeDeeTouch,
+    private readonly modalCtrl: ModalController
+  ) {
 
   }
 
@@ -94,58 +79,42 @@ export class MyApp {
     // Copy in all the js code from the script.js. Typescript will complain but it works just fine
   }
 
-  public openPage(event, page): void {
 
-    if (event) {
-      event.cancelBubble = true;
-      event.preventDefault();
-
-    }
-
-    // close the menu when clicking a link from the menu
-    this.menuCtrl.close();
-    // navigate to the new page if it is not the current page
-    for (const key of Object.keys(this.pages)) {
-      this.pages[key].active = false;
-    }
-    page.active = true;
-    this.nav.setRoot(page.component);
-  }
 
   private __appReady(): void {
     this.platform.ready()
-      .then(() => {
-      // Okay, so the platform is ready and our plugins are available.
-      // Here you can do any higher level native things you might need.
-
-      // #7
-      this.statusBar.show();
-      this.splashScreen.hide();
-      this.keyboard.hideFormAccessoryBar(false);
-
-      // Wait for every necessary service to be ready before starting the app
-      const beanStorageReadyCallback = this.uiBeanStorage.storageReady();
-      const preparationStorageReadyCallback = this.uiPreparationStorage.storageReady();
-      const uiSettingsStorageReadyCallback = this.uiSettingsStorage.storageReady();
-      const brewStorageReadyCallback = this.uiBrewStorage.storageReady();
-      const millStorageReadyCallback = this.uiMillStorage.storageReady();
-      Promise.all([
-        beanStorageReadyCallback,
-        preparationStorageReadyCallback,
-        brewStorageReadyCallback,
-        uiSettingsStorageReadyCallback,
-        millStorageReadyCallback
-      ])
         .then(() => {
-        this.uiLog.log('App finished loading');
-        this.__checkUpdate();
-        this.__initApp();
+          // Okay, so the platform is ready and our plugins are available.
+          // Here you can do any higher level native things you might need.
 
-      }, () => {
-        this.uiLog.log('App finished loading');
-        this.__initApp();
-      });
-    });
+          // #7
+          this.statusBar.show();
+          this.splashScreen.hide();
+          this.keyboard.hideFormAccessoryBar(false);
+
+          // Wait for every necessary service to be ready before starting the app
+          const beanStorageReadyCallback = this.uiBeanStorage.storageReady();
+          const preparationStorageReadyCallback = this.uiPreparationStorage.storageReady();
+          const uiSettingsStorageReadyCallback = this.uiSettingsStorage.storageReady();
+          const brewStorageReadyCallback = this.uiBrewStorage.storageReady();
+          const millStorageReadyCallback = this.uiMillStorage.storageReady();
+          Promise.all([
+            beanStorageReadyCallback,
+            preparationStorageReadyCallback,
+            brewStorageReadyCallback,
+            uiSettingsStorageReadyCallback,
+            millStorageReadyCallback
+          ])
+              .then(() => {
+                this.uiLog.log('App finished loading');
+                this.__checkUpdate();
+                this.__initApp();
+
+              }, () => {
+                this.uiLog.log('App finished loading');
+                this.__initApp();
+              });
+        });
 
   }
 
@@ -168,64 +137,80 @@ export class MyApp {
   private __initApp(): void {
     this.__registerBack();
 
-    this.rootPage = this.ROOT_PAGE;
-
     if (this.platform.is('ios')) {
-    this.threeDeeTouch.onHomeIconPressed()
-      .subscribe(
-      (payload) => {
-        if (payload.type === 'Brew') {
-          this.__trackNewBrew();
-        } else if (payload.type === 'Bean') {
-          this.__trackNewBean();
-        } else if (payload.type === 'Preparation') {
-          this.__trackNewPreparation();
-        } else if (payload.type === 'Mill') {
-          this.__trackNewMill();
-        }
-        // returns an object that is the button you presed
+      this.threeDeeTouch.onHomeIconPressed()
+          .subscribe(
+            async (payload) => {
+                if (payload.type === 'Brew') {
+                  await this.__trackNewBrew();
+                } else if (payload.type === 'Bean') {
+                  await this.__trackNewBean();
+                } else if (payload.type === 'Preparation') {
+                  await this.__trackNewPreparation();
+                } else if (payload.type === 'Mill') {
+                  await this.__trackNewMill();
+                }
+                // returns an object that is the button you presed
 
-      }
-    );
+              }
+          );
     }
   }
 
-  private __trackNewBrew(): void {
+  private async __trackNewBrew() {
 
     if (this.uiBrewHelper.canBrew()) {
-      const addBrewsModal = this.modalCtrl.create(BrewsAddModal, {});
-      addBrewsModal.present({animate: false});
+      const modal = await this.modalCtrl.create({component: BrewAddComponent});
+      await modal.present();
+      await modal.onWillDismiss();
     }
 
   }
-  private __trackNewBean(): void {
 
-      const modal = this.modalCtrl.create(BeansAddModal, {});
-      modal.present({animate: false});
+  private async __trackNewBean() {
 
-  }
-  private __trackNewPreparation(): void {
-
-      const modal = this.modalCtrl.create(PreparationsAddModal, {});
-      modal.present({animate: false});
-
-  }
-  private __trackNewMill(): void {
-
-      const modal = this.modalCtrl.create(MillAddModal, {});
-      modal.present({animate: false});
+    const modal = await this.modalCtrl.create({component: BeansAddComponent});
+    await modal.present();
+    await modal.onWillDismiss();
 
   }
 
-  private __registerBack(): void {
+  private async __trackNewPreparation() {
+    const modal = await this.modalCtrl.create({component: PreparationAddComponent});
+    await modal.present();
+    await modal.onWillDismiss();
+
+  }
+
+  private async __trackNewMill() {
+    const modal = await this.modalCtrl.create({component: MillAddComponent});
+    await modal.present();
+    await modal.onWillDismiss();
+
+  }
+
+  private __registerBack() {
+    this.platform.backButton.subscribeWithPriority(0, () => {
+      if (this.routerOutlet && this.routerOutlet.canGoBack()) {
+        this.routerOutlet.pop();
+      } else if (this.router.url === '/home') {
+        this.appMinimize.minimize();
+        // or if that doesn't work, try
+        // navigator['app'].exitApp();
+      } else {
+        // this.generic.showAlert("Exit", "Do you want to exit the app?", this.onYesHandler, this.onNoHandler, "backPress");
+      }
+    });
+  }
+  /*private __registerBack(): void {
     if (this.registerBackFunction !== undefined && this.registerBackFunction !== undefined) {
       return;
     }
     this.registerBackFunction = this.platform.registerBackButtonAction(() => {
       const activePortal = this.ionicApp._loadingPortal.getActive() ||
-        this.ionicApp._modalPortal.getActive() ||
-        this.ionicApp._toastPortal.getActive() ||
-        this.ionicApp._overlayPortal.getActive();
+          this.ionicApp._modalPortal.getActive() ||
+          this.ionicApp._toastPortal.getActive() ||
+          this.ionicApp._overlayPortal.getActive();
 
       if (activePortal) {
 
@@ -260,5 +245,5 @@ export class MyApp {
       }
     }, 1);
 
-  }
+  }*/
 }

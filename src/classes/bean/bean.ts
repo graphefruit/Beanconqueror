@@ -1,14 +1,16 @@
 /** Interfaces */
-import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
+import {BEAN_MIX_ENUM} from '../../enums/beans/mix';
 /** Enums */
-import { ROASTS_ENUM } from '../../enums/beans/roasts';
-import { IBean } from '../../interfaces/bean/iBean';
+import {ROASTS_ENUM} from '../../enums/beans/roasts';
+import {IBean} from '../../interfaces/bean/iBean';
 /** Classes */
-import { Config } from '../objectConfig/objectConfig';
+import {Config} from '../objectConfig/objectConfig';
+
 export class Bean implements IBean {
   public name: string;
   public roastingDate: string;
   public note: string;
+  /** @deprecated use attachments instead */
   public filePath: string;
   public roaster: string;
   public config: Config;
@@ -22,6 +24,7 @@ export class Bean implements IBean {
   public weight: number;
   public finished: boolean;
   public cost: number;
+  public attachments: Array<string>;
 
   constructor() {
     this.name = '';
@@ -39,6 +42,7 @@ export class Bean implements IBean {
     this.weight = 0;
     this.finished = false;
     this.cost = 0;
+    this.attachments = [];
   }
 
   public getRoastName(): string {
@@ -55,7 +59,7 @@ export class Bean implements IBean {
     if (isNaN(millisecondsSinceRoasting)) {
       millisecondsSinceRoasting = 0;
     }
-    return Math.floor(millisecondsSinceRoasting / ( 1000 * 60 * 60 * 24));
+    return Math.floor(millisecondsSinceRoasting / (1000 * 60 * 60 * 24));
   }
 
 }

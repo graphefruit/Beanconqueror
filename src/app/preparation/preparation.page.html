@@ -1,0 +1,50 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button icon-only (click)="add()">
+        <ion-icon name="add"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      Zubereitungsmethoden
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+
+<ion-content>
+  <ion-card *ngIf="preparations?.length == 0" class="ion-padding">
+    Du hast leider noch keine Brühmethoden hinterlegt!
+  </ion-card>
+  <ion-card *ngFor="let preparation of preparations">
+    <ion-card-header>
+      {{preparation.name}}
+    </ion-card-header>
+    <ion-card-content *ngIf="preparation.note != ''">
+      <pre>{{preparation.note}}</pre>
+    </ion-card-content>
+
+    <ion-row>
+      <ion-col>
+        <ion-button size="small" fill="clear" color="dark" (click)="editPreparation(preparation)">
+          <ion-icon name="md-create" slot="start"></ion-icon>
+          <span>Editieren</span>
+        </ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button size="small" fill="clear" color="dark" (click)="deletePreparation(preparation)">
+          <ion-icon name="trash" slot="start"></ion-icon>
+          <span>Löschen</span>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+
+
+
+  </ion-card>
+
+</ion-content>

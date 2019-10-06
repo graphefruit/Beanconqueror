@@ -4,7 +4,7 @@ import {IBrew} from '../../interfaces/brew/iBrew';
 import {IPreparation} from '../../interfaces/preparation/iPreparation';
 /** Classes */
 /** Third party */
-import moment from 'moment';
+import * as moment from 'moment';
 import {BREW_QUANTITY_TYPES_ENUM} from '../../enums/brews/brewQuantityTypes';
 import {IMill} from '../../interfaces/mill/iMill';
 /** Services */

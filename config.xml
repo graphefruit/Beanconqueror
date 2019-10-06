@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.beanconqueror.app" version="2.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.beanconqueror.app" version="2.0.0" xmlns="http://www.w3.org/ns/widgets">
     <name>Beanconqueror</name>
     <description />
     <author email="lars.saalbach@googlemail.com" href="https://github.com/graphefruit/beanconqueror">Lars Saalbach</author>
@@ -11,7 +11,7 @@
     <allow-intent href="sms:*" />
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
-    <allow-navigation href="*" />
+    <preference name="ScrollEnabled" value="false" />
     <preference name="android-minSdkVersion" value="16" />
     <preference name="BackupWebStorage" value="Cloud" />
     <preference name="SplashMaintainAspectRatio" value="true" />
@@ -20,7 +20,13 @@
     <preference name="SplashScreen" value="screen" />
     <preference name="SplashScreenDelay" value="3000" />
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
+    <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
     <platform name="android">
+        <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
+            <application android:networkSecurityConfig="@xml/network_security_config" />
+          <application android:allowBackup="false"/>
+        </edit-config>
+        <resource-file src="resources/android/xml/network_security_config.xml" target="app/src/main/res/xml/network_security_config.xml" />
         <allow-intent href="market:*" />
         <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
         <icon density="mdpi" src="resources/android/icon/drawable-mdpi-icon.png" />
@@ -78,31 +84,31 @@
                 </dict>
             </array>
         </edit-config>
-        <edit-file file="*-Info.plist" mode="merge" target="UIRequiresFullScreen">
+        <edit-config file="*-Info.plist" mode="merge" target="UIRequiresFullScreen">
             <false />
-        </edit-file>
-        <edit-file file="*-Info.plist" mode="merge" target="UISupportedInterfaceOrientations">
+        </edit-config>
+        <edit-config file="*-Info.plist" mode="merge" target="UISupportedInterfaceOrientations">
             <array>
                 <string>UIInterfaceOrientationPortrait</string>
                 <string>UIInterfaceOrientationPortraitUpsideDown</string>
                 <string>UIInterfaceOrientationLandscapeLeft</string>
                 <string>UIInterfaceOrientationLandscapeRight</string>
             </array>
-        </edit-file>
-        <edit-file file="*-Info.plist" mode="merge" target="UISupportedInterfaceOrientations~ipad">
+        </edit-config>
+        <edit-config file="*-Info.plist" mode="merge" target="UISupportedInterfaceOrientations~ipad">
             <array>
                 <string>UIInterfaceOrientationPortrait</string>
                 <string>UIInterfaceOrientationPortraitUpsideDown</string>
                 <string>UIInterfaceOrientationLandscapeLeft</string>
                 <string>UIInterfaceOrientationLandscapeRight</string>
             </array>
-        </edit-file>
-        <edit-file file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
+        </edit-config>
+        <edit-config file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
             <string>Need camera access to take pictures</string>
-        </edit-file>
-        <edit-file file="*-Info.plist" mode="merge" target="NSPhotoLibraryUsageDescription">
+        </edit-config>
+        <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryUsageDescription">
             <string>Need photo library access to get pictures from there</string>
-        </edit-file>
+        </edit-config>
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
         <icon height="57" src="resources/ios/icon/icon.png" width="57" />
@@ -137,29 +143,29 @@
         <splash height="480" src="resources/ios/splash/Default~iphone.png" width="320" />
         <splash height="2732" src="resources/ios/splash/Default@2x~universal~anyany.png" width="2732" />
     </platform>
-    <plugin name="cordova-plugin-android-permissions" spec="^1.0.0" />
-    <plugin name="cordova-plugin-appminimize" spec="^1.0.0" />
-    <plugin name="cordova-plugin-device" spec="^1.1.4" />
-    <plugin name="cordova-plugin-splashscreen" spec="^4.0.3" />
-    <plugin name="cordova-plugin-whitelist" spec="^1.3.1" />
-    <plugin name="cordova-sqlite-storage" spec="^2.0.4" />
-    <plugin name="cordova-plugin-app-version" spec="^0.1.9" />
-    <plugin name="cordova-plugin-statusbar" spec="^2.4.2" />
-    <plugin name="cordova-plugin-filechooser" spec="^1.0.1" />
-    <plugin name="cordova-plugin-filepath" spec="^1.4.2" />
-    <plugin name="cordova-plugin-x-socialsharing" spec="5.4.3" />
-    <plugin name="cordova-plugin-ionic-keyboard" spec="2.1.3" />
-    <plugin name="cordova-plugin-filepicker" spec="1.1.5" />
-    <plugin name="cordova-plugin-3dtouch" spec="1.3.5" />
-    <plugin name="cordova-plugin-telerik-imagepicker" spec="2.2.2">
-        <variable name="PHOTO_LIBRARY_USAGE_DESCRIPTION" value="Access to library needed to choose photos" />
-    </plugin>
-    <plugin name="cordova-plugin-inappbrowser" spec="3.0.0" />
-    <plugin name="cordova-plugin-camera" spec="4.0.3" />
-    <plugin name="cordova-plugin-file" spec="6.0.1" />
-    <plugin name="cordova-plugin-ionic-webview" spec="2.2.0">
+    <plugin name="cordova-plugin-whitelist" spec="~1.3.3" />
+    <plugin name="cordova-plugin-statusbar" spec="~2.4.2" />
+    <plugin name="cordova-plugin-device" spec="~2.0.2" />
+    <plugin name="cordova-plugin-splashscreen" spec="~5.0.2" />
+    <plugin name="cordova-plugin-ionic-webview" spec="^4.0.0">
         <variable name="ANDROID_SUPPORT_ANNOTATIONS_VERSION" value="27.+" />
     </plugin>
-    <engine name="android" spec="7.1.4" />
-    <engine name="ios" spec="4.5.5" />
+    <plugin name="cordova-plugin-ionic-keyboard" spec="^2.1.3" />
+    <plugin name="cordova-plugin-file" spec="^6.0.2" />
+    <plugin name="cordova-plugin-inappbrowser" spec="^3.1.0" />
+    <plugin name="cordova-plugin-telerik-imagepicker" spec="~2.3.3" />
+    <plugin name="cordova-plugin-camera" spec="~4.1.0" />
+    <plugin name="cordova-plugin-android-permissions" spec="~1.0.0" />
+    <plugin name="cordova-sqlite-storage" spec="~3.2.1" />
+    <plugin name="cordova-plugin-filechooser" spec="~1.2.0" />
+    <plugin name="cordova-plugin-filepath" spec="~1.5.5" />
+    <plugin name="cordova-plugin-filepicker" spec="~1.1.6" />
+    <plugin name="cordova-plugin-x-socialsharing" spec="~5.4.7">
+      <variable name="ANDROID_SUPPORT_V4_VERSION" value="27.+"/>
+    </plugin>
+    <plugin name="cordova-plugin-appminimize" spec="~1.0.1" />
+  <plugin name="cordova-android-support-gradle-release" spec="^3.0.1"/>
+  <plugin name="cordova-plugin-3dtouch" spec="^1.3.7"/>
+    <engine name="ios" spec="^4.5.5" />
+  <engine name="android" spec="^7.1.4"/>
 </widget>

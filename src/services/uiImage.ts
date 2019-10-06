@@ -1,11 +1,14 @@
 /** Core */
 import {Injectable} from '@angular/core';
-import {AndroidPermissions} from '@ionic-native/android-permissions';
+import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
 /** Ionic native  */
-import {Camera, CameraOptions} from '@ionic-native/camera';
-import {ImagePicker} from '@ionic-native/image-picker';
+import {Camera, CameraOptions} from '@ionic-native/camera/ngx';
+import {ImagePicker} from '@ionic-native/image-picker/ngx';
 /** Ionic */
-import {AlertController, Platform} from 'ionic-angular';
+import {AlertController, Platform} from '@ionic/angular';
+import {UIHelper} from './uiHelper';
+import {any} from 'codelyzer/util/function';
+import {UIFileHelper} from './uiFileHelper';
 
 @Injectable()
 export class UIImage {
@@ -13,31 +16,46 @@ export class UIImage {
                private readonly imagePicker: ImagePicker,
                private readonly alertController: AlertController,
                private readonly platform: Platform,
-               private readonly androidPermissions: AndroidPermissions) {
+               private readonly androidPermissions: AndroidPermissions,
+               private readonly uiHelper: UIHelper,
+               private readonly uiFileHelper: UIFileHelper) {
   }
 
   public async takePhoto (): Promise<any> {
     const promise = new Promise((resolve, reject) => {
-      const options: CameraOptions = {
-        quality: 100,
-        destinationType: this.camera.DestinationType.FILE_URI,
-        encodingType: this.camera.EncodingType.JPEG,
-        mediaType: this.camera.MediaType.PICTURE,
-        sourceType: this.camera.PictureSourceType.CAMERA,
-        saveToPhotoAlbum: true,
-        correctOrientation: true
-      };
-      this.camera.getPicture(options)
-        .then(
+      const isIos: boolean = this.platform.is('ios');
+      let options: CameraOptions = {};
+      if (isIos) {
+        options = {
+          quality: 100,
+          destinationType: this.camera.DestinationType.DATA_URL,
+          encodingType: this.camera.EncodingType.JPEG,
+          mediaType: this.camera.MediaType.PICTURE,
+          sourceType: this.camera.PictureSourceType.CAMERA,
+          saveToPhotoAlbum: false,
+          correctOrientation: true
+        };
+      } else {
+        options = {
+          quality: 100,
+          destinationType: this.camera.DestinationType.DATA_URL,
+          encodingType: this.camera.EncodingType.JPEG,
+          mediaType: this.camera.MediaType.PICTURE,
+          sourceType: this.camera.PictureSourceType.CAMERA,
+          saveToPhotoAlbum: false,
+          correctOrientation: true
+        };
+      }
+
+      this.camera.getPicture(options).then(
           (imageData) => {
-            let imageStr: string = imageData;
-            const isIos: boolean = this.platform.is('ios');
-            if (isIos) {
-              imageStr = imageStr.replace(/^file:\/\//, '');
-            }
-            resolve(imageStr);
+            const imageStr: string = `data:image/jpeg;base64,${imageData}`;
+            this.uiFileHelper.saveBase64File('beanconqueror_image', '.png', imageStr).then((_newURL) => {
+              // const filePath = _newURL.replace(/^file:\/\//, '');
+              resolve(_newURL);
+            });
           },
-          (err) => {
+          (_err: any) => {
             reject();
           }
         );
@@ -50,10 +68,16 @@ export class UIImage {
     const promise = new Promise((resolve, reject) => {
       this.__checkPermission(() => {
           setTimeout(() => {
-            this.imagePicker.getPictures({maximumImagesCount: 1}).then((results) => {
+            this.imagePicker.getPictures({maximumImagesCount: 1, outputType: 1}).then((results) => {
               if (results && results.length > 0 && results[0] !== 0 && results[0] !== '' && results[0] !== 'OK' && results[0].length > 5) {
-                const imagePath = results[0];
-                resolve(imagePath);
+                const imageStr: string = `data:image/jpeg;base64,${results[0]}`;
+                this.uiFileHelper.saveBase64File('beanconqueror_image', '.png', imageStr).then((_newURL) => {
+                  // const filePath = _newURL.replace(/^file:\/\//, '');
+                  resolve(_newURL);
+                });
+                // const imagePath = results[0];
+                // console.log(`Choose Photo Path ${imagePath}`);
+                // resolve(imagePath);
               } else {
                 reject();
               }
@@ -73,10 +97,10 @@ export class UIImage {
   }
 
   public async showOptionChooser (): Promise<any> {
-    const promise = new Promise((resolve, reject) => {
-      const alert = this.alertController.create({
-        title: 'Auswählen',
-        subTitle: 'Foto aufnehmen oder aus Bibliothek auswählen',
+    const promise = new Promise(async (resolve, reject) => {
+      const alert = await this.alertController.create({
+        header: 'Auswählen',
+        subHeader: 'Foto aufnehmen oder aus Bibliothek auswählen',
         buttons: [
           {
             text: 'Aufnehmen',
@@ -85,14 +109,14 @@ export class UIImage {
             }
           },
           {
-            text: 'Auswählen',
-            handler: () => {
-              resolve('CHOOSE');
-            }
+             text: 'Auswählen',
+             handler: () => {
+               resolve('CHOOSE');
+             }
           }
         ]
       });
-      alert.present({animate: false});
+      await alert.present();
     });
 
     return promise;
@@ -143,6 +167,9 @@ export class UIImage {
      * @returns {Promise<any>}
      */
     // requestReadPermission(): Promise<any>;
+
   }
+
+
 
 }

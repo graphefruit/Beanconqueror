@@ -1,7 +1,7 @@
 /** Core */
 import {Injectable} from '@angular/core';
 /** Ionic */
-import {AlertController} from 'ionic-angular';
+import { AlertController } from '@ionic/angular';
 
 @Injectable()
 export class UIAlert {
@@ -17,10 +17,10 @@ export class UIAlert {
     if (_ok) {
       okText = _ok;
     }
-    const promise = new Promise((resolve, reject) => {
-      const alert = this.alertController.create({
-        title: _title,
-        subTitle: _message,
+    const promise = new Promise(async (resolve, reject) => {
+      const alert = await this.alertController.create({
+        header: _title,
+        subHeader: _message,
         buttons: [
           {
             text: okText,
@@ -30,7 +30,7 @@ export class UIAlert {
           }
         ]
       });
-      alert.present({animate: false});
+      await alert.present();
     });
 
     return promise;
@@ -38,10 +38,10 @@ export class UIAlert {
 
   public async showConfirm (_message: string, _title?: string): Promise<any> {
 
-    const promise = new Promise((resolve, reject) => {
-      const alert = this.alertController.create({
-        title: _title,
-        subTitle: _message,
+    const promise = new Promise(async (resolve, reject) => {
+      const alert = await this.alertController.create({
+        header: _title,
+        subHeader: _message,
         buttons: [
           {
             text: 'Nein',
@@ -58,7 +58,7 @@ export class UIAlert {
           }
         ]
       });
-      alert.present({animate: false});
+      await alert.present();
     });
 
     return promise;
