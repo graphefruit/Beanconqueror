@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      Open-Source-Lizenzen
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card *ngFor="let key of licences | keys" (click)="licences[key].active = !licences[key].active">
+    <ion-item>
+      <ion-icon *ngIf="!licences[key].active" name="md-arrow-dropdown" item-left large></ion-icon>
+      <ion-icon *ngIf="licences[key].active" name="md-arrow-dropup" item-left large></ion-icon>
+      <h2>{{ licences[key].TITLE }}</h2>
+      <ion-button size="small" fill="outline" (click)="openLink($event,licences[key].LINK)">Webseite</ion-button>
+    </ion-item>
+
+    <ion-card-content *ngIf="licences[key].active" style="border-top: 1px solid rgba(0, 0, 0, 0.3);padding-top: 10px;"
+                      class="white-space-normal"
+                      [innerHTML]="licences[key].DESCRIPTION">
+    </ion-card-content>
+  </ion-card>
+</ion-content>

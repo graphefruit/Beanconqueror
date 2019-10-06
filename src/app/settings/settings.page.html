@@ -1,0 +1,193 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      Einstellungen
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+<ion-card>
+    <ion-card-header class="card-header">
+      Einstellungen
+    </ion-card-header>
+    <ion-card-content margin-top>
+      <p>Hier findest du alle spezifischen Einstellungen der App</p>
+    </ion-card-content>
+  </ion-card>
+  <ion-list *ngIf="isMobile()">
+    <ion-item-divider color="light">Datenübertragen</ion-item-divider>
+    <ion-item button (click)="import()">
+      Import
+    </ion-item>
+    <ion-item button (click)="export()">
+      Export
+    </ion-item>
+  </ion-list>
+  <ion-list>
+    <ion-item-divider color="light">Allgemeine Einstellungen</ion-item-divider>
+    <ion-item>
+      <ion-label>Ansicht</ion-label>
+      <ion-select [(ngModel)]="settings.brew_view" (ngModelChange)="saveSettings($event)">
+        <ion-select-option value="{{BREW_VIEWS.SINGLE_PAGE}}">Eine Seite</ion-select-option>
+        <ion-select-option value="{{BREW_VIEWS.MULTIPLE_PAGE}}" disabled>Paging</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
+  <ion-list>
+    <ion-item>
+      <ion-label>Letzen Bezug vorbelegen?</ion-label>
+      <ion-checkbox [(ngModel)]="settings.set_last_coffee_brew" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+    </ion-item>
+    <div *ngIf="settings.set_last_coffee_brew==true">
+      <ion-item-divider color="light">Welche Parameter sollen vorbelegt werden?</ion-item-divider>
+      <ion-item>
+        <ion-label>Temperatur Zeit / Surf Zeit</ion-label>
+        <ion-checkbox [(ngModel)]="settings.default_last_coffee_parameters.brew_temperature_time" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+      </ion-item>
+      <ion-item>
+        <ion-label>Zeit</ion-label>
+        <ion-checkbox [(ngModel)]="settings.default_last_coffee_parameters.brew_time" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+      </ion-item>
+      <ion-item>
+        <ion-label>Mahlgrad</ion-label>
+        <ion-checkbox [(ngModel)]="settings.default_last_coffee_parameters.grind_size" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+      </ion-item>
+      <ion-item>
+        <ion-label>Output: Gewicht/Menge</ion-label>
+        <ion-checkbox [(ngModel)]="settings.default_last_coffee_parameters.grind_weight" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+      </ion-item>
+      <ion-item>
+        <ion-label>Notizen</ion-label>
+        <ion-checkbox [(ngModel)]="settings.default_last_coffee_parameters.note" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+      </ion-item>
+      <ion-item>
+        <ion-label>Zubereitungsmethode</ion-label>
+        <ion-checkbox [(ngModel)]="settings.default_last_coffee_parameters.method_of_preparation" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+      </ion-item>
+      <ion-item>
+        <ion-label>Mühle</ion-label>
+        <ion-checkbox [(ngModel)]="settings.default_last_coffee_parameters.mill" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+      </ion-item>
+      <ion-item>
+        <ion-label>Mühlengeschwindigkeit (rpm)</ion-label>
+        <ion-checkbox [(ngModel)]="settings.default_last_coffee_parameters.mill_speed" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+      </ion-item>
+      <ion-item>
+        <ion-label>Bezugsmenge</ion-label>
+        <ion-checkbox [(ngModel)]="settings.default_last_coffee_parameters.brew_quantity" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+      </ion-item>
+      <ion-item>
+        <ion-label>Bohnensorte</ion-label>
+        <ion-checkbox [(ngModel)]="settings.default_last_coffee_parameters.bean_type" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+      </ion-item>
+      <ion-item>
+        <ion-label>Brühtemperatur</ion-label>
+        <ion-checkbox [(ngModel)]="settings.default_last_coffee_parameters.brew_temperature" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+      </ion-item>
+      <ion-item>
+        <ion-label>Druckprofil</ion-label>
+        <ion-checkbox [(ngModel)]="settings.default_last_coffee_parameters.pressure_profile" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+      </ion-item>
+      <ion-item>
+        <ion-label>Kaffeetyp</ion-label>
+        <ion-checkbox [(ngModel)]="settings.default_last_coffee_parameters.coffee_type" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+      </ion-item>
+      <ion-item>
+        <ion-label>Kaffee-Konzentration</ion-label>
+        <ion-checkbox [(ngModel)]="settings.default_last_coffee_parameters.coffee_concentration" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+      </ion-item>
+      <ion-item>
+        <ion-label>Erster Kaffeetropfen</ion-label>
+        <ion-checkbox [(ngModel)]="settings.default_last_coffee_parameters.coffee_first_drip_time" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+      </ion-item>
+      <ion-item>
+        <ion-label>Blooming-Zeit / Preinfusion</ion-label>
+        <ion-checkbox [(ngModel)]="settings.default_last_coffee_parameters.coffee_blooming_time" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+      </ion-item>
+      <ion-item>
+        <ion-label>Bewertung</ion-label>
+        <ion-checkbox [(ngModel)]="settings.default_last_coffee_parameters.rating" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+      </ion-item>
+    </div>
+  </ion-list>
+  <ion-list>
+
+
+    <ion-item-divider color="light">Anzuzeigende Bezugsparameter</ion-item-divider>
+    <ion-item>
+      <ion-label>Temperatur Zeit / Surf Zeit</ion-label>
+      <ion-checkbox [(ngModel)]="settings.brew_temperature_time" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label>Zeit</ion-label>
+      <ion-checkbox [(ngModel)]="settings.brew_time" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label>Mahlgrad</ion-label>
+      <ion-checkbox [(ngModel)]="settings.grind_size" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label>Output: Gewicht/Menge</ion-label>
+      <ion-checkbox [(ngModel)]="settings.grind_weight" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label>Notizen</ion-label>
+      <ion-checkbox [(ngModel)]="settings.note" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label>Zubereitungsmethode</ion-label>
+      <ion-checkbox [(ngModel)]="settings.method_of_preparation" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label>Mühle</ion-label>
+      <ion-checkbox [(ngModel)]="settings.mill" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label>Mühlengeschwindigkeit (rpm)</ion-label>
+      <ion-checkbox [(ngModel)]="settings.mill_speed" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label>Bezugsmenge</ion-label>
+      <ion-checkbox [(ngModel)]="settings.brew_quantity" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label>Bohnensorte</ion-label>
+      <ion-checkbox [(ngModel)]="settings.bean_type" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label>Brühtemperatur</ion-label>
+      <ion-checkbox [(ngModel)]="settings.brew_temperature" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label>Druckprofil</ion-label>
+      <ion-checkbox [(ngModel)]="settings.pressure_profile" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label>Kaffeetyp</ion-label>
+      <ion-checkbox [(ngModel)]="settings.coffee_type" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label>Kaffee-Konzentration</ion-label>
+      <ion-checkbox [(ngModel)]="settings.coffee_concentration" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label>Erster Kaffeetropfen</ion-label>
+      <ion-checkbox [(ngModel)]="settings.coffee_first_drip_time" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label>Blooming-Zeit / Preinfusion</ion-label>
+      <ion-checkbox [(ngModel)]="settings.coffee_blooming_time" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label>Anhänge</ion-label>
+      <ion-checkbox [(ngModel)]="settings.attachments" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label>Bewertung</ion-label>
+      <ion-checkbox [(ngModel)]="settings.rating" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+    </ion-item>
+  </ion-list>
+</ion-content>

@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      Credits
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+    <ion-card *ngFor="let key of credits | keys">
+      <ion-item>
+        <h2>{{ credits[key].TITLE }}</h2>
+        <ion-button fill="outline" size="small" (click)="openLink($event,credits[key].LINK)">Credit-Page</ion-button>
+      </ion-item>
+      <ion-card-content style="border-top: 1px solid rgba(0, 0, 0, 0.3);padding-top: 10px;"
+                        class="white-space-normal"
+                        [innerHTML]="credits[key].DESCRIPTION">
+      </ion-card-content>
+    </ion-card>
+</ion-content>

@@ -1,0 +1,129 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button icon-only (click)="add()">
+        <ion-icon name="add"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      Bohnen
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content>
+  <div class="ion-padding">
+    <ion-segment [(ngModel)]="bean_segment">
+      <ion-segment-button value="open">
+        Beziehbar
+      </ion-segment-button>
+      <ion-segment-button value="finished">
+        Fertig
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+  <div [ngSwitch]="bean_segment" >
+    <div *ngSwitchCase="'open'">
+      <ion-card *ngIf="getOpenBeans()?.length == 0" class="ion-padding">
+        Du hast leider keine frischen Bohnen mehr!
+      </ion-card>
+      <ion-card *ngFor="let bean of getOpenBeans()">
+        <div>
+         <async-image filePath="{{bean.filePath}}"></async-image>
+        </div>
+        <ion-card-header>
+          {{bean.name}}
+        </ion-card-header>
+        <ion-card-content *ngIf="bean.note != ''">
+          <pre>{{bean.note}}</pre>
+        </ion-card-content>
+        <ion-row>
+          <ion-col>
+            <div style="padding:0 0.9em;">
+              <ion-icon name="thermometer"></ion-icon>
+              <span>Röstgrad: {{bean.getRoastName()}}</span>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <div style="padding:0 0.9em;" >
+              <ion-icon name="calendar"></ion-icon>
+              <span>Röstdatum: {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}</span>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row >
+          <ion-col>
+            <ion-button size="small" fill="clear" color="dark" (click)="editBean(bean)">
+              <ion-icon name="md-create" slot="start"></ion-icon>
+              <span>Editieren</span>
+            </ion-button>
+          </ion-col>
+          <ion-col>
+            <ion-button size="small" fill="clear" color="dark" (click)="deleteBean(bean)">
+              <ion-icon name="trash" slot="start"></ion-icon>
+              <span>Löschen</span>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+
+
+      </ion-card>
+    </div>
+    <div *ngSwitchCase="'finished'">
+      <ion-card *ngIf="getFinishedBeans()?.length == 0" class="ion-padding">
+        Du hast keine aufgebrauchten Bohnen!
+      </ion-card>
+      <ion-card *ngFor="let bean of getFinishedBeans()">
+        <async-image filePath="{{bean.filePath}}"></async-image>
+        <!-- <img class="card-image" *ngIf="bean.filePath" [src]="bean.filePath"/>-->
+        <ion-card-header>
+          {{bean.name}}
+        </ion-card-header>
+        <ion-card-content *ngIf="bean.note != ''">
+          <pre>{{bean.note}}</pre>
+        </ion-card-content>
+        <ion-row>
+          <ion-col>
+            <div style="padding:0 0.9em;">
+              <ion-icon name="thermometer"></ion-icon>
+              <span>Röstgrad: {{bean.getRoastName()}}</span>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <div style="padding:0 0.9em;" >
+              <ion-icon name="calendar"></ion-icon>
+              <span>Röstdatum: {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}</span>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row >
+          <ion-col>
+            <ion-button size="small" fill="clear" color="dark" (click)="editBean(bean)">
+              <ion-icon name="md-create" slot="start"></ion-icon>
+              <span>Editieren</span>
+            </ion-button>
+          </ion-col>
+          <ion-col>
+            <ion-button size="small" fill="clear" color="dark" (click)="deleteBean(bean)">
+              <ion-icon name="trash" slot="start"></ion-icon>
+              <span>Löschen</span>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+
+
+      </ion-card>
+    </div>
+  </div>
+
+
+
+</ion-content>

@@ -1,12 +1,15 @@
 /** Core */
 import {Injectable} from '@angular/core';
-import {InAppBrowser} from '@ionic-native/in-app-browser';
+import {InAppBrowser} from '@ionic-native/in-app-browser/ngx';
 /** Ionic */
-import {Platform} from 'ionic-angular';
+import {Platform} from '@ionic/angular';
 /** Third party */
-import moment from 'moment';
+import * as moment from 'moment';
 // tslint:disable-next-line
 import 'moment/locale/de';
+import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
+import {File} from '@ionic-native/file/ngx';
+import {UIFileHelper} from './uiFileHelper';
 
 declare var cordova: any;
 declare var device: any;
@@ -18,7 +21,10 @@ declare var window: any;
 export class UIHelper {
 
   constructor (private readonly platform: Platform,
-               private readonly inAppBrowser: InAppBrowser) {
+               private readonly inAppBrowser: InAppBrowser,
+               private readonly sanitizer: DomSanitizer,
+               private readonly file: File,
+               private readonly uiFileHelper: UIFileHelper) {
     moment.locale('de');
   }
 
@@ -119,6 +125,17 @@ export class UIHelper {
 
   }
 
+  public sanitizeImagePath (imagePath: string): SafeUrl {
+    return this.sanitizer.bypassSecurityTrustUrl(imagePath);
+  }
+
+  public getBase64Data (imagePath: string) {
+    return this.uiFileHelper.getBase64File(imagePath);
+  }
+
+
+
+
   public async exportJSON (fileName: string, jsonContent: string): Promise<any> {
      const promise = new Promise((resolve, reject) => {
       const errorCallback = (e) => {
@@ -196,7 +213,7 @@ export class UIHelper {
      return promise;
   }
 
-  public exportCSV(fileName: string, csvContent: string): Promise<any> {
+  public async exportCSV (fileName: string, csvContent: string): Promise<any> {
 
     const promise = new Promise((resolve, reject) => {
       const errorCallback = (e) => {
@@ -274,5 +291,6 @@ export class UIHelper {
     });
     return promise;
   }
+
 
 }
