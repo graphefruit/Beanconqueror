@@ -8,7 +8,10 @@ import {UIHelper} from './uiHelper';
 import {UILog} from './uiLog';
 import {UIStorage} from './uiStorage';
 
-@Injectable()
+
+@Injectable({
+  providedIn: 'root'
+})
 export class UIBrewStorage extends StorageClass {
 
   /**

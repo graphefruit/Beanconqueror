@@ -10,7 +10,10 @@ import {UIHelper} from './uiHelper';
 import {any} from 'codelyzer/util/function';
 import {UIFileHelper} from './uiFileHelper';
 
-@Injectable()
+
+@Injectable({
+  providedIn: 'root'
+})
 export class UIImage {
   constructor (private readonly camera: Camera,
                private readonly imagePicker: ImagePicker,

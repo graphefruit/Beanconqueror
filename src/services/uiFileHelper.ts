@@ -7,7 +7,10 @@ import {Platform} from '@ionic/angular';
 /**
  * Handles every helping functionalities
  */
-@Injectable()
+
+@Injectable({
+  providedIn: 'root'
+})
 export class UIFileHelper {
 
   private cachedBase64: any = {};

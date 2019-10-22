@@ -12,7 +12,10 @@ import {UISettingsStorage} from './uiSettingsStorage';
 
 /** Services  */
 
-@Injectable()
+
+@Injectable({
+  providedIn: 'root'
+})
 export class UIStatistic {
 
   constructor (private readonly uiPreparationStorage: UIPreparationStorage,

@@ -6,7 +6,10 @@ import {Injectable} from '@angular/core';
  */
 import {Storage} from '@ionic/storage';
 
-@Injectable()
+
+@Injectable({
+  providedIn: 'root'
+})
 export class UIStorage {
 
   constructor (private readonly storage: Storage) {
@@ -82,16 +85,18 @@ export class UIStorage {
 
       const keysCount: number = Object.keys(_data).length;
       let finishedImport: number = 0;
-      for (const key of _data) {
-        this.storage.set(key, _data[key])
-          .then(() => {
-            finishedImport++;
-            if (keysCount === finishedImport) {
-              resolve();
-            }
-          }, () => {
-            reject();
-          });
+      for (const key in _data) {
+        if (_data.hasOwnProperty(key)) {
+          this.storage.set(key, _data[key])
+            .then(() => {
+              finishedImport++;
+              if (keysCount === finishedImport) {
+                resolve();
+              }
+            }, () => {
+              reject();
+            });
+        }
       }
     });
 

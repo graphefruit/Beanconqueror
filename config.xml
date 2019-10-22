@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.beanconqueror.app" version="2.0.0" xmlns="http://www.w3.org/ns/widgets">
+<widget id="com.beanconqueror.app" version="2.0.2" xmlns="http://www.w3.org/ns/widgets">
     <name>Beanconqueror</name>
     <description />
     <author email="lars.saalbach@googlemail.com" href="https://github.com/graphefruit/beanconqueror">Lars Saalbach</author>
@@ -24,7 +24,6 @@
     <platform name="android">
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
             <application android:networkSecurityConfig="@xml/network_security_config" />
-          <application android:allowBackup="false"/>
         </edit-config>
         <resource-file src="resources/android/xml/network_security_config.xml" target="app/src/main/res/xml/network_security_config.xml" />
         <allow-intent href="market:*" />
@@ -166,6 +165,6 @@
     <plugin name="cordova-plugin-appminimize" spec="~1.0.1" />
   <plugin name="cordova-android-support-gradle-release" spec="^3.0.1"/>
   <plugin name="cordova-plugin-3dtouch" spec="^1.3.7"/>
-    <engine name="ios" spec="^4.5.5" />
   <engine name="android" spec="^7.1.4"/>
+  <engine name="ios" spec="^5.0.1"/>
 </widget>

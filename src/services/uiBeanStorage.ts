@@ -12,7 +12,9 @@ import {UIStorage} from './uiStorage';
 
 /** Ionic native */
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class UIBeanStorage extends StorageClass {
 
   /**

@@ -17,7 +17,10 @@ declare var window: any;
 /**
  * Handles every helping functionalities
  */
-@Injectable()
+
+@Injectable({
+  providedIn: 'root'
+})
 export class UIHelper {
 
   constructor (private readonly platform: Platform,
