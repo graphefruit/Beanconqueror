@@ -107,6 +107,7 @@ export abstract class StorageClass {
   }
 
   protected __initializeStorage (): void {
+    console.log('Initialize' + this.DB_PATH);
     this.uiStorage.get(this.DB_PATH).then((_data) => {
       if (_data === null || _data === undefined) {
         // No beans have been added yet

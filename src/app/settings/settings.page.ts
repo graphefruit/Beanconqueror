@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
 import {ISettings} from '../../interfaces/settings/iSettings';
 import {IBean} from '../../interfaces/bean/iBean';
@@ -12,7 +12,6 @@ import {FilePath} from '@ionic-native/file-path/ngx';
 import {UIAlert} from '../../services/uiAlert';
 import {UIPreparationStorage} from '../../services/uiPreparationStorage';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
-import {UIBrewHelper} from '../../services/uiBrewHelper';
 import {UIMillStorage} from '../../services/uiMillStorage';
 import {IOSFilePicker} from '@ionic-native/file-picker/ngx';
 import {SocialSharing} from '@ionic-native/social-sharing/ngx';
@@ -142,6 +141,20 @@ export class SettingsPage implements OnInit {
       this.file.readAsText(path, file)
           .then((content) => {
             const parsedContent = JSON.parse(content);
+
+            // Set empty arrays if not existing.
+            if (!parsedContent[this.uiPreparationStorage.getDBPath()]) {
+              parsedContent[this.uiPreparationStorage.getDBPath()] = [];
+            }
+            if (!parsedContent[this.uiBeanStorage.getDBPath()]) {
+              parsedContent[this.uiBeanStorage.getDBPath()] = [];
+            }
+            if (!parsedContent[this.uiBrewStorage.getDBPath()]) {
+              parsedContent[this.uiBrewStorage.getDBPath()] = [];
+            }
+            if (!parsedContent[this.uiSettingsStorage.getDBPath()]) {
+              parsedContent[this.uiSettingsStorage.getDBPath()] = [];
+            }
             if (parsedContent[this.uiPreparationStorage.getDBPath()] &&
                 parsedContent[this.uiBeanStorage.getDBPath()] &&
                 parsedContent[this.uiBrewStorage.getDBPath()] &&

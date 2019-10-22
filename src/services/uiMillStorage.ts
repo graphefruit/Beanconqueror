@@ -13,7 +13,9 @@ import {UIStorage} from './uiStorage';
 
 /** Interfaces */
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class UIMillStorage extends StorageClass {
   /**
    * Singelton instance

@@ -11,7 +11,9 @@ import {UIHelper} from './uiHelper';
 import {UILog} from './uiLog';
 import {UIStorage} from './uiStorage';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class UIPreparationStorage extends StorageClass {
   /**
    * Singelton instance

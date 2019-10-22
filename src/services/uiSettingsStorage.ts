@@ -11,7 +11,10 @@ import {UIHelper} from './uiHelper';
 import {UILog} from './uiLog';
 import {UIStorage} from './uiStorage';
 
-@Injectable()
+
+@Injectable({
+  providedIn: 'root'
+})
 export class UISettingsStorage extends StorageClass {
   private readonly settings: Settings = new Settings();
 

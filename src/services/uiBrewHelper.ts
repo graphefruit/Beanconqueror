@@ -8,7 +8,10 @@ import {UIPreparationStorage} from './uiPreparationStorage';
 /**
  * Handles every helping functionalities
  */
-@Injectable()
+
+@Injectable({
+  providedIn: 'root'
+})
 export class UIBrewHelper {
 
   constructor (private readonly uiBeanStorage: UIBeanStorage,
