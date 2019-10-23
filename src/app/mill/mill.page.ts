@@ -24,7 +24,7 @@ public ngOnInit(): void {
                private readonly uiMillStorage: UIMillStorage,
                private readonly uiAlert: UIAlert,
                private readonly uiBrewStorage: UIBrewStorage,
-               private readonly  platform:Platform) {
+               private readonly  platform: Platform) {
 
   }
 

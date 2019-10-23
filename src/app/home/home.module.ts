@@ -21,6 +21,6 @@ import {SharedModule} from '../shared/shared.module';
     SharedModule,
   ],
   entryComponents:[],
-  declarations: [HomePage]
+  declarations: []
 })
 export class HomePageModule {}

@@ -179,6 +179,7 @@ export class AppComponent implements AfterViewInit {
     const modal = await this.modalCtrl.create({component: PreparationAddComponent});
     await modal.present();
     await modal.onWillDismiss();
+    this.router.navigate(['/']);
 
   }
 
@@ -186,6 +187,7 @@ export class AppComponent implements AfterViewInit {
     const modal = await this.modalCtrl.create({component: MillAddComponent});
     await modal.present();
     await modal.onWillDismiss();
+    this.router.navigate(['/']);
 
   }
 

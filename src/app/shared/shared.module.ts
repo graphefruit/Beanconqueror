@@ -34,7 +34,6 @@ import {ThanksComponent} from '../info/thanks/thanks.component';
 import {UIHelper} from '../../services/uiHelper';
 import {InAppBrowser} from '@ionic-native/in-app-browser/ngx';
 import {File} from '@ionic-native/file/ngx';
-import {UIFileHelper} from '../../services/uiFileHelper';
 import {UILog} from '../../services/uiLog';
 import {FileChooser} from '@ionic-native/file-chooser/ngx';
 import {FilePath} from '@ionic-native/file-path/ngx';
@@ -49,10 +48,16 @@ import {ImagePicker} from '@ionic-native/image-picker/ngx';
 import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
 import {StatusBar} from '@ionic-native/status-bar/ngx';
 import {SplashScreen} from '@ionic-native/splash-screen/ngx';
+import {BeansPage} from '../beans/beans.page';
+import {BeansAddComponent} from '../beans/beans-add/beans-add.component';
+import {BeansEditComponent} from '../beans/beans-edit/beans-edit.component';
+import {HomePage} from '../home/home.page';
+import {StatisticPage} from '../statistic/statistic.page';
+import {SettingsPage} from '../settings/settings.page';
 
 
 @NgModule({
-  declarations: [AboutComponent,
+  declarations: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, AboutComponent,
     ContactComponent,
     CreditsComponent,
     LicencesComponent,
@@ -63,7 +68,7 @@ import {SplashScreen} from '@ionic-native/splash-screen/ngx';
     FormatDatePipe, KeysPipe, AsyncImageComponent, SearchPipe, RemoveEmptyNumberDirective,
     PreventCharacterDirective, BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent,
     BrewPopoverComponent, BrewTableComponent, BrewTextComponent, TimerComponent],
-  entryComponents: [AboutComponent,
+  entryComponents: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, AboutComponent,
     ContactComponent,
     CreditsComponent,
     LicencesComponent,
@@ -88,7 +93,6 @@ import {SplashScreen} from '@ionic-native/splash-screen/ngx';
     InAppBrowser,
 
     File,
-    UIFileHelper,
     UILog,
     FileChooser,
     FilePath,
@@ -103,7 +107,7 @@ import {SplashScreen} from '@ionic-native/splash-screen/ngx';
     InAppBrowser, File
   ],
 
-  exports: [AboutComponent,
+  exports: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, AboutComponent,
     ContactComponent,
     CreditsComponent,
     LicencesComponent,
