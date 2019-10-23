@@ -1,12 +1,11 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import {Routes, RouterModule, RouteReuseStrategy} from '@angular/router';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {RouterModule, Routes} from '@angular/router';
 
-import {IonicModule, IonicRouteStrategy} from '@ionic/angular';
+import {IonicModule} from '@ionic/angular';
 
-import { SettingsPage } from './settings.page';
-import {IonicStorageModule, Storage} from '@ionic/storage';
+import {SettingsPage} from './settings.page';
 
 const routes: Routes = [
   {
@@ -22,7 +21,7 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [SettingsPage],
+  declarations: [],
   providers: []
 })
 export class SettingsPageModule {}
