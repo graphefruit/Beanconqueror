@@ -22,10 +22,14 @@
   <div class="ion-padding" s>
     <ion-segment [(ngModel)]="brew_segment">
       <ion-segment-button value="open">
-        Aktuell
+        <ion-label>Aktuell
+          <ion-badge>{{openBrewsCount}}</ion-badge>
+        </ion-label>
       </ion-segment-button>
       <ion-segment-button value="archive">
-        Archiv
+        <ion-label>Archiv
+          <ion-badge>{{archivedBrewsCount}}</ion-badge>
+        </ion-label>
       </ion-segment-button>
     </ion-segment>
   </div>
@@ -76,6 +80,9 @@
                 </ion-col>
               </ion-row>
               <ion-row>
+                <ion-col *ngIf="settings.rating === true">
+                  <i class="fa fa-percent"></i>&nbsp;{{brew.getBrewRatio()}}
+                </ion-col>
                 <ion-col *ngIf="settings.bean_type === true">
                   <ion-icon class="custom-coffee-beans"></ion-icon>&nbsp;{{brew.getBean().name}}
                 </ion-col>
@@ -177,6 +184,9 @@
                 </ion-col>
               </ion-row>
               <ion-row>
+                <ion-col *ngIf="settings.rating === true">
+                  <i class="fa fa-percent"></i>&nbsp;{{brew.getBrewRatio()}}
+                </ion-col>
                 <ion-col *ngIf="settings.bean_type === true">
                   <ion-icon class="custom-coffee-beans"></ion-icon>&nbsp;{{brew.getBean().name}}
                 </ion-col>
@@ -195,7 +205,7 @@
               </ion-item>
             </ion-list>
           </div>
-          <ion-row >
+          <ion-row>
             <ion-col>
               <ion-button (click)="postBrew(brew)" color="dark" fill="clear" size="small">
                 <ion-icon name="md-clipboard" slot="start"></ion-icon>

@@ -80,13 +80,17 @@ export class BrewTableComponent implements OnInit {
 
   public dismiss(): void {
     this.modalController.dismiss({
-      'dismissed': true
+      dismissed: true
     });
   }
 
   private __initializeBrews(): void {
     this.brews = this.uiBrewStorage.getAllEntries();
 
+    this.__sortBrews();
+  }
+
+  private __sortBrews(): void {
     // sort latest to top.
     this.brews = this.brews.sort((obj1, obj2) => {
       if (obj1.config.unix_timestamp < obj2.config.unix_timestamp) {

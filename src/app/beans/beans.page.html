@@ -19,10 +19,14 @@
   <div class="ion-padding">
     <ion-segment [(ngModel)]="bean_segment">
       <ion-segment-button value="open">
-        Beziehbar
+        <ion-label>Beziehbar
+          <ion-badge>{{openBeansCount}}</ion-badge>
+        </ion-label>
       </ion-segment-button>
       <ion-segment-button value="finished">
-        Fertig
+        <ion-label>Fertig
+          <ion-badge>{{finishedBeansCount}}</ion-badge>
+        </ion-label>
       </ion-segment-button>
     </ion-segment>
   </div>
@@ -33,7 +37,13 @@
       </ion-card>
       <ion-card *ngFor="let bean of getOpenBeans()">
         <div>
-         <async-image filePath="{{bean.filePath}}"></async-image>
+          <div *ngIf="bean?.attachments && bean.attachments.length > 0">
+            <ion-slides pager="true">
+              <ion-slide *ngFor="let attachment of bean.attachments;let i = index">
+                <async-image class="brew-image" filePath="{{attachment}}"></async-image>
+              </ion-slide>
+            </ion-slides>
+          </div>
         </div>
         <ion-card-header>
           {{bean.name}}
@@ -57,7 +67,15 @@
             </div>
           </ion-col>
         </ion-row>
-        <ion-row >
+        <ion-row>
+          <ion-col>
+            <ion-button (click)="repeatBean(bean)" color="dark" fill="clear" size="small">
+              <ion-icon name="md-repeat" slot="start"></ion-icon>
+              <span>Wiederholen</span>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+        <ion-row>
           <ion-col>
             <ion-button size="small" fill="clear" color="dark" (click)="editBean(bean)">
               <ion-icon name="md-create" slot="start"></ion-icon>
@@ -73,6 +91,7 @@
         </ion-row>
 
 
+
       </ion-card>
     </div>
     <div *ngSwitchCase="'finished'">
@@ -80,7 +99,15 @@
         Du hast keine aufgebrauchten Bohnen!
       </ion-card>
       <ion-card *ngFor="let bean of getFinishedBeans()">
-        <async-image filePath="{{bean.filePath}}"></async-image>
+        <div>
+          <div *ngIf="bean?.attachments && bean.attachments.length > 0">
+            <ion-slides pager="true">
+              <ion-slide *ngFor="let attachment of bean.attachments;let i = index">
+                <async-image class="brew-image" filePath="{{attachment}}"></async-image>
+              </ion-slide>
+            </ion-slides>
+          </div>
+        </div>
         <!-- <img class="card-image" *ngIf="bean.filePath" [src]="bean.filePath"/>-->
         <ion-card-header>
           {{bean.name}}
@@ -102,6 +129,14 @@
               <ion-icon name="calendar"></ion-icon>
               <span>Röstdatum: {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}</span>
             </div>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-button (click)="repeatBean(bean)" color="dark" fill="clear" size="small">
+              <ion-icon name="md-repeat" slot="start"></ion-icon>
+              <span>Wiederholen</span>
+            </ion-button>
           </ion-col>
         </ion-row>
         <ion-row >

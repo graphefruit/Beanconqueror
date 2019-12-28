@@ -1,5 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {ModalController, NavParams} from '@ionic/angular';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {IonSlides, ModalController, NavParams} from '@ionic/angular';
 import {BEAN_MIX_ENUM} from '../../../enums/beans/mix';
 import {UIBeanStorage} from '../../../services/uiBeanStorage';
 import {ROASTS_ENUM} from '../../../enums/beans/roasts';
@@ -7,7 +7,6 @@ import {UIHelper} from '../../../services/uiHelper';
 import {UIImage} from '../../../services/uiImage';
 import {IBean} from '../../../interfaces/bean/iBean';
 import {Bean} from '../../../classes/bean/bean';
-import {IMill} from '../../../interfaces/mill/iMill';
 
 @Component({
   selector: 'beans-edit',
@@ -20,6 +19,7 @@ export class BeansEditComponent implements OnInit {
   public roastsEnum = ROASTS_ENUM;
   public mixEnum = BEAN_MIX_ENUM;
   @Input() private bean: IBean;
+  @ViewChild('photoSlides') public photoSlides: IonSlides;
 
   constructor (private readonly navParams: NavParams,
                private readonly modalController: ModalController,
@@ -40,34 +40,44 @@ export class BeansEditComponent implements OnInit {
     }
   }
 
+
   public addImage(): void {
     this.uiImage.showOptionChooser()
-        .then((_option) => {
-          if (_option === 'CHOOSE') {
-            // CHOSE
-            this.uiImage.choosePhoto()
-                .then((_path) => {
-                  this.data.filePath = _path.toString();
-                });
-          } else {
-            // TAKE
-            this.uiImage.takePhoto()
-                .then((_path) => {
-                  this.data.filePath = _path.toString();
-                });
-          }
-        });
+      .then((_option) => {
+        if (_option === 'CHOOSE') {
+          // CHOSE
+          this.uiImage.choosePhoto()
+            .then((_path) => {
+              this.data.attachments.push(_path.toString());
+            });
+        } else {
+          // TAKE
+          this.uiImage.takePhoto()
+            .then((_path) => {
+              this.data.attachments.push(_path.toString());
+            });
+        }
+      });
+  }
+
+  public deleteImage(_index: number): void {
+    this.data.attachments.splice(_index, 1);
+    if (this.data.attachments.length > 0) {
+      // Slide to one item before
+      this.photoSlides.slideTo(_index - 1, 0);
+    }
+
   }
 
   public dismiss(): void {
     this.modalController.dismiss({
-      'dismissed': true
+      dismissed: true
     });
   }
   private __formValid(): boolean {
     let valid: boolean = true;
     const name: string = this.data.name;
-    if (name === undefined || name === undefined || name.trim() === '') {
+    if (name === undefined || name.trim() === '') {
       valid = false;
     }
 

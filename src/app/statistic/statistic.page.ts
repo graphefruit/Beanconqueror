@@ -32,13 +32,8 @@ export class StatisticPage implements OnInit {
   public ngOnInit() {
   }
 
-  private __getBrewsSortedForMonth(): Array<BrewView> {
-    const brewViews: Array<BrewView> = [];
-    const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
-// sort latest to top.
-    const brewsCopy: Array<Brew> = [...brews];
-
-    const sortedBrews: Array<IBrew> = brewsCopy.sort((obj1, obj2) => {
+  private __sortBrews(_brews: Array<Brew>): Array<IBrew> {
+    const sortedBrews: Array<IBrew> = _brews.sort((obj1, obj2) => {
       if (obj1.config.unix_timestamp < obj2.config.unix_timestamp) {
         return -1;
       }
@@ -48,6 +43,16 @@ export class StatisticPage implements OnInit {
 
       return 0;
     });
+    return sortedBrews;
+  }
+
+  private __getBrewsSortedForMonth(): Array<BrewView> {
+    const brewViews: Array<BrewView> = [];
+    const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
+// sort latest to top.
+    const brewsCopy: Array<Brew> = [...brews];
+
+    const sortedBrews: Array<IBrew> = this.__sortBrews(brewsCopy);
 
     const collection = {};
     // Create collection
@@ -102,7 +107,7 @@ export class StatisticPage implements OnInit {
       }
     };
 
-    const drinkChart = new Chart(this.drinkChart.nativeElement, {
+    this.drinkChart = new Chart(this.drinkChart.nativeElement, {
       type: 'line',
       data: drinkingData,
       options: chartOptions

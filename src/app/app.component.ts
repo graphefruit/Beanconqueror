@@ -20,6 +20,7 @@ import {PreparationAddComponent} from './preparation/preparation-add/preparation
 import {MillAddComponent} from './mill/mill-add/mill-add.component';
 import {UIBrewHelper} from '../services/uiBrewHelper';
 import {BrewAddComponent} from './brew/brew-add/brew-add.component';
+import {Bean} from '../classes/bean/bean';
 
 @Component({
   selector: 'app-root',
@@ -131,6 +132,19 @@ export class AppComponent implements AfterViewInit {
 
         this.uiBrewStorage.update(brew);
       }
+    }
+    // We made an update, filePath just could storage one image, but we want to storage multiple ones.
+    if (this.uiBeanStorage.getAllEntries().length > 0) {
+      let beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
+      for (const bean of beans) {
+        if (bean.filePath !== undefined && bean.filePath !== null && bean.filePath !== '') {
+          bean.attachments.push(bean.filePath);
+          bean.filePath = '';
+          this.uiBeanStorage.update(bean);
+        }
+
+      }
+
     }
   }
 

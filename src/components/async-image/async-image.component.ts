@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit} from '@angular/core';
 import {UIFileHelper} from '../../services/uiFileHelper';
 
 @Component({
@@ -6,7 +6,7 @@ import {UIFileHelper} from '../../services/uiFileHelper';
   templateUrl: './async-image.component.html',
   styleUrls: ['./async-image.component.scss'],
 })
-export class AsyncImageComponent implements OnInit {
+export class AsyncImageComponent implements OnInit, OnChanges {
   @Input() public filePath: string;
 
   public img: string = '';
@@ -14,24 +14,19 @@ export class AsyncImageComponent implements OnInit {
   constructor( private uiFileHelper: UIFileHelper) { }
 
   public async ngOnInit(): Promise<void> {
-    if (this.filePath === undefined || this.filePath === null || this.filePath === '') {
-      this.img = '';
-    } else {
-      this.img = await this.uiFileHelper.getBase64File(this.filePath);
-    }
+    this.__checkImageChangs();
   }
 
-  public async ngOnChanges (): Promise<void> {
+  public async ngOnChanges(): Promise<void> {
+    this.__checkImageChangs();
+  }
 
+  private async __checkImageChangs(): void {
     if (this.filePath === undefined || this.filePath === null || this.filePath === '') {
       this.img = '';
     } else {
       this.img = await this.uiFileHelper.getBase64File(this.filePath);
     }
-
-    // You can also use categoryId.previousValue and
-    // categoryId.firstChange for comparing old and new values
-
   }
 
 }

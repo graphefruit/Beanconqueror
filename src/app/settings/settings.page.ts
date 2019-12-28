@@ -237,7 +237,7 @@ export class SettingsPage implements OnInit {
   }
 
   private __cleanupImportBeanData(_data: Array<IBean>): any {
-    if (_data !== undefined && _data !== undefined && _data.length > 0) {
+    if (_data !== undefined && _data.length > 0) {
       for (const bean of _data) {
         bean.filePath = '';
       }
@@ -245,7 +245,7 @@ export class SettingsPage implements OnInit {
   }
 
   private __cleanupImportBrewData(_data: Array<IBrew>): void {
-    if (_data !== undefined && _data !== undefined && _data.length > 0) {
+    if (_data !== undefined && _data.length > 0) {
       for (const brew of _data) {
         brew.attachments = [];
       }

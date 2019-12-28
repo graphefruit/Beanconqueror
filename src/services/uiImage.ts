@@ -26,29 +26,16 @@ export class UIImage {
 
   public async takePhoto (): Promise<any> {
     const promise = new Promise((resolve, reject) => {
-      const isIos: boolean = this.platform.is('ios');
-      let options: CameraOptions = {};
-      if (isIos) {
-        options = {
-          quality: 100,
-          destinationType: this.camera.DestinationType.DATA_URL,
-          encodingType: this.camera.EncodingType.JPEG,
-          mediaType: this.camera.MediaType.PICTURE,
-          sourceType: this.camera.PictureSourceType.CAMERA,
-          saveToPhotoAlbum: false,
-          correctOrientation: true
-        };
-      } else {
-        options = {
-          quality: 100,
-          destinationType: this.camera.DestinationType.DATA_URL,
-          encodingType: this.camera.EncodingType.JPEG,
-          mediaType: this.camera.MediaType.PICTURE,
-          sourceType: this.camera.PictureSourceType.CAMERA,
-          saveToPhotoAlbum: false,
-          correctOrientation: true
-        };
-      }
+      // const isIos: boolean = this.platform.is('ios');
+      const options: CameraOptions = {
+        quality: 100,
+        destinationType: this.camera.DestinationType.DATA_URL,
+        encodingType: this.camera.EncodingType.JPEG,
+        mediaType: this.camera.MediaType.PICTURE,
+        sourceType: this.camera.PictureSourceType.CAMERA,
+        saveToPhotoAlbum: false,
+        correctOrientation: true
+      };
 
       this.camera.getPicture(options).then(
           (imageData) => {
