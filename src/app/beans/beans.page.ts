@@ -17,6 +17,8 @@ import {BeansEditComponent} from './beans-edit/beans-edit.component';
 export class BeansPage implements OnInit {
 
   public beans: Array<Bean> = [];
+  public openBeansCount: number = 0;
+  public finishedBeansCount: number = 0;
 
   public bean_segment: string = 'open';
   constructor(public modalCtrl: ModalController,
@@ -74,9 +76,23 @@ export class BeansPage implements OnInit {
 
   }
 
+  public async repeatBean(_bean: Bean) {
+
+    const modal = await this.modalCtrl.create({component: BeansAddComponent, componentProps: {bean_template: _bean}});
+    await modal.present();
+    await modal.onWillDismiss();
+    this.loadBeans();
+
+  }
+
   private __initializeBeans(): void {
     this.beans = this.uiBeanStorage.getAllEntries()
         .sort((a, b) => a.name.localeCompare(b.name));
+
+    this.openBeansCount = this.beans.filter(
+      (bean) => !bean.finished).length;
+    this.finishedBeansCount = this.beans.filter(
+      (bean) => bean.finished).length;
   }
 
   private __deleteBean(_bean: IBean): void {

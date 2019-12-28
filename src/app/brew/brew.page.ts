@@ -281,12 +281,8 @@ export class BrewPage implements OnInit {
     this.__initializeBrewView('archiv');
   }
 
-  private __initializeBrewView(_type: string): void {
-// sort latest to top.
-    const brewsCopy: Array<Brew> = [...this.brews];
-    let brewsFilteres: Array<Brew>;
-    brewsFilteres = brewsCopy.filter((e) => e.getBean().finished === !(_type === 'open'));
-    const sortedBrews: Array<IBrew> = brewsFilteres.sort((obj1, obj2) => {
+  private __sortBrews(_sortingBrews: Array<Brew>): Array<IBrew> {
+    const sortedBrews: Array<IBrew> = _sortingBrews.sort((obj1, obj2) => {
       if (obj1.config.unix_timestamp < obj2.config.unix_timestamp) {
         return 1;
       }
@@ -296,6 +292,15 @@ export class BrewPage implements OnInit {
 
       return 0;
     });
+    return sortedBrews;
+  }
+
+  private __initializeBrewView(_type: string): void {
+// sort latest to top.
+    const brewsCopy: Array<Brew> = [...this.brews];
+    let brewsFilteres: Array<Brew>;
+    brewsFilteres = brewsCopy.filter((e) => e.getBean().finished === !(_type === 'open'));
+    const sortedBrews: Array<IBrew> = this.__sortBrews(brewsFilteres);
 
     const collection = {};
     // Create collection

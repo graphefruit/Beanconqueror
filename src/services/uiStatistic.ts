@@ -31,7 +31,7 @@ export class UIStatistic {
     let costs: number = 0;
     const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
     for (const i of beans) {
-      if (i.cost !== undefined && i.cost !== undefined && i.cost > 0) {
+      if (i.cost !== undefined && i.cost > 0) {
         costs += i.cost;
       }
     }

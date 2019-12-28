@@ -27,6 +27,7 @@ export class BrewAddComponent implements OnInit {
   @ViewChild('timer') public timer: TimerComponent;
   @ViewChild('brewTemperatureTime') public brewTemperatureTime: TimerComponent;
 
+  private readonly brew_template: Brew;
   public data: Brew = new Brew();
 
   public BREW_VIEW_ENUM = BREW_VIEW_ENUM;
@@ -44,7 +45,7 @@ export class BrewAddComponent implements OnInit {
     //  event.preventDefault();
   }
 
-  private brew_template: Brew;
+
 
   constructor (private readonly modalController: ModalController,
                private readonly navParams: NavParams,
@@ -78,15 +79,14 @@ export class BrewAddComponent implements OnInit {
   public ionViewDidEnter(): void {
     if (this.brew_template) {
       this.__loadBrew(this.brew_template);
-    }
-    else {
+    } else {
       this.__loadLastBrew();
     }
   }
 
   public dismiss(): void {
     this.modalController.dismiss({
-      'dismissed': true
+      dismissed: true
     });
   }
 

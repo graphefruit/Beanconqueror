@@ -88,11 +88,16 @@
     <ion-textarea autocomplete="true" spellcheck="true" autocorrect="true" name="note" #note="ngModel" rows="5"
                   [(ngModel)]="data.note"></ion-textarea>
   </ion-item>
-  <ion-item (click)="addImage()">
+  <ion-item (click)="addImage()" button>
     Foto hinzufügen
   </ion-item>
-  <div *ngIf="data.filePath != ''">
-   <async-image filePath="{{data.filePath}}"></async-image>
+  <div *ngIf="data?.attachments && data.attachments.length > 0">
+    <ion-slides #photoSlides pager="true">
+      <ion-slide *ngFor="let attachment of data.attachments;let i = index">
+        <ion-button (click)="deleteImage(i)" class="position-absolute-button">Löschen</ion-button>
+        <async-image class="brew-image" filePath="{{attachment}}"></async-image>
+      </ion-slide>
+    </ion-slides>
   </div>
 
 

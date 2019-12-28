@@ -111,9 +111,7 @@
   <div *ngIf="data?.attachments && data.attachments.length > 0">
     <ion-slides #photoSlides pager="true">
       <ion-slide *ngFor="let attachment of data.attachments;let i = index">
-        <ion-buttons end>
-          <ion-button color="primary" (click)="deleteImage(i)">Löschen</ion-button>
-        </ion-buttons>
+        <ion-button (click)="deleteImage(i)" class="position-absolute-button">Löschen</ion-button>
 
         <async-image class="brew-image" filePath="{{attachment}}"></async-image>
       </ion-slide>

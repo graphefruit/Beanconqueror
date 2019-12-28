@@ -9,7 +9,9 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "sonar": "sh /Users/larssaalbach/Downloads/sonarqube-7.0/bin/macosx-universal-64/sonar.sh console",
+    "sonar_scan": "/Users/larssaalbach/Downloads/sonar-scanner-4.2.0.1873-macosx/bin/sonar-scanner"
   },
   "private": true,
   "dependencies": {
