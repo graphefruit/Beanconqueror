@@ -34,9 +34,26 @@
     </ion-segment>
   </div>
   <div [ngSwitch]="brew_segment">
-    <ion-item>
-      <ion-label stacked>Filter (Bohnen, Methode, Mühle)</ion-label>
-      <ion-input [(ngModel)]="query" type="text"></ion-input>
+    <ion-item *ngIf="settings.method_of_preparation === true">
+      <ion-label stacked>Zubereitungsmethode</ion-label>
+      <ion-select (ngModelChange)="filterChanged()" [(ngModel)]="openBrewsFilter.method_of_preparation" multiple="true">
+        >
+        <ion-select-option *ngFor="let method of method_of_preparations" value="{{method.config.uuid}}">{{method.name}}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item *ngIf="settings.bean_type === true">
+      <ion-label stacked>Bohne</ion-label>
+      <ion-select (ngModelChange)="filterChanged()" [(ngModel)]="openBrewsFilter.bean" multiple="true">>
+        <ion-select-option *ngFor="let bean of beans"
+                           value="{{bean.config.uuid}}">{{bean.name}}&nbsp;{{bean.finished ? '(Archiv)' : ''}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item *ngIf="settings.mill === true">
+      <ion-label stacked>Mühle</ion-label>
+      <ion-select (ngModelChange)="filterChanged()" [(ngModel)]="openBrewsFilter.mill" multiple="true">
+        <ion-select-option *ngFor="let mill of mills" value="{{mill.config.uuid}}">{{mill.name}}</ion-select-option>
+      </ion-select>
     </ion-item>
     <div *ngSwitchCase="'open'">
       <ion-card *ngIf="!uiBrewHelper.canBrew()" class="ion-padding">
@@ -49,11 +66,10 @@
         Keine Einträge vorhanden.
       </ion-card>
       <ion-list *ngFor="let brewView of openBrewsView">
-        <ion-list-header *ngIf="(brewView.brews | searchBrews:query).length > 0" class="brews-header">
+        <ion-list-header *ngIf="(brewView.brews).length > 0" class="brews-header">
           {{brewView.title}}
         </ion-list-header>
-        <ion-card *ngFor="let brew of brewView.brews | searchBrews:query">
-
+        <ion-card *ngFor="let brew of brewView.brews">
           <ion-card-header>
             {{brew.formateDate("HH:mm")}}
           </ion-card-header>

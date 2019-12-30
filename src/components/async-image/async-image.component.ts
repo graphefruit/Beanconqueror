@@ -14,14 +14,14 @@ export class AsyncImageComponent implements OnInit, OnChanges {
   constructor( private uiFileHelper: UIFileHelper) { }
 
   public async ngOnInit(): Promise<void> {
-    this.__checkImageChangs();
+    await this.__checkImageChangs();
   }
 
   public async ngOnChanges(): Promise<void> {
-    this.__checkImageChangs();
+    await this.__checkImageChangs();
   }
 
-  private async __checkImageChangs(): void {
+  private async __checkImageChangs(): Promise<void> {
     if (this.filePath === undefined || this.filePath === null || this.filePath === '') {
       this.img = '';
     } else {
