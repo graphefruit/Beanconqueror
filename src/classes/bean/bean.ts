@@ -53,6 +53,10 @@ export class Bean implements IBean {
     Object.assign(this, beanObj);
   }
 
+  public fixDataTypes(): void {
+    this.cost = Number(this.cost);
+    this.weight = Number(this.weight);
+  }
   public beanAgeInDays(): number {
     const today = Date.now();
     let millisecondsSinceRoasting = today - Date.parse(this.roastingDate);

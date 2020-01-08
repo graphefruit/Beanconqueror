@@ -31,13 +31,10 @@ import {LicencesComponent} from '../info/licences/licences.component';
 import {PrivacyComponent} from '../info/privacy/privacy.component';
 import {TermsComponent} from '../info/terms/terms.component';
 import {ThanksComponent} from '../info/thanks/thanks.component';
-import {UIHelper} from '../../services/uiHelper';
 import {InAppBrowser} from '@ionic-native/in-app-browser/ngx';
 import {File} from '@ionic-native/file/ngx';
-import {UILog} from '../../services/uiLog';
 import {FileChooser} from '@ionic-native/file-chooser/ngx';
 import {FilePath} from '@ionic-native/file-path/ngx';
-import {UIAlert} from '../../services/uiAlert';
 import {IOSFilePicker} from '@ionic-native/file-picker/ngx';
 import {SocialSharing} from '@ionic-native/social-sharing/ngx';
 import {AppMinimize} from '@ionic-native/app-minimize/ngx';
@@ -54,6 +51,7 @@ import {BeansEditComponent} from '../beans/beans-edit/beans-edit.component';
 import {HomePage} from '../home/home.page';
 import {StatisticPage} from '../statistic/statistic.page';
 import {SettingsPage} from '../settings/settings.page';
+import {BrewPopoverActionsComponent} from '../brew/brew-popover-actions/brew-popover-actions.component';
 
 
 @NgModule({
@@ -67,7 +65,7 @@ import {SettingsPage} from '../settings/settings.page';
     PreparationEditComponent, MillPage, MillEditComponent, MillAddComponent, BrewAddComponent,
     FormatDatePipe, KeysPipe, AsyncImageComponent, SearchPipe, RemoveEmptyNumberDirective,
     PreventCharacterDirective, BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent,
-    BrewPopoverComponent, BrewTableComponent, BrewTextComponent, TimerComponent],
+    BrewPopoverComponent, BrewPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent],
   entryComponents: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, AboutComponent,
     ContactComponent,
     CreditsComponent,
@@ -77,7 +75,7 @@ import {SettingsPage} from '../settings/settings.page';
     ThanksComponent, PreparationPage,
     PreparationAddComponent, PreparationEditComponent, MillPage, MillEditComponent,
     MillAddComponent, BrewAddComponent, BrewPage, BrewDetailComponent, BrewEditComponent,
-    BrewPhotoViewComponent, BrewPopoverComponent, BrewTableComponent, BrewTextComponent, TimerComponent],
+    BrewPhotoViewComponent, BrewPopoverComponent, BrewPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent],
   imports: [
     CommonModule,
     IonicModule,
@@ -87,17 +85,10 @@ import {SettingsPage} from '../settings/settings.page';
     StatusBar,
     SplashScreen,
     RemoveEmptyNumberDirective, PreventCharacterDirective, FormatDatePipe, KeysPipe,
-
-
-    UIHelper,
     InAppBrowser,
-
     File,
-    UILog,
     FileChooser,
     FilePath,
-    UIAlert,
-
     IOSFilePicker,
     SocialSharing,
     AppMinimize,
@@ -118,7 +109,7 @@ import {SettingsPage} from '../settings/settings.page';
     BrewAddComponent, FormatDatePipe,
     KeysPipe, AsyncImageComponent, SearchPipe, RemoveEmptyNumberDirective,
     PreventCharacterDirective, BrewPage, BrewDetailComponent, BrewEditComponent,
-    BrewPhotoViewComponent, BrewPopoverComponent, BrewTableComponent, BrewTextComponent, TimerComponent],
+    BrewPhotoViewComponent, BrewPopoverComponent, BrewPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule {

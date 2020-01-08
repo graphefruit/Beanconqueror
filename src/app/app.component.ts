@@ -22,6 +22,8 @@ import {UIBrewHelper} from '../services/uiBrewHelper';
 import {BrewAddComponent} from './brew/brew-add/brew-add.component';
 import {Bean} from '../classes/bean/bean';
 
+import {UIHelper} from '../services/uiHelper';
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -67,7 +69,8 @@ export class AppComponent implements AfterViewInit {
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly keyboard: Keyboard,
     private readonly threeDeeTouch: ThreeDeeTouch,
-    private readonly modalCtrl: ModalController
+    private readonly modalCtrl: ModalController,
+    private readonly uiHelper: UIHelper,
   ) {
 
   }
@@ -110,10 +113,12 @@ export class AppComponent implements AfterViewInit {
                 this.uiLog.log('App finished loading');
                 this.__checkUpdate();
                 this.__initApp();
+                this.uiHelper.setAppReady(1);
 
               }, () => {
                 this.uiLog.log('App finished loading');
                 this.__initApp();
+                this.uiHelper.setAppReady(2);
               });
         });
 
@@ -135,21 +140,30 @@ export class AppComponent implements AfterViewInit {
     }
     // We made an update, filePath just could storage one image, but we want to storage multiple ones.
     if (this.uiBeanStorage.getAllEntries().length > 0) {
-      let beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
+      const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
       for (const bean of beans) {
         if (bean.filePath !== undefined && bean.filePath !== null && bean.filePath !== '') {
           bean.attachments.push(bean.filePath);
           bean.filePath = '';
-          this.uiBeanStorage.update(bean);
         }
-
+        bean.fixDataTypes();
+        this.uiBeanStorage.update(bean);
       }
 
+    }
+    // Fix wrong types
+    if (this.uiBrewStorage.getAllEntries().length > 0) {
+      const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
+      for (const brew of brews) {
+        brew.fixDataTypes();
+        this.uiBrewStorage.update(brew);
+      }
     }
   }
 
   private __initApp(): void {
     this.__registerBack();
+
 
     if (this.platform.is('ios')) {
       this.threeDeeTouch.onHomeIconPressed()
@@ -263,3 +277,4 @@ export class AppComponent implements AfterViewInit {
 
   }*/
 }
+

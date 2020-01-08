@@ -1,6 +1,7 @@
 import {NgModule} from '@angular/core';
 import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 import {IonicStorageModule} from '@ionic/storage';
+import {RouteResolver} from './app-routing-resolver';
 
 const routes: Routes = [
   {
@@ -9,20 +10,48 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'home',
+    path: 'home', resolve: {
+      resolver: RouteResolver
+    },
     loadChildren: './home/home.module#HomePageModule',
     pathMatch: 'full'
   },
   {
-    path: 'info',
+    path: 'info', resolve: {
+      resolver: RouteResolver
+    },
     loadChildren: './info/info.module#InfoModule',
   },
-  {path: 'settings', loadChildren: './settings/settings.module#SettingsPageModule', pathMatch: 'full'},
-  {path: 'mill', loadChildren: './mill/mill.module#MillPageModule', pathMatch: 'full'},
-  {path: 'beans', loadChildren: './beans/beans.module#BeansPageModule', pathMatch: 'full'},
-  {path: 'preparation', loadChildren: './preparation/preparation.module#PreparationPageModule', pathMatch: 'full'},
-  {path: 'brew', loadChildren: './brew/brew.module#BrewPageModule', pathMatch: 'full'},
-  {path: 'statistic', loadChildren: './statistic/statistic.module#StatisticPageModule', pathMatch: 'full'},
+  {
+    path: 'settings', resolve: {
+      resolver: RouteResolver
+    }, loadChildren: './settings/settings.module#SettingsPageModule', pathMatch: 'full'
+  },
+  {
+    path: 'mill', resolve: {
+      resolver: RouteResolver
+    }, loadChildren: './mill/mill.module#MillPageModule', pathMatch: 'full'
+  },
+  {
+    path: 'beans', resolve: {
+      resolver: RouteResolver
+    }, loadChildren: './beans/beans.module#BeansPageModule', pathMatch: 'full'
+  },
+  {
+    path: 'preparation', resolve: {
+      resolver: RouteResolver
+    }, loadChildren: './preparation/preparation.module#PreparationPageModule', pathMatch: 'full'
+  },
+  {
+    path: 'brew', resolve: {
+      resolver: RouteResolver
+    }, loadChildren: './brew/brew.module#BrewPageModule', pathMatch: 'full'
+  },
+  {
+    path: 'statistic', resolve: {
+      resolver: RouteResolver
+    }, loadChildren: './statistic/statistic.module#StatisticPageModule', pathMatch: 'full'
+  },
 ];
 
 @NgModule({

@@ -10,6 +10,7 @@ import 'moment/locale/de';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {File} from '@ionic-native/file/ngx';
 import {UIFileHelper} from './uiFileHelper';
+import {UILog} from './uiLog';
 
 declare var cordova: any;
 declare var device: any;
@@ -23,11 +24,16 @@ declare var window: any;
 })
 export class UIHelper {
 
+  /**
+   *
+   */
+  private isAppReady: number = -1;
   constructor (private readonly platform: Platform,
                private readonly inAppBrowser: InAppBrowser,
                private readonly sanitizer: DomSanitizer,
                private readonly file: File,
-               private readonly uiFileHelper: UIFileHelper) {
+               private readonly uiFileHelper: UIFileHelper,
+               private readonly uiLog: UILog) {
     moment.locale('de');
   }
 
@@ -101,6 +107,33 @@ export class UIHelper {
 
   public async attachOnPlatformReady (): Promise<any> {
     return this.platform.ready();
+  }
+
+  /**
+   *
+   * @param _ready  1 = finished, but errors, 2 = finisheed no errors
+   */
+  public setAppReady(_ready: number): void {
+    this.isAppReady = _ready;
+  }
+
+  public isBeanconqurorAppReady(): Promise<any> {
+    const promise = new Promise((resolve, reject) => {
+
+      const intV = setInterval(() => {
+        this.uiLog.log('Check app ready');
+        if (this.isAppReady === 1) {
+          resolve();
+          clearInterval(intV);
+        } else if (this.isAppReady === 2) {
+          resolve();
+          clearInterval(intV);
+        }
+      }, 50);
+
+    });
+
+    return promise;
   }
 
   public convertToNumber(event: any): number {
