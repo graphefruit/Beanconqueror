@@ -180,4 +180,31 @@ export class Brew implements IBrew {
     return uiMillStorage;
   }
 
+  /**
+   * Sorry for this, but angular hates inputs which are string and needs numbers
+   */
+  public fixDataTypes() {
+    this.brew_quantity = Number(this.brew_quantity);
+    this.grind_weight = Number(this.grind_weight);
+    // UUID
+
+    // tslint:disable-next-line
+    this.mill_speed = Number(this.mill_speed);
+
+    // tslint:disable-next-line
+    this.brew_temperature = Number(this.brew_temperature);
+    // tslint:disable-next-line
+    this.brew_temperature_time = Number(this.brew_temperature_time);
+    // tslint:disable-next-line
+    this.brew_time = Number(this.brew_time);
+    // tslint:disable-next-line
+    this.brew_quantity = Number(this.brew_quantity);
+    // tslint:disable-next-line
+
+
+    this.coffee_first_drip_time = Number(this.coffee_first_drip_time);
+    // tslint:disable-next-line
+    this.coffee_blooming_time = Number(this.coffee_blooming_time);
+  }
+
 }

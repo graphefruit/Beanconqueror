@@ -5,7 +5,7 @@
     color:black;
   }
   ion-list{
-    margin-top:30px!important;
+    margin-top: 0px !important;
   }
   ion-list:first-child{
     margin-top:0px!important;
@@ -18,10 +18,25 @@
     color:red;
   }
 
+  ion-card {
+    ion-card-header {
+      padding-top: 0px;
+      padding-left: 5px;
+      padding-right: 0px;
+    }
+
+    ion-card-content {
+      padding-left: 5px;
+      padding-right: 0px;
+      padding-bottom: 0px;
+    }
+  }
+
+  ion-list-header {
+    --background: rgb(160, 176, 196);
+    --color: black;
+  }
+
 }
 
 
-ion-list-header{
-  --background:rgb(160,176,196);
-  --color:black;
-}

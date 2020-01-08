@@ -1,9 +1,11 @@
 /** Core */
 import {Injectable} from '@angular/core';
 /** Ionic */
-import { AlertController } from '@ionic/angular';
+import {AlertController} from '@ionic/angular';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class UIAlert {
 
   constructor (private readonly alertController: AlertController) {

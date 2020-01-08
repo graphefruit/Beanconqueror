@@ -3,7 +3,10 @@ import {Injectable} from '@angular/core';
 
 /** Third party */
 declare var console;
-@Injectable()
+
+@Injectable({
+  providedIn: 'root'
+})
 export class UILog {
 
   public disabled: boolean = true;

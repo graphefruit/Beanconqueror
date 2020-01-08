@@ -25,6 +25,7 @@ import {IPreparation} from '../../interfaces/preparation/iPreparation';
 import {IBean} from '../../interfaces/bean/iBean';
 import {IMill} from '../../interfaces/mill/iMill';
 import {IBrewPageFilter} from '../../interfaces/brew/iBrewPageFilter';
+import {BrewPopoverActionsComponent} from './brew-popover-actions/brew-popover-actions.component';
 
 @Component({
   selector: 'brew',
@@ -86,7 +87,7 @@ export class BrewPage implements OnInit {
     this.loadBrews();
   }
 
-  public async showMore(event) {
+  public async showMore(event): Promise<void> {
     const popover = await this.popoverCtrl.create({
       component: BrewPopoverComponent,
       event: event,
@@ -103,6 +104,38 @@ export class BrewPage implements OnInit {
       this.__resetFilter();
     }
 
+  }
+
+  public async showBrewActions(event, brew: Brew): Promise<void> {
+    const popover = await this.popoverCtrl.create({
+      component: BrewPopoverActionsComponent,
+      event: event,
+      translucent: true
+    });
+    await popover.present();
+    const data = await popover.onWillDismiss();
+    switch (data.role) {
+      case BrewPopoverActionsComponent.ACTIONS.POST:
+        this.postBrew(brew);
+        break;
+      case BrewPopoverActionsComponent.ACTIONS.REPEAT:
+        this.repeatBrew(brew);
+        break;
+      case BrewPopoverActionsComponent.ACTIONS.DETAIL:
+        this.detailBrew(brew);
+        break;
+      case BrewPopoverActionsComponent.ACTIONS.EDIT:
+        this.editBrew(brew);
+        break;
+      case BrewPopoverActionsComponent.ACTIONS.DELETE:
+        this.deleteBrew(brew);
+        break;
+      case BrewPopoverActionsComponent.ACTIONS.PHOTO_GALLERY:
+        this.viewPhotos(brew);
+        break;
+      default:
+        break;
+    }
   }
 
   private __resetFilter(): void {

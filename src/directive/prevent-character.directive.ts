@@ -14,21 +14,21 @@ export class PreventCharacterDirective {
   @HostListener('ionBlur', ['$event.target'])
     public blur(): void {
 
-        let val: any = this.model.control.value;
+    let val: any = this.model.control.value;
 
-        // Value needs to be combined as a string
-        // tslint:disable-next-line
-        val = val + '';
-        console.log(val);
-        if (val === '') {
-            val = '0';
-        }
-        if (val.indexOf(',')) {
-            val = val.replace(/,/g, '.');
-        }
+    // Value needs to be combined as a string
+    // tslint:disable-next-line
+    val = val + '';
+    console.log(val);
+    if (val === '') {
+      val = '0';
+    }
+    if (val.indexOf(',')) {
+      val = val.replace(/,/g, '.');
+    }
 
-        // Emit worked aswell but I don't know what its doing in depth
-        // this.ngModelChange.emit(parseFloat(val));
+    // Emit worked aswell but I don't know what its doing in depth
+    // this.ngModelChange.emit(parseFloat(val));
 
     const parsedFloat: number = parseFloat(val);
     if (Number.isNaN(parsedFloat)) {

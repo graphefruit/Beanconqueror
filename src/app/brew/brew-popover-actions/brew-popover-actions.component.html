@@ -1,0 +1,27 @@
+<ion-list>
+  <ion-item (click)="choose(getStaticActions().POST)" button>
+    <ion-icon name="md-clipboard" slot="start"></ion-icon>
+    <span>Posten</span>
+  </ion-item>
+  <ion-item (click)="choose(getStaticActions().REPEAT)" button>
+    <ion-icon name="md-repeat" slot="start"></ion-icon>
+    <span>Wiederholen</span>
+  </ion-item>
+  <ion-item (click)="choose(getStaticActions().DETAIL)" button>
+    <ion-icon name="list" slot="start"></ion-icon>
+    <span>Details</span>
+  </ion-item>
+  <ion-item (click)="choose(getStaticActions().EDIT)" button>
+    <ion-icon name="md-create" slot="start"></ion-icon>
+    <span>Editieren</span>
+  </ion-item>
+  <ion-item (click)="choose(getStaticActions().DELETE)" button>
+    <ion-icon name="trash" slot="start"></ion-icon>
+    <span>Löschen</span>
+  </ion-item>
+  <ion-item (click)="choose(getStaticActions().PHOTO_GALLERY)" button>
+    <ion-icon name="md-eye" slot="start"></ion-icon>
+    <span>Fotogalerie</span>
+  </ion-item>
+</ion-list>
+
