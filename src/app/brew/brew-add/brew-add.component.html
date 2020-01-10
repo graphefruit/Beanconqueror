@@ -76,13 +76,13 @@
       </ion-button>
     </ion-item>
     <ion-row *ngIf="settings.brew_quantity === true">
-      <ion-col no-padding col-8 col-sm-10>
+      <ion-col class="ion-no-padding" col-8 col-sm-10>
         <ion-item>
           <ion-label floating>Bezugsmenge</ion-label>
           <ion-input remove-empty-number prevent-characters [(ngModel)]="data.brew_quantity" type="text"></ion-input>
         </ion-item>
       </ion-col>
-      <ion-col no-padding col-4 col-sm-2 align-self-end>
+      <ion-col class="ion-no-padding ion-align-self-end" col-4 col-sm-2>
         <ion-item>
           <ion-select style="max-width:100%;" [(ngModel)]="data.brew_quantity_type" name="brewQuantityType"
                       #brewQuantityType="ngModel">

@@ -26,6 +26,8 @@ import {IBean} from '../../interfaces/bean/iBean';
 import {IMill} from '../../interfaces/mill/iMill';
 import {IBrewPageFilter} from '../../interfaces/brew/iBrewPageFilter';
 import {BrewPopoverActionsComponent} from './brew-popover-actions/brew-popover-actions.component';
+import {debounceTime, distinctUntilChanged} from 'rxjs/internal/operators';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'brew',
@@ -49,7 +51,7 @@ export class BrewPage implements OnInit {
     bean: [],
     method_of_preparation: []
   };
-
+  public debounceFilter: Subject<string> = new Subject<string>();
 
   public method_of_preparations: Array<IPreparation> = [];
   public beans: Array<IBean> = [];
@@ -81,16 +83,23 @@ export class BrewPage implements OnInit {
       .sort((a, b) => a.name.localeCompare(b.name));
 
     this.__initializeOpenBrewsFilter();
+
+    this.debounceFilter
+      .pipe(debounceTime(500), distinctUntilChanged())
+      .subscribe((model) => {
+        this.loadBrews();
+      });
   }
 
-  public filterChanged(): void {
-    this.loadBrews();
+
+  public filterChanged(_query): void {
+    this.debounceFilter.next(_query);
   }
 
   public async showMore(event): Promise<void> {
     const popover = await this.popoverCtrl.create({
       component: BrewPopoverComponent,
-      event: event,
+      event,
       translucent: true
     });
     await popover.present();
@@ -109,8 +118,9 @@ export class BrewPage implements OnInit {
   public async showBrewActions(event, brew: Brew): Promise<void> {
     const popover = await this.popoverCtrl.create({
       component: BrewPopoverActionsComponent,
-      event: event,
-      translucent: true
+      event,
+      translucent: true,
+      componentProps: {brew}
     });
     await popover.present();
     const data = await popover.onWillDismiss();
@@ -154,7 +164,7 @@ export class BrewPage implements OnInit {
     //   this.loadBrews();
     // });
     // editBrewModal.present({animate: false});
-    const modal = await this.modalCtrl.create({component:BrewEditComponent, componentProps: {'brew' : _brew}});
+    const modal = await this.modalCtrl.create({component: BrewEditComponent, componentProps: {brew: _brew}});
     await modal.present();
     await modal.onWillDismiss();
     this.loadBrews();
@@ -166,7 +176,7 @@ export class BrewPage implements OnInit {
     //   this.loadBrews();
     // });
     // editBrewModal.present({animate: false});
-    const modal = await this.modalCtrl.create({component:BrewDetailComponent, componentProps: {'brew' : _brew}});
+    const modal = await this.modalCtrl.create({component: BrewDetailComponent, componentProps: {brew: _brew}});
     await modal.present();
     await modal.onWillDismiss();
     this.loadBrews();
@@ -175,7 +185,7 @@ export class BrewPage implements OnInit {
   public async viewPhotos(_brew: IBrew) {
     // const brewsPhotoViewModal = this.modalCtrl.create(BrewsPhotoView, {BREW: _brew});
     // brewsPhotoViewModal.present({animate: false});
-    const modal = await this.modalCtrl.create({component:BrewPhotoViewComponent, componentProps: {'brew' : _brew}});
+    const modal = await this.modalCtrl.create({component: BrewPhotoViewComponent, componentProps: {brew: _brew}});
     await modal.present();
     await modal.onWillDismiss();
   }
@@ -192,7 +202,7 @@ export class BrewPage implements OnInit {
   }
 
   public async postBrew(_brew: IBrew) {
-    const modal = await this.modalCtrl.create({component:BrewTextComponent, componentProps: {'brew' : _brew}});
+    const modal = await this.modalCtrl.create({component: BrewTextComponent, componentProps: {brew: _brew}});
     await modal.present();
     await modal.onWillDismiss();
     this.loadBrews();
@@ -219,7 +229,7 @@ export class BrewPage implements OnInit {
     //   this.loadBrews();
     // });
     // repeatBrewModel.present({animate: false});
-    const modal = await this.modalCtrl.create({component:BrewAddComponent, componentProps: {'brew_template' : _brew}});
+    const modal = await this.modalCtrl.create({component: BrewAddComponent, componentProps: {brew_template: _brew}});
     await modal.present();
     await modal.onWillDismiss();
     this.loadBrews();
@@ -394,13 +404,14 @@ export class BrewPage implements OnInit {
 
 
     if (this.settings.mill === true && this.openBrewsFilter.mill.length > 0) {
-      brewsFilters = brewsFilters.filter((e) => this.openBrewsFilter.mill.filter((z) => z === e.getMill().config.uuid).length > 0);
+      brewsFilters = brewsFilters.filter((e) => this.openBrewsFilter.mill.filter((z) => z === e.mill).length > 0);
     }
     if (this.settings.bean_type === true && this.openBrewsFilter.bean.length > 0) {
-      brewsFilters = brewsFilters.filter((e) => this.openBrewsFilter.bean.filter((z) => z === e.getBean().config.uuid).length > 0);
+      brewsFilters = brewsFilters.filter((e) => this.openBrewsFilter.bean.filter((z) => z === e.bean).length > 0);
     }
     if (this.settings.method_of_preparation === true && this.openBrewsFilter.method_of_preparation.length > 0) {
-      brewsFilters = brewsFilters.filter((e) => this.openBrewsFilter.bean.filter((z) => z === e.getBean().config.uuid).length > 0);
+      brewsFilters = brewsFilters.filter((e) =>
+        (this.openBrewsFilter.method_of_preparation.filter((z) => z === e.method_of_preparation).length > 0));
     }
 
     const sortedBrews: Array<IBrew> = this.__sortBrews(brewsFilters);

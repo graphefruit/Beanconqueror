@@ -111,4 +111,5 @@ export class BeansAddComponent implements OnInit {
 
   public ngOnInit() {}
 
+
 }

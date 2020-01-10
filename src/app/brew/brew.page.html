@@ -34,21 +34,22 @@
   <div [ngSwitch]="brew_segment">
     <ion-item *ngIf="uiBrewHelper.canBrew() && settings.method_of_preparation === true">
       <ion-label stacked>Zubereitungsmethode</ion-label>
-      <ion-select (ngModelChange)="filterChanged()" [(ngModel)]="openBrewsFilter.method_of_preparation" multiple="true">
+      <ion-select (ngModelChange)="filterChanged($event)" [(ngModel)]="openBrewsFilter.method_of_preparation"
+                  multiple="true">
         <ion-select-option *ngFor="let method of method_of_preparations" value="{{method.config.uuid}}">{{method.name}}
         </ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item *ngIf="uiBrewHelper.canBrew() &&  settings.bean_type === true">
       <ion-label stacked>Bohne</ion-label>
-      <ion-select (ngModelChange)="filterChanged()" [(ngModel)]="openBrewsFilter.bean" multiple="true">>
+      <ion-select (ngModelChange)="filterChanged($event)" [(ngModel)]="openBrewsFilter.bean" multiple="true">>
         <ion-select-option *ngFor="let bean of beans"
                            value="{{bean.config.uuid}}">{{bean.name}}&nbsp;{{bean.finished ? '(Archiv)' : ''}}</ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item *ngIf="uiBrewHelper.canBrew() &&  settings.mill === true">
       <ion-label stacked>Mühle</ion-label>
-      <ion-select (ngModelChange)="filterChanged()" [(ngModel)]="openBrewsFilter.mill" multiple="true">
+      <ion-select (ngModelChange)="filterChanged($event)" [(ngModel)]="openBrewsFilter.mill" multiple="true">
         <ion-select-option *ngFor="let mill of mills" value="{{mill.config.uuid}}">{{mill.name}}</ion-select-option>
       </ion-select>
     </ion-item>

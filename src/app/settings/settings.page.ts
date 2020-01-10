@@ -415,6 +415,8 @@ export class SettingsPage implements OnInit {
         }
       }]
     };
+
+
     this.uiStorage.import(t).then((_data) => {
     });
   }
@@ -445,6 +447,9 @@ export class SettingsPage implements OnInit {
 
               this.__cleanupImportBeanData(parsedContent[this.uiBeanStorage.getDBPath()]);
               this.__cleanupImportBrewData(parsedContent[this.uiBrewStorage.getDBPath()]);
+
+              // When exporting the value is a number, when importing it needs to be  a string.
+              parsedContent['SETTINGS'][0]['brew_view'] = parsedContent['SETTINGS'][0]['brew_view'] + '';
 
               this.uiStorage.import(parsedContent).then((_data) => {
                 if (_data.BACKUP === false) {
