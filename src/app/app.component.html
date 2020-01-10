@@ -46,7 +46,8 @@
                           name="md-arrow-dropup"></ion-icon>
 
               </ion-item>
-              <ion-list style="margin-left:16px!important;" no-margin-important no-padding *ngIf="toggleAbout">
+              <ion-list *ngIf="toggleAbout" class="ion-no-padding" no-margin-important
+                        style="margin-left:16px!important;">
                 <ion-item [routerLink]="[pages.licences.url]" [class.active]="pages.licences.active">
                   <ion-icon class="menu-icon" name="{{pages.licences.icon}}"></ion-icon>
                   {{pages.licences.title}}

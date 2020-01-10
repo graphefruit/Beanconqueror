@@ -51,4 +51,14 @@ export class UIBrewStorage extends StorageClass {
     return brews;
   }
 
+  public add(_entry: Brew): void {
+    _entry.fixDataTypes();
+    super.add(_entry);
+  }
+
+  public update(_obj: Brew): boolean {
+    _obj.fixDataTypes();
+    return super.update(_obj);
+  }
+
 }

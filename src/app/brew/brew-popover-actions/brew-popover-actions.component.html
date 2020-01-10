@@ -19,7 +19,7 @@
     <ion-icon name="trash" slot="start"></ion-icon>
     <span>Löschen</span>
   </ion-item>
-  <ion-item (click)="choose(getStaticActions().PHOTO_GALLERY)" button>
+  <ion-item (click)="choose(getStaticActions().PHOTO_GALLERY)" [disabled]="!hasPhotos()" button>
     <ion-icon name="md-eye" slot="start"></ion-icon>
     <span>Fotogalerie</span>
   </ion-item>
