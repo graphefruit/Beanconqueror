@@ -16,7 +16,6 @@ export class RemoveEmptyNumberDirective {
   @HostListener('ionFocus', ['$event.target'])
   public focus(): void {
 
-    console.log('choose');
     const val: any = this.model.control.value;
     // Emit worked aswell but I don't know what its doing in depth
     // this.ngModelChange.emit(parseFloat(val));

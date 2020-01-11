@@ -19,7 +19,6 @@ export class PreventCharacterDirective {
     // Value needs to be combined as a string
     // tslint:disable-next-line
     val = val + '';
-    console.log(val);
     if (val === '') {
       val = '0';
     }
