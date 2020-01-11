@@ -20,7 +20,7 @@ export class UIFileHelper {
   public async saveBase64File (_fileName: string, _fileExtension: string, _base64: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       this.generateFileName(this.file.dataDirectory, _fileName, _fileExtension).then((_newName) => {
-        console.log('New Filename' + _newName);
+        // console.log('New Filename' + _newName);
         const newBlob: Blob = this.dataURItoBlob(_base64);
         if (newBlob === undefined) {
           reject();

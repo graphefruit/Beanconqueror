@@ -76,6 +76,10 @@
                   <ion-icon class="menu-icon" name="{{pages.terms.icon}}"></ion-icon>
                   {{pages.terms.title}}
                 </ion-item>
+                <ion-item [class.active]="pages.logs.active" [routerLink]="[pages.logs.url]">
+                  <ion-icon class="menu-icon" name="{{pages.logs.icon}}"></ion-icon>
+                  {{pages.logs.title}}
+                </ion-item>
               </ion-list>
               <ion-item [routerLink]="[pages.settings.url]" [class.active]="pages.settings.active">
                 <ion-icon class="menu-icon" name="{{pages.settings.icon}}"></ion-icon>

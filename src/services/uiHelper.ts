@@ -175,7 +175,7 @@ export class UIHelper {
   public async exportJSON (fileName: string, jsonContent: string): Promise<any> {
      const promise = new Promise((resolve, reject) => {
       const errorCallback = (e) => {
-        console.log('Error: ' + e);
+        // console.log('Error: ' + e);
         reject();
       };
 
@@ -253,7 +253,7 @@ export class UIHelper {
 
     const promise = new Promise((resolve, reject) => {
       const errorCallback = (e) => {
-        console.log('Error: ' + e);
+        // console.log('Error: ' + e);
         reject();
       };
 

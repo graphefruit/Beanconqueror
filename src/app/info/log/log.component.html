@@ -1,0 +1,15 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      Logs!
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-list>
+  <ion-item *ngFor="let i of logs">
+    {{i.value}}
+  </ion-item>
+</ion-list>

@@ -23,6 +23,7 @@ import {BrewAddComponent} from './brew/brew-add/brew-add.component';
 import {Bean} from '../classes/bean/bean';
 
 import {UIHelper} from '../services/uiHelper';
+import {UIAlert} from '../services/uiAlert';
 
 @Component({
   selector: 'app-root',
@@ -38,7 +39,7 @@ export class AppComponent implements AfterViewInit {
     home: {title: 'Home',   url: '/home', icon: 'md-home', active: true},
     settings: {title: 'Einstellungen',   url: '/settings', icon: 'md-settings', active: false},
       brew: {title: 'Brühungen',   url: '/brew', icon: 'fa-coffee', active: false},
-      beans: {title: 'Bohnnen',   url: '/beans', icon: 'fa-pagelines', active: false},
+    beans: {title: 'Bohnen', url: '/beans', icon: 'fa-pagelines', active: false},
       preparation: {title: 'Zubereitungsmethoden',   url: '/preparation', icon: 'fa-flask', active: false},
       mill: {title: 'Mühlen',   url: '/mill', icon: 'md-cut', active: false},
     about: {title: 'Über uns', url: '/info/about', icon: 'md-information', active: false},
@@ -49,7 +50,8 @@ export class AppComponent implements AfterViewInit {
     thanks: {title: 'Dankeschön!', url: '/info/thanks', icon: 'md-happy', active: false},
     licences: {title: 'Open-Source-Lizenzen', url: '/info/licences', icon: 'md-copy', active: false},
 
-    statistic: {title: 'Statistiken', url: '/statistic', icon: 'md-analytics', active: false}
+    statistic: {title: 'Statistiken', url: '/statistic', icon: 'md-analytics', active: false},
+    logs: {title: 'Logs', url: '/info/logs', icon: 'logo-buffer', active: false}
   };
 
 
@@ -71,6 +73,7 @@ export class AppComponent implements AfterViewInit {
     private readonly threeDeeTouch: ThreeDeeTouch,
     private readonly modalCtrl: ModalController,
     private readonly uiHelper: UIHelper,
+    private readonly uiAlert: UIAlert
   ) {
 
   }
@@ -116,6 +119,7 @@ export class AppComponent implements AfterViewInit {
                 this.uiHelper.setAppReady(1);
 
               }, () => {
+                this.uiAlert.showMessage('Die App konnte nicht korrekt gestartet werden, da das Dateisystem nicht verfügbar ist', 'Achtung!');
                 this.uiLog.log('App finished loading');
                 this.__initApp();
                 this.uiHelper.setAppReady(2);

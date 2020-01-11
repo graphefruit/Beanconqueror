@@ -126,8 +126,6 @@ export class BrewAddComponent implements OnInit {
             // CHOSE
             this.uiImage.choosePhoto()
                 .then((_path) => {
-                  console.log(_path);
-
                   if (_path) {
                     this.data.attachments.push(_path.toString());
                   }

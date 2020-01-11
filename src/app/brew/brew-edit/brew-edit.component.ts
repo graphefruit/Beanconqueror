@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {UIBeanStorage} from '../../../services/uiBeanStorage';
 import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 import {BREW_QUANTITY_TYPES_ENUM} from '../../../enums/brews/brewQuantityTypes';
@@ -69,8 +69,6 @@ export class BrewEditComponent implements OnInit {
             // CHOSE
             this.uiImage.choosePhoto()
                 .then((_path) => {
-                  console.log(_path);
-
                   if (_path) {
                     this.data.attachments.push(_path.toString());
                   }

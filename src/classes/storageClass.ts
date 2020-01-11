@@ -28,12 +28,12 @@ export abstract class StorageClass {
 
       const intV: any = setInterval(() => {
         if (this.isInitialized === 1) {
-          this.uiLog.log('Storage initialized');
+          this.uiLog.log(`Storage ${this.DB_PATH} initialized`);
           window.clearInterval(intV);
           resolve();
         } else if (this.isInitialized === 0) {
           window.clearInterval(intV);
-          this.uiLog.log('Storage not initialized');
+          this.uiLog.log(`Storage ${this.DB_PATH} not initialized`);
           reject();
         }
       }, 250);
@@ -107,18 +107,21 @@ export abstract class StorageClass {
   }
 
   protected __initializeStorage (): void {
-    console.log('Initialize' + this.DB_PATH);
+    this.uiLog.log(`Initialize Storage - ${this.DB_PATH}`);
     this.uiStorage.get(this.DB_PATH).then((_data) => {
       if (_data === null || _data === undefined) {
+        this.uiLog.log(`Storage empty but successfull - ${this.DB_PATH}`);
         // No beans have been added yet
         this.storedData = [];
         this.isInitialized = 1;
       } else {
+        this.uiLog.log(`Storage successfull - ${this.DB_PATH}`);
         this.storedData = _data;
         this.isInitialized = 1;
       }
-    }, () => {
+    }, (e) => {
       // Error
+      this.uiLog.log(`Storage error - ${this.DB_PATH} - ${JSON.stringify(e)}`);
       this.storedData = [];
       this.isInitialized = 1;
     });

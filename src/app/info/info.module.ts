@@ -11,6 +11,7 @@ import {PrivacyComponent} from './privacy/privacy.component';
 import {TermsComponent} from './terms/terms.component';
 import {ThanksComponent} from './thanks/thanks.component';
 import {SharedModule} from '../shared/shared.module';
+import {LogComponent} from './log/log.component';
 
 const routes: Routes = [
   {path: 'contact', component: ContactComponent},
@@ -38,6 +39,10 @@ const routes: Routes = [
   {
     path: 'thanks',
     component: ThanksComponent,
+  },
+  {
+    path: 'logs',
+    component: LogComponent
   }
 ];
 

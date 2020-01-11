@@ -138,7 +138,6 @@ export class SettingsPage implements OnInit {
   }
 
   private __bla(): void {
-    console.log('teset');
     // tslint:disable-next-line
     const t = {
       'BEANS': [{
