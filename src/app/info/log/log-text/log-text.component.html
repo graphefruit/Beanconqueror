@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Zurück</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding-horizontal">
+  <div style="overflow:scroll;">
+  <textarea [(ngModel)]='logString' style="width: 100%;height: 100vh;outline: 0;border: 0px;">
+  </textarea>
+  </div>
+
+</ion-content>
+<ion-footer>
+  <ion-row>
+    <ion-col>
+      <ion-button (click)="dismiss()" expand="block" fill="outline">Schließen</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>
+

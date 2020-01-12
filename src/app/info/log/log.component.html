@@ -3,13 +3,32 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="send()" icon-only>
+        <ion-icon name="send"></ion-icon>
+      </ion-button>
+    </ion-buttons>
     <ion-title>
-      Logs!
+      Logs
     </ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-list>
-  <ion-item *ngFor="let i of logs">
-    {{i.value}}
-  </ion-item>
-</ion-list>
+<ion-content>
+  <div class="ion-padding">
+    <ion-row *ngFor="let log of logs" class="ion-padding-bottom">
+      <ion-text *ngIf="log.key === LOG_ENUM.LOG" color="dark">
+        {{log.timestamp}} -  {{log.value}}
+      </ion-text>
+      <ion-text *ngIf="log.key === LOG_ENUM.INFO" color="primary">
+        {{log.timestamp}} -  {{log.value}}
+      </ion-text>
+      <ion-text *ngIf="log.key === LOG_ENUM.WARN" color="warning">
+        {{log.timestamp}} -  {{log.value}}
+      </ion-text>
+      <ion-text *ngIf="log.key === LOG_ENUM.ERR" color="danger">
+        {{log.timestamp}} -  {{log.value}}
+      </ion-text>
+    </ion-row>
+
+  </div>
+</ion-content>

@@ -53,6 +53,7 @@ import {StatisticPage} from '../statistic/statistic.page';
 import {SettingsPage} from '../settings/settings.page';
 import {BrewPopoverActionsComponent} from '../brew/brew-popover-actions/brew-popover-actions.component';
 import {LogComponent} from '../info/log/log.component';
+import {LogTextComponent} from '../info/log/log-text/log-text.component';
 
 
 @NgModule({
@@ -62,7 +63,7 @@ import {LogComponent} from '../info/log/log.component';
     LicencesComponent,
     PrivacyComponent,
     TermsComponent,
-    ThanksComponent, LogComponent, PreparationPage, PreparationAddComponent,
+    ThanksComponent, LogComponent, LogTextComponent, PreparationPage, PreparationAddComponent,
     PreparationEditComponent, MillPage, MillEditComponent, MillAddComponent, BrewAddComponent,
     FormatDatePipe, KeysPipe, AsyncImageComponent, SearchPipe, RemoveEmptyNumberDirective,
     PreventCharacterDirective, BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent,
@@ -73,7 +74,7 @@ import {LogComponent} from '../info/log/log.component';
     LicencesComponent,
     PrivacyComponent,
     TermsComponent,
-    ThanksComponent, LogComponent, PreparationPage,
+    ThanksComponent, LogComponent, LogTextComponent, PreparationPage,
     PreparationAddComponent, PreparationEditComponent, MillPage, MillEditComponent,
     MillAddComponent, BrewAddComponent, BrewPage, BrewDetailComponent, BrewEditComponent,
     BrewPhotoViewComponent, BrewPopoverComponent, BrewPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent],

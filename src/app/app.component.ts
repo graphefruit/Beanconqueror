@@ -114,13 +114,14 @@ export class AppComponent implements AfterViewInit {
           ])
               .then(() => {
                 this.uiLog.log('App finished loading');
+                this.uiLog.info('Everything should be fine!!!');
                 this.__checkUpdate();
                 this.__initApp();
                 this.uiHelper.setAppReady(1);
 
               }, () => {
                 this.uiAlert.showMessage('Die App konnte nicht korrekt gestartet werden, da das Dateisystem nicht verfügbar ist', 'Achtung!');
-                this.uiLog.log('App finished loading');
+                this.uiLog.error('App finished loading, but errors occured');
                 this.__initApp();
                 this.uiHelper.setAppReady(2);
               });
