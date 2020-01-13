@@ -62,17 +62,15 @@
     <ion-item *ngIf="settings.coffee_blooming_time === true">
       <ion-label stacked>Blooming-Zeit / Preinfusion</ion-label>
       <ion-input remove-empty-number prevent-characters [(ngModel)]="data.coffee_blooming_time" type="text"></ion-input>
-      <ion-button (click)="setCoffeeBloomingTime()" color="primary" fill="clear" size="small" slot="end">
+      <ion-button (click)="setCoffeeBloomingTime()" fill="outline" size="default" slot="end">
         <ion-icon name="time"></ion-icon>
-        Zeit!
       </ion-button>
     </ion-item>
     <ion-item *ngIf="settings.coffee_first_drip_time === true">
       <ion-label stacked>Erster Kaffeetropfen</ion-label>
       <ion-input remove-empty-number prevent-characters [(ngModel)]="data.coffee_first_drip_time" type="text"></ion-input>
-      <ion-button (click)="setCoffeeDripTime()" color="primary" fill="clear" size="small" slot="end">
+      <ion-button (click)="setCoffeeDripTime()" fill="outline" size="default" slot="end">
         <ion-icon name="time"></ion-icon>
-        Zeit!
       </ion-button>
     </ion-item>
     <ion-row *ngIf="settings.brew_quantity === true">
@@ -105,8 +103,8 @@
       <ion-label stacked>Bewertung&nbsp;
       </ion-label>
       <ion-range [(ngModel)]="data.rating" debounce="500s" max="10" min="1" snaps="true" step="1">
-        <ion-icon range-left small name="sad"></ion-icon>
-        <ion-icon range-right name="happy"></ion-icon>
+        <ion-icon name="sad" size="small" slot="start"></ion-icon>
+        <ion-icon name="happy" size="small" slot="end"></ion-icon>
       </ion-range>
       <ion-badge color="secondary" style="float:right;">{{data.rating}}</ion-badge>
     </ion-item>

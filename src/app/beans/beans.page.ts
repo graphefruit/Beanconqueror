@@ -3,7 +3,6 @@ import {UIAlert} from '../../services/uiAlert';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
 import {ModalController} from '@ionic/angular';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
-import {IBean} from '../../interfaces/bean/iBean';
 import {Brew} from '../../classes/brew/brew';
 import {Bean} from '../../classes/bean/bean';
 import {BeansAddComponent} from './beans-add/beans-add.component';
@@ -56,7 +55,7 @@ export class BeansPage implements OnInit {
     this.loadBeans();
   }
 
-  public async editBean(_bean: IBean) {
+  public async editBean(_bean: Bean) {
 
     const modal = await this.modalCtrl.create({component:BeansEditComponent,  componentProps: {'bean' : _bean}});
     await modal.present();
@@ -64,7 +63,7 @@ export class BeansPage implements OnInit {
     this.loadBeans();
   }
 
-  public deleteBean(_bean: IBean): void {
+  public deleteBean(_bean: Bean): void {
     this.uiAlert.showConfirm('Bohne löschen? Alle zugehörigen Brühungen werden mit entfernt.', 'Sicher?')
         .then(() => {
               // Yes
@@ -95,7 +94,7 @@ export class BeansPage implements OnInit {
       (bean) => bean.finished).length;
   }
 
-  private __deleteBean(_bean: IBean): void {
+  private __deleteBean(_bean: Bean): void {
     const brews: Array<Brew> =  this.uiBrewStorage.getAllEntries();
 
     const deletingBrewIndex: Array<number> = [];

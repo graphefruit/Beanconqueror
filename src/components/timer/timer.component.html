@@ -1,22 +1,22 @@
 <ion-item class="no-bottom-border item">
   <ion-label stacked>{{ label }}</ion-label>
   <ion-input prevent-characters type="number" [(ngModel)]="timer.seconds"></ion-input>
-  <ion-button (click)="initTimer()" class="circle-button" color="danger" size="small" slot="end"
+  <ion-button (click)="initTimer()" fill="outline" size="default" slot="end"
               *ngIf="!timer.runTimer && (timer.hasStarted || timer.hasFinished) || timer.hasFinished">
     <ion-icon name="refresh"></ion-icon>
 
   </ion-button>
-  <ion-button (click)="pauseTimer()" class="circle-button" color="warning" size="small" slot="end"
+  <ion-button (click)="pauseTimer()" fill="outline" size="default" slot="end"
               *ngIf="timer.runTimer && timer.hasStarted && !timer.hasFinished">
     <ion-icon name="pause"></ion-icon>
 
   </ion-button>
-  <ion-button (click)="resumeTimer()" class="circle-button" color="primary" size="small" slot="end"
+  <ion-button (click)="resumeTimer()" fill="outline" size="default" slot="end"
               *ngIf="!timer.runTimer && timer.hasStarted && !timer.hasFinished">
     <ion-icon name="play"></ion-icon>
 
   </ion-button>
-  <ion-button (click)="startTimer()" *ngIf="!timer.hasStarted" class="circle-button" color="primary" size="small"
+  <ion-button (click)="startTimer()" *ngIf="!timer.hasStarted" fill="outline" size="default"
               slot="end">
     <ion-icon name="play"></ion-icon>
   </ion-button>

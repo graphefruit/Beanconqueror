@@ -92,13 +92,13 @@
     <ion-input type="text" [(ngModel)]="data.coffee_concentration"></ion-input>
   </ion-item>
   <ion-item *ngIf="showRating()">
-    <ion-label stacked>Bewertung&nbsp;<ion-badge style="float:right;" color="secondary">{{data.rating}}</ion-badge>
+    <ion-label stacked>Bewertung
     </ion-label>
-    <!-- debounce="1000"  made an issue here -->
-    <ion-range *ngIf="data.rating" [(ngModel)]="data.rating"  min="1" max="10" step="1" snaps="true">
-      <ion-icon range-left  name="sad"></ion-icon>
-      <ion-icon range-right name="happy"></ion-icon>
+    <ion-range [(ngModel)]="data.rating" debounce="500s" max="10" min="1" snaps="true" step="1">
+      <ion-icon name="sad" size="small" slot="start"></ion-icon>
+      <ion-icon name="happy" size="small" slot="end"></ion-icon>
     </ion-range>
+    <ion-badge color="secondary" style="float:right;">{{data.rating}}</ion-badge>
   </ion-item>
   <ion-item>
     <ion-label stacked>Notizen</ion-label>
