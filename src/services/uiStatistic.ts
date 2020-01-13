@@ -27,7 +27,6 @@ export class UIStatistic {
   }
 
   public getSpentMoneyForCoffeeBeans(): number {
-    debugger;
     let costs: number = 0;
     const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
     for (const i of beans) {
@@ -146,7 +145,6 @@ export class UIStatistic {
   }
 
   public getTotalDrunk(): number {
-    debugger;
     if (this.uiSettings.getSettings().brew_quantity) {
       const brews: Array<IBrew> = this.uiBrewStorage.getAllEntries();
       if (brews.length > 0) {

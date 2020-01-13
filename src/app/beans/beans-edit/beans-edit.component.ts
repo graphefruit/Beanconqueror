@@ -31,8 +31,7 @@ export class BeansEditComponent implements OnInit {
 
   public ionViewWillEnter(): void {
     //  this.bean = this.navParams.get('BEAN');
-    this.data = this.uiHelper.copyData(this.bean);
-
+    this.data.initializeByObject(this.bean);
   }
   public editBean(): void {
     if (this.__formValid()) {

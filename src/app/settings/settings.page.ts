@@ -20,6 +20,7 @@ import {File} from '@ionic-native/file/ngx';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {Brew} from '../../classes/brew/brew';
 import {Mill} from '../../classes/mill/mill';
+import {UILog} from '../../services/uiLog';
 
 @Component({
   selector: 'settings',
@@ -46,7 +47,8 @@ export class SettingsPage implements OnInit {
               private readonly uiBrewStorage: UIBrewStorage,
               private readonly uiMillStorage: UIMillStorage,
               private readonly iosFilePicker: IOSFilePicker,
-              private readonly socialSharing: SocialSharing) {
+              private readonly socialSharing: SocialSharing,
+              private readonly uiLog: UILog) {
     this.__initializeSettings();
   }
 
@@ -58,10 +60,10 @@ export class SettingsPage implements OnInit {
   }
 
   public import (): void {
-    this.__bla();
-    return;
-    if (this.platform.is('android')) {
-      this.fileChooser.open()
+    if (this.platform.is('cordova')) {
+      this.uiLog.log('Import real data');
+      if (this.platform.is('android')) {
+        this.fileChooser.open()
           .then((uri) => {
             if (uri && uri.endsWith('.json')) {
               this.filePath.resolveNativePath(uri).then((resolvedFilePath) => {
@@ -72,7 +74,6 @@ export class SettingsPage implements OnInit {
                 }, (_err) => {
                   this.uiAlert.showMessage('Fehler beim Dateiauslesen (' + JSON.stringify(_err) + ')');
                 });
-
               }).catch((_err) => {
                 this.uiAlert.showMessage('Datei konnte nicht gefunden werden (' + JSON.stringify(_err) + ')');
               });
@@ -80,28 +81,28 @@ export class SettingsPage implements OnInit {
               this.uiAlert.showMessage('Invalides Dateiformat');
             }
           });
-
-    } else {
-      this.iosFilePicker.pickFile().then((uri) => {
-        if (uri && uri.endsWith('.json')) {
-
-          let path = uri.substring(0, uri.lastIndexOf('/'));
-          const file = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
-          if (path.indexOf('file://') !== 0) {
-            path = 'file://' + path;
+      } else {
+        this.iosFilePicker.pickFile().then((uri) => {
+          if (uri && uri.endsWith('.json')) {
+            let path = uri.substring(0, uri.lastIndexOf('/'));
+            const file = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
+            if (path.indexOf('file://') !== 0) {
+              path = 'file://' + path;
+            }
+            this.__readJSONFile(path, file).then(() => {
+              // nothing todo
+            }).catch((_err) => {
+              this.uiAlert.showMessage('Datei konnte nicht gefunden werden (' + JSON.stringify(_err) + ')');
+            });
+          } else {
+            this.uiAlert.showMessage('Invalides Dateiformat');
           }
-          this.__readJSONFile(path, file).then(() => {
-            // nothing todo
-          }).catch((_err) => {
-            this.uiAlert.showMessage('Datei konnte nicht gefunden werden (' + JSON.stringify(_err) + ')');
-          });
-        } else {
-          this.uiAlert.showMessage('Invalides Dateiformat');
-        }
-      });
+        });
 
+      }
+    } else {
+      this.__importDummyData();
     }
-
   }
 
   public isMobile (): boolean {
@@ -137,7 +138,8 @@ export class SettingsPage implements OnInit {
     this.settings = this.uiSettingsStorage.getSettings();
   }
 
-  private __bla(): void {
+  private __importDummyData(): void {
+    this.uiLog.log('Import dummy data');
     // tslint:disable-next-line
     const t = {
       'BEANS': [{
@@ -417,6 +419,9 @@ export class SettingsPage implements OnInit {
 
 
     this.uiStorage.import(t).then((_data) => {
+      this.__reinitializeStorages().then(() => {
+        this.__initializeSettings();
+      });
     });
   }
 
