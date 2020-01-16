@@ -75,13 +75,7 @@ export class BrewPage implements OnInit {
     this.settings = this.uiSettingsStorage.getSettings();
 
 
-    this.method_of_preparations = this.uiPreparationStorage.getAllEntries()
-      .sort((a, b) => a.name.localeCompare(b.name));
-    this.beans = this.uiBeanStorage.getAllEntries()
-      .sort((a, b) => a.name.localeCompare(b.name));
-    this.mills = this.uiMillStorage.getAllEntries()
-      .sort((a, b) => a.name.localeCompare(b.name));
-
+    this.__reloadFilterSettings();
     this.__initializeOpenBrewsFilter();
 
     this.debounceFilter
@@ -89,6 +83,20 @@ export class BrewPage implements OnInit {
       .subscribe((model) => {
         this.loadBrews();
       });
+  }
+
+  public async editBrew(_brew: IBrew) {
+    // const editBrewModal = this.modalCtrl.create(BrewsEditModal, {BREW: _brew});
+    // editBrewModal.onDidDismiss(() => {
+    //   this.loadBrews();
+    // });
+    // editBrewModal.present({animate: false});
+    const modal = await this.modalCtrl.create({component: BrewEditComponent, componentProps: {brew: _brew}});
+    await modal.present();
+    await modal.onWillDismiss();
+    this.__reloadFilterSettings();
+    this.__initializeOpenBrewsFilter();
+    this.loadBrews();
   }
 
 
@@ -148,7 +156,16 @@ export class BrewPage implements OnInit {
     }
   }
 
-  private __resetFilter(): void {
+  public async repeatBrew(_brew: Brew) {
+    // const repeatBrewModel = this.modalCtrl.create(BrewsAddModal, {brew_template: brew});
+    // repeatBrewModel.onDidDismiss(() => {
+    //   this.loadBrews();
+    // });
+    // repeatBrewModel.present({animate: false});
+    const modal = await this.modalCtrl.create({component: BrewAddComponent, componentProps: {brew_template: _brew}});
+    await modal.present();
+    await modal.onWillDismiss();
+    this.__reloadFilterSettings();
     this.__initializeOpenBrewsFilter();
     this.loadBrews();
   }
@@ -158,15 +175,12 @@ export class BrewPage implements OnInit {
     // If we don't have beans, we cant do a brew from now on, because of roasting degree and the age of beans.
   }
 
-  public async editBrew(_brew: IBrew) {
-    // const editBrewModal = this.modalCtrl.create(BrewsEditModal, {BREW: _brew});
-    // editBrewModal.onDidDismiss(() => {
-    //   this.loadBrews();
-    // });
-    // editBrewModal.present({animate: false});
-    const modal = await this.modalCtrl.create({component: BrewEditComponent, componentProps: {brew: _brew}});
+  public async add() {
+    const modal = await this.modalCtrl.create({component: BrewAddComponent});
     await modal.present();
     await modal.onWillDismiss();
+    this.__reloadFilterSettings();
+    this.__initializeOpenBrewsFilter();
     this.loadBrews();
   }
 
@@ -223,22 +237,18 @@ export class BrewPage implements OnInit {
     }
   }
 
-  public async repeatBrew(_brew: Brew) {
-    // const repeatBrewModel = this.modalCtrl.create(BrewsAddModal, {brew_template: brew});
-    // repeatBrewModel.onDidDismiss(() => {
-    //   this.loadBrews();
-    // });
-    // repeatBrewModel.present({animate: false});
-    const modal = await this.modalCtrl.create({component: BrewAddComponent, componentProps: {brew_template: _brew}});
-    await modal.present();
-    await modal.onWillDismiss();
-    this.loadBrews();
+  private __reloadFilterSettings() {
+    this.method_of_preparations = this.uiPreparationStorage.getAllEntries()
+      .sort((a, b) => a.name.localeCompare(b.name));
+    this.beans = this.uiBeanStorage.getAllEntries()
+      .sort((a, b) => a.name.localeCompare(b.name));
+    this.mills = this.uiMillStorage.getAllEntries()
+      .sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  public async add() {
-    const modal = await this.modalCtrl.create({component:BrewAddComponent});
-    await modal.present();
-    await modal.onWillDismiss();
+  private __resetFilter(): void {
+    this.__reloadFilterSettings();
+    this.__initializeOpenBrewsFilter();
     this.loadBrews();
   }
 
