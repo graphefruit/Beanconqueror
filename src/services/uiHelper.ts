@@ -120,16 +120,21 @@ export class UIHelper {
   public isBeanconqurorAppReady(): Promise<any> {
     const promise = new Promise((resolve, reject) => {
 
-      const intV = setInterval(() => {
-        this.uiLog.log('Check app ready');
-        if (this.isAppReady === 1) {
-          resolve();
-          clearInterval(intV);
-        } else if (this.isAppReady === 2) {
-          resolve();
-          clearInterval(intV);
-        }
-      }, 50);
+      if (this.isAppReady === 1 || this.isAppReady === 2) {
+        this.uiLog.log('Check app ready - Already loaded, no interval needed');
+        resolve();
+      } else {
+        const intV = setInterval(() => {
+          this.uiLog.log('Check app ready');
+          if (this.isAppReady === 1) {
+            resolve();
+            clearInterval(intV);
+          } else if (this.isAppReady === 2) {
+            resolve();
+            clearInterval(intV);
+          }
+        }, 50);
+      }
 
     });
 
