@@ -24,6 +24,7 @@ import {Bean} from '../classes/bean/bean';
 
 import {UIHelper} from '../services/uiHelper';
 import {UIAlert} from '../services/uiAlert';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
@@ -73,7 +74,8 @@ export class AppComponent implements AfterViewInit {
     private readonly threeDeeTouch: ThreeDeeTouch,
     private readonly modalCtrl: ModalController,
     private readonly uiHelper: UIHelper,
-    private readonly uiAlert: UIAlert
+    private readonly uiAlert: UIAlert,
+    private _translate: TranslateService,
   ) {
 
   }
@@ -82,7 +84,7 @@ export class AppComponent implements AfterViewInit {
 
     this.uiLog.log('Platform ready, init app');
     this.__appReady();
-
+    this._translate.setDefaultLang('de');
     // Copy in all the js code from the script.js. Typescript will complain but it works just fine
   }
 

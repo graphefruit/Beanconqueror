@@ -54,6 +54,7 @@ import {SettingsPage} from '../settings/settings.page';
 import {BrewPopoverActionsComponent} from '../brew/brew-popover-actions/brew-popover-actions.component';
 import {LogComponent} from '../info/log/log.component';
 import {LogTextComponent} from '../info/log/log-text/log-text.component';
+import {TranslateModule} from '@ngx-translate/core';
 
 
 @NgModule({
@@ -82,6 +83,7 @@ import {LogTextComponent} from '../info/log/log-text/log-text.component';
     CommonModule,
     IonicModule,
     FormsModule,
+    TranslateModule,
   ],
   providers: [
     StatusBar,
