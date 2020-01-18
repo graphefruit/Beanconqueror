@@ -9,14 +9,14 @@
       </ion-button>
     </ion-buttons>
     <ion-title>
-      Mühlen
+      {{"NAV_MILL" | translate}}
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <ion-card *ngIf="mills?.length == 0" class="ion-padding">
-    Du hast leider noch keine Mühlen hinterlegt!
+    {{"PAGE_MILL_LIST_NO_MILL_EXISTING" | translate}}
   </ion-card>
   <ion-card *ngFor="let mill of mills">
     <ion-card-header>
@@ -30,13 +30,13 @@
       <ion-col>
         <ion-button size="small" fill="clear" color="dark" (click)="edit(mill)">
           <ion-icon name="md-create" slot="start"></ion-icon>
-          <span>Editieren</span>
+          <span>{{"EDIT" | translate}}</span>
         </ion-button>
       </ion-col>
       <ion-col>
         <ion-button size="small" fill="clear" color="dark" (click)="delete(mill)">
           <ion-icon name="trash" slot="start"></ion-icon>
-          <span>Löschen</span>
+          <span>{{"DELETE" | translate}}</span>
         </ion-button>
       </ion-col>
     </ion-row>

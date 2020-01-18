@@ -37,22 +37,22 @@ export class AppComponent implements AfterViewInit {
    @ViewChild(IonRouterOutlet) public routerOutlet: IonRouterOutlet;
 
   public pages = {
-    home: {title: 'Home',   url: '/home', icon: 'md-home', active: true},
-    settings: {title: 'Einstellungen',   url: '/settings', icon: 'md-settings', active: false},
-      brew: {title: 'Brühungen',   url: '/brew', icon: 'fa-coffee', active: false},
-    beans: {title: 'Bohnen', url: '/beans', icon: 'fa-pagelines', active: false},
-      preparation: {title: 'Zubereitungsmethoden',   url: '/preparation', icon: 'fa-flask', active: false},
-      mill: {title: 'Mühlen',   url: '/mill', icon: 'md-cut', active: false},
-    about: {title: 'Über uns', url: '/info/about', icon: 'md-information', active: false},
-    contact: {title: 'Kontakt', url: '/info/contact', icon: 'md-mail', active: false},
-    privacy: {title: 'Privacy', url: '/info/privacy', icon: 'md-document', active: false},
-    credits: {title: 'Credits', url: '/info/credits', icon: 'md-document', active: false},
-    terms: {title: 'Terms & Conditions', url: '/info/terms', icon: 'md-document', active: false},
-    thanks: {title: 'Dankeschön!', url: '/info/thanks', icon: 'md-happy', active: false},
-    licences: {title: 'Open-Source-Lizenzen', url: '/info/licences', icon: 'md-copy', active: false},
+    home: {title: 'NAV_HOME', url: '/home', icon: 'md-home', active: true},
+    settings: {title: 'NAV_SETTINGS', url: '/settings', icon: 'md-settings', active: false},
+    brew: {title: 'NAV_BREWS', url: '/brew', icon: 'fa-coffee', active: false},
+    beans: {title: 'NAV_BEANS', url: '/beans', icon: 'fa-pagelines', active: false},
+    preparation: {title: 'NAV_PREPARATION', url: '/preparation', icon: 'fa-flask', active: false},
+    mill: {title: 'NAV_MILL', url: '/mill', icon: 'md-cut', active: false},
+    about: {title: 'NAV_ABOUT_US', url: '/info/about', icon: 'md-information', active: false},
+    contact: {title: 'NAV_CONTACT', url: '/info/contact', icon: 'md-mail', active: false},
+    privacy: {title: 'NAV_PRIVACY', url: '/info/privacy', icon: 'md-document', active: false},
+    credits: {title: 'NAV_CREDITS', url: '/info/credits', icon: 'md-document', active: false},
+    terms: {title: 'NAV_TERMS', url: '/info/terms', icon: 'md-document', active: false},
+    thanks: {title: 'NAV_THANKS', url: '/info/thanks', icon: 'md-happy', active: false},
+    licences: {title: 'NAV_LICENCES', url: '/info/licences', icon: 'md-copy', active: false},
 
-    statistic: {title: 'Statistiken', url: '/statistic', icon: 'md-analytics', active: false},
-    logs: {title: 'Logs', url: '/info/logs', icon: 'logo-buffer', active: false}
+    statistic: {title: 'NAV_STATISTICS', url: '/statistic', icon: 'md-analytics', active: false},
+    logs: {title: 'NAV_LOGS', url: '/info/logs', icon: 'logo-buffer', active: false}
   };
 
 
