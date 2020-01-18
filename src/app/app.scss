@@ -12,6 +12,9 @@ ion-card {
   padding:8px;
 }
 
+:root {
+  --ion-color-primary: #a0b0c4;
+}
 .blockquote {
   border-radius: 5px;
   padding: 5px 10px;
@@ -20,11 +23,6 @@ ion-card {
   font-style: italic;
 }
 
-/**ion-button[fill='clear']{
-  --border-width:1px;
-  --border-radius: 5px;
-  --border-style: solid;
-}**/
 [no-margin-important] {
   margin: 0px !important;
 }
@@ -40,17 +38,7 @@ ion-toolbar{
   --background: #7189a7;
   --color:white;
 }
-ion-button[expand='block']{
-  --background:#a0b0c4;
-  --color:white;
-}
 
-ion-button[fill='outline']
-{
-  --color:#a0b0c4;
-  --border-color:#a0b0c4;
-  --background:white;
-}
 ion-card-header {
   white-space: normal;
 }
