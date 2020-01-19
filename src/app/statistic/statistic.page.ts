@@ -6,6 +6,7 @@ import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {Brew} from '../../classes/brew/brew';
 import {IBrew} from '../../interfaces/brew/iBrew';
 import {Chart} from 'chart.js';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'statistic',
@@ -19,7 +20,8 @@ export class StatisticPage implements OnInit {
   constructor(
     public uiStatistic: UIStatistic,
     private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiHelper: UIHelper
+    private readonly uiHelper: UIHelper,
+    private translate: TranslateService
   ) {
 
 
@@ -89,7 +91,7 @@ export class StatisticPage implements OnInit {
     const drinkingData = {
       labels: [],
       datasets: [{
-        label: 'Getrunkene Tassen',
+        label: this.translate.instant('PAGE_STATISTICS_DRUNKEN_BREWS'),
         data: []
       }]
     };

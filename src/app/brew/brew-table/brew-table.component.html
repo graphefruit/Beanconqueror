@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Zurück</ion-title>
+    <ion-title>{{"BACK" | translate}}</ion-title>
     <ion-buttons slot="start">
       <ion-button (click)="dismiss()">
         <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
@@ -25,59 +25,55 @@
       <thead>
       <tr>
         <th>
-          Tag
+          {{"DAY" | translate}}
         </th>
         <th *ngIf="settings.grind_size === true">
-          Mahlgrad
+          {{"BREW_DATA_GRIND_SIZE" | translate}}
         </th>
         <th *ngIf="settings.grind_weight === true">
-          Gewicht
+          {{"BREW_DATA_GRIND_WEIGHT" | translate}}
         </th>
         <th *ngIf="settings.method_of_preparation === true">
-          Zubereitungs-<br/>methode
+          {{"BREW_DATA_PREPARATION_METHOD" | translate}}
         </th>
         <th  *ngIf="settings.bean_type === true">
-          Bohne
+          {{"BREW_DATA_BEAN_TYPE" | translate}}
         </th>
         <th  *ngIf="settings.brew_temperature === true">
-          Brüh-<br/>
-          temperatur
+          {{"BREW_DATA_BREW_TEMPERATURE" | translate}}
         </th>
         <th *ngIf="settings.brew_temperature_time === true">
-          Temperatur Zeit
+          {{'BREW_DATA_TEMPERATURE_TIME' | translate}}
         </th>
         <th *ngIf="settings.brew_time === true">
-          Brühzeit
+          {{'BREW_DATA_TIME' | translate}}
         </th>
         <th *ngIf="settings.brew_quantity === true">
-          Bezugsmenge
+          {{"BREW_DATA_BREW_QUANTITY" | translate}}
         </th>
         <th  *ngIf="settings.note === true">
-          Notizen
+          {{"BREW_DATA_NOTES" | translate }}
         </th>
         <th *ngIf="settings.rating === true">
-          Bewertung
+          {{"BREW_DATA_RATING" | translate }}
         </th>
         <th *ngIf="settings.coffee_type=== true">
-          Kaffeetyp
+          {{"BREW_DATA_COFFEE_TYPE" | translate}}
         </th>
         <th *ngIf="settings.coffee_concentration=== true">
-          Kaffee-<br/>
-          Konzentration
+          {{"BREW_DATA_COFFEE_CONCENTRATION" | translate}}
         </th>
         <th *ngIf="settings.coffee_first_drip_time === true">
-          Erster<br/>
-          Kaffeetropfen
+          {{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}
         </th>
         <th  *ngIf="settings.coffee_blooming_time === true">
-          Blooming-Zeit <br/>
-          / Preinfusion
+          {{"BREW_DATA_COFFEE_BLOOMING_TIME" | translate}}
         </th>
         <th *ngIf="settings.bean_type === true">
-          Bohnenalter
+          {{"BREW_INFORMATION_BEAN_AGE"  | translate}}
         </th>
         <th *ngIf="settings.grind_weight === true && settings.brew_quantity === true">
-          Brührate
+          {{"BREW_INFORMATION_BREW_RATIO"  | translate}}
         </th>
       </tr>
       </thead>
@@ -143,7 +139,7 @@
 <ion-footer>
   <ion-row>
     <ion-col>
-      <ion-button (click)="dismiss()" fill="outline" expand="block">Schließen</ion-button>
+      <ion-button (click)="dismiss()" expand="block" fill="outline">{{"CLOSE" | translate}}</ion-button>
     </ion-col>
   </ion-row>
 </ion-footer>
