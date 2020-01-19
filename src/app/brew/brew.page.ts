@@ -28,6 +28,7 @@ import {IBrewPageFilter} from '../../interfaces/brew/iBrewPageFilter';
 import {BrewPopoverActionsComponent} from './brew-popover-actions/brew-popover-actions.component';
 import {debounceTime, distinctUntilChanged} from 'rxjs/internal/operators';
 import {Subject} from 'rxjs';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'brew',
@@ -71,7 +72,8 @@ export class BrewPage implements OnInit {
                public alertCtrl: AlertController,
                private readonly uiPreparationStorage: UIPreparationStorage,
                private readonly uiBeanStorage: UIBeanStorage,
-               private readonly uiMillStorage: UIMillStorage) {
+               private readonly uiMillStorage: UIMillStorage,
+               private translate: TranslateService) {
     this.settings = this.uiSettingsStorage.getSettings();
 
 
@@ -323,29 +325,29 @@ export class BrewPage implements OnInit {
       const brew: Brew = i;
 
       const entry: Array<{ VALUE: any, LABEL: string }> = [
-        {VALUE: this.uiHelper.formateDate(brew.config.unix_timestamp, 'DD.MM.YYYY HH:mm'), LABEL: 'Tag'},
-        {VALUE: brew.grind_size, LABEL: 'Mahlgrad'},
-        {VALUE: brew.grind_weight, LABEL: 'Output: Gewicht/Menge'},
-        {VALUE: brew.getPreparation().name, LABEL: 'Zubereitungsmethode'},
-        {VALUE: brew.getBean().name, LABEL: 'Bohne'},
-        {VALUE: brew.getBean().roaster, LABEL: 'Röster'},
-        {VALUE: brew.brew_temperature, LABEL: 'Brühtemperatur'},
-        {VALUE: brew.brew_temperature_time, LABEL: 'Temperatur Zeit'},
-        {VALUE: brew.brew_time, LABEL: 'Brühzeit'},
-        {VALUE: brew.pressure_profile, LABEL: 'Druckprofil'},
-        {VALUE: brew.mill_speed, LABEL: 'Mühlengeschwindigkeit'},
-        {VALUE: brew.getMill().name, LABEL: 'Mühle'},
-        {VALUE: brew.brew_quantity, LABEL: 'Bezugsmenge'},
-        {VALUE: brew.getBrewQuantityTypeName(), LABEL: 'Bezugsmenge-Typ'},
-        {VALUE: brew.note, LABEL: 'Notizen'},
-        {VALUE: brew.rating, LABEL: 'Bewertung'},
-        {VALUE: brew.coffee_type, LABEL: 'Kaffeetyp'},
-        {VALUE: brew.coffee_concentration, LABEL: 'Kaffee-Konzentration'},
-        {VALUE: brew.coffee_first_drip_time, LABEL: 'Erster Kaffeetropfen'},
-        {VALUE: brew.coffee_blooming_time, LABEL: 'Blooming-Zeit / Preinfusion'},
-        {VALUE: brew.getCalculatedBeanAge(), LABEL: 'Bohnenalter'},
-        {VALUE: brew.getBrewRatio(), LABEL: 'Brührate'},
-        {VALUE: brew.getBean().finished, LABEL: 'Fertig?'}
+        {VALUE: this.uiHelper.formateDate(brew.config.unix_timestamp, 'DD.MM.YYYY HH:mm'), LABEL: this.translate.instant('DAY')},
+        {VALUE: brew.grind_size, LABEL: this.translate.instant('BREW_DATA_GRIND_SIZE')},
+        {VALUE: brew.grind_weight, LABEL: this.translate.instant('BREW_DATA_GRIND_WEIGHT')},
+        {VALUE: brew.getPreparation().name, LABEL: this.translate.instant('BREW_DATA_PREPARATION_METHOD')},
+        {VALUE: brew.getBean().name, LABEL: this.translate.instant('BREW_DATA_BEAN_TYPE')},
+        {VALUE: brew.getBean().roaster, LABEL: this.translate.instant('BEAN_DATA_ROASTER')},
+        {VALUE: brew.brew_temperature, LABEL: this.translate.instant('BREW_DATA_BREW_TEMPERATURE')},
+        {VALUE: brew.brew_temperature_time, LABEL: this.translate.instant('BREW_DATA_TEMPERATURE_TIME')},
+        {VALUE: brew.brew_time, LABEL: this.translate.instant('BREW_DATA_TIME')},
+        {VALUE: brew.pressure_profile, LABEL: this.translate.instant('BREW_DATA_PRESSURE_PROFILE')},
+        {VALUE: brew.mill_speed, LABEL: this.translate.instant('BREW_DATA_MILL_SPEED')},
+        {VALUE: brew.getMill().name, LABEL: this.translate.instant('BREW_DATA_MILL')},
+        {VALUE: brew.brew_quantity, LABEL: this.translate.instant('BREW_DATA_BREW_QUANTITY')},
+        {VALUE: brew.getBrewQuantityTypeName(), LABEL: this.translate.instant('BREW_INFORMATION_BREW_QUANTITY_TYPE_NAME')},
+        {VALUE: brew.note, LABEL: this.translate.instant('BREW_DATA_NOTES')},
+        {VALUE: brew.rating, LABEL: this.translate.instant('BREW_DATA_RATING')},
+        {VALUE: brew.coffee_type, LABEL: this.translate.instant('BREW_DATA_COFFEE_TYPE')},
+        {VALUE: brew.coffee_concentration, LABEL: this.translate.instant('BREW_DATA_COFFEE_CONCENTRATION')},
+        {VALUE: brew.coffee_first_drip_time, LABEL: this.translate.instant('BREW_DATA_COFFEE_FIRST_DRIP_TIME')},
+        {VALUE: brew.coffee_blooming_time, LABEL: this.translate.instant('BREW_DATA_COFFEE_BLOOMING_TIME')},
+        {VALUE: brew.getCalculatedBeanAge(), LABEL: this.translate.instant('BREW_INFORMATION_BEAN_AGE')},
+        {VALUE: brew.getBrewRatio(), LABEL: this.translate.instant('BREW_INFORMATION_BREW_RATIO')},
+        {VALUE: brew.getBean().finished, LABEL: this.translate.instant('FINISHED') + '?'},
       ];
       entries.push(entry);
     }

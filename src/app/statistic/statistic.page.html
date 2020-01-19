@@ -4,21 +4,26 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>
-      Statistik
+      {{"NAV_STATISTICS" | translate}}
     </ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>
   <ion-list>
     <ion-list-header>
-      Statistiken für Nerds.
+      {{"PAGE_STATISTICS_FOR_NERDS" | translate}}
     </ion-list-header>
-    <ion-item>Mühlenfuhrpark: {{uiStatistic.getMillsCount()}} Stück</ion-item>
-    <ion-item>Zubereitungsmethoden: {{uiStatistic.getPreparationsCount()}} Stück</ion-item>
-    <ion-item>Vermahlene Bohnen: {{uiStatistic.getTotalGround()}} g</ion-item>
-    <ion-item>Geld für Kaffee ausgegeben: {{uiStatistic.getSpentMoneyForCoffeeBeans()}} €</ion-item>
-    <ion-item>Getrunkene Tassen: {{uiStatistic.getBrewsDrunk()}} </ion-item>
-    <ion-item>Getrunkene Menge: {{uiStatistic.getTotalDrunk()}} gr/ml</ion-item>
+    <ion-item>{{"PAGE_STATISTICS_MILL_FLEET" | translate}}
+      : {{uiStatistic.getMillsCount()}} {{"PIECE" | translate}}</ion-item>
+    <ion-item>{{"PAGE_STATISTICS_DIFFERENT_PREPARATION_METHOD" | translate}}
+      : {{uiStatistic.getPreparationsCount()}} {{"PIECE" | translate}}x
+    </ion-item>
+    <ion-item>{{"PAGE_STATISTICS_TOTAL_GROUND_BEANS" | translate}}: {{uiStatistic.getTotalGround()}} g</ion-item>
+    <ion-item>{{"PAGE_STATISTICS_MONEY_SPENT_FOR_COFFEE" | translate}}: {{uiStatistic.getSpentMoneyForCoffeeBeans()}}
+      €
+    </ion-item>
+    <ion-item>{{"PAGE_STATISTICS_DRUNKEN_BREWS" | translate}}: {{uiStatistic.getBrewsDrunk()}} </ion-item>
+    <ion-item>{{"PAGE_STATISTICS_DRUNKEN_QUANTITY" | translate}}e: {{uiStatistic.getTotalDrunk()}} gr/ml</ion-item>
   </ion-list>
   <ion-card>
     <ion-card-content>
