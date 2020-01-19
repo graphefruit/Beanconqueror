@@ -55,6 +55,7 @@ import {BrewPopoverActionsComponent} from '../brew/brew-popover-actions/brew-pop
 import {LogComponent} from '../info/log/log.component';
 import {LogTextComponent} from '../info/log/log-text/log-text.component';
 import {TranslateModule} from '@ngx-translate/core';
+import {Globalization} from '@ionic-native/globalization/ngx';
 
 
 @NgModule({
@@ -99,7 +100,7 @@ import {TranslateModule} from '@ngx-translate/core';
     Keyboard,
     ThreeDeeTouch,
     Camera, ImagePicker, AndroidPermissions,
-    InAppBrowser, File
+    InAppBrowser, File, Globalization
   ],
 
   exports: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, AboutComponent,

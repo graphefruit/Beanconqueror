@@ -1,8 +1,8 @@
 /** Interfaces */
 /** Enums */
-import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
-import { IConfig } from '../objectConfig/iObjectConfig';
-import { IDefaultLastCoffeeParameters } from './iDefaultLastCoffeeParameters';
+import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
+import {IConfig} from '../objectConfig/iObjectConfig';
+import {IDefaultLastCoffeeParameters} from './iDefaultLastCoffeeParameters';
 
 export interface ISettings {
  // Properties
@@ -26,7 +26,7 @@ export interface ISettings {
   set_last_coffee_brew: boolean;
   attachments: boolean;
   rating: boolean;
-
+  language: string;
   default_last_coffee_parameters: IDefaultLastCoffeeParameters;
 
   config: IConfig;

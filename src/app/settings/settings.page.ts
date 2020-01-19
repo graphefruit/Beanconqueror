@@ -21,6 +21,7 @@ import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {Brew} from '../../classes/brew/brew';
 import {Mill} from '../../classes/mill/mill';
 import {UILog} from '../../services/uiLog';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'settings',
@@ -48,7 +49,8 @@ export class SettingsPage implements OnInit {
               private readonly uiMillStorage: UIMillStorage,
               private readonly iosFilePicker: IOSFilePicker,
               private readonly socialSharing: SocialSharing,
-              private readonly uiLog: UILog) {
+              private readonly uiLog: UILog,
+              private readonly translate: TranslateService) {
     this.__initializeSettings();
   }
 
@@ -56,6 +58,13 @@ export class SettingsPage implements OnInit {
   }
 
   public saveSettings (_event: any): void {
+    this.uiSettingsStorage.saveSettings(this.settings);
+  }
+
+
+  public setLanguage(_event: any): void {
+    console.log(this.settings.language);
+    this.translate.setDefaultLang(this.settings.language);
     this.uiSettingsStorage.saveSettings(this.settings);
   }
 
@@ -532,6 +541,7 @@ export class SettingsPage implements OnInit {
     if (_data !== undefined && _data.length > 0) {
       for (const bean of _data) {
         bean.filePath = '';
+        bean.attachments = [];
       }
     }
   }

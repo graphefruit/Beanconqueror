@@ -30,6 +30,7 @@ export class Settings implements ISettings {
   public set_last_coffee_brew: boolean;
   public default_last_coffee_parameters: DefaultLastCoffeeParameters;
   public config: Config;
+  public language: string;
 
   public initializeByObject (brewObj: ISettings): void {
     Object.assign(this, brewObj);
@@ -59,6 +60,7 @@ export class Settings implements ISettings {
     this.config = new Config();
 
     this.default_last_coffee_parameters = new DefaultLastCoffeeParameters();
+    this.language = '';
 
   }
 

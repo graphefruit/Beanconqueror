@@ -37,7 +37,16 @@
                            value="{{BREW_VIEWS.MULTIPLE_PAGE}}">{{"PAGE_SETTINGS_DISPLAY_PAGING" | translate}}</ion-select-option>
       </ion-select>
     </ion-item>
+
+    <ion-item>
+      <ion-label>{{"PAGE_SETTINGS_LANGUAGE" | translate}}</ion-label>
+      <ion-select (ngModelChange)="setLanguage($event)" [(ngModel)]="settings.language">
+        <ion-select-option value="de">{{"PAGE_SETTINGS_LANGUAGE_GERMAN" | translate}}</ion-select-option>
+        <ion-select-option value="en">{{"PAGE_SETTINGS_LANGUAGE_ENGLISH" | translate}}</ion-select-option>
+      </ion-select>
+    </ion-item>
   </ion-list>
+
   <ion-list>
     <ion-item>
       <ion-label>{{"PAGE_SETTINGS_PRESET_LAST_BREW" | translate}}</ion-label>
