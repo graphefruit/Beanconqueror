@@ -25,6 +25,8 @@ import {Bean} from '../classes/bean/bean';
 import {UIHelper} from '../services/uiHelper';
 import {UIAlert} from '../services/uiAlert';
 import {TranslateService} from '@ngx-translate/core';
+import {Globalization} from '@ionic-native/globalization/ngx';
+import {Settings} from '../classes/settings/settings';
 
 @Component({
   selector: 'app-root',
@@ -76,15 +78,15 @@ export class AppComponent implements AfterViewInit {
     private readonly uiHelper: UIHelper,
     private readonly uiAlert: UIAlert,
     private _translate: TranslateService,
+    private  globalization: Globalization
   ) {
-
+    console.log(this.globalization.getPreferredLanguage());
   }
 
   public ngAfterViewInit(): void {
 
     this.uiLog.log('Platform ready, init app');
     this.__appReady();
-    this._translate.setDefaultLang('de');
     // Copy in all the js code from the script.js. Typescript will complain but it works just fine
   }
 
@@ -168,9 +170,55 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
+  private __setDeviceLanguage() {
+    const settingsa: Settings = this.uiSettingsStorage.getSettings();
+    settingsa.language = 'en';
+    this.uiSettingsStorage.saveSettings(settingsa);
+    if (this.platform.is('cordova')) {
+      try {
+        const settings: Settings = this.uiSettingsStorage.getSettings();
+        if (settings.language === null || settings.language === undefined || settings.language === '') {
+          this.globalization.getPreferredLanguage().then((res) => {
+            // Run other functions after getting device default lang
+            const systemLanguage: string = res['value'].toLowerCase();
+            console.log(systemLanguage);
+            this.uiLog.log(`Found system language: ${systemLanguage}`);
+
+            let settingLanguage: string = '';
+            switch (systemLanguage) {
+              case 'de':
+                settingLanguage = 'de';
+                break;
+              default:
+                settingLanguage = 'en';
+                break;
+            }
+            this.uiLog.log(`Setting language: ${settingLanguage}`);
+            this._translate.setDefaultLang(settingLanguage);
+            settings.language = settingLanguage;
+            this.uiSettingsStorage.saveSettings(settings);
+
+          })
+            .catch((ex) => {
+              const exMessage: string = JSON.stringify(ex);
+              this.uiLog.error(`Exception occured when setting language ${exMessage}`);
+              this._translate.setDefaultLang('en');
+            });
+        }
+      } catch (ex) {
+        const exMessage: string = JSON.stringify(ex);
+        this.uiLog.error(`Exception occured when setting language ${exMessage}`);
+        this._translate.setDefaultLang('en');
+      }
+    } else {
+      this.uiLog.info('Cant set language because no cordova device');
+      this._translate.setDefaultLang('de');
+    }
+  }
+
   private __initApp(): void {
     this.__registerBack();
-
+    this.__setDeviceLanguage();
 
     if (this.platform.is('ios')) {
       this.threeDeeTouch.onHomeIconPressed()
