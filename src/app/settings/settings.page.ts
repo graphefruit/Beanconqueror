@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
 import {ISettings} from '../../interfaces/settings/iSettings';
 import {IBean} from '../../interfaces/bean/iBean';
@@ -22,6 +22,8 @@ import {Brew} from '../../classes/brew/brew';
 import {Mill} from '../../classes/mill/mill';
 import {UILog} from '../../services/uiLog';
 import {TranslateService} from '@ngx-translate/core';
+import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'settings',
@@ -33,7 +35,7 @@ export class SettingsPage implements OnInit {
   public settings: ISettings;
 
   public BREW_VIEWS = BREW_VIEW_ENUM;
-
+  public debounceFilter: Subject<string> = new Subject<string>();
   constructor(private readonly platform: Platform,
               public uiSettingsStorage: UISettingsStorage,
               public uiStorage: UIStorage,
@@ -50,20 +52,30 @@ export class SettingsPage implements OnInit {
               private readonly iosFilePicker: IOSFilePicker,
               private readonly socialSharing: SocialSharing,
               private readonly uiLog: UILog,
-              private readonly translate: TranslateService) {
+              private readonly translate: TranslateService,
+              private readonly changeDetectorRef: ChangeDetectorRef) {
     this.__initializeSettings();
+    this.debounceFilter
+      .pipe(debounceTime(500), distinctUntilChanged())
+      .subscribe((model) => {
+        this.setLanguage();
+      });
   }
 
   public ngOnInit() {
   }
 
   public saveSettings (_event: any): void {
+    this.changeDetectorRef.detectChanges();
     this.uiSettingsStorage.saveSettings(this.settings);
   }
 
+  public languageChanged(_query): void {
 
-  public setLanguage(_event: any): void {
-    console.log(this.settings.language);
+    this.debounceFilter.next(_query);
+  }
+
+  public setLanguage(): void {
     this.translate.setDefaultLang(this.settings.language);
     this.uiSettingsStorage.saveSettings(this.settings);
   }
