@@ -16,6 +16,7 @@ export interface IBean {
   // Aromatics
   aromatics: string;
   note: string;
+  /** @deprecated use attachments instead */
   filePath: string;
   roaster: string;
   roast: ROASTS_ENUM;

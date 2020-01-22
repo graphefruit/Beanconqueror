@@ -1,9 +1,9 @@
 <ion-app>
-  <ion-split-pane>
-    <ion-menu type="overlay">
+  <ion-split-pane contentId="menu-content">
+    <ion-menu contentId="menu-content" type="overlay">
       <ion-header>
         <ion-toolbar>
-          <ion-title>Menu</ion-title>
+          <ion-title>{{"NAV_MENU" | translate}}</ion-title>
         </ion-toolbar>
       </ion-header>
       <ion-content>
@@ -12,33 +12,33 @@
             <ion-list class="no-label-margin">
               <ion-item [routerLink]="[pages.home.url]" [class.active]="pages.home.active">
                 <ion-icon class="menu-icon" name="{{pages.home.icon}}"></ion-icon>
-                {{pages.home.title}}
+                {{pages.home.title | translate}}
               </ion-item>
               <ion-item [routerLink]="[pages.brew.url]" [class.active]="pages.brew.active">
                 <i style="color:rgba(0, 0, 0, 0.54);" class="menu-icon fa {{pages.brew.icon}}"></i>
-                {{pages.brew.title}}
+                {{pages.brew.title | translate}}
               </ion-item>
               <ion-item [routerLink]="[pages.beans.url]" [class.active]="pages.beans.active">
                 <ion-icon class="custom-coffee-beans"></ion-icon>
-                {{pages.beans.title}}
+                {{pages.beans.title | translate}}
               </ion-item>
               <ion-item [routerLink]="[pages.preparation.url]" [class.active]="pages.preparation.active">
                 <ion-icon class="custom-filter"></ion-icon>
-                {{pages.preparation.title}}
+                {{pages.preparation.title | translate}}
               </ion-item>
               <ion-item [routerLink]="[pages.mill.url]" [class.active]="pages.mill.active">
                 <ion-icon class="custom-mill"></ion-icon>
-                {{pages.mill.title}}
+                {{pages.mill.title | translate}}
               </ion-item>
               <ion-item [class.active]="pages.statistic.active" [routerLink]="[pages.statistic.url]">
                 <ion-icon class="menu-icon" name="{{pages.statistic.icon}}"></ion-icon>
-                {{pages.statistic.title}}
+                {{pages.statistic.title | translate}}
               </ion-item>
               <!--Without $event canceling the menu would close when toggling -->
               <ion-item class="no-border" (click)="toggleAbout =!toggleAbout; $event.stopPropagation();">
                 <div>
                   <ion-icon style="margin-right: 0px;color:rgba(0, 0, 0, 0.54);" class="menu-icon" item-left name="md-information-circle"></ion-icon>
-                  Infos zur App
+                  {{"NAV_INFORMATION_TO_APP" | translate}}
                 </div>
                 <ion-icon class="sub-menu-icon" item-right *ngIf="toggleAbout == false"
                           name="md-arrow-dropdown"></ion-icon>
@@ -50,56 +50,47 @@
                         style="margin-left:16px!important;">
                 <ion-item [routerLink]="[pages.licences.url]" [class.active]="pages.licences.active">
                   <ion-icon class="menu-icon" name="{{pages.licences.icon}}"></ion-icon>
-                  {{pages.licences.title}}
+                  {{pages.licences.title | translate}}
                 </ion-item>
                 <ion-item [routerLink]="[pages.credits.url]" [class.active]="pages.credits.active">
                   <ion-icon class="menu-icon" name="{{pages.credits.icon}}"></ion-icon>
-                  {{pages.credits.title}}
+                  {{pages.credits.title | translate}}
                 </ion-item>
                 <ion-item [routerLink]="[pages.about.url]" [class.active]="pages.about.active">
                   <ion-icon class="menu-icon" name="{{pages.about.icon}}"></ion-icon>
-                  {{pages.about.title}}
+                  {{pages.about.title | translate}}
                 </ion-item>
                 <ion-item [routerLink]="[pages.contact.url]" [class.active]="pages.contact.active">
                   <ion-icon class="menu-icon" name="{{pages.contact.icon}}"></ion-icon>
-                  {{pages.contact.title}}
+                  {{pages.contact.title | translate}}
                 </ion-item>
                 <ion-item [routerLink]="[pages.thanks.url]" [class.active]="pages.thanks.active">
                   <ion-icon class="menu-icon" name="{{pages.thanks.icon}}"></ion-icon>
-                  {{pages.thanks.title}}
+                  {{pages.thanks.title | translate}}
                 </ion-item>
                 <ion-item [routerLink]="[pages.privacy.url]" [class.active]="pages.privacy.active">
                   <ion-icon class="menu-icon" name="{{pages.privacy.icon}}"></ion-icon>
-                  {{pages.privacy.title}}
+                  {{pages.privacy.title | translate}}
                 </ion-item>
                 <ion-item [routerLink]="[pages.terms.url]" [class.active]="pages.terms.active">
                   <ion-icon class="menu-icon" name="{{pages.terms.icon}}"></ion-icon>
-                  {{pages.terms.title}}
+                  {{pages.terms.title | translate}}
                 </ion-item>
                 <ion-item [class.active]="pages.logs.active" [routerLink]="[pages.logs.url]">
                   <ion-icon class="menu-icon" name="{{pages.logs.icon}}"></ion-icon>
-                  {{pages.logs.title}}
+                  {{pages.logs.title | translate}}
                 </ion-item>
               </ion-list>
               <ion-item [routerLink]="[pages.settings.url]" [class.active]="pages.settings.active">
                 <ion-icon class="menu-icon" name="{{pages.settings.icon}}"></ion-icon>
-                {{pages.settings.title}}
+                {{pages.settings.title | translate}}
               </ion-item>
              </ion-list>
 
-
-
-
-            <!--<ion-item [routerDirection]="'root'" [routerLink]="[p.url]">
-              <ion-icon slot="start" [name]="p.icon"></ion-icon>
-              <ion-label>
-                {{p.title}}
-              </ion-label>
-            </ion-item>-->
           </ion-menu-toggle>
         </ion-list>
       </ion-content>
     </ion-menu>
-    <ion-router-outlet main></ion-router-outlet>
+    <ion-router-outlet id="menu-content"></ion-router-outlet>
   </ion-split-pane>
 </ion-app>

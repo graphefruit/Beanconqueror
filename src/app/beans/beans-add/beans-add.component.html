@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Hinzufügen</ion-title>
+    <ion-title>{{"ADD_SOMETHING" | translate}}</ion-title>
     <ion-buttons slot="start">
       <ion-button (click)="dismiss()">
         <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
@@ -10,82 +10,82 @@
 </ion-header>
 <ion-content>
   <ion-item>
-    <ion-label floating >Name*</ion-label>
+    <ion-label floating>{{"BEAN_DATA_NAME" | translate}}*</ion-label>
     <ion-input [(ngModel)]="data.name" name="name" type="text" #name="ngModel" spellcheck="false"
                autocapitalize="off" required>
     </ion-input>
   </ion-item>
   <ion-item>
-    <ion-label floating>Röstgrad*</ion-label>
+    <ion-label floating>{{"BEAN_DATA_ROAST_NAME" | translate}}*</ion-label>
     <ion-select [(ngModel)]="data.roast"  name="roast" #roast="ngModel">
       <ion-select-option *ngFor="let key of roastsEnum | keys" value="{{key}}">{{roastsEnum[key]}}</ion-select-option>
     </ion-select>
   </ion-item>
   <ion-item *ngIf="data.roast.toString() =='CUSTOM_ROAST'">
-    <ion-label floating >Custom Roast</ion-label>
+    <ion-label floating>{{"BEAN_DATA_CUSTOM_ROAST_NAME" | translate}}</ion-label>
     <ion-input [(ngModel)]="data.roast_custom" name="roast_custom" type="text" #roast_custom="ngModel" spellcheck="false"
                autocapitalize="off" required>
     </ion-input>
 
   </ion-item>
   <ion-item>
-    <ion-label floating>Röstdatum*</ion-label>
+    <ion-label floating>{{"BEAN_DATA_ROASTING_DATE" | translate}}*</ion-label>
     <ion-datetime min="2000-01-01" max="2999-12-31" displayFormat="DD.MM.YYYY" [(ngModel)]="data.roastingDate" name="roastingDate"
                   #roastingDate="ngModel"></ion-datetime>
   </ion-item>
   <ion-item>
-    <ion-label floating >Röster</ion-label>
+    <ion-label floating>{{"BEAN_DATA_ROASTER" | translate}}</ion-label>
     <ion-input [(ngModel)]="data.roaster" name="roaster" type="text" #roaster="ngModel" spellcheck="false"
                autocapitalize="off" required>
     </ion-input>
   </ion-item>
   <ion-item>
-    <ion-label floating >Varietät</ion-label>
+    <ion-label floating>{{"BEAN_DATA_VARIETY" | translate}}</ion-label>
     <ion-input [(ngModel)]="data.variety" name="variety" type="text" #variety="ngModel" spellcheck="false"
                autocapitalize="off" required>
     </ion-input>
   </ion-item>
   <ion-item>
-    <ion-label floating >Herkunftsland</ion-label>
+    <ion-label floating>{{"BEAN_DATA_COUNTRY" | translate}}</ion-label>
     <ion-input [(ngModel)]="data.country" name="country" type="text" #country="ngModel" spellcheck="false"
                autocapitalize="off" required>
     </ion-input>
   </ion-item>
   <ion-item>
-    <ion-label floating >Mischung</ion-label>
+    <ion-label floating>{{"BEAN_DATA_MIX" | translate}}</ion-label>
     <ion-select [(ngModel)]="data.beanMix"  name="beanMix" #beanMix="ngModel">
       <ion-select-option *ngFor="let key of mixEnum | keys" value="{{key}}">{{mixEnum[key]}}</ion-select-option>
     </ion-select>
   </ion-item>
   <ion-item>
-    <ion-label floating >Geschmack</ion-label>
+    <ion-label floating>{{"BEAN_DATA_AROMATICS" | translate}}</ion-label>
     <ion-input [(ngModel)]="data.aromatics" name="aromatics" type="text" #aromatics="ngModel" spellcheck="false"
                autocapitalize="off" required>
     </ion-input>
   </ion-item>
   <ion-item>
-    <ion-label floating >Gewicht</ion-label>
+    <ion-label floating>{{"BEAN_DATA_WEIGHT" | translate}}</ion-label>
     <ion-input [(ngModel)]="data.weight" name="weight" remove-empty-number prevent-characters type="text" #weight="ngModel" spellcheck="false"
                autocapitalize="off" required>
     </ion-input>
   </ion-item>
   <ion-item>
-    <ion-label floating >Kosten</ion-label>
+    <ion-label floating>{{"BEAN_DATA_COST" | translate}}</ion-label>
     <ion-input [(ngModel)]="data.cost" name="cost" remove-empty-number prevent-characters type="text" #cost="ngModel" spellcheck="false"
                autocapitalize="off" required>
     </ion-input>
   </ion-item>
   <ion-item>
-    <ion-label floating>Notizen</ion-label>
+    <ion-label floating>{{"NOTES" | translate}}</ion-label>
     <ion-textarea autocomplete="true" spellcheck="true" autocorrect="true" name="note" #note="ngModel" rows="5" [(ngModel)]="data.note"></ion-textarea>
   </ion-item>
   <ion-item button (click)="addImage()">
-    Foto hinzufügen
+    {{"ADD_PHOTO" | translate}}
   </ion-item>
   <div *ngIf="data?.attachments && data.attachments.length > 0">
     <ion-slides #photoSlides pager="true">
       <ion-slide *ngFor="let attachment of data.attachments;let i = index">
-        <ion-button (click)="deleteImage(i)" class="position-absolute-button">Löschen</ion-button>
+        <ion-button (click)="deleteImage(i)" class="position-absolute-button">{{"DELETE" | translate}}</ion-button>
         <async-image class="brew-image" filePath="{{attachment}}"></async-image>
       </ion-slide>
     </ion-slides>
@@ -94,10 +94,10 @@
 <ion-footer>
   <ion-row>
     <ion-col>
-      <ion-button (click)="dismiss()"  fill="outline" expand="block">Abbrechen</ion-button>
+      <ion-button (click)="dismiss()" expand="block" fill="outline">{{"CANCEL" | translate}}</ion-button>
     </ion-col>
     <ion-col>
-      <ion-button (click)="addBean()" type="submit"  expand="block">Anlegen</ion-button>
+      <ion-button (click)="addBean()" expand="block" type="submit">{{"GENERATE" | translate}}</ion-button>
     </ion-col>
   </ion-row>
 </ion-footer>

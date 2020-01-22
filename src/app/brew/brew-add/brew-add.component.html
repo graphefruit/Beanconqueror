@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Zurück</ion-title>
+    <ion-title>{{"BACK" | translate}}</ion-title>
     <ion-buttons slot="start">
       <ion-button (click)="dismiss()">
         <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
@@ -12,62 +12,62 @@
   <div *ngIf="settings.brew_view == BREW_VIEW_ENUM.SINGLE_PAGE">
 
     <ion-item *ngIf="settings.grind_size === true">
-      <ion-label floating>Mahlgrad</ion-label>
+      <ion-label floating>{{"BREW_DATA_GRIND_SIZE" | translate}}</ion-label>
       <ion-input type="text" [(ngModel)]="data.grind_size"></ion-input>
     </ion-item>
     <ion-item *ngIf="settings.grind_weight === true">
-      <ion-label floating>Gewicht</ion-label>
+      <ion-label floating>{{"BREW_DATA_GRIND_WEIGHT" | translate}}</ion-label>
       <ion-input remove-empty-number prevent-characters [(ngModel)]="data.grind_weight" type="text"></ion-input>
     </ion-item>
 
     <ion-item *ngIf="settings.brew_temperature === true">
-      <ion-label floating>Temperatur</ion-label>
+      <ion-label floating>{{"BREW_DATA_BREW_TEMPERATURE" | translate}}</ion-label>
       <ion-input remove-empty-number prevent-characters [(ngModel)]="data.brew_temperature"  type="text"></ion-input>
     </ion-item>
 
 
     <ion-item *ngIf="settings.method_of_preparation === true">
-      <ion-label floating>Zubereitungsmethode</ion-label>
+      <ion-label floating>{{"BREW_DATA_PREPARATION_METHOD" | translate}}</ion-label>
       <ion-select [(ngModel)]="data.method_of_preparation">
         <ion-select-option *ngFor="let method of method_of_preparations" value="{{method.config.uuid}}">{{method.name}}
         </ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item *ngIf="settings.bean_type === true">
-      <ion-label floating>Bohnen</ion-label>
+      <ion-label floating>{{"BREW_DATA_BEAN_TYPE" | translate}}</ion-label>
       <ion-select [(ngModel)]="data.bean">
         <ion-select-option *ngFor="let bean of beans" value="{{bean.config.uuid}}">{{bean.name}} / {{bean.beanAgeInDays()}} Tage ({{bean.roastingDate | formatDate:["DD.MM.YYYY"]}})
         </ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item *ngIf="settings.mill === true">
-      <ion-label floating>Mühle</ion-label>
+      <ion-label floating>{{"BREW_DATA_MILL" | translate}}</ion-label>
       <ion-select [(ngModel)]="data.mill">
         <ion-select-option *ngFor="let method of mills" value="{{method.config.uuid}}">{{method.name}}
         </ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item *ngIf="settings.mill_speed === true">
-      <ion-label floating>Mühlengeschwindikeit (rpm)</ion-label>
+      <ion-label floating>{{"BREW_DATA_MILL_SPEED" | translate}}</ion-label>
       <ion-input remove-empty-number prevent-characters [(ngModel)]="data.mill_speed"  type="text"></ion-input>
     </ion-item>
     <ion-item *ngIf="settings.pressure_profile === true">
-      <ion-label floating>Druckprofil</ion-label>
+      <ion-label floating>{{"BREW_DATA_PRESSURE_PROFILE" | translate}}</ion-label>
       <ion-input [(ngModel)]="data.pressure_profile"  type="text"></ion-input>
     </ion-item>
-    <timer #brewTemperatureTime timeInSeconds="0" label="Temperatur Zeit / Surf Zeit"
+    <timer #brewTemperatureTime label="{{'BREW_DATA_TEMPERATURE_TIME' | translate}}" timeInSeconds="0"
            *ngIf="settings.brew_temperature_time === true"></timer>
-    <timer #timer timeInSeconds="0" label="Zeit" (timerStarted)="brewTimeStarted($event)"
+    <timer #timer (timerStarted)="brewTimeStarted($event)" label="{{'BREW_DATA_TIME' | translate}}" timeInSeconds="0"
            *ngIf="settings.brew_time === true"></timer>
     <ion-item *ngIf="settings.coffee_blooming_time === true">
-      <ion-label stacked>Blooming-Zeit / Preinfusion</ion-label>
+      <ion-label stacked>{{"BREW_DATA_COFFEE_BLOOMING_TIME" | translate}}</ion-label>
       <ion-input remove-empty-number prevent-characters [(ngModel)]="data.coffee_blooming_time" type="text"></ion-input>
       <ion-button (click)="setCoffeeBloomingTime()" fill="outline" size="default" slot="end">
         <ion-icon name="time"></ion-icon>
       </ion-button>
     </ion-item>
     <ion-item *ngIf="settings.coffee_first_drip_time === true">
-      <ion-label stacked>Erster Kaffeetropfen</ion-label>
+      <ion-label stacked>{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}</ion-label>
       <ion-input remove-empty-number prevent-characters [(ngModel)]="data.coffee_first_drip_time" type="text"></ion-input>
       <ion-button (click)="setCoffeeDripTime()" fill="outline" size="default" slot="end">
         <ion-icon name="time"></ion-icon>
@@ -76,7 +76,7 @@
     <ion-row *ngIf="settings.brew_quantity === true">
       <ion-col class="ion-no-padding" col-8 col-sm-10>
         <ion-item>
-          <ion-label floating>Bezugsmenge</ion-label>
+          <ion-label floating>{{"BREW_DATA_BREW_QUANTITY" | translate}}</ion-label>
           <ion-input remove-empty-number prevent-characters [(ngModel)]="data.brew_quantity" type="text"></ion-input>
         </ion-item>
       </ion-col>
@@ -92,16 +92,15 @@
       </ion-col>
     </ion-row>
     <ion-item *ngIf="settings.coffee_type=== true">
-      <ion-label floating>Kaffeetyp</ion-label>
+      <ion-label floating>{{"BREW_DATA_COFFEE_TYPE" | translate}}</ion-label>
       <ion-input type="text" [(ngModel)]="data.coffee_type"></ion-input>
     </ion-item>
     <ion-item *ngIf="settings.coffee_concentration=== true">
-      <ion-label floating>Kaffee-Konzentration</ion-label>
+      <ion-label floating>{{"BREW_DATA_COFFEE_CONCENTRATION" | translate}}</ion-label>
       <ion-input type="text" [(ngModel)]="data.coffee_concentration"></ion-input>
     </ion-item>
     <ion-item *ngIf="settings.rating === true">
-      <ion-label stacked>Bewertung&nbsp;
-      </ion-label>
+      <ion-label stacked>{{"BREW_DATA_RATING" | translate }}</ion-label>
       <ion-range [(ngModel)]="data.rating" debounce="500s" max="10" min="1" snaps="true" step="1">
         <ion-icon name="sad" size="small" slot="start"></ion-icon>
         <ion-icon name="happy" size="small" slot="end"></ion-icon>
@@ -109,17 +108,17 @@
       <ion-badge color="secondary" style="float:right;">{{data.rating}}</ion-badge>
     </ion-item>
     <ion-item *ngIf="settings.note === true">
-      <ion-label stacked>Notizen</ion-label>
+      <ion-label stacked>{{"BREW_DATA_NOTES" | translate }}</ion-label>
       <ion-textarea autocomplete="true" spellcheck="true" autocorrect="true" [(ngModel)]="data.note"
                     rows="5"></ion-textarea>
     </ion-item>
     <ion-item button (click)="addImage()" *ngIf="settings.attachments === true">
-      Foto hinzufügen
+      {{"ADD_PHOTO" | translate}}
     </ion-item>
     <div *ngIf="data?.attachments && data.attachments.length > 0 && settings.attachments === true">
       <ion-slides #photoSlides pager="true">
         <ion-slide *ngFor="let attachment of data.attachments;let i = index">
-          <ion-button (click)="deleteImage(i)" class="position-absolute-button">Löschen</ion-button>
+          <ion-button (click)="deleteImage(i)" class="position-absolute-button">{{"DELETE" | translate }}</ion-button>
           <async-image class="brew-image" filePath="{{attachment}}"></async-image>
         </ion-slide>
       </ion-slides>
@@ -130,7 +129,7 @@
 </ion-content>
 <ion-footer>
   <ion-button (click)="finish()" expand="block">
-    Speichern & Abschließen
+    {{"SAVE_AND_FINISH" | translate}}
     <ion-icon name="arrow-forward" slot="end" ></ion-icon>
   </ion-button>
 </ion-footer>
