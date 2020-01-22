@@ -54,6 +54,8 @@ import {SettingsPage} from '../settings/settings.page';
 import {BrewPopoverActionsComponent} from '../brew/brew-popover-actions/brew-popover-actions.component';
 import {LogComponent} from '../info/log/log.component';
 import {LogTextComponent} from '../info/log/log-text/log-text.component';
+import {TranslateModule} from '@ngx-translate/core';
+import {Globalization} from '@ionic-native/globalization/ngx';
 
 
 @NgModule({
@@ -82,6 +84,7 @@ import {LogTextComponent} from '../info/log/log-text/log-text.component';
     CommonModule,
     IonicModule,
     FormsModule,
+    TranslateModule,
   ],
   providers: [
     StatusBar,
@@ -97,7 +100,7 @@ import {LogTextComponent} from '../info/log/log-text/log-text.component';
     Keyboard,
     ThreeDeeTouch,
     Camera, ImagePicker, AndroidPermissions,
-    InAppBrowser, File
+    InAppBrowser, File, Globalization
   ],
 
   exports: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, AboutComponent,

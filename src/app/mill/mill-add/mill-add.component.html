@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Hinzufügen</ion-title>
+    <ion-title>{{"ADD_SOMETHING" | translate}}</ion-title>
     <ion-buttons slot="start">
       <ion-button (click)="dismiss()">
         <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
@@ -11,21 +11,21 @@
 <ion-content>
   <form #addMillForm="ngForm" novalidate>
     <ion-item>
-      <ion-label floating>Name*</ion-label>
+      <ion-label floating>{{"NAME" | translate}}*</ion-label>
       <ion-input [(ngModel)]="data.name" name="name" type="text" #name="ngModel" spellcheck="false"
                  autocapitalize="off" required>
       </ion-input>
     </ion-item>
     <ion-item>
-      <ion-label floating>Notizen</ion-label>
+      <ion-label floating>{{"NOTES" | translate}}</ion-label>
       <ion-textarea autocomplete="true" spellcheck="true" autocorrect="true" name="note" #note="ngModel" rows="5" [(ngModel)]="data.note"></ion-textarea>
     </ion-item>
     <ion-row>
       <ion-col>
-        <ion-button (click)="dismiss()"  fill="outline" expand="block">Abbrechen</ion-button>
+        <ion-button (click)="dismiss()" expand="block" fill="outline">{{"CANCEL" | translate}}</ion-button>
       </ion-col>
       <ion-col>
-        <ion-button (click)="addMill(addMillForm)" type="submit" expand="block">Anlegen</ion-button>
+        <ion-button (click)="addMill(addMillForm)" expand="block" type="submit">{{"GENERATE" | translate}}</ion-button>
       </ion-col>
 
     </ion-row>

@@ -30,6 +30,7 @@
     "@ionic-native/file-chooser": "^5.19.1",
     "@ionic-native/file-path": "^5.19.1",
     "@ionic-native/file-picker": "^5.19.1",
+    "@ionic-native/globalization": "^5.19.1",
     "@ionic-native/image-picker": "^5.19.1",
     "@ionic-native/in-app-browser": "^5.19.1",
     "@ionic-native/keyboard": "^5.19.1",
@@ -39,6 +40,8 @@
     "@ionic-native/three-dee-touch": "^5.19.1",
     "@ionic/angular": "^4.11.8",
     "@ionic/storage": "^2.2.0",
+    "@ngx-translate/core": "^11.0.1",
+    "@ngx-translate/http-loader": "^4.0.0",
     "chart.js": "^2.8.0",
     "cordova-android": "^7.1.4",
     "cordova-android-support-gradle-release": "^3.0.1",
@@ -52,6 +55,7 @@
     "cordova-plugin-filechooser": "^1.2.0",
     "cordova-plugin-filepath": "^1.5.6",
     "cordova-plugin-filepicker": "^1.1.6",
+    "cordova-plugin-globalization": "^1.11.0",
     "cordova-plugin-inappbrowser": "^3.1.0",
     "cordova-plugin-ionic-keyboard": "^2.2.0",
     "cordova-plugin-ionic-webview": "^4.1.1",
@@ -122,7 +126,8 @@
       },
       "cordova-plugin-appminimize": {},
       "cordova-android-support-gradle-release": {},
-      "cordova-plugin-3dtouch": {}
+      "cordova-plugin-3dtouch": {},
+      "cordova-plugin-globalization": {}
     },
     "platforms": [
       "android",

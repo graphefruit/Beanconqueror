@@ -12,7 +12,7 @@
       </ion-button>
     </ion-buttons>
     <ion-title>
-      Brühungen
+      {{"NAV_BREWS" | translate }}
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -20,12 +20,12 @@
   <div class="ion-padding">
     <ion-segment [(ngModel)]="brew_segment">
       <ion-segment-button value="open">
-        <ion-label>Aktuell
+        <ion-label>{{"CURRENT" | translate }}
           <ion-badge>{{openBrewsCount}}</ion-badge>
         </ion-label>
       </ion-segment-button>
       <ion-segment-button value="archive">
-        <ion-label>Archiv
+        <ion-label>{{"ARCHIVE" | translate }}
           <ion-badge>{{archivedBrewsCount}}</ion-badge>
         </ion-label>
       </ion-segment-button>
@@ -33,7 +33,7 @@
   </div>
   <div [ngSwitch]="brew_segment">
     <ion-item *ngIf="uiBrewHelper.canBrew() && settings.method_of_preparation === true">
-      <ion-label stacked>Zubereitungsmethode</ion-label>
+      <ion-label stacked>{{"BREW_DATA_PREPARATION_METHOD" | translate}}</ion-label>
       <ion-select (ngModelChange)="filterChanged($event)" [(ngModel)]="openBrewsFilter.method_of_preparation"
                   multiple="true">
         <ion-select-option *ngFor="let method of method_of_preparations" value="{{method.config.uuid}}">{{method.name}}
@@ -41,27 +41,27 @@
       </ion-select>
     </ion-item>
     <ion-item *ngIf="uiBrewHelper.canBrew() &&  settings.bean_type === true">
-      <ion-label stacked>Bohne</ion-label>
+      <ion-label stacked>{{"BREW_DATA_BEAN_TYPE" | translate}}</ion-label>
       <ion-select (ngModelChange)="filterChanged($event)" [(ngModel)]="openBrewsFilter.bean" multiple="true">>
         <ion-select-option *ngFor="let bean of beans"
                            value="{{bean.config.uuid}}">{{bean.name}}&nbsp;{{bean.finished ? '(Archiv)' : ''}}</ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item *ngIf="uiBrewHelper.canBrew() &&  settings.mill === true">
-      <ion-label stacked>Mühle</ion-label>
+      <ion-label stacked>{{"BREW_DATA_MILL" | translate }}</ion-label>
       <ion-select (ngModelChange)="filterChanged($event)" [(ngModel)]="openBrewsFilter.mill" multiple="true">
         <ion-select-option *ngFor="let mill of mills" value="{{mill.config.uuid}}">{{mill.name}}</ion-select-option>
       </ion-select>
     </ion-item>
     <div *ngSwitchCase="'open'">
       <ion-card *ngIf="!uiBrewHelper.canBrew()" class="ion-padding">
-        <h2 class="error-text">Um einen Bezug zu starten, lege bitte eine <b>Bohnensorte</b> sowie eine <b>Zubereitungsmethode</b> und <b>Mühle</b> an.</h2>
+        <h2 [innerHTML]="'PAGE_BREWS_START_A_NEW_BREW' | translate" class="error-text">s</h2>
       </ion-card>
       <ion-card *ngIf="brews?.length == 0 && uiBrewHelper.canBrew()" class="ion-padding">
-        Du hast leider noch keinen Kaffee, seit der Benutzung dieser App getrunken (schon etwas schade oder?)
+        {{"PAGE_BREWS_NO_COFFEE_DRUNK_AT_ALL" | translate}}
       </ion-card>
       <ion-card *ngIf="openBrewsView?.length == 0" class="ion-padding">
-        Keine Einträge vorhanden.
+        {{"PAGE_BREWS_NO_ENTRIES" | translate}}
       </ion-card>
       <ion-list *ngFor="let brewView of openBrewsView">
         <ion-list-header *ngIf="(brewView.brews).length > 0" class="brews-header">
@@ -118,56 +118,11 @@
 
             <div *ngIf="settings.note === true && brew.note !=''">
 
-              <span style="font-size:0.8em;" text-italic>Notizen:</span><br/>
+              <span style="font-size:0.8em;" text-italic>{{"BREW_DATA_NOTES" | translate}}:</span><br/>
               <pre class="blockquote">{{brew.note}}</pre>
 
             </div>
-
           </ion-card-content>
-          <!--<ion-row >
-            <ion-col>
-              <ion-button (click)="postBrew(brew)" color="dark" fill="clear" size="small">
-                <ion-icon name="md-clipboard" slot="start"></ion-icon>
-                <span>Posten</span>
-              </ion-button>
-            </ion-col>
-            <ion-col>
-              <ion-button (click)="repeatBrew(brew)" color="dark" fill="clear" size="small">
-                <ion-icon name="md-repeat" slot="start"></ion-icon>
-                <span>Wiederholen</span>
-              </ion-button>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col>
-              <ion-button (click)="detailBrew(brew)" color="dark" fill="clear" size="small">
-                <ion-icon name="list" slot="start"></ion-icon>
-                <span>Details</span>
-              </ion-button>
-            </ion-col>
-
-            <ion-col>
-              <ion-button (click)="editBrew(brew)" color="dark" fill="clear" size="small">
-                <ion-icon name="md-create" slot="start"></ion-icon>
-                <span>Editieren</span>
-              </ion-button>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col>
-              <ion-button (click)="deleteBrew(brew)" color="dark" fill="clear" size="small">
-                <ion-icon name="trash" slot="start"></ion-icon>
-                <span>Löschen</span>
-              </ion-button>
-            </ion-col>
-            <ion-col *ngIf="settings.attachments === true">
-              <ion-button (click)="viewPhotos(brew)" *ngIf="brew?.attachments.length > 0" color="dark" fill="clear"
-                          size="small">
-                <ion-icon name="md-eye" slot="start"></ion-icon>
-                <span>Fotogalerie</span>
-              </ion-button>
-            </ion-col>
-          </ion-row>-->
         </ion-card>
       </ion-list>
     </div>
@@ -226,57 +181,10 @@
               </ion-row>
             </ion-grid>
             <div *ngIf="settings.note === true && brew.note !=''">
-
               <span style="font-size:0.8em;" text-italic>Notizen:</span><br/>
               <pre class="blockquote">{{brew.note}}</pre>
-
             </div>
-
           </ion-card-content>
-          <!-- <ion-row>
-             <ion-col>
-               <ion-button (click)="postBrew(brew)" color="dark" fill="clear" size="small">
-                 <ion-icon name="md-clipboard" slot="start"></ion-icon>
-                 <span>Posten</span>
-               </ion-button>
-             </ion-col>
-             <ion-col>
-               <ion-button (click)="repeatBrew(brew)" color="dark" fill="clear" size="small">
-                 <ion-icon name="md-repeat" slot="start"></ion-icon>
-                 <span>Wiederholen</span>
-               </ion-button>
-             </ion-col>
-           </ion-row>
-           <ion-row>
-             <ion-col>
-               <ion-button (click)="detailBrew(brew)" color="dark" fill="clear" size="small">
-                 <ion-icon name="list" slot="start"></ion-icon>
-                 <span>Details</span>
-               </ion-button>
-             </ion-col>
-
-             <ion-col>
-               <ion-button (click)="editBrew(brew)" color="dark" fill="clear" size="small">
-                 <ion-icon name="md-create" slot="start"></ion-icon>
-                 <span>Editieren</span>
-               </ion-button>
-             </ion-col>
-           </ion-row>
-           <ion-row>
-             <ion-col>
-               <ion-button (click)="deleteBrew(brew)" color="dark" fill="clear" size="small">
-                 <ion-icon name="trash" slot="start"></ion-icon>
-                 <span>Löschen</span>
-               </ion-button>
-             </ion-col>
-             <ion-col *ngIf="settings.attachments === true">
-               <ion-button (click)="viewPhotos(brew)" *ngIf="brew?.attachments.length > 0" color="dark" fill="clear"
-                           size="small">
-                 <ion-icon name="md-eye" slot="start"></ion-icon>
-                 <span>Fotogalerie</span>
-               </ion-button>
-             </ion-col>
-           </ion-row>-->
         </ion-card>
       </ion-list>
     </div>
