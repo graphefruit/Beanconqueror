@@ -40,7 +40,7 @@
 
     <ion-item>
       <ion-label>{{"PAGE_SETTINGS_LANGUAGE" | translate}}</ion-label>
-      <ion-select (ngModelChange)="setLanguage($event)" [(ngModel)]="settings.language">
+      <ion-select (ngModelChange)="languageChanged($event)" [(ngModel)]="settings.language">
         <ion-select-option value="de">{{"PAGE_SETTINGS_LANGUAGE_GERMAN" | translate}}</ion-select-option>
         <ion-select-option value="en">{{"PAGE_SETTINGS_LANGUAGE_ENGLISH" | translate}}</ion-select-option>
       </ion-select>

@@ -80,7 +80,6 @@ export class AppComponent implements AfterViewInit {
     private _translate: TranslateService,
     private  globalization: Globalization
   ) {
-    console.log(this.globalization.getPreferredLanguage());
   }
 
   public ngAfterViewInit(): void {
@@ -171,9 +170,6 @@ export class AppComponent implements AfterViewInit {
   }
 
   private __setDeviceLanguage() {
-    const settingsa: Settings = this.uiSettingsStorage.getSettings();
-    settingsa.language = 'en';
-    this.uiSettingsStorage.saveSettings(settingsa);
     if (this.platform.is('cordova')) {
       try {
         const settings: Settings = this.uiSettingsStorage.getSettings();
@@ -211,8 +207,16 @@ export class AppComponent implements AfterViewInit {
         this._translate.setDefaultLang('en');
       }
     } else {
-      this.uiLog.info('Cant set language because no cordova device');
-      this._translate.setDefaultLang('de');
+      this.uiLog.info('Cant set language for device, because no cordova device');
+      const settings: Settings = this.uiSettingsStorage.getSettings();
+      if (settings.language !== null && settings.language !== undefined && settings.language !== '') {
+        this.uiLog.info(`Set language from settings: ${settings.language}`);
+        this._translate.setDefaultLang(settings.language);
+      } else {
+        this.uiLog.info(`Set default language from settings, because no settings set`);
+        this._translate.setDefaultLang('de');
+      }
+
     }
   }
 
