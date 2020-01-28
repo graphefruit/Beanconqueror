@@ -26,6 +26,7 @@ export interface ISettings {
   set_last_coffee_brew: boolean;
   attachments: boolean;
   rating: boolean;
+  set_custom_brew_time: boolean;
   language: string;
   default_last_coffee_parameters: IDefaultLastCoffeeParameters;
 
