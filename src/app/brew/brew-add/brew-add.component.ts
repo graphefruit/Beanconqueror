@@ -79,6 +79,11 @@ export class BrewAddComponent implements OnInit {
 
   }
 
+  public customActionSheetOptions: any = {
+    cssClass: 'select-full-screen'
+  };
+
+
   public ionViewDidEnter(): void {
     if (this.brew_template) {
       this.__loadBrew(this.brew_template);
