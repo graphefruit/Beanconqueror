@@ -15,6 +15,7 @@ import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {UIImage} from '../../../services/uiImage';
 import {Brew} from '../../../classes/brew/brew';
 import {IBean} from '../../../interfaces/bean/iBean';
+import * as moment from 'moment';
 
 @Component({
   selector: 'brew-add',
@@ -38,6 +39,7 @@ export class BrewAddComponent implements OnInit {
   public method_of_preparations: Array<IPreparation> = [];
   public beans: Array<IBean> = [];
   public mills: Array<IMill> = [];
+  public customCreationDate: string = '';
 
 
   public keyDownHandler(event: Event): void {
@@ -73,6 +75,7 @@ export class BrewAddComponent implements OnInit {
     this.data.bean = this.beans[0].config.uuid;
     this.data.method_of_preparation = this.method_of_preparations[0].config.uuid;
     this.data.mill = this.mills[0].config.uuid;
+    this.customCreationDate = moment().toISOString();
 
   }
 
@@ -91,9 +94,12 @@ export class BrewAddComponent implements OnInit {
   }
 
   public finish(): void {
-
     this.stopTimer();
     this.uiBrewStorage.add(this.data);
+    if (this.settings.set_custom_brew_time) {
+      this.data.config.unix_timestamp = moment(this.customCreationDate).unix();
+    }
+    this.uiBrewStorage.update(this.data);
     this.dismiss();
   }
 

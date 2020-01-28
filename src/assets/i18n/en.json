@@ -73,6 +73,8 @@
   "BEAN_DATA_WEIGHT": "Weight",
   "BEAN_DATA_COST": "Cost",
   "BEAN_DATA_NAME": "Name",
+  "BREW_DATA_CUSTOM_BREW_TIME": "Custom brewtime?",
+  "BREW_CREATION_DATE": "Creation date",
   "REPEAT": "Repeat",
   "EDIT": "Edit",
   "DELETE": "Delete",

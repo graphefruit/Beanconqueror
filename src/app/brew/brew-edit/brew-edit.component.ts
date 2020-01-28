@@ -12,6 +12,7 @@ import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {UIImage} from '../../../services/uiImage';
 import {Brew} from '../../../classes/brew/brew';
 import {IBean} from '../../../interfaces/bean/iBean';
+import * as moment from 'moment';
 
 @Component({
   selector: 'brew-edit',
@@ -28,6 +29,8 @@ export class BrewEditComponent implements OnInit {
   public method_of_preparations: Array<IPreparation> = [];
   public beans: Array<IBean> = [];
   public mills: Array<IMill> = [];
+
+  public customCreationDate: string = '';
 
   constructor (private readonly modalController: ModalController,
                private readonly navParams: NavParams,
@@ -49,9 +52,11 @@ export class BrewEditComponent implements OnInit {
     this.mills = this.uiMillStorage.getAllEntries()
         .sort((a, b) => a.name.localeCompare(b.name));
   }
-  public ionViewWillEnter()
-  {
 
+  public ionViewWillEnter() {
+
+    this.customCreationDate = moment.unix(this.data.config.unix_timestamp).toISOString();
+    console.log(this.customCreationDate);
   }
 
   public showRating(): boolean {
@@ -99,6 +104,12 @@ export class BrewEditComponent implements OnInit {
   }
 
   public updateBrew(): void {
+    const newUnix = moment(this.customCreationDate).unix();
+    if (newUnix !== this.data.config.unix_timestamp) {
+      console.log('New unix timestamp set');
+      this.data.config.unix_timestamp = newUnix;
+    }
+
     this.uiBrewStorage.update(this.data);
     this.dismiss();
   }

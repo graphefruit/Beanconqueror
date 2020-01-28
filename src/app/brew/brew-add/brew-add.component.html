@@ -112,6 +112,11 @@
       <ion-textarea autocomplete="true" spellcheck="true" autocorrect="true" [(ngModel)]="data.note"
                     rows="5"></ion-textarea>
     </ion-item>
+    <ion-item *ngIf="settings.set_custom_brew_time">
+      <ion-label stacked>{{"BREW_CREATION_DATE" | translate }}</ion-label>
+      <ion-datetime [(ngModel)]="customCreationDate" display-format="DD.MM.YYYY HH:mm" picker-format="DD.MM.YYYY HH:mm"
+                    placeholder="Select Date"></ion-datetime>
+    </ion-item>
     <ion-item button (click)="addImage()" *ngIf="settings.attachments === true">
       {{"ADD_PHOTO" | translate}}
     </ion-item>

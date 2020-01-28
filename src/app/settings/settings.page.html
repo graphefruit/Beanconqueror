@@ -200,5 +200,9 @@
       <ion-label>{{"BREW_DATA_RATING" | translate}}</ion-label>
       <ion-checkbox [(ngModel)]="settings.rating" (ngModelChange)="saveSettings($event)"></ion-checkbox>
     </ion-item>
+    <ion-item>
+      <ion-label>{{"BREW_DATA_CUSTOM_BREW_TIME" | translate}}</ion-label>
+      <ion-checkbox (ngModelChange)="saveSettings($event)" [(ngModel)]="settings.set_custom_brew_time"></ion-checkbox>
+    </ion-item>
   </ion-list>
 </ion-content>
