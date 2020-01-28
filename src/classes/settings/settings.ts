@@ -28,6 +28,7 @@ export class Settings implements ISettings {
   public coffee_first_drip_time: boolean;
   public coffee_blooming_time: boolean;
   public set_last_coffee_brew: boolean;
+  public set_custom_brew_time: boolean;
   public default_last_coffee_parameters: DefaultLastCoffeeParameters;
   public config: Config;
   public language: string;
@@ -57,6 +58,7 @@ export class Settings implements ISettings {
     this.set_last_coffee_brew = false;
     this.mill_speed = false;
     this.pressure_profile = false;
+    this.set_custom_brew_time = false;
     this.config = new Config();
 
     this.default_last_coffee_parameters = new DefaultLastCoffeeParameters();
