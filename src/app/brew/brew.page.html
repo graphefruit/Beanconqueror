@@ -35,6 +35,7 @@
     <ion-item *ngIf="uiBrewHelper.canBrew() && settings.method_of_preparation === true">
       <ion-label stacked>{{"BREW_DATA_PREPARATION_METHOD" | translate}}</ion-label>
       <ion-select (ngModelChange)="filterChanged($event)" [(ngModel)]="openBrewsFilter.method_of_preparation"
+                  [interfaceOptions]="customSelectSheetOptions"
                   multiple="true">
         <ion-select-option *ngFor="let method of method_of_preparations" value="{{method.config.uuid}}">{{method.name}}
         </ion-select-option>
@@ -42,14 +43,16 @@
     </ion-item>
     <ion-item *ngIf="uiBrewHelper.canBrew() &&  settings.bean_type === true">
       <ion-label stacked>{{"BREW_DATA_BEAN_TYPE" | translate}}</ion-label>
-      <ion-select (ngModelChange)="filterChanged($event)" [(ngModel)]="openBrewsFilter.bean" multiple="true">>
+      <ion-select (ngModelChange)="filterChanged($event)" [(ngModel)]="openBrewsFilter.bean"
+                  [interfaceOptions]="customSelectSheetOptions" multiple="true">>
         <ion-select-option *ngFor="let bean of beans"
                            value="{{bean.config.uuid}}">{{bean.name}}&nbsp;{{bean.finished ? '(Archiv)' : ''}}</ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item *ngIf="uiBrewHelper.canBrew() &&  settings.mill === true">
       <ion-label stacked>{{"BREW_DATA_MILL" | translate }}</ion-label>
-      <ion-select (ngModelChange)="filterChanged($event)" [(ngModel)]="openBrewsFilter.mill" multiple="true">
+      <ion-select (ngModelChange)="filterChanged($event)" [(ngModel)]="openBrewsFilter.mill"
+                  [interfaceOptions]="customSelectSheetOptions" multiple="true">
         <ion-select-option *ngFor="let mill of mills" value="{{mill.config.uuid}}">{{mill.name}}</ion-select-option>
       </ion-select>
     </ion-item>
@@ -80,9 +83,6 @@
 
             <ion-grid>
               <ion-row>
-                <ion-col *ngIf="settings.grind_size === true">
-                  <i class="fa fa-th"></i>&nbsp;{{brew.grind_size}}
-                </ion-col>
                 <ion-col *ngIf="settings.grind_weight === true">
                   <i class="fa fa-balance-scale"></i>&nbsp;{{brew.grind_weight}}
                 </ion-col>
@@ -92,24 +92,34 @@
                 <ion-col *ngIf="settings.brew_time === true">
                   <i class="fa fa-clock-o "></i>&nbsp;{{brew.brew_time}}
                 </ion-col>
-                <ion-col *ngIf="settings.rating === true">
-                  <i class="fa fa-smile-o"></i>&nbsp;{{brew.rating}}
-                </ion-col>
                 <ion-col *ngIf="settings.brew_quantity === true">
                   <ion-icon name="beaker"></ion-icon>&nbsp;{{brew.brew_quantity}}
                 </ion-col>
               </ion-row>
               <ion-row>
+                <ion-col *ngIf="settings.grind_size === true">
+                  <i class="fa fa-th"></i>&nbsp;{{brew.grind_size}}
+                </ion-col>
                 <ion-col *ngIf="settings.rating === true">
+                  <i class="fa fa-smile-o"></i>&nbsp;{{brew.rating}}
+                </ion-col>
+                <ion-col *ngIf="settings.grind_weight === true && settings.brew_quantity">
                   <i class="fa fa-percent"></i>&nbsp;{{brew.getBrewRatio()}}
                 </ion-col>
-                <ion-col *ngIf="settings.bean_type === true">
-                  <ion-icon class="custom-coffee-beans"></ion-icon>&nbsp;{{brew.getBean().name}}
+              </ion-row>
+              <ion-row *ngIf="settings.bean_type === true">
+                <ion-col>
+                  <ion-icon class="custom-coffee-beans"></ion-icon>&nbsp;
+                  <span *ngIf="brew.getBean().roaster">{{brew.getBean().roaster}} - </span>{{brew.getBean().name}}
                 </ion-col>
-                <ion-col *ngIf="settings.method_of_preparation === true">
+              </ion-row>
+              <ion-row *ngIf="settings.method_of_preparation === true">
+                <ion-col>
                   <ion-icon class="custom-filter"></ion-icon>&nbsp;{{brew.getPreparation().name}}
                 </ion-col>
-                <ion-col *ngIf="settings.mill === true">
+              </ion-row>
+              <ion-row *ngIf="settings.mill === true">
+                <ion-col>
                   <ion-icon class="custom-mill"></ion-icon>&nbsp;{{brew.getMill().name}}
                 </ion-col>
               </ion-row>
@@ -146,9 +156,6 @@
           <ion-card-content>
             <ion-grid>
               <ion-row>
-                <ion-col *ngIf="settings.grind_size === true">
-                  <i class="fa fa-th"></i>&nbsp;{{brew.grind_size}}
-                </ion-col>
                 <ion-col *ngIf="settings.grind_weight === true">
                   <i class="fa fa-balance-scale"></i>&nbsp;{{brew.grind_weight}}
                 </ion-col>
@@ -158,24 +165,34 @@
                 <ion-col *ngIf="settings.brew_time === true">
                   <i class="fa fa-clock-o "></i>&nbsp;{{brew.brew_time}}
                 </ion-col>
-                <ion-col *ngIf="settings.rating === true">
-                  <i class="fa fa-smile-o"></i>&nbsp;{{brew.rating}}
-                </ion-col>
                 <ion-col *ngIf="settings.brew_quantity === true">
                   <ion-icon name="beaker"></ion-icon>&nbsp;{{brew.brew_quantity}}
                 </ion-col>
               </ion-row>
               <ion-row>
+                <ion-col *ngIf="settings.grind_size === true">
+                  <i class="fa fa-th"></i>&nbsp;{{brew.grind_size}}
+                </ion-col>
                 <ion-col *ngIf="settings.rating === true">
+                  <i class="fa fa-smile-o"></i>&nbsp;{{brew.rating}}
+                </ion-col>
+                <ion-col *ngIf="settings.grind_weight === true && settings.brew_quantity">
                   <i class="fa fa-percent"></i>&nbsp;{{brew.getBrewRatio()}}
                 </ion-col>
-                <ion-col *ngIf="settings.bean_type === true">
-                  <ion-icon class="custom-coffee-beans"></ion-icon>&nbsp;{{brew.getBean().name}}
+              </ion-row>
+              <ion-row *ngIf="settings.bean_type === true">
+                <ion-col>
+                  <ion-icon class="custom-coffee-beans"></ion-icon>&nbsp;
+                  <span *ngIf="brew.getBean().roaster">{{brew.getBean().roaster}} - </span>{{brew.getBean().name}}
                 </ion-col>
-                <ion-col *ngIf="settings.method_of_preparation === true">
+              </ion-row>
+              <ion-row *ngIf="settings.method_of_preparation === true">
+                <ion-col>
                   <ion-icon class="custom-filter"></ion-icon>&nbsp;{{brew.getPreparation().name}}
                 </ion-col>
-                <ion-col *ngIf="settings.mill === true">
+              </ion-row>
+              <ion-row *ngIf="settings.mill === true">
+                <ion-col>
                   <ion-icon class="custom-mill"></ion-icon>&nbsp;{{brew.getMill().name}}
                 </ion-col>
               </ion-row>

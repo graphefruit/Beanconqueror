@@ -35,7 +35,7 @@
     </ion-item>
     <ion-item *ngIf="settings.bean_type === true">
       <ion-label floating>{{"BREW_DATA_BEAN_TYPE" | translate}}</ion-label>
-      <ion-select [(ngModel)]="data.bean" [interfaceOptions]="customActionSheetOptions">
+      <ion-select [(ngModel)]="data.bean" [interfaceOptions]="customSelectSheetOptions">
         <ion-select-option *ngFor="let bean of beans" value="{{bean.config.uuid}}">
           {{bean.roaster}} || {{bean.name}} / {{bean.beanAgeInDays()}} Tage
           ({{bean.roastingDate | formatDate:["DD.MM.YYYY"]}})

@@ -41,6 +41,10 @@ export class BrewAddComponent implements OnInit {
   public mills: Array<IMill> = [];
   public customCreationDate: string = '';
 
+  public customSelectSheetOptions: any = {
+    cssClass: 'select-full-screen'
+  };
+
 
   public keyDownHandler(event: Event): void {
 
@@ -78,10 +82,6 @@ export class BrewAddComponent implements OnInit {
     this.customCreationDate = moment().toISOString();
 
   }
-
-  public customActionSheetOptions: any = {
-    cssClass: 'select-full-screen'
-  };
 
 
   public ionViewDidEnter(): void {

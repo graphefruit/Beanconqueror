@@ -158,3 +158,17 @@ ion-alert.select-full-screen {
 
 
 }
+
+ion-alert.select-break-text {
+
+  .alert-checkbox-label {
+    white-space: normal !important;
+  }
+
+  .alert-tappable.alert-checkbox {
+    height: auto;
+    contain: content;
+  }
+
+
+}
