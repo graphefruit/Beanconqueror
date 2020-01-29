@@ -52,6 +52,14 @@
           <pre class="blockquote">{{bean.note}}</pre>
         </ion-card-content>
         <ion-row>
+          <ion-col *ngIf="bean.roaster">
+            <div style="padding:0 0.9em;">
+              <ion-icon name="person"></ion-icon>
+              <span>{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</span>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row>
           <ion-col>
             <div style="padding:0 0.9em;">
               <ion-icon name="thermometer"></ion-icon>
@@ -63,7 +71,7 @@
           <ion-col>
             <div style="padding:0 0.9em;" >
               <ion-icon name="calendar"></ion-icon>
-              <span>{{"BEAN_DATA_ROAST_NAME" | translate}}: {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}</span>
+              <span>{{"BEAN_DATA_ROASTING_DATE" | translate}}: {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}</span>
             </div>
           </ion-col>
         </ion-row>
