@@ -118,6 +118,7 @@
   "BREW_DATA_COFFEE_BLOOMING_TIME": "Blooming-time / Preinfusion",
   "BREW_DATA_ATTACHMENTS": "Attachments",
   "BREW_DATA_RATING": "Rating",
+  "BREW_DATA_CALCULATED_COFFEE_BREW_TIME": "Coffee brew time",
   "BREW_INFORMATION_BREW_RATIO": "Brew rate",
   "BREW_INFORMATION_BEAN_AGE": "Bean age",
   "BREW_INFORMATION_BREW_QUANTITY_TYPE_NAME": "Quantity type"

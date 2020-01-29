@@ -1,4 +1,4 @@
-import { Component, OnInit,  EventEmitter, Input, Output } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 import {ITimer} from '../../interfaces/timer/iTimer';
 
@@ -11,6 +11,8 @@ export class TimerComponent implements OnInit {
   @Input() public label: string;
   @Input() public timeInSeconds: number;
   @Output() public timerStarted = new EventEmitter();
+  @Output() public timerPaused = new EventEmitter();
+  @Output() public timerTicked = new EventEmitter();
   public timer: ITimer;
   constructor() { }
 
@@ -49,6 +51,7 @@ export class TimerComponent implements OnInit {
   }
 
   public pauseTimer (): void {
+    this.timerPaused.emit();
     this.timer.runTimer = false;
   }
 
@@ -62,6 +65,7 @@ export class TimerComponent implements OnInit {
       this.timer.seconds++;
       this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
       this.timerTick();
+      this.timerTicked.emit();
     }, 1000);
   }
 

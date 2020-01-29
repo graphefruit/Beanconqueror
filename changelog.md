@@ -2,6 +2,7 @@
 - Bean roaster name is now showing up
 - Fullsize for selects / Text breaks
 - Localization for app
+- Added coffee brewtime where time and first coffee drip is subtracted
 
 3.1.
 - Beans can be repeated
