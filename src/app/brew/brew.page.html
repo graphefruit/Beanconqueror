@@ -90,7 +90,7 @@
                   <i class="fa fa-thermometer-half "></i>&nbsp;{{brew.brew_temperature}}
                 </ion-col>
                 <ion-col *ngIf="settings.brew_time === true">
-                  <i class="fa fa-clock-o "></i>&nbsp;{{brew.brew_time}}
+                  <i class="fa fa-clock-o "></i>&nbsp;{{brew.brew_time}} ({{brew.getCalcualatedCoffeeBrewTime()}})
                 </ion-col>
                 <ion-col *ngIf="settings.brew_quantity === true">
                   <ion-icon name="beaker"></ion-icon>&nbsp;{{brew.brew_quantity}}
@@ -163,7 +163,7 @@
                   <i class="fa fa-thermometer-half "></i>&nbsp;{{brew.brew_temperature}}
                 </ion-col>
                 <ion-col *ngIf="settings.brew_time === true">
-                  <i class="fa fa-clock-o "></i>&nbsp;{{brew.brew_time}}
+                  <i class="fa fa-clock-o "></i>&nbsp;{{brew.brew_time}} ({{brew.getCalcualatedCoffeeBrewTime()}})
                 </ion-col>
                 <ion-col *ngIf="settings.brew_quantity === true">
                   <ion-icon name="beaker"></ion-icon>&nbsp;{{brew.brew_quantity}}

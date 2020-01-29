@@ -160,6 +160,10 @@ export class Brew implements IBrew {
       .format(format);
   }
 
+  public getCalcualatedCoffeeBrewTime(): number {
+    return this.brew_time - this.coffee_first_drip_time;
+  }
+
   private getBeanStorageInstance(): UIBeanStorage {
     let uiBeanStorage: UIBeanStorage;
     uiBeanStorage = UIBeanStorage.getInstance();
