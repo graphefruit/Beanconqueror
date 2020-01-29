@@ -1,3 +1,8 @@
+3.2.
+- Bean roaster name is now showing up
+- Fullsize for selects / Text breaks
+- Localization for app
+
 3.1.
 - Beans can be repeated
 - Filter views changed/added

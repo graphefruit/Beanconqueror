@@ -47,6 +47,10 @@ export class BrewPage implements OnInit {
   public openBrewsCount: number = 0;
   public archivedBrewsCount: number = 0;
 
+  public customSelectSheetOptions: any = {
+    cssClass: 'select-break-text'
+  };
+
   public openBrewsFilter: IBrewPageFilter = {
     mill: [],
     bean: [],
@@ -76,15 +80,6 @@ export class BrewPage implements OnInit {
                private translate: TranslateService) {
     this.settings = this.uiSettingsStorage.getSettings();
 
-
-    this.__reloadFilterSettings();
-    this.__initializeOpenBrewsFilter();
-
-    this.debounceFilter
-      .pipe(debounceTime(500), distinctUntilChanged())
-      .subscribe((model) => {
-        this.loadBrews();
-      });
   }
 
   public async editBrew(_brew: IBrew) {
@@ -172,7 +167,14 @@ export class BrewPage implements OnInit {
     this.loadBrews();
   }
 
-  public ionViewWillEnter(): void {
+  public ionViewDidEnter(): void {
+    this.__reloadFilterSettings();
+    this.__initializeOpenBrewsFilter();
+    this.debounceFilter
+      .pipe(debounceTime(500), distinctUntilChanged())
+      .subscribe((model) => {
+        this.loadBrews();
+      });
     this.loadBrews();
     // If we don't have beans, we cant do a brew from now on, because of roasting degree and the age of beans.
   }
