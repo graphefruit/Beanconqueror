@@ -59,8 +59,16 @@
     </ion-item>
     <timer #brewTemperatureTime label="{{'BREW_DATA_TEMPERATURE_TIME' | translate}}" timeInSeconds="0"
            *ngIf="settings.brew_temperature_time === true"></timer>
-    <timer #timer (timerStarted)="brewTimeStarted($event)" label="{{'BREW_DATA_TIME' | translate}}" timeInSeconds="0"
+
+    <timer #timer (timerTicked)="brewTimeTicked($event)" label="{{'BREW_DATA_TIME' | translate}}" timeInSeconds="0"
            *ngIf="settings.brew_time === true"></timer>
+
+    <ion-item *ngIf="settings.brew_time === true && settings.coffee_first_drip_time === true" lines="full">
+      <ion-label>
+        {{'BREW_DATA_CALCULATED_COFFEE_BREW_TIME' | translate}}: {{data.getCalcualatedCoffeeBrewTime()}}
+      </ion-label>
+    </ion-item>
+
     <ion-item *ngIf="settings.coffee_blooming_time === true">
       <ion-label stacked>{{"BREW_DATA_COFFEE_BLOOMING_TIME" | translate}}</ion-label>
       <ion-input remove-empty-number prevent-characters [(ngModel)]="data.coffee_blooming_time" type="text"></ion-input>

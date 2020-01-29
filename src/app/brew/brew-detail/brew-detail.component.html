@@ -71,6 +71,12 @@
         <h3>{{data.brew_time}}</h3>
       </ion-label>
     </ion-item>
+    <ion-item *ngIf="settings.brew_time === true && settings.coffee_first_drip_time === true">
+      <ion-label>
+        <h2>{{'BREW_DATA_CALCULATED_COFFEE_BREW_TIME' | translate}}:</h2>
+        <h3>{{data.getCalcualatedCoffeeBrewTime()}}</h3>
+      </ion-label>
+    </ion-item>
     <ion-item *ngIf="settings.coffee_blooming_time === true">
       <ion-label>
         <h2>{{"BREW_DATA_COFFEE_BLOOMING_TIME" | translate}}:</h2>
