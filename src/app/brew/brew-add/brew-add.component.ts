@@ -41,10 +41,10 @@ export class BrewAddComponent implements OnInit {
   public mills: Array<IMill> = [];
   public customCreationDate: string = '';
 
+
   public customSelectSheetOptions: any = {
     cssClass: 'select-full-screen'
   };
-
 
   public keyDownHandler(event: Event): void {
 
@@ -108,11 +108,14 @@ export class BrewAddComponent implements OnInit {
     this.dismiss();
   }
 
-  public brewTimeStarted(_event): void {
-    if (this.brewTemperatureTime) {
-      this.brewTemperatureTime.pauseTimer();
+  public brewTimeTicked(_event): void {
+    if (this.timer) {
+      this.data.brew_time = this.timer.getSeconds();
+    } else {
+      this.data.brew_time = 0;
     }
   }
+
 
   public getTime(): number {
     if (this.timer) {
