@@ -32,6 +32,10 @@ export class BrewEditComponent implements OnInit {
 
   public customCreationDate: string = '';
 
+  public customSelectSheetOptions: any = {
+    cssClass: 'select-full-screen'
+  };
+
   constructor (private readonly modalController: ModalController,
                private readonly navParams: NavParams,
                private readonly uiBeanStorage: UIBeanStorage,

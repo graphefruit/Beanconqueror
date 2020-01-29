@@ -132,3 +132,43 @@ ion-icon {
   top: 0;
   right: 0;
 }
+
+ion-alert.select-full-screen {
+  .alert-wrapper {
+    min-height: 100%;
+    min-width: 100%;
+    height: 100%;
+    width: 100%;
+  }
+
+  .alert-radio-label {
+    white-space: normal !important;
+  }
+
+  .alert-radio-group {
+    max-height: 100%;
+    height: 100%;
+  }
+
+  // Applies a text wrap on ion options
+  .alert-tappable.alert-radio {
+    height: auto;
+    contain: content;
+  }
+
+
+}
+
+ion-alert.select-break-text {
+
+  .alert-checkbox-label {
+    white-space: normal !important;
+  }
+
+  .alert-tappable.alert-checkbox {
+    height: auto;
+    contain: content;
+  }
+
+
+}

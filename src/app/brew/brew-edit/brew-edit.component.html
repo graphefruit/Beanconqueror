@@ -32,8 +32,10 @@
   </ion-item>
   <ion-item>
     <ion-label>{{"BREW_DATA_BEAN_TYPE" | translate}}</ion-label>
-    <ion-select [(ngModel)]="data.bean">
-      <ion-select-option *ngFor="let bean of beans" value="{{bean.config.uuid}}">{{bean.name}}  / {{data.getCalculatedBeanAge()}} Tage ({{bean.roastingDate | formatDate:["DD.MM.YYYY"]}})
+    <ion-select [(ngModel)]="data.bean" [interfaceOptions]="customSelectSheetOptions">
+      <ion-select-option *ngFor="let bean of beans" value="{{bean.config.uuid}}">
+        {{bean.roaster}} || ionic s
+        {{bean.name}}  / {{data.getCalculatedBeanAge()}} Tage ({{bean.roastingDate | formatDate:["DD.MM.YYYY"]}})
       </ion-select-option>
     </ion-select>
   </ion-item>
