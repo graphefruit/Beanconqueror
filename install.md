@@ -72,3 +72,8 @@ ionic cordova plugin add cordova-android-support-gradle-release
 ##Globalization
 ionic cordova plugin add cordova-plugin-globalization
 npm install @ionic-native/globalization
+
+
+##App version
+ionic cordova plugin add cordova-plugin-app-version
+npm install @ionic-native/app-version
