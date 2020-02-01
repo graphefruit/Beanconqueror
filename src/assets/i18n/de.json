@@ -63,6 +63,8 @@
   "PAGE_STATISTICS_DRUNKEN_BREWS": "Getrunkene Tassen",
   "PAGE_STATISTICS_DRUNKEN_QUANTITY": "Getrunkene Menge",
   "PAGE_BREW_TEXT_INFORMATION_FROM_ROASTER": "Angaben vom Röster",
+  "PAGE_ABOUT_NO_VERSION_AVAILABLE": "Keine Version verfügbar",
+  "PAGE_ABOUT_APP_VERSION": "App Version",
   "BEAN_DATA_ROAST_NAME": "Röstgrad",
   "BEAN_DATA_CUSTOM_ROAST_NAME": "Eigener Röstgrad",
   "BEAN_DATA_ROASTING_DATE": "Röstdatum",
