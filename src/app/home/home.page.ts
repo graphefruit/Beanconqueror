@@ -3,6 +3,7 @@ import {ModalController, NavController} from '@ionic/angular';
 import {UIStatistic} from '../../services/uiStatistic';
 import * as moment from 'moment';
 import {BrewAddComponent} from '../brew/brew-add/brew-add.component';
+import {Router} from '@angular/router';
 
 
 @Component({
@@ -21,7 +22,8 @@ export class HomePage {
 
   constructor (public navCtrl: NavController,
                private readonly modalCtrl: ModalController,
-               public uiStatistic: UIStatistic) {
+               public uiStatistic: UIStatistic,
+               private readonly router: Router) {
 
   }
 
@@ -29,6 +31,23 @@ export class HomePage {
     const modal = await this.modalCtrl.create({component: BrewAddComponent});
     await modal.present();
     await modal.onWillDismiss();
+  }
+
+  public showBeans() {
+    this.router.navigate(['/beans']);
+  }
+
+  public showBrews() {
+    this.router.navigate(['/brew']);
+  }
+
+
+  public showPreparation() {
+    this.router.navigate(['/preparation']);
+  }
+
+  public showMills() {
+    this.router.navigate(['/preparation']);
   }
 
   public isChristmasTime(): boolean {

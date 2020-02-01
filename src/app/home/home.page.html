@@ -40,7 +40,7 @@
                 {{"PAGE_HOME_TOTAL_BREWS" | translate}}
             </span>
             <div *ngIf="uiStatistic.getBrewsDrunk() >0" style="max-width:200px;margin:0 auto;">
-              <ion-button fill="outline" size="small" (click)="addBrew()" >
+              <ion-button (click)="addBrew()" fill="outline" size="small">
                 <ion-icon name="md-add" slot="start"></ion-icon>
                 <span>{{"BREW" | translate}}</span>
               </ion-button>
@@ -49,7 +49,7 @@
         </ion-card>
       </ion-col>
       <ion-col class="ion-text-center" col-6>
-        <ion-card style="height: 100%;">
+        <ion-card (click)="showBeans()" style="height: 100%;" tappable="">
           <ion-card-header style="font-size: 2em;">
             <ion-icon class="custom-coffee-beans"></ion-icon>
             {{uiStatistic.getBeansCount()}}
@@ -61,6 +61,7 @@
             <span *ngIf="uiStatistic.getBeansCount() != 1">
                      {{"PAGE_HOME_BEANS_EXPLORED" | translate}}
               </span>
+
           </ion-card-content>
         </ion-card>
       </ion-col>
@@ -68,7 +69,7 @@
 
     <ion-row *ngIf="uiStatistic.getLastDrunkBrewTimestamp()">
       <ion-col class="ion-text-center" col-12>
-        <ion-card>
+        <ion-card (click)="showBrews()" tappable>
           <ion-card-header style="font-size: 2em;">{{uiStatistic.getSloganTimePassedSinceLastBrew()}}</ion-card-header>
           <ion-card-content>
             {{"PAGE_HOME_LAST_BREW" | translate}}: {{uiStatistic.getLastDrunkBrewTimestamp()}}<br>
@@ -79,12 +80,22 @@
         </ion-card>
       </ion-col>
     </ion-row>
-    <ion-row *ngIf="uiStatistic.getPreparationsCount()>2">
+    <ion-row *ngIf="uiStatistic.getPreparationsCount()>1">
       <ion-col class="ion-text-center" col-12>
-        <ion-card>
+        <ion-card (click)="showPreparation()" tappable>
           <ion-card-content>
             <strong>{{"PAGE_HOME_DIFFERENT_PREPARATION_METHODS" | translate}}
               :</strong> {{uiStatistic.getPreparationsCount()}}
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="uiStatistic.getMillsCount()>1">
+      <ion-col class="ion-text-center" col-12>
+        <ion-card (click)="showMills()" tappable>
+          <ion-card-content>
+            <strong>{{"PAGE_HOME_DIFFERENT_MILLS" | translate}}
+              :</strong> {{uiStatistic.getMillsCount()}}
           </ion-card-content>
         </ion-card>
       </ion-col>
