@@ -102,6 +102,32 @@ export class AppComponent implements AfterViewInit {
           this.splashScreen.hide();
           this.keyboard.hideFormAccessoryBar(false);
 
+
+          if (this.platform.is('ios')) {
+            this.uiLog.log(`iOS Device - attach to home icon pressed`);
+            this.threeDeeTouch.onHomeIconPressed()
+              .subscribe(
+                async (payload) => {
+                  /* We need to wait for app finished loading, but already attach on platform start, else
+                  *  the event won't get triggered **/
+                  this.uiHelper.isBeanconqurorAppReady().then(async () => {
+                    this.uiLog.log(`iOS Device - Home icon was pressed`);
+                    if (payload.type === 'Brew') {
+                      await this.__trackNewBrew();
+                    } else if (payload.type === 'Bean') {
+                      await this.__trackNewBean();
+                    } else if (payload.type === 'Preparation') {
+                      await this.__trackNewPreparation();
+                    } else if (payload.type === 'Mill') {
+                      await this.__trackNewMill();
+                    }
+                  });
+                  // returns an object that is the button you presed
+
+                }
+              );
+          }
+
           // Wait for every necessary service to be ready before starting the app
           const beanStorageReadyCallback = this.uiBeanStorage.storageReady();
           const preparationStorageReadyCallback = this.uiPreparationStorage.storageReady();
@@ -172,6 +198,7 @@ export class AppComponent implements AfterViewInit {
   private __setDeviceLanguage() {
     if (this.platform.is('cordova')) {
       try {
+        this.uiLog.info('Its a mobile device, try to set language now');
         const settings: Settings = this.uiSettingsStorage.getSettings();
         if (settings.language === null || settings.language === undefined || settings.language === '') {
           this.globalization.getPreferredLanguage().then((res) => {
@@ -200,6 +227,14 @@ export class AppComponent implements AfterViewInit {
               this.uiLog.error(`Exception occured when setting language ${exMessage}`);
               this._translate.setDefaultLang('en');
             });
+        } else {
+          this.uiLog.info('Language settings already existing, set language');
+          const settingLanguage: string = settings.language;
+          this.uiLog.log(`Setting language: ${settingLanguage}`);
+          this._translate.setDefaultLang(settingLanguage);
+          settings.language = settingLanguage;
+          this.uiSettingsStorage.saveSettings(settings);
+
         }
       } catch (ex) {
         const exMessage: string = JSON.stringify(ex);
@@ -224,24 +259,7 @@ export class AppComponent implements AfterViewInit {
     this.__registerBack();
     this.__setDeviceLanguage();
 
-    if (this.platform.is('ios')) {
-      this.threeDeeTouch.onHomeIconPressed()
-          .subscribe(
-            async (payload) => {
-                if (payload.type === 'Brew') {
-                  await this.__trackNewBrew();
-                } else if (payload.type === 'Bean') {
-                  await this.__trackNewBean();
-                } else if (payload.type === 'Preparation') {
-                  await this.__trackNewPreparation();
-                } else if (payload.type === 'Mill') {
-                  await this.__trackNewMill();
-                }
-                // returns an object that is the button you presed
 
-              }
-          );
-    }
   }
 
   private async __trackNewBrew() {

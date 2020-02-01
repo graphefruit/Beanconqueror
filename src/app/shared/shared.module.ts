@@ -56,6 +56,7 @@ import {LogComponent} from '../info/log/log.component';
 import {LogTextComponent} from '../info/log/log-text/log-text.component';
 import {TranslateModule} from '@ngx-translate/core';
 import {Globalization} from '@ionic-native/globalization/ngx';
+import {AppVersion} from '@ionic-native/app-version/ngx';
 
 
 @NgModule({
@@ -87,6 +88,7 @@ import {Globalization} from '@ionic-native/globalization/ngx';
     TranslateModule,
   ],
   providers: [
+    AppVersion,
     StatusBar,
     SplashScreen,
     RemoveEmptyNumberDirective, PreventCharacterDirective, FormatDatePipe, KeysPipe,
