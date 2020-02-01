@@ -3,6 +3,13 @@
 - Fullsize for selects / Text breaks
 - Localization for app
 - Added coffee brewtime where time and first coffee drip is subtracted
+- Added App version on about us 
+- Jump directly from homescreen to brew/grinders/preparation etc
+- Added roaster name for bean selection aswell as display on brew / bean overview
+- Visually enhanchements on brew overview
+
+Issues  fixed:
+- Forcetouch on iOS didn't work and just displayed home page
 
 3.1.
 - Beans can be repeated
