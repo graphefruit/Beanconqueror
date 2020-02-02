@@ -203,9 +203,11 @@ export class AppComponent implements AfterViewInit {
         if (settings.language === null || settings.language === undefined || settings.language === '') {
           this.globalization.getPreferredLanguage().then((res) => {
             // Run other functions after getting device default lang
-            const systemLanguage: string = res['value'].toLowerCase();
-            console.log(systemLanguage);
+            let systemLanguage: string = res['value'].toLowerCase();
             this.uiLog.log(`Found system language: ${systemLanguage}`);
+            if (systemLanguage.indexOf('-') > -1) {
+              systemLanguage = systemLanguage.split('-')[0];
+            }
 
             let settingLanguage: string = '';
             switch (systemLanguage) {
