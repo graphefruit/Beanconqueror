@@ -1,4 +1,8 @@
 :host {
+  ion-row.center-col ion-col {
+    display: flex;
+    align-items: center
+  }
   .brews-header{
     border-top:none;
     background-color:rgb(160,176,196);
@@ -33,6 +37,7 @@
     }
 
     padding: 5px;
+    padding-top: 0px;
   }
 
   ion-list-header {
