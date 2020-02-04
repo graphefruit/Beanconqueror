@@ -1,0 +1,40 @@
+<ion-item class="no-bottom-border item">
+  <ion-label stacked>{{ label }}</ion-label>
+  <ion-input [(ngModel)]="timer.seconds" prevent-characters type="number"></ion-input>
+  <ion-button (click)="initTimer()"
+              *ngIf="!timer.runTimer && (timer.hasStarted || timer.hasFinished) || timer.hasFinished" fill="outline"
+              size="default"
+              slot="end">
+    <ion-icon name="refresh"></ion-icon>
+
+  </ion-button>
+  <ion-button (click)="bloomTime()" *ngIf="timer.runTimer && timer.hasStarted && !timer.hasFinished && showBloomTimer"
+              fill="outline" size="default"
+              slot="end">
+    <ion-icon class="custom-coffee-blooming"></ion-icon>
+  </ion-button>
+  <ion-button (click)="dripTime()" *ngIf="timer.runTimer && timer.hasStarted && !timer.hasFinished && showDripTimer"
+              fill="outline" size="default"
+              slot="end">
+    <ion-icon name="ios-water"></ion-icon>
+  </ion-button>
+  <ion-button (click)="pauseTimer()" *ngIf="timer.runTimer && timer.hasStarted && !timer.hasFinished" fill="outline"
+              size="default"
+              slot="end">
+    <ion-icon name="pause"></ion-icon>
+
+  </ion-button>
+
+
+  <ion-button (click)="resumeTimer()" *ngIf="!timer.runTimer && timer.hasStarted && !timer.hasFinished" fill="outline"
+              size="default"
+              slot="end">
+    <ion-icon name="play"></ion-icon>
+
+  </ion-button>
+  <ion-button (click)="startTimer()" *ngIf="!timer.hasStarted" fill="outline" size="default"
+              slot="end">
+    <ion-icon name="play"></ion-icon>
+  </ion-button>
+</ion-item>
+
