@@ -7,6 +7,9 @@
 - Jump directly from homescreen to brew/grinders/preparation etc
 - Added roaster name for bean selection aswell as display on brew / bean overview
 - Visually enhanchements on brew overview
+- Rating changed to -1/0. -1 means - not rated
+- Changed brew-add added blooming-time aswell as first drip time as button to own timer.
+
 
 Issues  fixed:
 - Forcetouch on iOS didn't work and just displayed home page

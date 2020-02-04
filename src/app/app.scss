@@ -133,6 +133,10 @@ ion-icon {
   &[class*="custom-coffee-beans"] {
     mask-image: url(../assets/svg/coffee-beans.svg);
   }
+
+  &[class*="custom-coffee-blooming"] {
+    mask-image: url(../assets/svg/coffee-blooming.svg);
+  }
 }
 
 .position-absolute-button {

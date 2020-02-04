@@ -17,6 +17,7 @@ import {BrewPopoverComponent} from '../brew/brew-popover/brew-popover.component'
 import {BrewTableComponent} from '../brew/brew-table/brew-table.component';
 import {BrewTextComponent} from '../brew/brew-text/brew-text.component';
 import {TimerComponent} from '../../components/timer/timer.component';
+import {BrewTimerComponent} from '../../components/brew-timer/brew-timer.component';
 import {FormsModule} from '@angular/forms';
 import {MillPage} from '../mill/mill.page';
 import {MillEditComponent} from '../mill/mill-edit/mill-edit.component';
@@ -70,7 +71,7 @@ import {AppVersion} from '@ionic-native/app-version/ngx';
     PreparationEditComponent, MillPage, MillEditComponent, MillAddComponent, BrewAddComponent,
     FormatDatePipe, KeysPipe, AsyncImageComponent, SearchPipe, RemoveEmptyNumberDirective,
     PreventCharacterDirective, BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent,
-    BrewPopoverComponent, BrewPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent],
+    BrewPopoverComponent, BrewPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent, BrewTimerComponent],
   entryComponents: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, AboutComponent,
     ContactComponent,
     CreditsComponent,
@@ -80,7 +81,7 @@ import {AppVersion} from '@ionic-native/app-version/ngx';
     ThanksComponent, LogComponent, LogTextComponent, PreparationPage,
     PreparationAddComponent, PreparationEditComponent, MillPage, MillEditComponent,
     MillAddComponent, BrewAddComponent, BrewPage, BrewDetailComponent, BrewEditComponent,
-    BrewPhotoViewComponent, BrewPopoverComponent, BrewPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent],
+    BrewPhotoViewComponent, BrewPopoverComponent, BrewPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent, BrewTimerComponent],
   imports: [
     CommonModule,
     IonicModule,
@@ -116,7 +117,7 @@ import {AppVersion} from '@ionic-native/app-version/ngx';
     BrewAddComponent, FormatDatePipe,
     KeysPipe, AsyncImageComponent, SearchPipe, RemoveEmptyNumberDirective,
     PreventCharacterDirective, BrewPage, BrewDetailComponent, BrewEditComponent,
-    BrewPhotoViewComponent, BrewPopoverComponent, BrewPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent],
+    BrewPhotoViewComponent, BrewPopoverComponent, BrewPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent, BrewTimerComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule {

@@ -60,8 +60,16 @@
     <timer #brewTemperatureTime label="{{'BREW_DATA_TEMPERATURE_TIME' | translate}}" timeInSeconds="0"
            *ngIf="settings.brew_temperature_time === true"></timer>
 
-    <timer #timer (timerTicked)="brewTimeTicked($event)" label="{{'BREW_DATA_TIME' | translate}}" timeInSeconds="0"
-           *ngIf="settings.brew_time === true"></timer>
+    <brew-timer #timer
+                (bloomTimer)="setCoffeeBloomingTime($event)"
+                (dripTimer)="setCoffeeDripTime($event)"
+                (timerTicked)="brewTimeTicked($event)"
+                *ngIf="settings.brew_time === true"
+                [bloomTimerVisible]="settings.coffee_blooming_time"
+
+                [dripTimerVisible]="settings.coffee_first_drip_time"
+                label="{{'BREW_DATA_TIME' | translate}}"
+                timeInSeconds="0"></brew-timer>
 
     <ion-item *ngIf="settings.brew_time === true && settings.coffee_first_drip_time === true" lines="full">
       <ion-label>
@@ -72,16 +80,16 @@
     <ion-item *ngIf="settings.coffee_blooming_time === true">
       <ion-label stacked>{{"BREW_DATA_COFFEE_BLOOMING_TIME" | translate}}</ion-label>
       <ion-input remove-empty-number prevent-characters [(ngModel)]="data.coffee_blooming_time" type="text"></ion-input>
-      <ion-button (click)="setCoffeeBloomingTime()" fill="outline" size="default" slot="end">
+      <!--<ion-button (click)="setCoffeeBloomingTime()" fill="outline" size="default" slot="end">
         <ion-icon name="time"></ion-icon>
-      </ion-button>
+      </ion-button>-->
     </ion-item>
     <ion-item *ngIf="settings.coffee_first_drip_time === true">
       <ion-label stacked>{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}</ion-label>
       <ion-input remove-empty-number prevent-characters [(ngModel)]="data.coffee_first_drip_time" type="text"></ion-input>
-      <ion-button (click)="setCoffeeDripTime()" fill="outline" size="default" slot="end">
+      <!--<ion-button (click)="setCoffeeDripTime()" fill="outline" size="default" slot="end">
         <ion-icon name="time"></ion-icon>
-      </ion-button>
+      </ion-button>-->
     </ion-item>
     <ion-row *ngIf="settings.brew_quantity === true">
       <ion-col class="ion-no-padding" col-8 col-sm-10>
@@ -111,7 +119,7 @@
     </ion-item>
     <ion-item *ngIf="settings.rating === true">
       <ion-label stacked>{{"BREW_DATA_RATING" | translate }}</ion-label>
-      <ion-range [(ngModel)]="data.rating" debounce="500s" max="10" min="1" snaps="true" step="1">
+      <ion-range [(ngModel)]="data.rating" debounce="500s" max="10" min="-1" snaps="true" step="1">
         <ion-icon name="sad" size="small" slot="start"></ion-icon>
         <ion-icon name="happy" size="small" slot="end"></ion-icon>
       </ion-range>

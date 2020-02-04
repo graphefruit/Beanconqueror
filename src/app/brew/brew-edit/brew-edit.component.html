@@ -101,7 +101,7 @@
   <ion-item *ngIf="showRating()">
     <ion-label stacked>{{"BREW_DATA_RATING" | translate }}
     </ion-label>
-    <ion-range [(ngModel)]="data.rating" debounce="500s" max="10" min="1" snaps="true" step="1">
+    <ion-range [(ngModel)]="data.rating" debounce="500s" max="10" min="-1" snaps="true" step="1">
       <ion-icon name="sad" size="small" slot="start"></ion-icon>
       <ion-icon name="happy" size="small" slot="end"></ion-icon>
     </ion-range>

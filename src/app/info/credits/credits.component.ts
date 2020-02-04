@@ -32,6 +32,11 @@ export class CreditsComponent implements OnInit {
       TITLE: 'Loading Coffee',
       LINK: 'https://icons8.com/preloaders',
       DESCRIPTION: `https://icons8.com/preloaders/en/terms_of_use`
+    },
+    'ion-coffee-blooming': {
+      TITLE: 'Coffee blooming',
+      LINK: 'https://www.flaticon.com/packs/coffee-9',
+      DESCRIPTION: `<div>Icons made by <a  (click)="openLink($event,'https://www.flaticon.com/authors/good-ware')" href="https://www.flaticon.com/authors/good-ware" title="Good Ware">Good Ware</a> from <a (click)="openLink($event,'https://www.flaticon.com/')" href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>`
     }
   };
 

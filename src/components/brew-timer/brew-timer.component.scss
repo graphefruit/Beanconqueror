@@ -1,0 +1,14 @@
+:host {
+  .brew-image img {
+    max-width: 50%;
+    max-height: 200px;
+  }
+
+  ion-button.circle-button {
+    --border-radius: 100%;
+    height: 65px;
+    width: 65px;
+
+  }
+}
+
