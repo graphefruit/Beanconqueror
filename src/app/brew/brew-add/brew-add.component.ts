@@ -24,9 +24,9 @@ import * as moment from 'moment';
 })
 export class BrewAddComponent implements OnInit {
 
-  @ViewChild('photoSlides') public photoSlides: IonSlides;
-  @ViewChild('timer') public timer: TimerComponent;
-  @ViewChild('brewTemperatureTime') public brewTemperatureTime: TimerComponent;
+  @ViewChild('photoSlides', {static: false}) public photoSlides: IonSlides;
+  @ViewChild('timer', {static: false}) public timer: TimerComponent;
+  @ViewChild('brewTemperatureTime', {static: false}) public brewTemperatureTime: TimerComponent;
 
   private readonly brew_template: Brew;
   public data: Brew = new Brew();

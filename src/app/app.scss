@@ -5,6 +5,10 @@
 // file can hold Sass mixins, functions, and placeholder classes to be imported 
 // and used throughout the application.
 
+.menu-icon {
+  margin-right: 5px;
+  width: 25px;
+}
 ion-card {
   box-shadow: none !important;
   border: 1px solid rgba(0, 0, 0, .14);

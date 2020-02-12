@@ -22,7 +22,7 @@ import * as moment from 'moment';
 export class BrewEditComponent implements OnInit {
 
 
-  @ViewChild('photoSlides') public photoSlides: IonSlides;
+  @ViewChild('photoSlides', {static: false}) public photoSlides: IonSlides;
   public data: Brew = new Brew();
 
   public brewQuantityTypeEnums = BREW_QUANTITY_TYPES_ENUM;

@@ -15,7 +15,7 @@ import {TranslateService} from '@ngx-translate/core';
 })
 export class StatisticPage implements OnInit {
 
-  @ViewChild('drinkChart') public drinkChart;
+  @ViewChild('drinkChart', {static: false}) public drinkChart;
 
   constructor(
     public uiStatistic: UIStatistic,
