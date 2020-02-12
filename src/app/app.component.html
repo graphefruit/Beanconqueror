@@ -15,19 +15,19 @@
                 {{pages.home.title | translate}}
               </ion-item>
               <ion-item [routerLink]="[pages.brew.url]" [class.active]="pages.brew.active">
-                <i style="color:rgba(0, 0, 0, 0.54);" class="menu-icon fa {{pages.brew.icon}}"></i>
+                <ion-icon class="menu-icon" name="{{pages.brew.icon}}"></ion-icon>
                 {{pages.brew.title | translate}}
               </ion-item>
               <ion-item [routerLink]="[pages.beans.url]" [class.active]="pages.beans.active">
-                <ion-icon class="custom-coffee-beans"></ion-icon>
+                <ion-icon class="menu-icon custom-coffee-beans"></ion-icon>
                 {{pages.beans.title | translate}}
               </ion-item>
               <ion-item [routerLink]="[pages.preparation.url]" [class.active]="pages.preparation.active">
-                <ion-icon class="custom-filter"></ion-icon>
+                <ion-icon class="menu-icon custom-filter"></ion-icon>
                 {{pages.preparation.title | translate}}
               </ion-item>
               <ion-item [routerLink]="[pages.mill.url]" [class.active]="pages.mill.active">
-                <ion-icon class="custom-mill"></ion-icon>
+                <ion-icon class="menu-icon custom-mill"></ion-icon>
                 {{pages.mill.title | translate}}
               </ion-item>
               <ion-item [class.active]="pages.statistic.active" [routerLink]="[pages.statistic.url]">
@@ -37,13 +37,14 @@
               <!--Without $event canceling the menu would close when toggling -->
               <ion-item class="no-border" (click)="toggleAbout =!toggleAbout; $event.stopPropagation();">
                 <div>
-                  <ion-icon style="margin-right: 0px;color:rgba(0, 0, 0, 0.54);" class="menu-icon" item-left name="md-information-circle"></ion-icon>
+                  <ion-icon class="menu-icon" item-left name="information-circle-outline"
+                            style="margin-right: 0px;color:rgba(0, 0, 0, 0.54);"></ion-icon>
                   {{"NAV_INFORMATION_TO_APP" | translate}}
                 </div>
                 <ion-icon class="sub-menu-icon" item-right *ngIf="toggleAbout == false"
-                          name="md-arrow-dropdown"></ion-icon>
+                          name="chevron-down-outline"></ion-icon>
                 <ion-icon class="sub-menu-icon" item-right *ngIf="toggleAbout == true"
-                          name="md-arrow-dropup"></ion-icon>
+                          name="chevron-up-outline"></ion-icon>
 
               </ion-item>
               <ion-list *ngIf="toggleAbout" class="ion-no-padding" no-margin-important

@@ -12,7 +12,7 @@
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
     <preference name="ScrollEnabled" value="false" />
-    <preference name="android-minSdkVersion" value="16" />
+  <preference name="android-minSdkVersion" value="19"/>
   <preference name="android-targetSdkVersion" value="28"/>
     <preference name="BackupWebStorage" value="Cloud" />
     <preference name="SplashMaintainAspectRatio" value="true" />
@@ -166,6 +166,4 @@
     <plugin name="cordova-plugin-appminimize" spec="~1.0.1" />
   <plugin name="cordova-android-support-gradle-release" spec="^3.0.1"/>
   <plugin name="cordova-plugin-3dtouch" spec="^1.3.7"/>
-  <engine name="android" spec="^7.1.4"/>
-  <engine name="ios" spec="^5.0.1"/>
 </widget>

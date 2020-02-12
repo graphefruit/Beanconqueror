@@ -68,7 +68,7 @@
       </ion-card>
       <ion-list *ngFor="let brewView of openBrewsView">
         <ion-list-header *ngIf="(brewView.brews).length > 0" class="brews-header">
-          {{brewView.title}}
+          <ion-label>{{brewView.title}}</ion-label>
         </ion-list-header>
         <ion-card *ngFor="let brew of brewView.brews">
           <ion-card-header>
@@ -81,7 +81,7 @@
               </ion-col>
               <ion-col class="ion-justify-content-end" size="2">
                 <ion-button (click)="showBrewActions($event, brew)" color="medium" fill="clear">
-                <ion-icon name="more" slot="icon-only"></ion-icon>
+                  <ion-icon name="ellipsis-vertical-outline" slot="icon-only"></ion-icon>
               </ion-button>
               </ion-col>
             </ion-row>
@@ -94,13 +94,13 @@
                   <i class="fa fa-balance-scale"></i>&nbsp;{{brew.grind_weight}}
                 </ion-col>
                 <ion-col *ngIf="settings.brew_quantity === true" size="3">
-                  <ion-icon name="beaker"></ion-icon>&nbsp;{{brew.brew_quantity}}
+                  <ion-icon name="beaker-outline"></ion-icon>&nbsp;{{brew.brew_quantity}}
                 </ion-col>
                 <ion-col *ngIf="settings.grind_weight === true && settings.brew_quantity" size="3">
                   <i class="fa fa-percent"></i>&nbsp;{{brew.getBrewRatio()}}
                 </ion-col>
                 <ion-col *ngIf="settings.brew_time === true" size="3">
-                  <ion-icon name="ios-timer"></ion-icon>&nbsp;{{brew.brew_time}}
+                  <ion-icon name="timer-outline"></ion-icon>&nbsp;{{brew.brew_time}}
                   ({{brew.getCalcualatedCoffeeBrewTime()}})
                 </ion-col>
 
@@ -116,7 +116,7 @@
                   <i class="fa fa-smile-o"></i>&nbsp;{{brew.rating}}
                 </ion-col>
                 <ion-col size="3">
-                  <ion-icon name="ios-clock"></ion-icon>&nbsp;{{brew.formateDate("HH:mm")}}
+                  <ion-icon name="time-outline"></ion-icon>&nbsp;{{brew.formateDate("HH:mm")}}
                 </ion-col>
               </ion-row>
 
@@ -152,7 +152,7 @@
       </ion-card>
       <ion-list *ngFor="let brewView of archiveBrewsView">
         <ion-list-header *ngIf="(brewView.brews | searchBrews:query).length > 0" class="brews-header">
-          {{brewView.title}}
+          <ion-label>{{brewView.title}}</ion-label>
         </ion-list-header>
         <ion-card *ngFor="let brew of brewView.brews | searchBrews:query">
           <ion-card-header>
@@ -165,7 +165,7 @@
               </ion-col>
               <ion-col class="ion-align-self-center" size="2">
                 <ion-button (click)="showBrewActions($event, brew)" color="medium" fill="clear">
-                  <ion-icon name="more" slot="icon-only"></ion-icon>
+                  <ion-icon name="ellipsis-vertical-outline" slot="icon-only"></ion-icon>
                 </ion-button>
               </ion-col>
             </ion-row>
@@ -173,44 +173,46 @@
           <ion-card-content>
 
             <ion-grid class="ion-no-padding">
-              <ion-row>
+              <ion-row class="center-col">
                 <ion-col *ngIf="settings.grind_weight === true" size="3">
                   <i class="fa fa-balance-scale"></i>&nbsp;{{brew.grind_weight}}
                 </ion-col>
-                <ion-col *ngIf="settings.brew_temperature === true" size="3">
-                  <i class="fa fa-thermometer-half "></i>&nbsp;{{brew.brew_temperature}}
-                </ion-col>
                 <ion-col *ngIf="settings.brew_quantity === true" size="3">
-                  <ion-icon name="beaker"></ion-icon>&nbsp;{{brew.brew_quantity}}
-                </ion-col>
-                <ion-col *ngIf="settings.brew_time === true" size="3">
-                  <ion-icon name="ios-timer"></ion-icon>
-                  {{brew.brew_time}} ({{brew.getCalcualatedCoffeeBrewTime()}})
-                </ion-col>
-
-              </ion-row>
-              <ion-row>
-                <ion-col *ngIf="settings.grind_size === true" size="3">
-                  <i class="fa fa-th"></i>&nbsp;{{brew.grind_size}}
-                </ion-col>
-                <ion-col *ngIf="settings.rating === true" size="3">
-                  <i class="fa fa-smile-o"></i>&nbsp;{{brew.rating}}
+                  <ion-icon name="beaker-outline"></ion-icon>&nbsp;{{brew.brew_quantity}}
                 </ion-col>
                 <ion-col *ngIf="settings.grind_weight === true && settings.brew_quantity" size="3">
                   <i class="fa fa-percent"></i>&nbsp;{{brew.getBrewRatio()}}
                 </ion-col>
+                <ion-col *ngIf="settings.brew_time === true" size="3">
+                  <ion-icon name="timer-outline"></ion-icon>&nbsp;{{brew.brew_time}}
+                  ({{brew.getCalcualatedCoffeeBrewTime()}})
+                </ion-col>
+
+              </ion-row>
+              <ion-row class="center-col">
+                <ion-col *ngIf="settings.grind_size === true" size="3">
+                  <i class="fa fa-th"></i>&nbsp;{{brew.grind_size}}
+                </ion-col>
+                <ion-col *ngIf="settings.brew_temperature === true" size="3">
+                  <i class="fa fa-thermometer-half "></i>&nbsp;{{brew.brew_temperature}}
+                </ion-col>
+                <ion-col *ngIf="settings.rating === true" size="3">
+                  <i class="fa fa-smile-o"></i>&nbsp;{{brew.rating}}
+                </ion-col>
                 <ion-col size="3">
-                  <ion-icon name="ios-clock"></ion-icon>
-                  {{brew.formateDate("HH:mm")}}
+                  <ion-icon name="time-outline"></ion-icon>&nbsp;{{brew.formateDate("HH:mm")}}
                 </ion-col>
               </ion-row>
 
-              <ion-row>
-                <ion-col *ngIf="settings.method_of_preparation === true" class="ion-align-self-center" size="6">
-                  <ion-icon class="custom-filter"></ion-icon>&nbsp;{{brew.getPreparation().name}}
+              <ion-row class="center-col">
+                <ion-col *ngIf="settings.method_of_preparation === true" size="6">
+
+                  <ion-icon class="custom-filter margin-right-5"></ion-icon>
+                  <ion-label>{{brew.getPreparation().name}}</ion-label>
                 </ion-col>
-                <ion-col *ngIf="settings.mill === true" class="ion-align-self-center" size="6">
-                  <ion-icon class="custom-mill"></ion-icon>&nbsp;{{brew.getMill().name}}
+                <ion-col *ngIf="settings.mill === true" size="6">
+                  <ion-icon class="custom-mill margin-right-5"></ion-icon>
+                  <ion-label>{{brew.getMill().name}}</ion-label>
                 </ion-col>
               </ion-row>
 

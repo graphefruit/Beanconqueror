@@ -19,7 +19,7 @@ export class BeansEditComponent implements OnInit {
   public roastsEnum = ROASTS_ENUM;
   public mixEnum = BEAN_MIX_ENUM;
   @Input() private bean: IBean;
-  @ViewChild('photoSlides') public photoSlides: IonSlides;
+  @ViewChild('photoSlides', {static: false}) public photoSlides: IonSlides;
 
   constructor (private readonly navParams: NavParams,
                private readonly modalController: ModalController,
