@@ -14,7 +14,7 @@ import {IonSlides, ModalController, NavParams} from '@ionic/angular';
 })
 export class BeansAddComponent implements OnInit {
 
-  @ViewChild('photoSlides') public photoSlides: IonSlides;
+  @ViewChild('photoSlides', {static: false}) public photoSlides: IonSlides;
   public data: Bean = new Bean();
   private readonly bean_template: Bean;
   public roastsEnum = ROASTS_ENUM;

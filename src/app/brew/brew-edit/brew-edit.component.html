@@ -3,7 +3,7 @@
     <ion-title>{{"BACK" | translate}}</ion-title>
     <ion-buttons slot="start">
       <ion-button (click)="dismiss()">
-        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+        <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -102,8 +102,8 @@
     <ion-label stacked>{{"BREW_DATA_RATING" | translate }}
     </ion-label>
     <ion-range [(ngModel)]="data.rating" debounce="500s" max="10" min="-1" snaps="true" step="1">
-      <ion-icon name="sad" size="small" slot="start"></ion-icon>
-      <ion-icon name="happy" size="small" slot="end"></ion-icon>
+      <ion-icon name="sad-outline" size="small" slot="start"></ion-icon>
+      <ion-icon name="happy-outline" size="small" slot="end"></ion-icon>
     </ion-range>
     <ion-badge color="secondary" style="float:right;">{{data.rating}}</ion-badge>
   </ion-item>

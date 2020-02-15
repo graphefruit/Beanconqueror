@@ -36,24 +36,24 @@ import {Settings} from '../classes/settings/settings';
 export class AppComponent implements AfterViewInit {
   public toggleAbout: boolean = false;
   public registerBackFunction: any;
-   @ViewChild(IonRouterOutlet) public routerOutlet: IonRouterOutlet;
+  @ViewChild(IonRouterOutlet, {static: false}) public routerOutlet: IonRouterOutlet;
 
   public pages = {
-    home: {title: 'NAV_HOME', url: '/home', icon: 'md-home', active: true},
-    settings: {title: 'NAV_SETTINGS', url: '/settings', icon: 'md-settings', active: false},
-    brew: {title: 'NAV_BREWS', url: '/brew', icon: 'fa-coffee', active: false},
+    home: {title: 'NAV_HOME', url: '/home', icon: 'home-outline', active: true},
+    settings: {title: 'NAV_SETTINGS', url: '/settings', icon: 'settings-outline', active: false},
+    brew: {title: 'NAV_BREWS', url: '/brew', icon: 'cafe-outline', active: false},
     beans: {title: 'NAV_BEANS', url: '/beans', icon: 'fa-pagelines', active: false},
     preparation: {title: 'NAV_PREPARATION', url: '/preparation', icon: 'fa-flask', active: false},
     mill: {title: 'NAV_MILL', url: '/mill', icon: 'md-cut', active: false},
-    about: {title: 'NAV_ABOUT_US', url: '/info/about', icon: 'md-information', active: false},
-    contact: {title: 'NAV_CONTACT', url: '/info/contact', icon: 'md-mail', active: false},
-    privacy: {title: 'NAV_PRIVACY', url: '/info/privacy', icon: 'md-document', active: false},
-    credits: {title: 'NAV_CREDITS', url: '/info/credits', icon: 'md-document', active: false},
-    terms: {title: 'NAV_TERMS', url: '/info/terms', icon: 'md-document', active: false},
-    thanks: {title: 'NAV_THANKS', url: '/info/thanks', icon: 'md-happy', active: false},
-    licences: {title: 'NAV_LICENCES', url: '/info/licences', icon: 'md-copy', active: false},
+    about: {title: 'NAV_ABOUT_US', url: '/info/about', icon: 'information-circle-outline', active: false},
+    contact: {title: 'NAV_CONTACT', url: '/info/contact', icon: 'mail-outline', active: false},
+    privacy: {title: 'NAV_PRIVACY', url: '/info/privacy', icon: 'documents-outline', active: false},
+    credits: {title: 'NAV_CREDITS', url: '/info/credits', icon: 'documents-outline', active: false},
+    terms: {title: 'NAV_TERMS', url: '/info/terms', icon: 'documents-outline', active: false},
+    thanks: {title: 'NAV_THANKS', url: '/info/thanks', icon: 'happy-outline', active: false},
+    licences: {title: 'NAV_LICENCES', url: '/info/licences', icon: 'copy-outline', active: false},
 
-    statistic: {title: 'NAV_STATISTICS', url: '/statistic', icon: 'md-analytics', active: false},
+    statistic: {title: 'NAV_STATISTICS', url: '/statistic', icon: 'analytics-outline', active: false},
     logs: {title: 'NAV_LOGS', url: '/info/logs', icon: 'logo-buffer', active: false}
   };
 

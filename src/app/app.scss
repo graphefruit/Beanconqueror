@@ -5,6 +5,10 @@
 // file can hold Sass mixins, functions, and placeholder classes to be imported 
 // and used throughout the application.
 
+.menu-icon {
+  margin-right: 5px;
+  width: 25px;
+}
 ion-card {
   box-shadow: none !important;
   border: 1px solid rgba(0, 0, 0, .14);
@@ -130,10 +134,10 @@ ion-icon {
   &[class*="custom-filter"] {
     mask-image: url(../assets/svg/filter.svg);
   }
-  &[class*="custom-coffee-beans"] {
-    mask-image: url(../assets/svg/coffee-beans.svg);
-  }
 
+  &[class*="custom-coffee-bag"] {
+    mask-image: url(../assets/svg/coffee-bag.svg);
+  }
   &[class*="custom-coffee-blooming"] {
     mask-image: url(../assets/svg/coffee-blooming.svg);
   }
