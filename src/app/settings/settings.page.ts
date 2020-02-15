@@ -36,6 +36,9 @@ export class SettingsPage implements OnInit {
 
   public BREW_VIEWS = BREW_VIEW_ENUM;
   public debounceFilter: Subject<string> = new Subject<string>();
+
+  public settings_segment: string = 'general';
+
   constructor(private readonly platform: Platform,
               public uiSettingsStorage: UISettingsStorage,
               public uiStorage: UIStorage,
@@ -57,16 +60,33 @@ export class SettingsPage implements OnInit {
     this.__initializeSettings();
     this.debounceFilter
       .pipe(debounceTime(500), distinctUntilChanged())
-      .subscribe((model) => {
+      .subscribe(() => {
         this.setLanguage();
       });
+  }
+
+  private static __cleanupImportBeanData(_data: Array<IBean>): any {
+    if (_data !== undefined && _data.length > 0) {
+      for (const bean of _data) {
+        bean.filePath = '';
+        bean.attachments = [];
+      }
+    }
+  }
+
+  private static __cleanupImportBrewData(_data: Array<IBrew>): void {
+    if (_data !== undefined && _data.length > 0) {
+      for (const brew of _data) {
+        brew.attachments = [];
+      }
+    }
   }
 
   public ngOnInit() {
 
   }
 
-  public saveSettings (_event: any): void {
+  public saveSettings(): void {
     this.changeDetectorRef.detectChanges();
     this.uiSettingsStorage.saveSettings(this.settings);
   }
@@ -128,12 +148,9 @@ export class SettingsPage implements OnInit {
   }
 
   public isMobile (): boolean {
-    if (this.platform.is('android') || this.platform.is('ios')) {
-      return true;
-    }
-
-    return false;
+    return (this.platform.is('android') || this.platform.is('ios'));
   }
+
 
   public export(): void {
 
@@ -160,9 +177,9 @@ export class SettingsPage implements OnInit {
     this.settings = this.uiSettingsStorage.getSettings();
   }
 
+  /* tslint:disable */
   private __importDummyData(): void {
     this.uiLog.log('Import dummy data');
-    // tslint:disable-next-line
     const t = {
       'BEANS': [{
         'name': '0 Winter ',
@@ -440,15 +457,16 @@ export class SettingsPage implements OnInit {
     };
 
 
-    this.uiStorage.import(t).then((_data) => {
+    this.uiStorage.import(t).then(() => {
       this.__reinitializeStorages().then(() => {
         this.__initializeSettings();
       });
     });
   }
 
+  /* tslint:enable */
   private async __readJSONFile (path, file): Promise<any> {
-    const promise = new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       this.file.readAsText(path, file)
           .then((content) => {
             const parsedContent = JSON.parse(content);
@@ -471,8 +489,8 @@ export class SettingsPage implements OnInit {
                 parsedContent[this.uiBrewStorage.getDBPath()] &&
                 parsedContent[this.uiSettingsStorage.getDBPath()]) {
 
-              this.__cleanupImportBeanData(parsedContent[this.uiBeanStorage.getDBPath()]);
-              this.__cleanupImportBrewData(parsedContent[this.uiBrewStorage.getDBPath()]);
+              SettingsPage.__cleanupImportBeanData(parsedContent[this.uiBeanStorage.getDBPath()]);
+              SettingsPage.__cleanupImportBrewData(parsedContent[this.uiBrewStorage.getDBPath()]);
 
               // When exporting the value is a number, when importing it needs to be  a string.
               parsedContent['SETTINGS'][0]['brew_view'] = parsedContent['SETTINGS'][0]['brew_view'] + '';
@@ -515,13 +533,10 @@ export class SettingsPage implements OnInit {
 
           });
     });
-
-    return promise;
-
   }
 
   private async __reinitializeStorages (): Promise<any> {
-    const promise = new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
 
       this.uiBeanStorage.reinitializeStorage();
       this.uiBrewStorage.reinitializeStorage();
@@ -546,25 +561,8 @@ export class SettingsPage implements OnInit {
         resolve();
       });
     });
-
-    return promise;
   }
 
-  private __cleanupImportBeanData(_data: Array<IBean>): any {
-    if (_data !== undefined && _data.length > 0) {
-      for (const bean of _data) {
-        bean.filePath = '';
-        bean.attachments = [];
-      }
-    }
-  }
 
-  private __cleanupImportBrewData(_data: Array<IBrew>): void {
-    if (_data !== undefined && _data.length > 0) {
-      for (const brew of _data) {
-        brew.attachments = [];
-      }
-    }
-  }
 
 }
