@@ -111,6 +111,7 @@
   "BREW_DATA_PREPARATION_METHOD": "Zubereitungsmethode",
   "BREW_DATA_MILL": "Mühle",
   "BREW_DATA_MILL_SPEED": "Mühlengeschwindigkeit (rpm)",
+  "BREW_DATA_MILL_TIMER": "Mühlen Timer",
   "BREW_DATA_BREW_QUANTITY": "Kaffee (gr/ml)",
   "BREW_DATA_BEAN_TYPE": "Bohnensorte",
   "BREW_DATA_BREW_TEMPERATURE": "Brühtemperatur",

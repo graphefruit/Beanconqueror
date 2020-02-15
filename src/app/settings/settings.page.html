@@ -87,6 +87,11 @@
         <ion-checkbox [(ngModel)]="settings.default_last_coffee_parameters.mill_speed" (ngModelChange)="saveSettings($event)"></ion-checkbox>
       </ion-item>
       <ion-item>
+        <ion-label>{{"BREW_DATA_MILL_TIMER" | translate}}</ion-label>
+        <ion-checkbox (ngModelChange)="saveSettings($event)"
+                      [(ngModel)]="settings.default_last_coffee_parameters.mill_timer"></ion-checkbox>
+      </ion-item>
+      <ion-item>
         <ion-label>{{"BREW_DATA_BREW_QUANTITY" | translate}}</ion-label>
         <ion-checkbox [(ngModel)]="settings.default_last_coffee_parameters.brew_quantity" (ngModelChange)="saveSettings($event)"></ion-checkbox>
       </ion-item>
@@ -159,6 +164,10 @@
     <ion-item>
       <ion-label>{{"BREW_DATA_MILL_SPEED" | translate}}</ion-label>
       <ion-checkbox [(ngModel)]="settings.mill_speed" (ngModelChange)="saveSettings($event)"></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label>{{"BREW_DATA_MILL_TIMER" | translate}}</ion-label>
+      <ion-checkbox (ngModelChange)="saveSettings($event)" [(ngModel)]="settings.mill_timer"></ion-checkbox>
     </ion-item>
     <ion-item>
       <ion-label>{{"BREW_DATA_BREW_QUANTITY" | translate}}</ion-label>

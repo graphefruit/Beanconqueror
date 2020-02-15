@@ -1,6 +1,6 @@
 /** Interfacdes */
 
-import { IDefaultLastCoffeeParameters } from '../../interfaces/settings/iDefaultLastCoffeeParameters';
+import {IDefaultLastCoffeeParameters} from '../../interfaces/settings/iDefaultLastCoffeeParameters';
 
 export class DefaultLastCoffeeParameters implements IDefaultLastCoffeeParameters {
   public brew_time: boolean;
@@ -9,6 +9,7 @@ export class DefaultLastCoffeeParameters implements IDefaultLastCoffeeParameters
   public grind_weight: boolean;
   public mill: boolean;
   public mill_speed: boolean;
+  public mill_timer: boolean;
   public pressure_profile: boolean;
   public method_of_preparation: boolean;
   public brew_quantity: boolean;
@@ -28,6 +29,7 @@ export class DefaultLastCoffeeParameters implements IDefaultLastCoffeeParameters
     this.grind_size = true;
     this.grind_weight = true;
     this.mill = true;
+    this.mill_timer = false;
     this.method_of_preparation = true;
     this.brew_quantity = true;
     this.bean_type = true;
