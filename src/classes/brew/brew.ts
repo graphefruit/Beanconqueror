@@ -77,7 +77,7 @@ export class Brew implements IBrew {
     this.brew_quantity = 0;
     this.brew_quantity_type = 'GR' as BREW_QUANTITY_TYPES_ENUM;
     this.note = '';
-    this.rating = 1;
+    this.rating = 0;
     this.coffee_type = '';
     this.coffee_concentration = '';
     this.coffee_first_drip_time = 0;
