@@ -9,6 +9,7 @@ import {StorageClass} from '../classes/storageClass';
 import {UIHelper} from './uiHelper';
 import {UILog} from './uiLog';
 import {UIStorage} from './uiStorage';
+import {TranslateService} from '@ngx-translate/core';
 
 /** Ionic native */
 
@@ -33,7 +34,8 @@ export class UIBeanStorage extends StorageClass {
 
   constructor(protected uiStorage: UIStorage,
               protected uiHelper: UIHelper,
-              protected uiLog: UILog) {
+              protected uiLog: UILog,
+              private readonly translate: TranslateService) {
 
     super(uiStorage, uiHelper, uiLog, 'BEANS');
     if (UIBeanStorage.instance === undefined) {
@@ -53,7 +55,7 @@ export class UIBeanStorage extends StorageClass {
       }
     }
 
-    return '_nicht gefunden_';
+    return this.translate.instant('NO_COFFEE_DRUNK');
   }
 
   public getAllEntries(): Array<Bean> {

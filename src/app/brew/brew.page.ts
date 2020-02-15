@@ -209,7 +209,7 @@ export class BrewPage implements OnInit {
   }
 
   public deleteBrew(_brew: IBrew): void {
-    this.uiAlert.showConfirm('Brühung löschen?', 'Sicher?').then(() => {
+    this.uiAlert.showConfirm('DELETE_BREW_QUESTION', 'SURE_QUESTION', true).then(() => {
           // Yes
           this.__deleteBrew(_brew);
         },

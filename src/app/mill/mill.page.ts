@@ -60,7 +60,7 @@ public ngOnInit(): void {
   }
 
   public delete(_mill: Mill): void {
-    this.uiAlert.showConfirm('Mühle? Alle zugehörigen Brühungen werden hierdurch abgeändert.', 'Sicher?').then(() => {
+    this.uiAlert.showConfirm('DELETE_MILL_QUESTION', 'SURE_QUESTION', true).then(() => {
           // Yes
           this.__deleteMill(_mill);
         },

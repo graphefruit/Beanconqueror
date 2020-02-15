@@ -149,7 +149,7 @@ export class AppComponent implements AfterViewInit {
                 this.uiHelper.setAppReady(1);
 
               }, () => {
-                this.uiAlert.showMessage('Die App konnte nicht korrekt gestartet werden, da das Dateisystem nicht verfügbar ist', 'Achtung!');
+                this.uiAlert.showMessage('APP_COULD_NOT_STARTED_CORRECTLY_BECAUSE_MISSING_FILESYSTEM', 'CARE', undefined, true);
                 this.uiLog.error('App finished loading, but errors occured');
                 this.__initApp();
                 this.uiHelper.setAppReady(2);

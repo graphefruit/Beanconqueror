@@ -9,6 +9,7 @@ import {Bean} from '../classes/bean/bean';
 import {IBrew} from '../interfaces/brew/iBrew';
 import {UIMillStorage} from './uiMillStorage';
 import {UISettingsStorage} from './uiSettingsStorage';
+import {TranslateService} from '@ngx-translate/core';
 
 /** Services  */
 
@@ -23,7 +24,8 @@ export class UIStatistic {
                private readonly uiBrewStorage: UIBrewStorage,
                private readonly uiMillStorage: UIMillStorage,
                private readonly uiHelper: UIHelper,
-               private readonly uiSettings: UISettingsStorage) {
+               private readonly uiSettings: UISettingsStorage,
+               private readonly translate: TranslateService) {
   }
 
   public getSpentMoneyForCoffeeBeans(): number {
@@ -69,24 +71,24 @@ export class UIStatistic {
       const timeDiff = this.uiHelper.timeDifference(lastBrew.config.unix_timestamp);
 
       if (timeDiff.DAYS === 1) {
-        return "Ein Tag";
+        return this.translate.instant('ONE_DAY');
       }
       if (timeDiff.DAYS > 1) {
-        return `${timeDiff.DAYS} Tage`;
+        return `${timeDiff.DAYS} ${this.translate.instant('DAYS')}`;
       }
 
       if (timeDiff.HOURS === 1) {
-        return "Eine Stunde"
+        return this.translate.instant('ONE_HOUR');
       }
       if (timeDiff.HOURS > 1) {
-        return `${timeDiff.HOURS} Stunden`;
+        return `${timeDiff.HOURS} ${this.translate.instant('HOURS')}`;
       }
 
       if (timeDiff.MINUTES === 1) {
-        return "Eine Minute";
+        return this.translate.instant('ONE_MINUTE');
       }
 
-      return `${timeDiff.MINUTES} Minuten`;
+      return `${timeDiff.MINUTES} ${this.translate.instant('MINUTES')}`;
     }
 
     return '';
@@ -95,10 +97,10 @@ export class UIStatistic {
   public getSloganTimePassedSinceLastBrew(): string {
     const timePassed = this.getTimePassedSinceLastBrew();
     if (timePassed !== '') {
-      return `${timePassed} ohne Kaffee`;
+      return `${timePassed} ${this.translate.instant('WITHOUT_COFFEE')}`;
     }
 
-    return 'Noch kein Kaffee getrunken.';
+    return this.translate.instant('NO_COFFEE_DRUNK');
   }
 
   public getLastBeanUsed(): string {
@@ -107,7 +109,7 @@ export class UIStatistic {
       return this.uiBeanStorage.getBeanNameByUUID(lastBrew.bean);
     }
 
-    return '_nicht gefunden_';
+    return this.translate.instant('NOT_FOUND');
   }
 
   public getLastPreparationMethodUsed(): string {
@@ -116,7 +118,7 @@ export class UIStatistic {
       return this.uiPreparationStorage.getPreparationNameByUUID(lastBrew.method_of_preparation);
     }
 
-    return '_nicht gefunden_';
+    return this.translate.instant('NOT_FOUND');
   }
 
   public getLastMillUsed(): string {
@@ -125,7 +127,7 @@ export class UIStatistic {
       return this.uiMillStorage.getMillNameByUUID(lastBrew.mill);
     }
 
-    return '_nicht gefunden_';
+    return this.translate.instant('NOT_FOUND');
   }
 
   public getTotalGround(): number {
