@@ -4,7 +4,6 @@ import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 import {BREW_QUANTITY_TYPES_ENUM} from '../../../enums/brews/brewQuantityTypes';
 import {UIHelper} from '../../../services/uiHelper';
 import {ISettings} from '../../../interfaces/settings/iSettings';
-import {IMill} from '../../../interfaces/mill/iMill';
 import {BREW_VIEW_ENUM} from '../../../enums/settings/brewView';
 import {UIBrewStorage} from '../../../services/uiBrewStorage';
 import {TimerComponent} from '../../../components/timer/timer.component';
@@ -16,6 +15,8 @@ import {UIImage} from '../../../services/uiImage';
 import {Brew} from '../../../classes/brew/brew';
 import {IBean} from '../../../interfaces/bean/iBean';
 import * as moment from 'moment';
+import {Mill} from '../../../classes/mill/mill';
+import {Bean} from '../../../classes/bean/bean';
 
 @Component({
   selector: 'brew-add',
@@ -37,8 +38,8 @@ export class BrewAddComponent implements OnInit {
   public brewQuantityTypeEnums = BREW_QUANTITY_TYPES_ENUM;
 
   public method_of_preparations: Array<IPreparation> = [];
-  public beans: Array<IBean> = [];
-  public mills: Array<IMill> = [];
+  public beans: Array<Bean> = [];
+  public mills: Array<Mill> = [];
   public customCreationDate: string = '';
 
 
