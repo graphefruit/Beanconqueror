@@ -51,8 +51,12 @@
     <ion-input remove-empty-number prevent-characters [(ngModel)]="data.mill_speed"  type="text"></ion-input>
   </ion-item>
   <ion-item>
+    <ion-label stacked>{{"BREW_DATA_MILL_TIMER" | translate}}</ion-label>
+    <ion-input [(ngModel)]="data.mill_timer" prevent-characters remove-empty-number type="text"></ion-input>
+  </ion-item>
+  <ion-item>
     <ion-label stacked>{{"BREW_DATA_PRESSURE_PROFILE" | translate}}</ion-label>
-    <ion-input [(ngModel)]="data.pressure_profile"  type="text"></ion-input>
+    <ion-input [(ngModel)]="data.pressure_profile" type="text"></ion-input>
   </ion-item>
   <ion-item>
     <ion-label stacked>{{'BREW_DATA_TEMPERATURE_TIME' | translate}} / {{'BREW_DATA_SURF_TIME' | translate}}</ion-label>

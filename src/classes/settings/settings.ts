@@ -15,6 +15,7 @@ export class Settings implements ISettings {
   public grind_weight: boolean;
   public mill: boolean;
   public mill_speed: boolean;
+  public mill_timer: boolean;
   public pressure_profile: boolean;
   public method_of_preparation: boolean;
   public brew_quantity: boolean;
@@ -44,6 +45,7 @@ export class Settings implements ISettings {
     this.grind_size = true;
     this.grind_weight = true;
     this.mill = true;
+    this.mill_timer = false;
     this.method_of_preparation = true;
     this.brew_quantity = true;
     this.bean_type = true;

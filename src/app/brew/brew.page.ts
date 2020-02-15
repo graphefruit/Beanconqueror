@@ -300,8 +300,8 @@ export class BrewPage implements OnInit {
       this.uiHelper.exportCSV(filename, csvFile).then(async (_savedFile: FileEntry) => {
         if (this.platform.is('android')) {
           const alert = await this.alertCtrl.create({
-            header: 'Heruntergeladen!',
-            subHeader: `CSV-Datei '${_savedFile.name}' wurde erfolgreich in den Download-Ordner heruntergeladen!`,
+            header: this.translate.instant('DOWNLOADED'),
+            subHeader: this.translate.instant('CSV_FILE_DOWNLOADED_SUCCESSFULLY', {fileName: _savedFile.name}),
             buttons: ['OK']
           });
           await alert.present();
@@ -313,8 +313,8 @@ export class BrewPage implements OnInit {
       }, async () => {
         // No export possible.
         const alert = await this.alertCtrl.create({
-          header: 'Fehler aufgetreten!',
-          subHeader: 'CSV-Datei kann leider nicht heruntergeladen werden!',
+          header: this.translate.instant('ERROR_OCCURED'),
+          subHeader: this.translate.instant('CSV_FILE_NOT_DOWNLOADED'),
           buttons: ['OK']
         });
         await alert.present();
@@ -338,6 +338,7 @@ export class BrewPage implements OnInit {
         {VALUE: brew.brew_time, LABEL: this.translate.instant('BREW_DATA_TIME')},
         {VALUE: brew.pressure_profile, LABEL: this.translate.instant('BREW_DATA_PRESSURE_PROFILE')},
         {VALUE: brew.mill_speed, LABEL: this.translate.instant('BREW_DATA_MILL_SPEED')},
+        {VALUE: brew.mill_timer, LABEL: this.translate.instant('BREW_DATA_MILL_TIMER')},
         {VALUE: brew.getMill().name, LABEL: this.translate.instant('BREW_DATA_MILL')},
         {VALUE: brew.brew_quantity, LABEL: this.translate.instant('BREW_DATA_BREW_QUANTITY')},
         {VALUE: brew.getBrewQuantityTypeName(), LABEL: this.translate.instant('BREW_INFORMATION_BREW_QUANTITY_TYPE_NAME')},

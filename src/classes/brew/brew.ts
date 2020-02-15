@@ -29,6 +29,8 @@ export class Brew implements IBrew {
   // tslint:disable-next-line
   public mill_speed: number;
   // tslint:disable-next-line
+  public mill_timer: number;
+  // tslint:disable-next-line
   public pressure_profile: string;
   // UUID
   public bean: string;
@@ -66,6 +68,7 @@ export class Brew implements IBrew {
     this.method_of_preparation = '';
     this.mill = '';
     this.mill_speed = 0;
+    this.mill_timer = 0;
     this.pressure_profile = '';
     this.bean = '';
     this.brew_temperature_time = 0;
