@@ -64,10 +64,9 @@ export class BrewEditComponent implements OnInit {
   }
 
   public showRating(): boolean {
-    if (this.data !== undefined && this.data.rating >= 0) {
+    if (this.data !== undefined) {
       return true;
     }
-
     return false;
   }
 
