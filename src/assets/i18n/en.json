@@ -151,5 +151,8 @@
   "DELETE_MILL_QUESTION": "Delete grinder? All associated brews will be deleted aswell.",
   "DELETE_PREPARATION_METHOD_QUESTION": "Delete preparation method? All associated brews will be deleted aswell.",
   "APP_COULD_NOT_STARTED_CORRECTLY_BECAUSE_MISSING_FILESYSTEM": "App could not started correctly, because missing filesystem",
-  "CARE": "Care"
+  "CARE": "Care",
+  "ERROR_OCCURED": "Fehler aufgetreten",
+  "CSV_FILE_NOT_DOWNLOADED": "CSV file could not be downloaded!",
+  "CSV_FILE_DOWNLOADED_SUCCESSFULLY": "CSV file '{{fileName}}' was successfully downloaded into your download-folder!"
 }
