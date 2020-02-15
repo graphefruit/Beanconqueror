@@ -5,7 +5,7 @@
               *ngIf="!timer.runTimer && (timer.hasStarted || timer.hasFinished) || timer.hasFinished" fill="outline"
               size="default"
               slot="end">
-    <ion-icon name="refresh"></ion-icon>
+    <ion-icon name="refresh-outline"></ion-icon>
 
   </ion-button>
   <ion-button (click)="bloomTime()" *ngIf="timer.runTimer && timer.hasStarted && !timer.hasFinished && showBloomTimer"
@@ -16,12 +16,12 @@
   <ion-button (click)="dripTime()" *ngIf="timer.runTimer && timer.hasStarted && !timer.hasFinished && showDripTimer"
               fill="outline" size="default"
               slot="end">
-    <ion-icon name="ios-water"></ion-icon>
+    <ion-icon name="water-outline"></ion-icon>
   </ion-button>
   <ion-button (click)="pauseTimer()" *ngIf="timer.runTimer && timer.hasStarted && !timer.hasFinished" fill="outline"
               size="default"
               slot="end">
-    <ion-icon name="pause"></ion-icon>
+    <ion-icon name="pause-outline"></ion-icon>
 
   </ion-button>
 
@@ -29,12 +29,12 @@
   <ion-button (click)="resumeTimer()" *ngIf="!timer.runTimer && timer.hasStarted && !timer.hasFinished" fill="outline"
               size="default"
               slot="end">
-    <ion-icon name="play"></ion-icon>
+    <ion-icon name="play-outline"></ion-icon>
 
   </ion-button>
   <ion-button (click)="startTimer()" *ngIf="!timer.hasStarted" fill="outline" size="default"
               slot="end">
-    <ion-icon name="play"></ion-icon>
+    <ion-icon name="play-outline"></ion-icon>
   </ion-button>
 </ion-item>
 

@@ -47,7 +47,7 @@ export class HomePage {
   }
 
   public showMills() {
-    this.router.navigate(['/preparation']);
+    this.router.navigate(['/mill']);
   }
 
   public isChristmasTime(): boolean {

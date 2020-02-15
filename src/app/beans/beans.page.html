@@ -45,16 +45,18 @@
             </ion-slides>
           </div>
         </div>
-        <ion-card-header>
-          {{bean.name}}
-        </ion-card-header>
-        <ion-card-content *ngIf="bean.note != ''">
-          <pre class="blockquote">{{bean.note}}</pre>
-        </ion-card-content>
+        <ion-row>
+          <ion-col>
+            <div style="padding:0 0.9em;">
+              <ion-icon class="custom-coffee-bag ion-padding-end"></ion-icon>
+              <span>{{bean.name}}</span>
+            </div>
+          </ion-col>
+        </ion-row>
         <ion-row>
           <ion-col *ngIf="bean.roaster">
             <div style="padding:0 0.9em;">
-              <ion-icon name="person"></ion-icon>
+              <ion-icon class="ion-padding-end" name="person-outline"></ion-icon>
               <span>{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</span>
             </div>
           </ion-col>
@@ -62,7 +64,7 @@
         <ion-row>
           <ion-col>
             <div style="padding:0 0.9em;">
-              <ion-icon name="thermometer"></ion-icon>
+              <ion-icon class="ion-padding-end" name="thermometer-outline"></ion-icon>
               <span>{{"BEAN_DATA_ROAST_NAME" | translate}}: {{bean.getRoastName()}}</span>
             </div>
           </ion-col>
@@ -70,11 +72,14 @@
         <ion-row>
           <ion-col>
             <div style="padding:0 0.9em;" >
-              <ion-icon name="calendar"></ion-icon>
+              <ion-icon class="ion-padding-end" name="calendar-outline"></ion-icon>
               <span>{{"BEAN_DATA_ROASTING_DATE" | translate}}: {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}</span>
             </div>
           </ion-col>
         </ion-row>
+        <ion-card-content *ngIf="bean.note != ''">
+          <pre class="blockquote">{{bean.note}}</pre>
+        </ion-card-content>
         <ion-row>
           <ion-col>
             <ion-button (click)="repeatBean(bean)" color="dark" fill="clear" size="small">
@@ -98,8 +103,6 @@
           </ion-col>
         </ion-row>
 
-
-
       </ion-card>
     </div>
     <div *ngSwitchCase="'finished'">
@@ -117,16 +120,26 @@
           </div>
         </div>
         <!-- <img class="card-image" *ngIf="bean.filePath" [src]="bean.filePath"/>-->
-        <ion-card-header>
-          {{bean.name}}
-        </ion-card-header>
-        <ion-card-content *ngIf="bean.note != ''">
-          <pre class="blockquote">{{bean.note}}</pre>
-        </ion-card-content>
         <ion-row>
           <ion-col>
             <div style="padding:0 0.9em;">
-              <ion-icon name="thermometer"></ion-icon>
+              <ion-icon class="custom-coffee-bag ion-padding-end"></ion-icon>
+              <span>{{bean.name}}</span>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col *ngIf="bean.roaster">
+            <div style="padding:0 0.9em;">
+              <ion-icon class="ion-padding-end" name="person-outline"></ion-icon>
+              <span>{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</span>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <div style="padding:0 0.9em;">
+              <ion-icon class="ion-padding-end" name="thermometer-outline"></ion-icon>
               <span>{{"BEAN_DATA_ROAST_NAME" | translate}}: {{bean.getRoastName()}}</span>
             </div>
           </ion-col>
@@ -134,11 +147,14 @@
         <ion-row>
           <ion-col>
             <div style="padding:0 0.9em;" >
-              <ion-icon name="calendar"></ion-icon>
+              <ion-icon class="ion-padding-end" name="calendar-outline"></ion-icon>
               <span>{{"BEAN_DATA_ROASTING_DATE" | translate}}: {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}</span>
             </div>
           </ion-col>
         </ion-row>
+        <ion-card-content *ngIf="bean.note != ''">
+          <pre class="blockquote">{{bean.note}}</pre>
+        </ion-card-content>
         <ion-row>
           <ion-col>
             <ion-button (click)="repeatBean(bean)" color="dark" fill="clear" size="small">
