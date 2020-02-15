@@ -8,7 +8,7 @@
         <ion-icon name="add" slot="icon-only"></ion-icon>
       </ion-button>
       <ion-button (click)="showMore($event)">
-        <ion-icon name="more" slot="icon-only"></ion-icon>
+        <ion-icon name="ellipsis-vertical-outline" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-title>
@@ -74,7 +74,7 @@
           <ion-card-header>
             <ion-row class="center-col">
               <ion-col *ngIf="settings.bean_type === true" size="10">
-                  <ion-icon class="custom-coffee-beans"></ion-icon>&nbsp;
+                <ion-icon class="custom-coffee-bag"></ion-icon>&nbsp;
                 <span *ngIf="brew.getBean().roaster" style="font-weight:bold;">{{brew.getBean().roaster}}</span>
                 <span *ngIf="brew.getBean().roaster" class="margin-horizontal-5">-</span>
                 <span>{{brew.getBean().name}}</span>
@@ -159,7 +159,7 @@
             <ion-row>
               <ion-col *ngIf="settings.bean_type === true" class="ion-align-self-center" size="10">
                 <p>
-                  <ion-icon class="custom-coffee-beans"></ion-icon>&nbsp;
+                  <ion-icon class="custom-coffee-bag"></ion-icon>&nbsp;
                   <span *ngIf="brew.getBean().roaster" style="font-weight:bold;">{{brew.getBean().roaster}}
                     - </span>{{brew.getBean().name}}</p>
               </ion-col>
