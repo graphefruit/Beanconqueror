@@ -63,6 +63,7 @@ export class SettingsPage implements OnInit {
   }
 
   public ngOnInit() {
+
   }
 
   public saveSettings (_event: any): void {
@@ -93,13 +94,13 @@ export class SettingsPage implements OnInit {
                 this.__readJSONFile(path, file).then(() => {
                   // nothing todo
                 }, (_err) => {
-                  this.uiAlert.showMessage('Fehler beim Dateiauslesen (' + JSON.stringify(_err) + ')');
+                  this.uiAlert.showMessage(this.translate.instant('ERROR_ON_FILE_READING') + ' (' + JSON.stringify(_err) + ')');
                 });
               }).catch((_err) => {
-                this.uiAlert.showMessage('Datei konnte nicht gefunden werden (' + JSON.stringify(_err) + ')');
+                this.uiAlert.showMessage(this.translate.instant('FILE_NOT_FOUND_INFORMATION') + ' (' + JSON.stringify(_err) + ')');
               });
             } else {
-              this.uiAlert.showMessage('Invalides Dateiformat');
+              this.uiAlert.showMessage(this.translate.instant('INVALID_FILE_FORMAT'));
             }
           });
       } else {
@@ -113,10 +114,10 @@ export class SettingsPage implements OnInit {
             this.__readJSONFile(path, file).then(() => {
               // nothing todo
             }).catch((_err) => {
-              this.uiAlert.showMessage('Datei konnte nicht gefunden werden (' + JSON.stringify(_err) + ')');
+              this.uiAlert.showMessage(this.translate.instant('FILE_NOT_FOUND_INFORMATION') + ' (' + JSON.stringify(_err) + ')');
             });
           } else {
-            this.uiAlert.showMessage('Invalides Dateiformat');
+            this.uiAlert.showMessage(this.translate.instant('INVALID_FILE_FORMAT'));
           }
         });
 
@@ -141,8 +142,8 @@ export class SettingsPage implements OnInit {
       this.uiHelper.exportJSON('Beanconqueror.json', JSON.stringify(_data)).then(async (_fileEntry: FileEntry) => {
         if (this.platform.is('android')) {
           const alert =  await this.alertCtrl.create({
-            header: 'Heruntergeladen!',
-            subHeader: `JSON-Datei '${_fileEntry.name}' wurde erfolgreich in den Download-Ordner heruntergeladen!`,
+            header: this.translate.instant('DOWNLOADED'),
+            subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {fileName: _fileEntry.name}),
             buttons: ['OK']
           });
           await alert.present();
@@ -494,19 +495,19 @@ export class SettingsPage implements OnInit {
                       }
                     }
 
-                    this.uiAlert.showMessage('Import erfolgreich');
+                    this.uiAlert.showMessage(this.translate.instant('IMPORT_SUCCESSFULLY'));
                   });
 
                 } else {
-                  this.uiAlert.showMessage('Import unerfolgreich, Daten wurden nicht verändert');
+                  this.uiAlert.showMessage(this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED'));
                 }
 
               }, () => {
-                this.uiAlert.showMessage('Import unerfolgreich, Daten wurden nicht verändert');
+                this.uiAlert.showMessage(this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED'));
               });
 
             } else {
-              this.uiAlert.showMessage('Invalider Dateiinhalt');
+              this.uiAlert.showMessage(this.translate.instant('INVALID_FILE_DATA'));
             }
           })
           .catch((err) => {
