@@ -338,6 +338,7 @@ export class BrewPage implements OnInit {
         {VALUE: brew.brew_time, LABEL: this.translate.instant('BREW_DATA_TIME')},
         {VALUE: brew.pressure_profile, LABEL: this.translate.instant('BREW_DATA_PRESSURE_PROFILE')},
         {VALUE: brew.mill_speed, LABEL: this.translate.instant('BREW_DATA_MILL_SPEED')},
+        {VALUE: brew.mill_timer, LABEL: this.translate.instant('BREW_DATA_MILL_TIMER')},
         {VALUE: brew.getMill().name, LABEL: this.translate.instant('BREW_DATA_MILL')},
         {VALUE: brew.brew_quantity, LABEL: this.translate.instant('BREW_DATA_BREW_QUANTITY')},
         {VALUE: brew.getBrewQuantityTypeName(), LABEL: this.translate.instant('BREW_INFORMATION_BREW_QUANTITY_TYPE_NAME')},
