@@ -1,8 +1,9 @@
 /**
  * Created by lars on 10/18/2017.
  */
-import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
-import { IConfig } from '../objectConfig/iObjectConfig';
+import {BREW_QUANTITY_TYPES_ENUM} from '../../enums/brews/brewQuantityTypes';
+import {IConfig} from '../objectConfig/iObjectConfig';
+
 export interface IBrew {
  // Properties
   /**
@@ -27,6 +28,10 @@ export interface IBrew {
    * Inherits the used mill speed (rounds per minute), default: 0
    */
   mill_speed: number;
+  /**
+   * Inherits the used timer settings (), default: 0
+   */
+  mill_timer: number;
   /**
    * Inherits the actual used pressure profile (name and number)
    */

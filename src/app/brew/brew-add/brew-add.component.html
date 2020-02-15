@@ -53,6 +53,10 @@
       <ion-label floating>{{"BREW_DATA_MILL_SPEED" | translate}}</ion-label>
       <ion-input remove-empty-number prevent-characters [(ngModel)]="data.mill_speed"  type="text"></ion-input>
     </ion-item>
+    <ion-item *ngIf="settings.mill_timer === true">
+      <ion-label floating>{{"BREW_DATA_MILL_TIMER" | translate}}</ion-label>
+      <ion-input [(ngModel)]="data.mill_timer" prevent-characters remove-empty-number type="text"></ion-input>
+    </ion-item>
     <ion-item *ngIf="settings.pressure_profile === true">
       <ion-label floating>{{"BREW_DATA_PRESSURE_PROFILE" | translate}}</ion-label>
       <ion-input [(ngModel)]="data.pressure_profile"  type="text"></ion-input>

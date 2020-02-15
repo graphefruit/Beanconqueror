@@ -14,6 +14,7 @@ export interface ISettings {
   method_of_preparation: boolean;
   mill: boolean;
   mill_speed: boolean;
+  mill_timer: boolean;
   pressure_profile: boolean;
   brew_quantity: boolean;
   bean_type: boolean;
