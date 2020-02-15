@@ -5,7 +5,6 @@ import {UIHelper} from '../../../services/uiHelper';
 import {Brew} from '../../../classes/brew/brew';
 import {IBrew} from '../../../interfaces/brew/iBrew';
 import {Settings} from '../../../classes/settings/settings';
-import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 
 @Component({
   selector: 'brew-detail',
@@ -15,7 +14,7 @@ import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 export class BrewDetailComponent implements OnInit {
 
 
-  @ViewChild('photoSlides') public photoSlides: IonSlides;
+  @ViewChild('photoSlides', {static: false}) public photoSlides: IonSlides;
   public data: Brew = new Brew();
   public settings: Settings;
 

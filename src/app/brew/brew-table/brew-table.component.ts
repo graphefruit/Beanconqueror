@@ -20,7 +20,7 @@ import {BrewAddComponent} from '../brew-add/brew-add.component';
 })
 export class BrewTableComponent implements OnInit {
 
-  @ViewChild('tableEl') public tableEl: ElementRef;
+  @ViewChild('tableEl', {static: false}) public tableEl: ElementRef;
   public brews: Array<Brew> = [];
 
   public method_of_preparations: Array<IPreparation> = [];

@@ -41,7 +41,7 @@
             </span>
             <div *ngIf="uiStatistic.getBrewsDrunk() >0" style="max-width:200px;margin:0 auto;">
               <ion-button (click)="addBrew()" fill="outline" size="small">
-                <ion-icon name="md-add" slot="start"></ion-icon>
+                <ion-icon name="add-outline" slot="start"></ion-icon>
                 <span>{{"BREW" | translate}}</span>
               </ion-button>
             </div>
@@ -51,7 +51,7 @@
       <ion-col class="ion-text-center" col-6>
         <ion-card (click)="showBeans()" style="height: 100%;" tappable="">
           <ion-card-header style="font-size: 2em;">
-            <ion-icon class="custom-coffee-beans"></ion-icon>
+            <ion-icon class="custom-coffee-bag"></ion-icon>
             {{uiStatistic.getBeansCount()}}
           </ion-card-header>
           <ion-card-content>
@@ -73,7 +73,7 @@
           <ion-card-header style="font-size: 2em;">{{uiStatistic.getSloganTimePassedSinceLastBrew()}}</ion-card-header>
           <ion-card-content>
             {{"PAGE_HOME_LAST_BREW" | translate}}: {{uiStatistic.getLastDrunkBrewTimestamp()}}<br>
-            <ion-icon class="custom-coffee-beans"></ion-icon>&nbsp;{{uiStatistic.getLastBeanUsed()}}<br/>
+            <ion-icon class="custom-coffee-bag"></ion-icon>&nbsp;{{uiStatistic.getLastBeanUsed()}}<br/>
             <ion-icon class="custom-filter"></ion-icon>&nbsp;{{uiStatistic.getLastPreparationMethodUsed()}}<br/>
             <ion-icon class="custom-mill"></ion-icon>&nbsp;{{uiStatistic.getLastMillUsed()}}
           </ion-card-content>

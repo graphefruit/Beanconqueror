@@ -7,7 +7,6 @@ import {ImagePicker} from '@ionic-native/image-picker/ngx';
 /** Ionic */
 import {AlertController, Platform} from '@ionic/angular';
 import {UIHelper} from './uiHelper';
-import {any} from 'codelyzer/util/function';
 import {UIFileHelper} from './uiFileHelper';
 
 

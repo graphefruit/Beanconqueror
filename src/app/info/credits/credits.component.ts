@@ -23,11 +23,6 @@ export class CreditsComponent implements OnInit {
       LINK: 'https://www.flaticon.com/authors/ddara',
       DESCRIPTION: `<div>Icons made by <a (click)="openLink($event,'https://www.flaticon.com/authors/ddara')" href="https://www.flaticon.com/authors/ddara" target="_blank" title="dDara">dDara</a> from <a (click)="openLink($event,'https://www.flaticon.com/')"  href="https://www.flaticon.com/" target="_blank" title="Flaticon">www.flaticon.com</a> is licensed by <a (click)="openLink($event,'http://creativecommons.org/licenses/by/3.0/')"  href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>`
     },
-    'icon-bean': {
-      TITLE: 'Icon Bean',
-      LINK: 'https://www.freepik.com/',
-      DESCRIPTION: `<div>Icons made by <a (click)="openLink($event,'https://www.freepik.com/')" href="https://www.freepik.com/" target="_blank" title="Freepik">Freepik</a> from <a (click)="openLink($event,'https://www.flaticon.com/')"  href="https://www.flaticon.com/" target="_blank" title="Flaticon">www.flaticon.com</a> is licensed by <a (click)="openLink($event,'http://creativecommons.org/licenses/by/3.0/')"  href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>`
-    },
     'icon-loading': {
       TITLE: 'Loading Coffee',
       LINK: 'https://icons8.com/preloaders',
@@ -37,6 +32,11 @@ export class CreditsComponent implements OnInit {
       TITLE: 'Coffee blooming',
       LINK: 'https://www.flaticon.com/packs/coffee-9',
       DESCRIPTION: `<div>Icons made by <a  (click)="openLink($event,'https://www.flaticon.com/authors/good-ware')" href="https://www.flaticon.com/authors/good-ware" title="Good Ware">Good Ware</a> from <a (click)="openLink($event,'https://www.flaticon.com/')" href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>`
+    },
+    'ion-coffee-bag': {
+      TITLE: 'Icon Coffee Bag',
+      LINK: 'https://www.flaticon.com/authors/ddara',
+      DESCRIPTION: `<div>Icons made by <a (click)="openLink($event,'https://www.flaticon.com/authors/ddara')" href="https://www.flaticon.com/authors/ddara" target="_blank" title="dDara">dDara</a> from <a (click)="openLink($event,'https://www.flaticon.com/')"  href="https://www.flaticon.com/" target="_blank" title="Flaticon">www.flaticon.com</a> is licensed by <a (click)="openLink($event,'http://creativecommons.org/licenses/by/3.0/')"  href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>`
     }
   };
 
