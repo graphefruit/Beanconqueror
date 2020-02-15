@@ -2,19 +2,31 @@
 import {Injectable} from '@angular/core';
 /** Ionic */
 import {AlertController} from '@ionic/angular';
+import {TranslateService} from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UIAlert {
 
-  constructor (private readonly alertController: AlertController) {
+  constructor(private readonly alertController: AlertController,
+              private readonly translate: TranslateService) {
   }
 
   /**
    * @method showMessage
    */
-  public async showMessage (_message: string, _title?: string, _ok?: string): Promise<any> {
+  public async showMessage(_message: string, _title?: string, _ok?: string, _translate?: boolean): Promise<any> {
+    if (_translate === true) {
+      _message = this.translate.instant(_message);
+
+      if (_title) {
+        _title = this.translate.instant(_title);
+      }
+      if (_ok) {
+        _ok = this.translate.instant(_ok);
+      }
+    }
     let okText: string = 'OK';
     if (_ok) {
       okText = _ok;
@@ -38,7 +50,14 @@ export class UIAlert {
     return promise;
   }
 
-  public async showConfirm (_message: string, _title?: string): Promise<any> {
+  public async showConfirm(_message: string, _title?: string, _translate?: boolean): Promise<any> {
+    if (_translate === true) {
+      _message = this.translate.instant(_message);
+
+      if (_title) {
+        _title = this.translate.instant(_title);
+      }
+    }
 
     const promise = new Promise(async (resolve, reject) => {
       const alert = await this.alertController.create({
@@ -46,14 +65,14 @@ export class UIAlert {
         subHeader: _message,
         buttons: [
           {
-            text: 'Nein',
+            text: this.translate.instant('NO'),
             role: 'cancel',
             handler: () => {
               reject();
             }
           },
           {
-            text: 'Ja',
+            text: this.translate.instant('YES'),
             handler: () => {
               resolve();
             }

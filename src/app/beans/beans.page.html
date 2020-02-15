@@ -30,7 +30,7 @@
       </ion-segment-button>
     </ion-segment>
   </div>
-  <div [ngSwitch]="bean_segment" >
+  <div [ngSwitch]="bean_segment">
     <div *ngSwitchCase="'open'">
       <ion-card *ngIf="getOpenBeans()?.length == 0" class="ion-padding">
         {{"PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS" | translate}}
