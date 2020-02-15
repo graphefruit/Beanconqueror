@@ -5,7 +5,6 @@ import {UIPreparationStorage} from '../../services/uiPreparationStorage';
 import {ModalController} from '@ionic/angular';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {Brew} from '../../classes/brew/brew';
-import {BeansEditComponent} from '../beans/beans-edit/beans-edit.component';
 import {PreparationEditComponent} from './preparation-edit/preparation-edit.component';
 import {PreparationAddComponent} from './preparation-add/preparation-add.component';
 
@@ -49,7 +48,7 @@ export class PreparationPage implements OnInit {
   }
 
   public deletePreparation(_preparation: Preparation): void {
-    this.uiAlert.showConfirm('Zubereitungsmethode löschen? Alle zugehörigen Brühungen werden mit entfernt.', 'Sicher?').then(() => {
+    this.uiAlert.showConfirm('DELETE_PREPARATION_METHOD_QUESTION', 'SURE_QUESTION', true).then(() => {
           // Yes
           this.__deletePreparation(_preparation);
         },

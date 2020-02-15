@@ -10,6 +10,7 @@ import {IMill} from '../interfaces/mill/iMill';
 import {UIHelper} from './uiHelper';
 import {UILog} from './uiLog';
 import {UIStorage} from './uiStorage';
+import {TranslateService} from '@ngx-translate/core';
 
 /** Interfaces */
 
@@ -31,7 +32,8 @@ export class UIMillStorage extends StorageClass {
   }
   constructor(protected uiStorage: UIStorage,
               protected uiHelper: UIHelper,
-              protected uiLog: UILog) {
+              protected uiLog: UILog,
+              private readonly translate: TranslateService) {
     super(uiStorage, uiHelper, uiLog, 'MILL');
     if (UIMillStorage.instance === undefined) {
       UIMillStorage.instance = this;
@@ -50,7 +52,7 @@ export class UIMillStorage extends StorageClass {
       }
     }
 
-    return '_nicht gefunden_';
+    return this.translate.instant('NO_COFFEE_DRUNK');
   }
 
   public getAllEntries(): Array<Mill> {

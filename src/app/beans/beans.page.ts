@@ -64,7 +64,7 @@ export class BeansPage implements OnInit {
   }
 
   public deleteBean(_bean: Bean): void {
-    this.uiAlert.showConfirm('Bohne löschen? Alle zugehörigen Brühungen werden mit entfernt.', 'Sicher?')
+    this.uiAlert.showConfirm('DELETE_BEAN_QUESTION', 'SURE_QUESTION', true)
         .then(() => {
               // Yes
               this.__deleteBean(_bean);
