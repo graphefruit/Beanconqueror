@@ -6,9 +6,11 @@ import {ISettings} from '../../interfaces/settings/iSettings';
 import {Config} from '../objectConfig/objectConfig';
 
 import {DefaultLastCoffeeParameters} from './settingsDefaultLastCoffeeParameter';
+import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
 
 export class Settings implements ISettings {
   public brew_view: BREW_VIEW_ENUM;
+  public startup_view: STARTUP_VIEW_ENUM;
   public brew_time: boolean;
   public brew_temperature_time: boolean;
   public grind_size: boolean;
@@ -40,6 +42,7 @@ export class Settings implements ISettings {
 
   constructor() {
     this.brew_view = BREW_VIEW_ENUM.SINGLE_PAGE;
+    this.startup_view = STARTUP_VIEW_ENUM.HOME_PAGE;
     this.brew_temperature_time = false;
     this.brew_time = true;
     this.grind_size = true;
