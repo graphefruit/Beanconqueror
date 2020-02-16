@@ -3,10 +3,12 @@
 import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
 import {IConfig} from '../objectConfig/iObjectConfig';
 import {IDefaultLastCoffeeParameters} from './iDefaultLastCoffeeParameters';
+import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
 
 export interface ISettings {
  // Properties
   brew_view: BREW_VIEW_ENUM;
+  startup_view: STARTUP_VIEW_ENUM;
   brew_temperature_time: boolean;
   brew_time: boolean;
   grind_size: boolean;

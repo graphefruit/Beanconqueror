@@ -65,6 +65,14 @@
         <ion-select-option value="en">{{"PAGE_SETTINGS_LANGUAGE_ENGLISH" | translate}}</ion-select-option>
       </ion-select>
     </ion-item>
+    <ion-item>
+      <ion-label>{{"PAGE_SETTINGS_STARTUP_VIEW" | translate}}</ion-label>
+      <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.startup_view">
+        <ion-select-option value="{{STARTUP_VIEW.HOME_PAGE}}">{{"NAV_HOME" | translate}}</ion-select-option>
+        <ion-select-option value="{{STARTUP_VIEW.BREW_PAGE}}">{{"NAV_BREWS" | translate}}</ion-select-option>
+        <ion-select-option value="{{STARTUP_VIEW.ADD_BREW}}">{{"ADD_BREW" | translate}}</ion-select-option>
+      </ion-select>
+    </ion-item>
   </ion-list>
     </div>
     <div *ngSwitchCase="'visible_parameters'">

@@ -24,6 +24,7 @@ import {UILog} from '../../services/uiLog';
 import {TranslateService} from '@ngx-translate/core';
 import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 import {Subject} from 'rxjs';
+import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
 
 @Component({
   selector: 'settings',
@@ -35,6 +36,7 @@ export class SettingsPage implements OnInit {
   public settings: ISettings;
 
   public BREW_VIEWS = BREW_VIEW_ENUM;
+  public STARTUP_VIEW = STARTUP_VIEW_ENUM;
   public debounceFilter: Subject<string> = new Subject<string>();
 
   public settings_segment: string = 'general';
@@ -57,6 +59,7 @@ export class SettingsPage implements OnInit {
               private readonly uiLog: UILog,
               private readonly translate: TranslateService,
               private readonly changeDetectorRef: ChangeDetectorRef) {
+    debugger;
     this.__initializeSettings();
     this.debounceFilter
       .pipe(debounceTime(500), distinctUntilChanged())
@@ -87,6 +90,10 @@ export class SettingsPage implements OnInit {
   }
 
   public saveSettings(): void {
+    setTimeout(() => {
+      console.log(this.settings);
+    }, 1000);
+
     this.changeDetectorRef.detectChanges();
     this.uiSettingsStorage.saveSettings(this.settings);
   }

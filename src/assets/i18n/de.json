@@ -55,6 +55,7 @@
   "PAGE_SETTINGS_DISPLAY": "Ansicht",
   "PAGE_SETTINGS_DISPLAY_SINGLE_PAGE": "Eine Seite",
   "PAGE_SETTINGS_DISPLAY_PAGING": "Paging",
+  "PAGE_SETTINGS_STARTUP_VIEW": "Startansicht",
   "PAGE_STATISTICS_FOR_NERDS": "Statistiken für Nerds",
   "PAGE_STATISTICS_MILL_FLEET": "Mühlenfuhrpark",
   "PAGE_STATISTICS_DIFFERENT_PREPARATION_METHOD": "Zubereitungsmethoden",
@@ -154,5 +155,6 @@
   "CARE": "Achtung",
   "ERROR_OCCURED": "Fehler aufgetreten",
   "CSV_FILE_NOT_DOWNLOADED": "CSV-Datei kann leider nicht heruntergeladen werden!",
-  "CSV_FILE_DOWNLOADED_SUCCESSFULLY": "CSV-Datei '{{fileName}}' wurde erfolgreich in den Download-Ordner heruntergeladen!"
+  "CSV_FILE_DOWNLOADED_SUCCESSFULLY": "CSV-Datei '{{fileName}}' wurde erfolgreich in den Download-Ordner heruntergeladen!",
+  "ADD_BREW": "Brühung hinzufügen"
 }
