@@ -1,3 +1,16 @@
+3.3.
+- Fixed missing languages
+- Upgraded to Ionic 5 Framework
+- Added mill-timer
+- Startup screen can now be configured in settings
+- Settings excluded into different tabs
+- Added new icon for coffee bean
+
+Issues fixed:
+- Rating can now be edited to -1
+- Rating starts with 0
+
+
 3.2.
 - Bean roaster name is now showing up
 - Fullsize for selects / Text breaks
@@ -11,7 +24,7 @@
 - Changed brew-add added blooming-time aswell as first drip time as button to own timer.
 
 
-Issues  fixed:
+Issues fixed:
 - Forcetouch on iOS didn't work and just displayed home page
 
 3.1.
