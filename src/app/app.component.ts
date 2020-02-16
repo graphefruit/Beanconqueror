@@ -27,6 +27,7 @@ import {UIAlert} from '../services/uiAlert';
 import {TranslateService} from '@ngx-translate/core';
 import {Globalization} from '@ionic-native/globalization/ngx';
 import {Settings} from '../classes/settings/settings';
+import {STARTUP_VIEW_ENUM} from '../enums/settings/startupView';
 
 @Component({
   selector: 'app-root',
@@ -257,9 +258,28 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
+  private async __checkStartupView() {
+
+    const settings: Settings = this.uiSettingsStorage.getSettings();
+    console.log(settings.startup_view);
+    switch (settings.startup_view) {
+      case STARTUP_VIEW_ENUM.HOME_PAGE:
+        this.router.navigate([this.pages.home.url]);
+        break;
+      case STARTUP_VIEW_ENUM.BREW_PAGE:
+        this.router.navigate([this.pages.brew.url]);
+        break;
+      case STARTUP_VIEW_ENUM.ADD_BREW:
+        console.log('test');
+        await this.__trackNewBrew();
+        break;
+    }
+  }
+
   private __initApp(): void {
     this.__registerBack();
     this.__setDeviceLanguage();
+    this.__checkStartupView();
 
 
   }
