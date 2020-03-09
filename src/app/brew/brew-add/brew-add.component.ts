@@ -99,6 +99,10 @@ export class BrewAddComponent implements OnInit {
     });
   }
 
+  public getItemOrder(): number {
+    return 4;
+  }
+
   public finish(): void {
     this.stopTimer();
     this.uiBrewStorage.add(this.data);

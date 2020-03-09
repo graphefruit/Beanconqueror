@@ -7,6 +7,7 @@ import {Config} from '../objectConfig/objectConfig';
 
 import {DefaultLastCoffeeParameters} from './settingsDefaultLastCoffeeParameter';
 import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
+import {BrewOrder} from './settingsOrderBrew';
 
 export class Settings implements ISettings {
   public brew_view: BREW_VIEW_ENUM;
@@ -33,12 +34,9 @@ export class Settings implements ISettings {
   public set_last_coffee_brew: boolean;
   public set_custom_brew_time: boolean;
   public default_last_coffee_parameters: DefaultLastCoffeeParameters;
+  public brew_order: BrewOrder;
   public config: Config;
   public language: string;
-
-  public initializeByObject (brewObj: ISettings): void {
-    Object.assign(this, brewObj);
-  }
 
   constructor() {
     this.brew_view = BREW_VIEW_ENUM.SINGLE_PAGE;
@@ -67,8 +65,19 @@ export class Settings implements ISettings {
     this.config = new Config();
 
     this.default_last_coffee_parameters = new DefaultLastCoffeeParameters();
+    this.brew_order = new BrewOrder();
     this.language = '';
 
+  }
+
+  public initializeByObject(settingsObj: ISettings): void {
+    Object.assign(this, settingsObj);
+    // We need to reassign brew order here, else the class would be dismissed.
+    this.brew_order = new BrewOrder();
+    Object.assign(this.brew_order, settingsObj.brew_order);
+
+    this.default_last_coffee_parameters = new DefaultLastCoffeeParameters();
+    Object.assign(this.default_last_coffee_parameters, settingsObj.default_last_coffee_parameters);
   }
 
 }

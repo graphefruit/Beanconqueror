@@ -58,6 +58,7 @@ import {LogTextComponent} from '../info/log/log-text/log-text.component';
 import {TranslateModule} from '@ngx-translate/core';
 import {Globalization} from '@ionic-native/globalization/ngx';
 import {AppVersion} from '@ionic-native/app-version/ngx';
+import {EnumToArrayPipe} from '../../pipes/enumToArray';
 
 
 @NgModule({
@@ -69,7 +70,7 @@ import {AppVersion} from '@ionic-native/app-version/ngx';
     TermsComponent,
     ThanksComponent, LogComponent, LogTextComponent, PreparationPage, PreparationAddComponent,
     PreparationEditComponent, MillPage, MillEditComponent, MillAddComponent, BrewAddComponent,
-    FormatDatePipe, KeysPipe, AsyncImageComponent, SearchPipe, RemoveEmptyNumberDirective,
+    FormatDatePipe, KeysPipe, EnumToArrayPipe, AsyncImageComponent, SearchPipe, RemoveEmptyNumberDirective,
     PreventCharacterDirective, BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent,
     BrewPopoverComponent, BrewPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent, BrewTimerComponent],
   entryComponents: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, AboutComponent,
@@ -92,7 +93,7 @@ import {AppVersion} from '@ionic-native/app-version/ngx';
     AppVersion,
     StatusBar,
     SplashScreen,
-    RemoveEmptyNumberDirective, PreventCharacterDirective, FormatDatePipe, KeysPipe,
+    RemoveEmptyNumberDirective, PreventCharacterDirective, FormatDatePipe, KeysPipe, EnumToArrayPipe,
     InAppBrowser,
     File,
     FileChooser,
@@ -115,7 +116,7 @@ import {AppVersion} from '@ionic-native/app-version/ngx';
     ThanksComponent, PreparationPage, PreparationAddComponent,
     PreparationEditComponent, MillPage, MillEditComponent, MillAddComponent,
     BrewAddComponent, FormatDatePipe,
-    KeysPipe, AsyncImageComponent, SearchPipe, RemoveEmptyNumberDirective,
+    KeysPipe, EnumToArrayPipe, AsyncImageComponent, SearchPipe, RemoveEmptyNumberDirective,
     PreventCharacterDirective, BrewPage, BrewDetailComponent, BrewEditComponent,
     BrewPhotoViewComponent, BrewPopoverComponent, BrewPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent, BrewTimerComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

@@ -1,6 +1,5 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
-import {ISettings} from '../../interfaces/settings/iSettings';
 import {IBean} from '../../interfaces/bean/iBean';
 import {IBrew} from '../../interfaces/brew/iBrew';
 import {AlertController, Platform} from '@ionic/angular';
@@ -20,6 +19,7 @@ import {File} from '@ionic-native/file/ngx';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {Brew} from '../../classes/brew/brew';
 import {Mill} from '../../classes/mill/mill';
+import {Settings} from '../../classes/settings/settings';
 import {UILog} from '../../services/uiLog';
 import {TranslateService} from '@ngx-translate/core';
 import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
@@ -33,13 +33,15 @@ import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
 })
 export class SettingsPage implements OnInit {
 
-  public settings: ISettings;
+  public settings: Settings;
 
   public BREW_VIEWS = BREW_VIEW_ENUM;
   public STARTUP_VIEW = STARTUP_VIEW_ENUM;
   public debounceFilter: Subject<string> = new Subject<string>();
 
   public settings_segment: string = 'general';
+
+  public brewOrders: Array<{ number: number, label: string, enum: string }> = [];
 
   constructor(private readonly platform: Platform,
               public uiSettingsStorage: UISettingsStorage,
@@ -59,13 +61,34 @@ export class SettingsPage implements OnInit {
               private readonly uiLog: UILog,
               private readonly translate: TranslateService,
               private readonly changeDetectorRef: ChangeDetectorRef) {
-    debugger;
     this.__initializeSettings();
     this.debounceFilter
       .pipe(debounceTime(500), distinctUntilChanged())
       .subscribe(() => {
         this.setLanguage();
       });
+  }
+
+  public reorder_brew(ev: any) {
+
+
+    // The `from` and `to` properties contain the index of the item
+    // when the drag started and ended, respectively
+    console.log('Dragged from index', ev.detail.from, 'to', ev.detail.to);
+    // console.log(this.brewOrders);
+    this.brewOrders.splice(ev.detail.to, 0, this.brewOrders.splice(ev.detail.from, 1)[0]);
+    let count: number = 0;
+    for (const order of this.brewOrders) {
+      order.number = count;
+      this.settings.brew_order[order.enum] = order.number;
+      count++;
+    }
+    console.log(this.settings.brew_order);
+    // Finish the reorder and position the item in the DOM based on
+    // where the gesture ended. This method can also be called directly
+    // by the reorder group
+    ev.detail.complete();
+    this.saveSettings();
   }
 
   private static __cleanupImportBeanData(_data: Array<IBean>): any {
@@ -180,10 +203,29 @@ export class SettingsPage implements OnInit {
 
   }
 
-  private __initializeSettings(): void {
-    this.settings = this.uiSettingsStorage.getSettings();
-  }
+  private __initializeBrewOrders() {
+    this.brewOrders = [];
+    for (const key in this.settings.brew_order) {
+      if (this.settings.brew_order.hasOwnProperty(key)) {
+        this.brewOrders.push({
+          number: this.settings.brew_order[key],
+          label: this.settings.brew_order.getLabel(key),
+          enum: key,
+        });
+      }
+    }
+    this.brewOrders.sort((obj1, obj2) => {
+      if (obj1.number > obj2.number) {
+        return 1;
+      }
 
+      if (obj1.number < obj2.number) {
+        return -1;
+      }
+
+      return 0;
+    });
+  }
   /* tslint:disable */
   private __importDummyData(): void {
     this.uiLog.log('Import dummy data');
@@ -540,6 +582,11 @@ export class SettingsPage implements OnInit {
 
           });
     });
+  }
+
+  private __initializeSettings(): void {
+    this.settings = this.uiSettingsStorage.getSettings();
+    this.__initializeBrewOrders();
   }
 
   private async __reinitializeStorages (): Promise<any> {
