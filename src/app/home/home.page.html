@@ -60,8 +60,7 @@
               </span>
             <span *ngIf="uiStatistic.getBeansCount() != 1">
                      {{"PAGE_HOME_BEANS_EXPLORED" | translate}}
-              </span>
-
+            </span>
           </ion-card-content>
         </ion-card>
       </ion-col>
@@ -80,22 +79,38 @@
         </ion-card>
       </ion-col>
     </ion-row>
-    <ion-row *ngIf="uiStatistic.getPreparationsCount()>1">
-      <ion-col class="ion-text-center" col-12>
-        <ion-card (click)="showPreparation()" tappable>
+    <ion-row>
+      <ion-col class="ion-text-center" col-6>
+        <ion-card (click)="showPreparation()" style="height: 100%;" tappable>
+          <ion-card-header style="font-size: 2em;">
+            <ion-icon class="menu-icon custom-filter"></ion-icon>
+            {{uiStatistic.getPreparationsCount()}}
+          </ion-card-header>
           <ion-card-content>
-            <strong>{{"PAGE_HOME_DIFFERENT_PREPARATION_METHODS" | translate}}
-              :</strong> {{uiStatistic.getPreparationsCount()}}
+            <strong>{{"PAGE_HOME_DIFFERENT_PREPARATION_METHODS" | translate}}</strong>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col class="ion-text-center" col-6>
+        <ion-card (click)="showMills()" style="height: 100%;" tappable>
+          <ion-card-header style="font-size: 2em;">
+            <ion-icon class="menu-icon custom-mill"></ion-icon>
+            {{uiStatistic.getMillsCount()}}
+          </ion-card-header>
+          <ion-card-content>
+            <strong>{{"PAGE_HOME_DIFFERENT_MILLS" | translate}}</strong>
           </ion-card-content>
         </ion-card>
       </ion-col>
     </ion-row>
-    <ion-row *ngIf="uiStatistic.getMillsCount()>1">
+    <ion-row>
       <ion-col class="ion-text-center" col-12>
-        <ion-card (click)="showMills()" tappable>
+        <ion-card>
+          <ion-card-header style="font-size: 2em;">
+            <ion-icon name="happy-outline"></ion-icon>&nbsp;4
+          </ion-card-header>
           <ion-card-content>
-            <strong>{{"PAGE_HOME_DIFFERENT_MILLS" | translate}}
-              :</strong> {{uiStatistic.getMillsCount()}}
+            <strong>{{"PAGE_HOME_SUPPORTER" | translate }}</strong>
           </ion-card-content>
         </ion-card>
       </ion-col>

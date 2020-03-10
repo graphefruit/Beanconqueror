@@ -27,7 +27,9 @@ export class UIStorage {
 
     const promise = new Promise((resolve, reject) => {
       const exportObj = {};
+
       this.storage.forEach((_value, _key, _index) => {
+        debugger;
         exportObj[_key] = _value;
 
       })

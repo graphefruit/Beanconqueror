@@ -15,9 +15,11 @@
       <ion-icon *ngIf="!licences[key].active" item-left large name="chevron-down-outline"></ion-icon>
       <ion-icon *ngIf="licences[key].active" item-left large name="chevron-up-outline"></ion-icon>
       <h2>{{ licences[key].TITLE }}</h2>
-      <ion-button size="small" fill="outline" (click)="openLink($event,licences[key].LINK)">Webseite</ion-button>
     </ion-item>
-
+    <ion-item>
+      <ion-button (click)="openLink($event,licences[key].LINK)" fill="outline"
+                  size="small">{{"PAGE_LICENCES_WEBSITE" | translate}}</ion-button>
+    </ion-item>
     <ion-card-content *ngIf="licences[key].active" style="border-top: 1px solid rgba(0, 0, 0, 0.3);padding-top: 10px;"
                       class="white-space-normal"
                       [innerHTML]="licences[key].DESCRIPTION">

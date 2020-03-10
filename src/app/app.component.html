@@ -36,9 +36,10 @@
               </ion-item>
               <!--Without $event canceling the menu would close when toggling -->
               <ion-item class="no-border" (click)="toggleAbout =!toggleAbout; $event.stopPropagation();">
+                <ion-icon class="menu-icon" item-left name="information-circle-outline"
+                          style="color:rgba(0, 0, 0, 0.54);"></ion-icon>
                 <div>
-                  <ion-icon class="menu-icon" item-left name="information-circle-outline"
-                            style="margin-right: 0px;color:rgba(0, 0, 0, 0.54);"></ion-icon>
+
                   {{"NAV_INFORMATION_TO_APP" | translate}}
                 </div>
                 <ion-icon class="sub-menu-icon" item-right *ngIf="toggleAbout == false"

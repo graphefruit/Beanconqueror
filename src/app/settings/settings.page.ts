@@ -1,6 +1,5 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
-import {ISettings} from '../../interfaces/settings/iSettings';
 import {IBean} from '../../interfaces/bean/iBean';
 import {IBrew} from '../../interfaces/brew/iBrew';
 import {AlertController, Platform} from '@ionic/angular';
@@ -20,6 +19,7 @@ import {File} from '@ionic-native/file/ngx';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {Brew} from '../../classes/brew/brew';
 import {Mill} from '../../classes/mill/mill';
+import {Settings} from '../../classes/settings/settings';
 import {UILog} from '../../services/uiLog';
 import {TranslateService} from '@ngx-translate/core';
 import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
@@ -33,13 +33,32 @@ import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
 })
 export class SettingsPage implements OnInit {
 
-  public settings: ISettings;
+  public settings: Settings;
 
   public BREW_VIEWS = BREW_VIEW_ENUM;
   public STARTUP_VIEW = STARTUP_VIEW_ENUM;
   public debounceFilter: Subject<string> = new Subject<string>();
 
   public settings_segment: string = 'general';
+
+  public brewOrders: Array<{ number: number, label: string, enum: string }> = [];
+
+  private static __cleanupImportBeanData(_data: Array<IBean>): any {
+    if (_data !== undefined && _data.length > 0) {
+      for (const bean of _data) {
+        bean.filePath = '';
+        bean.attachments = [];
+      }
+    }
+  }
+
+  private static __cleanupImportBrewData(_data: Array<IBrew>): void {
+    if (_data !== undefined && _data.length > 0) {
+      for (const brew of _data) {
+        brew.attachments = [];
+      }
+    }
+  }
 
   constructor(private readonly platform: Platform,
               public uiSettingsStorage: UISettingsStorage,
@@ -59,7 +78,6 @@ export class SettingsPage implements OnInit {
               private readonly uiLog: UILog,
               private readonly translate: TranslateService,
               private readonly changeDetectorRef: ChangeDetectorRef) {
-    debugger;
     this.__initializeSettings();
     this.debounceFilter
       .pipe(debounceTime(500), distinctUntilChanged())
@@ -68,22 +86,29 @@ export class SettingsPage implements OnInit {
       });
   }
 
-  private static __cleanupImportBeanData(_data: Array<IBean>): any {
-    if (_data !== undefined && _data.length > 0) {
-      for (const bean of _data) {
-        bean.filePath = '';
-        bean.attachments = [];
-      }
+  public reorder_brew(ev: any) {
+
+
+    // The `from` and `to` properties contain the index of the item
+    // when the drag started and ended, respectively
+    console.log('Dragged from index', ev.detail.from, 'to', ev.detail.to);
+    // console.log(this.brewOrders);
+    this.brewOrders.splice(ev.detail.to, 0, this.brewOrders.splice(ev.detail.from, 1)[0]);
+    let count: number = 0;
+    for (const order of this.brewOrders) {
+      order.number = count;
+      this.settings.brew_order[order.enum] = order.number;
+      count++;
     }
+    console.log(this.settings.brew_order);
+    // Finish the reorder and position the item in the DOM based on
+    // where the gesture ended. This method can also be called directly
+    // by the reorder group
+    ev.detail.complete();
+    this.saveSettings();
   }
 
-  private static __cleanupImportBrewData(_data: Array<IBrew>): void {
-    if (_data !== undefined && _data.length > 0) {
-      for (const brew of _data) {
-        brew.attachments = [];
-      }
-    }
-  }
+
 
   public ngOnInit() {
 
@@ -162,7 +187,7 @@ export class SettingsPage implements OnInit {
   public export(): void {
 
     this.uiStorage.export().then((_data) => {
-
+      console.log(_data);
       this.uiHelper.exportJSON('Beanconqueror.json', JSON.stringify(_data)).then(async (_fileEntry: FileEntry) => {
         if (this.platform.is('android')) {
           const alert =  await this.alertCtrl.create({
@@ -180,10 +205,29 @@ export class SettingsPage implements OnInit {
 
   }
 
-  private __initializeSettings(): void {
-    this.settings = this.uiSettingsStorage.getSettings();
-  }
+  private __initializeBrewOrders() {
+    this.brewOrders = [];
+    for (const key in this.settings.brew_order) {
+      if (this.settings.brew_order.hasOwnProperty(key)) {
+        this.brewOrders.push({
+          number: this.settings.brew_order[key],
+          label: this.settings.brew_order.getLabel(key),
+          enum: key,
+        });
+      }
+    }
+    this.brewOrders.sort((obj1, obj2) => {
+      if (obj1.number > obj2.number) {
+        return 1;
+      }
 
+      if (obj1.number < obj2.number) {
+        return -1;
+      }
+
+      return 0;
+    });
+  }
   /* tslint:disable */
   private __importDummyData(): void {
     this.uiLog.log('Import dummy data');
@@ -201,7 +245,7 @@ export class SettingsPage implements OnInit {
         'variety': '',
         'country': '',
         'aromatics': 'Nach Weihnachten',
-        'weight': '250',
+        'weight': 250,
         'finished': true,
         'cost': 0,
         'attachments': ['/beanconqueror_image1.png']
@@ -218,9 +262,9 @@ export class SettingsPage implements OnInit {
         'variety': '',
         'country': '',
         'aromatics': '',
-        'weight': '1',
+        'weight': 1,
         'finished': false,
-        'cost': '19',
+        'cost': 19,
         'attachments': ['/beanconqueror_image2.png']
       }, {
         'name': 'Weihnachts Kaffee',
@@ -235,7 +279,7 @@ export class SettingsPage implements OnInit {
         'variety': '',
         'country': 'Kolumbien (Arhuaco Tribe) + Peru (Kooperative Amoju)',
         'aromatics': 'Mandarine, getrocknete Feige, dunkle Schokolade ',
-        'weight': '250',
+        'weight': 250,
         'finished': false,
         'cost': 0,
         'attachments': ['/beanconqueror_image3.png']
@@ -246,48 +290,51 @@ export class SettingsPage implements OnInit {
         'method_of_preparation': 'd6ed9d9b-8228-44c6-afcb-9e982181796d',
         'mill': '83249ce6-1b57-484a-84f4-08d7b2470d4e',
         'mill_speed': 0,
+        'mill_timer': 0,
         'pressure_profile': '',
         'bean': '1373c76d-eb5a-43b4-9e75-c1ee4dd035b5',
         'brew_temperature_time': 0,
         'brew_temperature': 92,
         'brew_time': 25,
-        'brew_quantity': '0',
+        'brew_quantity': 0,
         'brew_quantity_type': 'GR',
         'note': '',
         'rating': 6,
         'coffee_type': '',
         'coffee_concentration': '',
-        'coffee_first_drip_time': '0',
-        'coffee_blooming_time': '0',
+        'coffee_first_drip_time': 0,
+        'coffee_blooming_time': 0,
         'attachments': [],
         'config': {'uuid': '340f5c9c-dde2-45bd-be69-bae19b5a6dad', 'unix_timestamp': 1577454602}
       }, {
         'grind_size': '1,5',
-        'grind_weight': '18.1',
+        'grind_weight': 18.1,
         'method_of_preparation': 'd6ed9d9b-8228-44c6-afcb-9e982181796d',
         'mill': '83249ce6-1b57-484a-84f4-08d7b2470d4e',
-        'mill_speed': '0',
+        'mill_speed': 0,
+        'mill_timer': 0,
         'pressure_profile': '',
         'bean': '1373c76d-eb5a-43b4-9e75-c1ee4dd035b5',
-        'brew_temperature_time': '0',
-        'brew_temperature': '92',
+        'brew_temperature_time': 0,
+        'brew_temperature': 92,
         'brew_time': 25,
-        'brew_quantity': '45.8',
+        'brew_quantity': 45.8,
         'brew_quantity_type': 'GR',
         'note': '',
         'rating': 6,
         'coffee_type': 'Cappuccino ',
         'coffee_concentration': '',
-        'coffee_first_drip_time': '5',
-        'coffee_blooming_time': '0',
+        'coffee_first_drip_time': 5,
+        'coffee_blooming_time': 0,
         'attachments': [],
         'config': {'uuid': '5b773f65-8cf3-4559-ac09-da8aea42bcdb', 'unix_timestamp': 1577528824}
       }, {
         'grind_size': '1,5',
-        'grind_weight': '12.9',
+        'grind_weight': 12.9,
         'method_of_preparation': '29415e5d-98bc-44a7-890c-5d104d0c5a48',
         'mill': '83249ce6-1b57-484a-84f4-08d7b2470d4e',
         'mill_speed': 0,
+        'mill_timer': 0,
         'pressure_profile': '',
         'bean': '1373c76d-eb5a-43b4-9e75-c1ee4dd035b5',
         'brew_temperature_time': 0,
@@ -300,42 +347,44 @@ export class SettingsPage implements OnInit {
         'coffee_type': 'Cappuccino ',
         'coffee_concentration': '',
         'coffee_first_drip_time': 5,
-        'coffee_blooming_time': '0',
+        'coffee_blooming_time': 0,
         'attachments': [],
         'config': {'uuid': '8132ee6f-6606-454e-8a70-a4466090b046', 'unix_timestamp': 1577529063}
       }, {
         'grind_size': '1,5',
-        'grind_weight': '17.9',
+        'grind_weight': 17.9,
         'method_of_preparation': 'd6ed9d9b-8228-44c6-afcb-9e982181796d',
         'mill': '83249ce6-1b57-484a-84f4-08d7b2470d4e',
         'mill_speed': 0,
+        'mill_timer': 0,
         'pressure_profile': '',
         'bean': '1373c76d-eb5a-43b4-9e75-c1ee4dd035b5',
         'brew_temperature_time': 0,
         'brew_temperature': 92,
         'brew_time': 25,
-        'brew_quantity': '49.9',
+        'brew_quantity': 49.9,
         'brew_quantity_type': 'GR',
         'note': 'Leichte Nougatnote, ähnlich wie bei der Rösttrommel in Erlangen selbst. ',
         'rating': 8,
         'coffee_type': 'Cappuccino ',
         'coffee_concentration': '',
         'coffee_first_drip_time': 5,
-        'coffee_blooming_time': '0',
+        'coffee_blooming_time': 0,
         'attachments': [],
         'config': {'uuid': 'c9decbf9-fb92-4fd1-bacb-b8e6730686b7', 'unix_timestamp': 1577547710}
       }, {
         'grind_size': '1,5',
-        'grind_weight': '16.5',
+        'grind_weight': 16.5,
         'method_of_preparation': 'd6ed9d9b-8228-44c6-afcb-9e982181796d',
         'mill': '83249ce6-1b57-484a-84f4-08d7b2470d4e',
         'mill_speed': 0,
+        'mill_timer': 0,
         'pressure_profile': '',
         'bean': 'f2f5e0b2-fffe-4570-9a07-ccaafedcf6f2',
         'brew_temperature_time': 0,
         'brew_temperature': 92,
         'brew_time': 25,
-        'brew_quantity': '82.5',
+        'brew_quantity': 82.5,
         'brew_quantity_type': 'GR',
         'note': '',
         'rating': 4,
@@ -347,16 +396,17 @@ export class SettingsPage implements OnInit {
         'config': {'uuid': 'cecb4c13-a9ca-4263-abea-0e71e7af06cd', 'unix_timestamp': 1577622205}
       }, {
         'grind_size': '1,5',
-        'grind_weight': '18.1',
+        'grind_weight': 18.1,
         'method_of_preparation': 'd6ed9d9b-8228-44c6-afcb-9e982181796d',
         'mill': '83249ce6-1b57-484a-84f4-08d7b2470d4e',
         'mill_speed': 0,
+        'mill_timer': 0,
         'pressure_profile': '',
         'bean': 'f2f5e0b2-fffe-4570-9a07-ccaafedcf6f2',
         'brew_temperature_time': 0,
-        'brew_temperature': '92',
+        'brew_temperature': 92,
         'brew_time': 20,
-        'brew_quantity': '53.1',
+        'brew_quantity': 53.1,
         'brew_quantity_type': 'GR',
         'note': '',
         'rating': 5,
@@ -368,16 +418,17 @@ export class SettingsPage implements OnInit {
         'config': {'uuid': 'ffa5a248-4fa3-4039-a7ef-9c7669de695f', 'unix_timestamp': 1577646966}
       }, {
         'grind_size': '1,75',
-        'grind_weight': '17.2',
+        'grind_weight': 17.2,
         'method_of_preparation': 'd6ed9d9b-8228-44c6-afcb-9e982181796d',
         'mill': '83249ce6-1b57-484a-84f4-08d7b2470d4e',
         'mill_speed': 0,
+        'mill_timer': 0,
         'pressure_profile': '',
         'bean': 'f2f5e0b2-fffe-4570-9a07-ccaafedcf6f2',
         'brew_temperature_time': 0,
         'brew_temperature': 92,
         'brew_time': 25,
-        'brew_quantity': '84.5',
+        'brew_quantity': 84.5,
         'brew_quantity_type': 'GR',
         'note': '',
         'rating': 5,
@@ -389,23 +440,24 @@ export class SettingsPage implements OnInit {
         'config': {'uuid': '74c7c631-633c-4034-8538-30162bebbd25', 'unix_timestamp': 1578137905}
       }, {
         'grind_size': '1,75',
-        'grind_weight': '11.8',
+        'grind_weight': 11.8,
         'method_of_preparation': '29415e5d-98bc-44a7-890c-5d104d0c5a48',
         'mill': '83249ce6-1b57-484a-84f4-08d7b2470d4e',
-        'mill_speed': '0',
+        'mill_speed': 0,
+        'mill_timer': 0,
         'pressure_profile': '',
         'bean': 'f2f5e0b2-fffe-4570-9a07-ccaafedcf6f2',
-        'brew_temperature_time': '0',
-        'brew_temperature': '92',
-        'brew_time': '25',
-        'brew_quantity': '40.1',
+        'brew_temperature_time': 0,
+        'brew_temperature': 92,
+        'brew_time': 25,
+        'brew_quantity': 40.1,
         'brew_quantity_type': 'GR',
         'note': 'Channeling ',
         'rating': 4,
         'coffee_type': 'Cappuccino ',
         'coffee_concentration': '',
-        'coffee_first_drip_time': '0',
-        'coffee_blooming_time': '0',
+        'coffee_first_drip_time': 0,
+        'coffee_blooming_time': 0,
         'attachments': [],
         'config': {'uuid': 'e3b1931e-cbfe-4b9c-9663-916bb2494804', 'unix_timestamp': 1578138240}
       }],
@@ -421,11 +473,13 @@ export class SettingsPage implements OnInit {
       }, {'name': 'Einfach - Std.', 'note': '', 'config': {'uuid': '29415e5d-98bc-44a7-890c-5d104d0c5a48', 'unix_timestamp': 1577528939}}],
       'SETTINGS': [{
         'brew_view': 0,
+        'startup_view': '0',
         'brew_temperature_time': false,
         'brew_time': true,
         'grind_size': true,
         'grind_weight': true,
         'mill': true,
+        'mill_timer': false,
         'method_of_preparation': true,
         'brew_quantity': true,
         'bean_type': true,
@@ -440,6 +494,7 @@ export class SettingsPage implements OnInit {
         'set_last_coffee_brew': true,
         'mill_speed': false,
         'pressure_profile': false,
+        'set_custom_brew_time': false,
         'config': {'uuid': '7dc9fdfc-6be1-4350-be8f-0f7a9a795d8c', 'unix_timestamp': 1577454369},
         'default_last_coffee_parameters': {
           'bean_type': true,
@@ -448,6 +503,7 @@ export class SettingsPage implements OnInit {
           'grind_size': true,
           'grind_weight': false,
           'mill': true,
+          'mill_timer': false,
           'method_of_preparation': true,
           'brew_quantity': false,
           'brew_temperature': true,
@@ -459,7 +515,30 @@ export class SettingsPage implements OnInit {
           'rating': false,
           'mill_speed': false,
           'pressure_profile': false
-        }
+        },
+        'brew_order': {
+          'grind_size': 1,
+          'grind_weight': 2,
+          'brew_temperature': 3,
+          'method_of_preparation': 4,
+          'bean_type': 0,
+          'mill': 5,
+          'mill_speed': 6,
+          'mill_timer': 7,
+          'pressure_profile': 8,
+          'brew_temperature_time': 9,
+          'brew_time': 10,
+          'coffee_blooming_time': 11,
+          'coffee_first_drip_time': 12,
+          'brew_quantity': 13,
+          'coffee_type': 14,
+          'coffee_concentration': 15,
+          'rating': 16,
+          'note': 17,
+          'set_custom_brew_time': 18,
+          'attachments': 19
+        },
+        'language': ''
       }]
     };
 
@@ -540,6 +619,11 @@ export class SettingsPage implements OnInit {
 
           });
     });
+  }
+
+  private __initializeSettings(): void {
+    this.settings = this.uiSettingsStorage.getSettings();
+    this.__initializeBrewOrders();
   }
 
   private async __reinitializeStorages (): Promise<any> {
