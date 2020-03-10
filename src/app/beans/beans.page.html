@@ -81,21 +81,22 @@
           <pre class="blockquote">{{bean.note}}</pre>
         </ion-card-content>
         <ion-row>
-          <ion-col>
+
+        </ion-row>
+        <ion-row>
+          <ion-col col-4>
             <ion-button (click)="repeatBean(bean)" color="dark" fill="clear" size="small">
               <ion-icon name="repeat-outline" slot="start"></ion-icon>
               <span>{{"REPEAT" | translate}}</span>
             </ion-button>
           </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col>
+          <ion-col col-4>
             <ion-button size="small" fill="clear" color="dark" (click)="editBean(bean)">
               <ion-icon name="create-outline" slot="start"></ion-icon>
               <span>{{"EDIT" | translate}}</span>
             </ion-button>
           </ion-col>
-          <ion-col>
+          <ion-col col-4>
             <ion-button size="small" fill="clear" color="dark" (click)="deleteBean(bean)">
               <ion-icon name="trash-outline" slot="start"></ion-icon>
               <span>{{"DELETE" | translate}}</span>
@@ -156,21 +157,19 @@
           <pre class="blockquote">{{bean.note}}</pre>
         </ion-card-content>
         <ion-row>
-          <ion-col>
+          <ion-col col-4>
             <ion-button (click)="repeatBean(bean)" color="dark" fill="clear" size="small">
               <ion-icon name="repeat-outline" slot="start"></ion-icon>
               <span>{{"REPEAT" | translate}}</span>
             </ion-button>
           </ion-col>
-        </ion-row>
-        <ion-row >
-          <ion-col>
+          <ion-col col-4>
             <ion-button size="small" fill="clear" color="dark" (click)="editBean(bean)">
               <ion-icon name="create-outline" slot="start"></ion-icon>
               <span>{{"EDIT" | translate}}</span>
             </ion-button>
           </ion-col>
-          <ion-col>
+          <ion-col col-4>
             <ion-button size="small" fill="clear" color="dark" (click)="deleteBean(bean)">
               <ion-icon name="trash-outline" slot="start"></ion-icon>
               <span>{{"DELETE" | translate}}</span>

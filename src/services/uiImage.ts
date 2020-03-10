@@ -8,6 +8,7 @@ import {ImagePicker} from '@ionic-native/image-picker/ngx';
 import {AlertController, Platform} from '@ionic/angular';
 import {UIHelper} from './uiHelper';
 import {UIFileHelper} from './uiFileHelper';
+import {TranslateService} from '@ngx-translate/core';
 
 
 @Injectable({
@@ -20,7 +21,8 @@ export class UIImage {
                private readonly platform: Platform,
                private readonly androidPermissions: AndroidPermissions,
                private readonly uiHelper: UIHelper,
-               private readonly uiFileHelper: UIFileHelper) {
+               private readonly uiFileHelper: UIFileHelper,
+               private readonly translate: TranslateService) {
   }
 
   public async takePhoto (): Promise<any> {
@@ -88,17 +90,17 @@ export class UIImage {
   public async showOptionChooser (): Promise<any> {
     const promise = new Promise(async (resolve, reject) => {
       const alert = await this.alertController.create({
-        header: 'Auswählen',
-        subHeader: 'Foto aufnehmen oder aus Bibliothek auswählen',
+        header: this.translate.instant('CHOOSE'),
+        subHeader: this.translate.instant('CHOOSE_PHOTO_OR_LIBRARY'),
         buttons: [
           {
-            text: 'Aufnehmen',
+            text: this.translate.instant('RECORD'),
             handler: () => {
               resolve('TAKE');
             }
           },
           {
-             text: 'Auswählen',
+            text: this.translate.instant('CHOOSE'),
              handler: () => {
                resolve('CHOOSE');
              }

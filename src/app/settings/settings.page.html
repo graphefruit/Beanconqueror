@@ -273,7 +273,14 @@
       </ion-list>
     </div>
     <div *ngSwitchCase="'order'">
-
+      <ion-card>
+        <ion-card-header class="card-header">
+          {{"PAGE_SETTINGS_BREW_SORT_TITLE"  | translate}}
+        </ion-card-header>
+        <ion-card-content class="ion-margin-top">
+          <p>{{"PAGE_SETTINGS_BREW_SORT_DESCRIPTION" | translate}}</p>
+        </ion-card-content>
+      </ion-card>
       <ion-reorder-group (ionItemReorder)="reorder_brew($event)" disabled="false">
         <ion-item *ngFor="let index of brewOrders">
           <ion-label>
