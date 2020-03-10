@@ -14,6 +14,8 @@
     <ion-card *ngFor="let key of credits | keys">
       <ion-item>
         <h2>{{ credits[key].TITLE }}</h2>
+      </ion-item>
+      <ion-item>
         <ion-button fill="outline" size="small" (click)="openLink($event,credits[key].LINK)">Credit-Page</ion-button>
       </ion-item>
       <ion-card-content style="border-top: 1px solid rgba(0, 0, 0, 0.3);padding-top: 10px;"

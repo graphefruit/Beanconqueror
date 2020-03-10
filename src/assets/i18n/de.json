@@ -19,7 +19,7 @@
   "POPOVER_BREWS_OPTION_EXPORT": "Export",
   "POPOVER_BREWS_OPTION_TABLE": "Tabelle",
   "POPOVER_BREWS_OPTION_RESET_FILTER": "Filter zurücksetzen",
-  "POPOVER_BREWS_OPTION_POST": "Posten",
+  "POPOVER_BREWS_OPTION_POST": "Textexport",
   "POPOVER_BREWS_OPTION_REPEAT": "Wiederholen",
   "POPOVER_BREWS_OPTION_DETAIL": "Details",
   "POPOVER_BREWS_OPTION_EDIT": "Editieren",
@@ -36,6 +36,7 @@
   "PAGE_HOME_LAST_BREW": "Letzter Bezug",
   "PAGE_HOME_DIFFERENT_PREPARATION_METHODS": "Unterschiedliche Zubereitungsmethoden",
   "PAGE_HOME_DIFFERENT_MILLS": "Unterschiedliche Mühlen",
+  "PAGE_HOME_SUPPORTER": "Unterstützer",
   "PAGE_BEANS_LIST_OBTAINABLE": "Beziehbar",
   "PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS": "Du hast leider keine frischen Bohnen mehr!",
   "PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS": "Du hast keine aufgebrauchten Bohnen!",
@@ -56,6 +57,8 @@
   "PAGE_SETTINGS_DISPLAY_SINGLE_PAGE": "Eine Seite",
   "PAGE_SETTINGS_DISPLAY_PAGING": "Paging",
   "PAGE_SETTINGS_STARTUP_VIEW": "Startansicht",
+  "PAGE_SETTINGS_BREW_SORT_TITLE": "Brühsortierung",
+  "PAGE_SETTINGS_BREW_SORT_DESCRIPTION": "Lege deinen eigenen Brühworkflow fest. Hierfür ziehe die Felder in deine gewünschte Reihenfolge.",
   "PAGE_STATISTICS_FOR_NERDS": "Statistiken für Nerds",
   "PAGE_STATISTICS_MILL_FLEET": "Mühlenfuhrpark",
   "PAGE_STATISTICS_DIFFERENT_PREPARATION_METHOD": "Zubereitungsmethoden",
@@ -66,6 +69,7 @@
   "PAGE_BREW_TEXT_INFORMATION_FROM_ROASTER": "Angaben vom Röster",
   "PAGE_ABOUT_NO_VERSION_AVAILABLE": "Keine Version verfügbar",
   "PAGE_ABOUT_APP_VERSION": "App Version",
+  "PAGE_LICENCES_WEBSITE": "Webseite",
   "BEAN_DATA_ROAST_NAME": "Röstgrad",
   "BEAN_DATA_CUSTOM_ROAST_NAME": "Eigener Röstgrad",
   "BEAN_DATA_ROASTING_DATE": "Röstdatum",
@@ -156,5 +160,8 @@
   "ERROR_OCCURED": "Fehler aufgetreten",
   "CSV_FILE_NOT_DOWNLOADED": "CSV-Datei kann leider nicht heruntergeladen werden!",
   "CSV_FILE_DOWNLOADED_SUCCESSFULLY": "CSV-Datei '{{fileName}}' wurde erfolgreich in den Download-Ordner heruntergeladen!",
-  "ADD_BREW": "Brühung hinzufügen"
+  "ADD_BREW": "Brühung hinzufügen",
+  "CHOOSE": "Auswählen",
+  "CHOOSE_PHOTO_OR_LIBRARY": "Foto aufnehmen oder aus Bibliothek auswählen",
+  "RECORD": "Aufnehmen"
 }

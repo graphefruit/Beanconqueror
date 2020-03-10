@@ -4,6 +4,7 @@ import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
 import {IConfig} from '../objectConfig/iObjectConfig';
 import {IDefaultLastCoffeeParameters} from './iDefaultLastCoffeeParameters';
 import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
+import {IBrewOrder} from './iBrewOrder';
 
 export interface ISettings {
  // Properties
@@ -32,6 +33,7 @@ export interface ISettings {
   set_custom_brew_time: boolean;
   language: string;
   default_last_coffee_parameters: IDefaultLastCoffeeParameters;
+  brew_order: IBrewOrder;
 
   config: IConfig;
 }
