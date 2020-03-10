@@ -17,11 +17,13 @@
   </ion-item>
   <ion-item>
     <ion-label stacked>{{"BREW_DATA_GRIND_WEIGHT" | translate}}</ion-label>
-    <ion-input remove-empty-number prevent-characters [(ngModel)]="data.grind_weight" type="text"></ion-input>
+    <ion-input [(ngModel)]="data.grind_weight" inputmode="decimal" prevent-characters remove-empty-number
+               type="text"></ion-input>
   </ion-item>
   <ion-item>
     <ion-label stacked>{{"BREW_DATA_BREW_TEMPERATURE" | translate}}</ion-label>
-    <ion-input remove-empty-number prevent-characters [(ngModel)]="data.brew_temperature" type="text"></ion-input>
+    <ion-input [(ngModel)]="data.brew_temperature" inputmode="decimal" prevent-characters remove-empty-number
+               type="text"></ion-input>
   </ion-item>
   <ion-item>
     <ion-label>{{"BREW_DATA_PREPARATION_METHOD" | translate}}</ion-label>
@@ -34,7 +36,7 @@
     <ion-label>{{"BREW_DATA_BEAN_TYPE" | translate}}</ion-label>
     <ion-select [(ngModel)]="data.bean" [interfaceOptions]="customSelectSheetOptions">
       <ion-select-option *ngFor="let bean of beans" value="{{bean.config.uuid}}">
-        {{bean.roaster}} || ionic s
+        {{bean.roaster}} ||
         {{bean.name}}  / {{data.getCalculatedBeanAge()}} Tage ({{bean.roastingDate | formatDate:["DD.MM.YYYY"]}})
       </ion-select-option>
     </ion-select>
@@ -48,11 +50,13 @@
   </ion-item>
   <ion-item>
     <ion-label stacked>{{"BREW_DATA_MILL_SPEED" | translate}}</ion-label>
-    <ion-input remove-empty-number prevent-characters [(ngModel)]="data.mill_speed"  type="text"></ion-input>
+    <ion-input [(ngModel)]="data.mill_speed" inputmode="decimal" prevent-characters remove-empty-number
+               type="text"></ion-input>
   </ion-item>
   <ion-item>
     <ion-label stacked>{{"BREW_DATA_MILL_TIMER" | translate}}</ion-label>
-    <ion-input [(ngModel)]="data.mill_timer" prevent-characters remove-empty-number type="text"></ion-input>
+    <ion-input [(ngModel)]="data.mill_timer" inputmode="decimal" prevent-characters remove-empty-number
+               type="text"></ion-input>
   </ion-item>
   <ion-item>
     <ion-label stacked>{{"BREW_DATA_PRESSURE_PROFILE" | translate}}</ion-label>
@@ -60,11 +64,13 @@
   </ion-item>
   <ion-item>
     <ion-label stacked>{{'BREW_DATA_TEMPERATURE_TIME' | translate}} / {{'BREW_DATA_SURF_TIME' | translate}}</ion-label>
-    <ion-input remove-empty-number prevent-characters [(ngModel)]="data.brew_temperature_time" type="text"></ion-input>
+    <ion-input [(ngModel)]="data.brew_temperature_time" inputmode="decimal" prevent-characters remove-empty-number
+               type="text"></ion-input>
   </ion-item>
   <ion-item>
     <ion-label stacked>{{'BREW_DATA_TIME' | translate}}</ion-label>
-    <ion-input remove-empty-number prevent-characters [(ngModel)]="data.brew_time" type="text"></ion-input>
+    <ion-input [(ngModel)]="data.brew_time" inputmode="decimal" prevent-characters remove-empty-number
+               type="text"></ion-input>
   </ion-item>
   <ion-item disabled="true" lines="full">
     <ion-label>
@@ -73,17 +79,20 @@
   </ion-item>
   <ion-item>
     <ion-label stacked>{{"BREW_DATA_COFFEE_BLOOMING_TIME" | translate}}</ion-label>
-    <ion-input remove-empty-number prevent-characters [(ngModel)]="data.coffee_blooming_time" type="text"></ion-input>
+    <ion-input [(ngModel)]="data.coffee_blooming_time" inputmode="decimal" prevent-characters remove-empty-number
+               type="text"></ion-input>
   </ion-item>
   <ion-item>
     <ion-label stacked>{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}</ion-label>
-    <ion-input remove-empty-number prevent-characters [(ngModel)]="data.coffee_first_drip_time" type="text"></ion-input>
+    <ion-input [(ngModel)]="data.coffee_first_drip_time" inputmode="decimal" prevent-characters remove-empty-number
+               type="text"></ion-input>
   </ion-item>
   <ion-row>
     <ion-col col-8 col-sm-10>
       <ion-item>
         <ion-label stacked>{{"BREW_DATA_BREW_QUANTITY" | translate}}</ion-label>
-        <ion-input remove-empty-number prevent-characters [(ngModel)]="data.brew_quantity" type="text"></ion-input>
+        <ion-input [(ngModel)]="data.brew_quantity" inputmode="decimal" prevent-characters remove-empty-number
+                   type="text"></ion-input>
       </ion-item>
     </ion-col>
     <ion-col col-4 col-sm-2 align-self-end>

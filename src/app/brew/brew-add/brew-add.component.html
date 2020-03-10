@@ -17,12 +17,14 @@
     </ion-item>
     <ion-item *ngIf="settings.grind_weight === true" [style.order]="settings.brew_order.grind_size">
       <ion-label floating>{{"BREW_DATA_GRIND_WEIGHT" | translate}}</ion-label>
-      <ion-input remove-empty-number prevent-characters [(ngModel)]="data.grind_weight" type="text"></ion-input>
+      <ion-input [(ngModel)]="data.grind_weight" inputmode="decimal" prevent-characters remove-empty-number
+                 type="text"></ion-input>
     </ion-item>
 
     <ion-item *ngIf="settings.brew_temperature === true" [style.order]="settings.brew_order.brew_temperature">
       <ion-label floating>{{"BREW_DATA_BREW_TEMPERATURE" | translate}}</ion-label>
-      <ion-input remove-empty-number prevent-characters [(ngModel)]="data.brew_temperature"  type="text"></ion-input>
+      <ion-input [(ngModel)]="data.brew_temperature" inputmode="decimal" prevent-characters remove-empty-number
+                 type="text"></ion-input>
     </ion-item>
 
 
@@ -51,11 +53,13 @@
     </ion-item>
     <ion-item *ngIf="settings.mill_speed === true" [style.order]="settings.brew_order.mill_speed">
       <ion-label floating>{{"BREW_DATA_MILL_SPEED" | translate}}</ion-label>
-      <ion-input remove-empty-number prevent-characters [(ngModel)]="data.mill_speed"  type="text"></ion-input>
+      <ion-input [(ngModel)]="data.mill_speed" inputmode="decimal" prevent-characters remove-empty-number
+                 type="text"></ion-input>
     </ion-item>
     <ion-item *ngIf="settings.mill_timer === true" [style.order]="settings.brew_order.mill_timer">
       <ion-label floating>{{"BREW_DATA_MILL_TIMER" | translate}}</ion-label>
-      <ion-input [(ngModel)]="data.mill_timer" prevent-characters remove-empty-number type="text"></ion-input>
+      <ion-input [(ngModel)]="data.mill_timer" inputmode="decimal" prevent-characters remove-empty-number
+                 type="text"></ion-input>
     </ion-item>
     <ion-item *ngIf="settings.pressure_profile === true" [style.order]="settings.brew_order.pressure_profile">
       <ion-label floating>{{"BREW_DATA_PRESSURE_PROFILE" | translate}}</ion-label>
@@ -85,7 +89,8 @@
 
     <ion-item *ngIf="settings.coffee_blooming_time === true" [style.order]="settings.brew_order.coffee_blooming_time">
       <ion-label stacked>{{"BREW_DATA_COFFEE_BLOOMING_TIME" | translate}}</ion-label>
-      <ion-input remove-empty-number prevent-characters [(ngModel)]="data.coffee_blooming_time" type="text"></ion-input>
+      <ion-input [(ngModel)]="data.coffee_blooming_time" inputmode="decimal" prevent-characters remove-empty-number
+                 type="text"></ion-input>
       <!--<ion-button (click)="setCoffeeBloomingTime()" fill="outline" size="default" slot="end">
         <ion-icon name="time"></ion-icon>
       </ion-button>-->
@@ -93,7 +98,8 @@
     <ion-item *ngIf="settings.coffee_first_drip_time === true"
               [style.order]="settings.brew_order.coffee_first_drip_time">
       <ion-label stacked>{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}</ion-label>
-      <ion-input remove-empty-number prevent-characters [(ngModel)]="data.coffee_first_drip_time" type="text"></ion-input>
+      <ion-input [(ngModel)]="data.coffee_first_drip_time" inputmode="decimal" prevent-characters remove-empty-number
+                 type="text"></ion-input>
       <!--<ion-button (click)="setCoffeeDripTime()" fill="outline" size="default" slot="end">
         <ion-icon name="time"></ion-icon>
       </ion-button>-->
@@ -102,7 +108,8 @@
       <ion-col class="ion-no-padding" col-8 col-sm-10>
         <ion-item>
           <ion-label floating>{{"BREW_DATA_BREW_QUANTITY" | translate}}</ion-label>
-          <ion-input remove-empty-number prevent-characters [(ngModel)]="data.brew_quantity" type="text"></ion-input>
+          <ion-input [(ngModel)]="data.brew_quantity" inputmode="decimal" prevent-characters remove-empty-number
+                     type="text"></ion-input>
         </ion-item>
       </ion-col>
       <ion-col class="ion-no-padding ion-align-self-end" col-4 col-sm-2>

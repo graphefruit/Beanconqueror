@@ -48,6 +48,11 @@ export class BrewOrder implements IBrewOrder {
     this.attachments = 20;
   }
 
+  /**
+   * Get the translation label for the specific enum key
+   * @param _key Specific enum key
+   * @return The translation label
+   */
   public getLabel(_key: string): string {
     switch (_key) {
       case 'brew_temperature_time':
