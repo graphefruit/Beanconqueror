@@ -1,3 +1,12 @@
+3.4.
+- Added custom user workflow
+- UI changes
+- Decimal input added
+
+Issues fixed:
+- Missing translation labens
+
+
 3.3.
 - Fixed missing languages
 - Upgraded to Ionic 5 Framework
