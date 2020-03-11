@@ -59,7 +59,7 @@ import {TranslateModule} from '@ngx-translate/core';
 import {Globalization} from '@ionic-native/globalization/ngx';
 import {AppVersion} from '@ionic-native/app-version/ngx';
 import {EnumToArrayPipe} from '../../pipes/enumToArray';
-
+import {FirebaseX} from '@ionic-native/firebase-x/ngx';
 
 @NgModule({
   declarations: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, AboutComponent,
@@ -104,7 +104,7 @@ import {EnumToArrayPipe} from '../../pipes/enumToArray';
     Keyboard,
     ThreeDeeTouch,
     Camera, ImagePicker, AndroidPermissions,
-    InAppBrowser, File, Globalization
+    InAppBrowser, File, Globalization, FirebaseX
   ],
 
   exports: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, AboutComponent,

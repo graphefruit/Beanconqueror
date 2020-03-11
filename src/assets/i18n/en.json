@@ -163,5 +163,7 @@
   "ADD_BREW": "Add brew",
   "CHOOSE": "Choose",
   "CHOOSE_PHOTO_OR_LIBRARY": "Record photo or choose from photogallery.",
-  "RECORD": "Record"
+  "RECORD": "Record",
+  "ALLOW_ANALYTICS_TITLE": "Activate analytics?",
+  "ALLOW_ANALYTICS_DESCRIPTION": "With your agreement I'd like to retrieve analytic information. No personal information will be saved, promise."
 }

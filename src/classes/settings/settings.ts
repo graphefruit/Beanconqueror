@@ -37,6 +37,7 @@ export class Settings implements ISettings {
   public brew_order: BrewOrder;
   public config: Config;
   public language: string;
+  public analytics: boolean;
 
   constructor() {
     this.brew_view = BREW_VIEW_ENUM.SINGLE_PAGE;
@@ -67,6 +68,7 @@ export class Settings implements ISettings {
     this.default_last_coffee_parameters = new DefaultLastCoffeeParameters();
     this.brew_order = new BrewOrder();
     this.language = '';
+    this.analytics = undefined;
 
   }
 
