@@ -76,6 +76,11 @@
         <ion-select-option value="{{STARTUP_VIEW.ADD_BREW}}">{{"ADD_BREW" | translate}}</ion-select-option>
       </ion-select>
     </ion-item>
+    <ion-item>
+      <ion-label>{{"PAGE_SETTINGS_ANALYTICS_INFORMATION" | translate}}</ion-label>
+      <ion-checkbox (ionChange)="checkAnalytics()" (ngModelChange)="saveSettings();"
+                    [(ngModel)]="settings.analytics"></ion-checkbox>
+    </ion-item>
   </ion-list>
     </div>
     <div *ngSwitchCase="'visible_parameters'">

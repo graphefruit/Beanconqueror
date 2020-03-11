@@ -49,7 +49,6 @@ export class UIAlert {
 
     return promise;
   }
-
   public async showConfirm(_message: string, _title?: string, _translate?: boolean): Promise<any> {
     if (_translate === true) {
       _message = this.translate.instant(_message);
@@ -59,10 +58,11 @@ export class UIAlert {
       }
     }
 
-    const promise = new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const alert = await this.alertController.create({
         header: _title,
         subHeader: _message,
+        backdropDismiss: false,
         buttons: [
           {
             text: this.translate.instant('NO'),
@@ -81,8 +81,6 @@ export class UIAlert {
       });
       await alert.present();
     });
-
-    return promise;
   }
 
 }

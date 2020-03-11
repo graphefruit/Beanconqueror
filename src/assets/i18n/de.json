@@ -163,5 +163,7 @@
   "ADD_BREW": "Brühung hinzufügen",
   "CHOOSE": "Auswählen",
   "CHOOSE_PHOTO_OR_LIBRARY": "Foto aufnehmen oder aus Bibliothek auswählen",
-  "RECORD": "Aufnehmen"
+  "RECORD": "Aufnehmen",
+  "ALLOW_ANALYTICS_TITLE": "Analytics aktivieren?",
+  "ALLOW_ANALYTICS_DESCRIPTION": "Mit deiner Zustimmung möchte ich die App noch besser machen, erlaubst du mir Analytische Informationen zu erheben? Es werden keine Personalisierten Daten o.ä. aufgenommen - Versprochen."
 }

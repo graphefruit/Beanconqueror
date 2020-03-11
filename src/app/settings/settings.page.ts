@@ -25,6 +25,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
+import {UIAnalytics} from '../../services/uiAnalytics';
 
 @Component({
   selector: 'settings',
@@ -37,7 +38,7 @@ export class SettingsPage implements OnInit {
 
   public BREW_VIEWS = BREW_VIEW_ENUM;
   public STARTUP_VIEW = STARTUP_VIEW_ENUM;
-  public debounceFilter: Subject<string> = new Subject<string>();
+  public debounceLanguageFilter: Subject<string> = new Subject<string>();
 
   public settings_segment: string = 'general';
 
@@ -77,9 +78,10 @@ export class SettingsPage implements OnInit {
               private readonly socialSharing: SocialSharing,
               private readonly uiLog: UILog,
               private readonly translate: TranslateService,
-              private readonly changeDetectorRef: ChangeDetectorRef) {
+              private readonly changeDetectorRef: ChangeDetectorRef,
+              private readonly uiAnalytics: UIAnalytics) {
     this.__initializeSettings();
-    this.debounceFilter
+    this.debounceLanguageFilter
       .pipe(debounceTime(500), distinctUntilChanged())
       .subscribe(() => {
         this.setLanguage();
@@ -115,17 +117,20 @@ export class SettingsPage implements OnInit {
   }
 
   public saveSettings(): void {
-    setTimeout(() => {
-      console.log(this.settings);
-    }, 1000);
-
     this.changeDetectorRef.detectChanges();
     this.uiSettingsStorage.saveSettings(this.settings);
   }
 
-  public languageChanged(_query): void {
+  public checkAnalytics(): void {
+    if (this.settings.analytics) {
+      this.uiAnalytics.enableTracking();
+    } else {
+      this.uiAnalytics.disableTracking();
+    }
+  }
 
-    this.debounceFilter.next(_query);
+  public languageChanged(_query): void {
+    this.debounceLanguageFilter.next(_query);
   }
 
   public setLanguage(): void {

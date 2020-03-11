@@ -17,6 +17,7 @@ import {IBean} from '../../../interfaces/bean/iBean';
 import * as moment from 'moment';
 import {Mill} from '../../../classes/mill/mill';
 import {Bean} from '../../../classes/bean/bean';
+import {UIAnalytics} from '../../../services/uiAnalytics';
 
 @Component({
   selector: 'brew-add',
@@ -62,7 +63,8 @@ export class BrewAddComponent implements OnInit {
                private readonly uiImage: UIImage,
                private readonly uiSettingsStorage: UISettingsStorage,
                public uiHelper: UIHelper,
-               private readonly uiMillStorage: UIMillStorage) {
+               private readonly uiMillStorage: UIMillStorage,
+               private readonly uiAnalytics: UIAnalytics) {
     // Initialize to standard in drop down
     //
 
@@ -86,6 +88,7 @@ export class BrewAddComponent implements OnInit {
 
 
   public ionViewDidEnter(): void {
+    this.uiAnalytics.trackEvent('BREW', 'OPEN');
     if (this.brew_template) {
       this.__loadBrew(this.brew_template);
     } else {
