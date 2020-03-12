@@ -15,7 +15,7 @@
       <ion-label floating>{{"BREW_DATA_GRIND_SIZE" | translate}}</ion-label>
       <ion-input type="text" [(ngModel)]="data.grind_size"></ion-input>
     </ion-item>
-    <ion-item *ngIf="settings.grind_weight === true" [style.order]="settings.brew_order.grind_size">
+    <ion-item *ngIf="settings.grind_weight === true" [style.order]="settings.brew_order.grind_weight">
       <ion-label floating>{{"BREW_DATA_GRIND_WEIGHT" | translate}}</ion-label>
       <ion-input [(ngModel)]="data.grind_weight" inputmode="decimal" prevent-characters remove-empty-number
                  type="text"></ion-input>
