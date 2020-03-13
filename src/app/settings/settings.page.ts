@@ -90,10 +90,10 @@ export class SettingsPage implements OnInit {
 
   public reorder_brew(ev: any) {
 
-
+    this.uiAnalytics.trackEvent('SETTINGS', 'REORDER_BREW');
     // The `from` and `to` properties contain the index of the item
     // when the drag started and ended, respectively
-    console.log('Dragged from index', ev.detail.from, 'to', ev.detail.to);
+    // console.log('Dragged from index', ev.detail.from, 'to', ev.detail.to);
     // console.log(this.brewOrders);
     this.brewOrders.splice(ev.detail.to, 0, this.brewOrders.splice(ev.detail.from, 1)[0]);
     let count: number = 0;
@@ -102,7 +102,7 @@ export class SettingsPage implements OnInit {
       this.settings.brew_order[order.enum] = order.number;
       count++;
     }
-    console.log(this.settings.brew_order);
+    // console.log(this.settings.brew_order);
     // Finish the reorder and position the item in the DOM based on
     // where the gesture ended. This method can also be called directly
     // by the reorder group
@@ -123,8 +123,11 @@ export class SettingsPage implements OnInit {
 
   public checkAnalytics(): void {
     if (this.settings.analytics) {
+      this.uiAnalytics.trackEvent('SETTINGS', 'TRACKING_ENABLE');
       this.uiAnalytics.enableTracking();
     } else {
+      this.uiAnalytics.trackEvent('SETTINGS', 'TRACKING_DISABLE');
+      // Last one here so, but we need to know, which users don't want any tracking.
       this.uiAnalytics.disableTracking();
     }
   }
@@ -136,11 +139,13 @@ export class SettingsPage implements OnInit {
   public setLanguage(): void {
     this.translate.setDefaultLang(this.settings.language);
     this.translate.use(this.settings.language);
+    this.uiAnalytics.trackEvent('SETTINGS', 'SET_LANGUAGE - ' + this.settings.language);
     this.uiSettingsStorage.saveSettings(this.settings);
   }
 
   public import (): void {
     if (this.platform.is('cordova')) {
+      this.uiAnalytics.trackEvent('SETTINGS', 'IMPORT');
       this.uiLog.log('Import real data');
       if (this.platform.is('android')) {
         this.fileChooser.open()
@@ -191,9 +196,8 @@ export class SettingsPage implements OnInit {
 
 
   public export(): void {
-
+    this.uiAnalytics.trackEvent('SETTINGS', 'EXPORT');
     this.uiStorage.export().then((_data) => {
-      console.log(_data);
       this.uiHelper.exportJSON('Beanconqueror.json', JSON.stringify(_data)).then(async (_fileEntry: FileEntry) => {
         if (this.platform.is('android')) {
           const alert =  await this.alertCtrl.create({
