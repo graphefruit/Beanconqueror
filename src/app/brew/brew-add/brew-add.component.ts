@@ -88,7 +88,7 @@ export class BrewAddComponent implements OnInit {
 
 
   public ionViewDidEnter(): void {
-    this.uiAnalytics.trackEvent('BREW', 'OPEN');
+    this.uiAnalytics.trackEvent('BREW', 'ADD');
     if (this.brew_template) {
       this.__loadBrew(this.brew_template);
     } else {

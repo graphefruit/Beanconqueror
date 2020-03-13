@@ -13,6 +13,9 @@ import {UIImage} from '../../../services/uiImage';
 import {Brew} from '../../../classes/brew/brew';
 import {IBean} from '../../../interfaces/bean/iBean';
 import * as moment from 'moment';
+import {UIAnalytics} from '../../../services/uiAnalytics';
+import {ISettings} from '../../../interfaces/settings/iSettings';
+import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'brew-edit',
@@ -29,7 +32,7 @@ export class BrewEditComponent implements OnInit {
   public method_of_preparations: Array<IPreparation> = [];
   public beans: Array<IBean> = [];
   public mills: Array<IMill> = [];
-
+  public settings: ISettings;
   public customCreationDate: string = '';
 
   public customSelectSheetOptions: any = {
@@ -43,8 +46,11 @@ export class BrewEditComponent implements OnInit {
                private readonly uiBrewStorage: UIBrewStorage,
                public uiHelper: UIHelper,
                private readonly uiImage: UIImage,
-               private readonly uiMillStorage: UIMillStorage) {
+               private readonly uiMillStorage: UIMillStorage,
+               private readonly uiAnalytics: UIAnalytics,
+               private readonly uiSettingsStorage: UISettingsStorage) {
 
+    this.settings = this.uiSettingsStorage.getSettings();
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
     const brew: IBrew = this.uiHelper.copyData(this.navParams.get('brew'));
 
@@ -57,7 +63,8 @@ export class BrewEditComponent implements OnInit {
         .sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  public ionViewWillEnter() {
+  public ionViewDidEnter(): void {
+    this.uiAnalytics.trackEvent('BREW', 'EDIT');
 
     this.customCreationDate = moment.unix(this.data.config.unix_timestamp).toISOString();
     console.log(this.customCreationDate);

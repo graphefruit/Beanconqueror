@@ -4,7 +4,7 @@ import {Preparation} from '../../../classes/preparation/preparation';
 import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {UIHelper} from '../../../services/uiHelper';
-import {IBean} from '../../../interfaces/bean/iBean';
+import {UIAnalytics} from '../../../services/uiAnalytics';
 
 @Component({
   selector: 'preparation-edit',
@@ -19,11 +19,13 @@ export class PreparationEditComponent implements OnInit {
   constructor (private readonly navParams: NavParams,
                private readonly modalController: ModalController,
                private readonly uiPreparationStorage: UIPreparationStorage,
-               private readonly uiHelper: UIHelper) {
+               private readonly uiHelper: UIHelper,
+               private readonly uiAnalytics: UIAnalytics) {
 
   }
 
   public ionViewWillEnter(): void {
+    this.uiAnalytics.trackEvent('PREPARATION', 'EDIT');
 
     if (this.preparation !== undefined) {
       this.data = this.uiHelper.copyData(this.preparation);

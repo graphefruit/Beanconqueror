@@ -71,7 +71,7 @@
         <ion-list-header *ngIf="(brewView.brews).length > 0" class="brews-header">
           <ion-label>{{brewView.title}}</ion-label>
         </ion-list-header>
-        <ion-card *ngFor="let brew of brewView.brews">
+        <ion-card *ngFor="let brew of brewView.brews" class="dynamic-padding">
           <ion-card-header>
             <ion-row class="center-col">
               <ion-col *ngIf="settings.bean_type === true" size="10">
@@ -155,7 +155,7 @@
         <ion-list-header *ngIf="(brewView.brews | searchBrews:query).length > 0" class="brews-header">
           <ion-label>{{brewView.title}}</ion-label>
         </ion-list-header>
-        <ion-card *ngFor="let brew of brewView.brews | searchBrews:query">
+        <ion-card *ngFor="let brew of brewView.brews | searchBrews:query" class="dynamic-padding">
           <ion-card-header>
             <ion-row>
               <ion-col *ngIf="settings.bean_type === true" class="ion-align-self-center" size="10">

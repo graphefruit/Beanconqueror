@@ -4,6 +4,7 @@ import {UIMillStorage} from '../../../services/uiMillStorage';
 import {Mill} from '../../../classes/mill/mill';
 import {UIHelper} from '../../../services/uiHelper';
 import {IMill} from '../../../interfaces/mill/iMill';
+import {UIAnalytics} from '../../../services/uiAnalytics';
 
 @Component({
   selector: 'mill-edit',
@@ -19,12 +20,13 @@ export class MillEditComponent implements OnInit {
   constructor (private readonly navParams: NavParams,
                private  readonly modalController: ModalController,
                private readonly uiMillStorage: UIMillStorage,
-               private readonly uiHelper: UIHelper) {
+               private readonly uiHelper: UIHelper,
+               private readonly uiAnalytics: UIAnalytics) {
 
   }
 
   public ionViewWillEnter(): void {
-
+    this.uiAnalytics.trackEvent('MILL', 'EDIT');
     this.data = this.uiHelper.copyData(this.mill);
   }
 

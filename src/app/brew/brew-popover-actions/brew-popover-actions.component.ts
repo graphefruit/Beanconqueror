@@ -3,6 +3,7 @@ import {NavParams, PopoverController} from '@ionic/angular';
 import {IBrew} from '../../../interfaces/brew/iBrew';
 import {Brew} from '../../../classes/brew/brew';
 import {UIHelper} from '../../../services/uiHelper';
+import {UIAnalytics} from '../../../services/uiAnalytics';
 
 @Component({
   selector: 'brew-popover-actions',
@@ -24,13 +25,17 @@ export class BrewPopoverActionsComponent implements OnInit {
 
   constructor(private readonly popoverController: PopoverController,
               private readonly navParams: NavParams,
-              private readonly uiHelper: UIHelper,) {
+              private readonly uiHelper: UIHelper,
+              private readonly uiAnalytics: UIAnalytics) {
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
     const brew: IBrew = this.uiHelper.copyData(this.navParams.get('brew'));
 
     this.data.initializeByObject(brew);
   }
 
+  public ionViewDidEnter(): void {
+    this.uiAnalytics.trackEvent('BREW', 'POPOVER_ACTIONS');
+  }
   public ngOnInit() {
 
   }

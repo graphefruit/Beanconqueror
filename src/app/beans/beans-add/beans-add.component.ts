@@ -6,6 +6,7 @@ import {UIHelper} from '../../../services/uiHelper';
 import {UIImage} from '../../../services/uiImage';
 import {Bean} from '../../../classes/bean/bean';
 import {IonSlides, ModalController, NavParams} from '@ionic/angular';
+import {UIAnalytics} from '../../../services/uiAnalytics';
 
 @Component({
   selector: 'beans-add',
@@ -24,13 +25,15 @@ export class BeansAddComponent implements OnInit {
                private readonly navParams: NavParams,
                private readonly uiBeanStorage: UIBeanStorage,
                private readonly uiImage: UIImage,
-               public uiHelper: UIHelper) {
+               public uiHelper: UIHelper,
+               private readonly uiAnalytics: UIAnalytics) {
     this.data.roastingDate = new Date().toISOString();
     this.bean_template = this.navParams.get('bean_template');
   }
 
 
-  public ionViewDidEnter(): void {
+  public ionViewWillEnter(): void {
+    this.uiAnalytics.trackEvent('BEAN', 'ADD');
     if (this.bean_template) {
       this.__loadBean(this.bean_template);
     }
