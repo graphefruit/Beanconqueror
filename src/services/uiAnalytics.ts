@@ -82,6 +82,8 @@ export class UIAnalytics {
   public trackPage(_pageName: string) {
     if (this.canTrack) {
       this.__trackPageFB(_pageName);
+    } else {
+      this.uiLog.info(`ANALYTICS - DISABLED - But we would track page: Page:${_pageName}`);
     }
   }
 
@@ -94,6 +96,8 @@ export class UIAnalytics {
       } catch (ex) {
 
       }
+    } else {
+      this.uiLog.info(`ANALYTICS - DISABLED - But we would track event: Category:${_category}, Action: ${_action}`);
     }
   }
 
@@ -169,6 +173,7 @@ export class UIAnalytics {
       } catch (ex) {
 
       }
+    } else {
     }
   }
 
