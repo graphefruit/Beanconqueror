@@ -84,14 +84,3 @@ ionic cordova plugin add cordova-plugin-enable-multidex
 ##FirebaseX
 ionic cordova plugin add cordova-plugin-firebasex --variable FIREBASE_ANALYTICS_COLLECTION_ENABLED=false --variable FIREBASE_PERFORMANCE_COLLECTION_ENABLED=false --variable FIREBASE_CRASHLYTICS_COLLECTION_ENABLED=false
 npm install @ionic-native/firebase-x
-(sudo chmod go-w /YourPath/Beanconqueror)
-(pod repo update)
-
-
-##Debug analytics
-adb shell setprop debug.firebase.analytics.app Beanconqueror
-adb shell setprop debug.firebase.analytics.app com.beanconqueror.app
-
-deactivating debug mode:
-adb shell setprop debug.firebase.analytics.app .none.
-

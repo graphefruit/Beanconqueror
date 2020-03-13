@@ -81,7 +81,7 @@
                 [style.order]="settings.brew_order.brew_time" timeInSeconds="0"></brew-timer>
 
     <ion-item *ngIf="settings.brew_time === true && settings.coffee_first_drip_time === true"
-              [style.order]="settings.brew_order.brew_time" lines="full">
+              [style.order]="settings.brew_order.brew_time" disabled="true" lines="full">
       <ion-label>
         {{'BREW_DATA_CALCULATED_COFFEE_BREW_TIME' | translate}}: {{data.getCalcualatedCoffeeBrewTime()}}
       </ion-label>
@@ -100,9 +100,6 @@
       <ion-label stacked>{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}</ion-label>
       <ion-input [(ngModel)]="data.coffee_first_drip_time" inputmode="decimal" prevent-characters remove-empty-number
                  type="text"></ion-input>
-      <!--<ion-button (click)="setCoffeeDripTime()" fill="outline" size="default" slot="end">
-        <ion-icon name="time"></ion-icon>
-      </ion-button>-->
     </ion-item>
     <ion-row *ngIf="settings.brew_quantity === true" [style.order]="settings.brew_order.brew_quantity">
       <ion-col class="ion-no-padding" col-8 col-sm-10>
@@ -149,19 +146,19 @@
       <ion-datetime [(ngModel)]="customCreationDate" display-format="DD.MM.YYYY HH:mm" picker-format="DD.MM.YYYY HH:mm"
                     placeholder="Select Date"></ion-datetime>
     </ion-item>
-    <ion-item (click)="addImage()" *ngIf="settings.attachments === true" [style.order]="settings.brew_order.attachments"
-              button>
-      {{"ADD_PHOTO" | translate}}
-    </ion-item>
-    <div *ngIf="data?.attachments && data.attachments.length > 0 && settings.attachments === true">
-      <ion-slides #photoSlides pager="true">
-        <ion-slide *ngFor="let attachment of data.attachments;let i = index">
-          <ion-button (click)="deleteImage(i)" class="position-absolute-button">{{"DELETE" | translate }}</ion-button>
-          <async-image class="brew-image" filePath="{{attachment}}"></async-image>
-        </ion-slide>
-      </ion-slides>
+    <div *ngIf="settings.attachments === true" [style.order]="settings.brew_order.attachments">
+      <ion-item (click)="addImage()" button tappable>
+        {{"ADD_PHOTO" | translate}}
+      </ion-item>
+      <div *ngIf="data?.attachments && data.attachments.length > 0 && settings.attachments === true">
+        <ion-slides #photoSlides pager="true">
+          <ion-slide *ngFor="let attachment of data.attachments;let i = index">
+            <ion-button (click)="deleteImage(i)" class="position-absolute-button">{{"DELETE" | translate }}</ion-button>
+            <async-image class="brew-image" filePath="{{attachment}}"></async-image>
+          </ion-slide>
+        </ion-slides>
+      </div>
     </div>
-
 
   </div>
 </ion-content>

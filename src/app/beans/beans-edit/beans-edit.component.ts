@@ -7,6 +7,7 @@ import {UIHelper} from '../../../services/uiHelper';
 import {UIImage} from '../../../services/uiImage';
 import {IBean} from '../../../interfaces/bean/iBean';
 import {Bean} from '../../../classes/bean/bean';
+import {UIAnalytics} from '../../../services/uiAnalytics';
 
 @Component({
   selector: 'beans-edit',
@@ -25,11 +26,13 @@ export class BeansEditComponent implements OnInit {
                private readonly modalController: ModalController,
                private readonly uiBeanStorage: UIBeanStorage,
                private readonly uiImage: UIImage,
-               private readonly uiHelper: UIHelper) {
+               private readonly uiHelper: UIHelper,
+               private readonly uiAnalytics: UIAnalytics) {
     this.data.roastingDate = new Date().toISOString();
   }
 
   public ionViewWillEnter(): void {
+    this.uiAnalytics.trackEvent('BEAN', 'EDIT');
     //  this.bean = this.navParams.get('BEAN');
     this.data.initializeByObject(this.bean);
   }

@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {PopoverController} from '@ionic/angular';
+import {UIAnalytics} from '../../../services/uiAnalytics';
 
 @Component({
   selector: 'brew-popover',
@@ -15,7 +16,12 @@ export class BrewPopoverComponent implements OnInit {
   };
 
 
-  constructor(private readonly popoverController: PopoverController) {
+  constructor(private readonly popoverController: PopoverController,
+              private readonly uiAnalytics: UIAnalytics) {
+  }
+
+  public ionViewDidEnter(): void {
+    this.uiAnalytics.trackEvent('BREW', 'POPOVER');
   }
 
   public ngOnInit() {

@@ -22,7 +22,7 @@
     color:red;
   }
 
-  ion-card {
+  ion-card.dynamic-padding {
     ion-card-header {
       padding-top: 0px;
       padding-left: 5px;
@@ -39,6 +39,7 @@
     padding: 5px;
     padding-top: 0px;
   }
+
 
   ion-list-header {
     --background: rgb(160, 176, 196);
