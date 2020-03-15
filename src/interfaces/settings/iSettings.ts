@@ -34,6 +34,7 @@ export interface ISettings {
   language: string;
   default_last_coffee_parameters: IDefaultLastCoffeeParameters;
   brew_order: IBrewOrder;
+  analytics: boolean;
 
   config: IConfig;
 }

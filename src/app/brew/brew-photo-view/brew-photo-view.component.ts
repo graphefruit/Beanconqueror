@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ModalController, NavParams} from '@ionic/angular';
 import {IBrew} from '../../../interfaces/brew/iBrew';
+import {UIAnalytics} from '../../../services/uiAnalytics';
 
 @Component({
   selector: 'brew-photo-view',
@@ -13,11 +14,13 @@ export class BrewPhotoViewComponent implements OnInit {
   public data: IBrew;
 
   constructor (private readonly modalController: ModalController,
-               private readonly navParams: NavParams) {
+               private readonly navParams: NavParams,
+               private readonly uiAnalytics: UIAnalytics) {
 
   }
 
-  public ionViewWillEnter(): void {
+  public ionViewDidEnter(): void {
+    this.uiAnalytics.trackEvent('BREW', 'PHOTO_VIEW');
     this.data = this.navParams.get('brew');
 
   }

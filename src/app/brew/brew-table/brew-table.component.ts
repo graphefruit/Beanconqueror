@@ -12,6 +12,7 @@ import {Brew} from '../../../classes/brew/brew';
 import {IBean} from '../../../interfaces/bean/iBean';
 import {Settings} from '../../../classes/settings/settings';
 import {BrewAddComponent} from '../brew-add/brew-add.component';
+import {UIAnalytics} from '../../../services/uiAnalytics';
 
 @Component({
   selector: 'brew-table',
@@ -43,7 +44,8 @@ export class BrewTableComponent implements OnInit {
                private readonly uiBrewStorage: UIBrewStorage,
                private readonly renderer: Renderer2,
                private readonly modalCtrl: ModalController,
-               private readonly uiMillStorage: UIMillStorage) {
+               private readonly uiMillStorage: UIMillStorage,
+               private readonly uiAnalytics: UIAnalytics) {
     this.settings = this.uiSettingsStorage.getSettings();
 
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
@@ -54,6 +56,10 @@ export class BrewTableComponent implements OnInit {
     this.hasPreparationMethods = (this.uiPreparationStorage.getAllEntries().length > 0);
     this.hasMills = (this.uiMillStorage.getAllEntries().length > 0);
     this.__initializeBrews();
+  }
+
+  public ionViewDidEnter(): void {
+    this.uiAnalytics.trackEvent('BREW', 'TABLE');
   }
 
   public async addBrew() {
