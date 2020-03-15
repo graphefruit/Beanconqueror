@@ -35,6 +35,7 @@ export class UIAlert {
       const alert = await this.alertController.create({
         header: _title,
         subHeader: _message,
+        backdropDismiss: false,
         buttons: [
           {
             text: okText,

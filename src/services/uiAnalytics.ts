@@ -120,9 +120,10 @@ export class UIAnalytics {
           settings.analytics = true;
           this.uiSettings.saveSettings(settings);
           resolve();
-        }, () => {
+        }, async () => {
           settings.analytics = false;
           this.uiSettings.saveSettings(settings);
+          await this.uiAlert.showMessage('ALLOW_ANALYTICS_DENIED_DESCRIPTION', 'ALLOW_ANALYTICS_DENIED_TITLE', undefined, true);
           reject();
         });
       } else {
