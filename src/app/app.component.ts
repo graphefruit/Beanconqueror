@@ -114,7 +114,12 @@ export class AppComponent implements AfterViewInit {
                   /* We need to wait for app finished loading, but already attach on platform start, else
                   *  the event won't get triggered **/
                   this.uiHelper.isBeanconqurorAppReady().then(async () => {
-                    this.uiLog.log(`iOS Device - Home icon was pressed`);
+                    const payloadType = payload.type;
+                    try {
+                      this.uiAnalytics.trackEvent('STARTUP', 'FORCE_TOUCH_' + payloadType.toUpperCase());
+                      this.uiLog.log(`iOS Device - Home icon was pressed`);
+                    } catch (ex) {
+                    }
                     if (payload.type === 'Brew') {
                       await this.__trackNewBrew();
                     } else if (payload.type === 'Bean') {

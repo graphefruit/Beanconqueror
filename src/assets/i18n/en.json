@@ -166,5 +166,7 @@
   "CHOOSE_PHOTO_OR_LIBRARY": "Record photo or choose from photogallery.",
   "RECORD": "Record",
   "ALLOW_ANALYTICS_TITLE": "Activate analytics?",
-  "ALLOW_ANALYTICS_DESCRIPTION": "With your agreement I'd like to retrieve analytic information. No personal information will be saved, promise."
+  "ALLOW_ANALYTICS_DESCRIPTION": "With your agreement I'd like to retrieve analytic information. No personal information will be saved, promise.",
+  "ALLOW_ANALYTICS_DENIED_DESCRIPTION": "If you change your mind, you can find it in the settings!",
+  "ALLOW_ANALYTICS_DENIED_TITLE": "It's okay!"
 }

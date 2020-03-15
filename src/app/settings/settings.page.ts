@@ -139,7 +139,7 @@ export class SettingsPage implements OnInit {
   public setLanguage(): void {
     this.translate.setDefaultLang(this.settings.language);
     this.translate.use(this.settings.language);
-    this.uiAnalytics.trackEvent('SETTINGS', 'SET_LANGUAGE - ' + this.settings.language);
+    this.uiAnalytics.trackEvent('SETTINGS', 'SET_LANGUAGE_ ' + this.settings.language);
     this.uiSettingsStorage.saveSettings(this.settings);
   }
 
