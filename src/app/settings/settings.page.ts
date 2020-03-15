@@ -25,6 +25,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
+import {UIAnalytics} from '../../services/uiAnalytics';
 
 @Component({
   selector: 'settings',
@@ -37,7 +38,7 @@ export class SettingsPage implements OnInit {
 
   public BREW_VIEWS = BREW_VIEW_ENUM;
   public STARTUP_VIEW = STARTUP_VIEW_ENUM;
-  public debounceFilter: Subject<string> = new Subject<string>();
+  public debounceLanguageFilter: Subject<string> = new Subject<string>();
 
   public settings_segment: string = 'general';
 
@@ -77,9 +78,10 @@ export class SettingsPage implements OnInit {
               private readonly socialSharing: SocialSharing,
               private readonly uiLog: UILog,
               private readonly translate: TranslateService,
-              private readonly changeDetectorRef: ChangeDetectorRef) {
+              private readonly changeDetectorRef: ChangeDetectorRef,
+              private readonly uiAnalytics: UIAnalytics) {
     this.__initializeSettings();
-    this.debounceFilter
+    this.debounceLanguageFilter
       .pipe(debounceTime(500), distinctUntilChanged())
       .subscribe(() => {
         this.setLanguage();
@@ -88,10 +90,10 @@ export class SettingsPage implements OnInit {
 
   public reorder_brew(ev: any) {
 
-
+    this.uiAnalytics.trackEvent('SETTINGS', 'REORDER_BREW');
     // The `from` and `to` properties contain the index of the item
     // when the drag started and ended, respectively
-    console.log('Dragged from index', ev.detail.from, 'to', ev.detail.to);
+    // console.log('Dragged from index', ev.detail.from, 'to', ev.detail.to);
     // console.log(this.brewOrders);
     this.brewOrders.splice(ev.detail.to, 0, this.brewOrders.splice(ev.detail.from, 1)[0]);
     let count: number = 0;
@@ -100,7 +102,7 @@ export class SettingsPage implements OnInit {
       this.settings.brew_order[order.enum] = order.number;
       count++;
     }
-    console.log(this.settings.brew_order);
+    // console.log(this.settings.brew_order);
     // Finish the reorder and position the item in the DOM based on
     // where the gesture ended. This method can also be called directly
     // by the reorder group
@@ -115,26 +117,35 @@ export class SettingsPage implements OnInit {
   }
 
   public saveSettings(): void {
-    setTimeout(() => {
-      console.log(this.settings);
-    }, 1000);
-
     this.changeDetectorRef.detectChanges();
     this.uiSettingsStorage.saveSettings(this.settings);
   }
 
-  public languageChanged(_query): void {
+  public checkAnalytics(): void {
+    if (this.settings.analytics) {
+      this.uiAnalytics.trackEvent('SETTINGS', 'TRACKING_ENABLE');
+      this.uiAnalytics.enableTracking();
+    } else {
+      this.uiAnalytics.trackEvent('SETTINGS', 'TRACKING_DISABLE');
+      // Last one here so, but we need to know, which users don't want any tracking.
+      this.uiAnalytics.disableTracking();
+    }
+  }
 
-    this.debounceFilter.next(_query);
+  public languageChanged(_query): void {
+    this.debounceLanguageFilter.next(_query);
   }
 
   public setLanguage(): void {
     this.translate.setDefaultLang(this.settings.language);
+    this.translate.use(this.settings.language);
+    this.uiAnalytics.trackEvent('SETTINGS', 'SET_LANGUAGE_ ' + this.settings.language);
     this.uiSettingsStorage.saveSettings(this.settings);
   }
 
   public import (): void {
     if (this.platform.is('cordova')) {
+      this.uiAnalytics.trackEvent('SETTINGS', 'IMPORT');
       this.uiLog.log('Import real data');
       if (this.platform.is('android')) {
         this.fileChooser.open()
@@ -185,9 +196,8 @@ export class SettingsPage implements OnInit {
 
 
   public export(): void {
-
+    this.uiAnalytics.trackEvent('SETTINGS', 'EXPORT');
     this.uiStorage.export().then((_data) => {
-      console.log(_data);
       this.uiHelper.exportJSON('Beanconqueror.json', JSON.stringify(_data)).then(async (_fileEntry: FileEntry) => {
         if (this.platform.is('android')) {
           const alert =  await this.alertCtrl.create({

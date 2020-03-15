@@ -11,6 +11,7 @@ import {IBrew} from '../../../interfaces/brew/iBrew';
 import {Bean} from '../../../classes/bean/bean';
 import {Settings} from '../../../classes/settings/settings';
 import {TranslateService} from '@ngx-translate/core';
+import {UIAnalytics} from '../../../services/uiAnalytics';
 
 @Component({
   selector: 'brew-text',
@@ -36,12 +37,14 @@ export class BrewTextComponent implements OnInit {
                public uiHelper: UIHelper,
                public uiBrewHelper: UIBrewHelper,
                private readonly uiSettingsStorage: UISettingsStorage,
-               private translate: TranslateService) {
+               private translate: TranslateService,
+               private readonly uiAnalytics: UIAnalytics) {
     this.settings = this.uiSettingsStorage.getSettings();
 
   }
 
   public ionViewWillEnter(): void {
+    this.uiAnalytics.trackEvent('BREW', 'TEXT');
     this.selectedIBrew = this.navParams.get('brew');
     this.selectedBrew.initializeByObject(this.selectedIBrew);
     this.__generateText();

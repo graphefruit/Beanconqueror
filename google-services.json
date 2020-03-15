@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "570406286894",
+    "firebase_url": "https://beanconqueror-42004.firebaseio.com",
+    "project_id": "beanconqueror-42004",
+    "storage_bucket": "beanconqueror-42004.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:570406286894:android:4f7e4b88fc8f0e245811bf",
+        "android_client_info": {
+          "package_name": "com.beanconqueror.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "570406286894-dqereahnce054iehm6gfd7gmlba1u1d0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBo7nimd0NXbP7y5lkb3X2YeSIsS3Ye_OI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "570406286894-dqereahnce054iehm6gfd7gmlba1u1d0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -28,6 +28,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {Globalization} from '@ionic-native/globalization/ngx';
 import {Settings} from '../classes/settings/settings';
 import {STARTUP_VIEW_ENUM} from '../enums/settings/startupView';
+import {UIAnalytics} from '../services/uiAnalytics';
 
 @Component({
   selector: 'app-root',
@@ -79,7 +80,8 @@ export class AppComponent implements AfterViewInit {
     private readonly uiHelper: UIHelper,
     private readonly uiAlert: UIAlert,
     private _translate: TranslateService,
-    private  globalization: Globalization
+    private  globalization: Globalization,
+    private readonly uiAnalytics: UIAnalytics
   ) {
   }
 
@@ -112,7 +114,12 @@ export class AppComponent implements AfterViewInit {
                   /* We need to wait for app finished loading, but already attach on platform start, else
                   *  the event won't get triggered **/
                   this.uiHelper.isBeanconqurorAppReady().then(async () => {
-                    this.uiLog.log(`iOS Device - Home icon was pressed`);
+                    const payloadType = payload.type;
+                    try {
+                      this.uiAnalytics.trackEvent('STARTUP', 'FORCE_TOUCH_' + payloadType.toUpperCase());
+                      this.uiLog.log(`iOS Device - Home icon was pressed`);
+                    } catch (ex) {
+                    }
                     if (payload.type === 'Brew') {
                       await this.__trackNewBrew();
                     } else if (payload.type === 'Bean') {
@@ -196,72 +203,89 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
-  private __setDeviceLanguage() {
-    if (this.platform.is('cordova')) {
-      try {
-        this.uiLog.info('Its a mobile device, try to set language now');
-        const settings: Settings = this.uiSettingsStorage.getSettings();
-        if (settings.language === null || settings.language === undefined || settings.language === '') {
-          this.globalization.getPreferredLanguage().then((res) => {
-            // Run other functions after getting device default lang
-            let systemLanguage: string = res['value'].toLowerCase();
-            this.uiLog.log(`Found system language: ${systemLanguage}`);
-            if (systemLanguage.indexOf('-') > -1) {
-              systemLanguage = systemLanguage.split('-')[0];
-            }
+  private async __setDeviceLanguage(): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      if (this.platform.is('cordova')) {
+        try {
+          this.uiLog.info('Its a mobile device, try to set language now');
+          const settings: Settings = this.uiSettingsStorage.getSettings();
+          if (settings.language === null || settings.language === undefined || settings.language === '') {
+            this.globalization.getPreferredLanguage().then(async (res) => {
+              // Run other functions after getting device default lang
+              let systemLanguage: string = res['value'].toLowerCase();
+              this.uiLog.log(`Found system language: ${systemLanguage}`);
+              if (systemLanguage.indexOf('-') > -1) {
+                systemLanguage = systemLanguage.split('-')[0];
+              }
 
-            let settingLanguage: string = '';
-            switch (systemLanguage) {
-              case 'de':
-                settingLanguage = 'de';
-                break;
-              default:
-                settingLanguage = 'en';
-                break;
-            }
+              let settingLanguage: string = '';
+              switch (systemLanguage) {
+                case 'de':
+                  settingLanguage = 'de';
+                  break;
+                default:
+                  settingLanguage = 'en';
+                  break;
+              }
+              this.uiLog.log(`Setting language: ${settingLanguage}`);
+              this._translate.setDefaultLang(settingLanguage);
+              settings.language = settingLanguage;
+              this.uiSettingsStorage.saveSettings(settings);
+              await this._translate.use(settingLanguage).toPromise();
+              resolve();
+
+            })
+              .catch(async (ex) => {
+                const exMessage: string = JSON.stringify(ex);
+                this.uiLog.error(`Exception occured when setting language ${exMessage}`);
+                this._translate.setDefaultLang('en');
+                await this._translate.use('en').toPromise();
+                resolve();
+              });
+          } else {
+            this.uiLog.info('Language settings already existing, set language');
+            const settingLanguage: string = settings.language;
             this.uiLog.log(`Setting language: ${settingLanguage}`);
             this._translate.setDefaultLang(settingLanguage);
             settings.language = settingLanguage;
             this.uiSettingsStorage.saveSettings(settings);
+            await this._translate.use(settingLanguage).toPromise();
+            resolve();
 
-          })
-            .catch((ex) => {
-              const exMessage: string = JSON.stringify(ex);
-              this.uiLog.error(`Exception occured when setting language ${exMessage}`);
-              this._translate.setDefaultLang('en');
-            });
-        } else {
-          this.uiLog.info('Language settings already existing, set language');
-          const settingLanguage: string = settings.language;
-          this.uiLog.log(`Setting language: ${settingLanguage}`);
-          this._translate.setDefaultLang(settingLanguage);
-          settings.language = settingLanguage;
-          this.uiSettingsStorage.saveSettings(settings);
-
+          }
+        } catch (ex) {
+          const exMessage: string = JSON.stringify(ex);
+          this.uiLog.error(`Exception occured when setting language ${exMessage}`);
+          this._translate.setDefaultLang('en');
+          await this._translate.use('en').toPromise();
+          resolve();
         }
-      } catch (ex) {
-        const exMessage: string = JSON.stringify(ex);
-        this.uiLog.error(`Exception occured when setting language ${exMessage}`);
-        this._translate.setDefaultLang('en');
-      }
-    } else {
-      this.uiLog.info('Cant set language for device, because no cordova device');
-      const settings: Settings = this.uiSettingsStorage.getSettings();
-      if (settings.language !== null && settings.language !== undefined && settings.language !== '') {
-        this.uiLog.info(`Set language from settings: ${settings.language}`);
-        this._translate.setDefaultLang(settings.language);
       } else {
-        this.uiLog.info(`Set default language from settings, because no settings set`);
-        this._translate.setDefaultLang('de');
-      }
+        this.uiLog.info('Cant set language for device, because no cordova device');
+        const settings: Settings = this.uiSettingsStorage.getSettings();
+        if (settings.language !== null && settings.language !== undefined && settings.language !== '') {
+          this.uiLog.info(`Set language from settings: ${settings.language}`);
+          this._translate.setDefaultLang(settings.language);
+          await this._translate.use(settings.language).toPromise();
+          resolve();
+        } else {
+          this.uiLog.info(`Set default language from settings, because no settings set: de `);
+          this._translate.setDefaultLang('de');
+          await this._translate.use('de').toPromise();
+          resolve();
+        }
 
-    }
+      }
+    });
   }
 
   private async __checkStartupView() {
 
     const settings: Settings = this.uiSettingsStorage.getSettings();
-    console.log(settings.startup_view);
+
+    if (settings.startup_view !== STARTUP_VIEW_ENUM.HOME_PAGE) {
+      this.uiAnalytics.trackEvent('STARTUP', 'STARTUP_VIEW_' + settings.startup_view);
+    }
     switch (settings.startup_view) {
       case STARTUP_VIEW_ENUM.HOME_PAGE:
         this.router.navigate([this.pages.home.url]);
@@ -270,16 +294,19 @@ export class AppComponent implements AfterViewInit {
         this.router.navigate([this.pages.brew.url]);
         break;
       case STARTUP_VIEW_ENUM.ADD_BREW:
-        console.log('test');
         await this.__trackNewBrew();
         break;
     }
   }
 
-  private __initApp(): void {
+  private async __initApp() {
     this.__registerBack();
-    this.__setDeviceLanguage();
-    this.__checkStartupView();
+    await this.__setDeviceLanguage();
+    await this.uiAnalytics.initializeTracking().catch(() => {
+      // Nothing to do, user declined tracking.
+    });
+    await this.__checkStartupView();
+
 
 
   }

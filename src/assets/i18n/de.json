@@ -36,7 +36,7 @@
   "PAGE_HOME_LAST_BREW": "Letzter Bezug",
   "PAGE_HOME_DIFFERENT_PREPARATION_METHODS": "Unterschiedliche Zubereitungsmethoden",
   "PAGE_HOME_DIFFERENT_MILLS": "Unterschiedliche Mühlen",
-  "PAGE_HOME_SUPPORTER": "Unterstützer",
+  "PAGE_HOME_SUPPORTER": "App-Unterstützer",
   "PAGE_BEANS_LIST_OBTAINABLE": "Beziehbar",
   "PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS": "Du hast leider keine frischen Bohnen mehr!",
   "PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS": "Du hast keine aufgebrauchten Bohnen!",
@@ -59,6 +59,7 @@
   "PAGE_SETTINGS_STARTUP_VIEW": "Startansicht",
   "PAGE_SETTINGS_BREW_SORT_TITLE": "Brühsortierung",
   "PAGE_SETTINGS_BREW_SORT_DESCRIPTION": "Lege deinen eigenen Brühworkflow fest. Hierfür ziehe die Felder in deine gewünschte Reihenfolge.",
+  "PAGE_SETTINGS_ANALYTICS_INFORMATION": "Analytics erlauben?",
   "PAGE_STATISTICS_FOR_NERDS": "Statistiken für Nerds",
   "PAGE_STATISTICS_MILL_FLEET": "Mühlenfuhrpark",
   "PAGE_STATISTICS_DIFFERENT_PREPARATION_METHOD": "Zubereitungsmethoden",
@@ -163,5 +164,9 @@
   "ADD_BREW": "Brühung hinzufügen",
   "CHOOSE": "Auswählen",
   "CHOOSE_PHOTO_OR_LIBRARY": "Foto aufnehmen oder aus Bibliothek auswählen",
-  "RECORD": "Aufnehmen"
+  "RECORD": "Aufnehmen",
+  "ALLOW_ANALYTICS_TITLE": "Analytics aktivieren?",
+  "ALLOW_ANALYTICS_DESCRIPTION": "Mit deiner Zustimmung möchte ich die App noch besser machen, erlaubst du mir Analytische Informationen zu erheben? Es werden keine Personalisierten Daten o.ä. aufgenommen - Versprochen.",
+  "ALLOW_ANALYTICS_DENIED_DESCRIPTION": "Falls du es dir dennoch anders überlegst, findest du in den Einstellungen die Möglichkeit dazu!",
+  "ALLOW_ANALYTICS_DENIED_TITLE": "Auch Ok!"
 }
