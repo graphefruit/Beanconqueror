@@ -82,6 +82,12 @@
         </ion-card-content>
         <ion-row>
 
+          <ion-col col-12>
+            <ion-button (click)="informationBean(bean)" color="dark" fill="clear" size="small">
+              <ion-icon name="list-outline" slot="start"></ion-icon>
+              <span>{{"INFORMATION" | translate}}</span>
+            </ion-button>
+          </ion-col>
         </ion-row>
         <ion-row>
           <ion-col col-4>
@@ -103,6 +109,7 @@
             </ion-button>
           </ion-col>
         </ion-row>
+
 
       </ion-card>
     </div>

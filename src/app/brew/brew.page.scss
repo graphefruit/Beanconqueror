@@ -40,6 +40,13 @@
     padding-top: 0px;
   }
 
+  ion-card.good-brew {
+    border-top: 5px #009966 solid;
+  }
+
+  ion-card.bad-brew {
+    border-top: 5px #fe4164 solid;
+  }
 
   ion-list-header {
     --background: rgb(160, 176, 196);

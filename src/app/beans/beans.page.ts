@@ -7,6 +7,7 @@ import {Brew} from '../../classes/brew/brew';
 import {Bean} from '../../classes/bean/bean';
 import {BeansAddComponent} from './beans-add/beans-add.component';
 import {BeansEditComponent} from './beans-edit/beans-edit.component';
+import {BeansInformationComponent} from './beans-information/beans-information.component';
 
 @Component({
   selector: 'beans',
@@ -61,6 +62,13 @@ export class BeansPage implements OnInit {
     await modal.present();
     await modal.onWillDismiss();
     this.loadBeans();
+  }
+
+  public async informationBean(_bean: Bean) {
+
+    const modal = await this.modalCtrl.create({component: BeansInformationComponent, componentProps: {'bean': _bean}});
+    await modal.present();
+    await modal.onWillDismiss();
   }
 
   public deleteBean(_bean: Bean): void {

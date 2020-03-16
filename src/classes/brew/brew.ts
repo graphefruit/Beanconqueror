@@ -152,6 +152,22 @@ export class Brew implements IBrew {
 
   }
 
+  public isGoodBrew(): boolean {
+    return this.rating > 8;
+  }
+
+  public isNormalBrew(): boolean {
+    return this.rating > 5 && this.rating < 8;
+  }
+
+  public isBadBrew(): boolean {
+    return this.rating < 4 && this.rating > 0;
+  }
+
+  public isNotRatedBrew(): boolean {
+    return this.rating <= 0;
+  }
+
   public formateDate(_format?: string): string {
     let format: string = 'DD.MM.YYYY, HH:mm:ss';
     if (_format) {
