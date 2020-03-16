@@ -168,5 +168,10 @@
   "ALLOW_ANALYTICS_TITLE": "Analytics aktivieren?",
   "ALLOW_ANALYTICS_DESCRIPTION": "Mit deiner Zustimmung möchte ich die App noch besser machen, erlaubst du mir Analytische Informationen zu erheben? Es werden keine Personalisierten Daten o.ä. aufgenommen - Versprochen.",
   "ALLOW_ANALYTICS_DENIED_DESCRIPTION": "Falls du es dir dennoch anders überlegst, findest du in den Einstellungen die Möglichkeit dazu!",
-  "ALLOW_ANALYTICS_DENIED_TITLE": "Auch Ok!"
+  "ALLOW_ANALYTICS_DENIED_TITLE": "Auch Ok!",
+  "PAGE_BEAN_INFORMATION": "Bohnen Information",
+  "PAGE_BEAN_INFORMATION_GOOD_BREWS": "Gute Brühungen",
+  "PAGE_BEAN_INFORMATION_BAD_BREWS": "Schlechte Brühungen",
+  "PAGE_BEAN_INFORMATION_COUNT_BREWS": "Insgesamte Brühungen",
+  "INFORMATION": "Information"
 }

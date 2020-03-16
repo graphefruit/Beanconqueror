@@ -60,9 +60,10 @@ import {Globalization} from '@ionic-native/globalization/ngx';
 import {AppVersion} from '@ionic-native/app-version/ngx';
 import {EnumToArrayPipe} from '../../pipes/enumToArray';
 import {FirebaseX} from '@ionic-native/firebase-x/ngx';
+import {BeansInformationComponent} from '../beans/beans-information/beans-information.component';
 
 @NgModule({
-  declarations: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, AboutComponent,
+  declarations: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, AboutComponent,
     ContactComponent,
     CreditsComponent,
     LicencesComponent,
@@ -73,7 +74,7 @@ import {FirebaseX} from '@ionic-native/firebase-x/ngx';
     FormatDatePipe, KeysPipe, EnumToArrayPipe, AsyncImageComponent, SearchPipe, RemoveEmptyNumberDirective,
     PreventCharacterDirective, BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent,
     BrewPopoverComponent, BrewPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent, BrewTimerComponent],
-  entryComponents: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, AboutComponent,
+  entryComponents: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, AboutComponent,
     ContactComponent,
     CreditsComponent,
     LicencesComponent,
@@ -107,7 +108,7 @@ import {FirebaseX} from '@ionic-native/firebase-x/ngx';
     InAppBrowser, File, Globalization, FirebaseX
   ],
 
-  exports: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, AboutComponent,
+  exports: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, AboutComponent,
     ContactComponent,
     CreditsComponent,
     LicencesComponent,

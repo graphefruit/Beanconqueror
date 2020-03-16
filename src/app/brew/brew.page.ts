@@ -5,7 +5,6 @@ import {BrewView} from '../../classes/brew/brewView';
 import {UIHelper} from '../../services/uiHelper';
 import {ISettings} from '../../interfaces/settings/iSettings';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
-import {IBrew} from '../../interfaces/brew/iBrew';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {UIBrewHelper} from '../../services/uiBrewHelper';
 import {Brew} from '../../classes/brew/brew';
@@ -82,7 +81,7 @@ export class BrewPage implements OnInit {
 
   }
 
-  public async editBrew(_brew: IBrew) {
+  public async editBrew(_brew: Brew) {
     // const editBrewModal = this.modalCtrl.create(BrewsEditModal, {BREW: _brew});
     // editBrewModal.onDidDismiss(() => {
     //   this.loadBrews();
@@ -188,7 +187,7 @@ export class BrewPage implements OnInit {
     this.loadBrews();
   }
 
-  public async detailBrew(_brew: IBrew) {
+  public async detailBrew(_brew: Brew) {
     // const editBrewModal = this.modalCtrl.create(BrewsDetailsModal, {BREW: _brew});
     // editBrewModal.onDidDismiss(() => {
     //   this.loadBrews();
@@ -200,7 +199,7 @@ export class BrewPage implements OnInit {
     this.loadBrews();
   }
 
-  public async viewPhotos(_brew: IBrew) {
+  public async viewPhotos(_brew: Brew) {
     // const brewsPhotoViewModal = this.modalCtrl.create(BrewsPhotoView, {BREW: _brew});
     // brewsPhotoViewModal.present({animate: false});
     const modal = await this.modalCtrl.create({component: BrewPhotoViewComponent, componentProps: {brew: _brew}});
@@ -208,7 +207,7 @@ export class BrewPage implements OnInit {
     await modal.onWillDismiss();
   }
 
-  public deleteBrew(_brew: IBrew): void {
+  public deleteBrew(_brew: Brew): void {
     this.uiAlert.showConfirm('DELETE_BREW_QUESTION', 'SURE_QUESTION', true).then(() => {
           // Yes
           this.__deleteBrew(_brew);
@@ -219,11 +218,23 @@ export class BrewPage implements OnInit {
 
   }
 
-  public async postBrew(_brew: IBrew) {
+  public async postBrew(_brew: Brew) {
     const modal = await this.modalCtrl.create({component: BrewTextComponent, componentProps: {brew: _brew}});
     await modal.present();
     await modal.onWillDismiss();
     this.loadBrews();
+  }
+
+
+  public getBrewDisplayClass(_brew: Brew) {
+    if (_brew.isGoodBrew()) {
+      return 'good-brew';
+    } else if (_brew.isNormalBrew()) {
+      return 'normal-brew';
+    } else if (_brew.isBadBrew()) {
+      return 'bad-brew';
+    }
+    return 'not-rated-brew';
   }
 
   private __initializeOpenBrewsFilter(): void {
@@ -261,7 +272,7 @@ export class BrewPage implements OnInit {
     this.changeDetectorRef.detectChanges();
   }
 
-  private __deleteBrew(_brew: IBrew): void {
+  private __deleteBrew(_brew: Brew): void {
     this.uiBrewStorage.removeByObject(_brew);
     this.loadBrews();
 
@@ -397,8 +408,8 @@ export class BrewPage implements OnInit {
     this.__initializeBrewView('archiv');
   }
 
-  private __sortBrews(_sortingBrews: Array<Brew>): Array<IBrew> {
-    const sortedBrews: Array<IBrew> = _sortingBrews.sort((obj1, obj2) => {
+  private __sortBrews(_sortingBrews: Array<Brew>): Array<Brew> {
+    const sortedBrews: Array<Brew> = _sortingBrews.sort((obj1, obj2) => {
       if (obj1.config.unix_timestamp < obj2.config.unix_timestamp) {
         return 1;
       }
@@ -429,7 +440,7 @@ export class BrewPage implements OnInit {
         (this.openBrewsFilter.method_of_preparation.filter((z) => z === e.method_of_preparation).length > 0));
     }
 
-    const sortedBrews: Array<IBrew> = this.__sortBrews(brewsFilters);
+    const sortedBrews: Array<Brew> = this.__sortBrews(brewsFilters);
 
     const collection = {};
     // Create collection

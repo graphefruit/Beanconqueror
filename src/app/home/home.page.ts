@@ -50,6 +50,9 @@ export class HomePage {
     this.router.navigate(['/mill']);
   }
 
+  public showSupporter() {
+    this.router.navigate(['/info/thanks']);
+  }
   public isChristmasTime(): boolean {
     const month: number = moment().month() + 1;
     if (month === 12) {
