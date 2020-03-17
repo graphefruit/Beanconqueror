@@ -152,8 +152,12 @@ export class Brew implements IBrew {
 
   }
 
+  public isAwesomeBrew(): boolean {
+    return this.rating === 10;
+  }
+
   public isGoodBrew(): boolean {
-    return this.rating > 8;
+    return this.rating > 8 && this.rating < 10;
   }
 
   public isNormalBrew(): boolean {
@@ -161,7 +165,7 @@ export class Brew implements IBrew {
   }
 
   public isBadBrew(): boolean {
-    return this.rating < 4 && this.rating > 0;
+    return this.rating < 5 && this.rating > 0;
   }
 
   public isNotRatedBrew(): boolean {
