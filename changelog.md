@@ -1,3 +1,13 @@
+3.5.
+- Added custom user workflow for brews on edit/detail page
+- Show more information for beans (e.g. brew ratings)
+- Change UI's on brew to display awesome/good/bad brews
+- Added analytics function to know which interests are on user side.
+
+Issues fixed:
+- Wrong custom user workflow for ground coffee
+
+
 3.4.
 - Added custom user workflow
 - UI changes
