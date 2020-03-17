@@ -227,7 +227,9 @@ export class BrewPage implements OnInit {
 
 
   public getBrewDisplayClass(_brew: Brew) {
-    if (_brew.isGoodBrew()) {
+    if (_brew.isAwesomeBrew()) {
+      return 'awesome-brew';
+    } else if (_brew.isGoodBrew()) {
       return 'good-brew';
     } else if (_brew.isNormalBrew()) {
       return 'normal-brew';

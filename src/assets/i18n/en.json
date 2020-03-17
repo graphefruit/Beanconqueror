@@ -169,6 +169,13 @@
   "ALLOW_ANALYTICS_DESCRIPTION": "With your agreement I'd like to retrieve analytic information. No personal information will be saved, promise.",
   "ALLOW_ANALYTICS_DENIED_DESCRIPTION": "If you change your mind, you can find it in the settings!",
   "ALLOW_ANALYTICS_DENIED_TITLE": "It's okay!",
-  "PAGE_BEAN_INFORMATION": "Bean information",
-  "INFORMATION": "Information"
+  "PAGE_BEAN_INFORMATION": "Bohnen Information",
+  "PAGE_BEAN_INFORMATION_GOOD_BREWS": "Good",
+  "PAGE_BEAN_INFORMATION_BAD_BREWS": "Bad",
+  "PAGE_BEAN_INFORMATION_COUNT_BREWS": "Total brews",
+  "INFORMATION": "Information",
+  "PAGE_BEAN_BREW_CHART_TITLE": "Brew overview for this bean",
+  "PAGE_BEAN_INFORMATION_AWESOME_BREWS": "Awesome",
+  "PAGE_BEAN_INFORMATION_NORMAL_BREWS": "Normal",
+  "PAGE_BEAN_INFORMATION_NOT_RATED_BREWS": "Not rated"
 }

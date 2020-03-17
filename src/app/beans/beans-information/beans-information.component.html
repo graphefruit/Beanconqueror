@@ -14,10 +14,14 @@
     <ion-list-header>
       <ion-label>{{"PAGE_STATISTICS_FOR_NERDS" | translate}}</ion-label>
     </ion-list-header>
-    <ion-item>{{"PAGE_BEAN_INFORMATION_GOOD_BREWS" | translate}}:&nbsp;{{countGoodBrews()}}</ion-item>
-    <ion-item>{{"PAGE_BEAN_INFORMATION_BAD_BREWS" | translate}}:&nbsp;{{countBadBrews()}}</ion-item>
     <ion-item>{{"PAGE_BEAN_INFORMATION_COUNT_BREWS" | translate}}:&nbsp;{{countBrews()}}</ion-item>
   </ion-list>
+
+  <ion-card>
+    <ion-card-content>
+      <canvas #beanChart></canvas>
+    </ion-card-content>
+  </ion-card>
 
 </ion-content>
 <ion-footer>
