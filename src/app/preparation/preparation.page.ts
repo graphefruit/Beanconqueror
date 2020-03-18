@@ -7,6 +7,7 @@ import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {Brew} from '../../classes/brew/brew';
 import {PreparationEditComponent} from './preparation-edit/preparation-edit.component';
 import {PreparationAddComponent} from './preparation-add/preparation-add.component';
+import {PreparationInformationComponent} from './preparation-information/preparation-information.component';
 
 @Component({
   selector: 'preparation',
@@ -40,8 +41,16 @@ export class PreparationPage implements OnInit {
     await modal.onWillDismiss();
     this.loadPreparations();
   }
-  public async editPreparation(_preparation: any) {
-    const modal = await this.modalCtrl.create({component:PreparationEditComponent,  componentProps: {'preparation' : _preparation}});
+
+  public async editPreparation(_preparation: Preparation) {
+    const modal = await this.modalCtrl.create({component: PreparationEditComponent, componentProps: {preparation: _preparation}});
+    await modal.present();
+    await modal.onWillDismiss();
+    this.loadPreparations();
+  }
+
+  public async informationPreparation(_preparation: Preparation) {
+    const modal = await this.modalCtrl.create({component: PreparationInformationComponent, componentProps: {preparation: _preparation}});
     await modal.present();
     await modal.onWillDismiss();
     this.loadPreparations();

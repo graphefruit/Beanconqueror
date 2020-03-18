@@ -115,7 +115,6 @@
       "cordova-plugin-ionic-webview": {
         "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
       },
-      "cordova-plugin-ionic-keyboard": {},
       "cordova-plugin-file": {},
       "cordova-plugin-telerik-imagepicker": {},
       "cordova-plugin-camera": {
@@ -140,7 +139,8 @@
         "FIREBASE_PERFORMANCE_COLLECTION_ENABLED": "false",
         "FIREBASE_CRASHLYTICS_COLLECTION_ENABLED": "false"
       },
-      "cordova-plugin-enable-multidex": {}
+      "cordova-plugin-enable-multidex": {},
+      "cordova-plugin-ionic-keyboard": {}
     },
     "platforms": [
       "ios",
