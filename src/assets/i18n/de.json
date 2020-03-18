@@ -177,5 +177,11 @@
   "PAGE_BEAN_BREW_CHART_TITLE": "Brühübersicht für diese Bohne",
   "PAGE_BEAN_INFORMATION_AWESOME_BREWS": "Grandios",
   "PAGE_BEAN_INFORMATION_NORMAL_BREWS": "Normal",
-  "PAGE_BEAN_INFORMATION_NOT_RATED_BREWS": "Nicht bewertet"
+  "PAGE_BEAN_INFORMATION_NOT_RATED_BREWS": "Nicht bewertet",
+  "PAGE_PREPARATION_INFORMATION_BREWS_DONE": "Brühungen mit dieser Zubereitungsmethode",
+  "PAGE_PREPARATION_INFORMATION_BREWED_QUANTITY": "Gebrühte Menge",
+  "PAGE_PREPARATION_INFORMATION_GRIND_WEIGHT": "Verarbeitete Bohnenmenge",
+  "PAGE_PREPARATION_INFORMATION_TIME_SPENT_BREWING": "Totale Brühzeit",
+  "PAGE_PREPARATION_INFORMATION": "Zubereitungsmethode Informationen",
+  "SECONDS": "Sekunden"
 }
