@@ -61,9 +61,10 @@ import {AppVersion} from '@ionic-native/app-version/ngx';
 import {EnumToArrayPipe} from '../../pipes/enumToArray';
 import {FirebaseX} from '@ionic-native/firebase-x/ngx';
 import {BeansInformationComponent} from '../beans/beans-information/beans-information.component';
+import {PreparationInformationComponent} from '../preparation/preparation-information/preparation-information.component';
 
 @NgModule({
-  declarations: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, AboutComponent,
+  declarations: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, AboutComponent,
     ContactComponent,
     CreditsComponent,
     LicencesComponent,
@@ -74,7 +75,7 @@ import {BeansInformationComponent} from '../beans/beans-information/beans-inform
     FormatDatePipe, KeysPipe, EnumToArrayPipe, AsyncImageComponent, SearchPipe, RemoveEmptyNumberDirective,
     PreventCharacterDirective, BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent,
     BrewPopoverComponent, BrewPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent, BrewTimerComponent],
-  entryComponents: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, AboutComponent,
+  entryComponents: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, AboutComponent,
     ContactComponent,
     CreditsComponent,
     LicencesComponent,
@@ -108,7 +109,7 @@ import {BeansInformationComponent} from '../beans/beans-information/beans-inform
     InAppBrowser, File, Globalization, FirebaseX
   ],
 
-  exports: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, AboutComponent,
+  exports: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, AboutComponent,
     ContactComponent,
     CreditsComponent,
     LicencesComponent,
