@@ -161,7 +161,7 @@ export class Brew implements IBrew {
   }
 
   public isNormalBrew(): boolean {
-    return this.rating > 5 && this.rating < 8;
+    return this.rating >= 5 && this.rating < 8;
   }
 
   public isBadBrew(): boolean {
