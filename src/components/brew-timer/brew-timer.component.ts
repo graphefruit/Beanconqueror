@@ -30,7 +30,6 @@ export class BrewTimerComponent implements OnInit {
 
   public ngOnInit(): void {
     this.initTimer();
-    debugger;
     this.showBloomTimer = this.bloomTimerVisible;
     this.showDripTimer = this.dripTimerVisible;
   }

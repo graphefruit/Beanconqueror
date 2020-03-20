@@ -183,5 +183,8 @@
   "PAGE_PREPARATION_INFORMATION_GRIND_WEIGHT": "Used beans weight",
   "PAGE_PREPARATION_INFORMATION_TIME_SPENT_BREWING": "Total brew time",
   "PAGE_PREPARATION_INFORMATION": "Preparation information",
-  "SECONDS": "seconds"
+  "SECONDS": "seconds",
+  "PAGE_MILL_INFORMATION": "Grinder information",
+  "PAGE_MILL_INFORMATION_BREWS_DONE": "Brews with this grinder",
+  "PAGE_MILL_INFORMATION_GRIND_WEIGHT": "Used beans weight"
 }

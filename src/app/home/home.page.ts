@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {ModalController, NavController} from '@ionic/angular';
 import {UIStatistic} from '../../services/uiStatistic';
-import * as moment from 'moment';
+import moment from 'moment';
 import {BrewAddComponent} from '../brew/brew-add/brew-add.component';
 import {Router} from '@angular/router';
 

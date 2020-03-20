@@ -62,9 +62,10 @@ import {EnumToArrayPipe} from '../../pipes/enumToArray';
 import {FirebaseX} from '@ionic-native/firebase-x/ngx';
 import {BeansInformationComponent} from '../beans/beans-information/beans-information.component';
 import {PreparationInformationComponent} from '../preparation/preparation-information/preparation-information.component';
+import {MillInformationComponent} from '../mill/mill-information/mill-information.component';
 
 @NgModule({
-  declarations: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, AboutComponent,
+  declarations: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
     ContactComponent,
     CreditsComponent,
     LicencesComponent,
@@ -75,7 +76,7 @@ import {PreparationInformationComponent} from '../preparation/preparation-inform
     FormatDatePipe, KeysPipe, EnumToArrayPipe, AsyncImageComponent, SearchPipe, RemoveEmptyNumberDirective,
     PreventCharacterDirective, BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent,
     BrewPopoverComponent, BrewPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent, BrewTimerComponent],
-  entryComponents: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, AboutComponent,
+  entryComponents: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
     ContactComponent,
     CreditsComponent,
     LicencesComponent,
@@ -109,7 +110,7 @@ import {PreparationInformationComponent} from '../preparation/preparation-inform
     InAppBrowser, File, Globalization, FirebaseX
   ],
 
-  exports: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, AboutComponent,
+  exports: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
     ContactComponent,
     CreditsComponent,
     LicencesComponent,
