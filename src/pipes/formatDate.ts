@@ -1,7 +1,7 @@
 /** Core */
 import {Pipe, PipeTransform} from '@angular/core';
 /** Third party */
-import * as moment from 'moment';
+import moment from 'moment';
 
 @Pipe({name: 'formatDate'})
 export class FormatDatePipe implements PipeTransform {

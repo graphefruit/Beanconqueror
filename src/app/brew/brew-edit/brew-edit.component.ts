@@ -12,7 +12,7 @@ import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {UIImage} from '../../../services/uiImage';
 import {Brew} from '../../../classes/brew/brew';
 import {IBean} from '../../../interfaces/bean/iBean';
-import * as moment from 'moment';
+import moment from 'moment';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 import {ISettings} from '../../../interfaces/settings/iSettings';
 import {UISettingsStorage} from '../../../services/uiSettingsStorage';
