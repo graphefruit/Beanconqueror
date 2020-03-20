@@ -2,7 +2,7 @@
 import {Injectable} from '@angular/core';
 import {LOGS_ENUM} from '../enums/logs/logs';
 import {ILogInterface} from '../interfaces/log/iLog';
-import * as moment from 'moment';
+import moment from 'moment';
 
 /** Third party */
 declare var console;

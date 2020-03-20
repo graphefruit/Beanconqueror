@@ -53,7 +53,6 @@ export class PreparationPage implements OnInit {
     const modal = await this.modalCtrl.create({component: PreparationInformationComponent, componentProps: {preparation: _preparation}});
     await modal.present();
     await modal.onWillDismiss();
-    this.loadPreparations();
   }
 
   public deletePreparation(_preparation: Preparation): void {

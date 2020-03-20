@@ -7,6 +7,7 @@ import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {Brew} from '../../classes/brew/brew';
 import {MillEditComponent} from './mill-edit/mill-edit.component';
 import {MillAddComponent} from './mill-add/mill-add.component';
+import {MillInformationComponent} from './mill-information/mill-information.component';
 
 @Component({
   selector: 'mill',
@@ -68,6 +69,12 @@ public ngOnInit(): void {
           // No
         });
 
+  }
+
+  public async informationMill(_mill: Mill) {
+    const modal = await this.modalCtrl.create({component: MillInformationComponent, componentProps: {mill: _mill}});
+    await modal.present();
+    await modal.onWillDismiss();
   }
 
   private __initializeMills(): void {
