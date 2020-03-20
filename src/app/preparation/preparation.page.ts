@@ -103,7 +103,6 @@ export class PreparationPage implements OnInit {
     });
     await modal.present();
     await modal.onWillDismiss();
-    this.loadPreparations();
   }
 
   public deletePreparation(_preparation: Preparation): void {
