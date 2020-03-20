@@ -4,7 +4,7 @@ import {InAppBrowser} from '@ionic-native/in-app-browser/ngx';
 /** Ionic */
 import {Platform} from '@ionic/angular';
 /** Third party */
-import * as moment from 'moment';
+import moment from 'moment';
 // tslint:disable-next-line
 import 'moment/locale/de';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';

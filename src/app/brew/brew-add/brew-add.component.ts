@@ -14,7 +14,7 @@ import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {UIImage} from '../../../services/uiImage';
 import {Brew} from '../../../classes/brew/brew';
 import {IBean} from '../../../interfaces/bean/iBean';
-import * as moment from 'moment';
+import moment from 'moment';
 import {Mill} from '../../../classes/mill/mill';
 import {Bean} from '../../../classes/bean/bean';
 import {UIAnalytics} from '../../../services/uiAnalytics';

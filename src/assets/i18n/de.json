@@ -183,5 +183,8 @@
   "PAGE_PREPARATION_INFORMATION_GRIND_WEIGHT": "Verarbeitete Bohnenmenge",
   "PAGE_PREPARATION_INFORMATION_TIME_SPENT_BREWING": "Totale Brühzeit",
   "PAGE_PREPARATION_INFORMATION": "Zubereitungsmethode Informationen",
-  "SECONDS": "Sekunden"
+  "SECONDS": "Sekunden",
+  "PAGE_MILL_INFORMATION": "Mühlen Informationen",
+  "PAGE_MILL_INFORMATION_BREWS_DONE": "Brühungen mit dieser Mühle",
+  "PAGE_MILL_INFORMATION_GRIND_WEIGHT": "Verarbeitete Bohnenmenge"
 }
