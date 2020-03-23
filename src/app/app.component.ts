@@ -56,7 +56,8 @@ export class AppComponent implements AfterViewInit {
     licences: {title: 'NAV_LICENCES', url: '/info/licences', icon: 'copy-outline', active: false},
 
     statistic: {title: 'NAV_STATISTICS', url: '/statistic', icon: 'analytics-outline', active: false},
-    logs: {title: 'NAV_LOGS', url: '/info/logs', icon: 'logo-buffer', active: false}
+    logs: {title: 'NAV_LOGS', url: '/info/logs', icon: 'logo-buffer', active: false},
+    helper: {title: 'NAV_HELPER', url: '/helper', icon: 'construct-outline', active: false}
   };
 
 

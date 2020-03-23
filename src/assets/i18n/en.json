@@ -186,5 +186,15 @@
   "SECONDS": "seconds",
   "PAGE_MILL_INFORMATION": "Grinder information",
   "PAGE_MILL_INFORMATION_BREWS_DONE": "Brews with this grinder",
-  "PAGE_MILL_INFORMATION_GRIND_WEIGHT": "Used beans weight"
+  "PAGE_MILL_INFORMATION_GRIND_WEIGHT": "Used beans weight",
+  "NAV_HELPER": "Helper",
+  "PAGE_HELPER_WATER_HARDNESS": "Water hardness",
+  "PAGE_HELPER_WATER_HARDNESS_CA_CONTENTS": "Calcium content mg/l",
+  "PAGE_HELPER_WATER_HARDNESS_MG_CONTENTS": "Magnesium content mg/l",
+  "PAGE_HELPER_WATER_HARDNESS_GERMAN_HARDNESS": "German hardness",
+  "PAGE_HELPER_WATER_HARDNESS_TOTAL_HARDNESS": "Total hardness",
+  "PAGE_HELPER_BREW_RATIO": "Brew ratio",
+  "PAGE_HELPER_BREW_RATIO_GROUND_COFFEE": "Weight",
+  "PAGE_HELPER_BREW_RATIO_WATER": "Water",
+  "PAGE_HELPER_BREW_RATIO_CALCULATED": "Calculated brew ratio"
 }

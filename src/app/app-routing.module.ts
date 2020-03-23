@@ -51,7 +51,11 @@ const routes: Routes = [
     path: 'statistic', resolve: {
       resolver: RouteResolver
     }, loadChildren: './statistic/statistic.module#StatisticPageModule', pathMatch: 'full'
-  },
+  }, {
+    path: 'helper', resolve: {
+      resolver: RouteResolver
+    }, loadChildren: './helper/helper.module#HelperPageModule', pathMatch: 'full'
+  }
 ];
 
 @NgModule({
