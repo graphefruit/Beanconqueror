@@ -1,0 +1,63 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      {{"NAV_HELPER"  | translate}}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-list>
+    <ion-item-divider color="light">{{"PAGE_HELPER_WATER_HARDNESS" | translate}}</ion-item-divider>
+    <ion-item>
+      <ion-label position="stacked">{{"PAGE_HELPER_WATER_HARDNESS_CA_CONTENTS" | translate}}</ion-label>
+      <ion-input [(ngModel)]="waterhardness.ca" inputmode="decimal" prevent-characters remove-empty-number
+                 type="text"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">{{"PAGE_HELPER_WATER_HARDNESS_MG_CONTENTS" | translate}}</ion-label>
+      <ion-input [(ngModel)]="waterhardness.mg" inputmode="decimal" prevent-characters remove-empty-number
+                 type="text"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>{{"PAGE_HELPER_WATER_HARDNESS_GERMAN_HARDNESS" | translate}}</ion-label>
+      <ion-badge slot="end">{{getGermanHardness()}}</ion-badge>
+
+    </ion-item>
+    <ion-item>
+      <ion-label>{{"PAGE_HELPER_WATER_HARDNESS_TOTAL_HARDNESS" | translate}}</ion-label>
+      <ion-badge slot="end">{{getTotalHardness()}}</ion-badge>
+    </ion-item>
+  </ion-list>
+
+
+  <ion-list>
+    <ion-item-divider color="light">{{"PAGE_HELPER_BREW_RATIO" | translate}}</ion-item-divider>
+    <ion-item>
+      <ion-label position="stacked">{{"PAGE_HELPER_BREW_RATIO_GROUND_COFFEE" | translate}}</ion-label>
+      <ion-input [(ngModel)]="brewRatio.ground_coffee" inputmode="decimal" prevent-characters remove-empty-number
+                 type="text"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">{{"PAGE_HELPER_BREW_RATIO_WATER" | translate}}</ion-label>
+      <ion-input [(ngModel)]="brewRatio.water" inputmode="decimal" prevent-characters remove-empty-number
+                 type="text"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>{{"PAGE_HELPER_BREW_RATIO_CALCULATED" | translate}}</ion-label>
+      <ion-badge slot="end">{{getBrewRatio()}}</ion-badge>
+
+    </ion-item>
+
+  </ion-list>
+
+
+</ion-content>
+

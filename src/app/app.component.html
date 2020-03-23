@@ -30,6 +30,10 @@
                 <ion-icon class="menu-icon custom-mill"></ion-icon>
                 {{pages.mill.title | translate}}
               </ion-item>
+              <ion-item [class.active]="pages.helper.active" [routerLink]="[pages.helper.url]">
+                <ion-icon class="menu-icon" name="{{pages.helper.icon}}"></ion-icon>
+                {{pages.helper.title | translate}}
+              </ion-item>
               <ion-item [class.active]="pages.statistic.active" [routerLink]="[pages.statistic.url]">
                 <ion-icon class="menu-icon" name="{{pages.statistic.icon}}"></ion-icon>
                 {{pages.statistic.title | translate}}

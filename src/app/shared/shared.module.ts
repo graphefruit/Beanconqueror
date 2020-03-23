@@ -63,9 +63,10 @@ import {FirebaseX} from '@ionic-native/firebase-x/ngx';
 import {BeansInformationComponent} from '../beans/beans-information/beans-information.component';
 import {PreparationInformationComponent} from '../preparation/preparation-information/preparation-information.component';
 import {MillInformationComponent} from '../mill/mill-information/mill-information.component';
+import {HelperPage} from '../helper/helper.page';
 
 @NgModule({
-  declarations: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
+  declarations: [SettingsPage, StatisticPage, HomePage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
     ContactComponent,
     CreditsComponent,
     LicencesComponent,
@@ -76,7 +77,7 @@ import {MillInformationComponent} from '../mill/mill-information/mill-informatio
     FormatDatePipe, KeysPipe, EnumToArrayPipe, AsyncImageComponent, SearchPipe, RemoveEmptyNumberDirective,
     PreventCharacterDirective, BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent,
     BrewPopoverComponent, BrewPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent, BrewTimerComponent],
-  entryComponents: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
+  entryComponents: [SettingsPage, StatisticPage, HomePage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
     ContactComponent,
     CreditsComponent,
     LicencesComponent,
@@ -110,7 +111,7 @@ import {MillInformationComponent} from '../mill/mill-information/mill-informatio
     InAppBrowser, File, Globalization, FirebaseX
   ],
 
-  exports: [SettingsPage, StatisticPage, HomePage, BeansPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
+  exports: [SettingsPage, StatisticPage, HomePage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
     ContactComponent,
     CreditsComponent,
     LicencesComponent,
