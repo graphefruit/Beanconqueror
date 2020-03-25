@@ -217,18 +217,6 @@ export class BrewPage implements OnInit {
   }
 
 
-  public getBrewDisplayClass(_brew: Brew) {
-    if (_brew.isAwesomeBrew()) {
-      return 'awesome-brew';
-    } else if (_brew.isGoodBrew()) {
-      return 'good-brew';
-    } else if (_brew.isNormalBrew()) {
-      return 'normal-brew';
-    } else if (_brew.isBadBrew()) {
-      return 'bad-brew';
-    }
-    return 'not-rated-brew';
-  }
 
   private __initializeOpenBrewsFilter(): void {
     this.openBrewsFilter.mill = [];

@@ -1,4 +1,4 @@
-<ion-card class="dynamic-padding">
+<ion-card [ngClass]="getBrewDisplayClass(brew)" class="dynamic-padding">
   <ion-card-header>
     <ion-row>
       <ion-col *ngIf="settings.bean_type === true" class="ion-align-self-center" size="10">
