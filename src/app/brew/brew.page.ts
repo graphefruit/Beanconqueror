@@ -24,10 +24,10 @@ import {IPreparation} from '../../interfaces/preparation/iPreparation';
 import {IBean} from '../../interfaces/bean/iBean';
 import {IMill} from '../../interfaces/mill/iMill';
 import {IBrewPageFilter} from '../../interfaces/brew/iBrewPageFilter';
-import {BrewPopoverActionsComponent} from './brew-popover-actions/brew-popover-actions.component';
 import {debounceTime, distinctUntilChanged} from 'rxjs/internal/operators';
 import {Subject} from 'rxjs';
 import {TranslateService} from '@ngx-translate/core';
+import {BREW_ACTION} from '../../enums/brews/brewAction';
 
 @Component({
   selector: 'brew',
@@ -116,35 +116,26 @@ export class BrewPage implements OnInit {
     } else if (data.role === BrewPopoverComponent.ACTIONS.RESET_FILTER) {
       this.__resetFilter();
     }
-
   }
 
-  public async showBrewActions(event, brew: Brew): Promise<void> {
-    const popover = await this.popoverCtrl.create({
-      component: BrewPopoverActionsComponent,
-      event,
-      translucent: true,
-      componentProps: {brew}
-    });
-    await popover.present();
-    const data = await popover.onWillDismiss();
-    switch (data.role) {
-      case BrewPopoverActionsComponent.ACTIONS.POST:
+  public async brewAction(action: BREW_ACTION, brew: Brew): Promise<void> {
+    switch (action) {
+      case BREW_ACTION.POST:
         this.postBrew(brew);
         break;
-      case BrewPopoverActionsComponent.ACTIONS.REPEAT:
+      case BREW_ACTION.REPEAT:
         this.repeatBrew(brew);
         break;
-      case BrewPopoverActionsComponent.ACTIONS.DETAIL:
+      case BREW_ACTION.DETAIL:
         this.detailBrew(brew);
         break;
-      case BrewPopoverActionsComponent.ACTIONS.EDIT:
+      case BREW_ACTION.EDIT:
         this.editBrew(brew);
         break;
-      case BrewPopoverActionsComponent.ACTIONS.DELETE:
+      case BREW_ACTION.DELETE:
         this.deleteBrew(brew);
         break;
-      case BrewPopoverActionsComponent.ACTIONS.PHOTO_GALLERY:
+      case BREW_ACTION.PHOTO_GALLERY:
         this.viewPhotos(brew);
         break;
       default:
