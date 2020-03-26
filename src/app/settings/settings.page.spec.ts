@@ -17,6 +17,8 @@ import {FirebaseX} from '@ionic-native/firebase-x/ngx';
 import {Router} from '@angular/router';
 import {FileChooser} from '@ionic-native/file-chooser/ngx';
 import {FilePath} from '@ionic-native/file-path/ngx';
+import {IOSFilePicker} from '@ionic-native/file-picker/ngx';
+import {SocialSharing} from '@ionic-native/social-sharing/ngx';
 
 describe('SettingsPage', () => {
   let component: SettingsPage;
@@ -39,6 +41,8 @@ describe('SettingsPage', () => {
         {provide: Router},
         {provide: FileChooser},
         {provide: FilePath},
+        {provide: IOSFilePicker},
+        {provide: SocialSharing},
       ],
     })
     .compileComponents();

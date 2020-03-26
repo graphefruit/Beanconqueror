@@ -54,7 +54,10 @@ export class BrewEditComponent implements OnInit {
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
     const brew: IBrew = this.uiHelper.copyData(this.navParams.get('brew'));
 
-    this.data.initializeByObject(brew);
+    if (brew !== undefined) {
+      this.data.initializeByObject(brew);
+    }
+
     this.method_of_preparations = this.uiPreparationStorage.getAllEntries()
         .sort((a, b) => a.name.localeCompare(b.name));
     this.beans = this.uiBeanStorage.getAllEntries()

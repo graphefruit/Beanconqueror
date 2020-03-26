@@ -5,6 +5,7 @@ import {BrewInformationComponent} from './brew-information.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {Storage} from '@ionic/storage';
 import {InAppBrowser} from '@ionic-native/in-app-browser/ngx';
+import {File} from '@ionic-native/file/ngx';
 
 describe('BrewInformationComponent', () => {
   let component: BrewInformationComponent;
@@ -18,6 +19,7 @@ describe('BrewInformationComponent', () => {
       providers: [
         {provide: Storage},
         {provide: InAppBrowser},
+        {provide: File},
       ]
     }).compileComponents();
 

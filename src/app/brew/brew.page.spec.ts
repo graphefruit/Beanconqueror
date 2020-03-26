@@ -16,6 +16,8 @@ import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
 import {FirebaseX} from '@ionic-native/firebase-x/ngx';
 import {Router} from '@angular/router';
 import {SearchPipe} from '../../pipes/search';
+import {BrewInformationComponent} from '../../components/brew-information/brew-information.component';
+import {SocialSharing} from '@ionic-native/social-sharing/ngx';
 
 describe('BrewPage', () => {
   let component: BrewPage;
@@ -24,7 +26,7 @@ describe('BrewPage', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [TranslateModule.forRoot(), FormsModule, IonicStorageModule.forRoot(), CommonModule, IonicModule],
-      declarations: [BrewPage, KeysPipe, SearchPipe],
+      declarations: [BrewPage, KeysPipe, SearchPipe, BrewInformationComponent],
       providers: [
         {provide: InAppBrowser},
         {provide: ModalController},
@@ -35,7 +37,8 @@ describe('BrewPage', () => {
         {provide: ImagePicker},
         {provide: AndroidPermissions},
         {provide: FirebaseX},
-        {provide: Router}
+        {provide: Router},
+        {provide: SocialSharing},
       ],
     })
     .compileComponents();

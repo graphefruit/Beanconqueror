@@ -33,37 +33,40 @@ export class BrewInformationComponent implements OnInit {
   }
 
   public ngOnInit() {
-    this.bean = this.brew.getBean();
-    this.preparation = this.brew.getPreparation();
-    this.mill = this.brew.getMill();
+    if (this.brew) {
+      this.bean = this.brew.getBean();
+      this.preparation = this.brew.getPreparation();
+      this.mill = this.brew.getMill();
+    }
+
   }
 
-  public async showBrewActions(event, brew: Brew): Promise<void> {
+  public async showBrewActions(event): Promise<void> {
     const popover = await this.popoverCtrl.create({
       component: BrewPopoverActionsComponent,
       event,
       translucent: true,
-      componentProps: {brew}
+      componentProps: {brew: this.brew}
     });
     await popover.present();
     const data = await popover.onWillDismiss();
-    this.brewAction.emit([data.role as BREW_ACTION, brew]);
+    this.brewAction.emit([data.role as BREW_ACTION, this.brew]);
   }
 
 
   public getBrewDisplayClass() {
-    if (this.brew.rating === 8) {
-      debugger;
+    if (this.brew) {
+      if (this.brew.isAwesomeBrew()) {
+        return 'awesome-brew';
+      } else if (this.brew.isGoodBrew()) {
+        return 'good-brew';
+      } else if (this.brew.isNormalBrew()) {
+        return 'normal-brew';
+      } else if (this.brew.isBadBrew()) {
+        return 'bad-brew';
+      }
     }
-    if (this.brew.isAwesomeBrew()) {
-      return 'awesome-brew';
-    } else if (this.brew.isGoodBrew()) {
-      return 'good-brew';
-    } else if (this.brew.isNormalBrew()) {
-      return 'normal-brew';
-    } else if (this.brew.isBadBrew()) {
-      return 'bad-brew';
-    }
+
     return 'not-rated-brew';
   }
 }

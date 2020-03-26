@@ -30,10 +30,13 @@ export class BrewDetailComponent implements OnInit {
 
 
   }
-  public ionViewWillEnter(){
 
-    const copy: IBrew = this.uiHelper.copyData(this.brew);
-    this.data.initializeByObject(copy);
+  public ionViewWillEnter() {
+
+    if (!this.brew) {
+      const copy: IBrew = this.uiHelper.copyData(this.brew);
+      this.data.initializeByObject(copy);
+    }
   }
 
   public dismiss(): void {
