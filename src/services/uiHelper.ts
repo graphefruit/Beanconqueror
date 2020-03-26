@@ -38,11 +38,15 @@ export class UIHelper {
   }
 
   public copyData(_value: any): any {
-    if (_value.constructor === Array) {
-      return {...[], ..._value};
-    }
+    if (_value) {
+      if (_value.constructor === Array) {
+        return {...[], ..._value};
+      }
 
-    return {..._value};
+      return {..._value};
+    }
+    return undefined;
+
   }
 
   public generateUUID(): string {

@@ -23,6 +23,7 @@ describe('BrewEditComponent', () => {
   let fixture: ComponentFixture<BrewEditComponent>;
 
   beforeEach(async(() => {
+    NavParamsMock.setParams(undefined);
     TestBed.configureTestingModule({
       imports: [TranslateModule.forRoot(), FormsModule, IonicStorageModule.forRoot(), CommonModule, IonicModule],
       declarations: [BrewEditComponent, KeysPipe, AsyncImageComponent, FormatDatePipe],
@@ -40,14 +41,10 @@ describe('BrewEditComponent', () => {
       ],
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(BrewEditComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  });
-
+  }));
   it('should create', () => {
     expect(component).toBeTruthy();
   });

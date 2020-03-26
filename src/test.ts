@@ -13,6 +13,6 @@ getTestBed().initTestEnvironment(
 );
 // Then we find all the tests.
 const context = require.context('./', true, /\.spec\.ts$/);
-// const context = require.context('./', true, /home.page\.spec\.ts$/);
+// const context = require.context('./', true, /brew\.page\.spec\.ts$/);
 // And load the modules.
 context.keys().map(context);
