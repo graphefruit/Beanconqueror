@@ -52,7 +52,6 @@
       <feature name="CDVWKWebViewEngine">
         <param name="ios-package" value="CDVWKWebViewEngine"/>
       </feature>
-
       <preference name="CordovaWebViewEngine" value="CDVWKWebViewEngine"/>
         <edit-config file="*-Info.plist" mode="merge" target="UIApplicationShortcutItems">
             <array>

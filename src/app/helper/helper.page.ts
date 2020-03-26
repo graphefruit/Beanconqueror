@@ -33,13 +33,13 @@ export class HelperPage implements OnInit {
     }
   }
 
-  public getGermanHardness() {
+  public getGermanHardness(): string {
     //  °dH = 0.1402*[Ca] + 0.2307*[Mg],
     try {
       const hardness: number = ((this.waterhardness.ca * 1.4) + (this.waterhardness.mg * 2.307)) / 10;
       return hardness.toFixed(2);
     } catch (ex) {
-      return 0;
+      return '0';
     }
   }
 

@@ -2,6 +2,9 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {IonicModule} from '@ionic/angular';
 
 import {BrewInformationComponent} from './brew-information.component';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {Storage} from '@ionic/storage';
+import {InAppBrowser} from '@ionic-native/in-app-browser/ngx';
 
 describe('BrewInformationComponent', () => {
   let component: BrewInformationComponent;
@@ -10,7 +13,12 @@ describe('BrewInformationComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [BrewInformationComponent],
-      imports: [IonicModule.forRoot()]
+      imports: [IonicModule.forRoot()],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      providers: [
+        {provide: Storage},
+        {provide: InAppBrowser},
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(BrewInformationComponent);
