@@ -13,7 +13,7 @@
   <ion-item>
     <ion-label floating>{{"BEAN_DATA_NAME" | translate}}*</ion-label>
     <ion-input [(ngModel)]="data.name" name="name" type="text" #name="ngModel" spellcheck="false"
-               autocapitalize="off" required>
+               autocapitalize="sentences" required>
     </ion-input>
   </ion-item>
   <ion-item>
@@ -40,19 +40,19 @@
   <ion-item>
     <ion-label floating>{{"BEAN_DATA_ROASTER" | translate}}</ion-label>
     <ion-input [(ngModel)]="data.roaster" name="roaster" type="text" #roaster="ngModel" spellcheck="false"
-               autocapitalize="off" required>
+               autocapitalize="sentences" required>
     </ion-input>
   </ion-item>
   <ion-item>
     <ion-label floating>{{"BEAN_DATA_VARIETY" | translate}}</ion-label>
     <ion-input [(ngModel)]="data.variety" name="variety" type="text" #variety="ngModel" spellcheck="false"
-               autocapitalize="off" required>
+               autocapitalize="sentences" required>
     </ion-input>
   </ion-item>
   <ion-item>
     <ion-label floating>{{"BEAN_DATA_COUNTRY" | translate}}</ion-label>
     <ion-input [(ngModel)]="data.country" name="country" type="text" #country="ngModel" spellcheck="false"
-               autocapitalize="off" required>
+               autocapitalize="sentences" required>
     </ion-input>
   </ion-item>
   <ion-item>
@@ -64,19 +64,19 @@
   <ion-item>
     <ion-label floating>{{"BEAN_DATA_AROMATICS" | translate}}</ion-label>
     <ion-input [(ngModel)]="data.aromatics" name="aromatics" type="text" #aromatics="ngModel" spellcheck="false"
-               autocapitalize="off" required>
+               autocapitalize="sentences" required>
     </ion-input>
   </ion-item>
   <ion-item>
     <ion-label floating>{{"BEAN_DATA_WEIGHT" | translate}}</ion-label>
     <ion-input [(ngModel)]="data.weight" name="weight" remove-empty-number prevent-characters type="text" #weight="ngModel" spellcheck="false"
-               autocapitalize="off" required>
+               autocapitalize="off" inputmode="decimal" required>
     </ion-input>
   </ion-item>
   <ion-item>
     <ion-label floating>{{"BEAN_DATA_COST" | translate}}</ion-label>
     <ion-input [(ngModel)]="data.cost" name="cost" remove-empty-number prevent-characters type="text" #cost="ngModel" spellcheck="false"
-               autocapitalize="off" required>
+               autocapitalize="off" inputmode="decimal" required>
     </ion-input>
   </ion-item>
   <ion-item>
@@ -85,7 +85,8 @@
   </ion-item>
   <ion-item>
     <ion-label floating>{{"NOTES" | translate}}</ion-label>
-    <ion-textarea autocomplete="true" spellcheck="true" autocorrect="true" name="note" #note="ngModel" rows="5"
+    <ion-textarea #note="ngModel" autocapitalize="sentences" autocomplete="true" autocorrect="true" name="note" rows="5"
+                  spellcheck="true"
                   [(ngModel)]="data.note"></ion-textarea>
   </ion-item>
   <ion-item (click)="addImage()" button>

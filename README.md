@@ -37,6 +37,12 @@ ionic cordova build android
 
 ## Issues with iOS
 ```
+1. pod install
+-> this needs to be done in the ios platform
+
+if this doesn't help:
+
+2.
 sudo chmod go-w /YourPath/Beanconqueror
 pod repo update
 ```
