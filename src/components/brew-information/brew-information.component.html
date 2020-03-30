@@ -26,8 +26,7 @@
           <i class="fa fa-percent"></i>&nbsp;{{brew?.getBrewRatio()}}
         </ion-col>
         <ion-col *ngIf="settings.brew_time === true" size="3">
-          <ion-icon name="timer-outline"></ion-icon>&nbsp;{{brew?.brew_time}}
-          ({{brew?.getCalcualatedCoffeeBrewTime()}})
+          <ion-icon name="timer-outline"></ion-icon>&nbsp;{{brew?.getFormattedTotalCoffeeBrewTime()}}
         </ion-col>
       </ion-row>
       <ion-row class="center-col">

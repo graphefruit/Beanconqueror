@@ -183,8 +183,18 @@ export class Brew implements IBrew {
       .format(format);
   }
 
-  public getCalcualatedCoffeeBrewTime(): number {
-    return this.brew_time - this.coffee_first_drip_time;
+  public getFormattedTotalCoffeeBrewTime(): string {
+    const secs = this.brew_time;
+
+    const formatted = moment.utc(secs * 1000).format('mm:ss');
+    return formatted;
+  }
+
+  public getFormattedCoffeeBrewTime(): string {
+    const secs = this.brew_time - this.coffee_first_drip_time;
+
+    const formatted = moment.utc(secs * 1000).format('mm:ss');
+    return formatted;
   }
 
   private getBeanStorageInstance(): UIBeanStorage {
