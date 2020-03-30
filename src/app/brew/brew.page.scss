@@ -1,8 +1,4 @@
 :host {
-  ion-row.center-col ion-col {
-    display: flex;
-    align-items: center
-  }
   .brews-header{
     border-top:none;
     background-color:rgb(160,176,196);
@@ -15,41 +11,8 @@
     margin-top:0px!important;
   }
 
-  button[justify-content-start] .button-inner{
-    justify-content: flex-start;
-  }
   .error-text{
     color:red;
-  }
-
-  ion-card.dynamic-padding {
-    ion-card-header {
-      padding-top: 0px;
-      padding-left: 5px;
-      padding-right: 0px;
-      padding-bottom: 0px;
-    }
-
-    ion-card-content {
-      padding-left: 5px;
-      padding-right: 0px;
-      padding-bottom: 0px;
-    }
-
-    padding: 5px;
-    padding-top: 0px;
-  }
-
-  ion-card.good-brew {
-    border-top: 5px #009966 solid;
-  }
-
-  ion-card.bad-brew {
-    border-top: 5px #fe4164 solid;
-  }
-
-  ion-card.awesome-brew {
-    border-top: 5px #aa8736 solid;
   }
 
   ion-list-header {

@@ -79,9 +79,16 @@ export class BrewAddComponent implements OnInit {
 
     this.brew_template = this.navParams.get('brew_template');
     // Get first entry
-    this.data.bean = this.beans[0].config.uuid;
-    this.data.method_of_preparation = this.method_of_preparations[0].config.uuid;
-    this.data.mill = this.mills[0].config.uuid;
+    if (this.beans.length > 0) {
+      this.data.bean = this.beans[0].config.uuid;
+    }
+    if (this.method_of_preparations.length > 0) {
+      this.data.method_of_preparation = this.method_of_preparations[0].config.uuid;
+    }
+    if (this.mills.length > 0) {
+      this.data.mill = this.mills[0].config.uuid;
+    }
+
     this.customCreationDate = moment().toISOString();
 
   }

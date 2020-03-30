@@ -23,10 +23,11 @@ export class BeansInformationComponent implements OnInit {
   public data: Bean = new Bean();
   public roastsEnum = ROASTS_ENUM;
   public mixEnum = BEAN_MIX_ENUM;
+
   @Input() private bean: IBean;
 
   @ViewChild('beanChart', {static: false}) public beanChart;
-
+  private relatedBrews: Array<Brew> = [];
   constructor(private readonly navParams: NavParams,
               private readonly modalController: ModalController,
               private readonly uiBeanStorage: UIBeanStorage,
@@ -125,16 +126,18 @@ export class BeansInformationComponent implements OnInit {
   }
 
   private __getAllBrewsForThisBean(): Array<Brew> {
-    const brewsForThisBean: Array<Brew> = [];
-    const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
-    const beanUUID: string = this.data.config.uuid;
-    for (const brew of brews) {
-      if (brew.bean === beanUUID) {
-        brewsForThisBean.push(brew);
+    if (this.relatedBrews.length === 0) {
+      const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
+      const beanUUID: string = this.data.config.uuid;
+      for (const brew of brews) {
+        if (brew.bean === beanUUID) {
+          this.relatedBrews.push(brew);
+        }
       }
     }
-    return brewsForThisBean;
+    return this.relatedBrews;
   }
+
 
   private __loadBeanChart(): void {
 

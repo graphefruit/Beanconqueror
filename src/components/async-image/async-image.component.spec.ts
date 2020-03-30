@@ -1,7 +1,13 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { AsyncImageComponent } from './async-image.component';
+import {AsyncImageComponent} from './async-image.component';
+import {TranslateModule} from '@ngx-translate/core';
+import {FormsModule} from '@angular/forms';
+import {IonicStorageModule} from '@ionic/storage';
+import {CommonModule} from '@angular/common';
+import {IonicModule} from '@ionic/angular';
+import {File} from '@ionic-native/file/ngx';
 
 describe('AsyncImageComponent', () => {
   let component: AsyncImageComponent;
@@ -9,7 +15,12 @@ describe('AsyncImageComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AsyncImageComponent ],
+      imports: [TranslateModule.forRoot(), FormsModule, IonicStorageModule.forRoot(), CommonModule, IonicModule],
+      declarations: [AsyncImageComponent],
+      providers: [
+        {provide: Storage},
+        {provide: File}
+      ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
     })
     .compileComponents();

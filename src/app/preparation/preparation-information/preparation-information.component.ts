@@ -17,7 +17,7 @@ export class PreparationInformationComponent implements OnInit {
 
   public data: Preparation = new Preparation();
   @Input() private preparation: IPreparation;
-
+  private relatedBrews: Array<Brew> = [];
   constructor(private readonly uiAnalytics: UIAnalytics,
               private readonly uiHelper: UIHelper,
               private readonly modalController: ModalController,
@@ -43,11 +43,11 @@ export class PreparationInformationComponent implements OnInit {
   }
 
   public countBrewsWithThisPreparationMethod(): number {
-    return this.__getAllReleatedBrews().length;
+    return this.__getAllRelatedBrews().length;
   }
 
   public countBrewedQuantity(): string {
-    const brews: Array<Brew> = this.__getAllReleatedBrews();
+    const brews: Array<Brew> = this.__getAllRelatedBrews();
     let mlBrewed: number = 0;
     for (const brew of brews) {
       mlBrewed += brew.brew_quantity;
@@ -56,7 +56,7 @@ export class PreparationInformationComponent implements OnInit {
   }
 
   public typeOfBrewedQuantity(): string {
-    const brews: Array<Brew> = this.__getAllReleatedBrews();
+    const brews: Array<Brew> = this.__getAllRelatedBrews();
 
     for (const brew of brews) {
       return BREW_QUANTITY_TYPES_ENUM[brew.brew_quantity_type];
@@ -65,7 +65,7 @@ export class PreparationInformationComponent implements OnInit {
   }
 
   public countGrindWeight(): string {
-    const brews: Array<Brew> = this.__getAllReleatedBrews();
+    const brews: Array<Brew> = this.__getAllRelatedBrews();
     let grindWeights: number = 0;
     for (const brew of brews) {
       grindWeights += brew.grind_weight;
@@ -74,7 +74,7 @@ export class PreparationInformationComponent implements OnInit {
   }
 
   public countTimeSpentWithThisPreparationMethod(): string {
-    const brews: Array<Brew> = this.__getAllReleatedBrews();
+    const brews: Array<Brew> = this.__getAllRelatedBrews();
     let grindWeights: number = 0;
     for (const brew of brews) {
       grindWeights += brew.brew_time;
@@ -82,16 +82,18 @@ export class PreparationInformationComponent implements OnInit {
     return grindWeights.toFixed(2);
   }
 
-  private __getAllReleatedBrews(): Array<Brew> {
-    const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
 
-    const relatedBrews: Array<Brew> = [];
-    for (const brew of brews) {
-      if (brew.method_of_preparation === this.data.config.uuid) {
-        relatedBrews.push(brew);
+  private __getAllRelatedBrews(): Array<Brew> {
+    if (this.relatedBrews.length === 0) {
+      const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
+      for (const brew of brews) {
+        if (brew.method_of_preparation === this.data.config.uuid) {
+          this.relatedBrews.push(brew);
+        }
       }
     }
-    return relatedBrews;
+    return this.relatedBrews;
   }
+
 
 }
