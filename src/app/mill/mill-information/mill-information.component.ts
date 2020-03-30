@@ -16,6 +16,7 @@ export class MillInformationComponent implements OnInit {
 
   public data: Mill = new Mill();
   @Input() private mill: IMill;
+  private relatedBrews: Array<Brew> = [];
 
   constructor(private readonly uiAnalytics: UIAnalytics,
               private readonly uiHelper: UIHelper,
@@ -42,11 +43,11 @@ export class MillInformationComponent implements OnInit {
   }
 
   public countBrewsWithThisMillMethod(): number {
-    return this.__getAllReleatedBrews().length;
+    return this.__getAllRelatedBrews().length;
   }
 
   public countGrindWeight(): string {
-    const brews: Array<Brew> = this.__getAllReleatedBrews();
+    const brews: Array<Brew> = this.__getAllRelatedBrews();
     let grindWeights: number = 0;
     for (const brew of brews) {
       grindWeights += brew.grind_weight;
@@ -54,16 +55,17 @@ export class MillInformationComponent implements OnInit {
     return grindWeights.toFixed(2);
   }
 
-  private __getAllReleatedBrews(): Array<Brew> {
-    const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
-
-    const relatedBrews: Array<Brew> = [];
-    for (const brew of brews) {
-      if (brew.mill === this.data.config.uuid) {
-        relatedBrews.push(brew);
+  private __getAllRelatedBrews(): Array<Brew> {
+    if (this.relatedBrews.length === 0) {
+      const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
+      for (const brew of brews) {
+        if (brew.mill === this.data.config.uuid) {
+          this.relatedBrews.push(brew);
+        }
       }
     }
-    return relatedBrews;
+
+    return this.relatedBrews;
   }
 
 }

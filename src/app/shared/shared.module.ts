@@ -64,6 +64,7 @@ import {BeansInformationComponent} from '../beans/beans-information/beans-inform
 import {PreparationInformationComponent} from '../preparation/preparation-information/preparation-information.component';
 import {MillInformationComponent} from '../mill/mill-information/mill-information.component';
 import {HelperPage} from '../helper/helper.page';
+import {BrewInformationComponent} from '../../components/brew-information/brew-information.component';
 
 @NgModule({
   declarations: [SettingsPage, StatisticPage, HomePage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
@@ -74,7 +75,7 @@ import {HelperPage} from '../helper/helper.page';
     TermsComponent,
     ThanksComponent, LogComponent, LogTextComponent, PreparationPage, PreparationAddComponent,
     PreparationEditComponent, MillPage, MillEditComponent, MillAddComponent, BrewAddComponent,
-    FormatDatePipe, KeysPipe, EnumToArrayPipe, AsyncImageComponent, SearchPipe, RemoveEmptyNumberDirective,
+    FormatDatePipe, KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, SearchPipe, RemoveEmptyNumberDirective,
     PreventCharacterDirective, BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent,
     BrewPopoverComponent, BrewPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent, BrewTimerComponent],
   entryComponents: [SettingsPage, StatisticPage, HomePage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
@@ -120,7 +121,7 @@ import {HelperPage} from '../helper/helper.page';
     ThanksComponent, PreparationPage, PreparationAddComponent,
     PreparationEditComponent, MillPage, MillEditComponent, MillAddComponent,
     BrewAddComponent, FormatDatePipe,
-    KeysPipe, EnumToArrayPipe, AsyncImageComponent, SearchPipe, RemoveEmptyNumberDirective,
+    KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, SearchPipe, RemoveEmptyNumberDirective,
     PreventCharacterDirective, BrewPage, BrewDetailComponent, BrewEditComponent,
     BrewPhotoViewComponent, BrewPopoverComponent, BrewPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent, BrewTimerComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

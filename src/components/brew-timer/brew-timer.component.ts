@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 import {ITimer} from '../../interfaces/timer/iTimer';
+import moment from 'moment';
 
 @Component({
   selector: 'brew-timer',
@@ -100,6 +101,13 @@ export class BrewTimerComponent implements OnInit {
 
   public getSeconds(): number {
     return this.timer.seconds;
+  }
+
+  public formatSeconds(): string {
+    const secs = this.getSeconds();
+
+    const formatted = moment.utc(secs * 1000).format('mm:ss');
+    return formatted;
   }
 
   public getSecondsAsDigitalClock(inputSeconds: number): string {

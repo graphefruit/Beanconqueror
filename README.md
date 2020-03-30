@@ -37,12 +37,18 @@ ionic cordova build android
 
 ## Issues with iOS
 ```
+1. pod install
+-> this needs to be done in the ios platform
+
+if this doesn't help:
+
+2.
 sudo chmod go-w /YourPath/Beanconqueror
 pod repo update
 ```
 
 
-##Debug analytics on firebase
+## Debug analytics on firebase
 ```adb shell setprop debug.firebase.analytics.app Beanconqueror
 adb shell setprop debug.firebase.analytics.app com.beanconqueror.app
 ```
@@ -50,5 +56,11 @@ adb shell setprop debug.firebase.analytics.app com.beanconqueror.app
 ```
 adb shell setprop debug.firebase.analytics.app .none.
 ```
+
+
+### Check outdated dependencies
+````
+npm outdated
+``
 
 
