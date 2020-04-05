@@ -1,3 +1,14 @@
+3.6.
+- Automated first capital character on bean/brew/mill/preparation
+- Added information for brew/preparation/mill
+- Added helper functions 
+- Added first automated tests and fixed the not running ones
+- Updated old dependencies
+- Added time format to display minutes and seconds for brews
+
+Issues fixed:
+- Wrong empty letters
+
 3.5.
 - Added custom user workflow for brews on edit/detail page
 - Show more information for beans (e.g. brew ratings)
