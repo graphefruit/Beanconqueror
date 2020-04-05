@@ -230,6 +230,9 @@ export class BrewAddComponent implements OnInit {
     if (this.settings.default_last_coffee_parameters.mill) {
       this.data.mill = brew.mill;
     }
+    if (this.settings.default_last_coffee_parameters.mill_timer) {
+      this.data.mill_timer = brew.mill_timer;
+    }
     if (this.settings.default_last_coffee_parameters.mill_speed) {
       this.data.mill_speed = brew.mill_speed;
     }
