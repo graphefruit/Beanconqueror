@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 import {IonSlides, ModalController, NavParams} from '@ionic/angular';
 import {UIHelper} from '../../../services/uiHelper';
@@ -19,7 +19,7 @@ export class BrewDetailComponent implements OnInit {
   public settings: Settings;
 
 
-  @Input() private brew: IBrew;
+  private brew: IBrew;
   constructor (private readonly modalController: ModalController,
                private readonly navParams: NavParams,
                public uiHelper: UIHelper,
@@ -32,8 +32,8 @@ export class BrewDetailComponent implements OnInit {
   }
 
   public ionViewWillEnter() {
-
-    if (!this.brew) {
+    this.brew = this.navParams.get('brew');
+    if (this.brew) {
       const copy: IBrew = this.uiHelper.copyData(this.brew);
       this.data.initializeByObject(copy);
     }
@@ -41,7 +41,7 @@ export class BrewDetailComponent implements OnInit {
 
   public dismiss(): void {
     this.modalController.dismiss({
-      'dismissed': true
+      dismissed: true
     });
   }
 

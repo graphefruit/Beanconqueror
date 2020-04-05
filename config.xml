@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.beanconqueror.app" version="3.6.0" xmlns="http://www.w3.org/ns/widgets">
+<widget id="com.beanconqueror.app" version="3.6.1" xmlns="http://www.w3.org/ns/widgets">
     <name>Beanconqueror</name>
     <description />
     <author email="lars.saalbach@googlemail.com" href="https://github.com/graphefruit/beanconqueror">Lars Saalbach</author>
@@ -21,7 +21,8 @@
     <preference name="SplashScreen" value="screen" />
     <preference name="SplashScreenDelay" value="3000" />
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
-    <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
+  <preference name="iosExtraFilesystems"
+              value="library,library-nosync,dionocuments,documents-nosync,cache,bundle,root"/>
     <platform name="android">
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
             <application android:networkSecurityConfig="@xml/network_security_config" />
