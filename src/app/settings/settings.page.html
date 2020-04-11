@@ -81,6 +81,18 @@
       <ion-checkbox (ionChange)="checkAnalytics()" (ngModelChange)="saveSettings();"
                     [(ngModel)]="settings.analytics"></ion-checkbox>
     </ion-item>
+
+
+    <ion-item>
+      <ion-label>{{"PAGE_SETTINGS_SHOW_ARCHIVED_BEANS" | translate}}</ion-label>
+      <ion-checkbox (ngModelChange)="saveSettings();"
+                    [(ngModel)]="settings.show_archived_beans"></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label>{{"PAGE_SETTINGS_SHOW_ARCHIVED_BREWS" | translate}}</ion-label>
+      <ion-checkbox (ngModelChange)="saveSettings();"
+                    [(ngModel)]="settings.show_archived_brews"></ion-checkbox>
+    </ion-item>
   </ion-list>
     </div>
     <div *ngSwitchCase="'visible_parameters'">

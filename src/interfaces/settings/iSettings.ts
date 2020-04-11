@@ -36,5 +36,8 @@ export interface ISettings {
   brew_order: IBrewOrder;
   analytics: boolean;
 
+  show_archived_beans: boolean;
+  show_archived_brews: boolean;
+
   config: IConfig;
 }

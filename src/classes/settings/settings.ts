@@ -39,6 +39,9 @@ export class Settings implements ISettings {
   public language: string;
   public analytics: boolean;
 
+  public show_archived_beans: boolean;
+  public show_archived_brews: boolean;
+
   constructor() {
     this.brew_view = BREW_VIEW_ENUM.SINGLE_PAGE;
     this.startup_view = STARTUP_VIEW_ENUM.HOME_PAGE;
@@ -70,6 +73,8 @@ export class Settings implements ISettings {
     this.language = '';
     this.analytics = undefined;
 
+    this.show_archived_beans = true;
+    this.show_archived_brews = true;
   }
 
   public initializeByObject(settingsObj: ISettings): void {
