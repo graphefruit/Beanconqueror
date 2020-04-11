@@ -84,3 +84,10 @@ ionic cordova plugin add cordova-plugin-enable-multidex
 ##FirebaseX
 ionic cordova plugin add cordova-plugin-firebasex --variable FIREBASE_ANALYTICS_COLLECTION_ENABLED=false --variable FIREBASE_PERFORMANCE_COLLECTION_ENABLED=false --variable FIREBASE_CRASHLYTICS_COLLECTION_ENABLED=false
 npm install @ionic-native/firebase-x
+
+
+##Tooltips
+npm install ionic4-tooltips --save
+
+##Animations
+npm install @angular/animations@latest --save

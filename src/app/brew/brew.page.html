@@ -24,7 +24,7 @@
           <ion-badge>{{openBrewsCount}}</ion-badge>
         </ion-label>
       </ion-segment-button>
-      <ion-segment-button value="archive">
+      <ion-segment-button *ngIf="settings.show_archived_brews" value="archive">
         <ion-label>{{"ARCHIVE" | translate }}
           <ion-badge>{{archivedBrewsCount}}</ion-badge>
         </ion-label>
@@ -76,18 +76,20 @@
         </div>
       </ion-list>
     </div>
-    <div *ngSwitchCase="'archive'">
-      <ion-card *ngIf="archiveBrewsView?.length == 0" class="ion-padding">
-        {{"PAGE_BREWS_NO_ENTRIES" | translate }}
-      </ion-card>
-      <ion-list *ngFor="let brewView of archiveBrewsView">
-        <ion-list-header *ngIf="(brewView.brews | searchBrews:query).length > 0" class="brews-header">
-          <ion-label>{{brewView.title}}</ion-label>
-        </ion-list-header>
-        <div *ngFor="let brew of brewView.brews | searchBrews:query">
-          <brew-information (brewAction)="brewAction($event[0],$event[1])" [brew]="brew"></brew-information>
-        </div>
-      </ion-list>
+    <div *ngIf="settings.show_archived_brews">
+      <div *ngSwitchCase="'archive'">
+        <ion-card *ngIf="archiveBrewsView?.length == 0" class="ion-padding">
+          {{"PAGE_BREWS_NO_ENTRIES" | translate }}
+        </ion-card>
+        <ion-list *ngFor="let brewView of archiveBrewsView">
+          <ion-list-header *ngIf="(brewView.brews | searchBrews:query).length > 0" class="brews-header">
+            <ion-label>{{brewView.title}}</ion-label>
+          </ion-list-header>
+          <div *ngFor="let brew of brewView.brews | searchBrews:query">
+            <brew-information (brewAction)="brewAction($event[0],$event[1])" [brew]="brew"></brew-information>
+          </div>
+        </ion-list>
+      </div>
     </div>
   </div>
 

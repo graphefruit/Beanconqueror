@@ -2,7 +2,7 @@
   <ion-label position="stacked">
     {{ label }} - <i>{{ formatSeconds() }}</i>
   </ion-label>
-  <ion-input [(ngModel)]="timer.seconds" prevent-characters type="number"></ion-input>
+  <ion-input (ngModelChange)="changeEvent()" [(ngModel)]="timer.seconds" prevent-characters type="number"></ion-input>
   <ion-button (click)="initTimer()"
               *ngIf="!timer.runTimer && (timer.hasStarted || timer.hasFinished) || timer.hasFinished" fill="outline"
               size="default"

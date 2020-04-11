@@ -5,7 +5,6 @@ import moment from 'moment';
 import {BrewAddComponent} from '../brew/brew-add/brew-add.component';
 import {Router} from '@angular/router';
 
-
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -26,6 +25,11 @@ export class HomePage {
                private readonly router: Router) {
 
   }
+
+  public ionViewDidEnter(): void {
+
+  }
+
 
   public async addBrew() {
     const modal = await this.modalCtrl.create({component: BrewAddComponent});

@@ -8,6 +8,8 @@ import {Bean} from '../../classes/bean/bean';
 import {BeansAddComponent} from './beans-add/beans-add.component';
 import {BeansEditComponent} from './beans-edit/beans-edit.component';
 import {BeansInformationComponent} from './beans-information/beans-information.component';
+import {UISettingsStorage} from '../../services/uiSettingsStorage';
+import {Settings} from '../../classes/settings/settings';
 
 @Component({
   selector: 'beans',
@@ -20,12 +22,16 @@ export class BeansPage implements OnInit {
   public openBeansCount: number = 0;
   public finishedBeansCount: number = 0;
 
+  public settings: Settings;
+
   public bean_segment: string = 'open';
   constructor(public modalCtrl: ModalController,
               private readonly changeDetectorRef: ChangeDetectorRef,
               private readonly uiBeanStorage: UIBeanStorage,
               private readonly uiAlert: UIAlert,
-              private readonly uiBrewStorage: UIBrewStorage) {
+              private readonly uiBrewStorage: UIBrewStorage,
+              private readonly uiSettingsStorage: UISettingsStorage) {
+    this.settings = this.uiSettingsStorage.getSettings();
 
   }
 

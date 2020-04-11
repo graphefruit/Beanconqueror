@@ -65,6 +65,8 @@ import {PreparationInformationComponent} from '../preparation/preparation-inform
 import {MillInformationComponent} from '../mill/mill-information/mill-information.component';
 import {HelperPage} from '../helper/helper.page';
 import {BrewInformationComponent} from '../../components/brew-information/brew-information.component';
+import {CuppingRadarComponent} from '../../components/cupping-radar/cupping-radar.component';
+import {TooltipDirective} from '../../directive/tooltip.directive';
 
 @NgModule({
   declarations: [SettingsPage, StatisticPage, HomePage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
@@ -75,8 +77,8 @@ import {BrewInformationComponent} from '../../components/brew-information/brew-i
     TermsComponent,
     ThanksComponent, LogComponent, LogTextComponent, PreparationPage, PreparationAddComponent,
     PreparationEditComponent, MillPage, MillEditComponent, MillAddComponent, BrewAddComponent,
-    FormatDatePipe, KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, SearchPipe, RemoveEmptyNumberDirective,
-    PreventCharacterDirective, BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent,
+    FormatDatePipe, KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, CuppingRadarComponent, SearchPipe, RemoveEmptyNumberDirective,
+    PreventCharacterDirective, TooltipDirective, BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent,
     BrewPopoverComponent, BrewPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent, BrewTimerComponent],
   entryComponents: [SettingsPage, StatisticPage, HomePage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
     ContactComponent,
@@ -92,13 +94,13 @@ import {BrewInformationComponent} from '../../components/brew-information/brew-i
     CommonModule,
     IonicModule,
     FormsModule,
-    TranslateModule,
+    TranslateModule
   ],
   providers: [
     AppVersion,
     StatusBar,
     SplashScreen,
-    RemoveEmptyNumberDirective, PreventCharacterDirective, FormatDatePipe, KeysPipe, EnumToArrayPipe,
+    RemoveEmptyNumberDirective, PreventCharacterDirective, TooltipDirective, FormatDatePipe, KeysPipe, EnumToArrayPipe,
     InAppBrowser,
     File,
     FileChooser,
@@ -121,8 +123,8 @@ import {BrewInformationComponent} from '../../components/brew-information/brew-i
     ThanksComponent, PreparationPage, PreparationAddComponent,
     PreparationEditComponent, MillPage, MillEditComponent, MillAddComponent,
     BrewAddComponent, FormatDatePipe,
-    KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, SearchPipe, RemoveEmptyNumberDirective,
-    PreventCharacterDirective, BrewPage, BrewDetailComponent, BrewEditComponent,
+    KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, CuppingRadarComponent, SearchPipe, RemoveEmptyNumberDirective,
+    PreventCharacterDirective, TooltipDirective, BrewPage, BrewDetailComponent, BrewEditComponent,
     BrewPhotoViewComponent, BrewPopoverComponent, BrewPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent, BrewTimerComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
