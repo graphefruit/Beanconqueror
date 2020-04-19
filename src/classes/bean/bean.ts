@@ -73,11 +73,9 @@ export class Bean implements IBean {
   public getCalculatedBeanAge(): number {
 
     const roastingDate = moment(this.roastingDate);
-    const brewTime = moment.unix(this.config.unix_timestamp);
+    const brewTime = moment.unix(moment().unix());
 
     return brewTime.diff(roastingDate, 'days');
-
-
   }
 
 }
