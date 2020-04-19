@@ -5,6 +5,7 @@ import {ROASTS_ENUM} from '../../enums/beans/roasts';
 import {IBean} from '../../interfaces/bean/iBean';
 /** Classes */
 import {Config} from '../objectConfig/objectConfig';
+import moment from 'moment';
 
 export class Bean implements IBean {
   public name: string;
@@ -64,6 +65,19 @@ export class Bean implements IBean {
       millisecondsSinceRoasting = 0;
     }
     return Math.floor(millisecondsSinceRoasting / (1000 * 60 * 60 * 24));
+  }
+
+  /**
+   * Get the calculated bean age for this brew
+   */
+  public getCalculatedBeanAge(): number {
+
+    const roastingDate = moment(this.roastingDate);
+    const brewTime = moment.unix(this.config.unix_timestamp);
+
+    return brewTime.diff(roastingDate, 'days');
+
+
   }
 
 }

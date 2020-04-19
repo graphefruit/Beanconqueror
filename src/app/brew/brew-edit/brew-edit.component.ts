@@ -1,9 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {UIBeanStorage} from '../../../services/uiBeanStorage';
-import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 import {BREW_QUANTITY_TYPES_ENUM} from '../../../enums/brews/brewQuantityTypes';
 import {UIHelper} from '../../../services/uiHelper';
-import {IMill} from '../../../interfaces/mill/iMill';
 import {UIBrewStorage} from '../../../services/uiBrewStorage';
 import {IBrew} from '../../../interfaces/brew/iBrew';
 import {IonSlides, ModalController, NavParams} from '@ionic/angular';
@@ -11,11 +9,13 @@ import {UIMillStorage} from '../../../services/uiMillStorage';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {UIImage} from '../../../services/uiImage';
 import {Brew} from '../../../classes/brew/brew';
-import {IBean} from '../../../interfaces/bean/iBean';
 import moment from 'moment';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 import {ISettings} from '../../../interfaces/settings/iSettings';
 import {UISettingsStorage} from '../../../services/uiSettingsStorage';
+import {Preparation} from '../../../classes/preparation/preparation';
+import {Mill} from '../../../classes/mill/mill';
+import {Bean} from '../../../classes/bean/bean';
 
 @Component({
   selector: 'brew-edit',
@@ -29,9 +29,9 @@ export class BrewEditComponent implements OnInit {
   public data: Brew = new Brew();
 
   public brewQuantityTypeEnums = BREW_QUANTITY_TYPES_ENUM;
-  public method_of_preparations: Array<IPreparation> = [];
-  public beans: Array<IBean> = [];
-  public mills: Array<IMill> = [];
+  public method_of_preparations: Array<Preparation> = [];
+  public beans: Array<Bean> = [];
+  public mills: Array<Mill> = [];
   public settings: ISettings;
   public customCreationDate: string = '';
 
