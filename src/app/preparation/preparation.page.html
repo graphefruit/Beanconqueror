@@ -20,39 +20,9 @@
   <ion-card *ngIf="preparations?.length == 0" class="ion-padding">
     {{"PAGE_PREPARATION_LIST_NO_PREPARATION_EXISTING" | translate}}
   </ion-card>
-  <ion-card *ngFor="let preparation of preparations">
-    <ion-card-header>
-      {{preparation.name}}
-    </ion-card-header>
-    <ion-card-content *ngIf="preparation.note != ''">
-      <pre>{{preparation.note}}</pre>
-    </ion-card-content>
-    <ion-row>
-
-      <ion-col col-12>
-        <ion-button (click)="informationPreparation(preparation)" color="dark" fill="clear" size="small">
-          <ion-icon name="list-outline" slot="start"></ion-icon>
-          <span>{{"INFORMATION" | translate}}</span>
-        </ion-button>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col col-6>
-        <ion-button size="small" fill="clear" color="dark" (click)="editPreparation(preparation)">
-          <ion-icon name="create-outline" slot="start"></ion-icon>
-          <span>{{"EDIT" | translate}}</span>
-        </ion-button>
-      </ion-col>
-      <ion-col col-6>
-        <ion-button size="small" fill="clear" color="dark" (click)="deletePreparation(preparation)">
-          <ion-icon name="trash-outline" slot="start"></ion-icon>
-          <span>{{"DELETE" | translate}}</span>
-        </ion-button>
-      </ion-col>
-    </ion-row>
-
-
-
-  </ion-card>
+  <div *ngFor="let preparation of preparations">
+    <preparation-information-card (preparationAction)="preparationAction($event[0],$event[1])"
+                                  [preparation]="preparation"></preparation-information-card>
+  </div>
 
 </ion-content>

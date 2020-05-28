@@ -6,7 +6,7 @@ import {RouteResolver} from './app-routing-resolver';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: '/home/dashboard',
     pathMatch: 'full'
   },
   {
@@ -14,7 +14,6 @@ const routes: Routes = [
       resolver: RouteResolver
     },
     loadChildren: './home/home.module#HomePageModule',
-    pathMatch: 'full'
   },
   {
     path: 'info', resolve: {
@@ -54,7 +53,13 @@ const routes: Routes = [
   }, {
     path: 'helper', resolve: {
       resolver: RouteResolver
-    }, loadChildren: './helper/helper.module#HelperPageModule', pathMatch: 'full'
+    },
+    loadChildren: './helper/helper.module#HelperPageModule', pathMatch: 'full'
+  }, {
+    path: 'shopping-cart', resolve: {
+      resolver: RouteResolver
+    },
+    loadChildren: './shopping-cart/shopping-cart.module#ShoppingCartModule', pathMatch: 'full'
   }
 ];
 

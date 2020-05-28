@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>{{"BACK" | translate}}</ion-title>
+    <ion-title>{{"ADD_BREW" | translate}}</ion-title>
     <ion-buttons slot="start">
       <ion-button (click)="dismiss()">
         <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
@@ -9,7 +9,8 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <div *ngIf="settings.brew_view == BREW_VIEW_ENUM.SINGLE_PAGE" style="display:flex; flex-direction: column;">
+  <div *ngIf="settings.brew_view == BREW_VIEW_ENUM.SINGLE_PAGE" class="ion-margin-horizontal popover"
+       style="display:flex; flex-direction: column;">
 
     <ion-item *ngIf="settings.grind_size === true" [style.order]="settings.brew_order.grind_size">
       <ion-label position="stacked">{{"BREW_DATA_GRIND_SIZE" | translate}}</ion-label>
@@ -65,23 +66,26 @@
       <ion-label position="stacked">{{"BREW_DATA_PRESSURE_PROFILE" | translate}}</ion-label>
       <ion-input [(ngModel)]="data.pressure_profile"  type="text"></ion-input>
     </ion-item>
-    <timer #brewTemperatureTime label="{{'BREW_DATA_TEMPERATURE_TIME' | translate}}" timeInSeconds="0"
-           *ngIf="settings.brew_temperature_time === true"
-           [style.order]="settings.brew_order.brew_temperature_time"></timer>
+    <ion-item *ngIf="settings.brew_temperature_time === true" [style.order]="settings.brew_order.brew_temperature_time">
+      <timer #brewTemperatureTime label="{{'BREW_DATA_TEMPERATURE_TIME' | translate}}" timeInSeconds="0"
 
-    <brew-timer #timer
-                (bloomTimer)="setCoffeeBloomingTime($event)"
-                (dripTimer)="setCoffeeDripTime($event)"
-                (timerTicked)="brewTimeTicked($event)"
-                *ngIf="settings.brew_time === true"
-                [bloomTimerVisible]="settings.coffee_blooming_time"
+      ></timer>
+    </ion-item>
+    <ion-item *ngIf="settings.brew_time === true" [style.order]="settings.brew_order.brew_time">
+      <brew-timer #timer
+                  (bloomTimer)="setCoffeeBloomingTime($event)"
+                  (dripTimer)="setCoffeeDripTime($event)"
+                  (timerTicked)="brewTimeTicked($event)"
 
-                [dripTimerVisible]="settings.coffee_first_drip_time"
-                label="{{'BREW_DATA_TIME' | translate}}"
-                [style.order]="settings.brew_order.brew_time" timeInSeconds="0"></brew-timer>
+                  [bloomTimerVisible]="settings.coffee_blooming_time"
+
+                  [dripTimerVisible]="settings.coffee_first_drip_time"
+                  label="{{'BREW_DATA_TIME' | translate}}"
+                  timeInSeconds="0"></brew-timer>
+    </ion-item>
 
     <ion-item *ngIf="settings.brew_time === true && settings.coffee_first_drip_time === true"
-              [style.order]="settings.brew_order.brew_time" disabled="true" lines="full">
+              [style.order]="settings.brew_order.brew_time" lines="full">
       <ion-label>
         {{'BREW_DATA_CALCULATED_COFFEE_BREW_TIME' | translate}}: {{data.getFormattedCoffeeBrewTime()}}
       </ion-label>

@@ -65,7 +65,8 @@ export class UIStatistic {
     return '';
   }
 
-  public getTimePassedSinceLastBrew(): string {
+
+  public getTimePassedSinceLastBrewMessage(): string {
     const lastBrew: IBrew = this.getLastBrew();
     if (lastBrew !== undefined) {
       const timeDiff = this.uiHelper.timeDifference(lastBrew.config.unix_timestamp);
@@ -74,30 +75,59 @@ export class UIStatistic {
         return this.translate.instant('ONE_DAY');
       }
       if (timeDiff.DAYS > 1) {
-        return `${timeDiff.DAYS} ${this.translate.instant('DAYS')}`;
+        return `${this.translate.instant('DAYS')}`;
       }
 
       if (timeDiff.HOURS === 1) {
         return this.translate.instant('ONE_HOUR');
       }
       if (timeDiff.HOURS > 1) {
-        return `${timeDiff.HOURS} ${this.translate.instant('HOURS')}`;
+        return `${this.translate.instant('HOURS')}`;
       }
 
       if (timeDiff.MINUTES === 1) {
         return this.translate.instant('ONE_MINUTE');
       }
 
-      return `${timeDiff.MINUTES} ${this.translate.instant('MINUTES')}`;
+      return `${this.translate.instant('MINUTES')}`;
     }
 
-    return '';
+    return '0';
+  }
+
+  public getTimePassedSinceLastBrew(): string {
+    const lastBrew: IBrew = this.getLastBrew();
+    if (lastBrew !== undefined) {
+      const timeDiff = this.uiHelper.timeDifference(lastBrew.config.unix_timestamp);
+
+      if (timeDiff.DAYS === 1) {
+        return '1';
+      }
+      if (timeDiff.DAYS > 1) {
+        return `${timeDiff.DAYS}`;
+      }
+
+      if (timeDiff.HOURS === 1) {
+        return '1';
+      }
+      if (timeDiff.HOURS > 1) {
+        return `${timeDiff.HOURS}`;
+      }
+
+      if (timeDiff.MINUTES === 1) {
+        return '1';
+      }
+
+      return `${timeDiff.MINUTES}`;
+    }
+
+    return '0';
   }
 
   public getSloganTimePassedSinceLastBrew(): string {
     const timePassed = this.getTimePassedSinceLastBrew();
     if (timePassed !== '') {
-      return `${timePassed} ${this.translate.instant('WITHOUT_COFFEE')}`;
+      return `${this.getTimePassedSinceLastBrewMessage()} ${this.translate.instant('WITHOUT_COFFEE')}`;
     }
 
     return this.translate.instant('NO_COFFEE_DRUNK');

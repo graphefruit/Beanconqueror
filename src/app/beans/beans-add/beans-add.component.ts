@@ -7,6 +7,7 @@ import {UIImage} from '../../../services/uiImage';
 import {Bean} from '../../../classes/bean/bean';
 import {IonSlides, ModalController, NavParams} from '@ionic/angular';
 import {UIAnalytics} from '../../../services/uiAnalytics';
+import {UIFileHelper} from '../../../services/uiFileHelper';
 
 @Component({
   selector: 'beans-add',
@@ -26,16 +27,17 @@ export class BeansAddComponent implements OnInit {
                private readonly uiBeanStorage: UIBeanStorage,
                private readonly uiImage: UIImage,
                public uiHelper: UIHelper,
-               private readonly uiAnalytics: UIAnalytics) {
+               private readonly uiAnalytics: UIAnalytics,
+               private readonly uiFileHelper: UIFileHelper) {
     this.data.roastingDate = new Date().toISOString();
     this.bean_template = this.navParams.get('bean_template');
   }
 
 
-  public ionViewWillEnter(): void {
+  public async ionViewWillEnter() {
     this.uiAnalytics.trackEvent('BEAN', 'ADD');
     if (this.bean_template) {
-      this.__loadBean(this.bean_template);
+      await this.__loadBean(this.bean_template);
     }
   }
 
@@ -79,7 +81,7 @@ export class BeansAddComponent implements OnInit {
 
   }
 
-  private __loadBean(_bean: Bean) {
+  private async __loadBean(_bean: Bean) {
     this.data.name = _bean.name;
     this.data.roastingDate = _bean.roastingDate;
     this.data.note = _bean.note;
@@ -94,6 +96,20 @@ export class BeansAddComponent implements OnInit {
     this.data.weight = _bean.weight;
     this.data.finished = false;
     this.data.cost = _bean.cost;
+
+    const copyAttachments = [];
+    for (const attachment of _bean.attachments) {
+      try {
+        const newPath: string = await this.uiFileHelper.copyFile(attachment);
+        copyAttachments.push(newPath);
+      } catch (ex) {
+
+      }
+
+    }
+    console.log('copy them');
+    console.log(copyAttachments);
+    this.data.attachments = copyAttachments;
   }
 
   public dismiss(): void {

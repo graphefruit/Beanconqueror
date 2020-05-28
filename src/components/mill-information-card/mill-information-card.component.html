@@ -1,0 +1,28 @@
+<ion-card class="dynamic-padding">
+  <ion-card-header>
+    <ion-grid class="ion-no-padding">
+      <ion-row>
+        <ion-col class="ion-text-center" size="3">
+          <span class="heading-20">{{brewCounts()}}</span><br/>
+          <span>{{"NAV_BREWS" | translate}}</span><br/>
+        </ion-col>
+        <ion-col size="7">
+          <ion-list lines="none">
+            <div>
+              <ion-icon name="thermometer-outline"></ion-icon>
+              {{mill.name}}
+            </div>
+
+          </ion-list>
+        </ion-col>
+        <ion-col size="2">
+          <ion-button (click)="showMillActions($event)" color="medium" fill="clear">
+            <ion-icon name="ellipsis-vertical-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+  </ion-card-header>
+
+</ion-card>

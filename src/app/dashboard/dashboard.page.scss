@@ -1,0 +1,32 @@
+:host {
+  ion-button[add-brew] {
+    --padding-bottom: 0px;
+    --padding-end: 0px;
+    --padding-start: 5px;
+    --padding-top: 0px;
+  }
+
+  ion-grid {
+    --ion-grid-column-padding: 5px;
+
+  }
+
+  ion-list {
+    padding-top: 0px;
+
+    ion-list-header {
+      padding-left: 10px;
+      font-size: 16px;
+
+    }
+  }
+
+  ion-card.small-card {
+    ion-card-content {
+      letter-spacing: -0.21px;
+      line-height: inherit;
+    }
+
+  }
+
+}

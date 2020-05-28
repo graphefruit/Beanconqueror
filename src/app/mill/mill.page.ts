@@ -8,6 +8,7 @@ import {Brew} from '../../classes/brew/brew';
 import {MillEditComponent} from './mill-edit/mill-edit.component';
 import {MillAddComponent} from './mill-add/mill-add.component';
 import {MillInformationComponent} from './mill-information/mill-information.component';
+import {MILL_ACTION} from '../../enums/mills/millActions';
 
 @Component({
   selector: 'mill',
@@ -40,6 +41,23 @@ public ngOnInit(): void {
   public loadMills(): void {
     this.__initializeMills();
     this.changeDetectorRef.detectChanges();
+  }
+
+  public async millAction(action: MILL_ACTION, mill: Mill): Promise<void> {
+    switch (action) {
+
+      case MILL_ACTION.INFORMATION:
+        this.informationMill(mill);
+        break;
+      case MILL_ACTION.EDIT:
+        this.edit(mill);
+        break;
+      case MILL_ACTION.DELETE:
+        this.delete(mill);
+        break;
+      default:
+        break;
+    }
   }
 
   public async add() {

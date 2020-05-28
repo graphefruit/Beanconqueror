@@ -4,12 +4,12 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button (click)="add()" [disabled]="!uiBrewHelper.canBrew()">
-        <ion-icon name="add" slot="icon-only"></ion-icon>
+      <ion-button (click)="add()" [disabled]="!uiBrewHelper.canBrew()" class="big-icon-only">
+        <ion-icon class="ion-color-accent" name="add-circle-outline" slot="icon-only"></ion-icon>
       </ion-button>
-      <ion-button (click)="showMore($event)">
+      <!--<ion-button (click)="showMore($event)">
         <ion-icon name="ellipsis-vertical-outline" slot="icon-only"></ion-icon>
-      </ion-button>
+      </ion-button>-->
     </ion-buttons>
     <ion-title>
       {{"NAV_BREWS" | translate }}
@@ -21,42 +21,16 @@
     <ion-segment [(ngModel)]="brew_segment">
       <ion-segment-button value="open">
         <ion-label>{{"CURRENT" | translate }}
-          <ion-badge>{{openBrewsCount}}</ion-badge>
         </ion-label>
       </ion-segment-button>
       <ion-segment-button *ngIf="settings.show_archived_brews" value="archive">
         <ion-label>{{"ARCHIVE" | translate }}
-          <ion-badge>{{archivedBrewsCount}}</ion-badge>
         </ion-label>
 
       </ion-segment-button>
     </ion-segment>
   </div>
   <div [ngSwitch]="brew_segment">
-    <ion-item *ngIf="uiBrewHelper.canBrew() && settings.method_of_preparation === true">
-      <ion-label stacked>{{"BREW_DATA_PREPARATION_METHOD" | translate}}</ion-label>
-      <ion-select (ngModelChange)="filterChanged($event)" [(ngModel)]="openBrewsFilter.method_of_preparation"
-                  [interfaceOptions]="customSelectSheetOptions"
-                  multiple="true">
-        <ion-select-option *ngFor="let method of method_of_preparations" value="{{method.config.uuid}}">{{method.name}}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
-    <ion-item *ngIf="uiBrewHelper.canBrew() &&  settings.bean_type === true">
-      <ion-label stacked>{{"BREW_DATA_BEAN_TYPE" | translate}}</ion-label>
-      <ion-select (ngModelChange)="filterChanged($event)" [(ngModel)]="openBrewsFilter.bean"
-                  [interfaceOptions]="customSelectSheetOptions" multiple="true">>
-        <ion-select-option *ngFor="let bean of beans"
-                           value="{{bean.config.uuid}}">{{bean.name}}&nbsp;{{bean.finished ? '(Archiv)' : ''}}</ion-select-option>
-      </ion-select>
-    </ion-item>
-    <ion-item *ngIf="uiBrewHelper.canBrew() &&  settings.mill === true">
-      <ion-label stacked>{{"BREW_DATA_MILL" | translate }}</ion-label>
-      <ion-select (ngModelChange)="filterChanged($event)" [(ngModel)]="openBrewsFilter.mill"
-                  [interfaceOptions]="customSelectSheetOptions" multiple="true">
-        <ion-select-option *ngFor="let mill of mills" value="{{mill.config.uuid}}">{{mill.name}}</ion-select-option>
-      </ion-select>
-    </ion-item>
     <div *ngSwitchCase="'open'">
       <ion-card *ngIf="!uiBrewHelper.canBrew()" class="ion-padding">
         <h2 [innerHTML]="'PAGE_BREWS_START_A_NEW_BREW' | translate" class="error-text"></h2>
@@ -67,28 +41,34 @@
       <ion-card *ngIf="openBrewsView?.length == 0" class="ion-padding">
         {{"PAGE_BREWS_NO_ENTRIES" | translate}}
       </ion-card>
-      <ion-list *ngFor="let brewView of openBrewsView">
-        <ion-list-header *ngIf="(brewView.brews).length > 0" class="brews-header">
-          <ion-label>{{brewView.title}}</ion-label>
-        </ion-list-header>
-        <div *ngFor="let brew of brewView.brews | searchBrews:query">
-          <brew-information (brewAction)="brewAction($event[0],$event[1])" [brew]="brew"></brew-information>
-        </div>
-      </ion-list>
+
+      <div class="ion-justify-content-end container">
+        <ion-button (click)="showFilter()" fill="clear" tappable>
+          <ion-icon [class.active]="isFilterActive()" class="custom-filter black" slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
+      <ion-virtual-scroll *ngIf="brews?.length > 0" [items]="openBrewsView  | searchBrews:query"
+                          approxItemHeight="171px">
+        <brew-information (brewAction)="brewAction($event[0],$event[1])" *virtualItem="let brew;"
+                          [brew]="brew"></brew-information>
+      </ion-virtual-scroll>
     </div>
     <div *ngIf="settings.show_archived_brews">
       <div *ngSwitchCase="'archive'">
         <ion-card *ngIf="archiveBrewsView?.length == 0" class="ion-padding">
           {{"PAGE_BREWS_NO_ENTRIES" | translate }}
         </ion-card>
-        <ion-list *ngFor="let brewView of archiveBrewsView">
-          <ion-list-header *ngIf="(brewView.brews | searchBrews:query).length > 0" class="brews-header">
-            <ion-label>{{brewView.title}}</ion-label>
-          </ion-list-header>
-          <div *ngFor="let brew of brewView.brews | searchBrews:query">
-            <brew-information (brewAction)="brewAction($event[0],$event[1])" [brew]="brew"></brew-information>
-          </div>
-        </ion-list>
+        <div class="ion-justify-content-end container">
+          <ion-button (click)="showFilter()" fill="clear" tappable>
+            <ion-icon [class.active]="isFilterActive()" class="custom-filter black" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+        <ion-virtual-scroll *ngIf="archiveBrewsView?.length > 0" [items]="archiveBrewsView  | searchBrews:query"
+                            approxItemHeight="171px">
+          <brew-information (brewAction)="brewAction($event[0],$event[1])" *virtualItem="let brew;"
+                            [brew]="brew"></brew-information>
+        </ion-virtual-scroll>
+
       </div>
     </div>
   </div>

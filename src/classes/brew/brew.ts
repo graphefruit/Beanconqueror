@@ -137,6 +137,7 @@ export class Brew implements IBrew {
     return 0;
   }
 
+
   public getBrewRatio(): string {
     const grindWeight: number = this.grind_weight;
     const brewQuantity: number = this.brew_quantity;

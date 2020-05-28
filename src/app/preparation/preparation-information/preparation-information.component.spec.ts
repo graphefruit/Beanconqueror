@@ -16,7 +16,7 @@ import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
 import {FirebaseX} from '@ionic-native/firebase-x/ngx';
 import {Router} from '@angular/router';
 
-describe('PreparationInformationComponent', () => {
+describe('PreparationInformationCardComponent', () => {
   let component: PreparationInformationComponent;
   let fixture: ComponentFixture<PreparationInformationComponent>;
 

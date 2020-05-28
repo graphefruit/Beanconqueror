@@ -5,20 +5,94 @@
 // file can hold Sass mixins, functions, and placeholder classes to be imported 
 // and used throughout the application.
 
+@font-face {
+  font-family: 'Baloo';
+  src: url('../assets/fonts/Baloo-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Karla';
+  src: url('../assets/fonts/Karla-Regular.ttf') format('truetype');
+}
+
+ion-title {
+  font-family: 'Baloo';
+  font-size: 30px;
+  letter-spacing: -1.05px;
+}
+
+ion-toolbar {
+  --background: #F0F0F0;
+  --border-style: none;
+}
+
+ion-header {
+  &.header-md:after {
+    background: none;
+    height: 0px;
+  }
+}
+
+ion-icon {
+  color: var(--beanconqueror-icon-color);
+}
+
+
 .menu-icon {
   margin-right: 5px;
   width: 25px;
 }
-ion-card {
-  box-shadow: none !important;
-  border: 1px solid rgba(0, 0, 0, .14);
-  border-top: 5px solid #cfd7e1;
-  padding:8px;
+
+ion-card.small-card {
+
+  border-radius: 6px 6px 6px 6px;
+  box-shadow: 0px 3px 6px #00000029;
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+  border: none;
+  padding: 0px;
+  margin: 0px;
+
+  ion-card-content {
+    padding-bottom: 16px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 0px;
+  }
 }
 
-:root {
-  --ion-color-primary: #a0b0c4;
+
+ion-segment-button::part(indicator) {
+  /* Styles to apply to the `foo` part */
+  margin: 0 auto;
+  width: 25%;
 }
+
+ion-segment-button {
+  letter-spacing: -0.63px;
+  font-size: 18px;
+}
+
+.heading-20 {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+ion-card.long-card {
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+  box-shadow: 0px 3px 6px #00000029;
+  border-radius: 6px 6px 6px 6px;
+  padding: 0px;
+  border: none;
+
+  ion-card-content {
+    padding: 0px;
+  }
+}
+
+ion-card-header {
+  --ion-font-family: 'Baloo', sans-serif;
+}
+
 .blockquote {
   border-radius: 5px;
   padding: 5px 10px;
@@ -45,10 +119,6 @@ ion-modal{
 .margin-horizontal-5 {
   margin-right: 5px;
   margin-left: 5px;
-}
-ion-toolbar{
-  --background: #7189a7;
-  --color:white;
 }
 
 ion-card-header {
@@ -127,18 +197,42 @@ ion-icon {
     height: 1em;
   }
 
+  &[class*="custom-home"] {
+    mask-image: url(../assets/svg/icons/icons8-home.svg);
+  }
   &[class*="custom-mill"] {
-    mask-image: url(../assets/svg/mill.svg);
+    mask-image: url(../assets/svg/icons/icons8-pepper_grinder.svg);
   }
+
+  &[class*="custom-brew"] {
+    mask-image: url(../assets/svg/icons/icons8-coffee.svg);
+  }
+
+  &[class*="custom-preparation"] {
+    mask-image: url(../assets/svg/icons/icons8-coffee_maker.svg);
+  }
+
+  &[class*="custom-bean"] {
+    mask-image: url(../assets/svg/icons/icons8-java_bean.svg);
+  }
+
   &[class*="custom-filter"] {
-    mask-image: url(../assets/svg/filter.svg);
+    mask-image: url(../assets/svg/icons/icons8-filter.svg);
   }
+
 
   &[class*="custom-coffee-bag"] {
     mask-image: url(../assets/svg/coffee-bag.svg);
   }
   &[class*="custom-coffee-blooming"] {
     mask-image: url(../assets/svg/coffee-blooming.svg);
+  }
+
+}
+
+ion-tab-button.tab-selected {
+  ion-icon {
+    color: #504127;
   }
 }
 
@@ -187,3 +281,75 @@ ion-alert.select-break-text {
 
 
 }
+
+
+ion-split-pane {
+  --border: none !important;
+
+  ion-menu {
+    background-color: #282013 !important;
+
+    ion-content {
+      --padding-start: 20px;
+    }
+
+  }
+
+
+}
+
+ion-menu::content.menu-inner {
+
+  border-radius: 50px;
+
+}
+
+:root {
+  ion-alert {
+    --background: #ffffff;
+  }
+
+  ion-textarea {
+    --background: #F2F2F2;
+    /*CSS Attribute not taken*/
+    border-radius: 6px;
+    --padding-start: 6px;
+    --padding-end: 6px;
+    margin-bottom: 10px;
+  }
+
+  .popover {
+    ion-item:first-child {
+
+      --border-radius: 6px 6px 0px 0px;
+    }
+
+    ion-item:last-child {
+
+      --border-radius: 0px 0px 6px 6px;
+    }
+
+    ion-label {
+      font-family: 'Baloo';
+    }
+
+    ion-item {
+      --background: white;
+
+    }
+  }
+
+  .bottom-modal {
+    --background: rgba(0, 0, 0, 0.47);
+
+
+  }
+
+
+}
+
+.color-white {
+  color: white !important;
+}
+
+

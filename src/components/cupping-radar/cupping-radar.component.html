@@ -1,0 +1,100 @@
+<div class="ion-margin-horizontal" style="display: block">
+  <canvas #cuppingChart></canvas>
+</div>
+<div class="ion-text-center">{{"CUPPING_SCORE_CUPPERS_CORRECTION" | translate}} {{ this.model.cuppers_correction}}</div>
+<div class="ion-text-center">{{"CUPPING_SCORE" | translate}}: {{getScore()| number : '.1-1'}}</div>
+<ion-icon name="information-outline" slot="end" tooltip='{{"CUPPING_SCORE_TOOLTIP" | translate}}'></ion-icon>
+
+<ion-list>
+  <ion-item>
+    <ion-range (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.dry_fragrance" max="10" min="0" step="0.1">
+      <ion-label slot="start">{{"CUPPING_SCORE_DRY_FRAGRANCE" | translate}}</ion-label>
+
+      <ion-label slot="end">{{model.dry_fragrance| number : '.1-1'}}</ion-label>
+      <ion-icon name="information-outline" slot="end"
+                tooltip='{{"CUPPING_SCORE_DRY_FRAGRANCE_TOOLTIP" | translate}}'></ion-icon>
+    </ion-range>
+  </ion-item>
+  <ion-item>
+    <ion-range (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.wet_aroma" max="10" min="0" step="0.1">
+      <ion-label slot="start">{{"CUPPING_SCORE_WET_AROMA" | translate}}</ion-label>
+      <ion-label slot="end">{{model.wet_aroma| number : '.1-1'}}</ion-label>
+      <ion-icon name="information-outline" slot="end"
+                tooltip='{{"CUPPING_SCORE_WET_AROMA_TOOLTIP" | translate}}'></ion-icon>
+    </ion-range>
+  </ion-item>
+  <ion-item>
+    <ion-range (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.brightness" max="10" min="0" step="0.1">
+      <ion-label slot="start">{{"CUPPING_SCORE_BRIGHTNESS" | translate}}</ion-label>
+      <ion-label slot="end">{{model.brightness| number : '.1-1'}}</ion-label>
+      <ion-icon name="information-outline" slot="end"
+                tooltip='{{"CUPPING_SCORE_BRIGHTNESS_TOOLTIP" | translate}}'></ion-icon>
+    </ion-range>
+  </ion-item>
+  <ion-item>
+    <ion-range (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.flavor" max="10" min="0" step="0.1">
+      <ion-label slot="start">{{"CUPPING_SCORE_FLAVOR" | translate}}</ion-label>
+      <ion-label slot="end">{{model.flavor| number : '.1-1'}}</ion-label>
+      <ion-icon name="information-outline" slot="end"
+                tooltip='{{"CUPPING_SCORE_FLAVOR_TOOLTIP" | translate}}'></ion-icon>
+    </ion-range>
+  </ion-item>
+  <ion-item>
+    <ion-range (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.body" max="10" min="0" step="0.1">
+      <ion-label slot="start">{{"CUPPING_SCORE_BODY" | translate}}</ion-label>
+      <ion-label slot="end">{{model.body| number : '.1-1'}}</ion-label>
+      <ion-icon name="information-outline" slot="end" tooltip='{{"CUPPING_SCORE_BODY_TOOLTIP" | translate}}'></ion-icon>
+    </ion-range>
+  </ion-item>
+  <ion-item>
+    <ion-range (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.finish" max="10" min="0" step="0.1">
+      <ion-label slot="start">{{"CUPPING_SCORE_FINISH" | translate}}</ion-label>
+      <ion-label slot="end">{{model.finish| number : '.1-1'}}</ion-label>
+      <ion-icon name="information-outline" slot="end"
+                tooltip='{{"CUPPING_SCORE_FINISH_TOOLTIP" | translate}}'></ion-icon>
+    </ion-range>
+  </ion-item>
+  <ion-item>
+    <ion-range (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.sweetness" max="10" min="0" step="0.1">
+      <ion-label slot="start">{{"CUPPING_SCORE_SWEETNESS" | translate}}</ion-label>
+      <ion-label slot="end">{{model.sweetness| number : '.1-1'}}</ion-label>
+      <ion-icon name="information-outline" slot="end"
+                tooltip='{{"CUPPING_SCORE_SWEETNESS_TOOLTIP" | translate}}'></ion-icon>
+    </ion-range>
+  </ion-item>
+  <ion-item>
+    <ion-range (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.clean_cup" max="10" min="0" step="0.1">
+      <ion-label slot="start">{{"CUPPING_SCORE_CLEAN_CUP" | translate}}</ion-label>
+      <ion-label slot="end">{{model.clean_cup| number : '.1-1'}}</ion-label>
+      <ion-icon name="information-outline" slot="end"
+                tooltip='{{"CUPPING_SCORE_CLEAN_CUP_TOOLTIP" | translate}}'></ion-icon>
+    </ion-range>
+  </ion-item>
+  <ion-item>
+    <ion-range (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.complexity" max="10" min="0" step="0.1">
+      <ion-label slot="start">{{"CUPPING_SCORE_COMPLEXITY" | translate}}</ion-label>
+      <ion-label slot="end">{{model.complexity| number : '.1-1'}}</ion-label>
+      <ion-icon name="information-outline" slot="end"
+                tooltip='{{"CUPPING_SCORE_COMPLEXITY_TOOLTIP" | translate}}'></ion-icon>
+    </ion-range>
+  </ion-item>
+  <ion-item>
+    <ion-range (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.uniformity" max="10" min="0" step="0.1">
+      <ion-label slot="start">{{"CUPPING_SCORE_UNIFORMITY" | translate}}</ion-label>
+      <ion-label slot="end">{{model.uniformity| number : '.1-1'}}</ion-label>
+      <ion-icon name="information-outline" slot="end"
+                tooltip='{{"CUPPING_SCORE_UNIFORMITY_TOOLTIP" | translate}}'></ion-icon>
+    </ion-range>
+  </ion-item>
+  <ion-item>
+    <ion-range (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.cuppers_correction" max="10" min="0"
+               step="0.1">
+      <ion-label slot="start">{{"CUPPING_SCORE_CUPPERS_CORRECTION" | translate}}</ion-label>
+      <ion-label slot="end">{{model.cuppers_correction| number : '.1-1'}}</ion-label>
+      <ion-icon name="information-outline" slot="end"
+                tooltip='{{"CUPPING_SCORE_CUPPERS_CORRECTION_TOOLTIP" | translate}}'></ion-icon>
+    </ion-range>
+  </ion-item>
+
+
+</ion-list>
