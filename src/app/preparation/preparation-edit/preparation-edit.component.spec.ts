@@ -1,11 +1,11 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {IonicModule, ModalController, NavParams} from '@ionic/angular';
 
-import {PreparationEditComponent} from './preparation-edit.component';
+import {PreparationInformationComponent} from './preparation-information.component';
 import {TranslateModule} from '@ngx-translate/core';
 import {FormsModule} from '@angular/forms';
 import {IonicStorageModule} from '@ionic/storage';
 import {CommonModule} from '@angular/common';
-import {IonicModule, ModalController, NavParams} from '@ionic/angular';
 import {KeysPipe} from '../../../pipes/keys';
 import {InAppBrowser} from '@ionic-native/in-app-browser/ngx';
 import {NavParamsMock} from '../../../classes/mock/NavParamsMock';
@@ -16,14 +16,14 @@ import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
 import {FirebaseX} from '@ionic-native/firebase-x/ngx';
 import {Router} from '@angular/router';
 
-describe('PreparationEditComponent', () => {
-  let component: PreparationEditComponent;
-  let fixture: ComponentFixture<PreparationEditComponent>;
+describe('PreparationInformationCardComponent', () => {
+  let component: PreparationInformationComponent;
+  let fixture: ComponentFixture<PreparationInformationComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [TranslateModule.forRoot(), FormsModule, IonicStorageModule.forRoot(), CommonModule, IonicModule],
-      declarations: [PreparationEditComponent, KeysPipe],
+      declarations: [PreparationInformationComponent, KeysPipe],
       providers: [
         {provide: InAppBrowser},
         {provide: ModalController},
@@ -36,15 +36,12 @@ describe('PreparationEditComponent', () => {
         {provide: FirebaseX},
         {provide: Router}
       ],
-    })
-    .compileComponents();
-  }));
+    }).compileComponents();
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(PreparationEditComponent);
+    fixture = TestBed.createComponent(PreparationInformationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  });
+  }));
 
   it('should create', () => {
     expect(component).toBeTruthy();

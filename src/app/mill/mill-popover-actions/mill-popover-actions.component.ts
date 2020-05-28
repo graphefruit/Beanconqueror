@@ -40,6 +40,6 @@ export class MillPopoverActionsComponent implements OnInit {
   }
 
   public async choose(_type: string): Promise<void> {
-    this.popoverController.dismiss(undefined, _type,'mill-popover-actions');
+    this.popoverController.dismiss(undefined, _type);
   }
 }

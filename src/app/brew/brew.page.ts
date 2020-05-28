@@ -1,17 +1,21 @@
-import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
-import {AlertController, IonVirtualScroll, ModalController, Platform, PopoverController} from '@ionic/angular';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {AlertController, ModalController, Platform, PopoverController} from '@ionic/angular';
 import {UIAlert} from '../../services/uiAlert';
 import {UIHelper} from '../../services/uiHelper';
+import {ISettings} from '../../interfaces/settings/iSettings';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {UIBrewHelper} from '../../services/uiBrewHelper';
 import {Brew} from '../../classes/brew/brew';
 import {SocialSharing} from '@ionic-native/social-sharing/ngx';
 import {BrewAddComponent} from './brew-add/brew-add.component';
+import {FileEntry} from '@ionic-native/file';
 import {BrewDetailComponent} from './brew-detail/brew-detail.component';
 import {BrewPhotoViewComponent} from './brew-photo-view/brew-photo-view.component';
 import {BrewEditComponent} from './brew-edit/brew-edit.component';
-
+import {BrewTextComponent} from './brew-text/brew-text.component';
+import {BrewPopoverComponent} from './brew-popover/brew-popover.component';
+import {BrewTableComponent} from './brew-table/brew-table.component';
 import {UIPreparationStorage} from '../../services/uiPreparationStorage';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
 import {UIMillStorage} from '../../services/uiMillStorage';
@@ -19,14 +23,12 @@ import {IPreparation} from '../../interfaces/preparation/iPreparation';
 import {IBean} from '../../interfaces/bean/iBean';
 import {IMill} from '../../interfaces/mill/iMill';
 import {IBrewPageFilter} from '../../interfaces/brew/iBrewPageFilter';
+import {debounceTime, distinctUntilChanged} from 'rxjs/internal/operators';
+import {Subject} from 'rxjs';
 import {TranslateService} from '@ngx-translate/core';
 import {BREW_ACTION} from '../../enums/brews/brewAction';
 import {Bean} from '../../classes/bean/bean';
 import {BrewFilterComponent} from './brew-filter/brew-filter.component';
-import {Settings} from '../../classes/settings/settings';
-import {UIToast} from '../../services/uiToast';
-import {BrewCuppingComponent} from './brew-cupping/brew-cupping.component';
-import {UIAnalytics} from '../../services/uiAnalytics';
 
 @Component({
   selector: 'brew',
@@ -39,31 +41,28 @@ export class BrewPage implements OnInit {
   public brews: Array<Brew>;
   public openBrewsView: Array<Brew> = [];
   public archiveBrewsView: Array<Brew> = [];
-
-
   public brew_segment: string = 'open';
-  public settings: Settings;
+  public settings: ISettings;
   public query: string = '';
+  public openBrewsCount: number = 0;
+  public archivedBrewsCount: number = 0;
 
   public customSelectSheetOptions: any = {
     cssClass: 'select-break-text'
   };
-  @ViewChild('openScroll', {read: IonVirtualScroll, static: false}) public openScroll: IonVirtualScroll;
-  @ViewChild('archivedScroll', {read: IonVirtualScroll, static: false}) public archivedScroll: IonVirtualScroll;
 
   public openBrewsFilter: IBrewPageFilter = {
     mill: [],
     bean: [],
     method_of_preparation: []
   };
-  public openBrewFilterText: string = '';
-  public archivedBrewFilterText: string = '';
 
   public archivedBrewsFilter: IBrewPageFilter = {
     mill: [],
     bean: [],
     method_of_preparation: []
   };
+  public debounceFilter: Subject<string> = new Subject<string>();
 
   public method_of_preparations: Array<IPreparation> = [];
   public beans: Array<IBean> = [];
@@ -84,45 +83,51 @@ export class BrewPage implements OnInit {
                private readonly uiPreparationStorage: UIPreparationStorage,
                private readonly uiBeanStorage: UIBeanStorage,
                private readonly uiMillStorage: UIMillStorage,
-               private translate: TranslateService,
-               private readonly uiToast: UIToast,
-               private readonly uiAnalytics: UIAnalytics) {
-  }
-
-
-  public ionViewWillEnter(): void {
+               private translate: TranslateService) {
     this.settings = this.uiSettingsStorage.getSettings();
-    this.archivedBrewsFilter = this.settings.brew_filter.ARCHIVED;
-    this.openBrewsFilter = this.settings.brew_filter.OPEN;
+
+  }
+
+  public async editBrew(_brew: Brew) {
+    // const editBrewModal = this.modalCtrl.create(BrewsEditModal, {BREW: _brew});
+    // editBrewModal.onDidDismiss(() => {
+    //   this.loadBrews();
+    // });
+    // editBrewModal.present({animate: false});
+    const modal = await this.modalCtrl.create({component: BrewEditComponent, componentProps: {brew: _brew}});
+    await modal.present();
+    await modal.onWillDismiss();
     this.loadBrews();
-
-
-    this.retriggerScroll();
   }
 
-  public segmentChanged() {
-    this.retriggerScroll();
+
+  public filterChanged(_query): void {
+    this.debounceFilter.next(_query);
   }
 
-  private retriggerScroll() {
-
-    // https://github.com/ionic-team/ionic-framework/issues/18409
-    // Workarround
-    setTimeout( () => {
-      if (typeof(this.archivedScroll) !== 'undefined' && this.archiveBrewsView.length > 0)
-      {
-        this.archivedScroll.checkRange(0,this.archiveBrewsView.length);
-      }
-      if (typeof(this.openScroll) !== 'undefined' && this.openBrewsView.length > 0)
-      {
-        this.openScroll.checkRange(0,this.openBrewsView.length);
-      }
-    },25);
+  public async showMore(event): Promise<void> {
+    const popover = await this.popoverCtrl.create({
+      component: BrewPopoverComponent,
+      event,
+      translucent: true
+    });
+    await popover.present();
+    const data = await popover.onWillDismiss();
+    if (data.role === BrewPopoverComponent.ACTIONS.DOWNLOAD) {
+      this.downloadCSV();
+    } else if (data.role === BrewPopoverComponent.ACTIONS.TABLE) {
+      const tableModal = await this.modalCtrl.create({component: BrewTableComponent});
+      await tableModal.present();
+    } else if (data.role === BrewPopoverComponent.ACTIONS.RESET_FILTER) {
+      this.__resetFilter();
+    }
   }
-
 
   public async brewAction(action: BREW_ACTION, brew: Brew): Promise<void> {
     switch (action) {
+      case BREW_ACTION.POST:
+        this.postBrew(brew);
+        break;
       case BREW_ACTION.REPEAT:
         this.repeatBrew(brew);
         break;
@@ -138,80 +143,56 @@ export class BrewPage implements OnInit {
       case BREW_ACTION.PHOTO_GALLERY:
         this.viewPhotos(brew);
         break;
-      case BREW_ACTION.CUPPING:
-        this.cupBrew(brew);
-        break;
-      case BREW_ACTION.SHOW_MAP_COORDINATES:
-        this.showMapCoordinates(brew);
-        break;
-      case BREW_ACTION.FAST_REPEAT:
-        this.fastRepeatBrew(brew);
-        break;
       default:
         break;
     }
   }
 
-  public async fastRepeatBrew(brew: Brew) {
-    if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
-      this.uiAnalytics.trackEvent('BREW', 'FAST_REPEAT');
-      const repeatBrew = this.uiBrewHelper.repeatBrew(brew);
-      this.uiBrewStorage.add(repeatBrew);
-      this.uiToast.showInfoToast('TOAST_BREW_REPEATED_SUCCESSFULLY');
-      this.loadBrews();
-    }
-  }
-
-  public async editBrew(_brew: Brew) {
-
-    const modal = await this.modalCtrl.create({component: BrewEditComponent, id:'brew-edit', componentProps: {brew: _brew}});
+  public async repeatBrew(_brew: Brew) {
+    // const repeatBrewModel = this.modalCtrl.create(BrewsAddModal, {brew_template: brew});
+    // repeatBrewModel.onDidDismiss(() => {
+    //   this.loadBrews();
+    // });
+    // repeatBrewModel.present({animate: false});
+    const modal = await this.modalCtrl.create({component: BrewAddComponent, componentProps: {brew_template: _brew}});
     await modal.present();
     await modal.onWillDismiss();
     this.loadBrews();
   }
-  public async repeatBrew(_brew: Brew) {
-    if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
-      this.uiAnalytics.trackEvent('BREW', 'REPEAT');
-      const modal = await this.modalCtrl.create({component: BrewAddComponent, id: 'brew-add', componentProps: {brew_template: _brew}});
-      await modal.present();
-      await modal.onWillDismiss();
-      this.loadBrews();
-    }
+
+  public ionViewDidEnter(): void {
+    this.debounceFilter
+      .pipe(debounceTime(500), distinctUntilChanged())
+      .subscribe((model) => {
+        this.loadBrews();
+      });
+    this.loadBrews();
+    // If we don't have beans, we cant do a brew from now on, because of roasting degree and the age of beans.
   }
 
-
   public async add() {
-    if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
-      const modal = await this.modalCtrl.create({component: BrewAddComponent,id:'brew-add'});
-      await modal.present();
-      await modal.onWillDismiss();
-      this.loadBrews();
-    }
-
+    const modal = await this.modalCtrl.create({component: BrewAddComponent});
+    await modal.present();
+    await modal.onWillDismiss();
+    this.loadBrews();
   }
 
   public async detailBrew(_brew: Brew) {
-    const modal = await this.modalCtrl.create({component: BrewDetailComponent, id:'brew-detail', componentProps: {brew: _brew}});
+    // const editBrewModal = this.modalCtrl.create(BrewsDetailsModal, {BREW: _brew});
+    // editBrewModal.onDidDismiss(() => {
+    //   this.loadBrews();
+    // });
+    // editBrewModal.present({animate: false});
+    const modal = await this.modalCtrl.create({component: BrewDetailComponent, componentProps: {brew: _brew}});
     await modal.present();
     await modal.onWillDismiss();
     this.loadBrews();
   }
-
-  public async cupBrew(_brew: Brew) {
-    const modal = await this.modalCtrl.create({component: BrewCuppingComponent, id:'brew-cup', componentProps: {brew: _brew}});
-    await modal.present();
-    await modal.onWillDismiss();
-    this.loadBrews();
-  }
-
-  public async showMapCoordinates(_brew: Brew) {
-    this.uiAnalytics.trackEvent('BREW', 'SHOW_MAP');
-    this.uiHelper.openExternalWebpage(_brew.getCoordinateMapLink());
-  }
-
 
   public async viewPhotos(_brew: Brew) {
-    const modal = await this.modalCtrl.create({component: BrewPhotoViewComponent, id:'brew-photo', componentProps: {brew: _brew}});
+    // const brewsPhotoViewModal = this.modalCtrl.create(BrewsPhotoView, {BREW: _brew});
+    // brewsPhotoViewModal.present({animate: false});
+    const modal = await this.modalCtrl.create({component: BrewPhotoViewComponent, componentProps: {brew: _brew}});
     await modal.present();
     await modal.onWillDismiss();
   }
@@ -219,49 +200,193 @@ export class BrewPage implements OnInit {
   public deleteBrew(_brew: Brew): void {
     this.uiAlert.showConfirm('DELETE_BREW_QUESTION', 'SURE_QUESTION', true).then(() => {
           // Yes
-        this.uiAnalytics.trackEvent('BREW', 'DELETE');
-        this.__deleteBrew(_brew);
-        this.uiToast.showInfoToast('TOAST_BREW_DELETED_SUCCESSFULLY');
+          this.__deleteBrew(_brew);
         },
         () => {
           // No
         });
+
+  }
+
+  public async postBrew(_brew: Brew) {
+    const modal = await this.modalCtrl.create({component: BrewTextComponent, componentProps: {brew: _brew}});
+    await modal.present();
+    await modal.onWillDismiss();
+    this.loadBrews();
   }
 
 
+
+
+
+  private __resetFilter(): void {
+    this.loadBrews();
+  }
 
   public loadBrews(): void {
     this.__initializeBrews();
     this.changeDetectorRef.detectChanges();
-
   }
-
 
   private __deleteBrew(_brew: Brew): void {
     this.uiBrewStorage.removeByObject(_brew);
     this.loadBrews();
+
   }
 
+  private downloadCSV(): void {
+
+    const exportToCsv = (filename, rows) => {
+      const processRow = (row) => {
+        let finalVal = '';
+        for (let j = 0; j < row.length; j++) {
+          let innerValue = row[j] === null ? '' : row[j].toString();
+          if (row[j] instanceof Date) {
+            innerValue = row[j].toLocaleString();
+          }
+
+          let result = innerValue.replace(/"/g, '""');
+          if (result.search(/("|,|\n)/g) >= 0) {
+            result = `"${result}"`;
+          }
+
+          if (j > 0) {
+            finalVal += ',';
+          }
+          finalVal += result;
+        }
+
+        return finalVal + '\n';
+      };
+
+      let csvFile = '';
+      for (const i of  rows) {
+        csvFile += processRow(i);
+      }
+
+      this.uiHelper.exportCSV(filename, csvFile).then(async (_savedFile: FileEntry) => {
+        if (this.platform.is('android')) {
+          const alert = await this.alertCtrl.create({
+            header: this.translate.instant('DOWNLOADED'),
+            subHeader: this.translate.instant('CSV_FILE_DOWNLOADED_SUCCESSFULLY', {fileName: _savedFile.name}),
+            buttons: ['OK']
+          });
+          await alert.present();
+        } else {
+          this.socialSharing.share(undefined, undefined, _savedFile.nativeURL);
+
+        }
+
+      }, async () => {
+        // No export possible.
+        const alert = await this.alertCtrl.create({
+          header: this.translate.instant('ERROR_OCCURED'),
+          subHeader: this.translate.instant('CSV_FILE_NOT_DOWNLOADED'),
+          buttons: ['OK']
+        });
+        await alert.present();
+      });
+
+    };
+
+    const entries: Array<Array<{ VALUE: any, LABEL: string }>> = [];
+    for (const i of this.brews) {
+      const brew: Brew = i;
+
+      const entry: Array<{ VALUE: any, LABEL: string }> = [
+        {VALUE: this.uiHelper.formateDate(brew.config.unix_timestamp, 'DD.MM.YYYY HH:mm'), LABEL: this.translate.instant('DAY')},
+        {VALUE: brew.grind_size, LABEL: this.translate.instant('BREW_DATA_GRIND_SIZE')},
+        {VALUE: brew.grind_weight, LABEL: this.translate.instant('BREW_DATA_GRIND_WEIGHT')},
+        {VALUE: brew.getPreparation().name, LABEL: this.translate.instant('BREW_DATA_PREPARATION_METHOD')},
+        {VALUE: brew.getBean().name, LABEL: this.translate.instant('BREW_DATA_BEAN_TYPE')},
+        {VALUE: brew.getBean().roaster, LABEL: this.translate.instant('BEAN_DATA_ROASTER')},
+        {VALUE: brew.brew_temperature, LABEL: this.translate.instant('BREW_DATA_BREW_TEMPERATURE')},
+        {VALUE: brew.brew_temperature_time, LABEL: this.translate.instant('BREW_DATA_TEMPERATURE_TIME')},
+        {VALUE: brew.brew_time, LABEL: this.translate.instant('BREW_DATA_TIME')},
+        {VALUE: brew.pressure_profile, LABEL: this.translate.instant('BREW_DATA_PRESSURE_PROFILE')},
+        {VALUE: brew.mill_speed, LABEL: this.translate.instant('BREW_DATA_MILL_SPEED')},
+        {VALUE: brew.mill_timer, LABEL: this.translate.instant('BREW_DATA_MILL_TIMER')},
+        {VALUE: brew.getMill().name, LABEL: this.translate.instant('BREW_DATA_MILL')},
+        {VALUE: brew.brew_quantity, LABEL: this.translate.instant('BREW_DATA_BREW_QUANTITY')},
+        {VALUE: brew.getBrewQuantityTypeName(), LABEL: this.translate.instant('BREW_INFORMATION_BREW_QUANTITY_TYPE_NAME')},
+        {VALUE: brew.note, LABEL: this.translate.instant('BREW_DATA_NOTES')},
+        {VALUE: brew.rating, LABEL: this.translate.instant('BREW_DATA_RATING')},
+        {VALUE: brew.coffee_type, LABEL: this.translate.instant('BREW_DATA_COFFEE_TYPE')},
+        {VALUE: brew.coffee_concentration, LABEL: this.translate.instant('BREW_DATA_COFFEE_CONCENTRATION')},
+        {VALUE: brew.coffee_first_drip_time, LABEL: this.translate.instant('BREW_DATA_COFFEE_FIRST_DRIP_TIME')},
+        {VALUE: brew.coffee_blooming_time, LABEL: this.translate.instant('BREW_DATA_COFFEE_BLOOMING_TIME')},
+        {VALUE: brew.getCalculatedBeanAge(), LABEL: this.translate.instant('BREW_INFORMATION_BEAN_AGE')},
+        {VALUE: brew.getBrewRatio(), LABEL: this.translate.instant('BREW_INFORMATION_BREW_RATIO')},
+        {VALUE: brew.getBean().finished, LABEL: this.translate.instant('FINISHED') + '?'},
+      ];
+      entries.push(entry);
+    }
+
+    // create CSV header labels
+    const exportData: Array<Array<{ VALUE: any, LABEL: string }>> = [];
+
+    let headersSet: boolean = false;
+    for (const i of entries) {
+      const entry: Array<{ VALUE: any, LABEL: string }> = i;
+
+      let addValues: Array<any> = [];
+      if (!headersSet) {
+        for (const z of entry) {
+          addValues.push(z.LABEL);
+        }
+        headersSet = true;
+        exportData.push(addValues);
+      }
+      addValues = [];
+      for (const z of entry) {
+        addValues.push(z.VALUE);
+      }
+      exportData.push(addValues);
+    }
+
+    const now = new Date();
+    const currentDateTimeString = `${now.getMonth()}-${now.getDate()}-${now.getFullYear()}-
+    ${now.getHours()}${now.getMinutes()}${now.getSeconds()}`;
+
+    // generate file
+    exportToCsv('Beanconqueror-' + currentDateTimeString + '.csv', exportData);
+
+  }
 
   private __initializeBrews(): void {
     this.brews = this.uiBrewStorage.getAllEntries();
     this.openBrewsView = [];
     this.archiveBrewsView = [];
+    this.archivedBrewsCount = 0;
+    this.openBrewsCount = 0;
 
     this.__initializeBrewView('open');
     this.__initializeBrewView('archiv');
   }
 
+  private __sortBrews(_sortingBrews: Array<Brew>): Array<Brew> {
+    const sortedBrews: Array<Brew> = _sortingBrews.sort((obj1, obj2) => {
+      if (obj1.config.unix_timestamp < obj2.config.unix_timestamp) {
+        return 1;
+      }
+      if (obj1.config.unix_timestamp > obj2.config.unix_timestamp) {
+        return -1;
+      }
+
+      return 0;
+    });
+    return sortedBrews;
+  }
 
   public isFilterActive(): boolean {
     if (this.brew_segment === 'open') {
       return (this.openBrewsFilter.bean.length > 0 ||
         this.openBrewsFilter.method_of_preparation.length > 0 ||
-        this.openBrewsFilter.mill.length > 0) || this.openBrewFilterText !== '';
+        this.openBrewsFilter.mill.length > 0);
     } else {
       return (this.archivedBrewsFilter.bean.length > 0 ||
         this.archivedBrewsFilter.method_of_preparation.length > 0 ||
-        this.archivedBrewsFilter.mill.length > 0) || this.archivedBrewFilterText !== '';
+        this.archivedBrewsFilter.mill.length > 0);
     }
   }
 
@@ -279,17 +404,12 @@ export class BrewPage implements OnInit {
     }
 
     const modal = await this.modalCtrl.create({
-      component: BrewFilterComponent,
-      cssClass: 'bottom-modal',
-      showBackdrop: true,
-      backdropDismiss: true,
-      swipeToClose: true,
-      id:'brew-filter',
-      componentProps:
+      component: BrewFilterComponent, cssClass: 'bottom-modal', showBackdrop: true, componentProps:
         {brew_filter: brewFilter, segment: this.brew_segment}
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
+
     if (modalData.data.brew_filter !== undefined) {
       if (this.brew_segment === 'open') {
         this.openBrewsFilter = modalData.data.brew_filter;
@@ -298,76 +418,36 @@ export class BrewPage implements OnInit {
         this.archivedBrewsFilter = modalData.data.brew_filter;
       }
     }
-    this.__saveBrewFilter();
 
 
     this.loadBrews();
   }
 
-  private __saveBrewFilter() {
-    const settings: Settings = this.uiSettingsStorage.getSettings();
-    settings.brew_filter.OPEN = this.openBrewsFilter;
-    settings.brew_filter.ARCHIVED = this.archivedBrewsFilter;
-    this.uiSettingsStorage.saveSettings(settings);
-  }
-
-  public research() {
-    this.__initializeBrewView(this.brew_segment);
-  }
   private __initializeBrewView(_type: string): void {
 // sort latest to top.
     const brewsCopy: Array<Brew> = [...this.brews];
     let brewsFilters: Array<Brew>;
+    brewsFilters = brewsCopy.filter((e) => e.getBean().finished === !(_type === 'open'));
 
-    const isOpen: boolean = (_type === 'open');
-    if (isOpen) {
-      brewsFilters = brewsCopy.filter((e) =>
-        e.getBean().finished === !isOpen &&
-        e.getMill().finished === !isOpen &&
-        e.getPreparation().finished === !isOpen
-      );
-    } else {
-      brewsFilters = brewsCopy.filter((e) =>
-        e.getBean().finished === !isOpen ||
-        e.getMill().finished === !isOpen ||
-        e.getPreparation().finished === !isOpen
-      );
+
+    if (this.settings.mill === true && this.openBrewsFilter.mill.length > 0) {
+      brewsFilters = brewsFilters.filter((e) => this.openBrewsFilter.mill.filter((z) => z === e.mill).length > 0);
+    }
+    if (this.settings.bean_type === true && this.openBrewsFilter.bean.length > 0) {
+      brewsFilters = brewsFilters.filter((e) => this.openBrewsFilter.bean.filter((z) => z === e.bean).length > 0);
+    }
+    if (this.settings.method_of_preparation === true && this.openBrewsFilter.method_of_preparation.length > 0) {
+      brewsFilters = brewsFilters.filter((e) =>
+        (this.openBrewsFilter.method_of_preparation.filter((z) => z === e.method_of_preparation).length > 0));
     }
 
-
-
-    let filter: IBrewPageFilter;
-    if (isOpen) {
-      filter = this.openBrewsFilter;
-    } else {
-      filter = this.archivedBrewsFilter;
-    }
-
-    if (filter.mill.length > 0) {
-      brewsFilters = brewsFilters.filter((e) => filter.mill.filter((z) => z === e.mill).length > 0);
-    }
-    if (filter.bean.length > 0) {
-      brewsFilters = brewsFilters.filter((e) => filter.bean.filter((z) => z === e.bean).length > 0);
-    }
-    if (filter.method_of_preparation.length > 0) {
-      brewsFilters = brewsFilters.filter((e) => filter.method_of_preparation.filter((z) => z === e.method_of_preparation).length > 0);
-    }
-
-    let sortedBrews: Array<Brew> = UIBrewHelper.sortBrews(brewsFilters);
-    let searchText: string = '';
+    const sortedBrews: Array<Brew> = this.__sortBrews(brewsFilters);
     if (_type === 'open') {
-        searchText = this.openBrewFilterText.toLowerCase();
-    } else {
-      searchText = this.archivedBrewFilterText.toLowerCase();
-    }
-    if (searchText) {
-      sortedBrews = sortedBrews.filter((e) => e.note.toLowerCase().includes(searchText) || e.getPreparation().name.toLowerCase().includes(searchText) ||
-        e.getBean().name.toLowerCase().includes(searchText) ||
-        e.getBean().roaster.toLowerCase().includes(searchText));
-    }
+      // const l = [...sortedBrews];
 
-    if (_type === 'open') {
       this.openBrewsView = sortedBrews;
+      // l.concat(l,l,l,l,l,l,l,l,l,l,l,l,l,l,l,l,l);
+      console.log(this.openBrewsView);
     } else {
       this.archiveBrewsView = sortedBrews;
     }
@@ -375,6 +455,5 @@ export class BrewPage implements OnInit {
   }
   public ngOnInit() {
   }
-
 
 }

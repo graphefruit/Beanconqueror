@@ -40,40 +40,12 @@ export class UIFileHelper {
 
   public async deleteFile(_filePath): Promise<any> {
     return new Promise(async (resolve, reject) => {
-      if (this.platform.is('cordova')) {
-        const fileObj = this.__splitFilePath(_filePath);
-        let filePath = this.file.dataDirectory;
-        if (fileObj.FILE_PATH.length > 1 && fileObj.FILE_PATH.indexOf('/') === 0 && filePath.lastIndexOf('/') === filePath.length - 1) {
-          filePath = filePath + fileObj.FILE_PATH.substr(1);
-        }
-        this.file.removeFile(filePath, fileObj.FILE_NAME + fileObj.EXTENSION).then(() => {
-          resolve();
-        }, () => {
-          reject();
-        });
-      } else {
+      const fileObj = this.__splitFilePath(_filePath);
+      this.file.removeFile(fileObj.FILE_PATH, fileObj.FILE_NAME + fileObj.EXTENSION).then(() => {
         resolve();
-      }
-
-    });
-  }
-
-  public async copyFileWithSpecificName(_filePath: string, _fileName: string = 'beanconqueror_image'): Promise<any> {
-
-    const fileObj = this.__splitFilePath(_filePath);
-    return new Promise(async (resolve, reject) => {
-      this.generateFileName(this.file.dataDirectory, _fileName, fileObj.EXTENSION).then((_newName) => {
-        // console.log('New Filename' + _newName);
-
-        this.file.copyFile(fileObj.FILE_PATH, fileObj.FILE_NAME + fileObj.EXTENSION,
-          this.file.dataDirectory, _newName).then((_t) => {
-          resolve(_t.fullPath);
-        }, (e) => {
-          reject();
-        });
-
+      }, () => {
+        reject();
       });
-
     });
   }
 
@@ -98,30 +70,21 @@ export class UIFileHelper {
 
   private __splitFilePath(_filePath: string): { FILE_NAME: string; FILE_PATH: string; EXTENSION: string; } {
     // TODO If we have folders, this won't work. because we're ignoring foldesrs i all subfunctions
-    try {
+    let filePath: string = _filePath.substr(0, _filePath.lastIndexOf('/'));
 
-
-      let filePath: string = _filePath.substr(0, _filePath.lastIndexOf('/'));
-
-      if (filePath === '') {
-        filePath = '/';
-      }
-      const fileName: string = _filePath.substr(_filePath.lastIndexOf('/') + 1, _filePath.lastIndexOf('.') - _filePath.lastIndexOf('/') - 1);
-      const exstension: string = _filePath.substr(_filePath.lastIndexOf('.'));
-
-
-      return {
-        FILE_NAME: fileName,
-        FILE_PATH: filePath,
-        EXTENSION: exstension
-      };
-    } catch (ex) {
-      return {
-        FILE_NAME: '',
-        FILE_PATH: '',
-        EXTENSION: '',
-      };
+    if (filePath === '') {
+      filePath = '/';
     }
+    const fileName: string = _filePath.substr(_filePath.lastIndexOf('/') + 1, _filePath.lastIndexOf('.') - _filePath.lastIndexOf('/') - 1);
+    const exstension: string = _filePath.substr(_filePath.lastIndexOf('.'));
+
+
+    return {
+      FILE_NAME: fileName,
+      FILE_PATH: filePath,
+      EXTENSION: exstension
+    };
+
 
   }
 
@@ -134,10 +97,9 @@ export class UIFileHelper {
         }
         // let filePath: string;
         // filePath = _filePath;
-        // filePath.slice(0, filePath.lastIndexOf('/'));
         let path: string;
         let fileName: string;
-        path = this.file.dataDirectory;
+        path = this.file.dataDirectory; // filePath.slice(0, filePath.lastIndexOf('/'));
         fileName = _filePath;
         if (fileName.startsWith('/')) {
           fileName = fileName.slice(1);

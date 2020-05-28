@@ -82,37 +82,11 @@
   --ion-color-light-shade: #d7d8da;
   --ion-color-light-tint: #f5f6f9;
 
+  --ion-color-accent: #B88265;
 
   --beanconqueror-highlight-color-item: #AE9F87;
   --beanconqueror-icon-color: #AE9F87;
-
-  --beanconqueror-background-highlight-color: #FFACAB;
-
-  /**https://ionicframework.com/docs/theming/colors**/
-  --ion-color-accent: #CDC2AC;
-  --ion-color-accent-rgb: 184, 130, 101;
-  --ion-color-accent-contrast: #FFFFFF;
-  --ion-color-accent-contrast-rgb: 255, 255, 255;
-  --ion-color-accent-shade: #CDC2AC;
-  --ion-color-accent-tint: #FFFFFF;
-
-
-  --ion-color-accent-secondary: #B88265;
-  --ion-color-accent-secondary-rgb: 184, 130, 101;
-  --ion-color-accent-secondary-contrast: #FFFFFF;
-  --ion-color-accent-secondary-contrast-rgb: 255, 255, 255;
-  --ion-color-accent-secondary-shade:  #B88265;
-  --ion-color-accent-secondary-tint: #FFFFFF;
-
-
-  --ion-color-inactive: #CCCCCC;
-  --ion-color-inactive-rgb: 204, 204, 204;
-  --ion-color-inactive-contrast: #CCCCCC;
-  --ion-color-inactive-contrast-rgb: 255, 255, 255;
-  --ion-color-inactive-shade: #CCCCCC;
-  --ion-color-inactive-tint: #CCCCCC;
-
-
+  --beanconqueror-card-highlight: #9F8C6F;
 }
 
 .item-interactive.ion-valid {
@@ -122,26 +96,7 @@
 /**https://forum.ionicframework.com/t/adding-custom-colours-to-use-with-color-property/136919**/
 .ion-color-accent {
   --ion-color-base: var(--ion-color-accent);
-}
-.ion-color-accent-secondary {
-  --ion-color-base: var(--ion-color-accent-secondary);
-  color: var(--ion-color-accent-secondary);
-}
 
-.ion-color-inactive {
-  --ion-color-base: var(--ion-color-inactive);
-}
-
-.ion-color-background-highlight {
-  background-color: var(--beanconqueror-background-highlight-color);
-}
-
-.ion-color-background-inactive {
-  background-color: var(--ion-color-inactive);
-}
-
-.text-color-inactive {
-  color: var(--ion-color-inactive);
 }
 
 $card-md-border-radius: 5px;

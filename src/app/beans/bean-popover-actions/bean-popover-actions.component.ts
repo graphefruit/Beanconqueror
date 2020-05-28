@@ -43,7 +43,7 @@ export class BeanPopoverActionsComponent implements OnInit {
   }
 
   public async choose(_type: string): Promise<void> {
-    this.popoverController.dismiss(undefined, _type,'bean-popover-actions');
+    this.popoverController.dismiss(undefined, _type);
   }
 
 }

@@ -92,7 +92,7 @@ export class UIStatistic {
       return `${this.translate.instant('MINUTES')}`;
     }
 
-    return `${this.translate.instant('DAYS')}`;
+    return '0';
   }
 
   public getTimePassedSinceLastBrew(): string {
@@ -160,11 +160,8 @@ export class UIStatistic {
     return this.translate.instant('NOT_FOUND');
   }
 
-  /**
-   * Returns in KG
-   */
   public getTotalGround(): number {
-
+    if (this.uiSettings.getSettings().grind_weight) {
       const brews: Array<IBrew> = this.uiBrewStorage.getAllEntries();
       if (brews.length > 0) {
         let sum = 0;
@@ -172,24 +169,27 @@ export class UIStatistic {
           sum += +brew.grind_weight;
         }
 
-        return Math.round((sum / 1000) * 100) / 100;
+        return sum;
       }
+    }
 
     return 0;
   }
 
-  /**
-   * Retruns in kg/litres
-   */
   public getTotalDrunk(): number {
-    const brews: Array<IBrew> = this.uiBrewStorage.getAllEntries();
-    if (brews.length > 0) {
-      let sum = 0;
-      for (const brew of brews) {
-        sum += brew.brew_quantity;
+    if (this.uiSettings.getSettings().brew_quantity) {
+      const brews: Array<IBrew> = this.uiBrewStorage.getAllEntries();
+      if (brews.length > 0) {
+        let sum = 0;
+        for (const brew of brews) {
+          sum += brew.brew_quantity;
+        }
+
+        return sum;
       }
-      return Math.round((sum / 1000) * 100) / 100;
     }
+
+    return 0;
   }
 
   private getLastBrew(): IBrew {

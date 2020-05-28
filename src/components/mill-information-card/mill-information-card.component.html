@@ -1,44 +1,28 @@
-<ion-card class="long-card">
-  <ion-card-content class="no-ion-col-vertical-padding ion-padding-top">
-    <ion-grid class="no-padding-bottom">
+<ion-card class="dynamic-padding">
+  <ion-card-header>
+    <ion-grid class="ion-no-padding">
       <ion-row>
-        <ion-col size="11"><div class="ion-no-padding font-size-20 ion-title">{{mill.name}}</div></ion-col>
-        <ion-col size="1">
-          <ion-button (click)="showMillActions($event)" class="button-top-absolute" tappable
-                      color="accent" fill="clear">
-            <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>
+        <ion-col class="ion-text-center" size="3">
+          <span class="heading-20">{{brewCounts()}}</span><br/>
+          <span>{{"NAV_BREWS" | translate}}</span><br/>
+        </ion-col>
+        <ion-col size="7">
+          <ion-list lines="none">
+            <div>
+              <ion-icon name="thermometer-outline"></ion-icon>
+              {{mill.name}}
+            </div>
+
+          </ion-list>
+        </ion-col>
+        <ion-col size="2">
+          <ion-button (click)="showMillActions($event)" color="medium" fill="clear">
+            <ion-icon name="ellipsis-vertical-outline" slot="icon-only"></ion-icon>
           </ion-button>
         </ion-col>
       </ion-row>
-      <ion-row>
-        <ion-col>
-          <hr />
-        </ion-col>
-      </ion-row>
     </ion-grid>
 
-    <ion-grid class="no-ion-col-vertical-padding">
-      <ion-row>
-        <ion-col size="6">
-          <ion-label class="card-headline">{{"PAGE_HOME_TOTAL_BREWS" | translate}}</ion-label><br/>
+  </ion-card-header>
 
-          <ion-text>{{getBrewsCount()| number : '.0'}}</ion-text>
-        </ion-col>
-        <ion-col size="6">
-          <ion-label class="card-headline">{{"COFFEE_GRAMS_GRINDED" | translate}}</ion-label><br/>
-          <ion-text>{{getWeightCount()| number : '.0-2'}}</ion-text>
-        </ion-col>
-        <ion-col size="6">
-          <ion-label class="card-headline">{{"BEANS_USED" | translate}}</ion-label><br/>
-          <ion-text>{{getBeansCount()| number : '.0'}}</ion-text>
-        </ion-col>
-        <ion-col size="6">
-          <ion-label class="card-headline">{{"LAST_USE" | translate}}</ion-label><br/>
-          <ion-text *ngIf="getBrewsCount()> 0">{{lastUsed() | formatDate:["DD.MM.YYYY"]}}</ion-text>
-          <ion-text *ngIf="getBrewsCount() <= 0">-</ion-text>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </ion-card-content>
 </ion-card>
-

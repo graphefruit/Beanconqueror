@@ -9,16 +9,11 @@
   border-radius: 6px;
   margin-block-end: 10px;
 
-  @media (min-height: 600px) and (max-height: 667px) {
-    --max-height: 55%;
-    top: 45%;
+  ion-footer {
+    background: #F0F0F0;
   }
-  @media (min-height: 537px) and (max-height: 600px) {
-    --max-height: 65%;
-    top: 35%;
-  }
-  @media (max-height: 450px) {
-    --max-height: 100%;
-    top: 0%;
+
+  ion-label {
+    font-family: "Baloo";
   }
 }

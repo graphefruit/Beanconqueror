@@ -7,12 +7,8 @@ import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {Brew} from '../../classes/brew/brew';
 import {PreparationEditComponent} from './preparation-edit/preparation-edit.component';
 import {PreparationAddComponent} from './preparation-add/preparation-add.component';
+import {PreparationInformationComponent} from './preparation-information/preparation-information.component';
 import {PREPARATION_ACTION} from '../../enums/preparations/preparationAction';
-import {UISettingsStorage} from '../../services/uiSettingsStorage';
-import {Settings} from '../../classes/settings/settings';
-import {UIToast} from '../../services/uiToast';
-import {UIAnalytics} from '../../services/uiAnalytics';
-import {PreparationCustomParametersComponent} from './preparation-custom-parameters/preparation-custom-parameters.component';
 
 @Component({
   selector: 'preparation',
@@ -20,23 +16,18 @@ import {PreparationCustomParametersComponent} from './preparation-custom-paramet
   styleUrls: ['./preparation.page.scss'],
 })
 export class PreparationPage implements OnInit {
-  public settings: Settings;
-  public segment: string = 'open';
-  public preparations: Array<Preparation> = [];
 
+
+  public preparations: Array<Preparation> = [];
   constructor(public modalCtrl: ModalController,
               private readonly changeDetectorRef: ChangeDetectorRef,
               private readonly uiPreparationStorage: UIPreparationStorage,
               private readonly uiAlert: UIAlert,
-              private readonly uiBrewStorage: UIBrewStorage,
-              private readonly uiSettingsStorage: UISettingsStorage,
-              private readonly uiToast: UIToast,
-              private readonly uiAnalytics: UIAnalytics) {
+              private readonly uiBrewStorage: UIBrewStorage) {
 
   }
 
   public ionViewWillEnter(): void {
-    this.settings = this.uiSettingsStorage.getSettings();
     this.__initializePreparations();
   }
 
@@ -45,20 +36,11 @@ export class PreparationPage implements OnInit {
     this.changeDetectorRef.detectChanges();
   }
 
-  public getActivePreparations(): Array<Preparation> {
-    return this.preparations.filter(
-      (preparation) => !preparation.finished);
-  }
-
-  public getArchivedPreparations(): Array<Preparation> {
-    return this.preparations.filter(
-      (preparation) => preparation.finished);
-  }
-
   public async preparationAction(action: PREPARATION_ACTION, preparation: Preparation): Promise<void> {
     switch (action) {
-      case PREPARATION_ACTION.CUSTOM_PARAMETERS:
-        this.customParameters(preparation);
+
+      case PREPARATION_ACTION.INFORMATION:
+        this.informationPreparation(preparation);
         break;
       case PREPARATION_ACTION.EDIT:
         this.editPreparation(preparation);
@@ -66,41 +48,27 @@ export class PreparationPage implements OnInit {
       case PREPARATION_ACTION.DELETE:
         this.deletePreparation(preparation);
         break;
-      case PREPARATION_ACTION.ARCHIVE:
-        this.archive(preparation);
-        break;
       default:
         break;
     }
   }
 
   public async add() {
-    const modal = await this.modalCtrl.create({
-      component: PreparationAddComponent,
-      showBackdrop: true,
-      id: 'preparation-add'
-    });
-    await modal.present();
-    await modal.onWillDismiss();
-    this.loadPreparations();
-  }
-
-
-  public async customParameters(_preparation: Preparation) {
-    const modal = await this.modalCtrl.create({component: PreparationCustomParametersComponent,
-      componentProps: {preparation: _preparation},
-      id: 'preparation-custom-parameters'
-    });
+    const modal = await this.modalCtrl.create({component:PreparationAddComponent});
     await modal.present();
     await modal.onWillDismiss();
     this.loadPreparations();
   }
 
   public async editPreparation(_preparation: Preparation) {
-    const modal = await this.modalCtrl.create({component: PreparationEditComponent,
-      componentProps: {preparation: _preparation},
-      id: 'preparation-edit'
-    });
+    const modal = await this.modalCtrl.create({component: PreparationEditComponent, componentProps: {preparation: _preparation}});
+    await modal.present();
+    await modal.onWillDismiss();
+    this.loadPreparations();
+  }
+
+  public async informationPreparation(_preparation: Preparation) {
+    const modal = await this.modalCtrl.create({component: PreparationInformationComponent, componentProps: {preparation: _preparation}});
     await modal.present();
     await modal.onWillDismiss();
   }
@@ -108,25 +76,12 @@ export class PreparationPage implements OnInit {
   public deletePreparation(_preparation: Preparation): void {
     this.uiAlert.showConfirm('DELETE_PREPARATION_METHOD_QUESTION', 'SURE_QUESTION', true).then(() => {
           // Yes
-        this.uiAnalytics.trackEvent('PREPARATION', 'DELETE');
-        this.__deletePreparation(_preparation);
-        this.uiToast.showInfoToast('TOAST_PREPARATION_DELETED_SUCCESSFULLY');
-        this.settings.resetFilter();
-        this.uiSettingsStorage.saveSettings(this.settings);
+          this.__deletePreparation(_preparation);
         },
         () => {
           // No
         });
 
-  }
-
-  public archive(_preparation: Preparation) {
-    _preparation.finished = true;
-    this.uiPreparationStorage.update(_preparation);
-    this.uiToast.showInfoToast('TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY');
-    this.settings.resetFilter();
-    this.uiSettingsStorage.saveSettings(this.settings);
-    this.loadPreparations();
   }
 
   private __initializePreparations(): void {

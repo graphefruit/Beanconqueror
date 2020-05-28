@@ -7,7 +7,6 @@ import {MILL_ACTION} from '../../enums/mills/millActions';
 import {MillPopoverActionsComponent} from '../../app/mill/mill-popover-actions/mill-popover-actions.component';
 import {Brew} from '../../classes/brew/brew';
 import {UIMillHelper} from '../../services/uiMillHelper';
-import {UIBrewHelper} from '../../services/uiBrewHelper';
 
 @Component({
   selector: 'mill-information-card',
@@ -35,54 +34,18 @@ export class MillInformationCardComponent implements OnInit {
 
   }
 
-  public getBrewsCount(): number {
+  public brewCounts(): number {
 
     const relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(this.mill.config.uuid);
     return relatedBrews.length;
   }
-
-  public getWeightCount(): number {
-
-    const relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(this.mill.config.uuid);
-    let grindWeight: number = 0;
-    for (const brew of relatedBrews) {
-      grindWeight += brew.grind_weight;
-    }
-    return grindWeight;
-  }
-
-  public getBeansCount(): number {
-
-    const relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(this.mill.config.uuid);
-    const distinctBeans = relatedBrews.filter((bean, i, arr) => {
-      return arr.indexOf(arr.find((t) => t.bean === bean.bean)) === i;
-    });
-
-    return distinctBeans.length;
-
-  }
-  public lastUsed(): number {
-
-    let relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(this.mill.config.uuid);
-    if (relatedBrews.length > 0) {
-      relatedBrews = UIBrewHelper.sortBrews(relatedBrews);
-      return relatedBrews[0].config.unix_timestamp;
-    }
-    return -1;
-
-
-
-  }
-
-
 
   public async showMillActions(event): Promise<void> {
     const popover = await this.popoverCtrl.create({
       component: MillPopoverActionsComponent,
       event,
       translucent: true,
-      componentProps: {mill: this.mill},
-      id:'mill-popover-actions'
+      componentProps: {mill: this.mill}
     });
     await popover.present();
     const data = await popover.onWillDismiss();

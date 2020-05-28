@@ -35,54 +35,22 @@ export class PreparationInformationCardComponent implements OnInit {
   }
 
 
-  public getBrewsCount(): number {
+  public brewCounts(): number {
 
     const relatedBrews: Array<Brew> = this.uiPreparationHelper.getAllBrewsForThisPreparation(this.preparation.config.uuid);
     return relatedBrews.length;
   }
 
-  public getWeightCount(): number {
-
-    const relatedBrews: Array<Brew> = this.uiPreparationHelper.getAllBrewsForThisPreparation(this.preparation.config.uuid);
-    let grindWeight: number = 0;
-    for (const brew of relatedBrews) {
-      grindWeight += brew.grind_weight;
-    }
-    return grindWeight;
-  }
-
-  public getDrunkenQuantity(): number {
-
-    const relatedBrews: Array<Brew> = this.uiPreparationHelper.getAllBrewsForThisPreparation(this.preparation.config.uuid);
-    let drunkenQuantity: number = 0;
-    for (const brew of relatedBrews) {
-      drunkenQuantity += brew.brew_quantity;
-    }
-    return drunkenQuantity / 1000;
-  }
-
-  public getBeansCount(): number {
-
-    const relatedBrews: Array<Brew> = this.uiPreparationHelper.getAllBrewsForThisPreparation(this.preparation.config.uuid);
-    const distinctBeans = relatedBrews.filter((bean, i, arr) => {
-      return arr.indexOf(arr.find((t) => t.bean === bean.bean)) === i;
-    });
-
-    return distinctBeans.length;
-
-  }
   public async showPreparationActions(event): Promise<void> {
     const popover = await this.popoverCtrl.create({
       component: PreparationPopoverActionsComponent,
       event,
       translucent: true,
-      id: 'preparation-popover-actions',
       componentProps: {preparation: this.preparation}
     });
     await popover.present();
     const data = await popover.onWillDismiss();
     this.preparationAction.emit([data.role as PREPARATION_ACTION, this.preparation]);
   }
-
 
 }

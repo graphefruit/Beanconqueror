@@ -1,31 +1,12 @@
 :host {
+  .fixedLabel {
+    min-width: 20% !important;
+    max-width: 20% !important;
+  }
 
 
   ion-item {
     --border-width: 0px;
-  }
-
-
-  ion-item {
-    margin-left: 16px;
-    margin-right: 16px;
-  }
-
-  ::ng-deep ion-slides img {
-    width: 200px;
-    height: 200px;
-    display: block;
-    object-fit: contain;
-  }
-
-  ion-card
-  {
-    div.last-item {
-      margin-bottom:16px;
-      /*Last one*/
-      order:10000;
-    }
-
   }
 
 

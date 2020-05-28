@@ -7,10 +7,7 @@ const routes: Routes = [
   {
     path: '',
     redirectTo: '/home/dashboard',
-    pathMatch: 'full',
-    resolve: {
-      resolver: RouteResolver
-    },
+    pathMatch: 'full'
   },
   {
     path: 'home', resolve: {
@@ -57,18 +54,12 @@ const routes: Routes = [
     path: 'helper', resolve: {
       resolver: RouteResolver
     },
-    loadChildren: './helper/helper.module#HelperPageModule'
+    loadChildren: './helper/helper.module#HelperPageModule', pathMatch: 'full'
   }, {
     path: 'shopping-cart', resolve: {
       resolver: RouteResolver
     },
     loadChildren: './shopping-cart/shopping-cart.module#ShoppingCartModule', pathMatch: 'full'
-  },
-  {
-    path: 'brew-parameter', resolve: {
-      resolver: RouteResolver
-    },
-    loadChildren: './brew-parameter/brew-parameter.module#BrewParameterPageModule'
   }
 ];
 

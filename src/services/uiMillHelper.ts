@@ -13,24 +13,14 @@ import {UIBrewStorage} from './uiBrewStorage';
 })
 export class UIMillHelper {
 
-  private allStoredBrews: Array<Brew> = [];
   constructor(private readonly uiBrewStorage: UIBrewStorage) {
-    this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
-      // If an brew is deleted, we need to reset our array for the next call.
-      this.allStoredBrews = [];
-    });
+
   }
 
   public getAllBrewsForThisMill(_uuid: string): Array<Brew> {
 
-    if (this.allStoredBrews.length <= 0) {
-      // Load just if needed, performance reasons
-      this.allStoredBrews = this.uiBrewStorage.getAllEntries();
-    }
-
     const brewsForMill: Array<Brew> = [];
-    const brews: Array<Brew> = this.allStoredBrews;
-
+    const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
     const millUUID: string = _uuid;
     for (const brew of brews) {
       if (brew.mill === millUUID) {
