@@ -41,12 +41,8 @@ export class AppComponent implements AfterViewInit {
   @ViewChild(IonRouterOutlet, {static: false}) public routerOutlet: IonRouterOutlet;
 
   public pages = {
-    home: {title: 'NAV_HOME', url: '/home', icon: 'home-outline', active: true},
+    home: {title: 'NAV_HOME', url: '/home/dashboard', icon: 'home-outline', active: true},
     settings: {title: 'NAV_SETTINGS', url: '/settings', icon: 'settings-outline', active: false},
-    brew: {title: 'NAV_BREWS', url: '/brew', icon: 'cafe-outline', active: false},
-    beans: {title: 'NAV_BEANS', url: '/beans', icon: 'fa-pagelines', active: false},
-    preparation: {title: 'NAV_PREPARATION', url: '/preparation', icon: 'fa-flask', active: false},
-    mill: {title: 'NAV_MILL', url: '/mill', icon: 'md-cut', active: false},
     about: {title: 'NAV_ABOUT_US', url: '/info/about', icon: 'information-circle-outline', active: false},
     contact: {title: 'NAV_CONTACT', url: '/info/contact', icon: 'mail-outline', active: false},
     privacy: {title: 'NAV_PRIVACY', url: '/info/privacy', icon: 'documents-outline', active: false},
@@ -281,7 +277,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   private async __checkStartupView() {
-
+    return;
     const settings: Settings = this.uiSettingsStorage.getSettings();
 
     if (settings.startup_view !== STARTUP_VIEW_ENUM.HOME_PAGE) {
@@ -289,10 +285,10 @@ export class AppComponent implements AfterViewInit {
     }
     switch (settings.startup_view) {
       case STARTUP_VIEW_ENUM.HOME_PAGE:
-        this.router.navigate([this.pages.home.url]);
+        this.router.navigate(['/home/dashboard']);
         break;
       case STARTUP_VIEW_ENUM.BREW_PAGE:
-        this.router.navigate([this.pages.brew.url]);
+        this.router.navigate(['/home/brews']);
         break;
       case STARTUP_VIEW_ENUM.ADD_BREW:
         await this.__trackNewBrew();

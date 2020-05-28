@@ -8,6 +8,7 @@ import {Brew} from '../../classes/brew/brew';
 import {PreparationEditComponent} from './preparation-edit/preparation-edit.component';
 import {PreparationAddComponent} from './preparation-add/preparation-add.component';
 import {PreparationInformationComponent} from './preparation-information/preparation-information.component';
+import {PREPARATION_ACTION} from '../../enums/preparations/preparationAction';
 
 @Component({
   selector: 'preparation',
@@ -33,6 +34,23 @@ export class PreparationPage implements OnInit {
   public loadPreparations(): void {
     this.__initializePreparations();
     this.changeDetectorRef.detectChanges();
+  }
+
+  public async preparationAction(action: PREPARATION_ACTION, preparation: Preparation): Promise<void> {
+    switch (action) {
+
+      case PREPARATION_ACTION.INFORMATION:
+        this.informationPreparation(preparation);
+        break;
+      case PREPARATION_ACTION.EDIT:
+        this.editPreparation(preparation);
+        break;
+      case PREPARATION_ACTION.DELETE:
+        this.deletePreparation(preparation);
+        break;
+      default:
+        break;
+    }
   }
 
   public async add() {

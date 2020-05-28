@@ -27,6 +27,7 @@ export class Bean implements IBean {
   public cost: number;
   public attachments: Array<string>;
 
+
   constructor() {
     this.name = '';
     this.roastingDate = '';
@@ -77,5 +78,6 @@ export class Bean implements IBean {
 
     return brewTime.diff(roastingDate, 'days');
   }
+
 
 }

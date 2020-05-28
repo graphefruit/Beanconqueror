@@ -14,6 +14,8 @@ import {Platform} from '@ionic/angular';
 export class UIFileHelper {
 
   private cachedBase64: any = {};
+
+
   constructor (private readonly file: File, private readonly platform: Platform) {
   }
 
@@ -35,6 +37,57 @@ export class UIFileHelper {
 
     });
   }
+
+  public async deleteFile(_filePath): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      const fileObj = this.__splitFilePath(_filePath);
+      this.file.removeFile(fileObj.FILE_PATH, fileObj.FILE_NAME + fileObj.EXTENSION).then(() => {
+        resolve();
+      }, () => {
+        reject();
+      });
+    });
+  }
+
+  public async copyFile(_filePath: string): Promise<any> {
+
+    const fileObj = this.__splitFilePath(_filePath);
+    return new Promise(async (resolve, reject) => {
+      this.generateFileName(this.file.dataDirectory, fileObj.FILE_NAME, fileObj.EXTENSION).then((_newName) => {
+        // console.log('New Filename' + _newName);
+
+        this.file.copyFile(this.file.dataDirectory, fileObj.FILE_NAME + fileObj.EXTENSION,
+          this.file.dataDirectory, _newName).then((_t) => {
+          resolve(_t.fullPath);
+        }, (e) => {
+          reject();
+        });
+
+      });
+
+    });
+  }
+
+  private __splitFilePath(_filePath: string): { FILE_NAME: string; FILE_PATH: string; EXTENSION: string; } {
+    // TODO If we have folders, this won't work. because we're ignoring foldesrs i all subfunctions
+    let filePath: string = _filePath.substr(0, _filePath.lastIndexOf('/'));
+
+    if (filePath === '') {
+      filePath = '/';
+    }
+    const fileName: string = _filePath.substr(_filePath.lastIndexOf('/') + 1, _filePath.lastIndexOf('.') - _filePath.lastIndexOf('/') - 1);
+    const exstension: string = _filePath.substr(_filePath.lastIndexOf('.'));
+
+
+    return {
+      FILE_NAME: fileName,
+      FILE_PATH: filePath,
+      EXTENSION: exstension
+    };
+
+
+  }
+
 
   public async getBase64File (_filePath: string): Promise<any> {
     return new Promise(async (resolve, reject) => {

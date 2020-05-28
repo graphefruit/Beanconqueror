@@ -1,3 +1,9 @@
+3.7.
+- Show/Hide archived beans/brews
+
+Issues fixed:
+- Total brewtime not updated on manual input
+
 3.6.
 - Automated first capital character on bean/brew/mill/preparation
 - Added information for brew/preparation/mill

@@ -67,20 +67,30 @@ import {HelperPage} from '../helper/helper.page';
 import {BrewInformationComponent} from '../../components/brew-information/brew-information.component';
 import {CuppingRadarComponent} from '../../components/cupping-radar/cupping-radar.component';
 import {TooltipDirective} from '../../directive/tooltip.directive';
+import {DashboardPage} from '../dashboard/dashboard.page';
+import {BrewDashboardInformationComponent} from '../../components/brew-dashboard-information/brew-dashboard-information.component';
+import {BeanInformationComponent} from '../../components/bean-information/bean-information.component';
+import {BeanPopoverActionsComponent} from '../beans/bean-popover-actions/bean-popover-actions.component';
+import {PreparationPopoverActionsComponent} from '../preparation/preparation-popover-actions/preparation-popover-actions.component';
+import {PreparationInformationCardComponent} from '../../components/preparation-information-card/preparation-information-card.component';
+import {MillInformationCardComponent} from '../../components/mill-information-card/mill-information-card.component';
+import {MillPopoverActionsComponent} from '../mill/mill-popover-actions/mill-popover-actions.component';
+import {BrewFilterComponent} from '../brew/brew-filter/brew-filter.component';
 
 @NgModule({
-  declarations: [SettingsPage, StatisticPage, HomePage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
+  declarations: [SettingsPage, StatisticPage, HomePage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
     ContactComponent,
     CreditsComponent,
     LicencesComponent,
     PrivacyComponent,
     TermsComponent,
     ThanksComponent, LogComponent, LogTextComponent, PreparationPage, PreparationAddComponent,
-    PreparationEditComponent, MillPage, MillEditComponent, MillAddComponent, BrewAddComponent,
-    FormatDatePipe, KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, CuppingRadarComponent, SearchPipe, RemoveEmptyNumberDirective,
+    PreparationEditComponent, MillPage, MillEditComponent, BrewFilterComponent, MillAddComponent, BrewAddComponent,
+    FormatDatePipe, KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, BeanInformationComponent, BrewDashboardInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, CuppingRadarComponent, SearchPipe, RemoveEmptyNumberDirective,
     PreventCharacterDirective, TooltipDirective, BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent,
-    BrewPopoverComponent, BrewPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent, BrewTimerComponent],
-  entryComponents: [SettingsPage, StatisticPage, HomePage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
+    BrewPopoverComponent, BrewPopoverActionsComponent, MillPopoverActionsComponent, BeanPopoverActionsComponent, PreparationPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent, BrewTimerComponent],
+  entryComponents: [
+    SettingsPage, StatisticPage, HomePage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BrewFilterComponent, BeansInformationComponent, PreparationInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, MillInformationComponent, AboutComponent,
     ContactComponent,
     CreditsComponent,
     LicencesComponent,
@@ -89,7 +99,7 @@ import {TooltipDirective} from '../../directive/tooltip.directive';
     ThanksComponent, LogComponent, LogTextComponent, PreparationPage,
     PreparationAddComponent, PreparationEditComponent, MillPage, MillEditComponent,
     MillAddComponent, BrewAddComponent, BrewPage, BrewDetailComponent, BrewEditComponent,
-    BrewPhotoViewComponent, BrewPopoverComponent, BrewPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent, BrewTimerComponent],
+    BrewPhotoViewComponent, BrewPopoverComponent, BrewPopoverActionsComponent, MillPopoverActionsComponent, BeanPopoverActionsComponent, PreparationPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent, BrewTimerComponent],
   imports: [
     CommonModule,
     IonicModule,
@@ -121,11 +131,11 @@ import {TooltipDirective} from '../../directive/tooltip.directive';
     PrivacyComponent,
     TermsComponent,
     ThanksComponent, PreparationPage, PreparationAddComponent,
-    PreparationEditComponent, MillPage, MillEditComponent, MillAddComponent,
+    PreparationEditComponent, BrewFilterComponent, MillPage, MillEditComponent, MillAddComponent,
     BrewAddComponent, FormatDatePipe,
-    KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, CuppingRadarComponent, SearchPipe, RemoveEmptyNumberDirective,
+    KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, BeanInformationComponent, BeansInformationComponent, BrewDashboardInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, CuppingRadarComponent, SearchPipe, RemoveEmptyNumberDirective,
     PreventCharacterDirective, TooltipDirective, BrewPage, BrewDetailComponent, BrewEditComponent,
-    BrewPhotoViewComponent, BrewPopoverComponent, BrewPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent, BrewTimerComponent],
+    BrewPhotoViewComponent, BrewPopoverComponent, BrewPopoverActionsComponent, MillPopoverActionsComponent, BeanPopoverActionsComponent, PreparationPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent, BrewTimerComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule {

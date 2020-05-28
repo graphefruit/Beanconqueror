@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>{{"BACK" | translate}}</ion-title>
+    <ion-title>{{"DETAIL_BREW" | translate}}</ion-title>
     <ion-buttons slot="start">
       <ion-button (click)="dismiss()">
         <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
@@ -10,7 +10,7 @@
 </ion-header>
 <ion-content>
 
-  <div style="display:flex; flex-direction: column;">
+  <div class="ion-margin-horizontal popover" style="display:flex; flex-direction: column;">
     <ion-item *ngIf="settings.grind_size === true" [style.order]="settings.brew_order.grind_size">
       <ion-label>
         <h2>{{"BREW_DATA_GRIND_SIZE" | translate}}:</h2>

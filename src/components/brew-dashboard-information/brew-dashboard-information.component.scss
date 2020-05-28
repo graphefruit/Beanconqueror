@@ -1,0 +1,54 @@
+:host {
+
+
+  button[justify-content-start] .button-inner {
+    justify-content: flex-start;
+  }
+
+
+  ion-col.brown-color {
+    background-color: var(--beanconqueror-card-highlight);
+  }
+
+  ion-card.good-brew {
+    border-top: 5px #009966 solid;
+  }
+
+  ion-card.bad-brew {
+    border-top: 5px #fe4164 solid;
+  }
+
+  ion-card.awesome-brew {
+    border-top: 5px #aa8736 solid;
+  }
+
+  ion-row.center-col ion-col {
+    display: flex;
+    align-items: center
+  }
+
+  ion-list {
+    background: none;
+    margin: 0px;
+    padding: 0px;
+
+    ion-item {
+      --background: none;
+      --padding-start: 0px;
+      --padding-end: 0px;
+      --inner-padding-end: 0px;
+      font-size: 14px;
+      --min-height: 0px;
+
+      ion-icon {
+        font-size: 14px;
+        margin-right: 0px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+      }
+    }
+
+  }
+}
+
+

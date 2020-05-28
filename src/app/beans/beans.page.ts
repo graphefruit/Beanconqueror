@@ -10,6 +10,7 @@ import {BeansEditComponent} from './beans-edit/beans-edit.component';
 import {BeansInformationComponent} from './beans-information/beans-information.component';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {Settings} from '../../classes/settings/settings';
+import {BEAN_ACTION} from '../../enums/beans/beanAction';
 
 @Component({
   selector: 'beans',
@@ -53,6 +54,26 @@ export class BeansPage implements OnInit {
   public loadBeans(): void {
     this.__initializeBeans();
     this.changeDetectorRef.detectChanges();
+  }
+
+  public async beanAction(action: BEAN_ACTION, bean: Bean): Promise<void> {
+    switch (action) {
+
+      case BEAN_ACTION.REPEAT:
+        this.repeatBean(bean);
+        break;
+      case BEAN_ACTION.INFORMATION:
+        this.informationBean(bean);
+        break;
+      case BEAN_ACTION.EDIT:
+        this.editBean(bean);
+        break;
+      case BEAN_ACTION.DELETE:
+        this.deleteBean(bean);
+        break;
+      default:
+        break;
+    }
   }
 
   public async add() {

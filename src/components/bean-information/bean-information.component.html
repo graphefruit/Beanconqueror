@@ -1,0 +1,65 @@
+<ion-card class="dynamic-padding">
+  <ion-card-header>
+    <ion-grid class="ion-no-padding">
+      <ion-row>
+        <ion-col class="ion-text-center" size="3">
+          <span class="heading-20">{{brewCounts()}}</span><br/>
+          <span>{{"NAV_BREWS" | translate}}</span><br/>
+        </ion-col>
+        <ion-col size="7">
+          <ion-list lines="none">
+            <div *ngIf="bean.roaster">
+              <ion-icon name="person-outline"></ion-icon>&nbsp;{{bean.name}}
+            </div>
+            <div>
+              <ion-icon name="thermometer-outline"></ion-icon>
+              {{bean.getRoastName()}}
+            </div>
+            <div>
+              <ion-icon name="calendar-outline"></ion-icon>
+              {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}
+            </div>
+          </ion-list>
+        </ion-col>
+        <ion-col size="2">
+          <ion-button (click)="showBeanActions($event)" color="medium" fill="clear">
+            <ion-icon name="ellipsis-vertical-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+  </ion-card-header>
+  <ion-card-content>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6">
+          <ion-list lines="none">
+            <div *ngIf="bean.roaster" size="3">
+              <i class="fa fa-balance-scale"></i>&nbsp;{{bean.roaster}}
+            </div>
+            <div *ngIf="bean.country" size="3">
+              <i class="fa fa-thermometer-half "></i>&nbsp;{{bean.country}}
+            </div>
+            <div *ngIf="bean.cost" size="3">
+              <i class="fa fa-th"></i>&nbsp;{{bean.cost}}
+            </div>
+          </ion-list>
+        </ion-col>
+        <ion-col size="6">
+          <ion-list lines="none">
+            <div *ngIf="bean.variety" size="3">
+              <ion-icon name="beaker-outline"></ion-icon>&nbsp;{{bean.variety}}
+            </div>
+            <div *ngIf="bean.beanMix === true" size="3">
+              <ion-icon name="timer-outline"></ion-icon>&nbsp;{{bean.beanMix}}
+            </div>
+            <div *ngIf="bean.weight" size="3">
+              <i class="fa fa-percent"></i>&nbsp;{{bean.weight}}
+            </div>
+          </ion-list>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card-content>
+</ion-card>

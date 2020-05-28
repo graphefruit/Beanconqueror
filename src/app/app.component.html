@@ -1,5 +1,5 @@
 <ion-app>
-  <ion-split-pane contentId="menu-content">
+  <ion-split-pane contentId="menu-content" when="false">
     <ion-menu contentId="menu-content" type="overlay">
       <ion-header>
         <ion-toolbar>
@@ -13,22 +13,6 @@
               <ion-item [routerLink]="[pages.home.url]" [class.active]="pages.home.active">
                 <ion-icon class="menu-icon" name="{{pages.home.icon}}"></ion-icon>
                 {{pages.home.title | translate}}
-              </ion-item>
-              <ion-item [routerLink]="[pages.brew.url]" [class.active]="pages.brew.active">
-                <ion-icon class="menu-icon" name="{{pages.brew.icon}}"></ion-icon>
-                {{pages.brew.title | translate}}
-              </ion-item>
-              <ion-item [routerLink]="[pages.beans.url]" [class.active]="pages.beans.active">
-                <ion-icon class="menu-icon custom-coffee-bag"></ion-icon>
-                {{pages.beans.title | translate}}
-              </ion-item>
-              <ion-item [routerLink]="[pages.preparation.url]" [class.active]="pages.preparation.active">
-                <ion-icon class="menu-icon custom-filter"></ion-icon>
-                {{pages.preparation.title | translate}}
-              </ion-item>
-              <ion-item [routerLink]="[pages.mill.url]" [class.active]="pages.mill.active">
-                <ion-icon class="menu-icon custom-mill"></ion-icon>
-                {{pages.mill.title | translate}}
               </ion-item>
               <ion-item [class.active]="pages.helper.active" [routerLink]="[pages.helper.url]">
                 <ion-icon class="menu-icon" name="{{pages.helper.icon}}"></ion-icon>
