@@ -1,36 +1,37 @@
-<ion-card class="dynamic-padding">
-  <ion-card-header>
-    <ion-grid class="ion-no-padding">
-      <ion-row>
-        <ion-col class="ion-text-center" size="3">
-          <span class="heading-20">{{brewCounts()}}</span><br/>
-          <span>{{"NAV_BREWS" | translate}}</span><br/>
-        </ion-col>
-        <ion-col size="7">
+<ion-card class="long-card">
+  <ion-card-content>
+    <ion-grid class="ion-no-padding icons-black">
+      <ion-row class="center-col">
+        <ion-col class="ion-justify-content-center brown-color" size="2">
           <ion-list lines="none">
-            <div *ngIf="bean.roaster">
-              <ion-icon name="person-outline"></ion-icon>&nbsp;{{bean.name}}
-            </div>
-            <div>
-              <ion-icon name="thermometer-outline"></ion-icon>
-              {{bean.getRoastName()}}
-            </div>
-            <div>
-              <ion-icon name="calendar-outline"></ion-icon>
-              {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}
-            </div>
+            <ion-item class="ion-text-center">
+              <ion-label class="ion-no-margin"><h1>{{brewCounts()}}</h1></ion-label>
+            </ion-item>
+            <ion-item class="ion-text-center">
+              <ion-label class="ion-no-margin">{{"NAV_BREWS" | translate}}</ion-label>
+            </ion-item>
           </ion-list>
         </ion-col>
-        <ion-col size="2">
+        <ion-col class="ion-padding-start brown-color" size="8">
+          <ion-list lines="none">
+            <ion-item *ngIf="bean.roaster">
+              <ion-icon name="person-outline"></ion-icon>&nbsp;{{bean.name}}
+            </ion-item>
+            <ion-item>
+              <ion-icon name="thermometer-outline"></ion-icon>&nbsp;{{bean.getRoastName()}}
+            </ion-item>
+            <ion-item>
+              <ion-icon name="calendar-outline"></ion-icon>&nbsp;{{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}
+            </ion-item>
+          </ion-list>
+        </ion-col>
+        <ion-col class="ion-justify-content-center brown-color" size="2">
           <ion-button (click)="showBeanActions($event)" color="medium" fill="clear">
             <ion-icon name="ellipsis-vertical-outline" slot="icon-only"></ion-icon>
           </ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>
-
-  </ion-card-header>
-  <ion-card-content>
     <ion-grid>
       <ion-row>
         <ion-col size="6">

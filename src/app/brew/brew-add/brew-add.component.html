@@ -171,8 +171,12 @@
   </div>
 </ion-content>
 <ion-footer>
-  <ion-button (click)="finish()" expand="block">
-    {{"SAVE_AND_FINISH" | translate}}
-    <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
-  </ion-button>
+  <ion-row>
+    <ion-col>
+      <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline">{{"CANCEL" | translate}}</ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button (click)="finish()" color="accent" expand="block" type="submit">{{"SAVE" | translate}}</ion-button>
+    </ion-col>
+  </ion-row>
 </ion-footer>

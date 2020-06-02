@@ -35,12 +35,32 @@ export class PreparationInformationCardComponent implements OnInit {
   }
 
 
-  public brewCounts(): number {
+  public getBrewsCount(): number {
 
     const relatedBrews: Array<Brew> = this.uiPreparationHelper.getAllBrewsForThisPreparation(this.preparation.config.uuid);
     return relatedBrews.length;
   }
 
+  public getWeightCount(): number {
+
+    const relatedBrews: Array<Brew> = this.uiPreparationHelper.getAllBrewsForThisPreparation(this.preparation.config.uuid);
+    let grindWeight: number = 0;
+    for (const brew of relatedBrews) {
+      grindWeight += brew.grind_weight;
+    }
+    return grindWeight;
+  }
+
+  public getBeansCount(): number {
+
+    const relatedBrews: Array<Brew> = this.uiPreparationHelper.getAllBrewsForThisPreparation(this.preparation.config.uuid);
+    const distinctBeans = relatedBrews.filter((bean, i, arr) => {
+      return arr.indexOf(arr.find((t) => t.bean === bean.bean)) === i;
+    });
+
+    return distinctBeans.length;
+
+  }
   public async showPreparationActions(event): Promise<void> {
     const popover = await this.popoverCtrl.create({
       component: PreparationPopoverActionsComponent,
@@ -52,5 +72,6 @@ export class PreparationInformationCardComponent implements OnInit {
     const data = await popover.onWillDismiss();
     this.preparationAction.emit([data.role as PREPARATION_ACTION, this.preparation]);
   }
+
 
 }

@@ -20,7 +20,7 @@
   <ion-item *ngIf="uiBrewHelper.canBrew() &&  settings.bean_type === true">
     <ion-label position="stacked">{{"BREW_DATA_BEAN_TYPE" | translate}}</ion-label>
     <ion-select [(ngModel)]="filter.bean"
-                [interfaceOptions]="customSelectSheetOptions" multiple="true">>
+                [interfaceOptions]="customSelectSheetOptions" multiple="true">
       <ion-select-option *ngFor="let bean of beans"
                          value="{{bean.config.uuid}}">{{bean.name}}&nbsp;{{bean.finished ? '(Archiv)' : ''}}</ion-select-option>
     </ion-select>
@@ -37,7 +37,8 @@
 <ion-footer class="ion-no-border">
   <ion-row>
     <ion-col size="12">
-      <ion-button (click)="useFilter()" expand="block" type="submit">{{"USE_FILTER" | translate}}</ion-button>
+      <ion-button (click)="useFilter()" color="accent" expand="block"
+                  type="submit">{{"USE_FILTER" | translate}}</ion-button>
     </ion-col>
   </ion-row>
 </ion-footer>

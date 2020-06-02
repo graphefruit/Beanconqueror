@@ -4,6 +4,8 @@ import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {ModalController} from '@ionic/angular';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 
+import {PREPARATION_TYPES} from '../../../enums/preparations/preparationTypes';
+
 @Component({
   selector: 'preparation-add',
   templateUrl: './preparation-add.component.html',
@@ -13,6 +15,15 @@ export class PreparationAddComponent implements OnInit {
 
 
   public data: Preparation = new Preparation();
+
+  public preparationTypes = [
+    {TYPE: PREPARATION_TYPES.CUSTOM_PREPARATION, ICON: ''},
+    {TYPE: PREPARATION_TYPES.AEROPRESS, ICON: ''},
+    {TYPE: PREPARATION_TYPES.V60, ICON: ''},
+    {TYPE: PREPARATION_TYPES.CHEMEX, ICON: ''},
+    {TYPE: PREPARATION_TYPES.BIALETTI, ICON: ''},
+  ];
+
 
   constructor (private readonly modalController: ModalController,
                private readonly uiPreparationStorage: UIPreparationStorage,
