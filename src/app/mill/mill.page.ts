@@ -61,7 +61,7 @@ public ngOnInit(): void {
   }
 
   public async add() {
-    const modal = await this.modalCtrl.create({component:MillAddComponent});
+    const modal = await this.modalCtrl.create({component: MillAddComponent, cssClass: 'bottom-modal', showBackdrop: true});
     await modal.present();
     await modal.onWillDismiss();
     this.loadMills();
@@ -90,7 +90,10 @@ public ngOnInit(): void {
   }
 
   public async informationMill(_mill: Mill) {
-    const modal = await this.modalCtrl.create({component: MillInformationComponent, componentProps: {mill: _mill}});
+    const modal = await this.modalCtrl.create({
+      component: MillInformationComponent,
+      componentProps: {mill: _mill}
+    });
     await modal.present();
     await modal.onWillDismiss();
   }

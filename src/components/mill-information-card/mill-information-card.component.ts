@@ -34,10 +34,31 @@ export class MillInformationCardComponent implements OnInit {
 
   }
 
-  public brewCounts(): number {
+  public getBrewsCount(): number {
 
     const relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(this.mill.config.uuid);
     return relatedBrews.length;
+  }
+
+  public getWeightCount(): number {
+
+    const relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(this.mill.config.uuid);
+    let grindWeight: number = 0;
+    for (const brew of relatedBrews) {
+      grindWeight += brew.grind_weight;
+    }
+    return grindWeight;
+  }
+
+  public getBeansCount(): number {
+
+    const relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(this.mill.config.uuid);
+    const distinctBeans = relatedBrews.filter((bean, i, arr) => {
+      return arr.indexOf(arr.find((t) => t.bean === bean.bean)) === i;
+    });
+
+    return distinctBeans.length;
+
   }
 
   public async showMillActions(event): Promise<void> {

@@ -82,11 +82,21 @@
   --ion-color-light-shade: #d7d8da;
   --ion-color-light-tint: #f5f6f9;
 
-  --ion-color-accent: #B88265;
+
 
   --beanconqueror-highlight-color-item: #AE9F87;
   --beanconqueror-icon-color: #AE9F87;
   --beanconqueror-card-highlight: #9F8C6F;
+
+
+  /**https://ionicframework.com/docs/theming/colors**/
+  --ion-color-accent: #B88265;
+  --ion-color-accent-rgb: 184, 130, 101;
+  --ion-color-accent-contrast: #000000;
+  --ion-color-accent-contrast-rgb: 255, 255, 255;
+  --ion-color-accent-shade: #B88265;
+  --ion-color-accent-tint: #78c2B8826588;
+
 }
 
 .item-interactive.ion-valid {

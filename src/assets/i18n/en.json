@@ -233,5 +233,7 @@
   "EDIT_PREPARATION": "Edit preparation",
   "ADD_MILL": "Add grinder",
   "EDIT_MILL": "Edit grinder",
-  "USE_FILTER": "Use filter"
+  "USE_FILTER": "Use filter",
+  "COFFEE_GRAMS_GRINDED": "Grams grinded",
+  "BEANS_USED": "Beans used"
 }

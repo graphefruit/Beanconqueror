@@ -9,6 +9,24 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
+
+  <ion-grid>
+    <ion-row>
+      <ion-col *ngFor="let type of preparationTypes" size="6">
+        <ion-card class="preparation-add-card">
+          <ion-card-content>
+            <div class="ion-text-center">
+              <ion-icon name="{{type.ICON}}" size="large" slot="icon-only"></ion-icon>
+            </div>
+            <div class="ion-text-center">
+              {{type.TYPE}}
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+    </ion-row>
+  </ion-grid>
   <div class="ion-margin-horizontal popover">
     <form #addBeanForm="ngForm" novalidate>
       <ion-item>

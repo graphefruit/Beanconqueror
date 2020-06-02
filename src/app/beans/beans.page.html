@@ -33,9 +33,9 @@
       <ion-card *ngIf="getOpenBeans()?.length == 0" class="ion-padding">
         {{"PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS" | translate}}
       </ion-card>
-      <div *ngFor="let bean of getOpenBeans()">
-        <bean-information (beanAction)="beanAction($event[0],$event[1])" [bean]="bean"></bean-information>
-      </div>
+      <bean-information (beanAction)="beanAction($event[0],$event[1])" *ngFor="let bean of getOpenBeans()"
+                        [bean]="bean"></bean-information>
+
 
     </div>
     <div *ngIf="settings.show_archived_beans">
@@ -43,9 +43,9 @@
         <ion-card *ngIf="getFinishedBeans()?.length == 0" class="ion-padding">
           {{"PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS" | translate}}
         </ion-card>
-        <div *ngFor="let bean of getFinishedBeans()">
-          <bean-information (beanAction)="beanAction($event[0],$event[1])" [bean]="bean"></bean-information>
-        </div>
+        <bean-information (beanAction)="beanAction($event[0],$event[1])" *ngFor="let bean of getFinishedBeans()"
+                          [bean]="bean"></bean-information>
+
       </div>
     </div>
   </div>

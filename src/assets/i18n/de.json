@@ -233,5 +233,7 @@
   "EDIT_PREPARATION": "Zubereitung editieren",
   "ADD_MILL": "Mühle hinzufügen",
   "EDIT_MILL": "Mühle editieren",
-  "USE_FILTER": "Filter anwenden"
+  "USE_FILTER": "Filter anwenden",
+  "COFFEE_GRAMS_GRINDED": "Gramm gemahlen",
+  "BEANS_USED": "Bohnen verwendet"
 }
