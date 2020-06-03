@@ -3,49 +3,68 @@
 import {IBrewOrder} from '../../interfaces/settings/iBrewOrder';
 
 export class BrewOrder implements IBrewOrder {
-  public brew_time: number;
-  public brew_temperature_time: number;
-  public grind_size: number;
-  public grind_weight: number;
-  public mill: number;
-  public mill_speed: number;
-  public mill_timer: number;
-  public pressure_profile: number;
-  public method_of_preparation: number;
-  public brew_quantity: number;
-  public bean_type: number;
-  public brew_temperature: number;
-  public note: number;
-  public attachments: number;
-  public rating: number;
-  public coffee_type: number;
-  public coffee_concentration: number;
-  public coffee_first_drip_time: number;
-  public coffee_blooming_time: number;
-  public set_last_coffee_brew: number;
-  public set_custom_brew_time: number;
+
+  public before: {
+    grind_size: number;
+    grind_weight: number;
+    brew_temperature: number;
+    method_of_preparation: number;
+    bean_type: number;
+    mill: number;
+    mill_speed: number;
+    mill_timer: number;
+  };
+
+  public while: {
+    pressure_profile: number;
+    brew_temperature_time: number;
+    brew_time: number;
+    coffee_blooming_time: number;
+    coffee_first_drip_time: number;
+
+  };
+
+  public after: {
+    brew_quantity: number;
+    coffee_type: number;
+    coffee_concentration: number;
+    rating: number;
+    note: number;
+    set_custom_brew_time: number;
+    attachments: number;
+  };
+
+
 
   constructor() {
-    this.grind_size = 1;
-    this.grind_weight = 2;
-    this.brew_temperature = 3;
-    this.method_of_preparation = 4;
-    this.bean_type = 5;
-    this.mill = 6;
-    this.mill_speed = 7;
-    this.mill_timer = 8;
-    this.pressure_profile = 9;
-    this.brew_temperature_time = 10;
-    this.brew_time = 11;
-    this.coffee_blooming_time = 12;
-    this.coffee_first_drip_time = 13;
-    this.brew_quantity = 14;
-    this.coffee_type = 15;
-    this.coffee_concentration = 16;
-    this.rating = 17;
-    this.note = 18;
-    this.set_custom_brew_time = 19;
-    this.attachments = 20;
+    this.before = {
+      grind_size: 1,
+      grind_weight: 2,
+      brew_temperature: 3,
+      method_of_preparation: 4,
+      bean_type: 5,
+      mill: 6,
+      mill_speed: 7,
+      mill_timer: 8,
+    };
+
+    this.while = {
+      pressure_profile: 1,
+      brew_temperature_time: 2,
+      brew_time: 3,
+      coffee_blooming_time: 4,
+      coffee_first_drip_time: 5,
+    };
+
+    this.after = {
+      brew_quantity: 1,
+      coffee_type: 2,
+      coffee_concentration: 3,
+      rating: 4,
+      note: 5,
+      set_custom_brew_time: 6,
+      attachments: 7
+    };
   }
 
   /**

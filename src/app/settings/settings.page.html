@@ -298,8 +298,9 @@
           <p>{{"PAGE_SETTINGS_BREW_SORT_DESCRIPTION" | translate}}</p>
         </ion-card-content>
       </ion-card>
-      <ion-reorder-group (ionItemReorder)="reorder_brew($event)" disabled="false">
-        <ion-item *ngFor="let index of brewOrders">
+      <ion-list-header>DAvor</ion-list-header>
+      <ion-reorder-group (ionItemReorder)="reorder_brew($event,'before')" disabled="false">
+        <ion-item *ngFor="let index of brewOrdersBefore">
           <ion-label>
             {{index.label | translate}}
           </ion-label>
@@ -307,6 +308,27 @@
         </ion-item>
 
 
+      </ion-reorder-group>
+      <ion-list-header>Während</ion-list-header>
+      <ion-reorder-group (ionItemReorder)="reorder_brew($event,'while')" disabled="false">
+
+        <ion-item *ngFor="let index of brewOrdersWhile">
+          <ion-label>
+            {{index.label | translate}}
+          </ion-label>
+          <ion-reorder slot="end"></ion-reorder>
+        </ion-item>
+      </ion-reorder-group>
+
+      <ion-list-header>Danach</ion-list-header>
+      <ion-reorder-group (ionItemReorder)="reorder_brew($event,'after')" disabled="false">
+
+        <ion-item *ngFor="let index of brewOrdersAfter">
+          <ion-label>
+            {{index.label | translate}}
+          </ion-label>
+          <ion-reorder slot="end"></ion-reorder>
+        </ion-item>
       </ion-reorder-group>
     </div>
   </div>
