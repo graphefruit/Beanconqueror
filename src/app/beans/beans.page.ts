@@ -71,9 +71,18 @@ export class BeansPage implements OnInit {
       case BEAN_ACTION.DELETE:
         this.deleteBean(bean);
         break;
+      case BEAN_ACTION.BEANS_CONSUMED:
+        this.beansConsumed(bean);
+        break;
       default:
         break;
     }
+  }
+
+  public beansConsumed(_bean: Bean) {
+    _bean.finished = true;
+    this.uiBeanStorage.update(_bean);
+    this.loadBeans();
   }
 
   public async add() {

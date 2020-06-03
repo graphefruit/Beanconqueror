@@ -4,4 +4,5 @@ export enum BEAN_ACTION {
   REPEAT = 'REPEAT',
   EDIT = 'EDIT',
   DELETE = 'DELETE',
+  BEANS_CONSUMED = 'BEANS_CONSUMED',
 }

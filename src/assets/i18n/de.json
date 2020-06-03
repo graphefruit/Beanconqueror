@@ -235,5 +235,10 @@
   "EDIT_MILL": "Mühle editieren",
   "USE_FILTER": "Filter anwenden",
   "COFFEE_GRAMS_GRINDED": "Gramm gemahlen",
-  "BEANS_USED": "Bohnen verwendet"
+  "BEANS_USED": "Bohnen verwendet",
+  "BREW_HEADER_BEFORE_BREW": "Vor der Zubereitung",
+  "BREW_HEADER_WHILE_BREW": "Während der Zubereitung",
+  "BREW_HEADER_AFTER_BREW": "Nach der Zubereitung",
+  "BEANS_CONSUMED": "Bohnen aufgebraucht"
+
 }

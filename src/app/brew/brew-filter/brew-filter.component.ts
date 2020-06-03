@@ -75,7 +75,8 @@ export class BrewFilterComponent implements OnInit {
 
     if (this.segment === 'open') {
       this.beans = this.beans.filter((e) => e.finished === false);
-      console.log(this.beans);
+    } else {
+      this.beans = this.beans.filter((e) => e.finished === true);
     }
   }
 }

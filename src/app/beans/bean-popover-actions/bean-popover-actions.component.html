@@ -3,6 +3,10 @@
     <ion-icon name="list-outline" slot="start"></ion-icon>
     <span>{{"INFORMATION" | translate}}</span>
   </ion-item>
+  <ion-item (click)="choose(getStaticActions().BEANS_CONSUMED)" *ngIf="data.finished === false" button>
+    <ion-icon name="check-outline" slot="start"></ion-icon>
+    <span>{{"BEANS_CONSUMED" | translate}}</span>
+  </ion-item>
   <ion-item (click)="choose(getStaticActions().REPEAT)" button>
     <ion-icon name="repeat-outline" slot="start"></ion-icon>
     <span>{{"REPEAT" | translate}}</span>
