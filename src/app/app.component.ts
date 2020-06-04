@@ -78,7 +78,8 @@ export class AppComponent implements AfterViewInit {
     private readonly uiAlert: UIAlert,
     private _translate: TranslateService,
     private  globalization: Globalization,
-    private readonly uiAnalytics: UIAnalytics
+    private readonly uiAnalytics: UIAnalytics,
+    private readonly menu: MenuController,
   ) {
   }
 
@@ -89,6 +90,10 @@ export class AppComponent implements AfterViewInit {
     // Copy in all the js code from the script.js. Typescript will complain but it works just fine
   }
 
+
+  public dismiss() {
+    this.menu.close();
+  }
 
 
   private __appReady(): void {

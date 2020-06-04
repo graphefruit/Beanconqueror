@@ -7,7 +7,7 @@
 
 @font-face {
   font-family: 'Baloo';
-  src: url('../assets/fonts/Baloo-Regular.ttf') format('truetype');
+  src: url('../assets/fonts/BalooTamma2-Regular.ttf') format('truetype');
 }
 
 @font-face {
@@ -17,7 +17,7 @@
 
 ion-title {
   font-family: 'Baloo';
-  font-size: 30px;
+  font-size: 24px;
   letter-spacing: -1.05px;
 }
 
@@ -287,10 +287,13 @@ ion-split-pane {
   --border: none !important;
 
   ion-menu {
-    background-color: #282013 !important;
+    background-color: #F0F0F0 !important;
+
 
     ion-content {
-      --padding-start: 20px;
+      ion-item {
+        text-align: center;
+      }
     }
 
   }
@@ -309,12 +312,53 @@ ion-menu::content.menu-inner {
     --background: #ffffff;
   }
 
+  .bottom-modal {
+    ion-toolbar {
+      --background: #FFFFFF;
+    }
+
+    ion-content {
+      --background: #FFFFFF;
+    }
+
+    ion-item {
+      --background: #FFFFFF;
+      --inner-padding-bottom: 0;
+      --inner-padding-end: 0;
+      --inner-padding-start: 0;
+      --inner-padding-top: 0;
+
+      --padding-bottom: 0;
+      --padding-end: 0;
+      --padding-start: 0;
+      --padding-top: 0;
+
+      margin-left: 16px;
+      margin-right: 16px;
+
+    }
+
+    ion-footer {
+      background: #FFFFFF;
+      padding-left: 16px;
+      padding-right: 16px;
+      padding-bottom: 8px;
+
+      ion-col {
+        --ion-grid-column-padding: 0;
+      }
+    }
+
+    ion-label {
+      font-family: "Baloo";
+    }
+  }
   ion-textarea {
     --background: #F2F2F2;
     /*CSS Attribute not taken*/
     border-radius: 6px;
-    --padding-start: 6px;
-    --padding-end: 6px;
+    --padding-start: 6px !important;
+    --padding-end: 6px !important;
     margin-bottom: 10px;
   }
 
@@ -331,18 +375,24 @@ ion-menu::content.menu-inner {
 
     ion-label {
       font-family: 'Baloo';
+      font-size: 14px;
     }
 
     ion-item {
       --background: white;
 
     }
+
   }
 
   .bottom-modal {
     --background: rgba(0, 0, 0, 0.47);
 
 
+  }
+
+  .icon-black {
+    color: black;
   }
 
 
