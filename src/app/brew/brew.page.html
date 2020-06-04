@@ -17,7 +17,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <div class="ion-padding">
+  <div>
     <ion-segment [(ngModel)]="brew_segment">
       <ion-segment-button value="open">
         <ion-label>{{"CURRENT" | translate }}
@@ -43,7 +43,7 @@
       </ion-card>
 
       <div class="ion-justify-content-end container">
-        <ion-button (click)="showFilter()" fill="clear" tappable>
+        <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
           <ion-icon [class.active]="isFilterActive()" class="custom-filter black" slot="icon-only"></ion-icon>
         </ion-button>
       </div>
@@ -59,7 +59,7 @@
           {{"PAGE_BREWS_NO_ENTRIES" | translate }}
         </ion-card>
         <div class="ion-justify-content-end container">
-          <ion-button (click)="showFilter()" fill="clear" tappable>
+          <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
             <ion-icon [class.active]="isFilterActive()" class="custom-filter black" slot="icon-only"></ion-icon>
           </ion-button>
         </div>
