@@ -53,7 +53,8 @@ export class AppComponent implements AfterViewInit {
 
     statistic: {title: 'NAV_STATISTICS', url: '/statistic', icon: 'analytics-outline', active: false},
     logs: {title: 'NAV_LOGS', url: '/info/logs', icon: 'logo-buffer', active: false},
-    helper: {title: 'NAV_HELPER', url: '/helper', icon: 'construct-outline', active: false}
+    helper_brew_ratio: {title: 'NAV_HELPER', url: '/helper/brew-ratio', icon: 'construct-outline', active: false},
+    helper_water_hardness: {title: 'NAV_HELPER', url: '/helper/water-hardness', icon: 'construct-outline', active: false}
   };
 
 

@@ -188,6 +188,24 @@ pre{
   margin:0px!important;
   white-space: pre-wrap;
 }
+
+.custom-background-small {
+  background-image: url(../assets/svg/icons/background_small.svg);
+  background-size: cover;
+}
+
+.custom-background-medium {
+  background-image: url(../assets/svg/icons/background_medium.svg);
+  background-size: cover;
+}
+
+.custom-background-large {
+  background-image: url(../assets/svg/icons/background_large.svg);
+  background-size: cover;
+}
+
+
+
 ion-icon {
   &[class*="custom-"] {
     mask-size: contain;
@@ -220,6 +238,15 @@ ion-icon {
     mask-image: url(../assets/svg/icons/icons8-filter.svg);
   }
 
+  &[class*="custom-back"] {
+    mask-image: url(../assets/svg/icons/back.svg);
+  }
+
+  &[class*="custom-add"] {
+    mask-image: url(../assets/svg/icons/add.svg);
+  }
+
+
 
   &[class*="custom-coffee-bag"] {
     mask-image: url(../assets/svg/coffee-bag.svg);
@@ -227,6 +254,7 @@ ion-icon {
   &[class*="custom-coffee-blooming"] {
     mask-image: url(../assets/svg/coffee-blooming.svg);
   }
+
 
 }
 
@@ -308,6 +336,14 @@ ion-menu::content.menu-inner {
 }
 
 :root {
+  .big-icon-only {
+    width: 64px !important;
+    height: 64px !important;
+
+    ion-icon {
+      font-size: 64px !important; //Preferred size here
+    }
+  }
   ion-alert {
     --background: #ffffff;
   }

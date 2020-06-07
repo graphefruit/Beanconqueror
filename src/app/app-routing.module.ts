@@ -54,7 +54,7 @@ const routes: Routes = [
     path: 'helper', resolve: {
       resolver: RouteResolver
     },
-    loadChildren: './helper/helper.module#HelperPageModule', pathMatch: 'full'
+    loadChildren: './helper/helper.module#HelperPageModule'
   }, {
     path: 'shopping-cart', resolve: {
       resolver: RouteResolver

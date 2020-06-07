@@ -27,8 +27,13 @@
               <ion-item [routerLink]="[pages.home.url]" [class.active]="pages.home.active">
                 <ion-label>{{pages.home.title | translate}}</ion-label>
               </ion-item>
-              <ion-item [class.active]="pages.helper.active" [routerLink]="[pages.helper.url]">
-                <ion-label> {{pages.helper.title | translate}}</ion-label>
+              <ion-item [class.active]="pages.helper_brew_ratio.active" [routerLink]="[pages.helper_brew_ratio.url]">
+                <ion-label> {{pages.helper_brew_ratio.title | translate}}</ion-label>
+
+              </ion-item>
+              <ion-item [class.active]="pages.helper_water_hardness.active"
+                        [routerLink]="[pages.helper_water_hardness.url]">
+                <ion-label> {{pages.helper_water_hardness.title | translate}}</ion-label>
 
               </ion-item>
               <ion-item [class.active]="pages.statistic.active" [routerLink]="[pages.statistic.url]">
