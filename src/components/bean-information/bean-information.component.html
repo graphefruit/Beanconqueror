@@ -1,8 +1,8 @@
 <ion-card class="long-card">
   <ion-card-content>
     <ion-grid class="ion-no-padding icons-black">
-      <ion-row class="center-col">
-        <ion-col class="ion-justify-content-center brown-color" size="2">
+      <ion-row class="center-col custom-background-large">
+        <ion-col class="ion-justify-content-center" size="2">
           <ion-list lines="none">
             <ion-item class="ion-text-center">
               <ion-label class="ion-no-margin"><h1>{{brewCounts()}}</h1></ion-label>
@@ -12,7 +12,7 @@
             </ion-item>
           </ion-list>
         </ion-col>
-        <ion-col class="ion-padding-start brown-color" size="8">
+        <ion-col class="ion-padding-start" size="8">
           <ion-list lines="none">
             <ion-item *ngIf="bean.roaster">
               <ion-icon name="person-outline"></ion-icon>&nbsp;{{bean.name}}
@@ -25,7 +25,7 @@
             </ion-item>
           </ion-list>
         </ion-col>
-        <ion-col class="ion-justify-content-center brown-color" size="2">
+        <ion-col class="ion-justify-content-center" size="2">
           <ion-button (click)="showBeanActions($event)" color="medium" fill="clear">
             <ion-icon name="ellipsis-vertical-outline" slot="icon-only"></ion-icon>
           </ion-button>

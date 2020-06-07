@@ -76,6 +76,8 @@ import {PreparationInformationCardComponent} from '../../components/preparation-
 import {MillInformationCardComponent} from '../../components/mill-information-card/mill-information-card.component';
 import {MillPopoverActionsComponent} from '../mill/mill-popover-actions/mill-popover-actions.component';
 import {BrewFilterComponent} from '../brew/brew-filter/brew-filter.component';
+import {HelperBrewRatioComponent} from '../helper/helper-brew-ratio/helper-brew-ratio.component';
+import {HelperWaterHardnessComponent} from '../helper/helper-water-hardness/helper-water-hardness.component';
 
 @NgModule({
   declarations: [SettingsPage, StatisticPage, HomePage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
@@ -83,6 +85,8 @@ import {BrewFilterComponent} from '../brew/brew-filter/brew-filter.component';
     CreditsComponent,
     LicencesComponent,
     PrivacyComponent,
+    HelperBrewRatioComponent,
+    HelperWaterHardnessComponent,
     TermsComponent,
     ThanksComponent, LogComponent, LogTextComponent, PreparationPage, PreparationAddComponent,
     PreparationEditComponent, MillPage, MillEditComponent, BrewFilterComponent, MillAddComponent, BrewAddComponent,
@@ -95,6 +99,8 @@ import {BrewFilterComponent} from '../brew/brew-filter/brew-filter.component';
     CreditsComponent,
     LicencesComponent,
     PrivacyComponent,
+    HelperBrewRatioComponent,
+    HelperWaterHardnessComponent,
     TermsComponent,
     ThanksComponent, LogComponent, LogTextComponent, PreparationPage,
     PreparationAddComponent, PreparationEditComponent, MillPage, MillEditComponent,
@@ -129,6 +135,8 @@ import {BrewFilterComponent} from '../brew/brew-filter/brew-filter.component';
     CreditsComponent,
     LicencesComponent,
     PrivacyComponent,
+    HelperBrewRatioComponent,
+    HelperWaterHardnessComponent,
     TermsComponent,
     ThanksComponent, PreparationPage, PreparationAddComponent,
     PreparationEditComponent, BrewFilterComponent, MillPage, MillEditComponent, MillAddComponent,

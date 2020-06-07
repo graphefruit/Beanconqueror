@@ -13,7 +13,7 @@
     <ion-row>
       <ion-col class="ion-text-center" size="4">
         <ion-card class="small-card" style="height: 100%;">
-          <ion-card-header style="font-size: 2em;">
+          <ion-card-header class="custom-background-medium" style="font-size: 2em;">
             <ion-icon name="cafe-outline" slot="start"></ion-icon>
             {{uiStatistic.getBrewsDrunk()}}
           </ion-card-header>
@@ -29,7 +29,7 @@
       </ion-col>
       <ion-col class="ion-text-center" size="4">
         <ion-card class="small-card" style="height: 100%;" tappable="">
-          <ion-card-header style="font-size: 2em;">
+          <ion-card-header class="custom-background-medium" style="font-size: 2em;">
             {{uiStatistic.getBeansCount()}}
           </ion-card-header>
           <ion-card-content>
@@ -44,7 +44,8 @@
       </ion-col>
       <ion-col class="ion-text-center" size="4">
         <ion-card class="small-card" style="height: 100%;" tappable>
-          <ion-card-header style="font-size: 2em;">{{uiStatistic.getTimePassedSinceLastBrew()}}</ion-card-header>
+          <ion-card-header class="custom-background-medium"
+                           style="font-size: 2em;">{{uiStatistic.getTimePassedSinceLastBrew()}}</ion-card-header>
           <ion-card-content>
             {{uiStatistic.getTimePassedSinceLastBrewMessage()}} {{"WITHOUT_COFFEE" | translate}}<br>
 

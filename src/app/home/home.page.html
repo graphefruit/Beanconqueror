@@ -19,16 +19,19 @@
       <ion-tab-button tab="beans">
         <ion-icon class="menu-icon custom-bean"></ion-icon>
         <ion-label>{{"NAV_BEANS" | translate}}</ion-label>
+        <ion-badge *ngIf="!activeBeansExists()" color="danger"></ion-badge>
       </ion-tab-button>
 
       <ion-tab-button tab="preparations">
         <ion-icon class="menu-icon custom-preparation"></ion-icon>
         <ion-label>{{"NAV_PREPARATION" | translate}}</ion-label>
+        <ion-badge *ngIf="!activePreparationsExists()" color="danger"></ion-badge>
       </ion-tab-button>
 
       <ion-tab-button tab="mills">
         <ion-icon class="menu-icon custom-mill"></ion-icon>
         <ion-label>{{"NAV_MILL" | translate}}</ion-label>
+        <ion-badge *ngIf="!activeMillsExists()" color="danger"></ion-badge>
       </ion-tab-button>
 
 
