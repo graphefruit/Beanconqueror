@@ -1,0 +1,63 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      {{"PAGE_HELPER_WATER_HARDNESS"  | translate}}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="2"></ion-col>
+      <ion-col size="4">
+        <ion-card class="small-card ion-text-center" style="height: 100%;">
+          <ion-card-header class="card-background" style="font-size: 2em;">
+            {{getGermanHardness()}}
+          </ion-card-header>
+          <ion-card-content>
+            {{"PAGE_HELPER_WATER_HARDNESS_GERMAN_HARDNESS" | translate}}
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col size="4">
+        <ion-card class="small-card ion-text-center" style="height: 100%;">
+          <ion-card-header class="card-background" style="font-size: 2em;">
+            {{getTotalHardness()}}
+          </ion-card-header>
+          <ion-card-content>
+            {{"PAGE_HELPER_WATER_HARDNESS_TOTAL_HARDNESS" | translate}}
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col size="2"></ion-col>
+    </ion-row>
+  </ion-grid>
+
+
+  <ion-card>
+
+    <ion-card-content>
+
+
+      <ion-item>
+        <ion-label position="stacked">{{"PAGE_HELPER_WATER_HARDNESS_CA_CONTENTS" | translate}}</ion-label>
+        <ion-input [(ngModel)]="waterhardness.ca" inputmode="decimal" prevent-characters remove-empty-number
+                   type="text"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">{{"PAGE_HELPER_WATER_HARDNESS_MG_CONTENTS" | translate}}</ion-label>
+        <ion-input [(ngModel)]="waterhardness.mg" inputmode="decimal" prevent-characters remove-empty-number
+                   type="text"></ion-input>
+      </ion-item>
+
+
+    </ion-card-content>
+  </ion-card>
+
+
+</ion-content>
+

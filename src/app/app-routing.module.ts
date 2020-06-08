@@ -60,6 +60,12 @@ const routes: Routes = [
       resolver: RouteResolver
     },
     loadChildren: './shopping-cart/shopping-cart.module#ShoppingCartModule', pathMatch: 'full'
+  },
+  {
+    path: 'brew-parameter', resolve: {
+      resolver: RouteResolver
+    },
+    loadChildren: './brew-parameter/brew-parameter.module#BrewParameterPageModule'
   }
 ];
 

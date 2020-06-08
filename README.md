@@ -63,4 +63,7 @@ adb shell setprop debug.firebase.analytics.app .none.
 npm outdated
 ``
 
+###
+https://stackoverflow.com/questions/39627766/how-to-change-the-defaut-menu-icon-to-image-icon-in-ionic
+
 
