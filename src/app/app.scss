@@ -321,6 +321,7 @@ ion-split-pane {
     ion-content {
       ion-item {
         text-align: center;
+        --background: F0F0F0 !important;
       }
     }
 
@@ -336,6 +337,25 @@ ion-menu::content.menu-inner {
 }
 
 :root {
+
+  ion-radio {
+    --border-radius: var(--ion-color-accent);
+    --color: var(--ion-color-accent);
+    --color-checked: var(--ion-color-accent);
+    --inner-border-radius: var(--ion-color-accent);
+  }
+
+  ion-checkbox {
+
+    --background: #D1D1D1;
+    --background-checked: var(--ion-color-accent);
+    --border-color: transparent;
+    --border-color-checked: transparent;
+  }
+
+  ion-card-title {
+    letter-spacing: -1.05px;
+  }
   .big-icon-only {
     width: 64px !important;
     height: 64px !important;
@@ -346,6 +366,24 @@ ion-menu::content.menu-inner {
   }
   ion-alert {
     --background: #ffffff;
+  }
+
+  ion-card {
+    background-color: #FFFFFF;
+    border-radius: 6px 6px 6px 6px;
+  }
+
+  ion-item {
+    --background: #FFFFFF;
+    --inner-padding-bottom: 0;
+    --inner-padding-end: 0;
+    --inner-padding-start: 0;
+    --inner-padding-top: 0;
+
+    --padding-bottom: 0;
+    --padding-end: 0;
+    --padding-start: 0;
+    --padding-top: 0;
   }
 
   .bottom-modal {
@@ -359,19 +397,9 @@ ion-menu::content.menu-inner {
 
     ion-item {
       --background: #FFFFFF;
-      --inner-padding-bottom: 0;
-      --inner-padding-end: 0;
-      --inner-padding-start: 0;
-      --inner-padding-top: 0;
-
-      --padding-bottom: 0;
-      --padding-end: 0;
-      --padding-start: 0;
-      --padding-top: 0;
 
       margin-left: 16px;
       margin-right: 16px;
-
     }
 
     ion-footer {
@@ -385,9 +413,12 @@ ion-menu::content.menu-inner {
       }
     }
 
-    ion-label {
-      font-family: "Baloo";
-    }
+
+  }
+
+  ion-label {
+    font-family: "Baloo";
+    font-size: 14px;
   }
   ion-textarea {
     --background: #F2F2F2;

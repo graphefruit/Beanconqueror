@@ -78,13 +78,20 @@ import {MillPopoverActionsComponent} from '../mill/mill-popover-actions/mill-pop
 import {BrewFilterComponent} from '../brew/brew-filter/brew-filter.component';
 import {HelperBrewRatioComponent} from '../helper/helper-brew-ratio/helper-brew-ratio.component';
 import {HelperWaterHardnessComponent} from '../helper/helper-water-hardness/helper-water-hardness.component';
+import {BrewParameterPage} from '../brew-parameter/brew-parameter.page';
+import {SortParameterComponent} from '../brew-parameter/sort-parameter/sort-parameter.component';
+import {ManageParameterComponent} from '../brew-parameter/manage-parameter/manage-parameter.component';
+import {DefaultParameterComponent} from '../brew-parameter/default-parameter/default-parameter.component';
 
 @NgModule({
-  declarations: [SettingsPage, StatisticPage, HomePage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
+  declarations: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
     ContactComponent,
     CreditsComponent,
     LicencesComponent,
     PrivacyComponent,
+    DefaultParameterComponent,
+    SortParameterComponent,
+    ManageParameterComponent,
     HelperBrewRatioComponent,
     HelperWaterHardnessComponent,
     TermsComponent,
@@ -94,11 +101,14 @@ import {HelperWaterHardnessComponent} from '../helper/helper-water-hardness/help
     PreventCharacterDirective, TooltipDirective, BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent,
     BrewPopoverComponent, BrewPopoverActionsComponent, MillPopoverActionsComponent, BeanPopoverActionsComponent, PreparationPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent, BrewTimerComponent],
   entryComponents: [
-    SettingsPage, StatisticPage, HomePage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BrewFilterComponent, BeansInformationComponent, PreparationInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, MillInformationComponent, AboutComponent,
+    SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BrewFilterComponent, BeansInformationComponent, PreparationInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, MillInformationComponent, AboutComponent,
     ContactComponent,
     CreditsComponent,
     LicencesComponent,
     PrivacyComponent,
+    DefaultParameterComponent,
+    SortParameterComponent,
+    ManageParameterComponent,
     HelperBrewRatioComponent,
     HelperWaterHardnessComponent,
     TermsComponent,
@@ -130,11 +140,14 @@ import {HelperWaterHardnessComponent} from '../helper/helper-water-hardness/help
     InAppBrowser, File, Globalization, FirebaseX
   ],
 
-  exports: [SettingsPage, StatisticPage, HomePage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
+  exports: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
     ContactComponent,
     CreditsComponent,
     LicencesComponent,
     PrivacyComponent,
+    DefaultParameterComponent,
+    SortParameterComponent,
+    ManageParameterComponent,
     HelperBrewRatioComponent,
     HelperWaterHardnessComponent,
     TermsComponent,

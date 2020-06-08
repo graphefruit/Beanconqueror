@@ -15,6 +15,7 @@
   "NAV_LICENCES": "Open-Source-Lizenzen",
   "NAV_STATISTICS": "Statistiken",
   "NAV_LOGS": "Logs",
+  "NAV_BREW_PARAMS": "Bezugsparameter",
   "NAV_INFORMATION_TO_APP": "Infos zur App",
   "POPOVER_BREWS_OPTION_EXPORT": "Export",
   "POPOVER_BREWS_OPTION_TABLE": "Tabelle",
@@ -189,7 +190,6 @@
   "PAGE_MILL_INFORMATION": "Mühlen Informationen",
   "PAGE_MILL_INFORMATION_BREWS_DONE": "Brühungen mit dieser Mühle",
   "PAGE_MILL_INFORMATION_GRIND_WEIGHT": "Verarbeitete Bohnenmenge",
-  "NAV_HELPER": "Hilfsfunktionen",
   "PAGE_HELPER_WATER_HARDNESS": "Wasserhärte",
   "PAGE_HELPER_WATER_HARDNESS_CA_CONTENTS": "CA Gehalt mg/l",
   "PAGE_HELPER_WATER_HARDNESS_MG_CONTENTS": "MG Gehalt mg/l",
@@ -239,6 +239,9 @@
   "BREW_HEADER_BEFORE_BREW": "Vor der Zubereitung",
   "BREW_HEADER_WHILE_BREW": "Während der Zubereitung",
   "BREW_HEADER_AFTER_BREW": "Nach der Zubereitung",
-  "BEANS_CONSUMED": "Bohnen aufgebraucht"
+  "BEANS_CONSUMED": "Bohnen aufgebraucht",
+  "NAV_MANAGE_PARAMETERS": "Parameter verwalten",
+  "NAV_SORT_PARAMETERS": "Parameter sortieren",
+  "NAV_DEFINE_DEFAULT_PARAMETERS": "Vorbelegung festlegen"
 
 }

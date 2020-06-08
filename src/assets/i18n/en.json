@@ -15,6 +15,7 @@
   "NAV_LICENCES": "Open-Source-Licences",
   "NAV_STATISTICS": "Statistics",
   "NAV_LOGS": "Logs",
+  "NAV_BREW_PARAMS": "Brew parameters",
   "NAV_INFORMATION_TO_APP": "Information on app",
   "POPOVER_BREWS_OPTION_EXPORT": "Export",
   "POPOVER_BREWS_OPTION_TABLE": "Table",
@@ -189,7 +190,6 @@
   "PAGE_MILL_INFORMATION": "Grinder information",
   "PAGE_MILL_INFORMATION_BREWS_DONE": "Brews with this grinder",
   "PAGE_MILL_INFORMATION_GRIND_WEIGHT": "Used beans weight",
-  "NAV_HELPER": "Helper",
   "PAGE_HELPER_WATER_HARDNESS": "Water hardness",
   "PAGE_HELPER_WATER_HARDNESS_CA_CONTENTS": "Calcium content mg/l",
   "PAGE_HELPER_WATER_HARDNESS_MG_CONTENTS": "Magnesium content mg/l",
@@ -235,5 +235,8 @@
   "EDIT_MILL": "Edit grinder",
   "USE_FILTER": "Use filter",
   "COFFEE_GRAMS_GRINDED": "Grams grinded",
-  "BEANS_USED": "Beans used"
+  "BEANS_USED": "Beans used",
+  "NAV_MANAGE_PARAMETERS": "Manage parameters",
+  "NAV_SORT_PARAMETERS": "Sort parameters",
+  "NAV_DEFINE_DEFAULT_PARAMETERS": "Define default parameters"
 }
