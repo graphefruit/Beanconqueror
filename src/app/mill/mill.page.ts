@@ -61,7 +61,7 @@ public ngOnInit(): void {
   }
 
   public async add() {
-    const modal = await this.modalCtrl.create({component: MillAddComponent, cssClass: 'bottom-modal', showBackdrop: true});
+    const modal = await this.modalCtrl.create({component: MillAddComponent, cssClass: 'half-bottom-modal', showBackdrop: true});
     await modal.present();
     await modal.onWillDismiss();
     this.loadMills();

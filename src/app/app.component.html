@@ -43,58 +43,8 @@
               <ion-item [class.active]="pages.settings.active" [routerLink]="[pages.settings.url]">
                 <ion-label>{{pages.settings.title | translate}}</ion-label>
               </ion-item>
-              <!--Without $event canceling the menu would close when toggling -->
-              <ion-item class="no-border" (click)="toggleAbout =!toggleAbout; $event.stopPropagation();">
-                <ion-icon class="menu-icon" item-left name="information-circle-outline"
-                          style="color:rgba(0, 0, 0, 0.54);"></ion-icon>
-                <div>
-
-                  {{"NAV_INFORMATION_TO_APP" | translate}}
-                </div>
-                <ion-icon class="sub-menu-icon" item-right *ngIf="toggleAbout == false"
-                          name="chevron-down-outline"></ion-icon>
-                <ion-icon class="sub-menu-icon" item-right *ngIf="toggleAbout == true"
-                          name="chevron-up-outline"></ion-icon>
-
-              </ion-item>
-              <ion-list *ngIf="toggleAbout" class="ion-no-padding" no-margin-important
-                        style="margin-left:16px!important;">
-                <ion-item [routerLink]="[pages.licences.url]" [class.active]="pages.licences.active">
-                  <ion-icon class="menu-icon" name="{{pages.licences.icon}}"></ion-icon>
-                  {{pages.licences.title | translate}}
-                </ion-item>
-                <ion-item [routerLink]="[pages.credits.url]" [class.active]="pages.credits.active">
-                  <ion-icon class="menu-icon" name="{{pages.credits.icon}}"></ion-icon>
-                  {{pages.credits.title | translate}}
-                </ion-item>
-                <ion-item [routerLink]="[pages.about.url]" [class.active]="pages.about.active">
-                  <ion-icon class="menu-icon" name="{{pages.about.icon}}"></ion-icon>
-                  {{pages.about.title | translate}}
-                </ion-item>
-                <ion-item [routerLink]="[pages.contact.url]" [class.active]="pages.contact.active">
-                  <ion-icon class="menu-icon" name="{{pages.contact.icon}}"></ion-icon>
-                  {{pages.contact.title | translate}}
-                </ion-item>
-                <ion-item [routerLink]="[pages.thanks.url]" [class.active]="pages.thanks.active">
-                  <ion-icon class="menu-icon" name="{{pages.thanks.icon}}"></ion-icon>
-                  {{pages.thanks.title | translate}}
-                </ion-item>
-                <ion-item [routerLink]="[pages.privacy.url]" [class.active]="pages.privacy.active">
-                  <ion-icon class="menu-icon" name="{{pages.privacy.icon}}"></ion-icon>
-                  {{pages.privacy.title | translate}}
-                </ion-item>
-                <ion-item [routerLink]="[pages.terms.url]" [class.active]="pages.terms.active">
-                  <ion-icon class="menu-icon" name="{{pages.terms.icon}}"></ion-icon>
-                  {{pages.terms.title | translate}}
-                </ion-item>
-                <ion-item [class.active]="pages.logs.active" [routerLink]="[pages.logs.url]">
-                  <ion-icon class="menu-icon" name="{{pages.logs.icon}}"></ion-icon>
-                  {{pages.logs.title | translate}}
-                </ion-item>
-              </ion-list>
-              <ion-item [routerLink]="[pages.settings.url]" [class.active]="pages.settings.active">
-                <ion-icon class="menu-icon" name="{{pages.settings.icon}}"></ion-icon>
-                {{pages.settings.title | translate}}
+              <ion-item [class.active]="pages.info.active" [routerLink]="[pages.info.url]">
+                <ion-label>{{pages.info.title | translate}}</ion-label>
               </ion-item>
              </ion-list>
 

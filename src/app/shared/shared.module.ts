@@ -82,10 +82,13 @@ import {BrewParameterPage} from '../brew-parameter/brew-parameter.page';
 import {SortParameterComponent} from '../brew-parameter/sort-parameter/sort-parameter.component';
 import {ManageParameterComponent} from '../brew-parameter/manage-parameter/manage-parameter.component';
 import {DefaultParameterComponent} from '../brew-parameter/default-parameter/default-parameter.component';
+import {InfoComponent} from '../info/info.component';
+import {RouterModule} from '@angular/router';
 
 @NgModule({
   declarations: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
     ContactComponent,
+    InfoComponent,
     CreditsComponent,
     LicencesComponent,
     PrivacyComponent,
@@ -103,6 +106,7 @@ import {DefaultParameterComponent} from '../brew-parameter/default-parameter/def
   entryComponents: [
     SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BrewFilterComponent, BeansInformationComponent, PreparationInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, MillInformationComponent, AboutComponent,
     ContactComponent,
+    InfoComponent,
     CreditsComponent,
     LicencesComponent,
     PrivacyComponent,
@@ -120,7 +124,8 @@ import {DefaultParameterComponent} from '../brew-parameter/default-parameter/def
     CommonModule,
     IonicModule,
     FormsModule,
-    TranslateModule
+    TranslateModule,
+    RouterModule,
   ],
   providers: [
     AppVersion,
@@ -142,6 +147,7 @@ import {DefaultParameterComponent} from '../brew-parameter/default-parameter/def
 
   exports: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
     ContactComponent,
+    InfoComponent,
     CreditsComponent,
     LicencesComponent,
     PrivacyComponent,

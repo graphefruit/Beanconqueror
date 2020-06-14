@@ -8,10 +8,8 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content>
-  <div class="ion-margin-horizontal popover">
-
-
+<ion-content class="ion-padding">
+  <ion-card class="popover">
     <ion-item>
       <ion-label position="stacked">{{"BEAN_DATA_NAME" | translate}}*</ion-label>
       <ion-input [(ngModel)]="data.name" name="name" type="text" #name="ngModel" spellcheck="false"
@@ -96,16 +94,16 @@
         </ion-slide>
       </ion-slides>
     </div>
-  </div>
+  </ion-card>
 </ion-content>
-<ion-footer>
+<ion-footer class="ion-no-border">
   <ion-row>
     <ion-col>
       <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline">{{"CANCEL" | translate}}</ion-button>
     </ion-col>
     <ion-col>
       <ion-button (click)="addBean()" color="accent" expand="block"
-                  type="submit">{{"GENERATE" | translate}}</ion-button>
+                  type="submit">{{"SAVE" | translate}}</ion-button>
     </ion-col>
   </ion-row>
 </ion-footer>

@@ -43,6 +43,8 @@ export class AppComponent implements AfterViewInit {
   public pages = {
     home: {title: 'NAV_HOME', url: '/home/dashboard', icon: 'home-outline', active: true},
     settings: {title: 'NAV_SETTINGS', url: '/settings', icon: 'settings-outline', active: false},
+
+    info: {title: 'NAV_INFORMATION_TO_APP', url: '/info', icon: 'information-circle-outline', active: false},
     about: {title: 'NAV_ABOUT_US', url: '/info/about', icon: 'information-circle-outline', active: false},
     contact: {title: 'NAV_CONTACT', url: '/info/contact', icon: 'mail-outline', active: false},
     privacy: {title: 'NAV_PRIVACY', url: '/info/privacy', icon: 'documents-outline', active: false},
