@@ -19,6 +19,7 @@ ion-title {
   font-family: 'Baloo';
   font-size: 24px;
   letter-spacing: -1.05px;
+  color: black;
 }
 
 ion-toolbar {
@@ -338,6 +339,16 @@ ion-menu::content.menu-inner {
 
 :root {
 
+  .subtitle {
+    margin: 0;
+    font-size: 14px;
+    text-overflow: inherit;
+    white-space: normal;
+  }
+
+  ion-back-button {
+    --icon-font-size: 40px;
+  }
   ion-radio {
     --border-radius: var(--ion-color-accent);
     --color: var(--ion-color-accent);
@@ -386,7 +397,9 @@ ion-menu::content.menu-inner {
     --padding-top: 0;
   }
 
-  .bottom-modal {
+  .bottom-modal, .half-bottom-modal {
+    --background: rgba(0, 0, 0, 0.47);
+
     ion-toolbar {
       --background: #FFFFFF;
     }
@@ -403,6 +416,8 @@ ion-menu::content.menu-inner {
     }
 
     ion-footer {
+      //one px minus because it looks like a border
+      top: -1px;
       background: #FFFFFF;
       padding-left: 16px;
       padding-right: 16px;
@@ -449,12 +464,6 @@ ion-menu::content.menu-inner {
       --background: white;
 
     }
-
-  }
-
-  .bottom-modal {
-    --background: rgba(0, 0, 0, 0.47);
-
 
   }
 

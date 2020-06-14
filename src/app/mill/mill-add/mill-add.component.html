@@ -1,24 +1,19 @@
 <ion-content>
     <form #addMillForm="ngForm" novalidate>
-      <ion-item lines="full">
+      <ion-item lines="none">
         <ion-label position="stacked">{{"NAME" | translate}}*</ion-label>
         <ion-input [(ngModel)]="data.name" name="name" type="text" #name="ngModel" spellcheck="false"
                    autocapitalize="sentences" required>
         </ion-input>
       </ion-item>
-      <ion-item lines="none">
-        <ion-label position="stacked">{{"NOTES" | translate}}</ion-label>
-        <ion-textarea #note="ngModel" [(ngModel)]="data.note" autocapitalize="sentences" autocomplete="true"
-                      autocorrect="true" name="note" rows="3" spellcheck="true"></ion-textarea>
-      </ion-item>
     </form>
 </ion-content>
 <ion-footer class="ion-no-border">
   <ion-row>
-    <ion-col size="6">
+    <ion-col>
       <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline">{{"CANCEL" | translate}}</ion-button>
     </ion-col>
-    <ion-col size="6">
+    <ion-col>
       <ion-button (click)="addMill(addMillForm)" color="accent" expand="block"
                   type="submit">{{"SAVE" | translate}}</ion-button>
     </ion-col>
