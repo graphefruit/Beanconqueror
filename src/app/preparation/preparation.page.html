@@ -17,9 +17,14 @@
 
 
 <ion-content>
-  <ion-card *ngIf="preparations?.length == 0" class="ion-padding">
-    {{"PAGE_PREPARATION_LIST_NO_PREPARATION_EXISTING" | translate}}
-  </ion-card>
+  <div *ngIf="preparations?.length == 0" class="ion-padding ion-text-center">
+    <div>
+      <ion-icon class="custom-preparation" color="inactive" size="large"></ion-icon>
+    </div>
+    <div class="text-color-inactive ion-margin-top">
+      {{"PAGE_PREPARATION_LIST_NO_PREPARATION_EXISTING" | translate}}
+    </div>
+  </div>
   <div *ngFor="let preparation of preparations">
     <preparation-information-card (preparationAction)="preparationAction($event[0],$event[1])"
                                   [preparation]="preparation"></preparation-information-card>

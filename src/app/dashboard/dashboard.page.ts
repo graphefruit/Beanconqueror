@@ -4,6 +4,7 @@ import {BrewAddComponent} from '../brew/brew-add/brew-add.component';
 import {ModalController} from '@ionic/angular';
 import {Brew} from '../../classes/brew/brew';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
+import {UIBrewHelper} from '../../services/uiBrewHelper';
 
 @Component({
   selector: 'dashboard',
@@ -16,7 +17,8 @@ export class DashboardPage implements OnInit {
 
   constructor(public uiStatistic: UIStatistic,
               private readonly modalCtrl: ModalController,
-              private readonly uiBrewStorage: UIBrewStorage) {
+              private readonly uiBrewStorage: UIBrewStorage,
+              private readonly uiBrewHelper: UIBrewHelper) {
   }
 
   public ngOnInit() {
@@ -25,9 +27,11 @@ export class DashboardPage implements OnInit {
   }
 
   public async addBrew() {
-    const modal = await this.modalCtrl.create({component: BrewAddComponent});
-    await modal.present();
-    await modal.onWillDismiss();
+    if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
+      const modal = await this.modalCtrl.create({component: BrewAddComponent});
+      await modal.present();
+      await modal.onWillDismiss();
+    }
   }
 
   private __loadBrews() {

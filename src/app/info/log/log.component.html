@@ -1,7 +1,9 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
+      <ion-back-button
+        icon="beanconqueror-back">
+      </ion-back-button>
     </ion-buttons>
     <ion-buttons slot="end">
       <ion-button (click)="send()" icon-only>
@@ -13,22 +15,25 @@
     </ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content>
-  <div class="ion-padding">
+<ion-content class="ion-padding-horizontal">
+  <ion-card>
     <ion-row *ngFor="let log of logs" class="ion-padding-bottom">
-      <ion-text *ngIf="log.key === LOG_ENUM.LOG" color="dark">
-        {{log.timestamp}} -  {{log.value}}
-      </ion-text>
-      <ion-text *ngIf="log.key === LOG_ENUM.INFO" color="primary">
-        {{log.timestamp}} -  {{log.value}}
-      </ion-text>
-      <ion-text *ngIf="log.key === LOG_ENUM.WARN" color="warning">
-        {{log.timestamp}} -  {{log.value}}
-      </ion-text>
-      <ion-text *ngIf="log.key === LOG_ENUM.ERR" color="danger">
-        {{log.timestamp}} -  {{log.value}}
-      </ion-text>
+      <ion-col size="12">
+        <ion-text *ngIf="log.key === LOG_ENUM.LOG" color="dark">
+          {{log.timestamp}} -  {{log.value}}
+        </ion-text>
+        <ion-text *ngIf="log.key === LOG_ENUM.INFO" color="primary">
+          {{log.timestamp}} -  {{log.value}}
+        </ion-text>
+        <ion-text *ngIf="log.key === LOG_ENUM.WARN" color="warning">
+          {{log.timestamp}} -  {{log.value}}
+        </ion-text>
+        <ion-text *ngIf="log.key === LOG_ENUM.ERR" color="danger">
+          {{log.timestamp}} -  {{log.value}}
+        </ion-text>
+      </ion-col>
+
     </ion-row>
 
-  </div>
+  </ion-card>
 </ion-content>

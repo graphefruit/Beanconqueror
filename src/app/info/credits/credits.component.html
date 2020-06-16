@@ -1,7 +1,9 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
+      <ion-back-button
+        icon="beanconqueror-back">
+      </ion-back-button>
     </ion-buttons>
     <ion-title>
       {{"NAV_CREDITS" | translate}}
@@ -9,16 +11,20 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="ion-padding-horizontal">
 
     <ion-card *ngFor="let key of credits | keys">
-      <ion-item>
-        <h2>{{ credits[key].TITLE }}</h2>
+      <ion-item (click)="openLink($event,credits[key].LINK)" button tappable>
+        <ion-title>{{ credits[key].TITLE }}</ion-title>
+        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
       </ion-item>
-      <ion-item>
-        <ion-button fill="outline" size="small" (click)="openLink($event,credits[key].LINK)">Credit-Page</ion-button>
+      <ion-item (click)="credits[key].ACTIVE = !credits[key].ACTIVE" button lines="none" tappable>
+        <ion-icon *ngIf="credits[key].ACTIVE != true" name="chevron-down-outline" slot="start"></ion-icon>
+        <ion-icon *ngIf="credits[key].ACTIVE === true" name="chevron-up-outline" slot="start"></ion-icon>
+        <ion-label>{{"MORE_INFORMATION" | translate}}</ion-label>
       </ion-item>
-      <ion-card-content style="border-top: 1px solid rgba(0, 0, 0, 0.3);padding-top: 10px;"
+      <ion-card-content *ngIf="credits[key].ACTIVE === true"
+                        style="border-top: 1px solid rgba(0, 0, 0, 0.3);padding-top: 10px;"
                         class="white-space-normal"
                         [innerHTML]="credits[key].DESCRIPTION">
       </ion-card-content>

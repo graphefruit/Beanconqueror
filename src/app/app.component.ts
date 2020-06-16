@@ -29,6 +29,7 @@ import {Globalization} from '@ionic-native/globalization/ngx';
 import {Settings} from '../classes/settings/settings';
 import {STARTUP_VIEW_ENUM} from '../enums/settings/startupView';
 import {UIAnalytics} from '../services/uiAnalytics';
+import {WelcomePopoverComponent} from '../popover/welcome-popover/welcome-popover.component';
 
 @Component({
   selector: 'app-root',
@@ -103,6 +104,7 @@ export class AppComponent implements AfterViewInit {
   private __appReady(): void {
     this.platform.ready()
         .then(() => {
+          this.__showWelcomePopover();
           // Okay, so the platform is ready and our plugins are available.
           // Here you can do any higher level native things you might need.
 
@@ -324,6 +326,17 @@ export class AppComponent implements AfterViewInit {
       await modal.present();
       await modal.onWillDismiss();
     }
+
+  }
+
+
+  private async __showWelcomePopover() {
+
+
+    const modal = await this.modalCtrl.create({component: WelcomePopoverComponent});
+    await modal.present();
+    await modal.onWillDismiss();
+
 
   }
 

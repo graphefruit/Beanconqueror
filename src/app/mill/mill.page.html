@@ -15,9 +15,14 @@
 </ion-header>
 
 <ion-content>
-  <ion-card *ngIf="mills?.length == 0" class="ion-padding">
-    {{"PAGE_MILL_LIST_NO_MILL_EXISTING" | translate}}
-  </ion-card>
+  <div *ngIf="mills?.length == 0" class="ion-padding ion-text-center">
+    <div>
+      <ion-icon class="custom-mill" color="inactive" size="large"></ion-icon>
+    </div>
+    <div class="text-color-inactive ion-margin-top">
+      {{"PAGE_MILL_LIST_NO_MILL_EXISTING" | translate}}
+    </div>
+  </div>
   <div *ngFor="let mill of mills">
     <mill-information-card (millAction)="millAction($event[0],$event[1])" [mill]="mill"></mill-information-card>
 
