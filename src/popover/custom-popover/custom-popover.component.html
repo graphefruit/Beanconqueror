@@ -1,0 +1,21 @@
+<ion-content>
+  <div class="ion-padding">
+    <ion-title class="ion-text-center">
+      {{title | translate}}
+    </ion-title>
+    <div class="ion-text-center">
+      {{description | translate}}
+    </div>
+  </div>
+
+</ion-content>
+<ion-footer class="ion-no-border">
+  <ion-row>
+    <ion-col size="4"></ion-col>
+    <ion-col size="4">
+      <ion-button (click)="ok()" color="accent" expand="block"
+                  type="submit">{{okText | translate}}</ion-button>
+    </ion-col>
+    <ion-col size="4"></ion-col>
+  </ion-row>
+</ion-footer>

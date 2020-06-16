@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      {{"NAV_INFORMATION_TO_APP" | translate}}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+
+  <ion-card>
+
+    <ion-item [routerLink]="['/info/privacy']">
+      <ion-label>{{"NAV_PRIVACY" | translate}}</ion-label>
+      <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+    </ion-item>
+    <ion-item [routerLink]="['/info/terms']" lines="none">
+      <ion-label>{{"NAV_TERMS" | translate}}</ion-label>
+      <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+    </ion-item>
+  </ion-card>
+
+
+  <ion-card>
+
+    <ion-item [routerLink]="['/info/about']">
+      <ion-label>{{"NAV_ABOUT_US" | translate}}</ion-label>
+      <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+    </ion-item>
+    <ion-item [routerLink]="['/info/contact']">
+      <ion-label>{{"NAV_CONTACT" | translate}}</ion-label>
+      <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+    </ion-item>
+    <ion-item [routerLink]="['/info/thanks']" lines="none">
+      <ion-label>{{"NAV_THANKS" | translate}}</ion-label>
+      <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+    </ion-item>
+  </ion-card>
+
+
+  <ion-card>
+
+    <ion-item [routerLink]="['/info/licences']">
+      <ion-label>{{"NAV_LICENCES" | translate}}</ion-label>
+      <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+    </ion-item>
+    <ion-item [routerLink]="['/info/credits']">
+      <ion-label>{{"NAV_CREDITS" | translate}}</ion-label>
+      <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+    </ion-item>
+    <ion-item [routerLink]="['/info/logs']" lines="none">
+      <ion-label>{{"NAV_LOGS" | translate}}</ion-label>
+      <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+    </ion-item>
+  </ion-card>
+
+</ion-content>
