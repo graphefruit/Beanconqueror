@@ -235,6 +235,14 @@ ion-icon {
     mask-image: url(../assets/svg/icons/icons8-java_bean.svg);
   }
 
+  &[class*="custom-beans"] {
+    mask-image: url(../assets/svg/icons/icons8-coffee_beans.svg);
+  }
+
+  &[class*="custom-cup"] {
+    mask-image: url(../assets/svg/icons/icons8-cup.svg);
+  }
+
   &[class*="custom-filter"] {
     mask-image: url(../assets/svg/icons/icons8-filter.svg);
   }
@@ -471,6 +479,9 @@ ion-menu::content.menu-inner {
     color: black;
   }
 
+  .rotate-icon-180 {
+    transform: rotate(180deg);
+  }
 
 }
 

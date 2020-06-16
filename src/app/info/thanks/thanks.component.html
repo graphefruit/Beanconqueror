@@ -1,7 +1,9 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
+      <ion-back-button
+        icon="beanconqueror-back">
+      </ion-back-button>
     </ion-buttons>
     <ion-title>
       {{"NAV_THANKS" | translate}}
@@ -10,11 +12,12 @@
 </ion-header>
 
 
-<ion-content>
-  <ion-card-header>
-    {{"PAGE_THANKS_THANKS_FOR_YOUR_SUPPORT" | translate}}
-  </ion-card-header>
-  <ion-list>
+<ion-content class="ion-padding-horizontal">
+  <ion-card>
+    <ion-card-header>
+      {{"PAGE_THANKS_THANKS_FOR_YOUR_SUPPORT" | translate}}
+    </ion-card-header>
+
     <ion-item>
       Frank R.
     </ion-item>
@@ -27,9 +30,9 @@
     <ion-item>
       Jörg L.
     </ion-item>
-    <ion-item>
+    <ion-item lines="none">
       Karl-Heinz B.
     </ion-item>
-  </ion-list>
 
+  </ion-card>
 </ion-content>

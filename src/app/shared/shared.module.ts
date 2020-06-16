@@ -84,11 +84,15 @@ import {ManageParameterComponent} from '../brew-parameter/manage-parameter/manag
 import {DefaultParameterComponent} from '../brew-parameter/default-parameter/default-parameter.component';
 import {InfoComponent} from '../info/info.component';
 import {RouterModule} from '@angular/router';
+import {CustomPopoverComponent} from '../../popover/custom-popover/custom-popover.component';
+import {WelcomePopoverComponent} from '../../popover/welcome-popover/welcome-popover.component';
 
 @NgModule({
   declarations: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
     ContactComponent,
     InfoComponent,
+    CustomPopoverComponent,
+    WelcomePopoverComponent,
     CreditsComponent,
     LicencesComponent,
     PrivacyComponent,
@@ -107,6 +111,8 @@ import {RouterModule} from '@angular/router';
     SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BrewFilterComponent, BeansInformationComponent, PreparationInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, MillInformationComponent, AboutComponent,
     ContactComponent,
     InfoComponent,
+    CustomPopoverComponent,
+    WelcomePopoverComponent,
     CreditsComponent,
     LicencesComponent,
     PrivacyComponent,
@@ -148,6 +154,8 @@ import {RouterModule} from '@angular/router';
   exports: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
     ContactComponent,
     InfoComponent,
+    CustomPopoverComponent,
+    WelcomePopoverComponent,
     CreditsComponent,
     LicencesComponent,
     PrivacyComponent,

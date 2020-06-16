@@ -159,10 +159,13 @@ export class BrewPage implements OnInit {
   }
 
   public async add() {
-    const modal = await this.modalCtrl.create({component: BrewAddComponent});
-    await modal.present();
-    await modal.onWillDismiss();
-    this.loadBrews();
+    if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
+      const modal = await this.modalCtrl.create({component: BrewAddComponent});
+      await modal.present();
+      await modal.onWillDismiss();
+      this.loadBrews();
+    }
+
   }
 
   public async detailBrew(_brew: Brew) {

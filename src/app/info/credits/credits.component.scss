@@ -1,0 +1,15 @@
+:host {
+  ion-item {
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+
+  ion-card {
+    ion-item {
+      ion-title {
+        padding: 0;
+        margin: 0;
+      }
+    }
+  }
+}
