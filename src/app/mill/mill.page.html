@@ -15,17 +15,47 @@
 </ion-header>
 
 <ion-content>
-  <div *ngIf="mills?.length == 0" class="ion-padding ion-text-center">
-    <div>
-      <ion-icon class="custom-mill" color="inactive" size="large"></ion-icon>
-    </div>
-    <div class="text-color-inactive ion-margin-top">
-      {{"PAGE_MILL_LIST_NO_MILL_EXISTING" | translate}}
-    </div>
-  </div>
-  <div *ngFor="let mill of mills">
-    <mill-information-card (millAction)="millAction($event[0],$event[1])" [mill]="mill"></mill-information-card>
+  <div>
+    <ion-segment [(ngModel)]="segment">
+      <ion-segment-button value="open">
+        <ion-label>{{"CURRENT" | translate }}
+        </ion-label>
+      </ion-segment-button>
+      <ion-segment-button *ngIf="settings.show_archived_mills" value="archive">
+        <ion-label>{{"ARCHIVE" | translate }}
+        </ion-label>
 
+      </ion-segment-button>
+    </ion-segment>
   </div>
+  <div [ngSwitch]="segment">
+    <div *ngSwitchCase="'open'">
+      <div *ngIf="getActiveMills()?.length == 0" class="ion-padding ion-text-center">
+        <div>
+          <ion-icon class="custom-mill" color="inactive" size="large"></ion-icon>
+        </div>
+        <div class="text-color-inactive ion-margin-top">
+          {{"PAGE_MILL_LIST_NO_MILL_EXISTING" | translate}}
+        </div>
+      </div>
+      <div *ngFor="let mill of getActiveMills()">
+        <mill-information-card (millAction)="millAction($event[0],$event[1])" [mill]="mill"></mill-information-card>
+      </div>
+    </div>
+    <div *ngSwitchCase="'archive'">
+      <div *ngIf="getArchivedMills()?.length == 0" class="ion-padding ion-text-center">
+        <div>
+          <ion-icon class="custom-mill" color="inactive" size="large"></ion-icon>
+        </div>
+        <div class="text-color-inactive ion-margin-top">
+          {{"PAGE_MILL_LIST_NO_ARCHIVED_MILL_EXISTING" | translate}}
+        </div>
+      </div>
+      <div *ngFor="let mill of getArchivedMills()">
+        <mill-information-card (millAction)="millAction($event[0],$event[1])" [mill]="mill"></mill-information-card>
+      </div>
+    </div>
+  </div>
+
 
 </ion-content>

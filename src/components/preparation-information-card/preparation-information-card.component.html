@@ -8,13 +8,24 @@
         <ion-col class="ion-padding-start" size="8">
           <ion-list lines="none">
             <ion-item>
-              {{getBrewsCount()}}&nbsp;{{"PAGE_HOME_TOTAL_BREWS" | translate}}
+              <ion-col size="8">
+                &nbsp;{{"PAGE_HOME_TOTAL_BREWS" | translate}}
+              </ion-col>
+              <ion-col size="4">
+                {{getBrewsCount()}}
+              </ion-col>
             </ion-item>
             <ion-item>
-              {{getWeightCount()}}&nbsp;{{"COFFEE_GRAMS_GRINDED" | translate}}
+              <ion-label slot="start">{{"COFFEE_GRAMS_GRINDED" | translate}}</ion-label>
+              <ion-note color="primary" slot="end"> {{getWeightCount()}}</ion-note>
             </ion-item>
             <ion-item>
-              {{getBeansCount()}}&nbsp;{{"BEANS_USED" | translate}}
+              <ion-col size="6">
+                &nbsp;{{"BEANS_USED" | translate}}
+              </ion-col>
+              <ion-col size="6">
+                {{getBeansCount()}}
+              </ion-col>
             </ion-item>
           </ion-list>
         </ion-col>

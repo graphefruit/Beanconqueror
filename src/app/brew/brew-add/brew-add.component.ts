@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {UIBeanStorage} from '../../../services/uiBeanStorage';
 import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 import {BREW_QUANTITY_TYPES_ENUM} from '../../../enums/brews/brewQuantityTypes';
@@ -18,6 +18,8 @@ import moment from 'moment';
 import {Mill} from '../../../classes/mill/mill';
 import {Bean} from '../../../classes/bean/bean';
 import {UIAnalytics} from '../../../services/uiAnalytics';
+import {IMill} from '../../../interfaces/mill/iMill';
+import {UIToast} from '../../../services/uiToast';
 
 @Component({
   selector: 'brew-add',
@@ -43,15 +45,12 @@ export class BrewAddComponent implements OnInit {
   public mills: Array<Mill> = [];
   public customCreationDate: string = '';
 
+  @Input() private hide_toast_message: boolean;
 
   public customSelectSheetOptions: any = {
     cssClass: 'select-full-screen'
   };
 
-  public keyDownHandler(event: Event): void {
-
-    //  event.preventDefault();
-  }
 
 
 
@@ -64,17 +63,20 @@ export class BrewAddComponent implements OnInit {
                private readonly uiSettingsStorage: UISettingsStorage,
                public uiHelper: UIHelper,
                private readonly uiMillStorage: UIMillStorage,
-               private readonly uiAnalytics: UIAnalytics) {
+               private readonly uiAnalytics: UIAnalytics,
+               private readonly uiToast: UIToast) {
     // Initialize to standard in drop down
     //
 
     this.settings = this.uiSettingsStorage.getSettings();
     this.method_of_preparations = this.uiPreparationStorage.getAllEntries()
+      .filter((e) => !e.finished)
         .sort((a, b) => a.name.localeCompare(b.name));
     this.beans = this.uiBeanStorage.getAllEntries()
         .filter((bean) => !bean.finished)
         .sort((a, b) => a.name.localeCompare(b.name));
     this.mills = this.uiMillStorage.getAllEntries()
+      .filter((e) => !e.finished)
         .sort((a, b) => a.name.localeCompare(b.name));
 
     this.brew_template = this.navParams.get('brew_template');
@@ -103,14 +105,12 @@ export class BrewAddComponent implements OnInit {
     }
   }
 
-  public dismiss(): void {
+  public async dismiss() {
     this.modalController.dismiss({
       dismissed: true
     });
-  }
 
-  public getItemOrder(): number {
-    return 4;
+
   }
 
   public finish(): void {
@@ -120,6 +120,10 @@ export class BrewAddComponent implements OnInit {
       this.data.config.unix_timestamp = moment(this.customCreationDate).unix();
     }
     this.uiBrewStorage.update(this.data);
+    if (!this.hide_toast_message) {
+      this.uiToast.showInfoToast('TOAST_BREW_ADDED_SUCCESSFULLY');
+    }
+
     this.dismiss();
   }
 
@@ -146,7 +150,6 @@ export class BrewAddComponent implements OnInit {
   }
 
   public setCoffeeBloomingTime($event): void {
-    console.log($event);
     this.data.coffee_blooming_time = this.getTime();
   }
 
@@ -225,10 +228,18 @@ export class BrewAddComponent implements OnInit {
       this.data.grind_weight = brew.grind_weight;
     }
     if (this.settings.default_last_coffee_parameters.method_of_preparation) {
-      this.data.method_of_preparation = brew.method_of_preparation;
+      const brewPreparation: IPreparation = this.uiPreparationStorage.getByUUID(brew.method_of_preparation);
+      if (!brewPreparation.finished) {
+        this.data.method_of_preparation = brewPreparation.config.uuid;
+      }
+
     }
     if (this.settings.default_last_coffee_parameters.mill) {
-      this.data.mill = brew.mill;
+      const brewMill: IMill = this.uiMillStorage.getByUUID(brew.mill);
+      if (!brewMill.finished) {
+        this.data.mill = brewMill.config.uuid;
+      }
+
     }
     if (this.settings.default_last_coffee_parameters.mill_timer) {
       this.data.mill_timer = brew.mill_timer;

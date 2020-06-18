@@ -55,9 +55,23 @@ export class Bean implements IBean {
     Object.assign(this, beanObj);
   }
 
-  public fixDataTypes(): void {
-    this.cost = Number(this.cost);
-    this.weight = Number(this.weight);
+  public fixDataTypes(): boolean {
+    let fixNeeded: boolean = false;
+
+
+    if (Number(this.cost) !== this.cost) {
+      this.cost = Number(this.cost);
+      fixNeeded = true;
+    }
+
+
+    if (Number(this.weight) !== this.weight) {
+      this.weight = Number(this.weight);
+      fixNeeded = true;
+    }
+
+
+    return fixNeeded;
   }
   public beanAgeInDays(): number {
     const today = Date.now();

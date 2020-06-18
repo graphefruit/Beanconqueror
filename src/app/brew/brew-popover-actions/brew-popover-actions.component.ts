@@ -13,7 +13,6 @@ import {UIAnalytics} from '../../../services/uiAnalytics';
 export class BrewPopoverActionsComponent implements OnInit {
 
   public static ACTIONS: any = {
-    POST: 'POST',
     REPEAT: 'REPEAT',
     DETAIL: 'DETAIL',
     EDIT: 'EDIT',

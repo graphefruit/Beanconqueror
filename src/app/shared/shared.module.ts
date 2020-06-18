@@ -13,9 +13,6 @@ import {BrewPage} from '../brew/brew.page';
 import {BrewDetailComponent} from '../brew/brew-detail/brew-detail.component';
 import {BrewEditComponent} from '../brew/brew-edit/brew-edit.component';
 import {BrewPhotoViewComponent} from '../brew/brew-photo-view/brew-photo-view.component';
-import {BrewPopoverComponent} from '../brew/brew-popover/brew-popover.component';
-import {BrewTableComponent} from '../brew/brew-table/brew-table.component';
-import {BrewTextComponent} from '../brew/brew-text/brew-text.component';
 import {TimerComponent} from '../../components/timer/timer.component';
 import {BrewTimerComponent} from '../../components/brew-timer/brew-timer.component';
 import {FormsModule} from '@angular/forms';
@@ -60,9 +57,6 @@ import {Globalization} from '@ionic-native/globalization/ngx';
 import {AppVersion} from '@ionic-native/app-version/ngx';
 import {EnumToArrayPipe} from '../../pipes/enumToArray';
 import {FirebaseX} from '@ionic-native/firebase-x/ngx';
-import {BeansInformationComponent} from '../beans/beans-information/beans-information.component';
-import {PreparationInformationComponent} from '../preparation/preparation-information/preparation-information.component';
-import {MillInformationComponent} from '../mill/mill-information/mill-information.component';
 import {HelperPage} from '../helper/helper.page';
 import {BrewInformationComponent} from '../../components/brew-information/brew-information.component';
 import {CuppingRadarComponent} from '../../components/cupping-radar/cupping-radar.component';
@@ -86,11 +80,13 @@ import {InfoComponent} from '../info/info.component';
 import {RouterModule} from '@angular/router';
 import {CustomPopoverComponent} from '../../popover/custom-popover/custom-popover.component';
 import {WelcomePopoverComponent} from '../../popover/welcome-popover/welcome-popover.component';
+import {PreparationAddTypeComponent} from '../preparation/preparation-add-type/preparation-add-type.component';
 
 @NgModule({
-  declarations: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
+  declarations: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, AboutComponent,
     ContactComponent,
     InfoComponent,
+    PreparationAddTypeComponent,
     CustomPopoverComponent,
     WelcomePopoverComponent,
     CreditsComponent,
@@ -106,11 +102,12 @@ import {WelcomePopoverComponent} from '../../popover/welcome-popover/welcome-pop
     PreparationEditComponent, MillPage, MillEditComponent, BrewFilterComponent, MillAddComponent, BrewAddComponent,
     FormatDatePipe, KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, BeanInformationComponent, BrewDashboardInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, CuppingRadarComponent, SearchPipe, RemoveEmptyNumberDirective,
     PreventCharacterDirective, TooltipDirective, BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent,
-    BrewPopoverComponent, BrewPopoverActionsComponent, MillPopoverActionsComponent, BeanPopoverActionsComponent, PreparationPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent, BrewTimerComponent],
+    BrewPopoverActionsComponent, MillPopoverActionsComponent, BeanPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent, BrewTimerComponent],
   entryComponents: [
-    SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BrewFilterComponent, BeansInformationComponent, PreparationInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, MillInformationComponent, AboutComponent,
+    SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BrewFilterComponent, PreparationInformationCardComponent, MillInformationCardComponent, AboutComponent,
     ContactComponent,
     InfoComponent,
+    PreparationAddTypeComponent,
     CustomPopoverComponent,
     WelcomePopoverComponent,
     CreditsComponent,
@@ -125,7 +122,7 @@ import {WelcomePopoverComponent} from '../../popover/welcome-popover/welcome-pop
     ThanksComponent, LogComponent, LogTextComponent, PreparationPage,
     PreparationAddComponent, PreparationEditComponent, MillPage, MillEditComponent,
     MillAddComponent, BrewAddComponent, BrewPage, BrewDetailComponent, BrewEditComponent,
-    BrewPhotoViewComponent, BrewPopoverComponent, BrewPopoverActionsComponent, MillPopoverActionsComponent, BeanPopoverActionsComponent, PreparationPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent, BrewTimerComponent],
+    BrewPhotoViewComponent, BrewPopoverActionsComponent, MillPopoverActionsComponent, BeanPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent, BrewTimerComponent],
   imports: [
     CommonModule,
     IonicModule,
@@ -151,9 +148,10 @@ import {WelcomePopoverComponent} from '../../popover/welcome-popover/welcome-pop
     InAppBrowser, File, Globalization, FirebaseX
   ],
 
-  exports: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BeansInformationComponent, PreparationInformationComponent, MillInformationComponent, AboutComponent,
+  exports: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, AboutComponent,
     ContactComponent,
     InfoComponent,
+    PreparationAddTypeComponent,
     CustomPopoverComponent,
     WelcomePopoverComponent,
     CreditsComponent,
@@ -168,9 +166,9 @@ import {WelcomePopoverComponent} from '../../popover/welcome-popover/welcome-pop
     ThanksComponent, PreparationPage, PreparationAddComponent,
     PreparationEditComponent, BrewFilterComponent, MillPage, MillEditComponent, MillAddComponent,
     BrewAddComponent, FormatDatePipe,
-    KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, BeanInformationComponent, BeansInformationComponent, BrewDashboardInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, CuppingRadarComponent, SearchPipe, RemoveEmptyNumberDirective,
+    KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, BeanInformationComponent, BrewDashboardInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, CuppingRadarComponent, SearchPipe, RemoveEmptyNumberDirective,
     PreventCharacterDirective, TooltipDirective, BrewPage, BrewDetailComponent, BrewEditComponent,
-    BrewPhotoViewComponent, BrewPopoverComponent, BrewPopoverActionsComponent, MillPopoverActionsComponent, BeanPopoverActionsComponent, PreparationPopoverActionsComponent, BrewTableComponent, BrewTextComponent, TimerComponent, BrewTimerComponent],
+    BrewPhotoViewComponent, BrewPopoverActionsComponent, MillPopoverActionsComponent, BeanPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent, BrewTimerComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule {

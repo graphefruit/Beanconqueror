@@ -104,7 +104,6 @@ export class AppComponent implements AfterViewInit {
   private __appReady(): void {
     this.platform.ready()
         .then(() => {
-          this.__showWelcomePopover();
           // Okay, so the platform is ready and our plugins are available.
           // Here you can do any higher level native things you might need.
 
@@ -191,13 +190,17 @@ export class AppComponent implements AfterViewInit {
     // We made an update, filePath just could storage one image, but we want to storage multiple ones.
     if (this.uiBeanStorage.getAllEntries().length > 0) {
       const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
+      let needsUpdate: boolean = false;
       for (const bean of beans) {
         if (bean.filePath !== undefined && bean.filePath !== null && bean.filePath !== '') {
           bean.attachments.push(bean.filePath);
           bean.filePath = '';
+          needsUpdate = true;
         }
-        bean.fixDataTypes();
-        this.uiBeanStorage.update(bean);
+        if (bean.fixDataTypes() || needsUpdate) {
+          this.uiBeanStorage.update(bean);
+        }
+
       }
 
     }
@@ -205,8 +208,10 @@ export class AppComponent implements AfterViewInit {
     if (this.uiBrewStorage.getAllEntries().length > 0) {
       const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
       for (const brew of brews) {
-        brew.fixDataTypes();
-        this.uiBrewStorage.update(brew);
+        if (brew.fixDataTypes()) {
+          this.uiBrewStorage.update(brew);
+        }
+
       }
     }
   }
@@ -313,6 +318,7 @@ export class AppComponent implements AfterViewInit {
     await this.uiAnalytics.initializeTracking().catch(() => {
       // Nothing to do, user declined tracking.
     });
+    await this.__checkWelcomePage();
     await this.__checkStartupView();
 
 
@@ -330,14 +336,12 @@ export class AppComponent implements AfterViewInit {
   }
 
 
-  private async __showWelcomePopover() {
-
-
-    const modal = await this.modalCtrl.create({component: WelcomePopoverComponent});
-    await modal.present();
-    await modal.onWillDismiss();
-
-
+  private async __checkWelcomePage() {
+    if (this.uiSettingsStorage.getSettings().welcome_page_showed !== true) {
+      const modal = await this.modalCtrl.create({component: WelcomePopoverComponent});
+      await modal.present();
+      await modal.onWillDismiss();
+    }
   }
 
   private async __trackNewBean() {

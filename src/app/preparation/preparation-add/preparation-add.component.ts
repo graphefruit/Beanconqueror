@@ -1,10 +1,12 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {Preparation} from '../../../classes/preparation/preparation';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {ModalController} from '@ionic/angular';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 
 import {PREPARATION_TYPES} from '../../../enums/preparations/preparationTypes';
+import {NgForm} from '@angular/forms';
+import {PreparationAddTypeComponent} from '../preparation-add-type/preparation-add-type.component';
 
 @Component({
   selector: 'preparation-add',
@@ -24,6 +26,9 @@ export class PreparationAddComponent implements OnInit {
     {TYPE: PREPARATION_TYPES.BIALETTI, ICON: ''},
   ];
 
+  @ViewChild('addPreparationForm', {static: false}) public preparationForm: NgForm;
+
+  @Input() private hide_toast_message: boolean;
 
   constructor (private readonly modalController: ModalController,
                private readonly uiPreparationStorage: UIPreparationStorage,
@@ -34,22 +39,23 @@ export class PreparationAddComponent implements OnInit {
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent('PREPARATION', 'ADD');
   }
-  public addBean(form): void {
 
-    if (form.valid) {
-      this.__addBean();
-    }
-  }
-
-  public __addBean(): void {
-    this.uiPreparationStorage.add(this.data);
+  public async choosePreparation(_prepType: PREPARATION_TYPES) {
     this.dismiss();
+    const modal = await this.modalController.create({
+      component: PreparationAddTypeComponent,
+      cssClass: 'half-bottom-modal', showBackdrop: true, componentProps: {type: _prepType, hide_toast_message: this.hide_toast_message}
+    });
+    await modal.present();
+    await modal.onWillDismiss();
   }
 
-  public dismiss(): void {
+
+  public async dismiss() {
     this.modalController.dismiss({
-      'dismissed': true
+      dismissed: true
     });
+
   }
 
   public ngOnInit() {}

@@ -7,7 +7,6 @@ import {Brew} from '../../classes/brew/brew';
 import {Bean} from '../../classes/bean/bean';
 import {BeansAddComponent} from './beans-add/beans-add.component';
 import {BeansEditComponent} from './beans-edit/beans-edit.component';
-import {BeansInformationComponent} from './beans-information/beans-information.component';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {Settings} from '../../classes/settings/settings';
 import {BEAN_ACTION} from '../../enums/beans/beanAction';
@@ -20,8 +19,7 @@ import {BEAN_ACTION} from '../../enums/beans/beanAction';
 export class BeansPage implements OnInit {
 
   public beans: Array<Bean> = [];
-  public openBeansCount: number = 0;
-  public finishedBeansCount: number = 0;
+
 
   public settings: Settings;
 
@@ -62,9 +60,6 @@ export class BeansPage implements OnInit {
       case BEAN_ACTION.REPEAT:
         this.repeatBean(bean);
         break;
-      case BEAN_ACTION.INFORMATION:
-        this.informationBean(bean);
-        break;
       case BEAN_ACTION.EDIT:
         this.editBean(bean);
         break;
@@ -100,12 +95,6 @@ export class BeansPage implements OnInit {
     this.loadBeans();
   }
 
-  public async informationBean(_bean: Bean) {
-
-    const modal = await this.modalCtrl.create({component: BeansInformationComponent, componentProps: {'bean': _bean}});
-    await modal.present();
-    await modal.onWillDismiss();
-  }
 
   public deleteBean(_bean: Bean): void {
     this.uiAlert.showConfirm('DELETE_BEAN_QUESTION', 'SURE_QUESTION', true)
@@ -131,11 +120,6 @@ export class BeansPage implements OnInit {
   private __initializeBeans(): void {
     this.beans = this.uiBeanStorage.getAllEntries()
         .sort((a, b) => a.name.localeCompare(b.name));
-
-    this.openBeansCount = this.beans.filter(
-      (bean) => !bean.finished).length;
-    this.finishedBeansCount = this.beans.filter(
-      (bean) => bean.finished).length;
   }
 
   private __deleteBean(_bean: Bean): void {

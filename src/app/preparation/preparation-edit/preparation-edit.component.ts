@@ -5,6 +5,7 @@ import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {UIHelper} from '../../../services/uiHelper';
 import {UIAnalytics} from '../../../services/uiAnalytics';
+import {PREPARATION_TYPES} from '../../../enums/preparations/preparationTypes';
 
 @Component({
   selector: 'preparation-edit',
@@ -15,7 +16,7 @@ export class PreparationEditComponent implements OnInit {
 
   public data: Preparation = new Preparation();
   @Input() private preparation: IPreparation;
-
+  public preparationTypeEnum = PREPARATION_TYPES;
   constructor (private readonly navParams: NavParams,
                private readonly modalController: ModalController,
                private readonly uiPreparationStorage: UIPreparationStorage,

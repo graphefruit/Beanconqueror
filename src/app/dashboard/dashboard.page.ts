@@ -23,6 +23,11 @@ export class DashboardPage implements OnInit {
 
   public ngOnInit() {
 
+
+  }
+
+
+  public ionViewWillEnter(): void {
     this.__loadBrews();
   }
 
@@ -31,6 +36,7 @@ export class DashboardPage implements OnInit {
       const modal = await this.modalCtrl.create({component: BrewAddComponent});
       await modal.present();
       await modal.onWillDismiss();
+      this.__loadBrews();
     }
   }
 
@@ -38,7 +44,6 @@ export class DashboardPage implements OnInit {
     this.brews = this.uiBrewStorage.getAllEntries();
     this.brews = this.__sortBrews(this.brews);
     this.brews = this.brews.slice(0, 10);
-    console.log(this.brews);
   }
 
   private __sortBrews(_sortingBrews: Array<Brew>): Array<Brew> {

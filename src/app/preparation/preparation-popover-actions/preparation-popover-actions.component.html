@@ -1,7 +1,7 @@
 <ion-list lines="full">
-  <ion-item (click)="choose(getStaticActions().INFORMATION)" button>
-    <ion-icon name="list-outline" slot="start"></ion-icon>
-    <span>{{"INFORMATION" | translate}}</span>
+  <ion-item (click)="choose(getStaticActions().ARCHIVE)" *ngIf="data.finished === false" button>
+    <ion-icon name="check-outline" slot="start"></ion-icon>
+    <span>{{"ARCHIVE" | translate}}</span>
   </ion-item>
   <ion-item (click)="choose(getStaticActions().EDIT)" button>
     <ion-icon name="create-outline" slot="start"></ion-icon>

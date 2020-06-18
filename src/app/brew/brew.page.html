@@ -7,9 +7,6 @@
       <ion-button (click)="add()" class="big-icon-only">
         <ion-icon class="ion-color-accent" name="beanconqueror-add" slot="icon-only"></ion-icon>
       </ion-button>
-      <!--<ion-button (click)="showMore($event)">
-        <ion-icon name="ellipsis-vertical-outline" slot="icon-only"></ion-icon>
-      </ion-button>-->
     </ion-buttons>
     <ion-title>
       {{"NAV_BREWS" | translate }}
@@ -32,6 +29,11 @@
   </div>
   <div [ngSwitch]="brew_segment">
     <div *ngSwitchCase="'open'">
+      <div *ngIf="openBrewsView?.length > 0" class="ion-justify-content-end container">
+        <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
+          <ion-icon [class.active]="isFilterActive()" class="custom-filter black" slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
       <div *ngIf="openBrewsView?.length == 0" class="ion-padding ion-text-center">
         <div>
           <ion-icon class="custom-cup" color="inactive" size="large"></ion-icon>
@@ -41,11 +43,7 @@
         </div>
       </div>
 
-      <div *ngIf="openBrewsView?.length > 0" class="ion-justify-content-end container">
-        <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
-          <ion-icon [class.active]="isFilterActive()" class="custom-filter black" slot="icon-only"></ion-icon>
-        </ion-button>
-      </div>
+
       <ion-virtual-scroll *ngIf="brews?.length > 0" [items]="openBrewsView  | searchBrews:query"
                           approxItemHeight="171px">
         <brew-information (brewAction)="brewAction($event[0],$event[1])" *virtualItem="let brew;"
@@ -54,6 +52,11 @@
     </div>
     <div *ngIf="settings.show_archived_brews">
       <div *ngSwitchCase="'archive'">
+        <div *ngIf="archiveBrewsView?.length > 0 || isFilterActive()===true" class="ion-justify-content-end container">
+          <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
+            <ion-icon [class.active]="isFilterActive()" class="custom-filter black" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
         <div *ngIf="archiveBrewsView?.length == 0" class="ion-padding ion-text-center">
           <div>
             <ion-icon class="custom-cup" color="inactive" size="large"></ion-icon>
@@ -62,11 +65,7 @@
             {{"PAGE_BREWS_NO_ARCHIVED_ENTRIES" | translate}}
           </div>
         </div>
-        <div *ngIf="archiveBrewsView?.length > 0" class="ion-justify-content-end container">
-          <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
-            <ion-icon [class.active]="isFilterActive()" class="custom-filter black" slot="icon-only"></ion-icon>
-          </ion-button>
-        </div>
+
         <ion-virtual-scroll *ngIf="archiveBrewsView?.length > 0" [items]="archiveBrewsView  | searchBrews:query"
                             approxItemHeight="171px">
           <brew-information (brewAction)="brewAction($event[0],$event[1])" *virtualItem="let brew;"

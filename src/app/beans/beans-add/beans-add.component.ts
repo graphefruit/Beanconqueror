@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {BEAN_MIX_ENUM} from '../../../enums/beans/mix';
 import {UIBeanStorage} from '../../../services/uiBeanStorage';
 import {ROASTS_ENUM} from '../../../enums/beans/roasts';
@@ -8,6 +8,7 @@ import {Bean} from '../../../classes/bean/bean';
 import {IonSlides, ModalController, NavParams} from '@ionic/angular';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 import {UIFileHelper} from '../../../services/uiFileHelper';
+import {UIToast} from '../../../services/uiToast';
 
 @Component({
   selector: 'beans-add',
@@ -22,13 +23,16 @@ export class BeansAddComponent implements OnInit {
   public roastsEnum = ROASTS_ENUM;
   public mixEnum = BEAN_MIX_ENUM;
 
+  @Input() private hide_toast_message: boolean;
+
   constructor (private readonly modalController: ModalController,
                private readonly navParams: NavParams,
                private readonly uiBeanStorage: UIBeanStorage,
                private readonly uiImage: UIImage,
                public uiHelper: UIHelper,
                private readonly uiAnalytics: UIAnalytics,
-               private readonly uiFileHelper: UIFileHelper) {
+               private readonly uiFileHelper: UIFileHelper,
+               private readonly uiToast: UIToast) {
     this.data.roastingDate = new Date().toISOString();
     this.bean_template = this.navParams.get('bean_template');
   }
@@ -70,6 +74,9 @@ export class BeansAddComponent implements OnInit {
   public __addBean(): void {
     this.uiBeanStorage.add(this.data);
     this.dismiss();
+    if (!this.hide_toast_message) {
+      this.uiToast.showInfoToast('TOAST_BEAN_ADDED_SUCCESSFULLY');
+    }
   }
 
   public deleteImage(_index: number): void {

@@ -221,28 +221,58 @@ export class Brew implements IBrew {
   /**
    * Sorry for this, but angular hates inputs which are string and needs numbers
    */
-  public fixDataTypes() {
-    this.brew_quantity = Number(this.brew_quantity);
-    this.grind_weight = Number(this.grind_weight);
-    // UUID
-
-    // tslint:disable-next-line
-    this.mill_speed = Number(this.mill_speed);
-
-    // tslint:disable-next-line
-    this.brew_temperature = Number(this.brew_temperature);
-    // tslint:disable-next-line
-    this.brew_temperature_time = Number(this.brew_temperature_time);
-    // tslint:disable-next-line
-    this.brew_time = Number(this.brew_time);
-    // tslint:disable-next-line
-    this.brew_quantity = Number(this.brew_quantity);
-    // tslint:disable-next-line
+  public fixDataTypes(): boolean {
+    let fixNeeded: boolean = false;
 
 
-    this.coffee_first_drip_time = Number(this.coffee_first_drip_time);
-    // tslint:disable-next-line
-    this.coffee_blooming_time = Number(this.coffee_blooming_time);
+    if (Number(this.brew_quantity) !== this.brew_quantity) {
+      this.brew_quantity = Number(this.brew_quantity);
+      fixNeeded = true;
+    }
+
+    if (Number(this.grind_weight) !== this.grind_weight) {
+      this.grind_weight = Number(this.grind_weight);
+      fixNeeded = true;
+    }
+
+
+    if (Number(this.mill_speed) !== this.mill_speed) {
+      this.mill_speed = Number(this.mill_speed);
+      fixNeeded = true;
+    }
+
+    if (Number(this.brew_temperature) !== this.brew_temperature) {
+      this.brew_temperature = Number(this.brew_temperature);
+      fixNeeded = true;
+    }
+
+    if (Number(this.brew_temperature_time) !== this.brew_temperature_time) {
+      this.brew_temperature_time = Number(this.brew_temperature_time);
+      fixNeeded = true;
+    }
+    if (Number(this.brew_time) !== this.brew_time) {
+      this.brew_time = Number(this.brew_time);
+      fixNeeded = true;
+    }
+
+
+    if (Number(this.brew_quantity) !== this.brew_quantity) {
+      this.brew_quantity = Number(this.brew_quantity);
+      fixNeeded = true;
+    }
+
+    if (Number(this.coffee_first_drip_time) !== this.coffee_first_drip_time) {
+      this.coffee_first_drip_time = Number(this.coffee_first_drip_time);
+      fixNeeded = true;
+    }
+
+    if (Number(this.coffee_blooming_time) !== this.coffee_blooming_time) {
+      this.coffee_blooming_time = Number(this.coffee_blooming_time);
+      fixNeeded = true;
+    }
+
+
+    return fixNeeded;
   }
 
 }

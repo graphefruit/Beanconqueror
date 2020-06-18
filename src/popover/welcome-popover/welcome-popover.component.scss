@@ -1,9 +1,7 @@
 :host {
-  ion-slides {
-    height: 100%;
 
-    .swiper-pagination-bullets {
-      top: 10px;
-    }
+
+  .swiper-pagination.swiper-pagination-bullets {
+    top: 0px;
   }
 }
