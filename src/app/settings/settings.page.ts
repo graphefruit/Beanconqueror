@@ -199,6 +199,13 @@ export class SettingsPage implements OnInit {
   private __importDummyData(): void {
     this.uiLog.log('Import dummy data');
     const dummyData = BeanconquerorSettingsDummy;
+
+    if (dummyData.SETTINGS[0]['brew_order']['before'] === undefined) {
+      this.uiLog.log('Old brew order structure');
+      // Breaking change, we need to throw away the old order types by import
+      const settingsConst = new Settings();
+      dummyData['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(settingsConst.brew_order);
+    }
     this.uiStorage.import(dummyData).then(() => {
       this.__reinitializeStorages().then(() => {
         this.__initializeSettings();
@@ -236,6 +243,18 @@ export class SettingsPage implements OnInit {
 
               // When exporting the value is a number, when importing it needs to be  a string.
               parsedContent['SETTINGS'][0]['brew_view'] = parsedContent['SETTINGS'][0]['brew_view'] + '';
+              try {
+                if (!parsedContent['SETTINGS'][0]['brew_order']['before'] === undefined) {
+                  this.uiLog.log('Old brew order structure');
+                  // Breaking change, we need to throw away the old order types by import
+                  const settingsConst = new Settings();
+                  parsedContent['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(settingsConst.brew_order);
+                }
+              } catch (ex) {
+                const settingsConst = new Settings();
+                parsedContent['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(settingsConst.brew_order);
+              }
+
 
               this.uiStorage.import(parsedContent).then((_data) => {
                 if (_data.BACKUP === false) {

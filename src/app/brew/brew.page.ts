@@ -13,9 +13,7 @@ import {FileEntry} from '@ionic-native/file';
 import {BrewDetailComponent} from './brew-detail/brew-detail.component';
 import {BrewPhotoViewComponent} from './brew-photo-view/brew-photo-view.component';
 import {BrewEditComponent} from './brew-edit/brew-edit.component';
-import {BrewTextComponent} from './brew-text/brew-text.component';
-import {BrewPopoverComponent} from './brew-popover/brew-popover.component';
-import {BrewTableComponent} from './brew-table/brew-table.component';
+
 import {UIPreparationStorage} from '../../services/uiPreparationStorage';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
 import {UIMillStorage} from '../../services/uiMillStorage';
@@ -94,30 +92,8 @@ export class BrewPage implements OnInit {
     this.loadBrews();
   }
 
-
-  public async showMore(event): Promise<void> {
-    const popover = await this.popoverCtrl.create({
-      component: BrewPopoverComponent,
-      event,
-      translucent: true
-    });
-    await popover.present();
-    const data = await popover.onWillDismiss();
-    if (data.role === BrewPopoverComponent.ACTIONS.DOWNLOAD) {
-      this.downloadCSV();
-    } else if (data.role === BrewPopoverComponent.ACTIONS.TABLE) {
-      const tableModal = await this.modalCtrl.create({component: BrewTableComponent});
-      await tableModal.present();
-    } else if (data.role === BrewPopoverComponent.ACTIONS.RESET_FILTER) {
-      this.__resetFilter();
-    }
-  }
-
   public async brewAction(action: BREW_ACTION, brew: Brew): Promise<void> {
     switch (action) {
-      case BREW_ACTION.POST:
-        this.postBrew(brew);
-        break;
       case BREW_ACTION.REPEAT:
         this.repeatBrew(brew);
         break;
@@ -150,11 +126,12 @@ export class BrewPage implements OnInit {
     this.loadBrews();
   }
 
-  public ionViewDidEnter(): void {
+  public ionViewWillEnter(): void {
     const settings = this.uiSettingsStorage.getSettings();
     this.archivedBrewsFilter = settings.brew_filter.ARCHIVED;
     this.openBrewsFilter = settings.brew_filter.OPEN;
     this.loadBrews();
+
     // If we don't have beans, we cant do a brew from now on, because of roasting degree and the age of beans.
   }
 
@@ -192,16 +169,7 @@ export class BrewPage implements OnInit {
 
   }
 
-  public async postBrew(_brew: Brew) {
-    const modal = await this.modalCtrl.create({component: BrewTextComponent, componentProps: {brew: _brew}});
-    await modal.present();
-    await modal.onWillDismiss();
-    this.loadBrews();
-  }
 
-  private __resetFilter(): void {
-    this.loadBrews();
-  }
 
   public loadBrews(): void {
     this.__initializeBrews();
@@ -416,11 +384,26 @@ export class BrewPage implements OnInit {
 // sort latest to top.
     const brewsCopy: Array<Brew> = [...this.brews];
     let brewsFilters: Array<Brew>;
-    brewsFilters = brewsCopy.filter((e) => e.getBean().finished === !(_type === 'open'));
+
+    const isOpen: boolean = (_type === 'open');
+    if (isOpen) {
+      brewsFilters = brewsCopy.filter((e) =>
+        e.getBean().finished === !isOpen &&
+        e.getMill().finished === !isOpen &&
+        e.getPreparation().finished === !isOpen
+      );
+    } else {
+      brewsFilters = brewsCopy.filter((e) =>
+        e.getBean().finished === !isOpen ||
+        e.getMill().finished === !isOpen ||
+        e.getPreparation().finished === !isOpen
+      );
+    }
+
 
 
     let filter: IBrewPageFilter;
-    if (_type === 'open') {
+    if (isOpen) {
       filter = this.openBrewsFilter;
     } else {
       filter = this.archivedBrewsFilter;

@@ -42,6 +42,11 @@ export class Settings implements ISettings {
 
   public show_archived_beans: boolean;
   public show_archived_brews: boolean;
+  public show_archived_mills: boolean;
+  public show_archived_preparations: boolean;
+
+  public welcome_page_showed: boolean;
+
   public brew_filter: {
     OPEN: IBrewPageFilter,
     ARCHIVED: IBrewPageFilter
@@ -80,15 +85,18 @@ export class Settings implements ISettings {
 
     this.show_archived_beans = true;
     this.show_archived_brews = true;
+    this.show_archived_mills = true;
+    this.show_archived_preparations = true;
 
     this.brew_filter = {
       OPEN: {} as IBrewPageFilter,
       ARCHIVED: {} as IBrewPageFilter
     };
+
     this.brew_filter.OPEN = {bean: [], method_of_preparation: [], mill: []} as IBrewPageFilter;
     this.brew_filter.ARCHIVED = {bean: [], method_of_preparation: [], mill: []} as IBrewPageFilter;
 
-
+    this.welcome_page_showed = false;
   }
 
   public initializeByObject(settingsObj: ISettings): void {

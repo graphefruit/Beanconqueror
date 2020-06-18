@@ -39,10 +39,16 @@ export interface ISettings {
 
   show_archived_beans: boolean;
   show_archived_brews: boolean;
+  show_archived_mills: boolean;
+  show_archived_preparations: boolean;
+
   brew_filter: {
     OPEN: IBrewPageFilter,
     ARCHIVED: IBrewPageFilter
   };
+
+
+  welcome_page_showed: boolean;
 
   config: IConfig;
 }

@@ -55,7 +55,7 @@ export class UISettingsStorage extends StorageClass {
     });
   }
   public getSettings(): Settings {
-    return this.settings;
+    return this.uiHelper.copyData(this.settings);
   }
 
   public saveSettings(settings: ISettings): void {

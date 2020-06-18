@@ -75,7 +75,19 @@
         <ion-checkbox (ngModelChange)="saveSettings();"
                       [(ngModel)]="settings.show_archived_brews"></ion-checkbox>
       </ion-item>
-        </ion-card-content>
+      <ion-item>
+        <ion-label>{{"PAGE_SETTINGS_SHOW_ARCHIVED_PREPARATIONS" | translate}}</ion-label>
+        <ion-checkbox (ngModelChange)="saveSettings();"
+                      [(ngModel)]="settings.show_archived_preparations"></ion-checkbox>
+      </ion-item>
+      <ion-item>
+        <ion-label>{{"PAGE_SETTINGS_SHOW_ARCHIVED_MILLS" | translate}}</ion-label>
+        <ion-checkbox (ngModelChange)="saveSettings();"
+                      [(ngModel)]="settings.show_archived_mills"></ion-checkbox>
+      </ion-item>
+
+
+    </ion-card-content>
       </ion-card>
 
 

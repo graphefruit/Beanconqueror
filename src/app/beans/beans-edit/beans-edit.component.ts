@@ -33,7 +33,6 @@ export class BeansEditComponent implements OnInit {
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent('BEAN', 'EDIT');
-    //  this.bean = this.navParams.get('BEAN');
     this.data.initializeByObject(this.bean);
   }
   public editBean(): void {

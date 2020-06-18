@@ -9,7 +9,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <div *ngIf="data?.attachments && data.attachments.length > 0">
+  <ion-card *ngIf="data?.attachments && data.attachments.length > 0">
     <ion-slides #photoSlides pager="true" zoom="true">
       <ion-slide *ngFor="let attachment of data.attachments;let i = index">
         <div class="swiper-zoom-container">
@@ -17,7 +17,5 @@
         </div>
       </ion-slide>
     </ion-slides>
-  </div>
-
-
+  </ion-card>
 </ion-content>

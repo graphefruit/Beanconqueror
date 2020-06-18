@@ -14,6 +14,7 @@
                 [interfaceOptions]="customSelectSheetOptions"
                 multiple="true">
       <ion-select-option *ngFor="let method of method_of_preparations" value="{{method.config.uuid}}">{{method.name}}
+        &nbsp;{{method.finished ? '(' + ('ARCHIVED' | translate) + ')' : ''}}
       </ion-select-option>
     </ion-select>
   </ion-item>
@@ -22,14 +23,16 @@
     <ion-select [(ngModel)]="filter.bean"
                 [interfaceOptions]="customSelectSheetOptions" multiple="true">
       <ion-select-option *ngFor="let bean of beans"
-                         value="{{bean.config.uuid}}">{{bean.name}}&nbsp;{{bean.finished ? '(Archiv)' : ''}}</ion-select-option>
+                         value="{{bean.config.uuid}}">{{bean.name}}
+        &nbsp;{{bean.finished ? '(' + ('ARCHIVED' | translate) + ')' : ''}}</ion-select-option>
     </ion-select>
   </ion-item>
   <ion-item *ngIf="uiBrewHelper.canBrew() &&  settings.mill === true">
     <ion-label position="stacked">{{"BREW_DATA_MILL" | translate }}</ion-label>
     <ion-select [(ngModel)]="filter.mill"
                 [interfaceOptions]="customSelectSheetOptions" multiple="true">
-      <ion-select-option *ngFor="let mill of mills" value="{{mill.config.uuid}}">{{mill.name}}</ion-select-option>
+      <ion-select-option *ngFor="let mill of mills" value="{{mill.config.uuid}}">{{mill.name}}
+        &nbsp;{{mill.finished ? '(' + ('ARCHIVED' | translate) + ')' : ''}}</ion-select-option>
     </ion-select>
   </ion-item>
 </ion-content>

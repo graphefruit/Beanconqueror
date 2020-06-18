@@ -84,7 +84,7 @@ export class SortParameterComponent implements OnInit {
         break;
     }
 
-    for (const key in this.settings.brew_order) {
+    for (const key in this.settings.brew_order[_type]) {
       if (this.settings.brew_order[_type].hasOwnProperty(key)) {
         initializeOrder.push({
           number: this.settings.brew_order[_type][key],

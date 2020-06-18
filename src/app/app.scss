@@ -47,7 +47,6 @@ ion-icon {
 ion-card.small-card {
 
   border-radius: 6px 6px 6px 6px;
-  box-shadow: 0px 3px 6px #00000029;
   background: #FFFFFF 0% 0% no-repeat padding-box;
   border: none;
   padding: 0px;
@@ -57,7 +56,7 @@ ion-card.small-card {
     padding-bottom: 16px;
     padding-left: 8px;
     padding-right: 8px;
-    padding-top: 0px;
+    padding-top: 16px;
   }
 }
 
@@ -334,6 +333,14 @@ ion-split-pane {
       }
     }
 
+    ion-footer {
+      ion-item {
+        text-align: center;
+        --background: F0F0F0 !important;
+        font-size: 12px;
+      }
+    }
+
   }
 
 
@@ -390,6 +397,7 @@ ion-menu::content.menu-inner {
   ion-card {
     background-color: #FFFFFF;
     border-radius: 6px 6px 6px 6px;
+    box-shadow: none;
   }
 
   ion-item {
@@ -483,6 +491,75 @@ ion-menu::content.menu-inner {
     transform: rotate(180deg);
   }
 
+  span.swiper-pagination-bullet.swiper-pagination-bullet-active {
+    width: 15px;
+    border-radius: 6px;
+  }
+
+  .swiper-pagination.swiper-pagination-bullets {
+    top: 10px;
+    bottom: inherit;
+  }
+
+  ion-slide {
+    margin-top: 30px;
+  }
+
+  ion-slides {
+    --bullet-background: #282013;
+    --bullet-background-active: #AE9F87;
+  }
+
+  @media (min-width: 768px) {
+    ion-content {
+      --padding-start: 10%;
+      --padding-end: 10%;
+    }
+    ion-footer {
+      padding-left: 10%;
+      padding-right: 10%;
+    }
+    ion-modal {
+
+      ion-content {
+        --padding-start: 10%;
+        --padding-end: 10%;
+      }
+
+      ion-footer {
+        padding-left: 10%;
+        padding-right: 10%;
+      }
+    }
+    ion-modal.half-bottom-modal {
+      .ion-page {
+        margin-right: 10%;
+        margin-left: 10%;
+      }
+
+      ion-content {
+        --padding-start: 0%;
+        --padding-end: 0%;
+      }
+    }
+  }
+
+  .ion-title {
+    font-family: "Baloo";
+    font-size: 24px;
+    letter-spacing: -1.05px;
+    color: black;
+    line-height: 24px;
+    padding-bottom: var(--ion-padding, 16px);
+
+  }
+
+  ion-toast {
+    --background: #474747;
+    font-family: Baloo;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+  }
 }
 
 .color-white {

@@ -9,14 +9,14 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <div *ngIf="settings.brew_view == BREW_VIEW_ENUM.SINGLE_PAGE" class="ion-margin-horizontal popover"
-       style="display:flex; flex-direction: column;">
+  <ion-card *ngIf="settings.brew_view == BREW_VIEW_ENUM.SINGLE_PAGE" class="ion-margin-horizontal popover"
+            style="display:flex; flex-direction: column;">
 
     <div *ngIf="showSectionBeforeBrew()" style="display:flex;flex-direction: column;">
 
-      <ion-list-header>
-        {{"BREW_HEADER_BEFORE_BREW" | translate }}
-      </ion-list-header>
+      <ion-item lines="none">
+        <span class="ion-title ion-padding-top">{{"BREW_HEADER_BEFORE_BREW" | translate }}</span>
+      </ion-item>
       <ion-item *ngIf="settings.grind_size === true" [style.order]="settings.brew_order.before.grind_size">
       <ion-label position="stacked">{{"BREW_DATA_GRIND_SIZE" | translate}}</ion-label>
       <ion-input type="text" [(ngModel)]="data.grind_size"></ion-input>
@@ -73,10 +73,9 @@
 
 
     <div *ngIf="showSectionWhileBrew()" style="display:flex;flex-direction: column;">
-      <ion-list-header>
-        {{"BREW_HEADER_WHILE_BREW" | translate }}
-      </ion-list-header>
-
+      <ion-item lines="none">
+        <span class="ion-title ion-padding-top">{{"BREW_HEADER_WHILE_BREW" | translate }}</span>
+      </ion-item>
       <ion-item *ngIf="settings.pressure_profile === true" [style.order]="settings.brew_order.while.pressure_profile">
         <ion-label position="stacked">{{"BREW_DATA_PRESSURE_PROFILE" | translate}}</ion-label>
         <ion-input [(ngModel)]="data.pressure_profile" type="text"></ion-input>
@@ -122,9 +121,9 @@
     </div>
 
     <div *ngIf="showSectionAfterBrew()" style="display:flex;flex-direction: column;">
-      <ion-list-header>
-        {{"BREW_HEADER_AFTER_BREW" | translate }}
-      </ion-list-header>
+      <ion-item lines="none">
+        <span class="ion-title ion-padding-top">{{"BREW_HEADER_AFTER_BREW" | translate }}</span>
+      </ion-item>
       <ion-row *ngIf="settings.brew_quantity === true" [style.order]="settings.brew_order.after.brew_quantity">
         <ion-col class="ion-no-padding" col-8 col-sm-10>
           <ion-item>
@@ -192,9 +191,9 @@
       </div>
     </div>
 
-  </div>
+  </ion-card>
 </ion-content>
-<ion-footer>
+<ion-footer class="ion-no-border">
   <ion-row>
     <ion-col>
       <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline">{{"CANCEL" | translate}}</ion-button>
