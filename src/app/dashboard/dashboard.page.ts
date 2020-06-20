@@ -5,6 +5,7 @@ import {ModalController} from '@ionic/angular';
 import {Brew} from '../../classes/brew/brew';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {UIBrewHelper} from '../../services/uiBrewHelper';
+import {BrewDetailComponent} from '../brew/brew-detail/brew-detail.component';
 
 @Component({
   selector: 'dashboard',
@@ -58,5 +59,11 @@ export class DashboardPage implements OnInit {
       return 0;
     });
     return sortedBrews;
+  }
+
+  public async openBrew(_brew: Brew) {
+    const modal = await this.modalCtrl.create({component: BrewDetailComponent, componentProps: {brew: _brew}});
+    await modal.present();
+    await modal.onWillDismiss();
   }
 }

@@ -10,6 +10,7 @@ import {PreparationAddComponent} from './preparation-add/preparation-add.compone
 import {PREPARATION_ACTION} from '../../enums/preparations/preparationAction';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {Settings} from '../../classes/settings/settings';
+import {UIToast} from '../../services/uiToast';
 
 @Component({
   selector: 'preparation',
@@ -26,7 +27,8 @@ export class PreparationPage implements OnInit {
               private readonly uiPreparationStorage: UIPreparationStorage,
               private readonly uiAlert: UIAlert,
               private readonly uiBrewStorage: UIBrewStorage,
-              private readonly uiSettingsStorage: UISettingsStorage) {
+              private readonly uiSettingsStorage: UISettingsStorage,
+              private readonly uiToast: UIToast) {
     this.settings = this.uiSettingsStorage.getSettings();
 
   }
@@ -68,7 +70,12 @@ export class PreparationPage implements OnInit {
   }
 
   public async add() {
-    const modal = await this.modalCtrl.create({component: PreparationAddComponent, cssClass: 'bottom-modal', showBackdrop: true});
+    const modal = await this.modalCtrl.create({
+      component: PreparationAddComponent,
+      cssClass: 'bottom-modal',
+      showBackdrop: true,
+      id: 'preparation-add'
+    });
     await modal.present();
     await modal.onWillDismiss();
     this.loadPreparations();
@@ -85,6 +92,7 @@ export class PreparationPage implements OnInit {
     this.uiAlert.showConfirm('DELETE_PREPARATION_METHOD_QUESTION', 'SURE_QUESTION', true).then(() => {
           // Yes
           this.__deletePreparation(_preparation);
+        this.uiToast.showInfoToast('TOAST_PREPARATION_DELETED_SUCCESSFULLY');
         },
         () => {
           // No

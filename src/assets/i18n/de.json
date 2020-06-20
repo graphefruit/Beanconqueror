@@ -263,5 +263,9 @@
   "TOAST_BREW_ADDED_SUCCESSFULLY": "Brühung hinzugefügt",
   "TOAST_BEAN_ADDED_SUCCESSFULLY": "Bohne hinzugefügt",
   "TOAST_MILL_ADDED_SUCCESSFULLY": "Mühle hinzugefügt",
-  "TOAST_PREPARATION_ADDED_SUCCESSFULLY": "Brühmethode hinzugefügt"
+  "TOAST_PREPARATION_ADDED_SUCCESSFULLY": "Brühmethode hinzugefügt",
+  "TOAST_BREW_DELETED_SUCCESSFULLY": "Brühung gelöscht",
+  "TOAST_BEAN_DELETED_SUCCESSFULLY": "Bohne gelöscht",
+  "TOAST_MILL_DELETED_SUCCESSFULLY": "Mühle gelöscht",
+  "TOAST_PREPARATION_DELETED_SUCCESSFULLY": "Brühmethode gelöscht"
 }

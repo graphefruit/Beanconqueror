@@ -55,19 +55,4 @@ export class BrewInformationComponent implements OnInit {
   }
 
 
-  public getBrewDisplayClass() {
-    if (this.brew) {
-      if (this.brew.isAwesomeBrew()) {
-        return 'awesome-brew';
-      } else if (this.brew.isGoodBrew()) {
-        return 'good-brew';
-      } else if (this.brew.isNormalBrew()) {
-        return 'normal-brew';
-      } else if (this.brew.isBadBrew()) {
-        return 'bad-brew';
-      }
-    }
-
-    return 'not-rated-brew';
-  }
 }

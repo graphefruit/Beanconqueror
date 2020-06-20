@@ -53,6 +53,7 @@ export class Settings implements ISettings {
   };
 
   constructor() {
+    console.log('const called');
     this.brew_view = BREW_VIEW_ENUM.SINGLE_PAGE;
     this.startup_view = STARTUP_VIEW_ENUM.HOME_PAGE;
     this.brew_temperature_time = false;

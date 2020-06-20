@@ -354,6 +354,11 @@ ion-menu::content.menu-inner {
 
 :root {
 
+  ion-button {
+    font-family: 'Baloo';
+    text-transform: inherit;
+    height: 40px;
+  }
   .subtitle {
     margin: 0;
     font-size: 14px;
@@ -417,11 +422,11 @@ ion-menu::content.menu-inner {
     --background: rgba(0, 0, 0, 0.47);
 
     ion-toolbar {
-      --background: #FFFFFF;
+      --background: #F0F0F0F0
     }
 
     ion-content {
-      --background: #FFFFFF;
+      --background: #F0F0F0F0;
     }
 
     ion-item {
@@ -434,7 +439,7 @@ ion-menu::content.menu-inner {
     ion-footer {
       //one px minus because it looks like a border
       top: -1px;
-      background: #FFFFFF;
+      background: #F0F0F0F0;
       padding-left: 16px;
       padding-right: 16px;
       padding-bottom: 8px;
@@ -447,6 +452,25 @@ ion-menu::content.menu-inner {
 
   }
 
+  .half-bottom-modal {
+    ion-toolbar {
+      --background: #FFFFFF
+    }
+
+    ion-content {
+      --background: #FFFFFF;
+    }
+
+    ion-item {
+      --background: #FFFFFF;
+    }
+
+    ion-footer {
+      //one px minus because it looks like a border
+      background: #FFFFFF;
+
+    }
+  }
   ion-label {
     font-family: "Baloo";
     font-size: 14px;
@@ -560,6 +584,28 @@ ion-menu::content.menu-inner {
     font-weight: bold;
     letter-spacing: 0.5px;
   }
+
+  .ion-no-margin-important {
+    --margin-start: 0 !important;
+    --margin-end: 0 !important;
+    --margin-top: 0 !important;
+    --margin-bottom: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  .ion-text-bold {
+    font-weight: bold;
+  }
+
+  .button-top-absolute {
+    position: absolute;
+    top: -5px;
+  }
+
+
 }
 
 .color-white {

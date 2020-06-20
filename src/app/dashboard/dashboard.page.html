@@ -77,7 +77,7 @@
       </div>
     </div>
     <div *ngFor="let brew of brews">
-      <brew-dashboard-information [brew]="brew"></brew-dashboard-information>
+      <brew-dashboard-information (openBrew)="openBrew($event[0])" [brew]="brew"></brew-dashboard-information>
     </div>
   </ion-list>
 

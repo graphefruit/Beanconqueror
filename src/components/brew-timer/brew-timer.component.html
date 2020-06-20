@@ -27,7 +27,6 @@
   <ion-button (click)="resumeTimer()" *ngIf="!timer.runTimer && timer.hasStarted && !timer.hasFinished"
               class="big-icon-only" fill="clear" slot="end" tappable>
     <ion-icon class="ion-color-accent" name="beanconqueror-play"></ion-icon>
-
   </ion-button>
   <ion-button (click)="startTimer()" *ngIf="!timer.hasStarted" class="big-icon-only" fill="clear" slot="end" tappable>
     <ion-icon class="ion-color-accent" name="beanconqueror-play"></ion-icon>

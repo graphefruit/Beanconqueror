@@ -43,9 +43,6 @@
               <ion-item [class.active]="pages.settings.active" [routerLink]="[pages.settings.url]">
                 <ion-label>{{pages.settings.title | translate}}</ion-label>
               </ion-item>
-              <ion-item [class.active]="pages.info.active" [routerLink]="[pages.info.url]">
-                <ion-label>{{pages.info.title | translate}}</ion-label>
-              </ion-item>
              </ion-list>
 
           </ion-menu-toggle>
@@ -54,9 +51,7 @@
       <ion-footer class="ion-no-border">
         <ion-list class="no-label-margin" lines="none">
           <ion-item [class.active]="pages.info.active" [routerLink]="[pages.info.url]">
-
             <ion-label>{{pages.info.title | translate}}</ion-label>
-
           </ion-item>
         </ion-list>
       </ion-footer>

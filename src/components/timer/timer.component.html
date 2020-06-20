@@ -1,24 +1,24 @@
 <ion-item class="no-bottom-border item">
-  <ion-label stacked>{{ label }}</ion-label>
+  <ion-label position="stacked">{{ label }}</ion-label>
   <ion-input prevent-characters type="number" [(ngModel)]="timer.seconds"></ion-input>
-  <ion-button (click)="initTimer()" fill="outline" size="default" slot="end"
-              *ngIf="!timer.runTimer && (timer.hasStarted || timer.hasFinished) || timer.hasFinished">
-    <ion-icon name="refresh-outline"></ion-icon>
+  <ion-button (click)="initTimer()"
+              *ngIf="!timer.runTimer && (timer.hasStarted || timer.hasFinished) || timer.hasFinished"
+              class="big-icon-only" fill="clear" slot="end" tappable>
+    <ion-icon class="ion-color-accent" name="beanconqueror-refresh"></ion-icon>
 
   </ion-button>
-  <ion-button (click)="pauseTimer()" fill="outline" size="default" slot="end"
-              *ngIf="timer.runTimer && timer.hasStarted && !timer.hasFinished">
-    <ion-icon name="pause-outline"></ion-icon>
+  <ion-button (click)="pauseTimer()" *ngIf="timer.runTimer && timer.hasStarted && !timer.hasFinished"
+              class="big-icon-only" fill="clear" slot="end" tappable>
+    <ion-icon class="ion-color-accent" name="beanconqueror-pause"></ion-icon>
 
   </ion-button>
-  <ion-button (click)="resumeTimer()" fill="outline" size="default" slot="end"
-              *ngIf="!timer.runTimer && timer.hasStarted && !timer.hasFinished">
-    <ion-icon name="play-outline"></ion-icon>
+  <ion-button (click)="resumeTimer()" *ngIf="!timer.runTimer && timer.hasStarted && !timer.hasFinished"
+              class="big-icon-only" fill="clear" slot="end" tappable>
+    <ion-icon class="ion-color-accent" name="beanconqueror-play"></ion-icon>
+  </ion-button>
+  <ion-button (click)="startTimer()" *ngIf="!timer.hasStarted" class="big-icon-only" fill="clear" slot="end" tappable>
+    <ion-icon class="ion-color-accent" name="beanconqueror-play"></ion-icon>
+  </ion-button>
 
-  </ion-button>
-  <ion-button (click)="startTimer()" *ngIf="!timer.hasStarted" fill="outline" size="default"
-              slot="end">
-    <ion-icon name="play-outline"></ion-icon>
-  </ion-button>
 </ion-item>
 

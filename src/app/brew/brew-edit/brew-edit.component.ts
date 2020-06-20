@@ -119,7 +119,6 @@ export class BrewEditComponent implements OnInit {
   public updateBrew(): void {
     const newUnix = moment(this.customCreationDate).unix();
     if (newUnix !== this.data.config.unix_timestamp) {
-      console.log('New unix timestamp set');
       this.data.config.unix_timestamp = newUnix;
     }
 

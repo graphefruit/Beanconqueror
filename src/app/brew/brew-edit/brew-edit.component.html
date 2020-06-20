@@ -115,14 +115,14 @@
       </ion-item>
 
       <ion-row [style.order]="settings.brew_order.after.brew_quantity">
-      <ion-col class="ion-no-padding" col-8 col-sm-10>
+        <ion-col class="ion-no-padding" size="8">
       <ion-item>
         <ion-label position="stacked">{{"BREW_DATA_BREW_QUANTITY" | translate}}</ion-label>
         <ion-input [(ngModel)]="data.brew_quantity" inputmode="decimal" prevent-characters remove-empty-number
                    type="text"></ion-input>
       </ion-item>
     </ion-col>
-      <ion-col align-self-end class="ion-no-padding ion-align-self-end" col-4 col-sm-2>
+        <ion-col align-self-end class="ion-no-padding ion-align-self-end" size="4">
       <ion-item>
         <ion-select style="max-width:100%;"  [(ngModel)]="data.brew_quantity_type"  name="brewQuantityType" #brewQuantityType="ngModel">
           <ion-select-option *ngFor="let key of brewQuantityTypeEnums | keys" value="{{key}}">{{brewQuantityTypeEnums[key]}}</ion-select-option>

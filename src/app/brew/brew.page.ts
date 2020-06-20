@@ -26,6 +26,7 @@ import {BREW_ACTION} from '../../enums/brews/brewAction';
 import {Bean} from '../../classes/bean/bean';
 import {BrewFilterComponent} from './brew-filter/brew-filter.component';
 import {Settings} from '../../classes/settings/settings';
+import {UIToast} from '../../services/uiToast';
 
 @Component({
   selector: 'brew',
@@ -79,7 +80,8 @@ export class BrewPage implements OnInit {
                private readonly uiPreparationStorage: UIPreparationStorage,
                private readonly uiBeanStorage: UIBeanStorage,
                private readonly uiMillStorage: UIMillStorage,
-               private translate: TranslateService) {
+               private translate: TranslateService,
+               private readonly uiToast: UIToast) {
     this.settings = this.uiSettingsStorage.getSettings();
 
   }
@@ -162,6 +164,7 @@ export class BrewPage implements OnInit {
     this.uiAlert.showConfirm('DELETE_BREW_QUESTION', 'SURE_QUESTION', true).then(() => {
           // Yes
           this.__deleteBrew(_brew);
+        this.uiToast.showInfoToast('TOAST_BREW_DELETED_SUCCESSFULLY');
         },
         () => {
           // No
