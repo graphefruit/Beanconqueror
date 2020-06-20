@@ -23,4 +23,17 @@ export class Preparation implements IPreparation {
     Object.assign(this, preparationObj);
   }
 
+  public getIcon(_key: PREPARATION_TYPES): string {
+    switch (_key) {
+      case PREPARATION_TYPES.BIALETTI:
+        return 'beanconqueror-preparation-bialetti';
+      case PREPARATION_TYPES.V60:
+        return 'beanconqueror-preparation-v60';
+      case PREPARATION_TYPES.CHEMEX:
+        return 'beanconqueror-preparation-chemex';
+      default:
+        return '';
+    }
+  }
+
 }

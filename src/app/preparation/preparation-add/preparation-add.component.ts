@@ -18,12 +18,14 @@ export class PreparationAddComponent implements OnInit {
 
   public data: Preparation = new Preparation();
 
+  public preparation_types_enum = PREPARATION_TYPES;
+
   public preparationTypes = [
     {TYPE: PREPARATION_TYPES.CUSTOM_PREPARATION, ICON: ''},
     {TYPE: PREPARATION_TYPES.AEROPRESS, ICON: ''},
-    {TYPE: PREPARATION_TYPES.V60, ICON: ''},
-    {TYPE: PREPARATION_TYPES.CHEMEX, ICON: ''},
-    {TYPE: PREPARATION_TYPES.BIALETTI, ICON: ''},
+    {TYPE: PREPARATION_TYPES.V60, ICON: 'beanconqueror-preparation-v60'},
+    {TYPE: PREPARATION_TYPES.CHEMEX, ICON: 'beanconqueror-preparation-chemex'},
+    {TYPE: PREPARATION_TYPES.BIALETTI, ICON: 'beanconqueror-preparation-bialetti'},
   ];
 
   @ViewChild('addPreparationForm', {static: false}) public preparationForm: NgForm;

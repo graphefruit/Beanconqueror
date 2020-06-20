@@ -20,8 +20,9 @@
   </ion-item>
   <ion-item *ngIf="uiBrewHelper.canBrew() &&  settings.bean_type === true">
     <ion-label position="stacked">{{"BREW_DATA_BEAN_TYPE" | translate}}</ion-label>
-    <ion-select [(ngModel)]="filter.bean"
-                [interfaceOptions]="customSelectSheetOptions" multiple="true">
+    <ion-select [(ngModel)]="filter.bean" [interfaceOptions]="customSelectSheetOptions"
+                [multiple]="true"
+                bean-overlay>
       <ion-select-option *ngFor="let bean of beans"
                          value="{{bean.config.uuid}}">{{bean.name}}
         &nbsp;{{bean.finished ? '(' + ('ARCHIVED' | translate) + ')' : ''}}</ion-select-option>

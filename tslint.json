@@ -71,7 +71,8 @@
     "directive-class-suffix": true,
     "no-string-literal": false,
     "no-trailing-whitespace": false,
-    "one-line": false
+    "one-line": false,
+    "object-literal-shorthand": false
   }
 
 }
