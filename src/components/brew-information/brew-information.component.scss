@@ -5,18 +5,6 @@
   }
 
 
-  ion-card.good-brew {
-    border-top: 5px #009966 solid;
-  }
-
-  ion-card.bad-brew {
-    border-top: 5px #fe4164 solid;
-  }
-
-  ion-card.awesome-brew {
-    border-top: 5px #aa8736 solid;
-  }
-
   ion-row.center-col ion-col {
     display: flex;
     align-items: center
@@ -47,6 +35,11 @@
 
   .icons-black ion-icon {
     color: #282013;
+  }
+
+  .header-padding {
+    padding: 8px;
+    line-height: 12px;
   }
 }
 

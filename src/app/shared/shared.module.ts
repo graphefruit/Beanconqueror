@@ -81,6 +81,7 @@ import {RouterModule} from '@angular/router';
 import {CustomPopoverComponent} from '../../popover/custom-popover/custom-popover.component';
 import {WelcomePopoverComponent} from '../../popover/welcome-popover/welcome-popover.component';
 import {PreparationAddTypeComponent} from '../preparation/preparation-add-type/preparation-add-type.component';
+import {BeanOverlayDirective} from '../../directive/bean-overlay.directive';
 
 @NgModule({
   declarations: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, AboutComponent,
@@ -101,7 +102,7 @@ import {PreparationAddTypeComponent} from '../preparation/preparation-add-type/p
     ThanksComponent, LogComponent, LogTextComponent, PreparationPage, PreparationAddComponent,
     PreparationEditComponent, MillPage, MillEditComponent, BrewFilterComponent, MillAddComponent, BrewAddComponent,
     FormatDatePipe, KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, BeanInformationComponent, BrewDashboardInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, CuppingRadarComponent, SearchPipe, RemoveEmptyNumberDirective,
-    PreventCharacterDirective, TooltipDirective, BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent,
+    PreventCharacterDirective, BeanOverlayDirective, TooltipDirective, BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent,
     BrewPopoverActionsComponent, MillPopoverActionsComponent, BeanPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent, BrewTimerComponent],
   entryComponents: [
     SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BrewFilterComponent, PreparationInformationCardComponent, MillInformationCardComponent, AboutComponent,
@@ -134,7 +135,7 @@ import {PreparationAddTypeComponent} from '../preparation/preparation-add-type/p
     AppVersion,
     StatusBar,
     SplashScreen,
-    RemoveEmptyNumberDirective, PreventCharacterDirective, TooltipDirective, FormatDatePipe, KeysPipe, EnumToArrayPipe,
+    RemoveEmptyNumberDirective, PreventCharacterDirective, BeanOverlayDirective, TooltipDirective, FormatDatePipe, KeysPipe, EnumToArrayPipe,
     InAppBrowser,
     File,
     FileChooser,
@@ -167,7 +168,9 @@ import {PreparationAddTypeComponent} from '../preparation/preparation-add-type/p
     PreparationEditComponent, BrewFilterComponent, MillPage, MillEditComponent, MillAddComponent,
     BrewAddComponent, FormatDatePipe,
     KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, BeanInformationComponent, BrewDashboardInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, CuppingRadarComponent, SearchPipe, RemoveEmptyNumberDirective,
-    PreventCharacterDirective, TooltipDirective, BrewPage, BrewDetailComponent, BrewEditComponent,
+    PreventCharacterDirective,
+    BeanOverlayDirective,
+    TooltipDirective, BrewPage, BrewDetailComponent, BrewEditComponent,
     BrewPhotoViewComponent, BrewPopoverActionsComponent, MillPopoverActionsComponent, BeanPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent, BrewTimerComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

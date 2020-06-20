@@ -44,15 +44,16 @@ export class PreparationAddTypeComponent implements OnInit {
 
   public __addPreparation(): void {
     this.uiPreparationStorage.add(this.data);
-    this.dismiss();
+    this.dismiss(true);
     if (!this.hide_toast_message) {
       this.uiToast.showInfoToast('TOAST_PREPARATION_ADDED_SUCCESSFULLY');
     }
   }
 
-  public async dismiss() {
+  public async dismiss(_added: boolean) {
     this.modalController.dismiss({
-      dismissed: true
+      dismissed: true,
+      added: _added
     });
   }
 

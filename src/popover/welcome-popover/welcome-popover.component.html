@@ -27,7 +27,7 @@
           </ion-row>
         </div>
       </ion-slide>
-      <ion-slide *ngIf="!hasBeans()">
+      <ion-slide *ngIf="!hasBeans">
         <div>
           <ion-title>
             {{"WELCOME_PAGE_BEAN_TITLE" | translate}}
@@ -49,7 +49,7 @@
           </ion-row>
         </div>
       </ion-slide>
-      <ion-slide *ngIf="!hasPreparations()">
+      <ion-slide *ngIf="!hasPreparations">
         <div>
           <ion-title>
             {{"WELCOME_PAGE_PREPARATION_TITLE" | translate}}
@@ -71,7 +71,7 @@
           </ion-row>
         </div>
       </ion-slide>
-      <ion-slide *ngIf="!hasMills()">
+      <ion-slide *ngIf="!hasMills">
         <div>
           <ion-title>
             {{"WELCOME_PAGE_MILL_TITLE" | translate}}

@@ -41,20 +41,26 @@ export class PreparationAddComponent implements OnInit {
   }
 
   public async choosePreparation(_prepType: PREPARATION_TYPES) {
-    this.dismiss();
+
     const modal = await this.modalController.create({
       component: PreparationAddTypeComponent,
-      cssClass: 'half-bottom-modal', showBackdrop: true, componentProps: {type: _prepType, hide_toast_message: this.hide_toast_message}
+      cssClass: 'half-bottom-modal',
+      showBackdrop: true,
+      componentProps: {type: _prepType, hide_toast_message: this.hide_toast_message}
     });
     await modal.present();
-    await modal.onWillDismiss();
+    const {data} = await modal.onDidDismiss();
+    if (data.added === true) {
+      await this.dismiss();
+    }
+
   }
 
 
   public async dismiss() {
-    this.modalController.dismiss({
+    await this.modalController.dismiss({
       dismissed: true
-    });
+    }, undefined, 'preparation-add');
 
   }
 

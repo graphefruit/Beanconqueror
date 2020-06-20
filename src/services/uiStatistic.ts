@@ -92,7 +92,7 @@ export class UIStatistic {
       return `${this.translate.instant('MINUTES')}`;
     }
 
-    return '0';
+    return `${this.translate.instant('DAYS')}`;
   }
 
   public getTimePassedSinceLastBrew(): string {

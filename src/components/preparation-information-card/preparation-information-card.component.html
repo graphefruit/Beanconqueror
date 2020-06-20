@@ -3,35 +3,39 @@
     <ion-grid class="ion-no-padding">
       <ion-row class="center-col">
         <ion-col class="ion-justify-content-center brown-color" size="3">
-          <ion-label class="color-black ion-no-margin ion-text-center">{{preparation.name}}</ion-label>
+
         </ion-col>
         <ion-col class="ion-padding-start" size="8">
-          <ion-list lines="none">
+          <ion-list lines="none" style="width:100%;">
             <ion-item>
-              <ion-col size="8">
-                &nbsp;{{"PAGE_HOME_TOTAL_BREWS" | translate}}
+              <ion-col class="ion-text-bold" size="12">{{preparation.name}}</ion-col>
+            </ion-item>
+            <ion-item>
+              <ion-col size="8">{{"PAGE_HOME_TOTAL_BREWS" | translate}}
               </ion-col>
               <ion-col size="4">
                 {{getBrewsCount()}}
               </ion-col>
             </ion-item>
             <ion-item>
-              <ion-label slot="start">{{"COFFEE_GRAMS_GRINDED" | translate}}</ion-label>
-              <ion-note color="primary" slot="end"> {{getWeightCount()}}</ion-note>
+              <ion-col size="8">{{"COFFEE_GRAMS_GRINDED" | translate}}
+              </ion-col>
+              <ion-col size="4">
+                {{getBeansCount()}}
+              </ion-col>
             </ion-item>
             <ion-item>
-              <ion-col size="6">
-                &nbsp;{{"BEANS_USED" | translate}}
+              <ion-col size="8">{{"BEANS_USED" | translate}}
               </ion-col>
-              <ion-col size="6">
+              <ion-col size="4">
                 {{getBeansCount()}}
               </ion-col>
             </ion-item>
           </ion-list>
         </ion-col>
         <ion-col class="ion-justify-content-center" size="1">
-          <ion-button (click)="showPreparationActions($event)" class="preparation-action-button" color="medium"
-                      fill="clear">
+          <ion-button (click)="showPreparationActions($event)" class="button-top-absolute"
+                      color="accent" fill="clear">
             <ion-icon name="ellipsis-vertical-outline" slot="icon-only"></ion-icon>
           </ion-button>
         </ion-col>

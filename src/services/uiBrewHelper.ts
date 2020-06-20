@@ -25,8 +25,8 @@ export class UIBrewHelper {
   public canBrew(): boolean {
     const hasBeans: boolean = (this.uiBeanStorage.getAllEntries().length > 0 && this.uiBeanStorage.getAllEntries()
       .filter((bean) => !bean.finished).length > 0);
-    const hasPreparationMethods: boolean = (this.uiPreparationStorage.getAllEntries().length > 0);
-    const hasMills: boolean = (this.uiMillStorage.getAllEntries().length > 0);
+    const hasPreparationMethods: boolean = (this.uiPreparationStorage.getAllEntries().filter((e) => !e.finished).length > 0);
+    const hasMills: boolean = (this.uiMillStorage.getAllEntries().filter((e) => !e.finished).length > 0);
 
     return hasBeans && hasPreparationMethods && hasMills;
   }

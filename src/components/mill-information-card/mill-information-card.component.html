@@ -6,20 +6,23 @@
           <ion-label class="color-black ion-no-margin ion-text-center">{{mill.name}}</ion-label>
         </ion-col>
         <ion-col class="ion-padding-start" size="8">
-          <ion-list lines="none">
+          <ion-list lines="none" style="width:100%;">
             <ion-item>
-              {{getBrewsCount()}}&nbsp;{{"PAGE_HOME_TOTAL_BREWS" | translate}}
+              <ion-col size="8">{{"PAGE_HOME_TOTAL_BREWS" | translate}}</ion-col>
+              <ion-col size="4">{{getBrewsCount()}}</ion-col>
             </ion-item>
             <ion-item>
-              {{getWeightCount()}}&nbsp;{{"COFFEE_GRAMS_GRINDED" | translate}}
+              <ion-col size="8">{{"COFFEE_GRAMS_GRINDED" | translate}}</ion-col>
+              <ion-col size="4">{{getWeightCount()}}</ion-col>
             </ion-item>
             <ion-item>
-              {{getBeansCount()}}&nbsp;{{"BEANS_USED" | translate}}
+              <ion-col size="8">{{"BEANS_USED" | translate}}</ion-col>
+              <ion-col size="4">{{getBeansCount()}}</ion-col>
             </ion-item>
           </ion-list>
         </ion-col>
         <ion-col class="ion-justify-content-center" size="1">
-          <ion-button (click)="showMillActions($event)" class="mill-action-button" color="medium" fill="clear">
+          <ion-button (click)="showMillActions($event)" color="accent" fill="clear">
             <ion-icon name="ellipsis-vertical-outline" slot="icon-only"></ion-icon>
           </ion-button>
         </ion-col>

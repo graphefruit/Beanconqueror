@@ -10,6 +10,7 @@ import {BeansEditComponent} from './beans-edit/beans-edit.component';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {Settings} from '../../classes/settings/settings';
 import {BEAN_ACTION} from '../../enums/beans/beanAction';
+import {UIToast} from '../../services/uiToast';
 
 @Component({
   selector: 'beans',
@@ -29,7 +30,8 @@ export class BeansPage implements OnInit {
               private readonly uiBeanStorage: UIBeanStorage,
               private readonly uiAlert: UIAlert,
               private readonly uiBrewStorage: UIBrewStorage,
-              private readonly uiSettingsStorage: UISettingsStorage) {
+              private readonly uiSettingsStorage: UISettingsStorage,
+              private readonly uiToast: UIToast) {
     this.settings = this.uiSettingsStorage.getSettings();
 
   }
@@ -101,6 +103,7 @@ export class BeansPage implements OnInit {
         .then(() => {
               // Yes
               this.__deleteBean(_bean);
+            this.uiToast.showInfoToast('TOAST_BEAN_DELETED_SUCCESSFULLY');
             },
             () => {
               // No

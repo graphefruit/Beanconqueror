@@ -10,6 +10,7 @@ import {MillAddComponent} from './mill-add/mill-add.component';
 import {MILL_ACTION} from '../../enums/mills/millActions';
 import {Settings} from '../../classes/settings/settings';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
+import {UIToast} from '../../services/uiToast';
 
 
 @Component({
@@ -29,7 +30,8 @@ export class MillPage  implements OnInit  {
                private readonly uiMillStorage: UIMillStorage,
                private readonly uiAlert: UIAlert,
                private readonly uiBrewStorage: UIBrewStorage,
-               private readonly uiSettingsStorage: UISettingsStorage) {
+               private readonly uiSettingsStorage: UISettingsStorage,
+               private readonly uiToast: UIToast) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
 
@@ -103,6 +105,7 @@ export class MillPage  implements OnInit  {
     this.uiAlert.showConfirm('DELETE_MILL_QUESTION', 'SURE_QUESTION', true).then(() => {
           // Yes
           this.__deleteMill(_mill);
+        this.uiToast.showInfoToast('TOAST_MILL_DELETED_SUCCESSFULLY');
         },
         () => {
           // No

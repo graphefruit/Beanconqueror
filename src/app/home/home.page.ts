@@ -82,13 +82,13 @@ export class HomePage {
 
   public activePreparationsExists(): boolean {
     const preparations: Array<Preparation> = this.uiPreparationStorage.getAllEntries();
-    return preparations.length > 0;
+    return preparations.filter((e) => e.finished === false).length > 0;
   }
 
   public activeMillsExists(): boolean {
     const mills: Array<Mill> = this.uiMillStorage.getAllEntries();
 
-    return mills.length > 0;
+    return mills.filter((e) => e.finished === false).length > 0;
   }
 
 }

@@ -24,28 +24,27 @@ export abstract class StorageClass {
   }
 
   public async storageReady (): Promise<any> {
-    const promise = new Promise((resolve, reject) => {
+    const promise = new Promise(async (resolve, reject) => {
 
       if (this.isInitialized === -1) {
-        const intV: any = setInterval(() => {
+        const intV: any = setInterval(async () => {
           if (this.isInitialized === 1) {
-            this.uiLog.log(`Storage ${this.DB_PATH} initialized`);
+            this.uiLog.log(`Storage ${this.DB_PATH} ready`);
             window.clearInterval(intV);
-            resolve();
+            await resolve();
           } else if (this.isInitialized === 0) {
             window.clearInterval(intV);
-            this.uiLog.log(`Storage ${this.DB_PATH} not initialized`);
-            reject();
+            this.uiLog.log(`Storage ${this.DB_PATH} not ready`);
+            await reject();
           }
         }, 250);
       } else {
         if (this.isInitialized === 1) {
-          this.uiLog.log(`Storage ${this.DB_PATH} initialized`);
-
-          resolve();
+          this.uiLog.log(`Storage ${this.DB_PATH} - already - ready`);
+          await resolve();
         } else if (this.isInitialized === 0) {
-          this.uiLog.log(`Storage ${this.DB_PATH} not initialized`);
-          reject();
+          this.uiLog.log(`Storage ${this.DB_PATH} - already not - ready`);
+          await reject();
         }
       }
 
@@ -55,8 +54,13 @@ export abstract class StorageClass {
   }
 
   public reinitializeStorage (): void {
+    this.uiLog.log(`Storage - Reinitialize ${this.DB_PATH}`);
     this.isInitialized = -1;
     this.__initializeStorage();
+  }
+
+  protected getInitializeValue(): number {
+    return this.isInitialized;
   }
 
   public add (_entry): void {

@@ -114,8 +114,6 @@ export class BeansAddComponent implements OnInit {
       }
 
     }
-    console.log('copy them');
-    console.log(copyAttachments);
     this.data.attachments = copyAttachments;
   }
 

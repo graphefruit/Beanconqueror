@@ -145,7 +145,6 @@ export class BrewAddComponent implements OnInit {
   }
 
   public setCoffeeDripTime($event): void {
-    console.log($event);
     this.data.coffee_first_drip_time = this.getTime();
   }
 

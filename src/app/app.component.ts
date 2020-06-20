@@ -103,7 +103,7 @@ export class AppComponent implements AfterViewInit {
 
   private __appReady(): void {
     this.platform.ready()
-        .then(() => {
+      .then(async () => {
           // Okay, so the platform is ready and our plugins are available.
           // Here you can do any higher level native things you might need.
 
@@ -149,6 +149,7 @@ export class AppComponent implements AfterViewInit {
           const uiSettingsStorageReadyCallback = this.uiSettingsStorage.storageReady();
           const brewStorageReadyCallback = this.uiBrewStorage.storageReady();
           const millStorageReadyCallback = this.uiMillStorage.storageReady();
+
           Promise.all([
             beanStorageReadyCallback,
             preparationStorageReadyCallback,
@@ -218,10 +219,12 @@ export class AppComponent implements AfterViewInit {
 
   private async __setDeviceLanguage(): Promise<any> {
     return new Promise(async (resolve, reject) => {
+      const settings: Settings = this.uiSettingsStorage.getSettings();
       if (this.platform.is('cordova')) {
+
         try {
           this.uiLog.info('Its a mobile device, try to set language now');
-          const settings: Settings = this.uiSettingsStorage.getSettings();
+
           if (settings.language === null || settings.language === undefined || settings.language === '') {
             this.globalization.getPreferredLanguage().then(async (res) => {
               // Run other functions after getting device default lang
@@ -270,12 +273,13 @@ export class AppComponent implements AfterViewInit {
           const exMessage: string = JSON.stringify(ex);
           this.uiLog.error(`Exception occured when setting language ${exMessage}`);
           this._translate.setDefaultLang('en');
+          settings.language = 'en';
+          this.uiSettingsStorage.saveSettings(settings);
           await this._translate.use('en').toPromise();
           resolve();
         }
       } else {
         this.uiLog.info('Cant set language for device, because no cordova device');
-        const settings: Settings = this.uiSettingsStorage.getSettings();
         if (settings.language !== null && settings.language !== undefined && settings.language !== '') {
           this.uiLog.info(`Set language from settings: ${settings.language}`);
           this._translate.setDefaultLang(settings.language);
@@ -284,6 +288,8 @@ export class AppComponent implements AfterViewInit {
         } else {
           this.uiLog.info(`Set default language from settings, because no settings set: de `);
           this._translate.setDefaultLang('de');
+          settings.language = 'de';
+          this.uiSettingsStorage.saveSettings(settings);
           await this._translate.use('de').toPromise();
           resolve();
         }
@@ -293,7 +299,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   private async __checkStartupView() {
-    return;
+
     const settings: Settings = this.uiSettingsStorage.getSettings();
 
     if (settings.startup_view !== STARTUP_VIEW_ENUM.HOME_PAGE) {
@@ -308,6 +314,7 @@ export class AppComponent implements AfterViewInit {
         break;
       case STARTUP_VIEW_ENUM.ADD_BREW:
         await this.__trackNewBrew();
+        this.router.navigate(['/home/brews']);
         break;
     }
   }
@@ -337,7 +344,11 @@ export class AppComponent implements AfterViewInit {
 
 
   private async __checkWelcomePage() {
-    if (this.uiSettingsStorage.getSettings().welcome_page_showed !== true) {
+
+    const settings = this.uiSettingsStorage.getSettings();
+    const welcomePagedShowed: boolean = settings.welcome_page_showed;
+
+    if (!welcomePagedShowed) {
       const modal = await this.modalCtrl.create({component: WelcomePopoverComponent});
       await modal.present();
       await modal.onWillDismiss();
@@ -381,49 +392,5 @@ export class AppComponent implements AfterViewInit {
       }
     });
   }
-  /*private __registerBack(): void {
-    if (this.registerBackFunction !== undefined && this.registerBackFunction !== undefined) {
-      return;
-    }
-    this.registerBackFunction = this.platform.registerBackButtonAction(() => {
-      const activePortal = this.ionicApp._loadingPortal.getActive() ||
-          this.ionicApp._modalPortal.getActive() ||
-          this.ionicApp._toastPortal.getActive() ||
-          this.ionicApp._overlayPortal.getActive();
-
-      if (activePortal) {
-
-        activePortal.dismiss({animate: false});
-
-        // Logger.log("handled with portal");
-        return;
-      }
-
-      if (this.menuCtrl.isOpen()) {
-        this.menuCtrl.close();
-
-        // Logger.log("closing menu");
-        return;
-      }
-
-      const view = this.nav.getActive();
-      const page = view ? this.nav.getActive().instance : undefined;
-
-      if (page && !this.nav.canGoBack() && page.isHome !== undefined && page.isHome) {
-        // Minimize app, that it don't need to start again.
-        this.appMinimize.minimize();
-        // old window['plugins'].appMinimize.minimize();
-
-      } else if (page && !this.nav.canGoBack()) {
-        // isn'T realy root.
-        // this.__unregisterBack();
-        this.nav.setRoot(this.ROOT_PAGE);
-      } else if (this.nav.canGoBack() || view && view.isOverlay) {
-
-        this.nav.pop({animate: false});
-      }
-    }, 1);
-
-  }*/
 }
 

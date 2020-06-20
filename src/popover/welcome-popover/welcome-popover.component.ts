@@ -29,6 +29,10 @@ export class WelcomePopoverComponent implements OnInit {
 
   private settings: Settings;
 
+  public hasBeans: boolean = false;
+  public hasMills: boolean = false;
+  public hasPreparations: boolean = false;
+
   constructor(private readonly modalController: ModalController,
               private readonly uiAnalytics: UIAnalytics,
               private readonly uiSettingsStorage: UISettingsStorage,
@@ -36,17 +40,18 @@ export class WelcomePopoverComponent implements OnInit {
               private readonly uiMillStorage: UIMillStorage,
               private readonly uiPreparationStorage: UIPreparationStorage) {
     this.settings = this.uiSettingsStorage.getSettings();
+
+    this.hasBeans = this.uiBeanStorage.getAllEntries().length > 0;
+    this.hasMills = this.uiMillStorage.getAllEntries().length > 0;
+    this.hasPreparations = this.uiPreparationStorage.getAllEntries().length > 0;
   }
 
   public ngOnInit() {
   }
 
   public async activeGoogleAnalytics(_active: boolean) {
-    console.log(_active);
     this.settings.analytics = _active;
-    console.log(_active);
     this.uiSettingsStorage.saveSettings(this.settings);
-    console.log(_active);
     if (_active) {
       await this.uiAnalytics.enableTracking();
     } else {
@@ -56,17 +61,6 @@ export class WelcomePopoverComponent implements OnInit {
     this.welcomeSlider.slideNext();
   }
 
-  public hasBeans() {
-    return this.uiBeanStorage.getAllEntries().length > 0;
-  }
-
-  public hasMills() {
-    return this.uiMillStorage.getAllEntries().length > 0;
-  }
-
-  public hasPreparations() {
-    return this.uiPreparationStorage.getAllEntries().length > 0;
-  }
   public skip() {
     this.welcomeSlider.slideNext();
   }
