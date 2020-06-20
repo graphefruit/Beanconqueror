@@ -82,6 +82,7 @@ import {CustomPopoverComponent} from '../../popover/custom-popover/custom-popove
 import {WelcomePopoverComponent} from '../../popover/welcome-popover/welcome-popover.component';
 import {PreparationAddTypeComponent} from '../preparation/preparation-add-type/preparation-add-type.component';
 import {BeanOverlayDirective} from '../../directive/bean-overlay.directive';
+import {BeanModalSelectComponent} from '../beans/bean-modal-select/bean-modal-select.component';
 
 @NgModule({
   declarations: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, AboutComponent,
@@ -103,7 +104,7 @@ import {BeanOverlayDirective} from '../../directive/bean-overlay.directive';
     PreparationEditComponent, MillPage, MillEditComponent, BrewFilterComponent, MillAddComponent, BrewAddComponent,
     FormatDatePipe, KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, BeanInformationComponent, BrewDashboardInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, CuppingRadarComponent, SearchPipe, RemoveEmptyNumberDirective,
     PreventCharacterDirective, BeanOverlayDirective, TooltipDirective, BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent,
-    BrewPopoverActionsComponent, MillPopoverActionsComponent, BeanPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent, BrewTimerComponent],
+    BrewPopoverActionsComponent, BeanPopoverActionsComponent, MillPopoverActionsComponent, BeanModalSelectComponent, PreparationPopoverActionsComponent, TimerComponent, BrewTimerComponent],
   entryComponents: [
     SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BrewFilterComponent, PreparationInformationCardComponent, MillInformationCardComponent, AboutComponent,
     ContactComponent,
@@ -123,7 +124,7 @@ import {BeanOverlayDirective} from '../../directive/bean-overlay.directive';
     ThanksComponent, LogComponent, LogTextComponent, PreparationPage,
     PreparationAddComponent, PreparationEditComponent, MillPage, MillEditComponent,
     MillAddComponent, BrewAddComponent, BrewPage, BrewDetailComponent, BrewEditComponent,
-    BrewPhotoViewComponent, BrewPopoverActionsComponent, MillPopoverActionsComponent, BeanPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent, BrewTimerComponent],
+    BrewPhotoViewComponent, BrewPopoverActionsComponent, BeanPopoverActionsComponent, BeanModalSelectComponent, MillPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent, BrewTimerComponent],
   imports: [
     CommonModule,
     IonicModule,
@@ -171,7 +172,7 @@ import {BeanOverlayDirective} from '../../directive/bean-overlay.directive';
     PreventCharacterDirective,
     BeanOverlayDirective,
     TooltipDirective, BrewPage, BrewDetailComponent, BrewEditComponent,
-    BrewPhotoViewComponent, BrewPopoverActionsComponent, MillPopoverActionsComponent, BeanPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent, BrewTimerComponent],
+    BrewPhotoViewComponent, BrewPopoverActionsComponent, BeanPopoverActionsComponent, BeanModalSelectComponent, MillPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent, BrewTimerComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule {

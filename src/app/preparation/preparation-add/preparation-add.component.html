@@ -12,19 +12,18 @@
 
   <ion-grid>
     <ion-row>
-      <ion-col *ngFor="let prepType of preparationTypes" size="6">
-        <ion-card (click)="choosePreparation(prepType.TYPE)" class="preparation-add-card" tappable>
+      <ion-col *ngFor="let key of preparation_types_enum | keys" size="6">
+        <ion-card (click)="choosePreparation(key)" class="preparation-add-card" tappable>
           <ion-card-content>
             <div class="ion-text-center">
-              <ion-icon name="{{prepType.ICON}}" size="large" slot="icon-only"></ion-icon>
+              <ion-icon name="{{data.getIcon(key)}}" size="large" slot="icon-only"></ion-icon>
             </div>
             <div class="ion-text-center">
-              {{prepType.TYPE}}
+              {{key}}
             </div>
           </ion-card-content>
         </ion-card>
       </ion-col>
-
     </ion-row>
   </ion-grid>
 </ion-content>

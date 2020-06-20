@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 254.58 297.07">
+  <defs>
+    <style>
+      .cls-1{fill:#5c3844;}.cls-2{fill:#77455a;}.cls-3{fill:#643e4b;}.cls-4{fill:#d84e50;}.cls-5{fill:#97485c;}.cls-6{fill:#7f445c;}.cls-7{fill:#ff5957;}.cls-8{fill:#4c2f3a;}.cls-9{fill:#c1484e;}.cls-10{fill:#aa3f4a;}
+    </style>
+  </defs>
+  <g id="Ebene_2" data-name="Ebene 2">
+    <g id="Ebene_1-2" data-name="Ebene 1">
+      <rect class="cls-1" x="47.44" y="60.27" width="158.79" height="101.92" rx="25.5"/>
+      <rect class="cls-2" y="120.85" width="254.51" height="23.26" rx="3.5"/>
+      <rect class="cls-2" y="273.8" width="254.51" height="23.26" rx="3.5"/>
+      <rect class="cls-1" x="26.51" y="107.76" width="200.99" height="13.1"/>
+      <rect class="cls-3" x="99.48" y="50.29" width="55.33" height="10.72"/>
+      <rect class="cls-3" x="101.38" y="21.92" width="50.75" height="13.25" rx="3.32"
+            transform="translate(155.3 -98.21) rotate(90)"/>
+      <rect class="cls-4" x="99.27" y="24.85" width="65.63" height="13.25" rx="3.32"/>
+      <rect class="cls-4" x="150.92" y="14.36" width="44.32" height="13.25" rx="3.32"
+            transform="translate(24.1 111.55) rotate(-38.21)"/>
+      <rect class="cls-5" x="14.43" y="144.03" width="223.32" height="130.17"/>
+      <rect class="cls-6" x="173.94" y="143.57" width="63.78" height="130.56"/>
+      <rect class="cls-7" x="41.81" y="170.35" width="171.79" height="77.03"/>
+      <rect class="cls-4" x="173.76" y="172.35" width="38.05" height="73.06"/>
+      <rect class="cls-3" x="161.62" y="120.87" width="92.88" height="23.26" rx="3.5"/>
+      <rect class="cls-3" x="161.62" y="273.9" width="92.88" height="22.77" rx="3.5"/>
+      <rect class="cls-8" x="129.29" y="107.77" width="98.2" height="12.6"/>
+      <rect class="cls-8" x="134.96" y="50.29" width="19.9" height="10.77"/>
+      <rect class="cls-3" x="159.82" y="121.01" width="82.03" height="22.97"/>
+      <rect class="cls-3" x="159.82" y="274.1" width="82.03" height="22.67"/>
+      <path class="cls-8" d="M135,61s40.81,24.55,34.13,46.83h36.64s12.13-49.47-29.3-47.54Z"/>
+      <rect class="cls-9" x="182.23" width="72.35" height="23.16" rx="3.32"/>
+      <rect class="cls-10" x="238.2" width="16.37" height="23.16" rx="3.32"/>
+    </g>
+  </g>
+</svg>
