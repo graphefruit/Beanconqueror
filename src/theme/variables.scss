@@ -118,6 +118,10 @@
   --ion-color-base: var(--ion-color-inactive);
 }
 
+.ion-color-background-inactive {
+  background-color: var(--ion-color-inactive);
+}
+
 .text-color-inactive {
   color: var(--ion-color-inactive);
 }

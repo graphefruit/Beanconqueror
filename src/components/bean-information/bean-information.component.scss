@@ -1,8 +1,32 @@
 :host {
 
+
   button[justify-content-start] .button-inner {
     justify-content: flex-start;
   }
+
+  .full-sized-icon {
+    width: 80%;
+    height: 80%;
+    padding: 16px;
+  }
+
+  .color-black {
+    color: black;
+  }
+
+  ion-slide {
+    margin: 0px;
+  }
+
+  ::ng-deep img {
+
+    display: block;
+    object-fit: cover;
+  }
+
+
+
 
   ion-row.center-col ion-col {
     display: flex;
@@ -32,10 +56,4 @@
 
   }
 
-  .icons-black ion-icon {
-    color: #282013;
-  }
-
 }
-
-

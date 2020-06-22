@@ -80,7 +80,7 @@ export class WelcomePopoverComponent implements OnInit {
   public async addPreparation() {
     const modal = await this.modalController.create({
       component: PreparationAddComponent,
-      cssClass: 'bottom-modal', showBackdrop: true, componentProps: {hide_toast_message: true}
+      cssClass: 'bottom-modal', showBackdrop: true, id: 'preparation-add', componentProps: {hide_toast_message: true}
     });
     await modal.present();
     await modal.onWillDismiss();

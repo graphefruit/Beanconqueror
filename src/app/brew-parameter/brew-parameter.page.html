@@ -10,18 +10,21 @@
 </ion-header>
 <ion-content>
   <ion-card (click)="openManageParameters()" tappable>
-    <ion-card-content>
+    <ion-item class="ion-padding-horizontal" lines="none">
+      <ion-icon name="beanconqueror-manage-parameter" slot="start"></ion-icon>
       {{"NAV_MANAGE_PARAMETERS" | translate}}
-    </ion-card-content>
+    </ion-item>
   </ion-card>
   <ion-card (click)="openSortParameters()" tappable>
-    <ion-card-content>
+    <ion-item class="ion-padding-horizontal" lines="none">
+      <ion-icon name="beanconqueror-sort-parameter" slot="start"></ion-icon>
       {{"NAV_SORT_PARAMETERS" | translate}}
-    </ion-card-content>
+    </ion-item>
   </ion-card>
   <ion-card (click)="openDefaultParameters()" tappable>
-    <ion-card-content>
+    <ion-item class="ion-padding-horizontal" lines="none">
+      <ion-icon name="beanconqueror-default-parameter" slot="start"></ion-icon>
       {{"NAV_DEFAULT_PARAMETERS" | translate}}
-    </ion-card-content>
+    </ion-item>
   </ion-card>
 </ion-content>

@@ -2,7 +2,6 @@ import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {AlertController, ModalController, Platform, PopoverController} from '@ionic/angular';
 import {UIAlert} from '../../services/uiAlert';
 import {UIHelper} from '../../services/uiHelper';
-import {ISettings} from '../../interfaces/settings/iSettings';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {UIBrewHelper} from '../../services/uiBrewHelper';
@@ -40,7 +39,7 @@ export class BrewPage implements OnInit {
   public openBrewsView: Array<Brew> = [];
   public archiveBrewsView: Array<Brew> = [];
   public brew_segment: string = 'open';
-  public settings: ISettings;
+  public settings: Settings;
   public query: string = '';
   public openBrewsCount: number = 0;
   public archivedBrewsCount: number = 0;
@@ -82,8 +81,18 @@ export class BrewPage implements OnInit {
                private readonly uiMillStorage: UIMillStorage,
                private translate: TranslateService,
                private readonly uiToast: UIToast) {
-    this.settings = this.uiSettingsStorage.getSettings();
 
+
+  }
+
+
+  public ionViewWillEnter(): void {
+    this.settings = this.uiSettingsStorage.getSettings();
+    this.archivedBrewsFilter = this.settings.brew_filter.ARCHIVED;
+    this.openBrewsFilter = this.settings.brew_filter.OPEN;
+    this.loadBrews();
+
+    // If we don't have beans, we cant do a brew from now on, because of roasting degree and the age of beans.
   }
 
   public async editBrew(_brew: Brew) {
@@ -128,14 +137,6 @@ export class BrewPage implements OnInit {
     this.loadBrews();
   }
 
-  public ionViewWillEnter(): void {
-    const settings = this.uiSettingsStorage.getSettings();
-    this.archivedBrewsFilter = settings.brew_filter.ARCHIVED;
-    this.openBrewsFilter = settings.brew_filter.OPEN;
-    this.loadBrews();
-
-    // If we don't have beans, we cant do a brew from now on, because of roasting degree and the age of beans.
-  }
 
   public async add() {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {

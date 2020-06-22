@@ -18,7 +18,7 @@ export class BeanModalSelectComponent implements OnInit {
   public radioSelection: string;
 
 
-  @Input() private multiple: boolean;
+  @Input() public multiple: boolean;
   @Input() private selectedValues: Array<string>;
 
   constructor(private readonly modalController: ModalController,

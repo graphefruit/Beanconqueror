@@ -29,11 +29,11 @@ export class PreparationPage implements OnInit {
               private readonly uiBrewStorage: UIBrewStorage,
               private readonly uiSettingsStorage: UISettingsStorage,
               private readonly uiToast: UIToast) {
-    this.settings = this.uiSettingsStorage.getSettings();
 
   }
 
   public ionViewWillEnter(): void {
+    this.settings = this.uiSettingsStorage.getSettings();
     this.__initializePreparations();
   }
 

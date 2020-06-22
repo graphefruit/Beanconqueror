@@ -50,7 +50,7 @@
       </ion-content>
       <ion-footer class="ion-no-border">
         <ion-list class="no-label-margin" lines="none">
-          <ion-item [class.active]="pages.info.active" [routerLink]="[pages.info.url]">
+          <ion-item (click)="dismiss()" [class.active]="pages.info.active" [routerLink]="[pages.info.url]">
             <ion-label>{{pages.info.title | translate}}</ion-label>
           </ion-item>
         </ion-list>

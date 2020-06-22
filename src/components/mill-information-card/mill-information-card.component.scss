@@ -5,9 +5,10 @@
     justify-content: flex-start;
   }
 
-
-  ion-col.brown-color {
-    background-color: var(--beanconqueror-card-highlight);
+  .full-sized-icon {
+    width: 80%;
+    height: 80%;
+    padding: 16px;
   }
 
   .color-black {
