@@ -11,6 +11,7 @@ import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {Settings} from '../../classes/settings/settings';
 import {BEAN_ACTION} from '../../enums/beans/beanAction';
 import {UIToast} from '../../services/uiToast';
+import {BeanPhotoViewComponent} from './bean-photo-view/bean-photo-view.component';
 
 @Component({
   selector: 'beans',
@@ -32,11 +33,12 @@ export class BeansPage implements OnInit {
               private readonly uiBrewStorage: UIBrewStorage,
               private readonly uiSettingsStorage: UISettingsStorage,
               private readonly uiToast: UIToast) {
-    this.settings = this.uiSettingsStorage.getSettings();
+
 
   }
 
   public ionViewWillEnter(): void {
+    this.settings = this.uiSettingsStorage.getSettings();
     this.loadBeans();
   }
 
@@ -71,9 +73,18 @@ export class BeansPage implements OnInit {
       case BEAN_ACTION.BEANS_CONSUMED:
         this.beansConsumed(bean);
         break;
+      case BEAN_ACTION.PHOTO_GALLERY:
+        this.viewPhotos(bean);
+        break;
       default:
         break;
     }
+  }
+
+  public async viewPhotos(_bean: Bean) {
+    const modal = await this.modalCtrl.create({component: BeanPhotoViewComponent, componentProps: {bean: _bean}});
+    await modal.present();
+    await modal.onWillDismiss();
   }
 
   public beansConsumed(_bean: Bean) {

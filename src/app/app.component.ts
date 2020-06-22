@@ -301,7 +301,6 @@ export class AppComponent implements AfterViewInit {
   private async __checkStartupView() {
 
     const settings: Settings = this.uiSettingsStorage.getSettings();
-
     if (settings.startup_view !== STARTUP_VIEW_ENUM.HOME_PAGE) {
       this.uiAnalytics.trackEvent('STARTUP', 'STARTUP_VIEW_' + settings.startup_view);
     }

@@ -32,18 +32,15 @@ export class MillPage  implements OnInit  {
                private readonly uiBrewStorage: UIBrewStorage,
                private readonly uiSettingsStorage: UISettingsStorage,
                private readonly uiToast: UIToast) {
-    this.settings = this.uiSettingsStorage.getSettings();
+
   }
 
   public ngOnInit(): void {
   }
 
   public ionViewWillEnter(): void {
-
-      this.__initializeMills();
-
-
-
+    this.settings = this.uiSettingsStorage.getSettings();
+    this.__initializeMills();
   }
 
   public getActiveMills(): Array<Mill> {

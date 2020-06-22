@@ -22,7 +22,7 @@
         <ion-label>{{"PAGE_BEANS_LIST_OBTAINABLE" | translate}}
         </ion-label>
       </ion-segment-button>
-      <ion-segment-button *ngIf="settings.show_archived_beans" value="finished">
+      <ion-segment-button *ngIf="settings?.show_archived_beans" value="finished">
         <ion-label>{{"FINISHED" | translate}}
         </ion-label>
       </ion-segment-button>
@@ -43,7 +43,7 @@
 
 
     </div>
-    <div *ngIf="settings.show_archived_beans">
+    <div *ngIf="settings?.show_archived_beans">
       <div *ngSwitchCase="'finished'">
         <div *ngIf="getFinishedBeans()?.length == 0" class="ion-padding ion-text-center">
           <div>

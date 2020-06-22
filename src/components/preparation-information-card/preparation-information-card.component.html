@@ -2,8 +2,8 @@
   <ion-card-content>
     <ion-grid class="ion-no-padding">
       <ion-row class="center-col">
-        <ion-col class="ion-justify-content-center brown-color" size="3">
-
+        <ion-col class="ion-justify-content-center ion-color-background-inactive" size="3">
+          <ion-icon class="full-sized-icon" name="{{preparation.getIcon()}}"></ion-icon>
         </ion-col>
         <ion-col class="ion-padding-start" size="8">
           <ion-list lines="none" style="width:100%;">
@@ -21,7 +21,7 @@
               <ion-col size="8">{{"COFFEE_GRAMS_GRINDED" | translate}}
               </ion-col>
               <ion-col size="4">
-                {{getBeansCount()}}
+                {{getWeightCount()}}
               </ion-col>
             </ion-item>
             <ion-item>

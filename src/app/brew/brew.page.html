@@ -20,7 +20,7 @@
         <ion-label>{{"CURRENT" | translate }}
         </ion-label>
       </ion-segment-button>
-      <ion-segment-button *ngIf="settings.show_archived_brews" value="archive">
+      <ion-segment-button *ngIf="settings?.show_archived_brews" value="archive">
         <ion-label>{{"ARCHIVE" | translate }}
         </ion-label>
 
@@ -50,7 +50,7 @@
                           [brew]="brew"></brew-information>
       </ion-virtual-scroll>
     </div>
-    <div *ngIf="settings.show_archived_brews">
+    <div *ngIf="settings?.show_archived_brews">
       <div *ngSwitchCase="'archive'">
         <div *ngIf="archiveBrewsView?.length > 0 || isFilterActive()===true" class="ion-justify-content-end container">
           <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
