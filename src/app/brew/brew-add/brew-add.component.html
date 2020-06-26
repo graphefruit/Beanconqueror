@@ -49,8 +49,6 @@
       <ion-label position="stacked">{{"BREW_DATA_BEAN_TYPE" | translate}}</ion-label>
         <ion-select [(ngModel)]="data.bean" [interfaceOptions]="customSelectSheetOptions" bean-overlay>
         <ion-select-option *ngFor="let bean of beans" value="{{bean.config.uuid}}">
-          {{bean.roaster}} || {{bean.name}} / {{bean.beanAgeInDays()}} Tage
-          ({{bean.roastingDate | formatDate:["DD.MM.YYYY"]}})
         </ion-select-option>
       </ion-select>
     </ion-item>
@@ -73,18 +71,17 @@
       <ion-input [(ngModel)]="data.mill_timer" inputmode="decimal" prevent-characters remove-empty-number
                  type="text"></ion-input>
     </ion-item>
-
+      <ion-item *ngIf="settings.pressure_profile === true" [style.order]="settings.brew_order.before.pressure_profile"
+                lines="inset">
+        <ion-label position="stacked">{{"BREW_DATA_PRESSURE_PROFILE" | translate}}</ion-label>
+        <ion-input [(ngModel)]="data.pressure_profile" type="text"></ion-input>
+      </ion-item>
     </div>
 
 
     <div *ngIf="showSectionWhileBrew()" style="display:flex;flex-direction: column;">
       <ion-item lines="none">
         <span class="ion-title ion-padding-top">{{"BREW_HEADER_WHILE_BREW" | translate }}</span>
-      </ion-item>
-      <ion-item *ngIf="settings.pressure_profile === true" [style.order]="settings.brew_order.while.pressure_profile"
-                lines="inset">
-        <ion-label position="stacked">{{"BREW_DATA_PRESSURE_PROFILE" | translate}}</ion-label>
-        <ion-input [(ngModel)]="data.pressure_profile" type="text"></ion-input>
       </ion-item>
       <ion-item *ngIf="settings.brew_temperature_time === true" lines="inset"
                 [style.order]="settings.brew_order.while.brew_temperature_time">

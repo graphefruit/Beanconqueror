@@ -1,8 +1,9 @@
-import {Directive, HostListener, Input} from '@angular/core';
+import {Directive, ElementRef, HostListener, Input} from '@angular/core';
 import {NgModel} from '@angular/forms';
 import {ModalController} from '@ionic/angular';
-import {UIBeanStorage} from '../services/uiBeanStorage';
 import {BeanModalSelectComponent} from '../app/beans/bean-modal-select/bean-modal-select.component';
+import {UIBeanStorage} from '../services/uiBeanStorage';
+import {Bean} from '../classes/bean/bean';
 
 @Directive({
   selector: '[ngModel][bean-overlay]',
@@ -12,9 +13,12 @@ export class BeanOverlayDirective {
 
 
   @Input('multiple') public multipleSelect: boolean;
+
   constructor(private readonly model: NgModel,
               private readonly modalController: ModalController,
-              private readonly uiBeanStorage: UIBeanStorage) {
+              private el: ElementRef,
+              private uiBeanStorage: UIBeanStorage) {
+
 
   }
 
@@ -44,20 +48,53 @@ export class BeanOverlayDirective {
     });
     await modal.present();
     const {data} = await modal.onWillDismiss();
+    if (data !== undefined) {
+      if (this.multipleSelect) {
+        this.model.control.setValue(data.selected_values);
+        this.__generateOutputText(data.selected_values);
+      } else {
+        this.model.control.setValue(data.selected_values[0]);
+        this.__generateOutputText(data.selected_values[0]);
+      }
 
-    if (this.multipleSelect) {
-      this.model.control.setValue(data.selected_values);
-    } else {
-      this.model.control.setValue(data.selected_values[0]);
+
+      _event.target.selectedText = data.selected_text;
     }
 
 
-    _event.target.selectedText = data.selected_text;
-    // const selectedBean: Bean = this.uiBeanStorage.getByUUID('39c6c119-c493-4a6d-9723-553ef9e1785d');
+  }
 
+
+  public ngAfterViewChecked() {
+    console.log('blaa');
+
+    this.__generateOutputText(this.model.model);
 
 
   }
+
+
+  private __generateOutputText(_uuid: string | Array<string>) {
+
+    let generatedText: string = '';
+    if (typeof (_uuid) === 'string') {
+      const bean: Bean = this.uiBeanStorage.getByUUID(_uuid);
+      generatedText = this.__generateTextByBean(bean);
+    } else {
+      for (const uuid of _uuid) {
+        const bean: Bean = this.uiBeanStorage.getByUUID(uuid);
+        generatedText += this.__generateTextByBean(bean) + ', ';
+      }
+      generatedText = generatedText.substr(0, generatedText.lastIndexOf(', '));
+    }
+    this.el.nativeElement.selectedText = generatedText;
+  }
+
+  private __generateTextByBean(_bean: Bean): string {
+    const generatedText: string = `${_bean.name}`;
+    return generatedText;
+  }
+
 
 
 }

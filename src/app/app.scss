@@ -452,7 +452,7 @@ ion-menu::content.menu-inner {
 
   }
 
-  .half-bottom-modal {
+  .half-bottom-modal, .bottom-modal {
     ion-toolbar {
       --background: #FFFFFF
     }
@@ -603,6 +603,12 @@ ion-menu::content.menu-inner {
   .button-top-absolute {
     position: absolute;
     top: -5px;
+  }
+
+  @media (max-width: 320px) {
+    .button-top-absolute {
+      left: -20px;
+    }
   }
 
 

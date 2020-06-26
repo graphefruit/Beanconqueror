@@ -47,13 +47,11 @@
       <ion-label>{{"BREW_DATA_MILL_TIMER" | translate}}</ion-label>
       <ion-checkbox (ngModelChange)="settingsChanged($event)" [(ngModel)]="settings.mill_timer"></ion-checkbox>
     </ion-item>
-
-
-    <ion-title class="ion-padding-top">{{"SORT_PARAMETERS_MEANWHILE" | translate  }}</ion-title>
     <ion-item>
       <ion-label>{{"BREW_DATA_PRESSURE_PROFILE" | translate}}</ion-label>
       <ion-checkbox (ngModelChange)="settingsChanged($event)" [(ngModel)]="settings.pressure_profile"></ion-checkbox>
     </ion-item>
+    <ion-title class="ion-padding-top">{{"SORT_PARAMETERS_MEANWHILE" | translate  }}</ion-title>
     <ion-item>
       <ion-label>{{"BREW_DATA_TEMPERATURE_TIME" | translate}} / {{"BREW_DATA_SURF_TIME" | translate}}</ion-label>
       <ion-checkbox (ngModelChange)="settingsChanged($event)"

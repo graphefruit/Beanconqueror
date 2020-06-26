@@ -29,7 +29,7 @@
   </div>
   <div [ngSwitch]="brew_segment">
     <div *ngSwitchCase="'open'">
-      <div *ngIf="openBrewsView?.length > 0" class="ion-justify-content-end container">
+      <div *ngIf="openBrewsView?.length > 0 || isFilterActive() === true" class="ion-justify-content-end container">
         <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
           <ion-icon [class.active]="isFilterActive()" class="custom-filter black" slot="icon-only"></ion-icon>
         </ion-button>
