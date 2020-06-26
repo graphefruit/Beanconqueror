@@ -22,6 +22,7 @@ export class AsyncImageComponent implements OnInit, OnChanges {
   }
 
   private async __checkImageChangs(): Promise<void> {
+
     if (this.filePath === undefined || this.filePath === null || this.filePath === '') {
       this.img = '';
     } else {

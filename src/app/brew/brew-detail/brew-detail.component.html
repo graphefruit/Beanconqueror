@@ -77,18 +77,19 @@
         <h3>{{data.mill_timer}}</h3>
       </ion-label>
     </ion-item>
+      <ion-item *ngIf="settings.pressure_profile === true" [style.order]="settings.brew_order.before.pressure_profile">
+        <ion-label>
+          <h2>{{"BREW_DATA_PRESSURE_PROFILE" | translate}}:</h2>
+          <h3>{{data.pressure_profile}}</h3>
+        </ion-label>
+      </ion-item>
     </div>
     <div style="display:flex;flex-direction: column;">
 
       <ion-item lines="none">
         <span class="ion-title ion-padding-top">{{"BREW_HEADER_WHILE_BREW" | translate }}</span>
       </ion-item>
-      <ion-item *ngIf="settings.pressure_profile === true" [style.order]="settings.brew_order.while.pressure_profile">
-      <ion-label>
-        <h2>{{"BREW_DATA_PRESSURE_PROFILE" | translate}}:</h2>
-        <h3>{{data.pressure_profile}}</h3>
-      </ion-label>
-    </ion-item>
+
       <ion-item *ngIf="settings.brew_temperature_time === true"
                 [style.order]="settings.brew_order.while.brew_temperature_time">
       <ion-label>

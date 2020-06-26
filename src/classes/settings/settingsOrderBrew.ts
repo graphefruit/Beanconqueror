@@ -13,10 +13,10 @@ export class BrewOrder implements IBrewOrder {
     mill: number;
     mill_speed: number;
     mill_timer: number;
+    pressure_profile: number;
   };
 
   public while: {
-    pressure_profile: number;
     brew_temperature_time: number;
     brew_time: number;
     coffee_blooming_time: number;
@@ -46,14 +46,14 @@ export class BrewOrder implements IBrewOrder {
       mill: 6,
       mill_speed: 7,
       mill_timer: 8,
+      pressure_profile: 9,
     };
 
     this.while = {
-      pressure_profile: 1,
-      brew_temperature_time: 2,
-      brew_time: 3,
-      coffee_blooming_time: 4,
-      coffee_first_drip_time: 5,
+      brew_temperature_time: 1,
+      brew_time: 2,
+      coffee_blooming_time: 3,
+      coffee_first_drip_time: 4,
     };
 
     this.after = {

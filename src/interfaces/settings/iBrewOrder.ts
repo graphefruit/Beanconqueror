@@ -11,10 +11,10 @@ export interface IBrewOrder {
     mill: number;
     mill_speed: number;
     mill_timer: number;
+    pressure_profile: number;
   };
 
   while: {
-    pressure_profile: number;
     brew_temperature_time: number;
     brew_time: number;
     coffee_blooming_time: number;

@@ -71,16 +71,16 @@
                    type="text"></ion-input>
       </ion-item>
 
+      <ion-item [style.order]="settings.brew_order.before.pressure_profile">
+        <ion-label position="stacked">{{"BREW_DATA_PRESSURE_PROFILE" | translate}}</ion-label>
+        <ion-input [(ngModel)]="data.pressure_profile" type="text"></ion-input>
+      </ion-item>
     </div>
     <div style="display:flex;flex-direction: column;">
       <ion-item lines="none">
         <span class="ion-title ion-padding-top">{{"BREW_HEADER_WHILE_BREW" | translate }}</span>
       </ion-item>
 
-      <ion-item [style.order]="settings.brew_order.while.pressure_profile">
-        <ion-label position="stacked">{{"BREW_DATA_PRESSURE_PROFILE" | translate}}</ion-label>
-        <ion-input [(ngModel)]="data.pressure_profile" type="text"></ion-input>
-      </ion-item>
       <ion-item [style.order]="settings.brew_order.while.brew_temperature_time">
         <ion-label position="stacked">{{'BREW_DATA_TEMPERATURE_TIME' | translate}}
           / {{'BREW_DATA_SURF_TIME' | translate}}</ion-label>

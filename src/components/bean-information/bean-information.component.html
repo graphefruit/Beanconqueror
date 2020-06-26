@@ -61,23 +61,29 @@
 <ion-card class="long-card">
   <ion-card-content>
     <ion-grid class="ion-no-padding">
-      <ion-row class="center-col">
-        <ion-col class="ion-justify-content-center ion-color-background-inactive" size="3">
-          <ion-icon *ngIf="bean.attachments.length === 0" class="full-sized-icon"
-                    name="beanconqueror-bean-package"></ion-icon>
+      <ion-row>
+        <ion-col class="ion-color-background-inactive" size="3">
+          <div *ngIf="bean.attachments.length === 0" style="margin:0 auto;">
+            <ion-icon class="full-sized-icon"
+                      name="beanconqueror-bean-package"></ion-icon>
+          </div>
 
-          <div (click)="viewPhotos()" *ngIf="bean?.attachments && bean.attachments.length > 0" tappable>
+          <div (click)="viewPhotos()" *ngIf="bean?.attachments && bean.attachments.length > 0"
+               class="small-width-height-50 normal-width-height-100" style="margin:0 auto;" tappable>
             <async-image [filePath]="bean.attachments[0]" class="bean-slider"></async-image>
           </div>
         </ion-col>
-        <ion-col class="ion-padding-start" size="8">
+        <ion-col class="ion-padding-start" size="7">
           <ion-list lines="none" style="width:100%;">
             <ion-item>
               <ion-col class="ion-text-bold" size="12">{{bean?.name}}</ion-col>
             </ion-item>
-            <ion-item>
-              <ion-col *ngIf="bean?.weight && settings.grind_weight" class="ion-text-bold"
-                       size="12">{{getUsedWeightCount()}}g von {{bean?.weight}}g aufgebraucht
+            <ion-item *ngIf="bean?.weight && settings.grind_weight">
+              <ion-col class="ion-text-bold"
+                       size="12">{{"BEAN_WEIGHT_ALREADY_USED" | translate: {
+                gramUsed: getUsedWeightCount(),
+                gramTotal: bean?.weight
+              } }}
               </ion-col>
             </ion-item>
             <ion-item *ngIf="bean.roast !== getRoastEnum(roast_enum.UNKNOWN)">

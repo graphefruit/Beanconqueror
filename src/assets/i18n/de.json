@@ -267,5 +267,6 @@
   "TOAST_BREW_DELETED_SUCCESSFULLY": "Brühung gelöscht",
   "TOAST_BEAN_DELETED_SUCCESSFULLY": "Bohne gelöscht",
   "TOAST_MILL_DELETED_SUCCESSFULLY": "Mühle gelöscht",
-  "TOAST_PREPARATION_DELETED_SUCCESSFULLY": "Brühmethode gelöscht"
+  "TOAST_PREPARATION_DELETED_SUCCESSFULLY": "Brühmethode gelöscht",
+  "BEAN_WEIGHT_ALREADY_USED": "{{gramUsed}}g von {{gramTotal}}g aufgebraucht"
 }
