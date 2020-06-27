@@ -16,7 +16,7 @@
           <ion-label position="stacked">{{"PREPARATION_TYPE" | translate}}</ion-label>
           <ion-select #type="ngModel" [(ngModel)]="data.type" name="type">
             <ion-select-option *ngFor="let key of preparationTypeEnum | keys"
-                               value="{{key}}">{{preparationTypeEnum[key]}}</ion-select-option>
+                               value="{{key}}">{{'PREPARATION_TYPE_' + key | translate}}</ion-select-option>
           </ion-select>
         </ion-item>
         <ion-item>

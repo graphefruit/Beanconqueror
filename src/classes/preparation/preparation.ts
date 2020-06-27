@@ -34,8 +34,16 @@ export class Preparation implements IPreparation {
         return 'beanconqueror-preparation-v60';
       case PREPARATION_TYPES.CHEMEX:
         return 'beanconqueror-preparation-chemex';
+      case PREPARATION_TYPES.AEROPRESS:
+        return 'beanconqueror-preparation-aeropress';
+      case PREPARATION_TYPES.KALITA_WAVE:
+        return 'beanconqueror-preparation-kalita-wave';
+      case PREPARATION_TYPES.PORTAFILTER:
+        return 'beanconqueror-preparation-portafilter';
+      case PREPARATION_TYPES.FRENCH_PRESS:
+        return 'beanconqueror-preparation-frenchpress';
       default:
-        return '';
+        return 'help-outline';
     }
   }
 

@@ -268,5 +268,13 @@
   "TOAST_BEAN_DELETED_SUCCESSFULLY": "Bohne gelöscht",
   "TOAST_MILL_DELETED_SUCCESSFULLY": "Mühle gelöscht",
   "TOAST_PREPARATION_DELETED_SUCCESSFULLY": "Brühmethode gelöscht",
-  "BEAN_WEIGHT_ALREADY_USED": "{{gramUsed}}g von {{gramTotal}}g aufgebraucht"
+  "BEAN_WEIGHT_ALREADY_USED": "{{gramUsed}}g von {{gramTotal}}g aufgebraucht",
+  "PREPARATION_TYPE_CUSTOM_PREPARATION": "Eigene Zubereitungsart",
+  "PREPARATION_TYPE_AEROPRESS": "Aeropress",
+  "PREPARATION_TYPE_V60": "V60",
+  "PREPARATION_TYPE_CHEMEX": "Chemex",
+  "PREPARATION_TYPE_BIALETTI": "Bialetti",
+  "PREPARATION_TYPE_PORTAFILTER": "Siebträger",
+  "PREPARATION_TYPE_KALITA_WAVE": "Kalita Wave",
+  "PREPARATION_TYPE_FRENCH_PRESS": "French Press"
 }

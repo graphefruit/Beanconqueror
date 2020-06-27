@@ -2,7 +2,23 @@
   <ion-title class="ion-text-center ion-margin-top">{{"WELCOME_PAGE_TITLE" | translate}}</ion-title>
 </ion-header>
 <ion-content>
-  <div class="ion-text-center">
+  <div class="welcome-bubble">
+  </div>
+  <div *ngIf="slide === 1" class="ion-text-center" style="margin-top:35px;">
+    <ion-icon class="icon-64" name="beanconqueror-mill"></ion-icon>
+    <ion-icon class="icon-96" name="beanconqueror-preparation-portafilter"></ion-icon>
+  </div>
+  <div *ngIf="slide === 2" class="ion-text-center" style="margin-top:20px;">
+    <ion-icon class="icon-128" name="beanconqueror-bean-package"></ion-icon>
+  </div>
+  <div *ngIf="slide === 3" class="ion-text-center" style="margin-top:35px;">
+    <ion-icon class="icon-64" name="beanconqueror-preparation-chemex"></ion-icon>
+    <ion-icon class="icon-96" name="beanconqueror-preparation-portafilter"></ion-icon>
+  </div>
+  <div *ngIf="slide === 4" class="ion-text-center" style="margin-top:35px;">
+    <ion-icon class="icon-96" name="beanconqueror-mill"></ion-icon>
+  </div>
+  <div *ngIf="slide === 5" class="ion-text-center" style="margin-top: 10px;margin-left: 20px;">
     <ion-icon class="icon-128" name="beanconqueror-welcome"></ion-icon>
   </div>
 </ion-content>
