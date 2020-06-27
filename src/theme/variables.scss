@@ -87,6 +87,8 @@
   --beanconqueror-icon-color: #AE9F87;
   --beanconqueror-card-highlight: #9F8C6F;
 
+  --beanconqueror-background-highlight-color: #FFACAB;
+
 
   /**https://ionicframework.com/docs/theming/colors**/
   --ion-color-accent: #B88265;
@@ -116,6 +118,10 @@
 
 .ion-color-inactive {
   --ion-color-base: var(--ion-color-inactive);
+}
+
+.ion-color-background-highlight {
+  background-color: var(--beanconqueror-background-highlight-color);
 }
 
 .ion-color-background-inactive {

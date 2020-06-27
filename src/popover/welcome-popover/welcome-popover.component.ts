@@ -24,6 +24,7 @@ export class WelcomePopoverComponent implements OnInit {
     slide: 4,
   };
 
+  public slide: number = 1;
   @ViewChild('slider', {static: false}) public welcomeSlider: IonSlides;
 
 
@@ -57,15 +58,17 @@ export class WelcomePopoverComponent implements OnInit {
     } else {
       await this.uiAnalytics.disableTracking();
     }
-
+    this.slide++;
     this.welcomeSlider.slideNext();
   }
 
   public skip() {
+    this.slide++;
     this.welcomeSlider.slideNext();
   }
 
   public next() {
+    this.slide++;
     this.welcomeSlider.slideNext();
   }
 
