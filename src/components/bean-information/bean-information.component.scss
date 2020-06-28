@@ -1,25 +1,15 @@
 :host {
 
-  .small-width-height-50 {
-    width: 50px;
-    height: 50px;
 
-  }
-
-  @media (min-width: 321px) {
-    .normal-width-height-100 {
-      width: 100px;
-      height: 100px;
-    }
-  }
   button[justify-content-start] .button-inner {
     justify-content: flex-start;
   }
 
   .full-sized-icon {
-    width: 80%;
-    height: 80%;
-    padding-top: 8px;
+    width: calc(100% - 8px);
+    height: calc(100% - 16px);
+    position: absolute;
+    margin-top: 8px;
   }
 
   .color-black {
@@ -35,6 +25,7 @@
     height: 100%;
     display: block;
     object-fit: cover;
+    position: absolute;
   }
 
 
@@ -56,6 +47,13 @@
     padding: 0px;
 
     ion-item {
+      ion-col {
+        -ms-text-overflow: ellipsis;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+
       --background: none;
       --padding-start: 0px;
       --padding-end: 0px;
