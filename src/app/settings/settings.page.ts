@@ -129,21 +129,23 @@ export class SettingsPage implements OnInit {
       if (this.platform.is('android')) {
         this.fileChooser.open()
           .then((uri) => {
-            if (uri && uri.endsWith('.json')) {
               this.filePath.resolveNativePath(uri).then((resolvedFilePath) => {
-                const path = resolvedFilePath.substring(0, resolvedFilePath.lastIndexOf('/'));
-                const file = resolvedFilePath.substring(resolvedFilePath.lastIndexOf('/') + 1, resolvedFilePath.length);
-                this.__readJSONFile(path, file).then(() => {
-                  // nothing todo
-                }, (_err) => {
-                  this.uiAlert.showMessage(this.translate.instant('ERROR_ON_FILE_READING') + ' (' + JSON.stringify(_err) + ')');
-                });
+                try {
+                  const path = resolvedFilePath.substring(0, resolvedFilePath.lastIndexOf('/'));
+                  const file = resolvedFilePath.substring(resolvedFilePath.lastIndexOf('/') + 1, resolvedFilePath.length);
+                  this.__readJSONFile(path, file).then(() => {
+                    // nothing todo
+                  }, (_err) => {
+                    this.uiAlert.showMessage(this.translate.instant('ERROR_ON_FILE_READING') + ' (' + JSON.stringify(_err) + ')');
+                  });
+                } catch (ex) {
+                  this.uiAlert.showMessage(this.translate.instant('INVALID_FILE_FORMAT'));
+                }
+
               }).catch((_err) => {
                 this.uiAlert.showMessage(this.translate.instant('FILE_NOT_FOUND_INFORMATION') + ' (' + JSON.stringify(_err) + ')');
               });
-            } else {
-              this.uiAlert.showMessage(this.translate.instant('INVALID_FILE_FORMAT'));
-            }
+
           });
       } else {
         this.iosFilePicker.pickFile().then((uri) => {
