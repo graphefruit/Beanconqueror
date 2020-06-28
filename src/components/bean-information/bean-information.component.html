@@ -62,18 +62,18 @@
   <ion-card-content>
     <ion-grid class="ion-no-padding">
       <ion-row>
-        <ion-col class="ion-color-background-inactive" size="3">
+        <ion-col class="ion-color-background-highlight" size="3">
           <div *ngIf="bean.attachments.length === 0" style="margin:0 auto;">
             <ion-icon class="full-sized-icon"
                       name="beanconqueror-bean-package"></ion-icon>
           </div>
 
           <div (click)="viewPhotos()" *ngIf="bean?.attachments && bean.attachments.length > 0"
-               class="small-width-height-50 normal-width-height-100" style="margin:0 auto;" tappable>
+               style="margin:0 auto;" tappable>
             <async-image [filePath]="bean.attachments[0]" class="bean-slider"></async-image>
           </div>
         </ion-col>
-        <ion-col class="ion-padding-start" size="7">
+        <ion-col class="ion-padding-start" size="8">
           <ion-list lines="none" style="width:100%;">
             <ion-item>
               <ion-col class="ion-text-bold" size="12">{{bean?.name}}</ion-col>
@@ -93,7 +93,7 @@
                 {{bean.roast_custom}}
               </ion-col>
               <ion-col *ngIf="bean.roast !== getRoastEnum(roast_enum.CUSTOM_ROAST)" size="6">
-                {{bean.roast}}
+                {{roast_enum[bean.roast]}}
               </ion-col>
             </ion-item>
             <ion-item *ngIf="bean?.roastingDate">

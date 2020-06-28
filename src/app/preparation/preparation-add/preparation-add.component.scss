@@ -27,4 +27,9 @@
     top: 0;
   }
 
+  @media (max-width: 420px) {
+    ion-card {
+      min-height: 185px;
+    }
+  }
 }

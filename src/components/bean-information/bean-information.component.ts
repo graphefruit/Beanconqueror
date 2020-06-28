@@ -21,10 +21,7 @@ export class BeanInformationComponent implements OnInit {
 
 
   @Output() public beanAction: EventEmitter<any> = new EventEmitter();
-  public slideOpts = {
-    pager: true,
 
-  };
 
   public roast_enum = ROASTS_ENUM;
   public settings: Settings;
@@ -40,6 +37,7 @@ export class BeanInformationComponent implements OnInit {
 
 
   public ngOnInit() {
+    this.bean.attachments = [];
     if (Math.round((Math.random() * 1) + 0) === 0) {
       this.bean.attachments.push('https://blog.decaf.de/content/images/2015/06/five-roasters-coffee.jpg');
     } else {
