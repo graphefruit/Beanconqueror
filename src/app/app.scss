@@ -27,13 +27,18 @@ ion-toolbar {
   --border-style: none;
 }
 
+
 ion-header {
+  background-color: #F0F0F0;
   &.header-md:after {
     background: none;
     height: 0px;
   }
 }
 
+ion-content {
+  --background: #F0F0F0;
+}
 ion-icon {
   color: var(--beanconqueror-icon-color);
 }
@@ -329,14 +334,14 @@ ion-split-pane {
     ion-content {
       ion-item {
         text-align: center;
-        --background: F0F0F0 !important;
+        --background: #F0F0F0 !important;
       }
     }
 
     ion-footer {
       ion-item {
         text-align: center;
-        --background: F0F0F0 !important;
+        --background: #F0F0F0 !important;
         font-size: 12px;
       }
     }
@@ -422,13 +427,16 @@ ion-menu::content.menu-inner {
     --background: rgba(0, 0, 0, 0.47);
 
     ion-toolbar {
-      --background: #F0F0F0F0
+      --background: #F0F0F0
     }
 
     ion-content {
-      --background: #F0F0F0F0;
+      --background: #F0F0F0;
     }
 
+    ion-header {
+      background-color: #F0F0F0;
+    }
     ion-item {
       --background: #FFFFFF;
 

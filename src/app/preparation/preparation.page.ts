@@ -72,7 +72,6 @@ export class PreparationPage implements OnInit {
   public async add() {
     const modal = await this.modalCtrl.create({
       component: PreparationAddComponent,
-      cssClass: 'bottom-modal',
       showBackdrop: true,
       id: 'preparation-add'
     });
