@@ -1,33 +1,33 @@
 import {Component, Input, OnInit} from '@angular/core';
+
 import {ModalController} from '@ionic/angular';
-import {UIBeanStorage} from '../../../services/uiBeanStorage';
-import {Bean} from '../../../classes/bean/bean';
+import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
+import {Preparation} from '../../../classes/preparation/preparation';
+
 
 @Component({
-  selector: 'bean-modal-select',
-  templateUrl: './bean-modal-select.component.html',
-  styleUrls: ['./bean-modal-select.component.scss'],
+  selector: 'preparation-modal-select',
+  templateUrl: './preparation-modal-select.component.html',
+  styleUrls: ['./preparation-modal-select.component.scss'],
 })
-export class BeanModalSelectComponent implements OnInit {
+export class PreparationModalSelectComponent implements OnInit {
 
 
-  public objs: Array<Bean> = [];
+  public objs: Array<Preparation> = [];
   public multipleSelection = {};
   public radioSelection: string;
   @Input() public multiple: boolean;
-  @Input() public showFinished: boolean;
   @Input() private selectedValues: Array<string>;
 
   constructor(private readonly modalController: ModalController,
-              private readonly uiBeanStorage: UIBeanStorage) {
+              private readonly uiPreparationStorage: UIPreparationStorage) {
 
 
-    this.objs = this.uiBeanStorage.getAllEntries();
+    this.objs = this.uiPreparationStorage.getAllEntries();
 
   }
 
   public ionViewDidEnter(): void {
-    console.log(this.showFinished);
     if (this.multiple) {
       for (const obj of this.objs) {
 
@@ -44,14 +44,12 @@ export class BeanModalSelectComponent implements OnInit {
 
   }
 
-  public getOpenBeans(): Array<Bean> {
-
+  public getOpenPreparations(): Array<Preparation> {
     return this.objs.filter(
       (e) => !e.finished);
   }
 
-  public getFinishedBeans(): Array<Bean> {
-
+  public getArchivedPreparations(): Array<Preparation> {
     return this.objs.filter(
       (e) => e.finished);
   }
@@ -73,8 +71,8 @@ export class BeanModalSelectComponent implements OnInit {
     let selected_text: string = '';
 
     for (const val of chosenKeys) {
-      const bean = this.uiBeanStorage.getByUUID(val);
-      selected_text += bean.name + ', ';
+      const preparation: Preparation = this.uiPreparationStorage.getByUUID(val);
+      selected_text += preparation.name + ', ';
     }
 
     selected_text = selected_text.substr(0, selected_text.lastIndexOf(', '));

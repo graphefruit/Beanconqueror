@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {UIStatistic} from '../../services/uiStatistic';
 import {BrewAddComponent} from '../brew/brew-add/brew-add.component';
 import {ModalController} from '@ionic/angular';
@@ -19,14 +19,12 @@ export class DashboardPage implements OnInit {
   constructor(public uiStatistic: UIStatistic,
               private readonly modalCtrl: ModalController,
               private readonly uiBrewStorage: UIBrewStorage,
-              private readonly uiBrewHelper: UIBrewHelper) {
+              private readonly uiBrewHelper: UIBrewHelper,
+              private changeDetectorRef: ChangeDetectorRef) {
   }
 
-  public ngOnInit() {
-
-
+  public ngOnInit(): void {
   }
-
 
   public ionViewWillEnter(): void {
     this.__loadBrews();
@@ -41,10 +39,19 @@ export class DashboardPage implements OnInit {
     }
   }
 
+  public getBrews() {
+    this.brews = this.uiBrewStorage.getAllEntries();
+    this.brews = this.__sortBrews(this.brews);
+    this.brews = this.brews.slice(0, 10);
+    return this.brews;
+  }
+
   private __loadBrews() {
     this.brews = this.uiBrewStorage.getAllEntries();
     this.brews = this.__sortBrews(this.brews);
     this.brews = this.brews.slice(0, 10);
+    console.log(this.brews);
+    this.changeDetectorRef.detectChanges();
   }
 
   private __sortBrews(_sortingBrews: Array<Brew>): Array<Brew> {

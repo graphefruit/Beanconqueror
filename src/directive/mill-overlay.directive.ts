@@ -1,15 +1,15 @@
 import {Directive, ElementRef, HostListener, Input} from '@angular/core';
 import {NgModel} from '@angular/forms';
 import {ModalController} from '@ionic/angular';
-import {BeanModalSelectComponent} from '../app/beans/bean-modal-select/bean-modal-select.component';
-import {UIBeanStorage} from '../services/uiBeanStorage';
-import {Bean} from '../classes/bean/bean';
+import {UIMillStorage} from '../services/uiMillStorage';
+import {Mill} from '../classes/mill/mill';
+import {MillModalSelectComponent} from '../app/mill/mill-modal-select/mill-modal-select.component';
 
 @Directive({
-  selector: '[ngModel][bean-overlay]',
+  selector: '[ngModel][mill-overlay]',
   providers: [NgModel],
 })
-export class BeanOverlayDirective {
+export class MillOverlayDirective {
 
 
   @Input('multiple') public multipleSelect: boolean;
@@ -18,7 +18,7 @@ export class BeanOverlayDirective {
   constructor(private readonly model: NgModel,
               private readonly modalController: ModalController,
               private el: ElementRef,
-              private uiBeanStorage: UIBeanStorage) {
+              private uiMillStorage: UIMillStorage) {
 
 
   }
@@ -39,7 +39,7 @@ export class BeanOverlayDirective {
       selectedValues = [...this.model.model];
     }
     const modal = await this.modalController.create({
-      component: BeanModalSelectComponent,
+      component: MillModalSelectComponent,
       componentProps:
         {
           multiple: this.multipleSelect,
@@ -76,23 +76,22 @@ export class BeanOverlayDirective {
 
     let generatedText: string = '';
     if (typeof (_uuid) === 'string') {
-      const bean: Bean = this.uiBeanStorage.getByUUID(_uuid);
-      generatedText = this.__generateTextByBean(bean);
+      const mill: Mill = this.uiMillStorage.getByUUID(_uuid);
+      generatedText = this.__generateTextByBean(mill);
     } else {
       for (const uuid of _uuid) {
-        const bean: Bean = this.uiBeanStorage.getByUUID(uuid);
-        generatedText += this.__generateTextByBean(bean) + ', ';
+        const mill: Mill = this.uiMillStorage.getByUUID(uuid);
+        generatedText += this.__generateTextByBean(mill) + ', ';
       }
       generatedText = generatedText.substr(0, generatedText.lastIndexOf(', '));
     }
     this.el.nativeElement.selectedText = generatedText;
   }
 
-  private __generateTextByBean(_bean: Bean): string {
-    const generatedText: string = `${_bean.name}`;
+  private __generateTextByBean(_mill: Mill): string {
+    const generatedText: string = `${_mill.name}`;
     return generatedText;
   }
-
 
 
 }

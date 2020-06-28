@@ -63,12 +63,11 @@
     </ion-row>
   </ion-grid>
 
-
   <ion-list>
     <ion-list-header>
       <ion-label>{{"PAGE_HOME_LAST_BREWS" | translate}}</ion-label>
     </ion-list-header>
-    <div *ngIf="brews?.length == 0" class="ion-padding ion-text-center">
+    <div *ngIf="getBrews()?.length == 0" class="ion-padding ion-text-center">
       <div>
         <ion-icon class="custom-cup" color="inactive" size="large"></ion-icon>
       </div>
@@ -76,7 +75,7 @@
         {{"PAGE_BREWS_NO_ENTRIES" | translate}}
       </div>
     </div>
-    <div *ngFor="let brew of brews">
+    <div *ngFor="let brew of getBrews()">
       <brew-dashboard-information (openBrew)="openBrew($event[0])" [brew]="brew"></brew-dashboard-information>
     </div>
   </ion-list>
