@@ -6,11 +6,12 @@ import {Mill} from '../classes/mill/mill';
 import {MillModalSelectComponent} from '../app/mill/mill-modal-select/mill-modal-select.component';
 
 @Directive({
-  selector: '[ngModel][mill-overlay]'
+  selector: '[ngModel][mill-overlay]',
+  providers: [NgModel],
 })
 export class MillOverlayDirective {
 
-  private oldModelValue:any = undefined;
+
   @Input('multiple') public multipleSelect: boolean;
   @Input('show-finished') public showFinished: boolean = true;
 
@@ -22,7 +23,6 @@ export class MillOverlayDirective {
 
   }
 
-
   @HostListener('click', ['$event', '$event.target'])
   public async click(_event, _target) {
 
@@ -33,13 +33,10 @@ export class MillOverlayDirective {
 
 
     let selectedValues: Array<string> = [];
-    if (typeof (this.model.control.value) === 'string') {
-      selectedValues.push(this.model.control.value);
+    if (typeof (this.model.model) === 'string') {
+      selectedValues.push(this.model.model);
     } else {
-
-      if (this.model && this.model.control.value) {
-        selectedValues = [...this.model.control.value];
-      }
+      selectedValues = [...this.model.model];
     }
     const modal = await this.modalController.create({
       component: MillModalSelectComponent,
@@ -49,7 +46,6 @@ export class MillOverlayDirective {
           selectedValues: selectedValues,
           showFinished: this.showFinished
         },
-      id:'mill-modal-select',
       showBackdrop: true
     });
     await modal.present();
@@ -62,6 +58,8 @@ export class MillOverlayDirective {
         this.model.control.setValue(data.selected_values[0]);
         this.__generateOutputText(data.selected_values[0]);
       }
+
+
       _event.target.selectedText = data.selected_text;
     }
 
@@ -69,42 +67,29 @@ export class MillOverlayDirective {
   }
 
 
-  public ngDoCheck(): void {
-
-    try {
-      if (this.oldModelValue !== this.model.model){
-        this.oldModelValue = this.model.model;
-        this.__generateOutputText(this.model.model);
-      }
-    }
-    catch (ex){
-
-    }
-
-
+  public ngAfterViewChecked() {
+    this.__generateOutputText(this.model.model);
   }
+
 
   private __generateOutputText(_uuid: string | Array<string>) {
 
-    if (!_uuid) {
-      return;
-    }
     let generatedText: string = '';
     if (typeof (_uuid) === 'string') {
-      const obj: Mill = this.uiMillStorage.getByUUID(_uuid);
-      generatedText = this.__generateTextByObj(obj);
+      const mill: Mill = this.uiMillStorage.getByUUID(_uuid);
+      generatedText = this.__generateTextByBean(mill);
     } else {
       for (const uuid of _uuid) {
-        const obj: Mill = this.uiMillStorage.getByUUID(uuid);
-        generatedText += this.__generateTextByObj(obj) + ', ';
+        const mill: Mill = this.uiMillStorage.getByUUID(uuid);
+        generatedText += this.__generateTextByBean(mill) + ', ';
       }
       generatedText = generatedText.substr(0, generatedText.lastIndexOf(', '));
     }
     this.el.nativeElement.selectedText = generatedText;
   }
 
-  private __generateTextByObj(_obj: Mill): string {
-    const generatedText: string = `${_obj.name}`;
+  private __generateTextByBean(_mill: Mill): string {
+    const generatedText: string = `${_mill.name}`;
     return generatedText;
   }
 

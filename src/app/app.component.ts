@@ -41,7 +41,7 @@ export class AppComponent implements AfterViewInit {
   @ViewChild(IonRouterOutlet, {static: false}) public routerOutlet: IonRouterOutlet;
 
   public pages = {
-    home: {title: 'NAV_HOME', url: '/home/dashboard', icon: 'home-outline', active: true},
+    home: {title: 'NAV_HOME', url: '/', icon: 'home-outline', active: true},
     settings: {title: 'NAV_SETTINGS', url: '/settings', icon: 'settings-outline', active: false},
     about: {title: 'NAV_ABOUT_US', url: '/info/about', icon: 'information-circle-outline', active: false},
     contact: {title: 'NAV_CONTACT', url: '/info/contact', icon: 'mail-outline', active: false},

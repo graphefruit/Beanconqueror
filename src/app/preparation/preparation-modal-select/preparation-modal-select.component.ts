@@ -16,10 +16,9 @@ export class PreparationModalSelectComponent implements OnInit {
   public objs: Array<Preparation> = [];
   public multipleSelection = {};
   public radioSelection: string;
-  public preparation_segment: string = 'open';
   @Input() public multiple: boolean;
   @Input() private selectedValues: Array<string>;
-  @Input() public showFinished: boolean;
+
   constructor(private readonly modalController: ModalController,
               private readonly uiPreparationStorage: UIPreparationStorage) {
 
@@ -80,11 +79,11 @@ export class PreparationModalSelectComponent implements OnInit {
     this.modalController.dismiss({
       selected_values: chosenKeys,
       selected_text: selected_text,
-    },undefined,'preparation-modal-select');
+    });
   }
 
   public async dismiss(): Promise<void> {
-    this.modalController.dismiss(undefined, undefined, 'preparation-modal-select');
+    this.modalController.dismiss();
   }
 
 }

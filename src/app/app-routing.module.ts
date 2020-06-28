@@ -7,7 +7,10 @@ const routes: Routes = [
   {
     path: '',
     redirectTo: '/home/dashboard',
-    pathMatch: 'full'
+    pathMatch: 'full',
+    resolve: {
+      resolver: RouteResolver
+    },
   },
   {
     path: 'home', resolve: {

@@ -7,10 +7,11 @@ import {Bean} from '../classes/bean/bean';
 
 @Directive({
   selector: '[ngModel][bean-overlay]',
+  providers: [NgModel],
 })
 export class BeanOverlayDirective {
 
-  private oldModelValue:any = undefined;
+
   @Input('multiple') public multipleSelect: boolean;
   @Input('show-finished') public showFinished: boolean = true;
 
@@ -32,13 +33,10 @@ export class BeanOverlayDirective {
 
 
     let selectedValues: Array<string> = [];
-    if (typeof (this.model.control.value) === 'string') {
-      selectedValues.push(this.model.control.value);
+    if (typeof (this.model.model) === 'string') {
+      selectedValues.push(this.model.model);
     } else {
-
-      if (this.model && this.model.control.value) {
-        selectedValues = [...this.model.control.value];
-      }
+      selectedValues = [...this.model.model];
     }
     const modal = await this.modalController.create({
       component: BeanModalSelectComponent,
@@ -48,7 +46,6 @@ export class BeanOverlayDirective {
           selectedValues: selectedValues,
           showFinished: this.showFinished
         },
-      id:'bean-modal-select',
       showBackdrop: true
     });
     await modal.present();
@@ -61,6 +58,8 @@ export class BeanOverlayDirective {
         this.model.control.setValue(data.selected_values[0]);
         this.__generateOutputText(data.selected_values[0]);
       }
+
+
       _event.target.selectedText = data.selected_text;
     }
 
@@ -68,44 +67,32 @@ export class BeanOverlayDirective {
   }
 
 
-  public ngDoCheck(): void {
-
-    try {
-      if (this.oldModelValue !== this.model.model){
-        this.oldModelValue = this.model.model;
-        this.__generateOutputText(this.model.model);
-      }
-    }
-    catch (ex){
-
-    }
-
-
+  public ngAfterViewChecked() {
+    this.__generateOutputText(this.model.model);
   }
+
 
   private __generateOutputText(_uuid: string | Array<string>) {
 
-    if (!_uuid) {
-      return;
-    }
     let generatedText: string = '';
     if (typeof (_uuid) === 'string') {
-      const obj: Bean = this.uiBeanStorage.getByUUID(_uuid);
-      generatedText = this.__generateTextByObj(obj);
+      const bean: Bean = this.uiBeanStorage.getByUUID(_uuid);
+      generatedText = this.__generateTextByBean(bean);
     } else {
       for (const uuid of _uuid) {
-        const obj: Bean = this.uiBeanStorage.getByUUID(uuid);
-        generatedText += this.__generateTextByObj(obj) + ', ';
+        const bean: Bean = this.uiBeanStorage.getByUUID(uuid);
+        generatedText += this.__generateTextByBean(bean) + ', ';
       }
       generatedText = generatedText.substr(0, generatedText.lastIndexOf(', '));
     }
     this.el.nativeElement.selectedText = generatedText;
   }
 
-  private __generateTextByObj(_obj: Bean): string {
-    const generatedText: string = `${_obj.name}`;
+  private __generateTextByBean(_bean: Bean): string {
+    const generatedText: string = `${_bean.name}`;
     return generatedText;
   }
+
 
 
 }
