@@ -43,7 +43,7 @@ export class Preparation implements IPreparation {
       case PREPARATION_TYPES.FRENCH_PRESS:
         return 'beanconqueror-preparation-frenchpress';
       default:
-        return 'help-outline';
+        return 'beanconqueror-preparation-custom';
     }
   }
 
