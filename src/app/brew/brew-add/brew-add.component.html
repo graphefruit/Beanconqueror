@@ -47,7 +47,7 @@
     </ion-item>
       <ion-item *ngIf="settings.bean_type === true" [style.order]="settings.brew_order.before.bean_type" lines="inset">
       <ion-label position="stacked">{{"BREW_DATA_BEAN_TYPE" | translate}}</ion-label>
-        <ion-select [(ngModel)]="data.bean" [interfaceOptions]="customSelectSheetOptions" bean-overlay>
+        <ion-select [(ngModel)]="data.bean" bean-overlay show-finished="false">
         <ion-select-option *ngFor="let bean of beans" value="{{bean.config.uuid}}">
         </ion-select-option>
       </ion-select>

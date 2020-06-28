@@ -1,33 +1,30 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ModalController} from '@ionic/angular';
-import {UIBeanStorage} from '../../../services/uiBeanStorage';
-import {Bean} from '../../../classes/bean/bean';
+import {UIMillStorage} from '../../../services/uiMillStorage';
+import {Mill} from '../../../classes/mill/mill';
 
 @Component({
-  selector: 'bean-modal-select',
-  templateUrl: './bean-modal-select.component.html',
-  styleUrls: ['./bean-modal-select.component.scss'],
+  selector: 'mill-modal-select',
+  templateUrl: './mill-modal-select.component.html',
+  styleUrls: ['./mill-modal-select.component.scss'],
 })
-export class BeanModalSelectComponent implements OnInit {
+export class MillModalSelectComponent implements OnInit {
 
-
-  public objs: Array<Bean> = [];
+  public objs: Array<Mill> = [];
   public multipleSelection = {};
   public radioSelection: string;
   @Input() public multiple: boolean;
-  @Input() public showFinished: boolean;
   @Input() private selectedValues: Array<string>;
 
   constructor(private readonly modalController: ModalController,
-              private readonly uiBeanStorage: UIBeanStorage) {
+              private readonly uiMillStorage: UIMillStorage) {
 
 
-    this.objs = this.uiBeanStorage.getAllEntries();
+    this.objs = this.uiMillStorage.getAllEntries();
 
   }
 
   public ionViewDidEnter(): void {
-    console.log(this.showFinished);
     if (this.multiple) {
       for (const obj of this.objs) {
 
@@ -44,14 +41,12 @@ export class BeanModalSelectComponent implements OnInit {
 
   }
 
-  public getOpenBeans(): Array<Bean> {
-
+  public getOpenMills(): Array<Mill> {
     return this.objs.filter(
       (e) => !e.finished);
   }
 
-  public getFinishedBeans(): Array<Bean> {
-
+  public getArchivedMills(): Array<Mill> {
     return this.objs.filter(
       (e) => e.finished);
   }
@@ -73,8 +68,8 @@ export class BeanModalSelectComponent implements OnInit {
     let selected_text: string = '';
 
     for (const val of chosenKeys) {
-      const bean = this.uiBeanStorage.getByUUID(val);
-      selected_text += bean.name + ', ';
+      const mill: Mill = this.uiMillStorage.getByUUID(val);
+      selected_text += mill.name + ', ';
     }
 
     selected_text = selected_text.substr(0, selected_text.lastIndexOf(', '));

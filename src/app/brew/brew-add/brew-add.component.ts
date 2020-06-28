@@ -47,10 +47,6 @@ export class BrewAddComponent implements OnInit {
 
   @Input() private hide_toast_message: boolean;
 
-  public customSelectSheetOptions: any = {
-    cssClass: 'select-full-screen'
-  };
-
 
 
 

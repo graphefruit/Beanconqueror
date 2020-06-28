@@ -84,6 +84,10 @@ import {PreparationAddTypeComponent} from '../preparation/preparation-add-type/p
 import {BeanOverlayDirective} from '../../directive/bean-overlay.directive';
 import {BeanModalSelectComponent} from '../beans/bean-modal-select/bean-modal-select.component';
 import {BeanPhotoViewComponent} from '../beans/bean-photo-view/bean-photo-view.component';
+import {MillModalSelectComponent} from '../mill/mill-modal-select/mill-modal-select.component';
+import {PreparationModalSelectComponent} from '../preparation/preparation-modal-select/preparation-modal-select.component';
+import {MillOverlayDirective} from '../../directive/mill-overlay.directive';
+import {PreparationOverlayDirective} from '../../directive/preparation-overlay.directive';
 
 @NgModule({
   declarations: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, AboutComponent,
@@ -104,8 +108,15 @@ import {BeanPhotoViewComponent} from '../beans/bean-photo-view/bean-photo-view.c
     ThanksComponent, LogComponent, LogTextComponent, PreparationPage, PreparationAddComponent,
     PreparationEditComponent, MillPage, MillEditComponent, BrewFilterComponent, MillAddComponent, BrewAddComponent,
     FormatDatePipe, KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, BeanInformationComponent, BrewDashboardInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, CuppingRadarComponent, SearchPipe, RemoveEmptyNumberDirective,
-    PreventCharacterDirective, BeanOverlayDirective, TooltipDirective, BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent, BeanPhotoViewComponent,
-    BrewPopoverActionsComponent, BeanPopoverActionsComponent, MillPopoverActionsComponent, BeanModalSelectComponent, PreparationPopoverActionsComponent, TimerComponent, BrewTimerComponent],
+    PreventCharacterDirective,
+    BeanOverlayDirective,
+    MillOverlayDirective,
+    PreparationOverlayDirective,
+    TooltipDirective, BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent, BeanPhotoViewComponent,
+    BrewPopoverActionsComponent, BeanPopoverActionsComponent, MillPopoverActionsComponent, BeanModalSelectComponent,
+    MillModalSelectComponent,
+    PreparationModalSelectComponent,
+    PreparationPopoverActionsComponent, TimerComponent, BrewTimerComponent],
   entryComponents: [
     SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BrewFilterComponent, PreparationInformationCardComponent, MillInformationCardComponent, AboutComponent,
     ContactComponent,
@@ -125,7 +136,11 @@ import {BeanPhotoViewComponent} from '../beans/bean-photo-view/bean-photo-view.c
     ThanksComponent, LogComponent, LogTextComponent, PreparationPage,
     PreparationAddComponent, PreparationEditComponent, MillPage, MillEditComponent,
     MillAddComponent, BrewAddComponent, BrewPage, BrewDetailComponent, BrewEditComponent,
-    BrewPhotoViewComponent, BeanPhotoViewComponent, BrewPopoverActionsComponent, BeanPopoverActionsComponent, BeanModalSelectComponent, MillPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent, BrewTimerComponent],
+    BrewPhotoViewComponent, BeanPhotoViewComponent, BrewPopoverActionsComponent, BeanPopoverActionsComponent,
+    BeanModalSelectComponent,
+    MillModalSelectComponent,
+    PreparationModalSelectComponent,
+    MillPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent, BrewTimerComponent],
   imports: [
     CommonModule,
     IonicModule,
@@ -137,7 +152,11 @@ import {BeanPhotoViewComponent} from '../beans/bean-photo-view/bean-photo-view.c
     AppVersion,
     StatusBar,
     SplashScreen,
-    RemoveEmptyNumberDirective, PreventCharacterDirective, BeanOverlayDirective, TooltipDirective, FormatDatePipe, KeysPipe, EnumToArrayPipe,
+    RemoveEmptyNumberDirective, PreventCharacterDirective,
+    BeanOverlayDirective,
+    MillOverlayDirective,
+    PreparationOverlayDirective,
+    TooltipDirective, FormatDatePipe, KeysPipe, EnumToArrayPipe,
     InAppBrowser,
     File,
     FileChooser,
@@ -172,8 +191,14 @@ import {BeanPhotoViewComponent} from '../beans/bean-photo-view/bean-photo-view.c
     KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, BeanInformationComponent, BrewDashboardInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, CuppingRadarComponent, SearchPipe, RemoveEmptyNumberDirective,
     PreventCharacterDirective,
     BeanOverlayDirective,
+    MillOverlayDirective,
+    PreparationOverlayDirective,
     TooltipDirective, BrewPage, BrewDetailComponent, BrewEditComponent,
-    BrewPhotoViewComponent, BeanPhotoViewComponent, BrewPopoverActionsComponent, BeanPopoverActionsComponent, BeanModalSelectComponent, MillPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent, BrewTimerComponent],
+    BrewPhotoViewComponent, BeanPhotoViewComponent, BrewPopoverActionsComponent, BeanPopoverActionsComponent,
+    BeanModalSelectComponent,
+    MillModalSelectComponent,
+    PreparationModalSelectComponent,
+    MillPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent, BrewTimerComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule {

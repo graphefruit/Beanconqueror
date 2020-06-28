@@ -1,15 +1,15 @@
 import {Directive, ElementRef, HostListener, Input} from '@angular/core';
 import {NgModel} from '@angular/forms';
 import {ModalController} from '@ionic/angular';
-import {BeanModalSelectComponent} from '../app/beans/bean-modal-select/bean-modal-select.component';
-import {UIBeanStorage} from '../services/uiBeanStorage';
-import {Bean} from '../classes/bean/bean';
+import {UIPreparationStorage} from '../services/uiPreparationStorage';
+import {Preparation} from '../classes/preparation/preparation';
+import {PreparationModalSelectComponent} from '../app/preparation/preparation-modal-select/preparation-modal-select.component';
 
 @Directive({
-  selector: '[ngModel][bean-overlay]',
+  selector: '[ngModel][preparation-overlay]',
   providers: [NgModel],
 })
-export class BeanOverlayDirective {
+export class PreparationOverlayDirective {
 
 
   @Input('multiple') public multipleSelect: boolean;
@@ -18,7 +18,7 @@ export class BeanOverlayDirective {
   constructor(private readonly model: NgModel,
               private readonly modalController: ModalController,
               private el: ElementRef,
-              private uiBeanStorage: UIBeanStorage) {
+              private uiPreparationStorage: UIPreparationStorage) {
 
 
   }
@@ -39,7 +39,7 @@ export class BeanOverlayDirective {
       selectedValues = [...this.model.model];
     }
     const modal = await this.modalController.create({
-      component: BeanModalSelectComponent,
+      component: PreparationModalSelectComponent,
       componentProps:
         {
           multiple: this.multipleSelect,
@@ -76,23 +76,22 @@ export class BeanOverlayDirective {
 
     let generatedText: string = '';
     if (typeof (_uuid) === 'string') {
-      const bean: Bean = this.uiBeanStorage.getByUUID(_uuid);
-      generatedText = this.__generateTextByBean(bean);
+      const preparation: Preparation = this.uiPreparationStorage.getByUUID(_uuid);
+      generatedText = this.__generateTextByBean(preparation);
     } else {
       for (const uuid of _uuid) {
-        const bean: Bean = this.uiBeanStorage.getByUUID(uuid);
-        generatedText += this.__generateTextByBean(bean) + ', ';
+        const preparation: Preparation = this.uiPreparationStorage.getByUUID(uuid);
+        generatedText += this.__generateTextByBean(preparation) + ', ';
       }
       generatedText = generatedText.substr(0, generatedText.lastIndexOf(', '));
     }
     this.el.nativeElement.selectedText = generatedText;
   }
 
-  private __generateTextByBean(_bean: Bean): string {
-    const generatedText: string = `${_bean.name}`;
+  private __generateTextByBean(_preparation: Preparation): string {
+    const generatedText: string = `${_preparation.name}`;
     return generatedText;
   }
-
 
 
 }

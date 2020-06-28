@@ -124,7 +124,7 @@
   "BREW_DATA_RATING": "Bewertung",
   "BREW_DATA_CALCULATED_COFFEE_BREW_TIME": "Kaffeebezugszeit",
   "BREW_INFORMATION_BREW_RATIO": "Brührate",
-  "BREW_INFORMATION_BEAN_AGE": "Bohnenalter",
+  "BREW_INFORMATION_BEAN_AGE": "Bohnenalter (Tage)",
   "BREW_INFORMATION_BREW_QUANTITY_TYPE_NAME": "Bezugsmenge-Typ",
   "ONE_DAY": "Ein Tag",
   "DAYS": "Tage",
@@ -276,5 +276,13 @@
   "PREPARATION_TYPE_BIALETTI": "Bialetti",
   "PREPARATION_TYPE_PORTAFILTER": "Siebträger",
   "PREPARATION_TYPE_KALITA_WAVE": "Kalita Wave",
-  "PREPARATION_TYPE_FRENCH_PRESS": "French Press"
+  "PREPARATION_TYPE_FRENCH_PRESS": "French Press",
+  "CHOOSE_BEANS": "Bohnen auswählen",
+  "CHOOSE_BEAN": "Bohne auswählen",
+  "CHOOSE_PREPARATIONS": "Brühmethoden auswählen",
+  "CHOOSE_PREPARATION": "Brühmethode auswählen",
+  "CHOOSE_MILLS": "Mühlen auswählen",
+  "CHOOSE_MILL": "Mühle auswählen",
+  "MODAL_CHOOSE_BEANS_OPEN": "Aktuelle Bohnen",
+  "MODAL_CHOOSE_BEANS_FINISHED": "Fertige Bohnen"
 }
