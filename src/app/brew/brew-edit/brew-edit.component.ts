@@ -16,6 +16,7 @@ import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 import {Preparation} from '../../../classes/preparation/preparation';
 import {Mill} from '../../../classes/mill/mill';
 import {Bean} from '../../../classes/bean/bean';
+import {UIToast} from '../../../services/uiToast';
 
 @Component({
   selector: 'brew-edit',
@@ -48,7 +49,8 @@ export class BrewEditComponent implements OnInit {
                private readonly uiImage: UIImage,
                private readonly uiMillStorage: UIMillStorage,
                private readonly uiAnalytics: UIAnalytics,
-               private readonly uiSettingsStorage: UISettingsStorage) {
+               private readonly uiSettingsStorage: UISettingsStorage,
+               private readonly uiToast: UIToast) {
 
     this.settings = this.uiSettingsStorage.getSettings();
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
@@ -123,6 +125,7 @@ export class BrewEditComponent implements OnInit {
     }
 
     this.uiBrewStorage.update(this.data);
+    this.uiToast.showInfoToast('TOAST_BREW_EDITED_SUCCESSFULLY');
     this.dismiss();
   }
 

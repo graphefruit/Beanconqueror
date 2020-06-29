@@ -63,10 +63,13 @@ export abstract class StorageClass {
     return this.isInitialized;
   }
 
-  public add (_entry): void {
-    _entry.config.uuid = this.uiHelper.generateUUID();
-    _entry.config.unix_timestamp = this.uiHelper.getUnixTimestamp();
-    this.storedData.push(_entry);
+  public add(_entry) {
+    const newEntry = this.uiHelper.copyData(_entry);
+    newEntry.config.uuid = this.uiHelper.generateUUID();
+    newEntry.config.unix_timestamp = this.uiHelper.getUnixTimestamp();
+    console.log(newEntry);
+    this.storedData.push(newEntry);
+    console.log(this.storedData);
     this.__save();
   }
 
@@ -162,7 +165,7 @@ export abstract class StorageClass {
 
   }
 
-  private __save (): void {
+  private __save() {
     this.uiStorage.set(this.DB_PATH, this.storedData).then((e) => {
         this.uiLog.log('Storage - Save - Successfully');
       }, (e) => {

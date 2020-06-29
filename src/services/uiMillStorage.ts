@@ -2,7 +2,6 @@
 import {Injectable} from '@angular/core';
 /** Ionic native */
 /** Classes */
-import {Preparation} from '../classes/preparation/preparation';
 /** Services */
 import {Mill} from '../classes/mill/mill';
 import {StorageClass} from '../classes/storageClass';
@@ -60,9 +59,9 @@ export class UIMillStorage extends StorageClass {
     const entry: Array<Mill> = [];
 
     for (const mill of entries) {
-      const preparationObj: Preparation = new Preparation();
-      preparationObj.initializeByObject(mill);
-      entry.push(preparationObj);
+      const millObj: Mill = new Mill();
+      millObj.initializeByObject(mill);
+      entry.push(millObj);
 
     }
 

@@ -13,7 +13,8 @@
     <form #editMillForm="ngForm" novalidate>
       <ion-item>
         <ion-label position="stacked">{{"NAME" | translate}}*</ion-label>
-        <ion-input [(ngModel)]="data.name" name="name" type="text" #name="ngModel" spellcheck="false"
+        <ion-input #name="ngModel" [(ngModel)]="data.name" name="name"
+                   placeholder="{{'MILL.PLACE_HOLDER.NAME' | translate}}" spellcheck="false" type="text"
                    autocapitalize="sentences" required>
         </ion-input>
       </ion-item>
@@ -24,6 +25,7 @@
       <ion-item lines="none">
         <ion-label position="stacked">{{"NOTES" | translate}}</ion-label>
         <ion-textarea #note="ngModel" [(ngModel)]="data.note" autocapitalize="sentences" autocomplete="true"
+                      placeholder="{{'MILL.PLACE_HOLDER.NOTES' | translate}}"
                       autocorrect="true" name="note" rows="5" spellcheck="true"></ion-textarea>
       </ion-item>
     </form>

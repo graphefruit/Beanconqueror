@@ -8,6 +8,7 @@ import {UIImage} from '../../../services/uiImage';
 import {IBean} from '../../../interfaces/bean/iBean';
 import {Bean} from '../../../classes/bean/bean';
 import {UIAnalytics} from '../../../services/uiAnalytics';
+import {UIToast} from '../../../services/uiToast';
 
 @Component({
   selector: 'beans-edit',
@@ -27,7 +28,8 @@ export class BeansEditComponent implements OnInit {
                private readonly uiBeanStorage: UIBeanStorage,
                private readonly uiImage: UIImage,
                private readonly uiHelper: UIHelper,
-               private readonly uiAnalytics: UIAnalytics) {
+               private readonly uiAnalytics: UIAnalytics,
+               private readonly uiToast: UIToast) {
     this.data.roastingDate = new Date().toISOString();
   }
 
@@ -86,6 +88,7 @@ export class BeansEditComponent implements OnInit {
   }
   private __editBean(): void {
     this.uiBeanStorage.update(this.data);
+    this.uiToast.showInfoToast('TOAST_BEAN_EDITED_SUCCESSFULLY');
     this.dismiss();
   }
 

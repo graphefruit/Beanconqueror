@@ -1,5 +1,14 @@
 <ion-header>
-  <ion-title class="ion-text-center ion-margin-top">{{"WELCOME_PAGE_TITLE" | translate}}</ion-title>
+  <ion-title *ngIf="slide ===1" class="ion-text-center ion-margin-top">{{"WELCOME_PAGE_TITLE" | translate}}</ion-title>
+  <ion-title *ngIf="slide ===2"
+             class="ion-text-center ion-margin-top">{{"WELCOME_PAGE_BEAN_HEADLINE" | translate}}</ion-title>
+  <ion-title *ngIf="slide ===3"
+             class="ion-text-center ion-margin-top">{{"WELCOME_PAGE_PREPARATION_HEADLINE" | translate}}</ion-title>
+  <ion-title *ngIf="slide === 4"
+             class="ion-text-center ion-margin-top">{{"WELCOME_PAGE_MILL_HEADLINE" | translate}}</ion-title>
+  <ion-title *ngIf="slide === 5"
+             class="ion-text-center ion-margin-top">{{"WELCOME_PAGE_LETS_START_HEADLINE" | translate}}</ion-title>
+
 </ion-header>
 <ion-content>
   <div class="welcome-bubble">
@@ -114,10 +123,10 @@
       <ion-slide>
         <div>
           <ion-title>
-            bla bla bla
+            {{"WELCOME_PAGE_LETS_START_TITLE" | translate}}
           </ion-title>
           <div>
-            blubb blibb
+            {{"WELCOME_PAGE_LETS_START_DESCRIPTION" | translate}}
           </div>
           <ion-row>
             <ion-col size="12">

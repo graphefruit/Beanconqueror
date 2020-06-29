@@ -102,6 +102,7 @@ export class PreparationPage implements OnInit {
   public archive(_preparation: Preparation) {
     _preparation.finished = true;
     this.uiPreparationStorage.update(_preparation);
+    this.uiToast.showInfoToast('TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY');
     this.loadPreparations();
   }
 

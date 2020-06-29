@@ -15,16 +15,15 @@ export class MillModalSelectComponent implements OnInit {
   public radioSelection: string;
   @Input() public multiple: boolean;
   @Input() private selectedValues: Array<string>;
-
+  @Input() public showFinished: boolean;
   constructor(private readonly modalController: ModalController,
               private readonly uiMillStorage: UIMillStorage) {
 
 
-    this.objs = this.uiMillStorage.getAllEntries();
-
   }
 
   public ionViewDidEnter(): void {
+    this.objs = this.uiMillStorage.getAllEntries();
     if (this.multiple) {
       for (const obj of this.objs) {
 

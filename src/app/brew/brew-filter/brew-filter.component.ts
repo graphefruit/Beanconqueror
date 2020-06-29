@@ -20,9 +20,7 @@ import {Preparation} from '../../../classes/preparation/preparation';
 export class BrewFilterComponent implements OnInit {
 
   public settings: ISettings;
-  public customSelectSheetOptions: any = {
-    cssClass: 'select-break-text'
-  };
+
   public filter: IBrewPageFilter = {
     mill: [],
     bean: [],

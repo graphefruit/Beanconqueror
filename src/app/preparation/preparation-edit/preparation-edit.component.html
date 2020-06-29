@@ -21,7 +21,8 @@
         </ion-item>
         <ion-item>
           <ion-label position="stacked">{{"PREPARATION_TYPE_NAME" | translate}}*</ion-label>
-          <ion-input #name="ngModel" [(ngModel)]="data.name" autocapitalize="sentences" name="name" required
+          <ion-input #name="ngModel" [(ngModel)]="data.name" autocapitalize="sentences" name="name"
+                     placeholder="{{'PREPARATION.PLACE_HOLDER.PREPARATION_TYPE_NAME' | translate}}" required
                      spellcheck="false" type="text">
           </ion-input>
         </ion-item>
@@ -32,6 +33,7 @@
         <ion-item lines="none">
           <ion-label position="stacked">{{"NOTES" | translate}}</ion-label>
           <ion-textarea #note="ngModel" [(ngModel)]="data.note" autocapitalize="sentences" autocomplete="true"
+                        placeholder="{{'PREPARATION.PLACE_HOLDER.NOTES' | translate}}"
                         autocorrect="true" name="note" rows="5" spellcheck="true"></ion-textarea>
         </ion-item>
       </ion-card>

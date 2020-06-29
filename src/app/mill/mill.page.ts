@@ -56,6 +56,7 @@ export class MillPage  implements OnInit  {
   public archive(_mill: Mill) {
     _mill.finished = true;
     this.uiMillStorage.update(_mill);
+    this.uiToast.showInfoToast('TOAST_MILL_ARCHIVED_SUCCESSFULLY');
     this.loadMills();
   }
 
