@@ -11,7 +11,8 @@
       </ion-item>
       <ion-item lines="none">
         <ion-label position="stacked">{{"PREPARATION_TYPE_NAME" | translate}}*</ion-label>
-        <ion-input #name="ngModel" [(ngModel)]="data.name" autocapitalize="sentences" name="name" required
+        <ion-input #name="ngModel" [(ngModel)]="data.name" autocapitalize="sentences" name="name"
+                   placeholder="{{'PREPARATION.PLACE_HOLDER.PREPARATION_TYPE_NAME' | translate}}" required
                    spellcheck="false" type="text">
         </ion-input>
       </ion-item>
@@ -25,7 +26,7 @@
                   tappable>{{"CANCEL" | translate}}</ion-button>
     </ion-col>
     <ion-col size="6">
-      <ion-button (click)="addPreparation()" color="accent" expand="block" tappable
+      <ion-button (click)="addPreparation()" color="accent" disable-double-click expand="block" tappable
                   type="submit">{{"SAVE" | translate}}</ion-button>
     </ion-col>
 

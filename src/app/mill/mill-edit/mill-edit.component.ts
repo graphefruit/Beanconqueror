@@ -5,6 +5,7 @@ import {Mill} from '../../../classes/mill/mill';
 import {UIHelper} from '../../../services/uiHelper';
 import {IMill} from '../../../interfaces/mill/iMill';
 import {UIAnalytics} from '../../../services/uiAnalytics';
+import {UIToast} from '../../../services/uiToast';
 
 @Component({
   selector: 'mill-edit',
@@ -21,7 +22,8 @@ export class MillEditComponent implements OnInit {
                private  readonly modalController: ModalController,
                private readonly uiMillStorage: UIMillStorage,
                private readonly uiHelper: UIHelper,
-               private readonly uiAnalytics: UIAnalytics) {
+               private readonly uiAnalytics: UIAnalytics,
+               private readonly uiToast: UIToast) {
 
   }
 
@@ -38,6 +40,7 @@ export class MillEditComponent implements OnInit {
 
   public __editMill(): void {
     this.uiMillStorage.update(this.data);
+    this.uiToast.showInfoToast('TOAST_MILL_EDITED_SUCCESSFULLY');
     this.dismiss();
   }
 

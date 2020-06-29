@@ -72,6 +72,7 @@ export class BeansAddComponent implements OnInit {
   }
 
   public __addBean(): void {
+
     this.uiBeanStorage.add(this.data);
     this.dismiss();
     if (!this.hide_toast_message) {

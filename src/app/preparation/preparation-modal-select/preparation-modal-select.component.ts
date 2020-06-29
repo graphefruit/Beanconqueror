@@ -18,7 +18,7 @@ export class PreparationModalSelectComponent implements OnInit {
   public radioSelection: string;
   @Input() public multiple: boolean;
   @Input() private selectedValues: Array<string>;
-
+  @Input() public showFinished: boolean;
   constructor(private readonly modalController: ModalController,
               private readonly uiPreparationStorage: UIPreparationStorage) {
 

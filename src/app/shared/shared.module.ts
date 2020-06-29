@@ -88,6 +88,7 @@ import {MillModalSelectComponent} from '../mill/mill-modal-select/mill-modal-sel
 import {PreparationModalSelectComponent} from '../preparation/preparation-modal-select/preparation-modal-select.component';
 import {MillOverlayDirective} from '../../directive/mill-overlay.directive';
 import {PreparationOverlayDirective} from '../../directive/preparation-overlay.directive';
+import {DisableDoubleClickDirective} from '../../directive/disable-double-click.directive';
 
 @NgModule({
   declarations: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, AboutComponent,
@@ -112,7 +113,9 @@ import {PreparationOverlayDirective} from '../../directive/preparation-overlay.d
     BeanOverlayDirective,
     MillOverlayDirective,
     PreparationOverlayDirective,
-    TooltipDirective, BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent, BeanPhotoViewComponent,
+    TooltipDirective,
+    DisableDoubleClickDirective,
+    BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent, BeanPhotoViewComponent,
     BrewPopoverActionsComponent, BeanPopoverActionsComponent, MillPopoverActionsComponent, BeanModalSelectComponent,
     MillModalSelectComponent,
     PreparationModalSelectComponent,
@@ -156,7 +159,9 @@ import {PreparationOverlayDirective} from '../../directive/preparation-overlay.d
     BeanOverlayDirective,
     MillOverlayDirective,
     PreparationOverlayDirective,
-    TooltipDirective, FormatDatePipe, KeysPipe, EnumToArrayPipe,
+    TooltipDirective,
+    DisableDoubleClickDirective,
+    FormatDatePipe, KeysPipe, EnumToArrayPipe,
     InAppBrowser,
     File,
     FileChooser,
@@ -193,7 +198,9 @@ import {PreparationOverlayDirective} from '../../directive/preparation-overlay.d
     BeanOverlayDirective,
     MillOverlayDirective,
     PreparationOverlayDirective,
-    TooltipDirective, BrewPage, BrewDetailComponent, BrewEditComponent,
+    TooltipDirective,
+    DisableDoubleClickDirective,
+    BrewPage, BrewDetailComponent, BrewEditComponent,
     BrewPhotoViewComponent, BeanPhotoViewComponent, BrewPopoverActionsComponent, BeanPopoverActionsComponent,
     BeanModalSelectComponent,
     MillModalSelectComponent,

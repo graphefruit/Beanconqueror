@@ -218,6 +218,33 @@ export class Brew implements IBrew {
     return uiMillStorage;
   }
 
+  public getRatingIcon(_rating?: number): string {
+    if (_rating === undefined) {
+      _rating = this.rating;
+    }
+
+    if (_rating > 5) {
+      _rating = 5;
+    }
+    switch (_rating) {
+      case -1:
+        return 'help-outline';
+      case 0:
+        return 'beanconqueror-smile-neutral';
+      case 1:
+        return 'beanconqueror-smile-sad';
+      case 2:
+        return 'beanconqueror-smile-smiling';
+      case 3:
+        return 'beanconqueror-smile-smiling-1';
+      case 4:
+        return 'beanconqueror-smile-smiling-1';
+      default:
+        return 'help-outline';
+    }
+
+  }
+
   /**
    * Sorry for this, but angular hates inputs which are string and needs numbers
    */
@@ -268,6 +295,11 @@ export class Brew implements IBrew {
 
     if (Number(this.coffee_blooming_time) !== this.coffee_blooming_time) {
       this.coffee_blooming_time = Number(this.coffee_blooming_time);
+      fixNeeded = true;
+    }
+
+    if (this.rating > 5) {
+      this.rating = 5;
       fixNeeded = true;
     }
 

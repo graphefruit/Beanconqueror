@@ -88,7 +88,13 @@ export class BrewAddComponent implements OnInit {
     }
 
     this.customCreationDate = moment().toISOString();
+    this.data.attachments.push('https://www.machhoerndl-kaffee.de/media/image/d0/5d/0b/Ecuador_Ilda_Mayo_Filter_600x600.jpg');
 
+    this.data.attachments.push('https://www.machhoerndl-kaffee.de/media/image/d0/5d/0b/Ecuador_Ilda_Mayo_Filter_600x600.jpg');
+
+    this.data.attachments.push('https://www.machhoerndl-kaffee.de/media/image/d0/5d/0b/Ecuador_Ilda_Mayo_Filter_600x600.jpg');
+
+    this.data.attachments.push('https://www.machhoerndl-kaffee.de/media/image/d0/5d/0b/Ecuador_Ilda_Mayo_Filter_600x600.jpg');
   }
 
 

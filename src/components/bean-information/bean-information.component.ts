@@ -37,15 +37,6 @@ export class BeanInformationComponent implements OnInit {
 
 
   public ngOnInit() {
-    this.bean.attachments = [];
-    if (Math.round((Math.random() * 1) + 0) === 0) {
-      this.bean.attachments.push('https://blog.decaf.de/content/images/2015/06/five-roasters-coffee.jpg');
-    } else {
-      this.bean.attachments = [];
-    }
-
-    //this.bean.attachments.push('https://www.roesttrommel.de/media/image/51/e5/2b/RT_Packshot_Nicaragua_Mierisch_H_600x600@2x.jpg');
-    //this.bean.attachments.push('https://www.machhoerndl-kaffee.de/media/image/d0/5d/0b/Ecuador_Ilda_Mayo_Filter_600x600.jpg');
   }
 
   public brewCounts(): number {

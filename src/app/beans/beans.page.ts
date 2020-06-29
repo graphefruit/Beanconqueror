@@ -90,6 +90,7 @@ export class BeansPage implements OnInit {
   public beansConsumed(_bean: Bean) {
     _bean.finished = true;
     this.uiBeanStorage.update(_bean);
+    this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');
     this.loadBeans();
   }
 

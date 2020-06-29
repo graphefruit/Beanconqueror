@@ -28,6 +28,8 @@ import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
 import {UIAnalytics} from '../../services/uiAnalytics';
 
 import BeanconquerorSettingsDummy from '../../assets/Beanconqueror.json';
+import {ISettings} from '../../interfaces/settings/iSettings';
+import {IBrewPageFilter} from '../../interfaces/brew/iBrewPageFilter';
 
 @Component({
   selector: 'settings',
@@ -58,6 +60,23 @@ export class SettingsPage implements OnInit {
       for (const brew of _data) {
         brew.attachments = [];
       }
+    }
+  }
+
+  private static __cleanupImportSettingsData(_data: ISettings | any): void {
+    // We need to remove the filter because of new data here.
+    if (_data !== undefined) {
+      _data.brew_filter = {};
+      _data.brew_filter.ARCHIVED = {
+        mill: [],
+        bean: [],
+        method_of_preparation: []
+      } as IBrewPageFilter;
+      _data.brew_filter.OPEN = {
+        mill: [],
+        bean: [],
+        method_of_preparation: []
+      } as IBrewPageFilter;
     }
   }
 
@@ -208,6 +227,7 @@ export class SettingsPage implements OnInit {
       const settingsConst = new Settings();
       dummyData['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(settingsConst.brew_order);
     }
+    SettingsPage.__cleanupImportSettingsData(dummyData['SETTINGS'][0]);
     this.uiStorage.import(dummyData).then(() => {
       this.__reinitializeStorages().then(() => {
         this.__initializeSettings();
@@ -242,6 +262,7 @@ export class SettingsPage implements OnInit {
 
               SettingsPage.__cleanupImportBeanData(parsedContent[this.uiBeanStorage.getDBPath()]);
               SettingsPage.__cleanupImportBrewData(parsedContent[this.uiBrewStorage.getDBPath()]);
+              SettingsPage.__cleanupImportSettingsData(parsedContent[this.uiSettingsStorage.getDBPath()]);
 
               // When exporting the value is a number, when importing it needs to be  a string.
               parsedContent['SETTINGS'][0]['brew_view'] = parsedContent['SETTINGS'][0]['brew_view'] + '';

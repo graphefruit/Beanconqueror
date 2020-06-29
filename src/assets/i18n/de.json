@@ -17,7 +17,6 @@
   "NAV_LOGS": "Logs",
   "NAV_BREW_PARAMS": "Bezugsparameter",
   "NAV_INFORMATION_TO_APP": "Über die App",
-  "POPOVER_BREWS_OPTION_POST": "Textexport",
   "POPOVER_BREWS_OPTION_REPEAT": "Wiederholen",
   "POPOVER_BREWS_OPTION_DETAIL": "Details",
   "POPOVER_BREWS_OPTION_EDIT": "Editieren",
@@ -48,7 +47,6 @@
   "PAGE_SETTINGS_LANGUAGE": "Spracheinstellung",
   "PAGE_SETTINGS_LANGUAGE_GERMAN": "Deutsch",
   "PAGE_SETTINGS_LANGUAGE_ENGLISH": "Englisch",
-  "PAGE_SETTINGS_INFORMATION": "Hier findest du alle spezifischen Einstellungen der App",
   "PAGE_SETTINGS_GENERAL_SETTINGS": "Allgemeine Einstellungen",
   "PAGE_SETTINGS_TRANSFER": "Datenübertragung",
   "PAGE_SETTINGS_PRESET_LAST_BREW": "Letzen Bezug vorbelegen?",
@@ -90,8 +88,6 @@
   "SAVE": "Speichern",
   "ADD_SOMETHING": "Hinzufügen",
   "CONTACT": "Kontakt",
-  "BREW": "Brühen",
-  "THE_BREW": "Der Bezug",
   "NAME": "Name",
   "IMPORT": "Import",
   "EXPORT": "Export",
@@ -99,7 +95,6 @@
   "ARCHIVE": "Archiv",
   "CURRENT": "Aktuell",
   "BACK": "Zurück",
-  "SAVE_AND_FINISH": "Speichern & Abschließen",
   "CLOSE": "Schließen",
   "DAY": "Tag",
   "BREW_DATA_TEMPERATURE_TIME": "Temperatur Zeit",
@@ -133,7 +128,6 @@
   "ONE_MINUTE": "Eine Minute",
   "MINUTES": "Minuten",
   "WITHOUT_COFFEE": "ohne Kaffee",
-  "NO_COFFEE_DRUNK": "Noch keinen Kaffee getrunken.",
   "NOT_FOUND": "Nicht gefunden",
   "INVALID_FILE_FORMAT": "Invalides Dateiformat",
   "FILE_NOT_FOUND_INFORMATION": "Datei konnte nicht gefunden werden",
@@ -253,6 +247,12 @@
   "WELCOME_PAGE_MILL_DESCRIPTION": "Füge deine erste Mühle hinzu",
   "WELCOME_PAGE_MILL_ADD": "Mühle hinzufügen",
   "WELCOME_PAGE_TITLE": "Herzlich willkommen!",
+  "WELCOME_PAGE_BEAN_HEADLINE": "Die erste Bohne",
+  "WELCOME_PAGE_PREPARATION_HEADLINE": "Brühmethode hinzufügen",
+  "WELCOME_PAGE_MILL_HEADLINE": "Die erste Mühle",
+  "WELCOME_PAGE_LETS_START_HEADLINE": "Jetzt kann es losgehen!",
+  "WELCOME_PAGE_LETS_START_TITLE": "Jetzt kann es losgehen!",
+  "WELCOME_PAGE_LETS_START_DESCRIPTION": "Fertig!",
   "PREPARATION_TYPE": "Zubereitungsart",
   "PREPARATION_TYPE_NAME": "Name",
   "ARCHIVED": "Archiviert",
@@ -264,10 +264,19 @@
   "TOAST_BEAN_ADDED_SUCCESSFULLY": "Bohne hinzugefügt",
   "TOAST_MILL_ADDED_SUCCESSFULLY": "Mühle hinzugefügt",
   "TOAST_PREPARATION_ADDED_SUCCESSFULLY": "Brühmethode hinzugefügt",
+
   "TOAST_BREW_DELETED_SUCCESSFULLY": "Brühung gelöscht",
   "TOAST_BEAN_DELETED_SUCCESSFULLY": "Bohne gelöscht",
   "TOAST_MILL_DELETED_SUCCESSFULLY": "Mühle gelöscht",
   "TOAST_PREPARATION_DELETED_SUCCESSFULLY": "Brühmethode gelöscht",
+  "TOAST_BREW_EDITED_SUCCESSFULLY": "Brühung editiert",
+  "TOAST_BEAN_EDITED_SUCCESSFULLY": "Bohne editiert",
+  "TOAST_MILL_EDITED_SUCCESSFULLY": "Mühle editiert",
+  "TOAST_PREPARATION_EDITED_SUCCESSFULLY": "Brühmethode editiert",
+  "TOAST_BEAN_ARCHIVED_SUCCESSFULLY": "Bohne archiviert",
+  "TOAST_MILL_ARCHIVED_SUCCESSFULLY": "Mühle archiviert",
+  "TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY": "Brühmethode archiviert",
+
   "BEAN_WEIGHT_ALREADY_USED": "{{gramUsed}}g von {{gramTotal}}g aufgebraucht",
   "PREPARATION_TYPE_CUSTOM_PREPARATION": "Eigene Zubereitungsart",
   "PREPARATION_TYPE_AEROPRESS": "Aeropress",
@@ -284,5 +293,56 @@
   "CHOOSE_MILLS": "Mühlen auswählen",
   "CHOOSE_MILL": "Mühle auswählen",
   "MODAL_CHOOSE_BEANS_OPEN": "Aktuelle Bohnen",
-  "MODAL_CHOOSE_BEANS_FINISHED": "Fertige Bohnen"
+  "MODAL_CHOOSE_BEANS_FINISHED": "Fertige Bohnen",
+  "MODAL_CHOOSE_MILLS_OPEN": "Aktuelle Mühlen",
+  "MODAL_CHOOSE_MILLS_ARCHIVED": "Archivierte Mühlen",
+  "MODAL_CHOOSE_PREPARATIONS_OPEN": "Aktuelle Brühmethoden",
+  "MODAL_CHOOSE_PREPARATIONS_ARCHIVED": "Archivierte Brühmethoden",
+  "BEAN": {
+    "PLACE_HOLDER": {
+      "BEAN_DATA_NAME": "Füge einen Namen hinzu",
+      "BEAN_DATA_ROAST_NAME": "Füge einen Röstgrad hinzu",
+      "BEAN_DATA_ROASTING_DATE": "Wann wurden die Bohnen geröstet?",
+      "BEAN_DATA_ROASTER": "Wer hat die Bohnen geröstet?",
+      "BEAN_DATA_VARIETY": "Füge die Kaffee Varietät hinzu",
+      "BEAN_DATA_COUNTRY": "Woher stammt die Bohne?",
+      "BEAN_DATA_MIX": "Wie ist das Mischungsverhältnis?",
+      "BEAN_DATA_AROMATICS": "Füge die Aromen hinzu",
+      "BEAN_DATA_WEIGHT": "Gewicht der Bohnen",
+      "BEAN_DATA_COST": "Wieviel haben die Bohnen gekostet?",
+      "NOTES": "Füge Notizen zu deiner Bohne hinzu"
+    }
+  },
+  "PREPARATION": {
+    "PLACE_HOLDER": {
+      "PREPARATION_TYPE_NAME": "Füge einen Namen hinzu",
+      "NOTES": "Füge Notizen zu deiner Brühmethodik hinzu"
+    }
+  },
+  "MILL": {
+    "PLACE_HOLDER": {
+      "NAME": "Füge einen Namen hinzu",
+      "NOTES": "Füge Notizen zu deiner Mühler hinzu"
+    }
+  },
+  "BREW": {
+    "PLACE_HOLDER": {
+      "BREW_DATA_GRIND_SIZE": "Gebe deinen Mahlgrad ein",
+      "BREW_DATA_GRIND_WEIGHT": "Gebe die Kaffeemehlmenge (gr) ein",
+      "BREW_DATA_BREW_TEMPERATURE": "Gebe die Brühtemperatur ein",
+      "BREW_DATA_PREPARATION_METHOD": "Wähle die Brühmethode aus",
+      "BREW_DATA_BEAN_TYPE": "Wähle deine Bohne aus",
+      "BREW_DATA_MILL": "Wähle deine Mühle aus",
+      "BREW_DATA_MILL_SPEED": "Gebe die Mühlengeschwindigkeit ein",
+      "BREW_DATA_MILL_TIMER": "Gebe den Mühlentimer ein",
+      "BREW_DATA_PRESSURE_PROFILE": "Gebe das Druckprofil ein",
+      "BREW_DATA_TEMPERATURE_TIME": "Gebe die Zeit nach dem Aufheizen ein",
+      "BREW_DATA_COFFEE_BLOOMING_TIME": "Wielange hat der Kaffee gebloomt",
+      "BREW_DATA_COFFEE_FIRST_DRIP_TIME": "Wann kam der erste Kaffee Tropfen",
+      "BREW_DATA_BREW_QUANTITY": "Wieviel hast du Gebrüht?",
+      "BREW_DATA_COFFEE_TYPE": "Gib deinen Kaffeetyp (z.B. Ristretto) ein",
+      "BREW_DATA_COFFEE_CONCENTRATION": "Gib deine Kaffeekonzentration ein (Yield o.ä.)",
+      "BREW_DATA_NOTES": "Füge Notizen zu dieser Brühung hinzu"
+    }
+  }
 }

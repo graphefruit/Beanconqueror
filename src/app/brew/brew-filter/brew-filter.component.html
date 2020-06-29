@@ -11,29 +11,30 @@
   <ion-item *ngIf="settings.method_of_preparation === true">
     <ion-label position="stacked">{{"BREW_DATA_PREPARATION_METHOD" | translate}}</ion-label>
     <ion-select [(ngModel)]="filter.method_of_preparation"
-                [interfaceOptions]="customSelectSheetOptions"
-                multiple="true">
-      <ion-select-option *ngFor="let method of method_of_preparations" value="{{method.config.uuid}}">{{method.name}}
-        &nbsp;{{method.finished ? '(' + ('ARCHIVED' | translate) + ')' : ''}}
+                [show-finished]="segment !== 'open'"
+                multiple="true"
+                preparation-overlay>
+      <ion-select-option *ngFor="let method of method_of_preparations" value="{{method.config.uuid}}">
       </ion-select-option>
     </ion-select>
   </ion-item>
   <ion-item *ngIf="settings.bean_type === true">
     <ion-label position="stacked">{{"BREW_DATA_BEAN_TYPE" | translate}}</ion-label>
-    <ion-select [(ngModel)]="filter.bean" [interfaceOptions]="customSelectSheetOptions"
+    <ion-select [(ngModel)]="filter.bean"
                 [multiple]="true"
+                [show-finished]="segment !== 'open'"
                 bean-overlay>
       <ion-select-option *ngFor="let bean of beans"
-                         value="{{bean.config.uuid}}">{{bean.name}}
-        &nbsp;{{bean.finished ? '(' + ('ARCHIVED' | translate) + ')' : ''}}</ion-select-option>
+                         value="{{bean.config.uuid}}"></ion-select-option>
     </ion-select>
   </ion-item>
   <ion-item *ngIf="settings.mill === true">
     <ion-label position="stacked">{{"BREW_DATA_MILL" | translate }}</ion-label>
     <ion-select [(ngModel)]="filter.mill"
-                [interfaceOptions]="customSelectSheetOptions" multiple="true">
-      <ion-select-option *ngFor="let mill of mills" value="{{mill.config.uuid}}">{{mill.name}}
-        &nbsp;{{mill.finished ? '(' + ('ARCHIVED' | translate) + ')' : ''}}</ion-select-option>
+                [show-finished]="segment !== 'open'"
+                mill-overlay
+                multiple="true">
+      <ion-select-option *ngFor="let mill of mills" value="{{mill.config.uuid}}"></ion-select-option>
     </ion-select>
   </ion-item>
 </ion-content>
