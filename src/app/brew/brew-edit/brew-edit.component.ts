@@ -72,7 +72,6 @@ export class BrewEditComponent implements OnInit {
     this.uiAnalytics.trackEvent('BREW', 'EDIT');
 
     this.customCreationDate = moment.unix(this.data.config.unix_timestamp).toISOString();
-    console.log(this.customCreationDate);
   }
 
   public showRating(): boolean {

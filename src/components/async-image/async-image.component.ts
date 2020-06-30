@@ -21,14 +21,18 @@ export class AsyncImageComponent implements OnInit, OnChanges {
     await this.__checkImageChangs();
   }
 
+  public onError() {
+    this.img = '';
+  }
+
   private async __checkImageChangs(): Promise<void> {
 
     if (this.filePath === undefined || this.filePath === null || this.filePath === '') {
       this.img = '';
     } else {
-      this.img = this.filePath;// 'https://www.machhoerndl-kaffee.de/media/image/d0/5d/0b/Ecuador_Ilda_Mayo_Filter_600x600.jpg'; //await this.uiFileHelper.getBase64File(this.filePath);
-      //this.img = await this.uiFileHelper.getBase64File(this.filePath);
+      this.img = await this.uiFileHelper.getBase64File(this.filePath);
     }
   }
+
 
 }

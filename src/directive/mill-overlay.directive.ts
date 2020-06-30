@@ -38,8 +38,6 @@ export class MillOverlayDirective {
     } else {
       selectedValues = [...this.model.model];
     }
-    console.log(this.showFinished);
-
     const modal = await this.modalController.create({
       component: MillModalSelectComponent,
       componentProps:

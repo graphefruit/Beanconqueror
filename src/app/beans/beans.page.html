@@ -32,7 +32,7 @@
     <div *ngSwitchCase="'open'">
       <div *ngIf="getOpenBeans()?.length == 0" class="ion-padding ion-text-center">
         <div>
-          <ion-icon class="custom-beans" color="inactive" size="large"></ion-icon>
+          <ion-icon color="inactive" name="beanconqueror-beans" size="large"></ion-icon>
         </div>
         <div class="text-color-inactive ion-margin-top">
         {{"PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS" | translate}}
@@ -47,7 +47,7 @@
       <div *ngSwitchCase="'finished'">
         <div *ngIf="getFinishedBeans()?.length == 0" class="ion-padding ion-text-center">
           <div>
-            <ion-icon class="custom-beans" color="inactive" size="large"></ion-icon>
+            <ion-icon color="inactive" name="beanconqueror-beans" size="large"></ion-icon>
           </div>
           <div class="text-color-inactive ion-margin-top">
             {{"PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS" | translate}}

@@ -45,14 +45,17 @@
 
       <ion-item>
         <ion-label>{{"PAGE_SETTINGS_LANGUAGE" | translate}}</ion-label>
-        <ion-select (ngModelChange)="languageChanged($event)" [(ngModel)]="settings.language">
+        <ion-select (ngModelChange)="languageChanged($event)" [(ngModel)]="settings.language"
+                    cancelText="{{'CANCEL'| translate }}" cancelText="{{'CANCEL'| translate }}"
+                    okText="{{'CHOOSE'| translate }}" okText="{{'CHOOSE'| translate }}">
           <ion-select-option value="de">{{"PAGE_SETTINGS_LANGUAGE_GERMAN" | translate}}</ion-select-option>
           <ion-select-option value="en">{{"PAGE_SETTINGS_LANGUAGE_ENGLISH" | translate}}</ion-select-option>
         </ion-select>
       </ion-item>
       <ion-item>
         <ion-label>{{"PAGE_SETTINGS_STARTUP_VIEW" | translate}}</ion-label>
-        <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.startup_view">
+        <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.startup_view"
+                    cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
           <ion-select-option value="{{STARTUP_VIEW.HOME_PAGE}}">{{"NAV_HOME" | translate}}</ion-select-option>
           <ion-select-option value="{{STARTUP_VIEW.BREW_PAGE}}">{{"NAV_BREWS" | translate}}</ion-select-option>
           <ion-select-option value="{{STARTUP_VIEW.ADD_BREW}}">{{"ADD_BREW" | translate}}</ion-select-option>
@@ -80,7 +83,7 @@
         <ion-checkbox (ngModelChange)="saveSettings();"
                       [(ngModel)]="settings.show_archived_preparations"></ion-checkbox>
       </ion-item>
-      <ion-item>
+      <ion-item lines="none">
         <ion-label>{{"PAGE_SETTINGS_SHOW_ARCHIVED_MILLS" | translate}}</ion-label>
         <ion-checkbox (ngModelChange)="saveSettings();"
                       [(ngModel)]="settings.show_archived_mills"></ion-checkbox>

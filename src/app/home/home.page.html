@@ -9,27 +9,27 @@
     </ion-tab>
     <ion-tab-bar slot="bottom">
       <ion-tab-button tab="dashboard">
-        <ion-icon class="menu-icon custom-home"></ion-icon>
+        <ion-icon class="menu-icon" name="beanconqueror-home"></ion-icon>
         <ion-label>{{"NAV_HOME" | translate}}</ion-label>
       </ion-tab-button>
       <ion-tab-button tab="brews">
-        <ion-icon class="menu-icon custom-brew"></ion-icon>
+        <ion-icon class="menu-icon" name="beanconqueror-brew"></ion-icon>
         <ion-label>{{"NAV_BREWS" | translate}}</ion-label>
       </ion-tab-button>
       <ion-tab-button tab="beans">
-        <ion-icon class="menu-icon custom-bean"></ion-icon>
+        <ion-icon class="menu-icon" name="beanconqueror-bean"></ion-icon>
         <ion-label>{{"NAV_BEANS" | translate}}</ion-label>
         <ion-badge *ngIf="!activeBeansExists()" color="danger"></ion-badge>
       </ion-tab-button>
 
       <ion-tab-button tab="preparations">
-        <ion-icon class="menu-icon custom-preparation"></ion-icon>
+        <ion-icon class="menu-icon" name="beanconqueror-preparation"></ion-icon>
         <ion-label>{{"NAV_PREPARATION" | translate}}</ion-label>
         <ion-badge *ngIf="!activePreparationsExists()" color="danger"></ion-badge>
       </ion-tab-button>
 
       <ion-tab-button tab="mills">
-        <ion-icon class="menu-icon custom-mill"></ion-icon>
+        <ion-icon class="menu-icon" name="beanconqueror-pepper-mill"></ion-icon>
         <ion-label>{{"NAV_MILL" | translate}}</ion-label>
         <ion-badge *ngIf="!activeMillsExists()" color="danger"></ion-badge>
       </ion-tab-button>

@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
-  <g id="Gruppe_39" data-name="Gruppe 39" transform="translate(2384 1594)">
-    <path id="bg" d="M20,0A20,20,0,1,1,0,20,20,20,0,0,1,20,0Z" transform="translate(-2384 -1594)" fill="#b88265"/>
-    <line id="Linie_2" data-name="Linie 2" x2="16.71" transform="translate(-2372.131 -1573.905)" fill="none"
-          stroke="#fff" stroke-linecap="round" stroke-width="3"/>
-    <line id="Linie_4" data-name="Linie 4" x2="16.71" transform="translate(-2363.758 -1582.502) rotate(90)" fill="none"
-          stroke="#fff" stroke-linecap="round" stroke-width="3"/>
-  </g>
-</svg>

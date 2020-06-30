@@ -11,7 +11,6 @@ export class DisableDoubleClickDirective {
 
   @HostListener('click', ['$event'])
   public clickEvent(_event) {
-    console.log('bla');
     _event.srcElement.setAttribute('disabled', true);
     setTimeout(() => {
       _event.srcElement.removeAttribute('disabled');

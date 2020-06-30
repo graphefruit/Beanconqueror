@@ -80,8 +80,18 @@ export class BeansAddComponent implements OnInit {
     }
   }
 
-  public deleteImage(_index: number): void {
-    this.data.attachments.splice(_index, 1);
+  public async deleteImage(_index: number): Promise<any> {
+
+    const splicedPaths: Array<string> = this.data.attachments.splice(_index, 1);
+    for (const path of splicedPaths) {
+      try {
+        await this.uiFileHelper.deleteFile(path);
+        this.uiToast.showInfoToast('DELETED');
+      } catch (ex) {
+        this.uiToast.showInfoToast('NOT DELETED');
+      }
+
+    }
     if (this.data.attachments.length > 0) {
       // Slide to one item before
       this.photoSlides.slideTo(_index - 1, 0);

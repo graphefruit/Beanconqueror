@@ -34,7 +34,7 @@
     <div *ngSwitchCase="'open'">
       <div *ngIf="getActivePreparations()?.length == 0" class="ion-padding ion-text-center">
         <div>
-          <ion-icon class="custom-preparation" color="inactive" size="large"></ion-icon>
+          <ion-icon color="inactive" name="beanconqueror-preparation" size="large"></ion-icon>
         </div>
         <div class="text-color-inactive ion-margin-top">
           {{"PAGE_PREPARATION_LIST_NO_PREPARATION_EXISTING" | translate}}
@@ -48,7 +48,7 @@
     <div *ngSwitchCase="'archive'">
       <div *ngIf="getArchivedPreparations()?.length == 0" class="ion-padding ion-text-center">
         <div>
-          <ion-icon class="custom-preparation" color="inactive" size="large"></ion-icon>
+          <ion-icon color="inactive" name="beanconqueror-preparation" size="large"></ion-icon>
         </div>
         <div class="text-color-inactive ion-margin-top">
           {{"PAGE_PREPARATION_LIST_NO_ARCHIVED_PREPARATION_EXISTING" | translate}}
