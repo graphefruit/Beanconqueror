@@ -210,67 +210,6 @@ pre{
 }
 
 
-
-ion-icon {
-  &[class*="custom-"] {
-    mask-size: contain;
-    mask-repeat: no-repeat;
-    background: currentColor;
-    width: 1em;
-    height: 1em;
-  }
-
-  &[class*="custom-home"] {
-    mask-image: url(../assets/svg/icons/icons8-home.svg);
-  }
-  &[class*="custom-mill"] {
-    mask-image: url(../assets/svg/icons/icons8-pepper_grinder.svg);
-  }
-
-  &[class*="custom-brew"] {
-    mask-image: url(../assets/svg/icons/icons8-coffee.svg);
-  }
-
-  &[class*="custom-preparation"] {
-    mask-image: url(../assets/svg/icons/icons8-coffee_maker.svg);
-  }
-
-  &[class*="custom-bean"] {
-    mask-image: url(../assets/svg/icons/icons8-java_bean.svg);
-  }
-
-  &[class*="custom-beans"] {
-    mask-image: url(../assets/svg/icons/icons8-coffee_beans.svg);
-  }
-
-  &[class*="custom-cup"] {
-    mask-image: url(../assets/svg/icons/icons8-cup.svg);
-  }
-
-  &[class*="custom-filter"] {
-    mask-image: url(../assets/svg/icons/icons8-filter.svg);
-  }
-
-  &[class*="custom-back"] {
-    mask-image: url(../assets/svg/icons/back.svg);
-  }
-
-  &[class*="custom-add"] {
-    mask-image: url(../assets/svg/icons/add.svg);
-  }
-
-
-
-  &[class*="custom-coffee-bag"] {
-    mask-image: url(../assets/svg/coffee-bag.svg);
-  }
-  &[class*="custom-coffee-blooming"] {
-    mask-image: url(../assets/svg/coffee-blooming.svg);
-  }
-
-
-}
-
 ion-tab-button.tab-selected {
   ion-icon {
     color: #504127;
@@ -282,6 +221,7 @@ ion-tab-button.tab-selected {
   top: 0;
   right: 10px;
 }
+
 
 ion-alert.select-full-screen {
   .alert-wrapper {
@@ -359,6 +299,18 @@ ion-menu::content.menu-inner {
 
 :root {
 
+  ion-range::part(.range-bar) {
+    background-color: yellow;
+  }
+
+  ion-tab-bar {
+    --background: #FFFFFF;
+    --border: 0px;
+  }
+
+  ion-badge {
+    --background: #CDC2AC;
+  }
   ion-button {
     font-family: 'Baloo';
     text-transform: inherit;
@@ -551,28 +503,18 @@ ion-menu::content.menu-inner {
       padding-left: 10%;
       padding-right: 10%;
     }
-    ion-modal {
 
-      ion-content {
-        --padding-start: 10%;
-        --padding-end: 10%;
+    ion-modal.half-bottom-modal, ion-modal.bottom-modal {
+      .ion-page {
+        margin-right: 10%;
+        margin-left: 10%;
       }
 
       ion-footer {
         padding-left: 10%;
         padding-right: 10%;
       }
-    }
-    ion-modal.half-bottom-modal {
-      .ion-page {
-        margin-right: 10%;
-        margin-left: 10%;
-      }
 
-      ion-content {
-        --padding-start: 0%;
-        --padding-end: 0%;
-      }
     }
   }
 

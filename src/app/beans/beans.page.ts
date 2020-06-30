@@ -91,6 +91,8 @@ export class BeansPage implements OnInit {
     _bean.finished = true;
     this.uiBeanStorage.update(_bean);
     this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');
+    this.settings.resetFilter();
+    this.uiSettingsStorage.saveSettings(this.settings);
     this.loadBeans();
   }
 
@@ -116,6 +118,8 @@ export class BeansPage implements OnInit {
               // Yes
               this.__deleteBean(_bean);
             this.uiToast.showInfoToast('TOAST_BEAN_DELETED_SUCCESSFULLY');
+            this.settings.resetFilter();
+            this.uiSettingsStorage.saveSettings(this.settings);
             },
             () => {
               // No

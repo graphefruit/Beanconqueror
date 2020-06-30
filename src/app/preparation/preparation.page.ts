@@ -92,6 +92,8 @@ export class PreparationPage implements OnInit {
           // Yes
           this.__deletePreparation(_preparation);
         this.uiToast.showInfoToast('TOAST_PREPARATION_DELETED_SUCCESSFULLY');
+        this.settings.resetFilter();
+        this.uiSettingsStorage.saveSettings(this.settings);
         },
         () => {
           // No
@@ -103,6 +105,8 @@ export class PreparationPage implements OnInit {
     _preparation.finished = true;
     this.uiPreparationStorage.update(_preparation);
     this.uiToast.showInfoToast('TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY');
+    this.settings.resetFilter();
+    this.uiSettingsStorage.saveSettings(this.settings);
     this.loadPreparations();
   }
 

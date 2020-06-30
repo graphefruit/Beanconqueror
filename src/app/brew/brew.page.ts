@@ -87,7 +87,6 @@ export class BrewPage implements OnInit {
 
 
   public ionViewWillEnter(): void {
-    console.log('GET SETTTTINGS');
     this.settings = this.uiSettingsStorage.getSettings();
     this.archivedBrewsFilter = this.settings.brew_filter.ARCHIVED;
     this.openBrewsFilter = this.settings.brew_filter.OPEN;

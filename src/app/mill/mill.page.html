@@ -32,7 +32,7 @@
     <div *ngSwitchCase="'open'">
       <div *ngIf="getActiveMills()?.length == 0" class="ion-padding ion-text-center">
         <div>
-          <ion-icon class="custom-mill" color="inactive" size="large"></ion-icon>
+          <ion-icon color="inactive" name="beanconqueror-pepper-mill" size="large"></ion-icon>
         </div>
         <div class="text-color-inactive ion-margin-top">
           {{"PAGE_MILL_LIST_NO_MILL_EXISTING" | translate}}
@@ -45,7 +45,7 @@
     <div *ngSwitchCase="'archive'">
       <div *ngIf="getArchivedMills()?.length == 0" class="ion-padding ion-text-center">
         <div>
-          <ion-icon class="custom-mill" color="inactive" size="large"></ion-icon>
+          <ion-icon color="inactive" name="beanconqueror-pepper-mill" size="large"></ion-icon>
         </div>
         <div class="text-color-inactive ion-margin-top">
           {{"PAGE_MILL_LIST_NO_ARCHIVED_MILL_EXISTING" | translate}}

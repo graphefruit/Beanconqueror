@@ -31,12 +31,13 @@
     <div *ngSwitchCase="'open'">
       <div *ngIf="openBrewsView?.length > 0 || isFilterActive() === true" class="ion-justify-content-end container">
         <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
-          <ion-icon [class.active]="isFilterActive()" class="custom-filter black" slot="icon-only"></ion-icon>
+          <ion-icon [class.active]="isFilterActive()" class="black" name="beanconqueror-filter"
+                    slot="icon-only"></ion-icon>
         </ion-button>
       </div>
       <div *ngIf="openBrewsView?.length == 0" class="ion-padding ion-text-center">
         <div>
-          <ion-icon class="custom-cup" color="inactive" size="large"></ion-icon>
+          <ion-icon color="inactive" name="beanconqueror-cup" size="large"></ion-icon>
         </div>
         <div class="text-color-inactive ion-margin-top">
           {{"PAGE_BREWS_NO_ENTRIES" | translate}}
@@ -54,12 +55,13 @@
       <div *ngSwitchCase="'archive'">
         <div *ngIf="archiveBrewsView?.length > 0 || isFilterActive()===true" class="ion-justify-content-end container">
           <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
-            <ion-icon [class.active]="isFilterActive()" class="custom-filter black" slot="icon-only"></ion-icon>
+            <ion-icon [class.active]="isFilterActive()" class="black" name="beanconqueror-filter"
+                      slot="icon-only"></ion-icon>
           </ion-button>
         </div>
         <div *ngIf="archiveBrewsView?.length == 0" class="ion-padding ion-text-center">
           <div>
-            <ion-icon class="custom-cup" color="inactive" size="large"></ion-icon>
+            <ion-icon color="inactive" name="beanconqueror-cup" size="large"></ion-icon>
           </div>
           <div class="text-color-inactive ion-margin-top">
             {{"PAGE_BREWS_NO_ARCHIVED_ENTRIES" | translate}}

@@ -53,7 +53,6 @@ export class Settings implements ISettings {
   };
 
   constructor() {
-    console.log('const called');
     this.brew_view = BREW_VIEW_ENUM.SINGLE_PAGE;
     this.startup_view = STARTUP_VIEW_ENUM.HOME_PAGE;
     this.brew_temperature_time = false;
@@ -110,4 +109,18 @@ export class Settings implements ISettings {
     Object.assign(this.default_last_coffee_parameters, settingsObj.default_last_coffee_parameters);
   }
 
+  public resetFilter() {
+    this.brew_filter = {
+      OPEN: {
+        mill: [],
+        bean: [],
+        method_of_preparation: []
+      } as IBrewPageFilter,
+      ARCHIVED: {
+        mill: [],
+        bean: [],
+        method_of_preparation: []
+      } as IBrewPageFilter
+    };
+  }
 }

@@ -27,7 +27,6 @@ export class BeanModalSelectComponent implements OnInit {
   }
 
   public ionViewDidEnter(): void {
-    console.log(this.showFinished);
     if (this.multiple) {
       for (const obj of this.objs) {
 

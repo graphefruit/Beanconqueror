@@ -57,6 +57,8 @@ export class MillPage  implements OnInit  {
     _mill.finished = true;
     this.uiMillStorage.update(_mill);
     this.uiToast.showInfoToast('TOAST_MILL_ARCHIVED_SUCCESSFULLY');
+    this.settings.resetFilter();
+    this.uiSettingsStorage.saveSettings(this.settings);
     this.loadMills();
   }
 
@@ -104,6 +106,8 @@ export class MillPage  implements OnInit  {
           // Yes
           this.__deleteMill(_mill);
         this.uiToast.showInfoToast('TOAST_MILL_DELETED_SUCCESSFULLY');
+        this.settings.resetFilter();
+        this.uiSettingsStorage.saveSettings(this.settings);
         },
         () => {
           // No

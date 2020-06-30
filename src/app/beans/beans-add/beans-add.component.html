@@ -18,7 +18,8 @@
     </ion-item>
     <ion-item>
       <ion-label position="stacked">{{"BEAN_DATA_ROAST_NAME" | translate}}*</ion-label>
-      <ion-select #roast="ngModel" [(ngModel)]="data.roast" name="roast"
+      <ion-select #roast="ngModel" [(ngModel)]="data.roast" cancelText="{{'CANCEL'| translate }}" name="roast"
+                  okText="{{'CHOOSE'| translate }}"
                   placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROAST_NAME' | translate}}">
         <ion-select-option *ngFor="let key of roastsEnum | keys" value="{{key}}">{{roastsEnum[key]}}</ion-select-option>
       </ion-select>
@@ -59,7 +60,8 @@
     </ion-item>
     <ion-item>
       <ion-label position="stacked">{{"BEAN_DATA_MIX" | translate}}</ion-label>
-      <ion-select #beanMix="ngModel" [(ngModel)]="data.beanMix" name="beanMix"
+      <ion-select #beanMix="ngModel" [(ngModel)]="data.beanMix" cancelText="{{'CANCEL'| translate }}" name="beanMix"
+                  okText="{{'CHOOSE'| translate }}"
                   placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_MIX' | translate}}">
         <ion-select-option *ngFor="let key of mixEnum | keys" value="{{key}}">{{mixEnum[key]}}</ion-select-option>
       </ion-select>

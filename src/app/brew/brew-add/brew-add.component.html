@@ -152,7 +152,9 @@
           </ion-col>
           <ion-col class="ion-no-padding ion-align-self-end" size="4">
             <ion-item class="ion-no-margin-important">
-              <ion-select #brewQuantityType="ngModel" [(ngModel)]="data.brew_quantity_type" name="brewQuantityType"
+              <ion-select #brewQuantityType="ngModel" [(ngModel)]="data.brew_quantity_type"
+                          cancelText="{{'CANCEL'| translate }}" name="brewQuantityType"
+                          okText="{{'CHOOSE'| translate }}"
                           style="max-width:100%;">
                 <ion-select-option *ngFor="let key of brewQuantityTypeEnums | keys" value="{{key}}">
                   {{brewQuantityTypeEnums[key]}}
@@ -177,7 +179,7 @@
       </ion-item>
       <ion-item *ngIf="settings.rating === true" [style.order]="settings.brew_order.after.rating" lines="inset">
         <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
-          color="accent" style="vertical-align: top;">{{data.rating}}</ion-badge>
+          style="vertical-align: top;">{{data.rating}}</ion-badge>
         </ion-label>
         <ion-range [(ngModel)]="data.rating" color="accent" debounce="500s" max="5" min="-1" snaps="true" step="1">
 
