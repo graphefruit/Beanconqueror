@@ -35,8 +35,7 @@ import {SharedModule} from '../shared/shared.module';
           {
             path: 'mills',
             loadChildren: '../mill/mill.module#MillPageModule'
-          },
-
+          }
         ]
       }
     ]),

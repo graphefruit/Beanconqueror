@@ -331,6 +331,7 @@ export class AppComponent implements AfterViewInit {
 
   }
 
+
   private async __trackNewBrew() {
 
     if (this.uiBrewHelper.canBrew()) {

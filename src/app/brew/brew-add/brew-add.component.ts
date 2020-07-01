@@ -157,7 +157,6 @@ export class BrewAddComponent implements OnInit {
                   if (_path) {
                     this.data.attachments.push(_path.toString());
                   }
-
                 });
           } else {
             // TAKE
