@@ -1,34 +1,28 @@
 <ion-content>
   <ion-tabs>
 
-    <ion-tab tab="dashboard">
-
-    </ion-tab>
-    <ion-tab tab="brews">
-
-    </ion-tab>
     <ion-tab-bar slot="bottom">
-      <ion-tab-button tab="dashboard">
+      <ion-tab-button tab="dashboard" tappable>
         <ion-icon class="menu-icon" name="beanconqueror-home"></ion-icon>
         <ion-label>{{"NAV_HOME" | translate}}</ion-label>
       </ion-tab-button>
-      <ion-tab-button tab="brews">
+      <ion-tab-button tab="brews" tappable>
         <ion-icon class="menu-icon" name="beanconqueror-brew"></ion-icon>
         <ion-label>{{"NAV_BREWS" | translate}}</ion-label>
       </ion-tab-button>
-      <ion-tab-button tab="beans">
+      <ion-tab-button tab="beans" tappable>
         <ion-icon class="menu-icon" name="beanconqueror-bean"></ion-icon>
         <ion-label>{{"NAV_BEANS" | translate}}</ion-label>
         <ion-badge *ngIf="!activeBeansExists()" color="danger"></ion-badge>
       </ion-tab-button>
 
-      <ion-tab-button tab="preparations">
+      <ion-tab-button tab="preparations" tappable>
         <ion-icon class="menu-icon" name="beanconqueror-preparation"></ion-icon>
         <ion-label>{{"NAV_PREPARATION" | translate}}</ion-label>
         <ion-badge *ngIf="!activePreparationsExists()" color="danger"></ion-badge>
       </ion-tab-button>
 
-      <ion-tab-button tab="mills">
+      <ion-tab-button tab="mills" tappable>
         <ion-icon class="menu-icon" name="beanconqueror-pepper-mill"></ion-icon>
         <ion-label>{{"NAV_MILL" | translate}}</ion-label>
         <ion-badge *ngIf="!activeMillsExists()" color="danger"></ion-badge>
@@ -36,12 +30,5 @@
 
 
     </ion-tab-bar>
-
-
   </ion-tabs>
-  <!-- <div>
-     <cupping-radar></cupping-radar>
-     <canvas #cuppingChart></canvas>
-   </div>-->
-
 </ion-content>
