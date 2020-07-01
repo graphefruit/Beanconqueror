@@ -36,7 +36,10 @@ export class PreparationOverlayDirective {
     if (typeof (this.model.model) === 'string') {
       selectedValues.push(this.model.model);
     } else {
+
       selectedValues = [...this.model.model];
+
+
     }
     const modal = await this.modalController.create({
       component: PreparationModalSelectComponent,

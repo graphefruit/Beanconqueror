@@ -47,7 +47,7 @@
       <ion-label position="stacked">{{"BREW_DATA_PREPARATION_METHOD" | translate}}</ion-label>
         <ion-select [(ngModel)]="data.method_of_preparation"
                     placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}"
-                    preparation-overlayshow-finished="false ">
+                    preparation-overlay show-finished="false ">
       </ion-select>
     </ion-item>
       <ion-item *ngIf="settings.bean_type === true" [style.order]="settings.brew_order.before.bean_type" lines="inset">

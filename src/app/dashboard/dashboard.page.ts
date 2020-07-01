@@ -26,6 +26,11 @@ export class DashboardPage implements OnInit {
   }
 
 
+  public ionViewWillEnter() {
+    this.brews = this.uiBrewStorage.getAllEntries();
+    this.brews = this.__sortBrews(this.brews);
+    this.brews = this.brews.slice(0, 10);
+  }
   public async addBrew() {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
       const modal = await this.modalCtrl.create({component: BrewAddComponent});
@@ -35,9 +40,7 @@ export class DashboardPage implements OnInit {
   }
 
   public getBrews() {
-    this.brews = this.uiBrewStorage.getAllEntries();
-    this.brews = this.__sortBrews(this.brews);
-    this.brews = this.brews.slice(0, 10);
+
     return this.brews;
   }
 
