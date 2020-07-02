@@ -30,9 +30,6 @@ export class WelcomePopoverComponent implements OnInit {
 
   private settings: Settings;
 
-  public hasBeans: boolean = false;
-  public hasMills: boolean = false;
-  public hasPreparations: boolean = false;
 
   constructor(private readonly modalController: ModalController,
               private readonly uiAnalytics: UIAnalytics,
@@ -42,9 +39,7 @@ export class WelcomePopoverComponent implements OnInit {
               private readonly uiPreparationStorage: UIPreparationStorage) {
     this.settings = this.uiSettingsStorage.getSettings();
 
-    this.hasBeans = this.uiBeanStorage.getAllEntries().length > 0;
-    this.hasMills = this.uiMillStorage.getAllEntries().length > 0;
-    this.hasPreparations = this.uiPreparationStorage.getAllEntries().length > 0;
+
   }
 
   public ngOnInit() {

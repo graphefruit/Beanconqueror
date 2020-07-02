@@ -356,15 +356,17 @@ export class AppComponent implements AfterViewInit {
   }
 
   private async __trackNewBean() {
-
-    const modal = await this.modalCtrl.create({component: BeansAddComponent});
+    const modal = await this.modalCtrl.create({component: BeansAddComponent, componentProps: {hide_toast_message: false}});
     await modal.present();
     await modal.onWillDismiss();
 
   }
 
   private async __trackNewPreparation() {
-    const modal = await this.modalCtrl.create({component: PreparationAddComponent});
+    const modal = await this.modalCtrl.create({
+      component: PreparationAddComponent,
+      showBackdrop: true, id: 'preparation-add', componentProps: {hide_toast_message: false}
+    });
     await modal.present();
     await modal.onWillDismiss();
     this.router.navigate(['/']);
@@ -372,7 +374,10 @@ export class AppComponent implements AfterViewInit {
   }
 
   private async __trackNewMill() {
-    const modal = await this.modalCtrl.create({component: MillAddComponent});
+    const modal = await this.modalCtrl.create({
+      component: MillAddComponent,
+      cssClass: 'half-bottom-modal', showBackdrop: true, componentProps: {hide_toast_message: false}
+    });
     await modal.present();
     await modal.onWillDismiss();
     this.router.navigate(['/']);

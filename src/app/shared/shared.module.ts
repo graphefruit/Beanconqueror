@@ -149,7 +149,7 @@ import {DisableDoubleClickDirective} from '../../directive/disable-double-click.
     IonicModule,
     FormsModule,
     TranslateModule,
-    RouterModule,
+    RouterModule
   ],
   providers: [
     AppVersion,

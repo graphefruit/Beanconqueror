@@ -16,6 +16,7 @@ export class Bean implements IBean {
   public roaster: string;
   public config: Config;
   public roast: ROASTS_ENUM;
+  public roast_range: number;
   public beanMix: BEAN_MIX_ENUM;
   public variety: string;
   public country: string;
@@ -36,6 +37,7 @@ export class Bean implements IBean {
     this.roaster = '';
     this.config = new Config();
     this.roast = 'UNKNOWN' as ROASTS_ENUM;
+    this.roast_range = 0;
     this.roast_custom = '';
     this.beanMix = 'SINGLE_ORIGIN' as BEAN_MIX_ENUM;
     this.variety = '';
