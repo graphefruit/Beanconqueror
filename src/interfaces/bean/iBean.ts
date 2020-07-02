@@ -20,6 +20,7 @@ export interface IBean {
   filePath: string;
   roaster: string;
   roast: ROASTS_ENUM;
+  roast_range: number;
   // Will be filled when roast is choosen as custom.
   roast_custom: string;
   config: IConfig;

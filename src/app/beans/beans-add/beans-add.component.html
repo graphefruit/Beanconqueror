@@ -9,6 +9,8 @@
   </ion-toolbar>
 </ion-header>
 <ion-content class="ion-padding">
+
+
   <ion-card class="popover">
     <ion-item>
       <ion-label position="stacked">{{"BEAN_DATA_NAME" | translate}}*</ion-label>
@@ -16,8 +18,14 @@
                  autocapitalize="sentences" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_NAME' | translate}}" required>
       </ion-input>
     </ion-item>
-    <ion-item>
+    <ion-item lines="none">
       <ion-label position="stacked">{{"BEAN_DATA_ROAST_NAME" | translate}}*</ion-label>
+      <ion-range [(ngModel)]="data.roast_range" color="accent" debounce="500s" max="5" min="0" snaps="true" step="0.5">
+
+        <ion-icon name="star-half-outline" slot="end"></ion-icon>
+      </ion-range>
+    </ion-item>
+    <ion-item>
       <ion-select #roast="ngModel" [(ngModel)]="data.roast" cancelText="{{'CANCEL'| translate }}" name="roast"
                   okText="{{'CHOOSE'| translate }}"
                   placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROAST_NAME' | translate}}">
