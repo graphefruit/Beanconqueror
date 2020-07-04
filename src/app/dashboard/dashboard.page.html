@@ -67,7 +67,7 @@
 
   <ion-list>
     <ion-list-header>
-      <ion-label>{{"PAGE_HOME_LAST_BREWS" | translate}}</ion-label>
+      <h4 class="ion-no-margin">{{"PAGE_HOME_LAST_BREWS" | translate}}</h4>
     </ion-list-header>
     <div *ngIf="getBrews()?.length == 0" class="ion-padding ion-text-center">
       <div>
@@ -81,5 +81,5 @@
       <brew-dashboard-information (openBrew)="openBrew($event[0])" [brew]="brew"></brew-dashboard-information>
     </div>
   </ion-list>
-
+  <cupping-radar></cupping-radar>
 </ion-content>

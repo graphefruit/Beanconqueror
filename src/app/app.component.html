@@ -1,7 +1,7 @@
 <ion-app>
   <ion-split-pane contentId="menu-content" when="false">
     <ion-menu contentId="menu-content" type="overlay">
-      <ion-header>
+      <ion-header class="ion-margin-top">
         <ion-toolbar class="ion-text-center">
           <ion-buttons slot="start">
             <ion-button (click)="dismiss()">
@@ -21,7 +21,7 @@
         </ion-toolbar>
       </ion-header>
       <ion-content>
-        <ion-list>
+        <ion-list class="ion-margin-top">
           <ion-menu-toggle autoHide="false">
             <ion-list class="no-label-margin" lines="none">
               <ion-item [class.active]="pages.home.active" [routerLink]="[pages.home.url]" replaceUrl="true">

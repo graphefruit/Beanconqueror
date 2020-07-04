@@ -8,8 +8,8 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content>
-  <ion-card *ngIf="settings.brew_view == BREW_VIEW_ENUM.SINGLE_PAGE" class="ion-margin-horizontal popover"
+<ion-content class="ion-padding">
+  <ion-card *ngIf="settings.brew_view == BREW_VIEW_ENUM.SINGLE_PAGE" class="fpopover"
             style="display:flex; flex-direction: column;">
 
     <div *ngIf="showSectionBeforeBrew()" style="display:flex;flex-direction: column;">
