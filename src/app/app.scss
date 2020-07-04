@@ -16,10 +16,11 @@
 }
 
 ion-title {
-  font-family: 'Baloo';
+  font-family: "Baloo";
   font-size: 24px;
   letter-spacing: -1.05px;
-  color: black;
+  color: var(--ion-text-color);
+  line-height: 24px;
 }
 
 ion-toolbar {
@@ -69,13 +70,23 @@ ion-card.small-card {
 ion-segment-button::part(indicator) {
   /* Styles to apply to the `foo` part */
   margin: 0 auto;
-  width: 25%;
+  width: 35%;
 }
 
 ion-segment-button {
   letter-spacing: -0.63px;
-  font-size: 18px;
+  font-size: 20px;
+  text-transform: capitalize;
+  height: 30px;
+  max-height: 30px;
+  min-height: 30px;
+
+  ion-label {
+    font-size: 18px !important;
+  }
+
 }
+
 
 .heading-20 {
   font-size: 20px;
@@ -291,13 +302,15 @@ ion-split-pane {
 
 }
 
-ion-menu::content.menu-inner {
+ion-menu:host .menu-inner {
 
-  border-radius: 50px;
+
+  box-shadow: none;
 
 }
 
 :root {
+
 
   ion-range::part(.range-bar) {
     background-color: yellow;
@@ -315,6 +328,7 @@ ion-menu::content.menu-inner {
     font-family: 'Baloo';
     text-transform: inherit;
     height: 40px;
+    font-size: 16px;
   }
   .subtitle {
     margin: 0;
@@ -360,6 +374,7 @@ ion-menu::content.menu-inner {
     background-color: #FFFFFF;
     border-radius: 6px 6px 6px 6px;
     box-shadow: none;
+    color: var(--ion-text-color);
   }
 
   ion-item {
@@ -522,10 +537,9 @@ ion-menu::content.menu-inner {
     font-family: "Baloo";
     font-size: 24px;
     letter-spacing: -1.05px;
-    color: black;
+    color: var(--ion-text-color);
     line-height: 24px;
     padding-bottom: var(--ion-padding, 16px);
-
   }
 
   ion-toast {

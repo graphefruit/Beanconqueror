@@ -33,4 +33,19 @@
     left: calc(50% - 87px);
     top: 0;
   }
+
+  ion-title {
+    padding: 0px;
+  }
+
+  .welcome-content-text {
+    text-align: left;
+    padding-inline-start: var(--padding-start, 16px);
+    padding-inline-end: var(--padding-end, 16px);
+  }
+
+  ion-card {
+    margin-inline-start: var(--padding-start, 16px);
+    margin-inline-end: var(--padding-end, 16px);
+  }
 }
