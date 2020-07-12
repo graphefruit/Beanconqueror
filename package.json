@@ -76,6 +76,7 @@
     "es6-promise-plugin": "^4.2.2",
     "ionic": "^5.4.16",
     "moment": "^2.24.0",
+    "ngx-stars": "^1.4.3",
     "rxjs": "^6.5.4",
     "tslib": "^1.11.1",
     "zone.js": "~0.9.1"

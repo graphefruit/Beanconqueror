@@ -5,6 +5,16 @@
   }
 
 
+  .wrap-brew-text {
+    ion-item {
+
+      -ms-text-overflow: ellipsis;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+
+    }
+  }
   ion-row.center-col ion-col {
     display: flex;
     align-items: center
@@ -41,6 +51,19 @@
     padding: 8px;
     line-height: 12px;
   }
+
+  .icon-size-48 {
+    width: 32px;
+    height: 32px;
+    font-size: 32px;
+  }
+
+  .center-brew-rating-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
 }
 
 

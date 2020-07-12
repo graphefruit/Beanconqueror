@@ -10,7 +10,7 @@ export class AsyncImageComponent implements OnInit, OnChanges {
   @Input() public filePath: string;
 
   public img: string = '';
-  public preloadImg: string = 'assets/img/coffee_loader.gif';
+  public preloadImg: string = 'assets/img/loading.gif';
   constructor( private uiFileHelper: UIFileHelper) { }
 
   public async ngOnInit(): Promise<void> {
@@ -31,6 +31,9 @@ export class AsyncImageComponent implements OnInit, OnChanges {
       this.img = '';
     } else {
       this.img = await this.uiFileHelper.getBase64File(this.filePath);
+      if (this.img === '') {
+
+      }
     }
   }
 

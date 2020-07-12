@@ -14,7 +14,7 @@
   <div *ngIf="multiple">
     <ion-card *ngIf="getOpenBeans().length > 0">
       <ion-title class="ion-padding-top">{{"MODAL_CHOOSE_BEANS_OPEN" | translate  }}</ion-title>
-      <ion-item *ngFor="let bean of getOpenBeans()" lines="none">
+      <ion-item *ngFor="let bean of getOpenBeans()" lines="none" tappable>
         <ion-checkbox [(ngModel)]="multipleSelection[bean.config.uuid]" slot="start"></ion-checkbox>
         <div>
           <h6>{{bean.name}}</h6>
@@ -28,7 +28,7 @@
     <ion-card *ngIf="showFinished===true && getFinishedBeans().length > 0">
       <ion-title class="ion-padding-top">{{"MODAL_CHOOSE_BEANS_FINISHED" | translate  }}</ion-title>
 
-      <ion-item *ngFor="let bean of getFinishedBeans()" lines="none">
+      <ion-item *ngFor="let bean of getFinishedBeans()" lines="none" tappable>
         <ion-checkbox [(ngModel)]="multipleSelection[bean.config.uuid]" slot="start"></ion-checkbox>
         <div>
           <h6>{{bean.name}}</h6>
@@ -45,7 +45,7 @@
 
       <ion-card *ngIf="getOpenBeans().length > 0">
         <ion-title class="ion-padding-top">{{"MODAL_CHOOSE_BEANS_OPEN" | translate  }}</ion-title>
-        <ion-item *ngFor="let bean of getOpenBeans()" lines="none">
+        <ion-item *ngFor="let bean of getOpenBeans()" lines="none" tappable>
           <ion-radio slot="start" value="{{bean.config.uuid}}"></ion-radio>
           <div>
             <h6>{{bean.name}}</h6>
@@ -59,7 +59,7 @@
       <ion-card *ngIf="showFinished===true && getFinishedBeans().length > 0">
         <ion-title class="ion-padding-top">{{"MODAL_CHOOSE_BEANS_FINISHED" | translate  }}</ion-title>
 
-        <ion-item *ngFor="let bean of getFinishedBeans()" lines="none">
+        <ion-item *ngFor="let bean of getFinishedBeans()" lines="none" tappable>
           <ion-radio slot="start" value="{{bean.config.uuid}}"></ion-radio>
           <div>
             <h6>{{bean.name}}</h6>

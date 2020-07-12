@@ -8,7 +8,7 @@
   .full-sized-icon {
     width: 80%;
     height: 80%;
-    padding: 16px;
+    padding: 8px;
   }
 
 
@@ -23,6 +23,13 @@
     padding: 0px;
 
     ion-item {
+      ion-col {
+        -ms-text-overflow: ellipsis;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+
       --background: none;
       --padding-start: 0px;
       --padding-end: 0px;

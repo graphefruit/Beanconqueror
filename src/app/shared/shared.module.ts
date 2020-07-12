@@ -89,6 +89,7 @@ import {PreparationModalSelectComponent} from '../preparation/preparation-modal-
 import {MillOverlayDirective} from '../../directive/mill-overlay.directive';
 import {PreparationOverlayDirective} from '../../directive/preparation-overlay.directive';
 import {DisableDoubleClickDirective} from '../../directive/disable-double-click.directive';
+import {NgxStarsModule} from 'ngx-stars';
 
 @NgModule({
   declarations: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, AboutComponent,
@@ -149,7 +150,8 @@ import {DisableDoubleClickDirective} from '../../directive/disable-double-click.
     IonicModule,
     FormsModule,
     TranslateModule,
-    RouterModule
+    RouterModule,
+    NgxStarsModule,
   ],
   providers: [
     AppVersion,

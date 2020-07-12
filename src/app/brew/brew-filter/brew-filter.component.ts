@@ -62,6 +62,17 @@ export class BrewFilterComponent implements OnInit {
     });
   }
 
+  public resetFilter() {
+    this.filter = {
+      mill: [],
+      bean: [],
+      method_of_preparation: []
+    };
+    this.modalController.dismiss({
+      brew_filter: this.uiHelper.copyData(this.filter)
+    });
+  }
+
 
   private __reloadFilterSettings() {
     this.method_of_preparations = this.uiPreparationStorage.getAllEntries()

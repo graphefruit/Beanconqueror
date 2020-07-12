@@ -9,10 +9,8 @@
   </ion-toolbar>
 </ion-header>
 <ion-content class="ion-padding">
-  <ion-card *ngIf="settings.brew_view == BREW_VIEW_ENUM.SINGLE_PAGE" class="fpopover"
-            style="display:flex; flex-direction: column;">
-
-    <div *ngIf="showSectionBeforeBrew()" style="display:flex;flex-direction: column;">
+  <ion-card *ngIf="showSectionBeforeBrew()"
+            class="popover" style="display:flex; flex-direction: column;">
 
       <ion-item lines="none">
         <span class="ion-title ion-padding-top">{{"BREW_HEADER_BEFORE_BREW" | translate }}</span>
@@ -84,59 +82,64 @@
         <ion-input [(ngModel)]="data.pressure_profile"
                    placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PRESSURE_PROFILE' | translate}}" type="text"></ion-input>
       </ion-item>
-    </div>
 
 
-    <div *ngIf="showSectionWhileBrew()" style="display:flex;flex-direction: column;">
-      <ion-item lines="none">
-        <span class="ion-title ion-padding-top">{{"BREW_HEADER_WHILE_BREW" | translate }}</span>
-      </ion-item>
-      <ion-item *ngIf="settings.brew_temperature_time === true" lines="inset"
-                [style.order]="settings.brew_order.while.brew_temperature_time">
-        <timer #brewTemperatureTime label="{{'BREW_DATA_TEMPERATURE_TIME' | translate}}" timeInSeconds="0"
+  </ion-card>
+  <ion-card *ngIf="showSectionWhileBrew()"
+            class="popover" style="display:flex; flex-direction: column;">
 
-        ></timer>
-      </ion-item>
-      <ion-item *ngIf="settings.brew_time === true" [style.order]="settings.brew_order.while.brew_time" lines="inset">
-        <brew-timer #timer
-                    (bloomTimer)="setCoffeeBloomingTime($event)"
-                    (dripTimer)="setCoffeeDripTime($event)"
-                    (timerTicked)="brewTimeTicked($event)"
 
-                    [bloomTimerVisible]="settings.coffee_blooming_time"
+    <ion-item lines="none">
+      <span class="ion-title ion-padding-top">{{"BREW_HEADER_WHILE_BREW" | translate }}</span>
+    </ion-item>
+    <ion-item *ngIf="settings.brew_temperature_time === true" lines="inset"
+              [style.order]="settings.brew_order.while.brew_temperature_time">
+      <timer #brewTemperatureTime label="{{'BREW_DATA_TEMPERATURE_TIME' | translate}}" timeInSeconds="0"
 
-                    [dripTimerVisible]="settings.coffee_first_drip_time"
-                    label="{{'BREW_DATA_TIME' | translate}}"
-                    timeInSeconds="0"></brew-timer>
-      </ion-item>
+      ></timer>
+    </ion-item>
+    <ion-item *ngIf="settings.brew_time === true" [style.order]="settings.brew_order.while.brew_time" lines="inset">
+      <brew-timer #timer
+                  (bloomTimer)="setCoffeeBloomingTime($event)"
+                  (dripTimer)="setCoffeeDripTime($event)"
+                  (timerTicked)="brewTimeTicked($event)"
 
-      <ion-item *ngIf="settings.brew_time === true && settings.coffee_first_drip_time === true" lines="inset"
-                [style.order]="settings.brew_order.while.brew_time" lines="full">
-        <ion-label>
-          {{'BREW_DATA_CALCULATED_COFFEE_BREW_TIME' | translate}}: {{data.getFormattedCoffeeBrewTime()}}
-        </ion-label>
-      </ion-item>
+                  [bloomTimerVisible]="settings.coffee_blooming_time"
 
-      <ion-item *ngIf="settings.coffee_blooming_time === true" lines="inset"
-                [style.order]="settings.brew_order.while.coffee_blooming_time">
-        <ion-label position="stacked">{{"BREW_DATA_COFFEE_BLOOMING_TIME" | translate}}</ion-label>
-        <ion-input [(ngModel)]="data.coffee_blooming_time" inputmode="decimal"
-                   placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_COFFEE_BLOOMING_TIME' | translate}}" prevent-characters
-                   remove-empty-number
-                   type="text"></ion-input>
-      </ion-item>
-      <ion-item *ngIf="settings.coffee_first_drip_time === true" lines="inset"
-                [style.order]="settings.brew_order.while.coffee_first_drip_time">
-        <ion-label position="stacked">{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}</ion-label>
-        <ion-input [(ngModel)]="data.coffee_first_drip_time" inputmode="decimal"
-                   placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_COFFEE_FIRST_DRIP_TIME' | translate}}" prevent-characters
-                   remove-empty-number
-                   type="text"></ion-input>
-      </ion-item>
-    </div>
+                  [dripTimerVisible]="settings.coffee_first_drip_time"
+                  label="{{'BREW_DATA_TIME' | translate}}"
+                  timeInSeconds="0"></brew-timer>
+    </ion-item>
 
-    <div *ngIf="showSectionAfterBrew()" style="display:flex;flex-direction: column;">
-      <ion-item lines="none">
+    <ion-item *ngIf="settings.brew_time === true && settings.coffee_first_drip_time === true" lines="inset"
+              [style.order]="settings.brew_order.while.brew_time" lines="full">
+      <ion-label>
+        {{'BREW_DATA_CALCULATED_COFFEE_BREW_TIME' | translate}}: {{data.getFormattedCoffeeBrewTime()}}
+      </ion-label>
+    </ion-item>
+
+    <ion-item *ngIf="settings.coffee_blooming_time === true" lines="inset"
+              [style.order]="settings.brew_order.while.coffee_blooming_time">
+      <ion-label position="stacked">{{"BREW_DATA_COFFEE_BLOOMING_TIME" | translate}}</ion-label>
+      <ion-input [(ngModel)]="data.coffee_blooming_time" inputmode="decimal"
+                 placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_COFFEE_BLOOMING_TIME' | translate}}" prevent-characters
+                 remove-empty-number
+                 type="text"></ion-input>
+    </ion-item>
+    <ion-item *ngIf="settings.coffee_first_drip_time === true" lines="inset"
+              [style.order]="settings.brew_order.while.coffee_first_drip_time">
+      <ion-label position="stacked">{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}</ion-label>
+      <ion-input [(ngModel)]="data.coffee_first_drip_time" inputmode="decimal"
+                 placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_COFFEE_FIRST_DRIP_TIME' | translate}}" prevent-characters
+                 remove-empty-number
+                 type="text"></ion-input>
+    </ion-item>
+  </ion-card>
+  <ion-card *ngIf="showSectionAfterBrew()"
+            class="popover" style="display:flex; flex-direction: column;">
+
+
+    <ion-item lines="none">
         <span class="ion-title ion-padding-top">{{"BREW_HEADER_AFTER_BREW" | translate }}</span>
       </ion-item>
       <ion-item lines="inset">
@@ -217,17 +220,17 @@
           </ion-slides>
         </div>
       </div>
-    </div>
 
   </ion-card>
 </ion-content>
 <ion-footer class="ion-no-border">
   <ion-row>
     <ion-col>
-      <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline">{{"CANCEL" | translate}}</ion-button>
+      <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
+                  tappable>{{"CANCEL" | translate}}</ion-button>
     </ion-col>
     <ion-col>
-      <ion-button (click)="finish()" color="accent" disable-double-click expand="block"
+      <ion-button (click)="finish()" color="accent" disable-double-click expand="block" tappable
                   type="submit">{{"SAVE" | translate}}</ion-button>
     </ion-col>
   </ion-row>

@@ -325,7 +325,7 @@ ion-menu:host .menu-inner {
     --background: #CDC2AC;
   }
   ion-button {
-    font-family: 'Baloo';
+    font-family: 'Arial';
     text-transform: inherit;
     height: 40px;
     font-size: 16px;
@@ -335,6 +335,7 @@ ion-menu:host .menu-inner {
     font-size: 14px;
     text-overflow: inherit;
     white-space: normal;
+    line-height: 14px;
   }
 
   ion-back-button {
@@ -454,21 +455,13 @@ ion-menu:host .menu-inner {
     --background: #F2F2F2;
     /*CSS Attribute not taken*/
     border-radius: 6px;
-    --padding-start: 6px !important;
-    --padding-end: 6px !important;
+    --padding-start: 12px !important;
+    --padding-end: 12px !important;
     margin-bottom: 10px;
   }
 
   .popover {
-    ion-item:first-child {
 
-      --border-radius: 6px 6px 0px 0px;
-    }
-
-    ion-item:last-child {
-
-      --border-radius: 0px 0px 6px 6px;
-    }
 
     ion-label {
       font-family: 'Baloo';
@@ -567,14 +560,34 @@ ion-menu:host .menu-inner {
   .button-top-absolute {
     position: absolute;
     top: -5px;
+    right: -20px;
   }
 
-  @media (max-width: 450px) {
-    .button-top-absolute {
-      left: -20px;
-    }
+
+  .star-half {
+    background: url('../assets/custom-ion-icons/beanconqueror-bean-rating-half.svg');
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
+    background-color: inherit !important;
+    background-repeat: no-repeat;
   }
 
+  .star-full {
+    background: url('../assets/custom-ion-icons/beanconqueror-bean-rating-full.svg');
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
+    background-color: inherit !important;
+    background-repeat: no-repeat;
+  }
+
+  .star-empty {
+    background: url('../assets/custom-ion-icons/beanconqueror-bean-rating-empty.svg');
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
+    background-color: inherit !important;
+    background-repeat: no-repeat;
+
+  }
 
 }
 

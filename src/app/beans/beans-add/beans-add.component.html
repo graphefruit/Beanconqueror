@@ -19,14 +19,14 @@
       </ion-input>
     </ion-item>
     <ion-item lines="none">
-      <ion-label position="stacked">{{"BEAN_DATA_ROAST_NAME" | translate}}*</ion-label>
-      <ion-range [(ngModel)]="data.roast_range" color="accent" debounce="500s" max="5" min="0" snaps="true" step="0.5">
 
-        <ion-icon name="star-half-outline" slot="end"></ion-icon>
-      </ion-range>
+
+      <ion-label position="stacked">{{"BEAN_DATA_ROAST_NAME" | translate}}*</ion-label>
+      <ngx-stars [customPadding]="'20px'" [readonly]="false" [size]="2" class="ion-margin-top"></ngx-stars>
     </ion-item>
     <ion-item>
       <ion-select #roast="ngModel" [(ngModel)]="data.roast" cancelText="{{'CANCEL'| translate }}" name="roast"
+                  style="padding-left:0px!important;width: 100%; min-width: 100%;"
                   okText="{{'CHOOSE'| translate }}"
                   placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROAST_NAME' | translate}}">
         <ion-select-option *ngFor="let key of roastsEnum | keys" value="{{key}}">{{roastsEnum[key]}}</ion-select-option>
@@ -120,10 +120,11 @@
 <ion-footer class="ion-no-border">
   <ion-row>
     <ion-col>
-      <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline">{{"CANCEL" | translate}}</ion-button>
+      <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
+                  tappable>{{"CANCEL" | translate}}</ion-button>
     </ion-col>
     <ion-col>
-      <ion-button (click)="addBean()" color="accent" disable-double-click expand="block"
+      <ion-button (click)="addBean()" color="accent" disable-double-click expand="block" tappable
                   type="submit">{{"SAVE" | translate}}</ion-button>
     </ion-col>
   </ion-row>
