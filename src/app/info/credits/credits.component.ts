@@ -13,10 +13,10 @@ export class CreditsComponent implements OnInit {
 
   public ngOnInit() {}
   public credits: any = {
-    'icon-loading': {
-      TITLE: 'Loading Coffee',
-      LINK: 'https://icons8.com/preloaders',
-      DESCRIPTION: `https://icons8.com/preloaders/en/terms_of_use`
+    'bean-background': {
+      TITLE: 'Bean background',
+      LINK: 'https://www.pexels.com/de-de/@igor-haritanovich-814387?utm_content=attributionCopyText&utm_medium=referral&utm_source=pexels',
+      DESCRIPTION: `https://www.pexels.com/de-de/foto/arabica-aromatisch-bohnen-braun-1695052/?utm_content=attributionCopyText&utm_medium=referral&utm_source=pexels`
     }
   };
 

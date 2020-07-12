@@ -34,10 +34,11 @@
 <ion-footer class="ion-no-border">
   <ion-row>
     <ion-col>
-      <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline">{{"CANCEL" | translate}}</ion-button>
+      <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
+                  tappable>{{"CANCEL" | translate}}</ion-button>
     </ion-col>
     <ion-col>
-      <ion-button (click)="editMill(editMillForm)" color="accent" expand="block"
+      <ion-button (click)="editMill(editMillForm)" color="accent" expand="block" tappable
                   type="submit">{{"SAVE" | translate}}</ion-button>
     </ion-col>
   </ion-row>

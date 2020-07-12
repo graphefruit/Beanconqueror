@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="238.663" height="188.182" viewBox="0 0 238.663 188.182">
+  <g id="Gruppe_204" data-name="Gruppe 204" transform="translate(-61 -151)">
+    <circle id="Ellipse_368" data-name="Ellipse 368" cx="87" cy="87" r="87" transform="translate(61 151)" fill="#ff5957"
+            opacity="0.494"/>
+    <g id="Gruppe_170" data-name="Gruppe 170" transform="translate(-489.14 40.077)">
+      <path id="Pfad_1365" data-name="Pfad 1365" d="M721.165,365.27" transform="translate(-29.293 -66.165)"
+            fill="#97485c"/>
+      <path id="Pfad_1366" data-name="Pfad 1366" d="M716.637,365.27" transform="translate(-27.964 -66.165)"
+            fill="#97485c"/>
+      <path id="Pfad_1367" data-name="Pfad 1367" d="M809.108,250.6c39.316-1.585,35.691,46.963-11.223,40.346"
+            transform="translate(-51.815 -32.49)" fill="none" stroke="#7f445c" stroke-miterlimit="10" stroke-width="9"/>
+      <path id="Pfad_1368" data-name="Pfad 1368" d="M802.467,253.026c39.316-1.586,35.75,45.245-11.163,38.629"
+            transform="translate(-49.883 -33.203)" fill="none" stroke="#97485c" stroke-miterlimit="10"
+            stroke-width="9"/>
+      <path id="Pfad_1369" data-name="Pfad 1369"
+            d="M757.292,238.007c0,49.16-9.656,76.254-35.467,76.921-14.617.377-49.045-.667-67.56-.661-24.477.008-32.888-43.906-32.888-76.26"
+            transform="translate(0 -28.806)" fill="#97485c"/>
+      <path id="Pfad_1370" data-name="Pfad 1370"
+            d="M652.742,314.205c-23.53-2.165-31.364-43.844-31.364-76.2l7.493.014S632.59,278.429,652.742,314.205Z"
+            transform="translate(0 -28.806)" fill="#d84e50"/>
+      <path id="Pfad_1371" data-name="Pfad 1371"
+            d="M752.715,314.969c33.983,2.921,43.132-27.76,43.132-76.921l-28.576-.041S776,277.3,752.715,314.969Z"
+            transform="translate(-38.555 -28.806)" fill="#7f445c"/>
+      <path id="Pfad_1372" data-name="Pfad 1372"
+            d="M626.878,219.611s-4.924-32.358,8.845-32.771,14.753,13.622,14.753,13.622-.983,14.035,5.9,16.1,13.769,2.064,15.737.826,5.109-7.478,10.327-7.43c5.915.055,7.428,1.494,13.049,5.577,0,0,16.451-2.723,22.578,7.484l-90.836-.059Z"
+            transform="translate(-1.363 -13.783)" fill="#936164"/>
+      <circle id="Ellipse_407" data-name="Ellipse 407" cx="5.357" cy="5.357" r="5.357"
+              transform="translate(664.833 174.574)" fill="#936164"/>
+      <circle id="Ellipse_408" data-name="Ellipse 408" cx="3.561" cy="3.561" r="3.561"
+              transform="translate(656.153 160.646)" fill="#936164"/>
+      <circle id="Ellipse_409" data-name="Ellipse 409" cx="5.252" cy="5.252" r="5.252"
+              transform="translate(673.578 139.881)" fill="#936164"/>
+      <circle id="Ellipse_410" data-name="Ellipse 410" cx="1.847" cy="1.847" r="1.847"
+              transform="translate(674.181 160.357)" fill="#936164"/>
+    </g>
+  </g>
+</svg>

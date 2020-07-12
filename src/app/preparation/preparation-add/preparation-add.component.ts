@@ -41,6 +41,8 @@ export class PreparationAddComponent implements OnInit {
       component: PreparationAddTypeComponent,
       cssClass: 'half-bottom-modal',
       showBackdrop: true,
+      backdropDismiss: true,
+      swipeToClose: true,
       componentProps: {type: _prepType, hide_toast_message: this.hide_toast_message}
     });
     await modal.present();

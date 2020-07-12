@@ -3,14 +3,6 @@
   <div class="ion-margin-horizontal popover">
     <form #addPreparationForm="ngForm" novalidate>
       <ion-item>
-        <ion-label position="stacked">{{"PREPARATION_TYPE" | translate}}</ion-label>
-        <ion-select #type="ngModel" [(ngModel)]="data.type" cancelText="{{'CANCEL'| translate }}" name="type"
-                    okText="{{'CHOOSE'| translate }}">
-          <ion-select-option *ngFor="let key of preparationTypeEnum | keys"
-                             value="{{key}}"> {{'PREPARATION_TYPE_' + key | translate}}</ion-select-option>
-        </ion-select>
-      </ion-item>
-      <ion-item lines="none">
         <ion-label position="stacked">{{"PREPARATION_TYPE_NAME" | translate}}*</ion-label>
         <ion-input #name="ngModel" [(ngModel)]="data.name" autocapitalize="sentences" name="name"
                    placeholder="{{'PREPARATION.PLACE_HOLDER.PREPARATION_TYPE_NAME' | translate}}" required

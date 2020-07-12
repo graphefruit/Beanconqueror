@@ -6,6 +6,7 @@ import {ModalController, NavParams} from '@ionic/angular';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 import {UIToast} from '../../../services/uiToast';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'preparation-add-type',
@@ -17,8 +18,6 @@ export class PreparationAddTypeComponent implements OnInit {
 
   public data: Preparation = new Preparation();
 
-  public preparationTypeEnum = PREPARATION_TYPES;
-
   @ViewChild('addPreparationForm', {static: false}) public preparationForm: NgForm;
   @Input() private hide_toast_message: boolean;
 
@@ -26,8 +25,13 @@ export class PreparationAddTypeComponent implements OnInit {
               private readonly uiPreparationStorage: UIPreparationStorage,
               private readonly uiAnalytics: UIAnalytics,
               private readonly navParams: NavParams,
-              private readonly uiToast: UIToast) {
+              private readonly uiToast: UIToast,
+              private readonly translate: TranslateService) {
     this.data.type = this.navParams.get('type');
+    if (this.data.type !== PREPARATION_TYPES.CUSTOM_PREPARATION) {
+      this.data.name = this.translate.instant('PREPARATION_TYPE_' + this.data.type);
+    }
+
   }
 
   public ionViewWillEnter(): void {

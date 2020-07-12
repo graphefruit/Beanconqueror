@@ -215,6 +215,7 @@
   "ADD_MILL": "Mühle hinzufügen",
   "EDIT_MILL": "Mühle editieren",
   "USE_FILTER": "Filter anwenden",
+  "RESET_FILTER": "Filter zurücksetzten",
   "COFFEE_GRAMS_GRINDED": "Gramm gemahlen",
   "BEANS_USED": "Bohnen verwendet",
   "BREW_HEADER_BEFORE_BREW": "Vor der Zubereitung",
@@ -276,8 +277,7 @@
   "TOAST_BEAN_ARCHIVED_SUCCESSFULLY": "Bohne archiviert",
   "TOAST_MILL_ARCHIVED_SUCCESSFULLY": "Mühle archiviert",
   "TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY": "Brühmethode archiviert",
-
-  "BEAN_WEIGHT_ALREADY_USED": "{{gramUsed}}g von {{gramTotal}}g aufgebraucht",
+  "BEAN_WEIGHT_ALREADY_USED": "<b>{{gramUsed}}g</b> von {{gramTotal}}g aufgebraucht",
   "PREPARATION_TYPE_CUSTOM_PREPARATION": "Eigene Zubereitungsart",
   "PREPARATION_TYPE_AEROPRESS": "Aeropress",
   "PREPARATION_TYPE_V60": "V60",
@@ -286,6 +286,7 @@
   "PREPARATION_TYPE_PORTAFILTER": "Siebträger",
   "PREPARATION_TYPE_KALITA_WAVE": "Kalita Wave",
   "PREPARATION_TYPE_FRENCH_PRESS": "French Press",
+  "PREPARATION_TYPE_ADD_CUSTOM": "Eigene hinzufügen",
   "CHOOSE_BEANS": "Bohnen auswählen",
   "CHOOSE_BEAN": "Bohne auswählen",
   "CHOOSE_PREPARATIONS": "Brühmethoden auswählen",
@@ -344,5 +345,10 @@
       "BREW_DATA_COFFEE_CONCENTRATION": "Gib deine Kaffeekonzentration ein (Yield o.ä.)",
       "BREW_DATA_NOTES": "Füge Notizen zu dieser Brühung hinzu"
     }
-  }
+  },
+  "NO_BREW": "0 Brühungen",
+  "ONE_BREW": "Eine Brühung",
+  "MULTIPLE_BREWS": "{{count}} Brühungen",
+  "ROAST_DAYS_OLD": "{{days}} Tage alt",
+  "ROAST_DAY_OLD": "Einen Tag alt"
 }

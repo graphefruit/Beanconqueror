@@ -35,7 +35,10 @@ export function HttpLoaderFactory(http: HttpClient) {
     }),
     IonicModule.forRoot({
       mode: 'md',
-      menuIcon: 'beanconqueror-menu'
+      menuIcon: 'beanconqueror-menu',
+      swipeBackEnabled: true,
+      animated: true,
+      rippleEffect: false,
     }),
     IonicStorageModule.forRoot({
       name: '__baristaDB',

@@ -1,6 +1,21 @@
 :host {
+  ion-card {
+    height: 160px;
+    min-height: 160px;
+    max-height: 160px;
 
+    ion-card-content {
+      height: 100%;
 
+      ion-grid {
+        height: 100%;
+
+        ion-row {
+          height: 100%;
+        }
+      }
+    }
+  }
   button[justify-content-start] .button-inner {
     justify-content: flex-start;
   }
@@ -21,6 +36,13 @@
   }
 
   ::ng-deep img {
+    width: 100%;
+    height: 160px;
+    display: block;
+    object-fit: cover;
+  }
+
+  ::ng-deep img.preload-img {
     width: 100%;
     height: 100%;
     display: block;

@@ -84,7 +84,11 @@ export class MillPage  implements OnInit  {
   }
 
   public async add() {
-    const modal = await this.modalCtrl.create({component: MillAddComponent, cssClass: 'half-bottom-modal', showBackdrop: true});
+    const modal = await this.modalCtrl.create({
+      component: MillAddComponent, cssClass: 'half-bottom-modal', showBackdrop: true,
+      backdropDismiss: true,
+      swipeToClose: true
+    });
     await modal.present();
     await modal.onWillDismiss();
     this.loadMills();

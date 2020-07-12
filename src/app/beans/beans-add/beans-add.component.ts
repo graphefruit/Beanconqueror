@@ -22,7 +22,11 @@ export class BeansAddComponent implements OnInit {
   private readonly bean_template: Bean;
   public roastsEnum = ROASTS_ENUM;
   public mixEnum = BEAN_MIX_ENUM;
-
+  public heartIcons = {
+    empty: '../assets/custom-ion-icons/beanconqueror-bean-rating-empty.svg',
+    half: '../assets/custom-ion-icons/beanconqueror-bean-rating-half.svg',
+    full: '../assets/custom-ion-icons/beanconqueror-bean-rating-full.svg',
+  };
   @Input() private hide_toast_message: boolean;
 
   constructor (private readonly modalController: ModalController,

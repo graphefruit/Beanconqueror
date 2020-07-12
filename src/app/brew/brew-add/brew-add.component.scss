@@ -1,19 +1,10 @@
 :host {
-  .fixedLabel {
-    min-width: 20% !important;
-    max-width: 20% !important;
-  }
 
 
   ion-item {
     --border-width: 0px;
   }
 
-
-  ion-label {
-    font-size: 14px;
-    transform: none;
-  }
 
   ion-item {
     margin-left: 16px;
@@ -26,5 +17,6 @@
     display: block;
     object-fit: contain;
   }
+
 
 }

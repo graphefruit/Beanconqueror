@@ -8,28 +8,20 @@
     min-height: 130px;
 
     ion-icon {
-      width: 32px;
-      height: 32px;
-      font-size: 32px;
-      margin-top: 24px;
+      width: 64px;
+      height: 64px;
+      font-size: 64px;
+
     }
   }
   .preparation-add-card {
     background-color: #ffffff;
   }
 
-  .preparation-bubble {
-    width: 80px;
-    height: 80px;
-    background: var(--beanconqueror-background-highlight-color) 0% 0% no-repeat padding-box;
-    border-radius: 40px;
-    margin-left: calc(50% - 40px);
-    top: 0;
-  }
 
   @media (max-width: 420px) {
     ion-card {
-      min-height: 185px;
+      min-height: 125px;
     }
   }
 }

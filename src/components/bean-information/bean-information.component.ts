@@ -45,6 +45,12 @@ export class BeanInformationComponent implements OnInit {
     return relatedBrews.length;
   }
 
+  public daysOld(): number {
+
+    return this.bean.beanAgeInDays();
+
+  }
+
   public getUsedWeightCount(): number {
     let usedWeightCount: number = 0;
     const relatedBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(this.bean.config.uuid);

@@ -228,19 +228,21 @@ export class Brew implements IBrew {
     }
     switch (_rating) {
       case -1:
-        return 'help-outline';
+        return 'beanconqueror-emoji--1';
       case 0:
-        return 'beanconqueror-smile-neutral';
+        return 'beanconqueror-emoji-0';
       case 1:
-        return 'beanconqueror-smile-sad';
+        return 'beanconqueror-emoji-1';
       case 2:
-        return 'beanconqueror-smile-smiling';
+        return 'beanconqueror-emoji-2';
       case 3:
-        return 'beanconqueror-smile-smiling-1';
+        return 'beanconqueror-emoji-3';
       case 4:
-        return 'beanconqueror-smile-smiling-1';
+        return 'beanconqueror-emoji-4';
+      case 5:
+        return 'beanconqueror-emoji-5';
       default:
-        return 'help-outline';
+        return 'beanconqueror-emoji-0';
     }
 
   }

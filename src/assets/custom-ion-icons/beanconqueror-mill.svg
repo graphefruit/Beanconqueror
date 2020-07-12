@@ -1,34 +1,53 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 254.58 297.07">
-  <defs>
-    <style>
-      .cls-1{fill:#5c3844;}.cls-2{fill:#77455a;}.cls-3{fill:#643e4b;}.cls-4{fill:#d84e50;}.cls-5{fill:#97485c;}.cls-6{fill:#7f445c;}.cls-7{fill:#ff5957;}.cls-8{fill:#4c2f3a;}.cls-9{fill:#c1484e;}.cls-10{fill:#aa3f4a;}
-    </style>
-  </defs>
-  <g id="Ebene_2" data-name="Ebene 2">
-    <g id="Ebene_1-2" data-name="Ebene 1">
-      <rect class="cls-1" x="47.44" y="60.27" width="158.79" height="101.92" rx="25.5"/>
-      <rect class="cls-2" y="120.85" width="254.51" height="23.26" rx="3.5"/>
-      <rect class="cls-2" y="273.8" width="254.51" height="23.26" rx="3.5"/>
-      <rect class="cls-1" x="26.51" y="107.76" width="200.99" height="13.1"/>
-      <rect class="cls-3" x="99.48" y="50.29" width="55.33" height="10.72"/>
-      <rect class="cls-3" x="101.38" y="21.92" width="50.75" height="13.25" rx="3.32"
-            transform="translate(155.3 -98.21) rotate(90)"/>
-      <rect class="cls-4" x="99.27" y="24.85" width="65.63" height="13.25" rx="3.32"/>
-      <rect class="cls-4" x="150.92" y="14.36" width="44.32" height="13.25" rx="3.32"
-            transform="translate(24.1 111.55) rotate(-38.21)"/>
-      <rect class="cls-5" x="14.43" y="144.03" width="223.32" height="130.17"/>
-      <rect class="cls-6" x="173.94" y="143.57" width="63.78" height="130.56"/>
-      <rect class="cls-7" x="41.81" y="170.35" width="171.79" height="77.03"/>
-      <rect class="cls-4" x="173.76" y="172.35" width="38.05" height="73.06"/>
-      <rect class="cls-3" x="161.62" y="120.87" width="92.88" height="23.26" rx="3.5"/>
-      <rect class="cls-3" x="161.62" y="273.9" width="92.88" height="22.77" rx="3.5"/>
-      <rect class="cls-8" x="129.29" y="107.77" width="98.2" height="12.6"/>
-      <rect class="cls-8" x="134.96" y="50.29" width="19.9" height="10.77"/>
-      <rect class="cls-3" x="159.82" y="121.01" width="82.03" height="22.97"/>
-      <rect class="cls-3" x="159.82" y="274.1" width="82.03" height="22.67"/>
-      <path class="cls-8" d="M135,61s40.81,24.55,34.13,46.83h36.64s12.13-49.47-29.3-47.54Z"/>
-      <rect class="cls-9" x="182.23" width="72.35" height="23.16" rx="3.32"/>
-      <rect class="cls-10" x="238.2" width="16.37" height="23.16" rx="3.32"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="76" height="80.184" viewBox="0 0 76 80.184">
+  <g id="Gruppe_213" data-name="Gruppe 213" transform="translate(-29 -146)">
+    <circle id="Ellipse_368" data-name="Ellipse 368" cx="38" cy="38" r="38" transform="translate(29 150)" fill="#ff5957"
+            opacity="0.494"/>
+    <g id="Gruppe_194" data-name="Gruppe 194" transform="translate(-254.14 72.796)">
+      <rect id="Rechteck_2167" data-name="Rechteck 2167" width="42.859" height="27.511" rx="13.756"
+            transform="translate(299.113 89.472)" fill="#5c3844"/>
+      <rect id="Rechteck_2168" data-name="Rechteck 2168" width="68.696" height="6.279" rx="3.14"
+            transform="translate(286.308 105.825)" fill="#77455a"/>
+      <rect id="Rechteck_2169" data-name="Rechteck 2169" width="68.696" height="6.279" rx="3.14"
+            transform="translate(286.308 147.109)" fill="#77455a"/>
+      <rect id="Rechteck_2170" data-name="Rechteck 2170" width="54.251" height="3.535"
+            transform="translate(293.465 102.29)" fill="#5c3844"/>
+      <rect id="Rechteck_2171" data-name="Rechteck 2171" width="14.934" height="2.894"
+            transform="translate(313.158 86.779)" fill="#643e4b"/>
+      <rect id="Rechteck_2172" data-name="Rechteck 2172" width="13.699" height="3.577" rx="1.789"
+            transform="translate(322.31 74.059) rotate(90)" fill="#643e4b"/>
+      <rect id="Rechteck_2173" data-name="Rechteck 2173" width="17.715" height="3.577" rx="1.789"
+            transform="translate(313.102 79.911)" fill="#d84e50"/>
+      <rect id="Rechteck_2174" data-name="Rechteck 2174" width="11.962" height="3.577" rx="1.789"
+            transform="translate(327.22 81.162) rotate(-38.21)" fill="#d84e50"/>
+      <rect id="Rechteck_2175" data-name="Rechteck 2175" width="60.279" height="35.135"
+            transform="translate(290.202 112.08)" fill="#97485c"/>
+      <rect id="Rechteck_2176" data-name="Rechteck 2176" width="17.217" height="35.24"
+            transform="translate(333.257 111.956)" fill="#7f445c"/>
+      <g id="Gruppe_168" data-name="Gruppe 168" transform="translate(297.592 119.186)">
+        <rect id="Rechteck_2177" data-name="Rechteck 2177" width="46.369" height="20.793" transform="translate(0)"
+              fill="#ff5957"/>
+        <rect id="Rechteck_2178" data-name="Rechteck 2178" width="10.269" height="19.721"
+              transform="translate(35.616 0.538)" fill="#d84e50"/>
+      </g>
+      <rect id="Rechteck_2179" data-name="Rechteck 2179" width="25.071" height="6.279" rx="3.14"
+            transform="translate(329.933 105.828)" fill="#643e4b"/>
+      <rect id="Rechteck_2180" data-name="Rechteck 2180" width="25.071" height="6.145" rx="3.073"
+            transform="translate(329.933 147.136)" fill="#643e4b"/>
+      <rect id="Rechteck_2181" data-name="Rechteck 2181" width="26.506" height="3.402"
+            transform="translate(321.205 102.293)" fill="#4c2f3a"/>
+      <rect id="Rechteck_2182" data-name="Rechteck 2182" width="5.372" height="2.908"
+            transform="translate(322.737 86.778)" fill="#4c2f3a"/>
+      <rect id="Rechteck_2183" data-name="Rechteck 2183" width="22.14" height="6.2"
+            transform="translate(329.446 105.867)" fill="#643e4b"/>
+      <rect id="Rechteck_2184" data-name="Rechteck 2184" width="22.14" height="6.12"
+            transform="translate(329.446 147.188)" fill="#643e4b"/>
+      <path id="Pfad_1364" data-name="Pfad 1364"
+            d="M421.262,133.673s11.014,6.627,9.21,12.641h9.89s3.275-13.354-7.908-12.834Z"
+            transform="translate(-98.527 -43.995)" fill="#4c2f3a"/>
+      <rect id="Rechteck_2185" data-name="Rechteck 2185" width="19.529" height="6.251" rx="3.125"
+            transform="translate(335.494 73.204)" fill="#c1484e"/>
+      <rect id="Rechteck_2186" data-name="Rechteck 2186" width="4.419" height="6.251" rx="2.21"
+            transform="translate(350.604 73.204)" fill="#aa3f4a"/>
     </g>
   </g>
 </svg>
