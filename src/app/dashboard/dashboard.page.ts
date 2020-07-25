@@ -21,7 +21,6 @@ import {UIToast} from '../../services/uiToast';
 export class DashboardPage implements OnInit {
 
   public brews: Array<Brew> = [];
-
   constructor(public uiStatistic: UIStatistic,
               private readonly modalCtrl: ModalController,
               private readonly uiBrewStorage: UIBrewStorage,
