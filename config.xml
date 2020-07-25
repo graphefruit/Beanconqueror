@@ -20,6 +20,8 @@
     <preference name="SplashShowOnlyFirstTime" value="false" />
     <preference name="SplashScreen" value="screen" />
     <preference name="SplashScreenDelay" value="3000" />
+  <preference name="StatusBarOverlaysWebView" value="false"/>
+  <preference name="StatusBarBackgroundColor" value="#F0F0F0"/>
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
   <preference name="iosExtraFilesystems"
               value="library,library-nosync,dionocuments,documents-nosync,cache,bundle,root"/>

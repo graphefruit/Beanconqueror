@@ -41,7 +41,11 @@ export class UIFileHelper {
   public async deleteFile(_filePath): Promise<any> {
     return new Promise(async (resolve, reject) => {
       const fileObj = this.__splitFilePath(_filePath);
-      this.file.removeFile(fileObj.FILE_PATH, fileObj.FILE_NAME + fileObj.EXTENSION).then(() => {
+      let filePath = this.file.dataDirectory;
+      if (fileObj.FILE_PATH.length > 1 && fileObj.FILE_PATH.indexOf('/') === 0 && filePath.lastIndexOf('/') === filePath.length - 1) {
+        filePath = filePath + fileObj.FILE_PATH.substr(1);
+      }
+      this.file.removeFile(filePath, fileObj.FILE_NAME + fileObj.EXTENSION).then(() => {
         resolve();
       }, () => {
         reject();
@@ -89,21 +93,30 @@ export class UIFileHelper {
 
   private __splitFilePath(_filePath: string): { FILE_NAME: string; FILE_PATH: string; EXTENSION: string; } {
     // TODO If we have folders, this won't work. because we're ignoring foldesrs i all subfunctions
-    let filePath: string = _filePath.substr(0, _filePath.lastIndexOf('/'));
+    try {
 
-    if (filePath === '') {
-      filePath = '/';
+
+      let filePath: string = _filePath.substr(0, _filePath.lastIndexOf('/'));
+
+      if (filePath === '') {
+        filePath = '/';
+      }
+      const fileName: string = _filePath.substr(_filePath.lastIndexOf('/') + 1, _filePath.lastIndexOf('.') - _filePath.lastIndexOf('/') - 1);
+      const exstension: string = _filePath.substr(_filePath.lastIndexOf('.'));
+
+
+      return {
+        FILE_NAME: fileName,
+        FILE_PATH: filePath,
+        EXTENSION: exstension
+      };
+    } catch (ex) {
+      return {
+        FILE_NAME: '',
+        FILE_PATH: '',
+        EXTENSION: '',
+      };
     }
-    const fileName: string = _filePath.substr(_filePath.lastIndexOf('/') + 1, _filePath.lastIndexOf('.') - _filePath.lastIndexOf('/') - 1);
-    const exstension: string = _filePath.substr(_filePath.lastIndexOf('.'));
-
-
-    return {
-      FILE_NAME: fileName,
-      FILE_PATH: filePath,
-      EXTENSION: exstension
-    };
-
 
   }
 

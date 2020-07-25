@@ -36,23 +36,6 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`
     },
-    fontawesome: {
-      TITLE: 'Font Awesome',
-      LINK: 'https://github.com/FortAwesome/Font-Awesome',
-      ACTIVE: false,
-      DESCRIPTION: `
-      The Font Awesome font is licensed under the SIL OFL 1.1:<br/>
-      http://scripts.sil.org/OFL<br/>
-      Font Awesome CSS, LESS, and Sass files are licensed under the MIT License:<br/>
-      https://opensource.org/licenses/mit-license.html<br/>
-      The Font Awesome documentation is licensed under the CC BY 3.0 License:<br/>
-      http://creativecommons.org/licenses/by/3.0/<br/>
-      Attribution is no longer required as of Font Awesome 3.0, but much appreciated:<br/>
-      Font Awesome by Dave Gandy - http://fontawesome.io<br/>
-      Full details: http://fontawesome.io/license/
-      `
-
-    },
     chartjs: {
       TITLE: 'Chart.js',
       LINK: 'https://github.com/chartjs/Chart.js',

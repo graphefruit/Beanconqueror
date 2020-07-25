@@ -42,13 +42,7 @@ export class UIAnalytics {
         reject();
         this.disableTracking();
       }
-      /**this.__checkTrackingEnabled().then(async () => {
-        resolve();
-        this.enableTracking();
-      }, () => {
-        reject();
 
-      });**/
     });
   }
 

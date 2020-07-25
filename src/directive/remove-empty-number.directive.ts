@@ -4,7 +4,6 @@ import {NgModel} from '@angular/forms';
 @Directive({
     // tslint:disable-next-line:directive-selector
     selector: '[ngModel][remove-empty-number]',
-  providers: [NgModel],
 })
 export class RemoveEmptyNumberDirective {
 

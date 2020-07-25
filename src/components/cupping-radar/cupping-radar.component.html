@@ -5,14 +5,22 @@
 <div class="ion-text-center">{{"CUPPING_SCORE" | translate}}: {{getScore()| number : '.1-1'}}</div>
 <ion-icon name="information-outline" slot="end" tooltip='{{"CUPPING_SCORE_TOOLTIP" | translate}}'></ion-icon>
 
-<ion-list>
-  <ion-item>
-    <ion-range (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.dry_fragrance" max="10" min="0" step="0.1">
-      <ion-label slot="start">{{"CUPPING_SCORE_DRY_FRAGRANCE" | translate}}</ion-label>
+<ion-card>
+  <ion-item class="label-item" lines="none">
+    <ion-label style="min-height:30px;">{{"CUPPING_SCORE_DRY_FRAGRANCE" | translate }}&nbsp;<ion-badge
+      style="vertical-align: top;">{{model.dry_fragrance| number : '.1-1'}}</ion-badge>
 
-      <ion-label slot="end">{{model.dry_fragrance| number : '.1-1'}}</ion-label>
-      <ion-icon name="information-outline" slot="end"
-                tooltip='{{"CUPPING_SCORE_DRY_FRAGRANCE_TOOLTIP" | translate}}'></ion-icon>
+
+    </ion-label>
+    <ion-icon name="information-outline" slot="end"
+              tooltip='{{"CUPPING_SCORE_DRY_FRAGRANCE_TOOLTIP" | translate}}'></ion-icon>
+  </ion-item>
+  <ion-item>
+
+
+    <ion-range (ngModelChange)="rangeChanged($event)" [(ngModel)]="model.dry_fragrance" max="10" min="0" step="0.1">
+
+
     </ion-range>
   </ion-item>
   <ion-item>
@@ -95,6 +103,16 @@
                 tooltip='{{"CUPPING_SCORE_CUPPERS_CORRECTION_TOOLTIP" | translate}}'></ion-icon>
     </ion-range>
   </ion-item>
+  <ion-item>
+    <div style="padding: 8px 14px;">
+      <ion-label position="stacked">{{"BREW_DATA_NOTES" | translate }}</ion-label>
+      <ion-textarea [(ngModel)]="model.notes" autocapitalize="sentences" autocomplete="true" autocorrect="true"
+                    placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_NOTES' | translate}}"
+                    rows="5"
+                    spellcheck="true"></ion-textarea>
+    </div>
+
+  </ion-item>
 
 
-</ion-list>
+</ion-card>

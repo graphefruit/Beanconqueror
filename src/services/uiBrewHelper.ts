@@ -15,20 +15,40 @@ import {UIAlert} from './uiAlert';
 })
 export class UIBrewHelper {
 
+  private canBrewBoolean: boolean = undefined;
   constructor (private readonly uiBeanStorage: UIBeanStorage,
                private readonly uiMillStorage: UIMillStorage,
                private readonly uiPreparationStorage: UIPreparationStorage,
                private readonly uiAlert: UIAlert) {
 
+
+    this.uiBeanStorage.attachOnRemove().subscribe(() => {
+      this.canBrewBoolean = undefined;
+    });
+    this.uiMillStorage.attachOnRemove().subscribe(() => {
+      this.canBrewBoolean = undefined;
+    });
+    this.uiPreparationStorage.attachOnRemove().subscribe(() => {
+      this.canBrewBoolean = undefined;
+    });
+
+
+
   }
 
   public canBrew(): boolean {
-    const hasBeans: boolean = (this.uiBeanStorage.getAllEntries().length > 0 && this.uiBeanStorage.getAllEntries()
-      .filter((bean) => !bean.finished).length > 0);
-    const hasPreparationMethods: boolean = (this.uiPreparationStorage.getAllEntries().filter((e) => !e.finished).length > 0);
-    const hasMills: boolean = (this.uiMillStorage.getAllEntries().filter((e) => !e.finished).length > 0);
+    if (this.canBrewBoolean === undefined || this.canBrewBoolean === false) {
+      console.log('Need to check all values');
+      const hasBeans: boolean = (this.uiBeanStorage.getAllEntries().length > 0 && this.uiBeanStorage.getAllEntries()
+        .filter((bean) => !bean.finished).length > 0);
+      const hasPreparationMethods: boolean = (this.uiPreparationStorage.getAllEntries().filter((e) => !e.finished).length > 0);
+      const hasMills: boolean = (this.uiMillStorage.getAllEntries().filter((e) => !e.finished).length > 0);
 
-    return hasBeans && hasPreparationMethods && hasMills;
+      this.canBrewBoolean = hasBeans && hasPreparationMethods && hasMills;
+    }
+
+    return this.canBrewBoolean;
+
   }
 
   public canBrewIfNotShowMessage() {

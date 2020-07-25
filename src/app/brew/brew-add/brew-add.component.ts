@@ -20,6 +20,7 @@ import {Bean} from '../../../classes/bean/bean';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 import {IMill} from '../../../interfaces/mill/iMill';
 import {UIToast} from '../../../services/uiToast';
+import {UIFileHelper} from '../../../services/uiFileHelper';
 
 @Component({
   selector: 'brew-add',
@@ -60,7 +61,8 @@ export class BrewAddComponent implements OnInit {
                public uiHelper: UIHelper,
                private readonly uiMillStorage: UIMillStorage,
                private readonly uiAnalytics: UIAnalytics,
-               private readonly uiToast: UIToast) {
+               private readonly uiToast: UIToast,
+               private readonly uiFileHelper: UIFileHelper) {
     // Initialize to standard in drop down
     //
 
@@ -168,8 +170,17 @@ export class BrewAddComponent implements OnInit {
         });
   }
 
-  public deleteImage(_index: number): void {
-    this.data.attachments.splice(_index, 1);
+  public async deleteImage(_index: number) {
+    const splicedPaths: Array<string> = this.data.attachments.splice(_index, 1);
+    for (const path of splicedPaths) {
+      try {
+        await this.uiFileHelper.deleteFile(path);
+        this.uiToast.showInfoToast('IMAGE_DELETED');
+      } catch (ex) {
+        this.uiToast.showInfoToast('IMAGE_NOT_DELETED');
+      }
+
+    }
     if (this.data.attachments.length > 0) {
       // Slide to one item before
       this.photoSlides.slideTo(_index - 1, 0);

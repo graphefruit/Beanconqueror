@@ -353,5 +353,7 @@
   "ROAST_DAYS_OLD": "{{days}} Tage alt",
   "ROAST_DAY_OLD": "Einen Tag alt",
   "CUPPING_BREW": "Verkostung",
-  "COFFEE_DRUNKEN_QUANTITY": "Getrunkene Menge"
+  "COFFEE_DRUNKEN_QUANTITY": "Getrunkene Menge",
+  "IMAGE_DELETED": "Bild wurde gelöscht",
+  "IMAGE_NOT_DELETED": "Bild konnte nicht gelöscht werden"
 }

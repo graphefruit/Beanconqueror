@@ -94,9 +94,9 @@ export class BeansAddComponent implements OnInit {
     for (const path of splicedPaths) {
       try {
         await this.uiFileHelper.deleteFile(path);
-        this.uiToast.showInfoToast('DELETED');
+        this.uiToast.showInfoToast('IMAGE_DELETED');
       } catch (ex) {
-        this.uiToast.showInfoToast('NOT DELETED');
+        this.uiToast.showInfoToast('IMAGE_NOT_DELETED');
       }
 
     }
