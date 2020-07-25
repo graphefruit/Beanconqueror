@@ -26,6 +26,12 @@ export class BeanInformationComponent implements OnInit {
   public roast_enum = ROASTS_ENUM;
   public settings: Settings;
 
+  public heartIcons = {
+    empty: '../assets/custom-ion-icons/beanconqueror-bean-rating-empty.svg',
+    half: '../assets/custom-ion-icons/beanconqueror-bean-rating-half.svg',
+    full: '../assets/custom-ion-icons/beanconqueror-bean-rating-full.svg',
+  };
+
   constructor(private readonly uiSettingsStorage: UISettingsStorage,
               private readonly popoverCtrl: PopoverController,
               private readonly uiBeanHelper: UIBeanHelper,

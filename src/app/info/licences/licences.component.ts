@@ -67,6 +67,34 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`
     },
+    icons8: {
+      TITLE: 'Icons 8',
+      LINK: 'https://icons8.com/license',
+      ACTIVE: false,
+      DESCRIPTION: `For smartphone apps, please set a link to https://icons8.com in the About dialog or settings.
+
+Also, please credit our work in your App Store or Google Play description (something like "Icons by Icons8" is fine).`
+    },
+    font_karla_licence: {
+      TITLE: 'Font Karla',
+      LINK: 'https://fonts.google.com/specimen/Karla#standard-styles',
+      ACTIVE: false,
+      DESCRIPTION: `These fonts are licensed under the Open Font License.
+
+You can use them freely in your products & projects - print or digital, commercial or otherwise. However, you can't sell the fonts on their own.
+
+This isn't legal advice, please consider consulting a lawyer and see the full license for all details.`
+    },
+    font_baloo_tamma_licence: {
+      TITLE: 'Font Baloo Tamma 2',
+      LINK: 'https://fonts.google.com/specimen/Baloo+Tamma+2',
+      ACTIVE: false,
+      DESCRIPTION: `These fonts are licensed under the Open Font License.
+
+You can use them freely in your products & projects - print or digital, commercial or otherwise. However, you can't sell the fonts on their own.
+
+This isn't legal advice, please consider consulting a lawyer and see the full license for all details.`
+    }
 
 
   };

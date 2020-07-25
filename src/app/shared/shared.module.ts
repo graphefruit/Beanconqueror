@@ -90,6 +90,7 @@ import {MillOverlayDirective} from '../../directive/mill-overlay.directive';
 import {PreparationOverlayDirective} from '../../directive/preparation-overlay.directive';
 import {DisableDoubleClickDirective} from '../../directive/disable-double-click.directive';
 import {NgxStarsModule} from 'ngx-stars';
+import {BrewCuppingComponent} from '../brew/brew-cupping/brew-cupping.component';
 
 @NgModule({
   declarations: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, AboutComponent,
@@ -106,6 +107,7 @@ import {NgxStarsModule} from 'ngx-stars';
     ManageParameterComponent,
     HelperBrewRatioComponent,
     HelperWaterHardnessComponent,
+    BrewCuppingComponent,
     TermsComponent,
     ThanksComponent, LogComponent, LogTextComponent, PreparationPage, PreparationAddComponent,
     PreparationEditComponent, MillPage, MillEditComponent, BrewFilterComponent, MillAddComponent, BrewAddComponent,
@@ -136,6 +138,7 @@ import {NgxStarsModule} from 'ngx-stars';
     ManageParameterComponent,
     HelperBrewRatioComponent,
     HelperWaterHardnessComponent,
+    BrewCuppingComponent,
     TermsComponent,
     ThanksComponent, LogComponent, LogTextComponent, PreparationPage,
     PreparationAddComponent, PreparationEditComponent, MillPage, MillEditComponent,
@@ -174,7 +177,7 @@ import {NgxStarsModule} from 'ngx-stars';
     Keyboard,
     ThreeDeeTouch,
     Camera, ImagePicker, AndroidPermissions,
-    InAppBrowser, File, Globalization, FirebaseX
+    InAppBrowser, File, Globalization, FirebaseX,
   ],
 
   exports: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, AboutComponent,
@@ -191,6 +194,7 @@ import {NgxStarsModule} from 'ngx-stars';
     ManageParameterComponent,
     HelperBrewRatioComponent,
     HelperWaterHardnessComponent,
+    BrewCuppingComponent,
     TermsComponent,
     ThanksComponent, PreparationPage, PreparationAddComponent,
     PreparationEditComponent, BrewFilterComponent, MillPage, MillEditComponent, MillAddComponent,

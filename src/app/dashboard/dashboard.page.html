@@ -9,12 +9,10 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-
-
   <ion-grid>
     <ion-row>
       <ion-col class="ion-text-center" size="4">
-        <ion-card class="small-card" style="height: 100%;">
+        <ion-card [routerLink]="['/home/brews']" class="small-card" style="height: 100%;" tappable>
           <ion-card-header class="custom-background-medium" style="font-size: 2em;">
             <ion-icon name="cafe-outline" slot="start"></ion-icon>
             {{uiStatistic.getBrewsDrunk()}}
@@ -30,7 +28,7 @@
         </ion-card>
       </ion-col>
       <ion-col class="ion-text-center" size="4">
-        <ion-card class="small-card" style="height: 100%;" tappable="">
+        <ion-card [routerLink]="['/home/beans']" class="small-card" style="height: 100%;" tappable="">
           <ion-card-header class="custom-background-medium" style="font-size: 2em;">
             {{uiStatistic.getBeansCount()}}
           </ion-card-header>
@@ -45,7 +43,7 @@
         </ion-card>
       </ion-col>
       <ion-col class="ion-text-center" size="4">
-        <ion-card class="small-card" style="height: 100%;" tappable>
+        <ion-card [routerLink]="['/statistic']" class="small-card" style="height: 100%;" tappable>
           <ion-card-header class="custom-background-medium"
                            style="font-size: 2em;">{{uiStatistic.getTimePassedSinceLastBrew()}}</ion-card-header>
           <ion-card-content>
@@ -59,7 +57,7 @@
       <ion-col size="12">
         <ion-button (click)="addBrew()" add-brew color="accent" expand="block">
           <ion-icon name="beanconqueror-dashboard-add-fill" size="large" slot="start"></ion-icon>
-          <span slot="end">{{"PAGE_HOME_START_BREW" | translate}}</span>
+          <span class="ion-text-bold" slot="end">{{"PAGE_HOME_START_BREW" | translate}}</span>
         </ion-button>
       </ion-col>
     </ion-row>
@@ -78,8 +76,8 @@
       </div>
     </div>
     <div *ngFor="let brew of getBrews()">
-      <brew-dashboard-information (openBrew)="openBrew($event[0])" [brew]="brew"></brew-dashboard-information>
+      <brew-dashboard-information (brewAction)="brewAction($event[0],$event[1])"
+                                  [brew]="brew"></brew-dashboard-information>
     </div>
   </ion-list>
-  <cupping-radar></cupping-radar>
 </ion-content>

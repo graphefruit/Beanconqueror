@@ -1,19 +1,16 @@
 :host {
 
-  button[justify-content-start] .button-inner {
-    justify-content: flex-start;
+
+  .margin-header {
+    margin: auto 0;
   }
 
-
-  .wrap-brew-text {
-    ion-item {
-
-      -ms-text-overflow: ellipsis;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
-
-    }
+  .brew-time-center {
+    display: grid;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
   }
   ion-row.center-col ion-col {
     display: flex;
@@ -26,6 +23,12 @@
     padding: 0px;
 
     ion-item {
+      ion-col {
+        -ms-text-overflow: ellipsis;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
       --background: none;
       --padding-start: 0px;
       --padding-end: 0px;
@@ -34,7 +37,9 @@
       --min-height: 0px;
 
       ion-icon {
-        font-size: 14px;
+        top: 4px;
+        position: relative;
+        font-size: 18px;
         margin-right: 0px;
         margin-top: 0px;
         margin-bottom: 0px;
@@ -44,13 +49,9 @@
   }
 
   .icons-black ion-icon {
-    color: #282013;
+    color: rgb(80, 64, 39);
   }
 
-  .header-padding {
-    padding: 8px;
-    line-height: 12px;
-  }
 
   .icon-size-48 {
     width: 32px;
@@ -62,6 +63,13 @@
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  .no-ion-col-padding {
+    ion-col {
+      padding: 0px !important;
+    }
+
   }
 
 }

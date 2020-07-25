@@ -22,6 +22,7 @@
   "POPOVER_BREWS_OPTION_EDIT": "Editieren",
   "POPOVER_BREWS_OPTION_DELETE": "Löschen",
   "POPOVER_BREWS_OPTION_PHOTO_GALLERY": "Fotogalerie",
+  "POPOVER_BREWS_OPTION_CUPPING": "Verkosten",
   "PAGE_BREWS_NO_ENTRIES": "Du hast noch keinen Bezug hinzugefügt.",
   "PAGE_BREWS_NO_ARCHIVED_ENTRIES": "Du hast noch keinen Bezug archiviert.",
   "CANT_START_NEW_BREW_TITLE": "Ein Bezug nur mit Luft und Liebe?",
@@ -92,7 +93,7 @@
   "IMPORT": "Import",
   "EXPORT": "Export",
   "VIEW": "Ansicht",
-  "ARCHIVE": "Archiv",
+  "ARCHIVE": "Archivieren",
   "CURRENT": "Aktuell",
   "BACK": "Zurück",
   "CLOSE": "Schließen",
@@ -121,7 +122,7 @@
   "BREW_INFORMATION_BREW_RATIO": "Brührate",
   "BREW_INFORMATION_BEAN_AGE": "Bohnenalter (Tage)",
   "BREW_INFORMATION_BREW_QUANTITY_TYPE_NAME": "Bezugsmenge-Typ",
-  "ONE_DAY": "Ein Tag",
+  "ONE_DAY": "Tag",
   "DAYS": "Tage",
   "ONE_HOUR": "Eine Stunde",
   "HOURS": "Stunden",
@@ -350,5 +351,7 @@
   "ONE_BREW": "Eine Brühung",
   "MULTIPLE_BREWS": "{{count}} Brühungen",
   "ROAST_DAYS_OLD": "{{days}} Tage alt",
-  "ROAST_DAY_OLD": "Einen Tag alt"
+  "ROAST_DAY_OLD": "Einen Tag alt",
+  "CUPPING_BREW": "Verkostung",
+  "COFFEE_DRUNKEN_QUANTITY": "Getrunkene Menge"
 }

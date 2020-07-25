@@ -1,45 +1,48 @@
 <ion-card class="long-card">
   <ion-card-content>
     <ion-grid class="ion-no-padding icons-black">
-      <ion-row class="center-col custom-background-large header-padding">
-        <ion-col class="ion-justify-content-center" size="2">
-          <ion-list lines="none">
-            <ion-item class="ion-text-center">
-              <ion-label class="ion-no-margin"><h1>{{brew.config.unix_timestamp | formatDate:["DD"]}}.</h1></ion-label>
+      <ion-row class="custom-background-large" style="padding:8px;">
+        <ion-col size="2">
+          <div class="brew-time-center">
+            <div>
+              <span class="ion-text-bold" style="font-size:24px;">{{brew.config.unix_timestamp | formatDate:["DD"]}}
+                .</span>
+            </div>
+            <div style="line-height:14px;">{{brew.config.unix_timestamp | formatDate:["MMMM"]}}
+              <br/>{{brew.config.unix_timestamp | formatDate:["YYYY"]}}</div>
+          </div>
+
+        </ion-col>
+        <ion-col class="ion-padding-start margin-header" size="8">
+          <ion-list lines="none" style="width:100%;">
+            <ion-item>
+              <ion-col size="12">
+                <ion-icon name="beanconqueror-bean"></ion-icon>&nbsp;{{brew.getBean().name}}</ion-col>
             </ion-item>
-            <ion-item class="ion-text-center">
-              <ion-label class="ion-no-margin">{{brew.config.unix_timestamp | formatDate:["MMMM"]}}</ion-label>
+            <ion-item>
+              <ion-col size="12">
+                <ion-icon name="beanconqueror-preparation"></ion-icon>&nbsp;{{brew.getPreparation().name}}</ion-col>
             </ion-item>
-            <ion-item class="ion-text-center">
-              <ion-label class="ion-no-margin">{{brew.config.unix_timestamp | formatDate:["YYYY"]}}</ion-label>
+            <ion-item>
+              <ion-col size="12">
+                <ion-icon name="beanconqueror-pepper-mill"></ion-icon>&nbsp;{{brew.getMill().name}}</ion-col>
             </ion-item>
           </ion-list>
         </ion-col>
-        <ion-col class="ion-padding-start" size="9">
-          <ion-list class="wrap-brew-text" lines="none">
-            <ion-item>
-              <ion-icon name="beanconqueror-bean"></ion-icon>&nbsp;{{brew.getBean().name}}
-            </ion-item>
-            <ion-item>
-              <ion-icon name="beanconqueror-preparation"></ion-icon>&nbsp;{{brew.getPreparation().name}}
-            </ion-item>
-            <ion-item>
-              <ion-icon name="beanconqueror-pepper-mill"></ion-icon>&nbsp;{{brew.getMill().name}}
-            </ion-item>
-          </ion-list>
-        </ion-col>
-        <ion-col size="1">
+        <ion-col size="2">
           <ion-button (click)="showBrewActions($event)" class="button-top-absolute"
                       color="accent" fill="clear">
             <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>
           </ion-button>
+          <div class="ion-text-bold"
+               style="position: absolute;bottom:0;right:5px;">{{brew.config.unix_timestamp | formatDate:["HH:mm"]}}</div>
         </ion-col>
       </ion-row>
     </ion-grid>
     <ion-grid>
       <ion-row>
         <ion-col size="8">
-          <ion-list lines="none">
+          <ion-list class="no-ion-col-padding" lines="none">
             <ion-item *ngIf="settings.grind_weight === true">
               <ion-col class="ion-text-bold" size="8">
                 {{"BREW_DATA_GRIND_WEIGHT" | translate}}:
@@ -55,6 +58,15 @@
               </ion-col>
               <ion-col size="4">
                 {{brew?.brew_quantity}}
+              </ion-col>
+            </ion-item>
+
+            <ion-item *ngIf="settings.grind_size === true">
+              <ion-col class="ion-text-bold" size="8">
+                {{"BREW_DATA_GRIND_SIZE" | translate}}:
+              </ion-col>
+              <ion-col size="4">
+                {{brew?.grind_size}}
               </ion-col>
             </ion-item>
 

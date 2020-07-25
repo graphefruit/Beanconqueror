@@ -1,7 +1,7 @@
 <ion-card class="long-card">
   <ion-card-content>
     <ion-grid class="ion-no-padding">
-      <ion-row>
+      <ion-row style="padding:8px;">
         <ion-col class="ion-justify-content-center" size="3">
           <ion-icon class="full-sized-icon" name="{{preparation.getIcon()}}"></ion-icon>
         </ion-col>
@@ -11,21 +11,28 @@
               <ion-col class="ion-text-bold" size="12">{{preparation.name}}</ion-col>
             </ion-item>
             <ion-item>
-              <ion-col class="ion-text-bold" size="8">{{"PAGE_HOME_TOTAL_BREWS" | translate}}
+              <ion-col size="8">{{"PAGE_HOME_TOTAL_BREWS" | translate}}
               </ion-col>
               <ion-col size="4">
                 {{getBrewsCount()}}
               </ion-col>
             </ion-item>
             <ion-item>
-              <ion-col class="ion-text-bold" size="8">{{"COFFEE_GRAMS_GRINDED" | translate}}
+              <ion-col size="8">{{"COFFEE_GRAMS_GRINDED" | translate}}
               </ion-col>
               <ion-col size="4">
                 {{getWeightCount()}}
               </ion-col>
             </ion-item>
             <ion-item>
-              <ion-col class="ion-text-bold" size="8">{{"BEANS_USED" | translate}}
+              <ion-col size="8">{{"COFFEE_DRUNKEN_QUANTITY" | translate}}
+              </ion-col>
+              <ion-col size="4">
+                {{getDrunkenQuantity()}}&nbsp;(l/kg)
+              </ion-col>
+            </ion-item>
+            <ion-item>
+              <ion-col size="8">{{"BEANS_USED" | translate}}
               </ion-col>
               <ion-col size="4">
                 {{getBeansCount()}}
@@ -35,7 +42,7 @@
         </ion-col>
         <ion-col size="1">
           <ion-button (click)="showPreparationActions($event)" class="button-top-absolute"
-                      color="accent" fill="clear">
+                      color="accent" fill="clear" tappable>
             <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>
           </ion-button>
         </ion-col>

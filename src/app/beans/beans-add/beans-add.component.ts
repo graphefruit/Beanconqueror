@@ -75,6 +75,10 @@ export class BeansAddComponent implements OnInit {
     }
   }
 
+  public onRoastRate(_event): void {
+    this.data.roast_range = _event;
+  }
+
   public __addBean(): void {
 
     this.uiBeanStorage.add(this.data);

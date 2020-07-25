@@ -8,7 +8,6 @@ import {UIBrewHelper} from '../../services/uiBrewHelper';
 import {Brew} from '../../classes/brew/brew';
 import {SocialSharing} from '@ionic-native/social-sharing/ngx';
 import {BrewAddComponent} from './brew-add/brew-add.component';
-import {FileEntry} from '@ionic-native/file';
 import {BrewDetailComponent} from './brew-detail/brew-detail.component';
 import {BrewPhotoViewComponent} from './brew-photo-view/brew-photo-view.component';
 import {BrewEditComponent} from './brew-edit/brew-edit.component';
@@ -26,6 +25,7 @@ import {Bean} from '../../classes/bean/bean';
 import {BrewFilterComponent} from './brew-filter/brew-filter.component';
 import {Settings} from '../../classes/settings/settings';
 import {UIToast} from '../../services/uiToast';
+import {BrewCuppingComponent} from './brew-cupping/brew-cupping.component';
 
 @Component({
   selector: 'brew',
@@ -95,13 +95,7 @@ export class BrewPage implements OnInit {
     // If we don't have beans, we cant do a brew from now on, because of roasting degree and the age of beans.
   }
 
-  public async editBrew(_brew: Brew) {
 
-    const modal = await this.modalCtrl.create({component: BrewEditComponent, componentProps: {brew: _brew}});
-    await modal.present();
-    await modal.onWillDismiss();
-    this.loadBrews();
-  }
 
   public async brewAction(action: BREW_ACTION, brew: Brew): Promise<void> {
     switch (action) {
@@ -120,17 +114,22 @@ export class BrewPage implements OnInit {
       case BREW_ACTION.PHOTO_GALLERY:
         this.viewPhotos(brew);
         break;
+      case BREW_ACTION.CUPPING:
+        this.cupBrew(brew);
+        break;
       default:
         break;
     }
   }
 
+  public async editBrew(_brew: Brew) {
+
+    const modal = await this.modalCtrl.create({component: BrewEditComponent, componentProps: {brew: _brew}});
+    await modal.present();
+    await modal.onWillDismiss();
+    this.loadBrews();
+  }
   public async repeatBrew(_brew: Brew) {
-    // const repeatBrewModel = this.modalCtrl.create(BrewsAddModal, {brew_template: brew});
-    // repeatBrewModel.onDidDismiss(() => {
-    //   this.loadBrews();
-    // });
-    // repeatBrewModel.present({animate: false});
     const modal = await this.modalCtrl.create({component: BrewAddComponent, componentProps: {brew_template: _brew}});
     await modal.present();
     await modal.onWillDismiss();
@@ -155,6 +154,14 @@ export class BrewPage implements OnInit {
     this.loadBrews();
   }
 
+  public async cupBrew(_brew: Brew) {
+    const modal = await this.modalCtrl.create({component: BrewCuppingComponent, componentProps: {brew: _brew}});
+    await modal.present();
+    await modal.onWillDismiss();
+    this.loadBrews();
+  }
+
+
   public async viewPhotos(_brew: Brew) {
     const modal = await this.modalCtrl.create({component: BrewPhotoViewComponent, componentProps: {brew: _brew}});
     await modal.present();
@@ -170,7 +177,6 @@ export class BrewPage implements OnInit {
         () => {
           // No
         });
-
   }
 
 
@@ -186,124 +192,6 @@ export class BrewPage implements OnInit {
 
   }
 
-  private downloadCSV(): void {
-
-    const exportToCsv = (filename, rows) => {
-      const processRow = (row) => {
-        let finalVal = '';
-        for (let j = 0; j < row.length; j++) {
-          let innerValue = row[j] === null ? '' : row[j].toString();
-          if (row[j] instanceof Date) {
-            innerValue = row[j].toLocaleString();
-          }
-
-          let result = innerValue.replace(/"/g, '""');
-          if (result.search(/("|,|\n)/g) >= 0) {
-            result = `"${result}"`;
-          }
-
-          if (j > 0) {
-            finalVal += ',';
-          }
-          finalVal += result;
-        }
-
-        return finalVal + '\n';
-      };
-
-      let csvFile = '';
-      for (const i of  rows) {
-        csvFile += processRow(i);
-      }
-
-      this.uiHelper.exportCSV(filename, csvFile).then(async (_savedFile: FileEntry) => {
-        if (this.platform.is('android')) {
-          const alert = await this.alertCtrl.create({
-            header: this.translate.instant('DOWNLOADED'),
-            subHeader: this.translate.instant('CSV_FILE_DOWNLOADED_SUCCESSFULLY', {fileName: _savedFile.name}),
-            buttons: ['OK']
-          });
-          await alert.present();
-        } else {
-          this.socialSharing.share(undefined, undefined, _savedFile.nativeURL);
-
-        }
-
-      }, async () => {
-        // No export possible.
-        const alert = await this.alertCtrl.create({
-          header: this.translate.instant('ERROR_OCCURED'),
-          subHeader: this.translate.instant('CSV_FILE_NOT_DOWNLOADED'),
-          buttons: ['OK']
-        });
-        await alert.present();
-      });
-
-    };
-
-    const entries: Array<Array<{ VALUE: any, LABEL: string }>> = [];
-    for (const i of this.brews) {
-      const brew: Brew = i;
-
-      const entry: Array<{ VALUE: any, LABEL: string }> = [
-        {VALUE: this.uiHelper.formateDate(brew.config.unix_timestamp, 'DD.MM.YYYY HH:mm'), LABEL: this.translate.instant('DAY')},
-        {VALUE: brew.grind_size, LABEL: this.translate.instant('BREW_DATA_GRIND_SIZE')},
-        {VALUE: brew.grind_weight, LABEL: this.translate.instant('BREW_DATA_GRIND_WEIGHT')},
-        {VALUE: brew.getPreparation().name, LABEL: this.translate.instant('BREW_DATA_PREPARATION_METHOD')},
-        {VALUE: brew.getBean().name, LABEL: this.translate.instant('BREW_DATA_BEAN_TYPE')},
-        {VALUE: brew.getBean().roaster, LABEL: this.translate.instant('BEAN_DATA_ROASTER')},
-        {VALUE: brew.brew_temperature, LABEL: this.translate.instant('BREW_DATA_BREW_TEMPERATURE')},
-        {VALUE: brew.brew_temperature_time, LABEL: this.translate.instant('BREW_DATA_TEMPERATURE_TIME')},
-        {VALUE: brew.brew_time, LABEL: this.translate.instant('BREW_DATA_TIME')},
-        {VALUE: brew.pressure_profile, LABEL: this.translate.instant('BREW_DATA_PRESSURE_PROFILE')},
-        {VALUE: brew.mill_speed, LABEL: this.translate.instant('BREW_DATA_MILL_SPEED')},
-        {VALUE: brew.mill_timer, LABEL: this.translate.instant('BREW_DATA_MILL_TIMER')},
-        {VALUE: brew.getMill().name, LABEL: this.translate.instant('BREW_DATA_MILL')},
-        {VALUE: brew.brew_quantity, LABEL: this.translate.instant('BREW_DATA_BREW_QUANTITY')},
-        {VALUE: brew.getBrewQuantityTypeName(), LABEL: this.translate.instant('BREW_INFORMATION_BREW_QUANTITY_TYPE_NAME')},
-        {VALUE: brew.note, LABEL: this.translate.instant('BREW_DATA_NOTES')},
-        {VALUE: brew.rating, LABEL: this.translate.instant('BREW_DATA_RATING')},
-        {VALUE: brew.coffee_type, LABEL: this.translate.instant('BREW_DATA_COFFEE_TYPE')},
-        {VALUE: brew.coffee_concentration, LABEL: this.translate.instant('BREW_DATA_COFFEE_CONCENTRATION')},
-        {VALUE: brew.coffee_first_drip_time, LABEL: this.translate.instant('BREW_DATA_COFFEE_FIRST_DRIP_TIME')},
-        {VALUE: brew.coffee_blooming_time, LABEL: this.translate.instant('BREW_DATA_COFFEE_BLOOMING_TIME')},
-        {VALUE: brew.getCalculatedBeanAge(), LABEL: this.translate.instant('BREW_INFORMATION_BEAN_AGE')},
-        {VALUE: brew.getBrewRatio(), LABEL: this.translate.instant('BREW_INFORMATION_BREW_RATIO')},
-        {VALUE: brew.getBean().finished, LABEL: this.translate.instant('FINISHED') + '?'},
-      ];
-      entries.push(entry);
-    }
-
-    // create CSV header labels
-    const exportData: Array<Array<{ VALUE: any, LABEL: string }>> = [];
-
-    let headersSet: boolean = false;
-    for (const i of entries) {
-      const entry: Array<{ VALUE: any, LABEL: string }> = i;
-
-      let addValues: Array<any> = [];
-      if (!headersSet) {
-        for (const z of entry) {
-          addValues.push(z.LABEL);
-        }
-        headersSet = true;
-        exportData.push(addValues);
-      }
-      addValues = [];
-      for (const z of entry) {
-        addValues.push(z.VALUE);
-      }
-      exportData.push(addValues);
-    }
-
-    const now = new Date();
-    const currentDateTimeString = `${now.getMonth()}-${now.getDate()}-${now.getFullYear()}-
-    ${now.getHours()}${now.getMinutes()}${now.getSeconds()}`;
-
-    // generate file
-    exportToCsv('Beanconqueror-' + currentDateTimeString + '.csv', exportData);
-
-  }
 
   private __initializeBrews(): void {
     this.brews = this.uiBrewStorage.getAllEntries();
@@ -356,7 +244,12 @@ export class BrewPage implements OnInit {
     }
 
     const modal = await this.modalCtrl.create({
-      component: BrewFilterComponent, cssClass: 'bottom-modal', showBackdrop: true, componentProps:
+      component: BrewFilterComponent,
+      cssClass: 'bottom-modal',
+      showBackdrop: true,
+      backdropDismiss: true,
+      swipeToClose: true,
+      componentProps:
         {brew_filter: brewFilter, segment: this.brew_segment}
     });
     await modal.present();

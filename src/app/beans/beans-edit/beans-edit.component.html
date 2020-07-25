@@ -17,24 +17,26 @@
                autocapitalize="sentences" required>
     </ion-input>
   </ion-item>
-  <ion-item>
-    <ion-label position="stacked">{{"BEAN_DATA_ROAST_NAME" | translate}}*</ion-label>
-    <ion-select #roast="ngModel" [(ngModel)]="data.roast" cancelText="{{'CANCEL'| translate }}" name="roast"
-                okText="{{'CHOOSE'| translate }}"
-                placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROAST_NAME' | translate}}">
-      <ion-select-option *ngFor="let key of roastsEnum | keys" value="{{key}}">{{roastsEnum[key]}}</ion-select-option>
-    </ion-select>
-  </ion-item>
-
-  <ion-item *ngIf="data.roast.toString() =='CUSTOM_ROAST'">
-    <ion-label position="stacked">{{"BEAN_DATA_CUSTOM_ROAST_NAME" | translate}}</ion-label>
-    <ion-input #roast_custom="ngModel" [(ngModel)]="data.roast_custom" name="roast_custom"
-               placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_CUSTOM_ROAST_NAME' | translate}}" spellcheck="false"
-               type="text"
-               autocapitalize="off" required>
-    </ion-input>
-
-  </ion-item>
+    <ion-item *ngIf="viewLoaded===true" lines="none">
+      <ion-label position="stacked">{{"BEAN_DATA_ROAST_NAME" | translate}}*</ion-label>
+      <ngx-stars (ratingOutput)="onRoastRate($event)" [customPadding]="'20px'" [initialStars]="this.data.roast_range"
+                 [readonly]="false" [size]="2" class="ion-margin-top" style="margin-left:20px;"></ngx-stars>
+    </ion-item>
+    <ion-item>
+      <ion-select #roast="ngModel" [(ngModel)]="data.roast" cancelText="{{'CANCEL'| translate }}" name="roast"
+                  okText="{{'CHOOSE'| translate }}"
+                  placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROAST_NAME' | translate}}"
+                  style="padding-left:0px!important;width: 100%; min-width: 100%;">
+        <ion-select-option *ngFor="let key of roastsEnum | keys" value="{{key}}">{{roastsEnum[key]}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item *ngIf="data.roast.toString() =='CUSTOM_ROAST'">
+      <ion-label position="stacked">{{"BEAN_DATA_CUSTOM_ROAST_NAME" | translate}}</ion-label>
+      <ion-input #roast_custom="ngModel" [(ngModel)]="data.roast_custom" autocapitalize="off"
+                 name="roast_custom" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROAST_NAME' | translate}}" required
+                 spellcheck="false" type="text">
+      </ion-input>
+    </ion-item>
   <ion-item>
     <ion-label position="stacked">{{"BEAN_DATA_ROASTING_DATE" | translate}}*</ion-label>
     <ion-datetime [(ngModel)]="data.roastingDate" displayFormat="DD.MM.YYYY" max="2999-12-31" min="2000-01-01"

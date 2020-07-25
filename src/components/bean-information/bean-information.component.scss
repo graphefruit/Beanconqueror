@@ -1,8 +1,8 @@
 :host {
   ion-card {
-    height: 160px;
-    min-height: 160px;
-    max-height: 160px;
+    height: 200px;
+    min-height: 200px;
+    max-height: 200px;
 
     ion-card-content {
       height: 100%;
@@ -37,7 +37,7 @@
 
   ::ng-deep img {
     width: 100%;
-    height: 160px;
+    height: 200px;
     display: block;
     object-fit: cover;
   }

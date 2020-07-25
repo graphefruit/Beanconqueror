@@ -11,6 +11,10 @@
     <ion-icon name="beanconqueror-edit" slot="start"></ion-icon>
     <span>{{"POPOVER_BREWS_OPTION_EDIT" | translate}}</span>
   </ion-item>
+  <ion-item (click)="choose(getStaticActions().CUPPING)" button tappable>
+    <ion-icon name="beanconqueror-cupping" slot="start"></ion-icon>
+    <span>{{"POPOVER_BREWS_OPTION_CUPPING" | translate}}</span>
+  </ion-item>
   <ion-item (click)="choose(getStaticActions().DELETE)" button tappable>
     <ion-icon name="beanconqueror-delete" slot="start"></ion-icon>
     <span>{{"POPOVER_BREWS_OPTION_DELETE" | translate}}</span>

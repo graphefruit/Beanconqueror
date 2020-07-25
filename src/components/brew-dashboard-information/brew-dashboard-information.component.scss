@@ -1,11 +1,15 @@
 :host {
 
 
-  button[justify-content-start] .button-inner {
-    justify-content: flex-start;
+  .dashboard-time-center {
+    display: grid;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
   }
 
-  ion-row.center-col ion-col {
+  ion-col.center-col {
     display: flex;
     align-items: center
   }
@@ -15,6 +19,12 @@
     margin: 0px;
     padding: 0px;
 
+    ion-col {
+      -ms-text-overflow: ellipsis;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
     ion-item {
       --background: none;
       --padding-start: 0px;
@@ -24,7 +34,9 @@
       --min-height: 0px;
 
       ion-icon {
-        font-size: 14px;
+        top: 4px;
+        position: relative;
+        font-size: 17px;
         margin-right: 0px;
         margin-top: 0px;
         margin-bottom: 0px;
