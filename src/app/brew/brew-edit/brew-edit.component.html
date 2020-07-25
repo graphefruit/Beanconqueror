@@ -35,8 +35,10 @@
       <ion-item [style.order]="settings.brew_order.before.brew_temperature"
                 lines="inset">
         <ion-label position="stacked">{{"BREW_DATA_BREW_TEMPERATURE" | translate}}</ion-label>
-        <ion-input [(ngModel)]="data.brew_temperature" inputmode="decimal"
-                   placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_BREW_TEMPERATURE' | translate}}" prevent-characters
+        <ion-input [(ngModel)]="data.brew_temperature"
+                   inputmode="decimal"
+                   placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_BREW_TEMPERATURE' | translate}}"
+                   prevent-characters
                    remove-empty-number
                    type="text"></ion-input>
       </ion-item>

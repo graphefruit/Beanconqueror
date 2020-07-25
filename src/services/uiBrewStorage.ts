@@ -14,10 +14,13 @@ import {UIStorage} from './uiStorage';
 })
 export class UIBrewStorage extends StorageClass {
 
+
   /**
    * Singelton instance
    */
   public static instance: UIBrewStorage;
+
+  private brews: Array<Brew> = [];
 
   public static getInstance(): UIBrewStorage {
     if (UIBrewStorage.instance) {
@@ -36,20 +39,23 @@ export class UIBrewStorage extends StorageClass {
     if (UIBrewStorage.instance === undefined) {
       UIBrewStorage.instance = this;
     }
+    super.attachOnEvent().subscribe((data) => {
+      this.brews = [];
+    });
   }
 
   public getAllEntries(): Array<Brew> {
-    const brewEntries: Array<any> = super.getAllEntries();
-    const brews: Array<Brew> = [];
-
-    for (const brew of brewEntries) {
-      const brewObj: Brew = new Brew();
-      brewObj.initializeByObject(brew);
-      brews.push(brewObj);
+    if (this.brews.length <= 0) {
+      const brewEntries: Array<any> = super.getAllEntries();
+      for (const brew of brewEntries) {
+        const brewObj: Brew = new Brew();
+        brewObj.initializeByObject(brew);
+        this.brews.push(brewObj);
+      }
     }
-
-    return brews;
+    return this.brews;
   }
+
 
   public add(_entry: Brew): void {
     _entry.fixDataTypes();

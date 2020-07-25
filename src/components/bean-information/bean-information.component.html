@@ -32,6 +32,21 @@
                       </ion-col>
                     </ion-item>
                     <ion-item>
+                      <ion-col class="ion-text-bold" size="6">{{"BEAN_DATA_ROASTER" | translate}}:
+                      </ion-col>
+                      <ion-col *ngIf="bean.roaster" size="6">
+                        {{bean.roaster}}
+                      </ion-col>
+                      <ion-col *ngIf="!bean.roaster">-</ion-col>
+                    </ion-item>
+                    <ion-item *ngIf="bean?.roastingDate">
+                      <ion-col class="ion-text-bold" size="6">{{"BEAN_DATA_ROASTING_DATE" | translate}}:
+                      </ion-col>
+                      <ion-col size="6">
+                        {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}
+                      </ion-col>
+                    </ion-item>
+                    <ion-item>
                       <ion-col class="ion-text-bold" size="6">{{"BEAN_DATA_ROAST_NAME" | translate}}:
                       </ion-col>
 
@@ -50,21 +65,6 @@
                     <ion-item *ngIf="bean.roast_range !== 0">
                       <ngx-stars [initialStars]="bean.roast_range" [readonly]="true" [size]="1"
                                  style="margin-top:8px;"></ngx-stars>
-                    </ion-item>
-                    <ion-item *ngIf="bean?.roastingDate">
-                      <ion-col class="ion-text-bold" size="6">{{"BEAN_DATA_ROASTING_DATE" | translate}}:
-                      </ion-col>
-                      <ion-col size="6">
-                        {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}
-                      </ion-col>
-                    </ion-item>
-                    <ion-item>
-                      <ion-col class="ion-text-bold" size="6">{{"BEAN_DATA_ROASTER" | translate}}:
-                      </ion-col>
-                      <ion-col *ngIf="bean.roaster" size="6">
-                        {{bean.roaster}}
-                      </ion-col>
-                      <ion-col *ngIf="!bean.roaster">-</ion-col>
                     </ion-item>
                     <ion-item>
                       <div style="margin-top:8px;margin-bottom:8px;border-top:1px solid #CEC2AC;width:100%;"></div>

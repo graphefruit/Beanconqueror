@@ -17,11 +17,14 @@ import {TranslateService} from '@ngx-translate/core';
   providedIn: 'root'
 })
 export class UIMillStorage extends StorageClass {
+
+
   /**
    * Singelton instance
    */
   public static instance: UIMillStorage;
 
+  private mills: Array<Mill> = [];
   public static getInstance(): UIMillStorage {
     if (UIMillStorage.instance) {
       return UIMillStorage.instance;
@@ -37,6 +40,9 @@ export class UIMillStorage extends StorageClass {
     if (UIMillStorage.instance === undefined) {
       UIMillStorage.instance = this;
     }
+    super.attachOnEvent().subscribe((data) => {
+      this.mills = [];
+    });
   }
 
   public getMillNameByUUID(_uuid: string): string {
@@ -55,17 +61,16 @@ export class UIMillStorage extends StorageClass {
   }
 
   public getAllEntries(): Array<Mill> {
-    const entries: Array<any> = super.getAllEntries();
-    const entry: Array<Mill> = [];
+    if (this.mills.length <= 0) {
+      const entries: Array<any> = super.getAllEntries();
+      for (const mill of entries) {
+        const millObj: Mill = new Mill();
+        millObj.initializeByObject(mill);
+        this.mills.push(millObj);
 
-    for (const mill of entries) {
-      const millObj: Mill = new Mill();
-      millObj.initializeByObject(mill);
-      entry.push(millObj);
-
+      }
     }
-
-    return entry;
+    return this.mills;
   }
 
 }

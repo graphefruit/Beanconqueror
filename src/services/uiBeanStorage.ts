@@ -23,6 +23,8 @@ export class UIBeanStorage extends StorageClass {
    */
   private static instance: UIBeanStorage;
 
+  private beans: Array<Bean> = [];
+
   public static getInstance(): UIBeanStorage {
     if (UIBeanStorage.instance) {
       return UIBeanStorage.instance;
@@ -41,6 +43,9 @@ export class UIBeanStorage extends StorageClass {
     if (UIBeanStorage.instance === undefined) {
       UIBeanStorage.instance = this;
     }
+    super.attachOnEvent().subscribe((data) => {
+      this.beans = [];
+    });
   }
 
   public getBeanNameByUUID(_uuid: string): string {
@@ -59,17 +64,15 @@ export class UIBeanStorage extends StorageClass {
   }
 
   public getAllEntries(): Array<Bean> {
-    const beanEntries: Array<any> = super.getAllEntries();
-    const beans: Array<Bean> = [];
-
-    for (const bean of beanEntries) {
-      const beanObj: Bean = new Bean();
-      beanObj.initializeByObject(bean);
-      beans.push(beanObj);
-
+    if (this.beans.length <= 0) {
+      const beanEntries: Array<any> = super.getAllEntries();
+      for (const bean of beanEntries) {
+        const beanObj: Bean = new Bean();
+        beanObj.initializeByObject(bean);
+        this.beans.push(beanObj);
+      }
     }
-
-    return beans;
+    return this.beans;
   }
 
   public async add(_entry: Bean) {

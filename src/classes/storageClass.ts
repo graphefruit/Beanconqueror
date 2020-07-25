@@ -1,9 +1,11 @@
 import {UIHelper} from '../services/uiHelper';
 import {UILog} from '../services/uiLog';
 import {UIStorage} from '../services/uiStorage';
+import {Observable, Subject} from 'rxjs';
 
 export abstract class StorageClass {
-
+  private removeObjSubject = new Subject<any>();
+  private eventSubject = new Subject<any>();
   public DB_PATH: string = '';
   protected storedData: Array<any> = [];
 
@@ -69,6 +71,7 @@ export abstract class StorageClass {
     newEntry.config.unix_timestamp = this.uiHelper.getUnixTimestamp();
     this.storedData.push(newEntry);
     this.__save();
+    this.__sendEvent('ADD');
   }
 
   public getAllEntries (): Array<any> {
@@ -81,7 +84,7 @@ export abstract class StorageClass {
         this.uiLog.log(`Storage - Update  - Successfully - ${ _obj.config.uuid}`);
         this.storedData[i] = _obj;
         this.__save();
-
+        this.__sendEvent('UPDATE');
         return true;
       }
     }
@@ -116,6 +119,22 @@ export abstract class StorageClass {
     }
 
     return false;
+  }
+
+  public attachOnRemove(): Observable<any> {
+    return this.removeObjSubject.asObservable();
+  }
+
+  public attachOnEvent(): Observable<any> {
+    return this.eventSubject.asObservable();
+  }
+
+  private __sendRemoveMessage(_id: string) {
+    this.removeObjSubject.next({id: _id});
+  }
+
+  private __sendEvent(_type: string) {
+    this.eventSubject.next({type: _type});
   }
 
   public getDBPath (): string {
@@ -153,12 +172,13 @@ export abstract class StorageClass {
           this.storedData.splice(i, 1);
           this.__save();
 
+          this.__sendRemoveMessage(deleteUUID);
+          this.__sendEvent('DELETE');
           return true;
         }
       }
     }
     this.uiLog.error('Storage - Delete - Unsuccessfully');
-
     return false;
 
   }
