@@ -4,6 +4,7 @@ import {ICupping} from '../../interfaces/cupping/iCupping';
 import {Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 import {TranslateService} from '@ngx-translate/core';
+import {UIHelper} from '../../services/uiHelper';
 
 @Component({
   selector: 'cupping-radar',
@@ -24,11 +25,13 @@ export class CuppingRadarComponent implements AfterViewInit {
     sweetness: 0,
     uniformity: 0,
     wet_aroma: 0,
+    notes: '',
   };
   public debounceRadar: Subject<string> = new Subject<string>();
+  private chuppingChartObj: any = undefined;
   @ViewChild('cuppingChart', {static: false}) public cuppingChart;
 
-  constructor(private readonly translate: TranslateService) {
+  constructor(private readonly translate: TranslateService, private uiHelper: UIHelper) {
   }
 
   public ngOnInit(): void {
@@ -50,6 +53,16 @@ export class CuppingRadarComponent implements AfterViewInit {
     this.__loadCuppingChart();
   }
 
+  public setCuppingValues(_values: ICupping) {
+
+    this.model = _values;
+
+    this.debounceRadar.next();
+  }
+
+  public getCuppingValues() {
+    return this.model;
+  }
 
   public rangeChanged(_query): void {
     this.debounceRadar.next(_query);
@@ -131,7 +144,7 @@ export class CuppingRadarComponent implements AfterViewInit {
       maintainAspectRatio: true,
       aspectRatio: 1,
     };
-    const bla = new Chart(this.cuppingChart.nativeElement, {
+    this.chuppingChartObj = new Chart(this.cuppingChart.nativeElement, {
       type: 'radar',
       data: cuppingData,
       options: chartOptions

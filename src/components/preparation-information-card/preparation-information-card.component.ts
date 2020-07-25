@@ -51,6 +51,16 @@ export class PreparationInformationCardComponent implements OnInit {
     return grindWeight;
   }
 
+  public getDrunkenQuantity(): number {
+
+    const relatedBrews: Array<Brew> = this.uiPreparationHelper.getAllBrewsForThisPreparation(this.preparation.config.uuid);
+    let drunkenQuantity: number = 0;
+    for (const brew of relatedBrews) {
+      drunkenQuantity += brew.brew_quantity;
+    }
+    return drunkenQuantity / 1000;
+  }
+
   public getBeansCount(): number {
 
     const relatedBrews: Array<Brew> = this.uiPreparationHelper.getAllBrewsForThisPreparation(this.preparation.config.uuid);

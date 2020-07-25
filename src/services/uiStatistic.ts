@@ -160,6 +160,9 @@ export class UIStatistic {
     return this.translate.instant('NOT_FOUND');
   }
 
+  /**
+   * Returns in KG
+   */
   public getTotalGround(): number {
     if (this.uiSettings.getSettings().grind_weight) {
       const brews: Array<IBrew> = this.uiBrewStorage.getAllEntries();
@@ -169,13 +172,16 @@ export class UIStatistic {
           sum += +brew.grind_weight;
         }
 
-        return sum;
+        return Math.round((sum / 1000) * 100) / 100;
       }
     }
 
     return 0;
   }
 
+  /**
+   * Retruns in kg/litres
+   */
   public getTotalDrunk(): number {
     if (this.uiSettings.getSettings().brew_quantity) {
       const brews: Array<IBrew> = this.uiBrewStorage.getAllEntries();
@@ -184,8 +190,8 @@ export class UIStatistic {
         for (const brew of brews) {
           sum += brew.brew_quantity;
         }
+        return Math.round((sum / 1000) * 100) / 100;
 
-        return sum;
       }
     }
 

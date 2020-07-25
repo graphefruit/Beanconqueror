@@ -88,3 +88,4 @@ npm install @ionic-native/firebase-x
 
 ###https://github.com/hughjdavey/ngx-stars
 npm install --save ngx-stars
+

@@ -17,7 +17,7 @@
       <ion-item *ngFor="let mill of getOpenMills()" lines="none" tappable>
         <ion-checkbox [(ngModel)]="multipleSelection[mill.config.uuid]" slot="start"></ion-checkbox>
         <div>
-          <h6>{{mill.name}}</h6>
+          <span class="font-size-16">{{mill.name}}</span>
         </div>
       </ion-item>
     </ion-card>
@@ -27,7 +27,7 @@
       <ion-item *ngFor="let mill of getArchivedMills()" lines="none" tappable>
         <ion-checkbox [(ngModel)]="multipleSelection[mill.config.uuid]" slot="start"></ion-checkbox>
         <div>
-          <h6>{{mill.name}}</h6>
+          <span class="font-size-16">{{mill.name}}</span>
         </div>
       </ion-item>
     </ion-card>
@@ -50,7 +50,7 @@
         <ion-item *ngFor="let mill of getArchivedMills()" lines="none" tappable>
           <ion-radio slot="start" value="{{mill.config.uuid}}"></ion-radio>
           <div>
-            <h6>{{mill.name}}</h6>
+            <span class="font-size-16">{{mill.name}}</span>
           </div>
         </ion-item>
       </ion-card>

@@ -18,8 +18,7 @@
   <ion-row>
     <ion-col class="ion-text-center" size="6">
       <ion-card class="small-card" style="height: 100%;">
-        <ion-card-header class="custom-background-medium" style="font-size: 2em;">
-          {{uiStatistic.getMillsCount()}}
+        <ion-card-header class="custom-background-medium" style="font-size: 2em;">{{uiStatistic.getMillsCount()}}
         </ion-card-header>
         <ion-card-content>
           {{"NAV_MILL" | translate}}
@@ -28,8 +27,7 @@
     </ion-col>
     <ion-col class="ion-text-center" size="6">
       <ion-card class="small-card" style="height: 100%;">
-        <ion-card-header class="custom-background-medium" style="font-size: 2em;">
-          {{uiStatistic.getPreparationsCount()}}
+        <ion-card-header class="custom-background-medium" style="font-size: 2em;">{{uiStatistic.getPreparationsCount()}}
         </ion-card-header>
         <ion-card-content>
           {{"PAGE_STATISTICS_DIFFERENT_PREPARATION_METHOD" | translate}}
@@ -38,8 +36,7 @@
     </ion-col>
     <ion-col class="ion-text-center" size="6">
       <ion-card class="small-card" style="height: 100%;">
-        <ion-card-header class="custom-background-medium" style="font-size: 2em;">
-          {{uiStatistic.getTotalGround()}}&nbsp;g
+        <ion-card-header class="custom-background-medium" style="font-size: 2em;">{{uiStatistic.getTotalGround()}}&nbsp;kg
         </ion-card-header>
         <ion-card-content>
           {{"PAGE_STATISTICS_TOTAL_GROUND_BEANS" | translate}}
@@ -48,8 +45,8 @@
     </ion-col>
     <ion-col class="ion-text-center" size="6">
       <ion-card class="small-card" style="height: 100%;">
-        <ion-card-header class="custom-background-medium" style="font-size: 2em;">
-          {{uiStatistic.getSpentMoneyForCoffeeBeans()}}&nbsp;€
+        <ion-card-header class="custom-background-medium"
+                         style="font-size: 2em;">{{uiStatistic.getSpentMoneyForCoffeeBeans()}}&nbsp;€
         </ion-card-header>
         <ion-card-content>
           {{"PAGE_STATISTICS_MONEY_SPENT_FOR_COFFEE" | translate}}
@@ -58,8 +55,7 @@
     </ion-col>
     <ion-col class="ion-text-center" size="6">
       <ion-card class="small-card" style="height: 100%;">
-        <ion-card-header class="custom-background-medium" style="font-size: 2em;">
-          {{uiStatistic.getBrewsDrunk()}}
+        <ion-card-header class="custom-background-medium" style="font-size: 2em;">{{uiStatistic.getBrewsDrunk()}}
         </ion-card-header>
         <ion-card-content>
           {{"PAGE_STATISTICS_DRUNKEN_BREWS" | translate}}
@@ -68,11 +64,10 @@
     </ion-col>
     <ion-col class="ion-text-center" size="6">
       <ion-card class="small-card" style="height: 100%;">
-        <ion-card-header class="custom-background-medium" style="font-size: 2em;">
-          {{uiStatistic.getTotalDrunk()}}
+        <ion-card-header class="custom-background-medium" style="font-size: 2em;">{{uiStatistic.getTotalDrunk()}}
         </ion-card-header>
         <ion-card-content>
-          {{"PAGE_STATISTICS_DRUNKEN_QUANTITY" | translate}} (gr/ml)
+          {{"PAGE_STATISTICS_DRUNKEN_QUANTITY" | translate}} (kg/l)
         </ion-card-content>
       </ion-card>
     </ion-col>

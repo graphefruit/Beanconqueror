@@ -15,6 +15,7 @@ import {Bean} from '../bean/bean';
 import {Mill} from '../mill/mill';
 import {Config} from '../objectConfig/objectConfig';
 import {Preparation} from '../preparation/preparation';
+import {ICupping} from '../../interfaces/cupping/iCupping';
 
 export class Brew implements IBrew {
   // tslint:disable-next-line
@@ -57,9 +58,7 @@ export class Brew implements IBrew {
   public attachments: Array<string>;
   public config: Config;
 
-  public initializeByObject(brewObj: IBrew): void {
-    Object.assign(this, brewObj);
-  }
+  public cupping: ICupping;
 
   constructor() {
 
@@ -84,6 +83,44 @@ export class Brew implements IBrew {
     this.coffee_blooming_time = 0;
     this.attachments = [];
     this.config = new Config();
+
+
+    this.cupping = {
+      body: 0,
+      brightness: 0,
+      clean_cup: 0,
+      complexity: 0,
+      cuppers_correction: 0,
+      dry_fragrance: 0,
+      finish: 0,
+      flavor: 0,
+      sweetness: 0,
+      uniformity: 0,
+      wet_aroma: 0,
+      notes: '',
+    };
+
+  }
+
+  public initializeByObject(brewObj: IBrew): void {
+    Object.assign(this, brewObj);
+
+    if (this.cupping === undefined) {
+      this.cupping = {
+        body: 0,
+        brightness: 0,
+        clean_cup: 0,
+        complexity: 0,
+        cuppers_correction: 0,
+        dry_fragrance: 0,
+        finish: 0,
+        flavor: 0,
+        sweetness: 0,
+        uniformity: 0,
+        wet_aroma: 0,
+        notes: '',
+      };
+    }
   }
 
   public getBrewQuantityTypeName(): string {

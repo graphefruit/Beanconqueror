@@ -50,4 +50,10 @@ export interface ICupping {
    */
   cuppers_correction: number;
 
+
+  /**
+   * Extra notes
+   */
+  notes: string;
+
 }

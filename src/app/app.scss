@@ -23,6 +23,11 @@ ion-title {
   line-height: 24px;
 }
 
+.font-size-16 {
+  font-size: 16px;
+  line-height: 16px;
+}
+
 ion-toolbar {
   --background: #F0F0F0;
   --border-style: none;
@@ -376,6 +381,7 @@ ion-menu:host .menu-inner {
     border-radius: 6px 6px 6px 6px;
     box-shadow: none;
     color: var(--ion-text-color);
+    outline: none;
   }
 
   ion-item {
@@ -570,6 +576,8 @@ ion-menu:host .menu-inner {
     mask-image: none !important;
     background-color: inherit !important;
     background-repeat: no-repeat;
+    height: 22px !important;
+    width: 22px !important;
   }
 
   .star-full {
@@ -578,6 +586,8 @@ ion-menu:host .menu-inner {
     mask-image: none !important;
     background-color: inherit !important;
     background-repeat: no-repeat;
+    height: 22px !important;
+    width: 22px !important;
   }
 
   .star-empty {
@@ -586,6 +596,8 @@ ion-menu:host .menu-inner {
     mask-image: none !important;
     background-color: inherit !important;
     background-repeat: no-repeat;
+    height: 22px !important;
+    width: 22px !important;
 
   }
 

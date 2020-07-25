@@ -1,6 +1,6 @@
 <ion-content>
     <form #addMillForm="ngForm" novalidate>
-      <ion-item lines="none">
+      <ion-item>
         <ion-label position="stacked">{{"NAME" | translate}}*</ion-label>
         <ion-input #name="ngModel" [(ngModel)]="data.name" name="name"
                    placeholder="{{'MILL.PLACE_HOLDER.NAME' | translate}}" spellcheck="false" type="text"

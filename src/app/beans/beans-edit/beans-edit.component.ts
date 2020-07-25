@@ -20,6 +20,14 @@ export class BeansEditComponent implements OnInit {
   public data: Bean = new Bean();
   public roastsEnum = ROASTS_ENUM;
   public mixEnum = BEAN_MIX_ENUM;
+  public heartIcons = {
+    empty: '../assets/custom-ion-icons/beanconqueror-bean-rating-empty.svg',
+    half: '../assets/custom-ion-icons/beanconqueror-bean-rating-half.svg',
+    full: '../assets/custom-ion-icons/beanconqueror-bean-rating-full.svg',
+  };
+  // Needed for the rating element, if we set the initial stars before loading, we cant change it anymore.
+  public viewLoaded: boolean = false;
+
   @Input() private bean: IBean;
   @ViewChild('photoSlides', {static: false}) public photoSlides: IonSlides;
 
@@ -36,6 +44,7 @@ export class BeansEditComponent implements OnInit {
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent('BEAN', 'EDIT');
     this.data.initializeByObject(this.bean);
+    this.viewLoaded = true;
   }
   public editBean(): void {
     if (this.__formValid()) {
@@ -70,6 +79,10 @@ export class BeansEditComponent implements OnInit {
       this.photoSlides.slideTo(_index - 1, 0);
     }
 
+  }
+
+  public onRoastRate(_event): void {
+    this.data.roast_range = _event;
   }
 
   public dismiss(): void {

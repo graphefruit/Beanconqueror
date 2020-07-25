@@ -7,11 +7,6 @@ import {UIHelper} from '../../../services/uiHelper';
   styleUrls: ['./credits.component.scss'],
 })
 export class CreditsComponent implements OnInit {
-
-  constructor (private readonly uiHelper: UIHelper) {
-  }
-
-  public ngOnInit() {}
   public credits: any = {
     'bean-background': {
       TITLE: 'Bean background',
@@ -20,7 +15,12 @@ export class CreditsComponent implements OnInit {
     }
   };
 
-  // tslint:enable
+  constructor(private readonly uiHelper: UIHelper) {
+  }
+
+  public ngOnInit() {
+  }
+
 
 
 

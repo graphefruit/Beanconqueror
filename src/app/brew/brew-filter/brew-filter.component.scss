@@ -9,6 +9,10 @@
   border-radius: 6px;
   margin-block-end: 10px;
 
+  @media (min-height: 600px) and (max-height: 667px) {
+    --max-height: 55%;
+    top: 45%;
+  }
   @media (min-height: 537px) and (max-height: 600px) {
     --max-height: 65%;
     top: 35%;
