@@ -36,7 +36,7 @@ export class UIAlert {
     const promise = new Promise(async (resolve, reject) => {
       const alert = await this.alertController.create({
         header: _title,
-        subHeader: _message,
+        message: _message,
         backdropDismiss: false,
         buttons: [
           {

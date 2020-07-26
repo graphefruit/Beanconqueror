@@ -317,8 +317,9 @@ ion-menu:host .menu-inner {
 :root {
 
 
-  ion-range::part(.range-bar) {
-    background-color: yellow;
+  ion-range {
+    --bar-background: #CCCCCC;
+    --bar-background-active: var(--ion-color-accent);
   }
 
   ion-tab-bar {
@@ -601,6 +602,7 @@ ion-menu:host .menu-inner {
     width: 22px !important;
 
   }
+
 
 }
 
