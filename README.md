@@ -1,6 +1,7 @@
 [![license](https://img.shields.io/badge/license-GPL%203.0-brightgreen.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html) [![Github All Releases](https://img.shields.io/github/downloads/graphefruit/beanconqueror/total.svg)](https://github.com/graphefruit/beanconqueror/releases) [![GitHub Release Date](https://img.shields.io/github/release-date/graphefruit/beanconqueror.svg)](https://github.com/graphefruit/beanconqueror/releases)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=graphefruit_Beanconqueror&metric=alert_status)](https://sonarcloud.io/dashboard?id=graphefruit_Beanconqueror)
 # Beanconqueror
+
 ## Getting the App
 The App is a crossplattform application, running on the ionic framework. 
 
@@ -60,11 +61,6 @@ adb shell setprop debug.firebase.analytics.app .none.
 
 
 ### Check outdated dependencies
-````
+```
 npm outdated
-``
-
-###
-https://stackoverflow.com/questions/39627766/how-to-change-the-defaut-menu-icon-to-image-icon-in-ionic
-
-
+```
