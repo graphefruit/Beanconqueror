@@ -1,3 +1,16 @@
+4.0
+- New features
+  - Archive beans/preparations/grinders
+  - New layout
+  - Upgraded to the latest versions
+  - Repeat images on beans
+  - Images are deleted now on phone
+  - Tablet support
+  - Bean strength now via slider possible
+  - Cup and taste your brewed coffee
+  - Filter brews permanently now
+  - Better select dropdowns for beans/preparations/grinders
+
 3.7.
 - Show/Hide archived beans/brews
 
