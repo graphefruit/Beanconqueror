@@ -5,8 +5,9 @@
         <ion-col size="2">
           <div class="brew-time-center">
             <div>
-              <span class="ion-text-bold" style="font-size:24px;">{{brew.config.unix_timestamp | formatDate:["DD"]}}
-                .</span>
+              <span class="ion-text-bold" style="font-size:24px;">
+                {{brew.config.unix_timestamp | formatDate:["DD"]}}.
+              </span>
             </div>
             <div style="line-height:14px;">{{brew.config.unix_timestamp | formatDate:["MMMM"]}}
               <br/>{{brew.config.unix_timestamp | formatDate:["YYYY"]}}</div>
