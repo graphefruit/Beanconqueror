@@ -11,5 +11,10 @@
     margin-right: 16px;
   }
 
-
+  ion-card
+  {
+    ion-item:last-child{
+      margin-bottom:16px;
+    }
+  }
 }

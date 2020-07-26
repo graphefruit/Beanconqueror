@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {UIStatistic} from '../../services/uiStatistic';
 import {BrewAddComponent} from '../brew/brew-add/brew-add.component';
 import {ModalController} from '@ionic/angular';
@@ -26,7 +26,8 @@ export class DashboardPage implements OnInit {
               private readonly uiBrewStorage: UIBrewStorage,
               private readonly uiBrewHelper: UIBrewHelper,
               private readonly uiAlert: UIAlert,
-              private readonly uiToast: UIToast) {
+              private readonly uiToast: UIToast,
+              private readonly changeDetectorRef: ChangeDetectorRef) {
   }
 
   public ngOnInit(): void {
@@ -37,7 +38,7 @@ export class DashboardPage implements OnInit {
     this.loadBrews();
   }
 
-  public loadBrews() {
+  public async loadBrews() {
     this.brews = this.uiBrewStorage.getAllEntries().filter((e) =>
       e.getBean().finished === false &&
       e.getMill().finished === false &&
@@ -45,12 +46,15 @@ export class DashboardPage implements OnInit {
     );
     this.brews = this.__sortBrews(this.brews);
     this.brews = this.brews.slice(0, 10);
+    this.changeDetectorRef.detectChanges();
   }
+
   public async addBrew() {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
       const modal = await this.modalCtrl.create({component: BrewAddComponent});
       await modal.present();
       await modal.onWillDismiss();
+      this.loadBrews();
     }
   }
 

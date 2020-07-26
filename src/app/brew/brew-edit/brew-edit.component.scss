@@ -17,5 +17,10 @@
     display: block;
     object-fit: contain;
   }
-
+  ion-card
+  {
+    ion-item:last-child{
+      margin-bottom:16px;
+    }
+  }
 }
