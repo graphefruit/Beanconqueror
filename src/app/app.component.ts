@@ -235,14 +235,12 @@ export class AppComponent implements AfterViewInit {
               }
 
               let settingLanguage: string = '';
-              switch (systemLanguage) {
-                case 'de':
-                  settingLanguage = 'de';
-                  break;
-                default:
-                  settingLanguage = 'en';
-                  break;
+              if (systemLanguage === 'de'){
+                settingLanguage = 'de';
+              } else {
+                settingLanguage = 'en';
               }
+
               this.uiLog.log(`Setting language: ${settingLanguage}`);
               this._translate.setDefaultLang(settingLanguage);
               settings.language = settingLanguage;
