@@ -12,8 +12,10 @@ import {TermsComponent} from './terms/terms.component';
 import {ThanksComponent} from './thanks/thanks.component';
 import {SharedModule} from '../shared/shared.module';
 import {LogComponent} from './log/log.component';
+import {InfoComponent} from './info.component';
 
 const routes: Routes = [
+  {path: '', component: InfoComponent},
   {path: 'contact', component: ContactComponent},
   {
     path: 'about',
@@ -52,12 +54,10 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    SharedModule
-
+    SharedModule,
   ],
   declarations: [
   ],
   providers: []
-
 })
 export class InfoModule {}

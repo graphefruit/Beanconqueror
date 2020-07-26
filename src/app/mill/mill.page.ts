@@ -2,12 +2,16 @@ import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {UIMillStorage} from '../../services/uiMillStorage';
 import {UIAlert} from '../../services/uiAlert';
 import {Mill} from '../../classes/mill/mill';
-import {ModalController, Platform} from '@ionic/angular';
+import {ModalController} from '@ionic/angular';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {Brew} from '../../classes/brew/brew';
 import {MillEditComponent} from './mill-edit/mill-edit.component';
 import {MillAddComponent} from './mill-add/mill-add.component';
-import {MillInformationComponent} from './mill-information/mill-information.component';
+import {MILL_ACTION} from '../../enums/mills/millActions';
+import {Settings} from '../../classes/settings/settings';
+import {UISettingsStorage} from '../../services/uiSettingsStorage';
+import {UIToast} from '../../services/uiToast';
+
 
 @Component({
   selector: 'mill',
@@ -17,24 +21,45 @@ import {MillInformationComponent} from './mill-information/mill-information.comp
 export class MillPage  implements OnInit  {
 
   public mills: Array<Mill> = [];
-public ngOnInit(): void {
-}
+
+  public settings: Settings;
+  public segment: string = 'open';
 
   constructor (public modalCtrl: ModalController,
                private readonly changeDetectorRef: ChangeDetectorRef,
                private readonly uiMillStorage: UIMillStorage,
                private readonly uiAlert: UIAlert,
                private readonly uiBrewStorage: UIBrewStorage,
-               private readonly  platform: Platform) {
+               private readonly uiSettingsStorage: UISettingsStorage,
+               private readonly uiToast: UIToast) {
 
   }
 
+  public ngOnInit(): void {
+  }
+
   public ionViewWillEnter(): void {
+    this.settings = this.uiSettingsStorage.getSettings();
+    this.__initializeMills();
+  }
 
-      this.__initializeMills();
+  public getActiveMills(): Array<Mill> {
+    return this.mills.filter(
+      (mill) => !mill.finished);
+  }
 
+  public getArchivedMills(): Array<Mill> {
+    return this.mills.filter(
+      (mill) => mill.finished);
+  }
 
-
+  public archive(_mill: Mill) {
+    _mill.finished = true;
+    this.uiMillStorage.update(_mill);
+    this.uiToast.showInfoToast('TOAST_MILL_ARCHIVED_SUCCESSFULLY');
+    this.settings.resetFilter();
+    this.uiSettingsStorage.saveSettings(this.settings);
+    this.loadMills();
   }
 
   public loadMills(): void {
@@ -42,8 +67,28 @@ public ngOnInit(): void {
     this.changeDetectorRef.detectChanges();
   }
 
+  public async millAction(action: MILL_ACTION, mill: Mill): Promise<void> {
+    switch (action) {
+      case MILL_ACTION.EDIT:
+        this.edit(mill);
+        break;
+      case MILL_ACTION.DELETE:
+        this.delete(mill);
+        break;
+      case MILL_ACTION.ARCHIVE:
+        this.archive(mill);
+        break;
+      default:
+        break;
+    }
+  }
+
   public async add() {
-    const modal = await this.modalCtrl.create({component:MillAddComponent});
+    const modal = await this.modalCtrl.create({
+      component: MillAddComponent, cssClass: 'half-bottom-modal', showBackdrop: true,
+      backdropDismiss: true,
+      swipeToClose: true
+    });
     await modal.present();
     await modal.onWillDismiss();
     this.loadMills();
@@ -64,6 +109,9 @@ public ngOnInit(): void {
     this.uiAlert.showConfirm('DELETE_MILL_QUESTION', 'SURE_QUESTION', true).then(() => {
           // Yes
           this.__deleteMill(_mill);
+        this.uiToast.showInfoToast('TOAST_MILL_DELETED_SUCCESSFULLY');
+        this.settings.resetFilter();
+        this.uiSettingsStorage.saveSettings(this.settings);
         },
         () => {
           // No
@@ -71,11 +119,6 @@ public ngOnInit(): void {
 
   }
 
-  public async informationMill(_mill: Mill) {
-    const modal = await this.modalCtrl.create({component: MillInformationComponent, componentProps: {mill: _mill}});
-    await modal.present();
-    await modal.onWillDismiss();
-  }
 
   private __initializeMills(): void {
     this.mills = this.uiMillStorage.getAllEntries()

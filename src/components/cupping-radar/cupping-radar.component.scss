@@ -1,0 +1,15 @@
+:host {
+  ion-item {
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+
+  .label-item {
+    max-height: 35px;
+    ion-icon {
+      top: -5px;
+      position: relative;
+    }
+  }
+
+}

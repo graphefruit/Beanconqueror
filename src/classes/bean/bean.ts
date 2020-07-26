@@ -5,6 +5,7 @@ import {ROASTS_ENUM} from '../../enums/beans/roasts';
 import {IBean} from '../../interfaces/bean/iBean';
 /** Classes */
 import {Config} from '../objectConfig/objectConfig';
+import moment from 'moment';
 
 export class Bean implements IBean {
   public name: string;
@@ -15,6 +16,7 @@ export class Bean implements IBean {
   public roaster: string;
   public config: Config;
   public roast: ROASTS_ENUM;
+  public roast_range: number;
   public beanMix: BEAN_MIX_ENUM;
   public variety: string;
   public country: string;
@@ -26,6 +28,7 @@ export class Bean implements IBean {
   public cost: number;
   public attachments: Array<string>;
 
+
   constructor() {
     this.name = '';
     this.roastingDate = '';
@@ -34,6 +37,7 @@ export class Bean implements IBean {
     this.roaster = '';
     this.config = new Config();
     this.roast = 'UNKNOWN' as ROASTS_ENUM;
+    this.roast_range = 0;
     this.roast_custom = '';
     this.beanMix = 'SINGLE_ORIGIN' as BEAN_MIX_ENUM;
     this.variety = '';
@@ -53,9 +57,23 @@ export class Bean implements IBean {
     Object.assign(this, beanObj);
   }
 
-  public fixDataTypes(): void {
-    this.cost = Number(this.cost);
-    this.weight = Number(this.weight);
+  public fixDataTypes(): boolean {
+    let fixNeeded: boolean = false;
+
+
+    if (Number(this.cost) !== this.cost) {
+      this.cost = Number(this.cost);
+      fixNeeded = true;
+    }
+
+
+    if (Number(this.weight) !== this.weight) {
+      this.weight = Number(this.weight);
+      fixNeeded = true;
+    }
+
+
+    return fixNeeded;
   }
   public beanAgeInDays(): number {
     const today = Date.now();
@@ -65,5 +83,17 @@ export class Bean implements IBean {
     }
     return Math.floor(millisecondsSinceRoasting / (1000 * 60 * 60 * 24));
   }
+
+  /**
+   * Get the calculated bean age for this brew
+   */
+  public getCalculatedBeanAge(): number {
+
+    const roastingDate = moment(this.roastingDate);
+    const brewTime = moment.unix(moment().unix());
+
+    return brewTime.diff(roastingDate, 'days');
+  }
+
 
 }

@@ -8,6 +8,8 @@ import {UIImage} from '../../../services/uiImage';
 import {IBean} from '../../../interfaces/bean/iBean';
 import {Bean} from '../../../classes/bean/bean';
 import {UIAnalytics} from '../../../services/uiAnalytics';
+import {UIToast} from '../../../services/uiToast';
+import {UIFileHelper} from '../../../services/uiFileHelper';
 
 @Component({
   selector: 'beans-edit',
@@ -19,6 +21,14 @@ export class BeansEditComponent implements OnInit {
   public data: Bean = new Bean();
   public roastsEnum = ROASTS_ENUM;
   public mixEnum = BEAN_MIX_ENUM;
+  public heartIcons = {
+    empty: '../assets/custom-ion-icons/beanconqueror-bean-rating-empty.svg',
+    half: '../assets/custom-ion-icons/beanconqueror-bean-rating-half.svg',
+    full: '../assets/custom-ion-icons/beanconqueror-bean-rating-full.svg',
+  };
+  // Needed for the rating element, if we set the initial stars before loading, we cant change it anymore.
+  public viewLoaded: boolean = false;
+
   @Input() private bean: IBean;
   @ViewChild('photoSlides', {static: false}) public photoSlides: IonSlides;
 
@@ -27,14 +37,16 @@ export class BeansEditComponent implements OnInit {
                private readonly uiBeanStorage: UIBeanStorage,
                private readonly uiImage: UIImage,
                private readonly uiHelper: UIHelper,
-               private readonly uiAnalytics: UIAnalytics) {
+               private readonly uiAnalytics: UIAnalytics,
+               private readonly uiToast: UIToast,
+               private readonly uiFileHelper: UIFileHelper) {
     this.data.roastingDate = new Date().toISOString();
   }
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent('BEAN', 'EDIT');
-    //  this.bean = this.navParams.get('BEAN');
     this.data.initializeByObject(this.bean);
+    this.viewLoaded = true;
   }
   public editBean(): void {
     if (this.__formValid()) {
@@ -62,13 +74,26 @@ export class BeansEditComponent implements OnInit {
       });
   }
 
-  public deleteImage(_index: number): void {
-    this.data.attachments.splice(_index, 1);
+  public async deleteImage(_index: number) {
+    const splicedPaths: Array<string> = this.data.attachments.splice(_index, 1);
+    for (const path of splicedPaths) {
+      try {
+        await this.uiFileHelper.deleteFile(path);
+        this.uiToast.showInfoToast('IMAGE_DELETED');
+      } catch (ex) {
+        this.uiToast.showInfoToast('IMAGE_NOT_DELETED');
+      }
+
+    }
     if (this.data.attachments.length > 0) {
       // Slide to one item before
       this.photoSlides.slideTo(_index - 1, 0);
     }
 
+  }
+
+  public onRoastRate(_event): void {
+    this.data.roast_range = _event;
   }
 
   public dismiss(): void {
@@ -87,6 +112,7 @@ export class BeansEditComponent implements OnInit {
   }
   private __editBean(): void {
     this.uiBeanStorage.update(this.data);
+    this.uiToast.showInfoToast('TOAST_BEAN_EDITED_SUCCESSFULLY');
     this.dismiss();
   }
 

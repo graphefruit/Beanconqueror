@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="76" height="86.657" viewBox="0 0 76 86.657">
+  <g id="Gruppe_209" data-name="Gruppe 209" transform="translate(-229 -448)">
+    <circle id="Ellipse_371" data-name="Ellipse 371" cx="38" cy="38" r="38" transform="translate(229 448)"
+            fill="#ffacab"/>
+    <g id="Gruppe_190" data-name="Gruppe 190" transform="translate(-494 499.797)">
+      <g id="Gruppe_175" data-name="Gruppe 175" transform="translate(731 -41.766)">
+        <g id="Gruppe_174" data-name="Gruppe 174" transform="translate(28.176)">
+          <ellipse id="Ellipse_412" data-name="Ellipse 412" cx="2.109" cy="1.781" rx="2.109" ry="1.781" fill="#c1484e"/>
+          <path id="Pfad_1387" data-name="Pfad 1387"
+                d="M129.541,452.868c1.121-.147,2.126-.8,2.126-1.784s-1.166-1.744-2.56-1.744C129.107,449.34,131.769,451,129.541,452.868Z"
+                transform="translate(-127.454 -449.333)" fill="#933b43"/>
+        </g>
+        <path id="Pfad_1388" data-name="Pfad 1388" d="M109.218,603.816H64.854l7.7-30.057,29.154-.242Z"
+              transform="translate(-58.993 -527.19)" fill="#643e4b"/>
+        <path id="Pfad_1389" data-name="Pfad 1389" d="M117.3,603.585l-24.647-.1,5.843-29.92,12.485-.242Z"
+              transform="translate(-76.42 -527.066)" fill="#6d3d55"/>
+        <path id="Pfad_1390" data-name="Pfad 1390" d="M114.571,561.473l-29.1.242-.085-7.029,29.148-.392Z"
+              transform="translate(-71.866 -515.138)" fill="#ff5957"/>
+        <path id="Pfad_1391" data-name="Pfad 1391" d="M94.073,562.219l-8.443-.036-.085-7.029L94,555.04Z"
+              transform="translate(-71.965 -515.606)" fill="#d84e50"/>
+        <path id="Pfad_1392" data-name="Pfad 1392" d="M83.2,468.662l35.954.552-5.969,31.441-29.1.35Z"
+              transform="translate(-70.497 -461.448)" fill="#a55169"/>
+        <path id="Pfad_1393" data-name="Pfad 1393" d="M61.409,484.561l-12.269-15.9H66.874Z"
+              transform="translate(-49.14 -461.448)" fill="#7f445c"/>
+        <path id="Pfad_1394" data-name="Pfad 1394"
+              d="M177.383,470.271l4.906.133,5.688,7.138v25.429a6.72,6.72,0,0,1-6.246-4.573l.223-17.845-2.9-3.569h-3.011Z"
+              transform="translate(-128.706 -462.457)" fill="#97485c"/>
+        <path id="Pfad_1395" data-name="Pfad 1395"
+              d="M185.137,501.636a6.028,6.028,0,0,0,3.665,1.271l-.011-25.467L183.1,470.3l-4.906-.133s-.281,1.4-.837,4.082c6.386,1.363,5.931.95,7.219,4.043C188.026,486.578,184.758,501.3,185.137,501.636Z"
+              transform="translate(-129.532 -462.393)" fill="#6d3d55"/>
+        <path id="Pfad_1396" data-name="Pfad 1396" d="M72.6,574.05l8.468-.082-5.843,29.92-10.368.211Z"
+              transform="translate(-58.993 -527.473)" fill="#7f445c"/>
+        <path id="Pfad_1397" data-name="Pfad 1397" d="M49.5,468.687l12.269,15.9.132-.9,1.429-3.664L52.85,468.662Z"
+              transform="translate(-49.367 -461.448)" fill="#6d3d55"/>
+        <path id="Pfad_1398" data-name="Pfad 1398" d="M83.419,501.006l8.445-.123-4.3-32.22-5.425,15.714Z"
+              transform="translate(-69.829 -461.448)" fill="#7f445c"/>
+        <path id="Pfad_1399" data-name="Pfad 1399"
+              d="M76.736,462.467c.082-.246,1.613-3.685,1.613-3.685h35.193l1.56,4.238Z"
+              transform="translate(-66.442 -455.253)" fill="#6d3d55"/>
+      </g>
+    </g>
+  </g>
+</svg>

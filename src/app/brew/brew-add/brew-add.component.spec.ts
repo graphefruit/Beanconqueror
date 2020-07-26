@@ -16,7 +16,6 @@ import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
 import {FirebaseX} from '@ionic-native/firebase-x/ngx';
 import {Router} from '@angular/router';
 import {FormatDatePipe} from '../../../pipes/formatDate';
-import {TimerComponent} from '../../../components/timer/timer.component';
 import {BrewTimerComponent} from '../../../components/brew-timer/brew-timer.component';
 import {AsyncImageComponent} from '../../../components/async-image/async-image.component';
 
@@ -27,7 +26,7 @@ describe('BrewAddComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [TranslateModule.forRoot(), FormsModule, IonicStorageModule.forRoot(), CommonModule, IonicModule],
-      declarations: [BrewAddComponent, KeysPipe, FormatDatePipe, BrewTimerComponent, TimerComponent, AsyncImageComponent],
+      declarations: [BrewAddComponent, KeysPipe, FormatDatePipe, BrewTimerComponent, AsyncImageComponent],
       providers: [
         {provide: InAppBrowser},
         {provide: ModalController},

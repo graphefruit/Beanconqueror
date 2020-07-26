@@ -28,6 +28,8 @@ import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
 import {UIAnalytics} from '../../services/uiAnalytics';
 
 import BeanconquerorSettingsDummy from '../../assets/Beanconqueror.json';
+import {ISettings} from '../../interfaces/settings/iSettings';
+import {IBrewPageFilter} from '../../interfaces/brew/iBrewPageFilter';
 
 @Component({
   selector: 'settings',
@@ -42,9 +44,6 @@ export class SettingsPage implements OnInit {
   public STARTUP_VIEW = STARTUP_VIEW_ENUM;
   public debounceLanguageFilter: Subject<string> = new Subject<string>();
 
-  public settings_segment: string = 'general';
-
-  public brewOrders: Array<{ number: number, label: string, enum: string }> = [];
 
   private static __cleanupImportBeanData(_data: Array<IBean>): any {
     if (_data !== undefined && _data.length > 0) {
@@ -61,6 +60,23 @@ export class SettingsPage implements OnInit {
       for (const brew of _data) {
         brew.attachments = [];
       }
+    }
+  }
+
+  private static __cleanupImportSettingsData(_data: ISettings | any): void {
+    // We need to remove the filter because of new data here.
+    if (_data !== undefined) {
+      _data.brew_filter = {};
+      _data.brew_filter.ARCHIVED = {
+        mill: [],
+        bean: [],
+        method_of_preparation: []
+      } as IBrewPageFilter;
+      _data.brew_filter.OPEN = {
+        mill: [],
+        bean: [],
+        method_of_preparation: []
+      } as IBrewPageFilter;
     }
   }
 
@@ -91,27 +107,6 @@ export class SettingsPage implements OnInit {
       });
   }
 
-  public reorder_brew(ev: any) {
-
-    this.uiAnalytics.trackEvent('SETTINGS', 'REORDER_BREW');
-    // The `from` and `to` properties contain the index of the item
-    // when the drag started and ended, respectively
-    // console.log('Dragged from index', ev.detail.from, 'to', ev.detail.to);
-    // console.log(this.brewOrders);
-    this.brewOrders.splice(ev.detail.to, 0, this.brewOrders.splice(ev.detail.from, 1)[0]);
-    let count: number = 0;
-    for (const order of this.brewOrders) {
-      order.number = count;
-      this.settings.brew_order[order.enum] = order.number;
-      count++;
-    }
-    // console.log(this.settings.brew_order);
-    // Finish the reorder and position the item in the DOM based on
-    // where the gesture ended. This method can also be called directly
-    // by the reorder group
-    ev.detail.complete();
-    this.saveSettings();
-  }
 
 
 
@@ -153,23 +148,22 @@ export class SettingsPage implements OnInit {
       if (this.platform.is('android')) {
         this.fileChooser.open()
           .then((uri) => {
+              this.filePath.resolveNativePath(uri).then((resolvedFilePath) => {
+                try {
+                  const path = resolvedFilePath.substring(0, resolvedFilePath.lastIndexOf('/'));
+                  const file = resolvedFilePath.substring(resolvedFilePath.lastIndexOf('/') + 1, resolvedFilePath.length);
+                  this.__readJSONFile(path, file).then(() => {
+                    // nothing todo
+                  }, (_err) => {
+                    this.uiAlert.showMessage(this.translate.instant('ERROR_ON_FILE_READING') + ' (' + JSON.stringify(_err) + ')');
+                  });
+                } catch (ex) {
+                  this.uiAlert.showMessage(this.translate.instant('INVALID_FILE_FORMAT'));
+                }
 
-            this.filePath.resolveNativePath(uri).then((resolvedFilePath) => {
-              try {
-                const path = resolvedFilePath.substring(0, resolvedFilePath.lastIndexOf('/'));
-                const file = resolvedFilePath.substring(resolvedFilePath.lastIndexOf('/') + 1, resolvedFilePath.length);
-                this.__readJSONFile(path, file).then(() => {
-                  // nothing todo
-                }, (_err) => {
-                  this.uiAlert.showMessage(this.translate.instant('ERROR_ON_FILE_READING') + ' (' + JSON.stringify(_err) + ')');
-                });
-              } catch (ex) {
-                this.uiAlert.showMessage(this.translate.instant('INVALID_FILE_FORMAT'));
-              }
-
-            }).catch((_err) => {
-              this.uiAlert.showMessage(this.translate.instant('FILE_NOT_FOUND_INFORMATION') + ' (' + JSON.stringify(_err) + ')');
-            });
+              }).catch((_err) => {
+                this.uiAlert.showMessage(this.translate.instant('FILE_NOT_FOUND_INFORMATION') + ' (' + JSON.stringify(_err) + ')');
+              });
           });
       } else {
         this.iosFilePicker.pickFile().then((uri) => {
@@ -220,36 +214,23 @@ export class SettingsPage implements OnInit {
 
   }
 
-  private __initializeBrewOrders() {
-    this.brewOrders = [];
-    for (const key in this.settings.brew_order) {
-      if (this.settings.brew_order.hasOwnProperty(key)) {
-        this.brewOrders.push({
-          number: this.settings.brew_order[key],
-          label: this.settings.brew_order.getLabel(key),
-          enum: key,
-        });
-      }
-    }
-    this.brewOrders.sort((obj1, obj2) => {
-      if (obj1.number > obj2.number) {
-        return 1;
-      }
 
-      if (obj1.number < obj2.number) {
-        return -1;
-      }
-
-      return 0;
-    });
-  }
   /* tslint:disable */
   private __importDummyData(): void {
     this.uiLog.log('Import dummy data');
     const dummyData = BeanconquerorSettingsDummy;
+
+    if (dummyData.SETTINGS[0]['brew_order']['before'] === undefined) {
+      this.uiLog.log('Old brew order structure');
+      // Breaking change, we need to throw away the old order types by import
+      const settingsConst = new Settings();
+      dummyData['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(settingsConst.brew_order);
+    }
+    SettingsPage.__cleanupImportSettingsData(dummyData['SETTINGS'][0]);
     this.uiStorage.import(dummyData).then(() => {
       this.__reinitializeStorages().then(() => {
         this.__initializeSettings();
+        this.uiAlert.showMessage(this.translate.instant('IMPORT_SUCCESSFULLY'));
       });
     });
   }
@@ -281,9 +262,22 @@ export class SettingsPage implements OnInit {
 
               SettingsPage.__cleanupImportBeanData(parsedContent[this.uiBeanStorage.getDBPath()]);
               SettingsPage.__cleanupImportBrewData(parsedContent[this.uiBrewStorage.getDBPath()]);
+              SettingsPage.__cleanupImportSettingsData(parsedContent[this.uiSettingsStorage.getDBPath()]);
 
               // When exporting the value is a number, when importing it needs to be  a string.
               parsedContent['SETTINGS'][0]['brew_view'] = parsedContent['SETTINGS'][0]['brew_view'] + '';
+              try {
+                if (!parsedContent['SETTINGS'][0]['brew_order']['before'] === undefined) {
+                  this.uiLog.log('Old brew order structure');
+                  // Breaking change, we need to throw away the old order types by import
+                  const settingsConst = new Settings();
+                  parsedContent['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(settingsConst.brew_order);
+                }
+              } catch (ex) {
+                const settingsConst = new Settings();
+                parsedContent['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(settingsConst.brew_order);
+              }
+
 
               this.uiStorage.import(parsedContent).then((_data) => {
                 if (_data.BACKUP === false) {
@@ -327,7 +321,7 @@ export class SettingsPage implements OnInit {
 
   private __initializeSettings(): void {
     this.settings = this.uiSettingsStorage.getSettings();
-    this.__initializeBrewOrders();
+
   }
 
   private async __reinitializeStorages (): Promise<any> {

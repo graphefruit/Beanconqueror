@@ -1,0 +1,26 @@
+:host {
+
+
+  ion-item {
+    --border-width: 0px;
+  }
+
+
+  ion-item {
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+
+  ::ng-deep ion-slides img {
+    width: 200px;
+    height: 200px;
+    display: block;
+    object-fit: contain;
+  }
+  ion-card
+  {
+    ion-item:last-child{
+      margin-bottom:16px;
+    }
+  }
+}

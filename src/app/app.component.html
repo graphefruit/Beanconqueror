@@ -1,101 +1,63 @@
 <ion-app>
-  <ion-split-pane contentId="menu-content">
+  <ion-split-pane contentId="menu-content" when="false">
     <ion-menu contentId="menu-content" type="overlay">
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>{{"NAV_MENU" | translate}}</ion-title>
+      <ion-header class="ion-margin-top">
+        <ion-toolbar class="ion-text-center">
+          <ion-buttons slot="start">
+            <ion-button (click)="dismiss()">
+              <ion-icon class="icon-black" name="close-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+          <ion-title>
+            {{"NAV_MENU" | translate}}
+          </ion-title>
+
+          <ion-buttons slot="end">
+            <!-- do not remove this line, we need this that the title is centered -->
+            <ion-button (click)="dismiss()" style="visibility:hidden;">
+              <ion-icon class="icon-black" name="close-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-buttons>
         </ion-toolbar>
       </ion-header>
       <ion-content>
-        <ion-list>
+        <ion-list class="ion-margin-top">
           <ion-menu-toggle autoHide="false">
-            <ion-list class="no-label-margin">
-              <ion-item [routerLink]="[pages.home.url]" [class.active]="pages.home.active">
-                <ion-icon class="menu-icon" name="{{pages.home.icon}}"></ion-icon>
-                {{pages.home.title | translate}}
+            <ion-list class="no-label-margin" lines="none">
+              <ion-item [class.active]="pages.home.active" [routerLink]="[pages.home.url]" replaceUrl="true">
+                <ion-label>{{pages.home.title | translate}}</ion-label>
               </ion-item>
-              <ion-item [routerLink]="[pages.brew.url]" [class.active]="pages.brew.active">
-                <ion-icon class="menu-icon" name="{{pages.brew.icon}}"></ion-icon>
-                {{pages.brew.title | translate}}
+              <ion-item [class.active]="pages.brew_parameter.active" [routerLink]="[pages.brew_parameter.url]"
+                        replaceUrl="true">
+                <ion-label> {{pages.brew_parameter.title | translate}}</ion-label>
               </ion-item>
-              <ion-item [routerLink]="[pages.beans.url]" [class.active]="pages.beans.active">
-                <ion-icon class="menu-icon custom-coffee-bag"></ion-icon>
-                {{pages.beans.title | translate}}
+              <ion-item [class.active]="pages.helper_brew_ratio.active" [routerLink]="[pages.helper_brew_ratio.url]"
+                        replaceUrl="true">
+                <ion-label> {{pages.helper_brew_ratio.title | translate}}</ion-label>
               </ion-item>
-              <ion-item [routerLink]="[pages.preparation.url]" [class.active]="pages.preparation.active">
-                <ion-icon class="menu-icon custom-filter"></ion-icon>
-                {{pages.preparation.title | translate}}
+              <ion-item [class.active]="pages.helper_water_hardness.active"
+                        [routerLink]="[pages.helper_water_hardness.url]" replaceUrl="true">
+                <ion-label> {{pages.helper_water_hardness.title | translate}}</ion-label>
               </ion-item>
-              <ion-item [routerLink]="[pages.mill.url]" [class.active]="pages.mill.active">
-                <ion-icon class="menu-icon custom-mill"></ion-icon>
-                {{pages.mill.title | translate}}
+              <ion-item [class.active]="pages.statistic.active" [routerLink]="[pages.statistic.url]" replaceUrl="true">
+                <ion-label>{{pages.statistic.title | translate}}</ion-label>
               </ion-item>
-              <ion-item [class.active]="pages.helper.active" [routerLink]="[pages.helper.url]">
-                <ion-icon class="menu-icon" name="{{pages.helper.icon}}"></ion-icon>
-                {{pages.helper.title | translate}}
-              </ion-item>
-              <ion-item [class.active]="pages.statistic.active" [routerLink]="[pages.statistic.url]">
-                <ion-icon class="menu-icon" name="{{pages.statistic.icon}}"></ion-icon>
-                {{pages.statistic.title | translate}}
-              </ion-item>
-              <!--Without $event canceling the menu would close when toggling -->
-              <ion-item class="no-border" (click)="toggleAbout =!toggleAbout; $event.stopPropagation();">
-                <ion-icon class="menu-icon" item-left name="information-circle-outline"
-                          style="color:rgba(0, 0, 0, 0.54);"></ion-icon>
-                <div>
-
-                  {{"NAV_INFORMATION_TO_APP" | translate}}
-                </div>
-                <ion-icon class="sub-menu-icon" item-right *ngIf="toggleAbout == false"
-                          name="chevron-down-outline"></ion-icon>
-                <ion-icon class="sub-menu-icon" item-right *ngIf="toggleAbout == true"
-                          name="chevron-up-outline"></ion-icon>
-
-              </ion-item>
-              <ion-list *ngIf="toggleAbout" class="ion-no-padding" no-margin-important
-                        style="margin-left:16px!important;">
-                <ion-item [routerLink]="[pages.licences.url]" [class.active]="pages.licences.active">
-                  <ion-icon class="menu-icon" name="{{pages.licences.icon}}"></ion-icon>
-                  {{pages.licences.title | translate}}
-                </ion-item>
-                <ion-item [routerLink]="[pages.credits.url]" [class.active]="pages.credits.active">
-                  <ion-icon class="menu-icon" name="{{pages.credits.icon}}"></ion-icon>
-                  {{pages.credits.title | translate}}
-                </ion-item>
-                <ion-item [routerLink]="[pages.about.url]" [class.active]="pages.about.active">
-                  <ion-icon class="menu-icon" name="{{pages.about.icon}}"></ion-icon>
-                  {{pages.about.title | translate}}
-                </ion-item>
-                <ion-item [routerLink]="[pages.contact.url]" [class.active]="pages.contact.active">
-                  <ion-icon class="menu-icon" name="{{pages.contact.icon}}"></ion-icon>
-                  {{pages.contact.title | translate}}
-                </ion-item>
-                <ion-item [routerLink]="[pages.thanks.url]" [class.active]="pages.thanks.active">
-                  <ion-icon class="menu-icon" name="{{pages.thanks.icon}}"></ion-icon>
-                  {{pages.thanks.title | translate}}
-                </ion-item>
-                <ion-item [routerLink]="[pages.privacy.url]" [class.active]="pages.privacy.active">
-                  <ion-icon class="menu-icon" name="{{pages.privacy.icon}}"></ion-icon>
-                  {{pages.privacy.title | translate}}
-                </ion-item>
-                <ion-item [routerLink]="[pages.terms.url]" [class.active]="pages.terms.active">
-                  <ion-icon class="menu-icon" name="{{pages.terms.icon}}"></ion-icon>
-                  {{pages.terms.title | translate}}
-                </ion-item>
-                <ion-item [class.active]="pages.logs.active" [routerLink]="[pages.logs.url]">
-                  <ion-icon class="menu-icon" name="{{pages.logs.icon}}"></ion-icon>
-                  {{pages.logs.title | translate}}
-                </ion-item>
-              </ion-list>
-              <ion-item [routerLink]="[pages.settings.url]" [class.active]="pages.settings.active">
-                <ion-icon class="menu-icon" name="{{pages.settings.icon}}"></ion-icon>
-                {{pages.settings.title | translate}}
+              <ion-item [class.active]="pages.settings.active" [routerLink]="[pages.settings.url]" replaceUrl="true">
+                <ion-label>{{pages.settings.title | translate}}</ion-label>
               </ion-item>
              </ion-list>
 
           </ion-menu-toggle>
         </ion-list>
       </ion-content>
+      <ion-footer class="ion-no-border">
+        <ion-list class="no-label-margin" lines="none">
+          <ion-item (click)="dismiss()" [class.active]="pages.info.active" [routerLink]="[pages.info.url]"
+                    replaceUrl="true">
+            <ion-label>{{pages.info.title | translate}}</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-footer>
     </ion-menu>
     <ion-router-outlet id="menu-content"></ion-router-outlet>
   </ion-split-pane>

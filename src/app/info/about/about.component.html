@@ -1,7 +1,9 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
+      <ion-back-button
+        icon="beanconqueror-back">
+      </ion-back-button>
     </ion-buttons>
     <ion-title>
       {{"NAV_ABOUT_US" | translate}}
@@ -9,19 +11,18 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="ion-padding">
   <ion-card>
-    <ion-list>
+
       <ion-item>
-        <ion-icon item-left name="information-circle-outline"></ion-icon>
+        <ion-icon name="information-circle-outline" slot="start"></ion-icon>
         <div class="white-space-normal">
           &nbsp;GNU General Public License v3.0
         </div>
       </ion-item>
-      <ion-item>
-        <ion-icon item-left name="help-buoy-outline"></ion-icon>
+    <ion-item lines="none">
+      <ion-icon name="help-buoy-outline" slot="start"></ion-icon>
         <div>&nbsp;{{versionStr}}</div>
       </ion-item>
-    </ion-list>
   </ion-card>
 </ion-content>

@@ -33,7 +33,12 @@ export function HttpLoaderFactory(http: HttpClient) {
       }
     }),
     IonicModule.forRoot({
-      mode:'md'}),
+      mode: 'md',
+      menuIcon: 'beanconqueror-menu',
+      swipeBackEnabled: true,
+      animated: true,
+      rippleEffect: false,
+    }),
     IonicStorageModule.forRoot({
       name: '__baristaDB',
       driverOrder: ['indexeddb', 'sqlite', 'websql']

@@ -1,7 +1,9 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
+      <ion-back-button
+        icon="beanconqueror-back">
+      </ion-back-button>
     </ion-buttons>
     <ion-title>
       {{"NAV_LICENCES" | translate}}
@@ -9,20 +11,23 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-card *ngFor="let key of licences | keys" (click)="licences[key].active = !licences[key].active">
-    <ion-item>
-      <ion-icon *ngIf="!licences[key].active" item-left large name="chevron-down-outline"></ion-icon>
-      <ion-icon *ngIf="licences[key].active" item-left large name="chevron-up-outline"></ion-icon>
-      <h2>{{ licences[key].TITLE }}</h2>
+
+<ion-content class="ion-padding-horizontal">
+
+  <ion-card *ngFor="let key of licences | keys">
+    <ion-item (click)="openLink($event,licences[key].LINK)" button tappable>
+      <ion-title>{{ licences[key].TITLE }}</ion-title>
+      <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
     </ion-item>
-    <ion-item>
-      <ion-button (click)="openLink($event,licences[key].LINK)" fill="outline"
-                  size="small">{{"PAGE_LICENCES_WEBSITE" | translate}}</ion-button>
+    <ion-item (click)="licences[key].ACTIVE = !licences[key].ACTIVE" button lines="none" tappable>
+      <ion-icon *ngIf="licences[key].ACTIVE != true" name="chevron-down-outline" slot="start"></ion-icon>
+      <ion-icon *ngIf="licences[key].ACTIVE === true" name="chevron-up-outline" slot="start"></ion-icon>
+      <ion-label>{{"MORE_INFORMATION" | translate}}</ion-label>
     </ion-item>
-    <ion-card-content *ngIf="licences[key].active" style="border-top: 1px solid rgba(0, 0, 0, 0.3);padding-top: 10px;"
+    <ion-card-content *ngIf="licences[key].ACTIVE === true" [innerHTML]="licences[key].DESCRIPTION"
                       class="white-space-normal"
-                      [innerHTML]="licences[key].DESCRIPTION">
+                      style="border-top: 1px solid rgba(0, 0, 0, 0.3);padding-top: 10px;">
     </ion-card-content>
   </ion-card>
 </ion-content>
+

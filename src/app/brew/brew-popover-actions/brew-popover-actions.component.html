@@ -1,26 +1,26 @@
-<ion-list>
-  <ion-item (click)="choose(getStaticActions().POST)" button>
-    <ion-icon name="clipboard-outline" slot="start"></ion-icon>
-    <span>{{"POPOVER_BREWS_OPTION_POST" | translate}}</span>
-  </ion-item>
-  <ion-item (click)="choose(getStaticActions().REPEAT)" button>
-    <ion-icon name="repeat-outline" slot="start"></ion-icon>
+<ion-list lines="full ">
+  <ion-item (click)="choose(getStaticActions().REPEAT)" button tappable>
+    <ion-icon name="beanconqueror-repeat" slot="start"></ion-icon>
     <span>{{"POPOVER_BREWS_OPTION_REPEAT" | translate}}</span>
   </ion-item>
-  <ion-item (click)="choose(getStaticActions().DETAIL)" button>
-    <ion-icon name="list-outline" slot="start"></ion-icon>
+  <ion-item (click)="choose(getStaticActions().DETAIL)" button tappable>
+    <ion-icon name="beanconqueror-detail" slot="start"></ion-icon>
     <span>{{"POPOVER_BREWS_OPTION_DETAIL" | translate}}</span>
   </ion-item>
-  <ion-item (click)="choose(getStaticActions().EDIT)" button>
-    <ion-icon name="create-outline" slot="start"></ion-icon>
+  <ion-item (click)="choose(getStaticActions().EDIT)" button tappable>
+    <ion-icon name="beanconqueror-edit" slot="start"></ion-icon>
     <span>{{"POPOVER_BREWS_OPTION_EDIT" | translate}}</span>
   </ion-item>
-  <ion-item (click)="choose(getStaticActions().DELETE)" button>
-    <ion-icon name="trash-outline" slot="start"></ion-icon>
+  <ion-item (click)="choose(getStaticActions().CUPPING)" button tappable>
+    <ion-icon name="beanconqueror-cupping" slot="start"></ion-icon>
+    <span>{{"POPOVER_BREWS_OPTION_CUPPING" | translate}}</span>
+  </ion-item>
+  <ion-item (click)="choose(getStaticActions().DELETE)" button tappable>
+    <ion-icon name="beanconqueror-delete" slot="start"></ion-icon>
     <span>{{"POPOVER_BREWS_OPTION_DELETE" | translate}}</span>
   </ion-item>
-  <ion-item (click)="choose(getStaticActions().PHOTO_GALLERY)" [disabled]="!hasPhotos()" button>
-    <ion-icon name="eye-outline" slot="start"></ion-icon>
+  <ion-item (click)="choose(getStaticActions().PHOTO_GALLERY)" [disabled]="!hasPhotos()" button tappable>
+    <ion-icon name="beanconqueror-photo-gallery" slot="start"></ion-icon>
     <span>{{"POPOVER_BREWS_OPTION_PHOTO_GALLERY" | translate}}</span>
   </ion-item>
 </ion-list>

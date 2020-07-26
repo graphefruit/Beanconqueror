@@ -3,7 +3,6 @@ import {NgModel} from '@angular/forms';
 
 @Directive({
     selector: '[ngModel][prevent-characters]',
-    providers: [NgModel],
 })
 export class PreventCharacterDirective {
 

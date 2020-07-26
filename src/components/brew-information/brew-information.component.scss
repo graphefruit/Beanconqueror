@@ -1,42 +1,77 @@
 :host {
+
+
+  .margin-header {
+    margin: auto 0;
+  }
+
+  .brew-time-center {
+    display: grid;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
   ion-row.center-col ion-col {
     display: flex;
     align-items: center
   }
 
-  button[justify-content-start] .button-inner {
-    justify-content: flex-start;
-  }
+  ion-list {
+    background: none;
+    margin: 0px;
+    padding: 0px;
 
-  ion-card.dynamic-padding {
-    ion-card-header {
-      padding-top: 0px;
-      padding-left: 5px;
-      padding-right: 0px;
-      padding-bottom: 0px;
+    ion-item {
+      ion-col {
+        -ms-text-overflow: ellipsis;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      --background: none;
+      --padding-start: 0px;
+      --padding-end: 0px;
+      --inner-padding-end: 0px;
+      font-size: 14px;
+      --min-height: 0px;
+
+      ion-icon {
+        top: 4px;
+        position: relative;
+        font-size: 18px;
+        margin-right: 0px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+      }
     }
 
-    ion-card-content {
-      padding-left: 5px;
-      padding-right: 0px;
-      padding-bottom: 0px;
+  }
+
+  .icons-black ion-icon {
+    color: rgb(80, 64, 39);
+  }
+
+
+  .icon-size-48 {
+    width: 32px;
+    height: 32px;
+    font-size: 32px;
+  }
+
+  .center-brew-rating-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .no-ion-col-padding {
+    ion-col {
+      padding: 0px !important;
     }
 
-    padding: 5px;
-    padding-top: 0px;
   }
 
-  ion-card.good-brew {
-    border-top: 5px #009966 solid;
-  }
-
-  ion-card.bad-brew {
-    border-top: 5px #fe4164 solid;
-  }
-
-  ion-card.awesome-brew {
-    border-top: 5px #aa8736 solid;
-  }
 }
 
 

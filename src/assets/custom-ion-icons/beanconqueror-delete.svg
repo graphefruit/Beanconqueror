@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <g id="Gruppe_158" data-name="Gruppe 158" transform="translate(-186 -302)">
+    <circle id="Ellipse_355" data-name="Ellipse 355" cx="10" cy="10" r="10" transform="translate(186 302)"
+            fill="#ae9f87"/>
+    <path id="icons8-trash"
+          d="M7.057,2l-.509.509H4V3.528h.509v7.642A.99.99,0,0,0,5.528,12.19h5.095a.99.99,0,0,0,1.019-1.019V3.528h.509V2.509H9.6L9.095,2ZM5.528,3.528h5.095v7.642H5.528ZM6.547,4.547v5.6H7.566v-5.6Zm2.038,0v5.6H9.6v-5.6Z"
+          transform="translate(188 304.81)" fill="#fff"/>
+  </g>
+</svg>

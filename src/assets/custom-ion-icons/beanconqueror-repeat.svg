@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <g id="Gruppe_160" data-name="Gruppe 160" transform="translate(-186 -230)">
+    <circle id="Ellipse_353" data-name="Ellipse 353" cx="10" cy="10" r="10" transform="translate(186 230)"
+            fill="#ae9f87"/>
+    <path id="icons8-reset"
+          d="M7.917,2a5.917,5.917,0,1,0,5.917,5.917.515.515,0,1,0-1.029,0,4.888,4.888,0,1,1-1.323-3.344H10.49a.515.515,0,1,0,0,1.029h2.83V2.772a.515.515,0,1,0-1.029,0V3.936A5.9,5.9,0,0,0,7.917,2Z"
+          transform="translate(188 232.166)" fill="#fff"/>
+  </g>
+</svg>

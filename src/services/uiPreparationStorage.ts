@@ -21,6 +21,7 @@ export class UIPreparationStorage extends StorageClass {
    */
   public static instance: UIPreparationStorage;
 
+  private preparations: Array<Preparation> = [];
   public static getInstance(): UIPreparationStorage {
     if (UIPreparationStorage.instance) {
       return UIPreparationStorage.instance;
@@ -36,6 +37,10 @@ export class UIPreparationStorage extends StorageClass {
     if (UIPreparationStorage.instance === undefined) {
       UIPreparationStorage.instance = this;
     }
+
+    super.attachOnEvent().subscribe((data) => {
+      this.preparations = [];
+    });
   }
 
   public getPreparationNameByUUID(_uuid: string): string {
@@ -54,17 +59,16 @@ export class UIPreparationStorage extends StorageClass {
   }
 
   public getAllEntries(): Array<Preparation> {
-    const preparationEntries: Array<any> = super.getAllEntries();
-    const preparations: Array<Preparation> = [];
 
-    for (const prep of preparationEntries) {
-      const preparationObj: Preparation = new Preparation();
-      preparationObj.initializeByObject(prep);
-      preparations.push(preparationObj);
-
+    if (this.preparations.length <= 0) {
+      const preparationEntries: Array<any> = super.getAllEntries();
+      for (const prep of preparationEntries) {
+        const preparationObj: Preparation = new Preparation();
+        preparationObj.initializeByObject(prep);
+        this.preparations.push(preparationObj);
+      }
     }
-
-    return preparations;
+    return this.preparations;
   }
 
 }

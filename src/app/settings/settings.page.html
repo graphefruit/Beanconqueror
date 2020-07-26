@@ -11,293 +11,90 @@
 <ion-content>
 
 
-  <div class="ion-padding">
-    <ion-segment [(ngModel)]="settings_segment">
-      <ion-segment-button value="general">
-        <ion-icon name="bulb-outline"></ion-icon>
-      </ion-segment-button>
-      <ion-segment-button value="visible_parameters">
-        <ion-icon name="eye-outline"></ion-icon>
+  <ion-card *ngIf="isMobile()">
 
-      </ion-segment-button>
-      <ion-segment-button value="preset_parameters">
-        <ion-icon name="clipboard-outline"></ion-icon>
-      </ion-segment-button>
-      <ion-segment-button value="order">
-        <ion-icon name="reorder-four-outline"></ion-icon>
-      </ion-segment-button>
-    </ion-segment>
+    <ion-card-content>
+      <ion-card-title>{{"PAGE_SETTINGS_TRANSFER" | translate}}</ion-card-title>
+      <ion-item (click)="import()" button tappable>
+        <ion-label>{{"IMPORT" | translate}}</ion-label>
+        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+      </ion-item>
+      <ion-item (click)="export()" button lines="none" tappable>
+        <ion-label>{{"EXPORT" | translate}}</ion-label>
+        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
 
 
-  </div>
-  <div [ngSwitch]="settings_segment">
-    <div *ngSwitchCase="'general'">
-      <ion-card>
-        <ion-card-header class="card-header">
-          {{"NAV_SETTINGS"  | translate}}
-        </ion-card-header>
-        <ion-card-content class="ion-margin-top">
-          <p>{{"PAGE_SETTINGS_INFORMATION" | translate}}</p>
-        </ion-card-content>
+  <ion-card>
+
+    <ion-card-content>
+      <!--
+        <ion-card-title>{{"PAGE_SETTINGS_GENERAL_SETTINGS" | translate}}</ion-card-title>
+        <ion-item>
+          <ion-label>{{"PAGE_SETTINGS_DISPLAY" | translate}}</ion-label>
+          <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.brew_view">
+            <ion-select-option
+              value="{{BREW_VIEWS.SINGLE_PAGE}}">{{"PAGE_SETTINGS_DISPLAY_SINGLE_PAGE" | translate}}</ion-select-option>
+            <ion-select-option disabled
+                               value="{{BREW_VIEWS.MULTIPLE_PAGE}}">{{"PAGE_SETTINGS_DISPLAY_PAGING" | translate}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+      -->
+
+      <ion-item>
+        <ion-label>{{"PAGE_SETTINGS_LANGUAGE" | translate}}</ion-label>
+        <ion-select (ngModelChange)="languageChanged($event)" [(ngModel)]="settings.language"
+                    cancelText="{{'CANCEL'| translate }}" cancelText="{{'CANCEL'| translate }}"
+                    okText="{{'CHOOSE'| translate }}" okText="{{'CHOOSE'| translate }}">
+          <ion-select-option value="de">{{"PAGE_SETTINGS_LANGUAGE_GERMAN" | translate}}</ion-select-option>
+          <ion-select-option value="en">{{"PAGE_SETTINGS_LANGUAGE_ENGLISH" | translate}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label>{{"PAGE_SETTINGS_STARTUP_VIEW" | translate}}</ion-label>
+        <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.startup_view"
+                    cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
+          <ion-select-option value="{{STARTUP_VIEW.HOME_PAGE}}">{{"NAV_HOME" | translate}}</ion-select-option>
+          <ion-select-option value="{{STARTUP_VIEW.BREW_PAGE}}">{{"NAV_BREWS" | translate}}</ion-select-option>
+          <ion-select-option value="{{STARTUP_VIEW.ADD_BREW}}">{{"ADD_BREW" | translate}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label>{{"PAGE_SETTINGS_ANALYTICS_INFORMATION" | translate}}</ion-label>
+        <ion-checkbox (ionChange)="checkAnalytics()" (ngModelChange)="saveSettings();"
+                      [(ngModel)]="settings.analytics"></ion-checkbox>
+      </ion-item>
+
+
+      <ion-item>
+        <ion-label>{{"PAGE_SETTINGS_SHOW_ARCHIVED_BEANS" | translate}}</ion-label>
+        <ion-checkbox (ngModelChange)="saveSettings();"
+                      [(ngModel)]="settings.show_archived_beans"></ion-checkbox>
+      </ion-item>
+      <ion-item>
+        <ion-label>{{"PAGE_SETTINGS_SHOW_ARCHIVED_BREWS" | translate}}</ion-label>
+        <ion-checkbox (ngModelChange)="saveSettings();"
+                      [(ngModel)]="settings.show_archived_brews"></ion-checkbox>
+      </ion-item>
+      <ion-item>
+        <ion-label>{{"PAGE_SETTINGS_SHOW_ARCHIVED_PREPARATIONS" | translate}}</ion-label>
+        <ion-checkbox (ngModelChange)="saveSettings();"
+                      [(ngModel)]="settings.show_archived_preparations"></ion-checkbox>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label>{{"PAGE_SETTINGS_SHOW_ARCHIVED_MILLS" | translate}}</ion-label>
+        <ion-checkbox (ngModelChange)="saveSettings();"
+                      [(ngModel)]="settings.show_archived_mills"></ion-checkbox>
+      </ion-item>
+
+
+    </ion-card-content>
       </ion-card>
-  <ion-list *ngIf="isMobile()">
-    <ion-item-divider color="light">{{"PAGE_SETTINGS_TRANSFER" | translate}}</ion-item-divider>
-    <ion-item button (click)="import()">
-      {{"IMPORT" | translate}}
-    </ion-item>
-    <ion-item button (click)="export()">
-      {{"EXPORT" | translate}}
-    </ion-item>
-  </ion-list>
-  <ion-list>
-    <ion-item-divider color="light">{{"PAGE_SETTINGS_GENERAL_SETTINGS" | translate}}</ion-item-divider>
-    <ion-item>
-      <ion-label>{{"PAGE_SETTINGS_DISPLAY" | translate}}</ion-label>
-      <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.brew_view">
-        <ion-select-option
-          value="{{BREW_VIEWS.SINGLE_PAGE}}">{{"PAGE_SETTINGS_DISPLAY_SINGLE_PAGE" | translate}}</ion-select-option>
-        <ion-select-option disabled
-                           value="{{BREW_VIEWS.MULTIPLE_PAGE}}">{{"PAGE_SETTINGS_DISPLAY_PAGING" | translate}}</ion-select-option>
-      </ion-select>
-    </ion-item>
-
-    <ion-item>
-      <ion-label>{{"PAGE_SETTINGS_LANGUAGE" | translate}}</ion-label>
-      <ion-select (ngModelChange)="languageChanged($event)" [(ngModel)]="settings.language">
-        <ion-select-option value="de">{{"PAGE_SETTINGS_LANGUAGE_GERMAN" | translate}}</ion-select-option>
-        <ion-select-option value="en">{{"PAGE_SETTINGS_LANGUAGE_ENGLISH" | translate}}</ion-select-option>
-      </ion-select>
-    </ion-item>
-    <ion-item>
-      <ion-label>{{"PAGE_SETTINGS_STARTUP_VIEW" | translate}}</ion-label>
-      <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.startup_view">
-        <ion-select-option value="{{STARTUP_VIEW.HOME_PAGE}}">{{"NAV_HOME" | translate}}</ion-select-option>
-        <ion-select-option value="{{STARTUP_VIEW.BREW_PAGE}}">{{"NAV_BREWS" | translate}}</ion-select-option>
-        <ion-select-option value="{{STARTUP_VIEW.ADD_BREW}}">{{"ADD_BREW" | translate}}</ion-select-option>
-      </ion-select>
-    </ion-item>
-    <ion-item>
-      <ion-label>{{"PAGE_SETTINGS_ANALYTICS_INFORMATION" | translate}}</ion-label>
-      <ion-checkbox (ionChange)="checkAnalytics()" (ngModelChange)="saveSettings();"
-                    [(ngModel)]="settings.analytics"></ion-checkbox>
-    </ion-item>
-  </ion-list>
-    </div>
-    <div *ngSwitchCase="'visible_parameters'">
-      <ion-list>
-        <ion-item-divider color="light">{{"PAGE_SETTINGS_VISIBLE_BREW_PARAMS" | translate}}</ion-item-divider>
-        <ion-item>
-          <ion-label>{{"BREW_DATA_TEMPERATURE_TIME" | translate}} / {{"BREW_DATA_SURF_TIME" | translate}}</ion-label>
-          <ion-checkbox (ngModelChange)="saveSettings()"
-                        [(ngModel)]="settings.brew_temperature_time"></ion-checkbox>
-        </ion-item>
-        <ion-item>
-          <ion-label>{{"BREW_DATA_TIME" | translate}}</ion-label>
-          <ion-checkbox (ngModelChange)="saveSettings()" [(ngModel)]="settings.brew_time"></ion-checkbox>
-        </ion-item>
-        <ion-item>
-          <ion-label>{{"BREW_DATA_GRIND_SIZE" | translate}}</ion-label>
-          <ion-checkbox (ngModelChange)="saveSettings()" [(ngModel)]="settings.grind_size"></ion-checkbox>
-        </ion-item>
-        <ion-item>
-          <ion-label>{{"BREW_DATA_GRIND_WEIGHT" | translate}}</ion-label>
-          <ion-checkbox (ngModelChange)="saveSettings()" [(ngModel)]="settings.grind_weight"></ion-checkbox>
-        </ion-item>
-        <ion-item>
-          <ion-label>{{"BREW_DATA_NOTES" | translate}}</ion-label>
-          <ion-checkbox (ngModelChange)="saveSettings()" [(ngModel)]="settings.note"></ion-checkbox>
-        </ion-item>
-        <ion-item>
-          <ion-label>{{"BREW_DATA_PREPARATION_METHOD" | translate}}</ion-label>
-          <ion-checkbox (ngModelChange)="saveSettings()"
-                        [(ngModel)]="settings.method_of_preparation"></ion-checkbox>
-        </ion-item>
-        <ion-item>
-          <ion-label>{{"BREW_DATA_MILL" | translate}}</ion-label>
-          <ion-checkbox (ngModelChange)="saveSettings()" [(ngModel)]="settings.mill"></ion-checkbox>
-        </ion-item>
-        <ion-item>
-          <ion-label>{{"BREW_DATA_MILL_SPEED" | translate}}</ion-label>
-          <ion-checkbox (ngModelChange)="saveSettings()" [(ngModel)]="settings.mill_speed"></ion-checkbox>
-        </ion-item>
-        <ion-item>
-          <ion-label>{{"BREW_DATA_MILL_TIMER" | translate}}</ion-label>
-          <ion-checkbox (ngModelChange)="saveSettings()" [(ngModel)]="settings.mill_timer"></ion-checkbox>
-        </ion-item>
-        <ion-item>
-          <ion-label>{{"BREW_DATA_BREW_QUANTITY" | translate}}</ion-label>
-          <ion-checkbox (ngModelChange)="saveSettings()" [(ngModel)]="settings.brew_quantity"></ion-checkbox>
-        </ion-item>
-        <ion-item>
-          <ion-label>{{"BREW_DATA_BEAN_TYPE" | translate}}</ion-label>
-          <ion-checkbox (ngModelChange)="saveSettings()" [(ngModel)]="settings.bean_type"></ion-checkbox>
-        </ion-item>
-        <ion-item>
-          <ion-label>{{"BREW_DATA_BREW_TEMPERATURE" | translate}}</ion-label>
-          <ion-checkbox (ngModelChange)="saveSettings()" [(ngModel)]="settings.brew_temperature"></ion-checkbox>
-        </ion-item>
-        <ion-item>
-          <ion-label>{{"BREW_DATA_PRESSURE_PROFILE" | translate}}</ion-label>
-          <ion-checkbox (ngModelChange)="saveSettings()" [(ngModel)]="settings.pressure_profile"></ion-checkbox>
-        </ion-item>
-        <ion-item>
-          <ion-label>{{"BREW_DATA_COFFEE_TYPE" | translate}}</ion-label>
-          <ion-checkbox (ngModelChange)="saveSettings()" [(ngModel)]="settings.coffee_type"></ion-checkbox>
-        </ion-item>
-        <ion-item>
-          <ion-label>{{"BREW_DATA_COFFEE_CONCENTRATION" | translate}}</ion-label>
-          <ion-checkbox (ngModelChange)="saveSettings()"
-                        [(ngModel)]="settings.coffee_concentration"></ion-checkbox>
-        </ion-item>
-        <ion-item>
-          <ion-label>{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}</ion-label>
-          <ion-checkbox (ngModelChange)="saveSettings()"
-                        [(ngModel)]="settings.coffee_first_drip_time"></ion-checkbox>
-        </ion-item>
-        <ion-item>
-          <ion-label>{{"BREW_DATA_COFFEE_BLOOMING_TIME" | translate}}</ion-label>
-          <ion-checkbox (ngModelChange)="saveSettings()"
-                        [(ngModel)]="settings.coffee_blooming_time"></ion-checkbox>
-        </ion-item>
-        <ion-item>
-          <ion-label>{{"BREW_DATA_ATTACHMENTS" | translate}}</ion-label>
-          <ion-checkbox (ngModelChange)="saveSettings()" [(ngModel)]="settings.attachments"></ion-checkbox>
-        </ion-item>
-        <ion-item>
-          <ion-label>{{"BREW_DATA_RATING" | translate}}</ion-label>
-          <ion-checkbox (ngModelChange)="saveSettings()" [(ngModel)]="settings.rating"></ion-checkbox>
-        </ion-item>
-        <ion-item>
-          <ion-label>{{"BREW_DATA_CUSTOM_BREW_TIME" | translate}}</ion-label>
-          <ion-checkbox (ngModelChange)="saveSettings()"
-                        [(ngModel)]="settings.set_custom_brew_time"></ion-checkbox>
-        </ion-item>
-      </ion-list>
-    </div>
-    <div *ngSwitchCase="'preset_parameters'">
-      <ion-list>
-
-        <ion-item>
-          <ion-label>{{"PAGE_SETTINGS_PRESET_LAST_BREW" | translate}}</ion-label>
-          <ion-checkbox (ngModelChange)="saveSettings()"
-                        [(ngModel)]="settings.set_last_coffee_brew"></ion-checkbox>
-        </ion-item>
-        <div *ngIf="settings.set_last_coffee_brew==true">
-          <ion-item-divider color="light">{{"PAGE_SETTINGS_PRESET_LAST_BREW_PARAMS"  |  translate}}</ion-item-divider>
-          <ion-item>
-            <ion-label>{{"BREW_DATA_TEMPERATURE_TIME" | translate}} / {{"BREW_DATA_SURF_TIME" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings()"
-                          [(ngModel)]="settings.default_last_coffee_parameters.brew_temperature_time"></ion-checkbox>
-          </ion-item>
-          <ion-item>
-            <ion-label>{{"BREW_DATA_TIME" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings()"
-                          [(ngModel)]="settings.default_last_coffee_parameters.brew_time"></ion-checkbox>
-          </ion-item>
-          <ion-item>
-            <ion-label>{{"BREW_DATA_GRIND_SIZE" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings()"
-                          [(ngModel)]="settings.default_last_coffee_parameters.grind_size"></ion-checkbox>
-          </ion-item>
-          <ion-item>
-            <ion-label>{{"BREW_DATA_GRIND_WEIGHT" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings()"
-                          [(ngModel)]="settings.default_last_coffee_parameters.grind_weight"></ion-checkbox>
-          </ion-item>
-          <ion-item>
-            <ion-label>{{"BREW_DATA_NOTES" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings()"
-                          [(ngModel)]="settings.default_last_coffee_parameters.note"></ion-checkbox>
-          </ion-item>
-          <ion-item>
-            <ion-label>{{"BREW_DATA_PREPARATION_METHOD" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings()"
-                          [(ngModel)]="settings.default_last_coffee_parameters.method_of_preparation"></ion-checkbox>
-          </ion-item>
-          <ion-item>
-            <ion-label>{{"BREW_DATA_MILL" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings()"
-                          [(ngModel)]="settings.default_last_coffee_parameters.mill"></ion-checkbox>
-          </ion-item>
-          <ion-item>
-            <ion-label>{{"BREW_DATA_MILL_SPEED" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings()"
-                          [(ngModel)]="settings.default_last_coffee_parameters.mill_speed"></ion-checkbox>
-          </ion-item>
-          <ion-item>
-            <ion-label>{{"BREW_DATA_MILL_TIMER" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings()"
-                          [(ngModel)]="settings.default_last_coffee_parameters.mill_timer"></ion-checkbox>
-          </ion-item>
-          <ion-item>
-            <ion-label>{{"BREW_DATA_BREW_QUANTITY" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings()"
-                          [(ngModel)]="settings.default_last_coffee_parameters.brew_quantity"></ion-checkbox>
-          </ion-item>
-          <ion-item>
-            <ion-label>{{"BREW_DATA_BEAN_TYPE" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings()"
-                          [(ngModel)]="settings.default_last_coffee_parameters.bean_type"></ion-checkbox>
-          </ion-item>
-          <ion-item>
-            <ion-label>{{"BREW_DATA_BREW_TEMPERATURE" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings()"
-                          [(ngModel)]="settings.default_last_coffee_parameters.brew_temperature"></ion-checkbox>
-          </ion-item>
-          <ion-item>
-            <ion-label>{{"BREW_DATA_PRESSURE_PROFILE" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings()"
-                          [(ngModel)]="settings.default_last_coffee_parameters.pressure_profile"></ion-checkbox>
-          </ion-item>
-          <ion-item>
-            <ion-label>{{"BREW_DATA_COFFEE_TYPE" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings()"
-                          [(ngModel)]="settings.default_last_coffee_parameters.coffee_type"></ion-checkbox>
-          </ion-item>
-          <ion-item>
-            <ion-label>{{"BREW_DATA_COFFEE_CONCENTRATION" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings()"
-                          [(ngModel)]="settings.default_last_coffee_parameters.coffee_concentration"></ion-checkbox>
-          </ion-item>
-          <ion-item>
-            <ion-label>{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings()"
-                          [(ngModel)]="settings.default_last_coffee_parameters.coffee_first_drip_time"></ion-checkbox>
-          </ion-item>
-          <ion-item>
-            <ion-label>{{"BREW_DATA_COFFEE_BLOOMING_TIME" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings()"
-                          [(ngModel)]="settings.default_last_coffee_parameters.coffee_blooming_time"></ion-checkbox>
-          </ion-item>
-          <ion-item>
-            <ion-label>{{"BREW_DATA_RATING" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings()"
-                          [(ngModel)]="settings.default_last_coffee_parameters.rating"></ion-checkbox>
-          </ion-item>
-        </div>
-      </ion-list>
-    </div>
-    <div *ngSwitchCase="'order'">
-      <ion-card>
-        <ion-card-header class="card-header">
-          {{"PAGE_SETTINGS_BREW_SORT_TITLE"  | translate}}
-        </ion-card-header>
-        <ion-card-content class="ion-margin-top">
-          <p>{{"PAGE_SETTINGS_BREW_SORT_DESCRIPTION" | translate}}</p>
-        </ion-card-content>
-      </ion-card>
-      <ion-reorder-group (ionItemReorder)="reorder_brew($event)" disabled="false">
-        <ion-item *ngFor="let index of brewOrders">
-          <ion-label>
-            {{index.label | translate}}
-          </ion-label>
-          <ion-reorder slot="end"></ion-reorder>
-        </ion-item>
 
 
-      </ion-reorder-group>
-    </div>
-  </div>
+
 
 
 </ion-content>

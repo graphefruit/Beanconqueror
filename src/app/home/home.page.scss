@@ -1,4 +1,16 @@
-.welcome-card img {
-  max-height: 35vh;
-  overflow: hidden;
+:host {
+  ion-tab-button {
+    --padding-start: 6px;
+    --padding-end: 6px;
+    line-height: 16px;
+  }
+
+  @media (max-width: 320px) {
+    ion-tab-button {
+      --padding-start: 0px;
+      --padding-end: 0px;
+      line-height: 16px;
+    }
+  }
+
 }

@@ -16,8 +16,8 @@ import {UIStorage} from './uiStorage';
   providedIn: 'root'
 })
 export class UISettingsStorage extends StorageClass {
-  private readonly settings: Settings = new Settings();
-
+  private settings: Settings = new Settings();
+  private isSettingsInitialized: number = -1;
   constructor(protected uiStorage: UIStorage,
               protected uiHelper: UIHelper,
               protected uiLog: UILog) {
@@ -25,17 +25,54 @@ export class UISettingsStorage extends StorageClass {
 
     super.storageReady()
       .then(() => {
+
       const entries: Array<any> = this.getAllEntries();
       if (entries.length > 0) {
         // We already had some settings here.
+        if (this.settings === undefined) {
+          this.settings = new Settings();
+        }
         this.settings.initializeByObject(entries[0]);
+        this.isSettingsInitialized = 1;
       } else {
         // Take the new settings obj.
         super.add(this.settings);
+        this.isSettingsInitialized = 1;
       }
     }, () => {
       // Outsch, cant do much.
+        this.isSettingsInitialized = 0;
     });
+  }
+
+  public async storageReady(): Promise<any> {
+    const promise = new Promise(async (resolve, reject) => {
+
+      if (this.isSettingsInitialized === -1) {
+        const intV: any = setInterval(async () => {
+          if (this.isSettingsInitialized === 1) {
+            this.uiLog.log(`Storage ${this.DB_PATH} ready`);
+            window.clearInterval(intV);
+            await resolve();
+          } else if (this.isSettingsInitialized === 0) {
+            window.clearInterval(intV);
+            this.uiLog.log(`Storage ${this.DB_PATH} not ready`);
+            await reject();
+          }
+        }, 250);
+      } else {
+        if (this.isSettingsInitialized === 1) {
+          this.uiLog.log(`Storage ${this.DB_PATH} - already - ready`);
+          await resolve();
+        } else if (this.isSettingsInitialized === 0) {
+          this.uiLog.log(`Storage ${this.DB_PATH} - already - not - ready`);
+          await reject();
+        }
+      }
+
+    });
+
+    return promise;
   }
 
   public reinitializeStorage(): void {

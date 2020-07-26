@@ -4,7 +4,12 @@ import {UIStatistic} from '../../services/uiStatistic';
 import moment from 'moment';
 import {BrewAddComponent} from '../brew/brew-add/brew-add.component';
 import {Router} from '@angular/router';
-
+import {UIBeanStorage} from '../../services/uiBeanStorage';
+import {Bean} from '../../classes/bean/bean';
+import {UIPreparationStorage} from '../../services/uiPreparationStorage';
+import {Preparation} from '../../classes/preparation/preparation';
+import {UIMillStorage} from '../../services/uiMillStorage';
+import {Mill} from '../../classes/mill/mill';
 
 @Component({
   selector: 'app-home',
@@ -23,9 +28,17 @@ export class HomePage {
   constructor (public navCtrl: NavController,
                private readonly modalCtrl: ModalController,
                public uiStatistic: UIStatistic,
-               private readonly router: Router) {
+               private readonly router: Router,
+               private readonly uiBeanStorage: UIBeanStorage,
+               private readonly uiPreparationStorage: UIPreparationStorage,
+               private readonly uiMillStorage: UIMillStorage) {
 
   }
+
+  public ionViewDidEnter(): void {
+
+  }
+
 
   public async addBrew() {
     const modal = await this.modalCtrl.create({component: BrewAddComponent});
@@ -62,5 +75,20 @@ export class HomePage {
     return false;
   }
 
+  public activeBeansExists(): boolean {
+    const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
+    return beans.filter((e) => e.finished === false).length > 0;
+  }
+
+  public activePreparationsExists(): boolean {
+    const preparations: Array<Preparation> = this.uiPreparationStorage.getAllEntries();
+    return preparations.filter((e) => e.finished === false).length > 0;
+  }
+
+  public activeMillsExists(): boolean {
+    const mills: Array<Mill> = this.uiMillStorage.getAllEntries();
+
+    return mills.filter((e) => e.finished === false).length > 0;
+  }
 
 }

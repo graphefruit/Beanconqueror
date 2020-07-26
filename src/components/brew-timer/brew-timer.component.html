@@ -2,40 +2,35 @@
   <ion-label position="stacked">
     {{ label }} - <i>{{ formatSeconds() }}</i>
   </ion-label>
-  <ion-input [(ngModel)]="timer.seconds" prevent-characters type="number"></ion-input>
+  <ion-input (ngModelChange)="changeEvent()" [(ngModel)]="timer.seconds" prevent-characters type="number"></ion-input>
   <ion-button (click)="initTimer()"
-              *ngIf="!timer.runTimer && (timer.hasStarted || timer.hasFinished) || timer.hasFinished" fill="outline"
-              size="default"
-              slot="end">
-    <ion-icon name="refresh-outline"></ion-icon>
+              *ngIf="!timer.runTimer && (timer.hasStarted || timer.hasFinished) || timer.hasFinished"
+              class="big-icon-only" fill="clear" slot="end" tappable>
+    <ion-icon class="ion-color-accent" name="beanconqueror-refresh"></ion-icon>
 
   </ion-button>
   <ion-button (click)="bloomTime()" *ngIf="timer.runTimer && timer.hasStarted && !timer.hasFinished && showBloomTimer"
-              fill="outline" size="default"
-              slot="end">
-    <ion-icon class="custom-coffee-blooming"></ion-icon>
+              class="big-icon-only" fill="clear" slot="end" tappable>
+    <ion-icon class="ion-color-accent" name="beanconqueror-blooming"></ion-icon>
   </ion-button>
   <ion-button (click)="dripTime()" *ngIf="timer.runTimer && timer.hasStarted && !timer.hasFinished && showDripTimer"
-              fill="outline" size="default"
-              slot="end">
-    <ion-icon name="water-outline"></ion-icon>
+              class="big-icon-only" fill="clear" slot="end" tappable>
+    <ion-icon class="ion-color-accent" name="beanconqueror-water-drop"></ion-icon>
   </ion-button>
-  <ion-button (click)="pauseTimer()" *ngIf="timer.runTimer && timer.hasStarted && !timer.hasFinished" fill="outline"
-              size="default"
-              slot="end">
-    <ion-icon name="pause-outline"></ion-icon>
+  <ion-button (click)="pauseTimer()" *ngIf="timer.runTimer && timer.hasStarted && !timer.hasFinished"
+              class="big-icon-only" fill="clear" slot="end" tappable>
+    <ion-icon class="ion-color-accent" name="beanconqueror-pause"></ion-icon>
 
   </ion-button>
 
 
-  <ion-button (click)="resumeTimer()" *ngIf="!timer.runTimer && timer.hasStarted && !timer.hasFinished" fill="outline"
-              size="default"
-              slot="end">
-    <ion-icon name="play-outline"></ion-icon>
+  <ion-button (click)="resumeTimer()" *ngIf="!timer.runTimer && timer.hasStarted && !timer.hasFinished"
+              class="big-icon-only" fill="clear" slot="end" tappable>
+    <ion-icon class="ion-color-accent" name="beanconqueror-play"></ion-icon>
+  </ion-button>
+  <ion-button (click)="startTimer()" *ngIf="!timer.hasStarted" class="big-icon-only" fill="clear" slot="end" tappable>
+    <ion-icon class="ion-color-accent" name="beanconqueror-play"></ion-icon>
+  </ion-button>
 
-  </ion-button>
-  <ion-button (click)="startTimer()" *ngIf="!timer.hasStarted" fill="outline" size="default"
-              slot="end">
-    <ion-icon name="play-outline"></ion-icon>
-  </ion-button>
+
 </ion-item>

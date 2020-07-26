@@ -1,153 +1,173 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>{{"BACK" | translate}}</ion-title>
+    <ion-title>{{"DETAIL_BREW" | translate}}</ion-title>
     <ion-buttons slot="start">
-      <ion-button (click)="dismiss()">
-        <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+      <ion-button (click)="dismiss()" class="big-icon-only">
+        <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content>
 
-  <div style="display:flex; flex-direction: column;">
-    <ion-item *ngIf="settings.grind_size === true" [style.order]="settings.brew_order.grind_size">
+  <ion-card class="ion-margin-horizontal popover" style="display:flex; flex-direction: column;">
+
+      <ion-item lines="none">
+        <span class="ion-title ion-padding-top">{{"BREW_HEADER_BEFORE_BREW" | translate }}</span>
+      </ion-item>
+      <ion-item *ngIf="settings.grind_size === true" [style.order]="settings.brew_order.before.grind_size">
       <ion-label>
         <h2>{{"BREW_DATA_GRIND_SIZE" | translate}}:</h2>
         <h3>{{data.grind_size}}</h3>
       </ion-label>
     </ion-item>
-    <ion-item *ngIf="settings.grind_weight === true" [style.order]="settings.brew_order.grind_weight">
+      <ion-item *ngIf="settings.grind_weight === true" [style.order]="settings.brew_order.before.grind_weight">
       <ion-label>
         <h2>{{"BREW_DATA_GRIND_WEIGHT" | translate}}:</h2>
         <h3>{{data.grind_weight}}</h3>
       </ion-label>
     </ion-item>
-    <ion-item *ngIf="settings.brew_temperature === true" [style.order]="settings.brew_order.brew_temperature">
+      <ion-item *ngIf="settings.brew_temperature === true" [style.order]="settings.brew_order.before.brew_temperature">
       <ion-label>
         <h2>{{"BREW_DATA_BREW_TEMPERATURE" | translate}}:</h2>
         <h3>{{data.brew_temperature}}</h3>
       </ion-label>
     </ion-item>
-    <ion-item *ngIf="settings.method_of_preparation === true" [style.order]="settings.brew_order.method_of_preparation">
+      <ion-item *ngIf="settings.method_of_preparation === true"
+                [style.order]="settings.brew_order.before.method_of_preparation">
       <ion-label>
         <h2>{{"BREW_DATA_PREPARATION_METHOD" | translate}}:</h2>
         <h3>{{data.getPreparation().name}}</h3>
       </ion-label>
     </ion-item>
-    <ion-item *ngIf="settings.bean_type === true" [style.order]="settings.brew_order.bean_type">
+      <ion-item *ngIf="settings.bean_type === true" [style.order]="settings.brew_order.before.bean_type">
       <ion-label>
         <h2>{{"BREW_DATA_BEAN_TYPE" | translate}}:</h2>
         <h3>{{data.getBean().name}}</h3>
       </ion-label>
     </ion-item>
-    <ion-item *ngIf="settings.mill === true" [style.order]="settings.brew_order.mill">
+      <ion-item [style.order]="settings.brew_order.before.bean_type">
+        <ion-label>
+          <h2>{{"BREW_INFORMATION_BEAN_AGE" | translate}}:</h2>
+          <h3>{{data.getCalculatedBeanAge()}}</h3>
+        </ion-label>
+      </ion-item>
+      <ion-item [style.order]="settings.brew_order.before.bean_type">
+        <ion-label>
+          <h2>{{"BREW_INFORMATION_BREW_RATIO"  | translate}}:</h2>
+          <h3>{{data.getBrewRatio()}}</h3>
+        </ion-label>
+      </ion-item>
+      <ion-item *ngIf="settings.mill === true" [style.order]="settings.brew_order.before.mill">
       <ion-label>
         <h2>{{"BREW_DATA_MILL" | translate}}:</h2>
         <h3>{{data.getMill().name}}</h3>
       </ion-label>
     </ion-item>
-    <ion-item *ngIf="settings.mill_speed === true" [style.order]="settings.brew_order.mill_speed">
+      <ion-item *ngIf="settings.mill_speed === true" [style.order]="settings.brew_order.before.mill_speed">
       <ion-label>
         <h2>{{"BREW_DATA_MILL_SPEED" | translate}}:</h2>
         <h3>{{data.mill_speed}}</h3>
       </ion-label>
     </ion-item>
-    <ion-item *ngIf="settings.mill_timer === true" [style.order]="settings.brew_order.mill_timer">
+      <ion-item *ngIf="settings.mill_timer === true" [style.order]="settings.brew_order.before.mill_timer">
       <ion-label>
         <h2>{{"BREW_DATA_MILL_TIMER" | translate}}:</h2>
         <h3>{{data.mill_timer}}</h3>
       </ion-label>
     </ion-item>
-    <ion-item *ngIf="settings.pressure_profile === true" [style.order]="settings.brew_order.pressure_profile">
-      <ion-label>
-        <h2>{{"BREW_DATA_PRESSURE_PROFILE" | translate}}:</h2>
-        <h3>{{data.pressure_profile}}</h3>
-      </ion-label>
-    </ion-item>
-    <ion-item *ngIf="settings.brew_temperature_time === true" [style.order]="settings.brew_order.brew_temperature_time">
+      <ion-item *ngIf="settings.pressure_profile === true" [style.order]="settings.brew_order.before.pressure_profile">
+        <ion-label>
+          <h2>{{"BREW_DATA_PRESSURE_PROFILE" | translate}}:</h2>
+          <h3>{{data.pressure_profile}}</h3>
+        </ion-label>
+      </ion-item>
+  </ion-card>
+  <ion-card class="ion-margin-horizontal popover" style="display:flex; flex-direction: column;">
+
+      <ion-item lines="none">
+        <span class="ion-title ion-padding-top">{{"BREW_HEADER_WHILE_BREW" | translate }}</span>
+      </ion-item>
+
+      <ion-item *ngIf="settings.brew_temperature_time === true"
+                [style.order]="settings.brew_order.while.brew_temperature_time">
       <ion-label>
         <h2>{{'BREW_DATA_TEMPERATURE_TIME' | translate}} / {{'BREW_DATA_SURF_TIME' | translate}}:</h2>
         <h3>{{data.brew_temperature_time}}</h3>
       </ion-label>
     </ion-item>
-    <ion-item *ngIf="settings.brew_time === true" [style.order]="settings.brew_order.brew_time">
+      <ion-item *ngIf="settings.brew_time === true" [style.order]="settings.brew_order.while.brew_time">
       <ion-label>
         <h2>{{'BREW_DATA_TIME' | translate}}:</h2>
         <h3>{{data.brew_time}}</h3>
       </ion-label>
     </ion-item>
     <ion-item *ngIf="settings.brew_time === true && settings.coffee_first_drip_time === true"
-              [style.order]="settings.brew_order.brew_time" disabled="true" lines="full">
+              [style.order]="settings.brew_order.while.brew_time" disabled="true" lines="full">
       <ion-label>
         <h2>{{'BREW_DATA_CALCULATED_COFFEE_BREW_TIME' | translate}}:</h2>
         <h3>{{data.getFormattedCoffeeBrewTime()}}</h3>
       </ion-label>
     </ion-item>
-    <ion-item *ngIf="settings.coffee_blooming_time === true" [style.order]="settings.brew_order.coffee_blooming_time">
+      <ion-item *ngIf="settings.coffee_blooming_time === true"
+                [style.order]="settings.brew_order.while.coffee_blooming_time">
       <ion-label>
         <h2>{{"BREW_DATA_COFFEE_BLOOMING_TIME" | translate}}:</h2>
         <h3>{{data.coffee_blooming_time}}</h3>
       </ion-label>
     </ion-item>
     <ion-item *ngIf="settings.coffee_first_drip_time === true"
-              [style.order]="settings.brew_order.coffee_first_drip_time">
+              [style.order]="settings.brew_order.while.coffee_first_drip_time">
       <ion-label>
         <h2>{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}:</h2>
         <h3>{{data.coffee_first_drip_time}}</h3>
       </ion-label>
     </ion-item>
-    <ion-item *ngIf="settings.brew_quantity === true" [style.order]="settings.brew_order.brew_quantity">
+  </ion-card>
+  <ion-card class="ion-margin-horizontal popover" style="display:flex; flex-direction: column;">
+      <ion-item lines="none">
+        <span class="ion-title ion-padding-top">{{"BREW_HEADER_AFTER_BREW" | translate }}</span>
+      </ion-item>
+      <ion-item *ngIf="settings.brew_quantity === true" [style.order]="settings.brew_order.after.brew_quantity">
       <ion-label>
         <h2>{{"BREW_DATA_BREW_QUANTITY" | translate}}:</h2>
         <h3>{{data.brew_quantity}} ({{data.getBrewQuantityTypeName()}})</h3>
       </ion-label>
     </ion-item>
-    <ion-item *ngIf="settings.coffee_type=== true" [style.order]="settings.brew_order.coffee_type">
+      <ion-item *ngIf="settings.coffee_type=== true" [style.order]="settings.brew_order.after.coffee_type">
       <ion-label>
         <h2>{{"BREW_DATA_COFFEE_TYPE" | translate}}
         </h2>
         <h3>{{data.coffee_type}}</h3>
       </ion-label>
     </ion-item>
-    <ion-item *ngIf="settings.coffee_concentration=== true" [style.order]="settings.brew_order.coffee_concentration">
+      <ion-item *ngIf="settings.coffee_concentration=== true"
+                [style.order]="settings.brew_order.after.coffee_concentration">
       <ion-label>
         <h2>{{"BREW_DATA_COFFEE_CONCENTRATION" | translate}}:</h2>
         <h3>{{data.coffee_concentration}}</h3>
       </ion-label>
     </ion-item>
-    <ion-item *ngIf="settings.rating === true" [style.order]="settings.brew_order.rating">
+      <ion-item *ngIf="settings.rating === true" [style.order]="settings.brew_order.after.rating">
       <ion-label>
         <h2>{{"BREW_DATA_RATING" | translate }}:</h2>
         <h3>{{data.rating}}</h3>
       </ion-label>
     </ion-item>
-    <ion-item *ngIf="settings.note === true" [style.order]="settings.brew_order.note">
+      <ion-item *ngIf="settings.note === true" [style.order]="settings.brew_order.after.note">
       <ion-label>
         <h2>{{"BREW_DATA_NOTES" | translate }}:</h2>
         <pre>{{data.note}}</pre>
       </ion-label>
     </ion-item>
-    <ion-item [style.order]="settings.brew_order.bean_type">
-      <ion-label>
-        <h2>{{"BREW_INFORMATION_BEAN_AGE" | translate}}:</h2>
-        <h3>{{data.getCalculatedBeanAge()}}</h3>
-      </ion-label>
-    </ion-item>
-    <ion-item [style.order]="settings.brew_order.bean_type">
-      <ion-label>
-        <h2>{{"BREW_INFORMATION_BREW_RATIO"  | translate}}:</h2>
-        <h3>{{data.getBrewRatio()}}</h3>
-      </ion-label>
-    </ion-item>
-  </div>
-
-
-  <ion-row>
-    <ion-col>
-      <ion-button (click)="dismiss()" expand="block" fill="outline">{{"CLOSE" | translate}}</ion-button>
-    </ion-col>
-  </ion-row>
-
+  </ion-card>
 
 </ion-content>
+<ion-footer class="ion-no-border">
+  <ion-row>
+    <ion-col>
+      <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
+                  tappable>{{"CLOSE" | translate}}</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>
