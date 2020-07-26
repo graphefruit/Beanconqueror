@@ -164,7 +164,6 @@ export class SettingsPage implements OnInit {
               }).catch((_err) => {
                 this.uiAlert.showMessage(this.translate.instant('FILE_NOT_FOUND_INFORMATION') + ' (' + JSON.stringify(_err) + ')');
               });
-
           });
       } else {
         this.iosFilePicker.pickFile().then((uri) => {
