@@ -386,11 +386,12 @@ export class AppComponent implements AfterViewInit {
     this.platform.backButton.subscribeWithPriority(0, () => {
       if (this.routerOutlet && this.routerOutlet.canGoBack()) {
         this.routerOutlet.pop();
-      } else if (this.router.url === '/home') {
+      } else if (this.router.url.indexOf('/home')>=0) {
         this.appMinimize.minimize();
         // or if that doesn't work, try
         // navigator['app'].exitApp();
       } else {
+        this.router.navigate(['/home/dashboard']);
         // this.generic.showAlert("Exit", "Do you want to exit the app?", this.onYesHandler, this.onNoHandler, "backPress");
       }
     });
