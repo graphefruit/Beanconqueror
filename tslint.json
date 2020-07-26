@@ -70,7 +70,9 @@
     "component-class-suffix": [true, "Page", "Component"],
     "directive-class-suffix": true,
     "no-string-literal": false,
-    "no-trailing-whitespace": false
+    "no-trailing-whitespace": false,
+    "one-line": false,
+    "object-literal-shorthand": false
   }
 
 }

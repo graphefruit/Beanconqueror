@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      {{"NAV_BREW_PARAMS" | translate}}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-card (click)="openManageParameters()" tappable>
+    <ion-item class="ion-padding-horizontal" lines="none">
+      <ion-icon name="beanconqueror-manage-parameter" slot="start"></ion-icon>
+      {{"NAV_MANAGE_PARAMETERS" | translate}}
+    </ion-item>
+  </ion-card>
+  <ion-card (click)="openSortParameters()" tappable>
+    <ion-item class="ion-padding-horizontal" lines="none">
+      <ion-icon name="beanconqueror-sort-parameter" slot="start"></ion-icon>
+      {{"NAV_SORT_PARAMETERS" | translate}}
+    </ion-item>
+  </ion-card>
+  <ion-card (click)="openDefaultParameters()" tappable>
+    <ion-item class="ion-padding-horizontal" lines="none">
+      <ion-icon name="beanconqueror-default-parameter" slot="start"></ion-icon>
+      {{"NAV_DEFAULT_PARAMETERS" | translate}}
+    </ion-item>
+  </ion-card>
+</ion-content>

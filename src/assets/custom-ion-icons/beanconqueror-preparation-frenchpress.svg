@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="76" height="84.984" viewBox="0 0 76 84.984">
+  <g id="Gruppe_206" data-name="Gruppe 206" transform="translate(-229 -297)">
+    <circle id="Ellipse_369" data-name="Ellipse 369" cx="38" cy="38" r="38" transform="translate(229 297)"
+            fill="#ffacab"/>
+    <g id="Gruppe_188" data-name="Gruppe 188" transform="translate(-1453 352.903)">
+      <g id="Gruppe_183" data-name="Gruppe 183" transform="translate(1689.749 -49.089)">
+        <rect id="Rechteck_2202" data-name="Rechteck 2202" width="3.025" height="52.432"
+              transform="translate(25.963 11.949)" fill="#d84e50"/>
+        <rect id="Rechteck_2203" data-name="Rechteck 2203" width="31.154" height="2.714" rx="1.357"
+              transform="translate(11.805 63.368)" fill="#d84e50"/>
+        <path id="Pfad_1413" data-name="Pfad 1413"
+              d="M1057.15,532.831h-40.48a1.513,1.513,0,0,1-1.512-1.512V477.4l-6.977-7.463a1.512,1.512,0,0,1,1.22-2.406h47.749a1.513,1.513,0,0,1,1.512,1.512v62.275A1.513,1.513,0,0,1,1057.15,532.831Zm-38.968-3.025h37.456l-18.39.7s-14.123-.418-14.123-.1Z"
+              transform="translate(-1007.888 -454.661)" fill="#a55169" opacity="0.78"/>
+        <path id="Pfad_1414" data-name="Pfad 1414" d="M1028.308,589.454" transform="translate(-1018.015 -515.124)"
+              fill="#a55169"/>
+        <path id="Pfad_1415" data-name="Pfad 1415"
+              d="M1089.58,467.531h8.1a1.5,1.5,0,0,1,1.5,1.5v62.308a1.5,1.5,0,0,1-1.5,1.5h-8.1"
+              transform="translate(-1048.401 -454.661)" fill="#7f445c" opacity="0.63"/>
+        <path id="Pfad_1416" data-name="Pfad 1416"
+              d="M1070.392,504.323h-2.413a.763.763,0,0,1-.763-.763V482.486a11.173,11.173,0,0,0-11.161-11.16l-45.819.34a.759.759,0,0,1-.553-.232,9.984,9.984,0,0,1-1.731-2.121c-.049-.436-.181-1.772.833-1.926s47.27,0,47.27,0a15.116,15.116,0,0,1,15.1,15.1V503.56A.763.763,0,0,1,1070.392,504.323Z"
+              transform="translate(-1007.904 -454.555)" fill="#643e4b"/>
+        <g id="Gruppe_182" data-name="Gruppe 182" transform="translate(3.991)">
+          <path id="Pfad_1417" data-name="Pfad 1417"
+                d="M1061.187,457.138h-43.979a1.562,1.562,0,0,1-1.167-.472.844.844,0,0,1-.126-1c.179-.324,4.6-7.933,23.282-7.933s23.1,7.609,23.283,7.933a.845.845,0,0,1-.126,1A1.564,1.564,0,0,1,1061.187,457.138Z"
+                transform="translate(-1015.806 -444.844)" fill="#7f445c"/>
+          <rect id="Rechteck_2204" data-name="Rechteck 2204" width="3.886" height="6.456" rx="1.179"
+                transform="translate(21.542)" fill="#7f445c"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

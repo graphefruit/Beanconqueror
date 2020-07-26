@@ -30,15 +30,19 @@ export class UIAnalytics {
   }
 
   public async initializeTracking(): Promise<any> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       this.__attachToRoutingEvents();
-      this.__checkTrackingEnabled().then(async () => {
+
+      await this.uiSettings.storageReady();
+      const settings: Settings = this.uiSettings.getSettings();
+      if (settings.analytics) {
         resolve();
         this.enableTracking();
-      }, () => {
+      } else {
         reject();
         this.disableTracking();
-      });
+      }
+
     });
   }
 
@@ -111,7 +115,7 @@ export class UIAnalytics {
     });
   }
 
-  private async __checkTrackingEnabled(): Promise<any> {
+  /** private async __checkTrackingEnabled(): Promise<any> {
     return new Promise(async (resolve, reject) => {
       const settings: Settings = this.uiSettings.getSettings();
       if (settings.analytics === undefined) {
@@ -136,7 +140,7 @@ export class UIAnalytics {
       }
     });
 
-  }
+  }**/
 
   private __isInt(n) {
     return Number(n) === n && n % 1 === 0;

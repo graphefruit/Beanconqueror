@@ -1,0 +1,24 @@
+:host {
+  .card-background {
+    background-color: #CDC2AC !important;
+  }
+
+  .small-card ion-card-content {
+    padding-top: 16px !important;
+  }
+
+  ion-card {
+    background: #FFFFFF;
+
+    ion-item {
+      --background: white;
+
+      ion-label {
+        font-family: 'Baloo';
+        font-size: 14px;
+      }
+    }
+
+
+  }
+}

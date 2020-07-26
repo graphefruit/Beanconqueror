@@ -15,6 +15,7 @@ import {Bean} from '../bean/bean';
 import {Mill} from '../mill/mill';
 import {Config} from '../objectConfig/objectConfig';
 import {Preparation} from '../preparation/preparation';
+import {ICupping} from '../../interfaces/cupping/iCupping';
 
 export class Brew implements IBrew {
   // tslint:disable-next-line
@@ -57,9 +58,7 @@ export class Brew implements IBrew {
   public attachments: Array<string>;
   public config: Config;
 
-  public initializeByObject(brewObj: IBrew): void {
-    Object.assign(this, brewObj);
-  }
+  public cupping: ICupping;
 
   constructor() {
 
@@ -84,6 +83,44 @@ export class Brew implements IBrew {
     this.coffee_blooming_time = 0;
     this.attachments = [];
     this.config = new Config();
+
+
+    this.cupping = {
+      body: 0,
+      brightness: 0,
+      clean_cup: 0,
+      complexity: 0,
+      cuppers_correction: 0,
+      dry_fragrance: 0,
+      finish: 0,
+      flavor: 0,
+      sweetness: 0,
+      uniformity: 0,
+      wet_aroma: 0,
+      notes: '',
+    };
+
+  }
+
+  public initializeByObject(brewObj: IBrew): void {
+    Object.assign(this, brewObj);
+
+    if (this.cupping === undefined) {
+      this.cupping = {
+        body: 0,
+        brightness: 0,
+        clean_cup: 0,
+        complexity: 0,
+        cuppers_correction: 0,
+        dry_fragrance: 0,
+        finish: 0,
+        flavor: 0,
+        sweetness: 0,
+        uniformity: 0,
+        wet_aroma: 0,
+        notes: '',
+      };
+    }
   }
 
   public getBrewQuantityTypeName(): string {
@@ -136,6 +173,7 @@ export class Brew implements IBrew {
 
     return 0;
   }
+
 
   public getBrewRatio(): string {
     const grindWeight: number = this.grind_weight;
@@ -217,31 +255,95 @@ export class Brew implements IBrew {
     return uiMillStorage;
   }
 
+  public getRatingIcon(_rating?: number): string {
+    if (_rating === undefined) {
+      _rating = this.rating;
+    }
+
+    if (_rating > 5) {
+      _rating = 5;
+    }
+    switch (_rating) {
+      case -1:
+        return 'beanconqueror-emoji--1';
+      case 0:
+        return 'beanconqueror-emoji-0';
+      case 1:
+        return 'beanconqueror-emoji-1';
+      case 2:
+        return 'beanconqueror-emoji-2';
+      case 3:
+        return 'beanconqueror-emoji-3';
+      case 4:
+        return 'beanconqueror-emoji-4';
+      case 5:
+        return 'beanconqueror-emoji-5';
+      default:
+        return 'beanconqueror-emoji-0';
+    }
+
+  }
+
   /**
    * Sorry for this, but angular hates inputs which are string and needs numbers
    */
-  public fixDataTypes() {
-    this.brew_quantity = Number(this.brew_quantity);
-    this.grind_weight = Number(this.grind_weight);
-    // UUID
-
-    // tslint:disable-next-line
-    this.mill_speed = Number(this.mill_speed);
-
-    // tslint:disable-next-line
-    this.brew_temperature = Number(this.brew_temperature);
-    // tslint:disable-next-line
-    this.brew_temperature_time = Number(this.brew_temperature_time);
-    // tslint:disable-next-line
-    this.brew_time = Number(this.brew_time);
-    // tslint:disable-next-line
-    this.brew_quantity = Number(this.brew_quantity);
-    // tslint:disable-next-line
+  public fixDataTypes(): boolean {
+    let fixNeeded: boolean = false;
 
 
-    this.coffee_first_drip_time = Number(this.coffee_first_drip_time);
-    // tslint:disable-next-line
-    this.coffee_blooming_time = Number(this.coffee_blooming_time);
+    if (Number(this.brew_quantity) !== this.brew_quantity) {
+      this.brew_quantity = Number(this.brew_quantity);
+      fixNeeded = true;
+    }
+
+    if (Number(this.grind_weight) !== this.grind_weight) {
+      this.grind_weight = Number(this.grind_weight);
+      fixNeeded = true;
+    }
+
+
+    if (Number(this.mill_speed) !== this.mill_speed) {
+      this.mill_speed = Number(this.mill_speed);
+      fixNeeded = true;
+    }
+
+    if (Number(this.brew_temperature) !== this.brew_temperature) {
+      this.brew_temperature = Number(this.brew_temperature);
+      fixNeeded = true;
+    }
+
+    if (Number(this.brew_temperature_time) !== this.brew_temperature_time) {
+      this.brew_temperature_time = Number(this.brew_temperature_time);
+      fixNeeded = true;
+    }
+    if (Number(this.brew_time) !== this.brew_time) {
+      this.brew_time = Number(this.brew_time);
+      fixNeeded = true;
+    }
+
+
+    if (Number(this.brew_quantity) !== this.brew_quantity) {
+      this.brew_quantity = Number(this.brew_quantity);
+      fixNeeded = true;
+    }
+
+    if (Number(this.coffee_first_drip_time) !== this.coffee_first_drip_time) {
+      this.coffee_first_drip_time = Number(this.coffee_first_drip_time);
+      fixNeeded = true;
+    }
+
+    if (Number(this.coffee_blooming_time) !== this.coffee_blooming_time) {
+      this.coffee_blooming_time = Number(this.coffee_blooming_time);
+      fixNeeded = true;
+    }
+
+    if (this.rating > 5) {
+      this.rating = 5;
+      fixNeeded = true;
+    }
+
+
+    return fixNeeded;
   }
 
 }

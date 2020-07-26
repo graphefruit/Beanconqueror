@@ -1,0 +1,15 @@
+:host {
+  ion-list {
+    background: #ffffff;
+  }
+
+  ion-item {
+    margin-left: 16px;
+    margin-right: 16px;
+    --background: #ffffff;
+  }
+
+  ion-item:last-child {
+    --border-width: 0 0 0 0 !important;
+  }
+}

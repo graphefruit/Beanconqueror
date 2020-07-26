@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+  <g id="Gruppe_110" data-name="Gruppe 110" transform="translate(-241.667 -521.333)">
+    <g id="Komponente_17_2" data-name="Komponente 17 – 2" transform="translate(241.667 521.333)">
+      <g id="Gruppe_87" data-name="Gruppe 87" transform="translate(35.333 17.667) rotate(180)">
+        <g id="Gruppe_8" data-name="Gruppe 8" transform="translate(622.333 336.667)">
+          <path id="bg" d="M20,0A20,20,0,1,1,0,20,20,20,0,0,1,20,0Z" transform="translate(-627 -359)" fill="#b88265"/>
+        </g>
+      </g>
+    </g>
+    <path id="icons8-water"
+          d="M11.734,1.744a1.616,1.616,0,0,0-2.477,0C7.373,3.989,4,8.445,4,11.587a6.5,6.5,0,1,0,12.992,0C16.992,8.445,13.619,3.989,11.734,1.744Z"
+          transform="translate(251 531.75)" fill="#fff"/>
+  </g>
+</svg>

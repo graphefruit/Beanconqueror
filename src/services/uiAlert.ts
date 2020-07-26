@@ -1,8 +1,9 @@
 /** Core */
 import {Injectable} from '@angular/core';
 /** Ionic */
-import {AlertController} from '@ionic/angular';
+import {AlertController, ModalController} from '@ionic/angular';
 import {TranslateService} from '@ngx-translate/core';
+import {CustomPopoverComponent} from '../popover/custom-popover/custom-popover.component';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,8 @@ import {TranslateService} from '@ngx-translate/core';
 export class UIAlert {
 
   constructor(private readonly alertController: AlertController,
-              private readonly translate: TranslateService) {
+              private readonly translate: TranslateService,
+              private readonly modalController: ModalController) {
   }
 
   /**
@@ -34,7 +36,7 @@ export class UIAlert {
     const promise = new Promise(async (resolve, reject) => {
       const alert = await this.alertController.create({
         header: _title,
-        subHeader: _message,
+        message: _message,
         backdropDismiss: false,
         buttons: [
           {
@@ -82,6 +84,23 @@ export class UIAlert {
       });
       await alert.present();
     });
+  }
+
+  public async presentCustomPopover(_title: string, _description: string, _okText: string) {
+
+    const modal = await this.modalController.create(
+      {
+        component: CustomPopoverComponent,
+        cssClass: 'half-bottom-modal',
+        showBackdrop: true,
+        componentProps: {
+          title: _title,
+          description: _description,
+          okText: _okText
+        }
+      });
+    await modal.present();
+    await modal.onWillDismiss();
   }
 
 }

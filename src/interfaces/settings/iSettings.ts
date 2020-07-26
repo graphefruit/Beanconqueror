@@ -5,6 +5,7 @@ import {IConfig} from '../objectConfig/iObjectConfig';
 import {IDefaultLastCoffeeParameters} from './iDefaultLastCoffeeParameters';
 import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
 import {IBrewOrder} from './iBrewOrder';
+import {IBrewPageFilter} from '../brew/iBrewPageFilter';
 
 export interface ISettings {
  // Properties
@@ -35,6 +36,19 @@ export interface ISettings {
   default_last_coffee_parameters: IDefaultLastCoffeeParameters;
   brew_order: IBrewOrder;
   analytics: boolean;
+
+  show_archived_beans: boolean;
+  show_archived_brews: boolean;
+  show_archived_mills: boolean;
+  show_archived_preparations: boolean;
+
+  brew_filter: {
+    OPEN: IBrewPageFilter,
+    ARCHIVED: IBrewPageFilter
+  };
+
+
+  welcome_page_showed: boolean;
 
   config: IConfig;
 }

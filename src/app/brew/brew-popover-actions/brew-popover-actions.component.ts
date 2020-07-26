@@ -4,6 +4,7 @@ import {IBrew} from '../../../interfaces/brew/iBrew';
 import {Brew} from '../../../classes/brew/brew';
 import {UIHelper} from '../../../services/uiHelper';
 import {UIAnalytics} from '../../../services/uiAnalytics';
+import {BREW_ACTION} from '../../../enums/brews/brewAction';
 
 @Component({
   selector: 'brew-popover-actions',
@@ -12,14 +13,6 @@ import {UIAnalytics} from '../../../services/uiAnalytics';
 })
 export class BrewPopoverActionsComponent implements OnInit {
 
-  public static ACTIONS: any = {
-    POST: 'POST',
-    REPEAT: 'REPEAT',
-    DETAIL: 'DETAIL',
-    EDIT: 'EDIT',
-    DELETE: 'DELETE',
-    PHOTO_GALLERY: 'PHOTO_GALLERY'
-  };
 
   public data: Brew = new Brew();
 
@@ -45,7 +38,7 @@ export class BrewPopoverActionsComponent implements OnInit {
   }
 
   public getStaticActions(): any {
-    return BrewPopoverActionsComponent.ACTIONS;
+    return BREW_ACTION;
   }
 
   public async choose(_type: string): Promise<void> {

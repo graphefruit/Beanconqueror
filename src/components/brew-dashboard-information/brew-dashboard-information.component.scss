@@ -1,0 +1,49 @@
+:host {
+
+
+  .dashboard-time-center {
+    display: grid;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  ion-col.center-col {
+    display: flex;
+    align-items: center
+  }
+
+  ion-list {
+    background: none;
+    margin: 0px;
+    padding: 0px;
+
+    ion-col {
+      -ms-text-overflow: ellipsis;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    ion-item {
+      --background: none;
+      --padding-start: 0px;
+      --padding-end: 0px;
+      --inner-padding-end: 0px;
+      font-size: 14px;
+      --min-height: 0px;
+
+      ion-icon {
+        top: 4px;
+        position: relative;
+        font-size: 17px;
+        margin-right: 0px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+      }
+    }
+
+  }
+}
+
+

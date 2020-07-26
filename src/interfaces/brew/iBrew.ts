@@ -3,6 +3,7 @@
  */
 import {BREW_QUANTITY_TYPES_ENUM} from '../../enums/brews/brewQuantityTypes';
 import {IConfig} from '../objectConfig/iObjectConfig';
+import {ICupping} from '../cupping/iCupping';
 
 export interface IBrew {
  // Properties
@@ -94,6 +95,8 @@ export interface IBrew {
    */
   attachments: Array<string>;
   config: IConfig;
+
+  cupping: ICupping;
 
   // Functions
   formateDate(): string;

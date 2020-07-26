@@ -1,9 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {UIBeanStorage} from '../../../services/uiBeanStorage';
-import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 import {BREW_QUANTITY_TYPES_ENUM} from '../../../enums/brews/brewQuantityTypes';
 import {UIHelper} from '../../../services/uiHelper';
-import {IMill} from '../../../interfaces/mill/iMill';
 import {UIBrewStorage} from '../../../services/uiBrewStorage';
 import {IBrew} from '../../../interfaces/brew/iBrew';
 import {IonSlides, ModalController, NavParams} from '@ionic/angular';
@@ -11,11 +9,15 @@ import {UIMillStorage} from '../../../services/uiMillStorage';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {UIImage} from '../../../services/uiImage';
 import {Brew} from '../../../classes/brew/brew';
-import {IBean} from '../../../interfaces/bean/iBean';
 import moment from 'moment';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 import {ISettings} from '../../../interfaces/settings/iSettings';
 import {UISettingsStorage} from '../../../services/uiSettingsStorage';
+import {Preparation} from '../../../classes/preparation/preparation';
+import {Mill} from '../../../classes/mill/mill';
+import {Bean} from '../../../classes/bean/bean';
+import {UIToast} from '../../../services/uiToast';
+import {UIFileHelper} from '../../../services/uiFileHelper';
 
 @Component({
   selector: 'brew-edit',
@@ -29,9 +31,9 @@ export class BrewEditComponent implements OnInit {
   public data: Brew = new Brew();
 
   public brewQuantityTypeEnums = BREW_QUANTITY_TYPES_ENUM;
-  public method_of_preparations: Array<IPreparation> = [];
-  public beans: Array<IBean> = [];
-  public mills: Array<IMill> = [];
+  public method_of_preparations: Array<Preparation> = [];
+  public beans: Array<Bean> = [];
+  public mills: Array<Mill> = [];
   public settings: ISettings;
   public customCreationDate: string = '';
 
@@ -48,7 +50,9 @@ export class BrewEditComponent implements OnInit {
                private readonly uiImage: UIImage,
                private readonly uiMillStorage: UIMillStorage,
                private readonly uiAnalytics: UIAnalytics,
-               private readonly uiSettingsStorage: UISettingsStorage) {
+               private readonly uiSettingsStorage: UISettingsStorage,
+               private readonly uiToast: UIToast,
+               private readonly uiFileHelper: UIFileHelper) {
 
     this.settings = this.uiSettingsStorage.getSettings();
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
@@ -70,7 +74,6 @@ export class BrewEditComponent implements OnInit {
     this.uiAnalytics.trackEvent('BREW', 'EDIT');
 
     this.customCreationDate = moment.unix(this.data.config.unix_timestamp).toISOString();
-    console.log(this.customCreationDate);
   }
 
   public showRating(): boolean {
@@ -102,8 +105,17 @@ export class BrewEditComponent implements OnInit {
         });
   }
 
-  public deleteImage(_index: number): void {
-    this.data.attachments.splice(_index, 1);
+  public async deleteImage(_index: number) {
+    const splicedPaths: Array<string> = this.data.attachments.splice(_index, 1);
+    for (const path of splicedPaths) {
+      try {
+        await this.uiFileHelper.deleteFile(path);
+        this.uiToast.showInfoToast('IMAGE_DELETED');
+      } catch (ex) {
+        this.uiToast.showInfoToast('IMAGE_NOT_DELETED');
+      }
+
+    }
     if (this.data.attachments.length > 0) {
       // Slide to one item before
       this.photoSlides.slideTo(_index - 1, 0);
@@ -119,14 +131,15 @@ export class BrewEditComponent implements OnInit {
   public updateBrew(): void {
     const newUnix = moment(this.customCreationDate).unix();
     if (newUnix !== this.data.config.unix_timestamp) {
-      console.log('New unix timestamp set');
       this.data.config.unix_timestamp = newUnix;
     }
 
     this.uiBrewStorage.update(this.data);
+    this.uiToast.showInfoToast('TOAST_BREW_EDITED_SUCCESSFULLY');
     this.dismiss();
   }
 
   public ngOnInit() {}
+
 
 }

@@ -8,6 +8,7 @@ import {Config} from '../objectConfig/objectConfig';
 import {DefaultLastCoffeeParameters} from './settingsDefaultLastCoffeeParameter';
 import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
 import {BrewOrder} from './settingsOrderBrew';
+import {IBrewPageFilter} from '../../interfaces/brew/iBrewPageFilter';
 
 export class Settings implements ISettings {
   public brew_view: BREW_VIEW_ENUM;
@@ -38,6 +39,18 @@ export class Settings implements ISettings {
   public config: Config;
   public language: string;
   public analytics: boolean;
+
+  public show_archived_beans: boolean;
+  public show_archived_brews: boolean;
+  public show_archived_mills: boolean;
+  public show_archived_preparations: boolean;
+
+  public welcome_page_showed: boolean;
+
+  public brew_filter: {
+    OPEN: IBrewPageFilter,
+    ARCHIVED: IBrewPageFilter
+  };
 
   constructor() {
     this.brew_view = BREW_VIEW_ENUM.SINGLE_PAGE;
@@ -70,6 +83,20 @@ export class Settings implements ISettings {
     this.language = '';
     this.analytics = undefined;
 
+    this.show_archived_beans = true;
+    this.show_archived_brews = true;
+    this.show_archived_mills = true;
+    this.show_archived_preparations = true;
+
+    this.brew_filter = {
+      OPEN: {} as IBrewPageFilter,
+      ARCHIVED: {} as IBrewPageFilter
+    };
+
+    this.brew_filter.OPEN = {bean: [], method_of_preparation: [], mill: []} as IBrewPageFilter;
+    this.brew_filter.ARCHIVED = {bean: [], method_of_preparation: [], mill: []} as IBrewPageFilter;
+
+    this.welcome_page_showed = false;
   }
 
   public initializeByObject(settingsObj: ISettings): void {
@@ -82,4 +109,18 @@ export class Settings implements ISettings {
     Object.assign(this.default_last_coffee_parameters, settingsObj.default_last_coffee_parameters);
   }
 
+  public resetFilter() {
+    this.brew_filter = {
+      OPEN: {
+        mill: [],
+        bean: [],
+        method_of_preparation: []
+      } as IBrewPageFilter,
+      ARCHIVED: {
+        mill: [],
+        bean: [],
+        method_of_preparation: []
+      } as IBrewPageFilter
+    };
+  }
 }

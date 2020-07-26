@@ -1,0 +1,13 @@
+:host {
+  ion-item {
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+
+  ::ng-deep ion-slides img {
+    width: 200px;
+    height: 200px;
+    display: block;
+    object-fit: contain;
+  }
+}

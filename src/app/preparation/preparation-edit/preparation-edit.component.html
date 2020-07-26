@@ -1,34 +1,55 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>{{"EDIT" | translate}}</ion-title>
+    <ion-title>{{"EDIT_PREPARATION" | translate}}</ion-title>
     <ion-buttons slot="start">
-      <ion-button (click)="dismiss()">
-        <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+      <ion-button (click)="dismiss()" class="big-icon-only">
+        <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <form #editBeanForm="ngForm" novalidate>
-    <ion-item>
-      <ion-label floating>{{"NAME" | translate}}*</ion-label>
-      <ion-input [(ngModel)]="data.name" name="name" type="text" #name="ngModel" spellcheck="false"
-                 autocapitalize="sentences" required>
-      </ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label floating>{{"NOTES" | translate}}</ion-label>
-      <ion-textarea #note="ngModel" [(ngModel)]="data.note" autocapitalize="sentences" autocomplete="true"
-                    autocorrect="true" name="note" rows="5" spellcheck="true"></ion-textarea>
-    </ion-item>
-    <ion-row>
-      <ion-col>
-        <ion-button (click)="dismiss()" expand="block" fill="outline">{{"CANCEL" | translate}}</ion-button>
-      </ion-col>
-      <ion-col>
-        <ion-button (click)="editBean(editBeanForm)" expand="block" type="submit">{{"SAVE" | translate}}</ion-button>
-      </ion-col>
 
-    </ion-row>
-  </form>
+    <form #editBeanForm="ngForm" novalidate>
+      <ion-card class="popover">
+        <ion-item>
+          <ion-label position="stacked">{{"PREPARATION_TYPE" | translate}}</ion-label>
+          <ion-select #type="ngModel" [(ngModel)]="data.type" cancelText="{{'CANCEL'| translate }}" name="type"
+                      okText="{{'CHOOSE'| translate }}">
+            <ion-select-option *ngFor="let key of preparationTypeEnum | keys"
+                               value="{{key}}">{{'PREPARATION_TYPE_' + key | translate}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">{{"PREPARATION_TYPE_NAME" | translate}}*</ion-label>
+          <ion-input #name="ngModel" [(ngModel)]="data.name" autocapitalize="sentences" name="name"
+                     placeholder="{{'PREPARATION.PLACE_HOLDER.PREPARATION_TYPE_NAME' | translate}}" required
+                     spellcheck="false" type="text">
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">{{"ARCHIVED"|translate}}?</ion-label>
+          <ion-checkbox #finished="ngModel" [(ngModel)]="data.finished" name="finished"></ion-checkbox>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-label position="stacked">{{"NOTES" | translate}}</ion-label>
+          <ion-textarea #note="ngModel" [(ngModel)]="data.note" autocapitalize="sentences" autocomplete="true"
+                        placeholder="{{'PREPARATION.PLACE_HOLDER.NOTES' | translate}}"
+                        autocorrect="true" name="note" rows="5" spellcheck="true"></ion-textarea>
+        </ion-item>
+      </ion-card>
+    </form>
+
 </ion-content>
+<ion-footer class="ion-no-border">
+  <ion-row>
+    <ion-col>
+      <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline">{{"CANCEL" | translate}}</ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button (click)="editBean(editBeanForm)" color="accent" expand="block"
+                  type="submit">{{"SAVE" | translate}}</ion-button>
+    </ion-col>
+
+  </ion-row>
+</ion-footer>

@@ -65,7 +65,8 @@ export class UIStatistic {
     return '';
   }
 
-  public getTimePassedSinceLastBrew(): string {
+
+  public getTimePassedSinceLastBrewMessage(): string {
     const lastBrew: IBrew = this.getLastBrew();
     if (lastBrew !== undefined) {
       const timeDiff = this.uiHelper.timeDifference(lastBrew.config.unix_timestamp);
@@ -74,30 +75,59 @@ export class UIStatistic {
         return this.translate.instant('ONE_DAY');
       }
       if (timeDiff.DAYS > 1) {
-        return `${timeDiff.DAYS} ${this.translate.instant('DAYS')}`;
+        return `${this.translate.instant('DAYS')}`;
       }
 
       if (timeDiff.HOURS === 1) {
         return this.translate.instant('ONE_HOUR');
       }
       if (timeDiff.HOURS > 1) {
-        return `${timeDiff.HOURS} ${this.translate.instant('HOURS')}`;
+        return `${this.translate.instant('HOURS')}`;
       }
 
       if (timeDiff.MINUTES === 1) {
         return this.translate.instant('ONE_MINUTE');
       }
 
-      return `${timeDiff.MINUTES} ${this.translate.instant('MINUTES')}`;
+      return `${this.translate.instant('MINUTES')}`;
     }
 
-    return '';
+    return `${this.translate.instant('DAYS')}`;
+  }
+
+  public getTimePassedSinceLastBrew(): string {
+    const lastBrew: IBrew = this.getLastBrew();
+    if (lastBrew !== undefined) {
+      const timeDiff = this.uiHelper.timeDifference(lastBrew.config.unix_timestamp);
+
+      if (timeDiff.DAYS === 1) {
+        return '1';
+      }
+      if (timeDiff.DAYS > 1) {
+        return `${timeDiff.DAYS}`;
+      }
+
+      if (timeDiff.HOURS === 1) {
+        return '1';
+      }
+      if (timeDiff.HOURS > 1) {
+        return `${timeDiff.HOURS}`;
+      }
+
+      if (timeDiff.MINUTES === 1) {
+        return '1';
+      }
+
+      return `${timeDiff.MINUTES}`;
+    }
+
+    return '0';
   }
 
   public getSloganTimePassedSinceLastBrew(): string {
     const timePassed = this.getTimePassedSinceLastBrew();
     if (timePassed !== '') {
-      return `${timePassed} ${this.translate.instant('WITHOUT_COFFEE')}`;
+      return `${this.getTimePassedSinceLastBrewMessage()} ${this.translate.instant('WITHOUT_COFFEE')}`;
     }
 
     return this.translate.instant('NO_COFFEE_DRUNK');
@@ -130,6 +160,9 @@ export class UIStatistic {
     return this.translate.instant('NOT_FOUND');
   }
 
+  /**
+   * Returns in KG
+   */
   public getTotalGround(): number {
     if (this.uiSettings.getSettings().grind_weight) {
       const brews: Array<IBrew> = this.uiBrewStorage.getAllEntries();
@@ -139,13 +172,16 @@ export class UIStatistic {
           sum += +brew.grind_weight;
         }
 
-        return sum;
+        return Math.round((sum / 1000) * 100) / 100;
       }
     }
 
     return 0;
   }
 
+  /**
+   * Retruns in kg/litres
+   */
   public getTotalDrunk(): number {
     if (this.uiSettings.getSettings().brew_quantity) {
       const brews: Array<IBrew> = this.uiBrewStorage.getAllEntries();
@@ -154,8 +190,8 @@ export class UIStatistic {
         for (const brew of brews) {
           sum += brew.brew_quantity;
         }
+        return Math.round((sum / 1000) * 100) / 100;
 
-        return sum;
       }
     }
 

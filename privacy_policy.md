@@ -1,3 +1,4 @@
+
 ## Privacy Policy
 
 Graphefruit built the Beanconqueror app as an Open Source app. This SERVICE is provided by Graphefruit at no cost and is intended for use as is.

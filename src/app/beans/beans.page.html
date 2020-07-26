@@ -4,8 +4,8 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button icon-only (click)="add()">
-        <ion-icon name="add-outline"></ion-icon>
+      <ion-button (click)="add()" class="big-icon-only">
+        <ion-icon class="ion-color-accent" name="beanconqueror-add" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-title>
@@ -16,185 +16,47 @@
 
 
 <ion-content>
-  <div class="ion-padding">
+
     <ion-segment [(ngModel)]="bean_segment">
       <ion-segment-button value="open">
         <ion-label>{{"PAGE_BEANS_LIST_OBTAINABLE" | translate}}
-          <ion-badge>{{openBeansCount}}</ion-badge>
         </ion-label>
       </ion-segment-button>
-      <ion-segment-button value="finished">
+      <ion-segment-button *ngIf="settings?.show_archived_beans" value="finished">
         <ion-label>{{"FINISHED" | translate}}
-          <ion-badge>{{finishedBeansCount}}</ion-badge>
         </ion-label>
       </ion-segment-button>
     </ion-segment>
-  </div>
+
   <div [ngSwitch]="bean_segment">
     <div *ngSwitchCase="'open'">
-      <ion-card *ngIf="getOpenBeans()?.length == 0" class="ion-padding">
+      <div *ngIf="getOpenBeans()?.length == 0" class="ion-padding ion-text-center">
+        <div>
+          <ion-icon color="inactive" name="beanconqueror-beans" size="large"></ion-icon>
+        </div>
+        <div class="text-color-inactive ion-margin-top">
         {{"PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS" | translate}}
-      </ion-card>
-      <ion-card *ngFor="let bean of getOpenBeans()">
-        <div>
-          <div *ngIf="bean?.attachments && bean.attachments.length > 0">
-            <ion-slides pager="true">
-              <ion-slide *ngFor="let attachment of bean.attachments;let i = index">
-                <async-image class="brew-image" filePath="{{attachment}}"></async-image>
-              </ion-slide>
-            </ion-slides>
-          </div>
         </div>
-        <ion-row>
-          <ion-col>
-            <div style="padding:0 0.9em;">
-              <ion-icon class="custom-coffee-bag ion-padding-end"></ion-icon>
-              <span>{{bean.name}}</span>
-            </div>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col *ngIf="bean.roaster">
-            <div style="padding:0 0.9em;">
-              <ion-icon class="ion-padding-end" name="person-outline"></ion-icon>
-              <span>{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</span>
-            </div>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col>
-            <div style="padding:0 0.9em;">
-              <ion-icon class="ion-padding-end" name="thermometer-outline"></ion-icon>
-              <span>{{"BEAN_DATA_ROAST_NAME" | translate}}: {{bean.getRoastName()}}</span>
-            </div>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col>
-            <div style="padding:0 0.9em;" >
-              <ion-icon class="ion-padding-end" name="calendar-outline"></ion-icon>
-              <span>{{"BEAN_DATA_ROASTING_DATE" | translate}}: {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}</span>
-            </div>
-          </ion-col>
-        </ion-row>
-        <ion-card-content *ngIf="bean.note != ''">
-          <pre class="blockquote">{{bean.note}}</pre>
-        </ion-card-content>
-        <ion-row>
-
-          <ion-col col-12>
-            <ion-button (click)="informationBean(bean)" color="dark" fill="clear" size="small">
-              <ion-icon name="list-outline" slot="start"></ion-icon>
-              <span>{{"INFORMATION" | translate}}</span>
-            </ion-button>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col col-4>
-            <ion-button (click)="repeatBean(bean)" color="dark" fill="clear" size="small">
-              <ion-icon name="repeat-outline" slot="start"></ion-icon>
-              <span>{{"REPEAT" | translate}}</span>
-            </ion-button>
-          </ion-col>
-          <ion-col col-4>
-            <ion-button size="small" fill="clear" color="dark" (click)="editBean(bean)">
-              <ion-icon name="create-outline" slot="start"></ion-icon>
-              <span>{{"EDIT" | translate}}</span>
-            </ion-button>
-          </ion-col>
-          <ion-col col-4>
-            <ion-button size="small" fill="clear" color="dark" (click)="deleteBean(bean)">
-              <ion-icon name="trash-outline" slot="start"></ion-icon>
-              <span>{{"DELETE" | translate}}</span>
-            </ion-button>
-          </ion-col>
-        </ion-row>
+      </div>
+      <bean-information (beanAction)="beanAction($event[0],$event[1])" *ngFor="let bean of getOpenBeans()"
+                        [bean]="bean"></bean-information>
 
 
-      </ion-card>
     </div>
-    <div *ngSwitchCase="'finished'">
-      <ion-card *ngIf="getFinishedBeans()?.length == 0" class="ion-padding">
-        {{"PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS" | translate}}
-      </ion-card>
-      <ion-card *ngFor="let bean of getFinishedBeans()">
-        <div>
-          <div *ngIf="bean?.attachments && bean.attachments.length > 0">
-            <ion-slides pager="true">
-              <ion-slide *ngFor="let attachment of bean.attachments;let i = index">
-                <async-image class="brew-image" filePath="{{attachment}}"></async-image>
-              </ion-slide>
-            </ion-slides>
+    <div *ngIf="settings?.show_archived_beans">
+      <div *ngSwitchCase="'finished'">
+        <div *ngIf="getFinishedBeans()?.length == 0" class="ion-padding ion-text-center">
+          <div>
+            <ion-icon color="inactive" name="beanconqueror-beans" size="large"></ion-icon>
+          </div>
+          <div class="text-color-inactive ion-margin-top">
+            {{"PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS" | translate}}
           </div>
         </div>
-        <!-- <img class="card-image" *ngIf="bean.filePath" [src]="bean.filePath"/>-->
-        <ion-row>
-          <ion-col>
-            <div style="padding:0 0.9em;">
-              <ion-icon class="custom-coffee-bag ion-padding-end"></ion-icon>
-              <span>{{bean.name}}</span>
-            </div>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col *ngIf="bean.roaster">
-            <div style="padding:0 0.9em;">
-              <ion-icon class="ion-padding-end" name="person-outline"></ion-icon>
-              <span>{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</span>
-            </div>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col>
-            <div style="padding:0 0.9em;">
-              <ion-icon class="ion-padding-end" name="thermometer-outline"></ion-icon>
-              <span>{{"BEAN_DATA_ROAST_NAME" | translate}}: {{bean.getRoastName()}}</span>
-            </div>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col>
-            <div style="padding:0 0.9em;" >
-              <ion-icon class="ion-padding-end" name="calendar-outline"></ion-icon>
-              <span>{{"BEAN_DATA_ROASTING_DATE" | translate}}: {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}</span>
-            </div>
-          </ion-col>
-        </ion-row>
-        <ion-card-content *ngIf="bean.note != ''">
-          <pre class="blockquote">{{bean.note}}</pre>
-        </ion-card-content>
-        <ion-row>
+        <bean-information (beanAction)="beanAction($event[0],$event[1])" *ngFor="let bean of getFinishedBeans()"
+                          [bean]="bean"></bean-information>
 
-          <ion-col col-12>
-            <ion-button (click)="informationBean(bean)" color="dark" fill="clear" size="small">
-              <ion-icon name="list-outline" slot="start"></ion-icon>
-              <span>{{"INFORMATION" | translate}}</span>
-            </ion-button>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col col-4>
-            <ion-button (click)="repeatBean(bean)" color="dark" fill="clear" size="small">
-              <ion-icon name="repeat-outline" slot="start"></ion-icon>
-              <span>{{"REPEAT" | translate}}</span>
-            </ion-button>
-          </ion-col>
-          <ion-col col-4>
-            <ion-button size="small" fill="clear" color="dark" (click)="editBean(bean)">
-              <ion-icon name="create-outline" slot="start"></ion-icon>
-              <span>{{"EDIT" | translate}}</span>
-            </ion-button>
-          </ion-col>
-          <ion-col col-4>
-            <ion-button size="small" fill="clear" color="dark" (click)="deleteBean(bean)">
-              <ion-icon name="trash-outline" slot="start"></ion-icon>
-              <span>{{"DELETE" | translate}}</span>
-            </ion-button>
-          </ion-col>
-        </ion-row>
-
-
-      </ion-card>
+      </div>
     </div>
   </div>
 

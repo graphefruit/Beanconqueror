@@ -7,7 +7,11 @@ import {Brew} from '../../classes/brew/brew';
 import {Bean} from '../../classes/bean/bean';
 import {BeansAddComponent} from './beans-add/beans-add.component';
 import {BeansEditComponent} from './beans-edit/beans-edit.component';
-import {BeansInformationComponent} from './beans-information/beans-information.component';
+import {UISettingsStorage} from '../../services/uiSettingsStorage';
+import {Settings} from '../../classes/settings/settings';
+import {BEAN_ACTION} from '../../enums/beans/beanAction';
+import {UIToast} from '../../services/uiToast';
+import {BeanPhotoViewComponent} from './bean-photo-view/bean-photo-view.component';
 
 @Component({
   selector: 'beans',
@@ -17,19 +21,24 @@ import {BeansInformationComponent} from './beans-information/beans-information.c
 export class BeansPage implements OnInit {
 
   public beans: Array<Bean> = [];
-  public openBeansCount: number = 0;
-  public finishedBeansCount: number = 0;
+
+
+  public settings: Settings;
 
   public bean_segment: string = 'open';
   constructor(public modalCtrl: ModalController,
               private readonly changeDetectorRef: ChangeDetectorRef,
               private readonly uiBeanStorage: UIBeanStorage,
               private readonly uiAlert: UIAlert,
-              private readonly uiBrewStorage: UIBrewStorage) {
+              private readonly uiBrewStorage: UIBrewStorage,
+              private readonly uiSettingsStorage: UISettingsStorage,
+              private readonly uiToast: UIToast) {
+
 
   }
 
   public ionViewWillEnter(): void {
+    this.settings = this.uiSettingsStorage.getSettings();
     this.loadBeans();
   }
 
@@ -49,6 +58,44 @@ export class BeansPage implements OnInit {
     this.changeDetectorRef.detectChanges();
   }
 
+  public async beanAction(action: BEAN_ACTION, bean: Bean): Promise<void> {
+    switch (action) {
+
+      case BEAN_ACTION.REPEAT:
+        this.repeatBean(bean);
+        break;
+      case BEAN_ACTION.EDIT:
+        this.editBean(bean);
+        break;
+      case BEAN_ACTION.DELETE:
+        this.deleteBean(bean);
+        break;
+      case BEAN_ACTION.BEANS_CONSUMED:
+        this.beansConsumed(bean);
+        break;
+      case BEAN_ACTION.PHOTO_GALLERY:
+        this.viewPhotos(bean);
+        break;
+      default:
+        break;
+    }
+  }
+
+  public async viewPhotos(_bean: Bean) {
+    const modal = await this.modalCtrl.create({component: BeanPhotoViewComponent, componentProps: {bean: _bean}});
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+
+  public beansConsumed(_bean: Bean) {
+    _bean.finished = true;
+    this.uiBeanStorage.update(_bean);
+    this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');
+    this.settings.resetFilter();
+    this.uiSettingsStorage.saveSettings(this.settings);
+    this.loadBeans();
+  }
+
   public async add() {
     const modal = await this.modalCtrl.create({component:BeansAddComponent});
     await modal.present();
@@ -64,18 +111,15 @@ export class BeansPage implements OnInit {
     this.loadBeans();
   }
 
-  public async informationBean(_bean: Bean) {
-
-    const modal = await this.modalCtrl.create({component: BeansInformationComponent, componentProps: {'bean': _bean}});
-    await modal.present();
-    await modal.onWillDismiss();
-  }
 
   public deleteBean(_bean: Bean): void {
     this.uiAlert.showConfirm('DELETE_BEAN_QUESTION', 'SURE_QUESTION', true)
         .then(() => {
               // Yes
               this.__deleteBean(_bean);
+            this.uiToast.showInfoToast('TOAST_BEAN_DELETED_SUCCESSFULLY');
+            this.settings.resetFilter();
+            this.uiSettingsStorage.saveSettings(this.settings);
             },
             () => {
               // No
@@ -95,11 +139,6 @@ export class BeansPage implements OnInit {
   private __initializeBeans(): void {
     this.beans = this.uiBeanStorage.getAllEntries()
         .sort((a, b) => a.name.localeCompare(b.name));
-
-    this.openBeansCount = this.beans.filter(
-      (bean) => !bean.finished).length;
-    this.finishedBeansCount = this.beans.filter(
-      (bean) => bean.finished).length;
   }
 
   private __deleteBean(_bean: Bean): void {

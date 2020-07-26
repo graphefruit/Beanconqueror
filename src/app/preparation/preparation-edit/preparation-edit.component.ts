@@ -5,6 +5,8 @@ import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {UIHelper} from '../../../services/uiHelper';
 import {UIAnalytics} from '../../../services/uiAnalytics';
+import {PREPARATION_TYPES} from '../../../enums/preparations/preparationTypes';
+import {UIToast} from '../../../services/uiToast';
 
 @Component({
   selector: 'preparation-edit',
@@ -15,12 +17,13 @@ export class PreparationEditComponent implements OnInit {
 
   public data: Preparation = new Preparation();
   @Input() private preparation: IPreparation;
-
+  public preparationTypeEnum = PREPARATION_TYPES;
   constructor (private readonly navParams: NavParams,
                private readonly modalController: ModalController,
                private readonly uiPreparationStorage: UIPreparationStorage,
                private readonly uiHelper: UIHelper,
-               private readonly uiAnalytics: UIAnalytics) {
+               private readonly uiAnalytics: UIAnalytics,
+               private readonly uiToast: UIToast) {
 
   }
 
@@ -41,6 +44,7 @@ export class PreparationEditComponent implements OnInit {
 
   public __editBean(): void {
     this.uiPreparationStorage.update(this.data);
+    this.uiToast.showInfoToast('TOAST_PREPARATION_EDITED_SUCCESSFULLY');
     this.dismiss();
   }
 

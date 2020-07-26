@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {UIBeanStorage} from '../../../services/uiBeanStorage';
 import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 import {BREW_QUANTITY_TYPES_ENUM} from '../../../enums/brews/brewQuantityTypes';
@@ -18,6 +18,9 @@ import moment from 'moment';
 import {Mill} from '../../../classes/mill/mill';
 import {Bean} from '../../../classes/bean/bean';
 import {UIAnalytics} from '../../../services/uiAnalytics';
+import {IMill} from '../../../interfaces/mill/iMill';
+import {UIToast} from '../../../services/uiToast';
+import {UIFileHelper} from '../../../services/uiFileHelper';
 
 @Component({
   selector: 'brew-add',
@@ -43,15 +46,8 @@ export class BrewAddComponent implements OnInit {
   public mills: Array<Mill> = [];
   public customCreationDate: string = '';
 
+  @Input() private hide_toast_message: boolean;
 
-  public customSelectSheetOptions: any = {
-    cssClass: 'select-full-screen'
-  };
-
-  public keyDownHandler(event: Event): void {
-
-    //  event.preventDefault();
-  }
 
 
 
@@ -64,17 +60,21 @@ export class BrewAddComponent implements OnInit {
                private readonly uiSettingsStorage: UISettingsStorage,
                public uiHelper: UIHelper,
                private readonly uiMillStorage: UIMillStorage,
-               private readonly uiAnalytics: UIAnalytics) {
+               private readonly uiAnalytics: UIAnalytics,
+               private readonly uiToast: UIToast,
+               private readonly uiFileHelper: UIFileHelper) {
     // Initialize to standard in drop down
     //
 
     this.settings = this.uiSettingsStorage.getSettings();
     this.method_of_preparations = this.uiPreparationStorage.getAllEntries()
+      .filter((e) => !e.finished)
         .sort((a, b) => a.name.localeCompare(b.name));
     this.beans = this.uiBeanStorage.getAllEntries()
         .filter((bean) => !bean.finished)
         .sort((a, b) => a.name.localeCompare(b.name));
     this.mills = this.uiMillStorage.getAllEntries()
+      .filter((e) => !e.finished)
         .sort((a, b) => a.name.localeCompare(b.name));
 
     this.brew_template = this.navParams.get('brew_template');
@@ -90,7 +90,6 @@ export class BrewAddComponent implements OnInit {
     }
 
     this.customCreationDate = moment().toISOString();
-
   }
 
 
@@ -103,14 +102,12 @@ export class BrewAddComponent implements OnInit {
     }
   }
 
-  public dismiss(): void {
+  public async dismiss() {
     this.modalController.dismiss({
       dismissed: true
     });
-  }
 
-  public getItemOrder(): number {
-    return 4;
+
   }
 
   public finish(): void {
@@ -120,6 +117,10 @@ export class BrewAddComponent implements OnInit {
       this.data.config.unix_timestamp = moment(this.customCreationDate).unix();
     }
     this.uiBrewStorage.update(this.data);
+    if (!this.hide_toast_message) {
+      this.uiToast.showInfoToast('TOAST_BREW_ADDED_SUCCESSFULLY');
+    }
+
     this.dismiss();
   }
 
@@ -141,12 +142,10 @@ export class BrewAddComponent implements OnInit {
   }
 
   public setCoffeeDripTime($event): void {
-    console.log($event);
     this.data.coffee_first_drip_time = this.getTime();
   }
 
   public setCoffeeBloomingTime($event): void {
-    console.log($event);
     this.data.coffee_blooming_time = this.getTime();
   }
 
@@ -160,7 +159,6 @@ export class BrewAddComponent implements OnInit {
                   if (_path) {
                     this.data.attachments.push(_path.toString());
                   }
-
                 });
           } else {
             // TAKE
@@ -172,8 +170,17 @@ export class BrewAddComponent implements OnInit {
         });
   }
 
-  public deleteImage(_index: number): void {
-    this.data.attachments.splice(_index, 1);
+  public async deleteImage(_index: number) {
+    const splicedPaths: Array<string> = this.data.attachments.splice(_index, 1);
+    for (const path of splicedPaths) {
+      try {
+        await this.uiFileHelper.deleteFile(path);
+        this.uiToast.showInfoToast('IMAGE_DELETED');
+      } catch (ex) {
+        this.uiToast.showInfoToast('IMAGE_NOT_DELETED');
+      }
+
+    }
     if (this.data.attachments.length > 0) {
       // Slide to one item before
       this.photoSlides.slideTo(_index - 1, 0);
@@ -225,10 +232,21 @@ export class BrewAddComponent implements OnInit {
       this.data.grind_weight = brew.grind_weight;
     }
     if (this.settings.default_last_coffee_parameters.method_of_preparation) {
-      this.data.method_of_preparation = brew.method_of_preparation;
+      const brewPreparation: IPreparation = this.uiPreparationStorage.getByUUID(brew.method_of_preparation);
+      if (!brewPreparation.finished) {
+        this.data.method_of_preparation = brewPreparation.config.uuid;
+      }
+
     }
     if (this.settings.default_last_coffee_parameters.mill) {
-      this.data.mill = brew.mill;
+      const brewMill: IMill = this.uiMillStorage.getByUUID(brew.mill);
+      if (!brewMill.finished) {
+        this.data.mill = brewMill.config.uuid;
+      }
+
+    }
+    if (this.settings.default_last_coffee_parameters.mill_timer) {
+      this.data.mill_timer = brew.mill_timer;
     }
     if (this.settings.default_last_coffee_parameters.mill_speed) {
       this.data.mill_speed = brew.mill_speed;
@@ -281,4 +299,35 @@ export class BrewAddComponent implements OnInit {
 
   public ngOnInit() {}
 
+
+  public showSectionAfterBrew(): boolean {
+    return (this.settings.brew_quantity ||
+      this.settings.coffee_type ||
+      this.settings.coffee_concentration ||
+      this.settings.rating ||
+      this.settings.note ||
+      this.settings.set_custom_brew_time ||
+      this.settings.attachments);
+  }
+
+
+  public showSectionWhileBrew(): boolean {
+    return (this.settings.pressure_profile ||
+      this.settings.brew_temperature_time ||
+      this.settings.brew_time ||
+      this.settings.coffee_blooming_time ||
+      this.settings.coffee_first_drip_time);
+  }
+
+  public showSectionBeforeBrew(): boolean {
+    return (this.settings.grind_size ||
+      this.settings.grind_weight ||
+      this.settings.brew_temperature ||
+      this.settings.method_of_preparation ||
+      this.settings.bean_type ||
+      this.settings.mill ||
+      this.settings.mill_speed ||
+      this.settings.mill_timer);
+
+  }
 }

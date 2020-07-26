@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="184" height="223.291" viewBox="0 0 184 223.291">
+  <g id="Gruppe_201" data-name="Gruppe 201" transform="translate(-92 -117.264)">
+    <circle id="Ellipse_368" data-name="Ellipse 368" cx="75" cy="75" r="75" transform="translate(92 159)" fill="#ff5957"
+            opacity="0.494"/>
+    <g id="Gruppe_167" data-name="Gruppe 167" transform="translate(-1127.14 121.176)">
+      <rect id="Rechteck_2163" data-name="Rechteck 2163" width="73.34" height="145.391"
+            transform="translate(1287.729 73.953)" fill="#97485c"/>
+      <path id="Pfad_1358" data-name="Pfad 1358" d="M1367.037,79.64l-79.4.4L1316.068,11.2l70.2,1.654Z"
+            transform="translate(0 -5.348)" fill="#97485c"/>
+      <path id="Pfad_1359" data-name="Pfad 1359" d="M1399.075,7.754l-75.273.392V-3.565l75.346-.056Z"
+            transform="translate(-12.797 -0.103)" fill="#ff5957"/>
+      <rect id="Rechteck_2164" data-name="Rechteck 2164" width="21.76" height="145.391"
+            transform="translate(1339.444 73.953)" fill="#853f52"/>
+      <path id="Pfad_1360" data-name="Pfad 1360" d="M1390,80.679l-21.875.4,27.471-66.941h18.822Z"
+            transform="translate(-28.477 -6.386)" fill="#853f52"/>
+      <path id="Pfad_1361" data-name="Pfad 1361" d="M1429.694,7.754l-19.072.051.088-11.37,19-.056Z"
+            transform="translate(-43.515 -0.103)" fill="#d84e50"/>
+      <path id="Pfad_1362" data-name="Pfad 1362"
+            d="M1426.407,13.925l-3.939,211.5-21.177.268V80.4S1425.911,13.925,1426.407,13.925Z"
+            transform="translate(-40.214 -6.311)" fill="#643e4b"/>
+      <path id="Pfad_1363" data-name="Pfad 1363"
+            d="M1438.013-3.912l-4.451,222.918,19.7.188,1.507-144.781S1438.4-3.912,1438.013-3.912Z"
+            transform="translate(-51.632 0)" fill="#5c3844"/>
+      <rect id="Rechteck_2165" data-name="Rechteck 2165" width="56.975" height="35.952"
+            transform="translate(1296.344 116.79)" fill="#ff5957"/>
+      <rect id="Rechteck_2166" data-name="Rechteck 2166" width="12.901" height="34.265"
+            transform="translate(1339.444 117.702)" fill="#d84e50"/>
+    </g>
+  </g>
+</svg>
