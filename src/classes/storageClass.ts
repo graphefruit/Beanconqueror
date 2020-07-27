@@ -26,27 +26,27 @@ export abstract class StorageClass {
   }
 
   public async storageReady (): Promise<any> {
-    const promise = new Promise(async (resolve, reject) => {
+    const promise = new Promise((resolve, reject) => {
 
       if (this.isInitialized === -1) {
         const intV: any = setInterval(async () => {
           if (this.isInitialized === 1) {
             this.uiLog.log(`Storage ${this.DB_PATH} ready`);
             window.clearInterval(intV);
-            await resolve();
+            resolve();
           } else if (this.isInitialized === 0) {
             window.clearInterval(intV);
             this.uiLog.log(`Storage ${this.DB_PATH} not ready`);
-            await reject();
+            reject();
           }
         }, 250);
       } else {
         if (this.isInitialized === 1) {
           this.uiLog.log(`Storage ${this.DB_PATH} - already - ready`);
-          await resolve();
+          resolve();
         } else if (this.isInitialized === 0) {
           this.uiLog.log(`Storage ${this.DB_PATH} - already not - ready`);
-          await reject();
+          reject();
         }
       }
 

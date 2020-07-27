@@ -75,9 +75,9 @@ export class UIBeanStorage extends StorageClass {
     return this.beans;
   }
 
-  public async add(_entry: Bean) {
+  public add(_entry: Bean) {
     _entry.fixDataTypes();
-    await super.add(_entry);
+    super.add(_entry);
   }
 
   public update(_obj: Bean): boolean {

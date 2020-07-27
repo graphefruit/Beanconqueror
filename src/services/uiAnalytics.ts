@@ -157,7 +157,6 @@ export class UIAnalytics {
         });
 
       }
-
     } catch (ex) {
     }
   }
@@ -178,7 +177,6 @@ export class UIAnalytics {
       } catch (ex) {
 
       }
-    } else {
     }
   }
 
