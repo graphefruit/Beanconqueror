@@ -64,3 +64,7 @@ adb shell setprop debug.firebase.analytics.app .none.
 ```
 npm outdated
 ```
+
+### Why is external storage not supported?
+Sadly there are some issues to read/use files from external storage
+https://github.com/apache/cordova-plugin-file/issues/350

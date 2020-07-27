@@ -31,9 +31,6 @@ export class AsyncImageComponent implements OnInit, OnChanges {
       this.img = '';
     } else {
       this.img = await this.uiFileHelper.getBase64File(this.filePath);
-      if (this.img === '') {
-
-      }
     }
   }
 
