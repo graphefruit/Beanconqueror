@@ -27,6 +27,10 @@ The app needs access to your filesystem aswell as the camera
 *Camera*: Needed to take picures or access the photo library to set images for your beans/brews
 
 
+## Want to check the code quality?
+https://sonarcloud.io/dashboard?id=graphefruit_Beanconqueror
+
+
 ## Build iOS
 ```
 ionic cordova build ios -- --buildFlag="-UseModernBuildSystem=0"
@@ -39,7 +43,7 @@ ionic cordova build android
 
 ## Issues with iOS
 ```
-1. pod install
+1. pod install / pod install --repo-update
 -> this needs to be done in the ios platform
 
 if this doesn't help:
@@ -47,8 +51,18 @@ if this doesn't help:
 2.
 sudo chmod go-w /YourPath/Beanconqueror
 pod repo update
-```
 
+https://stackoverflow.com/questions/25755240/too-many-symbol-files-after-successfully-submitting-my-apps
+//:configuration = Debug
+DEBUG_INFORMATION_FORMAT = dwarf
+
+//:configuration = Release
+DEBUG_INFORMATION_FORMAT = dwarf
+
+//:completeSettings = some
+DEBUG_INFORMATION_FORMAT
+
+```
 
 ## Debug analytics on firebase
 ```adb shell setprop debug.firebase.analytics.app Beanconqueror
