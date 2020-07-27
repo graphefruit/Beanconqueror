@@ -355,5 +355,6 @@
   "CUPPING_BREW": "Verkostung",
   "COFFEE_DRUNKEN_QUANTITY": "Getrunkene Menge",
   "IMAGE_DELETED": "Bild wurde gelöscht",
-  "IMAGE_NOT_DELETED": "Bild konnte nicht gelöscht werden"
+  "IMAGE_NOT_DELETED": "Bild konnte nicht gelöscht werden",
+  "EXTERNAL_STORAGE_NOT_SUPPORTED": "Externes Dateisystem wird leider nicht unterstützt"
 }

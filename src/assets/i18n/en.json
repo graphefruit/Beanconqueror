@@ -354,5 +354,6 @@
   "CUPPING_BREW": "Cupping",
   "COFFEE_DRUNKEN_QUANTITY": "Drunken quantity",
   "IMAGE_DELETED": "Image deleted",
-  "IMAGE_NOT_DELETED": "Image could not be deleted"
+  "IMAGE_NOT_DELETED": "Image could not be deleted",
+  "EXTERNAL_STORAGE_NOT_SUPPORTED": "External filesystem sadly not supported"
 }

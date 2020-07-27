@@ -11,6 +11,7 @@ import {UIFileHelper} from './uiFileHelper';
 import {TranslateService} from '@ngx-translate/core';
 import {FileChooser} from '@ionic-native/file-chooser/ngx';
 import {FilePath} from '@ionic-native/file-path/ngx';
+import {UIAlert} from './uiAlert';
 
 
 @Injectable({
@@ -26,7 +27,8 @@ export class UIImage {
                private readonly uiFileHelper: UIFileHelper,
                private readonly translate: TranslateService,
                private readonly fileChooser: FileChooser,
-               private readonly filePath: FilePath) {
+               private readonly filePath: FilePath,
+               private readonly uiAlert: UIAlert) {
   }
 
   public async takePhoto (): Promise<any> {
@@ -72,11 +74,18 @@ export class UIImage {
                 this.filePath.resolveNativePath(uri).then((path) => {
                   if (path && (path.toLowerCase().endsWith('.png') || path.toLowerCase().endsWith('.jpg') ||
                     path.toLowerCase().endsWith('.jpeg') || path.toLowerCase().endsWith('.gif'))) {
-                    this.uiFileHelper.copyFileWithSpecificName(path).then((_fullPath) => {
-                      resolve(_fullPath);
-                    }, () => {
-                      reject();
-                    });
+                      if (path.toLowerCase().indexOf('sdcard')===-1) {
+                        this.uiFileHelper.copyFileWithSpecificName(path).then((_fullPath) => {
+                          resolve(_fullPath);
+                        }, () => {
+                          reject();
+                        });
+                      } else {
+
+                        this.uiAlert.showMessage('EXTERNAL_STORAGE_NOT_SUPPORTED',undefined,undefined,true);
+                        reject();
+                      }
+
                   } else {
                     reject();
                   }
