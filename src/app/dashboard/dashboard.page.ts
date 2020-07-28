@@ -12,6 +12,7 @@ import {BrewPhotoViewComponent} from '../brew/brew-photo-view/brew-photo-view.co
 import {BrewEditComponent} from '../brew/brew-edit/brew-edit.component';
 import {UIAlert} from '../../services/uiAlert';
 import {UIToast} from '../../services/uiToast';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'dashboard',
@@ -27,7 +28,8 @@ export class DashboardPage implements OnInit {
               private readonly uiBrewHelper: UIBrewHelper,
               private readonly uiAlert: UIAlert,
               private readonly uiToast: UIToast,
-              private readonly changeDetectorRef: ChangeDetectorRef) {
+              private readonly changeDetectorRef: ChangeDetectorRef,
+              private readonly router: Router) {
   }
 
   public ngOnInit(): void {
@@ -38,7 +40,7 @@ export class DashboardPage implements OnInit {
     this.loadBrews();
   }
 
-  public async loadBrews() {
+  public loadBrews() {
     this.brews = this.uiBrewStorage.getAllEntries().filter((e) =>
       e.getBean().finished === false &&
       e.getMill().finished === false &&
@@ -55,6 +57,7 @@ export class DashboardPage implements OnInit {
       await modal.present();
       await modal.onWillDismiss();
       this.loadBrews();
+      this.router.navigate(['/home/brews']);
     }
   }
 
