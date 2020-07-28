@@ -10,10 +10,10 @@ import {PreparationModalSelectComponent} from '../app/preparation/preparation-mo
 })
 export class PreparationOverlayDirective {
 
-
+  @Output() public ngModelChange = new EventEmitter();
   @Input('multiple') public multipleSelect: boolean;
   @Input('show-finished') public showFinished: boolean = true;
-  @Output() ngModelChange = new EventEmitter();
+  private oldModelValue:any = undefined;
   constructor(private readonly model: NgModel,
               private readonly modalController: ModalController,
               private el: ElementRef,
@@ -70,9 +70,19 @@ export class PreparationOverlayDirective {
 
   }
 
+  public ngDoCheck(): void {
 
-  public ngAfterViewInit() {
-    this.__generateOutputText(this.model.model);
+    try {
+      if (this.oldModelValue !== this.model.model){
+        this.oldModelValue = this.model.model;
+        this.__generateOutputText(this.model.model);
+      }
+    }
+    catch (ex){
+
+    }
+
+
   }
 
 

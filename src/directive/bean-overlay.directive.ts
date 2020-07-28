@@ -10,7 +10,7 @@ import {Bean} from '../classes/bean/bean';
 })
 export class BeanOverlayDirective {
 
-
+  private oldModelValue:any = undefined;
   @Input('multiple') public multipleSelect: boolean;
   @Input('show-finished') public showFinished: boolean = true;
 
@@ -67,10 +67,20 @@ export class BeanOverlayDirective {
   }
 
 
-  public ngAfterViewChecked() {
-    this.__generateOutputText(this.model.control.value);
-  }
+  public ngDoCheck(): void {
 
+    try {
+      if (this.oldModelValue !== this.model.model){
+        this.oldModelValue = this.model.model;
+        this.__generateOutputText(this.model.model);
+      }
+    }
+    catch (ex){
+
+    }
+
+
+  }
 
   private __generateOutputText(_uuid: string | Array<string>) {
 
