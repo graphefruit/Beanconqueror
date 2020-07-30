@@ -1,4 +1,5 @@
-<ion-list lines="full">
+<ion-content>
+  <ion-list lines="full">
   <ion-item (click)="choose(getStaticActions().ARCHIVE)" *ngIf="data.finished === false" button tappable>
     <ion-icon name="beanconqueror-finished" slot="start"></ion-icon>
     <span>{{"ARCHIVE" | translate}}</span>
@@ -12,4 +13,4 @@
     <span>{{"DELETE" | translate}}</span>
   </ion-item>
 </ion-list>
-
+</ion-content>
