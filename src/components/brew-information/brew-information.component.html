@@ -62,6 +62,16 @@
               </ion-col>
             </ion-item>
 
+            <ion-item *ngIf="settings.brew_quantity === true && settings.grind_weight === true">
+              <ion-col class="ion-text-bold" size="8">
+                {{"BREW_INFORMATION_BREW_RATIO" | translate}}:
+              </ion-col>
+              <ion-col size="4">
+                {{brew?.getBrewRatio()}}
+              </ion-col>
+            </ion-item>
+
+
             <ion-item *ngIf="settings.grind_size === true">
               <ion-col class="ion-text-bold" size="8">
                 {{"BREW_DATA_GRIND_SIZE" | translate}}:
