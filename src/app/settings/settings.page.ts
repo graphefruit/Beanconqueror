@@ -230,6 +230,7 @@ export class SettingsPage implements OnInit {
     this.uiStorage.import(dummyData).then(() => {
       this.__reinitializeStorages().then(() => {
         this.__initializeSettings();
+        this.setLanguage();
         this.uiAlert.showMessage(this.translate.instant('IMPORT_SUCCESSFULLY'));
       });
     });
@@ -296,7 +297,7 @@ export class SettingsPage implements OnInit {
                         this.uiBrewStorage.update(brew);
                       }
                     }
-
+                    this.setLanguage();
                     this.uiAlert.showMessage(this.translate.instant('IMPORT_SUCCESSFULLY'));
                   });
 
