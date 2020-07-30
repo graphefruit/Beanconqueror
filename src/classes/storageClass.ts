@@ -59,6 +59,7 @@ export abstract class StorageClass {
     this.uiLog.log(`Storage - Reinitialize ${this.DB_PATH}`);
     this.isInitialized = -1;
     this.__initializeStorage();
+    this.__sendEvent('REINITIALIZE');
   }
 
   protected getInitializeValue(): number {

@@ -202,7 +202,7 @@
       <ion-item *ngIf="settings.set_custom_brew_time" [style.order]="settings.brew_order.after.set_custom_brew_time"
                 lines="inset">
         <ion-label position="stacked">{{"BREW_CREATION_DATE" | translate }}</ion-label>
-        <ion-datetime [(ngModel)]="customCreationDate" display-format="DD.MM.YYYY HH:mm"
+        <ion-datetime [(ngModel)]="customCreationDate" cancelText="{{'CANCEL' | translate}}" display-format="DD.MM.YYYY HH:mm" doneText="{{'CHOOSE' | translate}}"
                       picker-format="DD.MM.YYYY HH:mm"
                       placeholder="Select Date"></ion-datetime>
       </ion-item>
