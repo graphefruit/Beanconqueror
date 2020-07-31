@@ -15,7 +15,7 @@ export class UIMillHelper {
 
   private allStoredBrews: Array<Brew> = [];
   constructor(private readonly uiBrewStorage: UIBrewStorage) {
-    this.uiBrewStorage.attachOnRemove().subscribe((_val) => {
+    this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
       // If an brew is deleted, we need to reset our array for the next call.
       this.allStoredBrews = [];
     });
