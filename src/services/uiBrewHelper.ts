@@ -22,13 +22,13 @@ export class UIBrewHelper {
                private readonly uiAlert: UIAlert) {
 
 
-    this.uiBeanStorage.attachOnRemove().subscribe(() => {
+    this.uiBeanStorage.attachOnEvent().subscribe(() => {
       this.canBrewBoolean = undefined;
     });
-    this.uiMillStorage.attachOnRemove().subscribe(() => {
+    this.uiMillStorage.attachOnEvent().subscribe(() => {
       this.canBrewBoolean = undefined;
     });
-    this.uiPreparationStorage.attachOnRemove().subscribe(() => {
+    this.uiPreparationStorage.attachOnEvent().subscribe(() => {
       this.canBrewBoolean = undefined;
     });
 
