@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {UIHelper} from '../../../services/uiHelper';
 
 @Component({
   selector: 'contact',
@@ -7,13 +8,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ContactComponent implements OnInit {
 
-  constructor() { }
+  constructor(private readonly uiHelper: UIHelper) { }
 
   public ngOnInit() {}
   public openLink(event, _link: string): void {
     event.cancelBubble = true;
     event.preventDefault();
-    //this.uiHelper.openExternalWebpage(_link);
+    this.uiHelper.openExternalWebpage(_link);
 
   }
 

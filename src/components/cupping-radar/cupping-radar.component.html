@@ -1,3 +1,4 @@
+<ion-card>
 <div class="ion-margin-horizontal" style="display: block">
   <canvas #cuppingChart></canvas>
 </div>
@@ -8,11 +9,10 @@
             tooltip='{{"CUPPING_SCORE_TOOLTIP" | translate}}'></ion-icon>
 </div>
 
-<ion-card>
+
   <ion-item class="label-item" lines="none">
-    <ion-label>{{"CUPPING_SCORE_DRY_FRAGRANCE" | translate }}&nbsp;<ion-badge
-      style="vertical-align: top;">{{model.dry_fragrance| number : '.1-1'}}</ion-badge>
-    </ion-label>
+    <ion-label>{{"CUPPING_SCORE_DRY_FRAGRANCE" | translate }} </ion-label>
+    <ion-badge style="vertical-align: top;">{{model.dry_fragrance| number : '.1-1'}}</ion-badge>
     <ion-icon name="information-outline" slot="end"
               tooltip='{{"CUPPING_SCORE_DRY_FRAGRANCE_TOOLTIP" | translate}}'></ion-icon>
   </ion-item>
