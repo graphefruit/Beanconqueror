@@ -2,29 +2,71 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=graphefruit_Beanconqueror&metric=alert_status)](https://sonarcloud.io/dashboard?id=graphefruit_Beanconqueror)
 # Beanconqueror
 
+A cup of coffee is not the same anymore then back in the 80's, thats why I wanted to build a tool for the coffee community.
+
+Coffee has been grown to like the new "black gold", more roasters and more tools outside are growing.
+
+Apart from the mechanical tools like grinders, portafilters etc, the app stores are pretty full of coffee apps.
+
+But none is taken care about the community needs are open source and neither grew up from the own coffee fascination like on my side.
+
+Thats why I build and maintain the Beanconqueror app for you, for me, for every coffee lover outside there.
+
+Download today, track your brews, change your recipes, to get the best tasting cup of coffee you've ever had.
+
+## Sneak preview
+
 ## Getting the App
 The App is a crossplattform application, running on the ionic framework. 
 
+
 ### Android
-Download the latest version [here](https://play.google.com/store/apps/details?id=com.beanconqueror.app).  
+Download the latest version [here](https://play.google.com/store/apps/details?id=com.beanconqueror.app).
+
+If you don't want to download the app by playstore, just have a look on the [release page](https://github.com/graphefruit/Beanconqueror/releases).
+
 ### iOS
 Download the latest version [here](https://apps.apple.com/de/app/beanconqueror/id1445297158).
 
-## Support
-You want to support me, to access more people to explore the world of good coffee?  
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/LarsSaalbach) Graphefruit
-<3 
+## :sparkling_heart: Support the project
+You want to support me, to access more people to explore the world of good coffee
+
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/LarsSaalbach) - Support me once
+
+Or sponsor me via Github
+
+
+Thanks! :heart:
+
+
+##Statistics
+![Graphefruit github stats](https://github-readme-stats.vercel.app/api?username=graphefruit&theme=dark&repo=Beanconqueror)
+![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=graphefruit&theme=dark)
+
+##Questions
+
+### Why is external storage not supported?
+Sadly there are some issues to read/use files from external storage
+https://github.com/apache/cordova-plugin-file/issues/350
+
+### Why is image-export functionality not support on iOS?
+iOS filesystem is different then on Android, because of this images cannot just be exported.
+Thats why just Android is support by now.
+
+### Which requirements does the app needs?
+The app needs access to your filesystem aswell as the camera
+
+*Filesytem*: Needed to save images which you took on beans/brews etc.
+*Camera*: Needed to take picures or access the photo library to set images for your beans/brews
+
+
+# Develop on your own
 
 ## Development & Building it yourself
 
 If you're not familiar with Ionic or Cordova [read through the introduction](http://ionicframework.com/docs/intro/installation/).  
 To get started with anything you need [Node.js](https://nodejs.org/en/download/) installed
 
-## Which requirements does the app needs?
-The app needs access to your filesystem aswell as the camera
-
-*Filesytem*: Needed to save images which you took on beans/brews etc.
-*Camera*: Needed to take picures or access the photo library to set images for your beans/brews
 
 
 ## Want to check the code quality?
@@ -78,7 +120,3 @@ adb shell setprop debug.firebase.analytics.app .none.
 ```
 npm outdated
 ```
-
-### Why is external storage not supported?
-Sadly there are some issues to read/use files from external storage
-https://github.com/apache/cordova-plugin-file/issues/350

@@ -40,16 +40,21 @@ export class UIFileHelper {
 
   public async deleteFile(_filePath): Promise<any> {
     return new Promise(async (resolve, reject) => {
-      const fileObj = this.__splitFilePath(_filePath);
-      let filePath = this.file.dataDirectory;
-      if (fileObj.FILE_PATH.length > 1 && fileObj.FILE_PATH.indexOf('/') === 0 && filePath.lastIndexOf('/') === filePath.length - 1) {
-        filePath = filePath + fileObj.FILE_PATH.substr(1);
-      }
-      this.file.removeFile(filePath, fileObj.FILE_NAME + fileObj.EXTENSION).then(() => {
+      if (this.platform.is('cordova')) {
+        const fileObj = this.__splitFilePath(_filePath);
+        let filePath = this.file.dataDirectory;
+        if (fileObj.FILE_PATH.length > 1 && fileObj.FILE_PATH.indexOf('/') === 0 && filePath.lastIndexOf('/') === filePath.length - 1) {
+          filePath = filePath + fileObj.FILE_PATH.substr(1);
+        }
+        this.file.removeFile(filePath, fileObj.FILE_NAME + fileObj.EXTENSION).then(() => {
+          resolve();
+        }, () => {
+          reject();
+        });
+      } else {
         resolve();
-      }, () => {
-        reject();
-      });
+      }
+
     });
   }
 
@@ -129,9 +134,10 @@ export class UIFileHelper {
         }
         // let filePath: string;
         // filePath = _filePath;
+        // filePath.slice(0, filePath.lastIndexOf('/'));
         let path: string;
         let fileName: string;
-        path = this.file.dataDirectory; // filePath.slice(0, filePath.lastIndexOf('/'));
+        path = this.file.dataDirectory;
         fileName = _filePath;
         if (fileName.startsWith('/')) {
           fileName = fileName.slice(1);

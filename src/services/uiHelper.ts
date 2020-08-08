@@ -178,6 +178,29 @@ export class UIHelper {
 
 
 
+  public async downloadFile (_filePath: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      if (this.platform.is('cordova')) {
+
+        // let filePath: string;
+        // filePath = _filePath;
+        // filePath.slice(0, filePath.lastIndexOf('/'));
+        let path: string;
+        let fileName: string;
+        path = this.file.dataDirectory;
+        fileName = _filePath;
+        if (fileName.startsWith('/')) {
+          fileName = fileName.slice(1);
+        }
+
+
+      } else {
+        resolve('');
+      }
+
+    });
+  }
+
   public async exportJSON (fileName: string, jsonContent: string): Promise<any> {
      const promise = new Promise((resolve, reject) => {
       const errorCallback = (e) => {
@@ -202,6 +225,7 @@ export class UIHelper {
 
         }
 
+
         window.resolveLocalFileSystemURL(storageLocation,
            (fileSystem)  => {
 
@@ -210,24 +234,33 @@ export class UIHelper {
                 exclusive: false
               },
                (directory) => {
+                 directory.getDirectory('Beanconqueror_export', {
+                     create: true,
+                     exclusive: false
+                   },
+                   (directory_export) => {
+                     // You need to put the name you would like to use for the file here.
+                     directory_export.getFile(fileName, {
+                         create: true,
+                         exclusive: false
+                       },
+                       (fileEntry) => {
 
-                // You need to put the name you would like to use for the file here.
-                directory.getFile(fileName, {
-                    create: true,
-                    exclusive: false
-                  },
-                   (fileEntry) => {
+                         fileEntry.createWriter((writer) => {
+                           writer.onwriteend =  () => {
+                             resolve(fileEntry);
+                           };
 
-                    fileEntry.createWriter((writer) => {
-                      writer.onwriteend =  () => {
-                        resolve(fileEntry);
-                      };
+                           writer.seek(0);
+                           writer.write(blob); // You need to put the file, blob or base64 representation here.
 
-                      writer.seek(0);
-                      writer.write(blob); // You need to put the file, blob or base64 representation here.
+                         }, errorCallback);
+                       }, errorCallback);
 
-                    }, errorCallback);
-                  }, errorCallback);
+                   }, errorCallback);
+
+
+
               }, errorCallback);
           }, errorCallback);
       } else {
