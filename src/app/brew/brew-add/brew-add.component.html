@@ -83,7 +83,7 @@
                    placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PRESSURE_PROFILE' | translate}}" type="text"></ion-input>
       </ion-item>
 
-
+    <div class="last-item"></div>
   </ion-card>
   <ion-card *ngIf="showSectionWhileBrew()"
             class="popover" style="display:flex; flex-direction: column;">
@@ -134,6 +134,7 @@
                  remove-empty-number
                  type="text"></ion-input>
     </ion-item>
+    <div class="last-item"></div>
   </ion-card>
   <ion-card *ngIf="showSectionAfterBrew()"
             class="popover" style="display:flex; flex-direction: column;">
@@ -188,9 +189,6 @@
 
           <ion-icon [name]="data.getRatingIcon()" size="large" slot="end"></ion-icon>
         </ion-range>
-
-
-
       </ion-item>
       <ion-item *ngIf="settings.note === true" [style.order]="settings.brew_order.after.note" lines="inset">
         <ion-label position="stacked">{{"BREW_DATA_NOTES" | translate }}</ion-label>
@@ -220,6 +218,7 @@
           </ion-slides>
         </div>
       </div>
+    <div class="last-item"></div>
 
   </ion-card>
 </ion-content>
