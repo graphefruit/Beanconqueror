@@ -15,7 +15,7 @@ Thats why I build and maintain the Beanconqueror app for you, for me, for every 
 Download today, track your brews, change your recipes, to get the best tasting cup of coffee you've ever had.
 
 ## Sneak preview
-
+![Farmers Market Finder Demo](demo/Beanconqueror.gif)
 ## Getting the App
 The App is a crossplattform application, running on the ionic framework. 
 
