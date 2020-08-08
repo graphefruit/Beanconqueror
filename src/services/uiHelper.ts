@@ -24,19 +24,6 @@ declare var window: any;
 })
 export class UIHelper {
 
-
-  public static generateUUID(): string {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-      // tslint:disable
-      const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
-  }
-
-  public static getUnixTimestamp(): number {
-    return moment()
-      .unix();
-  }
   /**
    *
    */
@@ -47,7 +34,7 @@ export class UIHelper {
                private readonly file: File,
                private readonly uiFileHelper: UIFileHelper,
                private readonly uiLog: UILog) {
-
+    moment.locale('de');
   }
 
   public copyData(_value: any): any {
@@ -99,7 +86,6 @@ export class UIHelper {
       format = _format;
 
     }
-
     return moment.unix(_unix)
       .format(format);
   }
@@ -189,6 +175,31 @@ export class UIHelper {
     return this.uiFileHelper.getBase64File(imagePath);
   }
 
+
+
+
+  public async downloadFile (_filePath: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      if (this.platform.is('cordova')) {
+
+        // let filePath: string;
+        // filePath = _filePath;
+        // filePath.slice(0, filePath.lastIndexOf('/'));
+        let path: string;
+        let fileName: string;
+        path = this.file.dataDirectory;
+        fileName = _filePath;
+        if (fileName.startsWith('/')) {
+          fileName = fileName.slice(1);
+        }
+
+
+      } else {
+        resolve('');
+      }
+
+    });
+  }
 
   public async exportJSON (fileName: string, jsonContent: string): Promise<any> {
      const promise = new Promise((resolve, reject) => {

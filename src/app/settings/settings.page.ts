@@ -14,7 +14,7 @@ import {UIBeanStorage} from '../../services/uiBeanStorage';
 import {UIMillStorage} from '../../services/uiMillStorage';
 import {IOSFilePicker} from '@ionic-native/file-picker/ngx';
 import {SocialSharing} from '@ionic-native/social-sharing/ngx';
-import {FileEntry} from '@ionic-native/file';
+import {DirectoryEntry, FileEntry} from '@ionic-native/file';
 import {File} from '@ionic-native/file/ngx';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {Brew} from '../../classes/brew/brew';
@@ -28,7 +28,14 @@ import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
 import {UIAnalytics} from '../../services/uiAnalytics';
 
 import BeanconquerorSettingsDummy from '../../assets/Beanconqueror.json';
+import {ISettings} from '../../interfaces/settings/iSettings';
+import {IBrewPageFilter} from '../../interfaces/brew/iBrewPageFilter';
+import {Bean} from '../../classes/bean/bean';
 
+
+declare var cordova: any;
+declare var device: any;
+declare var window: any;
 @Component({
   selector: 'settings',
   templateUrl: './settings.page.html',
@@ -42,9 +49,6 @@ export class SettingsPage implements OnInit {
   public STARTUP_VIEW = STARTUP_VIEW_ENUM;
   public debounceLanguageFilter: Subject<string> = new Subject<string>();
 
-  public settings_segment: string = 'general';
-
-  public brewOrders: Array<{ number: number, label: string, enum: string }> = [];
 
   private static __cleanupImportBeanData(_data: Array<IBean>): any {
     if (_data !== undefined && _data.length > 0) {
@@ -61,6 +65,23 @@ export class SettingsPage implements OnInit {
       for (const brew of _data) {
         brew.attachments = [];
       }
+    }
+  }
+
+  private static __cleanupImportSettingsData(_data: ISettings | any): void {
+    // We need to remove the filter because of new data here.
+    if (_data !== undefined) {
+      _data.brew_filter = {};
+      _data.brew_filter.ARCHIVED = {
+        mill: [],
+        bean: [],
+        method_of_preparation: []
+      } as IBrewPageFilter;
+      _data.brew_filter.OPEN = {
+        mill: [],
+        bean: [],
+        method_of_preparation: []
+      } as IBrewPageFilter;
     }
   }
 
@@ -82,7 +103,8 @@ export class SettingsPage implements OnInit {
               private readonly uiLog: UILog,
               private readonly translate: TranslateService,
               private readonly changeDetectorRef: ChangeDetectorRef,
-              private readonly uiAnalytics: UIAnalytics) {
+              private readonly uiAnalytics: UIAnalytics,
+              ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
       .pipe(debounceTime(500), distinctUntilChanged())
@@ -91,27 +113,6 @@ export class SettingsPage implements OnInit {
       });
   }
 
-  public reorder_brew(ev: any) {
-
-    this.uiAnalytics.trackEvent('SETTINGS', 'REORDER_BREW');
-    // The `from` and `to` properties contain the index of the item
-    // when the drag started and ended, respectively
-    // console.log('Dragged from index', ev.detail.from, 'to', ev.detail.to);
-    // console.log(this.brewOrders);
-    this.brewOrders.splice(ev.detail.to, 0, this.brewOrders.splice(ev.detail.from, 1)[0]);
-    let count: number = 0;
-    for (const order of this.brewOrders) {
-      order.number = count;
-      this.settings.brew_order[order.enum] = order.number;
-      count++;
-    }
-    // console.log(this.settings.brew_order);
-    // Finish the reorder and position the item in the DOM based on
-    // where the gesture ended. This method can also be called directly
-    // by the reorder group
-    ev.detail.complete();
-    this.saveSettings();
-  }
 
 
 
@@ -146,27 +147,36 @@ export class SettingsPage implements OnInit {
     this.uiSettingsStorage.saveSettings(this.settings);
   }
 
-  public import (): void {
+  public import(): void {
     if (this.platform.is('cordova')) {
       this.uiAnalytics.trackEvent('SETTINGS', 'IMPORT');
       this.uiLog.log('Import real data');
       if (this.platform.is('android')) {
         this.fileChooser.open()
-          .then((uri) => {
-            if (uri && uri.endsWith('.json')) {
-              this.filePath.resolveNativePath(uri).then((resolvedFilePath) => {
-                const path = resolvedFilePath.substring(0, resolvedFilePath.lastIndexOf('/'));
-                const file = resolvedFilePath.substring(resolvedFilePath.lastIndexOf('/') + 1, resolvedFilePath.length);
-                this.__readJSONFile(path, file).then(() => {
-                  // nothing todo
-                }, (_err) => {
-                  this.uiAlert.showMessage(this.translate.instant('ERROR_ON_FILE_READING') + ' (' + JSON.stringify(_err) + ')');
-                });
-              }).catch((_err) => {
-                this.uiAlert.showMessage(this.translate.instant('FILE_NOT_FOUND_INFORMATION') + ' (' + JSON.stringify(_err) + ')');
+          .then(async (uri) => {
+            try {
+              const fileEntry: any = await new Promise(async (resolve) =>
+                await window.resolveLocalFileSystemURL(uri, resolve)
+              );
+              const newPath: string = await this.filePath.resolveNativePath(fileEntry.nativeURL);
+              let importPath: string = '';
+              if (newPath.lastIndexOf('/Download/')>-1) {
+                let pathFromDownload = newPath.substr(0,newPath.lastIndexOf('/Download/'));
+                const decodedURI = decodeURIComponent(uri);
+                pathFromDownload = pathFromDownload + decodedURI.substring(decodedURI.lastIndexOf('/Download/'));
+                importPath = pathFromDownload;
+              } else {
+                importPath = newPath;
+              }
+              importPath = importPath.substring(0,importPath.lastIndexOf('/') +1);
+              this.__readAndroidJSONFile(fileEntry,importPath).then(() => {
+                // nothing todo
+              }, (_err) => {
+                this.uiAlert.showMessage(this.translate.instant('ERROR_ON_FILE_READING') + ' (' + JSON.stringify(_err) + ')');
               });
-            } else {
-              this.uiAlert.showMessage(this.translate.instant('INVALID_FILE_FORMAT'));
+            }
+            catch (ex) {
+              this.uiAlert.showMessage(this.translate.instant('FILE_NOT_FOUND_INFORMATION') + ' (' + JSON.stringify(ex.message) + ')');
             }
           });
       } else {
@@ -202,7 +212,12 @@ export class SettingsPage implements OnInit {
     this.uiAnalytics.trackEvent('SETTINGS', 'EXPORT');
     this.uiStorage.export().then((_data) => {
       this.uiHelper.exportJSON('Beanconqueror.json', JSON.stringify(_data)).then(async (_fileEntry: FileEntry) => {
-        if (this.platform.is('android')) {
+        if (this.platform.is('android'))
+        {
+          const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
+          const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
+          await this._exportAttachments(beans);
+          await this._exportAttachments(brews);
           const alert =  await this.alertCtrl.create({
             header: this.translate.instant('DOWNLOADED'),
             subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {fileName: _fileEntry.name}),
@@ -211,44 +226,151 @@ export class SettingsPage implements OnInit {
           await alert.present();
         } else {
           this.socialSharing.share(undefined, undefined, _fileEntry.nativeURL);
+          // We don't support image export yet, because
         }
 
       });
+
     });
 
   }
 
-  private __initializeBrewOrders() {
-    this.brewOrders = [];
-    for (const key in this.settings.brew_order) {
-      if (this.settings.brew_order.hasOwnProperty(key)) {
-        this.brewOrders.push({
-          number: this.settings.brew_order[key],
-          label: this.settings.brew_order.getLabel(key),
-          enum: key,
-        });
+  private async _exportAttachments(_storedData: Array<Bean> | Array<Brew>)
+  {
+    for (const entry of _storedData) {
+      for (const attachment of entry.attachments) {
+        await this._exportFile(attachment);
       }
     }
-    this.brewOrders.sort((obj1, obj2) => {
-      if (obj1.number > obj2.number) {
-        return 1;
-      }
-
-      if (obj1.number < obj2.number) {
-        return -1;
-      }
-
-      return 0;
-    });
   }
+
+  private async _exportFile(_filePath) {
+      let path: string;
+      let fileName: string;
+      path = this.file.dataDirectory;
+      fileName = _filePath;
+      if (fileName.startsWith('/')) {
+        fileName = fileName.slice(1);
+      }
+      let storageLocation: string = '';
+
+      switch (device.platform) {
+
+        case 'Android':
+          storageLocation = cordova.file.externalRootDirectory;
+          break;
+        case 'iOS':
+          storageLocation = cordova.file.documentsDirectory;
+          break;
+      }
+
+      try {
+        const fileSystem: any = await new Promise(async (resolve) =>
+          await window.resolveLocalFileSystemURL(storageLocation, resolve)
+        );
+
+        const directory: DirectoryEntry = await new Promise(async (resolve) =>
+          await fileSystem.getDirectory('Download', {
+            create: true,
+            exclusive: false
+          }, resolve)
+        );
+        const exportDirectory: DirectoryEntry = await new Promise(async (resolve) =>
+          await directory.getDirectory('Beanconqueror_export', {
+            create: true,
+            exclusive: false
+          }, resolve)
+        );
+        await this.file.copyFile(path, fileName, exportDirectory.nativeURL, fileName);
+      } catch(ex){
+
+      }
+
+
+  }
+
+  private async _importFiles(_storedData: Array<Bean> | Array<Brew>,_importPath: string)
+  {
+    for (const entry of _storedData) {
+      for (const attachment of entry.attachments) {
+        await this._importFile(attachment,_importPath);
+      }
+    }
+  }
+
+  private async _importFile(_filePath: string, _importPath: string) {
+    let path: string;
+    let fileName: string;
+    path = this.file.dataDirectory;
+    fileName = _filePath;
+    if (fileName.startsWith('/')) {
+      fileName = fileName.slice(1);
+    }
+    let storageLocation: string = '';
+
+    switch (device.platform) {
+
+      case 'Android':
+        storageLocation = _importPath;
+        break;
+      case 'iOS':
+        storageLocation = cordova.file.documentsDirectory;
+        break;
+    }
+
+    try {
+      try {
+        // extra catch because maybe file is not existing
+        await this.file.removeFile(path,fileName);
+      }
+      catch (ex){
+
+      }
+      await this.file.copyFile(storageLocation,fileName,path,fileName)
+    } catch(ex){
+      this.uiLog.error('Import file ' + ex.message);
+    }
+  }
+
+
+
   /* tslint:disable */
   private __importDummyData(): void {
     this.uiLog.log('Import dummy data');
     const dummyData = BeanconquerorSettingsDummy;
+
+    if (dummyData.SETTINGS[0]['brew_order']['before'] === undefined) {
+      this.uiLog.log('Old brew order structure');
+      // Breaking change, we need to throw away the old order types by import
+      const settingsConst = new Settings();
+      dummyData['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(settingsConst.brew_order);
+    }
+    SettingsPage.__cleanupImportSettingsData(dummyData['SETTINGS'][0]);
     this.uiStorage.import(dummyData).then(() => {
       this.__reinitializeStorages().then(() => {
         this.__initializeSettings();
+        this.setLanguage();
+        this.uiAlert.showMessage(this.translate.instant('IMPORT_SUCCESSFULLY'));
       });
+    });
+  }
+
+  /* tslint:enable */
+  private async __readAndroidJSONFile (_fileEntry: FileEntry,_importPath : string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      _fileEntry.file(async (file) => {
+        const reader = new FileReader();
+        reader.onloadend = (event: Event) => {
+          this.__importJSON(reader.result as string,_importPath);
+
+        };
+        reader.onerror = (event: Event) => {
+          reject();
+        };
+
+        reader.readAsText(file);
+      });
+
     });
   }
 
@@ -256,76 +378,104 @@ export class SettingsPage implements OnInit {
   private async __readJSONFile (path, file): Promise<any> {
     return new Promise((resolve, reject) => {
       this.file.readAsText(path, file)
-          .then((content) => {
-            const parsedContent = JSON.parse(content);
+        .then((content) => {
+          this.__importJSON(content,path);
+        })
+        .catch((err) => {
+          reject(err);
 
-            // Set empty arrays if not existing.
-            if (!parsedContent[this.uiPreparationStorage.getDBPath()]) {
-              parsedContent[this.uiPreparationStorage.getDBPath()] = [];
-            }
-            if (!parsedContent[this.uiBeanStorage.getDBPath()]) {
-              parsedContent[this.uiBeanStorage.getDBPath()] = [];
-            }
-            if (!parsedContent[this.uiBrewStorage.getDBPath()]) {
-              parsedContent[this.uiBrewStorage.getDBPath()] = [];
-            }
-            if (!parsedContent[this.uiSettingsStorage.getDBPath()]) {
-              parsedContent[this.uiSettingsStorage.getDBPath()] = [];
-            }
-            if (parsedContent[this.uiPreparationStorage.getDBPath()] &&
-                parsedContent[this.uiBeanStorage.getDBPath()] &&
-                parsedContent[this.uiBrewStorage.getDBPath()] &&
-                parsedContent[this.uiSettingsStorage.getDBPath()]) {
-
-              SettingsPage.__cleanupImportBeanData(parsedContent[this.uiBeanStorage.getDBPath()]);
-              SettingsPage.__cleanupImportBrewData(parsedContent[this.uiBrewStorage.getDBPath()]);
-
-              // When exporting the value is a number, when importing it needs to be  a string.
-              parsedContent['SETTINGS'][0]['brew_view'] = parsedContent['SETTINGS'][0]['brew_view'] + '';
-
-              this.uiStorage.import(parsedContent).then((_data) => {
-                if (_data.BACKUP === false) {
-                  this.__reinitializeStorages().then(() => {
-                    this.__initializeSettings();
-
-                    if (this.uiBrewStorage.getAllEntries().length > 0 && this.uiMillStorage.getAllEntries().length <= 0) {
-                      // We got an update and we got no mills yet, therefore we add a Standard mill.
-                      const data: Mill = new Mill();
-                      data.name = 'Standard';
-                      this.uiMillStorage.add(data);
-
-                      const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
-                      for (const brew of brews) {
-                        brew.mill = data.config.uuid;
-                        this.uiBrewStorage.update(brew);
-                      }
-                    }
-
-                    this.uiAlert.showMessage(this.translate.instant('IMPORT_SUCCESSFULLY'));
-                  });
-
-                } else {
-                  this.uiAlert.showMessage(this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED'));
-                }
-
-              }, () => {
-                this.uiAlert.showMessage(this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED'));
-              });
-
-            } else {
-              this.uiAlert.showMessage(this.translate.instant('INVALID_FILE_DATA'));
-            }
-          })
-          .catch((err) => {
-            reject(err);
-
-          });
+        });
     });
   }
 
+
+  private __importJSON(_content: string,_importPath: string) {
+    const parsedContent = JSON.parse(_content);
+
+    const isIOS: boolean = this.platform.is('ios');
+    // Set empty arrays if not existing.
+    if (!parsedContent[this.uiPreparationStorage.getDBPath()]) {
+      parsedContent[this.uiPreparationStorage.getDBPath()] = [];
+    }
+    if (!parsedContent[this.uiBeanStorage.getDBPath()]) {
+      parsedContent[this.uiBeanStorage.getDBPath()] = [];
+    }
+    if (!parsedContent[this.uiBrewStorage.getDBPath()]) {
+      parsedContent[this.uiBrewStorage.getDBPath()] = [];
+    }
+    if (!parsedContent[this.uiSettingsStorage.getDBPath()]) {
+      parsedContent[this.uiSettingsStorage.getDBPath()] = [];
+    }
+    if (parsedContent[this.uiPreparationStorage.getDBPath()] &&
+      parsedContent[this.uiBeanStorage.getDBPath()] &&
+      parsedContent[this.uiBrewStorage.getDBPath()] &&
+      parsedContent[this.uiSettingsStorage.getDBPath()]) {
+
+      if (!isIOS){
+        SettingsPage.__cleanupImportBeanData(parsedContent[this.uiBeanStorage.getDBPath()]);
+        SettingsPage.__cleanupImportBrewData(parsedContent[this.uiBrewStorage.getDBPath()]);
+      }
+      SettingsPage.__cleanupImportSettingsData(parsedContent[this.uiSettingsStorage.getDBPath()]);
+
+      // When exporting the value is a number, when importing it needs to be  a string.
+      parsedContent['SETTINGS'][0]['brew_view'] = parsedContent['SETTINGS'][0]['brew_view'] + '';
+      try {
+        if (!parsedContent['SETTINGS'][0]['brew_order']['before'] === undefined) {
+          this.uiLog.log('Old brew order structure');
+          // Breaking change, we need to throw away the old order types by import
+          const settingsConst = new Settings();
+          parsedContent['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(settingsConst.brew_order);
+        }
+      } catch (ex) {
+        const settingsConst = new Settings();
+        parsedContent['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(settingsConst.brew_order);
+      }
+
+
+      this.uiStorage.import(parsedContent).then(async (_data) => {
+        if (_data.BACKUP === false) {
+          this.__reinitializeStorages().then(async () => {
+            this.__initializeSettings();
+
+
+            if (!isIOS) {
+              const brewsData:Array<Brew> = this.uiBrewStorage.getAllEntries();
+              const beansData:Array<Bean> = this.uiBeanStorage.getAllEntries();
+              await this._importFiles(brewsData,_importPath);
+              await this._importFiles(beansData,_importPath);
+            }
+
+            if (this.uiBrewStorage.getAllEntries().length > 0 && this.uiMillStorage.getAllEntries().length <= 0) {
+              // We got an update and we got no mills yet, therefore we add a Standard mill.
+              const data: Mill = new Mill();
+              data.name = 'Standard';
+              this.uiMillStorage.add(data);
+
+              const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
+              for (const brew of brews) {
+                brew.mill = data.config.uuid;
+                this.uiBrewStorage.update(brew);
+              }
+            }
+            this.setLanguage();
+            this.uiAlert.showMessage(this.translate.instant('IMPORT_SUCCESSFULLY'));
+          });
+
+        } else {
+          this.uiAlert.showMessage(this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED'));
+        }
+
+      }, () => {
+        this.uiAlert.showMessage(this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED'));
+      });
+
+    } else {
+      this.uiAlert.showMessage(this.translate.instant('INVALID_FILE_DATA'));
+    }
+  }
   private __initializeSettings(): void {
     this.settings = this.uiSettingsStorage.getSettings();
-    this.__initializeBrewOrders();
+
   }
 
   private async __reinitializeStorages (): Promise<any> {
