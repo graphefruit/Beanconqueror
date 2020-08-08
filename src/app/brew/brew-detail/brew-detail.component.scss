@@ -11,10 +11,14 @@
     margin-right: 16px;
   }
 
+
   ion-card
   {
-    ion-item:last-of-type{
+    div.last-item {
       margin-bottom:16px;
+      /*Last one*/
+      order:10000;
     }
+
   }
 }
