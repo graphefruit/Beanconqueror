@@ -16,6 +16,29 @@ Download today, track your brews, change your recipes, to get the best tasting c
 
 ## Sneak preview
 ![Beanconqueror gif](demo/Beanconqueror.gif)
+
+## Features
+
+Different features are supported by this app, a brief overview you'll find here.
+
+- Add your own beans / grinders / preparation methods
+- Record different brew-parameters like:
+  - grind size
+  - grind amount
+  - brew time
+  - first coffee drip
+  - images 
+  - etc.
+- Manage your own workflow, first grind amount, then grind size? No problem
+- Archive old beans / grinders / preparation methods
+- Rate your brews
+- Cup your brews by SCA
+ 
+
+## Special thanks
+
+- Nicola for giving the app a whole new design :)
+
 ## Getting the App
 The App is a crossplattform application, running on the ionic framework. 
 
