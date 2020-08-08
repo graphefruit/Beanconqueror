@@ -207,7 +207,7 @@
   "CUPPING_SCORE_UNIFORMITY_TOOLTIP": "Uniformity refers to cup-to-cup differences. Dry-process coffees can be less uniform than wet-process coffees by nature. We would never avoid a lot that has fantastic flavors if occasionally it waivers. This is scored during the cupping protocol, where multiple cups are made of each lot being reviewed.",
   "CUPPING_SCORE_CUPPERS_CORRECTION_TOOLTIP": "This is adapted from the SCAA system and Cup of Excellence scoring (they sometimes call it \"Overall Points\"). It allows a cupper to ensure that the total score correctly communicates the overall impression of the cup. You might criticize this approach and consider it \"fudging\" the total. In a way, you would be correct ... but it would be much worse to change the category scores to achieve the desired total (to give a coffee a 9 for acidity when you know it is a 7), or conversely to have a coffee that absolutely deserves a 90 end up at 84. The specific Cupper's Correction number matters naught, be it a 5 or an 8 ... the idea is that the total score gives a correct impression of the coffee quality.",
   "CUPPING_SCORE_TOOLTIP": "100-95 = Astounding, 90-94 = Outstanding, 85-89 = Very Good, 80-84 = Good, 75-79 = Fair, 70-74 = Poor",
-  "DETAIL_BREW": "Bezug details",
+  "DETAIL_BREW": "Bezugdetails",
   "EDIT_BREW": "Bezug editieren",
   "ADD_BEAN": "Bohne hinzufügen",
   "EDIT_BEAN": "Bohne editieren",
@@ -243,10 +243,10 @@
   "WELCOME_PAGE_BEAN_ADD": "Bohne hinzufügen",
   "SKIP": "Überspringen",
   "WELCOME_PAGE_PREPARATION_TITLE": "Brühmethode hinzufügen",
-  "WELCOME_PAGE_PREPARATION_DESCRIPTION": "Kaffee zubereiten ohne eine Brühmethode? Egal ob V60, Aeropress, Siebträger oder ganz Klassisch? Füge deine Brühmethode hinzu.",
+  "WELCOME_PAGE_PREPARATION_DESCRIPTION": "Kaffee zubereiten ohne eine Brühmethode? Egal ob V60, Aeropress, Siebträger oder ganz klassisch? Füge deine Brühmethode hinzu.",
   "WELCOME_PAGE_PREPARATION_ADD": "Brühmethode hinzufügen",
   "WELCOME_PAGE_MILL_TITLE": "Mühle hinzufügen",
-  "WELCOME_PAGE_MILL_DESCRIPTION": "Bohne, Brühmethode und zu guter letzt: Deine Mühle, dann gehts schon los!",
+  "WELCOME_PAGE_MILL_DESCRIPTION": "Bohne, Brühmethode und zu guter Letzt: Deine Mühle, dann gehts schon los!",
   "WELCOME_PAGE_MILL_ADD": "Mühle hinzufügen",
   "WELCOME_PAGE_TITLE": "Herzlich willkommen!",
   "WELCOME_PAGE_BEAN_HEADLINE": "Die erste Bohne",
@@ -356,5 +356,6 @@
   "COFFEE_DRUNKEN_QUANTITY": "Getrunkene Menge",
   "IMAGE_DELETED": "Bild wurde gelöscht",
   "IMAGE_NOT_DELETED": "Bild konnte nicht gelöscht werden",
-  "EXTERNAL_STORAGE_NOT_SUPPORTED": "Externes Dateisystem wird leider nicht unterstützt"
+  "EXTERNAL_STORAGE_NOT_SUPPORTED": "Externes Dateisystem wird leider nicht unterstützt",
+  "TAB_ARCHIVE": "Archiv"
 }

@@ -6,30 +6,30 @@
   <ion-button (click)="initTimer()"
               *ngIf="!timer.runTimer && (timer.hasStarted || timer.hasFinished) || timer.hasFinished"
               class="big-icon-only" fill="clear" slot="end" tappable>
-    <ion-icon class="ion-color-accent" name="beanconqueror-refresh"></ion-icon>
+    <ion-icon class="ion-color-accent" name="beanconqueror-refresh" slot="icon-only"></ion-icon>
 
   </ion-button>
   <ion-button (click)="bloomTime()" *ngIf="timer.runTimer && timer.hasStarted && !timer.hasFinished && showBloomTimer"
               class="big-icon-only" fill="clear" slot="end" tappable>
-    <ion-icon class="ion-color-accent" name="beanconqueror-blooming"></ion-icon>
+    <ion-icon class="ion-color-accent" name="beanconqueror-blooming" slot="icon-only"></ion-icon>
   </ion-button>
   <ion-button (click)="dripTime()" *ngIf="timer.runTimer && timer.hasStarted && !timer.hasFinished && showDripTimer"
               class="big-icon-only" fill="clear" slot="end" tappable>
-    <ion-icon class="ion-color-accent" name="beanconqueror-water-drop"></ion-icon>
+    <ion-icon class="ion-color-accent" name="beanconqueror-water-drop" slot="icon-only"></ion-icon>
   </ion-button>
   <ion-button (click)="pauseTimer()" *ngIf="timer.runTimer && timer.hasStarted && !timer.hasFinished"
               class="big-icon-only" fill="clear" slot="end" tappable>
-    <ion-icon class="ion-color-accent" name="beanconqueror-pause"></ion-icon>
+    <ion-icon class="ion-color-accent" name="beanconqueror-pause" slot="icon-only"></ion-icon>
 
   </ion-button>
 
 
   <ion-button (click)="resumeTimer()" *ngIf="!timer.runTimer && timer.hasStarted && !timer.hasFinished"
               class="big-icon-only" fill="clear" slot="end" tappable>
-    <ion-icon class="ion-color-accent" name="beanconqueror-play"></ion-icon>
+    <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only"></ion-icon>
   </ion-button>
   <ion-button (click)="startTimer()" *ngIf="!timer.hasStarted" class="big-icon-only" fill="clear" slot="end" tappable>
-    <ion-icon class="ion-color-accent" name="beanconqueror-play"></ion-icon>
+    <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only"></ion-icon>
   </ion-button>
 
 

@@ -371,6 +371,7 @@ ion-menu:host .menu-inner {
 
     ion-icon {
       font-size: 64px !important; //Preferred size here
+      width: 44px;
     }
   }
   ion-alert {
@@ -457,6 +458,14 @@ ion-menu:host .menu-inner {
   ion-label {
     font-family: "Baloo";
     font-size: 14px;
+
+  }
+  ion-label.label-stacked {
+    -webkit-transform: translate3d(0, 40%, 0) scale(1);
+    -moz-transform: translate3d(0, 40%, 0) scale(1);
+    -ms-transform: translate3d(0, 40%, 0) scale(1);
+    -o-transform: translate3d(0, 40%, 0) scale(1);
+    transform: translate3d(0, 40%, 0) scale(1);
   }
   ion-textarea {
     --background: #F2F2F2;
@@ -602,8 +611,6 @@ ion-menu:host .menu-inner {
     width: 22px !important;
 
   }
-
-
 }
 
 .color-white {
