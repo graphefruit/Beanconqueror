@@ -23,7 +23,7 @@
                     </ion-item>
                     <ion-item>
                       <ion-col *ngIf="bean?.weight && settings.grind_weight"
-                               [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount(), gramTotal: bean?.weight}"
+                               [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount() | number : '.1-1', gramTotal: bean?.weight}"
                                size="12">
                       </ion-col>
                       <ion-col *ngIf="!(bean?.weight && settings.grind_weight)"
