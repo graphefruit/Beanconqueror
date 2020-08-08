@@ -39,11 +39,13 @@ Or sponsor me via Github
 Thanks! :heart:
 
 
-##Statistics
+## Statistics
+
 ![Graphefruit github stats](https://github-readme-stats.vercel.app/api?username=graphefruit&theme=dark&repo=Beanconqueror)
+
 ![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=graphefruit&theme=dark)
 
-##Questions
+## Questions
 
 ### Why is external storage not supported?
 Sadly there are some issues to read/use files from external storage
