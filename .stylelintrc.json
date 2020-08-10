@@ -1,6 +1,6 @@
 {
   "extends": "stylelint-config-standard",
   "rules": {
-    "selector-type-no-unknown": false
+    "selector-type-no-unknown": [true, { "ignoreTypes": ["/^ion-/"] }]
   }
 }
