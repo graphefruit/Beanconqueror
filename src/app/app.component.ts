@@ -109,6 +109,7 @@ export class AppComponent implements AfterViewInit {
 
           // #7
           this.statusBar.show();
+          this.statusBar.styleBlackOpaque();
           this.splashScreen.hide();
           this.keyboard.hideFormAccessoryBar(false);
 

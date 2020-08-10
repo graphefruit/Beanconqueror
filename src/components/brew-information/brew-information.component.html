@@ -49,7 +49,7 @@
                 {{"BREW_DATA_GRIND_WEIGHT" | translate}}:
               </ion-col>
               <ion-col size="4">
-                {{brew?.grind_weight}}
+                {{brew?.grind_weight | number : '.0-2'}}
               </ion-col>
             </ion-item>
 
@@ -58,7 +58,7 @@
                 {{"BREW_DATA_BREW_QUANTITY" | translate}}:
               </ion-col>
               <ion-col size="4">
-                {{brew?.brew_quantity}}
+                {{brew?.brew_quantity | number : '.0-2'}}
               </ion-col>
             </ion-item>
 
