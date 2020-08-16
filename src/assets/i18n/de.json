@@ -178,8 +178,8 @@
   "PAGE_HELPER_WATER_HARDNESS_GERMAN_HARDNESS": "°dH",
   "PAGE_HELPER_WATER_HARDNESS_TOTAL_HARDNESS": "Gesamthärte",
   "PAGE_HELPER_BREW_RATIO": "Brührate",
-  "PAGE_HELPER_BREW_RATIO_GROUND_COFFEE": "Gewicht",
-  "PAGE_HELPER_BREW_RATIO_WATER": "Wasser",
+  "PAGE_HELPER_BREW_RATIO_GROUND_COFFEE": "Gewicht Kaffeemehl",
+  "PAGE_HELPER_BREW_RATIO_WATER": "Wasser- / Espressogewicht",
   "PAGE_HELPER_BREW_RATIO_CALCULATED": "Kalkulierte Brührate",
   "PAGE_SETTINGS_SHOW_ARCHIVED_BREWS": "Anzeige archivierter Brühungen",
   "PAGE_SETTINGS_SHOW_ARCHIVED_BEANS": "Anzeige archivierter Bohnen",
@@ -357,5 +357,6 @@
   "IMAGE_DELETED": "Bild wurde gelöscht",
   "IMAGE_NOT_DELETED": "Bild konnte nicht gelöscht werden",
   "EXTERNAL_STORAGE_NOT_SUPPORTED": "Externes Dateisystem wird leider nicht unterstützt",
+  "BEANS_ARCHIVED": "Archiviert",
   "TAB_ARCHIVE": "Archiv"
 }
