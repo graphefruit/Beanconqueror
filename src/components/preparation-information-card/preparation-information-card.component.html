@@ -14,28 +14,28 @@
               <ion-col size="8">{{"PAGE_HOME_TOTAL_BREWS" | translate}}
               </ion-col>
               <ion-col size="4">
-                {{getBrewsCount()| number : '.1-1'}}
+                {{getBrewsCount()| number : '.0'}}
               </ion-col>
             </ion-item>
             <ion-item>
               <ion-col size="8">{{"COFFEE_GRAMS_GRINDED" | translate}}
               </ion-col>
               <ion-col size="4">
-                {{getWeightCount()| number : '.1-1'}}
+                {{getWeightCount()| number : '.0-2'}}
               </ion-col>
             </ion-item>
             <ion-item>
               <ion-col size="8">{{"COFFEE_DRUNKEN_QUANTITY" | translate}}
               </ion-col>
               <ion-col size="4">
-                {{getDrunkenQuantity()| number : '.1-1'}}&nbsp;(l/kg)
+                {{getDrunkenQuantity()| number : '.0-2'}}&nbsp;(l/kg)
               </ion-col>
             </ion-item>
             <ion-item>
               <ion-col size="8">{{"BEANS_USED" | translate}}
               </ion-col>
               <ion-col size="4">
-                {{getBeansCount()| number : '.1-1'}}
+                {{getBeansCount()| number : '.0'}}
               </ion-col>
             </ion-item>
           </ion-list>

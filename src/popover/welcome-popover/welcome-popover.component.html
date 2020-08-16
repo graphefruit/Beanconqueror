@@ -32,7 +32,7 @@
   <ion-card>
     <ion-slides #slider [options]="slideOpts" pager="true">
       <ion-slide>
-        <div>
+        <div class="ion-padding-top">
           <div class="welcome-content-text">
             <ion-title>
               {{"WELCOME_PAGE_ACTIVATE_GOOGLE_ANALYTICS_TITLE" | translate}}
@@ -41,7 +41,7 @@
               {{"WELCOME_PAGE_ACTIVATE_GOOGLE_ANALYTICS_DESCRIPTION" | translate}}
             </div>
           </div>
-          <ion-row>
+          <ion-row class="ion-padding-top">
             <ion-col size="6">
               <ion-button (click)="activeGoogleAnalytics(false)" color="accent" expand="block" tappable
                           fill="outline">{{"DO_NOT_ACTIVE" | translate}}</ion-button>
@@ -54,7 +54,7 @@
         </div>
       </ion-slide>
       <ion-slide>
-        <div>
+        <div class="ion-padding-top">
           <div class="welcome-content-text">
             <ion-title>
               {{"WELCOME_PAGE_BEAN_TITLE" | translate}}
@@ -63,7 +63,7 @@
               {{"WELCOME_PAGE_BEAN_DESCRIPTION" | translate}}
             </div>
           </div>
-          <ion-row>
+          <ion-row class="ion-padding-top">
             <ion-col size="12">
               <ion-button (click)="addBean()" color="accent"
                           expand="block">{{"WELCOME_PAGE_BEAN_ADD" | translate}}</ion-button>
@@ -78,7 +78,7 @@
         </div>
       </ion-slide>
       <ion-slide>
-        <div>
+        <div class="ion-padding-top">
           <div class="welcome-content-text">
             <ion-title>
               {{"WELCOME_PAGE_PREPARATION_TITLE" | translate}}
@@ -87,7 +87,7 @@
               {{"WELCOME_PAGE_PREPARATION_DESCRIPTION" | translate}}
             </div>
           </div>
-          <ion-row>
+          <ion-row class="ion-padding-top">
             <ion-col size="12">
               <ion-button (click)="addPreparation()" color="accent"
                           expand="block">{{"WELCOME_PAGE_PREPARATION_ADD" | translate}}</ion-button>
@@ -102,7 +102,7 @@
         </div>
       </ion-slide>
       <ion-slide>
-        <div>
+        <div class="ion-padding-top">
           <div class="welcome-content-text">
             <ion-title>
               {{"WELCOME_PAGE_MILL_TITLE" | translate}}
@@ -111,7 +111,7 @@
               {{"WELCOME_PAGE_MILL_DESCRIPTION" | translate}}
             </div>
           </div>
-          <ion-row>
+          <ion-row class="ion-padding-top">
             <ion-col size="12">
               <ion-button (click)="addMill()" color="accent"
                           expand="block">{{"WELCOME_PAGE_MILL_ADD" | translate}}</ion-button>
@@ -126,7 +126,7 @@
         </div>
       </ion-slide>
       <ion-slide>
-        <div>
+        <div class="ion-padding-top">
           <div class="welcome-content-text">
             <ion-title>
               {{"WELCOME_PAGE_LETS_START_TITLE" | translate}}
@@ -135,7 +135,7 @@
               {{"WELCOME_PAGE_LETS_START_DESCRIPTION" | translate}}
             </div>
           </div>
-          <ion-row>
+          <ion-row class="ion-padding-top">
             <ion-col size="12">
               <ion-button (click)="finish()" class="big-icon-only" fill="clear" tappable>
                 <ion-icon class="rotate-icon-180" name="beanconqueror-back" slot="icon-only"></ion-icon>
