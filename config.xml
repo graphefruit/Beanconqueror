@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.beanconqueror.app" version="4.0.0" xmlns="http://www.w3.org/ns/widgets">
+<widget id="com.beanconqueror.app" version="4.0.1" xmlns="http://www.w3.org/ns/widgets">
     <name>Beanconqueror</name>
     <description />
     <author email="lars.saalbach@googlemail.com" href="https://github.com/graphefruit/beanconqueror">Lars Saalbach</author>
@@ -112,10 +112,10 @@
             </array>
         </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
-            <string>Need camera access to take pictures</string>
+            <string>The app needs camera access, so that you can take pictures from coffee beans, coffee bags, your own coffee brews etc. This pictures are stored inside the app.</string>
         </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryUsageDescription">
-            <string>Need photo library access to get pictures from there</string>
+            <string>The app needs photo library access, so that you can choose from already taken pictures from coffee beans, coffee bags, your own coffee brews etc. This pictures are stored inside the app.</string>
         </edit-config>
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
