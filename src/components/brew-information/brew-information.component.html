@@ -78,6 +78,7 @@
               </ion-col>
               <ion-col size="4">
                 {{brew?.grind_size}}
+                <span *ngIf="settings.mill_speed === true && brew?.mill_speed > 0"> @ {{ brew?.mill_speed }}</span>
               </ion-col>
             </ion-item>
 
