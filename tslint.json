@@ -72,8 +72,6 @@
     "no-string-literal": false,
     "no-trailing-whitespace": false,
     "one-line": false,
-    "object-literal-shorthand": false,
-    "selector-type-"
+    "object-literal-shorthand": false
   }
-
 }
