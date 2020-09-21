@@ -12,6 +12,7 @@ export interface IBean {
   // Blend / Single Origin.
   beanMix: BEAN_MIX_ENUM;
   variety: string;
+  processing: string;
   country: string;
   // Aromatics
   aromatics: string;
