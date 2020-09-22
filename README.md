@@ -61,6 +61,11 @@ Or sponsor me via Github
 
 Thanks! :heart:
 
+## Contribution
+
+Before continuing it is important to note that Beanconqueror is open source available.
+
+I welcome pull requests, but you will be required to sign the Beanconqueror CLA before any contributions can be merged.
 
 ## Statistics
 
