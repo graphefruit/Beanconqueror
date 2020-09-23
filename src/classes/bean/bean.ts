@@ -19,6 +19,7 @@ export class Bean implements IBean {
   public roast_range: number;
   public beanMix: BEAN_MIX_ENUM;
   public variety: string;
+  public processing: string;
   public country: string;
   // tslint:disable-next-line
   public roast_custom: string;
@@ -41,6 +42,7 @@ export class Bean implements IBean {
     this.roast_custom = '';
     this.beanMix = 'SINGLE_ORIGIN' as BEAN_MIX_ENUM;
     this.variety = '';
+    this.processing = '';
     this.country = '';
     this.aromatics = '';
     this.weight = 0;
