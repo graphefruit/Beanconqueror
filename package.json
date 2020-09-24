@@ -26,6 +26,7 @@
     "@ionic-native/app-version": "^5.23.0",
     "@ionic-native/camera": "^5.23.0",
     "@ionic-native/core": "^5.23.0",
+    "@ionic-native/date-picker": "^5.28.0",
     "@ionic-native/file": "^5.23.0",
     "@ionic-native/file-chooser": "^5.23.0",
     "@ionic-native/file-path": "^5.23.0",
@@ -55,6 +56,7 @@
     "cordova-plugin-app-version": "^0.1.9",
     "cordova-plugin-appminimize": "^1.0.1",
     "cordova-plugin-camera": "^4.1.0",
+    "cordova-plugin-datepicker": "^0.9.3",
     "cordova-plugin-device": "^2.0.3",
     "cordova-plugin-enable-multidex": "^0.2.0",
     "cordova-plugin-file": "^6.0.2",
@@ -161,7 +163,8 @@
         "ANDROID_FIREBASE_CRASHLYTICS_VERSION": "17.0.1",
         "ANDROID_FIREBASE_CRASHLYTICS_NDK_VERSION": "17.0.1",
         "ANDROID_GSON_VERSION": "2.8.6"
-      }
+      },
+      "cordova-plugin-datepicker": {}
     },
     "platforms": [
       "android",

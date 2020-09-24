@@ -361,5 +361,6 @@
   "IMAGE_NOT_DELETED": "Image could not be deleted",
   "EXTERNAL_STORAGE_NOT_SUPPORTED": "Sorry, external story is not supported",
   "BEANS_ARCHIVED": "Archived",
-  "TAB_ARCHIVE": "Archive"
+  "TAB_ARCHIVE": "Archive",
+  "TODAY": "Today"
 }

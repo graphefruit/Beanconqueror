@@ -361,5 +361,6 @@
   "IMAGE_NOT_DELETED": "Bild konnte nicht gelöscht werden",
   "EXTERNAL_STORAGE_NOT_SUPPORTED": "Externes Dateisystem wird leider nicht unterstützt",
   "BEANS_ARCHIVED": "Archiviert",
-  "TAB_ARCHIVE": "Archiv"
+  "TAB_ARCHIVE": "Archiv",
+  "TODAY": "Heute",
 }
