@@ -25,6 +25,10 @@ export class BeansPage implements OnInit {
 
   public settings: Settings;
 
+  public openBeans: Array<Bean> = [];
+  public finishedBeans: Array<Bean> = [];
+
+
   public bean_segment: string = 'open';
   constructor(public modalCtrl: ModalController,
               private readonly changeDetectorRef: ChangeDetectorRef,
@@ -139,6 +143,8 @@ export class BeansPage implements OnInit {
   private __initializeBeans(): void {
     this.beans = this.uiBeanStorage.getAllEntries()
         .sort((a, b) => a.name.localeCompare(b.name));
+    this.openBeans = this.getOpenBeans();
+    this.finishedBeans = this.getFinishedBeans();
   }
 
   private __deleteBean(_bean: Bean): void {
