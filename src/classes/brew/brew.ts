@@ -159,19 +159,22 @@ export class Brew implements IBrew {
 
   /**
    * Get the calculated bean age for this brew
+   * If no age could be calculated it returns -1
    */
   public getCalculatedBeanAge(): number {
 
     const bean: IBean = this.getBeanStorageInstance()
       .getByUUID(this.bean) as IBean;
     if (bean) {
-      const roastingDate = moment(bean.roastingDate);
-      const brewTime = moment.unix(this.config.unix_timestamp);
+      if (bean.roastingDate) {
+        const roastingDate = moment(bean.roastingDate);
+        const brewTime = moment.unix(this.config.unix_timestamp);
 
-      return brewTime.diff(roastingDate, 'days');
+        return brewTime.diff(roastingDate, 'days');
+      }
     }
 
-    return 0;
+    return -1;
   }
 
 

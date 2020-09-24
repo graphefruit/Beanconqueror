@@ -18,7 +18,7 @@
     </ion-input>
   </ion-item>
     <ion-item *ngIf="viewLoaded===true" lines="none">
-      <ion-label position="stacked">{{"BEAN_DATA_ROAST_NAME" | translate}}*</ion-label>
+      <ion-label position="stacked">{{"BEAN_DATA_ROAST_NAME" | translate}}</ion-label>
       <ngx-stars (ratingOutput)="onRoastRate($event)" [customPadding]="'20px'" [initialStars]="this.data.roast_range"
                  [readonly]="false" [size]="2" class="ion-margin-top" style="margin-left:20px;"></ngx-stars>
     </ion-item>
@@ -38,7 +38,7 @@
       </ion-input>
     </ion-item>
   <ion-item>
-    <ion-label position="stacked">{{"BEAN_DATA_ROASTING_DATE" | translate}}*</ion-label>
+    <ion-label position="stacked">{{"BEAN_DATA_ROASTING_DATE" | translate}}</ion-label>
     <ion-datetime [(ngModel)]="data.roastingDate" cancelText="{{'CANCEL' | translate}}" displayFormat="DD.MM.YYYY" doneText="{{'CHOOSE' | translate}}" max="2999-12-31" min="2000-01-01"
                   placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROASTING_DATE' | translate}}"
                   name="roastingDate"
