@@ -75,11 +75,11 @@ export class MillModalSelectComponent implements OnInit {
     this.modalController.dismiss({
       selected_values: chosenKeys,
       selected_text: selected_text,
-    });
+    },undefined,'mill-modal-select');
   }
 
   public async dismiss(): Promise<void> {
-    this.modalController.dismiss();
+    this.modalController.dismiss(undefined,undefined,'mill-modal-select');
   }
 
 }

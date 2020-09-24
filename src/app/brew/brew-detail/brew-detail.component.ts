@@ -42,7 +42,7 @@ export class BrewDetailComponent implements OnInit {
   public dismiss(): void {
     this.modalController.dismiss({
       dismissed: true
-    });
+    },undefined,'brew-detail');
   }
 
   public ngOnInit() {}

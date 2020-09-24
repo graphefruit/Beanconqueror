@@ -99,7 +99,7 @@ export class BeansEditComponent implements OnInit {
   public dismiss(): void {
     this.modalController.dismiss({
       dismissed: true
-    });
+    },undefined,'bean-edit');
   }
   private __formValid(): boolean {
     let valid: boolean = true;

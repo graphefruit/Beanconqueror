@@ -139,7 +139,7 @@ export class BeansAddComponent implements OnInit {
   public dismiss(): void {
     this.modalController.dismiss({
       'dismissed': true
-    });
+    },undefined,'bean-add');
   }
 
   private __formValid(): boolean {

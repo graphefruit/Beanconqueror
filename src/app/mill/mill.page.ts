@@ -87,7 +87,8 @@ export class MillPage  implements OnInit  {
     const modal = await this.modalCtrl.create({
       component: MillAddComponent, cssClass: 'half-bottom-modal', showBackdrop: true,
       backdropDismiss: true,
-      swipeToClose: true
+      swipeToClose: true,
+      id: 'mill-add'
     });
     await modal.present();
     await modal.onWillDismiss();
@@ -97,8 +98,9 @@ export class MillPage  implements OnInit  {
 
     const editModal = await this.modalCtrl.create({
       component: MillEditComponent,
-      componentProps: {'mill' : _mill}
-    }, );
+      componentProps: {'mill' : _mill},
+      id:'mill-edit',
+    });
     await editModal.present();
     await editModal.onWillDismiss();
     this.loadMills();

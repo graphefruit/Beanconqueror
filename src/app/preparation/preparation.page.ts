@@ -81,7 +81,10 @@ export class PreparationPage implements OnInit {
   }
 
   public async editPreparation(_preparation: Preparation) {
-    const modal = await this.modalCtrl.create({component: PreparationEditComponent, componentProps: {preparation: _preparation}});
+    const modal = await this.modalCtrl.create({component: PreparationEditComponent,
+      componentProps: {preparation: _preparation},
+      id: 'preparation-edit'
+    });
     await modal.present();
     await modal.onWillDismiss();
     this.loadPreparations();

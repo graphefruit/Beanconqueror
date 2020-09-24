@@ -48,6 +48,7 @@ export class BeanOverlayDirective {
           selectedValues: selectedValues,
           showFinished: this.showFinished
         },
+      id:'bean-modal-select',
       showBackdrop: true
     });
     await modal.present();

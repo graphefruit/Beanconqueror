@@ -51,7 +51,8 @@ export class BrewDashboardInformationComponent implements OnInit {
       component: BrewPopoverActionsComponent,
       event,
       translucent: true,
-      componentProps: {brew: this.brew}
+      componentProps: {brew: this.brew},
+      id:'brew-popover-actions',
     });
     await popover.present();
     const data = await popover.onWillDismiss();

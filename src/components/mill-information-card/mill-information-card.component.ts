@@ -66,7 +66,8 @@ export class MillInformationCardComponent implements OnInit {
       component: MillPopoverActionsComponent,
       event,
       translucent: true,
-      componentProps: {mill: this.mill}
+      componentProps: {mill: this.mill},
+      id:'mill-popover-actions'
     });
     await popover.present();
     const data = await popover.onWillDismiss();

@@ -53,7 +53,7 @@ export class DashboardPage implements OnInit {
 
   public async addBrew() {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
-      const modal = await this.modalCtrl.create({component: BrewAddComponent});
+      const modal = await this.modalCtrl.create({component: BrewAddComponent, id:'brew-add'});
       await modal.present();
       await modal.onWillDismiss();
       this.loadBrews();
@@ -107,14 +107,14 @@ export class DashboardPage implements OnInit {
 
   public async editBrew(_brew: Brew) {
 
-    const modal = await this.modalCtrl.create({component: BrewEditComponent, componentProps: {brew: _brew}});
+    const modal = await this.modalCtrl.create({component: BrewEditComponent, id:'brew-edit', componentProps: {brew: _brew}});
     await modal.present();
     await modal.onWillDismiss();
     this.loadBrews();
   }
 
   public async repeatBrew(_brew: Brew) {
-    const modal = await this.modalCtrl.create({component: BrewAddComponent, componentProps: {brew_template: _brew}});
+    const modal = await this.modalCtrl.create({component: BrewAddComponent, id:'brew-add', componentProps: {brew_template: _brew}});
     await modal.present();
     await modal.onWillDismiss();
     this.loadBrews();
@@ -123,7 +123,7 @@ export class DashboardPage implements OnInit {
 
   public async add() {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
-      const modal = await this.modalCtrl.create({component: BrewAddComponent});
+      const modal = await this.modalCtrl.create({component: BrewAddComponent, id:'brew-add'});
       await modal.present();
       await modal.onWillDismiss();
       this.loadBrews();
@@ -132,14 +132,14 @@ export class DashboardPage implements OnInit {
   }
 
   public async detailBrew(_brew: Brew) {
-    const modal = await this.modalCtrl.create({component: BrewDetailComponent, componentProps: {brew: _brew}});
+    const modal = await this.modalCtrl.create({component: BrewDetailComponent, id:'brew-detail', componentProps: {brew: _brew}});
     await modal.present();
     await modal.onWillDismiss();
     this.loadBrews();
   }
 
   public async cupBrew(_brew: Brew) {
-    const modal = await this.modalCtrl.create({component: BrewCuppingComponent, componentProps: {brew: _brew}});
+    const modal = await this.modalCtrl.create({component: BrewCuppingComponent, id:'brew-cup', componentProps: {brew: _brew}});
     await modal.present();
     await modal.onWillDismiss();
     this.loadBrews();
@@ -147,7 +147,7 @@ export class DashboardPage implements OnInit {
 
 
   public async viewPhotos(_brew: Brew) {
-    const modal = await this.modalCtrl.create({component: BrewPhotoViewComponent, componentProps: {brew: _brew}});
+    const modal = await this.modalCtrl.create({component: BrewPhotoViewComponent, id:'brew-photo', componentProps: {brew: _brew}});
     await modal.present();
     await modal.onWillDismiss();
   }
