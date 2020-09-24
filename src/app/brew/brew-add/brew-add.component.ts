@@ -21,6 +21,8 @@ import {UIAnalytics} from '../../../services/uiAnalytics';
 import {IMill} from '../../../interfaces/mill/iMill';
 import {UIToast} from '../../../services/uiToast';
 import {UIFileHelper} from '../../../services/uiFileHelper';
+import {DatePicker} from '@ionic-native/date-picker/ngx';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'brew-add',
@@ -62,7 +64,9 @@ export class BrewAddComponent implements OnInit {
                private readonly uiMillStorage: UIMillStorage,
                private readonly uiAnalytics: UIAnalytics,
                private readonly uiToast: UIToast,
-               private readonly uiFileHelper: UIFileHelper) {
+               private readonly uiFileHelper: UIFileHelper,
+               private datePicker: DatePicker,
+               private translate: TranslateService) {
     // Initialize to standard in drop down
     //
 
@@ -329,5 +333,30 @@ export class BrewAddComponent implements OnInit {
       this.settings.mill_speed ||
       this.settings.mill_timer);
 
+  }
+
+  public chooseDateTime(_event) {
+    _event.cancelBubble = true;
+    _event.preventDefault();
+    _event.stopImmediatePropagation();
+    _event.stopPropagation();
+    this.datePicker.show({
+      date: new Date(),
+      mode: 'datetime',
+      androidTheme: this.datePicker.ANDROID_THEMES.THEME_DEVICE_DEFAULT_LIGHT,
+      okText: this.translate.instant('CHOOSE'),
+      todayText: this.translate.instant('TODAY'),
+      cancelText: this.translate.instant('CANCEL'),
+    }).then(
+      (date) => {
+        this.customCreationDate = moment(date).toISOString();
+        console.log(this.customCreationDate);
+       // this.displayingDay = this.getVerse(moment(date).format('DD.MM.YYYY'));
+      },
+      (err) => {
+        console.log('Error occurred while getting date: ', err)
+      }
+
+    );
   }
 }
