@@ -37,7 +37,7 @@ export class BeansAddComponent implements OnInit {
                private readonly uiAnalytics: UIAnalytics,
                private readonly uiFileHelper: UIFileHelper,
                private readonly uiToast: UIToast) {
-    this.data.roastingDate = new Date().toISOString();
+    // this.data.roastingDate = new Date().toISOString();
     this.bean_template = this.navParams.get('bean_template');
   }
 

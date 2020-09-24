@@ -40,7 +40,7 @@ export class BeansEditComponent implements OnInit {
                private readonly uiAnalytics: UIAnalytics,
                private readonly uiToast: UIToast,
                private readonly uiFileHelper: UIFileHelper) {
-    this.data.roastingDate = new Date().toISOString();
+    // this.data.roastingDate = new Date().toISOString();
   }
 
   public ionViewWillEnter(): void {
