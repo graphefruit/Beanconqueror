@@ -40,7 +40,7 @@ export class PreparationPopoverActionsComponent implements OnInit {
   }
 
   public async choose(_type: string): Promise<void> {
-    this.popoverController.dismiss(undefined, _type);
+    this.popoverController.dismiss(undefined, _type, 'preparation-popover-actions')
   }
 
 }

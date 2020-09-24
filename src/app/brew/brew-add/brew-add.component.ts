@@ -105,7 +105,7 @@ export class BrewAddComponent implements OnInit {
   public async dismiss() {
     this.modalController.dismiss({
       dismissed: true
-    });
+    },undefined,'brew-add');
 
 
   }

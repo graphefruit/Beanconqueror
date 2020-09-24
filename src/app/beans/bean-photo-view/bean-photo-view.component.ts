@@ -28,7 +28,7 @@ export class BeanPhotoViewComponent implements OnInit {
   public dismiss(): void {
     this.modalController.dismiss({
       dismissed: true
-    });
+    },undefined,'bean-photo');
   }
 
 

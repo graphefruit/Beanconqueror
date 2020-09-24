@@ -125,7 +125,7 @@ export class BrewEditComponent implements OnInit {
   public dismiss(): void {
     this.modalController.dismiss({
       'dismissed': true
-    });
+    },undefined,'brew-edit');
   }
 
   public updateBrew(): void {

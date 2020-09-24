@@ -355,7 +355,8 @@ export class AppComponent implements AfterViewInit {
   }
 
   private async __trackNewBean() {
-    const modal = await this.modalCtrl.create({component: BeansAddComponent, componentProps: {hide_toast_message: false}});
+    const modal = await this.modalCtrl.create({component: BeansAddComponent, id:'bean-add',
+      componentProps: {hide_toast_message: false}});
     await modal.present();
     await modal.onWillDismiss();
 
@@ -375,7 +376,7 @@ export class AppComponent implements AfterViewInit {
   private async __trackNewMill() {
     const modal = await this.modalCtrl.create({
       component: MillAddComponent,
-      cssClass: 'half-bottom-modal', showBackdrop: true, componentProps: {hide_toast_message: false}
+      cssClass: 'half-bottom-modal', id:'mill-add', showBackdrop: true, componentProps: {hide_toast_message: false}
     });
     await modal.present();
     await modal.onWillDismiss();

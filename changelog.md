@@ -1,3 +1,7 @@
+4.1
+- New features
+  - Roasting date is not required anymore
+
 4.0
 - New features
   - Archive beans/preparations/grinders

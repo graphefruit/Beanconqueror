@@ -58,7 +58,7 @@ export class PreparationAddTypeComponent implements OnInit {
     this.modalController.dismiss({
       dismissed: true,
       added: _added
-    });
+    }, undefined, 'preparation-add-type');
   }
 
   public ngOnInit() {

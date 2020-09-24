@@ -47,7 +47,7 @@ export class MillEditComponent implements OnInit {
   public dismiss(): void {
    this.modalController.dismiss({
       'dismissed': true
-    });
+    },undefined,'mill-edit');
   }
   public ngOnInit() {}
 
