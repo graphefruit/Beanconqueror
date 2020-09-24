@@ -15,7 +15,8 @@ import {TranslateService} from '@ngx-translate/core';
 })
 export class StatisticPage implements OnInit {
 
-  @ViewChild('drinkChart', {static: false}) public drinkChart;
+  @ViewChild('brewChart', {static: false}) public brewChart;
+  @ViewChild('drinkingChart', {static: false}) public drinkingChart;
 
   constructor(
     public uiStatistic: UIStatistic,
@@ -28,6 +29,7 @@ export class StatisticPage implements OnInit {
   }
 
   public ionViewDidEnter(): void {
+    this.__loadBrewChart();
     this.__loadDrinkingChart();
   }
 
@@ -83,6 +85,7 @@ export class StatisticPage implements OnInit {
 
   }
 
+
   private __loadDrinkingChart(): void {
     const brewView: Array<BrewView> = this.__getBrewsSortedForMonth();
     // Take the last 12 Months
@@ -91,7 +94,43 @@ export class StatisticPage implements OnInit {
     const drinkingData = {
       labels: [],
       datasets: [{
-        label: this.translate.instant('PAGE_STATISTICS_DRUNKEN_BREWS'),
+        label: this.translate.instant('PAGE_STATISTICS_DRUNKEN_QUANTITY') + ' (kg/l)',
+        data: []
+      }]
+    };
+
+    for (const forBrew of lastBrewViews) {
+      drinkingData.labels.push(forBrew.title);
+    }
+    for (const forBrew of lastBrewViews) {
+      let drunkenQuantity: number = 0;
+      for (const brew of forBrew.brews) {
+        drunkenQuantity +=brew.brew_quantity;
+      }
+      drinkingData.datasets[0].data.push(Math.round((drunkenQuantity / 1000) * 100) / 100);
+    }
+    const chartOptions = {
+      legend: {
+        display: true,
+        position: 'top'
+      }
+    };
+
+   const drinkChartToDismiss = new Chart(this.drinkingChart.nativeElement, {
+      type: 'line',
+      data: drinkingData,
+      options: chartOptions
+    });
+  }
+  private __loadBrewChart(): void {
+    const brewView: Array<BrewView> = this.__getBrewsSortedForMonth();
+    // Take the last 12 Months
+    const lastBrewViews: Array<BrewView> = brewView.slice(-12);
+
+    const drinkingData = {
+      labels: [],
+      datasets: [{
+        label: this.translate.instant('PAGE_STATISTICS_BREW_PROCESSES'),
         data: []
       }]
     };
@@ -109,7 +148,7 @@ export class StatisticPage implements OnInit {
       }
     };
 
-    this.drinkChart = new Chart(this.drinkChart.nativeElement, {
+    const brewChartToDismiss = new Chart(this.brewChart.nativeElement, {
       type: 'line',
       data: drinkingData,
       options: chartOptions

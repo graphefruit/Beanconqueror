@@ -30,7 +30,7 @@
 
   <div [ngSwitch]="bean_segment">
     <div *ngSwitchCase="'open'">
-      <div *ngIf="getOpenBeans()?.length == 0" class="ion-padding ion-text-center">
+      <div *ngIf="openBeans.length == 0" class="ion-padding ion-text-center">
         <div>
           <ion-icon color="inactive" name="beanconqueror-beans" size="large"></ion-icon>
         </div>
@@ -38,14 +38,17 @@
         {{"PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS" | translate}}
         </div>
       </div>
-      <bean-information (beanAction)="beanAction($event[0],$event[1])" *ngFor="let bean of getOpenBeans()"
-                        [bean]="bean"></bean-information>
+      <ion-virtual-scroll *ngIf="openBeans.length > 0" [items]="openBeans"
+                          approxItemHeight="200px">
+        <bean-information (beanAction)="beanAction($event[0],$event[1])"  *virtualItem="let bean;"
+                          [bean]="bean"></bean-information>
+      </ion-virtual-scroll>
 
 
     </div>
     <div *ngIf="settings?.show_archived_beans">
       <div *ngSwitchCase="'finished'">
-        <div *ngIf="getFinishedBeans()?.length == 0" class="ion-padding ion-text-center">
+        <div *ngIf="finishedBeans.length == 0" class="ion-padding ion-text-center">
           <div>
             <ion-icon color="inactive" name="beanconqueror-beans" size="large"></ion-icon>
           </div>
@@ -53,8 +56,11 @@
             {{"PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS" | translate}}
           </div>
         </div>
-        <bean-information (beanAction)="beanAction($event[0],$event[1])" *ngFor="let bean of getFinishedBeans()"
-                          [bean]="bean"></bean-information>
+        <ion-virtual-scroll *ngIf="finishedBeans.length > 0" [items]="finishedBeans"
+                            approxItemHeight="200px">
+          <bean-information (beanAction)="beanAction($event[0],$event[1])"  *virtualItem="let bean;"
+                            [bean]="bean"></bean-information>
+        </ion-virtual-scroll>
 
       </div>
     </div>
