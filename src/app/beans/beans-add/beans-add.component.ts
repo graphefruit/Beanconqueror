@@ -5,10 +5,14 @@ import {ROASTS_ENUM} from '../../../enums/beans/roasts';
 import {UIHelper} from '../../../services/uiHelper';
 import {UIImage} from '../../../services/uiImage';
 import {Bean} from '../../../classes/bean/bean';
-import {IonSlides, ModalController, NavParams} from '@ionic/angular';
+import {IonSlides, ModalController, NavParams, Platform} from '@ionic/angular';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 import {UIFileHelper} from '../../../services/uiFileHelper';
 import {UIToast} from '../../../services/uiToast';
+
+import {DatePicker} from '@ionic-native/date-picker/ngx';
+import {TranslateService} from '@ngx-translate/core';
+import moment from 'moment';
 
 @Component({
   selector: 'beans-add',
@@ -36,7 +40,10 @@ export class BeansAddComponent implements OnInit {
                public uiHelper: UIHelper,
                private readonly uiAnalytics: UIAnalytics,
                private readonly uiFileHelper: UIFileHelper,
-               private readonly uiToast: UIToast) {
+               private readonly uiToast: UIToast,
+               private readonly datePicker: DatePicker,
+               private readonly translate: TranslateService,
+               private readonly platform: Platform) {
     // this.data.roastingDate = new Date().toISOString();
     this.bean_template = this.navParams.get('bean_template');
   }
@@ -153,6 +160,29 @@ export class BeansAddComponent implements OnInit {
   }
 
   public ngOnInit() {}
+  public chooseDate(_event) {
+    if (this.platform.is('cordova')) {
+      _event.cancelBubble = true;
+      _event.preventDefault();
+      _event.stopImmediatePropagation();
+      _event.stopPropagation();
+      this.datePicker.show({
+        date: new Date(),
+        mode: 'date',
+        androidTheme: this.datePicker.ANDROID_THEMES.THEME_DEVICE_DEFAULT_LIGHT,
+        okText: this.translate.instant('CHOOSE'),
+        todayText: this.translate.instant('TODAY'),
+        cancelText: this.translate.instant('CANCEL'),
+      }).then(
+        (date) => {
+          this.data.roastingDate = moment(date).toISOString();
+        },
+        (err) => {
 
+        }
+
+      );
+    }
+  }
 
 }

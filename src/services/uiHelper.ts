@@ -34,7 +34,7 @@ export class UIHelper {
                private readonly file: File,
                private readonly uiFileHelper: UIFileHelper,
                private readonly uiLog: UILog) {
-    moment.locale('de');
+
   }
 
   public copyData(_value: any): any {
@@ -86,6 +86,7 @@ export class UIHelper {
       format = _format;
 
     }
+
     return moment.unix(_unix)
       .format(format);
   }

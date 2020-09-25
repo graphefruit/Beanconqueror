@@ -8,7 +8,7 @@ import {BREW_VIEW_ENUM} from '../../../enums/settings/brewView';
 import {UIBrewStorage} from '../../../services/uiBrewStorage';
 import {TimerComponent} from '../../../components/timer/timer.component';
 import {UISettingsStorage} from '../../../services/uiSettingsStorage';
-import {IonSlides, ModalController, NavParams} from '@ionic/angular';
+import {IonSlides, ModalController, NavParams, Platform} from '@ionic/angular';
 import {UIMillStorage} from '../../../services/uiMillStorage';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {UIImage} from '../../../services/uiImage';
@@ -65,8 +65,9 @@ export class BrewAddComponent implements OnInit {
                private readonly uiAnalytics: UIAnalytics,
                private readonly uiToast: UIToast,
                private readonly uiFileHelper: UIFileHelper,
-               private datePicker: DatePicker,
-               private translate: TranslateService) {
+               private readonly datePicker: DatePicker,
+               private readonly translate: TranslateService,
+               private readonly platform: Platform) {
     // Initialize to standard in drop down
     //
 
@@ -336,27 +337,27 @@ export class BrewAddComponent implements OnInit {
   }
 
   public chooseDateTime(_event) {
-    _event.cancelBubble = true;
-    _event.preventDefault();
-    _event.stopImmediatePropagation();
-    _event.stopPropagation();
-    this.datePicker.show({
-      date: new Date(),
-      mode: 'datetime',
-      androidTheme: this.datePicker.ANDROID_THEMES.THEME_DEVICE_DEFAULT_LIGHT,
-      okText: this.translate.instant('CHOOSE'),
-      todayText: this.translate.instant('TODAY'),
-      cancelText: this.translate.instant('CANCEL'),
-    }).then(
-      (date) => {
-        this.customCreationDate = moment(date).toISOString();
-        console.log(this.customCreationDate);
-       // this.displayingDay = this.getVerse(moment(date).format('DD.MM.YYYY'));
-      },
-      (err) => {
-        console.log('Error occurred while getting date: ', err)
-      }
+    if (this.platform.is('cordova')) {
+      _event.cancelBubble = true;
+      _event.preventDefault();
+      _event.stopImmediatePropagation();
+      _event.stopPropagation();
+      this.datePicker.show({
+        date: new Date(),
+        mode: 'datetime',
+        androidTheme: this.datePicker.ANDROID_THEMES.THEME_DEVICE_DEFAULT_LIGHT,
+        okText: this.translate.instant('CHOOSE'),
+        todayText: this.translate.instant('TODAY'),
+        cancelText: this.translate.instant('CANCEL'),
+      }).then(
+        (date) => {
+          this.customCreationDate = moment(date).toISOString();
+        },
+        (err) => {
 
-    );
+        }
+
+      );
+    }
   }
 }

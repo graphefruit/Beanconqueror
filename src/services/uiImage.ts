@@ -75,7 +75,19 @@ export class UIImage {
                   if (path && (path.toLowerCase().endsWith('.png') || path.toLowerCase().endsWith('.jpg') ||
                     path.toLowerCase().endsWith('.jpeg') || path.toLowerCase().endsWith('.gif'))) {
                       if (path.toLowerCase().indexOf('sdcard')===-1) {
-                        this.uiFileHelper.copyFileWithSpecificName(path).then((_fullPath) => {
+
+console.log('blaa just for lars');
+                        const newPath: string =path;
+                        let importPath: string = '';
+                        if (newPath.lastIndexOf('/Download/')>-1) {
+                          let pathFromDownload = newPath.substr(0,newPath.lastIndexOf('/Download/'));
+                          const decodedURI = decodeURIComponent(uri);
+                          pathFromDownload = pathFromDownload + decodedURI.substring(decodedURI.lastIndexOf('/Download/'));
+                          importPath = pathFromDownload;
+                        } else {
+                          importPath = newPath;
+                        }
+                        this.uiFileHelper.copyFileWithSpecificName(importPath).then((_fullPath) => {
                           resolve(_fullPath);
                         }, () => {
                           reject();
