@@ -314,14 +314,14 @@ export class AppComponent implements AfterViewInit {
     }
     switch (settings.startup_view) {
       case STARTUP_VIEW_ENUM.HOME_PAGE:
-        this.router.navigate(['/home/dashboard']);
+        this.router.navigate(['/home/dashboard'], {replaceUrl:true});
         break;
       case STARTUP_VIEW_ENUM.BREW_PAGE:
-        this.router.navigate(['/home/brews']);
+        this.router.navigate(['/home/brews'], {replaceUrl:true});
         break;
       case STARTUP_VIEW_ENUM.ADD_BREW:
         await this.__trackNewBrew();
-        this.router.navigate(['/home/brews']);
+        this.router.navigate(['/home/brews'], {replaceUrl:true});
         break;
     }
   }
@@ -378,7 +378,7 @@ export class AppComponent implements AfterViewInit {
     });
     await modal.present();
     await modal.onWillDismiss();
-    this.router.navigate(['/']);
+    this.router.navigate(['/'], {replaceUrl:true});
 
   }
 
@@ -389,20 +389,20 @@ export class AppComponent implements AfterViewInit {
     });
     await modal.present();
     await modal.onWillDismiss();
-    this.router.navigate(['/']);
+    this.router.navigate(['/'], {replaceUrl:true});
 
   }
 
   private __registerBack() {
     this.platform.backButton.subscribeWithPriority(0, () => {
-      if (this.routerOutlet && this.routerOutlet.canGoBack()) {
+      if (this.router.url.indexOf('/home') === -1 && this.routerOutlet && this.routerOutlet.canGoBack() ) {
         this.routerOutlet.pop();
       } else if (this.router.url.indexOf('/home')>=0) {
         this.appMinimize.minimize();
         // or if that doesn't work, try
         // navigator['app'].exitApp();
       } else {
-        this.router.navigate(['/home/dashboard']);
+        this.router.navigate(['/home/dashboard'], {replaceUrl:true});
         // this.generic.showAlert("Exit", "Do you want to exit the app?", this.onYesHandler, this.onNoHandler, "backPress");
       }
     });
