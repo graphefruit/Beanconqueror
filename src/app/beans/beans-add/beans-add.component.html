@@ -40,7 +40,7 @@
     </ion-item>
     <ion-item>
       <ion-label position="stacked">{{"BEAN_DATA_ROASTING_DATE" | translate}}</ion-label>
-      <ion-datetime [(ngModel)]="data.roastingDate" cancelText="{{'CANCEL' | translate}}" displayFormat="DD.MM.YYYY" doneText="{{'CHOOSE' | translate}}" max="2999-12-31" min="2000-01-01" name="roastingDate" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROASTING_DATE' | translate}}"
+      <ion-datetime (click)="chooseDate($event);" [(ngModel)]="data.roastingDate" cancelText="{{'CANCEL' | translate}}" displayFormat="DD.MM.YYYY" doneText="{{'CHOOSE' | translate}}" max="2999-12-31" min="2000-01-01" name="roastingDate" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROASTING_DATE' | translate}}"
                     #roastingDate="ngModel"></ion-datetime>
     </ion-item>
     <ion-item>

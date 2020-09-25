@@ -30,6 +30,8 @@ import {Settings} from '../classes/settings/settings';
 import {STARTUP_VIEW_ENUM} from '../enums/settings/startupView';
 import {UIAnalytics} from '../services/uiAnalytics';
 import {WelcomePopoverComponent} from '../popover/welcome-popover/welcome-popover.component';
+/** Third party */
+import moment from 'moment';
 
 @Component({
   selector: 'app-root',
@@ -247,6 +249,7 @@ export class AppComponent implements AfterViewInit {
               settings.language = settingLanguage;
               this.uiSettingsStorage.saveSettings(settings);
               await this._translate.use(settingLanguage).toPromise();
+              moment.locale(settingLanguage);
               resolve();
 
             })
@@ -255,6 +258,7 @@ export class AppComponent implements AfterViewInit {
                 this.uiLog.error(`Exception occured when setting language ${exMessage}`);
                 this._translate.setDefaultLang('en');
                 await this._translate.use('en').toPromise();
+                moment.locale('en');
                 resolve();
               });
           } else {
@@ -265,6 +269,8 @@ export class AppComponent implements AfterViewInit {
             settings.language = settingLanguage;
             this.uiSettingsStorage.saveSettings(settings);
             await this._translate.use(settingLanguage).toPromise();
+            moment.locale(settingLanguage);
+
             resolve();
 
           }
@@ -275,6 +281,7 @@ export class AppComponent implements AfterViewInit {
           settings.language = 'en';
           this.uiSettingsStorage.saveSettings(settings);
           await this._translate.use('en').toPromise();
+          moment.locale('en');
           resolve();
         }
       } else {
@@ -283,6 +290,7 @@ export class AppComponent implements AfterViewInit {
           this.uiLog.info(`Set language from settings: ${settings.language}`);
           this._translate.setDefaultLang(settings.language);
           await this._translate.use(settings.language).toPromise();
+          moment.locale(settings.language);
           resolve();
         } else {
           this.uiLog.info(`Set default language from settings, because no settings set: de `);
@@ -290,6 +298,7 @@ export class AppComponent implements AfterViewInit {
           settings.language = 'de';
           this.uiSettingsStorage.saveSettings(settings);
           await this._translate.use('de').toPromise();
+          moment.locale(settings.language);
           resolve();
         }
 

@@ -4,7 +4,7 @@ import {BREW_QUANTITY_TYPES_ENUM} from '../../../enums/brews/brewQuantityTypes';
 import {UIHelper} from '../../../services/uiHelper';
 import {UIBrewStorage} from '../../../services/uiBrewStorage';
 import {IBrew} from '../../../interfaces/brew/iBrew';
-import {IonSlides, ModalController, NavParams} from '@ionic/angular';
+import {IonSlides, ModalController, NavParams, Platform} from '@ionic/angular';
 import {UIMillStorage} from '../../../services/uiMillStorage';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {UIImage} from '../../../services/uiImage';
@@ -18,6 +18,8 @@ import {Mill} from '../../../classes/mill/mill';
 import {Bean} from '../../../classes/bean/bean';
 import {UIToast} from '../../../services/uiToast';
 import {UIFileHelper} from '../../../services/uiFileHelper';
+import {DatePicker} from '@ionic-native/date-picker/ngx';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'brew-edit',
@@ -52,7 +54,10 @@ export class BrewEditComponent implements OnInit {
                private readonly uiAnalytics: UIAnalytics,
                private readonly uiSettingsStorage: UISettingsStorage,
                private readonly uiToast: UIToast,
-               private readonly uiFileHelper: UIFileHelper) {
+               private readonly uiFileHelper: UIFileHelper,
+               private readonly datePicker: DatePicker,
+               private readonly translate: TranslateService,
+               private readonly platform: Platform) {
 
     this.settings = this.uiSettingsStorage.getSettings();
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
@@ -141,5 +146,29 @@ export class BrewEditComponent implements OnInit {
 
   public ngOnInit() {}
 
+  public chooseDateTime(_event) {
+    if (this.platform.is('cordova')) {
+      _event.cancelBubble = true;
+      _event.preventDefault();
+      _event.stopImmediatePropagation();
+      _event.stopPropagation();
+      this.datePicker.show({
+        date: new Date(),
+        mode: 'datetime',
+        androidTheme: this.datePicker.ANDROID_THEMES.THEME_DEVICE_DEFAULT_LIGHT,
+        okText: this.translate.instant('CHOOSE'),
+        todayText: this.translate.instant('TODAY'),
+        cancelText: this.translate.instant('CANCEL'),
+      }).then(
+        (date) => {
+          this.customCreationDate = moment(date).toISOString();
+        },
+        (err) => {
+
+        }
+
+      );
+    }
+  }
 
 }

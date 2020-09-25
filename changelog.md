@@ -1,6 +1,10 @@
 4.1
 - New features
   - Roasting date is not required anymore
+  - Added some more statistics
+  
+- Bug fixes
+  - Right translation on statistics page
 
 4.0
 - New features
