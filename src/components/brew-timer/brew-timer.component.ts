@@ -25,6 +25,7 @@ export class BrewTimerComponent implements OnInit {
   public showBloomTimer: boolean = true;
   public showDripTimer: boolean = true;
 
+  protected displayingTime: string = moment().startOf('day').toISOString();
   public timer: ITimer;
 
   constructor() {
@@ -59,6 +60,7 @@ export class BrewTimerComponent implements OnInit {
     } as ITimer;
 
     this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
+    this.displayingTime = moment(this.displayingTime).startOf('day').add('seconds',this.timer.seconds).toISOString();
   }
 
   public startTimer(): void {
@@ -95,6 +97,7 @@ export class BrewTimerComponent implements OnInit {
       }
       this.timer.seconds++;
       this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
+      this.displayingTime = moment(this.displayingTime).startOf('day').add('seconds',this.timer.seconds).toISOString();
       this.timerTick();
       this.timerTicked.emit();
     }, 1000);
@@ -125,5 +128,12 @@ export class BrewTimerComponent implements OnInit {
     const secondsString = (seconds < 10) ? `0${seconds}` : seconds.toString();
 
     return `${hoursString}:${minutesString}:${secondsString}`;
+  }
+  public changeDate(_event) {
+    const durationPassed =  moment.duration(moment(_event).diff(moment(_event).startOf('day')));
+    this.displayingTime = moment(_event).toISOString();
+    this.timer.seconds = durationPassed.asSeconds();
+    // Emit event so parent page can do something
+    this.changeEvent();
   }
 }

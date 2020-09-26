@@ -39,6 +39,8 @@ export class BrewEditComponent implements OnInit {
   public settings: ISettings;
   public customCreationDate: string = '';
 
+  public displayingBrewTime: string = '';
+
   public customSelectSheetOptions: any = {
     cssClass: 'select-full-screen'
   };
@@ -65,6 +67,7 @@ export class BrewEditComponent implements OnInit {
 
     if (brew !== undefined) {
       this.data.initializeByObject(brew);
+      this.displayingBrewTime = moment().startOf('day').add('seconds',this.data.brew_time).toISOString();
     }
 
     this.method_of_preparations = this.uiPreparationStorage.getAllEntries()
@@ -169,6 +172,12 @@ export class BrewEditComponent implements OnInit {
 
       );
     }
+  }
+
+  public changeDate(_event) {
+    const durationPassed =  moment.duration(moment(_event).diff(moment(_event).startOf('day')));
+    this.displayingBrewTime = moment(_event).toISOString();
+    this.data.brew_time = durationPassed.asSeconds();
   }
 
 }
