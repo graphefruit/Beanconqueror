@@ -103,8 +103,9 @@
     </ion-item>
     <ion-item [style.order]="settings.brew_order.while.brew_time" lines="inset">
       <ion-label position="stacked">{{'BREW_DATA_TIME' | translate}}</ion-label>
-      <ion-input [(ngModel)]="data.brew_time" inputmode="decimal" prevent-characters remove-empty-number
-                 type="text"></ion-input>
+      <ion-datetime (ngModelChange)="changeDate($event)" [(ngModel)]="displayingBrewTime" displayFormat="H:mm:ss"></ion-datetime>
+     <!-- <ion-input [(ngModel)]="data.brew_time" inputmode="decimal" prevent-characters remove-empty-number
+                 type="text"></ion-input>-->
     </ion-item>
 
     <ion-item [style.order]="settings.brew_order.while.brew_time"
