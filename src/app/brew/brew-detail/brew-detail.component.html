@@ -100,7 +100,7 @@
       <ion-item *ngIf="settings.brew_time === true" [style.order]="settings.brew_order.while.brew_time">
       <ion-label>
         <h2>{{'BREW_DATA_TIME' | translate}}:</h2>
-        <h3>{{data.brew_time}}</h3>
+        <h3>{{data.getFormattedBrewTime()}}</h3>
       </ion-label>
     </ion-item>
     <ion-item *ngIf="settings.brew_time === true && settings.coffee_first_drip_time === true"
