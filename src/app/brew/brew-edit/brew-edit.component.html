@@ -49,19 +49,19 @@
         <ion-label position="stacked">{{"BREW_DATA_PREPARATION_METHOD" | translate}}</ion-label>
         <ion-select [(ngModel)]="data.method_of_preparation"
                     placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}" preparation-overlay
-                    show-finished>
+                    [show-finished]="true">
         </ion-select>
       </ion-item>
       <ion-item [style.order]="settings.brew_order.before.bean_type" lines="inset">
         <ion-label position="stacked">{{"BREW_DATA_BEAN_TYPE" | translate}}</ion-label>
         <ion-select [(ngModel)]="data.bean" bean-overlay
-                    placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_BEAN_TYPE' | translate}}" show-finished>
+                    [show-finished]="true" placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_BEAN_TYPE' | translate}}">
         </ion-select>
       </ion-item>
       <ion-item [style.order]="settings.brew_order.before.mill" lines="inset">
         <ion-label position="stacked">{{"BREW_DATA_MILL" | translate}}</ion-label>
         <ion-select [(ngModel)]="data.mill" mill-overlay
-                    placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_MILL' | translate}}" show-finished>
+                    [show-finished]="true" placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_MILL' | translate}}">
         </ion-select>
       </ion-item>
       <ion-item [style.order]="settings.brew_order.before.mill_speed"
