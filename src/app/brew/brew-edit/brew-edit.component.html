@@ -103,7 +103,7 @@
     </ion-item>
     <ion-item [style.order]="settings.brew_order.while.brew_time" lines="inset">
       <ion-label position="stacked">{{'BREW_DATA_TIME' | translate}}</ion-label>
-      <ion-datetime (ngModelChange)="changeDate($event)" [(ngModel)]="displayingBrewTime" displayFormat="H:mm:ss"></ion-datetime>
+      <ion-datetime (ngModelChange)="changeDate($event)" [(ngModel)]="displayingBrewTime" displayFormat="H:mm:ss" mode="ios"></ion-datetime>
      <!-- <ion-input [(ngModel)]="data.brew_time" inputmode="decimal" prevent-characters remove-empty-number
                  type="text"></ion-input>-->
     </ion-item>
@@ -198,7 +198,7 @@
       <ion-item [style.order]="settings.brew_order.after.set_custom_brew_time"
                 lines="inset">
         <ion-label position="stacked">{{"BREW_CREATION_DATE" | translate }}</ion-label>
-        <ion-datetime (click)="chooseDateTime($event);" [(ngModel)]="customCreationDate" cancelText="{{'CANCEL' | translate}}" display-format="DD.MM.YYYY HH:mm" doneText="{{'CHOOSE' | translate}}"
+        <ion-datetime (click)="chooseDateTime($event);" [(ngModel)]="customCreationDate" cancelText="{{'CANCEL' | translate}}" display-format="DD.MM.YYYY HH:mm" doneText="{{'CHOOSE' | translate}}" mode="ios"
                       picker-format="DD.MM.YYYY HH:mm"
                       placeholder="Select Date"></ion-datetime>
       </ion-item>
