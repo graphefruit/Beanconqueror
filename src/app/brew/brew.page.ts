@@ -130,10 +130,12 @@ export class BrewPage implements OnInit {
     this.loadBrews();
   }
   public async repeatBrew(_brew: Brew) {
-    const modal = await this.modalCtrl.create({component: BrewAddComponent,id:'brew-add', componentProps: {brew_template: _brew}});
-    await modal.present();
-    await modal.onWillDismiss();
-    this.loadBrews();
+    if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
+      const modal = await this.modalCtrl.create({component: BrewAddComponent, id: 'brew-add', componentProps: {brew_template: _brew}});
+      await modal.present();
+      await modal.onWillDismiss();
+      this.loadBrews();
+    }
   }
 
 
