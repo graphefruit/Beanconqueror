@@ -239,10 +239,20 @@ export class Brew implements IBrew {
   }
 
   public getFormattedCoffeeBrewTime(): string {
-    const secs = this.brew_time - this.coffee_first_drip_time;
+    const secs = this.brew_time;
+    const start = moment().startOf('day').add('seconds',secs);
+    if (this.coffee_first_drip_time > 0) {
+      const diffing = moment().startOf('day').add('seconds',this.coffee_first_drip_time);
+      if (this.coffee_first_drip_time > this.brew_time) {
+        return ' - ' +  moment.utc(diffing.diff(start)).format('HH:mm:ss');
+      } else {
+        return moment.utc(start.diff(diffing)).format('HH:mm:ss');
+      }
+    } else {
+      return start.format('HH:mm:ss');
+    }
 
-    const formatted = moment.utc(secs * 1000).format('HH:mm:ss');
-    return formatted;
+
   }
 
   private getBeanStorageInstance(): UIBeanStorage {

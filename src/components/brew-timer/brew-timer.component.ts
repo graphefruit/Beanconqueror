@@ -45,6 +45,7 @@ export class BrewTimerComponent implements OnInit {
     this.timer.seconds = seconds;
 
     this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
+    this.displayingTime = moment(this.displayingTime).startOf('day').add('seconds',this.timer.seconds).toISOString();
   }
 
   public initTimer(): void {

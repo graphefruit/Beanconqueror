@@ -23,6 +23,7 @@ import {UIToast} from '../../../services/uiToast';
 import {UIFileHelper} from '../../../services/uiFileHelper';
 import {DatePicker} from '@ionic-native/date-picker/ngx';
 import {TranslateService} from '@ngx-translate/core';
+import {BrewTimerComponent} from '../../../components/brew-timer/brew-timer.component';
 
 @Component({
   selector: 'brew-add',
@@ -32,7 +33,7 @@ import {TranslateService} from '@ngx-translate/core';
 export class BrewAddComponent implements OnInit {
 
   @ViewChild('photoSlides', {static: false}) public photoSlides: IonSlides;
-  @ViewChild('timer', {static: false}) public timer: TimerComponent;
+  @ViewChild('timer', {static: false}) public timer: BrewTimerComponent;
   @ViewChild('brewTemperatureTime', {static: false}) public brewTemperatureTime: TimerComponent;
 
   private readonly brew_template: Brew;
