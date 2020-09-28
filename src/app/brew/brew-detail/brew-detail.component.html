@@ -155,6 +155,22 @@
         <h2>{{"BREW_DATA_RATING" | translate }}:</h2>
         <h3>{{data.rating}}</h3>
       </ion-label>
+
+    </ion-item>
+    <ion-item *ngIf="settings.tds === true" [style.order]="settings.brew_order.after.tds">
+      <ion-label>
+        <h2>{{"BREW_DATA_TDS" | translate }}:</h2>
+        <h3>{{data.tds}}</h3>
+      </ion-label>
+
+    </ion-item>
+
+    <ion-item *ngIf="settings.tds === true && settings.grind_weight === true && settings.brew_quantity === true"
+              [style.order]="settings.brew_order.after.tds" disabled="true" lines="inset">
+      <ion-label>
+        <h2>{{"BREW_DATA_CALCULATED_EXTRACTION_YIELD" | translate }}:</h2>
+        <h3>{{data.getExtractionYield()}}</h3>
+      </ion-label>
     </ion-item>
       <ion-item *ngIf="settings.note === true" [style.order]="settings.brew_order.after.note">
       <ion-label>

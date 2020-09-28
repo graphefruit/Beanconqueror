@@ -56,6 +56,7 @@ export class Brew implements IBrew {
   // tslint:disable-next-line
   public coffee_blooming_time: number;
   public attachments: Array<string>;
+  public tds: number;
   public config: Config;
 
   public cupping: ICupping;
@@ -83,6 +84,7 @@ export class Brew implements IBrew {
     this.coffee_blooming_time = 0;
     this.attachments = [];
     this.config = new Config();
+    this.tds = 0;
 
 
     this.cupping = {
@@ -175,6 +177,20 @@ export class Brew implements IBrew {
     }
 
     return -1;
+  }
+
+  public getExtractionYield(): string {
+    const grindWeight: number = this.grind_weight;
+    const brewQuantity: number = this.brew_quantity;
+    const tds: number = this.tds;
+
+
+    return this.toFixedIfNecessary(((brewQuantity * tds) / grindWeight),2).toString();
+
+  }
+
+  private toFixedIfNecessary( value, dp ){
+    return +parseFloat(value).toFixed( dp );
   }
 
 

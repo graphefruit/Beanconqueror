@@ -34,6 +34,7 @@ export class Settings implements ISettings {
   public coffee_blooming_time: boolean;
   public set_last_coffee_brew: boolean;
   public set_custom_brew_time: boolean;
+  public tds: boolean;
   public default_last_coffee_parameters: DefaultLastCoffeeParameters;
   public brew_order: BrewOrder;
   public config: Config;
@@ -108,6 +109,8 @@ export class Settings implements ISettings {
     this.default_last_coffee_parameters = new DefaultLastCoffeeParameters();
     Object.assign(this.default_last_coffee_parameters, settingsObj.default_last_coffee_parameters);
   }
+
+
 
   public resetFilter() {
     this.brew_filter = {
