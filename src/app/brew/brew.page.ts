@@ -1,5 +1,5 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {AlertController, ModalController, Platform, PopoverController} from '@ionic/angular';
+import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {AlertController, IonVirtualScroll, ModalController, Platform, PopoverController} from '@ionic/angular';
 import {UIAlert} from '../../services/uiAlert';
 import {UIHelper} from '../../services/uiHelper';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
@@ -47,6 +47,7 @@ export class BrewPage implements OnInit {
   public customSelectSheetOptions: any = {
     cssClass: 'select-break-text'
   };
+  @ViewChild('openScroll', {read: IonVirtualScroll, static: false}) public openScroll: IonVirtualScroll;
 
   public openBrewsFilter: IBrewPageFilter = {
     mill: [],
@@ -81,8 +82,6 @@ export class BrewPage implements OnInit {
                private readonly uiMillStorage: UIMillStorage,
                private translate: TranslateService,
                private readonly uiToast: UIToast) {
-
-
   }
 
 
@@ -92,6 +91,11 @@ export class BrewPage implements OnInit {
     this.openBrewsFilter = this.settings.brew_filter.OPEN;
     this.loadBrews();
 
+    // https://github.com/ionic-team/ionic-framework/issues/18409
+    // Workarround
+    setTimeout( () => {
+      this.openScroll.checkRange(0,this.openBrewsView.length);
+    },25);
     // If we don't have beans, we cant do a brew from now on, because of roasting degree and the age of beans.
   }
 
@@ -186,6 +190,7 @@ export class BrewPage implements OnInit {
   public loadBrews(): void {
     this.__initializeBrews();
     this.changeDetectorRef.detectChanges();
+
   }
 
 
