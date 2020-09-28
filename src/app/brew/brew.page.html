@@ -44,8 +44,7 @@
         </div>
       </div>
 
-
-      <ion-virtual-scroll [items]="openBrewsView  | searchBrews:query"  approx-item-height="300px">
+      <ion-virtual-scroll #openScroll [items]="openBrewsView  | searchBrews:query"  approxItemHeight="220px">
         <brew-information (brewAction)="brewAction($event[0],$event[1])" *virtualItem="let brew;"
                           [brew]="brew"></brew-information>
       </ion-virtual-scroll>
@@ -69,7 +68,7 @@
           </div>
         </div>
 
-        <ion-virtual-scroll *ngIf="archiveBrewsView?.length > 0" [items]="archiveBrewsView  | searchBrews:query">
+        <ion-virtual-scroll *ngIf="archiveBrewsView?.length > 0" [items]="archiveBrewsView  | searchBrews:query" approxItemHeight="220px">
           <brew-information (brewAction)="brewAction($event[0],$event[1])" *virtualItem="let brew;"
                             [brew]="brew"></brew-information>
         </ion-virtual-scroll>
