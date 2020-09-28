@@ -101,6 +101,14 @@
                 {{brew?.getFormattedTotalCoffeeBrewTime()}}
               </ion-col>
             </ion-item>
+            <ion-item *ngIf="settings.pressure_profile === true && brew?.pressure_profile">
+              <ion-col class="ion-text-bold" size="5">
+                {{'BREW_DATA_PRESSURE_PROFILE' | translate}}:
+              </ion-col>
+              <ion-col size="7">
+                {{brew?.pressure_profile}}
+              </ion-col>
+            </ion-item>
           </ion-list>
         </ion-col>
       </ion-row>
