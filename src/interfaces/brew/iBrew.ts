@@ -94,6 +94,12 @@ export interface IBrew {
    * Image attachments
    */
   attachments: Array<string>;
+
+  /**
+   * Total dissolved units
+   */
+  tds: number;
+
   config: IConfig;
 
   cupping: ICupping;

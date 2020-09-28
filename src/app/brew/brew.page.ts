@@ -38,11 +38,11 @@ export class BrewPage implements OnInit {
   public brews: Array<Brew>;
   public openBrewsView: Array<Brew> = [];
   public archiveBrewsView: Array<Brew> = [];
+
+
   public brew_segment: string = 'open';
   public settings: Settings;
   public query: string = '';
-  public openBrewsCount: number = 0;
-  public archivedBrewsCount: number = 0;
 
   public customSelectSheetOptions: any = {
     cssClass: 'select-break-text'
@@ -188,10 +188,10 @@ export class BrewPage implements OnInit {
     this.changeDetectorRef.detectChanges();
   }
 
+
   private __deleteBrew(_brew: Brew): void {
     this.uiBrewStorage.removeByObject(_brew);
     this.loadBrews();
-
   }
 
 
@@ -199,8 +199,6 @@ export class BrewPage implements OnInit {
     this.brews = this.uiBrewStorage.getAllEntries();
     this.openBrewsView = [];
     this.archiveBrewsView = [];
-    this.archivedBrewsCount = 0;
-    this.openBrewsCount = 0;
 
     this.__initializeBrewView('open');
     this.__initializeBrewView('archiv');

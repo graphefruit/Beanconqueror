@@ -8,6 +8,7 @@ import {BrewPopoverActionsComponent} from '../../app/brew/brew-popover-actions/b
 import {Bean} from '../../classes/bean/bean';
 import {Preparation} from '../../classes/preparation/preparation';
 import {Mill} from '../../classes/mill/mill';
+import {BREW_QUANTITY_TYPES_ENUM} from '../../enums/brews/brewQuantityTypes';
 
 @Component({
   selector: 'brew-information',
@@ -25,7 +26,7 @@ export class BrewInformationComponent implements OnInit {
   public bean: Bean;
   public preparation: Preparation;
   public mill: Mill;
-
+  public brewQuantityEnum = BREW_QUANTITY_TYPES_ENUM;
   public settings: Settings;
 
   constructor(private readonly uiSettingsStorage: UISettingsStorage, private readonly popoverCtrl: PopoverController) {

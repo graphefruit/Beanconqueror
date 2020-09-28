@@ -116,10 +116,15 @@
         <ion-checkbox (ngModelChange)="saveSettings()"
                       [(ngModel)]="settings.default_last_coffee_parameters.rating"></ion-checkbox>
       </ion-item>
-    <ion-item lines="none" tappable>
+    <ion-item  tappable>
         <ion-label>{{"BREW_DATA_NOTES" | translate}}</ion-label>
         <ion-checkbox (ngModelChange)="saveSettings()"
                       [(ngModel)]="settings.default_last_coffee_parameters.note"></ion-checkbox>
       </ion-item>
+    <ion-item lines="none" tappable>
+      <ion-label>{{"BREW_DATA_TDS" | translate}}</ion-label>
+      <ion-checkbox (ngModelChange)="saveSettings()"
+                    [(ngModel)]="settings.default_last_coffee_parameters.tds"></ion-checkbox>
+    </ion-item>
   </ion-card>
 </ion-content>

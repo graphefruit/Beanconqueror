@@ -313,7 +313,8 @@ export class BrewAddComponent implements OnInit {
       this.settings.rating ||
       this.settings.note ||
       this.settings.set_custom_brew_time ||
-      this.settings.attachments);
+      this.settings.attachments ||
+      this.settings.tds);
   }
 
 

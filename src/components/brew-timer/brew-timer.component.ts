@@ -25,6 +25,7 @@ export class BrewTimerComponent implements OnInit {
   public showBloomTimer: boolean = true;
   public showDripTimer: boolean = true;
 
+  public brewTimerPickerOptions: any;
   protected displayingTime: string = moment().startOf('day').toISOString();
   public timer: ITimer;
 
@@ -108,6 +109,12 @@ export class BrewTimerComponent implements OnInit {
     return this.timer.seconds;
   }
 
+  public reset() {
+    this.timer.seconds = 0;
+    this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
+    this.displayingTime = moment(this.displayingTime).startOf('day').add('seconds',this.timer.seconds).toISOString();
+    this.timerTicked.emit();
+  }
   public formatSeconds(): string {
     const secs = this.getSeconds();
 

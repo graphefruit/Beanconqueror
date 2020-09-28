@@ -1,5 +1,8 @@
 :host {
-
+.center-rating-icon {
+  margin: auto 0;
+  text-align: center;
+}
 
   .margin-header {
     margin: auto 0;
@@ -59,11 +62,6 @@
     font-size: 32px;
   }
 
-  .center-brew-rating-icon {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
 
   .no-ion-col-padding {
     ion-col {

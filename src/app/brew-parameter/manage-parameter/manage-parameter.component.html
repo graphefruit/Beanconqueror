@@ -104,9 +104,13 @@
       <ion-checkbox (ngModelChange)="settingsChanged($event)"
                     [(ngModel)]="settings.set_custom_brew_time"></ion-checkbox>
     </ion-item>
-    <ion-item lines="none" tappable>
+    <ion-item tappable>
       <ion-label>{{"BREW_DATA_ATTACHMENTS" | translate}}</ion-label>
       <ion-checkbox (ngModelChange)="settingsChanged($event)" [(ngModel)]="settings.attachments"></ion-checkbox>
+    </ion-item>
+    <ion-item lines="none" tappable>
+      <ion-label>{{"BREW_DATA_TDS" | translate}}</ion-label>
+      <ion-checkbox (ngModelChange)="settingsChanged($event)" [(ngModel)]="settings.tds"></ion-checkbox>
     </ion-item>
   </ion-card>
 </ion-content>

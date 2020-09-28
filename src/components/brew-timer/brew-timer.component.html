@@ -2,7 +2,7 @@
   <ion-label position="stacked">
     {{ label }}
   </ion-label>
-  <ion-datetime  (ngModelChange)="changeDate($event)" [(ngModel)]="displayingTime" cancelText="{{'CANCEL' | translate}}" displayFormat="H:mm:ss" doneText="{{'CHOOSE' | translate}}" mode="ios"></ion-datetime>
+  <ion-datetime (ngModelChange)="changeDate($event)" [(ngModel)]="displayingTime" cancelText="{{'CANCEL' | translate}}" displayFormat="H:mm:ss" doneText="{{'CHOOSE' | translate}}" mode="ios"></ion-datetime>
  <!-- <ion-input (ngModelChange)="changeEvent()" [(ngModel)]="timer.seconds" prevent-characters type="number"></ion-input>-->
   <ion-button (click)="initTimer()"
               *ngIf="!timer.runTimer && (timer.hasStarted || timer.hasFinished) || timer.hasFinished"
