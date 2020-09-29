@@ -20,4 +20,6 @@ export interface IDefaultLastCoffeeParameters {
   coffee_first_drip_time: boolean;
   coffee_blooming_time: boolean;
   rating: boolean;
+  tds: boolean;
+  brew_beverage_quantity: boolean;
 }

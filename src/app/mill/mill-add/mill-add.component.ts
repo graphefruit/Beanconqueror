@@ -43,7 +43,7 @@ export class MillAddComponent implements OnInit {
   public dismiss(): void {
     this.modalController.dismiss({
       'dismissed': true
-    });
+    },undefined, 'mill-add')
 
   }
   public ngOnInit() {}

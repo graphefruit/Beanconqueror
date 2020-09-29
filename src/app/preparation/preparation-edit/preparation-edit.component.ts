@@ -51,7 +51,7 @@ export class PreparationEditComponent implements OnInit {
   public dismiss(): void {
     this.modalController.dismiss({
       'dismissed': true
-    });
+    }, undefined, 'preparation-edit');
   }
 
 

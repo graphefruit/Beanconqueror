@@ -1,5 +1,5 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {AlertController, ModalController, Platform, PopoverController} from '@ionic/angular';
+import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {AlertController, IonVirtualScroll, ModalController, Platform, PopoverController} from '@ionic/angular';
 import {UIAlert} from '../../services/uiAlert';
 import {UIHelper} from '../../services/uiHelper';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
@@ -38,15 +38,17 @@ export class BrewPage implements OnInit {
   public brews: Array<Brew>;
   public openBrewsView: Array<Brew> = [];
   public archiveBrewsView: Array<Brew> = [];
+
+
   public brew_segment: string = 'open';
   public settings: Settings;
   public query: string = '';
-  public openBrewsCount: number = 0;
-  public archivedBrewsCount: number = 0;
 
   public customSelectSheetOptions: any = {
     cssClass: 'select-break-text'
   };
+  @ViewChild('openScroll', {read: IonVirtualScroll, static: false}) public openScroll: IonVirtualScroll;
+  @ViewChild('archivedScroll', {read: IonVirtualScroll, static: false}) public archivedScroll: IonVirtualScroll;
 
   public openBrewsFilter: IBrewPageFilter = {
     mill: [],
@@ -81,8 +83,6 @@ export class BrewPage implements OnInit {
                private readonly uiMillStorage: UIMillStorage,
                private translate: TranslateService,
                private readonly uiToast: UIToast) {
-
-
   }
 
 
@@ -92,9 +92,31 @@ export class BrewPage implements OnInit {
     this.openBrewsFilter = this.settings.brew_filter.OPEN;
     this.loadBrews();
 
-    // If we don't have beans, we cant do a brew from now on, because of roasting degree and the age of beans.
+
+    this.retriggerScroll();
   }
 
+  public segmentChanged() {
+    this.retriggerScroll();
+  }
+
+  private retriggerScroll() {
+
+    // https://github.com/ionic-team/ionic-framework/issues/18409
+    // Workarround
+    setTimeout( () => {
+      if (typeof(this.archivedScroll) !== 'undefined')
+      {
+        this.archivedScroll.checkRange(0,this.openBrewsView.length);
+      }
+      if (typeof(this.openScroll) !== 'undefined')
+      {
+        this.openScroll.checkRange(0,this.openBrewsView.length);
+      }
+
+
+    },25);
+  }
 
 
   public async brewAction(action: BREW_ACTION, brew: Brew): Promise<void> {
@@ -124,22 +146,24 @@ export class BrewPage implements OnInit {
 
   public async editBrew(_brew: Brew) {
 
-    const modal = await this.modalCtrl.create({component: BrewEditComponent, componentProps: {brew: _brew}});
+    const modal = await this.modalCtrl.create({component: BrewEditComponent, id:'brew-edit', componentProps: {brew: _brew}});
     await modal.present();
     await modal.onWillDismiss();
     this.loadBrews();
   }
   public async repeatBrew(_brew: Brew) {
-    const modal = await this.modalCtrl.create({component: BrewAddComponent, componentProps: {brew_template: _brew}});
-    await modal.present();
-    await modal.onWillDismiss();
-    this.loadBrews();
+    if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
+      const modal = await this.modalCtrl.create({component: BrewAddComponent, id: 'brew-add', componentProps: {brew_template: _brew}});
+      await modal.present();
+      await modal.onWillDismiss();
+      this.loadBrews();
+    }
   }
 
 
   public async add() {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
-      const modal = await this.modalCtrl.create({component: BrewAddComponent});
+      const modal = await this.modalCtrl.create({component: BrewAddComponent,id:'brew-add'});
       await modal.present();
       await modal.onWillDismiss();
       this.loadBrews();
@@ -148,14 +172,14 @@ export class BrewPage implements OnInit {
   }
 
   public async detailBrew(_brew: Brew) {
-    const modal = await this.modalCtrl.create({component: BrewDetailComponent, componentProps: {brew: _brew}});
+    const modal = await this.modalCtrl.create({component: BrewDetailComponent, id:'brew-detail', componentProps: {brew: _brew}});
     await modal.present();
     await modal.onWillDismiss();
     this.loadBrews();
   }
 
   public async cupBrew(_brew: Brew) {
-    const modal = await this.modalCtrl.create({component: BrewCuppingComponent, componentProps: {brew: _brew}});
+    const modal = await this.modalCtrl.create({component: BrewCuppingComponent, id:'brew-cup', componentProps: {brew: _brew}});
     await modal.present();
     await modal.onWillDismiss();
     this.loadBrews();
@@ -163,7 +187,7 @@ export class BrewPage implements OnInit {
 
 
   public async viewPhotos(_brew: Brew) {
-    const modal = await this.modalCtrl.create({component: BrewPhotoViewComponent, componentProps: {brew: _brew}});
+    const modal = await this.modalCtrl.create({component: BrewPhotoViewComponent, id:'brew-photo', componentProps: {brew: _brew}});
     await modal.present();
     await modal.onWillDismiss();
   }
@@ -184,12 +208,13 @@ export class BrewPage implements OnInit {
   public loadBrews(): void {
     this.__initializeBrews();
     this.changeDetectorRef.detectChanges();
+
   }
+
 
   private __deleteBrew(_brew: Brew): void {
     this.uiBrewStorage.removeByObject(_brew);
     this.loadBrews();
-
   }
 
 
@@ -197,8 +222,6 @@ export class BrewPage implements OnInit {
     this.brews = this.uiBrewStorage.getAllEntries();
     this.openBrewsView = [];
     this.archiveBrewsView = [];
-    this.archivedBrewsCount = 0;
-    this.openBrewsCount = 0;
 
     this.__initializeBrewView('open');
     this.__initializeBrewView('archiv');
@@ -249,6 +272,7 @@ export class BrewPage implements OnInit {
       showBackdrop: true,
       backdropDismiss: true,
       swipeToClose: true,
+      id:'brew-filter',
       componentProps:
         {brew_filter: brewFilter, segment: this.brew_segment}
     });

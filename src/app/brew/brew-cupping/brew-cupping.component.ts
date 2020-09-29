@@ -60,7 +60,7 @@ export class BrewCuppingComponent implements OnInit {
   public async dismiss() {
     this.modalController.dismiss({
       dismissed: true
-    });
+    },undefined,'brew-cup');
 
 
   }

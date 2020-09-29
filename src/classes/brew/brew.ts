@@ -56,6 +56,12 @@ export class Brew implements IBrew {
   // tslint:disable-next-line
   public coffee_blooming_time: number;
   public attachments: Array<string>;
+  public tds: number;
+
+
+  public brew_beverage_quantity: number;
+
+  public brew_beverage_quantity_type: BREW_QUANTITY_TYPES_ENUM;
   public config: Config;
 
   public cupping: ICupping;
@@ -83,7 +89,9 @@ export class Brew implements IBrew {
     this.coffee_blooming_time = 0;
     this.attachments = [];
     this.config = new Config();
-
+    this.tds = 0;
+    this.brew_beverage_quantity = 0;
+    this.brew_beverage_quantity_type = 'GR' as BREW_QUANTITY_TYPES_ENUM;
 
     this.cupping = {
       body: 0,
@@ -126,6 +134,9 @@ export class Brew implements IBrew {
   public getBrewQuantityTypeName(): string {
     return BREW_QUANTITY_TYPES_ENUM[this.brew_quantity_type];
   }
+  public getBrewBeverageQuantityTypeName(): string {
+    return BREW_QUANTITY_TYPES_ENUM[this.brew_beverage_quantity_type];
+  }
 
   public getBean(): Bean {
     const iBean: IBean = this.getBeanStorageInstance()
@@ -159,19 +170,36 @@ export class Brew implements IBrew {
 
   /**
    * Get the calculated bean age for this brew
+   * If no age could be calculated it returns -1
    */
   public getCalculatedBeanAge(): number {
 
     const bean: IBean = this.getBeanStorageInstance()
       .getByUUID(this.bean) as IBean;
     if (bean) {
-      const roastingDate = moment(bean.roastingDate);
-      const brewTime = moment.unix(this.config.unix_timestamp);
+      if (bean.roastingDate) {
+        const roastingDate = moment(bean.roastingDate);
+        const brewTime = moment.unix(this.config.unix_timestamp);
 
-      return brewTime.diff(roastingDate, 'days');
+        return brewTime.diff(roastingDate, 'days');
+      }
     }
 
-    return 0;
+    return -1;
+  }
+
+  public getExtractionYield(): string {
+    const grindWeight: number = this.grind_weight;
+    const brewQuantity: number = this.brew_beverage_quantity;
+    const tds: number = this.tds;
+
+
+    return this.toFixedIfNecessary(((brewQuantity * tds) / grindWeight),2).toString();
+
+  }
+
+  private toFixedIfNecessary( value, dp ){
+    return +parseFloat(value).toFixed( dp );
   }
 
 
@@ -228,11 +256,28 @@ export class Brew implements IBrew {
     return formatted;
   }
 
-  public getFormattedCoffeeBrewTime(): string {
-    const secs = this.brew_time - this.coffee_first_drip_time;
+  public getFormattedBrewTime(): string {
+    const secs = this.brew_time;
 
-    const formatted = moment.utc(secs * 1000).format('mm:ss');
+    const formatted = moment.utc(secs * 1000).format('HH:mm:ss');
     return formatted;
+  }
+
+  public getFormattedCoffeeBrewTime(): string {
+    const secs = this.brew_time;
+    const start = moment().startOf('day').add('seconds',secs);
+    if (this.coffee_first_drip_time > 0) {
+      const diffing = moment().startOf('day').add('seconds',this.coffee_first_drip_time);
+      if (this.coffee_first_drip_time > this.brew_time) {
+        return ' - ' +  moment.utc(diffing.diff(start)).format('HH:mm:ss');
+      } else {
+        return moment.utc(start.diff(diffing)).format('HH:mm:ss');
+      }
+    } else {
+      return start.format('HH:mm:ss');
+    }
+
+
   }
 
   private getBeanStorageInstance(): UIBeanStorage {

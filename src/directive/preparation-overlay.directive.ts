@@ -48,6 +48,7 @@ export class PreparationOverlayDirective {
           selectedValues: selectedValues,
           showFinished: this.showFinished
         },
+      id:'preparation-modal-select',
       showBackdrop: true
     });
     await modal.present();

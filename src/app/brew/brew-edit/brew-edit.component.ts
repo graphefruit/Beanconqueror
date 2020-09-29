@@ -4,7 +4,7 @@ import {BREW_QUANTITY_TYPES_ENUM} from '../../../enums/brews/brewQuantityTypes';
 import {UIHelper} from '../../../services/uiHelper';
 import {UIBrewStorage} from '../../../services/uiBrewStorage';
 import {IBrew} from '../../../interfaces/brew/iBrew';
-import {IonSlides, ModalController, NavParams} from '@ionic/angular';
+import {IonSlides, ModalController, NavParams, Platform} from '@ionic/angular';
 import {UIMillStorage} from '../../../services/uiMillStorage';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {UIImage} from '../../../services/uiImage';
@@ -18,6 +18,8 @@ import {Mill} from '../../../classes/mill/mill';
 import {Bean} from '../../../classes/bean/bean';
 import {UIToast} from '../../../services/uiToast';
 import {UIFileHelper} from '../../../services/uiFileHelper';
+import {DatePicker} from '@ionic-native/date-picker/ngx';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'brew-edit',
@@ -37,6 +39,8 @@ export class BrewEditComponent implements OnInit {
   public settings: ISettings;
   public customCreationDate: string = '';
 
+  public displayingBrewTime: string = '';
+
   public customSelectSheetOptions: any = {
     cssClass: 'select-full-screen'
   };
@@ -52,7 +56,10 @@ export class BrewEditComponent implements OnInit {
                private readonly uiAnalytics: UIAnalytics,
                private readonly uiSettingsStorage: UISettingsStorage,
                private readonly uiToast: UIToast,
-               private readonly uiFileHelper: UIFileHelper) {
+               private readonly uiFileHelper: UIFileHelper,
+               private readonly datePicker: DatePicker,
+               private readonly translate: TranslateService,
+               private readonly platform: Platform) {
 
     this.settings = this.uiSettingsStorage.getSettings();
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
@@ -60,6 +67,7 @@ export class BrewEditComponent implements OnInit {
 
     if (brew !== undefined) {
       this.data.initializeByObject(brew);
+      this.displayingBrewTime = moment().startOf('day').add('seconds',this.data.brew_time).toISOString();
     }
 
     this.method_of_preparations = this.uiPreparationStorage.getAllEntries()
@@ -125,7 +133,7 @@ export class BrewEditComponent implements OnInit {
   public dismiss(): void {
     this.modalController.dismiss({
       'dismissed': true
-    });
+    },undefined,'brew-edit');
   }
 
   public updateBrew(): void {
@@ -141,5 +149,66 @@ export class BrewEditComponent implements OnInit {
 
   public ngOnInit() {}
 
+  public chooseDateTime(_event) {
+    if (this.platform.is('cordova')) {
+      _event.cancelBubble = true;
+      _event.preventDefault();
+      _event.stopImmediatePropagation();
+      _event.stopPropagation();
+      this.datePicker.show({
+        date: new Date(),
+        mode: 'datetime',
+        androidTheme: this.datePicker.ANDROID_THEMES.THEME_DEVICE_DEFAULT_LIGHT,
+        okText: this.translate.instant('CHOOSE'),
+        todayText: this.translate.instant('TODAY'),
+        cancelText: this.translate.instant('CANCEL'),
+      }).then(
+        (date) => {
+          this.customCreationDate = moment(date).toISOString();
+        },
+        (err) => {
 
+        }
+
+      );
+    }
+  }
+
+  public changeDate(_event) {
+    const durationPassed =  moment.duration(moment(_event).diff(moment(_event).startOf('day')));
+    this.displayingBrewTime = moment(_event).toISOString();
+    this.data.brew_time = durationPassed.asSeconds();
+  }
+  public showSectionAfterBrew(): boolean {
+    return (this.settings.brew_quantity ||
+      this.settings.coffee_type ||
+      this.settings.coffee_concentration ||
+      this.settings.rating ||
+      this.settings.note ||
+      this.settings.set_custom_brew_time ||
+      this.settings.attachments ||
+      this.settings.tds ||
+      this.settings.brew_beverage_quantity);
+  }
+
+
+  public showSectionWhileBrew(): boolean {
+    return (this.settings.pressure_profile ||
+      this.settings.brew_temperature_time ||
+      this.settings.brew_time ||
+      this.settings.coffee_blooming_time ||
+      this.settings.coffee_first_drip_time);
+  }
+
+  public showSectionBeforeBrew(): boolean {
+    return (this.settings.grind_size ||
+      this.settings.grind_weight ||
+      this.settings.brew_temperature ||
+      this.settings.method_of_preparation ||
+      this.settings.bean_type ||
+      this.settings.mill ||
+      this.settings.mill_speed ||
+      this.settings.mill_timer);
+
+  }
 }

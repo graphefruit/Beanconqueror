@@ -79,11 +79,11 @@ export class PreparationModalSelectComponent implements OnInit {
     this.modalController.dismiss({
       selected_values: chosenKeys,
       selected_text: selected_text,
-    });
+    },undefined,'preparation-modal-select');
   }
 
   public async dismiss(): Promise<void> {
-    this.modalController.dismiss();
+    this.modalController.dismiss(undefined, undefined, 'preparation-modal-select');
   }
 
 }

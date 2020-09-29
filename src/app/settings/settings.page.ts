@@ -31,7 +31,8 @@ import BeanconquerorSettingsDummy from '../../assets/Beanconqueror.json';
 import {ISettings} from '../../interfaces/settings/iSettings';
 import {IBrewPageFilter} from '../../interfaces/brew/iBrewPageFilter';
 import {Bean} from '../../classes/bean/bean';
-
+/** Third party */
+import moment from 'moment';
 
 declare var cordova: any;
 declare var device: any;
@@ -145,6 +146,7 @@ export class SettingsPage implements OnInit {
     this.translate.use(this.settings.language);
     this.uiAnalytics.trackEvent('SETTINGS', 'SET_LANGUAGE_ ' + this.settings.language);
     this.uiSettingsStorage.saveSettings(this.settings);
+    moment.locale(this.settings.language);
   }
 
   public import(): void {
@@ -411,7 +413,7 @@ export class SettingsPage implements OnInit {
       parsedContent[this.uiBrewStorage.getDBPath()] &&
       parsedContent[this.uiSettingsStorage.getDBPath()]) {
 
-      if (!isIOS){
+      if (isIOS){
         SettingsPage.__cleanupImportBeanData(parsedContent[this.uiBeanStorage.getDBPath()]);
         SettingsPage.__cleanupImportBrewData(parsedContent[this.uiBrewStorage.getDBPath()]);
       }

@@ -70,7 +70,7 @@ export class BrewFilterComponent implements OnInit {
     };
     this.modalController.dismiss({
       brew_filter: this.uiHelper.copyData(this.filter)
-    });
+    },undefined,'brew-filter');
   }
 
 

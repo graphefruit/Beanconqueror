@@ -94,6 +94,22 @@ export interface IBrew {
    * Image attachments
    */
   attachments: Array<string>;
+
+  /**
+   * Inherits the brew beverage (user specific in g or ml)
+   */
+  brew_beverage_quantity: number;
+
+  /**
+   * Inherits the type of the brew quantity
+   */
+  brew_beverage_quantity_type: BREW_QUANTITY_TYPES_ENUM;
+
+  /**
+   * Total dissolved units
+   */
+  tds: number;
+
   config: IConfig;
 
   cupping: ICupping;

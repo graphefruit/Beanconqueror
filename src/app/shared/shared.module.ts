@@ -91,6 +91,7 @@ import {PreparationOverlayDirective} from '../../directive/preparation-overlay.d
 import {DisableDoubleClickDirective} from '../../directive/disable-double-click.directive';
 import {NgxStarsModule} from 'ngx-stars';
 import {BrewCuppingComponent} from '../brew/brew-cupping/brew-cupping.component';
+import {DatePicker} from '@ionic-native/date-picker/ngx';
 
 @NgModule({
   declarations: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, AboutComponent,
@@ -178,6 +179,7 @@ import {BrewCuppingComponent} from '../brew/brew-cupping/brew-cupping.component'
     ThreeDeeTouch,
     Camera, ImagePicker, AndroidPermissions,
     InAppBrowser, File, Globalization, FirebaseX,
+    DatePicker
   ],
 
   exports: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, AboutComponent,
