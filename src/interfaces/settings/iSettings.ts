@@ -32,6 +32,8 @@ export interface ISettings {
   attachments: boolean;
   rating: boolean;
   set_custom_brew_time: boolean;
+  tds: boolean;
+  brew_beverage_quantity: boolean;
   language: string;
   default_last_coffee_parameters: IDefaultLastCoffeeParameters;
   brew_order: IBrewOrder;

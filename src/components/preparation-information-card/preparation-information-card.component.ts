@@ -76,6 +76,7 @@ export class PreparationInformationCardComponent implements OnInit {
       component: PreparationPopoverActionsComponent,
       event,
       translucent: true,
+      id: 'preparation-popover-actions',
       componentProps: {preparation: this.preparation}
     });
     await popover.present();

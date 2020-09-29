@@ -83,7 +83,8 @@ export class BeanInformationComponent implements OnInit {
       component: BeanPopoverActionsComponent,
       event,
       translucent: true,
-      componentProps: {bean: this.bean}
+      componentProps: {bean: this.bean},
+      id:'bean-popover-actions'
     });
     await popover.present();
     const data = await popover.onWillDismiss();
@@ -91,7 +92,7 @@ export class BeanInformationComponent implements OnInit {
   }
 
   public async viewPhotos() {
-    const modal = await this.modalController.create({component: BeanPhotoViewComponent, componentProps: {bean: this.bean}});
+    const modal = await this.modalController.create({component: BeanPhotoViewComponent,id:'bean-photo', componentProps: {bean: this.bean}});
     await modal.present();
     await modal.onWillDismiss();
   }

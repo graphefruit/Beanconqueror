@@ -60,6 +60,7 @@
   "PAGE_STATISTICS_TOTAL_GROUND_BEANS": "Vermahlene Bohnen",
   "PAGE_STATISTICS_MONEY_SPENT_FOR_COFFEE": "Geld für Kaffee ausgegeben",
   "PAGE_STATISTICS_DRUNKEN_BREWS": "Getrunkene Tassen",
+  "PAGE_STATISTICS_BREW_PROCESSES": "Brühvorgänge",
   "PAGE_STATISTICS_DRUNKEN_QUANTITY": "Getrunkene Menge",
   "PAGE_BREW_TEXT_INFORMATION_FROM_ROASTER": "Angaben vom Röster",
   "PAGE_ABOUT_NO_VERSION_AVAILABLE": "Keine Version verfügbar",
@@ -104,12 +105,13 @@
   "BREW_DATA_TIME": "Zeit",
   "BREW_DATA_GRIND_SIZE": "Mahlgrad",
   "BREW_DATA_GRIND_WEIGHT": "Kaffeemehl (gr)",
+  "BREW_DATA_IN_OUT_BR": "In/Out (BR)",
   "BREW_DATA_NOTES": "Notizen",
   "BREW_DATA_PREPARATION_METHOD": "Brühmethode",
   "BREW_DATA_MILL": "Mühle",
   "BREW_DATA_MILL_SPEED": "Mühlengeschwindigkeit (rpm)",
   "BREW_DATA_MILL_TIMER": "Mühlen Timer",
-  "BREW_DATA_BREW_QUANTITY": "Kaffee (gr/ml)",
+  "BREW_DATA_BREW_QUANTITY": "Wassermenge (gr/ml)",
   "BREW_DATA_BEAN_TYPE": "Bohnensorte",
   "BREW_DATA_BREW_TEMPERATURE": "Brühtemperatur",
   "BREW_DATA_PRESSURE_PROFILE": "Profil",
@@ -120,6 +122,10 @@
   "BREW_DATA_ATTACHMENTS": "Anhänge",
   "BREW_DATA_RATING": "Bewertung",
   "BREW_DATA_CALCULATED_COFFEE_BREW_TIME": "Kaffeebezugszeit",
+  "BREW_DATA_TDS": "Insgesamt gelöste Feststoffe",
+  "BREW_DATA_CALCULATED_EXTRACTION_YIELD": "Extraction Yield %",
+  "BREW_DATA_TDS_EY": "TDS / %EY",
+  "BREW_DATA_BREW_BEVERAGE_QUANTITY": "Getränkmenge (gr/ml)",
   "BREW_INFORMATION_BREW_RATIO": "Brührate",
   "BREW_INFORMATION_BEAN_AGE": "Bohnenalter (Tage)",
   "BREW_INFORMATION_BREW_QUANTITY_TYPE_NAME": "Bezugsmenge-Typ",
@@ -346,7 +352,9 @@
       "BREW_DATA_BREW_QUANTITY": "Wieviel hast du Gebrüht?",
       "BREW_DATA_COFFEE_TYPE": "Gib deinen Kaffeetyp (z.B. Ristretto) ein",
       "BREW_DATA_COFFEE_CONCENTRATION": "Gib deine Kaffeekonzentration ein (Yield o.ä.)",
-      "BREW_DATA_NOTES": "Füge Notizen zu dieser Brühung hinzu"
+      "BREW_DATA_TDS": "Wieviele Feststoffe wurden insgesamt gelöst?",
+      "BREW_DATA_NOTES": "Füge Notizen zu dieser Brühung hinzu",
+      "BREW_DATA_BREW_BEVERAGE_QUANTITY": "Füge die engültige Getränkemenge hinzu"
     }
   },
   "NO_BREW": "0 Brühungen",
@@ -360,5 +368,6 @@
   "IMAGE_NOT_DELETED": "Bild konnte nicht gelöscht werden",
   "EXTERNAL_STORAGE_NOT_SUPPORTED": "Externes Dateisystem wird leider nicht unterstützt",
   "BEANS_ARCHIVED": "Archiviert",
-  "TAB_ARCHIVE": "Archiv"
+  "TAB_ARCHIVE": "Archiv",
+  "TODAY": "Heute"
 }

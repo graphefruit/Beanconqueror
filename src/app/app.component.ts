@@ -30,6 +30,8 @@ import {Settings} from '../classes/settings/settings';
 import {STARTUP_VIEW_ENUM} from '../enums/settings/startupView';
 import {UIAnalytics} from '../services/uiAnalytics';
 import {WelcomePopoverComponent} from '../popover/welcome-popover/welcome-popover.component';
+/** Third party */
+import moment from 'moment';
 
 @Component({
   selector: 'app-root',
@@ -216,6 +218,19 @@ export class AppComponent implements AfterViewInit {
 
       }
     }
+    const settings: Settings = this.uiSettingsStorage.getSettings();
+    if (settings.brew_order.after.tds === null || settings.brew_order.after.tds === undefined) {
+      const newSettingsObj: Settings = new Settings();
+      settings.brew_order.after.tds = newSettingsObj.brew_order.after.tds;
+      this.uiSettingsStorage.saveSettings(settings);
+
+    }
+    if (settings.brew_order.after.brew_beverage_quantity === null || settings.brew_order.after.brew_beverage_quantity === undefined) {
+      const newSettingsObj: Settings = new Settings();
+      settings.brew_order.after.brew_beverage_quantity = newSettingsObj.brew_order.after.brew_beverage_quantity;
+      this.uiSettingsStorage.saveSettings(settings);
+
+    }
   }
 
   private async __setDeviceLanguage(): Promise<any> {
@@ -247,6 +262,7 @@ export class AppComponent implements AfterViewInit {
               settings.language = settingLanguage;
               this.uiSettingsStorage.saveSettings(settings);
               await this._translate.use(settingLanguage).toPromise();
+              moment.locale(settingLanguage);
               resolve();
 
             })
@@ -255,6 +271,7 @@ export class AppComponent implements AfterViewInit {
                 this.uiLog.error(`Exception occured when setting language ${exMessage}`);
                 this._translate.setDefaultLang('en');
                 await this._translate.use('en').toPromise();
+                moment.locale('en');
                 resolve();
               });
           } else {
@@ -265,6 +282,8 @@ export class AppComponent implements AfterViewInit {
             settings.language = settingLanguage;
             this.uiSettingsStorage.saveSettings(settings);
             await this._translate.use(settingLanguage).toPromise();
+            moment.locale(settingLanguage);
+
             resolve();
 
           }
@@ -275,6 +294,7 @@ export class AppComponent implements AfterViewInit {
           settings.language = 'en';
           this.uiSettingsStorage.saveSettings(settings);
           await this._translate.use('en').toPromise();
+          moment.locale('en');
           resolve();
         }
       } else {
@@ -283,6 +303,7 @@ export class AppComponent implements AfterViewInit {
           this.uiLog.info(`Set language from settings: ${settings.language}`);
           this._translate.setDefaultLang(settings.language);
           await this._translate.use(settings.language).toPromise();
+          moment.locale(settings.language);
           resolve();
         } else {
           this.uiLog.info(`Set default language from settings, because no settings set: de `);
@@ -290,6 +311,7 @@ export class AppComponent implements AfterViewInit {
           settings.language = 'de';
           this.uiSettingsStorage.saveSettings(settings);
           await this._translate.use('de').toPromise();
+          moment.locale(settings.language);
           resolve();
         }
 
@@ -305,14 +327,14 @@ export class AppComponent implements AfterViewInit {
     }
     switch (settings.startup_view) {
       case STARTUP_VIEW_ENUM.HOME_PAGE:
-        this.router.navigate(['/home/dashboard']);
+        this.router.navigate(['/home/dashboard'], {replaceUrl:true});
         break;
       case STARTUP_VIEW_ENUM.BREW_PAGE:
-        this.router.navigate(['/home/brews']);
+        this.router.navigate(['/home/brews'], {replaceUrl:true});
         break;
       case STARTUP_VIEW_ENUM.ADD_BREW:
         await this.__trackNewBrew();
-        this.router.navigate(['/home/brews']);
+        this.router.navigate(['/home/brews'], {replaceUrl:true});
         break;
     }
   }
@@ -355,7 +377,8 @@ export class AppComponent implements AfterViewInit {
   }
 
   private async __trackNewBean() {
-    const modal = await this.modalCtrl.create({component: BeansAddComponent, componentProps: {hide_toast_message: false}});
+    const modal = await this.modalCtrl.create({component: BeansAddComponent, id:'bean-add',
+      componentProps: {hide_toast_message: false}});
     await modal.present();
     await modal.onWillDismiss();
 
@@ -368,31 +391,31 @@ export class AppComponent implements AfterViewInit {
     });
     await modal.present();
     await modal.onWillDismiss();
-    this.router.navigate(['/']);
+    this.router.navigate(['/'], {replaceUrl:true});
 
   }
 
   private async __trackNewMill() {
     const modal = await this.modalCtrl.create({
       component: MillAddComponent,
-      cssClass: 'half-bottom-modal', showBackdrop: true, componentProps: {hide_toast_message: false}
+      cssClass: 'half-bottom-modal', id:'mill-add', showBackdrop: true, componentProps: {hide_toast_message: false}
     });
     await modal.present();
     await modal.onWillDismiss();
-    this.router.navigate(['/']);
+    this.router.navigate(['/'], {replaceUrl:true});
 
   }
 
   private __registerBack() {
     this.platform.backButton.subscribeWithPriority(0, () => {
-      if (this.routerOutlet && this.routerOutlet.canGoBack()) {
+      if (this.router.url.indexOf('/home') === -1 && this.routerOutlet && this.routerOutlet.canGoBack() ) {
         this.routerOutlet.pop();
       } else if (this.router.url.indexOf('/home')>=0) {
         this.appMinimize.minimize();
         // or if that doesn't work, try
         // navigator['app'].exitApp();
       } else {
-        this.router.navigate(['/home/dashboard']);
+        this.router.navigate(['/home/dashboard'], {replaceUrl:true});
         // this.generic.showAlert("Exit", "Do you want to exit the app?", this.onYesHandler, this.onNoHandler, "backPress");
       }
     });

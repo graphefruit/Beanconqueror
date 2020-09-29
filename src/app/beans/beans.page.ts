@@ -25,6 +25,10 @@ export class BeansPage implements OnInit {
 
   public settings: Settings;
 
+  public openBeans: Array<Bean> = [];
+  public finishedBeans: Array<Bean> = [];
+
+
   public bean_segment: string = 'open';
   constructor(public modalCtrl: ModalController,
               private readonly changeDetectorRef: ChangeDetectorRef,
@@ -82,7 +86,7 @@ export class BeansPage implements OnInit {
   }
 
   public async viewPhotos(_bean: Bean) {
-    const modal = await this.modalCtrl.create({component: BeanPhotoViewComponent, componentProps: {bean: _bean}});
+    const modal = await this.modalCtrl.create({component: BeanPhotoViewComponent, id:'bean-photo', componentProps: {bean: _bean}});
     await modal.present();
     await modal.onWillDismiss();
   }
@@ -97,7 +101,7 @@ export class BeansPage implements OnInit {
   }
 
   public async add() {
-    const modal = await this.modalCtrl.create({component:BeansAddComponent});
+    const modal = await this.modalCtrl.create({component:BeansAddComponent,id:'bean-add'});
     await modal.present();
     await modal.onWillDismiss();
     this.loadBeans();
@@ -105,7 +109,7 @@ export class BeansPage implements OnInit {
 
   public async editBean(_bean: Bean) {
 
-    const modal = await this.modalCtrl.create({component:BeansEditComponent,  componentProps: {'bean' : _bean}});
+    const modal = await this.modalCtrl.create({component:BeansEditComponent, id:'bean-edit',  componentProps: {'bean' : _bean}});
     await modal.present();
     await modal.onWillDismiss();
     this.loadBeans();
@@ -129,7 +133,7 @@ export class BeansPage implements OnInit {
 
   public async repeatBean(_bean: Bean) {
 
-    const modal = await this.modalCtrl.create({component: BeansAddComponent, componentProps: {bean_template: _bean}});
+    const modal = await this.modalCtrl.create({component: BeansAddComponent, id:'bean-add', componentProps: {bean_template: _bean}});
     await modal.present();
     await modal.onWillDismiss();
     this.loadBeans();
@@ -139,6 +143,8 @@ export class BeansPage implements OnInit {
   private __initializeBeans(): void {
     this.beans = this.uiBeanStorage.getAllEntries()
         .sort((a, b) => a.name.localeCompare(b.name));
+    this.openBeans = this.getOpenBeans();
+    this.finishedBeans = this.getFinishedBeans();
   }
 
   private __deleteBean(_bean: Bean): void {

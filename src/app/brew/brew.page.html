@@ -15,7 +15,7 @@
 </ion-header>
 <ion-content>
   <div>
-    <ion-segment [(ngModel)]="brew_segment">
+    <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="brew_segment">
       <ion-segment-button value="open">
         <ion-label>{{"CURRENT" | translate }}
         </ion-label>
@@ -44,12 +44,12 @@
         </div>
       </div>
 
-
-      <ion-virtual-scroll *ngIf="brews?.length > 0" [items]="openBrewsView  | searchBrews:query"
-                          approxItemHeight="320px">
+      <ion-virtual-scroll #openScroll [items]="openBrewsView  | searchBrews:query"  approxItemHeight="220px">
         <brew-information (brewAction)="brewAction($event[0],$event[1])" *virtualItem="let brew;"
                           [brew]="brew"></brew-information>
       </ion-virtual-scroll>
+
+
     </div>
     <div *ngIf="settings?.show_archived_brews">
       <div *ngSwitchCase="'archive'">
@@ -68,11 +68,11 @@
           </div>
         </div>
 
-        <ion-virtual-scroll *ngIf="archiveBrewsView?.length > 0" [items]="archiveBrewsView  | searchBrews:query"
-                            approxItemHeight="320px">
+        <ion-virtual-scroll #archivedScroll *ngIf="archiveBrewsView?.length > 0" [items]="archiveBrewsView  | searchBrews:query" approxItemHeight="220px">
           <brew-information (brewAction)="brewAction($event[0],$event[1])" *virtualItem="let brew;"
                             [brew]="brew"></brew-information>
         </ion-virtual-scroll>
+
 
       </div>
     </div>

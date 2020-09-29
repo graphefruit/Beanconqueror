@@ -49,6 +49,7 @@ export class MillOverlayDirective {
           selectedValues: selectedValues,
           showFinished: this.showFinished
         },
+      id:'mill-modal-select',
       showBackdrop: true
     });
     await modal.present();
