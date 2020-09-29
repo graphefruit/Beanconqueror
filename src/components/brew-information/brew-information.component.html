@@ -77,7 +77,7 @@
                 </ion-col>
               </ion-item>
             </ng-template>
-            <ion-item *ngIf="settings.grind_size === true">
+            <ion-item *ngIf="settings.grind_size === true && brew?.grind_size">
               <ion-col class="ion-text-bold" size="5">
                 {{"BREW_DATA_GRIND_SIZE" | translate}}:
               </ion-col>
