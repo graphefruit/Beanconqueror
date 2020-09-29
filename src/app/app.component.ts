@@ -225,6 +225,12 @@ export class AppComponent implements AfterViewInit {
       this.uiSettingsStorage.saveSettings(settings);
 
     }
+    if (settings.brew_order.after.brew_beverage_quantity === null || settings.brew_order.after.brew_beverage_quantity === undefined) {
+      const newSettingsObj: Settings = new Settings();
+      settings.brew_order.after.brew_beverage_quantity = newSettingsObj.brew_order.after.brew_beverage_quantity;
+      this.uiSettingsStorage.saveSettings(settings);
+
+    }
   }
 
   private async __setDeviceLanguage(): Promise<any> {

@@ -57,6 +57,11 @@ export class Brew implements IBrew {
   public coffee_blooming_time: number;
   public attachments: Array<string>;
   public tds: number;
+
+
+  public brew_beverage_quantity: number;
+
+  public brew_beverage_quantity_type: BREW_QUANTITY_TYPES_ENUM;
   public config: Config;
 
   public cupping: ICupping;
@@ -85,7 +90,8 @@ export class Brew implements IBrew {
     this.attachments = [];
     this.config = new Config();
     this.tds = 0;
-
+    this.brew_beverage_quantity = 0;
+    this.brew_beverage_quantity_type = 'GR' as BREW_QUANTITY_TYPES_ENUM;
 
     this.cupping = {
       body: 0,
@@ -127,6 +133,9 @@ export class Brew implements IBrew {
 
   public getBrewQuantityTypeName(): string {
     return BREW_QUANTITY_TYPES_ENUM[this.brew_quantity_type];
+  }
+  public getBrewBeverageQuantityTypeName(): string {
+    return BREW_QUANTITY_TYPES_ENUM[this.brew_beverage_quantity_type];
   }
 
   public getBean(): Bean {
@@ -181,7 +190,7 @@ export class Brew implements IBrew {
 
   public getExtractionYield(): string {
     const grindWeight: number = this.grind_weight;
-    const brewQuantity: number = this.brew_quantity;
+    const brewQuantity: number = this.brew_beverage_quantity;
     const tds: number = this.tds;
 
 

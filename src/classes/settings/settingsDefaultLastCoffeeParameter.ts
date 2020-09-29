@@ -22,6 +22,7 @@ export class DefaultLastCoffeeParameters implements IDefaultLastCoffeeParameters
   public coffee_blooming_time: boolean;
   public rating: boolean;
   public tds: boolean;
+  public brew_beverage_quantity: boolean;
 
   constructor() {
     this.bean_type = true;
@@ -44,5 +45,6 @@ export class DefaultLastCoffeeParameters implements IDefaultLastCoffeeParameters
     this.mill_speed = false;
     this.pressure_profile = false;
     this.tds = false;
+    this.brew_beverage_quantity = false;
   }
 }

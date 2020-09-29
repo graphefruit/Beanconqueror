@@ -142,7 +142,7 @@
         <span class="ion-title ion-padding-top">{{"BREW_HEADER_AFTER_BREW" | translate }}</span>
       </ion-item>
       <ion-item *ngIf="settings.brew_quantity === true" [style.order]="settings.brew_order.after.brew_quantity" lines="inset">
-        <ion-row>
+        <ion-row style="width:100%">
           <ion-col class="ion-no-padding" size="8">
             <ion-item class="ion-no-margin-important">
               <ion-label position="stacked">{{"BREW_DATA_BREW_QUANTITY" | translate}}</ion-label>
@@ -195,6 +195,33 @@
                       rows="5"
                       spellcheck="true"></ion-textarea>
       </ion-item>
+
+    <ion-item  *ngIf="settings.brew_beverage_quantity === true" [style.order]="settings.brew_order.after.brew_beverage_quantity" lines="inset">
+      <ion-row style="width:100%">
+        <ion-col class="ion-no-padding" size="8">
+          <ion-item class="ion-no-margin-important">
+            <ion-label position="stacked">{{"BREW_DATA_BREW_BEVERAGE_QUANTITY" | translate}}</ion-label>
+            <ion-input [(ngModel)]="data.brew_beverage_quantity" inputmode="decimal"
+                       placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_BREW_BEVERAGE_QUANTITY' | translate}}" prevent-characters
+                       remove-empty-number
+                       type="text"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col class="ion-no-padding ion-align-self-end" size="4">
+          <ion-item class="ion-no-margin-important">
+            <ion-select #brewBeverageQuantityType="ngModel" [(ngModel)]="data.brew_beverage_quantity_type"
+                        cancelText="{{'CANCEL'| translate }}" name="brewQuantityType"
+                        okText="{{'CHOOSE'| translate }}"
+                        style="max-width:100%;">
+              <ion-select-option *ngFor="let key of brewQuantityTypeEnums | keys" value="{{key}}">
+                {{brewQuantityTypeEnums[key]}}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-item>
+
     <ion-item *ngIf="settings.tds === true" [style.order]="settings.brew_order.after.tds"
               lines="inset">
       <ion-label position="stacked">{{"BREW_DATA_TDS" | translate}}</ion-label>

@@ -314,7 +314,8 @@ export class BrewAddComponent implements OnInit {
       this.settings.note ||
       this.settings.set_custom_brew_time ||
       this.settings.attachments ||
-      this.settings.tds);
+      this.settings.tds ||
+      this.settings.brew_beverage_quantity);
   }
 
 

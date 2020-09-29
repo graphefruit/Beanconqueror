@@ -35,6 +35,7 @@ export class Settings implements ISettings {
   public set_last_coffee_brew: boolean;
   public set_custom_brew_time: boolean;
   public tds: boolean;
+  public brew_beverage_quantity: boolean;
   public default_last_coffee_parameters: DefaultLastCoffeeParameters;
   public brew_order: BrewOrder;
   public config: Config;
@@ -88,6 +89,7 @@ export class Settings implements ISettings {
     this.show_archived_brews = true;
     this.show_archived_mills = true;
     this.show_archived_preparations = true;
+    this.brew_beverage_quantity = false;
 
     this.brew_filter = {
       OPEN: {} as IBrewPageFilter,

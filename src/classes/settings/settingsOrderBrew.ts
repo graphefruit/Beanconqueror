@@ -33,6 +33,7 @@ export class BrewOrder implements IBrewOrder {
     set_custom_brew_time: number;
     attachments: number;
     tds:number;
+    brew_beverage_quantity: number;
   };
 
 
@@ -65,7 +66,8 @@ export class BrewOrder implements IBrewOrder {
       note: 5,
       set_custom_brew_time: 6,
       attachments: 7,
-      tds: 8
+      brew_beverage_quantity: 8,
+      tds:9,
     };
   }
 
@@ -118,6 +120,8 @@ export class BrewOrder implements IBrewOrder {
         return 'BREW_DATA_CUSTOM_BREW_TIME';
       case 'tds':
         return 'BREW_DATA_TDS';
+      case 'brew_beverage_quantity':
+        return 'BREW_DATA_BREW_BEVERAGE_QUANTITY';
       default:
         return _key;
     }
