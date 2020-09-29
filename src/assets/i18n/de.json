@@ -111,7 +111,7 @@
   "BREW_DATA_MILL": "Mühle",
   "BREW_DATA_MILL_SPEED": "Mühlengeschwindigkeit (rpm)",
   "BREW_DATA_MILL_TIMER": "Mühlen Timer",
-  "BREW_DATA_BREW_QUANTITY": "Kaffee (gr/ml)",
+  "BREW_DATA_BREW_QUANTITY": "Wassermenge (gr/ml)",
   "BREW_DATA_BEAN_TYPE": "Bohnensorte",
   "BREW_DATA_BREW_TEMPERATURE": "Brühtemperatur",
   "BREW_DATA_PRESSURE_PROFILE": "Profil",
@@ -125,6 +125,7 @@
   "BREW_DATA_TDS": "Insgesamt gelöste Feststoffe",
   "BREW_DATA_CALCULATED_EXTRACTION_YIELD": "Extraction Yield %",
   "BREW_DATA_TDS_EY": "TDS / %EY",
+  "BREW_DATA_BREW_BEVERAGE_QUANTITY": "Getränkmenge (gr/ml)",
   "BREW_INFORMATION_BREW_RATIO": "Brührate",
   "BREW_INFORMATION_BEAN_AGE": "Bohnenalter (Tage)",
   "BREW_INFORMATION_BREW_QUANTITY_TYPE_NAME": "Bezugsmenge-Typ",
@@ -352,7 +353,8 @@
       "BREW_DATA_COFFEE_TYPE": "Gib deinen Kaffeetyp (z.B. Ristretto) ein",
       "BREW_DATA_COFFEE_CONCENTRATION": "Gib deine Kaffeekonzentration ein (Yield o.ä.)",
       "BREW_DATA_TDS": "Wieviele Feststoffe wurden insgesamt gelöst?",
-      "BREW_DATA_NOTES": "Füge Notizen zu dieser Brühung hinzu"
+      "BREW_DATA_NOTES": "Füge Notizen zu dieser Brühung hinzu",
+      "BREW_DATA_BREW_BEVERAGE_QUANTITY": "Füge die engültige Getränkemenge hinzu"
     }
   },
   "NO_BREW": "0 Brühungen",

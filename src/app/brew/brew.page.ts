@@ -48,6 +48,7 @@ export class BrewPage implements OnInit {
     cssClass: 'select-break-text'
   };
   @ViewChild('openScroll', {read: IonVirtualScroll, static: false}) public openScroll: IonVirtualScroll;
+  @ViewChild('archivedScroll', {read: IonVirtualScroll, static: false}) public archivedScroll: IonVirtualScroll;
 
   public openBrewsFilter: IBrewPageFilter = {
     mill: [],
@@ -91,14 +92,31 @@ export class BrewPage implements OnInit {
     this.openBrewsFilter = this.settings.brew_filter.OPEN;
     this.loadBrews();
 
+
+    this.retriggerScroll();
+  }
+
+  public segmentChanged() {
+    this.retriggerScroll();
+  }
+
+  private retriggerScroll() {
+
     // https://github.com/ionic-team/ionic-framework/issues/18409
     // Workarround
     setTimeout( () => {
-      this.openScroll.checkRange(0,this.openBrewsView.length);
-    },25);
-    // If we don't have beans, we cant do a brew from now on, because of roasting degree and the age of beans.
-  }
+      if (typeof(this.archivedScroll) !== 'undefined')
+      {
+        this.archivedScroll.checkRange(0,this.openBrewsView.length);
+      }
+      if (typeof(this.openScroll) !== 'undefined')
+      {
+        this.openScroll.checkRange(0,this.openBrewsView.length);
+      }
 
+
+    },25);
+  }
 
 
   public async brewAction(action: BREW_ACTION, brew: Brew): Promise<void> {

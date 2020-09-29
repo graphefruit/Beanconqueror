@@ -111,7 +111,7 @@
   "BREW_DATA_MILL": "Grinder",
   "BREW_DATA_MILL_SPEED": "Grinding Speed (rpm)",
   "BREW_DATA_MILL_TIMER": "Grinding Time",
-  "BREW_DATA_BREW_QUANTITY": "Coffee (gr/ml)",
+  "BREW_DATA_BREW_QUANTITY": "Amount of water (gr/ml)",
   "BREW_DATA_BEAN_TYPE": "Bean Type",
   "BREW_DATA_BREW_TEMPERATURE": "Brew Temperature",
   "BREW_DATA_PRESSURE_PROFILE": "Profile",
@@ -128,6 +128,7 @@
   "BREW_INFORMATION_BEAN_AGE": "Bean Age",
   "BREW_INFORMATION_BREW_QUANTITY_TYPE_NAME": "Quantity Type",
   "BREW_DATA_TDS_EY": "TDS / %EY",
+  "BREW_DATA_BREW_BEVERAGE_QUANTITY": "Beverage quantity (gr/ml)",
   "ONE_DAY": "Day",
   "DAYS": "Days",
   "ONE_HOUR": "One hour",
@@ -348,11 +349,12 @@
       "BREW_DATA_TEMPERATURE_TIME": "Enter the time since heating up the machine",
       "BREW_DATA_COFFEE_BLOOMING_TIME": "How long is the blooming time?",
       "BREW_DATA_COFFEE_FIRST_DRIP_TIME": "When did the first drop appear?",
-      "BREW_DATA_BREW_QUANTITY": "How much did you brew?",
+      "BREW_DATA_BREW_QUANTITY": "How much water did you use for brewing?",
       "BREW_DATA_COFFEE_TYPE": "Enter the coffee type (e.g. ristretto)",
       "BREW_DATA_COFFEE_CONCENTRATION": "Enter the coffee concentration",
       "BREW_DATA_TDS": "How many solids where dissolved in total?",
-      "BREW_DATA_NOTES": "Add notes about this brew"
+      "BREW_DATA_NOTES": "Add notes about this brew",
+      "BREW_DATA_BREW_BEVERAGE_QUANTITY": "Add result of beverage quantity"
     }
   },
   "NO_BREW": "0 brews",

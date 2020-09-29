@@ -10,7 +10,7 @@
 </ion-header>
 <ion-content>
 
-  <ion-card class="ion-margin-horizontal popover" style="display:flex; flex-direction: column;">
+  <ion-card *ngIf="showSectionBeforeBrew()" class="ion-margin-horizontal popover" style="display:flex; flex-direction: column;">
 
       <ion-item lines="none">
         <span class="ion-title ion-padding-top">{{"BREW_HEADER_BEFORE_BREW" | translate }}</span>
@@ -84,7 +84,7 @@
       </ion-item>
     <div class="last-item"></div>
   </ion-card>
-  <ion-card class="ion-margin-horizontal popover" style="display:flex; flex-direction: column;">
+  <ion-card *ngIf="showSectionWhileBrew()" class="ion-margin-horizontal popover" style="display:flex; flex-direction: column;">
 
       <ion-item lines="none">
         <span class="ion-title ion-padding-top">{{"BREW_HEADER_WHILE_BREW" | translate }}</span>
@@ -126,7 +126,7 @@
     </ion-item>
     <div class="last-item"></div>
   </ion-card>
-  <ion-card class="ion-margin-horizontal popover" style="display:flex; flex-direction: column;">
+  <ion-card  *ngIf="showSectionAfterBrew()" class="ion-margin-horizontal popover" style="display:flex; flex-direction: column;">
       <ion-item lines="none">
         <span class="ion-title ion-padding-top">{{"BREW_HEADER_AFTER_BREW" | translate }}</span>
       </ion-item>
@@ -154,6 +154,13 @@
       <ion-label>
         <h2>{{"BREW_DATA_RATING" | translate }}:</h2>
         <h3>{{data.rating}}</h3>
+      </ion-label>
+
+    </ion-item>
+    <ion-item *ngIf="settings.brew_beverage_quantity === true" [style.order]="settings.brew_order.after.brew_beverage_quantity">
+      <ion-label>
+        <h2>{{"BREW_DATA_BREW_BEVERAGE_QUANTITY" | translate }}:</h2>
+        <h3>{{data.brew_beverage_quantity}}&nbsp;({{data.getBrewBeverageQuantityTypeName()}})</h3>
       </ion-label>
 
     </ion-item>

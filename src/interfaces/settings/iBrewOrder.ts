@@ -31,6 +31,7 @@ export interface IBrewOrder {
     set_custom_brew_time: number;
     attachments: number;
     tds:number;
+    brew_beverage_quantity:number;
   };
 
 
