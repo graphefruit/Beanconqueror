@@ -1,7 +1,7 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {UIAlert} from '../../services/uiAlert';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
-import {ModalController} from '@ionic/angular';
+import {IonVirtualScroll, ModalController} from '@ionic/angular';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {Brew} from '../../classes/brew/brew';
 import {Bean} from '../../classes/bean/bean';
@@ -28,7 +28,8 @@ export class BeansPage implements OnInit {
   public openBeans: Array<Bean> = [];
   public finishedBeans: Array<Bean> = [];
 
-
+  @ViewChild('openScroll', {read: IonVirtualScroll, static: false}) public openScroll: IonVirtualScroll;
+  @ViewChild('archivedScroll', {read: IonVirtualScroll, static: false}) public archivedScroll: IonVirtualScroll;
   public bean_segment: string = 'open';
   constructor(public modalCtrl: ModalController,
               private readonly changeDetectorRef: ChangeDetectorRef,
@@ -60,6 +61,27 @@ export class BeansPage implements OnInit {
   public loadBeans(): void {
     this.__initializeBeans();
     this.changeDetectorRef.detectChanges();
+    this.retriggerScroll();
+  }
+
+  public segmentChanged() {
+    this.retriggerScroll();
+  }
+  private retriggerScroll() {
+    // https://github.com/ionic-team/ionic-framework/issues/18409
+    // Workarround
+    setTimeout( () => {
+      if (typeof(this.archivedScroll) !== 'undefined' && this.finishedBeans.length > 0)
+      {
+        this.archivedScroll.checkRange(0,this.finishedBeans.length);
+      }
+      if (typeof(this.openScroll) !== 'undefined' && this.openBeans.length > 0)
+      {
+        this.openScroll.checkRange(0,this.openBeans.length);
+      }
+
+
+    },25);
   }
 
   public async beanAction(action: BEAN_ACTION, bean: Bean): Promise<void> {
