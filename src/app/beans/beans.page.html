@@ -17,7 +17,7 @@
 
 <ion-content>
 
-    <ion-segment [(ngModel)]="bean_segment">
+    <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="bean_segment">
       <ion-segment-button value="open">
         <ion-label>{{"PAGE_BEANS_LIST_OBTAINABLE" | translate}}
         </ion-label>
@@ -38,7 +38,7 @@
         {{"PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS" | translate}}
         </div>
       </div>
-      <ion-virtual-scroll *ngIf="openBeans.length > 0" [items]="openBeans"
+      <ion-virtual-scroll #openScroll *ngIf="openBeans.length > 0" [items]="openBeans"
                           approxItemHeight="200px">
         <bean-information (beanAction)="beanAction($event[0],$event[1])"  *virtualItem="let bean;"
                           [bean]="bean"></bean-information>
@@ -56,7 +56,7 @@
             {{"PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS" | translate}}
           </div>
         </div>
-        <ion-virtual-scroll *ngIf="finishedBeans.length > 0" [items]="finishedBeans"
+        <ion-virtual-scroll #archivedScroll *ngIf="finishedBeans.length > 0" [items]="finishedBeans"
                             approxItemHeight="200px">
           <bean-information (beanAction)="beanAction($event[0],$event[1])"  *virtualItem="let bean;"
                             [bean]="bean"></bean-information>

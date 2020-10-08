@@ -105,16 +105,14 @@ export class BrewPage implements OnInit {
     // https://github.com/ionic-team/ionic-framework/issues/18409
     // Workarround
     setTimeout( () => {
-      if (typeof(this.archivedScroll) !== 'undefined')
+      if (typeof(this.archivedScroll) !== 'undefined' && this.archiveBrewsView.length > 0)
       {
-        this.archivedScroll.checkRange(0,this.openBrewsView.length);
+        this.archivedScroll.checkRange(0,this.archiveBrewsView.length);
       }
-      if (typeof(this.openScroll) !== 'undefined')
+      if (typeof(this.openScroll) !== 'undefined' && this.openBrewsView.length > 0)
       {
         this.openScroll.checkRange(0,this.openBrewsView.length);
       }
-
-
     },25);
   }
 
