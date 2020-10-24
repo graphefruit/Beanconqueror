@@ -16,6 +16,7 @@ import {Mill} from '../mill/mill';
 import {Config} from '../objectConfig/objectConfig';
 import {Preparation} from '../preparation/preparation';
 import {ICupping} from '../../interfaces/cupping/iCupping';
+import {IBrewCoordinates} from '../../interfaces/brew/iBrewCoordinates';
 
 export class Brew implements IBrew {
   // tslint:disable-next-line
@@ -58,6 +59,8 @@ export class Brew implements IBrew {
   public attachments: Array<string>;
   public tds: number;
 
+  public coordinates: IBrewCoordinates;
+
 
   public brew_beverage_quantity: number;
 
@@ -93,7 +96,17 @@ export class Brew implements IBrew {
     this.brew_beverage_quantity = 0;
     this.brew_beverage_quantity_type = 'GR' as BREW_QUANTITY_TYPES_ENUM;
 
-    this.cupping = {
+    this.coordinates ={
+       accuracy: null,
+       altitude: null,
+       altitudeAccuracy:null,
+       heading:null,
+       latitude: null,
+       longitude: null,
+       speed: null
+    } as IBrewCoordinates;
+
+      this.cupping = {
       body: 0,
       brightness: 0,
       clean_cup: 0,
@@ -298,6 +311,15 @@ export class Brew implements IBrew {
     uiMillStorage = UIMillStorage.getInstance();
 
     return uiMillStorage;
+  }
+  
+  public getCoordinateMapLink(): string {
+
+    if (this.coordinates && this.coordinates.latitude) {
+      return `https://maps.google.com/?q=${this.coordinates.latitude},${this.coordinates.longitude}`
+
+    }
+    return undefined;
   }
 
   public getRatingIcon(_rating?: number): string {

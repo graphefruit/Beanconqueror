@@ -92,6 +92,7 @@ import {DisableDoubleClickDirective} from '../../directive/disable-double-click.
 import {NgxStarsModule} from 'ngx-stars';
 import {BrewCuppingComponent} from '../brew/brew-cupping/brew-cupping.component';
 import {DatePicker} from '@ionic-native/date-picker/ngx';
+import {Geolocation} from '@ionic-native/geolocation/ngx';
 
 @NgModule({
   declarations: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, AboutComponent,
@@ -179,7 +180,8 @@ import {DatePicker} from '@ionic-native/date-picker/ngx';
     ThreeDeeTouch,
     Camera, ImagePicker, AndroidPermissions,
     InAppBrowser, File, Globalization, FirebaseX,
-    DatePicker
+    DatePicker,
+    Geolocation
   ],
 
   exports: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, AboutComponent,

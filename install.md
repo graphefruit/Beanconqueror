@@ -92,3 +92,7 @@ npm install --save ngx-stars
 ##Datepicker
 ionic cordova plugin add cordova-plugin-datepicker
 npm install @ionic-native/date-picker
+
+## Geolocation
+ionic cordova plugin add cordova-plugin-geolocation
+npm install @ionic-native/geolocation

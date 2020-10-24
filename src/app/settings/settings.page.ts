@@ -33,6 +33,7 @@ import {IBrewPageFilter} from '../../interfaces/brew/iBrewPageFilter';
 import {Bean} from '../../classes/bean/bean';
 /** Third party */
 import moment from 'moment';
+import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
 
 declare var cordova: any;
 declare var device: any;
@@ -105,6 +106,7 @@ export class SettingsPage implements OnInit {
               private readonly translate: TranslateService,
               private readonly changeDetectorRef: ChangeDetectorRef,
               private readonly uiAnalytics: UIAnalytics,
+              private readonly androidPermissions: AndroidPermissions
               ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -119,6 +121,17 @@ export class SettingsPage implements OnInit {
 
   public ngOnInit() {
 
+  }
+
+  public checkCoordinates() {
+    if (this.platform.is('android')) {
+      // Request permission,
+      this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION).then((_status) => {
+        this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION).then((_status) => {
+        }, () => {
+        });
+      },() => {});
+    }
   }
 
   public saveSettings(): void {

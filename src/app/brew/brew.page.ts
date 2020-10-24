@@ -137,6 +137,9 @@ export class BrewPage implements OnInit {
       case BREW_ACTION.CUPPING:
         this.cupBrew(brew);
         break;
+      case BREW_ACTION.SHOW_MAP_COORDINATES:
+        this.showMapCoordinates(brew);
+        break;
       default:
         break;
     }
@@ -181,6 +184,10 @@ export class BrewPage implements OnInit {
     await modal.present();
     await modal.onWillDismiss();
     this.loadBrews();
+  }
+
+  public async showMapCoordinates(_brew: Brew) {
+    this.uiHelper.openExternalWebpage(_brew.getCoordinateMapLink());
   }
 
 

@@ -66,8 +66,11 @@
         <ion-checkbox (ionChange)="checkAnalytics()" (ngModelChange)="saveSettings();"
                       [(ngModel)]="settings.analytics"></ion-checkbox>
       </ion-item>
-
-
+      <ion-item>
+        <ion-label>{{"PAGE_SETTINGS_TRACK_BREW_COORDINATES" | translate}}</ion-label>
+        <ion-checkbox (ionChange)="checkCoordinates()" (ngModelChange)="saveSettings();" [(ngModel)]="settings.track_brew_coordinates"
+                      x></ion-checkbox>
+      </ion-item>
       <ion-item>
         <ion-label>{{"PAGE_SETTINGS_SHOW_ARCHIVED_BEANS" | translate}}</ion-label>
         <ion-checkbox (ngModelChange)="saveSettings();"

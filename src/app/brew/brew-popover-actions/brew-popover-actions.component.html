@@ -24,5 +24,9 @@
     <ion-icon name="beanconqueror-photo-gallery" slot="start"></ion-icon>
     <span>{{"POPOVER_BREWS_OPTION_PHOTO_GALLERY" | translate}}</span>
   </ion-item>
+  <ion-item (click)="choose(getStaticActions().SHOW_MAP_COORDINATES)" *ngIf="hasCoordinates()" button tappable>
+    <ion-icon name="navigate-circle-outline" slot="start"></ion-icon>
+    <span>{{"POPOVER_BREWS_OPTION_MAP_COORDINATES" | translate}}</span>
+  </ion-item>
 </ion-list>
 </ion-content>

@@ -23,6 +23,7 @@
   "POPOVER_BREWS_OPTION_DELETE": "Löschen",
   "POPOVER_BREWS_OPTION_PHOTO_GALLERY": "Fotogalerie",
   "POPOVER_BREWS_OPTION_CUPPING": "Verkosten",
+  "POPOVER_BREWS_OPTION_MAP_COORDINATES": "Anzeigen auf Karte",
   "PAGE_BREWS_NO_ENTRIES": "Du hast noch keinen Bezug hinzugefügt.",
   "PAGE_BREWS_NO_ARCHIVED_ENTRIES": "Du hast noch keinen Bezug archiviert.",
   "CANT_START_NEW_BREW_TITLE": "Ein Bezug nur mit Luft und Liebe?",
@@ -56,6 +57,7 @@
   "PAGE_SETTINGS_DISPLAY_PAGING": "Paging",
   "PAGE_SETTINGS_STARTUP_VIEW": "Startansicht",
   "PAGE_SETTINGS_ANALYTICS_INFORMATION": "Analytics erlauben?",
+  "PAGE_SETTINGS_TRACK_BREW_COORDINATES": "Brühkoordinaten speichern",
   "PAGE_STATISTICS_DIFFERENT_PREPARATION_METHOD": "Brühmethodiken",
   "PAGE_STATISTICS_TOTAL_GROUND_BEANS": "Vermahlene Bohnen",
   "PAGE_STATISTICS_MONEY_SPENT_FOR_COFFEE": "Geld für Kaffee ausgegeben",
@@ -369,5 +371,7 @@
   "EXTERNAL_STORAGE_NOT_SUPPORTED": "Externes Dateisystem wird leider nicht unterstützt",
   "BEANS_ARCHIVED": "Archiviert",
   "TAB_ARCHIVE": "Archiv",
-  "TODAY": "Heute"
+  "TODAY": "Heute",
+  "PLEASE_WAIT": "Bitte warten..."
+
 }

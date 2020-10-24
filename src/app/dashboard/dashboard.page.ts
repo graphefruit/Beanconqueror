@@ -13,6 +13,7 @@ import {BrewEditComponent} from '../brew/brew-edit/brew-edit.component';
 import {UIAlert} from '../../services/uiAlert';
 import {UIToast} from '../../services/uiToast';
 import {Router} from '@angular/router';
+import {UIHelper} from '../../services/uiHelper';
 
 @Component({
   selector: 'dashboard',
@@ -29,7 +30,8 @@ export class DashboardPage implements OnInit {
               private readonly uiAlert: UIAlert,
               private readonly uiToast: UIToast,
               private readonly changeDetectorRef: ChangeDetectorRef,
-              private readonly router: Router) {
+              private readonly router: Router,
+              private readonly uiHelper: UIHelper) {
   }
 
   public ngOnInit(): void {
@@ -100,6 +102,9 @@ export class DashboardPage implements OnInit {
       case BREW_ACTION.CUPPING:
         this.cupBrew(brew);
         break;
+      case BREW_ACTION.SHOW_MAP_COORDINATES:
+        this.showMapCoordinates(brew);
+        break;
       default:
         break;
     }
@@ -150,6 +155,10 @@ export class DashboardPage implements OnInit {
     const modal = await this.modalCtrl.create({component: BrewPhotoViewComponent, id:'brew-photo', componentProps: {brew: _brew}});
     await modal.present();
     await modal.onWillDismiss();
+  }
+
+  public async showMapCoordinates(_brew: Brew) {
+    this.uiHelper.openExternalWebpage(_brew.getCoordinateMapLink());
   }
 
   public deleteBrew(_brew: Brew): void {

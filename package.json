@@ -32,6 +32,7 @@
     "@ionic-native/file-path": "^5.23.0",
     "@ionic-native/file-picker": "^5.23.0",
     "@ionic-native/firebase-x": "^5.23.0",
+    "@ionic-native/geolocation": "^5.29.0",
     "@ionic-native/globalization": "^5.23.0",
     "@ionic-native/image-picker": "^5.23.0",
     "@ionic-native/in-app-browser": "^5.23.0",
@@ -64,6 +65,7 @@
     "cordova-plugin-filepath": "^1.5.8",
     "cordova-plugin-filepicker": "^1.1.6",
     "cordova-plugin-firebasex": "^10.1.2-cli",
+    "cordova-plugin-geolocation": "^4.0.2",
     "cordova-plugin-globalization": "^1.11.0",
     "cordova-plugin-inappbrowser": "^4.0.0",
     "cordova-plugin-ionic-keyboard": "^2.2.0",
@@ -164,7 +166,8 @@
         "ANDROID_FIREBASE_CRASHLYTICS_NDK_VERSION": "17.0.1",
         "ANDROID_GSON_VERSION": "2.8.6"
       },
-      "cordova-plugin-datepicker": {}
+      "cordova-plugin-datepicker": {},
+      "cordova-plugin-geolocation": {}
     },
     "platforms": [
       "android",

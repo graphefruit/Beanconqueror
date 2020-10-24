@@ -38,6 +38,7 @@ export interface ISettings {
   default_last_coffee_parameters: IDefaultLastCoffeeParameters;
   brew_order: IBrewOrder;
   analytics: boolean;
+  track_brew_coordinates: boolean;
 
   show_archived_beans: boolean;
   show_archived_brews: boolean;

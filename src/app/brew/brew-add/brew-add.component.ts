@@ -8,7 +8,7 @@ import {BREW_VIEW_ENUM} from '../../../enums/settings/brewView';
 import {UIBrewStorage} from '../../../services/uiBrewStorage';
 import {TimerComponent} from '../../../components/timer/timer.component';
 import {UISettingsStorage} from '../../../services/uiSettingsStorage';
-import {IonSlides, ModalController, NavParams, Platform} from '@ionic/angular';
+import {IonSlides, LoadingController, ModalController, NavParams, Platform} from '@ionic/angular';
 import {UIMillStorage} from '../../../services/uiMillStorage';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {UIImage} from '../../../services/uiImage';
@@ -24,6 +24,7 @@ import {UIFileHelper} from '../../../services/uiFileHelper';
 import {DatePicker} from '@ionic-native/date-picker/ngx';
 import {TranslateService} from '@ngx-translate/core';
 import {BrewTimerComponent} from '../../../components/brew-timer/brew-timer.component';
+import {Geolocation} from '@ionic-native/geolocation/ngx';
 
 @Component({
   selector: 'brew-add',
@@ -68,7 +69,9 @@ export class BrewAddComponent implements OnInit {
                private readonly uiFileHelper: UIFileHelper,
                private readonly datePicker: DatePicker,
                private readonly translate: TranslateService,
-               private readonly platform: Platform) {
+               private readonly platform: Platform,
+               private readonly geolocation: Geolocation,
+               private readonly loadingController: LoadingController) {
     // Initialize to standard in drop down
     //
 
@@ -96,6 +99,8 @@ export class BrewAddComponent implements OnInit {
     }
 
     this.customCreationDate = moment().toISOString();
+
+
   }
 
 
@@ -116,8 +121,28 @@ export class BrewAddComponent implements OnInit {
 
   }
 
-  public finish(): void {
+  public async finish() {
+    const loading = await this.loadingController.create({
+      message: this.translate.instant('PLEASE_WAIT')
+    });
+    loading.present();
+
     this.stopTimer();
+
+    if (this.settings.track_brew_coordinates) {
+      await this.geolocation.getCurrentPosition().then((resp) => {
+        this.data.coordinates.latitude = resp.coords.latitude;
+        this.data.coordinates.accuracy = resp.coords.accuracy;
+        this.data.coordinates.altitude = resp.coords.altitude;
+        this.data.coordinates.altitudeAccuracy = resp.coords.altitudeAccuracy;
+        this.data.coordinates.heading = resp.coords.heading;
+        this.data.coordinates.speed = resp.coords.speed;
+        this.data.coordinates.longitude = resp.coords.longitude;
+      }).catch((error) => {
+        // Couldn't get coordinates sorry.
+      });
+    }
+
     this.uiBrewStorage.add(this.data);
     if (this.settings.set_custom_brew_time) {
       this.data.config.unix_timestamp = moment(this.customCreationDate).unix();
@@ -127,6 +152,8 @@ export class BrewAddComponent implements OnInit {
       this.uiToast.showInfoToast('TOAST_BREW_ADDED_SUCCESSFULLY');
     }
 
+
+    await loading.dismiss();
     this.dismiss();
   }
 
