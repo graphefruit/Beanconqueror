@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {Bean} from '../../classes/bean/bean';
 import {Settings} from '../../classes/settings/settings';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
@@ -9,6 +9,7 @@ import {Brew} from '../../classes/brew/brew';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
 import {ROASTS_ENUM} from '../../enums/beans/roasts';
 import {BeanPhotoViewComponent} from '../../app/beans/bean-photo-view/bean-photo-view.component';
+import {NgxStarsComponent} from 'ngx-stars';
 
 @Component({
   selector: 'bean-information',
@@ -19,7 +20,7 @@ export class BeanInformationComponent implements OnInit {
 
   @Input() public bean: Bean;
 
-
+  @ViewChild('beanStars', {read: NgxStarsComponent, static: false}) public beanStars: NgxStarsComponent;
   @Output() public beanAction: EventEmitter<any> = new EventEmitter();
 
 
@@ -43,6 +44,18 @@ export class BeanInformationComponent implements OnInit {
 
 
   public ngOnInit() {
+  }
+  public ngAfterViewInit() {
+    this.resetRenderingRating();
+  }
+  public ngOnChanges() {
+    this.resetRenderingRating();
+  }
+
+  private resetRenderingRating() {
+    if (this.beanStars && this.bean.roast_range !== 0) {
+      this.beanStars.setRating(this.bean.roast_range);
+    }
   }
 
   public brewCounts(): number {

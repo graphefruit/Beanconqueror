@@ -62,8 +62,8 @@
                       </ion-col>
                       <ion-col>-</ion-col>
                     </ion-item>
-                    <ion-item *ngIf="bean.roast_range !== 0">
-                      <ngx-stars [initialStars]="bean.roast_range" [readonly]="true" [size]="1"
+                    <ion-item *ngIf="bean?.roast_range !== 0">
+                      <ngx-stars #beanStars [initialStars]="bean.roast_range" [readonly]="true" [size]="1"
                                  style="margin-top:8px;"></ngx-stars>
                     </ion-item>
                     <ion-item>
