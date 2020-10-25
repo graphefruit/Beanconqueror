@@ -373,7 +373,6 @@
   "EXTERNAL_STORAGE_NOT_SUPPORTED": "Externes Dateisystem wird leider nicht unterstützt",
   "BEANS_ARCHIVED": "Archiviert",
   "TAB_ARCHIVE": "Archiv",
-  "TODAY": "Heute",
-  "PLEASE_WAIT": "Bitte warten..."
-
+  "PLEASE_WAIT": "Bitte warten...",
+  "TODAY": "Heute"
 }
