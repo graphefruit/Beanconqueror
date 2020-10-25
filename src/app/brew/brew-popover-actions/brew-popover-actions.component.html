@@ -28,5 +28,9 @@
     <ion-icon name="navigate-circle-outline" slot="start"></ion-icon>
     <span>{{"POPOVER_BREWS_OPTION_MAP_COORDINATES" | translate}}</span>
   </ion-item>
+  <ion-item (click)="choose(getStaticActions().FAST_REPEAT)" *ngIf="hasFastBrewActivated()" button tappable>
+    <ion-icon name="repeat-outline" slot="start"></ion-icon>
+    <span>{{"POPOVER_BREWS_OPTION_FAST_REPEAT" | translate}}</span>
+  </ion-item>
 </ion-list>
 </ion-content>

@@ -140,9 +140,53 @@ export class BrewPage implements OnInit {
       case BREW_ACTION.SHOW_MAP_COORDINATES:
         this.showMapCoordinates(brew);
         break;
+      case BREW_ACTION.FAST_REPEAT:
+        this.fastRepeatBrew(brew);
+        break;
       default:
         break;
     }
+  }
+
+  public async fastRepeatBrew(brew: Brew) {
+
+      const repeatBrew: Brew = new Brew();
+      const brewBean: IBean = this.uiBeanStorage.getByUUID(brew.bean);
+      if (!brewBean.finished) {
+        repeatBrew.bean = brewBean.config.uuid;
+      }
+      repeatBrew.grind_size = brew.grind_size;
+
+      repeatBrew.grind_weight = brew.grind_weight;
+
+      const brewPreparation: IPreparation = this.uiPreparationStorage.getByUUID(brew.method_of_preparation);
+      if (!brewPreparation.finished) {
+        repeatBrew.method_of_preparation = brewPreparation.config.uuid;
+      }
+
+      const brewMill: IMill = this.uiMillStorage.getByUUID(brew.mill);
+      if (!brewMill.finished) {
+        repeatBrew.mill = brewMill.config.uuid;
+      }
+      repeatBrew.mill_timer = brew.mill_timer;
+      repeatBrew.mill_speed = brew.mill_speed;
+      repeatBrew.pressure_profile = brew.pressure_profile;
+      repeatBrew.brew_temperature = brew.brew_temperature;
+      repeatBrew.brew_temperature_time = brew.brew_temperature_time;
+      repeatBrew.brew_time = brew.brew_time;
+      repeatBrew.brew_quantity = brew.brew_quantity;
+      repeatBrew.brew_quantity_type = brew.brew_quantity_type;
+      repeatBrew.coffee_type = brew.coffee_type;
+      repeatBrew.coffee_concentration = brew.coffee_concentration;
+      repeatBrew.coffee_first_drip_time = brew.coffee_first_drip_time;
+      repeatBrew.coffee_blooming_time = brew.coffee_blooming_time;
+      repeatBrew.rating = brew.rating;
+      repeatBrew.note = brew.note;
+      repeatBrew.coordinates = brew.coordinates;
+
+      this.uiBrewStorage.add(repeatBrew);
+
+    this.loadBrews();
   }
 
   public async editBrew(_brew: Brew) {

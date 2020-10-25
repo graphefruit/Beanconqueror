@@ -6,6 +6,7 @@ import {UIHelper} from '../../../services/uiHelper';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 import {BREW_ACTION} from '../../../enums/brews/brewAction';
 import {UISettingsStorage} from '../../../services/uiSettingsStorage';
+import {Settings} from '../../../classes/settings/settings';
 
 @Component({
   selector: 'brew-popover-actions',
@@ -16,6 +17,7 @@ export class BrewPopoverActionsComponent implements OnInit {
 
 
   public data: Brew = new Brew();
+  private settings: Settings;
 
   constructor(private readonly popoverController: PopoverController,
               private readonly navParams: NavParams,
@@ -24,7 +26,7 @@ export class BrewPopoverActionsComponent implements OnInit {
               private readonly uiSettings: UISettingsStorage) {
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
     const brew: IBrew = this.uiHelper.copyData(this.navParams.get('brew'));
-
+    this.settings = this.uiSettings.getSettings();
     this.data.initializeByObject(brew);
   }
 
@@ -40,8 +42,12 @@ export class BrewPopoverActionsComponent implements OnInit {
   }
 
   public hasCoordinates(): boolean {
-    return (this.uiSettings.getSettings().track_brew_coordinates &&
+    return (this.settings.track_brew_coordinates &&
       (this.data.coordinates.latitude!== undefined && this.data.coordinates.latitude !== null && this.data.coordinates.latitude !== 0) );
+  }
+
+  public hasFastBrewActivated(): boolean {
+    return this.settings.fast_brew_repeat;
   }
 
   public getStaticActions(): any {

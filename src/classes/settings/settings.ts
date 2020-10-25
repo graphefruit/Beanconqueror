@@ -42,6 +42,7 @@ export class Settings implements ISettings {
   public language: string;
   public analytics: boolean;
   public track_brew_coordinates: boolean;
+  public fast_brew_repeat: boolean;
 
   public show_archived_beans: boolean;
   public show_archived_brews: boolean;
@@ -87,6 +88,7 @@ export class Settings implements ISettings {
     this.analytics = undefined;
 
     this.track_brew_coordinates = false;
+    this.fast_brew_repeat = false;
     this.show_archived_beans = true;
     this.show_archived_brews = true;
     this.show_archived_mills = true;

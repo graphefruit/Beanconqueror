@@ -39,6 +39,7 @@ export interface ISettings {
   brew_order: IBrewOrder;
   analytics: boolean;
   track_brew_coordinates: boolean;
+  fast_brew_repeat: boolean;
 
   show_archived_beans: boolean;
   show_archived_brews: boolean;
