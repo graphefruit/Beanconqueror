@@ -127,6 +127,9 @@ ion-card-header {
 }
 ion-label {
   white-space: normal;
+  p {
+    white-space: normal;
+  }
 }
 ion-modal{
   --min-height:100%!important;

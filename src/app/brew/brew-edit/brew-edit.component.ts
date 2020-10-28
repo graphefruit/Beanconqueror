@@ -20,6 +20,7 @@ import {UIToast} from '../../../services/uiToast';
 import {UIFileHelper} from '../../../services/uiFileHelper';
 import {DatePicker} from '@ionic-native/date-picker/ngx';
 import {TranslateService} from '@ngx-translate/core';
+import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
 
 @Component({
   selector: 'brew-edit',
@@ -31,7 +32,7 @@ export class BrewEditComponent implements OnInit {
 
   @ViewChild('photoSlides', {static: false}) public photoSlides: IonSlides;
   public data: Brew = new Brew();
-
+  public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   public brewQuantityTypeEnums = BREW_QUANTITY_TYPES_ENUM;
   public method_of_preparations: Array<Preparation> = [];
   public beans: Array<Bean> = [];
@@ -89,6 +90,9 @@ export class BrewEditComponent implements OnInit {
       return true;
     }
     return false;
+  }
+  public getPreparation(): Preparation {
+    return this.uiPreparationStorage.getByUUID(this.data.method_of_preparation);
   }
 
   public addImage(): void {

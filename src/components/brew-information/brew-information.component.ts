@@ -9,6 +9,7 @@ import {Bean} from '../../classes/bean/bean';
 import {Preparation} from '../../classes/preparation/preparation';
 import {Mill} from '../../classes/mill/mill';
 import {BREW_QUANTITY_TYPES_ENUM} from '../../enums/brews/brewQuantityTypes';
+import {PREPARATION_STYLE_TYPE} from '../../enums/preparations/preparationStyleTypes';
 
 @Component({
   selector: 'brew-information',
@@ -21,7 +22,7 @@ export class BrewInformationComponent implements OnInit {
 
 
   @Output() public brewAction: EventEmitter<any> = new EventEmitter();
-
+  public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
 
   public bean: Bean;
   public preparation: Preparation;

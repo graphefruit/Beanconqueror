@@ -8,6 +8,8 @@ import {UIAnalytics} from '../../../services/uiAnalytics';
 import {UIToast} from '../../../services/uiToast';
 import {TranslateService} from '@ngx-translate/core';
 
+import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
+
 @Component({
   selector: 'preparation-add-type',
   templateUrl: './preparation-add-type.component.html',
@@ -17,7 +19,7 @@ export class PreparationAddTypeComponent implements OnInit {
 
 
   public data: Preparation = new Preparation();
-
+  public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   @ViewChild('addPreparationForm', {static: false}) public preparationForm: NgForm;
   @Input() private hide_toast_message: boolean;
 
@@ -31,6 +33,7 @@ export class PreparationAddTypeComponent implements OnInit {
     if (this.data.type !== PREPARATION_TYPES.CUSTOM_PREPARATION) {
       this.data.name = this.translate.instant('PREPARATION_TYPE_' + this.data.type);
     }
+    this.data.style_type = this.data.getPresetStyleType();
 
   }
 

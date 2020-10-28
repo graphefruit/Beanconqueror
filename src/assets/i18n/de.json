@@ -374,5 +374,7 @@
   "BEANS_ARCHIVED": "Archiviert",
   "TAB_ARCHIVE": "Archiv",
   "PLEASE_WAIT": "Bitte warten...",
-  "TODAY": "Heute"
+  "TODAY": "Heute",
+  "PREPARATION_STYLE_POUR_OVER": "Pour Over",
+  "PREPARATION_STYLE_ESPRESSO": "Espresso"
 }

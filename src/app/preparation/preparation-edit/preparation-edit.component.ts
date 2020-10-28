@@ -7,6 +7,7 @@ import {UIHelper} from '../../../services/uiHelper';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 import {PREPARATION_TYPES} from '../../../enums/preparations/preparationTypes';
 import {UIToast} from '../../../services/uiToast';
+import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
 
 @Component({
   selector: 'preparation-edit',
@@ -16,6 +17,7 @@ import {UIToast} from '../../../services/uiToast';
 export class PreparationEditComponent implements OnInit {
 
   public data: Preparation = new Preparation();
+  public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   @Input() private preparation: IPreparation;
   public preparationTypeEnum = PREPARATION_TYPES;
   constructor (private readonly navParams: NavParams,

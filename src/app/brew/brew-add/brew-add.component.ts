@@ -25,6 +25,8 @@ import {DatePicker} from '@ionic-native/date-picker/ngx';
 import {TranslateService} from '@ngx-translate/core';
 import {BrewTimerComponent} from '../../../components/brew-timer/brew-timer.component';
 import {Geolocation} from '@ionic-native/geolocation/ngx';
+import {Preparation} from '../../../classes/preparation/preparation';
+import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
 
 @Component({
   selector: 'brew-add',
@@ -42,7 +44,7 @@ export class BrewAddComponent implements OnInit {
 
   public BREW_VIEW_ENUM = BREW_VIEW_ENUM;
   public settings: ISettings;
-
+  public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   public brewQuantityTypeEnums = BREW_QUANTITY_TYPES_ENUM;
 
   public method_of_preparations: Array<IPreparation> = [];
@@ -172,6 +174,10 @@ export class BrewAddComponent implements OnInit {
     }
 
     return 0;
+  }
+
+  public getPreparation(): Preparation {
+    return this.uiPreparationStorage.getByUUID(this.data.method_of_preparation);
   }
 
   public setCoffeeDripTime($event): void {

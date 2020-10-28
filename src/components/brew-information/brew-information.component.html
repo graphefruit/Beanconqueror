@@ -44,8 +44,11 @@
                 <ion-col class="ion-text-bold" size="5">
                   {{"BREW_DATA_IN_OUT_BR" | translate}}:
                 </ion-col>
-                <ion-col size="7">
-                  {{brew?.grind_weight | number : '.0-2'}}gr / {{brew?.brew_quantity | number : '.0-2'}}{{brewQuantityEnum[brew?.brew_quantity_type]}}&nbsp;({{brew?.getBrewRatio()}})
+                <ion-col *ngIf="brew?.getPreparation().style_type === PREPARATION_STYLE_TYPE.POUR_OVER" size="7">
+                  {{brew?.grind_weight | number : '.0-2'}}gr / {{brew.brew_quantity | number : '.0-2'}}{{brewQuantityEnum[brew?.brew_quantity_type]}}&nbsp;({{brew?.getBrewRatio()}})
+                </ion-col>
+                <ion-col *ngIf="brew?.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO" size="7">
+                  {{brew?.grind_weight | number : '.0-2'}}gr / {{brew.brew_beverage_quantity | number : '.0-2'}}{{brewQuantityEnum[brew?.brew_beverage_quantity_type]}}&nbsp;({{brew?.getBrewRatio()}})
                 </ion-col>
               </ion-item>
             </div>
@@ -68,7 +71,7 @@
                 </ion-col>
               </ion-item>
 
-              <ion-item *ngIf="settings.brew_quantity === true && settings.grind_weight === true">
+              <ion-item *ngIf="(settings.brew_quantity === true || settings.brew_beverage_quantity) === true && settings.grind_weight === true">
                 <ion-col class="ion-text-bold" size="5">
                   {{"BREW_INFORMATION_BREW_RATIO" | translate}}:
                 </ion-col>

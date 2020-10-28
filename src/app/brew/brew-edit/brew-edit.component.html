@@ -139,7 +139,7 @@
       <ion-item lines="none">
         <span class="ion-title ion-padding-top">{{"BREW_HEADER_AFTER_BREW" | translate }}</span>
       </ion-item>
-      <ion-item *ngIf="settings.brew_quantity === true" [style.order]="settings.brew_order.after.brew_quantity" lines="inset">
+      <ion-item *ngIf="settings.brew_quantity === true && getPreparation().style_type === PREPARATION_STYLE_TYPE.POUR_OVER" [style.order]="settings.brew_order.after.brew_quantity" lines="inset">
         <ion-row style="width:100%">
           <ion-col class="ion-no-padding" size="8">
             <ion-item class="ion-no-margin-important">

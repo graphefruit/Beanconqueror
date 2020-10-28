@@ -28,6 +28,14 @@
           </ion-input>
         </ion-item>
         <ion-item>
+          <ion-label position="stacked">{{"PREPARATION_TYPE_STYLE" | translate}}*</ion-label>
+          <ion-select #name="ngModel" [(ngModel)]="data.style_type" cancelText="{{'CANCEL'| translate }}"
+                      name="style_type" okText="{{'CHOOSE'| translate }}">
+            <ion-select-option value="{{PREPARATION_STYLE_TYPE.POUR_OVER}}">{{"PREPARATION_STYLE_POUR_OVER" | translate}}</ion-select-option>
+            <ion-select-option value="{{PREPARATION_STYLE_TYPE.ESPRESSO}}">{{"PREPARATION_STYLE_ESPRESSO" | translate}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
           <ion-label position="stacked">{{"ARCHIVED"|translate}}?</ion-label>
           <ion-checkbox #finished="ngModel" [(ngModel)]="data.finished" name="finished"></ion-checkbox>
         </ion-item>

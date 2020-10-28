@@ -17,6 +17,7 @@ import {Config} from '../objectConfig/objectConfig';
 import {Preparation} from '../preparation/preparation';
 import {ICupping} from '../../interfaces/cupping/iCupping';
 import {IBrewCoordinates} from '../../interfaces/brew/iBrewCoordinates';
+import {PREPARATION_STYLE_TYPE} from '../../enums/preparations/preparationStyleTypes';
 
 export class Brew implements IBrew {
   // tslint:disable-next-line
@@ -203,7 +204,7 @@ export class Brew implements IBrew {
 
   public getExtractionYield(): string {
     const grindWeight: number = this.grind_weight;
-    const brewQuantity: number = this.brew_beverage_quantity;
+    let brewQuantity: number = this.brew_beverage_quantity;
     const tds: number = this.tds;
 
 
@@ -218,7 +219,13 @@ export class Brew implements IBrew {
 
   public getBrewRatio(): string {
     const grindWeight: number = this.grind_weight;
-    const brewQuantity: number = this.brew_quantity;
+    let brewQuantity: number = 0;
+
+    if (this.getPreparation().style_type === PREPARATION_STYLE_TYPE.POUR_OVER) {
+      brewQuantity = this.brew_quantity;
+    } else {
+      brewQuantity = this.brew_beverage_quantity;
+    }
     let ratio: string = '1 / ';
 
     if (brewQuantity > 0 && grindWeight > 0) {

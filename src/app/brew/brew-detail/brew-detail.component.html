@@ -130,7 +130,7 @@
       <ion-item lines="none">
         <span class="ion-title ion-padding-top">{{"BREW_HEADER_AFTER_BREW" | translate }}</span>
       </ion-item>
-      <ion-item *ngIf="settings.brew_quantity === true" [style.order]="settings.brew_order.after.brew_quantity">
+      <ion-item *ngIf="settings.brew_quantity === true && getPreparation().style_type === PREPARATION_STYLE_TYPE.POUR_OVER" [style.order]="settings.brew_order.after.brew_quantity">
       <ion-label>
         <h2>{{"BREW_DATA_BREW_QUANTITY" | translate}}:</h2>
         <h3>{{data.brew_quantity}} ({{data.getBrewQuantityTypeName()}})</h3>

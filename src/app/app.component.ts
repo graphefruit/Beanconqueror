@@ -32,6 +32,7 @@ import {UIAnalytics} from '../services/uiAnalytics';
 import {WelcomePopoverComponent} from '../popover/welcome-popover/welcome-popover.component';
 /** Third party */
 import moment from 'moment';
+import {Preparation} from '../classes/preparation/preparation';
 
 @Component({
   selector: 'app-root',
@@ -207,6 +208,20 @@ export class AppComponent implements AfterViewInit {
 
       }
 
+    }
+    if (this.uiPreparationStorage.getAllEntries().length > 0) {
+      const preparations: Array<Preparation> = this.uiPreparationStorage.getAllEntries();
+      let needsUpdate: boolean = false;
+      for (const preparation of preparations) {
+        if (preparation.style_type === undefined) {
+          preparation.style_type = preparation.getPresetStyleType();
+          needsUpdate = true;
+        }
+        if ( needsUpdate) {
+          this.uiPreparationStorage.update(preparation);
+        }
+
+      }
     }
     // Fix wrong types
     if (this.uiBrewStorage.getAllEntries().length > 0) {

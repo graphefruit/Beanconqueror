@@ -3,12 +3,14 @@ import {IPreparation} from '../../interfaces/preparation/iPreparation';
 /** Classes */
 import {Config} from '../objectConfig/objectConfig';
 import {PREPARATION_TYPES} from '../../enums/preparations/preparationTypes';
+import {PREPARATION_STYLE_TYPE} from '../../enums/preparations/preparationStyleTypes';
 
 
 export class Preparation implements IPreparation {
   public name: string;
   public note: string;
   public config: Config;
+  public style_type: PREPARATION_STYLE_TYPE;
   public type: PREPARATION_TYPES;
   public finished: boolean;
   constructor() {
@@ -16,11 +18,24 @@ export class Preparation implements IPreparation {
     this.note = '';
     this.config = new Config();
     this.type = 'CUSTOM_PREPARATION' as PREPARATION_TYPES;
+    this.style_type = undefined;
     this.finished = false;
   }
 
   public initializeByObject (preparationObj: IPreparation): void {
     Object.assign(this, preparationObj);
+  }
+
+
+  public getPresetStyleType() {
+    switch (this.type) {
+      case PREPARATION_TYPES.CUSTOM_PREPARATION:
+        return  PREPARATION_STYLE_TYPE.ESPRESSO;
+      case PREPARATION_TYPES.PORTAFILTER:
+        return  PREPARATION_STYLE_TYPE.ESPRESSO;
+      default:
+        return PREPARATION_STYLE_TYPE.POUR_OVER
+    }
   }
 
   public getIcon(_key?: PREPARATION_TYPES): string {

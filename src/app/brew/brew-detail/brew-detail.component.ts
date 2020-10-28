@@ -5,6 +5,8 @@ import {UIHelper} from '../../../services/uiHelper';
 import {Brew} from '../../../classes/brew/brew';
 import {IBrew} from '../../../interfaces/brew/iBrew';
 import {Settings} from '../../../classes/settings/settings';
+import {Preparation} from '../../../classes/preparation/preparation';
+import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
 
 @Component({
   selector: 'brew-detail',
@@ -13,7 +15,7 @@ import {Settings} from '../../../classes/settings/settings';
 })
 export class BrewDetailComponent implements OnInit {
 
-
+  public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   @ViewChild('photoSlides', {static: false}) public photoSlides: IonSlides;
   public data: Brew = new Brew();
   public settings: Settings;
@@ -50,7 +52,9 @@ export class BrewDetailComponent implements OnInit {
       this.settings.tds ||
       this.settings.brew_beverage_quantity);
   }
-
+  public getPreparation(): Preparation {
+    return this.data.getPreparation();
+  }
 
   public showSectionWhileBrew(): boolean {
     return (this.settings.pressure_profile ||
