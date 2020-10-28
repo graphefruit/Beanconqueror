@@ -99,7 +99,7 @@ export class WelcomePopoverComponent implements OnInit {
   public finish() {
     this.modalController.dismiss({
       dismissed: true
-    });
+    }, undefined, 'welcome-popover');
     this.settings.welcome_page_showed = true;
     this.uiSettingsStorage.saveSettings(this.settings);
 

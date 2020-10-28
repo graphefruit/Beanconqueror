@@ -356,7 +356,7 @@ export class AppComponent implements AfterViewInit {
   private async __trackNewBrew() {
 
     if (this.uiBrewHelper.canBrew()) {
-      const modal = await this.modalCtrl.create({component: BrewAddComponent});
+      const modal = await this.modalCtrl.create({component: BrewAddComponent, id:'brew-add'});
       await modal.present();
       await modal.onWillDismiss();
     }
@@ -370,7 +370,7 @@ export class AppComponent implements AfterViewInit {
     const welcomePagedShowed: boolean = settings.welcome_page_showed;
 
     if (!welcomePagedShowed) {
-      const modal = await this.modalCtrl.create({component: WelcomePopoverComponent});
+      const modal = await this.modalCtrl.create({component: WelcomePopoverComponent, id:'welcome-popover'});
       await modal.present();
       await modal.onWillDismiss();
     }
