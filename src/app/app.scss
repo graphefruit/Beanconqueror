@@ -6,7 +6,7 @@
 // and used throughout the application.
 
 @font-face {
-  font-family: 'Baloo';
+  font-family: 'Baloo' ;
   src: url('../assets/fonts/BalooTamma2-Regular.ttf') format('truetype');
 }
 
@@ -16,7 +16,7 @@
 }
 
 ion-title {
-  font-family: "Baloo";
+  font-family: 'Baloo', sans-serif;
   font-size: 24px;
   letter-spacing: -1.05px;
   color: var(--ion-text-color);
@@ -459,7 +459,7 @@ ion-menu:host .menu-inner {
     }
   }
   ion-label {
-    font-family: "Baloo";
+    font-family: 'Baloo', sans-serif;
     font-size: 14px;
 
   }
@@ -483,7 +483,7 @@ ion-menu:host .menu-inner {
 
 
     ion-label {
-      font-family: 'Baloo';
+      font-family: 'Baloo', sans-serif;
       font-size: 14px;
     }
 
@@ -546,7 +546,7 @@ ion-menu:host .menu-inner {
   }
 
   .ion-title {
-    font-family: "Baloo";
+    font-family: 'Baloo', sans-serif;
     font-size: 24px;
     letter-spacing: -1.05px;
     color: var(--ion-text-color);
@@ -556,7 +556,7 @@ ion-menu:host .menu-inner {
 
   ion-toast {
     --background: #474747;
-    font-family: Baloo;
+    font-family: 'Baloo', sans-serif;
     font-weight: bold;
     letter-spacing: 0.5px;
   }
