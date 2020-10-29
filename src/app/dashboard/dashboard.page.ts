@@ -105,11 +105,21 @@ export class DashboardPage implements OnInit {
       case BREW_ACTION.SHOW_MAP_COORDINATES:
         this.showMapCoordinates(brew);
         break;
+      case BREW_ACTION.FAST_REPEAT:
+        this.fastRepeatBrew(brew);
+        break;
       default:
         break;
     }
   }
-
+  public async fastRepeatBrew(brew: Brew) {
+    if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
+      const repeatBrew = this.uiBrewHelper.repeatBrew(brew);
+      this.uiBrewStorage.add(repeatBrew);
+      this.uiToast.showInfoToast('TOAST_BREW_REPEATED_SUCCESSFULLY');
+      this.loadBrews();
+    }
+  }
   public async editBrew(_brew: Brew) {
 
     const modal = await this.modalCtrl.create({component: BrewEditComponent, id:'brew-edit', componentProps: {brew: _brew}});

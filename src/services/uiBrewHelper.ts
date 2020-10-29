@@ -5,6 +5,10 @@ import {UIBeanStorage} from './uiBeanStorage';
 import {UIMillStorage} from './uiMillStorage';
 import {UIPreparationStorage} from './uiPreparationStorage';
 import {UIAlert} from './uiAlert';
+import {Brew} from '../classes/brew/brew';
+import {IBean} from '../interfaces/bean/iBean';
+import {IPreparation} from '../interfaces/preparation/iPreparation';
+import {IMill} from '../interfaces/mill/iMill';
 
 /**
  * Handles every helping functionalities
@@ -56,6 +60,44 @@ export class UIBrewHelper {
       return false;
     }
     return true;
+  }
+
+
+  public repeatBrew(_brewToCopy: Brew): Brew {
+    const repeatBrew: Brew = new Brew();
+    const brewBean: IBean = this.uiBeanStorage.getByUUID(_brewToCopy.bean);
+    if (!brewBean.finished) {
+      repeatBrew.bean = brewBean.config.uuid;
+    }
+    repeatBrew.grind_size = _brewToCopy.grind_size;
+
+    repeatBrew.grind_weight = _brewToCopy.grind_weight;
+
+    const brewPreparation: IPreparation = this.uiPreparationStorage.getByUUID(_brewToCopy.method_of_preparation);
+    if (!brewPreparation.finished) {
+      repeatBrew.method_of_preparation = brewPreparation.config.uuid;
+    }
+
+    const brewMill: IMill = this.uiMillStorage.getByUUID(_brewToCopy.mill);
+    if (!brewMill.finished) {
+      repeatBrew.mill = brewMill.config.uuid;
+    }
+    repeatBrew.mill_timer = _brewToCopy.mill_timer;
+    repeatBrew.mill_speed = _brewToCopy.mill_speed;
+    repeatBrew.pressure_profile = _brewToCopy.pressure_profile;
+    repeatBrew.brew_temperature = _brewToCopy.brew_temperature;
+    repeatBrew.brew_temperature_time = _brewToCopy.brew_temperature_time;
+    repeatBrew.brew_time = _brewToCopy.brew_time;
+    repeatBrew.brew_quantity = _brewToCopy.brew_quantity;
+    repeatBrew.brew_quantity_type = _brewToCopy.brew_quantity_type;
+    repeatBrew.coffee_type = _brewToCopy.coffee_type;
+    repeatBrew.coffee_concentration = _brewToCopy.coffee_concentration;
+    repeatBrew.coffee_first_drip_time = _brewToCopy.coffee_first_drip_time;
+    repeatBrew.coffee_blooming_time = _brewToCopy.coffee_blooming_time;
+    repeatBrew.rating = _brewToCopy.rating;
+    repeatBrew.note = _brewToCopy.note;
+    repeatBrew.coordinates = _brewToCopy.coordinates;
+    return repeatBrew;
   }
 
 }

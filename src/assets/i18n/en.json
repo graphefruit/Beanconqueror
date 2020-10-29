@@ -274,6 +274,7 @@
   "PAGE_MILL_LIST_NO_ARCHIVED_MILL_EXISTING": "No grinders archived yet!",
   "PAGE_PREPARATION_LIST_NO_ARCHIVED_PREPARATION_EXISTING": "You did not yet archive any grinder.",
   "TOAST_BREW_ADDED_SUCCESSFULLY": "Brew added successfully",
+  "TOAST_BREW_REPEATED_SUCCESSFULLY": "Brew repeated successfully",
   "TOAST_BEAN_ADDED_SUCCESSFULLY": "Bean description added successfully",
   "TOAST_MILL_ADDED_SUCCESSFULLY": "Grinder added successfully",
   "TOAST_PREPARATION_ADDED_SUCCESSFULLY": "Preparation method added successfully",

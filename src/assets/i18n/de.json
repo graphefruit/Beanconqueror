@@ -274,6 +274,7 @@
   "PAGE_MILL_LIST_NO_ARCHIVED_MILL_EXISTING": "Du hast noch keine Mühle archiviert.",
   "PAGE_PREPARATION_LIST_NO_ARCHIVED_PREPARATION_EXISTING": "Du hast noch keine Brühmethode archiviert.",
   "TOAST_BREW_ADDED_SUCCESSFULLY": "Brühung hinzugefügt",
+  "TOAST_BREW_REPEATED_SUCCESSFULLY": "Brühung wiederholt",
   "TOAST_BEAN_ADDED_SUCCESSFULLY": "Bohne hinzugefügt",
   "TOAST_MILL_ADDED_SUCCESSFULLY": "Mühle hinzugefügt",
   "TOAST_PREPARATION_ADDED_SUCCESSFULLY": "Brühmethode hinzugefügt",
