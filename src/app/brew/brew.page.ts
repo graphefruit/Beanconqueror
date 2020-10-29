@@ -149,7 +149,7 @@ export class BrewPage implements OnInit {
   }
 
   public async fastRepeatBrew(brew: Brew) {
-
+    if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
       const repeatBrew: Brew = new Brew();
       const brewBean: IBean = this.uiBeanStorage.getByUUID(brew.bean);
       if (!brewBean.finished) {
@@ -186,7 +186,8 @@ export class BrewPage implements OnInit {
 
       this.uiBrewStorage.add(repeatBrew);
 
-    this.loadBrews();
+      this.loadBrews();
+    }
   }
 
   public async editBrew(_brew: Brew) {

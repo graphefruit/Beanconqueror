@@ -107,11 +107,19 @@ export class BrewAddComponent implements OnInit {
 
   }
 
-
   public ionViewDidEnter(): void {
     this.uiAnalytics.trackEvent('BREW', 'ADD');
+   this.getCoordinates(true);
+    if (this.brew_template) {
+      this.__loadBrew(this.brew_template,true);
+    } else {
+      this.__loadLastBrew();
+    }
+  }
+
+  private getCoordinates(_highAccuracy: boolean) {
     if (this.settings.track_brew_coordinates) {
-      this.geolocation.getCurrentPosition({ maximumAge: 3000, timeout: 10000 }).then((resp) => {
+      this.geolocation.getCurrentPosition({ maximumAge: 3000, timeout: 5000, enableHighAccuracy:_highAccuracy}).then((resp) => {
         this.data.coordinates.latitude = resp.coords.latitude;
         this.data.coordinates.accuracy = resp.coords.accuracy;
         this.data.coordinates.altitude = resp.coords.altitude;
@@ -123,12 +131,12 @@ export class BrewAddComponent implements OnInit {
       }).catch((error) => {
         // Couldn't get coordinates sorry.
         this.uiLog.error('BREW - No Coordinates found');
+        if (_highAccuracy === true) {
+          this.uiLog.error('BREW - Try to get coordinates with low accuracy');
+          this.getCoordinates(false);
+        }
+
       });
-    }
-    if (this.brew_template) {
-      this.__loadBrew(this.brew_template,true);
-    } else {
-      this.__loadLastBrew();
     }
   }
 
