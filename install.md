@@ -101,3 +101,7 @@ npm install @ionic-native/geolocation
 ######This plugin is not used with ionic wrapper, because its not working correctly
 ionic cordova plugin add cordova-plugin-apprate
 npm install @ionic-native/app-rate
+
+##Globaly installed:
+######Plugin checker
+npm install -g cordova-check-plugins

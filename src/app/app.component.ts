@@ -370,22 +370,24 @@ export class AppComponent implements AfterViewInit {
 
   }
   private __instanceAppRating() {
-    const appLanguage = this.uiSettingsStorage.getSettings().language;
-    AppRate.setPreferences({
-      usesUntilPrompt:25,
-      storeAppURL: {
-        ios: '1445297158',
-        android: 'market://details?id=com.beanconqueror.app',
-      },
-      promptAgainForEachNewVersion: false,
-      reviewType: {
-        ios: 'AppStoreReview',
-        android: 'InAppReview'
-      },
-      useLanguage:appLanguage,
-    });
+    if (this.platform.is('cordova')) {
+      const appLanguage = this.uiSettingsStorage.getSettings().language;
+      AppRate.setPreferences({
+        usesUntilPrompt: 25,
+        storeAppURL: {
+          ios: '1445297158',
+          android: 'market://details?id=com.beanconqueror.app',
+        },
+        promptAgainForEachNewVersion: false,
+        reviewType: {
+          ios: 'AppStoreReview',
+          android: 'InAppReview'
+        },
+        useLanguage: appLanguage,
+      });
 
-    AppRate.promptForRating(false);
+      AppRate.promptForRating(false);
+    }
   }
 
   private async __trackNewBrew() {

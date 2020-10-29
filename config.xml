@@ -181,9 +181,7 @@
         <variable name="ANDROID_SUPPORT_ANNOTATIONS_VERSION" value="27.+" />
     </plugin>
     <plugin name="cordova-plugin-file" spec="^6.0.2" />
-    <plugin name="cordova-plugin-telerik-imagepicker" spec="~2.3.3" />
     <plugin name="cordova-plugin-camera" spec="~4.1.0" />
-    <plugin name="cordova-plugin-android-permissions" spec="~1.0.0" />
     <plugin name="cordova-sqlite-storage" spec="~3.2.1" />
     <plugin name="cordova-plugin-filechooser" spec="~1.2.0" />
     <plugin name="cordova-plugin-filepath" spec="~1.5.5" />
