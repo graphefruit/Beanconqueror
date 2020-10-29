@@ -48,7 +48,7 @@ export class DashboardPage implements OnInit {
       e.getMill().finished === false &&
       e.getPreparation().finished === false
     );
-    this.brews = this.__sortBrews(this.brews);
+    this.brews = UIBrewHelper.sortBrews(this.brews);
     this.brews = this.brews.slice(0, 10);
     this.changeDetectorRef.detectChanges();
   }
@@ -68,19 +68,6 @@ export class DashboardPage implements OnInit {
   }
 
 
-  private __sortBrews(_sortingBrews: Array<Brew>): Array<Brew> {
-    const sortedBrews: Array<Brew> = _sortingBrews.sort((obj1, obj2) => {
-      if (obj1.config.unix_timestamp < obj2.config.unix_timestamp) {
-        return 1;
-      }
-      if (obj1.config.unix_timestamp > obj2.config.unix_timestamp) {
-        return -1;
-      }
-
-      return 0;
-    });
-    return sortedBrews;
-  }
 
   public async brewAction(action: BREW_ACTION, brew: Brew): Promise<void> {
     switch (action) {

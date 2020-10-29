@@ -244,19 +244,6 @@ export class BrewPage implements OnInit {
     this.__initializeBrewView('archiv');
   }
 
-  private __sortBrews(_sortingBrews: Array<Brew>): Array<Brew> {
-    const sortedBrews: Array<Brew> = _sortingBrews.sort((obj1, obj2) => {
-      if (obj1.config.unix_timestamp < obj2.config.unix_timestamp) {
-        return 1;
-      }
-      if (obj1.config.unix_timestamp > obj2.config.unix_timestamp) {
-        return -1;
-      }
-
-      return 0;
-    });
-    return sortedBrews;
-  }
 
   public isFilterActive(): boolean {
     if (this.brew_segment === 'open') {
@@ -356,7 +343,7 @@ export class BrewPage implements OnInit {
       brewsFilters = brewsFilters.filter((e) => filter.method_of_preparation.filter((z) => z === e.method_of_preparation).length > 0);
     }
 
-    const sortedBrews: Array<Brew> = this.__sortBrews(brewsFilters);
+    const sortedBrews: Array<Brew> = UIBrewHelper.sortBrews(brewsFilters);
     if (_type === 'open') {
       this.openBrewsView = sortedBrews;
     } else {

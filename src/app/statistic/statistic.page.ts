@@ -7,6 +7,7 @@ import {Brew} from '../../classes/brew/brew';
 import {IBrew} from '../../interfaces/brew/iBrew';
 import {Chart} from 'chart.js';
 import {TranslateService} from '@ngx-translate/core';
+import {UIBrewHelper} from '../../services/uiBrewHelper';
 
 @Component({
   selector: 'statistic',
@@ -36,19 +37,6 @@ export class StatisticPage implements OnInit {
   public ngOnInit() {
   }
 
-  private __sortBrews(_brews: Array<Brew>): Array<IBrew> {
-    const sortedBrews: Array<IBrew> = _brews.sort((obj1, obj2) => {
-      if (obj1.config.unix_timestamp < obj2.config.unix_timestamp) {
-        return -1;
-      }
-      if (obj1.config.unix_timestamp > obj2.config.unix_timestamp) {
-        return 1;
-      }
-
-      return 0;
-    });
-    return sortedBrews;
-  }
 
   private __getBrewsSortedForMonth(): Array<BrewView> {
     const brewViews: Array<BrewView> = [];
@@ -56,7 +44,7 @@ export class StatisticPage implements OnInit {
 // sort latest to top.
     const brewsCopy: Array<Brew> = [...brews];
 
-    const sortedBrews: Array<IBrew> = this.__sortBrews(brewsCopy);
+    const sortedBrews: Array<IBrew> = UIBrewHelper.sortBrews(brewsCopy);
 
     const collection = {};
     // Create collection

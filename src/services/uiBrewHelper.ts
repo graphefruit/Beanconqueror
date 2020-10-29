@@ -20,6 +20,19 @@ import {IMill} from '../interfaces/mill/iMill';
 export class UIBrewHelper {
 
   private canBrewBoolean: boolean = undefined;
+  public static sortBrews(_sortingBrews: Array<Brew>): Array<Brew> {
+    const sortedBrews: Array<Brew> = _sortingBrews.sort((obj1, obj2) => {
+      if (obj1.config.unix_timestamp < obj2.config.unix_timestamp) {
+        return 1;
+      }
+      if (obj1.config.unix_timestamp > obj2.config.unix_timestamp) {
+        return -1;
+      }
+
+      return 0;
+    });
+    return sortedBrews;
+  }
   constructor (private readonly uiBeanStorage: UIBeanStorage,
                private readonly uiMillStorage: UIMillStorage,
                private readonly uiPreparationStorage: UIPreparationStorage,
