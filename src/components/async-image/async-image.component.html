@@ -1,2 +1,2 @@
-<img (error)="onError()" *ngIf="img != ''" [src]="img"/>
-<img *ngIf="img===''" [src]="preloadImg" class="preload-img"/>
+<img (error)="onError()" *ngIf="img != ''" [src]="img" alt="Async error image"/>
+<img *ngIf="img===''" [src]="preloadImg" alt="Preload image" class="preload-img"/>

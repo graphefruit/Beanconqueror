@@ -3,7 +3,7 @@
     <ion-row>
       <ion-col size="3">
         <div *ngIf="bean?.attachments?.length === 0" style="margin:0 auto;">
-          <img src="../../assets/img/coffee-beans.jpg"/>
+          <img alt="Preset coffee image" src="../../assets/img/coffee-beans.jpg"/>
         </div>
         <div (click)="viewPhotos()" *ngIf="bean?.attachments && bean?.attachments?.length > 0"
              style="margin:0 auto;" tappable>
