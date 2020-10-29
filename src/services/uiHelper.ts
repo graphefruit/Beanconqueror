@@ -177,31 +177,6 @@ export class UIHelper {
   }
 
 
-
-
-  public async downloadFile (_filePath: string): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      if (this.platform.is('cordova')) {
-
-        // let filePath: string;
-        // filePath = _filePath;
-        // filePath.slice(0, filePath.lastIndexOf('/'));
-        let path: string;
-        let fileName: string;
-        path = this.file.dataDirectory;
-        fileName = _filePath;
-        if (fileName.startsWith('/')) {
-          fileName = fileName.slice(1);
-        }
-
-
-      } else {
-        resolve('');
-      }
-
-    });
-  }
-
   public async exportJSON (fileName: string, jsonContent: string): Promise<any> {
      const promise = new Promise((resolve, reject) => {
       const errorCallback = (e) => {
