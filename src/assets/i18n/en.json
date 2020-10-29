@@ -377,5 +377,6 @@
   "PLEASE_WAIT": "Please wait...",
   "PREPARATION_STYLE_POUR_OVER": "Pour Over",
   "PREPARATION_STYLE_ESPRESSO": "Espresso",
-  "PREPARATION_TYPE_STYLE": "Preparation style"
+  "PREPARATION_TYPE_STYLE": "Preparation style",
+  "PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION": "Activates a new menu entry. With this you can repeat the brew directly without any popover."
 }

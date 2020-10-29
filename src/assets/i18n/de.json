@@ -377,5 +377,6 @@
   "TODAY": "Heute",
   "PREPARATION_STYLE_POUR_OVER": "Pour Over",
   "PREPARATION_STYLE_ESPRESSO": "Espresso",
-  "PREPARATION_TYPE_STYLE": "Zubereitungsart"
+  "PREPARATION_TYPE_STYLE": "Zubereitungsart",
+  "PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION": "Aktiviert einen neuen Menüeintrag. Über diesen kann die Brühung direkt wiederholt werden ohne weiteres Fenster."
 }
