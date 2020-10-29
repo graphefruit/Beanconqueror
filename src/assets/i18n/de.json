@@ -376,5 +376,6 @@
   "PLEASE_WAIT": "Bitte warten...",
   "TODAY": "Heute",
   "PREPARATION_STYLE_POUR_OVER": "Pour Over",
-  "PREPARATION_STYLE_ESPRESSO": "Espresso"
+  "PREPARATION_STYLE_ESPRESSO": "Espresso",
+  "PREPARATION_TYPE_STYLE": "Zubereitungsart"
 }

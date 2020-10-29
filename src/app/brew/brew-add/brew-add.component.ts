@@ -27,6 +27,7 @@ import {BrewTimerComponent} from '../../../components/brew-timer/brew-timer.comp
 import {Geolocation} from '@ionic-native/geolocation/ngx';
 import {Preparation} from '../../../classes/preparation/preparation';
 import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
+import {UILog} from '../../../services/uiLog';
 
 @Component({
   selector: 'brew-add',
@@ -73,7 +74,8 @@ export class BrewAddComponent implements OnInit {
                private readonly translate: TranslateService,
                private readonly platform: Platform,
                private readonly geolocation: Geolocation,
-               private readonly loadingController: LoadingController) {
+               private readonly loadingController: LoadingController,
+               private uiLog: UILog) {
     // Initialize to standard in drop down
     //
 
@@ -108,6 +110,21 @@ export class BrewAddComponent implements OnInit {
 
   public ionViewDidEnter(): void {
     this.uiAnalytics.trackEvent('BREW', 'ADD');
+    if (this.settings.track_brew_coordinates) {
+      this.geolocation.getCurrentPosition({ maximumAge: 3000, timeout: 10000 }).then((resp) => {
+        this.data.coordinates.latitude = resp.coords.latitude;
+        this.data.coordinates.accuracy = resp.coords.accuracy;
+        this.data.coordinates.altitude = resp.coords.altitude;
+        this.data.coordinates.altitudeAccuracy = resp.coords.altitudeAccuracy;
+        this.data.coordinates.heading = resp.coords.heading;
+        this.data.coordinates.speed = resp.coords.speed;
+        this.data.coordinates.longitude = resp.coords.longitude;
+        this.uiLog.info('BREW - Coordinates found - ' + JSON.stringify(this.data.coordinates));
+      }).catch((error) => {
+        // Couldn't get coordinates sorry.
+        this.uiLog.error('BREW - No Coordinates found');
+      });
+    }
     if (this.brew_template) {
       this.__loadBrew(this.brew_template,true);
     } else {
@@ -130,20 +147,6 @@ export class BrewAddComponent implements OnInit {
     loading.present();
 
     this.stopTimer();
-
-    if (this.settings.track_brew_coordinates) {
-      await this.geolocation.getCurrentPosition({ maximumAge: 3000, timeout: 2000, enableHighAccuracy: true }).then((resp) => {
-        this.data.coordinates.latitude = resp.coords.latitude;
-        this.data.coordinates.accuracy = resp.coords.accuracy;
-        this.data.coordinates.altitude = resp.coords.altitude;
-        this.data.coordinates.altitudeAccuracy = resp.coords.altitudeAccuracy;
-        this.data.coordinates.heading = resp.coords.heading;
-        this.data.coordinates.speed = resp.coords.speed;
-        this.data.coordinates.longitude = resp.coords.longitude;
-      }).catch((error) => {
-        // Couldn't get coordinates sorry.
-      });
-    }
 
     this.uiBrewStorage.add(this.data);
     if (this.settings.set_custom_brew_time) {
