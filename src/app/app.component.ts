@@ -33,6 +33,7 @@ import {WelcomePopoverComponent} from '../popover/welcome-popover/welcome-popove
 /** Third party */
 import moment from 'moment';
 import {Preparation} from '../classes/preparation/preparation';
+import {PREPARATION_STYLE_TYPE} from '../enums/preparations/preparationStyleTypes';
 
 
 declare var AppRate;
@@ -220,6 +221,17 @@ export class AppComponent implements AfterViewInit {
           needsUpdate = true;
         }
         if ( needsUpdate) {
+          const preparationBrews: Array<Brew> = this.uiBrewStorage.getAllEntries().filter((e) => e.method_of_preparation === preparation.config.uuid);
+          if (preparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO){
+            for (const brew of preparationBrews) {
+              if (brew.brew_beverage_quantity === 0 && brew.brew_quantity > 0) {
+                brew.brew_beverage_quantity = brew.brew_quantity;
+                brew.brew_beverage_quantity_type = brew.brew_quantity_type;
+                console.log("updated");
+              }
+
+            }
+          }
           this.uiPreparationStorage.update(preparation);
         }
 
