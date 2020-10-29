@@ -34,6 +34,8 @@ import {WelcomePopoverComponent} from '../popover/welcome-popover/welcome-popove
 import moment from 'moment';
 import {Preparation} from '../classes/preparation/preparation';
 
+
+declare var AppRate;
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -362,11 +364,29 @@ export class AppComponent implements AfterViewInit {
     });
     await this.__checkWelcomePage();
     await this.__checkStartupView();
+    this.__instanceAppRating();
 
 
 
   }
+  private __instanceAppRating() {
+    const appLanguage = this.uiSettingsStorage.getSettings().language;
+    AppRate.setPreferences({
+      usesUntilPrompt:25,
+      storeAppURL: {
+        ios: '1445297158',
+        android: 'market://details?id=com.beanconqueror.app',
+      },
+      promptAgainForEachNewVersion: false,
+      reviewType: {
+        ios: 'AppStoreReview',
+        android: 'InAppReview'
+      },
+      useLanguage:appLanguage,
+    });
 
+    AppRate.promptForRating(false);
+  }
 
   private async __trackNewBrew() {
 

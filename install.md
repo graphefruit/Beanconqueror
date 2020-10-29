@@ -96,3 +96,8 @@ npm install @ionic-native/date-picker
 ## Geolocation
 ionic cordova plugin add cordova-plugin-geolocation
 npm install @ionic-native/geolocation
+
+##App rate
+######This plugin is not used with ionic wrapper, because its not working correctly
+ionic cordova plugin add cordova-plugin-apprate
+npm install @ionic-native/app-rate

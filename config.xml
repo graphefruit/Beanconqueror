@@ -98,9 +98,9 @@
         <edit-config file="*-Info.plist" mode="merge" target="NSLocationWhenInUseUsageDescription">
             <string>Location is used when enabled in settings, default off. Used for track your location where you brewed your coffee</string>
         </edit-config>
-        <config-file parent="UIUserInterfaceStyle" platform="ios" target="**-Info.plist">
+        <edit-file file="*-Info.plist" mode="merge" target="UIUserInterfaceStyle">
             <string>Light</string>
-        </config-file>
+        </edit-file>
         <edit-config file="*-Info.plist" mode="merge" target="UISupportedInterfaceOrientations">
             <array>
                 <string>UIInterfaceOrientationPortrait</string>
