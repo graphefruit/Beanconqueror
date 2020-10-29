@@ -112,6 +112,7 @@ ion-card.long-card {
 
 ion-card-header {
   --ion-font-family: 'Baloo', sans-serif;
+  white-space: normal;
 }
 
 .blockquote {
@@ -145,10 +146,6 @@ ion-modal{
   margin-left: 5px;
 }
 
-ion-card-header {
-  white-space: normal;
-}
-
 .checkbox-icon {
   border-radius: 0px !important;
 }
@@ -165,16 +162,7 @@ ion-buttons[start] button {
   box-shadow: none;
 }
 
-
-.navigation-menu {
-  .item-block .item-inner, .item-block:first-child, .item-block:last-child, .list-ios > .item-wrapper:last-child .item-block {
-
-  }
-}
 ion-list.no-label-margin ion-label {
-  margin: 0px !important;
-}
-[no-margin-important] {
   margin: 0px !important;
 }
 
@@ -187,15 +175,7 @@ ion-list.no-label-margin ion-label {
   margin: 20px auto 0 auto;
 
 }
-.bean-icon {
 
-  /*background: url(../assets/icon/grinder.svg) no-repeat top left;*/
-  background-size: contain;
-  width: 80px;
-  height: 35px;
-  margin: 20px auto 0 auto;
-
-}
 
 [text-italic]{
   font-style:italic;
@@ -406,11 +386,11 @@ ion-menu:host .menu-inner {
     --background: rgba(0, 0, 0, 0.47);
 
     ion-toolbar {
-      --background: #F0F0F0
+      --background: #FFFFFF
     }
 
     ion-content {
-      --background: #F0F0F0;
+      --background: #FFFFFF;
     }
 
     ion-header {
@@ -426,7 +406,7 @@ ion-menu:host .menu-inner {
     ion-footer {
       //one px minus because it looks like a border
       top: -1px;
-      background: #F0F0F0F0;
+      background: #FFFFFF;
       padding-left: 16px;
       padding-right: 16px;
       padding-bottom: 8px;
@@ -439,25 +419,7 @@ ion-menu:host .menu-inner {
 
   }
 
-  .half-bottom-modal, .bottom-modal {
-    ion-toolbar {
-      --background: #FFFFFF
-    }
 
-    ion-content {
-      --background: #FFFFFF;
-    }
-
-    ion-item {
-      --background: #FFFFFF;
-    }
-
-    ion-footer {
-      //one px minus because it looks like a border
-      background: #FFFFFF;
-
-    }
-  }
   ion-label {
     font-family: 'Baloo', sans-serif;
     font-size: 14px;
