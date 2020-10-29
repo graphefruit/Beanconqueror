@@ -30,19 +30,6 @@
   <ion-card>
 
     <ion-card-content>
-      <!--
-        <ion-card-title>{{"PAGE_SETTINGS_GENERAL_SETTINGS" | translate}}</ion-card-title>
-        <ion-item>
-          <ion-label>{{"PAGE_SETTINGS_DISPLAY" | translate}}</ion-label>
-          <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.brew_view">
-            <ion-select-option
-              value="{{BREW_VIEWS.SINGLE_PAGE}}">{{"PAGE_SETTINGS_DISPLAY_SINGLE_PAGE" | translate}}</ion-select-option>
-            <ion-select-option disabled
-                               value="{{BREW_VIEWS.MULTIPLE_PAGE}}">{{"PAGE_SETTINGS_DISPLAY_PAGING" | translate}}</ion-select-option>
-          </ion-select>
-        </ion-item>
-      -->
-
       <ion-item>
         <ion-label>{{"PAGE_SETTINGS_LANGUAGE" | translate}}</ion-label>
         <ion-select (ngModelChange)="languageChanged($event)" [(ngModel)]="settings.language"
