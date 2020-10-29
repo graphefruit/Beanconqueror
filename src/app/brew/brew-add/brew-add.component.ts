@@ -132,7 +132,7 @@ export class BrewAddComponent implements OnInit {
     this.stopTimer();
 
     if (this.settings.track_brew_coordinates) {
-      await this.geolocation.getCurrentPosition().then((resp) => {
+      await this.geolocation.getCurrentPosition({ maximumAge: 3000, timeout: 2000, enableHighAccuracy: true }).then((resp) => {
         this.data.coordinates.latitude = resp.coords.latitude;
         this.data.coordinates.accuracy = resp.coords.accuracy;
         this.data.coordinates.altitude = resp.coords.altitude;
