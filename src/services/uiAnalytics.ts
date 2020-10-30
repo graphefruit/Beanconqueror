@@ -115,37 +115,6 @@ export class UIAnalytics {
     });
   }
 
-  /** private async __checkTrackingEnabled(): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      const settings: Settings = this.uiSettings.getSettings();
-      if (settings.analytics === undefined) {
-        this.uiAlert.showConfirm('ALLOW_ANALYTICS_DESCRIPTION', 'ALLOW_ANALYTICS_TITLE', true).then(() => {
-
-          settings.analytics = true;
-          this.uiSettings.saveSettings(settings);
-          resolve();
-        }, async () => {
-          settings.analytics = false;
-          this.uiSettings.saveSettings(settings);
-          await this.uiAlert.showMessage('ALLOW_ANALYTICS_DENIED_DESCRIPTION', 'ALLOW_ANALYTICS_DENIED_TITLE', undefined, true);
-          reject();
-        });
-      } else {
-        if (settings.analytics) {
-          resolve();
-        } else {
-          reject();
-        }
-
-      }
-    });
-
-  }**/
-
-  private __isInt(n) {
-    return Number(n) === n && n % 1 === 0;
-  }
-
   private __trackPageFB(_pageName: string) {
     try {
       if (this.canTrack) {

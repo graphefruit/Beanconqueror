@@ -12,6 +12,7 @@ import {Settings} from '../../classes/settings/settings';
 import {BEAN_ACTION} from '../../enums/beans/beanAction';
 import {UIToast} from '../../services/uiToast';
 import {BeanPhotoViewComponent} from './bean-photo-view/bean-photo-view.component';
+import {UIAnalytics} from '../../services/uiAnalytics';
 
 @Component({
   selector: 'beans',
@@ -37,7 +38,8 @@ export class BeansPage implements OnInit {
               private readonly uiAlert: UIAlert,
               private readonly uiBrewStorage: UIBrewStorage,
               private readonly uiSettingsStorage: UISettingsStorage,
-              private readonly uiToast: UIToast) {
+              private readonly uiToast: UIToast,
+              private readonly uiAnalytics: UIAnalytics) {
 
 
   }
@@ -142,7 +144,8 @@ export class BeansPage implements OnInit {
     this.uiAlert.showConfirm('DELETE_BEAN_QUESTION', 'SURE_QUESTION', true)
         .then(() => {
               // Yes
-              this.__deleteBean(_bean);
+            this.uiAnalytics.trackEvent('BEAN', 'DELETE');
+            this.__deleteBean(_bean);
             this.uiToast.showInfoToast('TOAST_BEAN_DELETED_SUCCESSFULLY');
             this.settings.resetFilter();
             this.uiSettingsStorage.saveSettings(this.settings);
@@ -154,7 +157,7 @@ export class BeansPage implements OnInit {
   }
 
   public async repeatBean(_bean: Bean) {
-
+    this.uiAnalytics.trackEvent('BEAN', 'REPEAT');
     const modal = await this.modalCtrl.create({component: BeansAddComponent, id:'bean-add', componentProps: {bean_template: _bean}});
     await modal.present();
     await modal.onWillDismiss();

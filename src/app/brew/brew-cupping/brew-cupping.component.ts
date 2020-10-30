@@ -9,6 +9,7 @@ import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 import {UIToast} from '../../../services/uiToast';
 import {UIBrewStorage} from '../../../services/uiBrewStorage';
 import {CuppingRadarComponent} from '../../../components/cupping-radar/cupping-radar.component';
+import {UIAnalytics} from '../../../services/uiAnalytics';
 
 @Component({
   selector: 'brew-cupping',
@@ -29,7 +30,8 @@ export class BrewCuppingComponent implements OnInit {
               public uiHelper: UIHelper,
               private readonly uiSettingsStorage: UISettingsStorage,
               private readonly uiBrewStorage: UIBrewStorage,
-              private readonly uiToast: UIToast) {
+              private readonly uiToast: UIToast,
+              private uiAnalytics: UIAnalytics) {
 
     this.settings = this.uiSettingsStorage.getSettings();
 
@@ -38,6 +40,7 @@ export class BrewCuppingComponent implements OnInit {
   }
 
   public ionViewWillEnter() {
+    this.uiAnalytics.trackEvent('BREW', 'CUPPING');
     this.brew = this.navParams.get('brew');
     if (this.brew) {
       const copy: IBrew = this.uiHelper.copyData(this.brew);

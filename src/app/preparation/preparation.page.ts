@@ -11,6 +11,7 @@ import {PREPARATION_ACTION} from '../../enums/preparations/preparationAction';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {Settings} from '../../classes/settings/settings';
 import {UIToast} from '../../services/uiToast';
+import {UIAnalytics} from '../../services/uiAnalytics';
 
 @Component({
   selector: 'preparation',
@@ -28,7 +29,8 @@ export class PreparationPage implements OnInit {
               private readonly uiAlert: UIAlert,
               private readonly uiBrewStorage: UIBrewStorage,
               private readonly uiSettingsStorage: UISettingsStorage,
-              private readonly uiToast: UIToast) {
+              private readonly uiToast: UIToast,
+              private readonly uiAnalytics: UIAnalytics) {
 
   }
 
@@ -93,7 +95,8 @@ export class PreparationPage implements OnInit {
   public deletePreparation(_preparation: Preparation): void {
     this.uiAlert.showConfirm('DELETE_PREPARATION_METHOD_QUESTION', 'SURE_QUESTION', true).then(() => {
           // Yes
-          this.__deletePreparation(_preparation);
+        this.uiAnalytics.trackEvent('PREPARATION', 'DELETE');
+        this.__deletePreparation(_preparation);
         this.uiToast.showInfoToast('TOAST_PREPARATION_DELETED_SUCCESSFULLY');
         this.settings.resetFilter();
         this.uiSettingsStorage.saveSettings(this.settings);

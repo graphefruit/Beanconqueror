@@ -26,6 +26,7 @@ import {BrewFilterComponent} from './brew-filter/brew-filter.component';
 import {Settings} from '../../classes/settings/settings';
 import {UIToast} from '../../services/uiToast';
 import {BrewCuppingComponent} from './brew-cupping/brew-cupping.component';
+import {UIAnalytics} from '../../services/uiAnalytics';
 
 @Component({
   selector: 'brew',
@@ -82,7 +83,8 @@ export class BrewPage implements OnInit {
                private readonly uiBeanStorage: UIBeanStorage,
                private readonly uiMillStorage: UIMillStorage,
                private translate: TranslateService,
-               private readonly uiToast: UIToast) {
+               private readonly uiToast: UIToast,
+               private readonly uiAnalytics: UIAnalytics) {
   }
 
 
@@ -150,6 +152,7 @@ export class BrewPage implements OnInit {
 
   public async fastRepeatBrew(brew: Brew) {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
+      this.uiAnalytics.trackEvent('BREW', 'FAST_REPEAT');
       const repeatBrew = this.uiBrewHelper.repeatBrew(brew);
       this.uiBrewStorage.add(repeatBrew);
       this.uiToast.showInfoToast('TOAST_BREW_REPEATED_SUCCESSFULLY');
@@ -166,6 +169,7 @@ export class BrewPage implements OnInit {
   }
   public async repeatBrew(_brew: Brew) {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
+      this.uiAnalytics.trackEvent('BREW', 'REPEAT');
       const modal = await this.modalCtrl.create({component: BrewAddComponent, id: 'brew-add', componentProps: {brew_template: _brew}});
       await modal.present();
       await modal.onWillDismiss();
@@ -212,6 +216,7 @@ export class BrewPage implements OnInit {
   public deleteBrew(_brew: Brew): void {
     this.uiAlert.showConfirm('DELETE_BREW_QUESTION', 'SURE_QUESTION', true).then(() => {
           // Yes
+        this.uiAnalytics.trackEvent('BREW', 'DELETE');
           this.__deleteBrew(_brew);
         this.uiToast.showInfoToast('TOAST_BREW_DELETED_SUCCESSFULLY');
         },

@@ -14,6 +14,7 @@ import {UIAlert} from '../../services/uiAlert';
 import {UIToast} from '../../services/uiToast';
 import {Router} from '@angular/router';
 import {UIHelper} from '../../services/uiHelper';
+import {UIAnalytics} from '../../services/uiAnalytics';
 
 @Component({
   selector: 'dashboard',
@@ -31,7 +32,8 @@ export class DashboardPage implements OnInit {
               private readonly uiToast: UIToast,
               private readonly changeDetectorRef: ChangeDetectorRef,
               private readonly router: Router,
-              private readonly uiHelper: UIHelper) {
+              private readonly uiHelper: UIHelper,
+              private readonly uiAnalytics: UIAnalytics) {
   }
 
   public ngOnInit(): void {
@@ -101,6 +103,7 @@ export class DashboardPage implements OnInit {
   }
   public async fastRepeatBrew(brew: Brew) {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
+      this.uiAnalytics.trackEvent('BREW', 'FAST_REPEAT');
       const repeatBrew = this.uiBrewHelper.repeatBrew(brew);
       this.uiBrewStorage.add(repeatBrew);
       this.uiToast.showInfoToast('TOAST_BREW_REPEATED_SUCCESSFULLY');
@@ -116,10 +119,13 @@ export class DashboardPage implements OnInit {
   }
 
   public async repeatBrew(_brew: Brew) {
-    const modal = await this.modalCtrl.create({component: BrewAddComponent, id:'brew-add', componentProps: {brew_template: _brew}});
-    await modal.present();
-    await modal.onWillDismiss();
-    this.loadBrews();
+    if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
+      this.uiAnalytics.trackEvent('BREW', 'REPEAT');
+      const modal = await this.modalCtrl.create({component: BrewAddComponent, id: 'brew-add', componentProps: {brew_template: _brew}});
+      await modal.present();
+      await modal.onWillDismiss();
+      this.loadBrews();
+    }
   }
 
 
@@ -161,6 +167,7 @@ export class DashboardPage implements OnInit {
   public deleteBrew(_brew: Brew): void {
     this.uiAlert.showConfirm('DELETE_BREW_QUESTION', 'SURE_QUESTION', true).then(() => {
         // Yes
+        this.uiAnalytics.trackEvent('BREW', 'DELETE');
         this.__deleteBrew(_brew);
         this.uiToast.showInfoToast('TOAST_BREW_DELETED_SUCCESSFULLY');
       },
