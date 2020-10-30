@@ -34,6 +34,7 @@ import {Bean} from '../../classes/bean/bean';
 /** Third party */
 import moment from 'moment';
 import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
+import {UIUpdate} from '../../services/uiUpdate';
 
 declare var cordova: any;
 declare var device: any;
@@ -106,7 +107,8 @@ export class SettingsPage implements OnInit {
               private readonly translate: TranslateService,
               private readonly changeDetectorRef: ChangeDetectorRef,
               private readonly uiAnalytics: UIAnalytics,
-              private readonly androidPermissions: AndroidPermissions
+              private readonly androidPermissions: AndroidPermissions,
+              private readonly uiUpdate: UIUpdate
               ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -514,6 +516,7 @@ export class SettingsPage implements OnInit {
         millStorageReadyCallback,
         uiSettingsStorageReadyCallback
       ]).then(() => {
+        this.uiUpdate.checkUpdate();
         resolve();
       }, () => {
         resolve();

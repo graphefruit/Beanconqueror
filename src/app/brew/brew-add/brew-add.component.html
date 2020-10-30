@@ -104,21 +104,21 @@
                   (dripTimer)="setCoffeeDripTime($event)"
                   (timerTicked)="brewTimeTicked($event)"
 
-                  [bloomTimerVisible]="settings.coffee_blooming_time"
+                  [bloomTimerVisible]="settings.coffee_blooming_time && getPreparation().style_type === PREPARATION_STYLE_TYPE.POUR_OVER"
 
-                  [dripTimerVisible]="settings.coffee_first_drip_time"
+                  [dripTimerVisible]="settings.coffee_first_drip_time && getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
                   label="{{'BREW_DATA_TIME' | translate}}"
                   timeInSeconds="0"></brew-timer>
     </ion-item>
 
-    <ion-item *ngIf="settings.brew_time === true && settings.coffee_first_drip_time === true" lines="inset"
+    <ion-item *ngIf="settings.brew_time === true && settings.coffee_first_drip_time === true && getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO" lines="inset"
               [style.order]="settings.brew_order.while.brew_time" lines="full">
       <ion-label>
         {{'BREW_DATA_CALCULATED_COFFEE_BREW_TIME' | translate}}: {{data.getFormattedCoffeeBrewTime()}}
       </ion-label>
     </ion-item>
 
-    <ion-item *ngIf="settings.coffee_blooming_time === true" lines="inset"
+    <ion-item *ngIf="settings.coffee_blooming_time === true  && getPreparation().style_type === PREPARATION_STYLE_TYPE.POUR_OVER" lines="inset"
               [style.order]="settings.brew_order.while.coffee_blooming_time">
       <ion-label position="stacked">{{"BREW_DATA_COFFEE_BLOOMING_TIME" | translate}}</ion-label>
       <ion-input [(ngModel)]="data.coffee_blooming_time" inputmode="decimal"
@@ -126,7 +126,7 @@
                  remove-empty-number
                  type="text"></ion-input>
     </ion-item>
-    <ion-item *ngIf="settings.coffee_first_drip_time === true" lines="inset"
+    <ion-item *ngIf="settings.coffee_first_drip_time === true  && getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO" lines="inset"
               [style.order]="settings.brew_order.while.coffee_first_drip_time">
       <ion-label position="stacked">{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}</ion-label>
       <ion-input [(ngModel)]="data.coffee_first_drip_time" inputmode="decimal"

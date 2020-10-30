@@ -103,21 +103,21 @@
         <h3>{{data.getFormattedBrewTime()}}</h3>
       </ion-label>
     </ion-item>
-    <ion-item *ngIf="settings.brew_time === true && settings.coffee_first_drip_time === true"
-              [style.order]="settings.brew_order.while.brew_time" disabled="true" lines="full">
+    <ion-item *ngIf="settings.brew_time === true && settings.coffee_first_drip_time === true  && getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
+              [style.order]="settings.brew_order.while.brew_time" lines="full">
       <ion-label>
         <h2>{{'BREW_DATA_CALCULATED_COFFEE_BREW_TIME' | translate}}:</h2>
         <h3>{{data.getFormattedCoffeeBrewTime()}}</h3>
       </ion-label>
     </ion-item>
-      <ion-item *ngIf="settings.coffee_blooming_time === true"
+      <ion-item *ngIf="settings.coffee_blooming_time === true  && getPreparation().style_type === PREPARATION_STYLE_TYPE.POUR_OVER"
                 [style.order]="settings.brew_order.while.coffee_blooming_time">
       <ion-label>
         <h2>{{"BREW_DATA_COFFEE_BLOOMING_TIME" | translate}}:</h2>
         <h3>{{data.coffee_blooming_time}}</h3>
       </ion-label>
     </ion-item>
-    <ion-item *ngIf="settings.coffee_first_drip_time === true"
+    <ion-item *ngIf="settings.coffee_first_drip_time === true  && getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
               [style.order]="settings.brew_order.while.coffee_first_drip_time">
       <ion-label>
         <h2>{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}:</h2>

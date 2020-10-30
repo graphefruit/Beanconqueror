@@ -12,8 +12,28 @@ import moment from 'moment';
 export class BrewTimerComponent implements OnInit {
   @Input() public label: string;
   @Input() public timeInSeconds: number;
-  @Input() public dripTimerVisible: boolean;
-  @Input() public bloomTimerVisible: boolean;
+  private _dripTimerVisible: boolean;
+
+  get dripTimerVisible(): boolean {
+    return this._dripTimerVisible;
+  }
+
+  @Input() set dripTimerVisible(value: boolean) {
+    this._dripTimerVisible = value;
+
+    this.showDripTimer = this._dripTimerVisible;
+  }
+
+  private _bloomTimerVisible: boolean;
+
+  get bloomTimerVisible(): boolean {
+    return this._bloomTimerVisible;
+  }
+
+  @Input() set bloomTimerVisible(value: boolean) {
+    this._bloomTimerVisible = value;
+    this.showBloomTimer = this._bloomTimerVisible;
+  }
 
   @Output() public timerStarted = new EventEmitter();
   @Output() public timerPaused = new EventEmitter();
@@ -33,8 +53,7 @@ export class BrewTimerComponent implements OnInit {
 
   public ngOnInit(): void {
     this.initTimer();
-    this.showBloomTimer = this.bloomTimerVisible;
-    this.showDripTimer = this.dripTimerVisible;
+
   }
 
   public hasFinished(): boolean {
@@ -59,8 +78,8 @@ export class BrewTimerComponent implements OnInit {
       hasFinished: false,
       seconds: this.timeInSeconds
     } as ITimer;
-    this.showBloomTimer = true;
-    this.showDripTimer = true;
+    this.showBloomTimer = this.bloomTimerVisible;
+    this.showDripTimer = this.dripTimerVisible;
 
     this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
     this.displayingTime = moment(this.displayingTime).startOf('day').add('seconds',this.timer.seconds).toISOString();

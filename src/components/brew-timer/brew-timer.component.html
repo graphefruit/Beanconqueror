@@ -3,13 +3,6 @@
     {{ label }}
   </ion-label>
   <ion-datetime (ngModelChange)="changeDate($event)" [(ngModel)]="displayingTime" cancelText="{{'CANCEL' | translate}}" displayFormat="H:mm:ss" doneText="{{'CHOOSE' | translate}}" mode="ios"></ion-datetime>
- <!-- <ion-input (ngModelChange)="changeEvent()" [(ngModel)]="timer.seconds" prevent-characters type="number"></ion-input>-->
-  <!--<ion-button (click)="initTimer()"
-              *ngIf="!timer.runTimer && (timer.hasStarted || timer.hasFinished) || timer.hasFinished"
-              class="big-icon-only" fill="clear" slot="end" tappable>
-    <ion-icon class="ion-color-accent" name="beanconqueror-refresh" slot="icon-only"></ion-icon>
-
-  </ion-button>-->
   <ion-button (click)="bloomTime()" *ngIf="timer.runTimer && timer.hasStarted && !timer.hasFinished && showBloomTimer"
               class="big-icon-only" fill="clear" slot="end" tappable>
     <ion-icon class="ion-color-accent" name="beanconqueror-blooming" slot="icon-only"></ion-icon>
