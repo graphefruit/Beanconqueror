@@ -1,36 +1,37 @@
 <ion-content>
-<ion-list lines="full ">
-  <ion-item (click)="choose(getStaticActions().REPEAT)" button tappable>
-    <ion-icon name="beanconqueror-repeat" slot="start"></ion-icon>
-    <span>{{"POPOVER_BREWS_OPTION_REPEAT" | translate}}</span>
-  </ion-item>
-  <ion-item (click)="choose(getStaticActions().FAST_REPEAT)" *ngIf="hasFastBrewActivated()" button tappable>
-    <ion-icon name="beanconqueror-fast-repeat" slot="start"></ion-icon>
-    <span>{{"POPOVER_BREWS_OPTION_FAST_REPEAT" | translate}}</span>
-  </ion-item>
-  <ion-item (click)="choose(getStaticActions().DETAIL)" button tappable>
-    <ion-icon name="beanconqueror-detail" slot="start"></ion-icon>
-    <span>{{"POPOVER_BREWS_OPTION_DETAIL" | translate}}</span>
-  </ion-item>
-  <ion-item (click)="choose(getStaticActions().EDIT)" button tappable>
-    <ion-icon name="beanconqueror-edit" slot="start"></ion-icon>
-    <span>{{"POPOVER_BREWS_OPTION_EDIT" | translate}}</span>
-  </ion-item>
-  <ion-item (click)="choose(getStaticActions().CUPPING)" button tappable>
-    <ion-icon name="beanconqueror-cupping" slot="start"></ion-icon>
-    <span>{{"POPOVER_BREWS_OPTION_CUPPING" | translate}}</span>
-  </ion-item>
-  <ion-item (click)="choose(getStaticActions().DELETE)" button tappable>
-    <ion-icon name="beanconqueror-delete" slot="start"></ion-icon>
-    <span>{{"POPOVER_BREWS_OPTION_DELETE" | translate}}</span>
-  </ion-item>
-  <ion-item (click)="choose(getStaticActions().PHOTO_GALLERY)" *ngIf="hasPhotos()" button tappable>
-    <ion-icon name="beanconqueror-photo-gallery" slot="start"></ion-icon>
-    <span>{{"POPOVER_BREWS_OPTION_PHOTO_GALLERY" | translate}}</span>
-  </ion-item>
-  <ion-item (click)="choose(getStaticActions().SHOW_MAP_COORDINATES)" *ngIf="hasCoordinates()" button tappable>
-    <ion-icon name="beanconqueror-map" slot="start"></ion-icon>
-    <span>{{"POPOVER_BREWS_OPTION_MAP_COORDINATES" | translate}}</span>
-  </ion-item>
-</ion-list>
+<ion-list lines="full">
+    <ion-item (click)="choose(getStaticActions().REPEAT)" button tappable>
+      <ion-icon name="beanconqueror-repeat" slot="start"></ion-icon>
+      <span>{{"POPOVER_BREWS_OPTION_REPEAT" | translate}}</span>
+    </ion-item>
+    <ion-item (click)="choose(getStaticActions().FAST_REPEAT)" *ngIf="hasFastBrewActivated()" button tappable>
+      <ion-icon name="beanconqueror-fast-repeat" slot="start"></ion-icon>
+      <span>{{"POPOVER_BREWS_OPTION_FAST_REPEAT" | translate}}</span>
+    </ion-item>
+    <ion-item (click)="choose(getStaticActions().DETAIL)" button tappable>
+      <ion-icon name="beanconqueror-detail" slot="start"></ion-icon>
+      <span>{{"POPOVER_BREWS_OPTION_DETAIL" | translate}}</span>
+    </ion-item>
+    <ion-item (click)="choose(getStaticActions().EDIT)" button tappable>
+      <ion-icon name="beanconqueror-edit" slot="start"></ion-icon>
+      <span>{{"POPOVER_BREWS_OPTION_EDIT" | translate}}</span>
+    </ion-item>
+    <ion-item (click)="choose(getStaticActions().CUPPING)" button tappable>
+      <ion-icon name="beanconqueror-cupping" slot="start"></ion-icon>
+      <span>{{"POPOVER_BREWS_OPTION_CUPPING" | translate}}</span>
+    </ion-item>
+    <ion-item (click)="choose(getStaticActions().SHOW_MAP_COORDINATES)" *ngIf="hasCoordinates()" button tappable>
+      <ion-icon name="beanconqueror-map" slot="start"></ion-icon>
+      <span>{{"POPOVER_BREWS_OPTION_MAP_COORDINATES" | translate}}</span>
+    </ion-item>
+    <ion-item (click)="choose(getStaticActions().PHOTO_GALLERY)" *ngIf="hasPhotos()" button tappable>
+      <ion-icon name="beanconqueror-photo-gallery" slot="start"></ion-icon>
+      <span>{{"POPOVER_BREWS_OPTION_PHOTO_GALLERY" | translate}}</span>
+    </ion-item>
+    <ion-item (click)="choose(getStaticActions().DELETE)" button tappable>
+      <ion-icon name="beanconqueror-delete" slot="start"></ion-icon>
+      <span>{{"POPOVER_BREWS_OPTION_DELETE" | translate}}</span>
+    </ion-item>
+
+  </ion-list>
 </ion-content>

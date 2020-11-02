@@ -54,11 +54,13 @@
                       [(ngModel)]="settings.analytics"></ion-checkbox>
       </ion-item>
       <ion-item>
-        <ion-label>{{"PAGE_SETTINGS_TRACK_BREW_COORDINATES" | translate}}</ion-label>
+        <ion-label class="ion-margin-end"><h2>{{"PAGE_SETTINGS_TRACK_BREW_COORDINATES" | translate}}</h2>
+        <p>{{"PAGE_SETTINGS_TRACK_BREW_COORDINATES_DESCRIPTION" | translate}}</p></ion-label>
         <ion-checkbox (ionChange)="checkCoordinates()" (ngModelChange)="saveSettings();" [(ngModel)]="settings.track_brew_coordinates"></ion-checkbox>
       </ion-item>
       <ion-item>
-        <ion-label><h2>{{"PAGE_SETTINGS_FAST_REPEAT" | translate}}</h2><p>Wenn das feature aktiviert ist hast du die möglichkeit bla bla blaWenn das feature aktiviert ist hast du die möglichkeit bla bla blaWenn das feature aktiviert ist hast du die möglichkeit bla bla blaWenn das feature aktiviert ist hast du die möglichkeit bla bla blaWenn das feature aktiviert ist hast du die möglichkeit bla bla blaWenn das feature aktiviert ist hast du die möglichkeit bla bla bla</p></ion-label>
+        <ion-label class="ion-margin-end"><h2>{{"PAGE_SETTINGS_FAST_REPEAT" | translate}}</h2>
+          <p>{{"PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION" | translate}}</p></ion-label>
         <ion-checkbox  (ngModelChange)="saveSettings();" [(ngModel)]="settings.fast_brew_repeat"></ion-checkbox>
       </ion-item>
 

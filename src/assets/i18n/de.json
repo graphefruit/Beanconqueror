@@ -376,8 +376,9 @@
   "TAB_ARCHIVE": "Archiv",
   "PLEASE_WAIT": "Bitte warten...",
   "TODAY": "Heute",
-  "PREPARATION_STYLE_POUR_OVER": "Pour Over",
+  "PREPARATION_STYLE_POUR_OVER": "Filter",
   "PREPARATION_STYLE_ESPRESSO": "Espresso",
   "PREPARATION_TYPE_STYLE": "Zubereitungsart",
-  "PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION": "Aktiviert einen neuen Menüeintrag. Über diesen kann die Brühung direkt wiederholt werden ohne weiteres Fenster."
+  "PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION": "Aktiviert einen neuen Menüeintrag - über diesen kann die Brühung direkt wiederholt werden.",
+  "PAGE_SETTINGS_TRACK_BREW_COORDINATES_DESCRIPTION": "Speichere die Koordinatien zu jeder Brühung."
 }

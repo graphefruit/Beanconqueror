@@ -379,5 +379,6 @@
   "PREPARATION_STYLE_POUR_OVER": "Pour Over",
   "PREPARATION_STYLE_ESPRESSO": "Espresso",
   "PREPARATION_TYPE_STYLE": "Preparation style",
-  "PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION": "Activates a new menu entry. With this you can repeat the brew directly without any popover."
+  "PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION": "Activate a new menu entry - with this you can repeat the brew directly.",
+  "PAGE_SETTINGS_TRACK_BREW_COORDINATES_DESCRIPTION": "Save coordinates to each brew."
 }

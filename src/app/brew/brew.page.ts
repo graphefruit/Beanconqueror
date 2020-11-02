@@ -203,6 +203,7 @@ export class BrewPage implements OnInit {
   }
 
   public async showMapCoordinates(_brew: Brew) {
+    this.uiAnalytics.trackEvent('BREW', 'SHOW_MAP');
     this.uiHelper.openExternalWebpage(_brew.getCoordinateMapLink());
   }
 
