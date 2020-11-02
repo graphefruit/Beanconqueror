@@ -23,7 +23,7 @@ export class AboutComponent implements OnInit {
     this.versionStr = this.translate.instant('PAGE_ABOUT_NO_VERSION_AVAILABLE');
     if (this.platform.is('cordova')) {
 
-      const versionCode: string | number = await this.appVersion.getVersionCode();
+      const versionCode: string | number = await this.appVersion.getVersionNumber();
       this.versionStr = this.translate.instant('PAGE_ABOUT_APP_VERSION') + ': ' + versionCode;
 
     }

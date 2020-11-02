@@ -12,6 +12,10 @@ import {UIBeanStorage} from './uiBeanStorage';
 import {UIPreparationStorage} from './uiPreparationStorage';
 import {UISettingsStorage} from './uiSettingsStorage';
 import {UILog} from './uiLog';
+import {UiVersionStorage} from './uiVersionStorage';
+import {Version} from '../classes/version/iVersion';
+import {AppVersion} from '@ionic-native/app-version/ngx';
+import {Platform} from '@ionic/angular';
 
 
 @Injectable({
@@ -24,7 +28,10 @@ export class UIUpdate {
               private readonly uiBeanStorage: UIBeanStorage,
               private readonly uiPreparationStorage: UIPreparationStorage,
               private readonly uiSettingsStorage: UISettingsStorage,
-              private readonly uiLog: UILog) {
+              private readonly uiLog: UILog,
+              private readonly uiVersionStorage: UiVersionStorage,
+              private readonly appVersion: AppVersion,
+              private readonly platform: Platform) {
   }
 
 
@@ -110,4 +117,24 @@ export class UIUpdate {
     }
   }
 
+  public async checkUpdateScreen(): Promise<any> {
+    const promise = new Promise(async (resolve, reject) => {
+      let versionCode: string;
+      if (this.platform.is('cordova')) {
+        versionCode = await this.appVersion.getVersionNumber();
+      } else {
+        versionCode = '4.1.0';
+      }
+      const version: Version = this.uiVersionStorage.getVersion();
+      const displayingVersions = await version.whichUpdateScreensShallBeDisplayed(versionCode);
+
+
+      console.log(displayingVersions);
+      version.pushUpdatedVersion('4.1.2');
+      this.uiVersionStorage.saveVersion(version);
+      resolve();
+
+    });
+    return promise;
+  }
 }

@@ -35,6 +35,7 @@ import {Bean} from '../../classes/bean/bean';
 import moment from 'moment';
 import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
 import {UIUpdate} from '../../services/uiUpdate';
+import {UiVersionStorage} from '../../services/uiVersionStorage';
 
 declare var cordova: any;
 declare var device: any;
@@ -108,7 +109,8 @@ export class SettingsPage implements OnInit {
               private readonly changeDetectorRef: ChangeDetectorRef,
               private readonly uiAnalytics: UIAnalytics,
               private readonly androidPermissions: AndroidPermissions,
-              private readonly uiUpdate: UIUpdate
+              private readonly uiUpdate: UIUpdate,
+              private readonly uiVersionStorage: UiVersionStorage
               ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -509,12 +511,14 @@ export class SettingsPage implements OnInit {
       const uiSettingsStorageReadyCallback = this.uiSettingsStorage.storageReady();
       const brewStorageReadyCallback = this.uiBrewStorage.storageReady();
       const millStorageReadyCallback = this.uiMillStorage.storageReady();
+      const versionStorageReadyCallback = this.uiVersionStorage.storageReady();
       Promise.all([
         beanStorageReadyCallback,
         preparationStorageReadyCallback,
         brewStorageReadyCallback,
         millStorageReadyCallback,
-        uiSettingsStorageReadyCallback
+        uiSettingsStorageReadyCallback,
+        versionStorageReadyCallback
       ]).then(() => {
         this.uiUpdate.checkUpdate();
         resolve();

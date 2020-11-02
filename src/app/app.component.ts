@@ -34,6 +34,7 @@ import {WelcomePopoverComponent} from '../popover/welcome-popover/welcome-popove
 import moment from 'moment';
 import {Preparation} from '../classes/preparation/preparation';
 import {UIUpdate} from '../services/uiUpdate';
+import {UiVersionStorage} from '../services/uiVersionStorage';
 
 
 declare var AppRate;
@@ -91,7 +92,8 @@ export class AppComponent implements AfterViewInit {
     private  globalization: Globalization,
     private readonly uiAnalytics: UIAnalytics,
     private readonly menu: MenuController,
-    private readonly uiUpdate: UIUpdate
+    private readonly uiUpdate: UIUpdate,
+    private readonly uiVersionStorage: UiVersionStorage
   ) {
   }
 
@@ -157,13 +159,15 @@ export class AppComponent implements AfterViewInit {
           const uiSettingsStorageReadyCallback = this.uiSettingsStorage.storageReady();
           const brewStorageReadyCallback = this.uiBrewStorage.storageReady();
           const millStorageReadyCallback = this.uiMillStorage.storageReady();
+          const versionStorageReadyCallback = this.uiVersionStorage.storageReady();
 
           Promise.all([
             beanStorageReadyCallback,
             preparationStorageReadyCallback,
             brewStorageReadyCallback,
             uiSettingsStorageReadyCallback,
-            millStorageReadyCallback
+            millStorageReadyCallback,
+            versionStorageReadyCallback
           ])
               .then(() => {
                 this.uiLog.log('App finished loading');
@@ -293,6 +297,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   private async __initApp() {
+    this.uiUpdate.checkUpdateScreen();
     this.__registerBack();
     await this.__setDeviceLanguage();
     await this.uiAnalytics.initializeTracking().catch(() => {
