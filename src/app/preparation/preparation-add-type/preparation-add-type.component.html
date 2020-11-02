@@ -9,7 +9,7 @@
                    spellcheck="false" type="text">
         </ion-input>
       </ion-item>
-      <ion-item>
+      <ion-item [disabled]="data.type !== PREPARATION_TYPES.CUSTOM_PREPARATION">
         <ion-label position="stacked">{{"PREPARATION_TYPE_STYLE" | translate}}*</ion-label>
         <ion-select #name="ngModel" [(ngModel)]="data.style_type" cancelText="{{'CANCEL'| translate }}"
                     name="style_type" okText="{{'CHOOSE'| translate }}">

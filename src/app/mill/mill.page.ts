@@ -33,7 +33,7 @@ export class MillPage  implements OnInit  {
                private readonly uiBrewStorage: UIBrewStorage,
                private readonly uiSettingsStorage: UISettingsStorage,
                private readonly uiToast: UIToast,
-               private readonly uiAnalaytics: UIAnalytics) {
+               private readonly uiAnalytics: UIAnalytics) {
 
   }
 

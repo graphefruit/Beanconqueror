@@ -104,7 +104,7 @@
                   (dripTimer)="setCoffeeDripTime($event)"
                   (timerTicked)="brewTimeTicked($event)"
 
-                  [bloomTimerVisible]="settings.coffee_blooming_time && getPreparation().style_type === PREPARATION_STYLE_TYPE.POUR_OVER"
+                  [bloomTimerVisible]="settings.coffee_blooming_time"
 
                   [dripTimerVisible]="settings.coffee_first_drip_time && getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
                   label="{{'BREW_DATA_TIME' | translate}}"
@@ -118,7 +118,7 @@
       </ion-label>
     </ion-item>
 
-    <ion-item *ngIf="settings.coffee_blooming_time === true  && getPreparation().style_type === PREPARATION_STYLE_TYPE.POUR_OVER" lines="inset"
+    <ion-item *ngIf="settings.coffee_blooming_time === true " lines="inset"
               [style.order]="settings.brew_order.while.coffee_blooming_time">
       <ion-label position="stacked">{{"BREW_DATA_COFFEE_BLOOMING_TIME" | translate}}</ion-label>
       <ion-input [(ngModel)]="data.coffee_blooming_time" inputmode="decimal"

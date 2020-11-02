@@ -20,6 +20,7 @@ export class PreparationEditComponent implements OnInit {
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   @Input() private preparation: IPreparation;
   public preparationTypeEnum = PREPARATION_TYPES;
+
   constructor (private readonly navParams: NavParams,
                private readonly modalController: ModalController,
                private readonly uiPreparationStorage: UIPreparationStorage,
@@ -33,9 +34,12 @@ export class PreparationEditComponent implements OnInit {
     this.uiAnalytics.trackEvent('PREPARATION', 'EDIT');
 
     if (this.preparation !== undefined) {
-      this.data = this.uiHelper.copyData(this.preparation);
+      this.data.initializeByObject(this.preparation);
     }
 
+  }
+  public typeChanged(): void {
+    this.data.style_type = this.data.getPresetStyleType();
   }
 
   public editBean(form): void {

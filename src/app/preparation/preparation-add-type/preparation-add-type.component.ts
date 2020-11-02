@@ -20,6 +20,7 @@ export class PreparationAddTypeComponent implements OnInit {
 
   public data: Preparation = new Preparation();
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
+  public PREPARATION_TYPES = PREPARATION_TYPES;
   @ViewChild('addPreparationForm', {static: false}) public preparationForm: NgForm;
   @Input() private hide_toast_message: boolean;
 

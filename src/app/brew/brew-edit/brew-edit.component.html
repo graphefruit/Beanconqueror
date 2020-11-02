@@ -115,7 +115,7 @@
       </ion-label>
     </ion-item>
 
-    <ion-item *ngIf="settings.coffee_blooming_time === true  && getPreparation().style_type === PREPARATION_STYLE_TYPE.POUR_OVER" [style.order]="settings.brew_order.while.coffee_blooming_time"
+    <ion-item *ngIf="settings.coffee_blooming_time === true" [style.order]="settings.brew_order.while.coffee_blooming_time"
               lines="inset">
       <ion-label position="stacked">{{"BREW_DATA_COFFEE_BLOOMING_TIME" | translate}}</ion-label>
       <ion-input [(ngModel)]="data.coffee_blooming_time" inputmode="decimal"

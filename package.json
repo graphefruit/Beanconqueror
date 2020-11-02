@@ -114,7 +114,8 @@
     "stylelint-config-standard": "^20.0.0",
     "ts-node": "~8.3.0",
     "tslint": "^6.1.3",
-    "typescript": "~3.8.3"
+    "typescript": "~3.8.3",
+    "webpack-subresource-integrity": ">=1.5.1"
   },
   "description": "An Ionic project",
   "cordova": {

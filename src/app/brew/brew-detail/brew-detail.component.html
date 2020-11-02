@@ -110,7 +110,7 @@
         <h3>{{data.getFormattedCoffeeBrewTime()}}</h3>
       </ion-label>
     </ion-item>
-      <ion-item *ngIf="settings.coffee_blooming_time === true  && getPreparation().style_type === PREPARATION_STYLE_TYPE.POUR_OVER"
+      <ion-item *ngIf="settings.coffee_blooming_time === true"
                 [style.order]="settings.brew_order.while.coffee_blooming_time">
       <ion-label>
         <h2>{{"BREW_DATA_COFFEE_BLOOMING_TIME" | translate}}:</h2>
