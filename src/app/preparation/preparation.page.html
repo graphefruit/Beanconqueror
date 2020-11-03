@@ -13,9 +13,6 @@
     </ion-title>
   </ion-toolbar>
 </ion-header>
-
-
-
 <ion-content>
   <div>
     <ion-segment [(ngModel)]="segment">
@@ -26,7 +23,6 @@
       <ion-segment-button *ngIf="settings?.show_archived_mills" value="archive">
         <ion-label>{{"TAB_ARCHIVE" | translate }}
         </ion-label>
-
       </ion-segment-button>
     </ion-segment>
   </div>

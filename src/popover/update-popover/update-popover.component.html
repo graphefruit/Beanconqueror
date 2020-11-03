@@ -1,0 +1,28 @@
+<ion-header class="ion-margin-top">
+  <ion-toolbar class="ion-text-center">
+    <ion-buttons [style.visibility]="'hidden'" slot="start">
+      <ion-button (click)="dismiss()" tappable>
+        <ion-icon class="icon-black" name="close-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      {{"UPDATE_TITLE" | translate}}
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()" tappable>
+        <ion-icon class="icon-black" name="close-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-slides #slider [options]="slideOpts" pager="true">
+    <ion-slide *ngFor="let version of versions">
+     {{version}}
+    </ion-slide>
+
+  </ion-slides>
+</ion-content>
+<ion-footer class="ion-no-border">
+
+</ion-footer>

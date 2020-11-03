@@ -93,6 +93,7 @@ import {NgxStarsModule} from 'ngx-stars';
 import {BrewCuppingComponent} from '../brew/brew-cupping/brew-cupping.component';
 import {DatePicker} from '@ionic-native/date-picker/ngx';
 import {Geolocation} from '@ionic-native/geolocation/ngx';
+import {UpdatePopoverComponent} from '../../popover/update-popover/update-popover.component';
 
 @NgModule({
   declarations: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, AboutComponent,
@@ -101,6 +102,7 @@ import {Geolocation} from '@ionic-native/geolocation/ngx';
     PreparationAddTypeComponent,
     CustomPopoverComponent,
     WelcomePopoverComponent,
+    UpdatePopoverComponent,
     CreditsComponent,
     LicencesComponent,
     PrivacyComponent,
@@ -132,6 +134,7 @@ import {Geolocation} from '@ionic-native/geolocation/ngx';
     PreparationAddTypeComponent,
     CustomPopoverComponent,
     WelcomePopoverComponent,
+    UpdatePopoverComponent,
     CreditsComponent,
     LicencesComponent,
     PrivacyComponent,
@@ -190,6 +193,7 @@ import {Geolocation} from '@ionic-native/geolocation/ngx';
     PreparationAddTypeComponent,
     CustomPopoverComponent,
     WelcomePopoverComponent,
+    UpdatePopoverComponent,
     CreditsComponent,
     LicencesComponent,
     PrivacyComponent,

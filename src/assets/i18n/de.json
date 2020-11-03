@@ -380,5 +380,6 @@
   "PREPARATION_STYLE_ESPRESSO": "Espresso",
   "PREPARATION_TYPE_STYLE": "Zubereitungsart",
   "PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION": "Aktiviert einen neuen Menüeintrag - über diesen kann die Brühung direkt wiederholt werden.",
-  "PAGE_SETTINGS_TRACK_BREW_COORDINATES_DESCRIPTION": "Speichere die Koordinatien zu jeder Brühung."
+  "PAGE_SETTINGS_TRACK_BREW_COORDINATES_DESCRIPTION": "Speichere die Koordinatien zu jeder Brühung.",
+  "UPDATE_TITLE": "Was gibt's neues"
 }

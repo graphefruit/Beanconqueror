@@ -15,7 +15,8 @@ import {UILog} from './uiLog';
 import {UiVersionStorage} from './uiVersionStorage';
 import {Version} from '../classes/version/iVersion';
 import {AppVersion} from '@ionic-native/app-version/ngx';
-import {Platform} from '@ionic/angular';
+import {ModalController, Platform} from '@ionic/angular';
+import {UpdatePopoverComponent} from '../popover/update-popover/update-popover.component';
 
 
 @Injectable({
@@ -31,7 +32,8 @@ export class UIUpdate {
               private readonly uiLog: UILog,
               private readonly uiVersionStorage: UiVersionStorage,
               private readonly appVersion: AppVersion,
-              private readonly platform: Platform) {
+              private readonly platform: Platform,
+              private readonly modalCtrl: ModalController) {
   }
 
 
@@ -128,13 +130,27 @@ export class UIUpdate {
       const version: Version = this.uiVersionStorage.getVersion();
       const displayingVersions = await version.whichUpdateScreensShallBeDisplayed(versionCode);
 
+      if (displayingVersions.length > 0) {
 
-      console.log(displayingVersions);
-      version.pushUpdatedVersion('4.1.2');
-      this.uiVersionStorage.saveVersion(version);
+        await this.__showUpdateScreen(displayingVersions);
+
+        for (const v of displayingVersions) {
+          version.pushUpdatedVersion(v);
+        }
+        // this.uiVersionStorage.saveVersion(version);
+      }
+
       resolve();
 
     });
     return promise;
   }
+
+  private async __showUpdateScreen(showingVersions: Array<string>) {
+
+      const modal = await this.modalCtrl.create({component: UpdatePopoverComponent, id:'update-popover', componentProps: {versions: showingVersions}});
+      await modal.present();
+      await modal.onWillDismiss();
+  }
+
 }

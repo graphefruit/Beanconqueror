@@ -6,9 +6,6 @@ import {MillAddComponent} from '../../app/mill/mill-add/mill-add.component';
 import {UIAnalytics} from '../../services/uiAnalytics';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {Settings} from '../../classes/settings/settings';
-import {UIBeanStorage} from '../../services/uiBeanStorage';
-import {UIMillStorage} from '../../services/uiMillStorage';
-import {UIPreparationStorage} from '../../services/uiPreparationStorage';
 
 @Component({
   selector: 'welcome-popover',
@@ -28,15 +25,12 @@ export class WelcomePopoverComponent implements OnInit {
   @ViewChild('slider', {static: false}) public welcomeSlider: IonSlides;
 
 
-  private settings: Settings;
+  private readonly settings: Settings;
 
 
   constructor(private readonly modalController: ModalController,
               private readonly uiAnalytics: UIAnalytics,
-              private readonly uiSettingsStorage: UISettingsStorage,
-              private readonly uiBeanStorage: UIBeanStorage,
-              private readonly uiMillStorage: UIMillStorage,
-              private readonly uiPreparationStorage: UIPreparationStorage) {
+              private readonly uiSettingsStorage: UISettingsStorage) {
     this.settings = this.uiSettingsStorage.getSettings();
 
 
