@@ -33,6 +33,12 @@ export class BeansAddComponent implements OnInit {
   };
   @Input() private hide_toast_message: boolean;
 
+
+  public roasterResultsAvailable: boolean = false;
+  public roasterResults: string[] = [];
+  // Preset on start, else if value is filled the popup will be shown
+  public ignoreNextChange: boolean = true;
+
   constructor (private readonly modalController: ModalController,
                private readonly navParams: NavParams,
                private readonly uiBeanStorage: UIBeanStorage,
@@ -47,6 +53,50 @@ export class BeansAddComponent implements OnInit {
     // this.data.roastingDate = new Date().toISOString();
     this.bean_template = this.navParams.get('bean_template');
   }
+
+  public onRoasterSearchChange(event: any) {
+    let actualSearchValue = event.target.value;
+    this.roasterResults = [];
+    this.roasterResultsAvailable = false;
+    if (actualSearchValue === undefined || actualSearchValue === '') {
+      return;
+    }
+    if (this.ignoreNextChange) {
+      this.ignoreNextChange = false;
+      return;
+    }
+
+    actualSearchValue = actualSearchValue.toLowerCase();
+    const filteredEntries = this.uiBeanStorage.getAllEntries().filter((e)=>e.roaster.toLowerCase().startsWith(actualSearchValue));
+
+    for (const entry of filteredEntries) {
+      this.roasterResults.push(entry.roaster);
+    }
+    // Distinct values
+    this.roasterResults = Array.from(new Set(this.roasterResults.map((e) => e)));
+
+    if (this.roasterResults.length > 0) {
+      this.roasterResultsAvailable = true;
+    } else {
+      this.roasterResultsAvailable = false;
+    }
+
+  }
+  public onRoasterSearchLeave($event) {
+    setTimeout(() => {
+      this.roasterResultsAvailable = false;
+      this.roasterResults = [];
+    },150);
+
+  }
+
+  public roasterSelected(selected: string) :void {
+    this.data.roaster = selected;
+    this.roasterResults = [];
+    this.roasterResultsAvailable = false;
+    this.ignoreNextChange = true;
+  }
+
 
 
   public async ionViewWillEnter() {
