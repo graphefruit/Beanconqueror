@@ -50,9 +50,9 @@
                  autocapitalize="sentences">
       </ion-input>
     </ion-item>
-    <ion-item *ngIf="roasterResultsAvailable" lines="none" style="box-shadow: 0px 0px 5px 2px rgba(0,0,0,0.75);margin-top: 5px;margin-bottom: 5px;">
-      <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: white;">
-        <ion-item (click)="roasterSelected(result)" *ngFor="let result of roasterResults" button>
+    <ion-item *ngIf="roasterResultsAvailable" lines="none" style="margin-top: 5px;margin-bottom: 5px;">
+      <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: #E2E2E2;">
+        <ion-item (click)="roasterSelected(result)" *ngFor="let result of roasterResults;let last = last" button lines="{{last?'none':''}}" style="--background:#E2E2E">
           <ion-label>{{result}}</ion-label>
         </ion-item>
       </ion-list>

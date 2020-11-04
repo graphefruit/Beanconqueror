@@ -218,7 +218,7 @@ export class BrewPage implements OnInit {
     this.uiAlert.showConfirm('DELETE_BREW_QUESTION', 'SURE_QUESTION', true).then(() => {
           // Yes
         this.uiAnalytics.trackEvent('BREW', 'DELETE');
-          this.__deleteBrew(_brew);
+        this.__deleteBrew(_brew);
         this.uiToast.showInfoToast('TOAST_BREW_DELETED_SUCCESSFULLY');
         },
         () => {

@@ -39,7 +39,7 @@ export class BeansEditComponent implements OnInit {
   public roasterResultsAvailable: boolean = false;
   public roasterResults: string[] = [];
   // Preset on start, else if value is filled the popup will be shown
-  public ignoreNextChange: boolean = true;
+  public ignoreNextChange: boolean = false;
 
   constructor (private readonly navParams: NavParams,
                private readonly modalController: ModalController,
@@ -58,6 +58,9 @@ export class BeansEditComponent implements OnInit {
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent('BEAN', 'EDIT');
     this.data.initializeByObject(this.bean);
+    if (this.data.roaster !== '') {
+      this.ignoreNextChange = true;
+    }
     this.viewLoaded = true;
   }
   public editBean(): void {

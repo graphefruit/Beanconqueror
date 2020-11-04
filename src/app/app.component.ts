@@ -187,7 +187,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   private __checkUpdate(): void {
-   // this.uiUpdate.checkUpdate();
+   this.uiUpdate.checkUpdate();
   }
 
   private async __setDeviceLanguage(): Promise<any> {

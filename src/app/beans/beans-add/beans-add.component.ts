@@ -37,7 +37,7 @@ export class BeansAddComponent implements OnInit {
   public roasterResultsAvailable: boolean = false;
   public roasterResults: string[] = [];
   // Preset on start, else if value is filled the popup will be shown
-  public ignoreNextChange: boolean = true;
+  public ignoreNextChange: boolean = false;
 
   constructor (private readonly modalController: ModalController,
                private readonly navParams: NavParams,
@@ -84,8 +84,8 @@ export class BeansAddComponent implements OnInit {
   }
   public onRoasterSearchLeave($event) {
     setTimeout(() => {
-      this.roasterResultsAvailable = false;
-      this.roasterResults = [];
+      //this.roasterResultsAvailable = false;
+      //this.roasterResults = [];
     },150);
 
   }
@@ -169,6 +169,9 @@ export class BeansAddComponent implements OnInit {
     this.data.roastingDate = _bean.roastingDate;
     this.data.note = _bean.note;
     this.data.roaster = _bean.roaster;
+    if (this.data.roaster !== '') {
+      this.ignoreNextChange = true;
+    }
     this.data.roast = _bean.roast;
     this.data.beanMix = _bean.beanMix;
     this.data.variety = _bean.variety;
