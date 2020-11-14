@@ -23,5 +23,6 @@ export enum ROASTS_ENUM {
   ITALIAN_ROAST= 'Italian Roast',
   VIEANNA_ROAST= 'Vienna Roast',
   FRENCH_ROAST= 'French Roast',
-  CUSTOM_ROAST = 'Custom'
+
+  CUSTOM_ROAST = 'Custom',
 }

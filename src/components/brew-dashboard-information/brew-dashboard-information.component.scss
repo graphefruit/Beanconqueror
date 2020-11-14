@@ -1,5 +1,17 @@
 :host {
-
+  .vr {
+    border-right: 2px solid var(--ion-color-accent);
+    height: 75%;
+    position: absolute;
+    top: 12.5%;
+    bottom: 12.5%;
+    width:10%;
+  }
+  @media (max-width: 400px) {
+    .vr {
+      width:50%;
+    }
+  }
 
   .dashboard-time-center {
     display: grid;

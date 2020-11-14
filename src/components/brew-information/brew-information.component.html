@@ -1,29 +1,9 @@
 <ion-card class="long-card">
-  <ion-card-content>
-    <ion-grid class="ion-no-padding icons-black">
-      <ion-row class="custom-background-large" style="padding:8px">
-        <ion-col class="center-rating-icon" size="2">
-          <ion-icon class="icon-size-48" name="{{brew?.getRatingIcon()}}"></ion-icon>
-        </ion-col>
-        <ion-col class="ion-padding-start margin-header" size="8">
-          <ion-list lines="none" style="width:100%;">
-            <ion-item>
-              <ion-col size="12">
-                <ion-icon name="beanconqueror-bean"></ion-icon>&nbsp;{{brew.getBean().name}}</ion-col>
-            </ion-item>
-            <ion-item>
-              <ion-col size="12">
-                <ion-icon name="beanconqueror-preparation"></ion-icon>&nbsp;{{brew.getPreparation().name}}</ion-col>
-            </ion-item>
-            <ion-item>
-              <ion-col size="12">
-                <ion-icon name="beanconqueror-pepper-mill"></ion-icon>&nbsp;{{brew.getMill().name}}</ion-col>
-            </ion-item>
-            <ion-item>
-              <ion-col size="12">
-                <ion-icon name="time"></ion-icon>&nbsp;{{brew.config.unix_timestamp | formatDate:["DD.MM.YYYY HH:mm"]}}</ion-col>
-            </ion-item>
-          </ion-list>
+  <ion-card-content class="no-ion-col-vertical-padding ion-padding-top">
+    <ion-grid>
+      <ion-row class="ion-padding-bottom-half">
+        <ion-col size="10">
+          <ion-title class="ion-no-padding font-size-18"><b>{{brew.config.unix_timestamp | formatDate:["DD.MM.YYYY"]}}</b>&nbsp;{{brew.config.unix_timestamp | formatDate:["HH:mm"]}}</ion-title>
         </ion-col>
         <ion-col size="2">
           <ion-button (click)="showBrewActions($event)" class="button-top-absolute" color="accent" fill="clear">
@@ -31,89 +11,59 @@
           </ion-button>
         </ion-col>
       </ion-row>
-    </ion-grid>
-    <ion-grid>
       <ion-row>
-        <ion-col size="12">
-          <ion-list class="no-ion-col-padding" lines="none">
-            <div *ngIf="(settings.grind_weight===true &&
-                    settings.brew_quantity === true &&
-                     settings.brew_quantity === true)
-                     else elseBlock">
-              <ion-item>
-                <ion-col class="ion-text-bold" size="5">
-                  {{"BREW_DATA_IN_OUT_BR" | translate}}:
-                </ion-col>
-                <ion-col *ngIf="brew?.getPreparation().style_type === PREPARATION_STYLE_TYPE.POUR_OVER" size="7">
-                  {{brew?.grind_weight | number : '.0-2'}}gr / {{brew.brew_quantity | number : '.0-2'}}{{brewQuantityEnum[brew?.brew_quantity_type]}}&nbsp;({{brew?.getBrewRatio()}})
-                </ion-col>
-                <ion-col *ngIf="brew?.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO" size="7">
-                  {{brew?.grind_weight | number : '.0-2'}}gr / {{brew.brew_beverage_quantity | number : '.0-2'}}{{brewQuantityEnum[brew?.brew_beverage_quantity_type]}}&nbsp;({{brew?.getBrewRatio()}})
-                </ion-col>
-              </ion-item>
-            </div>
-            <ng-template #elseBlock>
-              <ion-item *ngIf="settings.grind_weight === true">
-                <ion-col class="ion-text-bold" size="5">
-                  {{"BREW_DATA_GRIND_WEIGHT" | translate}}:
-                </ion-col>
-                <ion-col size="7">
-                  {{brew?.grind_weight | number : '.0-2'}}
-                </ion-col>
-              </ion-item>
-
-              <ion-item *ngIf="settings.brew_quantity === true">
-                <ion-col class="ion-text-bold" size="5">
-                  {{"BREW_DATA_BREW_QUANTITY" | translate}}:
-                </ion-col>
-                <ion-col size="7">
-                  {{brew?.brew_quantity | number : '.0-2'}}
-                </ion-col>
-              </ion-item>
-
-              <ion-item *ngIf="(settings.brew_quantity === true || settings.brew_beverage_quantity) === true && settings.grind_weight === true">
-                <ion-col class="ion-text-bold" size="5">
-                  {{"BREW_INFORMATION_BREW_RATIO" | translate}}:
-                </ion-col>
-                <ion-col size="7">
-                  {{brew?.getBrewRatio()}}
-                </ion-col>
-              </ion-item>
-            </ng-template>
-            <ion-item *ngIf="settings.grind_size === true && brew?.grind_size">
-              <ion-col class="ion-text-bold" size="5">
-                {{"BREW_DATA_GRIND_SIZE" | translate}}:
-              </ion-col>
-              <ion-col size="7">
-                {{brew?.grind_size}}<span *ngIf="settings.mill_speed === true && brew?.mill_speed > 0">&nbsp;@&nbsp;{{ brew?.mill_speed }}</span>
-              </ion-col>
-            </ion-item>
-            <ion-item *ngIf="settings.tds === true &&  brew?.tds > 0 && brew?.brew_beverage_quantity>0">
-              <ion-col class="ion-text-bold" size="5">
-                {{'BREW_DATA_TDS_EY' | translate}}:
-              </ion-col>
-              <ion-col size="7">
-                {{brew?.tds}},&nbsp;%{{brew?.getExtractionYield()}}
-              </ion-col>
-            </ion-item>
-            <ion-item *ngIf="settings.brew_time === true">
-              <ion-col class="ion-text-bold" size="5">
-                {{'BREW_DATA_TIME' | translate}}:
-              </ion-col>
-              <ion-col size="7">
-                {{brew?.getFormattedTotalCoffeeBrewTime()}}
-              </ion-col>
-            </ion-item>
-            <ion-item *ngIf="settings.pressure_profile === true && brew?.pressure_profile">
-              <ion-col class="ion-text-bold" size="5">
-                {{'BREW_DATA_PRESSURE_PROFILE' | translate}}:
-              </ion-col>
-              <ion-col size="7">
-                {{brew?.pressure_profile}}
-              </ion-col>
-            </ion-item>
-          </ion-list>
+        <ion-col size="8"><div class="ion-no-padding font-size-20 ion-title">{{brew.getBean().name}}</div></ion-col>
+        <ion-col *ngIf="brew?.rating" class="center-col" size="4"><ngx-stars #brewStars [color]="'#BFB9B0'" [customStarIcons]="brewIcons" [initialStars]="brew.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right" ></ngx-stars></ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <hr />
         </ion-col>
+      </ion-row>
+
+    </ion-grid>
+    <ion-grid class="no-ion-col-vertical-padding">
+      <ion-row>
+        <ion-col size="6">
+          <ion-label class="card-headline">{{"BREW_DATA_PREPARATION_METHOD" | translate}}</ion-label><br/>
+          <ion-text>{{brew?.getPreparation().name}}</ion-text>
+        </ion-col>
+        <ion-col size="6">
+          <ion-label class="card-headline">{{"BREW_DATA_MILL" |translate}}</ion-label><br/>
+          <ion-text>{{brew?.getMill().name}}</ion-text>
+        </ion-col>
+      </ion-row>
+      <ion-row  class="ion-padding-bottom-half">
+        <ion-col size="6">
+          <ion-label class="card-headline">{{"BREW_DATA_IN_OUT_BR" | translate}}</ion-label><br/>
+          <ion-text *ngIf="brew?.getPreparation().style_type === PREPARATION_STYLE_TYPE.POUR_OVER">
+            {{brew?.grind_weight | number : '.0-2'}}gr / {{brew.brew_quantity | number : '.0-2'}}{{brewQuantityEnum[brew?.brew_quantity_type]}}&nbsp;({{brew?.getBrewRatio()}})
+          </ion-text>
+          <ion-text *ngIf="brew?.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO">
+            {{brew?.grind_weight | number : '.0-2'}}gr / {{brew.brew_beverage_quantity | number : '.0-2'}}{{brewQuantityEnum[brew?.brew_beverage_quantity_type]}}&nbsp;({{brew?.getBrewRatio()}})
+          </ion-text>
+        </ion-col>
+        <ion-col *ngIf="settings.brew_time && brew?.brew_time" size="6">
+          <ion-label class="card-headline">{{'BREW_DATA_TIME' | translate}}</ion-label><br/>
+          <ion-text>{{brew?.getFormattedTotalCoffeeBrewTime()}}</ion-text>
+        </ion-col>
+
+
+        <ion-col *ngIf="settings.grind_size === true && brew?.grind_size"  size="6">
+          <ion-label class="card-headline">{{'BREW_DATA_GRIND_SIZE' | translate}}</ion-label><br/>
+          <ion-text>{{brew?.grind_size}}<span *ngIf="settings.mill_speed === true && brew?.mill_speed > 0">&nbsp;@&nbsp;{{ brew?.mill_speed }}</span></ion-text>
+        </ion-col>
+        <ion-col *ngIf="settings.tds === true &&  brew?.tds > 0 && brew?.brew_beverage_quantity>0"  size="6">
+          <ion-label class="card-headline">{{'BREW_DATA_TDS_EY' | translate}}</ion-label><br/>
+          <ion-text>{{brew?.tds}},&nbsp;%{{brew?.getExtractionYield()}}</ion-text>
+        </ion-col>
+
+
+        <ion-col *ngIf="settings.pressure_profile === true && brew?.pressure_profile"  size="6">
+          <ion-label class="card-headline">{{'BREW_DATA_PRESSURE_PROFILE' | translate}}</ion-label><br/>
+          <ion-text>{{brew?.pressure_profile}}</ion-text>
+        </ion-col>
+
       </ion-row>
     </ion-grid>
   </ion-card-content>

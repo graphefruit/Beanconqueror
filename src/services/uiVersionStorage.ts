@@ -20,7 +20,7 @@ export class UiVersionStorage extends StorageClass {
   constructor(protected uiStorage: UIStorage,
               protected uiHelper: UIHelper,
               protected uiLog: UILog) {
-    super(uiStorage, uiHelper, uiLog, 'SETTINGS');
+    super(uiStorage, uiHelper, uiLog, 'VERSION');
 
     super.storageReady()
       .then(() => {

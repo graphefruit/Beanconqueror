@@ -6,6 +6,8 @@ import {IBean} from '../../interfaces/bean/iBean';
 /** Classes */
 import {Config} from '../objectConfig/objectConfig';
 import moment from 'moment';
+import {BEAN_PREPARATION_TYPE_ENUM} from '../../enums/beans/beanPreparationType';
+import {IBeanInformation} from '../../interfaces/bean/iBeanInformation';
 
 export class Bean implements IBean {
   public name: string;
@@ -18,9 +20,7 @@ export class Bean implements IBean {
   public roast: ROASTS_ENUM;
   public roast_range: number;
   public beanMix: BEAN_MIX_ENUM;
-  public variety: string;
-  public processing: string;
-  public country: string;
+
   // tslint:disable-next-line
   public roast_custom: string;
   public aromatics: string;
@@ -28,7 +28,19 @@ export class Bean implements IBean {
   public finished: boolean;
   public cost: number;
   public attachments: Array<string>;
+  public cupping_points:string;
+  public decaffeinated: boolean;
 
+  /** @deprecated */
+  public variety: string;
+  /** @deprecated */
+  public processing: string;
+  /** @deprecated */
+  public country: string;
+
+  public bean_information: Array<IBeanInformation>;
+
+  public bean_preparation_type: BEAN_PREPARATION_TYPE_ENUM;
 
   constructor() {
     this.name = '';
@@ -49,6 +61,10 @@ export class Bean implements IBean {
     this.finished = false;
     this.cost = 0;
     this.attachments = [];
+    this.decaffeinated = false;
+    this.cupping_points = '';
+    this.bean_preparation_type = 'UNKNOWN' as BEAN_PREPARATION_TYPE_ENUM;
+    this.bean_information = [];
   }
 
   public getRoastName(): string {

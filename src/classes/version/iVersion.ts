@@ -10,7 +10,8 @@ export class Version implements IVersion {
   public config: Config;
   public alreadyDisplayedVersions: Array<string>;
 
-  private updatedVersions: Array<string> = ['4.1.2','4.1.3'];
+  // Inherits all showable version updates, used from config.xml
+  private updatedVersions: Array<string> = ['5.0.0'];
 
 
   constructor() {
@@ -27,6 +28,7 @@ export class Version implements IVersion {
   public pushUpdatedVersion(updatedVersion: string) {
     this.alreadyDisplayedVersions.push(updatedVersion);
   }
+
   public whichUpdateScreensShallBeDisplayed(actualAppVersion: string): Array<string> {
 
       const versionCode: string = actualAppVersion;
@@ -40,7 +42,6 @@ export class Version implements IVersion {
         }
       }
       return displayVersions;
-
   }
 
   private  versionCompare(_actualAppVersion, _updateVersion) {

@@ -1,16 +1,22 @@
 <ion-card class="long-card">
   <ion-grid class="ion-no-padding">
     <ion-row>
-      <ion-col class="custom-background-small" size="3">
-        <ion-col size="2">
+      <ion-col size="2">
+
           <div class="dashboard-time-center">
-            <div>
-              <span class="ion-text-bold" style="font-size:24px;">{{brew.config.unix_timestamp | formatDate:["DD"]}}.</span>
+            <div class="ion-text-bold font-size-18">
+             {{brew.config.unix_timestamp | formatDate:["DD"]}}.<br/>
+              <span class="ion-text-bold font-size-14">
+              {{brew.config.unix_timestamp | formatDate:["MMMM"]}}<br/>{{brew.config.unix_timestamp | formatDate:["YYYY"]}}
+            </span>
             </div>
-            <div>{{brew.config.unix_timestamp | formatDate:["MMMM"]}}<br/>{{brew.config.unix_timestamp | formatDate:["YYYY"]}}</div>
+
           </div>
 
-        </ion-col>
+
+      </ion-col>
+      <ion-col size="1">
+        <div class="vr"></div>
       </ion-col>
       <ion-col size="9" style="padding-left:16px;">
         <ion-card class="ion-no-padding ion-no-margin long-card"
@@ -21,17 +27,17 @@
                 <ion-col class="margin-header" size="10">
                   <ion-list lines="none" style="width:100%;">
                     <ion-item>
-                      <ion-col size="12">
-                        <ion-icon name="beanconqueror-bean"></ion-icon>&nbsp;{{brew.getBean().name}}</ion-col>
+                      <ion-col class="ion-text-bold" size="12">
+                        {{brew.getBean().name}}</ion-col>
                     </ion-item>
                     <ion-item>
                       <ion-col size="12">
-                        <ion-icon name="beanconqueror-preparation"></ion-icon>&nbsp;{{brew.getPreparation().name}}
+                        {{brew.getPreparation().name}}
                       </ion-col>
                     </ion-item>
                     <ion-item>
                       <ion-col size="12">
-                        <ion-icon name="beanconqueror-pepper-mill"></ion-icon>&nbsp;{{brew.getMill().name}}</ion-col>
+                        {{brew.getMill().name}}</ion-col>
                     </ion-item>
                   </ion-list>
                 </ion-col>

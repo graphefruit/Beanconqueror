@@ -19,37 +19,42 @@
                 <ion-col class="ion-no-padding" size="11">
                   <ion-list lines="none" style="width:100%;">
                     <ion-item>
-                      <ion-col class="ion-text-bold" size="12">{{bean?.name}}</ion-col>
+                      <ion-grid class="ion-no-padding ion-no-margin">
+                        <ion-row>
+                          <ion-col size="6">
+                            <div class="ion-no-padding ion-title break-word font-size-20">{{bean?.name}}</div>
+                          </ion-col>
+
+                          <ion-col  *ngIf="bean?.roast_range !== 0" class="ion-float-right" size="6">
+                              <ngx-stars #beanStars [initialStars]="bean.roast_range" [readonly]="true" [size]="1" class="bean-display"></ngx-stars>
+                          </ion-col>
+                        </ion-row>
+                      </ion-grid>
                     </ion-item>
                     <ion-item>
-                      <ion-col *ngIf="bean?.weight && settings.grind_weight"
-                               [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount() | number : '.0-2', gramTotal: bean?.weight}"
-                               size="12">
+                      <ion-col size="6">
+                        <ion-label class="card-headline">{{"BEAN_DATA_ROASTING_DATE" | translate}}</ion-label>
                       </ion-col>
-                      <ion-col *ngIf="!(bean?.weight && settings.grind_weight)"
-                               [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: '0', gramTotal: '0'}"
-                               size="12">
+                      <ion-col *ngIf="bean?.roastingDate" size="6">
+                        {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}
+                      </ion-col>
+                      <ion-col *ngIf="!bean?.roastingDate" size="6">
+                        -
                       </ion-col>
                     </ion-item>
                     <ion-item>
-                      <ion-col class="ion-text-bold" size="6">{{"BEAN_DATA_ROASTER" | translate}}:
+                      <ion-col size="6">
+                        <ion-label class="card-headline">{{"BEAN_DATA_ROASTER" | translate}}</ion-label>
                       </ion-col>
                       <ion-col *ngIf="bean.roaster" size="6">
                         {{bean.roaster}}
                       </ion-col>
-                      <ion-col *ngIf="!bean.roaster">-</ion-col>
-                    </ion-item>
-                    <ion-item *ngIf="bean?.roastingDate">
-                      <ion-col class="ion-text-bold" size="6">{{"BEAN_DATA_ROASTING_DATE" | translate}}:
-                      </ion-col>
-                      <ion-col size="6">
-                        {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}
-                      </ion-col>
+                      <ion-col *ngIf="!bean.roaster" size="6">-</ion-col>
                     </ion-item>
                     <ion-item>
-                      <ion-col class="ion-text-bold" size="6">{{"BEAN_DATA_ROAST_NAME" | translate}}:
+                      <ion-col size="6">
+                        <ion-label class="card-headline">{{"BEAN_DATA_ROAST_NAME" | translate}}</ion-label>
                       </ion-col>
-
                       <ion-col
                         *ngIf="bean.roast === getRoastEnum(roast_enum.CUSTOM_ROAST) && bean.roast !== getRoastEnum(roast_enum.UNKNOWN)"
                         size="6">
@@ -60,12 +65,23 @@
                         size="6">
                         {{roast_enum[bean.roast]}}
                       </ion-col>
-                      <ion-col>-</ion-col>
+                      <ion-col size="6">-</ion-col>
                     </ion-item>
-                    <ion-item *ngIf="bean?.roast_range !== 0">
-                      <ngx-stars #beanStars [initialStars]="bean.roast_range" [readonly]="true" [size]="1"
-                                 style="margin-top:8px;"></ngx-stars>
+
+                    <ion-item>
+                      <ion-col *ngIf="bean?.weight && settings.grind_weight"
+                               [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount() | number : '.0-2', gramTotal: bean?.weight}"
+                               size="12">
+                      </ion-col>
+                      <ion-col *ngIf="!(bean?.weight && settings.grind_weight)"
+                               [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: '0', gramTotal: '0'}"
+                               size="12">
+                      </ion-col>
                     </ion-item>
+
+
+
+
                     <ion-item>
                       <div style="margin-top:8px;margin-bottom:8px;border-top:1px solid #CEC2AC;width:100%;"></div>
                     </ion-item>

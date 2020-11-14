@@ -17,6 +17,7 @@ import {Version} from '../classes/version/iVersion';
 import {AppVersion} from '@ionic-native/app-version/ngx';
 import {ModalController, Platform} from '@ionic/angular';
 import {UpdatePopoverComponent} from '../popover/update-popover/update-popover.component';
+import {IBeanInformation} from '../interfaces/bean/iBeanInformation';
 
 
 @Injectable({
@@ -61,6 +62,19 @@ export class UIUpdate {
           bean.attachments.push(bean.filePath);
           bean.filePath = '';
           needsUpdate = true;
+        }
+        if ((bean.variety || bean.country || bean.processing && bean.bean_information.length <=0)) {
+          console.log('we needed to do some shit here man!');
+          const beanInformation: IBeanInformation = {} as IBeanInformation;
+          beanInformation.country = bean.country;
+          beanInformation.variety = bean.variety;
+          beanInformation.processing = bean.processing;
+          bean.country = '';
+          bean.variety = '';
+          bean.processing = '';
+          bean.bean_information.push(beanInformation);
+          console.log(bean);
+         // needsUpdate = true;
         }
         if (bean.fixDataTypes() || needsUpdate) {
           this.uiBeanStorage.update(bean);
@@ -125,7 +139,8 @@ export class UIUpdate {
       if (this.platform.is('cordova')) {
         versionCode = await this.appVersion.getVersionNumber();
       } else {
-        versionCode = '4.1.0';
+        // Hardcored for testing
+        versionCode = '4.0.0';
       }
       const version: Version = this.uiVersionStorage.getVersion();
       const displayingVersions = await version.whichUpdateScreensShallBeDisplayed(versionCode);
@@ -137,7 +152,7 @@ export class UIUpdate {
         for (const v of displayingVersions) {
           version.pushUpdatedVersion(v);
         }
-        // this.uiVersionStorage.saveVersion(version);
+        //this.uiVersionStorage.saveVersion(version);
       }
 
       resolve();
@@ -148,7 +163,11 @@ export class UIUpdate {
 
   private async __showUpdateScreen(showingVersions: Array<string>) {
 
-      const modal = await this.modalCtrl.create({component: UpdatePopoverComponent, id:'update-popover', componentProps: {versions: showingVersions}});
+      const modal = await this.modalCtrl.create({component: UpdatePopoverComponent, id:'update-popover',
+        cssClass: 'half-bottom-modal', showBackdrop: true,
+        backdropDismiss: true,
+        swipeToClose: true,
+        componentProps: {versions: showingVersions}});
       await modal.present();
       await modal.onWillDismiss();
   }

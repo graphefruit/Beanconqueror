@@ -22,10 +22,21 @@ ion-title {
   color: var(--ion-text-color);
   line-height: 24px;
 }
-
+.font-size-14 {
+  font-size: 14px!important;
+  line-height: 14px!important;
+}
 .font-size-16 {
-  font-size: 16px;
-  line-height: 16px;
+  font-size: 16px!important;
+  line-height: 16px!important;
+}
+.font-size-18 {
+  font-size: 18px!important;
+  line-height: 18px!important;
+}
+.font-size-20 {
+  font-size: 20px!important;
+  line-height: 20px!important;
 }
 
 ion-toolbar {
@@ -298,6 +309,15 @@ ion-menu:host .menu-inner {
 }
 
 :root {
+  ion-col.center-col {
+    display: flex;
+    align-items: center
+  }
+  hr {
+    height: 0px;
+    border-top: 2px solid var(--ion-color-accent);
+    border-radius: 5px;
+  }
 
 
   ion-range {
@@ -425,6 +445,9 @@ ion-menu:host .menu-inner {
     font-size: 14px;
 
   }
+  ion-label.card-headline {
+    color: #938F89;
+  }
   ion-label.label-stacked {
     -webkit-transform: translate3d(0, 40%, 0) scale(1);
     -moz-transform: translate3d(0, 40%, 0) scale(1);
@@ -516,6 +539,15 @@ ion-menu:host .menu-inner {
     padding-bottom: var(--ion-padding, 16px);
   }
 
+  .ion-title.break-word{
+    word-wrap:break-spaces;
+    white-space: normal;
+  }
+
+  .ion-no-padding.ion-title{
+    padding-bottom:0px;
+  }
+
   ion-toast {
     --background: #474747;
     font-family: 'Baloo', sans-serif;
@@ -544,6 +576,7 @@ ion-menu:host .menu-inner {
     right: -20px;
     min-height: 45px;
   }
+
 
 
   .star-half {
@@ -575,6 +608,18 @@ ion-menu:host .menu-inner {
     height: 22px !important;
     width: 22px !important;
 
+  }
+  .bean-display {
+    .star-half, .star-full, .star-empty {
+      margin-right:-2px;
+      width:15px!important;
+      height:16px!important;
+      background-size: contain!important;
+    }
+  }
+
+  .ion-padding-bottom-half {
+   padding-bottom: 8px;
   }
 }
 

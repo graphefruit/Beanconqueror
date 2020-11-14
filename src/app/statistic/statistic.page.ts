@@ -76,7 +76,6 @@ export class StatisticPage implements OnInit {
 
   private __loadDrinkingChart(): void {
     const brewView: Array<BrewView> = this.__getBrewsSortedForMonth();
-    console.log(brewView);
     // Take the last 12 Months
     const lastBrewViews: Array<BrewView> = brewView.slice(-12);
 

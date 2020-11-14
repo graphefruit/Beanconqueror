@@ -10,13 +10,22 @@ export class UpdatePopoverComponent implements OnInit {
 
   @Input() public versions: Array<string>;
   public slideOpts = {
-    allowTouchMove: true,
+    allowTouchMove: false,
     speed: 400
   };
   public slide: number = 1;
-  @ViewChild('slider', {static: false}) public welcomeSlider: IonSlides;
+  @ViewChild('slider', {static: false}) public updateSlider: IonSlides;
 
-  constructor(private readonly modalController: ModalController) { }
+  constructor(private readonly modalController: ModalController) {
+
+  }
+
+  public nextSlide() {
+    this.updateSlider.slideNext();
+  }
+  public finish() {
+    this.dismiss();
+  }
 
   public ngOnInit() {}
 

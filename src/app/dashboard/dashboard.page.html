@@ -10,50 +10,57 @@
 </ion-header>
 <ion-content>
 
-  <ion-grid>
-    <ion-row>
-      <ion-col class="ion-text-center" size="4">
-        <ion-card [routerLink]="['/home/brews']" class="small-card" style="height: 100%;" tappable>
-          <ion-card-header class="custom-background-medium" style="font-size: 2em;">
-            <ion-icon name="cafe-outline" slot="start"></ion-icon>
-            {{uiStatistic.getBrewsDrunk()}}
-          </ion-card-header>
-          <ion-card-content>
-            <span *ngIf="uiStatistic.getBrewsDrunk() == 1">
-                   {{"PAGE_HOME_TOTAL_BREW" | translate}}
-            </span>
-            <span *ngIf="uiStatistic.getBrewsDrunk() != 1">
+  <ion-card>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="4">
+          <ion-card [routerLink]="['/home/brews']" class="dashboard ion-no-padding ion-no-margin"  style="height: 100%;" tappable>
+            <ion-card-header class="ion-no-padding ion-no-margin">
+              <ion-card-title> {{uiStatistic.getBrewsDrunk()}}</ion-card-title>
+              <ion-card-subtitle>
+                <span *ngIf="uiStatistic.getBrewsDrunk() == 1">
+                {{"PAGE_HOME_TOTAL_BREW" | translate}}
+                </span>
+                <span *ngIf="uiStatistic.getBrewsDrunk() != 1">
                 {{"PAGE_HOME_TOTAL_BREWS" | translate}}
-            </span>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-      <ion-col class="ion-text-center" size="4">
-        <ion-card [routerLink]="['/home/beans']" class="small-card" style="height: 100%;" tappable="">
-          <ion-card-header class="custom-background-medium" style="font-size: 2em;">
-            {{uiStatistic.getBeansCount()}}
-          </ion-card-header>
-          <ion-card-content>
-              <span *ngIf="uiStatistic.getBeansCount() == 1">
-                     {{"PAGE_HOME_BEAN_EXPLORED" | translate}}
-              </span>
-            <span *ngIf="uiStatistic.getBeansCount() != 1">
-                     {{"PAGE_HOME_BEANS_EXPLORED" | translate}}
-            </span>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-      <ion-col class="ion-text-center" size="4">
-        <ion-card [routerLink]="['/statistic']" class="small-card" style="height: 100%;" tappable>
-          <ion-card-header class="custom-background-medium"
-                           style="font-size: 2em;">{{uiStatistic.getTimePassedSinceLastBrew()}}</ion-card-header>
-          <ion-card-content>
-            {{uiStatistic.getTimePassedSinceLastBrewMessage()}} {{"WITHOUT_COFFEE" | translate}}<br>
+                </span>
+              </ion-card-subtitle>
 
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>
+            </ion-card-header>
+          </ion-card>
+        </ion-col>
+        <ion-col size="4">
+          <ion-card [routerLink]="['/home/beans']" class="dashboard ion-no-padding ion-no-margin"  style="height: 100%;" tappable>
+            <ion-card-header class="ion-no-padding ion-no-margin">
+              <ion-card-title> {{uiStatistic.getBeansCount()}}</ion-card-title>
+              <ion-card-subtitle>
+                <span *ngIf="uiStatistic.getBeansCount() == 1">
+                       {{"PAGE_HOME_BEAN_EXPLORED" | translate}}
+                </span>
+                  <span *ngIf="uiStatistic.getBeansCount() != 1">
+                       {{"PAGE_HOME_BEANS_EXPLORED" | translate}}
+              </span>
+              </ion-card-subtitle>
+
+            </ion-card-header>
+          </ion-card>
+        </ion-col>
+        <ion-col size="4">
+          <ion-card [routerLink]="['/statistic']" class="dashboard ion-no-padding ion-no-margin no-border"  style="height: 100%;" tappable>
+            <ion-card-header class="ion-no-padding ion-no-margin">
+              <ion-card-title> {{uiStatistic.getTimePassedSinceLastBrew()}}</ion-card-title>
+              <ion-card-subtitle>
+                {{uiStatistic.getTimePassedSinceLastBrewMessage()}} {{"WITHOUT_COFFEE" | translate}}
+              </ion-card-subtitle>
+
+            </ion-card-header>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+  <ion-grid>
+
     <ion-row>
       <ion-col size="12">
         <ion-button (click)="addBrew()" add-brew color="accent" expand="block">

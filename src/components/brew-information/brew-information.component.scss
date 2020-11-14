@@ -1,71 +1,23 @@
 :host {
-.center-rating-icon {
-  margin: auto 0;
-  text-align: center;
-}
 
-  .margin-header {
-    margin: auto 0;
-  }
-
-  .brew-time-center {
-    display: grid;
-    height: 100%;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-  }
-  ion-row.center-col ion-col {
-    display: flex;
-    align-items: center
-  }
-
-  ion-list {
-    background: none;
-    margin: 0px;
-    padding: 0px;
-
-    ion-item {
-      ion-col {
-        -ms-text-overflow: ellipsis;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-      }
-      --background: none;
-      --padding-start: 0px;
-      --padding-end: 0px;
-      --inner-padding-end: 0px;
-      font-size: 14px;
-      --min-height: 0px;
-
-      ion-icon {
-        top: 4px;
-        position: relative;
-        font-size: 18px;
-        margin-right: 0px;
-        margin-top: 0px;
-        margin-bottom: 0px;
-      }
+  ion-card {
+    ion-card-content {
+      padding-top: var(--padding-top);
     }
-
   }
 
-  .icons-black ion-icon {
-    color: rgb(80, 64, 39);
+  // Overwrite
+  .button-top-absolute {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    min-height: 45px;
   }
 
-
-  .icon-size-48 {
-    width: 32px;
-    height: 32px;
-    font-size: 32px;
-  }
-
-
-  .no-ion-col-padding {
+  .no-ion-col-vertical-padding {
     ion-col {
-      padding: 0px !important;
+      padding-top: 0px !important;
+      padding-bottom: 0px !important;
     }
 
   }

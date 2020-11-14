@@ -297,13 +297,14 @@ export class AppComponent implements AfterViewInit {
   }
 
   private async __initApp() {
-    this.uiUpdate.checkUpdateScreen();
+
     this.__registerBack();
     await this.__setDeviceLanguage();
     await this.uiAnalytics.initializeTracking().catch(() => {
       // Nothing to do, user declined tracking.
     });
     await this.__checkWelcomePage();
+    // await this.uiUpdate.checkUpdateScreen();
     await this.__checkStartupView();
     this.__instanceAppRating();
 

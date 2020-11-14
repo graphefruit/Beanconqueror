@@ -20,7 +20,7 @@
     <ion-item *ngIf="viewLoaded===true" lines="none">
       <ion-label position="stacked">{{"BEAN_DATA_ROAST_NAME" | translate}}</ion-label>
       <ngx-stars (ratingOutput)="onRoastRate($event)" [customPadding]="'20px'" [initialStars]="this.data.roast_range"
-                 [readonly]="false" [size]="2" class="ion-margin-top" style="margin-left:20px;"></ngx-stars>
+                 [readonly]="false" [size]="2" class="ion-margin-top"  style="margin-left:20px;"></ngx-stars>
     </ion-item>
     <ion-item>
       <ion-select #roast="ngModel" [(ngModel)]="data.roast" cancelText="{{'CANCEL'| translate }}" name="roast"

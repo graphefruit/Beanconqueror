@@ -1,4 +1,30 @@
 :host {
+
+
+  ion-card.dashboard {
+    text-align:center;
+    border-right: 2px solid var(--ion-color-accent);
+    border-radius:0px;
+    padding-right:8px;
+    ion-card-title {
+      color: var(--ion-color-accent);
+      font-size:24px;
+      font-weight: bold;
+    }
+    ion-card-subtitle {
+      font-weight:bold;
+      color: var(--ion-text-color);
+      font-size:14px;
+    }
+  }
+   ion-card.dashboard.no-border {
+
+      border-right: none;
+      padding-right: 0px;
+
+
+  }
+
   ion-button[add-brew] {
     --padding-bottom: 0px;
     --padding-end: 0px;
