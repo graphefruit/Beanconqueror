@@ -13,6 +13,7 @@ import {UIFileHelper} from '../../../services/uiFileHelper';
 import moment from 'moment';
 import {DatePicker} from '@ionic-native/date-picker/ngx';
 import {TranslateService} from '@ngx-translate/core';
+import {IBeanInformation} from '../../../interfaces/bean/iBeanInformation';
 
 @Component({
   selector: 'beans-edit',
@@ -103,6 +104,16 @@ export class BeansEditComponent implements OnInit {
       this.roasterResults = [];
     },150);
 
+  }
+
+
+  public addAnotherSort() {
+    const beanInformation: IBeanInformation = {} as IBeanInformation;
+    this.data.bean_information.push(beanInformation);
+  }
+
+  public deleteSortInformation(_index: number) {
+    this.data.bean_information.splice(_index, 1);
   }
 
   public roasterSelected(selected: string) :void {

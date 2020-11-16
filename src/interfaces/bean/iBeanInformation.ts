@@ -1,13 +1,12 @@
 export interface IBeanInformation {
-
-  farm: string;
-  elevation: string;
+  country: string;
   region: string;
+  farm: string;
+  farmer: string;
+  elevation: string;
   harvest_time: string;
   variety: string;
   processing: string;
-  country: string;
-
-
+  certification: string;
 
 }

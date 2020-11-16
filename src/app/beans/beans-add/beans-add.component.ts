@@ -13,6 +13,7 @@ import {UIToast} from '../../../services/uiToast';
 import {DatePicker} from '@ionic-native/date-picker/ngx';
 import {TranslateService} from '@ngx-translate/core';
 import moment from 'moment';
+import {IBeanInformation} from '../../../interfaces/bean/iBeanInformation';
 
 @Component({
   selector: 'beans-add',
@@ -104,6 +105,12 @@ export class BeansAddComponent implements OnInit {
     if (this.bean_template) {
       await this.__loadBean(this.bean_template);
     }
+
+    // Add one empty bean information, rest is being updated on start
+    if (this.data.bean_information.length <=0) {
+      const beanInformation: IBeanInformation = {} as IBeanInformation;
+      this.data.bean_information.push(beanInformation);
+    }
   }
 
   public addImage(): void {
@@ -134,6 +141,15 @@ export class BeansAddComponent implements OnInit {
 
   public onRoastRate(_event): void {
     this.data.roast_range = _event;
+  }
+
+  public addAnotherSort() {
+    const beanInformation: IBeanInformation = {} as IBeanInformation;
+    this.data.bean_information.push(beanInformation);
+  }
+
+  public deleteSortInformation(_index: number) {
+    this.data.bean_information.splice(_index, 1);
   }
 
   public __addBean(): void {

@@ -63,9 +63,8 @@ export class UIUpdate {
           bean.filePath = '';
           needsUpdate = true;
         }
+        const beanInformation: IBeanInformation = {} as IBeanInformation;
         if ((bean.variety || bean.country || bean.processing && bean.bean_information.length <=0)) {
-          console.log('we needed to do some shit here man!');
-          const beanInformation: IBeanInformation = {} as IBeanInformation;
           beanInformation.country = bean.country;
           beanInformation.variety = bean.variety;
           beanInformation.processing = bean.processing;
@@ -73,8 +72,11 @@ export class UIUpdate {
           bean.variety = '';
           bean.processing = '';
           bean.bean_information.push(beanInformation);
-          console.log(bean);
          // needsUpdate = true;
+        }
+        if (bean.bean_information.length <=0) {
+          // Add empty one.
+          bean.bean_information.push(beanInformation);
         }
         if (bean.fixDataTypes() || needsUpdate) {
           this.uiBeanStorage.update(bean);

@@ -65,6 +65,7 @@ export class Bean implements IBean {
     this.cupping_points = '';
     this.bean_preparation_type = 'UNKNOWN' as BEAN_PREPARATION_TYPE_ENUM;
     this.bean_information = [];
+
   }
 
   public getRoastName(): string {
