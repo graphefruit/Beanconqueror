@@ -1,6 +1,6 @@
 /** Interfaces */
 
-export interface IDefaultLastCoffeeParameters {
+export interface IBrewParameter {
  // Properties
   brew_temperature_time: boolean;
   brew_time: boolean;
@@ -22,4 +22,5 @@ export interface IDefaultLastCoffeeParameters {
   rating: boolean;
   tds: boolean;
   brew_beverage_quantity: boolean;
+
 }

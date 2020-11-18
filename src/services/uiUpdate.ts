@@ -18,6 +18,7 @@ import {AppVersion} from '@ionic-native/app-version/ngx';
 import {ModalController, Platform} from '@ionic/angular';
 import {UpdatePopoverComponent} from '../popover/update-popover/update-popover.component';
 import {IBeanInformation} from '../interfaces/bean/iBeanInformation';
+import {ISettings} from '../interfaces/settings/iSettings';
 
 
 @Injectable({
@@ -120,6 +121,7 @@ export class UIUpdate {
 
       }
     }
+
     const settings: Settings = this.uiSettingsStorage.getSettings();
     if (settings.brew_order.after.tds === null || settings.brew_order.after.tds === undefined) {
       const newSettingsObj: Settings = new Settings();
@@ -131,8 +133,45 @@ export class UIUpdate {
       const newSettingsObj: Settings = new Settings();
       settings.brew_order.after.brew_beverage_quantity = newSettingsObj.brew_order.after.brew_beverage_quantity;
       this.uiSettingsStorage.saveSettings(settings);
-
     }
+
+    const settingsEntries = this.uiSettingsStorage.getAllEntries();
+    if (settingsEntries.length > 0) {
+      let parametersHaveBeenMoved: boolean = false;
+      const iSettingsObj: ISettings =   settingsEntries[0];
+      if (!('manage_parameters' in iSettingsObj)) {
+        parametersHaveBeenMoved = true;
+      }
+
+      if (parametersHaveBeenMoved) {
+        console.info('Parameters have been moved');
+        settings.manage_parameters.brew_time = settings.brew_time;
+
+        settings.manage_parameters.brew_temperature_time = settings.brew_temperature_time;
+        settings.manage_parameters.grind_size = settings.grind_size;
+        settings.manage_parameters.grind_weight = settings.grind_weight;
+        settings.manage_parameters.mill = settings.mill;
+        settings.manage_parameters.mill_speed = settings.mill_speed;
+        settings.manage_parameters.mill_timer = settings.mill_timer;
+        settings.manage_parameters.pressure_profile = settings.pressure_profile;
+        settings.manage_parameters.method_of_preparation = settings.method_of_preparation;
+        settings.manage_parameters.brew_quantity = settings.brew_quantity;
+        settings.manage_parameters.brew_temperature = settings.brew_temperature;
+        settings.manage_parameters.note = settings.note;
+        settings.manage_parameters.attachments = settings.attachments;
+        settings.manage_parameters.rating = settings.rating;
+        settings.manage_parameters.coffee_type = settings.coffee_type;
+        settings.manage_parameters.coffee_concentration = settings.coffee_concentration;
+        settings.manage_parameters.coffee_first_drip_time = settings.coffee_first_drip_time;
+        settings.manage_parameters.coffee_blooming_time = settings.coffee_blooming_time;
+        settings.manage_parameters.set_last_coffee_brew = settings.set_last_coffee_brew;
+        settings.manage_parameters.set_custom_brew_time = settings.set_custom_brew_time;
+        settings.manage_parameters.tds = settings.tds;
+        settings.manage_parameters.brew_beverage_quantity = settings.brew_beverage_quantity;
+
+      }
+    }
+
   }
 
   public async checkUpdateScreen(): Promise<any> {

@@ -151,6 +151,9 @@ ion-modal{
 .margin-right-5 {
   margin-right: 5px;
 }
+.padding-right-8 {
+  padding-right:8px;
+}
 
 .margin-horizontal-5 {
   margin-right: 5px;
@@ -608,6 +611,10 @@ ion-menu:host .menu-inner {
     height: 22px !important;
     width: 22px !important;
 
+
+  }
+  ngx-stars> div > div {
+    margin-right:0px!important;
   }
   .bean-display {
     .star-half, .star-full, .star-empty {
@@ -620,6 +627,11 @@ ion-menu:host .menu-inner {
 
   .ion-padding-bottom-half {
    padding-bottom: 8px;
+  }
+
+  .break-whitespaces {
+    word-wrap:break-spaces!important;
+    white-space: break-spaces!important;
   }
 }
 

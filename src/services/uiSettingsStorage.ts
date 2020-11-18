@@ -95,7 +95,7 @@ export class UISettingsStorage extends StorageClass {
     return this.settings;
   }
 
-  public saveSettings(settings: ISettings): void {
+  public saveSettings(settings: ISettings | Settings): void {
       super.update(settings);
   }
 

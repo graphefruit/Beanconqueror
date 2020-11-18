@@ -1,0 +1,19 @@
+<ion-content>
+  <ion-segment [(ngModel)]="segment">
+    <ion-segment-button value="default">
+      <ion-label>Friends</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="manage">
+      <ion-label>Enemies</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="sort">
+      <ion-label>Enemies</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+{{segment}}
+  <div [ngSwitch]="segment">
+    <ion-card *ngSwitchCase="'default'">
+     <default-custom-parameter [data]="data"></default-custom-parameter>
+    </ion-card>
+  </div>
+</ion-content>

@@ -14,6 +14,7 @@ import {DatePicker} from '@ionic-native/date-picker/ngx';
 import {TranslateService} from '@ngx-translate/core';
 import moment from 'moment';
 import {IBeanInformation} from '../../../interfaces/bean/iBeanInformation';
+import {NgxStarsComponent} from 'ngx-stars';
 
 @Component({
   selector: 'beans-add',
@@ -23,15 +24,12 @@ import {IBeanInformation} from '../../../interfaces/bean/iBeanInformation';
 export class BeansAddComponent implements OnInit {
 
   @ViewChild('photoSlides', {static: false}) public photoSlides: IonSlides;
+  @ViewChild('beanStars', {read: NgxStarsComponent, static: false}) public beanStars: NgxStarsComponent;
   public data: Bean = new Bean();
   private readonly bean_template: Bean;
   public roastsEnum = ROASTS_ENUM;
   public mixEnum = BEAN_MIX_ENUM;
-  public heartIcons = {
-    empty: '../assets/custom-ion-icons/beanconqueror-bean-rating-empty.svg',
-    half: '../assets/custom-ion-icons/beanconqueror-bean-rating-half.svg',
-    full: '../assets/custom-ion-icons/beanconqueror-bean-rating-full.svg',
-  };
+
   @Input() private hide_toast_message: boolean;
 
 
@@ -140,7 +138,7 @@ export class BeansAddComponent implements OnInit {
   }
 
   public onRoastRate(_event): void {
-    this.data.roast_range = _event;
+    this.beanStars.setRating(this.data.roast_range);
   }
 
   public addAnotherSort() {

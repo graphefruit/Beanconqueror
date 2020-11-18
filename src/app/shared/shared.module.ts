@@ -94,6 +94,10 @@ import {BrewCuppingComponent} from '../brew/brew-cupping/brew-cupping.component'
 import {DatePicker} from '@ionic-native/date-picker/ngx';
 import {Geolocation} from '@ionic-native/geolocation/ngx';
 import {UpdatePopoverComponent} from '../../popover/update-popover/update-popover.component';
+import {PreparationCustomParametersComponent} from '../preparation/preparation-custom-parameters/preparation-custom-parameters.component';
+import {DefaultCustomParameterComponent} from '../../components/parameter/default-custom-parameter/default-custom-parameter.component';
+import {SortCustomParameterComponent} from '../../components/parameter/sort-custom-parameter/sort-custom-parameter.component';
+import {ManageCustomParameterComponent} from '../../components/parameter/manage-custom-parameter/manage-custom-parameter.component';
 
 @NgModule({
   declarations: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, AboutComponent,
@@ -114,7 +118,7 @@ import {UpdatePopoverComponent} from '../../popover/update-popover/update-popove
     BrewCuppingComponent,
     TermsComponent,
     ThanksComponent, LogComponent, LogTextComponent, PreparationPage, PreparationAddComponent,
-    PreparationEditComponent, MillPage, MillEditComponent, BrewFilterComponent, MillAddComponent, BrewAddComponent,
+    PreparationEditComponent, PreparationCustomParametersComponent, MillPage, MillEditComponent, BrewFilterComponent, MillAddComponent, BrewAddComponent,
     FormatDatePipe, KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, BeanInformationComponent, BrewDashboardInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, CuppingRadarComponent, SearchPipe, RemoveEmptyNumberDirective,
     PreventCharacterDirective,
     BeanOverlayDirective,
@@ -126,7 +130,7 @@ import {UpdatePopoverComponent} from '../../popover/update-popover/update-popove
     BrewPopoverActionsComponent, BeanPopoverActionsComponent, MillPopoverActionsComponent, BeanModalSelectComponent,
     MillModalSelectComponent,
     PreparationModalSelectComponent,
-    PreparationPopoverActionsComponent, TimerComponent, BrewTimerComponent],
+    PreparationPopoverActionsComponent, TimerComponent,DefaultCustomParameterComponent, SortCustomParameterComponent,ManageCustomParameterComponent, BrewTimerComponent],
   entryComponents: [
     SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BrewFilterComponent, PreparationInformationCardComponent, MillInformationCardComponent, AboutComponent,
     ContactComponent,
@@ -146,13 +150,13 @@ import {UpdatePopoverComponent} from '../../popover/update-popover/update-popove
     BrewCuppingComponent,
     TermsComponent,
     ThanksComponent, LogComponent, LogTextComponent, PreparationPage,
-    PreparationAddComponent, PreparationEditComponent, MillPage, MillEditComponent,
+    PreparationAddComponent, PreparationEditComponent, PreparationCustomParametersComponent, MillPage, MillEditComponent,
     MillAddComponent, BrewAddComponent, BrewPage, BrewDetailComponent, BrewEditComponent,
     BrewPhotoViewComponent, BeanPhotoViewComponent, BrewPopoverActionsComponent, BeanPopoverActionsComponent,
     BeanModalSelectComponent,
     MillModalSelectComponent,
     PreparationModalSelectComponent,
-    MillPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent, BrewTimerComponent],
+    MillPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent,DefaultCustomParameterComponent, SortCustomParameterComponent,ManageCustomParameterComponent, BrewTimerComponent],
   imports: [
     CommonModule,
     IonicModule,
@@ -205,7 +209,7 @@ import {UpdatePopoverComponent} from '../../popover/update-popover/update-popove
     BrewCuppingComponent,
     TermsComponent,
     ThanksComponent, PreparationPage, PreparationAddComponent,
-    PreparationEditComponent, BrewFilterComponent, MillPage, MillEditComponent, MillAddComponent,
+    PreparationEditComponent, PreparationCustomParametersComponent, BrewFilterComponent, MillPage, MillEditComponent, MillAddComponent,
     BrewAddComponent, FormatDatePipe,
     KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, BeanInformationComponent, BrewDashboardInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, CuppingRadarComponent, SearchPipe, RemoveEmptyNumberDirective,
     PreventCharacterDirective,
@@ -219,7 +223,7 @@ import {UpdatePopoverComponent} from '../../popover/update-popover/update-popove
     BeanModalSelectComponent,
     MillModalSelectComponent,
     PreparationModalSelectComponent,
-    MillPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent, BrewTimerComponent],
+    MillPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent,DefaultCustomParameterComponent, SortCustomParameterComponent, ManageCustomParameterComponent, BrewTimerComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule {

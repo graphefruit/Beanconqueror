@@ -1,8 +1,8 @@
 /** Interfacdes */
 
-import {IBrewOrder} from '../../interfaces/settings/iBrewOrder';
+import {IOrderBrewParameter} from '../../interfaces/parameter/iOrderBrewParameter';
 
-export class BrewOrder implements IBrewOrder {
+export class OrderBrewParameter implements IOrderBrewParameter {
 
   public before: {
     grind_size: number;

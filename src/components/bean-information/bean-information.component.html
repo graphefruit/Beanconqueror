@@ -1,125 +1,92 @@
 <ion-card class="long-card">
-  <ion-grid class="ion-no-padding">
-    <ion-row>
-      <ion-col size="3">
-        <div *ngIf="bean?.attachments?.length === 0" style="margin:0 auto;">
-          <img alt="Preset coffee image" src="../../assets/img/coffee-beans.jpg"/>
-        </div>
-        <div (click)="viewPhotos()" *ngIf="bean?.attachments && bean?.attachments?.length > 0"
-             style="margin:0 auto;" tappable>
-          <async-image [filePath]="bean.attachments[0]" class="bean-slider"></async-image>
-        </div>
-      </ion-col>
-      <ion-col size="9" style="padding-left:16px;">
-        <ion-card class="ion-no-padding ion-no-margin long-card" style="padding-top:8px;padding-right:8px;">
-          <ion-card-content>
-            <ion-grid class="ion-no-padding">
-              <ion-row>
+  <ion-card-content class="no-ion-col-vertical-padding ion-padding-top">
+    <ion-grid>
+      <ion-row class="ion-padding-bottom-half">
+        <ion-col size="10">
+          <ion-title class="ion-no-padding font-size-18"><b>{{bean.config.unix_timestamp | formatDate:["DD.MM.YYYY"]}}</b>&nbsp;{{bean.config.unix_timestamp | formatDate:["HH:mm"]}}</ion-title>
+        </ion-col>
+        <ion-col size="2">
+          <ion-button (click)="showBeanActions($event)" class="button-top-absolute" color="accent" fill="clear">
+            <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="8"><div class="ion-no-padding font-size-20 ion-title">{{bean.name}}</div></ion-col>
+        <ion-col  *ngIf="bean?.roast_range !== 0" class="ion-float-right" size="4">
+          <ngx-stars #beanStars [initialStars]="bean.roast_range" [readonly]="true" [size]="1" class="bean-display"></ngx-stars>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <hr />
+        </ion-col>
+      </ion-row>
+    </ion-grid>
 
-                <ion-col class="ion-no-padding" size="11">
-                  <ion-list lines="none" style="width:100%;">
-                    <ion-item>
-                      <ion-grid class="ion-no-padding ion-no-margin">
-                        <ion-row>
-                          <ion-col size="6">
-                            <div class="ion-no-padding ion-title break-word font-size-20">{{bean?.name}}</div>
-                          </ion-col>
+    <ion-grid class="no-ion-col-vertical-padding">
+      <ion-row>
+        <ion-col size="6">
+          <ion-label class="card-headline">{{"BEAN_DATA_ROASTING_DATE" | translate}}</ion-label><br/>
 
-                          <ion-col  *ngIf="bean?.roast_range !== 0" class="ion-float-right" size="6">
-                              <ngx-stars #beanStars [initialStars]="bean.roast_range" [readonly]="true" [size]="1" class="bean-display"></ngx-stars>
-                          </ion-col>
-                        </ion-row>
-                      </ion-grid>
-                    </ion-item>
-                    <ion-item>
-                      <ion-col size="6">
-                        <ion-label class="card-headline">{{"BEAN_DATA_ROASTING_DATE" | translate}}</ion-label>
-                      </ion-col>
-                      <ion-col *ngIf="bean?.roastingDate" size="6">
-                        {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}
-                      </ion-col>
-                      <ion-col *ngIf="!bean?.roastingDate" size="6">
-                        -
-                      </ion-col>
-                    </ion-item>
-                    <ion-item>
-                      <ion-col size="6">
-                        <ion-label class="card-headline">{{"BEAN_DATA_ROASTER" | translate}}</ion-label>
-                      </ion-col>
-                      <ion-col *ngIf="bean.roaster" size="6">
-                        {{bean.roaster}}
-                      </ion-col>
-                      <ion-col *ngIf="!bean.roaster" size="6">-</ion-col>
-                    </ion-item>
-                    <ion-item>
-                      <ion-col size="6">
-                        <ion-label class="card-headline">{{"BEAN_DATA_ROAST_NAME" | translate}}</ion-label>
-                      </ion-col>
-                      <ion-col
-                        *ngIf="bean.roast === getRoastEnum(roast_enum.CUSTOM_ROAST) && bean.roast !== getRoastEnum(roast_enum.UNKNOWN)"
-                        size="6">
-                        {{bean.roast_custom}}
-                      </ion-col>
-                      <ion-col
-                        *ngIf="bean.roast !== getRoastEnum(roast_enum.CUSTOM_ROAST) && bean.roast !== getRoastEnum(roast_enum.UNKNOWN)"
-                        size="6">
-                        {{roast_enum[bean.roast]}}
-                      </ion-col>
-                      <ion-col size="6">-</ion-col>
-                    </ion-item>
+          <ion-text *ngIf="bean?.roastingDate">
+          {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}</ion-text>
+          <ion-text *ngIf="!bean?.roastingDate">
+            -
+          </ion-text>
+        </ion-col>
+        <ion-col size="6">
+          <ion-label class="card-headline">{{"BEAN_DATA_ROASTER" | translate}}</ion-label><br/>
 
-                    <ion-item>
-                      <ion-col *ngIf="bean?.weight && settings.grind_weight"
-                               [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount() | number : '.0-2', gramTotal: bean?.weight}"
-                               size="12">
-                      </ion-col>
-                      <ion-col *ngIf="!(bean?.weight && settings.grind_weight)"
-                               [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: '0', gramTotal: '0'}"
-                               size="12">
-                      </ion-col>
-                    </ion-item>
+          <ion-text *ngIf="bean.roaster">
+            {{bean.roaster}}</ion-text>
+          <ion-text  *ngIf="!bean.roaster">
+            -
+          </ion-text>
+        </ion-col>
 
+        <ion-col size="6">
+          <ion-label class="card-headline">{{"BEAN_DATA_ROAST_NAME" | translate}}</ion-label><br/>
 
+          <ion-text *ngIf="bean.roast === getRoastEnum(roast_enum.CUSTOM_ROAST) && bean.roast !== getRoastEnum(roast_enum.UNKNOWN)">
+            {{bean.roast_custom}}</ion-text>
+          <ion-text *ngIf="bean.roast !== getRoastEnum(roast_enum.CUSTOM_ROAST) && bean.roast !== getRoastEnum(roast_enum.UNKNOWN)">
+            {{roast_enum[bean.roast]}}
+          </ion-text>
+          <ion-text *ngIf=" bean.roast === getRoastEnum(roast_enum.UNKNOWN)">
+            -
+          </ion-text>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <table>
+          <tr>
+            <td  class="accent-value">{{daysOld()}}</td>
+            <td class="padding-right-8"></td>
+            <td  *ngIf="daysOld() === 0 || daysOld() > 1" [innerHTML]="'ROAST_DAYS_OLD' | translate" style="line-height: 14px;"></td>
+            <td  *ngIf="daysOld() === 1" [innerHTML]="'ROAST_DAY_OLD' | translate" style="line-height: 14px;"></td>
+            <td class="ion-padding-end"></td>
+            <td class="accent-value">{{brewCounts()}}</td>
+            <td class="padding-right-8"></td>
+            <td  *ngIf="brewCounts() < 1 || brewCounts() > 1" [innerHTML]="'MULTIPLE_BREWS' | translate" style="line-height: 14px;"></td>
+            <td  *ngIf="brewCounts() === 1" [innerHTML]="'ONE_BREW' | translate" style="line-height: 14px;"></td>
+            <td class="ion-padding-end"></td>
 
+          </tr>
 
-                    <ion-item>
-                      <div style="margin-top:8px;margin-bottom:8px;border-top:1px solid #CEC2AC;width:100%;"></div>
-                    </ion-item>
-                    <ion-item class="ion-margin-bottom">
-                      <ion-col size="6">
-                  <span *ngIf="brewCounts() <1 " class="ion-text-bold">
-                    {{"NO_BREW" | translate}}
-                  </span>
-                        <span *ngIf="brewCounts() === 1" class="ion-text-bold">
-                    {{"ONE_BREW"| translate}}
-                  </span>
-                        <span *ngIf="brewCounts() > 1" class="ion-text-bold">
-                     {{"MULTIPLE_BREWS"| translate: {count: brewCounts()} }}
-                  </span>
-                      </ion-col>
-                      <ion-col size="6">
-                  <span *ngIf="daysOld() === 0 || daysOld() > 1" class="ion-text-bold">
-                     {{"ROAST_DAYS_OLD"| translate: {days: daysOld()} }}
-                  </span>
-                        <span *ngIf="daysOld() === 1" class="ion-text-bold">
-                     {{"ROAST_DAY_OLD"| translate}}
-                  </span>
+        </table>
+        <table *ngIf="false">
+          <tr>
+            <td *ngIf="bean?.weight && settings.grind_weight" [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount() | number : '.0-2', gramTotal: bean?.weight}" rowspan="2"
+                style="line-height: 14px;"></td>
+            <td *ngIf="!(bean?.weight && settings.grind_weight)" [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: '0', gramTotal: '0'}" rowspan="2"
+                style="line-height: 14px;"></td>
+          </tr>
 
-                      </ion-col>
-                    </ion-item>
-                  </ion-list>
-                </ion-col>
-                <ion-col size="1">
-                  <ion-button (click)="showBeanActions($event)" class="button-top-absolute" color="accent"
-                              fill="clear" tappable>
-                    <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>
-                  </ion-button>
-                </ion-col>
-              </ion-row>
-            </ion-grid>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+        </table>
+      </ion-row>
+    </ion-grid>
+
+  </ion-card-content>
+
 </ion-card>

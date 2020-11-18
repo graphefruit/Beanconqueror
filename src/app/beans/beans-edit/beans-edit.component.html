@@ -17,10 +17,22 @@
                autocapitalize="sentences" required>
     </ion-input>
   </ion-item>
-    <ion-item *ngIf="viewLoaded===true" lines="none">
+    <ion-item lines="none">
       <ion-label position="stacked">{{"BEAN_DATA_ROAST_NAME" | translate}}</ion-label>
-      <ngx-stars (ratingOutput)="onRoastRate($event)" [customPadding]="'20px'" [initialStars]="this.data.roast_range"
-                 [readonly]="false" [size]="2" class="ion-margin-top"  style="margin-left:20px;"></ngx-stars>
+    </ion-item>
+    <ion-item lines="none" style="margin-top: -15px;">
+      <ion-grid class="ion-no-padding">
+        <ion-row>
+          <ion-col size="6">
+            <ion-range (ionChange)="onRoastRate($event)" [(ngModel)]="data.roast_range" max="5" min="0" step="0.5">
+            </ion-range>
+          </ion-col>
+          <ion-col size="6">
+            <ngx-stars #beanStars  [readonly]="true" [size]="2"
+                       class="ion-margin-top" style="margin-left:5px;"></ngx-stars>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
     </ion-item>
     <ion-item>
       <ion-select #roast="ngModel" [(ngModel)]="data.roast" cancelText="{{'CANCEL'| translate }}" name="roast"

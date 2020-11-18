@@ -12,6 +12,7 @@ import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {Settings} from '../../classes/settings/settings';
 import {UIToast} from '../../services/uiToast';
 import {UIAnalytics} from '../../services/uiAnalytics';
+import {PreparationCustomParametersComponent} from './preparation-custom-parameters/preparation-custom-parameters.component';
 
 @Component({
   selector: 'preparation',
@@ -56,7 +57,9 @@ export class PreparationPage implements OnInit {
 
   public async preparationAction(action: PREPARATION_ACTION, preparation: Preparation): Promise<void> {
     switch (action) {
-
+      case PREPARATION_ACTION.CUSTOM_PARAMETERS:
+        this.customParameters(preparation);
+        break;
       case PREPARATION_ACTION.EDIT:
         this.editPreparation(preparation);
         break;
@@ -76,6 +79,17 @@ export class PreparationPage implements OnInit {
       component: PreparationAddComponent,
       showBackdrop: true,
       id: 'preparation-add'
+    });
+    await modal.present();
+    await modal.onWillDismiss();
+    this.loadPreparations();
+  }
+
+
+  public async customParameters(_preparation: Preparation) {
+    const modal = await this.modalCtrl.create({component: PreparationCustomParametersComponent,
+      componentProps: {preparation: _preparation},
+      id: 'preparation-custom-parameters'
     });
     await modal.present();
     await modal.onWillDismiss();

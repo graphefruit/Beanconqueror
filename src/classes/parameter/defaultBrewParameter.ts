@@ -1,8 +1,8 @@
 /** Interfacdes */
 
-import {IDefaultLastCoffeeParameters} from '../../interfaces/settings/iDefaultLastCoffeeParameters';
+import {IBrewParameter} from '../../interfaces/parameter/iBrewParameter';
 
-export class DefaultLastCoffeeParameters implements IDefaultLastCoffeeParameters {
+export class DefaultBrewParameter implements IBrewParameter {
   public brew_time: boolean;
   public brew_temperature_time: boolean;
   public grind_size: boolean;
@@ -23,7 +23,6 @@ export class DefaultLastCoffeeParameters implements IDefaultLastCoffeeParameters
   public rating: boolean;
   public tds: boolean;
   public brew_beverage_quantity: boolean;
-
   constructor() {
     this.bean_type = true;
     this.brew_temperature_time = false;

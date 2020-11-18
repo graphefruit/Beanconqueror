@@ -5,39 +5,66 @@ import {ISettings} from '../../interfaces/settings/iSettings';
 /** Classes */
 import {Config} from '../objectConfig/objectConfig';
 
-import {DefaultLastCoffeeParameters} from './settingsDefaultLastCoffeeParameter';
+import {DefaultBrewParameter} from '../parameter/defaultBrewParameter';
 import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
-import {BrewOrder} from './settingsOrderBrew';
+import {OrderBrewParameter} from '../parameter/orderBrewParameter';
 import {IBrewPageFilter} from '../../interfaces/brew/iBrewPageFilter';
+import {ManageBrewParameter} from '../parameter/manageBrewParameter';
 
 export class Settings implements ISettings {
   public brew_view: BREW_VIEW_ENUM;
   public startup_view: STARTUP_VIEW_ENUM;
+  /** @deprecated */
   public brew_time: boolean;
+  /** @deprecated */
   public brew_temperature_time: boolean;
+  /** @deprecated */
   public grind_size: boolean;
+  /** @deprecated */
   public grind_weight: boolean;
+  /** @deprecated */
   public mill: boolean;
+  /** @deprecated */
   public mill_speed: boolean;
+  /** @deprecated */
   public mill_timer: boolean;
+  /** @deprecated */
   public pressure_profile: boolean;
+  /** @deprecated */
   public method_of_preparation: boolean;
+  /** @deprecated */
   public brew_quantity: boolean;
+  /** @deprecated */
   public bean_type: boolean;
+  /** @deprecated */
   public brew_temperature: boolean;
+  /** @deprecated */
   public note: boolean;
+  /** @deprecated */
   public attachments: boolean;
+  /** @deprecated */
   public rating: boolean;
+  /** @deprecated */
   public coffee_type: boolean;
+  /** @deprecated */
   public coffee_concentration: boolean;
+  /** @deprecated */
   public coffee_first_drip_time: boolean;
+  /** @deprecated */
   public coffee_blooming_time: boolean;
+  /** @deprecated */
   public set_last_coffee_brew: boolean;
+  /** @deprecated */
   public set_custom_brew_time: boolean;
+  /** @deprecated */
   public tds: boolean;
+  /** @deprecated */
   public brew_beverage_quantity: boolean;
-  public default_last_coffee_parameters: DefaultLastCoffeeParameters;
-  public brew_order: BrewOrder;
+
+
+  public manage_parameters: ManageBrewParameter;
+  public default_last_coffee_parameters: DefaultBrewParameter;
+  public brew_order: OrderBrewParameter;
   public config: Config;
   public language: string;
   public analytics: boolean;
@@ -82,8 +109,9 @@ export class Settings implements ISettings {
     this.set_custom_brew_time = false;
     this.config = new Config();
 
-    this.default_last_coffee_parameters = new DefaultLastCoffeeParameters();
-    this.brew_order = new BrewOrder();
+    this.manage_parameters = new ManageBrewParameter();
+    this.default_last_coffee_parameters = new DefaultBrewParameter();
+    this.brew_order = new OrderBrewParameter();
     this.language = '';
     this.analytics = undefined;
 
@@ -109,10 +137,10 @@ export class Settings implements ISettings {
   public initializeByObject(settingsObj: ISettings): void {
     Object.assign(this, settingsObj);
     // We need to reassign brew order here, else the class would be dismissed.
-    this.brew_order = new BrewOrder();
+    this.brew_order = new OrderBrewParameter();
     Object.assign(this.brew_order, settingsObj.brew_order);
 
-    this.default_last_coffee_parameters = new DefaultLastCoffeeParameters();
+    this.default_last_coffee_parameters = new DefaultBrewParameter();
     Object.assign(this.default_last_coffee_parameters, settingsObj.default_last_coffee_parameters);
   }
 

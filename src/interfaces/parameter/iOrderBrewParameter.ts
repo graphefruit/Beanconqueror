@@ -1,6 +1,6 @@
 /** Interfaces */
 
-export interface IBrewOrder {
+export interface IOrderBrewParameter {
   // Properties
   before: {
     grind_size: number;

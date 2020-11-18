@@ -2,9 +2,9 @@
 /** Enums */
 import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
 import {IConfig} from '../objectConfig/iObjectConfig';
-import {IDefaultLastCoffeeParameters} from './iDefaultLastCoffeeParameters';
+import {IBrewParameter} from '../parameter/iBrewParameter';
 import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
-import {IBrewOrder} from './iBrewOrder';
+import {IOrderBrewParameter} from '../parameter/iOrderBrewParameter';
 import {IBrewPageFilter} from '../brew/iBrewPageFilter';
 
 export interface ISettings {
@@ -35,8 +35,9 @@ export interface ISettings {
   tds: boolean;
   brew_beverage_quantity: boolean;
   language: string;
-  default_last_coffee_parameters: IDefaultLastCoffeeParameters;
-  brew_order: IBrewOrder;
+  manage_parameters: IBrewParameter;
+  default_last_coffee_parameters: IBrewParameter;
+  brew_order: IOrderBrewParameter;
   analytics: boolean;
   track_brew_coordinates: boolean;
   fast_brew_repeat: boolean;
