@@ -1,51 +1,23 @@
 :host {
-
-
-  button[justify-content-start] .button-inner {
-    justify-content: flex-start;
+  ion-card {
+    ion-card-content {
+      padding-top: var(--padding-top);
+    }
   }
-
-  .full-sized-icon {
-    width: 80%;
-    height: 80%;
-    padding: 8px;
+  .button-top-absolute {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    min-height: 45px;
   }
-
-
-  ion-row.center-col ion-col {
-    display: flex;
-    align-items: center
-  }
-
-  ion-list {
-    background: none;
-    margin: 0px;
-    padding: 0px;
-
-    ion-item {
-      ion-col {
-        -ms-text-overflow: ellipsis;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-      }
-
-      --background: none;
-      --padding-start: 0px;
-      --padding-end: 0px;
-      --inner-padding-end: 0px;
-      font-size: 14px;
-      --min-height: 0px;
-
-      ion-icon {
-        font-size: 14px;
-        margin-right: 0px;
-        margin-top: 0px;
-        margin-bottom: 0px;
-      }
+  .no-ion-col-vertical-padding {
+    ion-col {
+      padding-top: 0px !important;
+      padding-bottom: 0px !important;
     }
 
   }
+
 
 }
 

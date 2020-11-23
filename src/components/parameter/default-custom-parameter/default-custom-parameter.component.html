@@ -1,12 +1,11 @@
-<ion-card>
-
+<ion-card class="ion-padding">
   <ion-item lines="none">
     <ion-label>{{"PAGE_SETTINGS_PRESET_LAST_BREW" | translate}}</ion-label>
     <ion-checkbox (ngModelChange)="save()"
                   [(ngModel)]="data.manage_parameters.set_last_coffee_brew"></ion-checkbox>
   </ion-item>
 </ion-card>
-<ion-card *ngIf="data.manage_parameters.set_last_coffee_brew==true">
+<ion-card *ngIf="data.manage_parameters.set_last_coffee_brew==true" class="ion-padding">
 
   <ion-title class="ion-padding-top">{{"SORT_PARAMETERS_BEFORE" | translate  }}</ion-title>
   <ion-item tappable>
@@ -24,8 +23,10 @@
     <ion-checkbox (ngModelChange)="save()"
                   [(ngModel)]="data.default_last_coffee_parameters.brew_temperature"></ion-checkbox>
   </ion-item>
-  <ion-item tappable>
-    <ion-label>{{"BREW_DATA_PREPARATION_METHOD" | translate}}</ion-label>
+  <ion-item [disabled]="true" tappable>
+    <ion-label>
+      <h2>{{"BREW_DATA_PREPARATION_METHOD" | translate}}</h2>
+    </ion-label>
     <ion-checkbox (ngModelChange)="save()"
                   [(ngModel)]="data.default_last_coffee_parameters.method_of_preparation"></ion-checkbox>
   </ion-item>
@@ -55,7 +56,7 @@
                   [(ngModel)]="data.default_last_coffee_parameters.pressure_profile"></ion-checkbox>
   </ion-item>
 </ion-card>
-<ion-card *ngIf="data.manage_parameters.set_last_coffee_brew==true">
+<ion-card *ngIf="data.manage_parameters.set_last_coffee_brew==true" class="ion-padding">
   <ion-title class="ion-padding-top">{{"SORT_PARAMETERS_MEANWHILE" | translate  }}</ion-title>
 
   <ion-item tappable>
@@ -79,7 +80,7 @@
                   [(ngModel)]="data.default_last_coffee_parameters.coffee_blooming_time"></ion-checkbox>
   </ion-item>
 </ion-card>
-<ion-card *ngIf="data.manage_parameters.set_last_coffee_brew==true">
+<ion-card *ngIf="data.manage_parameters.set_last_coffee_brew==true" class="ion-padding">
 
   <ion-title class="ion-padding-top">{{"SORT_PARAMETERS_AFTER" | translate  }}</ion-title>
   <ion-item tappable>

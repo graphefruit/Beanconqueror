@@ -1,19 +1,43 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{"EDIT_BEAN" | translate}}</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()" class="big-icon-only">
+        <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
 <ion-content>
-  <ion-segment [(ngModel)]="segment">
+  <div class="ion-padding-horizontal ion-margin-bottom">
+    <ion-item>
+      <ion-label>{{"PAGE_SETTINGS_ANALYTICS_INFORMATION" | translate}}</ion-label>
+      <ion-checkbox [(ngModel)]="data.use_custom_parameters" ></ion-checkbox>
+    </ion-item>
+  </div>
+  <div *ngIf="data.use_custom_parameters">
+  <ion-segment [(ngModel)]="segment" >
     <ion-segment-button value="default">
-      <ion-label>Friends</ion-label>
+      <ion-label>{{"CUSTOM_DEFAULT_PARAMETERS" | translate}}</ion-label>
     </ion-segment-button>
     <ion-segment-button value="manage">
-      <ion-label>Enemies</ion-label>
+      <ion-label>{{"CUSTOM_MANAGE_PARAMETERS" | translate}}</ion-label>
     </ion-segment-button>
     <ion-segment-button value="sort">
-      <ion-label>Enemies</ion-label>
+      <ion-label>{{"CUSTOM_SORT_PARAMETERS" | translate}}</ion-label>
     </ion-segment-button>
   </ion-segment>
-{{segment}}
+
   <div [ngSwitch]="segment">
     <ion-card *ngSwitchCase="'default'">
      <default-custom-parameter [data]="data"></default-custom-parameter>
     </ion-card>
+    <ion-card *ngSwitchCase="'manage'">
+      <manage-custom-parameter [data]="data"></manage-custom-parameter>
+    </ion-card>
+    <ion-card *ngSwitchCase="'sort'">
+      <sort-custom-parameter [data]="data"></sort-custom-parameter>
+    </ion-card>
+  </div>
   </div>
 </ion-content>

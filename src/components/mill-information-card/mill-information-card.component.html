@@ -1,29 +1,8 @@
 <ion-card class="long-card">
-  <ion-card-content>
-    <ion-grid class="ion-no-padding">
-      <ion-row style="padding:8px;">
-        <ion-col class="ion-justify-content-center" size="3">
-          <ion-icon class="full-sized-icon" name="beanconqueror-mill"></ion-icon>
-        </ion-col>
-        <ion-col class="ion-padding-start" size="8">
-          <ion-list lines="none" style="width:100%;">
-            <ion-item>
-              <ion-col class="ion-text-bold" size="12">{{mill.name}}</ion-col>
-            </ion-item>
-            <ion-item>
-              <ion-col size="8">{{"PAGE_HOME_TOTAL_BREWS" | translate}}</ion-col>
-              <ion-col size="4">{{getBrewsCount()| number : '.0'}}</ion-col>
-            </ion-item>
-            <ion-item>
-              <ion-col size="8">{{"COFFEE_GRAMS_GRINDED" | translate}}</ion-col>
-              <ion-col size="4">{{getWeightCount()| number : '.0-2'}}</ion-col>
-            </ion-item>
-            <ion-item>
-              <ion-col size="8">{{"BEANS_USED" | translate}}</ion-col>
-              <ion-col size="4">{{getBeansCount()| number : '.0'}}</ion-col>
-            </ion-item>
-          </ion-list>
-        </ion-col>
+  <ion-card-content class="no-ion-col-vertical-padding ion-padding-top">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="11"><div class="ion-no-padding font-size-20 ion-title">{{mill.name}}</div></ion-col>
         <ion-col size="1">
           <ion-button (click)="showMillActions($event)" class="button-top-absolute" tappable
                       color="accent" fill="clear">
@@ -31,6 +10,30 @@
           </ion-button>
         </ion-col>
       </ion-row>
+      <ion-row>
+        <ion-col>
+          <hr />
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <ion-grid class="no-ion-col-vertical-padding">
+      <ion-row>
+        <ion-col size="6">
+          <ion-label class="card-headline">{{"PAGE_HOME_TOTAL_BREWS" | translate}}</ion-label><br/>
+
+          <ion-text>{{getBrewsCount()| number : '.0'}}</ion-text>
+        </ion-col>
+        <ion-col size="6">
+          <ion-label class="card-headline">{{"COFFEE_GRAMS_GRINDED" | translate}}</ion-label><br/>
+          <ion-text>{{getWeightCount()| number : '.0-2'}}</ion-text>
+        </ion-col>
+        <ion-col size="6">
+          <ion-label class="card-headline">{{"BEANS_USED" | translate}}</ion-label><br/>
+          <ion-text>{{getBeansCount()| number : '.0'}}</ion-text>
+        </ion-col>
+      </ion-row>
     </ion-grid>
   </ion-card-content>
 </ion-card>
+

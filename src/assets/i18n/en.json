@@ -392,5 +392,21 @@
   "PREPARATION_TYPE_STYLE": "Preparation style",
   "PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION": "Activate a new menu entry - with this you can repeat the brew directly.",
   "PAGE_SETTINGS_TRACK_BREW_COORDINATES_DESCRIPTION": "Save coordinates to each brew.",
-  "UPDATE_TITLE": "Whats new"
+
+  "UPDATE_TITLE": "Was gibt's neues",
+  "NEXT": "Weiter",
+  "UPDATE_TEXT_TITLE_TITLE": {
+    "5.0.0": {
+      "TITLE": "Version 5.0: Das ist neu",
+      "DESCRIPTION": "Neues Layout, Neue Zubereitungsmethoden"
+    }
+  },
+  "CUSTOM_PARAMETERS": "Customize parameter",
+  "CUSTOM_DEFAULT_PARAMETERS": "Default",
+  "CUSTOM_MANAGE_PARAMETERS": "Manage",
+  "CUSTOM_SORT_PARAMETERS": "Sort",
+  "BREW_PARAMETER_CUSTOMIZE_TITLE": "Individuelle Parameter pro Zubereitungsart",
+  "BREW_PARAMETER_CUSTOMIZE_DESCRIPTION": "Du willst für einzelne Zubereitungsarten verschiedene Parameter festlegen? Navigiere dazu zum Menüpunkt \"Zubereitung\", öffne das Menü der entsprechenden Zubereitungsart und klicke auf \"Parameter individualisieren\". Lege nun fest, welche Parameter nur für diese Zubereitungsmethode erfasst werden sollen!",
+  "BREW_DATA_BREW_QUANTITY_TOOLTIP": "Amount of water just for filter coffee",
+  "BREW_DATA_PREPARATION_METHOD_TOOLTIP": "Preparation just customizeable when active"
 }

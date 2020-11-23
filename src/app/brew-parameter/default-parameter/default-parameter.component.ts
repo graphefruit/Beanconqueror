@@ -1,6 +1,5 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {UISettingsStorage} from '../../../services/uiSettingsStorage';
-import {UIAnalytics} from '../../../services/uiAnalytics';
 import {Settings} from '../../../classes/settings/settings';
 
 @Component({
@@ -13,9 +12,7 @@ export class DefaultParameterComponent implements OnInit {
   public settings: Settings;
 
 
-  constructor(public uiSettingsStorage: UISettingsStorage,
-              private readonly uiAnalytics: UIAnalytics,
-              private readonly changeDetectorRef: ChangeDetectorRef) {
+  constructor(public uiSettingsStorage: UISettingsStorage) {
 
     this.__initializeSettings();
   }
@@ -23,10 +20,6 @@ export class DefaultParameterComponent implements OnInit {
   public ngOnInit() {
   }
 
-  public saveSettings(): void {
-    this.changeDetectorRef.detectChanges();
-    this.uiSettingsStorage.saveSettings(this.settings);
-  }
 
   private __initializeSettings(): void {
     this.settings = this.uiSettingsStorage.getSettings();

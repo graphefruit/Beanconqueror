@@ -1,20 +1,17 @@
 <ion-card class="long-card">
   <ion-card-content class="no-ion-col-vertical-padding ion-padding-top">
     <ion-grid>
-      <ion-row class="ion-padding-bottom-half">
-        <ion-col size="10">
-          <ion-title class="ion-no-padding font-size-18"><b>{{bean.config.unix_timestamp | formatDate:["DD.MM.YYYY"]}}</b>&nbsp;{{bean.config.unix_timestamp | formatDate:["HH:mm"]}}</ion-title>
+      <ion-row>
+        <ion-col size="8"><div class="ion-no-padding font-size-20 ion-title">{{bean.name}}</div></ion-col>
+        <ion-col size="3">
+          <div *ngIf="bean?.roast_range !== 0">
+            <ngx-stars #beanStars [initialStars]="bean.roast_range" [readonly]="true" [size]="1" class="bean-display ion-float-right"></ngx-stars>
+          </div>
         </ion-col>
-        <ion-col size="2">
+        <ion-col size="1">
           <ion-button (click)="showBeanActions($event)" class="button-top-absolute" color="accent" fill="clear">
             <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>
           </ion-button>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col size="8"><div class="ion-no-padding font-size-20 ion-title">{{bean.name}}</div></ion-col>
-        <ion-col  *ngIf="bean?.roast_range !== 0" class="ion-float-right" size="4">
-          <ngx-stars #beanStars [initialStars]="bean.roast_range" [readonly]="true" [size]="1" class="bean-display"></ngx-stars>
         </ion-col>
       </ion-row>
       <ion-row>

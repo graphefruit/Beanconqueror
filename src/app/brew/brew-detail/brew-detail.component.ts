@@ -44,38 +44,58 @@ export class BrewDetailComponent implements OnInit {
     }
   }
 
-  public showSectionAfterBrew(): boolean {
-    return (this.settings.brew_quantity ||
-      this.settings.coffee_type ||
-      this.settings.coffee_concentration ||
-      this.settings.rating ||
-      this.settings.note ||
-      this.settings.set_custom_brew_time ||
-      this.settings.attachments ||
-      this.settings.tds ||
-      this.settings.brew_beverage_quantity);
-  }
+
   public getPreparation(): Preparation {
     return this.data.getPreparation();
   }
+  public showSectionAfterBrew(): boolean {
+    let checkData: Settings | Preparation;
+    if (this.getPreparation().use_custom_parameters === true) {
+      checkData = this.getPreparation();
+    } else {
+      checkData = this.settings;
+    }
+    return (checkData.manage_parameters.brew_quantity ||
+      checkData.manage_parameters.coffee_type ||
+      checkData.manage_parameters.coffee_concentration ||
+      checkData.manage_parameters.rating ||
+      checkData.manage_parameters.note ||
+      checkData.manage_parameters.set_custom_brew_time ||
+      checkData.manage_parameters.attachments ||
+      checkData.manage_parameters.tds ||
+      checkData.manage_parameters.brew_beverage_quantity);
+  }
+
 
   public showSectionWhileBrew(): boolean {
-    return (this.settings.pressure_profile ||
-      this.settings.brew_temperature_time ||
-      this.settings.brew_time ||
-      this.settings.coffee_blooming_time ||
-      this.settings.coffee_first_drip_time);
+    let checkData: Settings | Preparation;
+    if (this.getPreparation().use_custom_parameters === true) {
+      checkData = this.getPreparation();
+    } else {
+      checkData = this.settings;
+    }
+    return (checkData.manage_parameters.pressure_profile ||
+      checkData.manage_parameters.brew_temperature_time ||
+      checkData.manage_parameters.brew_time ||
+      checkData.manage_parameters.coffee_blooming_time ||
+      checkData.manage_parameters.coffee_first_drip_time);
   }
 
   public showSectionBeforeBrew(): boolean {
-    return (this.settings.grind_size ||
-      this.settings.grind_weight ||
-      this.settings.brew_temperature ||
-      this.settings.method_of_preparation ||
-      this.settings.bean_type ||
-      this.settings.mill ||
-      this.settings.mill_speed ||
-      this.settings.mill_timer);
+    let checkData: Settings | Preparation;
+    if (this.getPreparation().use_custom_parameters === true) {
+      checkData = this.getPreparation();
+    } else {
+      checkData = this.settings;
+    }
+    return (checkData.manage_parameters.grind_size ||
+      checkData.manage_parameters.grind_weight ||
+      checkData.manage_parameters.brew_temperature ||
+      checkData.manage_parameters.method_of_preparation ||
+      checkData.manage_parameters.bean_type ||
+      checkData.manage_parameters.mill ||
+      checkData.manage_parameters.mill_speed ||
+      checkData.manage_parameters.mill_timer);
 
   }
 

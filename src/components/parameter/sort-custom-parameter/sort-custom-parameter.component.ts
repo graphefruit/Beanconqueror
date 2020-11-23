@@ -1,7 +1,9 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {Settings} from '../../../classes/settings/settings';
 import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 import {UIAnalytics} from '../../../services/uiAnalytics';
+import {Preparation} from '../../../classes/preparation/preparation';
+import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 
 @Component({
   selector: 'sort-custom-parameter',
@@ -9,31 +11,43 @@ import {UIAnalytics} from '../../../services/uiAnalytics';
   styleUrls: ['./sort-custom-parameter.component.scss'],
 })
 export class SortCustomParameterComponent implements OnInit {
-  public settings: Settings;
+
   public brewOrdersBefore: Array<{ number: number, label: string, enum: string }> = [];
 
   public brewOrdersWhile: Array<{ number: number, label: string, enum: string }> = [];
   public brewOrdersAfter: Array<{ number: number, label: string, enum: string }> = [];
 
 
+
+  @Input() private data: Settings | Preparation;
   constructor(public uiSettingsStorage: UISettingsStorage,
+              private readonly uiPreparationStorage: UIPreparationStorage,
               private readonly uiAnalytics: UIAnalytics,
               private readonly changeDetectorRef: ChangeDetectorRef) {
 
-    this.__initializeSettings();
+
   }
 
   public ngOnInit() {
+    this.__initializeData();
   }
 
-  public saveSettings(): void {
+  public save(): void {
     this.changeDetectorRef.detectChanges();
-    this.uiSettingsStorage.saveSettings(this.settings);
+    if (this.data instanceof Settings) {
+      this.uiSettingsStorage.saveSettings(this.data as Settings);
+    } else {
+      this.uiPreparationStorage.update(this.data as Preparation);
+    }
   }
 
   public reorder_brew(ev: any, _type: string) {
+    if (this.data instanceof Settings) {
+      this.uiAnalytics.trackEvent('SETTINGS', 'REORDER_BREW');
+    } else {
+      this.uiAnalytics.trackEvent('PREPARATION', 'REORDER_BREW');
+    }
 
-    this.uiAnalytics.trackEvent('SETTINGS', 'REORDER_BREW');
     // The `from` and `to` properties contain the index of the item
     // when the drag started and ended, respectively
     // console.log('Dragged from index', ev.detail.from, 'to', ev.detail.to);
@@ -50,7 +64,7 @@ export class SortCustomParameterComponent implements OnInit {
     let count: number = 0;
     for (const order of reorderVar) {
       order.number = count;
-      this.settings.brew_order[_type][order.enum] = order.number;
+      this.data.brew_order[_type][order.enum] = order.number;
       count++;
     }
     // console.log(this.settings.brew_order);
@@ -58,11 +72,11 @@ export class SortCustomParameterComponent implements OnInit {
     // where the gesture ended. This method can also be called directly
     // by the reorder group
     ev.detail.complete();
-    this.saveSettings();
+    this.save();
   }
 
-  private __initializeSettings(): void {
-    this.settings = this.uiSettingsStorage.getSettings();
+  private __initializeData(): void {
+
     this.__initializeBrewOrders('before');
     this.__initializeBrewOrders('while');
     this.__initializeBrewOrders('after');
@@ -84,11 +98,13 @@ export class SortCustomParameterComponent implements OnInit {
         break;
     }
 
-    for (const key in this.settings.brew_order[_type]) {
-      if (this.settings.brew_order[_type].hasOwnProperty(key)) {
+
+
+    for (const key in this.data.brew_order[_type]) {
+      if (this.data.brew_order[_type].hasOwnProperty(key)) {
         initializeOrder.push({
-          number: this.settings.brew_order[_type][key],
-          label: this.settings.brew_order.getLabel(key),
+          number: this.data.brew_order[_type][key],
+          label: this.data.brew_order.getLabel(key),
           enum: key,
         });
       }

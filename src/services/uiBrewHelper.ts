@@ -9,6 +9,9 @@ import {Brew} from '../classes/brew/brew';
 import {IBean} from '../interfaces/bean/iBean';
 import {IPreparation} from '../interfaces/preparation/iPreparation';
 import {IMill} from '../interfaces/mill/iMill';
+import {UISettingsStorage} from './uiSettingsStorage';
+import {Settings} from '../classes/settings/settings';
+import {Preparation} from '../classes/preparation/preparation';
 
 /**
  * Handles every helping functionalities
@@ -20,6 +23,8 @@ import {IMill} from '../interfaces/mill/iMill';
 export class UIBrewHelper {
 
   private canBrewBoolean: boolean = undefined;
+
+  private settings: Settings;
   public static sortBrews(_sortingBrews: Array<Brew>): Array<Brew> {
     const sortedBrews: Array<Brew> = _sortingBrews.sort((obj1, obj2) => {
       if (obj1.config.unix_timestamp < obj2.config.unix_timestamp) {
@@ -49,7 +54,8 @@ export class UIBrewHelper {
   constructor (private readonly uiBeanStorage: UIBeanStorage,
                private readonly uiMillStorage: UIMillStorage,
                private readonly uiPreparationStorage: UIPreparationStorage,
-               private readonly uiAlert: UIAlert) {
+               private readonly uiAlert: UIAlert,
+               private readonly uiSettingsStorage: UISettingsStorage) {
 
 
     this.uiBeanStorage.attachOnEvent().subscribe(() => {
@@ -62,9 +68,22 @@ export class UIBrewHelper {
       this.canBrewBoolean = undefined;
     });
 
-
+    this.uiSettingsStorage.attachOnEvent().subscribe(() => {
+      this.settings = this.uiSettingsStorage.getSettings();
+    });
+    this.settings = this.uiSettingsStorage.getSettings();
 
   }
+
+  public fieldVisible(_settingsField:boolean,_preparationField:boolean,_useCustomPreparation: boolean) {
+    return _useCustomPreparation?_preparationField:_settingsField;
+  }
+
+  public fieldOrder(_settingsOrder:number, _preparationOrder:number, _useCustomPreparation: boolean) {
+    return _useCustomPreparation?_preparationOrder:_settingsOrder;
+  }
+
+
 
   public canBrew(): boolean {
     if (this.canBrewBoolean === undefined || this.canBrewBoolean === false) {
@@ -123,7 +142,77 @@ export class UIBrewHelper {
     repeatBrew.rating = _brewToCopy.rating;
     repeatBrew.note = _brewToCopy.note;
     repeatBrew.coordinates = _brewToCopy.coordinates;
+    // TDS is not needed here.
     return repeatBrew;
+  }
+
+
+  public cleanInvisibleBrewData(brew: Brew) {
+    const settingsObj: Settings = this.uiSettingsStorage.getSettings();
+    let checkData: Settings | Preparation;
+    if (brew.getPreparation().use_custom_parameters === true) {
+      checkData = brew.getPreparation()
+    } else {
+      checkData = settingsObj;
+    }
+
+
+
+    if (!checkData.default_last_coffee_parameters.grind_size ) {
+      brew.grind_size = '';
+    }
+    if (!checkData.default_last_coffee_parameters.grind_weight) {
+      brew.grind_weight = 0;
+    }
+
+    if (!checkData.default_last_coffee_parameters.mill_timer) {
+      brew.mill_timer = 0;
+    }
+    if (!checkData.default_last_coffee_parameters.mill_speed) {
+      brew.mill_speed = 0;
+    }
+    if (!checkData.default_last_coffee_parameters.pressure_profile) {
+      brew.pressure_profile = '';
+    }
+    if (checkData.default_last_coffee_parameters.brew_temperature) {
+      brew.brew_temperature = 0;
+    }
+    if (!checkData.default_last_coffee_parameters.brew_temperature_time) {
+     brew.brew_temperature_time = 0;
+    }
+    if (!checkData.default_last_coffee_parameters.brew_time) {
+      brew.brew_time = 0;
+    }
+
+    if (!checkData.default_last_coffee_parameters.brew_quantity) {
+      brew.brew_quantity = 0;
+    }
+    if (!checkData.default_last_coffee_parameters.coffee_type) {
+      brew.coffee_type = '';
+    }
+    if (checkData.default_last_coffee_parameters.coffee_concentration) {
+      brew.coffee_concentration = '';
+    }
+    if (checkData.default_last_coffee_parameters.coffee_first_drip_time) {
+     brew.coffee_first_drip_time = 0;
+    }
+    if (checkData.default_last_coffee_parameters.coffee_blooming_time) {
+      brew.coffee_blooming_time = 0;
+    }
+
+    if (checkData.default_last_coffee_parameters.rating) {
+      brew.rating = 0;
+    }
+    if (checkData.default_last_coffee_parameters.note) {
+      brew.note ='';
+    }
+    if (checkData.default_last_coffee_parameters.tds) {
+      brew.tds =0;
+    }
+    if (!checkData.default_last_coffee_parameters.brew_beverage_quantity) {
+      brew.brew_beverage_quantity = 0;
+    }
+
   }
 
 }

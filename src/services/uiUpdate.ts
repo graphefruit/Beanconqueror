@@ -73,6 +73,7 @@ export class UIUpdate {
           bean.variety = '';
           bean.processing = '';
           bean.bean_information.push(beanInformation);
+          /// TODO
          // needsUpdate = true;
         }
         if (bean.bean_information.length <=0) {
@@ -82,10 +83,9 @@ export class UIUpdate {
         if (bean.fixDataTypes() || needsUpdate) {
           this.uiBeanStorage.update(bean);
         }
-
       }
-
     }
+
     if (this.uiPreparationStorage.getAllEntries().length > 0) {
       const preparations: Array<Preparation> = this.uiPreparationStorage.getAllEntries();
       let needsUpdate: boolean = false;
@@ -146,7 +146,7 @@ export class UIUpdate {
       if (parametersHaveBeenMoved) {
         console.info('Parameters have been moved');
         settings.manage_parameters.brew_time = settings.brew_time;
-
+        /// TODO
         settings.manage_parameters.brew_temperature_time = settings.brew_temperature_time;
         settings.manage_parameters.grind_size = settings.grind_size;
         settings.manage_parameters.grind_weight = settings.grind_weight;
@@ -154,7 +154,8 @@ export class UIUpdate {
         settings.manage_parameters.mill_speed = settings.mill_speed;
         settings.manage_parameters.mill_timer = settings.mill_timer;
         settings.manage_parameters.pressure_profile = settings.pressure_profile;
-        settings.manage_parameters.method_of_preparation = settings.method_of_preparation;
+        // This will be fixed value
+        settings.manage_parameters.method_of_preparation = true;
         settings.manage_parameters.brew_quantity = settings.brew_quantity;
         settings.manage_parameters.brew_temperature = settings.brew_temperature;
         settings.manage_parameters.note = settings.note;
@@ -168,6 +169,8 @@ export class UIUpdate {
         settings.manage_parameters.set_custom_brew_time = settings.set_custom_brew_time;
         settings.manage_parameters.tds = settings.tds;
         settings.manage_parameters.brew_beverage_quantity = settings.brew_beverage_quantity;
+        // This will be fixed value
+        settings.default_last_coffee_parameters.method_of_preparation = true;
 
       }
     }

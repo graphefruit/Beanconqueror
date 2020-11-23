@@ -43,8 +43,8 @@ export class PreparationCustomParametersComponent implements OnInit {
 
   public dismiss(): void {
     this.modalController.dismiss({
-      'dismissed': true
-    }, undefined, 'custom');
+      dismissed: true
+    }, undefined, 'preparation-custom-parameters');
   }
 
 

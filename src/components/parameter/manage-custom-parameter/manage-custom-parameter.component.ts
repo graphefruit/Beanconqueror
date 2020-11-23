@@ -1,9 +1,11 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {Settings} from '../../../classes/settings/settings';
 import {Subject} from 'rxjs';
 import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
+import {Preparation} from '../../../classes/preparation/preparation';
+import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 
 @Component({
   selector: 'manage-custom-parameter',
@@ -13,34 +15,38 @@ import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 export class ManageCustomParameterComponent implements OnInit {
 
 
-  public settings: Settings;
-  public debounceSettingsChanged: Subject<string> = new Subject<string>();
 
+  public debounceChanges: Subject<string> = new Subject<string>();
+
+  @Input() private data: Settings | Preparation;
   constructor(public uiSettingsStorage: UISettingsStorage,
+              private readonly uiPreparationStorage: UIPreparationStorage,
               private readonly uiAnalytics: UIAnalytics,
               private readonly changeDetectorRef: ChangeDetectorRef) {
-    this.debounceSettingsChanged
+    this.debounceChanges
       .pipe(debounceTime(500), distinctUntilChanged())
       .subscribe(() => {
-        this.saveSettings();
+        this.save();
       });
-    this.__initializeSettings();
+
   }
 
   public ngOnInit() {
   }
 
-  public settingsChanged(_query): void {
-    this.debounceSettingsChanged.next(_query);
+  public triggerChanges(_query): void {
+    this.debounceChanges.next(_query);
   }
 
-  public saveSettings(): void {
+  public save(): void {
     this.changeDetectorRef.detectChanges();
-    this.uiSettingsStorage.saveSettings(this.settings);
+    if (this.data instanceof Settings) {
+      this.uiSettingsStorage.saveSettings(this.data as Settings);
+    } else {
+      this.uiPreparationStorage.update(this.data as Preparation);
+    }
+
   }
 
-  private __initializeSettings(): void {
-    this.settings = this.uiSettingsStorage.getSettings();
-  }
 
 }

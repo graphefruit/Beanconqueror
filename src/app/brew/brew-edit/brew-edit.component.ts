@@ -11,7 +11,6 @@ import {UIImage} from '../../../services/uiImage';
 import {Brew} from '../../../classes/brew/brew';
 import moment from 'moment';
 import {UIAnalytics} from '../../../services/uiAnalytics';
-import {ISettings} from '../../../interfaces/settings/iSettings';
 import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 import {Preparation} from '../../../classes/preparation/preparation';
 import {Mill} from '../../../classes/mill/mill';
@@ -21,6 +20,8 @@ import {UIFileHelper} from '../../../services/uiFileHelper';
 import {DatePicker} from '@ionic-native/date-picker/ngx';
 import {TranslateService} from '@ngx-translate/core';
 import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
+import {Settings} from '../../../classes/settings/settings';
+import {UIBrewHelper} from '../../../services/uiBrewHelper';
 
 @Component({
   selector: 'brew-edit',
@@ -37,7 +38,7 @@ export class BrewEditComponent implements OnInit {
   public method_of_preparations: Array<Preparation> = [];
   public beans: Array<Bean> = [];
   public mills: Array<Mill> = [];
-  public settings: ISettings;
+  public settings: Settings;
   public customCreationDate: string = '';
 
   public displayingBrewTime: string = '';
@@ -60,7 +61,8 @@ export class BrewEditComponent implements OnInit {
                private readonly uiFileHelper: UIFileHelper,
                private readonly datePicker: DatePicker,
                private readonly translate: TranslateService,
-               private readonly platform: Platform) {
+               private readonly platform: Platform,
+               private readonly uiBrewHelper: UIBrewHelper) {
 
     this.settings = this.uiSettingsStorage.getSettings();
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
@@ -136,7 +138,7 @@ export class BrewEditComponent implements OnInit {
 
   public dismiss(): void {
     this.modalController.dismiss({
-      'dismissed': true
+      dismissed: true
     },undefined,'brew-edit');
   }
 
@@ -145,7 +147,7 @@ export class BrewEditComponent implements OnInit {
     if (newUnix !== this.data.config.unix_timestamp) {
       this.data.config.unix_timestamp = newUnix;
     }
-
+    this.uiBrewHelper.cleanInvisibleBrewData(this.data);
     this.uiBrewStorage.update(this.data);
     this.uiToast.showInfoToast('TOAST_BREW_EDITED_SUCCESSFULLY');
     this.dismiss();
@@ -184,35 +186,53 @@ export class BrewEditComponent implements OnInit {
     this.data.brew_time = durationPassed.asSeconds();
   }
   public showSectionAfterBrew(): boolean {
-    return (this.settings.brew_quantity ||
-      this.settings.coffee_type ||
-      this.settings.coffee_concentration ||
-      this.settings.rating ||
-      this.settings.note ||
-      this.settings.set_custom_brew_time ||
-      this.settings.attachments ||
-      this.settings.tds ||
-      this.settings.brew_beverage_quantity);
+    let checkData: Settings | Preparation;
+    if (this.getPreparation().use_custom_parameters === true) {
+      checkData = this.getPreparation();
+    } else {
+      checkData = this.settings;
+    }
+    return (checkData.manage_parameters.brew_quantity ||
+      checkData.manage_parameters.coffee_type ||
+      checkData.manage_parameters.coffee_concentration ||
+      checkData.manage_parameters.rating ||
+      checkData.manage_parameters.note ||
+      checkData.manage_parameters.set_custom_brew_time ||
+      checkData.manage_parameters.attachments ||
+      checkData.manage_parameters.tds ||
+      checkData.manage_parameters.brew_beverage_quantity);
   }
 
 
   public showSectionWhileBrew(): boolean {
-    return (this.settings.pressure_profile ||
-      this.settings.brew_temperature_time ||
-      this.settings.brew_time ||
-      this.settings.coffee_blooming_time ||
-      this.settings.coffee_first_drip_time);
+    let checkData: Settings | Preparation;
+    if (this.getPreparation().use_custom_parameters === true) {
+      checkData = this.getPreparation();
+    } else {
+      checkData = this.settings;
+    }
+    return (checkData.manage_parameters.pressure_profile ||
+      checkData.manage_parameters.brew_temperature_time ||
+      checkData.manage_parameters.brew_time ||
+      checkData.manage_parameters.coffee_blooming_time ||
+      checkData.manage_parameters.coffee_first_drip_time);
   }
 
   public showSectionBeforeBrew(): boolean {
-    return (this.settings.grind_size ||
-      this.settings.grind_weight ||
-      this.settings.brew_temperature ||
-      this.settings.method_of_preparation ||
-      this.settings.bean_type ||
-      this.settings.mill ||
-      this.settings.mill_speed ||
-      this.settings.mill_timer);
+    let checkData: Settings | Preparation;
+    if (this.getPreparation().use_custom_parameters === true) {
+      checkData = this.getPreparation();
+    } else {
+      checkData = this.settings;
+    }
+    return (checkData.manage_parameters.grind_size ||
+      checkData.manage_parameters.grind_weight ||
+      checkData.manage_parameters.brew_temperature ||
+      checkData.manage_parameters.method_of_preparation ||
+      checkData.manage_parameters.bean_type ||
+      checkData.manage_parameters.mill ||
+      checkData.manage_parameters.mill_speed ||
+      checkData.manage_parameters.mill_timer);
 
   }
 }

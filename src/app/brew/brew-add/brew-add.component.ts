@@ -3,7 +3,6 @@ import {UIBeanStorage} from '../../../services/uiBeanStorage';
 import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 import {BREW_QUANTITY_TYPES_ENUM} from '../../../enums/brews/brewQuantityTypes';
 import {UIHelper} from '../../../services/uiHelper';
-import {ISettings} from '../../../interfaces/settings/iSettings';
 import {BREW_VIEW_ENUM} from '../../../enums/settings/brewView';
 import {UIBrewStorage} from '../../../services/uiBrewStorage';
 import {TimerComponent} from '../../../components/timer/timer.component';
@@ -28,6 +27,8 @@ import {Geolocation} from '@ionic-native/geolocation/ngx';
 import {Preparation} from '../../../classes/preparation/preparation';
 import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
 import {UILog} from '../../../services/uiLog';
+import {UIBrewHelper} from '../../../services/uiBrewHelper';
+import {Settings} from '../../../classes/settings/settings';
 
 @Component({
   selector: 'brew-add',
@@ -44,7 +45,7 @@ export class BrewAddComponent implements OnInit {
   public data: Brew = new Brew();
 
   public BREW_VIEW_ENUM = BREW_VIEW_ENUM;
-  public settings: ISettings;
+  public settings: Settings;
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   public brewQuantityTypeEnums = BREW_QUANTITY_TYPES_ENUM;
 
@@ -75,7 +76,8 @@ export class BrewAddComponent implements OnInit {
                private readonly platform: Platform,
                private readonly geolocation: Geolocation,
                private readonly loadingController: LoadingController,
-               private uiLog: UILog) {
+               private uiLog: UILog,
+               private readonly uiBrewHelper: UIBrewHelper) {
     // Initialize to standard in drop down
     //
 
@@ -156,8 +158,17 @@ export class BrewAddComponent implements OnInit {
 
     this.stopTimer();
 
+
+    this.uiBrewHelper.cleanInvisibleBrewData(this.data);
     this.uiBrewStorage.add(this.data);
-    if (this.settings.set_custom_brew_time) {
+
+    let checkData: Settings | Preparation;
+    if (this.getPreparation().use_custom_parameters === true) {
+      checkData = this.getPreparation();
+    } else {
+      checkData = this.settings;
+    }
+    if (checkData.manage_parameters.set_custom_brew_time) {
       this.data.config.unix_timestamp = moment(this.customCreationDate).unix();
     }
     this.uiBrewStorage.update(this.data);
@@ -254,9 +265,61 @@ export class BrewAddComponent implements OnInit {
 
   }
 
+  public showSectionAfterBrew(): boolean {
+    let checkData: Settings | Preparation;
+    if (this.getPreparation().use_custom_parameters === true) {
+      checkData = this.getPreparation();
+    } else {
+      checkData = this.settings;
+    }
+    return (checkData.manage_parameters.brew_quantity ||
+      checkData.manage_parameters.coffee_type ||
+      checkData.manage_parameters.coffee_concentration ||
+      checkData.manage_parameters.rating ||
+      checkData.manage_parameters.note ||
+      checkData.manage_parameters.set_custom_brew_time ||
+      checkData.manage_parameters.attachments ||
+      checkData.manage_parameters.tds ||
+      checkData.manage_parameters.brew_beverage_quantity);
+  }
+
+  public showSectionWhileBrew(): boolean {
+    let checkData: Settings | Preparation;
+    if (this.getPreparation().use_custom_parameters === true) {
+      checkData = this.getPreparation();
+    } else {
+      checkData = this.settings;
+    }
+    return (checkData.manage_parameters.pressure_profile ||
+      checkData.manage_parameters.brew_temperature_time ||
+      checkData.manage_parameters.brew_time ||
+      checkData.manage_parameters.coffee_blooming_time ||
+      checkData.manage_parameters.coffee_first_drip_time);
+  }
+
+  public ngOnInit() {}
+
+  public showSectionBeforeBrew(): boolean {
+    let checkData: Settings | Preparation;
+    if (this.getPreparation().use_custom_parameters === true) {
+      checkData = this.getPreparation();
+    } else {
+      checkData = this.settings;
+    }
+    return (checkData.manage_parameters.grind_size ||
+      checkData.manage_parameters.grind_weight ||
+      checkData.manage_parameters.brew_temperature ||
+      checkData.manage_parameters.method_of_preparation ||
+      checkData.manage_parameters.bean_type ||
+      checkData.manage_parameters.mill ||
+      checkData.manage_parameters.mill_speed ||
+      checkData.manage_parameters.mill_timer);
+
+  }
+
   // tslint:disable-next-line
   private __loadLastBrew(): void {
-    if (this.settings.set_last_coffee_brew) {
+    if (this.settings.manage_parameters.set_last_coffee_brew) {
       const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
       if (brews.length > 0) {
         const lastBrew: Brew = brews[brews.length - 1];
@@ -268,118 +331,94 @@ export class BrewAddComponent implements OnInit {
 
   private __loadBrew(brew: Brew,_template: boolean) {
 
-    if (this.settings.default_last_coffee_parameters.bean_type || _template === true) {
+    if (this.settings.default_last_coffee_parameters.method_of_preparation || _template === true) {
+      const brewPreparation: IPreparation = this.uiPreparationStorage.getByUUID(brew.method_of_preparation);
+      if (!brewPreparation.finished) {
+        this.data.method_of_preparation = brewPreparation.config.uuid;
+      }
+    }
+    let checkData: Settings | Preparation;
+    if (this.getPreparation().use_custom_parameters === true) {
+      checkData = this.getPreparation();
+    } else {
+      checkData = this.settings;
+    }
+
+    if (checkData.default_last_coffee_parameters.bean_type || _template === true) {
       const brewBean: IBean = this.uiBeanStorage.getByUUID(brew.bean);
       if (!brewBean.finished) {
         this.data.bean = brewBean.config.uuid;
       }
     }
 
-    if (this.settings.default_last_coffee_parameters.grind_size || _template === true) {
+    if (checkData.default_last_coffee_parameters.grind_size || _template === true) {
       this.data.grind_size = brew.grind_size;
     }
-    if (this.settings.default_last_coffee_parameters.grind_weight || _template === true) {
+    if (checkData.default_last_coffee_parameters.grind_weight || _template === true) {
       this.data.grind_weight = brew.grind_weight;
     }
-    if (this.settings.default_last_coffee_parameters.method_of_preparation|| _template === true) {
-      const brewPreparation: IPreparation = this.uiPreparationStorage.getByUUID(brew.method_of_preparation);
-      if (!brewPreparation.finished) {
-        this.data.method_of_preparation = brewPreparation.config.uuid;
-      }
 
-    }
-    if (this.settings.default_last_coffee_parameters.mill|| _template === true) {
+    if (checkData.default_last_coffee_parameters.mill || _template === true) {
       const brewMill: IMill = this.uiMillStorage.getByUUID(brew.mill);
       if (!brewMill.finished) {
         this.data.mill = brewMill.config.uuid;
       }
 
     }
-    if (this.settings.default_last_coffee_parameters.mill_timer|| _template === true) {
+    if (checkData.default_last_coffee_parameters.mill_timer|| _template === true) {
       this.data.mill_timer = brew.mill_timer;
     }
-    if (this.settings.default_last_coffee_parameters.mill_speed|| _template === true) {
+    if (checkData.default_last_coffee_parameters.mill_speed|| _template === true) {
       this.data.mill_speed = brew.mill_speed;
     }
-    if (this.settings.default_last_coffee_parameters.pressure_profile|| _template === true) {
+    if (checkData.default_last_coffee_parameters.pressure_profile|| _template === true) {
       this.data.pressure_profile = brew.pressure_profile;
     }
-    if (this.settings.default_last_coffee_parameters.brew_temperature|| _template === true) {
+    if (checkData.default_last_coffee_parameters.brew_temperature|| _template === true) {
       this.data.brew_temperature = brew.brew_temperature;
     }
 
     if (this.brewTemperatureTime) {
-      if (this.settings.default_last_coffee_parameters.brew_temperature_time || _template === true) {
+      if (checkData.default_last_coffee_parameters.brew_temperature_time || _template === true) {
         this.data.brew_temperature_time = brew.brew_temperature_time;
         this.brewTemperatureTime.setTime(this.data.brew_temperature_time);
       }
     }
     if (this.timer) {
-      if (this.settings.default_last_coffee_parameters.brew_time|| _template === true) {
+      if (checkData.default_last_coffee_parameters.brew_time || _template === true) {
         this.data.brew_time = brew.brew_time;
         this.timer.setTime(this.data.brew_time);
       }
     }
 
-    if (this.settings.default_last_coffee_parameters.brew_quantity|| _template === true) {
+    if (checkData.default_last_coffee_parameters.brew_quantity|| _template === true) {
       this.data.brew_quantity = brew.brew_quantity;
       this.data.brew_quantity_type = brew.brew_quantity_type;
     }
-    if (this.settings.default_last_coffee_parameters.coffee_type|| _template === true) {
+    if (checkData.default_last_coffee_parameters.coffee_type|| _template === true) {
       this.data.coffee_type = brew.coffee_type;
     }
-    if (this.settings.default_last_coffee_parameters.coffee_concentration|| _template === true) {
+    if (checkData.default_last_coffee_parameters.coffee_concentration|| _template === true) {
       this.data.coffee_concentration = brew.coffee_concentration;
     }
-    if (this.settings.default_last_coffee_parameters.coffee_first_drip_time|| _template === true) {
+    if (checkData.default_last_coffee_parameters.coffee_first_drip_time|| _template === true) {
       this.data.coffee_first_drip_time = brew.coffee_first_drip_time;
     }
-    if (this.settings.default_last_coffee_parameters.coffee_blooming_time|| _template === true) {
+    if (checkData.default_last_coffee_parameters.coffee_blooming_time|| _template === true) {
       this.data.coffee_blooming_time = brew.coffee_blooming_time;
     }
 
-    if (this.settings.default_last_coffee_parameters.rating|| _template === true) {
+    if (checkData.default_last_coffee_parameters.rating|| _template === true) {
       this.data.rating = brew.rating;
     }
-    if (this.settings.default_last_coffee_parameters.note|| _template === true) {
+    if (checkData.default_last_coffee_parameters.note || _template === true) {
       this.data.note = brew.note;
     }
-
-  }
-
-  public ngOnInit() {}
-
-
-  public showSectionAfterBrew(): boolean {
-    return (this.settings.brew_quantity ||
-      this.settings.coffee_type ||
-      this.settings.coffee_concentration ||
-      this.settings.rating ||
-      this.settings.note ||
-      this.settings.set_custom_brew_time ||
-      this.settings.attachments ||
-      this.settings.tds ||
-      this.settings.brew_beverage_quantity);
-  }
-
-
-  public showSectionWhileBrew(): boolean {
-    return (this.settings.pressure_profile ||
-      this.settings.brew_temperature_time ||
-      this.settings.brew_time ||
-      this.settings.coffee_blooming_time ||
-      this.settings.coffee_first_drip_time);
-  }
-
-  public showSectionBeforeBrew(): boolean {
-    return (this.settings.grind_size ||
-      this.settings.grind_weight ||
-      this.settings.brew_temperature ||
-      this.settings.method_of_preparation ||
-      this.settings.bean_type ||
-      this.settings.mill ||
-      this.settings.mill_speed ||
-      this.settings.mill_timer);
+    // TDS is not needed here
+    if (checkData.default_last_coffee_parameters.brew_beverage_quantity || _template === true) {
+      this.data.brew_beverage_quantity = brew.brew_beverage_quantity;
+      this.data.brew_beverage_quantity_type = brew.brew_beverage_quantity_type;
+    }
 
   }
 

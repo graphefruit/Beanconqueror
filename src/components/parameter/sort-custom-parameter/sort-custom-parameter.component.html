@@ -1,4 +1,4 @@
-<ion-card>
+<ion-card class="ion-padding">
   <ion-title class="ion-padding-top">{{"SORT_PARAMETERS_BEFORE" | translate  }}</ion-title>
   <ion-reorder-group (ionItemReorder)="reorder_brew($event,'before')" disabled="false">
     <ion-item *ngFor="let index of brewOrdersBefore; let last = last" lines="{{last?'none':''}}" tappable>
@@ -10,7 +10,7 @@
   </ion-reorder-group>
 </ion-card>
 
-<ion-card>
+<ion-card class="ion-padding">
   <ion-title class="ion-padding-top">{{"SORT_PARAMETERS_MEANWHILE" | translate  }}</ion-title>
   <ion-reorder-group (ionItemReorder)="reorder_brew($event,'while')" disabled="false">
     <ion-item *ngFor="let index of brewOrdersWhile; let last = last" lines="{{last?'none':''}}" tappable>
@@ -22,7 +22,7 @@
   </ion-reorder-group>
 </ion-card>
 
-<ion-card>
+<ion-card class="ion-padding">
   <ion-title class="ion-padding-top">{{"SORT_PARAMETERS_AFTER" | translate  }}</ion-title>
   <ion-reorder-group (ionItemReorder)="reorder_brew($event,'after')" disabled="false">
     <ion-item *ngFor="let index of brewOrdersAfter; let last = last" lines="{{last?'none':''}}" tappable>
