@@ -296,7 +296,7 @@
   "TOAST_BEAN_ARCHIVED_SUCCESSFULLY": "Bohne archiviert",
   "TOAST_MILL_ARCHIVED_SUCCESSFULLY": "Mühle archiviert",
   "TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY": "Brühmethode archiviert",
-  "BEAN_WEIGHT_ALREADY_USED": "<span style='color:#B88265'>aa{{gramUsed}}g</span> von <span style='color:#B88265'>{{gramTotal}}g</span><br/>verbraucht",
+  "BEAN_WEIGHT_ALREADY_USED": "{{gramUsed}}g von {{gramTotal}}g",
   "PREPARATION_TYPE_CUSTOM_PREPARATION": "Eigene Brühmethodik",
   "PREPARATION_TYPE_AEROPRESS": "Aeropress",
   "PREPARATION_TYPE_V60": "V60",
@@ -305,6 +305,13 @@
   "PREPARATION_TYPE_PORTAFILTER": "Siebträger",
   "PREPARATION_TYPE_KALITA_WAVE": "Kalita Wave",
   "PREPARATION_TYPE_FRENCH_PRESS": "French Press",
+  "PREPARATION_TYPE_SWANNECK": "Schwanenhals",
+  "PREPARATION_TYPE_DRIPPER": "Dripper",
+  "PREPARATION_TYPE_DELTER_PRESS": "Delter Press",
+  "PREPARATION_TYPE_COLD_BREW": "Cold Brew",
+  "PREPARATION_TYPE_AEROPRESS_INVERTED": "Aeropress Inverted",
+  "PREPARATION_TYPE_TURKISH": "Türkisch",
+  "PREPARATION_TYPE_BLUE_DRIPPER": "Blue Dripper",
   "PREPARATION_TYPE_ADD_CUSTOM": "Eigene hinzufügen",
   "CHOOSE_BEANS": "Bohnen auswählen",
   "CHOOSE_BEAN": "Bohne auswählen",
@@ -374,10 +381,10 @@
       "BREW_DATA_BREW_BEVERAGE_QUANTITY": "Füge die engültige Getränkemenge hinzu"
     }
   },
-  "ONE_BREW": "mal<br/>gebrüht",
-  "MULTIPLE_BREWS": "male<br/>gebrüht",
-  "ROAST_DAYS_OLD": "Tage<br/>alt",
-  "ROAST_DAY_OLD": "Tag<br/>alt",
+  "ROASTED_BEFORE": "Geröstet vor",
+  "DAY_OLD": "Tag alt",
+  "DAYS_OLD": "Tage alt",
+  "BEANS_AMOUNT_USED": "Verbraucht",
   "CUPPING_BREW": "Verkostung",
   "COFFEE_DRUNKEN_QUANTITY": "Getrunkene Menge",
   "IMAGE_DELETED": "Bild wurde gelöscht",
@@ -389,6 +396,8 @@
   "TODAY": "Heute",
   "PREPARATION_STYLE_POUR_OVER": "Filter",
   "PREPARATION_STYLE_ESPRESSO": "Espresso",
+  "PREPARATION_STYLE_FULL_IMMERSION": "Full Immersion",
+  "PREPARATION_STYLE_PERCOLATION": "Perkolation",
   "PREPARATION_TYPE_STYLE": "Zubereitungsart",
   "PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION": "Aktiviert einen neuen Menüeintrag - über diesen kann die Brühung direkt wiederholt werden.",
   "PAGE_SETTINGS_TRACK_BREW_COORDINATES_DESCRIPTION": "Speichere die Koordinatien zu jeder Brühung.",
@@ -408,6 +417,7 @@
   "BREW_PARAMETER_CUSTOMIZE_TITLE": "Individuelle Parameter pro Zubereitungsart",
   "BREW_PARAMETER_CUSTOMIZE_DESCRIPTION": "Du willst für einzelne Zubereitungsarten verschiedene Parameter festlegen? Navigiere dazu zum Menüpunkt \"Zubereitung\", öffne das Menü der entsprechenden Zubereitungsart und klicke auf \"Parameter individualisieren\". Lege nun fest, welche Parameter nur für diese Zubereitungsmethode erfasst werden sollen!",
   "BREW_DATA_BREW_QUANTITY_TOOLTIP": "Wassermenge nur für Filterkaffee",
-  "BREW_DATA_PREPARATION_METHOD_TOOLTIP": "Zubereitungsmethode wird nur individualisierbar wenn aktiviert"
+  "BREW_DATA_PREPARATION_METHOD_TOOLTIP": "Zubereitungsmethode wird nur individualisierbar wenn aktiviert",
+  "PAGE_SETTINGS_GENERAL": "Allgemeine Einstellungen"
 
 }

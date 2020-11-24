@@ -27,12 +27,14 @@
                      spellcheck="false" type="text">
           </ion-input>
         </ion-item>
-        <ion-item [disabled]="data.type !== preparationTypeEnum.CUSTOM_PREPARATION">
+        <ion-item>
           <ion-label position="stacked">{{"PREPARATION_TYPE_STYLE" | translate}}*</ion-label>
           <ion-select #name="ngModel" [(ngModel)]="data.style_type" cancelText="{{'CANCEL'| translate }}"
                       name="style_type" okText="{{'CHOOSE'| translate }}">
             <ion-select-option value="{{PREPARATION_STYLE_TYPE.POUR_OVER}}">{{"PREPARATION_STYLE_POUR_OVER" | translate}}</ion-select-option>
             <ion-select-option value="{{PREPARATION_STYLE_TYPE.ESPRESSO}}">{{"PREPARATION_STYLE_ESPRESSO" | translate}}</ion-select-option>
+            <ion-select-option value="{{PREPARATION_STYLE_TYPE.FULL_IMMERSION}}">{{"PREPARATION_STYLE_FULL_IMMERSION" | translate}}</ion-select-option>
+            <ion-select-option value="{{PREPARATION_STYLE_TYPE.PERCOLATION}}">{{"PREPARATION_STYLE_PERCOLATION" | translate}}</ion-select-option>
           </ion-select>
         </ion-item>
         <ion-item>

@@ -54,36 +54,20 @@
             -
           </ion-text>
         </ion-col>
-      </ion-row>
-      <ion-row>
-        <table>
-          <tr>
-            <td  class="accent-value">{{daysOld()}}</td>
-            <td class="padding-right-8"></td>
-            <td  *ngIf="daysOld() === 0 || daysOld() > 1" [innerHTML]="'ROAST_DAYS_OLD' | translate" style="line-height: 14px;"></td>
-            <td  *ngIf="daysOld() === 1" [innerHTML]="'ROAST_DAY_OLD' | translate" style="line-height: 14px;"></td>
-            <td class="ion-padding-end"></td>
-            <td class="accent-value">{{brewCounts()}}</td>
-            <td class="padding-right-8"></td>
-            <td  *ngIf="brewCounts() < 1 || brewCounts() > 1" [innerHTML]="'MULTIPLE_BREWS' | translate" style="line-height: 14px;"></td>
-            <td  *ngIf="brewCounts() === 1" [innerHTML]="'ONE_BREW' | translate" style="line-height: 14px;"></td>
-            <td class="ion-padding-end"></td>
-
-          </tr>
-
-        </table>
-        <table *ngIf="false">
-          <tr>
-            <td *ngIf="bean?.weight && settings.grind_weight" [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount() | number : '.0-2', gramTotal: bean?.weight}" rowspan="2"
-                style="line-height: 14px;"></td>
-            <td *ngIf="!(bean?.weight && settings.grind_weight)" [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: '0', gramTotal: '0'}" rowspan="2"
-                style="line-height: 14px;"></td>
-          </tr>
-
-        </table>
+        <ion-col size="6">
+          <ion-label class="card-headline">{{"PAGE_HOME_TOTAL_BREWS" | translate}}</ion-label><br/>
+          <ion-text>{{brewCounts()}}</ion-text>
+        </ion-col>
+        <ion-col size="6">
+          <ion-label class="card-headline">{{"ROASTED_BEFORE" | translate}}</ion-label><br/>
+          <ion-text *ngIf="daysOld() === 1">{{daysOld()}}&nbsp;{{"DAY_OLD" | translate}}</ion-text>
+          <ion-text *ngIf="!(daysOld() === 1)">{{daysOld()}}&nbsp;{{"DAYS_OLD" | translate}}</ion-text>
+        </ion-col>
+        <ion-col size="6">
+          <ion-label class="card-headline">{{"BEANS_AMOUNT_USED" | translate}}</ion-label><br/>
+          <ion-text [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount() | number : '.0-2', gramTotal: bean?.weight}">{{daysOld()}}</ion-text>
+        </ion-col>
       </ion-row>
     </ion-grid>
-
   </ion-card-content>
-
 </ion-card>

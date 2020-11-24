@@ -17,11 +17,11 @@
   </div>
   <div *ngIf="data.use_custom_parameters">
   <ion-segment [(ngModel)]="segment" >
-    <ion-segment-button value="default">
-      <ion-label>{{"CUSTOM_DEFAULT_PARAMETERS" | translate}}</ion-label>
-    </ion-segment-button>
     <ion-segment-button value="manage">
       <ion-label>{{"CUSTOM_MANAGE_PARAMETERS" | translate}}</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="default">
+      <ion-label>{{"CUSTOM_DEFAULT_PARAMETERS" | translate}}</ion-label>
     </ion-segment-button>
     <ion-segment-button value="sort">
       <ion-label>{{"CUSTOM_SORT_PARAMETERS" | translate}}</ion-label>
@@ -29,11 +29,11 @@
   </ion-segment>
 
   <div [ngSwitch]="segment">
-    <ion-card *ngSwitchCase="'default'">
-     <default-custom-parameter [data]="data"></default-custom-parameter>
-    </ion-card>
     <ion-card *ngSwitchCase="'manage'">
       <manage-custom-parameter [data]="data"></manage-custom-parameter>
+    </ion-card>
+    <ion-card *ngSwitchCase="'default'">
+     <default-custom-parameter [data]="data"></default-custom-parameter>
     </ion-card>
     <ion-card *ngSwitchCase="'sort'">
       <sort-custom-parameter [data]="data"></sort-custom-parameter>

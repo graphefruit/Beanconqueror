@@ -7,7 +7,6 @@ import {ModalController, NavParams} from '@ionic/angular';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {UIHelper} from '../../../services/uiHelper';
 import {UIAnalytics} from '../../../services/uiAnalytics';
-import {UIToast} from '../../../services/uiToast';
 
 @Component({
   selector: 'app-preparation-custom-parameters',
@@ -19,25 +18,22 @@ export class PreparationCustomParametersComponent implements OnInit {
   public data: Preparation = new Preparation();
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   public preparationTypeEnum = PREPARATION_TYPES;
-  public segment:string ='default';
+  public segment:string ='manage';
   @Input() private preparation: IPreparation;
 
   constructor (private readonly navParams: NavParams,
                private readonly modalController: ModalController,
                private readonly uiPreparationStorage: UIPreparationStorage,
                private readonly uiHelper: UIHelper,
-               private readonly uiAnalytics: UIAnalytics,
-               private readonly uiToast: UIToast) {
+               private readonly uiAnalytics: UIAnalytics) {
 
   }
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent('PREPARATION', 'CUSTOM_PARAMETERS');
-
     if (this.preparation !== undefined) {
       this.data.initializeByObject(this.preparation);
     }
-
   }
 
 

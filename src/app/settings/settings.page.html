@@ -28,8 +28,8 @@
 
 
   <ion-card>
-
     <ion-card-content>
+      <ion-card-title>{{"PAGE_SETTINGS_GENERAL" | translate}}</ion-card-title>
       <ion-item>
         <ion-label>{{"PAGE_SETTINGS_LANGUAGE" | translate}}</ion-label>
         <ion-select (ngModelChange)="languageChanged($event)" [(ngModel)]="settings.language"
