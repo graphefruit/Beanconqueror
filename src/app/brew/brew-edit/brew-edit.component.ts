@@ -22,6 +22,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
 import {Settings} from '../../../classes/settings/settings';
 import {UIBrewHelper} from '../../../services/uiBrewHelper';
+import {NgxStarsComponent} from 'ngx-stars';
 
 @Component({
   selector: 'brew-edit',
@@ -32,6 +33,7 @@ export class BrewEditComponent implements OnInit {
 
 
   @ViewChild('photoSlides', {static: false}) public photoSlides: IonSlides;
+  @ViewChild('brewStars', {read: NgxStarsComponent, static: false}) public brewStars: NgxStarsComponent;
   public data: Brew = new Brew();
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   public brewQuantityTypeEnums = BREW_QUANTITY_TYPES_ENUM;
@@ -45,6 +47,10 @@ export class BrewEditComponent implements OnInit {
 
   public customSelectSheetOptions: any = {
     cssClass: 'select-full-screen'
+  };
+  public brewIcons = {
+    empty: '../assets/custom-ion-icons/beanconqueror-brew-rating-empty.svg',
+    full: '../assets/custom-ion-icons/beanconqueror-brew-rating-full.svg',
   };
 
   constructor (private readonly modalController: ModalController,
@@ -234,5 +240,11 @@ export class BrewEditComponent implements OnInit {
       checkData.manage_parameters.mill_speed ||
       checkData.manage_parameters.mill_timer);
 
+  }
+
+  public changedRating() {
+    if (typeof(this.brewStars) !== 'undefined') {
+      this.brewStars.setRating(this.data.rating);
+    }
   }
 }

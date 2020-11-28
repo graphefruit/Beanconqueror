@@ -314,6 +314,7 @@ export class Brew implements IBrew {
     return undefined;
   }
 
+  /** @deprecated */
   public getRatingIcon(_rating?: number): string {
     if (_rating === undefined) {
       _rating = this.rating;

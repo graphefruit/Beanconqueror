@@ -300,10 +300,13 @@
         <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
           style="vertical-align: top;">{{data.rating}}</ion-badge>
         </ion-label>
-        <ion-range [(ngModel)]="data.rating" debounce="500s" max="5" min="-1" snaps="true" step="1">
+        <ion-range (ionChange)="changedRating()" [(ngModel)]="data.rating" debounce="500s" max="5" min="-1" snaps="true" step="1">
 
-          <ion-icon [name]="data.getRatingIcon()" size="large" slot="end"></ion-icon>
+          <div slot="end">
+            <ngx-stars #brewStars [color]="'#BFB9B0'" [customStarIcons]="brewIcons" [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right" ></ngx-stars>
+          </div>
         </ion-range>
+
       </ion-item>
       <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.note,
                       data.getPreparation().manage_parameters.note,

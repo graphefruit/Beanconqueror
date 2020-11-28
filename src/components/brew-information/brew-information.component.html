@@ -13,7 +13,7 @@
       </ion-row>
       <ion-row>
         <ion-col size="8"><div class="ion-no-padding font-size-20 ion-title">{{brew.getBean().name}}</div></ion-col>
-        <ion-col *ngIf="brew?.rating" class="center-col" size="4"><ngx-stars #brewStars [color]="'#BFB9B0'" [customStarIcons]="brewIcons" [initialStars]="brew.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right" ></ngx-stars></ion-col>
+        <ion-col *ngIf="brew?.rating" size="4"><ngx-stars #brewStars [color]="'#BFB9B0'" [customStarIcons]="brewIcons" [initialStars]="brew.rating" [maxStars]="5"  [readonly]="true"  [wholeStars]="true" class="ion-float-right" class="ion-float-right" ></ngx-stars></ion-col>
       </ion-row>
       <ion-row>
         <ion-col>

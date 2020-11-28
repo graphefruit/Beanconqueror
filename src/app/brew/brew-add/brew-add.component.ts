@@ -29,6 +29,7 @@ import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationSty
 import {UILog} from '../../../services/uiLog';
 import {UIBrewHelper} from '../../../services/uiBrewHelper';
 import {Settings} from '../../../classes/settings/settings';
+import {NgxStarsComponent} from 'ngx-stars';
 
 @Component({
   selector: 'brew-add',
@@ -40,7 +41,7 @@ export class BrewAddComponent implements OnInit {
   @ViewChild('photoSlides', {static: false}) public photoSlides: IonSlides;
   @ViewChild('timer', {static: false}) public timer: BrewTimerComponent;
   @ViewChild('brewTemperatureTime', {static: false}) public brewTemperatureTime: TimerComponent;
-
+  @ViewChild('brewStars', {read: NgxStarsComponent, static: false}) public brewStars: NgxStarsComponent;
   private readonly brew_template: Brew;
   public data: Brew = new Brew();
 
@@ -56,8 +57,10 @@ export class BrewAddComponent implements OnInit {
 
   @Input() private hide_toast_message: boolean;
 
-
-
+  public brewIcons = {
+    empty: '../assets/custom-ion-icons/beanconqueror-brew-rating-empty.svg',
+    full: '../assets/custom-ion-icons/beanconqueror-brew-rating-full.svg',
+  };
 
   constructor (private readonly modalController: ModalController,
                private readonly navParams: NavParams,
@@ -444,6 +447,12 @@ export class BrewAddComponent implements OnInit {
         }
 
       );
+    }
+  }
+
+  public changedRating() {
+    if (typeof(this.brewStars) !== 'undefined') {
+      this.brewStars.setRating(this.data.rating);
     }
   }
 }
