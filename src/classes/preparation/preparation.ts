@@ -7,6 +7,7 @@ import {PREPARATION_STYLE_TYPE} from '../../enums/preparations/preparationStyleT
 import {DefaultBrewParameter} from '../parameter/defaultBrewParameter';
 import {OrderBrewParameter} from '../parameter/orderBrewParameter';
 import {ManageBrewParameter} from '../parameter/manageBrewParameter';
+import {PreparationTool} from './preparationTool';
 
 
 export class Preparation implements IPreparation {
@@ -20,6 +21,7 @@ export class Preparation implements IPreparation {
   public manage_parameters: ManageBrewParameter;
   public default_last_coffee_parameters: DefaultBrewParameter;
   public brew_order: OrderBrewParameter;
+  public tools: Array<PreparationTool>;
   constructor() {
     this.name = '';
     this.note = '';
@@ -32,6 +34,7 @@ export class Preparation implements IPreparation {
     this.manage_parameters = new ManageBrewParameter();
     this.default_last_coffee_parameters = new DefaultBrewParameter();
     this.brew_order = new OrderBrewParameter();
+    this.tools = [];
   }
 
   public initializeByObject (preparationObj: IPreparation): void {

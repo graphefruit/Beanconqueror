@@ -9,6 +9,8 @@ import {UIToast} from '../../../services/uiToast';
 import {TranslateService} from '@ngx-translate/core';
 
 import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
+import {PreparationTool} from '../../../classes/preparation/preparationTool';
+import {UIHelper} from '../../../services/uiHelper';
 
 @Component({
   selector: 'preparation-add-type',
@@ -24,12 +26,15 @@ export class PreparationAddTypeComponent implements OnInit {
   @ViewChild('addPreparationForm', {static: false}) public preparationForm: NgForm;
   @Input() private hide_toast_message: boolean;
 
+  public  nextToolName: string ='';
+
   constructor(private readonly modalController: ModalController,
               private readonly uiPreparationStorage: UIPreparationStorage,
               private readonly uiAnalytics: UIAnalytics,
               private readonly navParams: NavParams,
               private readonly uiToast: UIToast,
-              private readonly translate: TranslateService) {
+              private readonly translate: TranslateService,
+              private readonly uiHelper: UIHelper) {
     this.data.type = this.navParams.get('type');
     if (this.data.type !== PREPARATION_TYPES.CUSTOM_PREPARATION) {
       this.data.name = this.translate.instant('PREPARATION_TYPE_' + this.data.type);
@@ -76,5 +81,31 @@ export class PreparationAddTypeComponent implements OnInit {
 
   public ngOnInit() {
   }
+
+  public addTool() {
+    const newChip = this.nextToolName;
+    if (newChip.trim() !== '') {
+      const prepTool: PreparationTool = new PreparationTool();
+      prepTool.name = newChip;
+      prepTool.config.uuid = this.uiHelper.generateUUID();
+      prepTool.config.unix_timestamp = this.uiHelper.getUnixTimestamp();
+      this.data.tools.push(prepTool);
+      this.nextToolName = '';
+    }
+  }
+
+  public deleteTool(_tool: PreparationTool) {
+    const tool: PreparationTool = _tool as PreparationTool;
+    for(let i = 0; i < this.data.tools.length; i++){
+
+      if ( this.data.tools[i].config.uuid === tool.config.uuid) {
+
+        this.data.tools.splice(i, 1);
+        break;
+      }
+
+    }
+  }
+
 
 }
