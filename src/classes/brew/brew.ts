@@ -225,7 +225,7 @@ export class Brew implements IBrew {
     const grindWeight: number = this.grind_weight;
     let brewQuantity: number = 0;
 
-    if (this.getPreparation().style_type === PREPARATION_STYLE_TYPE.POUR_OVER) {
+    if (this.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO) {
       brewQuantity = this.brew_quantity;
     } else {
       brewQuantity = this.brew_beverage_quantity;
@@ -242,25 +242,6 @@ export class Brew implements IBrew {
 
   }
 
-  public isAwesomeBrew(): boolean {
-    return this.rating === 10;
-  }
-
-  public isGoodBrew(): boolean {
-    return this.rating >= 8 && this.rating < 10;
-  }
-
-  public isNormalBrew(): boolean {
-    return this.rating >= 5 && this.rating < 8;
-  }
-
-  public isBadBrew(): boolean {
-    return this.rating < 5 && this.rating > 0;
-  }
-
-  public isNotRatedBrew(): boolean {
-    return this.rating <= 0;
-  }
 
   public formateDate(_format?: string): string {
     let format: string = 'DD.MM.YYYY, HH:mm:ss';

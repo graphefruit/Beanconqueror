@@ -8,7 +8,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-item *ngIf="settings.method_of_preparation === true">
+  <ion-item>
     <ion-label position="stacked">{{"BREW_DATA_PREPARATION_METHOD" | translate}}</ion-label>
     <ion-select [(ngModel)]="filter.method_of_preparation"
                 [show-finished]="segment !== 'open'"
@@ -18,7 +18,7 @@
       </ion-select-option>
     </ion-select>
   </ion-item>
-  <ion-item *ngIf="settings.bean_type === true">
+  <ion-item>
     <ion-label position="stacked">{{"BREW_DATA_BEAN_TYPE" | translate}}</ion-label>
     <ion-select [(ngModel)]="filter.bean"
                 [multiple]="true"
@@ -28,7 +28,7 @@
                          value="{{bean.config.uuid}}"></ion-select-option>
     </ion-select>
   </ion-item>
-  <ion-item *ngIf="settings.mill === true">
+  <ion-item>
     <ion-label position="stacked">{{"BREW_DATA_MILL" | translate }}</ion-label>
     <ion-select [(ngModel)]="filter.mill"
                 [show-finished]="segment !== 'open'"

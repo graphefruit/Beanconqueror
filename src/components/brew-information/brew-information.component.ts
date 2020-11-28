@@ -53,7 +53,6 @@ export class BrewInformationComponent implements OnInit {
   public ngOnChanges(changes: SimpleChange) {
     // changes.prop contains the old and the new value...
     try {
-      console.log("tadaaa");
       const previousValue = changes['brew'].previousValue as Brew;
       const currentValue =  changes['brew'].currentValue as Brew;
       if (previousValue.rating !== currentValue.rating) {

@@ -339,13 +339,13 @@ export class BrewPage implements OnInit {
       filter = this.archivedBrewsFilter;
     }
 
-    if (this.settings.mill === true && filter.mill.length > 0) {
+    if (filter.mill.length > 0) {
       brewsFilters = brewsFilters.filter((e) => filter.mill.filter((z) => z === e.mill).length > 0);
     }
-    if (this.settings.bean_type === true && filter.bean.length > 0) {
+    if (filter.bean.length > 0) {
       brewsFilters = brewsFilters.filter((e) => filter.bean.filter((z) => z === e.bean).length > 0);
     }
-    if (this.settings.method_of_preparation === true && filter.method_of_preparation.length > 0) {
+    if (filter.method_of_preparation.length > 0) {
       brewsFilters = brewsFilters.filter((e) => filter.method_of_preparation.filter((z) => z === e.method_of_preparation).length > 0);
     }
 
