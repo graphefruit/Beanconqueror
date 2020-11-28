@@ -324,12 +324,6 @@
   "CHOOSE_PREPARATION": "Select Preparation Method",
   "CHOOSE_MILLS": "Select Grinders",
   "CHOOSE_MILL": "Select Grinder",
-  "MODAL_CHOOSE_BEANS_OPEN": "Beans in Use",
-  "MODAL_CHOOSE_BEANS_FINISHED": "Beans Archived",
-  "MODAL_CHOOSE_MILLS_OPEN": "Grinders in Use",
-  "MODAL_CHOOSE_MILLS_ARCHIVED": "Grinders Archived",
-  "MODAL_CHOOSE_PREPARATIONS_OPEN": "Preparation Methods in Use",
-  "MODAL_CHOOSE_PREPARATIONS_ARCHIVED": "Preparation Methods Archived",
   "BEAN": {
     "PLACE_HOLDER": {
       "BEAN_DATA_NAME": "Add name",

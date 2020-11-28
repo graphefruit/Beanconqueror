@@ -324,12 +324,6 @@
   "CHOOSE_PREPARATION": "Brühmethode auswählen",
   "CHOOSE_MILLS": "Mühlen auswählen",
   "CHOOSE_MILL": "Mühle auswählen",
-  "MODAL_CHOOSE_BEANS_OPEN": "Aktuelle Bohnen",
-  "MODAL_CHOOSE_BEANS_FINISHED": "Fertige Bohnen",
-  "MODAL_CHOOSE_MILLS_OPEN": "Aktuelle Mühlen",
-  "MODAL_CHOOSE_MILLS_ARCHIVED": "Archivierte Mühlen",
-  "MODAL_CHOOSE_PREPARATIONS_OPEN": "Aktuelle Brühmethoden",
-  "MODAL_CHOOSE_PREPARATIONS_ARCHIVED": "Archivierte Brühmethoden",
   "BEAN": {
     "PLACE_HOLDER": {
       "BEAN_DATA_NAME": "Füge einen Namen hinzu",

@@ -26,7 +26,6 @@
     <div [ngSwitch]="mill_segment">
       <div *ngSwitchCase="'open'">
         <ion-card *ngIf="getOpenMills().length > 0">
-          <ion-title class="ion-padding-top">{{"MODAL_CHOOSE_MILLS_OPEN" | translate  }}</ion-title>
           <ion-item *ngFor="let mill of getOpenMills()" lines="none" tappable>
             <ion-checkbox [(ngModel)]="multipleSelection[mill.config.uuid]" slot="start"></ion-checkbox>
             <div>
@@ -37,8 +36,6 @@
       </div>
       <div *ngSwitchCase="'archive'">
         <ion-card>
-          <ion-title class="ion-padding-top">{{"MODAL_CHOOSE_MILLS_ARCHIVED" | translate  }}</ion-title>
-
           <ion-item *ngFor="let mill of getArchivedMills()" lines="none" tappable>
             <ion-checkbox [(ngModel)]="multipleSelection[mill.config.uuid]" slot="start"></ion-checkbox>
             <div>
@@ -55,7 +52,6 @@
         <div *ngSwitchCase="'open'">
 
           <ion-card *ngIf="getOpenMills().length > 0">
-            <ion-title class="ion-padding-top">{{"MODAL_CHOOSE_MILLS_OPEN" | translate  }}</ion-title>
             <ion-item *ngFor="let mill of getOpenMills()" lines="none" tappable>
               <ion-radio slot="start" value="{{mill.config.uuid}}"></ion-radio>
               <div>
@@ -66,8 +62,6 @@
         </div>
         <div *ngSwitchCase="'archive'">
           <ion-card>
-            <ion-title class="ion-padding-top">{{"MODAL_CHOOSE_MILLS_ARCHIVED" | translate  }}</ion-title>
-
             <ion-item *ngFor="let mill of getArchivedMills()" lines="none" tappable>
               <ion-radio slot="start" value="{{mill.config.uuid}}"></ion-radio>
               <div>
