@@ -223,7 +223,7 @@ export class BeansAddComponent implements OnInit {
 
   public dismiss(): void {
     this.modalController.dismiss({
-      'dismissed': true
+      dismissed: true
     },undefined,'bean-add');
   }
 

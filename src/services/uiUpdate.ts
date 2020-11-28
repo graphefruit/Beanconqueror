@@ -146,7 +146,7 @@ export class UIUpdate {
       if (parametersHaveBeenMoved) {
         console.info('Parameters have been moved');
         settings.manage_parameters.brew_time = settings.brew_time;
-        /// TODO
+        /// TODO Save changes
         settings.manage_parameters.brew_temperature_time = settings.brew_temperature_time;
         settings.manage_parameters.grind_size = settings.grind_size;
         settings.manage_parameters.grind_weight = settings.grind_weight;
@@ -156,6 +156,9 @@ export class UIUpdate {
         settings.manage_parameters.pressure_profile = settings.pressure_profile;
         // This will be fixed value
         settings.manage_parameters.method_of_preparation = true;
+        settings.manage_parameters.bean_type = true;
+        settings.manage_parameters.mill = true;
+
         settings.manage_parameters.brew_quantity = settings.brew_quantity;
         settings.manage_parameters.brew_temperature = settings.brew_temperature;
         settings.manage_parameters.note = settings.note;
@@ -169,6 +172,7 @@ export class UIUpdate {
         settings.manage_parameters.set_custom_brew_time = settings.set_custom_brew_time;
         settings.manage_parameters.tds = settings.tds;
         settings.manage_parameters.brew_beverage_quantity = settings.brew_beverage_quantity;
+
         // This will be fixed value
         settings.default_last_coffee_parameters.method_of_preparation = true;
 

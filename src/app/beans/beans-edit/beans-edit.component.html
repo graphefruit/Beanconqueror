@@ -113,6 +113,14 @@
     </ion-input>
   </ion-item>
     <ion-item>
+      <ion-label position="stacked">{{"BEAN_DATA_CUPPING_POINTS" | translate}}</ion-label>
+      <ion-input #cupping_points="ngModel" [(ngModel)]="data.cupping_points" autocapitalize="off" inputmode="decimal"
+                 name="cupping_points" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_CUPPING_POINTS' | translate}}"
+                 prevent-characters remove-empty-number spellcheck="false"
+                 type="text">
+      </ion-input>
+    </ion-item>
+    <ion-item>
       <ion-label position="stacked">{{"BEAN_DATA_DECAFFEINATED" | translate}}</ion-label>
       <ion-checkbox #decaffeinated="ngModel" [(ngModel)]="data.decaffeinated" name="decaffeinated"></ion-checkbox>
     </ion-item>
@@ -218,7 +226,7 @@
                  type="text">
       </ion-input>
     </ion-item>
-    <ion-item>
+    <ion-item lines="none">
       <ion-label position="stacked">{{"BEAN_DATA_CERTIFICATION" | translate}}</ion-label>
       <ion-input #harvestTime="ngModel" [(ngModel)]="beanInformation.certification" autocapitalize="sentences"
                  name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_CERTIFICATION' | translate}}" spellcheck="false"

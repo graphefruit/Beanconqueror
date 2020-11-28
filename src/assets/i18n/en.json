@@ -92,6 +92,7 @@
   "BEAN_DATA_DECAFFEINATED": "Decaffeinated",
   "BEAN_DATA_URL": "Website",
   "BEAN_DATA_EAN": "EAN / Articlenumber",
+  "BEAN_DATA_CUPPING_POINTS": "Cupping points",
   "BREW_DATA_CUSTOM_BREW_TIME": "Custom Brewing Time",
   "BREW_CREATION_DATE": "Creation Date",
   "REPEAT": "Repeat",
@@ -351,6 +352,7 @@
       "BEAN_DATA_DECAFFEINATED": "Is this coffee decaffeinated",
       "BEAN_DATA_URL": "Add the website url",
       "BEAN_DATA_EAN": "Add the ean or article number",
+      "BEAN_DATA_CUPPING_POINTS": "Add the cupping points",
       "NOTES": "Add notes about these beans"
     }
   },

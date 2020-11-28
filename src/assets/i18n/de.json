@@ -92,6 +92,7 @@
   "BEAN_DATA_DECAFFEINATED": "Entkoffeiniert",
   "BEAN_DATA_URL": "Webseite",
   "BEAN_DATA_EAN": "EAN / Artikelnummer",
+  "BEAN_DATA_CUPPING_POINTS": "Cupping Punkte",
   "BREW_DATA_CUSTOM_BREW_TIME": "Uhrzeit (des Bezuges)?",
   "BREW_CREATION_DATE": "Uhrzeit (des Bezuges)",
   "REPEAT": "Wiederholen",
@@ -352,6 +353,7 @@
       "BEAN_DATA_DECAFFEINATED": "Ist der Kaffee Entkoffeiniert",
       "BEAN_DATA_URL": "Füge die Webseite hinzu",
       "BEAN_DATA_EAN": "Füge die EAN oder Artikelnummer hinzu",
+      "BEAN_DATA_CUPPING_POINTS": "Füge die Cupping Punkte hinzu",
       "NOTES": "Füge Notizen zu deiner Bohne hinzu"
     }
   },
