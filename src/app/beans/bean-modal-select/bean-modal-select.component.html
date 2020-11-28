@@ -11,79 +11,100 @@
 </ion-header>
 <ion-content>
 
-  <div *ngIf="multiple">
-    <ion-card *ngIf="getOpenBeans().length > 0">
-      <ion-title class="ion-padding-top">{{"MODAL_CHOOSE_BEANS_OPEN" | translate  }}</ion-title>
-      <ion-item *ngFor="let bean of getOpenBeans()" lines="none" tappable>
-        <ion-checkbox [(ngModel)]="multipleSelection[bean.config.uuid]" slot="start"></ion-checkbox>
-        <div>
-          <h6>{{bean.name}}</h6>
-          <p *ngIf="bean?.roastingDate">{{"BEAN_DATA_ROASTING_DATE" | translate}}
-            : {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}&nbsp;
-            ({{bean.beanAgeInDays()}}
-            <span *ngIf="bean.beanAgeInDays() === 1">{{"DAY" | translate}}</span>
-            <span *ngIf="bean.beanAgeInDays() !== 1">{{"DAYS" | translate}}</span>)
-          </p>
-          <p *ngIf="bean?.roaster">{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</p>
-        </div>
-      </ion-item>
-    </ion-card>
-    <ion-card *ngIf="showFinished===true && getFinishedBeans().length > 0">
-      <ion-title class="ion-padding-top">{{"MODAL_CHOOSE_BEANS_FINISHED" | translate  }}</ion-title>
+  <ion-segment [(ngModel)]="bean_segment">
+    <ion-segment-button value="open">
+      <ion-label>{{"CURRENT" | translate }}
+      </ion-label>
+    </ion-segment-button>
+    <ion-segment-button *ngIf="showFinished===true && getFinishedBeans().length > 0" value="archive">
+      <ion-label>{{"TAB_ARCHIVE" | translate }}
+      </ion-label>
 
-      <ion-item *ngFor="let bean of getFinishedBeans()" lines="none" tappable>
-        <ion-checkbox [(ngModel)]="multipleSelection[bean.config.uuid]" slot="start"></ion-checkbox>
-        <div>
-          <h6>{{bean.name}}</h6>
-          <p *ngIf="bean?.roastingDate">{{"BEAN_DATA_ROASTING_DATE" | translate}}
-            : {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}&nbsp;
-            ({{bean.beanAgeInDays()}}
-            <span *ngIf="bean.beanAgeInDays() === 1">{{"DAY" | translate}}</span>
-            <span *ngIf="bean.beanAgeInDays() !== 1">{{"DAYS" | translate}}</span>)
-          </p>
-          <p *ngIf="bean?.roaster">{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</p>
-        </div>
-      </ion-item>
-    </ion-card>
+    </ion-segment-button>
+  </ion-segment>
+  <div  *ngIf="multiple">
+    <div [ngSwitch]="bean_segment">
+      <div *ngSwitchCase="'open'">
+          <ion-card *ngIf="getOpenBeans().length > 0">
+            <ion-title class="ion-padding-top">{{"MODAL_CHOOSE_BEANS_OPEN" | translate  }}</ion-title>
+            <ion-item *ngFor="let bean of getOpenBeans()" lines="none" tappable>
+              <ion-checkbox [(ngModel)]="multipleSelection[bean.config.uuid]" slot="start"></ion-checkbox>
+              <div>
+                <h6>{{bean.name}}</h6>
+                <p *ngIf="bean?.roastingDate">{{"BEAN_DATA_ROASTING_DATE" | translate}}
+                  : {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}&nbsp;
+                  ({{bean.beanAgeInDays()}}
+                  <span *ngIf="bean.beanAgeInDays() === 1">{{"DAY" | translate}}</span>
+                  <span *ngIf="bean.beanAgeInDays() !== 1">{{"DAYS" | translate}}</span>)
+                </p>
+                <p *ngIf="bean?.roaster">{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</p>
+              </div>
+            </ion-item>
+          </ion-card>
+      </div>
+      <div *ngSwitchCase="'archive'">
+          <ion-card>
+            <ion-title class="ion-padding-top">{{"MODAL_CHOOSE_BEANS_FINISHED" | translate  }}</ion-title>
+
+            <ion-item *ngFor="let bean of getFinishedBeans()" lines="none" tappable>
+              <ion-checkbox [(ngModel)]="multipleSelection[bean.config.uuid]" slot="start"></ion-checkbox>
+              <div>
+                <h6>{{bean.name}}</h6>
+                <p *ngIf="bean?.roastingDate">{{"BEAN_DATA_ROASTING_DATE" | translate}}
+                  : {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}&nbsp;
+                  ({{bean.beanAgeInDays()}}
+                  <span *ngIf="bean.beanAgeInDays() === 1">{{"DAY" | translate}}</span>
+                  <span *ngIf="bean.beanAgeInDays() !== 1">{{"DAYS" | translate}}</span>)
+                </p>
+                <p *ngIf="bean?.roaster">{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</p>
+              </div>
+            </ion-item>
+          </ion-card>
+      </div>
+    </div>
   </div>
-  <div *ngIf="!multiple">
+
+  <div  *ngIf="!multiple">
     <ion-radio-group [(ngModel)]="radioSelection">
+    <div [ngSwitch]="bean_segment">
+      <div *ngSwitchCase="'open'">
+        <ion-card *ngIf="getOpenBeans().length > 0">
+          <ion-title class="ion-padding-top">{{"MODAL_CHOOSE_BEANS_OPEN" | translate  }}</ion-title>
+          <ion-item *ngFor="let bean of getOpenBeans()" lines="none" tappable>
+            <ion-radio slot="start" value="{{bean.config.uuid}}"></ion-radio>
+            <div>
+              <h6>{{bean.name}}</h6>
+              <p *ngIf="bean?.roastingDate">{{"BEAN_DATA_ROASTING_DATE" | translate}}
+                : {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}&nbsp;
+                ({{bean.beanAgeInDays()}}
+                <span *ngIf="bean.beanAgeInDays() === 1">{{"DAY" | translate}}</span>
+                <span *ngIf="bean.beanAgeInDays() !== 1">{{"DAYS" | translate}}</span>)
+              </p>
+              <p *ngIf="bean?.roaster">{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</p>
+            </div>
+          </ion-item>
+        </ion-card>
+      </div>
+      <div *ngSwitchCase="'archive'">
+        <ion-card>
+          <ion-title class="ion-padding-top">{{"MODAL_CHOOSE_BEANS_FINISHED" | translate  }}</ion-title>
 
-      <ion-card *ngIf="getOpenBeans().length > 0">
-        <ion-title class="ion-padding-top">{{"MODAL_CHOOSE_BEANS_OPEN" | translate  }}</ion-title>
-        <ion-item *ngFor="let bean of getOpenBeans()" lines="none" tappable>
-          <ion-radio slot="start" value="{{bean.config.uuid}}"></ion-radio>
-          <div>
-            <h6>{{bean.name}}</h6>
-            <p *ngIf="bean?.roastingDate">{{"BEAN_DATA_ROASTING_DATE" | translate}}
-              : {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}&nbsp;
-              ({{bean.beanAgeInDays()}}
-              <span *ngIf="bean.beanAgeInDays() === 1">{{"DAY" | translate}}</span>
-              <span *ngIf="bean.beanAgeInDays() !== 1">{{"DAYS" | translate}}</span>)
-            </p>
-            <p *ngIf="bean?.roaster">{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</p>
-          </div>
-        </ion-item>
-      </ion-card>
-      <ion-card *ngIf="showFinished===true && getFinishedBeans().length > 0">
-        <ion-title class="ion-padding-top">{{"MODAL_CHOOSE_BEANS_FINISHED" | translate  }}</ion-title>
-
-        <ion-item *ngFor="let bean of getFinishedBeans()" lines="none" tappable>
-          <ion-radio slot="start" value="{{bean.config.uuid}}"></ion-radio>
-          <div>
-            <h6>{{bean.name}}</h6>
-            <p *ngIf="bean?.roastingDate">{{"BEAN_DATA_ROASTING_DATE" | translate}}
-              : {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}&nbsp;
-              ({{bean.beanAgeInDays()}}
-              <span *ngIf="bean.beanAgeInDays() === 1">{{"DAY" | translate}}</span>
-              <span *ngIf="bean.beanAgeInDays() !== 1">{{"DAYS" | translate}}</span>)
-            </p>
-            <p *ngIf="bean?.roaster">{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</p>
-          </div>
-        </ion-item>
-      </ion-card>
-
-
+          <ion-item *ngFor="let bean of getFinishedBeans()" lines="none" tappable>
+            <ion-radio slot="start" value="{{bean.config.uuid}}"></ion-radio>
+            <div>
+              <h6>{{bean.name}}</h6>
+              <p *ngIf="bean?.roastingDate">{{"BEAN_DATA_ROASTING_DATE" | translate}}
+                : {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}&nbsp;
+                ({{bean.beanAgeInDays()}}
+                <span *ngIf="bean.beanAgeInDays() === 1">{{"DAY" | translate}}</span>
+                <span *ngIf="bean.beanAgeInDays() !== 1">{{"DAYS" | translate}}</span>)
+              </p>
+              <p *ngIf="bean?.roaster">{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</p>
+            </div>
+          </ion-item>
+        </ion-card>
+      </div>
+    </div>
     </ion-radio-group>
   </div>
 

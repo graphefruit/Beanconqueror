@@ -10,7 +10,7 @@ import {Bean} from '../../../classes/bean/bean';
 })
 export class BeanModalSelectComponent implements OnInit {
 
-
+  public bean_segment: string = 'open';
   public objs: Array<Bean> = [];
   public multipleSelection = {};
   public radioSelection: string;

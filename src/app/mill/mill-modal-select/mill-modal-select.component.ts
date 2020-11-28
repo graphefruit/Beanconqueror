@@ -13,6 +13,7 @@ export class MillModalSelectComponent implements OnInit {
   public objs: Array<Mill> = [];
   public multipleSelection = {};
   public radioSelection: string;
+  public mill_segment: string = 'open';
   @Input() public multiple: boolean;
   @Input() private selectedValues: Array<string>;
   @Input() public showFinished: boolean;
