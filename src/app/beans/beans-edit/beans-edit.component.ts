@@ -15,6 +15,7 @@ import {DatePicker} from '@ionic-native/date-picker/ngx';
 import {TranslateService} from '@ngx-translate/core';
 import {IBeanInformation} from '../../../interfaces/bean/iBeanInformation';
 import {NgxStarsComponent} from 'ngx-stars';
+import {BEAN_ROASTING_TYPE_ENUM} from '../../../enums/beans/beanRoastingType';
 
 @Component({
   selector: 'beans-edit',
@@ -26,6 +27,7 @@ export class BeansEditComponent implements OnInit {
   public data: Bean = new Bean();
   public roastsEnum = ROASTS_ENUM;
   public mixEnum = BEAN_MIX_ENUM;
+  public beanRoastingTypeEnum = BEAN_ROASTING_TYPE_ENUM;
   @ViewChild('beanStars', {read: NgxStarsComponent, static: false}) public beanStars: NgxStarsComponent;
 
   // Needed for the rating element, if we set the initial stars before loading, we cant change it anymore.

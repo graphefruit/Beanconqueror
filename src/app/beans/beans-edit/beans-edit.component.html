@@ -79,6 +79,16 @@
       <ion-select-option *ngFor="let key of mixEnum | keys" value="{{key}}">{{mixEnum[key]}}</ion-select-option>
     </ion-select>
   </ion-item>
+    <ion-item>
+      <ion-label position="stacked">{{"BEAN_DATA_ROASTING_TYPE" | translate}}</ion-label>
+
+      <ion-select #bean_roasting_type="ngModel" [(ngModel)]="data.bean_roasting_type" cancelText="{{'CANCEL'| translate }}" name="bean_roasting_type"
+                  okText="{{'CHOOSE'| translate }}"
+                  placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROASTING_TYPE' | translate}}"
+                  style="padding-left:0px!important;width: 100%; min-width: 100%;">
+        <ion-select-option *ngFor="let key of beanRoastingTypeEnum | keys" value="{{key}}">{{beanRoastingTypeEnum[key]}}</ion-select-option>
+      </ion-select>
+    </ion-item>
   <ion-item>
     <ion-label position="stacked">{{"BEAN_DATA_AROMATICS" | translate}}</ion-label>
     <ion-input #aromatics="ngModel" [(ngModel)]="data.aromatics" name="aromatics"
@@ -102,6 +112,22 @@
                autocapitalize="off" inputmode="decimal">
     </ion-input>
   </ion-item>
+    <ion-item>
+      <ion-label position="stacked">{{"BEAN_DATA_DECAFFEINATED" | translate}}</ion-label>
+      <ion-checkbox #decaffeinated="ngModel" [(ngModel)]="data.decaffeinated" name="decaffeinated"></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">{{"BEAN_DATA_URL" | translate}}</ion-label>
+      <ion-input #url="ngModel" [(ngModel)]="data.url" autocapitalize="sentences" name="ean_article_number" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_URL' | translate}}"
+                 spellcheck="false" type="text">
+      </ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">{{"BEAN_DATA_EAN" | translate}}</ion-label>
+      <ion-input #ean_article_number="ngModel" [(ngModel)]="data.ean_article_number" autocapitalize="sentences" name="ean_article_number" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_EAN' | translate}}"
+                 spellcheck="false" type="text">
+      </ion-input>
+    </ion-item>
   <ion-item>
     <ion-label position="stacked">{{"FINISHED"|translate}}?</ion-label>
     <ion-checkbox [(ngModel)]="data.finished"></ion-checkbox>
@@ -167,7 +193,7 @@
     <ion-item>
       <ion-label position="stacked">{{"BEAN_DATA_ELEVATION" | translate}}</ion-label>
       <ion-input #elevation="ngModel" [(ngModel)]="beanInformation.elevation" autocapitalize="sentences"
-                 name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_COUNTRY' | translate}}" spellcheck="false"
+                 name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ELEVATION' | translate}}" spellcheck="false"
                  type="text">
       </ion-input>
     </ion-item>

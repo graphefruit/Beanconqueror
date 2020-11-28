@@ -1,7 +1,0 @@
-export enum BEAN_PREPARATION_TYPE_ENUM {
-
-  FILTER = 'FILTER',
-  ESPRESSO = 'ESPRESSO',
-  OMNI = 'OMNI',
-  UNKOWN = 'UNKOWN'
-}

@@ -15,6 +15,7 @@ import {TranslateService} from '@ngx-translate/core';
 import moment from 'moment';
 import {IBeanInformation} from '../../../interfaces/bean/iBeanInformation';
 import {NgxStarsComponent} from 'ngx-stars';
+import {BEAN_ROASTING_TYPE_ENUM} from '../../../enums/beans/beanRoastingType';
 
 @Component({
   selector: 'beans-add',
@@ -29,7 +30,7 @@ export class BeansAddComponent implements OnInit {
   private readonly bean_template: Bean;
   public roastsEnum = ROASTS_ENUM;
   public mixEnum = BEAN_MIX_ENUM;
-
+  public beanRoastingTypeEnum = BEAN_ROASTING_TYPE_ENUM;
   @Input() private hide_toast_message: boolean;
 
 
@@ -51,6 +52,7 @@ export class BeansAddComponent implements OnInit {
                private readonly platform: Platform) {
     // this.data.roastingDate = new Date().toISOString();
     this.bean_template = this.navParams.get('bean_template');
+    console.log('test');
   }
 
   public onRoasterSearchChange(event: any) {
@@ -83,8 +85,8 @@ export class BeansAddComponent implements OnInit {
   }
   public onRoasterSearchLeave($event) {
     setTimeout(() => {
-      //this.roasterResultsAvailable = false;
-      //this.roasterResults = [];
+      this.roasterResultsAvailable = false;
+      this.roasterResults = [];
     },150);
 
   }
@@ -188,14 +190,23 @@ export class BeansAddComponent implements OnInit {
     }
     this.data.roast = _bean.roast;
     this.data.beanMix = _bean.beanMix;
-    this.data.variety = _bean.variety;
-    this.data.country = _bean.country;
+
     // tslint:disable-next-line
     this.data.roast_custom = _bean.roast_custom;
     this.data.aromatics = _bean.aromatics;
     this.data.weight = _bean.weight;
     this.data.finished = false;
     this.data.cost = _bean.cost;
+
+    this.data.bean_roasting_type = _bean.bean_roasting_type;
+    this.data.decaffeinated = _bean.decaffeinated;
+    this.data.url = _bean.url;
+    this.data.ean_article_number = _bean.ean_article_number;
+
+    this.data.bean_information = _bean.bean_information;
+    this.data.cupping_points = _bean.cupping_points;
+    this.data.roast_range = _bean.roast_range;
+
 
     const copyAttachments = [];
     for (const attachment of _bean.attachments) {
