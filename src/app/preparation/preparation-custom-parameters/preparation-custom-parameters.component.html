@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>{{"EDIT_BEAN" | translate}}</ion-title>
+    <ion-title>{{"EDIT_PREPARATION_CUSTOM_PARAMETERS" | translate}}</ion-title>
     <ion-buttons slot="start">
       <ion-button (click)="dismiss()" class="big-icon-only">
         <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
@@ -9,12 +9,15 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <div class="ion-padding-horizontal ion-margin-bottom">
-    <ion-item>
-      <ion-label>{{"PAGE_SETTINGS_ANALYTICS_INFORMATION" | translate}}</ion-label>
+
+  <ion-card>
+    <ion-card-content>
+    <ion-item lines="none">
+      <ion-label>{{"ENABLE_PREPARATION_CUSTOM_PARAMETERS" | translate}}</ion-label>
       <ion-checkbox [(ngModel)]="data.use_custom_parameters" ></ion-checkbox>
     </ion-item>
-  </div>
+    </ion-card-content>
+  </ion-card>
   <div *ngIf="data.use_custom_parameters">
   <ion-segment [(ngModel)]="segment" >
     <ion-segment-button value="manage">

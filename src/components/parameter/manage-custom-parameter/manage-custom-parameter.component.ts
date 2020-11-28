@@ -6,6 +6,7 @@ import {UIAnalytics} from '../../../services/uiAnalytics';
 import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 import {Preparation} from '../../../classes/preparation/preparation';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
+import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
 
 @Component({
   selector: 'manage-custom-parameter',
@@ -36,6 +37,24 @@ export class ManageCustomParameterComponent implements OnInit {
 
   public triggerChanges(_query): void {
     this.debounceChanges.next(_query);
+  }
+  public isPreparation(): boolean {
+    return this.data instanceof Preparation;
+  }
+
+  public firstDripDisabled(): boolean {
+    if (this.isPreparation()) {
+      const prep: Preparation = this.data as Preparation;
+      return (prep.style_type !== PREPARATION_STYLE_TYPE.ESPRESSO);
+    }
+    return false;
+  }
+  public brewQuantityDisabled(): boolean {
+   if (this.isPreparation()) {
+     const prep: Preparation = this.data as Preparation;
+     return (prep.style_type === PREPARATION_STYLE_TYPE.ESPRESSO);
+   }
+   return false;
   }
 
   public save(): void {

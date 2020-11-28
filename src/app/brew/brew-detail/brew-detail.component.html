@@ -8,75 +8,132 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content>
+<ion-content *ngIf="loaded">
 
-  <ion-card *ngIf="showSectionBeforeBrew()" class="ion-margin-horizontal popover" style="display:flex; flex-direction: column;">
+  <ion-card *ngIf=" showSectionBeforeBrew()" class="ion-margin-horizontal popover" style="display:flex; flex-direction: column;">
 
       <ion-item lines="none">
         <span class="ion-title ion-padding-top">{{"BREW_HEADER_BEFORE_BREW" | translate }}</span>
       </ion-item>
-      <ion-item *ngIf="settings.grind_size === true" [style.order]="settings.brew_order.before.grind_size">
+      <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.grind_size,
+                      data.getPreparation().manage_parameters.grind_size,
+                      data.getPreparation().use_custom_parameters)"
+
+                [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.grind_size,
+                      data.getPreparation().brew_order.before.grind_size,
+                      data.getPreparation().use_custom_parameters)">
       <ion-label>
         <h2>{{"BREW_DATA_GRIND_SIZE" | translate}}:</h2>
         <h3>{{data.grind_size}}</h3>
       </ion-label>
     </ion-item>
-      <ion-item *ngIf="settings.grind_weight === true" [style.order]="settings.brew_order.before.grind_weight">
+      <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.grind_weight,
+                      data.getPreparation().manage_parameters.grind_weight,
+                      data.getPreparation().use_custom_parameters)"
+
+                [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.grind_weight,
+                      data.getPreparation().brew_order.before.grind_weight,
+                      data.getPreparation().use_custom_parameters)">
       <ion-label>
         <h2>{{"BREW_DATA_GRIND_WEIGHT" | translate}}:</h2>
         <h3>{{data.grind_weight}}</h3>
       </ion-label>
     </ion-item>
-      <ion-item *ngIf="settings.brew_temperature === true" [style.order]="settings.brew_order.before.brew_temperature">
+      <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.brew_temperature,
+                      data.getPreparation().manage_parameters.brew_temperature,
+                      data.getPreparation().use_custom_parameters)"
+
+                [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.brew_temperature,
+                      data.getPreparation().brew_order.before.brew_temperature,
+                      data.getPreparation().use_custom_parameters)">
       <ion-label>
         <h2>{{"BREW_DATA_BREW_TEMPERATURE" | translate}}:</h2>
         <h3>{{data.brew_temperature}}</h3>
       </ion-label>
     </ion-item>
-      <ion-item *ngIf="settings.method_of_preparation === true"
-                [style.order]="settings.brew_order.before.method_of_preparation">
+      <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.method_of_preparation,
+                      data.getPreparation().manage_parameters.method_of_preparation,
+                      data.getPreparation().use_custom_parameters)"
+
+                [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.method_of_preparation,
+                      data.getPreparation().brew_order.before.method_of_preparation,
+                      data.getPreparation().use_custom_parameters)">
       <ion-label>
         <h2>{{"BREW_DATA_PREPARATION_METHOD" | translate}}:</h2>
         <h3>{{data.getPreparation().name}}</h3>
       </ion-label>
     </ion-item>
-      <ion-item *ngIf="settings.bean_type === true" [style.order]="settings.brew_order.before.bean_type">
+      <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.bean_type,
+                      data.getPreparation().manage_parameters.bean_type,
+                      data.getPreparation().use_custom_parameters)"
+
+                [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.bean_type,
+                      data.getPreparation().brew_order.before.bean_type,
+                      data.getPreparation().use_custom_parameters)">
       <ion-label>
         <h2>{{"BREW_DATA_BEAN_TYPE" | translate}}:</h2>
         <h3>{{data.getBean().name}}</h3>
       </ion-label>
     </ion-item>
-      <ion-item *ngIf="data.getCalculatedBeanAge()>-1" [style.order]="settings.brew_order.before.bean_type">
+      <ion-item *ngIf="data.getCalculatedBeanAge()>-1" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.bean_type,
+                      data.getPreparation().brew_order.before.bean_type,
+                      data.getPreparation().use_custom_parameters)">
         <ion-label>
           <h2>{{"BREW_INFORMATION_BEAN_AGE" | translate}}:</h2>
           <h3>{{data.getCalculatedBeanAge()}}</h3>
         </ion-label>
       </ion-item>
-      <ion-item [style.order]="settings.brew_order.before.bean_type">
+      <ion-item [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.bean_type,
+                      data.getPreparation().brew_order.before.bean_type,
+                      data.getPreparation().use_custom_parameters)">
         <ion-label>
           <h2>{{"BREW_INFORMATION_BREW_RATIO"  | translate}}:</h2>
           <h3>{{data.getBrewRatio()}}</h3>
         </ion-label>
       </ion-item>
-      <ion-item *ngIf="settings.mill === true" [style.order]="settings.brew_order.before.mill">
+      <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.mill,
+                      data.getPreparation().manage_parameters.mill,
+                      data.getPreparation().use_custom_parameters)"
+
+                [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.mill,
+                      data.getPreparation().brew_order.before.mill,
+                      data.getPreparation().use_custom_parameters)">
       <ion-label>
         <h2>{{"BREW_DATA_MILL" | translate}}:</h2>
         <h3>{{data.getMill().name}}</h3>
       </ion-label>
     </ion-item>
-      <ion-item *ngIf="settings.mill_speed === true" [style.order]="settings.brew_order.before.mill_speed">
+      <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.mill_speed,
+                      data.getPreparation().manage_parameters.mill_speed,
+                      data.getPreparation().use_custom_parameters)"
+
+                [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.mill_speed,
+                      data.getPreparation().brew_order.before.mill_speed,
+                      data.getPreparation().use_custom_parameters)">
       <ion-label>
         <h2>{{"BREW_DATA_MILL_SPEED" | translate}}:</h2>
         <h3>{{data.mill_speed}}</h3>
       </ion-label>
     </ion-item>
-      <ion-item *ngIf="settings.mill_timer === true" [style.order]="settings.brew_order.before.mill_timer">
+      <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.mill_timer,
+                      data.getPreparation().manage_parameters.mill_timer,
+                      data.getPreparation().use_custom_parameters)"
+
+                [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.mill_timer,
+                      data.getPreparation().brew_order.before.mill_timer,
+                      data.getPreparation().use_custom_parameters)">
       <ion-label>
         <h2>{{"BREW_DATA_MILL_TIMER" | translate}}:</h2>
         <h3>{{data.mill_timer}}</h3>
       </ion-label>
     </ion-item>
-      <ion-item *ngIf="settings.pressure_profile === true" [style.order]="settings.brew_order.before.pressure_profile">
+      <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.pressure_profile,
+                      data.getPreparation().manage_parameters.pressure_profile,
+                      data.getPreparation().use_custom_parameters)"
+
+                [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.pressure_profile,
+                      data.getPreparation().brew_order.before.pressure_profile,
+                      data.getPreparation().use_custom_parameters)">
         <ion-label>
           <h2>{{"BREW_DATA_PRESSURE_PROFILE" | translate}}:</h2>
           <h3>{{data.pressure_profile}}</h3>
@@ -90,35 +147,61 @@
         <span class="ion-title ion-padding-top">{{"BREW_HEADER_WHILE_BREW" | translate }}</span>
       </ion-item>
 
-      <ion-item *ngIf="settings.brew_temperature_time === true"
-                [style.order]="settings.brew_order.while.brew_temperature_time">
+      <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.brew_temperature_time,
+                      data.getPreparation().manage_parameters.brew_temperature_time,
+                      data.getPreparation().use_custom_parameters)"
+
+                [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_temperature_time,
+                      data.getPreparation().brew_order.while.brew_temperature_time,
+                      data.getPreparation().use_custom_parameters)">
       <ion-label>
         <h2>{{'BREW_DATA_TEMPERATURE_TIME' | translate}} / {{'BREW_DATA_SURF_TIME' | translate}}:</h2>
         <h3>{{data.brew_temperature_time}}</h3>
       </ion-label>
     </ion-item>
-      <ion-item *ngIf="settings.brew_time === true" [style.order]="settings.brew_order.while.brew_time">
+      <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.brew_time,
+                      data.getPreparation().manage_parameters.brew_time,
+                      data.getPreparation().use_custom_parameters)"
+
+                [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
+                      data.getPreparation().brew_order.while.brew_time,
+                      data.getPreparation().use_custom_parameters)">
       <ion-label>
         <h2>{{'BREW_DATA_TIME' | translate}}:</h2>
         <h3>{{data.getFormattedBrewTime()}}</h3>
       </ion-label>
     </ion-item>
-    <ion-item *ngIf="settings.brew_time === true && settings.coffee_first_drip_time === true  && getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
-              [style.order]="settings.brew_order.while.brew_time" lines="full">
+    <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.brew_time && settings.manage_parameters.coffee_first_drip_time,
+                      data.getPreparation().manage_parameters.brew_time && data.getPreparation().manage_parameters.coffee_first_drip_time,
+                      data.getPreparation().use_custom_parameters) &&  data.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
+
+              [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
+                      data.getPreparation().brew_order.while.brew_time,
+                      data.getPreparation().use_custom_parameters)" lines="full">
       <ion-label>
         <h2>{{'BREW_DATA_CALCULATED_COFFEE_BREW_TIME' | translate}}:</h2>
         <h3>{{data.getFormattedCoffeeBrewTime()}}</h3>
       </ion-label>
     </ion-item>
-      <ion-item *ngIf="settings.coffee_blooming_time === true"
-                [style.order]="settings.brew_order.while.coffee_blooming_time">
+      <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_blooming_time,
+                      data.getPreparation().manage_parameters.coffee_blooming_time,
+                      data.getPreparation().use_custom_parameters)"
+
+                [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.coffee_blooming_time,
+                      data.getPreparation().brew_order.while.coffee_blooming_time,
+                      data.getPreparation().use_custom_parameters)">
       <ion-label>
         <h2>{{"BREW_DATA_COFFEE_BLOOMING_TIME" | translate}}:</h2>
         <h3>{{data.coffee_blooming_time}}</h3>
       </ion-label>
     </ion-item>
-    <ion-item *ngIf="settings.coffee_first_drip_time === true  && getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
-              [style.order]="settings.brew_order.while.coffee_first_drip_time">
+    <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_first_drip_time,
+                      data.getPreparation().manage_parameters.coffee_first_drip_time,
+                      data.getPreparation().use_custom_parameters) && data.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
+
+              [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.coffee_first_drip_time,
+                      data.getPreparation().brew_order.while.coffee_first_drip_time,
+                      data.getPreparation().use_custom_parameters)">
       <ion-label>
         <h2>{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}:</h2>
         <h3>{{data.coffee_first_drip_time}}</h3>
@@ -130,41 +213,76 @@
       <ion-item lines="none">
         <span class="ion-title ion-padding-top">{{"BREW_HEADER_AFTER_BREW" | translate }}</span>
       </ion-item>
-      <ion-item *ngIf="settings.brew_quantity === true && getPreparation().style_type === PREPARATION_STYLE_TYPE.POUR_OVER" [style.order]="settings.brew_order.after.brew_quantity">
+      <ion-item  *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.brew_quantity,
+                      data.getPreparation().manage_parameters.brew_quantity,
+                      data.getPreparation().use_custom_parameters) && data.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO"
+
+                 [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.after.brew_quantity,
+                      data.getPreparation().brew_order.after.brew_quantity,
+                      data.getPreparation().use_custom_parameters)">
       <ion-label>
         <h2>{{"BREW_DATA_BREW_QUANTITY" | translate}}:</h2>
         <h3>{{data.brew_quantity}} ({{data.getBrewQuantityTypeName()}})</h3>
       </ion-label>
     </ion-item>
-      <ion-item *ngIf="settings.coffee_type=== true" [style.order]="settings.brew_order.after.coffee_type">
+      <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_type,
+                      data.getPreparation().manage_parameters.coffee_type,
+                      data.getPreparation().use_custom_parameters)"
+
+                [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.after.coffee_type,
+                      data.getPreparation().brew_order.after.coffee_type,
+                      data.getPreparation().use_custom_parameters)">
       <ion-label>
         <h2>{{"BREW_DATA_COFFEE_TYPE" | translate}}
         </h2>
         <h3>{{data.coffee_type}}</h3>
       </ion-label>
     </ion-item>
-      <ion-item *ngIf="settings.coffee_concentration=== true"
-                [style.order]="settings.brew_order.after.coffee_concentration">
+      <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_concentration,
+                      data.getPreparation().manage_parameters.coffee_concentration,
+                      data.getPreparation().use_custom_parameters)"
+
+                [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.after.coffee_concentration,
+                      data.getPreparation().brew_order.after.coffee_concentration,
+                      data.getPreparation().use_custom_parameters)">
       <ion-label>
         <h2>{{"BREW_DATA_COFFEE_CONCENTRATION" | translate}}:</h2>
         <h3>{{data.coffee_concentration}}</h3>
       </ion-label>
     </ion-item>
-      <ion-item *ngIf="settings.rating === true" [style.order]="settings.brew_order.after.rating">
+      <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.rating,
+                      data.getPreparation().manage_parameters.rating,
+                      data.getPreparation().use_custom_parameters)"
+
+                [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.after.rating,
+                      data.getPreparation().brew_order.after.rating,
+                      data.getPreparation().use_custom_parameters)">
       <ion-label>
         <h2>{{"BREW_DATA_RATING" | translate }}:</h2>
         <h3>{{data.rating}}</h3>
       </ion-label>
 
     </ion-item>
-    <ion-item *ngIf="settings.brew_beverage_quantity === true" [style.order]="settings.brew_order.after.brew_beverage_quantity">
+    <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.brew_beverage_quantity,
+                      data.getPreparation().manage_parameters.brew_beverage_quantity,
+                      data.getPreparation().use_custom_parameters)"
+
+              [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.after.brew_beverage_quantity,
+                      data.getPreparation().brew_order.after.brew_beverage_quantity,
+                      data.getPreparation().use_custom_parameters)">
       <ion-label>
         <h2>{{"BREW_DATA_BREW_BEVERAGE_QUANTITY" | translate }}:</h2>
         <h3>{{data.brew_beverage_quantity}}&nbsp;({{data.getBrewBeverageQuantityTypeName()}})</h3>
       </ion-label>
 
     </ion-item>
-    <ion-item *ngIf="settings.tds === true" [style.order]="settings.brew_order.after.tds">
+    <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.tds,
+                      data.getPreparation().manage_parameters.tds,
+                      data.getPreparation().use_custom_parameters)"
+
+              [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.after.tds,
+                      data.getPreparation().brew_order.after.tds,
+                      data.getPreparation().use_custom_parameters)">
       <ion-label>
         <h2>{{"BREW_DATA_TDS" | translate }}:</h2>
         <h3>{{data.tds}}</h3>
@@ -172,14 +290,25 @@
 
     </ion-item>
 
-    <ion-item *ngIf="settings.tds === true && settings.grind_weight === true && settings.brew_quantity === true"
-              [style.order]="settings.brew_order.after.tds" disabled="true" lines="inset">
+    <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.grind_weight && settings.manage_parameters.brew_quantity,
+                      data.getPreparation().manage_parameters.grind_weight && data.getPreparation().manage_parameters.brew_quantity,
+                      data.getPreparation().use_custom_parameters)"
+
+              [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.after.tds,
+                      data.getPreparation().brew_order.after.tds,
+                      data.getPreparation().use_custom_parameters)"disabled="true" lines="inset">
       <ion-label>
         <h2>{{"BREW_DATA_CALCULATED_EXTRACTION_YIELD" | translate }}:</h2>
         <h3>{{data.getExtractionYield()}}</h3>
       </ion-label>
     </ion-item>
-      <ion-item *ngIf="settings.note === true" [style.order]="settings.brew_order.after.note">
+      <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.note,
+                      data.getPreparation().manage_parameters.note,
+                      data.getPreparation().use_custom_parameters)"
+
+                [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.after.note,
+                      data.getPreparation().brew_order.after.note,
+                      data.getPreparation().use_custom_parameters)">
       <ion-label>
         <h2>{{"BREW_DATA_NOTES" | translate }}:</h2>
         <pre>{{data.note}}</pre>

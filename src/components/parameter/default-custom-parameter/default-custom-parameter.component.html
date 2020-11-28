@@ -69,8 +69,11 @@
     <ion-checkbox (ngModelChange)="save()"
                   [(ngModel)]="data.default_last_coffee_parameters.brew_time"></ion-checkbox>
   </ion-item>
-  <ion-item tappable>
-    <ion-label>{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}</ion-label>
+  <ion-item [disabled]="firstDripDisabled()" tappable>
+    <ion-label>
+      <h2>{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}</h2>
+      <p>{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME_TOOLTIP" | translate}}</p>
+    </ion-label>
     <ion-checkbox (ngModelChange)="save()"
                   [(ngModel)]="data.default_last_coffee_parameters.coffee_first_drip_time"></ion-checkbox>
   </ion-item>
@@ -83,8 +86,11 @@
 <ion-card *ngIf="data.manage_parameters.set_last_coffee_brew==true" class="ion-padding">
 
   <ion-title class="ion-padding-top">{{"SORT_PARAMETERS_AFTER" | translate  }}</ion-title>
-  <ion-item tappable>
-    <ion-label>{{"BREW_DATA_BREW_QUANTITY" | translate}}</ion-label>
+  <ion-item [disabled]="brewQuantityDisabled()" tappable>
+    <ion-label>
+      <h2>{{"BREW_DATA_BREW_QUANTITY" | translate}}</h2>
+      <p>{{"BREW_DATA_BREW_QUANTITY_TOOLTIP" | translate}}</p>
+    </ion-label>
     <ion-checkbox (ngModelChange)="save()"
                   [(ngModel)]="data.default_last_coffee_parameters.brew_quantity"></ion-checkbox>
   </ion-item>

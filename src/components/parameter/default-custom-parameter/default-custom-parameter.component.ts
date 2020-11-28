@@ -5,6 +5,7 @@ import {UIAnalytics} from '../../../services/uiAnalytics';
 
 import {Preparation} from '../../../classes/preparation/preparation';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
+import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
 
 
 @Component({
@@ -25,6 +26,25 @@ export class DefaultCustomParameterComponent implements OnInit {
   public ngOnInit() {
   }
 
+  public isPreparation() {
+    return this.data instanceof Preparation;
+  }
+
+  public firstDripDisabled(): boolean {
+    if (this.isPreparation()) {
+      const prep: Preparation = this.data as Preparation;
+      return (prep.style_type !== PREPARATION_STYLE_TYPE.ESPRESSO);
+    }
+    return false;
+  }
+
+  public brewQuantityDisabled(): boolean {
+    if (this.isPreparation()) {
+      const prep: Preparation = this.data as Preparation;
+      return (prep.style_type === PREPARATION_STYLE_TYPE.ESPRESSO);
+    }
+    return false;
+  }
   public save(): void {
     this.changeDetectorRef.detectChanges();
     if (this.data instanceof Settings) {

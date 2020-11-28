@@ -146,9 +146,9 @@
   "BREW_INFORMATION_BREW_QUANTITY_TYPE_NAME": "Bezugsmenge-Typ",
   "ONE_DAY": "Tag",
   "DAYS": "Tage",
-  "ONE_HOUR": "Eine Stunde",
+  "ONE_HOUR": "Stunde",
   "HOURS": "Stunden",
-  "ONE_MINUTE": "Eine Minute",
+  "ONE_MINUTE": "Minute",
   "MINUTES": "Minuten",
   "WITHOUT_COFFEE": "ohne Kaffee",
   "NOT_FOUND": "Nicht gefunden",
@@ -426,8 +426,13 @@
   "CUSTOM_SORT_PARAMETERS": "Sortieren",
   "BREW_PARAMETER_CUSTOMIZE_TITLE": "Individuelle Parameter pro Zubereitungsart",
   "BREW_PARAMETER_CUSTOMIZE_DESCRIPTION": "Du willst für einzelne Zubereitungsarten verschiedene Parameter festlegen? Navigiere dazu zum Menüpunkt \"Zubereitung\", öffne das Menü der entsprechenden Zubereitungsart und klicke auf \"Parameter individualisieren\". Lege nun fest, welche Parameter nur für diese Zubereitungsmethode erfasst werden sollen!",
-  "BREW_DATA_BREW_QUANTITY_TOOLTIP": "Wassermenge nur für Filterkaffee",
+  "BREW_DATA_BREW_QUANTITY_TOOLTIP": "Wassermenge nicht nutzbar für Espresso",
+  "BREW_DATA_COFFEE_FIRST_DRIP_TIME_TOOLTIP": "Erster Kaffeetropfen nur für Espresso nutzbar",
   "BREW_DATA_PREPARATION_METHOD_TOOLTIP": "Zubereitungsmethode wird nur individualisierbar wenn aktiviert",
-  "PAGE_SETTINGS_GENERAL": "Allgemeine Einstellungen"
-
+  "PAGE_SETTINGS_GENERAL": "Allgemeine Einstellungen",
+  "EDIT_PREPARATION_CUSTOM_PARAMETERS": "Parameter individualisieren",
+  "ENABLE_PREPARATION_CUSTOM_PARAMETERS": "Benutze individuelle Parameter",
+  "BEAN_ADD_ANOTHER_SORT": "Weitere Sorten hinzufügen",
+  "BEAN_SORT": "Sorte",
+  "NAVIGATE_TO_PREPARATION_METHODS": "Zu den Zubereitungsmethoden"
 }

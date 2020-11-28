@@ -204,7 +204,7 @@ export class Brew implements IBrew {
 
   public getExtractionYield(): string {
     const grindWeight: number = this.grind_weight;
-    let brewQuantity: number = this.brew_beverage_quantity;
+    const brewQuantity: number = this.brew_beverage_quantity;
     const tds: number = this.tds;
 
 
@@ -213,7 +213,11 @@ export class Brew implements IBrew {
   }
 
   private toFixedIfNecessary( value, dp ){
-    return +parseFloat(value).toFixed( dp );
+    const parsedFloat = parseFloat(value);
+    if (isNaN(parsedFloat)) {
+      return 0;
+    }
+    return +parsedFloat.toFixed( dp );
   }
 
 

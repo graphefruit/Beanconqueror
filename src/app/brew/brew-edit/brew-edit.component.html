@@ -225,7 +225,7 @@
     </ion-item>
     <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.brew_quantity,
                       data.getPreparation().manage_parameters.brew_quantity,
-                      data.getPreparation().use_custom_parameters) && data.getPreparation().style_type === PREPARATION_STYLE_TYPE.POUR_OVER"
+                      data.getPreparation().use_custom_parameters) && data.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO"
 
               [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.after.brew_quantity,
                       data.getPreparation().brew_order.after.brew_quantity,

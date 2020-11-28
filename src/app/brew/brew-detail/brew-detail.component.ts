@@ -8,6 +8,7 @@ import {Settings} from '../../../classes/settings/settings';
 import {Preparation} from '../../../classes/preparation/preparation';
 import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
 import {UIAnalytics} from '../../../services/uiAnalytics';
+import {UIBrewHelper} from '../../../services/uiBrewHelper';
 
 @Component({
   selector: 'brew-detail',
@@ -23,11 +24,13 @@ export class BrewDetailComponent implements OnInit {
 
 
   private brew: IBrew;
+  private loaded:boolean = false;
   constructor (private readonly modalController: ModalController,
                private readonly navParams: NavParams,
                public uiHelper: UIHelper,
                private readonly uiSettingsStorage: UISettingsStorage,
-               private readonly uiAnalytics: UIAnalytics) {
+               private readonly uiAnalytics: UIAnalytics,
+               private readonly uiBrewHelper: UIBrewHelper) {
 
     this.settings = this.uiSettingsStorage.getSettings();
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
@@ -42,6 +45,7 @@ export class BrewDetailComponent implements OnInit {
       const copy: IBrew = this.uiHelper.copyData(this.brew);
       this.data.initializeByObject(copy);
     }
+    this.loaded = true;
   }
 
 

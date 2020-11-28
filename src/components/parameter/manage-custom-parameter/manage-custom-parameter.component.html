@@ -18,11 +18,11 @@
     <ion-checkbox (ngModelChange)="triggerChanges($event)"
                   [(ngModel)]="data.manage_parameters.method_of_preparation"></ion-checkbox>
   </ion-item>
-  <ion-item tappable>
+  <ion-item [disabled]="true"  tappable>
     <ion-label>{{"BREW_DATA_BEAN_TYPE" | translate}}</ion-label>
     <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.bean_type"></ion-checkbox>
   </ion-item>
-  <ion-item tappable>
+  <ion-item [disabled]="true" tappable>
     <ion-label>{{"BREW_DATA_MILL" | translate}}</ion-label>
     <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.mill"></ion-checkbox>
   </ion-item>
@@ -50,8 +50,11 @@
     <ion-label>{{"BREW_DATA_TIME" | translate}}</ion-label>
     <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.brew_time"></ion-checkbox>
   </ion-item>
-  <ion-item tappable>
-    <ion-label>{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}</ion-label>
+  <ion-item [disabled]="firstDripDisabled()" tappable>
+    <ion-label>
+      <h2>{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}</h2>
+      <p>{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME_TOOLTIP" | translate}}</p>
+    </ion-label>
     <ion-checkbox (ngModelChange)="triggerChanges($event)"
                   [(ngModel)]="data.manage_parameters.coffee_first_drip_time"></ion-checkbox>
   </ion-item>
@@ -63,7 +66,7 @@
 </ion-card>
 <ion-card class="ion-padding">
   <ion-title class="ion-padding-top">{{"SORT_PARAMETERS_AFTER" | translate  }}</ion-title>
-  <ion-item tappable>
+  <ion-item [disabled]="brewQuantityDisabled()" tappable>
     <ion-label>
       <h2>{{"BREW_DATA_BREW_QUANTITY" | translate}}</h2>
       <p>{{"BREW_DATA_BREW_QUANTITY_TOOLTIP" | translate}}</p>

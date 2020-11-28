@@ -31,7 +31,11 @@
   <ion-card class="ion-padding">
     <ion-card-title>{{"BREW_PARAMETER_CUSTOMIZE_TITLE" | translate}}</ion-card-title>
     <ion-card-content class="ion-no-padding">
-{{"BREW_PARAMETER_CUSTOMIZE_DESCRIPTION" | translate}}
+      {{"BREW_PARAMETER_CUSTOMIZE_DESCRIPTION" | translate}}
     </ion-card-content>
+    <ion-item [routerLink]="['/home/preparations']" detail="true" lines="none"
+              replaceUrl="true" >
+      {{"NAVIGATE_TO_PREPARATION_METHODS" | translate}}
+    </ion-item>
   </ion-card>
 </ion-content>

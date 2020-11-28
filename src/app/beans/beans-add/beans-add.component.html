@@ -155,12 +155,16 @@
   </ion-card>
 
   <ion-card *ngFor="let beanInformation of this.data.bean_information;let first = first;let i = index;let last = last;">
-    <ion-card-header *ngIf="!first" class="ion-no-padding">
+    <ion-card-header class="ion-no-padding ion-padding-top">
       <ion-item lines="none">
-        <ion-button (click)="deleteSortInformation(i)" fill="clear" slot="end" tappable>
+        <ion-title *ngIf="data.beanMix.toString() === 'BLEND'" class="ion-no-padding" slot="start">{{"BEAN_SORT" | translate}}&nbsp;-&nbsp;{{i+1}}</ion-title>
+        <ion-title *ngIf="data.beanMix.toString() !== 'BLEND'" class="ion-no-padding" slot="start">{{"BEAN_SORT" | translate}}</ion-title>
+        <ion-button (click)="deleteSortInformation(i)" *ngIf="!first" fill="clear" slot="end" tappable>
           <ion-icon color="primary" name="trash-outline" slot="icon-only"></ion-icon>
         </ion-button>
       </ion-item>
+      <hr/>
+
     </ion-card-header>
 
     <ion-item>
@@ -226,12 +230,14 @@
                  type="text">
       </ion-input>
     </ion-item>
-
-
-    <ion-item *ngIf="last && data.beanMix.toString() === 'BLEND'">
-      <ion-button (click)="addAnotherSort()">Weitere Sorte hinzufügen</ion-button>
-    </ion-item>
   </ion-card>
+
+
+  <ion-button (click)="addAnotherSort()" *ngIf="(data.beanMix.toString() === 'BLEND')" add-brew color="accent" expand="block">
+    <ion-icon name="beanconqueror-dashboard-add-fill" size="large" slot="start"></ion-icon>
+    <span class="ion-text-bold" slot="end">{{"BEAN_ADD_ANOTHER_SORT" | translate}}</span>
+  </ion-button>
+
 </ion-content>
 <ion-footer class="ion-no-border">
   <ion-row>

@@ -51,6 +51,15 @@ export class PreparationAddTypeComponent implements OnInit {
   }
 
   public __addPreparation(): void {
+    if (this.data.style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
+      this.data.manage_parameters.brew_beverage_quantity = true;
+      this.data.default_last_coffee_parameters.brew_beverage_quantity = true;
+      this.data.manage_parameters.brew_quantity = false;
+      this.data.default_last_coffee_parameters.brew_quantity = false;
+    } else {
+      this.data.manage_parameters.coffee_first_drip_time = false;
+      this.data.default_last_coffee_parameters.coffee_first_drip_time = false;
+    }
     this.uiPreparationStorage.add(this.data);
     this.dismiss(true);
     if (!this.hide_toast_message) {
