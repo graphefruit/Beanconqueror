@@ -244,6 +244,7 @@
   "BREW_HEADER_BEFORE_BREW": "Vor der Zubereitung",
   "BREW_HEADER_WHILE_BREW": "Während der Zubereitung",
   "BREW_HEADER_AFTER_BREW": "Nach der Zubereitung",
+  "BREW_HEADER_CUPPING": "Cupping",
   "BEANS_CONSUMED": "Bohnen aufgebraucht",
   "NAV_MANAGE_PARAMETERS": "Parameter verwalten",
   "NAV_SORT_PARAMETERS": "Parameter sortieren",
