@@ -140,6 +140,22 @@
                    placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PRESSURE_PROFILE' | translate}}" type="text"></ion-input>
       </ion-item>
 
+    <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.method_of_preparation_tool,
+                      data.getPreparation().manage_parameters.method_of_preparation_tool,
+                      data.getPreparation().use_custom_parameters)"
+
+              [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.method_of_preparation_tool,
+                      data.getPreparation().brew_order.before.method_of_preparation_tool,
+                      data.getPreparation().use_custom_parameters)"
+              lines="inset">
+      <ion-label position="stacked">{{"BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}</ion-label>
+      <ion-select [(ngModel)]="data.method_of_preparation_tools" color="accent"  multiple="true" placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD_TOOL' | translate}}">
+        <ion-select-option *ngFor="let tool of data.getPreparation().tools" value="{{tool.config.uuid}}">{{tool.name}}</ion-select-option>
+      </ion-select>
+
+    </ion-item>
+
+
     <div class="last-item"></div>
   </ion-card>
   <ion-card *ngIf="showSectionWhileBrew()"

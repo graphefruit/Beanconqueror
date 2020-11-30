@@ -129,9 +129,17 @@ export class UIUpdate {
       this.uiSettingsStorage.saveSettings(settings);
 
     }
-    if (settings.brew_order.after.brew_beverage_quantity === null || settings.brew_order.after.brew_beverage_quantity === undefined) {
+    if (settings.brew_order.after.brew_beverage_quantity === null ||
+      settings.brew_order.after.brew_beverage_quantity === undefined) {
       const newSettingsObj: Settings = new Settings();
       settings.brew_order.after.brew_beverage_quantity = newSettingsObj.brew_order.after.brew_beverage_quantity;
+      this.uiSettingsStorage.saveSettings(settings);
+    }
+
+    if (settings.brew_order.before.method_of_preparation_tool === null ||
+      settings.brew_order.before.method_of_preparation_tool === undefined) {
+      const newSettingsObj: Settings = new Settings();
+      settings.brew_order.before.method_of_preparation_tool = newSettingsObj.brew_order.before.method_of_preparation_tool;
       this.uiSettingsStorage.saveSettings(settings);
     }
 

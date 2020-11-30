@@ -19,8 +19,11 @@
           <ion-select-option value="{{PREPARATION_STYLE_TYPE.PERCOLATION}}">{{"PREPARATION_STYLE_PERCOLATION" | translate}}</ion-select-option>
         </ion-select>
       </ion-item>
-      <ion-item>
+      <ion-item lines="none">
         <ion-label>{{"PREPARATION_TOOLS"}}</ion-label>
+      </ion-item>
+      <ion-item style="margin-top: -20px;">
+
         <ion-input [(ngModel)]="nextToolName" name="nextToolName" type="text"></ion-input>
 
         <ion-button (click)="addTool()" fill="clear" tappable>
@@ -30,7 +33,7 @@
       <div>
         <ion-chip (click)="deleteTool(tool)" *ngFor="let tool of data.tools;let i=index;">{{tool.name}} <ion-icon name="close"></ion-icon></ion-chip>
       </div>
-    </form>
+    </form> 
   </div>
 </ion-content>
 <ion-footer class="ion-no-border">

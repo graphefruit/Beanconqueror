@@ -26,4 +26,5 @@ export interface IManageBrewParameter {
   set_last_coffee_brew: boolean;
 
   set_custom_brew_time: boolean;
+  method_of_preparation_tool: boolean;
 }

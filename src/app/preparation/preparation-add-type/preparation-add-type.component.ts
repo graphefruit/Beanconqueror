@@ -83,28 +83,14 @@ export class PreparationAddTypeComponent implements OnInit {
   }
 
   public addTool() {
-    const newChip = this.nextToolName;
-    if (newChip.trim() !== '') {
-      const prepTool: PreparationTool = new PreparationTool();
-      prepTool.name = newChip;
-      prepTool.config.uuid = this.uiHelper.generateUUID();
-      prepTool.config.unix_timestamp = this.uiHelper.getUnixTimestamp();
-      this.data.tools.push(prepTool);
-      this.nextToolName = '';
-    }
+     const added: boolean = this.data.addTool(this.nextToolName);
+     if (added) {
+       this.nextToolName = '';
+     }
   }
 
   public deleteTool(_tool: PreparationTool) {
-    const tool: PreparationTool = _tool as PreparationTool;
-    for(let i = 0; i < this.data.tools.length; i++){
-
-      if ( this.data.tools[i].config.uuid === tool.config.uuid) {
-
-        this.data.tools.splice(i, 1);
-        break;
-      }
-
-    }
+    this.data.deleteTool(_tool);
   }
 
 

@@ -70,6 +70,7 @@ export class Brew implements IBrew {
 
   public cupping: ICupping;
 
+  public method_of_preparation_tools: Array<string>;
   constructor() {
 
     this.grind_size = '';
@@ -121,6 +122,8 @@ export class Brew implements IBrew {
       wet_aroma: 0,
       notes: '',
     };
+
+    this.method_of_preparation_tools = [];
 
   }
 
@@ -314,35 +317,7 @@ export class Brew implements IBrew {
     return undefined;
   }
 
-  /** @deprecated */
-  public getRatingIcon(_rating?: number): string {
-    if (_rating === undefined) {
-      _rating = this.rating;
-    }
 
-    if (_rating > 5) {
-      _rating = 5;
-    }
-    switch (_rating) {
-      case -1:
-        return 'beanconqueror-emoji--1';
-      case 0:
-        return 'beanconqueror-emoji-0';
-      case 1:
-        return 'beanconqueror-emoji-1';
-      case 2:
-        return 'beanconqueror-emoji-2';
-      case 3:
-        return 'beanconqueror-emoji-3';
-      case 4:
-        return 'beanconqueror-emoji-4';
-      case 5:
-        return 'beanconqueror-emoji-5';
-      default:
-        return 'beanconqueror-emoji-0';
-    }
-
-  }
 
   /**
    * Sorry for this, but angular hates inputs which are string and needs numbers

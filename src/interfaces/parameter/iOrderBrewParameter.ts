@@ -12,6 +12,7 @@ export interface IOrderBrewParameter {
     mill_speed: number;
     mill_timer: number;
     pressure_profile: number;
+    method_of_preparation_tool: number;
   };
 
   while: {

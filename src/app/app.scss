@@ -633,6 +633,9 @@ ion-menu:host .menu-inner {
     word-wrap:break-spaces!important;
     white-space: break-spaces!important;
   }
+  ion-chip {
+    height:100%;
+  }
 }
 
 .color-white {

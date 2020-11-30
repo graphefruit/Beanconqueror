@@ -26,6 +26,7 @@ export class ManageBrewParameter implements IManageBrewParameter {
   public attachments: boolean;
   public set_last_coffee_brew: boolean;
   public set_custom_brew_time: boolean;
+  public method_of_preparation_tool: boolean;
 
   constructor() {
     this.bean_type = true;
@@ -52,5 +53,6 @@ export class ManageBrewParameter implements IManageBrewParameter {
     this.attachments = false;
     this.set_last_coffee_brew = false;
     this.set_custom_brew_time = false;
+    this.method_of_preparation_tool = false;
   }
 }

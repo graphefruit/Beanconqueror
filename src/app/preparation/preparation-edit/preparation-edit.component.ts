@@ -9,6 +9,7 @@ import {PREPARATION_TYPES} from '../../../enums/preparations/preparationTypes';
 import {UIToast} from '../../../services/uiToast';
 import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
 import {PreparationTool} from '../../../classes/preparation/preparationTool';
+import {UIAlert} from '../../../services/uiAlert';
 
 @Component({
   selector: 'preparation-edit',
@@ -27,7 +28,8 @@ export class PreparationEditComponent implements OnInit {
                private readonly uiPreparationStorage: UIPreparationStorage,
                private readonly uiHelper: UIHelper,
                private readonly uiAnalytics: UIAnalytics,
-               private readonly uiToast: UIToast) {
+               private readonly uiToast: UIToast,
+               private readonly uiAlert: UIAlert) {
 
   }
 
@@ -70,28 +72,20 @@ export class PreparationEditComponent implements OnInit {
     }, undefined, 'preparation-edit');
   }
   public addTool() {
-    const newChip = this.nextToolName;
-    if (newChip.trim() !== '') {
-      const prepTool: PreparationTool = new PreparationTool();
-      prepTool.name = newChip;
-      prepTool.config.uuid = this.uiHelper.generateUUID();
-      prepTool.config.unix_timestamp = this.uiHelper.getUnixTimestamp();
-      this.data.tools.push(prepTool);
+    const added: boolean = this.data.addTool(this.nextToolName);
+    if (added) {
       this.nextToolName = '';
     }
   }
 
   public deleteTool(_tool: PreparationTool) {
-    const tool: PreparationTool = _tool as PreparationTool;
-    for(let i = 0; i < this.data.tools.length; i++){
+    this.uiAlert.showConfirm('DELETE_PREPARATION_TOOL_QUESTION', 'SURE_QUESTION', true).then(() => {
+        this.data.deleteTool(_tool);
+      },
+      () => {
+        // No
+      });
 
-      if ( this.data.tools[i].config.uuid === tool.config.uuid) {
-
-        this.data.tools.splice(i, 1);
-        break;
-      }
-
-    }
   }
 
   public ngOnInit() {}

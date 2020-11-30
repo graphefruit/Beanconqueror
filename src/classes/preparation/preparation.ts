@@ -8,6 +8,7 @@ import {DefaultBrewParameter} from '../parameter/defaultBrewParameter';
 import {OrderBrewParameter} from '../parameter/orderBrewParameter';
 import {ManageBrewParameter} from '../parameter/manageBrewParameter';
 import {PreparationTool} from './preparationTool';
+import {UIHelper} from '../../services/uiHelper';
 
 
 export class Preparation implements IPreparation {
@@ -120,6 +121,33 @@ export class Preparation implements IPreparation {
       default:
         return 'beanconqueror-preparation-custom';
     }
+  }
+
+  public addTool(_toolName: string): boolean {
+    const nextTool = _toolName;
+    if (nextTool.trim() !== '') {
+      const prepTool: PreparationTool = new PreparationTool();
+      prepTool.name = nextTool;
+      prepTool.config.uuid = UIHelper.generateUUID();
+      prepTool.config.unix_timestamp = UIHelper.getUnixTimestamp();
+      this.tools.push(prepTool);
+      return true;
+    }
+    return false;
+  }
+
+  public deleteTool(_tool: PreparationTool): boolean {
+    const tool: PreparationTool = _tool as PreparationTool;
+    for(let i = 0; i < this.tools.length; i++){
+
+      if ( this.tools[i].config.uuid === tool.config.uuid) {
+
+        this.tools.splice(i, 1);
+        return true;
+      }
+
+    }
+    return false;
   }
 
 }

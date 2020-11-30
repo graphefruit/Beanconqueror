@@ -141,6 +141,7 @@
   "BREW_DATA_CALCULATED_EXTRACTION_YIELD": "Extraction Yield %",
   "BREW_DATA_TDS_EY": "TDS / %EY",
   "BREW_DATA_BREW_BEVERAGE_QUANTITY": "Getränkmenge (gr/ml)",
+  "BREW_DATA_PREPARATION_METHOD_TOOL": "Brühmethoden Tools",
   "BREW_INFORMATION_BREW_RATIO": "Brührate",
   "BREW_INFORMATION_BEAN_AGE": "Bohnenalter (Tage)",
   "BREW_INFORMATION_BREW_QUANTITY_TYPE_NAME": "Bezugsmenge-Typ",
@@ -167,6 +168,7 @@
   "DELETE_BEAN_QUESTION": "Bohne löschen? Alle zugehörigen Brühungen werden mit entfernt.",
   "DELETE_MILL_QUESTION": "Mühle? Alle zugehörigen Brühungen werden hierdurch abgeändert.",
   "DELETE_PREPARATION_METHOD_QUESTION": "Brühmethode löschen? Alle zugehörigen Brühungen werden mit entfernt.",
+  "DELETE_PREPARATION_TOOL_QUESTION": "Zubereitungstool löschen? Alle zugehörigen Brühungen mit diesem Tool werden mit entfernt.",
   "APP_COULD_NOT_STARTED_CORRECTLY_BECAUSE_MISSING_FILESYSTEM": "Die App konnte nicht korrekt gestartet werden, da das Dateisystem nicht verfügbar ist",
   "CARE": "Achtung",
   "ERROR_OCCURED": "Fehler aufgetreten",
@@ -383,7 +385,8 @@
       "BREW_DATA_COFFEE_CONCENTRATION": "Gib deine Kaffeekonzentration ein (Yield o.ä.)",
       "BREW_DATA_TDS": "Wieviele Feststoffe wurden insgesamt gelöst?",
       "BREW_DATA_NOTES": "Füge Notizen zu dieser Brühung hinzu",
-      "BREW_DATA_BREW_BEVERAGE_QUANTITY": "Füge die engültige Getränkemenge hinzu"
+      "BREW_DATA_BREW_BEVERAGE_QUANTITY": "Füge die engültige Getränkemenge hinzu",
+      "BREW_DATA_PREPARATION_METHOD_TOOL": "Bitte wähle deine Brühmethoden tools aus"
     }
   },
   "ROASTED_BEFORE": "Geröstet vor",

@@ -1,9 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
   <g id="Gruppe_113" data-name="Gruppe 113" transform="translate(378.333 603.667)">
     <g id="Gruppe_8" data-name="Gruppe 8" transform="translate(-965.333 -922.667) rotate(180)">
-      <path id="bg" d="M20,0A20,20,0,1,1,0,20,20,20,0,0,1,20,0Z" transform="translate(-627 -359)" fill="#b88265"/>
+      <path id="bg" d="M20,0A20,20,0,1,1,0,20,20,20,0,0,1,20,0Z" transform="translate(-627 -359)" fill="#cdc2ac"/>
     </g>
-    <path id="icons8-pause" d="M12,8V21.652h4.015V8Zm6.424,0V21.652H22.44V8Z" transform="translate(-375 -598.652)"
-          fill="#fff"/>
+    <path id="icons8-pause" d="M12,8V21.652h4.015V8Zm6.424,0V21.652H22.44V8Z" transform="translate(-375 -598.652)" fill="#fff"/>
   </g>
 </svg>

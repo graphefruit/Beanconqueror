@@ -115,7 +115,12 @@ export interface IBrew {
 
   cupping: ICupping;
 
-  coordinates: IBrewCoordinates
+  coordinates: IBrewCoordinates;
+
+  /**
+   * Inherits list of all uuid of all preparation tools
+   */
+  method_of_preparation_tools: Array<string>;
 
   // Functions
   formateDate(): string;

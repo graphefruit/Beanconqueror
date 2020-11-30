@@ -8,9 +8,9 @@
       <feComposite in="SourceGraphic"/>
     </filter>
   </defs>
-  <g id="Komponente_16_11" data-name="Komponente 16 – 11" transform="translate(57 54) rotate(180)">
-    <g transform="matrix(-1, 0, 0, -1, 57, 54)" filter="url(#bg)">
-      <path id="bg-2" data-name="bg" d="M22.5,0A22.5,22.5,0,1,1,0,22.5,22.5,22.5,0,0,1,22.5,0Z" transform="translate(57 54) rotate(180)" fill="#cdc2ac"/>
+  <g id="Komponente_16_7" data-name="Komponente 16 – 7" transform="translate(12 9)">
+    <g transform="matrix(1, 0, 0, 1, -12, -9)" filter="url(#bg)">
+      <path id="bg-2" data-name="bg" d="M22.5,0A22.5,22.5,0,1,1,0,22.5,22.5,22.5,0,0,1,22.5,0Z" transform="translate(12 9)" fill="#cdc2ac"/>
     </g>
     <line id="Linie_7" data-name="Linie 7" x2="10.854" transform="translate(16.363 22.727)" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="3"/>
     <path id="Pfad_1319" data-name="Pfad 1319" d="M-4614.324-1438.94l5.139,5.462-5.139,5.462" transform="translate(4637.831 1456.265)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>

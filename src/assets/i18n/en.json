@@ -144,6 +144,7 @@
   "BREW_INFORMATION_BREW_QUANTITY_TYPE_NAME": "Quantity Type",
   "BREW_DATA_TDS_EY": "TDS / %EY",
   "BREW_DATA_BREW_BEVERAGE_QUANTITY": "Beverage quantity (gr/ml)",
+  "BREW_DATA_PREPARATION_METHOD_TOOL": "Preparation tools",
   "ONE_DAY": "Day",
   "DAYS": "Days",
   "ONE_HOUR": "hour",
@@ -167,6 +168,7 @@
   "DELETE_BEAN_QUESTION": "Delete bean description? All associated brews will be deleted as well!",
   "DELETE_MILL_QUESTION": "Delete grinder? All associated brews will be deleted as well!",
   "DELETE_PREPARATION_METHOD_QUESTION": "Delete preparation method? All associated brews will be deleted as well!",
+  "DELETE_PREPARATION_TOOL_QUESTION": "Delete preparation tool? All associated brews with this tool will also be deleted.",
   "APP_COULD_NOT_STARTED_CORRECTLY_BECAUSE_MISSING_FILESYSTEM": "App could not start correctly because of missing file system",
   "CARE": "Care",
   "ERROR_OCCURED": "An error occurred",
@@ -383,7 +385,8 @@
       "BREW_DATA_COFFEE_CONCENTRATION": "Enter the coffee concentration",
       "BREW_DATA_TDS": "How many solids where dissolved in total?",
       "BREW_DATA_NOTES": "Add notes about this brew",
-      "BREW_DATA_BREW_BEVERAGE_QUANTITY": "Add result of beverage quantity"
+      "BREW_DATA_BREW_BEVERAGE_QUANTITY": "Add result of beverage quantity",
+      "BREW_DATA_PREPARATION_METHOD_TOOL": "Please choose your preparation tools"
     }
   },
   "ROASTED_BEFORE": "Roasted before",

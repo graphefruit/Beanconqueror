@@ -14,6 +14,7 @@ export class OrderBrewParameter implements IOrderBrewParameter {
     mill_speed: number;
     mill_timer: number;
     pressure_profile: number;
+    method_of_preparation_tool: number;
   };
 
   public while: {
@@ -49,6 +50,7 @@ export class OrderBrewParameter implements IOrderBrewParameter {
       mill_speed: 7,
       mill_timer: 8,
       pressure_profile: 9,
+      method_of_preparation_tool: 10,
     };
 
     this.while = {
@@ -90,6 +92,8 @@ export class OrderBrewParameter implements IOrderBrewParameter {
         return 'BREW_DATA_NOTES';
       case 'method_of_preparation':
         return 'BREW_DATA_PREPARATION_METHOD';
+      case 'method_of_preparation_tool':
+        return 'BREW_DATA_PREPARATION_METHOD_TOOL';
       case 'mill':
         return 'BREW_DATA_MILL';
       case 'mill_speed':

@@ -38,6 +38,10 @@
     <ion-label>{{"BREW_DATA_PRESSURE_PROFILE" | translate}}</ion-label>
     <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.pressure_profile"></ion-checkbox>
   </ion-item>
+  <ion-item lines="none" tappable>
+    <ion-label>{{"BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.method_of_preparation_tool"></ion-checkbox>
+  </ion-item>
 </ion-card>
 <ion-card class="ion-padding">
   <ion-title class="ion-padding-top">{{"SORT_PARAMETERS_MEANWHILE" | translate  }}</ion-title>
