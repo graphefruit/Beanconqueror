@@ -14,7 +14,7 @@
     <ion-card-content>
     <ion-item lines="none">
       <ion-label>{{"ENABLE_PREPARATION_CUSTOM_PARAMETERS" | translate}}</ion-label>
-      <ion-checkbox [(ngModel)]="data.use_custom_parameters" ></ion-checkbox>
+      <ion-checkbox (ionChange)="save()" [(ngModel)]="data.use_custom_parameters" ></ion-checkbox>
     </ion-item>
     </ion-card-content>
   </ion-card>

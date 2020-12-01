@@ -43,6 +43,9 @@ export class PreparationCustomParametersComponent implements OnInit {
     }, undefined, 'preparation-custom-parameters');
   }
 
+  public save() {
+    this.uiPreparationStorage.update(this.data);
+  }
 
   public ngOnInit() {}
 

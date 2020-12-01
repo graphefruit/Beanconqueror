@@ -432,5 +432,8 @@
   "ENABLE_PREPARATION_CUSTOM_PARAMETERS": "Use individual parameter",
   "BEAN_ADD_ANOTHER_SORT": "Add another sort",
   "BEAN_SORT": "Sort",
-  "NAVIGATE_TO_PREPARATION_METHODS": "Navigate to preparations"
+  "NAVIGATE_TO_PREPARATION_METHODS": "Navigate to preparations",
+  "PREPARATION_TOOLS": "Preparation tools",
+  "PREPARATION_TOOLS_INFORMATION": "Add different baskets for your portafilter. For V60 or Aeropress add e.g. cloth, paper or mesh filters e.g.",
+  "PREPARATION_TOOLS_PLACEHOLDER": "Paper or cloth filter, VST-20g, 14g-Basket, etc."
 }

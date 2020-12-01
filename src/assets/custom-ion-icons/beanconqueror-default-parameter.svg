@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 45 45">
   <g id="Gruppe_161" data-name="Gruppe 161" transform="translate(-32 -360)">
     <circle id="Ellipse_375" data-name="Ellipse 375" cx="22.5" cy="22.5" r="22.5" transform="translate(32 360)"
-            fill="#b88265"/>
+            fill="#AE9F87A2"/>
     <path id="icons8-coffee"
           d="M13,0C11.5,4.5,8,1,8,7h2C10,2.3,13,5.4,13,0Zm2,1c-.8,4.5-3,2.6-3,6h2C14,3.9,15,5.8,15,1ZM4,8,6,24H16L18,8Zm14.906,3-.219,2h1.625a.786.786,0,0,1,.781.813V15a2.841,2.841,0,0,1-2.906,3l-.281,2H18a4.807,4.807,0,0,0,5-5V13.813A2.753,2.753,0,0,0,20.188,11Z"
           transform="translate(43 369)" fill="#fff"/>

@@ -432,5 +432,8 @@
   "ENABLE_PREPARATION_CUSTOM_PARAMETERS": "Benutze individuelle Parameter",
   "BEAN_ADD_ANOTHER_SORT": "Weitere Sorten hinzufügen",
   "BEAN_SORT": "Sorte",
-  "NAVIGATE_TO_PREPARATION_METHODS": "Zu den Zubereitungsmethoden"
+  "NAVIGATE_TO_PREPARATION_METHODS": "Zu den Zubereitungsmethoden",
+  "PREPARATION_TOOLS": "Brühmethoden Tools",
+  "PREPARATION_TOOLS_INFORMATION": "Füge für Siebträger deine verschiedenen Siebe hinzu. Bei einer V60 oder auch Aeropress deine Unterschiedlichen Papier/Stoff/Metallfilter usw.",
+  "PREPARATION_TOOLS_PLACEHOLDER": "Papierfilter, Stofffilter, VST-20g, 14g-Sieb, etc."
 }

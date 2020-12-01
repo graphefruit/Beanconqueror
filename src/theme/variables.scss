@@ -91,12 +91,21 @@
 
 
   /**https://ionicframework.com/docs/theming/colors**/
-  --ion-color-accent: #B88265;
+  --ion-color-accent: #AE9F87A2;
   --ion-color-accent-rgb: 184, 130, 101;
   --ion-color-accent-contrast: #FFFFFF;
   --ion-color-accent-contrast-rgb: 255, 255, 255;
-  --ion-color-accent-shade: #B88265;
+  --ion-color-accent-shade: #AE9F87A2;
   --ion-color-accent-tint: #FFFFFF;
+
+
+  --ion-color-accent-secondary: #B88265;
+  --ion-color-accent-secondary-rgb: 184, 130, 101;
+  --ion-color-accent-secondary-contrast: #FFFFFF;
+  --ion-color-accent-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-accent-secondary-shade:  #B88265;
+  --ion-color-accent-secondary-tint: #FFFFFF;
+
 
   --ion-color-inactive: #CCCCCC;
   --ion-color-inactive-rgb: 204, 204, 204;

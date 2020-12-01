@@ -139,6 +139,19 @@
           <h3>{{data.pressure_profile}}</h3>
         </ion-label>
       </ion-item>
+    <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.method_of_preparation_tool,
+                      data.getPreparation().manage_parameters.method_of_preparation_tool,
+                      data.getPreparation().use_custom_parameters)"
+
+              [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.method_of_preparation_tool,
+                      data.getPreparation().brew_order.before.method_of_preparation_tool,
+                      data.getPreparation().use_custom_parameters)"
+              lines="inset">
+      <ion-label>
+        <h2>{{"BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}:</h2>
+        <ion-chip  *ngFor="let uuid of data.method_of_preparation_tools">{{data.getPreparationToolName(uuid)}}</ion-chip>
+      </ion-label>
+    </ion-item>
     <div class="last-item"></div>
   </ion-card>
   <ion-card *ngIf="showSectionWhileBrew()" class="ion-margin-horizontal popover" style="display:flex; flex-direction: column;">

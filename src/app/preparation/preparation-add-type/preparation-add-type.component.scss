@@ -1,6 +1,6 @@
 :host {
-  --max-height: 30%;
-  top: 70%;
+  --max-height: 40%;
+  top: 60%;
   position: absolute;
   margin-inline-start: 10px;
   margin-inline-end: 10px;
@@ -8,7 +8,11 @@
   margin-block-end: 10px;
 
   @media (max-height: 568px) {
-    --max-height: 60%;
-    top: 40%;
+    --max-height: 70%;
+    top: 30%;
+  }
+  @media (max-height: 400px) {
+    --max-height: 100%;
+    top: 0%;
   }
 }

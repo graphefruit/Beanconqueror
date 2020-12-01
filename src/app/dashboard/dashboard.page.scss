@@ -3,11 +3,11 @@
 
   ion-card.dashboard {
     text-align:center;
-    border-right: 2px solid var(--ion-color-accent);
+    border-right: 2px solid var(--ion-color-accent-secondary);
     border-radius:0px;
     padding-right:8px;
     ion-card-title {
-      color: var(--ion-color-accent);
+      color: var(--ion-color-accent-secondary);
       font-size:24px;
       font-weight: bold;
     }
@@ -30,6 +30,8 @@
     --padding-end: 0px;
     --padding-start: 5px;
     --padding-top: 0px;
+    --border-radius: 15px;
+    height: 45px;
   }
 
   ion-button[add-brew] ion-icon {

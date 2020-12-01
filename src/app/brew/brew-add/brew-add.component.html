@@ -142,20 +142,17 @@
 
     <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.method_of_preparation_tool,
                       data.getPreparation().manage_parameters.method_of_preparation_tool,
-                      data.getPreparation().use_custom_parameters)"
+                      data.getPreparation().use_custom_parameters)" [disabled]="data.getPreparation().tools.length <= 0"
 
               [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.method_of_preparation_tool,
                       data.getPreparation().brew_order.before.method_of_preparation_tool,
                       data.getPreparation().use_custom_parameters)"
               lines="inset">
       <ion-label position="stacked">{{"BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}</ion-label>
-      <ion-select [(ngModel)]="data.method_of_preparation_tools" color="accent"  multiple="true" placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD_TOOL' | translate}}">
+      <ion-select [(ngModel)]="data.method_of_preparation_tools" cancelText="{{'CANCEL'| translate }}" color="accent" multiple="true" name="method_of_preparation_tools"  okText="{{'CHOOSE'| translate }}" placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD_TOOL' | translate}}">
         <ion-select-option *ngFor="let tool of data.getPreparation().tools" value="{{tool.config.uuid}}">{{tool.name}}</ion-select-option>
       </ion-select>
-
     </ion-item>
-
-
     <div class="last-item"></div>
   </ion-card>
   <ion-card *ngIf="showSectionWhileBrew()"
@@ -421,7 +418,7 @@
                       data.getPreparation().use_custom_parameters)"
            lines="inset">
         <ion-item (click)="addImage()" button tappable>
-          {{"ADD_PHOTO" | translate}}
+          <ion-icon class="icon-32" name="beanconqueror-add"></ion-icon>&nbsp;{{"ADD_PHOTO" | translate}}
         </ion-item>
         <div *ngIf="data?.attachments && data.attachments.length > 0 && settings.attachments === true">
           <ion-slides #photoSlides pager="true">

@@ -38,17 +38,17 @@
           </ion-select>
         </ion-item>
         <ion-item lines="none">
-          <ion-label>{{"PREPARATION_TOOLS"}}</ion-label>
+          <ion-label>{{"PREPARATION_TOOLS" | translate}}</ion-label>
+          <ion-icon name="information-outline" slot="end"
+                    tooltip='{{"PREPARATION_TOOLS_INFORMATION" | translate}}'></ion-icon>
         </ion-item>
-        <ion-item style="margin-top: -20px;">
-
-          <ion-input [(ngModel)]="nextToolName" name="nextToolName" type="text"></ion-input>
-
+        <ion-item style="margin-top: -10px;">
+          <ion-input [(ngModel)]="nextToolName" name="nextToolName" placeholder='{{"PREPARATION_TOOLS_PLACEHOLDER" | translate}}' type="text"></ion-input>
           <ion-button (click)="addTool()" fill="clear" tappable>
             <ion-icon color="accent" name="beanconqueror-add" slot="icon-only"></ion-icon>
           </ion-button>
         </ion-item>
-        <div>
+        <div class="ion-padding-horizontal">
           <ion-chip (click)="deleteTool(tool)" *ngFor="let tool of data.tools;let i=index;">{{tool.name}} <ion-icon name="close"></ion-icon></ion-chip>
         </div>
         <ion-item>

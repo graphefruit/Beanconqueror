@@ -21,20 +21,5 @@
 
   }
 
-  table {
-    border-spacing: 0px;
-    table-layout: fixed;
-    word-break: break-word;
-  }
-  td.accent-value {
-    color: var(--ion-color-accent);
-    font-size:25px;
-    font-weight: bold;
-  }
-  td span.accent-value {
-    color: var(--ion-color-accent);
-    font-size:10px;
-    font-weight: bold;
-  }
 
 }

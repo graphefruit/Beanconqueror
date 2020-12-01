@@ -318,14 +318,14 @@ ion-menu:host .menu-inner {
   }
   hr {
     height: 0px;
-    border-top: 2px solid var(--ion-color-accent);
+    border-top: 2px solid var(--ion-color-accent-secondary);
     border-radius: 5px;
   }
 
 
   ion-range {
     --bar-background: #CCCCCC;
-    --bar-background-active: var(--ion-color-accent);
+    --bar-background-active: var(--ion-color-accent-secondary);
   }
 
   ion-tab-bar {
@@ -354,16 +354,16 @@ ion-menu:host .menu-inner {
     --icon-font-size: 40px;
   }
   ion-radio {
-    --border-radius: var(--ion-color-accent);
-    --color: var(--ion-color-accent);
-    --color-checked: var(--ion-color-accent);
-    --inner-border-radius: var(--ion-color-accent);
+    --border-radius: var(--ion-color-accent-secondary);
+    --color: var(--ion-color-accent-secondary);
+    --color-checked: var(--ion-color-accent-secondary);
+    --inner-border-radius: var(--ion-color-accent-secondary);
   }
 
   ion-checkbox {
 
     --background: #D1D1D1;
-    --background-checked: var(--ion-color-accent);
+    --background-checked: var(--ion-color-accent-secondary);
     --border-color: transparent;
     --border-color-checked: transparent;
   }
@@ -635,6 +635,11 @@ ion-menu:host .menu-inner {
   }
   ion-chip {
     height:100%;
+    word-break: break-all;
+  }
+  .icon-32{
+    width:32px;
+    height:32px;
   }
 }
 

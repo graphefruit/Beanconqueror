@@ -18,6 +18,7 @@ import {Preparation} from '../preparation/preparation';
 import {ICupping} from '../../interfaces/cupping/iCupping';
 import {IBrewCoordinates} from '../../interfaces/brew/iBrewCoordinates';
 import {PREPARATION_STYLE_TYPE} from '../../enums/preparations/preparationStyleTypes';
+import {PreparationTool} from '../preparation/preparationTool';
 
 export class Brew implements IBrew {
   // tslint:disable-next-line
@@ -243,6 +244,14 @@ export class Brew implements IBrew {
 
     return ratio;
 
+  }
+
+  public getPreparationToolName(_uuid: string): string {
+    const tool: PreparationTool = this.getPreparation().tools.find((e) => e.config.uuid === _uuid);
+    if (tool) {
+      return tool.name;
+    }
+    return '';
   }
 
 
