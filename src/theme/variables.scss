@@ -125,6 +125,10 @@
 .ion-color-accent {
   --ion-color-base: var(--ion-color-accent);
 }
+.ion-color-accent-secondary {
+  --ion-color-base: var(--ion-color-accent-secondary);
+  color: var(--ion-color-accent-secondary);
+}
 
 .ion-color-inactive {
   --ion-color-base: var(--ion-color-inactive);

@@ -6,6 +6,7 @@ import {IBrewParameter} from '../parameter/iBrewParameter';
 import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
 import {IOrderBrewParameter} from '../parameter/iOrderBrewParameter';
 import {IBrewPageFilter} from '../brew/iBrewPageFilter';
+import {IBeanPageFilter} from '../bean/iBeanPageFilter';
 
 export interface ISettings {
  // Properties
@@ -52,6 +53,10 @@ export interface ISettings {
     ARCHIVED: IBrewPageFilter
   };
 
+  bean_filter: {
+    OPEN: IBeanPageFilter,
+    ARCHIVED: IBeanPageFilter
+  };
 
   welcome_page_showed: boolean;
 

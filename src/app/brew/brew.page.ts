@@ -307,7 +307,6 @@ export class BrewPage implements OnInit {
     settings.brew_filter.OPEN = this.openBrewsFilter;
     settings.brew_filter.ARCHIVED = this.archivedBrewsFilter;
     this.uiSettingsStorage.saveSettings(settings);
-
   }
 
   private __initializeBrewView(_type: string): void {

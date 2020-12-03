@@ -98,6 +98,7 @@ import {PreparationCustomParametersComponent} from '../preparation/preparation-c
 import {DefaultCustomParameterComponent} from '../../components/parameter/default-custom-parameter/default-custom-parameter.component';
 import {SortCustomParameterComponent} from '../../components/parameter/sort-custom-parameter/sort-custom-parameter.component';
 import {ManageCustomParameterComponent} from '../../components/parameter/manage-custom-parameter/manage-custom-parameter.component';
+import {BeanFilterComponent} from '../beans/bean-filter/bean-filter.component';
 
 @NgModule({
   declarations: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, AboutComponent,
@@ -118,7 +119,7 @@ import {ManageCustomParameterComponent} from '../../components/parameter/manage-
     BrewCuppingComponent,
     TermsComponent,
     ThanksComponent, LogComponent, LogTextComponent, PreparationPage, PreparationAddComponent,
-    PreparationEditComponent, PreparationCustomParametersComponent, MillPage, MillEditComponent, BrewFilterComponent, MillAddComponent, BrewAddComponent,
+    PreparationEditComponent, PreparationCustomParametersComponent, MillPage, MillEditComponent, BrewFilterComponent, BeanFilterComponent, MillAddComponent, BrewAddComponent,
     FormatDatePipe, KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, BeanInformationComponent, BrewDashboardInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, CuppingRadarComponent, SearchPipe, RemoveEmptyNumberDirective,
     PreventCharacterDirective,
     BeanOverlayDirective,
@@ -132,7 +133,7 @@ import {ManageCustomParameterComponent} from '../../components/parameter/manage-
     PreparationModalSelectComponent,
     PreparationPopoverActionsComponent, TimerComponent,DefaultCustomParameterComponent, SortCustomParameterComponent,ManageCustomParameterComponent, BrewTimerComponent],
   entryComponents: [
-    SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BrewFilterComponent, PreparationInformationCardComponent, MillInformationCardComponent, AboutComponent,
+    SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BrewFilterComponent, BeanFilterComponent, PreparationInformationCardComponent, MillInformationCardComponent, AboutComponent,
     ContactComponent,
     InfoComponent,
     PreparationAddTypeComponent,
@@ -209,7 +210,7 @@ import {ManageCustomParameterComponent} from '../../components/parameter/manage-
     BrewCuppingComponent,
     TermsComponent,
     ThanksComponent, PreparationPage, PreparationAddComponent,
-    PreparationEditComponent, PreparationCustomParametersComponent, BrewFilterComponent, MillPage, MillEditComponent, MillAddComponent,
+    PreparationEditComponent, PreparationCustomParametersComponent, BrewFilterComponent, BeanFilterComponent, MillPage, MillEditComponent, MillAddComponent,
     BrewAddComponent, FormatDatePipe,
     KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, BeanInformationComponent, BrewDashboardInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, CuppingRadarComponent, SearchPipe, RemoveEmptyNumberDirective,
     PreventCharacterDirective,

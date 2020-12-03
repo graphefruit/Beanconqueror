@@ -56,7 +56,10 @@
                   [(ngModel)]="data.default_last_coffee_parameters.pressure_profile"></ion-checkbox>
   </ion-item>
   <ion-item lines="none" tappable>
-    <ion-label>{{"BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}</ion-label>
+    <ion-label>
+      <h2>{{"BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}</h2>
+      <p>{{"PREPARATION_TOOLS_PLACEHOLDER" | translate}}</p>
+    </ion-label>
     <ion-checkbox (ngModelChange)="save()"
                   [(ngModel)]="data.default_last_coffee_parameters.method_of_preparation_tool"></ion-checkbox>
   </ion-item>

@@ -2,7 +2,10 @@
   <ion-card-content class="no-ion-col-vertical-padding ion-padding-top">
     <ion-grid>
       <ion-row>
-        <ion-col size="11"><div class="ion-no-padding font-size-20 ion-title">{{preparation.name}}</div></ion-col>
+        <ion-col size="11">
+          <div class="ion-no-padding font-size-20 ion-title">{{preparation.name}}</div>
+          <span *ngIf="preparation.use_custom_parameters" class="ion-color-accent-secondary">{{"PREPARATION_PARAMETERS_CUSTOMIZED" | translate}}</span>
+        </ion-col>
 
         <ion-col size="1">
           <ion-button (click)="showPreparationActions($event)" class="button-top-absolute"

@@ -1,0 +1,54 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-item (click)="setSortOrder(beanSortOrderEnum.ASCENDING)" [class.active]="isOrderActive(beanSortOrderEnum.ASCENDING)" tappable>
+          <ion-label>{{"ASCENDING" | translate}}</ion-label>
+        </ion-item>
+
+      </ion-col>
+      <ion-col>
+        <ion-item (click)="setSortOrder(beanSortOrderEnum.DESCENDING)" [class.active]="isOrderActive(beanSortOrderEnum.DESCENDING)" tappable>
+          <ion-label>{{"DESCENDING" | translate}}</ion-label>
+        </ion-item>
+
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-list>
+
+      <ion-list-header>
+      {{"SORT_AFTER" | translate}}
+    </ion-list-header>
+      <ion-item (click)="setSortAfter(beanSortAfterEnum.NAME)" [class.active]="isSortActive(beanSortAfterEnum.NAME)" tappable>
+        <ion-label>{{"BEAN_SORT_NAME_OF_BEAN" | translate}}</ion-label>
+      </ion-item>
+      <ion-item  (click)="setSortAfter(beanSortAfterEnum.ROASTER)" [class.active]="isSortActive(beanSortAfterEnum.ROASTER)" tappable>
+        <ion-label>{{"BEAN_SORT_ROASTER" | translate}}</ion-label>
+      </ion-item>
+      <ion-item  (click)="setSortAfter(beanSortAfterEnum.ROASTING_DATE)" [class.active]="isSortActive(beanSortAfterEnum.ROASTING_DATE)" tappable>
+        <ion-label>{{"BEAN_SORT_ROASTING_DATE" | translate}}</ion-label>
+      </ion-item>
+  </ion-list>
+</ion-content>
+<ion-footer class="ion-no-border">
+  <ion-row>
+    <ion-col size="12">
+      <ion-button (click)="useFilter()" color="accent" expand="block" tappable
+                  type="submit">{{"USE_FILTER" | translate}}</ion-button>
+    </ion-col>
+    <ion-col size="12">
+      <ion-button (click)="resetFilter()" color="dark" expand="block" fill="clear"
+                  tappable>{{"RESET_FILTER" | translate}}</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>

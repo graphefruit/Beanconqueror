@@ -1,0 +1,7 @@
+export enum BEAN_SORT_AFTER {
+  UNKOWN = 'UNKOWN',
+  NAME = 'NAME',
+  ROASTER = 'ROASTER',
+  ROASTING_DATE = 'ROASTING DATE'
+
+}

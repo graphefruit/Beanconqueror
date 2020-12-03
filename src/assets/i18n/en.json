@@ -435,5 +435,14 @@
   "NAVIGATE_TO_PREPARATION_METHODS": "Navigate to preparations",
   "PREPARATION_TOOLS": "Preparation tools",
   "PREPARATION_TOOLS_INFORMATION": "Add different baskets for your portafilter. For V60 or Aeropress add e.g. cloth, paper or mesh filters e.g.",
-  "PREPARATION_TOOLS_PLACEHOLDER": "Paper or cloth filter, VST-20g, 14g-Basket, etc."
+  "PREPARATION_TOOLS_PLACEHOLDER": "Paper or cloth filter, VST-20g, 14g-Basket, etc.",
+  "PREPARATION_PARAMETERS_CUSTOMIZED": "Parameter customized",
+  "BEANS_LEFT_OVER": "Left over beans",
+  "SORT_ORDER": "Change order",
+  "ASCENDING": "ascending",
+  "DESCENDING": "descending",
+  "SORT_AFTER": "Sort after",
+  "BEAN_SORT_NAME_OF_BEAN": "Bean name",
+  "BEAN_SORT_ROASTER": "Roaster",
+  "BEAN_SORT_ROASTING_DATE": "Roasting date"
 }

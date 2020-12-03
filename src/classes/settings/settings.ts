@@ -10,6 +10,7 @@ import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
 import {OrderBrewParameter} from '../parameter/orderBrewParameter';
 import {IBrewPageFilter} from '../../interfaces/brew/iBrewPageFilter';
 import {ManageBrewParameter} from '../parameter/manageBrewParameter';
+import {IBeanPageFilter} from '../../interfaces/bean/iBeanPageFilter';
 
 export class Settings implements ISettings {
   public brew_view: BREW_VIEW_ENUM;
@@ -82,6 +83,10 @@ export class Settings implements ISettings {
     OPEN: IBrewPageFilter,
     ARCHIVED: IBrewPageFilter
   };
+  public bean_filter: {
+    OPEN: IBeanPageFilter,
+    ARCHIVED: IBeanPageFilter
+  };
 
   constructor() {
     this.brew_view = BREW_VIEW_ENUM.SINGLE_PAGE;
@@ -128,6 +133,11 @@ export class Settings implements ISettings {
       ARCHIVED: {} as IBrewPageFilter
     };
 
+    this.bean_filter = {
+      OPEN: {} as IBeanPageFilter,
+      ARCHIVED: {} as IBeanPageFilter
+    };
+
     this.brew_filter.OPEN = {bean: [], method_of_preparation: [], mill: []} as IBrewPageFilter;
     this.brew_filter.ARCHIVED = {bean: [], method_of_preparation: [], mill: []} as IBrewPageFilter;
 
@@ -137,11 +147,17 @@ export class Settings implements ISettings {
   public initializeByObject(settingsObj: ISettings): void {
     Object.assign(this, settingsObj);
     // We need to reassign brew order here, else the class would be dismissed.
+
+    this.manage_parameters = new ManageBrewParameter();
+    Object.assign(this.brew_order, settingsObj.manage_parameters);
+
     this.brew_order = new OrderBrewParameter();
     Object.assign(this.brew_order, settingsObj.brew_order);
 
     this.default_last_coffee_parameters = new DefaultBrewParameter();
     Object.assign(this.default_last_coffee_parameters, settingsObj.default_last_coffee_parameters);
+
+
   }
 
 
@@ -159,5 +175,8 @@ export class Settings implements ISettings {
         method_of_preparation: []
       } as IBrewPageFilter
     };
+  }
+  public resetBeanFilter() {
+
   }
 }
