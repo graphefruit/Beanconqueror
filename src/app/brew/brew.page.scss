@@ -1,36 +1,5 @@
 :host {
-  .brews-header{
-    border-top:none;
-    background-color:rgb(160,176,196);
-    color:black;
-  }
-  ion-list{
-    margin-top: 0px !important;
-  }
-  ion-list:first-child{
-    margin-top:0px!important;
-  }
-
-  .error-text{
-    color:red;
-  }
-
-  ion-list-header {
-    --background: rgb(160, 176, 196);
-    --color: black;
-  }
-
-
   .container {
     display: flex;
   }
-
-  ion-icon.black {
-    color: #282013;
-  }
-
-  ion-icon.active {
-    color: var(--ion-color-accent);
-  }
-
 }

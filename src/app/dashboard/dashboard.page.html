@@ -10,11 +10,11 @@
 </ion-header>
 <ion-content>
 
-  <ion-card>
+
     <ion-grid>
       <ion-row>
-        <ion-col size="4">
-          <ion-card [routerLink]="['/home/brews']" class="dashboard ion-no-padding ion-no-margin"  style="height: 100%;" tappable>
+        <ion-col size="6">
+          <ion-card [routerLink]="['/home/brews']" class="dashboard ion-no-margin" tappable>
             <ion-card-header class="ion-no-padding ion-no-margin">
               <ion-card-title> {{uiStatistic.getBrewsDrunk()}}</ion-card-title>
               <ion-card-subtitle>
@@ -29,24 +29,8 @@
             </ion-card-header>
           </ion-card>
         </ion-col>
-        <ion-col size="4">
-          <ion-card [routerLink]="['/home/beans']" class="dashboard ion-no-padding ion-no-margin"  style="height: 100%;" tappable>
-            <ion-card-header class="ion-no-padding ion-no-margin">
-              <ion-card-title> {{uiStatistic.getBeansCount()}}</ion-card-title>
-              <ion-card-subtitle>
-                <span *ngIf="uiStatistic.getBeansCount() == 1">
-                       {{"PAGE_HOME_BEAN_EXPLORED" | translate}}
-                </span>
-                  <span *ngIf="uiStatistic.getBeansCount() != 1">
-                       {{"PAGE_HOME_BEANS_EXPLORED" | translate}}
-              </span>
-              </ion-card-subtitle>
-
-            </ion-card-header>
-          </ion-card>
-        </ion-col>
-        <ion-col size="4">
-          <ion-card [routerLink]="['/statistic']" class="dashboard ion-no-padding ion-no-margin no-border"  style="height: 100%;" tappable>
+        <ion-col size="6">
+          <ion-card [routerLink]="['/statistic']" class="dashboard ion-no-margin no-border" tappable>
             <ion-card-header class="ion-no-padding ion-no-margin">
               <ion-card-title> {{uiStatistic.getTimePassedSinceLastBrew()}}</ion-card-title>
               <ion-card-subtitle>
@@ -56,9 +40,40 @@
             </ion-card-header>
           </ion-card>
         </ion-col>
+
+
+      </ion-row>
+      <ion-row>
+        <ion-col size="6">
+          <ion-card [routerLink]="['/home/beans']" class="dashboard ion-no-margin" tappable>
+            <ion-card-header class="ion-no-padding ion-no-margin">
+              <ion-card-title> {{uiStatistic.getBeansCount()}}</ion-card-title>
+              <ion-card-subtitle>
+                <span *ngIf="uiStatistic.getBeansCount() == 1">
+                       {{"PAGE_HOME_BEAN_EXPLORED" | translate}}
+                </span>
+                <span *ngIf="uiStatistic.getBeansCount() != 1">
+                       {{"PAGE_HOME_BEANS_EXPLORED" | translate}}
+              </span>
+              </ion-card-subtitle>
+
+            </ion-card-header>
+          </ion-card>
+        </ion-col>
+        <ion-col size="6">
+          <ion-card [routerLink]="['/home/beans']" class="dashboard ion-no-margin no-border" tappable>
+            <ion-card-header class="ion-no-padding ion-no-margin">
+              <ion-card-title> {{openBeansLeftOverCount()| number : '.0-2'}}&nbsp;kg</ion-card-title>
+              <ion-card-subtitle>
+                {{"BEANS_WEIGHT_AVAILABLE" | translate}}
+              </ion-card-subtitle>
+
+            </ion-card-header>
+          </ion-card>
+        </ion-col>
       </ion-row>
     </ion-grid>
-  </ion-card>
+
   <ion-grid>
 
     <ion-row>

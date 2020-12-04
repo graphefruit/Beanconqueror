@@ -11,6 +11,8 @@ import {OrderBrewParameter} from '../parameter/orderBrewParameter';
 import {IBrewPageFilter} from '../../interfaces/brew/iBrewPageFilter';
 import {ManageBrewParameter} from '../parameter/manageBrewParameter';
 import {IBeanPageFilter} from '../../interfaces/bean/iBeanPageFilter';
+import {BEAN_SORT_AFTER} from '../../enums/beans/beanSortAfter';
+import {BEAN_SORT_ORDER} from '../../enums/beans/beanSortOrder';
 
 export class Settings implements ISettings {
   public brew_view: BREW_VIEW_ENUM;
@@ -140,6 +142,9 @@ export class Settings implements ISettings {
 
     this.brew_filter.OPEN = {bean: [], method_of_preparation: [], mill: []} as IBrewPageFilter;
     this.brew_filter.ARCHIVED = {bean: [], method_of_preparation: [], mill: []} as IBrewPageFilter;
+
+    this.bean_filter.OPEN = {sort_after: BEAN_SORT_AFTER.UNKOWN, sort_order:  BEAN_SORT_ORDER.UNKOWN} as IBeanPageFilter;
+    this.bean_filter.ARCHIVED =  {sort_after: BEAN_SORT_AFTER.UNKOWN, sort_order:  BEAN_SORT_ORDER.UNKOWN} as IBeanPageFilter;
 
     this.welcome_page_showed = false;
   }

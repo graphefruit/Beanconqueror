@@ -1,28 +1,33 @@
 :host {
 
 
-  --max-height: 50%;
-  top: 50%;
+  --max-height: 70%;
+  top: 30%;
   position: absolute;
   margin-inline-start: 10px;
   margin-inline-end: 10px;
   border-radius: 6px;
   margin-block-end: 10px;
 
-  @media (min-height: 600px) and (max-height: 667px) {
-    --max-height: 55%;
-    top: 45%;
-  }
-  @media (min-height: 537px) and (max-height: 600px) {
-    --max-height: 65%;
-    top: 35%;
-  }
+
   @media (max-height: 450px) {
     --max-height: 100%;
     top: 0%;
   }
 
+  ion-list{
+    background:#ffffff;
+  }
   ion-item.active {
-    border:1px solid red;
+    border: 1px solid var(--ion-color-accent-secondary);
+  }
+  ion-item {
+    border-radius: 10px;
+    --background: #F0F0F0;
+
+    ion-icon{
+      padding-left: 16px;
+      margin-right: 8px;
+    }
   }
 }

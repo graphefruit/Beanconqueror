@@ -1,9 +1,9 @@
 <ion-card class="long-card">
   <ion-card-content class="no-ion-col-vertical-padding ion-padding-top">
-    <ion-grid>
+    <ion-grid class="no-padding-bottom">
       <ion-row class="ion-padding-bottom-half">
         <ion-col size="10">
-          <ion-title class="ion-no-padding font-size-18"><b>{{brew.config.unix_timestamp | formatDate:["DD.MM.YYYY"]}}</b>&nbsp;{{brew.config.unix_timestamp | formatDate:["HH:mm"]}}</ion-title>
+          <ion-title class="ion-no-padding font-size-18"><b>{{brew.config.unix_timestamp | formatDate:["DD.MM.YYYY"]}}</b><span class="ion-padding-start">{{brew.config.unix_timestamp | formatDate:["HH:mm"]}}</span></ion-title>
         </ion-col>
         <ion-col size="2">
           <ion-button (click)="showBrewActions($event)" class="button-top-absolute" color="accent" fill="clear">
@@ -20,7 +20,6 @@
           <hr />
         </ion-col>
       </ion-row>
-
     </ion-grid>
     <ion-grid class="no-ion-col-vertical-padding">
       <ion-row>

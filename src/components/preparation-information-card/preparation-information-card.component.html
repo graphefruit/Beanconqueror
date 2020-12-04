@@ -1,58 +1,66 @@
 <ion-card class="long-card">
   <ion-card-content class="no-ion-col-vertical-padding ion-padding-top">
-    <ion-grid>
+    <ion-grid class="ion-no-padding">
       <ion-row>
-        <ion-col size="11">
-          <div class="ion-no-padding font-size-20 ion-title">{{preparation.name}}</div>
-          <span *ngIf="preparation.use_custom_parameters" class="ion-color-accent-secondary">{{"PREPARATION_PARAMETERS_CUSTOMIZED" | translate}}</span>
+        <ion-col size="8">
+          <ion-grid>
+            <ion-row>
+              <ion-col size="12">
+                <div class="ion-no-padding font-size-20 ion-title">{{preparation.name}}</div>
+                <span *ngIf="preparation.use_custom_parameters" class="ion-color-accent-secondary">{{"PREPARATION_PARAMETERS_CUSTOMIZED" | translate}}</span>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12">
+                <ion-list lines="none" style="width:100%;">
+                  <ion-item>
+                    <ion-col class="card-headline" size="8">{{"PAGE_HOME_TOTAL_BREWS" | translate}}
+                    </ion-col>
+                    <ion-col size="4">
+                      {{getBrewsCount()| number : '.0'}}
+                    </ion-col>
+                  </ion-item>
+                  <ion-item>
+                    <ion-col class="card-headline" size="8">{{"COFFEE_GRAMS_GRINDED" | translate}}
+                    </ion-col>
+                    <ion-col size="4">
+                      {{getWeightCount()| number : '.0-2'}}
+                    </ion-col>
+                  </ion-item>
+                  <ion-item>
+                    <ion-col class="card-headline" size="8">{{"COFFEE_DRUNKEN_QUANTITY" | translate}}
+                    </ion-col>
+                    <ion-col size="4">
+                      {{getDrunkenQuantity()| number : '.0-2'}}&nbsp;(l/kg)
+                    </ion-col>
+                  </ion-item>
+                  <ion-item>
+                    <ion-col class="card-headline" size="8">{{"BEANS_USED" | translate}}
+                    </ion-col>
+                    <ion-col size="4">
+                      {{getBeansCount()| number : '.0'}}
+                    </ion-col>
+                  </ion-item>
+                </ion-list>
+              </ion-col>
+
+            </ion-row>
+          </ion-grid>
         </ion-col>
 
-        <ion-col size="1">
-          <ion-button (click)="showPreparationActions($event)" class="button-top-absolute"
-                      color="accent" fill="clear" tappable>
-            <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>
-          </ion-button>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-    <ion-grid class="ion-no-padding">
-      <ion-row style="padding:8px;">
-        <ion-col size="8">
-          <ion-list lines="none" style="width:100%;">
-            <ion-item>
-              <ion-col size="8">{{"PAGE_HOME_TOTAL_BREWS" | translate}}
-              </ion-col>
-              <ion-col size="4">
-                {{getBrewsCount()| number : '.0'}}
-              </ion-col>
-            </ion-item>
-            <ion-item>
-              <ion-col size="8">{{"COFFEE_GRAMS_GRINDED" | translate}}
-              </ion-col>
-              <ion-col size="4">
-                {{getWeightCount()| number : '.0-2'}}
-              </ion-col>
-            </ion-item>
-            <ion-item>
-              <ion-col size="8">{{"COFFEE_DRUNKEN_QUANTITY" | translate}}
-              </ion-col>
-              <ion-col size="4">
-                {{getDrunkenQuantity()| number : '.0-2'}}&nbsp;(l/kg)
-              </ion-col>
-            </ion-item>
-            <ion-item>
-              <ion-col size="8">{{"BEANS_USED" | translate}}
-              </ion-col>
-              <ion-col size="4">
-                {{getBeansCount()| number : '.0'}}
-              </ion-col>
-            </ion-item>
-          </ion-list>
-        </ion-col>
         <ion-col class="ion-justify-content-center" size="4">
           <ion-icon class="full-sized-icon" name="{{preparation.getIcon()}}"></ion-icon>
         </ion-col>
+        <ion-col size="1">
+
+        </ion-col>
       </ion-row>
+      <ion-button (click)="showPreparationActions($event)" class="button-top-absolute"
+                  color="accent" fill="clear" tappable>
+        <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>
+      </ion-button>
+
     </ion-grid>
+
   </ion-card-content>
 </ion-card>

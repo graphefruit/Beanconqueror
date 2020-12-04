@@ -5,26 +5,9 @@
   }
 
 
-  .swiper-pagination.swiper-pagination-bullets {
-    top: 0px;
-  }
-
-  .icon-128 {
-    width: 128px;
-    height: 128px;
-    font-size: 128px;
-  }
-
-  .icon-64 {
-    width: 192px;
-    height: 128px;
-
-  }
-
-  .icon-96 {
-    width: 96px;
-    height: 96px;
-    font-size: 96px;
+  ion-icon {
+    width: 100%;
+    height: 100%;
   }
 
   .welcome-bubble {
@@ -51,5 +34,10 @@
   ion-card {
     margin-inline-start: var(--padding-start, 16px);
     margin-inline-end: var(--padding-end, 16px);
+  }
+
+  ion-header, ion-content, ion-footer{
+    background:#ffffff;
+    --background:#ffffff;
   }
 }

@@ -1,5 +1,10 @@
 :host {
 
+  ion-card {
+    ion-card-content {
+      padding:16px;
+    }
+  }
 
   button[justify-content-start] .button-inner {
     justify-content: flex-start;
@@ -10,7 +15,17 @@
     height: 100%;
   }
 
-
+  .button-top-absolute {
+    position: absolute;
+    top: 0px;
+    right: -10px;
+    min-height: 20px;
+    ion-icon{
+      font-size: 18px!important;
+      width: 18px!important;
+      height: 18px!important;
+    }
+  }
   ion-row.center-col ion-col {
     display: flex;
     align-items: center

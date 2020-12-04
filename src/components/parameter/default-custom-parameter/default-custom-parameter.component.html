@@ -5,9 +5,9 @@
                   [(ngModel)]="data.manage_parameters.set_last_coffee_brew"></ion-checkbox>
   </ion-item>
 </ion-card>
-<ion-card *ngIf="data.manage_parameters.set_last_coffee_brew==true" class="ion-padding">
+<ion-card *ngIf="data.manage_parameters.set_last_coffee_brew==true" class="ion-padding" style="margin-top:30px;">
 
-  <ion-title class="ion-padding-top">{{"SORT_PARAMETERS_BEFORE" | translate  }}</ion-title>
+  <ion-title class="ion-no-padding">{{"SORT_PARAMETERS_BEFORE" | translate  }}</ion-title>
   <ion-item tappable>
     <ion-label>{{"BREW_DATA_GRIND_SIZE" | translate}}</ion-label>
     <ion-checkbox (ngModelChange)="save()"
@@ -50,7 +50,7 @@
     <ion-checkbox (ngModelChange)="save()"
                   [(ngModel)]="data.default_last_coffee_parameters.mill_timer"></ion-checkbox>
   </ion-item>
-  <ion-item lines="none" tappable>
+  <ion-item tappable>
     <ion-label>{{"BREW_DATA_PRESSURE_PROFILE" | translate}}</ion-label>
     <ion-checkbox (ngModelChange)="save()"
                   [(ngModel)]="data.default_last_coffee_parameters.pressure_profile"></ion-checkbox>
@@ -64,8 +64,8 @@
                   [(ngModel)]="data.default_last_coffee_parameters.method_of_preparation_tool"></ion-checkbox>
   </ion-item>
 </ion-card>
-<ion-card *ngIf="data.manage_parameters.set_last_coffee_brew==true" class="ion-padding">
-  <ion-title class="ion-padding-top">{{"SORT_PARAMETERS_MEANWHILE" | translate  }}</ion-title>
+<ion-card *ngIf="data.manage_parameters.set_last_coffee_brew==true" class="ion-padding" style="margin-top:30px;">
+  <ion-title class="ion-no-padding">{{"SORT_PARAMETERS_MEANWHILE" | translate  }}</ion-title>
 
   <ion-item tappable>
     <ion-label>{{"BREW_DATA_TEMPERATURE_TIME" | translate}} / {{"BREW_DATA_SURF_TIME" | translate}}</ion-label>
@@ -91,9 +91,9 @@
                   [(ngModel)]="data.default_last_coffee_parameters.coffee_blooming_time"></ion-checkbox>
   </ion-item>
 </ion-card>
-<ion-card *ngIf="data.manage_parameters.set_last_coffee_brew==true" class="ion-padding">
+<ion-card *ngIf="data.manage_parameters.set_last_coffee_brew==true" class="ion-padding" style="margin-top:30px;">
 
-  <ion-title class="ion-padding-top">{{"SORT_PARAMETERS_AFTER" | translate  }}</ion-title>
+  <ion-title  class="ion-no-padding">{{"SORT_PARAMETERS_AFTER" | translate  }}</ion-title>
   <ion-item [disabled]="brewQuantityDisabled()" tappable>
     <ion-label>
       <h2>{{"BREW_DATA_BREW_QUANTITY" | translate}}</h2>

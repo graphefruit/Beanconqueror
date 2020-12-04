@@ -2,4 +2,8 @@
   ion-card-header {
     padding: 8px;
   }
+  .card-background {
+    background-color: var(--ion-color-inactive) !important;
+  }
+
 }

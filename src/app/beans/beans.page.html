@@ -4,7 +4,7 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button (click)="add()" class="big-icon-only">
+      <ion-button (click)="add()" class="big-icon-only" fill="clear">
         <ion-icon class="ion-color-accent" name="beanconqueror-add" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -15,19 +15,28 @@
 </ion-header>
 <ion-content>
 
-    <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="bean_segment">
+    <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="bean_segment" class="ion-padding-vertical">
       <ion-segment-button value="open">
         <ion-label>{{"PAGE_BEANS_LIST_OBTAINABLE" | translate}}
         </ion-label>
       </ion-segment-button>
-      <ion-segment-button *ngIf="settings?.show_archived_beans" value="finished">
+      <ion-segment-button *ngIf="settings?.show_archived_beans" value="archiv">
         <ion-label>{{"TAB_ARCHIVE" | translate}}
         </ion-label>
       </ion-segment-button>
     </ion-segment>
-
   <div [ngSwitch]="bean_segment">
     <div *ngSwitchCase="'open'">
+      <div *ngIf="openBeans?.length > 0 || isFilterActive()" class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
+
+        <ion-searchbar (ionChange)="research()" [(ngModel)]="openBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+        <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
+          <ion-icon *ngIf="isFilterActive()"  name="beanconqueror-sort-active"
+                    slot="icon-only"></ion-icon>
+          <ion-icon *ngIf="!isFilterActive()"  name="beanconqueror-sort-inactive"
+                    slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
       <div *ngIf="openBeans.length == 0" class="ion-padding ion-text-center">
         <div>
           <ion-icon color="inactive" name="beanconqueror-beans" size="large"></ion-icon>
@@ -36,16 +45,6 @@
         {{"PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS" | translate}}
         </div>
       </div>
-      <div class="ion-justify-content-end container">
-        <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
-          <ion-icon [class.active]="isFilterActive()" class="black" name="beanconqueror-filter"
-                    slot="icon-only"></ion-icon>
-        </ion-button>
-      </div>
-
-      <ion-card *ngIf="openBeansLeftOverCount() > 0" class="ion-padding">
-        <ion-card-title>{{"BEANS_LEFT_OVER" | translate}}:&nbsp;{{openBeansLeftOverCount() | number : '.0-2'}}&nbsp;kg</ion-card-title>
-      </ion-card>
 
       <ion-virtual-scroll #openScroll *ngIf="openBeans.length > 0" [items]="openBeans"
                           approxItemHeight="200px">
@@ -56,7 +55,17 @@
 
     </div>
     <div *ngIf="settings?.show_archived_beans">
-      <div *ngSwitchCase="'finished'">
+      <div *ngSwitchCase="'archiv'">
+        <div *ngIf="finishedBeans?.length > 0 || isFilterActive()" class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
+
+          <ion-searchbar (ionChange)="research()" [(ngModel)]="archivedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+          <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
+            <ion-icon *ngIf="isFilterActive()"  name="beanconqueror-sort-active"
+                      slot="icon-only"></ion-icon>
+            <ion-icon *ngIf="!isFilterActive()"  name="beanconqueror-sort-inactive"
+                      slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
         <div *ngIf="finishedBeans.length == 0" class="ion-padding ion-text-center">
           <div>
             <ion-icon color="inactive" name="beanconqueror-beans" size="large"></ion-icon>

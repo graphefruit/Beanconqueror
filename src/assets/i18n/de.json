@@ -437,12 +437,13 @@
   "PREPARATION_TOOLS_INFORMATION": "Füge für Siebträger deine verschiedenen Siebe hinzu. Bei einer V60 oder auch Aeropress deine Unterschiedlichen Papier/Stoff/Metallfilter usw.",
   "PREPARATION_TOOLS_PLACEHOLDER": "Papierfilter, Stofffilter, VST-20g, 14g-Sieb, etc.",
   "PREPARATION_PARAMETERS_CUSTOMIZED": "Parameter individualisiert",
-  "BEANS_LEFT_OVER": "Verbrauchbare Bohnenmenge",
+  "BEANS_WEIGHT_AVAILABLE": "Bohnen verfügbar",
   "SORT_ORDER": "Sortierung ändern",
   "ASCENDING": "aufsteigend",
   "DESCENDING": "absteigend",
   "SORT_AFTER": "Sotieren nach",
   "BEAN_SORT_NAME_OF_BEAN": "Name der Bohne",
   "BEAN_SORT_ROASTER": "Röster",
-  "BEAN_SORT_ROASTING_DATE": "Röstdatum"
+  "BEAN_SORT_ROASTING_DATE": "Röstdatum",
+  "PAGE_SETTINGS_MANAGE_ARCHIVE": "Archive verwalten"
 }

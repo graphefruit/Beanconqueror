@@ -15,19 +15,17 @@
 </ion-header>
 
 <ion-content>
-  <div>
-    <ion-segment [(ngModel)]="segment">
-      <ion-segment-button value="open">
-        <ion-label>{{"CURRENT" | translate }}
-        </ion-label>
-      </ion-segment-button>
-      <ion-segment-button *ngIf="settings?.show_archived_mills" value="archive">
-        <ion-label>{{"TAB_ARCHIVE" | translate }}
-        </ion-label>
+  <ion-segment [(ngModel)]="segment" class="ion-padding-vertical">
+    <ion-segment-button value="open">
+      <ion-label>{{"CURRENT" | translate }}
+      </ion-label>
+    </ion-segment-button>
+    <ion-segment-button *ngIf="settings?.show_archived_mills" value="archive">
+      <ion-label>{{"TAB_ARCHIVE" | translate }}
+      </ion-label>
 
-      </ion-segment-button>
-    </ion-segment>
-  </div>
+    </ion-segment-button>
+  </ion-segment>
   <div [ngSwitch]="segment">
     <div *ngSwitchCase="'open'">
       <div *ngIf="getActiveMills()?.length == 0" class="ion-padding ion-text-center">

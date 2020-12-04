@@ -3,9 +3,9 @@
 
   ion-card.dashboard {
     text-align:center;
-    border-right: 2px solid var(--ion-color-accent-secondary);
-    border-radius:0px;
-    padding-right:8px;
+    padding: 6px;
+    height:100%;
+
     ion-card-title {
       color: var(--ion-color-accent-secondary);
       font-size:24px;
@@ -17,13 +17,7 @@
       font-size:14px;
     }
   }
-   ion-card.dashboard.no-border {
 
-      border-right: none;
-      padding-right: 0px;
-
-
-  }
 
   ion-button[add-brew] {
     --padding-bottom: 0px;

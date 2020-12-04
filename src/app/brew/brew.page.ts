@@ -56,6 +56,8 @@ export class BrewPage implements OnInit {
     bean: [],
     method_of_preparation: []
   };
+  public openBrewFilterText: string = '';
+  public archivedBrewFilterText: string = '';
 
   public archivedBrewsFilter: IBrewPageFilter = {
     mill: [],
@@ -255,11 +257,11 @@ export class BrewPage implements OnInit {
     if (this.brew_segment === 'open') {
       return (this.openBrewsFilter.bean.length > 0 ||
         this.openBrewsFilter.method_of_preparation.length > 0 ||
-        this.openBrewsFilter.mill.length > 0);
+        this.openBrewsFilter.mill.length > 0) || this.openBrewFilterText !== '';
     } else {
       return (this.archivedBrewsFilter.bean.length > 0 ||
         this.archivedBrewsFilter.method_of_preparation.length > 0 ||
-        this.archivedBrewsFilter.mill.length > 0);
+        this.archivedBrewsFilter.mill.length > 0) || this.archivedBrewFilterText !== '';
     }
   }
 
@@ -309,6 +311,9 @@ export class BrewPage implements OnInit {
     this.uiSettingsStorage.saveSettings(settings);
   }
 
+  public research() {
+    this.__initializeBrewView(this.brew_segment);
+  }
   private __initializeBrewView(_type: string): void {
 // sort latest to top.
     const brewsCopy: Array<Brew> = [...this.brews];
@@ -348,7 +353,19 @@ export class BrewPage implements OnInit {
       brewsFilters = brewsFilters.filter((e) => filter.method_of_preparation.filter((z) => z === e.method_of_preparation).length > 0);
     }
 
-    const sortedBrews: Array<Brew> = UIBrewHelper.sortBrews(brewsFilters);
+    let sortedBrews: Array<Brew> = UIBrewHelper.sortBrews(brewsFilters);
+    let searchText: string = '';
+    if (_type === 'open') {
+        searchText = this.openBrewFilterText.toLowerCase();
+    } else {
+      searchText = this.archivedBrewFilterText.toLowerCase();
+    }
+    if (searchText) {
+      sortedBrews = sortedBrews.filter((e) => e.note.toLowerCase().includes(searchText) || e.getPreparation().name.toLowerCase().includes(searchText) ||
+        e.getBean().name.toLowerCase().includes(searchText) ||
+        e.getBean().roaster.toLowerCase().includes(searchText));
+    }
+
     if (_type === 'open') {
       this.openBrewsView = sortedBrews;
     } else {

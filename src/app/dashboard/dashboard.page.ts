@@ -15,6 +15,9 @@ import {UIToast} from '../../services/uiToast';
 import {Router} from '@angular/router';
 import {UIHelper} from '../../services/uiHelper';
 import {UIAnalytics} from '../../services/uiAnalytics';
+import {UIBeanStorage} from '../../services/uiBeanStorage';
+import {Bean} from '../../classes/bean/bean';
+import {UIBeanHelper} from '../../services/uiBeanHelper';
 
 @Component({
   selector: 'dashboard',
@@ -24,6 +27,7 @@ import {UIAnalytics} from '../../services/uiAnalytics';
 export class DashboardPage implements OnInit {
 
   public brews: Array<Brew> = [];
+  private leftOverBeansWeight: number = undefined;
   constructor(public uiStatistic: UIStatistic,
               private readonly modalCtrl: ModalController,
               private readonly uiBrewStorage: UIBrewStorage,
@@ -33,7 +37,9 @@ export class DashboardPage implements OnInit {
               private readonly changeDetectorRef: ChangeDetectorRef,
               private readonly router: Router,
               private readonly uiHelper: UIHelper,
-              private readonly uiAnalytics: UIAnalytics) {
+              private readonly uiAnalytics: UIAnalytics,
+              private readonly uiBeanStorage: UIBeanStorage,
+              private readonly uiBeanHelper: UIBeanHelper) {
   }
 
   public ngOnInit(): void {
@@ -181,6 +187,34 @@ export class DashboardPage implements OnInit {
     this.uiBrewStorage.removeByObject(_brew);
     this.loadBrews();
 
+  }
+
+
+  public openBeansLeftOverCount(): number {
+    if (this.leftOverBeansWeight === undefined) {
+      let leftOverCount: number = 0;
+      const openBeans: Array<Bean> = this.uiBeanStorage.getAllEntries().filter(
+        (bean) => !bean.finished);
+      for (const bean of openBeans) {
+
+        if (bean.weight > 0) {
+          leftOverCount  += (bean.weight - this.getUsedWeightCount(bean));
+        }
+      }
+
+
+      this.leftOverBeansWeight = Math.round((leftOverCount / 1000) * 100) / 100;
+    }
+    return this.leftOverBeansWeight;
+  }
+
+  public getUsedWeightCount(_bean: Bean): number {
+    let usedWeightCount: number = 0;
+    const relatedBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(_bean.config.uuid);
+    for (const brew of relatedBrews) {
+      usedWeightCount += brew.grind_weight;
+    }
+    return usedWeightCount;
   }
 
 }

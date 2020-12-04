@@ -46,7 +46,10 @@ export class BeansPage implements OnInit {
     sort_after:  BEAN_SORT_AFTER.UNKOWN,
     sort_order: BEAN_SORT_ORDER.UNKOWN,
   };
-  private leftOverBeansWeight: number = undefined;
+
+  public archivedBeansFilterText: string = '';
+  public openBeansFilterText: string = '';
+
 
   constructor(public modalCtrl: ModalController,
               private readonly changeDetectorRef: ChangeDetectorRef,
@@ -63,26 +66,14 @@ export class BeansPage implements OnInit {
 
   public ionViewWillEnter(): void {
     this.settings = this.uiSettingsStorage.getSettings();
-    this.loadBeans();
     this.archivedBeansFilter = this.settings.bean_filter.ARCHIVED;
     this.openBeansFilter = this.settings.bean_filter.OPEN;
+    this.loadBeans();
   }
 
-  public getOpenBeans(): Array<Bean> {
-
-    return this.__sortBeans();
-    /*return this.beans.filter(
-        (bean) => !bean.finished);*/
-  }
-
-  public getFinishedBeans(): Array<Bean> {
-    return this.__sortBeans();
-    /*return this.beans.filter(
-        (bean) => bean.finished);*/
-  }
 
   public loadBeans(): void {
-    this.leftOverBeansWeight = undefined;
+
     this.__initializeBeans();
     this.changeDetectorRef.detectChanges();
     this.retriggerScroll();
@@ -196,21 +187,6 @@ export class BeansPage implements OnInit {
 
   }
 
-  public openBeansLeftOverCount(): number {
-    if (this.leftOverBeansWeight === undefined) {
-      let leftOverCount: number = 0;
-      for (const bean of this.openBeans) {
-
-        if (bean.weight > 0) {
-          leftOverCount  += (bean.weight - this.getUsedWeightCount(bean));
-        }
-      }
-
-
-      this.leftOverBeansWeight = Math.round((leftOverCount / 1000) * 100) / 100;
-    }
-    return this.leftOverBeansWeight;
-  }
 
   public async showFilter() {
     let beanFilter: IBeanPageFilter;
@@ -249,86 +225,15 @@ export class BeansPage implements OnInit {
   public isFilterActive(): boolean {
     if (this.bean_segment === 'open') {
       return (this.openBeansFilter.sort_order !== BEAN_SORT_ORDER.UNKOWN &&
-        this.openBeansFilter.sort_after !== BEAN_SORT_AFTER.UNKOWN);
+        this.openBeansFilter.sort_after !== BEAN_SORT_AFTER.UNKOWN) || this.openBeansFilterText !== '';
     } else {
       return (this.archivedBeansFilter.sort_order !== BEAN_SORT_ORDER.UNKOWN &&
-        this.archivedBeansFilter.sort_after !== BEAN_SORT_AFTER.UNKOWN);
+        this.archivedBeansFilter.sort_after !== BEAN_SORT_AFTER.UNKOWN) || this.archivedBeansFilterText !== '';
     }
   }
 
-  private __sortBeans(): Array<Bean> {
-// sort latest to top.
-
-    const isOpen: boolean = (this.bean_segment === 'open');
-    let filter: IBeanPageFilter;
-    let sortedBeans : Array<Bean>;
-    if (isOpen) {
-      filter = this.openBeansFilter;
-      sortedBeans =  this.beans.filter(
-        (bean) => !bean.finished);
-    } else {
-      filter = this.archivedBeansFilter;
-      sortedBeans =  this.beans.filter(
-        (bean) => bean.finished);
-    }
-
-    // Skip if something is unkown, because no filter is active then
-    if (filter.sort_order === BEAN_SORT_ORDER.UNKOWN || filter.sort_after === BEAN_SORT_AFTER.UNKOWN){
-      return sortedBeans;
-    }
-
-
-    switch (filter.sort_after) {
-      case BEAN_SORT_AFTER.NAME:
-        sortedBeans = sortedBeans.sort( (a,b) => {
-          const nameA = a.name.toUpperCase();
-          const nameB = a.name.toUpperCase();
-          if (nameA < nameB) {
-            return -1;
-          }
-          if (nameA > nameB) {
-            return 1;
-          }
-
-            return 0;
-          }
-        );
-         break;
-      case BEAN_SORT_AFTER.ROASTER:
-        sortedBeans = sortedBeans.sort( (a,b) => {
-          const roasterA = a.roaster.toUpperCase();
-          const roasterB = a.roaster.toUpperCase();
-          if (roasterA < roasterB) {
-            return -1;
-          }
-          if (roasterA > roasterB) {
-            return 1;
-          }
-
-          return 0;
-          }
-        );
-        break;
-      case BEAN_SORT_AFTER.ROASTING_DATE:
-        sortedBeans = sortedBeans.sort( (a,b) => {
-            if ( a.roastingDate > b.roastingDate ){
-              return -1;
-            }
-            if ( a.roastingDate < b.roastingDate ){
-              return 1;
-            }
-            return 0;
-          }
-        );
-
-    }
-
-    switch (filter.sort_order) {
-      case BEAN_SORT_ORDER.DESCENDING:
-        sortedBeans.reverse();
-        break;
-    }
-    return sortedBeans;
+  public research() {
+    this.__initializeBeansView(this.bean_segment);
   }
 
   private __saveBeanFilter() {
@@ -338,11 +243,97 @@ export class BeansPage implements OnInit {
     this.uiSettingsStorage.saveSettings(settings);
   }
 
-  private __initializeBeans(): void {
-    this.beans = this.uiBeanStorage.getAllEntries()
-        .sort((a, b) => a.name.localeCompare(b.name));
-    this.openBeans = this.getOpenBeans();
-    this.finishedBeans = this.getFinishedBeans();
+  private __initializeBeansView(_type: string) {
+// sort latest to top.
+    const beansCopy: Array<Bean> = [...this.beans];
+    const isOpen: boolean = (_type === 'open');
+    let filter: IBeanPageFilter;
+    let sortedBeans : Array<Bean>;
+    if (isOpen) {
+      filter = this.openBeansFilter;
+      sortedBeans =  beansCopy.filter(
+        (bean) => !bean.finished);
+    } else {
+      filter = this.archivedBeansFilter;
+      sortedBeans =  beansCopy.filter(
+        (bean) => bean.finished);
+    }
+
+    // Skip if something is unkown, because no filter is active then
+    if (filter.sort_order !== BEAN_SORT_ORDER.UNKOWN && filter.sort_after !== BEAN_SORT_AFTER.UNKOWN){
+
+      switch (filter.sort_after) {
+        case BEAN_SORT_AFTER.NAME:
+          sortedBeans = sortedBeans.sort( (a,b) => {
+            const nameA = a.name.toUpperCase();
+            const nameB = a.name.toUpperCase();
+            if (nameA < nameB) {
+              return -1;
+            }
+            if (nameA > nameB) {
+              return 1;
+            }
+
+              return 0;
+            }
+          );
+           break;
+        case BEAN_SORT_AFTER.ROASTER:
+          sortedBeans = sortedBeans.sort( (a,b) => {
+            const roasterA = a.roaster.toUpperCase();
+            const roasterB = a.roaster.toUpperCase();
+            if (roasterA < roasterB) {
+              return -1;
+            }
+            if (roasterA > roasterB) {
+              return 1;
+            }
+
+            return 0;
+            }
+          );
+          break;
+        case BEAN_SORT_AFTER.ROASTING_DATE:
+          sortedBeans = sortedBeans.sort( (a,b) => {
+              if ( a.roastingDate > b.roastingDate ){
+                return -1;
+              }
+              if ( a.roastingDate < b.roastingDate ){
+                return 1;
+              }
+              return 0;
+            }
+          );
+
+      }
+
+      switch (filter.sort_order) {
+        case BEAN_SORT_ORDER.DESCENDING:
+          sortedBeans.reverse();
+          break;
+      }
+
+
+    }
+    let searchText: string = '';
+    if (isOpen) {
+      searchText = this.openBeansFilterText.toLowerCase();
+    } else {
+      searchText = this.archivedBeansFilterText.toLowerCase();
+    }
+
+    if (searchText) {
+      sortedBeans = sortedBeans.filter((e) => e.note.toLowerCase().includes(searchText) ||
+        e.name.toLowerCase().includes(searchText) ||
+        e.roaster.toLowerCase().includes(searchText) ||
+        e.aromatics.toLowerCase().includes(searchText));
+    }
+    console.log('Lets go');
+   if (isOpen) {
+     this.openBeans = sortedBeans;
+   } else {
+     this.finishedBeans = sortedBeans;
+   }
   }
 
 
@@ -364,6 +355,15 @@ export class BeansPage implements OnInit {
 
   }
   public ngOnInit() {
+  }
+
+  private __initializeBeans(): void {
+    this.beans = this.uiBeanStorage.getAllEntries()
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    this.__initializeBeansView('open');
+    this.__initializeBeansView('archiv');
+
   }
 
 }

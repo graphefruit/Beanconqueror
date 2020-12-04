@@ -1,6 +1,6 @@
 :host {
   .card-background {
-    background-color: #CDC2AC !important;
+    background-color: var(--ion-color-inactive) !important;
   }
 
   .small-card ion-card-content {

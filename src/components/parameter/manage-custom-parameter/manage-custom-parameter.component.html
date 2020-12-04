@@ -1,6 +1,6 @@
 
 <ion-card class="ion-padding">
-  <ion-title class="ion-padding-top">{{"SORT_PARAMETERS_BEFORE" | translate  }}</ion-title>
+  <ion-title class="ion-no-padding">{{"SORT_PARAMETERS_BEFORE" | translate  }}</ion-title>
   <ion-item tappable>
     <ion-label>{{"BREW_DATA_GRIND_SIZE" | translate}}</ion-label>
     <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.grind_size"></ion-checkbox>
@@ -34,7 +34,7 @@
     <ion-label>{{"BREW_DATA_MILL_TIMER" | translate}}</ion-label>
     <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.mill_timer"></ion-checkbox>
   </ion-item>
-  <ion-item lines="none" tappable>
+  <ion-item tappable>
     <ion-label>{{"BREW_DATA_PRESSURE_PROFILE" | translate}}</ion-label>
     <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.pressure_profile"></ion-checkbox>
   </ion-item>
@@ -46,8 +46,8 @@
     <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.method_of_preparation_tool"></ion-checkbox>
   </ion-item>
 </ion-card>
-<ion-card class="ion-padding">
-  <ion-title class="ion-padding-top">{{"SORT_PARAMETERS_MEANWHILE" | translate  }}</ion-title>
+<ion-card class="ion-padding" style="margin-top:30px;">
+  <ion-title  class="ion-no-padding">{{"SORT_PARAMETERS_MEANWHILE" | translate  }}</ion-title>
   <ion-item tappable>
     <ion-label>{{"BREW_DATA_TEMPERATURE_TIME" | translate}} / {{"BREW_DATA_SURF_TIME" | translate}}</ion-label>
     <ion-checkbox (ngModelChange)="triggerChanges($event)"
@@ -71,8 +71,8 @@
                   [(ngModel)]="data.manage_parameters.coffee_blooming_time"></ion-checkbox>
   </ion-item>
 </ion-card>
-<ion-card class="ion-padding">
-  <ion-title class="ion-padding-top">{{"SORT_PARAMETERS_AFTER" | translate  }}</ion-title>
+<ion-card class="ion-padding"  style="margin-top:30px;">
+  <ion-title class="ion-no-padding">{{"SORT_PARAMETERS_AFTER" | translate  }}</ion-title>
   <ion-item [disabled]="brewQuantityDisabled()" tappable>
     <ion-label>
       <h2>{{"BREW_DATA_BREW_QUANTITY" | translate}}</h2>

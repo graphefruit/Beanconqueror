@@ -2,6 +2,8 @@
 
   ion-card {
     ion-card-content {
+      padding: 8px;
+      padding-bottom: 0px;
       padding-top: var(--padding-top);
     }
   }
@@ -11,7 +13,12 @@
     position: absolute;
     top: -20px;
     right: -20px;
-    min-height: 45px;
+    min-height: 20px;
+    ion-icon{
+      font-size: 18px!important;
+      width: 18px!important;
+      height: 18px!important;
+    }
   }
 
   .no-ion-col-vertical-padding {
@@ -20,6 +27,10 @@
       padding-bottom: 0px !important;
     }
 
+  }
+  ion-text {
+    position: relative;
+    top: -5px;
   }
 
 }

@@ -11,7 +11,7 @@
 <ion-content>
 
 
-  <ion-card *ngIf="isMobile()">
+  <ion-card>
 
     <ion-card-content>
       <ion-card-title>{{"PAGE_SETTINGS_TRANSFER" | translate}}</ion-card-title>
@@ -27,7 +27,7 @@
   </ion-card>
 
 
-  <ion-card>
+  <ion-card class="margin-top-20">
     <ion-card-content>
       <ion-card-title>{{"PAGE_SETTINGS_GENERAL" | translate}}</ion-card-title>
       <ion-item>
@@ -63,33 +63,34 @@
           <p>{{"PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION" | translate}}</p></ion-label>
         <ion-checkbox  (ngModelChange)="saveSettings();" [(ngModel)]="settings.fast_brew_repeat"></ion-checkbox>
       </ion-item>
-
-      <ion-item>
-        <ion-label>{{"PAGE_SETTINGS_SHOW_ARCHIVED_BEANS" | translate}}</ion-label>
-        <ion-checkbox (ngModelChange)="saveSettings();"
-                      [(ngModel)]="settings.show_archived_beans"></ion-checkbox>
-      </ion-item>
-      <ion-item>
-        <ion-label>{{"PAGE_SETTINGS_SHOW_ARCHIVED_BREWS" | translate}}</ion-label>
-        <ion-checkbox (ngModelChange)="saveSettings();"
-                      [(ngModel)]="settings.show_archived_brews"></ion-checkbox>
-      </ion-item>
-      <ion-item>
-        <ion-label>{{"PAGE_SETTINGS_SHOW_ARCHIVED_PREPARATIONS" | translate}}</ion-label>
-        <ion-checkbox (ngModelChange)="saveSettings();"
-                      [(ngModel)]="settings.show_archived_preparations"></ion-checkbox>
-      </ion-item>
-      <ion-item lines="none">
-        <ion-label>{{"PAGE_SETTINGS_SHOW_ARCHIVED_MILLS" | translate}}</ion-label>
-        <ion-checkbox (ngModelChange)="saveSettings();"
-                      [(ngModel)]="settings.show_archived_mills"></ion-checkbox>
-      </ion-item>
-
-
     </ion-card-content>
       </ion-card>
 
-
+<ion-card class="margin-top-20">
+  <ion-card-content>
+    <ion-card-title>{{"PAGE_SETTINGS_MANAGE_ARCHIVE" | translate}}</ion-card-title>
+    <ion-item>
+      <ion-label>{{"PAGE_SETTINGS_SHOW_ARCHIVED_BEANS" | translate}}</ion-label>
+      <ion-checkbox (ngModelChange)="saveSettings();"
+                    [(ngModel)]="settings.show_archived_beans"></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label>{{"PAGE_SETTINGS_SHOW_ARCHIVED_BREWS" | translate}}</ion-label>
+      <ion-checkbox (ngModelChange)="saveSettings();"
+                    [(ngModel)]="settings.show_archived_brews"></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label>{{"PAGE_SETTINGS_SHOW_ARCHIVED_PREPARATIONS" | translate}}</ion-label>
+      <ion-checkbox (ngModelChange)="saveSettings();"
+                    [(ngModel)]="settings.show_archived_preparations"></ion-checkbox>
+    </ion-item>
+    <ion-item lines="none">
+      <ion-label>{{"PAGE_SETTINGS_SHOW_ARCHIVED_MILLS" | translate}}</ion-label>
+      <ion-checkbox (ngModelChange)="saveSettings();"
+                    [(ngModel)]="settings.show_archived_mills"></ion-checkbox>
+    </ion-item>
+  </ion-card-content>
+</ion-card>
 
 
 

@@ -14,8 +14,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <div>
-    <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="brew_segment">
+    <ion-segment  (ionChange)="segmentChanged()" [(ngModel)]="brew_segment" class="ion-padding-vertical">
       <ion-segment-button value="open">
         <ion-label>{{"CURRENT" | translate }}
         </ion-label>
@@ -23,15 +22,17 @@
       <ion-segment-button *ngIf="settings?.show_archived_brews" value="archive">
         <ion-label>{{"TAB_ARCHIVE" | translate }}
         </ion-label>
-
       </ion-segment-button>
     </ion-segment>
-  </div>
   <div [ngSwitch]="brew_segment">
     <div *ngSwitchCase="'open'">
-      <div *ngIf="openBrewsView?.length > 0 || isFilterActive() === true" class="ion-justify-content-end container">
+      <div *ngIf="openBrewsView?.length > 0 || isFilterActive() === true" class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
+
+        <ion-searchbar (ionChange)="research()" [(ngModel)]="openBrewFilterText" class="ion-no-padding ion-no-margin" debounce="750" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
         <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
-          <ion-icon [class.active]="isFilterActive()" class="black" name="beanconqueror-filter"
+          <ion-icon *ngIf="isFilterActive()"  name="beanconqueror-filter-active"
+                    slot="icon-only"></ion-icon>
+          <ion-icon *ngIf="!isFilterActive()"  name="beanconqueror-filter-inactive"
                     slot="icon-only"></ion-icon>
         </ion-button>
       </div>
@@ -53,9 +54,14 @@
     </div>
     <div *ngIf="settings?.show_archived_brews">
       <div *ngSwitchCase="'archive'">
-        <div *ngIf="archiveBrewsView?.length > 0 || isFilterActive()===true" class="ion-justify-content-end container">
+
+        <div *ngIf="archiveBrewsView?.length > 0 || isFilterActive() === true" class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
+
+          <ion-searchbar (ionChange)="research()" [(ngModel)]="archivedBrewFilterText" class="ion-no-padding ion-no-margin" debounce="750" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
           <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
-            <ion-icon [class.active]="isFilterActive()" class="black" name="beanconqueror-filter"
+            <ion-icon *ngIf="isFilterActive()"  name="beanconqueror-filter-active"
+                      slot="icon-only"></ion-icon>
+            <ion-icon *ngIf="!isFilterActive()"  name="beanconqueror-filter-inactive"
                       slot="icon-only"></ion-icon>
           </ion-button>
         </div>

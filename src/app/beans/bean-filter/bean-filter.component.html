@@ -8,34 +8,41 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-grid>
+  <ion-list>
+    <ion-list-header>
+      {{"SORT_ORDER" | translate}}
+    </ion-list-header>
+    <ion-grid class="ion-no-padding">
     <ion-row>
-      <ion-col>
-        <ion-item (click)="setSortOrder(beanSortOrderEnum.ASCENDING)" [class.active]="isOrderActive(beanSortOrderEnum.ASCENDING)" tappable>
+      <ion-col size="6">
+        <ion-item (click)="setSortOrder(beanSortOrderEnum.ASCENDING)" [class.active]="isOrderActive(beanSortOrderEnum.ASCENDING)" lines="none" tappable>
+          <ion-icon   name="beanconqueror-order-asc" slot="start"></ion-icon>
           <ion-label>{{"ASCENDING" | translate}}</ion-label>
         </ion-item>
 
       </ion-col>
-      <ion-col>
-        <ion-item (click)="setSortOrder(beanSortOrderEnum.DESCENDING)" [class.active]="isOrderActive(beanSortOrderEnum.DESCENDING)" tappable>
+      <ion-col size="6">
+        <ion-item (click)="setSortOrder(beanSortOrderEnum.DESCENDING)" [class.active]="isOrderActive(beanSortOrderEnum.DESCENDING)" lines="none" tappable>
+          <ion-icon  name="beanconqueror-order-desc" slot="start"></ion-icon>
           <ion-label>{{"DESCENDING" | translate}}</ion-label>
         </ion-item>
 
       </ion-col>
     </ion-row>
-  </ion-grid>
-  <ion-list>
-
+    </ion-grid>
       <ion-list-header>
       {{"SORT_AFTER" | translate}}
     </ion-list-header>
-      <ion-item (click)="setSortAfter(beanSortAfterEnum.NAME)" [class.active]="isSortActive(beanSortAfterEnum.NAME)" tappable>
+      <ion-item (click)="setSortAfter(beanSortAfterEnum.NAME)" [class.active]="isSortActive(beanSortAfterEnum.NAME)" lines="none" tappable>
+        <ion-icon  name="beanconqueror-order-asc" slot="start"></ion-icon>
         <ion-label>{{"BEAN_SORT_NAME_OF_BEAN" | translate}}</ion-label>
       </ion-item>
-      <ion-item  (click)="setSortAfter(beanSortAfterEnum.ROASTER)" [class.active]="isSortActive(beanSortAfterEnum.ROASTER)" tappable>
+      <ion-item (click)="setSortAfter(beanSortAfterEnum.ROASTER)" [class.active]="isSortActive(beanSortAfterEnum.ROASTER)" class="ion-margin-top" lines="none" tappable>
+        <ion-icon name="beanconqueror-person" slot="start"></ion-icon>
         <ion-label>{{"BEAN_SORT_ROASTER" | translate}}</ion-label>
       </ion-item>
-      <ion-item  (click)="setSortAfter(beanSortAfterEnum.ROASTING_DATE)" [class.active]="isSortActive(beanSortAfterEnum.ROASTING_DATE)" tappable>
+      <ion-item (click)="setSortAfter(beanSortAfterEnum.ROASTING_DATE)" [class.active]="isSortActive(beanSortAfterEnum.ROASTING_DATE)" class="ion-margin-top" lines="none" tappable>
+        <ion-icon name="beanconqueror-clock" slot="start"></ion-icon>
         <ion-label>{{"BEAN_SORT_ROASTING_DATE" | translate}}</ion-label>
       </ion-item>
   </ion-list>
