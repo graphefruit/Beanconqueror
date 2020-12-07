@@ -304,7 +304,7 @@ export class AppComponent implements AfterViewInit {
       // Nothing to do, user declined tracking.
     });
     await this.__checkWelcomePage();
-    // await this.uiUpdate.checkUpdateScreen();
+    await this.uiUpdate.checkUpdateScreen();
     await this.__checkStartupView();
     this.__instanceAppRating();
 

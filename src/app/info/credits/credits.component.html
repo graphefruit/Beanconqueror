@@ -10,8 +10,7 @@
     </ion-title>
   </ion-toolbar>
 </ion-header>
-
-<ion-content class="ion-padding-horizontal">
+<ion-content>
 
     <ion-card *ngFor="let key of credits | keys">
       <ion-item (click)="openLink($event,credits[key].LINK)" button tappable>

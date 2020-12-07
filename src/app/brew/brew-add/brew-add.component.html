@@ -18,11 +18,9 @@
       <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.grind_size,
                       data.getPreparation().manage_parameters.grind_size,
                       data.getPreparation().use_custom_parameters)"
-
                 [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.grind_size,
                       data.getPreparation().brew_order.before.grind_size,
                       data.getPreparation().use_custom_parameters)"
-
                 lines="inset">
       <ion-label position="stacked">{{"BREW_DATA_GRIND_SIZE" | translate}}</ion-label>
         <ion-input [(ngModel)]="data.grind_size" placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_GRIND_SIZE' | translate}}"
@@ -31,8 +29,7 @@
      <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.grind_weight,
                       data.getPreparation().manage_parameters.grind_weight,
                       data.getPreparation().use_custom_parameters)"
-
-                            [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.grind_weight,
+                      [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.grind_weight,
                       data.getPreparation().brew_order.before.grind_weight,
                       data.getPreparation().use_custom_parameters)"
                 lines="inset">
@@ -46,20 +43,16 @@
    <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.brew_temperature,
                       data.getPreparation().manage_parameters.brew_temperature,
                       data.getPreparation().use_custom_parameters)"
-
-                         [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.brew_temperature,
+                      [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.brew_temperature,
                       data.getPreparation().brew_order.before.brew_temperature,
-                      data.getPreparation().use_custom_parameters)"
-                lines="inset">
+                      data.getPreparation().use_custom_parameters)" lines="inset">
       <ion-label position="stacked">{{"BREW_DATA_BREW_TEMPERATURE" | translate}}</ion-label>
         <ion-input [(ngModel)]="data.brew_temperature" inputmode="decimal"
                    placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_BREW_TEMPERATURE' | translate}}" prevent-characters
                    remove-empty-number
                    type="text"></ion-input>
     </ion-item>
-
-
-      <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.method_of_preparation,
+    <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.method_of_preparation,
                       data.getPreparation().manage_parameters.method_of_preparation,
                       data.getPreparation().use_custom_parameters)"
 
@@ -316,7 +309,7 @@
         <ion-range (ionChange)="changedRating()" [(ngModel)]="data.rating" debounce="500s" max="5" min="-1" snaps="true" step="1">
 
           <div slot="end">
-            <ngx-stars #brewStars [color]="'#BFB9B0'" [customStarIcons]="brewIcons" [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right" ></ngx-stars>
+            <ngx-stars #brewStars [color]="'#BFB9B0'"  [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars" ></ngx-stars>
           </div>
         </ion-range>
 
@@ -418,7 +411,7 @@
                       data.getPreparation().use_custom_parameters)"
            lines="inset">
         <ion-item (click)="addImage()" button tappable>
-          <ion-icon class="icon-32" name="beanconqueror-add"></ion-icon>&nbsp;{{"ADD_PHOTO" | translate}}
+          <ion-icon class="icon-16" name="beanconqueror-add"></ion-icon>&nbsp;{{"ADD_PHOTO" | translate}}
         </ion-item>
         <div *ngIf="data?.attachments && data.attachments.length > 0 && settings.attachments === true">
           <ion-slides #photoSlides pager="true">

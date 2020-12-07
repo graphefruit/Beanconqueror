@@ -48,10 +48,7 @@ export class BrewEditComponent implements OnInit {
   public customSelectSheetOptions: any = {
     cssClass: 'select-full-screen'
   };
-  public brewIcons = {
-    empty: '../assets/custom-ion-icons/beanconqueror-brew-rating-empty.svg',
-    full: '../assets/custom-ion-icons/beanconqueror-brew-rating-full.svg',
-  };
+
 
   constructor (private readonly modalController: ModalController,
                private readonly navParams: NavParams,

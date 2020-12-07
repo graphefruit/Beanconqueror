@@ -87,6 +87,7 @@
   "BEAN_DATA_FARMER": "Farmer",
   "BEAN_DATA_ELEVATION": "Anbauhöhe",
   "BEAN_DATA_HARVEST_TIME": "Ernte",
+  "BEAN_DATA_PERCENTAGE": "Prozentualer Anteil",
   "BEAN_DATA_CERTIFICATION": "Bohnenzertifikat",
   "BEAN_DATA_ROASTING_TYPE": "Rösttyp",
   "BEAN_DATA_DECAFFEINATED": "Entkoffeiniert",
@@ -345,6 +346,7 @@
       "BEAN_DATA_FARMER": "Füge den Farmer hinzu",
       "BEAN_DATA_ELEVATION": "In welcher Höhe wurde die Bohne angebaut",
       "BEAN_DATA_HARVEST_TIME": "Wann wurde die Bohne geerntet?",
+      "BEAN_DATA_PERCENTAGE": "Füge den prozentualen Anteil hinzu",
       "BEAN_DATA_CERTIFICATION": "Füge das Bohnenzertifikat hinzu (Fairtrade, Bio)",
       "BEAN_DATA_ROASTING_TYPE": "Füge den Rösttyp hinzu",
       "BEAN_DATA_DECAFFEINATED": "Ist der Kaffee Entkoffeiniert",
@@ -445,5 +447,6 @@
   "BEAN_SORT_NAME_OF_BEAN": "Name der Bohne",
   "BEAN_SORT_ROASTER": "Röster",
   "BEAN_SORT_ROASTING_DATE": "Röstdatum",
-  "PAGE_SETTINGS_MANAGE_ARCHIVE": "Archive verwalten"
+  "PAGE_SETTINGS_MANAGE_ARCHIVE": "Archive verwalten",
+  "LAST_USE": "Zuletzt verwendet"
 }

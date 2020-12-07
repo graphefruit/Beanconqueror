@@ -266,7 +266,8 @@ export class BeansPage implements OnInit {
         case BEAN_SORT_AFTER.NAME:
           sortedBeans = sortedBeans.sort( (a,b) => {
             const nameA = a.name.toUpperCase();
-            const nameB = a.name.toUpperCase();
+            const nameB = b.name.toUpperCase();
+
             if (nameA < nameB) {
               return -1;
             }
@@ -281,7 +282,7 @@ export class BeansPage implements OnInit {
         case BEAN_SORT_AFTER.ROASTER:
           sortedBeans = sortedBeans.sort( (a,b) => {
             const roasterA = a.roaster.toUpperCase();
-            const roasterB = a.roaster.toUpperCase();
+            const roasterB = b.roaster.toUpperCase();
             if (roasterA < roasterB) {
               return -1;
             }

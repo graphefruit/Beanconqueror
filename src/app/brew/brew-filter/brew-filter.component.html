@@ -7,15 +7,13 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content>
+<ion-content class="popover">
   <ion-item>
     <ion-label position="stacked">{{"BREW_DATA_PREPARATION_METHOD" | translate}}</ion-label>
     <ion-select [(ngModel)]="filter.method_of_preparation"
                 [show-finished]="segment !== 'open'"
                 multiple="true"
                 preparation-overlay>
-      <ion-select-option *ngFor="let method of method_of_preparations" value="{{method.config.uuid}}">
-      </ion-select-option>
     </ion-select>
   </ion-item>
   <ion-item>
@@ -24,8 +22,6 @@
                 [multiple]="true"
                 [show-finished]="segment !== 'open'"
                 bean-overlay>
-      <ion-select-option *ngFor="let bean of beans"
-                         value="{{bean.config.uuid}}"></ion-select-option>
     </ion-select>
   </ion-item>
   <ion-item>
@@ -34,7 +30,6 @@
                 [show-finished]="segment !== 'open'"
                 mill-overlay
                 multiple="true">
-      <ion-select-option *ngFor="let mill of mills" value="{{mill.config.uuid}}"></ion-select-option>
     </ion-select>
   </ion-item>
 </ion-content>

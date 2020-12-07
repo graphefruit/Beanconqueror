@@ -57,11 +57,6 @@ export class BrewAddComponent implements OnInit {
 
   @Input() private hide_toast_message: boolean;
 
-  public brewIcons = {
-    empty: '../assets/custom-ion-icons/beanconqueror-brew-rating-empty.svg',
-    full: '../assets/custom-ion-icons/beanconqueror-brew-rating-full.svg',
-  };
-
   constructor (private readonly modalController: ModalController,
                private readonly navParams: NavParams,
                private readonly uiBeanStorage: UIBeanStorage,

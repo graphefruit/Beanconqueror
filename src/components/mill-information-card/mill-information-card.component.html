@@ -32,6 +32,11 @@
           <ion-label class="card-headline">{{"BEANS_USED" | translate}}</ion-label><br/>
           <ion-text>{{getBeansCount()| number : '.0'}}</ion-text>
         </ion-col>
+        <ion-col size="6">
+          <ion-label class="card-headline">{{"LAST_USE" | translate}}</ion-label><br/>
+          <ion-text *ngIf="getBrewsCount()> 0">{{lastUsed() | formatDate:["DD.MM.YYYY"]}}</ion-text>
+          <ion-text *ngIf="getBrewsCount() <= 0">-</ion-text>
+        </ion-col>
       </ion-row>
     </ion-grid>
   </ion-card-content>

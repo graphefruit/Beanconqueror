@@ -8,7 +8,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-list>
+  <ion-list class="ion-no-padding">
     <ion-list-header>
       {{"SORT_ORDER" | translate}}
     </ion-list-header>
@@ -34,7 +34,7 @@
       {{"SORT_AFTER" | translate}}
     </ion-list-header>
       <ion-item (click)="setSortAfter(beanSortAfterEnum.NAME)" [class.active]="isSortActive(beanSortAfterEnum.NAME)" lines="none" tappable>
-        <ion-icon  name="beanconqueror-order-asc" slot="start"></ion-icon>
+        <ion-icon  name="beanconqueror-filter-aa" slot="start"></ion-icon>
         <ion-label>{{"BEAN_SORT_NAME_OF_BEAN" | translate}}</ion-label>
       </ion-item>
       <ion-item (click)="setSortAfter(beanSortAfterEnum.ROASTER)" [class.active]="isSortActive(beanSortAfterEnum.ROASTER)" class="ion-margin-top" lines="none" tappable>

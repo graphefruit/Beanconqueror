@@ -10,6 +10,9 @@ import {UIToast} from '../../../services/uiToast';
 import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
 import {PreparationTool} from '../../../classes/preparation/preparationTool';
 import {UIAlert} from '../../../services/uiAlert';
+import {UIPreparationHelper} from '../../../services/uiPreparationHelper';
+import {Brew} from '../../../classes/brew/brew';
+import {UIBrewStorage} from '../../../services/uiBrewStorage';
 
 @Component({
   selector: 'preparation-edit',
@@ -29,7 +32,9 @@ export class PreparationEditComponent implements OnInit {
                private readonly uiHelper: UIHelper,
                private readonly uiAnalytics: UIAnalytics,
                private readonly uiToast: UIToast,
-               private readonly uiAlert: UIAlert) {
+               private readonly uiAlert: UIAlert,
+               private readonly uiPreparationHelper: UIPreparationHelper,
+               private readonly uiBrewStorage: UIBrewStorage) {
 
   }
 
@@ -55,6 +60,7 @@ export class PreparationEditComponent implements OnInit {
     if (this.data.style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
       this.data.manage_parameters.brew_beverage_quantity = true;
       this.data.default_last_coffee_parameters.brew_beverage_quantity = true;
+
       this.data.manage_parameters.brew_quantity = false;
       this.data.default_last_coffee_parameters.brew_quantity = false;
     } else {
@@ -79,12 +85,20 @@ export class PreparationEditComponent implements OnInit {
   }
 
   public deleteTool(_tool: PreparationTool) {
-    this.uiAlert.showConfirm('DELETE_PREPARATION_TOOL_QUESTION', 'SURE_QUESTION', true).then(() => {
-        this.data.deleteTool(_tool);
-      },
-      () => {
-        // No
-      });
+   const relatedBrews: Array<Brew> =  this.uiPreparationHelper.getAllBrewsForThisPreparation(this.data.config.uuid).filter((e) => e.method_of_preparation_tools.includes(_tool.config.uuid));
+     this.uiAlert.showConfirm('DELETE_PREPARATION_TOOL_QUESTION', 'SURE_QUESTION', true).then(() => {
+         if (relatedBrews.length > 0) {
+           for (const brew of relatedBrews) {
+             this.uiBrewStorage.removeByUUID(brew.config.uuid);
+           }
+         }
+         this.data.deleteTool(_tool);
+       },
+       () => {
+         // No
+       });
+
+
 
   }
 

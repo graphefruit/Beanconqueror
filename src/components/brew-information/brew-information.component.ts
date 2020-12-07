@@ -31,11 +31,6 @@ export class BrewInformationComponent implements OnInit {
   public brewQuantityEnum = BREW_QUANTITY_TYPES_ENUM;
   public settings: Settings;
 
-  public brewIcons = {
-    empty: '../assets/custom-ion-icons/beanconqueror-brew-rating-empty.svg',
-    full: '../assets/custom-ion-icons/beanconqueror-brew-rating-full.svg',
-  };
-
   constructor(private readonly uiSettingsStorage: UISettingsStorage, private readonly popoverCtrl: PopoverController) {
     this.settings = this.uiSettingsStorage.getSettings();
 

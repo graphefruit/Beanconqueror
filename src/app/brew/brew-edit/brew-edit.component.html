@@ -306,7 +306,7 @@
       <ion-range (ionChange)="changedRating()" [(ngModel)]="data.rating" debounce="500s" max="5" min="-1" snaps="true" step="1">
 
         <div slot="end">
-          <ngx-stars #brewStars [color]="'#BFB9B0'" [customStarIcons]="brewIcons" [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right" ></ngx-stars>
+          <ngx-stars #brewStars [color]="'#BFB9B0'"  [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars" ></ngx-stars>
         </div>
       </ion-range>
     </ion-item>
@@ -407,7 +407,7 @@
                       data.getPreparation().use_custom_parameters)"
          lines="inset">
       <ion-item (click)="addImage()" button tappable>
-        <ion-icon class="icon-32" name="beanconqueror-add"></ion-icon>&nbsp;{{"ADD_PHOTO" | translate}}
+        <ion-icon class="icon-16" name="beanconqueror-add"></ion-icon>&nbsp;{{"ADD_PHOTO" | translate}}
       </ion-item>
       <div *ngIf="data?.attachments && data.attachments.length > 0 && settings.attachments === true">
         <ion-slides #photoSlides pager="true">

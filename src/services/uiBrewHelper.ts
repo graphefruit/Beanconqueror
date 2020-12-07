@@ -142,6 +142,7 @@ export class UIBrewHelper {
     repeatBrew.rating = _brewToCopy.rating;
     repeatBrew.note = _brewToCopy.note;
     repeatBrew.coordinates = _brewToCopy.coordinates;
+    repeatBrew.method_of_preparation_tools = _brewToCopy.method_of_preparation_tools;
     // TDS is not needed here.
     return repeatBrew;
   }
@@ -158,59 +159,62 @@ export class UIBrewHelper {
 
 
 
-    if (!checkData.default_last_coffee_parameters.grind_size ) {
+    if (!checkData.manage_parameters.grind_size ) {
       brew.grind_size = '';
     }
-    if (!checkData.default_last_coffee_parameters.grind_weight) {
+    if (!checkData.manage_parameters.grind_weight) {
       brew.grind_weight = 0;
     }
 
-    if (!checkData.default_last_coffee_parameters.mill_timer) {
+    if (!checkData.manage_parameters.mill_timer) {
       brew.mill_timer = 0;
     }
-    if (!checkData.default_last_coffee_parameters.mill_speed) {
+    if (!checkData.manage_parameters.mill_speed) {
       brew.mill_speed = 0;
     }
-    if (!checkData.default_last_coffee_parameters.pressure_profile) {
+    if (!checkData.manage_parameters.pressure_profile) {
       brew.pressure_profile = '';
     }
-    if (checkData.default_last_coffee_parameters.brew_temperature) {
+    if (checkData.manage_parameters.brew_temperature) {
       brew.brew_temperature = 0;
     }
-    if (!checkData.default_last_coffee_parameters.brew_temperature_time) {
+    if (!checkData.manage_parameters.brew_temperature_time) {
      brew.brew_temperature_time = 0;
     }
-    if (!checkData.default_last_coffee_parameters.brew_time) {
+    if (!checkData.manage_parameters.brew_time) {
       brew.brew_time = 0;
     }
 
-    if (!checkData.default_last_coffee_parameters.brew_quantity) {
+    if (!checkData.manage_parameters.brew_quantity) {
       brew.brew_quantity = 0;
     }
-    if (!checkData.default_last_coffee_parameters.coffee_type) {
+    if (!checkData.manage_parameters.coffee_type) {
       brew.coffee_type = '';
     }
-    if (checkData.default_last_coffee_parameters.coffee_concentration) {
+    if (!checkData.manage_parameters.coffee_concentration) {
       brew.coffee_concentration = '';
     }
-    if (checkData.default_last_coffee_parameters.coffee_first_drip_time) {
+    if (!checkData.manage_parameters.coffee_first_drip_time) {
      brew.coffee_first_drip_time = 0;
     }
-    if (checkData.default_last_coffee_parameters.coffee_blooming_time) {
+    if (!checkData.manage_parameters.coffee_blooming_time) {
       brew.coffee_blooming_time = 0;
     }
 
-    if (checkData.default_last_coffee_parameters.rating) {
+    if (!checkData.manage_parameters.rating) {
       brew.rating = 0;
     }
-    if (checkData.default_last_coffee_parameters.note) {
+    if (!checkData.manage_parameters.note) {
       brew.note ='';
     }
-    if (checkData.default_last_coffee_parameters.tds) {
+    if (!checkData.manage_parameters.tds) {
       brew.tds =0;
     }
-    if (!checkData.default_last_coffee_parameters.brew_beverage_quantity) {
+    if (!checkData.manage_parameters.brew_beverage_quantity) {
       brew.brew_beverage_quantity = 0;
+    }
+    if (!checkData.manage_parameters.method_of_preparation_tool) {
+      brew.method_of_preparation_tools = [];
     }
 
   }

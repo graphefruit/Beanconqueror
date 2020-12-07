@@ -7,6 +7,7 @@ import {MILL_ACTION} from '../../enums/mills/millActions';
 import {MillPopoverActionsComponent} from '../../app/mill/mill-popover-actions/mill-popover-actions.component';
 import {Brew} from '../../classes/brew/brew';
 import {UIMillHelper} from '../../services/uiMillHelper';
+import {UIBrewHelper} from '../../services/uiBrewHelper';
 
 @Component({
   selector: 'mill-information-card',
@@ -60,6 +61,20 @@ export class MillInformationCardComponent implements OnInit {
     return distinctBeans.length;
 
   }
+  public lastUsed(): number {
+
+    let relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(this.mill.config.uuid);
+    if (relatedBrews.length > 0) {
+      relatedBrews = UIBrewHelper.sortBrews(relatedBrews);
+      return relatedBrews[0].config.unix_timestamp;
+    }
+    return -1;
+
+
+
+  }
+
+
 
   public async showMillActions(event): Promise<void> {
     const popover = await this.popoverCtrl.create({

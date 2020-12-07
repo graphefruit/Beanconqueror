@@ -10,29 +10,20 @@ export class Version implements IVersion {
   public config: Config;
   public alreadyDisplayedVersions: Array<string>;
 
-  // Inherits all showable version updates, used from config.xml
-  private updatedVersions: Array<string> = ['5.0.0'];
-
 
   constructor() {
-
     this.alreadyDisplayedVersions = [];
     this.config = new Config();
-
   }
 
   public initializeByObject(versionObj: IVersion): void {
     Object.assign(this, versionObj);
   }
 
-  public pushUpdatedVersion(updatedVersion: string) {
-    this.alreadyDisplayedVersions.push(updatedVersion);
-  }
-
   public whichUpdateScreensShallBeDisplayed(actualAppVersion: string): Array<string> {
-
+      console.log('blaa');
       const versionCode: string = actualAppVersion;
-      const filteredVersions = this.updatedVersions.filter((e)=> this.alreadyDisplayedVersions.filter((b) => b === e).length === 0);
+      const filteredVersions = this.getUpdatedVersions().filter((e)=> this.alreadyDisplayedVersions.filter((b) => b === e).length === 0);
 
       const displayVersions: Array<string> = [];
       for (const v of filteredVersions) {
@@ -42,6 +33,19 @@ export class Version implements IVersion {
         }
       }
       return displayVersions;
+  }
+
+  public pushUpdatedVersion(updatedVersion: string) {
+    this.alreadyDisplayedVersions.push(updatedVersion);
+  }
+
+  /**
+   * Inherits all showable version updates, used from config.xml
+   * We dont set this to a variable, else it would be stored in DB and wrongly overwritten
+   */
+  private getUpdatedVersions() {
+    return ['5.0.0','5.0.1'];
+
   }
 
   private  versionCompare(_actualAppVersion, _updateVersion) {

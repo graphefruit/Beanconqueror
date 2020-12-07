@@ -64,9 +64,15 @@ export class BeanFilterComponent implements OnInit {
 
   public setSortOrder(_order: any) {
       this.filter.sort_order = _order;
+      if (this.filter.sort_after === BEAN_SORT_AFTER.UNKOWN) {
+        this.filter.sort_after = BEAN_SORT_AFTER.NAME;
+      }
   }
   public setSortAfter(_sort: any) {
     this.filter.sort_after = _sort;
+    if (this.filter.sort_order === BEAN_SORT_ORDER.UNKOWN) {
+      this.filter.sort_order = BEAN_SORT_ORDER.ASCENDING;
+    }
   }
   public isSortActive(_sort: any) {
     return this.filter.sort_after === _sort;

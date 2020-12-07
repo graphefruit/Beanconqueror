@@ -40,10 +40,14 @@ ion-title {
 ion-toolbar {
   --background: #F0F0F0;
   --border-style: none;
-  padding-top: 16px!important;
+  padding-top: 28px!important;
 }
 
-
+ion-toolbar[with-add-button] {
+  --background: #F0F0F0;
+  --border-style: none;
+  padding-top: 16px!important;
+}
 ion-header {
   background-color: #F0F0F0;
   &.header-md:after {
@@ -381,6 +385,25 @@ ion-menu:host .menu-inner {
       width: 44px;
     }
   }
+  .big-icon-96-only {
+    width: 96px !important;
+    height: 96px !important;
+
+    ion-icon {
+      font-size: 64px !important; //Preferred size here
+      width: 44px;
+    }
+  }
+
+  .big-add-icon {
+    width: 96px!important;
+    height: 80px!important;
+    ion-icon {
+      font-size: 128px !important; //Preferred size here
+      width: 128px!important;
+      height: 128px!important;
+    }
+  }
   ion-alert {
     --background: #ffffff;
   }
@@ -480,7 +503,7 @@ ion-menu:host .menu-inner {
     }
 
     ion-item {
-      --background: white;
+      --background: #FFFFFF;
 
     }
 
@@ -528,6 +551,11 @@ ion-menu:host .menu-inner {
         padding-right: 10%;
       }
 
+    }
+  }
+  ion-modal {
+    ion-toolbar {
+      padding-top:28px!important;
     }
   }
 
@@ -611,9 +639,32 @@ ion-menu:host .menu-inner {
     background-repeat: no-repeat;
     height: 22px !important;
     width: 22px !important;
+  }
+  .brew-stars {
 
+
+    .star-full {
+      background: url('../assets/custom-ion-icons/beanconqueror-brew-rating-full.svg')!important;
+      -webkit-mask-image: none !important;
+      mask-image: none !important;
+      background-color: inherit !important;
+      background-repeat: no-repeat;
+      height: 15px!important;
+      width: 16px!important;
+    }
+
+    .star-empty {
+      background: url('../assets/custom-ion-icons/beanconqueror-brew-rating-empty.svg')!important;
+      -webkit-mask-image: none !important;
+      mask-image: none !important;
+      background-color: inherit !important;
+      background-repeat: no-repeat;
+      height: 15px!important;
+      width: 16px!important;
+    }
 
   }
+
   ngx-stars> div > div {
     margin-right:0px!important;
   }
@@ -641,6 +692,10 @@ ion-menu:host .menu-inner {
   .icon-32{
     width:32px;
     height:32px;
+  }
+  .icon-16{
+    width:16px;
+    height:16px;
   }
   .no-padding-bottom {
     padding-bottom:0px;

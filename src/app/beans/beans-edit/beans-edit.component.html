@@ -148,7 +148,7 @@
                   [(ngModel)]="data.note"></ion-textarea>
   </ion-item>
     <ion-item (click)="addImage()" button lines="none" tappable>
-    {{"ADD_PHOTO" | translate}}
+      <ion-icon class="icon-16" name="beanconqueror-add"></ion-icon>&nbsp;{{"ADD_PHOTO" | translate}}
   </ion-item>
   <div *ngIf="data?.attachments && data.attachments.length > 0">
     <ion-slides #photoSlides pager="true">
@@ -160,18 +160,15 @@
     </ion-slides>
   </div>
   </ion-card>
-
-  <ion-card *ngFor="let beanInformation of this.data.bean_information;let first = first;let i = index;let last = last;">
+  <ion-card *ngFor="let beanInformation of this.data.bean_information;let first = first;let i = index;let last = last;" style="padding-bottom:6px;">
     <ion-card-header class="ion-no-padding ion-padding-top">
       <ion-item lines="none">
-        <ion-title *ngIf="data.beanMix.toString() === 'BLEND'" class="ion-no-padding" slot="start">{{"BEAN_SORT" | translate}}&nbsp;-&nbsp;{{i+1}}</ion-title>
+        <ion-title *ngIf="data.beanMix.toString() === 'BLEND'" class="ion-no-padding" slot="start">{{"BEAN_SORT" | translate}}&nbsp;{{i+1}}</ion-title>
         <ion-title *ngIf="data.beanMix.toString() !== 'BLEND'" class="ion-no-padding" slot="start">{{"BEAN_SORT" | translate}}</ion-title>
         <ion-button (click)="deleteSortInformation(i)" *ngIf="!first" fill="clear" slot="end" tappable>
-          <ion-icon color="primary" name="trash-outline" slot="icon-only"></ion-icon>
+          <ion-icon color="accent" name="close-outline" slot="icon-only"></ion-icon>
         </ion-button>
       </ion-item>
-      <hr/>
-
     </ion-card-header>
 
     <ion-item>
@@ -197,7 +194,7 @@
     </ion-item>
     <ion-item>
       <ion-label position="stacked">{{"BEAN_DATA_FARMER" | translate}}</ion-label>
-      <ion-input #farm="ngModel" [(ngModel)]="beanInformation.farmer" autocapitalize="sentences"
+      <ion-input #farmer="ngModel" [(ngModel)]="beanInformation.farmer" autocapitalize="sentences"
                  name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_FARMER' | translate}}" spellcheck="false"
                  type="text">
       </ion-input>
@@ -218,7 +215,7 @@
     </ion-item>
     <ion-item>
       <ion-label position="stacked">{{"BEAN_DATA_PROCESSING" | translate}}</ion-label>
-      <ion-input #variety="ngModel" [(ngModel)]="beanInformation.processing" autocapitalize="sentences"
+      <ion-input #processing="ngModel" [(ngModel)]="beanInformation.processing" autocapitalize="sentences"
                  name="processing" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_PROCESSING' | translate}}" spellcheck="false"
                  type="text">
       </ion-input>
@@ -230,9 +227,16 @@
                  type="text">
       </ion-input>
     </ion-item>
+    <ion-item>
+      <ion-label position="stacked">{{"BEAN_DATA_PERCENTAGE" | translate}}</ion-label>
+      <ion-input #percentage="ngModel" [(ngModel)]="beanInformation.percentage" inputmode="decimal"
+                 placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_PERCENTAGE' | translate}}" prevent-characters
+                 remove-empty-number
+                 type="text"></ion-input>
+    </ion-item>
     <ion-item lines="none">
       <ion-label position="stacked">{{"BEAN_DATA_CERTIFICATION" | translate}}</ion-label>
-      <ion-input #harvestTime="ngModel" [(ngModel)]="beanInformation.certification" autocapitalize="sentences"
+      <ion-input #certification="ngModel" [(ngModel)]="beanInformation.certification" autocapitalize="sentences"
                  name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_CERTIFICATION' | translate}}" spellcheck="false"
                  type="text">
       </ion-input>
@@ -240,7 +244,8 @@
   </ion-card>
 
 
-  <ion-button (click)="addAnotherSort()" *ngIf="(data.beanMix.toString() === 'BLEND')" add-brew color="accent" expand="block">
+
+  <ion-button (click)="addAnotherSort()" *ngIf="(data.beanMix.toString() === 'BLEND')" add-next-sort color="accent" expand="block">
     <ion-icon name="beanconqueror-dashboard-add-fill" size="large" slot="start"></ion-icon>
     <span class="ion-text-bold" slot="end">{{"BEAN_ADD_ANOTHER_SORT" | translate}}</span>
   </ion-button>

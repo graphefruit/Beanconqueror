@@ -1,12 +1,12 @@
 <ion-content>
 <ion-list lines="full">
-  <ion-item (click)="choose(getStaticActions().ARCHIVE)" *ngIf="data.finished === false" button tappable>
-    <ion-icon name="beanconqueror-finished" slot="start"></ion-icon>
-    <span>{{"ARCHIVE" | translate}}</span>
-  </ion-item>
   <ion-item (click)="choose(getStaticActions().EDIT)" button tappable>
     <ion-icon name="beanconqueror-edit" slot="start"></ion-icon>
     <span>{{"EDIT" | translate}}</span>
+  </ion-item>
+  <ion-item (click)="choose(getStaticActions().ARCHIVE)" *ngIf="data.finished === false" button tappable>
+    <ion-icon name="beanconqueror-finished" slot="start"></ion-icon>
+    <span>{{"ARCHIVE" | translate}}</span>
   </ion-item>
   <ion-item (click)="choose(getStaticActions().DELETE)" button tappable>
     <ion-icon name="beanconqueror-delete" slot="start"></ion-icon>

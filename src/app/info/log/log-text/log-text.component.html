@@ -8,17 +8,16 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content class="ion-padding-horizontal">
-  <div style="overflow:scroll;">
+<ion-content >
+  <div class="ion-padding-horizontal" style="overflow:scroll;">
   <textarea [(ngModel)]='logString' style="width: 100%;height: 100vh;outline: 0;border: 0px;">
   </textarea>
   </div>
-
 </ion-content>
 <ion-footer>
   <ion-row>
     <ion-col>
-      <ion-button (click)="dismiss()" expand="block" fill="outline">{{"CLOSE" | translate}}</ion-button>
+      <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline">{{"CLOSE" | translate}}</ion-button>
     </ion-col>
   </ion-row>
 </ion-footer>

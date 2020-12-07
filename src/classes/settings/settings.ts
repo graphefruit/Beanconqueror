@@ -154,7 +154,7 @@ export class Settings implements ISettings {
     // We need to reassign brew order here, else the class would be dismissed.
 
     this.manage_parameters = new ManageBrewParameter();
-    Object.assign(this.brew_order, settingsObj.manage_parameters);
+    Object.assign(this.manage_parameters, settingsObj.manage_parameters);
 
     this.brew_order = new OrderBrewParameter();
     Object.assign(this.brew_order, settingsObj.brew_order);

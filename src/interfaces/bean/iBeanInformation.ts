@@ -8,5 +8,5 @@ export interface IBeanInformation {
   variety: string;
   processing: string;
   certification: string;
-
+  percentage: number;
 }

@@ -10,4 +10,21 @@
     display: block;
     object-fit: contain;
   }
+
+  ion-button[add-next-sort] {
+    --padding-bottom: 0px;
+    --padding-end: 0px;
+    --padding-start: 5px;
+    --padding-top: 0px;
+    --border-radius: 15px;
+    height: 45px;
+    margin-left:10px;
+    margin-right:10px;
+  }
+
+  ion-button[add-next-sort] ion-icon {
+    left: 20px;
+    position: absolute;
+    height: 30px;
+  }
 }
