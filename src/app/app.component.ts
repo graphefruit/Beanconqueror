@@ -29,7 +29,15 @@ import {Globalization} from '@ionic-native/globalization/ngx';
 import {Settings} from '../classes/settings/settings';
 import {STARTUP_VIEW_ENUM} from '../enums/settings/startupView';
 import {UIAnalytics} from '../services/uiAnalytics';
+import {WelcomePopoverComponent} from '../popover/welcome-popover/welcome-popover.component';
+/** Third party */
+import moment from 'moment';
+import {Preparation} from '../classes/preparation/preparation';
+import {UIUpdate} from '../services/uiUpdate';
+import {UiVersionStorage} from '../services/uiVersionStorage';
 
+
+declare var AppRate;
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -43,6 +51,8 @@ export class AppComponent implements AfterViewInit {
   public pages = {
     home: {title: 'NAV_HOME', url: '/', icon: 'home-outline', active: true},
     settings: {title: 'NAV_SETTINGS', url: '/settings', icon: 'settings-outline', active: false},
+
+    info: {title: 'NAV_INFORMATION_TO_APP', url: '/info', icon: 'information-circle-outline', active: false},
     about: {title: 'NAV_ABOUT_US', url: '/info/about', icon: 'information-circle-outline', active: false},
     contact: {title: 'NAV_CONTACT', url: '/info/contact', icon: 'mail-outline', active: false},
     privacy: {title: 'NAV_PRIVACY', url: '/info/privacy', icon: 'documents-outline', active: false},
@@ -53,7 +63,9 @@ export class AppComponent implements AfterViewInit {
 
     statistic: {title: 'NAV_STATISTICS', url: '/statistic', icon: 'analytics-outline', active: false},
     logs: {title: 'NAV_LOGS', url: '/info/logs', icon: 'logo-buffer', active: false},
-    helper: {title: 'NAV_HELPER', url: '/helper', icon: 'construct-outline', active: false}
+    helper_brew_ratio: {title: 'PAGE_HELPER_BREW_RATIO', url: '/helper/brew-ratio', icon: 'construct-outline', active: false},
+    helper_water_hardness: {title: 'PAGE_HELPER_WATER_HARDNESS', url: '/helper/water-hardness', icon: 'construct-outline', active: false},
+    brew_parameter: {title: 'NAV_BREW_PARAMS', url: '/brew-parameter', icon: 'construct-outline', active: false}
   };
 
 
@@ -78,7 +90,10 @@ export class AppComponent implements AfterViewInit {
     private readonly uiAlert: UIAlert,
     private _translate: TranslateService,
     private  globalization: Globalization,
-    private readonly uiAnalytics: UIAnalytics
+    private readonly uiAnalytics: UIAnalytics,
+    private readonly menu: MenuController,
+    private readonly uiUpdate: UIUpdate,
+    private readonly uiVersionStorage: UiVersionStorage
   ) {
   }
 
@@ -90,15 +105,20 @@ export class AppComponent implements AfterViewInit {
   }
 
 
+  public dismiss() {
+    this.menu.close();
+  }
+
 
   private __appReady(): void {
     this.platform.ready()
-        .then(() => {
+      .then(async () => {
           // Okay, so the platform is ready and our plugins are available.
           // Here you can do any higher level native things you might need.
 
           // #7
           this.statusBar.show();
+          this.statusBar.styleBlackOpaque();
           this.splashScreen.hide();
           this.keyboard.hideFormAccessoryBar(false);
 
@@ -139,12 +159,15 @@ export class AppComponent implements AfterViewInit {
           const uiSettingsStorageReadyCallback = this.uiSettingsStorage.storageReady();
           const brewStorageReadyCallback = this.uiBrewStorage.storageReady();
           const millStorageReadyCallback = this.uiMillStorage.storageReady();
+          const versionStorageReadyCallback = this.uiVersionStorage.storageReady();
+
           Promise.all([
             beanStorageReadyCallback,
             preparationStorageReadyCallback,
             brewStorageReadyCallback,
             uiSettingsStorageReadyCallback,
-            millStorageReadyCallback
+            millStorageReadyCallback,
+            versionStorageReadyCallback
           ])
               .then(() => {
                 this.uiLog.log('App finished loading');
@@ -164,48 +187,17 @@ export class AppComponent implements AfterViewInit {
   }
 
   private __checkUpdate(): void {
-    if (this.uiBrewStorage.getAllEntries().length > 0 && this.uiMillStorage.getAllEntries().length <= 0) {
-      // We got an update and we got no mills yet, therefore we add a Standard mill.
-      const data: Mill = new Mill();
-      data.name = 'Standard';
-      this.uiMillStorage.add(data);
-
-      const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
-      for (const brew of brews) {
-        brew.mill = data.config.uuid;
-
-        this.uiBrewStorage.update(brew);
-      }
-    }
-    // We made an update, filePath just could storage one image, but we want to storage multiple ones.
-    if (this.uiBeanStorage.getAllEntries().length > 0) {
-      const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
-      for (const bean of beans) {
-        if (bean.filePath !== undefined && bean.filePath !== null && bean.filePath !== '') {
-          bean.attachments.push(bean.filePath);
-          bean.filePath = '';
-        }
-        bean.fixDataTypes();
-        this.uiBeanStorage.update(bean);
-      }
-
-    }
-    // Fix wrong types
-    if (this.uiBrewStorage.getAllEntries().length > 0) {
-      const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
-      for (const brew of brews) {
-        brew.fixDataTypes();
-        this.uiBrewStorage.update(brew);
-      }
-    }
+   this.uiUpdate.checkUpdate();
   }
 
   private async __setDeviceLanguage(): Promise<any> {
     return new Promise(async (resolve, reject) => {
+      const settings: Settings = this.uiSettingsStorage.getSettings();
       if (this.platform.is('cordova')) {
+
         try {
           this.uiLog.info('Its a mobile device, try to set language now');
-          const settings: Settings = this.uiSettingsStorage.getSettings();
+
           if (settings.language === null || settings.language === undefined || settings.language === '') {
             this.globalization.getPreferredLanguage().then(async (res) => {
               // Run other functions after getting device default lang
@@ -216,19 +208,18 @@ export class AppComponent implements AfterViewInit {
               }
 
               let settingLanguage: string = '';
-              switch (systemLanguage) {
-                case 'de':
-                  settingLanguage = 'de';
-                  break;
-                default:
-                  settingLanguage = 'en';
-                  break;
+              if (systemLanguage === 'de'){
+                settingLanguage = 'de';
+              } else {
+                settingLanguage = 'en';
               }
+
               this.uiLog.log(`Setting language: ${settingLanguage}`);
               this._translate.setDefaultLang(settingLanguage);
               settings.language = settingLanguage;
               this.uiSettingsStorage.saveSettings(settings);
               await this._translate.use(settingLanguage).toPromise();
+              moment.locale(settingLanguage);
               resolve();
 
             })
@@ -237,6 +228,7 @@ export class AppComponent implements AfterViewInit {
                 this.uiLog.error(`Exception occured when setting language ${exMessage}`);
                 this._translate.setDefaultLang('en');
                 await this._translate.use('en').toPromise();
+                moment.locale('en');
                 resolve();
               });
           } else {
@@ -247,6 +239,8 @@ export class AppComponent implements AfterViewInit {
             settings.language = settingLanguage;
             this.uiSettingsStorage.saveSettings(settings);
             await this._translate.use(settingLanguage).toPromise();
+            moment.locale(settingLanguage);
+
             resolve();
 
           }
@@ -254,21 +248,27 @@ export class AppComponent implements AfterViewInit {
           const exMessage: string = JSON.stringify(ex);
           this.uiLog.error(`Exception occured when setting language ${exMessage}`);
           this._translate.setDefaultLang('en');
+          settings.language = 'en';
+          this.uiSettingsStorage.saveSettings(settings);
           await this._translate.use('en').toPromise();
+          moment.locale('en');
           resolve();
         }
       } else {
         this.uiLog.info('Cant set language for device, because no cordova device');
-        const settings: Settings = this.uiSettingsStorage.getSettings();
         if (settings.language !== null && settings.language !== undefined && settings.language !== '') {
           this.uiLog.info(`Set language from settings: ${settings.language}`);
           this._translate.setDefaultLang(settings.language);
           await this._translate.use(settings.language).toPromise();
+          moment.locale(settings.language);
           resolve();
         } else {
           this.uiLog.info(`Set default language from settings, because no settings set: de `);
           this._translate.setDefaultLang('de');
+          settings.language = 'de';
+          this.uiSettingsStorage.saveSettings(settings);
           await this._translate.use('de').toPromise();
+          moment.locale(settings.language);
           resolve();
         }
 
@@ -277,127 +277,127 @@ export class AppComponent implements AfterViewInit {
   }
 
   private async __checkStartupView() {
-    return;
-    const settings: Settings = this.uiSettingsStorage.getSettings();
 
+    const settings: Settings = this.uiSettingsStorage.getSettings();
     if (settings.startup_view !== STARTUP_VIEW_ENUM.HOME_PAGE) {
       this.uiAnalytics.trackEvent('STARTUP', 'STARTUP_VIEW_' + settings.startup_view);
     }
     switch (settings.startup_view) {
       case STARTUP_VIEW_ENUM.HOME_PAGE:
-        this.router.navigate(['/home/dashboard']);
+        this.router.navigate(['/home/dashboard'], {replaceUrl:true});
         break;
       case STARTUP_VIEW_ENUM.BREW_PAGE:
-        this.router.navigate(['/home/brews']);
+        this.router.navigate(['/home/brews'], {replaceUrl:true});
         break;
       case STARTUP_VIEW_ENUM.ADD_BREW:
         await this.__trackNewBrew();
+        this.router.navigate(['/home/brews'], {replaceUrl:true});
         break;
     }
   }
 
   private async __initApp() {
+
     this.__registerBack();
     await this.__setDeviceLanguage();
     await this.uiAnalytics.initializeTracking().catch(() => {
       // Nothing to do, user declined tracking.
     });
+    await this.__checkWelcomePage();
+    await this.uiUpdate.checkUpdateScreen();
     await this.__checkStartupView();
+    this.__instanceAppRating();
 
 
 
+  }
+  private __instanceAppRating() {
+    if (this.platform.is('cordova')) {
+      const appLanguage = this.uiSettingsStorage.getSettings().language;
+      AppRate.setPreferences({
+        usesUntilPrompt: 25,
+        storeAppURL: {
+          ios: '1445297158',
+          android: 'market://details?id=com.beanconqueror.app',
+        },
+        promptAgainForEachNewVersion: false,
+        reviewType: {
+          ios: 'AppStoreReview',
+          android: 'InAppReview'
+        },
+        useLanguage: appLanguage,
+      });
+
+      AppRate.promptForRating(false);
+    }
   }
 
   private async __trackNewBrew() {
 
     if (this.uiBrewHelper.canBrew()) {
-      const modal = await this.modalCtrl.create({component: BrewAddComponent});
+      const modal = await this.modalCtrl.create({component: BrewAddComponent, id:'brew-add'});
       await modal.present();
       await modal.onWillDismiss();
     }
 
   }
 
-  private async __trackNewBean() {
 
-    const modal = await this.modalCtrl.create({component: BeansAddComponent});
+  private async __checkWelcomePage() {
+
+    const settings = this.uiSettingsStorage.getSettings();
+    const welcomePagedShowed: boolean = settings.welcome_page_showed;
+
+    if (!welcomePagedShowed) {
+      const modal = await this.modalCtrl.create({component: WelcomePopoverComponent, id:'welcome-popover'});
+      await modal.present();
+      await modal.onWillDismiss();
+    }
+  }
+
+  private async __trackNewBean() {
+    const modal = await this.modalCtrl.create({component: BeansAddComponent, id:'bean-add',
+      componentProps: {hide_toast_message: false}});
     await modal.present();
     await modal.onWillDismiss();
 
   }
 
   private async __trackNewPreparation() {
-    const modal = await this.modalCtrl.create({component: PreparationAddComponent});
+    const modal = await this.modalCtrl.create({
+      component: PreparationAddComponent,
+      showBackdrop: true, id: 'preparation-add', componentProps: {hide_toast_message: false}
+    });
     await modal.present();
     await modal.onWillDismiss();
-    this.router.navigate(['/']);
+    this.router.navigate(['/'], {replaceUrl:true});
 
   }
 
   private async __trackNewMill() {
-    const modal = await this.modalCtrl.create({component: MillAddComponent});
+    const modal = await this.modalCtrl.create({
+      component: MillAddComponent,
+      cssClass: 'half-bottom-modal', id:'mill-add', showBackdrop: true, componentProps: {hide_toast_message: false}
+    });
     await modal.present();
     await modal.onWillDismiss();
-    this.router.navigate(['/']);
+    this.router.navigate(['/'], {replaceUrl:true});
 
   }
 
   private __registerBack() {
     this.platform.backButton.subscribeWithPriority(0, () => {
-      if (this.routerOutlet && this.routerOutlet.canGoBack()) {
+      if (this.router.url.indexOf('/home') === -1 && this.routerOutlet && this.routerOutlet.canGoBack() ) {
         this.routerOutlet.pop();
-      } else if (this.router.url === '/home') {
+      } else if (this.router.url.indexOf('/home')>=0) {
         this.appMinimize.minimize();
         // or if that doesn't work, try
         // navigator['app'].exitApp();
       } else {
+        this.router.navigate(['/home/dashboard'], {replaceUrl:true});
         // this.generic.showAlert("Exit", "Do you want to exit the app?", this.onYesHandler, this.onNoHandler, "backPress");
       }
     });
   }
-  /*private __registerBack(): void {
-    if (this.registerBackFunction !== undefined && this.registerBackFunction !== undefined) {
-      return;
-    }
-    this.registerBackFunction = this.platform.registerBackButtonAction(() => {
-      const activePortal = this.ionicApp._loadingPortal.getActive() ||
-          this.ionicApp._modalPortal.getActive() ||
-          this.ionicApp._toastPortal.getActive() ||
-          this.ionicApp._overlayPortal.getActive();
-
-      if (activePortal) {
-
-        activePortal.dismiss({animate: false});
-
-        // Logger.log("handled with portal");
-        return;
-      }
-
-      if (this.menuCtrl.isOpen()) {
-        this.menuCtrl.close();
-
-        // Logger.log("closing menu");
-        return;
-      }
-
-      const view = this.nav.getActive();
-      const page = view ? this.nav.getActive().instance : undefined;
-
-      if (page && !this.nav.canGoBack() && page.isHome !== undefined && page.isHome) {
-        // Minimize app, that it don't need to start again.
-        this.appMinimize.minimize();
-        // old window['plugins'].appMinimize.minimize();
-
-      } else if (page && !this.nav.canGoBack()) {
-        // isn'T realy root.
-        // this.__unregisterBack();
-        this.nav.setRoot(this.ROOT_PAGE);
-      } else if (this.nav.canGoBack() || view && view.isOverlay) {
-
-        this.nav.pop({animate: false});
-      }
-    }, 1);
-
-  }*/
 }
 

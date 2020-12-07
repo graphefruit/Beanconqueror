@@ -1,28 +1,35 @@
 :host {
-
-
-  button[justify-content-start] .button-inner {
-    justify-content: flex-start;
+  .vr {
+    border-right: 2px solid var(--ion-color-accent);
+    height: 60%;
+    position: absolute;
+    top: 20%;
+    bottom: 20%;
+    right: 0px;
   }
 
-
-  ion-col.brown-color {
-    background-color: var(--beanconqueror-card-highlight);
+  // Overwrite
+  .button-top-absolute {
+    position: absolute;
+    top: -10px;
+    right: -20px;
+    min-height: 20px;
+    ion-icon{
+      font-size: 18px!important;
+      width: 18px!important;
+      height: 18px!important;
+    }
   }
 
-  ion-card.good-brew {
-    border-top: 5px #009966 solid;
+  .dashboard-time-center {
+    display: grid;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
   }
 
-  ion-card.bad-brew {
-    border-top: 5px #fe4164 solid;
-  }
-
-  ion-card.awesome-brew {
-    border-top: 5px #aa8736 solid;
-  }
-
-  ion-row.center-col ion-col {
+  ion-col.center-col {
     display: flex;
     align-items: center
   }
@@ -32,6 +39,12 @@
     margin: 0px;
     padding: 0px;
 
+    ion-col {
+      -ms-text-overflow: ellipsis;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
     ion-item {
       --background: none;
       --padding-start: 0px;
@@ -41,7 +54,9 @@
       --min-height: 0px;
 
       ion-icon {
-        font-size: 14px;
+        top: 4px;
+        position: relative;
+        font-size: 17px;
         margin-right: 0px;
         margin-top: 0px;
         margin-bottom: 0px;

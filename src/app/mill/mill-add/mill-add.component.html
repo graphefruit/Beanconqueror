@@ -1,36 +1,23 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>{{"ADD_MILL" | translate}}</ion-title>
-    <ion-buttons slot="start">
-      <ion-button (click)="dismiss()">
-        <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
-<ion-content>
-  <div class="ion-margin-horizontal popover">
+<ion-content class="ion-padding-top">
     <form #addMillForm="ngForm" novalidate>
       <ion-item>
         <ion-label position="stacked">{{"NAME" | translate}}*</ion-label>
-        <ion-input [(ngModel)]="data.name" name="name" type="text" #name="ngModel" spellcheck="false"
+        <ion-input #name="ngModel" [(ngModel)]="data.name" name="name"
+                   placeholder="{{'MILL.PLACE_HOLDER.NAME' | translate}}" spellcheck="false" type="text"
                    autocapitalize="sentences" required>
         </ion-input>
       </ion-item>
-      <ion-item>
-        <ion-label position="stacked">{{"NOTES" | translate}}</ion-label>
-        <ion-textarea #note="ngModel" [(ngModel)]="data.note" autocapitalize="sentences" autocomplete="true"
-                      autocorrect="true" name="note" rows="5" spellcheck="true"></ion-textarea>
-      </ion-item>
-      <ion-row>
-        <ion-col>
-          <ion-button (click)="dismiss()" expand="block" fill="outline">{{"CANCEL" | translate}}</ion-button>
-        </ion-col>
-        <ion-col>
-          <ion-button (click)="addMill(addMillForm)" expand="block" type="submit">{{"GENERATE" | translate}}</ion-button>
-        </ion-col>
-
-      </ion-row>
     </form>
-  </div>
 </ion-content>
+<ion-footer class="ion-no-border">
+  <ion-row>
+    <ion-col>
+      <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
+                  tappable>{{"CANCEL" | translate}}</ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button (click)="addMill(addMillForm)" color="accent" disable-double-click expand="block" tappable
+                  type="submit">{{"SAVE" | translate}}</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>

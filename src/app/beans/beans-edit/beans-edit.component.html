@@ -17,10 +17,22 @@
                autocapitalize="sentences" required>
     </ion-input>
   </ion-item>
-    <ion-item *ngIf="viewLoaded===true" lines="none">
+    <ion-item lines="none">
       <ion-label position="stacked">{{"BEAN_DATA_ROAST_NAME" | translate}}</ion-label>
-      <ngx-stars (ratingOutput)="onRoastRate($event)" [customPadding]="'20px'" [initialStars]="this.data.roast_range"
-                 [readonly]="false" [size]="2" class="ion-margin-top"  style="margin-left:20px;"></ngx-stars>
+    </ion-item>
+    <ion-item lines="none" style="margin-top: -15px;">
+      <ion-grid class="ion-no-padding">
+        <ion-row>
+          <ion-col size="6">
+            <ion-range (ionChange)="onRoastRate($event)" [(ngModel)]="data.roast_range" max="5" min="0" step="0.5">
+            </ion-range>
+          </ion-col>
+          <ion-col size="6">
+            <ngx-stars #beanStars  [readonly]="true" [size]="2"
+                       class="ion-margin-top" style="margin-left:5px;"></ngx-stars>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
     </ion-item>
     <ion-item>
       <ion-select #roast="ngModel" [(ngModel)]="data.roast" cancelText="{{'CANCEL'| translate }}" name="roast"
@@ -67,6 +79,16 @@
       <ion-select-option *ngFor="let key of mixEnum | keys" value="{{key}}">{{mixEnum[key]}}</ion-select-option>
     </ion-select>
   </ion-item>
+    <ion-item>
+      <ion-label position="stacked">{{"BEAN_DATA_ROASTING_TYPE" | translate}}</ion-label>
+
+      <ion-select #bean_roasting_type="ngModel" [(ngModel)]="data.bean_roasting_type" cancelText="{{'CANCEL'| translate }}" name="bean_roasting_type"
+                  okText="{{'CHOOSE'| translate }}"
+                  placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROASTING_TYPE' | translate}}"
+                  style="padding-left:0px!important;width: 100%; min-width: 100%;">
+        <ion-select-option *ngFor="let key of beanRoastingTypeEnum | keys" value="{{key}}">{{beanRoastingTypeEnum[key]}}</ion-select-option>
+      </ion-select>
+    </ion-item>
   <ion-item>
     <ion-label position="stacked">{{"BEAN_DATA_AROMATICS" | translate}}</ion-label>
     <ion-input #aromatics="ngModel" [(ngModel)]="data.aromatics" name="aromatics"
@@ -90,6 +112,30 @@
                autocapitalize="off" inputmode="decimal">
     </ion-input>
   </ion-item>
+    <ion-item>
+      <ion-label position="stacked">{{"BEAN_DATA_CUPPING_POINTS" | translate}}</ion-label>
+      <ion-input #cupping_points="ngModel" [(ngModel)]="data.cupping_points" autocapitalize="off" inputmode="decimal"
+                 name="cupping_points" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_CUPPING_POINTS' | translate}}"
+                 prevent-characters remove-empty-number spellcheck="false"
+                 type="text">
+      </ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">{{"BEAN_DATA_DECAFFEINATED" | translate}}</ion-label>
+      <ion-checkbox #decaffeinated="ngModel" [(ngModel)]="data.decaffeinated" name="decaffeinated"></ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">{{"BEAN_DATA_URL" | translate}}</ion-label>
+      <ion-input #url="ngModel" [(ngModel)]="data.url" autocapitalize="sentences" name="ean_article_number" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_URL' | translate}}"
+                 spellcheck="false" type="text">
+      </ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">{{"BEAN_DATA_EAN" | translate}}</ion-label>
+      <ion-input #ean_article_number="ngModel" [(ngModel)]="data.ean_article_number" autocapitalize="sentences" name="ean_article_number" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_EAN' | translate}}"
+                 spellcheck="false" type="text">
+      </ion-input>
+    </ion-item>
   <ion-item>
     <ion-label position="stacked">{{"FINISHED"|translate}}?</ion-label>
     <ion-checkbox [(ngModel)]="data.finished"></ion-checkbox>
@@ -102,7 +148,7 @@
                   [(ngModel)]="data.note"></ion-textarea>
   </ion-item>
     <ion-item (click)="addImage()" button lines="none" tappable>
-    {{"ADD_PHOTO" | translate}}
+      <ion-icon class="icon-16" name="beanconqueror-add"></ion-icon>&nbsp;{{"ADD_PHOTO" | translate}}
   </ion-item>
   <div *ngIf="data?.attachments && data.attachments.length > 0">
     <ion-slides #photoSlides pager="true">
@@ -114,12 +160,13 @@
     </ion-slides>
   </div>
   </ion-card>
-
-  <ion-card *ngFor="let beanInformation of this.data.bean_information;let first = first;let i = index;let last = last;">
-    <ion-card-header *ngIf="!first" class="ion-no-padding">
+  <ion-card *ngFor="let beanInformation of this.data.bean_information;let first = first;let i = index;let last = last;" style="padding-bottom:6px;">
+    <ion-card-header class="ion-no-padding ion-padding-top">
       <ion-item lines="none">
-        <ion-button (click)="deleteSortInformation(i)" fill="clear" slot="end" tappable>
-          <ion-icon color="primary" name="trash-outline" slot="icon-only"></ion-icon>
+        <ion-title *ngIf="data.beanMix.toString() === 'BLEND'" class="ion-no-padding" slot="start">{{"BEAN_SORT" | translate}}&nbsp;{{i+1}}</ion-title>
+        <ion-title *ngIf="data.beanMix.toString() !== 'BLEND'" class="ion-no-padding" slot="start">{{"BEAN_SORT" | translate}}</ion-title>
+        <ion-button (click)="deleteSortInformation(i)" *ngIf="!first" fill="clear" slot="end" tappable>
+          <ion-icon color="accent" name="close-outline" slot="icon-only"></ion-icon>
         </ion-button>
       </ion-item>
     </ion-card-header>
@@ -147,7 +194,7 @@
     </ion-item>
     <ion-item>
       <ion-label position="stacked">{{"BEAN_DATA_FARMER" | translate}}</ion-label>
-      <ion-input #farm="ngModel" [(ngModel)]="beanInformation.farmer" autocapitalize="sentences"
+      <ion-input #farmer="ngModel" [(ngModel)]="beanInformation.farmer" autocapitalize="sentences"
                  name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_FARMER' | translate}}" spellcheck="false"
                  type="text">
       </ion-input>
@@ -155,7 +202,7 @@
     <ion-item>
       <ion-label position="stacked">{{"BEAN_DATA_ELEVATION" | translate}}</ion-label>
       <ion-input #elevation="ngModel" [(ngModel)]="beanInformation.elevation" autocapitalize="sentences"
-                 name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_COUNTRY' | translate}}" spellcheck="false"
+                 name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ELEVATION' | translate}}" spellcheck="false"
                  type="text">
       </ion-input>
     </ion-item>
@@ -168,7 +215,7 @@
     </ion-item>
     <ion-item>
       <ion-label position="stacked">{{"BEAN_DATA_PROCESSING" | translate}}</ion-label>
-      <ion-input #variety="ngModel" [(ngModel)]="beanInformation.processing" autocapitalize="sentences"
+      <ion-input #processing="ngModel" [(ngModel)]="beanInformation.processing" autocapitalize="sentences"
                  name="processing" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_PROCESSING' | translate}}" spellcheck="false"
                  type="text">
       </ion-input>
@@ -181,16 +228,28 @@
       </ion-input>
     </ion-item>
     <ion-item>
+      <ion-label position="stacked">{{"BEAN_DATA_PERCENTAGE" | translate}}</ion-label>
+      <ion-input #percentage="ngModel" [(ngModel)]="beanInformation.percentage" inputmode="decimal"
+                 placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_PERCENTAGE' | translate}}" prevent-characters
+                 remove-empty-number
+                 type="text"></ion-input>
+    </ion-item>
+    <ion-item lines="none">
       <ion-label position="stacked">{{"BEAN_DATA_CERTIFICATION" | translate}}</ion-label>
-      <ion-input #harvestTime="ngModel" [(ngModel)]="beanInformation.certification" autocapitalize="sentences"
+      <ion-input #certification="ngModel" [(ngModel)]="beanInformation.certification" autocapitalize="sentences"
                  name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_CERTIFICATION' | translate}}" spellcheck="false"
                  type="text">
       </ion-input>
     </ion-item>
-    <ion-item *ngIf="last && data.beanMix.toString() === 'BLEND'">
-      <ion-button (click)="addAnotherSort()">Weitere Sorte hinzufügen</ion-button>
-    </ion-item>
   </ion-card>
+
+
+
+  <ion-button (click)="addAnotherSort()" *ngIf="(data.beanMix.toString() === 'BLEND')" add-next-sort color="accent" expand="block">
+    <ion-icon name="beanconqueror-dashboard-add-fill" size="large" slot="start"></ion-icon>
+    <span class="ion-text-bold" slot="end">{{"BEAN_ADD_ANOTHER_SORT" | translate}}</span>
+  </ion-button>
+
 
 </ion-content>
 <ion-footer class="ion-no-border">

@@ -7,29 +7,29 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content>
-  <ion-item *ngIf="uiBrewHelper.canBrew() && settings.method_of_preparation === true">
+<ion-content class="popover">
+  <ion-item>
     <ion-label position="stacked">{{"BREW_DATA_PREPARATION_METHOD" | translate}}</ion-label>
     <ion-select [(ngModel)]="filter.method_of_preparation"
-                [interfaceOptions]="customSelectSheetOptions"
-                multiple="true">
-      <ion-select-option *ngFor="let method of method_of_preparations" value="{{method.config.uuid}}">{{method.name}}
-      </ion-select-option>
+                [show-finished]="segment !== 'open'"
+                multiple="true"
+                preparation-overlay>
     </ion-select>
   </ion-item>
-  <ion-item *ngIf="uiBrewHelper.canBrew() &&  settings.bean_type === true">
+  <ion-item>
     <ion-label position="stacked">{{"BREW_DATA_BEAN_TYPE" | translate}}</ion-label>
     <ion-select [(ngModel)]="filter.bean"
-                [interfaceOptions]="customSelectSheetOptions" multiple="true">>
-      <ion-select-option *ngFor="let bean of beans"
-                         value="{{bean.config.uuid}}">{{bean.name}}&nbsp;{{bean.finished ? '(Archiv)' : ''}}</ion-select-option>
+                [multiple]="true"
+                [show-finished]="segment !== 'open'"
+                bean-overlay>
     </ion-select>
   </ion-item>
-  <ion-item *ngIf="uiBrewHelper.canBrew() &&  settings.mill === true">
+  <ion-item>
     <ion-label position="stacked">{{"BREW_DATA_MILL" | translate }}</ion-label>
     <ion-select [(ngModel)]="filter.mill"
-                [interfaceOptions]="customSelectSheetOptions" multiple="true">
-      <ion-select-option *ngFor="let mill of mills" value="{{mill.config.uuid}}">{{mill.name}}</ion-select-option>
+                [show-finished]="segment !== 'open'"
+                mill-overlay
+                multiple="true">
     </ion-select>
   </ion-item>
 </ion-content>
@@ -37,7 +37,12 @@
 <ion-footer class="ion-no-border">
   <ion-row>
     <ion-col size="12">
-      <ion-button (click)="useFilter()" expand="block" type="submit">{{"USE_FILTER" | translate}}</ion-button>
+      <ion-button (click)="useFilter()" color="accent" expand="block" tappable
+                  type="submit">{{"USE_FILTER" | translate}}</ion-button>
+    </ion-col>
+    <ion-col size="12">
+      <ion-button (click)="resetFilter()" color="dark" expand="block" fill="clear"
+                  tappable>{{"RESET_FILTER" | translate}}</ion-button>
     </ion-col>
   </ion-row>
 </ion-footer>

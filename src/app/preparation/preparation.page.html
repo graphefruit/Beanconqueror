@@ -1,11 +1,11 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar with-add-button>
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button icon-only (click)="add()">
-        <ion-icon name="add-outline"></ion-icon>
+      <ion-button (click)="add()" class="big-add-icon" fill="clear">
+        <ion-icon class="ion-color-accent" name="beanconqueror-add-box" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-title>
@@ -13,16 +13,47 @@
     </ion-title>
   </ion-toolbar>
 </ion-header>
-
-
-
 <ion-content>
-  <ion-card *ngIf="preparations?.length == 0" class="ion-padding">
-    {{"PAGE_PREPARATION_LIST_NO_PREPARATION_EXISTING" | translate}}
-  </ion-card>
-  <div *ngFor="let preparation of preparations">
-    <preparation-information-card (preparationAction)="preparationAction($event[0],$event[1])"
-                                  [preparation]="preparation"></preparation-information-card>
+  <ion-segment [(ngModel)]="segment" class="ion-padding-vertical">
+    <ion-segment-button value="open">
+      <ion-label>{{"CURRENT" | translate }}
+      </ion-label>
+    </ion-segment-button>
+    <ion-segment-button *ngIf="settings?.show_archived_mills" value="archive">
+      <ion-label>{{"TAB_ARCHIVE" | translate }}
+      </ion-label>
+    </ion-segment-button>
+  </ion-segment>
+  <div [ngSwitch]="segment">
+    <div *ngSwitchCase="'open'">
+      <div *ngIf="getActivePreparations()?.length == 0" class="ion-padding ion-text-center">
+        <div>
+          <ion-icon color="inactive" name="beanconqueror-preparation" size="large"></ion-icon>
+        </div>
+        <div class="text-color-inactive ion-margin-top">
+          {{"PAGE_PREPARATION_LIST_NO_PREPARATION_EXISTING" | translate}}
+        </div>
+      </div>
+      <div *ngFor="let preparation of getActivePreparations()">
+        <preparation-information-card (preparationAction)="preparationAction($event[0],$event[1])"
+                                      [preparation]="preparation"></preparation-information-card>
+      </div>
+    </div>
+    <div *ngSwitchCase="'archive'">
+      <div *ngIf="getArchivedPreparations()?.length == 0" class="ion-padding ion-text-center">
+        <div>
+          <ion-icon color="inactive" name="beanconqueror-preparation" size="large"></ion-icon>
+        </div>
+        <div class="text-color-inactive ion-margin-top">
+          {{"PAGE_PREPARATION_LIST_NO_ARCHIVED_PREPARATION_EXISTING" | translate}}
+        </div>
+      </div>
+      <div *ngFor="let preparation of getArchivedPreparations()">
+        <preparation-information-card (preparationAction)="preparationAction($event[0],$event[1])"
+                                      [preparation]="preparation"></preparation-information-card>
+      </div>
+    </div>
   </div>
+
 
 </ion-content>
