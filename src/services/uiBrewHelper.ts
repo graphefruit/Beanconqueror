@@ -143,7 +143,9 @@ export class UIBrewHelper {
     repeatBrew.note = _brewToCopy.note;
     repeatBrew.coordinates = _brewToCopy.coordinates;
     repeatBrew.method_of_preparation_tools = _brewToCopy.method_of_preparation_tools;
-    // TDS is not needed here.
+    repeatBrew.tds = _brewToCopy.tds;
+    repeatBrew.brew_beverage_quantity = _brewToCopy.brew_beverage_quantity;
+    repeatBrew.brew_beverage_quantity_type = _brewToCopy.brew_beverage_quantity_type;
     return repeatBrew;
   }
 

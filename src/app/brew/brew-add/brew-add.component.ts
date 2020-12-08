@@ -412,10 +412,15 @@ export class BrewAddComponent implements OnInit {
     if (checkData.default_last_coffee_parameters.note || _template === true) {
       this.data.note = brew.note;
     }
-    // TDS is not needed here
+    if (checkData.default_last_coffee_parameters.tds || _template === true) {
+      this.data.tds = brew.tds;
+    }
     if (checkData.default_last_coffee_parameters.brew_beverage_quantity || _template === true) {
       this.data.brew_beverage_quantity = brew.brew_beverage_quantity;
       this.data.brew_beverage_quantity_type = brew.brew_beverage_quantity_type;
+    }
+    if (checkData.default_last_coffee_parameters.method_of_preparation_tool || _template === true) {
+      this.data.method_of_preparation_tools = brew.method_of_preparation_tools;
     }
 
   }
