@@ -1,14 +1,14 @@
-<ion-content>
+<ion-content #updateContent>
   <ion-slides #slider [options]="slideOpts" pager="true">
-    <ion-slide *ngFor="let version of versions;let last = last">
-      <div class="ion-padding-top">
+    <ion-slide *ngFor="let version of versions;let last = last;let i=index;" >
+      <ion-card [style.display]="i+1===this.slide?'block':'none'">
         <div>
           <ion-title>
             {{"UPDATE_TEXT_TITLE_TITLE." + version + ".TITLE" | translate}}
           </ion-title>
-          <div [innerHTML]="'UPDATE_TEXT_TITLE_TITLE.' + version + '.DESCRIPTION' | translate">
-
-          </div>
+          <ul>
+              <li *ngFor="let desc of getDescription(version)">{{desc}}</li>
+          </ul>
         </div>
         <ion-row class="ion-padding-top">
           <ion-col size="3"></ion-col>
@@ -18,7 +18,7 @@
           </ion-col>
           <ion-col size="3"></ion-col>
         </ion-row>
-      </div>
+      </ion-card>
     </ion-slide>
   </ion-slides>
 </ion-content>

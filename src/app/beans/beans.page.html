@@ -29,7 +29,7 @@
     <div *ngSwitchCase="'open'">
       <div *ngIf="openBeans?.length > 0 || isFilterActive()" class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
 
-        <ion-searchbar (ionChange)="research()" [(ngModel)]="openBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+        <ion-searchbar (ionChange)="research()" [(ngModel)]="openBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
         <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
           <ion-icon *ngIf="isFilterActive()"  name="beanconqueror-sort-active"
                     slot="icon-only"></ion-icon>
@@ -58,7 +58,7 @@
       <div *ngSwitchCase="'archiv'">
         <div *ngIf="finishedBeans?.length > 0 || isFilterActive()" class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
 
-          <ion-searchbar (ionChange)="research()" [(ngModel)]="archivedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+          <ion-searchbar  (ionChange)="research()" [(ngModel)]="archivedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
           <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
             <ion-icon *ngIf="isFilterActive()"  name="beanconqueror-sort-active"
                       slot="icon-only"></ion-icon>

@@ -31,7 +31,7 @@ export class BrewFilterComponent implements OnInit {
   public method_of_preparations: Array<Preparation> = [];
   public beans: Array<Bean> = [];
   public mills: Array<Mill> = [];
-  private segment: string = 'open';
+  public segment: string = 'open';
 
   constructor(private readonly modalController: ModalController,
               private readonly uiBrewHelper: UIBrewHelper,

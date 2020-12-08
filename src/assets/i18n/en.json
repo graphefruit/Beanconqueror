@@ -412,8 +412,8 @@
   "PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION": "Activate a new menu entry - with this you can repeat the brew directly.",
   "PAGE_SETTINGS_TRACK_BREW_COORDINATES_DESCRIPTION": "Save coordinates to each brew.",
 
-  "UPDATE_TITLE": "Was gibt's neues",
-  "NEXT": "Weiter",
+  "UPDATE_TITLE": "Whats new?",
+  "NEXT": "Next",
   "UPDATE_TEXT_TITLE_TITLE": {
     "5.0.0": {
       "TITLE": "Version 5.0: Thats new!",
@@ -436,7 +436,6 @@
         "Added typeahead for roasters",
         "Rating moved to stars instead of icons"
       ]
-
     }
   },
   "CUSTOM_PARAMETERS": "Customize parameter",
@@ -467,5 +466,6 @@
   "BEAN_SORT_ROASTER": "Roaster",
   "BEAN_SORT_ROASTING_DATE": "Roasting date",
   "PAGE_SETTINGS_MANAGE_ARCHIVE": "Manage archive",
-  "LAST_USE": "Last used"
+  "LAST_USE": "Last used",
+  "SEARCH": "Search"
 }

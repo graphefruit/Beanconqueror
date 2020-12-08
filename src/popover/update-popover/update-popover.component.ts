@@ -1,5 +1,6 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {IonSlides, ModalController} from '@ionic/angular';
+import {IonContent, IonSlides, ModalController} from '@ionic/angular';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-update-popover',
@@ -15,13 +16,17 @@ export class UpdatePopoverComponent implements OnInit {
   };
   public slide: number = 1;
   @ViewChild('slider', {static: false}) public updateSlider: IonSlides;
+  @ViewChild('updateContent', {static: false}) public updateContentElement: IonContent;
 
-  constructor(private readonly modalController: ModalController) {
+  constructor(private readonly modalController: ModalController,
+              private translate: TranslateService) {
 
   }
 
   public nextSlide() {
     this.updateSlider.slideNext();
+    this.updateContentElement.scrollToTop(250);
+    this.slide ++;
   }
   public finish() {
     this.dismiss();
@@ -33,5 +38,11 @@ export class UpdatePopoverComponent implements OnInit {
     this.modalController.dismiss({
       dismissed: true
     }, undefined, 'update-popover');
+  }
+
+  public getDescription(_version: string): Array<string> {
+    const translatedStr: any = this.translate.instant( 'UPDATE_TEXT_TITLE_TITLE.' + _version + '.DESCRIPTION' );
+    return [...translatedStr];
+
   }
 }

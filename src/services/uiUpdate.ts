@@ -76,6 +76,7 @@ export class UIUpdate {
         if (bean.bean_information.length <=0) {
           // Add empty one.
           bean.bean_information.push(beanInformation);
+          needsUpdate = true;
         }
         if (bean.fixDataTypes() || needsUpdate) {
           this.uiBeanStorage.update(bean);

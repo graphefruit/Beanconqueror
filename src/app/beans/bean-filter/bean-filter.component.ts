@@ -23,7 +23,7 @@ export class BeanFilterComponent implements OnInit {
     sort_after: BEAN_SORT_AFTER.UNKOWN,
   };
 
-  private segment: string = 'open';
+  public segment: string = 'open';
 
   constructor(private readonly modalController: ModalController,
               private readonly uiBrewHelper: UIBrewHelper,

@@ -19,7 +19,7 @@ export class SortCustomParameterComponent implements OnInit {
 
 
 
-  @Input() private data: Settings | Preparation;
+  @Input() public data: Settings | Preparation;
   constructor(public uiSettingsStorage: UISettingsStorage,
               private readonly uiPreparationStorage: UIPreparationStorage,
               private readonly uiAnalytics: UIAnalytics,

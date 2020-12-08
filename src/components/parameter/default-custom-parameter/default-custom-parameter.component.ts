@@ -15,7 +15,7 @@ import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationSty
 })
 export class DefaultCustomParameterComponent implements OnInit {
 
-  @Input() private data: Settings | Preparation;
+  @Input() public data: Settings | Preparation;
   constructor(public uiSettingsStorage: UISettingsStorage,
               private readonly uiPreparationStorage: UIPreparationStorage,
               private readonly uiAnalytics: UIAnalytics,

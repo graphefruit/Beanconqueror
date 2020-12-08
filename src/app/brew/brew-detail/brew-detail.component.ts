@@ -26,7 +26,7 @@ export class BrewDetailComponent implements OnInit {
 
   @ViewChild('cuppingChart', {static: false}) public cuppingChart;
   private brew: IBrew;
-  private loaded:boolean = false;
+  public loaded:boolean = false;
   constructor (private readonly modalController: ModalController,
                private readonly navParams: NavParams,
                public uiHelper: UIHelper,

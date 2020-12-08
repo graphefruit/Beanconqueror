@@ -13,6 +13,19 @@
       font-size: 128px;
 
     }
+
+  }
+  @media (max-width: 320px) {
+    ion-card {
+      min-height: 170px;
+
+      ion-icon {
+        width: 96px;
+        height: 96px;
+        font-size: 96px;
+
+      }
+    }
   }
   .preparation-add-card {
     background-color: #ffffff;

@@ -28,7 +28,7 @@
     <div *ngSwitchCase="'open'">
       <div *ngIf="openBrewsView?.length > 0 || isFilterActive() === true" class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
 
-        <ion-searchbar (ionChange)="research()" [(ngModel)]="openBrewFilterText" class="ion-no-padding ion-no-margin" debounce="750" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+        <ion-searchbar  (ionChange)="research()" [(ngModel)]="openBrewFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
         <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
           <ion-icon *ngIf="isFilterActive()"  name="beanconqueror-filter-active"
                     slot="icon-only"></ion-icon>
@@ -57,7 +57,7 @@
 
         <div *ngIf="archiveBrewsView?.length > 0 || isFilterActive() === true" class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
 
-          <ion-searchbar (ionChange)="research()" [(ngModel)]="archivedBrewFilterText" class="ion-no-padding ion-no-margin" debounce="750" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+          <ion-searchbar  (ionChange)="research()" [(ngModel)]="archivedBrewFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
           <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
             <ion-icon *ngIf="isFilterActive()"  name="beanconqueror-filter-active"
                       slot="icon-only"></ion-icon>

@@ -417,7 +417,25 @@
   "UPDATE_TEXT_TITLE_TITLE": {
     "5.0.0": {
       "TITLE": "Version 5.0: Das ist neu",
-      "DESCRIPTION": "Neues Layout, Neue Zubereitungsmethoden"
+      "DESCRIPTION": [
+        "Neue layout, neue Icons, neue Farben, neues Logo",
+        "Neue Brühmethoden",
+        "Brühmethoden können nun Kategorisiert werden (Perkolation, Espresso, Full Immersion)",
+        "Brühmethoden können nun mit Tools hinterlegt werden (Filter, Siebe etc.)",
+        "Brühmethoden können nun einen eigenen Workflow haben",
+        "Weitere Bohneninformationen sowie unterschiedliche Bohnensorten können gepflegt werden",
+        "Bezugsfeld - Wassermenge ist nur für Perkolation/Full Immersion verfügbar",
+        "Wo hast du den letzten Kaffee bezogen? Aktiviere dies in den Einstellungen",
+        "Neue Möglichkeit: Aktiviere 'schnelle Brühwiederholung' in den Einstellungen",
+        "Aktualisierungsinformationen beim App start",
+        "Abfrage hinzugefügt die App zu bewerten - nach 25 Verwendungen",
+        "Bohnen können nun sortiert werden",
+        "Brühungen und Bohnen können nun durchsucht werden",
+        "Ausgefülltes Cupping Radar wird nun in den Brühdetails angezeigt",
+        "Übrige Bohnenmenge wird nun auf der Startseite angezeigt",
+        "Röster werden bei Bohnen nun vorgeschlagen",
+        "Bewertung von Brühungen wurde auf Sterne verändert"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Parameter individualisieren",
@@ -448,5 +466,6 @@
   "BEAN_SORT_ROASTER": "Röster",
   "BEAN_SORT_ROASTING_DATE": "Röstdatum",
   "PAGE_SETTINGS_MANAGE_ARCHIVE": "Archive verwalten",
-  "LAST_USE": "Zuletzt verwendet"
+  "LAST_USE": "Zuletzt verwendet",
+  "SEARCH": "Suchen"
 }
