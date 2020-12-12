@@ -5,7 +5,7 @@
   }
 
   ion-card {
-    min-height: 130px;
+    min-height: 185px;
 
     ion-icon {
       width: 128px;
@@ -15,7 +15,7 @@
     }
 
   }
-  @media (max-width: 320px) {
+  @media (max-width: 400px) {
     ion-card {
       min-height: 170px;
 

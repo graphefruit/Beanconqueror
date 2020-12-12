@@ -54,6 +54,12 @@ ion-header {
     background: none;
     height: 0px;
   }
+  ion-title{
+    font-size:28px;
+  }
+  .ion-title{
+    font-size:28px;
+  }
 }
 
 ion-content {
@@ -215,6 +221,9 @@ ion-tab-button {
   ion-icon {
     color: #cccccc;
   }
+  ion-icon.stroke {
+    stroke: #cccccc;
+  }
   ion-label {
     color: #cccccc;
   }
@@ -223,6 +232,9 @@ ion-tab-button {
 ion-tab-button.tab-selected {
   ion-icon {
     color: #cdc2ac;
+  }
+  ion-icon.stroke{
+    stroke: #cdc2ac;
   }
   ion-label {
     color: #cdc2ac;
@@ -341,7 +353,9 @@ ion-menu:host .menu-inner {
     text-transform: inherit;
     height: 40px;
     font-size: 16px;
+    --box-shadow:none;
   }
+
   .subtitle {
     margin: 0;
     font-size: 14px;
@@ -411,7 +425,7 @@ ion-menu:host .menu-inner {
   ion-card {
     background-color: #FFFFFF;
     border-radius: 6px 6px 6px 6px;
-    box-shadow: none;
+    box-shadow: 0px 0px 10px #0000001F;
     color: var(--ion-text-color);
     outline: none;
   }
@@ -433,7 +447,8 @@ ion-menu:host .menu-inner {
     --background: rgba(0, 0, 0, 0.47);
 
     ion-toolbar {
-      --background: #FFFFFF
+      --background: #FFFFFF;
+      padding-top:0px!important;
     }
 
     ion-content {
@@ -710,6 +725,9 @@ ion-menu:host .menu-inner {
     margin-top:20px;
   }
 
+  ion-popover {
+    --background: #ffffff;
+  }
 }
 
 .color-white {

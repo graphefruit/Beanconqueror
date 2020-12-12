@@ -57,7 +57,7 @@ export class Preparation implements IPreparation {
       case PREPARATION_TYPES.PORTAFILTER:
         return  PREPARATION_STYLE_TYPE.ESPRESSO;
       case PREPARATION_TYPES.BIALETTI:
-        return  PREPARATION_STYLE_TYPE.ESPRESSO;
+        return  PREPARATION_STYLE_TYPE.PERCOLATION;
       case PREPARATION_TYPES.V60:
         return  PREPARATION_STYLE_TYPE.POUR_OVER;
       case PREPARATION_TYPES.CHEMEX:
@@ -68,8 +68,6 @@ export class Preparation implements IPreparation {
         return  PREPARATION_STYLE_TYPE.POUR_OVER;
       case PREPARATION_TYPES.TURKISH:
         return  PREPARATION_STYLE_TYPE.FULL_IMMERSION;
-      case PREPARATION_TYPES.SWANNECK:
-        return  PREPARATION_STYLE_TYPE.PERCOLATION;
       case PREPARATION_TYPES.AEROPRESS_INVERTED:
         return  PREPARATION_STYLE_TYPE.FULL_IMMERSION;
       case PREPARATION_TYPES.DRIPPER:
@@ -80,6 +78,8 @@ export class Preparation implements IPreparation {
         return  PREPARATION_STYLE_TYPE.FULL_IMMERSION;
       case PREPARATION_TYPES.BLUE_DRIPPER:
         return  PREPARATION_STYLE_TYPE.POUR_OVER;
+      case PREPARATION_TYPES.FRENCH_PRESS:
+        return PREPARATION_STYLE_TYPE.FULL_IMMERSION;
       default:
         return PREPARATION_STYLE_TYPE.POUR_OVER
     }
@@ -106,8 +106,6 @@ export class Preparation implements IPreparation {
         return 'beanconqueror-preparation-frenchpress';
       case PREPARATION_TYPES.TURKISH:
         return 'beanconqueror-preparation-turkish';
-        case PREPARATION_TYPES.SWANNECK:
-        return 'beanconqueror-preparation-swanneck';
       case PREPARATION_TYPES.AEROPRESS_INVERTED:
         return 'beanconqueror-preparation-aeropress-inverted';
       case PREPARATION_TYPES.DRIPPER:

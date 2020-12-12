@@ -177,7 +177,7 @@ export class UIBrewHelper {
     if (!checkData.manage_parameters.pressure_profile) {
       brew.pressure_profile = '';
     }
-    if (checkData.manage_parameters.brew_temperature) {
+    if (!checkData.manage_parameters.brew_temperature) {
       brew.brew_temperature = 0;
     }
     if (!checkData.manage_parameters.brew_temperature_time) {

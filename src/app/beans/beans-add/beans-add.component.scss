@@ -1,8 +1,11 @@
 :host {
   ion-item {
+    --border-width: 0px;
     margin-left: 16px;
     margin-right: 16px;
   }
+
+
 
   ::ng-deep ion-slides img {
     width: 200px;

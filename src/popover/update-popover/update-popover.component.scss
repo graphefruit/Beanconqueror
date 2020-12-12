@@ -1,16 +1,16 @@
 :host {
 
-  top: 25%;
-  bottom:25%;
-  height:50%;
-  position: absolute;
-  margin-inline-start: 10px;
-  margin-inline-end: 10px;
-  border-radius: 6px;
-  margin-block-end: 10px;
+
   ul {
     text-align:left;
   }
   ion-slides { height: initial; }
-
+  ion-header, ion-content, ion-footer{
+    background:#ffffff;
+    --background:#ffffff;
+  }
+  .slider {
+    min-height: 100%;
+    background-color: #eee;
+  }
 }

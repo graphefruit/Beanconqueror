@@ -467,5 +467,7 @@
   "BEAN_SORT_ROASTING_DATE": "Röstdatum",
   "PAGE_SETTINGS_MANAGE_ARCHIVE": "Archive verwalten",
   "LAST_USE": "Zuletzt verwendet",
-  "SEARCH": "Suchen"
+  "SEARCH": "Suchen",
+  "OVERVIEW": "Übersicht",
+  "BEAN_HEADER_ADDITIONALE_INFORMATION": "Zusätzliche Informationen"
 }

@@ -51,6 +51,7 @@ export class BeansPage implements OnInit {
   public openBeansFilterText: string = '';
 
 
+
   constructor(public modalCtrl: ModalController,
               private readonly changeDetectorRef: ChangeDetectorRef,
               private readonly uiBeanStorage: UIBeanStorage,
@@ -105,7 +106,7 @@ export class BeansPage implements OnInit {
       }
 
 
-    },25);
+    },75);
   }
 
   public async beanAction(action: BEAN_ACTION, bean: Bean): Promise<void> {

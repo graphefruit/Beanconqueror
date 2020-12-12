@@ -45,9 +45,6 @@ export class BrewEditComponent implements OnInit {
 
   public displayingBrewTime: string = '';
 
-  public customSelectSheetOptions: any = {
-    cssClass: 'select-full-screen'
-  };
 
 
   constructor (private readonly modalController: ModalController,

@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-buttons slot="end">
+    <ion-buttons slot="end" style="margin-right:-10px;">
       <ion-button (click)="add()" class="big-add-icon" fill="clear">
         <ion-icon class="ion-color-accent" name="beanconqueror-add-box" slot="icon-only"></ion-icon>
       </ion-button>
@@ -15,7 +15,7 @@
 </ion-header>
 <ion-content>
 
-    <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="bean_segment" class="ion-padding-vertical">
+    <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="bean_segment" class="ion-padding-vertical" style="padding-top:0px;">
       <ion-segment-button value="open">
         <ion-label>{{"PAGE_BEANS_LIST_OBTAINABLE" | translate}}
         </ion-label>

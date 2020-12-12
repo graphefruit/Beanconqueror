@@ -42,7 +42,7 @@
   "PAGE_HOME_START_BREW": "Start Brewing",
   "PAGE_BEANS_LIST_OBTAINABLE": "Available",
   "PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS": "You're out of fresh beans!",
-  "PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS": "You got no archived bean descriptions.",
+  "PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS": "You got no archived beans.",
   "PAGE_MILL_LIST_NO_MILL_EXISTING": "You didn't add any grinders yet.",
   "PAGE_PREPARATION_LIST_NO_PREPARATION_EXISTING": "You didn't add any brewing method yet.",
   "PAGE_CONTACT_SUGGESTIONS_QUESTIONS_WISHES": "Suggestions, questions or requests?",
@@ -287,7 +287,7 @@
    "PAGE_SETTINGS_SHOW_ARCHIVED_PREPARATIONS": "Show archived preparation methods",
   "PAGE_SETTINGS_SHOW_ARCHIVED_MILLS": "Show archived preparation grinders",
   "PAGE_MILL_LIST_NO_ARCHIVED_MILL_EXISTING": "No grinders archived yet!",
-  "PAGE_PREPARATION_LIST_NO_ARCHIVED_PREPARATION_EXISTING": "You did not yet archive any grinder.",
+  "PAGE_PREPARATION_LIST_NO_ARCHIVED_PREPARATION_EXISTING": "You did not yet archive any preparation.",
   "TOAST_BREW_ADDED_SUCCESSFULLY": "Brew added successfully",
   "TOAST_BREW_REPEATED_SUCCESSFULLY": "Brew repeated successfully",
   "TOAST_BEAN_ADDED_SUCCESSFULLY": "Bean description added successfully",
@@ -302,7 +302,7 @@
   "TOAST_BEAN_EDITED_SUCCESSFULLY": "Bean description has been edited",
   "TOAST_MILL_EDITED_SUCCESSFULLY": "Grinder has been edited",
   "TOAST_PREPARATION_EDITED_SUCCESSFULLY": "Preparation has been edited",
-  "TOAST_BEAN_ARCHIVED_SUCCESSFULLY": "Bean description has been archived",
+  "TOAST_BEAN_ARCHIVED_SUCCESSFULLY": "Bean has been archived",
   "TOAST_MILL_ARCHIVED_SUCCESSFULLY": "Grinder has been archived",
   "TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY": "Preparation method has been archived",
   "BEAN_WEIGHT_ALREADY_USED": "{{gramUsed}}g of {{gramTotal}}g",
@@ -467,5 +467,7 @@
   "BEAN_SORT_ROASTING_DATE": "Roasting date",
   "PAGE_SETTINGS_MANAGE_ARCHIVE": "Manage archive",
   "LAST_USE": "Last used",
-  "SEARCH": "Search"
+  "SEARCH": "Search",
+  "OVERVIEW": "Overview",
+  "BEAN_HEADER_ADDITIONALE_INFORMATION": "Additional information"
 }

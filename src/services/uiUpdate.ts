@@ -204,8 +204,7 @@ export class UIUpdate {
 
   private async __showUpdateScreen(showingVersions: Array<string>) {
 
-      const modal = await this.modalCtrl.create({component: UpdatePopoverComponent, id:'update-popover',
-        cssClass: 'half-bottom-modal', showBackdrop: true,
+      const modal = await this.modalCtrl.create({component: UpdatePopoverComponent, id:'update-popover', showBackdrop: true,
         backdropDismiss: true,
         swipeToClose: true,
         componentProps: {versions: showingVersions}});
