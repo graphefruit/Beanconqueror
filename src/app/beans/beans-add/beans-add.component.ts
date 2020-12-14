@@ -52,7 +52,6 @@ export class BeansAddComponent implements OnInit {
                private readonly datePicker: DatePicker,
                private readonly translate: TranslateService,
                private readonly platform: Platform) {
-    // this.data.roastingDate = new Date().toISOString();
     this.bean_template = this.navParams.get('bean_template');
   }
 

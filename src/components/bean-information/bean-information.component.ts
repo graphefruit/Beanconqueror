@@ -79,10 +79,7 @@ export class BeanInformationComponent implements OnInit {
     for (const key in ROASTS_ENUM) {
       if (ROASTS_ENUM[key] === _key) {
         return (key as ROASTS_ENUM);
-
-
       }
-
     }
     return '';
   }

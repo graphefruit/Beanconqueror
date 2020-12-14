@@ -11,7 +11,7 @@ import {UIMillStorage} from '../services/uiMillStorage';
 import {UISettingsStorage} from '../services/uiSettingsStorage';
 import {AppMinimize} from '@ionic-native/app-minimize/ngx';
 import {Keyboard} from '@ionic-native/keyboard/ngx';
-import {ThreeDeeTouch} from '@ionic-native/three-dee-touch/ngx';
+import {ThreeDeeTouch, ThreeDeeTouchQuickAction} from '@ionic-native/three-dee-touch/ngx';
 import {Mill} from '../classes/mill/mill';
 import {Brew} from '../classes/brew/brew';
 import {Router} from '@angular/router';
@@ -118,7 +118,8 @@ export class AppComponent implements AfterViewInit {
 
           // #7
           this.statusBar.show();
-          this.statusBar.styleBlackOpaque();
+          this.statusBar.styleDefault();
+          this.statusBar.backgroundColorByHexString('#F0F0F0');
           this.splashScreen.hide();
           this.keyboard.hideFormAccessoryBar(false);
 
@@ -300,6 +301,7 @@ export class AppComponent implements AfterViewInit {
 
     this.__registerBack();
     await this.__setDeviceLanguage();
+    this.__setThreeDeeTouchActions();
     await this.uiAnalytics.initializeTracking().catch(() => {
       // Nothing to do, user declined tracking.
     });
@@ -309,6 +311,35 @@ export class AppComponent implements AfterViewInit {
     this.__instanceAppRating();
 
 
+
+  }
+  private __setThreeDeeTouchActions() {
+    if (this.platform.is('ios')) {
+      const actions: ThreeDeeTouchQuickAction[] = [
+        {
+          type: 'Brew',
+          title: this._translate.instant('THREE_DEE_TOUCH_ACTION_BREW'),
+          iconType: 'Add'
+        },
+        {
+          type: 'Bean',
+          title: this._translate.instant('THREE_DEE_TOUCH_ACTION_BEAN'),
+          iconType: 'Add'
+        },
+        {
+          type: 'Preparation',
+          title: this._translate.instant('THREE_DEE_TOUCH_ACTION_PREPARATION'),
+          iconType: 'Add'
+        },
+        {
+          type: 'Mill',
+          title: this._translate.instant('THREE_DEE_TOUCH_ACTION_MILL'),
+          iconType: 'Add'
+        },
+      ];
+
+      this.threeDeeTouch.configureQuickActions(actions);
+    }
 
   }
   private __instanceAppRating() {

@@ -3,9 +3,9 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-buttons slot="end" style="margin-right:-10px;">
+    <ion-buttons slot="end">
       <ion-button (click)="add()" class="big-add-icon" fill="clear">
-        <ion-icon class="ion-color-accent" name="beanconqueror-add-box" slot="icon-only"></ion-icon>
+        <ion-icon class="ion-color-accent" name="beanconqueror-add" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-title>
@@ -45,20 +45,19 @@
         {{"PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS" | translate}}
         </div>
       </div>
-
-      <ion-virtual-scroll #openScroll *ngIf="openBeans.length > 0" [items]="openBeans"
-                          approxItemHeight="200px">
-        <bean-information (beanAction)="beanAction($event[0],$event[1])"  *virtualItem="let bean;"
-                          [bean]="bean"></bean-information>
-      </ion-virtual-scroll>
-
+      <div *ngIf="openBeans.length > 0">
+        <ion-virtual-scroll #openScroll [items]="openBeans">
+          <bean-information (beanAction)="beanAction($event[0],$event[1])"  *virtualItem="let bean;"
+                            [bean]="bean"></bean-information>
+        </ion-virtual-scroll>
+      </div>
 
     </div>
     <div *ngIf="settings?.show_archived_beans">
       <div *ngSwitchCase="'archiv'">
         <div *ngIf="finishedBeans?.length > 0 || isFilterActive()" class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
 
-          <ion-searchbar  (ionChange)="research()" [(ngModel)]="archivedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+          <ion-searchbar (ionChange)="research()" [(ngModel)]="archivedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
           <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
             <ion-icon *ngIf="isFilterActive()"  name="beanconqueror-sort-active"
                       slot="icon-only"></ion-icon>
@@ -74,12 +73,12 @@
             {{"PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS" | translate}}
           </div>
         </div>
-        <ion-virtual-scroll #archivedScroll *ngIf="finishedBeans.length > 0" [items]="finishedBeans"
-                            approxItemHeight="200px">
-          <bean-information (beanAction)="beanAction($event[0],$event[1])"  *virtualItem="let bean;"
-                            [bean]="bean"></bean-information>
-        </ion-virtual-scroll>
-
+        <div *ngIf="finishedBeans.length > 0">
+          <ion-virtual-scroll #archivedScroll [items]="finishedBeans">
+            <bean-information (beanAction)="beanAction($event[0],$event[1])"  *virtualItem="let bean;"
+                              [bean]="bean"></bean-information>
+          </ion-virtual-scroll>
+        </div>
       </div>
     </div>
   </div>

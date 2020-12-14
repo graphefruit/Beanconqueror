@@ -25,10 +25,10 @@
       </ion-item>
       <ion-item style="margin-top: -10px;">
 
-        <ion-input [(ngModel)]="nextToolName" name="nextToolName" placeholder='{{"PREPARATION_TOOLS_PLACEHOLDER" | translate}}' type="text"></ion-input>
+        <ion-input (keyup.enter)="addTool()" [(ngModel)]="nextToolName" name="nextToolName" placeholder='{{"PREPARATION_TOOLS_PLACEHOLDER" | translate}}' type="text"></ion-input>
 
         <ion-button (click)="addTool()" fill="clear" tappable>
-          <ion-icon color="accent" name="beanconqueror-add" slot="icon-only"></ion-icon>
+          <ion-icon class="font-size-24" color="accent" name="beanconqueror-add" slot="icon-only"></ion-icon>
         </ion-button>
       </ion-item>
       <div class="ion-padding-horizontal">

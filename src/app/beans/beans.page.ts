@@ -18,6 +18,7 @@ import {BeanFilterComponent} from './bean-filter/bean-filter.component';
 import {IBeanPageFilter} from '../../interfaces/bean/iBeanPageFilter';
 import {BEAN_SORT_AFTER} from '../../enums/beans/beanSortAfter';
 import {BEAN_SORT_ORDER} from '../../enums/beans/beanSortOrder';
+import {BeansDetailComponent} from './beans-detail/beans-detail.component';
 
 @Component({
   selector: 'beans',
@@ -92,26 +93,11 @@ export class BeansPage implements OnInit {
   public segmentChanged() {
     this.retriggerScroll();
   }
-  private retriggerScroll() {
-    // https://github.com/ionic-team/ionic-framework/issues/18409
-    // Workarround
-    setTimeout( () => {
-      if (typeof(this.archivedScroll) !== 'undefined' && this.finishedBeans.length > 0)
-      {
-        this.archivedScroll.checkRange(0,this.finishedBeans.length);
-      }
-      if (typeof(this.openScroll) !== 'undefined' && this.openBeans.length > 0)
-      {
-        this.openScroll.checkRange(0,this.openBeans.length);
-      }
-
-
-    },75);
-  }
-
   public async beanAction(action: BEAN_ACTION, bean: Bean): Promise<void> {
     switch (action) {
-
+      case BEAN_ACTION.DETAIL:
+        this.detailBean(bean);
+        break;
       case BEAN_ACTION.REPEAT:
         this.repeatBean(bean);
         break;
@@ -132,11 +118,44 @@ export class BeansPage implements OnInit {
     }
   }
 
+  public async detailBean(_bean: Bean) {
+    const modal = await this.modalCtrl.create({component: BeansDetailComponent, id:'bean-detail', componentProps: {bean: _bean}});
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+
   public async viewPhotos(_bean: Bean) {
     const modal = await this.modalCtrl.create({component: BeanPhotoViewComponent, id:'bean-photo', componentProps: {bean: _bean}});
     await modal.present();
     await modal.onWillDismiss();
   }
+
+  private retriggerScroll() {
+    // https://github.com/ionic-team/ionic-framework/issues/18409
+    // Workarround
+    setTimeout( () => {
+      if (typeof(this.archivedScroll) !== 'undefined' && this.finishedBeans.length > 0)
+      {
+        this.archivedScroll.checkRange(0,this.finishedBeans.length);
+        setTimeout( () => {
+          this.archivedScroll.checkEnd();
+        },500);
+      }
+      if (typeof(this.openScroll) !== 'undefined' && this.openBeans.length > 0)
+      {
+        this.openScroll.checkRange(0,this.openBeans.length);
+
+        setTimeout( () => {
+          this.openScroll.checkEnd();
+        },75);
+
+      }
+
+
+
+    },75);
+  }
+
 
   public beansConsumed(_bean: Bean) {
     _bean.finished = true;
@@ -330,12 +349,12 @@ export class BeansPage implements OnInit {
         e.roaster.toLowerCase().includes(searchText) ||
         e.aromatics.toLowerCase().includes(searchText));
     }
-    console.log('Lets go');
    if (isOpen) {
      this.openBeans = sortedBeans;
    } else {
      this.finishedBeans = sortedBeans;
    }
+   this.retriggerScroll();
   }
 
 
@@ -363,6 +382,8 @@ export class BeansPage implements OnInit {
     this.beans = this.uiBeanStorage.getAllEntries()
       .sort((a, b) => a.name.localeCompare(b.name));
 
+    this.openBeans = [];
+    this.finishedBeans = [];
     this.__initializeBeansView('open');
     this.__initializeBeansView('archiv');
 

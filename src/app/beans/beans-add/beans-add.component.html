@@ -79,7 +79,7 @@
                    type="text">
         </ion-input>
       </ion-item>
-      <ion-item>
+      <ion-item  class="ion-margin-bottom">
         <ion-label position="stacked">{{"BEAN_DATA_MIX" | translate}}</ion-label>
         <ion-select #beanMix="ngModel" (ionChange)="beanMixChanged()" [(ngModel)]="data.beanMix" cancelText="{{'CANCEL'| translate }}" name="beanMix"
                     okText="{{'CHOOSE'| translate }}"
@@ -91,9 +91,9 @@
   </ion-card>
 
   <ion-card *ngFor="let beanInformation of this.data.bean_information;let first = first;let i = index;let last = last;let visible=false;" style="padding-bottom:6px; display:flex; flex-direction: column;">
-      <ion-item lines="none">
-        <span *ngIf="data.beanMix.toString() === 'BLEND'" class="ion-title ion-padding-top" slot="start">{{"BEAN_SORT" | translate}}&nbsp;{{i+1}}</span>
-        <span *ngIf="data.beanMix.toString() !== 'BLEND'" class="ion-title ion-padding-top" slot="start">{{"BEAN_SORT" | translate}}</span>
+      <ion-item class="ion-padding-top" lines="none">
+        <span *ngIf="data.beanMix.toString() === 'BLEND'" class="ion-title ion-no-padding-bottom" slot="start">{{i+1}}.&nbsp;{{"BEAN_SORT" | translate}}</span>
+        <span *ngIf="data.beanMix.toString() !== 'BLEND'" class="ion-title ion-no-padding-bottom" slot="start">{{"BEAN_SORT_INFORMATION" | translate}}</span>
         <ion-button (click)="deleteSortInformation(i)" *ngIf="!first" fill="clear" slot="end" tappable>
           <ion-icon color="accent" name="close-outline" slot="icon-only"></ion-icon>
         </ion-button>
@@ -169,7 +169,7 @@
                    remove-empty-number
                    type="text"></ion-input>
       </ion-item>
-      <ion-item lines="none">
+      <ion-item  class="ion-margin-bottom">
         <ion-label position="stacked">{{"BEAN_DATA_CERTIFICATION" | translate}}</ion-label>
         <ion-input #certification="ngModel" [(ngModel)]="beanInformation.certification" autocapitalize="sentences"
                    name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_CERTIFICATION' | translate}}" spellcheck="false"
@@ -185,7 +185,7 @@
 
   <ion-card style="display:flex; flex-direction: column;">
     <ion-item lines="none">
-      <span class="ion-title ion-padding-top">{{"BEAN_HEADER_ADDITIONALE_INFORMATION" | translate }}</span>
+      <span class="ion-title ion-padding-top ion-no-padding-bottom">{{"BEAN_SORT_MORE_INFORMATION" | translate }}</span>
     </ion-item>
       <ion-item>
         <ion-label position="stacked">{{"BEAN_DATA_WEIGHT" | translate}}</ion-label>

@@ -373,8 +373,8 @@
                  type="text"></ion-input>
     </ion-item>
 
-    <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.grind_weight && settings.manage_parameters.brew_quantity,
-                      data.getPreparation().manage_parameters.grind_weight && data.getPreparation().manage_parameters.brew_quantity,
+    <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.grind_weight && settings.manage_parameters.brew_quantity && settings.manage_parameters.tds,
+                      data.getPreparation().manage_parameters.grind_weight && data.getPreparation().manage_parameters.brew_quantity && data.getPreparation().manage_parameters.tds,
                       data.getPreparation().use_custom_parameters)"
 
               [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.after.tds,

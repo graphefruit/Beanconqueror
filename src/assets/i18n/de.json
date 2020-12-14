@@ -19,6 +19,7 @@
   "NAV_INFORMATION_TO_APP": "Über die App",
   "POPOVER_BREWS_OPTION_REPEAT": "Wiederholen",
   "POPOVER_BREWS_OPTION_DETAIL": "Details",
+  "DETAIL": "Details",
   "POPOVER_BREWS_OPTION_EDIT": "Editieren",
   "POPOVER_BREWS_OPTION_DELETE": "Löschen",
   "POPOVER_BREWS_OPTION_PHOTO_GALLERY": "Fotogalerie",
@@ -233,6 +234,7 @@
   "CUPPING_SCORE_CUPPERS_CORRECTION_TOOLTIP": "This is adapted from the SCAA system and Cup of Excellence scoring (they sometimes call it \"Overall Points\"). It allows a cupper to ensure that the total score correctly communicates the overall impression of the cup. You might criticize this approach and consider it \"fudging\" the total. In a way, you would be correct ... but it would be much worse to change the category scores to achieve the desired total (to give a coffee a 9 for acidity when you know it is a 7), or conversely to have a coffee that absolutely deserves a 90 end up at 84. The specific Cupper's Correction number matters naught, be it a 5 or an 8 ... the idea is that the total score gives a correct impression of the coffee quality.",
   "CUPPING_SCORE_TOOLTIP": "100-95 = Astounding, 90-94 = Outstanding, 85-89 = Very Good, 80-84 = Good, 75-79 = Fair, 70-74 = Poor",
   "DETAIL_BREW": "Bezugdetails",
+  "DETAIL_BEAN": "Bohnendetails",
   "EDIT_BREW": "Bezug editieren",
   "ADD_BEAN": "Bohne hinzufügen",
   "EDIT_BEAN": "Bohne editieren",
@@ -452,6 +454,8 @@
   "ENABLE_PREPARATION_CUSTOM_PARAMETERS": "Benutze individuelle Parameter",
   "BEAN_ADD_ANOTHER_SORT": "Weitere Sorten hinzufügen",
   "BEAN_SORT": "Sorte",
+  "BEAN_SORT_INFORMATION": "Sorteninformation",
+  "BEAN_SORT_MORE_INFORMATION": "Weitere Informationen",
   "NAVIGATE_TO_PREPARATION_METHODS": "Zu den Zubereitungsmethoden",
   "PREPARATION_TOOLS": "Brühmethoden Tools",
   "PREPARATION_TOOLS_INFORMATION": "Füge für Siebträger deine verschiedenen Siebe hinzu. Bei einer V60 oder auch Aeropress deine Unterschiedlichen Papier/Stoff/Metallfilter usw.",
@@ -469,5 +473,9 @@
   "LAST_USE": "Zuletzt verwendet",
   "SEARCH": "Suchen",
   "OVERVIEW": "Übersicht",
-  "BEAN_HEADER_ADDITIONALE_INFORMATION": "Zusätzliche Informationen"
+  "BEAN_HEADER_ADDITIONALE_INFORMATION": "Zusätzliche Informationen",
+  "THREE_DEE_TOUCH_ACTION_BREW":"Brühen",
+  "THREE_DEE_TOUCH_ACTION_BEAN":"Bohne",
+  "THREE_DEE_TOUCH_ACTION_PREPARATION":"Brühmethode",
+  "THREE_DEE_TOUCH_ACTION_MILL":"Mühle"
 }

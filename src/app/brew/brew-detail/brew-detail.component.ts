@@ -36,9 +36,6 @@ export class BrewDetailComponent implements OnInit {
                private readonly translate: TranslateService) {
 
     this.settings = this.uiSettingsStorage.getSettings();
-    // Moved from ionViewDidEnter, because of Ionic issues with ion-range
-
-
   }
 
   public ionViewWillEnter() {

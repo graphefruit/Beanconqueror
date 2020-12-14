@@ -21,7 +21,7 @@
     <preference name="SplashScreen" value="screen" />
     <preference name="SplashScreenDelay" value="3000" />
     <preference name="StatusBarOverlaysWebView" value="false" />
-    <preference name="StatusBarBackgroundColor" value="#000000" />
+    <preference name="StatusBarBackgroundColor" value="#F0F0F0" />
     <preference name="StatusBarStyle" value="light" />
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
     <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
@@ -29,15 +29,25 @@
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
             <application android:networkSecurityConfig="@xml/network_security_config" />
             <application android:requestLegacyExternalStorage="true" />
+            <application android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" />
         </edit-config>
         <resource-file src="resources/android/xml/network_security_config.xml" target="app/src/main/res/xml/network_security_config.xml" />
         <allow-intent href="market:*" />
-        <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
-        <icon density="mdpi" src="resources/android/icon/drawable-mdpi-icon.png" />
-        <icon density="hdpi" src="resources/android/icon/drawable-hdpi-icon.png" />
-        <icon density="xhdpi" src="resources/android/icon/drawable-xhdpi-icon.png" />
-        <icon density="xxhdpi" src="resources/android/icon/drawable-xxhdpi-icon.png" />
-        <icon density="xxxhdpi" src="resources/android/icon/drawable-xxxhdpi-icon.png" />
+        <resource-file src="resources/android/xml/colors.xml" target="/app/src/main/res/values/colors.xml" />
+        <resource-file src="resources/android/adaptiveicon/drawable/ic_launcher_foreground.xml" target="/app/src/main/res/drawable/ic_launcher_foreground.xml" />
+        <resource-file src="resources/android/adaptiveicon/drawable/ic_launcher_background.xml" target="/app/src/main/res/drawable/ic_launcher_background.xml" />
+        <resource-file src="resources/android/adaptiveicon/mipmap-anydpi-v26/ic_launcher.xml" target="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" />
+        <resource-file src="resources/android/adaptiveicon/mipmap-anydpi-v26/ic_launcher_round.xml" target="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" />
+        <resource-file src="resources/android/adaptiveicon/mipmap-hdpi/ic_launcher.png" target="app/src/main/res/mipmap-hdpi/ic_launcher.png" />
+        <resource-file src="resources/android/adaptiveicon/mipmap-hdpi/ic_launcher_round.png" target="app/src/main/res/mipmap-hdpi/ic_launcher_round.png" />
+        <resource-file src="resources/android/adaptiveicon/mipmap-mdpi/ic_launcher.png" target="app/src/main/res/mipmap-mdpi/ic_launcher.png" />
+        <resource-file src="resources/android/adaptiveicon/mipmap-mdpi/ic_launcher_round.png" target="app/src/main/res/mipmap-mdpi/ic_launcher_round.png" />
+        <resource-file src="resources/android/adaptiveicon/mipmap-xhdpi/ic_launcher.png" target="app/src/main/res/mipmap-xhdpi/ic_launcher.png" />
+        <resource-file src="resources/android/adaptiveicon/mipmap-xhdpi/ic_launcher_round.png" target="app/src/main/res/mipmap-xhdpi/ic_launcher_round.png" />
+        <resource-file src="resources/android/adaptiveicon/mipmap-xxhdpi/ic_launcher.png" target="app/src/main/res/mipmap-xxhdpi/ic_launcher.png" />
+        <resource-file src="resources/android/adaptiveicon/mipmap-xxhdpi/ic_launcher_round.png" target="app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png" />
+        <resource-file src="resources/android/adaptiveicon/mipmap-xxxhdpi/ic_launcher.png" target="app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" />
+        <resource-file src="resources/android/adaptiveicon/mipmap-xxxhdpi/ic_launcher_round.png" target="app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" />
         <splash density="land-ldpi" src="resources/android/splash/drawable-land-ldpi-screen.png" />
         <splash density="land-mdpi" src="resources/android/splash/drawable-land-mdpi-screen.png" />
         <splash density="land-hdpi" src="resources/android/splash/drawable-land-hdpi-screen.png" />
@@ -63,7 +73,7 @@
                     <key>UIApplicationShortcutItemIconType</key>
                     <string>UIApplicationShortcutIconTypeAdd</string>
                     <key>UIApplicationShortcutItemTitle</key>
-                    <string>Brühen</string>
+                    <string>Brew</string>
                     <key>UIApplicationShortcutItemType</key>
                     <string>Brew</string>
                 </dict>
@@ -71,7 +81,7 @@
                     <key>UIApplicationShortcutItemIconType</key>
                     <string>UIApplicationShortcutIconTypeAdd</string>
                     <key>UIApplicationShortcutItemTitle</key>
-                    <string>Bohne</string>
+                    <string>Bean</string>
                     <key>UIApplicationShortcutItemType</key>
                     <string>Bean</string>
                 </dict>
@@ -79,7 +89,7 @@
                     <key>UIApplicationShortcutItemIconType</key>
                     <string>UIApplicationShortcutIconTypeAdd</string>
                     <key>UIApplicationShortcutItemTitle</key>
-                    <string>Zubereitungsmethode</string>
+                    <string>Preparation method</string>
                     <key>UIApplicationShortcutItemType</key>
                     <string>Preparation</string>
                 </dict>
@@ -87,7 +97,7 @@
                     <key>UIApplicationShortcutItemIconType</key>
                     <string>UIApplicationShortcutIconTypeAdd</string>
                     <key>UIApplicationShortcutItemTitle</key>
-                    <string>Mühle</string>
+                    <string>Grinder</string>
                     <key>UIApplicationShortcutItemType</key>
                     <string>Mill</string>
                 </dict>

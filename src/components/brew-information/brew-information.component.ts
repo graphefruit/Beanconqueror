@@ -38,6 +38,7 @@ export class BrewInformationComponent implements OnInit {
 
   public ngOnInit() {
     if (this.brew) {
+
       this.bean = this.brew.getBean();
       this.preparation = this.brew.getPreparation();
       this.mill = this.brew.getMill();
@@ -47,17 +48,15 @@ export class BrewInformationComponent implements OnInit {
 
   public ngOnChanges(changes: SimpleChange) {
     // changes.prop contains the old and the new value...
-    try {
-      const previousValue = changes['brew'].previousValue as Brew;
-      const currentValue =  changes['brew'].currentValue as Brew;
-      if (previousValue.rating !== currentValue.rating) {
-        this.brewStars.setRating(currentValue.rating);
-      }
 
-    }catch (ex) {
+      this.resetRenderingRating();
 
+
+  }
+  private resetRenderingRating() {
+    if (this.brewStars && this.brew.rating > 0) {
+      this.brewStars.setRating(this.brew.rating);
     }
-
   }
 
   public async showBrewActions(event): Promise<void> {

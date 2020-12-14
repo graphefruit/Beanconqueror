@@ -88,14 +88,30 @@ import {MillModalSelectComponent} from '../mill/mill-modal-select/mill-modal-sel
 import {PreparationModalSelectComponent} from '../preparation/preparation-modal-select/preparation-modal-select.component';
 import {MillOverlayDirective} from '../../directive/mill-overlay.directive';
 import {PreparationOverlayDirective} from '../../directive/preparation-overlay.directive';
+import {DisableDoubleClickDirective} from '../../directive/disable-double-click.directive';
+import {NgxStarsModule} from 'ngx-stars';
+import {BrewCuppingComponent} from '../brew/brew-cupping/brew-cupping.component';
+import {DatePicker} from '@ionic-native/date-picker/ngx';
+import {Geolocation} from '@ionic-native/geolocation/ngx';
+import {UpdatePopoverComponent} from '../../popover/update-popover/update-popover.component';
+import {PreparationCustomParametersComponent} from '../preparation/preparation-custom-parameters/preparation-custom-parameters.component';
+import {DefaultCustomParameterComponent} from '../../components/parameter/default-custom-parameter/default-custom-parameter.component';
+import {SortCustomParameterComponent} from '../../components/parameter/sort-custom-parameter/sort-custom-parameter.component';
+import {ManageCustomParameterComponent} from '../../components/parameter/manage-custom-parameter/manage-custom-parameter.component';
+import {BeanFilterComponent} from '../beans/bean-filter/bean-filter.component';
+import {BeansDetailComponent} from '../beans/beans-detail/beans-detail.component';
 
 @NgModule({
-  declarations: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, AboutComponent,
+  declarations: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent,
+    BeansEditComponent,
+    BeansDetailComponent,
+    AboutComponent,
     ContactComponent,
     InfoComponent,
     PreparationAddTypeComponent,
     CustomPopoverComponent,
     WelcomePopoverComponent,
+    UpdatePopoverComponent,
     CreditsComponent,
     LicencesComponent,
     PrivacyComponent,
@@ -104,26 +120,33 @@ import {PreparationOverlayDirective} from '../../directive/preparation-overlay.d
     ManageParameterComponent,
     HelperBrewRatioComponent,
     HelperWaterHardnessComponent,
+    BrewCuppingComponent,
     TermsComponent,
     ThanksComponent, LogComponent, LogTextComponent, PreparationPage, PreparationAddComponent,
-    PreparationEditComponent, MillPage, MillEditComponent, BrewFilterComponent, MillAddComponent, BrewAddComponent,
+    PreparationEditComponent, PreparationCustomParametersComponent, MillPage, MillEditComponent, BrewFilterComponent, BeanFilterComponent, MillAddComponent, BrewAddComponent,
     FormatDatePipe, KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, BeanInformationComponent, BrewDashboardInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, CuppingRadarComponent, SearchPipe, RemoveEmptyNumberDirective,
     PreventCharacterDirective,
     BeanOverlayDirective,
     MillOverlayDirective,
     PreparationOverlayDirective,
-    TooltipDirective, BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent, BeanPhotoViewComponent,
+    TooltipDirective,
+    DisableDoubleClickDirective,
+    BrewPage, BrewDetailComponent, BrewEditComponent, BrewPhotoViewComponent, BeanPhotoViewComponent,
     BrewPopoverActionsComponent, BeanPopoverActionsComponent, MillPopoverActionsComponent, BeanModalSelectComponent,
     MillModalSelectComponent,
     PreparationModalSelectComponent,
-    PreparationPopoverActionsComponent, TimerComponent, BrewTimerComponent],
+    PreparationPopoverActionsComponent, TimerComponent,DefaultCustomParameterComponent, SortCustomParameterComponent,ManageCustomParameterComponent, BrewTimerComponent],
   entryComponents: [
-    SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, BrewFilterComponent, PreparationInformationCardComponent, MillInformationCardComponent, AboutComponent,
+    SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent,
+    BeansEditComponent,
+    BeansDetailComponent,
+    BrewFilterComponent, BeanFilterComponent, PreparationInformationCardComponent, MillInformationCardComponent, AboutComponent,
     ContactComponent,
     InfoComponent,
     PreparationAddTypeComponent,
     CustomPopoverComponent,
     WelcomePopoverComponent,
+    UpdatePopoverComponent,
     CreditsComponent,
     LicencesComponent,
     PrivacyComponent,
@@ -132,21 +155,23 @@ import {PreparationOverlayDirective} from '../../directive/preparation-overlay.d
     ManageParameterComponent,
     HelperBrewRatioComponent,
     HelperWaterHardnessComponent,
+    BrewCuppingComponent,
     TermsComponent,
     ThanksComponent, LogComponent, LogTextComponent, PreparationPage,
-    PreparationAddComponent, PreparationEditComponent, MillPage, MillEditComponent,
+    PreparationAddComponent, PreparationEditComponent, PreparationCustomParametersComponent, MillPage, MillEditComponent,
     MillAddComponent, BrewAddComponent, BrewPage, BrewDetailComponent, BrewEditComponent,
     BrewPhotoViewComponent, BeanPhotoViewComponent, BrewPopoverActionsComponent, BeanPopoverActionsComponent,
     BeanModalSelectComponent,
     MillModalSelectComponent,
     PreparationModalSelectComponent,
-    MillPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent, BrewTimerComponent],
+    MillPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent,DefaultCustomParameterComponent, SortCustomParameterComponent,ManageCustomParameterComponent, BrewTimerComponent],
   imports: [
     CommonModule,
     IonicModule,
     FormsModule,
     TranslateModule,
     RouterModule,
+    NgxStarsModule,
   ],
   providers: [
     AppVersion,
@@ -156,7 +181,9 @@ import {PreparationOverlayDirective} from '../../directive/preparation-overlay.d
     BeanOverlayDirective,
     MillOverlayDirective,
     PreparationOverlayDirective,
-    TooltipDirective, FormatDatePipe, KeysPipe, EnumToArrayPipe,
+    TooltipDirective,
+    DisableDoubleClickDirective,
+    FormatDatePipe, KeysPipe, EnumToArrayPipe,
     InAppBrowser,
     File,
     FileChooser,
@@ -167,15 +194,20 @@ import {PreparationOverlayDirective} from '../../directive/preparation-overlay.d
     Keyboard,
     ThreeDeeTouch,
     Camera, ImagePicker, AndroidPermissions,
-    InAppBrowser, File, Globalization, FirebaseX
+    InAppBrowser, File, Globalization, FirebaseX,
+    DatePicker,
+    Geolocation
   ],
 
-  exports: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent, AboutComponent,
+  exports: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, BeansPage, HelperPage, BeansAddComponent, BeansEditComponent,
+    BeansDetailComponent,
+    AboutComponent,
     ContactComponent,
     InfoComponent,
     PreparationAddTypeComponent,
     CustomPopoverComponent,
     WelcomePopoverComponent,
+    UpdatePopoverComponent,
     CreditsComponent,
     LicencesComponent,
     PrivacyComponent,
@@ -184,21 +216,24 @@ import {PreparationOverlayDirective} from '../../directive/preparation-overlay.d
     ManageParameterComponent,
     HelperBrewRatioComponent,
     HelperWaterHardnessComponent,
+    BrewCuppingComponent,
     TermsComponent,
     ThanksComponent, PreparationPage, PreparationAddComponent,
-    PreparationEditComponent, BrewFilterComponent, MillPage, MillEditComponent, MillAddComponent,
+    PreparationEditComponent, PreparationCustomParametersComponent, BrewFilterComponent, BeanFilterComponent, MillPage, MillEditComponent, MillAddComponent,
     BrewAddComponent, FormatDatePipe,
     KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, BeanInformationComponent, BrewDashboardInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, CuppingRadarComponent, SearchPipe, RemoveEmptyNumberDirective,
     PreventCharacterDirective,
     BeanOverlayDirective,
     MillOverlayDirective,
     PreparationOverlayDirective,
-    TooltipDirective, BrewPage, BrewDetailComponent, BrewEditComponent,
+    TooltipDirective,
+    DisableDoubleClickDirective,
+    BrewPage, BrewDetailComponent, BrewEditComponent,
     BrewPhotoViewComponent, BeanPhotoViewComponent, BrewPopoverActionsComponent, BeanPopoverActionsComponent,
     BeanModalSelectComponent,
     MillModalSelectComponent,
     PreparationModalSelectComponent,
-    MillPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent, BrewTimerComponent],
+    MillPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent,DefaultCustomParameterComponent, SortCustomParameterComponent, ManageCustomParameterComponent, BrewTimerComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule {

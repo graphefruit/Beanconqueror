@@ -36,17 +36,21 @@ ion-title {
   font-size: 20px!important;
   line-height: 20px!important;
 }
+.font-size-24{
+  font-size:24px!important;
+  line-height:24px!important;
+}
 
 ion-toolbar {
   --background: #F0F0F0;
   --border-style: none;
-  padding-top: 28px!important;
+  padding-top: 26px!important;
 }
 
 ion-toolbar[with-add-button] {
   --background: #F0F0F0;
   --border-style: none;
-  padding-top: 16px!important;
+  padding-top: 19px!important;
 }
 ion-header {
   background-color: #F0F0F0;
@@ -120,7 +124,6 @@ ion-segment-button {
 
 ion-card.long-card {
   background: #FFFFFF 0% 0% no-repeat padding-box;
-  box-shadow: 0px 3px 6px #00000029;
   border-radius: 6px 6px 6px 6px;
   padding: 0px;
   border: none;
@@ -324,6 +327,7 @@ ion-menu:host .menu-inner {
 }
 
 :root {
+
   ion-col.center-col {
     display: flex;
     align-items: center
@@ -410,8 +414,8 @@ ion-menu:host .menu-inner {
   }
 
   .big-add-icon {
-    width: 96px!important;
-    height: 80px!important;
+    width: 70px!important;
+    height: 70px!important;
     ion-icon {
       font-size: 128px !important; //Preferred size here
       width: 128px!important;
@@ -589,6 +593,9 @@ ion-menu:host .menu-inner {
   .ion-no-padding.ion-title{
     padding-bottom:0px;
   }
+  .ion-no-padding-bottom{
+    padding-bottom:0px;
+  }
 
   ion-toast {
     --background: #474747;
@@ -685,10 +692,19 @@ ion-menu:host .menu-inner {
   }
   .bean-display {
     .star-half, .star-full, .star-empty {
-      margin-right:-2px;
+      margin-right:5px;
       width:15px!important;
       height:16px!important;
       background-size: contain!important;
+    }
+    @media (max-width: 374px) {
+      /** Fix for iphone 5 - beans would be to near **/
+      .star-half, .star-full, .star-empty {
+        margin-right:-2px;
+        width:15px!important;
+        height:16px!important;
+        background-size: contain!important;
+      }
     }
   }
 
