@@ -328,12 +328,9 @@ export class BeansPage implements OnInit {
 
       }
 
-      switch (filter.sort_order) {
-        case BEAN_SORT_ORDER.DESCENDING:
-          sortedBeans.reverse();
-          break;
+      if (filter.sort_order === BEAN_SORT_ORDER.DESCENDING) {
+        sortedBeans.reverse();
       }
-
 
     }
     let searchText: string = '';

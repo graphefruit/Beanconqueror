@@ -1,11 +1,23 @@
 {
   "extends": "tslint:recommended",
   "rules": {
-    "selector-pseudo-class-no-unknown": [true, {
-      "ignorePseudoClasses": ["global"],
-
-    }],
-    "selector-type-no-unknown": [true, { "ignoreTypes": ["/^ion-/"]}],
+    "selector-pseudo-class-no-unknown": [
+      true,
+      {
+        "ignorePseudoClasses": [
+          "global"
+        ]
+      }
+    ],
+    "no-empty-source": false,
+    "selector-type-no-unknown": [
+      true,
+      {
+        "ignoreTypes": [
+          "/^ion-/"
+        ]
+      }
+    ],
     "array-type": false,
     "arrow-parens": false,
     "deprecation": {
@@ -72,7 +84,11 @@
     "use-life-cycle-interface": true,
     "use-pipe-transform-interface": true,
     "one-variable-per-declaration": false,
-    "component-class-suffix": [true, "Page", "Component"],
+    "component-class-suffix": [
+      true,
+      "Page",
+      "Component"
+    ],
     "directive-class-suffix": true,
     "no-string-literal": false,
     "no-trailing-whitespace": false,

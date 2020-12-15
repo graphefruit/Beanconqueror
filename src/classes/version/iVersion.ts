@@ -21,7 +21,6 @@ export class Version implements IVersion {
   }
 
   public whichUpdateScreensShallBeDisplayed(actualAppVersion: string): Array<string> {
-      console.log('blaa');
       const versionCode: string = actualAppVersion;
       const filteredVersions = this.getUpdatedVersions().filter((e)=> this.alreadyDisplayedVersions.filter((b) => b === e).length === 0);
 

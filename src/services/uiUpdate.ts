@@ -184,7 +184,7 @@ export class UIUpdate {
         versionCode = '4.0.0';
       }
       const version: Version = this.uiVersionStorage.getVersion();
-      const displayingVersions = await version.whichUpdateScreensShallBeDisplayed(versionCode);
+      const displayingVersions = version.whichUpdateScreensShallBeDisplayed(versionCode);
 
       if (displayingVersions.length > 0) {
 

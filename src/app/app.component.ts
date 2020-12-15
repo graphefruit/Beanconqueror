@@ -12,15 +12,12 @@ import {UISettingsStorage} from '../services/uiSettingsStorage';
 import {AppMinimize} from '@ionic-native/app-minimize/ngx';
 import {Keyboard} from '@ionic-native/keyboard/ngx';
 import {ThreeDeeTouch, ThreeDeeTouchQuickAction} from '@ionic-native/three-dee-touch/ngx';
-import {Mill} from '../classes/mill/mill';
-import {Brew} from '../classes/brew/brew';
 import {Router} from '@angular/router';
 import {BeansAddComponent} from './beans/beans-add/beans-add.component';
 import {PreparationAddComponent} from './preparation/preparation-add/preparation-add.component';
 import {MillAddComponent} from './mill/mill-add/mill-add.component';
 import {UIBrewHelper} from '../services/uiBrewHelper';
 import {BrewAddComponent} from './brew/brew-add/brew-add.component';
-import {Bean} from '../classes/bean/bean';
 
 import {UIHelper} from '../services/uiHelper';
 import {UIAlert} from '../services/uiAlert';
@@ -32,12 +29,12 @@ import {UIAnalytics} from '../services/uiAnalytics';
 import {WelcomePopoverComponent} from '../popover/welcome-popover/welcome-popover.component';
 /** Third party */
 import moment from 'moment';
-import {Preparation} from '../classes/preparation/preparation';
 import {UIUpdate} from '../services/uiUpdate';
 import {UiVersionStorage} from '../services/uiVersionStorage';
 
 
 declare var AppRate;
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -113,82 +110,82 @@ export class AppComponent implements AfterViewInit {
   private __appReady(): void {
     this.platform.ready()
       .then(async () => {
-          // Okay, so the platform is ready and our plugins are available.
-          // Here you can do any higher level native things you might need.
+        // Okay, so the platform is ready and our plugins are available.
+        // Here you can do any higher level native things you might need.
 
-          // #7
-          this.statusBar.show();
-          this.statusBar.styleDefault();
-          this.statusBar.backgroundColorByHexString('#F0F0F0');
-          this.splashScreen.hide();
-          this.keyboard.hideFormAccessoryBar(false);
+        // #7
+        this.statusBar.show();
+        this.statusBar.styleDefault();
+        this.statusBar.backgroundColorByHexString('#F0F0F0');
+        this.splashScreen.hide();
+        this.keyboard.hideFormAccessoryBar(false);
 
 
-          if (this.platform.is('ios')) {
-            this.uiLog.log(`iOS Device - attach to home icon pressed`);
-            this.threeDeeTouch.onHomeIconPressed()
-              .subscribe(
-                async (payload) => {
-                  /* We need to wait for app finished loading, but already attach on platform start, else
-                  *  the event won't get triggered **/
-                  this.uiHelper.isBeanconqurorAppReady().then(async () => {
-                    const payloadType = payload.type;
-                    try {
-                      this.uiAnalytics.trackEvent('STARTUP', 'FORCE_TOUCH_' + payloadType.toUpperCase());
-                      this.uiLog.log(`iOS Device - Home icon was pressed`);
-                    } catch (ex) {
-                    }
-                    if (payload.type === 'Brew') {
-                      await this.__trackNewBrew();
-                    } else if (payload.type === 'Bean') {
-                      await this.__trackNewBean();
-                    } else if (payload.type === 'Preparation') {
-                      await this.__trackNewPreparation();
-                    } else if (payload.type === 'Mill') {
-                      await this.__trackNewMill();
-                    }
-                  });
-                  // returns an object that is the button you presed
+        if (this.platform.is('ios')) {
+          this.uiLog.log(`iOS Device - attach to home icon pressed`);
+          this.threeDeeTouch.onHomeIconPressed()
+            .subscribe(
+              async (payload) => {
+                /* We need to wait for app finished loading, but already attach on platform start, else
+                *  the event won't get triggered **/
+                this.uiHelper.isBeanconqurorAppReady().then(async () => {
+                  const payloadType = payload.type;
+                  try {
+                    this.uiAnalytics.trackEvent('STARTUP', 'FORCE_TOUCH_' + payloadType.toUpperCase());
+                    this.uiLog.log(`iOS Device - Home icon was pressed`);
+                  } catch (ex) {
+                  }
+                  if (payload.type === 'Brew') {
+                    await this.__trackNewBrew();
+                  } else if (payload.type === 'Bean') {
+                    await this.__trackNewBean();
+                  } else if (payload.type === 'Preparation') {
+                    await this.__trackNewPreparation();
+                  } else if (payload.type === 'Mill') {
+                    await this.__trackNewMill();
+                  }
+                });
+                // returns an object that is the button you presed
 
-                }
-              );
-          }
+              }
+            );
+        }
 
-          // Wait for every necessary service to be ready before starting the app
-          const beanStorageReadyCallback = this.uiBeanStorage.storageReady();
-          const preparationStorageReadyCallback = this.uiPreparationStorage.storageReady();
-          const uiSettingsStorageReadyCallback = this.uiSettingsStorage.storageReady();
-          const brewStorageReadyCallback = this.uiBrewStorage.storageReady();
-          const millStorageReadyCallback = this.uiMillStorage.storageReady();
-          const versionStorageReadyCallback = this.uiVersionStorage.storageReady();
+        // Wait for every necessary service to be ready before starting the app
+        const beanStorageReadyCallback = this.uiBeanStorage.storageReady();
+        const preparationStorageReadyCallback = this.uiPreparationStorage.storageReady();
+        const uiSettingsStorageReadyCallback = this.uiSettingsStorage.storageReady();
+        const brewStorageReadyCallback = this.uiBrewStorage.storageReady();
+        const millStorageReadyCallback = this.uiMillStorage.storageReady();
+        const versionStorageReadyCallback = this.uiVersionStorage.storageReady();
 
-          Promise.all([
-            beanStorageReadyCallback,
-            preparationStorageReadyCallback,
-            brewStorageReadyCallback,
-            uiSettingsStorageReadyCallback,
-            millStorageReadyCallback,
-            versionStorageReadyCallback
-          ])
-              .then(() => {
-                this.uiLog.log('App finished loading');
-                this.uiLog.info('Everything should be fine!!!');
-                this.__checkUpdate();
-                this.__initApp();
-                this.uiHelper.setAppReady(1);
+        Promise.all([
+          beanStorageReadyCallback,
+          preparationStorageReadyCallback,
+          brewStorageReadyCallback,
+          uiSettingsStorageReadyCallback,
+          millStorageReadyCallback,
+          versionStorageReadyCallback
+        ])
+          .then(() => {
+            this.uiLog.log('App finished loading');
+            this.uiLog.info('Everything should be fine!!!');
+            this.__checkUpdate();
+            this.__initApp();
+            this.uiHelper.setAppReady(1);
 
-              }, () => {
-                this.uiAlert.showMessage('APP_COULD_NOT_STARTED_CORRECTLY_BECAUSE_MISSING_FILESYSTEM', 'CARE', undefined, true);
-                this.uiLog.error('App finished loading, but errors occured');
-                this.__initApp();
-                this.uiHelper.setAppReady(2);
-              });
-        });
+          }, () => {
+            this.uiAlert.showMessage('APP_COULD_NOT_STARTED_CORRECTLY_BECAUSE_MISSING_FILESYSTEM', 'CARE', undefined, true);
+            this.uiLog.error('App finished loading, but errors occured');
+            this.__initApp();
+            this.uiHelper.setAppReady(2);
+          });
+      });
 
   }
 
   private __checkUpdate(): void {
-   this.uiUpdate.checkUpdate();
+    this.uiUpdate.checkUpdate();
   }
 
   private async __setDeviceLanguage(): Promise<any> {
@@ -209,7 +206,7 @@ export class AppComponent implements AfterViewInit {
               }
 
               let settingLanguage: string = '';
-              if (systemLanguage === 'de'){
+              if (systemLanguage === 'de') {
                 settingLanguage = 'de';
               } else {
                 settingLanguage = 'en';
@@ -285,14 +282,14 @@ export class AppComponent implements AfterViewInit {
     }
     switch (settings.startup_view) {
       case STARTUP_VIEW_ENUM.HOME_PAGE:
-        this.router.navigate(['/home/dashboard'], {replaceUrl:true});
+        this.router.navigate(['/home/dashboard'], {replaceUrl: true});
         break;
       case STARTUP_VIEW_ENUM.BREW_PAGE:
-        this.router.navigate(['/home/brews'], {replaceUrl:true});
+        this.router.navigate(['/home/brews'], {replaceUrl: true});
         break;
       case STARTUP_VIEW_ENUM.ADD_BREW:
         await this.__trackNewBrew();
-        this.router.navigate(['/home/brews'], {replaceUrl:true});
+        this.router.navigate(['/home/brews'], {replaceUrl: true});
         break;
     }
   }
@@ -311,8 +308,8 @@ export class AppComponent implements AfterViewInit {
     this.__instanceAppRating();
 
 
-
   }
+
   private __setThreeDeeTouchActions() {
     if (this.platform.is('ios')) {
       const actions: ThreeDeeTouchQuickAction[] = [
@@ -342,6 +339,7 @@ export class AppComponent implements AfterViewInit {
     }
 
   }
+
   private __instanceAppRating() {
     if (this.platform.is('cordova')) {
       const appLanguage = this.uiSettingsStorage.getSettings().language;
@@ -366,7 +364,7 @@ export class AppComponent implements AfterViewInit {
   private async __trackNewBrew() {
 
     if (this.uiBrewHelper.canBrew()) {
-      const modal = await this.modalCtrl.create({component: BrewAddComponent, id:'brew-add'});
+      const modal = await this.modalCtrl.create({component: BrewAddComponent, id: 'brew-add'});
       await modal.present();
       await modal.onWillDismiss();
     }
@@ -380,15 +378,17 @@ export class AppComponent implements AfterViewInit {
     const welcomePagedShowed: boolean = settings.welcome_page_showed;
 
     if (!welcomePagedShowed) {
-      const modal = await this.modalCtrl.create({component: WelcomePopoverComponent, id:'welcome-popover'});
+      const modal = await this.modalCtrl.create({component: WelcomePopoverComponent, id: 'welcome-popover'});
       await modal.present();
       await modal.onWillDismiss();
     }
   }
 
   private async __trackNewBean() {
-    const modal = await this.modalCtrl.create({component: BeansAddComponent, id:'bean-add',
-      componentProps: {hide_toast_message: false}});
+    const modal = await this.modalCtrl.create({
+      component: BeansAddComponent, id: 'bean-add',
+      componentProps: {hide_toast_message: false}
+    });
     await modal.present();
     await modal.onWillDismiss();
 
@@ -401,31 +401,31 @@ export class AppComponent implements AfterViewInit {
     });
     await modal.present();
     await modal.onWillDismiss();
-    this.router.navigate(['/'], {replaceUrl:true});
+    this.router.navigate(['/'], {replaceUrl: true});
 
   }
 
   private async __trackNewMill() {
     const modal = await this.modalCtrl.create({
       component: MillAddComponent,
-      cssClass: 'half-bottom-modal', id:'mill-add', showBackdrop: true, componentProps: {hide_toast_message: false}
+      cssClass: 'half-bottom-modal', id: 'mill-add', showBackdrop: true, componentProps: {hide_toast_message: false}
     });
     await modal.present();
     await modal.onWillDismiss();
-    this.router.navigate(['/'], {replaceUrl:true});
+    this.router.navigate(['/'], {replaceUrl: true});
 
   }
 
   private __registerBack() {
     this.platform.backButton.subscribeWithPriority(0, () => {
-      if (this.router.url.indexOf('/home') === -1 && this.routerOutlet && this.routerOutlet.canGoBack() ) {
+      if (this.router.url.indexOf('/home') === -1 && this.routerOutlet && this.routerOutlet.canGoBack()) {
         this.routerOutlet.pop();
-      } else if (this.router.url.indexOf('/home')>=0) {
+      } else if (this.router.url.indexOf('/home') >= 0) {
         this.appMinimize.minimize();
         // or if that doesn't work, try
         // navigator['app'].exitApp();
       } else {
-        this.router.navigate(['/home/dashboard'], {replaceUrl:true});
+        this.router.navigate(['/home/dashboard'], {replaceUrl: true});
         // this.generic.showAlert("Exit", "Do you want to exit the app?", this.onYesHandler, this.onNoHandler, "backPress");
       }
     });
