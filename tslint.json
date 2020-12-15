@@ -1,6 +1,9 @@
 {
   "extends": "tslint:recommended",
   "rules": {
+    "selector-pseudo-class-no-unknown": [true, {
+      "ignorePseudoClasses": ["global"]
+    }],
     "array-type": false,
     "arrow-parens": false,
     "deprecation": {

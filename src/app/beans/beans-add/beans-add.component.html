@@ -26,7 +26,7 @@
       </ion-item>
       <ion-item *ngIf="roasterResultsAvailable" lines="none" style="margin-top: 5px;margin-bottom: 5px;">
         <ion-list style="width: 100%; max-height: 200px; overflow-y: auto; background: #F2F2F2;">
-          <ion-item (click)="roasterSelected(result)" *ngFor="let result of roasterResults;let last = last" button lines="{{last?'none':''}}" style="--background:#E2E2E">
+          <ion-item (click)="roasterSelected(result)" *ngFor="let result of roasterResults;let last = last" button lines="{{last?'none':''}}" style="--background:#F2F2F2">
             <ion-label>{{result}}</ion-label>
           </ion-item>
         </ion-list>
