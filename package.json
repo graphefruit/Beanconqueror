@@ -85,7 +85,7 @@
     "@ionic/angular-toolkit": "^2.3.3",
     "@types/jasmine": "^3.6.2",
     "@types/jasminewd2": "~2.0.8",
-    "@types/node": "^12.19.8",
+    "@types/node": "^12.19.9",
     "cordova-android": "^9.0.0",
     "cordova-ios": "^6.1.1",
     "cordova-plugin-androidx": "^2.0.0",
