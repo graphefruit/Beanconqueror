@@ -2,8 +2,10 @@
   "extends": "tslint:recommended",
   "rules": {
     "selector-pseudo-class-no-unknown": [true, {
-      "ignorePseudoClasses": ["global"]
+      "ignorePseudoClasses": ["global"],
+
     }],
+    "selector-type-no-unknown": [true, { "ignoreTypes": ["/^ion-/"]}],
     "array-type": false,
     "arrow-parens": false,
     "deprecation": {
