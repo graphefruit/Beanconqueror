@@ -137,22 +137,11 @@ export class BeansPage implements OnInit {
       if (typeof(this.archivedScroll) !== 'undefined' && this.finishedBeans.length > 0)
       {
         this.archivedScroll.checkRange(0,this.finishedBeans.length);
-        setTimeout( () => {
-          this.archivedScroll.checkEnd();
-        },500);
       }
       if (typeof(this.openScroll) !== 'undefined' && this.openBeans.length > 0)
       {
         this.openScroll.checkRange(0,this.openBeans.length);
-
-        setTimeout( () => {
-          this.openScroll.checkEnd();
-        },75);
-
       }
-
-
-
     },75);
   }
 

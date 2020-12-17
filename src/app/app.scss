@@ -744,6 +744,11 @@ ion-menu:host .menu-inner {
   ion-popover {
     --background: #ffffff;
   }
+
+  ion-app {
+    margin-bottom: env(safe-area-inset-bottom);
+    margin-bottom: constant(safe-area-inset-bottom);
+  }
 }
 
 .color-white {

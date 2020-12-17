@@ -9,6 +9,11 @@
     }
   }
 
+  .bean-title{
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
   // Overwrite
   .button-top-absolute {
     position: absolute;

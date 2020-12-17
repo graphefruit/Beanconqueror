@@ -154,22 +154,7 @@
       "cordova-plugin-geolocation": {
         "GPS_REQUIRED": "true"
       },
-      "cordova-plugin-firebasex": {
-        "FIREBASE_ANALYTICS_COLLECTION_ENABLED": "true",
-        "FIREBASE_PERFORMANCE_COLLECTION_ENABLED": "true",
-        "FIREBASE_CRASHLYTICS_COLLECTION_ENABLED": "true",
-        "ANDROID_ICON_ACCENT": "#FF00FFFF",
-        "ANDROID_PLAY_SERVICES_AUTH_VERSION": "18.0.0",
-        "ANDROID_FIREBASE_ANALYTICS_VERSION": "17.4.3",
-        "ANDROID_FIREBASE_MESSAGING_VERSION": "20.2.1",
-        "ANDROID_FIREBASE_CONFIG_VERSION": "19.1.4",
-        "ANDROID_FIREBASE_PERF_VERSION": "19.0.7",
-        "ANDROID_FIREBASE_AUTH_VERSION": "19.3.1",
-        "ANDROID_FIREBASE_FIRESTORE_VERSION": "21.4.3",
-        "ANDROID_FIREBASE_CRASHLYTICS_VERSION": "17.0.1",
-        "ANDROID_FIREBASE_CRASHLYTICS_NDK_VERSION": "17.0.1",
-        "ANDROID_GSON_VERSION": "2.8.6"
-      }
+      "cordova-plugin-firebasex": {}
     },
     "platforms": [
       "ios",
