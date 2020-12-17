@@ -1,47 +1,37 @@
 :host {
-  ion-row.center-col ion-col {
-    display: flex;
-    align-items: center
-  }
-
-  button[justify-content-start] .button-inner {
-    justify-content: flex-start;
-  }
-
-  ion-card.dynamic-padding {
-    ion-card-header {
-      padding-bottom: 5px;
-      padding-top: 5px;
-      background-color: #D4D2C1;
-    }
-
+  height:240px;
+  ion-card {
+    height:220px;
     ion-card-content {
-      padding: 16px;
-      background-color: #FFFFFF;
+      padding: 8px;
+      padding-bottom: 0px;
+      padding-top: var(--padding-top);
     }
-
-    box-shadow: 0px 3px 6px #00000029;
-    border-radius: 6px;
-    padding: 0px;
   }
 
-  ion-row.center-col ion-col {
-    display: flex;
-    align-items: center
+  // Overwrite
+  .button-top-absolute {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    min-height: 20px;
+    ion-icon{
+      font-size: 18px!important;
+      width: 18px!important;
+      height: 18px!important;
+    }
   }
 
-  ion-list {
-    background: none;
-    margin: 0px;
-    padding: 0px;
-
-    ion-icon {
-      font-size: 14px;
-      margin-right: 0px;
-      margin-top: 0px;
-      margin-bottom: 0px;
-
+  .no-ion-col-vertical-padding {
+    ion-col {
+      padding-top: 0px !important;
+      padding-bottom: 0px !important;
     }
+
+  }
+  ion-text {
+    position: relative;
+    top: -5px;
   }
 
 }

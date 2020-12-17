@@ -5,7 +5,6 @@ import {KeysPipe} from '../../pipes/keys';
 import {CommonModule} from '@angular/common';
 import {IonicModule} from '@ionic/angular';
 import {AsyncImageComponent} from '../../components/async-image/async-image.component';
-import {SearchPipe} from '../../pipes/search';
 import {RemoveEmptyNumberDirective} from '../../directive/remove-empty-number.directive';
 import {PreventCharacterDirective} from '../../directive/prevent-character.directive';
 import {BrewAddComponent} from '../brew/brew-add/brew-add.component';
@@ -124,7 +123,7 @@ import {BeansDetailComponent} from '../beans/beans-detail/beans-detail.component
     TermsComponent,
     ThanksComponent, LogComponent, LogTextComponent, PreparationPage, PreparationAddComponent,
     PreparationEditComponent, PreparationCustomParametersComponent, MillPage, MillEditComponent, BrewFilterComponent, BeanFilterComponent, MillAddComponent, BrewAddComponent,
-    FormatDatePipe, KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, BeanInformationComponent, BrewDashboardInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, CuppingRadarComponent, SearchPipe, RemoveEmptyNumberDirective,
+    FormatDatePipe, KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, BeanInformationComponent, BrewDashboardInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, CuppingRadarComponent, RemoveEmptyNumberDirective,
     PreventCharacterDirective,
     BeanOverlayDirective,
     MillOverlayDirective,
@@ -221,7 +220,7 @@ import {BeansDetailComponent} from '../beans/beans-detail/beans-detail.component
     ThanksComponent, PreparationPage, PreparationAddComponent,
     PreparationEditComponent, PreparationCustomParametersComponent, BrewFilterComponent, BeanFilterComponent, MillPage, MillEditComponent, MillAddComponent,
     BrewAddComponent, FormatDatePipe,
-    KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, BeanInformationComponent, BrewDashboardInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, CuppingRadarComponent, SearchPipe, RemoveEmptyNumberDirective,
+    KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, BeanInformationComponent, BrewDashboardInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, CuppingRadarComponent, RemoveEmptyNumberDirective,
     PreventCharacterDirective,
     BeanOverlayDirective,
     MillOverlayDirective,

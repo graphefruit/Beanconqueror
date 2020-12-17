@@ -46,7 +46,7 @@
         </div>
       </div>
       <div *ngIf="openBeans.length > 0">
-        <ion-virtual-scroll #openScroll [items]="openBeans">
+        <ion-virtual-scroll #openScroll [items]="openBeans" approxItemHeight="240px">
           <bean-information (beanAction)="beanAction($event[0],$event[1])"  *virtualItem="let bean;"
                             [bean]="bean"></bean-information>
         </ion-virtual-scroll>
@@ -74,7 +74,7 @@
           </div>
         </div>
         <div *ngIf="finishedBeans.length > 0">
-          <ion-virtual-scroll #archivedScroll [items]="finishedBeans">
+          <ion-virtual-scroll #archivedScroll [items]="finishedBeans" approxItemHeight="240px">
             <bean-information (beanAction)="beanAction($event[0],$event[1])"  *virtualItem="let bean;"
                               [bean]="bean"></bean-information>
           </ion-virtual-scroll>
