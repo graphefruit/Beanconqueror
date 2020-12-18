@@ -49,8 +49,6 @@
           <ion-label class="card-headline">{{'BREW_DATA_TIME' | translate}}</ion-label><br/>
           <ion-text>{{brew?.getFormattedTotalCoffeeBrewTime()}}</ion-text>
         </ion-col>
-
-
         <ion-col *ngIf="brew?.grind_size != ''"  size="6">
           <ion-label class="card-headline">{{'BREW_DATA_GRIND_SIZE' | translate}}</ion-label><br/>
           <ion-text>{{brew?.grind_size}}<span *ngIf="brew?.mill_speed > 0">&nbsp;@&nbsp;{{ brew?.mill_speed }}</span></ion-text>
@@ -59,8 +57,6 @@
           <ion-label class="card-headline">{{'BREW_DATA_TDS_EY' | translate}}</ion-label><br/>
           <ion-text>{{brew?.tds}},&nbsp;%{{brew?.getExtractionYield()}}</ion-text>
         </ion-col>
-
-
         <ion-col *ngIf="brew?.pressure_profile != ''"  size="6">
           <ion-label class="card-headline">{{'BREW_DATA_PRESSURE_PROFILE' | translate}}</ion-label><br/>
           <ion-text>{{brew?.pressure_profile}}</ion-text>

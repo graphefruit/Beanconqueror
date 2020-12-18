@@ -11,7 +11,11 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-
+  <ion-card *ngIf="noCreditsToGive">
+    <ion-card-header>
+      {{"PAGE_CREDITS_NOT_EXISTING" | translate}}
+    </ion-card-header>
+  </ion-card>
     <ion-card *ngFor="let key of credits | keys">
       <ion-item (click)="openLink($event,credits[key].LINK)" button tappable>
         <ion-title>{{ credits[key].TITLE }}</ion-title>

@@ -24,7 +24,7 @@ import {BEAN_ROASTING_TYPE_ENUM} from '../../../enums/beans/beanRoastingType';
 })
 export class BeansEditComponent implements OnInit {
 
-  public data: Bean = new Bean();
+  public data: Bean;
   public roastsEnum = ROASTS_ENUM;
   public mixEnum = BEAN_MIX_ENUM;
   public beanRoastingTypeEnum = BEAN_ROASTING_TYPE_ENUM;
@@ -55,6 +55,7 @@ export class BeansEditComponent implements OnInit {
 
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent('BEAN', 'EDIT');
+    this.data = new Bean();
     this.data.initializeByObject(this.bean);
     if (this.data.roaster !== '') {
       this.ignoreNextChange = true;

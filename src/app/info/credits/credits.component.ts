@@ -7,12 +7,10 @@ import {UIHelper} from '../../../services/uiHelper';
   styleUrls: ['./credits.component.scss'],
 })
 export class CreditsComponent implements OnInit {
+
+  public noCreditsToGive: boolean = true;
   public credits: any = {
-    'bean-background': {
-      TITLE: 'Bean background',
-      LINK: 'https://www.pexels.com/de-de/@igor-haritanovich-814387?utm_content=attributionCopyText&utm_medium=referral&utm_source=pexels',
-      DESCRIPTION: `https://www.pexels.com/de-de/foto/arabica-aromatisch-bohnen-braun-1695052/?utm_content=attributionCopyText&utm_medium=referral&utm_source=pexels`
-    }
+
   };
 
   constructor(private readonly uiHelper: UIHelper) {

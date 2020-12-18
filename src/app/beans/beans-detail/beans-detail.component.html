@@ -75,13 +75,13 @@
   </ion-card>
 
   <ion-card *ngFor="let beanInformation of this.data.bean_information;let first = first;let i = index;let last = last;let visible=false;" style="padding-bottom:6px; display:flex; flex-direction: column;">
-    <ion-item class="ion-padding-top" lines="none">
+    <ion-item (click)="visibleIndex[i] = !visibleIndex[i]"  class="ion-padding-top" lines="none" tappable>
       <span *ngIf="data.beanMix.toString() === 'BLEND'" class="ion-title ion-no-padding-bottom" slot="start">{{i+1}}.&nbsp;{{"BEAN_SORT" | translate}}</span>
       <span *ngIf="data.beanMix.toString() !== 'BLEND'" class="ion-title ion-no-padding-bottom" slot="start">{{"BEAN_SORT_INFORMATION" | translate}}</span>
-      <ion-button (click)="visibleIndex[i] = !visibleIndex[i]" *ngIf="!visibleIndex[i]"  fill="clear" slot="end" tappable>
+      <ion-button *ngIf="!visibleIndex[i]"  fill="clear" slot="end">
         <ion-icon color="accent" name="chevron-down-outline" slot="icon-only"></ion-icon>
       </ion-button>
-      <ion-button (click)="visibleIndex[i] = !visibleIndex[i]" *ngIf="visibleIndex[i]"  fill="clear" slot="end" tappable>
+      <ion-button *ngIf="visibleIndex[i]"  fill="clear" slot="end">
         <ion-icon color="accent" name="chevron-up-outline" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-item>

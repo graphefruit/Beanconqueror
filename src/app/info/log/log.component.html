@@ -16,7 +16,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-card>
+  <ion-card class="ion-padding">
     <ion-row *ngFor="let log of logs" class="ion-padding-bottom">
       <ion-col size="12">
         <ion-text *ngIf="log.key === LOG_ENUM.LOG" color="dark">
