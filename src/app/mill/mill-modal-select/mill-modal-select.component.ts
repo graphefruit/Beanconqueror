@@ -13,18 +13,18 @@ export class MillModalSelectComponent implements OnInit {
   public objs: Array<Mill> = [];
   public multipleSelection = {};
   public radioSelection: string;
+  public mill_segment: string = 'open';
   @Input() public multiple: boolean;
   @Input() private selectedValues: Array<string>;
-
+  @Input() public showFinished: boolean;
   constructor(private readonly modalController: ModalController,
               private readonly uiMillStorage: UIMillStorage) {
 
 
-    this.objs = this.uiMillStorage.getAllEntries();
-
   }
 
   public ionViewDidEnter(): void {
+    this.objs = this.uiMillStorage.getAllEntries();
     if (this.multiple) {
       for (const obj of this.objs) {
 
@@ -76,11 +76,11 @@ export class MillModalSelectComponent implements OnInit {
     this.modalController.dismiss({
       selected_values: chosenKeys,
       selected_text: selected_text,
-    });
+    },undefined,'mill-modal-select');
   }
 
   public async dismiss(): Promise<void> {
-    this.modalController.dismiss();
+    this.modalController.dismiss(undefined,undefined,'mill-modal-select');
   }
 
 }

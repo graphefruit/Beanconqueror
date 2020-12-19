@@ -1,17 +1,36 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 import {ITimer} from '../../interfaces/timer/iTimer';
+import moment from 'moment';
+
 
 @Component({
-  selector: 'brew-timer',
+  selector: ' brew-timer',
   templateUrl: './brew-timer.component.html',
   styleUrls: ['./brew-timer.component.scss'],
 })
 export class BrewTimerComponent implements OnInit {
   @Input() public label: string;
   @Input() public timeInSeconds: number;
-  @Input() public dripTimerVisible: boolean;
-  @Input() public bloomTimerVisible: boolean;
+  public displayingTime: string = moment().startOf('day').toISOString();
+
+  private _dripTimerVisible: boolean;
+
+  get dripTimerVisible(): boolean {
+    return this._dripTimerVisible;
+  }
+
+  @Input() set dripTimerVisible(value: boolean) {
+    this._dripTimerVisible = value;
+
+    this.showDripTimer = this._dripTimerVisible;
+  }
+
+  private _bloomTimerVisible: boolean;
+
+  get bloomTimerVisible(): boolean {
+    return this._bloomTimerVisible;
+  }
 
   @Output() public timerStarted = new EventEmitter();
   @Output() public timerPaused = new EventEmitter();
@@ -23,6 +42,10 @@ export class BrewTimerComponent implements OnInit {
   public showBloomTimer: boolean = true;
   public showDripTimer: boolean = true;
 
+  @Input() set bloomTimerVisible(value: boolean) {
+    this._bloomTimerVisible = value;
+    this.showBloomTimer = this._bloomTimerVisible;
+  }
   public timer: ITimer;
 
   constructor() {
@@ -30,8 +53,7 @@ export class BrewTimerComponent implements OnInit {
 
   public ngOnInit(): void {
     this.initTimer();
-    this.showBloomTimer = this.bloomTimerVisible;
-    this.showDripTimer = this.dripTimerVisible;
+
   }
 
   public hasFinished(): boolean {
@@ -42,6 +64,7 @@ export class BrewTimerComponent implements OnInit {
     this.timer.seconds = seconds;
 
     this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
+    this.displayingTime = moment(this.displayingTime).startOf('day').add('seconds',this.timer.seconds).toISOString();
   }
 
   public initTimer(): void {
@@ -55,8 +78,11 @@ export class BrewTimerComponent implements OnInit {
       hasFinished: false,
       seconds: this.timeInSeconds
     } as ITimer;
+    this.showBloomTimer = this.bloomTimerVisible;
+    this.showDripTimer = this.dripTimerVisible;
 
     this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
+    this.displayingTime = moment(this.displayingTime).startOf('day').add('seconds',this.timer.seconds).toISOString();
   }
 
   public startTimer(): void {
@@ -93,6 +119,7 @@ export class BrewTimerComponent implements OnInit {
       }
       this.timer.seconds++;
       this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
+      this.displayingTime = moment(this.displayingTime).startOf('day').add('seconds',this.timer.seconds).toISOString();
       this.timerTick();
       this.timerTicked.emit();
     }, 1000);
@@ -100,6 +127,22 @@ export class BrewTimerComponent implements OnInit {
 
   public getSeconds(): number {
     return this.timer.seconds;
+  }
+
+  public reset() {
+    this.timeInSeconds = 0;
+    this.initTimer();
+    this.timerTicked.emit();
+  }
+  public formatSeconds(): string {
+    const secs = this.getSeconds();
+
+    const formatted = moment.utc(secs * 1000).format('mm:ss');
+    return formatted;
+  }
+
+  public changeEvent() {
+    this.timerTicked.emit();
   }
 
   public getSecondsAsDigitalClock(inputSeconds: number): string {
@@ -112,5 +155,12 @@ export class BrewTimerComponent implements OnInit {
     const secondsString = (seconds < 10) ? `0${seconds}` : seconds.toString();
 
     return `${hoursString}:${minutesString}:${secondsString}`;
+  }
+  public changeDate(_event) {
+    const durationPassed =  moment.duration(moment(_event).diff(moment(_event).startOf('day')));
+    this.displayingTime = moment(_event).toISOString();
+    this.timer.seconds = durationPassed.asSeconds();
+    // Emit event so parent page can do something
+    this.changeEvent();
   }
 }

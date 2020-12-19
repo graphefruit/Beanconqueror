@@ -5,9 +5,23 @@
 
   ion-item {
     --background: #ffffff;
+
+    margin-left: 16px;
+    margin-right: 16px;
+
   }
 
   ion-item:last-child {
     --border-width: 0 0 0 0 !important;
+  }
+  ion-content, ion-content::part(scroll) {
+    background:white;
+  }
+
+  ion-content::part(scroll) {
+
+    padding-left:0px;
+    padding-right:0px;
+
   }
 }

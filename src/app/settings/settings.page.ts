@@ -31,7 +31,11 @@ import BeanconquerorSettingsDummy from '../../assets/Beanconqueror.json';
 import {ISettings} from '../../interfaces/settings/iSettings';
 import {IBrewPageFilter} from '../../interfaces/brew/iBrewPageFilter';
 import {Bean} from '../../classes/bean/bean';
-
+/** Third party */
+import moment from 'moment';
+import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
+import {UIUpdate} from '../../services/uiUpdate';
+import {UiVersionStorage} from '../../services/uiVersionStorage';
 
 declare var cordova: any;
 declare var device: any;
@@ -104,6 +108,9 @@ export class SettingsPage implements OnInit {
               private readonly translate: TranslateService,
               private readonly changeDetectorRef: ChangeDetectorRef,
               private readonly uiAnalytics: UIAnalytics,
+              private readonly androidPermissions: AndroidPermissions,
+              private readonly uiUpdate: UIUpdate,
+              private readonly uiVersionStorage: UiVersionStorage
               ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -118,6 +125,17 @@ export class SettingsPage implements OnInit {
 
   public ngOnInit() {
 
+  }
+
+  public checkCoordinates() {
+    if (this.platform.is('android')) {
+      // Request permission,
+      this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION).then((_status) => {
+        this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION).then((_status) => {
+        }, () => {
+        });
+      },() => {});
+    }
   }
 
   public saveSettings(): void {
@@ -145,6 +163,7 @@ export class SettingsPage implements OnInit {
     this.translate.use(this.settings.language);
     this.uiAnalytics.trackEvent('SETTINGS', 'SET_LANGUAGE_ ' + this.settings.language);
     this.uiSettingsStorage.saveSettings(this.settings);
+    moment.locale(this.settings.language);
   }
 
   public import(): void {
@@ -339,7 +358,7 @@ export class SettingsPage implements OnInit {
     this.uiLog.log('Import dummy data');
     const dummyData = BeanconquerorSettingsDummy;
 
-    if (dummyData.SETTINGS[0]['brew_order']['before'] === undefined) {
+   /** if (dummyData.SETTINGS[0]['brew_order']['before'] === undefined) {
       this.uiLog.log('Old brew order structure');
       // Breaking change, we need to throw away the old order types by import
       const settingsConst = new Settings();
@@ -352,7 +371,7 @@ export class SettingsPage implements OnInit {
         this.setLanguage();
         this.uiAlert.showMessage(this.translate.instant('IMPORT_SUCCESSFULLY'));
       });
-    });
+    });**/
   }
 
   /* tslint:enable */
@@ -411,7 +430,7 @@ export class SettingsPage implements OnInit {
       parsedContent[this.uiBrewStorage.getDBPath()] &&
       parsedContent[this.uiSettingsStorage.getDBPath()]) {
 
-      if (!isIOS){
+      if (isIOS){
         SettingsPage.__cleanupImportBeanData(parsedContent[this.uiBeanStorage.getDBPath()]);
         SettingsPage.__cleanupImportBrewData(parsedContent[this.uiBrewStorage.getDBPath()]);
       }
@@ -492,13 +511,16 @@ export class SettingsPage implements OnInit {
       const uiSettingsStorageReadyCallback = this.uiSettingsStorage.storageReady();
       const brewStorageReadyCallback = this.uiBrewStorage.storageReady();
       const millStorageReadyCallback = this.uiMillStorage.storageReady();
+      const versionStorageReadyCallback = this.uiVersionStorage.storageReady();
       Promise.all([
         beanStorageReadyCallback,
         preparationStorageReadyCallback,
         brewStorageReadyCallback,
         millStorageReadyCallback,
-        uiSettingsStorageReadyCallback
+        uiSettingsStorageReadyCallback,
+        versionStorageReadyCallback
       ]).then(() => {
+        this.uiUpdate.checkUpdate();
         resolve();
       }, () => {
         resolve();

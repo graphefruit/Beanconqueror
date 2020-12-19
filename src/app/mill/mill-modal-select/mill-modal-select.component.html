@@ -1,3 +1,89 @@
-<p>
-  mill-modal-select works!
-</p>
+<ion-header>
+  <ion-toolbar>
+    <ion-title *ngIf="multiple">{{"CHOOSE_MILLS" | translate}}</ion-title>
+    <ion-title *ngIf="!multiple">{{"CHOOSE_MILL" | translate}}</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()" class="big-icon-only">
+        <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+
+  <ion-segment [(ngModel)]="mill_segment">
+    <ion-segment-button value="open">
+      <ion-label>{{"CURRENT" | translate }}
+      </ion-label>
+    </ion-segment-button>
+    <ion-segment-button *ngIf="showFinished===true && getArchivedMills().length > 0" value="archive">
+      <ion-label>{{"TAB_ARCHIVE" | translate }}
+      </ion-label>
+
+    </ion-segment-button>
+  </ion-segment>
+  <div  *ngIf="multiple">
+    <div [ngSwitch]="mill_segment">
+      <div *ngSwitchCase="'open'">
+        <ion-card *ngIf="getOpenMills().length > 0">
+          <ion-item *ngFor="let mill of getOpenMills()" lines="none" tappable>
+            <ion-checkbox [(ngModel)]="multipleSelection[mill.config.uuid]" slot="start"></ion-checkbox>
+            <div>
+              <span class="font-size-16">{{mill.name}}</span>
+            </div>
+          </ion-item>
+        </ion-card>
+      </div>
+      <div *ngSwitchCase="'archive'">
+        <ion-card>
+          <ion-item *ngFor="let mill of getArchivedMills()" lines="none" tappable>
+            <ion-checkbox [(ngModel)]="multipleSelection[mill.config.uuid]" slot="start"></ion-checkbox>
+            <div>
+              <span class="font-size-16">{{mill.name}}</span>
+            </div>
+          </ion-item>
+        </ion-card>
+      </div>
+    </div>
+  </div>
+  <div  *ngIf="!multiple">
+    <ion-radio-group [(ngModel)]="radioSelection">
+      <div [ngSwitch]="mill_segment">
+        <div *ngSwitchCase="'open'">
+
+          <ion-card *ngIf="getOpenMills().length > 0">
+            <ion-item *ngFor="let mill of getOpenMills()" lines="none" tappable>
+              <ion-radio slot="start" value="{{mill.config.uuid}}"></ion-radio>
+              <div>
+                <h6>{{mill.name}}</h6>
+              </div>
+            </ion-item>
+          </ion-card>
+        </div>
+        <div *ngSwitchCase="'archive'">
+          <ion-card>
+            <ion-item *ngFor="let mill of getArchivedMills()" lines="none" tappable>
+              <ion-radio slot="start" value="{{mill.config.uuid}}"></ion-radio>
+              <div>
+                <span class="font-size-16">{{mill.name}}</span>
+              </div>
+            </ion-item>
+          </ion-card>
+        </div>
+      </div>
+    </ion-radio-group>
+  </div>
+</ion-content>
+<ion-footer class="ion-no-border">
+  <ion-row>
+    <ion-col size="6">
+      <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
+                  tappable>{{"CANCEL" | translate}}</ion-button>
+    </ion-col>
+    <ion-col size="6">
+      <ion-button (click)="choose()" color="accent" expand="block" tappable
+                  type="submit">{{"CHOOSE" | translate}}</ion-button>
+    </ion-col>
+
+  </ion-row>
+</ion-footer>

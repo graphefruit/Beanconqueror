@@ -85,3 +85,23 @@ ionic cordova plugin add cordova-plugin-enable-multidex
 ##FirebaseX
 ionic cordova plugin add cordova-plugin-firebasex --variable FIREBASE_ANALYTICS_COLLECTION_ENABLED=false --variable FIREBASE_PERFORMANCE_COLLECTION_ENABLED=false --variable FIREBASE_CRASHLYTICS_COLLECTION_ENABLED=false
 npm install @ionic-native/firebase-x
+
+###https://github.com/hughjdavey/ngx-stars
+npm install --save ngx-stars
+
+##Datepicker
+ionic cordova plugin add cordova-plugin-datepicker
+npm install @ionic-native/date-picker
+
+## Geolocation
+ionic cordova plugin add cordova-plugin-geolocation
+npm install @ionic-native/geolocation
+
+##App rate
+######This plugin is not used with ionic wrapper, because its not working correctly
+ionic cordova plugin add cordova-plugin-apprate
+npm install @ionic-native/app-rate
+
+##Globaly installed:
+######Plugin checker
+npm install -g cordova-check-plugins

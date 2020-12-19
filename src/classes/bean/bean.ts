@@ -6,7 +6,7 @@ import {IBean} from '../../interfaces/bean/iBean';
 /** Classes */
 import {Config} from '../objectConfig/objectConfig';
 import moment from 'moment';
-import {BEAN_PREPARATION_TYPE_ENUM} from '../../enums/beans/beanPreparationType';
+import {BEAN_ROASTING_TYPE_ENUM} from '../../enums/beans/beanRoastingType';
 import {IBeanInformation} from '../../interfaces/bean/iBeanInformation';
 
 export class Bean implements IBean {
@@ -30,6 +30,8 @@ export class Bean implements IBean {
   public attachments: Array<string>;
   public cupping_points:string;
   public decaffeinated: boolean;
+  public url: string;
+  public ean_article_number: string;
 
   /** @deprecated */
   public variety: string;
@@ -40,8 +42,7 @@ export class Bean implements IBean {
 
   public bean_information: Array<IBeanInformation>;
 
-  public bean_preparation_type: BEAN_PREPARATION_TYPE_ENUM;
-
+  public bean_roasting_type: BEAN_ROASTING_TYPE_ENUM;
   constructor() {
     this.name = '';
     this.roastingDate = '';
@@ -63,9 +64,10 @@ export class Bean implements IBean {
     this.attachments = [];
     this.decaffeinated = false;
     this.cupping_points = '';
-    this.bean_preparation_type = 'UNKNOWN' as BEAN_PREPARATION_TYPE_ENUM;
+    this.bean_roasting_type = 'UNKNOWN' as BEAN_ROASTING_TYPE_ENUM;
     this.bean_information = [];
-
+    this.url = '';
+    this.ean_article_number = '';
   }
 
   public getRoastName(): string {

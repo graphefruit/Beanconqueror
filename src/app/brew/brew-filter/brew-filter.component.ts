@@ -20,9 +20,7 @@ import {Preparation} from '../../../classes/preparation/preparation';
 export class BrewFilterComponent implements OnInit {
 
   public settings: ISettings;
-  public customSelectSheetOptions: any = {
-    cssClass: 'select-break-text'
-  };
+
   public filter: IBrewPageFilter = {
     mill: [],
     bean: [],
@@ -64,6 +62,17 @@ export class BrewFilterComponent implements OnInit {
     });
   }
 
+  public resetFilter() {
+    this.filter = {
+      mill: [],
+      bean: [],
+      method_of_preparation: []
+    };
+    this.modalController.dismiss({
+      brew_filter: this.uiHelper.copyData(this.filter)
+    },undefined,'brew-filter');
+  }
+
 
   private __reloadFilterSettings() {
     this.method_of_preparations = this.uiPreparationStorage.getAllEntries()
@@ -75,7 +84,10 @@ export class BrewFilterComponent implements OnInit {
 
     if (this.segment === 'open') {
       this.beans = this.beans.filter((e) => e.finished === false);
-      console.log(this.beans);
+      this.mills = this.mills.filter((e) => e.finished === false);
+      this.method_of_preparations = this.method_of_preparations.filter((e) => e.finished === false);
+    } else {
+      this.beans = this.beans.filter((e) => e.finished === true);
     }
   }
 }

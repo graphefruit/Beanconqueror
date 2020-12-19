@@ -14,6 +14,8 @@ import {DatePicker} from '@ionic-native/date-picker/ngx';
 import {TranslateService} from '@ngx-translate/core';
 import moment from 'moment';
 import {IBeanInformation} from '../../../interfaces/bean/iBeanInformation';
+import {NgxStarsComponent} from 'ngx-stars';
+import {BEAN_ROASTING_TYPE_ENUM} from '../../../enums/beans/beanRoastingType';
 
 @Component({
   selector: 'beans-add',
@@ -23,15 +25,12 @@ import {IBeanInformation} from '../../../interfaces/bean/iBeanInformation';
 export class BeansAddComponent implements OnInit {
 
   @ViewChild('photoSlides', {static: false}) public photoSlides: IonSlides;
+  @ViewChild('beanStars', {read: NgxStarsComponent, static: false}) public beanStars: NgxStarsComponent;
   public data: Bean = new Bean();
   private readonly bean_template: Bean;
   public roastsEnum = ROASTS_ENUM;
   public mixEnum = BEAN_MIX_ENUM;
-  public heartIcons = {
-    empty: '../assets/custom-ion-icons/beanconqueror-bean-rating-empty.svg',
-    half: '../assets/custom-ion-icons/beanconqueror-bean-rating-half.svg',
-    full: '../assets/custom-ion-icons/beanconqueror-bean-rating-full.svg',
-  };
+  public beanRoastingTypeEnum = BEAN_ROASTING_TYPE_ENUM;
   @Input() private hide_toast_message: boolean;
 
 
@@ -85,8 +84,8 @@ export class BeansAddComponent implements OnInit {
   }
   public onRoasterSearchLeave($event) {
     setTimeout(() => {
-      //this.roasterResultsAvailable = false;
-      //this.roasterResults = [];
+      this.roasterResultsAvailable = false;
+      this.roasterResults = [];
     },150);
 
   }
@@ -140,7 +139,7 @@ export class BeansAddComponent implements OnInit {
   }
 
   public onRoastRate(_event): void {
-    this.data.roast_range = _event;
+    this.beanStars.setRating(this.data.roast_range);
   }
 
   public addAnotherSort() {
@@ -182,6 +181,12 @@ export class BeansAddComponent implements OnInit {
 
   }
 
+  public dismiss(): void {
+    this.modalController.dismiss({
+      dismissed: true
+    },undefined,'bean-add');
+  }
+
   private async __loadBean(_bean: Bean) {
     this.data.name = _bean.name;
     this.data.roastingDate = _bean.roastingDate;
@@ -192,14 +197,23 @@ export class BeansAddComponent implements OnInit {
     }
     this.data.roast = _bean.roast;
     this.data.beanMix = _bean.beanMix;
-    this.data.variety = _bean.variety;
-    this.data.country = _bean.country;
+
     // tslint:disable-next-line
     this.data.roast_custom = _bean.roast_custom;
     this.data.aromatics = _bean.aromatics;
     this.data.weight = _bean.weight;
     this.data.finished = false;
     this.data.cost = _bean.cost;
+
+    this.data.bean_roasting_type = _bean.bean_roasting_type;
+    this.data.decaffeinated = _bean.decaffeinated;
+    this.data.url = _bean.url;
+    this.data.ean_article_number = _bean.ean_article_number;
+
+    this.data.bean_information = _bean.bean_information;
+    this.data.cupping_points = _bean.cupping_points;
+    this.data.roast_range = _bean.roast_range;
+
 
     const copyAttachments = [];
     for (const attachment of _bean.attachments) {
@@ -212,12 +226,6 @@ export class BeansAddComponent implements OnInit {
 
     }
     this.data.attachments = copyAttachments;
-  }
-
-  public dismiss(): void {
-    this.modalController.dismiss({
-      'dismissed': true
-    },undefined,'bean-add');
   }
 
   private __formValid(): boolean {

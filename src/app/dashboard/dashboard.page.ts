@@ -6,6 +6,18 @@ import {Brew} from '../../classes/brew/brew';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {UIBrewHelper} from '../../services/uiBrewHelper';
 import {BrewDetailComponent} from '../brew/brew-detail/brew-detail.component';
+import {BREW_ACTION} from '../../enums/brews/brewAction';
+import {BrewCuppingComponent} from '../brew/brew-cupping/brew-cupping.component';
+import {BrewPhotoViewComponent} from '../brew/brew-photo-view/brew-photo-view.component';
+import {BrewEditComponent} from '../brew/brew-edit/brew-edit.component';
+import {UIAlert} from '../../services/uiAlert';
+import {UIToast} from '../../services/uiToast';
+import {Router} from '@angular/router';
+import {UIHelper} from '../../services/uiHelper';
+import {UIAnalytics} from '../../services/uiAnalytics';
+import {UIBeanStorage} from '../../services/uiBeanStorage';
+import {Bean} from '../../classes/bean/bean';
+import {UIBeanHelper} from '../../services/uiBeanHelper';
 
 @Component({
   selector: 'dashboard',
@@ -15,62 +27,193 @@ import {BrewDetailComponent} from '../brew/brew-detail/brew-detail.component';
 export class DashboardPage implements OnInit {
 
   public brews: Array<Brew> = [];
-
+  private leftOverBeansWeight: number = undefined;
   constructor(public uiStatistic: UIStatistic,
               private readonly modalCtrl: ModalController,
               private readonly uiBrewStorage: UIBrewStorage,
               private readonly uiBrewHelper: UIBrewHelper,
-              private changeDetectorRef: ChangeDetectorRef) {
+              private readonly uiAlert: UIAlert,
+              private readonly uiToast: UIToast,
+              private readonly changeDetectorRef: ChangeDetectorRef,
+              private readonly router: Router,
+              private readonly uiHelper: UIHelper,
+              private readonly uiAnalytics: UIAnalytics,
+              private readonly uiBeanStorage: UIBeanStorage,
+              private readonly uiBeanHelper: UIBeanHelper) {
   }
 
   public ngOnInit(): void {
   }
 
-  public ionViewWillEnter(): void {
-    this.__loadBrews();
+
+  public ionViewWillEnter() {
+    this.loadBrews();
+  }
+
+  public loadBrews() {
+    this.brews = this.uiBrewStorage.getAllEntries().filter((e) =>
+      e.getBean().finished === false &&
+      e.getMill().finished === false &&
+      e.getPreparation().finished === false
+    );
+    this.brews = UIBrewHelper.sortBrews(this.brews);
+    this.brews = this.brews.slice(0, 10);
+    this.changeDetectorRef.detectChanges();
   }
 
   public async addBrew() {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
-      const modal = await this.modalCtrl.create({component: BrewAddComponent});
+      const modal = await this.modalCtrl.create({component: BrewAddComponent, id:'brew-add'});
       await modal.present();
       await modal.onWillDismiss();
-      this.__loadBrews();
+      this.loadBrews();
+      this.router.navigate(['/home/brews']);
     }
   }
 
   public getBrews() {
-    this.brews = this.uiBrewStorage.getAllEntries();
-    this.brews = this.__sortBrews(this.brews);
-    this.brews = this.brews.slice(0, 10);
     return this.brews;
   }
 
-  private __loadBrews() {
-    this.brews = this.uiBrewStorage.getAllEntries();
-    this.brews = this.__sortBrews(this.brews);
-    this.brews = this.brews.slice(0, 10);
-    console.log(this.brews);
-    this.changeDetectorRef.detectChanges();
+
+
+  public async brewAction(action: BREW_ACTION, brew: Brew): Promise<void> {
+    switch (action) {
+      case BREW_ACTION.REPEAT:
+        this.repeatBrew(brew);
+        break;
+      case BREW_ACTION.DETAIL:
+        this.detailBrew(brew);
+        break;
+      case BREW_ACTION.EDIT:
+        this.editBrew(brew);
+        break;
+      case BREW_ACTION.DELETE:
+        this.deleteBrew(brew);
+        break;
+      case BREW_ACTION.PHOTO_GALLERY:
+        this.viewPhotos(brew);
+        break;
+      case BREW_ACTION.CUPPING:
+        this.cupBrew(brew);
+        break;
+      case BREW_ACTION.SHOW_MAP_COORDINATES:
+        this.showMapCoordinates(brew);
+        break;
+      case BREW_ACTION.FAST_REPEAT:
+        this.fastRepeatBrew(brew);
+        break;
+      default:
+        break;
+    }
+  }
+  public async fastRepeatBrew(brew: Brew) {
+    if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
+      this.uiAnalytics.trackEvent('BREW', 'FAST_REPEAT');
+      const repeatBrew = this.uiBrewHelper.repeatBrew(brew);
+      this.uiBrewStorage.add(repeatBrew);
+      this.uiToast.showInfoToast('TOAST_BREW_REPEATED_SUCCESSFULLY');
+      this.loadBrews();
+    }
+  }
+  public async editBrew(_brew: Brew) {
+
+    const modal = await this.modalCtrl.create({component: BrewEditComponent, id:'brew-edit', componentProps: {brew: _brew}});
+    await modal.present();
+    await modal.onWillDismiss();
+    this.loadBrews();
   }
 
-  private __sortBrews(_sortingBrews: Array<Brew>): Array<Brew> {
-    const sortedBrews: Array<Brew> = _sortingBrews.sort((obj1, obj2) => {
-      if (obj1.config.unix_timestamp < obj2.config.unix_timestamp) {
-        return 1;
-      }
-      if (obj1.config.unix_timestamp > obj2.config.unix_timestamp) {
-        return -1;
-      }
-
-      return 0;
-    });
-    return sortedBrews;
+  public async repeatBrew(_brew: Brew) {
+    if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
+      this.uiAnalytics.trackEvent('BREW', 'REPEAT');
+      const modal = await this.modalCtrl.create({component: BrewAddComponent, id: 'brew-add', componentProps: {brew_template: _brew}});
+      await modal.present();
+      await modal.onWillDismiss();
+      this.loadBrews();
+    }
   }
 
-  public async openBrew(_brew: Brew) {
-    const modal = await this.modalCtrl.create({component: BrewDetailComponent, componentProps: {brew: _brew}});
+
+  public async add() {
+    if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
+      const modal = await this.modalCtrl.create({component: BrewAddComponent, id:'brew-add'});
+      await modal.present();
+      await modal.onWillDismiss();
+      this.loadBrews();
+    }
+
+  }
+
+  public async detailBrew(_brew: Brew) {
+    const modal = await this.modalCtrl.create({component: BrewDetailComponent, id:'brew-detail', componentProps: {brew: _brew}});
+    await modal.present();
+    await modal.onWillDismiss();
+    this.loadBrews();
+  }
+
+  public async cupBrew(_brew: Brew) {
+    const modal = await this.modalCtrl.create({component: BrewCuppingComponent, id:'brew-cup', componentProps: {brew: _brew}});
+    await modal.present();
+    await modal.onWillDismiss();
+    this.loadBrews();
+  }
+
+
+  public async viewPhotos(_brew: Brew) {
+    const modal = await this.modalCtrl.create({component: BrewPhotoViewComponent, id:'brew-photo', componentProps: {brew: _brew}});
     await modal.present();
     await modal.onWillDismiss();
   }
+
+  public async showMapCoordinates(_brew: Brew) {
+    this.uiAnalytics.trackEvent('BREW', 'SHOW_MAP');
+    this.uiHelper.openExternalWebpage(_brew.getCoordinateMapLink());
+  }
+
+  public deleteBrew(_brew: Brew): void {
+    this.uiAlert.showConfirm('DELETE_BREW_QUESTION', 'SURE_QUESTION', true).then(() => {
+        // Yes
+        this.uiAnalytics.trackEvent('BREW', 'DELETE');
+        this.__deleteBrew(_brew);
+        this.uiToast.showInfoToast('TOAST_BREW_DELETED_SUCCESSFULLY');
+      },
+      () => {
+        // No
+      });
+  }
+
+  public openBeansLeftOverCount(): number {
+    if (this.leftOverBeansWeight === undefined) {
+      let leftOverCount: number = 0;
+      const openBeans: Array<Bean> = this.uiBeanStorage.getAllEntries().filter(
+        (bean) => !bean.finished);
+      for (const bean of openBeans) {
+
+        if (bean.weight > 0) {
+          leftOverCount  += (bean.weight - this.getUsedWeightCount(bean));
+        }
+      }
+
+
+      this.leftOverBeansWeight = Math.round((leftOverCount / 1000) * 100) / 100;
+    }
+    return this.leftOverBeansWeight;
+  }
+
+  public getUsedWeightCount(_bean: Bean): number {
+    let usedWeightCount: number = 0;
+    const relatedBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(_bean.config.uuid);
+    for (const brew of relatedBrews) {
+      usedWeightCount += brew.grind_weight;
+    }
+    return usedWeightCount;
+  }
+
+  private __deleteBrew(_brew: Brew): void {
+    this.uiBrewStorage.removeByObject(_brew);
+    this.loadBrews();
+
+  }
+
 }
