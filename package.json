@@ -87,7 +87,7 @@
     "@types/jasminewd2": "~2.0.8",
     "@types/node": "^12.19.9",
     "cordova-android": "^9.0.0",
-    "cordova-ios": "^6.1.1",
+    "cordova-ios": "^6.1.0",
     "cordova-plugin-androidx": "^2.0.0",
     "cordova-plugin-androidx-adapter": "^1.1.3",
     "cordova-plugin-firebasex": "^10.2.0-cli",
@@ -157,8 +157,8 @@
       "cordova-plugin-firebasex": {}
     },
     "platforms": [
-      "ios",
-      "android"
+      "android",
+      "ios"
     ]
   }
 }
