@@ -31,7 +31,7 @@ export class BeansEditComponent implements OnInit {
   @ViewChild('beanStars', {read: NgxStarsComponent, static: false}) public beanStars: NgxStarsComponent;
 
 
-  @Input() private bean: IBean;
+  @Input() public bean: IBean;
   @ViewChild('photoSlides', {static: false}) public photoSlides: IonSlides;
 
 
