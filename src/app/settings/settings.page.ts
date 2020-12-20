@@ -39,6 +39,8 @@ import {UiVersionStorage} from '../../services/uiVersionStorage';
 
 declare var cordova: any;
 declare var device: any;
+
+
 declare var window: any;
 @Component({
   selector: 'settings',
