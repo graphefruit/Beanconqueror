@@ -40,7 +40,7 @@ Different features are supported by this app, a brief overview you'll find here.
 - Nicola for giving the app a whole new design :)
 
 ## Getting the App
-The App is a crossplattform application, running on the ionic framework. 
+The App is a cross platform application, running on the ionic framework. 
 
 
 ### Android
@@ -88,6 +88,7 @@ The app needs access to your filesystem aswell as the camera
 
 *Filesytem*: Needed to save images which you took on beans/brews etc.
 *Camera*: Needed to take picures or access the photo library to set images for your beans/brews
+*Internet*: NOT NEEDED! But needed if you want to send me some analytics information to make the app better :)
 
 
 # Develop on your own
@@ -105,7 +106,7 @@ https://sonarcloud.io/dashboard?id=graphefruit_Beanconqueror
 
 ## Build iOS
 ```
-ionic cordova build ios -- --buildFlag="-UseModernBuildSystem=0"
+ionic cordova build ios
 ```
 
 ## Build Android
@@ -114,6 +115,21 @@ ionic cordova build android
 ```
 
 ## Issues with iOS
+
+### Actual Pod issue
+```
+1. Add this to the pod file
+post_install do |pi|
+   pi.pods_project.targets.each do |t|
+       t.build_configurations.each do |bc|
+           bc.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '9.0'
+       end
+   end
+end
+2. Goto platform/ios and run pod install
+https://github.com/CocoaPods/CocoaPods/issues/9884
+```
+If you got other problems try these:
 ```
 1. pod install / pod install --repo-update
 or pod repo update
@@ -137,22 +153,10 @@ DEBUG_INFORMATION_FORMAT
 
 ```
 
-##Actual Pod issue
-```
-1. Add this to the pod file
-post_install do |pi|
-   pi.pods_project.targets.each do |t|
-       t.build_configurations.each do |bc|
-           bc.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '9.0'
-       end
-   end
-end
-2. Goto platform/ios and run pod install
-https://github.com/CocoaPods/CocoaPods/issues/9884
-
 
 ## Debug analytics on firebase
-```adb shell setprop debug.firebase.analytics.app Beanconqueror
+```
+adb shell setprop debug.firebase.analytics.app Beanconqueror
 adb shell setprop debug.firebase.analytics.app com.beanconqueror.app
 ```
 ### Decativate debug mode
@@ -166,7 +170,8 @@ adb shell setprop debug.firebase.analytics.app .none.
 npm outdated
 ```
 
-### check outdated plugins
+### Check outdated plugins
 ```
 cordova-check-plugins
 ```
+Telerik plugin aswell as Firebase-CLI should not be updated yet!
