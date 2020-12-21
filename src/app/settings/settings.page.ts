@@ -360,7 +360,7 @@ export class SettingsPage implements OnInit {
     this.uiLog.log('Import dummy data');
     const dummyData = BeanconquerorSettingsDummy;
 
-   /** if (dummyData.SETTINGS[0]['brew_order']['before'] === undefined) {
+    if (dummyData.SETTINGS[0]['brew_order']['before'] === undefined) {
       this.uiLog.log('Old brew order structure');
       // Breaking change, we need to throw away the old order types by import
       const settingsConst = new Settings();
@@ -373,7 +373,7 @@ export class SettingsPage implements OnInit {
         this.setLanguage();
         this.uiAlert.showMessage(this.translate.instant('IMPORT_SUCCESSFULLY'));
       });
-    });**/
+    });
   }
 
   /* tslint:enable */
