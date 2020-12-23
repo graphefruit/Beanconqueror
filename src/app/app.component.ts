@@ -116,7 +116,6 @@ export class AppComponent implements AfterViewInit {
         // #7
         this.statusBar.show();
         this.statusBar.styleDefault();
-        this.statusBar.backgroundColorByHexString('#F0F0F0');
         this.splashScreen.hide();
         this.keyboard.hideFormAccessoryBar(false);
 
