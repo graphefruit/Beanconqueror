@@ -90,7 +90,6 @@ import {PreparationOverlayDirective} from '../../directive/preparation-overlay.d
 import {DisableDoubleClickDirective} from '../../directive/disable-double-click.directive';
 import {NgxStarsModule} from 'ngx-stars';
 import {BrewCuppingComponent} from '../brew/brew-cupping/brew-cupping.component';
-import {DatePicker} from '@ionic-native/date-picker/ngx';
 import {Geolocation} from '@ionic-native/geolocation/ngx';
 import {UpdatePopoverComponent} from '../../popover/update-popover/update-popover.component';
 import {PreparationCustomParametersComponent} from '../preparation/preparation-custom-parameters/preparation-custom-parameters.component';
@@ -194,7 +193,6 @@ import {BeansDetailComponent} from '../beans/beans-detail/beans-detail.component
     ThreeDeeTouch,
     Camera, ImagePicker, AndroidPermissions,
     InAppBrowser, File, Globalization, FirebaseX,
-    DatePicker,
     Geolocation
   ],
 

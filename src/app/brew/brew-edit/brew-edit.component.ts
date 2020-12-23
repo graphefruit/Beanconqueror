@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {UIBeanStorage} from '../../../services/uiBeanStorage';
 import {BREW_QUANTITY_TYPES_ENUM} from '../../../enums/brews/brewQuantityTypes';
 import {UIHelper} from '../../../services/uiHelper';
@@ -17,13 +17,13 @@ import {Mill} from '../../../classes/mill/mill';
 import {Bean} from '../../../classes/bean/bean';
 import {UIToast} from '../../../services/uiToast';
 import {UIFileHelper} from '../../../services/uiFileHelper';
-import {DatePicker} from '@ionic-native/date-picker/ngx';
 import {TranslateService} from '@ngx-translate/core';
 import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
 import {Settings} from '../../../classes/settings/settings';
 import {UIBrewHelper} from '../../../services/uiBrewHelper';
 import {NgxStarsComponent} from 'ngx-stars';
 
+declare var cordova;
 @Component({
   selector: 'brew-edit',
   templateUrl: './brew-edit.component.html',
@@ -59,10 +59,10 @@ export class BrewEditComponent implements OnInit {
                private readonly uiSettingsStorage: UISettingsStorage,
                private readonly uiToast: UIToast,
                private readonly uiFileHelper: UIFileHelper,
-               private readonly datePicker: DatePicker,
                private readonly translate: TranslateService,
                private readonly platform: Platform,
-               private readonly uiBrewHelper: UIBrewHelper) {
+               private readonly uiBrewHelper: UIBrewHelper,
+               private readonly changeDetectorRef: ChangeDetectorRef) {
 
     this.settings = this.uiSettingsStorage.getSettings();
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
@@ -161,22 +161,24 @@ export class BrewEditComponent implements OnInit {
       _event.preventDefault();
       _event.stopImmediatePropagation();
       _event.stopPropagation();
-      this.datePicker.show({
-        date: new Date(),
-        mode: 'datetime',
-        androidTheme: this.datePicker.ANDROID_THEMES.THEME_DEVICE_DEFAULT_LIGHT,
+
+      const myDate = new Date(); // From model.
+
+      cordova.plugins.DateTimePicker.show({
+        mode: 'date',
+        date: myDate,
         okText: this.translate.instant('CHOOSE'),
         todayText: this.translate.instant('TODAY'),
         cancelText: this.translate.instant('CANCEL'),
-      }).then(
-        (date) => {
-          this.customCreationDate = moment(date).toISOString();
-        },
-        (err) => {
+        success: (newDate) => {
+          this.customCreationDate = moment(newDate).toISOString();
+          this.changeDetectorRef.detectChanges();
+
+        }, error: () => {
 
         }
+      });
 
-      );
     }
   }
 

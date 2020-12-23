@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit, ViewChild} from '@angular/core';
 import {UIBeanStorage} from '../../../services/uiBeanStorage';
 import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 import {BREW_QUANTITY_TYPES_ENUM} from '../../../enums/brews/brewQuantityTypes';
@@ -20,7 +20,6 @@ import {UIAnalytics} from '../../../services/uiAnalytics';
 import {IMill} from '../../../interfaces/mill/iMill';
 import {UIToast} from '../../../services/uiToast';
 import {UIFileHelper} from '../../../services/uiFileHelper';
-import {DatePicker} from '@ionic-native/date-picker/ngx';
 import {TranslateService} from '@ngx-translate/core';
 import {BrewTimerComponent} from '../../../components/brew-timer/brew-timer.component';
 import {Geolocation} from '@ionic-native/geolocation/ngx';
@@ -31,6 +30,7 @@ import {UIBrewHelper} from '../../../services/uiBrewHelper';
 import {Settings} from '../../../classes/settings/settings';
 import {NgxStarsComponent} from 'ngx-stars';
 
+declare var cordova;
 @Component({
   selector: 'brew-add',
   templateUrl: './brew-add.component.html',
@@ -69,13 +69,13 @@ export class BrewAddComponent implements OnInit {
                private readonly uiAnalytics: UIAnalytics,
                private readonly uiToast: UIToast,
                private readonly uiFileHelper: UIFileHelper,
-               private readonly datePicker: DatePicker,
                private readonly translate: TranslateService,
                private readonly platform: Platform,
                private readonly geolocation: Geolocation,
                private readonly loadingController: LoadingController,
                private uiLog: UILog,
-               private readonly uiBrewHelper: UIBrewHelper) {
+               private readonly uiBrewHelper: UIBrewHelper,
+               private readonly changeDetectorRef: ChangeDetectorRef) {
     // Initialize to standard in drop down
     //
 
@@ -431,22 +431,26 @@ export class BrewAddComponent implements OnInit {
       _event.preventDefault();
       _event.stopImmediatePropagation();
       _event.stopPropagation();
-      this.datePicker.show({
-        date: new Date(),
-        mode: 'datetime',
-        androidTheme: this.datePicker.ANDROID_THEMES.THEME_DEVICE_DEFAULT_LIGHT,
+
+      const myDate = new Date(); // From model.
+
+      cordova.plugins.DateTimePicker.show({
+        mode: 'date',
+        date: myDate,
         okText: this.translate.instant('CHOOSE'),
         todayText: this.translate.instant('TODAY'),
         cancelText: this.translate.instant('CANCEL'),
-      }).then(
-        (date) => {
-          this.customCreationDate = moment(date).toISOString();
-        },
-        (err) => {
+        success: (newDate) => {
+          this.customCreationDate = moment(newDate).toISOString();
+          this.changeDetectorRef.detectChanges();
+
+        }, error: () => {
 
         }
+      });
 
-      );
+
+
     }
   }
 

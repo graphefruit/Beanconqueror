@@ -90,8 +90,8 @@ npm install @ionic-native/firebase-x
 npm install --save ngx-stars
 
 ##Datepicker
-ionic cordova plugin add cordova-plugin-datepicker
-npm install @ionic-native/date-picker
+https://github.com/skwasjer/skwas-cordova-plugin-datetimepicker#readme
+cordova plugin add skwas-cordova-plugin-datetimepicker
 
 ## Geolocation
 ionic cordova plugin add cordova-plugin-geolocation

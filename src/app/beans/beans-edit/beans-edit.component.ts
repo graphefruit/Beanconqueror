@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit, ViewChild} from '@angular/core';
 import {IonSlides, ModalController, NavParams, Platform} from '@ionic/angular';
 import {BEAN_MIX_ENUM} from '../../../enums/beans/mix';
 import {UIBeanStorage} from '../../../services/uiBeanStorage';
@@ -11,12 +11,13 @@ import {UIAnalytics} from '../../../services/uiAnalytics';
 import {UIToast} from '../../../services/uiToast';
 import {UIFileHelper} from '../../../services/uiFileHelper';
 import moment from 'moment';
-import {DatePicker} from '@ionic-native/date-picker/ngx';
+
 import {TranslateService} from '@ngx-translate/core';
 import {IBeanInformation} from '../../../interfaces/bean/iBeanInformation';
 import {NgxStarsComponent} from 'ngx-stars';
 import {BEAN_ROASTING_TYPE_ENUM} from '../../../enums/beans/beanRoastingType';
 
+declare var cordova: any;
 @Component({
   selector: 'beans-edit',
   templateUrl: './beans-edit.component.html',
@@ -48,9 +49,9 @@ export class BeansEditComponent implements OnInit {
                private readonly uiAnalytics: UIAnalytics,
                private readonly uiToast: UIToast,
                private readonly uiFileHelper: UIFileHelper,
-               private readonly datePicker: DatePicker,
                private readonly translate: TranslateService,
-               private readonly platform: Platform) {
+               private readonly platform: Platform,
+               private readonly changeDetectorRef: ChangeDetectorRef) {
   }
 
   public ionViewWillEnter(): void {
@@ -188,22 +189,21 @@ export class BeansEditComponent implements OnInit {
       _event.preventDefault();
       _event.stopImmediatePropagation();
       _event.stopPropagation();
-      this.datePicker.show({
-        date: new Date(),
+      const myDate = new Date(); // From model.
+
+      cordova.plugins.DateTimePicker.show({
         mode: 'date',
-        androidTheme: this.datePicker.ANDROID_THEMES.THEME_DEVICE_DEFAULT_LIGHT,
+        date: myDate,
         okText: this.translate.instant('CHOOSE'),
         todayText: this.translate.instant('TODAY'),
         cancelText: this.translate.instant('CANCEL'),
-      }).then(
-        (date) => {
-          this.data.roastingDate = moment(date).toISOString();
-        },
-        (err) => {
+        success: (newDate) => {
+          this.data.roastingDate = moment(newDate).toISOString();
+          this.changeDetectorRef.detectChanges();
+        }, error: () => {
 
         }
-
-      );
+      });
     }
   }
   public beanMixChanged() {
