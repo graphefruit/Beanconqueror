@@ -163,4 +163,9 @@ export class BrewTimerComponent implements OnInit {
     // Emit event so parent page can do something
     this.changeEvent();
   }
+  public showOverlay(_event) {
+    _event.stopPropagation();
+    _event.stopImmediatePropagation();
+    console.log('test');
+  }
 }

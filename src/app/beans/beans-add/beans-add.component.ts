@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit, ViewChild} from '@angular/core';
 import {BEAN_MIX_ENUM} from '../../../enums/beans/mix';
 import {UIBeanStorage} from '../../../services/uiBeanStorage';
 import {ROASTS_ENUM} from '../../../enums/beans/roasts';
@@ -10,13 +10,14 @@ import {UIAnalytics} from '../../../services/uiAnalytics';
 import {UIFileHelper} from '../../../services/uiFileHelper';
 import {UIToast} from '../../../services/uiToast';
 
-import {DatePicker} from '@ionic-native/date-picker/ngx';
+
 import {TranslateService} from '@ngx-translate/core';
 import moment from 'moment';
 import {IBeanInformation} from '../../../interfaces/bean/iBeanInformation';
 import {NgxStarsComponent} from 'ngx-stars';
 import {BEAN_ROASTING_TYPE_ENUM} from '../../../enums/beans/beanRoastingType';
 
+declare var cordova: any;
 @Component({
   selector: 'beans-add',
   templateUrl: './beans-add.component.html',
@@ -48,9 +49,9 @@ export class BeansAddComponent implements OnInit {
                private readonly uiAnalytics: UIAnalytics,
                private readonly uiFileHelper: UIFileHelper,
                private readonly uiToast: UIToast,
-               private readonly datePicker: DatePicker,
                private readonly translate: TranslateService,
-               private readonly platform: Platform) {
+               private readonly platform: Platform,
+               private readonly changeDetectorRef: ChangeDetectorRef) {
     this.bean_template = this.navParams.get('bean_template');
   }
 
@@ -245,7 +246,25 @@ export class BeansAddComponent implements OnInit {
       _event.preventDefault();
       _event.stopImmediatePropagation();
       _event.stopPropagation();
-      this.datePicker.show({
+
+
+      const myDate = new Date(); // From model.
+
+      cordova.plugins.DateTimePicker.show({
+        mode: 'date',
+        date: myDate,
+        okText: this.translate.instant('CHOOSE'),
+        todayText: this.translate.instant('TODAY'),
+        cancelText: this.translate.instant('CANCEL'),
+        success: (newDate) => {
+          this.data.roastingDate = moment(newDate).toISOString();
+          this.changeDetectorRef.detectChanges();
+        }, error: () => {
+
+        }
+      });
+
+    /**  this.datePicker.show({
         date: new Date(),
         mode: 'date',
         androidTheme: this.datePicker.ANDROID_THEMES.THEME_DEVICE_DEFAULT_LIGHT,
@@ -260,7 +279,7 @@ export class BeansAddComponent implements OnInit {
 
         }
 
-      );
+      );**/
     }
   }
 
