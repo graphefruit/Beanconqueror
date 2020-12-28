@@ -478,5 +478,8 @@
   "THREE_DEE_TOUCH_ACTION_BEAN":"Bean",
   "THREE_DEE_TOUCH_ACTION_PREPARATION":"Preparation method",
   "THREE_DEE_TOUCH_ACTION_MILL":"Grinder",
-  "PAGE_CREDITS_NOT_EXISTING": "No content"
+  "PAGE_CREDITS_NOT_EXISTING": "No content",
+  "TIMER_HOUR": "Hours",
+  "TIMER_MINUTES": "Minutes",
+  "TIMER_SECONDS": "Seconds"
 }

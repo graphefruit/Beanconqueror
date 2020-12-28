@@ -1,0 +1,20 @@
+:host {
+  --max-height: 25%;
+  top: 75%;
+  position: absolute;
+  margin-inline-start: 10px;
+  margin-inline-end: 10px;
+  border-radius: 6px;
+  margin-block-end: 10px;
+
+  @media (max-height: 450px) {
+    --max-height: 50%;
+    top: 50%;
+  }
+  ion-col {
+    text-align:center;
+  }
+  ion-input {
+    --padding-start:0px;
+  }
+}

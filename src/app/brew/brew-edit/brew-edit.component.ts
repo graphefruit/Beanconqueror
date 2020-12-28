@@ -22,6 +22,7 @@ import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationSty
 import {Settings} from '../../../classes/settings/settings';
 import {UIBrewHelper} from '../../../services/uiBrewHelper';
 import {NgxStarsComponent} from 'ngx-stars';
+import {DatetimePopoverComponent} from '../../../popover/datetime-popover/datetime-popover.component';
 
 declare var cordova;
 @Component({
@@ -62,7 +63,8 @@ export class BrewEditComponent implements OnInit {
                private readonly translate: TranslateService,
                private readonly platform: Platform,
                private readonly uiBrewHelper: UIBrewHelper,
-               private readonly changeDetectorRef: ChangeDetectorRef) {
+               private readonly changeDetectorRef: ChangeDetectorRef,
+               private readonly modalCtrl: ModalController) {
 
     this.settings = this.uiSettingsStorage.getSettings();
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
@@ -182,11 +184,6 @@ export class BrewEditComponent implements OnInit {
     }
   }
 
-  public changeDate(_event) {
-    const durationPassed =  moment.duration(moment(_event).diff(moment(_event).startOf('day')));
-    this.displayingBrewTime = moment(_event).toISOString();
-    this.data.brew_time = durationPassed.asSeconds();
-  }
   public showSectionAfterBrew(): boolean {
     let checkData: Settings | Preparation;
     if (this.getPreparation().use_custom_parameters === true) {
@@ -242,5 +239,24 @@ export class BrewEditComponent implements OnInit {
     if (typeof(this.brewStars) !== 'undefined') {
       this.brewStars.setRating(this.data.rating);
     }
+  }
+  public async showTimeOverlay(_event) {
+    _event.stopPropagation();
+    _event.stopImmediatePropagation();
+
+    const modal = await this.modalCtrl.create({component: DatetimePopoverComponent,
+      id:'datetime-popover',
+      cssClass: 'half-bottom-modal',
+      showBackdrop: true,
+      backdropDismiss: true,
+      swipeToClose: true,
+      componentProps: {displayingTime: this.displayingBrewTime }});
+    await modal.present();
+    const modalData = await modal.onWillDismiss();
+    if (modalData.data.displayingTime !== undefined) {
+      this.displayingBrewTime =  modalData.data.displayingTime;
+      this.data.brew_time =moment.duration(moment(modalData.data.displayingTime).diff(moment(modalData.data.displayingTime).startOf('day'))).asSeconds();
+    }
+
   }
 }
