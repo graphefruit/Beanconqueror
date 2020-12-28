@@ -108,7 +108,8 @@ console.log('blaa just for lars');
                 reject();
               });
             } else if (isCordova) {
-              this.imagePicker.getPictures({maximumImagesCount: 1, outputType: 1}).then((results) => {
+              // https://github.com/Telerik-Verified-Plugins/ImagePicker/issues/173#issuecomment-559096572
+              this.imagePicker.getPictures({maximumImagesCount: 1, outputType: 1, disable_popover: true}).then((results) => {
                 if (results && results.length > 0 && results[0] !== 0 && results[0] !== ''
                   && results[0] !== 'OK' && results[0].length > 5) {
                   const imageStr: string = `data:image/jpeg;base64,${results[0]}`;
