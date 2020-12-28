@@ -182,7 +182,7 @@
                       data.getPreparation().use_custom_parameters)"
               lines="inset">
       <ion-label position="stacked">{{'BREW_DATA_TIME' | translate}}</ion-label>
-      <ion-datetime (ngModelChange)="changeDate($event)" [(ngModel)]="displayingBrewTime" displayFormat="H:mm:ss" mode="ios"></ion-datetime>
+      <ion-datetime (click)="showTimeOverlay($event);" [(ngModel)]="displayingBrewTime" displayFormat="H:mm:ss" mode="ios"></ion-datetime>
 
     </ion-item>
 

@@ -98,6 +98,8 @@ import {SortCustomParameterComponent} from '../../components/parameter/sort-cust
 import {ManageCustomParameterComponent} from '../../components/parameter/manage-custom-parameter/manage-custom-parameter.component';
 import {BeanFilterComponent} from '../beans/bean-filter/bean-filter.component';
 import {BeansDetailComponent} from '../beans/beans-detail/beans-detail.component';
+import {MaxNumberValueDirective} from '../../directive/max-number-value.directive';
+import {DatetimePopoverComponent} from '../../popover/datetime-popover/datetime-popover.component';
 
 @NgModule({
   declarations: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent,
@@ -110,6 +112,7 @@ import {BeansDetailComponent} from '../beans/beans-detail/beans-detail.component
     CustomPopoverComponent,
     WelcomePopoverComponent,
     UpdatePopoverComponent,
+    DatetimePopoverComponent,
     CreditsComponent,
     LicencesComponent,
     PrivacyComponent,
@@ -124,6 +127,7 @@ import {BeansDetailComponent} from '../beans/beans-detail/beans-detail.component
     PreparationEditComponent, PreparationCustomParametersComponent, MillPage, MillEditComponent, BrewFilterComponent, BeanFilterComponent, MillAddComponent, BrewAddComponent,
     FormatDatePipe, KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, BeanInformationComponent, BrewDashboardInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, CuppingRadarComponent, RemoveEmptyNumberDirective,
     PreventCharacterDirective,
+    MaxNumberValueDirective,
     BeanOverlayDirective,
     MillOverlayDirective,
     PreparationOverlayDirective,
@@ -133,7 +137,7 @@ import {BeansDetailComponent} from '../beans/beans-detail/beans-detail.component
     BrewPopoverActionsComponent, BeanPopoverActionsComponent, MillPopoverActionsComponent, BeanModalSelectComponent,
     MillModalSelectComponent,
     PreparationModalSelectComponent,
-    PreparationPopoverActionsComponent, TimerComponent,DefaultCustomParameterComponent, SortCustomParameterComponent,ManageCustomParameterComponent, BrewTimerComponent],
+    PreparationPopoverActionsComponent, TimerComponent, DefaultCustomParameterComponent, SortCustomParameterComponent, ManageCustomParameterComponent, BrewTimerComponent],
   entryComponents: [
     SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent,
     BeansEditComponent,
@@ -145,6 +149,7 @@ import {BeansDetailComponent} from '../beans/beans-detail/beans-detail.component
     CustomPopoverComponent,
     WelcomePopoverComponent,
     UpdatePopoverComponent,
+    DatetimePopoverComponent,
     CreditsComponent,
     LicencesComponent,
     PrivacyComponent,
@@ -162,7 +167,7 @@ import {BeansDetailComponent} from '../beans/beans-detail/beans-detail.component
     BeanModalSelectComponent,
     MillModalSelectComponent,
     PreparationModalSelectComponent,
-    MillPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent,DefaultCustomParameterComponent, SortCustomParameterComponent,ManageCustomParameterComponent, BrewTimerComponent],
+    MillPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent, DefaultCustomParameterComponent, SortCustomParameterComponent, ManageCustomParameterComponent, BrewTimerComponent],
   imports: [
     CommonModule,
     IonicModule,
@@ -176,6 +181,7 @@ import {BeansDetailComponent} from '../beans/beans-detail/beans-detail.component
     StatusBar,
     SplashScreen,
     RemoveEmptyNumberDirective, PreventCharacterDirective,
+    MaxNumberValueDirective,
     BeanOverlayDirective,
     MillOverlayDirective,
     PreparationOverlayDirective,
@@ -205,6 +211,7 @@ import {BeansDetailComponent} from '../beans/beans-detail/beans-detail.component
     CustomPopoverComponent,
     WelcomePopoverComponent,
     UpdatePopoverComponent,
+    DatetimePopoverComponent,
     CreditsComponent,
     LicencesComponent,
     PrivacyComponent,
@@ -220,6 +227,7 @@ import {BeansDetailComponent} from '../beans/beans-detail/beans-detail.component
     BrewAddComponent, FormatDatePipe,
     KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, BeanInformationComponent, BrewDashboardInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, CuppingRadarComponent, RemoveEmptyNumberDirective,
     PreventCharacterDirective,
+    MaxNumberValueDirective,
     BeanOverlayDirective,
     MillOverlayDirective,
     PreparationOverlayDirective,
@@ -230,7 +238,7 @@ import {BeansDetailComponent} from '../beans/beans-detail/beans-detail.component
     BeanModalSelectComponent,
     MillModalSelectComponent,
     PreparationModalSelectComponent,
-    MillPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent,DefaultCustomParameterComponent, SortCustomParameterComponent, ManageCustomParameterComponent, BrewTimerComponent],
+    MillPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent, DefaultCustomParameterComponent, SortCustomParameterComponent, ManageCustomParameterComponent, BrewTimerComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule {

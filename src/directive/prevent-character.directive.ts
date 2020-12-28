@@ -10,7 +10,7 @@ export class PreventCharacterDirective {
 
     }
 
-  @HostListener('ionBlur', ['$event.target'])
+    @HostListener('ionBlur', ['$event.target'])
     public blur(): void {
 
     let val: any = this.model.control.value;
@@ -34,7 +34,6 @@ export class PreventCharacterDirective {
     } else {
       this.model.control.setValue(parsedFloat);
     }
-
 
     }
 }

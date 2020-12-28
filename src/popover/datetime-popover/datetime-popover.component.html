@@ -1,0 +1,26 @@
+<ion-content class="ion-padding-top">
+  <ion-grid class="ion-no-padding">
+    <ion-row>
+      <ion-col size="4">{{"TIMER_HOUR" | translate}}</ion-col>
+      <ion-col size="4">{{"TIMER_MINUTES" | translate}}</ion-col>
+      <ion-col size="4">{{"TIMER_SECONDS" | translate}}</ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="4"><ion-input maxlength="2" [(ngModel)]="timer.HOURS" max-number-value="23" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
+      <ion-col size="4"><ion-input maxlength="2" [(ngModel)]="timer.MINUTES" max-number-value="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
+      <ion-col size="4"><ion-input maxlength="2" [(ngModel)]="timer.SECONDS" max-number-value="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+<ion-footer class="ion-no-border">
+  <ion-row>
+    <ion-col>
+      <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
+                  tappable>{{"CANCEL" | translate}}</ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button (click)="choose()" color="accent" disable-double-click expand="block" tappable
+                  type="submit">{{"CHOOSE" | translate}}</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>

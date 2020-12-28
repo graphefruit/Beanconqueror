@@ -2,6 +2,8 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 import {ITimer} from '../../interfaces/timer/iTimer';
 import moment from 'moment';
+import {DatetimePopoverComponent} from '../../popover/datetime-popover/datetime-popover.component';
+import {ModalController} from '@ionic/angular';
 
 
 @Component({
@@ -48,7 +50,7 @@ export class BrewTimerComponent implements OnInit {
   }
   public timer: ITimer;
 
-  constructor() {
+  constructor(private readonly modalCtrl: ModalController) {
   }
 
   public ngOnInit(): void {
@@ -163,9 +165,26 @@ export class BrewTimerComponent implements OnInit {
     // Emit event so parent page can do something
     this.changeEvent();
   }
-  public showOverlay(_event) {
+  public async showTimeOverlay(_event) {
     _event.stopPropagation();
     _event.stopImmediatePropagation();
-    console.log('test');
+
+    const modal = await this.modalCtrl.create({component: DatetimePopoverComponent,
+      id:'datetime-popover',
+      cssClass: 'half-bottom-modal',
+      showBackdrop: true,
+      backdropDismiss: true,
+      swipeToClose: true,
+      componentProps: {displayingTime: this.displayingTime}});
+    await modal.present();
+    const modalData = await modal.onWillDismiss();
+    if (modalData.data.displayingTime !== undefined) {
+      this.displayingTime = modalData.data.displayingTime;
+      this.timer.seconds = moment.duration(moment(this.displayingTime).diff(moment(this.displayingTime).startOf('day'))).asSeconds();
+      console.log(this.timer.seconds);
+      console.log(modalData.data.displayingTime);
+      this.changeEvent();
+    }
+
   }
 }

@@ -478,5 +478,8 @@
   "THREE_DEE_TOUCH_ACTION_BEAN":"Bohne",
   "THREE_DEE_TOUCH_ACTION_PREPARATION":"Brühmethode",
   "THREE_DEE_TOUCH_ACTION_MILL":"Mühle",
-  "PAGE_CREDITS_NOT_EXISTING": "Kein Inhalt"
+  "PAGE_CREDITS_NOT_EXISTING": "Kein Inhalt",
+  "TIMER_HOUR": "Stunden",
+  "TIMER_MINUTES": "Minuten",
+  "TIMER_SECONDS": "Sekunden"
 }
