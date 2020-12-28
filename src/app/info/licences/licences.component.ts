@@ -9,8 +9,8 @@ import {UIHelper} from '../../../services/uiHelper';
 export class LicencesComponent implements OnInit {
   public licences: any = {
     ionic: {
-      TITLE: 'Ionic Framework V2',
-      LINK: 'http://ionicframework.com/',
+      TITLE: 'Ionic Framework',
+      LINK: 'https://ionicframework.com/',
       ACTIVE: false,
       DESCRIPTION: `Copyright 2015-present Drifty Co.
 http://drifty.com/
