@@ -438,6 +438,14 @@
         "Added typeahead for roasters",
         "Rating moved to stars instead of icons"
       ]
+    },
+    "5.1.0": {
+      "TITLE": "Version 5.1: Thats new!",
+      "DESCRIPTION": [
+        "New timepicker for brews",
+        "Roasting date can now be again selected on iOS",
+        "Images can be choosen again on iPad"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Customize parameter",

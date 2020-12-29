@@ -269,7 +269,10 @@ export class Brew implements IBrew {
   public getFormattedTotalCoffeeBrewTime(): string {
     const secs = this.brew_time;
 
-    const formatted = moment.utc(secs * 1000).format('mm:ss');
+    let formatted = moment.utc(secs * 1000).format('mm:ss');
+    if (moment.utc(secs * 1000).hours() > 0) {
+      formatted = moment.utc(secs * 1000).format('HH:mm:ss');
+    }
     return formatted;
   }
 
