@@ -445,7 +445,8 @@
         "New timepicker for brews",
         "Roasting date can now be again selected on iOS",
         "Images can be choosen again on iPad",
-        "TDS calculation is now again visible on beverage quantity"
+        "TDS calculation is now again visible on beverage quantity",
+        "Safe zones added for iOS-devices"
       ]
     }
   },
