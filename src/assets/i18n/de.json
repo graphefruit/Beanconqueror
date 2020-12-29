@@ -438,6 +438,14 @@
         "Röster werden bei Bohnen nun vorgeschlagen",
         "Bewertung von Brühungen wurde auf Sterne verändert"
       ]
+    },
+    "5.1.0": {
+      "TITLE": "Version 5.1: Das ist neu",
+      "DESCRIPTION": [
+        "Neue Zeitauswahl für Brühungen",
+        "Röstdatum für Bohnen kann nun wieder ausgewählt werden auf iOS",
+        "Bilder können wieder auf dem iPad ausgewählt werden"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Parameter individualisieren",

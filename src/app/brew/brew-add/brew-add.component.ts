@@ -435,7 +435,7 @@ export class BrewAddComponent implements OnInit {
       const myDate = new Date(); // From model.
 
       cordova.plugins.DateTimePicker.show({
-        mode: 'date',
+        mode: 'datetime',
         date: myDate,
         okText: this.translate.instant('CHOOSE'),
         todayText: this.translate.instant('TODAY'),
