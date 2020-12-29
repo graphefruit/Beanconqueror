@@ -420,7 +420,7 @@
     "5.0.0": {
       "TITLE": "Version 5.0: Das ist neu",
       "DESCRIPTION": [
-        "Neue layout, neue Icons, neue Farben, neues Logo",
+        "Neues Layout, neue Icons, neue Farben, neues Logo",
         "Neue Brühmethoden",
         "Brühmethoden können nun Kategorisiert werden (Perkolation, Espresso, Full Immersion)",
         "Brühmethoden können nun mit Tools hinterlegt werden (Filter, Siebe etc.)",
@@ -436,7 +436,7 @@
         "Ausgefülltes Cupping Radar wird nun in den Brühdetails angezeigt",
         "Übrige Bohnenmenge wird nun auf der Startseite angezeigt",
         "Röster werden bei Bohnen nun vorgeschlagen",
-        "Bewertung von Brühungen wurde auf Sterne verändert"
+        "Bewertung von Brühungen auf Sterne verändert"
       ]
     },
     "5.1.0": {
@@ -444,7 +444,8 @@
       "DESCRIPTION": [
         "Neue Zeitauswahl für Brühungen",
         "Röstdatum für Bohnen kann nun wieder ausgewählt werden auf iOS",
-        "Bilder können wieder auf dem iPad ausgewählt werden"
+        "Bilder können wieder auf dem iPad ausgewählt werden",
+        "TDS-Berechnung ist nun wieder bei der Brühmenge ersichtlich"
       ]
     }
   },
