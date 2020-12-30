@@ -71,7 +71,14 @@ export class PreparationInformationCardComponent implements OnInit {
     return distinctBeans.length;
 
   }
+
+  public editPreparation() {
+   this.preparationAction.emit([PREPARATION_ACTION.EDIT, this.preparation]);
+  }
+
   public async showPreparationActions(event): Promise<void> {
+    event.stopPropagation();
+    event.stopImmediatePropagation();
     const popover = await this.popoverCtrl.create({
       component: PreparationPopoverActionsComponent,
       event,

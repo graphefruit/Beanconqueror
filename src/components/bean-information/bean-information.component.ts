@@ -10,6 +10,7 @@ import {UIBeanHelper} from '../../services/uiBeanHelper';
 import {ROASTS_ENUM} from '../../enums/beans/roasts';
 import {BeanPhotoViewComponent} from '../../app/beans/bean-photo-view/bean-photo-view.component';
 import {NgxStarsComponent} from 'ngx-stars';
+import {BREW_ACTION} from '../../enums/brews/brewAction';
 
 @Component({
   selector: 'bean-information',
@@ -84,7 +85,13 @@ export class BeanInformationComponent implements OnInit {
     return '';
   }
 
+  public showBean() {
+    this.beanAction.emit([BEAN_ACTION.DETAIL, this.bean]);
+  }
+
   public async showBeanActions(event): Promise<void> {
+    event.stopPropagation();
+    event.stopImmediatePropagation();
     const popover = await this.popoverCtrl.create({
       component: BeanPopoverActionsComponent,
       event,

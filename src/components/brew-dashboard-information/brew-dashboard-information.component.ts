@@ -41,11 +41,13 @@ export class BrewDashboardInformationComponent implements OnInit {
 
   }
 
-  public openBrewClick() {
+  public showBrew() {
     this.brewAction.emit([BREW_ACTION.DETAIL, this.brew]);
   }
 
   public async showBrewActions(event): Promise<void> {
+    event.stopPropagation();
+    event.stopImmediatePropagation();
     const popover = await this.popoverCtrl.create({
       component: BrewPopoverActionsComponent,
       event,

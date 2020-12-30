@@ -74,9 +74,13 @@ export class MillInformationCardComponent implements OnInit {
 
   }
 
-
+  public editMill() {
+    this.millAction.emit([MILL_ACTION.EDIT, this.mill]);
+  }
 
   public async showMillActions(event): Promise<void> {
+    event.stopPropagation();
+    event.stopImmediatePropagation();
     const popover = await this.popoverCtrl.create({
       component: MillPopoverActionsComponent,
       event,
