@@ -45,7 +45,7 @@ export class UIExcel {
     this.exportBeans(wb);
     this.exportPreparationMethods(wb);
     return wb;
-  };
+  }
 
 
   private exportPreparationMethods(_wb: XLSX.WorkBook)
@@ -288,7 +288,7 @@ export class UIExcel {
       }
       else alert(`Error: ${e.message}`);
     }
-  };
+  }
 
 
 
