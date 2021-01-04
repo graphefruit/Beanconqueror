@@ -1,7 +1,6 @@
 export enum BEAN_ACTION {
 
   DETAIL = 'DETAIL',
-  INFORMATION = 'INFORMATION',
   REPEAT = 'REPEAT',
   EDIT = 'EDIT',
   DELETE = 'DELETE',

@@ -235,6 +235,8 @@
   "CUPPING_SCORE_TOOLTIP": "100-95 = Astounding, 90-94 = Outstanding, 85-89 = Very Good, 80-84 = Good, 75-79 = Fair, 70-74 = Poor",
   "DETAIL_BREW": "Bezugdetails",
   "DETAIL_BEAN": "Bohnendetails",
+  "DETAIL_MILL": "Mühlendetails",
+  "DETAIL_PREPARATION": "Brühmethodendetails",
   "EDIT_BREW": "Bezug editieren",
   "ADD_BEAN": "Bohne hinzufügen",
   "EDIT_BEAN": "Bohne editieren",
@@ -491,5 +493,16 @@
   "PAGE_CREDITS_NOT_EXISTING": "Kein Inhalt",
   "TIMER_HOUR": "Stunden",
   "TIMER_MINUTES": "Minuten",
-  "TIMER_SECONDS": "Sekunden"
+  "TIMER_SECONDS": "Sekunden",
+  "EXCEL": {
+    "BEAN" : {
+      "CREATION_DATE": "Erstellungsdatum",
+      "ID": "Bohnen ID"
+    },
+    "PREPARATION": {
+      "CREATION_DATE": "Erstellungsdatum",
+      "ID": "Brühmethoden Id"
+    }
+  },
+  "EXCEL_EXPORT": "Excel Export"
 }

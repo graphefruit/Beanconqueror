@@ -12,6 +12,7 @@ import {Settings} from '../../classes/settings/settings';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {UIToast} from '../../services/uiToast';
 import {UIAnalytics} from '../../services/uiAnalytics';
+import {MillDetailComponent} from './mill-detail/mill-detail.component';
 
 
 @Component({
@@ -80,6 +81,9 @@ export class MillPage  implements OnInit  {
       case MILL_ACTION.ARCHIVE:
         this.archive(mill);
         break;
+      case MILL_ACTION.DETAIL:
+        this.detail(mill);
+        break;
       default:
         break;
     }
@@ -96,17 +100,23 @@ export class MillPage  implements OnInit  {
     await modal.onWillDismiss();
     this.loadMills();
   }
-  public async edit(_mill: any) {
+  public async edit(_mill: Mill) {
 
     const editModal = await this.modalCtrl.create({
       component: MillEditComponent,
-      componentProps: {'mill' : _mill},
+      componentProps: {mill : _mill},
       id:'mill-edit',
     });
     await editModal.present();
     await editModal.onWillDismiss();
     this.loadMills();
 
+  }
+
+  public async detail(_mill: Mill) {
+    const modal = await this.modalCtrl.create({component: MillDetailComponent, id:'mill-detail', componentProps: {mill: _mill}});
+    await modal.present();
+    await modal.onWillDismiss();
   }
 
   public delete(_mill: Mill): void {

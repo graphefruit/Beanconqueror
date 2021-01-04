@@ -75,7 +75,7 @@ export class MillInformationCardComponent implements OnInit {
   }
 
   public editMill() {
-    this.millAction.emit([MILL_ACTION.EDIT, this.mill]);
+    this.millAction.emit([MILL_ACTION.DETAIL, this.mill]);
   }
 
   public async showMillActions(event): Promise<void> {

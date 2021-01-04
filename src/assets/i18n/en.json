@@ -235,6 +235,8 @@
   "CUPPING_SCORE_TOOLTIP": "100-95 = Astounding, 90-94 = Outstanding, 85-89 = Very Good, 80-84 = Good, 75-79 = Fair, 70-74 = Poor",
   "DETAIL_BREW": "Brew details",
   "DETAIL_BEAN": "Bean details",
+  "DETAIL_MILL": "Grinder details",
+  "DETAIL_PREPARATION": "Preparation details",
   "EDIT_BREW": "Edit brew",
   "ADD_BEAN": "Add bean",
   "EDIT_BEAN": "Edit bean",
@@ -491,5 +493,17 @@
   "PAGE_CREDITS_NOT_EXISTING": "No content",
   "TIMER_HOUR": "Hours",
   "TIMER_MINUTES": "Minutes",
-  "TIMER_SECONDS": "Seconds"
+  "TIMER_SECONDS": "Seconds",
+  "EXCEL": {
+    "BEAN" : {
+      "CREATION_DATE": "Creation date",
+      "ID": "Bean Id"
+    },
+    "PREPARATION": {
+      "CREATION_DATE": "Creation date",
+      "ID": "Preparation Id"
+    }
+  },
+  "EXCEL_EXPORT": "Excel export"
+
 }

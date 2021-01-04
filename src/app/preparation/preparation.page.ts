@@ -13,6 +13,7 @@ import {Settings} from '../../classes/settings/settings';
 import {UIToast} from '../../services/uiToast';
 import {UIAnalytics} from '../../services/uiAnalytics';
 import {PreparationCustomParametersComponent} from './preparation-custom-parameters/preparation-custom-parameters.component';
+import {PreparationDetailComponent} from './preparation-detail/preparation-detail.component';
 
 @Component({
   selector: 'preparation',
@@ -69,6 +70,9 @@ export class PreparationPage implements OnInit {
       case PREPARATION_ACTION.ARCHIVE:
         this.archive(preparation);
         break;
+      case PREPARATION_ACTION.DETAIL:
+        this.detail(preparation);
+        break;
       default:
         break;
     }
@@ -104,6 +108,12 @@ export class PreparationPage implements OnInit {
     await modal.present();
     await modal.onWillDismiss();
     this.loadPreparations();
+  }
+
+  public async detail(_preparation: Preparation) {
+    const modal = await this.modalCtrl.create({component: PreparationDetailComponent, id:'preparation-detail', componentProps: {preparation: _preparation}});
+    await modal.present();
+    await modal.onWillDismiss();
   }
 
   public deletePreparation(_preparation: Preparation): void {
