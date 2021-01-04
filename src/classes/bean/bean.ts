@@ -73,6 +73,12 @@ export class Bean implements IBean {
   public getRoastName(): string {
     return ROASTS_ENUM[this.roast];
   }
+  public getCustomRoastName(): string {
+    if (this.roast === ROASTS_ENUM.CUSTOM_ROAST) {
+      return this.roast_custom;
+    }
+    return '-';
+  }
 
   public initializeByObject(beanObj: IBean): void {
     Object.assign(this, beanObj);

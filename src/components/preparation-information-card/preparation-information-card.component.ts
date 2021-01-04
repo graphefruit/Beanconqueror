@@ -73,7 +73,7 @@ export class PreparationInformationCardComponent implements OnInit {
   }
 
   public editPreparation() {
-   this.preparationAction.emit([PREPARATION_ACTION.EDIT, this.preparation]);
+   this.preparationAction.emit([PREPARATION_ACTION.DETAIL, this.preparation]);
   }
 
   public async showPreparationActions(event): Promise<void> {

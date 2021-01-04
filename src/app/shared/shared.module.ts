@@ -100,6 +100,8 @@ import {BeanFilterComponent} from '../beans/bean-filter/bean-filter.component';
 import {BeansDetailComponent} from '../beans/beans-detail/beans-detail.component';
 import {MaxNumberValueDirective} from '../../directive/max-number-value.directive';
 import {DatetimePopoverComponent} from '../../popover/datetime-popover/datetime-popover.component';
+import {MillDetailComponent} from '../mill/mill-detail/mill-detail.component';
+import {PreparationDetailComponent} from '../preparation/preparation-detail/preparation-detail.component';
 
 @NgModule({
   declarations: [SettingsPage, StatisticPage, HomePage, BrewParameterPage, DashboardPage, BeansPage, HelperPage, BeansAddComponent,
@@ -124,7 +126,10 @@ import {DatetimePopoverComponent} from '../../popover/datetime-popover/datetime-
     BrewCuppingComponent,
     TermsComponent,
     ThanksComponent, LogComponent, LogTextComponent, PreparationPage, PreparationAddComponent,
-    PreparationEditComponent, PreparationCustomParametersComponent, MillPage, MillEditComponent, BrewFilterComponent, BeanFilterComponent, MillAddComponent, BrewAddComponent,
+    PreparationEditComponent, PreparationCustomParametersComponent, MillPage, MillEditComponent,
+    MillDetailComponent,
+    PreparationDetailComponent,
+    BrewFilterComponent, BeanFilterComponent, MillAddComponent, BrewAddComponent,
     FormatDatePipe, KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, BeanInformationComponent, BrewDashboardInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, CuppingRadarComponent, RemoveEmptyNumberDirective,
     PreventCharacterDirective,
     MaxNumberValueDirective,
@@ -162,6 +167,8 @@ import {DatetimePopoverComponent} from '../../popover/datetime-popover/datetime-
     TermsComponent,
     ThanksComponent, LogComponent, LogTextComponent, PreparationPage,
     PreparationAddComponent, PreparationEditComponent, PreparationCustomParametersComponent, MillPage, MillEditComponent,
+    MillDetailComponent,
+    PreparationDetailComponent,
     MillAddComponent, BrewAddComponent, BrewPage, BrewDetailComponent, BrewEditComponent,
     BrewPhotoViewComponent, BeanPhotoViewComponent, BrewPopoverActionsComponent, BeanPopoverActionsComponent,
     BeanModalSelectComponent,
@@ -223,7 +230,10 @@ import {DatetimePopoverComponent} from '../../popover/datetime-popover/datetime-
     BrewCuppingComponent,
     TermsComponent,
     ThanksComponent, PreparationPage, PreparationAddComponent,
-    PreparationEditComponent, PreparationCustomParametersComponent, BrewFilterComponent, BeanFilterComponent, MillPage, MillEditComponent, MillAddComponent,
+    PreparationEditComponent, PreparationCustomParametersComponent, BrewFilterComponent, BeanFilterComponent, MillPage, MillEditComponent,
+    MillDetailComponent,
+    PreparationDetailComponent,
+    MillAddComponent,
     BrewAddComponent, FormatDatePipe,
     KeysPipe, EnumToArrayPipe, AsyncImageComponent, BrewInformationComponent, BeanInformationComponent, BrewDashboardInformationComponent, PreparationInformationCardComponent, MillInformationCardComponent, CuppingRadarComponent, RemoveEmptyNumberDirective,
     PreventCharacterDirective,

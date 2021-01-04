@@ -68,6 +68,7 @@
     "ngx-stars": "^1.4.3",
     "rxjs": "^6.6.3",
     "tslib": "^1.14.1",
+    "xlsx": "^0.16.9",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
