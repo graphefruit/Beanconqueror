@@ -746,6 +746,8 @@ ion-menu:host .menu-inner {
   }
 
   ion-app {
+    margin-top: env(safe-area-inset-top);
+    margin-top: constant(safe-area-inset-top);
     margin-bottom: env(safe-area-inset-bottom);
     margin-bottom: constant(safe-area-inset-bottom);
   }
