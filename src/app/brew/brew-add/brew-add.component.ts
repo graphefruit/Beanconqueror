@@ -174,6 +174,8 @@ export class BrewAddComponent implements OnInit {
       this.uiToast.showInfoToast('TOAST_BREW_ADDED_SUCCESSFULLY');
     }
 
+    // Send to Splunk here?
+
 
     await loading.dismiss();
     this.dismiss();

@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
 import {IBean} from '../../interfaces/bean/iBean';
 import {IBrew} from '../../interfaces/brew/iBrew';
-import {AlertController, Platform} from '@ionic/angular';
+import {AlertController, NavController, Platform} from '@ionic/angular';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {UIStorage} from '../../services/uiStorage';
 import {UIHelper} from '../../services/uiHelper';
@@ -37,6 +37,7 @@ import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
 import {UIUpdate} from '../../services/uiUpdate';
 import {UiVersionStorage} from '../../services/uiVersionStorage';
 import {UIExcel} from '../../services/uiExcel';
+import {Router} from '@angular/router';
 
 declare var cordova: any;
 declare var device: any;
@@ -114,7 +115,8 @@ export class SettingsPage implements OnInit {
               private readonly androidPermissions: AndroidPermissions,
               private readonly uiUpdate: UIUpdate,
               private readonly uiVersionStorage: UiVersionStorage,
-              private readonly uiExcel: UIExcel
+              private readonly uiExcel: UIExcel,
+              private readonly router: Router
               ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -255,6 +257,11 @@ export class SettingsPage implements OnInit {
       });
 
     });
+
+  }
+
+  public openManageSplunkParameters(): void {
+    this.router.navigateByUrl('/settings/splunk');
 
   }
 

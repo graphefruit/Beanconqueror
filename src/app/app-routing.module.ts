@@ -69,6 +69,12 @@ const routes: Routes = [
       resolver: RouteResolver
     },
     loadChildren: './brew-parameter/brew-parameter.module#BrewParameterPageModule'
+  },
+  {
+    path: 'settings', resolve: {
+      resolver: RouteResolver
+    },
+    loadChildren: './settings/settings.module#SettingsPageModule'
   }
 ];
 

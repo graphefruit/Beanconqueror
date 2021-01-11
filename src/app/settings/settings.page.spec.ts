@@ -26,7 +26,7 @@ describe('SettingsPage', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [TranslateModule.forRoot(), FormsModule, IonicStorageModule.forRoot(), CommonModule, IonicModule],
+      imports: [TranslateModule, FormsModule, IonicStorageModule.forRoot(), CommonModule, IonicModule],
       declarations: [SettingsPage, KeysPipe],
       providers: [
         {provide: InAppBrowser},

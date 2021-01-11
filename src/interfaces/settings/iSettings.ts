@@ -7,6 +7,7 @@ import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
 import {IOrderBrewParameter} from '../parameter/iOrderBrewParameter';
 import {IBrewPageFilter} from '../brew/iBrewPageFilter';
 import {IBeanPageFilter} from '../bean/iBeanPageFilter';
+import {ISplunkParameter} from '../parameter/iSplunkParameter';
 
 export interface ISettings {
  // Properties
@@ -37,6 +38,7 @@ export interface ISettings {
   brew_beverage_quantity: boolean;
   language: string;
   manage_parameters: IBrewParameter;
+  splunk_parameters: ISplunkParameter;
   default_last_coffee_parameters: IBrewParameter;
   brew_order: IOrderBrewParameter;
   analytics: boolean;

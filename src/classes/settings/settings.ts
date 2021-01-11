@@ -10,6 +10,7 @@ import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
 import {OrderBrewParameter} from '../parameter/orderBrewParameter';
 import {IBrewPageFilter} from '../../interfaces/brew/iBrewPageFilter';
 import {ManageBrewParameter} from '../parameter/manageBrewParameter';
+import {SplunkParameter} from '../parameter/splunkParameter';
 import {IBeanPageFilter} from '../../interfaces/bean/iBeanPageFilter';
 import {BEAN_SORT_AFTER} from '../../enums/beans/beanSortAfter';
 import {BEAN_SORT_ORDER} from '../../enums/beans/beanSortOrder';
@@ -66,6 +67,7 @@ export class Settings implements ISettings {
 
 
   public manage_parameters: ManageBrewParameter;
+  public splunk_parameters: SplunkParameter;
   public default_last_coffee_parameters: DefaultBrewParameter;
   public brew_order: OrderBrewParameter;
   public config: Config;
@@ -155,6 +157,9 @@ export class Settings implements ISettings {
 
     this.manage_parameters = new ManageBrewParameter();
     Object.assign(this.manage_parameters, settingsObj.manage_parameters);
+
+    this.splunk_parameters = new SplunkParameter();
+    Object.assign(this.splunk_parameters, settingsObj.splunk_parameters);
 
     this.brew_order = new OrderBrewParameter();
     Object.assign(this.brew_order, settingsObj.brew_order);
