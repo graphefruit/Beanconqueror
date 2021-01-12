@@ -29,6 +29,7 @@ import {UILog} from '../../../services/uiLog';
 import {UIBrewHelper} from '../../../services/uiBrewHelper';
 import {Settings} from '../../../classes/settings/settings';
 import {NgxStarsComponent} from 'ngx-stars';
+import { HttpClient } from '@angular/common/http';
 
 declare var cordova;
 @Component({
@@ -75,7 +76,8 @@ export class BrewAddComponent implements OnInit {
                private readonly loadingController: LoadingController,
                private uiLog: UILog,
                private readonly uiBrewHelper: UIBrewHelper,
-               private readonly changeDetectorRef: ChangeDetectorRef) {
+               private readonly changeDetectorRef: ChangeDetectorRef,
+               public httpClient: HttpClient) {
     // Initialize to standard in drop down
     //
 
@@ -174,8 +176,36 @@ export class BrewAddComponent implements OnInit {
       this.uiToast.showInfoToast('TOAST_BREW_ADDED_SUCCESSFULLY');
     }
 
-    // Send to Splunk here?
+    if ('hec_endpoint' in this.settings.splunk_parameters && this.settings.splunk_parameters.hec_endpoint !== '') {
+      const postData = {
+        index: 'logs_itoc_bsa_prod',
+        sourcetype: 'willtest',
+        event: {
+          data: this.data,
+          beans: this.data.getBean(),
+          mill: this.data.getMill(),
+          bean_age: this.data.getCalculatedBeanAge(),
+          prep_name: this.data.getPreparation()['name'],
+          prep_type: this.data.getPreparation()['type'],
+          // settings: this.settings,
+          splunk_settings: this.settings.splunk_parameters
+        }
+      }
 
+      this.httpClient.post(
+        this.settings.splunk_parameters.hec_endpoint,
+        postData
+      )
+        .subscribe(data => {
+          console.log(data['_body']);
+        }, error => {
+          console.log(error);
+        });
+    }
+    // cordova.plugin.http.setHeader('Authorization', 'Splunk f8d586fa-8401-4c12-97d4-68c4b3a3531c');
+    // cordova.plugin.http.post('https://hec.onboarding.splunk.aws.digital.nhs.uk/services/collector',
+
+    // https://hec.onboarding.splunk.aws.digital.nhs.uk/services/collector -H 'Authorization: Splunk f8d586fa-8401-4c12-97d4-68c4b3a3531c
 
     await loading.dismiss();
     this.dismiss();

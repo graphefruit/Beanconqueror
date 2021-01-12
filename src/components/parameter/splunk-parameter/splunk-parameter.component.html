@@ -13,5 +13,7 @@
     <ion-input #processing="ngModel" [(ngModel)]="data.splunk_parameters.hec_token"
                name="hec_token" placeholder="AAAAAAAA-BBBB-CCCC-DDDDDDDD" spellcheck="false" type="text">
     </ion-input>
+    <ion-button (click)="save()" color="accent" disable-double-click expand="block" tappable
+                type="submit">{{"SAVE" | translate}}</ion-button>
   </ion-item>
 </ion-card>

@@ -47,6 +47,7 @@ export class SplunkParameterComponent implements OnInit {
       this.uiPreparationStorage.update(this.data as Preparation);
     }
 
+
   }
 
 
