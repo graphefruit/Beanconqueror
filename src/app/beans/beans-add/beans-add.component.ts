@@ -264,22 +264,6 @@ export class BeansAddComponent implements OnInit {
         }
       });
 
-    /**  this.datePicker.show({
-        date: new Date(),
-        mode: 'date',
-        androidTheme: this.datePicker.ANDROID_THEMES.THEME_DEVICE_DEFAULT_LIGHT,
-        okText: this.translate.instant('CHOOSE'),
-        todayText: this.translate.instant('TODAY'),
-        cancelText: this.translate.instant('CANCEL'),
-      }).then(
-        (date) => {
-          this.data.roastingDate = moment(date).toISOString();
-        },
-        (err) => {
-
-        }
-
-      );**/
     }
   }
 

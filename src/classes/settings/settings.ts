@@ -80,7 +80,7 @@ export class Settings implements ISettings {
   public show_archived_preparations: boolean;
 
   public welcome_page_showed: boolean;
-
+  public track_caffeine_consumption: boolean;
   public brew_filter: {
     OPEN: IBrewPageFilter,
     ARCHIVED: IBrewPageFilter
@@ -89,6 +89,8 @@ export class Settings implements ISettings {
     OPEN: IBeanPageFilter,
     ARCHIVED: IBeanPageFilter
   };
+
+  public wake_lock: boolean;
 
   constructor() {
     this.brew_view = BREW_VIEW_ENUM.SINGLE_PAGE;
@@ -129,6 +131,7 @@ export class Settings implements ISettings {
     this.show_archived_mills = true;
     this.show_archived_preparations = true;
     this.brew_beverage_quantity = false;
+    this.track_caffeine_consumption = false;
 
     this.brew_filter = {
       OPEN: {} as IBrewPageFilter,
@@ -147,6 +150,7 @@ export class Settings implements ISettings {
     this.bean_filter.ARCHIVED =  {sort_after: BEAN_SORT_AFTER.UNKOWN, sort_order:  BEAN_SORT_ORDER.UNKOWN} as IBeanPageFilter;
 
     this.welcome_page_showed = false;
+    this.wake_lock = false;
   }
 
   public initializeByObject(settingsObj: ISettings): void {

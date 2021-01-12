@@ -24,6 +24,9 @@
         <ion-list class="ion-margin-top">
           <ion-menu-toggle autoHide="false">
             <ion-list class="no-label-margin" lines="none">
+              <ion-item [class.active]="pages.home.active" [routerLink]="['/roasting-section']" replaceUrl="true">
+                <ion-label>{{pages.home.title | translate}}</ion-label>
+              </ion-item>
               <ion-item [class.active]="pages.home.active" [routerLink]="[pages.home.url]" replaceUrl="true">
                 <ion-label>{{pages.home.title | translate}}</ion-label>
               </ion-item>
