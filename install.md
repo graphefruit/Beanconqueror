@@ -105,3 +105,11 @@ npm install @ionic-native/app-rate
 ##Globaly installed:
 ######Plugin checker
 npm install -g cordova-check-plugins
+
+##Healthkit
+https://github.com/dariosalvi78/cordova-plugin-health
+cordova plugin add cordova-plugin-health --variable HEALTH_READ_PERMISSION='App needs read access to see the caffeinate amount which was tracked with this coffee app' --variable HEALTH_WRITE_PERMISSION='App needs write access to add the drunken caffeinate amount with the tracked brews'
+
+##https://ionicframework.com/docs/native/insomnia
+ionic cordova plugin add cordova-plugin-insomnia
+npm install @ionic-native/insomnia

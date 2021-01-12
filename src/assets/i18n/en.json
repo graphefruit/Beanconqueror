@@ -61,6 +61,8 @@
   "PAGE_SETTINGS_ANALYTICS_INFORMATION": "Enable Analytics?",
   "PAGE_SETTINGS_TRACK_BREW_COORDINATES": "Save brew coordinates",
   "PAGE_SETTINGS_FAST_REPEAT": "Fast brew repeat",
+  "PAGE_SETTINGS_TRACK_CAFFEINE_CONSUMPTION": "Save caffeine consumption",
+  "PAGE_SETTINGS_WAKE_LOCK": "Keep display active while brewing",
   "PAGE_STATISTICS_DIFFERENT_PREPARATION_METHOD": "Preparation Methods",
   "PAGE_STATISTICS_TOTAL_GROUND_BEANS": "Ground beans total",
   "PAGE_STATISTICS_MONEY_SPENT_FOR_COFFEE": "Money spent for beans",
@@ -415,6 +417,7 @@
   "PREPARATION_TYPE_STYLE": "Preparation style",
   "PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION": "Activate a new menu entry - with this you can repeat the brew directly.",
   "PAGE_SETTINGS_TRACK_BREW_COORDINATES_DESCRIPTION": "Save coordinates to each brew.",
+  "PAGE_SETTINGS_TRACK_CAFFEINE_CONSUMPTION_DESCRIPTION": "Save consumed caffeeine amount",
 
   "UPDATE_TITLE": "Whats new?",
   "NEXT": "Next",
@@ -504,6 +507,7 @@
       "ID": "Preparation Id"
     }
   },
-  "EXCEL_EXPORT": "Excel export"
-
+  "EXCEL_EXPORT": "Excel export",
+  "HEALTH_KIT_QUESTION_TITLE": "Save caffeine consumption",
+  "HEALTH_KIT_QUESTION_MESSAGE": "Through activation the occupied caffeine will be automatically be saved"
 }

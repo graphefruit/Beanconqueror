@@ -44,10 +44,7 @@ export interface IBean {
 
   bean_roasting_type: BEAN_ROASTING_TYPE_ENUM;
 
-
-
-
-  bean_information: Array<IBeanInformation>
+  bean_information: Array<IBeanInformation>;
 
 
 }

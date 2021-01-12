@@ -274,7 +274,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   private async __checkStartupView() {
-
+  return;
     const settings: Settings = this.uiSettingsStorage.getSettings();
     if (settings.startup_view !== STARTUP_VIEW_ENUM.HOME_PAGE) {
       this.uiAnalytics.trackEvent('STARTUP', 'STARTUP_VIEW_' + settings.startup_view);
@@ -431,3 +431,31 @@ export class AppComponent implements AfterViewInit {
   }
 }
 
+/**
+ * navigator.health.store({
+  startDate: new Date(), // three days ago
+  endDate: new Date(), // now
+  dataType: 'nutrition.caffeine',
+value:23/1000,
+unit:'mg',
+
+}, function(e) {
+console.log('stored')
+console.log(e)
+}, function(e) {
+console.log('bnot stored')
+console.log(e)
+})
+
+ navigator.health.requestAuthorization([
+ 'nutrition.caffeine',   // Read and write permissions
+ {
+    write : []  // Write only permission
+  }
+ ], function(e) {
+console.log('yes');
+console.log(e)
+}, function(e) {
+console.log(e)
+})
+ */

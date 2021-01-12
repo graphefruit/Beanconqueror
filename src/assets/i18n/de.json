@@ -61,6 +61,8 @@
   "PAGE_SETTINGS_ANALYTICS_INFORMATION": "Analytics erlauben?",
   "PAGE_SETTINGS_TRACK_BREW_COORDINATES": "Brühkoordinaten speichern",
   "PAGE_SETTINGS_FAST_REPEAT": "Schnelle Brühwiederholung",
+  "PAGE_SETTINGS_TRACK_CAFFEINE_CONSUMPTION": "Koffeinmenge speichern",
+  "PAGE_SETTINGS_WAKE_LOCK": "Display während des Bezugs aktiv lassen",
   "PAGE_STATISTICS_DIFFERENT_PREPARATION_METHOD": "Brühmethodiken",
   "PAGE_STATISTICS_TOTAL_GROUND_BEANS": "Vermahlene Bohnen",
   "PAGE_STATISTICS_MONEY_SPENT_FOR_COFFEE": "Geld für Kaffee ausgegeben",
@@ -415,6 +417,7 @@
   "PREPARATION_TYPE_STYLE": "Zubereitungsart",
   "PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION": "Aktiviert einen neuen Menüeintrag - über diesen kann die Brühung direkt wiederholt werden.",
   "PAGE_SETTINGS_TRACK_BREW_COORDINATES_DESCRIPTION": "Speichere die Koordinatien zu jeder Brühung.",
+  "PAGE_SETTINGS_TRACK_CAFFEINE_CONSUMPTION_DESCRIPTION": "Speichere die zu dir genommene Koffeinmenge",
 
   "UPDATE_TITLE": "Was gibt's neues",
   "NEXT": "Weiter",
@@ -504,5 +507,15 @@
       "ID": "Brühmethoden Id"
     }
   },
-  "EXCEL_EXPORT": "Excel Export"
+  "EXCEL_EXPORT": "Excel Export",
+  "HEALTH_KIT_QUESTION_TITLE": "Koffeeinkonsum abspeichern",
+  "HEALTH_KIT_QUESTION_MESSAGE": "Durch die Aktivierung wird die eingenommene Koffeinmenge automatisch abgespeichert",
+
+  "ROASTING_SECTION" : {
+    "NAV_GREEN_BEANS": "Rohkaffee",
+    "GREEN_BEAN": {
+      "ADD": "Hinzufügen",
+      "ROASTABLE": "Röstbar"
+    }
+  }
 }
