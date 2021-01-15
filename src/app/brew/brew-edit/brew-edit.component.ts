@@ -163,9 +163,7 @@ export class BrewEditComponent implements OnInit {
         mill: this.data.getMill(),
         bean_age: this.data.getCalculatedBeanAge(),
         prep_name: this.data.getPreparation()['name'],
-        prep_type: this.data.getPreparation()['type'],
-        // settings: this.settings,
-        reporting_settings: this.settings.reporting_parameters
+        prep_type: this.data.getPreparation()['type']
       }
 
 
