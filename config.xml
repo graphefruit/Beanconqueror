@@ -109,6 +109,12 @@
                 </dict>
             </array>
         </edit-config>
+        <edit-file file="*-Info.plist" mode="merge" target="NSHealthShareUsageDescription">
+            <string>App needs read access to see the caffeinate amount which was tracked with this coffee app</string>
+        </edit-file>
+        <edit-file file="*-Info.plist" mode="merge" target="NSHealthUpdateUsageDescription">
+            <string>App needs write access to add the drunken caffeinate amount with the tracked brews</string>
+        </edit-file>
         <edit-config file="*-Info.plist" mode="merge" target="UIRequiresFullScreen">
             <false />
         </edit-config>
@@ -190,4 +196,10 @@
     <plugin name="cordova-plugin-appminimize" spec="~1.0.1" />
     <plugin name="cordova-android-support-gradle-release" spec="^3.0.1" />
     <plugin name="cordova-plugin-3dtouch" spec="^1.3.7" />
+    <plugin name="cordova-plugin-health" source="npm">
+        <variable name="HEALTH_READ_PERMISSION" value="App needs read access to see the caffeinate amount which was tracked with this coffee app" />
+        <variable name="HEALTH_WRITE_PERMISSION" value="App needs write access to add the drunken caffeinate amount with the tracked brews" />
+        <variable name="PLAY_AUTH_VERSION" value="18.1.0" />
+        <variable name="FIT_API_VERSION" value="19.0.0" />
+    </plugin>
 </widget>

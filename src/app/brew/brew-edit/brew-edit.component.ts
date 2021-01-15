@@ -66,7 +66,7 @@ export class BrewEditComponent implements OnInit {
                private readonly uiBrewHelper: UIBrewHelper,
                private readonly changeDetectorRef: ChangeDetectorRef,
                private readonly modalCtrl: ModalController,
-               public httpClient: HttpClient) {
+               private httpClient: HttpClient) {
 
     this.settings = this.uiSettingsStorage.getSettings();
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range

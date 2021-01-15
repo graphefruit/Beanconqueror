@@ -30,6 +30,8 @@ import {UIBrewHelper} from '../../../services/uiBrewHelper';
 import {Settings} from '../../../classes/settings/settings';
 import {NgxStarsComponent} from 'ngx-stars';
 import { HttpClient } from '@angular/common/http';
+import {UIHealthKit} from '../../../services/uiHealthKit';
+import {Insomnia} from '@ionic-native/insomnia/ngx';
 
 declare var cordova;
 @Component({
@@ -77,7 +79,9 @@ export class BrewAddComponent implements OnInit {
                private uiLog: UILog,
                private readonly uiBrewHelper: UIBrewHelper,
                private readonly changeDetectorRef: ChangeDetectorRef,
-               public httpClient: HttpClient) {
+               private httpClient: HttpClient,
+               private readonly uiHealthKit: UIHealthKit,
+               private insomnia: Insomnia) {
     // Initialize to standard in drop down
     //
 
@@ -110,6 +114,14 @@ export class BrewAddComponent implements OnInit {
   }
 
   public ionViewDidEnter(): void {
+    if (this.settings.wake_lock) {
+      this.insomnia.keepAwake()
+        .then(
+          () =>{},
+          () => {}
+        );
+    }
+
     this.uiAnalytics.trackEvent('BREW', 'ADD');
    this.getCoordinates(true);
     if (this.brew_template) {
@@ -117,6 +129,17 @@ export class BrewAddComponent implements OnInit {
     } else {
       this.__loadLastBrew();
     }
+  }
+
+  public ionViewWillLeave() {
+    if (this.settings.wake_lock) {
+      this.insomnia.allowSleepAgain()
+        .then(
+          () => {},
+          () => {}
+        );
+    }
+
   }
 
   private getCoordinates(_highAccuracy: boolean) {
@@ -172,6 +195,10 @@ export class BrewAddComponent implements OnInit {
       this.data.config.unix_timestamp = moment(this.customCreationDate).unix();
     }
     this.uiBrewStorage.update(this.data);
+
+    if (this.settings.track_caffeine_consumption && this.data.grind_weight > 0) {
+      this.uiHealthKit.trackCaffeineConsumption(this.data.grind_weight, moment(this.customCreationDate).toDate());
+    }
     if (!this.hide_toast_message) {
       this.uiToast.showInfoToast('TOAST_BREW_ADDED_SUCCESSFULLY');
     }

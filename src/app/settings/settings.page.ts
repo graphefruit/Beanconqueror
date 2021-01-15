@@ -38,6 +38,7 @@ import {UIUpdate} from '../../services/uiUpdate';
 import {UiVersionStorage} from '../../services/uiVersionStorage';
 import {UIExcel} from '../../services/uiExcel';
 import {Router} from '@angular/router';
+import {UIHealthKit} from '../../services/uiHealthKit';
 
 declare var cordova: any;
 declare var device: any;
@@ -56,6 +57,8 @@ export class SettingsPage implements OnInit {
   public BREW_VIEWS = BREW_VIEW_ENUM;
   public STARTUP_VIEW = STARTUP_VIEW_ENUM;
   public debounceLanguageFilter: Subject<string> = new Subject<string>();
+
+  public isHealthSectionAvailable: boolean = false;
 
 
   private static __cleanupImportBeanData(_data: Array<IBean>): any {
@@ -117,6 +120,7 @@ export class SettingsPage implements OnInit {
               private readonly uiVersionStorage: UiVersionStorage,
               private readonly uiExcel: UIExcel,
               private readonly router: Router
+              private readonly uiHealthKit: UIHealthKit
               ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -124,6 +128,13 @@ export class SettingsPage implements OnInit {
       .subscribe(() => {
         this.setLanguage();
       });
+
+
+    this.uiHealthKit.isAvailable().then( () => {
+      this.isHealthSectionAvailable = true;
+    }, () => {
+        this.isHealthSectionAvailable = false;
+      })
   }
 
 
@@ -132,6 +143,26 @@ export class SettingsPage implements OnInit {
   public ngOnInit() {
 
   }
+
+  public checkHealthPlugin() {
+    if (this.settings.track_caffeine_consumption === false) {
+      this.uiAlert.showConfirm('HEALTH_KIT_QUESTION_MESSAGE','HEALTH_KIT_QUESTION_TITLE', true).then( () => {
+        this.uiHealthKit.requestAuthorization().then(() => {
+          // Allowed
+          this.settings.track_caffeine_consumption = true;
+        }, () => {
+          // Forbidden
+          this.settings.track_caffeine_consumption = false;
+        });
+      }, () => {
+        this.settings.track_caffeine_consumption = false;
+      });
+    }
+
+
+  }
+
+
 
   public checkCoordinates() {
     if (this.platform.is('android')) {

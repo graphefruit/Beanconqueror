@@ -18,6 +18,13 @@ const routes: Routes = [
     },
     loadChildren: './home/home.module#HomePageModule',
   },
+
+  {
+    path: 'roasting-section', resolve: {
+      resolver: RouteResolver
+    },
+    loadChildren: './roasting-section/roasting-section.module#RoastingSectionPageModule'
+  },
   {
     path: 'info', resolve: {
       resolver: RouteResolver

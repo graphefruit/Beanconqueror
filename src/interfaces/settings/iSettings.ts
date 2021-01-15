@@ -50,6 +50,8 @@ export interface ISettings {
   show_archived_mills: boolean;
   show_archived_preparations: boolean;
 
+  track_caffeine_consumption: boolean;
+
   brew_filter: {
     OPEN: IBrewPageFilter,
     ARCHIVED: IBrewPageFilter
@@ -61,6 +63,8 @@ export interface ISettings {
   };
 
   welcome_page_showed: boolean;
+
+  wake_lock:boolean;
 
   config: IConfig;
 }
