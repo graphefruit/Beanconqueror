@@ -260,8 +260,8 @@ export class SettingsPage implements OnInit {
 
   }
 
-  public openManageSplunkParameters(): void {
-    this.router.navigateByUrl('/settings/splunk');
+  public openManageReportingParameters(): void {
+    this.router.navigateByUrl('/settings/reporting');
 
   }
 

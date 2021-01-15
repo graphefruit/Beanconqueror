@@ -176,25 +176,30 @@ export class BrewAddComponent implements OnInit {
       this.uiToast.showInfoToast('TOAST_BREW_ADDED_SUCCESSFULLY');
     }
 
-    if ('hec_endpoint' in this.settings.splunk_parameters && this.settings.splunk_parameters.hec_endpoint !== '') {
+    if ('reporting_endpoint' in this.settings.reporting_parameters && this.settings.reporting_parameters.reporting_endpoint !== '') {
       const postData = {
-        index: 'logs_itoc_bsa_prod',
-        sourcetype: 'willtest',
-        event: {
-          data: this.data,
-          beans: this.data.getBean(),
-          mill: this.data.getMill(),
-          bean_age: this.data.getCalculatedBeanAge(),
-          prep_name: this.data.getPreparation()['name'],
-          prep_type: this.data.getPreparation()['type'],
-          // settings: this.settings,
-          splunk_settings: this.settings.splunk_parameters
+        action: "new",
+        brew_data: this.data,
+        brew_timestamp: this.data.config.unix_timestamp,
+        beans: this.data.getBean(),
+        mill: this.data.getMill(),
+        bean_age: this.data.getCalculatedBeanAge(),
+        prep_name: this.data.getPreparation()['name'],
+        prep_type: this.data.getPreparation()['type'],
+        // settings: this.settings,
+        reporting_settings: this.settings.reporting_parameters
+        }
+
+
+      const httpOptions = {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
         }
       }
-
       this.httpClient.post(
-        this.settings.splunk_parameters.hec_endpoint,
-        postData
+        this.settings.reporting_parameters.reporting_endpoint,
+        postData,
+        httpOptions
       )
         .subscribe(data => {
           console.log(data['_body']);

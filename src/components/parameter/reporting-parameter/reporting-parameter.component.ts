@@ -9,11 +9,11 @@ import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
 
 @Component({
-  selector: 'splunk-parameter',
-  templateUrl: './splunk-parameter.component.html',
-  styleUrls: ['./splunk-parameter.component.scss'],
+  selector: 'reporting-parameter',
+  templateUrl: './reporting-parameter.component.html',
+  styleUrls: ['./reporting-parameter.component.scss'],
 })
-export class SplunkParameterComponent implements OnInit {
+export class ReportingParameterComponent implements OnInit {
 
 
 

@@ -1,19 +1,19 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {IonicModule} from '@ionic/angular';
 
-import {SplunkLoggingParameterComponent} from './splunk-logging-parameter.component';
+import {ReportingLoggingParameterComponent} from './reporting-logging-parameter.component';
 
-describe('SplunkLoggingParameterComponent', () => {
-  let component: SplunkLoggingParameterComponent;
-  let fixture: ComponentFixture<SplunkLoggingParameterComponent>;
+describe('ReportingLoggingParameterComponent', () => {
+  let component: ReportingLoggingParameterComponent;
+  let fixture: ComponentFixture<ReportingLoggingParameterComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [SplunkLoggingParameterComponent],
+      declarations: [ReportingLoggingParameterComponent],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(SplunkLoggingParameterComponent);
+    fixture = TestBed.createComponent(ReportingLoggingParameterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

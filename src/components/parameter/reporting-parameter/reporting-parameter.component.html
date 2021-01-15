@@ -1,0 +1,13 @@
+
+<ion-card class="ion-padding">
+  <ion-title class="ion-no-padding">{{"REPORTING_SETTINGS" | translate  }}</ion-title>
+  <ion-item tappable>
+    <ion-label>{{"REPORTING_ENDPOINT" | translate}}</ion-label>
+    <ion-input #processing="ngModel" [(ngModel)]="data.reporting_parameters.reporting_endpoint"
+               name="reporting_endpoint" placeholder="https://yourserver.com:8088" spellcheck="false" type="text">
+    </ion-input>
+    <ion-button (click)="save()" color="accent" disable-double-click expand="block" tappable
+                type="submit">{{"SAVE" | translate}}</ion-button>
+  </ion-item>
+
+</ion-card>

@@ -3,11 +3,11 @@ import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 import {Settings} from '../../../classes/settings/settings';
 
 @Component({
-  selector: 'splunk-logging-parameter',
-  templateUrl: './splunk-logging-parameter.component.html',
-  styleUrls: ['./splunk-logging-parameter.component.scss'],
+  selector: 'reporting-logging-parameter',
+  templateUrl: './reporting-logging-parameter.component.html',
+  styleUrls: ['./reporting-logging-parameter.component.scss'],
 })
-export class SplunkLoggingParameterComponent implements OnInit {
+export class ReportingLoggingParameterComponent implements OnInit {
 
   public settings: Settings;
 

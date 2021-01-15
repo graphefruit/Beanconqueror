@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 
 import {SettingsPage} from './settings.page';
-import {SplunkLoggingParameterComponent} from './splunk-logging-parameter/splunk-logging-parameter.component';
+import {ReportingLoggingParameterComponent} from './reporting-logging-parameter/reporting-logging-parameter.component';
 
 const routes: Routes = [
   {
@@ -10,8 +10,8 @@ const routes: Routes = [
     component: SettingsPage,
   },
   {
-    path: 'splunk',
-    component: SplunkLoggingParameterComponent
+    path: 'reporting',
+    component: ReportingLoggingParameterComponent
   },
 
 ];

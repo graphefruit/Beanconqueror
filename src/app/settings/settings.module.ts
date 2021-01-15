@@ -9,8 +9,6 @@ import {SharedModule} from '../shared/shared.module';
 
 import {SettingsPageRoutingModule} from './settings-routing.module';
 
-
-
 @NgModule({
   imports: [
     CommonModule,

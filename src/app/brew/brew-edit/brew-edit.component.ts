@@ -23,6 +23,7 @@ import {Settings} from '../../../classes/settings/settings';
 import {UIBrewHelper} from '../../../services/uiBrewHelper';
 import {NgxStarsComponent} from 'ngx-stars';
 import {DatetimePopoverComponent} from '../../../popover/datetime-popover/datetime-popover.component';
+import { HttpClient } from '@angular/common/http';
 
 declare var cordova;
 @Component({
@@ -64,7 +65,8 @@ export class BrewEditComponent implements OnInit {
                private readonly platform: Platform,
                private readonly uiBrewHelper: UIBrewHelper,
                private readonly changeDetectorRef: ChangeDetectorRef,
-               private readonly modalCtrl: ModalController) {
+               private readonly modalCtrl: ModalController,
+               public httpClient: HttpClient) {
 
     this.settings = this.uiSettingsStorage.getSettings();
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
@@ -151,6 +153,39 @@ export class BrewEditComponent implements OnInit {
     }
     this.uiBrewHelper.cleanInvisibleBrewData(this.data);
     this.uiBrewStorage.update(this.data);
+
+    if ('reporting_endpoint' in this.settings.reporting_parameters && this.settings.reporting_parameters.reporting_endpoint !== '') {
+      const postData = {
+        action: "edit",
+        brew_data: this.data,
+        brew_timestamp: this.data.config.unix_timestamp,
+        beans: this.data.getBean(),
+        mill: this.data.getMill(),
+        bean_age: this.data.getCalculatedBeanAge(),
+        prep_name: this.data.getPreparation()['name'],
+        prep_type: this.data.getPreparation()['type'],
+        // settings: this.settings,
+        reporting_settings: this.settings.reporting_parameters
+      }
+
+
+      const httpOptions = {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      }
+      this.httpClient.post(
+        this.settings.reporting_parameters.reporting_endpoint,
+        postData,
+        httpOptions
+      )
+        .subscribe(data => {
+          console.log(data['_body']);
+        }, error => {
+          console.log(error);
+        });
+    }
+
     this.uiToast.showInfoToast('TOAST_BREW_EDITED_SUCCESSFULLY');
     this.dismiss();
   }

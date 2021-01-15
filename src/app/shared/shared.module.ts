@@ -96,8 +96,8 @@ import {PreparationCustomParametersComponent} from '../preparation/preparation-c
 import {DefaultCustomParameterComponent} from '../../components/parameter/default-custom-parameter/default-custom-parameter.component';
 import {SortCustomParameterComponent} from '../../components/parameter/sort-custom-parameter/sort-custom-parameter.component';
 import {ManageCustomParameterComponent} from '../../components/parameter/manage-custom-parameter/manage-custom-parameter.component';
-import {SplunkParameterComponent} from '../../components/parameter/splunk-parameter/splunk-parameter.component';
-import {SplunkLoggingParameterComponent} from '../settings/splunk-logging-parameter/splunk-logging-parameter.component';
+import {ReportingParameterComponent} from '../../components/parameter/reporting-parameter/reporting-parameter.component';
+import {ReportingLoggingParameterComponent} from '../settings/reporting-logging-parameter/reporting-logging-parameter.component';
 import {BeanFilterComponent} from '../beans/bean-filter/bean-filter.component';
 import {BeansDetailComponent} from '../beans/beans-detail/beans-detail.component';
 import {MaxNumberValueDirective} from '../../directive/max-number-value.directive';
@@ -123,8 +123,8 @@ import {PreparationDetailComponent} from '../preparation/preparation-detail/prep
     DefaultParameterComponent,
     SortParameterComponent,
     ManageParameterComponent,
-    SplunkParameterComponent,
-    SplunkLoggingParameterComponent,
+    ReportingParameterComponent,
+    ReportingLoggingParameterComponent,
     HelperBrewRatioComponent,
     HelperWaterHardnessComponent,
     BrewCuppingComponent,
@@ -165,8 +165,8 @@ import {PreparationDetailComponent} from '../preparation/preparation-detail/prep
     DefaultParameterComponent,
     SortParameterComponent,
     ManageParameterComponent,
-    SplunkParameterComponent,
-    SplunkLoggingParameterComponent,
+    ReportingParameterComponent,
+    ReportingLoggingParameterComponent,
     HelperBrewRatioComponent,
     HelperWaterHardnessComponent,
     BrewCuppingComponent,
@@ -180,8 +180,8 @@ import {PreparationDetailComponent} from '../preparation/preparation-detail/prep
     BeanModalSelectComponent,
     MillModalSelectComponent,
     PreparationModalSelectComponent,
-    SplunkParameterComponent,
-    SplunkLoggingParameterComponent,
+    ReportingParameterComponent,
+    ReportingLoggingParameterComponent,
     MillPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent, DefaultCustomParameterComponent, SortCustomParameterComponent, ManageCustomParameterComponent, BrewTimerComponent],
   imports: [
     CommonModule,
@@ -256,7 +256,7 @@ import {PreparationDetailComponent} from '../preparation/preparation-detail/prep
     BeanModalSelectComponent,
     MillModalSelectComponent,
     PreparationModalSelectComponent,
-    SplunkParameterComponent,
+    ReportingParameterComponent,
     MillPopoverActionsComponent, PreparationPopoverActionsComponent, TimerComponent, DefaultCustomParameterComponent, SortCustomParameterComponent, ManageCustomParameterComponent, BrewTimerComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
