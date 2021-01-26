@@ -11,7 +11,6 @@ import {UIToast} from '../../../services/uiToast';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 import {UIBeanHelper} from '../../../services/uiBeanHelper';
 import {Brew} from '../../../classes/brew/brew';
-import {BeanPhotoViewComponent} from '../../beans/bean-photo-view/bean-photo-view.component';
 import {BeanFilterComponent} from '../../beans/bean-filter/bean-filter.component';
 import {GreenBean} from '../../../classes/green-bean/green-bean';
 import {UIGreenBeanStorage} from '../../../services/uiGreenBeanStorage';
@@ -19,6 +18,7 @@ import {GREEN_BEAN_ACTION} from '../../../enums/green-beans/greenBeanAction';
 import {GreenBeanEditComponent} from './green-bean-edit/green-bean-edit.component';
 import {GreenBeanAddComponent} from './green-bean-add/green-bean-add.component';
 import {GreenBeanDetailComponent} from './green-bean-detail/green-bean-detail.component';
+import {PhotoPopoverComponent} from '../../../popover/photo-popover/photo-popover.component';
 
 @Component({
   selector: 'app-green-beans',
@@ -125,7 +125,7 @@ export class GreenBeansPage implements OnInit {
   }
 
   public async viewPhotos(_bean: GreenBean) {
-    const modal = await this.modalCtrl.create({component: BeanPhotoViewComponent, id:'bean-photo', componentProps: {bean: _bean}});
+    const modal = await this.modalCtrl.create({component: PhotoPopoverComponent, id:'photo-popover', componentProps: {data: _bean}});
     await modal.present();
     await modal.onWillDismiss();
   }

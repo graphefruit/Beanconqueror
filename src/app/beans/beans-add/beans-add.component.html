@@ -240,18 +240,7 @@
                       autocorrect="true"
                       name="note" placeholder="{{'BEAN.PLACE_HOLDER.NOTES' | translate}}" rows="5" spellcheck="true"></ion-textarea>
       </ion-item>
-      <ion-item (click)="addImage()" button lines="none" tappable>
-        <ion-icon class="icon-16" name="beanconqueror-add"></ion-icon>&nbsp;{{"ADD_PHOTO" | translate}}
-      </ion-item>
-      <div *ngIf="data?.attachments && data.attachments.length > 0">
-        <ion-slides #photoSlides pager="true">
-          <ion-slide *ngFor="let attachment of data.attachments;let i = index">
-            <ion-button (click)="deleteImage(i)" class="position-absolute-button"
-                        color="accent">{{"DELETE" | translate}}</ion-button>
-            <async-image class="brew-image" filePath="{{attachment}}"></async-image>
-          </ion-slide>
-        </ion-slides>
-      </div>
+      <photo-add [(data)]="data" ></photo-add>
   </ion-card>
 
 </ion-content>

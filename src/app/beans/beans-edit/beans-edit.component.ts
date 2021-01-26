@@ -33,7 +33,6 @@ export class BeansEditComponent implements OnInit {
 
 
   @Input() public bean: IBean;
-  @ViewChild('photoSlides', {static: false}) public photoSlides: IonSlides;
 
 
   public roasterResultsAvailable: boolean = false;
@@ -120,42 +119,6 @@ export class BeansEditComponent implements OnInit {
     this.roasterResults = [];
     this.roasterResultsAvailable = false;
     this.ignoreNextChange = true;
-  }
-  public addImage(): void {
-    this.uiImage.showOptionChooser()
-      .then((_option) => {
-        if (_option === 'CHOOSE') {
-          // CHOSE
-          this.uiImage.choosePhoto()
-            .then((_path) => {
-              this.data.attachments.push(_path.toString());
-            });
-        } else {
-          // TAKE
-          this.uiImage.takePhoto()
-            .then((_path) => {
-              this.data.attachments.push(_path.toString());
-            });
-        }
-      });
-  }
-
-  public async deleteImage(_index: number) {
-    const splicedPaths: Array<string> = this.data.attachments.splice(_index, 1);
-    for (const path of splicedPaths) {
-      try {
-        await this.uiFileHelper.deleteFile(path);
-        this.uiToast.showInfoToast('IMAGE_DELETED');
-      } catch (ex) {
-        this.uiToast.showInfoToast('IMAGE_NOT_DELETED');
-      }
-
-    }
-    if (this.data.attachments.length > 0) {
-      // Slide to one item before
-      this.photoSlides.slideTo(_index - 1, 0);
-    }
-
   }
 
   public onRoastRate(_event): void {

@@ -11,7 +11,6 @@ import {BrewAddComponent} from '../brew/brew-add/brew-add.component';
 import {BrewPage} from '../brew/brew.page';
 import {BrewDetailComponent} from '../brew/brew-detail/brew-detail.component';
 import {BrewEditComponent} from '../brew/brew-edit/brew-edit.component';
-import {BrewPhotoViewComponent} from '../brew/brew-photo-view/brew-photo-view.component';
 import {TimerComponent} from '../../components/timer/timer.component';
 import {BrewTimerComponent} from '../../components/brew-timer/brew-timer.component';
 import {FormsModule} from '@angular/forms';
@@ -82,7 +81,6 @@ import {WelcomePopoverComponent} from '../../popover/welcome-popover/welcome-pop
 import {PreparationAddTypeComponent} from '../preparation/preparation-add-type/preparation-add-type.component';
 import {BeanOverlayDirective} from '../../directive/bean-overlay.directive';
 import {BeanModalSelectComponent} from '../beans/bean-modal-select/bean-modal-select.component';
-import {BeanPhotoViewComponent} from '../beans/bean-photo-view/bean-photo-view.component';
 import {MillModalSelectComponent} from '../mill/mill-modal-select/mill-modal-select.component';
 import {PreparationModalSelectComponent} from '../preparation/preparation-modal-select/preparation-modal-select.component';
 import {MillOverlayDirective} from '../../directive/mill-overlay.directive';
@@ -110,6 +108,8 @@ import {GreenBeanDetailComponent} from '../roasting-section/green-beans/green-be
 import {GreenBeanPopoverActionsComponent} from '../roasting-section/green-beans/green-bean-popover-actions/green-bean-popover-actions.component';
 import {GreenBeanInformationComponent} from '../../components/green-bean-information/green-bean-information.component';
 import { Insomnia } from '@ionic-native/insomnia/ngx';
+import {PhotoPopoverComponent} from '../../popover/photo-popover/photo-popover.component';
+import {PhotoAddComponent} from '../../components/photo-add/photo-add.component';
 
 @NgModule({
   declarations: [
@@ -182,8 +182,7 @@ import { Insomnia } from '@ionic-native/insomnia/ngx';
     BrewPage,
     BrewDetailComponent,
     BrewEditComponent,
-    BrewPhotoViewComponent,
-    BeanPhotoViewComponent,
+    PhotoPopoverComponent,
     BrewPopoverActionsComponent,
     BeanPopoverActionsComponent,
     MillPopoverActionsComponent,
@@ -195,7 +194,8 @@ import { Insomnia } from '@ionic-native/insomnia/ngx';
     DefaultCustomParameterComponent,
     SortCustomParameterComponent,
     ManageCustomParameterComponent,
-    BrewTimerComponent],
+    BrewTimerComponent,
+    PhotoAddComponent],
   entryComponents: [
     SettingsPage,
     StatisticPage,
@@ -250,8 +250,7 @@ import { Insomnia } from '@ionic-native/insomnia/ngx';
     BrewPage,
     BrewDetailComponent,
     BrewEditComponent,
-    BrewPhotoViewComponent,
-    BeanPhotoViewComponent,
+    PhotoPopoverComponent,
     BrewPopoverActionsComponent,
     BeanPopoverActionsComponent,
     BeanModalSelectComponent,
@@ -263,7 +262,8 @@ import { Insomnia } from '@ionic-native/insomnia/ngx';
     DefaultCustomParameterComponent,
     SortCustomParameterComponent,
     ManageCustomParameterComponent,
-    BrewTimerComponent],
+    BrewTimerComponent,
+    PhotoAddComponent],
   imports: [
     CommonModule,
     IonicModule,
@@ -368,8 +368,7 @@ import { Insomnia } from '@ionic-native/insomnia/ngx';
     BrewPage,
     BrewDetailComponent,
     BrewEditComponent,
-    BrewPhotoViewComponent,
-    BeanPhotoViewComponent,
+    PhotoPopoverComponent,
     BrewPopoverActionsComponent,
     BeanPopoverActionsComponent,
     BeanModalSelectComponent,
@@ -381,7 +380,8 @@ import { Insomnia } from '@ionic-native/insomnia/ngx';
     DefaultCustomParameterComponent,
     SortCustomParameterComponent,
     ManageCustomParameterComponent,
-    BrewTimerComponent],
+    BrewTimerComponent,
+    PhotoAddComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule {

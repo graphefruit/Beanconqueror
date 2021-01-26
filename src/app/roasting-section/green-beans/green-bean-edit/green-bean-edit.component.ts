@@ -8,7 +8,6 @@ import {UIAnalytics} from '../../../../services/uiAnalytics';
 import {UIFileHelper} from '../../../../services/uiFileHelper';
 import {UIToast} from '../../../../services/uiToast';
 import {TranslateService} from '@ngx-translate/core';
-import {IBeanInformation} from '../../../../interfaces/bean/iBeanInformation';
 import moment from 'moment';
 import {IGreenBean} from '../../../../interfaces/green-bean/iGreenBean';
 
@@ -21,7 +20,6 @@ declare var cordova;
 })
 export class GreenBeanEditComponent implements OnInit {
 
-  @ViewChild('photoSlides', {static: false}) public photoSlides: IonSlides;
 
   public data: GreenBean = new GreenBean();
   @Input() public greenBean: IGreenBean;
@@ -48,24 +46,7 @@ export class GreenBeanEditComponent implements OnInit {
 
   }
 
-  public addImage(): void {
-    this.uiImage.showOptionChooser()
-      .then((_option) => {
-        if (_option === 'CHOOSE') {
-          // CHOSE
-          this.uiImage.choosePhoto()
-            .then((_path) => {
-              this.data.attachments.push(_path.toString());
-            });
-        } else {
-          // TAKE
-          this.uiImage.takePhoto()
-            .then((_path) => {
-              this.data.attachments.push(_path.toString());
-            });
-        }
-      });
-  }
+
 
   public editBean(): void {
     if (this.__formValid()) {
@@ -88,24 +69,7 @@ export class GreenBeanEditComponent implements OnInit {
     this.dismiss();
   }
 
-  public async deleteImage(_index: number): Promise<any> {
 
-    const splicedPaths: Array<string> = this.data.attachments.splice(_index, 1);
-    for (const path of splicedPaths) {
-      try {
-        await this.uiFileHelper.deleteFile(path);
-        this.uiToast.showInfoToast('IMAGE_DELETED');
-      } catch (ex) {
-        this.uiToast.showInfoToast('IMAGE_NOT_DELETED');
-      }
-
-    }
-    if (this.data.attachments.length > 0) {
-      // Slide to one item before
-      this.photoSlides.slideTo(_index - 1, 0);
-    }
-
-  }
 
   public dismiss(): void {
     this.modalController.dismiss({

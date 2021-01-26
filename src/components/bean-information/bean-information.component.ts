@@ -8,7 +8,6 @@ import {BEAN_ACTION} from '../../enums/beans/beanAction';
 import {Brew} from '../../classes/brew/brew';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
 import {ROASTS_ENUM} from '../../enums/beans/roasts';
-import {BeanPhotoViewComponent} from '../../app/beans/bean-photo-view/bean-photo-view.component';
 import {NgxStarsComponent} from 'ngx-stars';
 @Component({
   selector: 'bean-information',
@@ -101,14 +100,5 @@ export class BeanInformationComponent implements OnInit {
     const data = await popover.onWillDismiss();
     this.beanAction.emit([data.role as BEAN_ACTION, this.bean]);
   }
-
-  public async viewPhotos() {
-    const modal = await this.modalController.create({component: BeanPhotoViewComponent,id:'bean-photo', componentProps: {bean: this.bean}});
-    await modal.present();
-    await modal.onWillDismiss();
-  }
-
-
-
 
 }

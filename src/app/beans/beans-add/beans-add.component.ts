@@ -25,7 +25,6 @@ declare var cordova: any;
 })
 export class BeansAddComponent implements OnInit {
 
-  @ViewChild('photoSlides', {static: false}) public photoSlides: IonSlides;
   @ViewChild('beanStars', {read: NgxStarsComponent, static: false}) public beanStars: NgxStarsComponent;
   public data: Bean = new Bean();
   private readonly bean_template: Bean;
@@ -113,24 +112,6 @@ export class BeansAddComponent implements OnInit {
     }
   }
 
-  public addImage(): void {
-    this.uiImage.showOptionChooser()
-        .then((_option) => {
-          if (_option === 'CHOOSE') {
-            // CHOSE
-            this.uiImage.choosePhoto()
-                .then((_path) => {
-                  this.data.attachments.push(_path.toString());
-                });
-          } else {
-            // TAKE
-            this.uiImage.takePhoto()
-                .then((_path) => {
-                  this.data.attachments.push(_path.toString());
-                });
-          }
-        });
-  }
 
   public addBean(): void {
 
@@ -163,24 +144,6 @@ export class BeansAddComponent implements OnInit {
     }
   }
 
-  public async deleteImage(_index: number): Promise<any> {
-
-    const splicedPaths: Array<string> = this.data.attachments.splice(_index, 1);
-    for (const path of splicedPaths) {
-      try {
-        await this.uiFileHelper.deleteFile(path);
-        this.uiToast.showInfoToast('IMAGE_DELETED');
-      } catch (ex) {
-        this.uiToast.showInfoToast('IMAGE_NOT_DELETED');
-      }
-
-    }
-    if (this.data.attachments.length > 0) {
-      // Slide to one item before
-      this.photoSlides.slideTo(_index - 1, 0);
-    }
-
-  }
 
   public dismiss(): void {
     this.modalController.dismiss({

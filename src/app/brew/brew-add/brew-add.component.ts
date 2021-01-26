@@ -40,7 +40,6 @@ declare var cordova;
 })
 export class BrewAddComponent implements OnInit {
 
-  @ViewChild('photoSlides', {static: false}) public photoSlides: IonSlides;
   @ViewChild('timer', {static: false}) public timer: BrewTimerComponent;
   @ViewChild('brewTemperatureTime', {static: false}) public brewTemperatureTime: TimerComponent;
   @ViewChild('brewStars', {read: NgxStarsComponent, static: false}) public brewStars: NgxStarsComponent;
@@ -233,45 +232,6 @@ export class BrewAddComponent implements OnInit {
 
   public setCoffeeBloomingTime($event): void {
     this.data.coffee_blooming_time = this.getTime();
-  }
-
-  public addImage(): void {
-    this.uiImage.showOptionChooser()
-        .then((_option) => {
-          if (_option === 'CHOOSE') {
-            // CHOSE
-            this.uiImage.choosePhoto()
-                .then((_path) => {
-                  if (_path) {
-                    this.data.attachments.push(_path.toString());
-                  }
-                });
-          } else {
-            // TAKE
-            this.uiImage.takePhoto()
-                .then((_path) => {
-                  this.data.attachments.push(_path.toString());
-                });
-          }
-        });
-  }
-
-  public async deleteImage(_index: number) {
-    const splicedPaths: Array<string> = this.data.attachments.splice(_index, 1);
-    for (const path of splicedPaths) {
-      try {
-        await this.uiFileHelper.deleteFile(path);
-        this.uiToast.showInfoToast('IMAGE_DELETED');
-      } catch (ex) {
-        this.uiToast.showInfoToast('IMAGE_NOT_DELETED');
-      }
-
-    }
-    if (this.data.attachments.length > 0) {
-      // Slide to one item before
-      this.photoSlides.slideTo(_index - 1, 0);
-    }
-
   }
 
   public stopTimer(): void {
