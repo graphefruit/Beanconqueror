@@ -11,7 +11,6 @@ import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {Settings} from '../../classes/settings/settings';
 import {BEAN_ACTION} from '../../enums/beans/beanAction';
 import {UIToast} from '../../services/uiToast';
-import {BeanPhotoViewComponent} from './bean-photo-view/bean-photo-view.component';
 import {UIAnalytics} from '../../services/uiAnalytics';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
 import {BeanFilterComponent} from './bean-filter/bean-filter.component';
@@ -19,6 +18,7 @@ import {IBeanPageFilter} from '../../interfaces/bean/iBeanPageFilter';
 import {BEAN_SORT_AFTER} from '../../enums/beans/beanSortAfter';
 import {BEAN_SORT_ORDER} from '../../enums/beans/beanSortOrder';
 import {BeansDetailComponent} from './beans-detail/beans-detail.component';
+import {PhotoPopoverComponent} from '../../popover/photo-popover/photo-popover.component';
 
 @Component({
   selector: 'beans',
@@ -125,7 +125,7 @@ export class BeansPage implements OnInit {
   }
 
   public async viewPhotos(_bean: Bean) {
-    const modal = await this.modalCtrl.create({component: BeanPhotoViewComponent, id:'bean-photo', componentProps: {bean: _bean}});
+    const modal = await this.modalCtrl.create({component: PhotoPopoverComponent, id:'photo-popover', componentProps: {data: _bean}});
     await modal.present();
     await modal.onWillDismiss();
   }

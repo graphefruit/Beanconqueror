@@ -7,7 +7,6 @@ import {UIBeanHelper} from '../../services/uiBeanHelper';
 import {Brew} from '../../classes/brew/brew';
 import {BEAN_ACTION} from '../../enums/beans/beanAction';
 
-import {BeanPhotoViewComponent} from '../../app/beans/bean-photo-view/bean-photo-view.component';
 import {GreenBean} from '../../classes/green-bean/green-bean';
 import {GreenBeanPopoverActionsComponent} from '../../app/roasting-section/green-beans/green-bean-popover-actions/green-bean-popover-actions.component';
 
@@ -67,11 +66,6 @@ export class GreenBeanInformationComponent implements OnInit {
     this.greenBeanAction.emit([data.role as BEAN_ACTION, this.greenBean]);
   }
 
-  public async viewPhotos() {
-    const modal = await this.modalController.create({component: BeanPhotoViewComponent,id:'bean-photo', componentProps: {bean: this.greenBean}});
-    await modal.present();
-    await modal.onWillDismiss();
-  }
 
   public getUsedWeightCount(): number {
     let usedWeightCount: number = 0;

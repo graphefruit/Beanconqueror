@@ -9,7 +9,6 @@ import {Brew} from '../../classes/brew/brew';
 import {SocialSharing} from '@ionic-native/social-sharing/ngx';
 import {BrewAddComponent} from './brew-add/brew-add.component';
 import {BrewDetailComponent} from './brew-detail/brew-detail.component';
-import {BrewPhotoViewComponent} from './brew-photo-view/brew-photo-view.component';
 import {BrewEditComponent} from './brew-edit/brew-edit.component';
 
 import {UIPreparationStorage} from '../../services/uiPreparationStorage';
@@ -27,6 +26,7 @@ import {Settings} from '../../classes/settings/settings';
 import {UIToast} from '../../services/uiToast';
 import {BrewCuppingComponent} from './brew-cupping/brew-cupping.component';
 import {UIAnalytics} from '../../services/uiAnalytics';
+import {PhotoPopoverComponent} from '../../popover/photo-popover/photo-popover.component';
 
 @Component({
   selector: 'brew',
@@ -209,7 +209,7 @@ export class BrewPage implements OnInit {
 
 
   public async viewPhotos(_brew: Brew) {
-    const modal = await this.modalCtrl.create({component: BrewPhotoViewComponent, id:'brew-photo', componentProps: {brew: _brew}});
+    const modal = await this.modalCtrl.create({component: PhotoPopoverComponent, id:'photo-popover', componentProps: {data: _brew}});
     await modal.present();
     await modal.onWillDismiss();
   }

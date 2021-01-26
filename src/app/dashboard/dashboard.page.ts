@@ -8,7 +8,6 @@ import {UIBrewHelper} from '../../services/uiBrewHelper';
 import {BrewDetailComponent} from '../brew/brew-detail/brew-detail.component';
 import {BREW_ACTION} from '../../enums/brews/brewAction';
 import {BrewCuppingComponent} from '../brew/brew-cupping/brew-cupping.component';
-import {BrewPhotoViewComponent} from '../brew/brew-photo-view/brew-photo-view.component';
 import {BrewEditComponent} from '../brew/brew-edit/brew-edit.component';
 import {UIAlert} from '../../services/uiAlert';
 import {UIToast} from '../../services/uiToast';
@@ -18,6 +17,7 @@ import {UIAnalytics} from '../../services/uiAnalytics';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
 import {Bean} from '../../classes/bean/bean';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
+import {PhotoPopoverComponent} from '../../popover/photo-popover/photo-popover.component';
 
 @Component({
   selector: 'dashboard',
@@ -161,7 +161,7 @@ export class DashboardPage implements OnInit {
 
 
   public async viewPhotos(_brew: Brew) {
-    const modal = await this.modalCtrl.create({component: BrewPhotoViewComponent, id:'brew-photo', componentProps: {brew: _brew}});
+    const modal = await this.modalCtrl.create({component: PhotoPopoverComponent, id:'photo-popover', componentProps: {data: _brew}});
     await modal.present();
     await modal.onWillDismiss();
   }
