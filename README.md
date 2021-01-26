@@ -17,6 +17,27 @@ Download today, track your brews, change your recipes, to get the best tasting c
 ## Sneak preview
 ![Beanconqueror gif](demo/Beanconqueror.gif)
 
+## Articles
+- German: [iphone-ticker](https://www.iphone-ticker.de/beanconqueror-app-geheimtipp-fuer-espresso-verrueckte-168517/) [wuv](https://www.wuv.de/tech/techtaeglich_super_mario_rast_durch_berlin)
+
+## Threads
+- German: [Kaffee-Netz](https://www.kaffee-netz.de/threads/beanconqueror-app.111249)
+- English: [Home-Barista](https://www.home-barista.com/knockbox/beanconqueror-app-t68236.html)
+- Dutch [tweakers](https://gathering.tweakers.net/forum/list_messages/1635607/44) [koffiepraat](https://www.koffiepraat.nl/forum/viewtopic.php?t=9842 )
+- Greek: [greekespresso](https://www.greekespresso.gr/forum/viewtopic.php?f=4&t=7251&p=97854&hilit=beanconqueror#p97854)
+
+## Rankings
+
+On January 2021, the app got a bit hyped, through german featuring articles, the top rankings because of this you find below.
+
+### Android
+Top charts: Eat & Drink - Rank 5
+Eat & Drink Ranking - Rank 70
+
+### iOS
+Eat & Drink Raking - Rank 36
+
+
 ## Features
 
 Different features are supported by this app, a brief overview you'll find here.
@@ -37,7 +58,7 @@ Different features are supported by this app, a brief overview you'll find here.
 
 ## Special thanks
 
-- Nicola for giving the app a whole new design :)
+- Nicola for giving the app a whole new design.
 
 ## Getting the App
 The App is a cross platform application, running on the ionic framework. 
@@ -86,9 +107,12 @@ Thats why just Android is support by now.
 ### Which requirements does the app needs?
 The app needs access to your filesystem aswell as the camera
 
-*Filesytem*: Needed to save images which you took on beans/brews etc.
-*Camera*: Needed to take picures or access the photo library to set images for your beans/brews
-*Internet*: NOT NEEDED! But needed if you want to send me some analytics information to make the app better :)
+- *Filesytem*: Needed to save images which you took on beans/brews etc or exporting your settings.
+- *Camera*: Needed to take picures or access the photo library to set images for your beans/brews
+- *Internet*: NOT NEEDED! But needed if you want to send me some analytics information to make the app better :)
+- *GPS*: NOT NEEDED! Activated through settings, saves the brew location
+- *Apple Health*: NOT NEEDED! Activated through settings, saves caffeine amount
+- *Wake look*: NOT NEEDED! Activated through settings, won't let your phone get into sleep mode while brewing
 
 
 # Develop on your own
@@ -97,7 +121,6 @@ The app needs access to your filesystem aswell as the camera
 
 If you're not familiar with Ionic or Cordova [read through the introduction](http://ionicframework.com/docs/intro/installation/).  
 To get started with anything you need [Node.js](https://nodejs.org/en/download/) installed
-
 
 
 ## Want to check the code quality?
