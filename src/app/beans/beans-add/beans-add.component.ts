@@ -35,10 +35,7 @@ export class BeansAddComponent implements OnInit {
                public uiHelper: UIHelper,
                private readonly uiAnalytics: UIAnalytics,
                private readonly uiFileHelper: UIFileHelper,
-               private readonly uiToast: UIToast,
-               private readonly translate: TranslateService,
-               private readonly platform: Platform,
-               private readonly changeDetectorRef: ChangeDetectorRef) {
+               private readonly uiToast: UIToast) {
     this.bean_template = this.navParams.get('bean_template');
   }
 
@@ -103,9 +100,6 @@ export class BeansAddComponent implements OnInit {
     this.data.roastingDate = _bean.roastingDate;
     this.data.note = _bean.note;
     this.data.roaster = _bean.roaster;
-    if (this.data.roaster !== '') {
-      //this.ignoreNextChange = true;
-    }
     this.data.roast = _bean.roast;
     this.data.beanMix = _bean.beanMix;
 

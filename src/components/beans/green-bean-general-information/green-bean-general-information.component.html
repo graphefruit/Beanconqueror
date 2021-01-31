@@ -1,0 +1,76 @@
+<ion-card class="popover" style="display:flex; flex-direction: column;">
+  <ion-item>
+    <ion-label position="stacked">{{"BEAN_DATA_NAME" | translate}}*</ion-label>
+    <ion-input #name="ngModel" [(ngModel)]="data.name" autocapitalize="sentences" name="name" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_NAME' | translate}}"
+               required spellcheck="false" type="text">
+    </ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">{{"BEAN_DATA_ROASTING_DATE" | translate}}</ion-label>
+    <ion-datetime #roastingDate="ngModel" (click)="chooseDate($event);" [(ngModel)]="data.date" cancelText="{{'CANCEL' | translate}}" displayFormat="DD.MM.YYYY" doneText="{{'CHOOSE' | translate}}" max="2999-12-31" min="2000-01-01" mode="ios" name="roastingDate"
+                  placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROASTING_DATE' | translate}}"></ion-datetime>
+  </ion-item>
+</ion-card>
+
+
+
+<ion-card style="display:flex; flex-direction: column;">
+  <ion-item lines="none">
+    <span class="ion-title ion-padding-top ion-no-padding-bottom">{{"BEAN_SORT_MORE_INFORMATION" | translate }}</span>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">{{"BEAN_DATA_WEIGHT" | translate}}</ion-label>
+    <ion-input #weight="ngModel" [(ngModel)]="data.weight" autocapitalize="off" inputmode="decimal"
+               name="weight" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_WEIGHT' | translate}}"
+               prevent-characters remove-empty-number spellcheck="false"
+               type="text">
+    </ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">{{"BEAN_DATA_COST" | translate}}</ion-label>
+    <ion-input #cost="ngModel" [(ngModel)]="data.cost" autocapitalize="off" inputmode="decimal"
+               name="cost" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_COST' | translate}}"
+               prevent-characters remove-empty-number spellcheck="false"
+               type="text">
+    </ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">{{"BEAN_DATA_AROMATICS" | translate}}</ion-label>
+    <ion-input #aromatics="ngModel" [(ngModel)]="data.aromatics" autocapitalize="sentences"
+               name="aromatics" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_AROMATICS' | translate}}" spellcheck="false"
+               type="text">
+    </ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">{{"BEAN_DATA_CUPPING_POINTS" | translate}}</ion-label>
+    <ion-input #cupping_points="ngModel" [(ngModel)]="data.cupping_points" autocapitalize="off" inputmode="decimal"
+               name="cupping_points" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_CUPPING_POINTS' | translate}}"
+               prevent-characters remove-empty-number spellcheck="false"
+               type="text">
+    </ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">{{"BEAN_DATA_DECAFFEINATED" | translate}}</ion-label>
+    <ion-checkbox #decaffeinated="ngModel" [(ngModel)]="data.decaffeinated" name="decaffeinated"></ion-checkbox>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">{{"BEAN_DATA_URL" | translate}}</ion-label>
+    <ion-input #url="ngModel" [(ngModel)]="data.url" autocapitalize="sentences" name="ean_article_number" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_URL' | translate}}"
+               spellcheck="false" type="text">
+    </ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">{{"BEAN_DATA_EAN" | translate}}</ion-label>
+    <ion-input #ean_article_number="ngModel" [(ngModel)]="data.ean_article_number" autocapitalize="sentences" name="ean_article_number" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_EAN' | translate}}"
+               spellcheck="false" type="text">
+    </ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">{{"NOTES" | translate}}</ion-label>
+    <ion-textarea #note="ngModel" [(ngModel)]="data.note" autocapitalize="sentences" autocomplete="true"
+                  autocorrect="true"
+                  name="note" placeholder="{{'BEAN.PLACE_HOLDER.NOTES' | translate}}" rows="5" spellcheck="true"></ion-textarea>
+  </ion-item>
+  <photo-add [(data)]="data"></photo-add>
+</ion-card>
