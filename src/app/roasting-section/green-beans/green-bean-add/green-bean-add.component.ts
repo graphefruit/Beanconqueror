@@ -1,23 +1,20 @@
-import {ChangeDetectorRef, Component, Input, OnInit, ViewChild} from '@angular/core';
-import {IonSlides, ModalController, NavParams, Platform} from '@ionic/angular';
+import {Component, Input, OnInit} from '@angular/core';
+import {ModalController, NavParams} from '@ionic/angular';
 
 
 import {UIImage} from '../../../../services/uiImage';
 import {UIHelper} from '../../../../services/uiHelper';
 import {UIAnalytics} from '../../../../services/uiAnalytics';
 import {UIFileHelper} from '../../../../services/uiFileHelper';
-import {UIToast} from '../../../../services/uiToast';
-import {TranslateService} from '@ngx-translate/core';
+
 import {IBeanInformation} from '../../../../interfaces/bean/iBeanInformation';
-import moment from 'moment';
+
 import {GreenBean} from '../../../../classes/green-bean/green-bean';
 
 import {UIGreenBeanStorage} from '../../../../services/uiGreenBeanStorage';
 
-declare var cordova;
-
 @Component({
-  selector: 'app-green-bean-add',
+  selector: 'green-bean-add',
   templateUrl: './green-bean-add.component.html',
   styleUrls: ['./green-bean-add.component.scss'],
 })
@@ -27,19 +24,15 @@ export class GreenBeanAddComponent implements OnInit {
   public data: GreenBean = new GreenBean();
   private readonly green_bean_template: GreenBean;
 
-  public visibleIndex: any = {};
 
+  public bean_segment = 'general';
   constructor (private readonly modalController: ModalController,
                private readonly navParams: NavParams,
                private readonly uiGreenBeanStorage: UIGreenBeanStorage,
                private readonly uiImage: UIImage,
                public uiHelper: UIHelper,
                private readonly uiAnalytics: UIAnalytics,
-               private readonly uiFileHelper: UIFileHelper,
-               private readonly uiToast: UIToast,
-               private readonly translate: TranslateService,
-               private readonly platform: Platform,
-               private readonly changeDetectorRef: ChangeDetectorRef) {
+               private readonly uiFileHelper: UIFileHelper) {
     this.green_bean_template = this.navParams.get('green_bean_template');
   }
 
@@ -121,32 +114,7 @@ export class GreenBeanAddComponent implements OnInit {
   }
 
   public ngOnInit() {}
-  public chooseDate(_event) {
-    if (this.platform.is('cordova')) {
-      _event.cancelBubble = true;
-      _event.preventDefault();
-      _event.stopImmediatePropagation();
-      _event.stopPropagation();
 
-
-      const myDate = new Date(); // From model.
-
-      cordova.plugins.DateTimePicker.show({
-        mode: 'date',
-        date: myDate,
-        okText: this.translate.instant('CHOOSE'),
-        todayText: this.translate.instant('TODAY'),
-        cancelText: this.translate.instant('CANCEL'),
-        success: (newDate) => {
-          this.data.date = moment(newDate).toISOString();
-          this.changeDetectorRef.detectChanges();
-        }, error: () => {
-
-        }
-      });
-
-    }
-  }
 
 
 

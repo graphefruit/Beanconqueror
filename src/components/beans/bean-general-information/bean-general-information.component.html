@@ -128,7 +128,7 @@
                spellcheck="false" type="text">
     </ion-input>
   </ion-item>
-  <ion-item *ngIf="isEdit">
+  <ion-item *ngIf="data?.config.uuid !== ''">
     <ion-label position="stacked">{{"FINISHED"|translate}}?</ion-label>
     <ion-checkbox [(ngModel)]="data.finished"></ion-checkbox>
   </ion-item>

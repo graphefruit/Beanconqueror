@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Bean} from '../../../classes/bean/bean';
 import {IBeanInformation} from '../../../interfaces/bean/iBeanInformation';
+import {GreenBean} from '../../../classes/green-bean/green-bean';
 
 @Component({
   selector: 'bean-sort-information',
@@ -8,8 +9,8 @@ import {IBeanInformation} from '../../../interfaces/bean/iBeanInformation';
   styleUrls: ['./bean-sort-information.component.scss'],
 })
 export class BeanSortInformationComponent implements OnInit {
-  @Input() public data: Bean ;
-  @Output() public dataChange = new EventEmitter<Bean>();
+  @Input() public data: Bean | GreenBean ;
+  @Output() public dataChange = new EventEmitter<Bean| GreenBean>();
 
   public visibleIndex: any = {};
 

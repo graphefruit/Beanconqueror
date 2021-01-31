@@ -113,6 +113,7 @@ import {PhotoAddComponent} from '../../components/photo-add/photo-add.component'
 import {BeanRoastInformationComponent} from '../../components/beans/bean-roast-information/bean-roast-information.component';
 import {BeanGeneralInformationComponent} from '../../components/beans/bean-general-information/bean-general-information.component';
 import {BeanSortInformationComponent} from '../../components/beans/bean-sort-information/bean-sort-information.component';
+import {GreenBeanGeneralInformationComponent} from '../../components/beans/green-bean-general-information/green-bean-general-information.component';
 
 @NgModule({
   declarations: [
@@ -201,7 +202,8 @@ import {BeanSortInformationComponent} from '../../components/beans/bean-sort-inf
     PhotoAddComponent,
     BeanRoastInformationComponent,
     BeanGeneralInformationComponent,
-    BeanSortInformationComponent],
+    BeanSortInformationComponent,
+    GreenBeanGeneralInformationComponent],
   entryComponents: [
     SettingsPage,
     StatisticPage,
@@ -272,7 +274,8 @@ import {BeanSortInformationComponent} from '../../components/beans/bean-sort-inf
     PhotoAddComponent,
     BeanRoastInformationComponent,
     BeanGeneralInformationComponent,
-    BeanSortInformationComponent],
+    BeanSortInformationComponent,
+    GreenBeanGeneralInformationComponent],
   imports: [
     CommonModule,
     IonicModule,
@@ -393,7 +396,8 @@ import {BeanSortInformationComponent} from '../../components/beans/bean-sort-inf
     PhotoAddComponent,
     BeanRoastInformationComponent,
     BeanGeneralInformationComponent,
-    BeanSortInformationComponent],
+    BeanSortInformationComponent,
+    GreenBeanGeneralInformationComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule {

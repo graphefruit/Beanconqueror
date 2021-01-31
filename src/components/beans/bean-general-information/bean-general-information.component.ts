@@ -18,7 +18,6 @@ declare var cordova;
 })
 export class BeanGeneralInformationComponent implements OnInit {
 
-  @Input() public isEdit: boolean = true;
   @Input() public data: Bean ;
   @Output() public dataChange = new EventEmitter<Bean>();
   @ViewChild('beanStars', {read: NgxStarsComponent, static: false}) public beanStars: NgxStarsComponent;

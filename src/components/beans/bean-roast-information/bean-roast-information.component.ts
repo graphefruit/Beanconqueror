@@ -23,7 +23,6 @@ export class BeanRoastInformationComponent implements OnInit {
     this.displayingTime = moment().startOf('day').add('seconds',this.data.bean_roast_information.roast_length).toISOString();
   }
 
-
   public async showTimeOverlay(_event) {
     _event.stopPropagation();
     _event.stopImmediatePropagation();
@@ -42,10 +41,6 @@ export class BeanRoastInformationComponent implements OnInit {
       this.data.bean_roast_information.roast_length =moment.duration(moment(modalData.data.displayingTime)
         .diff(moment(modalData.data.displayingTime).startOf('day'))).asSeconds();
     }
-
   }
-
-
-
 
 }
