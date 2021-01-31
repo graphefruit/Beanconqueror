@@ -55,13 +55,13 @@ export class UIHealthKit {
 
   }
 
-  public trackCaffeineConsumption(_quantity:number, _date: Date) {
+  public trackCaffeineConsumption(_amount:number, _date: Date) {
     try{
       navigator.health.store({
         startDate: _date, // three days ago
         endDate: _date, // now
         dataType: 'nutrition.caffeine',
-        value:_quantity * 0.008,
+        value:_amount,
         unit:'g',
 
       }, (e) => {

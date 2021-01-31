@@ -50,6 +50,9 @@ export interface ISettings {
 
   track_caffeine_consumption: boolean;
 
+  show_roasting_section: boolean;
+  show_cupping_section: boolean;
+
   brew_filter: {
     OPEN: IBrewPageFilter,
     ARCHIVED: IBrewPageFilter

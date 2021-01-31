@@ -194,7 +194,7 @@ export class BrewAddComponent implements OnInit {
     this.uiBrewStorage.update(this.data);
 
     if (this.settings.track_caffeine_consumption && this.data.grind_weight > 0) {
-      this.uiHealthKit.trackCaffeineConsumption(this.data.grind_weight, moment(this.customCreationDate).toDate());
+      this.uiHealthKit.trackCaffeineConsumption(this.data.getCaffeineAmount(), moment(this.customCreationDate).toDate());
     }
     if (!this.hide_toast_message) {
       this.uiToast.showInfoToast('TOAST_BREW_ADDED_SUCCESSFULLY');
@@ -435,9 +435,6 @@ export class BrewAddComponent implements OnInit {
 
         }
       });
-
-
-
     }
   }
 

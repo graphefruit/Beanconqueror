@@ -19,6 +19,7 @@ import {BEAN_SORT_AFTER} from '../../enums/beans/beanSortAfter';
 import {BEAN_SORT_ORDER} from '../../enums/beans/beanSortOrder';
 import {BeansDetailComponent} from './beans-detail/beans-detail.component';
 import {PhotoPopoverComponent} from '../../popover/photo-popover/photo-popover.component';
+import {UIImage} from '../../services/uiImage';
 
 @Component({
   selector: 'beans',
@@ -61,7 +62,8 @@ export class BeansPage implements OnInit {
               private readonly uiSettingsStorage: UISettingsStorage,
               private readonly uiToast: UIToast,
               private readonly uiAnalytics: UIAnalytics,
-              private readonly uiBeanHelper: UIBeanHelper) {
+              private readonly uiBeanHelper: UIBeanHelper,
+              private readonly uiImage: UIImage) {
 
 
   }
@@ -125,9 +127,7 @@ export class BeansPage implements OnInit {
   }
 
   public async viewPhotos(_bean: Bean) {
-    const modal = await this.modalCtrl.create({component: PhotoPopoverComponent, id:'photo-popover', componentProps: {data: _bean}});
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiImage.viewPhotos(_bean);
   }
 
   private retriggerScroll() {

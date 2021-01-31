@@ -484,6 +484,9 @@
   "BEAN_SORT_NAME_OF_BEAN": "Name der Bohne",
   "BEAN_SORT_ROASTER": "Röster",
   "BEAN_SORT_ROASTING_DATE": "Röstdatum",
+  "BEAN_TAB_ROAST_INFORMATION": "Röstinformation",
+  "BEAN_TAB_GENERAL_INFORMATION": "Allgemein",
+  "BEAN_TAB_SORT_INFORMATION": "Sorteninformation",
   "PAGE_SETTINGS_MANAGE_ARCHIVE": "Archive verwalten",
   "LAST_USE": "Zuletzt verwendet",
   "SEARCH": "Suchen",
@@ -508,14 +511,34 @@
     }
   },
   "EXCEL_EXPORT": "Excel Export",
-  "HEALTH_KIT_QUESTION_TITLE": "Koffeeinkonsum abspeichern",
-  "HEALTH_KIT_QUESTION_MESSAGE": "Durch die Aktivierung wird die eingenommene Koffeinmenge automatisch abgespeichert",
+  "HEALTH_KIT_QUESTION_TITLE": "Speichern in HealthKit",
+  "HEALTH_KIT_QUESTION_MESSAGE": "Durch die Aktivierung wird die eingenommene Koffeinmenge automatisch in Apple Health abgespeichert",
 
+  "NAV_ROASTING_SECTION": "Rösten",
   "ROASTING_SECTION" : {
     "NAV_GREEN_BEANS": "Rohkaffee",
     "GREEN_BEAN": {
       "ADD": "Hinzufügen",
       "ROASTABLE": "Röstbar"
+    },
+    "BEAN": {
+      "DROP_TEMPERATURE": "Endtemperatur der Röstung",
+      "ROAST_LENGTH": "Röstlänge",
+      "ROASTER_MACHINE": "Röstmaschine",
+      "GREEN_BEAN_WEIGHT": "Rohbohnengewicht",
+      "OUTSIDE_TEMPERATURE": "Wettertemperatur",
+        "HUMIDITY": "Feuchtigkeit",
+      "PLACE_HOLDER": {
+        "DROP_TEMPERATURE": "Endtemperatur der Röstung",
+        "ROAST_LENGTH": "Röstlänge",
+        "ROASTER_MACHINE": "Röstmaschine",
+        "GREEN_BEAN_WEIGHT": "Rohbohnengewicht",
+        "OUTSIDE_TEMPERATURE": "Wettertemperatur",
+        "HUMIDITY": "Feuchtigkeit"
+      }
     }
-  }
+  },
+  "PAGE_SETTINGS_MANAGE_SECTIONS": "Weitere Bereiche",
+  "PAGE_SETTINGS_SHOW_ROASTING_SECTION": "Röstbereich aktivieren",
+  "PAGE_SETTINGS_SHOW_CUPPING_SECTION": "Cuppingbereich aktivieren"
 }

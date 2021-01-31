@@ -26,7 +26,8 @@ import {Settings} from '../../classes/settings/settings';
 import {UIToast} from '../../services/uiToast';
 import {BrewCuppingComponent} from './brew-cupping/brew-cupping.component';
 import {UIAnalytics} from '../../services/uiAnalytics';
-import {PhotoPopoverComponent} from '../../popover/photo-popover/photo-popover.component';
+import {UIImage} from '../../services/uiImage';
+
 
 @Component({
   selector: 'brew',
@@ -84,7 +85,8 @@ export class BrewPage implements OnInit {
                private readonly uiMillStorage: UIMillStorage,
                private translate: TranslateService,
                private readonly uiToast: UIToast,
-               private readonly uiAnalytics: UIAnalytics) {
+               private readonly uiAnalytics: UIAnalytics,
+               private readonly uiImage: UIImage) {
   }
 
 
@@ -209,9 +211,7 @@ export class BrewPage implements OnInit {
 
 
   public async viewPhotos(_brew: Brew) {
-    const modal = await this.modalCtrl.create({component: PhotoPopoverComponent, id:'photo-popover', componentProps: {data: _brew}});
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiImage.viewPhotos(_brew);
   }
 
   public deleteBrew(_brew: Brew): void {
@@ -359,7 +359,8 @@ export class BrewPage implements OnInit {
       searchText = this.archivedBrewFilterText.toLowerCase();
     }
     if (searchText) {
-      sortedBrews = sortedBrews.filter((e) => e.note.toLowerCase().includes(searchText) || e.getPreparation().name.toLowerCase().includes(searchText) ||
+      sortedBrews = sortedBrews.filter((e) => e.note.toLowerCase().includes(searchText) ||
+        e.getPreparation().name.toLowerCase().includes(searchText) ||
         e.getBean().name.toLowerCase().includes(searchText) ||
         e.getBean().roaster.toLowerCase().includes(searchText));
     }

@@ -1,23 +1,16 @@
-import {ChangeDetectorRef, Component, Input, OnInit, ViewChild} from '@angular/core';
-import {BEAN_MIX_ENUM} from '../../../enums/beans/mix';
+import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {UIBeanStorage} from '../../../services/uiBeanStorage';
-import {ROASTS_ENUM} from '../../../enums/beans/roasts';
 import {UIHelper} from '../../../services/uiHelper';
 import {UIImage} from '../../../services/uiImage';
 import {Bean} from '../../../classes/bean/bean';
-import {IonSlides, ModalController, NavParams, Platform} from '@ionic/angular';
+import {ModalController, NavParams, Platform} from '@ionic/angular';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 import {UIFileHelper} from '../../../services/uiFileHelper';
 import {UIToast} from '../../../services/uiToast';
-
-
 import {TranslateService} from '@ngx-translate/core';
-import moment from 'moment';
 import {IBeanInformation} from '../../../interfaces/bean/iBeanInformation';
-import {NgxStarsComponent} from 'ngx-stars';
-import {BEAN_ROASTING_TYPE_ENUM} from '../../../enums/beans/beanRoastingType';
+import {GreenBean} from '../../../classes/green-bean/green-bean';
 
-declare var cordova: any;
 @Component({
   selector: 'beans-add',
   templateUrl: './beans-add.component.html',
@@ -25,20 +18,15 @@ declare var cordova: any;
 })
 export class BeansAddComponent implements OnInit {
 
-  @ViewChild('beanStars', {read: NgxStarsComponent, static: false}) public beanStars: NgxStarsComponent;
+
   public data: Bean = new Bean();
   private readonly bean_template: Bean;
-  public roastsEnum = ROASTS_ENUM;
-  public mixEnum = BEAN_MIX_ENUM;
-  public beanRoastingTypeEnum = BEAN_ROASTING_TYPE_ENUM;
+
   @Input() private hide_toast_message: boolean;
 
+  @Input() private greenBean: GreenBean;
 
-  public roasterResultsAvailable: boolean = false;
-  public roasterResults: string[] = [];
-  // Preset on start, else if value is filled the popup will be shown
-  public ignoreNextChange: boolean = false;
-  public visibleIndex: any = {};
+  public bean_segment = 'general';
 
   constructor (private readonly modalController: ModalController,
                private readonly navParams: NavParams,
@@ -54,53 +42,15 @@ export class BeansAddComponent implements OnInit {
     this.bean_template = this.navParams.get('bean_template');
   }
 
-  public onRoasterSearchChange(event: any) {
-    let actualSearchValue = event.target.value;
-    this.roasterResults = [];
-    this.roasterResultsAvailable = false;
-    if (actualSearchValue === undefined || actualSearchValue === '') {
-      return;
-    }
-    if (this.ignoreNextChange) {
-      this.ignoreNextChange = false;
-      return;
-    }
 
-    actualSearchValue = actualSearchValue.toLowerCase();
-    const filteredEntries = this.uiBeanStorage.getAllEntries().filter((e)=>e.roaster.toLowerCase().startsWith(actualSearchValue));
-
-    for (const entry of filteredEntries) {
-      this.roasterResults.push(entry.roaster);
-    }
-    // Distinct values
-    this.roasterResults = Array.from(new Set(this.roasterResults.map((e) => e)));
-
-    if (this.roasterResults.length > 0) {
-      this.roasterResultsAvailable = true;
-    } else {
-      this.roasterResultsAvailable = false;
-    }
-
-  }
-  public onRoasterSearchLeave($event) {
-    setTimeout(() => {
-      this.roasterResultsAvailable = false;
-      this.roasterResults = [];
-    },150);
-
-  }
-
-  public roasterSelected(selected: string) :void {
-    this.data.roaster = selected;
-    this.roasterResults = [];
-    this.roasterResultsAvailable = false;
-    this.ignoreNextChange = true;
-  }
 
 
 
   public async ionViewWillEnter() {
     this.uiAnalytics.trackEvent('BEAN', 'ADD');
+
+    // It just can be a bean template (bean will be repeated, or a green bean, both is not working)
+    // TODO how to handle roasting beans which wil be repeated?
     if (this.bean_template) {
       await this.__loadBean(this.bean_template);
     }
@@ -109,6 +59,10 @@ export class BeansAddComponent implements OnInit {
     if (this.data.bean_information.length <=0) {
       const beanInformation: IBeanInformation = {} as IBeanInformation;
       this.data.bean_information.push(beanInformation);
+    }
+
+    if (this.greenBean) {
+      this.loadGreenBeanInformation();
     }
   }
 
@@ -120,18 +74,11 @@ export class BeansAddComponent implements OnInit {
     }
   }
 
-  public onRoastRate(_event): void {
-    this.beanStars.setRating(this.data.roast_range);
-  }
-
-  public addAnotherSort() {
-    const beanInformation: IBeanInformation = {} as IBeanInformation;
-    this.data.bean_information.push(beanInformation);
-  }
-
-  public deleteSortInformation(_index: number) {
-    this.data.bean_information.splice(_index, 1);
-    this.visibleIndex[_index] = false;
+  private loadGreenBeanInformation() {
+    if (this.greenBean) {
+      this.data.bean_roast_information.bean_uuid = this.greenBean.config.uuid;
+      this.data.bean_information = this.greenBean.bean_information;
+    }
   }
 
 
@@ -157,7 +104,7 @@ export class BeansAddComponent implements OnInit {
     this.data.note = _bean.note;
     this.data.roaster = _bean.roaster;
     if (this.data.roaster !== '') {
-      this.ignoreNextChange = true;
+      //this.ignoreNextChange = true;
     }
     this.data.roast = _bean.roast;
     this.data.beanMix = _bean.beanMix;
@@ -203,39 +150,8 @@ export class BeansAddComponent implements OnInit {
   }
 
   public ngOnInit() {}
-  public chooseDate(_event) {
-    if (this.platform.is('cordova')) {
-      _event.cancelBubble = true;
-      _event.preventDefault();
-      _event.stopImmediatePropagation();
-      _event.stopPropagation();
 
 
-      const myDate = new Date(); // From model.
 
-      cordova.plugins.DateTimePicker.show({
-        mode: 'date',
-        date: myDate,
-        okText: this.translate.instant('CHOOSE'),
-        todayText: this.translate.instant('TODAY'),
-        cancelText: this.translate.instant('CANCEL'),
-        success: (newDate) => {
-          this.data.roastingDate = moment(newDate).toISOString();
-          this.changeDetectorRef.detectChanges();
-        }, error: () => {
-
-        }
-      });
-
-    }
-  }
-
-  public beanMixChanged() {
-    if (this.data.beanMix !== BEAN_MIX_ENUM.BLEND) {
-      const beanInfo:IBeanInformation = this.data.bean_information[0];
-      this.data.bean_information = [];
-      this.data.bean_information.push(beanInfo);
-    }
-  }
 
 }

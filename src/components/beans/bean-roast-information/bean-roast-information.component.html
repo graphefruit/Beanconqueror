@@ -1,0 +1,43 @@
+<ion-card class="popover" style="display:flex; flex-direction: column;">
+  <ion-item>
+    <ion-label position="stacked">{{"ROASTING_SECTION.BEAN.DROP_TEMPERATURE" | translate}}</ion-label>
+    <ion-input #drop_temperature="ngModel" [(ngModel)]="data.bean_roast_information.drop_temperature" autocapitalize="off" inputmode="decimal"
+               name="weight" placeholder="{{'ROASTING_SECTION.BEAN.PLACE_HOLDER.DROP_TEMPERATURE' | translate}}"
+               prevent-characters remove-empty-number spellcheck="false"
+               type="text">
+    </ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">{{"ROASTING_SECTION.BEAN.ROAST_LENGTH" | translate}}</ion-label>
+    <ion-datetime (click)="showTimeOverlay($event);" [(ngModel)]="displayingTime" cancelText="{{'CANCEL' | translate}}" displayFormat="H:mm:ss" doneText="{{'CHOOSE' | translate}}" mode="ios"></ion-datetime>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">{{"ROASTING_SECTION.BEAN.ROASTER_MACHINE" | translate}}</ion-label>
+    <ion-input #roaster_machine="ngModel" [(ngModel)]="data.bean_roast_information.roaster_machine" placeholder="{{'ROASTING_SECTION.BEAN.PLACE_HOLDER.ROASTER_MACHINE' | translate}}"
+               type="text"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">{{"ROASTING_SECTION.BEAN.GREEN_BEAN_WEIGHT" | translate}}</ion-label>
+    <ion-input #green_bean_weight="ngModel" [(ngModel)]="data.bean_roast_information.green_bean_weight" autocapitalize="off" inputmode="decimal"
+               name="green_bean_weight" placeholder="{{'ROASTING_SECTION.BEAN.PLACE_HOLDER.GREEN_BEAN_WEIGHT' | translate}}"
+               prevent-characters remove-empty-number spellcheck="false"
+               type="text">
+    </ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">{{"ROASTING_SECTION.BEAN.OUTSIDE_TEMPERATURE" | translate}}</ion-label>
+    <ion-input #outside_temperature="ngModel" [(ngModel)]="data.bean_roast_information.outside_temperature" autocapitalize="off" inputmode="decimal"
+               name="outside_temperature" placeholder="{{'ROASTING_SECTION.BEAN.PLACE_HOLDER.OUTSIDE_TEMPERATURE' | translate}}"
+               prevent-characters remove-empty-number spellcheck="false"
+               type="text">
+    </ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">{{"ROASTING_SECTION.BEAN.HUMIDITY" | translate}}</ion-label>
+    <ion-input #humidity="ngModel" [(ngModel)]="data.bean_roast_information.humidity" autocapitalize="off" inputmode="decimal"
+               name="humidity" placeholder="{{'ROASTING_SECTION.BEAN.PLACE_HOLDER.HUMIDITY' | translate}}"
+               prevent-characters remove-empty-number spellcheck="false"
+               type="text">
+    </ion-input>
+  </ion-item>
+</ion-card>
