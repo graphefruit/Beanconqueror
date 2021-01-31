@@ -47,6 +47,7 @@ export class AppComponent implements AfterViewInit {
 
   public pages = {
     home: {title: 'NAV_HOME', url: '/', icon: 'home-outline', active: true},
+    roasting_section: {title: 'NAV_ROASTING_SECTION', url: '/roasting-section', active: false},
     settings: {title: 'NAV_SETTINGS', url: '/settings', icon: 'settings-outline', active: false},
 
     info: {title: 'NAV_INFORMATION_TO_APP', url: '/info', icon: 'information-circle-outline', active: false},
@@ -185,6 +186,15 @@ export class AppComponent implements AfterViewInit {
 
   private __checkUpdate(): void {
     this.uiUpdate.checkUpdate();
+  }
+
+  public showCuppingSection() {
+    const settings: Settings = this.uiSettingsStorage.getSettings();
+    return settings.show_cupping_section;
+  }
+  public showRoastingSection() {
+    const settings: Settings = this.uiSettingsStorage.getSettings();
+    return settings.show_roasting_section;
   }
 
   private async __setDeviceLanguage(): Promise<any> {

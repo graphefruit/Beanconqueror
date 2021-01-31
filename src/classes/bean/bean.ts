@@ -8,6 +8,7 @@ import {Config} from '../objectConfig/objectConfig';
 import moment from 'moment';
 import {BEAN_ROASTING_TYPE_ENUM} from '../../enums/beans/beanRoastingType';
 import {IBeanInformation} from '../../interfaces/bean/iBeanInformation';
+import {BeanRoastInformation} from './beanRoastInformation';
 
 export class Bean implements IBean {
   public name: string;
@@ -43,6 +44,9 @@ export class Bean implements IBean {
   public bean_information: Array<IBeanInformation>;
 
   public bean_roasting_type: BEAN_ROASTING_TYPE_ENUM;
+
+  public bean_roast_information: BeanRoastInformation;
+
   constructor() {
     this.name = '';
     this.roastingDate = '';
@@ -68,6 +72,7 @@ export class Bean implements IBean {
     this.bean_information = [];
     this.url = '';
     this.ean_article_number = '';
+    this.bean_roast_information = new BeanRoastInformation();
   }
 
   public getRoastName(): string {
@@ -82,6 +87,9 @@ export class Bean implements IBean {
 
   public initializeByObject(beanObj: IBean): void {
     Object.assign(this, beanObj);
+
+    this.bean_roast_information = new BeanRoastInformation();
+    Object.assign(this.bean_roast_information, beanObj.bean_information);
   }
 
   public fixDataTypes(): boolean {

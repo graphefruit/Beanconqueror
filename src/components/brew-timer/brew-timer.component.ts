@@ -181,8 +181,6 @@ export class BrewTimerComponent implements OnInit {
     if (modalData.data.displayingTime !== undefined) {
       this.displayingTime = modalData.data.displayingTime;
       this.timer.seconds = moment.duration(moment(this.displayingTime).diff(moment(this.displayingTime).startOf('day'))).asSeconds();
-      console.log(this.timer.seconds);
-      console.log(modalData.data.displayingTime);
       this.changeEvent();
     }
 

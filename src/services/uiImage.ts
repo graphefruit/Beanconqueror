@@ -5,13 +5,17 @@ import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
 import {Camera, CameraOptions} from '@ionic-native/camera/ngx';
 import {ImagePicker} from '@ionic-native/image-picker/ngx';
 /** Ionic */
-import {AlertController, Platform} from '@ionic/angular';
+import {AlertController, ModalController, Platform} from '@ionic/angular';
 import {UIHelper} from './uiHelper';
 import {UIFileHelper} from './uiFileHelper';
 import {TranslateService} from '@ngx-translate/core';
 import {FileChooser} from '@ionic-native/file-chooser/ngx';
 import {FilePath} from '@ionic-native/file-path/ngx';
 import {UIAlert} from './uiAlert';
+import {PhotoPopoverComponent} from '../popover/photo-popover/photo-popover.component';
+import {Brew} from '../classes/brew/brew';
+import {GreenBean} from '../classes/green-bean/green-bean';
+import {Bean} from '../classes/bean/bean';
 
 
 @Injectable({
@@ -28,7 +32,8 @@ export class UIImage {
                private readonly translate: TranslateService,
                private readonly fileChooser: FileChooser,
                private readonly filePath: FilePath,
-               private readonly uiAlert: UIAlert) {
+               private readonly uiAlert: UIAlert,
+               private readonly modalCtrl: ModalController) {
   }
 
   public async takePhoto (): Promise<any> {
@@ -76,7 +81,6 @@ export class UIImage {
                     path.toLowerCase().endsWith('.jpeg') || path.toLowerCase().endsWith('.gif'))) {
                       if (path.toLowerCase().indexOf('sdcard')===-1) {
 
-console.log('blaa just for lars');
                         const newPath: string =path;
                         let importPath: string = '';
                         if (newPath.lastIndexOf('/Download/')>-1) {
@@ -206,6 +210,17 @@ console.log('blaa just for lars');
      */
     // requestReadPermission(): Promise<any>;
 
+  }
+
+  public async viewPhotos (_data: Bean | GreenBean | Brew) {
+
+    const modal = await this.modalCtrl.create({
+      component: PhotoPopoverComponent,
+      id: 'photo-popover',
+      componentProps: {data: _data}
+    });
+    await modal.present();
+    await modal.onWillDismiss();
   }
 
 

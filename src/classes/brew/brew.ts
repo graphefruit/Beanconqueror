@@ -283,6 +283,14 @@ export class Brew implements IBrew {
     return formatted;
   }
 
+  /**
+   * Return the caffeine amount in mg
+   * https://coffee.stackexchange.com/a/324
+   */
+  public getCaffeineAmount(): number {
+    return this.grind_weight * 0.008;
+  }
+
   public getFormattedCoffeeBrewTime(): string {
     const secs = this.brew_time;
     const start = moment().startOf('day').add('seconds',secs);

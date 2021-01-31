@@ -92,6 +92,9 @@ export class Settings implements ISettings {
 
   public wake_lock: boolean;
 
+  public show_roasting_section: boolean;
+  public show_cupping_section: boolean;
+
   constructor() {
     this.brew_view = BREW_VIEW_ENUM.SINGLE_PAGE;
     this.startup_view = STARTUP_VIEW_ENUM.HOME_PAGE;
@@ -132,6 +135,9 @@ export class Settings implements ISettings {
     this.show_archived_preparations = true;
     this.brew_beverage_quantity = false;
     this.track_caffeine_consumption = false;
+
+    this.show_roasting_section = false;
+    this.show_cupping_section = false;
 
     this.brew_filter = {
       OPEN: {} as IBrewPageFilter,

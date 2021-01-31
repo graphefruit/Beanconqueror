@@ -110,6 +110,9 @@ import {GreenBeanInformationComponent} from '../../components/green-bean-informa
 import { Insomnia } from '@ionic-native/insomnia/ngx';
 import {PhotoPopoverComponent} from '../../popover/photo-popover/photo-popover.component';
 import {PhotoAddComponent} from '../../components/photo-add/photo-add.component';
+import {BeanRoastInformationComponent} from '../../components/beans/bean-roast-information/bean-roast-information.component';
+import {BeanGeneralInformationComponent} from '../../components/beans/bean-general-information/bean-general-information.component';
+import {BeanSortInformationComponent} from '../../components/beans/bean-sort-information/bean-sort-information.component';
 
 @NgModule({
   declarations: [
@@ -195,7 +198,10 @@ import {PhotoAddComponent} from '../../components/photo-add/photo-add.component'
     SortCustomParameterComponent,
     ManageCustomParameterComponent,
     BrewTimerComponent,
-    PhotoAddComponent],
+    PhotoAddComponent,
+    BeanRoastInformationComponent,
+    BeanGeneralInformationComponent,
+    BeanSortInformationComponent],
   entryComponents: [
     SettingsPage,
     StatisticPage,
@@ -263,7 +269,10 @@ import {PhotoAddComponent} from '../../components/photo-add/photo-add.component'
     SortCustomParameterComponent,
     ManageCustomParameterComponent,
     BrewTimerComponent,
-    PhotoAddComponent],
+    PhotoAddComponent,
+    BeanRoastInformationComponent,
+    BeanGeneralInformationComponent,
+    BeanSortInformationComponent],
   imports: [
     CommonModule,
     IonicModule,
@@ -381,7 +390,10 @@ import {PhotoAddComponent} from '../../components/photo-add/photo-add.component'
     SortCustomParameterComponent,
     ManageCustomParameterComponent,
     BrewTimerComponent,
-    PhotoAddComponent],
+    PhotoAddComponent,
+    BeanRoastInformationComponent,
+    BeanGeneralInformationComponent,
+    BeanSortInformationComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule {

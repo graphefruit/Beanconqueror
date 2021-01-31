@@ -7,6 +7,7 @@ import {BEAN_MIX_ENUM} from '../../enums/beans/mix';
 import {ROASTS_ENUM} from '../../enums/beans/roasts';
 import {BEAN_ROASTING_TYPE_ENUM} from '../../enums/beans/beanRoastingType';
 import {IBeanInformation} from './iBeanInformation';
+import {IBeanRoastInformation} from './iBeanRoastInformation';
 
 export interface IBean {
   name: string;
@@ -46,5 +47,5 @@ export interface IBean {
 
   bean_information: Array<IBeanInformation>;
 
-
+  bean_roast_information: IBeanRoastInformation;
 }

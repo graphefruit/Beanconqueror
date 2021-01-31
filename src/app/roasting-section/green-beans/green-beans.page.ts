@@ -18,7 +18,8 @@ import {GREEN_BEAN_ACTION} from '../../../enums/green-beans/greenBeanAction';
 import {GreenBeanEditComponent} from './green-bean-edit/green-bean-edit.component';
 import {GreenBeanAddComponent} from './green-bean-add/green-bean-add.component';
 import {GreenBeanDetailComponent} from './green-bean-detail/green-bean-detail.component';
-import {PhotoPopoverComponent} from '../../../popover/photo-popover/photo-popover.component';
+import {BeansAddComponent} from '../../beans/beans-add/beans-add.component';
+import {UIImage} from '../../../services/uiImage';
 
 @Component({
   selector: 'app-green-beans',
@@ -61,7 +62,8 @@ export class GreenBeansPage implements OnInit {
               private readonly uiSettingsStorage: UISettingsStorage,
               private readonly uiToast: UIToast,
               private readonly uiAnalytics: UIAnalytics,
-              private readonly uiBeanHelper: UIBeanHelper) {
+              private readonly uiBeanHelper: UIBeanHelper,
+              private readonly uiImage: UIImage) {
 
 
   }
@@ -113,6 +115,9 @@ export class GreenBeansPage implements OnInit {
       case GREEN_BEAN_ACTION.PHOTO_GALLERY:
         this.viewPhotos(bean);
         break;
+      case GREEN_BEAN_ACTION.TRANSFER_ROAST:
+        this.transferRoast(bean);
+        break;
       default:
         break;
     }
@@ -125,9 +130,14 @@ export class GreenBeansPage implements OnInit {
   }
 
   public async viewPhotos(_bean: GreenBean) {
-    const modal = await this.modalCtrl.create({component: PhotoPopoverComponent, id:'photo-popover', componentProps: {data: _bean}});
+    await this.uiImage.viewPhotos(_bean);
+  }
+
+  public async transferRoast(_bean: GreenBean) {
+    const modal = await this.modalCtrl.create({component:BeansAddComponent, id:'bean-add',  componentProps: {greenBean : _bean}});
     await modal.present();
     await modal.onWillDismiss();
+    this.loadBeans();
   }
 
   private retriggerScroll() {
