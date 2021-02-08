@@ -3,7 +3,6 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 import {PopoverController} from '@ionic/angular';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
-import {Brew} from '../../classes/brew/brew';
 import {BEAN_ACTION} from '../../enums/beans/beanAction';
 
 import {GreenBean} from '../../classes/green-bean/green-bean';

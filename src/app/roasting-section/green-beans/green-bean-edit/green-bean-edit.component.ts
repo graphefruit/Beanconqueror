@@ -1,5 +1,5 @@
-import {ChangeDetectorRef, Component, Input, OnInit, ViewChild} from '@angular/core';
-import {IonSlides, ModalController, NavParams, Platform} from '@ionic/angular';
+import {Component, Input, OnInit} from '@angular/core';
+import {ModalController, NavParams} from '@ionic/angular';
 import {GreenBean} from '../../../../classes/green-bean/green-bean';
 import {UIGreenBeanStorage} from '../../../../services/uiGreenBeanStorage';
 import {UIImage} from '../../../../services/uiImage';
@@ -7,13 +7,12 @@ import {UIHelper} from '../../../../services/uiHelper';
 import {UIAnalytics} from '../../../../services/uiAnalytics';
 import {UIFileHelper} from '../../../../services/uiFileHelper';
 import {UIToast} from '../../../../services/uiToast';
-import {TranslateService} from '@ngx-translate/core';
 
 import {IGreenBean} from '../../../../interfaces/green-bean/iGreenBean';
 
 
 @Component({
-  selector: 'app-green-bean-edit',
+  selector: 'green-bean-edit',
   templateUrl: './green-bean-edit.component.html',
   styleUrls: ['./green-bean-edit.component.scss'],
 })
