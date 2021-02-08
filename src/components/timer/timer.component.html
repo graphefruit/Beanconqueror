@@ -1,6 +1,6 @@
 <ion-item class="no-bottom-border item">
   <ion-label position="stacked">{{ label }}</ion-label>
-  <ion-input prevent-characters type="number" [(ngModel)]="timer.seconds"></ion-input>
+  <ion-input prevent-characters type="number" (ionChange)="inputChanged()" [(ngModel)]="timer.seconds"></ion-input>
   <ion-button (click)="initTimer()"
               *ngIf="!timer.runTimer && (timer.hasStarted || timer.hasFinished) || timer.hasFinished"
               class="big-icon-only" fill="clear" slot="end" tappable>

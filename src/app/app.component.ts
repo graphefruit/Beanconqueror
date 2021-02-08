@@ -188,10 +188,6 @@ export class AppComponent implements AfterViewInit {
     this.uiUpdate.checkUpdate();
   }
 
-  public showCuppingSection() {
-    const settings: Settings = this.uiSettingsStorage.getSettings();
-    return settings.show_cupping_section;
-  }
   public showRoastingSection() {
     const settings: Settings = this.uiSettingsStorage.getSettings();
     return settings.show_roasting_section;
@@ -284,7 +280,6 @@ export class AppComponent implements AfterViewInit {
   }
 
   private async __checkStartupView() {
-  return;
     const settings: Settings = this.uiSettingsStorage.getSettings();
     if (settings.startup_view !== STARTUP_VIEW_ENUM.HOME_PAGE) {
       this.uiAnalytics.trackEvent('STARTUP', 'STARTUP_VIEW_' + settings.startup_view);
@@ -439,33 +434,17 @@ export class AppComponent implements AfterViewInit {
       }
     });
   }
-}
 
-/**
- * navigator.health.store({
-  startDate: new Date(), // three days ago
-  endDate: new Date(), // now
-  dataType: 'nutrition.caffeine',
-value:23/1000,
-unit:'mg',
-
-}, function(e) {
-console.log('stored')
-console.log(e)
-}, function(e) {
-console.log('bnot stored')
-console.log(e)
-})
-
- navigator.health.requestAuthorization([
- 'nutrition.caffeine',   // Read and write permissions
- {
-    write : []  // Write only permission
+  public openGithub() {
+    this.uiAnalytics.trackEvent('LINK','GITHUB');
+    this.uiHelper.openExternalWebpage('https://github.com/graphefruit/Beanconqueror');
   }
- ], function(e) {
-console.log('yes');
-console.log(e)
-}, function(e) {
-console.log(e)
-})
- */
+  public openInstagram() {
+    this.uiAnalytics.trackEvent('LINK','INSTAGRAM');
+    this.uiHelper.openExternalWebpage('https://www.instagram.com/beanconqueror/');
+  }
+  public openFacebook() {
+    this.uiAnalytics.trackEvent('LINK','FACEBOOK');
+    this.uiHelper.openExternalWebpage('https://www.facebook.com/Beanconqueror/');
+  }
+}

@@ -254,7 +254,7 @@
   "BREW_HEADER_WHILE_BREW": "Während der Zubereitung",
   "BREW_HEADER_AFTER_BREW": "Nach der Zubereitung",
   "BREW_HEADER_CUPPING": "Cupping",
-  "BEANS_CONSUMED": "Bohnen aufgebraucht",
+  "BEANS_CONSUMED": "Archivieren",
   "NAV_MANAGE_PARAMETERS": "Parameter verwalten",
   "NAV_SORT_PARAMETERS": "Parameter sortieren",
   "NAV_DEFAULT_PARAMETERS": "Vorbelegung festlegen",
@@ -519,6 +519,8 @@
     "NAV_GREEN_BEANS": "Rohkaffee",
     "GREEN_BEAN": {
       "ADD": "Hinzufügen",
+      "EDIT": "Editieren",
+      "DETAIL": "Details",
       "ROASTABLE": "Röstbar"
     },
     "BEAN": {
@@ -540,5 +542,6 @@
   },
   "PAGE_SETTINGS_MANAGE_SECTIONS": "Weitere Bereiche",
   "PAGE_SETTINGS_SHOW_ROASTING_SECTION": "Röstbereich aktivieren",
-  "PAGE_SETTINGS_SHOW_CUPPING_SECTION": "Cuppingbereich aktivieren"
+  "PAGE_SETTINGS_SHOW_CUPPING_SECTION": "Cuppingbereich aktivieren",
+  "BEAN_DATA_BUY_DATE": "Kaufdatum"
 }

@@ -15,16 +15,16 @@
 </ion-header>
 <ion-content>
 
-    <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="bean_segment" class="ion-padding-vertical" style="padding-top:0px;">
-      <ion-segment-button value="open">
-        <ion-label>{{"PAGE_BEANS_LIST_OBTAINABLE" | translate}}
-        </ion-label>
-      </ion-segment-button>
-      <ion-segment-button *ngIf="settings?.show_archived_beans" value="archiv">
-        <ion-label>{{"TAB_ARCHIVE" | translate}}
-        </ion-label>
-      </ion-segment-button>
-    </ion-segment>
+  <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="bean_segment" class="ion-padding-vertical" style="padding-top:0px;">
+    <ion-segment-button value="open">
+      <ion-label>{{"PAGE_BEANS_LIST_OBTAINABLE" | translate}}
+      </ion-label>
+    </ion-segment-button>
+    <ion-segment-button *ngIf="settings?.show_archived_beans" value="archiv">
+      <ion-label>{{"TAB_ARCHIVE" | translate}}
+      </ion-label>
+    </ion-segment-button>
+  </ion-segment>
   <div [ngSwitch]="bean_segment">
     <div *ngSwitchCase="'open'">
       <div *ngIf="openBeans?.length > 0 || isFilterActive()" class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">

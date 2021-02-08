@@ -350,7 +350,6 @@ export class GreenBeansPage implements OnInit {
       this.finishedBeans = sortedBeans;
     }
     this.retriggerScroll();
-    console.log('test');
   }
 
 
