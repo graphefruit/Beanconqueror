@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 
 import {ITimer} from '../../interfaces/timer/iTimer';
 
@@ -7,12 +7,11 @@ import {ITimer} from '../../interfaces/timer/iTimer';
   templateUrl: './timer.component.html',
   styleUrls: ['./timer.component.scss'],
 })
-export class TimerComponent implements OnInit {
+export class TimerComponent implements OnInit, OnDestroy {
   @Input() public label: string;
   @Input() public timeInSeconds: number;
-  @Output() public timerStarted = new EventEmitter();
-  @Output() public timerPaused = new EventEmitter();
-  @Output() public timerTicked = new EventEmitter();
+  @Output() public timeChanged = new EventEmitter();
+
   public timer: ITimer;
   constructor() { }
 
@@ -46,12 +45,12 @@ export class TimerComponent implements OnInit {
   public startTimer (): void {
     this.timer.hasStarted = true;
     this.timer.runTimer = true;
-    this.timerStarted.emit();
+    this.timeChanged.emit();
     this.timerTick();
   }
 
   public pauseTimer (): void {
-    this.timerPaused.emit();
+    this.timeChanged.emit();
     this.timer.runTimer = false;
   }
 
@@ -65,8 +64,14 @@ export class TimerComponent implements OnInit {
       this.timer.seconds++;
       this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
       this.timerTick();
-      this.timerTicked.emit();
+      this.timeChanged.emit();
     }, 1000);
+  }
+  public ngOnDestroy (): void {
+    this.timer.runTimer = false;
+  }
+  public inputChanged(){
+    this.timeChanged.emit();
   }
 
   public getSeconds (): number {

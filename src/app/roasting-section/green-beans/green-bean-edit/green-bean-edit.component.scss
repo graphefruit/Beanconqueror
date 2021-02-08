@@ -3,7 +3,9 @@
     margin-left: 16px;
     margin-right: 16px;
   }
-
+  ion-segment-button{
+    width:100%;
+  }
   ::ng-deep ion-slides img {
     width: 200px;
     height: 200px;

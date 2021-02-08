@@ -39,6 +39,7 @@ export class GreenBeanAddComponent implements OnInit {
 
   public async ionViewWillEnter() {
     this.uiAnalytics.trackEvent('GREEN_BEAN', 'ADD');
+
     if (this.green_bean_template) {
       await this.__loadBean(this.green_bean_template);
     }
@@ -46,6 +47,7 @@ export class GreenBeanAddComponent implements OnInit {
     // Add one empty bean information, rest is being updated on start
     if (this.data.bean_information.length <=0) {
       const beanInformation: IBeanInformation = {} as IBeanInformation;
+      beanInformation.percentage=100;
       this.data.bean_information.push(beanInformation);
     }
   }
@@ -87,8 +89,6 @@ export class GreenBeanAddComponent implements OnInit {
 
     this.data.bean_information = _bean.bean_information;
     this.data.cupping_points = _bean.cupping_points;
-
-
 
     const copyAttachments = [];
     for (const attachment of _bean.attachments) {

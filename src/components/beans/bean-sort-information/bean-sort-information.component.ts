@@ -12,7 +12,6 @@ export class BeanSortInformationComponent implements OnInit {
   @Input() public data: Bean | GreenBean ;
   @Output() public dataChange = new EventEmitter<Bean| GreenBean>();
 
-  public visibleIndex: any = {};
 
   constructor() { }
 
@@ -27,6 +26,6 @@ export class BeanSortInformationComponent implements OnInit {
 
   public deleteSortInformation(_index: number) {
     this.data.bean_information.splice(_index, 1);
-    this.visibleIndex[_index] = false;
+
   }
 }

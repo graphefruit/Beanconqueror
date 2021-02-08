@@ -17,6 +17,9 @@ export class GreenBeanDetailComponent implements OnInit {
   public data: GreenBean = new GreenBean();
   @Input() public greenBean: IGreenBean;
   public visibleIndex: any = {};
+
+  public bean_segment = 'general';
+
   constructor (private readonly modalController: ModalController,
                private readonly navParams: NavParams,
                private readonly uiGreenBeanStorage: UIGreenBeanStorage,

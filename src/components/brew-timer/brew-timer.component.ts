@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 
 import {ITimer} from '../../interfaces/timer/iTimer';
 import moment from 'moment';
@@ -11,9 +11,17 @@ import {ModalController} from '@ionic/angular';
   templateUrl: './brew-timer.component.html',
   styleUrls: ['./brew-timer.component.scss'],
 })
-export class BrewTimerComponent implements OnInit {
+export class BrewTimerComponent implements OnInit, OnDestroy {
   @Input() public label: string;
   @Input() public timeInSeconds: number;
+
+
+  @Output() public timerStarted = new EventEmitter();
+  @Output() public timerPaused = new EventEmitter();
+  @Output() public timerTicked = new EventEmitter();
+  @Output() public bloomTimer = new EventEmitter();
+  @Output() public dripTimer = new EventEmitter();
+
   public displayingTime: string = moment().startOf('day').toISOString();
 
   private _dripTimerVisible: boolean;
@@ -34,11 +42,6 @@ export class BrewTimerComponent implements OnInit {
     return this._bloomTimerVisible;
   }
 
-  @Output() public timerStarted = new EventEmitter();
-  @Output() public timerPaused = new EventEmitter();
-  @Output() public timerTicked = new EventEmitter();
-  @Output() public bloomTimer = new EventEmitter();
-  @Output() public dripTimer = new EventEmitter();
 
 
   public showBloomTimer: boolean = true;
@@ -57,6 +60,9 @@ export class BrewTimerComponent implements OnInit {
     this.initTimer();
 
   }
+  public ngOnDestroy (): void {
+    this.timer.runTimer = false;
+  }
 
   public hasFinished(): boolean {
     return this.timer.hasFinished;
@@ -64,7 +70,7 @@ export class BrewTimerComponent implements OnInit {
 
   public setTime(seconds: number): void {
     this.timer.seconds = seconds;
-
+console.log("bla ");
     this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
     this.displayingTime = moment(this.displayingTime).startOf('day').add('seconds',this.timer.seconds).toISOString();
   }
@@ -90,13 +96,14 @@ export class BrewTimerComponent implements OnInit {
   public startTimer(): void {
     this.timer.hasStarted = true;
     this.timer.runTimer = true;
-    this.timerStarted.emit();
     this.timerTick();
+    this.changeEvent();
   }
 
   public pauseTimer(): void {
     this.timerPaused.emit();
     this.timer.runTimer = false;
+    this.changeEvent();
   }
 
   public bloomTime(): void {
@@ -123,7 +130,7 @@ export class BrewTimerComponent implements OnInit {
       this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
       this.displayingTime = moment(this.displayingTime).startOf('day').add('seconds',this.timer.seconds).toISOString();
       this.timerTick();
-      this.timerTicked.emit();
+      this.changeEvent();
     }, 1000);
   }
 
@@ -134,7 +141,7 @@ export class BrewTimerComponent implements OnInit {
   public reset() {
     this.timeInSeconds = 0;
     this.initTimer();
-    this.timerTicked.emit();
+    this.changeEvent();
   }
   public formatSeconds(): string {
     const secs = this.getSeconds();

@@ -114,6 +114,8 @@ import {BeanRoastInformationComponent} from '../../components/beans/bean-roast-i
 import {BeanGeneralInformationComponent} from '../../components/beans/bean-general-information/bean-general-information.component';
 import {BeanSortInformationComponent} from '../../components/beans/bean-sort-information/bean-sort-information.component';
 import {GreenBeanGeneralInformationComponent} from '../../components/beans/green-bean-general-information/green-bean-general-information.component';
+import {BrewBrewingComponent} from '../../components/brews/brew-brewing/brew-brewing.component';
+import {BeanDetailSortInformationComponent} from '../../components/beans/detail/bean-detail-sort-information/bean-detail-sort-information.component';
 
 @NgModule({
   declarations: [
@@ -203,7 +205,10 @@ import {GreenBeanGeneralInformationComponent} from '../../components/beans/green
     BeanRoastInformationComponent,
     BeanGeneralInformationComponent,
     BeanSortInformationComponent,
-    GreenBeanGeneralInformationComponent],
+    GreenBeanGeneralInformationComponent,
+    BrewBrewingComponent,
+    BeanDetailSortInformationComponent
+  ],
   entryComponents: [
     SettingsPage,
     StatisticPage,
@@ -275,7 +280,9 @@ import {GreenBeanGeneralInformationComponent} from '../../components/beans/green
     BeanRoastInformationComponent,
     BeanGeneralInformationComponent,
     BeanSortInformationComponent,
-    GreenBeanGeneralInformationComponent],
+    GreenBeanGeneralInformationComponent,
+    BrewBrewingComponent,
+    BeanDetailSortInformationComponent],
   imports: [
     CommonModule,
     IonicModule,
@@ -397,7 +404,9 @@ import {GreenBeanGeneralInformationComponent} from '../../components/beans/green
     BeanRoastInformationComponent,
     BeanGeneralInformationComponent,
     BeanSortInformationComponent,
-    GreenBeanGeneralInformationComponent],
+    GreenBeanGeneralInformationComponent,
+    BrewBrewingComponent,
+    BeanDetailSortInformationComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule {

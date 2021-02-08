@@ -55,6 +55,9 @@
       </ion-content>
       <ion-footer class="ion-no-border">
         <ion-list class="no-label-margin" lines="none">
+          <ion-item>
+            <ion-label><ion-icon tappable (click)="openInstagram()" style="font-size:48px;" name="logo-instagram"></ion-icon>&nbsp;<ion-icon (click)="openFacebook()" style="margin-left:10px;font-size:48px;" name="logo-facebook"></ion-icon>&nbsp;<ion-icon tappable (click)="openGithub()" style="margin-left:10px;font-size:48px;" name="logo-github"></ion-icon></ion-label>
+          </ion-item>
           <ion-item (click)="dismiss()" [class.active]="pages.info.active" [routerLink]="[pages.info.url]"
                     replaceUrl="true">
             <ion-label>{{pages.info.title | translate}}</ion-label>

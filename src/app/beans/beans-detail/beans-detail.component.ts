@@ -26,6 +26,7 @@ export class BeansDetailComponent implements OnInit {
   public visibleIndex: any = {};
   @ViewChild('beanStars', {read: NgxStarsComponent, static: false}) public beanStars: NgxStarsComponent;
 
+  public bean_segment = 'general';
   constructor (private readonly modalController: ModalController,
                private readonly navParams: NavParams,
                public uiHelper: UIHelper,
@@ -33,6 +34,7 @@ export class BeansDetailComponent implements OnInit {
   }
 
   public ionViewWillEnter() {
+
     this.uiAnalytics.trackEvent('BEAN', 'DETAIL');
     this.bean = this.navParams.get('bean');
     if (this.bean) {

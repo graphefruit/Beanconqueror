@@ -8,10 +8,9 @@ import {UIAnalytics} from '../../../../services/uiAnalytics';
 import {UIFileHelper} from '../../../../services/uiFileHelper';
 import {UIToast} from '../../../../services/uiToast';
 import {TranslateService} from '@ngx-translate/core';
-import moment from 'moment';
+
 import {IGreenBean} from '../../../../interfaces/green-bean/iGreenBean';
 
-declare var cordova;
 
 @Component({
   selector: 'app-green-bean-edit',
@@ -23,7 +22,9 @@ export class GreenBeanEditComponent implements OnInit {
 
   public data: GreenBean = new GreenBean();
   @Input() public greenBean: IGreenBean;
-  public visibleIndex: any = {};
+
+
+  public bean_segment = 'general';
   constructor (private readonly modalController: ModalController,
                private readonly navParams: NavParams,
                private readonly uiGreenBeanStorage: UIGreenBeanStorage,
@@ -31,10 +32,7 @@ export class GreenBeanEditComponent implements OnInit {
                public uiHelper: UIHelper,
                private readonly uiAnalytics: UIAnalytics,
                private readonly uiFileHelper: UIFileHelper,
-               private readonly uiToast: UIToast,
-               private readonly translate: TranslateService,
-               private readonly platform: Platform,
-               private readonly changeDetectorRef: ChangeDetectorRef) {
+               private readonly uiToast: UIToast) {
 
   }
 
@@ -79,31 +77,6 @@ export class GreenBeanEditComponent implements OnInit {
 
 
   public ngOnInit() {}
-  public chooseDate(_event) {
-    if (this.platform.is('cordova')) {
-      _event.cancelBubble = true;
-      _event.preventDefault();
-      _event.stopImmediatePropagation();
-      _event.stopPropagation();
 
-
-      const myDate = new Date(); // From model.
-
-      cordova.plugins.DateTimePicker.show({
-        mode: 'date',
-        date: myDate,
-        okText: this.translate.instant('CHOOSE'),
-        todayText: this.translate.instant('TODAY'),
-        cancelText: this.translate.instant('CANCEL'),
-        success: (newDate) => {
-          this.data.date = moment(newDate).toISOString();
-          this.changeDetectorRef.detectChanges();
-        }, error: () => {
-
-        }
-      });
-
-    }
-  }
 
 }

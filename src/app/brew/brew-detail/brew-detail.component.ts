@@ -61,56 +61,15 @@ export class BrewDetailComponent implements OnInit {
     return this.data.getPreparation();
   }
   public showSectionAfterBrew(): boolean {
-    let checkData: Settings | Preparation;
-    if (this.getPreparation().use_custom_parameters === true) {
-      checkData = this.getPreparation();
-    } else {
-      checkData = this.settings;
-    }
-    return (checkData.manage_parameters.brew_quantity ||
-      checkData.manage_parameters.coffee_type ||
-      checkData.manage_parameters.coffee_concentration ||
-      checkData.manage_parameters.rating ||
-      checkData.manage_parameters.note ||
-      checkData.manage_parameters.set_custom_brew_time ||
-      checkData.manage_parameters.attachments ||
-      checkData.manage_parameters.tds ||
-      checkData.manage_parameters.brew_beverage_quantity);
+    return this.uiBrewHelper.showSectionAfterBrew(this.getPreparation());
   }
-
-
   public showSectionWhileBrew(): boolean {
-    let checkData: Settings | Preparation;
-    if (this.getPreparation().use_custom_parameters === true) {
-      checkData = this.getPreparation();
-    } else {
-      checkData = this.settings;
-    }
-    return (checkData.manage_parameters.pressure_profile ||
-      checkData.manage_parameters.brew_temperature_time ||
-      checkData.manage_parameters.brew_time ||
-      checkData.manage_parameters.coffee_blooming_time ||
-      checkData.manage_parameters.coffee_first_drip_time);
+    return this.uiBrewHelper.showSectionWhileBrew(this.getPreparation());
   }
 
   public showSectionBeforeBrew(): boolean {
-    let checkData: Settings | Preparation;
-    if (this.getPreparation().use_custom_parameters === true) {
-      checkData = this.getPreparation();
-    } else {
-      checkData = this.settings;
-    }
-    return (checkData.manage_parameters.grind_size ||
-      checkData.manage_parameters.grind_weight ||
-      checkData.manage_parameters.brew_temperature ||
-      checkData.manage_parameters.method_of_preparation ||
-      checkData.manage_parameters.bean_type ||
-      checkData.manage_parameters.mill ||
-      checkData.manage_parameters.mill_speed ||
-      checkData.manage_parameters.mill_timer);
-
+    return this.uiBrewHelper.showSectionBeforeBrew(this.getPreparation());
   }
-
   public dismiss(): void {
     this.modalController.dismiss({
       dismissed: true

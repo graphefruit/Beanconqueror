@@ -1,15 +1,16 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {UIBeanStorage} from '../../../services/uiBeanStorage';
 import {UIHelper} from '../../../services/uiHelper';
 import {UIImage} from '../../../services/uiImage';
 import {Bean} from '../../../classes/bean/bean';
-import {ModalController, NavParams, Platform} from '@ionic/angular';
+import {ModalController, NavParams} from '@ionic/angular';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 import {UIFileHelper} from '../../../services/uiFileHelper';
 import {UIToast} from '../../../services/uiToast';
-import {TranslateService} from '@ngx-translate/core';
 import {IBeanInformation} from '../../../interfaces/bean/iBeanInformation';
 import {GreenBean} from '../../../classes/green-bean/green-bean';
+import {BEAN_MIX_ENUM} from '../../../enums/beans/mix';
+import moment from 'moment';
 
 @Component({
   selector: 'beans-add',
@@ -63,7 +64,6 @@ export class BeansAddComponent implements OnInit {
     }
   }
 
-
   public addBean(): void {
 
     if (this.__formValid()) {
@@ -75,19 +75,27 @@ export class BeansAddComponent implements OnInit {
     if (this.greenBean) {
       this.data.bean_roast_information.bean_uuid = this.greenBean.config.uuid;
       this.data.bean_information = this.greenBean.bean_information;
+
+
+      this.data.name = this.greenBean.name;
+      this.data.cupping_points = this.greenBean.cupping_points;
+      this.data.ean_article_number = this.greenBean.ean_article_number;
+      this.data.url = this.greenBean.url;
+      this.data.decaffeinated = this.greenBean.decaffeinated;
+      this.data.aromatics = this.greenBean.aromatics;
+      this.data.note = this.greenBean.note;
+      this.data.beanMix = 'SINGLE_ORIGIN' as BEAN_MIX_ENUM;
+      this.data.roastingDate = moment().format();
     }
   }
 
-
   public __addBean(): void {
-
     this.uiBeanStorage.add(this.data);
     this.dismiss();
     if (!this.hide_toast_message) {
       this.uiToast.showInfoToast('TOAST_BEAN_ADDED_SUCCESSFULLY');
     }
   }
-
 
   public dismiss(): void {
     this.modalController.dismiss({

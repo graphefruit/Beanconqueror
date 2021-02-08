@@ -221,4 +221,57 @@ export class UIBrewHelper {
 
   }
 
+
+  public showSectionAfterBrew(_preparation: Preparation): boolean {
+
+    let checkData: Settings | Preparation;
+    if (_preparation.use_custom_parameters === true) {
+      checkData = _preparation;
+    } else {
+      checkData = this.settings;
+    }
+    return (checkData.manage_parameters.brew_quantity ||
+      checkData.manage_parameters.coffee_type ||
+      checkData.manage_parameters.coffee_concentration ||
+      checkData.manage_parameters.rating ||
+      checkData.manage_parameters.note ||
+      checkData.manage_parameters.set_custom_brew_time ||
+      checkData.manage_parameters.attachments ||
+      checkData.manage_parameters.tds ||
+      checkData.manage_parameters.brew_beverage_quantity);
+  }
+
+
+  public showSectionWhileBrew(_preparation: Preparation): boolean {
+    let checkData: Settings | Preparation;
+    if (_preparation.use_custom_parameters === true) {
+      checkData = _preparation;
+    } else {
+      checkData = this.settings;
+    }
+    return (checkData.manage_parameters.pressure_profile ||
+      checkData.manage_parameters.brew_temperature_time ||
+      checkData.manage_parameters.brew_time ||
+      checkData.manage_parameters.coffee_blooming_time ||
+      checkData.manage_parameters.coffee_first_drip_time);
+  }
+
+  public showSectionBeforeBrew(_preparation: Preparation): boolean {
+    let checkData: Settings | Preparation;
+    if (_preparation.use_custom_parameters === true) {
+      checkData = _preparation;
+    } else {
+      checkData = this.settings;
+    }
+    return (checkData.manage_parameters.grind_size ||
+      checkData.manage_parameters.grind_weight ||
+      checkData.manage_parameters.brew_temperature ||
+      checkData.manage_parameters.method_of_preparation ||
+      checkData.manage_parameters.bean_type ||
+      checkData.manage_parameters.mill ||
+      checkData.manage_parameters.mill_speed ||
+      checkData.manage_parameters.mill_timer);
+
+  }
+
 }

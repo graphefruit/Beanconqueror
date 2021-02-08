@@ -18,7 +18,6 @@ import {IBeanPageFilter} from '../../interfaces/bean/iBeanPageFilter';
 import {BEAN_SORT_AFTER} from '../../enums/beans/beanSortAfter';
 import {BEAN_SORT_ORDER} from '../../enums/beans/beanSortOrder';
 import {BeansDetailComponent} from './beans-detail/beans-detail.component';
-import {PhotoPopoverComponent} from '../../popover/photo-popover/photo-popover.component';
 import {UIImage} from '../../services/uiImage';
 
 @Component({
@@ -121,6 +120,7 @@ export class BeansPage implements OnInit {
   }
 
   public async detailBean(_bean: Bean) {
+    console.log("show detail bean");
     const modal = await this.modalCtrl.create({component: BeansDetailComponent, id:'bean-detail', componentProps: {bean: _bean}});
     await modal.present();
     await modal.onWillDismiss();
