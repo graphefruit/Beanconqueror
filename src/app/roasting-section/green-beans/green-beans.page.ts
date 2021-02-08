@@ -11,7 +11,6 @@ import {UIToast} from '../../../services/uiToast';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 import {UIBeanHelper} from '../../../services/uiBeanHelper';
 import {Brew} from '../../../classes/brew/brew';
-import {BeanFilterComponent} from '../../beans/bean-filter/bean-filter.component';
 import {GreenBean} from '../../../classes/green-bean/green-bean';
 import {UIGreenBeanStorage} from '../../../services/uiGreenBeanStorage';
 import {GREEN_BEAN_ACTION} from '../../../enums/green-beans/greenBeanAction';
@@ -20,6 +19,7 @@ import {GreenBeanAddComponent} from './green-bean-add/green-bean-add.component';
 import {GreenBeanDetailComponent} from './green-bean-detail/green-bean-detail.component';
 import {BeansAddComponent} from '../../beans/beans-add/beans-add.component';
 import {UIImage} from '../../../services/uiImage';
+import {GreenBeanFilterComponent} from './green-bean-filter/green-bean-filter.component';
 
 @Component({
   selector: 'app-green-beans',
@@ -28,7 +28,7 @@ import {UIImage} from '../../../services/uiImage';
 })
 export class GreenBeansPage implements OnInit {
 
-  public beans: Array<GreenBean> = [];
+  private beans: Array<GreenBean> = [];
 
 
   public settings: Settings;
@@ -70,8 +70,8 @@ export class GreenBeansPage implements OnInit {
 
   public ionViewWillEnter(): void {
     this.settings = this.uiSettingsStorage.getSettings();
-    this.archivedBeansFilter = this.settings.bean_filter.ARCHIVED;
-    this.openBeansFilter = this.settings.bean_filter.OPEN;
+    this.archivedBeansFilter = this.settings.green_bean_filter.ARCHIVED;
+    this.openBeansFilter = this.settings.green_bean_filter.OPEN;
     this.loadBeans();
   }
 
@@ -83,14 +83,7 @@ export class GreenBeansPage implements OnInit {
     this.retriggerScroll();
   }
 
-  public getUsedWeightCount(_bean: GreenBean): number {
-    let usedWeightCount: number = 0;
-    const relatedBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(_bean.config.uuid);
-    for (const brew of relatedBrews) {
-      usedWeightCount += brew.grind_weight;
-    }
-    return usedWeightCount;
-  }
+
 
   public segmentChanged() {
     this.retriggerScroll();
@@ -216,12 +209,12 @@ export class GreenBeansPage implements OnInit {
     }
 
     const modal = await this.modalCtrl.create({
-      component: BeanFilterComponent,
+      component: GreenBeanFilterComponent,
       cssClass: 'bottom-modal',
       showBackdrop: true,
       backdropDismiss: true,
       swipeToClose: true,
-      id:'bean-filter',
+      id:'green-bean-filter',
       componentProps:
         {bean_filter: beanFilter, segment: this.bean_segment}
     });
@@ -256,10 +249,9 @@ export class GreenBeansPage implements OnInit {
   }
 
   private __saveBeanFilter() {
-    const settings: Settings = this.uiSettingsStorage.getSettings();
-    settings.bean_filter.OPEN = this.openBeansFilter;
-    settings.bean_filter.ARCHIVED = this.archivedBeansFilter;
-    this.uiSettingsStorage.saveSettings(settings);
+    this.settings.green_bean_filter.OPEN = this.openBeansFilter;
+    this.settings.green_bean_filter.ARCHIVED = this.archivedBeansFilter;
+    this.uiSettingsStorage.saveSettings(this.settings);
   }
 
   private __initializeBeansView(_type: string) {
@@ -279,7 +271,7 @@ export class GreenBeansPage implements OnInit {
     }
 
     // Skip if something is unkown, because no filter is active then
-   /** if (filter.sort_order !== BEAN_SORT_ORDER.UNKOWN && filter.sort_after !== BEAN_SORT_AFTER.UNKOWN){
+   if (filter.sort_order !== BEAN_SORT_ORDER.UNKOWN && filter.sort_after !== BEAN_SORT_AFTER.UNKOWN){
 
       switch (filter.sort_after) {
         case BEAN_SORT_AFTER.NAME:
@@ -298,27 +290,24 @@ export class GreenBeansPage implements OnInit {
             }
           );
           break;
-        case BEAN_SORT_AFTER.ROASTER:
+        case BEAN_SORT_AFTER.PURCHASE_DATE:
           sortedBeans = sortedBeans.sort( (a,b) => {
-              const roasterA = a.roaster.toUpperCase();
-              const roasterB = b.roaster.toUpperCase();
-              if (roasterA < roasterB) {
+              if ( a.date > b.date){
                 return -1;
               }
-              if (roasterA > roasterB) {
+              if ( a.date < b.date){
                 return 1;
               }
-
               return 0;
             }
           );
           break;
-        case BEAN_SORT_AFTER.ROASTING_DATE:
+        case BEAN_SORT_AFTER.CREATION_DATE:
           sortedBeans = sortedBeans.sort( (a,b) => {
-              if ( a.roastingDate > b.roastingDate ){
+              if ( a.config.unix_timestamp > b.config.unix_timestamp ){
                 return -1;
               }
-              if ( a.roastingDate < b.roastingDate ){
+              if ( a.config.unix_timestamp < b.config.unix_timestamp ){
                 return 1;
               }
               return 0;
@@ -331,7 +320,7 @@ export class GreenBeansPage implements OnInit {
         sortedBeans.reverse();
       }
 
-    }**/
+    }
     let searchText: string = '';
     if (isOpen) {
       searchText = this.openBeansFilterText.toLowerCase();

@@ -63,6 +63,11 @@ export interface ISettings {
     ARCHIVED: IBeanPageFilter
   };
 
+  green_bean_filter: {
+    OPEN: IBeanPageFilter,
+    ARCHIVED: IBeanPageFilter
+  };
+
   welcome_page_showed: boolean;
 
   wake_lock:boolean;

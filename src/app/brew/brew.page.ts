@@ -1,22 +1,16 @@
 import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
-import {AlertController, IonVirtualScroll, ModalController, Platform, PopoverController} from '@ionic/angular';
+import {IonVirtualScroll, ModalController, Platform, PopoverController} from '@ionic/angular';
 import {UIAlert} from '../../services/uiAlert';
 import {UIHelper} from '../../services/uiHelper';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {UIBrewHelper} from '../../services/uiBrewHelper';
 import {Brew} from '../../classes/brew/brew';
-import {SocialSharing} from '@ionic-native/social-sharing/ngx';
 import {BrewAddComponent} from './brew-add/brew-add.component';
 import {BrewDetailComponent} from './brew-detail/brew-detail.component';
 import {BrewEditComponent} from './brew-edit/brew-edit.component';
 
-import {UIPreparationStorage} from '../../services/uiPreparationStorage';
-import {UIBeanStorage} from '../../services/uiBeanStorage';
-import {UIMillStorage} from '../../services/uiMillStorage';
-import {IPreparation} from '../../interfaces/preparation/iPreparation';
-import {IBean} from '../../interfaces/bean/iBean';
-import {IMill} from '../../interfaces/mill/iMill';
+
 import {IBrewPageFilter} from '../../interfaces/brew/iBrewPageFilter';
 import {TranslateService} from '@ngx-translate/core';
 import {BREW_ACTION} from '../../enums/brews/brewAction';
@@ -37,24 +31,17 @@ import {UIImage} from '../../services/uiImage';
 export class BrewPage implements OnInit {
 
 
-  public brews: Array<Brew>;
+  private brews: Array<Brew>;
   public openBrewsView: Array<Brew> = [];
   public archiveBrewsView: Array<Brew> = [];
 
 
   public brew_segment: string = 'open';
-  public settings: Settings;
-  public query: string = '';
-
 
   @ViewChild('openScroll', {read: IonVirtualScroll, static: false}) public openScroll: IonVirtualScroll;
   @ViewChild('archivedScroll', {read: IonVirtualScroll, static: false}) public archivedScroll: IonVirtualScroll;
 
-  public openBrewsFilter: IBrewPageFilter = {
-    mill: [],
-    bean: [],
-    method_of_preparation: []
-  };
+
   public openBrewFilterText: string = '';
   public archivedBrewFilterText: string = '';
 
@@ -63,15 +50,14 @@ export class BrewPage implements OnInit {
     bean: [],
     method_of_preparation: []
   };
-
-  public method_of_preparations: Array<IPreparation> = [];
-  public beans: Array<IBean> = [];
-  public finishedBeans: Array<IBean> = [];
-  public mills: Array<IMill> = [];
+  public openBrewsFilter: IBrewPageFilter = {
+    mill: [],
+    bean: [],
+    method_of_preparation: []
+  };
 
   constructor (private readonly modalCtrl: ModalController,
                private readonly platform: Platform,
-               private readonly socialSharing: SocialSharing,
                private readonly uiBrewStorage: UIBrewStorage,
                private readonly changeDetectorRef: ChangeDetectorRef,
                private readonly uiAlert: UIAlert,
@@ -79,10 +65,6 @@ export class BrewPage implements OnInit {
                public uiBrewHelper: UIBrewHelper,
                private readonly uiSettingsStorage: UISettingsStorage,
                private readonly popoverCtrl: PopoverController,
-               public alertCtrl: AlertController,
-               private readonly uiPreparationStorage: UIPreparationStorage,
-               private readonly uiBeanStorage: UIBeanStorage,
-               private readonly uiMillStorage: UIMillStorage,
                private translate: TranslateService,
                private readonly uiToast: UIToast,
                private readonly uiAnalytics: UIAnalytics,
@@ -91,9 +73,9 @@ export class BrewPage implements OnInit {
 
 
   public ionViewWillEnter(): void {
-    this.settings = this.uiSettingsStorage.getSettings();
-    this.archivedBrewsFilter = this.settings.brew_filter.ARCHIVED;
-    this.openBrewsFilter = this.settings.brew_filter.OPEN;
+    const settings: Settings = this.uiSettingsStorage.getSettings();
+    this.archivedBrewsFilter = settings.brew_filter.ARCHIVED;
+    this.openBrewsFilter = settings.brew_filter.OPEN;
     this.loadBrews();
 
 

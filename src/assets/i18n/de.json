@@ -513,7 +513,6 @@
   "EXCEL_EXPORT": "Excel Export",
   "HEALTH_KIT_QUESTION_TITLE": "Speichern in HealthKit",
   "HEALTH_KIT_QUESTION_MESSAGE": "Durch die Aktivierung wird die eingenommene Koffeinmenge automatisch in Apple Health abgespeichert",
-
   "NAV_ROASTING_SECTION": "Rösten",
   "ROASTING_SECTION" : {
     "NAV_GREEN_BEANS": "Rohkaffee",
@@ -543,5 +542,8 @@
   "PAGE_SETTINGS_MANAGE_SECTIONS": "Weitere Bereiche",
   "PAGE_SETTINGS_SHOW_ROASTING_SECTION": "Röstbereich aktivieren",
   "PAGE_SETTINGS_SHOW_CUPPING_SECTION": "Cuppingbereich aktivieren",
-  "BEAN_DATA_BUY_DATE": "Kaufdatum"
+  "BEAN_DATA_BUY_DATE": "Kaufdatum",
+  "BEAN_SORT_CREATION_DATE": "Erstelldatum",
+  "BEAN_SORT_PURCHASE_DATE": "Kaufdatum",
+  "BEAN_ROAST_COUNT": "Röstungen"
 }

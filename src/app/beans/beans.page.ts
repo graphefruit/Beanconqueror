@@ -82,15 +82,6 @@ export class BeansPage implements OnInit {
     this.retriggerScroll();
   }
 
-  public getUsedWeightCount(_bean: Bean): number {
-    let usedWeightCount: number = 0;
-    const relatedBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(_bean.config.uuid);
-    for (const brew of relatedBrews) {
-      usedWeightCount += brew.grind_weight;
-    }
-    return usedWeightCount;
-  }
-
   public segmentChanged() {
     this.retriggerScroll();
   }
@@ -120,7 +111,6 @@ export class BeansPage implements OnInit {
   }
 
   public async detailBean(_bean: Bean) {
-    console.log("show detail bean");
     const modal = await this.modalCtrl.create({component: BeansDetailComponent, id:'bean-detail', componentProps: {bean: _bean}});
     await modal.present();
     await modal.onWillDismiss();

@@ -33,7 +33,7 @@ export class BeansAddComponent implements OnInit {
                private readonly navParams: NavParams,
                private readonly uiBeanStorage: UIBeanStorage,
                private readonly uiImage: UIImage,
-               public uiHelper: UIHelper,
+               private readonly uiHelper: UIHelper,
                private readonly uiAnalytics: UIAnalytics,
                private readonly uiFileHelper: UIFileHelper,
                private readonly uiToast: UIToast) {

@@ -116,6 +116,7 @@ import {BeanSortInformationComponent} from '../../components/beans/bean-sort-inf
 import {GreenBeanGeneralInformationComponent} from '../../components/beans/green-bean-general-information/green-bean-general-information.component';
 import {BrewBrewingComponent} from '../../components/brews/brew-brewing/brew-brewing.component';
 import {BeanDetailSortInformationComponent} from '../../components/beans/detail/bean-detail-sort-information/bean-detail-sort-information.component';
+import {GreenBeanFilterComponent} from '../roasting-section/green-beans/green-bean-filter/green-bean-filter.component';
 
 @NgModule({
   declarations: [
@@ -207,7 +208,8 @@ import {BeanDetailSortInformationComponent} from '../../components/beans/detail/
     BeanSortInformationComponent,
     GreenBeanGeneralInformationComponent,
     BrewBrewingComponent,
-    BeanDetailSortInformationComponent
+    BeanDetailSortInformationComponent,
+    GreenBeanFilterComponent
   ],
   entryComponents: [
     SettingsPage,
@@ -282,7 +284,8 @@ import {BeanDetailSortInformationComponent} from '../../components/beans/detail/
     BeanSortInformationComponent,
     GreenBeanGeneralInformationComponent,
     BrewBrewingComponent,
-    BeanDetailSortInformationComponent],
+    BeanDetailSortInformationComponent,
+    GreenBeanFilterComponent],
   imports: [
     CommonModule,
     IonicModule,
@@ -406,7 +409,8 @@ import {BeanDetailSortInformationComponent} from '../../components/beans/detail/
     BeanSortInformationComponent,
     GreenBeanGeneralInformationComponent,
     BrewBrewingComponent,
-    BeanDetailSortInformationComponent],
+    BeanDetailSortInformationComponent,
+    GreenBeanFilterComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule {

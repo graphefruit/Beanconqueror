@@ -19,7 +19,7 @@
     <ion-grid class="no-ion-col-vertical-padding">
       <ion-row>
         <ion-col size="6">
-          <ion-label class="card-headline">{{"BEAN_DATA_ROASTING_DATE" | translate}}</ion-label><br/>
+          <ion-label class="card-headline">{{"BEAN_DATA_BUY_DATE" | translate}}</ion-label><br/>
 
           <ion-text *ngIf="greenBean?.date">
             {{greenBean.date | formatDate:["DD.MM.YYYY"]}}</ion-text>
@@ -28,7 +28,7 @@
           </ion-text>
         </ion-col>
         <ion-col size="6">
-          <ion-label class="card-headline">{{"BEAN_DATA_ROASTER" | translate}}</ion-label><br/>
+          <ion-label class="card-headline">{{"BEAN_DATA_COST" | translate}}</ion-label><br/>
 
           <ion-text *ngIf="greenBean.cost">
             {{greenBean.cost}}</ion-text>
@@ -36,12 +36,10 @@
             -
           </ion-text>
         </ion-col>
-
-
         <ion-col size="6">
-          <ion-label class="card-headline">{{"ROASTED_BEFORE" | translate}}</ion-label><br/>
-          <ion-text *ngIf="daysOld() === 1">{{daysOld()}}&nbsp;{{"DAY_OLD" | translate}}</ion-text>
-          <ion-text *ngIf="!(daysOld() === 1)">{{daysOld()}}&nbsp;{{"DAYS_OLD" | translate}}</ion-text>
+          <ion-label class="card-headline">{{"BEAN_ROAST_COUNT" | translate}}</ion-label><br/>
+          <ion-text>
+            {{roastCount()}}</ion-text>
         </ion-col>
         <ion-col size="6">
           <ion-label class="card-headline">{{"BEANS_AMOUNT_USED" | translate}}</ion-label><br/>
