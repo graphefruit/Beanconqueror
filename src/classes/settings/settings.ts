@@ -90,6 +90,11 @@ export class Settings implements ISettings {
     ARCHIVED: IBeanPageFilter
   };
 
+  public green_bean_filter: {
+    OPEN: IBeanPageFilter,
+    ARCHIVED: IBeanPageFilter
+  };
+
   public wake_lock: boolean;
 
   public show_roasting_section: boolean;
@@ -149,11 +154,20 @@ export class Settings implements ISettings {
       ARCHIVED: {} as IBeanPageFilter
     };
 
+    this.green_bean_filter = {
+      OPEN: {} as IBeanPageFilter,
+      ARCHIVED: {} as IBeanPageFilter
+    };
+
     this.brew_filter.OPEN = {bean: [], method_of_preparation: [], mill: []} as IBrewPageFilter;
     this.brew_filter.ARCHIVED = {bean: [], method_of_preparation: [], mill: []} as IBrewPageFilter;
 
     this.bean_filter.OPEN = {sort_after: BEAN_SORT_AFTER.UNKOWN, sort_order:  BEAN_SORT_ORDER.UNKOWN} as IBeanPageFilter;
     this.bean_filter.ARCHIVED =  {sort_after: BEAN_SORT_AFTER.UNKOWN, sort_order:  BEAN_SORT_ORDER.UNKOWN} as IBeanPageFilter;
+
+    this.green_bean_filter.OPEN = {sort_after: BEAN_SORT_AFTER.UNKOWN, sort_order:  BEAN_SORT_ORDER.UNKOWN} as IBeanPageFilter;
+    this.green_bean_filter.ARCHIVED =  {sort_after: BEAN_SORT_AFTER.UNKOWN, sort_order:  BEAN_SORT_ORDER.UNKOWN} as IBeanPageFilter;
+
 
     this.welcome_page_showed = false;
     this.wake_lock = false;

@@ -3,6 +3,8 @@ import {Injectable} from '@angular/core';
 
 import {Brew} from '../classes/brew/brew';
 import {UIBrewStorage} from './uiBrewStorage';
+import {UIBeanStorage} from './uiBeanStorage';
+import {Bean} from '../classes/bean/bean';
 
 /**
  * Handles every helping functionalities
@@ -14,10 +16,17 @@ import {UIBrewStorage} from './uiBrewStorage';
 export class UIBeanHelper {
 
   private allStoredBrews: Array<Brew> = [];
-  constructor(private readonly uiBrewStorage: UIBrewStorage) {
+  private allStoredBeans: Array<Bean> = [];
+  constructor(private readonly uiBrewStorage: UIBrewStorage,
+              private readonly uiBeanStorage: UIBeanStorage) {
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
       // If an brew is deleted, we need to reset our array for the next call.
       this.allStoredBrews = [];
+    });
+
+    this.uiBeanStorage.attachOnEvent().subscribe((_val) => {
+      // If an brew is deleted, we need to reset our array for the next call.
+      this.allStoredBeans = [];
     });
   }
 
@@ -40,5 +49,15 @@ export class UIBeanHelper {
 
   }
 
+  public getAllRoastedBeansForThisGreenBean(_uuid: string): Array<Bean> {
 
+    if (this.allStoredBeans.length <= 0) {
+      // Load just if needed, performance reasons
+      this.allStoredBeans = this.uiBeanStorage.getAllEntries();
+    }
+
+    const roastedBeans = this.allStoredBeans.filter((e) => (e.bean_roast_information && e.bean_roast_information.bean_uuid === _uuid));
+    return roastedBeans;
+
+  }
 }

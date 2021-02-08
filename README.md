@@ -14,6 +14,11 @@ Thats why I build and maintain the Beanconqueror app for you, for me, for every 
 
 Download today, track your brews, change your recipes, to get the best tasting cup of coffee you've ever had.
 
+##### Follow me
+
+| [Website](#) | [Instagram](https://www.instagram.com/beanconqueror/) | [Facebook](https://www.facebook.com/Beanconqueror/) |
+
+
 ## Sneak preview
 ![Beanconqueror gif](demo/Beanconqueror.gif)
 
