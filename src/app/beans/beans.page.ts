@@ -3,22 +3,15 @@ import {UIAlert} from '../../services/uiAlert';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
 import {IonVirtualScroll, ModalController} from '@ionic/angular';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
-import {Brew} from '../../classes/brew/brew';
 import {Bean} from '../../classes/bean/bean';
-import {BeansAddComponent} from './beans-add/beans-add.component';
-import {BeansEditComponent} from './beans-edit/beans-edit.component';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {Settings} from '../../classes/settings/settings';
 import {BEAN_ACTION} from '../../enums/beans/beanAction';
-import {UIToast} from '../../services/uiToast';
-import {UIAnalytics} from '../../services/uiAnalytics';
-import {UIBeanHelper} from '../../services/uiBeanHelper';
 import {BeanFilterComponent} from './bean-filter/bean-filter.component';
 import {IBeanPageFilter} from '../../interfaces/bean/iBeanPageFilter';
 import {BEAN_SORT_AFTER} from '../../enums/beans/beanSortAfter';
 import {BEAN_SORT_ORDER} from '../../enums/beans/beanSortOrder';
-import {BeansDetailComponent} from './beans-detail/beans-detail.component';
-import {UIImage} from '../../services/uiImage';
+import {BeansAddComponent} from './beans-add/beans-add.component';
 
 @Component({
   selector: 'beans',
@@ -58,11 +51,7 @@ export class BeansPage implements OnInit {
               private readonly uiBeanStorage: UIBeanStorage,
               private readonly uiAlert: UIAlert,
               private readonly uiBrewStorage: UIBrewStorage,
-              private readonly uiSettingsStorage: UISettingsStorage,
-              private readonly uiToast: UIToast,
-              private readonly uiAnalytics: UIAnalytics,
-              private readonly uiBeanHelper: UIBeanHelper,
-              private readonly uiImage: UIImage) {
+              private readonly uiSettingsStorage: UISettingsStorage) {
 
 
   }
@@ -86,39 +75,9 @@ export class BeansPage implements OnInit {
     this.retriggerScroll();
   }
   public async beanAction(action: BEAN_ACTION, bean: Bean): Promise<void> {
-    switch (action) {
-      case BEAN_ACTION.DETAIL:
-        this.detailBean(bean);
-        break;
-      case BEAN_ACTION.REPEAT:
-        this.repeatBean(bean);
-        break;
-      case BEAN_ACTION.EDIT:
-        this.editBean(bean);
-        break;
-      case BEAN_ACTION.DELETE:
-        this.deleteBean(bean);
-        break;
-      case BEAN_ACTION.BEANS_CONSUMED:
-        this.beansConsumed(bean);
-        break;
-      case BEAN_ACTION.PHOTO_GALLERY:
-        this.viewPhotos(bean);
-        break;
-      default:
-        break;
-    }
+    this.loadBeans();
   }
 
-  public async detailBean(_bean: Bean) {
-    const modal = await this.modalCtrl.create({component: BeansDetailComponent, id:'bean-detail', componentProps: {bean: _bean}});
-    await modal.present();
-    await modal.onWillDismiss();
-  }
-
-  public async viewPhotos(_bean: Bean) {
-    await this.uiImage.viewPhotos(_bean);
-  }
 
   private retriggerScroll() {
     // https://github.com/ionic-team/ionic-framework/issues/18409
@@ -134,58 +93,6 @@ export class BeansPage implements OnInit {
       }
     },75);
   }
-
-
-  public beansConsumed(_bean: Bean) {
-    _bean.finished = true;
-    this.uiBeanStorage.update(_bean);
-    this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');
-    this.settings.resetFilter();
-    this.uiSettingsStorage.saveSettings(this.settings);
-    this.loadBeans();
-  }
-
-  public async add() {
-    const modal = await this.modalCtrl.create({component:BeansAddComponent,id:'bean-add'});
-    await modal.present();
-    await modal.onWillDismiss();
-    this.loadBeans();
-  }
-
-  public async editBean(_bean: Bean) {
-
-    const modal = await this.modalCtrl.create({component:BeansEditComponent, id:'bean-edit',  componentProps: {'bean' : _bean}});
-    await modal.present();
-    await modal.onWillDismiss();
-    this.loadBeans();
-  }
-
-
-  public deleteBean(_bean: Bean): void {
-    this.uiAlert.showConfirm('DELETE_BEAN_QUESTION', 'SURE_QUESTION', true)
-        .then(() => {
-              // Yes
-            this.uiAnalytics.trackEvent('BEAN', 'DELETE');
-            this.__deleteBean(_bean);
-            this.uiToast.showInfoToast('TOAST_BEAN_DELETED_SUCCESSFULLY');
-            this.settings.resetFilter();
-            this.uiSettingsStorage.saveSettings(this.settings);
-            },
-            () => {
-              // No
-            });
-
-  }
-
-  public async repeatBean(_bean: Bean) {
-    this.uiAnalytics.trackEvent('BEAN', 'REPEAT');
-    const modal = await this.modalCtrl.create({component: BeansAddComponent, id:'bean-add', componentProps: {bean_template: _bean}});
-    await modal.present();
-    await modal.onWillDismiss();
-    this.loadBeans();
-
-  }
-
 
   public async showFilter() {
     let beanFilter: IBeanPageFilter;
@@ -334,23 +241,6 @@ export class BeansPage implements OnInit {
   }
 
 
-  private __deleteBean(_bean: Bean): void {
-    const brews: Array<Brew> =  this.uiBrewStorage.getAllEntries();
-
-    const deletingBrewIndex: Array<number> = [];
-    for (let i = 0; i < brews.length; i++) {
-      if (brews[i].bean === _bean.config.uuid) {
-        deletingBrewIndex.push(i);
-      }
-    }
-    for (let i = deletingBrewIndex.length; i--;) {
-      this.uiBrewStorage.removeByUUID(brews[deletingBrewIndex[i]].config.uuid);
-    }
-
-    this.uiBeanStorage.removeByObject(_bean);
-    this.loadBeans();
-
-  }
   public ngOnInit() {
   }
 
@@ -363,6 +253,13 @@ export class BeansPage implements OnInit {
     this.__initializeBeansView('open');
     this.__initializeBeansView('archiv');
 
+  }
+
+  public async add() {
+    const modal = await this.modalCtrl.create({component:BeansAddComponent,id:'bean-add'});
+    await modal.present();
+    await modal.onWillDismiss();
+    this.loadBeans();
   }
 
 }

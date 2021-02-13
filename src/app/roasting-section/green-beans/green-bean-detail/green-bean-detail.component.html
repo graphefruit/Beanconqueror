@@ -19,6 +19,10 @@
       <ion-label>{{"BEAN_TAB_SORT_INFORMATION" | translate }}
       </ion-label>
     </ion-segment-button>
+    <ion-segment-button value="linked">
+      <ion-label>{{"BEAN_TAB_LINKED_ROASTS" | translate }}
+      </ion-label>
+    </ion-segment-button>
   </ion-segment>
   <div [ngSwitch]="bean_segment">
     <div *ngSwitchCase="'general'">
@@ -99,6 +103,23 @@
     </div>
     <div *ngSwitchCase="'sortinformation'">
       <bean-detail-sort-information *ngIf="data" [(data)]="data"></bean-detail-sort-information>
+    </div>
+    <div *ngSwitchCase="'linked'">
+      <div *ngIf="linkedRoasts.length <=0"  class="ion-padding ion-text-center">
+        <div>
+          <ion-icon color="inactive" name="beanconqueror-beans" size="large"></ion-icon>
+        </div>
+        <div class="text-color-inactive ion-margin-top">
+          {{"PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS" | translate}}
+        </div>
+      </div>
+      <div *ngIf="linkedRoasts.length > 0">
+        <ion-virtual-scroll #archivedScroll [items]="linkedRoasts" approxItemHeight="240px">
+          <bean-information [showActions]="false" *virtualItem="let bean;"
+                            [bean]="bean"></bean-information>
+        </ion-virtual-scroll>
+      </div>
+
     </div>
   </div>
 

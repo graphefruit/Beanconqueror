@@ -17,4 +17,13 @@ export interface IBeanRoastInformation {
 
   /* Inherits the bean unique id, without this id, the roast information won't be displayed **/
   bean_uuid: string;
+
+  /* Inherits the first crack minute **/
+  first_crack_minute: number;
+  /* Inherits the first crack temperature **/
+  first_crack_temperature: number;
+  /* Inherits the second crack minute **/
+  second_crack_minute: number;
+  /* Inherits the second crack temperatuer **/
+  second_crack_temperature: number;
 }
