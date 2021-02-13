@@ -89,49 +89,10 @@ export class GreenBeansPage implements OnInit {
     this.retriggerScroll();
   }
   public async beanAction(action: GREEN_BEAN_ACTION, bean: GreenBean): Promise<void> {
-    switch (action) {
-      case GREEN_BEAN_ACTION.DETAIL:
-        this.detailBean(bean);
-        break;
-      case GREEN_BEAN_ACTION.REPEAT:
-        this.repeatBean(bean);
-        break;
-      case GREEN_BEAN_ACTION.EDIT:
-        this.editBean(bean);
-        break;
-      case GREEN_BEAN_ACTION.DELETE:
-        this.deleteBean(bean);
-        break;
-      case GREEN_BEAN_ACTION.BEANS_CONSUMED:
-        this.beansConsumed(bean);
-        break;
-      case GREEN_BEAN_ACTION.PHOTO_GALLERY:
-        this.viewPhotos(bean);
-        break;
-      case GREEN_BEAN_ACTION.TRANSFER_ROAST:
-        this.transferRoast(bean);
-        break;
-      default:
-        break;
-    }
-  }
-
-  public async detailBean(_bean: GreenBean) {
-    const modal = await this.modalCtrl.create({component: GreenBeanDetailComponent, id:'green-bean-detail', componentProps: {greenBean: _bean}});
-    await modal.present();
-    await modal.onWillDismiss();
-  }
-
-  public async viewPhotos(_bean: GreenBean) {
-    await this.uiImage.viewPhotos(_bean);
-  }
-
-  public async transferRoast(_bean: GreenBean) {
-    const modal = await this.modalCtrl.create({component:BeansAddComponent, id:'bean-add',  componentProps: {greenBean : _bean}});
-    await modal.present();
-    await modal.onWillDismiss();
     this.loadBeans();
   }
+
+
 
   private retriggerScroll() {
     // https://github.com/ionic-team/ionic-framework/issues/18409
@@ -148,57 +109,12 @@ export class GreenBeansPage implements OnInit {
     },75);
   }
 
-
-  public beansConsumed(_bean: GreenBean) {
-    _bean.finished = true;
-    this.uiGreenBeanStorage.update(_bean);
-    this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');
-    this.settings.resetFilter();
-    this.uiSettingsStorage.saveSettings(this.settings);
-    this.loadBeans();
-  }
-
   public async add() {
     const modal = await this.modalCtrl.create({component:GreenBeanAddComponent,id:'green-bean-add'});
     await modal.present();
     await modal.onWillDismiss();
     this.loadBeans();
   }
-
-  public async editBean(_bean: GreenBean) {
-
-    const modal = await this.modalCtrl.create({component:GreenBeanEditComponent, id:'green-bean-edit',  componentProps: {greenBean : _bean}});
-    await modal.present();
-    await modal.onWillDismiss();
-    this.loadBeans();
-  }
-
-
-  public deleteBean(_bean: GreenBean): void {
-    this.uiAlert.showConfirm('DELETE_BEAN_QUESTION', 'SURE_QUESTION', true)
-      .then(() => {
-          // Yes
-          this.uiAnalytics.trackEvent('GREEN_BEAN', 'DELETE');
-          this.__deleteBean(_bean);
-          this.uiToast.showInfoToast('TOAST_BEAN_DELETED_SUCCESSFULLY');
-          this.settings.resetFilter();
-          this.uiSettingsStorage.saveSettings(this.settings);
-        },
-        () => {
-          // No
-        });
-
-  }
-
-  public async repeatBean(_bean: GreenBean) {
-    this.uiAnalytics.trackEvent('GREEN_BEAN', 'REPEAT');
-    const modal = await this.modalCtrl.create({component: GreenBeanAddComponent, id:'green-bean-add', componentProps: {green_bean_template: _bean}});
-    await modal.present();
-    await modal.onWillDismiss();
-    this.loadBeans();
-
-  }
-
 
   public async showFilter() {
     let beanFilter: IBeanPageFilter;
@@ -341,24 +257,6 @@ export class GreenBeansPage implements OnInit {
     this.retriggerScroll();
   }
 
-
-  private __deleteBean(_bean: GreenBean): void {
-    const brews: Array<Brew> =  this.uiBrewStorage.getAllEntries();
-
-    const deletingBrewIndex: Array<number> = [];
-    for (let i = 0; i < brews.length; i++) {
-      if (brews[i].bean === _bean.config.uuid) {
-        deletingBrewIndex.push(i);
-      }
-    }
-    for (let i = deletingBrewIndex.length; i--;) {
-      this.uiBrewStorage.removeByUUID(brews[deletingBrewIndex[i]].config.uuid);
-    }
-
-    this.uiGreenBeanStorage.removeByObject(_bean);
-    this.loadBeans();
-
-  }
   public ngOnInit() {
   }
 

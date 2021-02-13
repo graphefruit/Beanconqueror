@@ -1,13 +1,26 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 
-import {PopoverController} from '@ionic/angular';
+import {ModalController, PopoverController} from '@ionic/angular';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
-import {BEAN_ACTION} from '../../enums/beans/beanAction';
 
 import {GreenBean} from '../../classes/green-bean/green-bean';
 import {GreenBeanPopoverActionsComponent} from '../../app/roasting-section/green-beans/green-bean-popover-actions/green-bean-popover-actions.component';
 import {Bean} from '../../classes/bean/bean';
+import {GreenBeanDetailComponent} from '../../app/roasting-section/green-beans/green-bean-detail/green-bean-detail.component';
+import {GreenBeanEditComponent} from '../../app/roasting-section/green-beans/green-bean-edit/green-bean-edit.component';
+import {GreenBeanAddComponent} from '../../app/roasting-section/green-beans/green-bean-add/green-bean-add.component';
+import {BeansAddComponent} from '../../app/beans/beans-add/beans-add.component';
+import {Brew} from '../../classes/brew/brew';
+import {UIBrewStorage} from '../../services/uiBrewStorage';
+import {UIGreenBeanStorage} from '../../services/uiGreenBeanStorage';
+import {UIAnalytics} from '../../services/uiAnalytics';
+import {UISettingsStorage} from '../../services/uiSettingsStorage';
+import {UIToast} from '../../services/uiToast';
+import {UIImage} from '../../services/uiImage';
+import {UIAlert} from '../../services/uiAlert';
+import {Settings} from '../../classes/settings/settings';
+import {GREEN_BEAN_ACTION} from '../../enums/green-beans/greenBeanAction';
 
 @Component({
   selector: 'green-bean-information',
@@ -21,9 +34,17 @@ export class GreenBeanInformationComponent implements OnInit {
 
 
 
-
+  private settings: Settings;
   constructor(private readonly popoverCtrl: PopoverController,
-              private readonly uiBeanHelper: UIBeanHelper) {
+              private readonly uiBeanHelper: UIBeanHelper,
+              private readonly uiGreenBeanStorage: UIGreenBeanStorage,
+              private readonly uiBrewStorage: UIBrewStorage,
+              private readonly modalController: ModalController,
+              private readonly uiAnalytics: UIAnalytics,
+              private readonly uiSettingsStorage: UISettingsStorage,
+              private readonly uiAlert: UIAlert,
+              private readonly uiToast: UIToast,
+              private readonly uiImage: UIImage) {
 
 
 
@@ -42,8 +63,8 @@ export class GreenBeanInformationComponent implements OnInit {
   }
 
 
-  public showGreenBean() {
-    this.greenBeanAction.emit([BEAN_ACTION.DETAIL, this.greenBean]);
+  public async showGreenBean() {
+    await this.detailBean();
   }
 
   public async showBeanActions(event): Promise<void> {
@@ -58,10 +79,37 @@ export class GreenBeanInformationComponent implements OnInit {
     });
     await popover.present();
     const data = await popover.onWillDismiss();
-    this.greenBeanAction.emit([data.role as BEAN_ACTION, this.greenBean]);
+    await  this.internalBeanAction(data.role as GREEN_BEAN_ACTION);
+    this.greenBeanAction.emit([data.role as GREEN_BEAN_ACTION, this.greenBean]);
   }
 
-
+  private async internalBeanAction(action: GREEN_BEAN_ACTION): Promise<void> {
+    switch (action) {
+      case GREEN_BEAN_ACTION.DETAIL:
+        await this.detailBean();
+        break;
+      case GREEN_BEAN_ACTION.REPEAT:
+        await this.repeatBean();
+        break;
+      case GREEN_BEAN_ACTION.EDIT:
+        await this.editBean();
+        break;
+      case GREEN_BEAN_ACTION.DELETE:
+        await this.deleteBean();
+        break;
+      case GREEN_BEAN_ACTION.BEANS_CONSUMED:
+        await this.beansConsumed();
+        break;
+      case GREEN_BEAN_ACTION.PHOTO_GALLERY:
+        await this.viewPhotos();
+        break;
+      case GREEN_BEAN_ACTION.TRANSFER_ROAST:
+        await this.transferRoast();
+        break;
+      default:
+        break;
+    }
+  }
   public getUsedWeightCount(): number {
     let usedWeightCount: number = 0;
     const relatedRoastingBeans: Array<Bean> = this.uiBeanHelper.getAllRoastedBeansForThisGreenBean(this.greenBean.config.uuid);
@@ -74,5 +122,80 @@ export class GreenBeanInformationComponent implements OnInit {
   public roastCount(): number {
     const relatedRoastingBeans: Array<Bean> = this.uiBeanHelper.getAllRoastedBeansForThisGreenBean(this.greenBean.config.uuid);
     return relatedRoastingBeans.length;
+  }
+  public async detailBean() {
+    const modal = await this.modalController.create({component: GreenBeanDetailComponent,
+      id:'green-bean-detail', componentProps: {greenBean: this.greenBean}});
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+
+  public async viewPhotos() {
+    await this.uiImage.viewPhotos(this.greenBean);
+
+  }
+
+  public async transferRoast() {
+    const modal = await this.modalController.create({component:BeansAddComponent,
+      id:'bean-add',  componentProps: {greenBean : this.greenBean}});
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+  public beansConsumed() {
+    this.greenBean.finished = true;
+    this.uiGreenBeanStorage.update(this.greenBean);
+    this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');
+    this.settings.resetFilter();
+    this.uiSettingsStorage.saveSettings(this.settings);
+
+  }
+  public async editBean() {
+
+    const modal = await this.modalController.create({component:GreenBeanEditComponent,
+      id:'green-bean-edit',  componentProps: {greenBean : this.greenBean}});
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+
+
+  public deleteBean(): void {
+    this.uiAlert.showConfirm('DELETE_BEAN_QUESTION', 'SURE_QUESTION', true)
+      .then(() => {
+          // Yes
+          this.uiAnalytics.trackEvent('GREEN_BEAN', 'DELETE');
+          this.__deleteBean();
+          this.uiToast.showInfoToast('TOAST_BEAN_DELETED_SUCCESSFULLY');
+          this.settings.resetFilter();
+          this.uiSettingsStorage.saveSettings(this.settings);
+        },
+        () => {
+          // No
+        });
+
+  }
+
+  public async repeatBean() {
+    this.uiAnalytics.trackEvent('GREEN_BEAN', 'REPEAT');
+    const modal = await this.modalController.create({component: GreenBeanAddComponent,
+      id:'green-bean-add', componentProps: {green_bean_template: this.greenBean}});
+    await modal.present();
+    await modal.onWillDismiss();
+
+  }
+  private __deleteBean(): void {
+    const brews: Array<Brew> =  this.uiBrewStorage.getAllEntries();
+
+    const deletingBrewIndex: Array<number> = [];
+    for (let i = 0; i < brews.length; i++) {
+      if (brews[i].bean === this.greenBean.config.uuid) {
+        deletingBrewIndex.push(i);
+      }
+    }
+    for (let i = deletingBrewIndex.length; i--;) {
+      this.uiBrewStorage.removeByUUID(brews[deletingBrewIndex[i]].config.uuid);
+    }
+
+    this.uiGreenBeanStorage.removeByObject(this.greenBean);
+
   }
 }
