@@ -9,6 +9,15 @@ import {Brew} from '../../classes/brew/brew';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
 import {ROASTS_ENUM} from '../../enums/beans/roasts';
 import {NgxStarsComponent} from 'ngx-stars';
+import {BeansDetailComponent} from '../../app/beans/beans-detail/beans-detail.component';
+import {BeansAddComponent} from '../../app/beans/beans-add/beans-add.component';
+import {BeansEditComponent} from '../../app/beans/beans-edit/beans-edit.component';
+import {UIAnalytics} from '../../services/uiAnalytics';
+import {UIBrewStorage} from '../../services/uiBrewStorage';
+import {UIAlert} from '../../services/uiAlert';
+import {UIToast} from '../../services/uiToast';
+import {UIImage} from '../../services/uiImage';
+import {UIBeanStorage} from '../../services/uiBeanStorage';
 @Component({
   selector: 'bean-information',
   templateUrl: './bean-information.component.html',
@@ -17,6 +26,7 @@ import {NgxStarsComponent} from 'ngx-stars';
 export class BeanInformationComponent implements OnInit {
 
   @Input() public bean: Bean;
+  @Input() public showActions: boolean = true;
 
   @ViewChild('beanStars', {read: NgxStarsComponent, static: false}) public beanStars: NgxStarsComponent;
   @Output() public beanAction: EventEmitter<any> = new EventEmitter();
@@ -30,7 +40,13 @@ export class BeanInformationComponent implements OnInit {
   constructor(private readonly uiSettingsStorage: UISettingsStorage,
               private readonly popoverCtrl: PopoverController,
               private readonly uiBeanHelper: UIBeanHelper,
-              private readonly modalController: ModalController) {
+              private readonly modalController: ModalController,
+              private readonly uiAnalytics: UIAnalytics,
+              private readonly uiBrewStorage: UIBrewStorage,
+              private readonly uiAlert: UIAlert,
+              private readonly uiToast: UIToast,
+              private readonly uiBeanStorage: UIBeanStorage,
+              private readonly uiImage: UIImage) {
     this.settings = this.uiSettingsStorage.getSettings();
 
 
@@ -82,8 +98,8 @@ export class BeanInformationComponent implements OnInit {
     return '';
   }
 
-  public showBean() {
-    this.beanAction.emit([BEAN_ACTION.DETAIL, this.bean]);
+  public async showBean() {
+    await this.detailBean();
   }
 
   public async showBeanActions(event): Promise<void> {
@@ -98,7 +114,109 @@ export class BeanInformationComponent implements OnInit {
     });
     await popover.present();
     const data = await popover.onWillDismiss();
+    await this.internalBeanAction(data.role as BEAN_ACTION);
     this.beanAction.emit([data.role as BEAN_ACTION, this.bean]);
   }
+
+
+  public async internalBeanAction(action: BEAN_ACTION): Promise<void> {
+    switch (action) {
+      case BEAN_ACTION.DETAIL:
+        await this.detailBean();
+        break;
+      case BEAN_ACTION.REPEAT:
+        await this.repeatBean();
+        break;
+      case BEAN_ACTION.EDIT:
+        await this.editBean();
+        break;
+      case BEAN_ACTION.DELETE:
+        await this.deleteBean();
+        break;
+      case BEAN_ACTION.BEANS_CONSUMED:
+        await this.beansConsumed();
+        break;
+      case BEAN_ACTION.PHOTO_GALLERY:
+        await this.viewPhotos();
+        break;
+      default:
+        break;
+    }
+  }
+
+  public async detailBean() {
+    console.log("testi");
+    const modal = await this.modalController.create({component: BeansDetailComponent, id:'bean-detail', componentProps: {bean: this.bean}});
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+
+  public async viewPhotos() {
+    await this.uiImage.viewPhotos(this.bean);
+  }
+  public beansConsumed() {
+    this.bean.finished = true;
+    this.uiBeanStorage.update(this.bean);
+    this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');
+    this.settings.resetFilter();
+    this.uiSettingsStorage.saveSettings(this.settings);
+  }
+
+  public async add() {
+    const modal = await this.modalController.create({component:BeansAddComponent,id:'bean-add'});
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+
+  public async editBean() {
+
+    const modal = await this.modalController.create({component:BeansEditComponent, id:'bean-edit',  componentProps: {bean : this.bean}});
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+
+
+  public deleteBean(): void {
+    this.uiAlert.showConfirm('DELETE_BEAN_QUESTION', 'SURE_QUESTION', true)
+      .then(() => {
+          // Yes
+          this.uiAnalytics.trackEvent('BEAN', 'DELETE');
+          this.__deleteBean();
+          this.uiToast.showInfoToast('TOAST_BEAN_DELETED_SUCCESSFULLY');
+          this.settings.resetFilter();
+          this.uiSettingsStorage.saveSettings(this.settings);
+        },
+        () => {
+          // No
+        });
+
+  }
+
+  public async repeatBean() {
+    this.uiAnalytics.trackEvent('BEAN', 'REPEAT');
+    const modal = await this.modalController.create({component: BeansAddComponent, id:'bean-add', componentProps: {bean_template: this.bean}});
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+
+
+  private __deleteBean(): void {
+    const brews: Array<Brew> =  this.uiBrewStorage.getAllEntries();
+
+    const deletingBrewIndex: Array<number> = [];
+    for (let i = 0; i < brews.length; i++) {
+      if (brews[i].bean === this.bean.config.uuid) {
+        deletingBrewIndex.push(i);
+      }
+    }
+    for (let i = deletingBrewIndex.length; i--;) {
+      this.uiBrewStorage.removeByUUID(brews[deletingBrewIndex[i]].config.uuid);
+    }
+
+    this.uiBeanStorage.removeByObject(this.bean);
+
+  }
+
+
 
 }

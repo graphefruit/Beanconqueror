@@ -72,7 +72,7 @@
           </div>
         </div>
           <ion-virtual-scroll #archivedScroll [items]="finishedBeans" approxItemHeight="240px">
-            <bean-information (beanAction)="beanAction($event[0],$event[1])"  *virtualItem="let bean;"
+            <bean-information (beanAction)="beanAction($event[0],$event[1])" *virtualItem="let bean;"
                               [bean]="bean"></bean-information>
           </ion-virtual-scroll>
       </div>

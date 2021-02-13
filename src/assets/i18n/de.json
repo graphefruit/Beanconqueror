@@ -520,7 +520,8 @@
       "ADD": "Hinzufügen",
       "EDIT": "Editieren",
       "DETAIL": "Details",
-      "ROASTABLE": "Röstbar"
+      "ROASTABLE": "Röstbar",
+      "NO_ROASTS_YET": "Keine Röstung vorgenommen"
     },
     "BEAN": {
       "DROP_TEMPERATURE": "Endtemperatur der Röstung",
@@ -528,14 +529,22 @@
       "ROASTER_MACHINE": "Röstmaschine",
       "GREEN_BEAN_WEIGHT": "Rohbohnengewicht",
       "OUTSIDE_TEMPERATURE": "Wettertemperatur",
-        "HUMIDITY": "Feuchtigkeit",
+      "HUMIDITY": "Feuchtigkeit",
+      "FIRST_CRACK_MINUTE": "First crack Minute",
+      "FIRST_CRACK_TEMPERATURE": "First crack Temperatur",
+      "SECOND_CRACK_MINUTE": "Second crack Minute",
+      "SECOND_CRACK_TEMPERATURE": "Second crack Temperatur",
       "PLACE_HOLDER": {
         "DROP_TEMPERATURE": "Endtemperatur der Röstung",
         "ROAST_LENGTH": "Röstlänge",
         "ROASTER_MACHINE": "Röstmaschine",
         "GREEN_BEAN_WEIGHT": "Rohbohnengewicht",
         "OUTSIDE_TEMPERATURE": "Wettertemperatur",
-        "HUMIDITY": "Feuchtigkeit"
+        "HUMIDITY": "Feuchtigkeit",
+        "FIRST_CRACK_MINUTE": "First crack Minute",
+        "FIRST_CRACK_TEMPERATURE": "First crack Temperatur",
+        "SECOND_CRACK_TEMPERATURE": "Second Crack Temperatur",
+        "SECOND_CRACK_MINUTE": "Second crack Minute"
       }
     }
   },
@@ -545,5 +554,7 @@
   "BEAN_DATA_BUY_DATE": "Kaufdatum",
   "BEAN_SORT_CREATION_DATE": "Erstelldatum",
   "BEAN_SORT_PURCHASE_DATE": "Kaufdatum",
-  "BEAN_ROAST_COUNT": "Röstungen"
+  "BEAN_ROAST_COUNT": "Röstungen",
+  "TRANSFER_ROAST": "Rösten",
+  "BEAN_TAB_LINKED_ROASTS": "Röstungen"
 }

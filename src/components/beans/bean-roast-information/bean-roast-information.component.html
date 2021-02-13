@@ -25,6 +25,38 @@
     </ion-input>
   </ion-item>
   <ion-item>
+    <ion-label position="stacked">{{"ROASTING_SECTION.BEAN.FIRST_CRACK_MINUTE" | translate}}</ion-label>
+    <ion-input #first_crack_minute="ngModel" [(ngModel)]="data.bean_roast_information.first_crack_minute" autocapitalize="off" inputmode="decimal"
+               name="outside_temperature" placeholder="{{'ROASTING_SECTION.BEAN.PLACE_HOLDER.FIRST_CRACK_MINUTE' | translate}}"
+               prevent-characters remove-empty-number spellcheck="false"
+               type="text">
+    </ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">{{"ROASTING_SECTION.BEAN.FIRST_CRACK_TEMPERATURE" | translate}}</ion-label>
+    <ion-input #first_crack_temperature="ngModel" [(ngModel)]="data.bean_roast_information.first_crack_temperature" autocapitalize="off" inputmode="decimal"
+               name="outside_temperature" placeholder="{{'ROASTING_SECTION.BEAN.PLACE_HOLDER.FIRST_CRACK_TEMPERATURE' | translate}}"
+               prevent-characters remove-empty-number spellcheck="false"
+               type="text">
+    </ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">{{"ROASTING_SECTION.BEAN.SECOND_CRACK_MINUTE" | translate}}</ion-label>
+    <ion-input #second_crack_minute="ngModel" [(ngModel)]="data.bean_roast_information.second_crack_minute" autocapitalize="off" inputmode="decimal"
+               name="outside_temperature" placeholder="{{'ROASTING_SECTION.BEAN.PLACE_HOLDER.SECOND_CRACK_MINUTE' | translate}}"
+               prevent-characters remove-empty-number spellcheck="false"
+               type="text">
+    </ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">{{"ROASTING_SECTION.BEAN.SECOND_CRACK_TEMPERATURE" | translate}}</ion-label>
+    <ion-input #second_crack_temperature="ngModel" [(ngModel)]="data.bean_roast_information.second_crack_temperature" autocapitalize="off" inputmode="decimal"
+               name="outside_temperature" placeholder="{{'ROASTING_SECTION.BEAN.PLACE_HOLDER.SECOND_CRACK_TEMPERATURE' | translate}}"
+               prevent-characters remove-empty-number spellcheck="false"
+               type="text">
+    </ion-input>
+  </ion-item>
+  <ion-item>
     <ion-label position="stacked">{{"ROASTING_SECTION.BEAN.OUTSIDE_TEMPERATURE" | translate}}</ion-label>
     <ion-input #outside_temperature="ngModel" [(ngModel)]="data.bean_roast_information.outside_temperature" autocapitalize="off" inputmode="decimal"
                name="outside_temperature" placeholder="{{'ROASTING_SECTION.BEAN.PLACE_HOLDER.OUTSIDE_TEMPERATURE' | translate}}"

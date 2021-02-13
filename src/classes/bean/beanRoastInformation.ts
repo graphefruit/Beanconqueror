@@ -10,6 +10,10 @@ export class BeanRoastInformation implements IBeanRoastInformation {
   public outside_temperature:number;
   public humidity:number;
   public bean_uuid: string;
+  public first_crack_minute: number;
+  public first_crack_temperature: number;
+  public second_crack_minute: number;
+  public second_crack_temperature: number;
 
   constructor() {
     this.drop_temperature = 0;
@@ -19,6 +23,10 @@ export class BeanRoastInformation implements IBeanRoastInformation {
     this.outside_temperature = 0;
     this.humidity= 0;
     this.bean_uuid = '';
+    this.first_crack_minute = 0;
+    this.first_crack_temperature = 0;
+    this.second_crack_minute = 0;
+    this.second_crack_temperature = 0;
   }
 
   public initializeByObject(beanObj: IBeanRoastInformation): void {

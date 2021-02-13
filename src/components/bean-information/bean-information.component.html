@@ -8,7 +8,7 @@
             <ngx-stars #beanStars [initialStars]="bean.roast_range" [readonly]="true" [size]="1" class="bean-display ion-float-right"></ngx-stars>
 
         </ion-col>
-        <ion-col size="1">
+        <ion-col size="1" *ngIf="showActions">
           <ion-button (click)="showBeanActions($event)" class="button-top-absolute" color="accent" fill="clear">
             <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>
           </ion-button>
