@@ -31,6 +31,7 @@ import {WelcomePopoverComponent} from '../popover/welcome-popover/welcome-popove
 import moment from 'moment';
 import {UIUpdate} from '../services/uiUpdate';
 import {UiVersionStorage} from '../services/uiVersionStorage';
+import {UIGreenBeanStorage} from '../services/uiGreenBeanStorage';
 
 
 declare var AppRate;
@@ -91,7 +92,8 @@ export class AppComponent implements AfterViewInit {
     private readonly uiAnalytics: UIAnalytics,
     private readonly menu: MenuController,
     private readonly uiUpdate: UIUpdate,
-    private readonly uiVersionStorage: UiVersionStorage
+    private readonly uiVersionStorage: UiVersionStorage,
+    private readonly uiGreenBeanStorage: UIGreenBeanStorage
   ) {
   }
 
@@ -158,6 +160,8 @@ export class AppComponent implements AfterViewInit {
         const brewStorageReadyCallback = this.uiBrewStorage.storageReady();
         const millStorageReadyCallback = this.uiMillStorage.storageReady();
         const versionStorageReadyCallback = this.uiVersionStorage.storageReady();
+        const greenBeanStorageCallback = this.uiGreenBeanStorage.storageReady();
+
 
         Promise.all([
           beanStorageReadyCallback,
@@ -165,7 +169,8 @@ export class AppComponent implements AfterViewInit {
           brewStorageReadyCallback,
           uiSettingsStorageReadyCallback,
           millStorageReadyCallback,
-          versionStorageReadyCallback
+          versionStorageReadyCallback,
+          greenBeanStorageCallback
         ])
           .then(() => {
             this.uiLog.log('App finished loading');

@@ -23,8 +23,6 @@ export class GreenBeansPage implements OnInit {
   private beans: Array<GreenBean> = [];
 
 
-  public settings: Settings;
-
   public openBeans: Array<GreenBean> = [];
   public finishedBeans: Array<GreenBean> = [];
 
@@ -57,9 +55,9 @@ export class GreenBeansPage implements OnInit {
   }
 
   public ionViewWillEnter(): void {
-    this.settings = this.uiSettingsStorage.getSettings();
-    this.archivedBeansFilter = this.settings.green_bean_filter.ARCHIVED;
-    this.openBeansFilter = this.settings.green_bean_filter.OPEN;
+    const settings = this.uiSettingsStorage.getSettings();
+    this.archivedBeansFilter = settings.green_bean_filter.ARCHIVED;
+    this.openBeansFilter = settings.green_bean_filter.OPEN;
     this.loadBeans();
   }
 
@@ -153,9 +151,10 @@ export class GreenBeansPage implements OnInit {
   }
 
   private __saveBeanFilter() {
-    this.settings.green_bean_filter.OPEN = this.openBeansFilter;
-    this.settings.green_bean_filter.ARCHIVED = this.archivedBeansFilter;
-    this.uiSettingsStorage.saveSettings(this.settings);
+    const settings: Settings = this.uiSettingsStorage.getSettings();
+    settings.green_bean_filter.OPEN = this.openBeansFilter;
+    settings.green_bean_filter.ARCHIVED = this.archivedBeansFilter;
+    this.uiSettingsStorage.saveSettings(settings);
   }
 
   private __initializeBeansView(_type: string) {
