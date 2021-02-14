@@ -130,5 +130,13 @@ export class Bean implements IBean {
     return brewTime.diff(roastingDate, 'days');
   }
 
+  public isSelfRoasted(): boolean {
+    if (this.bean_roast_information && this.bean_roast_information.bean_uuid) {
+      return true;
+    }
+    return false;
+  }
+
+
 
 }

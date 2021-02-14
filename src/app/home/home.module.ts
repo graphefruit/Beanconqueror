@@ -6,7 +6,6 @@ import {RouterModule} from '@angular/router';
 
 import {HomePage} from './home.page';
 import {SharedModule} from '../shared/shared.module';
-import {RouteResolver} from '../app-routing-resolver';
 
 @NgModule({
   imports: [

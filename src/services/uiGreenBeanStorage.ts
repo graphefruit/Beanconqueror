@@ -1,7 +1,6 @@
 /** Core */
 import {Injectable} from '@angular/core';
 /** Classes */
-import {Bean} from '../classes/bean/bean';
 /** Interfaces */
 
 /** Services */

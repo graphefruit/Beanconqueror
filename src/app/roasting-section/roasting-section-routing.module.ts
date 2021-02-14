@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { RoastingSectionPage } from './roasting-section.page';
-import {RouteResolver} from '../app-routing-resolver';
 
 const routes: Routes = [
   {
@@ -13,9 +12,6 @@ const routes: Routes = [
         path: '',
         redirectTo: '/roasting-section/dashboard',
         pathMatch: 'full',
-        resolve: {
-          resolver: RouteResolver
-        },
       },
       {
         path: 'dashboard',
