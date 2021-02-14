@@ -7,18 +7,10 @@ import {IonVirtualScroll, ModalController} from '@ionic/angular';
 import {UIAlert} from '../../../services/uiAlert';
 import {UIBrewStorage} from '../../../services/uiBrewStorage';
 import {UISettingsStorage} from '../../../services/uiSettingsStorage';
-import {UIToast} from '../../../services/uiToast';
-import {UIAnalytics} from '../../../services/uiAnalytics';
-import {UIBeanHelper} from '../../../services/uiBeanHelper';
-import {Brew} from '../../../classes/brew/brew';
 import {GreenBean} from '../../../classes/green-bean/green-bean';
 import {UIGreenBeanStorage} from '../../../services/uiGreenBeanStorage';
 import {GREEN_BEAN_ACTION} from '../../../enums/green-beans/greenBeanAction';
-import {GreenBeanEditComponent} from './green-bean-edit/green-bean-edit.component';
 import {GreenBeanAddComponent} from './green-bean-add/green-bean-add.component';
-import {GreenBeanDetailComponent} from './green-bean-detail/green-bean-detail.component';
-import {BeansAddComponent} from '../../beans/beans-add/beans-add.component';
-import {UIImage} from '../../../services/uiImage';
 import {GreenBeanFilterComponent} from './green-bean-filter/green-bean-filter.component';
 
 @Component({
@@ -59,11 +51,7 @@ export class GreenBeansPage implements OnInit {
               private readonly uiGreenBeanStorage: UIGreenBeanStorage,
               private readonly uiAlert: UIAlert,
               private readonly uiBrewStorage: UIBrewStorage,
-              private readonly uiSettingsStorage: UISettingsStorage,
-              private readonly uiToast: UIToast,
-              private readonly uiAnalytics: UIAnalytics,
-              private readonly uiBeanHelper: UIBeanHelper,
-              private readonly uiImage: UIImage) {
+              private readonly uiSettingsStorage: UISettingsStorage) {
 
 
   }
