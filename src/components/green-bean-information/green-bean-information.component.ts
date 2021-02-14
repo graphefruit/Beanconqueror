@@ -21,6 +21,7 @@ import {UIImage} from '../../services/uiImage';
 import {UIAlert} from '../../services/uiAlert';
 import {Settings} from '../../classes/settings/settings';
 import {GREEN_BEAN_ACTION} from '../../enums/green-beans/greenBeanAction';
+import {UIBeanStorage} from '../../services/uiBeanStorage';
 
 @Component({
   selector: 'green-bean-information',
@@ -32,9 +33,6 @@ export class GreenBeanInformationComponent implements OnInit {
 
   @Output() public greenBeanAction: EventEmitter<any> = new EventEmitter();
 
-
-
-  private settings: Settings;
   constructor(private readonly popoverCtrl: PopoverController,
               private readonly uiBeanHelper: UIBeanHelper,
               private readonly uiGreenBeanStorage: UIGreenBeanStorage,
@@ -44,7 +42,8 @@ export class GreenBeanInformationComponent implements OnInit {
               private readonly uiSettingsStorage: UISettingsStorage,
               private readonly uiAlert: UIAlert,
               private readonly uiToast: UIToast,
-              private readonly uiImage: UIImage) {
+              private readonly uiImage: UIImage,
+              private readonly uiBeanStorage: UIBeanStorage) {
 
 
 
@@ -52,6 +51,7 @@ export class GreenBeanInformationComponent implements OnInit {
 
 
   public ngOnInit() {
+
   }
 
 
@@ -145,9 +145,13 @@ export class GreenBeanInformationComponent implements OnInit {
     this.greenBean.finished = true;
     this.uiGreenBeanStorage.update(this.greenBean);
     this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');
-    this.settings.resetFilter();
-    this.uiSettingsStorage.saveSettings(this.settings);
+    this.resetSettings();
+  }
 
+  private resetSettings() {
+    const settings: Settings = this.uiSettingsStorage.getSettings();
+    settings.resetFilter();
+    this.uiSettingsStorage.saveSettings(settings);
   }
   public async editBean() {
 
@@ -158,20 +162,22 @@ export class GreenBeanInformationComponent implements OnInit {
   }
 
 
-  public deleteBean(): void {
-    this.uiAlert.showConfirm('DELETE_BEAN_QUESTION', 'SURE_QUESTION', true)
-      .then(() => {
-          // Yes
-          this.uiAnalytics.trackEvent('GREEN_BEAN', 'DELETE');
-          this.__deleteBean();
-          this.uiToast.showInfoToast('TOAST_BEAN_DELETED_SUCCESSFULLY');
-          this.settings.resetFilter();
-          this.uiSettingsStorage.saveSettings(this.settings);
-        },
-        () => {
-          // No
-        });
-
+  public deleteBean(): Promise<any> {
+    return new Promise(async (resolve,reject) => {
+      this.uiAlert.showConfirm('DELETE_BEAN_QUESTION', 'SURE_QUESTION', true)
+        .then(() => {
+            // Yes
+            this.uiAnalytics.trackEvent('GREEN_BEAN', 'DELETE');
+            this.__deleteBean();
+            this.uiToast.showInfoToast('TOAST_BEAN_DELETED_SUCCESSFULLY');
+            this.resetSettings();
+            resolve();
+          },
+          () => {
+            // No
+            reject();
+          });
+    });
   }
 
   public async repeatBean() {
@@ -184,18 +190,19 @@ export class GreenBeanInformationComponent implements OnInit {
   }
   private __deleteBean(): void {
     const brews: Array<Brew> =  this.uiBrewStorage.getAllEntries();
-
-    const deletingBrewIndex: Array<number> = [];
-    for (let i = 0; i < brews.length; i++) {
-      if (brews[i].bean === this.greenBean.config.uuid) {
-        deletingBrewIndex.push(i);
-      }
-    }
-    for (let i = deletingBrewIndex.length; i--;) {
-      this.uiBrewStorage.removeByUUID(brews[deletingBrewIndex[i]].config.uuid);
+    const relatedRoastingBeans: Array<Bean> = this.uiBeanHelper.getAllRoastedBeansForThisGreenBean(this.greenBean.config.uuid);
+    let deletingBrews: Array<Brew> = [];
+    for (const roastedBean of relatedRoastingBeans) {
+      const filteredBrews: Array<Brew> = brews.filter((e) => e.bean === roastedBean.config.uuid);
+      deletingBrews = [...deletingBrews, ...filteredBrews];
     }
 
+     for (const brew of deletingBrews) {
+       this.uiBrewStorage.removeByUUID(brew.config.uuid);
+     }
+    for (const bean of relatedRoastingBeans) {
+      this.uiBeanStorage.removeByUUID(bean.config.uuid);
+    }
     this.uiGreenBeanStorage.removeByObject(this.greenBean);
-
   }
 }
