@@ -337,7 +337,9 @@ ion-menu:host .menu-inner {
     border-top: 2px solid var(--ion-color-accent);
     border-radius: 5px;
   }
-
+.ion-no-padding-right {
+  padding-right:0px;
+}
 
   ion-range {
     --bar-background: #CCCCCC;

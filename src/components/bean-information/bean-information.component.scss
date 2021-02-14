@@ -1,7 +1,7 @@
 :host {
-  height:240px;
+  height:260px;
   ion-card {
-    height:220px;
+    height:240px;
     ion-card-content {
       padding: 8px;
       padding-bottom: 0px;
@@ -37,6 +37,18 @@
   ion-text {
     position: relative;
     top: -5px;
+  }
+  ion-text.limit-overflow {
+    white-space: nowrap;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  ::ng-deep img {
+    width: 100%;
+    height: 160px;
+    display: block;
+    object-fit: contain;
   }
 
 }

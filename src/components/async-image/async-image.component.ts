@@ -30,7 +30,12 @@ export class AsyncImageComponent implements OnInit, OnChanges {
     if (this.filePath === undefined || this.filePath === null || this.filePath === '') {
       this.img = '';
     } else {
-      this.img = await this.uiFileHelper.getBase64File(this.filePath);
+      if (this.filePath.startsWith("http")) {
+        this.img = this.filePath;
+      } else {
+        this.img = await this.uiFileHelper.getBase64File(this.filePath);
+      }
+
     }
   }
 
