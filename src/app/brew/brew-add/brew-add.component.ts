@@ -133,6 +133,7 @@ export class BrewAddComponent implements OnInit {
     const loading = await this.loadingController.create({
       message: this.translate.instant('PLEASE_WAIT')
     });
+    loading.present();
     try {
       this.uiBrewHelper.cleanInvisibleBrewData(this.data);
       this.uiBrewStorage.add(this.data);
@@ -161,7 +162,7 @@ export class BrewAddComponent implements OnInit {
     }
     await loading.dismiss();
     this.dismiss();
-    loading.present();
+
   }
 
 

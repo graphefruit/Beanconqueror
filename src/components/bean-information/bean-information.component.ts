@@ -33,9 +33,6 @@ export class BeanInformationComponent implements OnInit {
 
 
   public roast_enum = ROASTS_ENUM;
-  public settings: Settings;
-
-
 
   constructor(private readonly uiSettingsStorage: UISettingsStorage,
               private readonly popoverCtrl: PopoverController,
@@ -47,8 +44,6 @@ export class BeanInformationComponent implements OnInit {
               private readonly uiToast: UIToast,
               private readonly uiBeanStorage: UIBeanStorage,
               private readonly uiImage: UIImage) {
-    this.settings = this.uiSettingsStorage.getSettings();
-
 
   }
 
@@ -145,7 +140,6 @@ export class BeanInformationComponent implements OnInit {
   }
 
   public async detailBean() {
-    console.log("testi");
     const modal = await this.modalController.create({component: BeansDetailComponent, id:'bean-detail', componentProps: {bean: this.bean}});
     await modal.present();
     await modal.onWillDismiss();
@@ -158,8 +152,7 @@ export class BeanInformationComponent implements OnInit {
     this.bean.finished = true;
     this.uiBeanStorage.update(this.bean);
     this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');
-    this.settings.resetFilter();
-    this.uiSettingsStorage.saveSettings(this.settings);
+    this.resetSettings();
   }
 
   public async add() {
@@ -176,20 +169,30 @@ export class BeanInformationComponent implements OnInit {
   }
 
 
-  public deleteBean(): void {
-    this.uiAlert.showConfirm('DELETE_BEAN_QUESTION', 'SURE_QUESTION', true)
-      .then(() => {
-          // Yes
-          this.uiAnalytics.trackEvent('BEAN', 'DELETE');
-          this.__deleteBean();
-          this.uiToast.showInfoToast('TOAST_BEAN_DELETED_SUCCESSFULLY');
-          this.settings.resetFilter();
-          this.uiSettingsStorage.saveSettings(this.settings);
-        },
-        () => {
-          // No
-        });
+  public deleteBean(): Promise<any> {
+    return new Promise(async (resolve,reject) => {
+      this.uiAlert.showConfirm('DELETE_BEAN_QUESTION', 'SURE_QUESTION', true)
+        .then(() => {
+            // Yes
+            this.uiAnalytics.trackEvent('BEAN', 'DELETE');
+            this.__deleteBean();
+            this.uiToast.showInfoToast('TOAST_BEAN_DELETED_SUCCESSFULLY');
+            this.resetSettings();
+            resolve();
+          },
+          () => {
+            // No
+            reject();
+          });
+    });
 
+  }
+
+
+  private resetSettings() {
+    const settings: Settings = this.uiSettingsStorage.getSettings();
+    settings.resetFilter();
+    this.uiSettingsStorage.saveSettings(settings);
   }
 
   public async repeatBean() {

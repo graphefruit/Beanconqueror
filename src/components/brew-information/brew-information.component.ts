@@ -185,16 +185,22 @@ export class BrewInformationComponent implements OnInit {
     await this.uiImage.viewPhotos(this.brew);
   }
 
-  public deleteBrew(): void {
-    this.uiAlert.showConfirm('DELETE_BREW_QUESTION', 'SURE_QUESTION', true).then(() => {
-        // Yes
-        this.uiAnalytics.trackEvent('BREW', 'DELETE');
-        this.__deleteBrew();
-        this.uiToast.showInfoToast('TOAST_BREW_DELETED_SUCCESSFULLY');
-      },
-      () => {
-        // No
-      });
+  public deleteBrew(): Promise<any> {
+
+   return new Promise(async (resolve,reject) => {
+      this.uiAlert.showConfirm('DELETE_BREW_QUESTION', 'SURE_QUESTION', true).then(() => {
+          // Yes
+          this.uiAnalytics.trackEvent('BREW', 'DELETE');
+          this.__deleteBrew();
+          this.uiToast.showInfoToast('TOAST_BREW_DELETED_SUCCESSFULLY');
+          resolve();
+        },
+        () => {
+          // No
+          reject();
+        });
+      }
+   );
   }
 
   private __deleteBrew(): void {
