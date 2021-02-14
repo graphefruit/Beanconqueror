@@ -91,8 +91,8 @@
       </div>
     </div>
     <div *ngFor="let brew of getBrews()">
-      <brew-dashboard-information (brewAction)="brewAction($event[0],$event[1])"
-                                  [brew]="brew"></brew-dashboard-information>
+      <brew-information [layout]="'dashboard'" (brewAction)="brewAction($event[0],$event[1])"
+                                  [brew]="brew"></brew-information>
     </div>
   </ion-list>
 </ion-content>

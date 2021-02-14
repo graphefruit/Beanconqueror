@@ -60,7 +60,6 @@ import {BrewInformationComponent} from '../../components/brew-information/brew-i
 import {CuppingRadarComponent} from '../../components/cupping-radar/cupping-radar.component';
 import {TooltipDirective} from '../../directive/tooltip.directive';
 import {DashboardPage} from '../dashboard/dashboard.page';
-import {BrewDashboardInformationComponent} from '../../components/brew-dashboard-information/brew-dashboard-information.component';
 import {BeanInformationComponent} from '../../components/bean-information/bean-information.component';
 import {BeanPopoverActionsComponent} from '../beans/bean-popover-actions/bean-popover-actions.component';
 import {PreparationPopoverActionsComponent} from '../preparation/preparation-popover-actions/preparation-popover-actions.component';
@@ -174,7 +173,6 @@ import {GreenBeanFilterComponent} from '../roasting-section/green-beans/green-be
     AsyncImageComponent,
     BrewInformationComponent,
     BeanInformationComponent,
-    BrewDashboardInformationComponent,
     PreparationInformationCardComponent,
     MillInformationCardComponent,
     CuppingRadarComponent,
@@ -375,7 +373,6 @@ import {GreenBeanFilterComponent} from '../roasting-section/green-beans/green-be
     AsyncImageComponent,
     BrewInformationComponent,
     BeanInformationComponent,
-    BrewDashboardInformationComponent,
     PreparationInformationCardComponent,
     MillInformationCardComponent,
     CuppingRadarComponent,

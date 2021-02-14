@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
-import {IonVirtualScroll, ModalController, Platform, PopoverController} from '@ionic/angular';
+import {IonVirtualScroll, ModalController, Platform} from '@ionic/angular';
 import {UIAlert} from '../../services/uiAlert';
 import {UIHelper} from '../../services/uiHelper';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
@@ -7,20 +7,12 @@ import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {UIBrewHelper} from '../../services/uiBrewHelper';
 import {Brew} from '../../classes/brew/brew';
 import {BrewAddComponent} from './brew-add/brew-add.component';
-import {BrewDetailComponent} from './brew-detail/brew-detail.component';
-import {BrewEditComponent} from './brew-edit/brew-edit.component';
-
 
 import {IBrewPageFilter} from '../../interfaces/brew/iBrewPageFilter';
-import {TranslateService} from '@ngx-translate/core';
 import {BREW_ACTION} from '../../enums/brews/brewAction';
 import {Bean} from '../../classes/bean/bean';
 import {BrewFilterComponent} from './brew-filter/brew-filter.component';
 import {Settings} from '../../classes/settings/settings';
-import {UIToast} from '../../services/uiToast';
-import {BrewCuppingComponent} from './brew-cupping/brew-cupping.component';
-import {UIAnalytics} from '../../services/uiAnalytics';
-import {UIImage} from '../../services/uiImage';
 
 
 @Component({
@@ -56,6 +48,8 @@ export class BrewPage implements OnInit {
     method_of_preparation: []
   };
 
+  public settings: Settings;
+
   constructor (private readonly modalCtrl: ModalController,
                private readonly platform: Platform,
                private readonly uiBrewStorage: UIBrewStorage,
@@ -63,19 +57,14 @@ export class BrewPage implements OnInit {
                private readonly uiAlert: UIAlert,
                public uiHelper: UIHelper,
                public uiBrewHelper: UIBrewHelper,
-               private readonly uiSettingsStorage: UISettingsStorage,
-               private readonly popoverCtrl: PopoverController,
-               private translate: TranslateService,
-               private readonly uiToast: UIToast,
-               private readonly uiAnalytics: UIAnalytics,
-               private readonly uiImage: UIImage) {
+               private readonly uiSettingsStorage: UISettingsStorage) {
   }
 
 
   public ionViewWillEnter(): void {
-    const settings: Settings = this.uiSettingsStorage.getSettings();
-    this.archivedBrewsFilter = settings.brew_filter.ARCHIVED;
-    this.openBrewsFilter = settings.brew_filter.OPEN;
+    this.settings = this.uiSettingsStorage.getSettings();
+    this.archivedBrewsFilter = this.settings.brew_filter.ARCHIVED;
+    this.openBrewsFilter = this.settings.brew_filter.OPEN;
     this.loadBrews();
 
 
@@ -101,67 +90,6 @@ export class BrewPage implements OnInit {
       }
     },75);
   }
-
-
-  public async brewAction(action: BREW_ACTION, brew: Brew): Promise<void> {
-    switch (action) {
-      case BREW_ACTION.REPEAT:
-        this.repeatBrew(brew);
-        break;
-      case BREW_ACTION.DETAIL:
-        this.detailBrew(brew);
-        break;
-      case BREW_ACTION.EDIT:
-        this.editBrew(brew);
-        break;
-      case BREW_ACTION.DELETE:
-        this.deleteBrew(brew);
-        break;
-      case BREW_ACTION.PHOTO_GALLERY:
-        this.viewPhotos(brew);
-        break;
-      case BREW_ACTION.CUPPING:
-        this.cupBrew(brew);
-        break;
-      case BREW_ACTION.SHOW_MAP_COORDINATES:
-        this.showMapCoordinates(brew);
-        break;
-      case BREW_ACTION.FAST_REPEAT:
-        this.fastRepeatBrew(brew);
-        break;
-      default:
-        break;
-    }
-  }
-
-  public async fastRepeatBrew(brew: Brew) {
-    if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
-      this.uiAnalytics.trackEvent('BREW', 'FAST_REPEAT');
-      const repeatBrew = this.uiBrewHelper.repeatBrew(brew);
-      this.uiBrewStorage.add(repeatBrew);
-      this.uiToast.showInfoToast('TOAST_BREW_REPEATED_SUCCESSFULLY');
-      this.loadBrews();
-    }
-  }
-
-  public async editBrew(_brew: Brew) {
-
-    const modal = await this.modalCtrl.create({component: BrewEditComponent, id:'brew-edit', componentProps: {brew: _brew}});
-    await modal.present();
-    await modal.onWillDismiss();
-    this.loadBrews();
-  }
-  public async repeatBrew(_brew: Brew) {
-    if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
-      this.uiAnalytics.trackEvent('BREW', 'REPEAT');
-      const modal = await this.modalCtrl.create({component: BrewAddComponent, id: 'brew-add', componentProps: {brew_template: _brew}});
-      await modal.present();
-      await modal.onWillDismiss();
-      this.loadBrews();
-    }
-  }
-
-
   public async add() {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
       const modal = await this.modalCtrl.create({component: BrewAddComponent,id:'brew-add'});
@@ -172,55 +100,18 @@ export class BrewPage implements OnInit {
 
   }
 
-  public async detailBrew(_brew: Brew) {
-    const modal = await this.modalCtrl.create({component: BrewDetailComponent, id:'brew-detail', componentProps: {brew: _brew}});
-    await modal.present();
-    await modal.onWillDismiss();
+  public async brewAction(action: BREW_ACTION, brew: Brew): Promise<void> {
     this.loadBrews();
   }
-
-  public async cupBrew(_brew: Brew) {
-    const modal = await this.modalCtrl.create({component: BrewCuppingComponent, id:'brew-cup', componentProps: {brew: _brew}});
-    await modal.present();
-    await modal.onWillDismiss();
-    this.loadBrews();
-  }
-
-  public async showMapCoordinates(_brew: Brew) {
-    this.uiAnalytics.trackEvent('BREW', 'SHOW_MAP');
-    this.uiHelper.openExternalWebpage(_brew.getCoordinateMapLink());
-  }
-
-
-  public async viewPhotos(_brew: Brew) {
-    await this.uiImage.viewPhotos(_brew);
-  }
-
-  public deleteBrew(_brew: Brew): void {
-    this.uiAlert.showConfirm('DELETE_BREW_QUESTION', 'SURE_QUESTION', true).then(() => {
-          // Yes
-        this.uiAnalytics.trackEvent('BREW', 'DELETE');
-        this.__deleteBrew(_brew);
-        this.uiToast.showInfoToast('TOAST_BREW_DELETED_SUCCESSFULLY');
-        },
-        () => {
-          // No
-        });
-  }
-
 
 
   public loadBrews(): void {
     this.__initializeBrews();
     this.changeDetectorRef.detectChanges();
-
   }
 
 
-  private __deleteBrew(_brew: Brew): void {
-    this.uiBrewStorage.removeByObject(_brew);
-    this.loadBrews();
-  }
+
 
 
   private __initializeBrews(): void {
