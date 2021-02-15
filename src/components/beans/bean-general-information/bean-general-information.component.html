@@ -38,7 +38,7 @@
   <ion-item lines="none">
     <ion-label position="stacked">{{"BEAN_DATA_ROAST_NAME" | translate}}</ion-label>
   </ion-item>
-  <ion-item style="margin-top: -15px;">
+  <ion-item lines="none" style="margin-top: -15px;">
     <ion-grid class="ion-no-padding">
       <ion-row>
         <ion-col size="6">
@@ -52,7 +52,14 @@
       </ion-row>
     </ion-grid>
   </ion-item>
-
+  <ion-item>
+    <ion-select #roast="ngModel" [(ngModel)]="data.roast" cancelText="{{'CANCEL'| translate }}" name="roast"
+                okText="{{'CHOOSE'| translate }}"
+                placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROAST_NAME' | translate}}"
+                style="padding-left:0px!important;width: 100%; min-width: 100%;">
+      <ion-select-option *ngFor="let key of roastsEnum | keys" value="{{key}}">{{roastsEnum[key]}}</ion-select-option>
+    </ion-select>
+  </ion-item>
   <ion-item>
     <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
       style="vertical-align: top;">{{data.rating}}</ion-badge>
@@ -64,14 +71,6 @@
       </div>
     </ion-range>
   </ion-item>
-  <ion-item>
-    <ion-select #roast="ngModel" [(ngModel)]="data.roast" cancelText="{{'CANCEL'| translate }}" name="roast"
-                okText="{{'CHOOSE'| translate }}"
-                placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROAST_NAME' | translate}}"
-                style="padding-left:0px!important;width: 100%; min-width: 100%;">
-      <ion-select-option *ngFor="let key of roastsEnum | keys" value="{{key}}">{{roastsEnum[key]}}</ion-select-option>
-    </ion-select>
-  </ion-item>
   <ion-item *ngIf="data.roast.toString() =='CUSTOM_ROAST'">
     <ion-label position="stacked">{{"BEAN_DATA_CUSTOM_ROAST_NAME" | translate}}</ion-label>
     <ion-input #roast_custom="ngModel" [(ngModel)]="data.roast_custom" autocapitalize="off"
@@ -81,7 +80,7 @@
   </ion-item>
   <ion-item  class="ion-margin-bottom">
     <ion-label position="stacked">{{"BEAN_DATA_MIX" | translate}}</ion-label>
-    <ion-select #beanMix="ngModel" (ionChange)="beanMixChanged()" [(ngModel)]="data.beanMix" cancelText="{{'CANCEL'| translate }}" name="beanMix"
+    <ion-select #beanMix="ngModel" (ionBlur)="beanMixChanged()" [(ngModel)]="data.beanMix" cancelText="{{'CANCEL'| translate }}" name="beanMix"
                 okText="{{'CHOOSE'| translate }}"
                 placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_MIX' | translate}}">
       <ion-select-option *ngFor="let key of mixEnum | keys" value="{{key}}">{{mixEnum[key]}}</ion-select-option>
