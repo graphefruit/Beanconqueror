@@ -25,6 +25,8 @@ export class BeansDetailComponent implements OnInit {
   public data: Bean = new Bean();
   public visibleIndex: any = {};
   @ViewChild('beanStars', {read: NgxStarsComponent, static: false}) public beanStars: NgxStarsComponent;
+  @ViewChild('beanRating', {read: NgxStarsComponent, static: false}) public beanRating: NgxStarsComponent;
+
 
   public bean_segment = 'general';
   constructor (private readonly modalController: ModalController,
@@ -42,6 +44,7 @@ export class BeansDetailComponent implements OnInit {
       this.data.initializeByObject(copy);
     }
     this.beanStars.setRating(this.data.roast_range);
+    this.beanRating.setRating(this.data.rating);
 
 
   }
