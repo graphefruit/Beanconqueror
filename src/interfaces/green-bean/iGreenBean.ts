@@ -28,5 +28,7 @@ export interface IGreenBean {
 
   bean_information: Array<IBeanInformation>;
 
+  rating: number;
+
 
 }

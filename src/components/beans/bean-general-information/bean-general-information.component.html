@@ -38,7 +38,7 @@
   <ion-item lines="none">
     <ion-label position="stacked">{{"BEAN_DATA_ROAST_NAME" | translate}}</ion-label>
   </ion-item>
-  <ion-item lines="none" style="margin-top: -15px;">
+  <ion-item style="margin-top: -15px;">
     <ion-grid class="ion-no-padding">
       <ion-row>
         <ion-col size="6">
@@ -51,6 +51,18 @@
         </ion-col>
       </ion-row>
     </ion-grid>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
+      style="vertical-align: top;">{{data.rating}}</ion-badge>
+    </ion-label>
+    <ion-range (ionChange)="changedRating()" [(ngModel)]="data.rating" debounce="500s" max="5" min="0" snaps="true" step="1">
+
+      <div slot="end">
+        <ngx-stars #beanRating [color]="'#BFB9B0'"  [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars" ></ngx-stars>
+      </div>
+    </ion-range>
   </ion-item>
   <ion-item>
     <ion-select #roast="ngModel" [(ngModel)]="data.roast" cancelText="{{'CANCEL'| translate }}" name="roast"

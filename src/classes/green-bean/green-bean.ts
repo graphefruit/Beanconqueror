@@ -20,6 +20,7 @@ export class GreenBean implements IGreenBean {
   public decaffeinated: boolean;
   public url: string;
   public ean_article_number: string;
+  public rating: number;
 
 
 
@@ -42,6 +43,7 @@ export class GreenBean implements IGreenBean {
     this.bean_information = [];
     this.url = '';
     this.ean_article_number = '';
+    this.rating = 0;
   }
   public initializeByObject(beanObj: IGreenBean): void {
     Object.assign(this, beanObj);

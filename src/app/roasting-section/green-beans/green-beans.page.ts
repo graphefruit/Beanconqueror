@@ -42,6 +42,8 @@ export class GreenBeansPage implements OnInit {
   public archivedBeansFilterText: string = '';
   public openBeansFilterText: string = '';
 
+  public settings: Settings;
+
 
 
   constructor(public modalCtrl: ModalController,
@@ -50,7 +52,7 @@ export class GreenBeansPage implements OnInit {
               private readonly uiAlert: UIAlert,
               private readonly uiBrewStorage: UIBrewStorage,
               private readonly uiSettingsStorage: UISettingsStorage) {
-
+    this.settings = this.uiSettingsStorage.getSettings();
 
   }
 

@@ -1,9 +1,10 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import moment from 'moment';
 import {TranslateService} from '@ngx-translate/core';
 
 import {GreenBean} from '../../../classes/green-bean/green-bean';
 import {Platform} from '@ionic/angular';
+import {NgxStarsComponent} from 'ngx-stars';
 
 declare var cordova;
 @Component({
@@ -15,6 +16,7 @@ export class GreenBeanGeneralInformationComponent implements OnInit {
 
   @Input() public data: GreenBean ;
   @Output() public dataChange = new EventEmitter<GreenBean>();
+  @ViewChild('beanRating', {read: NgxStarsComponent, static: false}) public beanRating: NgxStarsComponent;
 
   constructor(private readonly platform: Platform,
               private readonly translate: TranslateService,
@@ -24,7 +26,11 @@ export class GreenBeanGeneralInformationComponent implements OnInit {
   }
 
   public ngOnInit() {}
-
+  public changedRating() {
+    if (typeof(this.beanRating) !== 'undefined') {
+      this.beanRating.setRating(this.data.rating);
+    }
+  }
   public chooseDate(_event) {
     if (this.platform.is('cordova')) {
       _event.cancelBubble = true;

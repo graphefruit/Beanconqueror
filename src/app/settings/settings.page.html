@@ -104,6 +104,11 @@
       <ion-checkbox (ngModelChange)="saveSettings();"
                     [(ngModel)]="settings.show_archived_beans"></ion-checkbox>
     </ion-item>
+    <ion-item *ngIf="settings.show_roasting_section">
+      <ion-label>{{"PAGE_SETTINGS_SHOW_ARCHIVED_GREEN_BEANS" | translate}}</ion-label>
+      <ion-checkbox (ngModelChange)="saveSettings();"
+                    [(ngModel)]="settings.show_archived_mills"></ion-checkbox>
+    </ion-item>
     <ion-item>
       <ion-label>{{"PAGE_SETTINGS_SHOW_ARCHIVED_BREWS" | translate}}</ion-label>
       <ion-checkbox (ngModelChange)="saveSettings();"
@@ -119,6 +124,8 @@
       <ion-checkbox (ngModelChange)="saveSettings();"
                     [(ngModel)]="settings.show_archived_mills"></ion-checkbox>
     </ion-item>
+
+
   </ion-card-content>
 </ion-card>
 

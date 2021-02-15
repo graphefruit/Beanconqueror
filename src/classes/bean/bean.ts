@@ -34,6 +34,8 @@ export class Bean implements IBean {
   public url: string;
   public ean_article_number: string;
 
+  public rating: number;
+
   /** @deprecated */
   public variety: string;
   /** @deprecated */
@@ -73,6 +75,7 @@ export class Bean implements IBean {
     this.url = '';
     this.ean_article_number = '';
     this.bean_roast_information = new BeanRoastInformation();
+    this.rating = 0;
   }
 
   public getRoastName(): string {

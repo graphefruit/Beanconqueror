@@ -2,7 +2,11 @@
   <ion-card-content class="no-ion-col-vertical-padding ion-padding-top">
     <ion-grid class="no-padding-bottom">
       <ion-row>
-        <ion-col size="11"><div class="ion-no-padding font-size-20 ion-title bean-title">{{greenBean.name}}</div></ion-col>
+        <ion-col [size]="greenBean?.rating!== 0?8:11" size="11"><div class="ion-no-padding font-size-20 ion-title bean-title">{{greenBean.name}}</div></ion-col>
+        <ion-col *ngIf="greenBean?.rating !== 0" size="3">
+                    <ngx-stars #beanRating [color]="'#BFB9B0'" [initialStars]="greenBean.rating" [maxStars]="5"  [readonly]="true"  [wholeStars]="true" class="ion-float-right brew-stars" >
+          </ngx-stars>
+        </ion-col>
         <ion-col size="1">
           <ion-button (click)="showBeanActions($event)" class="button-top-absolute" color="accent" fill="clear">
             <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>

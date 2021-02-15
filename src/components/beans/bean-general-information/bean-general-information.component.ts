@@ -21,6 +21,7 @@ export class BeanGeneralInformationComponent implements OnInit {
   @Input() public data: Bean ;
   @Output() public dataChange = new EventEmitter<Bean>();
   @ViewChild('beanStars', {read: NgxStarsComponent, static: false}) public beanStars: NgxStarsComponent;
+  @ViewChild('beanRating', {read: NgxStarsComponent, static: false}) public beanRating: NgxStarsComponent;
 
 
   public roastsEnum = ROASTS_ENUM;
@@ -114,6 +115,11 @@ export class BeanGeneralInformationComponent implements OnInit {
         }
       });
 
+    }
+  }
+  public changedRating() {
+    if (typeof(this.beanRating) !== 'undefined') {
+      this.beanRating.setRating(this.data.rating);
     }
   }
   public onRoastRate(_event): void {
