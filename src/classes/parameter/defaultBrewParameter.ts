@@ -45,7 +45,7 @@ export class DefaultBrewParameter implements IBrewParameter {
     this.mill_speed = false;
     this.pressure_profile = false;
     this.tds = false;
-    this.brew_beverage_quantity = false;
+    this.brew_beverage_quantity = true;
     this.method_of_preparation_tool = false;
   }
 }
