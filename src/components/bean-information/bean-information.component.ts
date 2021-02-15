@@ -97,6 +97,12 @@ export class BeanInformationComponent implements OnInit {
     await this.detailBean();
   }
 
+  public async showPhoto(event) {
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    await this.viewPhotos();
+  }
+
   public async showBeanActions(event): Promise<void> {
     event.stopPropagation();
     event.stopImmediatePropagation();
