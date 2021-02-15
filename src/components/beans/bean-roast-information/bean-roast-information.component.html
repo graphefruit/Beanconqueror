@@ -25,6 +25,14 @@
     </ion-input>
   </ion-item>
   <ion-item>
+    <ion-label position="stacked">{{"BEAN_DATA_WEIGHT_AFTER_ROASTING" | translate}}</ion-label>
+    <ion-input #weight="ngModel" [(ngModel)]="data.weight" autocapitalize="off" inputmode="decimal"
+               name="weight" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_WEIGHT' | translate}}"
+               prevent-characters remove-empty-number spellcheck="false"
+               type="text">
+    </ion-input>
+  </ion-item>
+  <ion-item>
     <ion-label position="stacked">{{"ROASTING_SECTION.BEAN.FIRST_CRACK_MINUTE" | translate}}</ion-label>
     <ion-input #first_crack_minute="ngModel" [(ngModel)]="data.bean_roast_information.first_crack_minute" autocapitalize="off" inputmode="decimal"
                name="outside_temperature" placeholder="{{'ROASTING_SECTION.BEAN.PLACE_HOLDER.FIRST_CRACK_MINUTE' | translate}}"

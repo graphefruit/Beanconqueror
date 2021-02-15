@@ -48,4 +48,6 @@ export interface IBean {
   bean_information: Array<IBeanInformation>;
 
   bean_roast_information: IBeanRoastInformation;
+
+  rating: number;
 }

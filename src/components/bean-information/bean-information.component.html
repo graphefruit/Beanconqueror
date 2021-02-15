@@ -2,10 +2,14 @@
   <ion-card-content class="no-ion-col-vertical-padding ion-padding-top">
     <ion-grid class="no-padding-bottom">
       <ion-row>
-        <ion-col [size]="bean?.roast_range!== 0?8:11"><div class="ion-no-padding font-size-20 ion-title bean-title"><ion-icon name="flame-outline" *ngIf="bean.isSelfRoasted()"></ion-icon>{{bean.name}}</div></ion-col>
+        <ion-col [size]="bean?.roast_range!== 0?8:11" style="margin: auto 0;"><div class="ion-no-padding font-size-20 ion-title bean-title"><ion-icon name="flame-outline" *ngIf="bean.isSelfRoasted()"></ion-icon>{{bean.name}}</div></ion-col>
         <ion-col *ngIf="bean?.roast_range !== 0" size="3">
 
-            <ngx-stars #beanStars [initialStars]="bean.roast_range" [readonly]="true" [size]="1" class="bean-display ion-float-right"></ngx-stars>
+            <ngx-stars #beanStars [initialStars]="bean.roast_range" [readonly]="true" [size]="1" class="bean-display ion-float-right"></ngx-stars><br/>
+
+            <ngx-stars #beanRating [color]="'#BFB9B0'" [initialStars]="bean.rating" [maxStars]="5"  [readonly]="true"  [wholeStars]="true" class="ion-float-right brew-stars" >
+            </ngx-stars>
+
 
         </ion-col>
         <ion-col size="1" *ngIf="showActions">

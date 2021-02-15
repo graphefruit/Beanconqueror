@@ -675,6 +675,7 @@ ion-menu:host .menu-inner {
       background-repeat: no-repeat;
       height: 15px!important;
       width: 16px!important;
+      margin-left: -3px;
     }
 
     .star-empty {
@@ -685,7 +686,14 @@ ion-menu:host .menu-inner {
       background-repeat: no-repeat;
       height: 15px!important;
       width: 16px!important;
+
     }
+
+      /** Fix for iphone 5 - beans would be to near **/
+      .star-half, .star-full, .star-empty {
+        margin-left: -3px;
+      }
+
 
   }
 
@@ -699,15 +707,13 @@ ion-menu:host .menu-inner {
       height:16px!important;
       background-size: contain!important;
     }
-    @media (max-width: 374px) {
+
       /** Fix for iphone 5 - beans would be to near **/
       .star-half, .star-full, .star-empty {
         margin-right:-2px;
-        width:15px!important;
-        height:16px!important;
-        background-size: contain!important;
+
       }
-    }
+
   }
 
   .ion-padding-bottom-half {

@@ -47,6 +47,7 @@ export interface ISettings {
   show_archived_brews: boolean;
   show_archived_mills: boolean;
   show_archived_preparations: boolean;
+  show_archived_green_beans: boolean;
 
   track_caffeine_consumption: boolean;
 

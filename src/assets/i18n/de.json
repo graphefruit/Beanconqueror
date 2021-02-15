@@ -211,6 +211,7 @@
   "PAGE_HELPER_BREW_RATIO_CALCULATED": "Kalkulierte Brührate",
   "PAGE_SETTINGS_SHOW_ARCHIVED_BREWS": "Anzeige archivierter Brühungen",
   "PAGE_SETTINGS_SHOW_ARCHIVED_BEANS": "Anzeige archivierter Bohnen",
+  "PAGE_SETTINGS_SHOW_ARCHIVED_GREEN_BEANS": "Anzeige archivierter Rohbohnen",
   "CUPPING_SCORE": "Score",
   "CUPPING_SCORE_DRY_FRAGRANCE": "Dry Fragrance",
   "CUPPING_SCORE_WET_AROMA": "Wet Aroma",
@@ -556,5 +557,6 @@
   "BEAN_SORT_PURCHASE_DATE": "Kaufdatum",
   "BEAN_ROAST_COUNT": "Röstungen",
   "TRANSFER_ROAST": "Rösten",
-  "BEAN_TAB_LINKED_ROASTS": "Röstungen"
+  "BEAN_TAB_LINKED_ROASTS": "Röstungen",
+  "BEAN_DATA_WEIGHT_AFTER_ROASTING": "Gewicht nach dem Rösten"
 }
