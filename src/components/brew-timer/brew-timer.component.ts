@@ -13,7 +13,6 @@ import {ModalController} from '@ionic/angular';
 })
 export class BrewTimerComponent implements OnInit, OnDestroy {
   @Input() public label: string;
-  @Input() public timeInSeconds: number;
 
 
   @Output() public timerStarted = new EventEmitter();
@@ -26,6 +25,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
   private _dripTimerVisible: boolean;
 
+  private startedTimestamp:number = -1;
   get dripTimerVisible(): boolean {
     return this._dripTimerVisible;
   }
@@ -70,21 +70,18 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
   public setTime(seconds: number): void {
     this.timer.seconds = seconds;
-console.log("bla ");
     this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
     this.displayingTime = moment(this.displayingTime).startOf('day').add('seconds',this.timer.seconds).toISOString();
   }
 
   public initTimer(): void {
-    if (!this.timeInSeconds) {
-      this.timeInSeconds = 0;
-    }
+
     // tslint:disable-next-line
     this.timer = {
       runTimer: false,
       hasStarted: false,
       hasFinished: false,
-      seconds: this.timeInSeconds
+      seconds: 0,
     } as ITimer;
     this.showBloomTimer = this.bloomTimerVisible;
     this.showDripTimer = this.dripTimerVisible;
@@ -94,6 +91,8 @@ console.log("bla ");
   }
 
   public startTimer(): void {
+    this.startedTimestamp = Math.floor(Date.now() / 1000);
+
     this.timer.hasStarted = true;
     this.timer.runTimer = true;
     this.timerTick();
@@ -122,11 +121,18 @@ console.log("bla ");
   }
 
   public timerTick(): void {
+
     setTimeout(() => {
       if (!this.timer.runTimer) {
         return;
       }
-      this.timer.seconds++;
+
+      const currentTickTimestamp: number =  Math.floor(Date.now() / 1000);
+      const delta: number = currentTickTimestamp - this.startedTimestamp;
+
+     this.timer.seconds  += delta;
+      this.startedTimestamp = currentTickTimestamp;
+
       this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
       this.displayingTime = moment(this.displayingTime).startOf('day').add('seconds',this.timer.seconds).toISOString();
       this.timerTick();
@@ -139,7 +145,6 @@ console.log("bla ");
   }
 
   public reset() {
-    this.timeInSeconds = 0;
     this.initTimer();
     this.changeEvent();
   }
