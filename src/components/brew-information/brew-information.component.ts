@@ -143,7 +143,6 @@ export class BrewInformationComponent implements OnInit {
   }
 
   public async editBrew() {
-
     const modal = await this.modalCtrl.create({component: BrewEditComponent, id:'brew-edit', componentProps: {brew: this.brew}});
     await modal.present();
     await modal.onWillDismiss();
