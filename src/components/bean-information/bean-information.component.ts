@@ -151,7 +151,7 @@ export class BeanInformationComponent implements OnInit {
     await modal.onWillDismiss();
   }
 
-  public async viewPhotos() {
+  private async viewPhotos() {
     await this.uiImage.viewPhotos(this.bean);
   }
   public beansConsumed() {

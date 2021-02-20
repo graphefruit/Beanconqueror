@@ -126,7 +126,6 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
       if (!this.timer.runTimer) {
         return;
       }
-
       const currentTickTimestamp: number =  Math.floor(Date.now() / 1000);
       const delta: number = currentTickTimestamp - this.startedTimestamp;
 

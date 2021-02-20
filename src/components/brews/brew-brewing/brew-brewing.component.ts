@@ -43,6 +43,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
   @ViewChild('brewStars', {read: NgxStarsComponent, static: false}) public brewStars: NgxStarsComponent;
   @Input() public data: Brew;
   @Input() public brewTemplate: Brew;
+  @Input() public isEdit: boolean = false;
   @Output() public dataChange = new EventEmitter<Brew>();
 
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
@@ -65,18 +66,25 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
   }
 
   public ngAfterViewInit() {
-
-    // We need a short timeout because of ViewChild, else we get an exception
     setTimeout( () => {
-      if (this.brewTemplate) {
-        this.__loadBrew(this.brewTemplate,true);
-      } else {
-        this.__loadLastBrew();
+    if (this.isEdit === false) {
+      // We need a short timeout because of ViewChild, else we get an exception
+
+        if (this.brewTemplate) {
+          this.__loadBrew(this.brewTemplate,true);
+        } else {
+          this.__loadLastBrew();
+        }
+
+    } else {
+      this.timer.setTime(this.data.brew_time);
+
+      if ( this.settings.manage_parameters.brew_temperature_time) {
+        this.brewTemperatureTime.setTime(this.data.brew_temperature_time);
       }
 
-
+    }
     })
-
   }
   public ngOnInit (): void {
     this.settings = this.uiSettingsStorage.getSettings();
