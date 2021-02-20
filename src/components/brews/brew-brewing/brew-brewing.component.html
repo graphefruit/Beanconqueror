@@ -176,8 +176,7 @@
                 [dripTimerVisible]="uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_first_drip_time,
                       data.getPreparation().manage_parameters.coffee_first_drip_time,
                       data.getPreparation().use_custom_parameters) && getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
-                label="{{'BREW_DATA_TIME' | translate}}"
-                timeInSeconds="0"></brew-timer>
+                label="{{'BREW_DATA_TIME' | translate}}"></brew-timer>
   </ion-item>
 
   <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.brew_time && settings.manage_parameters.coffee_first_drip_time,
