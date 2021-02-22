@@ -1,0 +1,25 @@
+<ion-card class="long-card" tappable (click)="show()">
+  <ion-card-content class="no-ion-col-vertical-padding ion-padding-top">
+    <ion-grid class="no-padding-bottom">
+      <ion-row>
+        <ion-col size="11"><div class="ion-no-padding font-size-20 ion-title">{{roastingMachine.name}}</div></ion-col>
+        <ion-col size="1">
+          <ion-button (click)="showActions($event)" class="button-top-absolute" tappable
+                      color="accent" fill="clear">
+            <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <hr />
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <ion-grid class="no-ion-col-vertical-padding">
+
+    </ion-grid>
+  </ion-card-content>
+</ion-card>
+

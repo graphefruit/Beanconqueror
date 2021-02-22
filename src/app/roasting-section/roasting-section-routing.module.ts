@@ -16,10 +16,14 @@ const routes: Routes = [
       {
         path: 'dashboard',
         loadChildren: './green-beans/green-beans.module#GreenBeansPageModule',
-
+      },
+      {
+        path: 'roasting-machine',
+        loadChildren: './roasting-machine/roasting-machine.module#RoastingMachinePageModule'
       }
     ]
   }
+
 ];
 
 @NgModule({

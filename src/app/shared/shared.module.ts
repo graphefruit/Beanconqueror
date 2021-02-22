@@ -116,6 +116,13 @@ import {GreenBeanGeneralInformationComponent} from '../../components/beans/green
 import {BrewBrewingComponent} from '../../components/brews/brew-brewing/brew-brewing.component';
 import {BeanDetailSortInformationComponent} from '../../components/beans/detail/bean-detail-sort-information/bean-detail-sort-information.component';
 import {GreenBeanFilterComponent} from '../roasting-section/green-beans/green-bean-filter/green-bean-filter.component';
+import {RoastingMachine} from '../../classes/roasting-machine/roasting-machine';
+import {RoastingMachineEditComponent} from '../roasting-section/roasting-machine/roasting-machine-edit/roasting-machine-edit.component';
+import {RoastingMachineAddComponent} from '../roasting-section/roasting-machine/roasting-machine-add/roasting-machine-add.component';
+import {RoastingMachineDetailComponent} from '../roasting-section/roasting-machine/roasting-machine-detail/roasting-machine-detail.component';
+import {RoastingMachinePage} from '../roasting-section/roasting-machine/roasting-machine.page';
+import {RoastingMachinePopoverActionsComponent} from '../roasting-section/roasting-machine/roasting-machine-popover-actions/roasting-machine-popover-actions.component';
+import {RoastingMachineInformationCardComponent} from '../../components/roasting-machine-information-card/roasting-machine-information-card.component';
 
 @NgModule({
   declarations: [
@@ -207,7 +214,13 @@ import {GreenBeanFilterComponent} from '../roasting-section/green-beans/green-be
     GreenBeanGeneralInformationComponent,
     BrewBrewingComponent,
     BeanDetailSortInformationComponent,
-    GreenBeanFilterComponent
+    GreenBeanFilterComponent,
+    RoastingMachineInformationCardComponent,
+    RoastingMachineEditComponent,
+    RoastingMachineAddComponent,
+    RoastingMachineDetailComponent,
+    RoastingMachinePage,
+    RoastingMachinePopoverActionsComponent
   ],
   entryComponents: [
     SettingsPage,
@@ -283,7 +296,13 @@ import {GreenBeanFilterComponent} from '../roasting-section/green-beans/green-be
     GreenBeanGeneralInformationComponent,
     BrewBrewingComponent,
     BeanDetailSortInformationComponent,
-    GreenBeanFilterComponent],
+    GreenBeanFilterComponent,
+    RoastingMachineInformationCardComponent,
+    RoastingMachineEditComponent,
+    RoastingMachineAddComponent,
+    RoastingMachineDetailComponent,
+    RoastingMachinePage,
+    RoastingMachinePopoverActionsComponent],
   imports: [
     CommonModule,
     IonicModule,
@@ -407,7 +426,13 @@ import {GreenBeanFilterComponent} from '../roasting-section/green-beans/green-be
     GreenBeanGeneralInformationComponent,
     BrewBrewingComponent,
     BeanDetailSortInformationComponent,
-    GreenBeanFilterComponent],
+    GreenBeanFilterComponent,
+    RoastingMachineInformationCardComponent,
+    RoastingMachineEditComponent,
+    RoastingMachineAddComponent,
+    RoastingMachineDetailComponent,
+    RoastingMachinePage,
+    RoastingMachinePopoverActionsComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule {

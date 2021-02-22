@@ -129,6 +129,11 @@ export class GreenBeanInformationComponent implements OnInit {
     await modal.present();
     await modal.onWillDismiss();
   }
+  public async showPhoto(event) {
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    await this.viewPhotos();
+  }
 
   public async viewPhotos() {
     await this.uiImage.viewPhotos(this.greenBean);
@@ -204,5 +209,9 @@ export class GreenBeanInformationComponent implements OnInit {
       this.uiBeanStorage.removeByUUID(bean.config.uuid);
     }
     this.uiGreenBeanStorage.removeByObject(this.greenBean);
+  }
+
+  public hasPhotos(): boolean{
+    return this.greenBean.attachments.length > 0;
   }
 }

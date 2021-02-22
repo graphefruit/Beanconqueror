@@ -1,0 +1,45 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{"EDIT_ROASTING_MACHINE" | translate}}</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()" class="big-icon-only">
+        <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-card class="popover">
+    <form #editRoastingMachine="ngForm" novalidate>
+      <ion-item>
+        <ion-label position="stacked">{{"NAME" | translate}}*</ion-label>
+        <ion-input #name="ngModel" [(ngModel)]="data.name" name="name"
+                   placeholder="{{'ROASTING_MACHINE.PLACE_HOLDER.NAME' | translate}}" spellcheck="false" type="text"
+                   autocapitalize="sentences" required>
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">{{"ARCHIVED"|translate}}?</ion-label>
+        <ion-checkbox #finished="ngModel" [(ngModel)]="data.finished" name="finished"></ion-checkbox>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label position="stacked">{{"NOTES" | translate}}</ion-label>
+        <ion-textarea #note="ngModel" [(ngModel)]="data.note" autocapitalize="sentences" autocomplete="true"
+                      placeholder="{{'ROASTING_MACHINE.PLACE_HOLDER.NOTES' | translate}}"
+                      autocorrect="true" name="note" rows="5" spellcheck="true"></ion-textarea>
+      </ion-item>
+    </form>
+  </ion-card>
+</ion-content>
+<ion-footer class="ion-no-border">
+  <ion-row>
+    <ion-col>
+      <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
+                  tappable>{{"CANCEL" | translate}}</ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button (click)="edit(editRoastingMachine)" color="accent" expand="block" tappable
+                  type="submit">{{"SAVE" | translate}}</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>

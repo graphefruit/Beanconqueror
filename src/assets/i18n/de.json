@@ -517,6 +517,7 @@
   "NAV_ROASTING_SECTION": "Rösten",
   "ROASTING_SECTION" : {
     "NAV_GREEN_BEANS": "Rohkaffee",
+    "NAV_ROASTING_MACHINE": "Röster",
     "GREEN_BEAN": {
       "ADD": "Hinzufügen",
       "EDIT": "Editieren",
@@ -558,5 +559,21 @@
   "BEAN_ROAST_COUNT": "Röstungen",
   "TRANSFER_ROAST": "Rösten",
   "BEAN_TAB_LINKED_ROASTS": "Röstungen",
-  "BEAN_DATA_WEIGHT_AFTER_ROASTING": "Gewicht nach dem Rösten"
+  "BEAN_DATA_WEIGHT_AFTER_ROASTING": "Gewicht nach dem Rösten",
+  "TOAST_ROASTING_MACHINE_ADDED_SUCCESSFULLY": "Röster hinzugefügt",
+  "TOAST_ROASTING_MACHINE_EDITED_SUCCESSFULLY": "Röster editiert",
+  "TOAST_ROASTING_MACHINE_ARCHIVED_SUCCESSFULLY": "Röster archiviert",
+  "DELETE_ROASTING_MACHINE_QUESTION": "Röster mit allen Bohnen löschen?",
+  "TOAST_ROASTING_MACHINE_DELETED_SUCCESSFULLY": "Röster gelöscht",
+  "EDIT_ROASTING_MACHINE": "Editieren",
+  "DETAIL_ROASTING_MACHINE": "Detail",
+  "ROASTING_MACHINE": {
+    "PLACE_HOLDER": {
+      "NAME": "Füge einen Namen hinzu",
+      "NOTES": "Füge Notizen zu deinem Röster hinzu"
+    }
+  },
+  "NAV_ROASTING_MACHINE": "Röster",
+  "PAGE_ROASTING_MACHINE_LIST_NO_MACHINES_EXISTING":"Du hast noch keine Röster hinzugefügt.",
+  "PAGE_ROASTING_MACHINE_LIST_NO_ARCHIVED_MACHINES_EXISTING": "Du hast noch keine Röster archiviert"
 }

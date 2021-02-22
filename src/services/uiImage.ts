@@ -16,6 +16,7 @@ import {PhotoPopoverComponent} from '../popover/photo-popover/photo-popover.comp
 import {Brew} from '../classes/brew/brew';
 import {GreenBean} from '../classes/green-bean/green-bean';
 import {Bean} from '../classes/bean/bean';
+import {RoastingMachine} from '../classes/roasting-machine/roasting-machine';
 
 
 @Injectable({
@@ -212,7 +213,7 @@ export class UIImage {
 
   }
 
-  public async viewPhotos (_data: Bean | GreenBean | Brew) {
+  public async viewPhotos (_data: Bean | GreenBean | Brew |RoastingMachine) {
 
     const modal = await this.modalCtrl.create({
       component: PhotoPopoverComponent,

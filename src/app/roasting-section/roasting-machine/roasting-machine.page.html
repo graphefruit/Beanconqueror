@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar with-add-button>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="add()" class="big-add-icon" fill="clear">
+        <ion-icon class="ion-color-accent" name="beanconqueror-add" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      {{"NAV_ROASTING_MACHINE" | translate}}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-segment [(ngModel)]="segment" class="ion-padding-vertical" style="padding-top:0px;">
+    <ion-segment-button value="open">
+      <ion-label>{{"CURRENT" | translate }}
+      </ion-label>
+    </ion-segment-button>
+    <ion-segment-button *ngIf="settings?.show_archived_mills" value="archive">
+      <ion-label>{{"TAB_ARCHIVE" | translate }}
+      </ion-label>
+
+    </ion-segment-button>
+  </ion-segment>
+  <div [ngSwitch]="segment">
+    <div *ngSwitchCase="'open'">
+      <div *ngIf="getActiveRoastingMachines()?.length == 0" class="ion-padding ion-text-center">
+        <div>
+          <ion-icon color="inactive" name="beanconqueror-pepper-mill" size="large"></ion-icon>
+        </div>
+        <div class="text-color-inactive ion-margin-top">
+          {{"PAGE_ROASTING_MACHINE_LIST_NO_MACHINES_EXISTING" | translate}}
+        </div>
+      </div>
+      <div *ngFor="let roastingMachine of getActiveRoastingMachines()">
+        <roasting-machine-information-card (roastingMachineAction)="roastingMachineAction($event[0],$event[1])" [roastingMachine]="roastingMachine"></roasting-machine-information-card>
+      </div>
+    </div>
+    <div *ngSwitchCase="'archive'">
+      <div *ngIf="getArchivedMRoastingMachines()?.length == 0" class="ion-padding ion-text-center">
+        <div>
+          <ion-icon color="inactive" name="beanconqueror-pepper-mill" size="large"></ion-icon>
+        </div>
+        <div class="text-color-inactive ion-margin-top">
+          {{"PAGE_ROASTING_MACHINE_LIST_NO_ARCHIVED_MACHINES_EXISTING" | translate}}
+        </div>
+      </div>
+      <div *ngFor="let roastingMachine of getArchivedMRoastingMachines()">
+        <roasting-machine-information-card (roastingMachineAction)="roastingMachineAction($event[0],$event[1])" [roastingMachine]="roastingMachine"></roasting-machine-information-card>
+      </div>
+    </div>
+  </div>
+
+
+</ion-content>

@@ -1,19 +1,12 @@
 :host {
-  height:200px;
   ion-card {
-    height:180px;
     ion-card-content {
       padding: 8px;
-      padding-bottom: 0px;
+      padding-bottom: var(--padding-bottom);
       padding-top: var(--padding-top);
     }
   }
 
-  .bean-title{
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-  }
   // Overwrite
   .button-top-absolute {
     position: absolute;
@@ -38,16 +31,8 @@
     position: relative;
     top: -5px;
   }
-  ion-text.limit-overflow {
-    white-space: nowrap;
-    display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  ::ng-deep img {
-    width: 100%;
-    height: 90px;
-    display: block;
-    object-fit: contain;
-  }
+
+
 }
+
+
