@@ -1,0 +1,23 @@
+<ion-content class="ion-padding-top">
+  <form #addRoastingMachine="ngForm" novalidate>
+    <ion-item>
+      <ion-label position="stacked">{{"NAME" | translate}}*</ion-label>
+      <ion-input #name="ngModel" [(ngModel)]="data.name" name="name"
+                 placeholder="{{'ROASTING_MACHINE.PLACE_HOLDER.NAME' | translate}}" spellcheck="false" type="text"
+                 autocapitalize="sentences" required>
+      </ion-input>
+    </ion-item>
+  </form>
+</ion-content>
+<ion-footer class="ion-no-border">
+  <ion-row>
+    <ion-col>
+      <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
+                  tappable>{{"CANCEL" | translate}}</ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button (click)="add(addRoastingMachine)" color="accent" disable-double-click expand="block" tappable
+                  type="submit">{{"SAVE" | translate}}</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>

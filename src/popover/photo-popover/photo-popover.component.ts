@@ -4,6 +4,7 @@ import {ModalController, NavParams} from '@ionic/angular';
 import {UIAnalytics} from '../../services/uiAnalytics';
 import {IGreenBean} from '../../interfaces/green-bean/iGreenBean';
 import {IBean} from '../../interfaces/bean/iBean';
+import {IRoastingMachine} from '../../interfaces/roasting-machine/iRoastingMachine';
 
 @Component({
   selector: 'photo-popover',
@@ -13,7 +14,7 @@ import {IBean} from '../../interfaces/bean/iBean';
 export class PhotoPopoverComponent implements OnInit {
 
 
-  public data: IBrew | IBean | IGreenBean;
+  public data: IBrew | IBean | IGreenBean |IRoastingMachine;
 
   constructor (private readonly modalController: ModalController,
                private readonly navParams: NavParams,

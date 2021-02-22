@@ -44,6 +44,8 @@ export class GreenBean implements IGreenBean {
     this.url = '';
     this.ean_article_number = '';
     this.rating = 0;
+
+    this.attachments.push('https://maxbean.de/wp-content/uploads/2020/01/maxfruit.png');
   }
   public initializeByObject(beanObj: IGreenBean): void {
     Object.assign(this, beanObj);

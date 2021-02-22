@@ -74,7 +74,7 @@ export class MillInformationCardComponent implements OnInit {
 
   }
 
-  public editMill() {
+  public show() {
     this.millAction.emit([MILL_ACTION.DETAIL, this.mill]);
   }
 

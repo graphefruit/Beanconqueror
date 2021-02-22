@@ -32,6 +32,7 @@ import moment from 'moment';
 import {UIUpdate} from '../services/uiUpdate';
 import {UiVersionStorage} from '../services/uiVersionStorage';
 import {UIGreenBeanStorage} from '../services/uiGreenBeanStorage';
+import {UIRoastingMachineStorage} from '../services/uiRoastingMachineStorage';
 
 
 declare var AppRate;
@@ -93,7 +94,8 @@ export class AppComponent implements AfterViewInit {
     private readonly menu: MenuController,
     private readonly uiUpdate: UIUpdate,
     private readonly uiVersionStorage: UiVersionStorage,
-    private readonly uiGreenBeanStorage: UIGreenBeanStorage
+    private readonly uiGreenBeanStorage: UIGreenBeanStorage,
+    private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
   ) {
   }
 
@@ -161,6 +163,7 @@ export class AppComponent implements AfterViewInit {
         const millStorageReadyCallback = this.uiMillStorage.storageReady();
         const versionStorageReadyCallback = this.uiVersionStorage.storageReady();
         const greenBeanStorageCallback = this.uiGreenBeanStorage.storageReady();
+        const roastingMachineStorageCallback = this.uiRoastingMachineStorage.storageReady();
 
 
         Promise.all([
@@ -170,7 +173,8 @@ export class AppComponent implements AfterViewInit {
           uiSettingsStorageReadyCallback,
           millStorageReadyCallback,
           versionStorageReadyCallback,
-          greenBeanStorageCallback
+          greenBeanStorageCallback,
+          roastingMachineStorageCallback
         ])
           .then(() => {
             this.uiLog.log('App finished loading');

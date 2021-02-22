@@ -22,6 +22,10 @@
 
     <ion-grid class="no-ion-col-vertical-padding">
       <ion-row>
+        <ion-col [size]="hasPhotos()?9:12" class="ion-no-padding-right">
+          <ion-grid class="ion-no-padding">
+            <ion-row>
+
         <ion-col size="6">
           <ion-label class="card-headline">{{"BEAN_DATA_BUY_DATE" | translate}}</ion-label><br/>
 
@@ -48,6 +52,14 @@
         <ion-col size="6">
           <ion-label class="card-headline">{{"BEANS_AMOUNT_USED" | translate}}</ion-label><br/>
           <ion-text [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount() | number : '.0-2', gramTotal: greenBean?.weight}">{{daysOld()}}</ion-text>
+        </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-col>
+        <ion-col class="ion-no-padding" size="3" *ngIf="hasPhotos()" (click)="showPhoto($event)">
+          <div style="margin:0 auto;" tappable>
+            <async-image [filePath]="greenBean.attachments[0]" class="bean-slider"></async-image>
+          </div>
         </ion-col>
       </ion-row>
     </ion-grid>
