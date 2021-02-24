@@ -30,7 +30,7 @@
     <div *ngSwitchCase="'open'">
       <div *ngIf="getActiveRoastingMachines()?.length == 0" class="ion-padding ion-text-center">
         <div>
-          <ion-icon color="inactive" name="beanconqueror-pepper-mill" size="large"></ion-icon>
+          <ion-icon color="inactive" name="beanconqueror-coffee-roaster" size="large"></ion-icon>
         </div>
         <div class="text-color-inactive ion-margin-top">
           {{"PAGE_ROASTING_MACHINE_LIST_NO_MACHINES_EXISTING" | translate}}
@@ -43,7 +43,7 @@
     <div *ngSwitchCase="'archive'">
       <div *ngIf="getArchivedMRoastingMachines()?.length == 0" class="ion-padding ion-text-center">
         <div>
-          <ion-icon color="inactive" name="beanconqueror-pepper-mill" size="large"></ion-icon>
+          <ion-icon color="inactive" name="beanconqueror-coffee-roaster" size="large"></ion-icon>
         </div>
         <div class="text-color-inactive ion-margin-top">
           {{"PAGE_ROASTING_MACHINE_LIST_NO_ARCHIVED_MACHINES_EXISTING" | translate}}

@@ -13,8 +13,9 @@
   </ion-item>
   <ion-item>
     <ion-label position="stacked">{{"ROASTING_SECTION.BEAN.ROASTER_MACHINE" | translate}}</ion-label>
-    <ion-input #roaster_machine="ngModel" [(ngModel)]="data.bean_roast_information.roaster_machine" placeholder="{{'ROASTING_SECTION.BEAN.PLACE_HOLDER.ROASTER_MACHINE' | translate}}"
-               type="text"></ion-input>
+    <ion-select [(ngModel)]="data.bean_roast_information.roaster_machine" roasting-machine-overlay
+                [show-finished]="true" placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_MILL' | translate}}"></ion-select>
+
   </ion-item>
   <ion-item>
     <ion-label position="stacked">{{"ROASTING_SECTION.BEAN.GREEN_BEAN_WEIGHT" | translate}}</ion-label>

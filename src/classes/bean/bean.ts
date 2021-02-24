@@ -9,6 +9,9 @@ import moment from 'moment';
 import {BEAN_ROASTING_TYPE_ENUM} from '../../enums/beans/beanRoastingType';
 import {IBeanInformation} from '../../interfaces/bean/iBeanInformation';
 import {BeanRoastInformation} from './beanRoastInformation';
+import {RoastingMachine} from '../roasting-machine/roasting-machine';
+import {UIRoastingMachineStorage} from '../../services/uiRoastingMachineStorage';
+import {IRoastingMachine} from '../../interfaces/roasting-machine/iRoastingMachine';
 
 export class Bean implements IBean {
   public name: string;
@@ -76,6 +79,7 @@ export class Bean implements IBean {
     this.ean_article_number = '';
     this.bean_roast_information = new BeanRoastInformation();
     this.rating = 0;
+    this.attachments.push('https://cdn.shopify.com/s/files/1/0282/1360/8541/products/Coffee_packaging_250_tasche_rot_BG_blau2.jpg?v=1603652239');
   }
 
   public getRoastName(): string {
@@ -138,6 +142,23 @@ export class Bean implements IBean {
       return true;
     }
     return false;
+  }
+
+  private getRoastingMachineStorage(): UIRoastingMachineStorage {
+    let uiRoastingMachineStorage: UIRoastingMachineStorage;
+    uiRoastingMachineStorage = UIRoastingMachineStorage.getInstance();
+
+    return uiRoastingMachineStorage;
+  }
+
+  public getRoastingMachine(): RoastingMachine {
+    const iRoastingMachine: IRoastingMachine = this.getRoastingMachineStorage()
+      .getByUUID(this.bean_roast_information.roaster_machine) as IRoastingMachine;
+    const roastingMachine: RoastingMachine = new RoastingMachine();
+    roastingMachine.initializeByObject(iRoastingMachine);
+
+    return roastingMachine;
+
   }
 
 

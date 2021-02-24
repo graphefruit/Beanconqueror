@@ -518,6 +518,10 @@
   "ROASTING_SECTION" : {
     "NAV_GREEN_BEANS": "Rohkaffee",
     "NAV_ROASTING_MACHINE": "Röster",
+    "ROASTING_MACHINE": {
+      "TOTAL_ROAST_QUANTITY": "Röstmenge",
+      "TOTAL_ROAST_COUNT": "Röstungen"
+    },
     "GREEN_BEAN": {
       "ADD": "Hinzufügen",
       "EDIT": "Editieren",
@@ -575,5 +579,7 @@
   },
   "NAV_ROASTING_MACHINE": "Röster",
   "PAGE_ROASTING_MACHINE_LIST_NO_MACHINES_EXISTING":"Du hast noch keine Röster hinzugefügt.",
-  "PAGE_ROASTING_MACHINE_LIST_NO_ARCHIVED_MACHINES_EXISTING": "Du hast noch keine Röster archiviert"
+  "PAGE_ROASTING_MACHINE_LIST_NO_ARCHIVED_MACHINES_EXISTING": "Du hast noch keine Röster archiviert",
+  "CHOOSE_ROASTING_MACHINES": "Röster auswählen",
+  "CHOOSE_ROASTING_MACHINE": "Röster auswählen"
 }

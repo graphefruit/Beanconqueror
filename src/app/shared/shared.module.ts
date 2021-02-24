@@ -116,13 +116,14 @@ import {GreenBeanGeneralInformationComponent} from '../../components/beans/green
 import {BrewBrewingComponent} from '../../components/brews/brew-brewing/brew-brewing.component';
 import {BeanDetailSortInformationComponent} from '../../components/beans/detail/bean-detail-sort-information/bean-detail-sort-information.component';
 import {GreenBeanFilterComponent} from '../roasting-section/green-beans/green-bean-filter/green-bean-filter.component';
-import {RoastingMachine} from '../../classes/roasting-machine/roasting-machine';
 import {RoastingMachineEditComponent} from '../roasting-section/roasting-machine/roasting-machine-edit/roasting-machine-edit.component';
 import {RoastingMachineAddComponent} from '../roasting-section/roasting-machine/roasting-machine-add/roasting-machine-add.component';
 import {RoastingMachineDetailComponent} from '../roasting-section/roasting-machine/roasting-machine-detail/roasting-machine-detail.component';
 import {RoastingMachinePage} from '../roasting-section/roasting-machine/roasting-machine.page';
 import {RoastingMachinePopoverActionsComponent} from '../roasting-section/roasting-machine/roasting-machine-popover-actions/roasting-machine-popover-actions.component';
 import {RoastingMachineInformationCardComponent} from '../../components/roasting-machine-information-card/roasting-machine-information-card.component';
+import {RoastingMachineOverlayDirective} from '../../directive/roasting-machine-overlay.directive';
+import {RoastingMachineModalSelectComponent} from '../roasting-section/roasting-machine/roasting-machine-modal-select/roasting-machine-modal-select.component';
 
 @NgModule({
   declarations: [
@@ -188,6 +189,7 @@ import {RoastingMachineInformationCardComponent} from '../../components/roasting
     MaxNumberValueDirective,
     BeanOverlayDirective,
     MillOverlayDirective,
+    RoastingMachineOverlayDirective,
     PreparationOverlayDirective,
     TooltipDirective,
     DisableDoubleClickDirective,
@@ -199,6 +201,7 @@ import {RoastingMachineInformationCardComponent} from '../../components/roasting
     BeanPopoverActionsComponent,
     MillPopoverActionsComponent,
     BeanModalSelectComponent,
+    RoastingMachineModalSelectComponent,
     MillModalSelectComponent,
     PreparationModalSelectComponent,
     PreparationPopoverActionsComponent,
@@ -280,6 +283,7 @@ import {RoastingMachineInformationCardComponent} from '../../components/roasting
     BrewPopoverActionsComponent,
     BeanPopoverActionsComponent,
     BeanModalSelectComponent,
+    RoastingMachineModalSelectComponent,
     MillModalSelectComponent,
     PreparationModalSelectComponent,
     MillPopoverActionsComponent,
@@ -319,6 +323,7 @@ import {RoastingMachineInformationCardComponent} from '../../components/roasting
     MaxNumberValueDirective,
     BeanOverlayDirective,
     MillOverlayDirective,
+    RoastingMachineOverlayDirective,
     PreparationOverlayDirective,
     TooltipDirective,
     DisableDoubleClickDirective,
@@ -400,6 +405,7 @@ import {RoastingMachineInformationCardComponent} from '../../components/roasting
     MaxNumberValueDirective,
     BeanOverlayDirective,
     MillOverlayDirective,
+    RoastingMachineOverlayDirective,
     PreparationOverlayDirective,
     TooltipDirective,
     DisableDoubleClickDirective,
@@ -410,6 +416,7 @@ import {RoastingMachineInformationCardComponent} from '../../components/roasting
     BrewPopoverActionsComponent,
     BeanPopoverActionsComponent,
     BeanModalSelectComponent,
+    RoastingMachineModalSelectComponent,
     MillModalSelectComponent,
     PreparationModalSelectComponent,
     MillPopoverActionsComponent,
