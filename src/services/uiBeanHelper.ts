@@ -60,4 +60,14 @@ export class UIBeanHelper {
     return roastedBeans;
 
   }
+  public getAllRoastedBeansForRoastingMachine(_uuid: string) {
+    if (this.allStoredBeans.length <= 0) {
+      // Load just if needed, performance reasons
+      this.allStoredBeans = this.uiBeanStorage.getAllEntries();
+    }
+
+    const roastedBeans = this.allStoredBeans.filter((e) => (e.bean_roast_information && e.bean_roast_information.roaster_machine === _uuid));
+    return roastedBeans;
+
+  }
 }

@@ -12,6 +12,8 @@ import {UIRoastingMachineStorage} from '../../services/uiRoastingMachineStorage'
 import {ROASTING_MACHINE_ACTION} from '../../enums/roasting-machine/roastingMachineAction';
 import {RoastingMachinePopoverActionsComponent} from '../../app/roasting-section/roasting-machine/roasting-machine-popover-actions/roasting-machine-popover-actions.component';
 import {RoastingMachineEditComponent} from '../../app/roasting-section/roasting-machine/roasting-machine-edit/roasting-machine-edit.component';
+import {UIBeanHelper} from '../../services/uiBeanHelper';
+import {Bean} from '../../classes/bean/bean';
 
 @Component({
   selector: 'roasting-machine-information-card',
@@ -33,7 +35,8 @@ export class RoastingMachineInformationCardComponent implements OnInit {
               private readonly uiAnalytics: UIAnalytics,
               private readonly uiAlert: UIAlert,
               private readonly uiImage: UIImage,
-              private readonly modalCtrl: ModalController) {
+              private readonly modalCtrl: ModalController,
+              private readonly uiBeanHelper: UIBeanHelper) {
     this.settings = this.uiSettingsStorage.getSettings();
 
   }
@@ -87,7 +90,6 @@ export class RoastingMachineInformationCardComponent implements OnInit {
   }
   public archive() {
 
-    /// \TODO remove all beans with this
     this.roastingMachine.finished = true;
     this.uiRoastingMachineStorage.update(this.roastingMachine);
     this.uiToast.showInfoToast('TOAST_ROASTING_MACHINE_ARCHIVED_SUCCESSFULLY');
@@ -108,7 +110,11 @@ export class RoastingMachineInformationCardComponent implements OnInit {
 
   }
 
-
+  public async showPhoto(event) {
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    await this.viewPhotos();
+  }
   public async viewPhotos() {
     await this.uiImage.viewPhotos(this.roastingMachine);
   }
@@ -134,6 +140,23 @@ export class RoastingMachineInformationCardComponent implements OnInit {
   private __delete(): void {
     /// \TODO remove all beans with this
     this.uiRoastingMachineStorage.removeByObject(this.roastingMachine);
+  }
+  public getRoastQuantity(): number {
+    const beans: Array<Bean> = this.uiBeanHelper.getAllRoastedBeansForRoastingMachine(this.roastingMachine.config.uuid);
+    let quantity:number = 0;
+    for (const bean of beans) {
+      quantity +=bean.weight;
+    }
+    return quantity;
+  }
+  public getRoastCount(): number {
+    const beans: Array<Bean> = this.uiBeanHelper.getAllRoastedBeansForRoastingMachine(this.roastingMachine.config.uuid);
+    return beans.length;
+  }
+
+
+  public hasPhotos() {
+    return (this.roastingMachine.attachments && this.roastingMachine.attachments.length > 0);
   }
 
 }

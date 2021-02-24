@@ -6,7 +6,6 @@ import { IonicModule } from '@ionic/angular';
 
 import { RoastingMachinePageRoutingModule } from './roasting-machine-routing.module';
 
-import { RoastingMachinePage } from './roasting-machine.page';
 import {SharedModule} from '../../shared/shared.module';
 
 @NgModule({
@@ -17,6 +16,6 @@ import {SharedModule} from '../../shared/shared.module';
     RoastingMachinePageRoutingModule,
     SharedModule
   ],
-  declarations: [RoastingMachinePage]
+  declarations: []
 })
 export class RoastingMachinePageModule {}

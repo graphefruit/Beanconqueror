@@ -8,7 +8,6 @@ import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 import {ROASTING_MACHINE_ACTION} from '../../../enums/roasting-machine/roastingMachineAction';
 import {RoastingMachine} from '../../../classes/roasting-machine/roasting-machine';
 import {UIRoastingMachineStorage} from '../../../services/uiRoastingMachineStorage';
-import {MillAddComponent} from '../../mill/mill-add/mill-add.component';
 import {RoastingMachineAddComponent} from './roasting-machine-add/roasting-machine-add.component';
 
 @Component({
