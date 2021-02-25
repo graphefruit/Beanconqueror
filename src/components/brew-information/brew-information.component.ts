@@ -113,7 +113,9 @@ export class BrewInformationComponent implements OnInit {
         await this.editBrew();
         break;
       case BREW_ACTION.DELETE:
-        await this.deleteBrew();
+        try {
+          await this.deleteBrew();
+        }catch (ex) {}
         break;
       case BREW_ACTION.PHOTO_GALLERY:
         await this.viewPhotos();

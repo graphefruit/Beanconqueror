@@ -25,6 +25,14 @@
   <div  *ngIf="multiple">
     <div [ngSwitch]="segment">
       <div *ngSwitchCase="'open'">
+        <div *ngIf="getOpenEntries()?.length == 0" class="ion-padding ion-text-center">
+          <div>
+            <ion-icon color="inactive" name="beanconqueror-coffee-roaster" size="large"></ion-icon>
+          </div>
+          <div class="text-color-inactive ion-margin-top">
+            {{"PAGE_ROASTING_MACHINE_LIST_NO_MACHINES_EXISTING" | translate}}
+          </div>
+        </div>
         <ion-card *ngIf="getOpenEntries().length > 0">
           <ion-item *ngFor="let data of getOpenEntries()" lines="none" tappable>
             <ion-checkbox [(ngModel)]="multipleSelection[data.config.uuid]" slot="start"></ion-checkbox>
@@ -35,7 +43,15 @@
         </ion-card>
       </div>
       <div *ngSwitchCase="'archive'">
-        <ion-card>
+        <div *ngIf="getArchivedEntries()?.length == 0" class="ion-padding ion-text-center">
+          <div>
+            <ion-icon color="inactive" name="beanconqueror-coffee-roaster" size="large"></ion-icon>
+          </div>
+          <div class="text-color-inactive ion-margin-top">
+            {{"PAGE_ROASTING_MACHINE_LIST_NO_ARCHIVED_MACHINES_EXISTING" | translate}}
+          </div>
+        </div>
+        <ion-card *ngIf="getArchivedEntries().length > 0">
           <ion-item *ngFor="let data of getArchivedEntries()" lines="none" tappable>
             <ion-checkbox [(ngModel)]="multipleSelection[data.config.uuid]" slot="start"></ion-checkbox>
             <div>
@@ -50,7 +66,14 @@
     <ion-radio-group [(ngModel)]="radioSelection">
       <div [ngSwitch]="segment">
         <div *ngSwitchCase="'open'">
-
+          <div *ngIf="getOpenEntries()?.length == 0" class="ion-padding ion-text-center">
+            <div>
+              <ion-icon color="inactive" name="beanconqueror-coffee-roaster" size="large"></ion-icon>
+            </div>
+            <div class="text-color-inactive ion-margin-top">
+              {{"PAGE_ROASTING_MACHINE_LIST_NO_MACHINES_EXISTING" | translate}}
+            </div>
+          </div>
           <ion-card *ngIf="getOpenEntries().length > 0">
             <ion-item *ngFor="let data of getOpenEntries()" lines="none" tappable>
               <ion-radio slot="start" value="{{data.config.uuid}}"></ion-radio>
@@ -61,7 +84,15 @@
           </ion-card>
         </div>
         <div *ngSwitchCase="'archive'">
-          <ion-card>
+          <div *ngIf="getArchivedEntries()?.length == 0" class="ion-padding ion-text-center">
+            <div>
+              <ion-icon color="inactive" name="beanconqueror-coffee-roaster" size="large"></ion-icon>
+            </div>
+            <div class="text-color-inactive ion-margin-top">
+              {{"PAGE_ROASTING_MACHINE_LIST_NO_ARCHIVED_MACHINES_EXISTING" | translate}}
+            </div>
+          </div>
+          <ion-card *ngIf="getArchivedEntries().length > 0">
             <ion-item *ngFor="let data of getArchivedEntries()" lines="none" tappable>
               <ion-radio slot="start" value="{{data.config.uuid}}"></ion-radio>
               <div>

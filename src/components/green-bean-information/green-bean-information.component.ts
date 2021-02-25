@@ -95,7 +95,9 @@ export class GreenBeanInformationComponent implements OnInit {
         await this.editBean();
         break;
       case GREEN_BEAN_ACTION.DELETE:
-        await this.deleteBean();
+        try{
+          await this.deleteBean();
+        }catch(ex){}
         break;
       case GREEN_BEAN_ACTION.BEANS_CONSUMED:
         await this.beansConsumed();

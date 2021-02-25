@@ -14,6 +14,7 @@ import {RoastingMachinePopoverActionsComponent} from '../../app/roasting-section
 import {RoastingMachineEditComponent} from '../../app/roasting-section/roasting-machine/roasting-machine-edit/roasting-machine-edit.component';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
 import {Bean} from '../../classes/bean/bean';
+import {UIBeanStorage} from '../../services/uiBeanStorage';
 
 @Component({
   selector: 'roasting-machine-information-card',
@@ -36,7 +37,8 @@ export class RoastingMachineInformationCardComponent implements OnInit {
               private readonly uiAlert: UIAlert,
               private readonly uiImage: UIImage,
               private readonly modalCtrl: ModalController,
-              private readonly uiBeanHelper: UIBeanHelper) {
+              private readonly uiBeanHelper: UIBeanHelper,
+              private readonly uiBeanStorage: UIBeanStorage) {
     this.settings = this.uiSettingsStorage.getSettings();
 
   }
@@ -76,7 +78,10 @@ export class RoastingMachineInformationCardComponent implements OnInit {
         await this.edit();
         break;
       case ROASTING_MACHINE_ACTION.DELETE:
-        await this.delete();
+        try {
+          await this.delete();
+        }catch (ex) {}
+
         break;
       case ROASTING_MACHINE_ACTION.PHOTO_GALLERY:
         await this.viewPhotos();
@@ -139,6 +144,12 @@ export class RoastingMachineInformationCardComponent implements OnInit {
 
   private __delete(): void {
     /// \TODO remove all beans with this
+    const beans: Array<Bean> = this.uiBeanHelper.getAllRoastedBeansForRoastingMachine(this.roastingMachine.config.uuid);
+    for (const bean of beans) {
+      bean.bean_roast_information.roaster_machine = '';
+      this.uiBeanStorage.update(bean);
+    }
+
     this.uiRoastingMachineStorage.removeByObject(this.roastingMachine);
   }
   public getRoastQuantity(): number {

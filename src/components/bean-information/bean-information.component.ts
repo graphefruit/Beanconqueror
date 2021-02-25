@@ -132,7 +132,9 @@ export class BeanInformationComponent implements OnInit {
         await this.editBean();
         break;
       case BEAN_ACTION.DELETE:
-        await this.deleteBean();
+        try {
+          await this.deleteBean();
+        }catch (ex) {}
         break;
       case BEAN_ACTION.BEANS_CONSUMED:
         await this.beansConsumed();

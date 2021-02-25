@@ -95,8 +95,12 @@ export class Bean implements IBean {
   public initializeByObject(beanObj: IBean): void {
     Object.assign(this, beanObj);
 
-    this.bean_roast_information = new BeanRoastInformation();
-    Object.assign(this.bean_roast_information, beanObj.bean_roast_information);
+    // Newer version, this information may not exist
+    if (beanObj.bean_roast_information) {
+      this.bean_roast_information = new BeanRoastInformation();
+      Object.assign(this.bean_roast_information, beanObj.bean_roast_information);
+    }
+
   }
 
   public fixDataTypes(): boolean {
