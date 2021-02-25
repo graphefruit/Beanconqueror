@@ -225,7 +225,6 @@ export class AppComponent implements AfterViewInit {
               } else {
                 settingLanguage = 'en';
               }
-
               this.uiLog.log(`Setting language: ${settingLanguage}`);
               this._translate.setDefaultLang(settingLanguage);
               settings.language = settingLanguage;
@@ -275,11 +274,11 @@ export class AppComponent implements AfterViewInit {
           moment.locale(settings.language);
           resolve();
         } else {
-          this.uiLog.info(`Set default language from settings, because no settings set: de `);
-          this._translate.setDefaultLang('de');
-          settings.language = 'de';
+          this.uiLog.info(`Set default language from settings, because no settings set: en `);
+          this._translate.setDefaultLang('en');
+          settings.language = 'en';
           this.uiSettingsStorage.saveSettings(settings);
-          await this._translate.use('de').toPromise();
+          await this._translate.use('en').toPromise();
           moment.locale(settings.language);
           resolve();
         }

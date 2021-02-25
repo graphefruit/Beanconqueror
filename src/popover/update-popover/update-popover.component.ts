@@ -27,12 +27,22 @@ export class UpdatePopoverComponent implements OnInit {
     this.updateSlider.slideNext();
     this.updateContentElement.scrollToTop(250);
     this.slide ++;
+    this.__triggerUpdate();
   }
   public finish() {
     this.dismiss();
   }
 
-  public ngOnInit() {}
+  public ngOnInit() {
+  this.__triggerUpdate();
+  }
+
+  private __triggerUpdate() {
+    // Fix, specialy on new devices which will see 2 update screens, the slider was white
+    setTimeout(() => {
+      this.updateSlider.update();
+    });
+  }
 
   public dismiss() {
     this.modalController.dismiss({

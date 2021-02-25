@@ -570,7 +570,7 @@
   "DELETE_ROASTING_MACHINE_QUESTION": "Röster mit allen Bohnen löschen?",
   "TOAST_ROASTING_MACHINE_DELETED_SUCCESSFULLY": "Röster gelöscht",
   "EDIT_ROASTING_MACHINE": "Editieren",
-  "DETAIL_ROASTING_MACHINE": "Detail",
+  "DETAIL_ROASTING_MACHINE":"Details",
   "ROASTING_MACHINE": {
     "PLACE_HOLDER": {
       "NAME": "Füge einen Namen hinzu",
@@ -579,7 +579,7 @@
   },
   "NAV_ROASTING_MACHINE": "Röster",
   "PAGE_ROASTING_MACHINE_LIST_NO_MACHINES_EXISTING":"Du hast noch keine Röster hinzugefügt.",
-  "PAGE_ROASTING_MACHINE_LIST_NO_ARCHIVED_MACHINES_EXISTING": "Du hast noch keine Röster archiviert",
+  "PAGE_ROASTING_MACHINE_LIST_NO_ARCHIVED_MACHINES_EXISTING": "Du hast noch keine Röster archiviert.",
   "CHOOSE_ROASTING_MACHINES": "Röster auswählen",
   "CHOOSE_ROASTING_MACHINE": "Röster auswählen"
 }
