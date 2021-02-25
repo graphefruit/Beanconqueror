@@ -759,6 +759,14 @@ ion-menu:host .menu-inner {
     margin-bottom: env(safe-area-inset-bottom);
     margin-bottom: constant(safe-area-inset-bottom);
   }
+
+  ion-toggle {
+    --background: var(--ion-color-inactive);
+    --background-checked: var(--ion-color-accent);
+
+    --handle-background:  var(--ion-color-inactive);
+    --handle-background-checked: var(--ion-color-accent);
+  }
 }
 
 .color-white {

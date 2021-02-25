@@ -3,4 +3,5 @@ export interface IBrewPageFilter {
   mill: Array<string>;
   bean: Array<string>;
   method_of_preparation: Array<string>;
+  favourite:boolean;
 }
