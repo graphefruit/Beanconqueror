@@ -581,5 +581,8 @@
   "PAGE_ROASTING_MACHINE_LIST_NO_MACHINES_EXISTING":"Du hast noch keine Röster hinzugefügt.",
   "PAGE_ROASTING_MACHINE_LIST_NO_ARCHIVED_MACHINES_EXISTING": "Du hast noch keine Röster archiviert.",
   "CHOOSE_ROASTING_MACHINES": "Röster auswählen",
-  "CHOOSE_ROASTING_MACHINE": "Röster auswählen"
+  "CHOOSE_ROASTING_MACHINE": "Röster auswählen",
+  "POPOVER_BREWS_OPTION_TOGGLE_FAVOURITE": "Favorit",
+  "TOAST_BREW_FAVOURITE_ADDED":"Favorit hinzugefügt",
+  "TOAST_BREW_FAVOURITE_REMOVED":"Favorit entfernt"
 }

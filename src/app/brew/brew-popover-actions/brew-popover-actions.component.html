@@ -8,6 +8,11 @@
       <ion-icon name="beanconqueror-fast-repeat" slot="start"></ion-icon>
       <span>{{"POPOVER_BREWS_OPTION_FAST_REPEAT" | translate}}</span>
     </ion-item>
+    <ion-item (click)="choose(getStaticActions().TOGGLE_FAVOURITE)" button tappable>
+      <ion-icon *ngIf="!data.favourite" name="heart-outline" slot="start"></ion-icon>
+      <ion-icon *ngIf="data.favourite" name="heart" slot="start"></ion-icon>
+      <span>{{"POPOVER_BREWS_OPTION_TOGGLE_FAVOURITE" | translate}}</span>
+    </ion-item>
     <ion-item (click)="choose(getStaticActions().DETAIL)" button tappable>
       <ion-icon name="beanconqueror-detail" slot="start"></ion-icon>
       <span>{{"POPOVER_BREWS_OPTION_DETAIL" | translate}}</span>

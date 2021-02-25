@@ -72,6 +72,8 @@ export class Brew implements IBrew {
   public cupping: ICupping;
 
   public method_of_preparation_tools: Array<string>;
+
+  public favourite: boolean;
   constructor() {
 
     this.grind_size = '';
@@ -125,7 +127,7 @@ export class Brew implements IBrew {
     };
 
     this.method_of_preparation_tools = [];
-
+    this.favourite = false;
   }
 
   public initializeByObject(brewObj: IBrew): void {
