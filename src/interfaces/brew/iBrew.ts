@@ -122,6 +122,8 @@ export interface IBrew {
    */
   method_of_preparation_tools: Array<string>;
 
+  favourite: boolean;
+
   // Functions
   formateDate(): string;
 

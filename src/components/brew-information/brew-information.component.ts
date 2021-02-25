@@ -129,6 +129,9 @@ export class BrewInformationComponent implements OnInit {
       case BREW_ACTION.FAST_REPEAT:
         await this.fastRepeatBrew();
         break;
+      case BREW_ACTION.TOGGLE_FAVOURITE:
+        this.toggleFavourite();
+        break;
       default:
         break;
     }
@@ -160,6 +163,17 @@ export class BrewInformationComponent implements OnInit {
     }
   }
 
+  public toggleFavourite() {
+    if (!this.brew.favourite) {
+      this.uiAnalytics.trackEvent('BREW', 'ADD_FAVOURITE');
+      this.uiToast.showInfoToast('TOAST_BREW_FAVOURITE_ADDED');
+      this.brew.favourite = true;
+    } else {
+      this.brew.favourite = false;
+      this.uiToast.showInfoToast('TOAST_BREW_FAVOURITE_REMOVED');
+    }
+    this.uiBrewStorage.update(this.brew);
+  }
 
 
   public async detailBrew() {
