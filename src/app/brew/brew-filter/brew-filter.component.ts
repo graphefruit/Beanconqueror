@@ -24,7 +24,8 @@ export class BrewFilterComponent implements OnInit {
   public filter: IBrewPageFilter = {
     mill: [],
     bean: [],
-    method_of_preparation: []
+    method_of_preparation: [],
+    favourite: false
   };
   public method_of_preparations: Array<Preparation> = [];
   public beans: Array<Bean> = [];
