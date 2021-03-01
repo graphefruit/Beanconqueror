@@ -37,18 +37,8 @@ export class BrewPage implements OnInit {
   public openBrewFilterText: string = '';
   public archivedBrewFilterText: string = '';
 
-  public archivedBrewsFilter: IBrewPageFilter = {
-    mill: [],
-    bean: [],
-    method_of_preparation: [],
-    favourite: false,
-  };
-  public openBrewsFilter: IBrewPageFilter = {
-    mill: [],
-    bean: [],
-    method_of_preparation: [],
-    favourite: false,
-  };
+  public archivedBrewsFilter: IBrewPageFilter = Settings.GET_BREW_FILTER();
+  public openBrewsFilter: IBrewPageFilter = Settings.GET_BREW_FILTER();
 
   public settings: Settings;
 

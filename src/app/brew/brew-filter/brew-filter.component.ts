@@ -11,6 +11,7 @@ import {UIBeanStorage} from '../../../services/uiBeanStorage';
 import {Bean} from '../../../classes/bean/bean';
 import {Mill} from '../../../classes/mill/mill';
 import {Preparation} from '../../../classes/preparation/preparation';
+import {Settings} from '../../../classes/settings/settings';
 
 @Component({
   selector: 'brew-filter',
@@ -21,12 +22,7 @@ export class BrewFilterComponent implements OnInit {
 
   public settings: ISettings;
 
-  public filter: IBrewPageFilter = {
-    mill: [],
-    bean: [],
-    method_of_preparation: [],
-    favourite: false,
-  };
+  public filter: IBrewPageFilter = Settings.GET_BREW_FILTER();
   public method_of_preparations: Array<Preparation> = [];
   public beans: Array<Bean> = [];
   public mills: Array<Mill> = [];

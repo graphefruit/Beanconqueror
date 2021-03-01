@@ -525,7 +525,7 @@
     "GREEN_BEAN": {
       "ADD": "Hinzufügen",
       "EDIT": "Editieren",
-      "DETAIL": "Details",
+      "DETAIL": "Rohbohnendetails",
       "ROASTABLE": "Röstbar",
       "NO_ROASTS_YET": "Keine Röstung vorgenommen"
     },
@@ -570,7 +570,7 @@
   "DELETE_ROASTING_MACHINE_QUESTION": "Röster mit allen Bohnen löschen?",
   "TOAST_ROASTING_MACHINE_DELETED_SUCCESSFULLY": "Röster gelöscht",
   "EDIT_ROASTING_MACHINE": "Editieren",
-  "DETAIL_ROASTING_MACHINE":"Details",
+  "DETAIL_ROASTING_MACHINE":"Rösterdetails",
   "ROASTING_MACHINE": {
     "PLACE_HOLDER": {
       "NAME": "Füge einen Namen hinzu",
@@ -584,5 +584,6 @@
   "CHOOSE_ROASTING_MACHINE": "Röster auswählen",
   "POPOVER_BREWS_OPTION_TOGGLE_FAVOURITE": "Favorit",
   "TOAST_BREW_FAVOURITE_ADDED":"Favorit hinzugefügt",
-  "TOAST_BREW_FAVOURITE_REMOVED":"Favorit entfernt"
+  "TOAST_BREW_FAVOURITE_REMOVED":"Favorit entfernt",
+  "BREW_FILTER_JUST_FAVOURITE": "Favoriten"
 }
