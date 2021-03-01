@@ -17,8 +17,7 @@ export class Bean implements IBean {
   public name: string;
   public roastingDate: string;
   public note: string;
-  /** @deprecated use attachments instead */
-  public filePath: string;
+
   public roaster: string;
   public config: Config;
   public roast: ROASTS_ENUM;
@@ -39,12 +38,6 @@ export class Bean implements IBean {
 
   public rating: number;
 
-  /** @deprecated */
-  public variety: string;
-  /** @deprecated */
-  public processing: string;
-  /** @deprecated */
-  public country: string;
 
   public bean_information: Array<IBeanInformation>;
 
@@ -56,16 +49,14 @@ export class Bean implements IBean {
     this.name = '';
     this.roastingDate = '';
     this.note = '';
-    this.filePath = '';
+
     this.roaster = '';
     this.config = new Config();
     this.roast = 'UNKNOWN' as ROASTS_ENUM;
     this.roast_range = 0;
     this.roast_custom = '';
     this.beanMix = 'SINGLE_ORIGIN' as BEAN_MIX_ENUM;
-    this.variety = '';
-    this.processing = '';
-    this.country = '';
+
     this.aromatics = '';
     this.weight = 0;
     this.finished = false;

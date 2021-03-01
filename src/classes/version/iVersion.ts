@@ -9,10 +9,12 @@ export class Version implements IVersion {
 
   public config: Config;
   public alreadyDisplayedVersions: Array<string>;
+  public updatedDataVersions:Array<string>;
 
 
   constructor() {
     this.alreadyDisplayedVersions = [];
+    this.updatedDataVersions = [];
     this.config = new Config();
   }
 
@@ -38,13 +40,24 @@ export class Version implements IVersion {
     this.alreadyDisplayedVersions.push(updatedVersion);
   }
 
+  public pushUpdatedDataVersion(updatedDataVersion: string) {
+    this.updatedDataVersions.push(updatedDataVersion);
+  }
+
+  public checkIfDataVersionWasUpdated(_updatedDataVersion: string) {
+   const foundEntries=  this.updatedDataVersions.find((e)=> e === _updatedDataVersion);
+   if (foundEntries && foundEntries.length > 0) {
+      return true;
+   }
+   return false;
+  }
+
   /**
    * Inherits all showable version updates, used from config.xml
    * We dont set this to a variable, else it would be stored in DB and wrongly overwritten
    */
   private getUpdatedVersions() {
     return ['5.0.0','5.1.0'];
-
   }
 
   private  versionCompare(_actualAppVersion, _updateVersion) {

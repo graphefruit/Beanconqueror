@@ -62,7 +62,7 @@ export class SettingsPage implements OnInit {
   private static __cleanupImportBeanData(_data: Array<IBean>): any {
     if (_data !== undefined && _data.length > 0) {
       for (const bean of _data) {
-        bean.filePath = '';
+        delete bean['filePath'];
         bean.attachments = [];
       }
     }

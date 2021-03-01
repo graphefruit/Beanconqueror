@@ -16,63 +16,10 @@ import {BEAN_SORT_ORDER} from '../../enums/beans/beanSortOrder';
 
 export class Settings implements ISettings {
 
-  public static GET_BREW_FILTER(): IBrewPageFilter {
-    return {
-      mill: [],
-      bean: [],
-      method_of_preparation: [],
-      favourite: false,
-    } as IBrewPageFilter;
-  }
 
   public brew_view: BREW_VIEW_ENUM;
   public startup_view: STARTUP_VIEW_ENUM;
-  /** @deprecated */
-  public brew_time: boolean;
-  /** @deprecated */
-  public brew_temperature_time: boolean;
-  /** @deprecated */
-  public grind_size: boolean;
-  /** @deprecated */
-  public grind_weight: boolean;
-  /** @deprecated */
-  public mill: boolean;
-  /** @deprecated */
-  public mill_speed: boolean;
-  /** @deprecated */
-  public mill_timer: boolean;
-  /** @deprecated */
-  public pressure_profile: boolean;
-  /** @deprecated */
-  public method_of_preparation: boolean;
-  /** @deprecated */
-  public brew_quantity: boolean;
-  /** @deprecated */
-  public bean_type: boolean;
-  /** @deprecated */
-  public brew_temperature: boolean;
-  /** @deprecated */
-  public note: boolean;
-  /** @deprecated */
-  public attachments: boolean;
-  /** @deprecated */
-  public rating: boolean;
-  /** @deprecated */
-  public coffee_type: boolean;
-  /** @deprecated */
-  public coffee_concentration: boolean;
-  /** @deprecated */
-  public coffee_first_drip_time: boolean;
-  /** @deprecated */
-  public coffee_blooming_time: boolean;
-  /** @deprecated */
-  public set_last_coffee_brew: boolean;
-  /** @deprecated */
-  public set_custom_brew_time: boolean;
-  /** @deprecated */
-  public tds: boolean;
-  /** @deprecated */
-  public brew_beverage_quantity: boolean;
+
 
 
   public manage_parameters: ManageBrewParameter;
@@ -111,30 +58,19 @@ export class Settings implements ISettings {
   public show_roasting_section: boolean;
   public show_cupping_section: boolean;
 
+  public static GET_BREW_FILTER(): IBrewPageFilter {
+    return {
+      mill: [],
+      bean: [],
+      method_of_preparation: [],
+      favourite: false,
+    } as IBrewPageFilter;
+  }
+
   constructor() {
     this.brew_view = BREW_VIEW_ENUM.SINGLE_PAGE;
     this.startup_view = STARTUP_VIEW_ENUM.HOME_PAGE;
-    this.brew_temperature_time = false;
-    this.brew_time = true;
-    this.grind_size = true;
-    this.grind_weight = true;
-    this.mill = true;
-    this.mill_timer = false;
-    this.method_of_preparation = true;
-    this.brew_quantity = true;
-    this.bean_type = true;
-    this.brew_temperature = true;
-    this.coffee_type = true;
-    this.coffee_concentration = true;
-    this.coffee_first_drip_time = true;
-    this.coffee_blooming_time = true;
-    this.note = true;
-    this.attachments = true;
-    this.rating = true;
-    this.set_last_coffee_brew = false;
-    this.mill_speed = false;
-    this.pressure_profile = false;
-    this.set_custom_brew_time = false;
+
     this.config = new Config();
 
     this.manage_parameters = new ManageBrewParameter();
@@ -150,7 +86,7 @@ export class Settings implements ISettings {
     this.show_archived_mills = true;
     this.show_archived_preparations = true;
     this.show_archived_green_beans = true;
-    this.brew_beverage_quantity = false;
+
     this.track_caffeine_consumption = false;
 
     this.show_roasting_section = false;

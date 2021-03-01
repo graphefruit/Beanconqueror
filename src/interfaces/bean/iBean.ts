@@ -14,19 +14,12 @@ export interface IBean {
   roastingDate: string;
   // Blend / Single Origin.
   beanMix: BEAN_MIX_ENUM;
-  /** @deprecated */
-  variety: string;
-  /** @deprecated */
-  processing: string;
-  // Like location
-  /** @deprecated */
-  country: string;
+
 
   // Aromatics
   aromatics: string;
   note: string;
-  /** @deprecated use attachments instead */
-  filePath: string;
+
   roaster: string;
   roast: ROASTS_ENUM;
   roast_range: number;
