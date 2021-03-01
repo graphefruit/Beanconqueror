@@ -15,6 +15,16 @@ import {BEAN_SORT_AFTER} from '../../enums/beans/beanSortAfter';
 import {BEAN_SORT_ORDER} from '../../enums/beans/beanSortOrder';
 
 export class Settings implements ISettings {
+
+  public static GET_BREW_FILTER(): IBrewPageFilter {
+    return {
+      mill: [],
+      bean: [],
+      method_of_preparation: [],
+      favourite: false,
+    } as IBrewPageFilter;
+  }
+
   public brew_view: BREW_VIEW_ENUM;
   public startup_view: STARTUP_VIEW_ENUM;
   /** @deprecated */
@@ -161,8 +171,8 @@ export class Settings implements ISettings {
       ARCHIVED: {} as IBeanPageFilter
     };
 
-    this.brew_filter.OPEN = {bean: [], method_of_preparation: [], mill: [],favourite: false} as IBrewPageFilter;
-    this.brew_filter.ARCHIVED = {bean: [], method_of_preparation: [], mill: [],favourite: false} as IBrewPageFilter;
+    this.brew_filter.OPEN = Settings.GET_BREW_FILTER();
+    this.brew_filter.ARCHIVED = Settings.GET_BREW_FILTER();
 
     this.bean_filter.OPEN = {sort_after: BEAN_SORT_AFTER.UNKOWN, sort_order:  BEAN_SORT_ORDER.UNKOWN} as IBeanPageFilter;
     this.bean_filter.ARCHIVED =  {sort_after: BEAN_SORT_AFTER.UNKOWN, sort_order:  BEAN_SORT_ORDER.UNKOWN} as IBeanPageFilter;
@@ -195,21 +205,13 @@ export class Settings implements ISettings {
 
   public resetFilter() {
     this.brew_filter = {
-      OPEN: {
-        mill: [],
-        bean: [],
-        method_of_preparation: [],
-        favourite: false,
-      } as IBrewPageFilter,
-      ARCHIVED: {
-        mill: [],
-        bean: [],
-        method_of_preparation: [],
-        favourite: false,
-      } as IBrewPageFilter
+      OPEN: {} as IBrewPageFilter,
+      ARCHIVED: {} as IBrewPageFilter
     };
+    this.brew_filter.OPEN = Settings.GET_BREW_FILTER();
+    this.brew_filter.ARCHIVED = Settings.GET_BREW_FILTER();
   }
-  public resetBeanFilter() {
 
-  }
+
+
 }

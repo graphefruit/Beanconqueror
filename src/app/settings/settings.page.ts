@@ -29,7 +29,6 @@ import {UIAnalytics} from '../../services/uiAnalytics';
 
 import BeanconquerorSettingsDummy from '../../assets/BeanconquerorDummy.json';
 import {ISettings} from '../../interfaces/settings/iSettings';
-import {IBrewPageFilter} from '../../interfaces/brew/iBrewPageFilter';
 import {Bean} from '../../classes/bean/bean';
 /** Third party */
 import moment from 'moment';
@@ -82,18 +81,8 @@ export class SettingsPage implements OnInit {
     // We need to remove the filter because of new data here.
     if (_data !== undefined) {
       _data.brew_filter = {};
-      _data.brew_filter.ARCHIVED = {
-        mill: [],
-        bean: [],
-        method_of_preparation: [],
-        favourite: false,
-      } as IBrewPageFilter;
-      _data.brew_filter.OPEN = {
-        mill: [],
-        bean: [],
-        method_of_preparation: [],
-        favourite: false,
-      } as IBrewPageFilter;
+      _data.brew_filter.ARCHIVED = Settings.GET_BREW_FILTER();
+      _data.brew_filter.OPEN = Settings.GET_BREW_FILTER();
     }
   }
 

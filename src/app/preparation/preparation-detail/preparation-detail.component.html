@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>{{"DETAIL_PERPARATION" | translate}}</ion-title>
+    <ion-title>{{"DETAIL_PREPARATION" | translate}}</ion-title>
     <ion-buttons slot="start">
       <ion-button (click)="dismiss()" class="big-icon-only">
         <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
@@ -31,7 +31,7 @@
         <h3 *ngIf="PREPARATION_STYLE_TYPE.PERCOLATION == data.style_type">{{"PREPARATION_STYLE_PERCOLATION" | translate}}</h3>
       </ion-label>
     </ion-item>
-    <ion-item>
+    <ion-item lines="none">
       <ion-label>
         <h2>{{"PREPARATION_TOOLS" | translate}}:</h2>
       </ion-label>
