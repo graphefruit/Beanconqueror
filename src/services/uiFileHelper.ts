@@ -60,8 +60,12 @@ export class UIFileHelper {
 
   public async copyFileWithSpecificName(_filePath: string, _fileName: string = 'beanconqueror_image'): Promise<any> {
 
-    const fileObj = this.__splitFilePath(_filePath);
+
     return new Promise(async (resolve, reject) => {
+      if (this.platform.is('cordova')) {
+
+
+      const fileObj = this.__splitFilePath(_filePath);
       this.generateFileName(this.file.dataDirectory, _fileName, fileObj.EXTENSION).then((_newName) => {
         // console.log('New Filename' + _newName);
 
@@ -73,14 +77,21 @@ export class UIFileHelper {
         });
 
       });
-
+      }
+      else {
+        reject();
+      }
     });
   }
 
   public async copyFile(_filePath: string): Promise<any> {
 
-    const fileObj = this.__splitFilePath(_filePath);
+
     return new Promise(async (resolve, reject) => {
+      if (this.platform.is('cordova')) {
+
+
+      const fileObj = this.__splitFilePath(_filePath);
       this.generateFileName(this.file.dataDirectory, fileObj.FILE_NAME, fileObj.EXTENSION).then((_newName) => {
         // console.log('New Filename' + _newName);
 
@@ -92,7 +103,9 @@ export class UIFileHelper {
         });
 
       });
-
+      } else {
+        reject();
+      }
     });
   }
 

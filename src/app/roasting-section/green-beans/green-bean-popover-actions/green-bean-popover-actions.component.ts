@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import {NavParams, PopoverController} from '@ionic/angular';
+import {ModalController, NavParams} from '@ionic/angular';
 import {UIHelper} from '../../../../services/uiHelper';
 import {UIAnalytics} from '../../../../services/uiAnalytics';
 import {IGreenBean} from '../../../../interfaces/green-bean/iGreenBean';
@@ -17,7 +17,7 @@ export class GreenBeanPopoverActionsComponent implements OnInit {
 
   public data: GreenBean = new GreenBean();
 
-  constructor(private readonly popoverController: PopoverController,
+  constructor(private readonly modalController: ModalController,
               private readonly navParams: NavParams,
               private readonly uiHelper: UIHelper,
               private readonly uiAnalytics: UIAnalytics) {
@@ -44,7 +44,9 @@ export class GreenBeanPopoverActionsComponent implements OnInit {
   }
 
   public async choose(_type: string): Promise<void> {
-    this.popoverController.dismiss(undefined, _type,'green-bean-popover-actions');
+    this.modalController.dismiss(undefined, _type,'green-bean-popover-actions');
   }
-
+  public async dismiss() {
+    this.modalController.dismiss(undefined, undefined,'green-bean-popover-actions');
+  }
 }

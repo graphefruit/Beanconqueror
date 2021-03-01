@@ -161,8 +161,8 @@ export class Settings implements ISettings {
       ARCHIVED: {} as IBeanPageFilter
     };
 
-    this.brew_filter.OPEN = {bean: [], method_of_preparation: [], mill: []} as IBrewPageFilter;
-    this.brew_filter.ARCHIVED = {bean: [], method_of_preparation: [], mill: []} as IBrewPageFilter;
+    this.brew_filter.OPEN = {bean: [], method_of_preparation: [], mill: [],favourite: false} as IBrewPageFilter;
+    this.brew_filter.ARCHIVED = {bean: [], method_of_preparation: [], mill: [],favourite: false} as IBrewPageFilter;
 
     this.bean_filter.OPEN = {sort_after: BEAN_SORT_AFTER.UNKOWN, sort_order:  BEAN_SORT_ORDER.UNKOWN} as IBeanPageFilter;
     this.bean_filter.ARCHIVED =  {sort_after: BEAN_SORT_AFTER.UNKOWN, sort_order:  BEAN_SORT_ORDER.UNKOWN} as IBeanPageFilter;
@@ -198,12 +198,14 @@ export class Settings implements ISettings {
       OPEN: {
         mill: [],
         bean: [],
-        method_of_preparation: []
+        method_of_preparation: [],
+        favourite: false,
       } as IBrewPageFilter,
       ARCHIVED: {
         mill: [],
         bean: [],
-        method_of_preparation: []
+        method_of_preparation: [],
+        favourite: false,
       } as IBrewPageFilter
     };
   }

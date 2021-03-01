@@ -40,12 +40,14 @@ export class BrewPage implements OnInit {
   public archivedBrewsFilter: IBrewPageFilter = {
     mill: [],
     bean: [],
-    method_of_preparation: []
+    method_of_preparation: [],
+    favourite: false,
   };
   public openBrewsFilter: IBrewPageFilter = {
     mill: [],
     bean: [],
-    method_of_preparation: []
+    method_of_preparation: [],
+    favourite: false,
   };
 
   public settings: Settings;

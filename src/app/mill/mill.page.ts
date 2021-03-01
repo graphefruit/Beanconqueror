@@ -56,37 +56,14 @@ export class MillPage  implements OnInit  {
       (mill) => mill.finished);
   }
 
-  public archive(_mill: Mill) {
-    _mill.finished = true;
-    this.uiMillStorage.update(_mill);
-    this.uiToast.showInfoToast('TOAST_MILL_ARCHIVED_SUCCESSFULLY');
-    this.settings.resetFilter();
-    this.uiSettingsStorage.saveSettings(this.settings);
-    this.loadMills();
-  }
-
   public loadMills(): void {
     this.__initializeMills();
     this.changeDetectorRef.detectChanges();
   }
 
   public async millAction(action: MILL_ACTION, mill: Mill): Promise<void> {
-    switch (action) {
-      case MILL_ACTION.EDIT:
-        this.edit(mill);
-        break;
-      case MILL_ACTION.DELETE:
-        this.delete(mill);
-        break;
-      case MILL_ACTION.ARCHIVE:
-        this.archive(mill);
-        break;
-      case MILL_ACTION.DETAIL:
-        this.detail(mill);
-        break;
-      default:
-        break;
-    }
+    this.loadMills();
+
   }
 
   public async add() {
@@ -100,59 +77,11 @@ export class MillPage  implements OnInit  {
     await modal.onWillDismiss();
     this.loadMills();
   }
-  public async edit(_mill: Mill) {
-
-    const editModal = await this.modalCtrl.create({
-      component: MillEditComponent,
-      componentProps: {mill : _mill},
-      id:'mill-edit',
-    });
-    await editModal.present();
-    await editModal.onWillDismiss();
-    this.loadMills();
-
-  }
-
-  public async detail(_mill: Mill) {
-    const modal = await this.modalCtrl.create({component: MillDetailComponent, id:'mill-detail', componentProps: {mill: _mill}});
-    await modal.present();
-    await modal.onWillDismiss();
-  }
-
-  public delete(_mill: Mill): void {
-    this.uiAlert.showConfirm('DELETE_MILL_QUESTION', 'SURE_QUESTION', true).then(() => {
-          // Yes
-        this.uiAnalytics.trackEvent('MILL', 'DELETE');
-          this.__deleteMill(_mill);
-        this.uiToast.showInfoToast('TOAST_MILL_DELETED_SUCCESSFULLY');
-        this.settings.resetFilter();
-        this.uiSettingsStorage.saveSettings(this.settings);
-        },
-        () => {
-          // No
-        });
-
-  }
-
 
   private __initializeMills(): void {
     this.mills = this.uiMillStorage.getAllEntries()
         .sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  private __deleteMill(_mill: Mill): void {
-    const brews: Array<Brew> =  this.uiBrewStorage.getAllEntries();
-    const deletingBrewIndex: Array<number> = [];
-    for (let i = 0; i < brews.length; i++) {
-      if (brews[i].mill === _mill.config.uuid) {
-        deletingBrewIndex.push(i);
-      }
-    }
-    for (let i = deletingBrewIndex.length; i--;) {
-      this.uiBrewStorage.removeByUUID(brews[deletingBrewIndex[i]].config.uuid);
-    }
 
-    this.uiMillStorage.removeByObject(_mill);
-    this.loadMills();
-  }
 }

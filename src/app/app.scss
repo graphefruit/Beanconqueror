@@ -487,6 +487,41 @@ ion-menu:host .menu-inner {
 
   }
 
+  .popover-actions {
+    ion-list {
+      background: #ffffff;
+    }
+
+    ion-item {
+      --background: #ffffff;
+
+      margin-left: 16px;
+      margin-right: 16px;
+
+    }
+
+    ion-item:last-child {
+      --border-width: 0 0 0 0 !important;
+    }
+    .bottom-modal ion-content, ion-content, ion-content::part(scroll) {
+      background:transparent;
+      --background:transparent;
+    }
+
+    ion-content::part(scroll) {
+
+      padding-left:0px;
+      padding-right:0px;
+
+    }
+    ion-footer{
+      overflow: scroll;
+    }
+    .modal-wrapper {
+      background: transparent;
+    }
+  }
+
 
   ion-label {
     font-family: 'Baloo', sans-serif;

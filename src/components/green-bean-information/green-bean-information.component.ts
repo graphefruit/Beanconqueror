@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 
-import {ModalController, PopoverController} from '@ionic/angular';
+import {ModalController} from '@ionic/angular';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
 
 import {GreenBean} from '../../classes/green-bean/green-bean';
@@ -33,8 +33,7 @@ export class GreenBeanInformationComponent implements OnInit {
 
   @Output() public greenBeanAction: EventEmitter<any> = new EventEmitter();
 
-  constructor(private readonly popoverCtrl: PopoverController,
-              private readonly uiBeanHelper: UIBeanHelper,
+  constructor(private readonly uiBeanHelper: UIBeanHelper,
               private readonly uiGreenBeanStorage: UIGreenBeanStorage,
               private readonly uiBrewStorage: UIBrewStorage,
               private readonly modalController: ModalController,
@@ -70,17 +69,18 @@ export class GreenBeanInformationComponent implements OnInit {
   public async showBeanActions(event): Promise<void> {
     event.stopPropagation();
     event.stopImmediatePropagation();
-    const popover = await this.popoverCtrl.create({
+    const popover = await this.modalController.create({
       component: GreenBeanPopoverActionsComponent,
-      event,
-      translucent: true,
       componentProps: {'green-bean': this.greenBean},
-      id:'green-bean-popover-actions'
+      id:'green-bean-popover-actions',
+      cssClass: 'popover-actions',
     });
     await popover.present();
     const data = await popover.onWillDismiss();
-    await  this.internalBeanAction(data.role as GREEN_BEAN_ACTION);
-    this.greenBeanAction.emit([data.role as GREEN_BEAN_ACTION, this.greenBean]);
+    if (data.role !== undefined) {
+      await this.internalBeanAction(data.role as GREEN_BEAN_ACTION);
+      this.greenBeanAction.emit([data.role as GREEN_BEAN_ACTION, this.greenBean]);
+    }
   }
 
   private async internalBeanAction(action: GREEN_BEAN_ACTION): Promise<void> {
