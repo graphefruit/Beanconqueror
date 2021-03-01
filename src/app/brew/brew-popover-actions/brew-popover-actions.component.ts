@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {NavParams, PopoverController} from '@ionic/angular';
+import {ModalController, NavParams} from '@ionic/angular';
 import {IBrew} from '../../../interfaces/brew/iBrew';
 import {Brew} from '../../../classes/brew/brew';
 import {UIHelper} from '../../../services/uiHelper';
@@ -19,7 +19,7 @@ export class BrewPopoverActionsComponent implements OnInit {
   public data: Brew = new Brew();
   private settings: Settings;
 
-  constructor(private readonly popoverController: PopoverController,
+  constructor(private readonly modalController: ModalController,
               private readonly navParams: NavParams,
               private readonly uiHelper: UIHelper,
               private readonly uiAnalytics: UIAnalytics,
@@ -55,8 +55,10 @@ export class BrewPopoverActionsComponent implements OnInit {
   }
 
   public async choose(_type: string): Promise<void> {
-    this.popoverController.dismiss(undefined, _type,'brew-popover-actions');
+    this.modalController.dismiss(undefined, _type,'brew-popover-actions');
   }
-
+  public async dismiss() {
+    this.modalController.dismiss(undefined, undefined,'brew-popover-actions');
+  }
 
 }

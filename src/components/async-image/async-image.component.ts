@@ -9,6 +9,8 @@ import {UIFileHelper} from '../../services/uiFileHelper';
 export class AsyncImageComponent implements OnInit, OnChanges {
   @Input() public filePath: string;
 
+
+  public errorOccured:boolean = false;
   public img: string = '';
   public preloadImg: string = 'assets/img/loading.gif';
   constructor( private uiFileHelper: UIFileHelper) { }
@@ -37,7 +39,13 @@ export class AsyncImageComponent implements OnInit, OnChanges {
       }
 
     }
+    if (this.img === '') {
+      this.errorOccured = true;
+    } else {
+      this.errorOccured = false;
+    }
   }
+
 
 
 }

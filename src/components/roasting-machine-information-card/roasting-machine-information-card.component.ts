@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Settings} from '../../classes/settings/settings';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
-import {ModalController, PopoverController} from '@ionic/angular';
+import {ModalController} from '@ionic/angular';
 import {UIToast} from '../../services/uiToast';
 import {UIAnalytics} from '../../services/uiAnalytics';
 import {UIAlert} from '../../services/uiAlert';
@@ -30,7 +30,7 @@ export class RoastingMachineInformationCardComponent implements OnInit {
   public settings: Settings;
 
   constructor(private readonly uiSettingsStorage: UISettingsStorage,
-              private readonly popoverCtrl: PopoverController,
+              private readonly modalController: ModalController,
               private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
               private readonly uiToast: UIToast,
               private readonly uiAnalytics: UIAnalytics,
@@ -55,17 +55,18 @@ export class RoastingMachineInformationCardComponent implements OnInit {
   public async showActions(event): Promise<void> {
     event.stopPropagation();
     event.stopImmediatePropagation();
-    const popover = await this.popoverCtrl.create({
+    const popover = await this.modalController.create({
       component: RoastingMachinePopoverActionsComponent,
-      event,
-      translucent: true,
       componentProps: {roastingMachine: this.roastingMachine},
       id:'roasting-machine-popover-actions',
+      cssClass: 'popover-actions',
     });
     await popover.present();
     const data = await popover.onWillDismiss();
-    await this.internalAction(data.role as ROASTING_MACHINE_ACTION);
-    this.roastingMachineAction.emit([data.role as ROASTING_MACHINE_ACTION, this.roastingMachine]);
+    if (data.role !== undefined) {
+      await this.internalAction(data.role as ROASTING_MACHINE_ACTION);
+      this.roastingMachineAction.emit([data.role as ROASTING_MACHINE_ACTION, this.roastingMachine]);
+    }
   }
 
 

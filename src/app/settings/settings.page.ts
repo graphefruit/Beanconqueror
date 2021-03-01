@@ -85,12 +85,14 @@ export class SettingsPage implements OnInit {
       _data.brew_filter.ARCHIVED = {
         mill: [],
         bean: [],
-        method_of_preparation: []
+        method_of_preparation: [],
+        favourite: false,
       } as IBrewPageFilter;
       _data.brew_filter.OPEN = {
         mill: [],
         bean: [],
-        method_of_preparation: []
+        method_of_preparation: [],
+        favourite: false,
       } as IBrewPageFilter;
     }
   }

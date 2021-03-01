@@ -25,7 +25,7 @@ export class BrewFilterComponent implements OnInit {
     mill: [],
     bean: [],
     method_of_preparation: [],
-    favourite: false
+    favourite: false,
   };
   public method_of_preparations: Array<Preparation> = [];
   public beans: Array<Bean> = [];
@@ -67,7 +67,8 @@ export class BrewFilterComponent implements OnInit {
     this.filter = {
       mill: [],
       bean: [],
-      method_of_preparation: []
+      method_of_preparation: [],
+      favourite: false,
     };
     this.modalController.dismiss({
       brew_filter: this.uiHelper.copyData(this.filter)

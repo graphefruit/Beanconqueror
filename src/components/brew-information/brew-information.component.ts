@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output, SimpleChange, ViewChild}
 import {Brew} from '../../classes/brew/brew';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {Settings} from '../../classes/settings/settings';
-import {ModalController, PopoverController} from '@ionic/angular';
+import {ModalController} from '@ionic/angular';
 import {BREW_ACTION} from '../../enums/brews/brewAction';
 import {BrewPopoverActionsComponent} from '../../app/brew/brew-popover-actions/brew-popover-actions.component';
 import {Bean} from '../../classes/bean/bean';
@@ -44,7 +44,6 @@ export class BrewInformationComponent implements OnInit {
   public settings: Settings;
 
   constructor(private readonly uiSettingsStorage: UISettingsStorage,
-              private readonly popoverCtrl: PopoverController,
               private readonly uiBrewHelper: UIBrewHelper,
               private readonly uiBrewStorage: UIBrewStorage,
               private readonly uiToast: UIToast,
@@ -87,17 +86,19 @@ export class BrewInformationComponent implements OnInit {
   public async showBrewActions(event): Promise<void> {
     event.stopPropagation();
     event.stopImmediatePropagation();
-    const popover = await this.popoverCtrl.create({
+    const popover = await this.modalCtrl.create({
       component: BrewPopoverActionsComponent,
-      event,
-      translucent: true,
+
       componentProps: {brew: this.brew},
       id:'brew-popover-actions',
+      cssClass: 'popover-actions',
     });
     await popover.present();
     const data = await popover.onWillDismiss();
-    await this.internalBrewAction(data.role as BREW_ACTION);
-    this.brewAction.emit([data.role as BREW_ACTION, this.brew]);
+    if (data.role !== undefined) {
+      await this.internalBrewAction(data.role as BREW_ACTION);
+      this.brewAction.emit([data.role as BREW_ACTION, this.brew]);
+    }
   }
 
 

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {NavParams, PopoverController} from '@ionic/angular';
+import {ModalController, NavParams} from '@ionic/angular';
 import {UIHelper} from '../../../../services/uiHelper';
 import {UIAnalytics} from '../../../../services/uiAnalytics';
 import {RoastingMachine} from '../../../../classes/roasting-machine/roasting-machine';
@@ -15,7 +15,7 @@ export class RoastingMachinePopoverActionsComponent implements OnInit {
 
   public data: RoastingMachine = new RoastingMachine();
 
-  constructor(private readonly popoverController: PopoverController,
+  constructor(private readonly modalController: ModalController,
               private readonly navParams: NavParams,
               private readonly uiHelper: UIHelper,
               private readonly uiAnalytics: UIAnalytics) {
@@ -42,7 +42,9 @@ export class RoastingMachinePopoverActionsComponent implements OnInit {
   }
 
   public async choose(_type: string): Promise<void> {
-    this.popoverController.dismiss(undefined, _type,'roasting-machine-popover-actions');
+    this.modalController.dismiss(undefined, _type,'roasting-machine-popover-actions');
   }
-
+  public async dismiss() {
+    this.modalController.dismiss(undefined, undefined,'roasting-machine-popover-actions');
+  }
 }

@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {NavParams, PopoverController} from '@ionic/angular';
+import {ModalController, NavParams} from '@ionic/angular';
 import {UIHelper} from '../../../services/uiHelper';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 import {IMill} from '../../../interfaces/mill/iMill';
@@ -16,7 +16,7 @@ export class MillPopoverActionsComponent implements OnInit {
 
   public data: Mill = new Mill();
 
-  constructor(private readonly popoverController: PopoverController,
+  constructor(private readonly modalController: ModalController,
               private readonly navParams: NavParams,
               private readonly uiHelper: UIHelper,
               private readonly uiAnalytics: UIAnalytics) {
@@ -34,12 +34,14 @@ export class MillPopoverActionsComponent implements OnInit {
 
   }
 
-
   public getStaticActions(): any {
     return MILL_ACTION;
   }
 
   public async choose(_type: string): Promise<void> {
-    this.popoverController.dismiss(undefined, _type,'mill-popover-actions');
+    this.modalController.dismiss(undefined, _type,'mill-popover-actions');
+  }
+  public async dismiss() {
+    this.modalController.dismiss(undefined, undefined,'mill-popover-actions');
   }
 }

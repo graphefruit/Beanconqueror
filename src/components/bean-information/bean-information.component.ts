@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angula
 import {Bean} from '../../classes/bean/bean';
 import {Settings} from '../../classes/settings/settings';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
-import {ModalController, PopoverController} from '@ionic/angular';
+import {ModalController} from '@ionic/angular';
 import {BeanPopoverActionsComponent} from '../../app/beans/bean-popover-actions/bean-popover-actions.component';
 import {BEAN_ACTION} from '../../enums/beans/beanAction';
 import {Brew} from '../../classes/brew/brew';
@@ -35,7 +35,6 @@ export class BeanInformationComponent implements OnInit {
   public roast_enum = ROASTS_ENUM;
 
   constructor(private readonly uiSettingsStorage: UISettingsStorage,
-              private readonly popoverCtrl: PopoverController,
               private readonly uiBeanHelper: UIBeanHelper,
               private readonly modalController: ModalController,
               private readonly uiAnalytics: UIAnalytics,
@@ -106,17 +105,18 @@ export class BeanInformationComponent implements OnInit {
   public async showBeanActions(event): Promise<void> {
     event.stopPropagation();
     event.stopImmediatePropagation();
-    const popover = await this.popoverCtrl.create({
+    const popover = await this.modalController.create({
       component: BeanPopoverActionsComponent,
-      event,
-      translucent: true,
       componentProps: {bean: this.bean},
-      id:'bean-popover-actions'
+      id:'bean-popover-actions',
+      cssClass: 'popover-actions',
     });
     await popover.present();
     const data = await popover.onWillDismiss();
-    await this.internalBeanAction(data.role as BEAN_ACTION);
-    this.beanAction.emit([data.role as BEAN_ACTION, this.bean]);
+    if (data.role !== undefined) {
+      await this.internalBeanAction(data.role as BEAN_ACTION);
+      this.beanAction.emit([data.role as BEAN_ACTION, this.bean]);
+    }
   }
 
 
