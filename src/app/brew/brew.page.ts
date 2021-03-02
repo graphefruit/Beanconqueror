@@ -117,15 +117,20 @@ export class BrewPage implements OnInit {
 
 
   public isFilterActive(): boolean {
+    let checkingFilter: IBrewPageFilter;
+    let checkingFilterText: string = '';
     if (this.brew_segment === 'open') {
-      return (this.openBrewsFilter.bean.length > 0 ||
-        this.openBrewsFilter.method_of_preparation.length > 0 ||
-        this.openBrewsFilter.mill.length > 0) || this.openBrewFilterText !== '';
+      checkingFilter = this.openBrewsFilter;
+      checkingFilterText = this.openBrewFilterText;
+
     } else {
-      return (this.archivedBrewsFilter.bean.length > 0 ||
-        this.archivedBrewsFilter.method_of_preparation.length > 0 ||
-        this.archivedBrewsFilter.mill.length > 0) || this.archivedBrewFilterText !== '';
+      checkingFilter = this.archivedBrewsFilter;
+      checkingFilterText = this.archivedBrewFilterText;
+
     }
+    return (checkingFilter.bean.length > 0 ||
+      checkingFilter.method_of_preparation.length > 0 ||
+      checkingFilter.mill.length > 0) || checkingFilter.favourite || checkingFilterText !== '';
   }
 
   // Treat the instructor name as the unique identifier for the object
@@ -214,6 +219,9 @@ export class BrewPage implements OnInit {
     }
     if (filter.method_of_preparation.length > 0) {
       brewsFilters = brewsFilters.filter((e) => filter.method_of_preparation.filter((z) => z === e.method_of_preparation).length > 0);
+    }
+    if (filter.favourite) {
+      brewsFilters = brewsFilters.filter((e)=>e.favourite === true);
     }
 
     let sortedBrews: Array<Brew> = UIBrewHelper.sortBrews(brewsFilters);

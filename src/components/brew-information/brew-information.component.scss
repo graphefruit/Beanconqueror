@@ -2,7 +2,7 @@
 
 
   ion-card.brew-layout {
-    height:233px;
+    height:270px;
     ion-card-content {
       padding: 8px;
       padding-bottom: 0px;
@@ -109,6 +109,18 @@
 
     }
   }
+
+  .limit-grid-overflow {
+    padding-top:0px;
+    padding-bottom:0px;
+    ion-text {
+      white-space: nowrap;
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
 
 
 
