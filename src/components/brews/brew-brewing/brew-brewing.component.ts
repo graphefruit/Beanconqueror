@@ -86,6 +86,11 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
     }
     })
   }
+
+  public resetPreparationTools() {
+    this.data.method_of_preparation_tools = [];
+  }
+
   public ngOnInit (): void {
     this.settings = this.uiSettingsStorage.getSettings();
     if (!this.data.config.uuid) {

@@ -41,7 +41,6 @@ export class BrewInformationComponent implements OnInit {
   public preparation: Preparation;
   public mill: Mill;
   public brewQuantityEnum = BREW_QUANTITY_TYPES_ENUM;
-  public settings: Settings;
 
   constructor(private readonly uiSettingsStorage: UISettingsStorage,
               private readonly uiBrewHelper: UIBrewHelper,
@@ -52,7 +51,6 @@ export class BrewInformationComponent implements OnInit {
               private readonly uiImage: UIImage,
               private readonly modalCtrl: ModalController,
               private readonly uiHelper: UIHelper) {
-    this.settings = this.uiSettingsStorage.getSettings();
 
   }
 

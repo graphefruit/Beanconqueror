@@ -1,6 +1,4 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Settings} from '../../classes/settings/settings';
-import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {ModalController} from '@ionic/angular';
 import {UIToast} from '../../services/uiToast';
 import {UIAnalytics} from '../../services/uiAnalytics';
@@ -26,11 +24,7 @@ export class RoastingMachineInformationCardComponent implements OnInit {
   @Input() public roastingMachine: RoastingMachine;
   @Output() public roastingMachineAction: EventEmitter<any> = new EventEmitter();
 
-
-  public settings: Settings;
-
-  constructor(private readonly uiSettingsStorage: UISettingsStorage,
-              private readonly modalController: ModalController,
+  constructor(private readonly modalController: ModalController,
               private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
               private readonly uiToast: UIToast,
               private readonly uiAnalytics: UIAnalytics,
@@ -39,8 +33,6 @@ export class RoastingMachineInformationCardComponent implements OnInit {
               private readonly modalCtrl: ModalController,
               private readonly uiBeanHelper: UIBeanHelper,
               private readonly uiBeanStorage: UIBeanStorage) {
-    this.settings = this.uiSettingsStorage.getSettings();
-
   }
 
   public ngOnInit() {

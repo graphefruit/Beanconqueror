@@ -28,7 +28,6 @@ export class PreparationInformationCardComponent implements OnInit {
 
   @Output() public preparationAction: EventEmitter<any> = new EventEmitter();
 
-  public settings: Settings;
 
   constructor(private readonly uiSettingsStorage: UISettingsStorage,
               private readonly modalController: ModalController,
@@ -38,7 +37,6 @@ export class PreparationInformationCardComponent implements OnInit {
               private readonly uiToast: UIToast,
               private readonly uiPreparationStorage: UIPreparationStorage,
               private readonly uiBrewStorage: UIBrewStorage) {
-    this.settings = this.uiSettingsStorage.getSettings();
 
   }
 
