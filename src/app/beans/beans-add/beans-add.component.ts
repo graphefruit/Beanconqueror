@@ -21,10 +21,9 @@ export class BeansAddComponent implements OnInit {
 
 
   public data: Bean = new Bean();
-  private readonly bean_template: Bean;
+  @Input() private readonly bean_template: Bean;
 
   @Input() private hide_toast_message: boolean;
-
   @Input() private greenBean: GreenBean;
 
   public bean_segment = 'general';
@@ -37,7 +36,7 @@ export class BeansAddComponent implements OnInit {
                private readonly uiAnalytics: UIAnalytics,
                private readonly uiFileHelper: UIFileHelper,
                private readonly uiToast: UIToast) {
-    this.bean_template = this.navParams.get('bean_template');
+
   }
 
 

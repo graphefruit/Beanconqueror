@@ -28,8 +28,6 @@ export class MillInformationCardComponent implements OnInit {
 
   @Output() public millAction: EventEmitter<any> = new EventEmitter();
 
-  public settings: Settings;
-
   constructor(private readonly uiSettingsStorage: UISettingsStorage,
               private readonly modalController: ModalController,
               private readonly uiMillHelper: UIMillHelper,
@@ -38,7 +36,6 @@ export class MillInformationCardComponent implements OnInit {
               private readonly uiMillStorage: UIMillStorage,
               private readonly uiBrewStorage: UIBrewStorage,
               private readonly uiAnalytics: UIAnalytics) {
-    this.settings = this.uiSettingsStorage.getSettings();
 
   }
 

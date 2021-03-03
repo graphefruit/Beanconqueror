@@ -470,7 +470,7 @@
   "ENABLE_PREPARATION_CUSTOM_PARAMETERS": "Use individual parameter",
   "BEAN_ADD_ANOTHER_SORT": "Add another sort",
   "BEAN_SORT": "Sort",
-  "BEAN_SORT_INFORMATION": "Sort information",
+  "BEAN_SORT_INFORMATION": "Variety information",
   "BEAN_SORT_MORE_INFORMATION": "More information",
   "NAVIGATE_TO_PREPARATION_METHODS": "Navigate to preparations",
   "PREPARATION_TOOLS": "Preparation tools",
@@ -487,7 +487,7 @@
   "BEAN_SORT_ROASTING_DATE": "Roasting date",
   "BEAN_TAB_ROAST_INFORMATION": "Roast information",
   "BEAN_TAB_GENERAL_INFORMATION": "General",
-  "BEAN_TAB_SORT_INFORMATION": "Sort information",
+  "BEAN_TAB_SORT_INFORMATION": "Variety information",
   "PAGE_SETTINGS_MANAGE_ARCHIVE": "Manage archive",
   "LAST_USE": "Last used",
   "SEARCH": "Search",
@@ -513,5 +513,77 @@
   },
   "EXCEL_EXPORT": "Excel export",
   "HEALTH_KIT_QUESTION_TITLE": "Save caffeine consumption",
-  "HEALTH_KIT_QUESTION_MESSAGE": "Through activation the occupied caffeine will be automatically be saved"
+  "HEALTH_KIT_QUESTION_MESSAGE": "Through activation the occupied caffeine will be automatically be saved",
+  "NAV_ROASTING_SECTION": "Roasting",
+  "ROASTING_SECTION" : {
+    "NAV_GREEN_BEANS": "Green bean",
+    "NAV_ROASTING_MACHINE": "Roaster",
+    "ROASTING_MACHINE": {
+      "TOTAL_ROAST_QUANTITY": "Roasting quantity",
+      "TOTAL_ROAST_COUNT": "Roast count"
+    },
+    "GREEN_BEAN": {
+      "ADD": "Add",
+      "EDIT": "Edit",
+      "DETAIL": "Greenbean Details",
+      "ROASTABLE": "Roastable",
+      "NO_ROASTS_YET": "No rosts yet"
+    },
+    "BEAN": {
+      "DROP_TEMPERATURE": "Final temperature of roast",
+      "ROAST_LENGTH": "Roast length",
+      "ROASTER_MACHINE": "Roasting machine",
+      "GREEN_BEAN_WEIGHT": "Greenbean weight",
+      "OUTSIDE_TEMPERATURE": "Weather temperature",
+      "HUMIDITY": "Humidity",
+      "FIRST_CRACK_MINUTE": "First crack Minute",
+      "FIRST_CRACK_TEMPERATURE": "First crack Temperatur",
+      "SECOND_CRACK_MINUTE": "Second crack Minute",
+      "SECOND_CRACK_TEMPERATURE": "Second crack Temperatur",
+      "PLACE_HOLDER": {
+        "DROP_TEMPERATURE": "Final temperature of roast",
+        "ROAST_LENGTH": "Roast length",
+        "ROASTER_MACHINE": "Roasting machine",
+        "GREEN_BEAN_WEIGHT": "Greenbean weight",
+        "OUTSIDE_TEMPERATURE": "Weather temperature",
+        "HUMIDITY": "Humidity",
+        "FIRST_CRACK_MINUTE": "First crack Minute",
+        "FIRST_CRACK_TEMPERATURE": "First crack Temperatur",
+        "SECOND_CRACK_TEMPERATURE": "Second Crack Temperatur",
+        "SECOND_CRACK_MINUTE": "Second crack Minute"
+      }
+    }
+  },
+  "PAGE_SETTINGS_MANAGE_SECTIONS": "More sections",
+  "PAGE_SETTINGS_SHOW_ROASTING_SECTION": "Activate roasting section ",
+  "PAGE_SETTINGS_SHOW_CUPPING_SECTION": "Activate cupping section",
+  "BEAN_DATA_BUY_DATE": "Buy date",
+  "BEAN_SORT_CREATION_DATE": "Creation date",
+  "BEAN_SORT_PURCHASE_DATE": "Purchase date",
+  "BEAN_ROAST_COUNT": "Roast count",
+  "TRANSFER_ROAST": "Roast",
+  "BEAN_TAB_LINKED_ROASTS": "Roast",
+  "BEAN_DATA_WEIGHT_AFTER_ROASTING": "Weight after roasting",
+  "TOAST_ROASTING_MACHINE_ADDED_SUCCESSFULLY": "Roaster added",
+  "TOAST_ROASTING_MACHINE_EDITED_SUCCESSFULLY": "Roaster edited",
+  "TOAST_ROASTING_MACHINE_ARCHIVED_SUCCESSFULLY": "Roaster archived",
+  "DELETE_ROASTING_MACHINE_QUESTION": "Delete roaster with all beans?",
+  "TOAST_ROASTING_MACHINE_DELETED_SUCCESSFULLY": "Roaster deleted",
+  "EDIT_ROASTING_MACHINE": "Edit",
+  "DETAIL_ROASTING_MACHINE":"Roaster details",
+  "ROASTING_MACHINE": {
+    "PLACE_HOLDER": {
+      "NAME": "Add a name",
+      "NOTES": "Add notes for this roaster"
+    }
+  },
+  "NAV_ROASTING_MACHINE": "Roaster",
+  "PAGE_ROASTING_MACHINE_LIST_NO_MACHINES_EXISTING":"You did not add any roaster",
+  "PAGE_ROASTING_MACHINE_LIST_NO_ARCHIVED_MACHINES_EXISTING": "You did not archive any roaster",
+  "CHOOSE_ROASTING_MACHINES": "Choose roaster",
+  "CHOOSE_ROASTING_MACHINE":  "Choose roaster",
+  "POPOVER_BREWS_OPTION_TOGGLE_FAVOURITE": "Favourite",
+  "TOAST_BREW_FAVOURITE_ADDED":"Favourite added",
+  "TOAST_BREW_FAVOURITE_REMOVED":"Favourite removed",
+  "BREW_FILTER_JUST_FAVOURITE": "Favourites"
 }

@@ -23,7 +23,7 @@
         <ion-label>{{"EXPORT" | translate}}</ion-label>
         <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
       </ion-item>
-      <ion-item (click)="excelExport()" button lines="none" lines="none" tappable>
+      <ion-item *ngIf="false" (click)="excelExport()" button lines="none" lines="none" tappable>
         <ion-label>{{"EXCEL_EXPORT" | translate}}</ion-label>
         <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
       </ion-item>
@@ -80,7 +80,7 @@
     </ion-card-content>
       </ion-card>
 
-  <ion-card class="margin-top-20">
+  <ion-card *ngIf="false" class="margin-top-20">
     <ion-card-content>
       <ion-card-title>{{"PAGE_SETTINGS_MANAGE_SECTIONS" | translate}}</ion-card-title>
       <ion-item>
