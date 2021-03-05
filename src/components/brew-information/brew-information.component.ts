@@ -42,6 +42,7 @@ export class BrewInformationComponent implements OnInit {
   public mill: Mill;
   public brewQuantityEnum = BREW_QUANTITY_TYPES_ENUM;
 
+
   constructor(private readonly uiSettingsStorage: UISettingsStorage,
               private readonly uiBrewHelper: UIBrewHelper,
               private readonly uiBrewStorage: UIBrewStorage,

@@ -65,11 +65,6 @@ const routes: Routes = [
       resolver: RouteResolver
     },
     loadChildren: './helper/helper.module#HelperPageModule'
-  }, {
-    path: 'shopping-cart', resolve: {
-      resolver: RouteResolver
-    },
-    loadChildren: './shopping-cart/shopping-cart.module#ShoppingCartModule', pathMatch: 'full'
   },
   {
     path: 'brew-parameter', resolve: {
@@ -81,11 +76,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules }),
-    IonicStorageModule.forRoot({
-      name: '__baristaDB',
-      driverOrder: ['indexeddb', 'sqlite', 'websql']
-    })
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
   ],
   exports: [RouterModule]
 })
