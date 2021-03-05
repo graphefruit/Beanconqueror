@@ -113,3 +113,6 @@ cordova plugin add cordova-plugin-health --variable HEALTH_READ_PERMISSION='App 
 ##https://ionicframework.com/docs/native/insomnia
 ionic cordova plugin add cordova-plugin-insomnia
 npm install @ionic-native/insomnia
+
+
+##https://www.npmjs.com/package/ag-virtual-scroll
