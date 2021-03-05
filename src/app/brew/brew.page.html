@@ -45,11 +45,16 @@
         </div>
       </div>
 
-      <ion-virtual-scroll #openScroll [items]="openBrewsView"  approxItemHeight="255px">
+      <!--<ion-virtual-scroll #openScroll [items]="openBrewsView"  approxItemHeight="255px">
         <brew-information (brewAction)="brewAction($event[0],$event[1])" *virtualItem="let brew;"
                           [brew]="brew"></brew-information>
-      </ion-virtual-scroll>
+      </ion-virtual-scroll>-->
 
+      <ag-virtual-scroll #vsOpen [items]="openBrewsView" height="100vh"  min-row-height="180" style="margin-bottom:10px;">
+        <brew-information (brewAction)="brewAction($event[0],$event[1])" *ngFor="let brew of vsOpen.items"
+                          [brew]="brew"></brew-information>
+
+      </ag-virtual-scroll>
 
     </div>
     <div *ngIf="settings?.show_archived_brews">
@@ -74,10 +79,16 @@
           </div>
         </div>
 
-        <ion-virtual-scroll #archivedScroll *ngIf="archiveBrewsView?.length > 0" [items]="archiveBrewsView" approxItemHeight="255px">
+        <!--<ion-virtual-scroll #archivedScroll *ngIf="archiveBrewsView?.length > 0" [items]="archiveBrewsView" approxItemHeight="255px">
           <brew-information (brewAction)="brewAction($event[0],$event[1])" *virtualItem="let brew;"
                             [brew]="brew"></brew-information>
-        </ion-virtual-scroll>
+        </ion-virtual-scroll>-->
+
+        <ag-virtual-scroll #vs [items]="archiveBrewsView" height="100vh"  min-row-height="180" style="margin-bottom:10px;">
+          <brew-information (brewAction)="brewAction($event[0],$event[1])" *ngFor="let brew of vs.items"
+                            [brew]="brew"></brew-information>
+
+        </ag-virtual-scroll>
 
 
       </div>

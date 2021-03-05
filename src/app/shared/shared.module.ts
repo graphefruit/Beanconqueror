@@ -124,6 +124,7 @@ import {RoastingMachinePopoverActionsComponent} from '../roasting-section/roasti
 import {RoastingMachineInformationCardComponent} from '../../components/roasting-machine-information-card/roasting-machine-information-card.component';
 import {RoastingMachineOverlayDirective} from '../../directive/roasting-machine-overlay.directive';
 import {RoastingMachineModalSelectComponent} from '../roasting-section/roasting-machine/roasting-machine-modal-select/roasting-machine-modal-select.component';
+import {AgVirtualScrollModule} from 'ag-virtual-scroll';
 
 @NgModule({
   declarations: [
@@ -314,6 +315,7 @@ import {RoastingMachineModalSelectComponent} from '../roasting-section/roasting-
     TranslateModule,
     RouterModule,
     NgxStarsModule,
+    AgVirtualScrollModule
   ],
   providers: [
     AppVersion,
