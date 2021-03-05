@@ -39,11 +39,7 @@ export class DashboardPage implements OnInit {
   }
 
   public loadBrews() {
-    this.brews = this.uiBrewStorage.getAllEntries().filter((e) =>
-      e.getBean().finished === false &&
-      e.getMill().finished === false &&
-      e.getPreparation().finished === false
-    );
+    this.brews = this.uiBrewStorage.getAllEntries();
     this.brews = UIBrewHelper.sortBrews(this.brews);
     this.brews = this.brews.slice(0, 10);
     this.changeDetectorRef.detectChanges();

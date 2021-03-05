@@ -9,6 +9,7 @@
           <ion-button (click)="showBrewActions($event)" class="button-top-absolute" color="accent" fill="clear">
             <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>
           </ion-button>
+
         </ion-col>
       </ion-row>
       <ion-row>
@@ -104,9 +105,12 @@
                 </ion-list>
               </ion-col>
               <ion-col size="2">
-                <ion-button (click)="showBrewActions($event)" class="button-top-absolute" color="accent"
+                <ion-button  *ngIf="brew.isArchived()===false" (click)="showBrewActions($event)" class="button-top-absolute" color="accent"
                             fill="clear" tappable>
                   <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>
+                </ion-button>
+                <ion-button *ngIf="brew.isArchived()===true" class="button-top-absolute" color="accent" fill="clear">
+                  <ion-icon name="archive" slot="icon-only"></ion-icon>
                 </ion-button>
               </ion-col>
             </ion-row>

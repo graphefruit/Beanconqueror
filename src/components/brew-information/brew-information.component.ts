@@ -1,7 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output, SimpleChange, ViewChild} from '@angular/core';
 import {Brew} from '../../classes/brew/brew';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
-import {Settings} from '../../classes/settings/settings';
 import {ModalController} from '@ionic/angular';
 import {BREW_ACTION} from '../../enums/brews/brewAction';
 import {BrewPopoverActionsComponent} from '../../app/brew/brew-popover-actions/brew-popover-actions.component';
