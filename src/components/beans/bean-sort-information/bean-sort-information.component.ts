@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Bean} from '../../../classes/bean/bean';
 import {IBeanInformation} from '../../../interfaces/bean/iBeanInformation';
 import {GreenBean} from '../../../classes/green-bean/green-bean';
+import {BEAN_MIX_ENUM} from '../../../enums/beans/mix';
 
 @Component({
   selector: 'bean-sort-information',
@@ -27,5 +28,11 @@ export class BeanSortInformationComponent implements OnInit {
   public deleteSortInformation(_index: number) {
     this.data.bean_information.splice(_index, 1);
 
+  }
+  public isBlend() {
+    if (this.data instanceof Bean) {
+      return this.data.beanMix === BEAN_MIX_ENUM.BLEND;
+    }
+      return false;
   }
 }

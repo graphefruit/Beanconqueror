@@ -70,7 +70,6 @@ export class Bean implements IBean {
     this.ean_article_number = '';
     this.bean_roast_information = new BeanRoastInformation();
     this.rating = 0;
-    this.attachments.push('https://cdn.shopify.com/s/files/1/0282/1360/8541/products/Coffee_packaging_250_tasche_rot_BG_blau2.jpg?v=1603652239');
   }
 
   public getRoastName(): string {

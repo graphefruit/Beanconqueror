@@ -27,7 +27,7 @@ import {BrewBrewingComponent} from '../../../components/brews/brew-brewing/brew-
 })
 export class BrewAddComponent implements OnInit {
 
-  private readonly brew_template: Brew;
+  public brew_template: Brew;
   public data: Brew = new Brew();
   public settings: Settings;
 
