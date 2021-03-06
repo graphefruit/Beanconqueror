@@ -10,11 +10,9 @@
 </ion-header>
 <ion-content>
   <div *ngIf="data?.attachments && data.attachments.length > 0">
-    <ion-slides #photoSlides pager="true" zoom="true">
+    <ion-slides #photoSlides pager="true">
       <ion-slide *ngFor="let attachment of data.attachments;let i = index">
-        <div class="swiper-zoom-container">
           <async-image class="brew-image" filePath="{{attachment}}"></async-image>
-        </div>
       </ion-slide>
     </ion-slides>
   </div>
