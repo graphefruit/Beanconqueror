@@ -13,7 +13,7 @@
     </ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content>
+<ion-content #brewContent>
     <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="brew_segment" class="ion-padding-vertical" style="padding-top:0px;">
       <ion-segment-button value="open">
         <ion-label>{{"CURRENT" | translate }}
@@ -50,8 +50,8 @@
                           [brew]="brew"></brew-information>
       </ion-virtual-scroll>-->
 
-      <ag-virtual-scroll #vsOpen [items]="openBrewsView" height="100vh"  min-row-height="180" style="margin-bottom:10px;">
-        <brew-information (brewAction)="brewAction($event[0],$event[1])" *ngFor="let brew of vsOpen.items"
+      <ag-virtual-scroll #openScroll [items]="openBrewsView" height="100vh"  min-row-height="180">
+        <brew-information (brewAction)="brewAction($event[0],$event[1])" *ngFor="let brew of openScroll.items"
                           [brew]="brew"></brew-information>
 
       </ag-virtual-scroll>
@@ -84,8 +84,8 @@
                             [brew]="brew"></brew-information>
         </ion-virtual-scroll>-->
 
-        <ag-virtual-scroll #vs [items]="archiveBrewsView" height="100vh"  min-row-height="180" style="margin-bottom:10px;">
-          <brew-information (brewAction)="brewAction($event[0],$event[1])" *ngFor="let brew of vs.items"
+        <ag-virtual-scroll #archivedScroll [items]="archiveBrewsView" height="100vh"  min-row-height="180">
+          <brew-information (brewAction)="brewAction($event[0],$event[1])" *ngFor="let brew of archivedScroll.items"
                             [brew]="brew"></brew-information>
 
         </ag-virtual-scroll>

@@ -1,5 +1,5 @@
-import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
-import {IonVirtualScroll, ModalController, Platform} from '@ionic/angular';
+import {ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
+import { ModalController, Platform} from '@ionic/angular';
 import {UIAlert} from '../../services/uiAlert';
 import {UIHelper} from '../../services/uiHelper';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
@@ -13,6 +13,7 @@ import {BREW_ACTION} from '../../enums/brews/brewAction';
 import {Bean} from '../../classes/bean/bean';
 import {BrewFilterComponent} from './brew-filter/brew-filter.component';
 import {Settings} from '../../classes/settings/settings';
+import {AgVirtualSrollComponent} from 'ag-virtual-scroll';
 
 
 @Component({
@@ -30,10 +31,11 @@ export class BrewPage implements OnInit {
 
   public brew_segment: string = 'open';
 
-  @ViewChild('openScroll', {read: IonVirtualScroll, static: false}) public openScroll: IonVirtualScroll;
-  @ViewChild('archivedScroll', {read: IonVirtualScroll, static: false}) public archivedScroll: IonVirtualScroll;
+  @ViewChild('openScroll', {read: AgVirtualSrollComponent, static: false}) public openScroll: AgVirtualSrollComponent;
+  @ViewChild('archivedScroll', {read: AgVirtualSrollComponent, static: false}) public archivedScroll: AgVirtualSrollComponent;
 
 
+  @ViewChild('brewContent',{read: ElementRef}) public brewContent: ElementRef;
   public openBrewFilterText: string = '';
   public archivedBrewFilterText: string = '';
 
@@ -69,18 +71,27 @@ export class BrewPage implements OnInit {
 
   private retriggerScroll() {
 
+    setTimeout(async () =>{
+
+      const el =  this.brewContent.nativeElement;
+      let scrollComponent: AgVirtualSrollComponent;
+      if (this.openScroll !== undefined) {
+        scrollComponent = this.openScroll;
+      } else {
+        scrollComponent = this.archivedScroll;
+      }
+
+      scrollComponent.el.style.height = (this.brewContent.nativeElement.offsetHeight - scrollComponent.el.offsetTop) - 10 + 'px';
+    },150);
+
     // https://github.com/ionic-team/ionic-framework/issues/18409
     // Workarround
-    setTimeout( () => {
-      if (typeof(this.archivedScroll) !== 'undefined' && this.archiveBrewsView.length > 0)
-      {
-        this.archivedScroll.checkRange(0,this.archiveBrewsView.length);
-      }
-      if (typeof(this.openScroll) !== 'undefined' && this.openBrewsView.length > 0)
-      {
-        this.openScroll.checkRange(0,this.openBrewsView.length);
-      }
-    },75);
+
+  }
+  @HostListener('window:resize')
+  @HostListener('window:orientationchange', ['$event'])
+  public onOrientationChange(event) {
+    this.retriggerScroll();
   }
   public async add() {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
