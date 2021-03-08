@@ -102,7 +102,7 @@
     "cordova-plugin-telerik-imagepicker": "^2.3.3",
     "cordova-plugin-x-socialsharing": "^6.0.2",
     "cordova-sqlite-storage": "^5.1.0",
-    "elliptic": ">=6.5.3",
+    "elliptic": ">=6.5.4",
     "es6-promise-plugin": "^4.2.2",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "^5.0.2",
