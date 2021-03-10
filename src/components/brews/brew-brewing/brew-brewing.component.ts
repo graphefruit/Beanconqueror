@@ -52,6 +52,12 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
   public customCreationDate: string = '';
   public displayingBrewTime: string = '';
 
+
+
+  public profileResultsAvailable: boolean = false;
+  public profileResults: string[] = [];
+  public profileFocused: boolean = false;
+
   constructor(private readonly platform: Platform,
               private readonly uiSettingsStorage: UISettingsStorage,
               private readonly uiPreparationStorage: UIPreparationStorage,
@@ -316,6 +322,54 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       this.data.method_of_preparation_tools = brew.method_of_preparation_tools;
     }
 
+  }
+
+
+
+  public onProfileSearchChange(event: any) {
+    if (!this.profileFocused) {
+      return;
+    }
+    let actualSearchValue = event.target.value;
+    this.profileResults = [];
+    this.profileResultsAvailable = false;
+    if (actualSearchValue === undefined || actualSearchValue === '') {
+      return;
+    }
+
+
+    actualSearchValue = actualSearchValue.toLowerCase();
+    const filteredEntries = this.uiBrewStorage.getAllEntries().filter((e)=>e.pressure_profile.toLowerCase().startsWith(actualSearchValue));
+
+    for (const entry of filteredEntries) {
+      this.profileResults.push(entry.pressure_profile);
+    }
+    // Distinct values
+    this.profileResults = Array.from(new Set(this.profileResults.map((e) => e)));
+
+    if (this.profileResults.length > 0) {
+      this.profileResultsAvailable = true;
+    } else {
+      this.profileResultsAvailable = false;
+    }
+
+  }
+  public onProfileSearchLeave($event) {
+    setTimeout(() => {
+      this.profileResultsAvailable = false;
+      this.profileResults = [];
+      this.profileFocused = false;
+    },150);
+
+  }
+  public onProfileSearchFocus($event) {
+    this.profileFocused = true;
+  }
+
+  public profileSelected(selected: string) :void {
+    this.data.pressure_profile = selected;
+    this.profileResults = [];
+    this.profileResultsAvailable = false;
   }
 
 }
