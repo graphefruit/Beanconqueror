@@ -323,6 +323,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   private __setThreeDeeTouchActions() {
+    // Ignore for now
     if (this.platform.is('ios')) {
       const actions: ThreeDeeTouchQuickAction[] = [
         {

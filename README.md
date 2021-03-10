@@ -131,6 +131,9 @@ To get started with anything you need [Node.js](https://nodejs.org/en/download/)
 ## Want to check the code quality?
 https://sonarcloud.io/dashboard?id=graphefruit_Beanconqueror
 
+## Get Started
+npm install -g cordova@10.0.0
+npm install -g @ionic/cli
 
 ## Build iOS
 ```

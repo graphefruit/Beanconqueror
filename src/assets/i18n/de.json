@@ -454,6 +454,19 @@
         "TDS-Berechnung ist nun wieder bei der Brühmenge ersichtlich",
         "Sicherheitsabstände wurden für iOS-Geräte hinzugefügt"
       ]
+    },
+    "5.2.0": {
+      "TITLE": "Version 5.2: Das ist neu",
+      "DESCRIPTION": [
+        "Apple Healthkit Integration (Aktivierbar in den Einstellungen)",
+        "Bohnenbilder werden angezeigt",
+        "Brühungen können favoritisiert werden",
+        "Aufräumarbeiten",
+        "Brühtimer läuft im Hintergrund weiter",
+        "Display kann aktiv gehalten werden (Aktivierbar in den Einstellungen)",
+        "Layoutänderungen",
+        "Detailansichten werden nun direkt Unterstützt beim Drücken auf eine Kachel."
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Parameter individualisieren",

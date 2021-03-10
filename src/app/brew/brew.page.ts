@@ -81,11 +81,9 @@ export class BrewPage implements OnInit {
         scrollComponent = this.archivedScroll;
       }
 
-      scrollComponent.el.style.height = (this.brewContent.nativeElement.offsetHeight - scrollComponent.el.offsetTop) - 10 + 'px';
+      scrollComponent.el.style.height = (this.brewContent.nativeElement.offsetHeight - scrollComponent.el.offsetTop) + 'px';
     },150);
 
-    // https://github.com/ionic-team/ionic-framework/issues/18409
-    // Workarround
 
   }
   @HostListener('window:resize')
@@ -159,10 +157,7 @@ export class BrewPage implements OnInit {
 
     const modal = await this.modalCtrl.create({
       component: BrewFilterComponent,
-      cssClass: 'bottom-modal',
-      showBackdrop: true,
-      backdropDismiss: true,
-      swipeToClose: true,
+      cssClass: 'popover-actions',
       id:'brew-filter',
       componentProps:
         {brew_filter: brewFilter, segment: this.brew_segment}

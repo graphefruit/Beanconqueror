@@ -1,4 +1,5 @@
-<ion-card class="long-card brew-layout" tappable (click)="showBrew()" *ngIf="layout === 'brew'">
+<div  *ngIf="layout === 'brew'">
+<ion-card class="long-card brew-layout" tappable (click)="showBrew()">
   <ion-card-content class="no-ion-col-vertical-padding ion-padding-top">
     <ion-grid class="no-padding-bottom">
       <ion-row class="ion-padding-bottom-half">
@@ -67,6 +68,8 @@
     </ion-grid>
   </ion-card-content>
 </ion-card>
+  <div style="height:10px;"></div>
+</div>
 <ion-card class="long-card dashboard-layout" tappable (click)="showBrew()" *ngIf="layout === 'dashboard'">
   <ion-grid class="ion-no-padding">
     <ion-row>

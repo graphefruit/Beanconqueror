@@ -15,7 +15,6 @@ import {BEAN_SORT_ORDER} from '../../../enums/beans/beanSortOrder';
 export class BeanFilterComponent implements OnInit {
 
 
-
   public beanSortAfterEnum = BEAN_SORT_AFTER;
   public beanSortOrderEnum = BEAN_SORT_ORDER;
   public filter: IBeanPageFilter = {
@@ -43,13 +42,13 @@ export class BeanFilterComponent implements OnInit {
   public dismiss(): void {
     this.modalController.dismiss({
       bean_filter: undefined
-    });
+    },undefined,'bean-filter');
   }
 
   public useFilter() {
     this.modalController.dismiss({
       bean_filter: this.uiHelper.copyData(this.filter)
-    });
+    },undefined,'bean-filter');
   }
 
   public resetFilter() {
@@ -57,9 +56,8 @@ export class BeanFilterComponent implements OnInit {
       sort_order: BEAN_SORT_ORDER.UNKOWN,
       sort_after: BEAN_SORT_AFTER.UNKOWN,
     };
-    this.modalController.dismiss({
-      bean_filter: this.uiHelper.copyData(this.filter)
-    },undefined,'bean-filter');
+    this.useFilter();
+
   }
 
   public setSortOrder(_order: any) {
