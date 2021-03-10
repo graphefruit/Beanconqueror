@@ -46,7 +46,7 @@ export class BeansPage implements OnInit {
 
 
 
-  constructor(public modalCtrl: ModalController,
+  constructor(private readonly modalCtrl: ModalController,
               private readonly changeDetectorRef: ChangeDetectorRef,
               private readonly uiBeanStorage: UIBeanStorage,
               private readonly uiAlert: UIAlert,
@@ -104,13 +104,11 @@ export class BeansPage implements OnInit {
 
     const modal = await this.modalCtrl.create({
       component: BeanFilterComponent,
-      cssClass: 'bottom-modal',
-      showBackdrop: true,
-      backdropDismiss: true,
-      swipeToClose: true,
-      id:'bean-filter',
       componentProps:
-        {bean_filter: beanFilter, segment: this.bean_segment}
+        {bean_filter: beanFilter, segment: this.bean_segment},
+      id:'bean-filter',
+
+      cssClass: 'popover-actions',
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();

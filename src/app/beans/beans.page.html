@@ -49,6 +49,7 @@
           <bean-information (beanAction)="beanAction($event[0],$event[1])"  *virtualItem="let bean;"
                             [bean]="bean"></bean-information>
         </ion-virtual-scroll>
+      <div style="height:10px;" *ngIf="openBeans.length>0"></div>
 
     </div>
     <div *ngIf="settings?.show_archived_beans">
@@ -75,6 +76,7 @@
             <bean-information (beanAction)="beanAction($event[0],$event[1])" *virtualItem="let bean;"
                               [bean]="bean"></bean-information>
           </ion-virtual-scroll>
+        <div style="height:10px;" *ngIf="finishedBeans.length>0"></div>
       </div>
     </div>
   </div>

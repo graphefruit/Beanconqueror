@@ -27,6 +27,7 @@ export class BeanGeneralInformationComponent implements OnInit {
   public roastsEnum = ROASTS_ENUM;
   public mixEnum = BEAN_MIX_ENUM;
   public beanRoastingTypeEnum = BEAN_ROASTING_TYPE_ENUM;
+
   public roasterResultsAvailable: boolean = false;
   public roasterResults: string[] = [];
   // Preset on start, else if value is filled the popup will be shown

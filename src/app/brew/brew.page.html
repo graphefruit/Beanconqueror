@@ -50,7 +50,7 @@
                           [brew]="brew"></brew-information>
       </ion-virtual-scroll>-->
 
-      <ag-virtual-scroll #openScroll [items]="openBrewsView" height="100vh"  min-row-height="180">
+      <ag-virtual-scroll #openScroll [items]="openBrewsView" height="100vh" min-row-height="180">
         <brew-information (brewAction)="brewAction($event[0],$event[1])" *ngFor="let brew of openScroll.items"
                           [brew]="brew"></brew-information>
 
@@ -84,7 +84,7 @@
                             [brew]="brew"></brew-information>
         </ion-virtual-scroll>-->
 
-        <ag-virtual-scroll #archivedScroll [items]="archiveBrewsView" height="100vh"  min-row-height="180">
+        <ag-virtual-scroll #archivedScroll [items]="archiveBrewsView" height="100vh" min-row-height="180">
           <brew-information (brewAction)="brewAction($event[0],$event[1])" *ngFor="let brew of archivedScroll.items"
                             [brew]="brew"></brew-information>
 
