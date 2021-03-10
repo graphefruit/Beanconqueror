@@ -30,8 +30,7 @@ export class BeanGeneralInformationComponent implements OnInit {
 
   public roasterResultsAvailable: boolean = false;
   public roasterResults: string[] = [];
-  // Preset on start, else if value is filled the popup will be shown
-  public ignoreNextChange: boolean = false;
+  public roasterFocused: boolean = false;
 
   constructor(private readonly platform: Platform,
               private readonly uiBeanStorage: UIBeanStorage,
@@ -51,16 +50,16 @@ export class BeanGeneralInformationComponent implements OnInit {
   }
 
   public onRoasterSearchChange(event: any) {
+    if (!this.roasterFocused) {
+      return;
+    }
     let actualSearchValue = event.target.value;
     this.roasterResults = [];
     this.roasterResultsAvailable = false;
     if (actualSearchValue === undefined || actualSearchValue === '') {
       return;
     }
-    if (this.ignoreNextChange) {
-      this.ignoreNextChange = false;
-      return;
-    }
+
 
     actualSearchValue = actualSearchValue.toLowerCase();
     const filteredEntries = this.uiBeanStorage.getAllEntries().filter((e)=>e.roaster.toLowerCase().startsWith(actualSearchValue));
@@ -82,15 +81,18 @@ export class BeanGeneralInformationComponent implements OnInit {
     setTimeout(() => {
       this.roasterResultsAvailable = false;
       this.roasterResults = [];
+      this.roasterFocused = false;
     },150);
 
+  }
+  public onRoasterSearchFocus($event) {
+    this.roasterFocused = true;
   }
 
   public roasterSelected(selected: string) :void {
     this.data.roaster = selected;
     this.roasterResults = [];
     this.roasterResultsAvailable = false;
-    this.ignoreNextChange = true;
   }
   public chooseDate(_event) {
     if (this.platform.is('cordova')) {
