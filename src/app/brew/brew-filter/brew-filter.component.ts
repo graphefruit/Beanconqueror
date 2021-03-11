@@ -60,12 +60,7 @@ export class BrewFilterComponent implements OnInit {
   }
 
   public resetFilter() {
-    this.filter = {
-      mill: [],
-      bean: [],
-      method_of_preparation: [],
-      favourite: false,
-    };
+    this.filter = Settings.GET_BREW_FILTER();
     this.modalController.dismiss({
       brew_filter: this.uiHelper.copyData(this.filter)
     },undefined,'brew-filter');

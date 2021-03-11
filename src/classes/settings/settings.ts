@@ -64,6 +64,10 @@ export class Settings implements ISettings {
       bean: [],
       method_of_preparation: [],
       favourite: false,
+      rating: {
+        upper:5,
+        lower:-1
+      }
     } as IBrewPageFilter;
   }
 

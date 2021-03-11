@@ -208,6 +208,12 @@ export class UIUpdate {
 
 
           break;
+        case 'UPDATE_2':
+          const settings_v2: Settings = this.uiSettingsStorage.getSettings();
+          // Reset after we've set new brewfilter
+          settings_v2.resetFilter();
+          this.uiSettingsStorage.saveSettings(settings_v2);
+          break;
         default:
           break;
       }
@@ -251,6 +257,7 @@ export class UIUpdate {
 
     this.uiLog.info('Check updates');
     this.__checkUpdateForDataVersion('UPDATE_1');
+    this.__checkUpdateForDataVersion('UPDATE_2');
 
   }
 

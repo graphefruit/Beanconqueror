@@ -137,9 +137,13 @@ export class BrewPage implements OnInit {
       checkingFilterText = this.archivedBrewFilterText;
 
     }
+    let didRatingFilterChanged: boolean = false;
+    if (checkingFilter.rating) {
+      didRatingFilterChanged =  (checkingFilter.rating.upper !== 5 || checkingFilter.rating.lower !== -1);
+    }
     return (checkingFilter.bean.length > 0 ||
       checkingFilter.method_of_preparation.length > 0 ||
-      checkingFilter.mill.length > 0) || checkingFilter.favourite || checkingFilterText !== '';
+      checkingFilter.mill.length > 0) || checkingFilter.favourite || didRatingFilterChanged || checkingFilterText !== '';
   }
 
   // Treat the instructor name as the unique identifier for the object
@@ -228,6 +232,9 @@ export class BrewPage implements OnInit {
     }
     if (filter.favourite) {
       brewsFilters = brewsFilters.filter((e)=>e.favourite === true);
+    }
+    if (filter.rating) {
+      brewsFilters = brewsFilters.filter((e: Brew)=> e.rating>= filter.rating.lower && e.rating <=filter.rating.upper  );
     }
 
     let sortedBrews: Array<Brew> = UIBrewHelper.sortBrews(brewsFilters);
