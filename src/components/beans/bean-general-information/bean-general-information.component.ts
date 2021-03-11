@@ -62,7 +62,7 @@ export class BeanGeneralInformationComponent implements OnInit {
 
 
     actualSearchValue = actualSearchValue.toLowerCase();
-    const filteredEntries = this.uiBeanStorage.getAllEntries().filter((e)=>e.roaster.toLowerCase().startsWith(actualSearchValue));
+    const filteredEntries = this.uiBeanStorage.getAllEntries().filter((e)=>e.roaster.toLowerCase().includes(actualSearchValue));
 
     for (const entry of filteredEntries) {
       this.roasterResults.push(entry.roaster);
