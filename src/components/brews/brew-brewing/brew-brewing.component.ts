@@ -339,7 +339,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
 
     actualSearchValue = actualSearchValue.toLowerCase();
-    const filteredEntries = this.uiBrewStorage.getAllEntries().filter((e)=>e.pressure_profile.toLowerCase().startsWith(actualSearchValue));
+    const filteredEntries = this.uiBrewStorage.getAllEntries().filter((e)=>e.pressure_profile.toLowerCase().includes(actualSearchValue));
 
     for (const entry of filteredEntries) {
       this.profileResults.push(entry.pressure_profile);
