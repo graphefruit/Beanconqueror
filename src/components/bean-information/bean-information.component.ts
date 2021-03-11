@@ -29,6 +29,8 @@ export class BeanInformationComponent implements OnInit {
   @Input() public showActions: boolean = true;
 
   @ViewChild('beanStars', {read: NgxStarsComponent, static: false}) public beanStars: NgxStarsComponent;
+  @ViewChild('beanRating', {read: NgxStarsComponent, static: false}) public beanRating: NgxStarsComponent;
+
   @Output() public beanAction: EventEmitter<any> = new EventEmitter();
 
 
@@ -57,9 +59,16 @@ export class BeanInformationComponent implements OnInit {
   }
 
   private resetRenderingRating() {
-    if (this.beanStars && this.bean.roast_range !== 0) {
-      this.beanStars.setRating(this.bean.roast_range);
-    }
+    setTimeout(() => {
+      // Timeout needed because of ngif not rendering
+      if (this.beanStars && this.bean.roast_range !== 0) {
+        this.beanStars.setRating(this.bean.roast_range);
+      }
+      if (this.beanRating && this.bean.rating !== 0) {
+        this.beanRating.setRating(this.bean.rating);
+      }
+    },250);
+
   }
 
   public brewCounts(): number {
