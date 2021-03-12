@@ -22,6 +22,7 @@ import {UIAlert} from '../../services/uiAlert';
 import {UIImage} from '../../services/uiImage';
 import {UIHelper} from '../../services/uiHelper';
 
+
 @Component({
   selector: 'brew-information',
   templateUrl: './brew-information.component.html',
@@ -33,6 +34,7 @@ export class BrewInformationComponent implements OnInit {
   @Input() public layout:string = 'brew';
 
   @ViewChild('brewStars', {read: NgxStarsComponent, static: false}) public brewStars: NgxStarsComponent;
+
   @Output() public brewAction: EventEmitter<any> = new EventEmitter();
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
 
@@ -60,6 +62,7 @@ export class BrewInformationComponent implements OnInit {
       this.bean = this.brew.getBean();
       this.preparation = this.brew.getPreparation();
       this.mill = this.brew.getMill();
+      this.__loadCuppingChart();
     }
 
   }
@@ -216,9 +219,13 @@ export class BrewInformationComponent implements OnInit {
       }
    );
   }
+  private showCupping(): boolean {
+    return this.uiBrewHelper.showCupping(this.brew);
+  }
 
   private __deleteBrew(): void {
     this.uiBrewStorage.removeByObject(this.brew);
   }
+
 
 }

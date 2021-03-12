@@ -12,6 +12,8 @@ import {IMill} from '../interfaces/mill/iMill';
 import {UISettingsStorage} from './uiSettingsStorage';
 import {Settings} from '../classes/settings/settings';
 import {Preparation} from '../classes/preparation/preparation';
+import {TranslateService} from '@ngx-translate/core';
+import {ICupping} from '../interfaces/cupping/iCupping';
 
 /**
  * Handles every helping functionalities
@@ -55,7 +57,8 @@ export class UIBrewHelper {
                private readonly uiMillStorage: UIMillStorage,
                private readonly uiPreparationStorage: UIPreparationStorage,
                private readonly uiAlert: UIAlert,
-               private readonly uiSettingsStorage: UISettingsStorage) {
+               private readonly uiSettingsStorage: UISettingsStorage,
+               private readonly translate: TranslateService) {
 
 
     this.uiBeanStorage.attachOnEvent().subscribe(() => {
@@ -272,6 +275,92 @@ export class UIBrewHelper {
       checkData.manage_parameters.mill_speed ||
       checkData.manage_parameters.mill_timer);
 
+  }
+
+  public showCupping(_data: Brew): boolean {
+    return (_data.cupping.dry_fragrance > 0 ||
+      _data.cupping.wet_aroma > 0 ||
+      _data.cupping.brightness > 0 ||
+      _data.cupping.flavor > 0 ||
+      _data.cupping.body > 0 ||
+      _data.cupping.finish > 0 ||
+      _data.cupping.sweetness > 0 ||
+      _data.cupping.clean_cup > 0 ||
+      _data.cupping.complexity > 0 ||
+      _data.cupping.uniformity > 0);
+  }
+
+
+  public getCuppingChartData(_data: Brew | ICupping) {
+
+    let data:any;
+    if (_data instanceof Brew) {
+      data =_data.cupping;
+    } else {
+      data = _data;
+    }
+    const cuppingData = {
+      labels: [
+        this.translate.instant('CUPPING_SCORE_DRY_FRAGRANCE'),
+        this.translate.instant('CUPPING_SCORE_WET_AROMA'),
+        this.translate.instant('CUPPING_SCORE_BRIGHTNESS'),
+        this.translate.instant('CUPPING_SCORE_FLAVOR'),
+        this.translate.instant('CUPPING_SCORE_BODY'),
+        this.translate.instant('CUPPING_SCORE_FINISH'),
+        this.translate.instant('CUPPING_SCORE_SWEETNESS'),
+        this.translate.instant('CUPPING_SCORE_CLEAN_CUP'),
+        this.translate.instant('CUPPING_SCORE_COMPLEXITY'),
+        this.translate.instant('CUPPING_SCORE_UNIFORMITY'),
+      ],
+      datasets: [
+        {
+          fillColor: 'rgba(220,220,220,0.5)',
+          strokeColor: 'rgba(220,220,220,1)',
+          pointColor: 'rgba(220,220,220,1)',
+          pointStrokeColor: '#fff',
+          data: [
+            data.dry_fragrance,
+            data.wet_aroma,
+            data.brightness,
+            data.flavor,
+            data.body,
+            data.finish,
+            data.sweetness,
+            data.clean_cup,
+            data.complexity,
+            data.uniformity
+          ]
+        }]
+    };
+    const chartOptions = {
+      responsive: true,
+      legend: false,
+      title: {
+        display: false,
+        text: '',
+      },
+
+      scale: {
+        ticks: {
+          beginAtZero: true,
+          max: 10,
+          min: 0,
+          step: 0.1
+        }
+      },
+      tooltips: {
+        // Disable the on-canvas tooltip
+        enabled: false,
+      },
+      maintainAspectRatio: true,
+      aspectRatio: 1,
+    };
+    const cuppingElementData = {
+      type: 'radar',
+      data: cuppingData,
+      options: chartOptions
+    };
+    return cuppingElementData;
   }
 
 }
