@@ -62,7 +62,6 @@ export class BrewInformationComponent implements OnInit {
       this.bean = this.brew.getBean();
       this.preparation = this.brew.getPreparation();
       this.mill = this.brew.getMill();
-      this.__loadCuppingChart();
     }
 
   }
