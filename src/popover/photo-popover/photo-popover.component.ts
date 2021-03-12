@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {IBrew} from '../../interfaces/brew/iBrew';
-import {ModalController, NavParams} from '@ionic/angular';
+import {IonSlides, ModalController, NavParams} from '@ionic/angular';
 import {UIAnalytics} from '../../services/uiAnalytics';
 import {IGreenBean} from '../../interfaces/green-bean/iGreenBean';
 import {IBean} from '../../interfaces/bean/iBean';
@@ -15,16 +15,19 @@ export class PhotoPopoverComponent implements OnInit {
 
 
   public data: IBrew | IBean | IGreenBean |IRoastingMachine;
-
+  @ViewChild('photoSlides', {static: false}) public photoSlides: IonSlides;
   constructor (private readonly modalController: ModalController,
                private readonly navParams: NavParams,
                private readonly uiAnalytics: UIAnalytics) {
 
   }
-
+  private async updateSlider() {
+    await this.photoSlides.update();
+  }
   public ionViewDidEnter(): void {
     this.uiAnalytics.trackEvent('PHOTO', 'VIEW');
     this.data = this.navParams.get('data');
+    this.updateSlider();
 
   }
 

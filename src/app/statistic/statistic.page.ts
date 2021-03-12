@@ -8,7 +8,8 @@ import {IBrew} from '../../interfaces/brew/iBrew';
 import {Chart} from 'chart.js';
 import {TranslateService} from '@ngx-translate/core';
 import {UIBrewHelper} from '../../services/uiBrewHelper';
-
+import {UIPreparationStorage} from '../../services/uiPreparationStorage';
+import Gradient from 'javascript-color-gradient';
 @Component({
   selector: 'statistic',
   templateUrl: './statistic.page.html',
@@ -18,10 +19,12 @@ export class StatisticPage implements OnInit {
 
   @ViewChild('brewChart', {static: false}) public brewChart;
   @ViewChild('drinkingChart', {static: false}) public drinkingChart;
+  @ViewChild('preparationUsageChart', {static: false}) public preparationUsageChart;
 
   constructor(
     public uiStatistic: UIStatistic,
     private readonly uiBrewStorage: UIBrewStorage,
+    private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiHelper: UIHelper,
     private translate: TranslateService
   ) {
@@ -32,6 +35,7 @@ export class StatisticPage implements OnInit {
   public ionViewDidEnter(): void {
     this.__loadBrewChart();
     this.__loadDrinkingChart();
+    this.__loadPreparationUsageChart();
   }
 
   public ngOnInit() {
@@ -99,7 +103,7 @@ export class StatisticPage implements OnInit {
     }
     const chartOptions = {
       legend: {
-        display: true,
+        display: false,
         position: 'top'
       }
     };
@@ -131,7 +135,7 @@ export class StatisticPage implements OnInit {
     }
     const chartOptions = {
       legend: {
-        display: true,
+        display: false,
         position: 'top'
       }
     };
@@ -143,4 +147,86 @@ export class StatisticPage implements OnInit {
     });
   }
 
+
+  private __loadPreparationUsageChart(): void {
+    const brewView: Array<Brew> = this.uiBrewStorage.getAllEntries();
+    const preparationMethodIds:Array<string> = Array.from(new Set(brewView.map((e:Brew) => e.method_of_preparation)));
+
+    const data = [{
+      data: [],
+      labels: [],
+      backgroundColor: [
+
+      ],
+      borderColor: '#fff'
+    }];
+    const labels:Array<string> = [];
+    for (const id of preparationMethodIds) {
+      data[0].data.push(brewView.filter((e:Brew)=>e.method_of_preparation === id).length);
+      data[0].labels.push(this.uiPreparationStorage.getPreparationNameByUUID(id));
+      labels.push(this.uiPreparationStorage.getPreparationNameByUUID(id));
+    }
+
+    const colorGradient = new Gradient();
+
+    const color1 = '#3F2CAF';
+    const color2 = '#e9446a';
+    const color3 = '#edc988';
+    const color4 = '#607D8B';
+
+    colorGradient.setMidpoint(data[0].labels.length);
+
+    colorGradient.setGradient(color1, color2, color3, color4);
+    data[0].backgroundColor = colorGradient.getArray();
+
+
+
+    const drinkingData = {
+      labels: labels,
+      datasets: data,
+      titel:'test'
+    };
+
+
+    const chartOptions = {
+      legend: {
+        display: true,
+        position: 'top'
+      },
+      plugins: {
+        labels: {
+          render: 'value'
+        },
+      },
+      tooltips: {
+        callbacks: {
+          label:  (tooltipItem, mapData) =>{
+            try {
+              let label = ' ' + mapData.labels[tooltipItem.index] || '';
+
+              if (label) {
+                label += ': ';
+              }
+
+              const sum = mapData.datasets[0].data.reduce((accumulator, curValue) => {
+                return accumulator + curValue;
+              });
+              const value = mapData.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+
+              label += Number((value / sum) * 100).toFixed(2) + '%';
+              return label;
+            } catch (error) {
+              console.log(error);
+            }
+          }
+        }
+      }
+    };
+
+    const preparationChartToDismiss = new Chart(this.preparationUsageChart.nativeElement, {
+      type: 'pie',
+      data: drinkingData,
+      options: chartOptions
+    });
+  }
 }

@@ -107,8 +107,8 @@ ion-segment-button {
   letter-spacing: -0.63px;
   font-size: 20px;
   text-transform: capitalize;
-  height: 30px;
-  max-height: 30px;
+  height: auto;
+  max-height: 40px;
   min-height: 30px;
 
   ion-label {
@@ -163,6 +163,9 @@ ion-modal{
 
 .margin-right-5 {
   margin-right: 5px;
+}
+.margin-top-5 {
+  margin-top:5px;
 }
 .padding-right-8 {
   padding-right:8px;
