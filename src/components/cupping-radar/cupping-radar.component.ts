@@ -4,7 +4,7 @@ import {ICupping} from '../../interfaces/cupping/iCupping';
 import {Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 import {TranslateService} from '@ngx-translate/core';
-import {UIHelper} from '../../services/uiHelper';
+import {UIBrewHelper} from '../../services/uiBrewHelper';
 
 @Component({
   selector: 'cupping-radar',
@@ -28,10 +28,9 @@ export class CuppingRadarComponent implements AfterViewInit {
     notes: '',
   };
   public debounceRadar: Subject<string> = new Subject<string>();
-  private chuppingChartObj: any = undefined;
   @ViewChild('cuppingChart', {static: false}) public cuppingChart;
 
-  constructor(private readonly translate: TranslateService, private uiHelper: UIHelper) {
+  constructor(private readonly translate: TranslateService, private uiBrewHelper: UIBrewHelper) {
   }
 
   public ngOnInit(): void {
@@ -87,68 +86,8 @@ export class CuppingRadarComponent implements AfterViewInit {
 
   private __loadCuppingChart(): void {
 
+    const chartObj = new Chart(this.cuppingChart.nativeElement, this.uiBrewHelper.getCuppingChartData(this.model));
 
-    const cuppingData = {
-      labels: [
-        this.translate.instant('CUPPING_SCORE_DRY_FRAGRANCE'),
-        this.translate.instant('CUPPING_SCORE_WET_AROMA'),
-        this.translate.instant('CUPPING_SCORE_BRIGHTNESS'),
-        this.translate.instant('CUPPING_SCORE_FLAVOR'),
-        this.translate.instant('CUPPING_SCORE_BODY'),
-        this.translate.instant('CUPPING_SCORE_FINISH'),
-        this.translate.instant('CUPPING_SCORE_SWEETNESS'),
-        this.translate.instant('CUPPING_SCORE_CLEAN_CUP'),
-        this.translate.instant('CUPPING_SCORE_COMPLEXITY'),
-        this.translate.instant('CUPPING_SCORE_UNIFORMITY'),
-      ],
-      datasets: [
-        {
-          fillColor: 'rgba(220,220,220,0.5)',
-          strokeColor: 'rgba(220,220,220,1)',
-          pointColor: 'rgba(220,220,220,1)',
-          pointStrokeColor: '#fff',
-          data: [
-            this.model.dry_fragrance,
-            this.model.wet_aroma,
-            this.model.brightness,
-            this.model.flavor,
-            this.model.body,
-            this.model.finish,
-            this.model.sweetness,
-            this.model.clean_cup,
-            this.model.complexity,
-            this.model.uniformity
-          ]
-        }]
-    };
-    const chartOptions = {
-      responsive: true,
-      legend: false,
-      title: {
-        display: false,
-        text: '',
-      },
-
-      scale: {
-        ticks: {
-          beginAtZero: true,
-          max: 10,
-          min: 0,
-          step: 0.1
-        }
-      },
-      tooltips: {
-        // Disable the on-canvas tooltip
-        enabled: false,
-      },
-      maintainAspectRatio: true,
-      aspectRatio: 1,
-    };
-    this.chuppingChartObj = new Chart(this.cuppingChart.nativeElement, {
-      type: 'radar',
-      data: cuppingData,
-      options: chartOptions
-    });
   }
 
 
