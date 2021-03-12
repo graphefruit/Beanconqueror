@@ -598,5 +598,6 @@
   "POPOVER_BREWS_OPTION_TOGGLE_FAVOURITE": "Favorit",
   "TOAST_BREW_FAVOURITE_ADDED":"Favorit hinzugefügt",
   "TOAST_BREW_FAVOURITE_REMOVED":"Favorit entfernt",
-  "BREW_FILTER_JUST_FAVOURITE": "Favoriten"
+  "BREW_FILTER_JUST_FAVOURITE": "Favoriten",
+  "STATISTICS_PREPARATION_USAGES": "Zubereitungsmethoden Verwendungen"
 }

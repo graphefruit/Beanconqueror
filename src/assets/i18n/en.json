@@ -243,8 +243,8 @@
   "EDIT_BREW": "Edit brew",
   "ADD_BEAN": "Add bean",
   "EDIT_BEAN": "Edit bean",
-  "ADD_PREPARATION": "Add preparation Method",
-  "EDIT_PREPARATION": "Edit preparation Method",
+  "ADD_PREPARATION": "Add preparation method",
+  "EDIT_PREPARATION": "Edit preparation method",
   "ADD_MILL": "Add grinder",
   "EDIT_MILL": "Edit grinder",
   "USE_FILTER": "Apply filter",
@@ -598,5 +598,6 @@
   "POPOVER_BREWS_OPTION_TOGGLE_FAVOURITE": "Favourite",
   "TOAST_BREW_FAVOURITE_ADDED":"Favourite added",
   "TOAST_BREW_FAVOURITE_REMOVED":"Favourite removed",
-  "BREW_FILTER_JUST_FAVOURITE": "Favourites"
+  "BREW_FILTER_JUST_FAVOURITE": "Favourites",
+  "STATISTICS_PREPARATION_USAGES": "Preparation usages"
 }

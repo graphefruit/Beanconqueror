@@ -52,7 +52,7 @@
     <ion-label position="stacked">{{"BREW_DATA_PREPARATION_METHOD" | translate}}</ion-label>
     <ion-select [(ngModel)]="data.method_of_preparation"
                 placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}"
-                [show-finished]="false" preparation-overlay (ionBlur)="resetPreparationTools();">
+                [show-finished]="false" preparation-overlay (ionChange)="resetPreparationTools();">
     </ion-select>
   </ion-item>
   <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.bean_type,

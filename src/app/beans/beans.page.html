@@ -45,7 +45,7 @@
         {{"PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS" | translate}}
         </div>
       </div>
-        <ion-virtual-scroll #openScroll [items]="openBeans" approxItemHeight="235px">
+        <ion-virtual-scroll #openScroll [items]="openBeans" approxItemHeight="245px">
           <bean-information (beanAction)="beanAction($event[0],$event[1])"  *virtualItem="let bean;"
                             [bean]="bean"></bean-information>
         </ion-virtual-scroll>
@@ -72,7 +72,7 @@
             {{"PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS" | translate}}
           </div>
         </div>
-          <ion-virtual-scroll #archivedScroll [items]="finishedBeans" approxItemHeight="235px">
+          <ion-virtual-scroll #archivedScroll [items]="finishedBeans" approxItemHeight="245px">
             <bean-information (beanAction)="beanAction($event[0],$event[1])" *virtualItem="let bean;"
                               [bean]="bean"></bean-information>
           </ion-virtual-scroll>

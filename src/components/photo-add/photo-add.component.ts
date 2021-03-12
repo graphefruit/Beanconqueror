@@ -22,7 +22,12 @@ export class PhotoAddComponent implements OnInit {
               private readonly uiFileHelper: UIFileHelper,
               private readonly uiToast: UIToast) { }
 
-  public ngOnInit() {}
+  public ngOnInit() {
+    setTimeout(() => {
+      // iOS Issue, update slider component
+      this.updateSlider();
+    },250);
+  }
 
   public addImage(): void {
     this.uiImage.showOptionChooser()
@@ -48,8 +53,13 @@ export class PhotoAddComponent implements OnInit {
       });
   }
 
-  private emitChanges() {
+  private async emitChanges() {
+    this.updateSlider();
     this.dataChange.emit(this.data);
+  }
+
+  private async updateSlider() {
+    await this.photoSlides.update();
   }
 
 
