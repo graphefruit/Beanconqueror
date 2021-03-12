@@ -370,6 +370,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
     this.data.pressure_profile = selected;
     this.profileResults = [];
     this.profileResultsAvailable = false;
+    this.profileFocused= false;
   }
 
 }

@@ -59,7 +59,10 @@ export class PhotoAddComponent implements OnInit {
   }
 
   private async updateSlider() {
-    await this.photoSlides.update();
+    if (this.photoSlides) {
+      await this.photoSlides.update();
+    }
+
   }
 
 
