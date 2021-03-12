@@ -218,9 +218,6 @@ export class BrewInformationComponent implements OnInit {
       }
    );
   }
-  private showCupping(): boolean {
-    return this.uiBrewHelper.showCupping(this.brew);
-  }
 
   private __deleteBrew(): void {
     this.uiBrewStorage.removeByObject(this.brew);

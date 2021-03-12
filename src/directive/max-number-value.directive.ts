@@ -14,8 +14,6 @@ export class MaxNumberValueDirective {
 
   @HostListener('ionBlur', ['$event.target'])
   public blur(): void {
-console.log('hihi');
-      console.log(this.value);
 
     let val: any = this.model.control.value;
 
