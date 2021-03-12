@@ -22,7 +22,10 @@ export class PhotoPopoverComponent implements OnInit {
 
   }
   private async updateSlider() {
-    await this.photoSlides.update();
+    if (this.photoSlides) {
+      await this.photoSlides.update();
+    }
+
   }
   public ionViewDidEnter(): void {
     this.uiAnalytics.trackEvent('PHOTO', 'VIEW');

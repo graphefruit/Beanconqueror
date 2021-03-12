@@ -93,6 +93,7 @@ export class BeanGeneralInformationComponent implements OnInit {
     this.data.roaster = selected;
     this.roasterResults = [];
     this.roasterResultsAvailable = false;
+    this.roasterFocused = false;
   }
   public chooseDate(_event) {
     if (this.platform.is('cordova')) {
