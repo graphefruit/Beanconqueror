@@ -195,9 +195,21 @@ export class UIStatistic {
 
   private getLastBrew(): IBrew {
     const brews: Array<IBrew> = this.uiBrewStorage.getAllEntries();
-    if (brews.length > 0) {
-      const lastIndex: number = brews.length - 1;
-      const lastBrew: IBrew = brews[lastIndex];
+    const sortedBrews = brews.sort((n1,n2) => {
+      if (n1.config.unix_timestamp > n2.config.unix_timestamp) {
+        return 1;
+      }
+
+      if (n1.config.unix_timestamp < n2.config.unix_timestamp) {
+        return -1;
+      }
+
+      return 0;
+    });
+
+    if (sortedBrews.length > 0) {
+      const lastIndex: number = sortedBrews.length - 1;
+      const lastBrew: IBrew = sortedBrews[lastIndex];
 
       return lastBrew;
     }
