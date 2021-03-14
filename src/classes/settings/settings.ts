@@ -63,6 +63,7 @@ export class Settings implements ISettings {
       mill: [],
       bean: [],
       method_of_preparation: [],
+      method_of_preparation_tools: [],
       favourite: false,
       rating: {
         upper:5,

@@ -14,6 +14,7 @@ import {Bean} from '../../classes/bean/bean';
 import {BrewFilterComponent} from './brew-filter/brew-filter.component';
 import {Settings} from '../../classes/settings/settings';
 import {AgVirtualSrollComponent} from 'ag-virtual-scroll';
+import {UIPreparationStorage} from '../../services/uiPreparationStorage';
 
 
 @Component({
@@ -81,7 +82,7 @@ export class BrewPage implements OnInit {
         scrollComponent = this.archivedScroll;
       }
 
-      scrollComponent.el.style.height = (this.brewContent.nativeElement.offsetHeight - scrollComponent.el.offsetTop) + 'px';
+      scrollComponent.el.style.height = (el.offsetHeight - scrollComponent.el.offsetTop) + 'px';
     },150);
 
 
@@ -108,6 +109,7 @@ export class BrewPage implements OnInit {
 
   public loadBrews(): void {
     this.__initializeBrews();
+    this.retriggerScroll();
     this.changeDetectorRef.detectChanges();
   }
 
@@ -191,6 +193,7 @@ export class BrewPage implements OnInit {
 
   public research() {
     this.__initializeBrewView(this.brew_segment);
+    this.retriggerScroll();
   }
   private __initializeBrewView(_type: string): void {
 // sort latest to top.
@@ -229,6 +232,11 @@ export class BrewPage implements OnInit {
     }
     if (filter.method_of_preparation.length > 0) {
       brewsFilters = brewsFilters.filter((e) => filter.method_of_preparation.filter((z) => z === e.method_of_preparation).length > 0);
+
+      // Tools just can be selected when a preparation method was selected
+      if (filter.method_of_preparation_tools.length > 0) {
+        brewsFilters = brewsFilters.filter( (e) => filter.method_of_preparation_tools.filter((z) => e.method_of_preparation_tools.includes(z) ).length>0);
+      }
     }
     if (filter.favourite) {
       brewsFilters = brewsFilters.filter((e)=>e.favourite === true);

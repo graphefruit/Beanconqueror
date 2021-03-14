@@ -12,6 +12,7 @@ import {Bean} from '../../../classes/bean/bean';
 import {Mill} from '../../../classes/mill/mill';
 import {Preparation} from '../../../classes/preparation/preparation';
 import {Settings} from '../../../classes/settings/settings';
+import {PreparationTool} from '../../../classes/preparation/preparationTool';
 
 @Component({
   selector: 'brew-filter',
@@ -45,6 +46,41 @@ export class BrewFilterComponent implements OnInit {
     this.segment = this.navParams.get('segment');
     this.filter = this.uiHelper.copyData(this.navParams.get('brew_filter'));
     this.__reloadFilterSettings();
+  }
+
+  public hasPreparationTools() {
+    for (const uuid of this.filter.method_of_preparation) {
+
+      const preparation = this.uiPreparationStorage.getByUUID(uuid);
+      if (preparation.tools.length > 0) {
+        return true;
+      }
+
+    }
+    return false;
+  }
+
+  public resetPreparationTools() {
+    this.filter.method_of_preparation_tools = [];
+  }
+
+  public getPreparationTools() {
+    const preparationTools: { name: string, tool: PreparationTool }[] = [];
+    for (const uuid of this.filter.method_of_preparation) {
+
+      const preparation:Preparation = this.uiPreparationStorage.getByUUID(uuid);
+      if (preparation.tools.length > 0) {
+        for (const tool of preparation.tools) {
+          preparationTools.push({
+            name:preparation.name,
+            tool: tool
+          })
+        }
+
+      }
+
+    }
+    return preparationTools;
   }
 
   public dismiss(): void {

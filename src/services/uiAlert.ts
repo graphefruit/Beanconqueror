@@ -1,7 +1,7 @@
 /** Core */
 import {Injectable} from '@angular/core';
 /** Ionic */
-import {AlertController, ModalController} from '@ionic/angular';
+import {AlertController, LoadingController, ModalController} from '@ionic/angular';
 import {TranslateService} from '@ngx-translate/core';
 import {CustomPopoverComponent} from '../popover/custom-popover/custom-popover.component';
 
@@ -12,7 +12,29 @@ export class UIAlert {
 
   constructor(private readonly alertController: AlertController,
               private readonly translate: TranslateService,
-              private readonly modalController: ModalController) {
+              private readonly modalController: ModalController,
+              private readonly loadingController:LoadingController) {
+  }
+
+
+  private loadingSpinner;
+
+  public async showLoadingSpinner() {
+    if (this.loadingSpinner) {
+      await this.hideLoadingSpinner();
+    }
+    this.loadingSpinner = await this.loadingController.create({
+      message: this.translate.instant('PLEASE_WAIT')
+    });
+    this.loadingSpinner.present();
+  }
+
+  public async hideLoadingSpinner() {
+    if (this.loadingSpinner) {
+      await this.loadingSpinner.dismiss();
+      this.loadingSpinner = undefined;
+    }
+
   }
 
   /**
