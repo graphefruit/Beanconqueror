@@ -125,6 +125,7 @@ import {RoastingMachineInformationCardComponent} from '../../components/roasting
 import {RoastingMachineOverlayDirective} from '../../directive/roasting-machine-overlay.directive';
 import {RoastingMachineModalSelectComponent} from '../roasting-section/roasting-machine/roasting-machine-modal-select/roasting-machine-modal-select.component';
 import {AgVirtualScrollModule} from 'ag-virtual-scroll';
+import {LongPressDirective} from '../../directive/long-press.directive';
 
 @NgModule({
   declarations: [
@@ -188,6 +189,7 @@ import {AgVirtualScrollModule} from 'ag-virtual-scroll';
     RemoveEmptyNumberDirective,
     PreventCharacterDirective,
     MaxNumberValueDirective,
+    LongPressDirective,
     BeanOverlayDirective,
     MillOverlayDirective,
     RoastingMachineOverlayDirective,
@@ -323,6 +325,7 @@ import {AgVirtualScrollModule} from 'ag-virtual-scroll';
     SplashScreen,
     RemoveEmptyNumberDirective, PreventCharacterDirective,
     MaxNumberValueDirective,
+    LongPressDirective,
     BeanOverlayDirective,
     MillOverlayDirective,
     RoastingMachineOverlayDirective,
@@ -405,6 +408,7 @@ import {AgVirtualScrollModule} from 'ag-virtual-scroll';
     RemoveEmptyNumberDirective,
     PreventCharacterDirective,
     MaxNumberValueDirective,
+    LongPressDirective,
     BeanOverlayDirective,
     MillOverlayDirective,
     RoastingMachineOverlayDirective,
