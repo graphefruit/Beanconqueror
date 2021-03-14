@@ -1,7 +1,10 @@
 :host {
-  height:245px;
+
   ion-card {
-    height:235px;
+    margin-top:0px;
+    margin-bottom:0px;
+    margin-left:10px;
+    margin-right:10px;
     ion-card-content {
       padding: 8px;
       padding-bottom: 0px;
@@ -38,11 +41,15 @@
     position: relative;
     top: -5px;
   }
-  ion-text.limit-overflow {
-    white-space: nowrap;
-    display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .limit-grid-overflow {
+    padding-top:0px;
+    padding-bottom:0px;
+    ion-text {
+      white-space: nowrap;
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
   ::ng-deep img {
     width: 100%;
