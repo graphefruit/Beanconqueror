@@ -13,7 +13,7 @@
     </ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content>
+<ion-content #beanContent>
 
   <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="bean_segment" class="ion-padding-vertical" style="padding-top:0px;">
     <ion-segment-button value="open">
@@ -45,11 +45,19 @@
         {{"PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS" | translate}}
         </div>
       </div>
-        <ion-virtual-scroll #openScroll [items]="openBeans" approxItemHeight="245px">
+
+
+      <ag-virtual-scroll #openScroll [items]="openBeans" height="100vh" min-row-height="210">
+        <bean-information (beanAction)="beanAction($event[0],$event[1])" *ngFor="let bean of openScroll.items"
+                          [bean]="bean"></bean-information>
+
+      </ag-virtual-scroll>
+
+        <!--<ion-virtual-scroll #openScroll [items]="openBeans" approxItemHeight="245px">
           <bean-information (beanAction)="beanAction($event[0],$event[1])"  *virtualItem="let bean;"
                             [bean]="bean"></bean-information>
         </ion-virtual-scroll>
-      <div style="height:10px;" *ngIf="openBeans.length>0"></div>
+      <div style="height:10px;" *ngIf="openBeans.length>0"></div>-->
 
     </div>
     <div *ngIf="settings?.show_archived_beans">
@@ -72,11 +80,17 @@
             {{"PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS" | translate}}
           </div>
         </div>
-          <ion-virtual-scroll #archivedScroll [items]="finishedBeans" approxItemHeight="245px">
+        <ag-virtual-scroll #archivedScroll [items]="finishedBeans" height="100vh" min-row-height="210">
+          <bean-information (beanAction)="beanAction($event[0],$event[1])"  *ngFor="let bean of archivedScroll.items"
+                            [bean]="bean"></bean-information>
+
+        </ag-virtual-scroll>
+
+          <!--<ion-virtual-scroll #archivedScroll [items]="finishedBeans" approxItemHeight="245px">
             <bean-information (beanAction)="beanAction($event[0],$event[1])" *virtualItem="let bean;"
                               [bean]="bean"></bean-information>
           </ion-virtual-scroll>
-        <div style="height:10px;" *ngIf="finishedBeans.length>0"></div>
+        <div style="height:10px;" *ngIf="finishedBeans.length>0"></div>-->
       </div>
     </div>
   </div>

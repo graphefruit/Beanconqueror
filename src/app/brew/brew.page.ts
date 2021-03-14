@@ -14,7 +14,6 @@ import {Bean} from '../../classes/bean/bean';
 import {BrewFilterComponent} from './brew-filter/brew-filter.component';
 import {Settings} from '../../classes/settings/settings';
 import {AgVirtualSrollComponent} from 'ag-virtual-scroll';
-import {UIPreparationStorage} from '../../services/uiPreparationStorage';
 
 
 @Component({
@@ -34,9 +33,8 @@ export class BrewPage implements OnInit {
 
   @ViewChild('openScroll', {read: AgVirtualSrollComponent, static: false}) public openScroll: AgVirtualSrollComponent;
   @ViewChild('archivedScroll', {read: AgVirtualSrollComponent, static: false}) public archivedScroll: AgVirtualSrollComponent;
-
-
   @ViewChild('brewContent',{read: ElementRef}) public brewContent: ElementRef;
+
   public openBrewFilterText: string = '';
   public archivedBrewFilterText: string = '';
 
@@ -85,8 +83,8 @@ export class BrewPage implements OnInit {
       scrollComponent.el.style.height = (el.offsetHeight - scrollComponent.el.offsetTop) + 'px';
     },150);
 
-
   }
+
   @HostListener('window:resize')
   @HostListener('window:orientationchange', ['$event'])
   public onOrientationChange(event) {

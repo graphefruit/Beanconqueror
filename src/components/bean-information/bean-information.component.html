@@ -25,8 +25,8 @@
       </ion-row>
     </ion-grid>
 
-    <ion-grid class="no-ion-col-vertical-padding">
-      <ion-row>
+    <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow">
+      <ion-row class="ion-padding-bottom-half">
         <ion-col [size]="hasPhotos()?9:12" class="ion-no-padding-right">
           <ion-grid class="ion-no-padding">
             <ion-row>
@@ -42,7 +42,7 @@
               <ion-col size="6">
                 <ion-label class="card-headline">{{"BEAN_DATA_ROASTER" | translate}}</ion-label><br/>
 
-                <ion-text class="limit-overflow" *ngIf="bean.roaster">
+                <ion-text *ngIf="bean.roaster">
                   {{bean.roaster}}</ion-text>
                 <ion-text  *ngIf="!bean.roaster">
                   -
@@ -86,3 +86,4 @@
     </ion-grid>
   </ion-card-content>
 </ion-card>
+<div style="height:10px;"></div>

@@ -1,7 +1,7 @@
-import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {UIAlert} from '../../services/uiAlert';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
-import {IonVirtualScroll, ModalController} from '@ionic/angular';
+import {ModalController} from '@ionic/angular';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {Bean} from '../../classes/bean/bean';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
@@ -12,6 +12,7 @@ import {IBeanPageFilter} from '../../interfaces/bean/iBeanPageFilter';
 import {BEAN_SORT_AFTER} from '../../enums/beans/beanSortAfter';
 import {BEAN_SORT_ORDER} from '../../enums/beans/beanSortOrder';
 import {BeansAddComponent} from './beans-add/beans-add.component';
+import {AgVirtualSrollComponent} from 'ag-virtual-scroll';
 
 @Component({
   selector: 'beans',
@@ -33,8 +34,10 @@ export class BeansPage implements OnInit {
     sort_order: BEAN_SORT_ORDER.UNKOWN,
   };
 
-  @ViewChild('openScroll', {read: IonVirtualScroll, static: false}) public openScroll: IonVirtualScroll;
-  @ViewChild('archivedScroll', {read: IonVirtualScroll, static: false}) public archivedScroll: IonVirtualScroll;
+  @ViewChild('openScroll', {read: AgVirtualSrollComponent, static: false}) public openScroll: AgVirtualSrollComponent;
+  @ViewChild('archivedScroll', {read: AgVirtualSrollComponent, static: false}) public archivedScroll: AgVirtualSrollComponent;
+  @ViewChild('beanContent',{read: ElementRef}) public beanContent: ElementRef;
+
   public bean_segment: string = 'open';
   public archivedBeansFilter: IBeanPageFilter = {
     sort_after:  BEAN_SORT_AFTER.UNKOWN,
@@ -80,18 +83,20 @@ export class BeansPage implements OnInit {
 
 
   private retriggerScroll() {
-    // https://github.com/ionic-team/ionic-framework/issues/18409
-    // Workarround
-    setTimeout( () => {
-      if (typeof(this.archivedScroll) !== 'undefined' && this.finishedBeans.length > 0)
-      {
-        this.archivedScroll.checkRange(0,this.finishedBeans.length);
+
+    setTimeout(async () =>{
+
+      const el =  this.beanContent.nativeElement;
+      let scrollComponent: AgVirtualSrollComponent;
+      if (this.openScroll !== undefined) {
+        scrollComponent = this.openScroll;
+      } else {
+        scrollComponent = this.archivedScroll;
       }
-      if (typeof(this.openScroll) !== 'undefined' && this.openBeans.length > 0)
-      {
-        this.openScroll.checkRange(0,this.openBeans.length);
-      }
-    },75);
+
+      scrollComponent.el.style.height = (el.offsetHeight - scrollComponent.el.offsetTop) + 'px';
+    },150);
+
   }
 
   public async showFilter() {
