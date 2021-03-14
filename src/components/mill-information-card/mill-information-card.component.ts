@@ -117,6 +117,12 @@ export class MillInformationCardComponent implements OnInit {
     settings.resetFilter();
     this.uiSettingsStorage.saveSettings(settings);
   }
+
+  public longPressEditMill(event) {
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    this.edit();
+  }
   public async edit() {
 
     const editModal = await this.modalController.create({

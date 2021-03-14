@@ -93,6 +93,12 @@ export class RoastingMachineInformationCardComponent implements OnInit {
     this.uiToast.showInfoToast('TOAST_ROASTING_MACHINE_ARCHIVED_SUCCESSFULLY');
   }
 
+  public longPressEditRoastingMachine(event) {
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    this.edit();
+  }
+
   public async edit() {
     const modal = await this.modalCtrl.create({component: RoastingMachineEditComponent, id:'roasting-machine-edit', componentProps: {roastingMachine: this.roastingMachine}});
     await modal.present();

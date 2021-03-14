@@ -33,7 +33,6 @@ export class DashboardPage implements OnInit {
   public ngOnInit(): void {
   }
 
-
   public ionViewWillEnter() {
     this.loadBrews();
   }

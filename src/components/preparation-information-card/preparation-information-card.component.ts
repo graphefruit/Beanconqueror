@@ -150,6 +150,12 @@ export class PreparationInformationCardComponent implements OnInit {
     await modal.onWillDismiss();
   }
 
+  public longPressEditPreparation(event) {
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    this.editPreparation();
+  }
+
   public async editPreparation() {
     const modal = await this.modalController.create({component: PreparationEditComponent,
       componentProps: {preparation: this.preparation},

@@ -160,6 +160,13 @@ export class GreenBeanInformationComponent implements OnInit {
     settings.resetFilter();
     this.uiSettingsStorage.saveSettings(settings);
   }
+
+  public longPressEditBean(event) {
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    this.editBean();
+  }
+
   public async editBean() {
 
     const modal = await this.modalController.create({component:GreenBeanEditComponent,
