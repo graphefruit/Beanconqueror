@@ -1,22 +1,24 @@
 /** Core */
 import {Injectable} from '@angular/core';
-import {File} from '@ionic-native/file/ngx';
+import {File, FileEntry} from '@ionic-native/file/ngx';
 import {unescape} from 'querystring';
 import {Platform} from '@ionic/angular';
+import {DomSanitizer} from '@angular/platform-browser';
 
 /**
  * Handles every helping functionalities
  */
-
+declare var window;
 @Injectable({
   providedIn: 'root'
 })
 export class UIFileHelper {
 
   private cachedBase64: any = {};
+  private cachedInternalUrls: any = {};
 
 
-  constructor (private readonly file: File, private readonly platform: Platform) {
+  constructor (private readonly file: File, private readonly platform: Platform, private readonly domSanitizer: DomSanitizer) {
   }
 
   public async saveBase64File (_fileName: string, _fileExtension: string, _base64: string): Promise<any> {
@@ -137,13 +139,54 @@ export class UIFileHelper {
     }
 
   }
+  public async getInternalFileSrc (_filePath: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      if (this.platform.is('cordova')) {
+        if (this.cachedInternalUrls[_filePath]) {
+          resolve(this.cachedInternalUrls[_filePath]);
+          return;
+        }
+        // let filePath: string;
+        // filePath = _filePath;
+        // filePath.slice(0, filePath.lastIndexOf('/'));
+        let path: string;
+        let fileName: string;
+        path = this.file.dataDirectory;
+        fileName = _filePath;
+        if (fileName.startsWith('/')) {
+          fileName = fileName.slice(1);
+        }
+        this.file.resolveLocalFilesystemUrl(path + fileName).then((fileEntry: FileEntry) => {
 
+
+          fileEntry.file(
+            (meta) => {
+              let convertedURL = window.Ionic.WebView.convertFileSrc(fileEntry.nativeURL);
+              convertedURL = this.domSanitizer.bypassSecurityTrustResourceUrl(convertedURL);
+              this.cachedInternalUrls[_filePath] = convertedURL;
+              resolve(convertedURL);
+            }, () => {
+              resolve('');
+            }
+          );
+
+        },() => {
+          resolve('');
+        });
+
+      } else {
+        resolve('');
+      }
+
+    });
+  }
 
   public async getBase64File (_filePath: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       if (this.platform.is('cordova')) {
         if (this.cachedBase64[_filePath]) {
           resolve(this.cachedBase64[_filePath]);
+          return;
         }
         // let filePath: string;
         // filePath = _filePath;

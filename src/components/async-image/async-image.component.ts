@@ -16,26 +16,28 @@ export class AsyncImageComponent implements OnInit, OnChanges {
   constructor( private uiFileHelper: UIFileHelper) { }
 
   public async ngOnInit(): Promise<void> {
-    await this.__checkImageChangs();
+    await this.__checkImageChanges();
   }
 
   public async ngOnChanges(): Promise<void> {
-    await this.__checkImageChangs();
+    await this.__checkImageChanges();
   }
 
   public onError() {
     this.img = '';
   }
 
-  private async __checkImageChangs(): Promise<void> {
+  private async __checkImageChanges(): Promise<void> {
 
     if (this.filePath === undefined || this.filePath === null || this.filePath === '') {
       this.img = '';
     } else {
-      if (this.filePath.startsWith("http")) {
+      if (this.filePath.startsWith('http')) {
         this.img = this.filePath;
       } else {
-        this.img = await this.uiFileHelper.getBase64File(this.filePath);
+
+        this.img = await this.uiFileHelper.getInternalFileSrc(this.filePath);
+
       }
 
     }
