@@ -18,6 +18,7 @@ import {Settings} from '../../../classes/settings/settings';
 import {UIHealthKit} from '../../../services/uiHealthKit';
 import {Insomnia} from '@ionic-native/insomnia/ngx';
 import {BrewBrewingComponent} from '../../../components/brews/brew-brewing/brew-brewing.component';
+import {UIAlert} from '../../../services/uiAlert';
 
 
 @Component({
@@ -51,7 +52,8 @@ export class BrewAddComponent implements OnInit {
                private readonly uiLog: UILog,
                private readonly uiBrewHelper: UIBrewHelper,
                private readonly uiHealthKit: UIHealthKit,
-               private readonly insomnia: Insomnia) {
+               private readonly insomnia: Insomnia,
+               private readonly uiAlert: UIAlert) {
     // Initialize to standard in drop down
 
     this.settings = this.uiSettingsStorage.getSettings();
@@ -130,10 +132,8 @@ export class BrewAddComponent implements OnInit {
   }
 
   public async finish() {
-    const loading = await this.loadingController.create({
-      message: this.translate.instant('PLEASE_WAIT')
-    });
-    loading.present();
+
+    await this.uiAlert.showLoadingSpinner();
     try {
       this.uiBrewHelper.cleanInvisibleBrewData(this.data);
       this.uiBrewStorage.add(this.data);
@@ -160,7 +160,7 @@ export class BrewAddComponent implements OnInit {
     catch (ex) {
 
     }
-    await loading.dismiss();
+    await this.uiAlert.hideLoadingSpinner();
     this.dismiss();
 
   }

@@ -12,7 +12,13 @@
     <ion-select [(ngModel)]="filter.method_of_preparation"
                 [show-finished]="segment !== 'open'"
                 multiple="true"
-                preparation-overlay>
+                preparation-overlay (ionChange)="resetPreparationTools();">
+    </ion-select>
+  </ion-item>
+  <ion-item *ngIf="hasPreparationTools()">
+    <ion-label position="stacked">{{"BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}</ion-label>
+    <ion-select [(ngModel)]="filter.method_of_preparation_tools" cancelText="{{'CANCEL'| translate }}" color="accent" multiple="true" name="method_of_preparation_tools"  okText="{{'CHOOSE'| translate }}" placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD_TOOL' | translate}}">
+      <ion-select-option *ngFor="let data of getPreparationTools()" value="{{data.tool.config.uuid}}">{{data.tool.name}} ({{data.name}})</ion-select-option>
     </ion-select>
   </ion-item>
   <ion-item>
