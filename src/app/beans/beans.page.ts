@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
 import {UIAlert} from '../../services/uiAlert';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
 import {ModalController} from '@ionic/angular';
@@ -81,7 +81,11 @@ export class BeansPage implements OnInit {
     this.loadBeans();
   }
 
-
+  @HostListener('window:resize')
+  @HostListener('window:orientationchange', ['$event'])
+  public onOrientationChange(event) {
+    this.retriggerScroll();
+  }
   private retriggerScroll() {
 
     setTimeout(async () =>{
@@ -95,7 +99,7 @@ export class BeansPage implements OnInit {
       }
 
       scrollComponent.el.style.height = (el.offsetHeight - scrollComponent.el.offsetTop) + 'px';
-    },150);
+    },250);
 
   }
 

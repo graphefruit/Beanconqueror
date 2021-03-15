@@ -20,11 +20,33 @@ export class LongPressDirective implements OnInit {
   public ngOnInit() {
     const isTouch = ('ontouchstart' in document.documentElement);
     const element = this.elementRef.nativeElement;
-    element.onpointerdown = (ev) => {
-      this.timerSub = timer(this.delay).subscribe(() => {
-        this.longPress.emit(ev);
-      });
-    };
+    if (element.onpointerdown) {
+      element.onpointerdown = (ev) => {
+        this.timerSub = timer(this.delay).subscribe(() => {
+          this.longPress.emit(ev);
+        });
+      };
+
+    } else {
+      // Every device which does not support onpointerdown, we implement touchstart
+      element.addEventListener('touchstart', (ev) => {
+        this.timerSub = timer(this.delay).subscribe(() => {
+          this.longPress.emit(ev);
+        });
+      },false);
+
+      element.addEventListener('touchmove', (ev) => {
+        this.unsub();
+      },false);
+      element.addEventListener('touchend', (ev) => {
+        this.unsub();
+      },false);
+      element.addEventListener('touchcancel', (ev) => {
+        this.unsub();
+      },false);
+
+    }
+
     element.onpointerup = () => { this.unsub(); };
     element.onpointercancel = () => { this.unsub(); };
     if (isTouch) {
