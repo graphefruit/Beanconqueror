@@ -492,6 +492,21 @@ ion-menu:host .menu-inner {
   }
 
   .popover-actions {
+
+    /**Background on ion-content will get transparent**/
+    .bottom-modal ion-content {
+      background: transparent;
+      --background:  transparent;
+    }
+    ion-content {
+      background: transparent;
+      --background:  transparent;
+    }
+     ion-content::part(scroll) {
+       background: transparent;
+       --background:  transparent;
+      }
+
     ion-list {
       background: #ffffff;
     }
@@ -506,10 +521,6 @@ ion-menu:host .menu-inner {
 
     ion-item:last-child {
       --border-width: 0 0 0 0 !important;
-    }
-    .bottom-modal ion-content, ion-content, ion-content::part(scroll) {
-      background:transparent;
-      --background:transparent;
     }
 
     ion-content::part(scroll) {
@@ -595,6 +606,15 @@ ion-menu:host .menu-inner {
       --padding-start: 10%;
       --padding-end: 10%;
     }
+    /*.popover-actions {
+
+        ion-content {
+        --padding-start: 10%;
+        --padding-end: 10%;
+        background: rgba(0, 0, 0, 0);
+        --background: rgba(0, 0, 0, 0);
+      }
+    }*/
     ion-footer {
       padding-left: 10%;
       padding-right: 10%;
