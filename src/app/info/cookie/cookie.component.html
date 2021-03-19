@@ -184,9 +184,9 @@
                         <p>Personal Data processed: Tracker and Usage Data.</p>
                         <p>Place of processing: Ireland &ndash; <a href="https://policies.google.com/privacy"
                                                                    target="_blank" rel="noopener noreferrer">Privacy
-                          Policy</a> &ndash; <a href="https://tools.google.com/dlpage/gaoptout?hl=en"
-                                                onClick="javascript:return tryFunc('tryGaOptOut',{href:'https://tools.google.com/dlpage/gaoptout?hl=en'})"
-                                                target="_blank">Opt Out</a>. </p></div>
+                          Policy</a> &ndash; <a href="#" onclick="return false;"
+                                                (click)="disableTracking()"
+                                                target="none">Opt Out</a>. </p></div>
                     </div>
                   </li>
                 </ul>
