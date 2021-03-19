@@ -126,6 +126,8 @@ import {RoastingMachineOverlayDirective} from '../../directive/roasting-machine-
 import {RoastingMachineModalSelectComponent} from '../roasting-section/roasting-machine/roasting-machine-modal-select/roasting-machine-modal-select.component';
 import {AgVirtualScrollModule} from 'ag-virtual-scroll';
 import {LongPressDirective} from '../../directive/long-press.directive';
+import {ImpressumComponent} from '../info/impressum/impressum.component';
+import {CookieComponent} from '../info/cookie/cookie.component';
 
 @NgModule({
   declarations: [
@@ -147,6 +149,8 @@ import {LongPressDirective} from '../../directive/long-press.directive';
     AboutComponent,
     ContactComponent,
     InfoComponent,
+    CookieComponent,
+    ImpressumComponent,
     PreparationAddTypeComponent,
     CustomPopoverComponent,
     WelcomePopoverComponent,
@@ -251,6 +255,8 @@ import {LongPressDirective} from '../../directive/long-press.directive';
     AboutComponent,
     ContactComponent,
     InfoComponent,
+    CookieComponent,
+    ImpressumComponent,
     PreparationAddTypeComponent,
     CustomPopoverComponent,
     WelcomePopoverComponent,
@@ -368,6 +374,8 @@ import {LongPressDirective} from '../../directive/long-press.directive';
     AboutComponent,
     ContactComponent,
     InfoComponent,
+    CookieComponent,
+    ImpressumComponent,
     PreparationAddTypeComponent,
     CustomPopoverComponent,
     WelcomePopoverComponent,

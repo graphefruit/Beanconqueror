@@ -13,6 +13,8 @@ import {ThanksComponent} from './thanks/thanks.component';
 import {SharedModule} from '../shared/shared.module';
 import {LogComponent} from './log/log.component';
 import {InfoComponent} from './info.component';
+import {ImpressumComponent} from './impressum/impressum.component';
+import {CookieComponent} from './cookie/cookie.component';
 
 const routes: Routes = [
   {path: '', component: InfoComponent},
@@ -45,6 +47,12 @@ const routes: Routes = [
   {
     path: 'logs',
     component: LogComponent
+  }, {
+  path: 'impressum',
+    component: ImpressumComponent
+  }, {
+    path: 'cookie',
+    component: CookieComponent
   }
 ];
 

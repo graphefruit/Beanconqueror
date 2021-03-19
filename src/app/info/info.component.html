@@ -11,13 +11,20 @@
 <ion-content>
 
   <ion-card>
-
+    <ion-item [routerLink]="['/info/impressum']">
+      <ion-label>{{"NAV_IMPRESSUM" | translate}}</ion-label>
+      <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+    </ion-item>
     <ion-item [routerLink]="['/info/privacy']">
       <ion-label>{{"NAV_PRIVACY" | translate}}</ion-label>
       <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
     </ion-item>
-    <ion-item [routerLink]="['/info/terms']" lines="none">
+    <ion-item [routerLink]="['/info/terms']">
       <ion-label>{{"NAV_TERMS" | translate}}</ion-label>
+      <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+    </ion-item>
+    <ion-item [routerLink]="['/info/cookie']" lines="none">
+      <ion-label>{{"NAV_COOKIE" | translate}}</ion-label>
       <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
     </ion-item>
   </ion-card>

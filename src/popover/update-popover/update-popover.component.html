@@ -9,7 +9,10 @@
           </ion-title>
           <ion-img src="assets/icon/beanconqueror_round.png" style="width:100%;height:50px;"></ion-img>
           <ul>
-              <li *ngFor="let desc of getDescription(version)">{{desc}}</li>
+              <div  *ngFor="let desc of getDescription(version)">
+                <li  *ngIf="desc != ''" [innerHTML]="desc"> </li>
+                <li  *ngIf="desc === ''" style="list-style-type:none">&nbsp;</li>
+              </div>
           </ul>
         </div>
         <ion-row class="ion-padding-top">
