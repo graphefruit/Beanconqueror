@@ -110,6 +110,7 @@ ion-segment-button {
   height: auto;
   max-height: 40px;
   min-height: 30px;
+  margin:auto;
 
   ion-label {
     font-size: 18px !important;
@@ -595,6 +596,7 @@ ion-menu:host .menu-inner {
 
   .swiper-pagination.swiper-pagination-bullets {
     position: relative;
+    bottom:0px;
   }
   ion-slides {
     --bullet-background: #282013;

@@ -9,7 +9,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-segment scrollable="true" [(ngModel)]="bean_segment" class="ion-padding-vertical" style="padding-top:0px;">
+  <ion-segment scrollable="true" [(ngModel)]="bean_segment" class="ion-padding-vertical" style="width:100%;padding-top:0px;">
     <ion-segment-button value="roastinformation" *ngIf="data?.bean_roast_information?.bean_uuid != ''">
       <ion-label>{{"BEAN_TAB_ROAST_INFORMATION" | translate }}
       </ion-label>
