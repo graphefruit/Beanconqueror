@@ -75,7 +75,7 @@
         </feature>
         <preference name="CordovaWebViewEngine" value="CDVWKWebViewEngine" />
         <edit-config file="*-Info.plist" mode="merge" target="TSAppUsesNonExemptEncryption">
-          <true/>
+            <true />
         </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="UIApplicationShortcutItems">
             <array>

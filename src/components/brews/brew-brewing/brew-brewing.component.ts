@@ -53,6 +53,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
   public displayingBrewTime: string = '';
 
 
+  public preparationMethodHasBeenFocused: boolean = false;
 
   public profileResultsAvailable: boolean = false;
   public profileResults: string[] = [];
@@ -93,8 +94,16 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
     })
   }
 
+  public preparationMethodFocused() {
+    //Needs to set set, because ion-change triggers on smartphones but not on websites, and therefore the value is overwritten when you use a brew template
+    this.preparationMethodHasBeenFocused = true;
+  }
   public resetPreparationTools() {
-    this.data.method_of_preparation_tools = [];
+    if ( this.preparationMethodHasBeenFocused === true) {
+      this.data.method_of_preparation_tools = [];
+      this.preparationMethodHasBeenFocused = false;
+    }
+
   }
 
   public ngOnInit (): void {
