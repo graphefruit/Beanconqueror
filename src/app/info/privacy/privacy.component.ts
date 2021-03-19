@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {UIHelper} from '../../../services/uiHelper';
+import {Settings} from '../../../classes/settings/settings';
+import {UISettingsStorage} from '../../../services/uiSettingsStorage';
+import {UIAnalytics} from '../../../services/uiAnalytics';
 
 @Component({
   selector: 'privacy',
@@ -8,7 +11,8 @@ import {UIHelper} from '../../../services/uiHelper';
 })
 export class PrivacyComponent implements OnInit {
 
-  constructor(private readonly uiHelper: UIHelper) { }
+  constructor(private readonly uiHelper: UIHelper,private readonly uiSettingsStorage: UISettingsStorage,
+              private readonly uiAnalytics: UIAnalytics) { }
 
   public ngOnInit() {}
 
@@ -17,5 +21,11 @@ export class PrivacyComponent implements OnInit {
     event.preventDefault();
     this.uiHelper.openExternalWebpage(_link);
 
+  }
+  public disableTracking() {
+    const settings: Settings = this.uiSettingsStorage.getSettings();
+    settings.analytics = false;
+    this.uiSettingsStorage.saveSettings(settings);
+    this.uiAnalytics.disableTracking();
   }
 }
