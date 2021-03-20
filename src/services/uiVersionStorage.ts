@@ -78,9 +78,11 @@ export class UiVersionStorage extends StorageClass {
     super.reinitializeStorage();
 
     super.storageReady().then(() => {
+
       const entries: Array<any> = this.getAllEntries();
       if (entries.length > 0) {
-        // We already had some settings here.
+        // Reset to a new version object, else when importing data, there might be wrong data existing still.
+        this.version = new Version();
         this.version.initializeByObject(entries[0]);
       } else {
         // Take the new settings obj.

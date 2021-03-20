@@ -548,7 +548,7 @@
   },
   "EXCEL_EXPORT": "Excel Export",
   "HEALTH_KIT_QUESTION_TITLE": "Speichern in HealthKit",
-  "HEALTH_KIT_QUESTION_MESSAGE": "Durch die Aktivierung wird die eingenommene Koffeinmenge automatisch in Apple Health abgespeichert",
+  "HEALTH_KIT_QUESTION_MESSAGE": "Durch die Aktivierung wird die eingenommene Koffeinmenge jeder Brühung automatisch in Apple Health abgespeichert",
   "NAV_ROASTING_SECTION": "Rösten",
   "ROASTING_SECTION" : {
     "NAV_GREEN_BEANS": "Rohkaffee",

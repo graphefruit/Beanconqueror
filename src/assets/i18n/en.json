@@ -458,7 +458,7 @@
       ]
     },
     "5.2.0": {
-      "TITLE": "Version 5.2: Das ist neu",
+      "TITLE": "Version 5.2: Thats new!",
       "DESCRIPTION": [
         "<b>Brews:</b>",
         "Brew timer continues in the background",
@@ -547,7 +547,7 @@
   },
   "EXCEL_EXPORT": "Excel export",
   "HEALTH_KIT_QUESTION_TITLE": "Save caffeine consumption",
-  "HEALTH_KIT_QUESTION_MESSAGE": "Through activation the occupied caffeine will be automatically be saved",
+  "HEALTH_KIT_QUESTION_MESSAGE": "Through activation the occupied caffeine from each brew will automatically be saved inside apple health",
   "NAV_ROASTING_SECTION": "Roasting",
   "ROASTING_SECTION" : {
     "NAV_GREEN_BEANS": "Green bean",
