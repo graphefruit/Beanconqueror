@@ -121,7 +121,7 @@
     "typescript": "~3.8.3",
     "webpack-subresource-integrity": "^1.5.2"
   },
-  "description": "An Ionic project",
+  "description": "Beanconqueror",
   "cordova": {
     "plugins": {
       "cordova-plugin-whitelist": {},
