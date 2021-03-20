@@ -508,6 +508,8 @@ export class SettingsPage implements OnInit {
             }
             this.setLanguage();
             this.uiAlert.showMessage(this.translate.instant('IMPORT_SUCCESSFULLY'));
+
+
           });
 
         } else {
@@ -535,6 +537,7 @@ export class SettingsPage implements OnInit {
       this.uiPreparationStorage.reinitializeStorage();
       this.uiSettingsStorage.reinitializeStorage();
       this.uiMillStorage.reinitializeStorage();
+      this.uiVersionStorage.reinitializeStorage();
 
       const beanStorageReadyCallback = this.uiBeanStorage.storageReady();
       const preparationStorageReadyCallback = this.uiPreparationStorage.storageReady();
