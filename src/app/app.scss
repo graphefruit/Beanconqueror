@@ -829,6 +829,9 @@ ion-menu:host .menu-inner {
     --handle-background:  var(--ion-color-inactive);
     --handle-background-checked: var(--ion-color-accent);
   }
+  .disablePointerEvents {
+    pointer-events: none;
+  }
 }
 
 .color-white {

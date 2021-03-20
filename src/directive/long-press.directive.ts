@@ -1,7 +1,7 @@
 import { EventEmitter, Directive, OnInit, Output, Input, ElementRef } from '@angular/core';
 import { timer, Subscription } from 'rxjs';
 
-
+declare var window;
 @Directive({
 
   selector: '[long-press]'
@@ -24,6 +24,13 @@ export class LongPressDirective implements OnInit {
       element.onpointerdown = (ev) => {
         this.timerSub = timer(this.delay).subscribe(() => {
           this.longPress.emit(ev);
+          /* Best hack in my entire life. Thanks android
+          * Prevent the ghostclick in the next page when the long-press is fired
+          * */
+          window.document.querySelector('body').classList.add('disablePointerEvents');
+          setTimeout( () => {
+            window.document.querySelector('body').classList.remove('disablePointerEvents');
+          },750);
         });
       };
 
@@ -31,7 +38,14 @@ export class LongPressDirective implements OnInit {
       // Every device which does not support onpointerdown, we implement touchstart
       element.addEventListener('touchstart', (ev) => {
         this.timerSub = timer(this.delay).subscribe(() => {
+          /* Best hack in my entire life. Thanks android
+	        * Prevent the ghostclick in the next page when the long-press is fired
+	        * */
           this.longPress.emit(ev);
+          window.document.querySelector('body').classList.add('disablePointerEvents');
+          setTimeout( () => {
+            window.document.querySelector('body').classList.remove('disablePointerEvents');
+          },750);
         });
       },false);
 
