@@ -93,10 +93,11 @@ export class RoastingMachineInformationCardComponent implements OnInit {
     this.uiToast.showInfoToast('TOAST_ROASTING_MACHINE_ARCHIVED_SUCCESSFULLY');
   }
 
-  public longPressEditRoastingMachine(event) {
+  public async longPressEditRoastingMachine(event) {
     event.stopPropagation();
     event.stopImmediatePropagation();
-    this.edit();
+    await this.edit();
+    this.roastingMachineAction.emit([ROASTING_MACHINE_ACTION.EDIT, this.roastingMachine]);
   }
 
   public async edit() {
