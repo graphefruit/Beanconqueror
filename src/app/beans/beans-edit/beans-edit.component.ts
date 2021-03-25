@@ -9,7 +9,6 @@ import {Bean} from '../../../classes/bean/bean';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 import {UIToast} from '../../../services/uiToast';
 
-declare var cordova: any;
 @Component({
   selector: 'beans-edit',
   templateUrl: './beans-edit.component.html',

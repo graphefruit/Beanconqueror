@@ -36,6 +36,9 @@ export class PreparationPopoverActionsComponent implements OnInit {
 
 
 
+  public hasPhotos(): boolean {
+    return this.data.attachments.length > 0;
+  }
   public getStaticActions(): any {
     return PREPARATION_ACTION;
   }

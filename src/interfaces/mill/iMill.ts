@@ -8,4 +8,5 @@ export interface IMill {
   note: string;
   finished: boolean;
   config: IConfig;
+  attachments: Array<string>;
 }

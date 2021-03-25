@@ -15,6 +15,7 @@ import {UIAlert} from '../../services/uiAlert';
 import {UIMillStorage} from '../../services/uiMillStorage';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {UIAnalytics} from '../../services/uiAnalytics';
+import {UIImage} from '../../services/uiImage';
 
 @Component({
   selector: 'mill-information-card',
@@ -35,7 +36,8 @@ export class MillInformationCardComponent implements OnInit {
               private readonly uiAlert: UIAlert,
               private readonly uiMillStorage: UIMillStorage,
               private readonly uiBrewStorage: UIBrewStorage,
-              private readonly uiAnalytics: UIAnalytics) {
+              private readonly uiAnalytics: UIAnalytics,
+              private readonly uiImage: UIImage) {
 
   }
 
@@ -87,6 +89,16 @@ export class MillInformationCardComponent implements OnInit {
     await this.detail();
   }
 
+  public async showPhoto(event) {
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    await this.viewPhotos();
+  }
+
+  private async viewPhotos() {
+    await this.uiImage.viewPhotos(this.mill);
+  }
+
 
   public async internalMillAction(action: MILL_ACTION): Promise<void> {
     switch (action) {
@@ -106,6 +118,9 @@ export class MillInformationCardComponent implements OnInit {
         break;
       case MILL_ACTION.DETAIL:
         await this.detail();
+        break;
+      case MILL_ACTION.PHOTO_GALLERY:
+        await this.viewPhotos();
         break;
       default:
         break;

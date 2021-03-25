@@ -242,9 +242,6 @@ export class BeanInformationComponent implements OnInit {
 
   }
 
-  public hasPhotos() {
-    return (this.bean.attachments && this.bean.attachments.length > 0);
-  }
 
 
 

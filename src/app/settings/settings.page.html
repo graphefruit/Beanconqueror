@@ -80,7 +80,7 @@
     </ion-card-content>
       </ion-card>
 
-  <ion-card *ngIf="false" class="margin-top-20">
+  <ion-card class="margin-top-20">
     <ion-card-content>
       <ion-card-title>{{"PAGE_SETTINGS_MANAGE_SECTIONS" | translate}}</ion-card-title>
       <ion-item>
@@ -88,7 +88,7 @@
         <ion-checkbox (ngModelChange)="saveSettings();"
                       [(ngModel)]="settings.show_roasting_section"></ion-checkbox>
       </ion-item>
-      <ion-item>
+      <ion-item *ngIf="false" >
         <ion-label>{{"PAGE_SETTINGS_SHOW_CUPPING_SECTION" | translate}}</ion-label>
         <ion-checkbox (ngModelChange)="saveSettings();"
                       [(ngModel)]="settings.show_cupping_section"></ion-checkbox>

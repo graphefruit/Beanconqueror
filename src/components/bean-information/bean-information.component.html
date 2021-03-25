@@ -27,7 +27,7 @@
 
     <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow">
       <ion-row class="ion-padding-bottom-half">
-        <ion-col [size]="hasPhotos()?9:12" class="ion-no-padding-right">
+        <ion-col [size]="bean.hasPhotos()?9:12" class="ion-no-padding-right">
           <ion-grid class="ion-no-padding">
             <ion-row>
               <ion-col size="6">
@@ -77,7 +77,7 @@
             </ion-row>
           </ion-grid>
         </ion-col>
-        <ion-col class="ion-no-padding" size="3" *ngIf="hasPhotos()" (click)="showPhoto($event)">
+        <ion-col class="ion-no-padding" size="3" *ngIf="bean.hasPhotos()" (click)="showPhoto($event)">
           <div style="margin:0 auto;" tappable>
             <async-image [filePath]="bean.attachments[0]" class="bean-slider"></async-image>
           </div>
