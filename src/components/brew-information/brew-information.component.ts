@@ -148,10 +148,11 @@ export class BrewInformationComponent implements OnInit {
     }
   }
 
-  public longPressEditBrew(event) {
+  public async longPressEditBrew(event) {
     event.stopPropagation();
     event.stopImmediatePropagation();
-    this.editBrew();
+    await this.editBrew();
+    this.brewAction.emit([BREW_ACTION.EDIT, this.brew]);
   }
   public async editBrew() {
     const modal = await this.modalCtrl.create({component: BrewEditComponent, id:'brew-edit', componentProps: {brew: this.brew}});

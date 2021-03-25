@@ -178,10 +178,11 @@ export class BeanInformationComponent implements OnInit {
     await modal.onWillDismiss();
   }
 
-  public longPressEditBean(event) {
+  public async longPressEditBean(event) {
     event.stopPropagation();
     event.stopImmediatePropagation();
-    this.editBean();
+    await this.editBean();
+    this.beanAction.emit([BEAN_ACTION.EDIT, this.bean]);
   }
   public async editBean() {
 

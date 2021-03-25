@@ -133,10 +133,11 @@ export class MillInformationCardComponent implements OnInit {
     this.uiSettingsStorage.saveSettings(settings);
   }
 
-  public longPressEditMill(event) {
+  public async longPressEditMill(event) {
     event.stopPropagation();
     event.stopImmediatePropagation();
-    this.edit();
+    await this.edit();
+    this.millAction.emit([MILL_ACTION.EDIT, this.mill]);
   }
   public async edit() {
 

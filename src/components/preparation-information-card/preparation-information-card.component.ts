@@ -167,10 +167,11 @@ export class PreparationInformationCardComponent implements OnInit {
     await modal.onWillDismiss();
   }
 
-  public longPressEditPreparation(event) {
+  public async longPressEditPreparation(event) {
     event.stopPropagation();
     event.stopImmediatePropagation();
-    this.editPreparation();
+    await this.editPreparation();
+    this.preparationAction.emit([PREPARATION_ACTION.EDIT, this.preparation]);
   }
 
   public async editPreparation() {

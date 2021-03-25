@@ -23,6 +23,7 @@ import {Settings} from '../../classes/settings/settings';
 import {GREEN_BEAN_ACTION} from '../../enums/green-beans/greenBeanAction';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
 
+
 @Component({
   selector: 'green-bean-information',
   templateUrl: './green-bean-information.component.html',
@@ -161,10 +162,11 @@ export class GreenBeanInformationComponent implements OnInit {
     this.uiSettingsStorage.saveSettings(settings);
   }
 
-  public longPressEditBean(event) {
+  public async longPressEditBean(event) {
     event.stopPropagation();
     event.stopImmediatePropagation();
-    this.editBean();
+    await this.editBean();
+    this.greenBeanAction.emit([GREEN_BEAN_ACTION.EDIT, this.greenBean]);
   }
 
   public async editBean() {
