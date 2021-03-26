@@ -11,17 +11,17 @@ declare var cordova;
 export class QrScannerService {
 
 
-  private qrScanner:any;
+
   constructor(private readonly uiLog: UILog,
               private readonly translate: TranslateService) {
-    this.qrScanner = cordova.plugins.barcodeScanner;
+
   }
 
 
              public scan(): Promise<string> {
 
                const observable:Observable<string> = new Observable((subscriber) => {
-                 this.qrScanner.scan(
+                 cordova.plugins.barcodeScanner.scan(
                    (result) => {
 
                      if (result.cancelled === 0 && result.format === 'QR_CODE') {

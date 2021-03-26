@@ -34,6 +34,7 @@ import {UiVersionStorage} from '../services/uiVersionStorage';
 import {UIGreenBeanStorage} from '../services/uiGreenBeanStorage';
 import {UIRoastingMachineStorage} from '../services/uiRoastingMachineStorage';
 import {IntentHandlerService} from '../services/intentHandler/intent-handler.service';
+import {ServerCommunicationService} from '../services/serverCommunication/server-communication.service';
 
 
 declare var AppRate;
@@ -97,7 +98,8 @@ export class AppComponent implements AfterViewInit {
     private readonly uiVersionStorage: UiVersionStorage,
     private readonly uiGreenBeanStorage: UIGreenBeanStorage,
     private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
-    private readonly intentHandlerService: IntentHandlerService
+    private readonly intentHandlerService: IntentHandlerService,
+    private readonly serverCommunication: ServerCommunicationService
   ) {
   }
 
@@ -125,7 +127,7 @@ export class AppComponent implements AfterViewInit {
       .then(async () => {
         // Okay, so the platform is ready and our plugins are available.
         // Here you can do any higher level native things you might need.
-
+        this.serverCommunication.getBeanInformation();
         // #7
         this.statusBar.show();
         this.statusBar.styleDefault();
