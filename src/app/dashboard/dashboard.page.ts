@@ -63,7 +63,8 @@ export class DashboardPage implements OnInit {
   }
 
 
-  public openBeansLeftOverCount(): number {
+  public openBeansLeftOverCount(): string {
+    // #183
     if (this.leftOverBeansWeight === undefined) {
       let leftOverCount: number = 0;
       const openBeans: Array<Bean> = this.uiBeanStorage.getAllEntries().filter(
@@ -76,9 +77,15 @@ export class DashboardPage implements OnInit {
       }
 
 
-      this.leftOverBeansWeight = Math.round((leftOverCount / 1000) * 100) / 100;
+      this.leftOverBeansWeight = leftOverCount;
     }
-    return this.leftOverBeansWeight;
+    if (this.leftOverBeansWeight <1000) {
+      return (Math.round(this.leftOverBeansWeight * 100) / 100 )+ ' g';
+
+    } else {
+      return (Math.round((this.leftOverBeansWeight / 1000) * 100) / 100) + ' kg';
+    }
+
   }
 
   public getUsedWeightCount(_bean: Bean): number {
