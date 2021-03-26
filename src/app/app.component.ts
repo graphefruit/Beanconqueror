@@ -33,10 +33,11 @@ import {UIUpdate} from '../services/uiUpdate';
 import {UiVersionStorage} from '../services/uiVersionStorage';
 import {UIGreenBeanStorage} from '../services/uiGreenBeanStorage';
 import {UIRoastingMachineStorage} from '../services/uiRoastingMachineStorage';
+import {IntentHandlerService} from '../services/intentHandler/intent-handler.service';
 
 
 declare var AppRate;
-declare var window;
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -96,15 +97,13 @@ export class AppComponent implements AfterViewInit {
     private readonly uiVersionStorage: UiVersionStorage,
     private readonly uiGreenBeanStorage: UIGreenBeanStorage,
     private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
+    private readonly intentHandlerService: IntentHandlerService
   ) {
   }
 
   public ngOnInit() {
-    (window['handleOpenURL']) = (_url) => {
-      setTimeout(()  => {
-        alert('received url11: ' + _url);
-      }, 0);
-    }
+    this.intentHandlerService.attachOnHandleOpenUrl();
+
 
   }
 

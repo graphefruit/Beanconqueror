@@ -126,3 +126,7 @@ Prio 1: https://github.com/fttx/phonegap-plugin-barcodescanner
 
 ##Custom URL Scheme:
 ionic cordova plugin add cordova-plugin-customurlscheme --variable URL_SCHEME=beanconqueror
+
+##Http
+ionic cordova plugin add cordova-plugin-advanced-http
+npm install @ionic-native/http

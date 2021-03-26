@@ -128,7 +128,7 @@ import {AgVirtualScrollModule} from 'ag-virtual-scroll';
 import {LongPressDirective} from '../../directive/long-press.directive';
 import {ImpressumComponent} from '../info/impressum/impressum.component';
 import {CookieComponent} from '../info/cookie/cookie.component';
-
+import { HTTP } from '@ionic-native/http/ngx';
 
 
 @NgModule({
@@ -354,7 +354,7 @@ import {CookieComponent} from '../info/cookie/cookie.component';
     InAppBrowser, File, Globalization, FirebaseX,
     Geolocation,
     Insomnia,
-
+    HTTP
   ],
 
   exports: [
