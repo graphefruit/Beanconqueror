@@ -123,3 +123,6 @@ npm install ag-virtual-scroll@1.3.0
 Prio 1: https://github.com/fttx/phonegap-plugin-barcodescanner
 (Next possible fallback: https://openbase.com/js/@red-mobile/cordova-plugin-barcodescanner)
 
+
+##Custom URL Scheme:
+ionic cordova plugin add cordova-plugin-customurlscheme --variable URL_SCHEME=beanconqueror

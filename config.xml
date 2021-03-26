@@ -75,6 +75,16 @@
             <param name="ios-package" value="CDVWKWebViewEngine" />
         </feature>
         <preference name="CordovaWebViewEngine" value="CDVWKWebViewEngine" />
+        <edit-config file="*-Info.plist" mode="merge" target="CFBundleURLTypes">
+            <array>
+                <dict>
+                    <key>CFBundleURLSchemes</key>
+                    <array>
+                        <string>beanconqueror</string>
+                    </array>
+                </dict>
+            </array>
+        </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="UIApplicationShortcutItems">
             <array>
                 <dict>
@@ -202,5 +212,11 @@
         <variable name="HEALTH_WRITE_PERMISSION" value="App needs write access to add the drunken caffeinate amount with the tracked brews" />
         <variable name="PLAY_AUTH_VERSION" value="18.1.0" />
         <variable name="FIT_API_VERSION" value="19.0.0" />
+    </plugin>
+    <plugin name="cordova-plugin-customurlscheme" spec="^5.0.2">
+        <variable name="URL_SCHEME" value="beanconqueror" />
+        <variable name="ANDROID_SCHEME" value=" " />
+        <variable name="ANDROID_HOST" value=" " />
+        <variable name="ANDROID_PATHPREFIX" value="/" />
     </plugin>
 </widget>

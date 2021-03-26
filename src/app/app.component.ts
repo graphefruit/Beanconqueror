@@ -36,7 +36,7 @@ import {UIRoastingMachineStorage} from '../services/uiRoastingMachineStorage';
 
 
 declare var AppRate;
-
+declare var window;
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -97,6 +97,15 @@ export class AppComponent implements AfterViewInit {
     private readonly uiGreenBeanStorage: UIGreenBeanStorage,
     private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
   ) {
+  }
+
+  public ngOnInit() {
+    (window['handleOpenURL']) = (_url) => {
+      setTimeout(()  => {
+        alert('received url11: ' + _url);
+      }, 0);
+    }
+
   }
 
   public ngAfterViewInit(): void {

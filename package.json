@@ -91,6 +91,8 @@
     "cordova-plugin-app-version": "^0.1.12",
     "cordova-plugin-apprate": "^1.7.2",
     "cordova-plugin-camera": "^5.0.1",
+    "cordova-plugin-customurlscheme": "^5.0.2",
+    "cordova-plugin-customurlscheme-ng": "^10.0.0",
     "cordova-plugin-dialogs": "^2.0.2",
     "cordova-plugin-firebasex": "^10.2.0-cli",
     "cordova-plugin-geolocation": "^4.1.0",
@@ -186,7 +188,13 @@
       "cordova-plugin-apprate": {
         "PLAY_CORE_VERSION": "1.+"
       },
-      "fttx-phonegap-plugin-barcodescanner": {}
+      "fttx-phonegap-plugin-barcodescanner": {},
+      "cordova-plugin-customurlscheme": {
+        "URL_SCHEME": "beanconqueror",
+        "ANDROID_SCHEME": " ",
+        "ANDROID_HOST": " ",
+        "ANDROID_PATHPREFIX": "/"
+      }
     },
     "platforms": [
       "android",
