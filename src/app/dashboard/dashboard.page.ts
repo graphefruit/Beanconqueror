@@ -10,6 +10,7 @@ import {Router} from '@angular/router';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
 import {Bean} from '../../classes/bean/bean';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
+import {QrScannerService} from '../../services/qrScanner/qr-scanner.service';
 
 @Component({
   selector: 'dashboard',
@@ -27,7 +28,8 @@ export class DashboardPage implements OnInit {
               private readonly changeDetectorRef: ChangeDetectorRef,
               private readonly router: Router,
               private readonly uiBeanStorage: UIBeanStorage,
-              private readonly uiBeanHelper: UIBeanHelper) {
+              private readonly uiBeanHelper: UIBeanHelper,
+              private readonly qrScannerService: QrScannerService) {
   }
 
   public ngOnInit(): void {
@@ -91,4 +93,9 @@ export class DashboardPage implements OnInit {
   }
 
 
+  public scan() {
+    this.qrScannerService.scan().then((scannedCode) => {
+      alert(scannedCode);
+    });
+  }
 }

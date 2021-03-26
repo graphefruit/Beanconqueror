@@ -116,3 +116,10 @@ npm install @ionic-native/insomnia
 
 
 ##https://www.npmjs.com/package/ag-virtual-scroll
+## We need angular 9 compatibility thats we we need to import 1.3.0
+npm install ag-virtual-scroll@1.3.0
+
+##QRCode Scanner
+Prio 1: https://github.com/fttx/phonegap-plugin-barcodescanner
+(Next possible fallback: https://openbase.com/js/@red-mobile/cordova-plugin-barcodescanner)
+

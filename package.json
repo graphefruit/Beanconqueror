@@ -105,6 +105,7 @@
     "cordova-sqlite-storage": "^5.1.0",
     "elliptic": ">=6.5.4",
     "es6-promise-plugin": "^4.2.2",
+    "fttx-phonegap-plugin-barcodescanner": "git+https://github.com/fttx/phonegap-plugin-barcodescanner.git",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "^5.0.2",
     "karma": "^5.2.3",
@@ -184,7 +185,8 @@
       },
       "cordova-plugin-apprate": {
         "PLAY_CORE_VERSION": "1.+"
-      }
+      },
+      "fttx-phonegap-plugin-barcodescanner": {}
     },
     "platforms": [
       "android",

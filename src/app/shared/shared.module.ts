@@ -129,6 +129,8 @@ import {LongPressDirective} from '../../directive/long-press.directive';
 import {ImpressumComponent} from '../info/impressum/impressum.component';
 import {CookieComponent} from '../info/cookie/cookie.component';
 
+
+
 @NgModule({
   declarations: [
     SettingsPage,
@@ -352,6 +354,7 @@ import {CookieComponent} from '../info/cookie/cookie.component';
     InAppBrowser, File, Globalization, FirebaseX,
     Geolocation,
     Insomnia,
+
   ],
 
   exports: [
