@@ -37,6 +37,9 @@ import {UIUpdate} from '../../services/uiUpdate';
 import {UiVersionStorage} from '../../services/uiVersionStorage';
 import {UIExcel} from '../../services/uiExcel';
 import {UIHealthKit} from '../../services/uiHealthKit';
+import {Preparation} from '../../classes/preparation/preparation';
+import {GreenBean} from '../../classes/green-bean/green-bean';
+import {RoastingMachine} from '../../classes/roasting-machine/roasting-machine';
 
 declare var cordova: any;
 declare var device: any;
@@ -261,8 +264,12 @@ export class SettingsPage implements OnInit {
         {
           const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
           const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
+          const preparations: Array<Preparation> = this.uiPreparationStorage.getAllEntries();
+          const mills: Array<Mill> = this.uiMillStorage.getAllEntries();
           await this._exportAttachments(beans);
           await this._exportAttachments(brews);
+          await this._exportAttachments(preparations);
+          await this._exportAttachments(mills);
           const alert =  await this.alertCtrl.create({
             header: this.translate.instant('DOWNLOADED'),
             subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {fileName: _fileEntry.name}),
@@ -284,7 +291,7 @@ export class SettingsPage implements OnInit {
     this.uiExcel.export();
   }
 
-  private async _exportAttachments(_storedData: Array<Bean> | Array<Brew>)
+  private async _exportAttachments(_storedData: Array<Bean> | Array<Brew> | Array<Preparation> | Array<Mill> | Array<GreenBean> | Array<RoastingMachine>)
   {
     for (const entry of _storedData) {
       for (const attachment of entry.attachments) {
@@ -338,7 +345,7 @@ export class SettingsPage implements OnInit {
 
   }
 
-  private async _importFiles(_storedData: Array<Bean> | Array<Brew>,_importPath: string)
+  private async _importFiles(_storedData: Array<Bean> | Array<Brew>| Array<Preparation> | Array<Mill> | Array<GreenBean> | Array<RoastingMachine>,_importPath: string)
   {
     for (const entry of _storedData) {
       for (const attachment of entry.attachments) {
@@ -490,8 +497,12 @@ export class SettingsPage implements OnInit {
             if (!isIOS) {
               const brewsData:Array<Brew> = this.uiBrewStorage.getAllEntries();
               const beansData:Array<Bean> = this.uiBeanStorage.getAllEntries();
+              const preparationData:Array<Preparation> = this.uiPreparationStorage.getAllEntries();
+              const millData:Array<Mill> = this.uiMillStorage.getAllEntries();
               await this._importFiles(brewsData,_importPath);
               await this._importFiles(beansData,_importPath);
+              await this._importFiles(preparationData,_importPath);
+              await this._importFiles(millData,_importPath);
             }
 
             if (this.uiBrewStorage.getAllEntries().length > 0 && this.uiMillStorage.getAllEntries().length <= 0) {
