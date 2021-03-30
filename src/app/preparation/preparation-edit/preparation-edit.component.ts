@@ -52,6 +52,8 @@ export class PreparationEditComponent implements OnInit {
 
   public editBean(form): void {
     if (form.valid) {
+      // #196
+      this.addTool();
       this.__editBean();
     }
   }
