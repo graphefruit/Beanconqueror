@@ -6,6 +6,8 @@ import {Bean} from '../../classes/bean/bean';
 import {UIFileHelper} from '../../services/uiFileHelper';
 import {UIToast} from '../../services/uiToast';
 import {IonSlides} from '@ionic/angular';
+import {Preparation} from '../../classes/preparation/preparation';
+import {Mill} from '../../classes/mill/mill';
 
 @Component({
   selector: 'photo-add',
@@ -14,8 +16,8 @@ import {IonSlides} from '@ionic/angular';
 })
 export class PhotoAddComponent implements OnInit {
 
-  @Input() public data: Brew | Bean | GreenBean;
-  @Output() public dataChange = new EventEmitter<Brew | Bean | GreenBean>();
+  @Input() public data: Brew | Bean | GreenBean | Mill | Preparation;
+  @Output() public dataChange = new EventEmitter<Brew | Bean | GreenBean| Mill | Preparation>();
   @ViewChild('photoSlides', {static: false}) public photoSlides: IonSlides;
 
   constructor(private readonly uiImage: UIImage,

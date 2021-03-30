@@ -17,7 +17,7 @@ import {RoastingMachineAddComponent} from './roasting-machine-add/roasting-machi
 })
 export class RoastingMachinePage implements OnInit {
 
-  public roastingMachines: Array<Mill> = [];
+  public roastingMachines: Array<RoastingMachine> = [];
 
   public settings: Settings;
   public segment: string = 'open';
@@ -39,12 +39,12 @@ export class RoastingMachinePage implements OnInit {
     this.loadRoastingMachines();
   }
 
-  public getActiveRoastingMachines(): Array<Mill> {
+  public getActiveRoastingMachines(): Array<RoastingMachine> {
     return this.roastingMachines.filter(
       (machine) => !machine.finished);
   }
 
-  public getArchivedMRoastingMachines(): Array<Mill> {
+  public getArchivedMRoastingMachines(): Array<RoastingMachine> {
     return this.roastingMachines.filter(
       (machine) => machine.finished);
   }

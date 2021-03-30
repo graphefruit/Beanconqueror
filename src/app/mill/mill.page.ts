@@ -4,15 +4,11 @@ import {UIAlert} from '../../services/uiAlert';
 import {Mill} from '../../classes/mill/mill';
 import {ModalController} from '@ionic/angular';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
-import {Brew} from '../../classes/brew/brew';
-import {MillEditComponent} from './mill-edit/mill-edit.component';
+
 import {MillAddComponent} from './mill-add/mill-add.component';
 import {MILL_ACTION} from '../../enums/mills/millActions';
 import {Settings} from '../../classes/settings/settings';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
-import {UIToast} from '../../services/uiToast';
-import {UIAnalytics} from '../../services/uiAnalytics';
-import {MillDetailComponent} from './mill-detail/mill-detail.component';
 
 
 @Component({
@@ -32,9 +28,7 @@ export class MillPage  implements OnInit  {
                private readonly uiMillStorage: UIMillStorage,
                private readonly uiAlert: UIAlert,
                private readonly uiBrewStorage: UIBrewStorage,
-               private readonly uiSettingsStorage: UISettingsStorage,
-               private readonly uiToast: UIToast,
-               private readonly uiAnalytics: UIAnalytics) {
+               private readonly uiSettingsStorage: UISettingsStorage) {
 
   }
 

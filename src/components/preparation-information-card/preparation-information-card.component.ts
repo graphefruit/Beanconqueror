@@ -15,6 +15,8 @@ import {UIAnalytics} from '../../services/uiAnalytics';
 import {UIToast} from '../../services/uiToast';
 import {UIPreparationStorage} from '../../services/uiPreparationStorage';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
+import {UIImage} from '../../services/uiImage';
+
 
 @Component({
   selector: 'preparation-information-card',
@@ -36,7 +38,8 @@ export class PreparationInformationCardComponent implements OnInit {
               private readonly uiAnalytics: UIAnalytics,
               private readonly uiToast: UIToast,
               private readonly uiPreparationStorage: UIPreparationStorage,
-              private readonly uiBrewStorage: UIBrewStorage) {
+              private readonly uiBrewStorage: UIBrewStorage,
+              private readonly uiImage: UIImage) {
 
   }
 
@@ -112,6 +115,17 @@ export class PreparationInformationCardComponent implements OnInit {
 
 
 
+  public async showPhoto(event) {
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    await this.viewPhotos();
+  }
+
+  private async viewPhotos() {
+    await this.uiImage.viewPhotos(this.preparation);
+  }
+
+
   public async internalPreparationAction(action: PREPARATION_ACTION): Promise<void> {
     switch (action) {
       case PREPARATION_ACTION.CUSTOM_PARAMETERS:
@@ -126,6 +140,9 @@ export class PreparationInformationCardComponent implements OnInit {
         }catch(ex) {
 
         }
+        break;
+      case PREPARATION_ACTION.PHOTO_GALLERY:
+        await this.viewPhotos();
         break;
       case PREPARATION_ACTION.ARCHIVE:
         await this.archive();
@@ -150,10 +167,11 @@ export class PreparationInformationCardComponent implements OnInit {
     await modal.onWillDismiss();
   }
 
-  public longPressEditPreparation(event) {
+  public async longPressEditPreparation(event) {
     event.stopPropagation();
     event.stopImmediatePropagation();
-    this.editPreparation();
+    await this.editPreparation();
+    this.preparationAction.emit([PREPARATION_ACTION.EDIT, this.preparation]);
   }
 
   public async editPreparation() {

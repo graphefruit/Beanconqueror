@@ -23,6 +23,8 @@ export class Preparation implements IPreparation {
   public default_last_coffee_parameters: DefaultBrewParameter;
   public brew_order: OrderBrewParameter;
   public tools: Array<PreparationTool>;
+  public attachments: Array<string>;
+
   constructor() {
     this.name = '';
     this.note = '';
@@ -36,6 +38,8 @@ export class Preparation implements IPreparation {
     this.default_last_coffee_parameters = new DefaultBrewParameter();
     this.brew_order = new OrderBrewParameter();
     this.tools = [];
+    this.attachments = [];
+
   }
 
   public initializeByObject (preparationObj: IPreparation): void {
@@ -146,6 +150,11 @@ export class Preparation implements IPreparation {
 
     }
     return false;
+  }
+
+
+  public hasPhotos(): boolean {
+    return (this.attachments && this.attachments.length > 0);
   }
 
 }
