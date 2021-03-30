@@ -488,6 +488,30 @@
         "Startup check revised",
         "Support for different card sized for brews and beans"
       ]
+    },
+    "5.3.0": {
+      "TITLE": "Version 5.3: Thats new!",
+      "DESCRIPTION": [
+        "<b>Brew methods:</b>",
+        "Changes to the card view",
+        "Custom images can be attached in the edit screen",
+        "Brew tools will be saved in edit screen, even when '+' is not pressed",
+        "",
+        "<b>Grinders:</b>",
+        "Custom images can be attached in the edit screen",
+        "",
+        "<b>Brews:</b>",
+        "Parameter 'Attachments' renamed in 'Attachments / Photos'",
+        "",
+        "<b>Dashboard:</b>",
+        "If bean amount is less then 1000g, the number will be written as a whole",
+        "",
+        "<b>Bug fixes:</b>",
+        "Editing via a long-press, does not change information any more",
+        "Information on the dashboard are updated after made changes",
+        "Multiple variety information with blends can be saved again",
+        "Added startup error message if app-data is missing"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Customize parameter",

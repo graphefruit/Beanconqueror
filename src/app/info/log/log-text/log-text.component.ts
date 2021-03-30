@@ -11,7 +11,7 @@ export class LogTextComponent implements OnInit {
 
   public logString: string = '';
 
-  constructor(private readonly modalController: ModalController, private readonly uiLog: UILog,) {
+  constructor(private readonly modalController: ModalController, private readonly uiLog: UILog) {
   }
 
   public ngOnInit() {

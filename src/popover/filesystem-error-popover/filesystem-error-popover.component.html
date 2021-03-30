@@ -1,0 +1,23 @@
+<ion-content>
+  <div class="ion-padding">
+    <h1 class="ion-text-center ion-title">
+      ERROR
+    </h1>
+    <div>
+      <p>App could not start correctly.</p>
+      <p>This could have some root causes:</p>
+      <ul>
+        <li>1. Your app data was deleted</li>
+        <li>2. Your storage was to low and your operating system cleaned it up</li>
+        <li>3. The app has a hiccup</li>
+        <li>4. The worst case: The app data got corrupted and shet itself</li>
+      </ul>
+      <p>Please retry, close the app and reopen it, if the error still occures please write an email:</p>
+      <ion-button expand="block" (click)="copyLogfiles()">Copy logfiles</ion-button><br/>
+     <div class="ion-text-center"><ion-icon style="font-size:48px" name="arrow-down-outline"></ion-icon></div>
+      <div class="ion-text-center"> <h2><a href="mailto:info@beanconqueror.com">info@beanconqueror.com</a></h2></div>
+
+    </div>
+  </div>
+
+</ion-content>

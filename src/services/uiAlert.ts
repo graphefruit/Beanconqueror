@@ -4,6 +4,7 @@ import {Injectable} from '@angular/core';
 import {AlertController, LoadingController, ModalController} from '@ionic/angular';
 import {TranslateService} from '@ngx-translate/core';
 import {CustomPopoverComponent} from '../popover/custom-popover/custom-popover.component';
+import {FilesystemErrorPopoverComponent} from '../popover/filesystem-error-popover/filesystem-error-popover.component';
 
 @Injectable({
   providedIn: 'root'
@@ -35,6 +36,21 @@ export class UIAlert {
       this.loadingSpinner = undefined;
     }
 
+  }
+
+  /**
+   * @method showMessage
+   */
+  public async showAppShetItSelfMessage() {
+
+    const modal = await this.modalController.create(
+      {
+        component: FilesystemErrorPopoverComponent,
+        cssClass: 'half-bottom-modal',
+        showBackdrop: true,
+      });
+    await modal.present();
+    await modal.onWillDismiss();
   }
 
   /**
