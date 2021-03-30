@@ -31,6 +31,15 @@ export class DashboardPage implements OnInit {
   }
 
   public ngOnInit(): void {
+    this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
+      // Reset when something changes
+     this.leftOverBeansWeight = undefined;
+    });
+
+    this.uiBeanStorage.attachOnEvent().subscribe((_val) => {
+      // Reset when something changes
+      this.leftOverBeansWeight = undefined;
+    });
   }
 
   public ionViewWillEnter() {
