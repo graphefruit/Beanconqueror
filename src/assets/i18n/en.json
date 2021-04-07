@@ -140,7 +140,7 @@
   "BREW_DATA_COFFEE_CONCENTRATION": "Coffee Concentration",
   "BREW_DATA_COFFEE_FIRST_DRIP_TIME": "First coffee drip",
   "BREW_DATA_COFFEE_BLOOMING_TIME": "Blooming Time / Preinfusion",
-  "BREW_DATA_ATTACHMENTS": "Attachments",
+  "BREW_DATA_ATTACHMENTS": "Attachments / Photos",
   "BREW_DATA_RATING": "Rating",
   "BREW_DATA_CALCULATED_COFFEE_BREW_TIME": "Coffee Brewing Time",
   "BREW_DATA_TDS": "Total dissolved solids",
@@ -487,6 +487,30 @@
         "Extension of statistics",
         "Startup check revised",
         "Support for different card sized for brews and beans"
+      ]
+    },
+    "5.3.1": {
+      "TITLE": "Version 5.3: Thats new!",
+      "DESCRIPTION": [
+        "<b>Brew methods:</b>",
+        "Changes to the card view",
+        "Custom images can be attached in the edit screen",
+        "Brew tools will be saved in edit screen, even when '+' is not pressed",
+        "",
+        "<b>Grinders:</b>",
+        "Custom images can be attached in the edit screen",
+        "",
+        "<b>Brews:</b>",
+        "Parameter 'Attachments' renamed in 'Attachments / Photos'",
+        "",
+        "<b>Dashboard:</b>",
+        "If bean amount is less then 1000g, the number will be written as a whole",
+        "",
+        "<b>Bug fixes:</b>",
+        "Editing via a long-press, does not change information any more",
+        "Information on the dashboard are updated after made changes",
+        "Multiple variety information with blends can be saved again",
+        "Added startup error message if app-data is missing"
       ]
     }
   },

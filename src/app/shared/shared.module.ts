@@ -128,6 +128,7 @@ import {AgVirtualScrollModule} from 'ag-virtual-scroll';
 import {LongPressDirective} from '../../directive/long-press.directive';
 import {ImpressumComponent} from '../info/impressum/impressum.component';
 import {CookieComponent} from '../info/cookie/cookie.component';
+import {FilesystemErrorPopoverComponent} from '../../popover/filesystem-error-popover/filesystem-error-popover.component';
 
 
 @NgModule({
@@ -154,6 +155,7 @@ import {CookieComponent} from '../info/cookie/cookie.component';
     ImpressumComponent,
     PreparationAddTypeComponent,
     CustomPopoverComponent,
+    FilesystemErrorPopoverComponent,
     WelcomePopoverComponent,
     UpdatePopoverComponent,
     DatetimePopoverComponent,
@@ -260,6 +262,7 @@ import {CookieComponent} from '../info/cookie/cookie.component';
     ImpressumComponent,
     PreparationAddTypeComponent,
     CustomPopoverComponent,
+    FilesystemErrorPopoverComponent,
     WelcomePopoverComponent,
     UpdatePopoverComponent,
     DatetimePopoverComponent,
@@ -379,6 +382,7 @@ import {CookieComponent} from '../info/cookie/cookie.component';
     ImpressumComponent,
     PreparationAddTypeComponent,
     CustomPopoverComponent,
+    FilesystemErrorPopoverComponent,
     WelcomePopoverComponent,
     UpdatePopoverComponent,
     DatetimePopoverComponent,

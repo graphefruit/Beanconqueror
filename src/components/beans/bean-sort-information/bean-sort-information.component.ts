@@ -31,7 +31,8 @@ export class BeanSortInformationComponent implements OnInit {
   }
   public isBlend() {
     if (this.data instanceof Bean) {
-      return this.data.beanMix === BEAN_MIX_ENUM.BLEND;
+      // #193
+      return BEAN_MIX_ENUM[this.data.beanMix] === BEAN_MIX_ENUM.BLEND;
     }
       return false;
   }

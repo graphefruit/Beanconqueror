@@ -140,7 +140,7 @@
   "BREW_DATA_COFFEE_CONCENTRATION": "Kaffee-Konzentration",
   "BREW_DATA_COFFEE_FIRST_DRIP_TIME": "Erster Kaffeetropfen",
   "BREW_DATA_COFFEE_BLOOMING_TIME": "Blooming-Zeit / Preinfusion",
-  "BREW_DATA_ATTACHMENTS": "Anhänge",
+  "BREW_DATA_ATTACHMENTS": "Anhänge / Fotos",
   "BREW_DATA_RATING": "Bewertung",
   "BREW_DATA_CALCULATED_COFFEE_BREW_TIME": "Kaffeebezugszeit",
   "BREW_DATA_TDS": "Insgesamt gelöste Feststoffe",
@@ -460,7 +460,6 @@
     "5.2.0": {
       "TITLE": "Version 5.2: Das ist neu",
       "DESCRIPTION": [
-
         "<b>Brühungen:</b>",
         "Brühtimer läuft im Hintergrund weiter",
         "Brühungen können favorisiert werden",
@@ -488,6 +487,30 @@
         "Statistikerweiterung",
         "Startüberprüfungsroutine überarbeitet",
         "Unterstützung für unterschiedlich große Kacheln für Brühungen und Bohnen"
+      ]
+    },
+    "5.3.1": {
+      "TITLE": "Version 5.3: Das ist neu",
+      "DESCRIPTION": [
+        "<b>Zubereitungsmethoden:</b>",
+        "Veränderung der Ansichtskachel",
+        "Bilder können in der Editierung hinterlegt werden",
+        "Zubereitungstool wird in der Editierungsansicht abgespeichert, auch wenn nicht auf '+' gedrückt wurde",
+        "",
+        "<b>Mühlen:</b>",
+        "Bilder können in der Editierung hinterlegt werden",
+        "",
+        "<b>Brühungen:</b>",
+        "Parameter 'Anhänge' in 'Anhänge / Fotos' verändert",
+        "",
+        "<b>Übersichtsseite:</b>",
+        "Bei weniger als 1000g Bohnen, wird die Zahl nun ausgeschrieben",
+        "",
+        "<b>Fehlerbehebungen:</b>",
+        "Editieren durch langes Drücken veränderte die Informationen in der Oberfläche nicht",
+        "Informationen auf der Übersichtsseite werden aktualisiert bei Veränderungen",
+        "Mehrere Sorteninformationen bei Blends können wieder hinterlegt werden",
+        "Fehlermeldung beim Appstart hinzugefügt falls Appdaten fehlen"
       ]
     }
   },

@@ -160,7 +160,7 @@ export abstract class StorageClass {
       // Error
       this.uiLog.log(`Storage error - ${this.DB_PATH} - ${JSON.stringify(e)}`);
       this.storedData = [];
-      this.isInitialized = 1;
+      this.isInitialized = 0;
     });
   }
 
