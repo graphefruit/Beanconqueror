@@ -26,6 +26,7 @@
     "@ionic-native/app-version": "^5.31.1",
     "@ionic-native/camera": "^5.31.1",
     "@ionic-native/core": "^5.31.1",
+    "@ionic-native/deeplinks": "^5.32.0",
     "@ionic-native/file": "^5.31.1",
     "@ionic-native/file-chooser": "^5.31.1",
     "@ionic-native/file-path": "^5.31.1",
@@ -91,7 +92,6 @@
     "cordova-plugin-app-version": "^0.1.12",
     "cordova-plugin-apprate": "^1.7.2",
     "cordova-plugin-camera": "^5.0.1",
-    "cordova-plugin-customurlscheme": "^5.0.2",
     "cordova-plugin-customurlscheme-ng": "^10.0.0",
     "cordova-plugin-dialogs": "^2.0.2",
     "cordova-plugin-firebasex": "^10.2.0-cli",
@@ -108,6 +108,7 @@
     "elliptic": ">=6.5.4",
     "es6-promise-plugin": "^4.2.2",
     "fttx-phonegap-plugin-barcodescanner": "git+https://github.com/fttx/phonegap-plugin-barcodescanner.git",
+    "ionic-plugin-deeplinks": "^1.0.22",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "^5.0.2",
     "karma": "^5.2.3",
@@ -189,11 +190,23 @@
         "PLAY_CORE_VERSION": "1.+"
       },
       "fttx-phonegap-plugin-barcodescanner": {},
-      "cordova-plugin-customurlscheme": {
-        "URL_SCHEME": "beanconqueror",
-        "ANDROID_SCHEME": " ",
-        "ANDROID_HOST": " ",
-        "ANDROID_PATHPREFIX": "/"
+      "ionic-plugin-deeplinks": {
+        "URL_SCHEME": "com.beanconqueror.com",
+        "DEEPLINK_SCHEME": "https",
+        "DEEPLINK_HOST": "beanconqueror.com",
+        "ANDROID_PATH_PREFIX": "/-",
+        "ANDROID_2_PATH_PREFIX": "/",
+        "ANDROID_3_PATH_PREFIX": "/",
+        "ANDROID_4_PATH_PREFIX": "/",
+        "ANDROID_5_PATH_PREFIX": "/",
+        "DEEPLINK_2_SCHEME": " ",
+        "DEEPLINK_2_HOST": " ",
+        "DEEPLINK_3_SCHEME": " ",
+        "DEEPLINK_3_HOST": " ",
+        "DEEPLINK_4_SCHEME": " ",
+        "DEEPLINK_4_HOST": " ",
+        "DEEPLINK_5_SCHEME": " ",
+        "DEEPLINK_5_HOST": " "
       }
     },
     "platforms": [

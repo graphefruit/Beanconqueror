@@ -35,6 +35,8 @@ import {UIGreenBeanStorage} from '../services/uiGreenBeanStorage';
 import {UIRoastingMachineStorage} from '../services/uiRoastingMachineStorage';
 import {IntentHandlerService} from '../services/intentHandler/intent-handler.service';
 import {ServerCommunicationService} from '../services/serverCommunication/server-communication.service';
+import {Deeplinks} from '@ionic-native/deeplinks/ngx';
+import {HomePage} from './home/home.page';
 
 
 declare var AppRate;
@@ -99,7 +101,8 @@ export class AppComponent implements AfterViewInit {
     private readonly uiGreenBeanStorage: UIGreenBeanStorage,
     private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
     private readonly intentHandlerService: IntentHandlerService,
-    private readonly serverCommunication: ServerCommunicationService
+    private readonly serverCommunication: ServerCommunicationService,
+    private readonly deepLinks: Deeplinks
   ) {
   }
 
@@ -125,6 +128,15 @@ export class AppComponent implements AfterViewInit {
   private __appReady(): void {
     this.platform.ready()
       .then(async () => {
+
+        this.deepLinks.routeWithNavController(this.router, {
+          '/': HomePage,
+        }).subscribe((match) => {
+          console.log('Successfully routed', match);
+        }, (nomatch) => {
+          console.warn('Unmatched Route', nomatch);
+        });
+
         // Okay, so the platform is ready and our plugins are available.
         // Here you can do any higher level native things you might need.
         this.serverCommunication.getBeanInformation();

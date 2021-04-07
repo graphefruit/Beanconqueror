@@ -129,6 +129,7 @@ import {LongPressDirective} from '../../directive/long-press.directive';
 import {ImpressumComponent} from '../info/impressum/impressum.component';
 import {CookieComponent} from '../info/cookie/cookie.component';
 import {FilesystemErrorPopoverComponent} from '../../popover/filesystem-error-popover/filesystem-error-popover.component';
+import {Deeplinks} from '@ionic-native/deeplinks/ngx';
 
 
 @NgModule({
@@ -355,7 +356,8 @@ import {FilesystemErrorPopoverComponent} from '../../popover/filesystem-error-po
     Camera, ImagePicker, AndroidPermissions,
     InAppBrowser, File, Globalization, FirebaseX,
     Geolocation,
-    Insomnia
+    Insomnia,
+    Deeplinks
   ],
 
   exports: [
