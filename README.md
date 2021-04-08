@@ -218,3 +218,5 @@ iOS 6.2 which was released doesn't work yet
 ### Android-Version:
 `ionic cordova platform add android@9.X`
 
+### Github Page Hosting
+https://stackoverflow.com/questions/60357663/do-apple-app-site-association-files-work-with-github-pages-i-e-site-github-io
