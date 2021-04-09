@@ -27,9 +27,18 @@ export class LongPressDirective implements OnInit {
           /* Best hack in my entire life. Thanks android
           * Prevent the ghostclick in the next page when the long-press is fired
           * */
-          window.document.querySelector('body').classList.add('disablePointerEvents');
+          const bodyEl = window.document.querySelector('body');
+          bodyEl.classList.add('disablePointerEvents');
           setTimeout( () => {
-            window.document.querySelector('body').classList.remove('disablePointerEvents');
+            bodyEl.classList.remove('disablePointerEvents');
+            setTimeout(() => {
+              // you can use scale(1) or translate(0, 0), etc
+              bodyEl.style.setProperty('transform', 'translateZ(0)');
+              // this will remove the property 1 frame later
+              requestAnimationFrame(() => {
+                bodyEl.style.removeProperty('transform');
+              });
+            },25);
           },750);
         });
       };
@@ -38,13 +47,22 @@ export class LongPressDirective implements OnInit {
       // Every device which does not support onpointerdown, we implement touchstart
       element.addEventListener('touchstart', (ev) => {
         this.timerSub = timer(this.delay).subscribe(() => {
-          /* Best hack in my entire life. Thanks android
-	        * Prevent the ghostclick in the next page when the long-press is fired
-	        * */
           this.longPress.emit(ev);
-          window.document.querySelector('body').classList.add('disablePointerEvents');
+          /* Best hack in my entire life. Thanks android
+          * Prevent the ghostclick in the next page when the long-press is fired
+          * */
+          const bodyEl = window.document.querySelector('body');
+          bodyEl.classList.add('disablePointerEvents');
           setTimeout( () => {
-            window.document.querySelector('body').classList.remove('disablePointerEvents');
+            bodyEl.classList.remove('disablePointerEvents');
+            setTimeout(() => {
+              // you can use scale(1) or translate(0, 0), etc
+              bodyEl.style.setProperty('transform', 'translateZ(0)');
+              // this will remove the property 1 frame later
+              requestAnimationFrame(() => {
+                bodyEl.style.removeProperty('transform');
+              });
+            },25);
           },750);
         });
       },false);

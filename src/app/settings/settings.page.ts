@@ -137,17 +137,21 @@ export class SettingsPage implements OnInit {
   }
 
   public checkHealthPlugin() {
+    // #200 - Didn't save the settings
     if (this.settings.track_caffeine_consumption === false) {
       this.uiAlert.showConfirm('HEALTH_KIT_QUESTION_MESSAGE','HEALTH_KIT_QUESTION_TITLE', true).then( () => {
         this.uiHealthKit.requestAuthorization().then(() => {
           // Allowed
           this.settings.track_caffeine_consumption = true;
+          this.saveSettings();
         }, () => {
           // Forbidden
           this.settings.track_caffeine_consumption = false;
+          this.saveSettings();
         });
       }, () => {
         this.settings.track_caffeine_consumption = false;
+        this.saveSettings();
       });
     }
 
