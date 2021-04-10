@@ -86,12 +86,12 @@
             <param name="ios-package" value="CDVWKWebViewEngine" />
         </feature>
         <preference name="CordovaWebViewEngine" value="CDVWKWebViewEngine" />
-        <edit-file file="*-Debug.plist" target="com.apple.developer.associated-domains">
+        <edit-file file="*-Debug.plist" mode="merge" target="com.apple.developer.associated-domains">
             <array>
                 <string>applinks:beanconqueror.com</string>
             </array>
         </edit-file>
-        <edit-file file="*-Release.plist" target="com.apple.developer.associated-domains">
+        <edit-file file="*-Release.plist" mode="merge" target="com.apple.developer.associated-domains">
             <array>
                 <string>applinks:beanconqueror.com</string>
             </array>
