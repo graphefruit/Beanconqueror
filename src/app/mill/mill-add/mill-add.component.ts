@@ -2,7 +2,6 @@ import {Component, Input, OnInit} from '@angular/core';
 import {UIMillStorage} from '../../../services/uiMillStorage';
 import {Mill} from '../../../classes/mill/mill';
 import {ModalController} from '@ionic/angular';
-import {UIAnalytics} from '../../../services/uiAnalytics';
 import {UIToast} from '../../../services/uiToast';
 
 @Component({
@@ -17,13 +16,11 @@ export class MillAddComponent implements OnInit {
   @Input() private hide_toast_message: boolean;
   constructor(private readonly modalController: ModalController,
               private readonly uiMillStorage: UIMillStorage,
-              private readonly uiAnalytics: UIAnalytics,
               private readonly uiToast: UIToast) {
 
   }
 
   public ionViewWillEnter(): void {
-    this.uiAnalytics.trackEvent('MILL', 'ADD');
   }
   public addMill(form): void {
 

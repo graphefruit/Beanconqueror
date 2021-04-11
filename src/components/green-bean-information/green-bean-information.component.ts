@@ -22,7 +22,7 @@ import {UIAlert} from '../../services/uiAlert';
 import {Settings} from '../../classes/settings/settings';
 import {GREEN_BEAN_ACTION} from '../../enums/green-beans/greenBeanAction';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
-
+import GREEN_BEAN_TRACKING from '../../data/tracking/greenBeanTracking';
 
 @Component({
   selector: 'green-bean-information',
@@ -70,6 +70,7 @@ export class GreenBeanInformationComponent implements OnInit {
   public async showBeanActions(event): Promise<void> {
     event.stopPropagation();
     event.stopImmediatePropagation();
+    this.uiAnalytics.trackEvent(GREEN_BEAN_TRACKING.TITLE, GREEN_BEAN_TRACKING.ACTIONS.POPOVER_ACTIONS);
     const popover = await this.modalController.create({
       component: GreenBeanPopoverActionsComponent,
       componentProps: {'green-bean': this.greenBean},
@@ -127,6 +128,7 @@ export class GreenBeanInformationComponent implements OnInit {
     return relatedRoastingBeans.length;
   }
   public async detailBean() {
+    this.uiAnalytics.trackEvent(GREEN_BEAN_TRACKING.TITLE, GREEN_BEAN_TRACKING.ACTIONS.DETAIL);
     const modal = await this.modalController.create({component: GreenBeanDetailComponent,
       id:'green-bean-detail', componentProps: {greenBean: this.greenBean}});
     await modal.present();
@@ -144,12 +146,14 @@ export class GreenBeanInformationComponent implements OnInit {
   }
 
   public async transferRoast() {
+    this.uiAnalytics.trackEvent(GREEN_BEAN_TRACKING.TITLE, GREEN_BEAN_TRACKING.ACTIONS.TRANSFER_ROAST);
     const modal = await this.modalController.create({component:BeansAddComponent,
       id:'bean-add',  componentProps: {greenBean : this.greenBean}});
     await modal.present();
     await modal.onWillDismiss();
   }
   public beansConsumed() {
+    this.uiAnalytics.trackEvent(GREEN_BEAN_TRACKING.TITLE, GREEN_BEAN_TRACKING.ACTIONS.ARCHIVE);
     this.greenBean.finished = true;
     this.uiGreenBeanStorage.update(this.greenBean);
     this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');
@@ -170,7 +174,7 @@ export class GreenBeanInformationComponent implements OnInit {
   }
 
   public async editBean() {
-
+    this.uiAnalytics.trackEvent(GREEN_BEAN_TRACKING.TITLE, GREEN_BEAN_TRACKING.ACTIONS.EDIT);
     const modal = await this.modalController.create({component:GreenBeanEditComponent,
       id:'green-bean-edit',  componentProps: {greenBean : this.greenBean}});
     await modal.present();
@@ -183,7 +187,7 @@ export class GreenBeanInformationComponent implements OnInit {
       this.uiAlert.showConfirm('DELETE_BEAN_QUESTION', 'SURE_QUESTION', true)
         .then(() => {
             // Yes
-            this.uiAnalytics.trackEvent('GREEN_BEAN', 'DELETE');
+            this.uiAnalytics.trackEvent(GREEN_BEAN_TRACKING.TITLE, GREEN_BEAN_TRACKING.ACTIONS.DELETE);
             this.__deleteBean();
             this.uiToast.showInfoToast('TOAST_BEAN_DELETED_SUCCESSFULLY');
             this.resetSettings();
@@ -197,7 +201,7 @@ export class GreenBeanInformationComponent implements OnInit {
   }
 
   public async repeatBean() {
-    this.uiAnalytics.trackEvent('GREEN_BEAN', 'REPEAT');
+    this.uiAnalytics.trackEvent(GREEN_BEAN_TRACKING.TITLE, GREEN_BEAN_TRACKING.ACTIONS.REPEAT);
     const modal = await this.modalController.create({component: GreenBeanAddComponent,
       id:'green-bean-add', componentProps: {green_bean_template: this.greenBean}});
     await modal.present();

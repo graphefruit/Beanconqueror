@@ -1,7 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ModalController, NavParams} from '@ionic/angular';
+import {ModalController} from '@ionic/angular';
 import {UIHelper} from '../../../../services/uiHelper';
-import {UIAnalytics} from '../../../../services/uiAnalytics';
 import {RoastingMachine} from '../../../../classes/roasting-machine/roasting-machine';
 import {IRoastingMachine} from '../../../../interfaces/roasting-machine/iRoastingMachine';
 
@@ -19,13 +18,10 @@ export class RoastingMachineDetailComponent implements OnInit {
 
 
   constructor (private readonly modalController: ModalController,
-               private readonly navParams: NavParams,
-               public uiHelper: UIHelper,
-               private readonly uiAnalytics: UIAnalytics) {
+               public uiHelper: UIHelper) {
   }
 
   public ionViewWillEnter() {
-    this.uiAnalytics.trackEvent('ROASTING_MACHINE', 'DETAIL');
     this.data = this.uiHelper.copyData(this.roastingMachine);
 
   }

@@ -40,7 +40,7 @@ import {UIHealthKit} from '../../services/uiHealthKit';
 import {Preparation} from '../../classes/preparation/preparation';
 import {GreenBean} from '../../classes/green-bean/green-bean';
 import {RoastingMachine} from '../../classes/roasting-machine/roasting-machine';
-
+import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
 declare var cordova: any;
 declare var device: any;
 
@@ -177,14 +177,7 @@ export class SettingsPage implements OnInit {
   }
 
   public checkAnalytics(): void {
-    if (this.settings.analytics) {
-      this.uiAnalytics.trackEvent('SETTINGS', 'TRACKING_ENABLE');
-      this.uiAnalytics.enableTracking();
-    } else {
-      this.uiAnalytics.trackEvent('SETTINGS', 'TRACKING_DISABLE');
-      // Last one here so, but we need to know, which users don't want any tracking.
-      this.uiAnalytics.disableTracking();
-    }
+
   }
 
   public languageChanged(_query): void {
@@ -194,14 +187,14 @@ export class SettingsPage implements OnInit {
   public setLanguage(): void {
     this.translate.setDefaultLang(this.settings.language);
     this.translate.use(this.settings.language);
-    this.uiAnalytics.trackEvent('SETTINGS', 'SET_LANGUAGE_ ' + this.settings.language);
+    this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.SET_LANGUAGE.CATEGORY,SETTINGS_TRACKING.ACTIONS.SET_LANGUAGE.DATA.LANGUAGE, this.settings.language);
     this.uiSettingsStorage.saveSettings(this.settings);
     moment.locale(this.settings.language);
   }
 
   public import(): void {
     if (this.platform.is('cordova')) {
-      this.uiAnalytics.trackEvent('SETTINGS', 'IMPORT');
+      this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.IMPORT);
       this.uiLog.log('Import real data');
       if (this.platform.is('android')) {
         this.fileChooser.open()
@@ -261,7 +254,7 @@ export class SettingsPage implements OnInit {
 
 
   public export(): void {
-    this.uiAnalytics.trackEvent('SETTINGS', 'EXPORT');
+    this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.EXPORT);
     this.uiStorage.export().then((_data) => {
       this.uiHelper.exportJSON('Beanconqueror.json', JSON.stringify(_data)).then(async (_fileEntry: FileEntry) => {
         if (this.platform.is('android'))

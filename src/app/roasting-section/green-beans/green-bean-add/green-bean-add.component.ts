@@ -4,7 +4,6 @@ import {ModalController, NavParams} from '@ionic/angular';
 
 import {UIImage} from '../../../../services/uiImage';
 import {UIHelper} from '../../../../services/uiHelper';
-import {UIAnalytics} from '../../../../services/uiAnalytics';
 import {UIFileHelper} from '../../../../services/uiFileHelper';
 
 import {IBeanInformation} from '../../../../interfaces/bean/iBeanInformation';
@@ -31,15 +30,12 @@ export class GreenBeanAddComponent implements OnInit {
                private readonly uiGreenBeanStorage: UIGreenBeanStorage,
                private readonly uiImage: UIImage,
                public uiHelper: UIHelper,
-               private readonly uiAnalytics: UIAnalytics,
                private readonly uiFileHelper: UIFileHelper) {
     this.green_bean_template = this.navParams.get('green_bean_template');
   }
 
 
   public async ionViewWillEnter() {
-    this.uiAnalytics.trackEvent('GREEN_BEAN', 'ADD');
-
     if (this.green_bean_template) {
       await this.__loadBean(this.green_bean_template);
     }

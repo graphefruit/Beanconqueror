@@ -16,10 +16,7 @@ export class CookieComponent implements OnInit {
   public ngOnInit() {}
 
   public disableTracking() {
-    const settings: Settings = this.uiSettingsStorage.getSettings();
-    settings.analytics = false;
-    this.uiSettingsStorage.saveSettings(settings);
-    this.uiAnalytics.disableTracking();
+
   }
 
 }

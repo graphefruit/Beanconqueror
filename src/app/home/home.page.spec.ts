@@ -13,7 +13,7 @@ import {File} from '@ionic-native/file/ngx';
 import {Camera} from '@ionic-native/camera/ngx';
 import {ImagePicker} from '@ionic-native/image-picker/ngx';
 import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
-import {FirebaseX} from '@ionic-native/firebase-x/ngx';
+;
 import {Router, UrlSerializer} from '@angular/router';
 
 describe('HomePage', () => {
@@ -33,7 +33,7 @@ describe('HomePage', () => {
         {provide: Camera},
         {provide: ImagePicker},
         {provide: AndroidPermissions},
-        {provide: FirebaseX},
+
         {provide: Router},
         {provide: Location},
         {provide: UrlSerializer},

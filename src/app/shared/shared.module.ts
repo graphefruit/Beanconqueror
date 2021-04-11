@@ -54,7 +54,6 @@ import {TranslateModule} from '@ngx-translate/core';
 import {Globalization} from '@ionic-native/globalization/ngx';
 import {AppVersion} from '@ionic-native/app-version/ngx';
 import {EnumToArrayPipe} from '../../pipes/enumToArray';
-import {FirebaseX} from '@ionic-native/firebase-x/ngx';
 import {HelperPage} from '../helper/helper.page';
 import {BrewInformationComponent} from '../../components/brew-information/brew-information.component';
 import {CuppingRadarComponent} from '../../components/cupping-radar/cupping-radar.component';
@@ -352,7 +351,7 @@ import {FilesystemErrorPopoverComponent} from '../../popover/filesystem-error-po
     Keyboard,
     ThreeDeeTouch,
     Camera, ImagePicker, AndroidPermissions,
-    InAppBrowser, File, Globalization, FirebaseX,
+    InAppBrowser, File, Globalization,
     Geolocation,
     Insomnia,
   ],

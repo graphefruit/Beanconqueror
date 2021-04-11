@@ -2,7 +2,6 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 
 import {ModalController, NavParams} from '@ionic/angular';
 import {UIHelper} from '../../../services/uiHelper';
-import {UIAnalytics} from '../../../services/uiAnalytics';
 import {IBean} from '../../../interfaces/bean/iBean';
 import {Bean} from '../../../classes/bean/bean';
 import {NgxStarsComponent} from 'ngx-stars';
@@ -31,13 +30,10 @@ export class BeansDetailComponent implements OnInit {
   public bean_segment = 'general';
   constructor (private readonly modalController: ModalController,
                private readonly navParams: NavParams,
-               public uiHelper: UIHelper,
-               private readonly uiAnalytics: UIAnalytics) {
+               public uiHelper: UIHelper) {
   }
 
   public ionViewWillEnter() {
-
-    this.uiAnalytics.trackEvent('BEAN', 'DETAIL');
     this.bean = this.navParams.get('bean');
     if (this.bean) {
       const copy: IBean = this.uiHelper.copyData(this.bean);

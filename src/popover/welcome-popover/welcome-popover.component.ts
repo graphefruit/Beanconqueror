@@ -39,14 +39,7 @@ export class WelcomePopoverComponent implements OnInit {
   public ngOnInit() {
   }
 
-  public async activeGoogleAnalytics(_active: boolean) {
-    this.settings.analytics = _active;
-    this.uiSettingsStorage.saveSettings(this.settings);
-    if (_active) {
-      await this.uiAnalytics.enableTracking();
-    } else {
-      await this.uiAnalytics.disableTracking();
-    }
+  public async agreeAnalytics() {
     this.slide++;
     this.welcomeSlider.slideNext();
   }

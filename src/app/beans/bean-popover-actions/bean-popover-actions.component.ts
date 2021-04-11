@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ModalController, NavParams} from '@ionic/angular';
 import {UIHelper} from '../../../services/uiHelper';
-import {UIAnalytics} from '../../../services/uiAnalytics';
 import {IBean} from '../../../interfaces/bean/iBean';
 import {Bean} from '../../../classes/bean/bean';
 import {BEAN_ACTION} from '../../../enums/beans/beanAction';
@@ -18,8 +17,7 @@ export class BeanPopoverActionsComponent implements OnInit {
 
   constructor(private readonly modalController: ModalController,
               private readonly navParams: NavParams,
-              private readonly uiHelper: UIHelper,
-              private readonly uiAnalytics: UIAnalytics) {
+              private readonly uiHelper: UIHelper) {
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
     const bean: IBean = this.uiHelper.copyData(this.navParams.get('bean'));
 
@@ -27,7 +25,6 @@ export class BeanPopoverActionsComponent implements OnInit {
   }
 
   public ionViewDidEnter(): void {
-    this.uiAnalytics.trackEvent('BEAN', 'POPOVER_ACTIONS');
   }
 
   public ngOnInit() {

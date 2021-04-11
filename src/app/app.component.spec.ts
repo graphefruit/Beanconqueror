@@ -15,7 +15,7 @@ import {AppMinimize} from '@ionic-native/app-minimize/ngx';
 import {Keyboard} from '@ionic-native/keyboard/ngx';
 import {ThreeDeeTouch} from '@ionic-native/three-dee-touch/ngx';
 import {Globalization} from '@ionic-native/globalization/ngx';
-import {FirebaseX} from '@ionic-native/firebase-x/ngx';
+;
 
 describe('AppComponent', () => {
 
@@ -42,7 +42,7 @@ describe('AppComponent', () => {
         {provide: ThreeDeeTouch},
         {provide: ModalController},
         {provide: Globalization},
-        {provide: FirebaseX},
+
       ],
       imports: [RouterTestingModule.withRoutes([]), TranslateModule.forRoot()],
     }).compileComponents();
