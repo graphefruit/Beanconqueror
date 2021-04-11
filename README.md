@@ -145,56 +145,6 @@ ionic cordova build ios
 ionic cordova build android
 ```
 
-## Issues with iOS
-
-### Actual Pod issue
-```
-1. Add this to the pod file
-post_install do |pi|
-   pi.pods_project.targets.each do |t|
-       t.build_configurations.each do |bc|
-           bc.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '9.0'
-       end
-   end
-end
-2. Goto platform/ios and run pod install
-https://github.com/CocoaPods/CocoaPods/issues/9884
-```
-If you got other problems try these:
-```
-1. pod install / pod install --repo-update
-or pod repo update
--> this needs to be done in the ios platform
-
-if this doesn't help:
-
-2.
-sudo chmod go-w /YourPath/Beanconqueror
-pod repo update
-
-https://stackoverflow.com/questions/25755240/too-many-symbol-files-after-successfully-submitting-my-apps
-//:configuration = Debug
-DEBUG_INFORMATION_FORMAT = dwarf
-
-//:configuration = Release
-DEBUG_INFORMATION_FORMAT = dwarf
-
-//:completeSettings = some
-DEBUG_INFORMATION_FORMAT
-
-```
-
-
-## Debug analytics on firebase
-```
-adb shell setprop debug.firebase.analytics.app Beanconqueror
-adb shell setprop debug.firebase.analytics.app com.beanconqueror.app
-```
-### Decativate debug mode
-```
-adb shell setprop debug.firebase.analytics.app .none.
-```
-
 
 ### Check outdated dependencies
 ```

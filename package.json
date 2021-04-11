@@ -171,8 +171,8 @@
       "cordova-plugin-androidx": {}
     },
     "platforms": [
-      "ios",
-      "android"
+      "android",
+      "ios"
     ]
   }
 }
