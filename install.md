@@ -113,3 +113,7 @@ npm install @ionic-native/insomnia
 
 
 ##https://www.npmjs.com/package/ag-virtual-scroll
+
+##Ionic Cordova Plugin Adapter X
+ionic cordova plugin add cordova-plugin-androidx-adapter
+ionic cordova plugin add cordova-plugin-androidx
