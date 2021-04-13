@@ -123,6 +123,8 @@ export class PreparationInformationCardComponent implements OnInit {
   }
 
   private async viewPhotos() {
+
+    this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.PHOTO_VIEW);
     await this.uiImage.viewPhotos(this.preparation);
   }
 

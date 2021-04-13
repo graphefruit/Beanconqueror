@@ -166,6 +166,7 @@ export class BeanInformationComponent implements OnInit {
   }
 
   private async viewPhotos() {
+    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.PHOTO_VIEW);
     await this.uiImage.viewPhotos(this.bean);
   }
   public beansConsumed() {

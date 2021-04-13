@@ -8,7 +8,8 @@ export default {
     EDIT: 'EDIT',
     DELETE: 'DELETE',
     REPEAT: 'REPEAT',
-    ARCHIVE: 'ARCHIVE'
+    ARCHIVE: 'ARCHIVE',
+    PHOTO_VIEW:'PHOTO_VIEW'
 
   }
 

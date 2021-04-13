@@ -9,7 +9,8 @@ export default {
     DETAIL: 'DETAIL',
     POPOVER_ACTIONS: 'POPOVER_ACTIONS',
     DELETE: 'DELETE',
-    ARCHIVE: 'ARCHIVE'
+    ARCHIVE: 'ARCHIVE',
+    PHOTO_VIEW: 'PHOTO_VIEW'
   }
 
 }

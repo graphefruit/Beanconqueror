@@ -209,6 +209,7 @@ export class BrewInformationComponent implements OnInit {
 
 
   public async viewPhotos() {
+    this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.PHOTO_VIEW);
     await this.uiImage.viewPhotos(this.brew);
   }
 

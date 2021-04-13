@@ -141,6 +141,7 @@ export class GreenBeanInformationComponent implements OnInit {
   }
 
   public async viewPhotos() {
+    this.uiAnalytics.trackEvent(GREEN_BEAN_TRACKING.TITLE, GREEN_BEAN_TRACKING.ACTIONS.PHOTO_VIEW);
     await this.uiImage.viewPhotos(this.greenBean);
 
   }

@@ -15,6 +15,7 @@ export default {
     REMOVE_FAVOURITE:'REMOVE_FAVOURITE',
     SHOW_MAP: 'SHOW_MAP',
     DELETE: 'DELETE',
+    PHOTO_VIEW: 'PHOTO_VIEW',
 
   }
 

@@ -96,6 +96,7 @@ export class MillInformationCardComponent implements OnInit {
   }
 
   private async viewPhotos() {
+    this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.PHOTO_VIEW);
     await this.uiImage.viewPhotos(this.mill);
   }
 

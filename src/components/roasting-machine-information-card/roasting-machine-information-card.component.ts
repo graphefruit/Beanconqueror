@@ -125,6 +125,8 @@ export class RoastingMachineInformationCardComponent implements OnInit {
     await this.viewPhotos();
   }
   public async viewPhotos() {
+
+    this.uiAnalytics.trackEvent(ROASTING_MACHINE_TRACKING.TITLE, ROASTING_MACHINE_TRACKING.ACTIONS.PHOTO_VIEW);
     await this.uiImage.viewPhotos(this.roastingMachine);
   }
 

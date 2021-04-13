@@ -36,6 +36,7 @@ export class UIAnalytics {
 
       await this.uiSettings.storageReady();
       this.matomoTracker = Matomo.getTracker();
+      this.matomoTracker.setReferrerUrl('BEANCONQUEROR');
       resolve();
 
     });

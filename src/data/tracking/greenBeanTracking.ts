@@ -9,7 +9,8 @@ export default {
     DELETE: 'DELETE',
     REPEAT: 'REPEAT',
     TRANSFER_ROAST: 'TRANSFER_ROAST',
-    ARCHIVE: 'ARCHIVE'
+    ARCHIVE: 'ARCHIVE',
+    PHOTO_VIEW: 'PHOTO_VIEW',
 
   }
 
