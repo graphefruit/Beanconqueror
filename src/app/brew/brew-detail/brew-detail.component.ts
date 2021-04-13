@@ -7,7 +7,6 @@ import {IBrew} from '../../../interfaces/brew/iBrew';
 import {Settings} from '../../../classes/settings/settings';
 import {Preparation} from '../../../classes/preparation/preparation';
 import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
-import {UIAnalytics} from '../../../services/uiAnalytics';
 import {UIBrewHelper} from '../../../services/uiBrewHelper';
 import {Chart} from 'chart.js';
 
@@ -30,14 +29,12 @@ export class BrewDetailComponent implements OnInit {
                private readonly navParams: NavParams,
                public uiHelper: UIHelper,
                private readonly uiSettingsStorage: UISettingsStorage,
-               private readonly uiAnalytics: UIAnalytics,
                private readonly uiBrewHelper: UIBrewHelper) {
 
     this.settings = this.uiSettingsStorage.getSettings();
   }
 
   public ionViewWillEnter() {
-    this.uiAnalytics.trackEvent('BREW', 'DETAIL');
     this.brew = this.navParams.get('brew');
     if (this.brew) {
       const copy: IBrew = this.uiHelper.copyData(this.brew);

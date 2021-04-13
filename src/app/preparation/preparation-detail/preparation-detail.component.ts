@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 
 import {ModalController, NavParams} from '@ionic/angular';
 import {UIHelper} from '../../../services/uiHelper';
-import {UIAnalytics} from '../../../services/uiAnalytics';
 import {Preparation} from '../../../classes/preparation/preparation';
 import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
@@ -25,12 +24,10 @@ export class PreparationDetailComponent implements OnInit {
   constructor (private readonly modalController: ModalController,
                private readonly navParams: NavParams,
                public uiHelper: UIHelper,
-               private readonly uiAnalytics: UIAnalytics,
                private readonly uiBrewStorage: UIBrewStorage) {
   }
 
   public ionViewWillEnter() {
-    this.uiAnalytics.trackEvent('PREPARATION', 'DETAIL');
     this.preparation = this.navParams.get('preparation');
     if (this.preparation) {
       const copy: IPreparation = this.uiHelper.copyData(this.preparation);

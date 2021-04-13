@@ -18,6 +18,7 @@ import {UIAlert} from '../../services/uiAlert';
 import {UIToast} from '../../services/uiToast';
 import {UIImage} from '../../services/uiImage';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
+import BEAN_TRACKING from '../../data/tracking/beanTracking';
 @Component({
   selector: 'bean-information',
   templateUrl: './bean-information.component.html',
@@ -114,6 +115,7 @@ export class BeanInformationComponent implements OnInit {
   public async showBeanActions(event): Promise<void> {
     event.stopPropagation();
     event.stopImmediatePropagation();
+    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.POPOVER_ACTIONS);
     const popover = await this.modalController.create({
       component: BeanPopoverActionsComponent,
       componentProps: {bean: this.bean},
@@ -157,15 +159,18 @@ export class BeanInformationComponent implements OnInit {
   }
 
   public async detailBean() {
+    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.DETAIL);
     const modal = await this.modalController.create({component: BeansDetailComponent, id:'bean-detail', componentProps: {bean: this.bean}});
     await modal.present();
     await modal.onWillDismiss();
   }
 
   private async viewPhotos() {
+    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.PHOTO_VIEW);
     await this.uiImage.viewPhotos(this.bean);
   }
   public beansConsumed() {
+    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ARCHIVE);
     this.bean.finished = true;
     this.uiBeanStorage.update(this.bean);
     this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');
@@ -173,6 +178,7 @@ export class BeanInformationComponent implements OnInit {
   }
 
   public async add() {
+    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ADD);
     const modal = await this.modalController.create({component:BeansAddComponent,id:'bean-add'});
     await modal.present();
     await modal.onWillDismiss();
@@ -185,7 +191,7 @@ export class BeanInformationComponent implements OnInit {
     this.beanAction.emit([BEAN_ACTION.EDIT, this.bean]);
   }
   public async editBean() {
-
+    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.EDIT);
     const modal = await this.modalController.create({component:BeansEditComponent, id:'bean-edit',  componentProps: {bean : this.bean}});
     await modal.present();
     await modal.onWillDismiss();
@@ -197,7 +203,7 @@ export class BeanInformationComponent implements OnInit {
       this.uiAlert.showConfirm('DELETE_BEAN_QUESTION', 'SURE_QUESTION', true)
         .then(() => {
             // Yes
-            this.uiAnalytics.trackEvent('BEAN', 'DELETE');
+            this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.DELETE);
             this.__deleteBean();
             this.uiToast.showInfoToast('TOAST_BEAN_DELETED_SUCCESSFULLY');
             this.resetSettings();
@@ -219,7 +225,7 @@ export class BeanInformationComponent implements OnInit {
   }
 
   public async repeatBean() {
-    this.uiAnalytics.trackEvent('BEAN', 'REPEAT');
+    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.REPEAT);
     const modal = await this.modalController.create({component: BeansAddComponent, id:'bean-add', componentProps: {bean_template: this.bean}});
     await modal.present();
     await modal.onWillDismiss();

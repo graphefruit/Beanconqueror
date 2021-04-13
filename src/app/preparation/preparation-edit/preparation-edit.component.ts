@@ -4,7 +4,6 @@ import {Preparation} from '../../../classes/preparation/preparation';
 import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {UIHelper} from '../../../services/uiHelper';
-import {UIAnalytics} from '../../../services/uiAnalytics';
 import {PREPARATION_TYPES} from '../../../enums/preparations/preparationTypes';
 import {UIToast} from '../../../services/uiToast';
 import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
@@ -30,7 +29,6 @@ export class PreparationEditComponent implements OnInit {
                private readonly modalController: ModalController,
                private readonly uiPreparationStorage: UIPreparationStorage,
                private readonly uiHelper: UIHelper,
-               private readonly uiAnalytics: UIAnalytics,
                private readonly uiToast: UIToast,
                private readonly uiAlert: UIAlert,
                private readonly uiPreparationHelper: UIPreparationHelper,
@@ -39,7 +37,6 @@ export class PreparationEditComponent implements OnInit {
   }
 
   public ionViewWillEnter(): void {
-    this.uiAnalytics.trackEvent('PREPARATION', 'EDIT');
 
     if (this.preparation !== undefined) {
       this.data.initializeByObject(this.preparation);

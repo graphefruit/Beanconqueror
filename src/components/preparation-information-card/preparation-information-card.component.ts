@@ -16,7 +16,7 @@ import {UIToast} from '../../services/uiToast';
 import {UIPreparationStorage} from '../../services/uiPreparationStorage';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {UIImage} from '../../services/uiImage';
-
+import PREPARATION_TRACKING from '../../data/tracking/preparationTracking';
 
 @Component({
   selector: 'preparation-information-card',
@@ -99,6 +99,7 @@ export class PreparationInformationCardComponent implements OnInit {
   public async showPreparationActions(event): Promise<void> {
     event.stopPropagation();
     event.stopImmediatePropagation();
+    this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.POPOVER_ACTIONS);
     const popover = await this.modalController.create({
       component: PreparationPopoverActionsComponent,
       id: 'preparation-popover-actions',
@@ -122,6 +123,8 @@ export class PreparationInformationCardComponent implements OnInit {
   }
 
   private async viewPhotos() {
+
+    this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.PHOTO_VIEW);
     await this.uiImage.viewPhotos(this.preparation);
   }
 
@@ -159,6 +162,7 @@ export class PreparationInformationCardComponent implements OnInit {
 
 
   public async customParameters() {
+    this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.CUSTOM_PARAMETERS);
     const modal = await this.modalController.create({component: PreparationCustomParametersComponent,
       componentProps: {preparation: this.preparation},
       id: 'preparation-custom-parameters'
@@ -175,6 +179,7 @@ export class PreparationInformationCardComponent implements OnInit {
   }
 
   public async editPreparation() {
+    this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.EDIT);
     const modal = await this.modalController.create({component: PreparationEditComponent,
       componentProps: {preparation: this.preparation},
       id: 'preparation-edit'
@@ -184,6 +189,7 @@ export class PreparationInformationCardComponent implements OnInit {
   }
 
   public async detail() {
+    this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.DETAIL);
     const modal = await this.modalController.create({component: PreparationDetailComponent, id:'preparation-detail', componentProps: {preparation: this.preparation}});
     await modal.present();
     await modal.onWillDismiss();
@@ -192,7 +198,7 @@ export class PreparationInformationCardComponent implements OnInit {
   public deletePreparation(): void {
     this.uiAlert.showConfirm('DELETE_PREPARATION_METHOD_QUESTION', 'SURE_QUESTION', true).then(() => {
         // Yes
-        this.uiAnalytics.trackEvent('PREPARATION', 'DELETE');
+        this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.DELETE);
         this.__deletePreparation();
         this.uiToast.showInfoToast('TOAST_PREPARATION_DELETED_SUCCESSFULLY');
         this.resetSettings();
@@ -204,6 +210,7 @@ export class PreparationInformationCardComponent implements OnInit {
   }
 
   public archive() {
+    this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.ARCHIVE);
     this.preparation.finished = true;
     this.uiPreparationStorage.update(this.preparation);
     this.uiToast.showInfoToast('TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY');

@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 
 import {ModalController, NavParams} from '@ionic/angular';
 import {UIHelper} from '../../../../services/uiHelper';
-import {UIAnalytics} from '../../../../services/uiAnalytics';
 import {IGreenBean} from '../../../../interfaces/green-bean/iGreenBean';
 import {GREEN_BEAN_ACTION} from '../../../../enums/green-beans/greenBeanAction';
 import {GreenBean} from '../../../../classes/green-bean/green-bean';
@@ -19,8 +18,7 @@ export class GreenBeanPopoverActionsComponent implements OnInit {
 
   constructor(private readonly modalController: ModalController,
               private readonly navParams: NavParams,
-              private readonly uiHelper: UIHelper,
-              private readonly uiAnalytics: UIAnalytics) {
+              private readonly uiHelper: UIHelper) {
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
     const bean: IGreenBean = this.uiHelper.copyData(this.navParams.get('green-bean'));
 
@@ -28,7 +26,6 @@ export class GreenBeanPopoverActionsComponent implements OnInit {
   }
 
   public ionViewDidEnter(): void {
-    this.uiAnalytics.trackEvent('GREEN_BEAN', 'POPOVER_ACTIONS');
   }
 
   public ngOnInit() {

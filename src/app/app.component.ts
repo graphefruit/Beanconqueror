@@ -38,7 +38,12 @@ import {ServerCommunicationService} from '../services/serverCommunication/server
 import {Deeplinks} from '@ionic-native/deeplinks/ngx';
 import {HomePage} from './home/home.page';
 
-
+import BEAN_TRACKING from '../data/tracking/beanTracking';
+import BREW_TRACKING from '../data/tracking/brewTracking';
+import MILL_TRACKING from '../data/tracking/millTracking';
+import PREPARATION_TRACKING from '../data/tracking/preparationTracking';
+import LINK_TRACKING from '../data/tracking/linkTracking';
+import STARTUP_TRACKING from '../data/tracking/startupTracking';
 declare var AppRate;
 
 @Component({
@@ -157,7 +162,8 @@ export class AppComponent implements AfterViewInit {
                 this.uiHelper.isBeanconqurorAppReady().then(async () => {
                   const payloadType = payload.type;
                   try {
-                    this.uiAnalytics.trackEvent('STARTUP', 'FORCE_TOUCH_' + payloadType.toUpperCase());
+                    this.uiAnalytics.trackEvent(STARTUP_TRACKING.TITLE,STARTUP_TRACKING.ACTIONS.FORCE_TOUCH.CATEGORY,
+                      STARTUP_TRACKING.ACTIONS.FORCE_TOUCH.DATA.TYPE, payloadType.toUpperCase());
                     this.uiLog.log(`iOS Device - Home icon was pressed`);
                   } catch (ex) {
                   }
@@ -310,7 +316,11 @@ export class AppComponent implements AfterViewInit {
   private async __checkStartupView() {
     const settings: Settings = this.uiSettingsStorage.getSettings();
     if (settings.startup_view !== STARTUP_VIEW_ENUM.HOME_PAGE) {
-      this.uiAnalytics.trackEvent('STARTUP', 'STARTUP_VIEW_' + settings.startup_view);
+
+      this.uiAnalytics.trackEvent(STARTUP_TRACKING.TITLE,
+        STARTUP_TRACKING.ACTIONS.STARTUP_VIEW.CATEGORY,
+        STARTUP_TRACKING.ACTIONS.STARTUP_VIEW.DATA.TYPE,
+        settings.startup_view);
     }
     switch (settings.startup_view) {
       case STARTUP_VIEW_ENUM.HOME_PAGE:
@@ -397,6 +407,7 @@ export class AppComponent implements AfterViewInit {
   private async __trackNewBrew() {
 
     if (this.uiBrewHelper.canBrew()) {
+      this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.ADD);
       const modal = await this.modalCtrl.create({component: BrewAddComponent, id: 'brew-add'});
       await modal.present();
       await modal.onWillDismiss();
@@ -418,6 +429,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   private async __trackNewBean() {
+    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ADD);
     const modal = await this.modalCtrl.create({
       component: BeansAddComponent, id: 'bean-add',
       componentProps: {hide_toast_message: false}
@@ -428,6 +440,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   private async __trackNewPreparation() {
+    this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.ADD);
     const modal = await this.modalCtrl.create({
       component: PreparationAddComponent,
       showBackdrop: true, id: 'preparation-add', componentProps: {hide_toast_message: false}
@@ -439,6 +452,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   private async __trackNewMill() {
+    this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.ADD);
     const modal = await this.modalCtrl.create({
       component: MillAddComponent,
       cssClass: 'half-bottom-modal', id: 'mill-add', showBackdrop: true, componentProps: {hide_toast_message: false}
@@ -465,15 +479,15 @@ export class AppComponent implements AfterViewInit {
   }
 
   public openGithub() {
-    this.uiAnalytics.trackEvent('LINK','GITHUB');
+    this.uiAnalytics.trackEvent(LINK_TRACKING.TITLE, LINK_TRACKING.ACTIONS.GITHUB);
     this.uiHelper.openExternalWebpage('https://github.com/graphefruit/Beanconqueror');
   }
   public openInstagram() {
-    this.uiAnalytics.trackEvent('LINK','INSTAGRAM');
+    this.uiAnalytics.trackEvent(LINK_TRACKING.TITLE, LINK_TRACKING.ACTIONS.INSTAGRAM);
     this.uiHelper.openExternalWebpage('https://www.instagram.com/beanconqueror/');
   }
   public openFacebook() {
-    this.uiAnalytics.trackEvent('LINK','FACEBOOK');
+    this.uiAnalytics.trackEvent(LINK_TRACKING.TITLE, LINK_TRACKING.ACTIONS.FACEBOOK);
     this.uiHelper.openExternalWebpage('https://www.facebook.com/Beanconqueror/');
   }
 }

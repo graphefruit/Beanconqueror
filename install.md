@@ -82,9 +82,6 @@ npm install @ionic-native/app-version
 ##MultiDex support on Android
 ionic cordova plugin add cordova-plugin-enable-multidex
 
-##FirebaseX
-ionic cordova plugin add cordova-plugin-firebasex --variable FIREBASE_ANALYTICS_COLLECTION_ENABLED=false --variable FIREBASE_PERFORMANCE_COLLECTION_ENABLED=false --variable FIREBASE_CRASHLYTICS_COLLECTION_ENABLED=false
-npm install @ionic-native/firebase-x
 
 ###https://github.com/hughjdavey/ngx-stars
 npm install --save ngx-stars
@@ -133,3 +130,7 @@ npm install @ionic-native/deeplinks
 
 
 https://search.google.com/search-console/not-verified?original_url=/search-console/ownership&original_resource_id
+
+##Ionic Cordova Plugin Adapter X
+ionic cordova plugin add cordova-plugin-androidx-adapter
+ionic cordova plugin add cordova-plugin-androidx

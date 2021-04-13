@@ -4,7 +4,8 @@ import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 import {Preparation} from '../../../classes/preparation/preparation';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
-
+import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
+import SETTINGS_TRACKING from '../../../data/tracking/settingsTracking';
 @Component({
   selector: 'sort-custom-parameter',
   templateUrl: './sort-custom-parameter.component.html',
@@ -43,9 +44,9 @@ export class SortCustomParameterComponent implements OnInit {
 
   public reorder_brew(ev: any, _type: string) {
     if (this.data instanceof Settings) {
-      this.uiAnalytics.trackEvent('SETTINGS', 'REORDER_BREW');
+      this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.REORDER_BREW);
     } else {
-      this.uiAnalytics.trackEvent('PREPARATION', 'REORDER_BREW');
+      this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.REORDER_BREW);
     }
 
     // The `from` and `to` properties contain the index of the item

@@ -27,7 +27,6 @@ export class PhotoPopoverComponent implements OnInit {
 
   }
   public ionViewDidEnter(): void {
-    this.uiAnalytics.trackEvent('PHOTO', 'VIEW');
     this.updateSlider();
 
   }

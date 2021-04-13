@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ModalController, NavParams} from '@ionic/angular';
 import {UIHelper} from '../../../services/uiHelper';
-import {UIAnalytics} from '../../../services/uiAnalytics';
 import {IMill} from '../../../interfaces/mill/iMill';
 import {MILL_ACTION} from '../../../enums/mills/millActions';
 import {Mill} from '../../../classes/mill/mill';
@@ -18,8 +17,7 @@ export class MillPopoverActionsComponent implements OnInit {
 
   constructor(private readonly modalController: ModalController,
               private readonly navParams: NavParams,
-              private readonly uiHelper: UIHelper,
-              private readonly uiAnalytics: UIAnalytics) {
+              private readonly uiHelper: UIHelper) {
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
     const mill: IMill = this.uiHelper.copyData(this.navParams.get('mill'));
 
@@ -27,7 +25,6 @@ export class MillPopoverActionsComponent implements OnInit {
   }
 
   public ionViewDidEnter(): void {
-    this.uiAnalytics.trackEvent('MILL', 'POPOVER_ACTIONS');
   }
 
   public ngOnInit() {

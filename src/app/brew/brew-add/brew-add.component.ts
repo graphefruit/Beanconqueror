@@ -7,7 +7,6 @@ import {UIMillStorage} from '../../../services/uiMillStorage';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {Brew} from '../../../classes/brew/brew';
 import moment from 'moment';
-import {UIAnalytics} from '../../../services/uiAnalytics';
 import {UIToast} from '../../../services/uiToast';
 import {TranslateService} from '@ngx-translate/core';
 import {Geolocation} from '@ionic-native/geolocation/ngx';
@@ -43,7 +42,6 @@ export class BrewAddComponent implements OnInit {
                private readonly uiBrewStorage: UIBrewStorage,
                private readonly uiSettingsStorage: UISettingsStorage,
                private readonly uiMillStorage: UIMillStorage,
-               private readonly uiAnalytics: UIAnalytics,
                private readonly uiToast: UIToast,
                private readonly translate: TranslateService,
                private readonly platform: Platform,
@@ -83,7 +81,6 @@ export class BrewAddComponent implements OnInit {
         );
     }
 
-    this.uiAnalytics.trackEvent('BREW', 'ADD');
     this.getCoordinates(true);
 
 

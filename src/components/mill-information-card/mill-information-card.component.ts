@@ -16,7 +16,7 @@ import {UIMillStorage} from '../../services/uiMillStorage';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {UIAnalytics} from '../../services/uiAnalytics';
 import {UIImage} from '../../services/uiImage';
-
+import MILL_TRACKING from '../../data/tracking/millTracking';
 @Component({
   selector: 'mill-information-card',
   templateUrl: './mill-information-card.component.html',
@@ -96,6 +96,7 @@ export class MillInformationCardComponent implements OnInit {
   }
 
   private async viewPhotos() {
+    this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.PHOTO_VIEW);
     await this.uiImage.viewPhotos(this.mill);
   }
 
@@ -140,7 +141,7 @@ export class MillInformationCardComponent implements OnInit {
     this.millAction.emit([MILL_ACTION.EDIT, this.mill]);
   }
   public async edit() {
-
+    this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.EDIT);
     const editModal = await this.modalController.create({
       component: MillEditComponent,
       componentProps: {mill : this.mill},
@@ -151,6 +152,7 @@ export class MillInformationCardComponent implements OnInit {
   }
 
   public async detail() {
+    this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.DETAIL);
     const modal = await this.modalController.create({component: MillDetailComponent, id:'mill-detail', componentProps: {mill: this.mill}});
     await modal.present();
     await modal.onWillDismiss();
@@ -159,7 +161,7 @@ export class MillInformationCardComponent implements OnInit {
   public delete(): void {
     this.uiAlert.showConfirm('DELETE_MILL_QUESTION', 'SURE_QUESTION', true).then(() => {
         // Yes
-        this.uiAnalytics.trackEvent('MILL', 'DELETE');
+        this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.DELETE);
         this.__deleteMill();
         this.uiToast.showInfoToast('TOAST_MILL_DELETED_SUCCESSFULLY');
         this.resetSettings();
@@ -186,6 +188,7 @@ export class MillInformationCardComponent implements OnInit {
 
 
   public archive() {
+    this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.ARCHIVE);
     this.mill.finished = true;
     this.uiMillStorage.update(this.mill);
     this.uiToast.showInfoToast('TOAST_MILL_ARCHIVED_SUCCESSFULLY');
@@ -195,6 +198,7 @@ export class MillInformationCardComponent implements OnInit {
   public async showMillActions(event): Promise<void> {
     event.stopPropagation();
     event.stopImmediatePropagation();
+    this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.POPOVER_ACTIONS);
     const popover = await this.modalController.create({
       component: MillPopoverActionsComponent,
       componentProps: {mill: this.mill},
