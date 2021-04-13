@@ -36,7 +36,8 @@ export class UIAnalytics {
 
       await this.uiSettings.storageReady();
       this.matomoTracker = Matomo.getTracker();
-      this.matomoTracker.setReferrerUrl('BEANCONQUEROR');
+      this.matomoTracker.setReferrerUrl('https://app.beanconqueror.com');
+      this.matomoTracker.setCustomUrl('https://app.beanconqueror.com');
       resolve();
 
     });
@@ -77,8 +78,8 @@ export class UIAnalytics {
   private __trackPageFB(_pageName: string) {
     try {
       if (this.canTrack) {
-        this.matomoTracker.trackPageView(_pageName);
         this.matomoTracker.setDocumentTitle(_pageName);
+        this.matomoTracker.trackPageView(_pageName);
         this.uiLog.log('SUCCESS - Track Page - ' + _pageName);
       }
     } catch (ex) {
