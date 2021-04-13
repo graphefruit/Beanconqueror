@@ -21,13 +21,12 @@ export class Settings implements ISettings {
   public startup_view: STARTUP_VIEW_ENUM;
 
 
-
+  public matomo_analytics:boolean;
   public manage_parameters: ManageBrewParameter;
   public default_last_coffee_parameters: DefaultBrewParameter;
   public brew_order: OrderBrewParameter;
   public config: Config;
   public language: string;
-  public analytics: boolean;
   public track_brew_coordinates: boolean;
   public fast_brew_repeat: boolean;
 
@@ -82,7 +81,7 @@ export class Settings implements ISettings {
     this.default_last_coffee_parameters = new DefaultBrewParameter();
     this.brew_order = new OrderBrewParameter();
     this.language = '';
-    this.analytics = undefined;
+    this.matomo_analytics = undefined;
 
     this.track_brew_coordinates = false;
     this.fast_brew_repeat = false;

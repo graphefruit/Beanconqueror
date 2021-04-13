@@ -39,7 +39,10 @@ export class WelcomePopoverComponent implements OnInit {
   public ngOnInit() {
   }
 
-  public async agreeAnalytics() {
+  public async understoodAnalytics() {
+    this.settings.matomo_analytics = true;
+    this.uiAnalytics.enableTracking();
+    this.uiSettingsStorage.saveSettings(this.settings);
     this.slide++;
     this.welcomeSlider.slideNext();
   }

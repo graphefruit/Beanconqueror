@@ -18,7 +18,7 @@ declare var Matomo;
 })
 export class UIAnalytics {
 
-  private canTrack: boolean = true;
+  private canTrack: boolean = false;
   private matomoTracker: any = undefined;
 
   constructor(private readonly alertController: AlertController,
@@ -36,11 +36,39 @@ export class UIAnalytics {
 
       await this.uiSettings.storageReady();
       this.matomoTracker = Matomo.getTracker();
-      this.matomoTracker.setReferrerUrl('https://app.beanconqueror.com');
-      this.matomoTracker.setCustomUrl('https://app.beanconqueror.com');
+
+      const settings: Settings = this.uiSettings.getSettings();
+      if (settings.matomo_analytics === true) {
+        this.enableTracking();
+      } else {
+        this.disableTracking();
+      }
       resolve();
 
     });
+  }
+
+
+  public enableTracking() {
+    this.canTrack = true;
+    this.uiLog.log('Tracking enabled');
+    try {
+      this.matomoTracker.setConsentGiven();
+      this.canTrack = true;
+    } catch (ex) {
+      this.uiLog.error(ex.message);
+    }
+  }
+
+  public disableTracking() {
+    this.canTrack = false;
+    this.uiLog.log('Tracking disabled');
+    try {
+      this.matomoTracker.requireConsent();
+      this.canTrack = false;
+    } catch (ex) {
+      this.uiLog.error(ex.message);
+    }
   }
 
   public trackPage(_pageName: string) {

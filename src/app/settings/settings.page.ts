@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
 import {IBean} from '../../interfaces/bean/iBean';
 import {IBrew} from '../../interfaces/brew/iBrew';
-import {AlertController, Platform} from '@ionic/angular';
+import {AlertController, ModalController, Platform} from '@ionic/angular';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {UIStorage} from '../../services/uiStorage';
 import {UIHelper} from '../../services/uiHelper';
@@ -41,6 +41,7 @@ import {Preparation} from '../../classes/preparation/preparation';
 import {GreenBean} from '../../classes/green-bean/green-bean';
 import {RoastingMachine} from '../../classes/roasting-machine/roasting-machine';
 import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
+import {AnalyticsPopoverComponent} from '../../popover/analytics-popover/analytics-popover.component';
 declare var cordova: any;
 declare var device: any;
 
@@ -113,6 +114,7 @@ export class SettingsPage implements OnInit {
               private readonly uiVersionStorage: UiVersionStorage,
               private readonly uiExcel: UIExcel,
               private readonly uiHealthKit: UIHealthKit,
+              private readonly modalCtrl: ModalController
               ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -171,13 +173,16 @@ export class SettingsPage implements OnInit {
     }
   }
 
+
   public saveSettings(): void {
     this.changeDetectorRef.detectChanges();
     this.uiSettingsStorage.saveSettings(this.settings);
   }
 
-  public checkAnalytics(): void {
-
+  public async showAnalyticsInformation() {
+    const modal = await this.modalCtrl.create({component: AnalyticsPopoverComponent, id: AnalyticsPopoverComponent.POPOVER_ID});
+    await modal.present();
+    await modal.onWillDismiss();
   }
 
   public languageChanged(_query): void {
@@ -399,11 +404,19 @@ export class SettingsPage implements OnInit {
       dummyData['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(settingsConst.brew_order);
     }
     SettingsPage.__cleanupImportSettingsData(dummyData['SETTINGS'][0]);
-    this.uiStorage.import(dummyData).then(() => {
-      this.__reinitializeStorages().then(() => {
+
+    this.uiStorage.import(dummyData).then(async () => {
+      this.__reinitializeStorages().then(async () => {
+        this.uiAnalytics.disableTracking();
         this.__initializeSettings();
         this.setLanguage();
-        this.uiAlert.showMessage(this.translate.instant('IMPORT_SUCCESSFULLY'));
+        await this.uiAlert.showMessage(this.translate.instant('IMPORT_SUCCESSFULLY'));
+        console.log(this.settings);
+        if (this.settings.matomo_analytics === undefined) {
+          await this.showAnalyticsInformation();
+        } else {
+          this.uiAnalytics.enableTracking();
+        }
       });
     });
   }
@@ -488,6 +501,7 @@ export class SettingsPage implements OnInit {
       this.uiStorage.import(parsedContent).then(async (_data) => {
         if (_data.BACKUP === false) {
           this.__reinitializeStorages().then(async () => {
+            this.uiAnalytics.disableTracking();
             this.__initializeSettings();
 
 
@@ -515,9 +529,14 @@ export class SettingsPage implements OnInit {
               }
             }
             this.setLanguage();
-            this.uiAlert.showMessage(this.translate.instant('IMPORT_SUCCESSFULLY'));
+            await this.uiAlert.showMessage(this.translate.instant('IMPORT_SUCCESSFULLY'));
 
-
+            console.log(this.settings);
+            if (this.settings.matomo_analytics === undefined) {
+              await this.showAnalyticsInformation();
+            } else {
+              this.uiAnalytics.enableTracking();
+            }
           });
 
         } else {

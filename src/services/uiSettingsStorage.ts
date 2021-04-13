@@ -82,6 +82,9 @@ export class UISettingsStorage extends StorageClass {
       const entries: Array<any> = this.getAllEntries();
       if (entries.length > 0) {
         // We already had some settings here.
+
+        // Issue found - when we add new data types or over import, we need to clean up settings before and then initialize by object
+        this.settings = new Settings();
         this.settings.initializeByObject(entries[0]);
       } else {
         // Take the new settings obj.

@@ -53,9 +53,14 @@
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-label>{{"PAGE_SETTINGS_ANALYTICS_INFORMATION" | translate}}</ion-label>
-        <ion-checkbox (ionChange)="checkAnalytics()" (ngModelChange)="saveSettings();"
-                      [(ngModel)]="settings.analytics"></ion-checkbox>
+        <ion-label>
+          <h2>{{"PAGE_SETTINGS_ANALYTICS_INFORMATION" | translate}}</h2>
+          <p>{{"PAGE_SETTINGS_ANALYTICS_INFORMATION_TOOLTIP" | translate}}</p>
+        </ion-label>
+        <ion-button (click)="showAnalyticsInformation()" tappable color="accent" fill="clear">
+          <ion-icon name="information-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+
       </ion-item>
       <ion-item>
         <ion-label>{{"PAGE_SETTINGS_WAKE_LOCK" | translate}}</ion-label>
