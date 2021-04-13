@@ -84,7 +84,7 @@
     "@types/jasmine": "^3.6.6",
     "@types/jasminewd2": "~2.0.8",
     "@types/node": "^12.20.5",
-    "cordova-android": "^9.0.0",
+    "cordova-android": "^9.1.0",
     "cordova-ios": "^6.1.1",
     "cordova-plugin-androidx": "^3.0.0",
     "cordova-plugin-androidx-adapter": "^1.1.3",
@@ -173,30 +173,33 @@
       },
       "cordova-plugin-androidx-adapter": {},
       "cordova-plugin-androidx": {}
-      },
-      "fttx-phonegap-plugin-barcodescanner": {},
-      "ionic-plugin-deeplinks": {
-        "URL_SCHEME": "com.beanconqueror.com",
-        "DEEPLINK_SCHEME": "https",
-        "DEEPLINK_HOST": "beanconqueror.com",
-        "ANDROID_PATH_PREFIX": "/-",
-        "ANDROID_2_PATH_PREFIX": "/",
-        "ANDROID_3_PATH_PREFIX": "/",
-        "ANDROID_4_PATH_PREFIX": "/",
-        "ANDROID_5_PATH_PREFIX": "/",
-        "DEEPLINK_2_SCHEME": " ",
-        "DEEPLINK_2_HOST": " ",
-        "DEEPLINK_3_SCHEME": " ",
-        "DEEPLINK_3_HOST": " ",
-        "DEEPLINK_4_SCHEME": " ",
-        "DEEPLINK_4_HOST": " ",
-        "DEEPLINK_5_SCHEME": " ",
-        "DEEPLINK_5_HOST": " "
-      }
+    },
+    "fttx-phonegap-plugin-barcodescanner": {},
+    "ionic-plugin-deeplinks": {
+      "URL_SCHEME": "com.beanconqueror.com",
+      "DEEPLINK_SCHEME": "https",
+      "DEEPLINK_HOST": "beanconqueror.com",
+      "ANDROID_PATH_PREFIX": "/-",
+      "ANDROID_2_PATH_PREFIX": "/",
+      "ANDROID_3_PATH_PREFIX": "/",
+      "ANDROID_4_PATH_PREFIX": "/",
+      "ANDROID_5_PATH_PREFIX": "/",
+      "DEEPLINK_2_SCHEME": " ",
+      "DEEPLINK_2_HOST": " ",
+      "DEEPLINK_3_SCHEME": " ",
+      "DEEPLINK_3_HOST": " ",
+      "DEEPLINK_4_SCHEME": " ",
+      "DEEPLINK_4_HOST": " ",
+      "DEEPLINK_5_SCHEME": " ",
+      "DEEPLINK_5_HOST": " "
     },
     "platforms": [
       "android",
       "ios"
     ]
-  }
+  },
+  "platforms": [
+    "android",
+    "ios"
+  ]
 }
