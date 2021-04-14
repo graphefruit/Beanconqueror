@@ -114,7 +114,7 @@ export class GreenBeansPage implements OnInit {
 
     const modal = await this.modalCtrl.create({
       component: GreenBeanFilterComponent,
-      cssClass: 'bottom-modal',
+      cssClass: 'popover-actions',
       showBackdrop: true,
       backdropDismiss: true,
       swipeToClose: true,
