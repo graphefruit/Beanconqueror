@@ -41,8 +41,8 @@ import PREPARATION_TRACKING from '../data/tracking/preparationTracking';
 import LINK_TRACKING from '../data/tracking/linkTracking';
 import STARTUP_TRACKING from '../data/tracking/startupTracking';
 import {AnalyticsPopoverComponent} from '../popover/analytics-popover/analytics-popover.component';
-declare var AppRate;
 
+declare var AppRate;
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -413,7 +413,6 @@ export class AppComponent implements AfterViewInit {
 
     const settings = this.uiSettingsStorage.getSettings();
     const matomo_analytics: boolean = settings.matomo_analytics;
-
     if (matomo_analytics === undefined) {
       const modal = await this.modalCtrl.create({component: AnalyticsPopoverComponent, id: AnalyticsPopoverComponent.POPOVER_ID});
       await modal.present();
@@ -457,7 +456,10 @@ export class AppComponent implements AfterViewInit {
   }
 
   private __registerBack() {
+
+
     this.platform.backButton.subscribeWithPriority(0, () => {
+      // NAvigation handler
       if (this.router.url.indexOf('/home') === -1 && this.routerOutlet && this.routerOutlet.canGoBack()) {
         this.routerOutlet.pop();
       } else if (this.router.url.indexOf('/home') >= 0) {
