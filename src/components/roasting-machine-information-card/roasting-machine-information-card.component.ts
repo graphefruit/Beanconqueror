@@ -149,13 +149,11 @@ export class RoastingMachineInformationCardComponent implements OnInit {
   }
 
   private __delete(): void {
-    /// \TODO remove all beans with this
     const beans: Array<Bean> = this.uiBeanHelper.getAllRoastedBeansForRoastingMachine(this.roastingMachine.config.uuid);
     for (const bean of beans) {
       bean.bean_roast_information.roaster_machine = '';
       this.uiBeanStorage.update(bean);
     }
-
     this.uiRoastingMachineStorage.removeByObject(this.roastingMachine);
   }
   public getRoastQuantity(): number {

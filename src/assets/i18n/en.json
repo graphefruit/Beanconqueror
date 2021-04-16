@@ -72,6 +72,7 @@
   "PAGE_STATISTICS_DRUNKEN_BREWS": "Total number of brews",
   "PAGE_STATISTICS_BREW_PROCESSES": "Total brews",
   "PAGE_STATISTICS_DRUNKEN_QUANTITY": "Consumed quantity",
+  "PAGE_STATISTICS_BEAN_WEIGHT_USED": "Ground beans total",
   "PAGE_BREW_TEXT_INFORMATION_FROM_ROASTER": "Roaster information",
   "PAGE_ABOUT_NO_VERSION_AVAILABLE": "No Version Available",
   "PAGE_ABOUT_APP_VERSION": "App Version",
@@ -300,7 +301,7 @@
   "PAGE_PREPARATION_LIST_NO_ARCHIVED_PREPARATION_EXISTING": "You did not yet archive any preparation.",
   "TOAST_BREW_ADDED_SUCCESSFULLY": "Brew added successfully",
   "TOAST_BREW_REPEATED_SUCCESSFULLY": "Brew repeated successfully",
-  "TOAST_BEAN_ADDED_SUCCESSFULLY": "Bean description added successfully",
+  "TOAST_BEAN_ADDED_SUCCESSFULLY": "Bean added successfully",
   "TOAST_MILL_ADDED_SUCCESSFULLY": "Grinder added successfully",
   "TOAST_PREPARATION_ADDED_SUCCESSFULLY": "Preparation method added successfully",
 
@@ -608,7 +609,7 @@
         "HUMIDITY": "Humidity",
         "FIRST_CRACK_MINUTE": "First crack Minute",
         "FIRST_CRACK_TEMPERATURE": "First crack Temperatur",
-        "SECOND_CRACK_TEMPERATURE": "Second Crack Temperatur",
+        "SECOND_CRACK_TEMPERATURE": "Second crack Temperatur",
         "SECOND_CRACK_MINUTE": "Second crack Minute"
       }
     }
@@ -623,8 +624,11 @@
   "TRANSFER_ROAST": "Roast",
   "BEAN_TAB_LINKED_ROASTS": "Roast",
   "BEAN_DATA_WEIGHT_AFTER_ROASTING": "Weight after roasting",
-  "TOAST_ROASTING_MACHINE_ADDED_SUCCESSFULLY": "Roaster added",
-  "TOAST_ROASTING_MACHINE_EDITED_SUCCESSFULLY": "Roaster edited",
+  "TOAST_GREEN_BEAN_ADDED_SUCCESSFULLY": "Green bean added",
+  "TOAST_GREEN_BEAN_EDITED_SUCCESSFULLY": "Green bean edited",
+  "TOAST_GREEN_BEAN_ARCHIVED_SUCCESSFULLY": "Green bean archived",
+  "TOAST_ROASTING_MACHINE_ADDED_SUCCESSFULLY": "Roasting machine added",
+  "TOAST_ROASTING_MACHINE_EDITED_SUCCESSFULLY": "Roasting machine edited",
   "TOAST_ROASTING_MACHINE_ARCHIVED_SUCCESSFULLY": "Roaster archived",
   "DELETE_ROASTING_MACHINE_QUESTION": "Delete roaster with all beans?",
   "TOAST_ROASTING_MACHINE_DELETED_SUCCESSFULLY": "Roaster deleted",
@@ -645,5 +649,6 @@
   "TOAST_BREW_FAVOURITE_ADDED":"Favourite added",
   "TOAST_BREW_FAVOURITE_REMOVED":"Favourite removed",
   "BREW_FILTER_JUST_FAVOURITE": "Favourites",
-  "STATISTICS_PREPARATION_USAGES": "Preparation usages"
+  "STATISTICS_PREPARATION_USAGES": "Preparation usages",
+  "STATISTICS_PREPARATION_TIMELINE_USAGES": "Usage history of preparations"
 }
