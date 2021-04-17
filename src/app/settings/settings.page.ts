@@ -27,7 +27,7 @@ import {Subject} from 'rxjs';
 import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
 import {UIAnalytics} from '../../services/uiAnalytics';
 
-import BeanconquerorSettingsDummy from '../../assets/BeanconquerorDummy.json';
+import BeanconquerorSettingsDummy from '../../assets/BeanconquerorTestData.json';
 import {ISettings} from '../../interfaces/settings/iSettings';
 import {Bean} from '../../classes/bean/bean';
 /** Third party */
