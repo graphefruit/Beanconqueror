@@ -128,6 +128,7 @@ import {LongPressDirective} from '../../directive/long-press.directive';
 import {ImpressumComponent} from '../info/impressum/impressum.component';
 import {CookieComponent} from '../info/cookie/cookie.component';
 import {FilesystemErrorPopoverComponent} from '../../popover/filesystem-error-popover/filesystem-error-popover.component';
+import {AnalyticsPopoverComponent} from '../../popover/analytics-popover/analytics-popover.component';
 
 @NgModule({
   declarations: [
@@ -155,6 +156,7 @@ import {FilesystemErrorPopoverComponent} from '../../popover/filesystem-error-po
     CustomPopoverComponent,
     FilesystemErrorPopoverComponent,
     WelcomePopoverComponent,
+    AnalyticsPopoverComponent,
     UpdatePopoverComponent,
     DatetimePopoverComponent,
     CreditsComponent,
@@ -262,6 +264,7 @@ import {FilesystemErrorPopoverComponent} from '../../popover/filesystem-error-po
     CustomPopoverComponent,
     FilesystemErrorPopoverComponent,
     WelcomePopoverComponent,
+    AnalyticsPopoverComponent,
     UpdatePopoverComponent,
     DatetimePopoverComponent,
     CreditsComponent,
@@ -382,6 +385,7 @@ import {FilesystemErrorPopoverComponent} from '../../popover/filesystem-error-po
     CustomPopoverComponent,
     FilesystemErrorPopoverComponent,
     WelcomePopoverComponent,
+    AnalyticsPopoverComponent,
     UpdatePopoverComponent,
     DatetimePopoverComponent,
     CreditsComponent,

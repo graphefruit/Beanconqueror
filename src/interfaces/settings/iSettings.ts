@@ -17,7 +17,7 @@ export interface ISettings {
   manage_parameters: IBrewParameter;
   default_last_coffee_parameters: IBrewParameter;
   brew_order: IOrderBrewParameter;
-  analytics: boolean;
+  matomo_analytics: boolean;
   track_brew_coordinates: boolean;
   fast_brew_repeat: boolean;
 

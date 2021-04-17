@@ -70,7 +70,12 @@ export class PreparationInformationCardComponent implements OnInit {
     const relatedBrews: Array<Brew> = this.uiPreparationHelper.getAllBrewsForThisPreparation(this.preparation.config.uuid);
     let drunkenQuantity: number = 0;
     for (const brew of relatedBrews) {
-      drunkenQuantity += brew.brew_quantity;
+      if (brew.brew_beverage_quantity > 0) {
+        drunkenQuantity += brew.brew_beverage_quantity;
+      } else {
+        drunkenQuantity += brew.brew_quantity;
+      }
+
     }
     return drunkenQuantity / 1000;
   }

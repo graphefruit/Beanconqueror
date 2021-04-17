@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 
 
 import {ModalController} from '@ionic/angular';
@@ -23,6 +23,7 @@ import {Settings} from '../../classes/settings/settings';
 import {GREEN_BEAN_ACTION} from '../../enums/green-beans/greenBeanAction';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
 import GREEN_BEAN_TRACKING from '../../data/tracking/greenBeanTracking';
+import {NgxStarsComponent} from 'ngx-stars';
 
 @Component({
   selector: 'green-bean-information',
@@ -33,6 +34,7 @@ export class GreenBeanInformationComponent implements OnInit {
   @Input() public greenBean: GreenBean;
 
   @Output() public greenBeanAction: EventEmitter<any> = new EventEmitter();
+  @ViewChild('greenBeanRating', {read: NgxStarsComponent, static: false}) public greenBeanRating: NgxStarsComponent;
 
   constructor(private readonly uiBeanHelper: UIBeanHelper,
               private readonly uiGreenBeanStorage: UIGreenBeanStorage,
@@ -48,12 +50,26 @@ export class GreenBeanInformationComponent implements OnInit {
 
 
   }
-
-
   public ngOnInit() {
 
   }
+  public ngAfterViewInit() {
+    this.resetRenderingRating();
+  }
+  public ngOnChanges() {
+    this.resetRenderingRating();
+  }
 
+  private resetRenderingRating() {
+    setTimeout(() => {
+      // Timeout needed because of ngif not rendering
+
+      if (this.greenBeanRating && this.greenBean.rating !== 0) {
+        this.greenBeanRating.setRating(this.greenBean.rating);
+      }
+    },250);
+
+  }
 
 
   public daysOld(): number {
@@ -157,7 +173,7 @@ export class GreenBeanInformationComponent implements OnInit {
     this.uiAnalytics.trackEvent(GREEN_BEAN_TRACKING.TITLE, GREEN_BEAN_TRACKING.ACTIONS.ARCHIVE);
     this.greenBean.finished = true;
     this.uiGreenBeanStorage.update(this.greenBean);
-    this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');
+    this.uiToast.showInfoToast('TOAST_GREEN_BEAN_ARCHIVED_SUCCESSFULLY');
     this.resetSettings();
   }
 

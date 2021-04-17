@@ -53,9 +53,11 @@
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-label>{{"PAGE_SETTINGS_ANALYTICS_INFORMATION" | translate}}</ion-label>
-        <ion-checkbox (ionChange)="checkAnalytics()" (ngModelChange)="saveSettings();"
-                      [(ngModel)]="settings.analytics"></ion-checkbox>
+        <ion-label>
+          <h2>{{"PAGE_SETTINGS_ANALYTICS_INFORMATION" | translate}}</h2>
+          <p>{{"PAGE_SETTINGS_ANALYTICS_INFORMATION_TOOLTIP" | translate}}</p>
+        </ion-label>
+          <ion-icon (click)="showAnalyticsInformation()" tappable name="information-outline"></ion-icon>
       </ion-item>
       <ion-item>
         <ion-label>{{"PAGE_SETTINGS_WAKE_LOCK" | translate}}</ion-label>
@@ -80,15 +82,15 @@
     </ion-card-content>
       </ion-card>
 
-  <ion-card class="margin-top-20" *ngIf="false">
+  <ion-card class="margin-top-20">
     <ion-card-content>
       <ion-card-title>{{"PAGE_SETTINGS_MANAGE_SECTIONS" | translate}}</ion-card-title>
-      <ion-item>
+      <ion-item lines="none">
         <ion-label>{{"PAGE_SETTINGS_SHOW_ROASTING_SECTION" | translate}}</ion-label>
         <ion-checkbox (ngModelChange)="saveSettings();"
                       [(ngModel)]="settings.show_roasting_section"></ion-checkbox>
       </ion-item>
-      <ion-item >
+      <ion-item  *ngIf="false">>
         <ion-label>{{"PAGE_SETTINGS_SHOW_CUPPING_SECTION" | translate}}</ion-label>
         <ion-checkbox (ngModelChange)="saveSettings();"
                       [(ngModel)]="settings.show_cupping_section"></ion-checkbox>

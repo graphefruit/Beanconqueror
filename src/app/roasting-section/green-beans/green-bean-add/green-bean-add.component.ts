@@ -11,6 +11,7 @@ import {IBeanInformation} from '../../../../interfaces/bean/iBeanInformation';
 import {GreenBean} from '../../../../classes/green-bean/green-bean';
 
 import {UIGreenBeanStorage} from '../../../../services/uiGreenBeanStorage';
+import {UIToast} from '../../../../services/uiToast';
 
 @Component({
   selector: 'green-bean-add',
@@ -30,7 +31,8 @@ export class GreenBeanAddComponent implements OnInit {
                private readonly uiGreenBeanStorage: UIGreenBeanStorage,
                private readonly uiImage: UIImage,
                public uiHelper: UIHelper,
-               private readonly uiFileHelper: UIFileHelper) {
+               private readonly uiFileHelper: UIFileHelper,
+               private readonly uiToast: UIToast) {
     this.green_bean_template = this.navParams.get('green_bean_template');
   }
 
@@ -59,6 +61,7 @@ export class GreenBeanAddComponent implements OnInit {
   public __addBean(): void {
 
     this.uiGreenBeanStorage.add(this.data);
+    this.uiToast.showInfoToast('TOAST_GREEN_BEAN_ADDED_SUCCESSFULLY');
     this.dismiss();
   }
 
