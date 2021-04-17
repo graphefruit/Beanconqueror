@@ -1,5 +1,4 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {Mill} from '../../../classes/mill/mill';
 import {Settings} from '../../../classes/settings/settings';
 import {ModalController} from '@ionic/angular';
 import {UIAlert} from '../../../services/uiAlert';

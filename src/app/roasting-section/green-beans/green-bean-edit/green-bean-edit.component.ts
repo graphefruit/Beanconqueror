@@ -59,7 +59,7 @@ export class GreenBeanEditComponent implements OnInit {
   }
   private __editBean(): void {
     this.uiGreenBeanStorage.update(this.data);
-    this.uiToast.showInfoToast('TOAST_BEAN_EDITED_SUCCESSFULLY');
+    this.uiToast.showInfoToast('TOAST_GREEN_BEAN_EDITED_SUCCESSFULLY');
     this.dismiss();
   }
 

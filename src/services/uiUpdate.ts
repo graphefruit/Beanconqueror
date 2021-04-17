@@ -214,6 +214,13 @@ export class UIUpdate {
           settings_v2.resetFilter();
           this.uiSettingsStorage.saveSettings(settings_v2);
           break;
+        case 'UPDATE_3':
+          const settings_v3:any = this.uiSettingsStorage.getSettings();
+          // Delete old analytics property
+          delete settings_v3.analytics;
+          console.log(settings_v3);
+          this.uiSettingsStorage.saveSettings(settings_v3);
+          break;
         default:
           break;
       }
@@ -258,7 +265,7 @@ export class UIUpdate {
     this.uiLog.info('Check updates');
     this.__checkUpdateForDataVersion('UPDATE_1');
     this.__checkUpdateForDataVersion('UPDATE_2');
-
+    this.__checkUpdateForDataVersion('UPDATE_3');
   }
 
 

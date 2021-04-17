@@ -128,6 +128,7 @@ import {LongPressDirective} from '../../directive/long-press.directive';
 import {ImpressumComponent} from '../info/impressum/impressum.component';
 import {CookieComponent} from '../info/cookie/cookie.component';
 import {FilesystemErrorPopoverComponent} from '../../popover/filesystem-error-popover/filesystem-error-popover.component';
+import {AnalyticsPopoverComponent} from '../../popover/analytics-popover/analytics-popover.component';
 import {Deeplinks} from '@ionic-native/deeplinks/ngx';
 
 
@@ -157,6 +158,7 @@ import {Deeplinks} from '@ionic-native/deeplinks/ngx';
     CustomPopoverComponent,
     FilesystemErrorPopoverComponent,
     WelcomePopoverComponent,
+    AnalyticsPopoverComponent,
     UpdatePopoverComponent,
     DatetimePopoverComponent,
     CreditsComponent,
@@ -264,6 +266,7 @@ import {Deeplinks} from '@ionic-native/deeplinks/ngx';
     CustomPopoverComponent,
     FilesystemErrorPopoverComponent,
     WelcomePopoverComponent,
+    AnalyticsPopoverComponent,
     UpdatePopoverComponent,
     DatetimePopoverComponent,
     CreditsComponent,
@@ -385,6 +388,7 @@ import {Deeplinks} from '@ionic-native/deeplinks/ngx';
     CustomPopoverComponent,
     FilesystemErrorPopoverComponent,
     WelcomePopoverComponent,
+    AnalyticsPopoverComponent,
     UpdatePopoverComponent,
     DatetimePopoverComponent,
     CreditsComponent,

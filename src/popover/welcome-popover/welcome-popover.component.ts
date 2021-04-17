@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {IonSlides, ModalController} from '@ionic/angular';
+import {IonSlides, ModalController, Platform} from '@ionic/angular';
 import {BeansAddComponent} from '../../app/beans/beans-add/beans-add.component';
 import {PreparationAddComponent} from '../../app/preparation/preparation-add/preparation-add.component';
 import {MillAddComponent} from '../../app/mill/mill-add/mill-add.component';
@@ -27,19 +27,31 @@ export class WelcomePopoverComponent implements OnInit {
 
   private readonly settings: Settings;
 
-
+  private disableHardwareBack;
   constructor(private readonly modalController: ModalController,
               private readonly uiAnalytics: UIAnalytics,
-              private readonly uiSettingsStorage: UISettingsStorage) {
+              private readonly uiSettingsStorage: UISettingsStorage,
+              private readonly platform: Platform) {
     this.settings = this.uiSettingsStorage.getSettings();
 
 
   }
 
   public ngOnInit() {
+    try {
+      this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(9999, (processNextHandler) => {
+        // Don't do anything.
+      });
+    }catch (ex) {
+
+    }
+
   }
 
-  public async agreeAnalytics() {
+  public async understoodAnalytics() {
+    this.settings.matomo_analytics = true;
+    this.uiAnalytics.enableTracking();
+    this.uiSettingsStorage.saveSettings(this.settings);
     this.slide++;
     this.welcomeSlider.slideNext();
   }
@@ -84,6 +96,12 @@ export class WelcomePopoverComponent implements OnInit {
   }
 
   public finish() {
+    try{
+      this.disableHardwareBack.unsubscribe();
+    } catch(ex) {
+
+    }
+
     this.modalController.dismiss({
       dismissed: true
     }, undefined, 'welcome-popover');

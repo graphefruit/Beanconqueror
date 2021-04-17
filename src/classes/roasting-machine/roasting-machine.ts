@@ -18,6 +18,7 @@ export class RoastingMachine implements IRoastingMachine {
     this.config = new Config();
     this.attachments = [];
     this.finished = false;
+    this.attachments.push('https://maxbean.de/wp-content/uploads/2020/11/10-primavera_front.png');
   }
   public initializeByObject(roastingMachineObj: IRoastingMachine): void {
     Object.assign(this, roastingMachineObj);
