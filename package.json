@@ -180,7 +180,7 @@
         "URL_SCHEME": "com.beanconqueror.com",
         "DEEPLINK_SCHEME": "https",
         "DEEPLINK_HOST": "beanconqueror.com",
-        "ANDROID_PATH_PREFIX": "/-"
+        "ANDROID_PATH_PREFIX": "/app/roaster/bean"
       }
     },
     "platforms": [

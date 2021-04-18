@@ -33,7 +33,7 @@
                     <action android:name="android.intent.action.VIEW" />
                     <category android:name="android.intent.category.DEFAULT" />
                     <category android:name="android.intent.category.BROWSABLE" />
-                    <data android:host="beanconqueror.com" android:pathPrefix="/-" android:scheme="https" />
+                    <data android:host="beanconqueror.com" android:pathPrefix="/app/roaster/bean" android:scheme="https" />
                 </intent-filter>
             </activity>
         </edit-file>
@@ -235,8 +235,9 @@
         <variable name="FIT_API_VERSION" value="19.0.0" />
     </plugin>
     <universal-links>
+        <ios-team-id value="1Q2WER3TY" />
         <host name="beanconqueror.com">
-            <path url="/" />
+            <path event="openRoasterBeans" url="/app/roaster/bean*" />
         </host>
     </universal-links>
 </widget>
