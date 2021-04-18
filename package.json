@@ -26,7 +26,7 @@
     "@ionic-native/app-version": "^5.31.1",
     "@ionic-native/camera": "^5.31.1",
     "@ionic-native/core": "^5.31.1",
-    "@ionic-native/deeplinks": "^5.32.0",
+    "@ionic-native/deeplinks": "^5.32.1",
     "@ionic-native/file": "^5.31.1",
     "@ionic-native/file-chooser": "^5.31.1",
     "@ionic-native/file-path": "^5.31.1",
@@ -172,26 +172,16 @@
         "PLAY_CORE_VERSION": "1.+"
       },
       "cordova-plugin-androidx-adapter": {},
-      "cordova-plugin-androidx": {}
-    },
-    "fttx-phonegap-plugin-barcodescanner": {},
-    "ionic-plugin-deeplinks": {
-      "URL_SCHEME": "com.beanconqueror.com",
-      "DEEPLINK_SCHEME": "https",
-      "DEEPLINK_HOST": "beanconqueror.com",
-      "ANDROID_PATH_PREFIX": "/-",
-      "ANDROID_2_PATH_PREFIX": "/",
-      "ANDROID_3_PATH_PREFIX": "/",
-      "ANDROID_4_PATH_PREFIX": "/",
-      "ANDROID_5_PATH_PREFIX": "/",
-      "DEEPLINK_2_SCHEME": " ",
-      "DEEPLINK_2_HOST": " ",
-      "DEEPLINK_3_SCHEME": " ",
-      "DEEPLINK_3_HOST": " ",
-      "DEEPLINK_4_SCHEME": " ",
-      "DEEPLINK_4_HOST": " ",
-      "DEEPLINK_5_SCHEME": " ",
-      "DEEPLINK_5_HOST": " "
+      "cordova-plugin-androidx": {},
+      "fttx-phonegap-plugin-barcodescanner": {
+        "ANDROID_SUPPORT_V4_VERSION": "27.+"
+      },
+      "ionic-plugin-deeplinks": {
+        "URL_SCHEME": "com.beanconqueror.com",
+        "DEEPLINK_SCHEME": "https",
+        "DEEPLINK_HOST": "beanconqueror.com",
+        "ANDROID_PATH_PREFIX": "/-"
+      }
     },
     "platforms": [
       "android",

@@ -258,7 +258,10 @@ export class SettingsPage implements OnInit {
   }
 
 
-  public export(): void {
+  public async export() {
+
+    await this.uiAlert.showLoadingSpinner();
+
     this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.EXPORT);
     this.uiStorage.export().then((_data) => {
       this.uiHelper.exportJSON('Beanconqueror.json', JSON.stringify(_data)).then(async (_fileEntry: FileEntry) => {
@@ -272,6 +275,7 @@ export class SettingsPage implements OnInit {
           await this._exportAttachments(brews);
           await this._exportAttachments(preparations);
           await this._exportAttachments(mills);
+          await this.uiAlert.hideLoadingSpinner();
           const alert =  await this.alertCtrl.create({
             header: this.translate.instant('DOWNLOADED'),
             subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {fileName: _fileEntry.name}),
@@ -279,12 +283,17 @@ export class SettingsPage implements OnInit {
           });
           await alert.present();
         } else {
+          await this.uiAlert.hideLoadingSpinner();
           this.socialSharing.share(undefined, undefined, _fileEntry.nativeURL);
           // We don't support image export yet, because
         }
 
+      }, async () => {
+        await this.uiAlert.hideLoadingSpinner();
       });
 
+    },async () => {
+      await this.uiAlert.hideLoadingSpinner();
     });
 
   }
@@ -455,7 +464,7 @@ export class SettingsPage implements OnInit {
   }
 
 
-  private __importJSON(_content: string,_importPath: string) {
+  private async __importJSON(_content: string,_importPath: string) {
     const parsedContent = JSON.parse(_content);
 
     const isIOS: boolean = this.platform.is('ios');
@@ -497,13 +506,12 @@ export class SettingsPage implements OnInit {
         parsedContent['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(settingsConst.brew_order);
       }
 
-
+      await this.uiAlert.showLoadingSpinner();
       this.uiStorage.import(parsedContent).then(async (_data) => {
         if (_data.BACKUP === false) {
           this.__reinitializeStorages().then(async () => {
             this.uiAnalytics.disableTracking();
             this.__initializeSettings();
-
 
             if (!isIOS) {
               const brewsData:Array<Brew> = this.uiBrewStorage.getAllEntries();
@@ -529,21 +537,24 @@ export class SettingsPage implements OnInit {
               }
             }
             this.setLanguage();
+            await this.uiAlert.hideLoadingSpinner();
             await this.uiAlert.showMessage(this.translate.instant('IMPORT_SUCCESSFULLY'));
-
-            console.log(this.settings);
             if (this.settings.matomo_analytics === undefined) {
               await this.showAnalyticsInformation();
             } else {
               this.uiAnalytics.enableTracking();
             }
+          }, async () => {
+            await this.uiAlert.hideLoadingSpinner();
           });
 
         } else {
+          await this.uiAlert.hideLoadingSpinner();
           this.uiAlert.showMessage(this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED'));
         }
 
-      }, () => {
+      }, async () => {
+        await this.uiAlert.hideLoadingSpinner();
         this.uiAlert.showMessage(this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED'));
       });
 

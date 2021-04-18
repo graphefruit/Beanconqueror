@@ -131,7 +131,8 @@ export class StatisticPage implements OnInit {
       const prepObj:any = {
         label: datasets[i].LABEL,
         data: datasets[i].DATA,
-        backgroundColor: colorArray[i]
+        borderColor: colorArray[i],
+        backgroundColor: 'transparent',
       };
       data.datasets.push(prepObj);
     }
