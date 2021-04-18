@@ -36,7 +36,12 @@ export class WelcomePopoverComponent implements OnInit {
 
 
   }
-
+  private __triggerUpdate() {
+    // Fix, specialy on new devices which will see 2 update screens, the slider was white
+    setTimeout(() => {
+      this.welcomeSlider.update();
+    });
+  }
   public ngOnInit() {
     try {
       this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(9999, (processNextHandler) => {
@@ -53,17 +58,23 @@ export class WelcomePopoverComponent implements OnInit {
     this.uiAnalytics.enableTracking();
     this.uiSettingsStorage.saveSettings(this.settings);
     this.slide++;
+
     this.welcomeSlider.slideNext();
+    this.__triggerUpdate();
   }
 
   public skip() {
+
     this.slide++;
     this.welcomeSlider.slideNext();
+    this.__triggerUpdate();
   }
 
   public next() {
+
     this.slide++;
     this.welcomeSlider.slideNext();
+    this.__triggerUpdate();
   }
 
   public async addBean() {

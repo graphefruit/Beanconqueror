@@ -42,6 +42,12 @@ import {GreenBean} from '../../classes/green-bean/green-bean';
 import {RoastingMachine} from '../../classes/roasting-machine/roasting-machine';
 import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
 import {AnalyticsPopoverComponent} from '../../popover/analytics-popover/analytics-popover.component';
+import {UIRoastingMachineStorage} from '../../services/uiRoastingMachineStorage';
+import {UIGreenBeanStorage} from '../../services/uiGreenBeanStorage';
+import {IPreparation} from '../../interfaces/preparation/iPreparation';
+import {IGreenBean} from '../../interfaces/green-bean/iGreenBean';
+import {IRoastingMachine} from '../../interfaces/roasting-machine/iRoastingMachine';
+import {IMill} from '../../interfaces/mill/iMill';
 declare var cordova: any;
 declare var device: any;
 
@@ -63,23 +69,15 @@ export class SettingsPage implements OnInit {
   public isHealthSectionAvailable: boolean = false;
 
 
-  private static __cleanupImportBeanData(_data: Array<IBean>): any {
+  private static __cleanupAttachmentData(_data: Array<IBean | IBrew | IMill | IPreparation | IGreenBean | IRoastingMachine>): any {
     if (_data !== undefined && _data.length > 0) {
-      for (const bean of _data) {
-        delete bean['filePath'];
-        bean.attachments = [];
+      for (const obj of _data) {
+        obj.attachments = [];
       }
     }
 
   }
 
-  private static __cleanupImportBrewData(_data: Array<IBrew>): void {
-    if (_data !== undefined && _data.length > 0) {
-      for (const brew of _data) {
-        brew.attachments = [];
-      }
-    }
-  }
 
   private static __cleanupImportSettingsData(_data: ISettings | any): void {
     // We need to remove the filter because of new data here.
@@ -114,7 +112,9 @@ export class SettingsPage implements OnInit {
               private readonly uiVersionStorage: UiVersionStorage,
               private readonly uiExcel: UIExcel,
               private readonly uiHealthKit: UIHealthKit,
-              private readonly modalCtrl: ModalController
+              private readonly modalCtrl: ModalController,
+              private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
+              private readonly uiGreenBeanStorage: UIGreenBeanStorage
               ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -420,7 +420,6 @@ export class SettingsPage implements OnInit {
         this.__initializeSettings();
         this.setLanguage();
         await this.uiAlert.showMessage(this.translate.instant('IMPORT_SUCCESSFULLY'));
-        console.log(this.settings);
         if (this.settings.matomo_analytics === undefined) {
           await this.showAnalyticsInformation();
         } else {
@@ -487,8 +486,14 @@ export class SettingsPage implements OnInit {
       parsedContent[this.uiSettingsStorage.getDBPath()]) {
 
       if (isIOS){
-        SettingsPage.__cleanupImportBeanData(parsedContent[this.uiBeanStorage.getDBPath()]);
-        SettingsPage.__cleanupImportBrewData(parsedContent[this.uiBrewStorage.getDBPath()]);
+        SettingsPage.__cleanupAttachmentData(parsedContent[this.uiBeanStorage.getDBPath()]);
+        SettingsPage.__cleanupAttachmentData(parsedContent[this.uiBrewStorage.getDBPath()]);
+
+        SettingsPage.__cleanupAttachmentData(parsedContent[this.uiRoastingMachineStorage.getDBPath()]);
+        SettingsPage.__cleanupAttachmentData(parsedContent[this.uiGreenBeanStorage.getDBPath()]);
+        SettingsPage.__cleanupAttachmentData(parsedContent[this.uiPreparationStorage.getDBPath()]);
+        SettingsPage.__cleanupAttachmentData(parsedContent[this.uiMillStorage.getDBPath()]);
+
       }
       SettingsPage.__cleanupImportSettingsData(parsedContent[this.uiSettingsStorage.getDBPath()]);
 

@@ -272,14 +272,14 @@
   "MORE_INFORMATION": "More information",
   "UNDERSTOOD": "Understood",
   "WELCOME_PAGE_ACTIVATE_ANALYTICS_TITLE": "Analytics & Tracking",
-  "WELCOME_PAGE_ACTIVATE_ANALYTICS_DESCRIPTION": "We’d like to continuously improve the app, the website and our future services for you. To do so, we need to track some data how you use the app and its features. But we promise, we will never track any personal data. To ensure these promises, we use Matomo a data-security and privacy focused open source service which is hosted on our own server - this makes sure, that only we have the data ownership.\nOur website provides all information about the parameters we track and furthermore you can check the source code which is 100% open source.\n\nYou have questions? Then feel free to contact us.",
+  "WELCOME_PAGE_ACTIVATE_ANALYTICS_DESCRIPTION": "We’d like to continuously improve the app, the website and our future services for you. To do so, we need to track some data how you use the app and its features. But we promise, we will never track any personal data. To ensure these promises, we use Matomo a data-security and privacy focused open source service which is hosted on our own server - this makes sure, that only we have the data ownership. Our website provides all information about the parameters we track and furthermore you can check the source code which is 100% open source. You have questions? Then feel free to contact us.",
   "ANALYTICS_INFORMATION_TITLE": "Analytics & Tracking",
-  "ANALYTICS_INFORMATION_DESCRIPTION": "As you know, the security of your data and your privacy is our top priority. For this reason, we have switched from Google Analytics to the data-security and privacy focused open source service Matomo which is hosted on our own server - this means, that we have the full data ownership. The tracked parameters haven’t changed, and we still promise that we will never track any personal data. Our website provides all information about the parameters we track and furthermore you can check the source code which is 100% open source.\n\nYou have questions? Then feel free to contact us.",
+  "ANALYTICS_INFORMATION_DESCRIPTION": "As you know, the security of your data and your privacy is our top priority.<br/><br/>For this reason, we have switched from Google Analytics to the data-security and privacy focused open source service Matomo which is hosted on our own server - this means, that we have the full data ownership.<br/><br/>The tracked parameters haven’t changed, and we still promise that we will never track any personal data.<br/><br/>Our website provides all information about the parameters we track and furthermore you can check the source code which is 100% open source.<br/><br/>You have questions?<br/><br/>Then feel free to contact us.",
   "ACTIVATE": "Activate",
   "DO_NOT_ACTIVE": "Don't activate",
-  "WELCOME_PAGE_BEAN_TITLE": "Bean description",
-  "WELCOME_PAGE_BEAN_DESCRIPTION": "Brewing coffee with beans is kind of tricky. Please add your first bean description to get started!",
-  "WELCOME_PAGE_BEAN_ADD": "Add bean description",
+  "WELCOME_PAGE_BEAN_TITLE": "Bean",
+  "WELCOME_PAGE_BEAN_DESCRIPTION": "Brewing coffee with beans is kind of tricky. Please add your first bean to get started!",
+  "WELCOME_PAGE_BEAN_ADD": "Add bean",
   "SKIP": "Skip",
   "WELCOME_PAGE_PREPARATION_TITLE": "Preparation method",
   "WELCOME_PAGE_PREPARATION_DESCRIPTION": "V60, Aeropress, Porta Filter - there are many ways to prepare coffee. Pleas add at least one.",
@@ -288,7 +288,7 @@
   "WELCOME_PAGE_MILL_DESCRIPTION": "Almost done, but you need something to grind your beans! Please add at least one grinder.",
   "WELCOME_PAGE_MILL_ADD": "Add grinder",
   "WELCOME_PAGE_TITLE": "Welcome!",
-  "WELCOME_PAGE_BEAN_HEADLINE": "First bean description",
+  "WELCOME_PAGE_BEAN_HEADLINE": "First bean",
   "WELCOME_PAGE_PREPARATION_HEADLINE": "Add preparation method",
   "WELCOME_PAGE_MILL_HEADLINE": "First Grinder",
   "WELCOME_PAGE_LETS_START_HEADLINE": "Now we get going!",
@@ -307,11 +307,11 @@
   "TOAST_MILL_ADDED_SUCCESSFULLY": "Grinder added successfully",
   "TOAST_PREPARATION_ADDED_SUCCESSFULLY": "Preparation method added successfully",
   "TOAST_BREW_DELETED_SUCCESSFULLY": "Brew has been deleted",
-  "TOAST_BEAN_DELETED_SUCCESSFULLY": "Bean description has been deleted",
+  "TOAST_BEAN_DELETED_SUCCESSFULLY": "Bean has been deleted",
   "TOAST_MILL_DELETED_SUCCESSFULLY": "Grinder has been deleted",
   "TOAST_PREPARATION_DELETED_SUCCESSFULLY": "Preparation method has been deleted",
   "TOAST_BREW_EDITED_SUCCESSFULLY": "Brew has been edited",
-  "TOAST_BEAN_EDITED_SUCCESSFULLY": "Bean description has been edited",
+  "TOAST_BEAN_EDITED_SUCCESSFULLY": "Bean has been edited",
   "TOAST_MILL_EDITED_SUCCESSFULLY": "Grinder has been edited",
   "TOAST_PREPARATION_EDITED_SUCCESSFULLY": "Preparation has been edited",
   "TOAST_BEAN_ARCHIVED_SUCCESSFULLY": "Bean has been archived",
@@ -588,7 +588,7 @@
       "EDIT": "Edit",
       "DETAIL": "Greenbean Details",
       "ROASTABLE": "Roastable",
-      "NO_ROASTS_YET": "No rosts yet"
+      "NO_ROASTS_YET": "No roasts yet"
     },
     "BEAN": {
       "DROP_TEMPERATURE": "Final temperature of roast",
@@ -598,9 +598,9 @@
       "OUTSIDE_TEMPERATURE": "Weather temperature",
       "HUMIDITY": "Humidity",
       "FIRST_CRACK_MINUTE": "First crack Minute",
-      "FIRST_CRACK_TEMPERATURE": "First crack Temperatur",
-      "SECOND_CRACK_MINUTE": "Second crack Minute",
-      "SECOND_CRACK_TEMPERATURE": "Second crack Temperatur",
+      "FIRST_CRACK_TEMPERATURE": "First crack temperatur",
+      "SECOND_CRACK_MINUTE": "Second crack minute",
+      "SECOND_CRACK_TEMPERATURE": "Second crack temperatur",
       "PLACE_HOLDER": {
         "DROP_TEMPERATURE": "Final temperature of roast",
         "ROAST_LENGTH": "Roast length",
@@ -608,10 +608,10 @@
         "GREEN_BEAN_WEIGHT": "Greenbean weight",
         "OUTSIDE_TEMPERATURE": "Weather temperature",
         "HUMIDITY": "Humidity",
-        "FIRST_CRACK_MINUTE": "First crack Minute",
-        "FIRST_CRACK_TEMPERATURE": "First crack Temperatur",
-        "SECOND_CRACK_TEMPERATURE": "Second crack Temperatur",
-        "SECOND_CRACK_MINUTE": "Second crack Minute"
+        "FIRST_CRACK_MINUTE": "First crack minute",
+        "FIRST_CRACK_TEMPERATURE": "First crack temperatur",
+        "SECOND_CRACK_TEMPERATURE": "Second crack temperatur",
+        "SECOND_CRACK_MINUTE": "Second crack minute"
       }
     }
   },
@@ -651,5 +651,6 @@
   "TOAST_BREW_FAVOURITE_REMOVED":"Favourite removed",
   "BREW_FILTER_JUST_FAVOURITE": "Favourites",
   "STATISTICS_PREPARATION_USAGES": "Preparation usages",
-  "STATISTICS_PREPARATION_TIMELINE_USAGES": "Usage history of preparations"
+  "STATISTICS_PREPARATION_TIMELINE_USAGES": "Usage history of preparations",
+  "ACCEPT": "Accept"
 }
