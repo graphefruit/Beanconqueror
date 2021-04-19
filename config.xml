@@ -26,6 +26,10 @@
     <preference name="StatusBarStyle" value="light" />
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
     <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
+    <preference name="URL_SCHEME" value="com.beanconqueror.app" />
+    <preference name="DEEPLINK_SCHEME" value="https" />
+    <preference name="DEEPLINK_HOST" value="com.beanconqueror.app" />
+    <preference default="/app/roaster/bean" name="ANDROID_PATH_PREFIX" />
     <platform name="android">
         <edit-file file="app/src/main/AndroidManifest.xml" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
             <activity android:label="webIntentFilter" android:name="com.beanconqueror.app">
@@ -235,7 +239,7 @@
         <variable name="FIT_API_VERSION" value="19.0.0" />
     </plugin>
     <universal-links>
-        <ios-team-id value="1Q2WER3TY" />
+        <ios-team-id value="W8B7XY7WGY" />
         <host name="beanconqueror.com">
             <path event="openRoasterBeans" url="/app/roaster/bean*" />
         </host>

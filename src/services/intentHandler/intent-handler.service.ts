@@ -15,16 +15,21 @@ export class IntentHandlerService {
               private readonly deeplinks: Deeplinks) { }
 
   public attachOnHandleOpenUrl() {
+
+    // https://github.com/ionic-team/ionic-plugin-deeplinks/issues/243 - to be done
     this.deeplinks.route( {
-      '/app/roaster/bean': InfoComponent
+      '/app/roaster/bean?:beanid': 'ROASTER_BEAN'
     }).subscribe((match) => {
         // match.$route - the route we matched, which is the matched entry from the arguments to route()
         // match.$args - the args passed in the link
         // match.$link - the full link data
+      alert('matched');
         console.log('Successfully matched route', match);
       },
       (nomatch) => {
         // nomatch.$link - the full link data
+        alert('not matched');
+        alert(nomatch.$link);
         console.error('Got a deeplink that didn\'t match', nomatch);
       });
     (window['handleOpenURL']) = (_url) => {
