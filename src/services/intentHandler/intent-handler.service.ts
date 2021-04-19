@@ -23,13 +23,13 @@ export class IntentHandlerService {
         // match.$route - the route we matched, which is the matched entry from the arguments to route()
         // match.$args - the args passed in the link
         // match.$link - the full link data
-      alert('matched');
+     // alert('matched');
         console.log('Successfully matched route', match);
       },
       (nomatch) => {
         // nomatch.$link - the full link data
-        alert('not matched');
-        alert(nomatch.$link);
+       // alert('not matched');
+        //alert(nomatch.$link);
         console.error('Got a deeplink that didn\'t match', nomatch);
       });
     (window['handleOpenURL']) = (_url) => {

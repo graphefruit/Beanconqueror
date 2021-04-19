@@ -652,5 +652,6 @@
   "BREW_FILTER_JUST_FAVOURITE": "Favourites",
   "STATISTICS_PREPARATION_USAGES": "Preparation usages",
   "STATISTICS_PREPARATION_TIMELINE_USAGES": "Usage history of preparations",
+  "STATISTICS_GRINDER_TIMELINE_USAGES": "Usage history of grinder",
   "ACCEPT": "Accept"
 }

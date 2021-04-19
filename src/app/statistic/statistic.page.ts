@@ -10,6 +10,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {UIBrewHelper} from '../../services/uiBrewHelper';
 import {UIPreparationStorage} from '../../services/uiPreparationStorage';
 import Gradient from 'javascript-color-gradient';
+import {UIMillStorage} from '../../services/uiMillStorage';
 @Component({
   selector: 'statistic',
   templateUrl: './statistic.page.html',
@@ -22,12 +23,15 @@ export class StatisticPage implements OnInit {
   @ViewChild('preparationUsageChart', {static: false}) public preparationUsageChart;
   @ViewChild('grindingChart', {static: false}) public grindingChart;
   @ViewChild('preparationUsageTimelineChart', {static: false}) public preparationUsageTimelineChart;
+  @ViewChild('grinderUsageTimelineChart', {static: false}) public grinderUsageTimelineChart;
+
 
   constructor(
     public uiStatistic: UIStatistic,
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiHelper: UIHelper,
+    private readonly uiMillStorage: UIMillStorage,
     private translate: TranslateService
   ) {
 
@@ -40,6 +44,7 @@ export class StatisticPage implements OnInit {
     this.__loadPreparationUsageChart();
     this.__loadGrindingChart();
     this.__loadPreparationUsageTimelineChart();
+    this.__loadGrinderUsageTimelineChart();
   }
 
   public ngOnInit() {
@@ -81,6 +86,83 @@ export class StatisticPage implements OnInit {
 
   }
 
+
+  private __loadGrinderUsageTimelineChart(): void {
+    const brewEntries: Array<Brew> = this.uiBrewStorage.getAllEntries();
+    const brewView: Array<BrewView> = this.__getBrewsSortedForMonth();
+    // Take the last 12 Months
+    const lastBrewViews: Array<BrewView> = brewView.slice(-12);
+
+    const grinderIds:Array<string> = Array.from(new Set(brewEntries.map((e:Brew) => e.mill)));
+
+    const data = {
+      labels: [],
+      datasets: [
+      ]
+    };
+
+    const datasets = [];
+
+    for (const forBrew of lastBrewViews) {
+      data.labels.push(forBrew.title);
+      for (const id of grinderIds) {
+        const foundDataset = datasets.filter((e)=>e.UUID === id);
+        if (foundDataset[0]) {
+          foundDataset[0].DATA.push(forBrew.brews.filter((e:Brew)=>e.mill === id).length);
+        } else {
+          const newDataObj:any = {
+            UUID: id,
+            DATA: [],
+            LABEL: this.uiMillStorage.getMillNameByUUID(id),
+          };
+
+          datasets.push(newDataObj);
+        }
+
+      }
+
+    }
+
+    const colorGradient = new Gradient();
+    const color1 = '#3F2CAF';
+    const color2 = '#e9446a';
+    const color3 = '#edc988';
+    const color4 = '#607D8B';
+
+    colorGradient.setMidpoint(datasets.length);
+    colorGradient.setGradient(color1, color2, color3, color4);
+
+    const colorArray = colorGradient.getArray();
+    for (let i=0;i<datasets.length;i++) {
+      const prepObj:any = {
+        label: datasets[i].LABEL,
+        data: datasets[i].DATA,
+        borderColor: colorArray[i],
+        backgroundColor: 'transparent',
+      };
+      data.datasets.push(prepObj);
+    }
+
+    const chartOptions = {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        title: {
+          display: true,
+          text: ''
+        }
+      }
+    };
+
+    const grindingChartToDismiss = new Chart(this.grinderUsageTimelineChart.nativeElement, {
+      type: 'line',
+      data: data,
+      options: chartOptions
+    });
+
+  }
   private __loadPreparationUsageTimelineChart(): void {
     const brewEntries: Array<Brew> = this.uiBrewStorage.getAllEntries();
     const brewView: Array<BrewView> = this.__getBrewsSortedForMonth();

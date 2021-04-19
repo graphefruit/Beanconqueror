@@ -22,7 +22,12 @@
       <canvas #drinkingChart></canvas>
     </ion-card-content>
   </ion-card>
-
+  <ion-card>
+    <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">{{"PAGE_STATISTICS_BEAN_WEIGHT_USED" | translate}} (g)</ion-card-header>
+    <ion-card-content class="ion-margin-top">
+      <canvas #grindingChart></canvas>
+    </ion-card-content>
+  </ion-card>
   <ion-card>
     <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">{{"STATISTICS_PREPARATION_USAGES" | translate}}
     </ion-card-header>
@@ -30,7 +35,6 @@
       <canvas #preparationUsageChart></canvas>
     </ion-card-content>
   </ion-card>
-
   <ion-card>
     <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">{{"STATISTICS_PREPARATION_TIMELINE_USAGES" | translate}}</ion-card-header>
     <ion-card-content class="ion-margin-top">
@@ -38,11 +42,12 @@
     </ion-card-content>
   </ion-card>
   <ion-card>
-    <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">{{"PAGE_STATISTICS_BEAN_WEIGHT_USED" | translate}} (g)</ion-card-header>
+    <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">{{"STATISTICS_GRINDER_TIMELINE_USAGES" | translate}}</ion-card-header>
     <ion-card-content class="ion-margin-top">
-      <canvas #grindingChart></canvas>
+      <canvas #grinderUsageTimelineChart></canvas>
     </ion-card-content>
   </ion-card>
+
 
 
   <ion-row>
