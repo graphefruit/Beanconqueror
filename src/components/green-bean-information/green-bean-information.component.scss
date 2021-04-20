@@ -54,6 +54,7 @@
   ::ng-deep img {
     width: 100%;
     height: auto;
+    max-height: 140px;
     display: block;
     object-fit: contain;
   }
