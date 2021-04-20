@@ -507,4 +507,9 @@ export class AppComponent implements AfterViewInit {
     this.uiAnalytics.trackEvent(LINK_TRACKING.TITLE, LINK_TRACKING.ACTIONS.FACEBOOK);
     this.uiHelper.openExternalWebpage('https://www.facebook.com/Beanconqueror/');
   }
+  public openDonatePage(){
+    this.uiAnalytics.trackEvent(LINK_TRACKING.TITLE, LINK_TRACKING.ACTIONS.BUY_ME_A_COFFEE);
+    this.uiHelper.openExternalWebpage('https://www.buymeacoffee.com/beanconqueror');
+
+  }
 }

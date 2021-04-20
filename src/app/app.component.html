@@ -66,6 +66,9 @@
               <ion-button (click)="openGithub()" tappable color="accent" fill="clear" >
                 <ion-icon name="logo-github" slot="icon-only"></ion-icon>
               </ion-button>
+              <ion-button (click)="openDonatePage()" tappable color="accent" fill="clear" >
+                <ion-icon style="position:relative;top:-2px;" name="beanconqueror-love" slot="icon-only"></ion-icon>
+              </ion-button>
             </ion-label>
           </ion-item>
           <ion-item (click)="dismiss()" [class.active]="pages.info.active" [routerLink]="[pages.info.url]"
