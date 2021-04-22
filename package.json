@@ -177,7 +177,7 @@
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
       },
       "ionic-plugin-deeplinks": {
-        "URL_SCHEME": "com.beanconqueror.app",
+        "URL_SCHEME": "beanconqueror",
         "DEEPLINK_SCHEME": "https",
         "DEEPLINK_HOST": "beanconqueror.com",
         "ANDROID_PATH_PREFIX": "/app/roaster/bean"

@@ -126,7 +126,7 @@ ionic cordova plugin add https://github.com/fttx/phonegap-plugin-barcodescanner.
 // ionic cordova plugin add cordova-plugin-customurlscheme --variable URL_SCHEME=beanconqueror
 
 
-ionic cordova plugin add ionic-plugin-deeplinks --variable URL_SCHEME=com.beanconqueror.app --variable DEEPLINK_SCHEME=https --variable DEEPLINK_HOST=beanconqueror.com --variable ANDROID_PATH_PREFIX=/app/roaster/bean
+ionic cordova plugin add ionic-plugin-deeplinks --variable URL_SCHEME=beanconqueror --variable DEEPLINK_SCHEME=https --variable DEEPLINK_HOST=beanconqueror.com --variable ANDROID_PATH_PREFIX=/app/roaster/bean
 npm install @ionic-native/deeplinks
 
 
@@ -135,3 +135,6 @@ https://search.google.com/search-console/not-verified?original_url=/search-conso
 ##Ionic Cordova Plugin Adapter X
 ionic cordova plugin add cordova-plugin-androidx-adapter
 ionic cordova plugin add cordova-plugin-androidx
+
+
+

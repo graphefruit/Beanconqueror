@@ -359,7 +359,7 @@ import {Deeplinks} from '@ionic-native/deeplinks/ngx';
     InAppBrowser, File, Globalization,
     Geolocation,
     Insomnia,
-    Deeplinks
+    Deeplinks,
   ],
 
   exports: [

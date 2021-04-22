@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {UIHelper} from '../uiHelper';
 import {Deeplinks} from '@ionic-native/deeplinks/ngx';
 import {InfoComponent} from '../../app/info/info.component';
+import {UILog} from '../uiLog';
 declare var window;
 @Injectable({
   providedIn: 'root'
@@ -12,51 +13,48 @@ export class IntentHandlerService {
     ADD_BEAN_ONLINE: 'ADD_BEAN_ONLINE'
   };
   constructor(private readonly uiHelper: UIHelper,
-              private readonly deeplinks: Deeplinks) { }
+              private readonly deeplinks: Deeplinks,
+              private readonly uiLog: UILog) { }
 
   public attachOnHandleOpenUrl() {
 
     // https://github.com/ionic-team/ionic-plugin-deeplinks/issues/243 - to be done
     this.deeplinks.route( {
-      '/app/roaster/bean?:beanid': 'ROASTER_BEAN'
-    }).subscribe((match) => {
-        // match.$route - the route we matched, which is the matched entry from the arguments to route()
-        // match.$args - the args passed in the link
-        // match.$link - the full link data
-     // alert('matched');
-        console.log('Successfully matched route', match);
+      '/NO_LINK_EVER_WILL_WORK_HERE/':  '/NO_LINK_EVER_WILL_WORK_HERE/'
+  }).subscribe((match) => {
+      // The plugin has some issues, therefore we use success and error case and hope for better times
+        this.uiLog.log('Deeplink matched');
+        this.handleDeepLink(match.$link);
       },
       (nomatch) => {
-        // nomatch.$link - the full link data
-       // alert('not matched');
-        //alert(nomatch.$link);
-        console.error('Got a deeplink that didn\'t match', nomatch);
+        this.uiLog.log('Deeplink not matched');
+        this.handleDeepLink(nomatch.$link);
       });
-    (window['handleOpenURL']) = (_url) => {
-      this.uiHelper.isBeanconqurorAppReady().then(async () => {
 
+  }
+  private handleDeepLink(_matchLink) {
+    try {
+      this.uiHelper.isBeanconqurorAppReady().then(() => {
+        const url: string = _matchLink.url;
 
-        this.handleIntentFromUrl(_url);
-        setTimeout(()  => {
-
-          alert('received url11: ' + _url);
-        }, 0);
-
+        this.uiLog.log('Handle deeplink:' + url);
+        if (url.indexOf('https://beanconqueror.com/app/roaster/bean?') === 0) {
+          const onlineBeanId: number = Number(_matchLink.queryString);
+          this.addBeanFromServer(onlineBeanId);
+        } else if (url.indexOf('beanconqueror://ADD_BEAN_ONLINE?')) {
+          const onlineBeanId: number = Number(_matchLink.queryString);
+          this.addBeanFromServer(onlineBeanId);
+        }
       });
+    }catch (ex) {
 
     }
+
   }
 
-  public handleIntentFromUrl(_url) {
-    const internalCall = _url.replace('beanconqueror://', '');
-      if(internalCall.startsWith(IntentHandlerService.SUPPORTED_INTENTS.ADD_BEAN_ONLINE)) {
-        const onlineBeanId: number = Number(internalCall.replace(IntentHandlerService.SUPPORTED_INTENTS.ADD_BEAN_ONLINE + '=',''));
-        this.addBeanFromServer(onlineBeanId);
-      }
-  }
 
-  private addBeanFromServer(_beanId:number) {
-
+  private addBeanFromServer(_beanId: number) {
+    this.uiLog.log('Load bean informatiomn from server:' + _beanId);
   }
 
 }

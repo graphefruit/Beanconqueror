@@ -34,9 +34,7 @@ import {UiVersionStorage} from '../services/uiVersionStorage';
 import {UIGreenBeanStorage} from '../services/uiGreenBeanStorage';
 import {UIRoastingMachineStorage} from '../services/uiRoastingMachineStorage';
 import {IntentHandlerService} from '../services/intentHandler/intent-handler.service';
-import {ServerCommunicationService} from '../services/serverCommunication/server-communication.service';
-import {Deeplinks} from '@ionic-native/deeplinks/ngx';
-import {HomePage} from './home/home.page';
+
 
 import BEAN_TRACKING from '../data/tracking/beanTracking';
 import BREW_TRACKING from '../data/tracking/brewTracking';
@@ -106,9 +104,7 @@ export class AppComponent implements AfterViewInit {
     private readonly uiVersionStorage: UiVersionStorage,
     private readonly uiGreenBeanStorage: UIGreenBeanStorage,
     private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
-    private readonly intentHandlerService: IntentHandlerService,
-    private readonly serverCommunication: ServerCommunicationService,
-    private readonly deepLinks: Deeplinks
+    private readonly intentHandlerService: IntentHandlerService
   ) {
   }
 
@@ -119,10 +115,8 @@ export class AppComponent implements AfterViewInit {
   }
 
   public ngAfterViewInit(): void {
-
     this.uiLog.log('Platform ready, init app');
     this.__appReady();
-    // Copy in all the js code from the script.js. Typescript will complain but it works just fine
   }
 
 
@@ -130,22 +124,12 @@ export class AppComponent implements AfterViewInit {
     this.menu.close();
   }
 
-
   private __appReady(): void {
     this.platform.ready()
       .then(async () => {
 
-        this.deepLinks.routeWithNavController(this.router, {
-          '/': HomePage,
-        }).subscribe((match) => {
-          console.log('Successfully routed', match);
-        }, (nomatch) => {
-          console.warn('Unmatched Route', nomatch);
-        });
-
         // Okay, so the platform is ready and our plugins are available.
         // Here you can do any higher level native things you might need.
-        this.serverCommunication.getBeanInformation();
         // #7
         this.statusBar.show();
         this.statusBar.styleDefault();
