@@ -75,8 +75,8 @@ export class UISettingsStorage extends StorageClass {
     return promise;
   }
 
-  public reinitializeStorage(): void {
-    super.reinitializeStorage();
+  public async reinitializeStorage() {
+    await super.reinitializeStorage();
 
     super.storageReady().then(() => {
       const entries: Array<any> = this.getAllEntries();

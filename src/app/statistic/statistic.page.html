@@ -9,102 +9,166 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-card>
-    <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">{{"PAGE_STATISTICS_BREW_PROCESSES" | translate}}</ion-card-header>
-    <ion-card-content class="ion-margin-top">
-      <canvas #brewChart></canvas>
-    </ion-card-content>
-  </ion-card>
+  <ion-segment scrollable="true" [(ngModel)]="segment" class="ion-padding-vertical" style="width:100%;padding-top:0px;">
+    <ion-segment-button value="GENERAL">
+      <ion-label>{{"STATISTIC_TAB_GENERAL" | translate }}
+      </ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="BREWS" (click)="loadBrewCharts()">
+      <ion-label>{{"STATISTIC_TAB_BREWS" | translate }}
+      </ion-label>
+    </ion-segment-button>
+    <ion-segment-button *ngIf="false"  value="BEANS" (click)="loadBeanCharts()">
+      <ion-label>{{"STATISTIC_TAB_BEANS" | translate }}
+      </ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="PREPARATIONS"  (click)="loadPreparationCharts()">
+      <ion-label>{{"STATISTIC_TAB_PREPARATIONS" | translate }}
+      </ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="GRINDERS"  (click)="loadGrinderCharts()">
+      <ion-label>{{"STATISTIC_TAB_GRINDERS" | translate }}
+      </ion-label>
+    </ion-segment-button>
+  </ion-segment>
 
-  <ion-card>
-    <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">{{"PAGE_STATISTICS_DRUNKEN_QUANTITY" | translate}} (kg | l)</ion-card-header>
-    <ion-card-content class="ion-margin-top">
-      <canvas #drinkingChart></canvas>
-    </ion-card-content>
-  </ion-card>
-  <ion-card>
-    <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">{{"PAGE_STATISTICS_BEAN_WEIGHT_USED" | translate}} (g)</ion-card-header>
-    <ion-card-content class="ion-margin-top">
-      <canvas #grindingChart></canvas>
-    </ion-card-content>
-  </ion-card>
-  <ion-card>
-    <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">{{"STATISTICS_PREPARATION_USAGES" | translate}}
-    </ion-card-header>
-    <ion-card-content class="ion-margin-top">
-      <canvas #preparationUsageChart></canvas>
-    </ion-card-content>
-  </ion-card>
-  <ion-card>
-    <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">{{"STATISTICS_PREPARATION_TIMELINE_USAGES" | translate}}</ion-card-header>
-    <ion-card-content class="ion-margin-top">
-      <canvas #preparationUsageTimelineChart></canvas>
-    </ion-card-content>
-  </ion-card>
-  <ion-card>
-    <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">{{"STATISTICS_GRINDER_TIMELINE_USAGES" | translate}}</ion-card-header>
-    <ion-card-content class="ion-margin-top">
-      <canvas #grinderUsageTimelineChart></canvas>
-    </ion-card-content>
-  </ion-card>
+  <div [ngSwitch]="segment">
+    <div *ngSwitchCase="'GENERAL'">
+      <ion-row>
+        <ion-col class="ion-text-center" size="6">
+          <ion-card class="small-card" style="height: 100%;">
+            <ion-card-header class="card-background" style="font-size: 1.2em;">{{uiStatistic.getMillsCount()}}
+            </ion-card-header>
+            <ion-card-content>
+              {{"NAV_MILL" | translate}}
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col class="ion-text-center" size="6">
+          <ion-card class="small-card" style="height: 100%;">
+            <ion-card-header class="card-background" style="font-size: 1.2em;">{{uiStatistic.getPreparationsCount()}}
+            </ion-card-header>
+            <ion-card-content>
+              {{"PAGE_STATISTICS_DIFFERENT_PREPARATION_METHOD" | translate}}
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col class="ion-text-center" size="6">
+          <ion-card class="small-card" style="height: 100%;">
+            <ion-card-header class="card-background" style="font-size: 1.2em;">{{uiStatistic.getTotalGround() | number : '.0-2'}}&nbsp;kg
+            </ion-card-header>
+            <ion-card-content>
+              {{"PAGE_STATISTICS_TOTAL_GROUND_BEANS" | translate}}
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col class="ion-text-center" size="6">
+          <ion-card class="small-card" style="height: 100%;">
+            <ion-card-header class="card-background"
+                             style="font-size: 1.2em;">{{uiStatistic.getSpentMoneyForCoffeeBeans() | number : '.0-2'}}&nbsp;€
+            </ion-card-header>
+            <ion-card-content>
+              {{"PAGE_STATISTICS_MONEY_SPENT_FOR_COFFEE" | translate}}
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col class="ion-text-center" size="6">
+          <ion-card class="small-card" style="height: 100%;">
+            <ion-card-header class="card-background" style="font-size: 1.2em;">{{uiStatistic.getBrewsDrunk() | number : '.0'}}
+            </ion-card-header>
+            <ion-card-content>
+              {{"PAGE_STATISTICS_DRUNKEN_BREWS" | translate}}
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col class="ion-text-center" size="6">
+          <ion-card class="small-card" style="height: 100%;">
+            <ion-card-header class="card-background" style="font-size: 1.2em;">{{uiStatistic.getTotalDrunk() | number : '.0-2'}}
+            </ion-card-header>
+            <ion-card-content>
+              {{"PAGE_STATISTICS_DRUNKEN_QUANTITY" | translate}} (kg | l)
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col class="ion-text-center" size="6">
+          <ion-card class="small-card" style="height: 100%;">
+            <ion-card-header class="card-background" style="font-size: 1.2em;">{{uiStatistic.brewedTime() | number : '.0'}}
+            </ion-card-header>
+            <ion-card-content>
+              {{"PAGE_STATISTICS_BREW_TIME" | translate}} (min)
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col class="ion-text-center" size="6">
+          <ion-card class="small-card" style="height: 100%;">
+            <ion-card-header class="card-background" style="font-size: 1.2em;">{{uiStatistic.photosTaken() | number : '.0'}}
+            </ion-card-header>
+            <ion-card-content>
+              {{"PAGE_STATISTICS_PHOTOS_TAKEN" | translate}}
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </div>
+    <div *ngSwitchCase="'BREWS'">
+      <ion-card>
+        <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">{{"PAGE_STATISTICS_BREW_PROCESSES" | translate}}</ion-card-header>
+        <ion-card-content class="ion-margin-top">
+          <canvas #brewChart></canvas>
+        </ion-card-content>
+      </ion-card>
+      <ion-card>
+        <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">{{"PAGE_STATISTICS_BREW_PER_DAYPROCESSES" | translate}}</ion-card-header>
+        <ion-card-content class="ion-margin-top">
+          <canvas #brewsPerDayChart></canvas>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card>
+        <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">{{"PAGE_STATISTICS_DRUNKEN_QUANTITY" | translate}} (kg | l)</ion-card-header>
+        <ion-card-content class="ion-margin-top">
+          <canvas #drinkingChart></canvas>
+        </ion-card-content>
+      </ion-card>
+    </div>
+    <div *ngSwitchCase="'BEANS'">
+    </div>
+    <div *ngSwitchCase="'PREPARATIONS'">
+      <ion-card>
+        <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">{{"STATISTICS_PREPARATION_USAGES" | translate}}
+        </ion-card-header>
+        <ion-card-content class="ion-margin-top">
+          <canvas #preparationUsageChart></canvas>
+        </ion-card-content>
+      </ion-card>
+      <ion-card>
+        <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">{{"STATISTICS_PREPARATION_TIMELINE_USAGES" | translate}}</ion-card-header>
+        <ion-card-content class="ion-margin-top">
+          <canvas #preparationUsageTimelineChart></canvas>
+        </ion-card-content>
+      </ion-card>
+    </div>
+    <div *ngSwitchCase="'GRINDERS'">
+      <ion-card>
+        <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">{{"PAGE_STATISTICS_BEAN_WEIGHT_USED" | translate}} (g)</ion-card-header>
+        <ion-card-content class="ion-margin-top">
+          <canvas #grindingChart></canvas>
+        </ion-card-content>
+      </ion-card>
+      <ion-card>
+        <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">{{"STATISTICS_GRINDER_TIMELINE_USAGES" | translate}}</ion-card-header>
+        <ion-card-content class="ion-margin-top">
+          <canvas #grinderUsageTimelineChart></canvas>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
 
 
 
-  <ion-row>
-    <ion-col class="ion-text-center" size="6">
-      <ion-card class="small-card" style="height: 100%;">
-        <ion-card-header class="card-background" style="font-size: 1.2em;">{{uiStatistic.getMillsCount()}}
-        </ion-card-header>
-        <ion-card-content>
-          {{"NAV_MILL" | translate}}
-        </ion-card-content>
-      </ion-card>
-    </ion-col>
-    <ion-col class="ion-text-center" size="6">
-      <ion-card class="small-card" style="height: 100%;">
-        <ion-card-header class="card-background" style="font-size: 1.2em;">{{uiStatistic.getPreparationsCount()}}
-        </ion-card-header>
-        <ion-card-content>
-          {{"PAGE_STATISTICS_DIFFERENT_PREPARATION_METHOD" | translate}}
-        </ion-card-content>
-      </ion-card>
-    </ion-col>
-    <ion-col class="ion-text-center" size="6">
-      <ion-card class="small-card" style="height: 100%;">
-        <ion-card-header class="card-background" style="font-size: 1.2em;">{{uiStatistic.getTotalGround() | number : '.0-2'}}&nbsp;kg
-        </ion-card-header>
-        <ion-card-content>
-          {{"PAGE_STATISTICS_TOTAL_GROUND_BEANS" | translate}}
-        </ion-card-content>
-      </ion-card>
-    </ion-col>
-    <ion-col class="ion-text-center" size="6">
-      <ion-card class="small-card" style="height: 100%;">
-        <ion-card-header class="card-background"
-                         style="font-size: 1.2em;">{{uiStatistic.getSpentMoneyForCoffeeBeans() | number : '.0-2'}}&nbsp;€
-        </ion-card-header>
-        <ion-card-content>
-          {{"PAGE_STATISTICS_MONEY_SPENT_FOR_COFFEE" | translate}}
-        </ion-card-content>
-      </ion-card>
-    </ion-col>
-    <ion-col class="ion-text-center" size="6">
-      <ion-card class="small-card" style="height: 100%;">
-        <ion-card-header class="card-background" style="font-size: 1.2em;">{{uiStatistic.getBrewsDrunk() | number : '.0'}}
-        </ion-card-header>
-        <ion-card-content>
-          {{"PAGE_STATISTICS_DRUNKEN_BREWS" | translate}}
-        </ion-card-content>
-      </ion-card>
-    </ion-col>
-    <ion-col class="ion-text-center" size="6">
-      <ion-card class="small-card" style="height: 100%;">
-        <ion-card-header class="card-background" style="font-size: 1.2em;">{{uiStatistic.getTotalDrunk() | number : '.0-2'}}
-        </ion-card-header>
-        <ion-card-content>
-          {{"PAGE_STATISTICS_DRUNKEN_QUANTITY" | translate}} (kg | l)
-        </ion-card-content>
-      </ion-card>
-    </ion-col>
-  </ion-row>
+
+
+
+
+
 </ion-content>

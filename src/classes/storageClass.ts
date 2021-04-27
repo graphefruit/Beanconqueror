@@ -18,7 +18,8 @@ export abstract class StorageClass {
 
   protected constructor (protected uiStorage: UIStorage,
                          protected uiHelper: UIHelper,
-                         protected uiLog: UILog, protected dbPath: string) {
+                         protected uiLog: UILog,
+                         protected dbPath: string,) {
 
       this.DB_PATH = dbPath;
       this.__initializeStorage();
@@ -55,10 +56,10 @@ export abstract class StorageClass {
     return promise;
   }
 
-  public reinitializeStorage (): void {
+  public async reinitializeStorage () {
     this.uiLog.log(`Storage - Reinitialize ${this.DB_PATH}`);
     this.isInitialized = -1;
-    this.__initializeStorage();
+    await this.__initializeStorage();
     this.__sendEvent('REINITIALIZE');
   }
 
@@ -143,25 +144,31 @@ export abstract class StorageClass {
     return this.DB_PATH;
   }
 
-  protected __initializeStorage (): void {
-    this.uiLog.log(`Initialize Storage - ${this.DB_PATH}`);
-    this.uiStorage.get(this.DB_PATH).then((_data) => {
-      if (_data === null || _data === undefined) {
-        this.uiLog.log(`Storage empty but successfull - ${this.DB_PATH}`);
-        // No beans have been added yet
+  protected async __initializeStorage () {
+    this.storedData = [];
+    const promise = new Promise((resolve, reject) => {
+      this.uiLog.log(`Initialize Storage - ${this.DB_PATH}`);
+      this.uiStorage.get(this.DB_PATH).then((_data) => {
+        if (_data === null || _data === undefined) {
+          this.uiLog.log(`Storage empty but successfull - ${this.DB_PATH}`);
+          // No beans have been added yet
+          this.storedData = [];
+          this.isInitialized = 1;
+        } else {
+          this.uiLog.log(`Storage successfull - ${this.DB_PATH}`);
+          this.storedData = _data;
+          this.isInitialized = 1;
+        }
+        resolve();
+      }, (e) => {
+        // Error
+        this.uiLog.log(`Storage error - ${this.DB_PATH} - ${JSON.stringify(e)}`);
         this.storedData = [];
-        this.isInitialized = 1;
-      } else {
-        this.uiLog.log(`Storage successfull - ${this.DB_PATH}`);
-        this.storedData = _data;
-        this.isInitialized = 1;
-      }
-    }, (e) => {
-      // Error
-      this.uiLog.log(`Storage error - ${this.DB_PATH} - ${JSON.stringify(e)}`);
-      this.storedData = [];
-      this.isInitialized = 0;
+        this.isInitialized = 0;
+        reject();
+      });
     });
+    return promise;
   }
 
   private __delete(_uuid: string): boolean {

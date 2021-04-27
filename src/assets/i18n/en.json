@@ -653,5 +653,13 @@
   "STATISTICS_PREPARATION_USAGES": "Preparation usages",
   "STATISTICS_PREPARATION_TIMELINE_USAGES": "Usage history of preparations",
   "STATISTICS_GRINDER_TIMELINE_USAGES": "Usage history of grinder",
-  "ACCEPT": "Accept"
+  "ACCEPT": "Accept",
+  "STATISTIC_TAB_GENERAL": "General",
+  "STATISTIC_TAB_BREWS": "Brews",
+  "STATISTIC_TAB_BEANS": "Beans",
+  "STATISTIC_TAB_PREPARATIONS": "Preparations",
+  "STATISTIC_TAB_GRINDERS": "Grinders",
+  "PAGE_STATISTICS_BREW_PER_DAYPROCESSES": "Brews per day",
+  "PAGE_STATISTICS_BREW_TIME": "Brew time",
+  "PAGE_STATISTICS_PHOTOS_TAKEN": "Photos taken"
 }

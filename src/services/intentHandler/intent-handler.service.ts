@@ -30,22 +30,24 @@ export class IntentHandlerService {
         this.uiLog.log('Deeplink not matched');
         this.handleDeepLink(nomatch.$link);
       });
-
   }
   private handleDeepLink(_matchLink) {
     try {
-      this.uiHelper.isBeanconqurorAppReady().then(() => {
-        const url: string = _matchLink.url;
+      if (_matchLink && _matchLink.url) {
+        this.uiHelper.isBeanconqurorAppReady().then(() => {
+          const url: string = _matchLink.url;
 
-        this.uiLog.log('Handle deeplink:' + url);
-        if (url.indexOf('https://beanconqueror.com/app/roaster/bean?') === 0) {
-          const onlineBeanId: number = Number(_matchLink.queryString);
-          this.addBeanFromServer(onlineBeanId);
-        } else if (url.indexOf('beanconqueror://ADD_BEAN_ONLINE?')) {
-          const onlineBeanId: number = Number(_matchLink.queryString);
-          this.addBeanFromServer(onlineBeanId);
-        }
-      });
+          this.uiLog.log('Handle deeplink:' + url);
+          if (url.indexOf('https://beanconqueror.com/app/roaster/bean?') === 0) {
+            const onlineBeanId: number = Number(_matchLink.queryString);
+            this.addBeanFromServer(onlineBeanId);
+          } else if (url.indexOf('beanconqueror://ADD_BEAN_ONLINE?')) {
+            const onlineBeanId: number = Number(_matchLink.queryString);
+            this.addBeanFromServer(onlineBeanId);
+          }
+        });
+      }
+
     }catch (ex) {
 
     }

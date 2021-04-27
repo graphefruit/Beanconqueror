@@ -145,7 +145,7 @@
   "BREW_DATA_ATTACHMENTS": "Anhänge / Fotos",
   "BREW_DATA_RATING": "Bewertung",
   "BREW_DATA_CALCULATED_COFFEE_BREW_TIME": "Kaffeebezugszeit",
-  "BREW_DATA_TDS": "Insgesamt gelöste Feststoffe",
+  "BREW_DATA_TDS": "Gelöste Stoffe (TDS [%])",
   "BREW_DATA_CALCULATED_EXTRACTION_YIELD": "Extraction Yield %",
   "BREW_DATA_TDS_EY": "TDS / %EY",
   "BREW_DATA_BREW_BEVERAGE_QUANTITY": "Getränkmenge (gr/ml)",
@@ -653,5 +653,13 @@
   "STATISTICS_PREPARATION_USAGES": "Zubereitungsmethoden Verwendungen",
   "STATISTICS_PREPARATION_TIMELINE_USAGES": "Verwendungshistorie Zubereitungsmethoden",
   "STATISTICS_GRINDER_TIMELINE_USAGES": "Verwendungshistorie Mühlen",
-  "ACCEPT": "Akzeptieren"
+  "ACCEPT": "Akzeptieren",
+  "STATISTIC_TAB_GENERAL": "Allgemein",
+  "STATISTIC_TAB_BREWS": "Brühungen",
+  "STATISTIC_TAB_BEANS": "Bohnen",
+  "STATISTIC_TAB_PREPARATIONS": "Zubereitungen",
+  "STATISTIC_TAB_GRINDERS": "Mühlen",
+  "PAGE_STATISTICS_BREW_PER_DAYPROCESSES": "Brühungen pro Tag",
+  "PAGE_STATISTICS_BREW_TIME": "Brühzeit",
+  "PAGE_STATISTICS_PHOTOS_TAKEN": "Fotos aufgenommen"
 }

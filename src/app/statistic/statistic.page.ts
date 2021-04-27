@@ -19,13 +19,15 @@ import {UIMillStorage} from '../../services/uiMillStorage';
 export class StatisticPage implements OnInit {
 
   @ViewChild('brewChart', {static: false}) public brewChart;
+  @ViewChild('brewsPerDayChart', {static: false}) public brewsPerDayChart;
+
   @ViewChild('drinkingChart', {static: false}) public drinkingChart;
   @ViewChild('preparationUsageChart', {static: false}) public preparationUsageChart;
   @ViewChild('grindingChart', {static: false}) public grindingChart;
   @ViewChild('preparationUsageTimelineChart', {static: false}) public preparationUsageTimelineChart;
   @ViewChild('grinderUsageTimelineChart', {static: false}) public grinderUsageTimelineChart;
 
-
+  public segment: string = 'GENERAL';
   constructor(
     public uiStatistic: UIStatistic,
     private readonly uiBrewStorage: UIBrewStorage,
@@ -39,12 +41,36 @@ export class StatisticPage implements OnInit {
   }
 
   public ionViewDidEnter(): void {
-    this.__loadBrewChart();
-    this.__loadDrinkingChart();
-    this.__loadPreparationUsageChart();
-    this.__loadGrindingChart();
-    this.__loadPreparationUsageTimelineChart();
-    this.__loadGrinderUsageTimelineChart();
+
+  }
+
+  public loadBrewCharts() {
+    setTimeout(() => {
+      this.__loadDrinkingChart();
+      this.__loadBrewChart();
+      this.__loadBrewPerDayChart();
+      },250);
+
+  }
+
+  public loadBeanCharts() {
+
+  }
+
+  public loadPreparationCharts() {
+    setTimeout(() => {
+      this.__loadPreparationUsageChart();
+      this.__loadPreparationUsageTimelineChart();
+    },250);
+
+  }
+
+  public loadGrinderCharts() {
+    setTimeout(() => {
+      this.__loadGrindingChart();
+      this.__loadGrinderUsageTimelineChart();
+    },250);
+
   }
 
   public ngOnInit() {
@@ -85,7 +111,41 @@ export class StatisticPage implements OnInit {
     return brewViews;
 
   }
+  private __getBrewsSortedForDay(): Array<BrewView> {
+    const brewViews: Array<BrewView> = [];
+    const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
+// sort latest to top.
+    const brewsCopy: Array<Brew> = [...brews];
 
+    const sortedBrews: Array<IBrew> = UIBrewHelper.sortBrewsASC(brewsCopy);
+
+    const collection = {};
+    // Create collection
+    for (const brew of sortedBrews) {
+      const day: string = this.uiHelper.formateDate(brew.config.unix_timestamp, 'DD');
+      const month: string = this.uiHelper.formateDate(brew.config.unix_timestamp, 'MMMM');
+      const year: string = this.uiHelper.formateDate(brew.config.unix_timestamp, 'YYYY');
+      if (collection[day +' - ' + month + ' - ' + year] === undefined) {
+        collection[day +' - ' + month + ' - ' + year] = {
+          BREWS: []
+        };
+      }
+      collection[day +' - ' + month + ' - ' + year].BREWS.push(brew);
+    }
+
+    for (const key in collection) {
+      if (collection.hasOwnProperty(key)) {
+        const viewObj: BrewView = new BrewView();
+        viewObj.title = key;
+        viewObj.brews = collection[key].BREWS;
+
+        brewViews.push(viewObj);
+      }
+    }
+
+    return brewViews;
+
+  }
 
   private __loadGrinderUsageTimelineChart(): void {
     const brewEntries: Array<Brew> = this.uiBrewStorage.getAllEntries();
@@ -275,6 +335,38 @@ export class StatisticPage implements OnInit {
     };
 
    const drinkChartToDismiss = new Chart(this.drinkingChart.nativeElement, {
+      type: 'line',
+      data: drinkingData,
+      options: chartOptions
+    });
+  }
+  private __loadBrewPerDayChart(): void {
+    const brewView: Array<BrewView> = this.__getBrewsSortedForDay();
+    // Take the last 12 Months
+    const lastBrewViews: Array<BrewView> = brewView.slice(-30);
+
+    const drinkingData = {
+      labels: [],
+      datasets: [{
+        label: this.translate.instant('PAGE_STATISTICS_BREW_PROCESSES'),
+        data: []
+      }]
+    };
+
+    for (const forBrew of lastBrewViews) {
+      drinkingData.labels.push(forBrew.title);
+    }
+    for (const forBrew of lastBrewViews) {
+      drinkingData.datasets[0].data.push(forBrew.brews.length);
+    }
+    const chartOptions = {
+      legend: {
+        display: false,
+        position: 'top'
+      }
+    };
+
+    const brewChartToDismiss = new Chart(this.brewsPerDayChart.nativeElement, {
       type: 'line',
       data: drinkingData,
       options: chartOptions

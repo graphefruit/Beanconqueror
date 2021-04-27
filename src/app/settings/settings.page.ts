@@ -48,6 +48,7 @@ import {IPreparation} from '../../interfaces/preparation/iPreparation';
 import {IGreenBean} from '../../interfaces/green-bean/iGreenBean';
 import {IRoastingMachine} from '../../interfaces/roasting-machine/iRoastingMachine';
 import {IMill} from '../../interfaces/mill/iMill';
+import {IBrewCoordinates} from '../../interfaces/brew/iBrewCoordinates';
 declare var cordova: any;
 declare var device: any;
 
@@ -263,6 +264,8 @@ export class SettingsPage implements OnInit {
     await this.uiAlert.showLoadingSpinner();
 
     this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.EXPORT);
+
+
     this.uiStorage.export().then((_data) => {
       this.uiHelper.exportJSON('Beanconqueror.json', JSON.stringify(_data)).then(async (_fileEntry: FileEntry) => {
         if (this.platform.is('android'))
@@ -276,6 +279,7 @@ export class SettingsPage implements OnInit {
           await this._exportAttachments(preparations);
           await this._exportAttachments(mills);
           await this.uiAlert.hideLoadingSpinner();
+
           const alert =  await this.alertCtrl.create({
             header: this.translate.instant('DOWNLOADED'),
             subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {fileName: _fileEntry.name}),
@@ -480,6 +484,15 @@ export class SettingsPage implements OnInit {
     if (!parsedContent[this.uiSettingsStorage.getDBPath()]) {
       parsedContent[this.uiSettingsStorage.getDBPath()] = [];
     }
+    if (!parsedContent[this.uiRoastingMachineStorage.getDBPath()]) {
+      parsedContent[this.uiRoastingMachineStorage.getDBPath()] = [];
+    }
+    if (!parsedContent[this.uiGreenBeanStorage.getDBPath()]) {
+      parsedContent[this.uiGreenBeanStorage.getDBPath()] = [];
+    }
+    if (!parsedContent[this.uiVersionStorage.getDBPath()]) {
+      parsedContent[this.uiVersionStorage.getDBPath()] = [];
+    }
     if (parsedContent[this.uiPreparationStorage.getDBPath()] &&
       parsedContent[this.uiBeanStorage.getDBPath()] &&
       parsedContent[this.uiBrewStorage.getDBPath()] &&
@@ -523,10 +536,15 @@ export class SettingsPage implements OnInit {
               const beansData:Array<Bean> = this.uiBeanStorage.getAllEntries();
               const preparationData:Array<Preparation> = this.uiPreparationStorage.getAllEntries();
               const millData:Array<Mill> = this.uiMillStorage.getAllEntries();
+              const greenBeanData:Array<GreenBean> = this.uiGreenBeanStorage.getAllEntries();
+              const roastingMachineData:Array<RoastingMachine> = this.uiRoastingMachineStorage.getAllEntries();
+
               await this._importFiles(brewsData,_importPath);
               await this._importFiles(beansData,_importPath);
               await this._importFiles(preparationData,_importPath);
               await this._importFiles(millData,_importPath);
+              await this._importFiles(greenBeanData,_importPath);
+              await this._importFiles(roastingMachineData,_importPath);
             }
 
             if (this.uiBrewStorage.getAllEntries().length > 0 && this.uiMillStorage.getAllEntries().length <= 0) {
@@ -573,14 +591,14 @@ export class SettingsPage implements OnInit {
   }
 
   private async __reinitializeStorages (): Promise<any> {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
 
-      this.uiBeanStorage.reinitializeStorage();
-      this.uiBrewStorage.reinitializeStorage();
-      this.uiPreparationStorage.reinitializeStorage();
-      this.uiSettingsStorage.reinitializeStorage();
-      this.uiMillStorage.reinitializeStorage();
-      this.uiVersionStorage.reinitializeStorage();
+      await this.uiBeanStorage.reinitializeStorage();
+      await this.uiBrewStorage.reinitializeStorage();
+      await this.uiPreparationStorage.reinitializeStorage();
+      await this.uiSettingsStorage.reinitializeStorage();
+      await this.uiMillStorage.reinitializeStorage();
+      await this.uiVersionStorage.reinitializeStorage();
 
       const beanStorageReadyCallback = this.uiBeanStorage.storageReady();
       const preparationStorageReadyCallback = this.uiPreparationStorage.storageReady();
@@ -595,8 +613,8 @@ export class SettingsPage implements OnInit {
         millStorageReadyCallback,
         uiSettingsStorageReadyCallback,
         versionStorageReadyCallback
-      ]).then(() => {
-        this.uiUpdate.checkUpdate();
+      ]).then(async () => {
+        await this.uiUpdate.checkUpdate();
         resolve();
       }, () => {
         resolve();

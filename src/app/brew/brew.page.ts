@@ -14,6 +14,7 @@ import {Bean} from '../../classes/bean/bean';
 import {BrewFilterComponent} from './brew-filter/brew-filter.component';
 import {Settings} from '../../classes/settings/settings';
 import {AgVirtualSrollComponent} from 'ag-virtual-scroll';
+import {IosPlatformService} from '../../services/iosPlatform/ios-platform.service';
 
 
 @Component({
@@ -50,7 +51,8 @@ export class BrewPage implements OnInit {
                private readonly uiAlert: UIAlert,
                public uiHelper: UIHelper,
                public uiBrewHelper: UIBrewHelper,
-               private readonly uiSettingsStorage: UISettingsStorage) {
+               private readonly uiSettingsStorage: UISettingsStorage,
+               private readonly iosPlatformService: IosPlatformService) {
   }
 
 

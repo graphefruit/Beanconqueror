@@ -43,6 +43,7 @@ import PREPARATION_TRACKING from '../data/tracking/preparationTracking';
 import LINK_TRACKING from '../data/tracking/linkTracking';
 import STARTUP_TRACKING from '../data/tracking/startupTracking';
 import {AnalyticsPopoverComponent} from '../popover/analytics-popover/analytics-popover.component';
+import {IosPlatformService} from '../services/iosPlatform/ios-platform.service';
 
 declare var AppRate;
 @Component({
@@ -104,7 +105,8 @@ export class AppComponent implements AfterViewInit {
     private readonly uiVersionStorage: UiVersionStorage,
     private readonly uiGreenBeanStorage: UIGreenBeanStorage,
     private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
-    private readonly intentHandlerService: IntentHandlerService
+    private readonly intentHandlerService: IntentHandlerService,
+    private readonly iosPlatformService: IosPlatformService,
   ) {
   }
 
@@ -125,6 +127,9 @@ export class AppComponent implements AfterViewInit {
   }
 
   private __appReady(): void {
+    setTimeout(() => {
+
+
     this.platform.ready()
       .then(async () => {
 
@@ -189,11 +194,11 @@ export class AppComponent implements AfterViewInit {
           greenBeanStorageCallback,
           roastingMachineStorageCallback
         ])
-          .then(() => {
+          .then(async () => {
             this.uiLog.log('App finished loading');
             this.uiLog.info('Everything should be fine!!!');
-            this.__checkUpdate();
-            this.__initApp();
+            await this.__checkUpdate();
+            await this.__initApp();
             this.uiHelper.setAppReady(1);
 
           }, async () => {
@@ -201,11 +206,12 @@ export class AppComponent implements AfterViewInit {
             this.uiLog.error('App finished loading, but errors occured');
           });
       });
-
+    },500);
   }
 
-  private __checkUpdate(): void {
-    this.uiUpdate.checkUpdate();
+  private async __checkUpdate() {
+
+    await this.uiUpdate.checkUpdate();
   }
 
   public showRoastingSection() {
@@ -258,11 +264,8 @@ export class AppComponent implements AfterViewInit {
             const settingLanguage: string = settings.language;
             this.uiLog.log(`Setting language: ${settingLanguage}`);
             this._translate.setDefaultLang(settingLanguage);
-            settings.language = settingLanguage;
-            this.uiSettingsStorage.saveSettings(settings);
             await this._translate.use(settingLanguage).toPromise();
             moment.locale(settingLanguage);
-
             resolve();
 
           }

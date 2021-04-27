@@ -18,6 +18,8 @@ import {AppVersion} from '@ionic-native/app-version/ngx';
 import {ModalController, Platform} from '@ionic/angular';
 import {UpdatePopoverComponent} from '../popover/update-popover/update-popover.component';
 import {IBeanInformation} from '../interfaces/bean/iBeanInformation';
+import {UIFileHelper} from './uiFileHelper';
+import {File} from '@ionic-native/file/ngx';
 
 
 @Injectable({
@@ -34,13 +36,16 @@ export class UIUpdate {
               private readonly uiVersionStorage: UiVersionStorage,
               private readonly appVersion: AppVersion,
               private readonly platform: Platform,
-              private readonly modalCtrl: ModalController) {
+              private readonly modalCtrl: ModalController,
+              private readonly uiFileHelper: UIFileHelper,
+              private readonly file: File) {
   }
 
-  private __updateDataVersion(_version): boolean {
+  private async __updateDataVersion(_version): Promise<boolean> {
     try {
       switch (_version) {
         case 'UPDATE_1':
+
           if (this.uiBrewStorage.getAllEntries().length > 0 && this.uiMillStorage.getAllEntries().length <= 0) {
             // We got an update and we got no mills yet, therefore we add a Standard mill.
             const data: Mill = new Mill();
@@ -221,18 +226,66 @@ export class UIUpdate {
           console.log(settings_v3);
           this.uiSettingsStorage.saveSettings(settings_v3);
           break;
+        case 'UPDATE_4':
+          if (this.platform.is('cordova') && this.platform.is('ios')){
+            // Greenbean and roasting machines just existing in this updated version then.
+            const allEntries: Array<Brew | Mill | Preparation | Bean> =
+              [...this.uiBrewStorage.getAllEntries(),
+                ...this.uiMillStorage.getAllEntries(),
+                ...this.uiPreparationStorage.getAllEntries(),
+                ...this.uiBeanStorage.getAllEntries()];
+
+            if (allEntries.length > 0) {
+              this.uiLog.log(`${_version} - Check ${allEntries.length} entries`);
+              for (const entry of allEntries) {
+
+                // tslint:disable-next-line
+                for (let i=0;i<entry.attachments.length;i++) {
+                  // We don't have a real path here, just the name
+                  let oldPath = entry.attachments[i];
+                  if (oldPath.startsWith('/')) {
+                    // Remove the first slash
+                    oldPath = oldPath.substr(1);
+                  }
+                  this.uiLog.log(`${_version} - Move file from ${this.file.dataDirectory} to ${this.file.syncedDataDirectory}; Name: ${oldPath}`);
+                  const newPath: string = await this.uiFileHelper.moveFile(this.file.dataDirectory,
+                    this.file.syncedDataDirectory,oldPath,oldPath);
+
+                  this.uiLog.log(`${_version} Update path from ${oldPath} to ${newPath}`);
+                  entry.attachments[i] = newPath;
+                }
+
+                let storageToUpdate: UIBrewStorage | UIBeanStorage | UIPreparationStorage | UIMillStorage;
+                if (entry instanceof Brew) {
+                  storageToUpdate = this.uiBrewStorage;
+
+                } else if (entry instanceof Mill) {
+                  storageToUpdate = this.uiMillStorage;
+                }
+                else if (entry instanceof Preparation) {
+                  storageToUpdate = this.uiPreparationStorage;
+                }
+                else if (entry instanceof Bean) {
+                  storageToUpdate = this.uiBeanStorage;
+                }
+                storageToUpdate.update(entry);
+              }
+            }
+          }
+          break;
         default:
           break;
       }
       return true;
     }
     catch (ex) {
+      this.uiLog.log('Update exception occured: ' + ex.message);
       return false;
     }
 
   }
 
-  private __checkUpdateForDataVersion(_dataVersion: string) {
+  private async __checkUpdateForDataVersion(_dataVersion: string) {
     const version: Version = this.uiVersionStorage.getVersion();
     let somethingUpdated: boolean = false;
 
@@ -241,12 +294,18 @@ export class UIUpdate {
 
     if (version.checkIfDataVersionWasUpdated(_dataVersion) === false) {
       this.uiLog.info('Data version ' + _dataVersion + ' - Update');
-      const updated: boolean = this.__updateDataVersion(_dataVersion);
-      if (updated) {
-        version.pushUpdatedDataVersion(_dataVersion);
-        somethingUpdated = true;
-      } else {
-        this.uiLog.info('Data version ' + _dataVersion + ' - could not update');
+      try {
+        const updated: boolean = await this.__updateDataVersion(_dataVersion);
+        if (updated) {
+          version.pushUpdatedDataVersion(_dataVersion);
+          somethingUpdated = true;
+        } else {
+          this.uiLog.info('Data version ' + _dataVersion + ' - could not update');
+        }
+
+      }
+      catch(ex) {
+        this.uiLog.error('Data version ' + _dataVersion + ' - could not update ' + ex.message);
       }
 
 
@@ -259,13 +318,12 @@ export class UIUpdate {
     }
   }
 
-  public checkUpdate(): void {
-
-
+  public async checkUpdate() {
     this.uiLog.info('Check updates');
-    this.__checkUpdateForDataVersion('UPDATE_1');
-    this.__checkUpdateForDataVersion('UPDATE_2');
-    this.__checkUpdateForDataVersion('UPDATE_3');
+    await this.__checkUpdateForDataVersion('UPDATE_1');
+    await this.__checkUpdateForDataVersion('UPDATE_2');
+    await this.__checkUpdateForDataVersion('UPDATE_3');
+    await this.__checkUpdateForDataVersion('UPDATE_4');
   }
 
 

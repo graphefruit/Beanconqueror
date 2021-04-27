@@ -202,7 +202,7 @@ export class UIHelper {
       // Fixed umlaut issue
       // Thanks to: https://stackoverflow.com/questions/31959487/utf-8-encoidng-issue-when-exporting-csv-file-javascript
       const blob = new Blob([jsonContent], {type: 'application/json;charset=UTF-8;'});
-      if (this.platform.is('android') || this.platform.is('ios')) {
+      if (this.platform.is('cordova') && (this.platform.is('android') || this.platform.is('ios'))) {
         let storageLocation: string = '';
 
         switch (device.platform) {

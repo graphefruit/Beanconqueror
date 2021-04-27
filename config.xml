@@ -12,10 +12,10 @@
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
     <allow-intent href="beanconqueror:" />
+    <allow-intent href="ionic:" />
     <preference name="ScrollEnabled" value="false" />
     <preference name="android-minSdkVersion" value="22" />
     <preference name="android-targetSdkVersion" value="29" />
-    <preference name="BackupWebStorage" value="Cloud" />
     <preference name="SplashMaintainAspectRatio" value="true" />
     <preference name="FadeSplashScreenDuration" value="300" />
     <preference name="SplashShowOnlyFirstTime" value="false" />
@@ -81,6 +81,7 @@
         <icon density="mdpi" src="resources/android/icon/drawable-mdpi-icon.png" />
     </platform>
     <platform name="ios">
+        <preference name="BackupWebStorage" value="cloud" />
         <preference name="WKWebViewOnly" value="true" />
         <feature name="CDVWKWebViewEngine">
             <param name="ios-package" value="CDVWKWebViewEngine" />

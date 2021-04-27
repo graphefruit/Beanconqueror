@@ -4,6 +4,7 @@ import {File, FileEntry} from '@ionic-native/file/ngx';
 import {unescape} from 'querystring';
 import {Platform} from '@ionic/angular';
 import {DomSanitizer} from '@angular/platform-browser';
+import {UILog} from './uiLog';
 
 /**
  * Handles every helping functionalities
@@ -18,20 +19,55 @@ export class UIFileHelper {
   private cachedInternalUrls: any = {};
 
 
-  constructor (private readonly file: File, private readonly platform: Platform, private readonly domSanitizer: DomSanitizer) {
+
+  constructor (private readonly file: File,
+               private readonly uiLog: UILog, private readonly platform: Platform, private readonly domSanitizer: DomSanitizer) {
+
+
   }
+
+  private getFileDirectory(): string {
+    if (this.platform.is('ios') && this.platform.is('cordova')) {
+      return this.file.syncedDataDirectory;
+    } else{
+      return this.file.dataDirectory;
+    }
+
+  }
+
+
+  public async saveJSONFile(_fileName: string, _jsonContent: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+
+      const blob = new Blob([_jsonContent], {type: 'application/json;charset=UTF-8;'});
+      this.file.createFile(this.getFileDirectory(),_fileName,true).then((_fileEntry: FileEntry) => {
+        _fileEntry.createWriter((writer) => {
+          writer.onwriteend = () => {
+            resolve();
+          };
+          writer.onerror = () => {
+            reject();
+          };
+          writer.seek(0);
+          writer.write(blob); // You need to put the file, blob or base64 representation here.
+        });
+      });
+    });
+  };
 
   public async saveBase64File (_fileName: string, _fileExtension: string, _base64: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
-      this.generateFileName(this.file.dataDirectory, _fileName, _fileExtension).then((_newName) => {
+      this.generateFileName(this.getFileDirectory(), _fileName, _fileExtension).then((_newName) => {
         // console.log('New Filename' + _newName);
         const newBlob: Blob = this.dataURItoBlob(_base64);
         if (newBlob === undefined) {
           reject();
         } else {
-          this.file.writeFile(this.file.dataDirectory, _newName, newBlob).then((_t) => {
+          this.file.writeFile(this.getFileDirectory(), _newName, newBlob).then((_t) => {
+            this.uiLog.log('Save file below: ' +_t.fullPath);
             resolve(_t.fullPath);
-          }, () => {
+          }, (e) => {
+            this.uiLog.error('Cant save file: ' + JSON.stringify(e));
             reject();
           });
         }
@@ -44,19 +80,31 @@ export class UIFileHelper {
     return new Promise(async (resolve, reject) => {
       if (this.platform.is('cordova')) {
         const fileObj = this.__splitFilePath(_filePath);
-        let filePath = this.file.dataDirectory;
+        let filePath = this.getFileDirectory();
         if (fileObj.FILE_PATH.length > 1 && fileObj.FILE_PATH.indexOf('/') === 0 && filePath.lastIndexOf('/') === filePath.length - 1) {
           filePath = filePath + fileObj.FILE_PATH.substr(1);
         }
         this.file.removeFile(filePath, fileObj.FILE_NAME + fileObj.EXTENSION).then(() => {
           resolve();
-        }, () => {
+        }, (e) => {
+          this.uiLog.error('Cant delete file: ' + JSON.stringify(e));
           reject();
         });
       } else {
         resolve();
       }
 
+    });
+  }
+
+  public moveFile(_oldPath, _newPath,_oldFilename,_newFilename): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      this.file.moveFile(_oldPath, _oldFilename, _newPath, _newFilename).then((_entry) => {
+
+        resolve(_entry.fullPath);
+      }, () => {
+        reject();
+      });
     });
   }
 
@@ -68,11 +116,11 @@ export class UIFileHelper {
 
 
       const fileObj = this.__splitFilePath(_filePath);
-      this.generateFileName(this.file.dataDirectory, _fileName, fileObj.EXTENSION).then((_newName) => {
+      this.generateFileName(this.getFileDirectory(), _fileName, fileObj.EXTENSION).then((_newName) => {
         // console.log('New Filename' + _newName);
 
         this.file.copyFile(fileObj.FILE_PATH, fileObj.FILE_NAME + fileObj.EXTENSION,
-          this.file.dataDirectory, _newName).then((_t) => {
+          this.getFileDirectory(), _newName).then((_t) => {
           resolve(_t.fullPath);
         }, (e) => {
           reject();
@@ -94,11 +142,11 @@ export class UIFileHelper {
 
 
       const fileObj = this.__splitFilePath(_filePath);
-      this.generateFileName(this.file.dataDirectory, fileObj.FILE_NAME, fileObj.EXTENSION).then((_newName) => {
+      this.generateFileName(this.getFileDirectory(), fileObj.FILE_NAME, fileObj.EXTENSION).then((_newName) => {
         // console.log('New Filename' + _newName);
 
-        this.file.copyFile(this.file.dataDirectory, fileObj.FILE_NAME + fileObj.EXTENSION,
-          this.file.dataDirectory, _newName).then((_t) => {
+        this.file.copyFile(this.getFileDirectory(), fileObj.FILE_NAME + fileObj.EXTENSION,
+          this.getFileDirectory(), _newName).then((_t) => {
           resolve(_t.fullPath);
         }, (e) => {
           reject();
@@ -151,11 +199,20 @@ export class UIFileHelper {
         // filePath.slice(0, filePath.lastIndexOf('/'));
         let path: string;
         let fileName: string;
-        path = this.file.dataDirectory;
+        path = this.getFileDirectory();
         fileName = _filePath;
         if (fileName.startsWith('/')) {
           fileName = fileName.slice(1);
         }
+
+        if (this.platform.is('ios')) {
+          // After switching to iOS cloud, the fullPath saves the Cloud path actualy with, so we need to delete this one :)
+          const searchForCloud: string = 'Cloud/';
+          if (fileName.startsWith(searchForCloud)) {
+            fileName =  fileName.substring(searchForCloud.length);
+          }
+        }
+
         this.file.resolveLocalFilesystemUrl(path + fileName).then((fileEntry: FileEntry) => {
 
 
@@ -193,7 +250,7 @@ export class UIFileHelper {
         // filePath.slice(0, filePath.lastIndexOf('/'));
         let path: string;
         let fileName: string;
-        path = this.file.dataDirectory;
+        path = this.getFileDirectory();
         fileName = _filePath;
         if (fileName.startsWith('/')) {
           fileName = fileName.slice(1);

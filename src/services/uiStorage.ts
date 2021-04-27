@@ -5,6 +5,9 @@ import {Injectable} from '@angular/core';
  *
  */
 import {Storage} from '@ionic/storage';
+import {EventQueueService} from './queueService/queue-service.service';
+import {AppEvent} from '../classes/appEvent/appEvent';
+import {AppEventType} from '../enums/appEvent/appEvent';
 
 
 @Injectable({
@@ -12,10 +15,11 @@ import {Storage} from '@ionic/storage';
 })
 export class UIStorage {
 
-  constructor (private readonly storage: Storage) {
+  constructor (private readonly storage: Storage,private eventQueue: EventQueueService) {
   }
 
   public async set (_key: string, _val: any): Promise<any> {
+    this.eventQueue.dispatch(new AppEvent(AppEventType.STORAGE_CHANGED, undefined));
     return this.storage.set(_key, _val);
   }
 
