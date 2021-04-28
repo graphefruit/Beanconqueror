@@ -38,7 +38,6 @@ export class UIFileHelper {
 
   public async saveJSONFile(_fileName: string, _jsonContent: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
-
       const blob = new Blob([_jsonContent], {type: 'application/json;charset=UTF-8;'});
       this.file.createFile(this.getFileDirectory(),_fileName,true).then((_fileEntry: FileEntry) => {
         _fileEntry.createWriter((writer) => {
@@ -51,9 +50,45 @@ export class UIFileHelper {
           writer.seek(0);
           writer.write(blob); // You need to put the file, blob or base64 representation here.
         });
+      },() => {
+        this.uiLog.error("Could not save file");
       });
     });
   };
+
+  public async getJSONFile(_fileName: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      if (this.platform.is('cordova')) {
+
+        // let filePath: string;
+        // filePath = _filePath;
+        // filePath.slice(0, filePath.lastIndexOf('/'));
+        let path: string;
+        let fileName: string;
+        path = this.getFileDirectory();
+        fileName = _fileName;
+        if (fileName.startsWith('/')) {
+          fileName = fileName.slice(1);
+        }
+
+        this.file.readAsText(path, fileName).then((_text: string) => {
+          try {
+            const parsedJSON: any =  JSON.parse(_text);
+            resolve(parsedJSON);
+          }catch(ex) {
+            this.uiLog.error('We could not read json file ' + ex.message);
+            resolve(undefined);
+          }
+
+        });
+      } else {
+        resolve(undefined);
+      }
+
+    });
+  };
+
+
 
   public async saveBase64File (_fileName: string, _fileExtension: string, _base64: string): Promise<any> {
     return new Promise(async (resolve, reject) => {

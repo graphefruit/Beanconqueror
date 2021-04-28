@@ -42,246 +42,246 @@ export class UIUpdate {
   }
 
   private async __updateDataVersion(_version): Promise<boolean> {
-    try {
-      switch (_version) {
-        case 'UPDATE_1':
+    const promise: Promise<boolean> = new Promise(async (resolve, reject) => {
+      try {
+        switch (_version) {
+          case 'UPDATE_1':
 
-          if (this.uiBrewStorage.getAllEntries().length > 0 && this.uiMillStorage.getAllEntries().length <= 0) {
-            // We got an update and we got no mills yet, therefore we add a Standard mill.
-            const data: Mill = new Mill();
-            data.name = 'Standard';
-            this.uiMillStorage.add(data);
+            if (this.uiBrewStorage.getAllEntries().length > 0 && this.uiMillStorage.getAllEntries().length <= 0) {
+              // We got an update and we got no mills yet, therefore we add a Standard mill.
+              const data: Mill = new Mill();
+              data.name = 'Standard';
+              this.uiMillStorage.add(data);
 
-            const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
-            for (const brew of brews) {
-              brew.mill = data.config.uuid;
-              this.uiBrewStorage.update(brew);
-            }
-          }
-          // We made an update, filePath just could storage one image, but we want to storage multiple ones.
-          if (this.uiBeanStorage.getAllEntries().length > 0) {
-            const beans: Array<any> = this.uiBeanStorage.getAllEntries();
-            let needsUpdate: boolean = false;
-            for (const bean of beans) {
-              if (bean.filePath !== undefined && bean.filePath !== null && bean.filePath !== '') {
-                bean.attachments.push(bean.filePath);
-                delete bean.filePath;
-                needsUpdate = true;
-              } else if (bean.filePath !== undefined && bean.filePath !== null && bean.filePath === '') {
-                delete bean.filePath;
-                needsUpdate = true;
-              }
-              const beanInformation: IBeanInformation = {} as IBeanInformation;
-              if ((bean.variety || bean.country || bean.processing && bean.bean_information.length <= 0)) {
-                beanInformation.country = bean.country;
-                beanInformation.variety = bean.variety;
-                beanInformation.processing = bean.processing;
-
-                bean.bean_information.push(beanInformation);
-                needsUpdate = true;
-              }
-              if ('variety' in bean || 'country' in bean || 'processing' in bean) {
-                delete bean.country;
-                delete bean.variety;
-                delete bean.processing;
-                needsUpdate = true;
-              }
-              if (bean.bean_information.length <= 0) {
-                // Add empty one.
-                bean.bean_information.push(beanInformation);
-                needsUpdate = true;
-              }
-              if (bean.fixDataTypes() || needsUpdate) {
-                this.uiBeanStorage.update(bean);
-              }
-            }
-          }
-
-          if (this.uiPreparationStorage.getAllEntries().length > 0) {
-            const preparations: Array<any> = this.uiPreparationStorage.getAllEntries();
-            let needsUpdate: boolean = false;
-            for (const preparation of preparations) {
-              if (preparation.style_type === undefined) {
-                preparation.style_type = preparation.getPresetStyleType();
-                needsUpdate = true;
-              }
-              if (needsUpdate) {
-                const preparationBrews: Array<any> = this.uiBrewStorage.getAllEntries()
-                  .filter((e) => e.method_of_preparation === preparation.config.uuid);
-                if (preparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
-                  for (const brew of preparationBrews) {
-                    if (brew.brew_beverage_quantity === 0 && brew.brew_quantity > 0) {
-                      brew.brew_beverage_quantity = brew.brew_quantity;
-                      brew.brew_beverage_quantity_type = brew.brew_quantity_type;
-                      this.uiBrewStorage.update(brew);
-                    }
-
-                  }
-                }
-                this.uiPreparationStorage.update(preparation);
-              }
-            }
-          }
-          // Fix wrong types
-          if (this.uiBrewStorage.getAllEntries().length > 0) {
-            const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
-            for (const brew of brews) {
-              if (brew.fixDataTypes()) {
+              const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
+              for (const brew of brews) {
+                brew.mill = data.config.uuid;
                 this.uiBrewStorage.update(brew);
               }
-
             }
-          }
-
-          const settings: any = this.uiSettingsStorage.getSettings();
-          if (settings.brew_order.after.tds === null || settings.brew_order.after.tds === undefined) {
-            const newSettingsObj: any = new Settings();
-            settings.brew_order.after.tds = newSettingsObj.brew_order.after.tds;
-            this.uiSettingsStorage.saveSettings(settings);
-
-          }
-          if (settings.brew_order.after.brew_beverage_quantity === null ||
-            settings.brew_order.after.brew_beverage_quantity === undefined) {
-            const newSettingsObj: any = new Settings();
-            settings.brew_order.after.brew_beverage_quantity = newSettingsObj.brew_order.after.brew_beverage_quantity;
-            this.uiSettingsStorage.saveSettings(settings);
-          }
-
-          if (settings.brew_order.before.method_of_preparation_tool === null ||
-            settings.brew_order.before.method_of_preparation_tool === undefined) {
-            const newSettingsObj: any = new Settings();
-            settings.brew_order.before.method_of_preparation_tool = newSettingsObj.brew_order.before.method_of_preparation_tool;
-
-            settings.manage_parameters.brew_time = settings.brew_time;
-            settings.manage_parameters.brew_temperature_time = settings.brew_temperature_time;
-            settings.manage_parameters.grind_size = settings.grind_size;
-            settings.manage_parameters.grind_weight = settings.grind_weight;
-            settings.manage_parameters.mill = settings.mill;
-            settings.manage_parameters.mill_speed = settings.mill_speed;
-            settings.manage_parameters.mill_timer = settings.mill_timer;
-            settings.manage_parameters.pressure_profile = settings.pressure_profile;
-            // This will be fixed value
-            settings.manage_parameters.method_of_preparation = true;
-            settings.manage_parameters.bean_type = true;
-            settings.manage_parameters.mill = true;
-
-            settings.manage_parameters.brew_quantity = settings.brew_quantity;
-            settings.manage_parameters.brew_temperature = settings.brew_temperature;
-            settings.manage_parameters.note = settings.note;
-            settings.manage_parameters.attachments = settings.attachments;
-            settings.manage_parameters.rating = settings.rating;
-            settings.manage_parameters.coffee_type = settings.coffee_type;
-            settings.manage_parameters.coffee_concentration = settings.coffee_concentration;
-            settings.manage_parameters.coffee_first_drip_time = settings.coffee_first_drip_time;
-            settings.manage_parameters.coffee_blooming_time = settings.coffee_blooming_time;
-            settings.manage_parameters.set_last_coffee_brew = settings.set_last_coffee_brew;
-            settings.manage_parameters.set_custom_brew_time = settings.set_custom_brew_time;
-            settings.manage_parameters.tds = settings.tds;
-            settings.manage_parameters.brew_beverage_quantity = settings.brew_beverage_quantity;
-
-            // This will be fixed value
-            settings.default_last_coffee_parameters.method_of_preparation = true;
-
-            // With this property there also came the change that we moved all parameters to manage_parameters
-            this.uiSettingsStorage.saveSettings(settings);
-          }
-
-
-          delete settings.brew_time;
-          delete settings.brew_temperature_time;
-          delete settings.grind_size;
-          delete settings.grind_weight;
-          delete settings.mill;
-          delete settings.mill_speed;
-          delete settings.mill_timer;
-          delete settings.pressure_profile;
-          delete settings.brew_quantity;
-          delete settings.brew_temperature;
-          delete settings.note;
-          delete settings.attachments;
-          delete settings.rating;
-          delete settings.coffee_type;
-          delete settings.coffee_concentration;
-          delete settings.coffee_first_drip_time;
-          delete settings.coffee_blooming_time;
-          delete settings.set_last_coffee_brew;
-          delete settings.set_custom_brew_time;
-          delete settings.tds;
-          delete settings.brew_beverage_quantity;
-
-          this.uiSettingsStorage.saveSettings(settings);
-
-
-          break;
-        case 'UPDATE_2':
-          const settings_v2: Settings = this.uiSettingsStorage.getSettings();
-          // Reset after we've set new brewfilter
-          settings_v2.resetFilter();
-          this.uiSettingsStorage.saveSettings(settings_v2);
-          break;
-        case 'UPDATE_3':
-          const settings_v3:any = this.uiSettingsStorage.getSettings();
-          // Delete old analytics property
-          delete settings_v3.analytics;
-          console.log(settings_v3);
-          this.uiSettingsStorage.saveSettings(settings_v3);
-          break;
-        case 'UPDATE_4':
-          if (this.platform.is('cordova') && this.platform.is('ios')){
-            // Greenbean and roasting machines just existing in this updated version then.
-            const allEntries: Array<Brew | Mill | Preparation | Bean> =
-              [...this.uiBrewStorage.getAllEntries(),
-                ...this.uiMillStorage.getAllEntries(),
-                ...this.uiPreparationStorage.getAllEntries(),
-                ...this.uiBeanStorage.getAllEntries()];
-
-            if (allEntries.length > 0) {
-              this.uiLog.log(`${_version} - Check ${allEntries.length} entries`);
-              for (const entry of allEntries) {
-
-                // tslint:disable-next-line
-                for (let i=0;i<entry.attachments.length;i++) {
-                  // We don't have a real path here, just the name
-                  let oldPath = entry.attachments[i];
-                  if (oldPath.startsWith('/')) {
-                    // Remove the first slash
-                    oldPath = oldPath.substr(1);
-                  }
-                  this.uiLog.log(`${_version} - Move file from ${this.file.dataDirectory} to ${this.file.syncedDataDirectory}; Name: ${oldPath}`);
-                  const newPath: string = await this.uiFileHelper.moveFile(this.file.dataDirectory,
-                    this.file.syncedDataDirectory,oldPath,oldPath);
-
-                  this.uiLog.log(`${_version} Update path from ${oldPath} to ${newPath}`);
-                  entry.attachments[i] = newPath;
+            // We made an update, filePath just could storage one image, but we want to storage multiple ones.
+            if (this.uiBeanStorage.getAllEntries().length > 0) {
+              const beans: Array<any> = this.uiBeanStorage.getAllEntries();
+              let needsUpdate: boolean = false;
+              for (const bean of beans) {
+                if (bean.filePath !== undefined && bean.filePath !== null && bean.filePath !== '') {
+                  bean.attachments.push(bean.filePath);
+                  delete bean.filePath;
+                  needsUpdate = true;
+                } else if (bean.filePath !== undefined && bean.filePath !== null && bean.filePath === '') {
+                  delete bean.filePath;
+                  needsUpdate = true;
                 }
+                const beanInformation: IBeanInformation = {} as IBeanInformation;
+                if ((bean.variety || bean.country || bean.processing && bean.bean_information.length <= 0)) {
+                  beanInformation.country = bean.country;
+                  beanInformation.variety = bean.variety;
+                  beanInformation.processing = bean.processing;
 
-                let storageToUpdate: UIBrewStorage | UIBeanStorage | UIPreparationStorage | UIMillStorage;
-                if (entry instanceof Brew) {
-                  storageToUpdate = this.uiBrewStorage;
-
-                } else if (entry instanceof Mill) {
-                  storageToUpdate = this.uiMillStorage;
+                  bean.bean_information.push(beanInformation);
+                  needsUpdate = true;
                 }
-                else if (entry instanceof Preparation) {
-                  storageToUpdate = this.uiPreparationStorage;
+                if ('variety' in bean || 'country' in bean || 'processing' in bean) {
+                  delete bean.country;
+                  delete bean.variety;
+                  delete bean.processing;
+                  needsUpdate = true;
                 }
-                else if (entry instanceof Bean) {
-                  storageToUpdate = this.uiBeanStorage;
+                if (bean.bean_information.length <= 0) {
+                  // Add empty one.
+                  bean.bean_information.push(beanInformation);
+                  needsUpdate = true;
                 }
-                storageToUpdate.update(entry);
+                if (bean.fixDataTypes() || needsUpdate) {
+                  this.uiBeanStorage.update(bean);
+                }
               }
             }
-          }
-          break;
-        default:
-          break;
+
+            if (this.uiPreparationStorage.getAllEntries().length > 0) {
+              const preparations: Array<any> = this.uiPreparationStorage.getAllEntries();
+              let needsUpdate: boolean = false;
+              for (const preparation of preparations) {
+                if (preparation.style_type === undefined) {
+                  preparation.style_type = preparation.getPresetStyleType();
+                  needsUpdate = true;
+                }
+                if (needsUpdate) {
+                  const preparationBrews: Array<any> = this.uiBrewStorage.getAllEntries()
+                    .filter((e) => e.method_of_preparation === preparation.config.uuid);
+                  if (preparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
+                    for (const brew of preparationBrews) {
+                      if (brew.brew_beverage_quantity === 0 && brew.brew_quantity > 0) {
+                        brew.brew_beverage_quantity = brew.brew_quantity;
+                        brew.brew_beverage_quantity_type = brew.brew_quantity_type;
+                        this.uiBrewStorage.update(brew);
+                      }
+
+                    }
+                  }
+                  this.uiPreparationStorage.update(preparation);
+                }
+              }
+            }
+            // Fix wrong types
+            if (this.uiBrewStorage.getAllEntries().length > 0) {
+              const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
+              for (const brew of brews) {
+                if (brew.fixDataTypes()) {
+                  this.uiBrewStorage.update(brew);
+                }
+
+              }
+            }
+
+            const settings: any = this.uiSettingsStorage.getSettings();
+            if (settings.brew_order.after.tds === null || settings.brew_order.after.tds === undefined) {
+              const newSettingsObj: any = new Settings();
+              settings.brew_order.after.tds = newSettingsObj.brew_order.after.tds;
+              this.uiSettingsStorage.saveSettings(settings);
+
+            }
+            if (settings.brew_order.after.brew_beverage_quantity === null ||
+              settings.brew_order.after.brew_beverage_quantity === undefined) {
+              const newSettingsObj: any = new Settings();
+              settings.brew_order.after.brew_beverage_quantity = newSettingsObj.brew_order.after.brew_beverage_quantity;
+              this.uiSettingsStorage.saveSettings(settings);
+            }
+
+            if (settings.brew_order.before.method_of_preparation_tool === null ||
+              settings.brew_order.before.method_of_preparation_tool === undefined) {
+              const newSettingsObj: any = new Settings();
+              settings.brew_order.before.method_of_preparation_tool = newSettingsObj.brew_order.before.method_of_preparation_tool;
+
+              settings.manage_parameters.brew_time = settings.brew_time;
+              settings.manage_parameters.brew_temperature_time = settings.brew_temperature_time;
+              settings.manage_parameters.grind_size = settings.grind_size;
+              settings.manage_parameters.grind_weight = settings.grind_weight;
+              settings.manage_parameters.mill = settings.mill;
+              settings.manage_parameters.mill_speed = settings.mill_speed;
+              settings.manage_parameters.mill_timer = settings.mill_timer;
+              settings.manage_parameters.pressure_profile = settings.pressure_profile;
+              // This will be fixed value
+              settings.manage_parameters.method_of_preparation = true;
+              settings.manage_parameters.bean_type = true;
+              settings.manage_parameters.mill = true;
+
+              settings.manage_parameters.brew_quantity = settings.brew_quantity;
+              settings.manage_parameters.brew_temperature = settings.brew_temperature;
+              settings.manage_parameters.note = settings.note;
+              settings.manage_parameters.attachments = settings.attachments;
+              settings.manage_parameters.rating = settings.rating;
+              settings.manage_parameters.coffee_type = settings.coffee_type;
+              settings.manage_parameters.coffee_concentration = settings.coffee_concentration;
+              settings.manage_parameters.coffee_first_drip_time = settings.coffee_first_drip_time;
+              settings.manage_parameters.coffee_blooming_time = settings.coffee_blooming_time;
+              settings.manage_parameters.set_last_coffee_brew = settings.set_last_coffee_brew;
+              settings.manage_parameters.set_custom_brew_time = settings.set_custom_brew_time;
+              settings.manage_parameters.tds = settings.tds;
+              settings.manage_parameters.brew_beverage_quantity = settings.brew_beverage_quantity;
+
+              // This will be fixed value
+              settings.default_last_coffee_parameters.method_of_preparation = true;
+
+              // With this property there also came the change that we moved all parameters to manage_parameters
+              this.uiSettingsStorage.saveSettings(settings);
+            }
+
+
+            delete settings.brew_time;
+            delete settings.brew_temperature_time;
+            delete settings.grind_size;
+            delete settings.grind_weight;
+            delete settings.mill;
+            delete settings.mill_speed;
+            delete settings.mill_timer;
+            delete settings.pressure_profile;
+            delete settings.brew_quantity;
+            delete settings.brew_temperature;
+            delete settings.note;
+            delete settings.attachments;
+            delete settings.rating;
+            delete settings.coffee_type;
+            delete settings.coffee_concentration;
+            delete settings.coffee_first_drip_time;
+            delete settings.coffee_blooming_time;
+            delete settings.set_last_coffee_brew;
+            delete settings.set_custom_brew_time;
+            delete settings.tds;
+            delete settings.brew_beverage_quantity;
+
+            this.uiSettingsStorage.saveSettings(settings);
+
+
+            break;
+          case 'UPDATE_2':
+            const settings_v2: Settings = this.uiSettingsStorage.getSettings();
+            // Reset after we've set new brewfilter
+            settings_v2.resetFilter();
+            this.uiSettingsStorage.saveSettings(settings_v2);
+            break;
+          case 'UPDATE_3':
+            const settings_v3: any = this.uiSettingsStorage.getSettings();
+            // Delete old analytics property
+            delete settings_v3.analytics;
+            console.log(settings_v3);
+            this.uiSettingsStorage.saveSettings(settings_v3);
+            break;
+          case 'UPDATE_4':
+            if (this.platform.is('cordova') && this.platform.is('ios')) {
+              // Greenbean and roasting machines just existing in this updated version then.
+              const allEntries: Array<Brew | Mill | Preparation | Bean> =
+                [...this.uiBrewStorage.getAllEntries(),
+                  ...this.uiMillStorage.getAllEntries(),
+                  ...this.uiPreparationStorage.getAllEntries(),
+                  ...this.uiBeanStorage.getAllEntries()];
+
+              if (allEntries.length > 0) {
+                this.uiLog.log(`${_version} - Check ${allEntries.length} entries`);
+                for (const entry of allEntries) {
+
+                  // tslint:disable-next-line
+                  for (let i = 0; i < entry.attachments.length; i++) {
+                    // We don't have a real path here, just the name
+                    let oldPath = entry.attachments[i];
+                    if (oldPath.startsWith('/')) {
+                      // Remove the first slash
+                      oldPath = oldPath.substr(1);
+                    }
+                    this.uiLog.log(`${_version} - Move file from ${this.file.dataDirectory} to ${this.file.syncedDataDirectory}; Name: ${oldPath}`);
+                    const newPath: string = await this.uiFileHelper.moveFile(this.file.dataDirectory,
+                      this.file.syncedDataDirectory, oldPath, oldPath);
+
+                    this.uiLog.log(`${_version} Update path from ${oldPath} to ${newPath}`);
+                    entry.attachments[i] = newPath;
+                  }
+
+                  let storageToUpdate: UIBrewStorage | UIBeanStorage | UIPreparationStorage | UIMillStorage;
+                  if (entry instanceof Brew) {
+                    storageToUpdate = this.uiBrewStorage;
+
+                  } else if (entry instanceof Mill) {
+                    storageToUpdate = this.uiMillStorage;
+                  } else if (entry instanceof Preparation) {
+                    storageToUpdate = this.uiPreparationStorage;
+                  } else if (entry instanceof Bean) {
+                    storageToUpdate = this.uiBeanStorage;
+                  }
+                  storageToUpdate.update(entry);
+                }
+              }
+            }
+            break;
+          default:
+            break;
+        }
+        resolve(true);
+      } catch (ex) {
+        this.uiLog.log('Update exception occured: ' + ex.message);
+        resolve(false);
       }
-      return true;
-    }
-    catch (ex) {
-      this.uiLog.log('Update exception occured: ' + ex.message);
-      return false;
-    }
+    });
+    return promise;
 
   }
 

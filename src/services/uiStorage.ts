@@ -45,6 +45,27 @@ export class UIStorage {
     return promise;
   }
 
+  public hasData() {
+    const promise = new Promise((resolve, reject) => {
+      let hasData: boolean = false;
+      this.storage.forEach((_value, _key, _index) => {
+        hasData = true;
+      })
+        .then(() => {
+          if (hasData) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        },() => {
+          resolve(false);
+        });
+    });
+
+    return promise;
+
+  }
+
   public async import (_data: any): Promise<any> {
 
     // Before we import, we do a saftey backup

@@ -173,38 +173,58 @@ export class AppComponent implements AfterViewInit {
             );
         }
 
-        // Wait for every necessary service to be ready before starting the app
-        const beanStorageReadyCallback = this.uiBeanStorage.storageReady();
-        const preparationStorageReadyCallback = this.uiPreparationStorage.storageReady();
-        const uiSettingsStorageReadyCallback = this.uiSettingsStorage.storageReady();
-        const brewStorageReadyCallback = this.uiBrewStorage.storageReady();
-        const millStorageReadyCallback = this.uiMillStorage.storageReady();
-        const versionStorageReadyCallback = this.uiVersionStorage.storageReady();
-        const greenBeanStorageCallback = this.uiGreenBeanStorage.storageReady();
-        const roastingMachineStorageCallback = this.uiRoastingMachineStorage.storageReady();
+        await this.__checkIOSBackup();
+
+        try {
+          await this.uiBeanStorage.initializeStorage();
+          await this.uiPreparationStorage.initializeStorage();
+          await this.uiSettingsStorage.initializeStorage();
+          await this.uiBrewStorage.initializeStorage();
+          await this.uiMillStorage.initializeStorage();
+          await this.uiVersionStorage.initializeStorage();
+          await this.uiGreenBeanStorage.initializeStorage();
+          await this.uiRoastingMachineStorage.initializeStorage();
 
 
-        Promise.all([
-          beanStorageReadyCallback,
-          preparationStorageReadyCallback,
-          brewStorageReadyCallback,
-          uiSettingsStorageReadyCallback,
-          millStorageReadyCallback,
-          versionStorageReadyCallback,
-          greenBeanStorageCallback,
-          roastingMachineStorageCallback
-        ])
-          .then(async () => {
-            this.uiLog.log('App finished loading');
-            this.uiLog.info('Everything should be fine!!!');
-            await this.__checkUpdate();
-            await this.__initApp();
-            this.uiHelper.setAppReady(1);
+          // Wait for every necessary service to be ready before starting the app
+          // Settings and version, will create a new object on start, so we need to wait for this in the end.
+          const beanStorageReadyCallback = this.uiBeanStorage.storageReady();
+          const preparationStorageReadyCallback = this.uiPreparationStorage.storageReady();
+          const uiSettingsStorageReadyCallback = this.uiSettingsStorage.storageReady();
+          const brewStorageReadyCallback = this.uiBrewStorage.storageReady();
+          const millStorageReadyCallback = this.uiMillStorage.storageReady();
+          const versionStorageReadyCallback = this.uiVersionStorage.storageReady();
+          const greenBeanStorageCallback = this.uiGreenBeanStorage.storageReady();
+          const roastingMachineStorageCallback = this.uiRoastingMachineStorage.storageReady();
 
-          }, async () => {
-            await this.uiAlert.showAppShetItSelfMessage();
-            this.uiLog.error('App finished loading, but errors occured');
-          });
+
+          Promise.all([
+            beanStorageReadyCallback,
+            preparationStorageReadyCallback,
+            brewStorageReadyCallback,
+            uiSettingsStorageReadyCallback,
+            millStorageReadyCallback,
+            versionStorageReadyCallback,
+            greenBeanStorageCallback,
+            roastingMachineStorageCallback
+          ])
+            .then(() => {
+              this.uiLog.log('App finished loading');
+              this.uiLog.info('Everything should be fine!!!');
+              this.__checkUpdate();
+              this.__initApp();
+              this.uiHelper.setAppReady(1);
+
+            }, async () => {
+              await this.uiAlert.showAppShetItSelfMessage();
+              this.uiLog.error('App finished loading, but errors occured');
+            });
+
+        } catch(ex) {
+          await this.uiAlert.showAppShetItSelfMessage();
+          this.uiLog.error('App finished loading, but errors occured');
+        }
+
       });
     },500);
   }
@@ -213,6 +233,12 @@ export class AppComponent implements AfterViewInit {
 
     await this.uiUpdate.checkUpdate();
   }
+
+  private async __checkIOSBackup() {
+
+    await this.iosPlatformService.checkIOSBackup();
+  }
+
 
   public showRoastingSection() {
     const settings: Settings = this.uiSettingsStorage.getSettings();

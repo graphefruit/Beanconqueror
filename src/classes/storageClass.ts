@@ -22,8 +22,12 @@ export abstract class StorageClass {
                          protected dbPath: string,) {
 
       this.DB_PATH = dbPath;
-      this.__initializeStorage();
 
+
+  }
+
+  public async initializeStorage() {
+    await this.__initializeStorage();
   }
 
   public async storageReady (): Promise<any> {
