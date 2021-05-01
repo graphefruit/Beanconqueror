@@ -28,7 +28,7 @@ export class UIFileHelper {
 
   private getFileDirectory(): string {
     if (this.platform.is('ios') && this.platform.is('cordova')) {
-      return this.file.syncedDataDirectory;
+      return this.file.documentsDirectory;
     } else{
       return this.file.dataDirectory;
     }
@@ -51,6 +51,7 @@ export class UIFileHelper {
           writer.write(blob); // You need to put the file, blob or base64 representation here.
         });
       },() => {
+        reject();
         this.uiLog.error("Could not save file");
       });
     });
@@ -77,12 +78,12 @@ export class UIFileHelper {
             resolve(parsedJSON);
           }catch(ex) {
             this.uiLog.error('We could not read json file ' + ex.message);
-            resolve(undefined);
+            reject();
           }
 
         });
       } else {
-        resolve(undefined);
+        reject();
       }
 
     });

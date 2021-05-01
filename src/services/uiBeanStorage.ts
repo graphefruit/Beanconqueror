@@ -80,8 +80,12 @@ export class UIBeanStorage extends StorageClass {
     super.add(_entry);
   }
 
-  public update(_obj: Bean): boolean {
-    _obj.fixDataTypes();
-    return super.update(_obj);
+  public async update(_obj: Bean): Promise<boolean> {
+    const promise: Promise<boolean> = new Promise(async (resolve, reject) => {
+      _obj.fixDataTypes();
+      const val = await super.update(_obj);
+      resolve(val)
+    });
+    return promise;
   }
 }

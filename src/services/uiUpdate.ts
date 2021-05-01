@@ -20,6 +20,8 @@ import {UpdatePopoverComponent} from '../popover/update-popover/update-popover.c
 import {IBeanInformation} from '../interfaces/bean/iBeanInformation';
 import {UIFileHelper} from './uiFileHelper';
 import {File} from '@ionic-native/file/ngx';
+import {UIAlert} from './uiAlert';
+import {TranslateService} from '@ngx-translate/core';
 
 
 @Injectable({
@@ -38,7 +40,9 @@ export class UIUpdate {
               private readonly platform: Platform,
               private readonly modalCtrl: ModalController,
               private readonly uiFileHelper: UIFileHelper,
-              private readonly file: File) {
+              private readonly file: File,
+              private readonly uiAlert: UIAlert,
+              private readonly translate: TranslateService) {
   }
 
   private async __updateDataVersion(_version): Promise<boolean> {
@@ -238,36 +242,54 @@ export class UIUpdate {
 
               if (allEntries.length > 0) {
                 this.uiLog.log(`${_version} - Check ${allEntries.length} entries`);
+                this.uiAlert.setLoadingSpinnerMessage(`${_version} - Check ${allEntries.length} entries`);
+                let entryIndex: number = -1;
                 for (const entry of allEntries) {
+                  entryIndex ++;
+                  try {
+                    this.uiLog.log(`${_version} - Check entry ${entryIndex} of ${allEntries.length}`);
+                    let entryNeedsUpdate: boolean = true;
+                    // tslint:disable-next-line
+                    for (let i = 0; i < entry.attachments.length; i++) {
+                      this.uiLog.log(`${_version} - Check attachments ${i}`);
+                      // We don't have a real path here, just the name
+                      let oldPath = entry.attachments[i];
+                      if (oldPath.startsWith('/')) {
+                        // Remove the first slash
+                        oldPath = oldPath.substr(1);
+                      }
+                      this.uiLog.log(`${_version} - Move file from ${this.file.dataDirectory} to ${this.file.syncedDataDirectory}; Name: ${oldPath}`);
+                       const newPath: string = await this.uiFileHelper.moveFile(this.file.dataDirectory, this.file.documentsDirectory, oldPath, oldPath);
 
-                  // tslint:disable-next-line
-                  for (let i = 0; i < entry.attachments.length; i++) {
-                    // We don't have a real path here, just the name
-                    let oldPath = entry.attachments[i];
-                    if (oldPath.startsWith('/')) {
-                      // Remove the first slash
-                      oldPath = oldPath.substr(1);
+                       this.uiLog.log(`${_version} Update path from ${oldPath} to ${newPath}`);
+                      entry.attachments[i] = newPath;
+                      entryNeedsUpdate = true;
                     }
-                    this.uiLog.log(`${_version} - Move file from ${this.file.dataDirectory} to ${this.file.syncedDataDirectory}; Name: ${oldPath}`);
-                    const newPath: string = await this.uiFileHelper.moveFile(this.file.dataDirectory,
-                      this.file.syncedDataDirectory, oldPath, oldPath);
 
-                    this.uiLog.log(`${_version} Update path from ${oldPath} to ${newPath}`);
-                    entry.attachments[i] = newPath;
+                    if (entryNeedsUpdate) {
+                      this.uiLog.log(`${_version} - Update entry ${entryIndex} of ${allEntries.length}`);
+
+                      this.uiAlert.setLoadingSpinnerMessage(  this.translate.instant('UPDATE_ENTRY_OF',{
+                        index: entryIndex, count: allEntries.length
+                      }));
+
+                      let storageToUpdate: UIBrewStorage | UIBeanStorage | UIPreparationStorage | UIMillStorage;
+                      if (entry instanceof Brew) {
+                        storageToUpdate = this.uiBrewStorage;
+
+                      } else if (entry instanceof Mill) {
+                        storageToUpdate = this.uiMillStorage;
+                      } else if (entry instanceof Preparation) {
+                        storageToUpdate = this.uiPreparationStorage;
+                      } else if (entry instanceof Bean) {
+                        storageToUpdate = this.uiBeanStorage;
+                      }
+                      await storageToUpdate.update(entry);
+                    }
+                  } catch (ex) {
+                    console.log(ex.message);
                   }
 
-                  let storageToUpdate: UIBrewStorage | UIBeanStorage | UIPreparationStorage | UIMillStorage;
-                  if (entry instanceof Brew) {
-                    storageToUpdate = this.uiBrewStorage;
-
-                  } else if (entry instanceof Mill) {
-                    storageToUpdate = this.uiMillStorage;
-                  } else if (entry instanceof Preparation) {
-                    storageToUpdate = this.uiPreparationStorage;
-                  } else if (entry instanceof Bean) {
-                    storageToUpdate = this.uiBeanStorage;
-                  }
-                  storageToUpdate.update(entry);
                 }
               }
             }
@@ -293,6 +315,7 @@ export class UIUpdate {
 
 
     if (version.checkIfDataVersionWasUpdated(_dataVersion) === false) {
+      await this.uiAlert.showLoadingSpinner();
       this.uiLog.info('Data version ' + _dataVersion + ' - Update');
       try {
         const updated: boolean = await this.__updateDataVersion(_dataVersion);
@@ -302,7 +325,7 @@ export class UIUpdate {
         } else {
           this.uiLog.info('Data version ' + _dataVersion + ' - could not update');
         }
-
+        await this.uiAlert.hideLoadingSpinner();
       }
       catch(ex) {
         this.uiLog.error('Data version ' + _dataVersion + ' - could not update ' + ex.message);
@@ -319,11 +342,13 @@ export class UIUpdate {
   }
 
   public async checkUpdate() {
+
     this.uiLog.info('Check updates');
     await this.__checkUpdateForDataVersion('UPDATE_1');
     await this.__checkUpdateForDataVersion('UPDATE_2');
     await this.__checkUpdateForDataVersion('UPDATE_3');
     await this.__checkUpdateForDataVersion('UPDATE_4');
+
   }
 
 

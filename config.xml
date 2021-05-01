@@ -107,6 +107,12 @@
                 </dict>
             </array>
         </edit-config>
+        <edit-config file="*-Info.plist" mode="merge" target="UIFileSharingEnabled">
+            <true />
+        </edit-config>
+        <edit-config file="*-Info.plist" mode="merge" target="LSSupportsOpeningDocumentsInPlace">
+            <true />
+        </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="UIApplicationShortcutItems">
             <array>
                 <dict>

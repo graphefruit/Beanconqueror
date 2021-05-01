@@ -349,6 +349,10 @@ ion-menu:host .menu-inner {
   ion-range {
     --bar-background: #CCCCCC;
     --bar-background-active: var(--ion-color-accent-secondary);
+
+  }
+  ion-range::part(pin) {
+    --pin-background: var(--ion-color-accent-secondary);
   }
 
   ion-tab-bar {

@@ -76,11 +76,4 @@ export class UIGreenBeanStorage extends StorageClass {
     return this.beans;
   }
 
-  public add(_entry: GreenBean) {
-    super.add(_entry);
-  }
-
-  public update(_obj: GreenBean): boolean {
-    return super.update(_obj);
-  }
 }

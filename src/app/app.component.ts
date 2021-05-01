@@ -141,7 +141,6 @@ export class AppComponent implements AfterViewInit {
         this.splashScreen.hide();
         this.keyboard.hideFormAccessoryBar(false);
 
-
         if (this.platform.is('ios')) {
           this.uiLog.log(`iOS Device - attach to home icon pressed`);
           this.threeDeeTouch.onHomeIconPressed()
@@ -172,7 +171,9 @@ export class AppComponent implements AfterViewInit {
               }
             );
         }
-
+        // Before we update and show messages, we need atleast to set one default language.
+        this._translate.setDefaultLang('en');
+        await this._translate.use('en').toPromise();
         await this.__checkIOSBackup();
 
         try {
@@ -208,11 +209,11 @@ export class AppComponent implements AfterViewInit {
             greenBeanStorageCallback,
             roastingMachineStorageCallback
           ])
-            .then(() => {
+            .then(async () => {
               this.uiLog.log('App finished loading');
               this.uiLog.info('Everything should be fine!!!');
-              this.__checkUpdate();
-              this.__initApp();
+              await this.__checkUpdate();
+              await this.__initApp();
               this.uiHelper.setAppReady(1);
 
             }, async () => {
@@ -355,9 +356,7 @@ export class AppComponent implements AfterViewInit {
     this.__registerBack();
     await this.__setDeviceLanguage();
     this.__setThreeDeeTouchActions();
-    await this.uiAnalytics.initializeTracking().catch(() => {
-      // Nothing to do, user declined tracking.
-    });
+    await this.uiAnalytics.initializeTracking();
     await this.__checkWelcomePage();
     await this.__checkAnalyticsInformationPage();
     await this.uiUpdate.checkUpdateScreen();

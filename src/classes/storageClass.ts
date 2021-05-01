@@ -84,18 +84,21 @@ export abstract class StorageClass {
     return this.storedData;
   }
 
-  public update (_obj): boolean {
-    for (let i = 0; i < this.storedData.length; i++) {
-      if (this.storedData[i].config.uuid === _obj.config.uuid) {
-        this.uiLog.log(`Storage - Update  - Successfully - ${ _obj.config.uuid}`);
-        this.storedData[i] = _obj;
-        this.__save();
-        this.__sendEvent('UPDATE');
-        return true;
+  public async update(_obj): Promise<boolean> {
+    const promise: Promise<any> = new Promise(async (resolve, reject) => {
+      for (let i = 0; i < this.storedData.length; i++) {
+        if (this.storedData[i].config.uuid === _obj.config.uuid) {
+          this.uiLog.log(`Storage - Update  - Successfully - ${_obj.config.uuid}`);
+          this.storedData[i] = _obj;
+          await this.__save();
+          this.__sendEvent('UPDATE');
+          resolve(true);
+        }
       }
-    }
 
-    return false;
+      resolve(false);
+    });
+    return promise;
   }
 
   public removeByObject(_obj: any): boolean {
@@ -195,8 +198,8 @@ export abstract class StorageClass {
 
   }
 
-  private __save() {
-    this.uiStorage.set(this.DB_PATH, this.storedData).then((e) => {
+  private async __save() {
+    await this.uiStorage.set(this.DB_PATH, this.storedData).then((e) => {
         this.uiLog.log('Storage - Save - Successfully');
       }, (e) => {
         this.uiLog.log('Storage - Save - Unsuccessfully');

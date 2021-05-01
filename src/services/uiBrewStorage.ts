@@ -62,9 +62,13 @@ export class UIBrewStorage extends StorageClass {
     super.add(_entry);
   }
 
-  public update(_obj: Brew): boolean {
-    _obj.fixDataTypes();
-    return super.update(_obj);
+  public async update(_obj: Brew): Promise<boolean> {
+    const promise: Promise<any> = new Promise(async (resolve, reject) => {
+      _obj.fixDataTypes();
+      const updateval: boolean = await super.update(_obj);
+      resolve(updateval);
+    });
+    return promise;
   }
 
 }

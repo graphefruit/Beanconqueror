@@ -29,6 +29,7 @@ export class Settings implements ISettings {
   public language: string;
   public track_brew_coordinates: boolean;
   public fast_brew_repeat: boolean;
+  public image_quality: number;
 
   public show_archived_beans: boolean;
   public show_archived_brews: boolean;
@@ -123,6 +124,7 @@ export class Settings implements ISettings {
 
     this.welcome_page_showed = false;
     this.wake_lock = false;
+    this.image_quality = 100;
   }
 
   public initializeByObject(settingsObj: ISettings): void {

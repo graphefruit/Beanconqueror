@@ -87,13 +87,14 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       if (this.timer) {
         this.timer.setTime(this.data.brew_time);
       }
-
-
       if ( this.settings.manage_parameters.brew_temperature_time) {
         this.brewTemperatureTime.setTime(this.data.brew_temperature_time);
       }
 
     }
+
+    // Trigger change rating
+    this.changedRating();
     })
   }
 
