@@ -6,6 +6,7 @@ import {UILog} from '../uiLog';
 import {EventQueueService} from '../queueService/queue-service.service';
 import {AppEventType} from '../../enums/appEvent/appEvent';
 import {Platform} from '@ionic/angular';
+import {debounceTime} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -19,21 +20,24 @@ export class IosPlatformService {
               private readonly platform: Platform) {
 
     if (this.platform.is('cordova') && this.platform.is('ios')) {
-      this.eventQueue.on(AppEventType.STORAGE_CHANGED).subscribe((event) => this.__saveBeanconquerorDump());
+      this.eventQueue.on(AppEventType.STORAGE_CHANGED).pipe(
+        // Wait for 3 seconds before we call the the debounce
+         debounceTime(3000)
+      ).subscribe((event) => this.__saveBeanconquerorDump());
     }
 
   }
 
   private __saveBeanconquerorDump() {
+    this.uiLog.log('iOS-Platform - Start to export JSON file');
     this.uiStorage.export().then((_data) => {
       this.uiFileHelper.saveJSONFile('Beanconqueror.json', JSON.stringify(_data)).then(async () => {
-        this.uiLog.log('JSON file successfully saved')
+        this.uiLog.log('iOS-Platform - JSON file successfully saved')
       }, () => {
-        this.uiLog.error('JSON file not saved')
+        this.uiLog.error('iOS-Platform - JSON file could not be saved')
       })
     });
   }
-
   public async checkIOSBackup() {
     try {
       this.uiLog.log('iOS-Platform - Check IOS Backup');
