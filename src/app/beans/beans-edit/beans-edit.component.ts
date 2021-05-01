@@ -31,9 +31,9 @@ export class BeansEditComponent implements OnInit {
     this.data.initializeByObject(this.bean);
   }
 
-  public editBean(): void {
+  public async editBean() {
     if (this.__formValid()) {
-      this.__editBean();
+      await this.__editBean();
     }
   }
 
@@ -52,8 +52,8 @@ export class BeansEditComponent implements OnInit {
 
     return valid;
   }
-  private __editBean(): void {
-    this.uiBeanStorage.update(this.data);
+  private async __editBean() {
+    await this.uiBeanStorage.update(this.data);
     this.uiToast.showInfoToast('TOAST_BEAN_EDITED_SUCCESSFULLY');
     this.dismiss();
   }

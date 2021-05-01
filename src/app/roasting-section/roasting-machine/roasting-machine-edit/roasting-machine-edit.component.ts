@@ -29,14 +29,14 @@ export class RoastingMachineEditComponent implements OnInit {
     this.data = this.uiHelper.copyData(this.roastingMachine);
   }
 
-  public edit(form): void {
+  public async edit(form) {
     if (form.valid) {
-      this.__edit();
+      await this.__edit();
     }
   }
 
-  public __edit(): void {
-    this.uiRoastingMachineStorage.update(this.data);
+  public async __edit() {
+    await this.uiRoastingMachineStorage.update(this.data);
     this.uiToast.showInfoToast('TOAST_ROASTING_MACHINE_EDITED_SUCCESSFULLY');
     this.dismiss();
   }

@@ -358,6 +358,7 @@
       "BEAN_DATA_FARMER": "Füge den Farmer hinzu",
       "BEAN_DATA_ELEVATION": "In welcher Höhe wurde die Bohne angebaut",
       "BEAN_DATA_HARVEST_TIME": "Wann wurde die Bohne geerntet?",
+      "BEAN_DATA_BUY_DATE": "Wann wurde die Bohne gekauft?",
       "BEAN_DATA_PERCENTAGE": "Füge den prozentualen Anteil hinzu",
       "BEAN_DATA_CERTIFICATION": "Füge das Bohnenzertifikat hinzu (Fairtrade, Bio)",
       "BEAN_DATA_ROASTING_TYPE": "Füge den Rösttyp hinzu",

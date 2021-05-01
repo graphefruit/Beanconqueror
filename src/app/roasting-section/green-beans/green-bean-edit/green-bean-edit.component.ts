@@ -42,9 +42,9 @@ export class GreenBeanEditComponent implements OnInit {
 
 
 
-  public editBean(): void {
+  public async editBean() {
     if (this.__formValid()) {
-      this.__editBean();
+      await this.__editBean();
     }
   }
 
@@ -57,8 +57,8 @@ export class GreenBeanEditComponent implements OnInit {
 
     return valid;
   }
-  private __editBean(): void {
-    this.uiGreenBeanStorage.update(this.data);
+  private async __editBean() {
+    await this.uiGreenBeanStorage.update(this.data);
     this.uiToast.showInfoToast('TOAST_GREEN_BEAN_EDITED_SUCCESSFULLY');
     this.dismiss();
   }

@@ -358,6 +358,7 @@
       "BEAN_DATA_FARMER": "Add the farmer",
       "BEAN_DATA_ELEVATION": "In which elevation was the bean grown",
       "BEAN_DATA_HARVEST_TIME": "In which time was the bean harvested?",
+      "BEAN_DATA_BUY_DATE": "When was the bean bought?",
       "BEAN_DATA_PERCENTAGE": "Add the sort percentage",
       "BEAN_DATA_CERTIFICATION": "Add the bean certification (e.g. fair trade, bio)",
       "BEAN_DATA_ROASTING_TYPE": "Add the roast type",

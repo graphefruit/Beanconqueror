@@ -87,13 +87,51 @@
             <param name="ios-package" value="CDVWKWebViewEngine" />
         </feature>
         <preference name="CordovaWebViewEngine" value="CDVWKWebViewEngine" />
+        <edit-file file="*-Debug.plist" mode="merge" target="com.apple.developer.healthkit">
+            <true />
+        </edit-file>
+        <edit-file file="*-Debug.plist" mode="merge" target="com.apple.developer.icloud-container-identifiers">
+            <array>
+                <string>iCloud.com.beanconqueror.app</string>
+            </array>
+        </edit-file>
+        <edit-file file="*-Debug.plist" mode="merge" target="com.apple.developer.icloud-services">
+            <array>
+                <string>CloudDocuments</string>
+            </array>
+        </edit-file>
+        <edit-file file="*-Debug.plist" mode="merge" target="com.apple.developer.ubiquity-container-identifiers">
+            <array>
+                <string>iCloud.com.beanconqueror.app</string>
+            </array>
+        </edit-file>
         <edit-file file="*-Debug.plist" mode="merge" target="com.apple.developer.associated-domains">
             <array>
+                <string>webcredentials:beanconqueror.com</string>
                 <string>applinks:beanconqueror.com</string>
+            </array>
+        </edit-file>
+        <edit-file file="*-Release.plist" mode="merge" target="com.apple.developer.healthkit">
+            <true />
+        </edit-file>
+        <edit-file file="*-Release.plist" mode="merge" target="com.apple.developer.icloud-container-identifiers">
+            <array>
+                <string>iCloud.com.beanconqueror.app</string>
+            </array>
+        </edit-file>
+        <edit-file file="*-Release.plist" mode="merge" target="com.apple.developer.icloud-services">
+            <array>
+                <string>CloudDocuments</string>
+            </array>
+        </edit-file>
+        <edit-file file="*-Release.plist" mode="merge" target="com.apple.developer.ubiquity-container-identifiers">
+            <array>
+                <string>iCloud.com.beanconqueror.app</string>
             </array>
         </edit-file>
         <edit-file file="*-Release.plist" mode="merge" target="com.apple.developer.associated-domains">
             <array>
+                <string>webcredentials:beanconqueror.com</string>
                 <string>applinks:beanconqueror.com</string>
             </array>
         </edit-file>

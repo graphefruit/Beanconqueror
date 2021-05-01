@@ -29,14 +29,14 @@ export class MillEditComponent implements OnInit {
     this.data = this.uiHelper.copyData(this.mill);
   }
 
-  public editMill(form): void {
+  public async editMill(form) {
     if (form.valid) {
-      this.__editMill();
+      await this.__editMill();
     }
   }
 
-  public __editMill(): void {
-    this.uiMillStorage.update(this.data);
+  public async __editMill() {
+    await this.uiMillStorage.update(this.data);
     this.uiToast.showInfoToast('TOAST_MILL_EDITED_SUCCESSFULLY');
     this.dismiss();
   }
