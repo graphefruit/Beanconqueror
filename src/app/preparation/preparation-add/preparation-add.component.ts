@@ -37,7 +37,7 @@ export class PreparationAddComponent implements OnInit {
     this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.ADD_TYPE);
     const modal = await this.modalController.create({
       component: PreparationAddTypeComponent,
-      cssClass: 'half-bottom-modal',
+      cssClass: 'popover-actions',
       showBackdrop: true,
       id: 'preparation-add-type',
       backdropDismiss: true,

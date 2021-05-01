@@ -98,7 +98,7 @@ export class WelcomePopoverComponent implements OnInit {
   public async addMill() {
     const modal = await this.modalController.create({
       component: MillAddComponent,
-      cssClass: 'half-bottom-modal', id:'mill-add', showBackdrop: true, componentProps: {hide_toast_message: true}
+      cssClass: 'popover-actions', id:'mill-add', showBackdrop: true, componentProps: {hide_toast_message: true}
     });
     await modal.present();
     await modal.onWillDismiss();

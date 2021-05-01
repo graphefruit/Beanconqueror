@@ -68,7 +68,7 @@ export class RoastingMachinePage implements OnInit {
   public async add() {
     this.uiAnalytics.trackEvent(ROASTING_MACHINE_TRACKING.TITLE, ROASTING_MACHINE_TRACKING.ACTIONS.ADD);
       const modal = await this.modalCtrl.create({
-        component: RoastingMachineAddComponent, cssClass: 'half-bottom-modal', showBackdrop: true,
+        component: RoastingMachineAddComponent, cssClass: 'popover-actions', showBackdrop: true,
         backdropDismiss: true,
         swipeToClose: true,
         id: 'roasting-machine-add'

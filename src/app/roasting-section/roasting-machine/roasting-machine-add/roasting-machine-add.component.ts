@@ -20,9 +20,9 @@ export class RoastingMachineAddComponent implements OnInit {
 
   public ionViewWillEnter(): void {
   }
-  public add(form): void {
+  public add(): void {
 
-    if (form.valid) {
+    if (this.data.name) {
       this.__add();
     }
   }

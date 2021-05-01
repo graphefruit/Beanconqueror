@@ -1,52 +1,57 @@
-<ion-content class="ion-padding-top">
-  <div class="popover">
-    <form #addPreparationForm="ngForm" novalidate>
-      <ion-item>
-        <ion-label position="stacked">{{"PREPARATION_TYPE_NAME" | translate}}*</ion-label>
-        <ion-input #name="ngModel" [(ngModel)]="data.name" autocapitalize="sentences" name="name"
-                   placeholder="{{'PREPARATION.PLACE_HOLDER.PREPARATION_TYPE_NAME' | translate}}" required
-                   spellcheck="false" type="text">
-        </ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label position="stacked">{{"PREPARATION_TYPE_STYLE" | translate}}*</ion-label>
-        <ion-select #name="ngModel" [(ngModel)]="data.style_type" cancelText="{{'CANCEL'| translate }}"
-                    name="style_type" okText="{{'CHOOSE'| translate }}">
-          <ion-select-option value="{{PREPARATION_STYLE_TYPE.POUR_OVER}}">{{"PREPARATION_STYLE_POUR_OVER" | translate}}</ion-select-option>
-          <ion-select-option value="{{PREPARATION_STYLE_TYPE.ESPRESSO}}">{{"PREPARATION_STYLE_ESPRESSO" | translate}}</ion-select-option>
-          <ion-select-option value="{{PREPARATION_STYLE_TYPE.FULL_IMMERSION}}">{{"PREPARATION_STYLE_FULL_IMMERSION" | translate}}</ion-select-option>
-          <ion-select-option value="{{PREPARATION_STYLE_TYPE.PERCOLATION}}">{{"PREPARATION_STYLE_PERCOLATION" | translate}}</ion-select-option>
-        </ion-select>
-      </ion-item>
-      <ion-item lines="none">
-        <ion-label>{{"PREPARATION_TOOLS" | translate}}</ion-label>
-        <ion-icon name="information-outline" slot="end"
-                  tooltip='{{"PREPARATION_TOOLS_INFORMATION" | translate}}'></ion-icon>
-      </ion-item>
-      <ion-item style="margin-top: -10px;">
+<ion-content (click)="dismiss()">
 
-        <ion-input (keyup.enter)="addTool()" [(ngModel)]="nextToolName" name="nextToolName" placeholder='{{"PREPARATION_TOOLS_PLACEHOLDER" | translate}}' type="text"></ion-input>
-
-        <ion-button (click)="addTool()" fill="clear" tappable>
-          <ion-icon class="font-size-24" color="accent" name="beanconqueror-add" slot="icon-only"></ion-icon>
-        </ion-button>
-      </ion-item>
-      <div class="ion-padding-horizontal">
-        <ion-chip (click)="deleteTool(tool)" *ngFor="let tool of data.tools;let i=index;">{{tool.name}} <ion-icon name="close"></ion-icon></ion-chip>
-      </div>
-    </form> 
-  </div>
 </ion-content>
 <ion-footer class="ion-no-border">
-  <ion-row>
-    <ion-col size="6">
-      <ion-button (click)="dismiss(false)" color="accent" expand="block" fill="outline"
-                  tappable>{{"CANCEL" | translate}}</ion-button>
-    </ion-col>
-    <ion-col size="6">
-      <ion-button (click)="addPreparation()" color="accent" disable-double-click expand="block" tappable
-                  type="submit">{{"SAVE" | translate}}</ion-button>
-    </ion-col>
+  <div style="width:100%;text-align:end;" class="ion-margin-top">
+    <ion-button (click)="dismiss()" tappable color="accent" fill="clear" >
+      <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+    </ion-button>
+  </div>
+  <form #addPreparationForm="ngForm" novalidate>
+    <ion-item>
+      <ion-label position="stacked">{{"PREPARATION_TYPE_NAME" | translate}}*</ion-label>
+      <ion-input #name="ngModel" [(ngModel)]="data.name" autocapitalize="sentences" name="name"
+                 placeholder="{{'PREPARATION.PLACE_HOLDER.PREPARATION_TYPE_NAME' | translate}}" required
+                 spellcheck="false" type="text">
+      </ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">{{"PREPARATION_TYPE_STYLE" | translate}}*</ion-label>
+      <ion-select #name="ngModel" [(ngModel)]="data.style_type" cancelText="{{'CANCEL'| translate }}"
+                  name="style_type" okText="{{'CHOOSE'| translate }}">
+        <ion-select-option value="{{PREPARATION_STYLE_TYPE.POUR_OVER}}">{{"PREPARATION_STYLE_POUR_OVER" | translate}}</ion-select-option>
+        <ion-select-option value="{{PREPARATION_STYLE_TYPE.ESPRESSO}}">{{"PREPARATION_STYLE_ESPRESSO" | translate}}</ion-select-option>
+        <ion-select-option value="{{PREPARATION_STYLE_TYPE.FULL_IMMERSION}}">{{"PREPARATION_STYLE_FULL_IMMERSION" | translate}}</ion-select-option>
+        <ion-select-option value="{{PREPARATION_STYLE_TYPE.PERCOLATION}}">{{"PREPARATION_STYLE_PERCOLATION" | translate}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item lines="none">
+      <ion-label>{{"PREPARATION_TOOLS" | translate}}</ion-label>
+      <ion-icon name="information-outline" slot="end"
+                tooltip='{{"PREPARATION_TOOLS_INFORMATION" | translate}}'></ion-icon>
+    </ion-item>
+    <ion-item style="margin-top: -10px;">
 
-  </ion-row>
+      <ion-input (keyup.enter)="addTool()" [(ngModel)]="nextToolName" name="nextToolName" placeholder='{{"PREPARATION_TOOLS_PLACEHOLDER" | translate}}' type="text"></ion-input>
+
+      <ion-button (click)="addTool()" fill="clear" tappable>
+        <ion-icon class="font-size-24" color="accent" name="beanconqueror-add" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-item>
+    <div class="ion-padding-horizontal">
+      <ion-chip (click)="deleteTool(tool)" *ngFor="let tool of data.tools;let i=index;">{{tool.name}} <ion-icon name="close"></ion-icon></ion-chip>
+    </div>
+  </form>
+    <ion-row class="ion-margin-top">
+      <ion-col size="6">
+        <ion-button (click)="dismiss(false)" color="accent" expand="block" fill="outline"
+                    tappable>{{"CANCEL" | translate}}</ion-button>
+      </ion-col>
+      <ion-col size="6">
+        <ion-button (click)="addPreparation()" color="accent" disable-double-click expand="block" tappable
+                    type="submit">{{"SAVE" | translate}}</ion-button>
+      </ion-col>
+
+    </ion-row>
 </ion-footer>
+

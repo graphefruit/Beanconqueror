@@ -481,7 +481,7 @@ export class AppComponent implements AfterViewInit {
     this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.ADD);
     const modal = await this.modalCtrl.create({
       component: MillAddComponent,
-      cssClass: 'half-bottom-modal', id: 'mill-add', showBackdrop: true, componentProps: {hide_toast_message: false}
+      cssClass: 'popover-actions', id: 'mill-add', showBackdrop: true, componentProps: {hide_toast_message: false}
     });
     await modal.present();
     await modal.onWillDismiss();

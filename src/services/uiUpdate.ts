@@ -242,13 +242,12 @@ export class UIUpdate {
 
               if (allEntries.length > 0) {
                 this.uiLog.log(`${_version} - Check ${allEntries.length} entries`);
-                this.uiAlert.setLoadingSpinnerMessage(`${_version} - Check ${allEntries.length} entries`);
                 let entryIndex: number = -1;
                 for (const entry of allEntries) {
                   entryIndex ++;
                   try {
                     this.uiLog.log(`${_version} - Check entry ${entryIndex} of ${allEntries.length}`);
-                    let entryNeedsUpdate: boolean = true;
+                    let entryNeedsUpdate: boolean = false;
                     // tslint:disable-next-line
                     for (let i = 0; i < entry.attachments.length; i++) {
                       this.uiLog.log(`${_version} - Check attachments ${i}`);
@@ -259,9 +258,9 @@ export class UIUpdate {
                         oldPath = oldPath.substr(1);
                       }
                       this.uiLog.log(`${_version} - Move file from ${this.file.dataDirectory} to ${this.file.syncedDataDirectory}; Name: ${oldPath}`);
-                       const newPath: string = await this.uiFileHelper.moveFile(this.file.dataDirectory, this.file.documentsDirectory, oldPath, oldPath);
+                      const newPath: string = await this.uiFileHelper.moveFile(this.file.dataDirectory, this.file.documentsDirectory, oldPath, oldPath);
 
-                       this.uiLog.log(`${_version} Update path from ${oldPath} to ${newPath}`);
+                      this.uiLog.log(`${_version} Update path from ${oldPath} to ${newPath}`);
                       entry.attachments[i] = newPath;
                       entryNeedsUpdate = true;
                     }
@@ -287,7 +286,7 @@ export class UIUpdate {
                       await storageToUpdate.update(entry);
                     }
                   } catch (ex) {
-                    console.log(ex.message);
+                    this.uiLog.log(`${_version} - Update exception ${ex.message}`);
                   }
 
                 }

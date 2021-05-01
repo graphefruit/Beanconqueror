@@ -22,9 +22,9 @@ export class MillAddComponent implements OnInit {
 
   public ionViewWillEnter(): void {
   }
-  public addMill(form): void {
+  public addMill(): void {
 
-    if (form.valid) {
+    if (this.data.name) {
       this.__addMill();
     }
   }

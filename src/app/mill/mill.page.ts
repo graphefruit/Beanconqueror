@@ -67,7 +67,9 @@ export class MillPage  implements OnInit  {
     this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.ADD);
 
     const modal = await this.modalCtrl.create({
-      component: MillAddComponent, cssClass: 'half-bottom-modal', showBackdrop: true,
+      component: MillAddComponent,
+      cssClass: 'popover-actions',
+      showBackdrop: true,
       backdropDismiss: true,
       swipeToClose: true,
       id: 'mill-add'
