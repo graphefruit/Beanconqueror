@@ -210,6 +210,9 @@
                 <string>UIInterfaceOrientationLandscapeRight</string>
             </array>
         </edit-config>
+        <edit-config file="*-Info.plist" mode="merge" target="ITSAppUsesNonExemptEncryption">
+            <false />
+        </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="UISupportedInterfaceOrientations~ipad">
             <array>
                 <string>UIInterfaceOrientationPortrait</string>
