@@ -664,5 +664,6 @@
   "PAGE_STATISTICS_PHOTOS_TAKEN": "Photos taken",
   "PAGE_SETTINGS_IMAGE_QUALITY": "Image quality",
   "PAGE_SETTINGS_IMAGE_QUALITY_TOOLTIP": "Define which quality your images should have. This allows you to lower your data usage.",
-  "UPDATE_ENTRY_OF": "Update entry {{index}} of {{count}}"
+  "UPDATE_ENTRY_OF": "Update entry {{index}} of {{count}}",
+  "WEBSITE": "Website"
 }

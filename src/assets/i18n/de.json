@@ -664,5 +664,6 @@
   "PAGE_STATISTICS_PHOTOS_TAKEN": "Fotos aufgenommen",
   "PAGE_SETTINGS_IMAGE_QUALITY": "Bildqualität",
   "PAGE_SETTINGS_IMAGE_QUALITY_TOOLTIP": "Bestimmte in welcher Qualität deine Bilder abgespeichert werden um Daten einzusparen.",
-  "UPDATE_ENTRY_OF": "Aktualisiere Eintrag {{index}} von {{count}}"
+  "UPDATE_ENTRY_OF": "Aktualisiere Eintrag {{index}} von {{count}}",
+  "WEBSITE": "Webseite"
 }
