@@ -11,6 +11,8 @@ import {UIBeanStorage} from '../../services/uiBeanStorage';
 import {Bean} from '../../classes/bean/bean';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
 import {QrScannerService} from '../../services/qrScanner/qr-scanner.service';
+import BREW_TRACKING from '../../data/tracking/brewTracking';
+import {UIAnalytics} from '../../services/uiAnalytics';
 
 @Component({
   selector: 'dashboard',
@@ -29,7 +31,8 @@ export class DashboardPage implements OnInit {
               private readonly router: Router,
               private readonly uiBeanStorage: UIBeanStorage,
               private readonly uiBeanHelper: UIBeanHelper,
-              private readonly qrScannerService: QrScannerService) {
+              private readonly qrScannerService: QrScannerService,
+              private readonly uiAnalytics: UIAnalytics) {
   }
 
   public ngOnInit(): void {
@@ -58,6 +61,7 @@ export class DashboardPage implements OnInit {
 
   public async addBrew() {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
+      this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.ADD);
       const modal = await this.modalCtrl.create({component: BrewAddComponent, id:'brew-add'});
       await modal.present();
       await modal.onWillDismiss();

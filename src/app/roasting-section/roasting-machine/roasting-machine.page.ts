@@ -8,6 +8,8 @@ import {ROASTING_MACHINE_ACTION} from '../../../enums/roasting-machine/roastingM
 import {RoastingMachine} from '../../../classes/roasting-machine/roasting-machine';
 import {UIRoastingMachineStorage} from '../../../services/uiRoastingMachineStorage';
 import {RoastingMachineAddComponent} from './roasting-machine-add/roasting-machine-add.component';
+import ROASTING_MACHINE_TRACKING from '../../../data/tracking/roastingMachineTracking';
+import {UIAnalytics} from '../../../services/uiAnalytics';
 
 @Component({
   selector: 'app-roasting-machine',
@@ -26,7 +28,8 @@ export class RoastingMachinePage implements OnInit {
                private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
                private readonly uiAlert: UIAlert,
                private readonly uiBrewStorage: UIBrewStorage,
-               private readonly uiSettingsStorage: UISettingsStorage,) {
+               private readonly uiSettingsStorage: UISettingsStorage,
+               private readonly uiAnalytics: UIAnalytics) {
 
   }
 
@@ -63,7 +66,7 @@ export class RoastingMachinePage implements OnInit {
       .sort((a, b) => a.name.localeCompare(b.name));
   }
   public async add() {
-
+    this.uiAnalytics.trackEvent(ROASTING_MACHINE_TRACKING.TITLE, ROASTING_MACHINE_TRACKING.ACTIONS.ADD);
       const modal = await this.modalCtrl.create({
         component: RoastingMachineAddComponent, cssClass: 'half-bottom-modal', showBackdrop: true,
         backdropDismiss: true,

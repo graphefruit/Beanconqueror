@@ -15,6 +15,8 @@ import {BrewFilterComponent} from './brew-filter/brew-filter.component';
 import {Settings} from '../../classes/settings/settings';
 import {AgVirtualSrollComponent} from 'ag-virtual-scroll';
 import {IosPlatformService} from '../../services/iosPlatform/ios-platform.service';
+import BREW_TRACKING from '../../data/tracking/brewTracking';
+import {UIAnalytics} from '../../services/uiAnalytics';
 
 
 @Component({
@@ -52,7 +54,7 @@ export class BrewPage implements OnInit {
                public uiHelper: UIHelper,
                public uiBrewHelper: UIBrewHelper,
                private readonly uiSettingsStorage: UISettingsStorage,
-               private readonly iosPlatformService: IosPlatformService) {
+               private readonly uiAnalytics: UIAnalytics) {
   }
 
 
@@ -94,6 +96,7 @@ export class BrewPage implements OnInit {
   }
   public async add() {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
+      this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.ADD);
       const modal = await this.modalCtrl.create({component: BrewAddComponent,id:'brew-add'});
       await modal.present();
       await modal.onWillDismiss();
