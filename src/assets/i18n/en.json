@@ -570,6 +570,10 @@
     "PREPARATION": {
       "CREATION_DATE": "Creation date",
       "ID": "Preparation Id"
+    },
+    "GRINDER": {
+      "CREATION_DATE": "Creation date",
+      "ID": "Mill Id"
     }
   },
   "EXCEL_EXPORT": "Excel export",

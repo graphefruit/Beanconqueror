@@ -8,7 +8,7 @@ import moment from 'moment';
 // tslint:disable-next-line
 import 'moment/locale/de';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import {File} from '@ionic-native/file/ngx';
+import {File, FileEntry} from '@ionic-native/file/ngx';
 import {UIFileHelper} from './uiFileHelper';
 import {UILog} from './uiLog';
 
@@ -193,87 +193,20 @@ export class UIHelper {
 
 
   public async exportJSON (fileName: string, jsonContent: string): Promise<any> {
-     const promise = new Promise((resolve, reject) => {
-      const errorCallback = (e) => {
-        // console.log('Error: ' + e);
-        reject();
-      };
+     const promise = new Promise(async (resolve, reject) => {
+
 
       // Fixed umlaut issue
       // Thanks to: https://stackoverflow.com/questions/31959487/utf-8-encoidng-issue-when-exporting-csv-file-javascript
       const blob = new Blob([jsonContent], {type: 'application/json;charset=UTF-8;'});
-      if (this.platform.is('cordova') && (this.platform.is('android') || this.platform.is('ios'))) {
-        let storageLocation: string = '';
-
-        switch (device.platform) {
-
-          case 'Android':
-            storageLocation = cordova.file.externalRootDirectory;
-            break;
-          case 'iOS':
-            storageLocation = cordova.file.documentsDirectory;
-            break;
-
+        try {
+          const file: FileEntry = await this.uiFileHelper.downloadFile(fileName,blob);
+          resolve(file);
+        } catch(ex) {
+          reject();
         }
 
 
-        window.resolveLocalFileSystemURL(storageLocation,
-           (fileSystem)  => {
-
-            fileSystem.getDirectory('Download', {
-                create: true,
-                exclusive: false
-              },
-               (directory) => {
-                 directory.getDirectory('Beanconqueror_export', {
-                     create: true,
-                     exclusive: false
-                   },
-                   (directory_export) => {
-                     // You need to put the name you would like to use for the file here.
-                     directory_export.getFile(fileName, {
-                         create: true,
-                         exclusive: false
-                       },
-                       (fileEntry) => {
-
-                         fileEntry.createWriter((writer) => {
-                           writer.onwriteend =  () => {
-                             resolve(fileEntry);
-                           };
-
-                           writer.seek(0);
-                           writer.write(blob); // You need to put the file, blob or base64 representation here.
-
-                         }, errorCallback);
-                       }, errorCallback);
-
-                   }, errorCallback);
-
-
-
-              }, errorCallback);
-          }, errorCallback);
-      } else {
-        setTimeout(() => {
-          if (navigator.msSaveBlob) { // IE 10+
-            navigator.msSaveBlob(blob, fileName);
-          } else {
-            const link = document.createElement('a');
-            if (link.download !== undefined) { // feature detection
-              // Browsers that support HTML5 download attribute
-              const url = URL.createObjectURL(blob);
-              link.setAttribute('href', url);
-              link.setAttribute('download', fileName);
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-              resolve(fileName);
-
-            }
-          }
-        }, 250);
-      }
 
     });
      return promise;

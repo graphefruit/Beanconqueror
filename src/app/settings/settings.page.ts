@@ -288,7 +288,7 @@ export class SettingsPage implements OnInit {
           await alert.present();
         } else {
           await this.uiAlert.hideLoadingSpinner();
-          this.socialSharing.share(undefined, undefined, _fileEntry.nativeURL);
+          // File already downloaded
           // We don't support image export yet, because
         }
 

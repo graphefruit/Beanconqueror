@@ -5,6 +5,7 @@ import {unescape} from 'querystring';
 import {Platform} from '@ionic/angular';
 import {DomSanitizer} from '@angular/platform-browser';
 import {UILog} from './uiLog';
+import {SocialSharing} from '@ionic-native/social-sharing/ngx';
 
 /**
  * Handles every helping functionalities
@@ -21,7 +22,10 @@ export class UIFileHelper {
 
 
   constructor (private readonly file: File,
-               private readonly uiLog: UILog, private readonly platform: Platform, private readonly domSanitizer: DomSanitizer) {
+               private readonly uiLog: UILog,
+               private readonly platform: Platform,
+               private readonly domSanitizer: DomSanitizer,
+               private readonly socialSharing: SocialSharing) {
 
 
   }
@@ -111,6 +115,92 @@ export class UIFileHelper {
 
     });
   }
+
+    public async downloadFile(_filename,_blob): Promise<FileEntry> {
+      const promise: Promise<FileEntry> =  new Promise(async (resolve, reject) => {
+
+        if (this.platform.is('cordova')) {
+
+
+        let storageLocation: string = '';
+        if (this.platform.is('android')) {
+          storageLocation = this.file.externalRootDirectory
+        } else {
+          storageLocation = this.file.documentsDirectory;
+        }
+
+        window.resolveLocalFileSystemURL(storageLocation,
+          (fileSystem) => {
+
+            fileSystem.getDirectory('Download', {
+                create: true,
+                exclusive: false
+              },
+              (directory) => {
+                directory.getDirectory('Beanconqueror_export', {
+                    create: true,
+                    exclusive: false
+                  },
+                  (directory_export) => {
+                    // You need to put the name you would like to use for the file here.
+                    directory_export.getFile(_filename, {
+                        create: true,
+                        exclusive: false
+                      },
+                      (fileEntry: FileEntry) => {
+
+                        fileEntry.createWriter((writer) => {
+                          writer.onwriteend = () => {
+
+                            if (this.platform.is('ios')) {
+                              this.socialSharing.share(undefined,undefined,fileEntry.nativeURL);
+                            }
+                            resolve(fileEntry);
+                          };
+
+                          writer.seek(0);
+                          writer.write(_blob); // You need to put the file, blob or base64 representation here.
+
+                        }, () => {
+                          reject();
+                        });
+                      }, () => {
+                        reject();
+                      });
+
+                  }, () => {
+                    reject();
+                  });
+
+
+              }, () => {
+                reject();
+              });
+          }, () => {
+            reject();
+          });
+        } else {
+          resolve(undefined);
+          setTimeout(() => {
+            if (navigator.msSaveBlob) { // IE 10+
+              navigator.msSaveBlob(_blob, _filename);
+            } else {
+              const link = document.createElement('a');
+              if (link.download !== undefined) { // feature detection
+                // Browsers that support HTML5 download attribute
+                const url = URL.createObjectURL(_blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', _filename);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              }
+            }
+          }, 250);
+        }
+      });
+return promise;
+    }
 
   public async deleteFile(_filePath): Promise<any> {
     return new Promise(async (resolve, reject) => {

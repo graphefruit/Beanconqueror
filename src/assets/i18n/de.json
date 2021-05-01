@@ -570,6 +570,10 @@
     "PREPARATION": {
       "CREATION_DATE": "Erstellungsdatum",
       "ID": "Brühmethoden Id"
+    },
+    "GRINDER": {
+      "CREATION_DATE": "Erstellungsdatum",
+      "ID": "Mühlen Id"
     }
   },
   "EXCEL_EXPORT": "Excel Export",
