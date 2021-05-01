@@ -22,6 +22,7 @@ import {UIFileHelper} from './uiFileHelper';
 import {File} from '@ionic-native/file/ngx';
 import {UIAlert} from './uiAlert';
 import {TranslateService} from '@ngx-translate/core';
+import {UIStorage} from './uiStorage';
 
 
 @Injectable({
@@ -42,7 +43,8 @@ export class UIUpdate {
               private readonly uiFileHelper: UIFileHelper,
               private readonly file: File,
               private readonly uiAlert: UIAlert,
-              private readonly translate: TranslateService) {
+              private readonly translate: TranslateService,
+              private readonly uiStorage: UIStorage) {
   }
 
   private async __updateDataVersion(_version): Promise<boolean> {
@@ -228,7 +230,6 @@ export class UIUpdate {
             const settings_v3: any = this.uiSettingsStorage.getSettings();
             // Delete old analytics property
             delete settings_v3.analytics;
-            console.log(settings_v3);
             this.uiSettingsStorage.saveSettings(settings_v3);
             break;
           case 'UPDATE_4':
@@ -306,7 +307,7 @@ export class UIUpdate {
 
   }
 
-  private async __checkUpdateForDataVersion(_dataVersion: string) {
+  private async __checkUpdateForDataVersion(_dataVersion: string, _silentUpdate: boolean) {
     const version: Version = this.uiVersionStorage.getVersion();
     let somethingUpdated: boolean = false;
 
@@ -314,7 +315,10 @@ export class UIUpdate {
 
 
     if (version.checkIfDataVersionWasUpdated(_dataVersion) === false) {
-      await this.uiAlert.showLoadingSpinner();
+      if (!_silentUpdate) {
+        await this.uiAlert.showLoadingSpinner();
+      }
+
       this.uiLog.info('Data version ' + _dataVersion + ' - Update');
       try {
         const updated: boolean = await this.__updateDataVersion(_dataVersion);
@@ -324,7 +328,9 @@ export class UIUpdate {
         } else {
           this.uiLog.info('Data version ' + _dataVersion + ' - could not update');
         }
-        await this.uiAlert.hideLoadingSpinner();
+        if (!_silentUpdate) {
+          await this.uiAlert.hideLoadingSpinner();
+        }
       }
       catch(ex) {
         this.uiLog.error('Data version ' + _dataVersion + ' - could not update ' + ex.message);
@@ -343,10 +349,12 @@ export class UIUpdate {
   public async checkUpdate() {
 
     this.uiLog.info('Check updates');
-    await this.__checkUpdateForDataVersion('UPDATE_1');
-    await this.__checkUpdateForDataVersion('UPDATE_2');
-    await this.__checkUpdateForDataVersion('UPDATE_3');
-    await this.__checkUpdateForDataVersion('UPDATE_4');
+    const hasData: boolean = await this.uiStorage.hasData();
+    debugger;
+    await this.__checkUpdateForDataVersion('UPDATE_1',!hasData);
+    await this.__checkUpdateForDataVersion('UPDATE_2',!hasData);
+    await this.__checkUpdateForDataVersion('UPDATE_3',!hasData);
+    await this.__checkUpdateForDataVersion('UPDATE_4',!hasData);
 
   }
 

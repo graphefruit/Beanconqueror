@@ -45,11 +45,17 @@ export class UIStorage {
     return promise;
   }
 
-  public hasData() {
-    const promise = new Promise((resolve, reject) => {
+  public async hasData(): Promise<boolean> {
+    const promise: Promise<boolean> = new Promise((resolve, reject) => {
       let hasData: boolean = false;
       this.storage.forEach((_value, _key, _index) => {
-        hasData = true;
+        if (_key === 'SETTINGS' || _key ==='VERSION') {
+
+          //Settings and version will be set realy early... so we don't relay on those
+        } else {
+          hasData = true;
+        }
+
       })
         .then(() => {
           if (hasData) {

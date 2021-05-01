@@ -69,9 +69,6 @@ export class MillPage  implements OnInit  {
     const modal = await this.modalCtrl.create({
       component: MillAddComponent,
       cssClass: 'popover-actions',
-      showBackdrop: true,
-      backdropDismiss: true,
-      swipeToClose: true,
       id: 'mill-add'
     });
     await modal.present();
