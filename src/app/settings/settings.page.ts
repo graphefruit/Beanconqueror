@@ -174,7 +174,10 @@ export class SettingsPage implements OnInit {
     }
   }
 
-
+    public changeBrewRating() {
+      this.settings.resetFilter();
+      this.saveSettings();
+    }
   public saveSettings(): void {
     this.changeDetectorRef.detectChanges();
     this.uiSettingsStorage.saveSettings(this.settings);

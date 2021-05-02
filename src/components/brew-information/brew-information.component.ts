@@ -22,6 +22,7 @@ import {UIAlert} from '../../services/uiAlert';
 import {UIImage} from '../../services/uiImage';
 import {UIHelper} from '../../services/uiHelper';
 import BREW_TRACKING from '../../data/tracking/brewTracking';
+import {Settings} from '../../classes/settings/settings';
 
 @Component({
   selector: 'brew-information',
@@ -44,6 +45,8 @@ export class BrewInformationComponent implements OnInit {
   public brewQuantityEnum = BREW_QUANTITY_TYPES_ENUM;
 
 
+  public settings: Settings = null;
+
   constructor(private readonly uiSettingsStorage: UISettingsStorage,
               private readonly uiBrewHelper: UIBrewHelper,
               private readonly uiBrewStorage: UIBrewStorage,
@@ -58,12 +61,26 @@ export class BrewInformationComponent implements OnInit {
 
   public ngOnInit() {
     if (this.brew) {
-
+      this.settings =  this.uiSettingsStorage.getSettings();
       this.bean = this.brew.getBean();
       this.preparation = this.brew.getPreparation();
       this.mill = this.brew.getMill();
     }
 
+  }
+
+  public hasCustomRatingRange(): boolean {
+    if (this.settings) {
+      return this.settings.brew_rating > 5;
+    }
+    return false;
+  }
+
+  public getCustomMaxRating(): number {
+    if (this.settings) {
+      return this.settings.brew_rating;
+    }
+    return 5;
   }
 
   public ngOnChanges(changes: SimpleChange) {

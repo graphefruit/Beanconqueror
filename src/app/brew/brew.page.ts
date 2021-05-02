@@ -14,7 +14,6 @@ import {Bean} from '../../classes/bean/bean';
 import {BrewFilterComponent} from './brew-filter/brew-filter.component';
 import {Settings} from '../../classes/settings/settings';
 import {AgVirtualSrollComponent} from 'ag-virtual-scroll';
-import {IosPlatformService} from '../../services/iosPlatform/ios-platform.service';
 import BREW_TRACKING from '../../data/tracking/brewTracking';
 import {UIAnalytics} from '../../services/uiAnalytics';
 
@@ -144,7 +143,7 @@ export class BrewPage implements OnInit {
     }
     let didRatingFilterChanged: boolean = false;
     if (checkingFilter.rating) {
-      didRatingFilterChanged =  (checkingFilter.rating.upper !== 5 || checkingFilter.rating.lower !== -1);
+      didRatingFilterChanged =  (checkingFilter.rating.upper !== this.settings?.brew_rating || checkingFilter.rating.lower !== -1);
     }
     return (checkingFilter.bean.length > 0 ||
       checkingFilter.method_of_preparation.length > 0 ||

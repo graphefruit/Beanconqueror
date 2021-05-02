@@ -16,13 +16,28 @@ import {UIStorage} from './uiStorage';
   providedIn: 'root'
 })
 export class UISettingsStorage extends StorageClass {
+  /**
+   * Singelton instance
+   */
+  public static instance: UISettingsStorage;
   private settings: Settings = new Settings();
   private isSettingsInitialized: number = -1;
+
+  public static getInstance(): UISettingsStorage {
+    if (UISettingsStorage.instance) {
+      return UISettingsStorage.instance;
+    }
+
+    return undefined;
+  }
+
   constructor(protected uiStorage: UIStorage,
               protected uiHelper: UIHelper,
               protected uiLog: UILog) {
     super(uiStorage, uiHelper, uiLog, 'SETTINGS');
-
+    if (UISettingsStorage.instance === undefined) {
+      UISettingsStorage.instance = this;
+    }
     super.storageReady()
       .then(() => {
 

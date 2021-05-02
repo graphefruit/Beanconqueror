@@ -47,6 +47,9 @@ export class BrewFilterComponent implements OnInit {
     this.filter = this.uiHelper.copyData(this.navParams.get('brew_filter'));
     this.__reloadFilterSettings();
   }
+  public getMaxBrewRating() {
+    return this.settings.brew_rating;
+  }
 
   public hasPreparationTools() {
     for (const uuid of this.filter.method_of_preparation) {

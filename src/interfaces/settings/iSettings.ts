@@ -21,6 +21,7 @@ export interface ISettings {
   track_brew_coordinates: boolean;
   fast_brew_repeat: boolean;
   image_quality: number;
+  brew_rating: number;
 
   show_archived_beans: boolean;
   show_archived_brews: boolean;

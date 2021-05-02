@@ -133,7 +133,7 @@ export class BrewAddComponent implements OnInit {
     await this.uiAlert.showLoadingSpinner();
     try {
       this.uiBrewHelper.cleanInvisibleBrewData(this.data);
-      this.uiBrewStorage.add(this.data);
+      await this.uiBrewStorage.add(this.data);
 
       let checkData: Settings | Preparation;
       if (this.getPreparation().use_custom_parameters === true) {

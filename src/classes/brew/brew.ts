@@ -405,12 +405,6 @@ export class Brew implements IBrew {
       fixNeeded = true;
     }
 
-    if (this.rating > 5) {
-      this.rating = 5;
-      fixNeeded = true;
-    }
-
-
     return fixNeeded;
   }
 
