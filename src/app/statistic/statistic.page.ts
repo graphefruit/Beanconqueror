@@ -509,7 +509,7 @@ export class StatisticPage implements OnInit {
               label += Number((value / sum) * 100).toFixed(2) + '%';
               return label;
             } catch (error) {
-              console.log(error);
+
             }
           }
         }

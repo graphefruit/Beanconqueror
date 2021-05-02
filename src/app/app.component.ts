@@ -140,6 +140,10 @@ export class AppComponent implements AfterViewInit {
         this.statusBar.styleDefault();
         this.splashScreen.hide();
         this.keyboard.hideFormAccessoryBar(false);
+        if (this.platform.is('cordova')) {
+          // When we're in cordova, disable the log messages
+          this.uiLog.disable();
+        }
 
         if (this.platform.is('ios')) {
           this.uiLog.log(`iOS Device - attach to home icon pressed`);

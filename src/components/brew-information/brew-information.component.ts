@@ -216,10 +216,10 @@ export class BrewInformationComponent implements OnInit {
   public deleteBrew(): Promise<any> {
 
    return new Promise(async (resolve,reject) => {
-      this.uiAlert.showConfirm('DELETE_BREW_QUESTION', 'SURE_QUESTION', true).then(() => {
+      this.uiAlert.showConfirm('DELETE_BREW_QUESTION', 'SURE_QUESTION', true).then(async () => {
           // Yes
           this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.DELETE);
-          this.__deleteBrew();
+          await this.__deleteBrew();
           this.uiToast.showInfoToast('TOAST_BREW_DELETED_SUCCESSFULLY');
           resolve();
         },
@@ -231,8 +231,8 @@ export class BrewInformationComponent implements OnInit {
    );
   }
 
-  private __deleteBrew(): void {
-    this.uiBrewStorage.removeByObject(this.brew);
+  private async __deleteBrew() {
+    await this.uiBrewStorage.removeByObject(this.brew);
   }
 
 

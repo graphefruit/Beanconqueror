@@ -10,7 +10,8 @@ export class ServerCommunicationService {
 
 
   public getBeanInformation() {
-    this.http.get('https://jsonplaceholder.typicode.com/todos/1', {}).toPromise()
+    /*
+    this.http.get('', {}).toPromise()
       .then((data) => {
 
         console.log(data);
@@ -24,6 +25,6 @@ export class ServerCommunicationService {
         console.log(error.error); // error message as string
         console.log(error.headers);
 
-      });
+      });*/
   }
 }

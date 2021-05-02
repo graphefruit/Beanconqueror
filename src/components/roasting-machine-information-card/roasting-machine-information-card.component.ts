@@ -73,10 +73,11 @@ export class RoastingMachineInformationCardComponent implements OnInit {
         await this.edit();
         break;
       case ROASTING_MACHINE_ACTION.DELETE:
+
         try {
           await this.delete();
         }catch (ex) {}
-
+        await this.uiAlert.hideLoadingSpinner();
         break;
       case ROASTING_MACHINE_ACTION.PHOTO_GALLERY:
         await this.viewPhotos();
@@ -130,13 +131,14 @@ export class RoastingMachineInformationCardComponent implements OnInit {
     await this.uiImage.viewPhotos(this.roastingMachine);
   }
 
-  public delete(): Promise<any> {
+  public async delete(): Promise<any> {
 
     return new Promise(async (resolve,reject) => {
-        this.uiAlert.showConfirm('DELETE_ROASTING_MACHINE_QUESTION', 'SURE_QUESTION', true).then(() => {
+        this.uiAlert.showConfirm('DELETE_ROASTING_MACHINE_QUESTION', 'SURE_QUESTION', true).then(async () => {
+            await this.uiAlert.showLoadingSpinner();
             // Yes
             this.uiAnalytics.trackEvent(ROASTING_MACHINE_TRACKING.TITLE, ROASTING_MACHINE_TRACKING.ACTIONS.DELETE);
-            this.__delete();
+            await this.__delete();
             this.uiToast.showInfoToast('TOAST_ROASTING_MACHINE_DELETED_SUCCESSFULLY');
             resolve();
           },
@@ -148,13 +150,13 @@ export class RoastingMachineInformationCardComponent implements OnInit {
     );
   }
 
-  private __delete(): void {
+  private async __delete() {
     const beans: Array<Bean> = this.uiBeanHelper.getAllRoastedBeansForRoastingMachine(this.roastingMachine.config.uuid);
     for (const bean of beans) {
       bean.bean_roast_information.roaster_machine = '';
-      this.uiBeanStorage.update(bean);
+      await this.uiBeanStorage.update(bean);
     }
-    this.uiRoastingMachineStorage.removeByObject(this.roastingMachine);
+    await this.uiRoastingMachineStorage.removeByObject(this.roastingMachine);
   }
   public getRoastQuantity(): number {
     const beans: Array<Bean> = this.uiBeanHelper.getAllRoastedBeansForRoastingMachine(this.roastingMachine.config.uuid);

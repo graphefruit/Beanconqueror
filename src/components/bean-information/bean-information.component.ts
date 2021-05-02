@@ -146,6 +146,7 @@ export class BeanInformationComponent implements OnInit {
         try {
           await this.deleteBean();
         }catch (ex) {}
+        await this.uiAlert.hideLoadingSpinner();
         break;
       case BEAN_ACTION.BEANS_CONSUMED:
         await this.beansConsumed();
@@ -198,13 +199,14 @@ export class BeanInformationComponent implements OnInit {
   }
 
 
-  public deleteBean(): Promise<any> {
+  public async deleteBean(): Promise<any> {
     return new Promise(async (resolve,reject) => {
       this.uiAlert.showConfirm('DELETE_BEAN_QUESTION', 'SURE_QUESTION', true)
-        .then(() => {
+        .then(async () => {
+            await this.uiAlert.showLoadingSpinner();
             // Yes
             this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.DELETE);
-            this.__deleteBean();
+            await this.__deleteBean();
             this.uiToast.showInfoToast('TOAST_BEAN_DELETED_SUCCESSFULLY');
             this.resetSettings();
             resolve();
@@ -232,7 +234,7 @@ export class BeanInformationComponent implements OnInit {
   }
 
 
-  private __deleteBean(): void {
+  private async __deleteBean() {
     const brews: Array<Brew> =  this.uiBrewStorage.getAllEntries();
 
     const deletingBrewIndex: Array<number> = [];
@@ -242,10 +244,10 @@ export class BeanInformationComponent implements OnInit {
       }
     }
     for (let i = deletingBrewIndex.length; i--;) {
-      this.uiBrewStorage.removeByUUID(brews[deletingBrewIndex[i]].config.uuid);
+      await this.uiBrewStorage.removeByUUID(brews[deletingBrewIndex[i]].config.uuid);
     }
 
-    this.uiBeanStorage.removeByObject(this.bean);
+    await this.uiBeanStorage.removeByObject(this.bean);
 
   }
 

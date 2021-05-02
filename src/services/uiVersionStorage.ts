@@ -82,8 +82,6 @@ export class UiVersionStorage extends StorageClass {
       const entries: Array<any> = this.getAllEntries();
       if (entries.length > 0) {
         // Reset to a new version object, else when importing data, there might be wrong data existing still.
-        debugger;
-        console.log("blaaa");
         this.version = new Version();
         this.version.initializeByObject(entries[0]);
       } else {

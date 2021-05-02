@@ -101,14 +101,19 @@ export abstract class StorageClass {
     return promise;
   }
 
-  public removeByObject(_obj: any): boolean {
-    if (_obj !== null && _obj !== undefined && _obj.config.uuid) {
-      const deleteUUID = _obj.config.uuid;
+  public async removeByObject(_obj: any): Promise<boolean> {
+    const promise: Promise<boolean> = new Promise(async (resolve, reject) => {
+      if (_obj !== null && _obj !== undefined && _obj.config.uuid) {
+        const deleteUUID = _obj.config.uuid;
 
-      return this.__delete(deleteUUID);
-    }
+        const deletedBool: boolean = await this.__delete(deleteUUID);
+        resolve(deletedBool);
+      } else {
+        resolve(false);
+      }
 
-    return false;
+    });
+    return promise;
   }
 
   public getByUUID(_uuid: string): any {
@@ -122,12 +127,17 @@ export abstract class StorageClass {
     }
   }
 
-  public removeByUUID(_beanUUID: string): boolean {
-    if (_beanUUID !== null && _beanUUID !== undefined && _beanUUID !== '') {
-      return this.__delete(_beanUUID);
-    }
+  public async removeByUUID(_beanUUID: string): Promise<boolean> {
+    const promise: Promise<boolean> = new Promise(async (resolve, reject) => {
+      if (_beanUUID !== null && _beanUUID !== undefined && _beanUUID !== '') {
+        const deletedBool: boolean = await this.__delete(_beanUUID);
+        resolve(deletedBool);
+      } else {
+        resolve(false);
+      }
 
-    return false;
+    });
+    return promise;
   }
 
   public attachOnRemove(): Observable<any> {
@@ -178,24 +188,27 @@ export abstract class StorageClass {
     return promise;
   }
 
-  private __delete(_uuid: string): boolean {
-    if (_uuid !== null && _uuid !== undefined && _uuid !== '') {
-      const deleteUUID = _uuid;
-      for (let i = 0; i < this.storedData.length; i++) {
-        if (this.storedData[i].config.uuid === deleteUUID) {
-          this.uiLog.log(`Storage - Delete - Successfully -${deleteUUID}`);
-          this.storedData.splice(i, 1);
-          this.__save();
+  private __delete(_uuid: string): Promise<boolean> {
+    const promise: Promise<boolean> = new Promise(async (resolve, reject) => {
+      if (_uuid !== null && _uuid !== undefined && _uuid !== '') {
+        const deleteUUID = _uuid;
+        for (let i = 0; i < this.storedData.length; i++) {
+          if (this.storedData[i].config.uuid === deleteUUID) {
+            this.uiLog.log(`Storage - Delete - Successfully -${deleteUUID}`);
+            this.storedData.splice(i, 1);
+            await this.__save();
 
-          this.__sendRemoveMessage(deleteUUID);
-          this.__sendEvent('DELETE');
-          return true;
+            this.__sendRemoveMessage(deleteUUID);
+            this.__sendEvent('DELETE');
+            resolve(true);
+            return;
+          }
         }
       }
-    }
-    this.uiLog.error('Storage - Delete - Unsuccessfully');
-    return false;
-
+      this.uiLog.error('Storage - Delete - Unsuccessfully');
+      resolve(false);
+    });
+    return promise;
   }
 
   private async __save() {

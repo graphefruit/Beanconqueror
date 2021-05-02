@@ -256,7 +256,7 @@ export class BeansPage implements OnInit {
   private __initializeBeans(): void {
     this.beans = this.uiBeanStorage.getAllEntries()
       .sort((a, b) => a.name.localeCompare(b.name));
-console.log(this.beans);
+
     this.openBeans = [];
     this.finishedBeans = [];
     this.__initializeBeansView('open');
