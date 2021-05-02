@@ -271,29 +271,37 @@ export class SettingsPage implements OnInit {
 
     this.uiStorage.export().then((_data) => {
       this.uiHelper.exportJSON('Beanconqueror.json', JSON.stringify(_data)).then(async (_fileEntry: FileEntry) => {
-        if (this.platform.is('android'))
-        {
-          const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
-          const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
-          const preparations: Array<Preparation> = this.uiPreparationStorage.getAllEntries();
-          const mills: Array<Mill> = this.uiMillStorage.getAllEntries();
-          await this._exportAttachments(beans);
-          await this._exportAttachments(brews);
-          await this._exportAttachments(preparations);
-          await this._exportAttachments(mills);
-          await this.uiAlert.hideLoadingSpinner();
 
-          const alert =  await this.alertCtrl.create({
-            header: this.translate.instant('DOWNLOADED'),
-            subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {fileName: _fileEntry.name}),
-            buttons: ['OK']
-          });
-          await alert.present();
+        if (this.platform.is('cordova')) {
+          if (this.platform.is('android'))
+          {
+            const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
+            const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
+            const preparations: Array<Preparation> = this.uiPreparationStorage.getAllEntries();
+            const mills: Array<Mill> = this.uiMillStorage.getAllEntries();
+            await this._exportAttachments(beans);
+            await this._exportAttachments(brews);
+            await this._exportAttachments(preparations);
+            await this._exportAttachments(mills);
+            await this.uiAlert.hideLoadingSpinner();
+
+            const alert =  await this.alertCtrl.create({
+              header: this.translate.instant('DOWNLOADED'),
+              subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {fileName: _fileEntry.name}),
+              buttons: ['OK']
+            });
+            await alert.present();
+          } else {
+            await this.uiAlert.hideLoadingSpinner();
+            // File already downloaded
+            // We don't support image export yet, because
+          }
         } else {
           await this.uiAlert.hideLoadingSpinner();
           // File already downloaded
           // We don't support image export yet, because
         }
+
 
       }, async () => {
         await this.uiAlert.hideLoadingSpinner();
