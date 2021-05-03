@@ -93,7 +93,7 @@ export class UISettingsStorage extends StorageClass {
   public async reinitializeStorage() {
     await super.reinitializeStorage();
 
-    super.storageReady().then(() => {
+    await super.storageReady().then(async () => {
       const entries: Array<any> = this.getAllEntries();
       if (entries.length > 0) {
         // We already had some settings here.
@@ -103,7 +103,7 @@ export class UISettingsStorage extends StorageClass {
         this.settings.initializeByObject(entries[0]);
       } else {
         // Take the new settings obj.
-        super.add(this.settings);
+        await super.add(this.settings);
       }
     }, () => {
       // Outsch, cant do much.
@@ -113,8 +113,8 @@ export class UISettingsStorage extends StorageClass {
     return this.settings;
   }
 
-  public saveSettings(settings: ISettings | Settings): void {
-      super.update(settings);
+  public async saveSettings(settings: ISettings | Settings) {
+      await super.update(settings);
   }
 
 }

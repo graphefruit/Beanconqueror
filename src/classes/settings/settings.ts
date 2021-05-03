@@ -60,18 +60,9 @@ export class Settings implements ISettings {
   public show_roasting_section: boolean;
   public show_cupping_section: boolean;
 
-  public static GET_BREW_FILTER(): IBrewPageFilter {
-    let uiSettingsStorage: UISettingsStorage;
-    uiSettingsStorage = UISettingsStorage.getInstance();
-    let upperRating: number = 5;
-    try {
-      if (uiSettingsStorage !== undefined) {
-        upperRating = uiSettingsStorage.getSettings().brew_rating;
-      }
-    } catch(ex) {
+  public GET_BREW_FILTER(): IBrewPageFilter {
 
-    }
-
+    const upperRating: number = this.brew_rating;
 
     return {
       mill: [],
@@ -125,9 +116,10 @@ export class Settings implements ISettings {
       OPEN: {} as IBeanPageFilter,
       ARCHIVED: {} as IBeanPageFilter
     };
+    this.brew_rating = 5;
 
-    this.brew_filter.OPEN = Settings.GET_BREW_FILTER();
-    this.brew_filter.ARCHIVED = Settings.GET_BREW_FILTER();
+    this.brew_filter.OPEN = this.GET_BREW_FILTER();
+    this.brew_filter.ARCHIVED = this.GET_BREW_FILTER();
 
     this.bean_filter.OPEN = {sort_after: BEAN_SORT_AFTER.UNKOWN, sort_order:  BEAN_SORT_ORDER.UNKOWN} as IBeanPageFilter;
     this.bean_filter.ARCHIVED =  {sort_after: BEAN_SORT_AFTER.UNKOWN, sort_order:  BEAN_SORT_ORDER.UNKOWN} as IBeanPageFilter;
@@ -139,7 +131,7 @@ export class Settings implements ISettings {
     this.welcome_page_showed = false;
     this.wake_lock = false;
     this.image_quality = 100;
-    this.brew_rating = 5;
+
   }
 
   public initializeByObject(settingsObj: ISettings): void {
@@ -165,8 +157,8 @@ export class Settings implements ISettings {
       OPEN: {} as IBrewPageFilter,
       ARCHIVED: {} as IBrewPageFilter
     };
-    this.brew_filter.OPEN = Settings.GET_BREW_FILTER();
-    this.brew_filter.ARCHIVED = Settings.GET_BREW_FILTER();
+    this.brew_filter.OPEN = this.GET_BREW_FILTER();
+    this.brew_filter.ARCHIVED = this.GET_BREW_FILTER();
   }
 
 

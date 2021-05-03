@@ -40,8 +40,8 @@ export class BrewPage implements OnInit {
   public openBrewFilterText: string = '';
   public archivedBrewFilterText: string = '';
 
-  public archivedBrewsFilter: IBrewPageFilter = Settings.GET_BREW_FILTER();
-  public openBrewsFilter: IBrewPageFilter = Settings.GET_BREW_FILTER();
+  public archivedBrewsFilter: IBrewPageFilter;
+  public openBrewsFilter: IBrewPageFilter;
 
   public settings: Settings;
 
@@ -54,11 +54,13 @@ export class BrewPage implements OnInit {
                public uiBrewHelper: UIBrewHelper,
                private readonly uiSettingsStorage: UISettingsStorage,
                private readonly uiAnalytics: UIAnalytics) {
+    this.settings = this.uiSettingsStorage.getSettings();
+    this.archivedBrewsFilter = this.settings.GET_BREW_FILTER();
+    this.openBrewsFilter = this.settings.GET_BREW_FILTER();
   }
 
 
   public ionViewWillEnter(): void {
-    this.settings = this.uiSettingsStorage.getSettings();
     this.archivedBrewsFilter = this.settings.brew_filter.ARCHIVED;
     this.openBrewsFilter = this.settings.brew_filter.OPEN;
     this.loadBrews();
@@ -187,10 +189,10 @@ export class BrewPage implements OnInit {
   }
 
   private __saveBrewFilter() {
-    const settings: Settings = this.uiSettingsStorage.getSettings();
-    settings.brew_filter.OPEN = this.openBrewsFilter;
-    settings.brew_filter.ARCHIVED = this.archivedBrewsFilter;
-    this.uiSettingsStorage.saveSettings(settings);
+
+    this.settings.brew_filter.OPEN = this.openBrewsFilter;
+    this.settings.brew_filter.ARCHIVED = this.archivedBrewsFilter;
+    this.uiSettingsStorage.saveSettings(this.settings);
   }
 
   public research() {

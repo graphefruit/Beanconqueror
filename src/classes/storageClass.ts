@@ -71,12 +71,12 @@ export abstract class StorageClass {
     return this.isInitialized;
   }
 
-  public add(_entry) {
+  public async add(_entry) {
     const newEntry = this.uiHelper.copyData(_entry);
     newEntry.config.uuid = this.uiHelper.generateUUID();
     newEntry.config.unix_timestamp = this.uiHelper.getUnixTimestamp();
     this.storedData.push(newEntry);
-    this.__save();
+    await this.__save();
     this.__sendEvent('ADD');
   }
 

@@ -70,7 +70,7 @@ export class SettingsPage implements OnInit {
   public isHealthSectionAvailable: boolean = false;
 
 
-  private static __cleanupAttachmentData(_data: Array<IBean | IBrew | IMill | IPreparation | IGreenBean | IRoastingMachine>): any {
+  private __cleanupAttachmentData(_data: Array<IBean | IBrew | IMill | IPreparation | IGreenBean | IRoastingMachine>): any {
     if (_data !== undefined && _data.length > 0) {
       for (const obj of _data) {
         obj.attachments = [];
@@ -80,12 +80,12 @@ export class SettingsPage implements OnInit {
   }
 
 
-  private static __cleanupImportSettingsData(_data: ISettings | any): void {
+  private  __cleanupImportSettingsData(_data: ISettings | any): void {
     // We need to remove the filter because of new data here.
     if (_data !== undefined) {
       _data.brew_filter = {};
-      _data.brew_filter.ARCHIVED = Settings.GET_BREW_FILTER();
-      _data.brew_filter.OPEN = Settings.GET_BREW_FILTER();
+      _data.brew_filter.ARCHIVED = this.settings.GET_BREW_FILTER();
+      _data.brew_filter.OPEN = this.settings.GET_BREW_FILTER();
     }
   }
 
@@ -427,7 +427,7 @@ export class SettingsPage implements OnInit {
       const settingsConst = new Settings();
       dummyData['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(settingsConst.brew_order);
     }
-    SettingsPage.__cleanupImportSettingsData(dummyData['SETTINGS'][0]);
+    this.__cleanupImportSettingsData(dummyData['SETTINGS'][0]);
 
     this.uiStorage.import(dummyData).then(async () => {
       this.__reinitializeStorages().then(async () => {
@@ -510,16 +510,16 @@ export class SettingsPage implements OnInit {
       parsedContent[this.uiSettingsStorage.getDBPath()]) {
 
       if (isIOS){
-        SettingsPage.__cleanupAttachmentData(parsedContent[this.uiBeanStorage.getDBPath()]);
-        SettingsPage.__cleanupAttachmentData(parsedContent[this.uiBrewStorage.getDBPath()]);
+        this.__cleanupAttachmentData(parsedContent[this.uiBeanStorage.getDBPath()]);
+        this.__cleanupAttachmentData(parsedContent[this.uiBrewStorage.getDBPath()]);
 
-        SettingsPage.__cleanupAttachmentData(parsedContent[this.uiRoastingMachineStorage.getDBPath()]);
-        SettingsPage.__cleanupAttachmentData(parsedContent[this.uiGreenBeanStorage.getDBPath()]);
-        SettingsPage.__cleanupAttachmentData(parsedContent[this.uiPreparationStorage.getDBPath()]);
-        SettingsPage.__cleanupAttachmentData(parsedContent[this.uiMillStorage.getDBPath()]);
+        this.__cleanupAttachmentData(parsedContent[this.uiRoastingMachineStorage.getDBPath()]);
+        this.__cleanupAttachmentData(parsedContent[this.uiGreenBeanStorage.getDBPath()]);
+        this.__cleanupAttachmentData(parsedContent[this.uiPreparationStorage.getDBPath()]);
+        this.__cleanupAttachmentData(parsedContent[this.uiMillStorage.getDBPath()]);
 
       }
-      SettingsPage.__cleanupImportSettingsData(parsedContent[this.uiSettingsStorage.getDBPath()]);
+      this.__cleanupImportSettingsData(parsedContent[this.uiSettingsStorage.getDBPath()]);
 
       // When exporting the value is a number, when importing it needs to be  a string.
       parsedContent['SETTINGS'][0]['brew_view'] = parsedContent['SETTINGS'][0]['brew_view'] + '';
