@@ -31,6 +31,17 @@ export class IntentHandlerService {
         this.handleDeepLink(nomatch.$link);
       });
   }
+  private findGetParameter(_url: string,_parameterName: string) {
+    let result = null,
+      tmp = [];
+    _url.split('&')
+      .forEach( (item) => {
+        tmp = item.split('=');
+        if (tmp[0] === _parameterName) result = decodeURIComponent(tmp[1]);
+      });
+    return result;
+  }
+
   private handleDeepLink(_matchLink) {
     try {
       if (_matchLink && _matchLink.url) {
@@ -38,10 +49,11 @@ export class IntentHandlerService {
           const url: string = _matchLink.url;
 
           this.uiLog.log('Handle deeplink:' + url);
-          if (url.indexOf('https://beanconqueror.com/app/roaster/bean?') === 0) {
-            const onlineBeanId: number = Number(_matchLink.queryString);
+          this.uiLog.log(JSON.stringify(_matchLink));
+          if (url.indexOf('https://beanconqueror.com/app/roaster/bean') === 0) {
+            const onlineBeanId: number = Number(this.findGetParameter(_matchLink.queryString,'id'));
             this.addBeanFromServer(onlineBeanId);
-          } else if (url.indexOf('beanconqueror://ADD_BEAN_ONLINE?')) {
+          } else if (url.indexOf('beanconqueror://ADD_BEAN_ONLINE?') === 0) {
             const onlineBeanId: number = Number(_matchLink.queryString);
             this.addBeanFromServer(onlineBeanId);
           }
@@ -56,7 +68,7 @@ export class IntentHandlerService {
 
 
   private addBeanFromServer(_beanId: number) {
-    this.uiLog.log('Load bean informatiomn from server:' + _beanId);
+    this.uiLog.log('Load bean information from server: ' + _beanId);
   }
 
 }
