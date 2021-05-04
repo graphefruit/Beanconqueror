@@ -180,6 +180,7 @@ export class AppComponent implements AfterViewInit {
         await this._translate.use('en').toPromise();
         await this.__checkIOSBackup();
 
+
         try {
           await this.uiBeanStorage.initializeStorage();
           await this.uiPreparationStorage.initializeStorage();
@@ -189,7 +190,6 @@ export class AppComponent implements AfterViewInit {
           await this.uiVersionStorage.initializeStorage();
           await this.uiGreenBeanStorage.initializeStorage();
           await this.uiRoastingMachineStorage.initializeStorage();
-
 
           // Wait for every necessary service to be ready before starting the app
           // Settings and version, will create a new object on start, so we need to wait for this in the end.
@@ -235,13 +235,19 @@ export class AppComponent implements AfterViewInit {
   }
 
   private async __checkUpdate() {
-
+    try {
     await this.uiUpdate.checkUpdate();
+    } catch(ex) {
+
+    }
   }
 
   private async __checkIOSBackup() {
+    try {
+      await this.iosPlatformService.checkIOSBackup();
+    } catch(ex) {
 
-    await this.iosPlatformService.checkIOSBackup();
+    }
   }
 
 
