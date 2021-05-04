@@ -13,6 +13,7 @@ import {UIBeanHelper} from '../../services/uiBeanHelper';
 import {QrScannerService} from '../../services/qrScanner/qr-scanner.service';
 import BREW_TRACKING from '../../data/tracking/brewTracking';
 import {UIAnalytics} from '../../services/uiAnalytics';
+import {IntentHandlerService} from '../../services/intentHandler/intent-handler.service';
 
 @Component({
   selector: 'dashboard',
@@ -32,7 +33,8 @@ export class DashboardPage implements OnInit {
               private readonly uiBeanStorage: UIBeanStorage,
               private readonly uiBeanHelper: UIBeanHelper,
               private readonly qrScannerService: QrScannerService,
-              private readonly uiAnalytics: UIAnalytics) {
+              private readonly uiAnalytics: UIAnalytics,
+              private readonly intenthandler: IntentHandlerService) {
   }
 
   public ngOnInit(): void {
@@ -116,7 +118,7 @@ export class DashboardPage implements OnInit {
 
   public scan() {
     this.qrScannerService.scan().then((scannedCode) => {
-      alert(scannedCode);
-    });
+      this.intenthandler.handleQRCodeLink(scannedCode);
+    },() => {});
   }
 }

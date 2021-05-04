@@ -3,6 +3,7 @@ import {UIHelper} from '../uiHelper';
 import {Deeplinks} from '@ionic-native/deeplinks/ngx';
 import {InfoComponent} from '../../app/info/info.component';
 import {UILog} from '../uiLog';
+import {Url} from 'url';
 declare var window;
 @Injectable({
   providedIn: 'root'
@@ -42,6 +43,24 @@ export class IntentHandlerService {
     return result;
   }
 
+  private findParameterByCompleteUrl(_url,_parameter) {
+    const url: Url = new URL(_url);
+    const val = url.searchParams.get(_parameter);
+    return val;
+  }
+
+  public handleQRCodeLink(_url) {
+    this.uiHelper.isBeanconqurorAppReady().then(() => {
+      const url: string = _url;
+
+      this.uiLog.log('Handle QRcode Link:' + url);
+      if (url.indexOf('https://beanconqueror.com/app/roaster/bean') === 0) {
+        const onlineBeanId: number = Number(this.findParameterByCompleteUrl(url,'id'));
+        this.addBeanFromServer(onlineBeanId);
+      }
+    });
+  }
+
   private handleDeepLink(_matchLink) {
     try {
       if (_matchLink && _matchLink.url) {
@@ -65,6 +84,8 @@ export class IntentHandlerService {
     }
 
   }
+
+
 
 
   private addBeanFromServer(_beanId: number) {

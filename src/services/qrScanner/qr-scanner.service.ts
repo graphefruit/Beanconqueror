@@ -23,8 +23,7 @@ export class QrScannerService {
                const observable:Observable<string> = new Observable((subscriber) => {
                  cordova.plugins.barcodeScanner.scan(
                    (result) => {
-
-                     if (result.cancelled === 0 && result.format === 'QR_CODE') {
+                     if ((result.cancelled === false || result.cancelled === 0) && result.format === 'QR_CODE') {
                        subscriber.next(result.text as string);
                        subscriber.complete();
                      }
