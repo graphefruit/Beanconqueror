@@ -120,7 +120,7 @@ export class BrewInformationComponent implements OnInit {
   }
 
 
-  private async internalBrewAction(action: BREW_ACTION): Promise<void> {
+  private async internalBrewAction(action: BREW_ACTION) {
     switch (action) {
       case BREW_ACTION.REPEAT:
         await this.repeatBrew();

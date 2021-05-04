@@ -134,7 +134,7 @@ export class PreparationInformationCardComponent implements OnInit {
   }
 
 
-  public async internalPreparationAction(action: PREPARATION_ACTION): Promise<void> {
+  public async internalPreparationAction(action: PREPARATION_ACTION) {
     switch (action) {
       case PREPARATION_ACTION.CUSTOM_PARAMETERS:
         await this.customParameters();

@@ -101,7 +101,7 @@ export class GreenBeanInformationComponent implements OnInit {
     }
   }
 
-  private async internalBeanAction(action: GREEN_BEAN_ACTION): Promise<void> {
+  private async internalBeanAction(action: GREEN_BEAN_ACTION) {
     switch (action) {
       case GREEN_BEAN_ACTION.DETAIL:
         await this.detailBean();

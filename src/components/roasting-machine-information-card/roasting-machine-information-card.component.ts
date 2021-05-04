@@ -64,7 +64,7 @@ export class RoastingMachineInformationCardComponent implements OnInit {
   }
 
 
-  private async internalAction(action: ROASTING_MACHINE_ACTION): Promise<void> {
+  private async internalAction(action: ROASTING_MACHINE_ACTION) {
     switch (action) {
       case ROASTING_MACHINE_ACTION.DETAIL:
         await this.detail();

@@ -101,7 +101,7 @@ export class MillInformationCardComponent implements OnInit {
   }
 
 
-  public async internalMillAction(action: MILL_ACTION): Promise<void> {
+  public async internalMillAction(action: MILL_ACTION) {
     switch (action) {
       case MILL_ACTION.EDIT:
         await this.edit();
