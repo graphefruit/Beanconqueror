@@ -23,6 +23,7 @@ import {UIImage} from '../../services/uiImage';
 import {UIHelper} from '../../services/uiHelper';
 import BREW_TRACKING from '../../data/tracking/brewTracking';
 import {Settings} from '../../classes/settings/settings';
+import {ShareService} from '../../services/shareService/share-service.service';
 
 @Component({
   selector: 'brew-information',
@@ -55,7 +56,8 @@ export class BrewInformationComponent implements OnInit {
               private readonly uiAlert: UIAlert,
               private readonly uiImage: UIImage,
               private readonly modalCtrl: ModalController,
-              private readonly uiHelper: UIHelper) {
+              private readonly uiHelper: UIHelper,
+              private readonly shareService: ShareService) {
 
   }
 
@@ -151,6 +153,9 @@ export class BrewInformationComponent implements OnInit {
       case BREW_ACTION.TOGGLE_FAVOURITE:
         this.toggleFavourite();
         break;
+      case BREW_ACTION.SHARE:
+        await this.share();
+        break;
       default:
         break;
     }
@@ -228,6 +233,10 @@ export class BrewInformationComponent implements OnInit {
   public async viewPhotos() {
     this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.PHOTO_VIEW);
     await this.uiImage.viewPhotos(this.brew);
+  }
+
+  public async share() {
+    await this.shareService.shareBrew(this.brew);
   }
 
   public deleteBrew(): Promise<any> {

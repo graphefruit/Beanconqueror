@@ -718,5 +718,6 @@
   "PAGE_SETTINGS_BREW_RATING": "Brew rating",
   "PAGE_SETTINGS_BREW_RATING_TOOLTIP": "-1 to 5 are to less for rating your brew? You can set up to 100 'points'.",
   "UPDATE_ENTRY_OF": "Update entry {{index}} of {{count}}",
-  "WEBSITE": "Website"
+  "WEBSITE": "Website",
+  "SHARE": "Share"
 }

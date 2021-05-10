@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { EventQueueService } from './queue-service.service';
+import { ShareService } from './share-service.service';
 
-describe('EventQueueService', () => {
-  let service: EventQueueService;
+describe('ShareService', () => {
+  let service: ShareService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(EventQueueService);
+    service = TestBed.inject(ShareService);
   });
 
   it('should be created', () => {

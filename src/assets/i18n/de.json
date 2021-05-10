@@ -718,5 +718,6 @@
   "PAGE_SETTINGS_BREW_RATING": "Brühbewertung",
   "PAGE_SETTINGS_BREW_RATING_TOOLTIP": "-1 bis 5 sind dir zu wenig zur Bewertung deiner Brühung? Du kannst bis zu 100 'Punkten' vergeben",
   "UPDATE_ENTRY_OF": "Aktualisiere Eintrag {{index}} von {{count}}",
-  "WEBSITE": "Webseite"
+  "WEBSITE": "Webseite",
+  "SHARE": "Teilen"
 }

@@ -19,6 +19,7 @@ import {UIToast} from '../../services/uiToast';
 import {UIImage} from '../../services/uiImage';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
 import BEAN_TRACKING from '../../data/tracking/beanTracking';
+import {ShareService} from '../../services/shareService/share-service.service';
 @Component({
   selector: 'bean-information',
   templateUrl: './bean-information.component.html',
@@ -45,7 +46,8 @@ export class BeanInformationComponent implements OnInit {
               private readonly uiAlert: UIAlert,
               private readonly uiToast: UIToast,
               private readonly uiBeanStorage: UIBeanStorage,
-              private readonly uiImage: UIImage) {
+              private readonly uiImage: UIImage,
+              private readonly shareService: ShareService) {
 
   }
 
@@ -154,6 +156,9 @@ export class BeanInformationComponent implements OnInit {
       case BEAN_ACTION.PHOTO_GALLERY:
         await this.viewPhotos();
         break;
+      case BEAN_ACTION.SHARE:
+        await this.shareBean();
+        break;
       default:
         break;
     }
@@ -196,6 +201,10 @@ export class BeanInformationComponent implements OnInit {
     const modal = await this.modalController.create({component:BeansEditComponent, id:'bean-edit',  componentProps: {bean : this.bean}});
     await modal.present();
     await modal.onWillDismiss();
+  }
+
+  public async shareBean() {
+    await this.shareService.shareBean(this.bean);
   }
 
 

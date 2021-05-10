@@ -16,6 +16,7 @@ export default {
     SHOW_MAP: 'SHOW_MAP',
     DELETE: 'DELETE',
     PHOTO_VIEW: 'PHOTO_VIEW',
+    SHARE: 'SHARE'
 
   }
 
