@@ -22,15 +22,15 @@ export class MillAddComponent implements OnInit {
 
   public ionViewWillEnter(): void {
   }
-  public addMill(): void {
+  public async addMill() {
 
     if (this.data.name) {
-      this.__addMill();
+      await this.__addMill();
     }
   }
 
-  public __addMill(): void {
-    this.uiMillStorage.add(this.data);
+  public async __addMill() {
+    await this.uiMillStorage.add(this.data);
     this.dismiss();
     if (!this.hide_toast_message) {
       this.uiToast.showInfoToast('TOAST_MILL_ADDED_SUCCESSFULLY');

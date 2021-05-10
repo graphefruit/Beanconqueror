@@ -60,10 +60,10 @@ export class BeansAddComponent implements OnInit {
     }
   }
 
-  public addBean(): void {
+  public async addBean() {
 
     if (this.__formValid()) {
-      this.__addBean();
+      await this.__addBean();
     }
   }
 
@@ -85,8 +85,8 @@ export class BeansAddComponent implements OnInit {
     }
   }
 
-  public __addBean(): void {
-    this.uiBeanStorage.add(this.data);
+  public async __addBean() {
+    await this.uiBeanStorage.add(this.data);
     this.dismiss();
     if (!this.hide_toast_message) {
       this.uiToast.showInfoToast('TOAST_BEAN_ADDED_SUCCESSFULLY');

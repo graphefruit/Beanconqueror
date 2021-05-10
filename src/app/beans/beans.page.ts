@@ -261,7 +261,6 @@ export class BeansPage implements OnInit {
     this.finishedBeans = [];
     this.__initializeBeansView('open');
     this.__initializeBeansView('archiv');
-
   }
 
   public async add() {

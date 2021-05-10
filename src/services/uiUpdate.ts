@@ -350,7 +350,6 @@ export class UIUpdate {
 
     this.uiLog.info('Check updates');
     const hasData: boolean = await this.uiStorage.hasData();
-    debugger;
     await this.__checkUpdateForDataVersion('UPDATE_1',!hasData);
     await this.__checkUpdateForDataVersion('UPDATE_2',!hasData);
     await this.__checkUpdateForDataVersion('UPDATE_3',!hasData);

@@ -20,15 +20,15 @@ export class RoastingMachineAddComponent implements OnInit {
 
   public ionViewWillEnter(): void {
   }
-  public add(): void {
+  public async add() {
 
     if (this.data.name) {
-      this.__add();
+      await this.__add();
     }
   }
 
-  public __add(): void {
-    this.uiRoastingMachineStorage.add(this.data);
+  public async __add() {
+    await this.uiRoastingMachineStorage.add(this.data);
     this.dismiss();
     this.uiToast.showInfoToast('TOAST_ROASTING_MACHINE_ADDED_SUCCESSFULLY');
   }

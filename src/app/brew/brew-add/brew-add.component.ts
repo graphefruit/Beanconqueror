@@ -143,8 +143,9 @@ export class BrewAddComponent implements OnInit {
       }
       if (checkData.manage_parameters.set_custom_brew_time) {
         this.data.config.unix_timestamp = moment(this.brewBrewing.customCreationDate).unix();
+        await this.uiBrewStorage.update(this.data);
       }
-      this.uiBrewStorage.update(this.data);
+
 
       if (this.settings.track_caffeine_consumption && this.data.grind_weight > 0) {
         this.uiHealthKit.trackCaffeineConsumption(this.data.getCaffeineAmount(), moment(this.brewBrewing.customCreationDate).toDate());
