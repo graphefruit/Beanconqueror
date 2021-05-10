@@ -8,22 +8,23 @@ import {UIHelper} from './uiHelper';
 import {Settings} from '../classes/settings/settings';
 import {UISettingsStorage} from './uiSettingsStorage';
 import {UIAlert} from './uiAlert';
-import {FirebaseX} from '@ionic-native/firebase-x/ngx';
 import {UILog} from './uiLog';
 import {NavigationEnd, Router} from '@angular/router';
 
+declare var window;
+declare var Matomo;
 @Injectable({
   providedIn: 'root'
 })
 export class UIAnalytics {
 
-  private canTrack: boolean = undefined;
+  private canTrack: boolean = false;
+  private matomoTracker: any = undefined;
 
   constructor(private readonly alertController: AlertController,
               private readonly translate: TranslateService,
               private readonly uiHelper: UIHelper,
-              private readonly fb: FirebaseX,
-              private readonly  uiSettings: UISettingsStorage,
+              private readonly uiSettings: UISettingsStorage,
               private readonly uiAlert: UIAlert,
               private readonly uiLog: UILog,
               private readonly router: Router) {
@@ -34,53 +35,40 @@ export class UIAnalytics {
       this.__attachToRoutingEvents();
 
       await this.uiSettings.storageReady();
+      this.matomoTracker = Matomo.getTracker();
+
       const settings: Settings = this.uiSettings.getSettings();
-      if (settings.analytics) {
-        resolve();
+      if (settings.matomo_analytics === true) {
         this.enableTracking();
       } else {
-        reject();
         this.disableTracking();
       }
+      resolve();
 
     });
   }
 
-  public async enableTracking() {
+
+  public enableTracking() {
     this.canTrack = true;
     this.uiLog.log('Tracking enabled');
     try {
-      this.fb.setAnalyticsCollectionEnabled(true).then(() => {
-      }, () => {
-
-      });
-      this.fb.setPerformanceCollectionEnabled(true).then(() => {
-      }, () => {
-
-      });
-
-
+      this.matomoTracker.setConsentGiven();
+      this.canTrack = true;
     } catch (ex) {
       this.uiLog.error(ex.message);
     }
   }
 
-  public async disableTracking() {
+  public disableTracking() {
     this.canTrack = false;
     this.uiLog.log('Tracking disabled');
     try {
-      this.fb.setAnalyticsCollectionEnabled(false).then(() => {
-      }, () => {
-
-      });
-      this.fb.setPerformanceCollectionEnabled(false).then(() => {
-      }, () => {
-
-      });
+      this.matomoTracker.requireConsent();
+      this.canTrack = false;
     } catch (ex) {
       this.uiLog.error(ex.message);
     }
-
   }
 
   public trackPage(_pageName: string) {
@@ -91,11 +79,11 @@ export class UIAnalytics {
     }
   }
 
-  public trackEvent(_category, _action) {
+  public trackEvent(_category, _action,_name?,_value?) {
     if (this.canTrack) {
       try {
 
-        this.__trackEventFB(_category, _action);
+        this.__trackEventFB(_category, _action,_name,_value);
 
       } catch (ex) {
 
@@ -118,31 +106,26 @@ export class UIAnalytics {
   private __trackPageFB(_pageName: string) {
     try {
       if (this.canTrack) {
-        this.fb.setScreenName(_pageName).then(() => {
-          this.uiLog.log('SUCCESS - Track Page - ' + _pageName);
-        }).catch((error: any) => {
-          this.uiLog.error('ERROR - track Page - ' + _pageName);
-          // Do nothing
-        });
-
+        this.matomoTracker.setDocumentTitle(_pageName);
+        this.matomoTracker.trackPageView(_pageName);
+        this.uiLog.log('SUCCESS - Track Page - ' + _pageName);
       }
     } catch (ex) {
     }
   }
 
 
-  private __trackEventFB(_category, _action) {
+  private __trackEventFB(_category, _action,_name?,_value?) {
     if (this.canTrack) {
       try {
-        this.fb.logEvent(_category, {
-          ACTION: _action
-        }).then(() => {
-          this.uiLog.log('SUCCESS - Track event page - Category:' + _category + ' Action:' + _action);
-        }).catch((error: any) => {
-          // Do nothing
-          this.uiLog.log('ERROR - Track event page - Category:' + _category + ' Action:' + _action);
-        });
 
+        if (_name && _value) {
+          this.matomoTracker.trackEvent(_category,_action,_name,_value);
+          this.uiLog.log('SUCCESS - Track event page - Category:' + _category + ' Action:' + _action + ' Name:' + _name + ' Value:' + _value);
+        } else {
+          this.matomoTracker.trackEvent(_category,_action);
+          this.uiLog.log('SUCCESS - Track event page - Category:' + _category + ' Action:' + _action);
+        }
       } catch (ex) {
 
       }

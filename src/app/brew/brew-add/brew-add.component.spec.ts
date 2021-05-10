@@ -13,7 +13,7 @@ import {File} from '@ionic-native/file/ngx';
 import {Camera} from '@ionic-native/camera/ngx';
 import {ImagePicker} from '@ionic-native/image-picker/ngx';
 import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
-import {FirebaseX} from '@ionic-native/firebase-x/ngx';
+;
 import {Router} from '@angular/router';
 import {FormatDatePipe} from '../../../pipes/formatDate';
 import {BrewTimerComponent} from '../../../components/brew-timer/brew-timer.component';
@@ -36,7 +36,7 @@ describe('BrewAddComponent', () => {
         {provide: Camera},
         {provide: ImagePicker},
         {provide: AndroidPermissions},
-        {provide: FirebaseX},
+
         {provide: Router}
       ],
     })

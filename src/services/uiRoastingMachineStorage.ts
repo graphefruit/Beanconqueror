@@ -75,11 +75,4 @@ export class UIRoastingMachineStorage extends StorageClass {
     return this.roastingMachines;
   }
 
-  public add(_entry: RoastingMachine) {
-    super.add(_entry);
-  }
-
-  public update(_obj: RoastingMachine): boolean {
-    return super.update(_obj);
-  }
 }

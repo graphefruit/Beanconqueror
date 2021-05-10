@@ -21,7 +21,8 @@ import {UIAnalytics} from '../../services/uiAnalytics';
 import {UIAlert} from '../../services/uiAlert';
 import {UIImage} from '../../services/uiImage';
 import {UIHelper} from '../../services/uiHelper';
-
+import BREW_TRACKING from '../../data/tracking/brewTracking';
+import {Settings} from '../../classes/settings/settings';
 
 @Component({
   selector: 'brew-information',
@@ -44,6 +45,8 @@ export class BrewInformationComponent implements OnInit {
   public brewQuantityEnum = BREW_QUANTITY_TYPES_ENUM;
 
 
+  public settings: Settings = null;
+
   constructor(private readonly uiSettingsStorage: UISettingsStorage,
               private readonly uiBrewHelper: UIBrewHelper,
               private readonly uiBrewStorage: UIBrewStorage,
@@ -58,12 +61,26 @@ export class BrewInformationComponent implements OnInit {
 
   public ngOnInit() {
     if (this.brew) {
-
+      this.settings =  this.uiSettingsStorage.getSettings();
       this.bean = this.brew.getBean();
       this.preparation = this.brew.getPreparation();
       this.mill = this.brew.getMill();
     }
 
+  }
+
+  public hasCustomRatingRange(): boolean {
+    if (this.settings) {
+      return this.settings.brew_rating > 5;
+    }
+    return false;
+  }
+
+  public getCustomMaxRating(): number {
+    if (this.settings) {
+      return this.settings.brew_rating;
+    }
+    return 5;
   }
 
   public ngOnChanges(changes: SimpleChange) {
@@ -86,6 +103,7 @@ export class BrewInformationComponent implements OnInit {
   public async showBrewActions(event): Promise<void> {
     event.stopPropagation();
     event.stopImmediatePropagation();
+    this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.POPOVER_ACTIONS);
     const popover = await this.modalCtrl.create({
       component: BrewPopoverActionsComponent,
 
@@ -102,7 +120,7 @@ export class BrewInformationComponent implements OnInit {
   }
 
 
-  private async internalBrewAction(action: BREW_ACTION): Promise<void> {
+  private async internalBrewAction(action: BREW_ACTION) {
     switch (action) {
       case BREW_ACTION.REPEAT:
         await this.repeatBrew();
@@ -140,7 +158,7 @@ export class BrewInformationComponent implements OnInit {
 
   public async fastRepeatBrew() {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
-      this.uiAnalytics.trackEvent('BREW', 'FAST_REPEAT');
+      this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.FAST_REPEAT);
       const repeatBrew = this.uiBrewHelper.repeatBrew(this.brew);
       this.uiBrewStorage.add(repeatBrew);
       this.uiToast.showInfoToast('TOAST_BREW_REPEATED_SUCCESSFULLY');
@@ -155,6 +173,7 @@ export class BrewInformationComponent implements OnInit {
     this.brewAction.emit([BREW_ACTION.EDIT, this.brew]);
   }
   public async editBrew() {
+    this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.EDIT);
     const modal = await this.modalCtrl.create({component: BrewEditComponent, id:'brew-edit', componentProps: {brew: this.brew}});
     await modal.present();
     await modal.onWillDismiss();
@@ -162,7 +181,7 @@ export class BrewInformationComponent implements OnInit {
   }
   public async repeatBrew() {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
-      this.uiAnalytics.trackEvent('BREW', 'REPEAT');
+      this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.REPEAT);
       const modal = await this.modalCtrl.create({component: BrewAddComponent, id: 'brew-add', componentProps: {brew_template: this.brew}});
       await modal.present();
       await modal.onWillDismiss();
@@ -172,10 +191,11 @@ export class BrewInformationComponent implements OnInit {
 
   public toggleFavourite() {
     if (!this.brew.favourite) {
-      this.uiAnalytics.trackEvent('BREW', 'ADD_FAVOURITE');
+      this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.ADD_FAVOURITE);
       this.uiToast.showInfoToast('TOAST_BREW_FAVOURITE_ADDED');
       this.brew.favourite = true;
     } else {
+      this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.REMOVE_FAVOURITE);
       this.brew.favourite = false;
       this.uiToast.showInfoToast('TOAST_BREW_FAVOURITE_REMOVED');
     }
@@ -184,6 +204,7 @@ export class BrewInformationComponent implements OnInit {
 
 
   public async detailBrew() {
+    this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.DETAIL);
     const modal = await this.modalCtrl.create({component: BrewDetailComponent, id:'brew-detail', componentProps: {brew: this.brew}});
     await modal.present();
     await modal.onWillDismiss();
@@ -191,6 +212,7 @@ export class BrewInformationComponent implements OnInit {
   }
 
   public async cupBrew() {
+    this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.CUPPING);
     const modal = await this.modalCtrl.create({component: BrewCuppingComponent, id:'brew-cup', componentProps: {brew: this.brew}});
     await modal.present();
     await modal.onWillDismiss();
@@ -198,22 +220,23 @@ export class BrewInformationComponent implements OnInit {
   }
 
   public async showMapCoordinates() {
-    this.uiAnalytics.trackEvent('BREW', 'SHOW_MAP');
+    this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.SHOW_MAP);
     this.uiHelper.openExternalWebpage(this.brew.getCoordinateMapLink());
   }
 
 
   public async viewPhotos() {
+    this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.PHOTO_VIEW);
     await this.uiImage.viewPhotos(this.brew);
   }
 
   public deleteBrew(): Promise<any> {
 
    return new Promise(async (resolve,reject) => {
-      this.uiAlert.showConfirm('DELETE_BREW_QUESTION', 'SURE_QUESTION', true).then(() => {
+      this.uiAlert.showConfirm('DELETE_BREW_QUESTION', 'SURE_QUESTION', true).then(async () => {
           // Yes
-          this.uiAnalytics.trackEvent('BREW', 'DELETE');
-          this.__deleteBrew();
+          this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.DELETE);
+          await this.__deleteBrew();
           this.uiToast.showInfoToast('TOAST_BREW_DELETED_SUCCESSFULLY');
           resolve();
         },
@@ -225,8 +248,8 @@ export class BrewInformationComponent implements OnInit {
    );
   }
 
-  private __deleteBrew(): void {
-    this.uiBrewStorage.removeByObject(this.brew);
+  private async __deleteBrew() {
+    await this.uiBrewStorage.removeByObject(this.brew);
   }
 
 

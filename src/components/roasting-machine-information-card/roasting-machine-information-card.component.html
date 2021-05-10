@@ -36,7 +36,7 @@
           </ion-grid>
         </ion-col>
         <ion-col class="ion-no-padding" size="3" *ngIf="hasPhotos()" (click)="showPhoto($event)">
-          <div style="margin:0 auto;" tappable>
+          <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
             <async-image [filePath]="roastingMachine.attachments[0]" class="bean-slider"></async-image>
           </div>
         </ion-col>

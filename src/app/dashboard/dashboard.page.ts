@@ -10,6 +10,10 @@ import {Router} from '@angular/router';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
 import {Bean} from '../../classes/bean/bean';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
+import {QrScannerService} from '../../services/qrScanner/qr-scanner.service';
+import BREW_TRACKING from '../../data/tracking/brewTracking';
+import {UIAnalytics} from '../../services/uiAnalytics';
+import {IntentHandlerService} from '../../services/intentHandler/intent-handler.service';
 
 @Component({
   selector: 'dashboard',
@@ -27,17 +31,21 @@ export class DashboardPage implements OnInit {
               private readonly changeDetectorRef: ChangeDetectorRef,
               private readonly router: Router,
               private readonly uiBeanStorage: UIBeanStorage,
-              private readonly uiBeanHelper: UIBeanHelper) {
+              private readonly uiBeanHelper: UIBeanHelper,
+              private readonly qrScannerService: QrScannerService,
+              private readonly uiAnalytics: UIAnalytics,
+              private readonly intenthandler: IntentHandlerService) {
   }
 
   public ngOnInit(): void {
+
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
-      // Reset when something changes
-     this.leftOverBeansWeight = undefined;
+      // If an brew is deleted, we need to reset our array for the next call.
+      this.leftOverBeansWeight = undefined;
     });
 
     this.uiBeanStorage.attachOnEvent().subscribe((_val) => {
-      // Reset when something changes
+      // If an brew is deleted, we need to reset our array for the next call.
       this.leftOverBeansWeight = undefined;
     });
   }
@@ -55,6 +63,7 @@ export class DashboardPage implements OnInit {
 
   public async addBrew() {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
+      this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.ADD);
       const modal = await this.modalCtrl.create({component: BrewAddComponent, id:'brew-add'});
       await modal.present();
       await modal.onWillDismiss();
@@ -107,4 +116,9 @@ export class DashboardPage implements OnInit {
   }
 
 
+  public scan() {
+    this.qrScannerService.scan().then((scannedCode) => {
+      this.intenthandler.handleQRCodeLink(scannedCode);
+    },() => {});
+  }
 }

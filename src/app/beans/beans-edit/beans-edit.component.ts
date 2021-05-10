@@ -6,7 +6,6 @@ import {UIHelper} from '../../../services/uiHelper';
 import {UIImage} from '../../../services/uiImage';
 import {IBean} from '../../../interfaces/bean/iBean';
 import {Bean} from '../../../classes/bean/bean';
-import {UIAnalytics} from '../../../services/uiAnalytics';
 import {UIToast} from '../../../services/uiToast';
 
 @Component({
@@ -24,19 +23,17 @@ export class BeansEditComponent implements OnInit {
                private readonly uiBeanStorage: UIBeanStorage,
                private readonly uiImage: UIImage,
                private readonly uiHelper: UIHelper,
-               private readonly uiAnalytics: UIAnalytics,
                private readonly uiToast: UIToast) {
   }
 
   public ionViewWillEnter(): void {
-    this.uiAnalytics.trackEvent('BEAN', 'EDIT');
     this.data = new Bean();
     this.data.initializeByObject(this.bean);
   }
 
-  public editBean(): void {
+  public async editBean() {
     if (this.__formValid()) {
-      this.__editBean();
+      await this.__editBean();
     }
   }
 
@@ -55,8 +52,8 @@ export class BeansEditComponent implements OnInit {
 
     return valid;
   }
-  private __editBean(): void {
-    this.uiBeanStorage.update(this.data);
+  private async __editBean() {
+    await this.uiBeanStorage.update(this.data);
     this.uiToast.showInfoToast('TOAST_BEAN_EDITED_SUCCESSFULLY');
     this.dismiss();
   }

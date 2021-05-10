@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {ModalController} from '@ionic/angular';
-import {UIAnalytics} from '../../../../services/uiAnalytics';
 import {UIToast} from '../../../../services/uiToast';
 import {UIRoastingMachineStorage} from '../../../../services/uiRoastingMachineStorage';
 import {RoastingMachine} from '../../../../classes/roasting-machine/roasting-machine';
@@ -15,23 +14,21 @@ export class RoastingMachineAddComponent implements OnInit {
   public data: RoastingMachine = new RoastingMachine();
   constructor(private readonly modalController: ModalController,
               private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
-              private readonly uiAnalytics: UIAnalytics,
               private readonly uiToast: UIToast) {
 
   }
 
   public ionViewWillEnter(): void {
-    this.uiAnalytics.trackEvent('ROASTING_MACHINE', 'ADD');
   }
-  public add(form): void {
+  public async add() {
 
-    if (form.valid) {
-      this.__add();
+    if (this.data.name) {
+      await this.__add();
     }
   }
 
-  public __add(): void {
-    this.uiRoastingMachineStorage.add(this.data);
+  public async __add() {
+    await this.uiRoastingMachineStorage.add(this.data);
     this.dismiss();
     this.uiToast.showInfoToast('TOAST_ROASTING_MACHINE_ADDED_SUCCESSFULLY');
   }

@@ -12,7 +12,8 @@ import {RoastingMachinePopoverActionsComponent} from '../../app/roasting-section
 import {RoastingMachineEditComponent} from '../../app/roasting-section/roasting-machine/roasting-machine-edit/roasting-machine-edit.component';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
 import {Bean} from '../../classes/bean/bean';
-import {UIBeanStorage} from '../../services/uiBeanStorage';
+import {UIBeanStorage} from '../../services/uiBeanStorage'
+import ROASTING_MACHINE_TRACKING from '../../data/tracking/roastingMachineTracking';
 
 @Component({
   selector: 'roasting-machine-information-card',
@@ -47,6 +48,7 @@ export class RoastingMachineInformationCardComponent implements OnInit {
   public async showActions(event): Promise<void> {
     event.stopPropagation();
     event.stopImmediatePropagation();
+    this.uiAnalytics.trackEvent(ROASTING_MACHINE_TRACKING.TITLE, ROASTING_MACHINE_TRACKING.ACTIONS.POPOVER_ACTIONS);
     const popover = await this.modalController.create({
       component: RoastingMachinePopoverActionsComponent,
       componentProps: {roastingMachine: this.roastingMachine},
@@ -62,7 +64,7 @@ export class RoastingMachineInformationCardComponent implements OnInit {
   }
 
 
-  private async internalAction(action: ROASTING_MACHINE_ACTION): Promise<void> {
+  private async internalAction(action: ROASTING_MACHINE_ACTION) {
     switch (action) {
       case ROASTING_MACHINE_ACTION.DETAIL:
         await this.detail();
@@ -71,10 +73,11 @@ export class RoastingMachineInformationCardComponent implements OnInit {
         await this.edit();
         break;
       case ROASTING_MACHINE_ACTION.DELETE:
+
         try {
           await this.delete();
         }catch (ex) {}
-
+        await this.uiAlert.hideLoadingSpinner();
         break;
       case ROASTING_MACHINE_ACTION.PHOTO_GALLERY:
         await this.viewPhotos();
@@ -87,7 +90,7 @@ export class RoastingMachineInformationCardComponent implements OnInit {
     }
   }
   public archive() {
-
+    this.uiAnalytics.trackEvent(ROASTING_MACHINE_TRACKING.TITLE, ROASTING_MACHINE_TRACKING.ACTIONS.ARCHIVE);
     this.roastingMachine.finished = true;
     this.uiRoastingMachineStorage.update(this.roastingMachine);
     this.uiToast.showInfoToast('TOAST_ROASTING_MACHINE_ARCHIVED_SUCCESSFULLY');
@@ -101,6 +104,7 @@ export class RoastingMachineInformationCardComponent implements OnInit {
   }
 
   public async edit() {
+    this.uiAnalytics.trackEvent(ROASTING_MACHINE_TRACKING.TITLE, ROASTING_MACHINE_TRACKING.ACTIONS.EDIT);
     const modal = await this.modalCtrl.create({component: RoastingMachineEditComponent, id:'roasting-machine-edit', componentProps: {roastingMachine: this.roastingMachine}});
     await modal.present();
     await modal.onWillDismiss();
@@ -109,6 +113,7 @@ export class RoastingMachineInformationCardComponent implements OnInit {
 
 
   public async detail() {
+    this.uiAnalytics.trackEvent(ROASTING_MACHINE_TRACKING.TITLE, ROASTING_MACHINE_TRACKING.ACTIONS.DETAIL);
     const modal = await this.modalCtrl.create({component: RoastingMachineDetailComponent, id:'roasting-machine-detail', componentProps: {roastingMachine: this.roastingMachine}});
     await modal.present();
     await modal.onWillDismiss();
@@ -121,16 +126,19 @@ export class RoastingMachineInformationCardComponent implements OnInit {
     await this.viewPhotos();
   }
   public async viewPhotos() {
+
+    this.uiAnalytics.trackEvent(ROASTING_MACHINE_TRACKING.TITLE, ROASTING_MACHINE_TRACKING.ACTIONS.PHOTO_VIEW);
     await this.uiImage.viewPhotos(this.roastingMachine);
   }
 
-  public delete(): Promise<any> {
+  public async delete(): Promise<any> {
 
     return new Promise(async (resolve,reject) => {
-        this.uiAlert.showConfirm('DELETE_ROASTING_MACHINE_QUESTION', 'SURE_QUESTION', true).then(() => {
+        this.uiAlert.showConfirm('DELETE_ROASTING_MACHINE_QUESTION', 'SURE_QUESTION', true).then(async () => {
+            await this.uiAlert.showLoadingSpinner();
             // Yes
-            this.uiAnalytics.trackEvent('ROASTING_MACHINE', 'DELETE');
-            this.__delete();
+            this.uiAnalytics.trackEvent(ROASTING_MACHINE_TRACKING.TITLE, ROASTING_MACHINE_TRACKING.ACTIONS.DELETE);
+            await this.__delete();
             this.uiToast.showInfoToast('TOAST_ROASTING_MACHINE_DELETED_SUCCESSFULLY');
             resolve();
           },
@@ -142,15 +150,13 @@ export class RoastingMachineInformationCardComponent implements OnInit {
     );
   }
 
-  private __delete(): void {
-    /// \TODO remove all beans with this
+  private async __delete() {
     const beans: Array<Bean> = this.uiBeanHelper.getAllRoastedBeansForRoastingMachine(this.roastingMachine.config.uuid);
     for (const bean of beans) {
       bean.bean_roast_information.roaster_machine = '';
-      this.uiBeanStorage.update(bean);
+      await this.uiBeanStorage.update(bean);
     }
-
-    this.uiRoastingMachineStorage.removeByObject(this.roastingMachine);
+    await this.uiRoastingMachineStorage.removeByObject(this.roastingMachine);
   }
   public getRoastQuantity(): number {
     const beans: Array<Bean> = this.uiBeanHelper.getAllRoastedBeansForRoastingMachine(this.roastingMachine.config.uuid);

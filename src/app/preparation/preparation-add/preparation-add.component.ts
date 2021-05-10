@@ -1,13 +1,12 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {Preparation} from '../../../classes/preparation/preparation';
-import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {ModalController} from '@ionic/angular';
-import {UIAnalytics} from '../../../services/uiAnalytics';
 
 import {PREPARATION_TYPES} from '../../../enums/preparations/preparationTypes';
 import {NgForm} from '@angular/forms';
 import {PreparationAddTypeComponent} from '../preparation-add-type/preparation-add-type.component';
-
+import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
+import {UIAnalytics} from '../../../services/uiAnalytics';
 @Component({
   selector: 'preparation-add',
   templateUrl: './preparation-add.component.html',
@@ -26,24 +25,20 @@ export class PreparationAddComponent implements OnInit {
   @Input() private hide_toast_message: boolean;
 
   constructor (private readonly modalController: ModalController,
-               private readonly uiPreparationStorage: UIPreparationStorage,
                private readonly uiAnalytics: UIAnalytics) {
 
   }
 
   public ionViewWillEnter(): void {
-    this.uiAnalytics.trackEvent('PREPARATION', 'ADD');
   }
 
   public async choosePreparation(_prepType: PREPARATION_TYPES) {
 
+    this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.ADD_TYPE);
     const modal = await this.modalController.create({
       component: PreparationAddTypeComponent,
-      cssClass: 'half-bottom-modal',
-      showBackdrop: true,
+      cssClass: 'popover-actions',
       id: 'preparation-add-type',
-      backdropDismiss: true,
-      swipeToClose: true,
       componentProps: {type: _prepType, hide_toast_message: this.hide_toast_message}
     });
     await modal.present();

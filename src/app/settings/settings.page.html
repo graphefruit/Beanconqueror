@@ -23,7 +23,7 @@
         <ion-label>{{"EXPORT" | translate}}</ion-label>
         <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
       </ion-item>
-      <ion-item *ngIf="false" (click)="excelExport()" button lines="none" lines="none" tappable>
+      <ion-item (click)="excelExport()" button lines="none" tappable>
         <ion-label>{{"EXCEL_EXPORT" | translate}}</ion-label>
         <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
       </ion-item>
@@ -44,18 +44,44 @@
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-label>{{"PAGE_SETTINGS_STARTUP_VIEW" | translate}}</ion-label>
-        <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.startup_view"
-                    cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
-          <ion-select-option value="{{STARTUP_VIEW.HOME_PAGE}}">{{"NAV_HOME" | translate}}</ion-select-option>
-          <ion-select-option value="{{STARTUP_VIEW.BREW_PAGE}}">{{"NAV_BREWS" | translate}}</ion-select-option>
-          <ion-select-option value="{{STARTUP_VIEW.ADD_BREW}}">{{"ADD_BREW" | translate}}</ion-select-option>
-        </ion-select>
+      <ion-label>{{"PAGE_SETTINGS_STARTUP_VIEW" | translate}}</ion-label>
+      <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.startup_view"
+                  cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
+        <ion-select-option value="{{STARTUP_VIEW.HOME_PAGE}}">{{"NAV_HOME" | translate}}</ion-select-option>
+        <ion-select-option value="{{STARTUP_VIEW.BREW_PAGE}}">{{"NAV_BREWS" | translate}}</ion-select-option>
+        <ion-select-option value="{{STARTUP_VIEW.ADD_BREW}}">{{"ADD_BREW" | translate}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+      <ion-item lines="none">
+        <ion-label>
+          <h2>{{"PAGE_SETTINGS_IMAGE_QUALITY" | translate}}</h2>
+        </ion-label>
+        <ion-icon name="information-outline" slot="end"
+                  tooltip='{{"PAGE_SETTINGS_IMAGE_QUALITY_TOOLTIP" | translate}}'></ion-icon>
+      </ion-item>
+      <ion-item style="top:-15px;">
+        <ion-range style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="50" snaps="true" max="100" step="1" (ionBlur)="saveSettings()" [(ngModel)]="settings.image_quality">
+          <ion-label slot="end">{{settings.image_quality}}%</ion-label>
+        </ion-range>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label>
+          <h2>{{"PAGE_SETTINGS_BREW_RATING" | translate}}</h2>
+        </ion-label>
+        <ion-icon name="information-outline" slot="end"
+                  tooltip='{{"PAGE_SETTINGS_BREW_RATING_TOOLTIP" | translate}}'></ion-icon>
+      </ion-item>
+      <ion-item style="top:-15px;">
+        <ion-range style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="5" snaps="true" max="100" step="1" (ionBlur)="changeBrewRating()" [(ngModel)]="settings.brew_rating">
+          <ion-label slot="end">{{settings.brew_rating}}</ion-label>
+        </ion-range>
       </ion-item>
       <ion-item>
-        <ion-label>{{"PAGE_SETTINGS_ANALYTICS_INFORMATION" | translate}}</ion-label>
-        <ion-checkbox (ionChange)="checkAnalytics()" (ngModelChange)="saveSettings();"
-                      [(ngModel)]="settings.analytics"></ion-checkbox>
+        <ion-label>
+          <h2>{{"PAGE_SETTINGS_ANALYTICS_INFORMATION" | translate}}</h2>
+          <p>{{"PAGE_SETTINGS_ANALYTICS_INFORMATION_TOOLTIP" | translate}}</p>
+        </ion-label>
+          <ion-icon (click)="showAnalyticsInformation()" tappable name="information-outline"></ion-icon>
       </ion-item>
       <ion-item>
         <ion-label>{{"PAGE_SETTINGS_WAKE_LOCK" | translate}}</ion-label>
@@ -80,15 +106,15 @@
     </ion-card-content>
       </ion-card>
 
-  <ion-card class="margin-top-20" *ngIf="false">
+  <ion-card class="margin-top-20">
     <ion-card-content>
       <ion-card-title>{{"PAGE_SETTINGS_MANAGE_SECTIONS" | translate}}</ion-card-title>
-      <ion-item>
+      <ion-item lines="none">
         <ion-label>{{"PAGE_SETTINGS_SHOW_ROASTING_SECTION" | translate}}</ion-label>
         <ion-checkbox (ngModelChange)="saveSettings();"
                       [(ngModel)]="settings.show_roasting_section"></ion-checkbox>
       </ion-item>
-      <ion-item >
+      <ion-item  *ngIf="false">>
         <ion-label>{{"PAGE_SETTINGS_SHOW_CUPPING_SECTION" | translate}}</ion-label>
         <ion-checkbox (ngModelChange)="saveSettings();"
                       [(ngModel)]="settings.show_cupping_section"></ion-checkbox>

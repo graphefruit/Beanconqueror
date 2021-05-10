@@ -74,10 +74,10 @@ export class UiVersionStorage extends StorageClass {
     return promise;
   }
 
-  public reinitializeStorage(): void {
-    super.reinitializeStorage();
+  public async reinitializeStorage() {
+    await super.reinitializeStorage();
 
-    super.storageReady().then(() => {
+    await super.storageReady().then(async () => {
 
       const entries: Array<any> = this.getAllEntries();
       if (entries.length > 0) {
@@ -86,7 +86,7 @@ export class UiVersionStorage extends StorageClass {
         this.version.initializeByObject(entries[0]);
       } else {
         // Take the new settings obj.
-        super.add(this.version);
+        await super.add(this.version);
       }
     }, () => {
       // Outsch, cant do much.
@@ -96,8 +96,8 @@ export class UiVersionStorage extends StorageClass {
     return this.version;
   }
 
-  public saveVersion(version: IVersion): void {
-      super.update(version);
+  public async saveVersion(version: IVersion) {
+      await super.update(version);
   }
 
 }

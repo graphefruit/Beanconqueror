@@ -5,7 +5,6 @@ import {IBrew} from '../../../interfaces/brew/iBrew';
 import {ModalController, NavParams, Platform} from '@ionic/angular';
 import {Brew} from '../../../classes/brew/brew';
 import moment from 'moment';
-import {UIAnalytics} from '../../../services/uiAnalytics';
 import {UIToast} from '../../../services/uiToast';
 import {UIBrewHelper} from '../../../services/uiBrewHelper';
 import {BrewBrewingComponent} from '../../../components/brews/brew-brewing/brew-brewing.component';
@@ -27,7 +26,6 @@ export class BrewEditComponent implements OnInit {
                private readonly navParams: NavParams,
                private readonly uiBrewStorage: UIBrewStorage,
                private readonly uiHelper: UIHelper,
-               private readonly uiAnalytics: UIAnalytics,
                private readonly uiToast: UIToast,
                private readonly platform: Platform,
                private readonly uiBrewHelper: UIBrewHelper) {
@@ -41,9 +39,6 @@ export class BrewEditComponent implements OnInit {
 
   }
 
-  public ionViewDidEnter(): void {
-    this.uiAnalytics.trackEvent('BREW', 'EDIT');
-  }
 
   public dismiss(): void {
     this.modalController.dismiss({
@@ -51,13 +46,13 @@ export class BrewEditComponent implements OnInit {
     },undefined,'brew-edit');
   }
 
-  public updateBrew(): void {
+  public async updateBrew() {
     const newUnix = moment(this.brewBrewing.customCreationDate).unix();
     if (newUnix !== this.data.config.unix_timestamp) {
       this.data.config.unix_timestamp = newUnix;
     }
     this.uiBrewHelper.cleanInvisibleBrewData(this.data);
-    this.uiBrewStorage.update(this.data);
+    await this.uiBrewStorage.update(this.data);
     this.uiToast.showInfoToast('TOAST_BREW_EDITED_SUCCESSFULLY');
     this.dismiss();
   }

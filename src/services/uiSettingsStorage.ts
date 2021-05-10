@@ -16,13 +16,28 @@ import {UIStorage} from './uiStorage';
   providedIn: 'root'
 })
 export class UISettingsStorage extends StorageClass {
+  /**
+   * Singelton instance
+   */
+  public static instance: UISettingsStorage;
   private settings: Settings = new Settings();
   private isSettingsInitialized: number = -1;
+
+  public static getInstance(): UISettingsStorage {
+    if (UISettingsStorage.instance) {
+      return UISettingsStorage.instance;
+    }
+
+    return undefined;
+  }
+
   constructor(protected uiStorage: UIStorage,
               protected uiHelper: UIHelper,
               protected uiLog: UILog) {
     super(uiStorage, uiHelper, uiLog, 'SETTINGS');
-
+    if (UISettingsStorage.instance === undefined) {
+      UISettingsStorage.instance = this;
+    }
     super.storageReady()
       .then(() => {
 
@@ -75,17 +90,20 @@ export class UISettingsStorage extends StorageClass {
     return promise;
   }
 
-  public reinitializeStorage(): void {
-    super.reinitializeStorage();
+  public async reinitializeStorage() {
+    await super.reinitializeStorage();
 
-    super.storageReady().then(() => {
+    await super.storageReady().then(async () => {
       const entries: Array<any> = this.getAllEntries();
       if (entries.length > 0) {
         // We already had some settings here.
+
+        // Issue found - when we add new data types or over import, we need to clean up settings before and then initialize by object
+        this.settings = new Settings();
         this.settings.initializeByObject(entries[0]);
       } else {
         // Take the new settings obj.
-        super.add(this.settings);
+        await super.add(this.settings);
       }
     }, () => {
       // Outsch, cant do much.
@@ -95,8 +113,8 @@ export class UISettingsStorage extends StorageClass {
     return this.settings;
   }
 
-  public saveSettings(settings: ISettings | Settings): void {
-      super.update(settings);
+  public async saveSettings(settings: ISettings | Settings) {
+      await super.update(settings);
   }
 
 }

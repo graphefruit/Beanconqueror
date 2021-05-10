@@ -52,6 +52,8 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
   public customCreationDate: string = '';
   public displayingBrewTime: string = '';
 
+  public maxBrewRating: number = 5;
+
 
   public preparationMethodHasBeenFocused: boolean = false;
 
@@ -73,6 +75,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
   }
 
   public ngAfterViewInit() {
+
     setTimeout( () => {
     if (this.isEdit === false) {
       // We need a short timeout because of ViewChild, else we get an exception
@@ -84,13 +87,17 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
         }
 
     } else {
-      this.timer.setTime(this.data.brew_time);
-
+      if (this.timer) {
+        this.timer.setTime(this.data.brew_time);
+      }
       if ( this.settings.manage_parameters.brew_temperature_time) {
         this.brewTemperatureTime.setTime(this.data.brew_temperature_time);
       }
 
     }
+
+    // Trigger change rating
+    this.changedRating();
     })
   }
 
@@ -114,6 +121,8 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       this.customCreationDate = moment.unix(this.data.config.unix_timestamp).toISOString();
       this.displayingBrewTime = moment().startOf('day').add('seconds',this.data.brew_time).toISOString();
     }
+
+    this.maxBrewRating = this.settings.brew_rating;
 
   }
 

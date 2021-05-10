@@ -4,12 +4,6 @@
     margin-right: 16px;
   }
 
-  ::ng-deep ion-slides img {
-    width: 200px;
-    height: 200px;
-    display: block;
-    object-fit: contain;
-  }
   ion-button[add-next-sort] {
     --padding-bottom: 0px;
     --padding-end: 0px;

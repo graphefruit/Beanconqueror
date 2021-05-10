@@ -54,7 +54,6 @@ import {TranslateModule} from '@ngx-translate/core';
 import {Globalization} from '@ionic-native/globalization/ngx';
 import {AppVersion} from '@ionic-native/app-version/ngx';
 import {EnumToArrayPipe} from '../../pipes/enumToArray';
-import {FirebaseX} from '@ionic-native/firebase-x/ngx';
 import {HelperPage} from '../helper/helper.page';
 import {BrewInformationComponent} from '../../components/brew-information/brew-information.component';
 import {CuppingRadarComponent} from '../../components/cupping-radar/cupping-radar.component';
@@ -129,6 +128,9 @@ import {LongPressDirective} from '../../directive/long-press.directive';
 import {ImpressumComponent} from '../info/impressum/impressum.component';
 import {CookieComponent} from '../info/cookie/cookie.component';
 import {FilesystemErrorPopoverComponent} from '../../popover/filesystem-error-popover/filesystem-error-popover.component';
+import {AnalyticsPopoverComponent} from '../../popover/analytics-popover/analytics-popover.component';
+import {Deeplinks} from '@ionic-native/deeplinks/ngx';
+
 
 @NgModule({
   declarations: [
@@ -156,6 +158,7 @@ import {FilesystemErrorPopoverComponent} from '../../popover/filesystem-error-po
     CustomPopoverComponent,
     FilesystemErrorPopoverComponent,
     WelcomePopoverComponent,
+    AnalyticsPopoverComponent,
     UpdatePopoverComponent,
     DatetimePopoverComponent,
     CreditsComponent,
@@ -263,6 +266,7 @@ import {FilesystemErrorPopoverComponent} from '../../popover/filesystem-error-po
     CustomPopoverComponent,
     FilesystemErrorPopoverComponent,
     WelcomePopoverComponent,
+    AnalyticsPopoverComponent,
     UpdatePopoverComponent,
     DatetimePopoverComponent,
     CreditsComponent,
@@ -352,9 +356,10 @@ import {FilesystemErrorPopoverComponent} from '../../popover/filesystem-error-po
     Keyboard,
     ThreeDeeTouch,
     Camera, ImagePicker, AndroidPermissions,
-    InAppBrowser, File, Globalization, FirebaseX,
+    InAppBrowser, File, Globalization,
     Geolocation,
     Insomnia,
+    Deeplinks,
   ],
 
   exports: [
@@ -383,6 +388,7 @@ import {FilesystemErrorPopoverComponent} from '../../popover/filesystem-error-po
     CustomPopoverComponent,
     FilesystemErrorPopoverComponent,
     WelcomePopoverComponent,
+    AnalyticsPopoverComponent,
     UpdatePopoverComponent,
     DatetimePopoverComponent,
     CreditsComponent,

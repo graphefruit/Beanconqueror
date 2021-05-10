@@ -14,10 +14,13 @@
         </ion-col>
       </ion-row>
       <ion-row>
-        <ion-col [size]="brew?.rating>0?8:12"><div class="ion-no-padding font-size-20 ion-title brew-title">{{brew.getBean().name}}</div></ion-col>
-        <ion-col *ngIf="brew?.rating > 0" size="4">
+        <ion-col [size]="brew?.rating>0 ? (hasCustomRatingRange()? 10:8) :12"><div class="ion-no-padding font-size-20 ion-title brew-title">{{brew.getBean().name}}</div></ion-col>
+        <ion-col *ngIf="brew?.rating > 0 && hasCustomRatingRange() === false" size="4">
           <ngx-stars #brewStars [color]="'#BFB9B0'" [initialStars]="brew.rating" [maxStars]="5"  [readonly]="true"  [wholeStars]="true" class="ion-float-right brew-stars" >
           </ngx-stars>
+        </ion-col>
+        <ion-col *ngIf="brew?.rating > 0  && hasCustomRatingRange() === true" size="2" class="ion-text-right">
+          <ion-badge>{{brew.rating}}</ion-badge>
         </ion-col>
       </ion-row>
       <ion-row>

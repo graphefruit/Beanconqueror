@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.beanconqueror.app" version="5.3.1" xmlns="http://www.w3.org/ns/widgets">
+<widget id="com.beanconqueror.app" version="5.3.4" xmlns="http://www.w3.org/ns/widgets">
     <name>Beanconqueror</name>
     <description />
     <author email="lars.saalbach@googlemail.com" href="https://github.com/graphefruit/beanconqueror">Lars Saalbach</author>
@@ -11,10 +11,11 @@
     <allow-intent href="sms:*" />
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
+    <allow-intent href="beanconqueror:" />
+    <allow-intent href="ionic:" />
     <preference name="ScrollEnabled" value="false" />
     <preference name="android-minSdkVersion" value="22" />
     <preference name="android-targetSdkVersion" value="29" />
-    <preference name="BackupWebStorage" value="Cloud" />
     <preference name="SplashMaintainAspectRatio" value="true" />
     <preference name="FadeSplashScreenDuration" value="300" />
     <preference name="SplashShowOnlyFirstTime" value="false" />
@@ -26,7 +27,18 @@
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
     <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
     <platform name="android">
+        <edit-file file="app/src/main/AndroidManifest.xml" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
+            <activity android:label="webIntentFilter" android:name="com.beanconqueror.app">
+                <intent-filter android:autoVerify="true">
+                    <action android:name="android.intent.action.VIEW" />
+                    <category android:name="android.intent.category.DEFAULT" />
+                    <category android:name="android.intent.category.BROWSABLE" />
+                    <data android:host="beanconqueror.com" android:pathPrefix="/app/roaster/bean" android:scheme="https" />
+                </intent-filter>
+            </activity>
+        </edit-file>
         <preference name="AndroidXEnabled" value="false" />
+        <preference name="AndroidLaunchMode" value="standard" />
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
             <application android:networkSecurityConfig="@xml/network_security_config" />
             <application android:requestLegacyExternalStorage="true" />
@@ -69,11 +81,76 @@
         <icon density="mdpi" src="resources/android/icon/drawable-mdpi-icon.png" />
     </platform>
     <platform name="ios">
+        <preference name="BackupWebStorage" value="cloud" />
         <preference name="WKWebViewOnly" value="true" />
         <feature name="CDVWKWebViewEngine">
             <param name="ios-package" value="CDVWKWebViewEngine" />
         </feature>
         <preference name="CordovaWebViewEngine" value="CDVWKWebViewEngine" />
+        <edit-file file="*-Debug.plist" mode="merge" target="com.apple.developer.healthkit">
+            <true />
+        </edit-file>
+        <edit-file file="*-Debug.plist" mode="merge" target="com.apple.developer.icloud-container-identifiers">
+            <array>
+                <string>iCloud.com.beanconqueror.app</string>
+            </array>
+        </edit-file>
+        <edit-file file="*-Debug.plist" mode="merge" target="com.apple.developer.icloud-services">
+            <array>
+                <string>CloudDocuments</string>
+            </array>
+        </edit-file>
+        <edit-file file="*-Debug.plist" mode="merge" target="com.apple.developer.ubiquity-container-identifiers">
+            <array>
+                <string>iCloud.com.beanconqueror.app</string>
+            </array>
+        </edit-file>
+        <edit-file file="*-Debug.plist" mode="merge" target="com.apple.developer.associated-domains">
+            <array>
+                <string>webcredentials:beanconqueror.com</string>
+                <string>applinks:beanconqueror.com</string>
+            </array>
+        </edit-file>
+        <edit-file file="*-Release.plist" mode="merge" target="com.apple.developer.healthkit">
+            <true />
+        </edit-file>
+        <edit-file file="*-Release.plist" mode="merge" target="com.apple.developer.icloud-container-identifiers">
+            <array>
+                <string>iCloud.com.beanconqueror.app</string>
+            </array>
+        </edit-file>
+        <edit-file file="*-Release.plist" mode="merge" target="com.apple.developer.icloud-services">
+            <array>
+                <string>CloudDocuments</string>
+            </array>
+        </edit-file>
+        <edit-file file="*-Release.plist" mode="merge" target="com.apple.developer.ubiquity-container-identifiers">
+            <array>
+                <string>iCloud.com.beanconqueror.app</string>
+            </array>
+        </edit-file>
+        <edit-file file="*-Release.plist" mode="merge" target="com.apple.developer.associated-domains">
+            <array>
+                <string>webcredentials:beanconqueror.com</string>
+                <string>applinks:beanconqueror.com</string>
+            </array>
+        </edit-file>
+        <edit-config file="*-Info.plist" mode="merge" target="CFBundleURLTypes">
+            <array>
+                <dict>
+                    <key>CFBundleURLSchemes</key>
+                    <array>
+                        <string>beanconqueror</string>
+                    </array>
+                </dict>
+            </array>
+        </edit-config>
+        <edit-config file="*-Info.plist" mode="merge" target="UIFileSharingEnabled">
+            <true />
+        </edit-config>
+        <edit-config file="*-Info.plist" mode="merge" target="LSSupportsOpeningDocumentsInPlace">
+            <true />
+        </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="UIApplicationShortcutItems">
             <array>
                 <dict>
@@ -132,6 +209,9 @@
                 <string>UIInterfaceOrientationLandscapeLeft</string>
                 <string>UIInterfaceOrientationLandscapeRight</string>
             </array>
+        </edit-config>
+        <edit-config file="*-Info.plist" mode="merge" target="ITSAppUsesNonExemptEncryption">
+            <false />
         </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="UISupportedInterfaceOrientations~ipad">
             <array>
@@ -202,4 +282,10 @@
         <variable name="PLAY_AUTH_VERSION" value="18.1.0" />
         <variable name="FIT_API_VERSION" value="19.0.0" />
     </plugin>
+    <universal-links>
+        <ios-team-id value="W8B7XY7WGY" />
+        <host name="beanconqueror.com">
+            <path event="openRoasterBeans" url="/app/roaster/bean*" />
+        </host>
+    </universal-links>
 </widget>

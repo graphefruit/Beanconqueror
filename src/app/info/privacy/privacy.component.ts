@@ -23,9 +23,6 @@ export class PrivacyComponent implements OnInit {
 
   }
   public disableTracking() {
-    const settings: Settings = this.uiSettingsStorage.getSettings();
-    settings.analytics = false;
-    this.uiSettingsStorage.saveSettings(settings);
-    this.uiAnalytics.disableTracking();
+
   }
 }

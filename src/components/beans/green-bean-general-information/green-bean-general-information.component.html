@@ -9,7 +9,7 @@
   <ion-item>
     <ion-label position="stacked">{{"BEAN_DATA_BUY_DATE" | translate}}</ion-label>
     <ion-datetime #roastingDate="ngModel" (click)="chooseDate($event);" [(ngModel)]="data.date" cancelText="{{'CANCEL' | translate}}" displayFormat="DD.MM.YYYY" doneText="{{'CHOOSE' | translate}}" max="2999-12-31" min="2000-01-01" mode="ios" name="roastingDate"
-                  placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROASTING_DATE' | translate}}"></ion-datetime>
+                  placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_BUY_DATE' | translate}}"></ion-datetime>
   </ion-item>
   <ion-item>
     <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
@@ -76,6 +76,10 @@
     <ion-input #ean_article_number="ngModel" [(ngModel)]="data.ean_article_number" autocapitalize="sentences" name="ean_article_number" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_EAN' | translate}}"
                spellcheck="false" type="text">
     </ion-input>
+  </ion-item>
+  <ion-item *ngIf="data?.config.uuid !== ''">
+    <ion-label position="stacked">{{"FINISHED"|translate}}?</ion-label>
+    <ion-checkbox [(ngModel)]="data.finished"></ion-checkbox>
   </ion-item>
   <ion-item>
     <ion-label position="stacked">{{"NOTES" | translate}}</ion-label>

@@ -4,7 +4,6 @@ import {UIHelper} from '../../../services/uiHelper';
 import {UIImage} from '../../../services/uiImage';
 import {Bean} from '../../../classes/bean/bean';
 import {ModalController, NavParams} from '@ionic/angular';
-import {UIAnalytics} from '../../../services/uiAnalytics';
 import {UIFileHelper} from '../../../services/uiFileHelper';
 import {UIToast} from '../../../services/uiToast';
 import {IBeanInformation} from '../../../interfaces/bean/iBeanInformation';
@@ -33,7 +32,6 @@ export class BeansAddComponent implements OnInit {
                private readonly uiBeanStorage: UIBeanStorage,
                private readonly uiImage: UIImage,
                private readonly uiHelper: UIHelper,
-               private readonly uiAnalytics: UIAnalytics,
                private readonly uiFileHelper: UIFileHelper,
                private readonly uiToast: UIToast) {
 
@@ -44,7 +42,6 @@ export class BeansAddComponent implements OnInit {
 
 
   public async ionViewWillEnter() {
-    this.uiAnalytics.trackEvent('BEAN', 'ADD');
 
     // It just can be a bean template (bean will be repeated, or a green bean, both is not working)
     // TODO how to handle roasting beans which wil be repeated?
@@ -63,10 +60,10 @@ export class BeansAddComponent implements OnInit {
     }
   }
 
-  public addBean(): void {
+  public async addBean() {
 
     if (this.__formValid()) {
-      this.__addBean();
+      await this.__addBean();
     }
   }
 
@@ -88,8 +85,8 @@ export class BeansAddComponent implements OnInit {
     }
   }
 
-  public __addBean(): void {
-    this.uiBeanStorage.add(this.data);
+  public async __addBean() {
+    await this.uiBeanStorage.add(this.data);
     this.dismiss();
     if (!this.hide_toast_message) {
       this.uiToast.showInfoToast('TOAST_BEAN_ADDED_SUCCESSFULLY');

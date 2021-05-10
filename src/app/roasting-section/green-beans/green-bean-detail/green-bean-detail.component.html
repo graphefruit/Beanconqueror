@@ -110,14 +110,12 @@
           <ion-icon color="inactive" name="beanconqueror-beans" size="large"></ion-icon>
         </div>
         <div class="text-color-inactive ion-margin-top">
-          {{"PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS" | translate}}
+          {{"ROASTING_SECTION.GREEN_BEAN.NO_ROASTS_YET" | translate}}
         </div>
       </div>
       <div *ngIf="linkedRoasts.length > 0">
-        <ion-virtual-scroll #archivedScroll [items]="linkedRoasts" approxItemHeight="240px">
-          <bean-information [showActions]="false" *virtualItem="let bean;"
+          <bean-information (beanAction)="beanAction($event[0],$event[1])" [showActions]="false" *ngFor="let bean of linkedRoasts"
                             [bean]="bean"></bean-information>
-        </ion-virtual-scroll>
       </div>
 
     </div>

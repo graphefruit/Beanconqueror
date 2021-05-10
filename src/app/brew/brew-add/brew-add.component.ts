@@ -7,7 +7,6 @@ import {UIMillStorage} from '../../../services/uiMillStorage';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {Brew} from '../../../classes/brew/brew';
 import moment from 'moment';
-import {UIAnalytics} from '../../../services/uiAnalytics';
 import {UIToast} from '../../../services/uiToast';
 import {TranslateService} from '@ngx-translate/core';
 import {Geolocation} from '@ionic-native/geolocation/ngx';
@@ -43,7 +42,6 @@ export class BrewAddComponent implements OnInit {
                private readonly uiBrewStorage: UIBrewStorage,
                private readonly uiSettingsStorage: UISettingsStorage,
                private readonly uiMillStorage: UIMillStorage,
-               private readonly uiAnalytics: UIAnalytics,
                private readonly uiToast: UIToast,
                private readonly translate: TranslateService,
                private readonly platform: Platform,
@@ -83,7 +81,6 @@ export class BrewAddComponent implements OnInit {
         );
     }
 
-    this.uiAnalytics.trackEvent('BREW', 'ADD');
     this.getCoordinates(true);
 
 
@@ -136,7 +133,7 @@ export class BrewAddComponent implements OnInit {
     await this.uiAlert.showLoadingSpinner();
     try {
       this.uiBrewHelper.cleanInvisibleBrewData(this.data);
-      this.uiBrewStorage.add(this.data);
+      await this.uiBrewStorage.add(this.data);
 
       let checkData: Settings | Preparation;
       if (this.getPreparation().use_custom_parameters === true) {
@@ -146,8 +143,9 @@ export class BrewAddComponent implements OnInit {
       }
       if (checkData.manage_parameters.set_custom_brew_time) {
         this.data.config.unix_timestamp = moment(this.brewBrewing.customCreationDate).unix();
+        await this.uiBrewStorage.update(this.data);
       }
-      this.uiBrewStorage.update(this.data);
+
 
       if (this.settings.track_caffeine_consumption && this.data.grind_weight > 0) {
         this.uiHealthKit.trackCaffeineConsumption(this.data.getCaffeineAmount(), moment(this.brewBrewing.customCreationDate).toDate());

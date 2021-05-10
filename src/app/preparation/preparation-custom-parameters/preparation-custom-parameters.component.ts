@@ -5,8 +5,6 @@ import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 import {PREPARATION_TYPES} from '../../../enums/preparations/preparationTypes';
 import {ModalController, NavParams} from '@ionic/angular';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
-import {UIHelper} from '../../../services/uiHelper';
-import {UIAnalytics} from '../../../services/uiAnalytics';
 
 @Component({
   selector: 'app-preparation-custom-parameters',
@@ -23,14 +21,11 @@ export class PreparationCustomParametersComponent implements OnInit {
 
   constructor (private readonly navParams: NavParams,
                private readonly modalController: ModalController,
-               private readonly uiPreparationStorage: UIPreparationStorage,
-               private readonly uiHelper: UIHelper,
-               private readonly uiAnalytics: UIAnalytics) {
+               private readonly uiPreparationStorage: UIPreparationStorage) {
 
   }
 
   public ionViewWillEnter(): void {
-    this.uiAnalytics.trackEvent('PREPARATION', 'CUSTOM_PARAMETERS');
     if (this.preparation !== undefined) {
       this.data.initializeByObject(this.preparation);
     }

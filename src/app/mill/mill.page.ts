@@ -9,6 +9,8 @@ import {MillAddComponent} from './mill-add/mill-add.component';
 import {MILL_ACTION} from '../../enums/mills/millActions';
 import {Settings} from '../../classes/settings/settings';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
+import MILL_TRACKING from '../../data/tracking/millTracking';
+import {UIAnalytics} from '../../services/uiAnalytics';
 
 
 @Component({
@@ -28,7 +30,8 @@ export class MillPage  implements OnInit  {
                private readonly uiMillStorage: UIMillStorage,
                private readonly uiAlert: UIAlert,
                private readonly uiBrewStorage: UIBrewStorage,
-               private readonly uiSettingsStorage: UISettingsStorage) {
+               private readonly uiSettingsStorage: UISettingsStorage,
+               private readonly uiAnalytics: UIAnalytics) {
 
   }
 
@@ -61,10 +64,11 @@ export class MillPage  implements OnInit  {
   }
 
   public async add() {
+    this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.ADD);
+
     const modal = await this.modalCtrl.create({
-      component: MillAddComponent, cssClass: 'half-bottom-modal', showBackdrop: true,
-      backdropDismiss: true,
-      swipeToClose: true,
+      component: MillAddComponent,
+      cssClass: 'popover-actions',
       id: 'mill-add'
     });
     await modal.present();

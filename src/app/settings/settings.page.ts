@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
 import {IBean} from '../../interfaces/bean/iBean';
 import {IBrew} from '../../interfaces/brew/iBrew';
-import {AlertController, Platform} from '@ionic/angular';
+import {AlertController, ModalController, Platform} from '@ionic/angular';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {UIStorage} from '../../services/uiStorage';
 import {UIHelper} from '../../services/uiHelper';
@@ -27,7 +27,7 @@ import {Subject} from 'rxjs';
 import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
 import {UIAnalytics} from '../../services/uiAnalytics';
 
-import BeanconquerorSettingsDummy from '../../assets/BeanconquerorDummy.json';
+import BeanconquerorSettingsDummy from '../../assets/BeanconquerorTestData.json';
 import {ISettings} from '../../interfaces/settings/iSettings';
 import {Bean} from '../../classes/bean/bean';
 /** Third party */
@@ -40,7 +40,15 @@ import {UIHealthKit} from '../../services/uiHealthKit';
 import {Preparation} from '../../classes/preparation/preparation';
 import {GreenBean} from '../../classes/green-bean/green-bean';
 import {RoastingMachine} from '../../classes/roasting-machine/roasting-machine';
-
+import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
+import {AnalyticsPopoverComponent} from '../../popover/analytics-popover/analytics-popover.component';
+import {UIRoastingMachineStorage} from '../../services/uiRoastingMachineStorage';
+import {UIGreenBeanStorage} from '../../services/uiGreenBeanStorage';
+import {IPreparation} from '../../interfaces/preparation/iPreparation';
+import {IGreenBean} from '../../interfaces/green-bean/iGreenBean';
+import {IRoastingMachine} from '../../interfaces/roasting-machine/iRoastingMachine';
+import {IMill} from '../../interfaces/mill/iMill';
+import {IBrewCoordinates} from '../../interfaces/brew/iBrewCoordinates';
 declare var cordova: any;
 declare var device: any;
 
@@ -62,30 +70,22 @@ export class SettingsPage implements OnInit {
   public isHealthSectionAvailable: boolean = false;
 
 
-  private static __cleanupImportBeanData(_data: Array<IBean>): any {
+  private __cleanupAttachmentData(_data: Array<IBean | IBrew | IMill | IPreparation | IGreenBean | IRoastingMachine>): any {
     if (_data !== undefined && _data.length > 0) {
-      for (const bean of _data) {
-        delete bean['filePath'];
-        bean.attachments = [];
+      for (const obj of _data) {
+        obj.attachments = [];
       }
     }
 
   }
 
-  private static __cleanupImportBrewData(_data: Array<IBrew>): void {
-    if (_data !== undefined && _data.length > 0) {
-      for (const brew of _data) {
-        brew.attachments = [];
-      }
-    }
-  }
 
-  private static __cleanupImportSettingsData(_data: ISettings | any): void {
+  private  __cleanupImportSettingsData(_data: ISettings | any): void {
     // We need to remove the filter because of new data here.
     if (_data !== undefined) {
       _data.brew_filter = {};
-      _data.brew_filter.ARCHIVED = Settings.GET_BREW_FILTER();
-      _data.brew_filter.OPEN = Settings.GET_BREW_FILTER();
+      _data.brew_filter.ARCHIVED = this.settings.GET_BREW_FILTER();
+      _data.brew_filter.OPEN = this.settings.GET_BREW_FILTER();
     }
   }
 
@@ -113,6 +113,9 @@ export class SettingsPage implements OnInit {
               private readonly uiVersionStorage: UiVersionStorage,
               private readonly uiExcel: UIExcel,
               private readonly uiHealthKit: UIHealthKit,
+              private readonly modalCtrl: ModalController,
+              private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
+              private readonly uiGreenBeanStorage: UIGreenBeanStorage
               ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -137,17 +140,21 @@ export class SettingsPage implements OnInit {
   }
 
   public checkHealthPlugin() {
+    // #200 - Didn't save the settings
     if (this.settings.track_caffeine_consumption === false) {
       this.uiAlert.showConfirm('HEALTH_KIT_QUESTION_MESSAGE','HEALTH_KIT_QUESTION_TITLE', true).then( () => {
         this.uiHealthKit.requestAuthorization().then(() => {
           // Allowed
           this.settings.track_caffeine_consumption = true;
+          this.saveSettings();
         }, () => {
           // Forbidden
           this.settings.track_caffeine_consumption = false;
+          this.saveSettings();
         });
       }, () => {
         this.settings.track_caffeine_consumption = false;
+        this.saveSettings();
       });
     }
 
@@ -167,20 +174,19 @@ export class SettingsPage implements OnInit {
     }
   }
 
+    public changeBrewRating() {
+      this.settings.resetFilter();
+      this.saveSettings();
+    }
   public saveSettings(): void {
     this.changeDetectorRef.detectChanges();
     this.uiSettingsStorage.saveSettings(this.settings);
   }
 
-  public checkAnalytics(): void {
-    if (this.settings.analytics) {
-      this.uiAnalytics.trackEvent('SETTINGS', 'TRACKING_ENABLE');
-      this.uiAnalytics.enableTracking();
-    } else {
-      this.uiAnalytics.trackEvent('SETTINGS', 'TRACKING_DISABLE');
-      // Last one here so, but we need to know, which users don't want any tracking.
-      this.uiAnalytics.disableTracking();
-    }
+  public async showAnalyticsInformation() {
+    const modal = await this.modalCtrl.create({component: AnalyticsPopoverComponent, id: AnalyticsPopoverComponent.POPOVER_ID});
+    await modal.present();
+    await modal.onWillDismiss();
   }
 
   public languageChanged(_query): void {
@@ -190,14 +196,14 @@ export class SettingsPage implements OnInit {
   public setLanguage(): void {
     this.translate.setDefaultLang(this.settings.language);
     this.translate.use(this.settings.language);
-    this.uiAnalytics.trackEvent('SETTINGS', 'SET_LANGUAGE_ ' + this.settings.language);
+    this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.SET_LANGUAGE.CATEGORY,SETTINGS_TRACKING.ACTIONS.SET_LANGUAGE.DATA.LANGUAGE, this.settings.language);
     this.uiSettingsStorage.saveSettings(this.settings);
     moment.locale(this.settings.language);
   }
 
   public import(): void {
     if (this.platform.is('cordova')) {
-      this.uiAnalytics.trackEvent('SETTINGS', 'IMPORT');
+      this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.IMPORT);
       this.uiLog.log('Import real data');
       if (this.platform.is('android')) {
         this.fileChooser.open()
@@ -256,33 +262,53 @@ export class SettingsPage implements OnInit {
   }
 
 
-  public export(): void {
-    this.uiAnalytics.trackEvent('SETTINGS', 'EXPORT');
+  public async export() {
+
+    await this.uiAlert.showLoadingSpinner();
+
+    this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.EXPORT);
+
+
     this.uiStorage.export().then((_data) => {
       this.uiHelper.exportJSON('Beanconqueror.json', JSON.stringify(_data)).then(async (_fileEntry: FileEntry) => {
-        if (this.platform.is('android'))
-        {
-          const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
-          const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
-          const preparations: Array<Preparation> = this.uiPreparationStorage.getAllEntries();
-          const mills: Array<Mill> = this.uiMillStorage.getAllEntries();
-          await this._exportAttachments(beans);
-          await this._exportAttachments(brews);
-          await this._exportAttachments(preparations);
-          await this._exportAttachments(mills);
-          const alert =  await this.alertCtrl.create({
-            header: this.translate.instant('DOWNLOADED'),
-            subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {fileName: _fileEntry.name}),
-            buttons: ['OK']
-          });
-          await alert.present();
+
+        if (this.platform.is('cordova')) {
+          if (this.platform.is('android'))
+          {
+            const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
+            const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
+            const preparations: Array<Preparation> = this.uiPreparationStorage.getAllEntries();
+            const mills: Array<Mill> = this.uiMillStorage.getAllEntries();
+            await this._exportAttachments(beans);
+            await this._exportAttachments(brews);
+            await this._exportAttachments(preparations);
+            await this._exportAttachments(mills);
+            await this.uiAlert.hideLoadingSpinner();
+
+            const alert =  await this.alertCtrl.create({
+              header: this.translate.instant('DOWNLOADED'),
+              subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {fileName: _fileEntry.name}),
+              buttons: ['OK']
+            });
+            await alert.present();
+          } else {
+            await this.uiAlert.hideLoadingSpinner();
+            // File already downloaded
+            // We don't support image export yet, because
+          }
         } else {
-          this.socialSharing.share(undefined, undefined, _fileEntry.nativeURL);
+          await this.uiAlert.hideLoadingSpinner();
+          // File already downloaded
           // We don't support image export yet, because
         }
 
+
+      }, async () => {
+        await this.uiAlert.hideLoadingSpinner();
       });
 
+    },async () => {
+      await this.uiAlert.hideLoadingSpinner();
     });
 
   }
@@ -401,12 +427,19 @@ export class SettingsPage implements OnInit {
       const settingsConst = new Settings();
       dummyData['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(settingsConst.brew_order);
     }
-    SettingsPage.__cleanupImportSettingsData(dummyData['SETTINGS'][0]);
-    this.uiStorage.import(dummyData).then(() => {
-      this.__reinitializeStorages().then(() => {
+    this.__cleanupImportSettingsData(dummyData['SETTINGS'][0]);
+
+    this.uiStorage.import(dummyData).then(async () => {
+      this.__reinitializeStorages().then(async () => {
+        this.uiAnalytics.disableTracking();
         this.__initializeSettings();
         this.setLanguage();
-        this.uiAlert.showMessage(this.translate.instant('IMPORT_SUCCESSFULLY'));
+        await this.uiAlert.showMessage(this.translate.instant('IMPORT_SUCCESSFULLY'));
+        if (this.settings.matomo_analytics === undefined) {
+          await this.showAnalyticsInformation();
+        } else {
+          this.uiAnalytics.enableTracking();
+        }
       });
     });
   }
@@ -445,7 +478,7 @@ export class SettingsPage implements OnInit {
   }
 
 
-  private __importJSON(_content: string,_importPath: string) {
+  private async __importJSON(_content: string,_importPath: string) {
     const parsedContent = JSON.parse(_content);
 
     const isIOS: boolean = this.platform.is('ios');
@@ -462,16 +495,31 @@ export class SettingsPage implements OnInit {
     if (!parsedContent[this.uiSettingsStorage.getDBPath()]) {
       parsedContent[this.uiSettingsStorage.getDBPath()] = [];
     }
+    if (!parsedContent[this.uiRoastingMachineStorage.getDBPath()]) {
+      parsedContent[this.uiRoastingMachineStorage.getDBPath()] = [];
+    }
+    if (!parsedContent[this.uiGreenBeanStorage.getDBPath()]) {
+      parsedContent[this.uiGreenBeanStorage.getDBPath()] = [];
+    }
+    if (!parsedContent[this.uiVersionStorage.getDBPath()]) {
+      parsedContent[this.uiVersionStorage.getDBPath()] = [];
+    }
     if (parsedContent[this.uiPreparationStorage.getDBPath()] &&
       parsedContent[this.uiBeanStorage.getDBPath()] &&
       parsedContent[this.uiBrewStorage.getDBPath()] &&
       parsedContent[this.uiSettingsStorage.getDBPath()]) {
 
       if (isIOS){
-        SettingsPage.__cleanupImportBeanData(parsedContent[this.uiBeanStorage.getDBPath()]);
-        SettingsPage.__cleanupImportBrewData(parsedContent[this.uiBrewStorage.getDBPath()]);
+        this.__cleanupAttachmentData(parsedContent[this.uiBeanStorage.getDBPath()]);
+        this.__cleanupAttachmentData(parsedContent[this.uiBrewStorage.getDBPath()]);
+
+        this.__cleanupAttachmentData(parsedContent[this.uiRoastingMachineStorage.getDBPath()]);
+        this.__cleanupAttachmentData(parsedContent[this.uiGreenBeanStorage.getDBPath()]);
+        this.__cleanupAttachmentData(parsedContent[this.uiPreparationStorage.getDBPath()]);
+        this.__cleanupAttachmentData(parsedContent[this.uiMillStorage.getDBPath()]);
+
       }
-      SettingsPage.__cleanupImportSettingsData(parsedContent[this.uiSettingsStorage.getDBPath()]);
+      this.__cleanupImportSettingsData(parsedContent[this.uiSettingsStorage.getDBPath()]);
 
       // When exporting the value is a number, when importing it needs to be  a string.
       parsedContent['SETTINGS'][0]['brew_view'] = parsedContent['SETTINGS'][0]['brew_view'] + '';
@@ -487,22 +535,27 @@ export class SettingsPage implements OnInit {
         parsedContent['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(settingsConst.brew_order);
       }
 
-
+      await this.uiAlert.showLoadingSpinner();
       this.uiStorage.import(parsedContent).then(async (_data) => {
         if (_data.BACKUP === false) {
           this.__reinitializeStorages().then(async () => {
+            this.uiAnalytics.disableTracking();
             this.__initializeSettings();
-
 
             if (!isIOS) {
               const brewsData:Array<Brew> = this.uiBrewStorage.getAllEntries();
               const beansData:Array<Bean> = this.uiBeanStorage.getAllEntries();
               const preparationData:Array<Preparation> = this.uiPreparationStorage.getAllEntries();
               const millData:Array<Mill> = this.uiMillStorage.getAllEntries();
+              const greenBeanData:Array<GreenBean> = this.uiGreenBeanStorage.getAllEntries();
+              const roastingMachineData:Array<RoastingMachine> = this.uiRoastingMachineStorage.getAllEntries();
+
               await this._importFiles(brewsData,_importPath);
               await this._importFiles(beansData,_importPath);
               await this._importFiles(preparationData,_importPath);
               await this._importFiles(millData,_importPath);
+              await this._importFiles(greenBeanData,_importPath);
+              await this._importFiles(roastingMachineData,_importPath);
             }
 
             if (this.uiBrewStorage.getAllEntries().length > 0 && this.uiMillStorage.getAllEntries().length <= 0) {
@@ -518,16 +571,24 @@ export class SettingsPage implements OnInit {
               }
             }
             this.setLanguage();
-            this.uiAlert.showMessage(this.translate.instant('IMPORT_SUCCESSFULLY'));
-
-
+            await this.uiAlert.hideLoadingSpinner();
+            await this.uiAlert.showMessage(this.translate.instant('IMPORT_SUCCESSFULLY'));
+            if (this.settings.matomo_analytics === undefined) {
+              await this.showAnalyticsInformation();
+            } else {
+              this.uiAnalytics.enableTracking();
+            }
+          }, async () => {
+            await this.uiAlert.hideLoadingSpinner();
           });
 
         } else {
+          await this.uiAlert.hideLoadingSpinner();
           this.uiAlert.showMessage(this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED'));
         }
 
-      }, () => {
+      }, async () => {
+        await this.uiAlert.hideLoadingSpinner();
         this.uiAlert.showMessage(this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED'));
       });
 
@@ -541,14 +602,14 @@ export class SettingsPage implements OnInit {
   }
 
   private async __reinitializeStorages (): Promise<any> {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
 
-      this.uiBeanStorage.reinitializeStorage();
-      this.uiBrewStorage.reinitializeStorage();
-      this.uiPreparationStorage.reinitializeStorage();
-      this.uiSettingsStorage.reinitializeStorage();
-      this.uiMillStorage.reinitializeStorage();
-      this.uiVersionStorage.reinitializeStorage();
+      await this.uiBeanStorage.reinitializeStorage();
+      await this.uiBrewStorage.reinitializeStorage();
+      await this.uiPreparationStorage.reinitializeStorage();
+      await this.uiSettingsStorage.reinitializeStorage();
+      await this.uiMillStorage.reinitializeStorage();
+      await this.uiVersionStorage.reinitializeStorage();
 
       const beanStorageReadyCallback = this.uiBeanStorage.storageReady();
       const preparationStorageReadyCallback = this.uiPreparationStorage.storageReady();
@@ -563,8 +624,8 @@ export class SettingsPage implements OnInit {
         millStorageReadyCallback,
         uiSettingsStorageReadyCallback,
         versionStorageReadyCallback
-      ]).then(() => {
-        this.uiUpdate.checkUpdate();
+      ]).then(async () => {
+        await this.uiUpdate.checkUpdate();
         resolve();
       }, () => {
         resolve();

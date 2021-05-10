@@ -5,9 +5,9 @@ import {ModalController, NavParams} from '@ionic/angular';
 import {UIGreenBeanStorage} from '../../../../services/uiGreenBeanStorage';
 import {UIImage} from '../../../../services/uiImage';
 import {UIHelper} from '../../../../services/uiHelper';
-import {UIAnalytics} from '../../../../services/uiAnalytics';
 import {Bean} from '../../../../classes/bean/bean';
 import {UIBeanHelper} from '../../../../services/uiBeanHelper';
+import {BEAN_ACTION} from '../../../../enums/beans/beanAction';
 
 @Component({
   selector: 'app-green-bean-detail',
@@ -29,22 +29,26 @@ export class GreenBeanDetailComponent implements OnInit {
                private readonly uiGreenBeanStorage: UIGreenBeanStorage,
                private readonly uiImage: UIImage,
                private readonly uiHelper: UIHelper,
-               private readonly uiAnalytics: UIAnalytics,
                private uiBeanHelper: UIBeanHelper) {
 
   }
 
 
   public async ionViewWillEnter() {
-    this.uiAnalytics.trackEvent('GREEN_BEAN', 'DETAIL');
     this.data = new GreenBean();
     this.data.initializeByObject(this.greenBean);
     // Add one empty bean information, rest is being updated on start
-    this.linkedRoasts = this.getRelatedRoastedBeans();
+   this.loadRelatedRoastedBeans();
   }
 
+  private loadRelatedRoastedBeans() {
+    this.linkedRoasts = this.getRelatedRoastedBeans();
+  }
   private getRelatedRoastedBeans(): Array<Bean> {
    return this.uiBeanHelper.getAllRoastedBeansForThisGreenBean(this.greenBean.config.uuid);
+  }
+  public async beanAction(action: BEAN_ACTION, bean: Bean): Promise<void> {
+    this.loadRelatedRoastedBeans();
   }
 
   public dismiss(): void {

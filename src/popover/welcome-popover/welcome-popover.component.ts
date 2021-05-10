@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {IonSlides, ModalController} from '@ionic/angular';
+import {IonSlides, ModalController, Platform} from '@ionic/angular';
 import {BeansAddComponent} from '../../app/beans/beans-add/beans-add.component';
 import {PreparationAddComponent} from '../../app/preparation/preparation-add/preparation-add.component';
 import {MillAddComponent} from '../../app/mill/mill-add/mill-add.component';
@@ -27,38 +27,54 @@ export class WelcomePopoverComponent implements OnInit {
 
   private readonly settings: Settings;
 
-
+  private disableHardwareBack;
   constructor(private readonly modalController: ModalController,
               private readonly uiAnalytics: UIAnalytics,
-              private readonly uiSettingsStorage: UISettingsStorage) {
+              private readonly uiSettingsStorage: UISettingsStorage,
+              private readonly platform: Platform) {
     this.settings = this.uiSettingsStorage.getSettings();
 
 
   }
-
+  private __triggerUpdate() {
+    // Fix, specialy on new devices which will see 2 update screens, the slider was white
+    setTimeout(() => {
+      this.welcomeSlider.update();
+    });
+  }
   public ngOnInit() {
+    try {
+      this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(9999, (processNextHandler) => {
+        // Don't do anything.
+      });
+    }catch (ex) {
+
+    }
+
   }
 
-  public async activeGoogleAnalytics(_active: boolean) {
-    this.settings.analytics = _active;
+  public async understoodAnalytics() {
+    this.settings.matomo_analytics = true;
+    this.uiAnalytics.enableTracking();
     this.uiSettingsStorage.saveSettings(this.settings);
-    if (_active) {
-      await this.uiAnalytics.enableTracking();
-    } else {
-      await this.uiAnalytics.disableTracking();
-    }
     this.slide++;
+
     this.welcomeSlider.slideNext();
+    this.__triggerUpdate();
   }
 
   public skip() {
+
     this.slide++;
     this.welcomeSlider.slideNext();
+    this.__triggerUpdate();
   }
 
   public next() {
+
     this.slide++;
     this.welcomeSlider.slideNext();
+    this.__triggerUpdate();
   }
 
   public async addBean() {
@@ -82,7 +98,9 @@ export class WelcomePopoverComponent implements OnInit {
   public async addMill() {
     const modal = await this.modalController.create({
       component: MillAddComponent,
-      cssClass: 'half-bottom-modal', id:'mill-add', showBackdrop: true, componentProps: {hide_toast_message: true}
+      cssClass: 'popover-actions',
+      id:'mill-add',
+      componentProps: {hide_toast_message: true}
     });
     await modal.present();
     await modal.onWillDismiss();
@@ -91,11 +109,17 @@ export class WelcomePopoverComponent implements OnInit {
   }
 
   public finish() {
+    try{
+      this.disableHardwareBack.unsubscribe();
+    } catch(ex) {
+
+    }
+    this.settings.welcome_page_showed = true;
+    this.uiSettingsStorage.saveSettings(this.settings);
     this.modalController.dismiss({
       dismissed: true
     }, undefined, 'welcome-popover');
-    this.settings.welcome_page_showed = true;
-    this.uiSettingsStorage.saveSettings(this.settings);
+
 
   }
 
