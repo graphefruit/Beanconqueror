@@ -7,7 +7,7 @@ import {UILog} from './uiLog';
 import {UIStorage} from './uiStorage';
 import * as XLSX from 'xlsx';
 import {File, FileEntry} from '@ionic-native/file/ngx';
-import {Platform} from '@ionic/angular';
+import {AlertController, Platform} from '@ionic/angular';
 import {UIBrewStorage} from './uiBrewStorage';
 import {TranslateService} from '@ngx-translate/core';
 import {UIBeanStorage} from './uiBeanStorage';
@@ -38,7 +38,8 @@ export class UIExcel {
               private readonly uiAlert: UIAlert,
               private readonly socialsharing: SocialSharing,
               private readonly uiFileHelper: UIFileHelper,
-              private readonly uiMillStorage: UIMillStorage) {
+              private readonly uiMillStorage: UIMillStorage,
+              private readonly alertCtrl: AlertController) {
 
   }
   private  write(): XLSX.WorkBook {
@@ -288,13 +289,22 @@ export class UIExcel {
   public async export() {
     await this.uiAlert.showLoadingSpinner();
     const wb: XLSX.WorkBook = this.write();
-    const filename: string = 'Export.xlsx';
+    const filename: string = 'Beanconqueror_export.xlsx';
     try {
       /* generate Blob */
       const wbout: ArrayBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
       const blob: Blob = new Blob([wbout], {type: 'application/octet-stream'});
       try {
         const downloadFile: FileEntry = await this.uiFileHelper.downloadFile(filename,blob);
+        await this.uiAlert.hideLoadingSpinner();
+        if (this.platform.is('android')) {
+          const alert =  await this.alertCtrl.create({
+            header: this.translate.instant('DOWNLOADED'),
+            subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {fileName: filename}),
+            buttons: ['OK']
+          });
+          await alert.present();
+        }
 
       } catch (ex) {
 
