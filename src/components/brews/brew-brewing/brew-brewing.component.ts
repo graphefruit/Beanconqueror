@@ -252,7 +252,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       }
     }
     let checkData: Settings | Preparation;
-    if (this.getPreparation().use_custom_parameters === true) {
+    if (this.getPreparation().use_custom_parameters === true && this.getPreparation().manage_parameters.set_last_coffee_brew === true) {
       checkData = this.getPreparation();
     } else {
       checkData = this.settings;
