@@ -25,7 +25,9 @@ export class AndroidPlatformService {
     if (this.platform.is('cordova') && this.platform.is('android')) {
       this.uiHelper.isBeanconqurorAppReady().then(() => {
         // Delete on startup old json backup files
-        this.uiFileHelper.deleteJSONBackupsOlderThenSevenDays();
+        this.uiFileHelper.deleteJSONBackupsOlderThenSevenDays().then(() => {
+
+        }, () => {});
       },() => {});
       this.eventQueue.on(AppEventType.STORAGE_CHANGED).pipe(
         // Wait for 3 seconds before we call the the debounce
