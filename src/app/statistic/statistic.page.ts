@@ -184,10 +184,10 @@ export class StatisticPage implements OnInit {
     }
 
     const colorGradient = new Gradient();
-    const color1 = '#3F2CAF';
-    const color2 = '#e9446a';
-    const color3 = '#edc988';
-    const color4 = '#607D8B';
+    const color1 = '#CDC2AC';
+    const color2 = '#607D8B';
+    const color3 = '#BF658F';
+    const color4 = '#E0A29A';
 
     colorGradient.setMidpoint(datasets.length);
     colorGradient.setGradient(color1, color2, color3, color4);
@@ -260,10 +260,10 @@ export class StatisticPage implements OnInit {
     }
 
     const colorGradient = new Gradient();
-    const color1 = '#3F2CAF';
-    const color2 = '#e9446a';
-    const color3 = '#edc988';
-    const color4 = '#607D8B';
+    const color1 = '#CDC2AC';
+    const color2 = '#607D8B';
+    const color3 = '#BF658F';
+    const color4 = '#E0A29A';
 
     colorGradient.setMidpoint(datasets.length);
     colorGradient.setGradient(color1, color2, color3, color4);
@@ -308,7 +308,9 @@ export class StatisticPage implements OnInit {
       labels: [],
       datasets: [{
         label: this.translate.instant('PAGE_STATISTICS_DRUNKEN_QUANTITY') + ' (kg/l)',
-        data: []
+        data: [],
+        borderColor: 'rgb(159,140,111)',
+        backgroundColor: 'rgb(205,194,172)',
       }]
     };
 
@@ -349,7 +351,9 @@ export class StatisticPage implements OnInit {
       labels: [],
       datasets: [{
         label: this.translate.instant('PAGE_STATISTICS_BREW_PROCESSES'),
-        data: []
+        data: [],
+        borderColor: 'rgb(159,140,111)',
+        backgroundColor: 'rgb(205,194,172)',
       }]
     };
 
@@ -381,7 +385,9 @@ export class StatisticPage implements OnInit {
       labels: [],
       datasets: [{
         label: this.translate.instant('PAGE_STATISTICS_BREW_PROCESSES'),
-        data: []
+        data: [],
+        borderColor: 'rgb(159,140,111)',
+        backgroundColor: 'rgb(205,194,172)',
       }]
     };
 
@@ -414,7 +420,9 @@ export class StatisticPage implements OnInit {
       labels: [],
       datasets: [{
         label: this.translate.instant('PAGE_STATISTICS_BEAN_WEIGHT_USED'),
-        data: []
+        data: [],
+        borderColor: 'rgb(159,140,111)',
+        backgroundColor: 'rgb(205,194,172)',
       }]
     };
 
@@ -461,11 +469,10 @@ export class StatisticPage implements OnInit {
     }
 
     const colorGradient = new Gradient();
-
-    const color1 = '#3F2CAF';
-    const color2 = '#e9446a';
-    const color3 = '#edc988';
-    const color4 = '#607D8B';
+    const color1 = '#CDC2AC';
+    const color2 = '#607D8B';
+    const color3 = '#BF658F';
+    const color4 = '#E0A29A';
 
     colorGradient.setMidpoint(data[0].labels.length);
 
