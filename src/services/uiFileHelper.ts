@@ -1,12 +1,12 @@
 /** Core */
 import {Injectable} from '@angular/core';
-import {File, FileEntry} from '@ionic-native/file/ngx';
+import {DirectoryEntry, Entry, File, FileEntry} from '@ionic-native/file/ngx';
 import {unescape} from 'querystring';
 import {Platform} from '@ionic/angular';
 import {DomSanitizer} from '@angular/platform-browser';
 import {UILog} from './uiLog';
 import {SocialSharing} from '@ionic-native/social-sharing/ngx';
-
+import moment from 'moment';
 /**
  * Handles every helping functionalities
  */
@@ -56,7 +56,7 @@ export class UIFileHelper {
         });
       },() => {
         reject();
-        this.uiLog.error("Could not save file");
+        this.uiLog.error('Could not save file');
       });
     });
   };
@@ -114,6 +114,78 @@ export class UIFileHelper {
       });
 
     });
+  }
+
+  public async deleteJSONBackupsOlderThenSevenDays(): Promise<any> {
+    const promise: Promise<any> =  new Promise(async (resolve, reject) => {
+
+      if (this.platform.is('cordova')) {
+
+
+        let storageLocation: string = '';
+        if (this.platform.is('android')) {
+          storageLocation = this.file.externalRootDirectory
+        } else {
+          storageLocation = this.file.documentsDirectory;
+        }
+
+        const lastSevenDays: Array<string> = [];
+        for (let i=0;i<8;i++) {
+          const day: string = moment().subtract(i,'days').format('DD_MM_YYYY');
+          const automatedBackupFileName: string = 'Beanconqueror_automatic_export_' + day + '.json';
+          lastSevenDays.push(automatedBackupFileName);
+        }
+
+        window.resolveLocalFileSystemURL(storageLocation,
+          (fileSystem) => {
+
+            fileSystem.getDirectory('Download', {
+                create: true,
+                exclusive: false
+              },
+              (directory) => {
+                directory.getDirectory('Beanconqueror_export', {
+                    create: true,
+                    exclusive: false
+                  },
+                  (directory_export: DirectoryEntry) => {
+                    const directoryReader = directory_export.createReader();
+                    directoryReader.readEntries((entries: Entry[]) => {
+                      for (const entry of entries) {
+                        if (entry.isFile) {
+                          if (lastSevenDays.indexOf(entry.name) === -1 && entry.name.indexOf('Beanconqueror_automatic_export_') === 0) {
+                            const filename: string = entry.name;
+                            entry.remove(() =>{
+                              this.uiLog.log('Removed automated backup file ' +filename);
+
+                            },()=> {
+                              this.uiLog.log('Could not remove automated backup file ' +filename);
+                            });
+                          } else if (lastSevenDays.indexOf(entry.name)>-1) {
+                            this.uiLog.log('We found a backup file not older then 7 days, so dont delete it');
+                          }
+                        }
+                      }
+
+                    },() => {
+
+                    });
+                  }, () => {
+                    reject();
+                  });
+
+
+              }, () => {
+                reject();
+              });
+          }, () => {
+            reject();
+          });
+      } else {
+        reject(undefined);
+      }
+    });
+    return promise;
   }
 
     public async downloadFile(_filename,_blob): Promise<FileEntry> {
@@ -199,7 +271,7 @@ export class UIFileHelper {
           }, 250);
         }
       });
-return promise;
+      return promise;
     }
 
   public async deleteFile(_filePath): Promise<any> {

@@ -44,6 +44,7 @@ import LINK_TRACKING from '../data/tracking/linkTracking';
 import STARTUP_TRACKING from '../data/tracking/startupTracking';
 import {AnalyticsPopoverComponent} from '../popover/analytics-popover/analytics-popover.component';
 import {IosPlatformService} from '../services/iosPlatform/ios-platform.service';
+import {AndroidPlatformService} from '../services/androidPlatform/android-platform.service';
 
 declare var AppRate;
 @Component({
@@ -107,7 +108,9 @@ export class AppComponent implements AfterViewInit {
     private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
     private readonly intentHandlerService: IntentHandlerService,
     private readonly iosPlatformService: IosPlatformService,
+    private readonly androidPlatformService: AndroidPlatformService
   ) {
+    //Dont remove androidPlatformService, we need to initialize it via constructor
   }
 
   public ngOnInit() {
@@ -142,7 +145,7 @@ export class AppComponent implements AfterViewInit {
         this.keyboard.hideFormAccessoryBar(false);
         if (this.platform.is('cordova')) {
           // When we're in cordova, disable the log messages
-          this.uiLog.disable();
+          // this.uiLog.disable();
         }
 
         if (this.platform.is('ios')) {

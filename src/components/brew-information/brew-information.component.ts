@@ -165,7 +165,7 @@ export class BrewInformationComponent implements OnInit {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
       this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.FAST_REPEAT);
       const repeatBrew = this.uiBrewHelper.repeatBrew(this.brew);
-      this.uiBrewStorage.add(repeatBrew);
+      await this.uiBrewStorage.add(repeatBrew);
       this.uiToast.showInfoToast('TOAST_BREW_REPEATED_SUCCESSFULLY');
 
     }

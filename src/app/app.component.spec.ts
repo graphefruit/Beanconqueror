@@ -15,7 +15,6 @@ import {AppMinimize} from '@ionic-native/app-minimize/ngx';
 import {Keyboard} from '@ionic-native/keyboard/ngx';
 import {ThreeDeeTouch} from '@ionic-native/three-dee-touch/ngx';
 import {Globalization} from '@ionic-native/globalization/ngx';
-;
 
 describe('AppComponent', () => {
 
