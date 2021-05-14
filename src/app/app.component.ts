@@ -110,7 +110,7 @@ export class AppComponent implements AfterViewInit {
     private readonly iosPlatformService: IosPlatformService,
     private readonly androidPlatformService: AndroidPlatformService
   ) {
-    //Dont remove androidPlatformService, we need to initialize it via constructor
+    // Dont remove androidPlatformService, we need to initialize it via constructor
   }
 
   public ngOnInit() {
@@ -130,12 +130,8 @@ export class AppComponent implements AfterViewInit {
   }
 
   private __appReady(): void {
-    setTimeout(() => {
-
-
     this.platform.ready()
       .then(async () => {
-
         // Okay, so the platform is ready and our plugins are available.
         // Here you can do any higher level native things you might need.
         // #7
@@ -145,7 +141,7 @@ export class AppComponent implements AfterViewInit {
         this.keyboard.hideFormAccessoryBar(false);
         if (this.platform.is('cordova')) {
           // When we're in cordova, disable the log messages
-          // this.uiLog.disable();
+          this.uiLog.disable();
         }
 
         if (this.platform.is('ios')) {
@@ -234,7 +230,6 @@ export class AppComponent implements AfterViewInit {
         }
 
       });
-    },500);
   }
 
   private async __checkUpdate() {

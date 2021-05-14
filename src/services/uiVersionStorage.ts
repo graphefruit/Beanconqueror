@@ -23,7 +23,7 @@ export class UiVersionStorage extends StorageClass {
     super(uiStorage, uiHelper, uiLog, 'VERSION');
 
     super.storageReady()
-      .then(() => {
+      .then(async () => {
 
       const entries: Array<any> = this.getAllEntries();
       if (entries.length > 0) {
@@ -35,7 +35,7 @@ export class UiVersionStorage extends StorageClass {
         this.isVersionInitialized = 1;
       } else {
         // Take the new settings obj.
-        super.add(this.version);
+        await super.add(this.version);
         this.isVersionInitialized = 1;
       }
     }, () => {

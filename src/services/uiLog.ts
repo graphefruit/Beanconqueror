@@ -32,7 +32,7 @@ export class UILog {
 
   public log(_message: string): void {
     this.generateLogMessage(LOGS_ENUM.LOG, _message);
-    if (!this.disabled) {
+    if (this.disabled === false) {
 
       console.log(_message);
     }
@@ -41,7 +41,7 @@ export class UILog {
 
   public info(_message: string): void {
     this.generateLogMessage(LOGS_ENUM.INFO, _message);
-    if (!this.disabled && console.info) {
+    if (this.disabled === false && console.info) {
 
       console.info(_message);
     }
@@ -49,7 +49,7 @@ export class UILog {
 
   public error(_message: string): void {
     this.generateLogMessage(LOGS_ENUM.ERR, _message);
-    if (!this.disabled && console.error) {
+    if (this.disabled === false && console.error) {
 
       console.error(_message);
     }
@@ -57,7 +57,7 @@ export class UILog {
 
   public warn(_message: string): void {
     this.generateLogMessage(LOGS_ENUM.WARN, _message);
-    if (!this.disabled && console.warn) {
+    if (this.disabled === false && console.warn) {
 
       console.warn(_message);
     }

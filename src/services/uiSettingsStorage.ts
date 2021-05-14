@@ -39,7 +39,7 @@ export class UISettingsStorage extends StorageClass {
       UISettingsStorage.instance = this;
     }
     super.storageReady()
-      .then(() => {
+      .then(async () => {
 
       const entries: Array<any> = this.getAllEntries();
       if (entries.length > 0) {
@@ -51,7 +51,7 @@ export class UISettingsStorage extends StorageClass {
         this.isSettingsInitialized = 1;
       } else {
         // Take the new settings obj.
-        super.add(this.settings);
+        await super.add(this.settings);
         this.isSettingsInitialized = 1;
       }
     }, () => {
