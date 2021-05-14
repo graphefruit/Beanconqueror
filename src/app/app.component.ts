@@ -363,6 +363,15 @@ export class AppComponent implements AfterViewInit {
 
     this.__registerBack();
     await this.__setDeviceLanguage();
+
+    // After we set the right device language, we check now if we can request external storage
+    if (this.platform.is('cordova') && this.platform.is('android')) {
+      try {
+        await this.androidPlatformService.checkHasExternalStorage();
+      } catch(ex) {
+      }
+    }
+
     this.__setThreeDeeTouchActions();
     await this.uiAnalytics.initializeTracking();
     await this.__checkWelcomePage();

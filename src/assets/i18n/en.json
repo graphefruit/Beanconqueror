@@ -727,5 +727,7 @@
   "PAGE_SETTINGS_BREW_RATING_TOOLTIP": "-1 to 5 are to less for rating your brew? You can set up to 100 'points'.",
   "UPDATE_ENTRY_OF": "Update entry {{index}} of {{count}}",
   "WEBSITE": "Website",
-  "SHARE": "Share"
+  "SHARE": "Share",
+  "ANDROID_FILE_ACCESS_NEEDED_TITLE": "Share file access required",
+  "ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION": "In order for the app to work fully, we ask you to authorize file access. Otherwise there will be misconduct within the app."
 }

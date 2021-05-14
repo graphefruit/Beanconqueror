@@ -9,6 +9,8 @@ import {debounceTime} from 'rxjs/operators';
 import {FileEntry} from '@ionic-native/file';
 import {UIHelper} from '../uiHelper';
 import moment from 'moment';
+import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
+import {UIAlert} from '../uiAlert';
 @Injectable({
   providedIn: 'root'
 })
@@ -20,7 +22,9 @@ export class AndroidPlatformService {
               private readonly uiFileHelper: UIFileHelper,
               private readonly eventQueue: EventQueueService,
               private readonly platform: Platform,
-              private readonly uiHelper: UIHelper) {
+              private readonly uiHelper: UIHelper,
+              private readonly androidPermissions: AndroidPermissions,
+              private readonly uiAlert: UIAlert) {
 
     if (this.platform.is('cordova') && this.platform.is('android')) {
       this.uiHelper.isBeanconqurorAppReady().then(() => {
@@ -51,6 +55,42 @@ export class AndroidPlatformService {
         this.uiLog.error('Android-Platform - JSON file could not be saved')
       });
     });
+  }
+
+
+  private requestExternalStorageAccess() {
+    const promise = new Promise((resolve, reject) => {
+    this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE).then((_status) => {
+      if (_status.hasPermission) {
+        resolve();
+      } else {
+        reject();
+      }
+    }, () => {
+      reject();
+    });
+    });
+    return promise;
+  }
+
+  public checkHasExternalStorage() {
+    const promise = new Promise((resolve, reject) => {
+      this.androidPermissions.hasPermission(this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE).then(async (_status) => {
+        if (_status.hasPermission === false) {
+          await this.uiAlert.showMessage('ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION','ANDROID_FILE_ACCESS_NEEDED_TITLE',undefined,true)
+          this.requestExternalStorageAccess().then( () => {
+            resolve();
+          }, () => {
+            reject();
+          })
+        } else {
+          resolve();
+        }
+      }, () => {
+        reject();
+      });
+    });
+    return promise;
   }
 
 }
