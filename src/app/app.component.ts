@@ -442,6 +442,7 @@ export class AppComponent implements AfterViewInit {
       const modal = await this.modalCtrl.create({component: BrewAddComponent, id: 'brew-add'});
       await modal.present();
       await modal.onWillDismiss();
+      this.router.navigate(['/home/brews'], {replaceUrl: true});
     }
 
   }
@@ -479,6 +480,7 @@ export class AppComponent implements AfterViewInit {
     });
     await modal.present();
     await modal.onWillDismiss();
+    this.router.navigate(['/'], {replaceUrl: true});
 
   }
 

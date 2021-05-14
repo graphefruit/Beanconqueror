@@ -60,7 +60,7 @@ export class IosPlatformService {
     this.uiLog.log('iOS-Platform - Start to export JSON file');
     this.uiStorage.export().then((_data) => {
 
-      this.uiHelper.exportJSON('Beanconqueror_automatic_export_' + this.getAutomatedBackupFilename() + '.json', JSON.stringify(_data)).then(async (_fileEntry: FileEntry) => {
+      this.uiHelper.exportJSON('Beanconqueror_automatic_export_' + this.getAutomatedBackupFilename() + '.json', JSON.stringify(_data),false).then(async (_fileEntry: FileEntry) => {
         this.uiLog.log('iOS-Platform - JSON file successfully saved')
       }, () => {
         this.uiLog.error('iOS-Platform - JSON file could not be saved')

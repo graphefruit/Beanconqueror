@@ -197,7 +197,7 @@ export class UIHelper {
   }
 
 
-  public async exportJSON (fileName: string, jsonContent: string): Promise<any> {
+  public async exportJSON (fileName: string, jsonContent: string,_share: boolean = true): Promise<any> {
      const promise = new Promise(async (resolve, reject) => {
 
 
@@ -205,7 +205,7 @@ export class UIHelper {
       // Thanks to: https://stackoverflow.com/questions/31959487/utf-8-encoidng-issue-when-exporting-csv-file-javascript
       const blob = new Blob([jsonContent], {type: 'application/json;charset=UTF-8;'});
         try {
-          const file: FileEntry = await this.uiFileHelper.downloadFile(fileName,blob);
+          const file: FileEntry = await this.uiFileHelper.downloadFile(fileName,blob,_share);
           resolve(file);
         } catch(ex) {
           reject();

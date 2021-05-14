@@ -188,7 +188,7 @@ export class UIFileHelper {
     return promise;
   }
 
-    public async downloadFile(_filename,_blob): Promise<FileEntry> {
+    public async downloadFile(_filename,_blob,_share: boolean = true): Promise<FileEntry> {
       const promise: Promise<FileEntry> =  new Promise(async (resolve, reject) => {
 
         if (this.platform.is('cordova')) {
@@ -224,7 +224,7 @@ export class UIFileHelper {
                         fileEntry.createWriter((writer) => {
                           writer.onwriteend = () => {
 
-                            if (this.platform.is('ios')) {
+                            if (this.platform.is('ios') && _share === true) {
                               this.socialSharing.share(undefined,undefined,fileEntry.nativeURL);
                             }
                             resolve(fileEntry);
