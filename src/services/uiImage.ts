@@ -113,12 +113,15 @@ export class UIImage {
                       }
 
                   } else {
+                    this.uiAlert.showMessage('WRONG_FILE_FORMAT',undefined,undefined,true);
                     reject();
                   }
                 }, () => {
+                  this.uiAlert.showMessage('COULD_NOT_ACCESS_FILE',undefined,undefined,true);
                   reject();
                 });
               }, () => {
+                this.uiAlert.showMessage('COULD_NOT_ACCESS_FILE',undefined,undefined,true);
                 reject();
               });
             } else if (isCordova) {
