@@ -11,6 +11,7 @@ import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {File, FileEntry} from '@ionic-native/file/ngx';
 import {UIFileHelper} from './uiFileHelper';
 import {UILog} from './uiLog';
+import {UIAlert} from './uiAlert';
 
 declare var cordova: any;
 declare var device: any;
@@ -35,7 +36,8 @@ export class UIHelper {
                private readonly sanitizer: DomSanitizer,
                private readonly file: File,
                private readonly uiFileHelper: UIFileHelper,
-               private readonly uiLog: UILog) {
+               private readonly uiLog: UILog,
+               private readonly uiAlert: UIAlert) {
 
   }
 
@@ -72,6 +74,9 @@ export class UIHelper {
     });
   }
 
+  public showAlert(_message,_title?:string) {
+    this.uiAlert.showMessage(_message,_title);
+  }
   public getUnixTimestamp(): number {
     return moment()
       .unix();

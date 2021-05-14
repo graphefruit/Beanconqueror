@@ -215,6 +215,7 @@ export abstract class StorageClass {
     await this.uiStorage.set(this.DB_PATH, this.storedData).then((e) => {
         this.uiLog.log('Storage - Save - Successfully');
       }, (e) => {
+        this.uiHelper.showAlert(e.message,'CRITICAL ERROR');
         this.uiLog.log('Storage - Save - Unsuccessfully');
       }
     );
