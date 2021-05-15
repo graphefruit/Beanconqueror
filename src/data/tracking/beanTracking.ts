@@ -9,8 +9,8 @@ export default {
     DELETE: 'DELETE',
     REPEAT: 'REPEAT',
     ARCHIVE: 'ARCHIVE',
-    PHOTO_VIEW:'PHOTO_VIEW'
-
+    PHOTO_VIEW: 'PHOTO_VIEW',
+    SHARE: 'SHARE'
   }
 
 }

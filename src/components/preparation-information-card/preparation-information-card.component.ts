@@ -134,7 +134,7 @@ export class PreparationInformationCardComponent implements OnInit {
   }
 
 
-  public async internalPreparationAction(action: PREPARATION_ACTION): Promise<void> {
+  public async internalPreparationAction(action: PREPARATION_ACTION) {
     switch (action) {
       case PREPARATION_ACTION.CUSTOM_PARAMETERS:
         await this.customParameters();
@@ -143,11 +143,13 @@ export class PreparationInformationCardComponent implements OnInit {
         await this.editPreparation();
         break;
       case PREPARATION_ACTION.DELETE:
+
         try {
           await this.deletePreparation();
         }catch(ex) {
 
         }
+        await this.uiAlert.hideLoadingSpinner();
         break;
       case PREPARATION_ACTION.PHOTO_GALLERY:
         await this.viewPhotos();
@@ -200,11 +202,12 @@ export class PreparationInformationCardComponent implements OnInit {
     await modal.onWillDismiss();
   }
 
-  public deletePreparation(): void {
-    this.uiAlert.showConfirm('DELETE_PREPARATION_METHOD_QUESTION', 'SURE_QUESTION', true).then(() => {
+  public async deletePreparation() {
+    await this.uiAlert.showConfirm('DELETE_PREPARATION_METHOD_QUESTION', 'SURE_QUESTION', true).then(async () => {
+        await this.uiAlert.showLoadingSpinner();
         // Yes
         this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.DELETE);
-        this.__deletePreparation();
+        await this.__deletePreparation();
         this.uiToast.showInfoToast('TOAST_PREPARATION_DELETED_SUCCESSFULLY');
         this.resetSettings();
       },
@@ -222,7 +225,7 @@ export class PreparationInformationCardComponent implements OnInit {
     this.resetSettings();
   }
 
-  private __deletePreparation(): void {
+  private async __deletePreparation() {
     const brews: Array<Brew> =  this.uiBrewStorage.getAllEntries();
     const deletingBrewIndex: Array<number> = [];
     for (let i = 0; i < brews.length; i++) {
@@ -231,10 +234,10 @@ export class PreparationInformationCardComponent implements OnInit {
       }
     }
     for (let i = deletingBrewIndex.length; i--;) {
-      this.uiBrewStorage.removeByUUID(brews[deletingBrewIndex[i]].config.uuid);
+      await this.uiBrewStorage.removeByUUID(brews[deletingBrewIndex[i]].config.uuid);
     }
 
-    this.uiPreparationStorage.removeByObject(this.preparation);
+    await this.uiPreparationStorage.removeByObject(this.preparation);
   }
 
 

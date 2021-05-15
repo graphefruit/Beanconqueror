@@ -3,7 +3,6 @@ import {ModalController, NavParams} from '@ionic/angular';
 import {UIBrewHelper} from '../../../services/uiBrewHelper';
 import {UIHelper} from '../../../services/uiHelper';
 import {UISettingsStorage} from '../../../services/uiSettingsStorage';
-import {ISettings} from '../../../interfaces/settings/iSettings';
 import {IBrewPageFilter} from '../../../interfaces/brew/iBrewPageFilter';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {UIMillStorage} from '../../../services/uiMillStorage';
@@ -21,9 +20,9 @@ import {PreparationTool} from '../../../classes/preparation/preparationTool';
 })
 export class BrewFilterComponent implements OnInit {
 
-  public settings: ISettings;
+  public settings: Settings;
 
-  public filter: IBrewPageFilter = Settings.GET_BREW_FILTER();
+  public filter: IBrewPageFilter;
   public method_of_preparations: Array<Preparation> = [];
   public beans: Array<Bean> = [];
   public mills: Array<Mill> = [];
@@ -39,6 +38,7 @@ export class BrewFilterComponent implements OnInit {
               private readonly uiMillStorage: UIMillStorage) {
 
     this.settings = this.uiSettingsStorage.getSettings();
+    this.filter = this.settings.GET_BREW_FILTER();
   }
 
   public ngOnInit() {
@@ -46,6 +46,9 @@ export class BrewFilterComponent implements OnInit {
     this.segment = this.navParams.get('segment');
     this.filter = this.uiHelper.copyData(this.navParams.get('brew_filter'));
     this.__reloadFilterSettings();
+  }
+  public getMaxBrewRating() {
+    return this.settings.brew_rating;
   }
 
   public hasPreparationTools() {
@@ -96,7 +99,7 @@ export class BrewFilterComponent implements OnInit {
   }
 
   public resetFilter() {
-    this.filter = Settings.GET_BREW_FILTER();
+    this.filter = this.settings.GET_BREW_FILTER();
     this.modalController.dismiss({
       brew_filter: this.uiHelper.copyData(this.filter)
     },undefined,'brew-filter');

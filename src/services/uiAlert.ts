@@ -28,6 +28,15 @@ export class UIAlert {
       message: this.translate.instant('PLEASE_WAIT')
     });
     this.loadingSpinner.present();
+
+
+  }
+
+  public setLoadingSpinnerMessage(message: string) {
+    if (this.loadingSpinner) {
+      this.loadingSpinner.message = message;
+    }
+
   }
 
   public async hideLoadingSpinner() {

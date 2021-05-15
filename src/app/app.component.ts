@@ -33,6 +33,8 @@ import {UIUpdate} from '../services/uiUpdate';
 import {UiVersionStorage} from '../services/uiVersionStorage';
 import {UIGreenBeanStorage} from '../services/uiGreenBeanStorage';
 import {UIRoastingMachineStorage} from '../services/uiRoastingMachineStorage';
+import {IntentHandlerService} from '../services/intentHandler/intent-handler.service';
+
 
 import BEAN_TRACKING from '../data/tracking/beanTracking';
 import BREW_TRACKING from '../data/tracking/brewTracking';
@@ -41,6 +43,8 @@ import PREPARATION_TRACKING from '../data/tracking/preparationTracking';
 import LINK_TRACKING from '../data/tracking/linkTracking';
 import STARTUP_TRACKING from '../data/tracking/startupTracking';
 import {AnalyticsPopoverComponent} from '../popover/analytics-popover/analytics-popover.component';
+import {IosPlatformService} from '../services/iosPlatform/ios-platform.service';
+import {AndroidPlatformService} from '../services/androidPlatform/android-platform.service';
 
 declare var AppRate;
 @Component({
@@ -102,14 +106,22 @@ export class AppComponent implements AfterViewInit {
     private readonly uiVersionStorage: UiVersionStorage,
     private readonly uiGreenBeanStorage: UIGreenBeanStorage,
     private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
+    private readonly intentHandlerService: IntentHandlerService,
+    private readonly iosPlatformService: IosPlatformService,
+    private readonly androidPlatformService: AndroidPlatformService
   ) {
+    // Dont remove androidPlatformService, we need to initialize it via constructor
+  }
+
+  public ngOnInit() {
+    this.intentHandlerService.attachOnHandleOpenUrl();
+
+
   }
 
   public ngAfterViewInit(): void {
-
     this.uiLog.log('Platform ready, init app');
     this.__appReady();
-    // Copy in all the js code from the script.js. Typescript will complain but it works just fine
   }
 
 
@@ -117,19 +129,20 @@ export class AppComponent implements AfterViewInit {
     this.menu.close();
   }
 
-
   private __appReady(): void {
     this.platform.ready()
       .then(async () => {
         // Okay, so the platform is ready and our plugins are available.
         // Here you can do any higher level native things you might need.
-
         // #7
         this.statusBar.show();
         this.statusBar.styleDefault();
         this.splashScreen.hide();
         this.keyboard.hideFormAccessoryBar(false);
-
+        if (this.platform.is('cordova')) {
+          // When we're in cordova, disable the log messages
+          this.uiLog.disable();
+        }
 
         if (this.platform.is('ios')) {
           this.uiLog.log(`iOS Device - attach to home icon pressed`);
@@ -161,46 +174,80 @@ export class AppComponent implements AfterViewInit {
               }
             );
         }
-
-        // Wait for every necessary service to be ready before starting the app
-        const beanStorageReadyCallback = this.uiBeanStorage.storageReady();
-        const preparationStorageReadyCallback = this.uiPreparationStorage.storageReady();
-        const uiSettingsStorageReadyCallback = this.uiSettingsStorage.storageReady();
-        const brewStorageReadyCallback = this.uiBrewStorage.storageReady();
-        const millStorageReadyCallback = this.uiMillStorage.storageReady();
-        const versionStorageReadyCallback = this.uiVersionStorage.storageReady();
-        const greenBeanStorageCallback = this.uiGreenBeanStorage.storageReady();
-        const roastingMachineStorageCallback = this.uiRoastingMachineStorage.storageReady();
+        // Before we update and show messages, we need atleast to set one default language.
+        this._translate.setDefaultLang('en');
+        await this._translate.use('en').toPromise();
+        await this.__checkIOSBackup();
 
 
-        Promise.all([
-          beanStorageReadyCallback,
-          preparationStorageReadyCallback,
-          brewStorageReadyCallback,
-          uiSettingsStorageReadyCallback,
-          millStorageReadyCallback,
-          versionStorageReadyCallback,
-          greenBeanStorageCallback,
-          roastingMachineStorageCallback
-        ])
-          .then(() => {
-            this.uiLog.log('App finished loading');
-            this.uiLog.info('Everything should be fine!!!');
-            this.__checkUpdate();
-            this.__initApp();
-            this.uiHelper.setAppReady(1);
+        try {
+          await this.uiBeanStorage.initializeStorage();
+          await this.uiPreparationStorage.initializeStorage();
+          await this.uiSettingsStorage.initializeStorage();
+          await this.uiBrewStorage.initializeStorage();
+          await this.uiMillStorage.initializeStorage();
+          await this.uiVersionStorage.initializeStorage();
+          await this.uiGreenBeanStorage.initializeStorage();
+          await this.uiRoastingMachineStorage.initializeStorage();
 
-          }, async () => {
-            await this.uiAlert.showAppShetItSelfMessage();
-            this.uiLog.error('App finished loading, but errors occured');
-          });
+          // Wait for every necessary service to be ready before starting the app
+          // Settings and version, will create a new object on start, so we need to wait for this in the end.
+          const beanStorageReadyCallback = this.uiBeanStorage.storageReady();
+          const preparationStorageReadyCallback = this.uiPreparationStorage.storageReady();
+          const uiSettingsStorageReadyCallback = this.uiSettingsStorage.storageReady();
+          const brewStorageReadyCallback = this.uiBrewStorage.storageReady();
+          const millStorageReadyCallback = this.uiMillStorage.storageReady();
+          const versionStorageReadyCallback = this.uiVersionStorage.storageReady();
+          const greenBeanStorageCallback = this.uiGreenBeanStorage.storageReady();
+          const roastingMachineStorageCallback = this.uiRoastingMachineStorage.storageReady();
+
+
+          Promise.all([
+            beanStorageReadyCallback,
+            preparationStorageReadyCallback,
+            brewStorageReadyCallback,
+            uiSettingsStorageReadyCallback,
+            millStorageReadyCallback,
+            versionStorageReadyCallback,
+            greenBeanStorageCallback,
+            roastingMachineStorageCallback
+          ])
+            .then(async () => {
+              this.uiLog.log('App finished loading');
+              this.uiLog.info('Everything should be fine!!!');
+              await this.__checkUpdate();
+              await this.__initApp();
+              this.uiHelper.setAppReady(1);
+
+            }, async () => {
+              await this.uiAlert.showAppShetItSelfMessage();
+              this.uiLog.error('App finished loading, but errors occured');
+            });
+
+        } catch(ex) {
+          await this.uiAlert.showAppShetItSelfMessage();
+          this.uiLog.error('App finished loading, but errors occured');
+        }
+
       });
-
   }
 
-  private __checkUpdate(): void {
-    this.uiUpdate.checkUpdate();
+  private async __checkUpdate() {
+    try {
+    await this.uiUpdate.checkUpdate();
+    } catch(ex) {
+
+    }
   }
+
+  private async __checkIOSBackup() {
+    try {
+      await this.iosPlatformService.checkIOSBackup();
+    } catch(ex) {
+
+    }
+  }
+
 
   public showRoastingSection() {
     const settings: Settings = this.uiSettingsStorage.getSettings();
@@ -252,11 +299,8 @@ export class AppComponent implements AfterViewInit {
             const settingLanguage: string = settings.language;
             this.uiLog.log(`Setting language: ${settingLanguage}`);
             this._translate.setDefaultLang(settingLanguage);
-            settings.language = settingLanguage;
-            this.uiSettingsStorage.saveSettings(settings);
             await this._translate.use(settingLanguage).toPromise();
             moment.locale(settingLanguage);
-
             resolve();
 
           }
@@ -319,10 +363,17 @@ export class AppComponent implements AfterViewInit {
 
     this.__registerBack();
     await this.__setDeviceLanguage();
+
+    // After we set the right device language, we check now if we can request external storage
+    if (this.platform.is('cordova') && this.platform.is('android')) {
+      try {
+        await this.androidPlatformService.checkHasExternalStorage();
+      } catch(ex) {
+      }
+    }
+
     this.__setThreeDeeTouchActions();
-    await this.uiAnalytics.initializeTracking().catch(() => {
-      // Nothing to do, user declined tracking.
-    });
+    await this.uiAnalytics.initializeTracking();
     await this.__checkWelcomePage();
     await this.__checkAnalyticsInformationPage();
     await this.uiUpdate.checkUpdateScreen();
@@ -391,6 +442,7 @@ export class AppComponent implements AfterViewInit {
       const modal = await this.modalCtrl.create({component: BrewAddComponent, id: 'brew-add'});
       await modal.present();
       await modal.onWillDismiss();
+      this.router.navigate(['/home/brews'], {replaceUrl: true});
     }
 
   }
@@ -428,6 +480,7 @@ export class AppComponent implements AfterViewInit {
     });
     await modal.present();
     await modal.onWillDismiss();
+    this.router.navigate(['/'], {replaceUrl: true});
 
   }
 
@@ -447,7 +500,9 @@ export class AppComponent implements AfterViewInit {
     this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.ADD);
     const modal = await this.modalCtrl.create({
       component: MillAddComponent,
-      cssClass: 'half-bottom-modal', id: 'mill-add', showBackdrop: true, componentProps: {hide_toast_message: false}
+      cssClass: 'popover-actions',
+      id: 'mill-add',
+      componentProps: {hide_toast_message: false}
     });
     await modal.present();
     await modal.onWillDismiss();
@@ -484,5 +539,10 @@ export class AppComponent implements AfterViewInit {
   public openFacebook() {
     this.uiAnalytics.trackEvent(LINK_TRACKING.TITLE, LINK_TRACKING.ACTIONS.FACEBOOK);
     this.uiHelper.openExternalWebpage('https://www.facebook.com/Beanconqueror/');
+  }
+  public openDonatePage(){
+    this.uiAnalytics.trackEvent(LINK_TRACKING.TITLE, LINK_TRACKING.ACTIONS.BUY_ME_A_COFFEE);
+    this.uiHelper.openExternalWebpage('https://www.buymeacoffee.com/beanconqueror');
+
   }
 }

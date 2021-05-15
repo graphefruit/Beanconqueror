@@ -3,7 +3,9 @@
     min-height: 100%;
     background-color: #eee;
   }
-
+  [hidden] {
+    display: none;
+  }
 
   ion-icon {
     width: 100%;

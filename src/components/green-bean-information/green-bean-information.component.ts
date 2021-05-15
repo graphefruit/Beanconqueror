@@ -101,7 +101,7 @@ export class GreenBeanInformationComponent implements OnInit {
     }
   }
 
-  private async internalBeanAction(action: GREEN_BEAN_ACTION): Promise<void> {
+  private async internalBeanAction(action: GREEN_BEAN_ACTION) {
     switch (action) {
       case GREEN_BEAN_ACTION.DETAIL:
         await this.detailBean();
@@ -113,9 +113,11 @@ export class GreenBeanInformationComponent implements OnInit {
         await this.editBean();
         break;
       case GREEN_BEAN_ACTION.DELETE:
+
         try{
           await this.deleteBean();
         }catch(ex){}
+        await this.uiAlert.hideLoadingSpinner();
         break;
       case GREEN_BEAN_ACTION.BEANS_CONSUMED:
         await this.beansConsumed();
@@ -199,14 +201,15 @@ export class GreenBeanInformationComponent implements OnInit {
   }
 
 
-  public deleteBean(): Promise<any> {
+  public async deleteBean(): Promise<any> {
     return new Promise(async (resolve,reject) => {
-      this.uiAlert.showConfirm('DELETE_BEAN_QUESTION', 'SURE_QUESTION', true)
-        .then(() => {
+      this.uiAlert.showConfirm('DELETE_GREEN_BEAN_QUESTION', 'SURE_QUESTION', true)
+        .then(async () => {
+            await this.uiAlert.showLoadingSpinner();
             // Yes
             this.uiAnalytics.trackEvent(GREEN_BEAN_TRACKING.TITLE, GREEN_BEAN_TRACKING.ACTIONS.DELETE);
-            this.__deleteBean();
-            this.uiToast.showInfoToast('TOAST_BEAN_DELETED_SUCCESSFULLY');
+            await this.__deleteBean();
+            this.uiToast.showInfoToast('TOAST_GREEN_BEAN_DELETED_SUCCESSFULLY');
             this.resetSettings();
             resolve();
           },
@@ -225,7 +228,7 @@ export class GreenBeanInformationComponent implements OnInit {
     await modal.onWillDismiss();
 
   }
-  private __deleteBean(): void {
+  private async __deleteBean() {
     const brews: Array<Brew> =  this.uiBrewStorage.getAllEntries();
     const relatedRoastingBeans: Array<Bean> = this.uiBeanHelper.getAllRoastedBeansForThisGreenBean(this.greenBean.config.uuid);
     let deletingBrews: Array<Brew> = [];
@@ -235,12 +238,12 @@ export class GreenBeanInformationComponent implements OnInit {
     }
 
      for (const brew of deletingBrews) {
-       this.uiBrewStorage.removeByUUID(brew.config.uuid);
+       await this.uiBrewStorage.removeByUUID(brew.config.uuid);
      }
     for (const bean of relatedRoastingBeans) {
-      this.uiBeanStorage.removeByUUID(bean.config.uuid);
+      await this.uiBeanStorage.removeByUUID(bean.config.uuid);
     }
-    this.uiGreenBeanStorage.removeByObject(this.greenBean);
+    await this.uiGreenBeanStorage.removeByObject(this.greenBean);
   }
 
   public hasPhotos(): boolean{

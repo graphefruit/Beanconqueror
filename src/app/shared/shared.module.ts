@@ -129,6 +129,8 @@ import {ImpressumComponent} from '../info/impressum/impressum.component';
 import {CookieComponent} from '../info/cookie/cookie.component';
 import {FilesystemErrorPopoverComponent} from '../../popover/filesystem-error-popover/filesystem-error-popover.component';
 import {AnalyticsPopoverComponent} from '../../popover/analytics-popover/analytics-popover.component';
+import {Deeplinks} from '@ionic-native/deeplinks/ngx';
+
 
 @NgModule({
   declarations: [
@@ -357,6 +359,7 @@ import {AnalyticsPopoverComponent} from '../../popover/analytics-popover/analyti
     InAppBrowser, File, Globalization,
     Geolocation,
     Insomnia,
+    Deeplinks,
   ],
 
   exports: [

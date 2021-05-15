@@ -39,8 +39,6 @@ export class BrewEditComponent implements OnInit {
 
   }
 
-  public ionViewDidEnter(): void {
-  }
 
   public dismiss(): void {
     this.modalController.dismiss({
@@ -48,13 +46,13 @@ export class BrewEditComponent implements OnInit {
     },undefined,'brew-edit');
   }
 
-  public updateBrew(): void {
+  public async updateBrew() {
     const newUnix = moment(this.brewBrewing.customCreationDate).unix();
     if (newUnix !== this.data.config.unix_timestamp) {
       this.data.config.unix_timestamp = newUnix;
     }
     this.uiBrewHelper.cleanInvisibleBrewData(this.data);
-    this.uiBrewStorage.update(this.data);
+    await this.uiBrewStorage.update(this.data);
     this.uiToast.showInfoToast('TOAST_BREW_EDITED_SUCCESSFULLY');
     this.dismiss();
   }

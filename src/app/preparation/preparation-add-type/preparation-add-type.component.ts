@@ -44,14 +44,14 @@ export class PreparationAddTypeComponent implements OnInit {
   }
 
 
-  public addPreparation(): void {
+  public async addPreparation() {
 
     if (this.preparationForm.valid) {
-      this.__addPreparation();
+      await this.__addPreparation();
     }
   }
 
-  public __addPreparation(): void {
+  public async __addPreparation() {
     if (this.data.style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
       this.data.manage_parameters.brew_beverage_quantity = true;
       this.data.default_last_coffee_parameters.brew_beverage_quantity = true;
@@ -61,7 +61,7 @@ export class PreparationAddTypeComponent implements OnInit {
       this.data.manage_parameters.coffee_first_drip_time = false;
       this.data.default_last_coffee_parameters.coffee_first_drip_time = false;
     }
-    this.uiPreparationStorage.add(this.data);
+    await this.uiPreparationStorage.add(this.data);
     this.dismiss(true);
     if (!this.hide_toast_message) {
       this.uiToast.showInfoToast('TOAST_PREPARATION_ADDED_SUCCESSFULLY');

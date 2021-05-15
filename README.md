@@ -160,3 +160,13 @@ Telerik plugin aswell as Firebase-CLI should not be updated yet!
 
 ### NPM-Version
 Don't use NPM V 7 right now, 6.14.11 works fine
+
+### iOS-Version:
+`ionic cordova platform add ios@6.1.1`
+iOS 6.2 which was released doesn't work yet
+
+### Android-Version:
+`ionic cordova platform add android@9.X`
+
+### Github Page Hosting
+https://stackoverflow.com/questions/60357663/do-apple-app-site-association-files-work-with-github-pages-i-e-site-github-io

@@ -98,6 +98,7 @@ npm install @ionic-native/geolocation
 ######This plugin is not used with ionic wrapper, because its not working correctly
 ionic cordova plugin add cordova-plugin-apprate
 npm install @ionic-native/app-rate
+(Apprate needs. cordova-plugin-nativestorage)
 
 ##Globaly installed:
 ######Plugin checker
@@ -113,7 +114,28 @@ npm install @ionic-native/insomnia
 
 
 ##https://www.npmjs.com/package/ag-virtual-scroll
+## We need angular 9 compatibility thats we we need to import 1.3.0
+npm install ag-virtual-scroll@1.3.0
+
+##QRCode Scanner
+Prio 1: https://github.com/fttx/phonegap-plugin-barcodescanner
+ionic cordova plugin add https://github.com/fttx/phonegap-plugin-barcodescanner.git --save-dev
+(Next possible fallback: https://openbase.com/js/@red-mobile/cordova-plugin-barcodescanner)
+
+
+##Custom URL Scheme:
+// ionic cordova plugin add cordova-plugin-customurlscheme --variable URL_SCHEME=beanconqueror
+
+
+ionic cordova plugin add ionic-plugin-deeplinks --variable URL_SCHEME=beanconqueror --variable DEEPLINK_SCHEME=https --variable DEEPLINK_HOST=beanconqueror.com --variable ANDROID_PATH_PREFIX=/app/roaster/bean
+npm install @ionic-native/deeplinks
+
+
+https://search.google.com/search-console/not-verified?original_url=/search-console/ownership&original_resource_id
 
 ##Ionic Cordova Plugin Adapter X
 ionic cordova plugin add cordova-plugin-androidx-adapter
 ionic cordova plugin add cordova-plugin-androidx
+
+
+

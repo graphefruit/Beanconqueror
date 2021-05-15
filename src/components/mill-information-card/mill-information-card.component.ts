@@ -101,18 +101,19 @@ export class MillInformationCardComponent implements OnInit {
   }
 
 
-  public async internalMillAction(action: MILL_ACTION): Promise<void> {
+  public async internalMillAction(action: MILL_ACTION) {
     switch (action) {
       case MILL_ACTION.EDIT:
         await this.edit();
         break;
       case MILL_ACTION.DELETE:
+
         try {
           await this.delete();
         } catch (ex) {
 
         }
-
+        await this.uiAlert.hideLoadingSpinner();
         break;
       case MILL_ACTION.ARCHIVE:
         await this.archive();
@@ -158,11 +159,12 @@ export class MillInformationCardComponent implements OnInit {
     await modal.onWillDismiss();
   }
 
-  public delete(): void {
-    this.uiAlert.showConfirm('DELETE_MILL_QUESTION', 'SURE_QUESTION', true).then(() => {
+  public async delete() {
+    await this.uiAlert.showConfirm('DELETE_MILL_QUESTION', 'SURE_QUESTION', true).then(async () => {
+        await this.uiAlert.showLoadingSpinner();
         // Yes
         this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.DELETE);
-        this.__deleteMill();
+        await this.__deleteMill();
         this.uiToast.showInfoToast('TOAST_MILL_DELETED_SUCCESSFULLY');
         this.resetSettings();
       },
@@ -171,7 +173,7 @@ export class MillInformationCardComponent implements OnInit {
       });
 
   }
-  private __deleteMill(): void {
+  private async __deleteMill() {
     const brews: Array<Brew> =  this.uiBrewStorage.getAllEntries();
     const deletingBrewIndex: Array<number> = [];
     for (let i = 0; i < brews.length; i++) {
@@ -180,10 +182,10 @@ export class MillInformationCardComponent implements OnInit {
       }
     }
     for (let i = deletingBrewIndex.length; i--;) {
-      this.uiBrewStorage.removeByUUID(brews[deletingBrewIndex[i]].config.uuid);
+      await this.uiBrewStorage.removeByUUID(brews[deletingBrewIndex[i]].config.uuid);
     }
 
-    this.uiMillStorage.removeByObject(this.mill);
+    await this.uiMillStorage.removeByObject(this.mill);
   }
 
 

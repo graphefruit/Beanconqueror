@@ -22,6 +22,8 @@ import {UIAlert} from '../../services/uiAlert';
 import {UIImage} from '../../services/uiImage';
 import {UIHelper} from '../../services/uiHelper';
 import BREW_TRACKING from '../../data/tracking/brewTracking';
+import {Settings} from '../../classes/settings/settings';
+import {ShareService} from '../../services/shareService/share-service.service';
 
 @Component({
   selector: 'brew-information',
@@ -44,6 +46,8 @@ export class BrewInformationComponent implements OnInit {
   public brewQuantityEnum = BREW_QUANTITY_TYPES_ENUM;
 
 
+  public settings: Settings = null;
+
   constructor(private readonly uiSettingsStorage: UISettingsStorage,
               private readonly uiBrewHelper: UIBrewHelper,
               private readonly uiBrewStorage: UIBrewStorage,
@@ -52,18 +56,33 @@ export class BrewInformationComponent implements OnInit {
               private readonly uiAlert: UIAlert,
               private readonly uiImage: UIImage,
               private readonly modalCtrl: ModalController,
-              private readonly uiHelper: UIHelper) {
+              private readonly uiHelper: UIHelper,
+              private readonly shareService: ShareService) {
 
   }
 
   public ngOnInit() {
     if (this.brew) {
-
+      this.settings =  this.uiSettingsStorage.getSettings();
       this.bean = this.brew.getBean();
       this.preparation = this.brew.getPreparation();
       this.mill = this.brew.getMill();
     }
 
+  }
+
+  public hasCustomRatingRange(): boolean {
+    if (this.settings) {
+      return this.settings.brew_rating > 5;
+    }
+    return false;
+  }
+
+  public getCustomMaxRating(): number {
+    if (this.settings) {
+      return this.settings.brew_rating;
+    }
+    return 5;
   }
 
   public ngOnChanges(changes: SimpleChange) {
@@ -103,7 +122,7 @@ export class BrewInformationComponent implements OnInit {
   }
 
 
-  private async internalBrewAction(action: BREW_ACTION): Promise<void> {
+  private async internalBrewAction(action: BREW_ACTION) {
     switch (action) {
       case BREW_ACTION.REPEAT:
         await this.repeatBrew();
@@ -134,6 +153,9 @@ export class BrewInformationComponent implements OnInit {
       case BREW_ACTION.TOGGLE_FAVOURITE:
         this.toggleFavourite();
         break;
+      case BREW_ACTION.SHARE:
+        await this.share();
+        break;
       default:
         break;
     }
@@ -143,7 +165,7 @@ export class BrewInformationComponent implements OnInit {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
       this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.FAST_REPEAT);
       const repeatBrew = this.uiBrewHelper.repeatBrew(this.brew);
-      this.uiBrewStorage.add(repeatBrew);
+      await this.uiBrewStorage.add(repeatBrew);
       this.uiToast.showInfoToast('TOAST_BREW_REPEATED_SUCCESSFULLY');
 
     }
@@ -213,13 +235,17 @@ export class BrewInformationComponent implements OnInit {
     await this.uiImage.viewPhotos(this.brew);
   }
 
+  public async share() {
+    await this.shareService.shareBrew(this.brew);
+  }
+
   public deleteBrew(): Promise<any> {
 
    return new Promise(async (resolve,reject) => {
-      this.uiAlert.showConfirm('DELETE_BREW_QUESTION', 'SURE_QUESTION', true).then(() => {
+      this.uiAlert.showConfirm('DELETE_BREW_QUESTION', 'SURE_QUESTION', true).then(async () => {
           // Yes
           this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.DELETE);
-          this.__deleteBrew();
+          await this.__deleteBrew();
           this.uiToast.showInfoToast('TOAST_BREW_DELETED_SUCCESSFULLY');
           resolve();
         },
@@ -231,8 +257,8 @@ export class BrewInformationComponent implements OnInit {
    );
   }
 
-  private __deleteBrew(): void {
-    this.uiBrewStorage.removeByObject(this.brew);
+  private async __deleteBrew() {
+    await this.uiBrewStorage.removeByObject(this.brew);
   }
 
 

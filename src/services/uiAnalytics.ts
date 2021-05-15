@@ -126,8 +126,6 @@ export class UIAnalytics {
           this.matomoTracker.trackEvent(_category,_action);
           this.uiLog.log('SUCCESS - Track event page - Category:' + _category + ' Action:' + _action);
         }
-
-        this.uiLog.log('SUCCESS - Track event page - Category:' + _category + ' Action:' + _action);
       } catch (ex) {
 
       }

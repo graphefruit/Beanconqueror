@@ -17,12 +17,15 @@ import {Brew} from '../classes/brew/brew';
 import {GreenBean} from '../classes/green-bean/green-bean';
 import {Bean} from '../classes/bean/bean';
 import {RoastingMachine} from '../classes/roasting-machine/roasting-machine';
+import {UISettingsStorage} from './uiSettingsStorage';
+import {Settings} from '../classes/settings/settings';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class UIImage {
+
   constructor (private readonly camera: Camera,
                private readonly imagePicker: ImagePicker,
                private readonly alertController: AlertController,
@@ -34,14 +37,20 @@ export class UIImage {
                private readonly fileChooser: FileChooser,
                private readonly filePath: FilePath,
                private readonly uiAlert: UIAlert,
-               private readonly modalCtrl: ModalController) {
+               private readonly modalCtrl: ModalController,
+               private readonly uiSettingsStorage: UISettingsStorage) {
+  }
+
+  private getImageQuality() {
+    const settings: Settings = this.uiSettingsStorage.getSettings();
+    return settings.image_quality;
   }
 
   public async takePhoto (): Promise<any> {
     const promise = new Promise((resolve, reject) => {
       // const isIos: boolean = this.platform.is('ios');
       const options: CameraOptions = {
-        quality: 100,
+        quality: this.getImageQuality(),
         destinationType: this.camera.DestinationType.DATA_URL,
         encodingType: this.camera.EncodingType.JPEG,
         mediaType: this.camera.MediaType.PICTURE,
@@ -104,17 +113,20 @@ export class UIImage {
                       }
 
                   } else {
+                    this.uiAlert.showMessage('WRONG_FILE_FORMAT',undefined,undefined,true);
                     reject();
                   }
                 }, () => {
+                  this.uiAlert.showMessage('COULD_NOT_ACCESS_FILE',undefined,undefined,true);
                   reject();
                 });
               }, () => {
+                this.uiAlert.showMessage('COULD_NOT_ACCESS_FILE',undefined,undefined,true);
                 reject();
               });
             } else if (isCordova) {
               // https://github.com/Telerik-Verified-Plugins/ImagePicker/issues/173#issuecomment-559096572
-              this.imagePicker.getPictures({maximumImagesCount: 1, outputType: 1, disable_popover: true}).then((results) => {
+              this.imagePicker.getPictures({maximumImagesCount: 1, outputType: 1, disable_popover: true, quality: this.getImageQuality()}).then((results) => {
                 if (results && results.length > 0 && results[0] !== 0 && results[0] !== ''
                   && results[0] !== 'OK' && results[0].length > 5) {
                   const imageStr: string = `data:image/jpeg;base64,${results[0]}`;

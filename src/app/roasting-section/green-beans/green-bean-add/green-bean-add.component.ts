@@ -51,16 +51,16 @@ export class GreenBeanAddComponent implements OnInit {
   }
 
 
-  public addBean(): void {
+  public async addBean() {
 
     if (this.__formValid()) {
-      this.__addBean();
+      await this.__addBean();
     }
   }
 
-  public __addBean(): void {
+  public async __addBean() {
 
-    this.uiGreenBeanStorage.add(this.data);
+    await this.uiGreenBeanStorage.add(this.data);
     this.uiToast.showInfoToast('TOAST_GREEN_BEAN_ADDED_SUCCESSFULLY');
     this.dismiss();
   }

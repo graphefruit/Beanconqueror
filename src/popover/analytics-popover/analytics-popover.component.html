@@ -1,15 +1,11 @@
 <ion-header>
-  <ion-title class="ion-text-center ion-margin-top">{{"WELCOME_PAGE_LETS_START_HEADLINE" | translate}}</ion-title>
+  <ion-title class="ion-text-center ion-margin-top">{{"ANALYTICS_INFORMATION_TITLE" | translate}}</ion-title>
 
 </ion-header>
 <ion-content>
   <div class="ion-padding-top ion-margin-horizontal">
     <div class="welcome-content-text">
-      <ion-title>
-        {{"WELCOME_PAGE_LETS_START_TITLE" | translate}}
-      </ion-title>
-      <div>
-        {{"WELCOME_PAGE_LETS_START_DESCRIPTION" | translate}}
+      <div [innerHTML]="'ANALYTICS_INFORMATION_DESCRIPTION' | translate">
       </div>
     </div>
   </div>
@@ -18,7 +14,7 @@
 
         <ion-row class="ion-padding-top">
           <ion-col size="12">
-            <ion-button (click)="finish()" color="accent" expand="block" tappable>{{"UNDERSTOOD" | translate}}</ion-button>
+            <ion-button (click)="finish()" color="accent" expand="block" tappable>{{"ACCEPT" | translate}}</ion-button>
           </ion-col>
         </ion-row>
 

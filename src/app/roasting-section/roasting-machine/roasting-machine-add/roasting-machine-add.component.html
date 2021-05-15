@@ -1,22 +1,27 @@
-<ion-content class="ion-padding-top">
-  <form #addRoastingMachine="ngForm" novalidate>
-    <ion-item>
-      <ion-label position="stacked">{{"NAME" | translate}}*</ion-label>
-      <ion-input #name="ngModel" [(ngModel)]="data.name" name="name"
-                 placeholder="{{'ROASTING_MACHINE.PLACE_HOLDER.NAME' | translate}}" spellcheck="false" type="text"
-                 autocapitalize="sentences" required>
-      </ion-input>
-    </ion-item>
-  </form>
+
+<ion-content (click)="dismiss()">
+
 </ion-content>
 <ion-footer class="ion-no-border">
-  <ion-row>
+  <div style="width:100%;text-align:end;" class="ion-margin-top">
+    <ion-button (click)="dismiss()" tappable color="accent" fill="clear" >
+      <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+    </ion-button>
+  </div>
+  <ion-item>
+    <ion-label position="stacked">{{"NAME" | translate}}*</ion-label>
+    <ion-input #name="ngModel" [(ngModel)]="data.name" name="name"
+               placeholder="{{'ROASTING_MACHINE.PLACE_HOLDER.NAME' | translate}}" spellcheck="false" type="text"
+               autocapitalize="sentences" required>
+    </ion-input>
+  </ion-item>
+  <ion-row class="ion-margin-top">
     <ion-col>
       <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
                   tappable>{{"CANCEL" | translate}}</ion-button>
     </ion-col>
     <ion-col>
-      <ion-button (click)="add(addRoastingMachine)" color="accent" disable-double-click expand="block" tappable
+      <ion-button (click)="add()" color="accent" disable-double-click expand="block" tappable
                   type="submit">{{"SAVE" | translate}}</ion-button>
     </ion-col>
   </ion-row>

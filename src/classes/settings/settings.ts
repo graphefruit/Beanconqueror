@@ -13,6 +13,7 @@ import {ManageBrewParameter} from '../parameter/manageBrewParameter';
 import {IBeanPageFilter} from '../../interfaces/bean/iBeanPageFilter';
 import {BEAN_SORT_AFTER} from '../../enums/beans/beanSortAfter';
 import {BEAN_SORT_ORDER} from '../../enums/beans/beanSortOrder';
+import {UISettingsStorage} from '../../services/uiSettingsStorage';
 
 export class Settings implements ISettings {
 
@@ -29,6 +30,8 @@ export class Settings implements ISettings {
   public language: string;
   public track_brew_coordinates: boolean;
   public fast_brew_repeat: boolean;
+  public image_quality: number;
+  public brew_rating: number;
 
   public show_archived_beans: boolean;
   public show_archived_brews: boolean;
@@ -57,7 +60,10 @@ export class Settings implements ISettings {
   public show_roasting_section: boolean;
   public show_cupping_section: boolean;
 
-  public static GET_BREW_FILTER(): IBrewPageFilter {
+  public GET_BREW_FILTER(): IBrewPageFilter {
+
+    const upperRating: number = this.brew_rating;
+
     return {
       mill: [],
       bean: [],
@@ -65,7 +71,7 @@ export class Settings implements ISettings {
       method_of_preparation_tools: [],
       favourite: false,
       rating: {
-        upper:5,
+        upper: upperRating,
         lower:-1
       }
     } as IBrewPageFilter;
@@ -110,9 +116,10 @@ export class Settings implements ISettings {
       OPEN: {} as IBeanPageFilter,
       ARCHIVED: {} as IBeanPageFilter
     };
+    this.brew_rating = 5;
 
-    this.brew_filter.OPEN = Settings.GET_BREW_FILTER();
-    this.brew_filter.ARCHIVED = Settings.GET_BREW_FILTER();
+    this.brew_filter.OPEN = this.GET_BREW_FILTER();
+    this.brew_filter.ARCHIVED = this.GET_BREW_FILTER();
 
     this.bean_filter.OPEN = {sort_after: BEAN_SORT_AFTER.UNKOWN, sort_order:  BEAN_SORT_ORDER.UNKOWN} as IBeanPageFilter;
     this.bean_filter.ARCHIVED =  {sort_after: BEAN_SORT_AFTER.UNKOWN, sort_order:  BEAN_SORT_ORDER.UNKOWN} as IBeanPageFilter;
@@ -123,6 +130,8 @@ export class Settings implements ISettings {
 
     this.welcome_page_showed = false;
     this.wake_lock = false;
+    this.image_quality = 100;
+
   }
 
   public initializeByObject(settingsObj: ISettings): void {
@@ -148,8 +157,8 @@ export class Settings implements ISettings {
       OPEN: {} as IBrewPageFilter,
       ARCHIVED: {} as IBrewPageFilter
     };
-    this.brew_filter.OPEN = Settings.GET_BREW_FILTER();
-    this.brew_filter.ARCHIVED = Settings.GET_BREW_FILTER();
+    this.brew_filter.OPEN = this.GET_BREW_FILTER();
+    this.brew_filter.ARCHIVED = this.GET_BREW_FILTER();
   }
 
 

@@ -13,6 +13,8 @@ import {BEAN_SORT_AFTER} from '../../enums/beans/beanSortAfter';
 import {BEAN_SORT_ORDER} from '../../enums/beans/beanSortOrder';
 import {BeansAddComponent} from './beans-add/beans-add.component';
 import {AgVirtualSrollComponent} from 'ag-virtual-scroll';
+import {UIAnalytics} from '../../services/uiAnalytics';
+import BEAN_TRACKING from '../../data/tracking/beanTracking';
 
 @Component({
   selector: 'beans',
@@ -54,7 +56,8 @@ export class BeansPage implements OnInit {
               private readonly uiBeanStorage: UIBeanStorage,
               private readonly uiAlert: UIAlert,
               private readonly uiBrewStorage: UIBrewStorage,
-              private readonly uiSettingsStorage: UISettingsStorage) {
+              private readonly uiSettingsStorage: UISettingsStorage,
+              private readonly uiAnalytics: UIAnalytics) {
 
 
   }
@@ -116,7 +119,6 @@ export class BeansPage implements OnInit {
       componentProps:
         {bean_filter: beanFilter, segment: this.bean_segment},
       id:'bean-filter',
-
       cssClass: 'popover-actions',
     });
     await modal.present();
@@ -259,10 +261,10 @@ export class BeansPage implements OnInit {
     this.finishedBeans = [];
     this.__initializeBeansView('open');
     this.__initializeBeansView('archiv');
-
   }
 
   public async add() {
+    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ADD);
     const modal = await this.modalCtrl.create({component:BeansAddComponent,id:'bean-add'});
     await modal.present();
     await modal.onWillDismiss();

@@ -4,16 +4,13 @@ import {Preparation} from '../../classes/preparation/preparation';
 import {UIPreparationStorage} from '../../services/uiPreparationStorage';
 import {ModalController} from '@ionic/angular';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
-import {Brew} from '../../classes/brew/brew';
-import {PreparationEditComponent} from './preparation-edit/preparation-edit.component';
 import {PreparationAddComponent} from './preparation-add/preparation-add.component';
 import {PREPARATION_ACTION} from '../../enums/preparations/preparationAction';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {Settings} from '../../classes/settings/settings';
 import {UIToast} from '../../services/uiToast';
 import {UIAnalytics} from '../../services/uiAnalytics';
-import {PreparationCustomParametersComponent} from './preparation-custom-parameters/preparation-custom-parameters.component';
-import {PreparationDetailComponent} from './preparation-detail/preparation-detail.component';
+import PREPARATION_TRACKING from '../../data/tracking/preparationTracking';
 
 @Component({
   selector: 'preparation',
@@ -57,6 +54,7 @@ export class PreparationPage implements OnInit {
   }
 
   public async add() {
+    this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.ADD);
     const modal = await this.modalCtrl.create({
       component: PreparationAddComponent,
       showBackdrop: true,

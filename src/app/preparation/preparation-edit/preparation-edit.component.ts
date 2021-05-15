@@ -47,15 +47,15 @@ export class PreparationEditComponent implements OnInit {
     this.data.style_type = this.data.getPresetStyleType();
   }
 
-  public editBean(form): void {
+  public async editBean(form) {
     if (form.valid) {
       // #196
       this.addTool();
-      this.__editBean();
+      await this.__editBean();
     }
   }
 
-  public __editBean(): void {
+  public async __editBean() {
     if (this.data.style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
       this.data.manage_parameters.brew_beverage_quantity = true;
       this.data.default_last_coffee_parameters.brew_beverage_quantity = true;
@@ -66,7 +66,7 @@ export class PreparationEditComponent implements OnInit {
       this.data.manage_parameters.coffee_first_drip_time = false;
       this.data.default_last_coffee_parameters.coffee_first_drip_time = false;
     }
-    this.uiPreparationStorage.update(this.data);
+    await this.uiPreparationStorage.update(this.data);
     this.uiToast.showInfoToast('TOAST_PREPARATION_EDITED_SUCCESSFULLY');
     this.dismiss();
   }
