@@ -10,10 +10,8 @@ import {Router} from '@angular/router';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
 import {Bean} from '../../classes/bean/bean';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
-import {QrScannerService} from '../../services/qrScanner/qr-scanner.service';
 import BREW_TRACKING from '../../data/tracking/brewTracking';
 import {UIAnalytics} from '../../services/uiAnalytics';
-import {IntentHandlerService} from '../../services/intentHandler/intent-handler.service';
 
 @Component({
   selector: 'dashboard',
@@ -32,9 +30,8 @@ export class DashboardPage implements OnInit {
               private readonly router: Router,
               private readonly uiBeanStorage: UIBeanStorage,
               private readonly uiBeanHelper: UIBeanHelper,
-              private readonly qrScannerService: QrScannerService,
               private readonly uiAnalytics: UIAnalytics,
-              private readonly intenthandler: IntentHandlerService) {
+              ) {
   }
 
   public ngOnInit(): void {
@@ -115,10 +112,4 @@ export class DashboardPage implements OnInit {
     return usedWeightCount;
   }
 
-
-  public scan() {
-    this.qrScannerService.scan().then((scannedCode) => {
-      this.intenthandler.handleQRCodeLink(scannedCode);
-    },() => {});
-  }
 }

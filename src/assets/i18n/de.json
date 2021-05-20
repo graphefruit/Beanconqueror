@@ -731,5 +731,6 @@
   "ANDROID_FILE_ACCESS_NEEDED_TITLE": "Freigabe Dateizugriff benötigt",
   "ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION": "Damit die App vollfunktional funktioniert, bitten wir dich den Dateizugriff freizugeben. Andernfalls wird es zu Fehlverhalten innerhalb der App kommen.",
   "COULD_NOT_ACCESS_FILE": "Auf die ausgewählte Datei konnte nicht Zugegriffen werden",
-  "WRONG_FILE_FORMAT": "Nicht unterstütztes Dateiformat ausgewählt"
+  "WRONG_FILE_FORMAT": "Nicht unterstütztes Dateiformat ausgewählt",
+  "SCAN_BEAN": "Packung einlesen"
 }
