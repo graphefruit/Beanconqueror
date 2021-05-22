@@ -5,6 +5,10 @@ import {Brew} from '../classes/brew/brew';
 import {UIBrewStorage} from './uiBrewStorage';
 import {UIBeanStorage} from './uiBeanStorage';
 import {Bean} from '../classes/bean/bean';
+import BEAN_TRACKING from '../data/tracking/beanTracking';
+import {BeansAddComponent} from '../app/beans/beans-add/beans-add.component';
+import {UIAnalytics} from './uiAnalytics';
+import {ModalController} from '@ionic/angular';
 
 /**
  * Handles every helping functionalities
@@ -18,7 +22,9 @@ export class UIBeanHelper {
   private allStoredBrews: Array<Brew> = [];
   private allStoredBeans: Array<Bean> = [];
   constructor(private readonly uiBrewStorage: UIBrewStorage,
-              private readonly uiBeanStorage: UIBeanStorage) {
+              private readonly uiBeanStorage: UIBeanStorage,
+              private readonly uiAnalytics: UIAnalytics,
+              private readonly modalController: ModalController) {
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
       // If an brew is deleted, we need to reset our array for the next call.
       this.allStoredBrews = [];
@@ -68,6 +74,19 @@ export class UIBeanHelper {
 
     const roastedBeans = this.allStoredBeans.filter((e) => (e.bean_roast_information && e.bean_roast_information.roaster_machine === _uuid));
     return roastedBeans;
+
+  }
+
+
+  public async addScannedQRBean(_scannedQRBean) {
+    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ADD);
+    const modal = await this.modalController.create({
+      component:BeansAddComponent,
+      id:BeansAddComponent.COMPONENT_ID,
+      componentProps: {qr_bean_template: _scannedQRBean}
+    });
+    await modal.present();
+    await modal.onWillDismiss();
 
   }
 }

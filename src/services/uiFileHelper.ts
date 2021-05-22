@@ -274,6 +274,72 @@ export class UIFileHelper {
       return promise;
     }
 
+    public a() {
+    debugger;
+    console.log(this.file.resolveDirectoryUrl);
+
+    }
+
+  public createFolder(_folders) {
+    const promise: Promise<FileEntry> = new Promise(async (resolve, reject) => {
+
+      const folders = _folders.split('/');
+
+      this.file.resolveDirectoryUrl(this.getFileDirectory()).then((_rootDir: DirectoryEntry) => {
+
+        this.createFolderInternal(_rootDir, folders,
+          ()=> {
+
+            resolve();
+          },
+          () => {
+
+            reject();
+          });
+      },() => {
+       reject();
+      });
+
+
+    });
+
+    return promise;
+  };
+
+  private createFolderInternal(_rootDirEntry: DirectoryEntry, _folders, _resolve, _reject) {
+
+
+
+    // Throw out './' or '/' and move on to prevent something like '/foo/.//bar'.
+    if (_folders[0] === '.' || _folders[0] === '') {
+      _folders = _folders.slice(1);
+    }
+    if (_folders === undefined || _folders.length === 0) {
+      _resolve();
+    }
+    else {
+
+
+      this.file.getDirectory(_rootDirEntry, _folders[0], {create: true, exclusive: false}).then((dirEntry) => {
+        // Recursively add the new subfolder (if we still have another to create).
+
+        if (_folders.length) {
+          this.createFolderInternal(dirEntry, _folders.slice(1), _resolve, _reject);
+        }
+        else {
+          // All folders were created
+          _resolve();
+        }
+
+      }, () => {
+        _reject();
+      });
+    }
+
+
+  };
+
+
   public async deleteFile(_filePath): Promise<any> {
     return new Promise(async (resolve, reject) => {
       if (this.platform.is('cordova')) {

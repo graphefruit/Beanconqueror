@@ -8,6 +8,7 @@ import moment from 'moment';
 import {UIToast} from '../../../services/uiToast';
 import {UIBrewHelper} from '../../../services/uiBrewHelper';
 import {BrewBrewingComponent} from '../../../components/brews/brew-brewing/brew-brewing.component';
+import {BrewTrackingService} from '../../../services/brewTracking/brew-tracking.service';
 
 
 @Component({
@@ -28,7 +29,8 @@ export class BrewEditComponent implements OnInit {
                private readonly uiHelper: UIHelper,
                private readonly uiToast: UIToast,
                private readonly platform: Platform,
-               private readonly uiBrewHelper: UIBrewHelper) {
+               private readonly uiBrewHelper: UIBrewHelper,
+               private readonly brewTracking: BrewTrackingService) {
 
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
     const brew: IBrew = this.uiHelper.copyData(this.navParams.get('brew'));
@@ -53,6 +55,8 @@ export class BrewEditComponent implements OnInit {
     }
     this.uiBrewHelper.cleanInvisibleBrewData(this.data);
     await this.uiBrewStorage.update(this.data);
+    this.brewTracking.trackBrew(this.data);
+
     this.uiToast.showInfoToast('TOAST_BREW_EDITED_SUCCESSFULLY');
     this.dismiss();
   }

@@ -46,6 +46,7 @@ import {AnalyticsPopoverComponent} from '../popover/analytics-popover/analytics-
 import {IosPlatformService} from '../services/iosPlatform/ios-platform.service';
 import {AndroidPlatformService} from '../services/androidPlatform/android-platform.service';
 
+
 declare var AppRate;
 @Component({
   selector: 'app-root',
@@ -415,6 +416,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   private __instanceAppRating() {
+
     if (this.platform.is('cordova')) {
       const appLanguage = this.uiSettingsStorage.getSettings().language;
       AppRate.setPreferences({

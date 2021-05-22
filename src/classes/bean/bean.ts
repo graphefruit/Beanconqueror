@@ -45,6 +45,8 @@ export class Bean implements IBean {
 
   public bean_roast_information: BeanRoastInformation;
 
+  public qr_code: string;
+
   constructor() {
     this.name = '';
     this.roastingDate = '';
@@ -70,6 +72,7 @@ export class Bean implements IBean {
     this.ean_article_number = '';
     this.bean_roast_information = new BeanRoastInformation();
     this.rating = 0;
+    this.qr_code = '';
   }
 
   public getRoastName(): string {

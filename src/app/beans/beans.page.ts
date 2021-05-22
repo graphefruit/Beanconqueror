@@ -15,7 +15,6 @@ import {BeansAddComponent} from './beans-add/beans-add.component';
 import {AgVirtualSrollComponent} from 'ag-virtual-scroll';
 import {UIAnalytics} from '../../services/uiAnalytics';
 import BEAN_TRACKING from '../../data/tracking/beanTracking';
-import {BeanPopoverActionsComponent} from './bean-popover-actions/bean-popover-actions.component';
 import {TranslateService} from '@ngx-translate/core';
 import {QrScannerService} from '../../services/qrScanner/qr-scanner.service';
 import {IntentHandlerService} from '../../services/intentHandler/intent-handler.service';
@@ -294,6 +293,7 @@ export class BeansPage implements OnInit {
         role: 'scan',
         icon: 'qr-code-outline',
         handler: async () => {
+          console.log("scan");
           await this.scan();
 
         }
@@ -311,6 +311,9 @@ export class BeansPage implements OnInit {
   }
 
   public async scan() {
+
+    this.intenthandler.handleQRCodeLink('https://beanconqueror.com/app/roaster/bean.html?id=1');
+    return;
     this.qrScannerService.scan().then((scannedCode) => {
       this.intenthandler.handleQRCodeLink(scannedCode);
     },() => {});

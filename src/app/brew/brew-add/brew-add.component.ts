@@ -18,6 +18,7 @@ import {UIHealthKit} from '../../../services/uiHealthKit';
 import {Insomnia} from '@ionic-native/insomnia/ngx';
 import {BrewBrewingComponent} from '../../../components/brews/brew-brewing/brew-brewing.component';
 import {UIAlert} from '../../../services/uiAlert';
+import {BrewTrackingService} from '../../../services/brewTracking/brew-tracking.service';
 
 
 @Component({
@@ -51,7 +52,8 @@ export class BrewAddComponent implements OnInit {
                private readonly uiBrewHelper: UIBrewHelper,
                private readonly uiHealthKit: UIHealthKit,
                private readonly insomnia: Insomnia,
-               private readonly uiAlert: UIAlert) {
+               private readonly uiAlert: UIAlert,
+               private readonly brewTracking: BrewTrackingService) {
     // Initialize to standard in drop down
 
     this.settings = this.uiSettingsStorage.getSettings();
@@ -147,12 +149,14 @@ export class BrewAddComponent implements OnInit {
       }
 
 
+
       if (this.settings.track_caffeine_consumption && this.data.grind_weight > 0) {
         this.uiHealthKit.trackCaffeineConsumption(this.data.getCaffeineAmount(), moment(this.brewBrewing.customCreationDate).toDate());
       }
       if (!this.hide_toast_message) {
         this.uiToast.showInfoToast('TOAST_BREW_ADDED_SUCCESSFULLY');
       }
+      this.brewTracking.trackBrew(this.data);
 
     }
     catch (ex) {

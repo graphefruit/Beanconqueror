@@ -4,6 +4,8 @@ import {Deeplinks} from '@ionic-native/deeplinks/ngx';
 import {InfoComponent} from '../../app/info/info.component';
 import {UILog} from '../uiLog';
 import {Url} from 'url';
+import {ServerCommunicationService} from '../serverCommunication/server-communication.service';
+import {UIBeanHelper} from '../uiBeanHelper';
 declare var window;
 @Injectable({
   providedIn: 'root'
@@ -15,7 +17,9 @@ export class IntentHandlerService {
   };
   constructor(private readonly uiHelper: UIHelper,
               private readonly deeplinks: Deeplinks,
-              private readonly uiLog: UILog) { }
+              private readonly uiLog: UILog,
+              private readonly serverCommunicationService: ServerCommunicationService,
+              private readonly uiBeanHelper: UIBeanHelper) { }
 
   public attachOnHandleOpenUrl() {
 
@@ -88,8 +92,15 @@ export class IntentHandlerService {
 
 
 
-  private addBeanFromServer(_beanId: number) {
+  private async addBeanFromServer(_beanId: number) {
     this.uiLog.log('Load bean information from server: ' + _beanId);
+    try {
+
+      const beanData = await this.serverCommunicationService.getBeanInformation(_beanId);
+      await this.uiBeanHelper.addScannedQRBean(beanData);
+    } catch (ex) {
+
+    }
   }
 
 }

@@ -12,6 +12,8 @@ import {Bean} from '../../classes/bean/bean';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
 import BREW_TRACKING from '../../data/tracking/brewTracking';
 import {UIAnalytics} from '../../services/uiAnalytics';
+import {UIFileHelper} from '../../services/uiFileHelper';
+import {ServerCommunicationService} from '../../services/serverCommunication/server-communication.service';
 
 @Component({
   selector: 'dashboard',
@@ -31,11 +33,12 @@ export class DashboardPage implements OnInit {
               private readonly uiBeanStorage: UIBeanStorage,
               private readonly uiBeanHelper: UIBeanHelper,
               private readonly uiAnalytics: UIAnalytics,
-              ) {
+              private readonly serverCommunication: ServerCommunicationService) {
   }
 
   public ngOnInit(): void {
 
+    this.serverCommunication.getBeanInformation(1);
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
       // If an brew is deleted, we need to reset our array for the next call.
       this.leftOverBeansWeight = undefined;

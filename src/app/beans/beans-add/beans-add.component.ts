@@ -18,9 +18,11 @@ import moment from 'moment';
 })
 export class BeansAddComponent implements OnInit {
 
-
+  public static COMPONENT_ID = 'bean-add';
   public data: Bean = new Bean();
   @Input() private readonly bean_template: Bean;
+  @Input() private readonly qr_bean_template: Bean;
+
 
   @Input() private hide_toast_message: boolean;
   @Input() private greenBean: GreenBean;
@@ -47,6 +49,8 @@ export class BeansAddComponent implements OnInit {
     // TODO how to handle roasting beans which wil be repeated?
     if (this.bean_template) {
       await this.__loadBean(this.bean_template);
+    } else if (this.qr_bean_template) {
+      await this.__loadBean(this.qr_bean_template);
     }
 
     // Add one empty bean information, rest is being updated on start
@@ -96,7 +100,7 @@ export class BeansAddComponent implements OnInit {
   public dismiss(): void {
     this.modalController.dismiss({
       dismissed: true
-    },undefined,'bean-add');
+    },undefined, BeansAddComponent.COMPONENT_ID);
   }
 
   private async __loadBean(_bean: Bean) {
