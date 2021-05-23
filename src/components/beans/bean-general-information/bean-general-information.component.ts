@@ -111,8 +111,15 @@ export class BeanGeneralInformationComponent implements OnInit {
         okText: this.translate.instant('CHOOSE'),
         todayText: this.translate.instant('TODAY'),
         cancelText: this.translate.instant('CANCEL'),
+        clearText: this.translate.instant('CLEAR'),
         success: (newDate) => {
-          this.data.roastingDate = moment(newDate).toISOString();
+          if (newDate === undefined) {
+            this.data.roastingDate = '';
+          } else
+          {
+            this.data.roastingDate = moment(newDate).toISOString();
+          }
+
           this.changeDetectorRef.detectChanges();
         }, error: () => {
 

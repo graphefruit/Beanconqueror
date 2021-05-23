@@ -732,5 +732,6 @@
   "ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION": "In order for the app to work fully, we ask you to authorize file access. Otherwise there will be misconduct within the app.",
   "COULD_NOT_ACCESS_FILE": "We could not access the chosen file",
   "WRONG_FILE_FORMAT": "You have chosen a not supported file format",
-  "SCAN_BEAN": "Scan package"
+  "SCAN_BEAN": "Scan package",
+  "CLEAR":"Clear"
 }

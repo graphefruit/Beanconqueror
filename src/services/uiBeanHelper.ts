@@ -105,6 +105,6 @@ export class UIBeanHelper {
   }
 
   public async archiveBeanWithRatingQuestion(_bean: Bean) {
-    console.log("test");
+
   }
 }

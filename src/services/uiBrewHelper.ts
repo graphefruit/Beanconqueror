@@ -157,7 +157,7 @@ export class UIBrewHelper {
   public async checkIfBeanPackageIsConsumedTriggerMessageAndArchive(_bean) {
    if (this.checkIfBeanPackageIsConsumed(_bean)) {
      try {
-       await this.uiAlert.showConfirm('IT looks like your bean package is consumed, shall we archive it right now');
+       await this.uiAlert.showConfirm('BEANS_LOOKS_LIKE_CONSUMED');
        // He said yes
        UIBeanHelper.getInstance().archiveBeanWithRatingQuestion(_bean);
 
