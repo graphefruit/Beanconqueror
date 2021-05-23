@@ -6,6 +6,7 @@ import {UILog} from '../uiLog';
 import {Url} from 'url';
 import {ServerCommunicationService} from '../serverCommunication/server-communication.service';
 import {UIBeanHelper} from '../uiBeanHelper';
+import {Bean} from '../../classes/bean/bean';
 declare var window;
 @Injectable({
   providedIn: 'root'
@@ -97,6 +98,7 @@ export class IntentHandlerService {
     try {
 
       const beanData = await this.serverCommunicationService.getBeanInformation(_beanId);
+      beanData['qr_code'] = '1';
       await this.uiBeanHelper.addScannedQRBean(beanData);
     } catch (ex) {
 

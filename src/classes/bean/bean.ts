@@ -140,6 +140,12 @@ export class Bean implements IBean {
     }
     return false;
   }
+  public isScannedBean(): boolean {
+    if (this.qr_code !== '') {
+      return true;
+    }
+    return false;
+  }
 
   private getRoastingMachineStorage(): UIRoastingMachineStorage {
     let uiRoastingMachineStorage: UIRoastingMachineStorage;

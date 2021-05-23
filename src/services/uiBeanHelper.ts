@@ -18,9 +18,19 @@ import {ModalController} from '@ionic/angular';
   providedIn: 'root'
 })
 export class UIBeanHelper {
-
+  private static instance: UIBeanHelper;
   private allStoredBrews: Array<Brew> = [];
   private allStoredBeans: Array<Bean> = [];
+
+  public static getInstance(): UIBeanHelper {
+    if (UIBeanHelper.instance) {
+      return UIBeanHelper.instance;
+    }
+    // noinspection TsLint
+
+    return undefined;
+  }
+
   constructor(private readonly uiBrewStorage: UIBrewStorage,
               private readonly uiBeanStorage: UIBeanStorage,
               private readonly uiAnalytics: UIAnalytics,
@@ -34,6 +44,11 @@ export class UIBeanHelper {
       // If an brew is deleted, we need to reset our array for the next call.
       this.allStoredBeans = [];
     });
+
+
+    if (UIBeanHelper.instance === undefined) {
+      UIBeanHelper.instance = this;
+    }
   }
 
   public getAllBrewsForThisBean(_uuid: string): Array<Brew> {
@@ -87,6 +102,9 @@ export class UIBeanHelper {
     });
     await modal.present();
     await modal.onWillDismiss();
+  }
 
+  public async archiveBeanWithRatingQuestion(_bean: Bean) {
+    console.log("test");
   }
 }

@@ -168,7 +168,7 @@
   "IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED": "Import unsuccessful, no data has been changed",
   "INVALID_FILE_DATA": "Invalid file content",
   "DOWNLOADED": "Downloaded",
-  "FILE_DOWNLOADED_SUCCESSFULLY": "JSON file '{{fileName}}' was successfully downloaded to your download folder!",
+  "FILE_DOWNLOADED_SUCCESSFULLY": "File '{{fileName}}' was successfully downloaded to your download folder!",
   "NO": "No",
   "YES": "Yes",
   "SURE_QUESTION": "Sure?",

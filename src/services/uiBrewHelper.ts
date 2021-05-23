@@ -14,6 +14,9 @@ import {Settings} from '../classes/settings/settings';
 import {Preparation} from '../classes/preparation/preparation';
 import {TranslateService} from '@ngx-translate/core';
 import {ICupping} from '../interfaces/cupping/iCupping';
+import {UIBrewStorage} from './uiBrewStorage';
+import {Bean} from '../classes/bean/bean';
+import {UIBeanHelper} from './uiBeanHelper';
 
 /**
  * Handles every helping functionalities
@@ -24,9 +27,21 @@ import {ICupping} from '../interfaces/cupping/iCupping';
 })
 export class UIBrewHelper {
 
+
+  private static instance: UIBrewHelper;
+
   private canBrewBoolean: boolean = undefined;
 
   private settings: Settings;
+
+  public static getInstance(): UIBrewHelper {
+    if (UIBrewHelper.instance) {
+      return UIBrewHelper.instance;
+    }
+    // noinspection TsLint
+
+    return undefined;
+  }
   public static sortBrews(_sortingBrews: Array<Brew>): Array<Brew> {
     const sortedBrews: Array<Brew> = _sortingBrews.sort((obj1, obj2) => {
       if (obj1.config.unix_timestamp < obj2.config.unix_timestamp) {
@@ -53,9 +68,11 @@ export class UIBrewHelper {
     });
     return sortedBrews;
   }
+
   constructor (private readonly uiBeanStorage: UIBeanStorage,
                private readonly uiMillStorage: UIMillStorage,
                private readonly uiPreparationStorage: UIPreparationStorage,
+               private readonly uiBrewStorage: UIBrewStorage,
                private readonly uiAlert: UIAlert,
                private readonly uiSettingsStorage: UISettingsStorage,
                private readonly translate: TranslateService) {
@@ -75,6 +92,10 @@ export class UIBrewHelper {
       this.settings = this.uiSettingsStorage.getSettings();
     });
     this.settings = this.uiSettingsStorage.getSettings();
+
+    if (UIBrewHelper.instance === undefined) {
+      UIBrewHelper.instance = this;
+    }
 
   }
 
@@ -108,6 +129,44 @@ export class UIBrewHelper {
       return false;
     }
     return true;
+  }
+
+  public checkIfBeanPackageIsConsumed(_bean: Bean): boolean {
+      const bean: Bean = _bean;
+      if (bean.weight > 0) {
+        const beanPackageWeight = bean.weight;
+        let usedWeightCount: number = 0;
+        const brews: Array<Brew> = this.uiBrewStorage.getAllEntries().filter((e)=> e.getBean().config.uuid === bean.config.uuid);
+        for (const brew of brews) {
+          usedWeightCount += brew.grind_weight;
+        }
+
+
+
+        // 5 grams is threshold
+        // If we just got 5 grams left, ask the user if he wants to archive his beans
+        if ((beanPackageWeight - usedWeightCount) <= 5) {
+          return true;
+        }
+
+      }
+      return false;
+  }
+
+
+  public async checkIfBeanPackageIsConsumedTriggerMessageAndArchive(_bean) {
+   if (this.checkIfBeanPackageIsConsumed(_bean)) {
+     try {
+       await this.uiAlert.showConfirm('IT looks like your bean package is consumed, shall we archive it right now');
+       // He said yes
+       UIBeanHelper.getInstance().archiveBeanWithRatingQuestion(_bean);
+
+     } catch (ex) {
+
+     }
+
+   }
+
   }
 
 

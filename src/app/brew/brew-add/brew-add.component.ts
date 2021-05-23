@@ -158,6 +158,12 @@ export class BrewAddComponent implements OnInit {
       }
       this.brewTracking.trackBrew(this.data);
 
+      if (this.uiBrewHelper.checkIfBeanPackageIsConsumedTriggerMessageAndArchive(this.data.getBean())) {
+        console.log("WE SHOULD DO SOMETHING");
+
+
+      }
+
     }
     catch (ex) {
 

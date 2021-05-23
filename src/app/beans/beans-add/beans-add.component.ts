@@ -139,6 +139,9 @@ export class BeansAddComponent implements OnInit {
 
     }
     this.data.attachments = copyAttachments;
+
+/// TODO SOLVE
+    this.data.qr_code = _bean.qr_code;
   }
 
   private __formValid(): boolean {
