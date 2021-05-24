@@ -380,11 +380,11 @@ export class UIFileHelper {
 
 
       const fileObj = this.__splitFilePath(_filePath);
-      this.generateFileName(this.getFileDirectory(), _fileName, fileObj.EXTENSION).then((_newName) => {
+      this.generateFileName(this.getFileDirectory(), _fileName, fileObj.EXTENSION).then(async (_newName) => {
         // console.log('New Filename' + _newName);
 
         this.file.copyFile(fileObj.FILE_PATH, fileObj.FILE_NAME + fileObj.EXTENSION,
-          this.getFileDirectory(), _newName).then((_t) => {
+          this.getFileDirectory(), _newName).then(async (_t) => {
           resolve(_t.fullPath);
         }, (e) => {
           reject();
@@ -455,8 +455,8 @@ export class UIFileHelper {
     return new Promise(async (resolve, reject) => {
       if (this.platform.is('cordova')) {
         if (this.cachedInternalUrls[_filePath]) {
-          resolve(this.cachedInternalUrls[_filePath]);
-          return;
+          //resolve(this.cachedInternalUrls[_filePath]);
+        //  return;
         }
         // let filePath: string;
         // filePath = _filePath;
