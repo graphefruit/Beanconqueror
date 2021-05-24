@@ -45,6 +45,7 @@ import STARTUP_TRACKING from '../data/tracking/startupTracking';
 import {AnalyticsPopoverComponent} from '../popover/analytics-popover/analytics-popover.component';
 import {IosPlatformService} from '../services/iosPlatform/ios-platform.service';
 import {AndroidPlatformService} from '../services/androidPlatform/android-platform.service';
+import {environment} from '../environments/environment';
 
 
 declare var AppRate;
@@ -140,7 +141,7 @@ export class AppComponent implements AfterViewInit {
         this.statusBar.styleDefault();
         this.splashScreen.hide();
         this.keyboard.hideFormAccessoryBar(false);
-        if (this.platform.is('cordova')) {
+        if (environment.production === true) {
           // When we're in cordova, disable the log messages
           this.uiLog.disable();
         }
