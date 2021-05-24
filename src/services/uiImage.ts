@@ -126,16 +126,34 @@ export class UIImage {
               });
             } else if (isCordova) {
               // https://github.com/Telerik-Verified-Plugins/ImagePicker/issues/173#issuecomment-559096572
-              this.imagePicker.getPictures({maximumImagesCount: 5, outputType: 1, disable_popover: true, quality: this.getImageQuality()}).then((results) => {
-                if (results && results.length > 0 && results[0] !== 0 && results[0] !== ''
-                  && results[0] !== 'OK' && results[0].length > 5) {
-                  const imageStr: string = `data:image/jpeg;base64,${results[0]}`;
-                  this.uiFileHelper.saveBase64File('beanconqueror_image', '.png', imageStr).then((_newURL) => {
-                    resolve(_newURL);
-                  });
+              this.imagePicker.getPictures({maximumImagesCount: 5, outputType: 1, disable_popover: true, quality: this.getImageQuality()}).then(async (results) => {
+                const fileurls: Array<string> = [];
+                this.uiAlert.showLoadingSpinner();
+                for (const result of results) {
+                  if (result && result.length > 0 && result !== 0 && result !== ''
+                    && result !== 'OK' && result.length > 5) {
+
+                    try {
+                      const imageStr: string = `data:image/jpeg;base64,${result}`;
+                      await this.uiFileHelper.saveBase64File('beanconqueror_image', '.png', imageStr).then((_newURL) => {
+                        fileurls.push(_newURL);
+                      });
+                    } catch(ex) {
+
+                    }
+
+
+                  } else {
+                  }
+
+                }
+                this.uiAlert.hideLoadingSpinner();
+                if (fileurls.length > 0) {
+                  resolve(fileurls);
                 } else {
                   reject();
                 }
+
               }, (err) => {
                 reject();
               });
