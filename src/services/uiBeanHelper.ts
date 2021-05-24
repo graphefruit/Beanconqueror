@@ -9,6 +9,7 @@ import BEAN_TRACKING from '../data/tracking/beanTracking';
 import {BeansAddComponent} from '../app/beans/beans-add/beans-add.component';
 import {UIAnalytics} from './uiAnalytics';
 import {ModalController} from '@ionic/angular';
+import {BeanArchivePopoverComponent} from '../app/beans/bean-archive-popover/bean-archive-popover.component';
 
 /**
  * Handles every helping functionalities
@@ -106,5 +107,17 @@ export class UIBeanHelper {
 
   public async archiveBeanWithRatingQuestion(_bean: Bean) {
 
+      this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ARCHIVE);
+
+      const modal = await this.modalController.create({
+        component: BeanArchivePopoverComponent,
+        cssClass: 'popover-actions',
+        id: BeanArchivePopoverComponent.COMPONENT_ID,
+        componentProps: {
+          bean: _bean
+        }
+      });
+      await modal.present();
+      await modal.onWillDismiss();
   }
 }

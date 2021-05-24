@@ -130,6 +130,7 @@ import {CookieComponent} from '../info/cookie/cookie.component';
 import {FilesystemErrorPopoverComponent} from '../../popover/filesystem-error-popover/filesystem-error-popover.component';
 import {AnalyticsPopoverComponent} from '../../popover/analytics-popover/analytics-popover.component';
 import {Deeplinks} from '@ionic-native/deeplinks/ngx';
+import {BeanArchivePopoverComponent} from '../beans/bean-archive-popover/bean-archive-popover.component';
 
 
 @NgModule({
@@ -211,6 +212,7 @@ import {Deeplinks} from '@ionic-native/deeplinks/ngx';
     PhotoPopoverComponent,
     BrewPopoverActionsComponent,
     BeanPopoverActionsComponent,
+    BeanArchivePopoverComponent,
     MillPopoverActionsComponent,
     BeanModalSelectComponent,
     RoastingMachineModalSelectComponent,
@@ -298,6 +300,7 @@ import {Deeplinks} from '@ionic-native/deeplinks/ngx';
     PhotoPopoverComponent,
     BrewPopoverActionsComponent,
     BeanPopoverActionsComponent,
+    BeanArchivePopoverComponent,
     BeanModalSelectComponent,
     RoastingMachineModalSelectComponent,
     MillModalSelectComponent,
@@ -439,6 +442,7 @@ import {Deeplinks} from '@ionic-native/deeplinks/ngx';
     PhotoPopoverComponent,
     BrewPopoverActionsComponent,
     BeanPopoverActionsComponent,
+    BeanArchivePopoverComponent,
     BeanModalSelectComponent,
     RoastingMachineModalSelectComponent,
     MillModalSelectComponent,

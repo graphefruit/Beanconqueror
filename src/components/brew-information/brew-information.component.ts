@@ -168,6 +168,8 @@ export class BrewInformationComponent implements OnInit {
       await this.uiBrewStorage.add(repeatBrew);
       this.uiToast.showInfoToast('TOAST_BREW_REPEATED_SUCCESSFULLY');
 
+      // If fast repeat is used, also recheck if bean package is consumed
+      await this.uiBrewHelper.checkIfBeanPackageIsConsumedTriggerMessageAndArchive(this.brew.getBean());
     }
   }
 

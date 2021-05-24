@@ -733,5 +733,6 @@
   "COULD_NOT_ACCESS_FILE": "We could not access the chosen file",
   "WRONG_FILE_FORMAT": "You have chosen a not supported file format",
   "SCAN_BEAN": "Scan package",
-  "CLEAR":"Clear"
+  "CLEAR":"Clear",
+  "BEAN_LOOKS_LIKE_CONSUMED": "Bean package looks like consumed, you want to archive it now?"
 }
