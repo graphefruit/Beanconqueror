@@ -1,0 +1,31 @@
+<ion-searchbar [(ngModel)]="searchFlavorText" (ionInput)="searchFlavors()"></ion-searchbar>
+<ion-list>
+
+  <div  *ngFor="let flavor of cuppingFlavors">
+    <ion-item style="--background:{{flavor.color}}">
+      <ion-checkbox slot="end" class="ion-margin-end"></ion-checkbox>
+      <ion-label [ngStyle]="{'color': flavor.text}">{{flavor.name}}</ion-label>
+    </ion-item>
+    <div *ngIf="flavor.children && flavor.children.length > 0">
+      <div *ngFor="let childFlavor of flavor.children">
+        <ion-item  style="--background:{{childFlavor.color}}">
+          <div class="margin-left-first">
+            <ion-label [ngStyle]="{'color': childFlavor.text}">{{childFlavor.name}}</ion-label>
+          </div>
+          <ion-checkbox slot="end" class="ion-margin-end"></ion-checkbox>
+        </ion-item>
+        <ion-item  *ngFor="let childChildFlavor of childFlavor.children" style="--background:{{childChildFlavor.color}}">
+          <div class="margin-left-second">
+            <ion-label [ngStyle]="{'color': childChildFlavor.text}">{{childChildFlavor.name}}</ion-label>
+          </div>
+          <ion-checkbox slot="end" class="ion-margin-end"></ion-checkbox>
+        </ion-item>
+      </div>
+
+    </div>
+  </div>
+<div>
+
+
+</div>
+</ion-list>

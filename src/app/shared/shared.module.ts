@@ -131,6 +131,7 @@ import {FilesystemErrorPopoverComponent} from '../../popover/filesystem-error-po
 import {AnalyticsPopoverComponent} from '../../popover/analytics-popover/analytics-popover.component';
 import {Deeplinks} from '@ionic-native/deeplinks/ngx';
 import {BeanArchivePopoverComponent} from '../beans/bean-archive-popover/bean-archive-popover.component';
+import {CuppingFlavorsComponent} from '../../components/cupping-flavors/cupping-flavors.component';
 
 
 @NgModule({
@@ -196,6 +197,7 @@ import {BeanArchivePopoverComponent} from '../beans/bean-archive-popover/bean-ar
     PreparationInformationCardComponent,
     MillInformationCardComponent,
     CuppingRadarComponent,
+    CuppingFlavorsComponent,
     RemoveEmptyNumberDirective,
     PreventCharacterDirective,
     MaxNumberValueDirective,
@@ -426,6 +428,7 @@ import {BeanArchivePopoverComponent} from '../beans/bean-archive-popover/bean-ar
     PreparationInformationCardComponent,
     MillInformationCardComponent,
     CuppingRadarComponent,
+    CuppingFlavorsComponent,
     RemoveEmptyNumberDirective,
     PreventCharacterDirective,
     MaxNumberValueDirective,
