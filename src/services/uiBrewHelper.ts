@@ -208,6 +208,7 @@ export class UIBrewHelper {
     repeatBrew.tds = _brewToCopy.tds;
     repeatBrew.brew_beverage_quantity = _brewToCopy.brew_beverage_quantity;
     repeatBrew.brew_beverage_quantity_type = _brewToCopy.brew_beverage_quantity_type;
+    repeatBrew.water = _brewToCopy.water;
     return repeatBrew;
   }
 
@@ -280,6 +281,9 @@ export class UIBrewHelper {
     if (!checkData.manage_parameters.method_of_preparation_tool) {
       brew.method_of_preparation_tools = [];
     }
+    if (!checkData.manage_parameters.water ) {
+      brew.water = '';
+    }
 
   }
 
@@ -332,7 +336,8 @@ export class UIBrewHelper {
       checkData.manage_parameters.bean_type ||
       checkData.manage_parameters.mill ||
       checkData.manage_parameters.mill_speed ||
-      checkData.manage_parameters.mill_timer);
+      checkData.manage_parameters.mill_timer ||
+      checkData.manage_parameters.water);
 
   }
 

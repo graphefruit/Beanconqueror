@@ -57,12 +57,12 @@ export class UIUpdate {
               // We got an update and we got no mills yet, therefore we add a Standard mill.
               const data: Mill = new Mill();
               data.name = 'Standard';
-              this.uiMillStorage.add(data);
+              await this.uiMillStorage.add(data);
 
               const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
               for (const brew of brews) {
                 brew.mill = data.config.uuid;
-                this.uiBrewStorage.update(brew);
+                await this.uiBrewStorage.update(brew);
               }
             }
             // We made an update, filePath just could storage one image, but we want to storage multiple ones.
@@ -99,7 +99,7 @@ export class UIUpdate {
                   needsUpdate = true;
                 }
                 if (bean.fixDataTypes() || needsUpdate) {
-                  this.uiBeanStorage.update(bean);
+                  await this.uiBeanStorage.update(bean);
                 }
               }
             }
@@ -120,12 +120,12 @@ export class UIUpdate {
                       if (brew.brew_beverage_quantity === 0 && brew.brew_quantity > 0) {
                         brew.brew_beverage_quantity = brew.brew_quantity;
                         brew.brew_beverage_quantity_type = brew.brew_quantity_type;
-                        this.uiBrewStorage.update(brew);
+                        await this.uiBrewStorage.update(brew);
                       }
 
                     }
                   }
-                  this.uiPreparationStorage.update(preparation);
+                  await this.uiPreparationStorage.update(preparation);
                 }
               }
             }
@@ -134,7 +134,7 @@ export class UIUpdate {
               const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
               for (const brew of brews) {
                 if (brew.fixDataTypes()) {
-                  this.uiBrewStorage.update(brew);
+                  await this.uiBrewStorage.update(brew);
                 }
 
               }
@@ -144,14 +144,14 @@ export class UIUpdate {
             if (settings.brew_order.after.tds === null || settings.brew_order.after.tds === undefined) {
               const newSettingsObj: any = new Settings();
               settings.brew_order.after.tds = newSettingsObj.brew_order.after.tds;
-              this.uiSettingsStorage.saveSettings(settings);
+              await this.uiSettingsStorage.saveSettings(settings);
 
             }
             if (settings.brew_order.after.brew_beverage_quantity === null ||
               settings.brew_order.after.brew_beverage_quantity === undefined) {
               const newSettingsObj: any = new Settings();
               settings.brew_order.after.brew_beverage_quantity = newSettingsObj.brew_order.after.brew_beverage_quantity;
-              this.uiSettingsStorage.saveSettings(settings);
+              await this.uiSettingsStorage.saveSettings(settings);
             }
 
             if (settings.brew_order.before.method_of_preparation_tool === null ||
@@ -190,7 +190,7 @@ export class UIUpdate {
               settings.default_last_coffee_parameters.method_of_preparation = true;
 
               // With this property there also came the change that we moved all parameters to manage_parameters
-              this.uiSettingsStorage.saveSettings(settings);
+              await this.uiSettingsStorage.saveSettings(settings);
             }
 
 
@@ -216,7 +216,7 @@ export class UIUpdate {
             delete settings.tds;
             delete settings.brew_beverage_quantity;
 
-            this.uiSettingsStorage.saveSettings(settings);
+            await this.uiSettingsStorage.saveSettings(settings);
 
 
             break;
@@ -224,13 +224,13 @@ export class UIUpdate {
             const settings_v2: Settings = this.uiSettingsStorage.getSettings();
             // Reset after we've set new brewfilter
             settings_v2.resetFilter();
-            this.uiSettingsStorage.saveSettings(settings_v2);
+            await this.uiSettingsStorage.saveSettings(settings_v2);
             break;
           case 'UPDATE_3':
             const settings_v3: any = this.uiSettingsStorage.getSettings();
             // Delete old analytics property
             delete settings_v3.analytics;
-            this.uiSettingsStorage.saveSettings(settings_v3);
+            await this.uiSettingsStorage.saveSettings(settings_v3);
             break;
           case 'UPDATE_4':
             if (this.platform.is('cordova') && this.platform.is('ios')) {
@@ -294,6 +294,25 @@ export class UIUpdate {
               }
             }
             break;
+
+          case 'UPDATE_5':
+
+            /// TODO - fix more parapmeters here aswell. and fix that settings are saved again
+            const settings_v5: any = this.uiSettingsStorage.getSettings();
+            if (settings_v5.brew_order.before.water === null || settings_v5.brew_order.before.water === undefined) {
+              const newSettingsObj: any = new Settings();
+              settings_v5.brew_order.before.water = newSettingsObj.brew_order.before.water;
+              settings_v5.brew_order.before.bean_weight_in = newSettingsObj.brew_order.before.water;
+              settings_v5.brew_order.before.water = newSettingsObj.brew_order.before.water;
+              await this.uiSettingsStorage.saveSettings(settings);
+
+              const preparations_v5:any = this.uiPreparationStorage.getAllEntries();
+              for(const prep of preparations_v5) {
+                prep.brew_order.before.water = newSettingsObj.brew_order.before.water;
+                await this.uiPreparationStorage.update(prep);
+              }
+            }
+            break;
           default:
             break;
         }
@@ -354,6 +373,7 @@ export class UIUpdate {
     await this.__checkUpdateForDataVersion('UPDATE_2',!hasData);
     await this.__checkUpdateForDataVersion('UPDATE_3',!hasData);
     await this.__checkUpdateForDataVersion('UPDATE_4',!hasData);
+    await this.__checkUpdateForDataVersion('UPDATE_5',!hasData);
 
   }
 
@@ -377,7 +397,7 @@ export class UIUpdate {
         for (const v of displayingVersions) {
           version.pushUpdatedVersion(v);
         }
-        this.uiVersionStorage.saveVersion(version);
+      //  this.uiVersionStorage.saveVersion(version);
       }
 
       resolve();

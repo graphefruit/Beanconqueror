@@ -46,6 +46,7 @@ import {AnalyticsPopoverComponent} from '../popover/analytics-popover/analytics-
 import {IosPlatformService} from '../services/iosPlatform/ios-platform.service';
 import {AndroidPlatformService} from '../services/androidPlatform/android-platform.service';
 import {environment} from '../environments/environment';
+import {UIWaterStorage} from '../services/uiWaterStorage';
 
 
 declare var AppRate;
@@ -62,6 +63,7 @@ export class AppComponent implements AfterViewInit {
   public pages = {
     home: {title: 'NAV_HOME', url: '/', icon: 'home-outline', active: true},
     roasting_section: {title: 'NAV_ROASTING_SECTION', url: '/roasting-section', active: false},
+    water_section: {title: 'NAV_WATER_SECTION', url: '/water-section', active: false},
     settings: {title: 'NAV_SETTINGS', url: '/settings', icon: 'settings-outline', active: false},
 
     info: {title: 'NAV_INFORMATION_TO_APP', url: '/info', icon: 'information-circle-outline', active: false},
@@ -110,7 +112,8 @@ export class AppComponent implements AfterViewInit {
     private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
     private readonly intentHandlerService: IntentHandlerService,
     private readonly iosPlatformService: IosPlatformService,
-    private readonly androidPlatformService: AndroidPlatformService
+    private readonly androidPlatformService: AndroidPlatformService,
+    private readonly uiWaterStorage: UIWaterStorage
   ) {
     // Dont remove androidPlatformService, we need to initialize it via constructor
   }
@@ -191,6 +194,7 @@ export class AppComponent implements AfterViewInit {
           await this.uiVersionStorage.initializeStorage();
           await this.uiGreenBeanStorage.initializeStorage();
           await this.uiRoastingMachineStorage.initializeStorage();
+          await this.uiWaterStorage.initializeStorage();
 
           // Wait for every necessary service to be ready before starting the app
           // Settings and version, will create a new object on start, so we need to wait for this in the end.
@@ -202,6 +206,7 @@ export class AppComponent implements AfterViewInit {
           const versionStorageReadyCallback = this.uiVersionStorage.storageReady();
           const greenBeanStorageCallback = this.uiGreenBeanStorage.storageReady();
           const roastingMachineStorageCallback = this.uiRoastingMachineStorage.storageReady();
+          const waterStorageCallback = this.uiWaterStorage.storageReady();
 
 
           Promise.all([
@@ -212,7 +217,8 @@ export class AppComponent implements AfterViewInit {
             millStorageReadyCallback,
             versionStorageReadyCallback,
             greenBeanStorageCallback,
-            roastingMachineStorageCallback
+            roastingMachineStorageCallback,
+            waterStorageCallback
           ])
             .then(async () => {
               this.uiLog.log('App finished loading');
@@ -254,6 +260,11 @@ export class AppComponent implements AfterViewInit {
   public showRoastingSection() {
     const settings: Settings = this.uiSettingsStorage.getSettings();
     return settings.show_roasting_section;
+  }
+
+  public showWaterSection() {
+    const settings: Settings = this.uiSettingsStorage.getSettings();
+    return settings.show_water_section;
   }
 
   private async __setDeviceLanguage(): Promise<any> {

@@ -28,10 +28,12 @@ export interface ISettings {
   show_archived_mills: boolean;
   show_archived_preparations: boolean;
   show_archived_green_beans: boolean;
+  show_archived_waters:boolean;
 
   track_caffeine_consumption: boolean;
 
   show_roasting_section: boolean;
+  show_water_section: boolean;
   show_cupping_section: boolean;
 
   brew_filter: {

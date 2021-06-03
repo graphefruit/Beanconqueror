@@ -49,6 +49,8 @@ import {IGreenBean} from '../../interfaces/green-bean/iGreenBean';
 import {IRoastingMachine} from '../../interfaces/roasting-machine/iRoastingMachine';
 import {IMill} from '../../interfaces/mill/iMill';
 import {IBrewCoordinates} from '../../interfaces/brew/iBrewCoordinates';
+import {UIWaterStorage} from '../../services/uiWaterStorage';
+import {Water} from '../../classes/water/water';
 declare var cordova: any;
 declare var device: any;
 
@@ -115,7 +117,8 @@ export class SettingsPage implements OnInit {
               private readonly uiHealthKit: UIHealthKit,
               private readonly modalCtrl: ModalController,
               private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
-              private readonly uiGreenBeanStorage: UIGreenBeanStorage
+              private readonly uiGreenBeanStorage: UIGreenBeanStorage,
+              private readonly uiWaterStorage: UIWaterStorage
               ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -279,10 +282,12 @@ export class SettingsPage implements OnInit {
             const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
             const preparations: Array<Preparation> = this.uiPreparationStorage.getAllEntries();
             const mills: Array<Mill> = this.uiMillStorage.getAllEntries();
+            const waters: Array<Water> = this.uiWaterStorage.getAllEntries();
             await this._exportAttachments(beans);
             await this._exportAttachments(brews);
             await this._exportAttachments(preparations);
             await this._exportAttachments(mills);
+            await this._exportAttachments(waters);
             await this.uiAlert.hideLoadingSpinner();
 
             const alert =  await this.alertCtrl.create({
@@ -501,6 +506,9 @@ export class SettingsPage implements OnInit {
     if (!parsedContent[this.uiGreenBeanStorage.getDBPath()]) {
       parsedContent[this.uiGreenBeanStorage.getDBPath()] = [];
     }
+    if (!parsedContent[this.uiWaterStorage.getDBPath()]) {
+      parsedContent[this.uiWaterStorage.getDBPath()] = [];
+    }
     if (!parsedContent[this.uiVersionStorage.getDBPath()]) {
       parsedContent[this.uiVersionStorage.getDBPath()] = [];
     }
@@ -517,6 +525,7 @@ export class SettingsPage implements OnInit {
         this.__cleanupAttachmentData(parsedContent[this.uiGreenBeanStorage.getDBPath()]);
         this.__cleanupAttachmentData(parsedContent[this.uiPreparationStorage.getDBPath()]);
         this.__cleanupAttachmentData(parsedContent[this.uiMillStorage.getDBPath()]);
+        this.__cleanupAttachmentData(parsedContent[this.uiWaterStorage.getDBPath()]);
 
       }
       this.__cleanupImportSettingsData(parsedContent[this.uiSettingsStorage.getDBPath()]);
@@ -549,6 +558,7 @@ export class SettingsPage implements OnInit {
               const millData:Array<Mill> = this.uiMillStorage.getAllEntries();
               const greenBeanData:Array<GreenBean> = this.uiGreenBeanStorage.getAllEntries();
               const roastingMachineData:Array<RoastingMachine> = this.uiRoastingMachineStorage.getAllEntries();
+              const waterData:Array<Water> = this.uiWaterStorage.getAllEntries();
 
               await this._importFiles(brewsData,_importPath);
               await this._importFiles(beansData,_importPath);
@@ -556,6 +566,7 @@ export class SettingsPage implements OnInit {
               await this._importFiles(millData,_importPath);
               await this._importFiles(greenBeanData,_importPath);
               await this._importFiles(roastingMachineData,_importPath);
+              await this._importFiles(waterData,_importPath);
             }
 
             if (this.uiBrewStorage.getAllEntries().length > 0 && this.uiMillStorage.getAllEntries().length <= 0) {
@@ -604,26 +615,39 @@ export class SettingsPage implements OnInit {
   private async __reinitializeStorages (): Promise<any> {
     return new Promise(async (resolve) => {
 
-      await this.uiBeanStorage.reinitializeStorage();
-      await this.uiBrewStorage.reinitializeStorage();
-      await this.uiPreparationStorage.reinitializeStorage();
-      await this.uiSettingsStorage.reinitializeStorage();
-      await this.uiMillStorage.reinitializeStorage();
-      await this.uiVersionStorage.reinitializeStorage();
+      await this.uiBeanStorage.initializeStorage();
+      await this.uiPreparationStorage.initializeStorage();
+      await this.uiSettingsStorage.initializeStorage();
+      await this.uiBrewStorage.initializeStorage();
+      await this.uiMillStorage.initializeStorage();
+      await this.uiVersionStorage.initializeStorage();
+      await this.uiGreenBeanStorage.initializeStorage();
+      await this.uiRoastingMachineStorage.initializeStorage();
+      await this.uiWaterStorage.initializeStorage();
 
+      // Wait for every necessary service to be ready before starting the app
+      // Settings and version, will create a new object on start, so we need to wait for this in the end.
       const beanStorageReadyCallback = this.uiBeanStorage.storageReady();
       const preparationStorageReadyCallback = this.uiPreparationStorage.storageReady();
       const uiSettingsStorageReadyCallback = this.uiSettingsStorage.storageReady();
       const brewStorageReadyCallback = this.uiBrewStorage.storageReady();
       const millStorageReadyCallback = this.uiMillStorage.storageReady();
       const versionStorageReadyCallback = this.uiVersionStorage.storageReady();
+      const greenBeanStorageCallback = this.uiGreenBeanStorage.storageReady();
+      const roastingMachineStorageCallback = this.uiRoastingMachineStorage.storageReady();
+      const waterStorageCallback = this.uiWaterStorage.storageReady();
+
+
       Promise.all([
         beanStorageReadyCallback,
         preparationStorageReadyCallback,
         brewStorageReadyCallback,
-        millStorageReadyCallback,
         uiSettingsStorageReadyCallback,
-        versionStorageReadyCallback
+        millStorageReadyCallback,
+        versionStorageReadyCallback,
+        greenBeanStorageCallback,
+        roastingMachineStorageCallback,
+        waterStorageCallback
       ]).then(async () => {
         await this.uiUpdate.checkUpdate();
         resolve();

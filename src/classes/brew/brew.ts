@@ -60,7 +60,9 @@ export class Brew implements IBrew {
   public coffee_blooming_time: number;
   public attachments: Array<string>;
   public tds: number;
-
+  // UUID
+  public water: string;
+  public bean_weight_in: number;
   public coordinates: IBrewCoordinates;
 
 
@@ -70,6 +72,8 @@ export class Brew implements IBrew {
   public config: Config;
 
   public cupping: ICupping;
+
+
 
   public method_of_preparation_tools: Array<string>;
 
@@ -128,6 +132,7 @@ export class Brew implements IBrew {
 
     this.method_of_preparation_tools = [];
     this.favourite = false;
+    this.water = '';
   }
 
   public initializeByObject(brewObj: IBrew): void {

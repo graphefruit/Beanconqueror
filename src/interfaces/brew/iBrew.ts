@@ -122,6 +122,16 @@ export interface IBrew {
    */
   method_of_preparation_tools: Array<string>;
 
+  /**
+   * UUID
+   */
+  water: string;
+
+  /**
+   * Used for rentention calculation
+   */
+  bean_weight_in: number;
+
   favourite: boolean;
 
   // Functions

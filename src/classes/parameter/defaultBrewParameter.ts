@@ -24,6 +24,9 @@ export class DefaultBrewParameter implements IBrewParameter {
   public tds: boolean;
   public brew_beverage_quantity: boolean;
   public method_of_preparation_tool: boolean;
+  public water: boolean;
+  public bean_weight_in: boolean;
+  public vessel: boolean;
   constructor() {
     this.bean_type = true;
     this.brew_temperature_time = false;
@@ -47,5 +50,8 @@ export class DefaultBrewParameter implements IBrewParameter {
     this.tds = false;
     this.brew_beverage_quantity = true;
     this.method_of_preparation_tool = false;
+    this.water = false;
+    this.bean_weight_in = false;
+    this.vessel = false;
   }
 }

@@ -384,7 +384,7 @@
   {
     "name": "Sweet & Roasting Notes",
     "color": "#F9F8B5",
-    "text": "rgb(255, 255, 255)",
+    "text": "rgb(0, 0, 0)",
     "children": [
       {
         "name": "Chocolate",

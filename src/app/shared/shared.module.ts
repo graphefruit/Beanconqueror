@@ -132,6 +132,15 @@ import {AnalyticsPopoverComponent} from '../../popover/analytics-popover/analyti
 import {Deeplinks} from '@ionic-native/deeplinks/ngx';
 import {BeanArchivePopoverComponent} from '../beans/bean-archive-popover/bean-archive-popover.component';
 import {CuppingFlavorsComponent} from '../../components/cupping-flavors/cupping-flavors.component';
+import {WaterSectionPage} from '../water-section/water-section.page';
+import {WaterPage} from '../water-section/water/water.page';
+import {WaterPopoverActionsComponent} from '../water-section/water/water-popover-actions/water-popover-actions.component';
+import {WaterAddComponent} from '../water-section/water/water-add/water-add.component';
+import {WaterInformationCardComponent} from '../../components/water-information-card/water-information-card.component';
+import {WaterEditComponent} from '../water-section/water/water-edit/water-edit.component';
+import {WaterDetailComponent} from '../water-section/water/water-detail/water-detail.component';
+import {WaterModalSelectComponent} from '../water-section/water/water-modal-select/water-modal-select.component';
+import {WaterOverlayDirective} from '../../directive/water-overlay.directive';
 
 
 @NgModule({
@@ -142,6 +151,8 @@ import {CuppingFlavorsComponent} from '../../components/cupping-flavors/cupping-
     BrewParameterPage,
     DashboardPage,
     RoastingSectionPage,
+    WaterSectionPage,
+    WaterPage,
     GreenBeansPage,
     GreenBeanAddComponent,
     GreenBeanEditComponent,
@@ -196,6 +207,9 @@ import {CuppingFlavorsComponent} from '../../components/cupping-flavors/cupping-
     BeanInformationComponent,
     PreparationInformationCardComponent,
     MillInformationCardComponent,
+    WaterInformationCardComponent,
+    WaterEditComponent,
+    WaterDetailComponent,
     CuppingRadarComponent,
     CuppingFlavorsComponent,
     RemoveEmptyNumberDirective,
@@ -206,17 +220,20 @@ import {CuppingFlavorsComponent} from '../../components/cupping-flavors/cupping-
     MillOverlayDirective,
     RoastingMachineOverlayDirective,
     PreparationOverlayDirective,
+    WaterOverlayDirective,
     TooltipDirective,
     DisableDoubleClickDirective,
     BrewPage,
     BrewDetailComponent,
     BrewEditComponent,
     PhotoPopoverComponent,
+    WaterPopoverActionsComponent,
     BrewPopoverActionsComponent,
     BeanPopoverActionsComponent,
     BeanArchivePopoverComponent,
     MillPopoverActionsComponent,
     BeanModalSelectComponent,
+    WaterModalSelectComponent,
     RoastingMachineModalSelectComponent,
     MillModalSelectComponent,
     PreparationModalSelectComponent,
@@ -239,7 +256,8 @@ import {CuppingFlavorsComponent} from '../../components/cupping-flavors/cupping-
     RoastingMachineAddComponent,
     RoastingMachineDetailComponent,
     RoastingMachinePage,
-    RoastingMachinePopoverActionsComponent
+    RoastingMachinePopoverActionsComponent,
+    WaterAddComponent
   ],
   entryComponents: [
     SettingsPage,
@@ -248,6 +266,8 @@ import {CuppingFlavorsComponent} from '../../components/cupping-flavors/cupping-
     BrewParameterPage,
     DashboardPage,
     RoastingSectionPage,
+    WaterSectionPage,
+    WaterPage,
     GreenBeansPage,
     GreenBeanAddComponent,
     GreenBeanEditComponent,
@@ -261,6 +281,9 @@ import {CuppingFlavorsComponent} from '../../components/cupping-flavors/cupping-
     BeanFilterComponent,
     PreparationInformationCardComponent,
     MillInformationCardComponent,
+    WaterInformationCardComponent,
+    WaterEditComponent,
+    WaterDetailComponent,
     AboutComponent,
     ContactComponent,
     InfoComponent,
@@ -301,9 +324,11 @@ import {CuppingFlavorsComponent} from '../../components/cupping-flavors/cupping-
     BrewEditComponent,
     PhotoPopoverComponent,
     BrewPopoverActionsComponent,
+    WaterPopoverActionsComponent,
     BeanPopoverActionsComponent,
     BeanArchivePopoverComponent,
     BeanModalSelectComponent,
+    WaterModalSelectComponent,
     RoastingMachineModalSelectComponent,
     MillModalSelectComponent,
     PreparationModalSelectComponent,
@@ -327,7 +352,10 @@ import {CuppingFlavorsComponent} from '../../components/cupping-flavors/cupping-
     RoastingMachineAddComponent,
     RoastingMachineDetailComponent,
     RoastingMachinePage,
-    RoastingMachinePopoverActionsComponent],
+    RoastingMachinePopoverActionsComponent,
+    WaterAddComponent
+
+  ],
   imports: [
     CommonModule,
     IonicModule,
@@ -348,6 +376,7 @@ import {CuppingFlavorsComponent} from '../../components/cupping-flavors/cupping-
     MillOverlayDirective,
     RoastingMachineOverlayDirective,
     PreparationOverlayDirective,
+    WaterOverlayDirective,
     TooltipDirective,
     DisableDoubleClickDirective,
     FormatDatePipe, KeysPipe, EnumToArrayPipe,
@@ -375,6 +404,8 @@ import {CuppingFlavorsComponent} from '../../components/cupping-flavors/cupping-
     BeansPage,
     HelperPage,
     RoastingSectionPage,
+    WaterSectionPage,
+    WaterPage,
     GreenBeansPage,
     BeansAddComponent,
     BeansEditComponent,
@@ -427,6 +458,9 @@ import {CuppingFlavorsComponent} from '../../components/cupping-flavors/cupping-
     BeanInformationComponent,
     PreparationInformationCardComponent,
     MillInformationCardComponent,
+    WaterInformationCardComponent,
+    WaterEditComponent,
+    WaterDetailComponent,
     CuppingRadarComponent,
     CuppingFlavorsComponent,
     RemoveEmptyNumberDirective,
@@ -437,6 +471,7 @@ import {CuppingFlavorsComponent} from '../../components/cupping-flavors/cupping-
     MillOverlayDirective,
     RoastingMachineOverlayDirective,
     PreparationOverlayDirective,
+    WaterOverlayDirective,
     TooltipDirective,
     DisableDoubleClickDirective,
     BrewPage,
@@ -444,9 +479,11 @@ import {CuppingFlavorsComponent} from '../../components/cupping-flavors/cupping-
     BrewEditComponent,
     PhotoPopoverComponent,
     BrewPopoverActionsComponent,
+    WaterPopoverActionsComponent,
     BeanPopoverActionsComponent,
     BeanArchivePopoverComponent,
     BeanModalSelectComponent,
+    WaterModalSelectComponent,
     RoastingMachineModalSelectComponent,
     MillModalSelectComponent,
     PreparationModalSelectComponent,
@@ -470,7 +507,9 @@ import {CuppingFlavorsComponent} from '../../components/cupping-flavors/cupping-
     RoastingMachineAddComponent,
     RoastingMachineDetailComponent,
     RoastingMachinePage,
-    RoastingMachinePopoverActionsComponent],
+    RoastingMachinePopoverActionsComponent,
+    WaterAddComponent
+  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule {

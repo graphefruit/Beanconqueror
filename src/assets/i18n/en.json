@@ -19,6 +19,7 @@
   "NAV_LOGS": "Logs",
   "NAV_BREW_PARAMS": "Brewing Parameters",
   "NAV_INFORMATION_TO_APP": "About Beanconqueror",
+  "NAV_WATER_SECTION": "Water",
   "POPOVER_BREWS_OPTION_REPEAT": "Repeat",
   "POPOVER_BREWS_OPTION_DETAIL": "Details",
   "DETAIL": "Details",
@@ -153,6 +154,9 @@
   "BREW_DATA_TDS_EY": "TDS / %EY",
   "BREW_DATA_BREW_BEVERAGE_QUANTITY": "Beverage quantity (gr/ml)",
   "BREW_DATA_PREPARATION_METHOD_TOOL": "Preparation tools",
+  "BREW_DATA_WATER": "Water",
+  "BREW_DATA_BEAN_WEIGHT_IN": "Bean amount (gr)",
+  "BREW_DATA_VESSEL": "Vessel",
   "ONE_DAY": "Day",
   "DAYS": "Days",
   "ONE_HOUR": "hour",
@@ -311,14 +315,17 @@
   "TOAST_BEAN_DELETED_SUCCESSFULLY": "Bean has been deleted",
   "TOAST_GREEN_BEAN_DELETED_SUCCESSFULLY": "Green bean has been deleted",
   "TOAST_MILL_DELETED_SUCCESSFULLY": "Grinder has been deleted",
+  "TOAST_WATER_DELETED_SUCCESSFULLY": "Water has been deleted",
   "TOAST_PREPARATION_DELETED_SUCCESSFULLY": "Preparation method has been deleted",
   "TOAST_BREW_EDITED_SUCCESSFULLY": "Brew has been edited",
   "TOAST_BEAN_EDITED_SUCCESSFULLY": "Bean has been edited",
   "TOAST_MILL_EDITED_SUCCESSFULLY": "Grinder has been edited",
   "TOAST_PREPARATION_EDITED_SUCCESSFULLY": "Preparation has been edited",
+  "TOAST_WATER_EDITED_SUCCESSFULLY": "Water has been edited",
   "TOAST_BEAN_ARCHIVED_SUCCESSFULLY": "Bean has been archived",
   "TOAST_MILL_ARCHIVED_SUCCESSFULLY": "Grinder has been archived",
   "TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY": "Preparation method has been archived",
+  "TOAST_WATER_ARCHIVED_SUCCESSFULLY": "Water has been archived",
   "BEAN_WEIGHT_ALREADY_USED": "{{gramUsed}}g of {{gramTotal}}g",
   "PREPARATION_TYPE_CUSTOM_PREPARATION": "Custom preparation method",
   "PREPARATION_TYPE_AEROPRESS": "Aeropress",
@@ -338,6 +345,8 @@
   "PREPARATION_TYPE_ADD_CUSTOM": "Add custom method",
   "CHOOSE_BEANS": "Select beans",
   "CHOOSE_BEAN": "Select bean",
+  "CHOOSE_WATERS": "Select waters",
+  "CHOOSE_WATER": "Select water",
   "CHOOSE_PREPARATIONS": "Select preparation methods",
   "CHOOSE_PREPARATION": "Select preparation method",
   "CHOOSE_MILLS": "Select grinders",
@@ -403,7 +412,9 @@
       "BREW_DATA_TDS": "How many solids where dissolved in total?",
       "BREW_DATA_NOTES": "Add notes about this brew",
       "BREW_DATA_BREW_BEVERAGE_QUANTITY": "Add result of beverage quantity",
-      "BREW_DATA_PREPARATION_METHOD_TOOL": "Please choose your preparation tools"
+      "BREW_DATA_PREPARATION_METHOD_TOOL": "Please choose your preparation tools",
+      "BREW_DATA_WATER": "Choose used water",
+      "BREW_DATA_BEAN_WEIGHT_IN": "How much bean weight did you use?"
     }
   },
   "ROASTED_BEFORE": "Roasted before",
@@ -675,7 +686,8 @@
     }
   },
   "PAGE_SETTINGS_MANAGE_SECTIONS": "More sections",
-  "PAGE_SETTINGS_SHOW_ROASTING_SECTION": "Activate roasting section ",
+  "PAGE_SETTINGS_SHOW_ROASTING_SECTION": "Activate roasting section",
+  "PAGE_SETTINGS_SHOW_WATER_SECTION": "Activate water section",
   "PAGE_SETTINGS_SHOW_CUPPING_SECTION": "Activate cupping section",
   "BEAN_DATA_BUY_DATE": "Buy date",
   "BEAN_SORT_CREATION_DATE": "Creation date",
@@ -691,6 +703,7 @@
   "TOAST_ROASTING_MACHINE_EDITED_SUCCESSFULLY": "Roasting machine edited",
   "TOAST_ROASTING_MACHINE_ARCHIVED_SUCCESSFULLY": "Roaster archived",
   "DELETE_ROASTING_MACHINE_QUESTION": "Delete roaster? All referenced roasted beans will be updated and will not be deleted",
+  "DELETE_WATER_QUESTION": "Delete water? All referenced brews will be updated and will not be deleted",
   "TOAST_ROASTING_MACHINE_DELETED_SUCCESSFULLY": "Roaster deleted",
   "EDIT_ROASTING_MACHINE": "Edit",
   "DETAIL_ROASTING_MACHINE":"Roaster details",
@@ -874,5 +887,37 @@
   "CUPPING_137": "Magnolia",
   "CUPPING_138": "Jasmine honeysuckle",
   "CUPPING_139": "Orange blossom",
-  "CUPPING_140": "Lemongrass"
+  "CUPPING_140": "Lemongrass",
+  "WATER_SECTION" : {
+    "NAV_WATER": "Water",
+    "YOU_GOT_NO_ARCHIVED_WATER": "You didn't archive any water yet",
+    "YOU_GOT_NO_WATER": "You didn't add any water yet",
+    "CATEGORY_INFORMATION": "Water information",
+    "CATEGORY_GENERAL": "General",
+    "UNITS": "Units",
+    "WATER_BOTTLE_EXPLANATION": "Water bottles most often report concentration in units of ppm = mg/L",
+    "WATER": {
+      "GENERAL_HARDNESS":"General hardness (GH)",
+      "TOTAL_ALKALINITY":"Total alkalinity (KH)",
+      "CALCIUM": "Calcium (Ca)",
+      "MAGNESIUM":"Magnesium (Mg)",
+      "SODIUM": "Sodium (Na)",
+      "TDS":"Total dissolved solids (TDS)",
+      "PLACE_HOLDER": {
+        "GENERAL_HARDNESS":"General hardness",
+        "TOTAL_ALKALINITY":"Total alkalinity",
+        "CALCIUM": "Calcium (Ca)",
+        "MAGNESIUM":"Magnesium (Mg)",
+        "SODIUM": "Sodium (Na)",
+        "TDS":"Total dissolved solids (TDS)",
+        "NAME": "Add water name"
+      },
+      "WATER_UNIT":  {
+        "UNKNOWN": "Unknown",
+        "PPM": "ppm als CaCO3",
+        "MG_L": "mg/L",
+        "MMOL_L": "mmo/L"
+      }
+    }
+  }
 }

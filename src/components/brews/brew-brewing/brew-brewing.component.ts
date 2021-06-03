@@ -339,6 +339,9 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
     if (checkData.default_last_coffee_parameters.method_of_preparation_tool || _template === true) {
       this.data.method_of_preparation_tools = brew.method_of_preparation_tools;
     }
+    if (checkData.default_last_coffee_parameters.water || _template === true) {
+      this.data.water = brew.water;
+    }
 
   }
 
@@ -390,5 +393,6 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
     this.profileResultsAvailable = false;
     this.profileFocused= false;
   }
+
 
 }

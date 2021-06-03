@@ -38,12 +38,30 @@
     <ion-label>{{"BREW_DATA_PRESSURE_PROFILE" | translate}}</ion-label>
     <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.pressure_profile"></ion-checkbox>
   </ion-item>
-  <ion-item lines="none" tappable>
+  <ion-item tappable>
     <ion-label>
       <h2>{{"BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}</h2>
       <p>{{"PREPARATION_TOOLS_PLACEHOLDER" | translate}}</p>
     </ion-label>
     <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.method_of_preparation_tool"></ion-checkbox>
+  </ion-item>
+  <ion-item tappable>
+    <ion-label>{{"BREW_DATA_WATER" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.water"></ion-checkbox>
+  </ion-item>
+  <ion-item tappable>
+    <ion-label>
+      <h2>{{"BREW_DATA_BEAN_WEIGHT_IN" | translate}}</h2>
+      <p>{{"BEAN_WEIGHT_IN_PLACEHOLDER" | translate}}</p>
+    </ion-label>
+    <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.bean_weight_in"></ion-checkbox>
+  </ion-item>
+  <ion-item lines="none"  tappable>
+    <ion-label>
+      <h2>{{"BREW_DATA_VESSEL" | translate}}</h2>
+      <p>{{"VESSLE_PLACEHOLDER" | translate}}</p>
+    </ion-label>
+    <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.vessel"></ion-checkbox>
   </ion-item>
 </ion-card>
 <ion-card class="ion-padding" style="margin-top:30px;">

@@ -17,12 +17,17 @@ const routes: Routes = [
     },
     loadChildren: './home/home.module#HomePageModule',
   },
-
   {
     path: 'roasting-section', resolve: {
       resolver: RouteResolver
     },
     loadChildren: './roasting-section/roasting-section.module#RoastingSectionPageModule'
+  },
+  {
+    path: 'water-section', resolve: {
+      resolver: RouteResolver
+    },
+    loadChildren: './water-section/water-section.module#WaterSectionPageModule'
   },
   {
     path: 'info', resolve: {

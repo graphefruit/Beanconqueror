@@ -15,6 +15,9 @@ export class OrderBrewParameter implements IOrderBrewParameter {
     mill_timer: number;
     pressure_profile: number;
     method_of_preparation_tool: number;
+    water: number;
+    bean_weight_in:number;
+    vessel:number;
   };
 
   public while: {
@@ -51,6 +54,9 @@ export class OrderBrewParameter implements IOrderBrewParameter {
       mill_timer: 8,
       pressure_profile: 9,
       method_of_preparation_tool: 10,
+      water: 11,
+      bean_weight_in:12,
+      vessel:13
     };
 
     this.while = {
@@ -126,6 +132,12 @@ export class OrderBrewParameter implements IOrderBrewParameter {
         return 'BREW_DATA_TDS';
       case 'brew_beverage_quantity':
         return 'BREW_DATA_BREW_BEVERAGE_QUANTITY';
+      case 'water':
+        return 'BREW_DATA_WATER';
+      case 'bean_weight_in':
+        return 'BREW_DATA_BEAN_WEIGHT_IN';
+      case 'vessel':
+        return 'BREW_DATA_VESSEL';
       default:
         return _key;
     }

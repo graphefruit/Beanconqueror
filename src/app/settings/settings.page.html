@@ -109,12 +109,17 @@
   <ion-card class="margin-top-20">
     <ion-card-content>
       <ion-card-title>{{"PAGE_SETTINGS_MANAGE_SECTIONS" | translate}}</ion-card-title>
-      <ion-item lines="none">
+      <ion-item >
         <ion-label>{{"PAGE_SETTINGS_SHOW_ROASTING_SECTION" | translate}}</ion-label>
         <ion-checkbox (ngModelChange)="saveSettings();"
                       [(ngModel)]="settings.show_roasting_section"></ion-checkbox>
       </ion-item>
-      <ion-item  *ngIf="false">>
+      <ion-item lines="none">
+        <ion-label>{{"PAGE_SETTINGS_SHOW_WATER_SECTION" | translate}}</ion-label>
+        <ion-checkbox (ngModelChange)="saveSettings();"
+                      [(ngModel)]="settings.show_water_section"></ion-checkbox>
+      </ion-item>
+      <ion-item  *ngIf="false">
         <ion-label>{{"PAGE_SETTINGS_SHOW_CUPPING_SECTION" | translate}}</ion-label>
         <ion-checkbox (ngModelChange)="saveSettings();"
                       [(ngModel)]="settings.show_cupping_section"></ion-checkbox>

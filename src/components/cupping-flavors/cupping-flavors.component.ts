@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import CuppingFlavors from '../../data/cupping-flavors/cupping-flavors.json'
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'cupping-flavors',
@@ -9,58 +10,126 @@ import CuppingFlavors from '../../data/cupping-flavors/cupping-flavors.json'
 export class CuppingFlavorsComponent implements OnInit {
 
   public searchFlavorText: string = '';
-  public cuppingFlavors = [];
-  constructor() { }
+
+
+  public selectedFlavors = {};
+  public customFlavors = [];
+
+
+  public displayingFlavors = [];
+  private allCuppingFlavors = [];
+  public customFlavor: string = '';
+
+
+  constructor(private translate: TranslateService) { }
 
   public ngOnInit() {
-    this.cuppingFlavors = CuppingFlavors;
 
+    this.instanceCuppingFlavors();
+    this.setNewCuppingView(this.allCuppingFlavors);
+  }
 
-
-    var flavorValue = 1;
-    const myObj = {};
-    for (let i=0;i<this.cuppingFlavors.length;i++) {
-      this.cuppingFlavors[i]["value"] = flavorValue;
-
-      let oldName = this.cuppingFlavors[i]["name"];
-      this.cuppingFlavors[i]["label"] = "CUPPING_" + flavorValue;
-      myObj['CUPPING_' + flavorValue] = oldName;
-
-      flavorValue++;
-
-      for (let z=0;z<this.cuppingFlavors[i].children.length;z++) {
-        this.cuppingFlavors[i].children[z]["value"] = flavorValue;
-
-        oldName = this.cuppingFlavors[i].children[z]["name"];
-        this.cuppingFlavors[i].children[z]["label"] = "CUPPING_" + flavorValue;
-        myObj['CUPPING_' + flavorValue] = oldName;
-
-
-        flavorValue++;
-
-        for (let y=0;y<this.cuppingFlavors[i].children[z].children.length;y++) {
-
-          this.cuppingFlavors[i].children[z].children[y]["value"] = flavorValue;
-
-          oldName = this.cuppingFlavors[i].children[z].children[y]["name"];
-          this.cuppingFlavors[i].children[z].children[y]["label"] = "CUPPING_" + flavorValue;
-          myObj['CUPPING_' + flavorValue] = oldName;
-
-
-          flavorValue++;
-
+  private instanceCuppingFlavors() {
+    this.allCuppingFlavors = CuppingFlavors;
+    for (const flavor of this.allCuppingFlavors) {
+      flavor.translatedLabel = this.translate.instant(flavor.label);
+      flavor.display = true;
+      for (const subFlavors of flavor.children) {
+        subFlavors.translatedLabel = this.translate.instant(subFlavors.label);
+        subFlavors.display = true;
+        for (const subSubFlavors of subFlavors.children) {
+          subSubFlavors.translatedLabel = this.translate.instant(subSubFlavors.label);
+          subSubFlavors.display = true;
         }
       }
-
     }
-    debugger;
-    console.log(JSON.stringify(this.cuppingFlavors));
   }
+  private setNewCuppingView(_newView: Array<any>) {
+    this.displayingFlavors =  Object.assign([], _newView);
+  }
+
 
   public searchFlavors() {
-    requestAnimationFrame(() => {
-      console.log(this.searchFlavorText);
-    });
+      if (this.searchFlavorText && this.searchFlavorText.trim() !== '') {
+        this.setNewCuppingView(this.searchThroughFlavors(this.searchFlavorText.trim()));
+      } else {
+        this.resetFlavors();
+      }
   }
+
+  public resetFlavors() {
+    this.setNewCuppingView(this.allCuppingFlavors);
+  }
+  private searchThroughFlavors(searchText: string) {
+
+    const searchedFlavors: Array<any> = JSON.parse(JSON.stringify(this.allCuppingFlavors));
+
+
+
+
+    for (const flavor of searchedFlavors) {
+      let displaySubFlavor: boolean = false;
+
+      for (const subFlavors of flavor.children) {
+
+        let displaySubSubFlavor: boolean = false;
+
+        for (const subSubFlavors of subFlavors.children) {
+          if (this.flavorMatches(subSubFlavors.translatedLabel,searchText)) {
+            subSubFlavors.display = true;
+            displaySubSubFlavor = true;
+          } else {
+            subSubFlavors.display = false;
+          }
+
+        }
+
+        if (displaySubSubFlavor) {
+          subFlavors.display = true;
+          displaySubFlavor = true;
+        } else {
+          // If subSubFlavor is not display, we search if we show the above one aswell.
+          if (this.flavorMatches(subFlavors.translatedLabel,searchText)) {
+            subFlavors.display = true;
+            displaySubFlavor = true;
+          } else {
+            subFlavors.display = false;
+          }
+        }
+
+
+      }
+
+      if (displaySubFlavor) {
+        flavor.display = true;
+      } else {
+        // If subSubFlavor is not display, we search if we show the above one aswell.
+        if (this.flavorMatches(flavor.translatedLabel,searchText)) {
+          flavor.display = true;
+        } else {
+          flavor.display = false;
+        }
+      }
+    }
+    return searchedFlavors;
+
+  }
+  private flavorMatches(text:string, search: string):boolean {
+    return text.toLowerCase().includes(search.toLowerCase());
+  }
+
+
+  public addCustomFlavor() {
+    if (this.customFlavor)
+    {
+      this.customFlavors.push(this.customFlavor);
+      this.customFlavor = '';
+    }
+  }
+  public removeCustomFlavor(_index){
+    this.customFlavors.splice(_index, 1);
+  }
+
+
 
 }

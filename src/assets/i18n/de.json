@@ -19,6 +19,7 @@
   "NAV_LOGS": "Logs",
   "NAV_BREW_PARAMS": "Bezugsparameter",
   "NAV_INFORMATION_TO_APP": "Über die App",
+  "NAV_WATER_SECTION": "Wasser",
   "POPOVER_BREWS_OPTION_REPEAT": "Wiederholen",
   "POPOVER_BREWS_OPTION_DETAIL": "Details",
   "DETAIL": "Details",
@@ -150,6 +151,9 @@
   "BREW_DATA_TDS_EY": "TDS / %EY",
   "BREW_DATA_BREW_BEVERAGE_QUANTITY": "Getränkmenge (gr/ml)",
   "BREW_DATA_PREPARATION_METHOD_TOOL": "Brühmethoden Tools",
+  "BREW_DATA_WATER": "Wasser",
+  "BREW_DATA_BEAN_WEIGHT_IN": "Bohnenmenge (gr)",
+  "BREW_DATA_VESSEL": "Gefäß",
   "BREW_INFORMATION_BREW_RATIO": "Brührate",
   "BREW_INFORMATION_BEAN_AGE": "Bohnenalter (Tage)",
   "BREW_INFORMATION_BREW_QUANTITY_TYPE_NAME": "Bezugsmenge-Typ",
@@ -312,13 +316,16 @@
   "TOAST_GREEN_BEAN_DELETED_SUCCESSFULLY": "Rohbohne gelöscht",
   "TOAST_MILL_DELETED_SUCCESSFULLY": "Mühle gelöscht",
   "TOAST_PREPARATION_DELETED_SUCCESSFULLY": "Brühmethode gelöscht",
+  "TOAST_WATER_DELETED_SUCCESSFULLY": "Wasser gelöscht",
   "TOAST_BREW_EDITED_SUCCESSFULLY": "Brühung editiert",
   "TOAST_BEAN_EDITED_SUCCESSFULLY": "Bohne editiert",
   "TOAST_MILL_EDITED_SUCCESSFULLY": "Mühle editiert",
   "TOAST_PREPARATION_EDITED_SUCCESSFULLY": "Brühmethode editiert",
+  "TOAST_WATER_EDITED_SUCCESSFULLY": "Wasser editiert",
   "TOAST_BEAN_ARCHIVED_SUCCESSFULLY": "Bohne archiviert",
   "TOAST_MILL_ARCHIVED_SUCCESSFULLY": "Mühle archiviert",
   "TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY": "Brühmethode archiviert",
+  "TOAST_WATER_ARCHIVED_SUCCESSFULLY": "Wasser archiviert",
   "BEAN_WEIGHT_ALREADY_USED": "{{gramUsed}}g von {{gramTotal}}g",
   "PREPARATION_TYPE_CUSTOM_PREPARATION": "Eigene Brühmethodik",
   "PREPARATION_TYPE_AEROPRESS": "Aeropress",
@@ -338,6 +345,8 @@
   "PREPARATION_TYPE_ADD_CUSTOM": "Eigene hinzufügen",
   "CHOOSE_BEANS": "Bohnen auswählen",
   "CHOOSE_BEAN": "Bohne auswählen",
+  "CHOOSE_WATERS": "Wasser auswählen",
+  "CHOOSE_WATER": "Wasser auswählen",
   "CHOOSE_PREPARATIONS": "Brühmethoden auswählen",
   "CHOOSE_PREPARATION": "Brühmethode auswählen",
   "CHOOSE_MILLS": "Mühlen auswählen",
@@ -403,7 +412,9 @@
       "BREW_DATA_TDS": "Wieviele Feststoffe wurden insgesamt gelöst?",
       "BREW_DATA_NOTES": "Füge Notizen zu dieser Brühung hinzu",
       "BREW_DATA_BREW_BEVERAGE_QUANTITY": "Füge die engültige Getränkemenge hinzu",
-      "BREW_DATA_PREPARATION_METHOD_TOOL": "Bitte wähle deine Brühmethoden tools aus"
+      "BREW_DATA_PREPARATION_METHOD_TOOL": "Bitte wähle deine Brühmethoden tools aus",
+      "BREW_DATA_WATER": "Wähle dein verwendetes Wasser aus",
+      "BREW_DATA_BEAN_WEIGHT_IN": "Wieviel Bohnengewicht wurde verwendet"
     }
   },
   "ROASTED_BEFORE": "Geröstet vor",
@@ -676,6 +687,7 @@
   },
   "PAGE_SETTINGS_MANAGE_SECTIONS": "Weitere Bereiche",
   "PAGE_SETTINGS_SHOW_ROASTING_SECTION": "Röstbereich aktivieren",
+  "PAGE_SETTINGS_SHOW_WATER_SECTION": "Wasserbereich aktivieren",
   "PAGE_SETTINGS_SHOW_CUPPING_SECTION": "Cuppingbereich aktivieren",
   "BEAN_DATA_BUY_DATE": "Kaufdatum",
   "BEAN_SORT_CREATION_DATE": "Erstelldatum",
@@ -691,6 +703,7 @@
   "TOAST_ROASTING_MACHINE_EDITED_SUCCESSFULLY": "Röstmaschine editiert",
   "TOAST_ROASTING_MACHINE_ARCHIVED_SUCCESSFULLY": "Röster archiviert",
   "DELETE_ROASTING_MACHINE_QUESTION": "Röster löschen? Alle referenzierten Bohnen werden abgeändert und nicht gelöscht.",
+  "DELETE_WATER_QUESTION": "Wasser löschen?  Alle referenzierten Brühungen werden abgeändert und nicht gelöscht.",
   "TOAST_ROASTING_MACHINE_DELETED_SUCCESSFULLY": "Röster gelöscht",
   "EDIT_ROASTING_MACHINE": "Editieren",
   "DETAIL_ROASTING_MACHINE":"Rösterdetails",
@@ -874,5 +887,37 @@
   "CUPPING_137": "Magnolia",
   "CUPPING_138": "Jasmine honeysuckle",
   "CUPPING_139": "Orange blossom",
-  "CUPPING_140": "Lemongrass"
+  "CUPPING_140": "Lemongrass",
+  "WATER_SECTION" : {
+    "NAV_WATER": "Wasser",
+    "YOU_GOT_NO_ARCHIVED_WATER": "Du hast noch kein Wasser archiviert",
+    "YOU_GOT_NO_WATER": "Du hast noch kein Wasser hinzugefügt",
+    "CATEGORY_INFORMATION": "Wasserinformationen",
+    "CATEGORY_GENERAL": "Allgemein",
+    "WATER_BOTTLE_EXPLANATION": "Die meisten Wasserflaschen geben die Konzentration als ppm = mg/l an",
+    "WATER": {
+      "GENERAL_HARDNESS":"General hardness",
+      "TOTAL_ALKALINITY":"Total alkalinity",
+      "CALCIUM": "Calcium (Ca)",
+      "MAGNESIUM":"Magnesium (Mg)",
+      "SODIUM": "Sodium (Na)",
+      "TDS": "Gelöste Stoffe (TDS [%])",
+      "UNITS": "Einheiten",
+      "PLACE_HOLDER": {
+        "GENERAL_HARDNESS":"General hardness",
+        "TOTAL_ALKALINITY":"Total alkalinity",
+        "CALCIUM": "Calcium (Ca)",
+        "MAGNESIUM":"Magnesium (Mg)",
+        "SODIUM": "Sodium (Na)",
+        "TDS":"Gelöste Stoffe (TDS [%])",
+        "NAME": "Wassernamen eingeben"
+      },
+      "WATER_UNIT":  {
+        "UNKNOWN": "Unbekannt",
+        "PPM": "ppm als CaCO3",
+        "MG_L": "mg/L",
+        "MMOL_L": "mmo/L"
+      }
+    }
+  }
 }
