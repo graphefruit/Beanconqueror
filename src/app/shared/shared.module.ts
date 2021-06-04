@@ -142,6 +142,7 @@ import {WaterDetailComponent} from '../water-section/water/water-detail/water-de
 import {WaterModalSelectComponent} from '../water-section/water/water-modal-select/water-modal-select.component';
 import {WaterOverlayDirective} from '../../directive/water-overlay.directive';
 import {BrewBrixCalculatorComponent} from '../brew/brew-brix-calculator/brew-brix-calculator.component';
+import {BrewBeverageQuantityCalculatorComponent} from '../brew/brew-beverage-quantity-calculator/brew-beverage-quantity-calculator.component';
 
 
 @NgModule({
@@ -201,6 +202,7 @@ import {BrewBrixCalculatorComponent} from '../brew/brew-brix-calculator/brew-bri
     MillAddComponent,
     BrewAddComponent,
     BrewBrixCalculatorComponent,
+    BrewBeverageQuantityCalculatorComponent,
     FormatDatePipe,
     KeysPipe,
     EnumToArrayPipe,
@@ -322,6 +324,7 @@ import {BrewBrixCalculatorComponent} from '../brew/brew-brix-calculator/brew-bri
     MillAddComponent,
     BrewAddComponent,
     BrewBrixCalculatorComponent,
+    BrewBeverageQuantityCalculatorComponent,
     BrewPage,
     BrewDetailComponent,
     BrewEditComponent,
@@ -454,6 +457,7 @@ import {BrewBrixCalculatorComponent} from '../brew/brew-brix-calculator/brew-bri
     MillAddComponent,
     BrewAddComponent,
     BrewBrixCalculatorComponent,
+    BrewBeverageQuantityCalculatorComponent,
     FormatDatePipe,
     KeysPipe,
     EnumToArrayPipe,

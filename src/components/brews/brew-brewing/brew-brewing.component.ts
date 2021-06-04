@@ -31,6 +31,7 @@ import {UIMillStorage} from '../../../services/uiMillStorage';
 import {UIBeanStorage} from '../../../services/uiBeanStorage';
 import {UIWaterStorage} from '../../../services/uiWaterStorage';
 import {BrewBrixCalculatorComponent} from '../../../app/brew/brew-brix-calculator/brew-brix-calculator.component';
+import {BrewBeverageQuantityCalculatorComponent} from '../../../app/brew/brew-beverage-quantity-calculator/brew-beverage-quantity-calculator.component';
 
 
 
@@ -347,6 +348,13 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       this.data.water = brew.water;
     }
 
+    if (checkData.default_last_coffee_parameters.vessel || _template === true) {
+      this.data.vessel_name = brew.vessel_name;
+      this.data.vessel_weight = brew.vessel_weight;
+    }
+
+
+
   }
 
 
@@ -417,6 +425,20 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
     const {data} = await modal.onWillDismiss();
     if (data !== undefined) {
       this.data.tds = data.tds;
+    }
+
+  }
+
+  public async calculateBrewBeverageQuantity() {
+
+    const modal = await this.modalController.create({component: BrewBeverageQuantityCalculatorComponent,
+      cssClass: 'popover-actions',
+      id: BrewBeverageQuantityCalculatorComponent.COMPONENT_ID});
+    await modal.present();
+
+    const {data} = await modal.onWillDismiss();
+    if (data !== undefined) {
+      this.data.brew_beverage_quantity = data.brew_beverage_quantity;
     }
 
   }

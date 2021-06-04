@@ -63,6 +63,10 @@ export class Brew implements IBrew {
   // UUID
   public water: string;
   public bean_weight_in: number;
+
+  public vessel_weight: number;
+  public vessel_name: string;
+
   public coordinates: IBrewCoordinates;
 
 
@@ -133,6 +137,8 @@ export class Brew implements IBrew {
     this.method_of_preparation_tools = [];
     this.favourite = false;
     this.water = '';
+    this.vessel_name = '';
+    this.vessel_weight = 0;
   }
 
   public initializeByObject(brewObj: IBrew): void {

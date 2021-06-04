@@ -157,6 +157,8 @@
   "BREW_DATA_WATER": "Water",
   "BREW_DATA_BEAN_WEIGHT_IN": "Bean amount (gr)",
   "BREW_DATA_VESSEL": "Vessel",
+  "BREW_DATA_VESSEL_WEIGHT": "Vessel Weight",
+  "BREW_DATA_VESSEL_NAME": "Vessel name",
   "ONE_DAY": "Day",
   "DAYS": "Days",
   "ONE_HOUR": "hour",

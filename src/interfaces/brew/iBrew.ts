@@ -134,6 +134,9 @@ export interface IBrew {
 
   favourite: boolean;
 
+  vessel_weight: number;
+  vessel_name: string;
+
   // Functions
   formateDate(): string;
 

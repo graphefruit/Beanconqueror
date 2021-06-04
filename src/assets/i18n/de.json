@@ -154,6 +154,8 @@
   "BREW_DATA_WATER": "Wasser",
   "BREW_DATA_BEAN_WEIGHT_IN": "Bohnenmenge (gr)",
   "BREW_DATA_VESSEL": "Gefäß",
+  "BREW_DATA_VESSEL_WEIGHT": "Gefäß Gewicht",
+  "BREW_DATA_VESSEL_NAME": "Gefäß name",
   "BREW_INFORMATION_BREW_RATIO": "Brührate",
   "BREW_INFORMATION_BEAN_AGE": "Bohnenalter (Tage)",
   "BREW_INFORMATION_BREW_QUANTITY_TYPE_NAME": "Bezugsmenge-Typ",
