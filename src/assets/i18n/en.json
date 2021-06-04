@@ -927,5 +927,8 @@
     }
   },
   "BREW_BRIX_CALCULATION": "Degrees Brix",
-  "SET_TDS": "Set tds"
+  "SET_TDS": "Set tds",
+  "TOTAL_WEIGHT": "Total weight",
+  "CALCULATED_WEIGHT": "Calculated weight",
+  "SET_WEIGHT": "Set weight"
 }

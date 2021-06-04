@@ -152,6 +152,35 @@
         <ion-chip  *ngFor="let uuid of data.method_of_preparation_tools">{{data.getPreparationToolName(uuid)}}</ion-chip>
       </ion-label>
     </ion-item>
+
+    <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.bean_weight_in,
+                      data.getPreparation().manage_parameters.bean_weight_in,
+                      data.getPreparation().use_custom_parameters)"
+
+              [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.bean_weight_in,
+                      data.getPreparation().brew_order.before.bean_weight_in,
+                      data.getPreparation().use_custom_parameters)">
+      <ion-label>
+        <h2>{{"BREW_DATA_BEAN_WEIGHT_IN" | translate}}:</h2>
+        <h3>{{data.bean_weight_in}}</h3>
+      </ion-label>
+    </ion-item>
+    <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.vessel,
+                      data.getPreparation().manage_parameters.vessel,
+                      data.getPreparation().use_custom_parameters)"
+
+              [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.vessel,
+                      data.getPreparation().brew_order.before.vessel,
+                      data.getPreparation().use_custom_parameters)">
+      <ion-label>
+        <h2>{{"BREW_DATA_VESSEL_WEIGHT" | translate}}:</h2>
+        <h3>{{data.vessel_weight}}</h3>
+      </ion-label>
+      <ion-label>
+        <h2>{{"BREW_DATA_VESSEL_NAME" | translate}}:</h2>
+        <h3>{{data.vessel_name}}</h3>
+      </ion-label>
+    </ion-item>
     <div class="last-item"></div>
   </ion-card>
   <ion-card *ngIf="showSectionWhileBrew()" class="ion-margin-horizontal popover" style="display:flex; flex-direction: column;">

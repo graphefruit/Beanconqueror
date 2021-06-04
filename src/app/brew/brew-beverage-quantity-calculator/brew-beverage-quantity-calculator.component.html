@@ -8,25 +8,24 @@
     </ion-button>
   </div>
   <ion-item lines="inset">
-    <ion-row class="ion-no-padding">
-      <ion-col class="ion-no-padding" size="4">
-        <ion-label position="stacked">{{"Total" | translate}}</ion-label>
+
+        <ion-label position="stacked">{{"TOTAL_WEIGHT" | translate}}</ion-label>
         <ion-input [(ngModel)]="totalWeight" (ionChange)="calculateWeight()" inputmode="decimal"
-                   placeholder="{{'BREW_DATA_VESSEL_WEIGHT' | translate}}" prevent-characters
+                   placeholder="{{'TOTAL_WEIGHT' | translate}}" prevent-characters
                    remove-empty-number
                    type="text"></ion-input>
-      </ion-col>
-      <ion-col   class="ion-no-padding" size="4">
-        <ion-label position="stacked">{{"Vessel weight" | translate}}</ion-label>
-        <ion-input [(ngModel)]="vesselWeight"  (ionChange)="calculateWeight()" placeholder="{{'BREW_DATA_VESSEL_NAME' | translate}}"
+  </ion-item>
+  <ion-item lines="inset">
+
+        <ion-label position="stacked">{{"BREW_DATA_VESSEL_WEIGHT" | translate}}</ion-label>
+        <ion-input [(ngModel)]="vesselWeight"  (ionChange)="calculateWeight()" placeholder="{{'BREW_DATA_VESSEL_WEIGHT' | translate}}"
                    type="text"></ion-input>
-      </ion-col>
-      <ion-col   class="ion-no-padding" size="4">
-        <ion-label position="stacked">{{"Calc." | translate}}</ion-label>
-        <ion-input disabled="true" [(ngModel)]="calcualtedWeight" placeholder="{{'BREW_DATA_VESSEL_NAME' | translate}}"
+  </ion-item>
+  <ion-item lines="inset">
+        <ion-label position="stacked">{{"CALCULATED_WEIGHT" | translate}}</ion-label>
+        <ion-input disabled="true" [(ngModel)]="calculatedWeight" placeholder="{{'CALCULATED_WEIGHT' | translate}}"
                    type="text"></ion-input>
-      </ion-col>
-    </ion-row>
+
   </ion-item>
   <ion-row>
     <ion-col>
@@ -34,8 +33,8 @@
                   tappable>{{"CANCEL" | translate}}</ion-button>
     </ion-col>
     <ion-col>
-      <ion-button (click)="setBrix()" color="accent" disable-double-click expand="block" tappable
-                  type="submit">{{"Set weight" | translate}}</ion-button>
+      <ion-button (click)="setBrewBeverage()" color="accent" disable-double-click expand="block" tappable
+                  type="submit">{{"SET_WEIGHT" | translate}}</ion-button>
     </ion-col>
   </ion-row>
 </ion-footer>

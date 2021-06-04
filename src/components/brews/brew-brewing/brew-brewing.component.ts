@@ -431,8 +431,15 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
   public async calculateBrewBeverageQuantity() {
 
+    let vessleWeight: number = 0;
+    if (this.data.vessel_weight > 0) {
+      vessleWeight = this.data.vessel_weight;
+    }
     const modal = await this.modalController.create({component: BrewBeverageQuantityCalculatorComponent,
       cssClass: 'popover-actions',
+      componentProps: {
+        vesselWeight: vessleWeight
+      },
       id: BrewBeverageQuantityCalculatorComponent.COMPONENT_ID});
     await modal.present();
 

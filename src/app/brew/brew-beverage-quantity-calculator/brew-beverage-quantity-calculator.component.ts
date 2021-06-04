@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {ModalController} from '@ionic/angular';
 
 @Component({
@@ -12,8 +12,8 @@ export class BrewBeverageQuantityCalculatorComponent implements OnInit {
 
 
   public totalWeight: number = 0;
-  public vesselWeight: number = 0;
-  public calcualtedWeight: number = 0;
+  @Input('vesselWeight') public vesselWeight: number = 0;
+  public calculatedWeight: number = 0;
 
   constructor(private readonly modalController: ModalController) {
 
@@ -23,12 +23,15 @@ export class BrewBeverageQuantityCalculatorComponent implements OnInit {
   }
 
   public calculateWeight() {
-    this.calcualtedWeight = this.totalWeight - this.vesselWeight
+    this.calculatedWeight = this.totalWeight - this.vesselWeight
   }
 
-  public async setBrix() {
+  public async setBrewBeverage() {
 
-    let brewBeverageQuantity: number = 0;
+    let brewBeverageQuantity: number = this.calculatedWeight;
+    if (brewBeverageQuantity < 0) {
+      brewBeverageQuantity = 0;
+    }
     this.modalController.dismiss({
       brew_beverage_quantity: brewBeverageQuantity,
       dismissed: true
