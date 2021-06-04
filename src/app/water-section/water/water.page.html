@@ -17,7 +17,7 @@
 <ion-content #waterContent>
   <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="segment" class="ion-padding-vertical" style="padding-top:0px;">
     <ion-segment-button value="open">
-      <ion-label>{{"ROASTING_SECTION.GREEN_BEAN.ROASTABLE" | translate}}
+      <ion-label>{{"CURRENT" | translate}}
       </ion-label>
     </ion-segment-button>
     <ion-segment-button *ngIf="settings?.show_archived_waters" value="archiv">
