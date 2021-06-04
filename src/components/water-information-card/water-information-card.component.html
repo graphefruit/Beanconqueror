@@ -23,14 +23,14 @@
           <ion-grid class="ion-no-padding">
             <ion-row>
               <ion-col size="6">
-                <ion-label class="card-headline">{{"ROASTING_SECTION.ROASTING_MACHINE.TOTAL_ROAST_COUNT" | translate}}</ion-label><br/>
+                <ion-label class="card-headline">{{"WATER_SECTION.USED_TIMES" | translate}}</ion-label><br/>
 
-                <ion-text>1</ion-text>
+                <ion-text>{{getUsedTimes()}}</ion-text>
               </ion-col>
               <ion-col size="6">
-                <ion-label class="card-headline">{{"ROASTING_SECTION.ROASTING_MACHINE.TOTAL_ROAST_QUANTITY" | translate}}</ion-label><br/>
+                <ion-label class="card-headline">{{"WATER_SECTION.AMOUNT" | translate}}</ion-label><br/>
 
-                <ion-text>1</ion-text>
+                <ion-text>{{getAmount()}}</ion-text>
               </ion-col>
             </ion-row>
           </ion-grid>

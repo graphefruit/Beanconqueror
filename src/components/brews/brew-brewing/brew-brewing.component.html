@@ -157,7 +157,7 @@
     </ion-select>
   </ion-item>
 
-  <ion-item  *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.water,
+  <ion-item [disabled]="!hasWaterEntries()"  *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.water,
                       data.getPreparation().manage_parameters.water,
                       data.getPreparation().use_custom_parameters)"
 

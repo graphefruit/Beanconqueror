@@ -311,6 +311,7 @@
   "TOAST_BEAN_ADDED_SUCCESSFULLY": "Bean added successfully",
   "TOAST_MILL_ADDED_SUCCESSFULLY": "Grinder added successfully",
   "TOAST_PREPARATION_ADDED_SUCCESSFULLY": "Preparation method added successfully",
+  "TOAST_WATER_ADDED_SUCCESSFULLY": "Water added successfully",
   "TOAST_BREW_DELETED_SUCCESSFULLY": "Brew has been deleted",
   "TOAST_BEAN_DELETED_SUCCESSFULLY": "Bean has been deleted",
   "TOAST_GREEN_BEAN_DELETED_SUCCESSFULLY": "Green bean has been deleted",
@@ -896,6 +897,8 @@
     "CATEGORY_GENERAL": "General",
     "UNITS": "Units",
     "WATER_BOTTLE_EXPLANATION": "Water bottles most often report concentration in units of ppm = mg/L",
+    "USED_TIMES": "Used",
+    "AMOUNT": "Quantity",
     "WATER": {
       "GENERAL_HARDNESS":"General hardness (GH)",
       "TOTAL_ALKALINITY":"Total alkalinity (KH)",
@@ -910,7 +913,8 @@
         "MAGNESIUM":"Magnesium (Mg)",
         "SODIUM": "Sodium (Na)",
         "TDS":"Total dissolved solids (TDS)",
-        "NAME": "Add water name"
+        "NAME": "Add water name",
+        "NOTES": "Add some notes to your water"
       },
       "WATER_UNIT":  {
         "UNKNOWN": "Unknown",

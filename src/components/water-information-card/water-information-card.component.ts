@@ -148,11 +148,20 @@ export class WaterInformationCardComponent implements OnInit {
     );
   }
 
+
+  private getAllRelatedBrews(): Array<Brew> {
+    // Remove all references in brews
+    const brews: Array<Brew> =  this.uiBrewStorage.getAllEntries().filter((e)=>e.water === this.water.config.uuid);
+    if (brews && brews.length > 0) {
+        return brews;
+    }
+    return [];
+  }
   private async __delete() {
 
 
     // Remove all references in brews
-    const brews: Array<Brew> =  this.uiBrewStorage.getAllEntries().filter((e)=>e.water === this.water.config.uuid);
+    const brews: Array<Brew> =  this.getAllRelatedBrews();
     if (brews && brews.length > 0) {
 
       for (const brew of brews) {
@@ -164,6 +173,26 @@ export class WaterInformationCardComponent implements OnInit {
   }
 
 
+
+  public getUsedTimes() {
+    const brews: Array<Brew> =  this.getAllRelatedBrews();
+    return brews.length;
+  }
+  public getAmount() {
+    const brews: Array<Brew> =  this.getAllRelatedBrews();
+    let amount: number = 0;
+    if (brews && brews.length > 0) {
+
+      for (const brew of brews) {
+        if (brew.brew_beverage_quantity) {
+          amount += brew.brew_beverage_quantity;
+        } else if (brew.brew_quantity) {
+          amount += brew.brew_quantity;
+        }
+      }
+    }
+    return amount;
+  }
 
   public hasPhotos() {
     return (this.water.attachments && this.water.attachments.length > 0);

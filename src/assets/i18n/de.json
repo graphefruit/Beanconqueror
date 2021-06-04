@@ -311,6 +311,7 @@
   "TOAST_BEAN_ADDED_SUCCESSFULLY": "Bohne hinzugefügt",
   "TOAST_MILL_ADDED_SUCCESSFULLY": "Mühle hinzugefügt",
   "TOAST_PREPARATION_ADDED_SUCCESSFULLY": "Brühmethode hinzugefügt",
+  "TOAST_WATER_ADDED_SUCCESSFULLY": "Wasser hinzugefügt",
   "TOAST_BREW_DELETED_SUCCESSFULLY": "Brühung gelöscht",
   "TOAST_BEAN_DELETED_SUCCESSFULLY": "Bohne gelöscht",
   "TOAST_GREEN_BEAN_DELETED_SUCCESSFULLY": "Rohbohne gelöscht",
@@ -895,6 +896,8 @@
     "CATEGORY_INFORMATION": "Wasserinformationen",
     "CATEGORY_GENERAL": "Allgemein",
     "WATER_BOTTLE_EXPLANATION": "Die meisten Wasserflaschen geben die Konzentration als ppm = mg/l an",
+    "USED_TIMES": "Verwendet",
+    "AMOUNT": "Menge",
     "WATER": {
       "GENERAL_HARDNESS":"General hardness",
       "TOTAL_ALKALINITY":"Total alkalinity",
@@ -910,7 +913,8 @@
         "MAGNESIUM":"Magnesium (Mg)",
         "SODIUM": "Sodium (Na)",
         "TDS":"Gelöste Stoffe (TDS [%])",
-        "NAME": "Wassernamen eingeben"
+        "NAME": "Wassernamen eingeben",
+        "NOTES": "Füge Notizen zu deinem Wasser"
       },
       "WATER_UNIT":  {
         "UNKNOWN": "Unbekannt",

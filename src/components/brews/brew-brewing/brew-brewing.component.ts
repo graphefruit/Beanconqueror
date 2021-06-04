@@ -29,6 +29,7 @@ import {IMill} from '../../../interfaces/mill/iMill';
 import {UIBrewStorage} from '../../../services/uiBrewStorage';
 import {UIMillStorage} from '../../../services/uiMillStorage';
 import {UIBeanStorage} from '../../../services/uiBeanStorage';
+import {UIWaterStorage} from '../../../services/uiWaterStorage';
 
 
 declare var cordova;
@@ -70,7 +71,8 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
               private readonly uiBrewHelper: UIBrewHelper,
               private readonly uiBrewStorage: UIBrewStorage,
               private readonly uiMillStorage: UIMillStorage,
-              private readonly uiBeanStorage: UIBeanStorage) {
+              private readonly uiBeanStorage: UIBeanStorage,
+              private readonly uiWaterStorage: UIWaterStorage) {
 
   }
 
@@ -392,6 +394,15 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
     this.profileResults = [];
     this.profileResultsAvailable = false;
     this.profileFocused= false;
+  }
+
+  public hasWaterEntries(): boolean {
+    if (this.isEdit) {
+      //When its edit, it doesn't matter when we don't have any active water
+      return this.uiWaterStorage.getAllEntries().length > 0
+    }
+    return this.uiWaterStorage.getAllEntries().filter((e)=>!e.finished).length > 0
+
   }
 
 
