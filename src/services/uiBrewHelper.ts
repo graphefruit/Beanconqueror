@@ -138,10 +138,12 @@ export class UIBrewHelper {
         let usedWeightCount: number = 0;
         const brews: Array<Brew> = this.uiBrewStorage.getAllEntries().filter((e)=> e.getBean().config.uuid === bean.config.uuid);
         for (const brew of brews) {
-          usedWeightCount += brew.grind_weight;
+          if (brew.bean_weight_in > 0) {
+            usedWeightCount += brew.bean_weight_in;
+          } else {
+            usedWeightCount += brew.grind_weight;
+          }
         }
-
-
 
         // 5 grams is threshold
         // If we just got 5 grams left, ask the user if he wants to archive his beans
