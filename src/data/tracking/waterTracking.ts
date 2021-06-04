@@ -7,7 +7,6 @@ export default {
     ADD: 'ADD',
     EDIT: 'EDIT',
     DELETE: 'DELETE',
-    REPEAT: 'REPEAT',
     ARCHIVE: 'ARCHIVE',
     PHOTO_VIEW: 'PHOTO_VIEW',
   }

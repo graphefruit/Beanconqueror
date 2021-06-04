@@ -110,7 +110,7 @@ export class WaterPage implements OnInit {
 
 
   private __initializeView(_type: string) {
-// sort latest to top.
+    // sort latest to top.
     const copyObj: Array<Water> = [...this.waters];
     const isOpen: boolean = (_type === 'open');
     let sortedBeans : Array<Water>;

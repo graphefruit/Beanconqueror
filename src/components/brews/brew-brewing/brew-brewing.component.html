@@ -418,6 +418,10 @@
                placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_TDS' | translate}}" prevent-characters
                remove-empty-number
                type="text"></ion-input>
+    <ion-button (click)="calculateBrixToTds()"
+                class="big-icon-only" fill="clear" slot="end" tappable>
+      <ion-icon class="ion-color-accent" name="beanconqueror-refractometer" slot="icon-only"></ion-icon>
+    </ion-button>
   </ion-item>
 
   <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.grind_weight && settings.manage_parameters.brew_beverage_quantity && settings.manage_parameters.tds,

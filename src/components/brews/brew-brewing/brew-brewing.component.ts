@@ -30,6 +30,8 @@ import {UIBrewStorage} from '../../../services/uiBrewStorage';
 import {UIMillStorage} from '../../../services/uiMillStorage';
 import {UIBeanStorage} from '../../../services/uiBeanStorage';
 import {UIWaterStorage} from '../../../services/uiWaterStorage';
+import {BrewBrixCalculatorComponent} from '../../../app/brew/brew-brix-calculator/brew-brix-calculator.component';
+
 
 
 declare var cordova;
@@ -398,10 +400,24 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
   public hasWaterEntries(): boolean {
     if (this.isEdit) {
-      //When its edit, it doesn't matter when we don't have any active water
+      // When its edit, it doesn't matter when we don't have any active water
       return this.uiWaterStorage.getAllEntries().length > 0
     }
     return this.uiWaterStorage.getAllEntries().filter((e)=>!e.finished).length > 0
+
+  }
+
+  public async calculateBrixToTds() {
+
+    const modal = await this.modalController.create({component: BrewBrixCalculatorComponent,
+      cssClass: 'popover-actions',
+      id: BrewBrixCalculatorComponent.COMPONENT_ID});
+    await modal.present();
+
+    const {data} = await modal.onWillDismiss();
+    if (data !== undefined) {
+      this.data.tds = data.tds;
+    }
 
   }
 

@@ -16,8 +16,8 @@ export default {
     SHOW_MAP: 'SHOW_MAP',
     DELETE: 'DELETE',
     PHOTO_VIEW: 'PHOTO_VIEW',
-    SHARE: 'SHARE'
-
+    SHARE: 'SHARE',
+    BRIX_CALCULATION: 'BRIX_CALCULATION'
   }
 
 }

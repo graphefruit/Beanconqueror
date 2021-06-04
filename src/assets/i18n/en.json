@@ -923,5 +923,7 @@
         "MMOL_L": "mmo/L"
       }
     }
-  }
+  },
+  "BREW_BRIX_CALCULATION": "Degrees Brix",
+  "SET_TDS": "Set tds"
 }
