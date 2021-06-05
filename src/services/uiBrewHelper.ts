@@ -211,6 +211,7 @@ export class UIBrewHelper {
     repeatBrew.brew_beverage_quantity = _brewToCopy.brew_beverage_quantity;
     repeatBrew.brew_beverage_quantity_type = _brewToCopy.brew_beverage_quantity_type;
     repeatBrew.water = _brewToCopy.water;
+    repeatBrew.bean_weight_in = _brewToCopy.bean_weight_in;
     repeatBrew.vessel_weight = _brewToCopy.vessel_weight;
     repeatBrew.vessel_name = _brewToCopy.vessel_name;
     return repeatBrew;
@@ -288,6 +289,9 @@ export class UIBrewHelper {
     if (!checkData.manage_parameters.water ) {
       brew.water = '';
     }
+    if (!checkData.manage_parameters.bean_weight_in) {
+      brew.bean_weight_in = 0;
+    }
     if (!checkData.manage_parameters.vessel) {
       brew.vessel_name ='';
       brew.vessel_weight = 0;
@@ -346,6 +350,7 @@ export class UIBrewHelper {
       checkData.manage_parameters.mill_speed ||
       checkData.manage_parameters.mill_timer ||
       checkData.manage_parameters.water ||
+      checkData.manage_parameters.bean_weight_in ||
       checkData.manage_parameters.vessel);
 
   }

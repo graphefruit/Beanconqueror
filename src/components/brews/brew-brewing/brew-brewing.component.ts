@@ -352,6 +352,9 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       this.data.vessel_name = brew.vessel_name;
       this.data.vessel_weight = brew.vessel_weight;
     }
+    if (checkData.default_last_coffee_parameters.bean_weight_in || _template === true) {
+      this.data.bean_weight_in = brew.bean_weight_in;
+    }
 
 
 
@@ -431,14 +434,14 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
   public async calculateBrewBeverageQuantity() {
 
-    let vessleWeight: number = 0;
+    let vesselWeight: number = 0;
     if (this.data.vessel_weight > 0) {
-      vessleWeight = this.data.vessel_weight;
+      vesselWeight = this.data.vessel_weight;
     }
     const modal = await this.modalController.create({component: BrewBeverageQuantityCalculatorComponent,
       cssClass: 'popover-actions',
       componentProps: {
-        vesselWeight: vessleWeight
+        vesselWeight: vesselWeight
       },
       id: BrewBeverageQuantityCalculatorComponent.COMPONENT_ID});
     await modal.present();

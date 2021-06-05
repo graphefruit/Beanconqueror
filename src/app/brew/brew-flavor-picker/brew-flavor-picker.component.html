@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>{{"CUPPING_BREW" | translate}}</ion-title>
+    <ion-title>{{"ADD_FLAVORS_AROMAS_TITLE" | translate}}</ion-title>
     <ion-buttons slot="start">
       <ion-button (click)="dismiss()" class="big-icon-only">
         <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
@@ -8,9 +8,8 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content class="ion-padding-top">
-  <cupping-flavors #flavor></cupping-flavors>
-  <cupping-radar #radar></cupping-radar>
+<ion-content>
+  <cupping-flavors #flavors></cupping-flavors>
 </ion-content>
 <ion-footer class="ion-no-border">
   <ion-row>
@@ -19,8 +18,8 @@
                   tappable>{{"CANCEL" | translate}}</ion-button>
     </ion-col>
     <ion-col>
-      <ion-button (click)="updateBrew()" color="accent" expand="block" tappable
-                  type="submit">{{"SAVE" | translate}}</ion-button>
+      <ion-button (click)="setFlavors()" color="accent" disable-double-click expand="block" tappable
+                  type="submit">{{"SET_FLAVORS" | translate}}</ion-button>
     </ion-col>
   </ion-row>
 </ion-footer>

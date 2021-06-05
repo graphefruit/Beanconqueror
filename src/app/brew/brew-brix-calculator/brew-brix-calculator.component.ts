@@ -28,6 +28,7 @@ export class BrewBrixCalculatorComponent implements OnInit {
     if (tdsValue < 0) {
       tdsValue = 0;
     }
+    tdsValue = +tdsValue.toFixed(2);
     this.modalController.dismiss({
       tds: tdsValue,
       dismissed: true

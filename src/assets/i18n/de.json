@@ -922,7 +922,7 @@
         "UNKNOWN": "Unbekannt",
         "PPM": "ppm als CaCO3",
         "MG_L": "mg/L",
-        "MMOL_L": "mmo/L"
+        "MMOL_L": "mmol/L"
       }
     }
   },
@@ -930,5 +930,10 @@
   "SET_TDS": "TDS setzen",
   "TOTAL_WEIGHT": "Gesamtes Gewicht",
   "CALCULATED_WEIGHT": "Berechnetes Gewicht",
-  "SET_WEIGHT": "Gewicht setzten"
+  "SET_WEIGHT": "Gewicht setzten",
+  "ADD_FLAVORS_AROMAS_TITLE": "Aromen / Geschmäcker",
+  "CUSTOM_FLAVORS_AROMAS":"Eigene Aromen",
+  "CUSTOM_FLAVORS_AROMAS_PLACEHOLDER":"Füge deine eigenen Aromen hinzu",
+  "PREDEFINED_FLAVORS_AROMAS":"Vordefinierte Aromen",
+  "SET_FLAVORS": "Armomen setzen"
 }

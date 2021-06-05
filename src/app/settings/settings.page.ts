@@ -264,6 +264,18 @@ export class SettingsPage implements OnInit {
     return (this.platform.is('android') || this.platform.is('ios'));
   }
 
+  private async exportAttachments() {
+    const exportObjects:Array<any> =
+      [...this.uiBeanStorage.getAllEntries(),
+        ...this.uiBrewStorage.getAllEntries(),
+        ...this.uiPreparationStorage.getAllEntries(),
+        ...this.uiMillStorage.getAllEntries(),
+        ...this.uiWaterStorage.getAllEntries(),
+        ...this.uiGreenBeanStorage.getAllEntries(),
+        ...this.uiRoastingMachineStorage.getAllEntries()];
+
+    await this._exportAttachments(exportObjects)
+  }
 
   public async export() {
 
@@ -278,16 +290,8 @@ export class SettingsPage implements OnInit {
         if (this.platform.is('cordova')) {
           if (this.platform.is('android'))
           {
-            const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
-            const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
-            const preparations: Array<Preparation> = this.uiPreparationStorage.getAllEntries();
-            const mills: Array<Mill> = this.uiMillStorage.getAllEntries();
-            const waters: Array<Water> = this.uiWaterStorage.getAllEntries();
-            await this._exportAttachments(beans);
-            await this._exportAttachments(brews);
-            await this._exportAttachments(preparations);
-            await this._exportAttachments(mills);
-            await this._exportAttachments(waters);
+
+            await this.exportAttachments();
             await this.uiAlert.hideLoadingSpinner();
 
             const alert =  await this.alertCtrl.create({

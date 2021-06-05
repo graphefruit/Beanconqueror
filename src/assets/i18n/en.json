@@ -920,9 +920,9 @@
       },
       "WATER_UNIT":  {
         "UNKNOWN": "Unknown",
-        "PPM": "ppm als CaCO3",
+        "PPM": "ppm as CaCO3",
         "MG_L": "mg/L",
-        "MMOL_L": "mmo/L"
+        "MMOL_L": "mmol/L"
       }
     }
   },
@@ -930,5 +930,10 @@
   "SET_TDS": "Set tds",
   "TOTAL_WEIGHT": "Total weight",
   "CALCULATED_WEIGHT": "Calculated weight",
-  "SET_WEIGHT": "Set weight"
+  "SET_WEIGHT": "Set weight",
+  "ADD_FLAVORS_AROMAS_TITLE": "Aromas / Flavors",
+  "CUSTOM_FLAVORS_AROMAS":"Own aromas/flavors",
+  "CUSTOM_FLAVORS_AROMAS_PLACEHOLDER":"Add your custom aromas/flavors",
+  "PREDEFINED_FLAVORS_AROMAS":"Prefefined aromas/flavors",
+  "SET_FLAVORS": "Set flavors"
 }

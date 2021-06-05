@@ -1,10 +1,10 @@
-
 <ion-list>
   <ion-list-header>
-    Custom flavors / Aromas
+    {{"CUSTOM_FLAVORS_AROMAS" | translate}}
+
   </ion-list-header>
   <ion-item class="ion-margin-horizontal">
-    <ion-input (keyup.enter)="addCustomFlavor()" [(ngModel)]="customFlavor" name="customFlavor" placeholder='{{"PREPARATION_TOOLS_PLACEHOLDER" | translate}}' type="text"></ion-input>
+    <ion-input id="customFlavorInput" (keyup.enter)="addCustomFlavor()" [(ngModel)]="customFlavor" name="customFlavor" placeholder='{{"CUSTOM_FLAVORS_AROMAS_PLACEHOLDER" | translate}}' type="text"></ion-input>
 
     <ion-icon tappable (click)="addCustomFlavor()" class="ion-margin-end" slot="end" name="add-circle-outline"></ion-icon>
   </ion-item>
@@ -12,7 +12,7 @@
   <ion-chip (click)="removeCustomFlavor(i)" *ngFor="let flavor of customFlavors;let i=index;">{{flavor}} <ion-icon name="close"></ion-icon></ion-chip>
   </div>
   <ion-list-header>
-    Predefined flavors
+    {{"PREDEFINED_FLAVORS_AROMAS" | translate }}
   </ion-list-header>
   <ion-searchbar [(ngModel)]="searchFlavorText" debounce="500" (ionChange)="searchFlavors()" (ionClear)="resetFlavors()"></ion-searchbar>
   <div class="ion-margin-horizontal" *ngFor="let flavor of displayingFlavors">

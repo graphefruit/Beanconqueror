@@ -12,8 +12,8 @@ import {Bean} from '../../classes/bean/bean';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
 import BREW_TRACKING from '../../data/tracking/brewTracking';
 import {UIAnalytics} from '../../services/uiAnalytics';
-import {UIFileHelper} from '../../services/uiFileHelper';
 import {ServerCommunicationService} from '../../services/serverCommunication/server-communication.service';
+import {BrewFlavorPickerComponent} from '../brew/brew-flavor-picker/brew-flavor-picker.component';
 
 @Component({
   selector: 'dashboard',
@@ -113,6 +113,13 @@ export class DashboardPage implements OnInit {
       usedWeightCount += brew.grind_weight;
     }
     return usedWeightCount;
+  }
+
+  public async showFlavor() {
+    let brew: Brew = new Brew();
+    const modal = await this.modalCtrl.create({component: BrewFlavorPickerComponent, id: BrewFlavorPickerComponent.COMPONENT_ID, componentProps: {brew: brew}});
+    await modal.present();
+    await modal.onWillDismiss();
   }
 
 }
