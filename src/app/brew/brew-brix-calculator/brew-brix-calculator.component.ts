@@ -24,7 +24,7 @@ export class BrewBrixCalculatorComponent implements OnInit {
     const brix: number = this.brix;
 
 
-    let tdsValue: number = (0.0036*brix + 0.7897)*brix;
+    let tdsValue: number = ((0.0036*brix + 0.7897)*brix) - 0.0071;
     if (tdsValue < 0) {
       tdsValue = 0;
     }

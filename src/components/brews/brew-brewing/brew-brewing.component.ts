@@ -429,10 +429,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
     actualSearchValue = actualSearchValue.toLowerCase();
     const filteredEntries = this.uiBrewStorage.getAllEntries().filter((e)=>e.vessel_name !== '' && e.vessel_name.toLowerCase().includes(actualSearchValue));
 
-
-
     for (const entry of filteredEntries) {
-      debugger;
       if (this.vesselResults.filter((e)=>e.name === entry.vessel_name).length <=0) {
         this.vesselResults.push({
           "name": entry.vessel_name,
