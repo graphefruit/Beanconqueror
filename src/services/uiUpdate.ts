@@ -302,13 +302,15 @@ export class UIUpdate {
             if (settings_v5.brew_order.before.water === null || settings_v5.brew_order.before.water === undefined) {
               const newSettingsObj: any = new Settings();
               settings_v5.brew_order.before.water = newSettingsObj.brew_order.before.water;
-              settings_v5.brew_order.before.bean_weight_in = newSettingsObj.brew_order.before.water;
-              settings_v5.brew_order.before.water = newSettingsObj.brew_order.before.water;
+              settings_v5.brew_order.before.bean_weight_in = newSettingsObj.brew_order.before.bean_weight_in;
+              settings_v5.brew_order.before.vessel = newSettingsObj.brew_order.before.vessel;
               await this.uiSettingsStorage.saveSettings(settings);
 
               const preparations_v5:any = this.uiPreparationStorage.getAllEntries();
               for(const prep of preparations_v5) {
                 prep.brew_order.before.water = newSettingsObj.brew_order.before.water;
+                prep.brew_order.before.bean_weight_in = newSettingsObj.brew_order.before.bean_weight_in;
+                prep.brew_order.before.vessel = newSettingsObj.brew_order.before.vessel;
                 await this.uiPreparationStorage.update(prep);
               }
             }

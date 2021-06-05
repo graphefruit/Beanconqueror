@@ -65,6 +65,10 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
   public profileResults: string[] = [];
   public profileFocused: boolean = false;
 
+  public vesselResultsAvailable: boolean = false;
+  public vesselResults: Array<any> =[];
+  public vesselFocused: boolean = false;
+
   constructor(private readonly platform: Platform,
               private readonly uiSettingsStorage: UISettingsStorage,
               private readonly uiPreparationStorage: UIPreparationStorage,
@@ -408,6 +412,62 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
     this.profileResultsAvailable = false;
     this.profileFocused= false;
   }
+
+
+  public onVesselSearchChange(event: any) {
+    if (!this.vesselFocused) {
+      return;
+    }
+    let actualSearchValue = event.target.value;
+    this.vesselResults = [];
+    this.vesselResultsAvailable = false;
+    if (actualSearchValue === undefined || actualSearchValue === '') {
+      return;
+    }
+
+
+    actualSearchValue = actualSearchValue.toLowerCase();
+    const filteredEntries = this.uiBrewStorage.getAllEntries().filter((e)=>e.vessel_name !== '' && e.vessel_name.toLowerCase().includes(actualSearchValue));
+
+
+
+    for (const entry of filteredEntries) {
+      debugger;
+      if (this.vesselResults.filter((e)=>e.name === entry.vessel_name).length <=0) {
+        this.vesselResults.push({
+          "name": entry.vessel_name,
+          "weight": entry.vessel_weight}
+        );
+      }
+
+    }
+    // Distinct values
+    if (this.vesselResults.length > 0) {
+      this.vesselResultsAvailable = true;
+    } else {
+      this.vesselResultsAvailable = false;
+    }
+
+  }
+  public onVesselSearchLeave($event) {
+    setTimeout(() => {
+      this.vesselResults = [];
+      this.vesselResultsAvailable = false;
+      this.vesselFocused= false;
+    },150);
+
+  }
+  public onVesselSearchFocus($event) {
+    this.vesselFocused = true;
+  }
+
+  public vesselSelected(selected: string) :void {
+    this.data.pressure_profile = selected;
+    this.vesselResults = [];
+    this.vesselResultsAvailable = false;
+    this.vesselFocused= false;
+  }
+
 
   public hasWaterEntries(): boolean {
     if (this.isEdit) {
