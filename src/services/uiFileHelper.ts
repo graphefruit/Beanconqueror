@@ -451,12 +451,12 @@ export class UIFileHelper {
     }
 
   }
-  public async getInternalFileSrc (_filePath: string): Promise<any> {
+  public async getInternalFileSrc (_filePath: string,_addTimeStamp: boolean = false): Promise<any> {
     return new Promise(async (resolve, reject) => {
       if (this.platform.is('cordova')) {
         if (this.cachedInternalUrls[_filePath]) {
           //resolve(this.cachedInternalUrls[_filePath]);
-        //  return;
+         // return;
         }
         // let filePath: string;
         // filePath = _filePath;
@@ -483,6 +483,9 @@ export class UIFileHelper {
           fileEntry.file(
             (meta) => {
               let convertedURL = window.Ionic.WebView.convertFileSrc(fileEntry.nativeURL);
+              if (_addTimeStamp) {
+                convertedURL +='?' + moment().unix();
+              }
               convertedURL = this.domSanitizer.bypassSecurityTrustResourceUrl(convertedURL);
               this.cachedInternalUrls[_filePath] = convertedURL;
               resolve(convertedURL);
