@@ -116,7 +116,7 @@
       </ion-item>
       <ion-item lines="none">
         <ion-label>{{"PAGE_SETTINGS_SHOW_WATER_SECTION" | translate}}</ion-label>
-        <ion-checkbox (ngModelChange)="saveSettings();"
+        <ion-checkbox (ngModelChange)="saveSettings();" (click)="checkWaterSection()"
                       [(ngModel)]="settings.show_water_section"></ion-checkbox>
       </ion-item>
       <ion-item  *ngIf="false">

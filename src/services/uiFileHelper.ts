@@ -274,12 +274,6 @@ export class UIFileHelper {
       return promise;
     }
 
-    public a() {
-    debugger;
-    console.log(this.file.resolveDirectoryUrl);
-
-    }
-
   public createFolder(_folders) {
     const promise: Promise<FileEntry> = new Promise(async (resolve, reject) => {
 

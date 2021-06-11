@@ -19,6 +19,7 @@ import {BrewTrackingService} from '../../../services/brewTracking/brew-tracking.
 export class BrewEditComponent implements OnInit {
 
 
+  public static COMPONENT_ID: string = 'brew-edit';
   @ViewChild('brewBrewing', {read: BrewBrewingComponent, static: false}) public brewBrewing: BrewBrewingComponent;
   public data: Brew = new Brew();
 
@@ -45,7 +46,7 @@ export class BrewEditComponent implements OnInit {
   public dismiss(): void {
     this.modalController.dismiss({
       dismissed: true
-    },undefined,'brew-edit');
+    },undefined,BrewEditComponent.COMPONENT_ID);
   }
 
   public async updateBrew() {

@@ -141,7 +141,20 @@ export class SettingsPage implements OnInit {
   public ngOnInit() {
 
   }
+  public async checkWaterSection() {
+    if (this.settings.show_water_section === false) {
+      this.uiAlert.showLoadingSpinner();
+      this.settings.manage_parameters.water = true;
+      await this.saveSettings();
 
+      const preps: Array<Preparation> = this.uiPreparationStorage.getAllEntries();
+      for (const prep of preps) {
+        prep.manage_parameters.water = true;
+        await this.uiPreparationStorage.update(prep);
+      }
+      this.uiAlert.hideLoadingSpinner();
+    }
+  }
   public checkHealthPlugin() {
     // #200 - Didn't save the settings
     if (this.settings.track_caffeine_consumption === false) {
@@ -181,9 +194,9 @@ export class SettingsPage implements OnInit {
       this.settings.resetFilter();
       this.saveSettings();
     }
-  public saveSettings(): void {
+  public async saveSettings() {
     this.changeDetectorRef.detectChanges();
-    this.uiSettingsStorage.saveSettings(this.settings);
+    await this.uiSettingsStorage.saveSettings(this.settings);
   }
 
   public async showAnalyticsInformation() {

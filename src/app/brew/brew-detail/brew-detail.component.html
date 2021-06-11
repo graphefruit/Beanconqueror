@@ -6,6 +6,11 @@
         <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="edit()" tappable>
+        <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content *ngIf="loaded">
@@ -173,12 +178,12 @@
                       data.getPreparation().brew_order.before.vessel,
                       data.getPreparation().use_custom_parameters)">
       <ion-label>
-        <h2>{{"BREW_DATA_VESSEL_WEIGHT" | translate}}:</h2>
-        <h3>{{data.vessel_weight}}</h3>
-      </ion-label>
-      <ion-label>
         <h2>{{"BREW_DATA_VESSEL_NAME" | translate}}:</h2>
         <h3>{{data.vessel_name}}</h3>
+      </ion-label>
+      <ion-label>
+        <h2>{{"BREW_DATA_VESSEL_WEIGHT" | translate}}:</h2>
+        <h3>{{data.vessel_weight}}</h3>
       </ion-label>
     </ion-item>
     <div class="last-item"></div>
@@ -356,10 +361,9 @@
       <pre>{{data.note}}</pre>
     </ion-label>
   </ion-item>
-
     <div class="last-item"></div>
   </ion-card>
-  <ion-card   *ngIf="showCupping()" class="ion-margin-horizontal popover" style="display:flex; flex-direction: column;">
+  <ion-card  *ngIf="showCupping()" class="ion-margin-horizontal popover" style="display:flex; flex-direction: column;">
     <ion-item lines="none">
       <span class="ion-title ion-padding-top">{{"BREW_HEADER_CUPPING" | translate }}</span>
     </ion-item>
@@ -372,6 +376,29 @@
     </ion-item>
     <div class="last-item"></div>
   </ion-card>
+
+  <ion-card *ngIf="data.hasCustomFlavors()"  class="ion-margin-horizontal popover" style="display:flex; flex-direction: column;">
+    <ion-item lines="none">
+      <span class="ion-title ion-padding-top">{{"CUSTOM_FLAVORS_AROMAS" | translate }}</span>
+    </ion-item>
+
+    <ion-item *ngFor="let customFlavor of this.data.cupped_flavor.custom_flavors;let index = i;let last = last;" lines="{{last?'none':'inset'}}">
+      <ion-label>{{customFlavor}}</ion-label>
+    </ion-item>
+
+  </ion-card>
+  <ion-card *ngIf="data.hasPredefinedFlavors()" class="ion-margin-horizontal popover" style="display:flex; flex-direction: column;">
+    <ion-item lines="none">
+      <span class="ion-title ion-padding-top">{{"PREDEFINED_FLAVORS_AROMAS" | translate }}</span>
+    </ion-item>
+
+    <ion-item  *ngFor="let item of this.data.cupped_flavor.predefined_flavors | keyvalue;let last = last;" lines="{{last?'none':'inset'}}">
+      <ion-label>{{'CUPPING_' + item.key | translate}}</ion-label>
+    </ion-item>
+
+  </ion-card>
+
+
 </ion-content>
 <ion-footer class="ion-no-border">
   <ion-row>

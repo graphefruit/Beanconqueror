@@ -28,9 +28,12 @@ import {BrewTrackingService} from '../../../services/brewTracking/brew-tracking.
 })
 export class BrewAddComponent implements OnInit {
 
+  public static COMPONENT_ID: string = 'brew-add';
   public brew_template: Brew;
   public data: Brew = new Brew();
   public settings: Settings;
+
+  public loadSpecificLastPreparation: Preparation;
 
   @ViewChild('brewBrewing', {read: BrewBrewingComponent, static: false}) public brewBrewing: BrewBrewingComponent;
 
@@ -58,6 +61,7 @@ export class BrewAddComponent implements OnInit {
 
     this.settings = this.uiSettingsStorage.getSettings();
     this.brew_template = this.navParams.get('brew_template');
+    this.loadSpecificLastPreparation = this.navParams.get('loadSpecificLastPreparation');
 
     // Get first entry
     this.data.bean = this.uiBeanStorage.getAllEntries()
@@ -125,7 +129,7 @@ export class BrewAddComponent implements OnInit {
   public async dismiss() {
     this.modalController.dismiss({
       dismissed: true
-    },undefined,'brew-add');
+    },undefined,BrewAddComponent.COMPONENT_ID);
 
 
   }

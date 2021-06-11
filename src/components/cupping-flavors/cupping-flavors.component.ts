@@ -1,6 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import CuppingFlavors from '../../data/cupping-flavors/cupping-flavors.json'
 import {TranslateService} from '@ngx-translate/core';
+import {Brew} from '../../classes/brew/brew';
+import {IFlavor} from '../../interfaces/flavor/iFlavor';
+import {UIHelper} from '../../services/uiHelper';
 
 @Component({
   selector: 'cupping-flavors',
@@ -12,8 +15,11 @@ export class CuppingFlavorsComponent implements OnInit {
   public searchFlavorText: string = '';
 
 
+  @Input('data' ) public data: IFlavor;
+  @Output() public dataChange = new EventEmitter<Brew>();
+
   public selectedFlavors = {};
-  public customFlavors = [];
+  public customFlavors: Array<string> = [];
 
 
   public displayingFlavors = [];
@@ -21,7 +27,8 @@ export class CuppingFlavorsComponent implements OnInit {
   public customFlavor: string = '';
 
 
-  constructor(private translate: TranslateService) { }
+  constructor(private translate: TranslateService,
+              private readonly uiHelper: UIHelper) { }
 
   public ngOnInit() {
 
@@ -48,6 +55,21 @@ export class CuppingFlavorsComponent implements OnInit {
     this.displayingFlavors =  Object.assign([], _newView);
   }
 
+
+  public setCustomFlavors(_flavors: Array<string>) {
+    this.customFlavors =  this.uiHelper.cloneData(_flavors);
+
+  }
+  public setSelectedFlavors(_selectedFlavors: {}) {
+    this.selectedFlavors = this.uiHelper.cloneData(_selectedFlavors);
+  }
+
+  public getCustomFlavors(): Array<string> {
+    return this.customFlavors;
+  }
+  public getSelectedFlavors() {
+    return this.selectedFlavors;
+  }
 
   public searchFlavors() {
       if (this.searchFlavorText && this.searchFlavorText.trim() !== '') {

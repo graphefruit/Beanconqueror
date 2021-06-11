@@ -101,7 +101,6 @@ export class UIImage {
                       let importPath: string = '';
                       if (newPath.lastIndexOf('/Download/')>-1) {
                         let pathFromDownload = newPath.substr(0,newPath.lastIndexOf('/Download/'));
-                        console.log(file.uri);
                         const decodedURI = decodeURIComponent(file.uri);
                         pathFromDownload = pathFromDownload + decodedURI.substring(decodedURI.lastIndexOf('/Download/'));
                         importPath = pathFromDownload;

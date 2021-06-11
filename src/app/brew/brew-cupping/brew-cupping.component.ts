@@ -9,6 +9,7 @@ import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 import {UIToast} from '../../../services/uiToast';
 import {UIBrewStorage} from '../../../services/uiBrewStorage';
 import {CuppingRadarComponent} from '../../../components/cupping-radar/cupping-radar.component';
+import {BrewFlavorPickerComponent} from '../brew-flavor-picker/brew-flavor-picker.component';
 
 @Component({
   selector: 'brew-cupping',
@@ -17,6 +18,7 @@ import {CuppingRadarComponent} from '../../../components/cupping-radar/cupping-r
 })
 export class BrewCuppingComponent implements OnInit {
 
+  public segment:string ='flavor';
 
   public data: Brew = new Brew();
   public settings: Settings;
@@ -37,10 +39,53 @@ export class BrewCuppingComponent implements OnInit {
 
   }
 
+  public segmentChanged() {
+    // Timeout else the viewchilds are not ready.
+    setTimeout( () => {
+      if (this.segment === 'cupping') {
+        this.loadCupping();
+      } else {
+
+      }
+    },50);
+
+  }
+  public saveCuppingValues() {
+    this.data.cupping = this.radar.getCuppingValues();
+  }
+
+  public loadCupping() {
+    this.radar.setCuppingValues(this.data.cupping);
+  }
+
+  public deleteCustomFlavor(_index) {
+    this.data.cupped_flavor.custom_flavors.splice(_index, 1);
+  }
+  public deletePredefinedFlavor(_key) {
+
+    delete this.data.cupped_flavor.predefined_flavors[_key];
+
+  }
+
+  public async tasteFlavors() {
+      const modal = await this.modalController.create({component: BrewFlavorPickerComponent,
+        id: BrewFlavorPickerComponent.COMPONENT_ID,
+        componentProps: {flavor: this.data.cupped_flavor}});
+      await modal.present();
+      const {data} = await modal.onWillDismiss();
+      if (data !== undefined && data.hasOwnProperty('customFlavors')) {
+        this.data.cupped_flavor.custom_flavors = data.customFlavors;
+        this.data.cupped_flavor.predefined_flavors = data.selectedFlavors;
+
+      }
+  }
+
+
   public ionViewWillEnter() {
     this.brew = this.navParams.get('brew');
     if (this.brew) {
-      const copy: IBrew = this.uiHelper.copyData(this.brew);
+
+      const copy: IBrew = this.uiHelper.cloneData(this.uiBrewStorage.getByUUID(this.brew.config.uuid));
       this.data.initializeByObject(copy);
       this.radar.setCuppingValues(this.data.cupping);
     }
@@ -49,10 +94,10 @@ export class BrewCuppingComponent implements OnInit {
   public ngOnInit(): void {
   }
 
-  public updateBrew(): void {
-    this.data.cupping = this.radar.getCuppingValues();
+  public async updateBrew() {
 
-    this.uiBrewStorage.update(this.data);
+
+    await this.uiBrewStorage.update(this.data);
     this.uiToast.showInfoToast('TOAST_BREW_EDITED_SUCCESSFULLY');
     this.dismiss();
   }

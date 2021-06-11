@@ -9,8 +9,54 @@
   </ion-toolbar>
 </ion-header>
 <ion-content class="ion-padding-top">
-  <cupping-flavors #flavor></cupping-flavors>
-  <cupping-radar #radar></cupping-radar>
+
+  <ion-segment (ionChange)="segmentChanged()" scrollable="true" [(ngModel)]="segment" class="ion-padding-vertical" style="width:100%;padding-top:0px;">
+    <ion-segment-button  value="flavor">
+      <ion-label>{{"CUPPING_BREW_TAB_AROMA" | translate }}
+      </ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="cupping">
+      <ion-label>{{"CUPPING_BREW_TAB_TASTING" | translate }}
+      </ion-label>
+    </ion-segment-button>
+  </ion-segment>
+  <div [ngSwitch]="segment">
+    <div *ngSwitchCase="'flavor'">
+      <ion-button style="margin-left:10px;margin-right:10px;" color="accent" expand="block" (click)="tasteFlavors()" tappable>
+        {{"ADD_AROMA_FLAVOR" | translate}}
+        <ion-icon style="color: white;right: 0px;position: absolute;" name="add-outline" slot="end"></ion-icon>
+      </ion-button>
+      <ion-card>
+        <ion-item lines="none">
+          <span class="ion-title ion-padding-top">{{"CUSTOM_FLAVORS_AROMAS" | translate }}</span>
+        </ion-item>
+
+        <ion-item *ngFor="let customFlavor of this.data.cupped_flavor.custom_flavors;let index = i;let last = last;" lines="{{last?'none':'inset'}}">
+          <ion-label>{{customFlavor}}</ion-label>
+          <ion-icon (click)="deleteCustomFlavor(index)" tappable slot="end" name="trash-outline"></ion-icon>
+        </ion-item>
+
+      </ion-card>
+      <ion-card>
+        <ion-item lines="none">
+          <span class="ion-title ion-padding-top">{{"PREDEFINED_FLAVORS_AROMAS" | translate }}</span>
+        </ion-item>
+
+        <ion-item  *ngFor="let item of this.data.cupped_flavor.predefined_flavors | keyvalue;let last = last;" lines="{{last?'none':'inset'}}">
+          <ion-label>{{'CUPPING_' + item.key | translate}}</ion-label>
+          <ion-icon (click)="deletePredefinedFlavor(item.key)" tappable slot="end" name="trash-outline"></ion-icon>
+        </ion-item>
+
+      </ion-card>
+
+
+    </div>
+    <div *ngSwitchCase="'cupping'">
+      <cupping-radar (cuppingChanged)="saveCuppingValues()" #radar></cupping-radar>
+    </div>
+  </div>
+
+
 </ion-content>
 <ion-footer class="ion-no-border">
   <ion-row>

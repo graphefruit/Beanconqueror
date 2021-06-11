@@ -144,6 +144,7 @@ import {WaterOverlayDirective} from '../../directive/water-overlay.directive';
 import {BrewBrixCalculatorComponent} from '../brew/brew-brix-calculator/brew-brix-calculator.component';
 import {BrewBeverageQuantityCalculatorComponent} from '../brew/brew-beverage-quantity-calculator/brew-beverage-quantity-calculator.component';
 import {BrewFlavorPickerComponent} from '../brew/brew-flavor-picker/brew-flavor-picker.component';
+import {BrewChoosePreparationToBrewComponent} from '../brew/brew-choose-preparation-to-brew/brew-choose-preparation-to-brew.component';
 
 
 @NgModule({
@@ -203,6 +204,7 @@ import {BrewFlavorPickerComponent} from '../brew/brew-flavor-picker/brew-flavor-
     MillAddComponent,
     BrewAddComponent,
     BrewBrixCalculatorComponent,
+    BrewChoosePreparationToBrewComponent,
     BrewFlavorPickerComponent,
     BrewBeverageQuantityCalculatorComponent,
     FormatDatePipe,
@@ -326,6 +328,7 @@ import {BrewFlavorPickerComponent} from '../brew/brew-flavor-picker/brew-flavor-
     MillAddComponent,
     BrewAddComponent,
     BrewBrixCalculatorComponent,
+    BrewChoosePreparationToBrewComponent,
     BrewFlavorPickerComponent,
     BrewBeverageQuantityCalculatorComponent,
     BrewPage,
@@ -460,6 +463,7 @@ import {BrewFlavorPickerComponent} from '../brew/brew-flavor-picker/brew-flavor-
     MillAddComponent,
     BrewAddComponent,
     BrewBrixCalculatorComponent,
+    BrewChoosePreparationToBrewComponent,
     BrewFlavorPickerComponent,
     BrewBeverageQuantityCalculatorComponent,
     FormatDatePipe,

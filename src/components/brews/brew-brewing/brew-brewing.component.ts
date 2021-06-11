@@ -47,6 +47,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
   @ViewChild('brewStars', {read: NgxStarsComponent, static: false}) public brewStars: NgxStarsComponent;
   @Input() public data: Brew;
   @Input() public brewTemplate: Brew;
+  @Input() public loadSpecificLastPreparation: Brew;
   @Input() public isEdit: boolean = false;
   @Output() public dataChange = new EventEmitter<Brew>();
 
@@ -91,7 +92,17 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
         if (this.brewTemplate) {
           this.__loadBrew(this.brewTemplate,true);
-        } else {
+        } else if (this.loadSpecificLastPreparation) {
+
+          const foundBrews: Array<Brew> = UIBrewHelper.sortBrews(this.uiBrewStorage.getAllEntries().filter((e)=>e.method_of_preparation === this.loadSpecificLastPreparation.config.uuid));
+          if (foundBrews.length > 0) {
+            this.__loadBrew(foundBrews[0],false);
+          } else {
+            // Fallback
+            this.__loadLastBrew();
+          }
+        }
+        else {
           this.__loadLastBrew();
         }
 
@@ -250,6 +261,10 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
         this.__loadBrew(lastBrew,false);
       }
     }
+  }
+
+  private __loadSpecificLastPreparationBrew() {
+
   }
 
   private __loadBrew(brew: Brew,_template: boolean) {
@@ -430,7 +445,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
     const filteredEntries = this.uiBrewStorage.getAllEntries().filter((e)=>e.vessel_name !== '' && e.vessel_name.toLowerCase().includes(actualSearchValue));
 
     for (const entry of filteredEntries) {
-      if (this.vesselResults.filter((e)=>e.name === entry.vessel_name).length <=0) {
+      if (this.vesselResults.filter((e)=>e.name === entry.vessel_name && e.weight === entry.vessel_weight).length <=0) {
         this.vesselResults.push({
           "name": entry.vessel_name,
           "weight": entry.vessel_weight}
@@ -459,7 +474,8 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
   }
 
   public vesselSelected(selected: string) :void {
-    this.data.pressure_profile = selected;
+    this.data.vessel_name = selected['name'];
+    this.data.vessel_weight = selected['weight'];
     this.vesselResults = [];
     this.vesselResultsAvailable = false;
     this.vesselFocused= false;
@@ -504,7 +520,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
     await modal.present();
 
     const {data} = await modal.onWillDismiss();
-    if (data !== undefined) {
+    if (data !== undefined && data.brew_beverage_quantity > 0) {
       this.data.brew_beverage_quantity = data.brew_beverage_quantity;
     }
 

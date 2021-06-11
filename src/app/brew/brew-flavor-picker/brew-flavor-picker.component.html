@@ -9,7 +9,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <cupping-flavors #flavors></cupping-flavors>
+  <cupping-flavors *ngIf="this.flavor !== undefined" [(data)]="this.data"  #flavorEl></cupping-flavors>
 </ion-content>
 <ion-footer class="ion-no-border">
   <ion-row>
@@ -19,7 +19,7 @@
     </ion-col>
     <ion-col>
       <ion-button (click)="setFlavors()" color="accent" disable-double-click expand="block" tappable
-                  type="submit">{{"SET_FLAVORS" | translate}}</ion-button>
+                  type="submit">{{"SAVE" | translate}}</ion-button>
     </ion-col>
   </ion-row>
 </ion-footer>

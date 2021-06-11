@@ -16,6 +16,7 @@ import {UIAlert} from './uiAlert';
 declare var cordova: any;
 declare var device: any;
 declare var window: any;
+import { cloneDeep } from 'lodash';
 /**
  * Handles every helping functionalities
  */
@@ -52,6 +53,11 @@ export class UIHelper {
   public static getUnixTimestamp(): number {
     return moment()
       .unix();
+  }
+
+  public cloneData(_value) {
+    const clone = cloneDeep(_value);
+    return clone;
   }
 
   public copyData(_value: any): any {

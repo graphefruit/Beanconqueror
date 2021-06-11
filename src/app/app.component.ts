@@ -77,6 +77,8 @@ export class AppComponent implements AfterViewInit {
 
     statistic: {title: 'NAV_STATISTICS', url: '/statistic', icon: 'analytics-outline', active: false},
     logs: {title: 'NAV_LOGS', url: '/info/logs', icon: 'logo-buffer', active: false},
+
+    helper: {title: 'NAV_HELPER', url: '/helper', icon: 'logo-buffer', active: false},
     helper_brew_ratio: {title: 'PAGE_HELPER_BREW_RATIO', url: '/helper/brew-ratio', icon: 'construct-outline', active: false},
     helper_water_hardness: {title: 'PAGE_HELPER_WATER_HARDNESS', url: '/helper/water-hardness', icon: 'construct-outline', active: false},
     brew_parameter: {title: 'NAV_BREW_PARAMS', url: '/brew-parameter', icon: 'construct-outline', active: false}
@@ -452,10 +454,7 @@ export class AppComponent implements AfterViewInit {
   private async __trackNewBrew() {
 
     if (this.uiBrewHelper.canBrew()) {
-      this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.ADD);
-      const modal = await this.modalCtrl.create({component: BrewAddComponent, id: 'brew-add'});
-      await modal.present();
-      await modal.onWillDismiss();
+      await this.uiBrewHelper.addBrew();
       this.router.navigate(['/home/brews'], {replaceUrl: true});
     }
 

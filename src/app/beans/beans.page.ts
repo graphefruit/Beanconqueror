@@ -293,7 +293,6 @@ export class BeansPage implements OnInit {
         role: 'scan',
         icon: 'qr-code-outline',
         handler: async () => {
-          console.log("scan");
           await this.scan();
 
         }

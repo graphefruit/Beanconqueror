@@ -59,7 +59,6 @@ export class WaterPage implements OnInit {
     this.__initialize();
     this.changeDetectorRef.detectChanges();
     this.retriggerScroll();
-    console.log(this.openWaters);
   }
 
 

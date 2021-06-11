@@ -5,6 +5,7 @@ import {BREW_QUANTITY_TYPES_ENUM} from '../../enums/brews/brewQuantityTypes';
 import {IConfig} from '../objectConfig/iObjectConfig';
 import {ICupping} from '../cupping/iCupping';
 import {IBrewCoordinates} from './iBrewCoordinates';
+import {IFlavor} from '../flavor/iFlavor';
 
 export interface IBrew {
  // Properties
@@ -136,6 +137,8 @@ export interface IBrew {
 
   vessel_weight: number;
   vessel_name: string;
+
+  cupped_flavor: IFlavor;
 
   // Functions
   formateDate(): string;

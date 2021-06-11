@@ -6,15 +6,12 @@ import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {UIBrewHelper} from '../../services/uiBrewHelper';
 import {Brew} from '../../classes/brew/brew';
-import {BrewAddComponent} from './brew-add/brew-add.component';
-
 import {IBrewPageFilter} from '../../interfaces/brew/iBrewPageFilter';
 import {BREW_ACTION} from '../../enums/brews/brewAction';
 import {Bean} from '../../classes/bean/bean';
 import {BrewFilterComponent} from './brew-filter/brew-filter.component';
 import {Settings} from '../../classes/settings/settings';
 import {AgVirtualSrollComponent} from 'ag-virtual-scroll';
-import BREW_TRACKING from '../../data/tracking/brewTracking';
 import {UIAnalytics} from '../../services/uiAnalytics';
 
 
@@ -96,14 +93,8 @@ export class BrewPage implements OnInit {
     this.retriggerScroll();
   }
   public async add() {
-    if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
-      this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.ADD);
-      const modal = await this.modalCtrl.create({component: BrewAddComponent,id:'brew-add'});
-      await modal.present();
-      await modal.onWillDismiss();
-      this.loadBrews();
-    }
-
+    await this.uiBrewHelper.addBrew();
+    this.loadBrews();
   }
 
   public async brewAction(action: BREW_ACTION, brew: Brew): Promise<void> {
@@ -273,5 +264,12 @@ export class BrewPage implements OnInit {
   public ngOnInit() {
   }
 
+
+  public async longPressAdd(event) {
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    await this.uiBrewHelper.longPressAddBrew();
+    this.loadBrews();
+  }
 
 }

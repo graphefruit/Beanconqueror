@@ -19,6 +19,7 @@ import {ICupping} from '../../interfaces/cupping/iCupping';
 import {IBrewCoordinates} from '../../interfaces/brew/iBrewCoordinates';
 import {PREPARATION_STYLE_TYPE} from '../../enums/preparations/preparationStyleTypes';
 import {PreparationTool} from '../preparation/preparationTool';
+import {IFlavor} from '../../interfaces/flavor/iFlavor';
 
 export class Brew implements IBrew {
   // tslint:disable-next-line
@@ -78,6 +79,7 @@ export class Brew implements IBrew {
   public cupping: ICupping;
 
 
+  public cupped_flavor: IFlavor;
 
   public method_of_preparation_tools: Array<string>;
 
@@ -134,6 +136,13 @@ export class Brew implements IBrew {
       notes: '',
     };
 
+    this.cupped_flavor = {
+      predefined_flavors: {
+
+      },
+      custom_flavors: []
+    } as IFlavor;
+
     this.method_of_preparation_tools = [];
     this.favourite = false;
     this.water = '';
@@ -160,6 +169,21 @@ export class Brew implements IBrew {
         notes: '',
       };
     }
+    if (this.cupped_flavor === undefined) {
+      this.cupped_flavor = {
+        predefined_flavors: {
+
+        },
+        custom_flavors: []
+      } as IFlavor;
+    }
+  }
+
+  public hasCustomFlavors(): boolean {
+    return this.cupped_flavor.custom_flavors.length > 0;
+  }
+  public hasPredefinedFlavors(): boolean {
+    return Object.keys(this.cupped_flavor.predefined_flavors).length > 0;
   }
 
   public getBrewQuantityTypeName(): string {

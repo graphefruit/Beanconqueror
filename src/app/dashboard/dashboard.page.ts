@@ -10,10 +10,8 @@ import {Router} from '@angular/router';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
 import {Bean} from '../../classes/bean/bean';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
-import BREW_TRACKING from '../../data/tracking/brewTracking';
 import {UIAnalytics} from '../../services/uiAnalytics';
 import {ServerCommunicationService} from '../../services/serverCommunication/server-communication.service';
-import {BrewFlavorPickerComponent} from '../brew/brew-flavor-picker/brew-flavor-picker.component';
 
 @Component({
   selector: 'dashboard',
@@ -62,14 +60,18 @@ export class DashboardPage implements OnInit {
   }
 
   public async addBrew() {
-    if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
-      this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.ADD);
-      const modal = await this.modalCtrl.create({component: BrewAddComponent, id:'brew-add'});
-      await modal.present();
-      await modal.onWillDismiss();
+
+      await this.uiBrewHelper.addBrew();
       this.loadBrews();
       this.router.navigate(['/home/brews']);
-    }
+  }
+
+  public async longPressAdd(event) {
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    await this.uiBrewHelper.longPressAddBrew();
+    this.loadBrews();
+    this.router.navigate(['/home/brews']);
   }
 
   public getBrews() {
@@ -115,11 +117,5 @@ export class DashboardPage implements OnInit {
     return usedWeightCount;
   }
 
-  public async showFlavor() {
-    let brew: Brew = new Brew();
-    const modal = await this.modalCtrl.create({component: BrewFlavorPickerComponent, id: BrewFlavorPickerComponent.COMPONENT_ID, componentProps: {brew: brew}});
-    await modal.present();
-    await modal.onWillDismiss();
-  }
 
 }

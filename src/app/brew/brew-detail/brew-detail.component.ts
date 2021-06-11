@@ -72,7 +72,14 @@ export class BrewDetailComponent implements OnInit {
   }
 
   public ngOnInit() {}
+  public async edit() {
+    const returningBrew: Brew = await this.uiBrewHelper.editBrew(this.data);
+    if (returningBrew) {
+      this.data = returningBrew;
+    }
 
+
+  }
   private showCupping(): boolean {
     return this.uiBrewHelper.showCupping(this.data);
   }
@@ -80,5 +87,6 @@ export class BrewDetailComponent implements OnInit {
   private __loadCuppingChart(): void {
     const chartObj = new Chart(this.cuppingChart.nativeElement, this.uiBrewHelper.getCuppingChartData(this.data));
   }
+
 
 }

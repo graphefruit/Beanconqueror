@@ -17,6 +17,13 @@ import {ICupping} from '../interfaces/cupping/iCupping';
 import {UIBrewStorage} from './uiBrewStorage';
 import {Bean} from '../classes/bean/bean';
 import {UIBeanHelper} from './uiBeanHelper';
+import BREW_TRACKING from '../data/tracking/brewTracking';
+import {BrewAddComponent} from '../app/brew/brew-add/brew-add.component';
+import {UIAnalytics} from './uiAnalytics';
+import {ModalController} from '@ionic/angular';
+import {BrewChoosePreparationToBrewComponent} from '../app/brew/brew-choose-preparation-to-brew/brew-choose-preparation-to-brew.component';
+import {BrewEditComponent} from '../app/brew/brew-edit/brew-edit.component';
+import {IBrew} from '../interfaces/brew/iBrew';
 
 /**
  * Handles every helping functionalities
@@ -75,7 +82,9 @@ export class UIBrewHelper {
                private readonly uiBrewStorage: UIBrewStorage,
                private readonly uiAlert: UIAlert,
                private readonly uiSettingsStorage: UISettingsStorage,
-               private readonly translate: TranslateService) {
+               private readonly translate: TranslateService,
+               private readonly uiAnalytics: UIAnalytics,
+               private readonly modalController: ModalController) {
 
 
     this.uiBeanStorage.attachOnEvent().subscribe(() => {
@@ -439,6 +448,59 @@ export class UIBrewHelper {
       options: chartOptions
     };
     return cuppingElementData;
+  }
+
+
+
+  public async addBrew() {
+    if (this.canBrewIfNotShowMessage()) {
+      this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.ADD);
+      const modal = await this.modalController.create({component: BrewAddComponent,id:BrewAddComponent.COMPONENT_ID});
+      await modal.present();
+      await modal.onWillDismiss();
+    }
+  }
+  public async longPressAddBrew() {
+    if (this.canBrewIfNotShowMessage()) {
+      this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.ADD);
+      const modal = await this.modalController.create({
+        component: BrewChoosePreparationToBrewComponent,
+        id: BrewChoosePreparationToBrewComponent.COMPONENT_ID,
+        cssClass: 'popover-actions',
+      });
+      await modal.present();
+
+
+      const {data} = await modal.onWillDismiss();
+      if (data !== undefined && data.preparation) {
+        const modalBrew = await this.modalController.create({
+          component: BrewAddComponent,
+          componentProps: {loadSpecificLastPreparation: data.preparation},
+          id: BrewAddComponent.COMPONENT_ID
+        });
+        await modalBrew.present();
+        await modalBrew.onWillDismiss();
+
+      }
+    }
+  }
+  public async editBrew(_brew: Brew): Promise<Brew> {
+    const promise:Promise<Brew> = new Promise(async (resolve, reject) => {
+      this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.EDIT);
+      const modal = await this.modalController.create({
+        component: BrewEditComponent,
+        id: BrewEditComponent.COMPONENT_ID,
+        componentProps: {brew: _brew}
+      });
+      await modal.present();
+      await modal.onWillDismiss();
+
+      const iBrew: IBrew = this.uiBrewStorage.getByUUID(_brew.config.uuid);
+      const returningBrew: Brew = new Brew();
+      returningBrew.initializeByObject(iBrew);
+      resolve(returningBrew);
+    });
+    return promise;
   }
 
 }
