@@ -375,7 +375,6 @@ export class UIUpdate {
     await this.__checkUpdateForDataVersion('UPDATE_2',!hasData);
     await this.__checkUpdateForDataVersion('UPDATE_3',!hasData);
     await this.__checkUpdateForDataVersion('UPDATE_4',!hasData);
-    // TODO::: FIX IT
     //await this.__checkUpdateForDataVersion('UPDATE_5',!hasData);
 
   }
@@ -388,7 +387,7 @@ export class UIUpdate {
         versionCode = await this.appVersion.getVersionNumber();
       } else {
         // Hardcored for testing
-        versionCode = '4.0.0';
+        versionCode = '5.4.0';
       }
       const version: Version = this.uiVersionStorage.getVersion();
       const displayingVersions = version.whichUpdateScreensShallBeDisplayed(versionCode);

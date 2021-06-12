@@ -84,10 +84,8 @@ export class BrewCuppingComponent implements OnInit {
   public ionViewWillEnter() {
     this.brew = this.navParams.get('brew');
     if (this.brew) {
-
       const copy: IBrew = this.uiHelper.cloneData(this.uiBrewStorage.getByUUID(this.brew.config.uuid));
       this.data.initializeByObject(copy);
-      this.radar.setCuppingValues(this.data.cupping);
     }
   }
 

@@ -60,6 +60,11 @@ export class UIMillStorage extends StorageClass {
     return this.translate.instant('NO_COFFEE_DRUNK');
   }
 
+  public async initializeStorage() {
+    this.mills = [];
+    await super.__initializeStorage();
+  }
+
   public getAllEntries(): Array<Mill> {
     if (this.mills.length <= 0) {
       const entries: Array<any> = super.getAllEntries();

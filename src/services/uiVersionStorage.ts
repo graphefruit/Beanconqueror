@@ -44,6 +44,11 @@ export class UiVersionStorage extends StorageClass {
     });
   }
 
+  public async initializeStorage() {
+    this.version = new Version();
+    await super.__initializeStorage();
+  }
+
   public async storageReady(): Promise<any> {
     const promise = new Promise((resolve, reject) => {
 

@@ -56,7 +56,10 @@ export class UIBrewStorage extends StorageClass {
     return this.brews;
   }
 
-
+  public async initializeStorage() {
+    this.brews = [];
+    await super.__initializeStorage();
+  }
   public async add(_entry: Brew) {
     _entry.fixDataTypes();
     await super.add(_entry);

@@ -47,6 +47,10 @@ export class UIWaterStorage extends StorageClass {
   }
 
 
+  public async initializeStorage() {
+    this.waters = [];
+    await super.__initializeStorage();
+  }
 
   public getAllEntries(): Array<Water> {
     if (this.waters.length <= 0) {

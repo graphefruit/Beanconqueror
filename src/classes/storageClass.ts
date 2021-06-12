@@ -60,7 +60,7 @@ export abstract class StorageClass {
     return promise;
   }
 
-  public async reinitializeStorage () {
+  public async reinitializeStorage() {
     this.uiLog.log(`Storage - Reinitialize ${this.DB_PATH}`);
     this.isInitialized = -1;
     await this.__initializeStorage();
@@ -163,6 +163,7 @@ export abstract class StorageClass {
 
   protected async __initializeStorage () {
     this.storedData = [];
+    this.isInitialized = -1;
     const promise = new Promise((resolve, reject) => {
       this.uiLog.log(`Initialize Storage - ${this.DB_PATH}`);
       this.uiStorage.get(this.DB_PATH).then((_data) => {

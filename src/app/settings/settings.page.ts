@@ -48,7 +48,6 @@ import {IPreparation} from '../../interfaces/preparation/iPreparation';
 import {IGreenBean} from '../../interfaces/green-bean/iGreenBean';
 import {IRoastingMachine} from '../../interfaces/roasting-machine/iRoastingMachine';
 import {IMill} from '../../interfaces/mill/iMill';
-import {IBrewCoordinates} from '../../interfaces/brew/iBrewCoordinates';
 import {UIWaterStorage} from '../../services/uiWaterStorage';
 import {Water} from '../../classes/water/water';
 declare var cordova: any;
@@ -144,14 +143,20 @@ export class SettingsPage implements OnInit {
   public async checkWaterSection() {
     if (this.settings.show_water_section === false) {
       this.uiAlert.showLoadingSpinner();
-      this.settings.manage_parameters.water = true;
-      await this.saveSettings();
+      try {
+        this.settings.manage_parameters.water = true;
+        await this.saveSettings();
 
-      const preps: Array<Preparation> = this.uiPreparationStorage.getAllEntries();
-      for (const prep of preps) {
-        prep.manage_parameters.water = true;
-        await this.uiPreparationStorage.update(prep);
+        const preps: Array<Preparation> = this.uiPreparationStorage.getAllEntries();
+        for (const prep of preps) {
+          prep.manage_parameters.water = true;
+          await this.uiPreparationStorage.update(prep);
+        }
       }
+      catch (ex) {
+
+      }
+
       this.uiAlert.hideLoadingSpinner();
     }
   }
@@ -632,15 +637,15 @@ export class SettingsPage implements OnInit {
   private async __reinitializeStorages (): Promise<any> {
     return new Promise(async (resolve) => {
 
-      await this.uiBeanStorage.initializeStorage();
-      await this.uiPreparationStorage.initializeStorage();
-      await this.uiSettingsStorage.initializeStorage();
-      await this.uiBrewStorage.initializeStorage();
-      await this.uiMillStorage.initializeStorage();
-      await this.uiVersionStorage.initializeStorage();
-      await this.uiGreenBeanStorage.initializeStorage();
-      await this.uiRoastingMachineStorage.initializeStorage();
-      await this.uiWaterStorage.initializeStorage();
+      await this.uiBeanStorage.reinitializeStorage();
+      await this.uiPreparationStorage.reinitializeStorage();
+      await this.uiSettingsStorage.reinitializeStorage();
+      await this.uiBrewStorage.reinitializeStorage();
+      await this.uiMillStorage.reinitializeStorage();
+      await this.uiVersionStorage.reinitializeStorage();
+      await this.uiGreenBeanStorage.reinitializeStorage();
+      await this.uiRoastingMachineStorage.reinitializeStorage();
+      await this.uiWaterStorage.reinitializeStorage();
 
       // Wait for every necessary service to be ready before starting the app
       // Settings and version, will create a new object on start, so we need to wait for this in the end.
@@ -666,6 +671,8 @@ export class SettingsPage implements OnInit {
         roastingMachineStorageCallback,
         waterStorageCallback
       ]).then(async () => {
+        console.log(this.uiBrewStorage.getAllEntries().length);
+        console.log('did someting happend here');
         await this.uiUpdate.checkUpdate();
         resolve();
       }, () => {

@@ -63,6 +63,11 @@ export class UIRoastingMachineStorage extends StorageClass {
     return this.translate.instant('NO_COFFEE_DRUNK');
   }
 
+  public async initializeStorage() {
+    this.roastingMachines = [];
+    await super.__initializeStorage();
+  }
+
   public getAllEntries(): Array<RoastingMachine> {
     if (this.roastingMachines.length <= 0) {
       const machineEntry: Array<any> = super.getAllEntries();

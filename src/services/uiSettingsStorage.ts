@@ -60,6 +60,12 @@ export class UISettingsStorage extends StorageClass {
     });
   }
 
+  public async initializeStorage() {
+    this.settings = new Settings();
+    await super.__initializeStorage();
+
+  }
+
   public async storageReady(): Promise<any> {
     const promise = new Promise((resolve, reject) => {
 
