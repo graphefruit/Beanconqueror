@@ -330,7 +330,7 @@
                       data.getPreparation().use_custom_parameters)"
             lines="inset">
     <ion-row style="width:100%">
-      <ion-col class="ion-no-padding" size="8">
+      <ion-col class="ion-no-padding" size="10">
         <ion-item class="ion-no-margin-important">
           <ion-label position="stacked">{{"BREW_DATA_BREW_QUANTITY" | translate}}&nbsp;-&nbsp;({{data.getBrewRatio()}})</ion-label>
           <ion-input [(ngModel)]="data.brew_quantity" inputmode="decimal"
@@ -339,7 +339,7 @@
                      type="text"></ion-input>
         </ion-item>
       </ion-col>
-      <ion-col class="ion-no-padding ion-align-self-end" size="4">
+      <ion-col class="ion-no-padding ion-align-self-end" size="2">
         <ion-item class="ion-no-margin-important">
           <ion-select #brewQuantityType="ngModel" [(ngModel)]="data.brew_quantity_type"
                       cancelText="{{'CANCEL'| translate }}" name="brewQuantityType"
