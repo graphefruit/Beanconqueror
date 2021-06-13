@@ -34,14 +34,14 @@ export class AnalyticsPopoverComponent implements OnInit {
     }
   }
 
-  public finish() {
+  public async finish() {
     try{
       this.disableHardwareBack.unsubscribe();
     } catch(ex) {
 
     }
     this.settings.matomo_analytics = true;
-    this.uiSettingsStorage.saveSettings(this.settings);
+    await this.uiSettingsStorage.saveSettings(this.settings);
     this.uiAnalytics.enableTracking();
     this.modalController.dismiss({
       dismissed: true

@@ -166,18 +166,18 @@ export class SettingsPage implements OnInit {
     // #200 - Didn't save the settings
     if (this.settings.track_caffeine_consumption === false) {
       this.uiAlert.showConfirm('HEALTH_KIT_QUESTION_MESSAGE','HEALTH_KIT_QUESTION_TITLE', true).then( () => {
-        this.uiHealthKit.requestAuthorization().then(() => {
+        this.uiHealthKit.requestAuthorization().then(async () => {
           // Allowed
           this.settings.track_caffeine_consumption = true;
-          this.saveSettings();
-        }, () => {
+          await this.saveSettings();
+        }, async () => {
           // Forbidden
           this.settings.track_caffeine_consumption = false;
-          this.saveSettings();
+          await this.saveSettings();
         });
-      }, () => {
+      }, async () => {
         this.settings.track_caffeine_consumption = false;
-        this.saveSettings();
+        await this.saveSettings();
       });
     }
 
@@ -197,9 +197,9 @@ export class SettingsPage implements OnInit {
     }
   }
 
-    public changeBrewRating() {
+    public async changeBrewRating() {
       this.settings.resetFilter();
-      this.saveSettings();
+      await this.saveSettings();
     }
   public async saveSettings() {
     this.changeDetectorRef.detectChanges();

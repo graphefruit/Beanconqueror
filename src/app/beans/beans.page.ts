@@ -158,11 +158,11 @@ export class BeansPage implements OnInit {
     this.__initializeBeansView(this.bean_segment);
   }
 
-  private __saveBeanFilter() {
+  private async __saveBeanFilter() {
     const settings: Settings = this.uiSettingsStorage.getSettings();
     settings.bean_filter.OPEN = this.openBeansFilter;
     settings.bean_filter.ARCHIVED = this.archivedBeansFilter;
-    this.uiSettingsStorage.saveSettings(settings);
+    await this.uiSettingsStorage.saveSettings(settings);
   }
 
   private __initializeBeansView(_type: string) {

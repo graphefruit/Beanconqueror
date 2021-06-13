@@ -115,7 +115,6 @@ export class WelcomePopoverComponent implements OnInit {
     } catch(ex) {
 
     }
-    debugger;
     this.settings.welcome_page_showed = true;
     await this.uiSettingsStorage.saveSettings(this.settings);
     this.modalController.dismiss({

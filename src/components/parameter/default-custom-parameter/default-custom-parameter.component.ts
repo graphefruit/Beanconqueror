@@ -45,12 +45,12 @@ export class DefaultCustomParameterComponent implements OnInit {
     }
     return false;
   }
-  public save(): void {
+  public async save() {
     this.changeDetectorRef.detectChanges();
     if (this.data instanceof Settings) {
-      this.uiSettingsStorage.saveSettings(this.data as Settings);
+      await this.uiSettingsStorage.saveSettings(this.data as Settings);
     } else {
-      this.uiPreparationStorage.update(this.data as Preparation);
+      await this.uiPreparationStorage.update(this.data as Preparation);
     }
 
   }

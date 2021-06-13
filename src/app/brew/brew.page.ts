@@ -179,11 +179,11 @@ export class BrewPage implements OnInit {
     this.loadBrews();
   }
 
-  private __saveBrewFilter() {
+  private async __saveBrewFilter() {
 
     this.settings.brew_filter.OPEN = this.openBrewsFilter;
     this.settings.brew_filter.ARCHIVED = this.archivedBrewsFilter;
-    this.uiSettingsStorage.saveSettings(this.settings);
+    await this.uiSettingsStorage.saveSettings(this.settings);
   }
 
   public research() {

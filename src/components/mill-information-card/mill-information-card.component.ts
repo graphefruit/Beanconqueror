@@ -129,10 +129,10 @@ export class MillInformationCardComponent implements OnInit {
     }
   }
 
-  private resetSettings() {
+  private async resetSettings() {
     const settings: Settings = this.uiSettingsStorage.getSettings();
     settings.resetFilter();
-    this.uiSettingsStorage.saveSettings(settings);
+    await this.uiSettingsStorage.saveSettings(settings);
   }
 
   public async longPressEditMill(event) {
