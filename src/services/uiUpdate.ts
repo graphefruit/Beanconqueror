@@ -375,6 +375,8 @@ export class UIUpdate {
     await this.__checkUpdateForDataVersion('UPDATE_2',!hasData);
     await this.__checkUpdateForDataVersion('UPDATE_3',!hasData);
     await this.__checkUpdateForDataVersion('UPDATE_4',!hasData);
+
+    // TODO FIX FOR VERSION 5
     //await this.__checkUpdateForDataVersion('UPDATE_5',!hasData);
 
   }

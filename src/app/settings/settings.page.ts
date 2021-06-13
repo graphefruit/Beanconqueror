@@ -346,7 +346,7 @@ export class SettingsPage implements OnInit {
     this.uiExcel.export();
   }
 
-  private async _exportAttachments(_storedData: Array<Bean> | Array<Brew> | Array<Preparation> | Array<Mill> | Array<GreenBean> | Array<RoastingMachine>)
+  private async _exportAttachments(_storedData: Array<Bean> | Array<Brew> | Array<Preparation> | Array<Mill> | Array<GreenBean> | Array<RoastingMachine> | Array<Water>)
   {
     for (const entry of _storedData) {
       for (const attachment of entry.attachments) {
@@ -400,7 +400,7 @@ export class SettingsPage implements OnInit {
 
   }
 
-  private async _importFiles(_storedData: Array<Bean> | Array<Brew>| Array<Preparation> | Array<Mill> | Array<GreenBean> | Array<RoastingMachine>,_importPath: string)
+  private async _importFiles(_storedData: Array<Bean> | Array<Brew>| Array<Preparation> | Array<Mill> | Array<GreenBean> | Array<RoastingMachine> | Array<Water>,_importPath: string)
   {
     for (const entry of _storedData) {
       for (const attachment of entry.attachments) {
