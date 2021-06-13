@@ -51,7 +51,10 @@ export class UISettingsStorage extends StorageClass {
         this.isSettingsInitialized = 1;
       } else {
         // Take the new settings obj.
-        await super.add(this.settings);
+
+        const data: any = await super.add(this.settings);
+        this.settings = new Settings();
+        this.settings.initializeByObject(data);
         this.isSettingsInitialized = 1;
       }
     }, () => {
@@ -61,7 +64,6 @@ export class UISettingsStorage extends StorageClass {
   }
 
   public async initializeStorage() {
-    this.settings = new Settings();
     await super.__initializeStorage();
 
   }
@@ -108,8 +110,9 @@ export class UISettingsStorage extends StorageClass {
         this.settings = new Settings();
         this.settings.initializeByObject(entries[0]);
       } else {
-        // Take the new settings obj.
-        await super.add(this.settings);
+        const data: any = await super.add(this.settings);
+        this.settings = new Settings();
+        this.settings.initializeByObject(data);
       }
     }, () => {
       // Outsch, cant do much.

@@ -35,7 +35,9 @@ export class UiVersionStorage extends StorageClass {
         this.isVersionInitialized = 1;
       } else {
         // Take the new settings obj.
-        await super.add(this.version);
+        const data: any = await super.add(this.version);
+        this.version = new Version();
+        this.version.initializeByObject(data);
         this.isVersionInitialized = 1;
       }
     }, () => {
@@ -45,7 +47,6 @@ export class UiVersionStorage extends StorageClass {
   }
 
   public async initializeStorage() {
-    this.version = new Version();
     await super.__initializeStorage();
   }
 
@@ -90,8 +91,9 @@ export class UiVersionStorage extends StorageClass {
         this.version = new Version();
         this.version.initializeByObject(entries[0]);
       } else {
-        // Take the new settings obj.
-        await super.add(this.version);
+        const data: any = await super.add(this.version);
+        this.version = new Version();
+        this.version.initializeByObject(data);
       }
     }, () => {
       // Outsch, cant do much.

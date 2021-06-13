@@ -142,22 +142,24 @@ export class SettingsPage implements OnInit {
   }
   public async checkWaterSection() {
     if (this.settings.show_water_section === false) {
-      this.uiAlert.showLoadingSpinner();
+      await this.uiAlert.showLoadingSpinner();
       try {
         this.settings.manage_parameters.water = true;
         await this.saveSettings();
 
         const preps: Array<Preparation> = this.uiPreparationStorage.getAllEntries();
-        for (const prep of preps) {
-          prep.manage_parameters.water = true;
-          await this.uiPreparationStorage.update(prep);
+        if (preps.length > 0) {
+          for (const prep of preps) {
+            prep.manage_parameters.water = true;
+            await this.uiPreparationStorage.update(prep);
+          }
         }
       }
       catch (ex) {
 
       }
 
-      this.uiAlert.hideLoadingSpinner();
+      await this.uiAlert.hideLoadingSpinner();
     }
   }
   public checkHealthPlugin() {

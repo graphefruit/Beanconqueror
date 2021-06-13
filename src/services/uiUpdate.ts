@@ -399,7 +399,7 @@ export class UIUpdate {
         for (const v of displayingVersions) {
           version.pushUpdatedVersion(v);
         }
-      //  this.uiVersionStorage.saveVersion(version);
+        await this.uiVersionStorage.saveVersion(version);
       }
 
       resolve();

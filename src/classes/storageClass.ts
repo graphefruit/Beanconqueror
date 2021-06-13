@@ -72,12 +72,16 @@ export abstract class StorageClass {
   }
 
   public async add(_entry) {
-    const newEntry = this.uiHelper.cloneData(_entry);
-    newEntry.config.uuid = this.uiHelper.generateUUID();
-    newEntry.config.unix_timestamp = this.uiHelper.getUnixTimestamp();
-    this.storedData.push(newEntry);
-    await this.__save();
-    this.__sendEvent('ADD');
+    const promise = new Promise(async (resolve, reject) => {
+      const newEntry = this.uiHelper.cloneData(_entry);
+      newEntry.config.uuid = this.uiHelper.generateUUID();
+      newEntry.config.unix_timestamp = this.uiHelper.getUnixTimestamp();
+      this.storedData.push(newEntry);
+      await this.__save();
+      this.__sendEvent('ADD');
+      resolve(this.uiHelper.cloneData(newEntry));
+    });
+    return promise;
   }
 
   public getAllEntries (): Array<any> {
@@ -86,17 +90,24 @@ export abstract class StorageClass {
 
   public async update(_obj): Promise<boolean> {
     const promise: Promise<any> = new Promise(async (resolve, reject) => {
+      let didUpdate: boolean = false;
       for (let i = 0; i < this.storedData.length; i++) {
         if (this.storedData[i].config.uuid === _obj.config.uuid) {
           this.uiLog.log(`Storage - Update  - Successfully - ${_obj.config.uuid}`);
           this.storedData[i] = _obj;
           await this.__save();
           this.__sendEvent('UPDATE');
+          didUpdate = true;
           resolve(true);
+          return;
         }
       }
+      if (didUpdate === false) {
+        this.uiLog.error(`Storage - Update  - Unsucessfully - ${_obj.config.uuid} - not found`);
 
+      }
       resolve(false);
+
     });
     return promise;
   }

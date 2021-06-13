@@ -25,14 +25,14 @@ export class WelcomePopoverComponent implements OnInit {
   @ViewChild('slider', {static: false}) public welcomeSlider: IonSlides;
 
 
-  private readonly settings: Settings;
+  private settings: Settings;
 
   private disableHardwareBack;
   constructor(private readonly modalController: ModalController,
               private readonly uiAnalytics: UIAnalytics,
               private readonly uiSettingsStorage: UISettingsStorage,
               private readonly platform: Platform) {
-    this.settings = this.uiSettingsStorage.getSettings();
+
 
 
   }
@@ -44,6 +44,7 @@ export class WelcomePopoverComponent implements OnInit {
   }
   public ngOnInit() {
     try {
+      this.settings = this.uiSettingsStorage.getSettings();
       this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(9999, (processNextHandler) => {
         // Don't do anything.
       });
@@ -56,14 +57,14 @@ export class WelcomePopoverComponent implements OnInit {
   public async understoodAnalytics() {
     this.settings.matomo_analytics = true;
     this.uiAnalytics.enableTracking();
-    this.uiSettingsStorage.saveSettings(this.settings);
+    await this.uiSettingsStorage.saveSettings(this.settings);
     this.slide++;
 
     this.welcomeSlider.slideNext();
     this.__triggerUpdate();
   }
 
-  public skip() {
+  public async skip() {
 
     this.slide++;
     this.welcomeSlider.slideNext();
@@ -108,14 +109,15 @@ export class WelcomePopoverComponent implements OnInit {
 
   }
 
-  public finish() {
+  public async finish() {
     try{
       this.disableHardwareBack.unsubscribe();
     } catch(ex) {
 
     }
+    debugger;
     this.settings.welcome_page_showed = true;
-    this.uiSettingsStorage.saveSettings(this.settings);
+    await this.uiSettingsStorage.saveSettings(this.settings);
     this.modalController.dismiss({
       dismissed: true
     }, undefined, 'welcome-popover');

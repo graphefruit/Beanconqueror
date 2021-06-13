@@ -88,7 +88,7 @@ export class UIImage {
             const fileurls: Array<string> = [];
             if (isCordova && isAndroid) {
               chooser.getFile().then(async (_files) => {
-                this.uiAlert.showLoadingSpinner();
+                await this.uiAlert.showLoadingSpinner();
 
                 for (const file of _files) {
                   try {
@@ -120,7 +120,7 @@ export class UIImage {
 
                   }
                 }
-                this.uiAlert.hideLoadingSpinner();
+                await this.uiAlert.hideLoadingSpinner();
                 if (fileurls.length > 0) {
                   resolve(fileurls);
                 } else {
@@ -170,7 +170,7 @@ export class UIImage {
               // https://github.com/Telerik-Verified-Plugins/ImagePicker/issues/173#issuecomment-559096572
               this.imagePicker.getPictures({maximumImagesCount: 5, outputType: 1, disable_popover: true, quality: this.getImageQuality()}).then(async (results) => {
 
-                this.uiAlert.showLoadingSpinner();
+                await this.uiAlert.showLoadingSpinner();
                 for (const result of results) {
                   if (result && result.length > 0 && result !== 0 && result !== ''
                     && result !== 'OK' && result.length > 5) {
@@ -189,7 +189,7 @@ export class UIImage {
                   }
 
                 }
-                this.uiAlert.hideLoadingSpinner();
+                await this.uiAlert.hideLoadingSpinner();
                 if (fileurls.length > 0) {
                   resolve(fileurls);
                 } else {
