@@ -332,7 +332,7 @@
     <ion-row style="width:100%">
       <ion-col class="ion-no-padding" size="8">
         <ion-item class="ion-no-margin-important">
-          <ion-label position="stacked">{{"BREW_DATA_BREW_QUANTITY" | translate}}</ion-label>
+          <ion-label position="stacked">{{"BREW_DATA_BREW_QUANTITY" | translate}}&nbsp;-&nbsp;({{data.getBrewRatio()}})</ion-label>
           <ion-input [(ngModel)]="data.brew_quantity" inputmode="decimal"
                      placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_BREW_QUANTITY' | translate}}" prevent-characters
                      remove-empty-number
@@ -429,7 +429,7 @@
     <ion-row style="width:100%">
       <ion-col class="ion-no-padding" size="10">
         <ion-item class="ion-no-margin-important">
-          <ion-label position="stacked">{{"BREW_DATA_BREW_BEVERAGE_QUANTITY" | translate}}</ion-label>
+          <ion-label position="stacked">{{"BREW_DATA_BREW_BEVERAGE_QUANTITY" | translate}}<span *ngIf="data.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO || (data.brew_quantity <=0 && data.brew_beverage_quantity >0)">&nbsp;-&nbsp;({{data.getBrewRatio()}})</span></ion-label>
           <ion-input [(ngModel)]="data.brew_beverage_quantity" inputmode="decimal"
                      placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_BREW_BEVERAGE_QUANTITY' | translate}}" prevent-characters
                      remove-empty-number
