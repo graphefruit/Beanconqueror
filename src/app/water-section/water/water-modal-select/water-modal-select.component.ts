@@ -24,8 +24,6 @@ export class WaterModalSelectComponent implements OnInit {
 
 
     this.objs = this.uiWaterStorage.getAllEntries();
-console.log(this.objs);
-console.log(this.showFinished);
 
   }
 

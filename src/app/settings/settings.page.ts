@@ -671,8 +671,6 @@ export class SettingsPage implements OnInit {
         roastingMachineStorageCallback,
         waterStorageCallback
       ]).then(async () => {
-        console.log(this.uiBrewStorage.getAllEntries().length);
-        console.log('did someting happend here');
         await this.uiUpdate.checkUpdate();
         resolve();
       }, () => {
