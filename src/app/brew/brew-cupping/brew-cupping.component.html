@@ -23,7 +23,7 @@
   <div [ngSwitch]="segment">
     <div *ngSwitchCase="'flavor'">
       <ion-button style="margin-left:10px;margin-right:10px;" color="accent" expand="block" (click)="tasteFlavors()" tappable>
-        {{"ADD_AROMA_FLAVOR" | translate}}
+        <span>{{"ADD_AROMA_FLAVOR" | translate}}</span>
         <ion-icon style="color: white;right: 0px;position: absolute;" name="add-outline" slot="end"></ion-icon>
       </ion-button>
       <ion-card>

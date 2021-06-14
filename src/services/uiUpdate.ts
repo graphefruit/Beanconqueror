@@ -315,7 +315,7 @@ export class UIUpdate {
               settings_v5.brew_order.before.water = highestNumber +1;
               settings_v5.brew_order.before.bean_weight_in = highestNumber +2;
               settings_v5.brew_order.before.vessel = highestNumber +3;
-              await this.uiSettingsStorage.saveSettings(settings);
+              await this.uiSettingsStorage.saveSettings(settings_v5);
 
               const preparations_v5:any = this.uiPreparationStorage.getAllEntries();
               for(const prep of preparations_v5) {
@@ -374,6 +374,7 @@ export class UIUpdate {
     }
 
     if (somethingUpdated) {
+    console.log("SAVE UPDATE!!!");
       // this.uiVersionStorage.saveVersion(version);
     }
   }
@@ -388,7 +389,7 @@ export class UIUpdate {
     await this.__checkUpdateForDataVersion('UPDATE_4',!hasData);
 
     // TODO FIX FOR VERSION 5
-    //await this.__checkUpdateForDataVersion('UPDATE_5',!hasData);
+    await this.__checkUpdateForDataVersion('UPDATE_5',!hasData);
 
   }
 
