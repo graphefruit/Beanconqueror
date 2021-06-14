@@ -142,22 +142,28 @@ export class UIUpdate {
 
             const settings: any = this.uiSettingsStorage.getSettings();
             if (settings.brew_order.after.tds === null || settings.brew_order.after.tds === undefined) {
-              const newSettingsObj: any = new Settings();
-              settings.brew_order.after.tds = newSettingsObj.brew_order.after.tds;
+              const settingsAfter = settings.brew_order.after;
+              const maxKey = _.maxBy(_.keys(settingsAfter), (o) => settingsAfter[o]);
+              const highestNumber = settingsAfter[maxKey];
+              settings.brew_order.after.tds = highestNumber +1;
               await this.uiSettingsStorage.saveSettings(settings);
 
             }
             if (settings.brew_order.after.brew_beverage_quantity === null ||
               settings.brew_order.after.brew_beverage_quantity === undefined) {
-              const newSettingsObj: any = new Settings();
-              settings.brew_order.after.brew_beverage_quantity = newSettingsObj.brew_order.after.brew_beverage_quantity;
+              const settingsAfter = settings.brew_order.after;
+              const maxKey = _.maxBy(_.keys(settingsAfter), (o) => settingsAfter[o]);
+              const highestNumber = settingsAfter[maxKey];
+              settings.brew_order.after.brew_beverage_quantity = highestNumber+1;
               await this.uiSettingsStorage.saveSettings(settings);
             }
 
             if (settings.brew_order.before.method_of_preparation_tool === null ||
               settings.brew_order.before.method_of_preparation_tool === undefined) {
-              const newSettingsObj: any = new Settings();
-              settings.brew_order.before.method_of_preparation_tool = newSettingsObj.brew_order.before.method_of_preparation_tool;
+              const settingsBefore = settings.brew_order.before;
+              const maxKey = _.maxBy(_.keys(settingsBefore), (o) => settingsBefore[o]);
+              const highestNumber = settingsBefore[maxKey];
+              settings.brew_order.before.method_of_preparation_tool = highestNumber+1;
 
               settings.manage_parameters.brew_time = settings.brew_time;
               settings.manage_parameters.brew_temperature_time = settings.brew_temperature_time;
@@ -300,17 +306,22 @@ export class UIUpdate {
             /// TODO - fix more parapmeters here aswell. and fix that settings are saved again
             const settings_v5: any = this.uiSettingsStorage.getSettings();
             if (settings_v5.brew_order.before.water === null || settings_v5.brew_order.before.water === undefined) {
-              const newSettingsObj: any = new Settings();
-              settings_v5.brew_order.before.water = newSettingsObj.brew_order.before.water;
-              settings_v5.brew_order.before.bean_weight_in = newSettingsObj.brew_order.before.bean_weight_in;
-              settings_v5.brew_order.before.vessel = newSettingsObj.brew_order.before.vessel;
+
+
+              const settings_v5Before = settings_v5.brew_order.before;
+              const maxKey = _.maxBy(_.keys(settings_v5Before), (o) => settings_v5Before[o]);
+              const highestNumber = settings_v5Before[maxKey];
+
+              settings_v5.brew_order.before.water = highestNumber +1;
+              settings_v5.brew_order.before.bean_weight_in = highestNumber +2;
+              settings_v5.brew_order.before.vessel = highestNumber +3;
               await this.uiSettingsStorage.saveSettings(settings);
 
               const preparations_v5:any = this.uiPreparationStorage.getAllEntries();
               for(const prep of preparations_v5) {
-                prep.brew_order.before.water = newSettingsObj.brew_order.before.water;
-                prep.brew_order.before.bean_weight_in = newSettingsObj.brew_order.before.bean_weight_in;
-                prep.brew_order.before.vessel = newSettingsObj.brew_order.before.vessel;
+                prep.brew_order.before.water = highestNumber +1;
+                prep.brew_order.before.bean_weight_in = highestNumber +2;
+                prep.brew_order.before.vessel = highestNumber +3;
                 await this.uiPreparationStorage.update(prep);
               }
             }
@@ -363,7 +374,7 @@ export class UIUpdate {
     }
 
     if (somethingUpdated) {
-      this.uiVersionStorage.saveVersion(version);
+      // this.uiVersionStorage.saveVersion(version);
     }
   }
 

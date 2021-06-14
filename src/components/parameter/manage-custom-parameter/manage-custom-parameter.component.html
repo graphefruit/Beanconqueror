@@ -1,9 +1,9 @@
 
 <ion-card class="ion-padding">
   <ion-title class="ion-no-padding">{{"SORT_PARAMETERS_BEFORE" | translate  }}</ion-title>
-  <ion-item tappable>
-    <ion-label>{{"BREW_DATA_GRIND_SIZE" | translate}}</ion-label>
-    <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.grind_size"></ion-checkbox>
+  <ion-item [disabled]="true"  tappable>
+    <ion-label>{{"BREW_DATA_BEAN_TYPE" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.bean_type"></ion-checkbox>
   </ion-item>
   <ion-item tappable>
     <ion-label>
@@ -19,34 +19,26 @@
     </ion-label>
     <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.grind_weight"></ion-checkbox>
   </ion-item>
-  <ion-item tappable>
-    <ion-label>{{"BREW_DATA_BREW_TEMPERATURE" | translate}}</ion-label>
-    <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.brew_temperature"></ion-checkbox>
-  </ion-item>
-  <ion-item [disabled]="true" tappable>
-    <ion-label>{{"BREW_DATA_PREPARATION_METHOD" | translate}}</ion-label>
-    <ion-checkbox (ngModelChange)="triggerChanges($event)"
-                  [(ngModel)]="data.manage_parameters.method_of_preparation"></ion-checkbox>
-  </ion-item>
-  <ion-item [disabled]="true"  tappable>
-    <ion-label>{{"BREW_DATA_BEAN_TYPE" | translate}}</ion-label>
-    <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.bean_type"></ion-checkbox>
-  </ion-item>
   <ion-item [disabled]="true" tappable>
     <ion-label>{{"BREW_DATA_MILL" | translate}}</ion-label>
     <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.mill"></ion-checkbox>
   </ion-item>
   <ion-item tappable>
-    <ion-label>{{"BREW_DATA_MILL_SPEED" | translate}}</ion-label>
-    <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.mill_speed"></ion-checkbox>
+    <ion-label>{{"BREW_DATA_GRIND_SIZE" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.grind_size"></ion-checkbox>
   </ion-item>
   <ion-item tappable>
     <ion-label>{{"BREW_DATA_MILL_TIMER" | translate}}</ion-label>
     <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.mill_timer"></ion-checkbox>
   </ion-item>
   <ion-item tappable>
-    <ion-label>{{"BREW_DATA_PRESSURE_PROFILE" | translate}}</ion-label>
-    <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.pressure_profile"></ion-checkbox>
+    <ion-label>{{"BREW_DATA_MILL_SPEED" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.mill_speed"></ion-checkbox>
+  </ion-item>
+  <ion-item [disabled]="true" tappable>
+    <ion-label>{{"BREW_DATA_PREPARATION_METHOD" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="triggerChanges($event)"
+                  [(ngModel)]="data.manage_parameters.method_of_preparation"></ion-checkbox>
   </ion-item>
   <ion-item tappable>
     <ion-label>
@@ -56,16 +48,27 @@
     <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.method_of_preparation_tool"></ion-checkbox>
   </ion-item>
   <ion-item tappable>
+    <ion-label>{{"BREW_DATA_BREW_TEMPERATURE" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.brew_temperature"></ion-checkbox>
+  </ion-item>
+  <ion-item tappable>
     <ion-label>{{"BREW_DATA_WATER" | translate}}</ion-label>
     <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.water"></ion-checkbox>
   </ion-item>
-  <ion-item lines="none"  tappable>
+  <ion-item tappable>
     <ion-label>
       <h2>{{"BREW_DATA_VESSEL" | translate}}</h2>
       <p>{{"VESSEL_PLACEHOLDER" | translate}}</p>
     </ion-label>
     <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.vessel"></ion-checkbox>
   </ion-item>
+  <ion-item lines="none" tappable>
+    <ion-label>{{"BREW_DATA_PRESSURE_PROFILE" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.pressure_profile"></ion-checkbox>
+  </ion-item>
+
+
+
 </ion-card>
 <ion-card class="ion-padding" style="margin-top:30px;">
   <ion-title  class="ion-no-padding">{{"SORT_PARAMETERS_MEANWHILE" | translate  }}</ion-title>
@@ -94,13 +97,6 @@
 </ion-card>
 <ion-card class="ion-padding"  style="margin-top:30px;">
   <ion-title class="ion-no-padding">{{"SORT_PARAMETERS_AFTER" | translate  }}</ion-title>
-  <ion-item [disabled]="brewQuantityDisabled()" tappable>
-    <ion-label>
-      <h2>{{"BREW_DATA_BREW_QUANTITY" | translate}}</h2>
-      <p>{{"BREW_DATA_BREW_QUANTITY_TOOLTIP" | translate}}</p>
-    </ion-label>
-    <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.brew_quantity"></ion-checkbox>
-  </ion-item>
   <ion-item tappable>
     <ion-label>{{"BREW_DATA_COFFEE_TYPE" | translate}}</ion-label>
     <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.coffee_type"></ion-checkbox>
@@ -111,6 +107,21 @@
                   [(ngModel)]="data.manage_parameters.coffee_concentration"></ion-checkbox>
   </ion-item>
 
+  <ion-item [disabled]="brewQuantityDisabled()" tappable>
+    <ion-label>
+      <h2>{{"BREW_DATA_BREW_QUANTITY" | translate}}</h2>
+      <p>{{"BREW_DATA_BREW_QUANTITY_TOOLTIP" | translate}}</p>
+    </ion-label>
+    <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.brew_quantity"></ion-checkbox>
+  </ion-item>
+  <ion-item tappable>
+    <ion-label>{{"BREW_DATA_BREW_BEVERAGE_QUANTITY" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.brew_beverage_quantity"></ion-checkbox>
+  </ion-item>
+  <ion-item tappable>
+    <ion-label>{{"BREW_DATA_TDS" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.tds"></ion-checkbox>
+  </ion-item>
   <ion-item tappable>
     <ion-label>{{"BREW_DATA_RATING" | translate}}</ion-label>
     <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.rating"></ion-checkbox>
@@ -124,16 +135,8 @@
     <ion-checkbox (ngModelChange)="triggerChanges($event)"
                   [(ngModel)]="data.manage_parameters.set_custom_brew_time"></ion-checkbox>
   </ion-item>
-  <ion-item tappable>
+  <ion-item lines="none"  tappable>
     <ion-label>{{"BREW_DATA_ATTACHMENTS" | translate}}</ion-label>
     <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.attachments"></ion-checkbox>
-  </ion-item>
-  <ion-item tappable>
-    <ion-label>{{"BREW_DATA_BREW_BEVERAGE_QUANTITY" | translate}}</ion-label>
-    <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.brew_beverage_quantity"></ion-checkbox>
-  </ion-item>
-  <ion-item lines="none" tappable>
-    <ion-label>{{"BREW_DATA_TDS" | translate}}</ion-label>
-    <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.tds"></ion-checkbox>
   </ion-item>
 </ion-card>
