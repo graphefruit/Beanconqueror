@@ -12,6 +12,7 @@ import {ModalController} from '@ionic/angular';
 import {BeanArchivePopoverComponent} from '../app/beans/bean-archive-popover/bean-archive-popover.component';
 import {BeansEditComponent} from '../app/beans/beans-edit/beans-edit.component';
 import {BeansDetailComponent} from '../app/beans/beans-detail/beans-detail.component';
+import {GreenBean} from '../classes/green-bean/green-bean';
 
 /**
  * Handles every helping functionalities
@@ -108,6 +109,22 @@ export class UIBeanHelper {
 
   public async addBean(_hideToastMessage:boolean = false) {
     const modal = await this.modalController.create({component:BeansAddComponent,id: BeansAddComponent.COMPONENT_ID,  componentProps: {hide_toast_message: _hideToastMessage}});
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+  public async repeatBean(_bean: Bean) {
+    const modal = await this.modalController.create({
+      component: BeansAddComponent,
+      id: BeansAddComponent.COMPONENT_ID,
+      componentProps: {bean_template: _bean}
+    });
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+
+  public async addRoastedBean(_greenBean: GreenBean) {
+    const modal = await this.modalController.create({component:BeansAddComponent,
+      id:BeansAddComponent.COMPONENT_ID,  componentProps: {greenBean : _greenBean}});
     await modal.present();
     await modal.onWillDismiss();
   }

@@ -162,10 +162,8 @@ export class GreenBeanInformationComponent implements OnInit {
 
   public async transferRoast() {
     this.uiAnalytics.trackEvent(GREEN_BEAN_TRACKING.TITLE, GREEN_BEAN_TRACKING.ACTIONS.TRANSFER_ROAST);
-    const modal = await this.modalController.create({component:BeansAddComponent,
-      id:'bean-add',  componentProps: {greenBean : this.greenBean}});
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiBeanHelper.addRoastedBean(this.greenBean);
+
   }
   public beansConsumed() {
     this.uiAnalytics.trackEvent(GREEN_BEAN_TRACKING.TITLE, GREEN_BEAN_TRACKING.ACTIONS.ARCHIVE);
@@ -215,11 +213,8 @@ export class GreenBeanInformationComponent implements OnInit {
 
   public async repeatBean() {
     this.uiAnalytics.trackEvent(GREEN_BEAN_TRACKING.TITLE, GREEN_BEAN_TRACKING.ACTIONS.REPEAT);
-    const modal = await this.modalController.create({component: GreenBeanAddComponent,
-      id:GreenBeanAddComponent.COMPONENT_ID, componentProps: {green_bean_template: this.greenBean}});
-    await modal.present();
-    await modal.onWillDismiss();
 
+    await this.uiGreenBeanHelper.repeatGreenBean(this.greenBean);
   }
   private async __deleteBean() {
     const brews: Array<Brew> =  this.uiBrewStorage.getAllEntries();

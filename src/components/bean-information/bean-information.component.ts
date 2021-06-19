@@ -232,13 +232,8 @@ export class BeanInformationComponent implements OnInit {
 
   public async repeatBean() {
     this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.REPEAT);
-    const modal = await this.modalController.create({
-      component: BeansAddComponent,
-      id: BeansAddComponent.COMPONENT_ID,
-      componentProps: {bean_template: this.bean}
-    });
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiBeanHelper.repeatBean(this.bean);
+
   }
 
 

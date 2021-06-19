@@ -49,7 +49,7 @@ export class IntentHandlerService {
   }
 
   private findParameterByCompleteUrl(_url,_parameter) {
-    const urlObj: Url = new URL(_url);
+    const urlObj: any = new window.URL(_url);
     const val = urlObj.searchParams.get(_parameter);
     return val;
   }

@@ -166,7 +166,7 @@ export class BrewInformationComponent implements OnInit {
   public async fastRepeatBrew() {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
       this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.FAST_REPEAT);
-      const repeatBrew = this.uiBrewHelper.repeatBrew(this.brew);
+      const repeatBrew = this.uiBrewHelper.copyBrewToRepeat(this.brew);
       await this.uiBrewStorage.add(repeatBrew);
       this.uiToast.showInfoToast('TOAST_BREW_REPEATED_SUCCESSFULLY');
 
@@ -187,10 +187,7 @@ export class BrewInformationComponent implements OnInit {
   public async repeatBrew() {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
       this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.REPEAT);
-      const modal = await this.modalCtrl.create({component: BrewAddComponent, id: BrewAddComponent.COMPONENT_ID, componentProps: {brew_template: this.brew}});
-      await modal.present();
-      await modal.onWillDismiss();
-
+      await this.uiBrewHelper.repeatBrew(this.brew);
     }
   }
 

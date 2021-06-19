@@ -183,7 +183,7 @@ export class UIBrewHelper {
   }
 
 
-  public repeatBrew(_brewToCopy: Brew): Brew {
+  public copyBrewToRepeat(_brewToCopy: Brew): Brew {
     const repeatBrew: Brew = new Brew();
     const brewBean: IBean = this.uiBeanStorage.getByUUID(_brewToCopy.bean);
     if (!brewBean.finished) {
@@ -460,6 +460,12 @@ export class UIBrewHelper {
       await modal.present();
       await modal.onWillDismiss();
     }
+  }
+
+  public async repeatBrew(_brew: Brew) {
+    const modal = await this.modalController.create({component: BrewAddComponent, id: BrewAddComponent.COMPONENT_ID, componentProps: {brew_template: _brew}});
+    await modal.present();
+    await modal.onWillDismiss();
   }
   public async longPressAddBrew() {
     if (this.canBrewIfNotShowMessage()) {
