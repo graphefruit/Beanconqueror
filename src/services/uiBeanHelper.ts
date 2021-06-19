@@ -10,6 +10,8 @@ import {BeansAddComponent} from '../app/beans/beans-add/beans-add.component';
 import {UIAnalytics} from './uiAnalytics';
 import {ModalController} from '@ionic/angular';
 import {BeanArchivePopoverComponent} from '../app/beans/bean-archive-popover/bean-archive-popover.component';
+import {BeansEditComponent} from '../app/beans/beans-edit/beans-edit.component';
+import {BeansDetailComponent} from '../app/beans/beans-detail/beans-detail.component';
 
 /**
  * Handles every helping functionalities
@@ -95,12 +97,29 @@ export class UIBeanHelper {
 
 
   public async addScannedQRBean(_scannedQRBean) {
-    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ADD);
     const modal = await this.modalController.create({
       component:BeansAddComponent,
       id:BeansAddComponent.COMPONENT_ID,
       componentProps: {qr_bean_template: _scannedQRBean}
     });
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+
+  public async addBean(_hideToastMessage:boolean = false) {
+    const modal = await this.modalController.create({component:BeansAddComponent,id: BeansAddComponent.COMPONENT_ID,  componentProps: {hide_toast_message: _hideToastMessage}});
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+  public async editBean(_bean: Bean) {
+
+    const modal = await this.modalController.create({component:BeansEditComponent, id: BeansEditComponent.COMPONENT_ID,  componentProps: {bean : _bean}});
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+
+  public async detailBean(_bean: Bean) {
+    const modal = await this.modalController.create({component: BeansDetailComponent, id: BeansDetailComponent.COMPONENT_ID, componentProps: {bean: _bean}});
     await modal.present();
     await modal.onWillDismiss();
   }

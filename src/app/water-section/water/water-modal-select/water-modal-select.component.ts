@@ -9,7 +9,7 @@ import {Water} from '../../../../classes/water/water';
   styleUrls: ['./water-modal-select.component.scss'],
 })
 export class WaterModalSelectComponent implements OnInit {
-  public static COMPONENT_ID = 'water-add';
+  public static COMPONENT_ID = 'water-model-select';
 
   public segment: string = 'open';
   public objs: Array<Water> = [];

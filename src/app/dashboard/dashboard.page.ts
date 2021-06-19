@@ -1,6 +1,5 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {UIStatistic} from '../../services/uiStatistic';
-import {BrewAddComponent} from '../brew/brew-add/brew-add.component';
 import {ModalController} from '@ionic/angular';
 import {Brew} from '../../classes/brew/brew';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
@@ -11,7 +10,6 @@ import {UIBeanStorage} from '../../services/uiBeanStorage';
 import {Bean} from '../../classes/bean/bean';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
 import {UIAnalytics} from '../../services/uiAnalytics';
-import {ServerCommunicationService} from '../../services/serverCommunication/server-communication.service';
 
 @Component({
   selector: 'dashboard',
@@ -30,13 +28,11 @@ export class DashboardPage implements OnInit {
               private readonly router: Router,
               private readonly uiBeanStorage: UIBeanStorage,
               private readonly uiBeanHelper: UIBeanHelper,
-              private readonly uiAnalytics: UIAnalytics,
-              private readonly serverCommunication: ServerCommunicationService) {
+              private readonly uiAnalytics: UIAnalytics) {
   }
 
   public ngOnInit(): void {
 
-    this.serverCommunication.getBeanInformation(1);
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
       // If an brew is deleted, we need to reset our array for the next call.
       this.leftOverBeansWeight = undefined;

@@ -3,6 +3,8 @@ import {UIMillStorage} from '../../../services/uiMillStorage';
 import {Mill} from '../../../classes/mill/mill';
 import {ModalController} from '@ionic/angular';
 import {UIToast} from '../../../services/uiToast';
+import MILL_TRACKING from '../../../data/tracking/millTracking';
+import {UIAnalytics} from '../../../services/uiAnalytics';
 
 @Component({
   selector: 'mill-add',
@@ -11,16 +13,19 @@ import {UIToast} from '../../../services/uiToast';
 })
 export class MillAddComponent implements OnInit {
 
+  public static COMPONENT_ID: string = 'mill-add';
 
   public data: Mill = new Mill();
   @Input() private hide_toast_message: boolean;
   constructor(private readonly modalController: ModalController,
               private readonly uiMillStorage: UIMillStorage,
-              private readonly uiToast: UIToast) {
+              private readonly uiToast: UIToast,
+              private readonly uiAnalytics: UIAnalytics) {
 
   }
 
   public ionViewWillEnter(): void {
+    this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.ADD);
   }
   public async addMill() {
 
@@ -31,6 +36,7 @@ export class MillAddComponent implements OnInit {
 
   public async __addMill() {
     await this.uiMillStorage.add(this.data);
+    this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.ADD_FINISH);
     this.dismiss();
     if (!this.hide_toast_message) {
       this.uiToast.showInfoToast('TOAST_MILL_ADDED_SUCCESSFULLY');
@@ -40,7 +46,7 @@ export class MillAddComponent implements OnInit {
   public dismiss(): void {
     this.modalController.dismiss({
       'dismissed': true
-    },undefined, 'mill-add')
+    },undefined, MillAddComponent.COMPONENT_ID)
 
   }
   public ngOnInit() {}

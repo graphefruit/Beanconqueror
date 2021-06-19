@@ -10,6 +10,8 @@ import {IBeanInformation} from '../../../interfaces/bean/iBeanInformation';
 import {GreenBean} from '../../../classes/green-bean/green-bean';
 import {BEAN_MIX_ENUM} from '../../../enums/beans/mix';
 import moment from 'moment';
+import BEAN_TRACKING from '../../../data/tracking/beanTracking';
+import {UIAnalytics} from '../../../services/uiAnalytics';
 
 @Component({
   selector: 'beans-add',
@@ -35,7 +37,8 @@ export class BeansAddComponent implements OnInit {
                private readonly uiImage: UIImage,
                private readonly uiHelper: UIHelper,
                private readonly uiFileHelper: UIFileHelper,
-               private readonly uiToast: UIToast) {
+               private readonly uiToast: UIToast,
+               private readonly uiAnalytics: UIAnalytics) {
 
   }
 
@@ -44,6 +47,7 @@ export class BeansAddComponent implements OnInit {
 
 
   public async ionViewWillEnter() {
+    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ADD);
 
     // It just can be a bean template (bean will be repeated, or a green bean, both is not working)
     // TODO how to handle roasting beans which wil be repeated?
@@ -91,6 +95,7 @@ export class BeansAddComponent implements OnInit {
 
   public async __addBean() {
     await this.uiBeanStorage.add(this.data);
+    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ADD_FINISH);
     this.dismiss();
     if (!this.hide_toast_message) {
       this.uiToast.showInfoToast('TOAST_BEAN_ADDED_SUCCESSFULLY');

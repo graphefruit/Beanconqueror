@@ -11,13 +11,12 @@ import {BeanFilterComponent} from './bean-filter/bean-filter.component';
 import {IBeanPageFilter} from '../../interfaces/bean/iBeanPageFilter';
 import {BEAN_SORT_AFTER} from '../../enums/beans/beanSortAfter';
 import {BEAN_SORT_ORDER} from '../../enums/beans/beanSortOrder';
-import {BeansAddComponent} from './beans-add/beans-add.component';
 import {AgVirtualSrollComponent} from 'ag-virtual-scroll';
 import {UIAnalytics} from '../../services/uiAnalytics';
-import BEAN_TRACKING from '../../data/tracking/beanTracking';
 import {TranslateService} from '@ngx-translate/core';
 import {QrScannerService} from '../../services/qrScanner/qr-scanner.service';
 import {IntentHandlerService} from '../../services/intentHandler/intent-handler.service';
+import {UIBeanHelper} from '../../services/uiBeanHelper';
 
 @Component({
   selector: 'beans',
@@ -64,7 +63,8 @@ export class BeansPage implements OnInit {
               private readonly translate: TranslateService,
               private readonly actionSheetController: ActionSheetController,
               private readonly qrScannerService: QrScannerService,
-              private readonly intenthandler: IntentHandlerService) {
+              private readonly intenthandler: IntentHandlerService,
+              private readonly uiBeanHelper: UIBeanHelper) {
 
 
   }
@@ -271,11 +271,8 @@ export class BeansPage implements OnInit {
   }
 
   public async add() {
-    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ADD);
-    const modal = await this.modalCtrl.create({component:BeansAddComponent,id:'bean-add'});
-    await modal.present();
-    await modal.onWillDismiss();
-    this.loadBeans();
+   await this.uiBeanHelper.addBean();
+   this.loadBeans();
   }
 
 
@@ -311,7 +308,7 @@ export class BeansPage implements OnInit {
 
   public async scan() {
 
-    this.intenthandler.handleQRCodeLink('https://beanconqueror.com/app/roaster/bean.html?id=1');
+    this.intenthandler.handleQRCodeLink('https://beanconqueror.com/app/roaster/bean.html?id=a45e2f47-b844-4b12-b963-1546be52ec68');
     return;
     this.qrScannerService.scan().then((scannedCode) => {
       this.intenthandler.handleQRCodeLink(scannedCode);

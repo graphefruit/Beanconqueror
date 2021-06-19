@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import {UIHelper} from '../uiHelper';
 import {Deeplinks} from '@ionic-native/deeplinks/ngx';
-import {InfoComponent} from '../../app/info/info.component';
+
 import {UILog} from '../uiLog';
 import {Url} from 'url';
 import {ServerCommunicationService} from '../serverCommunication/server-communication.service';
 import {UIBeanHelper} from '../uiBeanHelper';
-import {Bean} from '../../classes/bean/bean';
+
 declare var window;
 @Injectable({
   providedIn: 'root'
@@ -49,8 +49,8 @@ export class IntentHandlerService {
   }
 
   private findParameterByCompleteUrl(_url,_parameter) {
-    const url: Url = new URL(_url);
-    const val = url.searchParams.get(_parameter);
+    const urlObj: Url = new URL(_url);
+    const val = urlObj.searchParams.get(_parameter);
     return val;
   }
 
@@ -58,10 +58,11 @@ export class IntentHandlerService {
     this.uiHelper.isBeanconqurorAppReady().then(() => {
       const url: string = _url;
 
+      debugger;
       this.uiLog.log('Handle QRcode Link:' + url);
       if (url.indexOf('https://beanconqueror.com/app/roaster/bean') === 0) {
-        const onlineBeanId: number = Number(this.findParameterByCompleteUrl(url,'id'));
-        this.addBeanFromServer(onlineBeanId);
+        const qrCodeId: string = String(this.findParameterByCompleteUrl(url,'id'));
+        this.addBeanFromServer(qrCodeId);
       }
     });
   }
@@ -75,11 +76,11 @@ export class IntentHandlerService {
           this.uiLog.log('Handle deeplink:' + url);
           this.uiLog.log(JSON.stringify(_matchLink));
           if (url.indexOf('https://beanconqueror.com/app/roaster/bean') === 0) {
-            const onlineBeanId: number = Number(this.findGetParameter(_matchLink.queryString,'id'));
-            this.addBeanFromServer(onlineBeanId);
+            const qrCodeId: string = String(this.findGetParameter(_matchLink.queryString,'id'));
+            this.addBeanFromServer(qrCodeId);
           } else if (url.indexOf('beanconqueror://ADD_BEAN_ONLINE?') === 0) {
-            const onlineBeanId: number = Number(_matchLink.queryString);
-            this.addBeanFromServer(onlineBeanId);
+            const qrCodeId: string = String(this.findGetParameter(_matchLink.queryString,'id'));
+            this.addBeanFromServer(qrCodeId);
           }
         });
       }
@@ -93,11 +94,11 @@ export class IntentHandlerService {
 
 
 
-  private async addBeanFromServer(_beanId: number) {
-    this.uiLog.log('Load bean information from server: ' + _beanId);
+  private async addBeanFromServer(_qrCodeId: string) {
+    this.uiLog.log('Load bean information from server: ' + _qrCodeId);
     try {
 
-      const beanData = await this.serverCommunicationService.getBeanInformation(_beanId);
+      const beanData = await this.serverCommunicationService.getBeanInformation(_qrCodeId);
       beanData['qr_code'] = '1';
       await this.uiBeanHelper.addScannedQRBean(beanData);
     } catch (ex) {

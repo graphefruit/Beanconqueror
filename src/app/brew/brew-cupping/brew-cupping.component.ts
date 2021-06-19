@@ -10,6 +10,8 @@ import {UIToast} from '../../../services/uiToast';
 import {UIBrewStorage} from '../../../services/uiBrewStorage';
 import {CuppingRadarComponent} from '../../../components/cupping-radar/cupping-radar.component';
 import {BrewFlavorPickerComponent} from '../brew-flavor-picker/brew-flavor-picker.component';
+import BREW_TRACKING from '../../../data/tracking/brewTracking';
+import {UIAnalytics} from '../../../services/uiAnalytics';
 
 @Component({
   selector: 'brew-cupping',
@@ -17,7 +19,7 @@ import {BrewFlavorPickerComponent} from '../brew-flavor-picker/brew-flavor-picke
   styleUrls: ['./brew-cupping.component.scss'],
 })
 export class BrewCuppingComponent implements OnInit {
-
+  public static COMPONENT_ID = 'brew-cup';
   public segment:string ='flavor';
 
   public data: Brew = new Brew();
@@ -31,7 +33,8 @@ export class BrewCuppingComponent implements OnInit {
               public uiHelper: UIHelper,
               private readonly uiSettingsStorage: UISettingsStorage,
               private readonly uiBrewStorage: UIBrewStorage,
-              private readonly uiToast: UIToast) {
+              private readonly uiToast: UIToast,
+              private readonly uiAnalytics: UIAnalytics) {
 
     this.settings = this.uiSettingsStorage.getSettings();
 
@@ -82,6 +85,7 @@ export class BrewCuppingComponent implements OnInit {
 
 
   public ionViewWillEnter() {
+    this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.CUPPING);
     this.brew = this.navParams.get('brew');
     if (this.brew) {
       const copy: IBrew = this.uiHelper.cloneData(this.uiBrewStorage.getByUUID(this.brew.config.uuid));
@@ -103,7 +107,7 @@ export class BrewCuppingComponent implements OnInit {
   public async dismiss() {
     this.modalController.dismiss({
       dismissed: true
-    },undefined,'brew-cup');
+    },undefined,BrewCuppingComponent.COMPONENT_ID);
 
 
   }

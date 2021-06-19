@@ -6,6 +6,9 @@ import {MillAddComponent} from '../../app/mill/mill-add/mill-add.component';
 import {UIAnalytics} from '../../services/uiAnalytics';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {Settings} from '../../classes/settings/settings';
+import {UIBeanHelper} from '../../services/uiBeanHelper';
+import {UIMillHelper} from '../../services/uiMillHelper';
+import {UIPreparationHelper} from '../../services/uiPreparationHelper';
 
 @Component({
   selector: 'welcome-popover',
@@ -31,7 +34,10 @@ export class WelcomePopoverComponent implements OnInit {
   constructor(private readonly modalController: ModalController,
               private readonly uiAnalytics: UIAnalytics,
               private readonly uiSettingsStorage: UISettingsStorage,
-              private readonly platform: Platform) {
+              private readonly platform: Platform,
+              private readonly uiBeanHelper: UIBeanHelper,
+              private readonly uiMillHelper: UIMillHelper,
+              private readonly uiPreparationHelper :UIPreparationHelper) {
 
 
 
@@ -79,32 +85,17 @@ export class WelcomePopoverComponent implements OnInit {
   }
 
   public async addBean() {
-    const modal = await this.modalController.create({component: BeansAddComponent, id:'bean-add',
-      componentProps: {hide_toast_message: true}});
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiBeanHelper.addBean(true);
     this.next();
   }
 
   public async addPreparation() {
-    const modal = await this.modalController.create({
-      component: PreparationAddComponent,
-      showBackdrop: true, id: 'preparation-add', componentProps: {hide_toast_message: true}
-    });
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiPreparationHelper.addPreparation(true);
     this.next();
   }
 
   public async addMill() {
-    const modal = await this.modalController.create({
-      component: MillAddComponent,
-      cssClass: 'popover-actions',
-      id:'mill-add',
-      componentProps: {hide_toast_message: true}
-    });
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiMillHelper.addMill(true);
     this.next();
 
   }

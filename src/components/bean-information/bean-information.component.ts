@@ -169,10 +169,7 @@ export class BeanInformationComponent implements OnInit {
   }
 
   public async detailBean() {
-    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.DETAIL);
-    const modal = await this.modalController.create({component: BeansDetailComponent, id:'bean-detail', componentProps: {bean: this.bean}});
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiBeanHelper.detailBean(this.bean);
   }
 
   private async viewPhotos() {
@@ -188,10 +185,7 @@ export class BeanInformationComponent implements OnInit {
   }
 
   public async add() {
-    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ADD);
-    const modal = await this.modalController.create({component:BeansAddComponent,id:'bean-add'});
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiBeanHelper.addBean();
   }
 
   public async longPressEditBean(event) {
@@ -201,10 +195,7 @@ export class BeanInformationComponent implements OnInit {
     this.beanAction.emit([BEAN_ACTION.EDIT, this.bean]);
   }
   public async editBean() {
-    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.EDIT);
-    const modal = await this.modalController.create({component:BeansEditComponent, id:'bean-edit',  componentProps: {bean : this.bean}});
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiBeanHelper.editBean(this.bean);
   }
 
   public async shareBean() {
@@ -243,7 +234,7 @@ export class BeanInformationComponent implements OnInit {
     this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.REPEAT);
     const modal = await this.modalController.create({
       component: BeansAddComponent,
-      id:'bean-add',
+      id: BeansAddComponent.COMPONENT_ID,
       componentProps: {bean_template: this.bean}
     });
     await modal.present();

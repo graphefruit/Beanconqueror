@@ -25,6 +25,7 @@ import PREPARATION_TRACKING from '../../data/tracking/preparationTracking';
 })
 export class PreparationInformationCardComponent implements OnInit {
 
+
   @Input() public preparation: Preparation;
 
 
@@ -107,7 +108,7 @@ export class PreparationInformationCardComponent implements OnInit {
     this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.POPOVER_ACTIONS);
     const popover = await this.modalController.create({
       component: PreparationPopoverActionsComponent,
-      id: 'preparation-popover-actions',
+      id: PreparationPopoverActionsComponent.COMPONENT_ID,
       componentProps: {preparation: this.preparation},
       cssClass: 'popover-actions',
     });
@@ -172,7 +173,7 @@ export class PreparationInformationCardComponent implements OnInit {
     this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.CUSTOM_PARAMETERS);
     const modal = await this.modalController.create({component: PreparationCustomParametersComponent,
       componentProps: {preparation: this.preparation},
-      id: 'preparation-custom-parameters'
+      id: PreparationCustomParametersComponent.COMPONENT_ID
     });
     await modal.present();
     await modal.onWillDismiss();
@@ -186,20 +187,11 @@ export class PreparationInformationCardComponent implements OnInit {
   }
 
   public async editPreparation() {
-    this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.EDIT);
-    const modal = await this.modalController.create({component: PreparationEditComponent,
-      componentProps: {preparation: this.preparation},
-      id: 'preparation-edit'
-    });
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiPreparationHelper.editPreparation(this.preparation);
   }
 
   public async detail() {
-    this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.DETAIL);
-    const modal = await this.modalController.create({component: PreparationDetailComponent, id:'preparation-detail', componentProps: {preparation: this.preparation}});
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiPreparationHelper.detailPreparation(this.preparation);
   }
 
   public async deletePreparation() {

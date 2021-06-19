@@ -19,6 +19,8 @@ import {Insomnia} from '@ionic-native/insomnia/ngx';
 import {BrewBrewingComponent} from '../../../components/brews/brew-brewing/brew-brewing.component';
 import {UIAlert} from '../../../services/uiAlert';
 import {BrewTrackingService} from '../../../services/brewTracking/brew-tracking.service';
+import BREW_TRACKING from '../../../data/tracking/brewTracking';
+import {UIAnalytics} from '../../../services/uiAnalytics';
 
 
 @Component({
@@ -56,7 +58,8 @@ export class BrewAddComponent implements OnInit {
                private readonly uiHealthKit: UIHealthKit,
                private readonly insomnia: Insomnia,
                private readonly uiAlert: UIAlert,
-               private readonly brewTracking: BrewTrackingService) {
+               private readonly brewTracking: BrewTrackingService,
+               private readonly uiAnalytics: UIAnalytics) {
     // Initialize to standard in drop down
 
     this.settings = this.uiSettingsStorage.getSettings();
@@ -79,6 +82,7 @@ export class BrewAddComponent implements OnInit {
   }
 
   public ionViewDidEnter(): void {
+    this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.ADD);
     if (this.settings.wake_lock) {
       this.insomnia.keepAwake()
         .then(
@@ -170,7 +174,7 @@ export class BrewAddComponent implements OnInit {
     }
     await this.uiAlert.hideLoadingSpinner();
     await this.uiBrewHelper.checkIfBeanPackageIsConsumedTriggerMessageAndArchive(this.data.getBean());
-
+    this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.ADD_FINISH);
     this.dismiss();
 
 

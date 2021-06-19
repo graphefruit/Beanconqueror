@@ -9,6 +9,8 @@ import {Preparation} from '../../../classes/preparation/preparation';
 import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
 import {UIBrewHelper} from '../../../services/uiBrewHelper';
 import {Chart} from 'chart.js';
+import BREW_TRACKING from '../../../data/tracking/brewTracking';
+import {UIAnalytics} from '../../../services/uiAnalytics';
 
 @Component({
   selector: 'brew-detail',
@@ -16,7 +18,7 @@ import {Chart} from 'chart.js';
   styleUrls: ['./brew-detail.component.scss'],
 })
 export class BrewDetailComponent implements OnInit {
-
+  public static COMPONENT_ID = 'brew-detail';
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   @ViewChild('photoSlides', {static: false}) public photoSlides: IonSlides;
   public data: Brew = new Brew();
@@ -29,12 +31,14 @@ export class BrewDetailComponent implements OnInit {
                private readonly navParams: NavParams,
                public uiHelper: UIHelper,
                private readonly uiSettingsStorage: UISettingsStorage,
-               private readonly uiBrewHelper: UIBrewHelper) {
+               private readonly uiBrewHelper: UIBrewHelper,
+               private readonly uiAnalytics: UIAnalytics) {
 
     this.settings = this.uiSettingsStorage.getSettings();
   }
 
   public ionViewWillEnter() {
+    this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.DETAIL);
     this.brew = this.navParams.get('brew');
     if (this.brew) {
       const copy: IBrew = this.uiHelper.copyData(this.brew);
@@ -68,7 +72,7 @@ export class BrewDetailComponent implements OnInit {
   public dismiss(): void {
     this.modalController.dismiss({
       dismissed: true
-    },undefined,'brew-detail');
+    },undefined,BrewDetailComponent.COMPONENT_ID);
   }
 
   public ngOnInit() {}

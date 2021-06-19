@@ -24,6 +24,8 @@ import {ModalController} from '@ionic/angular';
 import {BrewChoosePreparationToBrewComponent} from '../app/brew/brew-choose-preparation-to-brew/brew-choose-preparation-to-brew.component';
 import {BrewEditComponent} from '../app/brew/brew-edit/brew-edit.component';
 import {IBrew} from '../interfaces/brew/iBrew';
+import {BrewDetailComponent} from '../app/brew/brew-detail/brew-detail.component';
+import {BrewCuppingComponent} from '../app/brew/brew-cupping/brew-cupping.component';
 
 /**
  * Handles every helping functionalities
@@ -454,7 +456,6 @@ export class UIBrewHelper {
 
   public async addBrew() {
     if (this.canBrewIfNotShowMessage()) {
-      this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.ADD);
       const modal = await this.modalController.create({component: BrewAddComponent,id:BrewAddComponent.COMPONENT_ID});
       await modal.present();
       await modal.onWillDismiss();
@@ -462,7 +463,7 @@ export class UIBrewHelper {
   }
   public async longPressAddBrew() {
     if (this.canBrewIfNotShowMessage()) {
-      this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.ADD);
+      this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.LONG_PRESS_ADD);
       const modal = await this.modalController.create({
         component: BrewChoosePreparationToBrewComponent,
         id: BrewChoosePreparationToBrewComponent.COMPONENT_ID,
@@ -486,7 +487,6 @@ export class UIBrewHelper {
   }
   public async editBrew(_brew: Brew): Promise<Brew> {
     const promise:Promise<Brew> = new Promise(async (resolve, reject) => {
-      this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.EDIT);
       const modal = await this.modalController.create({
         component: BrewEditComponent,
         id: BrewEditComponent.COMPONENT_ID,
@@ -501,6 +501,22 @@ export class UIBrewHelper {
       resolve(returningBrew);
     });
     return promise;
+  }
+
+  public async detailBrew(_brew: Brew) {
+
+    const modal = await this.modalController.create({component: BrewDetailComponent, id: BrewDetailComponent.COMPONENT_ID, componentProps: {brew: _brew}});
+    await modal.present();
+    await modal.onWillDismiss();
+
+  }
+
+  public async cupBrew(_brew: Brew) {
+
+    const modal = await this.modalController.create({component: BrewCuppingComponent, id:BrewCuppingComponent.COMPONENT_ID, componentProps: {brew: _brew}});
+    await modal.present();
+    await modal.onWillDismiss();
+
   }
 
 }

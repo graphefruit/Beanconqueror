@@ -35,10 +35,6 @@ import {UIGreenBeanStorage} from '../services/uiGreenBeanStorage';
 import {UIRoastingMachineStorage} from '../services/uiRoastingMachineStorage';
 import {IntentHandlerService} from '../services/intentHandler/intent-handler.service';
 
-
-import BEAN_TRACKING from '../data/tracking/beanTracking';
-import BREW_TRACKING from '../data/tracking/brewTracking';
-import MILL_TRACKING from '../data/tracking/millTracking';
 import PREPARATION_TRACKING from '../data/tracking/preparationTracking';
 import LINK_TRACKING from '../data/tracking/linkTracking';
 import STARTUP_TRACKING from '../data/tracking/startupTracking';
@@ -47,6 +43,9 @@ import {IosPlatformService} from '../services/iosPlatform/ios-platform.service';
 import {AndroidPlatformService} from '../services/androidPlatform/android-platform.service';
 import {environment} from '../environments/environment';
 import {UIWaterStorage} from '../services/uiWaterStorage';
+import {UIBeanHelper} from '../services/uiBeanHelper';
+import {UIMillHelper} from '../services/uiMillHelper';
+import {UIPreparationHelper} from '../services/uiPreparationHelper';
 
 
 declare var AppRate;
@@ -115,7 +114,10 @@ export class AppComponent implements AfterViewInit {
     private readonly intentHandlerService: IntentHandlerService,
     private readonly iosPlatformService: IosPlatformService,
     private readonly androidPlatformService: AndroidPlatformService,
-    private readonly uiWaterStorage: UIWaterStorage
+    private readonly uiWaterStorage: UIWaterStorage,
+    private readonly uiBeanHelper: UIBeanHelper,
+    private readonly uiMillHelper: UIMillHelper,
+    private readonly uiPreparationHelper: UIPreparationHelper
   ) {
     // Dont remove androidPlatformService, we need to initialize it via constructor
   }
@@ -486,39 +488,19 @@ export class AppComponent implements AfterViewInit {
   }
 
   private async __trackNewBean() {
-    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ADD);
-    const modal = await this.modalCtrl.create({
-      component: BeansAddComponent, id: 'bean-add',
-      componentProps: {hide_toast_message: false}
-    });
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiBeanHelper.addBean();
     this.router.navigate(['/'], {replaceUrl: true});
 
   }
 
   private async __trackNewPreparation() {
-    this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.ADD);
-    const modal = await this.modalCtrl.create({
-      component: PreparationAddComponent,
-      showBackdrop: true, id: 'preparation-add', componentProps: {hide_toast_message: false}
-    });
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiPreparationHelper.addPreparation();
     this.router.navigate(['/'], {replaceUrl: true});
 
   }
 
   private async __trackNewMill() {
-    this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.ADD);
-    const modal = await this.modalCtrl.create({
-      component: MillAddComponent,
-      cssClass: 'popover-actions',
-      id: 'mill-add',
-      componentProps: {hide_toast_message: false}
-    });
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiMillHelper.addMill();
     this.router.navigate(['/'], {replaceUrl: true});
 
   }

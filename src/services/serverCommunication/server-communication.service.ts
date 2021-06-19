@@ -10,13 +10,11 @@ export class ServerCommunicationService {
   constructor(private http: HttpClient) {}
 
 
-  public getBeanInformation(_beanId) {
+  public getBeanInformation(_qrCodeId:string) {
     const promise = new Promise((resolve, reject) => {
-      this.http.get(environment.API_URL + 'QRCode/GetBeanByQRCodeId', {}).toPromise()
+      this.http.get(environment.API_URL + 'Roaster/GetBeanFromQrCodeId?Id=' + _qrCodeId, {}).toPromise()
         .then((data) => {
-
           resolve(data);
-
         },() => {
           reject();
         })

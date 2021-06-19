@@ -3,6 +3,8 @@ import {ModalController} from '@ionic/angular';
 import {UIToast} from '../../../../services/uiToast';
 import {UIWaterStorage} from '../../../../services/uiWaterStorage';
 import {Water} from '../../../../classes/water/water';
+import WATER_TRACKING from '../../../../data/tracking/waterTracking';
+import {UIAnalytics} from '../../../../services/uiAnalytics';
 
 @Component({
   selector: 'app-water-add',
@@ -16,11 +18,13 @@ export class WaterAddComponent implements OnInit {
 
   constructor(private readonly modalController: ModalController,
               private readonly uiWaterStorage: UIWaterStorage,
-              private readonly uiToast: UIToast) {
+              private readonly uiToast: UIToast,
+              private readonly uiAnalytics: UIAnalytics) {
 
   }
 
   public ionViewWillEnter(): void {
+    this.uiAnalytics.trackEvent(WATER_TRACKING.TITLE, WATER_TRACKING.ACTIONS.ADD);
   }
   public async add() {
 
@@ -31,9 +35,9 @@ export class WaterAddComponent implements OnInit {
 
   public async __add() {
     await this.uiWaterStorage.add(this.data);
-    this.dismiss();
+    this.uiAnalytics.trackEvent(WATER_TRACKING.TITLE, WATER_TRACKING.ACTIONS.ADD_FINISH);
     this.uiToast.showInfoToast('TOAST_WATER_ADDED_SUCCESSFULLY');
-
+    this.dismiss();
   }
 
   public dismiss(): void {

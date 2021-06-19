@@ -142,21 +142,11 @@ export class MillInformationCardComponent implements OnInit {
     this.millAction.emit([MILL_ACTION.EDIT, this.mill]);
   }
   public async edit() {
-    this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.EDIT);
-    const editModal = await this.modalController.create({
-      component: MillEditComponent,
-      componentProps: {mill : this.mill},
-      id:'mill-edit',
-    });
-    await editModal.present();
-    await editModal.onWillDismiss();
+    await this.uiMillHelper.editMill(this.mill);
   }
 
   public async detail() {
-    this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.DETAIL);
-    const modal = await this.modalController.create({component: MillDetailComponent, id:'mill-detail', componentProps: {mill: this.mill}});
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiMillHelper.detailMill(this.mill);
   }
 
   public async delete() {

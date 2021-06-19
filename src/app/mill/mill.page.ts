@@ -5,12 +5,11 @@ import {Mill} from '../../classes/mill/mill';
 import {ModalController} from '@ionic/angular';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
 
-import {MillAddComponent} from './mill-add/mill-add.component';
 import {MILL_ACTION} from '../../enums/mills/millActions';
 import {Settings} from '../../classes/settings/settings';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
-import MILL_TRACKING from '../../data/tracking/millTracking';
 import {UIAnalytics} from '../../services/uiAnalytics';
+import {UIMillHelper} from '../../services/uiMillHelper';
 
 
 @Component({
@@ -31,7 +30,8 @@ export class MillPage  implements OnInit  {
                private readonly uiAlert: UIAlert,
                private readonly uiBrewStorage: UIBrewStorage,
                private readonly uiSettingsStorage: UISettingsStorage,
-               private readonly uiAnalytics: UIAnalytics) {
+               private readonly uiAnalytics: UIAnalytics,
+               private readonly uiMillHelper: UIMillHelper) {
 
   }
 
@@ -64,15 +64,7 @@ export class MillPage  implements OnInit  {
   }
 
   public async add() {
-    this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.ADD);
-
-    const modal = await this.modalCtrl.create({
-      component: MillAddComponent,
-      cssClass: 'popover-actions',
-      id: 'mill-add'
-    });
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiMillHelper.addMill();
     this.loadMills();
   }
 

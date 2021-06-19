@@ -7,8 +7,6 @@ import {UIBeanHelper} from '../../services/uiBeanHelper';
 import {GreenBean} from '../../classes/green-bean/green-bean';
 import {GreenBeanPopoverActionsComponent} from '../../app/roasting-section/green-beans/green-bean-popover-actions/green-bean-popover-actions.component';
 import {Bean} from '../../classes/bean/bean';
-import {GreenBeanDetailComponent} from '../../app/roasting-section/green-beans/green-bean-detail/green-bean-detail.component';
-import {GreenBeanEditComponent} from '../../app/roasting-section/green-beans/green-bean-edit/green-bean-edit.component';
 import {GreenBeanAddComponent} from '../../app/roasting-section/green-beans/green-bean-add/green-bean-add.component';
 import {BeansAddComponent} from '../../app/beans/beans-add/beans-add.component';
 import {Brew} from '../../classes/brew/brew';
@@ -24,6 +22,7 @@ import {GREEN_BEAN_ACTION} from '../../enums/green-beans/greenBeanAction';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
 import GREEN_BEAN_TRACKING from '../../data/tracking/greenBeanTracking';
 import {NgxStarsComponent} from 'ngx-stars';
+import {UIGreenBeanHelper} from '../../services/uiGreenBeanHelper';
 
 @Component({
   selector: 'green-bean-information',
@@ -45,7 +44,8 @@ export class GreenBeanInformationComponent implements OnInit {
               private readonly uiAlert: UIAlert,
               private readonly uiToast: UIToast,
               private readonly uiImage: UIImage,
-              private readonly uiBeanStorage: UIBeanStorage) {
+              private readonly uiBeanStorage: UIBeanStorage,
+              private readonly uiGreenBeanHelper: UIGreenBeanHelper) {
 
 
 
@@ -146,11 +146,7 @@ export class GreenBeanInformationComponent implements OnInit {
     return relatedRoastingBeans.length;
   }
   public async detailBean() {
-    this.uiAnalytics.trackEvent(GREEN_BEAN_TRACKING.TITLE, GREEN_BEAN_TRACKING.ACTIONS.DETAIL);
-    const modal = await this.modalController.create({component: GreenBeanDetailComponent,
-      id:'green-bean-detail', componentProps: {greenBean: this.greenBean}});
-    await modal.present();
-    await modal.onWillDismiss();
+   await this.uiGreenBeanHelper.detailGreenBean(this.greenBean);
   }
   public async showPhoto(event) {
     event.stopPropagation();
@@ -193,11 +189,8 @@ export class GreenBeanInformationComponent implements OnInit {
   }
 
   public async editBean() {
-    this.uiAnalytics.trackEvent(GREEN_BEAN_TRACKING.TITLE, GREEN_BEAN_TRACKING.ACTIONS.EDIT);
-    const modal = await this.modalController.create({component:GreenBeanEditComponent,
-      id:'green-bean-edit',  componentProps: {greenBean : this.greenBean}});
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiGreenBeanHelper.editGreenBean(this.greenBean);
+
   }
 
 
@@ -223,7 +216,7 @@ export class GreenBeanInformationComponent implements OnInit {
   public async repeatBean() {
     this.uiAnalytics.trackEvent(GREEN_BEAN_TRACKING.TITLE, GREEN_BEAN_TRACKING.ACTIONS.REPEAT);
     const modal = await this.modalController.create({component: GreenBeanAddComponent,
-      id:'green-bean-add', componentProps: {green_bean_template: this.greenBean}});
+      id:GreenBeanAddComponent.COMPONENT_ID, componentProps: {green_bean_template: this.greenBean}});
     await modal.present();
     await modal.onWillDismiss();
 

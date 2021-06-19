@@ -14,6 +14,7 @@ import {UIBeanHelper} from '../../services/uiBeanHelper';
 import {Bean} from '../../classes/bean/bean';
 import {UIBeanStorage} from '../../services/uiBeanStorage'
 import ROASTING_MACHINE_TRACKING from '../../data/tracking/roastingMachineTracking';
+import {UIRoastingMachineHelper} from '../../services/uiRoastingMachineHelper';
 
 @Component({
   selector: 'roasting-machine-information-card',
@@ -33,7 +34,8 @@ export class RoastingMachineInformationCardComponent implements OnInit {
               private readonly uiImage: UIImage,
               private readonly modalCtrl: ModalController,
               private readonly uiBeanHelper: UIBeanHelper,
-              private readonly uiBeanStorage: UIBeanStorage) {
+              private readonly uiBeanStorage: UIBeanStorage,
+              private readonly uiRoastingMachineHelper: UIRoastingMachineHelper) {
   }
 
   public ngOnInit() {
@@ -89,10 +91,10 @@ export class RoastingMachineInformationCardComponent implements OnInit {
         break;
     }
   }
-  public archive() {
+  public async archive() {
     this.uiAnalytics.trackEvent(ROASTING_MACHINE_TRACKING.TITLE, ROASTING_MACHINE_TRACKING.ACTIONS.ARCHIVE);
     this.roastingMachine.finished = true;
-    this.uiRoastingMachineStorage.update(this.roastingMachine);
+    await this.uiRoastingMachineStorage.update(this.roastingMachine);
     this.uiToast.showInfoToast('TOAST_ROASTING_MACHINE_ARCHIVED_SUCCESSFULLY');
   }
 
@@ -104,19 +106,12 @@ export class RoastingMachineInformationCardComponent implements OnInit {
   }
 
   public async edit() {
-    this.uiAnalytics.trackEvent(ROASTING_MACHINE_TRACKING.TITLE, ROASTING_MACHINE_TRACKING.ACTIONS.EDIT);
-    const modal = await this.modalCtrl.create({component: RoastingMachineEditComponent, id:'roasting-machine-edit', componentProps: {roastingMachine: this.roastingMachine}});
-    await modal.present();
-    await modal.onWillDismiss();
-
+    await this.uiRoastingMachineHelper.editRoastingMachine(this.roastingMachine);
   }
 
 
   public async detail() {
-    this.uiAnalytics.trackEvent(ROASTING_MACHINE_TRACKING.TITLE, ROASTING_MACHINE_TRACKING.ACTIONS.DETAIL);
-    const modal = await this.modalCtrl.create({component: RoastingMachineDetailComponent, id:'roasting-machine-detail', componentProps: {roastingMachine: this.roastingMachine}});
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiRoastingMachineHelper.detailRoastingMachine(this.roastingMachine);
 
   }
 

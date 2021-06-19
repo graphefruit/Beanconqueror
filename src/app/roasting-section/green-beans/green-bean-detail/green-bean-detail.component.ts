@@ -8,6 +8,8 @@ import {UIHelper} from '../../../../services/uiHelper';
 import {Bean} from '../../../../classes/bean/bean';
 import {UIBeanHelper} from '../../../../services/uiBeanHelper';
 import {BEAN_ACTION} from '../../../../enums/beans/beanAction';
+import GREEN_BEAN_TRACKING from '../../../../data/tracking/greenBeanTracking';
+import {UIAnalytics} from '../../../../services/uiAnalytics';
 
 @Component({
   selector: 'app-green-bean-detail',
@@ -15,7 +17,7 @@ import {BEAN_ACTION} from '../../../../enums/beans/beanAction';
   styleUrls: ['./green-bean-detail.component.scss'],
 })
 export class GreenBeanDetailComponent implements OnInit {
-
+  public static COMPONENT_ID:string = 'green-bean-detail';
   public data: GreenBean = new GreenBean();
   @Input() public greenBean: IGreenBean;
   public visibleIndex: any = {};
@@ -29,12 +31,14 @@ export class GreenBeanDetailComponent implements OnInit {
                private readonly uiGreenBeanStorage: UIGreenBeanStorage,
                private readonly uiImage: UIImage,
                private readonly uiHelper: UIHelper,
-               private uiBeanHelper: UIBeanHelper) {
+               private uiBeanHelper: UIBeanHelper,
+               private readonly uiAnalytics: UIAnalytics) {
 
   }
 
 
   public async ionViewWillEnter() {
+    this.uiAnalytics.trackEvent(GREEN_BEAN_TRACKING.TITLE, GREEN_BEAN_TRACKING.ACTIONS.DETAIL);
     this.data = new GreenBean();
     this.data.initializeByObject(this.greenBean);
     // Add one empty bean information, rest is being updated on start
@@ -54,7 +58,7 @@ export class GreenBeanDetailComponent implements OnInit {
   public dismiss(): void {
     this.modalController.dismiss({
       dismissed: true
-    },undefined,'green-bean-detail');
+    },undefined,GreenBeanDetailComponent.COMPONENT_ID);
   }
 
 

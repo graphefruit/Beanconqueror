@@ -153,7 +153,7 @@ export class BrewInformationComponent implements OnInit {
         await this.fastRepeatBrew();
         break;
       case BREW_ACTION.TOGGLE_FAVOURITE:
-        this.toggleFavourite();
+        await this.toggleFavourite();
         break;
       case BREW_ACTION.SHARE:
         await this.share();
@@ -187,14 +187,14 @@ export class BrewInformationComponent implements OnInit {
   public async repeatBrew() {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
       this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.REPEAT);
-      const modal = await this.modalCtrl.create({component: BrewAddComponent, id: 'brew-add', componentProps: {brew_template: this.brew}});
+      const modal = await this.modalCtrl.create({component: BrewAddComponent, id: BrewAddComponent.COMPONENT_ID, componentProps: {brew_template: this.brew}});
       await modal.present();
       await modal.onWillDismiss();
 
     }
   }
 
-  public toggleFavourite() {
+  public async toggleFavourite() {
     if (!this.brew.favourite) {
       this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.ADD_FAVOURITE);
       this.uiToast.showInfoToast('TOAST_BREW_FAVOURITE_ADDED');
@@ -204,23 +204,16 @@ export class BrewInformationComponent implements OnInit {
       this.brew.favourite = false;
       this.uiToast.showInfoToast('TOAST_BREW_FAVOURITE_REMOVED');
     }
-    this.uiBrewStorage.update(this.brew);
+    await this.uiBrewStorage.update(this.brew);
   }
 
 
   public async detailBrew() {
-    this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.DETAIL);
-    const modal = await this.modalCtrl.create({component: BrewDetailComponent, id:'brew-detail', componentProps: {brew: this.brew}});
-    await modal.present();
-    await modal.onWillDismiss();
-
+    await this.uiBrewHelper.detailBrew(this.brew);
   }
 
   public async cupBrew() {
-    this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.CUPPING);
-    const modal = await this.modalCtrl.create({component: BrewCuppingComponent, id:'brew-cup', componentProps: {brew: this.brew}});
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiBrewHelper.cupBrew(this.brew);
 
   }
 

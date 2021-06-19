@@ -10,11 +10,10 @@ import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 import {GreenBean} from '../../../classes/green-bean/green-bean';
 import {UIGreenBeanStorage} from '../../../services/uiGreenBeanStorage';
 import {GREEN_BEAN_ACTION} from '../../../enums/green-beans/greenBeanAction';
-import {GreenBeanAddComponent} from './green-bean-add/green-bean-add.component';
 import {GreenBeanFilterComponent} from './green-bean-filter/green-bean-filter.component';
 import {AgVirtualSrollComponent} from 'ag-virtual-scroll';
-import GREEN_BEAN_TRACKING from '../../../data/tracking/greenBeanTracking';
 import {UIAnalytics} from '../../../services/uiAnalytics';
+import {UIGreenBeanHelper} from '../../../services/uiGreenBeanHelper';
 
 @Component({
   selector: 'app-green-beans',
@@ -58,7 +57,8 @@ export class GreenBeansPage implements OnInit {
               private readonly uiAlert: UIAlert,
               private readonly uiBrewStorage: UIBrewStorage,
               private readonly uiSettingsStorage: UISettingsStorage,
-              private readonly uiAnalytics: UIAnalytics) {
+              private readonly uiAnalytics: UIAnalytics,
+              private readonly uiGreenBeanHelper: UIGreenBeanHelper) {
     this.settings = this.uiSettingsStorage.getSettings();
 
   }
@@ -113,10 +113,7 @@ export class GreenBeansPage implements OnInit {
 
 
   public async add() {
-    this.uiAnalytics.trackEvent(GREEN_BEAN_TRACKING.TITLE, GREEN_BEAN_TRACKING.ACTIONS.ADD);
-    const modal = await this.modalCtrl.create({component:GreenBeanAddComponent,id:'green-bean-add'});
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiGreenBeanHelper.addGreenBean();
     this.loadBeans();
   }
 

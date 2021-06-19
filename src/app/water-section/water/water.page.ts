@@ -13,6 +13,7 @@ import {GreenBean} from '../../../classes/green-bean/green-bean';
 import WATER_TRACKING from '../../../data/tracking/waterTracking';
 
 import {WaterAddComponent} from './water-add/water-add.component';
+import {UIWaterHelper} from '../../../services/uiWaterHelper';
 
 @Component({
   selector: 'app-water',
@@ -43,7 +44,8 @@ export class WaterPage implements OnInit {
               private readonly uiAlert: UIAlert,
               private readonly uiBrewStorage: UIBrewStorage,
               private readonly uiSettingsStorage: UISettingsStorage,
-              private readonly uiAnalytics: UIAnalytics) {
+              private readonly uiAnalytics: UIAnalytics,
+              private readonly uiWaterHelper: UIWaterHelper) {
     this.settings = this.uiSettingsStorage.getSettings();
 
   }
@@ -96,11 +98,9 @@ export class WaterPage implements OnInit {
 
 
   public async add() {
-    this.uiAnalytics.trackEvent(WATER_TRACKING.TITLE, WATER_TRACKING.ACTIONS.ADD);
-    const modal = await this.modalCtrl.create({component:WaterAddComponent,id:WaterAddComponent.COMPONENT_ID, cssClass: 'popover-actions'});
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiWaterHelper.addWater();
     this.load();
+
   }
 
 

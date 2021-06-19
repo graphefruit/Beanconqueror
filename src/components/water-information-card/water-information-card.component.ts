@@ -13,6 +13,7 @@ import {UIImage} from '../../services/uiImage';
 import WATER_TRACKING from '../../data/tracking/waterTracking';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {Brew} from '../../classes/brew/brew';
+import {UIWaterHelper} from '../../services/uiWaterHelper';
 
 @Component({
   selector: 'water-information-card',
@@ -31,7 +32,8 @@ export class WaterInformationCardComponent implements OnInit {
               private readonly uiAlert: UIAlert,
               private readonly uiImage: UIImage,
               private readonly modalCtrl: ModalController,
-              private readonly uiBrewStorage: UIBrewStorage) {
+              private readonly uiBrewStorage: UIBrewStorage,
+              private readonly uiWaterHelper: UIWaterHelper) {
   }
 
   public ngOnInit() {
@@ -102,19 +104,12 @@ export class WaterInformationCardComponent implements OnInit {
   }
 
   public async edit() {
-    this.uiAnalytics.trackEvent(WATER_TRACKING.TITLE, WATER_TRACKING.ACTIONS.EDIT);
-    const modal = await this.modalCtrl.create({component: WaterEditComponent, id: WaterEditComponent.COMPONENT_ID, componentProps: {water: this.water}});
-    await modal.present();
-    await modal.onWillDismiss();
-
+    await this.uiWaterHelper.editWater(this.water);
   }
 
 
   public async detail() {
-    this.uiAnalytics.trackEvent(WATER_TRACKING.TITLE, WATER_TRACKING.ACTIONS.DETAIL);
-    const modal = await this.modalCtrl.create({component: WaterDetailComponent, id: WaterDetailComponent.COMPONENT_ID, componentProps: {water: this.water}});
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiWaterHelper.detailWater(this.water);
 
   }
 
