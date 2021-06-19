@@ -194,7 +194,7 @@ export class MillInformationCardComponent implements OnInit {
     const popover = await this.modalController.create({
       component: MillPopoverActionsComponent,
       componentProps: {mill: this.mill},
-      id:'mill-popover-actions',
+      id: MillPopoverActionsComponent.COMPONENT_ID,
       cssClass: 'popover-actions',
     });
     await popover.present();

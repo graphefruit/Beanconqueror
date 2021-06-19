@@ -125,7 +125,7 @@ export class BeanInformationComponent implements OnInit {
     const popover = await this.modalController.create({
       component: BeanPopoverActionsComponent,
       componentProps: {bean: this.bean},
-      id:'bean-popover-actions',
+      id:BeanPopoverActionsComponent.COMPONENT_ID,
       cssClass: 'popover-actions',
     });
     await popover.present();

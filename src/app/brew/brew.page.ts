@@ -159,7 +159,7 @@ export class BrewPage implements OnInit {
     const modal = await this.modalCtrl.create({
       component: BrewFilterComponent,
       cssClass: 'popover-actions',
-      id:'brew-filter',
+      id: BrewFilterComponent.COMPONENT_ID,
       componentProps:
         {brew_filter: brewFilter, segment: this.brew_segment}
     });

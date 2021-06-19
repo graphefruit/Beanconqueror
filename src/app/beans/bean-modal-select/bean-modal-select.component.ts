@@ -9,7 +9,7 @@ import {Bean} from '../../../classes/bean/bean';
   styleUrls: ['./bean-modal-select.component.scss'],
 })
 export class BeanModalSelectComponent implements OnInit {
-
+  public static COMPONENT_ID = 'bean-modal-select';
   public bean_segment: string = 'open';
   public objs: Array<Bean> = [];
   public multipleSelection = {};
@@ -80,11 +80,11 @@ export class BeanModalSelectComponent implements OnInit {
     this.modalController.dismiss({
       selected_values: chosenKeys,
       selected_text: selected_text,
-    },undefined,'bean-modal-select');
+    },undefined, BeanModalSelectComponent.COMPONENT_ID);
   }
 
   public async dismiss(): Promise<void> {
-    this.modalController.dismiss(undefined,undefined,'bean-modal-select');
+    this.modalController.dismiss(undefined,undefined,BeanModalSelectComponent.COMPONENT_ID);
   }
 
 }

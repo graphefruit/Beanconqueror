@@ -20,6 +20,8 @@ import {RoastingMachine} from '../classes/roasting-machine/roasting-machine';
 import {UISettingsStorage} from './uiSettingsStorage';
 import {Settings} from '../classes/settings/settings';
 import {Water} from '../classes/water/water';
+import {Mill} from '../classes/mill/mill';
+import {Preparation} from '../classes/preparation/preparation';
 
 declare var chooser;
 @Injectable({
@@ -285,11 +287,11 @@ export class UIImage {
 
   }
 
-  public async viewPhotos (_data: Bean | GreenBean | Brew |RoastingMachine | Water) {
+  public async viewPhotos (_data: Bean | GreenBean | Brew |RoastingMachine | Water | Mill | Preparation) {
 
     const modal = await this.modalCtrl.create({
       component: PhotoPopoverComponent,
-      id: 'photo-popover',
+      id: PhotoPopoverComponent.COMPONENT_ID,
       componentProps: {data: _data}
     });
     await modal.present();

@@ -52,7 +52,7 @@ export class RoastingMachineInformationCardComponent implements OnInit {
     const popover = await this.modalController.create({
       component: RoastingMachinePopoverActionsComponent,
       componentProps: {roastingMachine: this.roastingMachine},
-      id:'roasting-machine-popover-actions',
+      id:RoastingMachinePopoverActionsComponent.COMPONENT_ID,
       cssClass: 'popover-actions',
     });
     await popover.present();

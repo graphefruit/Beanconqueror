@@ -12,7 +12,7 @@ import {Mill} from '../../../classes/mill/mill';
 })
 export class MillPopoverActionsComponent implements OnInit {
 
-
+  public static COMPONENT_ID = 'mill-popover-actions';
   public data: Mill = new Mill();
 
   constructor(private readonly modalController: ModalController,
@@ -40,9 +40,9 @@ export class MillPopoverActionsComponent implements OnInit {
   }
 
   public async choose(_type: string): Promise<void> {
-    this.modalController.dismiss(undefined, _type,'mill-popover-actions');
+    this.modalController.dismiss(undefined, _type,MillPopoverActionsComponent.COMPONENT_ID);
   }
   public async dismiss() {
-    this.modalController.dismiss(undefined, undefined,'mill-popover-actions');
+    this.modalController.dismiss(undefined, undefined,MillPopoverActionsComponent.COMPONENT_ID);
   }
 }

@@ -13,7 +13,7 @@ import {GreenBean} from '../../../../classes/green-bean/green-bean';
   styleUrls: ['./green-bean-popover-actions.component.scss'],
 })
 export class GreenBeanPopoverActionsComponent implements OnInit {
-
+  public static COMPONENT_ID = 'green-bean-popover-actions';
   public data: GreenBean = new GreenBean();
 
   constructor(private readonly modalController: ModalController,
@@ -41,9 +41,9 @@ export class GreenBeanPopoverActionsComponent implements OnInit {
   }
 
   public async choose(_type: string): Promise<void> {
-    this.modalController.dismiss(undefined, _type,'green-bean-popover-actions');
+    this.modalController.dismiss(undefined, _type, GreenBeanPopoverActionsComponent.COMPONENT_ID);
   }
   public async dismiss() {
-    this.modalController.dismiss(undefined, undefined,'green-bean-popover-actions');
+    this.modalController.dismiss(undefined, undefined, GreenBeanPopoverActionsComponent.COMPONENT_ID);
   }
 }

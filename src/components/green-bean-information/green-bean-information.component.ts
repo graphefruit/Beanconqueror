@@ -90,7 +90,7 @@ export class GreenBeanInformationComponent implements OnInit {
     const popover = await this.modalController.create({
       component: GreenBeanPopoverActionsComponent,
       componentProps: {'green-bean': this.greenBean},
-      id:'green-bean-popover-actions',
+      id: GreenBeanPopoverActionsComponent.COMPONENT_ID,
       cssClass: 'popover-actions',
     });
     await popover.present();

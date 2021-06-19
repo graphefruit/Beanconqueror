@@ -38,8 +38,8 @@ export class PreparationCustomParametersComponent implements OnInit {
     }, undefined, PreparationCustomParametersComponent.COMPONENT_ID);
   }
 
-  public save() {
-    this.uiPreparationStorage.update(this.data);
+  public async save() {
+    await this.uiPreparationStorage.update(this.data);
   }
 
   public ngOnInit() {}

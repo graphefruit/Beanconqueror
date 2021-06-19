@@ -125,7 +125,7 @@ export class BeansPage implements OnInit {
       component: BeanFilterComponent,
       componentProps:
         {bean_filter: beanFilter, segment: this.bean_segment},
-      id:'bean-filter',
+      id: BeanFilterComponent.COMPONENT_ID,
       cssClass: 'popover-actions',
     });
     await modal.present();

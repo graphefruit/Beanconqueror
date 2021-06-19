@@ -109,7 +109,7 @@ export class BrewInformationComponent implements OnInit {
       component: BrewPopoverActionsComponent,
 
       componentProps: {brew: this.brew},
-      id:'brew-popover-actions',
+      id: BrewPopoverActionsComponent.COMPONENT_ID,
       cssClass: 'popover-actions',
     });
     await popover.present();

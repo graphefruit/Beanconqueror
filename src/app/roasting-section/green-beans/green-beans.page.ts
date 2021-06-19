@@ -131,7 +131,7 @@ export class GreenBeansPage implements OnInit {
       showBackdrop: true,
       backdropDismiss: true,
       swipeToClose: true,
-      id:'green-bean-filter',
+      id: GreenBeanFilterComponent.COMPONENT_ID,
       componentProps:
         {bean_filter: beanFilter, segment: this.bean_segment}
     });

@@ -49,7 +49,7 @@ export class RoastingMachineOverlayDirective {
           selectedValues: selectedValues,
           showFinished: this.showFinished
         },
-      id:'roasting-machine-modal-select',
+      id: RoastingMachineModalSelectComponent.COMPONENT_ID,
       showBackdrop: true
     });
     await modal.present();

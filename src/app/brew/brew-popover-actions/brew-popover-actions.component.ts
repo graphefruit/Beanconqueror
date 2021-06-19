@@ -14,7 +14,7 @@ import {Settings} from '../../../classes/settings/settings';
 })
 export class BrewPopoverActionsComponent implements OnInit {
 
-
+  public static COMPONENT_ID = 'brew-popover-actions';
   public data: Brew = new Brew();
   private settings: Settings;
 
@@ -52,10 +52,10 @@ export class BrewPopoverActionsComponent implements OnInit {
   }
 
   public async choose(_type: string): Promise<void> {
-    this.modalController.dismiss(undefined, _type,'brew-popover-actions');
+    this.modalController.dismiss(undefined, _type, BrewPopoverActionsComponent.COMPONENT_ID);
   }
   public async dismiss() {
-    this.modalController.dismiss(undefined, undefined,'brew-popover-actions');
+    this.modalController.dismiss(undefined, undefined,BrewPopoverActionsComponent.COMPONENT_ID);
   }
 
 }

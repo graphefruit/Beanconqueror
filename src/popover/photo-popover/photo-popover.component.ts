@@ -1,9 +1,12 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {IBrew} from '../../interfaces/brew/iBrew';
 import {IonSlides, ModalController} from '@ionic/angular';
-import {IGreenBean} from '../../interfaces/green-bean/iGreenBean';
-import {IBean} from '../../interfaces/bean/iBean';
-import {IRoastingMachine} from '../../interfaces/roasting-machine/iRoastingMachine';
+import {Bean} from '../../classes/bean/bean';
+import {GreenBean} from '../../classes/green-bean/green-bean';
+import {Brew} from '../../classes/brew/brew';
+import {RoastingMachine} from '../../classes/roasting-machine/roasting-machine';
+import {Water} from '../../classes/water/water';
+import {Mill} from '../../classes/mill/mill';
+import {Preparation} from '../../classes/preparation/preparation';
 
 @Component({
   selector: 'photo-popover',
@@ -11,9 +14,9 @@ import {IRoastingMachine} from '../../interfaces/roasting-machine/iRoastingMachi
   styleUrls: ['./photo-popover.component.scss'],
 })
 export class PhotoPopoverComponent implements OnInit {
+  public static COMPONENT_ID:string = 'photo-popover';
 
-
-  @Input() public data: IBrew | IBean | IGreenBean |IRoastingMachine;
+  @Input() public data:  Bean | GreenBean | Brew |RoastingMachine | Water | Mill | Preparation;
   @ViewChild('photoSlides', {static: false}) public photoSlides: IonSlides;
   constructor (private readonly modalController: ModalController) {
 
@@ -32,7 +35,7 @@ export class PhotoPopoverComponent implements OnInit {
   public dismiss(): void {
     this.modalController.dismiss({
       dismissed: true
-    },undefined,'photo-popover');
+    },undefined,PhotoPopoverComponent.COMPONENT_ID);
   }
 
 
