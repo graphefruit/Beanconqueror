@@ -8,8 +8,6 @@ import {PreparationPopoverActionsComponent} from '../../app/preparation/preparat
 import {Brew} from '../../classes/brew/brew';
 import {UIPreparationHelper} from '../../services/uiPreparationHelper';
 import {PreparationCustomParametersComponent} from '../../app/preparation/preparation-custom-parameters/preparation-custom-parameters.component';
-import {PreparationEditComponent} from '../../app/preparation/preparation-edit/preparation-edit.component';
-import {PreparationDetailComponent} from '../../app/preparation/preparation-detail/preparation-detail.component';
 import {UIAlert} from '../../services/uiAlert';
 import {UIAnalytics} from '../../services/uiAnalytics';
 import {UIToast} from '../../services/uiToast';
@@ -201,7 +199,7 @@ export class PreparationInformationCardComponent implements OnInit {
         this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.DELETE);
         await this.__deletePreparation();
         this.uiToast.showInfoToast('TOAST_PREPARATION_DELETED_SUCCESSFULLY');
-        this.resetSettings();
+        await this.resetSettings();
       },
       () => {
         // No
@@ -209,12 +207,12 @@ export class PreparationInformationCardComponent implements OnInit {
 
   }
 
-  public archive() {
+  public async archive() {
     this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.ARCHIVE);
     this.preparation.finished = true;
-    this.uiPreparationStorage.update(this.preparation);
+    await this.uiPreparationStorage.update(this.preparation);
     this.uiToast.showInfoToast('TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY');
-    this.resetSettings();
+    await this.resetSettings();
   }
 
   private async __deletePreparation() {

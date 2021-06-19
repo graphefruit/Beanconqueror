@@ -13,11 +13,7 @@ import {AppMinimize} from '@ionic-native/app-minimize/ngx';
 import {Keyboard} from '@ionic-native/keyboard/ngx';
 import {ThreeDeeTouch, ThreeDeeTouchQuickAction} from '@ionic-native/three-dee-touch/ngx';
 import {Router} from '@angular/router';
-import {BeansAddComponent} from './beans/beans-add/beans-add.component';
-import {PreparationAddComponent} from './preparation/preparation-add/preparation-add.component';
-import {MillAddComponent} from './mill/mill-add/mill-add.component';
 import {UIBrewHelper} from '../services/uiBrewHelper';
-import {BrewAddComponent} from './brew/brew-add/brew-add.component';
 
 import {UIHelper} from '../services/uiHelper';
 import {UIAlert} from '../services/uiAlert';

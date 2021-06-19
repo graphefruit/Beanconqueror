@@ -156,7 +156,7 @@ export class MillInformationCardComponent implements OnInit {
         this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.DELETE);
         await this.__deleteMill();
         this.uiToast.showInfoToast('TOAST_MILL_DELETED_SUCCESSFULLY');
-        this.resetSettings();
+        await this.resetSettings();
       },
       () => {
         // No
@@ -179,12 +179,12 @@ export class MillInformationCardComponent implements OnInit {
   }
 
 
-  public archive() {
+  public async archive() {
     this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.ARCHIVE);
     this.mill.finished = true;
-    this.uiMillStorage.update(this.mill);
+    await this.uiMillStorage.update(this.mill);
     this.uiToast.showInfoToast('TOAST_MILL_ARCHIVED_SUCCESSFULLY');
-    this.resetSettings();
+    await this.resetSettings();
   }
 
   public async showMillActions(event): Promise<void> {

@@ -176,12 +176,12 @@ export class BeanInformationComponent implements OnInit {
     this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.PHOTO_VIEW);
     await this.uiImage.viewPhotos(this.bean);
   }
-  public beansConsumed() {
+  public async beansConsumed() {
     this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ARCHIVE);
     this.bean.finished = true;
-    this.uiBeanStorage.update(this.bean);
+    await this.uiBeanStorage.update(this.bean);
     this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');
-    this.resetSettings();
+    await this.resetSettings();
   }
 
   public async add() {
@@ -212,7 +212,7 @@ export class BeanInformationComponent implements OnInit {
             this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.DELETE);
             await this.__deleteBean();
             this.uiToast.showInfoToast('TOAST_BEAN_DELETED_SUCCESSFULLY');
-            this.resetSettings();
+            await this.resetSettings();
             resolve();
           },
           () => {

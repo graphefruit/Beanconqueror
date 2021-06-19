@@ -157,7 +157,6 @@ export class GreenBeanInformationComponent implements OnInit {
   public async viewPhotos() {
     this.uiAnalytics.trackEvent(GREEN_BEAN_TRACKING.TITLE, GREEN_BEAN_TRACKING.ACTIONS.PHOTO_VIEW);
     await this.uiImage.viewPhotos(this.greenBean);
-
   }
 
   public async transferRoast() {
@@ -165,12 +164,12 @@ export class GreenBeanInformationComponent implements OnInit {
     await this.uiBeanHelper.addRoastedBean(this.greenBean);
 
   }
-  public beansConsumed() {
+  public async beansConsumed() {
     this.uiAnalytics.trackEvent(GREEN_BEAN_TRACKING.TITLE, GREEN_BEAN_TRACKING.ACTIONS.ARCHIVE);
     this.greenBean.finished = true;
-    this.uiGreenBeanStorage.update(this.greenBean);
+    await this.uiGreenBeanStorage.update(this.greenBean);
     this.uiToast.showInfoToast('TOAST_GREEN_BEAN_ARCHIVED_SUCCESSFULLY');
-    this.resetSettings();
+    await this.resetSettings();
   }
 
   private async resetSettings() {
@@ -201,7 +200,7 @@ export class GreenBeanInformationComponent implements OnInit {
             this.uiAnalytics.trackEvent(GREEN_BEAN_TRACKING.TITLE, GREEN_BEAN_TRACKING.ACTIONS.DELETE);
             await this.__deleteBean();
             this.uiToast.showInfoToast('TOAST_GREEN_BEAN_DELETED_SUCCESSFULLY');
-            this.resetSettings();
+            await this.resetSettings();
             resolve();
           },
           () => {

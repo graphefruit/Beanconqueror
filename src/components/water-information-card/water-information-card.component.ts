@@ -4,8 +4,6 @@ import {UIToast} from '../../services/uiToast';
 import {UIWaterStorage} from '../../services/uiWaterStorage';
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {WATER_ACTION} from '../../enums/water/waterActions';
-import {WaterDetailComponent} from '../../app/water-section/water/water-detail/water-detail.component';
-import {WaterEditComponent} from '../../app/water-section/water/water-edit/water-edit.component';
 import {ModalController} from '@ionic/angular';
 import {WaterPopoverActionsComponent} from '../../app/water-section/water/water-popover-actions/water-popover-actions.component';
 import {UIAnalytics} from '../../services/uiAnalytics';
@@ -89,10 +87,10 @@ export class WaterInformationCardComponent implements OnInit {
         break;
     }
   }
-  public archive() {
+  public async archive() {
     this.uiAnalytics.trackEvent(WATER_TRACKING.TITLE, WATER_TRACKING.ACTIONS.ARCHIVE);
     this.water.finished = true;
-    this.uiWaterStorage.update(this.water);
+    await this.uiWaterStorage.update(this.water);
     this.uiToast.showInfoToast('TOAST_WATER_ARCHIVED_SUCCESSFULLY');
   }
 

@@ -5,11 +5,9 @@ import {UIAnalytics} from '../../services/uiAnalytics';
 import {UIAlert} from '../../services/uiAlert';
 import {UIImage} from '../../services/uiImage';
 import {RoastingMachine} from '../../classes/roasting-machine/roasting-machine';
-import {RoastingMachineDetailComponent} from '../../app/roasting-section/roasting-machine/roasting-machine-detail/roasting-machine-detail.component';
 import {UIRoastingMachineStorage} from '../../services/uiRoastingMachineStorage';
 import {ROASTING_MACHINE_ACTION} from '../../enums/roasting-machine/roastingMachineAction';
 import {RoastingMachinePopoverActionsComponent} from '../../app/roasting-section/roasting-machine/roasting-machine-popover-actions/roasting-machine-popover-actions.component';
-import {RoastingMachineEditComponent} from '../../app/roasting-section/roasting-machine/roasting-machine-edit/roasting-machine-edit.component';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
 import {Bean} from '../../classes/bean/bean';
 import {UIBeanStorage} from '../../services/uiBeanStorage'
