@@ -23,7 +23,7 @@ import {File} from '@ionic-native/file/ngx';
 import {UIAlert} from './uiAlert';
 import {TranslateService} from '@ngx-translate/core';
 import {UIStorage} from './uiStorage';
-
+import { maxBy, keys } from 'lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -143,7 +143,7 @@ export class UIUpdate {
             const settings: any = this.uiSettingsStorage.getSettings();
             if (settings.brew_order.after.tds === null || settings.brew_order.after.tds === undefined) {
               const settingsAfter = settings.brew_order.after;
-              const maxKey = _.maxBy(_.keys(settingsAfter), (o) => settingsAfter[o]);
+              const maxKey = maxBy(keys(settingsAfter), (o) => settingsAfter[o]);
               const highestNumber = settingsAfter[maxKey];
               settings.brew_order.after.tds = highestNumber +1;
               await this.uiSettingsStorage.saveSettings(settings);
@@ -152,7 +152,7 @@ export class UIUpdate {
             if (settings.brew_order.after.brew_beverage_quantity === null ||
               settings.brew_order.after.brew_beverage_quantity === undefined) {
               const settingsAfter = settings.brew_order.after;
-              const maxKey = _.maxBy(_.keys(settingsAfter), (o) => settingsAfter[o]);
+              const maxKey = maxBy(keys(settingsAfter), (o) => settingsAfter[o]);
               const highestNumber = settingsAfter[maxKey];
               settings.brew_order.after.brew_beverage_quantity = highestNumber+1;
               await this.uiSettingsStorage.saveSettings(settings);
@@ -161,7 +161,7 @@ export class UIUpdate {
             if (settings.brew_order.before.method_of_preparation_tool === null ||
               settings.brew_order.before.method_of_preparation_tool === undefined) {
               const settingsBefore = settings.brew_order.before;
-              const maxKey = _.maxBy(_.keys(settingsBefore), (o) => settingsBefore[o]);
+              const maxKey = maxBy(keys(settingsBefore), (o) => settingsBefore[o]);
               const highestNumber = settingsBefore[maxKey];
               settings.brew_order.before.method_of_preparation_tool = highestNumber+1;
 
@@ -309,7 +309,7 @@ export class UIUpdate {
 
 
               const settings_v5Before = settings_v5.brew_order.before;
-              const maxKey = _.maxBy(_.keys(settings_v5Before), (o) => settings_v5Before[o]);
+              const maxKey = maxBy(keys(settings_v5Before), (o) => settings_v5Before[o]);
               const highestNumber = settings_v5Before[maxKey];
 
               settings_v5.brew_order.before.water = highestNumber +1;
