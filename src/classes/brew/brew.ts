@@ -20,6 +20,10 @@ import {IBrewCoordinates} from '../../interfaces/brew/iBrewCoordinates';
 import {PREPARATION_STYLE_TYPE} from '../../enums/preparations/preparationStyleTypes';
 import {PreparationTool} from '../preparation/preparationTool';
 import {IFlavor} from '../../interfaces/flavor/iFlavor';
+import {UIWaterStorage} from '../../services/uiWaterStorage';
+import {IWalker} from 'tslint';
+import {IWater} from '../../interfaces/water/iWater';
+import {Water} from '../water/water';
 
 export class Brew implements IBrew {
   // tslint:disable-next-line
@@ -223,6 +227,16 @@ export class Brew implements IBrew {
 
   }
 
+  public getWater(): Water {
+    const iWater: IWater = this.getWaterStorageInstance()
+      .getByUUID(this.water) as IWater;
+    const water: Water = new Water();
+    water.initializeByObject(iWater);
+
+    return water;
+
+  }
+
   /**
    * Get the calculated bean age for this brew
    * If no age could be calculated it returns -1
@@ -363,6 +377,13 @@ export class Brew implements IBrew {
     uiMillStorage = UIMillStorage.getInstance();
 
     return uiMillStorage;
+  }
+
+  private getWaterStorageInstance(): UIWaterStorage  {
+    let uiWaterStorage: UIWaterStorage;
+    uiWaterStorage = UIWaterStorage.getInstance();
+
+    return uiWaterStorage;
   }
   
   public getCoordinateMapLink(): string {

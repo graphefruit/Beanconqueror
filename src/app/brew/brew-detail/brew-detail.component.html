@@ -179,11 +179,24 @@
                       data.getPreparation().use_custom_parameters)">
       <ion-label>
         <h2>{{"BREW_DATA_VESSEL_NAME" | translate}}:</h2>
-        <h3>{{data.vessel_name}}</h3>
+        <h3 *ngIf="data.vessel_name !== ''">{{data.vessel_name}}</h3>
+        <h3 *ngIf="data.vessel_name === ''">-</h3>
       </ion-label>
       <ion-label>
         <h2>{{"BREW_DATA_VESSEL_WEIGHT" | translate}}:</h2>
         <h3>{{data.vessel_weight}}</h3>
+      </ion-label>
+    </ion-item>
+    <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.water,
+                      data.getPreparation().manage_parameters.water,
+                      data.getPreparation().use_custom_parameters)"
+
+              [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.water,
+                      data.getPreparation().brew_order.before.water,
+                      data.getPreparation().use_custom_parameters)">
+      <ion-label>
+        <h2>{{"BREW_DATA_WATER" | translate}}:</h2>
+        <h3>{{data.getWater().name}}</h3>
       </ion-label>
     </ion-item>
     <div class="last-item"></div>

@@ -901,7 +901,7 @@
     "CATEGORY_GENERAL": "Allgemein",
     "WATER_BOTTLE_EXPLANATION": "Die meisten Wasserflaschen geben die Konzentration als ppm = mg/l an",
     "USED_TIMES": "Verwendet",
-    "AMOUNT": "Menge",
+    "AMOUNT": "Verwendete Menge",
     "WATER": {
       "GENERAL_HARDNESS":"Generelle Härte",
       "TOTAL_ALKALINITY":"Totale Alkalinität",

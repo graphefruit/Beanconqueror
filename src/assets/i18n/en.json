@@ -901,8 +901,8 @@
     "CATEGORY_GENERAL": "General",
     "UNITS": "Units",
     "WATER_BOTTLE_EXPLANATION": "Water bottles most often report concentration in units of ppm = mg/L",
-    "USED_TIMES": "Used",
-    "AMOUNT": "Quantity",
+    "USED_TIMES": "Used times",
+    "AMOUNT": "Used quantity",
     "WATER": {
       "GENERAL_HARDNESS":"General hardness (GH)",
       "TOTAL_ALKALINITY":"Total alkalinity (KH)",
