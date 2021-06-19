@@ -30,6 +30,8 @@ export class BrewFlavorPickerComponent implements OnInit {
     },undefined,BrewFlavorPickerComponent.COMPONENT_ID);
   }
   public setFlavors() {
+
+    this.flavorEl.checkInputAndAddCustomFlavor();
     const customFlavors: Array<string> =  this.flavorEl.getCustomFlavors();
     const selectedFlavors: {} = this.flavorEl.getSelectedFlavors();
     for (const key in selectedFlavors) {

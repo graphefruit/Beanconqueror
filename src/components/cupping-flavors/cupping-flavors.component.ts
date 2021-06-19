@@ -141,6 +141,10 @@ export class CuppingFlavorsComponent implements OnInit {
   }
 
 
+  public checkInputAndAddCustomFlavor() {
+      this.addCustomFlavor();
+  }
+
   public addCustomFlavor() {
     if (this.customFlavor)
     {
