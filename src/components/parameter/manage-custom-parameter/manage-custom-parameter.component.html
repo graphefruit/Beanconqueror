@@ -52,7 +52,10 @@
     <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.brew_temperature"></ion-checkbox>
   </ion-item>
   <ion-item tappable>
-    <ion-label>{{"BREW_DATA_WATER" | translate}}</ion-label>
+    <ion-label>
+      <h2>{{"BREW_DATA_WATER" | translate}}</h2>
+      <p>{{"WATER_PLACEHOLDER" | translate}}</p>
+    </ion-label>
     <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.water"></ion-checkbox>
   </ion-item>
   <ion-item tappable>

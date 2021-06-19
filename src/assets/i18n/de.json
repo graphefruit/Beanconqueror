@@ -943,5 +943,6 @@
   "GRIND_WEIGHT_PLACEHOLDER": "Zur Brühung verwendete gemahlene Bohnenmenge",
   "PRESET_BREW_TITLE": "Letzte Zubereitung vorbelegen",
   "CUPPING_BREW_TAB_AROMA": "Aromen",
-  "CUPPING_BREW_TAB_TASTING": "Schematisches Tasting"
+  "CUPPING_BREW_TAB_TASTING": "Schematisches Tasting",
+  "WATER_PLACEHOLDER": "Für eine vollständige Funktionalität, aktiviere bitte in den Einstellungen den Wasserbereich"
 }
