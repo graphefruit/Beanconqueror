@@ -303,7 +303,6 @@ export class UIUpdate {
 
           case 'UPDATE_5':
 
-            /// TODO - fix more parapmeters here aswell. and fix that settings are saved again
             const settings_v5: any = this.uiSettingsStorage.getSettings();
             if (settings_v5.brew_order.before.water === null || settings_v5.brew_order.before.water === undefined) {
 
@@ -374,8 +373,7 @@ export class UIUpdate {
     }
 
     if (somethingUpdated) {
-    console.log("SAVE UPDATE!!!");
-      // this.uiVersionStorage.saveVersion(version);
+      this.uiVersionStorage.saveVersion(version);
     }
   }
 
@@ -387,8 +385,6 @@ export class UIUpdate {
     await this.__checkUpdateForDataVersion('UPDATE_2',!hasData);
     await this.__checkUpdateForDataVersion('UPDATE_3',!hasData);
     await this.__checkUpdateForDataVersion('UPDATE_4',!hasData);
-
-    // TODO FIX FOR VERSION 5
     await this.__checkUpdateForDataVersion('UPDATE_5',!hasData);
 
   }

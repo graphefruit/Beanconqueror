@@ -116,6 +116,8 @@ export class UIImage {
                       });
 
                     }
+                  }, () => {
+                    reject();
                   });
                   }
                   catch(ex) {

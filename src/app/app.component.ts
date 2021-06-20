@@ -30,8 +30,6 @@ import {UiVersionStorage} from '../services/uiVersionStorage';
 import {UIGreenBeanStorage} from '../services/uiGreenBeanStorage';
 import {UIRoastingMachineStorage} from '../services/uiRoastingMachineStorage';
 import {IntentHandlerService} from '../services/intentHandler/intent-handler.service';
-
-import PREPARATION_TRACKING from '../data/tracking/preparationTracking';
 import LINK_TRACKING from '../data/tracking/linkTracking';
 import STARTUP_TRACKING from '../data/tracking/startupTracking';
 import {AnalyticsPopoverComponent} from '../popover/analytics-popover/analytics-popover.component';
