@@ -62,7 +62,10 @@ export class DashboardPage implements OnInit {
       this.router.navigate(['/home/brews']);
   }
 
-  public async longPressAdd(event) {
+  public async longPressAdd(event: Event) {
+    event.preventDefault();
+    event.cancelBubble = true;
+
     event.stopPropagation();
     event.stopImmediatePropagation();
     await this.uiBrewHelper.longPressAddBrew();

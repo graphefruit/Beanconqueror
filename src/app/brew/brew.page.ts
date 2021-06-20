@@ -93,6 +93,7 @@ export class BrewPage implements OnInit {
     this.retriggerScroll();
   }
   public async add() {
+
     await this.uiBrewHelper.addBrew();
     this.loadBrews();
   }
@@ -266,6 +267,8 @@ export class BrewPage implements OnInit {
 
 
   public async longPressAdd(event) {
+    console.log("test");
+
     event.stopPropagation();
     event.stopImmediatePropagation();
     await this.uiBrewHelper.longPressAddBrew();

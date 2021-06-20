@@ -145,6 +145,7 @@ import {BrewBrixCalculatorComponent} from '../brew/brew-brix-calculator/brew-bri
 import {BrewBeverageQuantityCalculatorComponent} from '../brew/brew-beverage-quantity-calculator/brew-beverage-quantity-calculator.component';
 import {BrewFlavorPickerComponent} from '../brew/brew-flavor-picker/brew-flavor-picker.component';
 import {BrewChoosePreparationToBrewComponent} from '../brew/brew-choose-preparation-to-brew/brew-choose-preparation-to-brew.component';
+import {ShortPressDirective} from '../../directive/short-press.directive';
 
 
 @NgModule({
@@ -224,6 +225,7 @@ import {BrewChoosePreparationToBrewComponent} from '../brew/brew-choose-preparat
     PreventCharacterDirective,
     MaxNumberValueDirective,
     LongPressDirective,
+    ShortPressDirective,
     BeanOverlayDirective,
     MillOverlayDirective,
     RoastingMachineOverlayDirective,
@@ -384,6 +386,7 @@ import {BrewChoosePreparationToBrewComponent} from '../brew/brew-choose-preparat
     RemoveEmptyNumberDirective, PreventCharacterDirective,
     MaxNumberValueDirective,
     LongPressDirective,
+    ShortPressDirective,
     BeanOverlayDirective,
     MillOverlayDirective,
     RoastingMachineOverlayDirective,
@@ -483,6 +486,7 @@ import {BrewChoosePreparationToBrewComponent} from '../brew/brew-choose-preparat
     PreventCharacterDirective,
     MaxNumberValueDirective,
     LongPressDirective,
+    ShortPressDirective,
     BeanOverlayDirective,
     MillOverlayDirective,
     RoastingMachineOverlayDirective,
