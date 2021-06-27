@@ -43,7 +43,7 @@ export class UIAnalytics {
       } else {
         this.disableTracking();
       }
-      resolve();
+      resolve(undefined);
 
     });
   }

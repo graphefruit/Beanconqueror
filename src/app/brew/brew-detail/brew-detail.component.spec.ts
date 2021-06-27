@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {BrewDetailComponent} from './brew-detail.component';
 import {TranslateModule} from '@ngx-translate/core';
@@ -20,7 +20,7 @@ describe('BrewDetailComponent', () => {
   let component: BrewDetailComponent;
   let fixture: ComponentFixture<BrewDetailComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [TranslateModule.forRoot(), FormsModule, IonicStorageModule.forRoot(), CommonModule, IonicModule],
       declarations: [BrewDetailComponent, KeysPipe],

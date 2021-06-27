@@ -58,7 +58,7 @@ export class UiVersionStorage extends StorageClass {
           if (this.isVersionInitialized === 1) {
             this.uiLog.log(`Storage ${this.DB_PATH} ready`);
             window.clearInterval(intV);
-            resolve();
+            resolve(undefined);
           } else if (this.isVersionInitialized === 0) {
             window.clearInterval(intV);
             this.uiLog.log(`Storage ${this.DB_PATH} not ready`);
@@ -68,7 +68,7 @@ export class UiVersionStorage extends StorageClass {
       } else {
         if (this.isVersionInitialized === 1) {
           this.uiLog.log(`Storage ${this.DB_PATH} - already - ready`);
-          resolve();
+          resolve(undefined);
         } else if (this.isVersionInitialized === 0) {
           this.uiLog.log(`Storage ${this.DB_PATH} - already - not - ready`);
           reject();

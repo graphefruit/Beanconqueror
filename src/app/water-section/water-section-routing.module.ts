@@ -16,7 +16,7 @@ const routes: Routes = [
       },
       {
         path: 'water',
-        loadChildren: './water/water.module#WaterPageModule',
+        loadChildren: () => import('./water/water.module').then(m => m.WaterPageModule),
       }
     ]
   }

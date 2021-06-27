@@ -1,7 +1,6 @@
 /** Core */
 import {Injectable} from '@angular/core';
 import {DirectoryEntry, Entry, File, FileEntry} from '@ionic-native/file/ngx';
-import {unescape} from 'querystring';
 import {Platform} from '@ionic/angular';
 import {DomSanitizer} from '@angular/platform-browser';
 import {UILog} from './uiLog';
@@ -46,7 +45,7 @@ export class UIFileHelper {
       this.file.createFile(this.getFileDirectory(),_fileName,true).then((_fileEntry: FileEntry) => {
         _fileEntry.createWriter((writer) => {
           writer.onwriteend = () => {
-            resolve();
+            resolve(undefined);
           };
           writer.onerror = () => {
             reject();
@@ -284,7 +283,7 @@ export class UIFileHelper {
         this.createFolderInternal(_rootDir, folders,
           ()=> {
 
-            resolve();
+            resolve(undefined);
           },
           () => {
 
@@ -309,7 +308,7 @@ export class UIFileHelper {
       _folders = _folders.slice(1);
     }
     if (_folders === undefined || _folders.length === 0) {
-      _resolve();
+      _resolve(undefined);
     }
     else {
 
@@ -322,7 +321,7 @@ export class UIFileHelper {
         }
         else {
           // All folders were created
-          _resolve();
+          _resolve(undefined);
         }
 
       }, () => {
@@ -343,13 +342,13 @@ export class UIFileHelper {
           filePath = filePath + fileObj.FILE_PATH.substr(1);
         }
         this.file.removeFile(filePath, fileObj.FILE_NAME + fileObj.EXTENSION).then(() => {
-          resolve();
+          resolve(undefined);
         }, (e) => {
           this.uiLog.error('Cant delete file: ' + JSON.stringify(e));
           reject();
         });
       } else {
-        resolve();
+        resolve(undefined);
       }
 
     });
@@ -563,7 +562,7 @@ export class UIFileHelper {
       if (base64TagExists) {
         byteString = atob(dataURI.split(',')[1]);
       } else {
-        byteString = unescape(dataURI.split(',')[1]);
+        byteString = window.unescape(dataURI.split(',')[1]);
       }
 
       // separate out the mime component

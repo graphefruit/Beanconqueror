@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { DatetimePopoverComponent } from './datetime-popover.component';
@@ -7,7 +7,7 @@ describe('DatetimePopoverComponent', () => {
   let component: DatetimePopoverComponent;
   let fixture: ComponentFixture<DatetimePopoverComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ DatetimePopoverComponent ],
       imports: [IonicModule.forRoot()]

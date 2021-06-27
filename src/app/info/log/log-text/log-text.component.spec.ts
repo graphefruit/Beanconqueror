@@ -1,5 +1,5 @@
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {LogTextComponent} from './log-text.component';
 import {FormsModule} from '@angular/forms';
@@ -12,7 +12,7 @@ describe('LogTextComponent', () => {
   let component: LogTextComponent;
   let fixture: ComponentFixture<LogTextComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [FormsModule, TranslateModule.forRoot(), IonicStorageModule.forRoot(), CommonModule, IonicModule],
       declarations: [LogTextComponent],

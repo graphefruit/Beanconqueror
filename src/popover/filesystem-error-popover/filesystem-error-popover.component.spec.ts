@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { FilesystemErrorPopoverComponent } from './filesystem-error-popover.component';
@@ -7,7 +7,7 @@ describe('FilesystemErrorPopoverComponent', () => {
   let component: FilesystemErrorPopoverComponent;
   let fixture: ComponentFixture<FilesystemErrorPopoverComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ FilesystemErrorPopoverComponent ],
       imports: [IonicModule.forRoot()]

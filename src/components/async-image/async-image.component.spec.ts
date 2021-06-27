@@ -1,5 +1,5 @@
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {AsyncImageComponent} from './async-image.component';
 import {TranslateModule} from '@ngx-translate/core';
@@ -13,7 +13,7 @@ describe('AsyncImageComponent', () => {
   let component: AsyncImageComponent;
   let fixture: ComponentFixture<AsyncImageComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [TranslateModule.forRoot(), FormsModule, IonicStorageModule.forRoot(), CommonModule, IonicModule],
       declarations: [AsyncImageComponent],

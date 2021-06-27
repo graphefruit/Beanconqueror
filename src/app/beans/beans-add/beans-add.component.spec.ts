@@ -1,5 +1,5 @@
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {BeansAddComponent} from './beans-add.component';
 import {TranslateModule} from '@ngx-translate/core';
@@ -22,7 +22,7 @@ import {NavParamsMock} from '../../../classes/mock/NavParamsMock';
 describe('BeansAddComponent', () => {
   let component: BeansAddComponent;
   let fixture: ComponentFixture<BeansAddComponent>;
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
 
     TestBed.configureTestingModule({
       imports: [TranslateModule.forRoot(), FormsModule, IonicStorageModule.forRoot(), CommonModule, IonicModule],

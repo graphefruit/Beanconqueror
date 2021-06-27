@@ -15,72 +15,72 @@ const routes: Routes = [
     path: 'home', resolve: {
       resolver: RouteResolver
     },
-    loadChildren: './home/home.module#HomePageModule',
+    loadChildren: () => import('./home/home.module').then(m => m.HomePageModule),
   },
   {
     path: 'roasting-section', resolve: {
       resolver: RouteResolver
     },
-    loadChildren: './roasting-section/roasting-section.module#RoastingSectionPageModule'
+    loadChildren: () => import('./roasting-section/roasting-section.module').then(m => m.RoastingSectionPageModule)
   },
   {
     path: 'water-section', resolve: {
       resolver: RouteResolver
     },
-    loadChildren: './water-section/water-section.module#WaterSectionPageModule'
+    loadChildren: () => import('./water-section/water-section.module').then(m => m.WaterSectionPageModule)
   },
   {
     path: 'info', resolve: {
       resolver: RouteResolver
     },
-    loadChildren: './info/info.module#InfoModule',
+    loadChildren: () => import('./info/info.module').then(m => m.InfoModule),
   },
   {
     path: 'settings', resolve: {
       resolver: RouteResolver
-    }, loadChildren: './settings/settings.module#SettingsPageModule', pathMatch: 'full'
+    }, loadChildren: () => import('./settings/settings.module').then(m => m.SettingsPageModule), pathMatch: 'full'
   },
   {
     path: 'mill', resolve: {
       resolver: RouteResolver
-    }, loadChildren: './mill/mill.module#MillPageModule', pathMatch: 'full'
+    }, loadChildren: () => import('./mill/mill.module').then(m => m.MillPageModule), pathMatch: 'full'
   },
   {
     path: 'beans', resolve: {
       resolver: RouteResolver
-    }, loadChildren: './beans/beans.module#BeansPageModule', pathMatch: 'full'
+    }, loadChildren: () => import('./beans/beans.module').then(m => m.BeansPageModule), pathMatch: 'full'
   },
   {
     path: 'preparation', resolve: {
       resolver: RouteResolver
-    }, loadChildren: './preparation/preparation.module#PreparationPageModule', pathMatch: 'full'
+    }, loadChildren: () => import('./preparation/preparation.module').then(m => m.PreparationPageModule), pathMatch: 'full'
   },
   {
     path: 'brew', resolve: {
       resolver: RouteResolver
-    }, loadChildren: './brew/brew.module#BrewPageModule', pathMatch: 'full'
+    }, loadChildren: () => import('./brew/brew.module').then(m => m.BrewPageModule), pathMatch: 'full'
   },
   {
     path: 'statistic', resolve: {
       resolver: RouteResolver
-    }, loadChildren: './statistic/statistic.module#StatisticPageModule', pathMatch: 'full'
+    }, loadChildren: () => import('./statistic/statistic.module').then(m => m.StatisticPageModule), pathMatch: 'full'
   }, {
     path: 'helper', resolve: {
       resolver: RouteResolver
     },
-    loadChildren: './helper/helper.module#HelperPageModule'
+    loadChildren: () => import('./helper/helper.module').then(m => m.HelperPageModule)
   },
   {
     path: 'brew-parameter', resolve: {
       resolver: RouteResolver
     },
-    loadChildren: './brew-parameter/brew-parameter.module#BrewParameterPageModule'
+    loadChildren: () => import('./brew-parameter/brew-parameter.module').then(m => m.BrewParameterPageModule)
   }
 ];
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules, relativeLinkResolution: 'legacy' })
   ],
   exports: [RouterModule]
 })

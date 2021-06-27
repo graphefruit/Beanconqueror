@@ -131,7 +131,7 @@ export class WaterInformationCardComponent implements OnInit {
             this.uiAnalytics.trackEvent(WATER_TRACKING.TITLE, WATER_TRACKING.ACTIONS.DELETE);
             await this.__delete();
             this.uiToast.showInfoToast('TOAST_WATER_DELETED_SUCCESSFULLY');
-            resolve();
+            resolve(undefined);
           },
           () => {
             // No

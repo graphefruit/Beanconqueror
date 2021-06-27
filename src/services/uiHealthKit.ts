@@ -42,7 +42,7 @@ export class UIHealthKit {
             write : []  // Write only permission
           }
         ], (e) => {
-          resolve();
+          resolve(undefined);
         }, (e) => {
           reject();
         });

@@ -412,7 +412,7 @@ export class UIUpdate {
         await this.uiVersionStorage.saveVersion(version);
       }
 
-      resolve();
+      resolve(undefined);
 
     });
     return promise;

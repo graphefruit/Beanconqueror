@@ -213,7 +213,7 @@ export class BeanInformationComponent implements OnInit {
             await this.__deleteBean();
             this.uiToast.showInfoToast('TOAST_BEAN_DELETED_SUCCESSFULLY');
             await this.resetSettings();
-            resolve();
+            resolve(undefined);
           },
           () => {
             // No

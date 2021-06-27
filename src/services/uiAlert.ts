@@ -89,7 +89,7 @@ export class UIAlert {
           {
             text: okText,
             handler: () => {
-              resolve();
+              resolve(undefined);
             }
           }
         ]
@@ -124,7 +124,7 @@ export class UIAlert {
           {
             text: this.translate.instant('YES'),
             handler: () => {
-              resolve();
+              resolve(undefined);
             }
           }
         ]

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { BeanSortInformationComponent } from './bean-sort-information.component';
@@ -7,7 +7,7 @@ describe('BeanSortInformationComponent', () => {
   let component: BeanSortInformationComponent;
   let fixture: ComponentFixture<BeanSortInformationComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ BeanSortInformationComponent ],
       imports: [IonicModule.forRoot()]

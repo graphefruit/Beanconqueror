@@ -76,7 +76,7 @@ export class UISettingsStorage extends StorageClass {
           if (this.isSettingsInitialized === 1) {
             this.uiLog.log(`Storage ${this.DB_PATH} ready`);
             window.clearInterval(intV);
-            resolve();
+            resolve(undefined);
           } else if (this.isSettingsInitialized === 0) {
             window.clearInterval(intV);
             this.uiLog.log(`Storage ${this.DB_PATH} not ready`);
@@ -86,7 +86,7 @@ export class UISettingsStorage extends StorageClass {
       } else {
         if (this.isSettingsInitialized === 1) {
           this.uiLog.log(`Storage ${this.DB_PATH} - already - ready`);
-          resolve();
+          resolve(undefined);
         } else if (this.isSettingsInitialized === 0) {
           this.uiLog.log(`Storage ${this.DB_PATH} - already - not - ready`);
           reject();

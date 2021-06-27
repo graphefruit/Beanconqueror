@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {LogComponent} from './log.component';
 import {TranslateModule} from '@ngx-translate/core';
@@ -20,7 +20,7 @@ describe('LogComponent', () => {
   let component: LogComponent;
   let fixture: ComponentFixture<LogComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [FormsModule, TranslateModule.forRoot(), IonicStorageModule.forRoot(), CommonModule, IonicModule],
       declarations: [LogComponent, KeysPipe],

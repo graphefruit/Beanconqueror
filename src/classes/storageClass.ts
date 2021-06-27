@@ -38,7 +38,7 @@ export abstract class StorageClass {
           if (this.isInitialized === 1) {
             this.uiLog.log(`Storage ${this.DB_PATH} ready`);
             window.clearInterval(intV);
-            resolve();
+            resolve(undefined);
           } else if (this.isInitialized === 0) {
             window.clearInterval(intV);
             this.uiLog.log(`Storage ${this.DB_PATH} not ready`);
@@ -48,7 +48,7 @@ export abstract class StorageClass {
       } else {
         if (this.isInitialized === 1) {
           this.uiLog.log(`Storage ${this.DB_PATH} - already - ready`);
-          resolve();
+          resolve(undefined);
         } else if (this.isInitialized === 0) {
           this.uiLog.log(`Storage ${this.DB_PATH} - already not - ready`);
           reject();
@@ -188,7 +188,7 @@ export abstract class StorageClass {
           this.storedData = _data;
           this.isInitialized = 1;
         }
-        resolve();
+        resolve(undefined);
       }, (e) => {
         // Error
         this.uiLog.log(`Storage error - ${this.DB_PATH} - ${JSON.stringify(e)}`);

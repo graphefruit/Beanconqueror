@@ -133,7 +133,7 @@ export class RoastingMachineInformationCardComponent implements OnInit {
             this.uiAnalytics.trackEvent(ROASTING_MACHINE_TRACKING.TITLE, ROASTING_MACHINE_TRACKING.ACTIONS.DELETE);
             await this.__delete();
             this.uiToast.showInfoToast('TOAST_ROASTING_MACHINE_DELETED_SUCCESSFULLY');
-            resolve();
+            resolve(undefined);
           },
           () => {
             // No

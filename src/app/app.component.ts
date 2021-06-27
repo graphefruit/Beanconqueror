@@ -294,7 +294,7 @@ export class AppComponent implements AfterViewInit {
               await this.uiSettingsStorage.saveSettings(settings);
               await this._translate.use(settingLanguage).toPromise();
               moment.locale(settingLanguage);
-              resolve();
+              resolve(undefined);
 
             })
               .catch(async (ex) => {
@@ -303,7 +303,7 @@ export class AppComponent implements AfterViewInit {
                 this._translate.setDefaultLang('en');
                 await this._translate.use('en').toPromise();
                 moment.locale('en');
-                resolve();
+                resolve(undefined);
               });
           } else {
             this.uiLog.info('Language settings already existing, set language');
@@ -312,7 +312,7 @@ export class AppComponent implements AfterViewInit {
             this._translate.setDefaultLang(settingLanguage);
             await this._translate.use(settingLanguage).toPromise();
             moment.locale(settingLanguage);
-            resolve();
+            resolve(undefined);
 
           }
         } catch (ex) {
@@ -323,7 +323,7 @@ export class AppComponent implements AfterViewInit {
           await this.uiSettingsStorage.saveSettings(settings);
           await this._translate.use('en').toPromise();
           moment.locale('en');
-          resolve();
+          resolve(undefined);
         }
       } else {
         this.uiLog.info('Cant set language for device, because no cordova device');
@@ -332,7 +332,7 @@ export class AppComponent implements AfterViewInit {
           this._translate.setDefaultLang(settings.language);
           await this._translate.use(settings.language).toPromise();
           moment.locale(settings.language);
-          resolve();
+          resolve(undefined);
         } else {
           this.uiLog.info(`Set default language from settings, because no settings set: en `);
           this._translate.setDefaultLang('en');
@@ -340,7 +340,7 @@ export class AppComponent implements AfterViewInit {
           await this.uiSettingsStorage.saveSettings(settings);
           await this._translate.use('en').toPromise();
           moment.locale(settings.language);
-          resolve();
+          resolve(undefined);
         }
 
       }

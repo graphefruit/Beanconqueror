@@ -243,7 +243,7 @@ export class BrewInformationComponent implements OnInit {
           this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.DELETE);
           await this.__deleteBrew();
           this.uiToast.showInfoToast('TOAST_BREW_DELETED_SUCCESSFULLY');
-          resolve();
+          resolve(undefined);
         },
         () => {
           // No

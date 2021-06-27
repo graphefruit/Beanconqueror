@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { PhotoPopoverComponent } from './photo-popover.component';
@@ -7,7 +7,7 @@ describe('PhotoPopoverComponent', () => {
   let component: PhotoPopoverComponent;
   let fixture: ComponentFixture<PhotoPopoverComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ PhotoPopoverComponent ],
       imports: [IonicModule.forRoot()]

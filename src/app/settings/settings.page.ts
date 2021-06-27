@@ -674,9 +674,9 @@ export class SettingsPage implements OnInit {
         waterStorageCallback
       ]).then(async () => {
         await this.uiUpdate.checkUpdate();
-        resolve();
+        resolve(undefined);
       }, () => {
-        resolve();
+        resolve(undefined);
       });
     });
   }

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { GreenBeanPopoverActionsComponent } from './green-bean-popover-actions.component';
@@ -7,7 +7,7 @@ describe('GreenBeanPopoverActionsComponent', () => {
   let component: GreenBeanPopoverActionsComponent;
   let fixture: ComponentFixture<GreenBeanPopoverActionsComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ GreenBeanPopoverActionsComponent ],
       imports: [IonicModule.forRoot()]

@@ -62,7 +62,7 @@ export class AndroidPlatformService {
     const promise = new Promise((resolve, reject) => {
     this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE).then((_status) => {
       if (_status.hasPermission) {
-        resolve();
+        resolve(undefined);
       } else {
         reject();
       }
@@ -79,12 +79,12 @@ export class AndroidPlatformService {
         if (_status.hasPermission === false) {
           await this.uiAlert.showMessage('ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION','ANDROID_FILE_ACCESS_NEEDED_TITLE',undefined,true)
           this.requestExternalStorageAccess().then( () => {
-            resolve();
+            resolve(undefined);
           }, () => {
             reject();
           })
         } else {
-          resolve();
+          resolve(undefined);
         }
       }, () => {
         reject();

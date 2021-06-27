@@ -124,7 +124,7 @@ export class UIStorage {
             .then(() => {
               finishedImport++;
               if (keysCount === finishedImport) {
-                resolve();
+                resolve(undefined);
               }
             }, () => {
               reject();

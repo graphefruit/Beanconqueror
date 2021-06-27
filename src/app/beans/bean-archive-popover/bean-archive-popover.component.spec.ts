@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { BeanArchivePopoverComponent } from './bean-archive-popover.component';
@@ -7,7 +7,7 @@ describe('BeanArchivePopoverComponent', () => {
   let component: BeanArchivePopoverComponent;
   let fixture: ComponentFixture<BeanArchivePopoverComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ BeanArchivePopoverComponent ],
       imports: [IonicModule.forRoot()]

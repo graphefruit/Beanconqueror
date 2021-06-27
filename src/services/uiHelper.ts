@@ -153,12 +153,12 @@ export class UIHelper {
 
       if (this.isAppReady === 1 || this.isAppReady === 2) {
         this.uiLog.log('Check app ready - Already loaded, no interval needed');
-        resolve();
+        resolve(undefined);
       } else {
         const intV = setInterval(() => {
           this.uiLog.log('Check app ready');
           if (this.isAppReady === 1 || this.isAppReady === 2) {
-            resolve();
+            resolve(undefined);
             clearInterval(intV);
           }
         }, 50);

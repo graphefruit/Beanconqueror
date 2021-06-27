@@ -201,7 +201,7 @@ export class GreenBeanInformationComponent implements OnInit {
             await this.__deleteBean();
             this.uiToast.showInfoToast('TOAST_GREEN_BEAN_DELETED_SUCCESSFULLY');
             await this.resetSettings();
-            resolve();
+            resolve(undefined);
           },
           () => {
             // No
