@@ -32,6 +32,9 @@ import {UIBeanStorage} from '../../../services/uiBeanStorage';
 import {UIWaterStorage} from '../../../services/uiWaterStorage';
 import {BrewBrixCalculatorComponent} from '../../../app/brew/brew-brix-calculator/brew-brix-calculator.component';
 import {BrewBeverageQuantityCalculatorComponent} from '../../../app/brew/brew-beverage-quantity-calculator/brew-beverage-quantity-calculator.component';
+import {BleManagerService} from '../../../services/bleManager/ble-manager.service';
+import {Subscription} from 'rxjs';
+import DecentScale, {DECENT_SCALE_TIMER_COMMAND} from '../../../classes/devices/decentScale';
 
 
 
@@ -70,6 +73,8 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
   public vesselResults: Array<any> =[];
   public vesselFocused: boolean = false;
 
+
+  public scaleWeightSubscription: Subscription = undefined;
   constructor(private readonly platform: Platform,
               private readonly uiSettingsStorage: UISettingsStorage,
               private readonly uiPreparationStorage: UIPreparationStorage,
@@ -80,11 +85,13 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
               private readonly uiBrewStorage: UIBrewStorage,
               private readonly uiMillStorage: UIMillStorage,
               private readonly uiBeanStorage: UIBeanStorage,
-              private readonly uiWaterStorage: UIWaterStorage) {
+              private readonly uiWaterStorage: UIWaterStorage,
+              private readonly bleManager: BleManagerService) {
 
   }
 
   public ngAfterViewInit() {
+
 
     setTimeout( () => {
     if (this.isEdit === false) {
@@ -133,6 +140,25 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
   }
 
+  public attachToWeightChange() {
+    const decentScale: DecentScale = this.bleManager.getDecentScale();
+    if (decentScale) {
+      if (this.scaleWeightSubscription !== undefined) {
+        this.deattachToWeightChange();
+      }
+      this.scaleWeightSubscription  = decentScale.weightChange.subscribe((_val) => {
+        this.__setScaleWeight(_val);
+      });
+    }
+
+  }
+  public deattachToWeightChange() {
+    if (this.scaleWeightSubscription) {
+      this.scaleWeightSubscription.unsubscribe();
+      this.scaleWeightSubscription = undefined;
+    }
+  }
+
   public ngOnInit (): void {
     this.settings = this.uiSettingsStorage.getSettings();
     if (!this.data.config.uuid) {
@@ -168,6 +194,35 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       this.data.brew_time = this.timer.getSeconds();
     } else {
       this.data.brew_time = 0;
+    }
+  }
+
+  public timerStarted(_event): void {
+    const decentScale: DecentScale = this.bleManager.getDecentScale();
+    if (decentScale) {
+      decentScale.setTimer(DECENT_SCALE_TIMER_COMMAND.START);
+      this.attachToWeightChange();
+    }
+  }
+  public timerResumed(_event): void {
+    const decentScale: DecentScale = this.bleManager.getDecentScale();
+    if (decentScale) {
+      decentScale.setTimer(DECENT_SCALE_TIMER_COMMAND.START);
+      this.attachToWeightChange();
+    }
+  }
+  public timerPaused(_event): void {
+    const decentScale: DecentScale = this.bleManager.getDecentScale();
+    if (decentScale) {
+      decentScale.setTimer(DECENT_SCALE_TIMER_COMMAND.STOP);
+      this.deattachToWeightChange();
+    }
+  }
+  public timerReset(_event): void {
+    const decentScale: DecentScale = this.bleManager.getDecentScale();
+    if (decentScale) {
+      decentScale.setTimer(DECENT_SCALE_TIMER_COMMAND.RESET);
+      this.deattachToWeightChange();
     }
   }
   public temperatureTimeChanged(_event): void {
@@ -263,7 +318,14 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
     }
   }
 
-  private __loadSpecificLastPreparationBrew() {
+
+  private __setScaleWeight(_weight: number) {
+    if (this.data.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO) {
+      this.data.brew_quantity = _weight;
+    } else
+    {
+      this.data.brew_beverage_quantity = _weight;
+    }
 
   }
 

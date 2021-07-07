@@ -40,6 +40,7 @@ import {UIWaterStorage} from '../services/uiWaterStorage';
 import {UIBeanHelper} from '../services/uiBeanHelper';
 import {UIMillHelper} from '../services/uiMillHelper';
 import {UIPreparationHelper} from '../services/uiPreparationHelper';
+import {BleManagerService} from '../services/bleManager/ble-manager.service';
 
 
 declare var AppRate;
@@ -111,7 +112,8 @@ export class AppComponent implements AfterViewInit {
     private readonly uiWaterStorage: UIWaterStorage,
     private readonly uiBeanHelper: UIBeanHelper,
     private readonly uiMillHelper: UIMillHelper,
-    private readonly uiPreparationHelper: UIPreparationHelper
+    private readonly uiPreparationHelper: UIPreparationHelper,
+    private readonly bleManager: BleManagerService
   ) {
     // Dont remove androidPlatformService, we need to initialize it via constructor
   }
@@ -389,8 +391,18 @@ export class AppComponent implements AfterViewInit {
     await this.__checkAnalyticsInformationPage();
     await this.uiUpdate.checkUpdateScreen();
     await this.__checkStartupView();
+    this.__connectSmartScale();
     this.__instanceAppRating();
 
+
+  }
+
+  private  __connectSmartScale() {
+    const settings = this.uiSettingsStorage.getSettings();
+    const decent_scale_id: string = settings.decent_scale_id;
+    if (decent_scale_id !== '') {
+      this.bleManager.autoConnectDecentScale(decent_scale_id);
+    }
 
   }
 

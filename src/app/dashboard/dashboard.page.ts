@@ -9,7 +9,6 @@ import {Router} from '@angular/router';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
 import {Bean} from '../../classes/bean/bean';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
-import {UIAnalytics} from '../../services/uiAnalytics';
 
 @Component({
   selector: 'dashboard',
@@ -28,8 +27,9 @@ export class DashboardPage implements OnInit {
               private readonly router: Router,
               private readonly uiBeanStorage: UIBeanStorage,
               private readonly uiBeanHelper: UIBeanHelper,
-              private readonly uiAnalytics: UIAnalytics) {
+  ) {
   }
+
 
   public ngOnInit(): void {
 

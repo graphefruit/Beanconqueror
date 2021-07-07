@@ -944,5 +944,6 @@
   "PRESET_BREW_TITLE": "Letzte Zubereitung vorbelegen",
   "CUPPING_BREW_TAB_AROMA": "Aromen",
   "CUPPING_BREW_TAB_TASTING": "Schematisches Tasting",
-  "WATER_PLACEHOLDER": "Für eine vollständige Funktionalität, aktiviere bitte in den Einstellungen den Wasserbereich"
+  "WATER_PLACEHOLDER": "Für eine vollständige Funktionalität, aktiviere bitte in den Einstellungen den Wasserbereich",
+  "PAGE_SETTINGS_SCALES": "Waagen"
 }

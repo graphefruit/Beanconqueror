@@ -146,7 +146,7 @@ import {BrewBeverageQuantityCalculatorComponent} from '../brew/brew-beverage-qua
 import {BrewFlavorPickerComponent} from '../brew/brew-flavor-picker/brew-flavor-picker.component';
 import {BrewChoosePreparationToBrewComponent} from '../brew/brew-choose-preparation-to-brew/brew-choose-preparation-to-brew.component';
 import {ShortPressDirective} from '../../directive/short-press.directive';
-
+import {BluetoothLE} from '@ionic-native/bluetooth-le/ngx';
 
 @NgModule({
   declarations: [
@@ -409,6 +409,7 @@ import {ShortPressDirective} from '../../directive/short-press.directive';
     Geolocation,
     Insomnia,
     Deeplinks,
+    BluetoothLE
   ],
 
   exports: [

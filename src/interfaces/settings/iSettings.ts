@@ -28,7 +28,7 @@ export interface ISettings {
   show_archived_mills: boolean;
   show_archived_preparations: boolean;
   show_archived_green_beans: boolean;
-  show_archived_waters:boolean;
+  show_archived_waters: boolean;
 
   track_caffeine_consumption: boolean;
 
@@ -53,7 +53,9 @@ export interface ISettings {
 
   welcome_page_showed: boolean;
 
-  wake_lock:boolean;
+  wake_lock: boolean;
 
   config: IConfig;
+
+  decent_scale_id: string;
 }

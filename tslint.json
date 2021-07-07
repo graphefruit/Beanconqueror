@@ -15,6 +15,7 @@
         ]
       }
     ],
+    "no-bitwise": false,
     "no-empty-source": false,
     "arrow-return-shorthand": true,
     "selector-type-no-unknown": [

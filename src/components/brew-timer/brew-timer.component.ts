@@ -17,6 +17,8 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
   @Output() public timerStarted = new EventEmitter();
   @Output() public timerPaused = new EventEmitter();
+  @Output() public timerReset = new EventEmitter();
+  @Output() public timerResumed = new EventEmitter();
   @Output() public timerTicked = new EventEmitter();
   @Output() public bloomTimer = new EventEmitter();
   @Output() public dripTimer = new EventEmitter();
@@ -90,18 +92,23 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     this.displayingTime = moment(this.displayingTime).startOf('day').add('seconds',this.timer.seconds).toISOString();
   }
 
-  public startTimer(): void {
+  public startTimer(_resumed: boolean = false): void {
     this.startedTimestamp = Math.floor(Date.now() / 1000);
 
     this.timer.hasStarted = true;
     this.timer.runTimer = true;
     this.timerTick();
+    if (_resumed === false) {
+      this.timerStarted.emit();
+    }
+
     this.changeEvent();
   }
 
   public pauseTimer(): void {
     this.timerPaused.emit();
     this.timer.runTimer = false;
+    this.timerPaused.emit();
     this.changeEvent();
   }
 
@@ -117,7 +124,8 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   }
 
   public resumeTimer(): void {
-    this.startTimer();
+    this.startTimer(true);
+    this.timerResumed.emit();
   }
 
   public timerTick(): void {
@@ -144,6 +152,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   }
 
   public reset() {
+    this.timerReset.emit();
     this.initTimer();
     this.changeEvent();
   }

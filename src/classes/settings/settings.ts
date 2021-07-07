@@ -38,7 +38,7 @@ export class Settings implements ISettings {
   public show_archived_mills: boolean;
   public show_archived_preparations: boolean;
   public show_archived_green_beans: boolean;
-  public show_archived_waters:boolean;
+  public show_archived_waters: boolean;
 
   public welcome_page_showed: boolean;
   public track_caffeine_consumption: boolean;
@@ -62,6 +62,7 @@ export class Settings implements ISettings {
   public show_water_section: boolean;
   public show_cupping_section: boolean;
 
+  public decent_scale_id: string;
   public GET_BREW_FILTER(): IBrewPageFilter {
 
     const upperRating: number = this.brew_rating;
@@ -135,6 +136,7 @@ export class Settings implements ISettings {
     this.welcome_page_showed = false;
     this.wake_lock = false;
     this.image_quality = 100;
+    this.decent_scale_id = '';
 
   }
 

@@ -50,6 +50,7 @@ import {IRoastingMachine} from '../../interfaces/roasting-machine/iRoastingMachi
 import {IMill} from '../../interfaces/mill/iMill';
 import {UIWaterStorage} from '../../services/uiWaterStorage';
 import {Water} from '../../classes/water/water';
+import {BleManagerService} from '../../services/bleManager/ble-manager.service';
 declare var cordova: any;
 declare var device: any;
 
@@ -117,7 +118,8 @@ export class SettingsPage implements OnInit {
               private readonly modalCtrl: ModalController,
               private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
               private readonly uiGreenBeanStorage: UIGreenBeanStorage,
-              private readonly uiWaterStorage: UIWaterStorage
+              private readonly uiWaterStorage: UIWaterStorage,
+              private readonly bleManager: BleManagerService
               ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -139,6 +141,21 @@ export class SettingsPage implements OnInit {
 
   public ngOnInit() {
 
+  }
+
+  public async findAndConnectDecentScale() {
+    const scaleId: string = await this.bleManager.findAndconnectDecentScale();
+    if (scaleId) {
+      this.settings.decent_scale_id = scaleId;
+      await this.saveSettings();
+    }
+  }
+  public async disconnectDecentScale() {
+    const disconnected: boolean = await this.bleManager.disconnect(this.settings.decent_scale_id);
+    if (disconnected) {
+      this.settings.decent_scale_id = '';
+      await this.saveSettings();
+    }
   }
   public async checkWaterSection() {
     if (this.settings.show_water_section === false) {
@@ -201,6 +218,7 @@ export class SettingsPage implements OnInit {
       this.settings.resetFilter();
       await this.saveSettings();
     }
+
   public async saveSettings() {
     this.changeDetectorRef.detectChanges();
     await this.uiSettingsStorage.saveSettings(this.settings);
@@ -285,7 +303,7 @@ export class SettingsPage implements OnInit {
   }
 
   private async exportAttachments() {
-    const exportObjects:Array<any> =
+    const exportObjects: Array<any> =
       [...this.uiBeanStorage.getAllEntries(),
         ...this.uiBrewStorage.getAllEntries(),
         ...this.uiPreparationStorage.getAllEntries(),

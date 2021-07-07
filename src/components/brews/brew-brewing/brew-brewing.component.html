@@ -263,6 +263,10 @@
                 (bloomTimer)="setCoffeeBloomingTime($event)"
                 (dripTimer)="setCoffeeDripTime($event)"
                 (timerTicked)="brewTimeTicked($event)"
+                (timerStarted)="timerStarted($event)"
+                (timerResumed)="timerResumed($event)"
+                (timerPaused)="timerPaused($event)"
+                (timerReset)="timerReset($event)"
                 [bloomTimerVisible]="uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_blooming_time,
                       data.getPreparation().manage_parameters.coffee_blooming_time,
                       data.getPreparation().use_custom_parameters)"

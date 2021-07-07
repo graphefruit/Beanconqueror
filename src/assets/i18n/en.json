@@ -944,5 +944,6 @@
   "PRESET_BREW_TITLE": "Use last brew as preset",
   "CUPPING_BREW_TAB_AROMA": "Aroma",
   "CUPPING_BREW_TAB_TASTING": "Systematic tasting",
-  "WATER_PLACEHOLDER": "For full function, please activate the water section in the settings menu"
+  "WATER_PLACEHOLDER": "For full function, please activate the water section in the settings menu",
+  "PAGE_SETTINGS_SCALES": "Scales"
 }
