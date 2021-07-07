@@ -226,15 +226,25 @@ await this.attachNotification();
 
   public async tare() {
     await this.write(this.buildTareCommand());
+    await setTimeout(async () => {
+      await  this.write(this.buildTareCommand());
+    },50);
   }
 
   public async setLed(_weightOn: boolean, _timerOn: boolean) {
     await this.write(this.buildLedOnOffCommand(_weightOn, _timerOn));
+
+    await setTimeout(async () => {
+      await  this.write(this.buildLedOnOffCommand(_weightOn, _timerOn));
+    },50);
   }
 
 
   public async setTimer(_timer: DECENT_SCALE_TIMER_COMMAND) {
     await this.write(this.buildTimerCommand(_timer));
+    await setTimeout(async () => {
+      await this.write(this.buildTimerCommand(_timer));
+    },50);
   }
 
   public getWeight() {

@@ -125,7 +125,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
     // Trigger change rating
     this.changedRating();
-    })
+    });
   }
 
   public preparationMethodFocused() {
@@ -197,31 +197,33 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
     }
   }
 
-  public timerStarted(_event): void {
+  public async timerStarted(_event) {
+    const decentScale: DecentScale = this.bleManager.getDecentScale();
+    if (decentScale) {
+      await decentScale.tare();
+      await decentScale.setTimer(DECENT_SCALE_TIMER_COMMAND.START);
+      this.attachToWeightChange();
+    }
+  }
+  public async timerResumed(_event) {
     const decentScale: DecentScale = this.bleManager.getDecentScale();
     if (decentScale) {
       decentScale.setTimer(DECENT_SCALE_TIMER_COMMAND.START);
       this.attachToWeightChange();
     }
   }
-  public timerResumed(_event): void {
+  public  async timerPaused(_event) {
     const decentScale: DecentScale = this.bleManager.getDecentScale();
     if (decentScale) {
-      decentScale.setTimer(DECENT_SCALE_TIMER_COMMAND.START);
-      this.attachToWeightChange();
-    }
-  }
-  public timerPaused(_event): void {
-    const decentScale: DecentScale = this.bleManager.getDecentScale();
-    if (decentScale) {
-      decentScale.setTimer(DECENT_SCALE_TIMER_COMMAND.STOP);
+      await decentScale.setTimer(DECENT_SCALE_TIMER_COMMAND.STOP);
       this.deattachToWeightChange();
     }
   }
-  public timerReset(_event): void {
+  public async timerReset(_event) {
     const decentScale: DecentScale = this.bleManager.getDecentScale();
     if (decentScale) {
-      decentScale.setTimer(DECENT_SCALE_TIMER_COMMAND.RESET);
+      await decentScale.tare();
+      await decentScale.setTimer(DECENT_SCALE_TIMER_COMMAND.RESET);
       this.deattachToWeightChange();
     }
   }
