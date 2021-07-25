@@ -6,6 +6,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {UILog} from './uiLog';
 import {SocialSharing} from '@ionic-native/social-sharing/ngx';
 import moment from 'moment';
+import {FileTransfer, FileTransferObject} from '@ionic-native/file-transfer/ngx';
 /**
  * Handles every helping functionalities
  */
@@ -24,7 +25,8 @@ export class UIFileHelper {
                private readonly uiLog: UILog,
                private readonly platform: Platform,
                private readonly domSanitizer: DomSanitizer,
-               private readonly socialSharing: SocialSharing) {
+               private readonly socialSharing: SocialSharing,
+               private readonly fileTransfer: FileTransfer) {
 
 
   }
@@ -187,6 +189,24 @@ export class UIFileHelper {
     return promise;
   }
 
+    public async downloadExternalFile(_url: string,  _fileName: string = 'beanconqueror_image', _fileExtension: string ='.png') {
+      const promise: Promise<FileEntry> = new Promise(async (resolve, reject) => {
+        const url: string = _url;
+        const fileTransferObj: FileTransferObject = this.fileTransfer.create();
+        await this.generateFileName(this.getFileDirectory(), _fileName, _fileExtension).then(async (_newName) => {
+          fileTransferObj.download(url, this.getFileDirectory() + _newName).then(async (_entry) => {
+            this.uiLog.log('File download completed: ' + _entry.fullPath);
+            resolve(_entry.fullPath);
+          }, (error) => {
+            // handle error
+            resolve(undefined);
+          });
+        });
+      });
+      return promise;
+
+    }
+
     public async downloadFile(_filename,_blob,_share: boolean = true): Promise<FileEntry> {
       const promise: Promise<FileEntry> =  new Promise(async (resolve, reject) => {
 
@@ -195,7 +215,7 @@ export class UIFileHelper {
 
         let storageLocation: string = '';
         if (this.platform.is('android')) {
-          storageLocation = this.file.externalRootDirectory
+          storageLocation = this.file.externalRootDirectory;
         } else {
           storageLocation = this.file.documentsDirectory;
         }

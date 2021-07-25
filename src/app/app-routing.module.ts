@@ -75,6 +75,12 @@ const routes: Routes = [
       resolver: RouteResolver
     },
     loadChildren: () => import('./brew-parameter/brew-parameter.module').then(m => m.BrewParameterPageModule)
+  },
+  {
+    path: 'decent-test', resolve: {
+      resolver: RouteResolver
+    },
+    loadChildren: () => import('./decent-test/decent-test.module').then( m => m.DecentTestPageModule)
   }
 ];
 

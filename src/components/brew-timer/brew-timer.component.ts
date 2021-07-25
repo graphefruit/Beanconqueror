@@ -27,7 +27,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
   private _dripTimerVisible: boolean;
 
-  private startedTimestamp:number = -1;
+  private startedTimestamp: number = -1;
   get dripTimerVisible(): boolean {
     return this._dripTimerVisible;
   }

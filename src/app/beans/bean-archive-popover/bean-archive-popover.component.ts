@@ -37,7 +37,7 @@ export class BeanArchivePopoverComponent implements OnInit {
 
   }
 
-  private async archive() {
+  public async archive() {
     this.data.finished = true;
     await this.uiBeanStorage.update(this.data);
     this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');

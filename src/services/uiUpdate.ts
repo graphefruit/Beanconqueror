@@ -316,7 +316,7 @@ export class UIUpdate {
               settings_v5.brew_order.before.vessel = highestNumber +3;
               await this.uiSettingsStorage.saveSettings(settings_v5);
 
-              const preparations_v5:any = this.uiPreparationStorage.getAllEntries();
+              const preparations_v5: any = this.uiPreparationStorage.getAllEntries();
               for(const prep of preparations_v5) {
                 prep.brew_order.before.water = highestNumber +1;
                 prep.brew_order.before.bean_weight_in = highestNumber +2;
@@ -373,7 +373,7 @@ export class UIUpdate {
     }
 
     if (somethingUpdated) {
-      this.uiVersionStorage.saveVersion(version);
+     await this.uiVersionStorage.saveVersion(version);
     }
   }
 

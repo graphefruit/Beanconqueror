@@ -146,7 +146,8 @@ import {BrewBeverageQuantityCalculatorComponent} from '../brew/brew-beverage-qua
 import {BrewFlavorPickerComponent} from '../brew/brew-flavor-picker/brew-flavor-picker.component';
 import {BrewChoosePreparationToBrewComponent} from '../brew/brew-choose-preparation-to-brew/brew-choose-preparation-to-brew.component';
 import {ShortPressDirective} from '../../directive/short-press.directive';
-import {BluetoothLE} from '@ionic-native/bluetooth-le/ngx';
+import {DecentTestPage} from '../decent-test/decent-test.page';
+import {FileTransfer} from '@ionic-native/file-transfer/ngx';
 
 @NgModule({
   declarations: [
@@ -234,6 +235,7 @@ import {BluetoothLE} from '@ionic-native/bluetooth-le/ngx';
     TooltipDirective,
     DisableDoubleClickDirective,
     BrewPage,
+    DecentTestPage,
     BrewDetailComponent,
     BrewEditComponent,
     PhotoPopoverComponent,
@@ -334,6 +336,7 @@ import {BluetoothLE} from '@ionic-native/bluetooth-le/ngx';
     BrewFlavorPickerComponent,
     BrewBeverageQuantityCalculatorComponent,
     BrewPage,
+    DecentTestPage,
     BrewDetailComponent,
     BrewEditComponent,
     PhotoPopoverComponent,
@@ -409,7 +412,7 @@ import {BluetoothLE} from '@ionic-native/bluetooth-le/ngx';
     Geolocation,
     Insomnia,
     Deeplinks,
-    BluetoothLE
+    FileTransfer
   ],
 
   exports: [
@@ -496,6 +499,7 @@ import {BluetoothLE} from '@ionic-native/bluetooth-le/ngx';
     TooltipDirective,
     DisableDoubleClickDirective,
     BrewPage,
+    DecentTestPage,
     BrewDetailComponent,
     BrewEditComponent,
     PhotoPopoverComponent,

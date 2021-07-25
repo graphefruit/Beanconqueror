@@ -20,7 +20,7 @@ import {UIAnalytics} from '../../../services/uiAnalytics';
 })
 export class BrewCuppingComponent implements OnInit {
   public static COMPONENT_ID = 'brew-cup';
-  public segment:string ='flavor';
+  public segment: string ='flavor';
 
   public data: Brew = new Brew();
   public settings: Settings;

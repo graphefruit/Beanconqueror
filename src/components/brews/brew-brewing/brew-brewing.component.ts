@@ -35,7 +35,7 @@ import {BrewBeverageQuantityCalculatorComponent} from '../../../app/brew/brew-be
 import {BleManagerService} from '../../../services/bleManager/ble-manager.service';
 import {Subscription} from 'rxjs';
 import DecentScale, {DECENT_SCALE_TIMER_COMMAND} from '../../../classes/devices/decentScale';
-
+import {Chart} from 'chart.js';
 
 
 declare var cordova;
@@ -75,6 +75,19 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
 
   public scaleWeightSubscription: Subscription = undefined;
+  public scaleFlowSubscription: Subscription = undefined;
+
+
+  @ViewChild('flowProfileChart', {static: false}) public flowProfileChart;
+  public flowProfileObj = {
+    TIMES:0,
+    VALUE:0,
+    CALCULATED_SECOND: -1,
+  };
+  public flowProfileChartEl: any = undefined;
+  public bluetoothScaleConnected: boolean = false;
+
+
   constructor(private readonly platform: Platform,
               private readonly uiSettingsStorage: UISettingsStorage,
               private readonly uiPreparationStorage: UIPreparationStorage,
@@ -129,7 +142,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
   }
 
   public preparationMethodFocused() {
-    //Needs to set set, because ion-change triggers on smartphones but not on websites, and therefore the value is overwritten when you use a brew template
+    // Needs to set set, because ion-change triggers on smartphones but not on websites, and therefore the value is overwritten when you use a brew template
     this.preparationMethodHasBeenFocused = true;
   }
   public resetPreparationTools() {
@@ -140,24 +153,68 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
   }
 
-  public attachToWeightChange() {
+  public attachToScaleEvents() {
     const decentScale: DecentScale = this.bleManager.getDecentScale();
     if (decentScale) {
-      if (this.scaleWeightSubscription !== undefined) {
-        this.deattachToWeightChange();
-      }
+      this.bluetoothScaleConnected = true;
+      setTimeout(() => {
+        if (this.flowProfileChartEl === undefined) {
+          this.initializeFlowChart();
+        }
+      });
+
+      this.deattachToScaleChange();
       this.scaleWeightSubscription  = decentScale.weightChange.subscribe((_val) => {
         this.__setScaleWeight(_val);
       });
+
+      this.scaleFlowSubscription = decentScale.flowChange.subscribe((_val) => {
+        this.__setFlowProfile(_val);
+      });
+
+
     }
 
   }
-  public deattachToWeightChange() {
+
+
+  private initializeFlowChart(): void {
+
+
+    const drinkingData = {
+      labels: [],
+      datasets: [{
+        label: this.translate.instant('PAGE_STATISTICS_BREW_PROCESSES'),
+        data: [],
+        borderColor: 'rgb(159,140,111)',
+        backgroundColor: 'rgb(205,194,172)',
+      }]
+    };
+    const chartOptions = {
+      legend: {
+        display: false,
+        position: 'top'
+      }
+    };
+
+    this.flowProfileChartEl = new Chart(this.flowProfileChart.nativeElement, {
+      type: 'line',
+      data: drinkingData,
+      options: chartOptions
+    });
+  }
+
+  public deattachToScaleChange() {
     if (this.scaleWeightSubscription) {
       this.scaleWeightSubscription.unsubscribe();
       this.scaleWeightSubscription = undefined;
     }
+    if (this.scaleFlowSubscription) {
+      this.scaleFlowSubscription.unsubscribe();
+      this.scaleFlowSubscription = undefined;
+    }
   }
+
 
   public ngOnInit (): void {
     this.settings = this.uiSettingsStorage.getSettings();
@@ -202,29 +259,35 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
     if (decentScale) {
       await decentScale.tare();
       await decentScale.setTimer(DECENT_SCALE_TIMER_COMMAND.START);
-      this.attachToWeightChange();
+      this.attachToScaleEvents();
+
     }
   }
   public async timerResumed(_event) {
     const decentScale: DecentScale = this.bleManager.getDecentScale();
     if (decentScale) {
-      decentScale.setTimer(DECENT_SCALE_TIMER_COMMAND.START);
-      this.attachToWeightChange();
+      await decentScale.setTimer(DECENT_SCALE_TIMER_COMMAND.START);
+      this.attachToScaleEvents();
     }
   }
   public  async timerPaused(_event) {
     const decentScale: DecentScale = this.bleManager.getDecentScale();
     if (decentScale) {
       await decentScale.setTimer(DECENT_SCALE_TIMER_COMMAND.STOP);
-      this.deattachToWeightChange();
+      this.deattachToScaleChange();
     }
   }
   public async timerReset(_event) {
     const decentScale: DecentScale = this.bleManager.getDecentScale();
     if (decentScale) {
       await decentScale.tare();
+      await decentScale.setTimer(DECENT_SCALE_TIMER_COMMAND.STOP);
       await decentScale.setTimer(DECENT_SCALE_TIMER_COMMAND.RESET);
-      this.deattachToWeightChange();
+      this.deattachToScaleChange();
+      this.initializeFlowChart();
+      this.flowProfileObj.TIMES = 0;
+      this.flowProfileObj.VALUE = 0;
+      this.flowProfileObj.CALCULATED_SECOND = -1;
     }
   }
   public temperatureTimeChanged(_event): void {
@@ -321,13 +384,53 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
   }
 
 
-  private __setScaleWeight(_weight: number) {
+  private __setScaleWeight(_scaleChange: any) {
+
+    const weight: number = _scaleChange.WEIGHT;
+    const oldWeight: number = _scaleChange.OLD_WEIGHT;
+    const stable: boolean = _scaleChange.STABLE;
     if (this.data.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO) {
-      this.data.brew_quantity = _weight;
+      this.data.brew_quantity = weight;
     } else
     {
-      this.data.brew_beverage_quantity = _weight;
+      // If the drip timer is showing, we can set the first drip and not doing a reference to the normal weight.
+      if (this.timer.showDripTimer === true) {
+        // First drip is incoming
+        if (this.uiBrewHelper.fieldVisible(this.settings.manage_parameters.coffee_first_drip_time,
+          this.data.getPreparation().manage_parameters.coffee_first_drip_time,
+          this.data.getPreparation().use_custom_parameters)) {
+          this.setCoffeeDripTime(undefined);
+        }
+
+      }
+      this.data.brew_beverage_quantity = weight;
     }
+  }
+  private __setFlowProfile(_scaleChange: any) {
+    const weight: number = _scaleChange.WEIGHT;
+    const oldWeight: number = _scaleChange.OLD_WEIGHT;
+    const stable: boolean = _scaleChange.STABLE;
+    const newWeight = weight - oldWeight;
+    const scaleSendDate = _scaleChange.DATE;
+
+    //We need to do usefull things here.
+    if (this.flowProfileObj.CALCULATED_SECOND === -1) {
+      this.flowProfileObj.CALCULATED_SECOND = this.getTime();
+      this.flowProfileObj.VALUE = newWeight;
+    }
+
+    if (this.flowProfileObj.CALCULATED_SECOND !== this.getTime()) {
+      // New second arrived, write the actual flow now.
+      this.flowProfileChartEl.data.datasets[0].data.push(newWeight - this.flowProfileObj.VALUE);
+
+      this.flowProfileChartEl.data.labels.push(this.getTime());
+      this.flowProfileChartEl.update();
+      this.flowProfileObj.VALUE = newWeight;
+      this.flowProfileObj.CALCULATED_SECOND = this.getTime();
+    }
+
+
+
 
   }
 

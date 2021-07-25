@@ -1,7 +1,7 @@
 import {ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
 import {UIAlert} from '../../services/uiAlert';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
-import {ActionSheetController, ModalController} from '@ionic/angular';
+import {ActionSheetController, ModalController, Platform} from '@ionic/angular';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {Bean} from '../../classes/bean/bean';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
@@ -64,7 +64,8 @@ export class BeansPage implements OnInit {
               private readonly actionSheetController: ActionSheetController,
               private readonly qrScannerService: QrScannerService,
               private readonly intenthandler: IntentHandlerService,
-              private readonly uiBeanHelper: UIBeanHelper) {
+              private readonly uiBeanHelper: UIBeanHelper,
+              private readonly platform: Platform) {
 
 
   }
@@ -197,10 +198,10 @@ export class BeansPage implements OnInit {
               return 1;
             }
 
-              return 0;
+            return 0;
             }
           );
-           break;
+          break;
         case BEAN_SORT_AFTER.ROASTER:
           sortedBeans = sortedBeans.sort( (a,b) => {
             const roasterA = a.roaster.toUpperCase();
@@ -308,11 +309,16 @@ export class BeansPage implements OnInit {
 
   public async scan() {
 
-    this.intenthandler.handleQRCodeLink('https://beanconqueror.com/app/roaster/bean.html?id=a45e2f47-b844-4b12-b963-1546be52ec68');
+    if (this.platform.is('cordova')) {
+      await this.qrScannerService.scan().then(async (scannedCode) => {
+        await this.intenthandler.handleQRCodeLink(scannedCode);
+      },() => {});
+    } else {
+      await this.intenthandler.handleQRCodeLink('https://beanconqueror.com/app/roaster/bean.html?id=a45e2f47-b844-4b12-b963-1546be52ec68');
+    }
+
     return;
-    this.qrScannerService.scan().then((scannedCode) => {
-      this.intenthandler.handleQRCodeLink(scannedCode);
-    },() => {});
+
   }
 
 }

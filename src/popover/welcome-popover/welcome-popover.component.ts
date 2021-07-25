@@ -37,7 +37,7 @@ export class WelcomePopoverComponent implements OnInit {
               private readonly platform: Platform,
               private readonly uiBeanHelper: UIBeanHelper,
               private readonly uiMillHelper: UIMillHelper,
-              private readonly uiPreparationHelper :UIPreparationHelper) {
+              private readonly uiPreparationHelper: UIPreparationHelper) {
 
 
 

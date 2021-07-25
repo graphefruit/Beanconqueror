@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
+import {ServerBean} from '../../models/bean/serverBean';
 
 @Injectable({
   providedIn: 'root'
@@ -10,10 +11,10 @@ export class ServerCommunicationService {
   constructor(private http: HttpClient) {}
 
 
-  public getBeanInformation(_qrCodeId:string) {
-    const promise = new Promise((resolve, reject) => {
+  public getBeanInformation(_qrCodeId: string): Promise<ServerBean> {
+    const promise = new Promise<ServerBean>((resolve, reject) => {
       this.http.get(environment.API_URL + 'Roaster/GetBeanFromQrCodeId?Id=' + _qrCodeId, {}).toPromise()
-        .then((data) => {
+        .then((data: ServerBean) => {
           resolve(data);
         },() => {
           reject();

@@ -22,7 +22,8 @@ export default class DecentScale extends BluetoothDevice {
 
   private tareCounter: number = 0;
 
-  public weightChange: EventEmitter<number> = new EventEmitter();
+  public weightChange: EventEmitter<any> = new EventEmitter();
+  public flowChange: EventEmitter<any> = new EventEmitter();
 
   public static notification_callback(event, scale) {
 
@@ -206,7 +207,8 @@ export default class DecentScale extends BluetoothDevice {
       this.enable_notifications();
       this.enable_notifications();
     }, 1000);*/
-await this.attachNotification();
+      await this.setLed(true,true);
+      await this.attachNotification();
   }
 
 
@@ -217,14 +219,16 @@ await this.attachNotification();
           DecentScale.WRITE_CHAR_UUID,
           _bytes.buffer,
           (e) => {
-            resolve(undefined);
+            resolve(true);
           }, (e) => {
-           reject(undefined);
+            resolve(false);
           });
       });
     }
 
   public async tare() {
+    this.setWeight(0);
+
     await this.write(this.buildTareCommand());
     await setTimeout(async () => {
       await  this.write(this.buildTareCommand());
@@ -234,9 +238,9 @@ await this.attachNotification();
   public async setLed(_weightOn: boolean, _timerOn: boolean) {
     await this.write(this.buildLedOnOffCommand(_weightOn, _timerOn));
 
-    await setTimeout(async () => {
+    /*await setTimeout(async () => {
       await  this.write(this.buildLedOnOffCommand(_weightOn, _timerOn));
-    },50);
+    },50);*/
   }
 
 
@@ -250,31 +254,71 @@ await this.attachNotification();
   public getWeight() {
     return this.weight;
   }
-  public setWeight(_newWeight: number) {
-    if (_newWeight < 0) {
-      return;
+  public setWeight(_newWeight: number,_stableWeight: boolean = false) {
+
+    if (_stableWeight === false) {
+      if (_newWeight < 0) {
+        return;
+      }
+      if ((_newWeight - this.weight) > 5) {
+        // Each cycle is 1/10 hertz, so more then 5 grams each hertz would be to much
+        return;
+      }
+      if (_newWeight < this.weight) {
+        // If new weight is lower then old weight, ignore it, main reasons would be a swirl / user put the v60 away etc.
+        return;
+      }
+    } else {
+      // Weight is stable
+      if (_newWeight <= 0) {
+        return;
+      }
     }
-    if (_newWeight - this.weight > 30) {
-      // If we get the interval above 30grams, we ignore this one, because it looks like "shaky"
-      return;
-    }
 
 
-
+    const oldWeight = this.weight;
     // We passed every shake change, seems like everything correct, set the new weight.
     this.weight = _newWeight;
-    this.weightChange.emit(this.weight);
+    this.weightChange.emit({
+      WEIGHT: this.weight,
+      OLD_WEIGHT: oldWeight,
+      STABLE: _stableWeight
+    });
+  }
+  public setFlow(_newWeight: number,_stableWeight: boolean = false) {
+    const oldWeight = this.weight;
+    // We passed every shake change, seems like everything correct, set the new weight.
+    this.weight = _newWeight;
+
+    const actualDate = new Date();
+
+
+    // console.log(`New weight - ${this.weight} -  ${actualDate.getSeconds()} : ${actualDate.getMilliseconds()}`);
+    this.flowChange.emit({
+      WEIGHT: this.weight,
+      OLD_WEIGHT: oldWeight,
+      STABLE: _stableWeight,
+      DATE: actualDate
+    });
   }
 
 
   public async attachNotification() {
     ble.startNotification(this.device_id, DecentScale.READ_SERVICE_UUID, DecentScale.READ_CHAR_UUID,
-      (_data) => {
+      async (_data) => {
         const scaleData = new Uint8Array(_data);
+        console.log("Received: " + scaleData[1] + " - " + scaleData[2] + " - "+ scaleData[3]);
         if (scaleData[1] === 0xCE || scaleData[1] === 0xCA) {
           // Weight notification
           const newWeight: number =  ((scaleData[2] << 8) + scaleData[3]) / 10;
-          this.setWeight(newWeight);
+          const weightIsStable = (scaleData[1] === 0xCE);
+          this.setWeight(newWeight,weightIsStable);
+          this.setFlow(newWeight,weightIsStable);
+        } else if (scaleData[1] === 0xAA && scaleData[2] === 0x01) {
+          // Tare button pressed.
+          await this.tare();
+        } else if (scaleData[1] === 0xAA && scaleData[2] === 0x02) {
+          // Timer button pressed
         }
 
 

@@ -51,6 +51,7 @@ import {IMill} from '../../interfaces/mill/iMill';
 import {UIWaterStorage} from '../../services/uiWaterStorage';
 import {Water} from '../../classes/water/water';
 import {BleManagerService} from '../../services/bleManager/ble-manager.service';
+import {UIToast} from '../../services/uiToast';
 declare var cordova: any;
 declare var device: any;
 
@@ -119,7 +120,8 @@ export class SettingsPage implements OnInit {
               private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
               private readonly uiGreenBeanStorage: UIGreenBeanStorage,
               private readonly uiWaterStorage: UIWaterStorage,
-              private readonly bleManager: BleManagerService
+              private readonly bleManager: BleManagerService,
+              private readonly uiToast: UIToast
               ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -133,7 +135,7 @@ export class SettingsPage implements OnInit {
       this.isHealthSectionAvailable = true;
     }, () => {
         this.isHealthSectionAvailable = false;
-      })
+      });
   }
 
 
@@ -144,10 +146,38 @@ export class SettingsPage implements OnInit {
   }
 
   public async findAndConnectDecentScale() {
-    const scaleId: string = await this.bleManager.findAndconnectDecentScale();
-    if (scaleId) {
-      this.settings.decent_scale_id = scaleId;
+
+    const hasLocationPermission: boolean = await this.bleManager.hasLocationPermission();
+    if (!hasLocationPermission) {
+      await this.uiAlert.showMessage('SCALE.REQUEST_PERMISSION.LOCATION',undefined,undefined,true);
+      await this.bleManager.requestLocationPermissions();
+    }
+
+    const hasBluetoothPermission: boolean = await this.bleManager.hasBluetoothPermission();
+    if (!hasBluetoothPermission) {
+      await this.uiAlert.showMessage('SCALE.REQUEST_PERMISSION.BLUETOOTH',undefined,undefined,true);
+      await this.bleManager.requestBluetoothPermissions();
+    }
+
+
+    const bleEnabled: boolean = await this.bleManager.isBleEnabled();
+    if (bleEnabled === false) {
+      await this.uiAlert.showMessage('SCALE.BLUETOOTH_NOT_ENABLED',undefined,undefined,true);
+      return;
+    }
+
+
+    await this.uiAlert.showLoadingSpinner();
+    const scaleDeviceId: any = await this.bleManager.tryToFindDecentScale();
+    if (scaleDeviceId) {
+      await this.uiAlert.hideLoadingSpinner();
+      // We don't need to retry for iOS, because we just did scan before.
+      this.bleManager.autoConnectDecentScale(scaleDeviceId,false);
+      this.settings.decent_scale_id = scaleDeviceId;
       await this.saveSettings();
+    } else {
+      await this.uiAlert.hideLoadingSpinner();
+      this.uiAlert.showMessage('SCALE.CONNECTION_NOT_ESTABLISHED',undefined,undefined,true);
     }
   }
   public async disconnectDecentScale() {

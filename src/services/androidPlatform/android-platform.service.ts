@@ -73,16 +73,16 @@ export class AndroidPlatformService {
     return promise;
   }
 
-  public checkHasExternalStorage() {
+  public async checkHasExternalStorage() {
     const promise = new Promise((resolve, reject) => {
       this.androidPermissions.hasPermission(this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE).then(async (_status) => {
         if (_status.hasPermission === false) {
-          await this.uiAlert.showMessage('ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION','ANDROID_FILE_ACCESS_NEEDED_TITLE',undefined,true)
+          await this.uiAlert.showMessage('ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION','ANDROID_FILE_ACCESS_NEEDED_TITLE',undefined,true);
           this.requestExternalStorageAccess().then( () => {
             resolve(undefined);
           }, () => {
             reject();
-          })
+          });
         } else {
           resolve(undefined);
         }

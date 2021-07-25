@@ -224,6 +224,7 @@ export class UIExcel {
     header.push(this.translate.instant('BREW_DATA_PRESSURE_PROFILE'));
     header.push(this.translate.instant('BREW_DATA_PREPARATION_METHOD_TOOL'));
     header.push(this.translate.instant('BREW_DATA_TEMPERATURE_TIME'));
+    header.push(this.translate.instant('BREW_DATA_TIME'));
     header.push(this.translate.instant('BREW_DATA_COFFEE_BLOOMING_TIME'));
     header.push(this.translate.instant('BREW_DATA_COFFEE_FIRST_DRIP_TIME'));
     header.push(this.translate.instant('BREW_DATA_BREW_QUANTITY'));
@@ -260,6 +261,7 @@ export class UIExcel {
         brew.pressure_profile,
         brew.getPreparation().tools.filter((e)=> brew.method_of_preparation_tools.includes(e.config.uuid) === true).map((e) => e.name).join(','),
         brew.brew_temperature_time,
+        brew.brew_time,
         brew.coffee_blooming_time,
         brew.coffee_first_drip_time,
         brew.brew_quantity ,
@@ -278,7 +280,7 @@ export class UIExcel {
         brew.getPreparation().config.uuid,
         brew.getMill().config.uuid
       ];
-      wsData.push(entry)
+      wsData.push(entry);
     }
     const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
     XLSX.utils.book_append_sheet(_wb, ws,  this.translate.instant('NAV_BREWS'))

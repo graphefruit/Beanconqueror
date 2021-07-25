@@ -140,6 +140,12 @@ ionic cordova plugin add cordova-plugin-androidx
 
 ##Bluetooth
 We combine both plugins, because the other plugins asks all of the permissions.
-ionic cordova plugin add cordova-plugin-bluetoothle
-npm install @ionic-native/bluetooth-le
-https://github.com/don/cordova-plugin-ble-central
+
+//1. ionic cordova plugin add cordova-plugin-bluetoothle
+//2. npm install @ionic-native/bluetooth-le
+3. https://github.com/don/cordova-plugin-ble-central
+
+
+##File download
+ionic cordova plugin add cordova-plugin-file-transfer
+npm install @ionic-native/file-transfer

@@ -54,33 +54,31 @@ export class IntentHandlerService {
     return val;
   }
 
-  public handleQRCodeLink(_url) {
-    this.uiHelper.isBeanconqurorAppReady().then(() => {
+  public async handleQRCodeLink(_url) {
+    await this.uiHelper.isBeanconqurorAppReady().then(async () => {
       const url: string = _url;
-
-      debugger;
       this.uiLog.log('Handle QRcode Link:' + url);
       if (url.indexOf('https://beanconqueror.com/app/roaster/bean') === 0) {
         const qrCodeId: string = String(this.findParameterByCompleteUrl(url,'id'));
-        this.addBeanFromServer(qrCodeId);
+        await this.addBeanFromServer(qrCodeId);
       }
     });
   }
 
-  private handleDeepLink(_matchLink) {
+  private async handleDeepLink(_matchLink) {
     try {
       if (_matchLink && _matchLink.url) {
-        this.uiHelper.isBeanconqurorAppReady().then(() => {
+          await this.uiHelper.isBeanconqurorAppReady().then(async () => {
           const url: string = _matchLink.url;
 
           this.uiLog.log('Handle deeplink:' + url);
           this.uiLog.log(JSON.stringify(_matchLink));
           if (url.indexOf('https://beanconqueror.com/app/roaster/bean') === 0) {
             const qrCodeId: string = String(this.findGetParameter(_matchLink.queryString,'id'));
-            this.addBeanFromServer(qrCodeId);
+            await this.addBeanFromServer(qrCodeId);
           } else if (url.indexOf('beanconqueror://ADD_BEAN_ONLINE?') === 0) {
             const qrCodeId: string = String(this.findGetParameter(_matchLink.queryString,'id'));
-            this.addBeanFromServer(qrCodeId);
+            await this.addBeanFromServer(qrCodeId);
           }
         });
       }

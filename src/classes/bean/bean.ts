@@ -31,7 +31,7 @@ export class Bean implements IBean {
   public finished: boolean;
   public cost: number;
   public attachments: Array<string>;
-  public cupping_points:string;
+  public cupping_points: string;
   public decaffeinated: boolean;
   public url: string;
   public ean_article_number: string;

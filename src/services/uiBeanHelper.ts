@@ -13,6 +13,9 @@ import {BeanArchivePopoverComponent} from '../app/beans/bean-archive-popover/bea
 import {BeansEditComponent} from '../app/beans/beans-edit/beans-edit.component';
 import {BeansDetailComponent} from '../app/beans/beans-detail/beans-detail.component';
 import {GreenBean} from '../classes/green-bean/green-bean';
+import {ServerBean} from '../models/bean/serverBean';
+import {BeanMapper} from '../mapper/bean/beanMapper';
+
 
 /**
  * Handles every helping functionalities
@@ -97,7 +100,12 @@ export class UIBeanHelper {
   }
 
 
-  public async addScannedQRBean(_scannedQRBean) {
+  public async addScannedQRBean(_scannedQRBean: ServerBean) {
+    console.log(_scannedQRBean);
+
+
+    /*const newMapper = new BeanMapper();
+    newMapper.mapServerToClientBean()*/
     const modal = await this.modalController.create({
       component:BeansAddComponent,
       id:BeansAddComponent.COMPONENT_ID,
@@ -107,7 +115,7 @@ export class UIBeanHelper {
     await modal.onWillDismiss();
   }
 
-  public async addBean(_hideToastMessage:boolean = false) {
+  public async addBean(_hideToastMessage: boolean = false) {
     const modal = await this.modalController.create({component:BeansAddComponent,id: BeansAddComponent.COMPONENT_ID,  componentProps: {hide_toast_message: _hideToastMessage}});
     await modal.present();
     await modal.onWillDismiss();

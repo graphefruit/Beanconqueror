@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      {{"DECENT" | translate}}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+<ion-card>
+  <ion-button (click)="findAndConnectDecentScale();">CONNECT SCALE</ion-button>
+
+  <ion-button (click)="sendLEDCommand()">
+    START
+  </ion-button>
+  <ion-button (click)="stopLEDCommand()">
+    STOP
+  </ion-button>
+</ion-card>
+
+
+</ion-content>

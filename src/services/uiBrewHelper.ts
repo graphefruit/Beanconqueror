@@ -27,6 +27,7 @@ import {IBrew} from '../interfaces/brew/iBrew';
 import {BrewDetailComponent} from '../app/brew/brew-detail/brew-detail.component';
 import {BrewCuppingComponent} from '../app/brew/brew-cupping/brew-cupping.component';
 
+
 /**
  * Handles every helping functionalities
  */
@@ -492,7 +493,7 @@ export class UIBrewHelper {
     }
   }
   public async editBrew(_brew: Brew): Promise<Brew> {
-    const promise:Promise<Brew> = new Promise(async (resolve, reject) => {
+    const promise: Promise<Brew> = new Promise(async (resolve, reject) => {
       const modal = await this.modalController.create({
         component: BrewEditComponent,
         id: BrewEditComponent.COMPONENT_ID,
@@ -524,5 +525,6 @@ export class UIBrewHelper {
     await modal.onWillDismiss();
 
   }
+
 
 }

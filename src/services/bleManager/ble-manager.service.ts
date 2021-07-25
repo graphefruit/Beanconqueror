@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import DecentScale from '../../classes/devices/decentScale';
-import {BluetoothLE} from '@ionic-native/bluetooth-le/ngx';
 import {Platform} from '@ionic/angular';
 import {UILog} from '../uiLog';
+import {UIToast} from '../uiToast';
+import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
 
 declare var ble;
 declare var window;
@@ -14,8 +15,10 @@ export class BleManagerService {
   public scales;
   public failed: boolean;
   public ready: boolean;
-  constructor(private readonly bluetoothle: BluetoothLE, private readonly platform: Platform,
-              private uiLog: UILog) {
+  constructor(private readonly platform: Platform,
+              private readonly uiLog: UILog,
+              private readonly uiToast: UIToast,
+              private androidPermissions: AndroidPermissions) {
 
     this.scales = [];
     this.failed = false;
@@ -27,6 +30,70 @@ export class BleManagerService {
 
     },() => {
 
+    });
+  }
+
+
+  public async hasLocationPermission(): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      if (this.platform.is('android')) {
+        this.androidPermissions.hasPermission(this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION).then((_status) => {
+          if (_status.hasPermission === false) {
+            resolve(false);
+          } else {
+            resolve(true);
+          }
+        }, () => {
+          resolve(false);
+        });
+      } else {
+        resolve(true);
+      }
+    });
+  }
+  public async hasBluetoothPermission(): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      if (this.platform.is('android')) {
+        this.androidPermissions.hasPermission(this.androidPermissions.PERMISSION.BLUETOOTH_ADMIN).then((_status) => {
+          if (_status.hasPermission === false) {
+            resolve(false);
+          } else {
+            resolve(true);
+          }
+        }, () => {
+          resolve(false);
+        });
+      } else {
+        resolve(true);
+      }
+    });
+  }
+
+  public async requestBluetoothPermissions() {
+    return new Promise<boolean>((resolve, reject) => {
+      this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.BLUETOOTH_ADMIN).then((_status) => {
+        if (_status.hasPermission === false) {
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+      }, () => {
+        resolve(false);
+      });
+    });
+  }
+
+  public async requestLocationPermissions() {
+    return new Promise<boolean>((resolve, reject) => {
+      this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION).then((_status) => {
+        if (_status.hasPermission === false) {
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+      }, () => {
+        resolve(false);
+      });
     });
   }
 
@@ -43,10 +110,6 @@ export class BleManagerService {
       }).catch(() => {
 
       });**/
-    }
-    const bleEnabled: boolean = await this.isBleEnabled();
-    if (bleEnabled === false) {
-      alert("BLE not enabled");
     }
 
     return new Promise<Array<any>>((resolve, reject) => {
@@ -76,7 +139,7 @@ export class BleManagerService {
       });
       timeoutVar = setTimeout(async () => {
         await stopScanningAndResolve();
-      },10000);
+      },60000);
     });
   }
 
@@ -97,6 +160,8 @@ export class BleManagerService {
   public disconnect(deviceId): Promise<boolean>{
     return new Promise<boolean>((resolve, reject) => {
       ble.disconnect(deviceId, () => {
+        this.decentScale = null;
+        this.uiToast.showInfoToastBottom('SCALE_DISCONNECTED_SUCCESSFULLY');
         resolve(true);
       }, () => {
         resolve(false);
@@ -117,48 +182,67 @@ export class BleManagerService {
     });
   }
 
-  public async findAndconnectDecentScale() {
-    return new Promise<string>(async (resolve, reject) => {
-      const devices: Array<any> = await this.scanDevices();
-      let bleDecentScale: any = null;
-      for (const device of devices) {
-
-        if (device && device.name && device.name.toLowerCase().startsWith('decent')) {
-          bleDecentScale = device;
-          break;
-        }
-      }
-
-      if (bleDecentScale !== null) {
-        const deviceConnected: boolean = await this.connectDevice(bleDecentScale);
-        if (deviceConnected) {
-          this.decentScale = new DecentScale(bleDecentScale.id);
-          window.larsBLE = this.decentScale;
-          resolve(bleDecentScale.id);
-        }
-      } else {
-        resolve('');
-      }
-
-    });
-  }
-
   public getDecentScale() {
     return this.decentScale;
   }
 
-  public async autoConnectDecentScale(deviceId: string) {
-    if (this.platform.is('ios')) {
-      //We just need to scan, then we can auto connect for iOS (lol)
+  private async __scanAutoConnectDecentScaleIOS() {
+    return new Promise<boolean>(async (resolve, reject) => {
+      if (this.platform.is('ios')) {
+        // We just need to scan, then we can auto connect for iOS (lol)
+        this.uiLog.log('Try to find scale on iOS');
+        const decentScale = await this.tryToFindDecentScale();
+        if (decentScale === undefined) {
+          this.uiLog.log('Scale not found, retry');
+          // Try every 11 seconds, because the search algorythm goes 10 seconds at all.
+          const intV = setInterval(async () => {
+
+            const decentScaleSub = await this.tryToFindDecentScale();
+            if (decentScaleSub !== undefined) {
+              resolve(true);
+              clearInterval(intV);
+            } else {
+              this.uiLog.log('Scale not found, retry');
+            }
+          }, 61000);
+        }
+
+      } else {
+        resolve(true);
+      }
+    });
+
+  }
+
+  public async tryToFindDecentScale() {
+    return new Promise<string>(async (resolve, reject) => {
       const devices: Array<any> = await this.scanDevices();
+      for (const device of devices) {
+        if (device && device.name && device.name.toLowerCase().startsWith('decent')) {
+          resolve(device.id);
+          return;
+        }
+      }
+      resolve(undefined);
+    });
+  }
+  public async autoConnectDecentScale(deviceId: string,_retryScanForIOS: boolean = false) {
+    if (_retryScanForIOS === true) {
+      // iOS needs to know the scale, before auto connect can be done
+      await this.__scanAutoConnectDecentScaleIOS();
     }
+
     ble.autoConnect(deviceId, () => {
       this.decentScale = new DecentScale(deviceId);
-      window.larsBLE = this.decentScale;
       this.uiLog.log('Connected successfully');
+      this.uiToast.showInfoToastBottom('SCALE.CONNECTED_SUCCESSFULLY');
     }, () => {
-      this.decentScale = null;
-      this.uiLog.log('Disconnected successfully');
+      if (this.decentScale !== null) {
+        // The disconnect event was already called
+        this.decentScale = null;
+        this.uiToast.showInfoToastBottom('SCALE.DISCONNECTED_UNPLANNED');
+        this.uiLog.log('Disconnected successfully');
+      }
     });
   }
 

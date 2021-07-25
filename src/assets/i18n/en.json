@@ -747,7 +747,7 @@
   "WEBSITE": "Website",
   "SHARE": "Share",
   "ANDROID_FILE_ACCESS_NEEDED_TITLE": "Share file access required",
-  "ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION": "In order for the app to work fully, we ask you to authorize file access. Otherwise there will be misconduct within the app.",
+  "ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION": "In order for the app to work fully, we ask you to authorize file access. Otherwise there will be misconduct within the app. This is specialy needed for the automatic backup system.",
   "COULD_NOT_ACCESS_FILE": "We could not access the chosen file",
   "WRONG_FILE_FORMAT": "You have chosen a not supported file format",
   "SCAN_BEAN": "Scan package",
@@ -945,5 +945,17 @@
   "CUPPING_BREW_TAB_AROMA": "Aroma",
   "CUPPING_BREW_TAB_TASTING": "Systematic tasting",
   "WATER_PLACEHOLDER": "For full function, please activate the water section in the settings menu",
-  "PAGE_SETTINGS_SCALES": "Scales"
+  "PAGE_SETTINGS_SCALES": "Scales",
+  "CONNECT": "Connect",
+  "DISCONNECT": "Disconnect",
+  "SCALE": {
+    "BLUETOOTH_NOT_ENABLED": "Bluetooth not activated, please activate to work properly",
+    "CONNECTION_NOT_ESTABLISHED": "Scale not found found or connection could not be established",
+    "CONNECTED_SUCCESSFULLY": "Scale connected",
+    "DISCONNECTED_SUCCESSFULLY": "Scale disconnected",
+    "REQUEST_PERMISSION": {
+      "LOCATION": "To find bluetooth scales, the app needs access to the location.",
+      "BLUETOOTH":  "To find bluetooth scales, the app needs access to bluetooth"
+    }
+  }
 }

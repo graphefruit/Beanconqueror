@@ -56,6 +56,7 @@ export class AppComponent implements AfterViewInit {
 
   public pages = {
     home: {title: 'NAV_HOME', url: '/', icon: 'home-outline', active: true},
+    decent: {title: 'DECENT', url: '/decent-test', icon: 'home-outline', active: true},
     roasting_section: {title: 'NAV_ROASTING_SECTION', url: '/roasting-section', active: false},
     water_section: {title: 'NAV_WATER_SECTION', url: '/water-section', active: false},
     settings: {title: 'NAV_SETTINGS', url: '/settings', icon: 'settings-outline', active: false},
@@ -400,8 +401,8 @@ export class AppComponent implements AfterViewInit {
   private  __connectSmartScale() {
     const settings = this.uiSettingsStorage.getSettings();
     const decent_scale_id: string = settings.decent_scale_id;
-    if (decent_scale_id !== '') {
-      this.bleManager.autoConnectDecentScale(decent_scale_id);
+    if (decent_scale_id) {
+      this.bleManager.autoConnectDecentScale(decent_scale_id,true);
     }
 
   }
