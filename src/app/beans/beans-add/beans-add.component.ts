@@ -128,7 +128,7 @@ export class BeansAddComponent implements OnInit {
     this.data.url = _bean.url;
     this.data.ean_article_number = _bean.ean_article_number;
 
-    this.data.bean_information = _bean.bean_information;
+    this.data.bean_information = this.uiHelper.cloneData(_bean.bean_information);
     this.data.cupping_points = _bean.cupping_points;
     this.data.roast_range = _bean.roast_range;
 
