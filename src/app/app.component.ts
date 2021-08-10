@@ -401,8 +401,11 @@ export class AppComponent implements AfterViewInit {
   private  __connectSmartScale() {
     const settings = this.uiSettingsStorage.getSettings();
     const decent_scale_id: string = settings.decent_scale_id;
-    if (decent_scale_id) {
+    this.uiLog.log(`Connect smartscale? ${decent_scale_id}`);
+    if (decent_scale_id !== undefined && decent_scale_id !== '') {
       this.bleManager.autoConnectDecentScale(decent_scale_id,true);
+    } else {
+      this.uiLog.log('Smartscale not connected, dont try to connect');
     }
 
   }

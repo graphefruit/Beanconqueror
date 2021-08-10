@@ -3,9 +3,10 @@ import {UIHelper} from '../uiHelper';
 import {Deeplinks} from '@ionic-native/deeplinks/ngx';
 
 import {UILog} from '../uiLog';
-import {Url} from 'url';
 import {ServerCommunicationService} from '../serverCommunication/server-communication.service';
 import {UIBeanHelper} from '../uiBeanHelper';
+import {ServerBean} from '../../models/bean/serverBean';
+import {UIAlert} from '../uiAlert';
 
 declare var window;
 @Injectable({
@@ -20,7 +21,8 @@ export class IntentHandlerService {
               private readonly deeplinks: Deeplinks,
               private readonly uiLog: UILog,
               private readonly serverCommunicationService: ServerCommunicationService,
-              private readonly uiBeanHelper: UIBeanHelper) { }
+              private readonly uiBeanHelper: UIBeanHelper,
+              private readonly uiAlert: UIAlert) { }
 
   public attachOnHandleOpenUrl() {
 
@@ -43,7 +45,9 @@ export class IntentHandlerService {
     _url.split('&')
       .forEach( (item) => {
         tmp = item.split('=');
-        if (tmp[0] === _parameterName) result = decodeURIComponent(tmp[1]);
+        if (tmp[0] === _parameterName) {
+          result = decodeURIComponent(tmp[1]);
+        }
       });
     return result;
   }
@@ -61,6 +65,8 @@ export class IntentHandlerService {
       if (url.indexOf('https://beanconqueror.com/app/roaster/bean') === 0) {
         const qrCodeId: string = String(this.findParameterByCompleteUrl(url,'id'));
         await this.addBeanFromServer(qrCodeId);
+      } else {
+        this.uiAlert.showMessage('QR.WRONG_QRCODE_DESCRIPTION','QR.WRONG_QRCODE_TITLE',undefined,true);
       }
     });
   }
@@ -79,6 +85,8 @@ export class IntentHandlerService {
           } else if (url.indexOf('beanconqueror://ADD_BEAN_ONLINE?') === 0) {
             const qrCodeId: string = String(this.findGetParameter(_matchLink.queryString,'id'));
             await this.addBeanFromServer(qrCodeId);
+          } else {
+            this.uiAlert.showMessage('QR.WRONG_LINK_DESCRIPTION','QR.WRONG_LINK_TITLE',undefined,true);
           }
         });
       }
@@ -96,9 +104,13 @@ export class IntentHandlerService {
     this.uiLog.log('Load bean information from server: ' + _qrCodeId);
     try {
 
-      const beanData = await this.serverCommunicationService.getBeanInformation(_qrCodeId);
-      beanData['qr_code'] = '1';
-      await this.uiBeanHelper.addScannedQRBean(beanData);
+      try {
+        const beanData: ServerBean = await this.serverCommunicationService.getBeanInformation(_qrCodeId);
+        await this.uiBeanHelper.addScannedQRBean(beanData);
+      } catch (ex) {
+        this.uiAlert.showMessage('QR.SERVER.ERROR_OCCURED','ERROR_OCCURED',undefined,true);
+      }
+
     } catch (ex) {
 
     }

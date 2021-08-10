@@ -9,7 +9,6 @@ import {Router} from '@angular/router';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
 import {Bean} from '../../classes/bean/bean';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
-import {UIFileHelper} from '../../services/uiFileHelper';
 
 @Component({
   selector: 'dashboard',
@@ -27,15 +26,11 @@ export class DashboardPage implements OnInit {
               private readonly changeDetectorRef: ChangeDetectorRef,
               private readonly router: Router,
               private readonly uiBeanStorage: UIBeanStorage,
-              private readonly uiBeanHelper: UIBeanHelper,
-              private readonly uiFileHelper: UIFileHelper,
+              private readonly uiBeanHelper: UIBeanHelper
   ) {
   }
 
-public async test() {
-
-}
-  public ngOnInit(): void {
+  public  ngOnInit() {
 
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
       // If an brew is deleted, we need to reset our array for the next call.

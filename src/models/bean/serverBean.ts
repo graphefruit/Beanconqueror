@@ -39,4 +39,12 @@ export class ServerBean
       path: string,
     }>;
     public qrCodeId: string;
+
+    public error: {
+      message: string,
+      errorCode: string,
+      messageDetail: string,
+      statusCode: number
+    };
+
 }

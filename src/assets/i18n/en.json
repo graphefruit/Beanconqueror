@@ -957,5 +957,14 @@
       "LOCATION": "To find bluetooth scales, the app needs access to the location.",
       "BLUETOOTH":  "To find bluetooth scales, the app needs access to bluetooth"
     }
+  },
+  "QR":{
+    "WRONG_QRCODE_DESCRIPTION": "Wrong qr code or wrong content",
+    "WRONG_QRCODE_TITLE": "Error",
+    "WRONG_LINK_DESCRIPTION": "Wrong app link",
+    "WRONG_LINK_TITLE": "Error",
+    "SERVER": {
+      "ERROR_OCCURED": "An error is occured, please try again."
+    }
   }
 }

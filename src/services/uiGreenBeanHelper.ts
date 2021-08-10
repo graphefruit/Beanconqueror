@@ -37,7 +37,7 @@ export class UIGreenBeanHelper {
     const modal = await this.modalController.create({component: GreenBeanAddComponent,
       id:GreenBeanAddComponent.COMPONENT_ID, componentProps: {green_bean_template: _greenBean}});
     await modal.present();
-    await modal.onWillDismiss()
+    await modal.onWillDismiss();
   }
 
   public async editGreenBean(_greenBean: GreenBean) {

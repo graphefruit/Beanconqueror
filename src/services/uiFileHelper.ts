@@ -7,6 +7,7 @@ import {UILog} from './uiLog';
 import {SocialSharing} from '@ionic-native/social-sharing/ngx';
 import moment from 'moment';
 import {FileTransfer, FileTransferObject} from '@ionic-native/file-transfer/ngx';
+import {InstanceClass} from './instanceClass';
 /**
  * Handles every helping functionalities
  */
@@ -14,7 +15,7 @@ declare var window;
 @Injectable({
   providedIn: 'root'
 })
-export class UIFileHelper {
+export class UIFileHelper extends InstanceClass {
 
   private cachedBase64: any = {};
   private cachedInternalUrls: any = {};
@@ -28,7 +29,7 @@ export class UIFileHelper {
                private readonly socialSharing: SocialSharing,
                private readonly fileTransfer: FileTransfer) {
 
-
+    super();
   }
 
   private getFileDirectory(): string {

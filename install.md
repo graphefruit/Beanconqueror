@@ -147,5 +147,6 @@ We combine both plugins, because the other plugins asks all of the permissions.
 
 
 ##File download
-ionic cordova plugin add cordova-plugin-file-transfer
+ionic cordova plugin add https://github.com/dpa99c/cordova-plugin-file-transfer
+(We cant use the other plugin cause of compile issues)
 npm install @ionic-native/file-transfer

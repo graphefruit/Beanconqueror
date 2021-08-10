@@ -957,5 +957,14 @@
       "LOCATION": "Um Bluetooth-Waagen zu finden, muss der Standort freigegeben werden",
       "BLUETOOTH":  "Um Bluetooth-Waagen zu finden, muss Bluetooth freigegeben werden"
     }
+  },
+  "QR":{
+    "WRONG_QRCODE_DESCRIPTION": "Falscher QR-Code oder falscher Inhalt",
+    "WRONG_QRCODE_TITLE": "Fehler",
+    "WRONG_LINK_DESCRIPTION": "Falsche App-Verlinkung",
+    "WRONG_LINK_TITLE": "Fehler",
+    "SERVER": {
+      "ERROR_OCCURED": "Ein Fehler ist aufgetreten, bitte versuche es erneut."
+    }
   }
 }

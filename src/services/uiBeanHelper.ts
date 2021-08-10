@@ -15,6 +15,7 @@ import {BeansDetailComponent} from '../app/beans/beans-detail/beans-detail.compo
 import {GreenBean} from '../classes/green-bean/green-bean';
 import {ServerBean} from '../models/bean/serverBean';
 import {BeanMapper} from '../mapper/bean/beanMapper';
+import {UIAlert} from './uiAlert';
 
 
 /**
@@ -41,7 +42,8 @@ export class UIBeanHelper {
   constructor(private readonly uiBrewStorage: UIBrewStorage,
               private readonly uiBeanStorage: UIBeanStorage,
               private readonly uiAnalytics: UIAnalytics,
-              private readonly modalController: ModalController) {
+              private readonly modalController: ModalController,
+              private readonly uiAlert: UIAlert) {
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
       // If an brew is deleted, we need to reset our array for the next call.
       this.allStoredBrews = [];
@@ -101,18 +103,31 @@ export class UIBeanHelper {
 
 
   public async addScannedQRBean(_scannedQRBean: ServerBean) {
-    console.log(_scannedQRBean);
+
+    if (_scannedQRBean.error === null)
+    {
+      this.uiAlert.showLoadingSpinner();
+      const newMapper = new BeanMapper();
+      const bean: Bean = await newMapper.mapServerToClientBean(_scannedQRBean);
+      this.uiAlert.hideLoadingSpinner();
+      if (bean !== null) {
+
+        const modal = await this.modalController.create({
+          component:BeansAddComponent,
+          id:BeansAddComponent.COMPONENT_ID,
+          componentProps: {qr_bean_template: _scannedQRBean}
+        });
+        await modal.present();
+        await modal.onWillDismiss();
+      } else {
+        this.uiAlert.showMessage('QR.SERVER.ERROR_OCCURED','ERROR_OCCURED',undefined,true);
+      }
 
 
-    /*const newMapper = new BeanMapper();
-    newMapper.mapServerToClientBean()*/
-    const modal = await this.modalController.create({
-      component:BeansAddComponent,
-      id:BeansAddComponent.COMPONENT_ID,
-      componentProps: {qr_bean_template: _scannedQRBean}
-    });
-    await modal.present();
-    await modal.onWillDismiss();
+    }  else {
+      this.uiAlert.showMessage('QR.SERVER.ERROR_OCCURED','ERROR_OCCURED',undefined,true);
+    }
+
   }
 
   public async addBean(_hideToastMessage: boolean = false) {
