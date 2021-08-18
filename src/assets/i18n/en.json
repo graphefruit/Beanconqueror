@@ -965,6 +965,8 @@
     "WRONG_LINK_TITLE": "Error",
     "SERVER": {
       "ERROR_OCCURED": "An error is occured, please try again."
-    }
+    },
+    "BEAN_SUCCESSFULLY_SCANNED": "Bean successfully scanned",
+    "IMAGES_GETTING_DOWNLOADED": "Images getting downloaded"
   }
 }

@@ -312,9 +312,13 @@ export class BeansPage implements OnInit {
     if (this.platform.is('cordova')) {
       await this.qrScannerService.scan().then(async (scannedCode) => {
         await this.intenthandler.handleQRCodeLink(scannedCode);
+        this.loadBeans();
       },() => {});
     } else {
-      await this.intenthandler.handleQRCodeLink('https://beanconqueror.com/app/roaster/bean.html?id=dfa6ce4e-766c-4806-a672-4bfa899d714e');
+
+
+      await this.intenthandler.handleQRCodeLink('https://beanconqueror.com/app/roaster/bean.html?id=01540770-684a-4fd7-9190-e3ec08d4a6e8');
+      this.loadBeans();
     }
 
     return;

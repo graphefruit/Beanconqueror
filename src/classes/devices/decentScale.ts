@@ -22,6 +22,14 @@ export default class DecentScale extends BluetoothDevice {
 
   private tareCounter: number = 0;
 
+  private actualValue: number = 0;
+  private smoothedValue: number = 0;
+  protected weight = {
+    ACTUAL_WEIGHT: 0,
+    SMOOTHED_WEIGHT: 0,
+    OLD_SMOOTHED_WEIGHT: 0
+  };
+
   public weightChange: EventEmitter<any> = new EventEmitter();
   public flowChange: EventEmitter<any> = new EventEmitter();
 
@@ -33,7 +41,6 @@ export default class DecentScale extends BluetoothDevice {
   constructor(device_id) {
     super();
     this.device_id = device_id;
-    this.weight = 0;
     this.batteryLevel = 0;
     this.buffer = new Uint8Array();
     this.connect();
@@ -111,102 +118,8 @@ export default class DecentScale extends BluetoothDevice {
     return bytes;
   }
 
-  public decode() {
-    console.log(this.buffer);
-    if (this.buffer.byteLength <= 4) {
-      return;
-    }
-
-
-    /*if (this.buffer[0] !== DecentScale.HEADER1 && this.buffer[1] !== DecentScale.HEADER2) {
-      console.log("header does not match: ", this.buffer[0], this.buffer[1]);
-      this.buffer = new Uint8Array();
-      return;
-    }
-
-    let cmd = this.buffer[2];
-    switch (cmd) {
-      // Event
-      case 12:
-        var msgType = this.buffer[4]
-        var payload = this.buffer.slice(5)
-
-        if (msgType === 5) {
-          var value = ((payload[1] & 0xff) << 8) + (payload[0] & 0xff);
-          var unit = payload[4] & 0xFF;
-
-          if (unit === 1) {
-            value /= 10;
-          } else if (unit === 2) {
-            value /= 100;
-          } else if (unit === 3) {
-            value /= 1000;
-          } else if (unit === 4) {
-            value /= 10000;
-          }
-
-          if ((payload[5] & 0x02) === 0x02) {
-            value *= -1;
-          }
-
-          this.weight = value;
-        }
-        break;
-      // Status
-      case 8:
-        //length = buffer[3];
-        this.batteryLevel = this.buffer[4];
-        console.log('Got status message, battery= ' + this.batteryLevel)
-        break
-
-      default:
-        console.log('unknown message type: ' + cmd);
-        console.log(this.buffer);
-        break
-    }*/
-    this.buffer = new Uint8Array();
-  }
-
 
   public async connect() {
- /*   console.log('Connecting to GATT Server...');
-    const server = await this.device.gatt.connect();
-
-    console.log('Getting Weight Service...');
-    this.service = await server.getPrimaryService(DecentScale.SERVICE_UUID).catch(async (e) => {
-      console.log('FAILED: ' + e);
-      return null;
-    });
-    console.log('Getting Weight Characteristic...');
-
-    setTimeout( async () => {
-
-
-    this.weightCharacteristic = await this.service.getCharacteristic(DecentScale.CHAR_UUID).catch(async (e) => {
-      console.log('FAILED: ' + e);
-      return null;
-    });
-    console.log('Adding Weight Listener...');
-
-    this.weightCharacteristic.addEventListener('characteristicvaluechanged', (e) => DecentScale.notification_callback(e, this));
-
-    // Identify to the scale and enable notifications
-    this.weightCharacteristic.startNotifications().catch(async (e) => {
-      console.log('FAILED: ' + e);
-      return null;
-    });   },250);
-*/
-
-
-  /*  setTimeout( ()=> {
-      console.log('Sending ident...');
-      this.ident();
-    }, 500);
-    setTimeout( ()=> {
-      console.log('Sending config...');
-      this.enable_notifications();
-      this.enable_notifications();
-    }, 1000);*/
       await this.setLed(true,true);
       await this.attachNotification();
   }
@@ -227,6 +140,9 @@ export default class DecentScale extends BluetoothDevice {
     }
 
   public async tare() {
+    this.weight.SMOOTHED_WEIGHT = 0;
+    this.weight.ACTUAL_WEIGHT = 0;
+    this.weight.OLD_SMOOTHED_WEIGHT = 0;
     this.setWeight(0);
 
     await this.write(this.buildTareCommand());
@@ -238,9 +154,9 @@ export default class DecentScale extends BluetoothDevice {
   public async setLed(_weightOn: boolean, _timerOn: boolean) {
     await this.write(this.buildLedOnOffCommand(_weightOn, _timerOn));
 
-    /*await setTimeout(async () => {
+    await setTimeout(async () => {
       await  this.write(this.buildLedOnOffCommand(_weightOn, _timerOn));
-    },50);*/
+    },50);
   }
 
 
@@ -256,47 +172,38 @@ export default class DecentScale extends BluetoothDevice {
   }
   public setWeight(_newWeight: number,_stableWeight: boolean = false) {
 
-    if (_stableWeight === false) {
-      if (_newWeight < 0) {
-        return;
-      }
-      if ((_newWeight - this.weight) > 5) {
-        // Each cycle is 1/10 hertz, so more then 5 grams each hertz would be to much
-        return;
-      }
-      if (_newWeight < this.weight) {
-        // If new weight is lower then old weight, ignore it, main reasons would be a swirl / user put the v60 away etc.
-        return;
-      }
-    } else {
-      // Weight is stable
-      if (_newWeight <= 0) {
-        return;
-      }
-    }
+    // Allow negative weight
+    // Each value effect the current weight bei 10%.
+    // (A3 * 03 + b2 * 0.7)
+    //  Actual value * 03 + smoothed value * 0.7
 
+    this.weight.OLD_SMOOTHED_WEIGHT = this.weight.SMOOTHED_WEIGHT;
+    this.weight.SMOOTHED_WEIGHT = this.calculateSmoothedWeight(_newWeight, this.weight.SMOOTHED_WEIGHT);
 
-    const oldWeight = this.weight;
     // We passed every shake change, seems like everything correct, set the new weight.
-    this.weight = _newWeight;
+    this.weight.ACTUAL_WEIGHT = _newWeight;
     this.weightChange.emit({
-      WEIGHT: this.weight,
-      OLD_WEIGHT: oldWeight,
+      ACTUAL_WEIGHT: this.weight.ACTUAL_WEIGHT,
+      SMOOTHED_WEIGHT: this.weight.SMOOTHED_WEIGHT,
       STABLE: _stableWeight
     });
   }
+  private calculateSmoothedWeight(_actualWeight: number, _smoothedWeight: number): number {
+    return (_actualWeight * 0.3) + (_smoothedWeight * 0.7);
+  }
+
+  public getSmoothedWeight() {
+    return this.weight.SMOOTHED_WEIGHT;
+  }
+  public getOldSmoothedWeight() {
+    return this.weight.OLD_SMOOTHED_WEIGHT;
+  }
+
   public setFlow(_newWeight: number,_stableWeight: boolean = false) {
-    const oldWeight = this.weight;
-    // We passed every shake change, seems like everything correct, set the new weight.
-    this.weight = _newWeight;
-
     const actualDate = new Date();
-
-
-    // console.log(`New weight - ${this.weight} -  ${actualDate.getSeconds()} : ${actualDate.getMilliseconds()}`);
     this.flowChange.emit({
-      WEIGHT: this.weight,
-      OLD_WEIGHT: oldWeight,
+      ACTUAL_WEIGHT: this.weight.ACTUAL_WEIGHT,
+      SMOOTHED_WEIGHT:this.weight.SMOOTHED_WEIGHT,
       STABLE: _stableWeight,
       DATE: actualDate
     });
@@ -306,11 +213,12 @@ export default class DecentScale extends BluetoothDevice {
   public async attachNotification() {
     ble.startNotification(this.device_id, DecentScale.READ_SERVICE_UUID, DecentScale.READ_CHAR_UUID,
       async (_data) => {
-        const scaleData = new Uint8Array(_data);
+        const scaleData = new Int8Array(_data);
         console.log("Received: " + scaleData[1] + " - " + scaleData[2] + " - "+ scaleData[3]);
         if (scaleData[1] === 0xCE || scaleData[1] === 0xCA) {
           // Weight notification
           const newWeight: number =  ((scaleData[2] << 8) + scaleData[3]) / 10;
+
           const weightIsStable = (scaleData[1] === 0xCE);
           this.setWeight(newWeight,weightIsStable);
           this.setFlow(newWeight,weightIsStable);

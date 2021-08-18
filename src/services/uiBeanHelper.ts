@@ -16,6 +16,7 @@ import {GreenBean} from '../classes/green-bean/green-bean';
 import {ServerBean} from '../models/bean/serverBean';
 import {BeanMapper} from '../mapper/bean/beanMapper';
 import {UIAlert} from './uiAlert';
+import {UIToast} from './uiToast';
 
 
 /**
@@ -43,7 +44,8 @@ export class UIBeanHelper {
               private readonly uiBeanStorage: UIBeanStorage,
               private readonly uiAnalytics: UIAnalytics,
               private readonly modalController: ModalController,
-              private readonly uiAlert: UIAlert) {
+              private readonly uiAlert: UIAlert,
+              private readonly uiToast: UIToast) {
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
       // If an brew is deleted, we need to reset our array for the next call.
       this.allStoredBrews = [];
@@ -106,16 +108,17 @@ export class UIBeanHelper {
 
     if (_scannedQRBean.error === null)
     {
-      this.uiAlert.showLoadingSpinner();
+      this.uiToast.showInfoToastBottom('QR.BEAN_SUCCESSFULLY_SCANNED');
+      await this.uiAlert.showLoadingSpinner();
       const newMapper = new BeanMapper();
       const bean: Bean = await newMapper.mapServerToClientBean(_scannedQRBean);
-      this.uiAlert.hideLoadingSpinner();
+      await this.uiAlert.hideLoadingSpinner();
       if (bean !== null) {
 
         const modal = await this.modalController.create({
           component:BeansAddComponent,
           id:BeansAddComponent.COMPONENT_ID,
-          componentProps: {qr_bean_template: _scannedQRBean}
+          componentProps: {bean_template: bean, server_bean: _scannedQRBean}
         });
         await modal.present();
         await modal.onWillDismiss();
@@ -125,6 +128,7 @@ export class UIBeanHelper {
 
 
     }  else {
+      await this.uiAlert.hideLoadingSpinner();
       this.uiAlert.showMessage('QR.SERVER.ERROR_OCCURED','ERROR_OCCURED',undefined,true);
     }
 

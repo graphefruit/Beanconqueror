@@ -13,6 +13,7 @@
     <allow-intent href="geo:*" />
     <allow-intent href="beanconqueror:" />
     <allow-intent href="ionic:" />
+    <allow-navigation href="*" />
     <preference name="ScrollEnabled" value="false" />
     <preference name="android-minSdkVersion" value="22" />
     <preference name="android-targetSdkVersion" value="29" />

@@ -75,7 +75,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
 
   public scaleWeightSubscription: Subscription = undefined;
-  public scaleFlowSubscription: Subscription = undefined;
+  public scaleFlowInterval = undefined;
 
 
   @ViewChild('flowProfileChart', {static: false}) public flowProfileChart;
@@ -157,20 +157,20 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
     const decentScale: DecentScale = this.bleManager.getDecentScale();
     if (decentScale) {
       this.bluetoothScaleConnected = true;
+
+
+      this.deattachToScaleChange();
+
       setTimeout(() => {
         if (this.flowProfileChartEl === undefined) {
           this.initializeFlowChart();
         }
-      });
+      },250);
 
-      this.deattachToScaleChange();
       this.scaleWeightSubscription  = decentScale.weightChange.subscribe((_val) => {
         this.__setScaleWeight(_val);
       });
-
-      this.scaleFlowSubscription = decentScale.flowChange.subscribe((_val) => {
-        this.__setFlowProfile(_val);
-      });
+      this.generateFlowProfile();
 
 
     }
@@ -180,28 +180,31 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
   private initializeFlowChart(): void {
 
+    setTimeout(() => {
+      if (this.flowProfileChartEl === undefined) {
+          const drinkingData = {
+            labels: [],
+            datasets: [{
+              label: this.translate.instant('PAGE_STATISTICS_BREW_PROCESSES'),
+              data: [],
+              borderColor: 'rgb(159,140,111)',
+              backgroundColor: 'rgb(205,194,172)',
+            }]
+          };
+          const chartOptions = {
+            legend: {
+              display: false,
+              position: 'top'
+            }
+          };
 
-    const drinkingData = {
-      labels: [],
-      datasets: [{
-        label: this.translate.instant('PAGE_STATISTICS_BREW_PROCESSES'),
-        data: [],
-        borderColor: 'rgb(159,140,111)',
-        backgroundColor: 'rgb(205,194,172)',
-      }]
-    };
-    const chartOptions = {
-      legend: {
-        display: false,
-        position: 'top'
+          this.flowProfileChartEl = new Chart(this.flowProfileChart.nativeElement, {
+            type: 'line',
+            data: drinkingData,
+            options: chartOptions
+          });
       }
-    };
-
-    this.flowProfileChartEl = new Chart(this.flowProfileChart.nativeElement, {
-      type: 'line',
-      data: drinkingData,
-      options: chartOptions
-    });
+    },250);
   }
 
   public deattachToScaleChange() {
@@ -209,10 +212,8 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       this.scaleWeightSubscription.unsubscribe();
       this.scaleWeightSubscription = undefined;
     }
-    if (this.scaleFlowSubscription) {
-      this.scaleFlowSubscription.unsubscribe();
-      this.scaleFlowSubscription = undefined;
-    }
+    this.stopFlowProfile();
+
   }
 
 
@@ -383,14 +384,17 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
     }
   }
 
-
+  private b = [];
   private __setScaleWeight(_scaleChange: any) {
 
-    const weight: number = _scaleChange.WEIGHT;
-    const oldWeight: number = _scaleChange.OLD_WEIGHT;
-    const stable: boolean = _scaleChange.STABLE;
+    const smoothedWeight: number = _scaleChange.SMOOTHED_WEIGHT;
+    const actualWeight: number = _scaleChange.ACTUAL_WEIGHT;
+
+    this.b.push(actualWeight);
+    console.log(actualWeight);
+
     if (this.data.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO) {
-      this.data.brew_quantity = weight;
+      this.data.brew_quantity = smoothedWeight;
     } else
     {
       // If the drip timer is showing, we can set the first drip and not doing a reference to the normal weight.
@@ -403,34 +407,37 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
         }
 
       }
-      this.data.brew_beverage_quantity = weight;
+      this.data.brew_beverage_quantity = smoothedWeight;
     }
   }
-  private __setFlowProfile(_scaleChange: any) {
-    const weight: number = _scaleChange.WEIGHT;
-    const oldWeight: number = _scaleChange.OLD_WEIGHT;
-    const stable: boolean = _scaleChange.STABLE;
-    const newWeight = weight - oldWeight;
-    const scaleSendDate = _scaleChange.DATE;
 
-    //We need to do usefull things here.
-    if (this.flowProfileObj.CALCULATED_SECOND === -1) {
-      this.flowProfileObj.CALCULATED_SECOND = this.getTime();
-      this.flowProfileObj.VALUE = newWeight;
+  private generateFlowProfile() {
+    if (this.scaleFlowInterval === undefined) {
+
+      this.scaleFlowInterval = setInterval(() => {
+
+        if (this.flowProfileChartEl !== undefined) {
+          const decentScale: DecentScale = this.bleManager.getDecentScale();
+          let flowValue: number = (decentScale.getSmoothedWeight() - decentScale.getOldSmoothedWeight()) * 10;
+          // Ignore flowing weight when we're below zero
+          if (flowValue < 0) {
+            flowValue = 0;
+          }
+          this.flowProfileChartEl.data.datasets[0].data.push(flowValue);
+
+          this.flowProfileChartEl.data.labels.push(this.getTime());
+          this.flowProfileChartEl.update();
+        }
+      },1000);
+
     }
 
-    if (this.flowProfileObj.CALCULATED_SECOND !== this.getTime()) {
-      // New second arrived, write the actual flow now.
-      this.flowProfileChartEl.data.datasets[0].data.push(newWeight - this.flowProfileObj.VALUE);
-
-      this.flowProfileChartEl.data.labels.push(this.getTime());
-      this.flowProfileChartEl.update();
-      this.flowProfileObj.VALUE = newWeight;
-      this.flowProfileObj.CALCULATED_SECOND = this.getTime();
+  }
+  private stopFlowProfile() {
+    if (this.scaleFlowInterval !== undefined) {
+      clearInterval(this.scaleFlowInterval);
+      this.scaleFlowInterval = undefined;
     }
-
-
-
 
   }
 

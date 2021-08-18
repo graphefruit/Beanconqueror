@@ -3,7 +3,7 @@ import {UIBeanStorage} from '../../../services/uiBeanStorage';
 import {UIHelper} from '../../../services/uiHelper';
 import {UIImage} from '../../../services/uiImage';
 import {Bean} from '../../../classes/bean/bean';
-import {ModalController, NavParams} from '@ionic/angular';
+import {ModalController, NavParams, Platform} from '@ionic/angular';
 import {UIFileHelper} from '../../../services/uiFileHelper';
 import {UIToast} from '../../../services/uiToast';
 import {IBeanInformation} from '../../../interfaces/bean/iBeanInformation';
@@ -12,6 +12,9 @@ import {BEAN_MIX_ENUM} from '../../../enums/beans/mix';
 import moment from 'moment';
 import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import {UIAnalytics} from '../../../services/uiAnalytics';
+import {ServerBean} from '../../../models/bean/serverBean';
+import {BeanMapper} from '../../../mapper/bean/beanMapper';
+import {UIAlert} from '../../../services/uiAlert';
 
 @Component({
   selector: 'beans-add',
@@ -23,7 +26,7 @@ export class BeansAddComponent implements OnInit {
   public static COMPONENT_ID = 'bean-add';
   public data: Bean = new Bean();
   @Input() private readonly bean_template: Bean;
-  @Input() private readonly qr_bean_template: Bean;
+  @Input() private readonly server_bean: ServerBean;
 
 
   @Input() private hide_toast_message: boolean;
@@ -38,13 +41,11 @@ export class BeansAddComponent implements OnInit {
                private readonly uiHelper: UIHelper,
                private readonly uiFileHelper: UIFileHelper,
                private readonly uiToast: UIToast,
-               private readonly uiAnalytics: UIAnalytics) {
+               private readonly uiAnalytics: UIAnalytics,
+               private readonly uiAlert: UIAlert,
+               private readonly platform: Platform) {
 
   }
-
-
-
-
 
   public async ionViewWillEnter() {
     this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ADD);
@@ -53,8 +54,19 @@ export class BeansAddComponent implements OnInit {
     // TODO how to handle roasting beans which wil be repeated?
     if (this.bean_template) {
       await this.__loadBean(this.bean_template);
-    } else if (this.qr_bean_template) {
-      await this.__loadBean(this.qr_bean_template);
+    }
+
+
+    // Download images after loading the bean, else they would be copied :O
+    if (this.server_bean && this.platform.is('cordova')) {
+      if (this.server_bean.attachment.length > 0) {
+        await this.uiAlert.showLoadingSpinner();
+        this.uiAlert.setLoadingSpinnerMessage('QR.IMAGES_GETTING_DOWNLOADED');
+        const newMapper = new BeanMapper();
+        await newMapper.downloadAndAttachAttachments(this.data, this.server_bean.attachment);
+        await this.uiAlert.hideLoadingSpinner();
+      }
+
     }
 
     // Add one empty bean information, rest is being updated on start

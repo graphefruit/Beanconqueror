@@ -190,8 +190,8 @@ export class UIFileHelper extends InstanceClass {
     return promise;
   }
 
-    public async downloadExternalFile(_url: string,  _fileName: string = 'beanconqueror_image', _fileExtension: string ='.png') {
-      const promise: Promise<FileEntry> = new Promise(async (resolve, reject) => {
+    public async downloadExternalFile(_url: string,  _fileName: string = 'beanconqueror_image', _fileExtension: string ='.png'): Promise<string> {
+      const promise: Promise<string> = new Promise(async (resolve, reject) => {
         const url: string = _url;
         const fileTransferObj: FileTransferObject = this.fileTransfer.create();
         await this.generateFileName(this.getFileDirectory(), _fileName, _fileExtension).then(async (_newName) => {

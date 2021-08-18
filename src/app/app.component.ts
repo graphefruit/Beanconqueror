@@ -114,13 +114,16 @@ export class AppComponent implements AfterViewInit {
     private readonly uiBeanHelper: UIBeanHelper,
     private readonly uiMillHelper: UIMillHelper,
     private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly bleManager: BleManagerService
+    private readonly bleManager: BleManagerService,
+
   ) {
+
     // Dont remove androidPlatformService, we need to initialize it via constructor
   }
 
   public ngOnInit() {
     this.intentHandlerService.attachOnHandleOpenUrl();
+
 
 
   }
@@ -138,6 +141,9 @@ export class AppComponent implements AfterViewInit {
   private __appReady(): void {
     this.platform.ready()
       .then(async () => {
+
+
+
         // Okay, so the platform is ready and our plugins are available.
         // Here you can do any higher level native things you might need.
         // #7

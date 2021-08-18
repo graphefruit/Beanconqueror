@@ -32,9 +32,14 @@ export class UIAlert {
 
   }
 
-  public setLoadingSpinnerMessage(message: string) {
+  public setLoadingSpinnerMessage(message: string, translate: boolean = false) {
     if (this.loadingSpinner) {
-      this.loadingSpinner.message = message;
+      if (translate === false) {
+        this.loadingSpinner.message = message;
+      } else {
+        this.loadingSpinner.message = this.translate.instant(message);
+      }
+
     }
 
   }

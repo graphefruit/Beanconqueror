@@ -105,9 +105,11 @@ export class IntentHandlerService {
     try {
 
       try {
+        await this.uiAlert.showLoadingSpinner();
         const beanData: ServerBean = await this.serverCommunicationService.getBeanInformation(_qrCodeId);
         await this.uiBeanHelper.addScannedQRBean(beanData);
       } catch (ex) {
+        await this.uiAlert.hideLoadingSpinner();
         this.uiAlert.showMessage('QR.SERVER.ERROR_OCCURED','ERROR_OCCURED',undefined,true);
       }
 

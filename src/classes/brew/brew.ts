@@ -21,9 +21,10 @@ import {PREPARATION_STYLE_TYPE} from '../../enums/preparations/preparationStyleT
 import {PreparationTool} from '../preparation/preparationTool';
 import {IFlavor} from '../../interfaces/flavor/iFlavor';
 import {UIWaterStorage} from '../../services/uiWaterStorage';
-import {IWalker} from 'tslint';
+
 import {IWater} from '../../interfaces/water/iWater';
 import {Water} from '../water/water';
+
 
 export class Brew implements IBrew {
   // tslint:disable-next-line
@@ -125,7 +126,7 @@ export class Brew implements IBrew {
        speed: null
     } as IBrewCoordinates;
 
-      this.cupping = {
+    this.cupping = {
       body: 0,
       brightness: 0,
       clean_cup: 0,
@@ -148,6 +149,7 @@ export class Brew implements IBrew {
     } as IFlavor;
 
     this.method_of_preparation_tools = [];
+    this.bean_weight_in = 0;
     this.favourite = false;
     this.water = '';
     this.vessel_name = '';
