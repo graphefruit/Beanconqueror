@@ -47,12 +47,38 @@ export class PreparationModalSelectComponent implements OnInit {
 
   public getOpenPreparations(): Array<Preparation> {
     return this.objs.filter(
-      (e) => !e.finished);
+      (e) => !e.finished).sort( (a,b) => {
+        const nameA = a.name.toUpperCase();
+        const nameB = b.name.toUpperCase();
+
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+
+        return 0;
+      }
+    );
   }
 
   public getArchivedPreparations(): Array<Preparation> {
     return this.objs.filter(
-      (e) => e.finished);
+      (e) => e.finished).sort( (a,b) => {
+        const nameA = a.name.toUpperCase();
+        const nameB = b.name.toUpperCase();
+
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+
+        return 0;
+      }
+    );
   }
 
 
