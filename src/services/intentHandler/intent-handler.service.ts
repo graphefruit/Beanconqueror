@@ -61,7 +61,7 @@ export class IntentHandlerService {
   public async handleQRCodeLink(_url) {
     await this.uiHelper.isBeanconqurorAppReady().then(async () => {
       const url: string = _url;
-      this.uiLog.log('Handle QRcode Link:' + url);
+      this.uiLog.log('Handle QR Code Link: ' + url);
       if (url.indexOf('https://beanconqueror.com/app/roaster/bean') === 0) {
         const qrCodeId: string = String(this.findParameterByCompleteUrl(url,'id'));
         await this.addBeanFromServer(qrCodeId);
@@ -77,8 +77,7 @@ export class IntentHandlerService {
           await this.uiHelper.isBeanconqurorAppReady().then(async () => {
           const url: string = _matchLink.url;
 
-          this.uiLog.log('Handle deeplink:' + url);
-          this.uiLog.log(JSON.stringify(_matchLink));
+          this.uiLog.log('Handle deeplink: ' + url);
           if (url.indexOf('https://beanconqueror.com/app/roaster/bean') === 0) {
             const qrCodeId: string = String(this.findGetParameter(_matchLink.queryString,'id'));
             await this.addBeanFromServer(qrCodeId);
@@ -91,31 +90,25 @@ export class IntentHandlerService {
         });
       }
 
-    }catch (ex) {
+    } catch (ex) {
 
     }
 
   }
 
 
-
-
   private async addBeanFromServer(_qrCodeId: string) {
     this.uiLog.log('Load bean information from server: ' + _qrCodeId);
+
     try {
-
-      try {
-        await this.uiAlert.showLoadingSpinner();
-        const beanData: ServerBean = await this.serverCommunicationService.getBeanInformation(_qrCodeId);
-        await this.uiBeanHelper.addScannedQRBean(beanData);
-      } catch (ex) {
-        await this.uiAlert.hideLoadingSpinner();
-        this.uiAlert.showMessage('QR.SERVER.ERROR_OCCURED','ERROR_OCCURED',undefined,true);
-      }
-
+      await this.uiAlert.showLoadingSpinner();
+      const beanData: ServerBean = await this.serverCommunicationService.getBeanInformation(_qrCodeId);
+      await this.uiBeanHelper.addScannedQRBean(beanData);
     } catch (ex) {
-
+      await this.uiAlert.hideLoadingSpinner();
+      this.uiAlert.showMessage('QR.SERVER.ERROR_OCCURED','ERROR_OCCURED',undefined,true);
     }
+
   }
 
 }

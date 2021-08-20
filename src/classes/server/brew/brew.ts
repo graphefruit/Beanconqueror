@@ -2,6 +2,10 @@ import {BREW_QUANTITY_TYPES_ENUM} from '../../../enums/brews/brewQuantityTypes';
 
 
 export class ServerBrew  {
+
+  public brew_id: string;
+
+  public qr_code: string;
   // tslint:disable-next-line
   public grind_size: string;
   // tslint:disable-next-line
@@ -55,7 +59,6 @@ export class ServerBrew  {
 
   public method_of_preparation_tools: Array<string>;
 
-  public favourite: boolean;
   constructor() {
 
     this.grind_size = '';
@@ -84,7 +87,7 @@ export class ServerBrew  {
 
     this.method_of_preparation_tools = [];
     this.bean_weight_in = 0;
-    this.favourite = false;
+
     this.water = '';
     this.vessel_name = '';
     this.vessel_weight = 0;

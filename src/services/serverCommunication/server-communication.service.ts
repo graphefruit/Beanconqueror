@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {ServerBean} from '../../models/bean/serverBean';
 import {UILog} from '../uiLog';
-import {Brew} from '../../classes/brew/brew';
+import {ServerBrew} from '../../classes/server/brew/brew';
 
 @Injectable({
   providedIn: 'root'
@@ -31,9 +31,9 @@ export class ServerCommunicationService {
   }
 
 
-  public trackBrew(brew: Brew) {
+  public trackBrew(brew: ServerBrew) {
     const promise = new Promise((resolve, reject) => {
-      this.http.put(environment.API_URL + 'Tracking/Brew', {}).toPromise()
+      this.http.put(environment.API_URL + 'Roaster/TrackBrew', brew).toPromise()
         .then((data) => {
           resolve(data);
         },() => {

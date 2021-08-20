@@ -105,6 +105,16 @@ export class UIHelper {
       .format(format);
   }
 
+
+  public toFixedIfNecessary( value, dp ){
+    const parsedFloat = parseFloat(value);
+    if (isNaN(parsedFloat)) {
+      return 0;
+    }
+    return +parsedFloat.toFixed( dp );
+  }
+
+
   public formateDate(_unix: number, _format?: string): string {
 
     let format: string = 'DD.MM.YYYY, HH:mm:ss';

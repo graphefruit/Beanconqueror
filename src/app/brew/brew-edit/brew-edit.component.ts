@@ -59,6 +59,7 @@ export class BrewEditComponent implements OnInit {
     }
     this.uiBrewHelper.cleanInvisibleBrewData(this.data);
     await this.uiBrewStorage.update(this.data);
+
     this.brewTracking.trackBrew(this.data);
 
     this.uiToast.showInfoToast('TOAST_BREW_EDITED_SUCCESSFULLY');

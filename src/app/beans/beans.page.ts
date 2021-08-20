@@ -249,12 +249,12 @@ export class BeansPage implements OnInit {
         e.roaster.toLowerCase().includes(searchText) ||
         e.aromatics.toLowerCase().includes(searchText));
     }
-   if (isOpen) {
+    if (isOpen) {
      this.openBeans = sortedBeans;
-   } else {
+    } else {
      this.finishedBeans = sortedBeans;
-   }
-   this.retriggerScroll();
+    }
+    this.retriggerScroll();
   }
 
 
@@ -315,8 +315,7 @@ export class BeansPage implements OnInit {
         this.loadBeans();
       },() => {});
     } else {
-
-
+      // Test sample for development
       await this.intenthandler.handleQRCodeLink('https://beanconqueror.com/app/roaster/bean.html?id=01540770-684a-4fd7-9190-e3ec08d4a6e8');
       this.loadBeans();
     }

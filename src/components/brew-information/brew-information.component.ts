@@ -21,6 +21,7 @@ import BREW_TRACKING from '../../data/tracking/brewTracking';
 import {Settings} from '../../classes/settings/settings';
 import {ShareService} from '../../services/shareService/share-service.service';
 import {TranslateService} from '@ngx-translate/core';
+import {BrewTrackingService} from '../../services/brewTracking/brew-tracking.service';
 
 @Component({
   selector: 'brew-information',
@@ -55,7 +56,8 @@ export class BrewInformationComponent implements OnInit {
               private readonly modalCtrl: ModalController,
               private readonly uiHelper: UIHelper,
               private readonly shareService: ShareService,
-              private readonly translate: TranslateService) {
+              private readonly translate: TranslateService,
+              private readonly brewTracking: BrewTrackingService) {
 
   }
 
@@ -165,6 +167,8 @@ export class BrewInformationComponent implements OnInit {
       this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.FAST_REPEAT);
       const repeatBrew = this.uiBrewHelper.copyBrewToRepeat(this.brew);
       await this.uiBrewStorage.add(repeatBrew);
+
+      this.brewTracking.trackBrew(repeatBrew);
       this.uiToast.showInfoToast('TOAST_BREW_REPEATED_SUCCESSFULLY');
 
       // If fast repeat is used, also recheck if bean package is consumed

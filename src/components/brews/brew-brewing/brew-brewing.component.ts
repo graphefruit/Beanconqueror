@@ -36,6 +36,7 @@ import {BleManagerService} from '../../../services/bleManager/ble-manager.servic
 import {Subscription} from 'rxjs';
 import DecentScale, {DECENT_SCALE_TIMER_COMMAND} from '../../../classes/devices/decentScale';
 import {Chart} from 'chart.js';
+import {UIHelper} from '../../../services/uiHelper';
 
 
 declare var cordova;
@@ -99,7 +100,8 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
               private readonly uiMillStorage: UIMillStorage,
               private readonly uiBeanStorage: UIBeanStorage,
               private readonly uiWaterStorage: UIWaterStorage,
-              private readonly bleManager: BleManagerService) {
+              private readonly bleManager: BleManagerService,
+              private readonly uiHelper: UIHelper) {
 
   }
 
@@ -394,11 +396,11 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
     console.log(actualWeight);
 
     if (this.data.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO) {
-      this.data.brew_quantity = smoothedWeight;
+      this.data.brew_quantity = this.uiHelper.toFixedIfNecessary(smoothedWeight,2);
     } else
     {
       // If the drip timer is showing, we can set the first drip and not doing a reference to the normal weight.
-      if (this.timer.showDripTimer === true) {
+      if (this.timer.showDripTimer === true && this.data.coffee_first_drip_time <=0) {
         // First drip is incoming
         if (this.uiBrewHelper.fieldVisible(this.settings.manage_parameters.coffee_first_drip_time,
           this.data.getPreparation().manage_parameters.coffee_first_drip_time,
@@ -407,7 +409,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
         }
 
       }
-      this.data.brew_beverage_quantity = smoothedWeight;
+      this.data.brew_beverage_quantity = this.uiHelper.toFixedIfNecessary(smoothedWeight,2);
     }
   }
 
