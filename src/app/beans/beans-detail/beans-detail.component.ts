@@ -63,4 +63,11 @@ export class BeansDetailComponent implements OnInit {
     }
     return '';
   }
+
+  public openURL() {
+    if (this.data.url) {
+      this.uiHelper.openExternalWebpage(this.data.url);
+    }
+  }
+
 }

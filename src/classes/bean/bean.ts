@@ -170,5 +170,4 @@ export class Bean implements IBean {
   }
 
 
-
 }
