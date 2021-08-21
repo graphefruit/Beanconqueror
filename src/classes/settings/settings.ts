@@ -22,7 +22,7 @@ export class Settings implements ISettings {
   public startup_view: STARTUP_VIEW_ENUM;
 
 
-  public matomo_analytics:boolean;
+  public matomo_analytics: boolean;
   public manage_parameters: ManageBrewParameter;
   public default_last_coffee_parameters: DefaultBrewParameter;
   public brew_order: OrderBrewParameter;
@@ -63,6 +63,8 @@ export class Settings implements ISettings {
   public show_cupping_section: boolean;
 
   public decent_scale_id: string;
+
+  public currency: string;
   public GET_BREW_FILTER(): IBrewPageFilter {
 
     const upperRating: number = this.brew_rating;
@@ -137,6 +139,8 @@ export class Settings implements ISettings {
     this.wake_lock = false;
     this.image_quality = 100;
     this.decent_scale_id = '';
+
+    this.currency = 'EUR';
 
   }
 

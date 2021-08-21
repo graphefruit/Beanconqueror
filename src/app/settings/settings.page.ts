@@ -30,6 +30,8 @@ import {UIAnalytics} from '../../services/uiAnalytics';
 import BeanconquerorSettingsDummy from '../../assets/BeanconquerorTestData.json';
 import {ISettings} from '../../interfaces/settings/iSettings';
 import {Bean} from '../../classes/bean/bean';
+
+
 /** Third party */
 import moment from 'moment';
 import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
@@ -52,6 +54,7 @@ import {UIWaterStorage} from '../../services/uiWaterStorage';
 import {Water} from '../../classes/water/water';
 import {BleManagerService} from '../../services/bleManager/ble-manager.service';
 import {UIToast} from '../../services/uiToast';
+import {CurrencyService} from '../../services/currencyService/currency.service';
 declare var cordova: any;
 declare var device: any;
 
@@ -72,6 +75,7 @@ export class SettingsPage implements OnInit {
 
   public isHealthSectionAvailable: boolean = false;
 
+  public currencies = {};
 
   private __cleanupAttachmentData(_data: Array<IBean | IBrew | IMill | IPreparation | IGreenBean | IRoastingMachine>): any {
     if (_data !== undefined && _data.length > 0) {
@@ -81,6 +85,7 @@ export class SettingsPage implements OnInit {
     }
 
   }
+
 
 
   private  __cleanupImportSettingsData(_data: ISettings | any): void {
@@ -121,7 +126,8 @@ export class SettingsPage implements OnInit {
               private readonly uiGreenBeanStorage: UIGreenBeanStorage,
               private readonly uiWaterStorage: UIWaterStorage,
               private readonly bleManager: BleManagerService,
-              private readonly uiToast: UIToast
+              private readonly uiToast: UIToast,
+              private readonly currencyService: CurrencyService
               ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -130,6 +136,7 @@ export class SettingsPage implements OnInit {
         this.setLanguage();
       });
 
+    this.currencies = this.currencyService.getCurrencies();
 
     this.uiHealthKit.isAvailable().then( () => {
       this.isHealthSectionAvailable = true;

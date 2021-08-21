@@ -151,3 +151,7 @@ ionic cordova plugin add https://github.com/dpa99c/cordova-plugin-file-transfer
 (We cant use the other plugin cause of compile issues)
 npm install @ionic-native/file-transfer
 
+
+
+##Currency
+https://github.com/bengourley/currency-symbol-map

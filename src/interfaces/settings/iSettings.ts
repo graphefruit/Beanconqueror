@@ -58,4 +58,6 @@ export interface ISettings {
   config: IConfig;
 
   decent_scale_id: string;
+
+  currency: string;
 }

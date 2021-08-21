@@ -11,6 +11,8 @@ import {UIBrewHelper} from '../../services/uiBrewHelper';
 import {UIPreparationStorage} from '../../services/uiPreparationStorage';
 import Gradient from 'javascript-color-gradient';
 import {UIMillStorage} from '../../services/uiMillStorage';
+import currencyToSymbolMap from 'currency-symbol-map/map';
+import {CurrencyService} from '../../services/currencyService/currency.service';
 @Component({
   selector: 'statistic',
   templateUrl: './statistic.page.html',
@@ -27,6 +29,7 @@ export class StatisticPage implements OnInit {
   @ViewChild('preparationUsageTimelineChart', {static: false}) public preparationUsageTimelineChart;
   @ViewChild('grinderUsageTimelineChart', {static: false}) public grinderUsageTimelineChart;
 
+  public currencies = currencyToSymbolMap;
   public segment: string = 'GENERAL';
   constructor(
     public uiStatistic: UIStatistic,
@@ -34,10 +37,15 @@ export class StatisticPage implements OnInit {
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiHelper: UIHelper,
     private readonly uiMillStorage: UIMillStorage,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private readonly currencyService: CurrencyService
   ) {
 
 
+  }
+
+  public getCurrencySymbol() {
+    return this.currencyService.getActualCurrencySymbol();
   }
 
   public ionViewDidEnter(): void {

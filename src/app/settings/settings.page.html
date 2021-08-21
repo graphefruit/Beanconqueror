@@ -98,11 +98,22 @@
           <p>{{"PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION" | translate}}</p></ion-label>
         <ion-checkbox  (ngModelChange)="saveSettings();" [(ngModel)]="settings.fast_brew_repeat"></ion-checkbox>
       </ion-item>
+
+      <ion-item>
+      <ion-label>{{"PAGE_SETTINGS_CURRENCY" | translate}}</ion-label>
+      <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.currency"
+                  cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
+        <ion-select-option *ngFor="let key of currencies | keys" value="{{key}}">
+          {{key}} ({{currencies[key]}})
+        </ion-select-option>
+      </ion-select>
+      </ion-item>
       <ion-item *ngIf="isHealthSectionAvailable" lines="none">
         <ion-label class="ion-margin-end"><h2>{{"PAGE_SETTINGS_TRACK_CAFFEINE_CONSUMPTION" | translate}}</h2>
           <p>{{"PAGE_SETTINGS_TRACK_CAFFEINE_CONSUMPTION_DESCRIPTION" | translate}}</p></ion-label>
         <ion-checkbox (click)="checkHealthPlugin()" [(ngModel)]="settings.track_caffeine_consumption"></ion-checkbox>
       </ion-item>
+
     </ion-card-content>
       </ion-card>
 
