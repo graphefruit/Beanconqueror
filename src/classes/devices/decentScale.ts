@@ -33,6 +33,9 @@ export default class DecentScale extends BluetoothDevice {
   public weightChange: EventEmitter<any> = new EventEmitter();
   public flowChange: EventEmitter<any> = new EventEmitter();
 
+  public timerEvent: EventEmitter<any> = new EventEmitter();
+  public tareEvent: EventEmitter<any> = new EventEmitter();
+
   public static notification_callback(event, scale) {
 
   }
@@ -224,9 +227,11 @@ export default class DecentScale extends BluetoothDevice {
           this.setFlow(newWeight,weightIsStable);
         } else if (scaleData[1] === 0xAA && scaleData[2] === 0x01) {
           // Tare button pressed.
+          this.tareEvent.emit();
           await this.tare();
         } else if (scaleData[1] === 0xAA && scaleData[2] === 0x02) {
           // Timer button pressed
+          this.timerEvent.emit();
         }
 
 

@@ -28,14 +28,16 @@ export class IntentHandlerService {
 
     // https://github.com/ionic-team/ionic-plugin-deeplinks/issues/243 - to be done
     this.deeplinks.route( {
+      '*':'*',
       '/NO_LINK_EVER_WILL_WORK_HERE/':  '/NO_LINK_EVER_WILL_WORK_HERE/'
   }).subscribe((match) => {
       // The plugin has some issues, therefore we use success and error case and hope for better times
-        this.uiLog.log('Deeplink matched');
+        this.uiLog.log('Deeplink matched ' + JSON.stringify(match.$link));
         this.handleDeepLink(match.$link);
       },
       (nomatch) => {
-        this.uiLog.log('Deeplink not matched');
+        this.uiLog.log('Deeplink not matched ' + JSON.stringify(nomatch.$link));
+
         this.handleDeepLink(nomatch.$link);
       });
   }

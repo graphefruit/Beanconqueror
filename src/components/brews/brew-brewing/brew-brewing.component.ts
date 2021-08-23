@@ -76,6 +76,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
 
   public scaleWeightSubscription: Subscription = undefined;
+  public scaleTimerSubscription: Subscription = undefined;
   public scaleFlowInterval = undefined;
 
 
@@ -109,6 +110,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
 
     setTimeout( () => {
+      //If we wouldn't wait in the timeout, the components wouldnt be existing
     if (this.isEdit === false) {
       // We need a short timeout because of ViewChild, else we get an exception
 
@@ -143,6 +145,15 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
     });
   }
 
+  public ngOnDestroy() {
+    // We don't deattach the timer subscription in the deattach toscale events, else we couldn't start anymore.
+    if ( this.scaleTimerSubscription) {
+      this.scaleTimerSubscription.unsubscribe();
+      this.scaleTimerSubscription = undefined;
+    }
+    this.deattachToScaleChange();
+  }
+
   public preparationMethodFocused() {
     // Needs to set set, because ion-change triggers on smartphones but not on websites, and therefore the value is overwritten when you use a brew template
     this.preparationMethodHasBeenFocused = true;
@@ -172,11 +183,36 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       this.scaleWeightSubscription  = decentScale.weightChange.subscribe((_val) => {
         this.__setScaleWeight(_val);
       });
+
+      this.scaleTimerSubscription = decentScale.timerEvent.subscribe(() => {
+        // Timer pressed
+        if (this.timer.isTimerRunning() === true) {
+          this.timer.pauseTimer();
+        } else {
+          this.timer.startTimer();
+        }
+
+      });
       this.generateFlowProfile();
 
 
     }
 
+  }
+
+  private getActualBluetoothWeight() {
+    const decentScale: DecentScale = this.bleManager.getDecentScale();
+    return decentScale.getWeight().ACTUAL_WEIGHT;
+  }
+
+  public bluetoothScaleSetGrindWeight() {
+    this.data.grind_weight = this.getActualBluetoothWeight();
+  }
+  public bluetoothScaleSetBrewQuantityWeight() {
+    this.data.brew_quantity = this.getActualBluetoothWeight();
+  }
+  public bluetoothScaleSetBrewBeverageQuantityWeight() {
+    this.data.brew_beverage_quantity = this.getActualBluetoothWeight();
   }
 
 

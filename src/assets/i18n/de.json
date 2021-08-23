@@ -587,6 +587,12 @@
         "Einige Label Änderungen",
         "Datenzugriffe/Reihenfolgen wurden innerhalb der App verändert um Probleme zu vermeiden"
       ]
+    },
+    "6.0.0": {
+      "TITLE": "Version 6.0: Das ist neu",
+      "DESCRIPTION": [
+        "<b>Röstabteilung:</b>"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Parameter individualisieren",

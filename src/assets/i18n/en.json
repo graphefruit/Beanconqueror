@@ -587,6 +587,12 @@
         "Some label changes",
         "Changed data access / order inside app to reduce problems"
       ]
+    },
+    "6.0.0": {
+      "TITLE": "Version 6.0: Thats new",
+      "DESCRIPTION": [
+        "<b>Röstabteilung:</b>"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Customize parameter",

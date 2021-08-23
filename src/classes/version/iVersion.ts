@@ -57,14 +57,14 @@ export class Version implements IVersion {
    * We dont set this to a variable, else it would be stored in DB and wrongly overwritten
    */
   private getUpdatedVersions() {
-    return ['5.0.0','5.1.0','5.2.0','5.3.1','5.4.0'];
+    return ['5.0.0','5.1.0','5.2.0','5.3.1','5.4.0','6.0.0'];
   }
 
   private  versionCompare(_actualAppVersion, _updateVersion) {
     const actualVersion = parseInt(_actualAppVersion.replace(/[.]/g,''),0);
     const replacedVersion = parseInt(_updateVersion.replace(/[.]/g,''),0);
     if (actualVersion > replacedVersion) {
-      return -1
+      return -1;
     } else if (actualVersion === replacedVersion) {
       return 0;
     }

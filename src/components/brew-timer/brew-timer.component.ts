@@ -62,6 +62,10 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     this.initTimer();
 
   }
+
+  public isTimerRunning() {
+    return this.timer.runTimer;
+  }
   public ngOnDestroy (): void {
     this.timer.runTimer = false;
   }
@@ -81,7 +85,6 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     // tslint:disable-next-line
     this.timer = {
       runTimer: false,
-      hasStarted: false,
       hasFinished: false,
       seconds: 0,
     } as ITimer;
@@ -95,7 +98,6 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   public startTimer(_resumed: boolean = false): void {
     this.startedTimestamp = Math.floor(Date.now() / 1000);
 
-    this.timer.hasStarted = true;
     this.timer.runTimer = true;
     this.timerTick();
     if (_resumed === false) {
