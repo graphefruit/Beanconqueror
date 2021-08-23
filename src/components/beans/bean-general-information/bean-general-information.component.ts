@@ -128,6 +128,8 @@ export class BeanGeneralInformationComponent implements OnInit {
 
     }
   }
+
+
   public changedRating() {
     if (typeof(this.beanRating) !== 'undefined') {
       this.beanRating.setRating(this.data.rating);

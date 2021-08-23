@@ -28,7 +28,7 @@
       <bean-roast-information *ngIf="data" [(data)]="data"></bean-roast-information>
     </div>
     <div *ngSwitchCase="'general'">
-      <bean-general-information *ngIf="data" [(data)]="data"></bean-general-information>
+      <bean-general-information #beanGeneralInformation *ngIf="data" [(data)]="data"></bean-general-information>
     </div>
     <div *ngSwitchCase="'sortinformation'">
       <bean-sort-information *ngIf="data" [(data)]="data"></bean-sort-information>

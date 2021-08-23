@@ -5,6 +5,7 @@ import {BEAN_ROASTING_TYPE_ENUM} from '../../enums/beans/beanRoastingType';
 import {IBeanInformation} from '../../interfaces/bean/iBeanInformation';
 import {UIFileHelper} from '../../services/uiFileHelper';
 import {IAttachment} from '../../interfaces/server/iAttachment';
+import {ROASTS_ENUM} from '../../enums/beans/roasts';
 
 export class BeanMapper {
 
@@ -18,7 +19,7 @@ export class BeanMapper {
         const newBean: Bean = new Bean();
         newBean.name = _serverResponse.name;
         newBean.roaster = _serverResponse.roaster;
-
+        newBean.roast_range = _serverResponse.roast_range;
         newBean.aromatics = _serverResponse.aromatics;
         newBean.weight = _serverResponse.weight;
         newBean.qr_code = _serverResponse.qr_code;
@@ -28,33 +29,82 @@ export class BeanMapper {
         newBean.ean_article_number = _serverResponse.ean_article_number;
         newBean.note = _serverResponse.note;
         newBean.roastingDate = _serverResponse.roastingDate;
-        newBean.roast_range = _serverResponse.roastRange;
         newBean.url = _serverResponse.url;
 
         switch (_serverResponse.beanMix) {
           case 0:
-            newBean.beanMix = BEAN_MIX_ENUM.UNKNOWN;
+            newBean.beanMix = 'UNKNOWN' as BEAN_MIX_ENUM;
             break;
           case 1:
-            newBean.beanMix = BEAN_MIX_ENUM.SINGLE_ORIGIN;
+            newBean.beanMix = 'SINGLE_ORIGIN' as BEAN_MIX_ENUM;
             break;
           case 2:
-            newBean.beanMix = BEAN_MIX_ENUM.BLEND;
+            newBean.beanMix = 'BLEND' as BEAN_MIX_ENUM;
             break;
         }
 
-        switch (_serverResponse.bean_roasting_type) {
+        switch (_serverResponse.roast) {
           case 0:
-            newBean.bean_roasting_type = BEAN_ROASTING_TYPE_ENUM.UNKNOWN;
+            newBean.roast = 'UNKNOWN' as ROASTS_ENUM;
             break;
           case 1:
-            newBean.bean_roasting_type = BEAN_ROASTING_TYPE_ENUM.FILTER;
+            newBean.roast = 'CINNAMON_ROAST' as ROASTS_ENUM;
             break;
           case 2:
-            newBean.bean_roasting_type = BEAN_ROASTING_TYPE_ENUM.ESPRESSO;
+            newBean.roast = 'AMERICAN_ROAST' as ROASTS_ENUM;
             break;
           case 3:
-            newBean.bean_roasting_type = BEAN_ROASTING_TYPE_ENUM.OMNI;
+            newBean.roast = 'NEW_ENGLAND_ROAST' as ROASTS_ENUM;
+            break;
+          case 4:
+            newBean.roast = 'HALF_CITY_ROAST' as ROASTS_ENUM;
+            break;
+          case 5:
+            newBean.roast = 'MODERATE_LIGHT_ROAST' as ROASTS_ENUM;
+            break;
+          case 6:
+            newBean.roast = 'CITY_ROAST' as ROASTS_ENUM;
+            break;
+          case 7:
+            newBean.roast = 'CITY_PLUS_ROAST' as ROASTS_ENUM;
+            break;
+          case 8:
+            newBean.roast = 'FULL_CITY_ROAST' as ROASTS_ENUM;
+            break;
+          case 9:
+            newBean.roast = 'FULL_CITY_PLUS_ROAST' as ROASTS_ENUM;
+            break;
+          case 10:
+            newBean.roast = 'ITALIAN_ROAST' as ROASTS_ENUM;
+            break;
+          case 11:
+            newBean.roast = 'VIEANNA_ROAST' as ROASTS_ENUM;
+            break;
+          case 12:
+            newBean.roast = 'FRENCH_ROAST' as ROASTS_ENUM;
+            break;
+          case 13:
+            newBean.roast = 'CUSTOM_ROAST' as ROASTS_ENUM;
+            newBean.roast_custom = _serverResponse.roast_custom;
+            break;
+
+        }
+
+
+
+        switch (_serverResponse.bean_roasting_type) {
+          case 0:
+            newBean.bean_roasting_type = 'FILTER' as BEAN_ROASTING_TYPE_ENUM;
+
+            break;
+          case 1:
+            newBean.bean_roasting_type = 'ESPRESSO' as BEAN_ROASTING_TYPE_ENUM;
+            break;
+          case 2:
+            newBean.bean_roasting_type = 'OMNI' as BEAN_ROASTING_TYPE_ENUM;
+            break;
+          case 3:
+            newBean.bean_roasting_type = 'UNKNOWN' as BEAN_ROASTING_TYPE_ENUM;
             break;
         }
 

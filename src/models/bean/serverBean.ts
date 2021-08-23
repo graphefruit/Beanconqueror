@@ -3,10 +3,12 @@ import {IAttachment} from '../../interfaces/server/iAttachment';
 export class ServerBean
 {
   public name: string;
+  public roast: number;
+  public roast_custom: string;
   public roaster: string;
   public roastingDate: string;
   public note: string;
-  public roastRange: number;
+  public roast_range: number;
   public aromatics: string;
   public weight: number;
   public cost: number;

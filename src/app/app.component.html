@@ -27,9 +27,6 @@
               <ion-item [class.active]="pages.home.active" [routerLink]="[pages.home.url]" replaceUrl="true">
                 <ion-label>{{pages.home.title | translate}}</ion-label>
               </ion-item>
-              <ion-item [class.active]="pages.decent.active" [routerLink]="[pages.decent.url]" replaceUrl="true">
-                <ion-label>{{pages.decent.title | translate}}</ion-label>
-              </ion-item>
               <ion-item *ngIf="showRoastingSection()" [class.active]="pages.roasting_section.active" [routerLink]="[pages.roasting_section.url]" replaceUrl="true">
                 <ion-label>{{pages.roasting_section.title | translate}}</ion-label>
               </ion-item>

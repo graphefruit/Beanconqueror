@@ -159,6 +159,8 @@ export class BeansAddComponent implements OnInit {
 
 /// TODO SOLVE
     this.data.qr_code = _bean.qr_code;
+
+
   }
 
   private __formValid(): boolean {

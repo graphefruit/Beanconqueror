@@ -43,6 +43,7 @@ export class Bean implements IBean {
 
   public bean_roasting_type: BEAN_ROASTING_TYPE_ENUM;
 
+  /** Roast information are set from green beans **/
   public bean_roast_information: BeanRoastInformation;
 
   public qr_code: string;

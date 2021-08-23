@@ -397,8 +397,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
     if (this.data.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO) {
       this.data.brew_quantity = this.uiHelper.toFixedIfNecessary(smoothedWeight,2);
-    } else
-    {
+    } else {
       // If the drip timer is showing, we can set the first drip and not doing a reference to the normal weight.
       if (this.timer.showDripTimer === true && this.data.coffee_first_drip_time <=0) {
         // First drip is incoming
@@ -407,8 +406,8 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
           this.data.getPreparation().use_custom_parameters)) {
           this.setCoffeeDripTime(undefined);
         }
-
       }
+
       this.data.brew_beverage_quantity = this.uiHelper.toFixedIfNecessary(smoothedWeight,2);
     }
   }
@@ -649,7 +648,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
     this.vesselFocused = true;
   }
 
-  public vesselSelected(selected: string) :void {
+  public vesselSelected(selected: string): void {
     this.data.vessel_name = selected['name'];
     this.data.vessel_weight = selected['weight'];
     this.vesselResults = [];

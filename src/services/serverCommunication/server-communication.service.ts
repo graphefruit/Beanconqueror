@@ -4,6 +4,8 @@ import {environment} from '../../environments/environment';
 import {ServerBean} from '../../models/bean/serverBean';
 import {UILog} from '../uiLog';
 import {ServerBrew} from '../../classes/server/brew/brew';
+import {catchError, timeout} from 'rxjs/operators';
+import {of} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -15,12 +17,20 @@ export class ServerCommunicationService {
 
   public getBeanInformation(_qrCodeId: string): Promise<ServerBean> {
     const promise = new Promise<ServerBean>((resolve, reject) => {
-      this.http.get(environment.API_URL + 'Roaster/GetBeanFromQrCodeId?Id=' + _qrCodeId, {}).toPromise()
+      this.http.get(environment.API_URL + 'Roaster/GetBeanFromQrCodeId?id=' + _qrCodeId, {}).pipe(timeout(10000),catchError((e)=>{
+        return of(null);
+      })).toPromise()
         .then((data: ServerBean) => {
-          this.uiLog.log(`getBeanInformation - data received - ${JSON.stringify(data)}`);
-          resolve(data);
+          if (data === null) {
+            // Timeout was triggered.
+            reject();
+          } else {
+            this.uiLog.log(`getBeanInformation - data received - ${JSON.stringify(data)}`);
+            resolve(data);
+          }
+
         },(error) => {
-          console.log(error);
+          this.uiLog.log(`getBeanInformation - error received - ${JSON.stringify(error)}`);
           reject();
         })
         .catch((error) => {
@@ -33,9 +43,16 @@ export class ServerCommunicationService {
 
   public trackBrew(brew: ServerBrew) {
     const promise = new Promise((resolve, reject) => {
-      this.http.put(environment.API_URL + 'Roaster/TrackBrew', brew).toPromise()
+      this.http.put(environment.API_URL + 'Roaster/TrackBrew', brew).pipe(timeout(10000),catchError((e)=>{
+        return of(null);
+      })).toPromise()
         .then((data) => {
-          resolve(data);
+          if (data === null) {
+            // Timeout was triggered.
+            reject();
+          } else {
+            resolve(data);
+          }
         },() => {
           reject();
         })
