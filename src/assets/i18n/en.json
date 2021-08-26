@@ -162,6 +162,7 @@
   "BREW_DATA_VESSEL_WEIGHT": "Server weight",
   "BREW_DATA_VESSEL_NAME": "Server name",
   "BREW_DATA_FLAVOR": "Flavor",
+  "BREW_DATA_FLOW_PROFILE": "Flow",
   "ONE_DAY": "Day",
   "DAYS": "Days",
   "ONE_HOUR": "hour",

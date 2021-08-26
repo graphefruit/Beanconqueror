@@ -9,6 +9,7 @@ import {ServerBean} from '../../models/bean/serverBean';
 import {UIAlert} from '../uiAlert';
 
 declare var window;
+declare var IonicDeeplink;
 @Injectable({
   providedIn: 'root'
 })
@@ -26,20 +27,16 @@ export class IntentHandlerService {
 
   public attachOnHandleOpenUrl() {
 
-    // https://github.com/ionic-team/ionic-plugin-deeplinks/issues/243 - to be done
-    this.deeplinks.route( {
-      '*':'*',
+    IonicDeeplink.route({
       '/NO_LINK_EVER_WILL_WORK_HERE/':  '/NO_LINK_EVER_WILL_WORK_HERE/'
-  }).subscribe((match) => {
-      // The plugin has some issues, therefore we use success and error case and hope for better times
-        this.uiLog.log('Deeplink matched ' + JSON.stringify(match.$link));
-        this.handleDeepLink(match.$link);
-      },
-      (nomatch) => {
-        this.uiLog.log('Deeplink not matched ' + JSON.stringify(nomatch.$link));
+    }, (match) => {
+      this.uiLog.log('Deeplink matched ' + JSON.stringify(match.$link));
+      this.handleDeepLink(match.$link);
+    }, (nomatch) => {
+      this.uiLog.log('Deeplink not matched ' + JSON.stringify(nomatch.$link));
 
-        this.handleDeepLink(nomatch.$link);
-      });
+      this.handleDeepLink(nomatch.$link);
+    });
   }
   private findGetParameter(_url: string,_parameterName: string) {
     let result = null,

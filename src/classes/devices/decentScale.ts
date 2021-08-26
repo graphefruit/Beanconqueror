@@ -217,19 +217,20 @@ export default class DecentScale extends BluetoothDevice {
     ble.startNotification(this.device_id, DecentScale.READ_SERVICE_UUID, DecentScale.READ_CHAR_UUID,
       async (_data) => {
         const scaleData = new Int8Array(_data);
+        const uScaleData = new Uint8Array(_data);
         console.log("Received: " + scaleData[1] + " - " + scaleData[2] + " - "+ scaleData[3]);
-        if (scaleData[1] === 0xCE || scaleData[1] === 0xCA) {
+        if (uScaleData[1] === 0xCE || uScaleData[1] === 0xCA) {
           // Weight notification
           const newWeight: number =  ((scaleData[2] << 8) + scaleData[3]) / 10;
 
-          const weightIsStable = (scaleData[1] === 0xCE);
+          const weightIsStable = (uScaleData[1] === 0xCE);
           this.setWeight(newWeight,weightIsStable);
           this.setFlow(newWeight,weightIsStable);
-        } else if (scaleData[1] === 0xAA && scaleData[2] === 0x01) {
+        } else if (uScaleData[1] === 0xAA && uScaleData[2] === 0x01) {
           // Tare button pressed.
           this.tareEvent.emit();
           await this.tare();
-        } else if (scaleData[1] === 0xAA && scaleData[2] === 0x02) {
+        } else if (uScaleData[1] === 0xAA && uScaleData[2] === 0x02) {
           // Timer button pressed
           this.timerEvent.emit();
         }

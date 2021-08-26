@@ -159,6 +159,7 @@
   "BREW_DATA_VESSEL_WEIGHT": "Gefäß Gewicht",
   "BREW_DATA_VESSEL_NAME": "Gefäß name",
   "BREW_DATA_FLAVOR": "Geschmack",
+  "BREW_DATA_FLOW_PROFILE": "Fluss",
   "BREW_INFORMATION_BREW_RATIO": "Brührate",
   "BREW_INFORMATION_BEAN_AGE": "Bohnenalter (Tage)",
   "BREW_INFORMATION_BREW_QUANTITY_TYPE_NAME": "Bezugsmenge-Typ",

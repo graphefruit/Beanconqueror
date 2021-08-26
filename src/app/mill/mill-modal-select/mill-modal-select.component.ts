@@ -43,12 +43,38 @@ export class MillModalSelectComponent implements OnInit {
 
   public getOpenMills(): Array<Mill> {
     return this.objs.filter(
-      (e) => !e.finished);
+      (e) => !e.finished).sort( (a,b) => {
+        const nameA = a.name.toUpperCase();
+        const nameB = b.name.toUpperCase();
+
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+
+        return 0;
+      }
+    );
   }
 
   public getArchivedMills(): Array<Mill> {
     return this.objs.filter(
-      (e) => e.finished);
+      (e) => e.finished).sort( (a,b) => {
+        const nameA = a.name.toUpperCase();
+        const nameB = b.name.toUpperCase();
+
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+
+        return 0;
+      }
+    );
   }
 
 

@@ -140,6 +140,26 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
     }
 
+    if (this.smartScaleConnected()) {
+      if (this.flowProfileChartEl === undefined) {
+        this.initializeFlowChart();
+      }
+      if (!this.scaleTimerSubscription) {
+        const decentScale: DecentScale = this.bleManager.getDecentScale();
+        this.scaleTimerSubscription = decentScale.timerEvent.subscribe(() => {
+          // Timer pressed
+          if (this.timer.isTimerRunning() === true) {
+            this.timer.pauseTimer();
+          } else {
+            this.timer.startTimer();
+          }
+          this.changeDetectorRef.detectChanges();
+
+        });
+      }
+    }
+
+
     // Trigger change rating
     this.changedRating();
     });
@@ -166,33 +186,31 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
   }
 
+  public smartScaleConnected() {
+    if(!this.platform.is('cordova')) {
+      return true;
+    }
+
+    const decentScale: DecentScale = this.bleManager.getDecentScale();
+    if (decentScale) {
+     return true;
+    }
+     else {
+       return false;
+    }
+
+  }
+
   public attachToScaleEvents() {
     const decentScale: DecentScale = this.bleManager.getDecentScale();
     if (decentScale) {
       this.bluetoothScaleConnected = true;
-
-
       this.deattachToScaleChange();
-
-      setTimeout(() => {
-        if (this.flowProfileChartEl === undefined) {
-          this.initializeFlowChart();
-        }
-      },250);
 
       this.scaleWeightSubscription  = decentScale.weightChange.subscribe((_val) => {
         this.__setScaleWeight(_val);
       });
 
-      this.scaleTimerSubscription = decentScale.timerEvent.subscribe(() => {
-        // Timer pressed
-        if (this.timer.isTimerRunning() === true) {
-          this.timer.pauseTimer();
-        } else {
-          this.timer.startTimer();
-        }
-
-      });
       this.generateFlowProfile();
 
 
@@ -219,6 +237,9 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
   private initializeFlowChart(): void {
 
     setTimeout(() => {
+      if (this.flowProfileChartEl) {
+        this.flowProfileChartEl.destroy();
+      }
       if (this.flowProfileChartEl === undefined) {
           const drinkingData = {
             labels: [],
@@ -422,17 +443,18 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
     }
   }
 
-  private b = [];
+
   private __setScaleWeight(_scaleChange: any) {
 
     const smoothedWeight: number = _scaleChange.SMOOTHED_WEIGHT;
     const actualWeight: number = _scaleChange.ACTUAL_WEIGHT;
-
-    this.b.push(actualWeight);
-    console.log(actualWeight);
+    const stableWeight: boolean = _scaleChange.STABLE;
 
     if (this.data.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO) {
-      this.data.brew_quantity = this.uiHelper.toFixedIfNecessary(smoothedWeight,2);
+      if (stableWeight && actualWeight > 20) {
+        this.data.brew_quantity = this.uiHelper.toFixedIfNecessary(smoothedWeight,2);
+      }
+
     } else {
       // If the drip timer is showing, we can set the first drip and not doing a reference to the normal weight.
       if (this.timer.showDripTimer === true && this.data.coffee_first_drip_time <=0) {
@@ -443,12 +465,13 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
           this.setCoffeeDripTime(undefined);
         }
       }
-
-      this.data.brew_beverage_quantity = this.uiHelper.toFixedIfNecessary(smoothedWeight,2);
+      if (stableWeight && actualWeight > 20) {
+        this.data.brew_beverage_quantity = this.uiHelper.toFixedIfNecessary(smoothedWeight, 2);
+      }
     }
   }
 
-  private generateFlowProfile() {
+  private  generateFlowProfile() {
     if (this.scaleFlowInterval === undefined) {
 
       this.scaleFlowInterval = setInterval(() => {

@@ -23,7 +23,7 @@ export class ServerBean
         farm: string,
         farmer: string,
         elevation: string,
-        harvestTime: string,
+        harvest_time: string,
         variety: string,
         processing: string,
         certification: string,

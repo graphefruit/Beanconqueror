@@ -122,8 +122,6 @@ export class AppComponent implements AfterViewInit {
   }
 
   public ngOnInit() {
-    this.intentHandlerService.attachOnHandleOpenUrl();
-
 
 
   }
@@ -186,6 +184,8 @@ export class AppComponent implements AfterViewInit {
               }
             );
         }
+
+        this.intentHandlerService.attachOnHandleOpenUrl();
         // Before we update and show messages, we need atleast to set one default language.
         this._translate.setDefaultLang('en');
         await this._translate.use('en').toPromise();

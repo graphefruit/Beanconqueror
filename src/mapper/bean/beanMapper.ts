@@ -17,6 +17,7 @@ export class BeanMapper {
     return new Promise<Bean>(async (resolve, reject) => {
       try {
         const newBean: Bean = new Bean();
+
         newBean.name = _serverResponse.name;
         newBean.roaster = _serverResponse.roaster;
         newBean.roast_range = _serverResponse.roast_range;
@@ -31,83 +32,41 @@ export class BeanMapper {
         newBean.roastingDate = _serverResponse.roastingDate;
         newBean.url = _serverResponse.url;
 
-        switch (_serverResponse.beanMix) {
-          case 0:
-            newBean.beanMix = 'UNKNOWN' as BEAN_MIX_ENUM;
-            break;
-          case 1:
-            newBean.beanMix = 'SINGLE_ORIGIN' as BEAN_MIX_ENUM;
-            break;
-          case 2:
-            newBean.beanMix = 'BLEND' as BEAN_MIX_ENUM;
-            break;
-        }
+        newBean.beanMix = {
+          0: 'UNKNOWN' as BEAN_MIX_ENUM,
+          1: 'SINGLE_ORIGIN' as BEAN_MIX_ENUM,
+          2: 'BLEND' as BEAN_MIX_ENUM,
+        }[_serverResponse.beanMix];
 
-        switch (_serverResponse.roast) {
-          case 0:
-            newBean.roast = 'UNKNOWN' as ROASTS_ENUM;
-            break;
-          case 1:
-            newBean.roast = 'CINNAMON_ROAST' as ROASTS_ENUM;
-            break;
-          case 2:
-            newBean.roast = 'AMERICAN_ROAST' as ROASTS_ENUM;
-            break;
-          case 3:
-            newBean.roast = 'NEW_ENGLAND_ROAST' as ROASTS_ENUM;
-            break;
-          case 4:
-            newBean.roast = 'HALF_CITY_ROAST' as ROASTS_ENUM;
-            break;
-          case 5:
-            newBean.roast = 'MODERATE_LIGHT_ROAST' as ROASTS_ENUM;
-            break;
-          case 6:
-            newBean.roast = 'CITY_ROAST' as ROASTS_ENUM;
-            break;
-          case 7:
-            newBean.roast = 'CITY_PLUS_ROAST' as ROASTS_ENUM;
-            break;
-          case 8:
-            newBean.roast = 'FULL_CITY_ROAST' as ROASTS_ENUM;
-            break;
-          case 9:
-            newBean.roast = 'FULL_CITY_PLUS_ROAST' as ROASTS_ENUM;
-            break;
-          case 10:
-            newBean.roast = 'ITALIAN_ROAST' as ROASTS_ENUM;
-            break;
-          case 11:
-            newBean.roast = 'VIEANNA_ROAST' as ROASTS_ENUM;
-            break;
-          case 12:
-            newBean.roast = 'FRENCH_ROAST' as ROASTS_ENUM;
-            break;
-          case 13:
-            newBean.roast = 'CUSTOM_ROAST' as ROASTS_ENUM;
-            newBean.roast_custom = _serverResponse.roast_custom;
-            break;
 
+        newBean.roast = {
+          0:'UNKNOWN' as ROASTS_ENUM,
+          1: 'CINNAMON_ROAST' as ROASTS_ENUM,
+          2: 'AMERICAN_ROAST' as ROASTS_ENUM,
+          3: 'NEW_ENGLAND_ROAST' as ROASTS_ENUM,
+          4: 'HALF_CITY_ROAST' as ROASTS_ENUM,
+          5: 'MODERATE_LIGHT_ROAST' as ROASTS_ENUM,
+          6: 'CITY_ROAST' as ROASTS_ENUM,
+          7: 'CITY_PLUS_ROAST' as ROASTS_ENUM,
+          8: 'FULL_CITY_ROAST' as ROASTS_ENUM,
+          9: 'FULL_CITY_PLUS_ROAST' as ROASTS_ENUM,
+          10: 'ITALIAN_ROAST' as ROASTS_ENUM,
+          11: 'VIEANNA_ROAST' as ROASTS_ENUM,
+          12: 'FRENCH_ROAST' as ROASTS_ENUM,
+          13: 'CUSTOM_ROAST' as ROASTS_ENUM,
+        }[_serverResponse.roast];
+
+        if (newBean.roast === ROASTS_ENUM.CUSTOM_ROAST) {
+          newBean.roast_custom = _serverResponse.roast_custom;
         }
 
 
-
-        switch (_serverResponse.bean_roasting_type) {
-          case 0:
-            newBean.bean_roasting_type = 'FILTER' as BEAN_ROASTING_TYPE_ENUM;
-
-            break;
-          case 1:
-            newBean.bean_roasting_type = 'ESPRESSO' as BEAN_ROASTING_TYPE_ENUM;
-            break;
-          case 2:
-            newBean.bean_roasting_type = 'OMNI' as BEAN_ROASTING_TYPE_ENUM;
-            break;
-          case 3:
-            newBean.bean_roasting_type = 'UNKNOWN' as BEAN_ROASTING_TYPE_ENUM;
-            break;
-        }
-
+        newBean.bean_roasting_type = {
+          0: 'FILTER' as BEAN_ROASTING_TYPE_ENUM,
+          1: 'ESPRESSO' as BEAN_ROASTING_TYPE_ENUM,
+          2: 'OMNI' as BEAN_ROASTING_TYPE_ENUM,
+          3: 'UNKNOWN' as BEAN_ROASTING_TYPE_ENUM,
+        }[_serverResponse.bean_roasting_type];
 
         for (const information of _serverResponse.bean_information) {
           const iInformation = {} as IBeanInformation;
@@ -116,7 +75,7 @@ export class BeanMapper {
           iInformation.elevation = information.elevation;
           iInformation.farm = information.farm;
           iInformation.farmer = information.farmer;
-          iInformation.harvest_time = information.harvestTime;
+          iInformation.harvest_time = information.harvest_time;
           iInformation.percentage = information.percentage;
           iInformation.processing = information.processing;
           iInformation.region = information.region;
