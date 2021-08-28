@@ -185,7 +185,11 @@ export class AppComponent implements AfterViewInit {
             );
         }
 
-        this.intentHandlerService.attachOnHandleOpenUrl();
+        if (this.platform.is('cordova')) {
+          // Just support deeplinks on devices.
+          this.intentHandlerService.attachOnHandleOpenUrl();
+        }
+
         // Before we update and show messages, we need atleast to set one default language.
         this._translate.setDefaultLang('en');
         await this._translate.use('en').toPromise();

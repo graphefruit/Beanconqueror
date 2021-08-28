@@ -1,5 +1,4 @@
 import {BluetoothDevice} from './bluetoothDevice';
-import {UILog} from '../../services/uiLog';
 import {EventEmitter} from '@angular/core';
 
 export enum DECENT_SCALE_TIMER_COMMAND {
@@ -22,12 +21,11 @@ export default class DecentScale extends BluetoothDevice {
 
   private tareCounter: number = 0;
 
-  private actualValue: number = 0;
-  private smoothedValue: number = 0;
   protected weight = {
     ACTUAL_WEIGHT: 0,
     SMOOTHED_WEIGHT: 0,
-    OLD_SMOOTHED_WEIGHT: 0
+    OLD_SMOOTHED_WEIGHT: 0,
+    OLD_WEIGHT: 0,
   };
 
   public weightChange: EventEmitter<any> = new EventEmitter();
@@ -146,6 +144,7 @@ export default class DecentScale extends BluetoothDevice {
     this.weight.SMOOTHED_WEIGHT = 0;
     this.weight.ACTUAL_WEIGHT = 0;
     this.weight.OLD_SMOOTHED_WEIGHT = 0;
+    this.weight.OLD_WEIGHT = 0;
     this.setWeight(0);
 
     await this.write(this.buildTareCommand());
@@ -180,6 +179,7 @@ export default class DecentScale extends BluetoothDevice {
     // (A3 * 03 + b2 * 0.7)
     //  Actual value * 03 + smoothed value * 0.7
 
+
     this.weight.OLD_SMOOTHED_WEIGHT = this.weight.SMOOTHED_WEIGHT;
     this.weight.SMOOTHED_WEIGHT = this.calculateSmoothedWeight(_newWeight, this.weight.SMOOTHED_WEIGHT);
 
@@ -188,8 +188,11 @@ export default class DecentScale extends BluetoothDevice {
     this.weightChange.emit({
       ACTUAL_WEIGHT: this.weight.ACTUAL_WEIGHT,
       SMOOTHED_WEIGHT: this.weight.SMOOTHED_WEIGHT,
-      STABLE: _stableWeight
+      STABLE: _stableWeight,
+      OLD_WEIGHT: this.weight.OLD_WEIGHT,
+      OLD_SMOOTHED_WEIGHT: this.weight.OLD_SMOOTHED_WEIGHT,
     });
+    this.weight.OLD_WEIGHT = _newWeight;
   }
   private calculateSmoothedWeight(_actualWeight: number, _smoothedWeight: number): number {
     return (_actualWeight * 0.3) + (_smoothedWeight * 0.7);
@@ -218,11 +221,18 @@ export default class DecentScale extends BluetoothDevice {
       async (_data) => {
         const scaleData = new Int8Array(_data);
         const uScaleData = new Uint8Array(_data);
-        console.log("Received: " + scaleData[1] + " - " + scaleData[2] + " - "+ scaleData[3]);
+        // console.log("Received: " + scaleData[1] + " - " + scaleData[2] + " - "+ scaleData[3]);
         if (uScaleData[1] === 0xCE || uScaleData[1] === 0xCA) {
           // Weight notification
-          const newWeight: number =  ((scaleData[2] << 8) + scaleData[3]) / 10;
+          let newWeight: number =  ((uScaleData[2] << 8) + uScaleData[3]) / 10;
 
+          /** We've got the issue that the Uint doesn't pass us negative values, but if we used signed, when the scale shows
+           * 23 grams, the weight is -23 grams, therefore we cant make a good compromise.
+           * After the scale will go up to 3200 kilos, we check the weight and if its above, we take the signed int.
+           */
+          if (newWeight > 3200) {
+            newWeight = ((scaleData[2] << 8) + scaleData[3]) / 10;
+          }
           const weightIsStable = (uScaleData[1] === 0xCE);
           this.setWeight(newWeight,weightIsStable);
           this.setFlow(newWeight,weightIsStable);

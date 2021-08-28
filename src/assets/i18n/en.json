@@ -972,7 +972,7 @@
     "WRONG_LINK_DESCRIPTION": "Wrong app link",
     "WRONG_LINK_TITLE": "Error",
     "SERVER": {
-      "ERROR_OCCURED": "An error is occured, please try again."
+      "ERROR_OCCURED": "An error is occured, qr code could not be read, please try again."
     },
     "BEAN_SUCCESSFULLY_SCANNED": "Bean successfully scanned",
     "IMAGES_GETTING_DOWNLOADED": "Images getting downloaded"
