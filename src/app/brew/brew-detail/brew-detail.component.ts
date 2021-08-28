@@ -26,7 +26,10 @@ export class BrewDetailComponent implements OnInit {
 
   @ViewChild('cuppingChart', {static: false}) public cuppingChart;
   private brew: IBrew;
-  public loaded:boolean = false;
+  public loaded: boolean = false;
+  @ViewChild('flowProfileChart', {static: false}) public flowProfileChart;
+  public flowProfileChartEl: any = undefined;
+
   constructor (private readonly modalController: ModalController,
                private readonly navParams: NavParams,
                public uiHelper: UIHelper,
@@ -51,6 +54,9 @@ export class BrewDetailComponent implements OnInit {
         this.__loadCuppingChart();
       },150);
     }
+    setTimeout( ()=>{
+      this.initializeFlowChart();
+    },150);
 
     this.loaded = true;
   }
@@ -91,6 +97,46 @@ export class BrewDetailComponent implements OnInit {
   private __loadCuppingChart(): void {
     const chartObj = new Chart(this.cuppingChart.nativeElement, this.uiBrewHelper.getCuppingChartData(this.data));
   }
+  private initializeFlowChart(): void {
 
+    setTimeout(() => {
+      if (this.flowProfileChartEl) {
+        this.flowProfileChartEl.destroy();
+        this.flowProfileChartEl = undefined;
+      }
+      if (this.flowProfileChartEl === undefined) {
+        const drinkingData = {
+          labels: [],
+          datasets: [{
+            label: '',
+            data: [],
+            borderColor: 'rgb(159,140,111)',
+            backgroundColor: 'rgb(205,194,172)',
+          }]
+        };
+        const chartOptions = {
+          legend: {
+            display: false,
+            position: 'top'
+          }
+        };
+
+        this.flowProfileChartEl = new Chart(this.flowProfileChart.nativeElement, {
+          type: 'line',
+          data: drinkingData,
+          options: chartOptions
+        });
+
+        if (this.data.flow_profile.length > 0) {
+          for (const data of this.data.flow_profile) {
+            this.flowProfileChartEl.data.datasets[0].data.push(data.value);
+
+            this.flowProfileChartEl.data.labels.push(data.time);
+          }
+          this.flowProfileChartEl.update();
+        }
+      }
+    },250);
+  }
 
 }

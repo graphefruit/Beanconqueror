@@ -255,6 +255,13 @@
 
     ></timer>
   </ion-item>
+  <ion-item [hidden]="smartScaleConnected() !== true"
+            [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
+                      data.getPreparation().brew_order.while.brew_time,
+                      data.getPreparation().use_custom_parameters)">
+    <ion-label style="position: relative;top: -10px;" position="stacked">{{"BREW_DATA_FLOW_PROFILE" | translate}}</ion-label>
+    <canvas #flowProfileChart></canvas>
+  </ion-item>
   <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.brew_time,
                       data.getPreparation().manage_parameters.brew_time,
                       data.getPreparation().use_custom_parameters)"
@@ -294,10 +301,6 @@
     </ion-label>
   </ion-item>
 
-  <ion-item [hidden]="smartScaleConnected() !== true">
-    <ion-label style="position: relative;top: -10px;" position="stacked">{{"BREW_DATA_FLOW_PROFILE" | translate}}</ion-label>
-    <canvas #flowProfileChart></canvas>
-  </ion-item>
   <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_blooming_time,
                       data.getPreparation().manage_parameters.coffee_blooming_time,
                       data.getPreparation().use_custom_parameters)"

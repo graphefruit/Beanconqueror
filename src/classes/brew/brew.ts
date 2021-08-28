@@ -89,6 +89,11 @@ export class Brew implements IBrew {
   public method_of_preparation_tools: Array<string>;
 
   public favourite: boolean;
+
+  public flow_profile: Array<{
+    value: number,
+    time: number,
+  }>;
   constructor() {
 
     this.grind_size = '';
@@ -154,6 +159,8 @@ export class Brew implements IBrew {
     this.water = '';
     this.vessel_name = '';
     this.vessel_weight = 0;
+
+    this.flow_profile = [];
   }
 
   public initializeByObject(brewObj: IBrew): void {

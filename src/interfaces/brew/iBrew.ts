@@ -140,6 +140,11 @@ export interface IBrew {
 
   cupped_flavor: IFlavor;
 
+  flow_profile: Array<{
+    value: number,
+    time: number,
+  }>;
+
   // Functions
   formateDate(): string;
 

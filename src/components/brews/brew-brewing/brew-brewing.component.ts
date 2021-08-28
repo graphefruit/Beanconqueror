@@ -84,11 +84,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
 
   @ViewChild('flowProfileChart', {static: false}) public flowProfileChart;
-  public flowProfileObj = {
-    TIMES:0,
-    VALUE:0,
-    CALCULATED_SECOND: -1,
-  };
+
   public flowProfileChartEl: any = undefined;
   public bluetoothScaleConnected: boolean = false;
 
@@ -109,9 +105,9 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
   }
 
-  public ngAfterViewInit() {
+  public async ngAfterViewInit() {
 
-    setTimeout( () => {
+    setTimeout( async() => {
     // If we wouldn't wait in the timeout, the components wouldnt be existing
     if (this.isEdit === false) {
       // We need a short timeout because of ViewChild, else we get an exception
@@ -136,7 +132,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       if (this.timer) {
         this.timer.setTime(this.data.brew_time);
       }
-      if ( this.settings.manage_parameters.brew_temperature_time) {
+      if (this.brewTemperatureTime && this.settings.manage_parameters.brew_temperature_time) {
         this.brewTemperatureTime.setTime(this.data.brew_temperature_time);
       }
 
@@ -173,7 +169,12 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
         });
       }
+
+      await decentScale.tare();
+      await decentScale.setTimer(DECENT_SCALE_TIMER_COMMAND.STOP);
+      await decentScale.setTimer(DECENT_SCALE_TIMER_COMMAND.RESET);
     }
+
 
 
     // Trigger change rating
@@ -234,9 +235,6 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
         this.__setFlowProfile(_val);
       });
 
-      //this.generateFlowProfile();
-
-
     }
 
   }
@@ -268,7 +266,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
           const drinkingData = {
             labels: [],
             datasets: [{
-              label: this.translate.instant('PAGE_STATISTICS_BREW_PROCESSES'),
+              label: '',
               data: [],
               borderColor: 'rgb(159,140,111)',
               backgroundColor: 'rgb(205,194,172)',
@@ -286,6 +284,15 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
             data: drinkingData,
             options: chartOptions
           });
+
+          if (this.data.flow_profile.length > 0) {
+            for (const data of this.data.flow_profile) {
+              this.flowProfileChartEl.data.datasets[0].data.push(data.value);
+
+              this.flowProfileChartEl.data.labels.push(data.time);
+            }
+            this.flowProfileChartEl.update();
+          }
       }
     },250);
   }
@@ -373,9 +380,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       await decentScale.setTimer(DECENT_SCALE_TIMER_COMMAND.RESET);
       this.deattachToScaleChange();
       this.initializeFlowChart();
-      this.flowProfileObj.TIMES = 0;
-      this.flowProfileObj.VALUE = 0;
-      this.flowProfileObj.CALCULATED_SECOND = -1;
+      this.data.flow_profile = [];
     }
   }
   public temperatureTimeChanged(_event): void {
@@ -563,26 +568,29 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       }
       // Reset
       this.flowProfileArr = [];
+      const time: number = this.getTime();
+      let actualFlowValue: number = 0;
+
       if (wrongFlow === false) {
-        if (this.flowProfileChartEl !== undefined) {
           const decentScale: DecentScale = this.bleManager.getDecentScale();
           let flowValue: number = (decentScale.getSmoothedWeight() - decentScale.getOldSmoothedWeight()) * 10;
           // Ignore flowing weight when we're below zero
           if (flowValue < 0) {
             flowValue = 0;
           }
-          this.flowProfileChartEl.data.datasets[0].data.push(flowValue);
 
-          this.flowProfileChartEl.data.labels.push(this.getTime());
-          this.flowProfileChartEl.update();
-        }
-      } else {
-        this.flowProfileChartEl.data.datasets[0].data.push(0);
-
-        this.flowProfileChartEl.data.labels.push(this.getTime());
-        this.flowProfileChartEl.update();
+          actualFlowValue = flowValue;
       }
 
+      this.flowProfileChartEl.data.datasets[0].data.push(actualFlowValue);
+
+      this.flowProfileChartEl.data.labels.push(time);
+      this.flowProfileChartEl.update();
+
+      this.data.flow_profile.push({
+        time: time,
+        value: actualFlowValue
+      });
 
     } else {
       this.flowProfileArr.push(weight);
