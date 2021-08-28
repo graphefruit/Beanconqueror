@@ -306,6 +306,29 @@ export class Brew implements IBrew {
 
   }
 
+  public getGramsPerLiter() {
+    const grindWeight: number = this.grind_weight;
+    let brewQuantity: number = 0;
+
+    if (this.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO) {
+      brewQuantity = this.brew_quantity;
+    } else {
+      brewQuantity = this.brew_beverage_quantity;
+    }
+
+
+    let ratio: string = '';
+
+    if (brewQuantity > 0 && grindWeight > 0) {
+      ratio = this.toFixedIfNecessary((grindWeight * 1000) / brewQuantity,2) + ' g/l';
+    } else {
+      ratio = '? g/l';
+    }
+
+    return ratio;
+
+  }
+
   public getPreparationToolName(_uuid: string): string {
     const tool: PreparationTool = this.getPreparation().tools.find((e) => e.config.uuid === _uuid);
     if (tool) {
