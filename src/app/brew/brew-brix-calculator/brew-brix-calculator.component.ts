@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {ModalController} from '@ionic/angular';
+import {UIAnalytics} from '../../../services/uiAnalytics';
+import BREW_TRACKING from '../../../data/tracking/brewTracking';
 
 @Component({
   selector: 'app-brew-brix-calculator',
@@ -12,11 +14,12 @@ export class BrewBrixCalculatorComponent implements OnInit {
 
   public brix: number = 0;
 
-  constructor(private readonly modalController: ModalController) {
+  constructor(private readonly modalController: ModalController, private readonly uiAnalytics: UIAnalytics) {
 
   }
 
   public ionViewWillEnter(): void {
+    this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.BRIX_CALCULATION);
   }
 
 
@@ -32,7 +35,7 @@ export class BrewBrixCalculatorComponent implements OnInit {
     this.modalController.dismiss({
       tds: tdsValue,
       dismissed: true
-    },undefined, BrewBrixCalculatorComponent.COMPONENT_ID)
+    },undefined, BrewBrixCalculatorComponent.COMPONENT_ID);
 
   }
 
@@ -40,7 +43,7 @@ export class BrewBrixCalculatorComponent implements OnInit {
   public dismiss(): void {
     this.modalController.dismiss({
       dismissed: true
-    },undefined, BrewBrixCalculatorComponent.COMPONENT_ID)
+    },undefined, BrewBrixCalculatorComponent.COMPONENT_ID);
 
   }
   public ngOnInit() {}

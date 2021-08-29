@@ -81,6 +81,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
   public scaleTareSubscription: Subscription = undefined;
   public scaleFlowSubscription: Subscription = undefined;
   private flowProfileArr = [];
+  private flowTime: number = undefined;
 
 
   @ViewChild('flowProfileChart', {static: false}) public flowProfileChart;
@@ -261,6 +262,8 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       if (this.flowProfileChartEl) {
         this.flowProfileChartEl.destroy();
         this.flowProfileChartEl = undefined;
+        this.flowTime = undefined;
+        this.flowProfileArr = [];
       }
       if (this.flowProfileChartEl === undefined) {
           const drinkingData = {
@@ -546,16 +549,21 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
   private __setFlowProfile(_scaleChange: any) {
     const weight: number = _scaleChange.ACTUAL_WEIGHT;
-    const stable: boolean = _scaleChange.STABLE;
+
+    if (this.flowTime === undefined) {
+      this.flowTime = this.getTime();
+    }
+    if (this.flowTime !== this.getTime()) {
 
 
-    if (this.flowProfileArr.length >= 10) {
-      // We got 10 entries (means 1 second, now check what the user is doing)
+      //Old solution: We wait for 10 entries,
+      //New solution: We wait for the new second, even when their are just 8 entries.
+
 
       let wrongFlow: boolean = false;
       for (let i=0;i<this.flowProfileArr.length;i++) {
         const val: number = this.flowProfileArr[i];
-        if (i !== 9) {
+        if (i !== this.flowProfileArr.length-1) {
           const nextVal = this.flowProfileArr[i+1];
           if (val>nextVal || val <0) {
             // The first value is taller then the second value... somethings is wrong
@@ -566,36 +574,36 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
         }
       }
-      // Reset
-      this.flowProfileArr = [];
-      const time: number = this.getTime();
+
+
       let actualFlowValue: number = 0;
 
       if (wrongFlow === false) {
-          const decentScale: DecentScale = this.bleManager.getDecentScale();
-          let flowValue: number = (decentScale.getSmoothedWeight() - decentScale.getOldSmoothedWeight()) * 10;
-          // Ignore flowing weight when we're below zero
-          if (flowValue < 0) {
-            flowValue = 0;
-          }
-
-          actualFlowValue = flowValue;
+        const decentScale: DecentScale = this.bleManager.getDecentScale();
+        let flowValue: number = (decentScale.getSmoothedWeight() - decentScale.getOldSmoothedWeight()) * 10;
+        // Ignore flowing weight when we're below zero
+        if (flowValue < 0) {
+          flowValue = 0;
+        }
+        actualFlowValue = flowValue;
       }
 
       this.flowProfileChartEl.data.datasets[0].data.push(actualFlowValue);
 
-      this.flowProfileChartEl.data.labels.push(time);
+      this.flowProfileChartEl.data.labels.push(this.flowTime);
       this.flowProfileChartEl.update();
 
       this.data.flow_profile.push({
-        time: time,
+        time: this.flowTime,
         value: actualFlowValue
       });
+      // Reset
+      this.flowTime = this.getTime();
+      this.flowProfileArr = [];
 
     } else {
       this.flowProfileArr.push(weight);
     }
-
 
   }
 
