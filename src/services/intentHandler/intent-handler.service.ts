@@ -7,6 +7,8 @@ import {ServerCommunicationService} from '../serverCommunication/server-communic
 import {UIBeanHelper} from '../uiBeanHelper';
 import {ServerBean} from '../../models/bean/serverBean';
 import {UIAlert} from '../uiAlert';
+import QR_TRACKING from '../../data/tracking/qrTracking';
+import {UIAnalytics} from '../uiAnalytics';
 
 declare var window;
 declare var IonicDeeplink;
@@ -23,7 +25,8 @@ export class IntentHandlerService {
               private readonly uiLog: UILog,
               private readonly serverCommunicationService: ServerCommunicationService,
               private readonly uiBeanHelper: UIBeanHelper,
-              private readonly uiAlert: UIAlert) { }
+              private readonly uiAlert: UIAlert,
+              private readonly uiAnalytics: UIAnalytics) { }
 
   public attachOnHandleOpenUrl() {
 
@@ -62,6 +65,7 @@ export class IntentHandlerService {
       const url: string = _url;
       this.uiLog.log('Handle QR Code Link: ' + url);
       if (url.indexOf('https://beanconqueror.com/app/roaster/bean') === 0) {
+        this.uiAnalytics.trackEvent(QR_TRACKING.TITLE, QR_TRACKING.ACTIONS.SCAN);
         const qrCodeId: string = String(this.findParameterByCompleteUrl(url,'id'));
         await this.addBeanFromServer(qrCodeId);
       } else {
@@ -104,6 +108,7 @@ export class IntentHandlerService {
       const beanData: ServerBean = await this.serverCommunicationService.getBeanInformation(_qrCodeId);
       await this.uiBeanHelper.addScannedQRBean(beanData);
     } catch (ex) {
+      this.uiAnalytics.trackEvent(QR_TRACKING.TITLE, QR_TRACKING.ACTIONS.SCAN_FAILED);
       await this.uiAlert.hideLoadingSpinner();
       this.uiAlert.showMessage('QR.SERVER.ERROR_OCCURED','ERROR_OCCURED',undefined,true);
     }

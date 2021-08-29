@@ -17,6 +17,7 @@ import {ServerBean} from '../models/bean/serverBean';
 import {BeanMapper} from '../mapper/bean/beanMapper';
 import {UIAlert} from './uiAlert';
 import {UIToast} from './uiToast';
+import QR_TRACKING from '../data/tracking/qrTracking';
 
 
 /**
@@ -108,6 +109,7 @@ export class UIBeanHelper {
 
     if (_scannedQRBean.error === null)
     {
+      this.uiAnalytics.trackEvent(QR_TRACKING.TITLE, QR_TRACKING.ACTIONS.SCAN_SUCCESSFULLY);
       this.uiToast.showInfoToastBottom('QR.BEAN_SUCCESSFULLY_SCANNED');
       await this.uiAlert.showLoadingSpinner();
       const newMapper = new BeanMapper();
@@ -128,6 +130,7 @@ export class UIBeanHelper {
 
 
     }  else {
+      this.uiAnalytics.trackEvent(QR_TRACKING.TITLE, QR_TRACKING.ACTIONS.SCAN);
       await this.uiAlert.hideLoadingSpinner();
       this.uiAlert.showMessage('QR.SERVER.ERROR_OCCURED','ERROR_OCCURED',undefined,true);
     }
