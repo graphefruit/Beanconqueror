@@ -961,6 +961,7 @@
     "CONNECTION_NOT_ESTABLISHED": "Waage konnte nicht gefunden oder verbunden werden",
     "CONNECTED_SUCCESSFULLY": "Waage verbunden",
     "DISCONNECTED_SUCCESSFULLY": "Waage getrennt",
+    "DISCONNECTED_UNPLANNED": "Waage ungeplant getrennt",
     "REQUEST_PERMISSION": {
       "LOCATION": "Um Bluetooth-Waagen zu finden, muss der Standort freigegeben werden",
       "BLUETOOTH":  "Um Bluetooth-Waagen zu finden, muss Bluetooth freigegeben werden"

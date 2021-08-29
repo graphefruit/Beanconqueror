@@ -961,6 +961,7 @@
     "CONNECTION_NOT_ESTABLISHED": "Scale not found found or connection could not be established",
     "CONNECTED_SUCCESSFULLY": "Scale connected",
     "DISCONNECTED_SUCCESSFULLY": "Scale disconnected",
+    "DISCONNECTED_UNPLANNED": "Scale disconnected unplanned",
     "REQUEST_PERMISSION": {
       "LOCATION": "To find bluetooth scales, the app needs access to the location.",
       "BLUETOOTH":  "To find bluetooth scales, the app needs access to bluetooth"

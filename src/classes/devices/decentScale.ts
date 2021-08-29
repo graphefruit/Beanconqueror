@@ -258,6 +258,8 @@ export default class DecentScale extends BluetoothDevice {
       (e) => {
 
       },
-      (e) => {console.log("wrote NOT");console.log(e)});
+      (e) => {
+
+      });
   }
 }

@@ -144,6 +144,8 @@ We combine both plugins, because the other plugins asks all of the permissions.
 //1. ionic cordova plugin add cordova-plugin-bluetoothle
 //2. npm install @ionic-native/bluetooth-le
 3. https://github.com/don/cordova-plugin-ble-central
+-> ionic cordova plugin add cordova-plugin-ble-central --variable BLUETOOTH_USAGE_DESCRIPTION="Bluetooth access needed to connect smartscales" --variable IOS_INIT_ON_LOAD=false
+
 
 
 ##File download

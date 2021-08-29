@@ -203,11 +203,11 @@
       },
       "cordova-plugin-simple-file-chooser": {},
       "cordova-plugin-filepath": {},
+      "cordova-plugin-file-transfer": {},
       "cordova-plugin-ble-central": {
-        "IOS_INIT_ON_LOAD": "true",
-        "BLUETOOTH_USAGE_DESCRIPTION": " "
-      },
-      "cordova-plugin-file-transfer": {}
+        "BLUETOOTH_USAGE_DESCRIPTION": "Bluetooth access needed to connect smart scales",
+        "IOS_INIT_ON_LOAD": "false"
+      }
     },
     "platforms": [
       "android",

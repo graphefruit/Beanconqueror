@@ -43,7 +43,7 @@ export class WaterAddComponent implements OnInit {
   public dismiss(): void {
     this.modalController.dismiss({
       'dismissed': true
-    },undefined, WaterAddComponent.COMPONENT_ID)
+    },undefined, WaterAddComponent.COMPONENT_ID);
 
   }
   public ngOnInit() {}

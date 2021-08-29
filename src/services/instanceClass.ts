@@ -7,7 +7,6 @@ export abstract class InstanceClass {
   private static instance: any;
   constructor() {
     if (InstanceClass.instance === undefined) {
-      console.log('Instance...');
       InstanceClass.instance = this;
     }
   }
