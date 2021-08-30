@@ -41,6 +41,7 @@ import {UIBeanHelper} from '../services/uiBeanHelper';
 import {UIMillHelper} from '../services/uiMillHelper';
 import {UIPreparationHelper} from '../services/uiPreparationHelper';
 import {BleManagerService} from '../services/bleManager/ble-manager.service';
+import {CleanupService} from '../services/cleanupService/cleanup.service';
 
 
 declare var AppRate;
@@ -115,6 +116,7 @@ export class AppComponent implements AfterViewInit {
     private readonly uiMillHelper: UIMillHelper,
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly bleManager: BleManagerService,
+    private readonly cleanupService: CleanupService,
 
   ) {
 
@@ -235,6 +237,7 @@ export class AppComponent implements AfterViewInit {
               this.uiLog.log('App finished loading');
               this.uiLog.info('Everything should be fine!!!');
               await this.__checkUpdate();
+              await this.__checkCleanup();
               await this.__initApp();
               this.uiHelper.setAppReady(1);
 
@@ -255,6 +258,13 @@ export class AppComponent implements AfterViewInit {
     try {
     await this.uiUpdate.checkUpdate();
     } catch(ex) {
+
+    }
+  }
+  private async __checkCleanup() {
+    try {
+      await this.cleanupService.cleanupOldBrewData();
+    } catch (ex) {
 
     }
   }
@@ -387,7 +397,6 @@ export class AppComponent implements AfterViewInit {
 
     this.__registerBack();
     await this.__setDeviceLanguage();
-
     // After we set the right device language, we check now if we can request external storage
     if (this.platform.is('cordova') && this.platform.is('android')) {
       try {

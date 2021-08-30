@@ -126,7 +126,7 @@ export class UIFileHelper extends InstanceClass {
 
         let storageLocation: string = '';
         if (this.platform.is('android')) {
-          storageLocation = this.file.externalRootDirectory
+          storageLocation = this.file.externalRootDirectory;
         } else {
           storageLocation = this.file.documentsDirectory;
         }

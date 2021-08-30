@@ -127,6 +127,10 @@ export class UIHelper {
       .format(format);
   }
 
+  public getActualTimeWithMilliseconds() {
+    return moment(new Date()).format("HH:mm:ss.SSS");
+  }
+
   public timeDifference(_unix: number): any {
     const now = moment.unix(this.getUnixTimestamp());
     const toDiff = moment(moment.unix(_unix));

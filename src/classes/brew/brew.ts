@@ -24,6 +24,7 @@ import {UIWaterStorage} from '../../services/uiWaterStorage';
 
 import {IWater} from '../../interfaces/water/iWater';
 import {Water} from '../water/water';
+import {IBrewFlow} from '../../interfaces/brew/iBrewFlow';
 
 
 export class Brew implements IBrew {
@@ -93,7 +94,9 @@ export class Brew implements IBrew {
   public flow_profile: Array<{
     value: number,
     time: number,
+    timestamp: string,
   }>;
+  public flow_profile_raw: Array<IBrewFlow>;
   constructor() {
 
     this.grind_size = '';
@@ -161,6 +164,7 @@ export class Brew implements IBrew {
     this.vessel_weight = 0;
 
     this.flow_profile = [];
+    this.flow_profile_raw = [];
   }
 
   public initializeByObject(brewObj: IBrew): void {

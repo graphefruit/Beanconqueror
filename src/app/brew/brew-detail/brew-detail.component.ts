@@ -11,6 +11,7 @@ import {UIBrewHelper} from '../../../services/uiBrewHelper';
 import {Chart} from 'chart.js';
 import BREW_TRACKING from '../../../data/tracking/brewTracking';
 import {UIAnalytics} from '../../../services/uiAnalytics';
+import {UIExcel} from '../../../services/uiExcel';
 
 @Component({
   selector: 'brew-detail',
@@ -35,7 +36,8 @@ export class BrewDetailComponent implements OnInit {
                public uiHelper: UIHelper,
                private readonly uiSettingsStorage: UISettingsStorage,
                private readonly uiBrewHelper: UIBrewHelper,
-               private readonly uiAnalytics: UIAnalytics) {
+               private readonly uiAnalytics: UIAnalytics,
+               private readonly uiExcel: UIExcel) {
 
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -137,6 +139,10 @@ export class BrewDetailComponent implements OnInit {
         }
       }
     },250);
+  }
+
+  public async downloadFlowProfile() {
+    await this.uiExcel.exportBrewFlowProfile(this.data.flow_profile_raw);
   }
 
 }

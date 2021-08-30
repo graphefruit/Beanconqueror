@@ -6,6 +6,7 @@ import {IConfig} from '../objectConfig/iObjectConfig';
 import {ICupping} from '../cupping/iCupping';
 import {IBrewCoordinates} from './iBrewCoordinates';
 import {IFlavor} from '../flavor/iFlavor';
+import {IBrewFlow} from './iBrewFlow';
 
 export interface IBrew {
  // Properties
@@ -144,6 +145,7 @@ export interface IBrew {
     value: number,
     time: number,
   }>;
+  flow_profile_raw: Array<IBrewFlow>;
 
   // Functions
   formateDate(): string;

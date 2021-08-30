@@ -37,6 +37,8 @@ import {Subscription} from 'rxjs';
 import DecentScale, {DECENT_SCALE_TIMER_COMMAND} from '../../../classes/devices/decentScale';
 import {Chart} from 'chart.js';
 import {UIHelper} from '../../../services/uiHelper';
+import {UIExcel} from '../../../services/uiExcel';
+import {IBrewFlow} from '../../../interfaces/brew/iBrewFlow';
 
 
 declare var cordova;
@@ -102,7 +104,8 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
               private readonly uiBeanStorage: UIBeanStorage,
               private readonly uiWaterStorage: UIWaterStorage,
               private readonly bleManager: BleManagerService,
-              private readonly uiHelper: UIHelper) {
+              private readonly uiHelper: UIHelper,
+              private readonly uiExcel: UIExcel) {
 
   }
 
@@ -384,6 +387,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       this.deattachToScaleChange();
       this.initializeFlowChart();
       this.data.flow_profile = [];
+      this.data.flow_profile_raw = [];
     }
   }
   public temperatureTimeChanged(_event): void {
@@ -549,6 +553,10 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
   private __setFlowProfile(_scaleChange: any) {
     const weight: number = _scaleChange.ACTUAL_WEIGHT;
+    const oldWeight: number = _scaleChange.OLD_WEIGHT;
+    let smoothedWeight: number = _scaleChange.SMOOTHED_WEIGHT;
+    let oldSmoothedWeight: number = _scaleChange.OLD_SMOOTHED_WEIGHT;
+
 
     if (this.flowTime === undefined) {
       this.flowTime = this.getTime();
@@ -574,13 +582,26 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
         }
       }
+      if (wrongFlow === false) {
+        const firstVal: number = this.flowProfileArr[0];
+        const lastVal: number = this.flowProfileArr[this.flowProfileArr.length-1];
+
+        if ((lastVal - firstVal) > 100) {
+          // Threshhold reached, more then 100g in on esecond is to much
+          wrongFlow = true;
+        }
+      }
+
 
 
       let actualFlowValue: number = 0;
 
       if (wrongFlow === false) {
         const decentScale: DecentScale = this.bleManager.getDecentScale();
-        let flowValue: number = (decentScale.getSmoothedWeight() - decentScale.getOldSmoothedWeight()) * 10;
+        // Overwrite to make sure to have the latest data to save.
+        smoothedWeight = decentScale.getSmoothedWeight();
+        oldSmoothedWeight = decentScale.getOldSmoothedWeight();
+        let flowValue: number = (smoothedWeight - oldSmoothedWeight) * 10;
         // Ignore flowing weight when we're below zero
         if (flowValue < 0) {
           flowValue = 0;
@@ -588,25 +609,52 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
         actualFlowValue = flowValue;
       }
 
+
+      this.pushFlowProfile(this.flowTime,weight,oldWeight,smoothedWeight,oldSmoothedWeight);
+
       this.flowProfileChartEl.data.datasets[0].data.push(actualFlowValue);
 
       this.flowProfileChartEl.data.labels.push(this.flowTime);
       this.flowProfileChartEl.update();
 
       this.data.flow_profile.push({
+        timestamp: this.uiHelper.getActualTimeWithMilliseconds(),
         time: this.flowTime,
         value: actualFlowValue
       });
+
+
       // Reset
       this.flowTime = this.getTime();
       this.flowProfileArr = [];
 
     } else {
       this.flowProfileArr.push(weight);
+      this.pushFlowProfile(this.flowTime,weight,oldWeight,smoothedWeight,oldSmoothedWeight);
     }
 
   }
+  private pushFlowProfile(_brewTime: number,
+                          _actualWeight: number,
+                          _oldWeight: number,
+                          _actualSmoothedWeight: number,
+                          _oldSmoothedWeight: number) {
+    const brewFlow: IBrewFlow = {
 
+    } as IBrewFlow;
+    brewFlow.timestamp = this.uiHelper.getActualTimeWithMilliseconds();
+    brewFlow.brew_time = _brewTime;
+    brewFlow.actual_weight = _actualWeight;
+    brewFlow.old_weight = _oldWeight;
+    brewFlow.actual_smoothed_weight = _actualSmoothedWeight;
+    brewFlow.old_smoothed_weight = _oldSmoothedWeight;
+    this.data.flow_profile_raw.push(brewFlow);
+
+  }
+
+  public async downloadFlowProfile() {
+    await this.uiExcel.exportBrewFlowProfile(this.data.flow_profile_raw);
+  }
 
   private __loadBrew(brew: Brew,_template: boolean) {
 

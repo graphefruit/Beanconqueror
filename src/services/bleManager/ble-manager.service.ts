@@ -161,7 +161,7 @@ export class BleManagerService {
     return new Promise<boolean>((resolve, reject) => {
       ble.disconnect(deviceId, () => {
         this.decentScale = null;
-        this.uiToast.showInfoToastBottom('SCALE_DISCONNECTED_SUCCESSFULLY');
+        this.uiToast.showInfoToastBottom('SCALE.DISCONNECTED_SUCCESSFULLY');
         resolve(true);
       }, () => {
         resolve(false);

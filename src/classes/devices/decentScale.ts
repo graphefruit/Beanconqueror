@@ -151,6 +151,9 @@ export default class DecentScale extends BluetoothDevice {
     await setTimeout(async () => {
       await  this.write(this.buildTareCommand());
     },50);
+    await setTimeout(async () => {
+      await  this.write(this.buildTareCommand());
+    },75);
   }
 
   public async setLed(_weightOn: boolean, _timerOn: boolean) {
@@ -159,6 +162,9 @@ export default class DecentScale extends BluetoothDevice {
     await setTimeout(async () => {
       await  this.write(this.buildLedOnOffCommand(_weightOn, _timerOn));
     },50);
+    await setTimeout(async () => {
+      await  this.write(this.buildLedOnOffCommand(_weightOn, _timerOn));
+    },75);
   }
 
 
@@ -167,6 +173,9 @@ export default class DecentScale extends BluetoothDevice {
     await setTimeout(async () => {
       await this.write(this.buildTimerCommand(_timer));
     },50);
+    await setTimeout(async () => {
+      await this.write(this.buildTimerCommand(_timer));
+    },75);
   }
 
   public getWeight() {

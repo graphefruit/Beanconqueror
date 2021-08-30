@@ -181,6 +181,7 @@ export class SettingsPage implements OnInit {
       // We don't need to retry for iOS, because we just did scan before.
       this.bleManager.autoConnectDecentScale(scaleDeviceId,false);
       this.settings.decent_scale_id = scaleDeviceId;
+      this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.DECENT_SCALE);
       await this.saveSettings();
     } else {
       await this.uiAlert.hideLoadingSpinner();
