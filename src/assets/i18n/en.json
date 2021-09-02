@@ -965,7 +965,8 @@
     "REQUEST_PERMISSION": {
       "LOCATION": "To find bluetooth scales, the app needs access to the location.",
       "BLUETOOTH":  "To find bluetooth scales, the app needs access to bluetooth"
-    }
+    },
+    "INFORMATION_DESCRIPTION": "The rawdata of flow profiles won't be saved (to big data), but you have the possibility to save them on the on the individual brew page."
   },
   "QR":{
     "WRONG_QRCODE_DESCRIPTION": "Wrong qr code or wrong content",

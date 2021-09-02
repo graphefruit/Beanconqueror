@@ -116,12 +116,14 @@ export class Bean implements IBean {
     return fixNeeded;
   }
   public beanAgeInDays(): number {
-    const today = Date.now();
-    let millisecondsSinceRoasting = today - Date.parse(this.roastingDate);
-    if (isNaN(millisecondsSinceRoasting)) {
-      millisecondsSinceRoasting = 0;
+    if (this.roastingDate !== undefined && this.roastingDate !== '') {
+      const today = moment(Date.now()).startOf('day');
+      const roastingDate = moment(this.roastingDate).startOf('day');
+
+      return today.diff(roastingDate,'days');
     }
-    return Math.floor(millisecondsSinceRoasting / (1000 * 60 * 60 * 24));
+    return 0;
+
   }
 
   /**

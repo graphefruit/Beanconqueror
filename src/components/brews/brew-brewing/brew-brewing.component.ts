@@ -84,6 +84,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
   public scaleFlowSubscription: Subscription = undefined;
   private flowProfileArr = [];
   private flowTime: number = undefined;
+  public flow_profile_raw: Array<IBrewFlow> =[];
 
 
   @ViewChild('flowProfileChart', {static: false}) public flowProfileChart;
@@ -387,7 +388,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       this.deattachToScaleChange();
       this.initializeFlowChart();
       this.data.flow_profile = [];
-      this.data.flow_profile_raw = [];
+      this.flow_profile_raw = [];
     }
   }
   public temperatureTimeChanged(_event): void {
@@ -569,6 +570,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
 
       let wrongFlow: boolean = false;
+      let sameFlowPerTenHerzCounter: number =0;
       for (let i=0;i<this.flowProfileArr.length;i++) {
         const val: number = this.flowProfileArr[i];
         if (i !== this.flowProfileArr.length-1) {
@@ -578,16 +580,32 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
             // Also if the value is negative, something strange happend.
             wrongFlow = true;
             break;
+          } else if (val === nextVal) {
+            sameFlowPerTenHerzCounter += 1;
+            if (sameFlowPerTenHerzCounter > 6) {
+              //
+              wrongFlow = true;
+              break;
+            }
           }
 
         }
       }
       if (wrongFlow === false) {
         const firstVal: number = this.flowProfileArr[0];
+        const preLastVal: number = this.flowProfileArr[this.flowProfileArr.length-2];
         const lastVal: number = this.flowProfileArr[this.flowProfileArr.length-1];
 
         if ((lastVal - firstVal) > 100) {
           // Threshhold reached, more then 100g in on esecond is to much
+          wrongFlow = true;
+        } else if (firstVal === lastVal){
+          // Weight didn't change at all.
+          wrongFlow = true;
+        } else if ((lastVal - firstVal) < 0.3 || (preLastVal - firstVal) < 0.3 ) {
+
+          //Threshshold, weight changes because of strange thing happening.
+          // Sometimes the weight changes so strange, that the last two preVal's came above
           wrongFlow = true;
         }
       }
@@ -648,12 +666,12 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
     brewFlow.old_weight = _oldWeight;
     brewFlow.actual_smoothed_weight = _actualSmoothedWeight;
     brewFlow.old_smoothed_weight = _oldSmoothedWeight;
-    this.data.flow_profile_raw.push(brewFlow);
+    this.flow_profile_raw.push(brewFlow);
 
   }
 
   public async downloadFlowProfile() {
-    await this.uiExcel.exportBrewFlowProfile(this.data.flow_profile_raw);
+    await this.uiExcel.exportBrewFlowProfile(this.flow_profile_raw);
   }
 
   private __loadBrew(brew: Brew,_template: boolean) {

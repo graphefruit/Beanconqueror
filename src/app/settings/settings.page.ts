@@ -23,7 +23,7 @@ import {Settings} from '../../classes/settings/settings';
 import {UILog} from '../../services/uiLog';
 import {TranslateService} from '@ngx-translate/core';
 import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
-import {Subject} from 'rxjs';
+import {Subject, Subscription} from 'rxjs';
 import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
 import {UIAnalytics} from '../../services/uiAnalytics';
 
@@ -55,6 +55,7 @@ import {Water} from '../../classes/water/water';
 import {BleManagerService} from '../../services/bleManager/ble-manager.service';
 import {UIToast} from '../../services/uiToast';
 import {CurrencyService} from '../../services/currencyService/currency.service';
+import DecentScale from '../../classes/devices/decentScale';
 declare var cordova: any;
 declare var device: any;
 
@@ -77,6 +78,9 @@ export class SettingsPage implements OnInit {
 
   public currencies = {};
 
+  private scaleWeightSubscription: Subscription = undefined;
+  public actualScaleWeight: number = undefined;
+
   private __cleanupAttachmentData(_data: Array<IBean | IBrew | IMill | IPreparation | IGreenBean | IRoastingMachine>): any {
     if (_data !== undefined && _data.length > 0) {
       for (const obj of _data) {
@@ -86,6 +90,31 @@ export class SettingsPage implements OnInit {
 
   }
 
+  private unsubscribeSmartScale() {
+    if (this.scaleWeightSubscription) {
+      this.scaleWeightSubscription.unsubscribe();
+      this.scaleWeightSubscription = undefined;
+
+    }
+    this.actualScaleWeight = undefined;
+  }
+  private async subscribeSmartScale() {
+    if (this.scaleWeightSubscription === undefined) {
+      const scale: DecentScale = this.bleManager.getDecentScale();
+      if (scale) {
+        await scale.setLed(true,false);
+        this.scaleWeightSubscription  = scale.weightChange.subscribe((_val) => {
+          this.actualScaleWeight = _val.ACTUAL_WEIGHT;
+        });
+      }
+
+    }
+
+  }
+
+  private ionWillLeave() {
+    this.unsubscribeSmartScale();
+  }
 
 
   private  __cleanupImportSettingsData(_data: ISettings | any): void {
@@ -148,7 +177,8 @@ export class SettingsPage implements OnInit {
 
 
 
-  public ngOnInit() {
+  public async ngOnInit() {
+    await this.subscribeSmartScale();
 
   }
 
@@ -183,6 +213,9 @@ export class SettingsPage implements OnInit {
       this.settings.decent_scale_id = scaleDeviceId;
       this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.DECENT_SCALE);
       await this.saveSettings();
+
+      await this.subscribeSmartScale();
+
     } else {
       await this.uiAlert.hideLoadingSpinner();
       this.uiAlert.showMessage('SCALE.CONNECTION_NOT_ESTABLISHED',undefined,undefined,true);
@@ -193,6 +226,7 @@ export class SettingsPage implements OnInit {
     if (disconnected) {
       this.settings.decent_scale_id = '';
       await this.saveSettings();
+      this.unsubscribeSmartScale();
     }
   }
   public async checkWaterSection() {

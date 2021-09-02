@@ -28,8 +28,21 @@ export default class DecentScale extends BluetoothDevice {
     OLD_WEIGHT: 0,
   };
 
-  public weightChange: EventEmitter<any> = new EventEmitter();
-  public flowChange: EventEmitter<any> = new EventEmitter();
+  public weightChange: EventEmitter<{
+    ACTUAL_WEIGHT: number,
+    SMOOTHED_WEIGHT: number,
+    STABLE: boolean,
+    OLD_WEIGHT: number,
+    OLD_SMOOTHED_WEIGHT: number
+  }> = new EventEmitter();
+  public flowChange: EventEmitter<{
+    ACTUAL_WEIGHT: number,
+    SMOOTHED_WEIGHT: number,
+    STABLE: boolean,
+    OLD_WEIGHT: number,
+    OLD_SMOOTHED_WEIGHT: number
+    DATE: Date,
+  }> = new EventEmitter();
 
   public timerEvent: EventEmitter<any> = new EventEmitter();
   public tareEvent: EventEmitter<any> = new EventEmitter();
@@ -150,10 +163,7 @@ export default class DecentScale extends BluetoothDevice {
     await this.write(this.buildTareCommand());
     await setTimeout(async () => {
       await  this.write(this.buildTareCommand());
-    },50);
-    await setTimeout(async () => {
-      await  this.write(this.buildTareCommand());
-    },75);
+    },200);
   }
 
   public async setLed(_weightOn: boolean, _timerOn: boolean) {
@@ -161,10 +171,7 @@ export default class DecentScale extends BluetoothDevice {
 
     await setTimeout(async () => {
       await  this.write(this.buildLedOnOffCommand(_weightOn, _timerOn));
-    },50);
-    await setTimeout(async () => {
-      await  this.write(this.buildLedOnOffCommand(_weightOn, _timerOn));
-    },75);
+    },200);
   }
 
 
@@ -172,10 +179,7 @@ export default class DecentScale extends BluetoothDevice {
     await this.write(this.buildTimerCommand(_timer));
     await setTimeout(async () => {
       await this.write(this.buildTimerCommand(_timer));
-    },50);
-    await setTimeout(async () => {
-      await this.write(this.buildTimerCommand(_timer));
-    },75);
+    },200);
   }
 
   public getWeight() {
@@ -201,6 +205,7 @@ export default class DecentScale extends BluetoothDevice {
       OLD_WEIGHT: this.weight.OLD_WEIGHT,
       OLD_SMOOTHED_WEIGHT: this.weight.OLD_SMOOTHED_WEIGHT,
     });
+    this.triggerFlow(_stableWeight);
     this.weight.OLD_WEIGHT = _newWeight;
   }
   private calculateSmoothedWeight(_actualWeight: number, _smoothedWeight: number): number {
@@ -214,12 +219,14 @@ export default class DecentScale extends BluetoothDevice {
     return this.weight.OLD_SMOOTHED_WEIGHT;
   }
 
-  public setFlow(_newWeight: number,_stableWeight: boolean = false) {
+  public triggerFlow(_stableWeight: boolean = false) {
     const actualDate = new Date();
     this.flowChange.emit({
       ACTUAL_WEIGHT: this.weight.ACTUAL_WEIGHT,
-      SMOOTHED_WEIGHT:this.weight.SMOOTHED_WEIGHT,
+      SMOOTHED_WEIGHT: this.weight.SMOOTHED_WEIGHT,
       STABLE: _stableWeight,
+      OLD_WEIGHT: this.weight.OLD_WEIGHT,
+      OLD_SMOOTHED_WEIGHT: this.weight.OLD_SMOOTHED_WEIGHT,
       DATE: actualDate
     });
   }
@@ -244,7 +251,7 @@ export default class DecentScale extends BluetoothDevice {
           }
           const weightIsStable = (uScaleData[1] === 0xCE);
           this.setWeight(newWeight,weightIsStable);
-          this.setFlow(newWeight,weightIsStable);
+
         } else if (uScaleData[1] === 0xAA && uScaleData[2] === 0x01) {
           // Tare button pressed.
           this.tareEvent.emit();

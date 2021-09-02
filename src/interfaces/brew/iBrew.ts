@@ -145,7 +145,6 @@ export interface IBrew {
     value: number,
     time: number,
   }>;
-  flow_profile_raw: Array<IBrewFlow>;
 
   // Functions
   formateDate(): string;

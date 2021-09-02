@@ -96,7 +96,7 @@ export class Brew implements IBrew {
     time: number,
     timestamp: string,
   }>;
-  public flow_profile_raw: Array<IBrewFlow>;
+
   constructor() {
 
     this.grind_size = '';
@@ -164,7 +164,6 @@ export class Brew implements IBrew {
     this.vessel_weight = 0;
 
     this.flow_profile = [];
-    this.flow_profile_raw = [];
   }
 
   public initializeByObject(brewObj: IBrew): void {

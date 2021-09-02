@@ -18,7 +18,9 @@ export class CleanupService {
 
   public async cleanupOldBrewData() {
 
-      this.uiHelper.isBeanconqurorAppReady().then(async () => {
+     /**
+      * One log of raw data was 400kb, thats to much to store right now.
+      * this.uiHelper.isBeanconqurorAppReady().then(async () => {
         this.uiLog.log(`Check if old brew data need to be updated for saving spaces`);
         const unixBefore: number = moment(new Date()).subtract(10, 'days').unix();
         const allOldBrewEntries = this.uiBrewStorage.getAllEntries().filter((_brew)=>_brew.config.unix_timestamp<=unixBefore);
@@ -33,7 +35,7 @@ export class CleanupService {
         }
         this.uiLog.log(`Updated ${updatedBrews} old brews`);
 
-      },() => {});
+      },() => {});**/
 
   }
 }

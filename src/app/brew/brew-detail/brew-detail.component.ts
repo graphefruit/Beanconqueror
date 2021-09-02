@@ -141,8 +141,4 @@ export class BrewDetailComponent implements OnInit {
     },250);
   }
 
-  public async downloadFlowProfile() {
-    await this.uiExcel.exportBrewFlowProfile(this.data.flow_profile_raw);
-  }
-
 }

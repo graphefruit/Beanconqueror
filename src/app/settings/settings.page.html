@@ -140,9 +140,13 @@
 
   <ion-card class="margin-top-20">
     <ion-card-content>
-      <ion-card-title>{{"PAGE_SETTINGS_SCALES" | translate}}</ion-card-title>
+      <ion-card-title>
+        {{"PAGE_SETTINGS_SCALES" | translate}}</ion-card-title>
       <ion-item lines="none">
-        <ion-label>Decent Scale</ion-label>
+        <ion-label><h2>Decent Scale</h2>
+        <p *ngIf="actualScaleWeight !== undefined">
+          {{actualScaleWeight}}g
+        </p></ion-label>
         <ion-button *ngIf="settings.decent_scale_id === ''" (click)="findAndConnectDecentScale()" tappable color="accent" fill="outline" >
           <ion-label>{{"CONNECT" | translate}}</ion-label>
           <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
@@ -152,7 +156,11 @@
           <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
         </ion-button>
       </ion-item>
+      <ion-label>
+        <ion-icon style="top: 3px; position: relative;" name="information-circle-outline"></ion-icon><p style="display: inline;">{{"SCALE.INFORMATION_DESCRIPTION" | translate}}</p>
+      </ion-label>
     </ion-card-content>
+
   </ion-card>
 
 <ion-card class="margin-top-20">
