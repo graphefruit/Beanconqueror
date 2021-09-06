@@ -182,7 +182,7 @@ export class SettingsPage implements OnInit {
 
   }
 
-  public async findAndConnectDecentScale() {
+  public async findAndConnectDecentScale(_retry: boolean = false) {
 
     const hasLocationPermission: boolean = await this.bleManager.hasLocationPermission();
     if (!hasLocationPermission) {
@@ -205,6 +205,7 @@ export class SettingsPage implements OnInit {
 
 
     await this.uiAlert.showLoadingSpinner();
+    this.uiAlert.setLoadingSpinnerMessage('SCALE.BLUETOOTH_SCAN_RUNNING',true);
     const scaleDeviceId: any = await this.bleManager.tryToFindDecentScale();
     if (scaleDeviceId) {
       await this.uiAlert.hideLoadingSpinner();
@@ -229,6 +230,20 @@ export class SettingsPage implements OnInit {
       this.unsubscribeSmartScale();
     }
   }
+  public async retryConnectDecentScale() {
+    await this.findAndConnectDecentScale(true);
+  }
+
+  public isDecentScaleConnected(): boolean {
+    const decentScale: DecentScale = this.bleManager.getDecentScale();
+    if (decentScale !== null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+
   public async checkWaterSection() {
     if (this.settings.show_water_section === false) {
       await this.uiAlert.showLoadingSpinner();

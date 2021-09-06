@@ -14,7 +14,7 @@ export class UIAlert {
   constructor(private readonly alertController: AlertController,
               private readonly translate: TranslateService,
               private readonly modalController: ModalController,
-              private readonly loadingController:LoadingController) {
+              private readonly loadingController: LoadingController) {
   }
 
 

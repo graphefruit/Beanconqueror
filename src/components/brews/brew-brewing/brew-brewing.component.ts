@@ -505,20 +505,17 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
             wrongFlow = true;
             break;
           }
-
         }
       }
       // Reset
       this.scaleWeightArr = [];
       if (wrongFlow === false) {
         if (this.data.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO) {
-          if (actualWeight>=this.data.brew_quantity) {
+          if (actualWeight <=0) {
             this.data.brew_quantity = this.uiHelper.toFixedIfNecessary(actualWeight,2);
           }
-
-
         } else {
-          if (actualWeight>=this.data.brew_beverage_quantity) {
+          if (actualWeight <=0) {
             // If the drip timer is showing, we can set the first drip and not doing a reference to the normal weight.
             this.data.brew_beverage_quantity = this.uiHelper.toFixedIfNecessary(actualWeight, 2);
           }
@@ -604,7 +601,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
           wrongFlow = true;
         } else if ((lastVal - firstVal) < 0.3 || (preLastVal - firstVal) < 0.3 ) {
 
-          //Threshshold, weight changes because of strange thing happening.
+          // Threshshold, weight changes because of strange thing happening.
           // Sometimes the weight changes so strange, that the last two preVal's came above
           wrongFlow = true;
         }

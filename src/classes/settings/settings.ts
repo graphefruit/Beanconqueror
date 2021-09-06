@@ -63,6 +63,7 @@ export class Settings implements ISettings {
   public show_cupping_section: boolean;
 
   public decent_scale_id: string;
+  public bluetooth_scale_stay_connected: boolean;
 
   public currency: string;
   public GET_BREW_FILTER(): IBrewPageFilter {
@@ -139,6 +140,7 @@ export class Settings implements ISettings {
     this.wake_lock = false;
     this.image_quality = 100;
     this.decent_scale_id = '';
+    this.bluetooth_scale_stay_connected = false;
 
     this.currency = 'EUR';
 

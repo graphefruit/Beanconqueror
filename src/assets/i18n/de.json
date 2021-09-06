@@ -932,7 +932,8 @@
         "UNKNOWN": "Unbekannt",
         "PPM": "ppm als CaCO3",
         "MG_L": "mg/L",
-        "MMOL_L": "mmol/L"
+        "MMOL_L": "mmol/L",
+        "DH": "°dH"
       }
     }
   },
@@ -957,6 +958,7 @@
   "CONNECT": "Verbinden",
   "DISCONNECT": "Trennen",
   "SCALE": {
+    "BLUETOOTH_SCAN_RUNNING": "Waage wird für 60 Sekunden versucht zu finden, bitte warten",
     "BLUETOOTH_NOT_ENABLED": "Bluetooth ist nicht aktiviert, bitte aktiviere dies in den Einstellungen",
     "CONNECTION_NOT_ESTABLISHED": "Waage konnte nicht gefunden oder verbunden werden",
     "CONNECTED_SUCCESSFULLY": "Waage verbunden",
@@ -978,5 +980,7 @@
     },
     "BEAN_SUCCESSFULLY_SCANNED": "Bohne erfolgreich gescannt",
     "IMAGES_GETTING_DOWNLOADED": "Bilder werden heruntergeladen"
-  }
+  },
+  "RETRY_CONNECT": "Erneut verbinden",
+  "SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE": "Waage verbunden lassen bei App minimierung/inaktivität"
 }

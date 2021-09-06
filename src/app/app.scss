@@ -624,8 +624,8 @@ ion-menu:host .menu-inner {
 
   @media (min-width: 768px) {
     ion-content {
-      --padding-start: 10%;
-      --padding-end: 10%;
+      --padding-start: 2.5%;
+      --padding-end: 2.5%;
     }
     /*.popover-actions {
 
@@ -637,19 +637,19 @@ ion-menu:host .menu-inner {
       }
     }*/
     ion-footer {
-      padding-left: 10%;
-      padding-right: 10%;
+      padding-left: 2.5%;
+      padding-right: 2.5%;
     }
 
     ion-modal.half-bottom-modal, ion-modal.bottom-modal {
       .ion-page {
-        margin-right: 10%;
-        margin-left: 10%;
+        margin-right: 2.5%;
+        margin-left: 2.5%;
       }
 
       ion-footer {
-        padding-left: 10%;
-        padding-right: 10%;
+        padding-left: 2.5%;
+        padding-right: 2.5%;
       }
 
     }

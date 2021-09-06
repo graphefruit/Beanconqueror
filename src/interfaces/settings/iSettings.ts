@@ -58,6 +58,7 @@ export interface ISettings {
   config: IConfig;
 
   decent_scale_id: string;
+  bluetooth_scale_stay_connected: boolean;
 
   currency: string;
 }

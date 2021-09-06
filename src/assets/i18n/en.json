@@ -932,7 +932,8 @@
         "UNKNOWN": "Unknown",
         "PPM": "ppm as CaCO3",
         "MG_L": "mg/L",
-        "MMOL_L": "mmol/L"
+        "MMOL_L": "mmol/L",
+        "DH": "°dH"
       }
     }
   },
@@ -957,6 +958,7 @@
   "CONNECT": "Connect",
   "DISCONNECT": "Disconnect",
   "SCALE": {
+    "BLUETOOTH_SCAN_RUNNING": "Scale will be searched for 60 seconds, please wait",
     "BLUETOOTH_NOT_ENABLED": "Bluetooth not activated, please activate to work properly",
     "CONNECTION_NOT_ESTABLISHED": "Scale not found found or connection could not be established",
     "CONNECTED_SUCCESSFULLY": "Scale connected",
@@ -978,5 +980,7 @@
     },
     "BEAN_SUCCESSFULLY_SCANNED": "Bean successfully scanned",
     "IMAGES_GETTING_DOWNLOADED": "Images getting downloaded"
-  }
+  },
+  "RETRY_CONNECT": "Retry connection",
+  "SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE": "Let scale connected even when app is minimized/inactive"
 }

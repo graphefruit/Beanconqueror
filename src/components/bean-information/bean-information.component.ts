@@ -91,7 +91,7 @@ export class BeanInformationComponent implements OnInit {
     const relatedBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(this.bean.config.uuid);
     for (const brew of relatedBrews) {
       if (brew.bean_weight_in > 0) {
-        usedWeightCount += brew.bean_weight_in
+        usedWeightCount += brew.bean_weight_in;
       } else {
         usedWeightCount += brew.grind_weight;
       }
