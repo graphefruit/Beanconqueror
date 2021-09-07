@@ -379,6 +379,12 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       this.deattachToScaleChange();
     }
   }
+  public async tareScale() {
+    const decentScale: DecentScale = this.bleManager.getDecentScale();
+    if (decentScale) {
+      await decentScale.tare();
+    }
+  }
   public async timerReset(_event) {
     const decentScale: DecentScale = this.bleManager.getDecentScale();
     if (decentScale) {
@@ -511,11 +517,11 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       this.scaleWeightArr = [];
       if (wrongFlow === false) {
         if (this.data.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO) {
-          if (actualWeight <=0) {
+          if (actualWeight> 0) {
             this.data.brew_quantity = this.uiHelper.toFixedIfNecessary(actualWeight,2);
           }
         } else {
-          if (actualWeight <=0) {
+          if (actualWeight> 0) {
             // If the drip timer is showing, we can set the first drip and not doing a reference to the normal weight.
             this.data.brew_beverage_quantity = this.uiHelper.toFixedIfNecessary(actualWeight, 2);
           }
@@ -667,8 +673,30 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
   }
 
+  public getActualScaleWeight() {
+    try {
+      const decentScale: DecentScale = this.bleManager.getDecentScale();
+      return decentScale.getWeight();
+    } catch(ex) {
+      return 0;
+    }
+
+  }
+  public getActualSmoothedWeightPerSecond(): number {
+    try {
+      const lastflow = this.flow_profile_raw[this.flow_profile_raw.length-1];
+      const smoothedWeight = lastflow.actual_smoothed_weight;
+      const oldSmoothedWeight = lastflow.old_smoothed_weight;
+      const flowValue: number = (smoothedWeight - oldSmoothedWeight) * 10;
+      this.uiHelper.toFixedIfNecessary(flowValue,2);
+    }catch(ex) {
+      return 0;
+    }
+
+  }
+
   public async downloadFlowProfile() {
-    await this.uiExcel.exportBrewFlowProfile(this.flow_profile_raw);
+    await this.uiExcel.exportBrewFlowProfile(this.flow_profile_raw,this.data.flow_profile);
   }
 
   private __loadBrew(brew: Brew,_template: boolean) {

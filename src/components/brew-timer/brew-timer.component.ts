@@ -4,6 +4,8 @@ import {ITimer} from '../../interfaces/timer/iTimer';
 import moment from 'moment';
 import {DatetimePopoverComponent} from '../../popover/datetime-popover/datetime-popover.component';
 import {ModalController} from '@ionic/angular';
+import {BleManagerService} from '../../services/bleManager/ble-manager.service';
+import DecentScale from '../../classes/devices/decentScale';
 
 
 @Component({
@@ -22,6 +24,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   @Output() public timerTicked = new EventEmitter();
   @Output() public bloomTimer = new EventEmitter();
   @Output() public dripTimer = new EventEmitter();
+  @Output() public tareScale = new EventEmitter();
 
   public displayingTime: string = moment().startOf('day').toISOString();
 
@@ -55,7 +58,19 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   }
   public timer: ITimer;
 
-  constructor(private readonly modalCtrl: ModalController) {
+  constructor(private readonly modalCtrl: ModalController, private readonly bleManager: BleManagerService) {
+  }
+
+  public smartScaleConnected() {
+    try {
+      const smartScale: DecentScale = this.bleManager.getDecentScale();
+      if (smartScale === null) {
+        return false;
+      }
+      return true;
+    }catch(ex) {
+
+    }
   }
 
   public ngOnInit(): void {
@@ -107,6 +122,10 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     }
 
     this.changeEvent();
+  }
+
+  public __tareScale(): void {
+    this.tareScale.emit();
   }
 
   public pauseTimer(): void {

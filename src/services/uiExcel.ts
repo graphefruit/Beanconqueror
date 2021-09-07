@@ -58,7 +58,11 @@ export class UIExcel {
     return wb;
   }
 
-  private generateBrewFlowProfileRaw(_flow: Array<IBrewFlow>): XLSX.WorkBook {
+  private generateBrewFlowProfileRaw(_flow: Array<IBrewFlow>, _flowProfile: Array<{
+    value: number,
+    time: number,
+    timestamp: string,
+  }>): XLSX.WorkBook {
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     const header: Array<string> = [];
     header.push('Timestamp');
@@ -82,7 +86,25 @@ export class UIExcel {
       wsData.push(wbEntry);
     }
     const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
-    XLSX.utils.book_append_sheet(wb, ws, this.translate.instant('Flow profile'));
+    XLSX.utils.book_append_sheet(wb, ws, this.translate.instant('Flow profile raw'));
+
+
+    const header_flow: Array<string> = [];
+    header.push('Timestamp');
+    header.push('Time');
+    header.push('Value');
+
+    const wsDataFlow: any[][] = [header_flow];
+    for (const entry of _flowProfile) {
+      const wbEntry: Array<any> = [
+        entry.timestamp,
+        entry.time,
+        entry.value,];
+      wsDataFlow.push(wbEntry);
+    }
+    const wsFlow: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsDataFlow);
+    XLSX.utils.book_append_sheet(wb, wsFlow, this.translate.instant('Flow profile calculated'));
+
     return wb;
   }
 
@@ -312,12 +334,16 @@ export class UIExcel {
       wsData.push(entry);
     }
     const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
-    XLSX.utils.book_append_sheet(_wb, ws,  this.translate.instant('NAV_BREWS'))
+    XLSX.utils.book_append_sheet(_wb, ws,  this.translate.instant('NAV_BREWS'));
   }
 
-  public async exportBrewFlowProfile(_flow: Array<IBrewFlow>) {
+  public async exportBrewFlowProfile(_flow: Array<IBrewFlow>,_flowProfile: Array<{
+    value: number,
+    time: number,
+    timestamp: string,
+  }>) {
     await this.uiAlert.showLoadingSpinner();
-    const wb: XLSX.WorkBook = this.generateBrewFlowProfileRaw(_flow);
+    const wb: XLSX.WorkBook = this.generateBrewFlowProfileRaw(_flow, _flowProfile);
     const filename: string = 'Beanconqueror_Flowprofile_Raw.xlsx';
     try {
       /* generate Blob */
