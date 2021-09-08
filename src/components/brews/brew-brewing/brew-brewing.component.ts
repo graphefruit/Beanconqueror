@@ -246,7 +246,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
   private getActualBluetoothWeight() {
     const decentScale: DecentScale = this.bleManager.getDecentScale();
-    return decentScale.getWeight().ACTUAL_WEIGHT;
+    return decentScale.getWeight();
   }
 
   public bluetoothScaleSetGrindWeight() {
@@ -379,7 +379,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       this.deattachToScaleChange();
     }
   }
-  public async tareScale() {
+  public async tareScale(_event) {
     const decentScale: DecentScale = this.bleManager.getDecentScale();
     if (decentScale) {
       await decentScale.tare();
@@ -688,7 +688,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       const smoothedWeight = lastflow.actual_smoothed_weight;
       const oldSmoothedWeight = lastflow.old_smoothed_weight;
       const flowValue: number = (smoothedWeight - oldSmoothedWeight) * 10;
-      this.uiHelper.toFixedIfNecessary(flowValue,2);
+      return this.uiHelper.toFixedIfNecessary(flowValue,2);
     }catch(ex) {
       return 0;
     }

@@ -183,7 +183,7 @@ export default class DecentScale extends BluetoothDevice {
   }
 
   public getWeight() {
-    return this.weight;
+    return this.weight.ACTUAL_WEIGHT;
   }
   public setWeight(_newWeight: number,_stableWeight: boolean = false) {
 
