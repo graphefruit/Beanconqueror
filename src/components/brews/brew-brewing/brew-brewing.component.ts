@@ -77,8 +77,6 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
   public vesselFocused: boolean = false;
 
 
-  private scaleWeightArr = [];
-  public scaleWeightSubscription: Subscription = undefined;
   public scaleTimerSubscription: Subscription = undefined;
   public scaleTareSubscription: Subscription = undefined;
   public scaleFlowSubscription: Subscription = undefined;
@@ -233,9 +231,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       this.bluetoothScaleConnected = true;
       this.deattachToScaleChange();
 
-      this.scaleWeightSubscription  = decentScale.weightChange.subscribe((_val) => {
-        this.__setScaleWeight(_val);
-      });
+
       this.scaleFlowSubscription = decentScale.flowChange.subscribe((_val) => {
         this.__setFlowProfile(_val);
       });
@@ -305,10 +301,6 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
   }
 
   public deattachToScaleChange() {
-    if (this.scaleWeightSubscription) {
-      this.scaleWeightSubscription.unsubscribe();
-      this.scaleWeightSubscription = undefined;
-    }
 
     if (this.scaleFlowSubscription) {
       this.scaleFlowSubscription.unsubscribe();
@@ -491,62 +483,38 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
   }
 
 
-  private __setScaleWeight(_scaleChange: any) {
-
-    const smoothedWeight: number = _scaleChange.SMOOTHED_WEIGHT;
-    const actualWeight: number = _scaleChange.ACTUAL_WEIGHT;
-    const stableWeight: boolean = _scaleChange.STABLE;
+  private __setScaleWeight(_weight: number, _wrongFlow: boolean, _weightDidntChange: boolean) {
 
 
-    if (this.scaleWeightArr.length >= 10) {
-      // We got 10 entries (means 1 second, now check what the user is doing)
-
-      let wrongFlow: boolean = false;
-      for (let i=0;i<this.scaleWeightArr.length;i++) {
-        const val: number = this.scaleWeightArr[i];
-        if (i !== 9) {
-          const nextVal = this.scaleWeightArr[i+1];
-          if (val>nextVal || val <0) {
-            // The first value is taller then the second value... somethings is wrong
-            wrongFlow = true;
-            break;
-          }
+    if (_wrongFlow === false || _weightDidntChange === true) {
+      if (this.data.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO) {
+        if (_weight > 0) {
+          this.data.brew_quantity = this.uiHelper.toFixedIfNecessary(_weight,2);
         }
-      }
-      // Reset
-      this.scaleWeightArr = [];
-      if (wrongFlow === false) {
-        if (this.data.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO) {
-          if (actualWeight> 0) {
-            this.data.brew_quantity = this.uiHelper.toFixedIfNecessary(actualWeight,2);
-          }
-        } else {
-          if (actualWeight> 0) {
-            // If the drip timer is showing, we can set the first drip and not doing a reference to the normal weight.
-            this.data.brew_beverage_quantity = this.uiHelper.toFixedIfNecessary(actualWeight, 2);
-          }
-
-        }
-        this.changeDetectorRef.detectChanges();
-
       } else {
-       // Pah. Shit here.
-      }
+        if (_weight> 0) {
+          // If the drip timer is showing, we can set the first drip and not doing a reference to the normal weight.
+          this.data.brew_beverage_quantity = this.uiHelper.toFixedIfNecessary(_weight, 2);
+        }
 
+      }
+      this.changeDetectorRef.detectChanges();
 
     } else {
-      this.scaleWeightArr.push(actualWeight);
+      // Pah. Shit here.
     }
 
 
-    if (this.data.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO && actualWeight > 0) {
+
+    if (this.data.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO && _weight > 0) {
       // If the drip timer is showing, we can set the first drip and not doing a reference to the normal weight.
       if (this.timer.showDripTimer === true && this.data.coffee_first_drip_time <=0) {
         // First drip is incoming
         if (this.uiBrewHelper.fieldVisible(this.settings.manage_parameters.coffee_first_drip_time,
           this.data.getPreparation().manage_parameters.coffee_first_drip_time,
           this.data.getPreparation().use_custom_parameters)) {
-          this.setCoffeeDripTime(undefined);
+          //The first time we set the weight, we have one sec delay, because of this do it -1 second
+          this.data.coffee_first_drip_time = this.getTime()-1;
           this.changeDetectorRef.detectChanges();
         }
       }
@@ -570,9 +538,8 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
       //Old solution: We wait for 10 entries,
       //New solution: We wait for the new second, even when their are just 8 entries.
-
-
       let wrongFlow: boolean = false;
+      let weightDidntChange: boolean = false;
       let sameFlowPerTenHerzCounter: number =0;
       for (let i=0;i<this.flowProfileArr.length;i++) {
         const val: number = this.flowProfileArr[i];
@@ -599,18 +566,40 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
         const preLastVal: number = this.flowProfileArr[this.flowProfileArr.length-2];
         const lastVal: number = this.flowProfileArr[this.flowProfileArr.length-1];
 
-        if ((lastVal - firstVal) > 100) {
-          // Threshhold reached, more then 100g in on esecond is to much
-          wrongFlow = true;
-        } else if (firstVal === lastVal){
-          // Weight didn't change at all.
-          wrongFlow = true;
-        } else if ((lastVal - firstVal) < 0.3 || (preLastVal - firstVal) < 0.3 ) {
+        if (this.data.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO) {
+          //We do some calculations on filter
+          if ((lastVal - firstVal) > 100) {
+            // Threshhold reached, more then 100g in on esecond is to much
+            wrongFlow = true;
+          } else if (firstVal === lastVal){
+            // Weight didn't change at all.
+            weightDidntChange = true;
+            wrongFlow = true;
+          }
+          else if ((lastVal - firstVal) < 0.2 || (preLastVal - firstVal) < 0.2 ) {
 
-          // Threshshold, weight changes because of strange thing happening.
-          // Sometimes the weight changes so strange, that the last two preVal's came above
-          wrongFlow = true;
+            // Threshshold, weight changes because of strange thing happening.
+            // Sometimes the weight changes so strange, that the last two preVal's came above
+            wrongFlow = true;
+            weightDidntChange = true;
+          }
+        } else {
+          if ((lastVal - firstVal) > 100) {
+            // Threshhold reached, more then 100g in on esecond is to much
+            wrongFlow = true;
+          } else if (firstVal === lastVal){
+            // Weight didn't change at all.
+            weightDidntChange = true;
+            wrongFlow = true;
+          }
+          else if ((lastVal - firstVal) < 0.1) {
+            // Threshshold, weight changes because of strange thing happening.
+            // Sometimes the weight changes so strange, that the last two preVal's came above
+            wrongFlow = true;
+            weightDidntChange = true;
+          }
         }
+
       }
 
 
@@ -632,22 +621,24 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
 
       this.pushFlowProfile(this.flowTime,weight,oldWeight,smoothedWeight,oldSmoothedWeight);
-
-      this.flowProfileChartEl.data.datasets[0].data.push(actualFlowValue);
-
-      this.flowProfileChartEl.data.labels.push(this.flowTime);
-      this.flowProfileChartEl.update();
-
       this.data.flow_profile.push({
         timestamp: this.uiHelper.getActualTimeWithMilliseconds(),
         time: this.flowTime,
         value: actualFlowValue
       });
+      this.flowProfileChartEl.data.datasets[0].data.push(actualFlowValue);
+      this.flowProfileChartEl.data.labels.push(this.flowTime);
 
+
+
+
+      this.__setScaleWeight(weight,wrongFlow,weightDidntChange);
 
       // Reset
       this.flowTime = this.getTime();
       this.flowProfileArr = [];
+
+      this.flowProfileChartEl.update();
 
     } else {
       this.flowProfileArr.push(weight);
