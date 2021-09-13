@@ -536,8 +536,8 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
     if (this.flowTime !== this.getTime()) {
 
 
-      //Old solution: We wait for 10 entries,
-      //New solution: We wait for the new second, even when their are just 8 entries.
+      // Old solution: We wait for 10 entries,
+      // New solution: We wait for the new second, even when their are just 8 entries.
       let wrongFlow: boolean = false;
       let weightDidntChange: boolean = false;
       let sameFlowPerTenHerzCounter: number =0;
@@ -563,7 +563,6 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       }
       if (wrongFlow === false) {
         const firstVal: number = this.flowProfileArr[0];
-        const preLastVal: number = this.flowProfileArr[this.flowProfileArr.length-2];
         const lastVal: number = this.flowProfileArr[this.flowProfileArr.length-1];
 
         if (this.data.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO) {
@@ -576,7 +575,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
             weightDidntChange = true;
             wrongFlow = true;
           }
-          else if ((lastVal - firstVal) < 0.2 || (preLastVal - firstVal) < 0.2 ) {
+          else if ((lastVal - firstVal) < 0.2 || (this.flowProfileArr.length > 2 &&  (this.flowProfileArr[this.flowProfileArr.length-2] - firstVal) < 0.2)) {
 
             // Threshshold, weight changes because of strange thing happening.
             // Sometimes the weight changes so strange, that the last two preVal's came above
@@ -607,10 +606,11 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       let actualFlowValue: number = 0;
 
       if (wrongFlow === false) {
-        const decentScale: DecentScale = this.bleManager.getDecentScale();
         // Overwrite to make sure to have the latest data to save.
-        smoothedWeight = decentScale.getSmoothedWeight();
-        oldSmoothedWeight = decentScale.getOldSmoothedWeight();
+        // Get the latest flow, why?? -> Because we're on a new time actually, and thats why we need to get the latest push value
+        const lastFlow = this.flow_profile_raw[this.flow_profile_raw.length -1];
+        smoothedWeight = lastFlow.actual_smoothed_weight;
+        oldSmoothedWeight = lastFlow.old_smoothed_weight;
         let flowValue: number = (smoothedWeight - oldSmoothedWeight) * 10;
         // Ignore flowing weight when we're below zero
         if (flowValue < 0) {
@@ -620,7 +620,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       }
 
 
-      this.pushFlowProfile(this.flowTime,weight,oldWeight,smoothedWeight,oldSmoothedWeight);
+
       this.data.flow_profile.push({
         timestamp: this.uiHelper.getActualTimeWithMilliseconds(),
         time: this.flowTime,
@@ -636,6 +636,9 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
       // Reset
       this.flowTime = this.getTime();
+
+      // We're over the actual flow profile, so push with the new time.
+      this.pushFlowProfile(this.flowTime,weight,oldWeight,smoothedWeight,oldSmoothedWeight);
       this.flowProfileArr = [];
 
       this.flowProfileChartEl.update();
