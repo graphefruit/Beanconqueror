@@ -550,11 +550,14 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
             // Also if the value is negative, something strange happend.
             wrongFlow = true;
             break;
-          } else if (val === nextVal) {
+          }
+          //Treat this as same level as other if and not else if.
+          if (val === nextVal) {
             sameFlowPerTenHerzCounter += 1;
-            if (sameFlowPerTenHerzCounter > 6) {
+            if (sameFlowPerTenHerzCounter >= 5  ) {
               //
               wrongFlow = true;
+              weightDidntChange = true;
               break;
             }
           }
@@ -575,8 +578,8 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
             weightDidntChange = true;
             wrongFlow = true;
           }
-          else if ((lastVal - firstVal) < 0.2 || (this.flowProfileArr.length > 2 &&  (this.flowProfileArr[this.flowProfileArr.length-2] - firstVal) < 0.2)) {
-
+          else if ((lastVal - firstVal) < 1 || (this.flowProfileArr.length > 2 &&  (this.flowProfileArr[this.flowProfileArr.length-2] - firstVal) < 1)) {
+            // Threshold for filter is bigger, 1g
             // Threshshold, weight changes because of strange thing happening.
             // Sometimes the weight changes so strange, that the last two preVal's came above
             wrongFlow = true;
