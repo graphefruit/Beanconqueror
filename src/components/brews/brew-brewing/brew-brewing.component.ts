@@ -543,25 +543,36 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       let sameFlowPerTenHerzCounter: number =0;
       for (let i=0;i<this.flowProfileArr.length;i++) {
         const val: number = this.flowProfileArr[i];
+
+        // We ignore the latest value in this check.
         if (i !== this.flowProfileArr.length-1) {
           const nextVal = this.flowProfileArr[i+1];
           if (val>nextVal || val <0) {
             // The first value is taller then the second value... somethings is wrong
             // Also if the value is negative, something strange happend.
             wrongFlow = true;
+            weightDidntChange = false;
             break;
           }
-          //Treat this as same level as other if and not else if.
+          // Treat this as same level as other if and not else if.
           if (val === nextVal) {
             sameFlowPerTenHerzCounter += 1;
             if (sameFlowPerTenHerzCounter >= 5  ) {
               //
               wrongFlow = true;
               weightDidntChange = true;
-              break;
+              // We don't get out of the loop here, why? because the next value could be negative, and we then need to say that the weight changed, else we would maybe set wrong data.
+
             }
           }
 
+        } else {
+          // This is the latest value of this time
+          if (val <0) {
+            wrongFlow = true;
+            weightDidntChange = false;
+            break;
+          }
         }
       }
       if (wrongFlow === false) {
