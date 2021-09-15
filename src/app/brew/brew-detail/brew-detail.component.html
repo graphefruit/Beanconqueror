@@ -154,8 +154,9 @@
               lines="inset">
       <ion-label>
         <h2>{{"BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}:</h2>
-        <ion-chip  *ngFor="let uuid of data.method_of_preparation_tools">{{data.getPreparationToolName(uuid)}}</ion-chip>
+        <div class="break-whitespaces"><ion-chip  *ngFor="let uuid of data.method_of_preparation_tools">{{data.getPreparationToolName(uuid)}}</ion-chip></div>
       </ion-label>
+
     </ion-item>
 
     <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.bean_weight_in,
