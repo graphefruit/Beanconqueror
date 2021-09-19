@@ -162,7 +162,7 @@ export class UIExcel {
       ];
 
 
-      wsData.push(entry)
+      wsData.push(entry);
     }
 
     const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
@@ -382,7 +382,10 @@ export class UIExcel {
   public async export() {
     await this.uiAlert.showLoadingSpinner();
     const wb: XLSX.WorkBook = this.write();
-    const filename: string = 'Beanconqueror_export.xlsx';
+
+
+    const dateTimeStr: string = this.uiHelper.formateDate(new Date().getTime() / 1000, 'DD_MM_YYYY_HH_mm_ss');
+    const filename: string = 'Beanconqueror_export_' + dateTimeStr + '.xlsx';
     try {
       /* generate Blob */
       const wbout: ArrayBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });

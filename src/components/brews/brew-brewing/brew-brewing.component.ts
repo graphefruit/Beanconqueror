@@ -1,7 +1,7 @@
 import {
   AfterViewInit,
   ChangeDetectorRef,
-  Component,
+  Component, ElementRef,
   EventEmitter,
   Input,
   OnInit,
@@ -51,6 +51,10 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
   @ViewChild('timer', {static: false}) public timer: BrewTimerComponent;
   @ViewChild('brewTemperatureTime', {static: false}) public brewTemperatureTime: TimerComponent;
   @ViewChild('brewStars', {read: NgxStarsComponent, static: false}) public brewStars: NgxStarsComponent;
+
+  @ViewChild('smartScaleWeight',{read: ElementRef}) public smartScaleWeightEl: ElementRef;
+  @ViewChild('smartScaleWeightPerSecond',{read: ElementRef}) public smartScaleWeightPerSecondEl: ElementRef;
+
   @Input() public data: Brew;
   @Input() public brewTemplate: Brew;
   @Input() public loadSpecificLastPreparation: Brew;
@@ -217,6 +221,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
     const decentScale: DecentScale = this.bleManager.getDecentScale();
     if (decentScale) {
+     this.changeDetectorRef.detectChanges();
      return true;
     }
      else {
@@ -234,6 +239,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
       this.scaleFlowSubscription = decentScale.flowChange.subscribe((_val) => {
         this.__setFlowProfile(_val);
+        this.setActualSmartInformation();
       });
 
     }
@@ -526,8 +532,8 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
   private __setFlowProfile(_scaleChange: any) {
     const weight: number = _scaleChange.ACTUAL_WEIGHT;
     const oldWeight: number = _scaleChange.OLD_WEIGHT;
-    let smoothedWeight: number = _scaleChange.SMOOTHED_WEIGHT;
-    let oldSmoothedWeight: number = _scaleChange.OLD_SMOOTHED_WEIGHT;
+    const smoothedWeight: number = _scaleChange.SMOOTHED_WEIGHT;
+    const oldSmoothedWeight: number = _scaleChange.OLD_SMOOTHED_WEIGHT;
 
 
     if (this.flowTime === undefined) {
@@ -632,9 +638,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
         // Overwrite to make sure to have the latest data to save.
         // Get the latest flow, why?? -> Because we're on a new time actually, and thats why we need to get the latest push value
         const lastFlow = this.flow_profile_raw[this.flow_profile_raw.length -1];
-        smoothedWeight = lastFlow.actual_smoothed_weight;
-        oldSmoothedWeight = lastFlow.old_smoothed_weight;
-        let flowValue: number = (smoothedWeight - oldSmoothedWeight) * 10;
+        let flowValue: number = (lastFlow.actual_smoothed_weight -  lastFlow.old_smoothed_weight) * 10;
         // Ignore flowing weight when we're below zero
         if (flowValue < 0) {
           flowValue = 0;
@@ -659,17 +663,14 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
       // Reset
       this.flowTime = this.getTime();
-
-      // We're over the actual flow profile, so push with the new time.
-      this.pushFlowProfile(this.flowTime,weight,oldWeight,smoothedWeight,oldSmoothedWeight);
+      this.flowProfileChartEl.update();
       this.flowProfileArr = [];
 
-      this.flowProfileChartEl.update();
-
-    } else {
-      this.flowProfileArr.push(weight);
-      this.pushFlowProfile(this.flowTime,weight,oldWeight,smoothedWeight,oldSmoothedWeight);
     }
+
+    this.flowProfileArr.push(weight);
+    this.pushFlowProfile(this.flowTime,weight,oldWeight,smoothedWeight,oldSmoothedWeight);
+
 
   }
   private pushFlowProfile(_brewTime: number,
@@ -688,6 +689,17 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
     brewFlow.old_smoothed_weight = _oldSmoothedWeight;
     this.flow_profile_raw.push(brewFlow);
 
+  }
+
+  public setActualSmartInformation() {
+    try {
+      const weightEl =  this.smartScaleWeightEl.nativeElement;
+      const secondEl =  this.smartScaleWeightPerSecondEl.nativeElement;
+      weightEl.textContent = this.getActualScaleWeight() + ' g';
+      secondEl.textContent = this.getActualSmoothedWeightPerSecond() + ' g/s';
+    }catch(ex) {
+
+    }
   }
 
   public getActualScaleWeight() {

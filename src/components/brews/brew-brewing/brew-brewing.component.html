@@ -262,17 +262,33 @@
                       data.getPreparation().use_custom_parameters)">
     <ion-label  style="position: relative;padding-bottom: 10px;" position="stacked">
       <span style="position: relative; top: -5px;">{{"BREW_DATA_FLOW_PROFILE" | translate}}</span>
-      <ion-chip  outline="true" style="height: 30px; margin-bottom: 15px;">
-      <ion-label *ngIf="flow_profile_raw.length <= 0">? g</ion-label>
-      <ion-label *ngIf="flow_profile_raw.length > 0">{{getActualScaleWeight()}} g</ion-label>
-    </ion-chip>
-      <ion-chip outline="true" style="height: 30px; margin-bottom: 15px;">
-        <ion-label *ngIf="flow_profile_raw.length <= 0">? g/s</ion-label>
-        <ion-label *ngIf="flow_profile_raw.length > 0">{{getActualSmoothedWeightPerSecond()}} g/s</ion-label>
-      </ion-chip></ion-label>
+
+
+    </ion-label>
     <ion-button style="margin-top: 18px;" [disabled]="flow_profile_raw.length <= 0" (click)="downloadFlowProfile()" tappable fill="clear" slot="end">
       <ion-icon name="download" slot="icon-only"></ion-icon>
     </ion-button>
+  </ion-item>
+  <ion-item style="margin-top:-15px;" lines="none" [hidden]="smartScaleConnected() !== true || (isEdit === true && this.data?.flow_profile?.length > 0)"
+            [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
+                      data.getPreparation().brew_order.while.brew_time,
+                      data.getPreparation().use_custom_parameters)">
+    <ion-grid class="ion-no-padding">
+      <ion-row>
+        <ion-col size="4">
+
+              <h2 *ngIf="flow_profile_raw.length <= 0">? g</h2>
+              <h2 *ngIf="flow_profile_raw.length > 0" #smartScaleWeight>0 g</h2>
+
+          </ion-col>
+        <ion-col size="6">
+
+            <h2 *ngIf="flow_profile_raw.length <= 0">? g/s</h2>
+            <h2 *ngIf="flow_profile_raw.length > 0" #smartScaleWeightPerSecond>0 g/s</h2>
+
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   </ion-item>
 
   <ion-item [hidden]="smartScaleConnected() !== true || (isEdit === true && this.data?.flow_profile?.length > 0)"
