@@ -157,11 +157,14 @@ export class BleManagerService {
       }
     });
   }
-  public disconnect(deviceId): Promise<boolean>{
+  public disconnect(deviceId: string, show_toast: boolean = true): Promise<boolean>{
     return new Promise<boolean>((resolve, reject) => {
       ble.disconnect(deviceId, () => {
         this.decentScale = null;
-        this.uiToast.showInfoToastBottom('SCALE.DISCONNECTED_SUCCESSFULLY');
+        if (show_toast) {
+          this.uiToast.showInfoToastBottom('SCALE.DISCONNECTED_SUCCESSFULLY');
+        }
+
         resolve(true);
       }, () => {
         resolve(false);

@@ -438,7 +438,8 @@ export class AppComponent implements AfterViewInit {
       if (settings.bluetooth_scale_stay_connected === false) {
         const decent_scale_id: string = settings.decent_scale_id;
         if (decent_scale_id !== undefined && decent_scale_id !== '') {
-          this.bleManager.disconnect(settings.decent_scale_id);
+          // Don't show message on device pause.
+          this.bleManager.disconnect(settings.decent_scale_id,false);
         }
       }
     });

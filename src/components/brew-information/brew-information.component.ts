@@ -22,6 +22,7 @@ import {Settings} from '../../classes/settings/settings';
 import {ShareService} from '../../services/shareService/share-service.service';
 import {TranslateService} from '@ngx-translate/core';
 import {BrewTrackingService} from '../../services/brewTracking/brew-tracking.service';
+import {UIHealthKit} from '../../services/uiHealthKit';
 
 @Component({
   selector: 'brew-information',
@@ -57,7 +58,8 @@ export class BrewInformationComponent implements OnInit {
               private readonly uiHelper: UIHelper,
               private readonly shareService: ShareService,
               private readonly translate: TranslateService,
-              private readonly brewTracking: BrewTrackingService) {
+              private readonly brewTracking: BrewTrackingService,
+              private readonly uiHealthKit: UIHealthKit) {
 
   }
 
@@ -169,6 +171,10 @@ export class BrewInformationComponent implements OnInit {
       await this.uiBrewStorage.add(repeatBrew);
 
       this.brewTracking.trackBrew(repeatBrew);
+      if (this.settings.track_caffeine_consumption && repeatBrew.grind_weight > 0 && repeatBrew.getBean().decaffeinated === false) {
+        this.uiHealthKit.trackCaffeineConsumption(repeatBrew.getCaffeineAmount(),new Date());
+      }
+
       this.uiToast.showInfoToast('TOAST_BREW_REPEATED_SUCCESSFULLY');
 
       // If fast repeat is used, also recheck if bean package is consumed

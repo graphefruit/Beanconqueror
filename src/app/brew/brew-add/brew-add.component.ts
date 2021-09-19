@@ -158,7 +158,7 @@ export class BrewAddComponent implements OnInit {
 
 
 
-      if (this.settings.track_caffeine_consumption && this.data.grind_weight > 0) {
+      if (this.settings.track_caffeine_consumption && this.data.grind_weight > 0 && this.data.getBean().decaffeinated === false) {
         this.uiHealthKit.trackCaffeineConsumption(this.data.getCaffeineAmount(), moment(this.brewBrewing.customCreationDate).toDate());
       }
       if (!this.hide_toast_message) {

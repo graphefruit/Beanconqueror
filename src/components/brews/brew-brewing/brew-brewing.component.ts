@@ -541,6 +541,8 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       let wrongFlow: boolean = false;
       let weightDidntChange: boolean = false;
       let sameFlowPerTenHerzCounter: number =0;
+
+      let flowHasSomeMinusValueInIt: boolean = false;
       for (let i=0;i<this.flowProfileArr.length;i++) {
         const val: number = this.flowProfileArr[i];
 
@@ -574,6 +576,13 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
             break;
           }
         }
+
+        if (val<0) {
+          flowHasSomeMinusValueInIt = true;
+        }
+      }
+      if (weightDidntChange === true && flowHasSomeMinusValueInIt === true ) {
+        weightDidntChange = false;
       }
       if (wrongFlow === false) {
         const firstVal: number = this.flowProfileArr[0];
