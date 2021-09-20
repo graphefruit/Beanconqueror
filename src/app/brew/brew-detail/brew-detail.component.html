@@ -62,7 +62,8 @@
 
                 [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.method_of_preparation,
                       data.getPreparation().brew_order.before.method_of_preparation,
-                      data.getPreparation().use_custom_parameters)">
+                      data.getPreparation().use_custom_parameters)"
+                detail="true" (click)="detailPreparation()">
       <ion-label>
         <h2>{{"BREW_DATA_PREPARATION_METHOD" | translate}}:</h2>
         <h3>{{data.getPreparation().name}}</h3>
@@ -74,7 +75,8 @@
 
                 [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.bean_type,
                       data.getPreparation().brew_order.before.bean_type,
-                      data.getPreparation().use_custom_parameters)">
+                      data.getPreparation().use_custom_parameters)"
+      detail="true" (click)="detailBean()">
       <ion-label>
         <h2>{{"BREW_DATA_BEAN_TYPE" | translate}}:</h2>
         <h3>{{data.getBean().name}}</h3>
@@ -102,7 +104,8 @@
 
                 [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.mill,
                       data.getPreparation().brew_order.before.mill,
-                      data.getPreparation().use_custom_parameters)">
+                      data.getPreparation().use_custom_parameters)"
+                detail="true" (click)="detailMill()">
       <ion-label>
         <h2>{{"BREW_DATA_MILL" | translate}}:</h2>
         <h3>{{data.getMill().name}}</h3>

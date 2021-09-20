@@ -221,7 +221,6 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
     const decentScale: DecentScale = this.bleManager.getDecentScale();
     if (decentScale) {
-     this.changeDetectorRef.detectChanges();
      return true;
     }
      else {

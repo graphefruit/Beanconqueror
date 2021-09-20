@@ -12,6 +12,9 @@ import {Chart} from 'chart.js';
 import BREW_TRACKING from '../../../data/tracking/brewTracking';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 import {UIExcel} from '../../../services/uiExcel';
+import {UIBeanHelper} from '../../../services/uiBeanHelper';
+import {UIPreparationHelper} from '../../../services/uiPreparationHelper';
+import {UIMillHelper} from '../../../services/uiMillHelper';
 
 @Component({
   selector: 'brew-detail',
@@ -37,7 +40,10 @@ export class BrewDetailComponent implements OnInit {
                private readonly uiSettingsStorage: UISettingsStorage,
                private readonly uiBrewHelper: UIBrewHelper,
                private readonly uiAnalytics: UIAnalytics,
-               private readonly uiExcel: UIExcel) {
+               private readonly uiExcel: UIExcel,
+               private readonly uiBeanHelper: UIBeanHelper,
+               private readonly uiPreparationHelper: UIPreparationHelper,
+               private readonly uiMillHelper: UIMillHelper) {
 
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -61,6 +67,16 @@ export class BrewDetailComponent implements OnInit {
     },150);
 
     this.loaded = true;
+  }
+
+  public async detailBean() {
+    await this.uiBeanHelper.detailBean(this.data.getBean());
+  }
+  public async detailPreparation() {
+    await this.uiPreparationHelper.detailPreparation(this.data.getPreparation());
+  }
+  public async detailMill() {
+    await this.uiMillHelper.detailMill(this.data.getMill());
   }
 
 
