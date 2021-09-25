@@ -55,6 +55,7 @@
   "PAGE_SETTINGS_LANGUAGE": "Language Settings",
   "PAGE_SETTINGS_LANGUAGE_GERMAN": "German",
   "PAGE_SETTINGS_LANGUAGE_ENGLISH": "English",
+  "PAGE_SETTINGS_LANGUAGE_SPANISH": "Spanish",
   "PAGE_SETTINGS_GENERAL_SETTINGS": "General Settings",
   "PAGE_SETTINGS_TRANSFER": "Data Transfer",
   "PAGE_SETTINGS_PRESET_LAST_BREW": "Preset Values?",
@@ -308,7 +309,7 @@
   "PREPARATION_TYPE": "Preparation type",
   "PREPARATION_TYPE_NAME": "Name",
   "ARCHIVED": "Archived",
-   "PAGE_SETTINGS_SHOW_ARCHIVED_PREPARATIONS": "Show archived preparation methods",
+  "PAGE_SETTINGS_SHOW_ARCHIVED_PREPARATIONS": "Show archived preparation methods",
   "PAGE_SETTINGS_SHOW_ARCHIVED_MILLS": "Show archived preparation grinders",
   "PAGE_MILL_LIST_NO_ARCHIVED_MILL_EXISTING": "No grinders archived yet!",
   "PAGE_PREPARATION_LIST_NO_ARCHIVED_PREPARATION_EXISTING": "You did not yet archive any preparation.",
@@ -445,7 +446,6 @@
   "PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION": "Activate a new menu entry - with this you can repeat the brew directly.",
   "PAGE_SETTINGS_TRACK_BREW_COORDINATES_DESCRIPTION": "Save coordinates to each brew.",
   "PAGE_SETTINGS_TRACK_CAFFEINE_CONSUMPTION_DESCRIPTION": "Save consumed caffeeine amount",
-
   "UPDATE_TITLE": "Whats new?",
   "NEXT": "Next",
   "UPDATE_TEXT_TITLE_TITLE": {
@@ -716,10 +716,10 @@
   "TOAST_ROASTING_MACHINE_EDITED_SUCCESSFULLY": "Roasting machine edited",
   "TOAST_ROASTING_MACHINE_ARCHIVED_SUCCESSFULLY": "Roaster archived",
   "DELETE_ROASTING_MACHINE_QUESTION": "Delete roaster? All referenced roasted beans will be updated and will not be deleted",
-  "DELETE_WATER_QUESTION": "Delete water? All referenced brews will be updated and will not be deleted",
   "TOAST_ROASTING_MACHINE_DELETED_SUCCESSFULLY": "Roaster deleted",
   "EDIT_ROASTING_MACHINE": "Edit",
   "DETAIL_ROASTING_MACHINE":"Roaster details",
+  "DELETE_WATER_QUESTION": "Delete water? All referenced brews will be updated and will not be deleted",
   "ROASTING_MACHINE": {
     "PLACE_HOLDER": {
       "NAME": "Add a name",
@@ -907,7 +907,6 @@
     "YOU_GOT_NO_WATER": "You didn't add any water yet",
     "CATEGORY_INFORMATION": "Water information",
     "CATEGORY_GENERAL": "General",
-    "UNITS": "Units",
     "WATER_BOTTLE_EXPLANATION": "Water bottles most often report concentration in units of ppm = mg/L",
     "USED_TIMES": "Used times",
     "AMOUNT": "Used quantity",
@@ -918,6 +917,7 @@
       "MAGNESIUM":"Magnesium (Mg)",
       "SODIUM": "Sodium (Na)",
       "TDS":"Total dissolved solids (TDS)",
+      "UNITS": "Units",
       "PLACE_HOLDER": {
         "GENERAL_HARDNESS":"General hardness",
         "TOTAL_ALKALINITY":"Total alkalinity",
@@ -966,7 +966,7 @@
     "DISCONNECTED_UNPLANNED": "Scale disconnected unplanned",
     "REQUEST_PERMISSION": {
       "LOCATION": "To find bluetooth scales, the app needs access to the location.",
-      "BLUETOOTH":  "To find bluetooth scales, the app needs access to bluetooth"
+      "BLUETOOTH": "To find bluetooth scales, the app needs access to bluetooth"
     },
     "INFORMATION_DESCRIPTION": "The rawdata of flow profiles won't be saved (to big data), but you have the possibility to save them on the on the individual brew page."
   },
