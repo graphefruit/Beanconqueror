@@ -645,6 +645,11 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
         actualFlowValue = flowValue;
       }
 
+      if (actualFlowValue >= 70) {
+        // Something went broken, more then 70 flow seems like miserable.
+        actualFlowValue = 0;
+      }
+
 
 
       this.data.flow_profile.push({

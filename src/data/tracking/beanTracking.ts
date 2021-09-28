@@ -14,5 +14,4 @@ export default {
     PHOTO_VIEW: 'PHOTO_VIEW',
     SHARE: 'SHARE'
   }
-
 }

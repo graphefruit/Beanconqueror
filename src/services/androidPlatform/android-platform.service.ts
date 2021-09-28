@@ -50,9 +50,9 @@ export class AndroidPlatformService {
     this.uiStorage.export().then((_data) => {
 
       this.uiHelper.exportJSON('Beanconqueror_automatic_export_' + this.getAutomatedBackupFilename() + '.json', JSON.stringify(_data)).then(async (_fileEntry: FileEntry) => {
-        this.uiLog.log('Android-Platform - JSON file successfully saved')
+        this.uiLog.log('Android-Platform - JSON file successfully saved');
       }, () => {
-        this.uiLog.error('Android-Platform - JSON file could not be saved')
+        this.uiLog.error('Android-Platform - JSON file could not be saved');
       });
     });
   }

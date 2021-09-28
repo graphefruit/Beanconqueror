@@ -19,6 +19,7 @@ import {SocialSharing} from '@ionic-native/social-sharing/ngx';
 import {UIFileHelper} from './uiFileHelper';
 import {UIMillStorage} from './uiMillStorage';
 import {IBrewFlow} from '../interfaces/brew/iBrewFlow';
+import moment from 'moment';
 
 
 
@@ -344,7 +345,10 @@ export class UIExcel {
   }>) {
     await this.uiAlert.showLoadingSpinner();
     const wb: XLSX.WorkBook = this.generateBrewFlowProfileRaw(_flow, _flowProfile);
-    const filename: string = 'Beanconqueror_Flowprofile_Raw.xlsx';
+
+
+
+    const filename: string = 'Beanconqueror_Flowprofile_Raw_' + moment().format('HH_MM_SSSS_DD_MM_YYYY').toString() + '.xlsx';
     try {
       /* generate Blob */
       const wbout: ArrayBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });

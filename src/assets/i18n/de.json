@@ -846,7 +846,7 @@
   "CUPPING_82": "Marshallow",
   "CUPPING_83": "Zuckerrohr",
   "CUPPING_84": "Brauner Zucker",
-  "CUPPING_85": "Karamel",
+  "CUPPING_85": "Karamell",
   "CUPPING_86": "Ahornsirup",
   "CUPPING_87": "Melasse",
   "CUPPING_88": "Cola",
@@ -897,7 +897,7 @@
   "CUPPING_133": "Blumig",
   "CUPPING_134": "Hibiskus",
   "CUPPING_135": "Rose",
-  "CUPPING_136": "Lavende",
+  "CUPPING_136": "Lavendel",
   "CUPPING_137": "Magnolie",
   "CUPPING_138": "Jasmine",
   "CUPPING_139": "Orangenblüte",
@@ -983,5 +983,7 @@
     "IMAGES_GETTING_DOWNLOADED": "Bilder werden heruntergeladen"
   },
   "RETRY_CONNECT": "Erneut verbinden",
-  "SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE": "Waage verbunden lassen bei App minimierung/inaktivität"
+  "SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE": "Waage verbunden lassen bei App minimierung/inaktivität",
+  "BREW_FLOW_WEIGHT": "Gewicht",
+  "BREW_FLOW_WEIGHT_PER_SECOND": "Fluss"
 }

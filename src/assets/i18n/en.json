@@ -982,5 +982,7 @@
     "IMAGES_GETTING_DOWNLOADED": "Images getting downloaded"
   },
   "RETRY_CONNECT": "Retry connection",
-  "SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE": "Let scale connected even when app is minimized/inactive"
+  "SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE": "Let scale connected even when app is minimized/inactive",
+  "BREW_FLOW_WEIGHT": "Weight",
+  "BREW_FLOW_WEIGHT_PER_SECOND": "Flow"
 }
