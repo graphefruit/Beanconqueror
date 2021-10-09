@@ -89,7 +89,7 @@ export class BeanGeneralInformationComponent implements OnInit {
     this.roasterFocused = true;
   }
 
-  public roasterSelected(selected: string) :void {
+  public roasterSelected(selected: string): void {
     this.data.roaster = selected;
     this.roasterResults = [];
     this.roasterResultsAvailable = false;
@@ -140,7 +140,7 @@ export class BeanGeneralInformationComponent implements OnInit {
   }
   public beanMixChanged() {
     if (this.data.beanMix !== BEAN_MIX_ENUM.BLEND) {
-      const beanInfo:IBeanInformation = this.data.bean_information[0];
+      const beanInfo: IBeanInformation = this.data.bean_information[0];
       this.data.bean_information = [];
       this.data.bean_information.push(beanInfo);
     }
