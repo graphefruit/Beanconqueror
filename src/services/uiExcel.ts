@@ -348,7 +348,7 @@ export class UIExcel {
 
 
 
-    const filename: string = 'Beanconqueror_Flowprofile_Raw_' + moment().format('HH_MM_SSSS_DD_MM_YYYY').toString() + '.xlsx';
+    const filename: string = 'Beanconqueror_Flowprofile_Raw_' + moment().format('HH_mm_ss_DD_MM_YYYY').toString() + '.xlsx';
     try {
       /* generate Blob */
       const wbout: ArrayBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });

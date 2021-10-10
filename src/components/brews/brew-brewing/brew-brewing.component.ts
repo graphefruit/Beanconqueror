@@ -603,8 +603,8 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
             weightDidntChange = true;
             wrongFlow = true;
           }
-          else if ((lastVal - firstVal) < 1 || (this.flowProfileArr.length > 2 &&  (this.flowProfileArr[this.flowProfileArr.length-2] - firstVal) < 1)) {
-            // Threshold for filter is bigger, 1g
+          else if ((lastVal - firstVal) < 0.5 || (this.flowProfileArr.length > 2 &&  (this.flowProfileArr[this.flowProfileArr.length-2] - firstVal) < 0.5)) {
+            // Threshold for filter is bigger, 0.5g
             // Threshshold, weight changes because of strange thing happening.
             // Sometimes the weight changes so strange, that the last two preVal's came above
             wrongFlow = true;
@@ -659,8 +659,6 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       });
       this.flowProfileChartEl.data.datasets[0].data.push(actualFlowValue);
       this.flowProfileChartEl.data.labels.push(this.flowTime);
-
-
 
 
       this.__setScaleWeight(weight,wrongFlow,weightDidntChange);
