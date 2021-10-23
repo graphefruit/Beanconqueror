@@ -62,8 +62,9 @@ export class BeansAddComponent implements OnInit {
       if (this.server_bean.attachment.length > 0) {
         await this.uiAlert.showLoadingSpinner();
         this.uiAlert.setLoadingSpinnerMessage('QR.IMAGES_GETTING_DOWNLOADED');
-        const newMapper = new BeanMapper();
-        await newMapper.downloadAndAttachAttachments(this.data, this.server_bean.attachment);
+        // We don't support attachments yet.
+        // const newMapper = new BeanMapper();
+        // await newMapper.downloadAndAttachAttachments(this.data, this.server_bean.attachment);
         await this.uiAlert.hideLoadingSpinner();
       }
 
