@@ -82,9 +82,6 @@ npm install @ionic-native/app-version
 ##MultiDex support on Android
 ionic cordova plugin add cordova-plugin-enable-multidex
 
-##FirebaseX
-ionic cordova plugin add cordova-plugin-firebasex --variable FIREBASE_ANALYTICS_COLLECTION_ENABLED=false --variable FIREBASE_PERFORMANCE_COLLECTION_ENABLED=false --variable FIREBASE_CRASHLYTICS_COLLECTION_ENABLED=false
-npm install @ionic-native/firebase-x
 
 ###https://github.com/hughjdavey/ngx-stars
 npm install --save ngx-stars
@@ -101,6 +98,7 @@ npm install @ionic-native/geolocation
 ######This plugin is not used with ionic wrapper, because its not working correctly
 ionic cordova plugin add cordova-plugin-apprate
 npm install @ionic-native/app-rate
+(Apprate needs. cordova-plugin-nativestorage)
 
 ##Globaly installed:
 ######Plugin checker
@@ -116,3 +114,46 @@ npm install @ionic-native/insomnia
 
 
 ##https://www.npmjs.com/package/ag-virtual-scroll
+## We need angular 9 compatibility thats we we need to import 1.3.0
+npm install ag-virtual-scroll@1.3.0
+
+##QRCode Scanner
+Prio 1: https://github.com/fttx/phonegap-plugin-barcodescanner
+ionic cordova plugin add https://github.com/fttx/phonegap-plugin-barcodescanner.git --save-dev
+(Next possible fallback: https://openbase.com/js/@red-mobile/cordova-plugin-barcodescanner)
+
+
+##Custom URL Scheme:
+// ionic cordova plugin add cordova-plugin-customurlscheme --variable URL_SCHEME=beanconqueror
+
+
+ionic cordova plugin add ionic-plugin-deeplinks --variable URL_SCHEME=beanconqueror --variable DEEPLINK_SCHEME=https --variable DEEPLINK_HOST=beanconqueror.com --variable ANDROID_PATH_PREFIX=/app/roaster/bean
+npm install @ionic-native/deeplinks
+
+
+https://search.google.com/search-console/not-verified?original_url=/search-console/ownership&original_resource_id
+
+##Ionic Cordova Plugin Adapter X
+ionic cordova plugin add cordova-plugin-androidx-adapter
+ionic cordova plugin add cordova-plugin-androidx
+
+
+##Bluetooth
+We combine both plugins, because the other plugins asks all of the permissions.
+
+//1. ionic cordova plugin add cordova-plugin-bluetoothle
+//2. npm install @ionic-native/bluetooth-le
+3. https://github.com/don/cordova-plugin-ble-central
+-> ionic cordova plugin add cordova-plugin-ble-central --variable BLUETOOTH_USAGE_DESCRIPTION="Bluetooth access needed to connect smartscales" --variable IOS_INIT_ON_LOAD=false
+
+
+
+##File download
+ionic cordova plugin add https://github.com/dpa99c/cordova-plugin-file-transfer
+(We cant use the other plugin cause of compile issues)
+npm install @ionic-native/file-transfer
+
+
+
+##Currency
+https://github.com/bengourley/currency-symbol-map

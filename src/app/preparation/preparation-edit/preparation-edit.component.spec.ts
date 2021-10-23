@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {PreparationEditComponent} from './preparation-edit.component';
 import {TranslateModule} from '@ngx-translate/core';
@@ -13,14 +13,14 @@ import {File} from '@ionic-native/file/ngx';
 import {Camera} from '@ionic-native/camera/ngx';
 import {ImagePicker} from '@ionic-native/image-picker/ngx';
 import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
-import {FirebaseX} from '@ionic-native/firebase-x/ngx';
+;
 import {Router} from '@angular/router';
 
 describe('PreparationEditComponent', () => {
   let component: PreparationEditComponent;
   let fixture: ComponentFixture<PreparationEditComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [TranslateModule.forRoot(), FormsModule, IonicStorageModule.forRoot(), CommonModule, IonicModule],
       declarations: [PreparationEditComponent, KeysPipe],
@@ -33,7 +33,7 @@ describe('PreparationEditComponent', () => {
         {provide: Camera},
         {provide: ImagePicker},
         {provide: AndroidPermissions},
-        {provide: FirebaseX},
+
         {provide: Router}
       ],
     })

@@ -4,7 +4,8 @@ import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 import {Preparation} from '../../../classes/preparation/preparation';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
-
+import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
+import SETTINGS_TRACKING from '../../../data/tracking/settingsTracking';
 @Component({
   selector: 'sort-custom-parameter',
   templateUrl: './sort-custom-parameter.component.html',
@@ -32,20 +33,20 @@ export class SortCustomParameterComponent implements OnInit {
     this.__initializeData();
   }
 
-  public save(): void {
+  public async save() {
     this.changeDetectorRef.detectChanges();
     if (this.data instanceof Settings) {
-      this.uiSettingsStorage.saveSettings(this.data as Settings);
+      await this.uiSettingsStorage.saveSettings(this.data as Settings);
     } else {
-      this.uiPreparationStorage.update(this.data as Preparation);
+      await this.uiPreparationStorage.update(this.data as Preparation);
     }
   }
 
   public reorder_brew(ev: any, _type: string) {
     if (this.data instanceof Settings) {
-      this.uiAnalytics.trackEvent('SETTINGS', 'REORDER_BREW');
+      this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.REORDER_BREW);
     } else {
-      this.uiAnalytics.trackEvent('PREPARATION', 'REORDER_BREW');
+      this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.REORDER_BREW);
     }
 
     // The `from` and `to` properties contain the index of the item

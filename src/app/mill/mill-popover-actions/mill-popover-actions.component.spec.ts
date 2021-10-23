@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {IonicModule} from '@ionic/angular';
 
 import {MillPopoverActionsComponent} from './mill-popover-actions.component';
@@ -7,7 +7,7 @@ describe('MillPopoverActionsComponent', () => {
   let component: MillPopoverActionsComponent;
   let fixture: ComponentFixture<MillPopoverActionsComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [MillPopoverActionsComponent],
       imports: [IonicModule.forRoot()]

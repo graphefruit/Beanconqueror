@@ -16,7 +16,7 @@ import {UIMillStorage} from '../../services/uiMillStorage';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {UIAnalytics} from '../../services/uiAnalytics';
 import {UIImage} from '../../services/uiImage';
-
+import MILL_TRACKING from '../../data/tracking/millTracking';
 @Component({
   selector: 'mill-information-card',
   templateUrl: './mill-information-card.component.html',
@@ -96,22 +96,24 @@ export class MillInformationCardComponent implements OnInit {
   }
 
   private async viewPhotos() {
+    this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.PHOTO_VIEW);
     await this.uiImage.viewPhotos(this.mill);
   }
 
 
-  public async internalMillAction(action: MILL_ACTION): Promise<void> {
+  public async internalMillAction(action: MILL_ACTION) {
     switch (action) {
       case MILL_ACTION.EDIT:
         await this.edit();
         break;
       case MILL_ACTION.DELETE:
+
         try {
           await this.delete();
         } catch (ex) {
 
         }
-
+        await this.uiAlert.hideLoadingSpinner();
         break;
       case MILL_ACTION.ARCHIVE:
         await this.archive();
@@ -127,10 +129,10 @@ export class MillInformationCardComponent implements OnInit {
     }
   }
 
-  private resetSettings() {
+  private async resetSettings() {
     const settings: Settings = this.uiSettingsStorage.getSettings();
     settings.resetFilter();
-    this.uiSettingsStorage.saveSettings(settings);
+    await this.uiSettingsStorage.saveSettings(settings);
   }
 
   public async longPressEditMill(event) {
@@ -140,36 +142,28 @@ export class MillInformationCardComponent implements OnInit {
     this.millAction.emit([MILL_ACTION.EDIT, this.mill]);
   }
   public async edit() {
-
-    const editModal = await this.modalController.create({
-      component: MillEditComponent,
-      componentProps: {mill : this.mill},
-      id:'mill-edit',
-    });
-    await editModal.present();
-    await editModal.onWillDismiss();
+    await this.uiMillHelper.editMill(this.mill);
   }
 
   public async detail() {
-    const modal = await this.modalController.create({component: MillDetailComponent, id:'mill-detail', componentProps: {mill: this.mill}});
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiMillHelper.detailMill(this.mill);
   }
 
-  public delete(): void {
-    this.uiAlert.showConfirm('DELETE_MILL_QUESTION', 'SURE_QUESTION', true).then(() => {
+  public async delete() {
+    await this.uiAlert.showConfirm('DELETE_MILL_QUESTION', 'SURE_QUESTION', true).then(async () => {
+        await this.uiAlert.showLoadingSpinner();
         // Yes
-        this.uiAnalytics.trackEvent('MILL', 'DELETE');
-        this.__deleteMill();
+        this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.DELETE);
+        await this.__deleteMill();
         this.uiToast.showInfoToast('TOAST_MILL_DELETED_SUCCESSFULLY');
-        this.resetSettings();
+        await this.resetSettings();
       },
       () => {
         // No
       });
 
   }
-  private __deleteMill(): void {
+  private async __deleteMill() {
     const brews: Array<Brew> =  this.uiBrewStorage.getAllEntries();
     const deletingBrewIndex: Array<number> = [];
     for (let i = 0; i < brews.length; i++) {
@@ -178,27 +172,29 @@ export class MillInformationCardComponent implements OnInit {
       }
     }
     for (let i = deletingBrewIndex.length; i--;) {
-      this.uiBrewStorage.removeByUUID(brews[deletingBrewIndex[i]].config.uuid);
+      await this.uiBrewStorage.removeByUUID(brews[deletingBrewIndex[i]].config.uuid);
     }
 
-    this.uiMillStorage.removeByObject(this.mill);
+    await this.uiMillStorage.removeByObject(this.mill);
   }
 
 
-  public archive() {
+  public async archive() {
+    this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.ARCHIVE);
     this.mill.finished = true;
-    this.uiMillStorage.update(this.mill);
+    await this.uiMillStorage.update(this.mill);
     this.uiToast.showInfoToast('TOAST_MILL_ARCHIVED_SUCCESSFULLY');
-    this.resetSettings();
+    await this.resetSettings();
   }
 
   public async showMillActions(event): Promise<void> {
     event.stopPropagation();
     event.stopImmediatePropagation();
+    this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.POPOVER_ACTIONS);
     const popover = await this.modalController.create({
       component: MillPopoverActionsComponent,
       componentProps: {mill: this.mill},
-      id:'mill-popover-actions',
+      id: MillPopoverActionsComponent.COMPONENT_ID,
       cssClass: 'popover-actions',
     });
     await popover.present();

@@ -28,28 +28,23 @@
     <ion-icon name="beanconqueror-welcome-start-last-page"></ion-icon>
   </div>
 </ion-content>
-<ion-footer class="ion-no-border">
+<!--We just add 50% height for first slide of analytics, else the image wouldn't be displayed -->
+<ion-footer  class="ion-no-border" [style.maxHeight]="slide==1 ? '50%' : 'inherit'" style="overflow:auto;">
     <ion-slides #slider [options]="slideOpts" pager="true">
-      <ion-slide>
-        <div class="ion-padding-top ion-margin-horizontal">
+      <ion-slide >
+        <!--Hide the long text, because else the slide would have a scrollable context -->
+        <div [hidden]="slide!=1"  class="ion-padding-top ion-margin-horizontal">
           <div class="welcome-content-text">
             <ion-title>
-              {{"WELCOME_PAGE_ACTIVATE_GOOGLE_ANALYTICS_TITLE" | translate}}
+              {{"WELCOME_PAGE_ACTIVATE_ANALYTICS_TITLE" | translate}}
             </ion-title>
-            <div>
-              {{"WELCOME_PAGE_ACTIVATE_GOOGLE_ANALYTICS_DESCRIPTION" | translate}}
+            <div [innerHTML]="'WELCOME_PAGE_ACTIVATE_ANALYTICS_DESCRIPTION' | translate">
             </div>
           </div>
           <ion-row class="ion-padding-top">
             <ion-col size="12">
-              <ion-button (click)="activeGoogleAnalytics(true)" color="accent"
-                          expand="block">{{"ACTIVATE" | translate}}</ion-button>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col size="12">
-              <ion-button (click)="activeGoogleAnalytics(false)" color="dark" expand="block"
-                          fill="clear">{{"SKIP" | translate}}</ion-button>
+              <ion-button (click)="understoodAnalytics()" color="accent"
+                          expand="block">{{"ACCEPT" | translate}}</ion-button>
             </ion-col>
           </ion-row>
         </div>

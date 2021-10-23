@@ -1,10 +1,13 @@
 /** Core */
 import {Injectable} from '@angular/core';
-import {File, FileEntry} from '@ionic-native/file/ngx';
-import {unescape} from 'querystring';
+import {DirectoryEntry, Entry, File, FileEntry} from '@ionic-native/file/ngx';
 import {Platform} from '@ionic/angular';
 import {DomSanitizer} from '@angular/platform-browser';
-
+import {UILog} from './uiLog';
+import {SocialSharing} from '@ionic-native/social-sharing/ngx';
+import moment from 'moment';
+import {FileTransfer, FileTransferObject} from '@ionic-native/file-transfer/ngx';
+import {InstanceClass} from './instanceClass';
 /**
  * Handles every helping functionalities
  */
@@ -12,26 +15,101 @@ declare var window;
 @Injectable({
   providedIn: 'root'
 })
-export class UIFileHelper {
+export class UIFileHelper extends InstanceClass {
 
   private cachedBase64: any = {};
   private cachedInternalUrls: any = {};
 
 
-  constructor (private readonly file: File, private readonly platform: Platform, private readonly domSanitizer: DomSanitizer) {
+
+  constructor (private readonly file: File,
+               private readonly uiLog: UILog,
+               private readonly platform: Platform,
+               private readonly domSanitizer: DomSanitizer,
+               private readonly socialSharing: SocialSharing,
+               private readonly fileTransfer: FileTransfer) {
+
+    super();
   }
+
+  private getFileDirectory(): string {
+    if (this.platform.is('ios') && this.platform.is('cordova')) {
+      return this.file.documentsDirectory;
+    } else{
+      return this.file.dataDirectory;
+    }
+
+  }
+
+
+  public async saveJSONFile(_fileName: string, _jsonContent: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      const blob = new Blob([_jsonContent], {type: 'application/json;charset=UTF-8;'});
+      this.file.createFile(this.getFileDirectory(),_fileName,true).then((_fileEntry: FileEntry) => {
+        _fileEntry.createWriter((writer) => {
+          writer.onwriteend = () => {
+            resolve(undefined);
+          };
+          writer.onerror = () => {
+            reject();
+          };
+          writer.seek(0);
+          writer.write(blob); // You need to put the file, blob or base64 representation here.
+        });
+      },() => {
+        reject();
+        this.uiLog.error('Could not save file');
+      });
+    });
+  };
+
+  public async getJSONFile(_fileName: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      if (this.platform.is('cordova')) {
+
+        // let filePath: string;
+        // filePath = _filePath;
+        // filePath.slice(0, filePath.lastIndexOf('/'));
+        let path: string;
+        let fileName: string;
+        path = this.getFileDirectory();
+        fileName = _fileName;
+        if (fileName.startsWith('/')) {
+          fileName = fileName.slice(1);
+        }
+
+        this.file.readAsText(path, fileName).then((_text: string) => {
+          try {
+            const parsedJSON: any =  JSON.parse(_text);
+            resolve(parsedJSON);
+          }catch(ex) {
+            this.uiLog.error('We could not read json file ' + ex.message);
+            reject();
+          }
+
+        });
+      } else {
+        reject();
+      }
+
+    });
+  };
+
+
 
   public async saveBase64File (_fileName: string, _fileExtension: string, _base64: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
-      this.generateFileName(this.file.dataDirectory, _fileName, _fileExtension).then((_newName) => {
+      this.generateFileName(this.getFileDirectory(), _fileName, _fileExtension).then((_newName) => {
         // console.log('New Filename' + _newName);
         const newBlob: Blob = this.dataURItoBlob(_base64);
         if (newBlob === undefined) {
           reject();
         } else {
-          this.file.writeFile(this.file.dataDirectory, _newName, newBlob).then((_t) => {
+          this.file.writeFile(this.getFileDirectory(), _newName, newBlob).then((_t) => {
+            this.uiLog.log('Save file below: ' +_t.fullPath);
             resolve(_t.fullPath);
-          }, () => {
+          }, (e) => {
+            this.uiLog.error('Cant save file: ' + JSON.stringify(e));
             reject();
           });
         }
@@ -40,23 +118,271 @@ export class UIFileHelper {
     });
   }
 
+  public async deleteJSONBackupsOlderThenSevenDays(): Promise<any> {
+    const promise: Promise<any> =  new Promise(async (resolve, reject) => {
+
+      if (this.platform.is('cordova')) {
+
+
+        let storageLocation: string = '';
+        if (this.platform.is('android')) {
+          storageLocation = this.file.externalRootDirectory;
+        } else {
+          storageLocation = this.file.documentsDirectory;
+        }
+
+        const lastSevenDays: Array<string> = [];
+        for (let i=0;i<8;i++) {
+          const day: string = moment().subtract(i,'days').format('DD_MM_YYYY');
+          const automatedBackupFileName: string = 'Beanconqueror_automatic_export_' + day + '.json';
+          lastSevenDays.push(automatedBackupFileName);
+        }
+
+        window.resolveLocalFileSystemURL(storageLocation,
+          (fileSystem) => {
+
+            fileSystem.getDirectory('Download', {
+                create: true,
+                exclusive: false
+              },
+              (directory) => {
+                directory.getDirectory('Beanconqueror_export', {
+                    create: true,
+                    exclusive: false
+                  },
+                  (directory_export: DirectoryEntry) => {
+                    const directoryReader = directory_export.createReader();
+                    directoryReader.readEntries((entries: Entry[]) => {
+                      for (const entry of entries) {
+                        if (entry.isFile) {
+                          if (lastSevenDays.indexOf(entry.name) === -1 && entry.name.indexOf('Beanconqueror_automatic_export_') === 0) {
+                            const filename: string = entry.name;
+                            entry.remove(() =>{
+                              this.uiLog.log('Removed automated backup file ' +filename);
+
+                            },()=> {
+                              this.uiLog.log('Could not remove automated backup file ' +filename);
+                            });
+                          } else if (lastSevenDays.indexOf(entry.name)>-1) {
+                            this.uiLog.log('We found a backup file not older then 7 days, so dont delete it');
+                          }
+                        }
+                      }
+
+                    },() => {
+
+                    });
+                  }, () => {
+                    reject();
+                  });
+
+
+              }, () => {
+                reject();
+              });
+          }, () => {
+            reject();
+          });
+      } else {
+        reject(undefined);
+      }
+    });
+    return promise;
+  }
+
+    public async downloadExternalFile(_url: string,  _fileName: string = 'beanconqueror_image', _fileExtension: string ='.png'): Promise<string> {
+      const promise: Promise<string> = new Promise(async (resolve, reject) => {
+        const url: string = _url;
+        const fileTransferObj: FileTransferObject = this.fileTransfer.create();
+        await this.generateFileName(this.getFileDirectory(), _fileName, _fileExtension).then(async (_newName) => {
+          fileTransferObj.download(url, this.getFileDirectory() + _newName).then(async (_entry) => {
+            this.uiLog.log('File download completed: ' + _entry.fullPath);
+            resolve(_entry.fullPath);
+          }, (error) => {
+            // handle error
+            resolve(undefined);
+          });
+        });
+      });
+      return promise;
+
+    }
+
+    public async downloadFile(_filename,_blob,_share: boolean = true): Promise<FileEntry> {
+      const promise: Promise<FileEntry> =  new Promise(async (resolve, reject) => {
+
+        if (this.platform.is('cordova')) {
+
+
+        let storageLocation: string = '';
+        if (this.platform.is('android')) {
+          storageLocation = this.file.externalRootDirectory;
+        } else {
+          storageLocation = this.file.documentsDirectory;
+        }
+
+        window.resolveLocalFileSystemURL(storageLocation,
+          (fileSystem) => {
+
+            fileSystem.getDirectory('Download', {
+                create: true,
+                exclusive: false
+              },
+              (directory) => {
+                directory.getDirectory('Beanconqueror_export', {
+                    create: true,
+                    exclusive: false
+                  },
+                  (directory_export) => {
+                    // You need to put the name you would like to use for the file here.
+                    directory_export.getFile(_filename, {
+                        create: true,
+                        exclusive: false
+                      },
+                      (fileEntry: FileEntry) => {
+
+                        fileEntry.createWriter((writer) => {
+                          writer.onwriteend = () => {
+
+                            if (this.platform.is('ios') && _share === true) {
+                              this.socialSharing.share(undefined,undefined,fileEntry.nativeURL);
+                            }
+                            resolve(fileEntry);
+                          };
+
+                          writer.seek(0);
+                          writer.write(_blob); // You need to put the file, blob or base64 representation here.
+
+                        }, () => {
+                          reject();
+                        });
+                      }, () => {
+                        reject();
+                      });
+
+                  }, () => {
+                    reject();
+                  });
+
+
+              }, () => {
+                reject();
+              });
+          }, () => {
+            reject();
+          });
+        } else {
+          resolve(undefined);
+          setTimeout(() => {
+            if (navigator.msSaveBlob) { // IE 10+
+              navigator.msSaveBlob(_blob, _filename);
+            } else {
+              const link = document.createElement('a');
+              if (link.download !== undefined) { // feature detection
+                // Browsers that support HTML5 download attribute
+                const url = URL.createObjectURL(_blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', _filename);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              }
+            }
+          }, 250);
+        }
+      });
+      return promise;
+    }
+
+  public createFolder(_folders) {
+    const promise: Promise<FileEntry> = new Promise(async (resolve, reject) => {
+
+      const folders = _folders.split('/');
+
+      this.file.resolveDirectoryUrl(this.getFileDirectory()).then((_rootDir: DirectoryEntry) => {
+
+        this.createFolderInternal(_rootDir, folders,
+          ()=> {
+
+            resolve(undefined);
+          },
+          () => {
+
+            reject();
+          });
+      },() => {
+       reject();
+      });
+
+
+    });
+
+    return promise;
+  };
+
+  private createFolderInternal(_rootDirEntry: DirectoryEntry, _folders, _resolve, _reject) {
+
+
+
+    // Throw out './' or '/' and move on to prevent something like '/foo/.//bar'.
+    if (_folders[0] === '.' || _folders[0] === '') {
+      _folders = _folders.slice(1);
+    }
+    if (_folders === undefined || _folders.length === 0) {
+      _resolve(undefined);
+    }
+    else {
+
+
+      this.file.getDirectory(_rootDirEntry, _folders[0], {create: true, exclusive: false}).then((dirEntry) => {
+        // Recursively add the new subfolder (if we still have another to create).
+
+        if (_folders.length) {
+          this.createFolderInternal(dirEntry, _folders.slice(1), _resolve, _reject);
+        }
+        else {
+          // All folders were created
+          _resolve(undefined);
+        }
+
+      }, () => {
+        _reject();
+      });
+    }
+
+
+  };
+
+
   public async deleteFile(_filePath): Promise<any> {
     return new Promise(async (resolve, reject) => {
       if (this.platform.is('cordova')) {
         const fileObj = this.__splitFilePath(_filePath);
-        let filePath = this.file.dataDirectory;
+        let filePath = this.getFileDirectory();
         if (fileObj.FILE_PATH.length > 1 && fileObj.FILE_PATH.indexOf('/') === 0 && filePath.lastIndexOf('/') === filePath.length - 1) {
           filePath = filePath + fileObj.FILE_PATH.substr(1);
         }
         this.file.removeFile(filePath, fileObj.FILE_NAME + fileObj.EXTENSION).then(() => {
-          resolve();
-        }, () => {
+          resolve(undefined);
+        }, (e) => {
+          this.uiLog.error('Cant delete file: ' + JSON.stringify(e));
           reject();
         });
       } else {
-        resolve();
+        resolve(undefined);
       }
 
+    });
+  }
+
+  public moveFile(_oldPath, _newPath,_oldFilename,_newFilename): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      this.file.moveFile(_oldPath, _oldFilename, _newPath, _newFilename).then((_entry) => {
+
+        resolve(_entry.fullPath);
+      }, () => {
+        reject();
+      });
     });
   }
 
@@ -68,11 +394,11 @@ export class UIFileHelper {
 
 
       const fileObj = this.__splitFilePath(_filePath);
-      this.generateFileName(this.file.dataDirectory, _fileName, fileObj.EXTENSION).then((_newName) => {
+      this.generateFileName(this.getFileDirectory(), _fileName, fileObj.EXTENSION).then(async (_newName) => {
         // console.log('New Filename' + _newName);
 
         this.file.copyFile(fileObj.FILE_PATH, fileObj.FILE_NAME + fileObj.EXTENSION,
-          this.file.dataDirectory, _newName).then((_t) => {
+          this.getFileDirectory(), _newName).then(async (_t) => {
           resolve(_t.fullPath);
         }, (e) => {
           reject();
@@ -94,11 +420,11 @@ export class UIFileHelper {
 
 
       const fileObj = this.__splitFilePath(_filePath);
-      this.generateFileName(this.file.dataDirectory, fileObj.FILE_NAME, fileObj.EXTENSION).then((_newName) => {
+      this.generateFileName(this.getFileDirectory(), fileObj.FILE_NAME, fileObj.EXTENSION).then((_newName) => {
         // console.log('New Filename' + _newName);
 
-        this.file.copyFile(this.file.dataDirectory, fileObj.FILE_NAME + fileObj.EXTENSION,
-          this.file.dataDirectory, _newName).then((_t) => {
+        this.file.copyFile(this.getFileDirectory(), fileObj.FILE_NAME + fileObj.EXTENSION,
+          this.getFileDirectory(), _newName).then((_t) => {
           resolve(_t.fullPath);
         }, (e) => {
           reject();
@@ -139,29 +465,41 @@ export class UIFileHelper {
     }
 
   }
-  public async getInternalFileSrc (_filePath: string): Promise<any> {
+  public async getInternalFileSrc (_filePath: string,_addTimeStamp: boolean = false): Promise<any> {
     return new Promise(async (resolve, reject) => {
       if (this.platform.is('cordova')) {
         if (this.cachedInternalUrls[_filePath]) {
-          resolve(this.cachedInternalUrls[_filePath]);
-          return;
+          //resolve(this.cachedInternalUrls[_filePath]);
+         // return;
         }
         // let filePath: string;
         // filePath = _filePath;
         // filePath.slice(0, filePath.lastIndexOf('/'));
         let path: string;
         let fileName: string;
-        path = this.file.dataDirectory;
+        path = this.getFileDirectory();
         fileName = _filePath;
         if (fileName.startsWith('/')) {
           fileName = fileName.slice(1);
         }
+
+        if (this.platform.is('ios')) {
+          // After switching to iOS cloud, the fullPath saves the Cloud path actualy with, so we need to delete this one :)
+          const searchForCloud: string = 'Cloud/';
+          if (fileName.startsWith(searchForCloud)) {
+            fileName =  fileName.substring(searchForCloud.length);
+          }
+        }
+
         this.file.resolveLocalFilesystemUrl(path + fileName).then((fileEntry: FileEntry) => {
 
 
           fileEntry.file(
             (meta) => {
               let convertedURL = window.Ionic.WebView.convertFileSrc(fileEntry.nativeURL);
+              if (_addTimeStamp) {
+                convertedURL +='?' + moment().unix();
+              }
               convertedURL = this.domSanitizer.bypassSecurityTrustResourceUrl(convertedURL);
               this.cachedInternalUrls[_filePath] = convertedURL;
               resolve(convertedURL);
@@ -193,7 +531,7 @@ export class UIFileHelper {
         // filePath.slice(0, filePath.lastIndexOf('/'));
         let path: string;
         let fileName: string;
-        path = this.file.dataDirectory;
+        path = this.getFileDirectory();
         fileName = _filePath;
         if (fileName.startsWith('/')) {
           fileName = fileName.slice(1);
@@ -245,7 +583,7 @@ export class UIFileHelper {
       if (base64TagExists) {
         byteString = atob(dataURI.split(',')[1]);
       } else {
-        byteString = unescape(dataURI.split(',')[1]);
+        byteString = window.unescape(dataURI.split(',')[1]);
       }
 
       // separate out the mime component

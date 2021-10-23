@@ -8,14 +8,27 @@ import {SharedModule} from '../shared/shared.module';
 import {HelperBrewRatioComponent} from './helper-brew-ratio/helper-brew-ratio.component';
 import {HelperWaterHardnessComponent} from './helper-water-hardness/helper-water-hardness.component';
 
+
+import {HelperPage} from './helper.page';
+
 const routes: Routes = [
   {
-    path: 'brew-ratio',
-    component: HelperBrewRatioComponent
-  },
-  {
-    path: 'water-hardness',
-    component: HelperWaterHardnessComponent
+    path: '',
+    component: HelperPage,
+    children: [{
+      path: '',
+      redirectTo: '/helper/brew-ratio',
+      pathMatch: 'full',
+    },
+    {
+      path: 'brew-ratio',
+      component: HelperBrewRatioComponent
+    },
+    {
+      path: 'water-hardness',
+      component: HelperWaterHardnessComponent
+    }
+   ]
   }
 ];
 

@@ -28,6 +28,10 @@
       <ion-icon name="beanconqueror-cupping" slot="start"></ion-icon>
       <span>{{"POPOVER_BREWS_OPTION_CUPPING" | translate}}</span>
     </ion-item>
+  <ion-item (click)="choose(getStaticActions().SHARE)" button tappable>
+    <ion-icon name="share-social-outline" slot="start"></ion-icon>
+    <span>{{"SHARE" | translate}}</span>
+  </ion-item>
     <ion-item (click)="choose(getStaticActions().SHOW_MAP_COORDINATES)" *ngIf="hasCoordinates()" button tappable>
       <ion-icon name="beanconqueror-map" slot="start"></ion-icon>
       <span>{{"POPOVER_BREWS_OPTION_MAP_COORDINATES" | translate}}</span>
@@ -40,6 +44,5 @@
       <ion-icon name="beanconqueror-delete" slot="start"></ion-icon>
       <span>{{"POPOVER_BREWS_OPTION_DELETE" | translate}}</span>
     </ion-item>
-
   </ion-list>
 </ion-footer>

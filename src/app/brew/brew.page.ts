@@ -6,14 +6,13 @@ import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {UIBrewHelper} from '../../services/uiBrewHelper';
 import {Brew} from '../../classes/brew/brew';
-import {BrewAddComponent} from './brew-add/brew-add.component';
-
 import {IBrewPageFilter} from '../../interfaces/brew/iBrewPageFilter';
 import {BREW_ACTION} from '../../enums/brews/brewAction';
 import {Bean} from '../../classes/bean/bean';
 import {BrewFilterComponent} from './brew-filter/brew-filter.component';
 import {Settings} from '../../classes/settings/settings';
 import {AgVirtualSrollComponent} from 'ag-virtual-scroll';
+import {UIAnalytics} from '../../services/uiAnalytics';
 
 
 @Component({
@@ -38,8 +37,8 @@ export class BrewPage implements OnInit {
   public openBrewFilterText: string = '';
   public archivedBrewFilterText: string = '';
 
-  public archivedBrewsFilter: IBrewPageFilter = Settings.GET_BREW_FILTER();
-  public openBrewsFilter: IBrewPageFilter = Settings.GET_BREW_FILTER();
+  public archivedBrewsFilter: IBrewPageFilter;
+  public openBrewsFilter: IBrewPageFilter;
 
   public settings: Settings;
 
@@ -50,12 +49,15 @@ export class BrewPage implements OnInit {
                private readonly uiAlert: UIAlert,
                public uiHelper: UIHelper,
                public uiBrewHelper: UIBrewHelper,
-               private readonly uiSettingsStorage: UISettingsStorage) {
+               private readonly uiSettingsStorage: UISettingsStorage,
+               private readonly uiAnalytics: UIAnalytics) {
+    this.settings = this.uiSettingsStorage.getSettings();
+    this.archivedBrewsFilter = this.settings.GET_BREW_FILTER();
+    this.openBrewsFilter = this.settings.GET_BREW_FILTER();
   }
 
 
   public ionViewWillEnter(): void {
-    this.settings = this.uiSettingsStorage.getSettings();
     this.archivedBrewsFilter = this.settings.brew_filter.ARCHIVED;
     this.openBrewsFilter = this.settings.brew_filter.OPEN;
     this.loadBrews();
@@ -91,13 +93,9 @@ export class BrewPage implements OnInit {
     this.retriggerScroll();
   }
   public async add() {
-    if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
-      const modal = await this.modalCtrl.create({component: BrewAddComponent,id:'brew-add'});
-      await modal.present();
-      await modal.onWillDismiss();
-      this.loadBrews();
-    }
 
+    await this.uiBrewHelper.addBrew();
+    this.loadBrews();
   }
 
   public async brewAction(action: BREW_ACTION, brew: Brew): Promise<void> {
@@ -139,7 +137,7 @@ export class BrewPage implements OnInit {
     }
     let didRatingFilterChanged: boolean = false;
     if (checkingFilter.rating) {
-      didRatingFilterChanged =  (checkingFilter.rating.upper !== 5 || checkingFilter.rating.lower !== -1);
+      didRatingFilterChanged =  (checkingFilter.rating.upper !== this.settings?.brew_rating || checkingFilter.rating.lower !== -1);
     }
     return (checkingFilter.bean.length > 0 ||
       checkingFilter.method_of_preparation.length > 0 ||
@@ -162,7 +160,7 @@ export class BrewPage implements OnInit {
     const modal = await this.modalCtrl.create({
       component: BrewFilterComponent,
       cssClass: 'popover-actions',
-      id:'brew-filter',
+      id: BrewFilterComponent.COMPONENT_ID,
       componentProps:
         {brew_filter: brewFilter, segment: this.brew_segment}
     });
@@ -182,11 +180,11 @@ export class BrewPage implements OnInit {
     this.loadBrews();
   }
 
-  private __saveBrewFilter() {
-    const settings: Settings = this.uiSettingsStorage.getSettings();
-    settings.brew_filter.OPEN = this.openBrewsFilter;
-    settings.brew_filter.ARCHIVED = this.archivedBrewsFilter;
-    this.uiSettingsStorage.saveSettings(settings);
+  private async __saveBrewFilter() {
+
+    this.settings.brew_filter.OPEN = this.openBrewsFilter;
+    this.settings.brew_filter.ARCHIVED = this.archivedBrewsFilter;
+    await this.uiSettingsStorage.saveSettings(this.settings);
   }
 
   public research() {
@@ -267,5 +265,12 @@ export class BrewPage implements OnInit {
   public ngOnInit() {
   }
 
+
+  public async longPressAdd(event) {
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    await this.uiBrewHelper.longPressAddBrew();
+    this.loadBrews();
+  }
 
 }

@@ -4,7 +4,7 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button (click)="add()" class="big-add-icon" fill="clear">
+      <ion-button (short-press)="beanPopover()" (long-press)="longPressAdd($event)" tappable class="big-add-icon" fill="clear">
         <ion-icon class="ion-color-accent" name="beanconqueror-add" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -85,12 +85,6 @@
                             [bean]="bean"></bean-information>
 
         </ag-virtual-scroll>
-
-          <!--<ion-virtual-scroll #archivedScroll [items]="finishedBeans" approxItemHeight="245px">
-            <bean-information (beanAction)="beanAction($event[0],$event[1])" *virtualItem="let bean;"
-                              [bean]="bean"></bean-information>
-          </ion-virtual-scroll>
-        <div style="height:10px;" *ngIf="finishedBeans.length>0"></div>-->
       </div>
     </div>
   </div>

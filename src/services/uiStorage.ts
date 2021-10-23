@@ -5,6 +5,9 @@ import {Injectable} from '@angular/core';
  *
  */
 import {Storage} from '@ionic/storage';
+import {EventQueueService} from './queueService/queue-service.service';
+import {AppEvent} from '../classes/appEvent/appEvent';
+import {AppEventType} from '../enums/appEvent/appEvent';
 
 
 @Injectable({
@@ -12,10 +15,11 @@ import {Storage} from '@ionic/storage';
 })
 export class UIStorage {
 
-  constructor (private readonly storage: Storage) {
+  constructor (private readonly storage: Storage,private eventQueue: EventQueueService) {
   }
 
   public async set (_key: string, _val: any): Promise<any> {
+    this.eventQueue.dispatch(new AppEvent(AppEventType.STORAGE_CHANGED, undefined));
     return this.storage.set(_key, _val);
   }
 
@@ -39,6 +43,33 @@ export class UIStorage {
     });
 
     return promise;
+  }
+
+  public async hasData(): Promise<boolean> {
+    const promise: Promise<boolean> = new Promise((resolve, reject) => {
+      let hasData: boolean = false;
+      this.storage.forEach((_value, _key, _index) => {
+        if (_key === 'SETTINGS' || _key ==='VERSION') {
+
+          //Settings and version will be set realy early... so we don't relay on those
+        } else {
+          hasData = true;
+        }
+
+      })
+        .then(() => {
+          if (hasData) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        },() => {
+          resolve(false);
+        });
+    });
+
+    return promise;
+
   }
 
   public async import (_data: any): Promise<any> {
@@ -93,7 +124,7 @@ export class UIStorage {
             .then(() => {
               finishedImport++;
               if (keysCount === finishedImport) {
-                resolve();
+                resolve(undefined);
               }
             }, () => {
               reject();

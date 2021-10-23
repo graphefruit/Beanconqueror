@@ -12,7 +12,7 @@ import {Preparation} from '../../../classes/preparation/preparation';
 })
 export class PreparationModalSelectComponent implements OnInit {
 
-
+  public static COMPONENT_ID = 'preparation-modal-select';
   public objs: Array<Preparation> = [];
   public multipleSelection = {};
   public radioSelection: string;
@@ -47,12 +47,38 @@ export class PreparationModalSelectComponent implements OnInit {
 
   public getOpenPreparations(): Array<Preparation> {
     return this.objs.filter(
-      (e) => !e.finished);
+      (e) => !e.finished).sort( (a,b) => {
+        const nameA = a.name.toUpperCase();
+        const nameB = b.name.toUpperCase();
+
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+
+        return 0;
+      }
+    );
   }
 
   public getArchivedPreparations(): Array<Preparation> {
     return this.objs.filter(
-      (e) => e.finished);
+      (e) => e.finished).sort( (a,b) => {
+        const nameA = a.name.toUpperCase();
+        const nameB = b.name.toUpperCase();
+
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+
+        return 0;
+      }
+    );
   }
 
 
@@ -80,11 +106,11 @@ export class PreparationModalSelectComponent implements OnInit {
     this.modalController.dismiss({
       selected_values: chosenKeys,
       selected_text: selected_text,
-    },undefined,'preparation-modal-select');
+    },undefined,PreparationModalSelectComponent.COMPONENT_ID);
   }
 
   public async dismiss(): Promise<void> {
-    this.modalController.dismiss(undefined, undefined, 'preparation-modal-select');
+    this.modalController.dismiss(undefined, undefined, PreparationModalSelectComponent.COMPONENT_ID);
   }
 
 }

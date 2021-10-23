@@ -1,5 +1,5 @@
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
-import {async, TestBed} from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 
 import {ModalController, Platform} from '@ionic/angular';
 import {SplashScreen} from '@ionic-native/splash-screen/ngx';
@@ -15,16 +15,15 @@ import {AppMinimize} from '@ionic-native/app-minimize/ngx';
 import {Keyboard} from '@ionic-native/keyboard/ngx';
 import {ThreeDeeTouch} from '@ionic-native/three-dee-touch/ngx';
 import {Globalization} from '@ionic-native/globalization/ngx';
-import {FirebaseX} from '@ionic-native/firebase-x/ngx';
 
 describe('AppComponent', () => {
 
   let statusBarSpy, splashScreenSpy, platformReadySpy, platformSpy;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     statusBarSpy = jasmine.createSpyObj('StatusBar', ['styleDefault']);
     splashScreenSpy = jasmine.createSpyObj('SplashScreen', ['hide']);
-    platformReadySpy = Promise.resolve();
+    platformReadySpy = Promise.resolve(undefined);
     platformSpy = jasmine.createSpyObj('Platform', { ready: platformReadySpy });
 
     TestBed.configureTestingModule({
@@ -42,7 +41,7 @@ describe('AppComponent', () => {
         {provide: ThreeDeeTouch},
         {provide: ModalController},
         {provide: Globalization},
-        {provide: FirebaseX},
+
       ],
       imports: [RouterTestingModule.withRoutes([]), TranslateModule.forRoot()],
     }).compileComponents();

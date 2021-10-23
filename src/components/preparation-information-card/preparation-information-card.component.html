@@ -48,7 +48,7 @@
           <ion-icon class="full-sized-icon" name="{{preparation.getIcon()}}"></ion-icon>
         </ion-col>
         <ion-col class="ion-no-padding" size="3" *ngIf="preparation.hasPhotos()" (click)="showPhoto($event)">
-          <div style="margin:0 auto;" tappable>
+          <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
             <async-image [filePath]="preparation.attachments[0]" class="bean-slider"></async-image>
           </div>
         </ion-col>

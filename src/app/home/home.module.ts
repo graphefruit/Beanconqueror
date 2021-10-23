@@ -19,22 +19,22 @@ import {SharedModule} from '../shared/shared.module';
         children: [
           {
             path: 'dashboard',
-            loadChildren: '../dashboard/dashboard.module#DashboardPageModule',
+            loadChildren: () => import('../dashboard/dashboard.module').then(m => m.DashboardPageModule),
           },
           {
             path: 'brews',
-            loadChildren: '../brew/brew.module#BrewPageModule'
+            loadChildren: () => import('../brew/brew.module').then(m => m.BrewPageModule)
           },
           {
             path: 'beans',
-            loadChildren: '../beans/beans.module#BeansPageModule'
+            loadChildren: () => import('../beans/beans.module').then(m => m.BeansPageModule)
           }, {
             path: 'preparations',
-            loadChildren: '../preparation/preparation.module#PreparationPageModule'
+            loadChildren: () => import('../preparation/preparation.module').then(m => m.PreparationPageModule)
           },
           {
             path: 'mills',
-            loadChildren: '../mill/mill.module#MillPageModule'
+            loadChildren: () => import('../mill/mill.module').then(m => m.MillPageModule)
           }
         ]
       }

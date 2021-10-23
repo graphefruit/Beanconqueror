@@ -10,6 +10,13 @@ import {IBrew} from '../interfaces/brew/iBrew';
 import {UIMillStorage} from './uiMillStorage';
 import {UISettingsStorage} from './uiSettingsStorage';
 import {TranslateService} from '@ngx-translate/core';
+import {IPreparation} from '../interfaces/preparation/iPreparation';
+import {IMill} from '../interfaces/mill/iMill';
+import {IBean} from '../interfaces/bean/iBean';
+import {IGreenBean} from '../interfaces/green-bean/iGreenBean';
+import {IRoastingMachine} from '../interfaces/roasting-machine/iRoastingMachine';
+import {UIGreenBeanStorage} from './uiGreenBeanStorage';
+import {UIRoastingMachineStorage} from './uiRoastingMachineStorage';
 
 /** Services  */
 
@@ -23,6 +30,8 @@ export class UIStatistic {
                private readonly uiBeanStorage: UIBeanStorage,
                private readonly uiBrewStorage: UIBrewStorage,
                private readonly uiMillStorage: UIMillStorage,
+               private readonly uiGreenBeanStorage: UIGreenBeanStorage,
+               private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
                private readonly uiHelper: UIHelper,
                private readonly uiSettings: UISettingsStorage,
                private readonly translate: TranslateService) {
@@ -169,7 +178,13 @@ export class UIStatistic {
       if (brews.length > 0) {
         let sum = 0;
         for (const brew of brews) {
-          sum += +brew.grind_weight;
+          if (brew.bean_weight_in > 0 ) {
+            sum += +brew.bean_weight_in;
+          } else {
+            sum += +brew.grind_weight;
+          }
+
+
         }
 
         return Math.round((sum / 1000) * 100) / 100;
@@ -189,6 +204,36 @@ export class UIStatistic {
         sum += brew.brew_quantity;
       }
       return Math.round((sum / 1000) * 100) / 100;
+    }
+    return 0;
+  }
+
+  public brewedTime() {
+    const brews: Array<IBrew> = this.uiBrewStorage.getAllEntries();
+    if (brews.length > 0) {
+      let sum = 0;
+      for (const brew of brews) {
+        sum += brew.brew_time;
+      }
+      return sum/60;
+    }
+    return 0;
+  }
+  public photosTaken() {
+    const allEntries: Array<IBrew | IMill | IPreparation | IBean | IGreenBean | IRoastingMachine> =
+      [...this.uiBrewStorage.getAllEntries(),
+        ...this.uiMillStorage.getAllEntries(),
+        ...this.uiPreparationStorage.getAllEntries(),
+        ...this.uiBeanStorage.getAllEntries(),
+        ...this.uiGreenBeanStorage.getAllEntries(),
+        ...this.uiRoastingMachineStorage.getAllEntries()];
+
+    if (allEntries.length > 0) {
+      let sum = 0;
+      for (const entry of allEntries) {
+        sum += entry.attachments.length;
+      }
+      return sum;
     }
     return 0;
   }

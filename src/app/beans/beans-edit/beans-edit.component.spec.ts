@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {BeansEditComponent} from './beans-edit.component';
 import {TranslateModule} from '@ngx-translate/core';
@@ -12,7 +12,7 @@ import {File} from '@ionic-native/file/ngx';
 import {Camera} from '@ionic-native/camera/ngx';
 import {ImagePicker} from '@ionic-native/image-picker/ngx';
 import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
-import {FirebaseX} from '@ionic-native/firebase-x/ngx';
+;
 import {Router} from '@angular/router';
 import {NavParamsMock} from '../../../classes/mock/NavParamsMock';
 import {AsyncImageComponent} from '../../../components/async-image/async-image.component';
@@ -21,7 +21,7 @@ describe('BeansEditComponent', () => {
   let component: BeansEditComponent;
   let fixture: ComponentFixture<BeansEditComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [TranslateModule.forRoot(), FormsModule, IonicStorageModule.forRoot(), CommonModule, IonicModule],
       declarations: [BeansEditComponent, KeysPipe, AsyncImageComponent],
@@ -34,7 +34,7 @@ describe('BeansEditComponent', () => {
         {provide: Camera},
         {provide: ImagePicker},
         {provide: AndroidPermissions},
-        {provide: FirebaseX},
+
         {provide: Router}
       ],
     })

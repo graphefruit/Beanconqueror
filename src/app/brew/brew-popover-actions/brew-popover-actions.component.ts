@@ -3,7 +3,6 @@ import {ModalController, NavParams} from '@ionic/angular';
 import {IBrew} from '../../../interfaces/brew/iBrew';
 import {Brew} from '../../../classes/brew/brew';
 import {UIHelper} from '../../../services/uiHelper';
-import {UIAnalytics} from '../../../services/uiAnalytics';
 import {BREW_ACTION} from '../../../enums/brews/brewAction';
 import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 import {Settings} from '../../../classes/settings/settings';
@@ -15,14 +14,13 @@ import {Settings} from '../../../classes/settings/settings';
 })
 export class BrewPopoverActionsComponent implements OnInit {
 
-
+  public static COMPONENT_ID = 'brew-popover-actions';
   public data: Brew = new Brew();
   private settings: Settings;
 
   constructor(private readonly modalController: ModalController,
               private readonly navParams: NavParams,
               private readonly uiHelper: UIHelper,
-              private readonly uiAnalytics: UIAnalytics,
               private readonly uiSettings: UISettingsStorage) {
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
     const brew: IBrew = this.uiHelper.copyData(this.navParams.get('brew'));
@@ -31,7 +29,6 @@ export class BrewPopoverActionsComponent implements OnInit {
   }
 
   public ionViewDidEnter(): void {
-    this.uiAnalytics.trackEvent('BREW', 'POPOVER_ACTIONS');
   }
   public ngOnInit() {
 
@@ -55,10 +52,10 @@ export class BrewPopoverActionsComponent implements OnInit {
   }
 
   public async choose(_type: string): Promise<void> {
-    this.modalController.dismiss(undefined, _type,'brew-popover-actions');
+    this.modalController.dismiss(undefined, _type, BrewPopoverActionsComponent.COMPONENT_ID);
   }
   public async dismiss() {
-    this.modalController.dismiss(undefined, undefined,'brew-popover-actions');
+    this.modalController.dismiss(undefined, undefined,BrewPopoverActionsComponent.COMPONENT_ID);
   }
 
 }

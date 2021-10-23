@@ -31,7 +31,7 @@ export class Bean implements IBean {
   public finished: boolean;
   public cost: number;
   public attachments: Array<string>;
-  public cupping_points:string;
+  public cupping_points: string;
   public decaffeinated: boolean;
   public url: string;
   public ean_article_number: string;
@@ -43,7 +43,10 @@ export class Bean implements IBean {
 
   public bean_roasting_type: BEAN_ROASTING_TYPE_ENUM;
 
+  /** Roast information are set from green beans **/
   public bean_roast_information: BeanRoastInformation;
+
+  public qr_code: string;
 
   constructor() {
     this.name = '';
@@ -70,6 +73,7 @@ export class Bean implements IBean {
     this.ean_article_number = '';
     this.bean_roast_information = new BeanRoastInformation();
     this.rating = 0;
+    this.qr_code = '';
   }
 
   public getRoastName(): string {
@@ -112,12 +116,14 @@ export class Bean implements IBean {
     return fixNeeded;
   }
   public beanAgeInDays(): number {
-    const today = Date.now();
-    let millisecondsSinceRoasting = today - Date.parse(this.roastingDate);
-    if (isNaN(millisecondsSinceRoasting)) {
-      millisecondsSinceRoasting = 0;
+    if (this.roastingDate !== undefined && this.roastingDate !== '') {
+      const today = moment(Date.now()).startOf('day');
+      const roastingDate = moment(this.roastingDate).startOf('day');
+
+      return today.diff(roastingDate,'days');
     }
-    return Math.floor(millisecondsSinceRoasting / (1000 * 60 * 60 * 24));
+    return 0;
+
   }
 
   /**
@@ -133,6 +139,12 @@ export class Bean implements IBean {
 
   public isSelfRoasted(): boolean {
     if (this.bean_roast_information && this.bean_roast_information.bean_uuid) {
+      return true;
+    }
+    return false;
+  }
+  public isScannedBean(): boolean {
+    if (this.qr_code !== '') {
       return true;
     }
     return false;
@@ -159,7 +171,6 @@ export class Bean implements IBean {
   public hasPhotos() {
     return (this.attachments && this.attachments.length > 0);
   }
-
 
 
 }

@@ -1,6 +1,12 @@
 {
   "extends": "tslint:recommended",
   "rules": {
+    "align": {
+      "options": [
+        "parameters",
+        "statements"
+      ]
+    },
     "selector-pseudo-class-no-unknown": [
       true,
       {
@@ -9,7 +15,9 @@
         ]
       }
     ],
+    "no-bitwise": false,
     "no-empty-source": false,
+    "arrow-return-shorthand": true,
     "selector-type-no-unknown": [
       true,
       {
@@ -18,10 +26,18 @@
         ]
       }
     ],
+    "curly": true,
     "array-type": false,
     "arrow-parens": false,
+    "eofline": true,
     "deprecation": {
       "severity": "warn"
+    },
+    "import-spacing": true,
+    "indent": {
+      "options": [
+        "spaces"
+      ]
     },
     "import-blacklist": [
       true,
@@ -62,7 +78,6 @@
     "no-non-null-assertion": true,
     "no-redundant-jsdoc": true,
     "no-switch-case-fall-through": true,
-    "no-use-before-declare": true,
     "no-var-requires": false,
     "object-literal-key-quotes": [
       true,
@@ -84,15 +99,64 @@
     "use-life-cycle-interface": true,
     "use-pipe-transform-interface": true,
     "one-variable-per-declaration": false,
+    "semicolon": {
+      "options": [
+        "always"
+      ]
+    },
+    "space-before-function-paren": {
+      "options": {
+        "anonymous": "never",
+        "asyncArrow": "always",
+        "constructor": "never",
+        "method": "never",
+        "named": "never"
+      }
+    },
     "component-class-suffix": [
       true,
       "Page",
       "Component"
     ],
+    "typedef-whitespace": {
+      "options": [
+        {
+          "call-signature": "nospace",
+          "index-signature": "nospace",
+          "parameter": "nospace",
+          "property-declaration": "nospace",
+          "variable-declaration": "nospace"
+        },
+        {
+          "call-signature": "onespace",
+          "index-signature": "onespace",
+          "parameter": "onespace",
+          "property-declaration": "onespace",
+          "variable-declaration": "onespace"
+        }
+      ]
+    },
     "directive-class-suffix": true,
     "no-string-literal": false,
     "no-trailing-whitespace": false,
     "one-line": false,
-    "object-literal-shorthand": false
+    "object-literal-shorthand": false,
+    "variable-name": {
+      "options": [
+        "ban-keywords",
+        "check-format",
+        "allow-pascal-case"
+      ]
+    },
+    "whitespace": {
+      "options": [
+        "check-branch",
+        "check-decl",
+        "check-operator",
+        "check-separator",
+        "check-type",
+        "check-typecast"
+      ]
+    }
   }
 }

@@ -4,16 +4,12 @@ import {Preparation} from '../../classes/preparation/preparation';
 import {UIPreparationStorage} from '../../services/uiPreparationStorage';
 import {ModalController} from '@ionic/angular';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
-import {Brew} from '../../classes/brew/brew';
-import {PreparationEditComponent} from './preparation-edit/preparation-edit.component';
-import {PreparationAddComponent} from './preparation-add/preparation-add.component';
 import {PREPARATION_ACTION} from '../../enums/preparations/preparationAction';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {Settings} from '../../classes/settings/settings';
 import {UIToast} from '../../services/uiToast';
 import {UIAnalytics} from '../../services/uiAnalytics';
-import {PreparationCustomParametersComponent} from './preparation-custom-parameters/preparation-custom-parameters.component';
-import {PreparationDetailComponent} from './preparation-detail/preparation-detail.component';
+import {UIPreparationHelper} from '../../services/uiPreparationHelper';
 
 @Component({
   selector: 'preparation',
@@ -32,7 +28,8 @@ export class PreparationPage implements OnInit {
               private readonly uiBrewStorage: UIBrewStorage,
               private readonly uiSettingsStorage: UISettingsStorage,
               private readonly uiToast: UIToast,
-              private readonly uiAnalytics: UIAnalytics) {
+              private readonly uiAnalytics: UIAnalytics,
+              private readonly uiPreparationHelper: UIPreparationHelper) {
 
   }
 
@@ -57,13 +54,7 @@ export class PreparationPage implements OnInit {
   }
 
   public async add() {
-    const modal = await this.modalCtrl.create({
-      component: PreparationAddComponent,
-      showBackdrop: true,
-      id: 'preparation-add'
-    });
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiPreparationHelper.addPreparation();
     this.loadPreparations();
   }
 

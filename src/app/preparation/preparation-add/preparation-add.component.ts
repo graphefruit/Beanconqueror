@@ -1,13 +1,12 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {Preparation} from '../../../classes/preparation/preparation';
-import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {ModalController} from '@ionic/angular';
-import {UIAnalytics} from '../../../services/uiAnalytics';
 
 import {PREPARATION_TYPES} from '../../../enums/preparations/preparationTypes';
 import {NgForm} from '@angular/forms';
 import {PreparationAddTypeComponent} from '../preparation-add-type/preparation-add-type.component';
-
+import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
+import {UIAnalytics} from '../../../services/uiAnalytics';
 @Component({
   selector: 'preparation-add',
   templateUrl: './preparation-add.component.html',
@@ -16,6 +15,7 @@ import {PreparationAddTypeComponent} from '../preparation-add-type/preparation-a
 export class PreparationAddComponent implements OnInit {
 
 
+  public static COMPONENT_ID: string = 'preparation-add';
   public data: Preparation = new Preparation();
 
   public preparation_types_enum = PREPARATION_TYPES;
@@ -26,29 +26,27 @@ export class PreparationAddComponent implements OnInit {
   @Input() private hide_toast_message: boolean;
 
   constructor (private readonly modalController: ModalController,
-               private readonly uiPreparationStorage: UIPreparationStorage,
                private readonly uiAnalytics: UIAnalytics) {
 
   }
 
   public ionViewWillEnter(): void {
-    this.uiAnalytics.trackEvent('PREPARATION', 'ADD');
+    this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.ADD);
   }
 
   public async choosePreparation(_prepType: PREPARATION_TYPES) {
 
+
     const modal = await this.modalController.create({
       component: PreparationAddTypeComponent,
-      cssClass: 'half-bottom-modal',
-      showBackdrop: true,
-      id: 'preparation-add-type',
-      backdropDismiss: true,
-      swipeToClose: true,
+      cssClass: 'popover-actions',
+      id:  PreparationAddTypeComponent.COMPONENT_ID,
       componentProps: {type: _prepType, hide_toast_message: this.hide_toast_message}
     });
     await modal.present();
     const {data} = await modal.onDidDismiss();
     if (data.added === true) {
+      this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.ADD_FINISH);
       await this.dismiss();
     }
 
@@ -58,7 +56,7 @@ export class PreparationAddComponent implements OnInit {
   public async dismiss() {
     await this.modalController.dismiss({
       dismissed: true
-    }, undefined, 'preparation-add');
+    }, undefined, PreparationAddComponent.COMPONENT_ID);
 
   }
 

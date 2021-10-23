@@ -2,7 +2,13 @@
   <ion-card-content class="no-ion-col-vertical-padding ion-padding-top">
     <ion-grid class="no-padding-bottom">
       <ion-row>
-        <ion-col [size]="(bean?.roast_range!== 0 || bean?.rating !== 0)?8:11" style="margin: auto 0;"><div class="ion-no-padding font-size-20 ion-title bean-title"><ion-icon style="top: 3px;position: relative;margin-right:5px;" name="flame-outline" *ngIf="bean.isSelfRoasted()"></ion-icon>{{bean.name}}</div></ion-col>
+        <ion-col [size]="(bean?.roast_range!== 0 || bean?.rating !== 0)?8:11" style="margin: auto 0;">
+          <div class="ion-no-padding font-size-20 ion-title bean-title">
+            <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="flame-outline" *ngIf="bean.isSelfRoasted()"></ion-icon>
+            <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="qr-code-outline" *ngIf="bean.isScannedBean()"></ion-icon>
+            {{bean.name}}
+          </div>
+        </ion-col>
         <ion-col *ngIf="bean?.roast_range !== 0 || bean?.rating !== 0" size="3">
 
           <ngx-stars *ngIf="bean?.roast_range !== 0" #beanStars [initialStars]="bean.roast_range" [readonly]="true" [size]="1" class="bean-display ion-float-right"></ngx-stars><div style="clear:both;" *ngIf="bean?.roast_range !== 0 && bean?.rating !== 0"></div>
@@ -78,7 +84,7 @@
           </ion-grid>
         </ion-col>
         <ion-col class="ion-no-padding" size="3" *ngIf="bean.hasPhotos()" (click)="showPhoto($event)">
-          <div style="margin:0 auto;" tappable>
+          <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
             <async-image [filePath]="bean.attachments[0]" class="bean-slider"></async-image>
           </div>
         </ion-col>

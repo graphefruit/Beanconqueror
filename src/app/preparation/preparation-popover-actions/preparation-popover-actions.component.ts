@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ModalController, NavParams} from '@ionic/angular';
 import {UIHelper} from '../../../services/uiHelper';
-import {UIAnalytics} from '../../../services/uiAnalytics';
 import {Preparation} from '../../../classes/preparation/preparation';
 import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 import {PREPARATION_ACTION} from '../../../enums/preparations/preparationAction';
@@ -13,13 +12,12 @@ import {PREPARATION_ACTION} from '../../../enums/preparations/preparationAction'
 })
 export class PreparationPopoverActionsComponent implements OnInit {
 
-
+  public static COMPONENT_ID: string = 'preparation-popover-actions';
   public data: Preparation = new Preparation();
 
   constructor(private readonly modalController: ModalController,
               private readonly navParams: NavParams,
-              private readonly uiHelper: UIHelper,
-              private readonly uiAnalytics: UIAnalytics) {
+              private readonly uiHelper: UIHelper) {
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
     const preparation: IPreparation = this.uiHelper.copyData(this.navParams.get('preparation'));
 
@@ -27,7 +25,6 @@ export class PreparationPopoverActionsComponent implements OnInit {
   }
 
   public ionViewDidEnter(): void {
-    this.uiAnalytics.trackEvent('PREPARATION', 'POPOVER_ACTIONS');
   }
 
   public ngOnInit() {
@@ -44,9 +41,9 @@ export class PreparationPopoverActionsComponent implements OnInit {
   }
 
   public async choose(_type: string): Promise<void> {
-    this.modalController.dismiss(undefined, _type, 'preparation-popover-actions')
+    this.modalController.dismiss(undefined, _type, PreparationPopoverActionsComponent.COMPONENT_ID)
   }
   public async dismiss() {
-    this.modalController.dismiss(undefined, undefined,'preparation-popover-actions');
+    this.modalController.dismiss(undefined, undefined,PreparationPopoverActionsComponent.COMPONENT_ID);
   }
 }

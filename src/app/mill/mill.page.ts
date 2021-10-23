@@ -5,10 +5,11 @@ import {Mill} from '../../classes/mill/mill';
 import {ModalController} from '@ionic/angular';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
 
-import {MillAddComponent} from './mill-add/mill-add.component';
 import {MILL_ACTION} from '../../enums/mills/millActions';
 import {Settings} from '../../classes/settings/settings';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
+import {UIAnalytics} from '../../services/uiAnalytics';
+import {UIMillHelper} from '../../services/uiMillHelper';
 
 
 @Component({
@@ -28,7 +29,9 @@ export class MillPage  implements OnInit  {
                private readonly uiMillStorage: UIMillStorage,
                private readonly uiAlert: UIAlert,
                private readonly uiBrewStorage: UIBrewStorage,
-               private readonly uiSettingsStorage: UISettingsStorage) {
+               private readonly uiSettingsStorage: UISettingsStorage,
+               private readonly uiAnalytics: UIAnalytics,
+               private readonly uiMillHelper: UIMillHelper) {
 
   }
 
@@ -61,14 +64,7 @@ export class MillPage  implements OnInit  {
   }
 
   public async add() {
-    const modal = await this.modalCtrl.create({
-      component: MillAddComponent, cssClass: 'half-bottom-modal', showBackdrop: true,
-      backdropDismiss: true,
-      swipeToClose: true,
-      id: 'mill-add'
-    });
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiMillHelper.addMill();
     this.loadMills();
   }
 

@@ -24,5 +24,16 @@ export class UIToast {
     toast.present();
   }
 
+  public async showInfoToastBottom(_message: string) {
+    const toast = await this.toastController.create({
+      message: this.translate.instant(_message),
+      duration: 2000,
+      position: 'bottom',
+
+    });
+    toast.present();
+  }
+
+
 
 }

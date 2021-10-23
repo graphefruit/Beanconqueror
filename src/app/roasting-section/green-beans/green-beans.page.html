@@ -14,7 +14,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content #greenBeanContent>
   <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="bean_segment" class="ion-padding-vertical" style="padding-top:0px;">
     <ion-segment-button value="open">
       <ion-label>{{"ROASTING_SECTION.GREEN_BEAN.ROASTABLE" | translate}}
@@ -45,11 +45,9 @@
           {{"PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS" | translate}}
         </div>
       </div>
-      <ion-virtual-scroll #openScroll [items]="openBeans" approxItemHeight="240px">
-        <green-bean-information (greenBeanAction)="beanAction($event[0],$event[1])"  *virtualItem="let bean;"
-                          [greenBean]="bean"></green-bean-information>
-      </ion-virtual-scroll>
-
+      <ag-virtual-scroll #openScroll [items]="openBeans" height="100vh" min-row-height="165">
+        <green-bean-information (greenBeanAction)="beanAction($event[0],$event[1])" *ngFor="let bean of openScroll.items" [greenBean]="bean"></green-bean-information>
+      </ag-virtual-scroll>
     </div>
     <div *ngIf="settings?.show_archived_beans">
       <div *ngSwitchCase="'archiv'">
@@ -71,10 +69,10 @@
             {{"PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS" | translate}}
           </div>
         </div>
-        <ion-virtual-scroll #archivedScroll [items]="finishedBeans" approxItemHeight="240px">
-          <green-bean-information (greenBeanAction)="beanAction($event[0],$event[1])"  *virtualItem="let bean;"
-                            [greenBean]="bean"></green-bean-information>
-        </ion-virtual-scroll>
+
+        <ag-virtual-scroll #archivedScroll [items]="finishedBeans" height="100vh" min-row-height="165">
+          <green-bean-information (greenBeanAction)="beanAction($event[0],$event[1])" *ngFor="let bean of archivedScroll.items" [greenBean]="bean"></green-bean-information>
+        </ag-virtual-scroll>
       </div>
     </div>
   </div>

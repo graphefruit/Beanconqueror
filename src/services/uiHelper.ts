@@ -8,13 +8,15 @@ import moment from 'moment';
 // tslint:disable-next-line
 import 'moment/locale/de';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import {File} from '@ionic-native/file/ngx';
+import {File, FileEntry} from '@ionic-native/file/ngx';
 import {UIFileHelper} from './uiFileHelper';
 import {UILog} from './uiLog';
+import {UIAlert} from './uiAlert';
 
 declare var cordova: any;
 declare var device: any;
 declare var window: any;
+import { cloneDeep } from 'lodash';
 /**
  * Handles every helping functionalities
  */
@@ -35,7 +37,8 @@ export class UIHelper {
                private readonly sanitizer: DomSanitizer,
                private readonly file: File,
                private readonly uiFileHelper: UIFileHelper,
-               private readonly uiLog: UILog) {
+               private readonly uiLog: UILog,
+               private readonly uiAlert: UIAlert) {
 
   }
 
@@ -50,6 +53,11 @@ export class UIHelper {
   public static getUnixTimestamp(): number {
     return moment()
       .unix();
+  }
+
+  public cloneData(_value) {
+    const clone = cloneDeep(_value);
+    return clone;
   }
 
   public copyData(_value: any): any {
@@ -72,6 +80,9 @@ export class UIHelper {
     });
   }
 
+  public showAlert(_message,_title?:string) {
+    this.uiAlert.showMessage(_message,_title);
+  }
   public getUnixTimestamp(): number {
     return moment()
       .unix();
@@ -94,6 +105,16 @@ export class UIHelper {
       .format(format);
   }
 
+
+  public toFixedIfNecessary( value, dp ){
+    const parsedFloat = parseFloat(value);
+    if (isNaN(parsedFloat)) {
+      return 0;
+    }
+    return +parsedFloat.toFixed( dp );
+  }
+
+
   public formateDate(_unix: number, _format?: string): string {
 
     let format: string = 'DD.MM.YYYY, HH:mm:ss';
@@ -104,6 +125,10 @@ export class UIHelper {
 
     return moment.unix(_unix)
       .format(format);
+  }
+
+  public getActualTimeWithMilliseconds() {
+    return moment(new Date()).format("HH:mm:ss.SSS");
   }
 
   public timeDifference(_unix: number): any {
@@ -142,12 +167,12 @@ export class UIHelper {
 
       if (this.isAppReady === 1 || this.isAppReady === 2) {
         this.uiLog.log('Check app ready - Already loaded, no interval needed');
-        resolve();
+        resolve(undefined);
       } else {
         const intV = setInterval(() => {
           this.uiLog.log('Check app ready');
           if (this.isAppReady === 1 || this.isAppReady === 2) {
-            resolve();
+            resolve(undefined);
             clearInterval(intV);
           }
         }, 50);
@@ -192,88 +217,21 @@ export class UIHelper {
   }
 
 
-  public async exportJSON (fileName: string, jsonContent: string): Promise<any> {
-     const promise = new Promise((resolve, reject) => {
-      const errorCallback = (e) => {
-        // console.log('Error: ' + e);
-        reject();
-      };
+  public async exportJSON (fileName: string, jsonContent: string,_share: boolean = true): Promise<any> {
+     const promise = new Promise(async (resolve, reject) => {
+
 
       // Fixed umlaut issue
       // Thanks to: https://stackoverflow.com/questions/31959487/utf-8-encoidng-issue-when-exporting-csv-file-javascript
       const blob = new Blob([jsonContent], {type: 'application/json;charset=UTF-8;'});
-      if (this.platform.is('android') || this.platform.is('ios')) {
-        let storageLocation: string = '';
-
-        switch (device.platform) {
-
-          case 'Android':
-            storageLocation = cordova.file.externalRootDirectory;
-            break;
-          case 'iOS':
-            storageLocation = cordova.file.documentsDirectory;
-            break;
-
+        try {
+          const file: FileEntry = await this.uiFileHelper.downloadFile(fileName,blob,_share);
+          resolve(file);
+        } catch(ex) {
+          reject();
         }
 
 
-        window.resolveLocalFileSystemURL(storageLocation,
-           (fileSystem)  => {
-
-            fileSystem.getDirectory('Download', {
-                create: true,
-                exclusive: false
-              },
-               (directory) => {
-                 directory.getDirectory('Beanconqueror_export', {
-                     create: true,
-                     exclusive: false
-                   },
-                   (directory_export) => {
-                     // You need to put the name you would like to use for the file here.
-                     directory_export.getFile(fileName, {
-                         create: true,
-                         exclusive: false
-                       },
-                       (fileEntry) => {
-
-                         fileEntry.createWriter((writer) => {
-                           writer.onwriteend =  () => {
-                             resolve(fileEntry);
-                           };
-
-                           writer.seek(0);
-                           writer.write(blob); // You need to put the file, blob or base64 representation here.
-
-                         }, errorCallback);
-                       }, errorCallback);
-
-                   }, errorCallback);
-
-
-
-              }, errorCallback);
-          }, errorCallback);
-      } else {
-        setTimeout(() => {
-          if (navigator.msSaveBlob) { // IE 10+
-            navigator.msSaveBlob(blob, fileName);
-          } else {
-            const link = document.createElement('a');
-            if (link.download !== undefined) { // feature detection
-              // Browsers that support HTML5 download attribute
-              const url = URL.createObjectURL(blob);
-              link.setAttribute('href', url);
-              link.setAttribute('download', fileName);
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-              resolve(fileName);
-
-            }
-          }
-        }, 250);
-      }
 
     });
      return promise;

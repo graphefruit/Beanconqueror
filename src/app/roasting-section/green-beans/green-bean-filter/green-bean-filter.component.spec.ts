@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { GreenBeanFilterComponent } from './green-bean-filter.component';
@@ -7,7 +7,7 @@ describe('GreenBeanFilterComponent', () => {
   let component: GreenBeanFilterComponent;
   let fixture: ComponentFixture<GreenBeanFilterComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ GreenBeanFilterComponent ],
       imports: [IonicModule.forRoot()]

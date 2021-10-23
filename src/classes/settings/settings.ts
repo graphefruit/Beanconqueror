@@ -13,6 +13,7 @@ import {ManageBrewParameter} from '../parameter/manageBrewParameter';
 import {IBeanPageFilter} from '../../interfaces/bean/iBeanPageFilter';
 import {BEAN_SORT_AFTER} from '../../enums/beans/beanSortAfter';
 import {BEAN_SORT_ORDER} from '../../enums/beans/beanSortOrder';
+import {UISettingsStorage} from '../../services/uiSettingsStorage';
 
 export class Settings implements ISettings {
 
@@ -21,21 +22,23 @@ export class Settings implements ISettings {
   public startup_view: STARTUP_VIEW_ENUM;
 
 
-
+  public matomo_analytics: boolean;
   public manage_parameters: ManageBrewParameter;
   public default_last_coffee_parameters: DefaultBrewParameter;
   public brew_order: OrderBrewParameter;
   public config: Config;
   public language: string;
-  public analytics: boolean;
   public track_brew_coordinates: boolean;
   public fast_brew_repeat: boolean;
+  public image_quality: number;
+  public brew_rating: number;
 
   public show_archived_beans: boolean;
   public show_archived_brews: boolean;
   public show_archived_mills: boolean;
   public show_archived_preparations: boolean;
   public show_archived_green_beans: boolean;
+  public show_archived_waters: boolean;
 
   public welcome_page_showed: boolean;
   public track_caffeine_consumption: boolean;
@@ -56,9 +59,17 @@ export class Settings implements ISettings {
   public wake_lock: boolean;
 
   public show_roasting_section: boolean;
+  public show_water_section: boolean;
   public show_cupping_section: boolean;
 
-  public static GET_BREW_FILTER(): IBrewPageFilter {
+  public decent_scale_id: string;
+  public bluetooth_scale_stay_connected: boolean;
+
+  public currency: string;
+  public GET_BREW_FILTER(): IBrewPageFilter {
+
+    const upperRating: number = this.brew_rating;
+
     return {
       mill: [],
       bean: [],
@@ -66,7 +77,7 @@ export class Settings implements ISettings {
       method_of_preparation_tools: [],
       favourite: false,
       rating: {
-        upper:5,
+        upper: upperRating,
         lower:-1
       }
     } as IBrewPageFilter;
@@ -82,7 +93,7 @@ export class Settings implements ISettings {
     this.default_last_coffee_parameters = new DefaultBrewParameter();
     this.brew_order = new OrderBrewParameter();
     this.language = '';
-    this.analytics = undefined;
+    this.matomo_analytics = undefined;
 
     this.track_brew_coordinates = false;
     this.fast_brew_repeat = false;
@@ -91,10 +102,12 @@ export class Settings implements ISettings {
     this.show_archived_mills = true;
     this.show_archived_preparations = true;
     this.show_archived_green_beans = true;
+    this.show_archived_waters = true;
 
     this.track_caffeine_consumption = false;
 
     this.show_roasting_section = false;
+    this.show_water_section = false;
     this.show_cupping_section = false;
 
     this.brew_filter = {
@@ -111,9 +124,10 @@ export class Settings implements ISettings {
       OPEN: {} as IBeanPageFilter,
       ARCHIVED: {} as IBeanPageFilter
     };
+    this.brew_rating = 5;
 
-    this.brew_filter.OPEN = Settings.GET_BREW_FILTER();
-    this.brew_filter.ARCHIVED = Settings.GET_BREW_FILTER();
+    this.brew_filter.OPEN = this.GET_BREW_FILTER();
+    this.brew_filter.ARCHIVED = this.GET_BREW_FILTER();
 
     this.bean_filter.OPEN = {sort_after: BEAN_SORT_AFTER.UNKOWN, sort_order:  BEAN_SORT_ORDER.UNKOWN} as IBeanPageFilter;
     this.bean_filter.ARCHIVED =  {sort_after: BEAN_SORT_AFTER.UNKOWN, sort_order:  BEAN_SORT_ORDER.UNKOWN} as IBeanPageFilter;
@@ -124,6 +138,12 @@ export class Settings implements ISettings {
 
     this.welcome_page_showed = false;
     this.wake_lock = false;
+    this.image_quality = 100;
+    this.decent_scale_id = '';
+    this.bluetooth_scale_stay_connected = false;
+
+    this.currency = 'EUR';
+
   }
 
   public initializeByObject(settingsObj: ISettings): void {
@@ -149,8 +169,8 @@ export class Settings implements ISettings {
       OPEN: {} as IBrewPageFilter,
       ARCHIVED: {} as IBrewPageFilter
     };
-    this.brew_filter.OPEN = Settings.GET_BREW_FILTER();
-    this.brew_filter.ARCHIVED = Settings.GET_BREW_FILTER();
+    this.brew_filter.OPEN = this.GET_BREW_FILTER();
+    this.brew_filter.ARCHIVED = this.GET_BREW_FILTER();
   }
 
 

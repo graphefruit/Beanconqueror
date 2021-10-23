@@ -6,6 +6,11 @@
         <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button class="big-icon-only" (click)="edit()" tappable>
+        <ion-icon name="create" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content *ngIf="loaded">
@@ -57,7 +62,8 @@
 
                 [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.method_of_preparation,
                       data.getPreparation().brew_order.before.method_of_preparation,
-                      data.getPreparation().use_custom_parameters)">
+                      data.getPreparation().use_custom_parameters)"
+                detail="true" (click)="detailPreparation()">
       <ion-label>
         <h2>{{"BREW_DATA_PREPARATION_METHOD" | translate}}:</h2>
         <h3>{{data.getPreparation().name}}</h3>
@@ -69,7 +75,8 @@
 
                 [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.bean_type,
                       data.getPreparation().brew_order.before.bean_type,
-                      data.getPreparation().use_custom_parameters)">
+                      data.getPreparation().use_custom_parameters)"
+      detail="true" (click)="detailBean()">
       <ion-label>
         <h2>{{"BREW_DATA_BEAN_TYPE" | translate}}:</h2>
         <h3>{{data.getBean().name}}</h3>
@@ -97,7 +104,8 @@
 
                 [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.mill,
                       data.getPreparation().brew_order.before.mill,
-                      data.getPreparation().use_custom_parameters)">
+                      data.getPreparation().use_custom_parameters)"
+                detail="true" (click)="detailMill()">
       <ion-label>
         <h2>{{"BREW_DATA_MILL" | translate}}:</h2>
         <h3>{{data.getMill().name}}</h3>
@@ -149,7 +157,50 @@
               lines="inset">
       <ion-label>
         <h2>{{"BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}:</h2>
-        <ion-chip  *ngFor="let uuid of data.method_of_preparation_tools">{{data.getPreparationToolName(uuid)}}</ion-chip>
+        <div class="break-whitespaces"><ion-chip  *ngFor="let uuid of data.method_of_preparation_tools">{{data.getPreparationToolName(uuid)}}</ion-chip></div>
+      </ion-label>
+
+    </ion-item>
+
+    <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.bean_weight_in,
+                      data.getPreparation().manage_parameters.bean_weight_in,
+                      data.getPreparation().use_custom_parameters)"
+
+              [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.bean_weight_in,
+                      data.getPreparation().brew_order.before.bean_weight_in,
+                      data.getPreparation().use_custom_parameters)">
+      <ion-label>
+        <h2>{{"BREW_DATA_BEAN_WEIGHT_IN" | translate}}:</h2>
+        <h3>{{data.bean_weight_in}}</h3>
+      </ion-label>
+    </ion-item>
+    <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.vessel,
+                      data.getPreparation().manage_parameters.vessel,
+                      data.getPreparation().use_custom_parameters)"
+
+              [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.vessel,
+                      data.getPreparation().brew_order.before.vessel,
+                      data.getPreparation().use_custom_parameters)">
+      <ion-label>
+        <h2>{{"BREW_DATA_VESSEL_NAME" | translate}}:</h2>
+        <h3 *ngIf="data.vessel_name !== ''">{{data.vessel_name}}</h3>
+        <h3 *ngIf="data.vessel_name === ''">-</h3>
+      </ion-label>
+      <ion-label>
+        <h2>{{"BREW_DATA_VESSEL_WEIGHT" | translate}}:</h2>
+        <h3>{{data.vessel_weight}}</h3>
+      </ion-label>
+    </ion-item>
+    <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.water,
+                      data.getPreparation().manage_parameters.water,
+                      data.getPreparation().use_custom_parameters)"
+
+              [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.water,
+                      data.getPreparation().brew_order.before.water,
+                      data.getPreparation().use_custom_parameters)">
+      <ion-label>
+        <h2>{{"BREW_DATA_WATER" | translate}}:</h2>
+        <h3>{{data.getWater().name}}</h3>
       </ion-label>
     </ion-item>
     <div class="last-item"></div>
@@ -171,6 +222,17 @@
         <h2>{{'BREW_DATA_TEMPERATURE_TIME' | translate}} / {{'BREW_DATA_SURF_TIME' | translate}}:</h2>
         <h3>{{data.brew_temperature_time}}</h3>
       </ion-label>
+    </ion-item>
+    <ion-item lines="none" [hidden]="data.flow_profile.length<=0"
+              [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
+                      data.getPreparation().brew_order.while.brew_time,
+                      data.getPreparation().use_custom_parameters)">
+      <ion-label style="position: relative;" position="stacked">{{"BREW_DATA_FLOW_PROFILE" | translate}}</ion-label>
+    </ion-item>
+    <ion-item [hidden]="data.flow_profile.length<=0" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
+                      data.getPreparation().brew_order.while.brew_time,
+                      data.getPreparation().use_custom_parameters)">
+      <canvas #flowProfileChart></canvas>
     </ion-item>
       <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.brew_time,
                       data.getPreparation().manage_parameters.brew_time,
@@ -327,10 +389,9 @@
       <pre>{{data.note}}</pre>
     </ion-label>
   </ion-item>
-
     <div class="last-item"></div>
   </ion-card>
-  <ion-card   *ngIf="showCupping()" class="ion-margin-horizontal popover" style="display:flex; flex-direction: column;">
+  <ion-card  *ngIf="showCupping()" class="ion-margin-horizontal popover" style="display:flex; flex-direction: column;">
     <ion-item lines="none">
       <span class="ion-title ion-padding-top">{{"BREW_HEADER_CUPPING" | translate }}</span>
     </ion-item>
@@ -343,6 +404,29 @@
     </ion-item>
     <div class="last-item"></div>
   </ion-card>
+
+  <ion-card *ngIf="data.hasCustomFlavors()"  class="ion-margin-horizontal popover" style="display:flex; flex-direction: column;">
+    <ion-item lines="none">
+      <span class="ion-title ion-padding-top">{{"CUSTOM_FLAVORS_AROMAS" | translate }}</span>
+    </ion-item>
+
+    <ion-item *ngFor="let customFlavor of this.data.cupped_flavor.custom_flavors;let index = i;let last = last;" lines="{{last?'none':'inset'}}">
+      <ion-label>{{customFlavor}}</ion-label>
+    </ion-item>
+
+  </ion-card>
+  <ion-card *ngIf="data.hasPredefinedFlavors()" class="ion-margin-horizontal popover" style="display:flex; flex-direction: column;">
+    <ion-item lines="none">
+      <span class="ion-title ion-padding-top">{{"PREDEFINED_FLAVORS_AROMAS" | translate }}</span>
+    </ion-item>
+
+    <ion-item  *ngFor="let item of this.data.cupped_flavor.predefined_flavors | keyvalue;let last = last;" lines="{{last?'none':'inset'}}">
+      <ion-label>{{'CUPPING_' + item.key | translate}}</ion-label>
+    </ion-item>
+
+  </ion-card>
+
+
 </ion-content>
 <ion-footer class="ion-no-border">
   <ion-row>

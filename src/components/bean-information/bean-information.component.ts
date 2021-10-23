@@ -18,6 +18,8 @@ import {UIAlert} from '../../services/uiAlert';
 import {UIToast} from '../../services/uiToast';
 import {UIImage} from '../../services/uiImage';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
+import BEAN_TRACKING from '../../data/tracking/beanTracking';
+import {ShareService} from '../../services/shareService/share-service.service';
 @Component({
   selector: 'bean-information',
   templateUrl: './bean-information.component.html',
@@ -44,7 +46,8 @@ export class BeanInformationComponent implements OnInit {
               private readonly uiAlert: UIAlert,
               private readonly uiToast: UIToast,
               private readonly uiBeanStorage: UIBeanStorage,
-              private readonly uiImage: UIImage) {
+              private readonly uiImage: UIImage,
+              private readonly shareService: ShareService) {
 
   }
 
@@ -87,7 +90,11 @@ export class BeanInformationComponent implements OnInit {
     let usedWeightCount: number = 0;
     const relatedBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(this.bean.config.uuid);
     for (const brew of relatedBrews) {
-      usedWeightCount += brew.grind_weight;
+      if (brew.bean_weight_in > 0) {
+        usedWeightCount += brew.bean_weight_in;
+      } else {
+        usedWeightCount += brew.grind_weight;
+      }
     }
     return usedWeightCount;
   }
@@ -114,10 +121,11 @@ export class BeanInformationComponent implements OnInit {
   public async showBeanActions(event): Promise<void> {
     event.stopPropagation();
     event.stopImmediatePropagation();
+    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.POPOVER_ACTIONS);
     const popover = await this.modalController.create({
       component: BeanPopoverActionsComponent,
       componentProps: {bean: this.bean},
-      id:'bean-popover-actions',
+      id:BeanPopoverActionsComponent.COMPONENT_ID,
       cssClass: 'popover-actions',
     });
     await popover.present();
@@ -144,6 +152,7 @@ export class BeanInformationComponent implements OnInit {
         try {
           await this.deleteBean();
         }catch (ex) {}
+        await this.uiAlert.hideLoadingSpinner();
         break;
       case BEAN_ACTION.BEANS_CONSUMED:
         await this.beansConsumed();
@@ -151,31 +160,32 @@ export class BeanInformationComponent implements OnInit {
       case BEAN_ACTION.PHOTO_GALLERY:
         await this.viewPhotos();
         break;
+      case BEAN_ACTION.SHARE:
+        await this.shareBean();
+        break;
       default:
         break;
     }
   }
 
   public async detailBean() {
-    const modal = await this.modalController.create({component: BeansDetailComponent, id:'bean-detail', componentProps: {bean: this.bean}});
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiBeanHelper.detailBean(this.bean);
   }
 
   private async viewPhotos() {
+    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.PHOTO_VIEW);
     await this.uiImage.viewPhotos(this.bean);
   }
-  public beansConsumed() {
+  public async beansConsumed() {
+    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ARCHIVE);
     this.bean.finished = true;
-    this.uiBeanStorage.update(this.bean);
+    await this.uiBeanStorage.update(this.bean);
     this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');
-    this.resetSettings();
+    await this.resetSettings();
   }
 
   public async add() {
-    const modal = await this.modalController.create({component:BeansAddComponent,id:'bean-add'});
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiBeanHelper.addBean();
   }
 
   public async longPressEditBean(event) {
@@ -185,23 +195,25 @@ export class BeanInformationComponent implements OnInit {
     this.beanAction.emit([BEAN_ACTION.EDIT, this.bean]);
   }
   public async editBean() {
+    await this.uiBeanHelper.editBean(this.bean);
+  }
 
-    const modal = await this.modalController.create({component:BeansEditComponent, id:'bean-edit',  componentProps: {bean : this.bean}});
-    await modal.present();
-    await modal.onWillDismiss();
+  public async shareBean() {
+    await this.shareService.shareBean(this.bean);
   }
 
 
-  public deleteBean(): Promise<any> {
+  public async deleteBean(): Promise<any> {
     return new Promise(async (resolve,reject) => {
       this.uiAlert.showConfirm('DELETE_BEAN_QUESTION', 'SURE_QUESTION', true)
-        .then(() => {
+        .then(async () => {
+            await this.uiAlert.showLoadingSpinner();
             // Yes
-            this.uiAnalytics.trackEvent('BEAN', 'DELETE');
-            this.__deleteBean();
+            this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.DELETE);
+            await this.__deleteBean();
             this.uiToast.showInfoToast('TOAST_BEAN_DELETED_SUCCESSFULLY');
-            this.resetSettings();
-            resolve();
+            await this.resetSettings();
+            resolve(undefined);
           },
           () => {
             // No
@@ -212,21 +224,20 @@ export class BeanInformationComponent implements OnInit {
   }
 
 
-  private resetSettings() {
+  private async resetSettings() {
     const settings: Settings = this.uiSettingsStorage.getSettings();
     settings.resetFilter();
-    this.uiSettingsStorage.saveSettings(settings);
+    await this.uiSettingsStorage.saveSettings(settings);
   }
 
   public async repeatBean() {
-    this.uiAnalytics.trackEvent('BEAN', 'REPEAT');
-    const modal = await this.modalController.create({component: BeansAddComponent, id:'bean-add', componentProps: {bean_template: this.bean}});
-    await modal.present();
-    await modal.onWillDismiss();
+    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.REPEAT);
+    await this.uiBeanHelper.repeatBean(this.bean);
+
   }
 
 
-  private __deleteBean(): void {
+  private async __deleteBean() {
     const brews: Array<Brew> =  this.uiBrewStorage.getAllEntries();
 
     const deletingBrewIndex: Array<number> = [];
@@ -236,10 +247,10 @@ export class BeanInformationComponent implements OnInit {
       }
     }
     for (let i = deletingBrewIndex.length; i--;) {
-      this.uiBrewStorage.removeByUUID(brews[deletingBrewIndex[i]].config.uuid);
+      await this.uiBrewStorage.removeByUUID(brews[deletingBrewIndex[i]].config.uuid);
     }
 
-    this.uiBeanStorage.removeByObject(this.bean);
+    await this.uiBeanStorage.removeByObject(this.bean);
 
   }
 

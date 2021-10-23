@@ -1,0 +1,215 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{"EDIT" | translate}}</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()" class="big-icon-only">
+        <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-card class="popover" style="display:flex; flex-direction: column;">
+    <ion-item lines="none">
+      <span class="ion-title ion-padding-top ion-no-padding-bottom">{{"WATER_SECTION.CATEGORY_GENERAL" | translate }}</span>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">{{"NAME" | translate}}*</ion-label>
+      <ion-input #name="ngModel" [(ngModel)]="data.name" name="name"
+                 placeholder="{{'WATER_SECTION.WATER.PLACE_HOLDER.NAME' | translate}}" spellcheck="false" type="text"
+                 autocapitalize="sentences" required>
+      </ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">{{"ARCHIVED"|translate}}?</ion-label>
+      <ion-checkbox #finished="ngModel" [(ngModel)]="data.finished" name="finished"></ion-checkbox>
+    </ion-item>
+    <ion-item lines="none">
+      <ion-label position="stacked">{{"NOTES" | translate}}</ion-label>
+      <ion-textarea #note="ngModel" [(ngModel)]="data.note" autocapitalize="sentences" autocomplete="true"
+                    placeholder="{{'WATER_SECTION.WATER.PLACE_HOLDER.NOTES' | translate}}"
+                    autocorrect="true" name="note" rows="5" spellcheck="true"></ion-textarea>
+    </ion-item>
+    <photo-add [(data)]="data" ></photo-add>
+  </ion-card>
+  <ion-card style="display:flex; flex-direction: column;">
+    <ion-item lines="none">
+      <span class="ion-title ion-padding-top ion-no-padding-bottom">{{"WATER_SECTION.CATEGORY_INFORMATION" | translate }}</span>
+
+    </ion-item>
+    <ion-item lines="inset">
+      <ion-row style="width:100%">
+        <ion-col class="ion-no-padding" size="8">
+          <ion-item class="ion-no-margin-important">
+            <ion-label position="stacked">{{"WATER_SECTION.WATER.GENERAL_HARDNESS" | translate}}</ion-label>
+            <ion-input [(ngModel)]="data.general_hardness" inputmode="decimal"
+                       placeholder="{{'WATER_SECTION.WATER.PLACE_HOLDER.GENERAL_HARDNESS' | translate}}" prevent-characters
+                       remove-empty-number
+                       type="text"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col class="ion-no-padding ion-align-self-end" size="4">
+          <ion-item class="ion-no-margin-important">
+            <ion-select #brewQuantityType="ngModel" [(ngModel)]="data.general_hardness_type"
+                        cancelText="{{'CANCEL'| translate }}" name="brewQuantityType"
+                        okText="{{'CHOOSE'| translate }}"
+                        style="max-width:100%;">
+              <ion-select-option *ngFor="let key of waterPropertyEnum | keys" value="{{key}}">
+                {{"WATER_SECTION.WATER.WATER_UNIT." + key | translate}}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-item>
+    <ion-item lines="inset">
+      <ion-row style="width:100%">
+        <ion-col class="ion-no-padding" size="8">
+          <ion-item class="ion-no-margin-important">
+            <ion-label position="stacked">{{"WATER_SECTION.WATER.TOTAL_ALKALINITY" | translate}}</ion-label>
+            <ion-input [(ngModel)]="data.total_alkalinity" inputmode="decimal"
+                       placeholder="{{'WATER_SECTION.WATER.PLACE_HOLDER.TOTAL_ALKALINITY' | translate}}" prevent-characters
+                       remove-empty-number
+                       type="text"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col class="ion-no-padding ion-align-self-end" size="4">
+          <ion-item class="ion-no-margin-important">
+            <ion-select #brewQuantityType="ngModel" [(ngModel)]="data.total_alkalinity_type"
+                        cancelText="{{'CANCEL'| translate }}" name="brewQuantityType"
+                        okText="{{'CHOOSE'| translate }}"
+                        style="max-width:100%;">
+              <ion-select-option *ngFor="let key of waterPropertyEnum | keys" value="{{key}}">
+                {{"WATER_SECTION.WATER.WATER_UNIT." + key | translate}}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-item>
+    <ion-item lines="inset">
+      <ion-row style="width:100%">
+        <ion-col class="ion-no-padding" size="8">
+          <ion-item class="ion-no-margin-important">
+            <ion-label position="stacked">{{"WATER_SECTION.WATER.CALCIUM" | translate}}</ion-label>
+            <ion-input [(ngModel)]="data.calcium" inputmode="decimal"
+                       placeholder="{{'WATER_SECTION.WATER.PLACE_HOLDER.CALCIUM' | translate}}" prevent-characters
+                       remove-empty-number
+                       type="text"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col class="ion-no-padding ion-align-self-end" size="4">
+          <ion-item class="ion-no-margin-important">
+            <ion-select #brewQuantityType="ngModel" [(ngModel)]="data.calcium_type"
+                        cancelText="{{'CANCEL'| translate }}" name="brewQuantityType"
+                        okText="{{'CHOOSE'| translate }}"
+                        style="max-width:100%;">
+              <ion-select-option *ngFor="let key of waterPropertyEnum | keys" value="{{key}}">
+                {{"WATER_SECTION.WATER.WATER_UNIT." + key | translate}}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-item>
+    <ion-item lines="inset">
+      <ion-row style="width:100%">
+        <ion-col class="ion-no-padding" size="8">
+          <ion-item class="ion-no-margin-important">
+            <ion-label position="stacked">{{"WATER_SECTION.WATER.MAGNESIUM" | translate}}</ion-label>
+            <ion-input [(ngModel)]="data.magnesium" inputmode="decimal"
+                       placeholder="{{'WATER_SECTION.WATER.PLACE_HOLDER.MAGNESIUM' | translate}}" prevent-characters
+                       remove-empty-number
+                       type="text"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col class="ion-no-padding ion-align-self-end" size="4">
+          <ion-item class="ion-no-margin-important">
+            <ion-select #brewQuantityType="ngModel" [(ngModel)]="data.magnesium_type"
+                        cancelText="{{'CANCEL'| translate }}" name="brewQuantityType"
+                        okText="{{'CHOOSE'| translate }}"
+                        style="max-width:100%;">
+              <ion-select-option *ngFor="let key of waterPropertyEnum | keys" value="{{key}}">
+                {{"WATER_SECTION.WATER.WATER_UNIT." + key | translate}}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-item>
+    <ion-item lines="inset">
+      <ion-row style="width:100%">
+        <ion-col class="ion-no-padding" size="8">
+          <ion-item class="ion-no-margin-important">
+            <ion-label position="stacked">{{"WATER_SECTION.WATER.SODIUM" | translate}}</ion-label>
+            <ion-input [(ngModel)]="data.sodium" inputmode="decimal"
+                       placeholder="{{'WATER_SECTION.WATER.PLACE_HOLDER.SODIUM' | translate}}" prevent-characters
+                       remove-empty-number
+                       type="text"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col class="ion-no-padding ion-align-self-end" size="4">
+          <ion-item class="ion-no-margin-important">
+            <ion-select #brewQuantityType="ngModel" [(ngModel)]="data.sodium_type"
+                        cancelText="{{'CANCEL'| translate }}" name="brewQuantityType"
+                        okText="{{'CHOOSE'| translate }}"
+                        style="max-width:100%;">
+              <ion-select-option *ngFor="let key of waterPropertyEnum | keys" value="{{key}}">
+                {{"WATER_SECTION.WATER.WATER_UNIT." + key | translate}}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-item>
+    <ion-item lines="inset">
+      <ion-row style="width:100%">
+        <ion-col class="ion-no-padding" size="8">
+          <ion-item class="ion-no-margin-important">
+            <ion-label position="stacked">{{"WATER_SECTION.WATER.TDS" | translate}}</ion-label>
+            <ion-input [(ngModel)]="data.tds" inputmode="decimal"
+                       placeholder="{{'WATER_SECTION.WATER.PLACE_HOLDER.TDS' | translate}}" prevent-characters
+                       remove-empty-number
+                       type="text"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col class="ion-no-padding ion-align-self-end" size="4">
+          <ion-item class="ion-no-margin-important">
+            <ion-select disabled="true" #brewQuantityType="ngModel" [(ngModel)]="data.tds_type"
+                        cancelText="{{'CANCEL'| translate }}" name="brewQuantityType"
+                        okText="{{'CHOOSE'| translate }}"
+                        style="max-width:100%;">
+              <ion-select-option *ngFor="let key of waterPropertyEnum | keys" value="{{key}}">
+                {{waterPropertyTdsEnum[key]}}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-item>
+
+    <ion-item lines="none">
+
+      <ion-icon name="information-circle-outline" slot="start"></ion-icon>
+      <ion-label class="break-whitespaces">
+        <h2>{{"WATER_SECTION.WATER_BOTTLE_EXPLANATION" | translate}}</h2>
+      </ion-label>
+
+    </ion-item>
+
+  </ion-card>
+
+
+</ion-content>
+<ion-footer class="ion-no-border">
+  <ion-row>
+    <ion-col>
+      <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
+                  tappable>{{"CANCEL" | translate}}</ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button (click)="edit()" color="accent" expand="block" tappable
+                  type="submit">{{"SAVE" | translate}}</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>

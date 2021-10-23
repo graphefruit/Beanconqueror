@@ -1,5 +1,4 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {Mill} from '../../../classes/mill/mill';
 import {Settings} from '../../../classes/settings/settings';
 import {ModalController} from '@ionic/angular';
 import {UIAlert} from '../../../services/uiAlert';
@@ -9,6 +8,9 @@ import {ROASTING_MACHINE_ACTION} from '../../../enums/roasting-machine/roastingM
 import {RoastingMachine} from '../../../classes/roasting-machine/roasting-machine';
 import {UIRoastingMachineStorage} from '../../../services/uiRoastingMachineStorage';
 import {RoastingMachineAddComponent} from './roasting-machine-add/roasting-machine-add.component';
+import ROASTING_MACHINE_TRACKING from '../../../data/tracking/roastingMachineTracking';
+import {UIAnalytics} from '../../../services/uiAnalytics';
+import {UIRoastingMachineHelper} from '../../../services/uiRoastingMachineHelper';
 
 @Component({
   selector: 'app-roasting-machine',
@@ -27,7 +29,9 @@ export class RoastingMachinePage implements OnInit {
                private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
                private readonly uiAlert: UIAlert,
                private readonly uiBrewStorage: UIBrewStorage,
-               private readonly uiSettingsStorage: UISettingsStorage,) {
+               private readonly uiSettingsStorage: UISettingsStorage,
+               private readonly uiAnalytics: UIAnalytics,
+               private readonly uiRoastingMachineHelper: UIRoastingMachineHelper) {
 
   }
 
@@ -64,15 +68,7 @@ export class RoastingMachinePage implements OnInit {
       .sort((a, b) => a.name.localeCompare(b.name));
   }
   public async add() {
-
-      const modal = await this.modalCtrl.create({
-        component: RoastingMachineAddComponent, cssClass: 'half-bottom-modal', showBackdrop: true,
-        backdropDismiss: true,
-        swipeToClose: true,
-        id: 'roasting-machine-add'
-      });
-      await modal.present();
-      await modal.onWillDismiss();
+      await this.uiRoastingMachineHelper.addRoastingMachine();
       this.loadRoastingMachines();
   }
 }

@@ -38,7 +38,13 @@
     position: relative;
     top: -5px;
   }
-
+  ::ng-deep img {
+    width: 100%;
+    max-height: 140px;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
 
 }
 

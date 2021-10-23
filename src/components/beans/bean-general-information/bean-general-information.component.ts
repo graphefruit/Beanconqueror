@@ -89,7 +89,7 @@ export class BeanGeneralInformationComponent implements OnInit {
     this.roasterFocused = true;
   }
 
-  public roasterSelected(selected: string) :void {
+  public roasterSelected(selected: string): void {
     this.data.roaster = selected;
     this.roasterResults = [];
     this.roasterResultsAvailable = false;
@@ -111,8 +111,15 @@ export class BeanGeneralInformationComponent implements OnInit {
         okText: this.translate.instant('CHOOSE'),
         todayText: this.translate.instant('TODAY'),
         cancelText: this.translate.instant('CANCEL'),
+        clearText: this.translate.instant('CLEAR'),
         success: (newDate) => {
-          this.data.roastingDate = moment(newDate).toISOString();
+          if (newDate === undefined) {
+            this.data.roastingDate = '';
+          } else
+          {
+            this.data.roastingDate = moment(newDate).toISOString();
+          }
+
           this.changeDetectorRef.detectChanges();
         }, error: () => {
 
@@ -121,6 +128,8 @@ export class BeanGeneralInformationComponent implements OnInit {
 
     }
   }
+
+
   public changedRating() {
     if (typeof(this.beanRating) !== 'undefined') {
       this.beanRating.setRating(this.data.rating);
@@ -131,7 +140,7 @@ export class BeanGeneralInformationComponent implements OnInit {
   }
   public beanMixChanged() {
     if (this.data.beanMix !== BEAN_MIX_ENUM.BLEND) {
-      const beanInfo:IBeanInformation = this.data.bean_information[0];
+      const beanInfo: IBeanInformation = this.data.bean_information[0];
       this.data.bean_information = [];
       this.data.bean_information.push(beanInfo);
     }

@@ -23,4 +23,7 @@ export interface IBrewParameter {
   tds: boolean;
   brew_beverage_quantity: boolean;
   method_of_preparation_tool: boolean;
+  water: boolean;
+  bean_weight_in: boolean;
+  vessel: boolean;
 }

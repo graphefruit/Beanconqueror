@@ -5,12 +5,13 @@
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
-    "module": "es2015",
+    "module": "es2020",
     "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
+    //https://stackoverflow.com/a/59424454/3747399
+    "emitDecoratorMetadata": false,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es5",
+    "target": "es2020",
     "typeRoots": [
       "node_modules/@types"
     ],

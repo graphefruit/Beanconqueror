@@ -14,7 +14,7 @@ export class UIAlert {
   constructor(private readonly alertController: AlertController,
               private readonly translate: TranslateService,
               private readonly modalController: ModalController,
-              private readonly loadingController:LoadingController) {
+              private readonly loadingController: LoadingController) {
   }
 
 
@@ -28,6 +28,20 @@ export class UIAlert {
       message: this.translate.instant('PLEASE_WAIT')
     });
     this.loadingSpinner.present();
+
+
+  }
+
+  public setLoadingSpinnerMessage(message: string, translate: boolean = false) {
+    if (this.loadingSpinner) {
+      if (translate === false) {
+        this.loadingSpinner.message = message;
+      } else {
+        this.loadingSpinner.message = this.translate.instant(message);
+      }
+
+    }
+
   }
 
   public async hideLoadingSpinner() {
@@ -80,7 +94,7 @@ export class UIAlert {
           {
             text: okText,
             handler: () => {
-              resolve();
+              resolve(undefined);
             }
           }
         ]
@@ -115,7 +129,7 @@ export class UIAlert {
           {
             text: this.translate.instant('YES'),
             handler: () => {
-              resolve();
+              resolve(undefined);
             }
           }
         ]

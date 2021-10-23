@@ -13,7 +13,7 @@ import {UIHelper} from '../../../../services/uiHelper';
 })
 export class GreenBeanFilterComponent implements OnInit {
 
-
+  public static COMPONENT_ID = 'green-bean-filter';
 
 
   public beanSortAfterEnum = BEAN_SORT_AFTER;
@@ -58,7 +58,7 @@ export class GreenBeanFilterComponent implements OnInit {
     };
     this.modalController.dismiss({
       bean_filter: this.uiHelper.copyData(this.filter)
-    },undefined,'green-bean-filter');
+    },undefined,GreenBeanFilterComponent.COMPONENT_ID);
   }
 
   public setSortOrder(_order: any) {

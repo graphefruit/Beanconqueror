@@ -56,15 +56,22 @@ export class UIBrewStorage extends StorageClass {
     return this.brews;
   }
 
-
-  public add(_entry: Brew): void {
+  public async initializeStorage() {
+    this.brews = [];
+    await super.__initializeStorage();
+  }
+  public async add(_entry: Brew) {
     _entry.fixDataTypes();
-    super.add(_entry);
+    await super.add(_entry);
   }
 
-  public update(_obj: Brew): boolean {
-    _obj.fixDataTypes();
-    return super.update(_obj);
+  public async update(_obj: Brew): Promise<boolean> {
+    const promise: Promise<any> = new Promise(async (resolve, reject) => {
+      _obj.fixDataTypes();
+      const updateval: boolean = await super.update(_obj);
+      resolve(updateval);
+    });
+    return promise;
   }
 
 }

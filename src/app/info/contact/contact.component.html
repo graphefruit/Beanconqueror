@@ -16,7 +16,20 @@
       {{"PAGE_CONTACT_SUGGESTIONS_QUESTIONS_WISHES" | translate}}
     </ion-card-header>
     <ion-card-content>
-      <div><a href="https://github.com/graphefruit/Beanconqueror" (click)="openLink($event,'https://github.com/graphefruit/Beanconqueror')">https://github.com/graphefruit/Beanconqueror</a></div>
+      <ion-item tappable button (click)="openWebsite()">
+
+        <ion-icon name="beanconqueror-website" slot="start"></ion-icon>
+        <span>{{"WEBSITE" | translate}}</span>
+        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+      </ion-item>
+        <ion-item tappable button (click)="openGithub()">
+
+          <ion-icon name="logo-github" slot="start"></ion-icon>
+          <span>Github</span>
+          <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+        </ion-item>
+
+
     </ion-card-content>
   </ion-card>
 </ion-content>

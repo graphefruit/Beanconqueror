@@ -58,6 +58,11 @@ export class UIPreparationStorage extends StorageClass {
     return this.translate.instant('NO_COFFEE_DRUNK');
   }
 
+  public async initializeStorage() {
+    this.preparations = [];
+    await super.__initializeStorage();
+  }
+
   public getAllEntries(): Array<Preparation> {
 
     if (this.preparations.length <= 0) {

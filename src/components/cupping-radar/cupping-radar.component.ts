@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Output, ViewChild} from '@angular/core';
 import {Chart} from 'chart.js';
 import {ICupping} from '../../interfaces/cupping/iCupping';
 import {Subject} from 'rxjs';
@@ -30,6 +30,8 @@ export class CuppingRadarComponent implements AfterViewInit {
   public debounceRadar: Subject<string> = new Subject<string>();
   @ViewChild('cuppingChart', {static: false}) public cuppingChart;
 
+  @Output() public cuppingChanged: EventEmitter<any> = new EventEmitter();
+
   constructor(private readonly translate: TranslateService, private uiBrewHelper: UIBrewHelper) {
   }
 
@@ -55,8 +57,8 @@ export class CuppingRadarComponent implements AfterViewInit {
   public setCuppingValues(_values: ICupping) {
 
     this.model = _values;
-
     this.debounceRadar.next();
+
   }
 
   public getCuppingValues() {
@@ -64,6 +66,7 @@ export class CuppingRadarComponent implements AfterViewInit {
   }
 
   public rangeChanged(_query): void {
+    this.cuppingChanged.emit();
     this.debounceRadar.next(_query);
   }
 

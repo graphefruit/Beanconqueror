@@ -16,15 +16,30 @@ import {UIStorage} from './uiStorage';
   providedIn: 'root'
 })
 export class UISettingsStorage extends StorageClass {
+  /**
+   * Singelton instance
+   */
+  public static instance: UISettingsStorage;
   private settings: Settings = new Settings();
   private isSettingsInitialized: number = -1;
+
+  public static getInstance(): UISettingsStorage {
+    if (UISettingsStorage.instance) {
+      return UISettingsStorage.instance;
+    }
+
+    return undefined;
+  }
+
   constructor(protected uiStorage: UIStorage,
               protected uiHelper: UIHelper,
               protected uiLog: UILog) {
     super(uiStorage, uiHelper, uiLog, 'SETTINGS');
-
+    if (UISettingsStorage.instance === undefined) {
+      UISettingsStorage.instance = this;
+    }
     super.storageReady()
-      .then(() => {
+      .then(async () => {
 
       const entries: Array<any> = this.getAllEntries();
       if (entries.length > 0) {
@@ -36,13 +51,21 @@ export class UISettingsStorage extends StorageClass {
         this.isSettingsInitialized = 1;
       } else {
         // Take the new settings obj.
-        super.add(this.settings);
+
+        const data: any = await super.add(this.settings);
+        this.settings = new Settings();
+        this.settings.initializeByObject(data);
         this.isSettingsInitialized = 1;
       }
     }, () => {
       // Outsch, cant do much.
         this.isSettingsInitialized = 0;
     });
+  }
+
+  public async initializeStorage() {
+    await super.__initializeStorage();
+
   }
 
   public async storageReady(): Promise<any> {
@@ -53,7 +76,7 @@ export class UISettingsStorage extends StorageClass {
           if (this.isSettingsInitialized === 1) {
             this.uiLog.log(`Storage ${this.DB_PATH} ready`);
             window.clearInterval(intV);
-            resolve();
+            resolve(undefined);
           } else if (this.isSettingsInitialized === 0) {
             window.clearInterval(intV);
             this.uiLog.log(`Storage ${this.DB_PATH} not ready`);
@@ -63,7 +86,7 @@ export class UISettingsStorage extends StorageClass {
       } else {
         if (this.isSettingsInitialized === 1) {
           this.uiLog.log(`Storage ${this.DB_PATH} - already - ready`);
-          resolve();
+          resolve(undefined);
         } else if (this.isSettingsInitialized === 0) {
           this.uiLog.log(`Storage ${this.DB_PATH} - already - not - ready`);
           reject();
@@ -75,17 +98,21 @@ export class UISettingsStorage extends StorageClass {
     return promise;
   }
 
-  public reinitializeStorage(): void {
-    super.reinitializeStorage();
+  public async reinitializeStorage() {
+    await super.reinitializeStorage();
 
-    super.storageReady().then(() => {
+    await super.storageReady().then(async () => {
       const entries: Array<any> = this.getAllEntries();
       if (entries.length > 0) {
         // We already had some settings here.
+
+        // Issue found - when we add new data types or over import, we need to clean up settings before and then initialize by object
+        this.settings = new Settings();
         this.settings.initializeByObject(entries[0]);
       } else {
-        // Take the new settings obj.
-        super.add(this.settings);
+        const data: any = await super.add(this.settings);
+        this.settings = new Settings();
+        this.settings.initializeByObject(data);
       }
     }, () => {
       // Outsch, cant do much.
@@ -95,8 +122,8 @@ export class UISettingsStorage extends StorageClass {
     return this.settings;
   }
 
-  public saveSettings(settings: ISettings | Settings): void {
-      super.update(settings);
+  public async saveSettings(settings: ISettings | Settings) {
+      await super.update(settings);
   }
 
 }

@@ -1,9 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {ModalController, NavParams} from '@ionic/angular';
 import {UIHelper} from '../../../services/uiHelper';
-import {UIAnalytics} from '../../../services/uiAnalytics';
 import {Mill} from '../../../classes/mill/mill';
 import {IMill} from '../../../interfaces/mill/iMill';
+import MILL_TRACKING from '../../../data/tracking/millTracking';
+import {UIAnalytics} from '../../../services/uiAnalytics';
 
 @Component({
   selector: 'app-mill-detail',
@@ -12,6 +13,7 @@ import {IMill} from '../../../interfaces/mill/iMill';
 })
 export class MillDetailComponent implements OnInit {
 
+  public static COMPONENT_ID: string = 'mill-detail';
   public mill: IMill;
   public data: Mill = new Mill();
 
@@ -23,7 +25,7 @@ export class MillDetailComponent implements OnInit {
   }
 
   public ionViewWillEnter() {
-    this.uiAnalytics.trackEvent('MILL', 'DETAIL');
+    this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.DETAIL);
     this.mill = this.navParams.get('mill');
     if (this.mill) {
       const copy: IMill = this.uiHelper.copyData(this.mill);
@@ -36,7 +38,7 @@ export class MillDetailComponent implements OnInit {
   public dismiss(): void {
     this.modalController.dismiss({
       dismissed: true
-    },undefined,'mill-detail');
+    },undefined,MillDetailComponent.COMPONENT_ID);
   }
 
 

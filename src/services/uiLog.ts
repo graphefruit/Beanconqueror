@@ -23,7 +23,7 @@ export class UILog {
     this.disabled = false;
   }
   public disable(): void {
-    this.disabled = false;
+    this.disabled = true;
   }
 
   public getLogs(): Array<ILogInterface> {
@@ -31,8 +31,8 @@ export class UILog {
   }
 
   public log(_message: string): void {
-    if (!this.disabled) {
-      this.generateLogMessage(LOGS_ENUM.LOG, _message);
+    this.generateLogMessage(LOGS_ENUM.LOG, _message);
+    if (this.disabled === false) {
 
       console.log(_message);
     }
@@ -40,27 +40,34 @@ export class UILog {
   }
 
   public info(_message: string): void {
-    if (!this.disabled && console.info) {
-      this.generateLogMessage(LOGS_ENUM.INFO, _message);
+    this.generateLogMessage(LOGS_ENUM.INFO, _message);
+    if (this.disabled === false && console.info) {
+
       console.info(_message);
     }
   }
 
   public error(_message: string): void {
-    if (!this.disabled && console.error) {
-      this.generateLogMessage(LOGS_ENUM.ERR, _message);
+    this.generateLogMessage(LOGS_ENUM.ERR, _message);
+    if (this.disabled === false && console.error) {
+
       console.error(_message);
     }
   }
 
   public warn(_message: string): void {
-    if (!this.disabled && console.warn) {
-      this.generateLogMessage(LOGS_ENUM.WARN, _message);
+    this.generateLogMessage(LOGS_ENUM.WARN, _message);
+    if (this.disabled === false && console.warn) {
+
       console.warn(_message);
     }
   }
 
   private generateLogMessage(_type: LOGS_ENUM, _message: string) {
+    if (this.logs.length > 2000) {
+      // Make sure we don't exceed when something wents wrong inside the app.
+      this.logs = [];
+    }
     const logMessage: ILogInterface = {} as ILogInterface;
     logMessage.key = _type;
     logMessage.value = _message;

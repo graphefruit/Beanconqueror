@@ -3,6 +3,9 @@
 
   ul {
     text-align:left;
+    li {
+      word-break: break-word;
+    }
   }
   ion-slides { height: initial; }
   ion-header, ion-content, ion-footer{

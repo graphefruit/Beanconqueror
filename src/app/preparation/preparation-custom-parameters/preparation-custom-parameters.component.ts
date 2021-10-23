@@ -5,8 +5,6 @@ import {IPreparation} from '../../../interfaces/preparation/iPreparation';
 import {PREPARATION_TYPES} from '../../../enums/preparations/preparationTypes';
 import {ModalController, NavParams} from '@ionic/angular';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
-import {UIHelper} from '../../../services/uiHelper';
-import {UIAnalytics} from '../../../services/uiAnalytics';
 
 @Component({
   selector: 'app-preparation-custom-parameters',
@@ -14,7 +12,7 @@ import {UIAnalytics} from '../../../services/uiAnalytics';
   styleUrls: ['./preparation-custom-parameters.component.scss'],
 })
 export class PreparationCustomParametersComponent implements OnInit {
-
+  public static COMPONENT_ID: string = 'preparation-custom-parameters';
   public data: Preparation = new Preparation();
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   public preparationTypeEnum = PREPARATION_TYPES;
@@ -23,14 +21,11 @@ export class PreparationCustomParametersComponent implements OnInit {
 
   constructor (private readonly navParams: NavParams,
                private readonly modalController: ModalController,
-               private readonly uiPreparationStorage: UIPreparationStorage,
-               private readonly uiHelper: UIHelper,
-               private readonly uiAnalytics: UIAnalytics) {
+               private readonly uiPreparationStorage: UIPreparationStorage) {
 
   }
 
   public ionViewWillEnter(): void {
-    this.uiAnalytics.trackEvent('PREPARATION', 'CUSTOM_PARAMETERS');
     if (this.preparation !== undefined) {
       this.data.initializeByObject(this.preparation);
     }
@@ -40,11 +35,11 @@ export class PreparationCustomParametersComponent implements OnInit {
   public dismiss(): void {
     this.modalController.dismiss({
       dismissed: true
-    }, undefined, 'preparation-custom-parameters');
+    }, undefined, PreparationCustomParametersComponent.COMPONENT_ID);
   }
 
-  public save() {
-    this.uiPreparationStorage.update(this.data);
+  public async save() {
+    await this.uiPreparationStorage.update(this.data);
   }
 
   public ngOnInit() {}

@@ -4,11 +4,12 @@ import {GreenBean} from '../../../../classes/green-bean/green-bean';
 import {UIGreenBeanStorage} from '../../../../services/uiGreenBeanStorage';
 import {UIImage} from '../../../../services/uiImage';
 import {UIHelper} from '../../../../services/uiHelper';
-import {UIAnalytics} from '../../../../services/uiAnalytics';
 import {UIFileHelper} from '../../../../services/uiFileHelper';
 import {UIToast} from '../../../../services/uiToast';
 
 import {IGreenBean} from '../../../../interfaces/green-bean/iGreenBean';
+import GREEN_BEAN_TRACKING from '../../../../data/tracking/greenBeanTracking';
+import {UIAnalytics} from '../../../../services/uiAnalytics';
 
 
 @Component({
@@ -17,7 +18,7 @@ import {IGreenBean} from '../../../../interfaces/green-bean/iGreenBean';
   styleUrls: ['./green-bean-edit.component.scss'],
 })
 export class GreenBeanEditComponent implements OnInit {
-
+  public static COMPONENT_ID:string = 'green-bean-edit';
 
   public data: GreenBean = new GreenBean();
   @Input() public greenBean: IGreenBean;
@@ -29,15 +30,15 @@ export class GreenBeanEditComponent implements OnInit {
                private readonly uiGreenBeanStorage: UIGreenBeanStorage,
                private readonly uiImage: UIImage,
                public uiHelper: UIHelper,
-               private readonly uiAnalytics: UIAnalytics,
                private readonly uiFileHelper: UIFileHelper,
-               private readonly uiToast: UIToast) {
+               private readonly uiToast: UIToast,
+               private readonly uiAnalytics: UIAnalytics) {
 
   }
 
 
   public async ionViewWillEnter() {
-    this.uiAnalytics.trackEvent('GREEN_BEAN', 'EDIT');
+    this.uiAnalytics.trackEvent(GREEN_BEAN_TRACKING.TITLE, GREEN_BEAN_TRACKING.ACTIONS.EDIT);
     this.data = new GreenBean();
     this.data.initializeByObject(this.greenBean);
 
@@ -45,9 +46,9 @@ export class GreenBeanEditComponent implements OnInit {
 
 
 
-  public editBean(): void {
+  public async editBean() {
     if (this.__formValid()) {
-      this.__editBean();
+      await this.__editBean();
     }
   }
 
@@ -60,9 +61,10 @@ export class GreenBeanEditComponent implements OnInit {
 
     return valid;
   }
-  private __editBean(): void {
-    this.uiGreenBeanStorage.update(this.data);
-    this.uiToast.showInfoToast('TOAST_BEAN_EDITED_SUCCESSFULLY');
+  private async __editBean() {
+    await this.uiGreenBeanStorage.update(this.data);
+    this.uiToast.showInfoToast('TOAST_GREEN_BEAN_EDITED_SUCCESSFULLY');
+    this.uiAnalytics.trackEvent(GREEN_BEAN_TRACKING.TITLE, GREEN_BEAN_TRACKING.ACTIONS.EDIT_FINISH);
     this.dismiss();
   }
 
@@ -71,7 +73,7 @@ export class GreenBeanEditComponent implements OnInit {
   public dismiss(): void {
     this.modalController.dismiss({
       dismissed: true
-    },undefined,'green-bean-edit');
+    },undefined,GreenBeanEditComponent.COMPONENT_ID);
   }
 
 

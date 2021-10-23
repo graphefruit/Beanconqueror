@@ -6,9 +6,9 @@ export class BeanRoastInformation implements IBeanRoastInformation {
   public drop_temperature: number;
   public roast_length: number;
   public roaster_machine: string;
-  public green_bean_weight:number;
-  public outside_temperature:number;
-  public humidity:number;
+  public green_bean_weight: number;
+  public outside_temperature: number;
+  public humidity: number;
   public bean_uuid: string;
   public first_crack_minute: number;
   public first_crack_temperature: number;

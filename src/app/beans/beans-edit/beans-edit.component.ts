@@ -6,8 +6,9 @@ import {UIHelper} from '../../../services/uiHelper';
 import {UIImage} from '../../../services/uiImage';
 import {IBean} from '../../../interfaces/bean/iBean';
 import {Bean} from '../../../classes/bean/bean';
-import {UIAnalytics} from '../../../services/uiAnalytics';
 import {UIToast} from '../../../services/uiToast';
+import {UIAnalytics} from '../../../services/uiAnalytics';
+import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 
 @Component({
   selector: 'beans-edit',
@@ -16,6 +17,7 @@ import {UIToast} from '../../../services/uiToast';
 })
 export class BeansEditComponent implements OnInit {
 
+  public static COMPONENT_ID:string = 'bean-edit';
   public data: Bean;
   @Input() public bean: IBean;
   public bean_segment = 'general';
@@ -24,26 +26,26 @@ export class BeansEditComponent implements OnInit {
                private readonly uiBeanStorage: UIBeanStorage,
                private readonly uiImage: UIImage,
                private readonly uiHelper: UIHelper,
-               private readonly uiAnalytics: UIAnalytics,
-               private readonly uiToast: UIToast) {
+               private readonly uiToast: UIToast,
+               private readonly uiAnalytics: UIAnalytics) {
   }
 
   public ionViewWillEnter(): void {
-    this.uiAnalytics.trackEvent('BEAN', 'EDIT');
+    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.EDIT);
     this.data = new Bean();
     this.data.initializeByObject(this.bean);
   }
 
-  public editBean(): void {
+  public async editBean() {
     if (this.__formValid()) {
-      this.__editBean();
+      await this.__editBean();
     }
   }
 
   public dismiss(): void {
     this.modalController.dismiss({
       dismissed: true
-    },undefined,'bean-edit');
+    },undefined,BeansEditComponent.COMPONENT_ID);
   }
 
   private __formValid(): boolean {
@@ -55,9 +57,10 @@ export class BeansEditComponent implements OnInit {
 
     return valid;
   }
-  private __editBean(): void {
-    this.uiBeanStorage.update(this.data);
+  private async __editBean() {
+    await this.uiBeanStorage.update(this.data);
     this.uiToast.showInfoToast('TOAST_BEAN_EDITED_SUCCESSFULLY');
+    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.EDIT_FINISH);
     this.dismiss();
   }
 

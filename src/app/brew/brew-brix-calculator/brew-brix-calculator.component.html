@@ -1,0 +1,25 @@
+<ion-content (click)="dismiss()">
+
+</ion-content>
+<ion-footer class="ion-no-border">
+  <div style="width:100%;text-align:end;" class="ion-margin-top">
+    <ion-button (click)="dismiss()" tappable color="accent" fill="clear" >
+      <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+    </ion-button>
+  </div>
+  <ion-item lines="inset">
+    <ion-label position="stacked">{{"BREW_BRIX_CALCULATION" | translate}}</ion-label>
+    <ion-input [(ngModel)]="brix" placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_GRIND_SIZE' | translate}}"
+               type="text"></ion-input>
+  </ion-item>
+  <ion-row>
+    <ion-col>
+      <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
+                  tappable>{{"CANCEL" | translate}}</ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button (click)="setBrix()" color="accent" disable-double-click expand="block" tappable
+                  type="submit">{{"SET_TDS" | translate}}</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>

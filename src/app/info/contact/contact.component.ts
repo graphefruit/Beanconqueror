@@ -1,5 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {UIHelper} from '../../../services/uiHelper';
+import LINK_TRACKING from '../../../data/tracking/linkTracking';
+import {UIAnalytics} from '../../../services/uiAnalytics';
 
 @Component({
   selector: 'contact',
@@ -8,14 +10,19 @@ import {UIHelper} from '../../../services/uiHelper';
 })
 export class ContactComponent implements OnInit {
 
-  constructor(private readonly uiHelper: UIHelper) { }
+  constructor(private readonly uiHelper: UIHelper,
+              private readonly uiAnalytics: UIAnalytics) { }
 
   public ngOnInit() {}
-  public openLink(event, _link: string): void {
-    event.cancelBubble = true;
-    event.preventDefault();
-    this.uiHelper.openExternalWebpage(_link);
 
+
+  public openGithub() {
+    this.uiAnalytics.trackEvent(LINK_TRACKING.TITLE, LINK_TRACKING.ACTIONS.GITHUB);
+    this.uiHelper.openExternalWebpage('https://github.com/graphefruit/Beanconqueror');
+  }
+  public openWebsite() {
+    this.uiAnalytics.trackEvent(LINK_TRACKING.TITLE, LINK_TRACKING.ACTIONS.WEBSITE);
+    this.uiHelper.openExternalWebpage('https://beanconqueror.com');
   }
 
 }

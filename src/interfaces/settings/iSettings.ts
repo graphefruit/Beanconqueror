@@ -17,19 +17,23 @@ export interface ISettings {
   manage_parameters: IBrewParameter;
   default_last_coffee_parameters: IBrewParameter;
   brew_order: IOrderBrewParameter;
-  analytics: boolean;
+  matomo_analytics: boolean;
   track_brew_coordinates: boolean;
   fast_brew_repeat: boolean;
+  image_quality: number;
+  brew_rating: number;
 
   show_archived_beans: boolean;
   show_archived_brews: boolean;
   show_archived_mills: boolean;
   show_archived_preparations: boolean;
   show_archived_green_beans: boolean;
+  show_archived_waters: boolean;
 
   track_caffeine_consumption: boolean;
 
   show_roasting_section: boolean;
+  show_water_section: boolean;
   show_cupping_section: boolean;
 
   brew_filter: {
@@ -49,7 +53,12 @@ export interface ISettings {
 
   welcome_page_showed: boolean;
 
-  wake_lock:boolean;
+  wake_lock: boolean;
 
   config: IConfig;
+
+  decent_scale_id: string;
+  bluetooth_scale_stay_connected: boolean;
+
+  currency: string;
 }

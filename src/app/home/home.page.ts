@@ -30,9 +30,6 @@ export class HomePage {
 
   }
 
-  public ionViewDidEnter(): void {
-
-  }
 
 
   public showBeans() {

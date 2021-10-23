@@ -1,6 +1,5 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {UIStatistic} from '../../services/uiStatistic';
-import {BrewAddComponent} from '../brew/brew-add/brew-add.component';
 import {ModalController} from '@ionic/angular';
 import {Brew} from '../../classes/brew/brew';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
@@ -27,17 +26,19 @@ export class DashboardPage implements OnInit {
               private readonly changeDetectorRef: ChangeDetectorRef,
               private readonly router: Router,
               private readonly uiBeanStorage: UIBeanStorage,
-              private readonly uiBeanHelper: UIBeanHelper) {
+              private readonly uiBeanHelper: UIBeanHelper
+  ) {
   }
 
-  public ngOnInit(): void {
+  public  ngOnInit() {
+
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
-      // Reset when something changes
-     this.leftOverBeansWeight = undefined;
+      // If an brew is deleted, we need to reset our array for the next call.
+      this.leftOverBeansWeight = undefined;
     });
 
     this.uiBeanStorage.attachOnEvent().subscribe((_val) => {
-      // Reset when something changes
+      // If an brew is deleted, we need to reset our array for the next call.
       this.leftOverBeansWeight = undefined;
     });
   }
@@ -54,13 +55,21 @@ export class DashboardPage implements OnInit {
   }
 
   public async addBrew() {
-    if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
-      const modal = await this.modalCtrl.create({component: BrewAddComponent, id:'brew-add'});
-      await modal.present();
-      await modal.onWillDismiss();
+
+      await this.uiBrewHelper.addBrew();
       this.loadBrews();
       this.router.navigate(['/home/brews']);
-    }
+  }
+
+  public async longPressAdd(event: Event) {
+    event.preventDefault();
+    event.cancelBubble = true;
+
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    await this.uiBrewHelper.longPressAddBrew();
+    this.loadBrews();
+    this.router.navigate(['/home/brews']);
   }
 
   public getBrews() {

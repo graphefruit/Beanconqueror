@@ -1,9 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {ModalController} from '@ionic/angular';
-import {UIAnalytics} from '../../../../services/uiAnalytics';
 import {UIToast} from '../../../../services/uiToast';
 import {UIRoastingMachineStorage} from '../../../../services/uiRoastingMachineStorage';
 import {RoastingMachine} from '../../../../classes/roasting-machine/roasting-machine';
+import ROASTING_MACHINE_TRACKING from '../../../../data/tracking/roastingMachineTracking';
+import {UIAnalytics} from '../../../../services/uiAnalytics';
 
 @Component({
   selector: 'app-roasting-machine-add',
@@ -12,34 +13,37 @@ import {RoastingMachine} from '../../../../classes/roasting-machine/roasting-mac
 })
 export class RoastingMachineAddComponent implements OnInit {
 
+  public static COMPONENT_ID:string = 'roasting-machine-add';
   public data: RoastingMachine = new RoastingMachine();
   constructor(private readonly modalController: ModalController,
               private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
-              private readonly uiAnalytics: UIAnalytics,
-              private readonly uiToast: UIToast) {
+              private readonly uiToast: UIToast,
+              private readonly uiAnalytics: UIAnalytics) {
 
   }
 
   public ionViewWillEnter(): void {
-    this.uiAnalytics.trackEvent('ROASTING_MACHINE', 'ADD');
+    this.uiAnalytics.trackEvent(ROASTING_MACHINE_TRACKING.TITLE, ROASTING_MACHINE_TRACKING.ACTIONS.ADD);
   }
-  public add(form): void {
+  public async add() {
 
-    if (form.valid) {
-      this.__add();
+    if (this.data.name) {
+      await this.__add();
     }
   }
 
-  public __add(): void {
-    this.uiRoastingMachineStorage.add(this.data);
-    this.dismiss();
+  public async __add() {
+    await this.uiRoastingMachineStorage.add(this.data);
+    this.uiAnalytics.trackEvent(ROASTING_MACHINE_TRACKING.TITLE, ROASTING_MACHINE_TRACKING.ACTIONS.ADD_FINISH);
     this.uiToast.showInfoToast('TOAST_ROASTING_MACHINE_ADDED_SUCCESSFULLY');
+    this.dismiss();
+
   }
 
   public dismiss(): void {
     this.modalController.dismiss({
       dismissed: true
-    },undefined, 'roasting-machine-add')
+    },undefined, RoastingMachineAddComponent.COMPONENT_ID)
 
   }
   public ngOnInit() {}

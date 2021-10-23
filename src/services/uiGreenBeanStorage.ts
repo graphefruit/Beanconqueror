@@ -49,6 +49,11 @@ export class UIGreenBeanStorage extends StorageClass {
     });
   }
 
+  public async initializeStorage() {
+    this.beans = [];
+    await super.__initializeStorage();
+  }
+
   public getBeanNameByUUID(_uuid: string): string {
     if (_uuid.toLowerCase() === 'standard') {
       return 'Standard';
@@ -76,11 +81,4 @@ export class UIGreenBeanStorage extends StorageClass {
     return this.beans;
   }
 
-  public add(_entry: GreenBean) {
-    super.add(_entry);
-  }
-
-  public update(_obj: GreenBean): boolean {
-    return super.update(_obj);
-  }
 }

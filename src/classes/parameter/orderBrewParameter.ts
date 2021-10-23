@@ -5,16 +5,19 @@ import {IOrderBrewParameter} from '../../interfaces/parameter/iOrderBrewParamete
 export class OrderBrewParameter implements IOrderBrewParameter {
 
   public before: {
-    grind_size: number;
-    grind_weight: number;
-    brew_temperature: number;
-    method_of_preparation: number;
     bean_type: number;
+    bean_weight_in:number;
+    grind_weight: number;
     mill: number;
-    mill_speed: number;
+    grind_size: number;
     mill_timer: number;
-    pressure_profile: number;
+    mill_speed: number;
+    method_of_preparation: number;
     method_of_preparation_tool: number;
+    brew_temperature: number;
+    water: number;
+    vessel:number;
+    pressure_profile: number;
   };
 
   public while: {
@@ -26,31 +29,34 @@ export class OrderBrewParameter implements IOrderBrewParameter {
   };
 
   public after: {
-    brew_quantity: number;
     coffee_type: number;
     coffee_concentration: number;
+    brew_quantity: number;
+    brew_beverage_quantity: number;
+    tds:number;
     rating: number;
     note: number;
     set_custom_brew_time: number;
     attachments: number;
-    tds:number;
-    brew_beverage_quantity: number;
   };
 
 
 
   constructor() {
     this.before = {
-      grind_size: 1,
-      grind_weight: 2,
-      brew_temperature: 3,
-      method_of_preparation: 4,
-      bean_type: 5,
-      mill: 6,
+      bean_type: 1,
+      bean_weight_in: 2,
+      grind_weight: 3,
+      mill: 4,
+      grind_size: 5,
+      mill_timer: 6,
       mill_speed: 7,
-      mill_timer: 8,
-      pressure_profile: 9,
-      method_of_preparation_tool: 10,
+      method_of_preparation: 8,
+      method_of_preparation_tool: 9,
+      brew_temperature: 10,
+      water: 11,
+      vessel:12,
+      pressure_profile: 13
     };
 
     this.while = {
@@ -61,15 +67,15 @@ export class OrderBrewParameter implements IOrderBrewParameter {
     };
 
     this.after = {
-      brew_quantity: 1,
-      coffee_type: 2,
-      coffee_concentration: 3,
-      rating: 4,
-      note: 5,
-      set_custom_brew_time: 6,
-      attachments: 7,
-      brew_beverage_quantity: 8,
-      tds:9,
+      coffee_type: 1,
+      coffee_concentration: 2,
+      brew_quantity: 3,
+      brew_beverage_quantity: 4,
+      tds: 5,
+      rating: 6,
+      note: 7,
+      set_custom_brew_time: 8,
+      attachments: 9
     };
   }
 
@@ -126,6 +132,12 @@ export class OrderBrewParameter implements IOrderBrewParameter {
         return 'BREW_DATA_TDS';
       case 'brew_beverage_quantity':
         return 'BREW_DATA_BREW_BEVERAGE_QUANTITY';
+      case 'water':
+        return 'BREW_DATA_WATER';
+      case 'bean_weight_in':
+        return 'BREW_DATA_BEAN_WEIGHT_IN';
+      case 'vessel':
+        return 'BREW_DATA_VESSEL';
       default:
         return _key;
     }

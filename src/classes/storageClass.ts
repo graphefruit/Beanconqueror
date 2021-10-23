@@ -18,11 +18,16 @@ export abstract class StorageClass {
 
   protected constructor (protected uiStorage: UIStorage,
                          protected uiHelper: UIHelper,
-                         protected uiLog: UILog, protected dbPath: string) {
+                         protected uiLog: UILog,
+                         protected dbPath: string,) {
 
       this.DB_PATH = dbPath;
-      this.__initializeStorage();
 
+
+  }
+
+  public async initializeStorage() {
+    await this.__initializeStorage();
   }
 
   public async storageReady (): Promise<any> {
@@ -33,7 +38,7 @@ export abstract class StorageClass {
           if (this.isInitialized === 1) {
             this.uiLog.log(`Storage ${this.DB_PATH} ready`);
             window.clearInterval(intV);
-            resolve();
+            resolve(undefined);
           } else if (this.isInitialized === 0) {
             window.clearInterval(intV);
             this.uiLog.log(`Storage ${this.DB_PATH} not ready`);
@@ -43,7 +48,7 @@ export abstract class StorageClass {
       } else {
         if (this.isInitialized === 1) {
           this.uiLog.log(`Storage ${this.DB_PATH} - already - ready`);
-          resolve();
+          resolve(undefined);
         } else if (this.isInitialized === 0) {
           this.uiLog.log(`Storage ${this.DB_PATH} - already not - ready`);
           reject();
@@ -55,10 +60,10 @@ export abstract class StorageClass {
     return promise;
   }
 
-  public reinitializeStorage (): void {
+  public async reinitializeStorage() {
     this.uiLog.log(`Storage - Reinitialize ${this.DB_PATH}`);
     this.isInitialized = -1;
-    this.__initializeStorage();
+    await this.__initializeStorage();
     this.__sendEvent('REINITIALIZE');
   }
 
@@ -66,41 +71,60 @@ export abstract class StorageClass {
     return this.isInitialized;
   }
 
-  public add(_entry) {
-    const newEntry = this.uiHelper.copyData(_entry);
-    newEntry.config.uuid = this.uiHelper.generateUUID();
-    newEntry.config.unix_timestamp = this.uiHelper.getUnixTimestamp();
-    this.storedData.push(newEntry);
-    this.__save();
-    this.__sendEvent('ADD');
+  public async add(_entry) {
+    const promise = new Promise(async (resolve, reject) => {
+      const newEntry = this.uiHelper.cloneData(_entry);
+      newEntry.config.uuid = this.uiHelper.generateUUID();
+      newEntry.config.unix_timestamp = this.uiHelper.getUnixTimestamp();
+      this.storedData.push(newEntry);
+      await this.__save();
+      this.__sendEvent('ADD');
+      resolve(this.uiHelper.cloneData(newEntry));
+    });
+    return promise;
   }
 
   public getAllEntries (): Array<any> {
     return this.storedData;
   }
 
-  public update (_obj): boolean {
-    for (let i = 0; i < this.storedData.length; i++) {
-      if (this.storedData[i].config.uuid === _obj.config.uuid) {
-        this.uiLog.log(`Storage - Update  - Successfully - ${ _obj.config.uuid}`);
-        this.storedData[i] = _obj;
-        this.__save();
-        this.__sendEvent('UPDATE');
-        return true;
+  public async update(_obj): Promise<boolean> {
+    const promise: Promise<any> = new Promise(async (resolve, reject) => {
+      let didUpdate: boolean = false;
+      for (let i = 0; i < this.storedData.length; i++) {
+        if (this.storedData[i].config.uuid === _obj.config.uuid) {
+          this.uiLog.log(`Storage - Update  - Successfully - ${_obj.config.uuid}`);
+          this.storedData[i] = _obj;
+          await this.__save();
+          this.__sendEvent('UPDATE');
+          didUpdate = true;
+          resolve(true);
+          return;
+        }
       }
-    }
+      if (didUpdate === false) {
+        this.uiLog.error(`Storage - Update  - Unsucessfully - ${_obj.config.uuid} - not found`);
 
-    return false;
+      }
+      resolve(false);
+
+    });
+    return promise;
   }
 
-  public removeByObject(_obj: any): boolean {
-    if (_obj !== null && _obj !== undefined && _obj.config.uuid) {
-      const deleteUUID = _obj.config.uuid;
+  public async removeByObject(_obj: any): Promise<boolean> {
+    const promise: Promise<boolean> = new Promise(async (resolve, reject) => {
+      if (_obj !== null && _obj !== undefined && _obj.config.uuid) {
+        const deleteUUID = _obj.config.uuid;
 
-      return this.__delete(deleteUUID);
-    }
+        const deletedBool: boolean = await this.__delete(deleteUUID);
+        resolve(deletedBool);
+      } else {
+        resolve(false);
+      }
 
-    return false;
+    });
+    return promise;
   }
 
   public getByUUID(_uuid: string): any {
@@ -114,12 +138,17 @@ export abstract class StorageClass {
     }
   }
 
-  public removeByUUID(_beanUUID: string): boolean {
-    if (_beanUUID !== null && _beanUUID !== undefined && _beanUUID !== '') {
-      return this.__delete(_beanUUID);
-    }
+  public async removeByUUID(_beanUUID: string): Promise<boolean> {
+    const promise: Promise<boolean> = new Promise(async (resolve, reject) => {
+      if (_beanUUID !== null && _beanUUID !== undefined && _beanUUID !== '') {
+        const deletedBool: boolean = await this.__delete(_beanUUID);
+        resolve(deletedBool);
+      } else {
+        resolve(false);
+      }
 
-    return false;
+    });
+    return promise;
   }
 
   public attachOnRemove(): Observable<any> {
@@ -143,51 +172,62 @@ export abstract class StorageClass {
     return this.DB_PATH;
   }
 
-  protected __initializeStorage (): void {
-    this.uiLog.log(`Initialize Storage - ${this.DB_PATH}`);
-    this.uiStorage.get(this.DB_PATH).then((_data) => {
-      if (_data === null || _data === undefined) {
-        this.uiLog.log(`Storage empty but successfull - ${this.DB_PATH}`);
-        // No beans have been added yet
+  protected async __initializeStorage () {
+    this.storedData = [];
+    this.isInitialized = -1;
+    const promise = new Promise((resolve, reject) => {
+      this.uiLog.log(`Initialize Storage - ${this.DB_PATH}`);
+      this.uiStorage.get(this.DB_PATH).then((_data) => {
+        if (_data === null || _data === undefined) {
+          this.uiLog.log(`Storage empty but successfull - ${this.DB_PATH}`);
+          // No beans have been added yet
+          this.storedData = [];
+          this.isInitialized = 1;
+        } else {
+          this.uiLog.log(`Storage successfull - ${this.DB_PATH}`);
+          this.storedData = _data;
+          this.isInitialized = 1;
+        }
+        resolve(undefined);
+      }, (e) => {
+        // Error
+        this.uiLog.log(`Storage error - ${this.DB_PATH} - ${JSON.stringify(e)}`);
         this.storedData = [];
-        this.isInitialized = 1;
-      } else {
-        this.uiLog.log(`Storage successfull - ${this.DB_PATH}`);
-        this.storedData = _data;
-        this.isInitialized = 1;
-      }
-    }, (e) => {
-      // Error
-      this.uiLog.log(`Storage error - ${this.DB_PATH} - ${JSON.stringify(e)}`);
-      this.storedData = [];
-      this.isInitialized = 0;
+        this.isInitialized = 0;
+        reject();
+      });
     });
+    return promise;
   }
 
-  private __delete(_uuid: string): boolean {
-    if (_uuid !== null && _uuid !== undefined && _uuid !== '') {
-      const deleteUUID = _uuid;
-      for (let i = 0; i < this.storedData.length; i++) {
-        if (this.storedData[i].config.uuid === deleteUUID) {
-          this.uiLog.log(`Storage - Delete - Successfully -${deleteUUID}`);
-          this.storedData.splice(i, 1);
-          this.__save();
+  private __delete(_uuid: string): Promise<boolean> {
+    const promise: Promise<boolean> = new Promise(async (resolve, reject) => {
+      if (_uuid !== null && _uuid !== undefined && _uuid !== '') {
+        const deleteUUID = _uuid;
+        for (let i = 0; i < this.storedData.length; i++) {
+          if (this.storedData[i].config.uuid === deleteUUID) {
+            this.uiLog.log(`Storage - Delete - Successfully -${deleteUUID}`);
+            this.storedData.splice(i, 1);
+            await this.__save();
 
-          this.__sendRemoveMessage(deleteUUID);
-          this.__sendEvent('DELETE');
-          return true;
+            this.__sendRemoveMessage(deleteUUID);
+            this.__sendEvent('DELETE');
+            resolve(true);
+            return;
+          }
         }
       }
-    }
-    this.uiLog.error('Storage - Delete - Unsuccessfully');
-    return false;
-
+      this.uiLog.error('Storage - Delete - Unsuccessfully');
+      resolve(false);
+    });
+    return promise;
   }
 
-  private __save() {
-    this.uiStorage.set(this.DB_PATH, this.storedData).then((e) => {
+  private async __save() {
+    await this.uiStorage.set(this.DB_PATH, this.storedData).then((e) => {
         this.uiLog.log('Storage - Save - Successfully');
       }, (e) => {
+        this.uiHelper.showAlert(e.message,'CRITICAL ERROR');
         this.uiLog.log('Storage - Save - Unsuccessfully');
       }
     );

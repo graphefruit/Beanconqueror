@@ -10,10 +10,6 @@ import {Mill} from '../../classes/mill/mill';
 import {BREW_QUANTITY_TYPES_ENUM} from '../../enums/brews/brewQuantityTypes';
 import {PREPARATION_STYLE_TYPE} from '../../enums/preparations/preparationStyleTypes';
 import {NgxStarsComponent} from 'ngx-stars';
-import {BrewEditComponent} from '../../app/brew/brew-edit/brew-edit.component';
-import {BrewAddComponent} from '../../app/brew/brew-add/brew-add.component';
-import {BrewDetailComponent} from '../../app/brew/brew-detail/brew-detail.component';
-import {BrewCuppingComponent} from '../../app/brew/brew-cupping/brew-cupping.component';
 import {UIBrewHelper} from '../../services/uiBrewHelper';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {UIToast} from '../../services/uiToast';
@@ -21,7 +17,12 @@ import {UIAnalytics} from '../../services/uiAnalytics';
 import {UIAlert} from '../../services/uiAlert';
 import {UIImage} from '../../services/uiImage';
 import {UIHelper} from '../../services/uiHelper';
-
+import BREW_TRACKING from '../../data/tracking/brewTracking';
+import {Settings} from '../../classes/settings/settings';
+import {ShareService} from '../../services/shareService/share-service.service';
+import {TranslateService} from '@ngx-translate/core';
+import {BrewTrackingService} from '../../services/brewTracking/brew-tracking.service';
+import {UIHealthKit} from '../../services/uiHealthKit';
 
 @Component({
   selector: 'brew-information',
@@ -44,6 +45,8 @@ export class BrewInformationComponent implements OnInit {
   public brewQuantityEnum = BREW_QUANTITY_TYPES_ENUM;
 
 
+  public settings: Settings = null;
+
   constructor(private readonly uiSettingsStorage: UISettingsStorage,
               private readonly uiBrewHelper: UIBrewHelper,
               private readonly uiBrewStorage: UIBrewStorage,
@@ -52,18 +55,36 @@ export class BrewInformationComponent implements OnInit {
               private readonly uiAlert: UIAlert,
               private readonly uiImage: UIImage,
               private readonly modalCtrl: ModalController,
-              private readonly uiHelper: UIHelper) {
+              private readonly uiHelper: UIHelper,
+              private readonly shareService: ShareService,
+              private readonly translate: TranslateService,
+              private readonly brewTracking: BrewTrackingService,
+              private readonly uiHealthKit: UIHealthKit) {
 
   }
 
   public ngOnInit() {
     if (this.brew) {
-
+      this.settings =  this.uiSettingsStorage.getSettings();
       this.bean = this.brew.getBean();
       this.preparation = this.brew.getPreparation();
       this.mill = this.brew.getMill();
     }
 
+  }
+
+  public hasCustomRatingRange(): boolean {
+    if (this.settings) {
+      return this.settings.brew_rating > 5;
+    }
+    return false;
+  }
+
+  public getCustomMaxRating(): number {
+    if (this.settings) {
+      return this.settings.brew_rating;
+    }
+    return 5;
   }
 
   public ngOnChanges(changes: SimpleChange) {
@@ -81,16 +102,18 @@ export class BrewInformationComponent implements OnInit {
 
   public async showBrew() {
     await this.detailBrew();
+    this.brewAction.emit([BREW_ACTION.DETAIL, this.brew]);
   }
 
   public async showBrewActions(event): Promise<void> {
     event.stopPropagation();
     event.stopImmediatePropagation();
+    this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.POPOVER_ACTIONS);
     const popover = await this.modalCtrl.create({
       component: BrewPopoverActionsComponent,
 
       componentProps: {brew: this.brew},
-      id:'brew-popover-actions',
+      id: BrewPopoverActionsComponent.COMPONENT_ID,
       cssClass: 'popover-actions',
     });
     await popover.present();
@@ -102,7 +125,7 @@ export class BrewInformationComponent implements OnInit {
   }
 
 
-  private async internalBrewAction(action: BREW_ACTION): Promise<void> {
+  private async internalBrewAction(action: BREW_ACTION) {
     switch (action) {
       case BREW_ACTION.REPEAT:
         await this.repeatBrew();
@@ -131,7 +154,10 @@ export class BrewInformationComponent implements OnInit {
         await this.fastRepeatBrew();
         break;
       case BREW_ACTION.TOGGLE_FAVOURITE:
-        this.toggleFavourite();
+        await this.toggleFavourite();
+        break;
+      case BREW_ACTION.SHARE:
+        await this.share();
         break;
       default:
         break;
@@ -140,11 +166,19 @@ export class BrewInformationComponent implements OnInit {
 
   public async fastRepeatBrew() {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
-      this.uiAnalytics.trackEvent('BREW', 'FAST_REPEAT');
-      const repeatBrew = this.uiBrewHelper.repeatBrew(this.brew);
-      this.uiBrewStorage.add(repeatBrew);
+      this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.FAST_REPEAT);
+      const repeatBrew = this.uiBrewHelper.copyBrewToRepeat(this.brew);
+      await this.uiBrewStorage.add(repeatBrew);
+
+      this.brewTracking.trackBrew(repeatBrew);
+      if (this.settings.track_caffeine_consumption && repeatBrew.grind_weight > 0 && repeatBrew.getBean().decaffeinated === false) {
+        this.uiHealthKit.trackCaffeineConsumption(repeatBrew.getCaffeineAmount(),new Date());
+      }
+
       this.uiToast.showInfoToast('TOAST_BREW_REPEATED_SUCCESSFULLY');
 
+      // If fast repeat is used, also recheck if bean package is consumed
+      await this.uiBrewHelper.checkIfBeanPackageIsConsumedTriggerMessageAndArchive(this.brew.getBean());
     }
   }
 
@@ -155,67 +189,71 @@ export class BrewInformationComponent implements OnInit {
     this.brewAction.emit([BREW_ACTION.EDIT, this.brew]);
   }
   public async editBrew() {
-    const modal = await this.modalCtrl.create({component: BrewEditComponent, id:'brew-edit', componentProps: {brew: this.brew}});
-    await modal.present();
-    await modal.onWillDismiss();
-
+    await this.uiBrewHelper.editBrew(this.brew);
   }
   public async repeatBrew() {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
-      this.uiAnalytics.trackEvent('BREW', 'REPEAT');
-      const modal = await this.modalCtrl.create({component: BrewAddComponent, id: 'brew-add', componentProps: {brew_template: this.brew}});
-      await modal.present();
-      await modal.onWillDismiss();
-
+      this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.REPEAT);
+      await this.uiBrewHelper.repeatBrew(this.brew);
     }
   }
 
-  public toggleFavourite() {
+  public async toggleFavourite() {
     if (!this.brew.favourite) {
-      this.uiAnalytics.trackEvent('BREW', 'ADD_FAVOURITE');
+      this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.ADD_FAVOURITE);
       this.uiToast.showInfoToast('TOAST_BREW_FAVOURITE_ADDED');
       this.brew.favourite = true;
     } else {
+      this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.REMOVE_FAVOURITE);
       this.brew.favourite = false;
       this.uiToast.showInfoToast('TOAST_BREW_FAVOURITE_REMOVED');
     }
-    this.uiBrewStorage.update(this.brew);
+    await this.uiBrewStorage.update(this.brew);
   }
 
 
   public async detailBrew() {
-    const modal = await this.modalCtrl.create({component: BrewDetailComponent, id:'brew-detail', componentProps: {brew: this.brew}});
-    await modal.present();
-    await modal.onWillDismiss();
-
+    await this.uiBrewHelper.detailBrew(this.brew);
   }
 
   public async cupBrew() {
-    const modal = await this.modalCtrl.create({component: BrewCuppingComponent, id:'brew-cup', componentProps: {brew: this.brew}});
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiBrewHelper.cupBrew(this.brew);
 
   }
 
   public async showMapCoordinates() {
-    this.uiAnalytics.trackEvent('BREW', 'SHOW_MAP');
+    this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.SHOW_MAP);
     this.uiHelper.openExternalWebpage(this.brew.getCoordinateMapLink());
   }
 
 
   public async viewPhotos() {
+    this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.PHOTO_VIEW);
     await this.uiImage.viewPhotos(this.brew);
   }
 
+  public async share() {
+    await this.shareService.shareBrew(this.brew);
+  }
+
+  public getCuppedBrewFlavors(): Array<string> {
+    const flavors: Array<string> = [...this.brew.cupped_flavor.custom_flavors];
+    for (const key in this.brew.cupped_flavor.predefined_flavors) {
+      if (this.brew.cupped_flavor.predefined_flavors.hasOwnProperty(key)) {
+        flavors.push(this.translate.instant('CUPPING_' + key));
+      }
+    }
+    return flavors;
+  }
   public deleteBrew(): Promise<any> {
 
    return new Promise(async (resolve,reject) => {
-      this.uiAlert.showConfirm('DELETE_BREW_QUESTION', 'SURE_QUESTION', true).then(() => {
+      this.uiAlert.showConfirm('DELETE_BREW_QUESTION', 'SURE_QUESTION', true).then(async () => {
           // Yes
-          this.uiAnalytics.trackEvent('BREW', 'DELETE');
-          this.__deleteBrew();
+          this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.DELETE);
+          await this.__deleteBrew();
           this.uiToast.showInfoToast('TOAST_BREW_DELETED_SUCCESSFULLY');
-          resolve();
+          resolve(undefined);
         },
         () => {
           // No
@@ -225,8 +263,8 @@ export class BrewInformationComponent implements OnInit {
    );
   }
 
-  private __deleteBrew(): void {
-    this.uiBrewStorage.removeByObject(this.brew);
+  private async __deleteBrew() {
+    await this.uiBrewStorage.removeByObject(this.brew);
   }
 
 

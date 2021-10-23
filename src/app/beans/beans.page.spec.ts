@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {BeansPage} from './beans.page';
 import {TranslateModule} from '@ngx-translate/core';
@@ -13,7 +13,7 @@ import {File} from '@ionic-native/file/ngx';
 import {Camera} from '@ionic-native/camera/ngx';
 import {ImagePicker} from '@ionic-native/image-picker/ngx';
 import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
-import {FirebaseX} from '@ionic-native/firebase-x/ngx';
+;
 import {Router} from '@angular/router';
 import {AsyncImageComponent} from '../../components/async-image/async-image.component';
 import {FormatDatePipe} from '../../pipes/formatDate';
@@ -22,7 +22,7 @@ describe('BeansPage', () => {
   let component: BeansPage;
   let fixture: ComponentFixture<BeansPage>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [TranslateModule.forRoot(), FormsModule, IonicStorageModule.forRoot(), CommonModule, IonicModule],
       declarations: [BeansPage, KeysPipe, AsyncImageComponent, FormatDatePipe],
@@ -35,7 +35,7 @@ describe('BeansPage', () => {
         {provide: Camera},
         {provide: ImagePicker},
         {provide: AndroidPermissions},
-        {provide: FirebaseX},
+
         {provide: Router}
       ],
     })

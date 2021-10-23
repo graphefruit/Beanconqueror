@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {IonicModule} from '@ionic/angular';
 
 import {CuppingRadarComponent} from './cupping-radar.component';
@@ -7,7 +7,7 @@ describe('CuppingRadarComponent', () => {
   let component: CuppingRadarComponent;
   let fixture: ComponentFixture<CuppingRadarComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [CuppingRadarComponent],
       imports: [IonicModule.forRoot()]

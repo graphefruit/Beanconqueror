@@ -4,7 +4,6 @@ import {ModalController, NavParams} from '@ionic/angular';
 
 import {UIImage} from '../../../../services/uiImage';
 import {UIHelper} from '../../../../services/uiHelper';
-import {UIAnalytics} from '../../../../services/uiAnalytics';
 import {UIFileHelper} from '../../../../services/uiFileHelper';
 
 import {IBeanInformation} from '../../../../interfaces/bean/iBeanInformation';
@@ -12,6 +11,9 @@ import {IBeanInformation} from '../../../../interfaces/bean/iBeanInformation';
 import {GreenBean} from '../../../../classes/green-bean/green-bean';
 
 import {UIGreenBeanStorage} from '../../../../services/uiGreenBeanStorage';
+import {UIToast} from '../../../../services/uiToast';
+import GREEN_BEAN_TRACKING from '../../../../data/tracking/greenBeanTracking';
+import {UIAnalytics} from '../../../../services/uiAnalytics';
 
 @Component({
   selector: 'green-bean-add',
@@ -20,7 +22,7 @@ import {UIGreenBeanStorage} from '../../../../services/uiGreenBeanStorage';
 })
 export class GreenBeanAddComponent implements OnInit {
 
-
+  public static COMPONENT_ID:string = 'green-bean-add';
   public data: GreenBean = new GreenBean();
   private readonly green_bean_template: GreenBean;
 
@@ -31,15 +33,15 @@ export class GreenBeanAddComponent implements OnInit {
                private readonly uiGreenBeanStorage: UIGreenBeanStorage,
                private readonly uiImage: UIImage,
                public uiHelper: UIHelper,
-               private readonly uiAnalytics: UIAnalytics,
-               private readonly uiFileHelper: UIFileHelper) {
+               private readonly uiFileHelper: UIFileHelper,
+               private readonly uiToast: UIToast,
+               private readonly uiAnalytics: UIAnalytics) {
     this.green_bean_template = this.navParams.get('green_bean_template');
   }
 
 
   public async ionViewWillEnter() {
-    this.uiAnalytics.trackEvent('GREEN_BEAN', 'ADD');
-
+    this.uiAnalytics.trackEvent(GREEN_BEAN_TRACKING.TITLE, GREEN_BEAN_TRACKING.ACTIONS.ADD);
     if (this.green_bean_template) {
       await this.__loadBean(this.green_bean_template);
     }
@@ -53,16 +55,18 @@ export class GreenBeanAddComponent implements OnInit {
   }
 
 
-  public addBean(): void {
+  public async addBean() {
 
     if (this.__formValid()) {
-      this.__addBean();
+      await this.__addBean();
     }
   }
 
-  public __addBean(): void {
+  public async __addBean() {
 
-    this.uiGreenBeanStorage.add(this.data);
+    await this.uiGreenBeanStorage.add(this.data);
+    this.uiToast.showInfoToast('TOAST_GREEN_BEAN_ADDED_SUCCESSFULLY');
+    this.uiAnalytics.trackEvent(GREEN_BEAN_TRACKING.TITLE, GREEN_BEAN_TRACKING.ACTIONS.ADD_FINISH);
     this.dismiss();
   }
 
@@ -71,7 +75,7 @@ export class GreenBeanAddComponent implements OnInit {
   public dismiss(): void {
     this.modalController.dismiss({
       dismissed: true
-    },undefined,'green-bean-add');
+    },undefined,GreenBeanAddComponent.COMPONENT_ID);
   }
 
   private async __loadBean(_bean: GreenBean) {

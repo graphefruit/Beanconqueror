@@ -2,13 +2,14 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 
 import {ModalController, NavParams} from '@ionic/angular';
 import {UIHelper} from '../../../services/uiHelper';
-import {UIAnalytics} from '../../../services/uiAnalytics';
 import {IBean} from '../../../interfaces/bean/iBean';
 import {Bean} from '../../../classes/bean/bean';
 import {NgxStarsComponent} from 'ngx-stars';
 import {ROASTS_ENUM} from '../../../enums/beans/roasts';
 import {BEAN_MIX_ENUM} from '../../../enums/beans/mix';
 import {BEAN_ROASTING_TYPE_ENUM} from '../../../enums/beans/beanRoastingType';
+import {UIAnalytics} from '../../../services/uiAnalytics';
+import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 
 
 @Component({
@@ -18,6 +19,7 @@ import {BEAN_ROASTING_TYPE_ENUM} from '../../../enums/beans/beanRoastingType';
 })
 export class BeansDetailComponent implements OnInit {
 
+  public static COMPONENT_ID:string = 'bean-detail';
   public roast_enum = ROASTS_ENUM;
   public mixEnum = BEAN_MIX_ENUM;
   public beanRoastingTypeEnum = BEAN_ROASTING_TYPE_ENUM;
@@ -36,8 +38,7 @@ export class BeansDetailComponent implements OnInit {
   }
 
   public ionViewWillEnter() {
-
-    this.uiAnalytics.trackEvent('BEAN', 'DETAIL');
+    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.DETAIL);
     this.bean = this.navParams.get('bean');
     if (this.bean) {
       const copy: IBean = this.uiHelper.copyData(this.bean);
@@ -52,7 +53,7 @@ export class BeansDetailComponent implements OnInit {
   public dismiss(): void {
     this.modalController.dismiss({
       dismissed: true
-    },undefined,'bean-detail');
+    },undefined,BeansDetailComponent.COMPONENT_ID);
   }
   public getRoastEnum(_key: ROASTS_ENUM) {
     for (const key in ROASTS_ENUM) {
@@ -62,4 +63,11 @@ export class BeansDetailComponent implements OnInit {
     }
     return '';
   }
+
+  public openURL() {
+    if (this.data.url) {
+      this.uiHelper.openExternalWebpage(this.data.url);
+    }
+  }
+
 }

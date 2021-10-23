@@ -1,17 +1,19 @@
-import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
 import {Settings} from '../../../classes/settings/settings';
 import {IBeanPageFilter} from '../../../interfaces/bean/iBeanPageFilter';
 import {BEAN_SORT_AFTER} from '../../../enums/beans/beanSortAfter';
 import {BEAN_SORT_ORDER} from '../../../enums/beans/beanSortOrder';
-import {IonVirtualScroll, ModalController} from '@ionic/angular';
+import {ModalController} from '@ionic/angular';
 import {UIAlert} from '../../../services/uiAlert';
 import {UIBrewStorage} from '../../../services/uiBrewStorage';
 import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 import {GreenBean} from '../../../classes/green-bean/green-bean';
 import {UIGreenBeanStorage} from '../../../services/uiGreenBeanStorage';
 import {GREEN_BEAN_ACTION} from '../../../enums/green-beans/greenBeanAction';
-import {GreenBeanAddComponent} from './green-bean-add/green-bean-add.component';
 import {GreenBeanFilterComponent} from './green-bean-filter/green-bean-filter.component';
+import {AgVirtualSrollComponent} from 'ag-virtual-scroll';
+import {UIAnalytics} from '../../../services/uiAnalytics';
+import {UIGreenBeanHelper} from '../../../services/uiGreenBeanHelper';
 
 @Component({
   selector: 'app-green-beans',
@@ -31,8 +33,11 @@ export class GreenBeansPage implements OnInit {
     sort_order: BEAN_SORT_ORDER.UNKOWN,
   };
 
-  @ViewChild('openScroll', {read: IonVirtualScroll, static: false}) public openScroll: IonVirtualScroll;
-  @ViewChild('archivedScroll', {read: IonVirtualScroll, static: false}) public archivedScroll: IonVirtualScroll;
+
+  @ViewChild('greenBeanContent',{read: ElementRef}) public greenBeanContent: ElementRef;
+
+  @ViewChild('openScroll', {read: AgVirtualSrollComponent, static: false}) public openScroll: AgVirtualSrollComponent;
+  @ViewChild('archivedScroll', {read: AgVirtualSrollComponent, static: false}) public archivedScroll: AgVirtualSrollComponent;
   public bean_segment: string = 'open';
   public archivedBeansFilter: IBeanPageFilter = {
     sort_after:  BEAN_SORT_AFTER.UNKOWN,
@@ -51,7 +56,9 @@ export class GreenBeansPage implements OnInit {
               private readonly uiGreenBeanStorage: UIGreenBeanStorage,
               private readonly uiAlert: UIAlert,
               private readonly uiBrewStorage: UIBrewStorage,
-              private readonly uiSettingsStorage: UISettingsStorage) {
+              private readonly uiSettingsStorage: UISettingsStorage,
+              private readonly uiAnalytics: UIAnalytics,
+              private readonly uiGreenBeanHelper: UIGreenBeanHelper) {
     this.settings = this.uiSettingsStorage.getSettings();
 
   }
@@ -76,31 +83,37 @@ export class GreenBeansPage implements OnInit {
   public segmentChanged() {
     this.retriggerScroll();
   }
+
+  @HostListener('window:resize')
+  @HostListener('window:orientationchange', ['$event'])
+  public onOrientationChange(event) {
+    this.retriggerScroll();
+  }
+  private retriggerScroll() {
+
+    setTimeout(async () =>{
+
+      const el =  this.greenBeanContent.nativeElement;
+      let scrollComponent: AgVirtualSrollComponent;
+      if (this.openScroll !== undefined) {
+        scrollComponent = this.openScroll;
+      } else {
+        scrollComponent = this.archivedScroll;
+      }
+
+      scrollComponent.el.style.height = (el.offsetHeight - scrollComponent.el.offsetTop) + 'px';
+    },250);
+
+  }
+
   public async beanAction(action: GREEN_BEAN_ACTION, bean: GreenBean): Promise<void> {
     this.loadBeans();
   }
 
 
 
-  private retriggerScroll() {
-    // https://github.com/ionic-team/ionic-framework/issues/18409
-    // Workarround
-    setTimeout( () => {
-      if (typeof(this.archivedScroll) !== 'undefined' && this.finishedBeans.length > 0)
-      {
-        this.archivedScroll.checkRange(0,this.finishedBeans.length);
-      }
-      if (typeof(this.openScroll) !== 'undefined' && this.openBeans.length > 0)
-      {
-        this.openScroll.checkRange(0,this.openBeans.length);
-      }
-    },75);
-  }
-
   public async add() {
-    const modal = await this.modalCtrl.create({component:GreenBeanAddComponent,id:'green-bean-add'});
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiGreenBeanHelper.addGreenBean();
     this.loadBeans();
   }
 
@@ -114,11 +127,11 @@ export class GreenBeansPage implements OnInit {
 
     const modal = await this.modalCtrl.create({
       component: GreenBeanFilterComponent,
-      cssClass: 'bottom-modal',
+      cssClass: 'popover-actions',
       showBackdrop: true,
       backdropDismiss: true,
       swipeToClose: true,
-      id:'green-bean-filter',
+      id: GreenBeanFilterComponent.COMPONENT_ID,
       componentProps:
         {bean_filter: beanFilter, segment: this.bean_segment}
     });

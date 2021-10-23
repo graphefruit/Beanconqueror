@@ -27,4 +27,7 @@ export interface IManageBrewParameter {
 
   set_custom_brew_time: boolean;
   method_of_preparation_tool: boolean;
+  water: boolean;
+  bean_weight_in: boolean;
+  vessel: boolean;
 }

@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {IonicModule} from '@ionic/angular';
 
 import {PreparationAddTypeComponent} from './preparation-add-type.component';
@@ -7,7 +7,7 @@ describe('PreparationAddTypeComponent', () => {
   let component: PreparationAddTypeComponent;
   let fixture: ComponentFixture<PreparationAddTypeComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [PreparationAddTypeComponent],
       imports: [IonicModule.forRoot()]

@@ -1,18 +1,10 @@
 :host {
-  --max-height: 50%;
-  top: 50%;
-  position: absolute;
-  margin-inline-start: 10px;
-  margin-inline-end: 10px;
-  border-radius: 6px;
-  margin-block-end: 10px;
-
-  @media (max-height: 568px) {
-    --max-height: 70%;
-    top: 30%;
+  ion-footer{
+    background:#ffffff;
   }
-  @media (max-height: 400px) {
-    --max-height: 100%;
-    top: 0%;
+
+  /*Because we have a doubled overlay, the background effect is not working*/
+  ion-content {
+    --background: rgba(0,0,0,0.32);
   }
 }

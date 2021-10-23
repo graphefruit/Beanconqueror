@@ -4,6 +4,8 @@ import {ITimer} from '../../interfaces/timer/iTimer';
 import moment from 'moment';
 import {DatetimePopoverComponent} from '../../popover/datetime-popover/datetime-popover.component';
 import {ModalController} from '@ionic/angular';
+import {BleManagerService} from '../../services/bleManager/ble-manager.service';
+import DecentScale from '../../classes/devices/decentScale';
 
 
 @Component({
@@ -17,15 +19,18 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
   @Output() public timerStarted = new EventEmitter();
   @Output() public timerPaused = new EventEmitter();
+  @Output() public timerReset = new EventEmitter();
+  @Output() public timerResumed = new EventEmitter();
   @Output() public timerTicked = new EventEmitter();
   @Output() public bloomTimer = new EventEmitter();
   @Output() public dripTimer = new EventEmitter();
+  @Output() public tareScale = new EventEmitter();
 
   public displayingTime: string = moment().startOf('day').toISOString();
 
   private _dripTimerVisible: boolean;
 
-  private startedTimestamp:number = -1;
+  private startedTimestamp: number = -1;
   get dripTimerVisible(): boolean {
     return this._dripTimerVisible;
   }
@@ -53,12 +58,28 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   }
   public timer: ITimer;
 
-  constructor(private readonly modalCtrl: ModalController) {
+  constructor(private readonly modalCtrl: ModalController, private readonly bleManager: BleManagerService) {
+  }
+
+  public smartScaleConnected() {
+    try {
+      const smartScale: DecentScale = this.bleManager.getDecentScale();
+      if (smartScale === null) {
+        return false;
+      }
+      return true;
+    }catch(ex) {
+
+    }
   }
 
   public ngOnInit(): void {
     this.initTimer();
 
+  }
+
+  public isTimerRunning() {
+    return this.timer.runTimer;
   }
   public ngOnDestroy (): void {
     this.timer.runTimer = false;
@@ -90,18 +111,27 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     this.displayingTime = moment(this.displayingTime).startOf('day').add('seconds',this.timer.seconds).toISOString();
   }
 
-  public startTimer(): void {
+  public startTimer(_resumed: boolean = false): void {
     this.startedTimestamp = Math.floor(Date.now() / 1000);
 
     this.timer.hasStarted = true;
     this.timer.runTimer = true;
     this.timerTick();
+    if (_resumed === false) {
+      this.timerStarted.emit();
+    }
+
     this.changeEvent();
+  }
+
+  public __tareScale(): void {
+    this.tareScale.emit();
   }
 
   public pauseTimer(): void {
     this.timerPaused.emit();
     this.timer.runTimer = false;
+    this.timerPaused.emit();
     this.changeEvent();
   }
 
@@ -117,7 +147,8 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   }
 
   public resumeTimer(): void {
-    this.startTimer();
+    this.startTimer(true);
+    this.timerResumed.emit();
   }
 
   public timerTick(): void {
@@ -129,7 +160,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
       const currentTickTimestamp: number =  Math.floor(Date.now() / 1000);
       const delta: number = currentTickTimestamp - this.startedTimestamp;
 
-     this.timer.seconds  += delta;
+      this.timer.seconds  += delta;
       this.startedTimestamp = currentTickTimestamp;
 
       this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
@@ -144,6 +175,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   }
 
   public reset() {
+    this.timerReset.emit();
     this.initTimer();
     this.changeEvent();
   }

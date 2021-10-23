@@ -43,4 +43,5 @@ export interface IBean {
   bean_roast_information: IBeanRoastInformation;
 
   rating: number;
+  qr_code: string;
 }

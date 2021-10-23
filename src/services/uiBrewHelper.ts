@@ -14,6 +14,19 @@ import {Settings} from '../classes/settings/settings';
 import {Preparation} from '../classes/preparation/preparation';
 import {TranslateService} from '@ngx-translate/core';
 import {ICupping} from '../interfaces/cupping/iCupping';
+import {UIBrewStorage} from './uiBrewStorage';
+import {Bean} from '../classes/bean/bean';
+import {UIBeanHelper} from './uiBeanHelper';
+import BREW_TRACKING from '../data/tracking/brewTracking';
+import {BrewAddComponent} from '../app/brew/brew-add/brew-add.component';
+import {UIAnalytics} from './uiAnalytics';
+import {ModalController} from '@ionic/angular';
+import {BrewChoosePreparationToBrewComponent} from '../app/brew/brew-choose-preparation-to-brew/brew-choose-preparation-to-brew.component';
+import {BrewEditComponent} from '../app/brew/brew-edit/brew-edit.component';
+import {IBrew} from '../interfaces/brew/iBrew';
+import {BrewDetailComponent} from '../app/brew/brew-detail/brew-detail.component';
+import {BrewCuppingComponent} from '../app/brew/brew-cupping/brew-cupping.component';
+
 
 /**
  * Handles every helping functionalities
@@ -24,9 +37,21 @@ import {ICupping} from '../interfaces/cupping/iCupping';
 })
 export class UIBrewHelper {
 
+
+  private static instance: UIBrewHelper;
+
   private canBrewBoolean: boolean = undefined;
 
   private settings: Settings;
+
+  public static getInstance(): UIBrewHelper {
+    if (UIBrewHelper.instance) {
+      return UIBrewHelper.instance;
+    }
+    // noinspection TsLint
+
+    return undefined;
+  }
   public static sortBrews(_sortingBrews: Array<Brew>): Array<Brew> {
     const sortedBrews: Array<Brew> = _sortingBrews.sort((obj1, obj2) => {
       if (obj1.config.unix_timestamp < obj2.config.unix_timestamp) {
@@ -53,12 +78,16 @@ export class UIBrewHelper {
     });
     return sortedBrews;
   }
+
   constructor (private readonly uiBeanStorage: UIBeanStorage,
                private readonly uiMillStorage: UIMillStorage,
                private readonly uiPreparationStorage: UIPreparationStorage,
+               private readonly uiBrewStorage: UIBrewStorage,
                private readonly uiAlert: UIAlert,
                private readonly uiSettingsStorage: UISettingsStorage,
-               private readonly translate: TranslateService) {
+               private readonly translate: TranslateService,
+               private readonly uiAnalytics: UIAnalytics,
+               private readonly modalController: ModalController) {
 
 
     this.uiBeanStorage.attachOnEvent().subscribe(() => {
@@ -75,6 +104,10 @@ export class UIBrewHelper {
       this.settings = this.uiSettingsStorage.getSettings();
     });
     this.settings = this.uiSettingsStorage.getSettings();
+
+    if (UIBrewHelper.instance === undefined) {
+      UIBrewHelper.instance = this;
+    }
 
   }
 
@@ -110,8 +143,48 @@ export class UIBrewHelper {
     return true;
   }
 
+  public checkIfBeanPackageIsConsumed(_bean: Bean): boolean {
+      const bean: Bean = _bean;
+      if (bean.weight > 0) {
+        const beanPackageWeight = bean.weight;
+        let usedWeightCount: number = 0;
+        const brews: Array<Brew> = this.uiBrewStorage.getAllEntries().filter((e)=> e.getBean().config.uuid === bean.config.uuid);
+        for (const brew of brews) {
+          if (brew.bean_weight_in > 0) {
+            usedWeightCount += brew.bean_weight_in;
+          } else {
+            usedWeightCount += brew.grind_weight;
+          }
+        }
 
-  public repeatBrew(_brewToCopy: Brew): Brew {
+        // 5 grams is threshold
+        // If we just got 5 grams left, ask the user if he wants to archive his beans
+        if ((beanPackageWeight - usedWeightCount) <= 5) {
+          return true;
+        }
+
+      }
+      return false;
+  }
+
+
+  public async checkIfBeanPackageIsConsumedTriggerMessageAndArchive(_bean) {
+   if (this.checkIfBeanPackageIsConsumed(_bean)) {
+     try {
+       await this.uiAlert.showConfirm('BEAN_LOOKS_LIKE_CONSUMED',undefined,true);
+       // He said yes
+       await UIBeanHelper.getInstance().archiveBeanWithRatingQuestion(_bean);
+
+     } catch (ex) {
+
+     }
+
+   }
+
+  }
+
+
+  public copyBrewToRepeat(_brewToCopy: Brew): Brew {
     const repeatBrew: Brew = new Brew();
     const brewBean: IBean = this.uiBeanStorage.getByUUID(_brewToCopy.bean);
     if (!brewBean.finished) {
@@ -149,6 +222,10 @@ export class UIBrewHelper {
     repeatBrew.tds = _brewToCopy.tds;
     repeatBrew.brew_beverage_quantity = _brewToCopy.brew_beverage_quantity;
     repeatBrew.brew_beverage_quantity_type = _brewToCopy.brew_beverage_quantity_type;
+    repeatBrew.water = _brewToCopy.water;
+    repeatBrew.bean_weight_in = _brewToCopy.bean_weight_in;
+    repeatBrew.vessel_weight = _brewToCopy.vessel_weight;
+    repeatBrew.vessel_name = _brewToCopy.vessel_name;
     return repeatBrew;
   }
 
@@ -221,6 +298,16 @@ export class UIBrewHelper {
     if (!checkData.manage_parameters.method_of_preparation_tool) {
       brew.method_of_preparation_tools = [];
     }
+    if (!checkData.manage_parameters.water ) {
+      brew.water = '';
+    }
+    if (!checkData.manage_parameters.bean_weight_in) {
+      brew.bean_weight_in = 0;
+    }
+    if (!checkData.manage_parameters.vessel) {
+      brew.vessel_name ='';
+      brew.vessel_weight = 0;
+    }
 
   }
 
@@ -273,7 +360,10 @@ export class UIBrewHelper {
       checkData.manage_parameters.bean_type ||
       checkData.manage_parameters.mill ||
       checkData.manage_parameters.mill_speed ||
-      checkData.manage_parameters.mill_timer);
+      checkData.manage_parameters.mill_timer ||
+      checkData.manage_parameters.water ||
+      checkData.manage_parameters.bean_weight_in ||
+      checkData.manage_parameters.vessel);
 
   }
 
@@ -362,5 +452,79 @@ export class UIBrewHelper {
     };
     return cuppingElementData;
   }
+
+
+
+  public async addBrew() {
+    if (this.canBrewIfNotShowMessage()) {
+      const modal = await this.modalController.create({component: BrewAddComponent,id:BrewAddComponent.COMPONENT_ID});
+      await modal.present();
+      await modal.onWillDismiss();
+    }
+  }
+
+  public async repeatBrew(_brew: Brew) {
+    const modal = await this.modalController.create({component: BrewAddComponent, id: BrewAddComponent.COMPONENT_ID, componentProps: {brew_template: _brew}});
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+  public async longPressAddBrew() {
+    if (this.canBrewIfNotShowMessage()) {
+      this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.LONG_PRESS_ADD);
+      const modal = await this.modalController.create({
+        component: BrewChoosePreparationToBrewComponent,
+        id: BrewChoosePreparationToBrewComponent.COMPONENT_ID,
+        cssClass: 'popover-actions',
+      });
+      await modal.present();
+
+
+      const {data} = await modal.onWillDismiss();
+      if (data !== undefined && data.preparation) {
+        const modalBrew = await this.modalController.create({
+          component: BrewAddComponent,
+          componentProps: {loadSpecificLastPreparation: data.preparation},
+          id: BrewAddComponent.COMPONENT_ID
+        });
+        await modalBrew.present();
+        await modalBrew.onWillDismiss();
+
+      }
+    }
+  }
+  public async editBrew(_brew: Brew): Promise<Brew> {
+    const promise: Promise<Brew> = new Promise(async (resolve, reject) => {
+      const modal = await this.modalController.create({
+        component: BrewEditComponent,
+        id: BrewEditComponent.COMPONENT_ID,
+        componentProps: {brew: _brew}
+      });
+      await modal.present();
+      await modal.onWillDismiss();
+
+      const iBrew: IBrew = this.uiBrewStorage.getByUUID(_brew.config.uuid);
+      const returningBrew: Brew = new Brew();
+      returningBrew.initializeByObject(iBrew);
+      resolve(returningBrew);
+    });
+    return promise;
+  }
+
+  public async detailBrew(_brew: Brew) {
+
+    const modal = await this.modalController.create({component: BrewDetailComponent, id: BrewDetailComponent.COMPONENT_ID, componentProps: {brew: _brew}});
+    await modal.present();
+    await modal.onWillDismiss();
+
+  }
+
+  public async cupBrew(_brew: Brew) {
+
+    const modal = await this.modalController.create({component: BrewCuppingComponent, id:BrewCuppingComponent.COMPONENT_ID, componentProps: {brew: _brew}});
+    await modal.present();
+    await modal.onWillDismiss();
+
+  }
+
 
 }
