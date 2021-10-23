@@ -15,6 +15,7 @@ import {UIAnalytics} from '../../../services/uiAnalytics';
 export class PreparationAddComponent implements OnInit {
 
 
+  public static COMPONENT_ID: string = 'preparation-add';
   public data: Preparation = new Preparation();
 
   public preparation_types_enum = PREPARATION_TYPES;
@@ -30,20 +31,22 @@ export class PreparationAddComponent implements OnInit {
   }
 
   public ionViewWillEnter(): void {
+    this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.ADD);
   }
 
   public async choosePreparation(_prepType: PREPARATION_TYPES) {
 
-    this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.ADD_TYPE);
+
     const modal = await this.modalController.create({
       component: PreparationAddTypeComponent,
       cssClass: 'popover-actions',
-      id: 'preparation-add-type',
+      id:  PreparationAddTypeComponent.COMPONENT_ID,
       componentProps: {type: _prepType, hide_toast_message: this.hide_toast_message}
     });
     await modal.present();
     const {data} = await modal.onDidDismiss();
     if (data.added === true) {
+      this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.ADD_FINISH);
       await this.dismiss();
     }
 
@@ -53,7 +56,7 @@ export class PreparationAddComponent implements OnInit {
   public async dismiss() {
     await this.modalController.dismiss({
       dismissed: true
-    }, undefined, 'preparation-add');
+    }, undefined, PreparationAddComponent.COMPONENT_ID);
 
   }
 

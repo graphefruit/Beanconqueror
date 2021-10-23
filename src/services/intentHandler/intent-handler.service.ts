@@ -1,10 +1,17 @@
 import { Injectable } from '@angular/core';
 import {UIHelper} from '../uiHelper';
 import {Deeplinks} from '@ionic-native/deeplinks/ngx';
-import {InfoComponent} from '../../app/info/info.component';
+
 import {UILog} from '../uiLog';
-import {Url} from 'url';
+import {ServerCommunicationService} from '../serverCommunication/server-communication.service';
+import {UIBeanHelper} from '../uiBeanHelper';
+import {ServerBean} from '../../models/bean/serverBean';
+import {UIAlert} from '../uiAlert';
+import QR_TRACKING from '../../data/tracking/qrTracking';
+import {UIAnalytics} from '../uiAnalytics';
+
 declare var window;
+declare var IonicDeeplink;
 @Injectable({
   providedIn: 'root'
 })
@@ -15,22 +22,24 @@ export class IntentHandlerService {
   };
   constructor(private readonly uiHelper: UIHelper,
               private readonly deeplinks: Deeplinks,
-              private readonly uiLog: UILog) { }
+              private readonly uiLog: UILog,
+              private readonly serverCommunicationService: ServerCommunicationService,
+              private readonly uiBeanHelper: UIBeanHelper,
+              private readonly uiAlert: UIAlert,
+              private readonly uiAnalytics: UIAnalytics) { }
 
   public attachOnHandleOpenUrl() {
 
-    // https://github.com/ionic-team/ionic-plugin-deeplinks/issues/243 - to be done
-    this.deeplinks.route( {
+    IonicDeeplink.route({
       '/NO_LINK_EVER_WILL_WORK_HERE/':  '/NO_LINK_EVER_WILL_WORK_HERE/'
-  }).subscribe((match) => {
-      // The plugin has some issues, therefore we use success and error case and hope for better times
-        this.uiLog.log('Deeplink matched');
-        this.handleDeepLink(match.$link);
-      },
-      (nomatch) => {
-        this.uiLog.log('Deeplink not matched');
-        this.handleDeepLink(nomatch.$link);
-      });
+    }, (match) => {
+      this.uiLog.log('Deeplink matched ' + JSON.stringify(match.$link));
+      this.handleDeepLink(match.$link);
+    }, (nomatch) => {
+      this.uiLog.log('Deeplink not matched ' + JSON.stringify(nomatch.$link));
+
+      this.handleDeepLink(nomatch.$link);
+    });
   }
   private findGetParameter(_url: string,_parameterName: string) {
     let result = null,
@@ -38,58 +47,72 @@ export class IntentHandlerService {
     _url.split('&')
       .forEach( (item) => {
         tmp = item.split('=');
-        if (tmp[0] === _parameterName) result = decodeURIComponent(tmp[1]);
+        if (tmp[0] === _parameterName) {
+          result = decodeURIComponent(tmp[1]);
+        }
       });
     return result;
   }
 
   private findParameterByCompleteUrl(_url,_parameter) {
-    const url: Url = new URL(_url);
-    const val = url.searchParams.get(_parameter);
+    const urlObj: any = new window.URL(_url);
+    const val = urlObj.searchParams.get(_parameter);
     return val;
   }
 
-  public handleQRCodeLink(_url) {
-    this.uiHelper.isBeanconqurorAppReady().then(() => {
+  public async handleQRCodeLink(_url) {
+    await this.uiHelper.isBeanconqurorAppReady().then(async () => {
       const url: string = _url;
-
-      this.uiLog.log('Handle QRcode Link:' + url);
+      this.uiLog.log('Handle QR Code Link: ' + url);
       if (url.indexOf('https://beanconqueror.com/app/roaster/bean') === 0) {
-        const onlineBeanId: number = Number(this.findParameterByCompleteUrl(url,'id'));
-        this.addBeanFromServer(onlineBeanId);
+        this.uiAnalytics.trackEvent(QR_TRACKING.TITLE, QR_TRACKING.ACTIONS.SCAN);
+        const qrCodeId: string = String(this.findParameterByCompleteUrl(url,'id'));
+        await this.addBeanFromServer(qrCodeId);
+      } else {
+        this.uiAlert.showMessage('QR.WRONG_QRCODE_DESCRIPTION','QR.WRONG_QRCODE_TITLE',undefined,true);
       }
     });
   }
 
-  private handleDeepLink(_matchLink) {
+  private async handleDeepLink(_matchLink) {
     try {
       if (_matchLink && _matchLink.url) {
-        this.uiHelper.isBeanconqurorAppReady().then(() => {
+          await this.uiHelper.isBeanconqurorAppReady().then(async () => {
           const url: string = _matchLink.url;
 
-          this.uiLog.log('Handle deeplink:' + url);
-          this.uiLog.log(JSON.stringify(_matchLink));
+          this.uiLog.log('Handle deeplink: ' + url);
           if (url.indexOf('https://beanconqueror.com/app/roaster/bean') === 0) {
-            const onlineBeanId: number = Number(this.findGetParameter(_matchLink.queryString,'id'));
-            this.addBeanFromServer(onlineBeanId);
+            const qrCodeId: string = String(this.findGetParameter(_matchLink.queryString,'id'));
+            await this.addBeanFromServer(qrCodeId);
           } else if (url.indexOf('beanconqueror://ADD_BEAN_ONLINE?') === 0) {
-            const onlineBeanId: number = Number(_matchLink.queryString);
-            this.addBeanFromServer(onlineBeanId);
+            const qrCodeId: string = String(this.findGetParameter(_matchLink.queryString,'id'));
+            await this.addBeanFromServer(qrCodeId);
+          } else {
+            this.uiAlert.showMessage('QR.WRONG_LINK_DESCRIPTION','QR.WRONG_LINK_TITLE',undefined,true);
           }
         });
       }
 
-    }catch (ex) {
+    } catch (ex) {
 
     }
 
   }
 
 
+  private async addBeanFromServer(_qrCodeId: string) {
+    this.uiLog.log('Load bean information from server: ' + _qrCodeId);
 
+    try {
+      await this.uiAlert.showLoadingSpinner();
+      const beanData: ServerBean = await this.serverCommunicationService.getBeanInformation(_qrCodeId);
+      await this.uiBeanHelper.addScannedQRBean(beanData);
+    } catch (ex) {
+      this.uiAnalytics.trackEvent(QR_TRACKING.TITLE, QR_TRACKING.ACTIONS.SCAN_FAILED);
+      await this.uiAlert.hideLoadingSpinner();
+      this.uiAlert.showMessage('QR.SERVER.ERROR_OCCURED','ERROR_OCCURED',undefined,true);
+    }
 
-  private addBeanFromServer(_beanId: number) {
-    this.uiLog.log('Load bean information from server: ' + _beanId);
   }
 
 }

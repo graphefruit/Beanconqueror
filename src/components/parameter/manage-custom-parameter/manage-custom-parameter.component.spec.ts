@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {IonicModule} from '@ionic/angular';
 
 import {ManageCustomParameterComponent} from './manage-custom-parameter.component';
@@ -7,7 +7,7 @@ describe('ManageCustomParameterComponent', () => {
   let component: ManageCustomParameterComponent;
   let fixture: ComponentFixture<ManageCustomParameterComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ManageCustomParameterComponent ],
       imports: [IonicModule.forRoot()]

@@ -35,13 +35,19 @@ export class UiVersionStorage extends StorageClass {
         this.isVersionInitialized = 1;
       } else {
         // Take the new settings obj.
-        await super.add(this.version);
+        const data: any = await super.add(this.version);
+        this.version = new Version();
+        this.version.initializeByObject(data);
         this.isVersionInitialized = 1;
       }
     }, () => {
       // Outsch, cant do much.
         this.isVersionInitialized = 0;
     });
+  }
+
+  public async initializeStorage() {
+    await super.__initializeStorage();
   }
 
   public async storageReady(): Promise<any> {
@@ -52,7 +58,7 @@ export class UiVersionStorage extends StorageClass {
           if (this.isVersionInitialized === 1) {
             this.uiLog.log(`Storage ${this.DB_PATH} ready`);
             window.clearInterval(intV);
-            resolve();
+            resolve(undefined);
           } else if (this.isVersionInitialized === 0) {
             window.clearInterval(intV);
             this.uiLog.log(`Storage ${this.DB_PATH} not ready`);
@@ -62,7 +68,7 @@ export class UiVersionStorage extends StorageClass {
       } else {
         if (this.isVersionInitialized === 1) {
           this.uiLog.log(`Storage ${this.DB_PATH} - already - ready`);
-          resolve();
+          resolve(undefined);
         } else if (this.isVersionInitialized === 0) {
           this.uiLog.log(`Storage ${this.DB_PATH} - already - not - ready`);
           reject();
@@ -85,8 +91,9 @@ export class UiVersionStorage extends StorageClass {
         this.version = new Version();
         this.version.initializeByObject(entries[0]);
       } else {
-        // Take the new settings obj.
-        await super.add(this.version);
+        const data: any = await super.add(this.version);
+        this.version = new Version();
+        this.version.initializeByObject(data);
       }
     }, () => {
       // Outsch, cant do much.

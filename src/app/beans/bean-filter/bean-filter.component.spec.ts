@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {IonicModule} from '@ionic/angular';
 
 import {BeanFilterComponent} from './bean-filter.component';
@@ -7,7 +7,7 @@ describe('BeanFilterComponent', () => {
   let component: BeanFilterComponent;
   let fixture: ComponentFixture<BeanFilterComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ BeanFilterComponent ],
       imports: [IonicModule.forRoot()]

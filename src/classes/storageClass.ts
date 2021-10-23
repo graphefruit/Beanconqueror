@@ -38,7 +38,7 @@ export abstract class StorageClass {
           if (this.isInitialized === 1) {
             this.uiLog.log(`Storage ${this.DB_PATH} ready`);
             window.clearInterval(intV);
-            resolve();
+            resolve(undefined);
           } else if (this.isInitialized === 0) {
             window.clearInterval(intV);
             this.uiLog.log(`Storage ${this.DB_PATH} not ready`);
@@ -48,7 +48,7 @@ export abstract class StorageClass {
       } else {
         if (this.isInitialized === 1) {
           this.uiLog.log(`Storage ${this.DB_PATH} - already - ready`);
-          resolve();
+          resolve(undefined);
         } else if (this.isInitialized === 0) {
           this.uiLog.log(`Storage ${this.DB_PATH} - already not - ready`);
           reject();
@@ -60,7 +60,7 @@ export abstract class StorageClass {
     return promise;
   }
 
-  public async reinitializeStorage () {
+  public async reinitializeStorage() {
     this.uiLog.log(`Storage - Reinitialize ${this.DB_PATH}`);
     this.isInitialized = -1;
     await this.__initializeStorage();
@@ -72,12 +72,16 @@ export abstract class StorageClass {
   }
 
   public async add(_entry) {
-    const newEntry = this.uiHelper.copyData(_entry);
-    newEntry.config.uuid = this.uiHelper.generateUUID();
-    newEntry.config.unix_timestamp = this.uiHelper.getUnixTimestamp();
-    this.storedData.push(newEntry);
-    await this.__save();
-    this.__sendEvent('ADD');
+    const promise = new Promise(async (resolve, reject) => {
+      const newEntry = this.uiHelper.cloneData(_entry);
+      newEntry.config.uuid = this.uiHelper.generateUUID();
+      newEntry.config.unix_timestamp = this.uiHelper.getUnixTimestamp();
+      this.storedData.push(newEntry);
+      await this.__save();
+      this.__sendEvent('ADD');
+      resolve(this.uiHelper.cloneData(newEntry));
+    });
+    return promise;
   }
 
   public getAllEntries (): Array<any> {
@@ -86,17 +90,24 @@ export abstract class StorageClass {
 
   public async update(_obj): Promise<boolean> {
     const promise: Promise<any> = new Promise(async (resolve, reject) => {
+      let didUpdate: boolean = false;
       for (let i = 0; i < this.storedData.length; i++) {
         if (this.storedData[i].config.uuid === _obj.config.uuid) {
           this.uiLog.log(`Storage - Update  - Successfully - ${_obj.config.uuid}`);
           this.storedData[i] = _obj;
           await this.__save();
           this.__sendEvent('UPDATE');
+          didUpdate = true;
           resolve(true);
+          return;
         }
       }
+      if (didUpdate === false) {
+        this.uiLog.error(`Storage - Update  - Unsucessfully - ${_obj.config.uuid} - not found`);
 
+      }
       resolve(false);
+
     });
     return promise;
   }
@@ -163,6 +174,7 @@ export abstract class StorageClass {
 
   protected async __initializeStorage () {
     this.storedData = [];
+    this.isInitialized = -1;
     const promise = new Promise((resolve, reject) => {
       this.uiLog.log(`Initialize Storage - ${this.DB_PATH}`);
       this.uiStorage.get(this.DB_PATH).then((_data) => {
@@ -176,7 +188,7 @@ export abstract class StorageClass {
           this.storedData = _data;
           this.isInitialized = 1;
         }
-        resolve();
+        resolve(undefined);
       }, (e) => {
         // Error
         this.uiLog.log(`Storage error - ${this.DB_PATH} - ${JSON.stringify(e)}`);

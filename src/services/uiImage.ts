@@ -19,8 +19,11 @@ import {Bean} from '../classes/bean/bean';
 import {RoastingMachine} from '../classes/roasting-machine/roasting-machine';
 import {UISettingsStorage} from './uiSettingsStorage';
 import {Settings} from '../classes/settings/settings';
+import {Water} from '../classes/water/water';
+import {Mill} from '../classes/mill/mill';
+import {Preparation} from '../classes/preparation/preparation';
 
-
+declare var chooser;
 @Injectable({
   providedIn: 'root'
 })
@@ -84,8 +87,51 @@ export class UIImage {
 
             const isCordova: boolean = this.platform.is('cordova');
             const isAndroid: boolean = this.platform.is('android');
+            const fileurls: Array<string> = [];
             if (isCordova && isAndroid) {
-              this.fileChooser.open().then((uri) => {
+              chooser.getFile().then(async (_files) => {
+                await this.uiAlert.showLoadingSpinner();
+
+                for (const file of _files) {
+                  try {
+                  await this.filePath.resolveNativePath(file.uri).then(async (path) => {
+                    if (path && (path.toLowerCase().endsWith('.png') || path.toLowerCase().endsWith('.jpg') ||
+                      path.toLowerCase().endsWith('.jpeg') || path.toLowerCase().endsWith('.gif')) &&
+                      path.toLowerCase().indexOf('sdcard')===-1) {
+
+                      const newPath: string =path;
+                      let importPath: string = '';
+                      if (newPath.lastIndexOf('/Download/')>-1) {
+                        let pathFromDownload = newPath.substr(0,newPath.lastIndexOf('/Download/'));
+                        const decodedURI = decodeURIComponent(file.uri);
+                        pathFromDownload = pathFromDownload + decodedURI.substring(decodedURI.lastIndexOf('/Download/'));
+                        importPath = pathFromDownload;
+                      } else {
+                        importPath = newPath;
+                      }
+                      await this.uiFileHelper.copyFileWithSpecificName(importPath).then(async(_fullPath) => {
+                        fileurls.push(_fullPath);
+                      }, () => {
+
+                      });
+
+                    }
+                  }, () => {
+                    reject();
+                  });
+                  }
+                  catch(ex) {
+
+                  }
+                }
+                await this.uiAlert.hideLoadingSpinner();
+                if (fileurls.length > 0) {
+                  resolve(fileurls);
+                } else {
+                  reject();
+                }
+              });
+             /* this.fileChooser.open().then((uri) => {
                 this.filePath.resolveNativePath(uri).then((path) => {
                   if (path && (path.toLowerCase().endsWith('.png') || path.toLowerCase().endsWith('.jpg') ||
                     path.toLowerCase().endsWith('.jpeg') || path.toLowerCase().endsWith('.gif'))) {
@@ -123,19 +169,37 @@ export class UIImage {
               }, () => {
                 this.uiAlert.showMessage('COULD_NOT_ACCESS_FILE',undefined,undefined,true);
                 reject();
-              });
+              });*/
             } else if (isCordova) {
               // https://github.com/Telerik-Verified-Plugins/ImagePicker/issues/173#issuecomment-559096572
-              this.imagePicker.getPictures({maximumImagesCount: 1, outputType: 1, disable_popover: true, quality: this.getImageQuality()}).then((results) => {
-                if (results && results.length > 0 && results[0] !== 0 && results[0] !== ''
-                  && results[0] !== 'OK' && results[0].length > 5) {
-                  const imageStr: string = `data:image/jpeg;base64,${results[0]}`;
-                  this.uiFileHelper.saveBase64File('beanconqueror_image', '.png', imageStr).then((_newURL) => {
-                    resolve(_newURL);
-                  });
+              this.imagePicker.getPictures({maximumImagesCount: 5, outputType: 1, disable_popover: true, quality: this.getImageQuality()}).then(async (results) => {
+
+                await this.uiAlert.showLoadingSpinner();
+                for (const result of results) {
+                  if (result && result.length > 0 && result !== 0 && result !== ''
+                    && result !== 'OK' && result.length > 5) {
+
+                    try {
+                      const imageStr: string = `data:image/jpeg;base64,${result}`;
+                      await this.uiFileHelper.saveBase64File('beanconqueror_image', '.png', imageStr).then((_newURL) => {
+                        fileurls.push(_newURL);
+                      });
+                    } catch(ex) {
+
+                    }
+
+
+                  } else {
+                  }
+
+                }
+                await this.uiAlert.hideLoadingSpinner();
+                if (fileurls.length > 0) {
+                  resolve(fileurls);
                 } else {
                   reject();
                 }
+
               }, (err) => {
                 reject();
               });
@@ -225,11 +289,11 @@ export class UIImage {
 
   }
 
-  public async viewPhotos (_data: Bean | GreenBean | Brew |RoastingMachine) {
+  public async viewPhotos (_data: Bean | GreenBean | Brew |RoastingMachine | Water | Mill | Preparation) {
 
     const modal = await this.modalCtrl.create({
       component: PhotoPopoverComponent,
-      id: 'photo-popover',
+      id: PhotoPopoverComponent.COMPONENT_ID,
       componentProps: {data: _data}
     });
     await modal.present();

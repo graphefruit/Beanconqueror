@@ -12,7 +12,7 @@ import {BEAN_ACTION} from '../../../enums/beans/beanAction';
 })
 export class BeanPopoverActionsComponent implements OnInit {
 
-
+  public static COMPONENT_ID = 'bean-popover-actions';
   public data: Bean = new Bean();
 
   constructor(private readonly modalController: ModalController,
@@ -40,10 +40,10 @@ export class BeanPopoverActionsComponent implements OnInit {
   }
 
   public async choose(_type: string): Promise<void> {
-    this.modalController.dismiss(undefined, _type,'bean-popover-actions');
+    this.modalController.dismiss(undefined, _type, BeanPopoverActionsComponent.COMPONENT_ID);
   }
   public async dismiss() {
-    this.modalController.dismiss(undefined, undefined,'bean-popover-actions');
+    this.modalController.dismiss(undefined, undefined,BeanPopoverActionsComponent.COMPONENT_ID);
   }
 
 }

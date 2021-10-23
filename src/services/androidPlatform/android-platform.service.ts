@@ -50,9 +50,9 @@ export class AndroidPlatformService {
     this.uiStorage.export().then((_data) => {
 
       this.uiHelper.exportJSON('Beanconqueror_automatic_export_' + this.getAutomatedBackupFilename() + '.json', JSON.stringify(_data)).then(async (_fileEntry: FileEntry) => {
-        this.uiLog.log('Android-Platform - JSON file successfully saved')
+        this.uiLog.log('Android-Platform - JSON file successfully saved');
       }, () => {
-        this.uiLog.error('Android-Platform - JSON file could not be saved')
+        this.uiLog.error('Android-Platform - JSON file could not be saved');
       });
     });
   }
@@ -62,7 +62,7 @@ export class AndroidPlatformService {
     const promise = new Promise((resolve, reject) => {
     this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE).then((_status) => {
       if (_status.hasPermission) {
-        resolve();
+        resolve(undefined);
       } else {
         reject();
       }
@@ -73,18 +73,18 @@ export class AndroidPlatformService {
     return promise;
   }
 
-  public checkHasExternalStorage() {
+  public async checkHasExternalStorage() {
     const promise = new Promise((resolve, reject) => {
       this.androidPermissions.hasPermission(this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE).then(async (_status) => {
         if (_status.hasPermission === false) {
-          await this.uiAlert.showMessage('ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION','ANDROID_FILE_ACCESS_NEEDED_TITLE',undefined,true)
+          await this.uiAlert.showMessage('ANDROID_FILE_ACCESS_NEEDED_DESCRIPTION','ANDROID_FILE_ACCESS_NEEDED_TITLE',undefined,true);
           this.requestExternalStorageAccess().then( () => {
-            resolve();
+            resolve(undefined);
           }, () => {
             reject();
-          })
+          });
         } else {
-          resolve();
+          resolve(undefined);
         }
       }, () => {
         reject();

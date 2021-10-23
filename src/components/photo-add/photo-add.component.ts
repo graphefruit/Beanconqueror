@@ -37,9 +37,12 @@ export class PhotoAddComponent implements OnInit {
         if (_option === 'CHOOSE') {
           // CHOSE
           this.uiImage.choosePhoto()
-            .then((_path) => {
-              if (_path) {
-                this.data.attachments.push(_path.toString());
+            .then((_paths) => {
+              if (_paths.length > 0) {
+                for (const path of _paths) {
+                  this.data.attachments.push(path.toString());
+                }
+
                 this.emitChanges();
               }
 

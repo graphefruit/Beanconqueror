@@ -4,7 +4,7 @@
       <ion-menu-button show="back"></ion-menu-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button (click)="add()" class="big-add-icon" fill="clear">
+      <ion-button tappable (short-press)="add()" (long-press)="longPressAdd($event);" class="big-add-icon" fill="clear">
         <ion-icon class="ion-color-accent" name="beanconqueror-add" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -45,11 +45,6 @@
         </div>
       </div>
 
-      <!--<ion-virtual-scroll #openScroll [items]="openBrewsView"  approxItemHeight="255px">
-        <brew-information (brewAction)="brewAction($event[0],$event[1])" *virtualItem="let brew;"
-                          [brew]="brew"></brew-information>
-      </ion-virtual-scroll>-->
-
       <ag-virtual-scroll #openScroll [items]="openBrewsView" height="100vh" min-row-height="180">
         <brew-information (brewAction)="brewAction($event[0],$event[1])" *ngFor="let brew of openScroll.items"
                           [brew]="brew"></brew-information>
@@ -78,11 +73,6 @@
             {{"PAGE_BREWS_NO_ARCHIVED_ENTRIES" | translate}}
           </div>
         </div>
-
-        <!--<ion-virtual-scroll #archivedScroll *ngIf="archiveBrewsView?.length > 0" [items]="archiveBrewsView" approxItemHeight="255px">
-          <brew-information (brewAction)="brewAction($event[0],$event[1])" *virtualItem="let brew;"
-                            [brew]="brew"></brew-information>
-        </ion-virtual-scroll>-->
 
         <ag-virtual-scroll #archivedScroll [items]="archiveBrewsView" height="100vh" min-row-height="180">
           <brew-information (brewAction)="brewAction($event[0],$event[1])" *ngFor="let brew of archivedScroll.items"

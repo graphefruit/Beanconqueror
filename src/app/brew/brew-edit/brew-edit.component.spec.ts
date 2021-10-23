@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {BrewEditComponent} from './brew-edit.component';
 import {TranslateModule} from '@ngx-translate/core';
@@ -22,7 +22,7 @@ describe('BrewEditComponent', () => {
   let component: BrewEditComponent;
   let fixture: ComponentFixture<BrewEditComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     NavParamsMock.setParams(undefined);
     TestBed.configureTestingModule({
       imports: [TranslateModule.forRoot(), FormsModule, IonicStorageModule.forRoot(), CommonModule, IonicModule],

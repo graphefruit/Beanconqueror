@@ -51,13 +51,21 @@ export class UISettingsStorage extends StorageClass {
         this.isSettingsInitialized = 1;
       } else {
         // Take the new settings obj.
-        await super.add(this.settings);
+
+        const data: any = await super.add(this.settings);
+        this.settings = new Settings();
+        this.settings.initializeByObject(data);
         this.isSettingsInitialized = 1;
       }
     }, () => {
       // Outsch, cant do much.
         this.isSettingsInitialized = 0;
     });
+  }
+
+  public async initializeStorage() {
+    await super.__initializeStorage();
+
   }
 
   public async storageReady(): Promise<any> {
@@ -68,7 +76,7 @@ export class UISettingsStorage extends StorageClass {
           if (this.isSettingsInitialized === 1) {
             this.uiLog.log(`Storage ${this.DB_PATH} ready`);
             window.clearInterval(intV);
-            resolve();
+            resolve(undefined);
           } else if (this.isSettingsInitialized === 0) {
             window.clearInterval(intV);
             this.uiLog.log(`Storage ${this.DB_PATH} not ready`);
@@ -78,7 +86,7 @@ export class UISettingsStorage extends StorageClass {
       } else {
         if (this.isSettingsInitialized === 1) {
           this.uiLog.log(`Storage ${this.DB_PATH} - already - ready`);
-          resolve();
+          resolve(undefined);
         } else if (this.isSettingsInitialized === 0) {
           this.uiLog.log(`Storage ${this.DB_PATH} - already - not - ready`);
           reject();
@@ -102,8 +110,9 @@ export class UISettingsStorage extends StorageClass {
         this.settings = new Settings();
         this.settings.initializeByObject(entries[0]);
       } else {
-        // Take the new settings obj.
-        await super.add(this.settings);
+        const data: any = await super.add(this.settings);
+        this.settings = new Settings();
+        this.settings.initializeByObject(data);
       }
     }, () => {
       // Outsch, cant do much.

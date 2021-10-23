@@ -6,6 +6,9 @@ import {MillAddComponent} from '../../app/mill/mill-add/mill-add.component';
 import {UIAnalytics} from '../../services/uiAnalytics';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {Settings} from '../../classes/settings/settings';
+import {UIBeanHelper} from '../../services/uiBeanHelper';
+import {UIMillHelper} from '../../services/uiMillHelper';
+import {UIPreparationHelper} from '../../services/uiPreparationHelper';
 
 @Component({
   selector: 'welcome-popover',
@@ -25,14 +28,17 @@ export class WelcomePopoverComponent implements OnInit {
   @ViewChild('slider', {static: false}) public welcomeSlider: IonSlides;
 
 
-  private readonly settings: Settings;
+  private settings: Settings;
 
   private disableHardwareBack;
   constructor(private readonly modalController: ModalController,
               private readonly uiAnalytics: UIAnalytics,
               private readonly uiSettingsStorage: UISettingsStorage,
-              private readonly platform: Platform) {
-    this.settings = this.uiSettingsStorage.getSettings();
+              private readonly platform: Platform,
+              private readonly uiBeanHelper: UIBeanHelper,
+              private readonly uiMillHelper: UIMillHelper,
+              private readonly uiPreparationHelper: UIPreparationHelper) {
+
 
 
   }
@@ -44,6 +50,7 @@ export class WelcomePopoverComponent implements OnInit {
   }
   public ngOnInit() {
     try {
+      this.settings = this.uiSettingsStorage.getSettings();
       this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(9999, (processNextHandler) => {
         // Don't do anything.
       });
@@ -56,14 +63,14 @@ export class WelcomePopoverComponent implements OnInit {
   public async understoodAnalytics() {
     this.settings.matomo_analytics = true;
     this.uiAnalytics.enableTracking();
-    this.uiSettingsStorage.saveSettings(this.settings);
+    await this.uiSettingsStorage.saveSettings(this.settings);
     this.slide++;
 
     this.welcomeSlider.slideNext();
     this.__triggerUpdate();
   }
 
-  public skip() {
+  public async skip() {
 
     this.slide++;
     this.welcomeSlider.slideNext();
@@ -78,44 +85,29 @@ export class WelcomePopoverComponent implements OnInit {
   }
 
   public async addBean() {
-    const modal = await this.modalController.create({component: BeansAddComponent, id:'bean-add',
-      componentProps: {hide_toast_message: true}});
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiBeanHelper.addBean(true);
     this.next();
   }
 
   public async addPreparation() {
-    const modal = await this.modalController.create({
-      component: PreparationAddComponent,
-      showBackdrop: true, id: 'preparation-add', componentProps: {hide_toast_message: true}
-    });
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiPreparationHelper.addPreparation(true);
     this.next();
   }
 
   public async addMill() {
-    const modal = await this.modalController.create({
-      component: MillAddComponent,
-      cssClass: 'popover-actions',
-      id:'mill-add',
-      componentProps: {hide_toast_message: true}
-    });
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiMillHelper.addMill(true);
     this.next();
 
   }
 
-  public finish() {
+  public async finish() {
     try{
       this.disableHardwareBack.unsubscribe();
     } catch(ex) {
 
     }
     this.settings.welcome_page_showed = true;
-    this.uiSettingsStorage.saveSettings(this.settings);
+    await this.uiSettingsStorage.saveSettings(this.settings);
     this.modalController.dismiss({
       dismissed: true
     }, undefined, 'welcome-popover');

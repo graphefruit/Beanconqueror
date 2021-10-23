@@ -19,7 +19,7 @@ import {PreparationTool} from '../../../classes/preparation/preparationTool';
   styleUrls: ['./brew-filter.component.scss'],
 })
 export class BrewFilterComponent implements OnInit {
-
+  public static COMPONENT_ID = 'brew-filter';
   public settings: Settings;
 
   public filter: IBrewPageFilter;
@@ -102,7 +102,7 @@ export class BrewFilterComponent implements OnInit {
     this.filter = this.settings.GET_BREW_FILTER();
     this.modalController.dismiss({
       brew_filter: this.uiHelper.copyData(this.filter)
-    },undefined,'brew-filter');
+    },undefined,BrewFilterComponent.COMPONENT_ID);
   }
 
 

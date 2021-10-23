@@ -12,7 +12,7 @@ import {PREPARATION_ACTION} from '../../../enums/preparations/preparationAction'
 })
 export class PreparationPopoverActionsComponent implements OnInit {
 
-
+  public static COMPONENT_ID: string = 'preparation-popover-actions';
   public data: Preparation = new Preparation();
 
   constructor(private readonly modalController: ModalController,
@@ -41,9 +41,9 @@ export class PreparationPopoverActionsComponent implements OnInit {
   }
 
   public async choose(_type: string): Promise<void> {
-    this.modalController.dismiss(undefined, _type, 'preparation-popover-actions')
+    this.modalController.dismiss(undefined, _type, PreparationPopoverActionsComponent.COMPONENT_ID)
   }
   public async dismiss() {
-    this.modalController.dismiss(undefined, undefined,'preparation-popover-actions');
+    this.modalController.dismiss(undefined, undefined,PreparationPopoverActionsComponent.COMPONENT_ID);
   }
 }

@@ -8,6 +8,9 @@ import moment from 'moment';
 import {UIToast} from '../../../services/uiToast';
 import {UIBrewHelper} from '../../../services/uiBrewHelper';
 import {BrewBrewingComponent} from '../../../components/brews/brew-brewing/brew-brewing.component';
+import {BrewTrackingService} from '../../../services/brewTracking/brew-tracking.service';
+import BREW_TRACKING from '../../../data/tracking/brewTracking';
+import {UIAnalytics} from '../../../services/uiAnalytics';
 
 
 @Component({
@@ -18,6 +21,7 @@ import {BrewBrewingComponent} from '../../../components/brews/brew-brewing/brew-
 export class BrewEditComponent implements OnInit {
 
 
+  public static COMPONENT_ID: string = 'brew-edit';
   @ViewChild('brewBrewing', {read: BrewBrewingComponent, static: false}) public brewBrewing: BrewBrewingComponent;
   public data: Brew = new Brew();
 
@@ -28,7 +32,9 @@ export class BrewEditComponent implements OnInit {
                private readonly uiHelper: UIHelper,
                private readonly uiToast: UIToast,
                private readonly platform: Platform,
-               private readonly uiBrewHelper: UIBrewHelper) {
+               private readonly uiBrewHelper: UIBrewHelper,
+               private readonly brewTracking: BrewTrackingService,
+               private readonly uiAnalytics: UIAnalytics) {
 
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
     const brew: IBrew = this.uiHelper.copyData(this.navParams.get('brew'));
@@ -43,7 +49,7 @@ export class BrewEditComponent implements OnInit {
   public dismiss(): void {
     this.modalController.dismiss({
       dismissed: true
-    },undefined,'brew-edit');
+    },undefined,BrewEditComponent.COMPONENT_ID);
   }
 
   public async updateBrew() {
@@ -53,11 +59,17 @@ export class BrewEditComponent implements OnInit {
     }
     this.uiBrewHelper.cleanInvisibleBrewData(this.data);
     await this.uiBrewStorage.update(this.data);
+
+    this.brewTracking.trackBrew(this.data);
+
     this.uiToast.showInfoToast('TOAST_BREW_EDITED_SUCCESSFULLY');
+    this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.EDIT_FINISH);
     this.dismiss();
   }
 
-  public ngOnInit() {}
+  public ngOnInit() {
+    this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.EDIT);
+  }
 
 
 }

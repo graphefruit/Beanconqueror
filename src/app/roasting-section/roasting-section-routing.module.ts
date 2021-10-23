@@ -15,11 +15,11 @@ const routes: Routes = [
       },
       {
         path: 'dashboard',
-        loadChildren: './green-beans/green-beans.module#GreenBeansPageModule',
+        loadChildren: () => import('./green-beans/green-beans.module').then(m => m.GreenBeansPageModule),
       },
       {
         path: 'roasting-machine',
-        loadChildren: './roasting-machine/roasting-machine.module#RoastingMachinePageModule'
+        loadChildren: () => import('./roasting-machine/roasting-machine.module').then(m => m.RoastingMachinePageModule)
       }
     ]
   }

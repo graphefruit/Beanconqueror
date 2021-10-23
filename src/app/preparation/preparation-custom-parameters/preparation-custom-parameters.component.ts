@@ -12,7 +12,7 @@ import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
   styleUrls: ['./preparation-custom-parameters.component.scss'],
 })
 export class PreparationCustomParametersComponent implements OnInit {
-
+  public static COMPONENT_ID: string = 'preparation-custom-parameters';
   public data: Preparation = new Preparation();
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   public preparationTypeEnum = PREPARATION_TYPES;
@@ -35,11 +35,11 @@ export class PreparationCustomParametersComponent implements OnInit {
   public dismiss(): void {
     this.modalController.dismiss({
       dismissed: true
-    }, undefined, 'preparation-custom-parameters');
+    }, undefined, PreparationCustomParametersComponent.COMPONENT_ID);
   }
 
-  public save() {
-    this.uiPreparationStorage.update(this.data);
+  public async save() {
+    await this.uiPreparationStorage.update(this.data);
   }
 
   public ngOnInit() {}

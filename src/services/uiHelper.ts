@@ -16,6 +16,7 @@ import {UIAlert} from './uiAlert';
 declare var cordova: any;
 declare var device: any;
 declare var window: any;
+import { cloneDeep } from 'lodash';
 /**
  * Handles every helping functionalities
  */
@@ -52,6 +53,11 @@ export class UIHelper {
   public static getUnixTimestamp(): number {
     return moment()
       .unix();
+  }
+
+  public cloneData(_value) {
+    const clone = cloneDeep(_value);
+    return clone;
   }
 
   public copyData(_value: any): any {
@@ -99,6 +105,16 @@ export class UIHelper {
       .format(format);
   }
 
+
+  public toFixedIfNecessary( value, dp ){
+    const parsedFloat = parseFloat(value);
+    if (isNaN(parsedFloat)) {
+      return 0;
+    }
+    return +parsedFloat.toFixed( dp );
+  }
+
+
   public formateDate(_unix: number, _format?: string): string {
 
     let format: string = 'DD.MM.YYYY, HH:mm:ss';
@@ -109,6 +125,10 @@ export class UIHelper {
 
     return moment.unix(_unix)
       .format(format);
+  }
+
+  public getActualTimeWithMilliseconds() {
+    return moment(new Date()).format("HH:mm:ss.SSS");
   }
 
   public timeDifference(_unix: number): any {
@@ -147,12 +167,12 @@ export class UIHelper {
 
       if (this.isAppReady === 1 || this.isAppReady === 2) {
         this.uiLog.log('Check app ready - Already loaded, no interval needed');
-        resolve();
+        resolve(undefined);
       } else {
         const intV = setInterval(() => {
           this.uiLog.log('Check app ready');
           if (this.isAppReady === 1 || this.isAppReady === 2) {
-            resolve();
+            resolve(undefined);
             clearInterval(intV);
           }
         }, 50);

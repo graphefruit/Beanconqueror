@@ -27,6 +27,10 @@ export class ManageBrewParameter implements IManageBrewParameter {
   public set_last_coffee_brew: boolean;
   public set_custom_brew_time: boolean;
   public method_of_preparation_tool: boolean;
+  public water: boolean;
+
+  public bean_weight_in: boolean;
+  public vessel: boolean;
 
   constructor() {
     this.bean_type = true;
@@ -54,5 +58,8 @@ export class ManageBrewParameter implements IManageBrewParameter {
     this.set_last_coffee_brew = false;
     this.set_custom_brew_time = false;
     this.method_of_preparation_tool = false;
+    this.water = false;
+    this.bean_weight_in = false;
+    this.vessel = false;
   }
 }

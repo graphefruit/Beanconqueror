@@ -19,6 +19,13 @@ import {ICupping} from '../../interfaces/cupping/iCupping';
 import {IBrewCoordinates} from '../../interfaces/brew/iBrewCoordinates';
 import {PREPARATION_STYLE_TYPE} from '../../enums/preparations/preparationStyleTypes';
 import {PreparationTool} from '../preparation/preparationTool';
+import {IFlavor} from '../../interfaces/flavor/iFlavor';
+import {UIWaterStorage} from '../../services/uiWaterStorage';
+
+import {IWater} from '../../interfaces/water/iWater';
+import {Water} from '../water/water';
+import {IBrewFlow} from '../../interfaces/brew/iBrewFlow';
+
 
 export class Brew implements IBrew {
   // tslint:disable-next-line
@@ -60,6 +67,12 @@ export class Brew implements IBrew {
   public coffee_blooming_time: number;
   public attachments: Array<string>;
   public tds: number;
+  // UUID
+  public water: string;
+  public bean_weight_in: number;
+
+  public vessel_weight: number;
+  public vessel_name: string;
 
   public coordinates: IBrewCoordinates;
 
@@ -71,9 +84,19 @@ export class Brew implements IBrew {
 
   public cupping: ICupping;
 
+
+  public cupped_flavor: IFlavor;
+
   public method_of_preparation_tools: Array<string>;
 
   public favourite: boolean;
+
+  public flow_profile: Array<{
+    value: number,
+    time: number,
+    timestamp: string,
+  }>;
+
   constructor() {
 
     this.grind_size = '';
@@ -111,7 +134,7 @@ export class Brew implements IBrew {
        speed: null
     } as IBrewCoordinates;
 
-      this.cupping = {
+    this.cupping = {
       body: 0,
       brightness: 0,
       clean_cup: 0,
@@ -126,8 +149,21 @@ export class Brew implements IBrew {
       notes: '',
     };
 
+    this.cupped_flavor = {
+      predefined_flavors: {
+
+      },
+      custom_flavors: []
+    } as IFlavor;
+
     this.method_of_preparation_tools = [];
+    this.bean_weight_in = 0;
     this.favourite = false;
+    this.water = '';
+    this.vessel_name = '';
+    this.vessel_weight = 0;
+
+    this.flow_profile = [];
   }
 
   public initializeByObject(brewObj: IBrew): void {
@@ -149,6 +185,21 @@ export class Brew implements IBrew {
         notes: '',
       };
     }
+    if (this.cupped_flavor === undefined) {
+      this.cupped_flavor = {
+        predefined_flavors: {
+
+        },
+        custom_flavors: []
+      } as IFlavor;
+    }
+  }
+
+  public hasCustomFlavors(): boolean {
+    return this.cupped_flavor.custom_flavors.length > 0;
+  }
+  public hasPredefinedFlavors(): boolean {
+    return Object.keys(this.cupped_flavor.predefined_flavors).length > 0;
   }
 
   public getBrewQuantityTypeName(): string {
@@ -185,6 +236,16 @@ export class Brew implements IBrew {
     mill.initializeByObject(iMill);
 
     return mill;
+
+  }
+
+  public getWater(): Water {
+    const iWater: IWater = this.getWaterStorageInstance()
+      .getByUUID(this.water) as IWater;
+    const water: Water = new Water();
+    water.initializeByObject(iWater);
+
+    return water;
 
   }
 
@@ -242,6 +303,29 @@ export class Brew implements IBrew {
       ratio += (brewQuantity / grindWeight).toFixed(2);
     } else {
       ratio += '?';
+    }
+
+    return ratio;
+
+  }
+
+  public getGramsPerLiter() {
+    const grindWeight: number = this.grind_weight;
+    let brewQuantity: number = 0;
+
+    if (this.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO) {
+      brewQuantity = this.brew_quantity;
+    } else {
+      brewQuantity = this.brew_beverage_quantity;
+    }
+
+
+    let ratio: string = '';
+
+    if (brewQuantity > 0 && grindWeight > 0) {
+      ratio = this.toFixedIfNecessary((grindWeight * 1000) / brewQuantity,2) + ' g/l';
+    } else {
+      ratio = '? g/l';
     }
 
     return ratio;
@@ -328,6 +412,13 @@ export class Brew implements IBrew {
     uiMillStorage = UIMillStorage.getInstance();
 
     return uiMillStorage;
+  }
+
+  private getWaterStorageInstance(): UIWaterStorage  {
+    let uiWaterStorage: UIWaterStorage;
+    uiWaterStorage = UIWaterStorage.getInstance();
+
+    return uiWaterStorage;
   }
   
   public getCoordinateMapLink(): string {

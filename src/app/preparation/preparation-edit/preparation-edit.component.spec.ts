@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {PreparationEditComponent} from './preparation-edit.component';
 import {TranslateModule} from '@ngx-translate/core';
@@ -20,7 +20,7 @@ describe('PreparationEditComponent', () => {
   let component: PreparationEditComponent;
   let fixture: ComponentFixture<PreparationEditComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [TranslateModule.forRoot(), FormsModule, IonicStorageModule.forRoot(), CommonModule, IonicModule],
       declarations: [PreparationEditComponent, KeysPipe],

@@ -5,15 +5,14 @@ import {UIAnalytics} from '../../services/uiAnalytics';
 import {UIAlert} from '../../services/uiAlert';
 import {UIImage} from '../../services/uiImage';
 import {RoastingMachine} from '../../classes/roasting-machine/roasting-machine';
-import {RoastingMachineDetailComponent} from '../../app/roasting-section/roasting-machine/roasting-machine-detail/roasting-machine-detail.component';
 import {UIRoastingMachineStorage} from '../../services/uiRoastingMachineStorage';
 import {ROASTING_MACHINE_ACTION} from '../../enums/roasting-machine/roastingMachineAction';
 import {RoastingMachinePopoverActionsComponent} from '../../app/roasting-section/roasting-machine/roasting-machine-popover-actions/roasting-machine-popover-actions.component';
-import {RoastingMachineEditComponent} from '../../app/roasting-section/roasting-machine/roasting-machine-edit/roasting-machine-edit.component';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
 import {Bean} from '../../classes/bean/bean';
 import {UIBeanStorage} from '../../services/uiBeanStorage'
 import ROASTING_MACHINE_TRACKING from '../../data/tracking/roastingMachineTracking';
+import {UIRoastingMachineHelper} from '../../services/uiRoastingMachineHelper';
 
 @Component({
   selector: 'roasting-machine-information-card',
@@ -33,7 +32,8 @@ export class RoastingMachineInformationCardComponent implements OnInit {
               private readonly uiImage: UIImage,
               private readonly modalCtrl: ModalController,
               private readonly uiBeanHelper: UIBeanHelper,
-              private readonly uiBeanStorage: UIBeanStorage) {
+              private readonly uiBeanStorage: UIBeanStorage,
+              private readonly uiRoastingMachineHelper: UIRoastingMachineHelper) {
   }
 
   public ngOnInit() {
@@ -52,7 +52,7 @@ export class RoastingMachineInformationCardComponent implements OnInit {
     const popover = await this.modalController.create({
       component: RoastingMachinePopoverActionsComponent,
       componentProps: {roastingMachine: this.roastingMachine},
-      id:'roasting-machine-popover-actions',
+      id:RoastingMachinePopoverActionsComponent.COMPONENT_ID,
       cssClass: 'popover-actions',
     });
     await popover.present();
@@ -89,10 +89,10 @@ export class RoastingMachineInformationCardComponent implements OnInit {
         break;
     }
   }
-  public archive() {
+  public async archive() {
     this.uiAnalytics.trackEvent(ROASTING_MACHINE_TRACKING.TITLE, ROASTING_MACHINE_TRACKING.ACTIONS.ARCHIVE);
     this.roastingMachine.finished = true;
-    this.uiRoastingMachineStorage.update(this.roastingMachine);
+    await this.uiRoastingMachineStorage.update(this.roastingMachine);
     this.uiToast.showInfoToast('TOAST_ROASTING_MACHINE_ARCHIVED_SUCCESSFULLY');
   }
 
@@ -104,19 +104,12 @@ export class RoastingMachineInformationCardComponent implements OnInit {
   }
 
   public async edit() {
-    this.uiAnalytics.trackEvent(ROASTING_MACHINE_TRACKING.TITLE, ROASTING_MACHINE_TRACKING.ACTIONS.EDIT);
-    const modal = await this.modalCtrl.create({component: RoastingMachineEditComponent, id:'roasting-machine-edit', componentProps: {roastingMachine: this.roastingMachine}});
-    await modal.present();
-    await modal.onWillDismiss();
-
+    await this.uiRoastingMachineHelper.editRoastingMachine(this.roastingMachine);
   }
 
 
   public async detail() {
-    this.uiAnalytics.trackEvent(ROASTING_MACHINE_TRACKING.TITLE, ROASTING_MACHINE_TRACKING.ACTIONS.DETAIL);
-    const modal = await this.modalCtrl.create({component: RoastingMachineDetailComponent, id:'roasting-machine-detail', componentProps: {roastingMachine: this.roastingMachine}});
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiRoastingMachineHelper.detailRoastingMachine(this.roastingMachine);
 
   }
 
@@ -140,7 +133,7 @@ export class RoastingMachineInformationCardComponent implements OnInit {
             this.uiAnalytics.trackEvent(ROASTING_MACHINE_TRACKING.TITLE, ROASTING_MACHINE_TRACKING.ACTIONS.DELETE);
             await this.__delete();
             this.uiToast.showInfoToast('TOAST_ROASTING_MACHINE_DELETED_SUCCESSFULLY');
-            resolve();
+            resolve(undefined);
           },
           () => {
             // No

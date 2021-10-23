@@ -49,7 +49,7 @@ export class MillOverlayDirective {
           selectedValues: selectedValues,
           showFinished: this.showFinished
         },
-      id:'mill-modal-select',
+      id: MillModalSelectComponent.COMPONENT_ID,
       showBackdrop: true
     });
     await modal.present();

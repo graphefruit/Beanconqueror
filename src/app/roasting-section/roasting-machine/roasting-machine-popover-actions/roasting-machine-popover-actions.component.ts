@@ -11,7 +11,7 @@ import {ROASTING_MACHINE_ACTION} from '../../../../enums/roasting-machine/roasti
   styleUrls: ['./roasting-machine-popover-actions.component.scss'],
 })
 export class RoastingMachinePopoverActionsComponent implements OnInit {
-
+  public static COMPONENT_ID:string = 'roasting-machine-popover-actions';
   public data: RoastingMachine = new RoastingMachine();
 
   constructor(private readonly modalController: ModalController,
@@ -39,9 +39,9 @@ export class RoastingMachinePopoverActionsComponent implements OnInit {
   }
 
   public async choose(_type: string): Promise<void> {
-    this.modalController.dismiss(undefined, _type,'roasting-machine-popover-actions');
+    this.modalController.dismiss(undefined, _type,RoastingMachinePopoverActionsComponent.COMPONENT_ID);
   }
   public async dismiss() {
-    this.modalController.dismiss(undefined, undefined,'roasting-machine-popover-actions');
+    this.modalController.dismiss(undefined, undefined,RoastingMachinePopoverActionsComponent.COMPONENT_ID);
   }
 }

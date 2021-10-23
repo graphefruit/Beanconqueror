@@ -73,7 +73,20 @@ ion-content {
 ion-icon {
   color: var(--beanconqueror-icon-color);
 }
+.ion-page {
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+app-home.ion-page, helper.ion-page, app-roasting-section.ion-page, water-section.ion-page {
+  padding-bottom:0px;
+}
 
+ion-action-sheet {
+  .action-sheet-wrapper {
+    padding-bottom: constant(safe-area-inset-bottom);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
 
 .menu-icon {
   margin-right: 5px;
@@ -239,13 +252,13 @@ ion-tab-button {
 
 ion-tab-button.tab-selected {
   ion-icon {
-    color: #cdc2ac;
+    color: #B88265;
   }
   ion-icon.stroke{
-    stroke: #cdc2ac;
+    stroke: #B88265;
   }
   ion-label {
-    color: #cdc2ac;
+    color: #B88265;
   }
 }
 
@@ -358,6 +371,9 @@ ion-menu:host .menu-inner {
   ion-tab-bar {
     --background: #FFFFFF;
     --border: 0px;
+    padding-bottom: 12px;
+    padding-bottom: constant(safe-area-inset-bottom);
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   ion-badge {
@@ -608,8 +624,8 @@ ion-menu:host .menu-inner {
 
   @media (min-width: 768px) {
     ion-content {
-      --padding-start: 10%;
-      --padding-end: 10%;
+      --padding-start: 2.5%;
+      --padding-end: 2.5%;
     }
     /*.popover-actions {
 
@@ -621,19 +637,19 @@ ion-menu:host .menu-inner {
       }
     }*/
     ion-footer {
-      padding-left: 10%;
-      padding-right: 10%;
+      padding-left: 2.5%;
+      padding-right: 2.5%;
     }
 
     ion-modal.half-bottom-modal, ion-modal.bottom-modal {
       .ion-page {
-        margin-right: 10%;
-        margin-left: 10%;
+        margin-right: 2.5%;
+        margin-left: 2.5%;
       }
 
       ion-footer {
-        padding-left: 10%;
-        padding-right: 10%;
+        padding-left: 2.5%;
+        padding-right: 2.5%;
       }
 
     }
@@ -641,6 +657,9 @@ ion-menu:host .menu-inner {
   ion-modal {
     ion-toolbar {
       padding-top:28px!important;
+    }
+    ion-footer {
+
     }
   }
 

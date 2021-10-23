@@ -1,0 +1,9 @@
+export default {
+
+  TITLE:'QR',
+  ACTIONS: {
+    SCAN: 'SCAN',
+    SCAN_SUCCESSFULLY: 'SCAN_SUCCESSFULLY',
+    SCAN_FAILED: 'SCAN_FAILED',
+  }
+};

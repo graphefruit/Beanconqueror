@@ -42,7 +42,7 @@ export class UIHealthKit {
             write : []  // Write only permission
           }
         ], (e) => {
-          resolve();
+          resolve(undefined);
         }, (e) => {
           reject();
         });
@@ -55,7 +55,7 @@ export class UIHealthKit {
 
   }
 
-  public trackCaffeineConsumption(_amount:number, _date: Date) {
+  public trackCaffeineConsumption(_amount: number, _date: Date) {
     try{
       navigator.health.store({
         startDate: _date, // three days ago

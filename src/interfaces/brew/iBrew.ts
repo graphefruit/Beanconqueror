@@ -5,6 +5,8 @@ import {BREW_QUANTITY_TYPES_ENUM} from '../../enums/brews/brewQuantityTypes';
 import {IConfig} from '../objectConfig/iObjectConfig';
 import {ICupping} from '../cupping/iCupping';
 import {IBrewCoordinates} from './iBrewCoordinates';
+import {IFlavor} from '../flavor/iFlavor';
+import {IBrewFlow} from './iBrewFlow';
 
 export interface IBrew {
  // Properties
@@ -122,7 +124,27 @@ export interface IBrew {
    */
   method_of_preparation_tools: Array<string>;
 
+  /**
+   * UUID
+   */
+  water: string;
+
+  /**
+   * Used for rentention calculation
+   */
+  bean_weight_in: number;
+
   favourite: boolean;
+
+  vessel_weight: number;
+  vessel_name: string;
+
+  cupped_flavor: IFlavor;
+
+  flow_profile: Array<{
+    value: number,
+    time: number,
+  }>;
 
   // Functions
   formateDate(): string;

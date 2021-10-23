@@ -9,6 +9,8 @@ import {TranslateService} from '@ngx-translate/core';
 
 import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
 import {PreparationTool} from '../../../classes/preparation/preparationTool';
+import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
+import {UIAnalytics} from '../../../services/uiAnalytics';
 
 @Component({
   selector: 'preparation-add-type',
@@ -18,6 +20,7 @@ import {PreparationTool} from '../../../classes/preparation/preparationTool';
 export class PreparationAddTypeComponent implements OnInit {
 
 
+  public static COMPONENT_ID: string = 'preparation-add-type';
   public data: Preparation = new Preparation();
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   public PREPARATION_TYPES = PREPARATION_TYPES;
@@ -30,7 +33,8 @@ export class PreparationAddTypeComponent implements OnInit {
               private readonly uiPreparationStorage: UIPreparationStorage,
               private readonly navParams: NavParams,
               private readonly uiToast: UIToast,
-              private readonly translate: TranslateService) {
+              private readonly translate: TranslateService,
+              private readonly uiAnalytics: UIAnalytics) {
     this.data.type = this.navParams.get('type');
     if (this.data.type !== PREPARATION_TYPES.CUSTOM_PREPARATION) {
       this.data.name = this.translate.instant('PREPARATION_TYPE_' + this.data.type);
@@ -40,7 +44,7 @@ export class PreparationAddTypeComponent implements OnInit {
   }
 
   public ionViewWillEnter(): void {
-
+    this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.ADD_TYPE);
   }
 
 
@@ -72,7 +76,7 @@ export class PreparationAddTypeComponent implements OnInit {
     this.modalController.dismiss({
       dismissed: true,
       added: _added
-    }, undefined, 'preparation-add-type');
+    }, undefined, PreparationAddTypeComponent.COMPONENT_ID);
   }
 
   public ngOnInit() {

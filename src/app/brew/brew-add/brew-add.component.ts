@@ -18,6 +18,9 @@ import {UIHealthKit} from '../../../services/uiHealthKit';
 import {Insomnia} from '@ionic-native/insomnia/ngx';
 import {BrewBrewingComponent} from '../../../components/brews/brew-brewing/brew-brewing.component';
 import {UIAlert} from '../../../services/uiAlert';
+import {BrewTrackingService} from '../../../services/brewTracking/brew-tracking.service';
+import BREW_TRACKING from '../../../data/tracking/brewTracking';
+import {UIAnalytics} from '../../../services/uiAnalytics';
 
 
 @Component({
@@ -27,9 +30,12 @@ import {UIAlert} from '../../../services/uiAlert';
 })
 export class BrewAddComponent implements OnInit {
 
+  public static COMPONENT_ID: string = 'brew-add';
   public brew_template: Brew;
   public data: Brew = new Brew();
   public settings: Settings;
+
+  public loadSpecificLastPreparation: Preparation;
 
   @ViewChild('brewBrewing', {read: BrewBrewingComponent, static: false}) public brewBrewing: BrewBrewingComponent;
 
@@ -51,11 +57,14 @@ export class BrewAddComponent implements OnInit {
                private readonly uiBrewHelper: UIBrewHelper,
                private readonly uiHealthKit: UIHealthKit,
                private readonly insomnia: Insomnia,
-               private readonly uiAlert: UIAlert) {
+               private readonly uiAlert: UIAlert,
+               private readonly brewTracking: BrewTrackingService,
+               private readonly uiAnalytics: UIAnalytics) {
     // Initialize to standard in drop down
 
     this.settings = this.uiSettingsStorage.getSettings();
     this.brew_template = this.navParams.get('brew_template');
+    this.loadSpecificLastPreparation = this.navParams.get('loadSpecificLastPreparation');
 
     // Get first entry
     this.data.bean = this.uiBeanStorage.getAllEntries()
@@ -73,6 +82,7 @@ export class BrewAddComponent implements OnInit {
   }
 
   public ionViewDidEnter(): void {
+    this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.ADD);
     if (this.settings.wake_lock) {
       this.insomnia.keepAwake()
         .then(
@@ -123,7 +133,7 @@ export class BrewAddComponent implements OnInit {
   public async dismiss() {
     this.modalController.dismiss({
       dismissed: true
-    },undefined,'brew-add');
+    },undefined,BrewAddComponent.COMPONENT_ID);
 
 
   }
@@ -147,19 +157,29 @@ export class BrewAddComponent implements OnInit {
       }
 
 
-      if (this.settings.track_caffeine_consumption && this.data.grind_weight > 0) {
+
+      if (this.settings.track_caffeine_consumption && this.data.grind_weight > 0 && this.data.getBean().decaffeinated === false) {
         this.uiHealthKit.trackCaffeineConsumption(this.data.getCaffeineAmount(), moment(this.brewBrewing.customCreationDate).toDate());
       }
       if (!this.hide_toast_message) {
         this.uiToast.showInfoToast('TOAST_BREW_ADDED_SUCCESSFULLY');
       }
 
+      this.brewTracking.trackBrew(this.data);
+
+
+
+
     }
     catch (ex) {
 
     }
     await this.uiAlert.hideLoadingSpinner();
+    await this.uiBrewHelper.checkIfBeanPackageIsConsumedTriggerMessageAndArchive(this.data.getBean());
+    this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.ADD_FINISH);
     this.dismiss();
+
+
 
   }
 

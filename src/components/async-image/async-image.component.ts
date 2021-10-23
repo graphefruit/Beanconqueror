@@ -36,7 +36,7 @@ export class AsyncImageComponent implements OnInit, OnChanges {
         this.img = this.filePath;
       } else {
 
-        this.img = await this.uiFileHelper.getInternalFileSrc(this.filePath);
+        this.img = await this.uiFileHelper.getInternalFileSrc(this.filePath,true);
 
       }
 
@@ -47,7 +47,5 @@ export class AsyncImageComponent implements OnInit, OnChanges {
       this.errorOccured = false;
     }
   }
-
-
 
 }

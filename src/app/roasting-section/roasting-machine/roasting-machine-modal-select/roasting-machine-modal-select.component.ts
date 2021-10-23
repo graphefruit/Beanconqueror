@@ -10,7 +10,7 @@ import {RoastingMachine} from '../../../../classes/roasting-machine/roasting-mac
   styleUrls: ['./roasting-machine-modal-select.component.scss'],
 })
 export class RoastingMachineModalSelectComponent implements OnInit {
-
+  public static COMPONENT_ID:string = 'roasting-machine-modal-select';
   public objs: Array<RoastingMachine> = [];
   public multipleSelection = {};
   public radioSelection: string;
@@ -77,11 +77,11 @@ export class RoastingMachineModalSelectComponent implements OnInit {
     this.modalController.dismiss({
       selected_values: chosenKeys,
       selected_text: selected_text,
-    },undefined,'roasting-machine-modal-select');
+    },undefined,RoastingMachineModalSelectComponent.COMPONENT_ID);
   }
 
   public async dismiss(): Promise<void> {
-    this.modalController.dismiss(undefined,undefined,'roasting-machine-modal-select');
+    this.modalController.dismiss(undefined,undefined,RoastingMachineModalSelectComponent.COMPONENT_ID);
   }
 
 }

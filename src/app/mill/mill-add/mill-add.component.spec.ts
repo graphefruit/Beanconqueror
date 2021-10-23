@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {MillAddComponent} from './mill-add.component';
 import {TranslateModule} from '@ngx-translate/core';
@@ -20,7 +20,7 @@ describe('MillAddComponent', () => {
   let component: MillAddComponent;
   let fixture: ComponentFixture<MillAddComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [TranslateModule.forRoot(), FormsModule, IonicStorageModule.forRoot(), CommonModule, IonicModule],
       declarations: [MillAddComponent, KeysPipe],

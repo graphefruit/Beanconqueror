@@ -11,6 +11,8 @@ import {UIBrewHelper} from '../../services/uiBrewHelper';
 import {UIPreparationStorage} from '../../services/uiPreparationStorage';
 import Gradient from 'javascript-color-gradient';
 import {UIMillStorage} from '../../services/uiMillStorage';
+import currencyToSymbolMap from 'currency-symbol-map/map';
+import {CurrencyService} from '../../services/currencyService/currency.service';
 @Component({
   selector: 'statistic',
   templateUrl: './statistic.page.html',
@@ -27,6 +29,7 @@ export class StatisticPage implements OnInit {
   @ViewChild('preparationUsageTimelineChart', {static: false}) public preparationUsageTimelineChart;
   @ViewChild('grinderUsageTimelineChart', {static: false}) public grinderUsageTimelineChart;
 
+  public currencies = currencyToSymbolMap;
   public segment: string = 'GENERAL';
   constructor(
     public uiStatistic: UIStatistic,
@@ -34,10 +37,15 @@ export class StatisticPage implements OnInit {
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiHelper: UIHelper,
     private readonly uiMillStorage: UIMillStorage,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private readonly currencyService: CurrencyService
   ) {
 
 
+  }
+
+  public getCurrencySymbol() {
+    return this.currencyService.getActualCurrencySymbol();
   }
 
   public ionViewDidEnter(): void {
@@ -153,7 +161,7 @@ export class StatisticPage implements OnInit {
     // Take the last 12 Months
     const lastBrewViews: Array<BrewView> = brewView.slice(-12);
 
-    const grinderIds:Array<string> = Array.from(new Set(brewEntries.map((e:Brew) => e.mill)));
+    const grinderIds: Array<string> = Array.from(new Set(brewEntries.map((e:Brew) => e.mill)));
 
     const data = {
       labels: [],
@@ -168,11 +176,11 @@ export class StatisticPage implements OnInit {
       for (const id of grinderIds) {
         const foundDataset = datasets.filter((e)=>e.UUID === id);
         if (foundDataset[0]) {
-          foundDataset[0].DATA.push(forBrew.brews.filter((e:Brew)=>e.mill === id).length);
+          foundDataset[0].DATA.push(forBrew.brews.filter((e: Brew)=>e.mill === id).length);
         } else {
-          const newDataObj:any = {
+          const newDataObj: any = {
             UUID: id,
-            DATA: [],
+            DATA: [forBrew.brews.filter((e: Brew)=>e.mill === id).length],
             LABEL: this.uiMillStorage.getMillNameByUUID(id),
           };
 
@@ -229,7 +237,7 @@ export class StatisticPage implements OnInit {
     // Take the last 12 Months
     const lastBrewViews: Array<BrewView> = brewView.slice(-12);
 
-    const preparationMethodIds:Array<string> = Array.from(new Set(brewEntries.map((e:Brew) => e.method_of_preparation)));
+    const preparationMethodIds: Array<string> = Array.from(new Set(brewEntries.map((e: Brew) => e.method_of_preparation)));
 
     const data = {
       labels: [],
@@ -244,11 +252,11 @@ export class StatisticPage implements OnInit {
       for (const id of preparationMethodIds) {
         const foundDataset = datasets.filter((e)=>e.UUID === id);
         if (foundDataset[0]) {
-          foundDataset[0].DATA.push(forBrew.brews.filter((e:Brew)=>e.method_of_preparation === id).length);
+          foundDataset[0].DATA.push(forBrew.brews.filter((e: Brew)=>e.method_of_preparation === id).length);
         } else {
-          const newDataObj:any = {
+          const newDataObj: any = {
             UUID: id,
-            DATA: [],
+            DATA: [forBrew.brews.filter((e: Brew)=>e.method_of_preparation === id).length],
             LABEL: this.uiPreparationStorage.getPreparationNameByUUID(id),
           };
 
@@ -270,7 +278,7 @@ export class StatisticPage implements OnInit {
 
     const colorArray = colorGradient.getArray();
     for (let i=0;i<datasets.length;i++) {
-      const prepObj:any = {
+      const prepObj: any = {
         label: datasets[i].LABEL,
         data: datasets[i].DATA,
         borderColor: colorArray[i],
@@ -432,7 +440,7 @@ export class StatisticPage implements OnInit {
     for (const forBrew of lastBrewViews) {
       let weightCount: number = 0;
       for (const brew of forBrew.brews) {
-        weightCount += brew.grind_weight
+        weightCount += brew.grind_weight;
       }
       drinkingData.datasets[0].data.push(weightCount);
     }
@@ -451,7 +459,7 @@ export class StatisticPage implements OnInit {
   }
   private __loadPreparationUsageChart(): void {
     const brewView: Array<Brew> = this.uiBrewStorage.getAllEntries();
-    const preparationMethodIds:Array<string> = Array.from(new Set(brewView.map((e:Brew) => e.method_of_preparation)));
+    const preparationMethodIds: Array<string> = Array.from(new Set(brewView.map((e: Brew) => e.method_of_preparation)));
 
     const data = [{
       data: [],
@@ -461,9 +469,9 @@ export class StatisticPage implements OnInit {
       ],
       borderColor: '#fff'
     }];
-    const labels:Array<string> = [];
+    const labels: Array<string> = [];
     for (const id of preparationMethodIds) {
-      data[0].data.push(brewView.filter((e:Brew)=>e.method_of_preparation === id).length);
+      data[0].data.push(brewView.filter((e: Brew)=>e.method_of_preparation === id).length);
       data[0].labels.push(this.uiPreparationStorage.getPreparationNameByUUID(id));
       labels.push(this.uiPreparationStorage.getPreparationNameByUUID(id));
     }

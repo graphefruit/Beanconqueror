@@ -1,0 +1,1023 @@
+[
+  {
+    "name": "Fruit",
+    "color": "#EB85B5",
+    "text": "rgb(255, 255, 255)",
+    "children": [
+      {
+        "name": "Citrus",
+        "color": "#F6F267",
+        "text": "rgb(51, 51, 51)",
+        "children": [
+          {
+            "name": "Lemon & lemonade",
+            "color": "#F3F01C",
+            "text": "rgb(119, 117, 13)",
+            "value": 3,
+            "label": "CUPPING_3"
+          },
+          {
+            "name": "Lime",
+            "color": "#A0D165",
+            "text": "rgb(78, 102, 49)",
+            "value": 4,
+            "label": "CUPPING_4"
+          },
+          {
+            "name": "Grapefruit",
+            "color": "#F9F6A3",
+            "text": "rgb(122, 120, 79)",
+            "value": 5,
+            "label": "CUPPING_5"
+          },
+          {
+            "name": "Clementine",
+            "color": "#FCE11B",
+            "text": "rgb(123, 110, 13)",
+            "value": 6,
+            "label": "CUPPING_6"
+          },
+          {
+            "name": "Tangerine",
+            "color": "#FBC4A3",
+            "text": "rgb(122, 96, 79)",
+            "value": 7,
+            "label": "CUPPING_7"
+          },
+          {
+            "name": "Mandarin orange",
+            "color": "#FBA56E",
+            "text": "rgb(122, 80, 53)",
+            "value": 8,
+            "label": "CUPPING_8"
+          },
+          {
+            "name": "Orange",
+            "color": "#F5776A",
+            "text": "rgb(122, 80, 53)",
+            "value": 9,
+            "label": "CUPPING_9"
+          }
+        ],
+        "value": 2,
+        "label": "CUPPING_2"
+      },
+      {
+        "name": "Apple/pear",
+        "color": "#CCDF45",
+        "text": "rgb(255, 255, 255)",
+        "children": [
+          {
+            "name": "Green apple",
+            "color": "#C6E3B2",
+            "text": "rgb(97, 111, 87)",
+            "value": 11,
+            "label": "CUPPING_11"
+          },
+          {
+            "name": "Red apple",
+            "color": "#F04B53",
+            "text": "rgb(97, 111, 87)",
+            "value": 12,
+            "label": "CUPPING_12"
+          }
+        ],
+        "value": 10,
+        "label": "CUPPING_10"
+      },
+      {
+        "name": "Melon",
+        "color": "#A4D169",
+        "text": "rgb(255, 255, 255)",
+        "children": [
+          {
+            "name": "Watermelon",
+            "color": "#78AF57",
+            "text": "rgb(101, 109, 32)",
+            "value": 14,
+            "label": "CUPPING_14"
+          },
+          {
+            "name": "Honeydew",
+            "color": "#CFE043",
+            "text": "rgb(101, 109, 32)",
+            "value": 15,
+            "label": "CUPPING_15"
+          },
+          {
+            "name": "Cantaloupe",
+            "color": "#F5F043",
+            "text": "rgb(120, 117, 32)",
+            "value": 16,
+            "label": "CUPPING_16"
+          }
+        ],
+        "value": 13,
+        "label": "CUPPING_13"
+      },
+      {
+        "name": "Grape",
+        "color": "#9356A3",
+        "text": "rgb(255, 255, 255)",
+        "children": [
+          {
+            "name": "White grape",
+            "color": "#FCFDDA",
+            "text": "rgb(123, 123, 106)",
+            "value": 18,
+            "label": "CUPPING_18"
+          },
+          {
+            "name": "Green grape",
+            "color": "#F8F9CA",
+            "text": "rgb(121, 122, 98)",
+            "value": 19,
+            "label": "CUPPING_19"
+          },
+          {
+            "name": "Red grape",
+            "color": "#D2B9C7",
+            "text": "rgb(102, 90, 97)",
+            "value": 20,
+            "label": "CUPPING_20"
+          },
+          {
+            "name": "Concord grape",
+            "color": "#A89FCF",
+            "text": "rgb(82, 77, 101)",
+            "value": 21,
+            "label": "CUPPING_21"
+          }
+        ],
+        "value": 17,
+        "label": "CUPPING_17"
+      },
+      {
+        "name": "Tropical fruit",
+        "color": "#F6F474",
+        "text": "rgb(51, 51, 51)",
+        "children": [
+          {
+            "name": "Lychee",
+            "color": "#FBFBE0",
+            "text": "rgb(122, 122, 109)",
+            "value": 23,
+            "label": "CUPPING_23"
+          },
+          {
+            "name": "Star fruit",
+            "color": "#F9F7B0",
+            "text": "rgb(122, 121, 86)",
+            "value": 24,
+            "label": "CUPPING_24"
+          },
+          {
+            "name": "Tamarind",
+            "color": "#D2E6F7",
+            "text": "rgb(102, 112, 121)",
+            "value": 25,
+            "label": "CUPPING_25"
+          },
+          {
+            "name": "Passion fruit",
+            "color": "#FCFCDB",
+            "text": "rgb(123, 123, 107)",
+            "value": 26,
+            "label": "CUPPING_26"
+          },
+          {
+            "name": "Pineapple",
+            "color": "#F9F59C",
+            "text": "rgb(122, 120, 76)",
+            "value": 27,
+            "label": "CUPPING_27"
+          },
+          {
+            "name": "Mango",
+            "color": "#FED6B0",
+            "text": "rgb(124, 104, 86)",
+            "value": 28,
+            "label": "CUPPING_28"
+          },
+          {
+            "name": "Papaya",
+            "color": "#FDCEA2",
+            "text": "rgb(123, 100, 79)",
+            "value": 29,
+            "label": "CUPPING_29"
+          },
+          {
+            "name": "Kiwi",
+            "color": "#FBFBD5",
+            "text": "rgb(122, 122, 104)",
+            "value": 30,
+            "label": "CUPPING_30"
+          },
+          {
+            "name": "Banana",
+            "color": "#F8F492",
+            "text": "rgb(121, 119, 71)",
+            "value": 31,
+            "label": "CUPPING_31"
+          },
+          {
+            "name": "Coconut",
+            "color": "#FCFCDC",
+            "text": "rgb(123, 123, 107)",
+            "value": 32,
+            "label": "CUPPING_32"
+          }
+        ],
+        "value": 22,
+        "label": "CUPPING_22"
+      },
+      {
+        "name": "Stone fruit",
+        "color": "#FCB888",
+        "text": "rgb(255, 255, 255)",
+        "children": [
+          {
+            "name": "Peach",
+            "color": "#FEDA76",
+            "text": "rgb(124, 106, 57)",
+            "value": 34,
+            "label": "CUPPING_34"
+          },
+          {
+            "name": "Nectarine",
+            "color": "#FEC44D",
+            "text": "rgb(124, 96, 37)",
+            "value": 35,
+            "label": "CUPPING_35"
+          },
+          {
+            "name": "Apricot",
+            "color": "#FEC66D",
+            "text": "rgb(124, 97, 53)",
+            "value": 36,
+            "label": "CUPPING_36"
+          },
+          {
+            "name": "Plum",
+            "color": "#F268A7",
+            "text": "rgb(124, 97, 53)",
+            "value": 37,
+            "label": "CUPPING_37"
+          },
+          {
+            "name": "Cherry",
+            "color": "#F36A69",
+            "text": "rgb(124, 97, 53)",
+            "value": 38,
+            "label": "CUPPING_38"
+          },
+          {
+            "name": "Black cherry",
+            "color": "#9F4E5C",
+            "text": "rgb(255, 255, 255)",
+            "value": 39,
+            "label": "CUPPING_39"
+          }
+        ],
+        "value": 33,
+        "label": "CUPPING_33"
+      },
+      {
+        "name": "Berry",
+        "color": "#504784",
+        "text": "rgb(255, 255, 255)",
+        "children": [
+          {
+            "name": "Cranberry",
+            "color": "#DA587C",
+            "text": "rgb(255, 255, 255)",
+            "value": 41,
+            "label": "CUPPING_41"
+          },
+          {
+            "name": "Raspberry",
+            "color": "#EA2E90",
+            "text": "rgb(255, 255, 255)",
+            "value": 42,
+            "label": "CUPPING_42"
+          },
+          {
+            "name": "Strawberry",
+            "color": "#C44E58",
+            "text": "rgb(255, 255, 255)",
+            "value": 43,
+            "label": "CUPPING_43"
+          },
+          {
+            "name": "Blueberry",
+            "color": "#6A93CD",
+            "text": "rgb(255, 255, 255)",
+            "value": 44,
+            "label": "CUPPING_44"
+          },
+          {
+            "name": "Red currant",
+            "color": "#F36D86",
+            "text": "rgb(255, 255, 255)",
+            "value": 45,
+            "label": "CUPPING_45"
+          },
+          {
+            "name": "Black currant",
+            "color": "#867EA2",
+            "text": "rgb(255, 255, 255)",
+            "value": 46,
+            "label": "CUPPING_46"
+          }
+        ],
+        "value": 40,
+        "label": "CUPPING_40"
+      },
+      {
+        "name": "Dried fruit",
+        "color": "#638AC9",
+        "text": "rgb(255, 255, 255)",
+        "children": [
+          {
+            "name": "Golden raisin",
+            "color": "#F8DA9F",
+            "text": "rgb(121, 106, 77)",
+            "value": 48,
+            "label": "CUPPING_48"
+          },
+          {
+            "name": "Raisin",
+            "color": "#7765AF",
+            "text": "rgb(255, 255, 255)",
+            "value": 49,
+            "label": "CUPPING_49"
+          },
+          {
+            "name": "Dried fig",
+            "color": "#9A97CD",
+            "text": "rgb(255, 255, 255)",
+            "value": 50,
+            "label": "CUPPING_50"
+          },
+          {
+            "name": "Dried dates",
+            "color": "#A09DD0",
+            "text": "rgb(78, 76, 101)",
+            "value": 51,
+            "label": "CUPPING_51"
+          },
+          {
+            "name": "Prune",
+            "color": "#4B4A86",
+            "text": "rgb(255, 255, 255)",
+            "value": 52,
+            "label": "CUPPING_52"
+          }
+        ],
+        "value": 47,
+        "label": "CUPPING_47"
+      }
+    ],
+    "value": 1,
+    "label": "CUPPING_1"
+  },
+  {
+    "name": "Sweet & Roasting Notes",
+    "color": "#F9F8B5",
+    "text": "rgb(0, 0, 0)",
+    "children": [
+      {
+        "name": "Chocolate",
+        "color": "#AE936D",
+        "children": [
+          {
+            "name": "Cacao nibs",
+            "color": "#725C64",
+            "text": "rgb(255, 255, 255)",
+            "value": 55,
+            "label": "CUPPING_55"
+          },
+          {
+            "name": "Dark chocolate",
+            "color": "#815443",
+            "text": "rgb(255, 255, 255)",
+            "value": 56,
+            "label": "CUPPING_56"
+          },
+          {
+            "name": "Bakers chocolate",
+            "color": "#53362C",
+            "text": "rgb(255, 255, 255)",
+            "value": 57,
+            "label": "CUPPING_57"
+          },
+          {
+            "name": "Bittersweet chocolate",
+            "color": "#B38E6A",
+            "text": "rgb(255, 255, 255)",
+            "value": 58,
+            "label": "CUPPING_58"
+          },
+          {
+            "name": "Cocoa powder",
+            "color": "#C39276",
+            "text": "rgb(255, 255, 255)",
+            "value": 59,
+            "label": "CUPPING_59"
+          },
+          {
+            "name": "Milk chocolate",
+            "color": "#C4A993",
+            "text": "rgb(255, 255, 255)",
+            "value": 60,
+            "label": "CUPPING_60"
+          }
+        ],
+        "value": 54,
+        "label": "CUPPING_54"
+      },
+      {
+        "name": "Nut",
+        "color": "#FED08C",
+        "text": "rgb(51, 51, 51)",
+        "children": [
+          {
+            "name": "Walnut",
+            "color": "#80614E",
+            "text": "rgb(255, 255, 255)",
+            "value": 62,
+            "label": "CUPPING_62"
+          },
+          {
+            "name": "Peanut",
+            "color": "#D7C593",
+            "text": "rgb(105, 96, 72)",
+            "value": 63,
+            "label": "CUPPING_63"
+          },
+          {
+            "name": "Cashew",
+            "color": "#FBFAC2",
+            "text": "rgb(122, 122, 95)",
+            "value": 64,
+            "label": "CUPPING_64"
+          },
+          {
+            "name": "Pecan",
+            "color": "#EFE58F",
+            "text": "rgb(117, 112, 70)",
+            "value": 65,
+            "label": "CUPPING_65"
+          },
+          {
+            "name": "Hazelnut",
+            "color": "#F3D48E",
+            "text": "rgb(119, 103, 69)",
+            "value": 66,
+            "label": "CUPPING_66"
+          },
+          {
+            "name": "Almond",
+            "color": "#FCFBDB",
+            "text": "rgb(123, 122, 107)",
+            "value": 67,
+            "label": "CUPPING_67"
+          }
+        ],
+        "value": 61,
+        "label": "CUPPING_61"
+      },
+      {
+        "name": "Grain & Creal",
+        "color": "#F1ECD5",
+        "text": "rgb(51, 51, 51)",
+        "children": [
+          {
+            "name": "Sweet bread pastery",
+            "color": "#FBD595",
+            "text": "rgb(122, 104, 73)",
+            "value": 69,
+            "label": "CUPPING_69"
+          },
+          {
+            "name": "Granola",
+            "color": "#D8AF80",
+            "text": "rgb(105, 85, 62)",
+            "value": 70,
+            "label": "CUPPING_70"
+          },
+          {
+            "name": "Graham cracker",
+            "color": "#D9A665",
+            "text": "rgb(106, 81, 49)",
+            "value": 71,
+            "label": "CUPPING_71"
+          },
+          {
+            "name": "Rye",
+            "color": "#F8D1A5",
+            "text": "rgb(121, 102, 80)",
+            "value": 72,
+            "label": "CUPPING_72"
+          },
+          {
+            "name": "Wheat",
+            "color": "#E2DBC5",
+            "text": "rgb(110, 107, 96)",
+            "value": 73,
+            "label": "CUPPING_73"
+          },
+          {
+            "name": "Barley",
+            "color": "#FCBF86",
+            "text": "rgb(123, 93, 65)",
+            "value": 74,
+            "label": "CUPPING_74"
+          },
+          {
+            "name": "Fresh bread",
+            "color": "#EFE0AC",
+            "text": "rgb(117, 109, 84)",
+            "value": 75,
+            "label": "CUPPING_75"
+          }
+        ],
+        "value": 68,
+        "label": "CUPPING_68"
+      },
+      {
+        "name": "Sweet & Sugary",
+        "color": "#F9F8B5",
+        "text": "rgb(51, 51, 51)",
+        "children": [
+          {
+            "name": "Vanila",
+            "color": "#FCFCDB",
+            "text": "rgb(123, 123, 107)",
+            "value": 77,
+            "label": "CUPPING_77"
+          },
+          {
+            "name": "Nougat",
+            "color": "#FAF9C0",
+            "text": "rgb(122, 122, 94)",
+            "value": 78,
+            "label": "CUPPING_78"
+          },
+          {
+            "name": "Honey",
+            "color": "#F8DA4A",
+            "text": "rgb(121, 106, 36)",
+            "value": 79,
+            "label": "CUPPING_79"
+          },
+          {
+            "name": "Butter",
+            "color": "#FBFAC6",
+            "text": "rgb(122, 122, 97)",
+            "value": 80,
+            "label": "CUPPING_80"
+          },
+          {
+            "name": "Cream",
+            "color": "#FEFEF4",
+            "text": "rgb(124, 124, 119)",
+            "value": 81,
+            "label": "CUPPING_81"
+          },
+          {
+            "name": "Marshallow",
+            "color": "#FEFCEE",
+            "text": "rgb(124, 123, 116)",
+            "value": 82,
+            "label": "CUPPING_82"
+          },
+          {
+            "name": "Sugar cane",
+            "color": "#FDFBE5",
+            "text": "rgb(123, 122, 112)",
+            "value": 83,
+            "label": "CUPPING_83"
+          },
+          {
+            "name": "Brown sugar",
+            "color": "#FFDDBB",
+            "text": "rgb(124, 108, 91)",
+            "value": 84,
+            "label": "CUPPING_84"
+          },
+          {
+            "name": "Caramel",
+            "color": "#EB9741",
+            "text": "rgb(115, 73, 31)",
+            "value": 85,
+            "label": "CUPPING_85"
+          },
+          {
+            "name": "Maple syrup",
+            "color": "#D68C5D",
+            "text": "rgb(115, 73, 31)",
+            "value": 86,
+            "label": "CUPPING_86"
+          },
+          {
+            "name": "Molasses",
+            "color": "#68554A",
+            "text": "rgb(255, 255, 255)",
+            "value": 87,
+            "label": "CUPPING_87"
+          },
+          {
+            "name": "Cola",
+            "color": "#5E514A",
+            "text": "rgb(255, 255, 255)",
+            "value": 88,
+            "label": "CUPPING_88"
+          }
+        ],
+        "value": 76,
+        "label": "CUPPING_76"
+      },
+      {
+        "name": "Roast",
+        "color": "#B7AFAF",
+        "text": "rgb(255, 255, 255)",
+        "children": [
+          {
+            "name": "Toast",
+            "color": "#DABB60",
+            "text": "rgb(106, 91, 47)",
+            "value": 90,
+            "label": "CUPPING_90"
+          },
+          {
+            "name": "Burnt sugar",
+            "color": "#AD9D8A",
+            "text": "rgb(106, 91, 47)",
+            "value": 91,
+            "label": "CUPPING_91"
+          },
+          {
+            "name": "Smokey",
+            "color": "#B7BCAA",
+            "text": "rgb(255, 255, 255)",
+            "value": 92,
+            "label": "CUPPING_92"
+          },
+          {
+            "name": "Carbon",
+            "color": "#233D3F",
+            "text": "rgb(255, 255, 255)",
+            "value": 93,
+            "label": "CUPPING_93"
+          }
+        ],
+        "value": 89,
+        "label": "CUPPING_89"
+      }
+    ],
+    "value": 53,
+    "label": "CUPPING_53"
+  },
+  {
+    "name": "Vegetal, Savory & Spices",
+    "color": "#F9CFC8",
+    "text": "rgb(51, 51, 51)",
+    "children": [
+      {
+        "name": "Spice",
+        "color": "#F9CFC8",
+        "text": "rgb(51, 51, 51)",
+        "children": [
+          {
+            "name": "Black pepper",
+            "color": "#C4CCAB",
+            "text": "rgb(96, 99, 83)",
+            "value": 96,
+            "label": "CUPPING_96"
+          },
+          {
+            "name": "White pepper",
+            "color": "#C2C39B",
+            "text": "rgb(95, 95, 75)",
+            "value": 97,
+            "label": "CUPPING_97"
+          },
+          {
+            "name": "Cinnamon",
+            "color": "#DA8E64",
+            "text": "rgb(95, 95, 75)",
+            "value": 98,
+            "label": "CUPPING_98"
+          },
+          {
+            "name": "Coriander",
+            "color": "#FCFBD2",
+            "text": "rgb(123, 122, 102)",
+            "value": 99,
+            "label": "CUPPING_99"
+          },
+          {
+            "name": "Ginger",
+            "color": "#FDC374",
+            "text": "rgb(123, 95, 56)",
+            "value": 100,
+            "label": "CUPPING_100"
+          },
+          {
+            "name": "Nutmeg",
+            "color": "#F5C679",
+            "text": "rgb(120, 97, 59)",
+            "value": 101,
+            "label": "CUPPING_101"
+          },
+          {
+            "name": "Curry",
+            "color": "#FDC893",
+            "text": "rgb(123, 97, 72)",
+            "value": 102,
+            "label": "CUPPING_102"
+          },
+          {
+            "name": "Licorice-anise",
+            "color": "#3C3B39",
+            "text": "rgb(255, 255, 255)",
+            "value": 103,
+            "label": "CUPPING_103"
+          },
+          {
+            "name": "Clove",
+            "color": "#637269",
+            "text": "rgb(255, 255, 255)",
+            "value": 104,
+            "label": "CUPPING_104"
+          }
+        ],
+        "value": 95,
+        "label": "CUPPING_95"
+      },
+      {
+        "name": "Savory",
+        "color": "#F1967F",
+        "text": "rgb(0, 0, 0)",
+        "children": [
+          {
+            "name": "Leathery",
+            "color": "#D6885E",
+            "text": "rgb(0, 0, 0)",
+            "value": 106,
+            "label": "CUPPING_106"
+          },
+          {
+            "name": "Meat-like",
+            "color": "#895448",
+            "text": "rgb(0, 0, 0)",
+            "value": 107,
+            "label": "CUPPING_107"
+          },
+          {
+            "name": "Soy sauce",
+            "color": "#8B7366",
+            "text": "rgb(0, 0, 0)",
+            "value": 108,
+            "label": "CUPPING_108"
+          },
+          {
+            "name": "Sundried tomato",
+            "color": "#E3666F",
+            "text": "rgb(0, 0, 0)",
+            "value": 109,
+            "label": "CUPPING_109"
+          },
+          {
+            "name": "Tomato",
+            "color": "#F0524E",
+            "text": "rgb(0, 0, 0)",
+            "value": 110,
+            "label": "CUPPING_110"
+          }
+        ],
+        "value": 105,
+        "label": "CUPPING_105"
+      },
+      {
+        "name": "Vegetal Earthy Herb",
+        "color": "#A7B14B",
+        "text": "rgb(255, 255, 255)",
+        "children": [
+          {
+            "name": "Soil",
+            "color": "#171313",
+            "text": "rgb(255, 255, 255)",
+            "value": 112,
+            "label": "CUPPING_112"
+          },
+          {
+            "name": "Fresh wood",
+            "color": "#E4AF6C",
+            "text": "rgb(111, 85, 52)",
+            "value": 113,
+            "label": "CUPPING_113"
+          },
+          {
+            "name": "Cedar",
+            "color": "#C36F5B",
+            "text": "rgb(115, 105, 55)",
+            "value": 114,
+            "label": "CUPPING_114"
+          },
+          {
+            "name": "Tobacco",
+            "color": "#D98F5D",
+            "text": "rgb(115, 105, 55)",
+            "value": 115,
+            "label": "CUPPING_115"
+          },
+          {
+            "name": "Hay / straw",
+            "color": "#EBD872",
+            "text": "rgb(115, 105, 55)",
+            "value": 116,
+            "label": "CUPPING_116"
+          },
+          {
+            "name": "Leafy greens",
+            "color": "#13B788",
+            "text": "rgb(115, 105, 55)",
+            "value": 117,
+            "label": "CUPPING_117"
+          },
+          {
+            "name": "Olive",
+            "color": "#A3C47D",
+            "text": "rgb(79, 96, 61)",
+            "value": 118,
+            "label": "CUPPING_118"
+          },
+          {
+            "name": "Green pepper",
+            "color": "#8FCE97",
+            "text": "rgb(70, 100, 73)",
+            "value": 119,
+            "label": "CUPPING_119"
+          },
+          {
+            "name": "Squash",
+            "color": "#F2E832",
+            "text": "rgb(118, 113, 24)",
+            "value": 120,
+            "label": "CUPPING_120"
+          },
+          {
+            "name": "Mushroom",
+            "color": "#D4B65A",
+            "text": "rgb(103, 89, 44)",
+            "value": 121,
+            "label": "CUPPING_121"
+          },
+          {
+            "name": "Sweet pea",
+            "color": "#C0DFA1",
+            "text": "rgb(94, 109, 78)",
+            "value": 122,
+            "label": "CUPPING_122"
+          },
+          {
+            "name": "Snow pea",
+            "color": "#BDDD96",
+            "text": "rgb(92, 108, 73)",
+            "value": 123,
+            "label": "CUPPING_123"
+          },
+          {
+            "name": "Grassy",
+            "color": "#83C97F",
+            "text": "rgb(64, 98, 62)",
+            "value": 124,
+            "label": "CUPPING_124"
+          },
+          {
+            "name": "Dill",
+            "color": "#B6D491",
+            "text": "rgb(89, 103, 71)",
+            "value": 125,
+            "label": "CUPPING_125"
+          },
+          {
+            "name": "Sage",
+            "color": "#D1E1B4",
+            "text": "rgb(102, 110, 88)",
+            "value": 126,
+            "label": "CUPPING_126"
+          },
+          {
+            "name": "Mint",
+            "color": "#D2E59B",
+            "text": "rgb(102, 112, 75)",
+            "value": 127,
+            "label": "CUPPING_127"
+          },
+          {
+            "name": "Green tea",
+            "color": "#E0E394",
+            "text": "rgb(109, 111, 72)",
+            "value": 128,
+            "label": "CUPPING_128"
+          },
+          {
+            "name": "Black tea",
+            "color": "#8E807F",
+            "text": "rgb(255, 255, 255)",
+            "value": 129,
+            "label": "CUPPING_129"
+          },
+          {
+            "name": "Hops",
+            "color": "#FECB70",
+            "text": "rgb(124, 99, 54)",
+            "value": 130,
+            "label": "CUPPING_130"
+          },
+          {
+            "name": "Bergamot",
+            "color": "#FEFEF4",
+            "text": "rgb(124, 124, 119)",
+            "value": 131,
+            "label": "CUPPING_131"
+          }
+        ],
+        "value": 111,
+        "label": "CUPPING_111"
+      }
+    ],
+    "value": 94,
+    "label": "CUPPING_94"
+  },
+  {
+    "name": "Flowery",
+    "color": "#F9F8B5",
+    "text": "rgb(51, 51, 51)",
+    "children": [
+      {
+        "name": "Floral",
+        "color": "#F9F8B5",
+        "text": "rgb(51, 51, 51)",
+        "children": [
+          {
+            "name": "Hibiscus",
+            "color": "#FADBE9",
+            "text": "rgb(122, 107, 114)",
+            "value": 134,
+            "label": "CUPPING_134"
+          },
+          {
+            "name": "Rose hips",
+            "color": "#FEF9FB",
+            "text": "rgb(124, 122, 122)",
+            "value": 135,
+            "label": "CUPPING_135"
+          },
+          {
+            "name": "Lavender",
+            "color": "#B8AFC9",
+            "text": "rgb(90, 85, 98)",
+            "value": 136,
+            "label": "CUPPING_136"
+          },
+          {
+            "name": "Magnolia",
+            "color": "#FDFCE8",
+            "text": "rgb(123, 123, 113)",
+            "value": 137,
+            "label": "CUPPING_137"
+          },
+          {
+            "name": "Jasmine honeysuckle",
+            "color": "#FEFCEC",
+            "text": "rgb(124, 123, 115)",
+            "value": 138,
+            "label": "CUPPING_138"
+          },
+          {
+            "name": "Orange blossom",
+            "color": "#FAF9B6",
+            "text": "rgb(122, 122, 89)",
+            "value": 139,
+            "label": "CUPPING_139"
+          },
+          {
+            "name": "Lemongrass",
+            "color": "#F9F7B6",
+            "text": "rgb(122, 121, 89))",
+            "value": 140,
+            "label": "CUPPING_140"
+          }
+        ],
+        "value": 133,
+        "label": "CUPPING_133"
+      }
+    ],
+    "value": 132,
+    "label": "CUPPING_132"
+  }
+]

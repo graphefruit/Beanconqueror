@@ -22,7 +22,7 @@ export class Settings implements ISettings {
   public startup_view: STARTUP_VIEW_ENUM;
 
 
-  public matomo_analytics:boolean;
+  public matomo_analytics: boolean;
   public manage_parameters: ManageBrewParameter;
   public default_last_coffee_parameters: DefaultBrewParameter;
   public brew_order: OrderBrewParameter;
@@ -38,6 +38,7 @@ export class Settings implements ISettings {
   public show_archived_mills: boolean;
   public show_archived_preparations: boolean;
   public show_archived_green_beans: boolean;
+  public show_archived_waters: boolean;
 
   public welcome_page_showed: boolean;
   public track_caffeine_consumption: boolean;
@@ -58,8 +59,13 @@ export class Settings implements ISettings {
   public wake_lock: boolean;
 
   public show_roasting_section: boolean;
+  public show_water_section: boolean;
   public show_cupping_section: boolean;
 
+  public decent_scale_id: string;
+  public bluetooth_scale_stay_connected: boolean;
+
+  public currency: string;
   public GET_BREW_FILTER(): IBrewPageFilter {
 
     const upperRating: number = this.brew_rating;
@@ -96,10 +102,12 @@ export class Settings implements ISettings {
     this.show_archived_mills = true;
     this.show_archived_preparations = true;
     this.show_archived_green_beans = true;
+    this.show_archived_waters = true;
 
     this.track_caffeine_consumption = false;
 
     this.show_roasting_section = false;
+    this.show_water_section = false;
     this.show_cupping_section = false;
 
     this.brew_filter = {
@@ -131,6 +139,10 @@ export class Settings implements ISettings {
     this.welcome_page_showed = false;
     this.wake_lock = false;
     this.image_quality = 100;
+    this.decent_scale_id = '';
+    this.bluetooth_scale_stay_connected = false;
+
+    this.currency = 'EUR';
 
   }
 

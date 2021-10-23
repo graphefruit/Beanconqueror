@@ -9,7 +9,7 @@ import {Mill} from '../../../classes/mill/mill';
   styleUrls: ['./mill-modal-select.component.scss'],
 })
 export class MillModalSelectComponent implements OnInit {
-
+  public static COMPONENT_ID = 'mill-modal-select';
   public objs: Array<Mill> = [];
   public multipleSelection = {};
   public radioSelection: string;
@@ -43,12 +43,38 @@ export class MillModalSelectComponent implements OnInit {
 
   public getOpenMills(): Array<Mill> {
     return this.objs.filter(
-      (e) => !e.finished);
+      (e) => !e.finished).sort( (a,b) => {
+        const nameA = a.name.toUpperCase();
+        const nameB = b.name.toUpperCase();
+
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+
+        return 0;
+      }
+    );
   }
 
   public getArchivedMills(): Array<Mill> {
     return this.objs.filter(
-      (e) => e.finished);
+      (e) => e.finished).sort( (a,b) => {
+        const nameA = a.name.toUpperCase();
+        const nameB = b.name.toUpperCase();
+
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+
+        return 0;
+      }
+    );
   }
 
 
@@ -76,11 +102,11 @@ export class MillModalSelectComponent implements OnInit {
     this.modalController.dismiss({
       selected_values: chosenKeys,
       selected_text: selected_text,
-    },undefined,'mill-modal-select');
+    },undefined, MillModalSelectComponent.COMPONENT_ID);
   }
 
   public async dismiss(): Promise<void> {
-    this.modalController.dismiss(undefined,undefined,'mill-modal-select');
+    this.modalController.dismiss(undefined,undefined,MillModalSelectComponent.COMPONENT_ID);
   }
 
 }

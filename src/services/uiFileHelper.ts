@@ -1,12 +1,13 @@
 /** Core */
 import {Injectable} from '@angular/core';
 import {DirectoryEntry, Entry, File, FileEntry} from '@ionic-native/file/ngx';
-import {unescape} from 'querystring';
 import {Platform} from '@ionic/angular';
 import {DomSanitizer} from '@angular/platform-browser';
 import {UILog} from './uiLog';
 import {SocialSharing} from '@ionic-native/social-sharing/ngx';
 import moment from 'moment';
+import {FileTransfer, FileTransferObject} from '@ionic-native/file-transfer/ngx';
+import {InstanceClass} from './instanceClass';
 /**
  * Handles every helping functionalities
  */
@@ -14,7 +15,7 @@ declare var window;
 @Injectable({
   providedIn: 'root'
 })
-export class UIFileHelper {
+export class UIFileHelper extends InstanceClass {
 
   private cachedBase64: any = {};
   private cachedInternalUrls: any = {};
@@ -25,9 +26,10 @@ export class UIFileHelper {
                private readonly uiLog: UILog,
                private readonly platform: Platform,
                private readonly domSanitizer: DomSanitizer,
-               private readonly socialSharing: SocialSharing) {
+               private readonly socialSharing: SocialSharing,
+               private readonly fileTransfer: FileTransfer) {
 
-
+    super();
   }
 
   private getFileDirectory(): string {
@@ -46,7 +48,7 @@ export class UIFileHelper {
       this.file.createFile(this.getFileDirectory(),_fileName,true).then((_fileEntry: FileEntry) => {
         _fileEntry.createWriter((writer) => {
           writer.onwriteend = () => {
-            resolve();
+            resolve(undefined);
           };
           writer.onerror = () => {
             reject();
@@ -124,7 +126,7 @@ export class UIFileHelper {
 
         let storageLocation: string = '';
         if (this.platform.is('android')) {
-          storageLocation = this.file.externalRootDirectory
+          storageLocation = this.file.externalRootDirectory;
         } else {
           storageLocation = this.file.documentsDirectory;
         }
@@ -188,6 +190,24 @@ export class UIFileHelper {
     return promise;
   }
 
+    public async downloadExternalFile(_url: string,  _fileName: string = 'beanconqueror_image', _fileExtension: string ='.png'): Promise<string> {
+      const promise: Promise<string> = new Promise(async (resolve, reject) => {
+        const url: string = _url;
+        const fileTransferObj: FileTransferObject = this.fileTransfer.create();
+        await this.generateFileName(this.getFileDirectory(), _fileName, _fileExtension).then(async (_newName) => {
+          fileTransferObj.download(url, this.getFileDirectory() + _newName).then(async (_entry) => {
+            this.uiLog.log('File download completed: ' + _entry.fullPath);
+            resolve(_entry.fullPath);
+          }, (error) => {
+            // handle error
+            resolve(undefined);
+          });
+        });
+      });
+      return promise;
+
+    }
+
     public async downloadFile(_filename,_blob,_share: boolean = true): Promise<FileEntry> {
       const promise: Promise<FileEntry> =  new Promise(async (resolve, reject) => {
 
@@ -196,7 +216,7 @@ export class UIFileHelper {
 
         let storageLocation: string = '';
         if (this.platform.is('android')) {
-          storageLocation = this.file.externalRootDirectory
+          storageLocation = this.file.externalRootDirectory;
         } else {
           storageLocation = this.file.documentsDirectory;
         }
@@ -274,6 +294,66 @@ export class UIFileHelper {
       return promise;
     }
 
+  public createFolder(_folders) {
+    const promise: Promise<FileEntry> = new Promise(async (resolve, reject) => {
+
+      const folders = _folders.split('/');
+
+      this.file.resolveDirectoryUrl(this.getFileDirectory()).then((_rootDir: DirectoryEntry) => {
+
+        this.createFolderInternal(_rootDir, folders,
+          ()=> {
+
+            resolve(undefined);
+          },
+          () => {
+
+            reject();
+          });
+      },() => {
+       reject();
+      });
+
+
+    });
+
+    return promise;
+  };
+
+  private createFolderInternal(_rootDirEntry: DirectoryEntry, _folders, _resolve, _reject) {
+
+
+
+    // Throw out './' or '/' and move on to prevent something like '/foo/.//bar'.
+    if (_folders[0] === '.' || _folders[0] === '') {
+      _folders = _folders.slice(1);
+    }
+    if (_folders === undefined || _folders.length === 0) {
+      _resolve(undefined);
+    }
+    else {
+
+
+      this.file.getDirectory(_rootDirEntry, _folders[0], {create: true, exclusive: false}).then((dirEntry) => {
+        // Recursively add the new subfolder (if we still have another to create).
+
+        if (_folders.length) {
+          this.createFolderInternal(dirEntry, _folders.slice(1), _resolve, _reject);
+        }
+        else {
+          // All folders were created
+          _resolve(undefined);
+        }
+
+      }, () => {
+        _reject();
+      });
+    }
+
+
+  };
+
+
   public async deleteFile(_filePath): Promise<any> {
     return new Promise(async (resolve, reject) => {
       if (this.platform.is('cordova')) {
@@ -283,13 +363,13 @@ export class UIFileHelper {
           filePath = filePath + fileObj.FILE_PATH.substr(1);
         }
         this.file.removeFile(filePath, fileObj.FILE_NAME + fileObj.EXTENSION).then(() => {
-          resolve();
+          resolve(undefined);
         }, (e) => {
           this.uiLog.error('Cant delete file: ' + JSON.stringify(e));
           reject();
         });
       } else {
-        resolve();
+        resolve(undefined);
       }
 
     });
@@ -314,11 +394,11 @@ export class UIFileHelper {
 
 
       const fileObj = this.__splitFilePath(_filePath);
-      this.generateFileName(this.getFileDirectory(), _fileName, fileObj.EXTENSION).then((_newName) => {
+      this.generateFileName(this.getFileDirectory(), _fileName, fileObj.EXTENSION).then(async (_newName) => {
         // console.log('New Filename' + _newName);
 
         this.file.copyFile(fileObj.FILE_PATH, fileObj.FILE_NAME + fileObj.EXTENSION,
-          this.getFileDirectory(), _newName).then((_t) => {
+          this.getFileDirectory(), _newName).then(async (_t) => {
           resolve(_t.fullPath);
         }, (e) => {
           reject();
@@ -385,12 +465,12 @@ export class UIFileHelper {
     }
 
   }
-  public async getInternalFileSrc (_filePath: string): Promise<any> {
+  public async getInternalFileSrc (_filePath: string,_addTimeStamp: boolean = false): Promise<any> {
     return new Promise(async (resolve, reject) => {
       if (this.platform.is('cordova')) {
         if (this.cachedInternalUrls[_filePath]) {
-          resolve(this.cachedInternalUrls[_filePath]);
-          return;
+          //resolve(this.cachedInternalUrls[_filePath]);
+         // return;
         }
         // let filePath: string;
         // filePath = _filePath;
@@ -417,6 +497,9 @@ export class UIFileHelper {
           fileEntry.file(
             (meta) => {
               let convertedURL = window.Ionic.WebView.convertFileSrc(fileEntry.nativeURL);
+              if (_addTimeStamp) {
+                convertedURL +='?' + moment().unix();
+              }
               convertedURL = this.domSanitizer.bypassSecurityTrustResourceUrl(convertedURL);
               this.cachedInternalUrls[_filePath] = convertedURL;
               resolve(convertedURL);
@@ -500,7 +583,7 @@ export class UIFileHelper {
       if (base64TagExists) {
         byteString = atob(dataURI.split(',')[1]);
       } else {
-        byteString = unescape(dataURI.split(',')[1]);
+        byteString = window.unescape(dataURI.split(',')[1]);
       }
 
       // separate out the mime component

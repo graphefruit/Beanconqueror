@@ -130,7 +130,24 @@ import {CookieComponent} from '../info/cookie/cookie.component';
 import {FilesystemErrorPopoverComponent} from '../../popover/filesystem-error-popover/filesystem-error-popover.component';
 import {AnalyticsPopoverComponent} from '../../popover/analytics-popover/analytics-popover.component';
 import {Deeplinks} from '@ionic-native/deeplinks/ngx';
-
+import {BeanArchivePopoverComponent} from '../beans/bean-archive-popover/bean-archive-popover.component';
+import {CuppingFlavorsComponent} from '../../components/cupping-flavors/cupping-flavors.component';
+import {WaterSectionPage} from '../water-section/water-section.page';
+import {WaterPage} from '../water-section/water/water.page';
+import {WaterPopoverActionsComponent} from '../water-section/water/water-popover-actions/water-popover-actions.component';
+import {WaterAddComponent} from '../water-section/water/water-add/water-add.component';
+import {WaterInformationCardComponent} from '../../components/water-information-card/water-information-card.component';
+import {WaterEditComponent} from '../water-section/water/water-edit/water-edit.component';
+import {WaterDetailComponent} from '../water-section/water/water-detail/water-detail.component';
+import {WaterModalSelectComponent} from '../water-section/water/water-modal-select/water-modal-select.component';
+import {WaterOverlayDirective} from '../../directive/water-overlay.directive';
+import {BrewBrixCalculatorComponent} from '../brew/brew-brix-calculator/brew-brix-calculator.component';
+import {BrewBeverageQuantityCalculatorComponent} from '../brew/brew-beverage-quantity-calculator/brew-beverage-quantity-calculator.component';
+import {BrewFlavorPickerComponent} from '../brew/brew-flavor-picker/brew-flavor-picker.component';
+import {BrewChoosePreparationToBrewComponent} from '../brew/brew-choose-preparation-to-brew/brew-choose-preparation-to-brew.component';
+import {ShortPressDirective} from '../../directive/short-press.directive';
+import {DecentTestPage} from '../decent-test/decent-test.page';
+import {FileTransfer} from '@ionic-native/file-transfer/ngx';
 
 @NgModule({
   declarations: [
@@ -140,6 +157,8 @@ import {Deeplinks} from '@ionic-native/deeplinks/ngx';
     BrewParameterPage,
     DashboardPage,
     RoastingSectionPage,
+    WaterSectionPage,
+    WaterPage,
     GreenBeansPage,
     GreenBeanAddComponent,
     GreenBeanEditComponent,
@@ -186,6 +205,10 @@ import {Deeplinks} from '@ionic-native/deeplinks/ngx';
     BeanFilterComponent,
     MillAddComponent,
     BrewAddComponent,
+    BrewBrixCalculatorComponent,
+    BrewChoosePreparationToBrewComponent,
+    BrewFlavorPickerComponent,
+    BrewBeverageQuantityCalculatorComponent,
     FormatDatePipe,
     KeysPipe,
     EnumToArrayPipe,
@@ -194,25 +217,35 @@ import {Deeplinks} from '@ionic-native/deeplinks/ngx';
     BeanInformationComponent,
     PreparationInformationCardComponent,
     MillInformationCardComponent,
+    WaterInformationCardComponent,
+    WaterEditComponent,
+    WaterDetailComponent,
     CuppingRadarComponent,
+    CuppingFlavorsComponent,
     RemoveEmptyNumberDirective,
     PreventCharacterDirective,
     MaxNumberValueDirective,
     LongPressDirective,
+    ShortPressDirective,
     BeanOverlayDirective,
     MillOverlayDirective,
     RoastingMachineOverlayDirective,
     PreparationOverlayDirective,
+    WaterOverlayDirective,
     TooltipDirective,
     DisableDoubleClickDirective,
     BrewPage,
+    DecentTestPage,
     BrewDetailComponent,
     BrewEditComponent,
     PhotoPopoverComponent,
+    WaterPopoverActionsComponent,
     BrewPopoverActionsComponent,
     BeanPopoverActionsComponent,
+    BeanArchivePopoverComponent,
     MillPopoverActionsComponent,
     BeanModalSelectComponent,
+    WaterModalSelectComponent,
     RoastingMachineModalSelectComponent,
     MillModalSelectComponent,
     PreparationModalSelectComponent,
@@ -235,7 +268,8 @@ import {Deeplinks} from '@ionic-native/deeplinks/ngx';
     RoastingMachineAddComponent,
     RoastingMachineDetailComponent,
     RoastingMachinePage,
-    RoastingMachinePopoverActionsComponent
+    RoastingMachinePopoverActionsComponent,
+    WaterAddComponent
   ],
   entryComponents: [
     SettingsPage,
@@ -244,6 +278,8 @@ import {Deeplinks} from '@ionic-native/deeplinks/ngx';
     BrewParameterPage,
     DashboardPage,
     RoastingSectionPage,
+    WaterSectionPage,
+    WaterPage,
     GreenBeansPage,
     GreenBeanAddComponent,
     GreenBeanEditComponent,
@@ -257,6 +293,9 @@ import {Deeplinks} from '@ionic-native/deeplinks/ngx';
     BeanFilterComponent,
     PreparationInformationCardComponent,
     MillInformationCardComponent,
+    WaterInformationCardComponent,
+    WaterEditComponent,
+    WaterDetailComponent,
     AboutComponent,
     ContactComponent,
     InfoComponent,
@@ -292,13 +331,21 @@ import {Deeplinks} from '@ionic-native/deeplinks/ngx';
     PreparationDetailComponent,
     MillAddComponent,
     BrewAddComponent,
+    BrewBrixCalculatorComponent,
+    BrewChoosePreparationToBrewComponent,
+    BrewFlavorPickerComponent,
+    BrewBeverageQuantityCalculatorComponent,
     BrewPage,
+    DecentTestPage,
     BrewDetailComponent,
     BrewEditComponent,
     PhotoPopoverComponent,
     BrewPopoverActionsComponent,
+    WaterPopoverActionsComponent,
     BeanPopoverActionsComponent,
+    BeanArchivePopoverComponent,
     BeanModalSelectComponent,
+    WaterModalSelectComponent,
     RoastingMachineModalSelectComponent,
     MillModalSelectComponent,
     PreparationModalSelectComponent,
@@ -322,7 +369,10 @@ import {Deeplinks} from '@ionic-native/deeplinks/ngx';
     RoastingMachineAddComponent,
     RoastingMachineDetailComponent,
     RoastingMachinePage,
-    RoastingMachinePopoverActionsComponent],
+    RoastingMachinePopoverActionsComponent,
+    WaterAddComponent
+
+  ],
   imports: [
     CommonModule,
     IonicModule,
@@ -339,10 +389,12 @@ import {Deeplinks} from '@ionic-native/deeplinks/ngx';
     RemoveEmptyNumberDirective, PreventCharacterDirective,
     MaxNumberValueDirective,
     LongPressDirective,
+    ShortPressDirective,
     BeanOverlayDirective,
     MillOverlayDirective,
     RoastingMachineOverlayDirective,
     PreparationOverlayDirective,
+    WaterOverlayDirective,
     TooltipDirective,
     DisableDoubleClickDirective,
     FormatDatePipe, KeysPipe, EnumToArrayPipe,
@@ -360,6 +412,7 @@ import {Deeplinks} from '@ionic-native/deeplinks/ngx';
     Geolocation,
     Insomnia,
     Deeplinks,
+    FileTransfer
   ],
 
   exports: [
@@ -370,6 +423,8 @@ import {Deeplinks} from '@ionic-native/deeplinks/ngx';
     BeansPage,
     HelperPage,
     RoastingSectionPage,
+    WaterSectionPage,
+    WaterPage,
     GreenBeansPage,
     BeansAddComponent,
     BeansEditComponent,
@@ -414,6 +469,10 @@ import {Deeplinks} from '@ionic-native/deeplinks/ngx';
     PreparationDetailComponent,
     MillAddComponent,
     BrewAddComponent,
+    BrewBrixCalculatorComponent,
+    BrewChoosePreparationToBrewComponent,
+    BrewFlavorPickerComponent,
+    BrewBeverageQuantityCalculatorComponent,
     FormatDatePipe,
     KeysPipe,
     EnumToArrayPipe,
@@ -422,24 +481,34 @@ import {Deeplinks} from '@ionic-native/deeplinks/ngx';
     BeanInformationComponent,
     PreparationInformationCardComponent,
     MillInformationCardComponent,
+    WaterInformationCardComponent,
+    WaterEditComponent,
+    WaterDetailComponent,
     CuppingRadarComponent,
+    CuppingFlavorsComponent,
     RemoveEmptyNumberDirective,
     PreventCharacterDirective,
     MaxNumberValueDirective,
     LongPressDirective,
+    ShortPressDirective,
     BeanOverlayDirective,
     MillOverlayDirective,
     RoastingMachineOverlayDirective,
     PreparationOverlayDirective,
+    WaterOverlayDirective,
     TooltipDirective,
     DisableDoubleClickDirective,
     BrewPage,
+    DecentTestPage,
     BrewDetailComponent,
     BrewEditComponent,
     PhotoPopoverComponent,
     BrewPopoverActionsComponent,
+    WaterPopoverActionsComponent,
     BeanPopoverActionsComponent,
+    BeanArchivePopoverComponent,
     BeanModalSelectComponent,
+    WaterModalSelectComponent,
     RoastingMachineModalSelectComponent,
     MillModalSelectComponent,
     PreparationModalSelectComponent,
@@ -463,7 +532,9 @@ import {Deeplinks} from '@ionic-native/deeplinks/ngx';
     RoastingMachineAddComponent,
     RoastingMachineDetailComponent,
     RoastingMachinePage,
-    RoastingMachinePopoverActionsComponent],
+    RoastingMachinePopoverActionsComponent,
+    WaterAddComponent
+  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule {

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { PhotoAddComponent } from './photo-add.component';
@@ -7,7 +7,7 @@ describe('PhotoAddComponent', () => {
   let component: PhotoAddComponent;
   let fixture: ComponentFixture<PhotoAddComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ PhotoAddComponent ],
       imports: [IonicModule.forRoot()]

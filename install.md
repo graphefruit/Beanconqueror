@@ -138,4 +138,22 @@ ionic cordova plugin add cordova-plugin-androidx-adapter
 ionic cordova plugin add cordova-plugin-androidx
 
 
+##Bluetooth
+We combine both plugins, because the other plugins asks all of the permissions.
 
+//1. ionic cordova plugin add cordova-plugin-bluetoothle
+//2. npm install @ionic-native/bluetooth-le
+3. https://github.com/don/cordova-plugin-ble-central
+-> ionic cordova plugin add cordova-plugin-ble-central --variable BLUETOOTH_USAGE_DESCRIPTION="Bluetooth access needed to connect smartscales" --variable IOS_INIT_ON_LOAD=false
+
+
+
+##File download
+ionic cordova plugin add https://github.com/dpa99c/cordova-plugin-file-transfer
+(We cant use the other plugin cause of compile issues)
+npm install @ionic-native/file-transfer
+
+
+
+##Currency
+https://github.com/bengourley/currency-symbol-map

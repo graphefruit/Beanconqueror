@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {IonicModule} from '@ionic/angular';
 
 import {HelperBrewRatioComponent} from './helper-brew-ratio.component';
@@ -7,7 +7,7 @@ describe('HelperBrewRatioComponent', () => {
   let component: HelperBrewRatioComponent;
   let fixture: ComponentFixture<HelperBrewRatioComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [HelperBrewRatioComponent],
       imports: [IonicModule.forRoot()]

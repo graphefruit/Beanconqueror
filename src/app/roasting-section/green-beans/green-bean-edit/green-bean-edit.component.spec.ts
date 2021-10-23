@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { GreenBeanEditComponent } from './green-bean-edit.component';
@@ -7,7 +7,7 @@ describe('GreenBeanEditComponent', () => {
   let component: GreenBeanEditComponent;
   let fixture: ComponentFixture<GreenBeanEditComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ GreenBeanEditComponent ],
       imports: [IonicModule.forRoot()]

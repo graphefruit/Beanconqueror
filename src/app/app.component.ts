@@ -13,11 +13,7 @@ import {AppMinimize} from '@ionic-native/app-minimize/ngx';
 import {Keyboard} from '@ionic-native/keyboard/ngx';
 import {ThreeDeeTouch, ThreeDeeTouchQuickAction} from '@ionic-native/three-dee-touch/ngx';
 import {Router} from '@angular/router';
-import {BeansAddComponent} from './beans/beans-add/beans-add.component';
-import {PreparationAddComponent} from './preparation/preparation-add/preparation-add.component';
-import {MillAddComponent} from './mill/mill-add/mill-add.component';
 import {UIBrewHelper} from '../services/uiBrewHelper';
-import {BrewAddComponent} from './brew/brew-add/brew-add.component';
 
 import {UIHelper} from '../services/uiHelper';
 import {UIAlert} from '../services/uiAlert';
@@ -34,17 +30,19 @@ import {UiVersionStorage} from '../services/uiVersionStorage';
 import {UIGreenBeanStorage} from '../services/uiGreenBeanStorage';
 import {UIRoastingMachineStorage} from '../services/uiRoastingMachineStorage';
 import {IntentHandlerService} from '../services/intentHandler/intent-handler.service';
-
-
-import BEAN_TRACKING from '../data/tracking/beanTracking';
-import BREW_TRACKING from '../data/tracking/brewTracking';
-import MILL_TRACKING from '../data/tracking/millTracking';
-import PREPARATION_TRACKING from '../data/tracking/preparationTracking';
 import LINK_TRACKING from '../data/tracking/linkTracking';
 import STARTUP_TRACKING from '../data/tracking/startupTracking';
 import {AnalyticsPopoverComponent} from '../popover/analytics-popover/analytics-popover.component';
 import {IosPlatformService} from '../services/iosPlatform/ios-platform.service';
 import {AndroidPlatformService} from '../services/androidPlatform/android-platform.service';
+import {environment} from '../environments/environment';
+import {UIWaterStorage} from '../services/uiWaterStorage';
+import {UIBeanHelper} from '../services/uiBeanHelper';
+import {UIMillHelper} from '../services/uiMillHelper';
+import {UIPreparationHelper} from '../services/uiPreparationHelper';
+import {BleManagerService} from '../services/bleManager/ble-manager.service';
+import {CleanupService} from '../services/cleanupService/cleanup.service';
+
 
 declare var AppRate;
 @Component({
@@ -59,7 +57,9 @@ export class AppComponent implements AfterViewInit {
 
   public pages = {
     home: {title: 'NAV_HOME', url: '/', icon: 'home-outline', active: true},
+    decent: {title: 'DECENT', url: '/decent-test', icon: 'home-outline', active: true},
     roasting_section: {title: 'NAV_ROASTING_SECTION', url: '/roasting-section', active: false},
+    water_section: {title: 'NAV_WATER_SECTION', url: '/water-section', active: false},
     settings: {title: 'NAV_SETTINGS', url: '/settings', icon: 'settings-outline', active: false},
 
     info: {title: 'NAV_INFORMATION_TO_APP', url: '/info', icon: 'information-circle-outline', active: false},
@@ -73,6 +73,8 @@ export class AppComponent implements AfterViewInit {
 
     statistic: {title: 'NAV_STATISTICS', url: '/statistic', icon: 'analytics-outline', active: false},
     logs: {title: 'NAV_LOGS', url: '/info/logs', icon: 'logo-buffer', active: false},
+
+    helper: {title: 'NAV_HELPER', url: '/helper', icon: 'logo-buffer', active: false},
     helper_brew_ratio: {title: 'PAGE_HELPER_BREW_RATIO', url: '/helper/brew-ratio', icon: 'construct-outline', active: false},
     helper_water_hardness: {title: 'PAGE_HELPER_WATER_HARDNESS', url: '/helper/water-hardness', icon: 'construct-outline', active: false},
     brew_parameter: {title: 'NAV_BREW_PARAMS', url: '/brew-parameter', icon: 'construct-outline', active: false}
@@ -108,13 +110,20 @@ export class AppComponent implements AfterViewInit {
     private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
     private readonly intentHandlerService: IntentHandlerService,
     private readonly iosPlatformService: IosPlatformService,
-    private readonly androidPlatformService: AndroidPlatformService
+    private readonly androidPlatformService: AndroidPlatformService,
+    private readonly uiWaterStorage: UIWaterStorage,
+    private readonly uiBeanHelper: UIBeanHelper,
+    private readonly uiMillHelper: UIMillHelper,
+    private readonly uiPreparationHelper: UIPreparationHelper,
+    private readonly bleManager: BleManagerService,
+    private readonly cleanupService: CleanupService,
+
   ) {
+
     // Dont remove androidPlatformService, we need to initialize it via constructor
   }
 
   public ngOnInit() {
-    this.intentHandlerService.attachOnHandleOpenUrl();
 
 
   }
@@ -132,6 +141,9 @@ export class AppComponent implements AfterViewInit {
   private __appReady(): void {
     this.platform.ready()
       .then(async () => {
+
+
+
         // Okay, so the platform is ready and our plugins are available.
         // Here you can do any higher level native things you might need.
         // #7
@@ -139,7 +151,7 @@ export class AppComponent implements AfterViewInit {
         this.statusBar.styleDefault();
         this.splashScreen.hide();
         this.keyboard.hideFormAccessoryBar(false);
-        if (this.platform.is('cordova')) {
+        if (environment.production === true) {
           // When we're in cordova, disable the log messages
           this.uiLog.disable();
         }
@@ -174,6 +186,12 @@ export class AppComponent implements AfterViewInit {
               }
             );
         }
+
+        if (this.platform.is('cordova')) {
+          // Just support deeplinks on devices.
+          this.intentHandlerService.attachOnHandleOpenUrl();
+        }
+
         // Before we update and show messages, we need atleast to set one default language.
         this._translate.setDefaultLang('en');
         await this._translate.use('en').toPromise();
@@ -189,6 +207,7 @@ export class AppComponent implements AfterViewInit {
           await this.uiVersionStorage.initializeStorage();
           await this.uiGreenBeanStorage.initializeStorage();
           await this.uiRoastingMachineStorage.initializeStorage();
+          await this.uiWaterStorage.initializeStorage();
 
           // Wait for every necessary service to be ready before starting the app
           // Settings and version, will create a new object on start, so we need to wait for this in the end.
@@ -200,6 +219,7 @@ export class AppComponent implements AfterViewInit {
           const versionStorageReadyCallback = this.uiVersionStorage.storageReady();
           const greenBeanStorageCallback = this.uiGreenBeanStorage.storageReady();
           const roastingMachineStorageCallback = this.uiRoastingMachineStorage.storageReady();
+          const waterStorageCallback = this.uiWaterStorage.storageReady();
 
 
           Promise.all([
@@ -210,12 +230,14 @@ export class AppComponent implements AfterViewInit {
             millStorageReadyCallback,
             versionStorageReadyCallback,
             greenBeanStorageCallback,
-            roastingMachineStorageCallback
+            roastingMachineStorageCallback,
+            waterStorageCallback
           ])
             .then(async () => {
               this.uiLog.log('App finished loading');
               this.uiLog.info('Everything should be fine!!!');
               await this.__checkUpdate();
+              await this.__checkCleanup();
               await this.__initApp();
               this.uiHelper.setAppReady(1);
 
@@ -239,6 +261,13 @@ export class AppComponent implements AfterViewInit {
 
     }
   }
+  private async __checkCleanup() {
+    try {
+      await this.cleanupService.cleanupOldBrewData();
+    } catch (ex) {
+
+    }
+  }
 
   private async __checkIOSBackup() {
     try {
@@ -252,6 +281,11 @@ export class AppComponent implements AfterViewInit {
   public showRoastingSection() {
     const settings: Settings = this.uiSettingsStorage.getSettings();
     return settings.show_roasting_section;
+  }
+
+  public showWaterSection() {
+    const settings: Settings = this.uiSettingsStorage.getSettings();
+    return settings.show_water_section;
   }
 
   private async __setDeviceLanguage(): Promise<any> {
@@ -274,16 +308,19 @@ export class AppComponent implements AfterViewInit {
               let settingLanguage: string = '';
               if (systemLanguage === 'de') {
                 settingLanguage = 'de';
-              } else {
+              }  else if (systemLanguage === 'es') {
+                settingLanguage = 'es';
+              }
+              else  {
                 settingLanguage = 'en';
               }
               this.uiLog.log(`Setting language: ${settingLanguage}`);
               this._translate.setDefaultLang(settingLanguage);
               settings.language = settingLanguage;
-              this.uiSettingsStorage.saveSettings(settings);
+              await this.uiSettingsStorage.saveSettings(settings);
               await this._translate.use(settingLanguage).toPromise();
               moment.locale(settingLanguage);
-              resolve();
+              resolve(undefined);
 
             })
               .catch(async (ex) => {
@@ -292,7 +329,7 @@ export class AppComponent implements AfterViewInit {
                 this._translate.setDefaultLang('en');
                 await this._translate.use('en').toPromise();
                 moment.locale('en');
-                resolve();
+                resolve(undefined);
               });
           } else {
             this.uiLog.info('Language settings already existing, set language');
@@ -301,7 +338,7 @@ export class AppComponent implements AfterViewInit {
             this._translate.setDefaultLang(settingLanguage);
             await this._translate.use(settingLanguage).toPromise();
             moment.locale(settingLanguage);
-            resolve();
+            resolve(undefined);
 
           }
         } catch (ex) {
@@ -309,10 +346,10 @@ export class AppComponent implements AfterViewInit {
           this.uiLog.error(`Exception occured when setting language ${exMessage}`);
           this._translate.setDefaultLang('en');
           settings.language = 'en';
-          this.uiSettingsStorage.saveSettings(settings);
+          await this.uiSettingsStorage.saveSettings(settings);
           await this._translate.use('en').toPromise();
           moment.locale('en');
-          resolve();
+          resolve(undefined);
         }
       } else {
         this.uiLog.info('Cant set language for device, because no cordova device');
@@ -321,15 +358,15 @@ export class AppComponent implements AfterViewInit {
           this._translate.setDefaultLang(settings.language);
           await this._translate.use(settings.language).toPromise();
           moment.locale(settings.language);
-          resolve();
+          resolve(undefined);
         } else {
           this.uiLog.info(`Set default language from settings, because no settings set: en `);
           this._translate.setDefaultLang('en');
           settings.language = 'en';
-          this.uiSettingsStorage.saveSettings(settings);
+          await this.uiSettingsStorage.saveSettings(settings);
           await this._translate.use('en').toPromise();
           moment.locale(settings.language);
-          resolve();
+          resolve(undefined);
         }
 
       }
@@ -363,7 +400,6 @@ export class AppComponent implements AfterViewInit {
 
     this.__registerBack();
     await this.__setDeviceLanguage();
-
     // After we set the right device language, we check now if we can request external storage
     if (this.platform.is('cordova') && this.platform.is('android')) {
       try {
@@ -378,9 +414,47 @@ export class AppComponent implements AfterViewInit {
     await this.__checkAnalyticsInformationPage();
     await this.uiUpdate.checkUpdateScreen();
     await this.__checkStartupView();
+    this.__connectSmartScale();
     this.__instanceAppRating();
 
+    this.__attachOnDevicePause();
+    this.__attachOnDeviceResume();
 
+
+  }
+
+  private  __connectSmartScale() {
+    const settings = this.uiSettingsStorage.getSettings();
+    const decent_scale_id: string = settings.decent_scale_id;
+    this.uiLog.log(`Connect smartscale? ${decent_scale_id}`);
+    if (decent_scale_id !== undefined && decent_scale_id !== '') {
+      this.bleManager.autoConnectDecentScale(decent_scale_id,true);
+    } else {
+      this.uiLog.log('Smartscale not connected, dont try to connect');
+    }
+
+  }
+
+  private __attachOnDevicePause() {
+    this.platform.pause.subscribe(async () => {
+      const settings: Settings = this.uiSettingsStorage.getSettings();
+      if (settings.bluetooth_scale_stay_connected === false) {
+        const decent_scale_id: string = settings.decent_scale_id;
+        if (decent_scale_id !== undefined && decent_scale_id !== '') {
+          // Don't show message on device pause.
+          this.bleManager.disconnect(settings.decent_scale_id,false);
+        }
+      }
+    });
+  }
+  private __attachOnDeviceResume() {
+    this.platform.resume.subscribe(async () => {
+      const settings: Settings = this.uiSettingsStorage.getSettings();
+      if (settings.bluetooth_scale_stay_connected === false) {
+        this.__connectSmartScale();
+      }
+
+    });
   }
 
   private __setThreeDeeTouchActions() {
@@ -415,6 +489,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   private __instanceAppRating() {
+
     if (this.platform.is('cordova')) {
       const appLanguage = this.uiSettingsStorage.getSettings().language;
       AppRate.setPreferences({
@@ -438,10 +513,7 @@ export class AppComponent implements AfterViewInit {
   private async __trackNewBrew() {
 
     if (this.uiBrewHelper.canBrew()) {
-      this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.ADD);
-      const modal = await this.modalCtrl.create({component: BrewAddComponent, id: 'brew-add'});
-      await modal.present();
-      await modal.onWillDismiss();
+      await this.uiBrewHelper.addBrew();
       this.router.navigate(['/home/brews'], {replaceUrl: true});
     }
 
@@ -473,39 +545,19 @@ export class AppComponent implements AfterViewInit {
   }
 
   private async __trackNewBean() {
-    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ADD);
-    const modal = await this.modalCtrl.create({
-      component: BeansAddComponent, id: 'bean-add',
-      componentProps: {hide_toast_message: false}
-    });
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiBeanHelper.addBean();
     this.router.navigate(['/'], {replaceUrl: true});
 
   }
 
   private async __trackNewPreparation() {
-    this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.ADD);
-    const modal = await this.modalCtrl.create({
-      component: PreparationAddComponent,
-      showBackdrop: true, id: 'preparation-add', componentProps: {hide_toast_message: false}
-    });
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiPreparationHelper.addPreparation();
     this.router.navigate(['/'], {replaceUrl: true});
 
   }
 
   private async __trackNewMill() {
-    this.uiAnalytics.trackEvent(MILL_TRACKING.TITLE, MILL_TRACKING.ACTIONS.ADD);
-    const modal = await this.modalCtrl.create({
-      component: MillAddComponent,
-      cssClass: 'popover-actions',
-      id: 'mill-add',
-      componentProps: {hide_toast_message: false}
-    });
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiMillHelper.addMill();
     this.router.navigate(['/'], {replaceUrl: true});
 
   }

@@ -5,7 +5,9 @@ export default {
 
 
     ADD: 'ADD',
+    ADD_FINISH: 'ADD_FINISH',
     EDIT: 'EDIT',
+    EDIT_FINISH: 'EDIT_FINISH',
     DETAIL: 'DETAIL',
     POPOVER_ACTIONS: 'POPOVER_ACTIONS',
     DELETE: 'DELETE',

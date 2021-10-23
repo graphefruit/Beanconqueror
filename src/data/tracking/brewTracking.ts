@@ -3,9 +3,11 @@ export default {
   TITLE:'BREW',
   ACTIONS: {
 
-
+    LONG_PRESS_ADD:'LONG_PRESS_ADD',
     ADD: 'ADD',
+    ADD_FINISH:'ADD_FINISH',
     EDIT: 'EDIT',
+    EDIT_FINISH:'EDIT_FINISH',
     DETAIL: 'DETAIL',
     POPOVER_ACTIONS: 'POPOVER_ACTIONS',
     CUPPING: 'CUPPING',
@@ -16,8 +18,8 @@ export default {
     SHOW_MAP: 'SHOW_MAP',
     DELETE: 'DELETE',
     PHOTO_VIEW: 'PHOTO_VIEW',
-    SHARE: 'SHARE'
-
+    SHARE: 'SHARE',
+    BRIX_CALCULATION: 'BRIX_CALCULATION'
   }
 
 }

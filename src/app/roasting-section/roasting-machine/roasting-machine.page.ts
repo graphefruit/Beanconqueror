@@ -10,6 +10,7 @@ import {UIRoastingMachineStorage} from '../../../services/uiRoastingMachineStora
 import {RoastingMachineAddComponent} from './roasting-machine-add/roasting-machine-add.component';
 import ROASTING_MACHINE_TRACKING from '../../../data/tracking/roastingMachineTracking';
 import {UIAnalytics} from '../../../services/uiAnalytics';
+import {UIRoastingMachineHelper} from '../../../services/uiRoastingMachineHelper';
 
 @Component({
   selector: 'app-roasting-machine',
@@ -29,7 +30,8 @@ export class RoastingMachinePage implements OnInit {
                private readonly uiAlert: UIAlert,
                private readonly uiBrewStorage: UIBrewStorage,
                private readonly uiSettingsStorage: UISettingsStorage,
-               private readonly uiAnalytics: UIAnalytics) {
+               private readonly uiAnalytics: UIAnalytics,
+               private readonly uiRoastingMachineHelper: UIRoastingMachineHelper) {
 
   }
 
@@ -66,14 +68,7 @@ export class RoastingMachinePage implements OnInit {
       .sort((a, b) => a.name.localeCompare(b.name));
   }
   public async add() {
-    this.uiAnalytics.trackEvent(ROASTING_MACHINE_TRACKING.TITLE, ROASTING_MACHINE_TRACKING.ACTIONS.ADD);
-      const modal = await this.modalCtrl.create({
-        component: RoastingMachineAddComponent,
-        cssClass: 'popover-actions',
-        id: 'roasting-machine-add'
-      });
-      await modal.present();
-      await modal.onWillDismiss();
+      await this.uiRoastingMachineHelper.addRoastingMachine();
       this.loadRoastingMachines();
   }
 }

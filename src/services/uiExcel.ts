@@ -18,6 +18,8 @@ import {UIAlert} from './uiAlert';
 import {SocialSharing} from '@ionic-native/social-sharing/ngx';
 import {UIFileHelper} from './uiFileHelper';
 import {UIMillStorage} from './uiMillStorage';
+import {IBrewFlow} from '../interfaces/brew/iBrewFlow';
+import moment from 'moment';
 
 
 
@@ -57,6 +59,56 @@ export class UIExcel {
     return wb;
   }
 
+  private generateBrewFlowProfileRaw(_flow: Array<IBrewFlow>, _flowProfile: Array<{
+    value: number,
+    time: number,
+    timestamp: string,
+  }>): XLSX.WorkBook {
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    const header: Array<string> = [];
+    header.push('Timestamp');
+    header.push('Brew time');
+    header.push('Actual weight');
+    header.push('Old weight');
+    header.push('Actual smoothed weight');
+    header.push('Old smoothed weight');
+
+
+
+    const wsData: any[][] = [header];
+    for (const entry of _flow) {
+      const wbEntry: Array<any> = [
+      entry.timestamp,
+      entry.brew_time,
+      entry.actual_weight,
+      entry.old_weight,
+      entry.actual_smoothed_weight,
+      entry.old_smoothed_weight];
+      wsData.push(wbEntry);
+    }
+    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
+    XLSX.utils.book_append_sheet(wb, ws, this.translate.instant('Flow profile raw'));
+
+
+    const header_flow: Array<string> = [];
+    header.push('Timestamp');
+    header.push('Time');
+    header.push('Value');
+
+    const wsDataFlow: any[][] = [header_flow];
+    for (const entry of _flowProfile) {
+      const wbEntry: Array<any> = [
+        entry.timestamp,
+        entry.time,
+        entry.value,];
+      wsDataFlow.push(wbEntry);
+    }
+    const wsFlow: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsDataFlow);
+    XLSX.utils.book_append_sheet(wb, wsFlow, this.translate.instant('Flow profile calculated'));
+
+    return wb;
+  }
+
 
   private exportGrinders(_wb: XLSX.WorkBook) {
     const header: Array<string> = [];
@@ -77,7 +129,7 @@ export class UIExcel {
         this.uiHelper.formateDate(mill.config.unix_timestamp, 'DD.MM.YYYY HH:mm:ss'),
         mill.config.uuid
       ];
-      wsData.push(entry)
+      wsData.push(entry);
     }
 
     const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
@@ -111,7 +163,7 @@ export class UIExcel {
       ];
 
 
-      wsData.push(entry)
+      wsData.push(entry);
     }
 
     const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
@@ -224,6 +276,7 @@ export class UIExcel {
     header.push(this.translate.instant('BREW_DATA_PRESSURE_PROFILE'));
     header.push(this.translate.instant('BREW_DATA_PREPARATION_METHOD_TOOL'));
     header.push(this.translate.instant('BREW_DATA_TEMPERATURE_TIME'));
+    header.push(this.translate.instant('BREW_DATA_TIME'));
     header.push(this.translate.instant('BREW_DATA_COFFEE_BLOOMING_TIME'));
     header.push(this.translate.instant('BREW_DATA_COFFEE_FIRST_DRIP_TIME'));
     header.push(this.translate.instant('BREW_DATA_BREW_QUANTITY'));
@@ -260,6 +313,7 @@ export class UIExcel {
         brew.pressure_profile,
         brew.getPreparation().tools.filter((e)=> brew.method_of_preparation_tools.includes(e.config.uuid) === true).map((e) => e.name).join(','),
         brew.brew_temperature_time,
+        brew.brew_time,
         brew.coffee_blooming_time,
         brew.coffee_first_drip_time,
         brew.brew_quantity ,
@@ -278,18 +332,64 @@ export class UIExcel {
         brew.getPreparation().config.uuid,
         brew.getMill().config.uuid
       ];
-      wsData.push(entry)
+      wsData.push(entry);
     }
     const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
-    XLSX.utils.book_append_sheet(_wb, ws,  this.translate.instant('NAV_BREWS'))
+    XLSX.utils.book_append_sheet(_wb, ws,  this.translate.instant('NAV_BREWS'));
   }
 
+  public async exportBrewFlowProfile(_flow: Array<IBrewFlow>,_flowProfile: Array<{
+    value: number,
+    time: number,
+    timestamp: string,
+  }>) {
+    await this.uiAlert.showLoadingSpinner();
+    const wb: XLSX.WorkBook = this.generateBrewFlowProfileRaw(_flow, _flowProfile);
+
+
+
+    const filename: string = 'Beanconqueror_Flowprofile_Raw_' + moment().format('HH_mm_ss_DD_MM_YYYY').toString() + '.xlsx';
+    try {
+      /* generate Blob */
+      const wbout: ArrayBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+      const blob: Blob = new Blob([wbout], {type: 'application/octet-stream'});
+      try {
+        const downloadFile: FileEntry = await this.uiFileHelper.downloadFile(filename,blob);
+        await this.uiAlert.hideLoadingSpinner();
+        if (this.platform.is('android')) {
+          const alert =  await this.alertCtrl.create({
+            header: this.translate.instant('DOWNLOADED'),
+            subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {fileName: filename}),
+            buttons: ['OK']
+          });
+          await alert.present();
+        }
+
+      } catch (ex) {
+
+      }
+
+    } catch(e) {
+      if(e.message.match(/It was determined/)) {
+        /* in the browser, use writeFile */
+        XLSX.writeFile(wb, filename);
+      }
+      else {
+        this.uiAlert.showMessage(e.message);
+        this.uiLog.log(`Excel export - Error occured: ${e.message}`);
+      }
+    }
+    await this.uiAlert.hideLoadingSpinner();
+  }
 
   /* Export button */
   public async export() {
     await this.uiAlert.showLoadingSpinner();
     const wb: XLSX.WorkBook = this.write();
-    const filename: string = 'Beanconqueror_export.xlsx';
+
+
+    const dateTimeStr: string = this.uiHelper.formateDate(new Date().getTime() / 1000, 'DD_MM_YYYY_HH_mm_ss');
+    const filename: string = 'Beanconqueror_export_' + dateTimeStr + '.xlsx';
     try {
       /* generate Blob */
       const wbout: ArrayBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });

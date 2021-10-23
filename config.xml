@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.beanconqueror.app" version="5.4.0" xmlns="http://www.w3.org/ns/widgets">
+<widget id="com.beanconqueror.app" version="5.4.3" xmlns="http://www.w3.org/ns/widgets">
     <name>Beanconqueror</name>
     <description />
     <author email="lars.saalbach@googlemail.com" href="https://github.com/graphefruit/beanconqueror">Lars Saalbach</author>
@@ -13,6 +13,7 @@
     <allow-intent href="geo:*" />
     <allow-intent href="beanconqueror:" />
     <allow-intent href="ionic:" />
+    <allow-navigation href="*" />
     <preference name="ScrollEnabled" value="false" />
     <preference name="android-minSdkVersion" value="22" />
     <preference name="android-targetSdkVersion" value="29" />
@@ -27,6 +28,7 @@
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
     <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
     <platform name="android">
+        <preference name="Fullscreen" value="false" />
         <edit-file file="app/src/main/AndroidManifest.xml" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
             <activity android:label="webIntentFilter" android:name="com.beanconqueror.app">
                 <intent-filter android:autoVerify="true">
@@ -37,7 +39,7 @@
                 </intent-filter>
             </activity>
         </edit-file>
-        <preference name="AndroidXEnabled" value="false" />
+        <preference name="AndroidXEnabled" value="true" />
         <preference name="AndroidLaunchMode" value="standard" />
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
             <application android:networkSecurityConfig="@xml/network_security_config" />
@@ -271,7 +273,6 @@
     <plugin name="cordova-plugin-device" spec="~2.0.2" />
     <plugin name="cordova-plugin-file" spec="^6.0.2" />
     <plugin name="cordova-plugin-filechooser" spec="~1.2.0" />
-    <plugin name="cordova-plugin-filepath" spec="~1.5.5" />
     <plugin name="cordova-plugin-filepicker" spec="~1.1.6" />
     <plugin name="cordova-plugin-appminimize" spec="~1.0.1" />
     <plugin name="cordova-android-support-gradle-release" spec="^3.0.1" />

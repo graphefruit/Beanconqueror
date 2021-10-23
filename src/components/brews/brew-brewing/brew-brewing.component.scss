@@ -25,4 +25,26 @@
   }
 
 
+  ion-card.flow-profile {
+    margin:0px;
+    ion-card-header {
+      color: #FFFFFF;
+      background-color: var(--ion-color-accent) !important;
+      font-size: 18px;
+      min-height: 60px;
+      padding: 8px;
+      display: flex;
+      justify-content: space-evenly;
+      flex-direction: column;
+    }
+
+    ion-card-content {
+      padding-top: 8px;
+      color: #000000;
+      padding-bottom: 4px;
+    }
+
+  }
+
+
 }

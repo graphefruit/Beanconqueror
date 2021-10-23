@@ -90,7 +90,11 @@ export class BeanInformationComponent implements OnInit {
     let usedWeightCount: number = 0;
     const relatedBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(this.bean.config.uuid);
     for (const brew of relatedBrews) {
-      usedWeightCount += brew.grind_weight;
+      if (brew.bean_weight_in > 0) {
+        usedWeightCount += brew.bean_weight_in;
+      } else {
+        usedWeightCount += brew.grind_weight;
+      }
     }
     return usedWeightCount;
   }
@@ -121,7 +125,7 @@ export class BeanInformationComponent implements OnInit {
     const popover = await this.modalController.create({
       component: BeanPopoverActionsComponent,
       componentProps: {bean: this.bean},
-      id:'bean-popover-actions',
+      id:BeanPopoverActionsComponent.COMPONENT_ID,
       cssClass: 'popover-actions',
     });
     await popover.present();
@@ -165,29 +169,23 @@ export class BeanInformationComponent implements OnInit {
   }
 
   public async detailBean() {
-    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.DETAIL);
-    const modal = await this.modalController.create({component: BeansDetailComponent, id:'bean-detail', componentProps: {bean: this.bean}});
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiBeanHelper.detailBean(this.bean);
   }
 
   private async viewPhotos() {
     this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.PHOTO_VIEW);
     await this.uiImage.viewPhotos(this.bean);
   }
-  public beansConsumed() {
+  public async beansConsumed() {
     this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ARCHIVE);
     this.bean.finished = true;
-    this.uiBeanStorage.update(this.bean);
+    await this.uiBeanStorage.update(this.bean);
     this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');
-    this.resetSettings();
+    await this.resetSettings();
   }
 
   public async add() {
-    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ADD);
-    const modal = await this.modalController.create({component:BeansAddComponent,id:'bean-add'});
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiBeanHelper.addBean();
   }
 
   public async longPressEditBean(event) {
@@ -197,10 +195,7 @@ export class BeanInformationComponent implements OnInit {
     this.beanAction.emit([BEAN_ACTION.EDIT, this.bean]);
   }
   public async editBean() {
-    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.EDIT);
-    const modal = await this.modalController.create({component:BeansEditComponent, id:'bean-edit',  componentProps: {bean : this.bean}});
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiBeanHelper.editBean(this.bean);
   }
 
   public async shareBean() {
@@ -217,8 +212,8 @@ export class BeanInformationComponent implements OnInit {
             this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.DELETE);
             await this.__deleteBean();
             this.uiToast.showInfoToast('TOAST_BEAN_DELETED_SUCCESSFULLY');
-            this.resetSettings();
-            resolve();
+            await this.resetSettings();
+            resolve(undefined);
           },
           () => {
             // No
@@ -229,17 +224,16 @@ export class BeanInformationComponent implements OnInit {
   }
 
 
-  private resetSettings() {
+  private async resetSettings() {
     const settings: Settings = this.uiSettingsStorage.getSettings();
     settings.resetFilter();
-    this.uiSettingsStorage.saveSettings(settings);
+    await this.uiSettingsStorage.saveSettings(settings);
   }
 
   public async repeatBean() {
     this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.REPEAT);
-    const modal = await this.modalController.create({component: BeansAddComponent, id:'bean-add', componentProps: {bean_template: this.bean}});
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiBeanHelper.repeatBean(this.bean);
+
   }
 
 

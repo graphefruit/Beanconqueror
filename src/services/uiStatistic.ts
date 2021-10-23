@@ -178,7 +178,13 @@ export class UIStatistic {
       if (brews.length > 0) {
         let sum = 0;
         for (const brew of brews) {
-          sum += +brew.grind_weight;
+          if (brew.bean_weight_in > 0 ) {
+            sum += +brew.bean_weight_in;
+          } else {
+            sum += +brew.grind_weight;
+          }
+
+
         }
 
         return Math.round((sum / 1000) * 100) / 100;

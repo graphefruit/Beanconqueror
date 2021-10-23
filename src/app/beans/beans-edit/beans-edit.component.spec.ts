@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {BeansEditComponent} from './beans-edit.component';
 import {TranslateModule} from '@ngx-translate/core';
@@ -21,7 +21,7 @@ describe('BeansEditComponent', () => {
   let component: BeansEditComponent;
   let fixture: ComponentFixture<BeansEditComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [TranslateModule.forRoot(), FormsModule, IonicStorageModule.forRoot(), CommonModule, IonicModule],
       declarations: [BeansEditComponent, KeysPipe, AsyncImageComponent],
