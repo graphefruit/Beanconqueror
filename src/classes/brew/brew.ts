@@ -271,11 +271,19 @@ export class Brew implements IBrew {
 
   public getExtractionYield(): string {
     const grindWeight: number = this.grind_weight;
-    const brewQuantity: number = this.brew_beverage_quantity;
+    const brewQuantity: number = this.brew_quantity;
+    const brewBeverageQuantity: number = this.brew_beverage_quantity;
     const tds: number = this.tds;
 
+    if (this.getPreparation().style_type === PREPARATION_STYLE_TYPE.FULL_IMMERSION && brewQuantity > 0)
+    {
+      // #262
+      // ey=(tds*total water)/dose
+      return this.toFixedIfNecessary(((brewQuantity * tds) / grindWeight),2).toString();
 
-    return this.toFixedIfNecessary(((brewQuantity * tds) / grindWeight),2).toString();
+    }
+
+    return this.toFixedIfNecessary(((brewBeverageQuantity * tds) / grindWeight),2).toString();
 
   }
 
