@@ -4,9 +4,9 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { DecentTestPageRoutingModule } from './decent-test-routing.module';
+import { ScaleTestPageRoutingModule } from './scale-test-routing.module';
 
-import { DecentTestPage } from './decent-test.page';
+import { ScaleTestPage } from './scale-test.page';
 import {SharedModule} from '../shared/shared.module';
 
 @NgModule({
@@ -14,9 +14,9 @@ import {SharedModule} from '../shared/shared.module';
     CommonModule,
     FormsModule,
     IonicModule,
-    DecentTestPageRoutingModule,
+    ScaleTestPageRoutingModule,
     SharedModule,
   ],
   declarations: []
 })
-export class DecentTestPageModule {}
+export class ScaleTestPageModule {}

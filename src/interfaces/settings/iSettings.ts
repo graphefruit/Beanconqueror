@@ -1,3 +1,4 @@
+import { ScaleType } from './../../classes/devices';
 /** Interfaces */
 /** Enums */
 import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
@@ -57,7 +58,8 @@ export interface ISettings {
 
   config: IConfig;
 
-  decent_scale_id: string;
+  scale_id: string;
+  scale_type: ScaleType;
   bluetooth_scale_stay_connected: boolean;
 
   currency: string;

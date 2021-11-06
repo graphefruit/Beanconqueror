@@ -1,66 +1,69 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {AlertController, ModalController, Platform} from '@ionic/angular';
+import BeanconquerorSettingsDummy from '../../assets/BeanconquerorTestData.json';
+import {Bean} from '../../classes/bean/bean';
+import {BluetoothScale} from './../../classes/devices/bluetoothDevice';
+import {Brew} from '../../classes/brew/brew';
 import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
+import {DirectoryEntry, FileEntry} from '@ionic-native/file';
+import {FileChooser} from '@ionic-native/file-chooser/ngx';
+import {File} from '@ionic-native/file/ngx';
+import {FilePath} from '@ionic-native/file-path/ngx';
 import {IBean} from '../../interfaces/bean/iBean';
 import {IBrew} from '../../interfaces/brew/iBrew';
-import {AlertController, ModalController, Platform} from '@ionic/angular';
-import {UISettingsStorage} from '../../services/uiSettingsStorage';
-import {UIStorage} from '../../services/uiStorage';
-import {UIHelper} from '../../services/uiHelper';
-import {FileChooser} from '@ionic-native/file-chooser/ngx';
-import {FilePath} from '@ionic-native/file-path/ngx';
-import {UIAlert} from '../../services/uiAlert';
-import {UIPreparationStorage} from '../../services/uiPreparationStorage';
-import {UIBeanStorage} from '../../services/uiBeanStorage';
-import {UIMillStorage} from '../../services/uiMillStorage';
 import {IOSFilePicker} from '@ionic-native/file-picker/ngx';
-import {SocialSharing} from '@ionic-native/social-sharing/ngx';
-import {DirectoryEntry, FileEntry} from '@ionic-native/file';
-import {File} from '@ionic-native/file/ngx';
-import {UIBrewStorage} from '../../services/uiBrewStorage';
-import {Brew} from '../../classes/brew/brew';
+import {ISettings} from '../../interfaces/settings/iSettings';
 import {Mill} from '../../classes/mill/mill';
 import {Settings} from '../../classes/settings/settings';
-import {UILog} from '../../services/uiLog';
-import {TranslateService} from '@ngx-translate/core';
-import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
-import {Subject, Subscription} from 'rxjs';
+import {SocialSharing} from '@ionic-native/social-sharing/ngx';
 import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
+import {Subject, Subscription} from 'rxjs';
+import {TranslateService} from '@ngx-translate/core';
+import {UIAlert} from '../../services/uiAlert';
 import {UIAnalytics} from '../../services/uiAnalytics';
-
-import BeanconquerorSettingsDummy from '../../assets/BeanconquerorTestData.json';
-import {ISettings} from '../../interfaces/settings/iSettings';
-import {Bean} from '../../classes/bean/bean';
+import {UIBeanStorage} from '../../services/uiBeanStorage';
+import {UIBrewStorage} from '../../services/uiBrewStorage';
+import {UIHelper} from '../../services/uiHelper';
+import {UILog} from '../../services/uiLog';
+import {UIMillStorage} from '../../services/uiMillStorage';
+import {UIPreparationStorage} from '../../services/uiPreparationStorage';
+import {UISettingsStorage} from '../../services/uiSettingsStorage';
+import {UIStorage} from '../../services/uiStorage';
 
 
 /** Third party */
-import moment from 'moment';
-import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
-import {UIUpdate} from '../../services/uiUpdate';
-import {UiVersionStorage} from '../../services/uiVersionStorage';
-import {UIExcel} from '../../services/uiExcel';
-import {UIHealthKit} from '../../services/uiHealthKit';
-import {Preparation} from '../../classes/preparation/preparation';
-import {GreenBean} from '../../classes/green-bean/green-bean';
-import {RoastingMachine} from '../../classes/roasting-machine/roasting-machine';
-import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
 import {AnalyticsPopoverComponent} from '../../popover/analytics-popover/analytics-popover.component';
-import {UIRoastingMachineStorage} from '../../services/uiRoastingMachineStorage';
-import {UIGreenBeanStorage} from '../../services/uiGreenBeanStorage';
-import {IPreparation} from '../../interfaces/preparation/iPreparation';
-import {IGreenBean} from '../../interfaces/green-bean/iGreenBean';
-import {IRoastingMachine} from '../../interfaces/roasting-machine/iRoastingMachine';
-import {IMill} from '../../interfaces/mill/iMill';
-import {UIWaterStorage} from '../../services/uiWaterStorage';
-import {Water} from '../../classes/water/water';
+import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
 import {BleManagerService} from '../../services/bleManager/ble-manager.service';
-import {UIToast} from '../../services/uiToast';
 import {CurrencyService} from '../../services/currencyService/currency.service';
 import DecentScale from '../../classes/devices/decentScale';
+import {GreenBean} from '../../classes/green-bean/green-bean';
+import {IGreenBean} from '../../interfaces/green-bean/iGreenBean';
+import {IMill} from '../../interfaces/mill/iMill';
+import {IPreparation} from '../../interfaces/preparation/iPreparation';
+import {IRoastingMachine} from '../../interfaces/roasting-machine/iRoastingMachine';
+import moment from 'moment';
+import {Preparation} from '../../classes/preparation/preparation';
+import {RoastingMachine} from '../../classes/roasting-machine/roasting-machine';
+import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
+import {UIExcel} from '../../services/uiExcel';
+import {UIGreenBeanStorage} from '../../services/uiGreenBeanStorage';
+import {UIHealthKit} from '../../services/uiHealthKit';
+import {UIRoastingMachineStorage} from '../../services/uiRoastingMachineStorage';
+import {UIToast} from '../../services/uiToast';
+import {UIUpdate} from '../../services/uiUpdate';
+import {UiVersionStorage} from '../../services/uiVersionStorage';
+import {UIWaterStorage} from '../../services/uiWaterStorage';
+import {Water} from '../../classes/water/water';
+
+
 declare var cordova: any;
 declare var device: any;
 
 
 declare var window: any;
+
 @Component({
   selector: 'settings',
   templateUrl: './settings.page.html',
@@ -98,13 +101,14 @@ export class SettingsPage implements OnInit {
     }
     this.actualScaleWeight = undefined;
   }
+
   private async subscribeSmartScale() {
     if (this.scaleWeightSubscription === undefined) {
-      const scale: DecentScale = this.bleManager.getDecentScale();
+      const scale: BluetoothScale = this.bleManager.getScale();
       if (scale) {
-        await scale.setLed(true,false);
-        this.scaleWeightSubscription  = scale.weightChange.subscribe((_val) => {
-          this.actualScaleWeight = _val.ACTUAL_WEIGHT;
+        await scale.setLed(true, false);
+        this.scaleWeightSubscription = scale.weightChange.subscribe((_val) => {
+          this.actualScaleWeight = _val.actual;
         });
       }
 
@@ -117,7 +121,7 @@ export class SettingsPage implements OnInit {
   }
 
 
-  private  __cleanupImportSettingsData(_data: ISettings | any): void {
+  private __cleanupImportSettingsData(_data: ISettings | any): void {
     // We need to remove the filter because of new data here.
     if (_data !== undefined) {
       _data.brew_filter = {};
@@ -157,7 +161,7 @@ export class SettingsPage implements OnInit {
               private readonly bleManager: BleManagerService,
               private readonly uiToast: UIToast,
               private readonly currencyService: CurrencyService
-              ) {
+  ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
       .pipe(debounceTime(500), distinctUntilChanged())
@@ -167,14 +171,12 @@ export class SettingsPage implements OnInit {
 
     this.currencies = this.currencyService.getCurrencies();
 
-    this.uiHealthKit.isAvailable().then( () => {
+    this.uiHealthKit.isAvailable().then(() => {
       this.isHealthSectionAvailable = true;
     }, () => {
-        this.isHealthSectionAvailable = false;
-      });
+      this.isHealthSectionAvailable = false;
+    });
   }
-
-
 
 
   public async ngOnInit() {
@@ -182,65 +184,63 @@ export class SettingsPage implements OnInit {
 
   }
 
-  public async findAndConnectDecentScale(_retry: boolean = false) {
-
+  public async findAndConnectScale(_retry: boolean = false) {
     const hasLocationPermission: boolean = await this.bleManager.hasLocationPermission();
     if (!hasLocationPermission) {
-      await this.uiAlert.showMessage('SCALE.REQUEST_PERMISSION.LOCATION',undefined,undefined,true);
+      await this.uiAlert.showMessage('SCALE.REQUEST_PERMISSION.LOCATION', undefined, undefined, true);
       await this.bleManager.requestLocationPermissions();
     }
 
     const hasBluetoothPermission: boolean = await this.bleManager.hasBluetoothPermission();
     if (!hasBluetoothPermission) {
-      await this.uiAlert.showMessage('SCALE.REQUEST_PERMISSION.BLUETOOTH',undefined,undefined,true);
+      await this.uiAlert.showMessage('SCALE.REQUEST_PERMISSION.BLUETOOTH', undefined, undefined, true);
       await this.bleManager.requestBluetoothPermissions();
     }
 
 
     const bleEnabled: boolean = await this.bleManager.isBleEnabled();
     if (bleEnabled === false) {
-      await this.uiAlert.showMessage('SCALE.BLUETOOTH_NOT_ENABLED',undefined,undefined,true);
+      await this.uiAlert.showMessage('SCALE.BLUETOOTH_NOT_ENABLED', undefined, undefined, true);
       return;
     }
 
 
     await this.uiAlert.showLoadingSpinner();
-    this.uiAlert.setLoadingSpinnerMessage('SCALE.BLUETOOTH_SCAN_RUNNING',true);
-    const scaleDeviceId: any = await this.bleManager.tryToFindDecentScale();
-    if (scaleDeviceId) {
+    this.uiAlert.setLoadingSpinnerMessage('SCALE.BLUETOOTH_SCAN_RUNNING', true);
+    const scale = await this.bleManager.tryToFindScale();
+    if (scale) {
       await this.uiAlert.hideLoadingSpinner();
       // We don't need to retry for iOS, because we just did scan before.
-      this.bleManager.autoConnectDecentScale(scaleDeviceId,false);
-      this.settings.decent_scale_id = scaleDeviceId;
-      this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.DECENT_SCALE);
+      this.bleManager.autoConnectScale(scale.type, scale.id, false);
+      this.settings.scale_id = scale.id;
+      this.settings.scale_type = scale.type;
+      this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.SCALE);
       await this.saveSettings();
 
       await this.subscribeSmartScale();
 
     } else {
       await this.uiAlert.hideLoadingSpinner();
-      this.uiAlert.showMessage('SCALE.CONNECTION_NOT_ESTABLISHED',undefined,undefined,true);
+      this.uiAlert.showMessage('SCALE.CONNECTION_NOT_ESTABLISHED', undefined, undefined, true);
     }
   }
-  public async disconnectDecentScale() {
-    const disconnected: boolean = await this.bleManager.disconnect(this.settings.decent_scale_id);
+
+  public async disconnectScale() {
+    const disconnected: boolean = await this.bleManager.disconnect(this.settings.scale_id);
     if (disconnected) {
-      this.settings.decent_scale_id = '';
+      this.settings.scale_id = '';
+      this.settings.scale_type = null;
       await this.saveSettings();
       this.unsubscribeSmartScale();
     }
   }
-  public async retryConnectDecentScale() {
-    await this.findAndConnectDecentScale(true);
+
+  public async retryConnectScale() {
+    await this.findAndConnectScale(true);
   }
 
-  public isDecentScaleConnected(): boolean {
-    const decentScale: DecentScale = this.bleManager.getDecentScale();
-    if (decentScale !== null) {
-      return true;
-    } else {
-      return false;
-    }
+  public isScaleConnected(): boolean {
+    return this.bleManager.getScale() !== null;
   }
 
 
@@ -258,18 +258,18 @@ export class SettingsPage implements OnInit {
             await this.uiPreparationStorage.update(prep);
           }
         }
-      }
-      catch (ex) {
+      } catch (ex) {
 
       }
 
       await this.uiAlert.hideLoadingSpinner();
     }
   }
+
   public checkHealthPlugin() {
     // #200 - Didn't save the settings
     if (this.settings.track_caffeine_consumption === false) {
-      this.uiAlert.showConfirm('HEALTH_KIT_QUESTION_MESSAGE','HEALTH_KIT_QUESTION_TITLE', true).then( () => {
+      this.uiAlert.showConfirm('HEALTH_KIT_QUESTION_MESSAGE', 'HEALTH_KIT_QUESTION_TITLE', true).then(() => {
         this.uiHealthKit.requestAuthorization().then(async () => {
           // Allowed
           this.settings.track_caffeine_consumption = true;
@@ -289,7 +289,6 @@ export class SettingsPage implements OnInit {
   }
 
 
-
   public checkCoordinates() {
     if (this.platform.is('android')) {
       // Request permission,
@@ -297,14 +296,15 @@ export class SettingsPage implements OnInit {
         this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION).then((_status) => {
         }, () => {
         });
-      },() => {});
+      }, () => {
+      });
     }
   }
 
-    public async changeBrewRating() {
-      this.settings.resetFilter();
-      await this.saveSettings();
-    }
+  public async changeBrewRating() {
+    this.settings.resetFilter();
+    await this.saveSettings();
+  }
 
   public async saveSettings() {
     this.changeDetectorRef.detectChanges();
@@ -324,7 +324,7 @@ export class SettingsPage implements OnInit {
   public setLanguage(): void {
     this.translate.setDefaultLang(this.settings.language);
     this.translate.use(this.settings.language);
-    this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.SET_LANGUAGE.CATEGORY,SETTINGS_TRACKING.ACTIONS.SET_LANGUAGE.DATA.LANGUAGE, this.settings.language);
+    this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.SET_LANGUAGE.CATEGORY, SETTINGS_TRACKING.ACTIONS.SET_LANGUAGE.DATA.LANGUAGE, this.settings.language);
     this.uiSettingsStorage.saveSettings(this.settings);
     moment.locale(this.settings.language);
   }
@@ -342,22 +342,21 @@ export class SettingsPage implements OnInit {
               );
               const newPath: string = await this.filePath.resolveNativePath(fileEntry.nativeURL);
               let importPath: string = '';
-              if (newPath.lastIndexOf('/Download/')>-1) {
-                let pathFromDownload = newPath.substr(0,newPath.lastIndexOf('/Download/'));
+              if (newPath.lastIndexOf('/Download/') > -1) {
+                let pathFromDownload = newPath.substr(0, newPath.lastIndexOf('/Download/'));
                 const decodedURI = decodeURIComponent(uri);
                 pathFromDownload = pathFromDownload + decodedURI.substring(decodedURI.lastIndexOf('/Download/'));
                 importPath = pathFromDownload;
               } else {
                 importPath = newPath;
               }
-              importPath = importPath.substring(0,importPath.lastIndexOf('/') +1);
-              this.__readAndroidJSONFile(fileEntry,importPath).then(() => {
+              importPath = importPath.substring(0, importPath.lastIndexOf('/') + 1);
+              this.__readAndroidJSONFile(fileEntry, importPath).then(() => {
                 // nothing todo
               }, (_err) => {
                 this.uiAlert.showMessage(this.translate.instant('ERROR_ON_FILE_READING') + ' (' + JSON.stringify(_err) + ')');
               });
-            }
-            catch (ex) {
+            } catch (ex) {
               this.uiAlert.showMessage(this.translate.instant('FILE_NOT_FOUND_INFORMATION') + ' (' + JSON.stringify(ex.message) + ')');
             }
           });
@@ -385,7 +384,7 @@ export class SettingsPage implements OnInit {
     }
   }
 
-  public isMobile (): boolean {
+  public isMobile(): boolean {
     return (this.platform.is('android') || this.platform.is('ios'));
   }
 
@@ -399,7 +398,7 @@ export class SettingsPage implements OnInit {
         ...this.uiGreenBeanStorage.getAllEntries(),
         ...this.uiRoastingMachineStorage.getAllEntries()];
 
-    await this._exportAttachments(exportObjects)
+    await this._exportAttachments(exportObjects);
   }
 
   public async export() {
@@ -413,13 +412,12 @@ export class SettingsPage implements OnInit {
       this.uiHelper.exportJSON('Beanconqueror.json', JSON.stringify(_data)).then(async (_fileEntry: FileEntry) => {
 
         if (this.platform.is('cordova')) {
-          if (this.platform.is('android'))
-          {
+          if (this.platform.is('android')) {
 
             await this.exportAttachments();
             await this.uiAlert.hideLoadingSpinner();
 
-            const alert =  await this.alertCtrl.create({
+            const alert = await this.alertCtrl.create({
               header: this.translate.instant('DOWNLOADED'),
               subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {fileName: _fileEntry.name}),
               buttons: ['OK']
@@ -441,7 +439,7 @@ export class SettingsPage implements OnInit {
         await this.uiAlert.hideLoadingSpinner();
       });
 
-    },async () => {
+    }, async () => {
       await this.uiAlert.hideLoadingSpinner();
     });
 
@@ -451,8 +449,7 @@ export class SettingsPage implements OnInit {
     this.uiExcel.export();
   }
 
-  private async _exportAttachments(_storedData: Array<Bean> | Array<Brew> | Array<Preparation> | Array<Mill> | Array<GreenBean> | Array<RoastingMachine> | Array<Water>)
-  {
+  private async _exportAttachments(_storedData: Array<Bean> | Array<Brew> | Array<Preparation> | Array<Mill> | Array<GreenBean> | Array<RoastingMachine> | Array<Water>) {
     for (const entry of _storedData) {
       for (const attachment of entry.attachments) {
         await this._exportFile(attachment);
@@ -461,55 +458,54 @@ export class SettingsPage implements OnInit {
   }
 
   private async _exportFile(_filePath) {
-      let path: string;
-      let fileName: string;
-      path = this.file.dataDirectory;
-      fileName = _filePath;
-      if (fileName.startsWith('/')) {
-        fileName = fileName.slice(1);
-      }
-      let storageLocation: string = '';
+    let path: string;
+    let fileName: string;
+    path = this.file.dataDirectory;
+    fileName = _filePath;
+    if (fileName.startsWith('/')) {
+      fileName = fileName.slice(1);
+    }
+    let storageLocation: string = '';
 
-      switch (device.platform) {
+    switch (device.platform) {
 
-        case 'Android':
-          storageLocation = cordova.file.externalRootDirectory;
-          break;
-        case 'iOS':
-          storageLocation = cordova.file.documentsDirectory;
-          break;
-      }
+      case 'Android':
+        storageLocation = cordova.file.externalRootDirectory;
+        break;
+      case 'iOS':
+        storageLocation = cordova.file.documentsDirectory;
+        break;
+    }
 
-      try {
-        const fileSystem: any = await new Promise(async (resolve) =>
-          await window.resolveLocalFileSystemURL(storageLocation, resolve)
-        );
+    try {
+      const fileSystem: any = await new Promise(async (resolve) =>
+        await window.resolveLocalFileSystemURL(storageLocation, resolve)
+      );
 
-        const directory: DirectoryEntry = await new Promise(async (resolve) =>
-          await fileSystem.getDirectory('Download', {
-            create: true,
-            exclusive: false
-          }, resolve)
-        );
-        const exportDirectory: DirectoryEntry = await new Promise(async (resolve) =>
-          await directory.getDirectory('Beanconqueror_export', {
-            create: true,
-            exclusive: false
-          }, resolve)
-        );
-        await this.file.copyFile(path, fileName, exportDirectory.nativeURL, fileName);
-      } catch(ex){
+      const directory: DirectoryEntry = await new Promise(async (resolve) =>
+        await fileSystem.getDirectory('Download', {
+          create: true,
+          exclusive: false
+        }, resolve)
+      );
+      const exportDirectory: DirectoryEntry = await new Promise(async (resolve) =>
+        await directory.getDirectory('Beanconqueror_export', {
+          create: true,
+          exclusive: false
+        }, resolve)
+      );
+      await this.file.copyFile(path, fileName, exportDirectory.nativeURL, fileName);
+    } catch (ex) {
 
-      }
+    }
 
 
   }
 
-  private async _importFiles(_storedData: Array<Bean> | Array<Brew>| Array<Preparation> | Array<Mill> | Array<GreenBean> | Array<RoastingMachine> | Array<Water>,_importPath: string)
-  {
+  private async _importFiles(_storedData: Array<Bean> | Array<Brew> | Array<Preparation> | Array<Mill> | Array<GreenBean> | Array<RoastingMachine> | Array<Water>, _importPath: string) {
     for (const entry of _storedData) {
       for (const attachment of entry.attachments) {
-        await this._importFile(attachment,_importPath);
+        await this._importFile(attachment, _importPath);
       }
     }
   }
@@ -537,17 +533,15 @@ export class SettingsPage implements OnInit {
     try {
       try {
         // extra catch because maybe file is not existing
-        await this.file.removeFile(path,fileName);
-      }
-      catch (ex){
+        await this.file.removeFile(path, fileName);
+      } catch (ex) {
 
       }
-      await this.file.copyFile(storageLocation,fileName,path,fileName)
-    } catch(ex){
+      await this.file.copyFile(storageLocation, fileName, path, fileName);
+    } catch (ex) {
       this.uiLog.error('Import file ' + ex.message);
     }
   }
-
 
 
   /* tslint:disable */
@@ -579,12 +573,12 @@ export class SettingsPage implements OnInit {
   }
 
   /* tslint:enable */
-  private async __readAndroidJSONFile (_fileEntry: FileEntry,_importPath : string): Promise<any> {
+  private async __readAndroidJSONFile(_fileEntry: FileEntry, _importPath: string): Promise<any> {
     return new Promise((resolve, reject) => {
       _fileEntry.file(async (file) => {
         const reader = new FileReader();
         reader.onloadend = (event: Event) => {
-          this.__importJSON(reader.result as string,_importPath);
+          this.__importJSON(reader.result as string, _importPath);
 
         };
         reader.onerror = (event: Event) => {
@@ -598,11 +592,11 @@ export class SettingsPage implements OnInit {
   }
 
   /* tslint:enable */
-  private async __readJSONFile (path, file): Promise<any> {
+  private async __readJSONFile(path, file): Promise<any> {
     return new Promise((resolve, reject) => {
       this.file.readAsText(path, file)
         .then((content) => {
-          this.__importJSON(content,path);
+          this.__importJSON(content, path);
         })
         .catch((err) => {
           reject(err);
@@ -612,7 +606,7 @@ export class SettingsPage implements OnInit {
   }
 
 
-  private async __importJSON(_content: string,_importPath: string) {
+  private async __importJSON(_content: string, _importPath: string) {
     const parsedContent = JSON.parse(_content);
 
     const isIOS: boolean = this.platform.is('ios');
@@ -646,7 +640,7 @@ export class SettingsPage implements OnInit {
       parsedContent[this.uiBrewStorage.getDBPath()] &&
       parsedContent[this.uiSettingsStorage.getDBPath()]) {
 
-      if (isIOS){
+      if (isIOS) {
         this.__cleanupAttachmentData(parsedContent[this.uiBeanStorage.getDBPath()]);
         this.__cleanupAttachmentData(parsedContent[this.uiBrewStorage.getDBPath()]);
 
@@ -681,21 +675,21 @@ export class SettingsPage implements OnInit {
             this.__initializeSettings();
 
             if (!isIOS) {
-              const brewsData:Array<Brew> = this.uiBrewStorage.getAllEntries();
-              const beansData:Array<Bean> = this.uiBeanStorage.getAllEntries();
-              const preparationData:Array<Preparation> = this.uiPreparationStorage.getAllEntries();
-              const millData:Array<Mill> = this.uiMillStorage.getAllEntries();
-              const greenBeanData:Array<GreenBean> = this.uiGreenBeanStorage.getAllEntries();
-              const roastingMachineData:Array<RoastingMachine> = this.uiRoastingMachineStorage.getAllEntries();
-              const waterData:Array<Water> = this.uiWaterStorage.getAllEntries();
+              const brewsData: Array<Brew> = this.uiBrewStorage.getAllEntries();
+              const beansData: Array<Bean> = this.uiBeanStorage.getAllEntries();
+              const preparationData: Array<Preparation> = this.uiPreparationStorage.getAllEntries();
+              const millData: Array<Mill> = this.uiMillStorage.getAllEntries();
+              const greenBeanData: Array<GreenBean> = this.uiGreenBeanStorage.getAllEntries();
+              const roastingMachineData: Array<RoastingMachine> = this.uiRoastingMachineStorage.getAllEntries();
+              const waterData: Array<Water> = this.uiWaterStorage.getAllEntries();
 
-              await this._importFiles(brewsData,_importPath);
-              await this._importFiles(beansData,_importPath);
-              await this._importFiles(preparationData,_importPath);
-              await this._importFiles(millData,_importPath);
-              await this._importFiles(greenBeanData,_importPath);
-              await this._importFiles(roastingMachineData,_importPath);
-              await this._importFiles(waterData,_importPath);
+              await this._importFiles(brewsData, _importPath);
+              await this._importFiles(beansData, _importPath);
+              await this._importFiles(preparationData, _importPath);
+              await this._importFiles(millData, _importPath);
+              await this._importFiles(greenBeanData, _importPath);
+              await this._importFiles(roastingMachineData, _importPath);
+              await this._importFiles(waterData, _importPath);
             }
 
             if (this.uiBrewStorage.getAllEntries().length > 0 && this.uiMillStorage.getAllEntries().length <= 0) {
@@ -736,12 +730,13 @@ export class SettingsPage implements OnInit {
       this.uiAlert.showMessage(this.translate.instant('INVALID_FILE_DATA'));
     }
   }
+
   private __initializeSettings(): void {
     this.settings = this.uiSettingsStorage.getSettings();
 
   }
 
-  private async __reinitializeStorages (): Promise<any> {
+  private async __reinitializeStorages(): Promise<any> {
     return new Promise(async (resolve) => {
 
       await this.uiBeanStorage.reinitializeStorage();
@@ -785,7 +780,6 @@ export class SettingsPage implements OnInit {
       });
     });
   }
-
 
 
 }
