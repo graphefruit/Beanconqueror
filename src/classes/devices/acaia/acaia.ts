@@ -2,7 +2,7 @@
 
 import {Characteristic} from '../ble.types';
 import {MAGIC1, MAGIC2, SCALE_CHARACTERISTIC_UUID, SCALE_SERVICE_UUID} from './constants';
-import {Button, ParsedMessage, MessageType, ScaleMessageType, Units, WorkerResult, WorkerResultType, DEBUG} from './common';
+import {Button, ParsedMessage, MessageType, ScaleMessageType, Units, WorkerResult, DecoderResultType, DEBUG} from './common';
 import {memoize} from 'lodash';
 
 declare var ble;
@@ -22,34 +22,61 @@ const log = (...args) => {
   }
 };
 
-export class DecodeWorker {
-  private readonly worker: Worker;
+// DecodeWorkers receives array buffer from heartbeat notification and emits parsed messages if any
+class DecoderWorker {
+  private worker: Worker;
+  private readonly decodeCallback: (msgs: ParsedMessage[]) => any;
+  private loading: Promise<unknown>;
 
   constructor(callback: (msgs: ParsedMessage[]) => any) {
+    this.decodeCallback = callback;
     if (typeof Worker !== 'undefined') {
-      // Create a new
       this.worker = new Worker(new URL('./decode.worker', import.meta.url));
-      this.worker.onmessage = ({data}) => {
-        if (data instanceof Object && data.hasOwnProperty('type') && data.hasOwnProperty('data')) {
-          switch ((data as WorkerResult).type) {
-            case WorkerResultType.LOG:
-              log(...data.data);
-              break;
-            case WorkerResultType.DECODE_RESULT:
-              callback(data.data);
-              break;
-          }
-        }
-      };
+      this.worker.onmessage = this.handleMessage.bind(this);
     } else {
-      throw new Error('web workers not supported');
-      // Web workers are not supported in this environment.
-      // You should add a fallback so that your program still executes correctly.
+      // fallback to running in setTimeout
+      // dynamically imoprt './decoder' to prevent webpack including the code when we have Workers
+      this.loading = import('./decoder')
+        .then(({Decoder}) => {
+          const decoder = new Decoder(log);
+          // @ts-ignore
+          this.worker = {
+            postMessage: (message) => {
+              // pretend that we are doing it in parallel
+              setTimeout(() => {
+                const result = decoder.process(message);
+                if (result) {
+                  setTimeout(() => {
+                    this.handleMessage({data: result});
+                  });
+                }
+              });
+            },
+          };
+        })
+        .catch(console.error.bind(console));
     }
   }
 
   public addBuffer(buffer: ArrayBuffer) {
-    this.worker.postMessage(buffer, [buffer]);
+    if (this.worker) {
+      this.worker.postMessage(buffer, [buffer]);
+    } else {
+      this.loading.then(() => this.addBuffer(buffer));
+    }
+  }
+
+  private handleMessage({data}) {
+    if (data instanceof Object && data.hasOwnProperty('type') && data.hasOwnProperty('data')) {
+      switch ((data as WorkerResult).type) {
+        case DecoderResultType.LOG:
+          log(...data.data);
+          break;
+        case DecoderResultType.DECODE_RESULT:
+          this.decodeCallback(data.data);
+          break;
+      }
+    }
   }
 }
 
@@ -57,10 +84,12 @@ export class AcaiaScale {
   private readonly device_id: string;
   private char_uuid: string;
   private weight_uuid: string;
+
+  // TODO(mike1808) Pyxis is not supported right now
   private isPyxisStyle: boolean;
   private readonly characteristics: Characteristic[];
 
-  private worker: DecodeWorker;
+  private worker: DecoderWorker;
 
   private connected: boolean;
   private packet: Uint8Array;
@@ -110,7 +139,6 @@ export class AcaiaScale {
   }
 
   public getElapsedTime(): number {
-    /* Return the time displayed on the timer, in seconds */
     if (this.timer_running) {
       return Date.now() - this.timer_start_time + this.transit_delay;
     } else {
@@ -129,11 +157,10 @@ export class AcaiaScale {
       console.error('failed to set MTU', e);
     }
 
-    this.worker = new DecodeWorker(this.messageParseCallback.bind(this));
+    this.worker = new DecoderWorker(this.messageParseCallback.bind(this));
     ble.startNotification(this.device_id, this.weight_uuid, this.char_uuid, this.handleNotification.bind(this));
     await this.write(new Uint8Array([0, 1]).buffer);
     this.notificationsReady();
-    // time.sleep(0.5);
   }
 
   public async disconnect() {
@@ -241,9 +268,9 @@ export class AcaiaScale {
   }
 
   private write(data: ArrayBuffer, withoutResponse = false) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       ble[withoutResponse ? 'writeWithoutResponse' : 'write'](this.device_id, this.weight_uuid, this.char_uuid, data,
-        resolve, reject
+        resolve, resolve  // resolve for both cases because sometimes write says it's an error but in reality it's fine
       );
     });
   }
@@ -307,7 +334,7 @@ const encodeNotificationRequest = memoize((): ArrayBuffer => {
     2,  // timer
     5,  // timer argument (number heartbeats between timer messages)
     3,  // key
-    4  // setting
+    4   // setting
   ];
   return encodeEventData(payload);
 });

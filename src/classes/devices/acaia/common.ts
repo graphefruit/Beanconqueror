@@ -1,4 +1,4 @@
-export const DEBUG = false
+export const DEBUG = false;
 
 export enum ScaleMessageType {
   WEIGHT = 5,
@@ -43,20 +43,20 @@ export interface Settings {
 
 export type ParsedMessage = Settings | Message;
 
-export enum WorkerResultType {
+export enum DecoderResultType {
   LOG,
   DECODE_RESULT,
   ENCODE_RESULT,
 }
 
-export interface WorkerDecodeResult {
-  type: WorkerResultType.DECODE_RESULT;
+export interface DecoderResult {
+  type: DecoderResultType.DECODE_RESULT;
   data: ParsedMessage[];
 }
 
-export interface WorkerLog {
-  type: WorkerResultType.LOG;
+export interface DecoderLog {
+  type: DecoderResultType.LOG;
   data: unknown[];
 }
 
-export type WorkerResult = WorkerLog | WorkerDecodeResult;
+export type WorkerResult = DecoderLog | DecoderResult;
