@@ -28,11 +28,9 @@ export class BleManagerService {
     this.ready = true;
   }
 
-  private async stopScanning() {
-    await ble.stopScan(() => {
-
-    }, () => {
-
+  private stopScanning() {
+    return new Promise((resolve, reject) => {
+      return ble.stopScan(resolve, reject);
     });
   }
 
@@ -121,9 +119,9 @@ export class BleManagerService {
       };
 
       ble.startScan([], async (device) => {
-        devices.push(device);
         if (DecentScale.test(device) || LunarScale.test(device)) {
           // We found all needed devices.
+          devices.push(device);
           clearTimeout(timeoutVar);
           timeoutVar = null;
           await stopScanningAndResolve();
@@ -151,7 +149,7 @@ export class BleManagerService {
     });
   }
 
-  public async isBleEnabled(): Promise<boolean> {
+  public isBleEnabled(): Promise<boolean> {
     return new Promise((resolve, reject) => {
       ble.isEnabled(
         () => {
@@ -216,23 +214,27 @@ export class BleManagerService {
       await this.__scanAutoConnectScaleIOS();
     }
 
-    ble.autoConnect(deviceId, this.connectCallback.bind(this, deviceType), this.disconnectCallback.bind(this));
+    return new Promise((resolve, reject) => {
+      ble.autoConnect(deviceId, this.connectCallback.bind(this, resolve, deviceType), this.disconnectCallback.bind(this, reject));
+    });
   }
 
-  private connectCallback(deviceType: ScaleType, data: PeripheralData) {
+  private connectCallback(callback, deviceType: ScaleType, data: PeripheralData) {
     // wait for full data
     if (!this.scale || 'characteristics' in data) {
       this.scale = makeDevice(deviceType, data);
       this.uiLog.log('Connected successfully');
       this.uiToast.showInfoToastBottom('SCALE.CONNECTED_SUCCESSFULLY');
+      callback();
     }
   }
 
-  private disconnectCallback() {
+  private disconnectCallback(callback) {
     if (this.scale) {
       this.scale = null;
       this.uiToast.showInfoToastBottom('SCALE.DISCONNECTED_UNPLANNED');
       this.uiLog.log('Disconnected successfully');
+      callback();
     }
   }
 }

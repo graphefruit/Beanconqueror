@@ -1,6 +1,6 @@
 import {PeripheralData} from './ble.types';
 import {BluetoothScale, SCALE_TIMER_COMMAND, Weight} from './bluetoothDevice';
-import {AcaiaScale, EventType} from './lunar/lunar';
+import {AcaiaScale, EventType} from './acaia/acaia';
 
 declare var ble;
 export default class LunarScale extends BluetoothScale {

@@ -3,7 +3,7 @@
     <name>Beanconqueror</name>
     <description />
     <author email="lars.saalbach@googlemail.com" href="https://github.com/graphefruit/beanconqueror">Lars Saalbach</author>
-    <content original-src="index.html" src="http://localhost:8100" />
+    <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -289,5 +289,4 @@
             <path event="openRoasterBeans" url="/app/roaster/bean*" />
         </host>
     </universal-links>
-    <allow-navigation href="http://localhost:8100" sessionid="5ad64ca3" />
 </widget>

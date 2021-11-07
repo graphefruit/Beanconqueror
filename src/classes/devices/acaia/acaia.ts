@@ -20,7 +20,6 @@ export class AcaiaScale {
   private weight_uuid: string;
   private isPyxisStyle: boolean;
   private readonly characteristics: Characteristic[];
-  private characteristic: Characteristic;
 
   private connected: boolean;
   private packet: Uint8Array;
@@ -48,10 +47,13 @@ export class AcaiaScale {
                     */
     this.device_id = device_id;
     this.connected = false;
+
+    // TODO(mike1808): make it to work with new Lunar and Pyxis by auto-detecting service and char uuid
     this.characteristics = characteristics;
     this.char_uuid = SCALE_CHARACTERISTIC_UUID;
     this.weight_uuid = SCALE_SERVICE_UUID;
     this.isPyxisStyle = false;
+
     this.queue = null;
     this.command_queue = [];
     this.packet = null;
