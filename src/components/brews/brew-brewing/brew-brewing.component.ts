@@ -278,12 +278,52 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
               data: [],
               borderColor: 'rgb(159,140,111)',
               backgroundColor: 'rgb(205,194,172)',
+              yAxisID: 'y',
+              pointRadius: 0,
+            },
+            {
+              label: '',
+              data: [],
+              borderColor: 'rgb(96,125,139)',
+              backgroundColor: 'rgb(127,151,162)',
+              yAxisID: 'y1',
+              spanGaps: true,
+              pointRadius: 0,
             }]
           };
           const chartOptions = {
+            animation: true,
             legend: {
               display: false,
               position: 'top'
+            },
+            responsive: true,
+            interaction: {
+              mode: 'index',
+              intersect: false,
+            },
+            stacked: false,
+
+            scales: {
+              y: {
+                type: 'linear',
+                display: true,
+                position: 'left',
+              },
+              y1: {
+                type: 'linear',
+                display: true,
+                position: 'right',
+                // grid line settings
+                grid: {
+                  drawOnChartArea: false, // only want the grid lines for one axis to show up
+                },
+              },
+              xAxis: {
+                ticks: {
+                  maxTicksLimit: 10
+                }
+              }
             }
           };
 
@@ -291,7 +331,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
             type: 'line',
             data: drinkingData,
             options: chartOptions
-          });
+          } as any);
 
           if (this.data.flow_profile.length > 0) {
             for (const data of this.data.flow_profile) {
@@ -518,7 +558,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
         if (this.uiBrewHelper.fieldVisible(this.settings.manage_parameters.coffee_first_drip_time,
           this.data.getPreparation().manage_parameters.coffee_first_drip_time,
           this.data.getPreparation().use_custom_parameters)) {
-          //The first time we set the weight, we have one sec delay, because of this do it -1 second
+          // The first time we set the weight, we have one sec delay, because of this do it -1 second
           this.data.coffee_first_drip_time = this.getTime()-1;
           this.changeDetectorRef.detectChanges();
         }
@@ -528,12 +568,37 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
 
 
+  private flowStartTime: any = undefined;
+
   private __setFlowProfile(_scaleChange: any) {
     const weight: number = _scaleChange.ACTUAL_WEIGHT;
     const oldWeight: number = _scaleChange.OLD_WEIGHT;
     const smoothedWeight: number = _scaleChange.SMOOTHED_WEIGHT;
     const oldSmoothedWeight: number = _scaleChange.OLD_SMOOTHED_WEIGHT;
 
+
+
+
+
+
+
+
+
+    const actualDate = moment(new Date());
+    let actualMilliSecond = 0;
+    if (this.flowStartTime !== undefined) {
+      actualMilliSecond = actualDate.diff(this.flowStartTime,'milliseconds');
+    } else {
+      this.flowStartTime = moment(new Date());
+    }
+
+    console.log("Old: " + actualMilliSecond);
+    if (actualMilliSecond > 100) {
+      actualMilliSecond = Number(actualMilliSecond.toString()[0]);
+    } else {
+      actualMilliSecond = 0;
+    }
+    console.log("New: " + actualMilliSecond);
 
     if (this.flowTime === undefined) {
       this.flowTime = this.getTime();
@@ -657,25 +722,48 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
         time: this.flowTime,
         value: actualFlowValue
       });
-      this.flowProfileChartEl.data.datasets[0].data.push(actualFlowValue);
-      this.flowProfileChartEl.data.labels.push(this.flowTime);
+
+      const weightData = this.flowProfileChartEl.data.datasets[0].data;
+
+      const addRange = weightData.length - this.flowProfileChartEl.data.datasets[1].data.length;
+
+      for(let i=0;i<addRange;i++){
+        // This looks so scary :<
+        if (i===0) {
+          this.flowProfileChartEl.data.datasets[1].data.push(actualFlowValue);
+        } else {
+          this.flowProfileChartEl.data.datasets[1].data.push(undefined);
+        }
+
+      }
+
+      // this.flowProfileChartEl.data.labels.push(this.flowTime);
 
 
       this.__setScaleWeight(weight,wrongFlow,weightDidntChange);
 
       // Reset
       this.flowTime = this.getTime();
+      this.flowStartTime = moment(new Date());
       this.flowProfileChartEl.update();
       this.flowProfileArr = [];
 
     }
 
+
+    console.log("Push time: " + this.flowTime + '.' + actualMilliSecond);
+    console.log("Push weight: " + weight);
+    this.flowProfileChartEl.data.labels.push(this.flowTime + '.' + actualMilliSecond);
+    this.flowProfileChartEl.data.datasets[0].data.push(weight);
     this.flowProfileArr.push(weight);
-    this.pushFlowProfile(this.flowTime,weight,oldWeight,smoothedWeight,oldSmoothedWeight);
+    this.pushFlowProfile(this.flowTime  + '.' + actualMilliSecond ,weight,oldWeight,smoothedWeight,oldSmoothedWeight);
+
+
+
 
 
   }
-  private pushFlowProfile(_brewTime: number,
+  private pushFlowProfile(_brewTime: string,
                           _actualWeight: number,
                           _oldWeight: number,
                           _actualSmoothedWeight: number,

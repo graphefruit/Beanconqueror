@@ -228,7 +228,7 @@ export class StatisticPage implements OnInit {
       type: 'line',
       data: data,
       options: chartOptions
-    });
+    } as any);
 
   }
   private __loadPreparationUsageTimelineChart(): void {
@@ -304,7 +304,7 @@ export class StatisticPage implements OnInit {
       type: 'line',
       data: data,
       options: chartOptions
-    });
+    } as any);
 
   }
   private __loadDrinkingChart(): void {
@@ -348,7 +348,7 @@ export class StatisticPage implements OnInit {
       type: 'line',
       data: drinkingData,
       options: chartOptions
-    });
+    } as any);
   }
   private __loadBrewPerDayChart(): void {
     const brewView: Array<BrewView> = this.__getBrewsSortedForDay();
@@ -382,7 +382,7 @@ export class StatisticPage implements OnInit {
       type: 'line',
       data: drinkingData,
       options: chartOptions
-    });
+    } as any);
   }
   private __loadBrewChart(): void {
     const brewView: Array<BrewView> = this.__getBrewsSortedForMonth();
@@ -416,7 +416,7 @@ export class StatisticPage implements OnInit {
       type: 'line',
       data: drinkingData,
       options: chartOptions
-    });
+    } as any);
   }
 
   private __loadGrindingChart(): void {
@@ -455,7 +455,7 @@ export class StatisticPage implements OnInit {
       type: 'line',
       data: drinkingData,
       options: chartOptions
-    });
+    } as any);
   }
   private __loadPreparationUsageChart(): void {
     const brewView: Array<Brew> = this.uiBrewStorage.getAllEntries();
@@ -535,6 +535,6 @@ export class StatisticPage implements OnInit {
       type: 'pie',
       data: drinkingData,
       options: chartOptions
-    });
+    } as any);
   }
 }

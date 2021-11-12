@@ -113,7 +113,7 @@ export class BrewDetailComponent implements OnInit {
   }
 
   private __loadCuppingChart(): void {
-    const chartObj = new Chart(this.cuppingChart.nativeElement, this.uiBrewHelper.getCuppingChartData(this.data));
+    const chartObj = new Chart(this.cuppingChart.nativeElement, this.uiBrewHelper.getCuppingChartData(this.data) as any);
   }
   private initializeFlowChart(): void {
 
@@ -143,7 +143,7 @@ export class BrewDetailComponent implements OnInit {
           type: 'line',
           data: drinkingData,
           options: chartOptions
-        });
+        } as any);
 
         if (this.data.flow_profile.length > 0) {
           for (const data of this.data.flow_profile) {

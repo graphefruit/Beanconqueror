@@ -1,6 +1,6 @@
 export interface IBrewFlow {
   timestamp: string;
-  brew_time: number;
+  brew_time: string;
   actual_weight: number;
   old_weight: number;
   actual_smoothed_weight: number;

@@ -89,7 +89,7 @@ export class CuppingRadarComponent implements AfterViewInit {
 
   private __loadCuppingChart(): void {
 
-    const chartObj = new Chart(this.cuppingChart.nativeElement, this.uiBrewHelper.getCuppingChartData(this.model));
+    const chartObj = new Chart(this.cuppingChart.nativeElement, this.uiBrewHelper.getCuppingChartData(this.model) as any);
 
   }
 
