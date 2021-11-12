@@ -18,7 +18,7 @@ export enum EventType {
 }
 
 const log = (...args) => {
-  if (DEBUG) {
+
     try {
       const uiLogInstance = UILog.getInstance();
 
@@ -29,7 +29,7 @@ const log = (...args) => {
 
     }
     console.log(...args);
-  }
+
 };
 
 export class DecodeWorker {
