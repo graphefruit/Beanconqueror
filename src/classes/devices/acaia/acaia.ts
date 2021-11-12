@@ -4,6 +4,7 @@ import {Characteristic} from '../ble.types';
 import {MAGIC1, MAGIC2, SCALE_CHARACTERISTIC_UUID, SCALE_SERVICE_UUID} from './constants';
 import {Button, ParsedMessage, MessageType, ScaleMessageType, Units, WorkerResult, WorkerResultType, DEBUG} from './common';
 import {memoize} from 'lodash';
+import {UILog} from '../../../services/uiLog';
 
 declare var ble;
 
@@ -18,6 +19,15 @@ export enum EventType {
 
 const log = (...args) => {
   if (DEBUG) {
+    try {
+      const uiLogInstance = UILog.getInstance();
+
+      // tslint:disable
+      uiLogInstance.log('ACAIA - ' + JSON.stringify(args));
+    }
+    catch(ex) {
+
+    }
     console.log(...args);
   }
 };
@@ -36,12 +46,14 @@ export class DecodeWorker {
               log(...data.data);
               break;
             case WorkerResultType.DECODE_RESULT:
+              log('Decode results - ' + JSON.stringify(data.data));
               callback(data.data);
               break;
           }
         }
       };
     } else {
+      log('ACAIA - Webworkes are not supported');
       throw new Error('web workers not supported');
       // Web workers are not supported in this environment.
       // You should add a fallback so that your program still executes correctly.
@@ -126,6 +138,7 @@ export class AcaiaScale {
     try {
       await promisify(ble.requestMtu)(this.device_id, 247);
     } catch (e) {
+      log('failed to set MTU ' + JSON.stringify(e));
       console.error('failed to set MTU', e);
     }
 
@@ -278,10 +291,12 @@ export class AcaiaScale {
         }
         return true;
       } catch (e) {
+        log('Heartbeat failed ' + JSON.stringify(e));
         console.error('Heartbeat failed ' + e);
         try {
           await this.disconnect();
         } catch (e) {
+          log(e);
           return false;
         }
       }
