@@ -4,7 +4,7 @@ import {Characteristic} from '../ble.types';
 import {MAGIC1, MAGIC2, SCALE_CHARACTERISTIC_UUID, SCALE_SERVICE_UUID} from './constants';
 import {Button, ParsedMessage, MessageType, ScaleMessageType, Units, WorkerResult, DecoderResultType, DEBUG} from './common';
 import {memoize} from 'lodash';
-
+import {UILog} from '../../../services/uiLog';
 declare var ble;
 
 export enum EventType {
@@ -17,9 +17,18 @@ export enum EventType {
 }
 
 const log = (...args) => {
-  if (DEBUG) {
-    console.log(...args);
+
+  try {
+    const uiLogInstance = UILog.getInstance();
+
+    // tslint:disable
+    uiLogInstance.log('ACAIA - ' + JSON.stringify(args));
   }
+  catch(ex) {
+
+  }
+  console.log(...args);
+
 };
 
 // DecodeWorkers receives array buffer from heartbeat notification and emits parsed messages if any
