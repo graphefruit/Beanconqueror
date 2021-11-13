@@ -20,8 +20,6 @@ const log = (...args) => {
 
   try {
     const uiLogInstance = UILog.getInstance();
-
-    // tslint:disable
     uiLogInstance.log('ACAIA - ' + JSON.stringify(args));
   }
   catch(ex) {
@@ -156,6 +154,7 @@ export class AcaiaScale {
   }
 
   public async connect(callback) {
+    log('Connect scale');
     if (this.connected) {
       return;
     }
@@ -163,6 +162,7 @@ export class AcaiaScale {
     try {
       await promisify(ble.requestMtu)(this.device_id, 247);
     } catch (e) {
+      log('failed to set MTU' + JSON.stringify(e));
       console.error('failed to set MTU', e);
     }
 
@@ -222,6 +222,7 @@ export class AcaiaScale {
 
   private messageParseCallback(messages: ParsedMessage[]) {
     messages.forEach((msg) => {
+      log('Message recieved - ' + JSON.stringify(msg));
       if (msg.type === MessageType.SETTINGS) {
         this.battery = msg.battery;
         this.units = msg.units;
@@ -314,10 +315,12 @@ export class AcaiaScale {
         }
         return true;
       } catch (e) {
+        log('Heartbeat failed ' + JSON.stringify(e));
         console.error('Heartbeat failed ' + e);
         try {
           await this.disconnect();
         } catch (e) {
+          log('ERROR - '+ JSON.stringify(e));
           return false;
         }
       }
