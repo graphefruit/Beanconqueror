@@ -143,7 +143,15 @@ export class BrewAddComponent implements OnInit {
     await this.uiAlert.showLoadingSpinner();
     try {
       this.uiBrewHelper.cleanInvisibleBrewData(this.data);
-      const updateBrewTimestamp =  await this.uiBrewStorage.add(this.data);
+      const addedBrewObj: Brew =  await this.uiBrewStorage.add(this.data);
+
+      if (this.brewBrewing.flow_profile_raw.weight.length > 0) {
+        const savedPath = this.brewBrewing.saveFlowProfile(addedBrewObj.config.uuid);
+        addedBrewObj.flow_profile = savedPath;
+        await this.uiBrewStorage.update(addedBrewObj);
+      }
+
+
 
       let checkData: Settings | Preparation;
       if (this.getPreparation().use_custom_parameters === true) {
@@ -151,13 +159,14 @@ export class BrewAddComponent implements OnInit {
       } else {
         checkData = this.settings;
       }
-      console.log("next next");
 
       if (checkData.manage_parameters.set_custom_brew_time) {
 
-        updateBrewTimestamp.config.unix_timestamp = moment(this.brewBrewing.customCreationDate).unix();
-        await this.uiBrewStorage.update(updateBrewTimestamp);
+        addedBrewObj.config.unix_timestamp = moment(this.brewBrewing.customCreationDate).unix();
+        await this.uiBrewStorage.update(addedBrewObj);
       }
+
+
 
 
 

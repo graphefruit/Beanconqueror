@@ -13,7 +13,7 @@ import {ManageBrewParameter} from '../parameter/manageBrewParameter';
 import {IBeanPageFilter} from '../../interfaces/bean/iBeanPageFilter';
 import {BEAN_SORT_AFTER} from '../../enums/beans/beanSortAfter';
 import {BEAN_SORT_ORDER} from '../../enums/beans/beanSortOrder';
-import {UISettingsStorage} from '../../services/uiSettingsStorage';
+
 
 export class Settings implements ISettings {
 

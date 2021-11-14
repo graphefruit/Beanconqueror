@@ -38,7 +38,7 @@ import DecentScale, {DECENT_SCALE_TIMER_COMMAND} from '../../../classes/devices/
 import {Chart} from 'chart.js';
 import {UIHelper} from '../../../services/uiHelper';
 import {UIExcel} from '../../../services/uiExcel';
-import {IBrewFlow} from '../../../interfaces/brew/iBrewFlow';
+import {BrewFlow, IBrewWaterFlow, IBrewWeightFlow} from '../../../classes/brew/brewFlow';
 import {UIFileHelper} from '../../../services/uiFileHelper';
 
 
@@ -87,8 +87,8 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
   public scaleFlowSubscription: Subscription = undefined;
   private flowProfileArr = [];
   private flowTime: number = undefined;
-  public flow_profile_raw: Array<IBrewFlow> =[];
-
+  private flowSecondTick: number = 0;
+  public flow_profile_raw: BrewFlow = new BrewFlow();
 
   @ViewChild('flowProfileChart', {static: false}) public flowProfileChart;
 
@@ -143,6 +143,10 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       }
       if (this.brewTemperatureTime && this.settings.manage_parameters.brew_temperature_time) {
         this.brewTemperatureTime.setTime(this.data.brew_temperature_time);
+      }
+      if (this.data.flow_profile !== '') {
+        // We had a flow profile, so read data now.
+        await this.readFlowProfile();
       }
 
     }
@@ -270,6 +274,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
         this.flowProfileChartEl.destroy();
         this.flowProfileChartEl = undefined;
         this.flowTime = undefined;
+        this.flowSecondTick = 0;
         this.flowProfileArr = [];
       }
       if (this.flowProfileChartEl === undefined) {
@@ -335,11 +340,14 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
             options: chartOptions
           } as any);
 
-          if (this.data.flow_profile.length > 0) {
-            for (const data of this.data.flow_profile) {
-              this.flowProfileChartEl.data.datasets[0].data.push(data.value);
+          if (this.flow_profile_raw.weight.length > 0) {
+            for (const data of this.flow_profile_raw.weight) {
+              this.flowProfileChartEl.data.datasets[0].data.push(data.actual_weight);
 
-              this.flowProfileChartEl.data.labels.push(data.time);
+              this.flowProfileChartEl.data.labels.push(data.brew_time);
+            }
+            for (const data of this.flow_profile_raw.waterFlow) {
+              this.flowProfileChartEl.data.datasets[1].data.push(data.value);
             }
             this.flowProfileChartEl.update();
           }
@@ -359,7 +367,6 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
   public ngOnInit (): void {
     this.settings = this.uiSettingsStorage.getSettings();
-    console.log("here we gooo");
     if (!this.data.config.uuid) {
       this.customCreationDate = moment().toISOString();
     } else {
@@ -432,9 +439,16 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       await decentScale.setTimer(DECENT_SCALE_TIMER_COMMAND.STOP);
       await decentScale.setTimer(DECENT_SCALE_TIMER_COMMAND.RESET);
       this.deattachToScaleChange();
+
+
+      if (this.isEdit) {
+        await this.deleteFlowProfile();
+        this.data.flow_profile = '';
+      }
+
+      this.flow_profile_raw = new BrewFlow();
+
       this.initializeFlowChart();
-      this.data.flow_profile = [];
-      this.flow_profile_raw = [];
     }
   }
   public temperatureTimeChanged(_event): void {
@@ -569,9 +583,40 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
     }
   }
 
+  /**
+   * This function is triggered outside of add/edit component, because the uuid is not existing on adding at start
+   * @param _uuid
+   */
+  public saveFlowProfile(_uuid: string): string {
+    const random =  Math.floor(Math.random() * 10) + 1;
+
+    const t = [];
+    for (let i=0;i<random;i++) {
+      t.push(i);
+    }
+    const savingPath = 'brews/' + _uuid + '_flow_profile.json';
+    this.uiFileHelper.saveJSONFile(savingPath,JSON.stringify(this.flow_profile_raw));
+    return savingPath;
+  }
+
+  private async readFlowProfile() {
+    const flowProfilePath = 'brews/' + this.data.config.uuid + '_flow_profile.json';
+    const jsonParsed = await this.uiFileHelper.getJSONFile(flowProfilePath);
+    this.flow_profile_raw = jsonParsed;
+  }
+  private async deleteFlowProfile() {
+    try {
+      if (this.data.flow_profile !== '') {
+        const flowProfilePath = 'brews/' + this.data.config.uuid + '_flow_profile.json';
+        await this.uiFileHelper.deleteFile(flowProfilePath);
+      }
+    } catch (ex) {
+
+    }
+
+  }
 
 
-  private flowStartTime: any = undefined;
 
   private __setFlowProfile(_scaleChange: any) {
     const weight: number = _scaleChange.ACTUAL_WEIGHT;
@@ -579,29 +624,6 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
     const smoothedWeight: number = _scaleChange.SMOOTHED_WEIGHT;
     const oldSmoothedWeight: number = _scaleChange.OLD_SMOOTHED_WEIGHT;
 
-
-
-
-
-
-
-
-
-    const actualDate = moment(new Date());
-    let actualMilliSecond = 0;
-    if (this.flowStartTime !== undefined) {
-      actualMilliSecond = actualDate.diff(this.flowStartTime,'milliseconds');
-    } else {
-      this.flowStartTime = moment(new Date());
-    }
-
-    console.log("Old: " + actualMilliSecond);
-    if (actualMilliSecond > 100) {
-      actualMilliSecond = Number(actualMilliSecond.toString()[0]);
-    } else {
-      actualMilliSecond = 0;
-    }
-    console.log("New: " + actualMilliSecond);
 
     if (this.flowTime === undefined) {
       this.flowTime = this.getTime();
@@ -662,7 +684,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
         const lastVal: number = this.flowProfileArr[this.flowProfileArr.length-1];
 
         if (this.data.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO) {
-          //We do some calculations on filter
+          // We do some calculations on filter
           if ((lastVal - firstVal) > 100) {
             // Threshhold reached, more then 100g in on esecond is to much
             wrongFlow = true;
@@ -704,7 +726,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
       if (wrongFlow === false) {
         // Overwrite to make sure to have the latest data to save.
         // Get the latest flow, why?? -> Because we're on a new time actually, and thats why we need to get the latest push value
-        const lastFlow = this.flow_profile_raw[this.flow_profile_raw.length -1];
+        const lastFlow = this.flow_profile_raw.weight[this.flow_profile_raw.weight.length -1];
         let flowValue: number = (lastFlow.actual_smoothed_weight -  lastFlow.old_smoothed_weight) * 10;
         // Ignore flowing weight when we're below zero
         if (flowValue < 0) {
@@ -720,50 +742,49 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
 
 
-      this.data.flow_profile.push({
-        timestamp: this.uiHelper.getActualTimeWithMilliseconds(),
-        time: this.flowTime,
-        value: actualFlowValue
-      });
 
       const weightData = this.flowProfileChartEl.data.datasets[0].data;
 
       const addRange = weightData.length - this.flowProfileChartEl.data.datasets[1].data.length;
 
+      const timestamp = this.uiHelper.getActualTimeWithMilliseconds();
       for(let i=0;i<addRange;i++){
+        const waterFlow: IBrewWaterFlow = {
+
+        } as IBrewWaterFlow;
+
+        waterFlow.brew_time = this.flowTime.toString();
+        waterFlow.timestamp = timestamp;
+
         // This looks so scary :<
-        if (i===0) {
+        if (i===addRange-1) {
+          // We set last entry as value.
           this.flowProfileChartEl.data.datasets[1].data.push(actualFlowValue);
+          waterFlow.value = actualFlowValue;
         } else {
-          this.flowProfileChartEl.data.datasets[1].data.push(undefined);
+          this.flowProfileChartEl.data.datasets[1].data.push(null);
+          waterFlow.value = null;
         }
 
+        this.flow_profile_raw.waterFlow.push(waterFlow);
+
       }
-
-      // this.flowProfileChartEl.data.labels.push(this.flowTime);
-
 
       this.__setScaleWeight(weight,wrongFlow,weightDidntChange);
 
       // Reset
       this.flowTime = this.getTime();
-      this.flowStartTime = moment(new Date());
+      this.flowSecondTick = 0;
       this.flowProfileChartEl.update();
       this.flowProfileArr = [];
 
     }
 
-
-    console.log("Push time: " + this.flowTime + '.' + actualMilliSecond);
-    console.log("Push weight: " + weight);
-    this.flowProfileChartEl.data.labels.push(this.flowTime + '.' + actualMilliSecond);
+    this.flowProfileChartEl.data.labels.push(this.flowTime + '.' +  this.flowSecondTick);
     this.flowProfileChartEl.data.datasets[0].data.push(weight);
     this.flowProfileArr.push(weight);
-    this.pushFlowProfile(this.flowTime  + '.' + actualMilliSecond ,weight,oldWeight,smoothedWeight,oldSmoothedWeight);
-
-
-
-
+    this.pushFlowProfile(this.flowTime  + '.' +  this.flowSecondTick ,weight,oldWeight,smoothedWeight,oldSmoothedWeight);
+    this.flowSecondTick++;
 
   }
   private pushFlowProfile(_brewTime: string,
@@ -771,16 +792,16 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
                           _oldWeight: number,
                           _actualSmoothedWeight: number,
                           _oldSmoothedWeight: number) {
-    const brewFlow: IBrewFlow = {
+    const brewFlow: IBrewWeightFlow = {
 
-    } as IBrewFlow;
+    } as IBrewWeightFlow;
     brewFlow.timestamp = this.uiHelper.getActualTimeWithMilliseconds();
     brewFlow.brew_time = _brewTime;
     brewFlow.actual_weight = _actualWeight;
     brewFlow.old_weight = _oldWeight;
     brewFlow.actual_smoothed_weight = _actualSmoothedWeight;
     brewFlow.old_smoothed_weight = _oldSmoothedWeight;
-    this.flow_profile_raw.push(brewFlow);
+    this.flow_profile_raw.weight.push(brewFlow);
 
   }
 
@@ -806,7 +827,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
   }
   public getActualSmoothedWeightPerSecond(): number {
     try {
-      const lastflow = this.flow_profile_raw[this.flow_profile_raw.length-1];
+      const lastflow = this.flow_profile_raw.weight[this.flow_profile_raw.weight.length-1];
       const smoothedWeight = lastflow.actual_smoothed_weight;
       const oldSmoothedWeight = lastflow.old_smoothed_weight;
       const flowValue: number = (smoothedWeight - oldSmoothedWeight) * 10;
@@ -818,7 +839,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
   }
 
   public async downloadFlowProfile() {
-    await this.uiExcel.exportBrewFlowProfile(this.flow_profile_raw,this.data.flow_profile);
+    await this.uiExcel.exportBrewFlowProfile(this.flow_profile_raw);
   }
 
   private __loadBrew(brew: Brew,_template: boolean) {

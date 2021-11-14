@@ -368,11 +368,24 @@ export class UIFileHelper extends InstanceClass {
       if (this.platform.is('cordova')) {
         const fileObj = this.__splitFilePath(_filePath);
         let filePath = this.getFileDirectory();
-        if (fileObj.FILE_PATH.length > 1 && fileObj.FILE_PATH.indexOf('/') === 0 && filePath.lastIndexOf('/') === filePath.length - 1) {
-          filePath = filePath + fileObj.FILE_PATH.substr(1);
+
+        if (filePath.endsWith('/') === false) {
+          filePath = filePath + '/';
         }
+        if (fileObj.FILE_PATH.startsWith('/')) {
+          fileObj.FILE_PATH = fileObj.FILE_PATH.substr(1);
+        }
+        if (fileObj.FILE_PATH.endsWith('/')) {
+          fileObj.FILE_PATH.substr(0,fileObj.FILE_PATH.length-1);
+        }
+        if (fileObj.FILE_PATH.length > 0) {
+          filePath = filePath + fileObj.FILE_PATH;
+        }
+
         this.file.removeFile(filePath, fileObj.FILE_NAME + fileObj.EXTENSION).then(() => {
+          this.uiLog.log('Deleted file: ' + _filePath);
           resolve(undefined);
+
         }, (e) => {
           this.uiLog.error('Cant delete file: ' + JSON.stringify(e));
           reject();

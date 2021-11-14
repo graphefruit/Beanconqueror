@@ -58,7 +58,14 @@ export class BrewEditComponent implements OnInit {
       this.data.config.unix_timestamp = newUnix;
     }
     this.uiBrewHelper.cleanInvisibleBrewData(this.data);
+
+    if (this.brewBrewing.flow_profile_raw.weight.length > 0) {
+      const savedPath = this.brewBrewing.saveFlowProfile(this.data.config.uuid);
+      this.data.flow_profile = savedPath;
+    }
     await this.uiBrewStorage.update(this.data);
+
+
 
     this.brewTracking.trackBrew(this.data);
 

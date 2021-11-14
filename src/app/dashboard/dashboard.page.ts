@@ -9,8 +9,7 @@ import {Router} from '@angular/router';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
 import {Bean} from '../../classes/bean/bean';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
-import {Chart, ChartConfiguration} from 'chart.js';
-import {UIFileHelper} from '../../services/uiFileHelper';
+
 @Component({
   selector: 'dashboard',
   templateUrl: './dashboard.page.html',
@@ -29,103 +28,11 @@ export class DashboardPage implements OnInit {
               private readonly router: Router,
               private readonly uiBeanStorage: UIBeanStorage,
               private readonly uiBeanHelper: UIBeanHelper,
-              private readonly uiFileHelper: UIFileHelper
   ) {
-    this.initializeFlowChart();
-  }
-  @ViewChild('flowProfileChart', {static: false}) public flowProfileChart;
 
-
-  public saveFile() {
-    const random =  Math.floor(Math.random() * 10) + 1;
-
-    const t = [];
-    for (let i=0;i<random;i++) {
-      t.push(i);
-    }
-    this.uiFileHelper.saveJSONFile('brews/817273.json',JSON.stringify(t));
-  }
-
-  public async readFile() {
-   const jsonParsed = await this.uiFileHelper.getJSONFile('brews/817273.json');
-   console.log(jsonParsed);
   }
 
 
-  private initializeFlowChart(): void {
-
-    setTimeout(() => {
-      if (this.flowProfileChartEl) {
-        this.flowProfileChartEl.destroy();
-        this.flowProfileChartEl = undefined;
-
-      }
-      if (this.flowProfileChartEl === undefined) {
-        const drinkingData = {
-          labels: [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9],
-          datasets: [{
-            label: '1',
-            //data:[],
-             data: [4,5,6,4,3,3,1,2,3],
-            borderColor: 'rgb(159,140,111)',
-            backgroundColor: 'rgb(205,194,172)',
-            yAxisID: 'y',
-            pointRadius: 0,
-          },{
-            label: '2',
-           // data:[],
-            data: [11,12,undefined,undefined,undefined,12,72,81,9],
-            borderColor: 'rgb(96,125,139)',
-            backgroundColor: 'rgb(127,151,162)',
-            yAxisID: 'y1',
-            spanGaps: true,
-          }]
-        };
-        const chartOptions = {
-
-          animation: false,
-            responsive: true,
-            interaction: {
-              mode: 'index',
-              intersect: false,
-            },
-            stacked: false,
-
-            scales: {
-              y: {
-                type: 'linear',
-                display: true,
-                position: 'left',
-              },
-              y1: {
-                type: 'linear',
-                display: false,
-                position: 'right',
-                // grid line settings
-                grid: {
-                  drawOnChartArea: false, // only want the grid lines for one axis to show up
-                },
-              },
-              xAxis: {
-                ticks: {
-                  maxTicksLimit: 50
-                }
-              },
-
-            }
-
-        };
-
-
-        this.flowProfileChartEl = new Chart(this.flowProfileChart.nativeElement, {
-          type: 'line',
-          data: drinkingData,
-          options: chartOptions
-        }as any);
-
-      }
-    },1000);
-  }
 
 
   public  ngOnInit() {
