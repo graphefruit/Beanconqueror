@@ -10,6 +10,7 @@ import {UIBeanStorage} from '../../services/uiBeanStorage';
 import {Bean} from '../../classes/bean/bean';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
 import {Chart, ChartConfiguration} from 'chart.js';
+import {UIFileHelper} from '../../services/uiFileHelper';
 @Component({
   selector: 'dashboard',
   templateUrl: './dashboard.page.html',
@@ -19,6 +20,7 @@ export class DashboardPage implements OnInit {
 
   public brews: Array<Brew> = [];
   private leftOverBeansWeight: number = undefined;
+  public flowProfileChartEl: any = undefined;
   constructor(public uiStatistic: UIStatistic,
               private readonly modalCtrl: ModalController,
               private readonly uiBrewStorage: UIBrewStorage,
@@ -26,13 +28,30 @@ export class DashboardPage implements OnInit {
               private readonly changeDetectorRef: ChangeDetectorRef,
               private readonly router: Router,
               private readonly uiBeanStorage: UIBeanStorage,
-              private readonly uiBeanHelper: UIBeanHelper
+              private readonly uiBeanHelper: UIBeanHelper,
+              private readonly uiFileHelper: UIFileHelper
   ) {
     this.initializeFlowChart();
   }
   @ViewChild('flowProfileChart', {static: false}) public flowProfileChart;
 
-  public flowProfileChartEl: any = undefined;
+
+  public saveFile() {
+    const random =  Math.floor(Math.random() * 10) + 1;
+
+    const t = [];
+    for (let i=0;i<random;i++) {
+      t.push(i);
+    }
+    this.uiFileHelper.saveJSONFile('brews/817273.json',JSON.stringify(t));
+  }
+
+  public async readFile() {
+   const jsonParsed = await this.uiFileHelper.getJSONFile('brews/817273.json');
+   console.log(jsonParsed);
+  }
+
+
   private initializeFlowChart(): void {
 
     setTimeout(() => {

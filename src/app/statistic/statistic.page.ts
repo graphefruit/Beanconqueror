@@ -213,6 +213,7 @@ export class StatisticPage implements OnInit {
 
     const chartOptions = {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         legend: {
           position: 'top',
@@ -289,6 +290,7 @@ export class StatisticPage implements OnInit {
 
     const chartOptions = {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         legend: {
           position: 'top',

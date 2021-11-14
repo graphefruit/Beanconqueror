@@ -39,6 +39,7 @@ import {Chart} from 'chart.js';
 import {UIHelper} from '../../../services/uiHelper';
 import {UIExcel} from '../../../services/uiExcel';
 import {IBrewFlow} from '../../../interfaces/brew/iBrewFlow';
+import {UIFileHelper} from '../../../services/uiFileHelper';
 
 
 declare var cordova;
@@ -108,7 +109,8 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
               private readonly uiWaterStorage: UIWaterStorage,
               private readonly bleManager: BleManagerService,
               private readonly uiHelper: UIHelper,
-              private readonly uiExcel: UIExcel) {
+              private readonly uiExcel: UIExcel,
+              private readonly uiFileHelper: UIFileHelper) {
 
   }
 
@@ -274,7 +276,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
           const drinkingData = {
             labels: [],
             datasets: [{
-              label: '',
+              label: this.translate.instant('BREW_FLOW_WEIGHT'),
               data: [],
               borderColor: 'rgb(159,140,111)',
               backgroundColor: 'rgb(205,194,172)',
@@ -282,7 +284,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
               pointRadius: 0,
             },
             {
-              label: '',
+              label: this.translate.instant('BREW_FLOW_WEIGHT_PER_SECOND'),
               data: [],
               borderColor: 'rgb(96,125,139)',
               backgroundColor: 'rgb(127,151,162)',
@@ -357,6 +359,7 @@ export class BrewBrewingComponent implements OnInit,AfterViewInit {
 
   public ngOnInit (): void {
     this.settings = this.uiSettingsStorage.getSettings();
+    console.log("here we gooo");
     if (!this.data.config.uuid) {
       this.customCreationDate = moment().toISOString();
     } else {
