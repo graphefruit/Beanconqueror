@@ -71,7 +71,7 @@ export abstract class StorageClass {
     return this.isInitialized;
   }
 
-  public async add(_entry) {
+  public async add(_entry): Promise<any> {
     const promise = new Promise(async (resolve, reject) => {
       const newEntry = this.uiHelper.cloneData(_entry);
       newEntry.config.uuid = this.uiHelper.generateUUID();

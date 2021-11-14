@@ -143,7 +143,7 @@ export class BrewAddComponent implements OnInit {
     await this.uiAlert.showLoadingSpinner();
     try {
       this.uiBrewHelper.cleanInvisibleBrewData(this.data);
-      await this.uiBrewStorage.add(this.data);
+      const updateBrewTimestamp =  await this.uiBrewStorage.add(this.data);
 
       let checkData: Settings | Preparation;
       if (this.getPreparation().use_custom_parameters === true) {
@@ -151,9 +151,12 @@ export class BrewAddComponent implements OnInit {
       } else {
         checkData = this.settings;
       }
+      console.log("next next");
+
       if (checkData.manage_parameters.set_custom_brew_time) {
-        this.data.config.unix_timestamp = moment(this.brewBrewing.customCreationDate).unix();
-        await this.uiBrewStorage.update(this.data);
+
+        updateBrewTimestamp.config.unix_timestamp = moment(this.brewBrewing.customCreationDate).unix();
+        await this.uiBrewStorage.update(updateBrewTimestamp);
       }
 
 
