@@ -15,6 +15,9 @@ import {UIExcel} from '../../../services/uiExcel';
 import {UIBeanHelper} from '../../../services/uiBeanHelper';
 import {UIPreparationHelper} from '../../../services/uiPreparationHelper';
 import {UIMillHelper} from '../../../services/uiMillHelper';
+import {TranslateService} from '@ngx-translate/core';
+import {BrewFlow} from '../../../classes/brew/brewFlow';
+import {UIFileHelper} from '../../../services/uiFileHelper';
 
 @Component({
   selector: 'brew-detail',
@@ -34,6 +37,7 @@ export class BrewDetailComponent implements OnInit {
   @ViewChild('flowProfileChart', {static: false}) public flowProfileChart;
   public flowProfileChartEl: any = undefined;
 
+  public flow_profile_raw: BrewFlow = new BrewFlow();
   constructor (private readonly modalController: ModalController,
                private readonly navParams: NavParams,
                public uiHelper: UIHelper,
@@ -43,12 +47,14 @@ export class BrewDetailComponent implements OnInit {
                private readonly uiExcel: UIExcel,
                private readonly uiBeanHelper: UIBeanHelper,
                private readonly uiPreparationHelper: UIPreparationHelper,
-               private readonly uiMillHelper: UIMillHelper) {
+               private readonly uiMillHelper: UIMillHelper,
+               private readonly translate: TranslateService,
+               private readonly uiFileHelper: UIFileHelper) {
 
     this.settings = this.uiSettingsStorage.getSettings();
   }
 
-  public ionViewWillEnter() {
+  public async ionViewWillEnter() {
     this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.DETAIL);
     this.brew = this.navParams.get('brew');
     if (this.brew) {
@@ -62,11 +68,13 @@ export class BrewDetailComponent implements OnInit {
         this.__loadCuppingChart();
       },150);
     }
+    await this.readFlowProfile();
     setTimeout( ()=>{
       this.initializeFlowChart();
     },150);
 
     this.loaded = true;
+
   }
 
   public async detailBean() {
@@ -104,6 +112,8 @@ export class BrewDetailComponent implements OnInit {
     const returningBrew: Brew = await this.uiBrewHelper.editBrew(this.data);
     if (returningBrew) {
       this.data = returningBrew;
+      await this.readFlowProfile();
+      this.initializeFlowChart();
     }
 
 
@@ -113,7 +123,7 @@ export class BrewDetailComponent implements OnInit {
   }
 
   private __loadCuppingChart(): void {
-    const chartObj = new Chart(this.cuppingChart.nativeElement, this.uiBrewHelper.getCuppingChartData(this.data));
+    const chartObj = new Chart(this.cuppingChart.nativeElement, this.uiBrewHelper.getCuppingChartData(this.data) as any);
   }
   private initializeFlowChart(): void {
 
@@ -126,16 +136,56 @@ export class BrewDetailComponent implements OnInit {
         const drinkingData = {
           labels: [],
           datasets: [{
-            label: '',
+            label: this.translate.instant('BREW_FLOW_WEIGHT'),
             data: [],
             borderColor: 'rgb(159,140,111)',
             backgroundColor: 'rgb(205,194,172)',
-          }]
+            yAxisID: 'y',
+            pointRadius: 0,
+          },
+            {
+              label: this.translate.instant('BREW_FLOW_WEIGHT_PER_SECOND'),
+              data: [],
+              borderColor: 'rgb(96,125,139)',
+              backgroundColor: 'rgb(127,151,162)',
+              yAxisID: 'y1',
+              spanGaps: true,
+              pointRadius: 0,
+            }]
         };
         const chartOptions = {
+          animation: true,
           legend: {
             display: false,
             position: 'top'
+          },
+          responsive: true,
+          interaction: {
+            mode: 'index',
+            intersect: false,
+          },
+          stacked: false,
+
+          scales: {
+            y: {
+              type: 'linear',
+              display: true,
+              position: 'left',
+            },
+            y1: {
+              type: 'linear',
+              display: true,
+              position: 'right',
+              // grid line settings
+              grid: {
+                drawOnChartArea: false, // only want the grid lines for one axis to show up
+              },
+            },
+            xAxis: {
+              ticks: {
+                maxTicksLimit: 10
+              }
+            }
           }
         };
 
@@ -143,18 +193,32 @@ export class BrewDetailComponent implements OnInit {
           type: 'line',
           data: drinkingData,
           options: chartOptions
-        });
+        } as any);
 
-        if (this.data.flow_profile.length > 0) {
-          for (const data of this.data.flow_profile) {
-            this.flowProfileChartEl.data.datasets[0].data.push(data.value);
+        if (this.flow_profile_raw.weight.length > 0) {
+          for (const data of this.flow_profile_raw.weight) {
+            this.flowProfileChartEl.data.datasets[0].data.push(data.actual_weight);
 
-            this.flowProfileChartEl.data.labels.push(data.time);
+            this.flowProfileChartEl.data.labels.push(data.brew_time);
+          }
+          for (const data of this.flow_profile_raw.waterFlow) {
+            this.flowProfileChartEl.data.datasets[1].data.push(data.value);
           }
           this.flowProfileChartEl.update();
         }
       }
     },250);
+  }
+
+  private async readFlowProfile() {
+    if (this.data.flow_profile !== '') {
+      const flowProfilePath = 'brews/' + this.data.config.uuid + '_flow_profile.json';
+      const jsonParsed = await this.uiFileHelper.getJSONFile(flowProfilePath);
+      this.flow_profile_raw = jsonParsed;
+    }
+  }
+  public async downloadFlowProfile() {
+    await this.uiExcel.exportBrewFlowProfile(this.flow_profile_raw);
   }
 
 }

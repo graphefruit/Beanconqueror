@@ -45,10 +45,18 @@ export class UIFileHelper extends InstanceClass {
   public async saveJSONFile(_fileName: string, _jsonContent: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       const blob = new Blob([_jsonContent], {type: 'application/json;charset=UTF-8;'});
+
+      try {
+        await this.createFolder(_fileName);
+      } catch (ex) {
+        this.uiLog.error('UILog - saveJSONFile - We could not create folders ' + _fileName);
+      }
+
       this.file.createFile(this.getFileDirectory(),_fileName,true).then((_fileEntry: FileEntry) => {
         _fileEntry.createWriter((writer) => {
           writer.onwriteend = () => {
             resolve(undefined);
+            this.uiLog.error('UILog - saveJSONFile - File saved successfully - ' + _fileName);
           };
           writer.onerror = () => {
             reject();
@@ -294,10 +302,10 @@ export class UIFileHelper extends InstanceClass {
       return promise;
     }
 
-  public createFolder(_folders) {
+  public createFolder(_path) {
     const promise: Promise<FileEntry> = new Promise(async (resolve, reject) => {
 
-      const folders = _folders.split('/');
+      const folders = _path.split('/');
 
       this.file.resolveDirectoryUrl(this.getFileDirectory()).then((_rootDir: DirectoryEntry) => {
 
@@ -328,7 +336,8 @@ export class UIFileHelper extends InstanceClass {
     if (_folders[0] === '.' || _folders[0] === '') {
       _folders = _folders.slice(1);
     }
-    if (_folders === undefined || _folders.length === 0) {
+    if (_folders === undefined || _folders.length === 0 || _folders[0].indexOf('.') >=0) {
+      //  _folders[0].indexOf('.')  -> Means we got a file with a extension.
       _resolve(undefined);
     }
     else {
@@ -359,11 +368,24 @@ export class UIFileHelper extends InstanceClass {
       if (this.platform.is('cordova')) {
         const fileObj = this.__splitFilePath(_filePath);
         let filePath = this.getFileDirectory();
-        if (fileObj.FILE_PATH.length > 1 && fileObj.FILE_PATH.indexOf('/') === 0 && filePath.lastIndexOf('/') === filePath.length - 1) {
-          filePath = filePath + fileObj.FILE_PATH.substr(1);
+
+        if (filePath.endsWith('/') === false) {
+          filePath = filePath + '/';
         }
+        if (fileObj.FILE_PATH.startsWith('/')) {
+          fileObj.FILE_PATH = fileObj.FILE_PATH.substr(1);
+        }
+        if (fileObj.FILE_PATH.endsWith('/')) {
+          fileObj.FILE_PATH.substr(0,fileObj.FILE_PATH.length-1);
+        }
+        if (fileObj.FILE_PATH.length > 0) {
+          filePath = filePath + fileObj.FILE_PATH;
+        }
+
         this.file.removeFile(filePath, fileObj.FILE_NAME + fileObj.EXTENSION).then(() => {
+          this.uiLog.log('Deleted file: ' + _filePath);
           resolve(undefined);
+
         }, (e) => {
           this.uiLog.error('Cant delete file: ' + JSON.stringify(e));
           reject();

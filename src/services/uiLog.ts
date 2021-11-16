@@ -3,6 +3,8 @@ import {Injectable} from '@angular/core';
 import {LOGS_ENUM} from '../enums/logs/logs';
 import {ILogInterface} from '../interfaces/log/iLog';
 import moment from 'moment';
+import {Brew} from '../classes/brew/brew';
+import {Bean} from '../classes/bean/bean';
 
 /** Third party */
 declare var console;
@@ -13,10 +15,26 @@ declare var console;
 })
 export class UILog {
 
+  private static instance: UILog;
+
   public disabled: boolean = true;
   private logs: Array<ILogInterface> = [];
+
+
+  public static getInstance(): UILog {
+    if (UILog.instance) {
+      return UILog.instance;
+    }
+    // noinspection TsLint
+
+    return undefined;
+  }
   constructor() {
     this.disabled = false;
+
+    if (UILog.instance === undefined) {
+      UILog.instance = this;
+    }
   }
 
   public enable(): void {
@@ -76,3 +94,4 @@ export class UILog {
   }
 
 }
+

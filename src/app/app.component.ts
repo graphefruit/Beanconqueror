@@ -44,7 +44,7 @@ import { BleManagerService } from '../services/bleManager/ble-manager.service';
 import { CleanupService } from '../services/cleanupService/cleanup.service';
 import { ScaleType } from 'src/classes/devices';
 
-
+import { Chart, registerables } from 'chart.js';
 declare var AppRate;
 @Component({
   selector: 'app-root',
@@ -131,6 +131,8 @@ export class AppComponent implements AfterViewInit {
 
   public ngAfterViewInit(): void {
     this.uiLog.log('Platform ready, init app');
+
+    Chart.register(...registerables);
     this.__appReady();
   }
 

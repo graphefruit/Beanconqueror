@@ -1,35 +1,36 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {NgxStarsComponent} from 'ngx-stars';
-import {Brew} from '../../../classes/brew/brew';
-import {Preparation} from '../../../classes/preparation/preparation';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { NgxStarsComponent } from 'ngx-stars';
+import { Brew } from '../../../classes/brew/brew';
+import { Preparation } from '../../../classes/preparation/preparation';
 import moment from 'moment';
-import {Settings} from '../../../classes/settings/settings';
-import {ModalController, Platform} from '@ionic/angular';
-import {DatetimePopoverComponent} from '../../../popover/datetime-popover/datetime-popover.component';
-import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
-import {BREW_QUANTITY_TYPES_ENUM} from '../../../enums/brews/brewQuantityTypes';
-import {UISettingsStorage} from '../../../services/uiSettingsStorage';
-import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
-import {TranslateService} from '@ngx-translate/core';
-import {UIBrewHelper} from '../../../services/uiBrewHelper';
-import {BrewTimerComponent} from '../../brew-timer/brew-timer.component';
-import {TimerComponent} from '../../timer/timer.component';
-import {IPreparation} from '../../../interfaces/preparation/iPreparation';
-import {IBean} from '../../../interfaces/bean/iBean';
-import {IMill} from '../../../interfaces/mill/iMill';
-import {UIBrewStorage} from '../../../services/uiBrewStorage';
-import {UIMillStorage} from '../../../services/uiMillStorage';
-import {UIBeanStorage} from '../../../services/uiBeanStorage';
-import {UIWaterStorage} from '../../../services/uiWaterStorage';
-import {BrewBrixCalculatorComponent} from '../../../app/brew/brew-brix-calculator/brew-brix-calculator.component';
-import {BrewBeverageQuantityCalculatorComponent} from '../../../app/brew/brew-beverage-quantity-calculator/brew-beverage-quantity-calculator.component';
-import {BleManagerService} from '../../../services/bleManager/ble-manager.service';
-import {Subscription} from 'rxjs';
-import {BluetoothScale, SCALE_TIMER_COMMAND} from '../../../classes/devices';
-import {Chart} from 'chart.js';
-import {UIHelper} from '../../../services/uiHelper';
-import {UIExcel} from '../../../services/uiExcel';
-import {IBrewFlow} from '../../../interfaces/brew/iBrewFlow';
+import { Settings } from '../../../classes/settings/settings';
+import { ModalController, Platform } from '@ionic/angular';
+import { DatetimePopoverComponent } from '../../../popover/datetime-popover/datetime-popover.component';
+import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
+import { BREW_QUANTITY_TYPES_ENUM } from '../../../enums/brews/brewQuantityTypes';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { TranslateService } from '@ngx-translate/core';
+import { UIBrewHelper } from '../../../services/uiBrewHelper';
+import { BrewTimerComponent } from '../../brew-timer/brew-timer.component';
+import { TimerComponent } from '../../timer/timer.component';
+import { IPreparation } from '../../../interfaces/preparation/iPreparation';
+import { IBean } from '../../../interfaces/bean/iBean';
+import { IMill } from '../../../interfaces/mill/iMill';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { UIMillStorage } from '../../../services/uiMillStorage';
+import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { UIWaterStorage } from '../../../services/uiWaterStorage';
+import { BrewBrixCalculatorComponent } from '../../../app/brew/brew-brix-calculator/brew-brix-calculator.component';
+import { BrewBeverageQuantityCalculatorComponent } from '../../../app/brew/brew-beverage-quantity-calculator/brew-beverage-quantity-calculator.component';
+import { BleManagerService } from '../../../services/bleManager/ble-manager.service';
+import { Subscription } from 'rxjs';
+import { BluetoothScale, SCALE_TIMER_COMMAND } from '../../../classes/devices';
+import { Chart } from 'chart.js';
+import { UIHelper } from '../../../services/uiHelper';
+import { UIExcel } from '../../../services/uiExcel';
+import { BrewFlow, IBrewWaterFlow, IBrewWeightFlow } from '../../../classes/brew/brewFlow';
+import { UIFileHelper } from '../../../services/uiFileHelper';
 
 
 declare var cordova;
@@ -40,12 +41,12 @@ declare var cordova;
   styleUrls: ['./brew-brewing.component.scss'],
 })
 export class BrewBrewingComponent implements OnInit, AfterViewInit {
-  @ViewChild('timer', {static: false}) public timer: BrewTimerComponent;
-  @ViewChild('brewTemperatureTime', {static: false}) public brewTemperatureTime: TimerComponent;
-  @ViewChild('brewStars', {read: NgxStarsComponent, static: false}) public brewStars: NgxStarsComponent;
+  @ViewChild('timer', { static: false }) public timer: BrewTimerComponent;
+  @ViewChild('brewTemperatureTime', { static: false }) public brewTemperatureTime: TimerComponent;
+  @ViewChild('brewStars', { read: NgxStarsComponent, static: false }) public brewStars: NgxStarsComponent;
 
-  @ViewChild('smartScaleWeight', {read: ElementRef}) public smartScaleWeightEl: ElementRef;
-  @ViewChild('smartScaleWeightPerSecond', {read: ElementRef}) public smartScaleWeightPerSecondEl: ElementRef;
+  @ViewChild('smartScaleWeight', { read: ElementRef }) public smartScaleWeightEl: ElementRef;
+  @ViewChild('smartScaleWeightPerSecond', { read: ElementRef }) public smartScaleWeightPerSecondEl: ElementRef;
 
   @Input() public data: Brew;
   @Input() public brewTemplate: Brew;
@@ -78,29 +79,30 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public scaleFlowSubscription: Subscription = undefined;
   private flowProfileArr = [];
   private flowTime: number = undefined;
-  public flow_profile_raw: Array<IBrewFlow> = [];
+  private flowSecondTick: number = 0;
+  public flow_profile_raw: BrewFlow = new BrewFlow();
 
-
-  @ViewChild('flowProfileChart', {static: false}) public flowProfileChart;
+  @ViewChild('flowProfileChart', { static: false }) public flowProfileChart;
 
   public flowProfileChartEl: any = undefined;
   public bluetoothScaleConnected: boolean = false;
 
 
   constructor(private readonly platform: Platform,
-              private readonly uiSettingsStorage: UISettingsStorage,
-              private readonly uiPreparationStorage: UIPreparationStorage,
-              private readonly translate: TranslateService,
-              private readonly modalController: ModalController,
-              private readonly changeDetectorRef: ChangeDetectorRef,
-              private readonly uiBrewHelper: UIBrewHelper,
-              private readonly uiBrewStorage: UIBrewStorage,
-              private readonly uiMillStorage: UIMillStorage,
-              private readonly uiBeanStorage: UIBeanStorage,
-              private readonly uiWaterStorage: UIWaterStorage,
-              private readonly bleManager: BleManagerService,
-              private readonly uiHelper: UIHelper,
-              private readonly uiExcel: UIExcel) {
+    private readonly uiSettingsStorage: UISettingsStorage,
+    private readonly uiPreparationStorage: UIPreparationStorage,
+    private readonly translate: TranslateService,
+    private readonly modalController: ModalController,
+    private readonly changeDetectorRef: ChangeDetectorRef,
+    private readonly uiBrewHelper: UIBrewHelper,
+    private readonly uiBrewStorage: UIBrewStorage,
+    private readonly uiMillStorage: UIMillStorage,
+    private readonly uiBeanStorage: UIBeanStorage,
+    private readonly uiWaterStorage: UIWaterStorage,
+    private readonly bleManager: BleManagerService,
+    private readonly uiHelper: UIHelper,
+    private readonly uiExcel: UIExcel,
+    private readonly uiFileHelper: UIFileHelper) {
 
   }
 
@@ -133,7 +135,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         if (this.brewTemperatureTime && this.settings.manage_parameters.brew_temperature_time) {
           this.brewTemperatureTime.setTime(this.data.brew_temperature_time);
         }
-
+        if (this.data.flow_profile !== '') {
+          // We had a flow profile, so read data now.
+          await this.readFlowProfile();
+        }
       }
 
       if (this.smartScaleConnected()) {
@@ -263,22 +268,63 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         this.flowProfileChartEl.destroy();
         this.flowProfileChartEl = undefined;
         this.flowTime = undefined;
+        this.flowSecondTick = 0;
         this.flowProfileArr = [];
       }
       if (this.flowProfileChartEl === undefined) {
         const drinkingData = {
           labels: [],
           datasets: [{
-            label: '',
+            label: this.translate.instant('BREW_FLOW_WEIGHT'),
             data: [],
             borderColor: 'rgb(159,140,111)',
             backgroundColor: 'rgb(205,194,172)',
+            yAxisID: 'y',
+            pointRadius: 0,
+          },
+          {
+            label: this.translate.instant('BREW_FLOW_WEIGHT_PER_SECOND'),
+            data: [],
+            borderColor: 'rgb(96,125,139)',
+            backgroundColor: 'rgb(127,151,162)',
+            yAxisID: 'y1',
+            spanGaps: true,
+            pointRadius: 0,
           }]
         };
         const chartOptions = {
+          animation: true,
           legend: {
             display: false,
             position: 'top'
+          },
+          responsive: true,
+          interaction: {
+            mode: 'index',
+            intersect: false,
+          },
+          stacked: false,
+
+          scales: {
+            y: {
+              type: 'linear',
+              display: true,
+              position: 'left',
+            },
+            y1: {
+              type: 'linear',
+              display: true,
+              position: 'right',
+              // grid line settings
+              grid: {
+                drawOnChartArea: false, // only want the grid lines for one axis to show up
+              },
+            },
+            xAxis: {
+              ticks: {
+                maxTicksLimit: 10
+              }
+            }
           }
         };
 
@@ -286,13 +332,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           type: 'line',
           data: drinkingData,
           options: chartOptions
-        });
+        } as any);
 
-        if (this.data.flow_profile.length > 0) {
-          for (const data of this.data.flow_profile) {
-            this.flowProfileChartEl.data.datasets[0].data.push(data.value);
+        if (this.flow_profile_raw.weight.length > 0) {
+          for (const data of this.flow_profile_raw.weight) {
+            this.flowProfileChartEl.data.datasets[0].data.push(data.actual_weight);
 
-            this.flowProfileChartEl.data.labels.push(data.time);
+            this.flowProfileChartEl.data.labels.push(data.brew_time);
+          }
+          for (const data of this.flow_profile_raw.waterFlow) {
+            this.flowProfileChartEl.data.datasets[1].data.push(data.value);
           }
           this.flowProfileChartEl.update();
         }
@@ -388,9 +437,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       await scale.setTimer(SCALE_TIMER_COMMAND.STOP);
       await scale.setTimer(SCALE_TIMER_COMMAND.RESET);
       this.deattachToScaleChange();
+
+
+      if (this.isEdit) {
+        await this.deleteFlowProfile();
+        this.data.flow_profile = '';
+      }
+
+      this.flow_profile_raw = new BrewFlow();
+
       this.initializeFlowChart();
-      this.data.flow_profile = [];
-      this.flow_profile_raw = [];
     }
   }
 
@@ -468,7 +524,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       showBackdrop: true,
       backdropDismiss: true,
       swipeToClose: true,
-      componentProps: {displayingTime: this.displayingBrewTime}
+      componentProps: { displayingTime: this.displayingBrewTime }
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
@@ -515,12 +571,45 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         if (this.uiBrewHelper.fieldVisible(this.settings.manage_parameters.coffee_first_drip_time,
           this.data.getPreparation().manage_parameters.coffee_first_drip_time,
           this.data.getPreparation().use_custom_parameters)) {
-          //The first time we set the weight, we have one sec delay, because of this do it -1 second
+          // The first time we set the weight, we have one sec delay, because of this do it -1 second
           this.data.coffee_first_drip_time = this.getTime() - 1;
           this.changeDetectorRef.detectChanges();
         }
       }
     }
+  }
+
+  /**
+   * This function is triggered outside of add/edit component, because the uuid is not existing on adding at start
+   * @param _uuid
+   */
+  public saveFlowProfile(_uuid: string): string {
+    const random = Math.floor(Math.random() * 10) + 1;
+
+    const t = [];
+    for (let i = 0; i < random; i++) {
+      t.push(i);
+    }
+    const savingPath = 'brews/' + _uuid + '_flow_profile.json';
+    this.uiFileHelper.saveJSONFile(savingPath, JSON.stringify(this.flow_profile_raw));
+    return savingPath;
+  }
+
+  private async readFlowProfile() {
+    const flowProfilePath = 'brews/' + this.data.config.uuid + '_flow_profile.json';
+    const jsonParsed = await this.uiFileHelper.getJSONFile(flowProfilePath);
+    this.flow_profile_raw = jsonParsed;
+  }
+  private async deleteFlowProfile() {
+    try {
+      if (this.data.flow_profile !== '') {
+        const flowProfilePath = 'brews/' + this.data.config.uuid + '_flow_profile.json';
+        await this.uiFileHelper.deleteFile(flowProfilePath);
+      }
+    } catch (ex) {
+
+    }
+
   }
 
 
@@ -587,7 +676,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         const lastVal: number = this.flowProfileArr[this.flowProfileArr.length - 1];
 
         if (this.data.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO) {
-          //We do some calculations on filter
+          // We do some calculations on filter
           if ((lastVal - firstVal) > 100) {
             // Threshhold reached, more then 100g in on esecond is to much
             wrongFlow = true;
@@ -626,7 +715,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       if (wrongFlow === false) {
         // Overwrite to make sure to have the latest data to save.
         // Get the latest flow, why?? -> Because we're on a new time actually, and thats why we need to get the latest push value
-        const lastFlow = this.flow_profile_raw[this.flow_profile_raw.length - 1];
+        const lastFlow = this.flow_profile_raw.weight[this.flow_profile_raw.weight.length - 1];
         let flowValue: number = (lastFlow.actual_smoothed_weight - lastFlow.old_smoothed_weight) * 10;
         // Ignore flowing weight when we're below zero
         if (flowValue < 0) {
@@ -640,44 +729,65 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         actualFlowValue = 0;
       }
 
+      const weightData = this.flowProfileChartEl.data.datasets[0].data;
 
-      this.data.flow_profile.push({
-        timestamp: this.uiHelper.getActualTimeWithMilliseconds(),
-        time: this.flowTime,
-        value: actualFlowValue
-      });
-      this.flowProfileChartEl.data.datasets[0].data.push(actualFlowValue);
-      this.flowProfileChartEl.data.labels.push(this.flowTime);
+      const addRange = weightData.length - this.flowProfileChartEl.data.datasets[1].data.length;
 
+      const timestamp = this.uiHelper.getActualTimeWithMilliseconds();
+      for (let i = 0; i < addRange; i++) {
+        const waterFlow: IBrewWaterFlow = {
+
+        } as IBrewWaterFlow;
+
+        waterFlow.brew_time = this.flowTime.toString();
+        waterFlow.timestamp = timestamp;
+
+        // This looks so scary :<
+        if (i === addRange - 1) {
+          // We set last entry as value.
+          this.flowProfileChartEl.data.datasets[1].data.push(actualFlowValue);
+          waterFlow.value = actualFlowValue;
+        } else {
+          this.flowProfileChartEl.data.datasets[1].data.push(null);
+          waterFlow.value = null;
+        }
+
+        this.flow_profile_raw.waterFlow.push(waterFlow);
+
+      }
 
       this.__setScaleWeight(weight, wrongFlow, weightDidntChange);
 
       // Reset
       this.flowTime = this.getTime();
+      this.flowSecondTick = 0;
       this.flowProfileChartEl.update();
       this.flowProfileArr = [];
 
     }
 
+    this.flowProfileChartEl.data.labels.push(this.flowTime + '.' + this.flowSecondTick);
+    this.flowProfileChartEl.data.datasets[0].data.push(weight);
     this.flowProfileArr.push(weight);
-    this.pushFlowProfile(this.flowTime, weight, oldWeight, smoothedWeight, oldSmoothedWeight);
-
-
+    this.pushFlowProfile(this.flowTime + '.' + this.flowSecondTick, weight, oldWeight, smoothedWeight, oldSmoothedWeight);
+    this.flowSecondTick++;
   }
 
-  private pushFlowProfile(_brewTime: number,
-                          _actualWeight: number,
-                          _oldWeight: number,
-                          _actualSmoothedWeight: number,
-                          _oldSmoothedWeight: number) {
-    const brewFlow: IBrewFlow = {} as IBrewFlow;
+  private pushFlowProfile(_brewTime: string,
+    _actualWeight: number,
+    _oldWeight: number,
+    _actualSmoothedWeight: number,
+    _oldSmoothedWeight: number) {
+    const brewFlow: IBrewWeightFlow = {
+
+    } as IBrewWeightFlow;
     brewFlow.timestamp = this.uiHelper.getActualTimeWithMilliseconds();
     brewFlow.brew_time = _brewTime;
     brewFlow.actual_weight = _actualWeight;
     brewFlow.old_weight = _oldWeight;
     brewFlow.actual_smoothed_weight = _actualSmoothedWeight;
     brewFlow.old_smoothed_weight = _oldSmoothedWeight;
-    this.flow_profile_raw.push(brewFlow);
+    this.flow_profile_raw.weight.push(brewFlow);
 
   }
 
@@ -702,7 +812,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public getActualSmoothedWeightPerSecond(): number {
     try {
-      const lastflow = this.flow_profile_raw[this.flow_profile_raw.length - 1];
+      const lastflow = this.flow_profile_raw.weight[this.flow_profile_raw.weight.length - 1];
       const smoothedWeight = lastflow.actual_smoothed_weight;
       const oldSmoothedWeight = lastflow.old_smoothed_weight;
       const flowValue: number = (smoothedWeight - oldSmoothedWeight) * 10;
@@ -714,7 +824,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public async downloadFlowProfile() {
-    await this.uiExcel.exportBrewFlowProfile(this.flow_profile_raw, this.data.flow_profile);
+    await this.uiExcel.exportBrewFlowProfile(this.flow_profile_raw);
   }
 
   private __loadBrew(brew: Brew, _template: boolean) {
@@ -897,9 +1007,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     for (const entry of filteredEntries) {
       if (this.vesselResults.filter((e) => e.name === entry.vessel_name && e.weight === entry.vessel_weight).length <= 0) {
         this.vesselResults.push({
-            name: entry.vessel_name,
-            weight: entry.vessel_weight
-          }
+          name: entry.vessel_name,
+          weight: entry.vessel_weight
+        }
         );
       }
 
@@ -953,7 +1063,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     });
     await modal.present();
 
-    const {data} = await modal.onWillDismiss();
+    const { data } = await modal.onWillDismiss();
     if (data !== undefined) {
       this.data.tds = data.tds;
     }
@@ -976,7 +1086,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     });
     await modal.present();
 
-    const {data} = await modal.onWillDismiss();
+    const { data } = await modal.onWillDismiss();
     if (data !== undefined && data.brew_beverage_quantity > 0) {
       this.data.brew_beverage_quantity = data.brew_beverage_quantity;
     }

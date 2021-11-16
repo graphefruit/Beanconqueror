@@ -24,7 +24,6 @@ import {UIWaterStorage} from '../../services/uiWaterStorage';
 
 import {IWater} from '../../interfaces/water/iWater';
 import {Water} from '../water/water';
-import {IBrewFlow} from '../../interfaces/brew/iBrewFlow';
 
 
 export class Brew implements IBrew {
@@ -91,11 +90,8 @@ export class Brew implements IBrew {
 
   public favourite: boolean;
 
-  public flow_profile: Array<{
-    value: number,
-    time: number,
-    timestamp: string,
-  }>;
+  // Inherits the saved json path
+  public flow_profile: string;
 
   constructor() {
 
@@ -163,7 +159,7 @@ export class Brew implements IBrew {
     this.vessel_name = '';
     this.vessel_weight = 0;
 
-    this.flow_profile = [];
+    this.flow_profile = '';
   }
 
   public initializeByObject(brewObj: IBrew): void {
@@ -271,11 +267,19 @@ export class Brew implements IBrew {
 
   public getExtractionYield(): string {
     const grindWeight: number = this.grind_weight;
-    const brewQuantity: number = this.brew_beverage_quantity;
+    const brewQuantity: number = this.brew_quantity;
+    const brewBeverageQuantity: number = this.brew_beverage_quantity;
     const tds: number = this.tds;
 
+    if (this.getPreparation().style_type === PREPARATION_STYLE_TYPE.FULL_IMMERSION && brewQuantity > 0)
+    {
+      // #262
+      // ey=(tds*total water)/dose
+      return this.toFixedIfNecessary(((brewQuantity * tds) / grindWeight),2).toString();
 
-    return this.toFixedIfNecessary(((brewQuantity * tds) / grindWeight),2).toString();
+    }
+
+    return this.toFixedIfNecessary(((brewBeverageQuantity * tds) / grindWeight),2).toString();
 
   }
 

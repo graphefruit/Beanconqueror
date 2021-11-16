@@ -383,12 +383,13 @@ export class UIBrewHelper {
 
   public getCuppingChartData(_data: Brew | ICupping) {
 
-    let data:any;
+    let data: any;
     if (_data instanceof Brew) {
       data =_data.cupping;
     } else {
       data = _data;
     }
+    console.log("hahaha");
     const cuppingData = {
       labels: [
         this.translate.instant('CUPPING_SCORE_DRY_FRAGRANCE'),
@@ -424,10 +425,13 @@ export class UIBrewHelper {
     };
     const chartOptions = {
       responsive: true,
-      legend: false,
       title: {
         display: false,
         text: '',
+      },
+      plugins: {
+        legend: false,
+        tooltip: false,
       },
 
       scale: {
