@@ -4,7 +4,7 @@ import {Characteristic} from '../ble.types';
 import {MAGIC1, MAGIC2, SCALE_CHARACTERISTIC_UUID, SCALE_SERVICE_UUID} from './constants';
 import {Button, ParsedMessage, MessageType, ScaleMessageType, Units, WorkerResult, DecoderResultType, DEBUG} from './common';
 import {memoize} from 'lodash';
-
+import {UILog} from '../../../services/uiLog';
 declare var ble;
 
 export enum EventType {
@@ -17,9 +17,16 @@ export enum EventType {
 }
 
 const log = (...args) => {
-  if (DEBUG) {
-    console.log(...args);
+
+  try {
+    const uiLogInstance = UILog.getInstance();
+    uiLogInstance.log('ACAIA - ' + JSON.stringify(args));
   }
+  catch(ex) {
+
+  }
+  console.log(...args);
+
 };
 
 // DecodeWorkers receives array buffer from heartbeat notification and emits parsed messages if any
@@ -147,6 +154,7 @@ export class AcaiaScale {
   }
 
   public async connect(callback) {
+    log('Connect scale');
     if (this.connected) {
       return;
     }
@@ -154,6 +162,7 @@ export class AcaiaScale {
     try {
       await promisify(ble.requestMtu)(this.device_id, 247);
     } catch (e) {
+      log('failed to set MTU' + JSON.stringify(e));
       console.error('failed to set MTU', e);
     }
 
@@ -213,6 +222,7 @@ export class AcaiaScale {
 
   private messageParseCallback(messages: ParsedMessage[]) {
     messages.forEach((msg) => {
+      log('Message recieved - ' + JSON.stringify(msg));
       if (msg.type === MessageType.SETTINGS) {
         this.battery = msg.battery;
         this.units = msg.units;
@@ -305,10 +315,12 @@ export class AcaiaScale {
         }
         return true;
       } catch (e) {
+        log('Heartbeat failed ' + JSON.stringify(e));
         console.error('Heartbeat failed ' + e);
         try {
           await this.disconnect();
         } catch (e) {
+          log('ERROR - '+ JSON.stringify(e));
           return false;
         }
       }
