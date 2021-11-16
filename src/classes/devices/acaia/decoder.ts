@@ -22,8 +22,10 @@ export class Decoder {
   }
 
   public process(buffer: ArrayBuffer): DecoderResult {
+    this.log("Decoder#process start");
     this.addBuffer(buffer);
     const messages = this.processMessages();
+    this.log("Decoder#process, receives messages", { messages });
 
     if (messages.length) {
       return {type: DecoderResultType.DECODE_RESULT, data: messages};

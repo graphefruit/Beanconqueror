@@ -1,10 +1,10 @@
 // Converted to TypeScript from Python from https://github.com/lucapinello/pyacaia
 
-import {Characteristic} from '../ble.types';
-import {MAGIC1, MAGIC2, SCALE_CHARACTERISTIC_UUID, SCALE_SERVICE_UUID} from './constants';
-import {Button, ParsedMessage, MessageType, ScaleMessageType, Units, WorkerResult, DecoderResultType, DEBUG} from './common';
-import {memoize} from 'lodash';
-import {UILog} from '../../../services/uiLog';
+import { Characteristic } from '../ble.types';
+import { MAGIC1, MAGIC2, SCALE_CHARACTERISTIC_UUID, SCALE_SERVICE_UUID } from './constants';
+import { Button, ParsedMessage, MessageType, ScaleMessageType, Units, WorkerResult, DecoderResultType, DEBUG } from './common';
+import { memoize } from 'lodash';
+import { UILog } from '../../../services/uiLog';
 declare var ble;
 
 export enum EventType {
@@ -17,16 +17,25 @@ export enum EventType {
 }
 
 const log = (...args) => {
-
   try {
     const uiLogInstance = UILog.getInstance();
     uiLogInstance.log('ACAIA - ' + JSON.stringify(args));
   }
-  catch(ex) {
+  catch (ex) {
 
   }
   console.log(...args);
+};
 
+const logError = (...args) => {
+  try {
+    const uiLogInstance = UILog.getInstance();
+    uiLogInstance.error('Error: ACAIA - ' + JSON.stringify(args));
+  }
+  catch (ex) {
+
+  }
+  console.error(...args);
 };
 
 // DecodeWorkers receives array buffer from heartbeat notification and emits parsed messages if any
@@ -38,13 +47,16 @@ class DecoderWorker {
   constructor(callback: (msgs: ParsedMessage[]) => any) {
     this.decodeCallback = callback;
     if (typeof Worker !== 'undefined') {
+      log('Workers are supported. Creating a decode worker...')
       this.worker = new Worker(new URL('./decode.worker', import.meta.url));
       this.worker.onmessage = this.handleMessage.bind(this);
     } else {
+      log('Workers are NOT supported. Import decoder...');
       // fallback to running in setTimeout
       // dynamically imoprt './decoder' to prevent webpack including the code when we have Workers
       this.loading = import('./decoder')
-        .then(({Decoder}) => {
+        .then(({ Decoder }) => {
+          log('Decoder is imported, initalizing...')
           const decoder = new Decoder(log);
           // @ts-ignore
           this.worker = {
@@ -54,14 +66,14 @@ class DecoderWorker {
                 const result = decoder.process(message);
                 if (result) {
                   setTimeout(() => {
-                    this.handleMessage({data: result});
+                    this.handleMessage({ data: result });
                   });
                 }
               });
             },
           };
         })
-        .catch(console.error.bind(console));
+        .catch(logError);
     }
   }
 
@@ -73,7 +85,8 @@ class DecoderWorker {
     }
   }
 
-  private handleMessage({data}) {
+  private handleMessage({ data }) {
+    log("Decoder sent a message", data)
     if (data instanceof Object && data.hasOwnProperty('type') && data.hasOwnProperty('data')) {
       switch ((data as WorkerResult).type) {
         case DecoderResultType.LOG:
@@ -156,8 +169,10 @@ export class AcaiaScale {
   public async connect(callback) {
     log('Connect scale');
     if (this.connected) {
+      log('Already connected, bail.')
       return;
     }
+
     this.callback = callback;
     try {
       await promisify(ble.requestMtu)(this.device_id, 247);
@@ -167,7 +182,9 @@ export class AcaiaScale {
     }
 
     this.worker = new DecoderWorker(this.messageParseCallback.bind(this));
+    log("Subscribing to notificatoins", { device_id: this.device_id, weight_uuid: this.weight_uuid, char_uuid: this.char_uuid });
     ble.startNotification(this.device_id, this.weight_uuid, this.char_uuid, this.handleNotification.bind(this));
+
     await this.write(new Uint8Array([0, 1]).buffer);
     this.notificationsReady();
   }
@@ -278,9 +295,13 @@ export class AcaiaScale {
   }
 
   private write(data: ArrayBuffer, withoutResponse = false) {
+    log("trying to write: ", new Uint8Array(data))
     return new Promise((resolve) => {
       ble[withoutResponse ? 'writeWithoutResponse' : 'write'](this.device_id, this.weight_uuid, this.char_uuid, data,
-        resolve, resolve  // resolve for both cases because sometimes write says it's an error but in reality it's fine
+        resolve, (err) => {
+          logError("failed to write to characteristic, but we are ignoring it", err, withoutResponse);
+          resolve(false) // resolve for both cases because sometimes write says it's an error but in reality it's fine
+        }
       );
     });
   }
@@ -303,9 +324,11 @@ export class AcaiaScale {
         while (this.command_queue.length) {
           const packet = this.command_queue.shift();
           this.write(packet, true)
-            .catch(log);
+            .catch(logError);
         }
+
         if (Date.now() >= this.last_heartbeat + 1000) {
+          log('Sending heartbeat...');
           this.last_heartbeat = Date.now();
           if (this.isPyxisStyle) {
             this.write(encodeId(this.isPyxisStyle));
@@ -320,7 +343,7 @@ export class AcaiaScale {
         try {
           await this.disconnect();
         } catch (e) {
-          log('ERROR - '+ JSON.stringify(e));
+          log('ERROR - ' + JSON.stringify(e));
           return false;
         }
       }
@@ -338,6 +361,7 @@ const encodeEventData = memoize((payload: number[]): ArrayBuffer => {
 });
 
 const encodeNotificationRequest = memoize((): ArrayBuffer => {
+  log("encodeNotificationRequest");
   const payload = [
     0,  // weight
     1,  // weight argument
@@ -352,6 +376,7 @@ const encodeNotificationRequest = memoize((): ArrayBuffer => {
 });
 
 const encodeId = memoize((isPyxisStyle = false): ArrayBuffer => {
+  log("encodeId");
   let payload: number[];
   if (isPyxisStyle) {
     payload = [
@@ -366,37 +391,44 @@ const encodeId = memoize((isPyxisStyle = false): ArrayBuffer => {
 });
 
 const encodeHeartbeat = memoize((): ArrayBuffer => {
+  log("encodeHeartbeat");
   const payload = [2, 0];
   return encode(0, payload);
 });
 
 const encodeTare = memoize((): ArrayBuffer => {
+  log("encodeTare");
   const payload = [0];
   return encode(4, payload);
 });
 
 const encodeGetSettings = memoize((): ArrayBuffer => {
+  log("encodeSettings");
   /* Settings are returned as a notification */
   const payload = new Array(16).fill(0);
   return encode(6, payload);
 });
 
 const encodeStartTimer = memoize((): ArrayBuffer => {
+  log("encodeStartTimer");
   const payload = [0, 0];
   return encode(13, payload);
 });
 
 const encodeStopTimer = memoize((): ArrayBuffer => {
+  log("encodeStopTimer");
   const payload = [0, 2];
   return encode(13, payload);
 });
 
 const encodeResetTimer = memoize((): ArrayBuffer => {
+  log("encodeResetTimer");
   const payload = [0, 1];
   return encode(13, payload);
 });
 
 function encode(msgType: number, payload: number[]): ArrayBuffer {
+  log("encode", { msgType, payload });
   let cksum1, cksum2, val;
   const bytes = new Uint8Array(5 + payload.length);
   bytes[0] = MAGIC1;
@@ -420,7 +452,7 @@ function encode(msgType: number, payload: number[]): ArrayBuffer {
 
 function promisify(fn) {
   // tslint:disable-next-line:only-arrow-functions
-  return function(...args) {
+  return function (...args) {
     return new Promise((resolve, reject) => {
       fn(...args, resolve, reject);
     });

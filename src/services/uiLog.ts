@@ -50,8 +50,7 @@ export class UILog {
 
   public log(_message: string): void {
     this.generateLogMessage(LOGS_ENUM.LOG, _message);
-    if (this.disabled === false) {
-
+    if (!this.disabled) {
       console.log(_message);
     }
 
