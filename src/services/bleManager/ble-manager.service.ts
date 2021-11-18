@@ -1,3 +1,4 @@
+import { Platforms } from '@ionic/core';
 import {PeripheralData} from './../../classes/devices/ble.types';
 import {Injectable} from '@angular/core';
 import {BluetoothScale, ScaleType, makeDevice, LunarScale, DecentScale} from '../../classes/devices';
@@ -222,7 +223,7 @@ export class BleManagerService {
   private connectCallback(callback, deviceType: ScaleType, data: PeripheralData) {
     // wait for full data
     if (!this.scale || 'characteristics' in data) {
-      this.scale = makeDevice(deviceType, data);
+      this.scale = makeDevice(deviceType, data, this.platform.platforms() as Platforms[]);
       this.uiLog.log('Connected successfully');
       this.uiToast.showInfoToastBottom('SCALE.CONNECTED_SUCCESSFULLY');
       callback();

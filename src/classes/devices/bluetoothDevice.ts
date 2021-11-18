@@ -1,8 +1,9 @@
-import {PeripheralData} from './ble.types';
+import { Platforms } from '@ionic/core';
+import { PeripheralData } from './ble.types';
 
 declare var ble;
 
-import {EventEmitter} from '@angular/core';
+import { EventEmitter } from '@angular/core';
 
 export enum SCALE_TIMER_COMMAND {
   STOP = 'STOP',
@@ -34,6 +35,7 @@ export type TareEvent = undefined;
 export class BluetoothScale {
   public device_id: string;
   protected weight: Weight;
+  protected platforms: Platforms[];
   public batteryLevel: number;
 
   public weightChange: EventEmitter<WeightChangeEvent> = new EventEmitter();
@@ -42,8 +44,9 @@ export class BluetoothScale {
   public timerEvent: EventEmitter<TimerEvent | null> = new EventEmitter();
   public tareEvent: EventEmitter<TareEvent> = new EventEmitter();
 
-  constructor(data: PeripheralData) {
+  constructor(data: PeripheralData, platforms: Platforms[]) {
     this.device_id = data.id;
+    this.platforms = platforms;
   }
 
   public async connect() {

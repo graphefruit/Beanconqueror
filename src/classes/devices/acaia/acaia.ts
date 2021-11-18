@@ -1,3 +1,4 @@
+import { Platforms } from '@ionic/core';
 // Converted to TypeScript from Python from https://github.com/lucapinello/pyacaia
 
 import { Characteristic } from '../ble.types';
@@ -109,6 +110,8 @@ export class AcaiaScale {
   private isPyxisStyle: boolean;
   private readonly characteristics: Characteristic[];
 
+  private platforms: Platforms[];
+
   private worker: DecoderWorker;
 
   private connected: boolean;
@@ -129,19 +132,26 @@ export class AcaiaScale {
   private set_interval_thread: ReturnType<typeof setInterval>;
   private callback: (eventType: EventType, data?: any) => any;
 
-  constructor(device_id: string, characteristics: Characteristic[]) {
+  constructor(device_id: string, platforms: Platforms[], characteristics: Characteristic[]) {
     /*For Pyxis-style devices, the UUIDs can be overridden.  char_uuid
                       is the command UUID, and weight_uuid is where the notify comes
                       from.  Old-style scales only specify char_uuid
                     */
     this.device_id = device_id;
+    this.platforms = platforms;
     this.connected = false;
 
     // TODO(mike1808): make it to work with new Lunar and Pyxis by auto-detecting service and char uuid
+    log("received charactersitics: ", JSON.stringify(characteristics))
     this.characteristics = characteristics;
-    this.char_uuid = SCALE_CHARACTERISTIC_UUID;
-    this.weight_uuid = SCALE_SERVICE_UUID;
     this.isPyxisStyle = false;
+
+    if (!this.findBLEUUIDs()) {
+      throw new Error("Cannot find weight service and characterstics on the scale");
+    }
+
+    // this.char_uuid = SCALE_CHARACTERISTIC_UUID;
+    // this.weight_uuid = SCALE_SERVICE_UUID;
 
     this.command_queue = [];
     this.packet = null;
@@ -174,11 +184,14 @@ export class AcaiaScale {
     }
 
     this.callback = callback;
-    try {
-      await promisify(ble.requestMtu)(this.device_id, 247);
-    } catch (e) {
-      log('failed to set MTU' + JSON.stringify(e));
-      console.error('failed to set MTU', e);
+
+    if (!this.platforms.includes('ios')) {
+      try {
+        await promisify(ble.requestMtu)(this.device_id, 247);
+      } catch (e) {
+        log('failed to set MTU' + JSON.stringify(e));
+        console.error('failed to set MTU', e);
+      }
     }
 
     this.worker = new DecoderWorker(this.messageParseCallback.bind(this));
@@ -230,6 +243,20 @@ export class AcaiaScale {
     this.command_queue.push(encodeResetTimer());
     this.paused_time = 0;
     this.timer_running = false;
+  }
+
+  private findBLEUUIDs() {
+    for (let char of this.characteristics) {
+      if (to128bitUUID(char.chracterstic) === to128bitUUID(SCALE_CHARACTERISTIC_UUID)) {
+        this.char_uuid = SCALE_CHARACTERISTIC_UUID;
+        this.weight_uuid = char.service;
+        if (to128bitUUID(this.weight_uuid) !== to128bitUUID(SCALE_SERVICE_UUID)) {
+          this.isPyxisStyle = true;
+        }
+        return true;
+      }
+    }
+    return false;
   }
 
   private handleNotification(value: ArrayBuffer) {
@@ -457,4 +484,19 @@ function promisify(fn) {
       fn(...args, resolve, reject);
     });
   };
+}
+
+
+function to128bitUUID(uuid: string) {
+  // nothing to do
+  switch (uuid.length) {
+    case 4:
+      return `0000${uuid}-0000-1000-8000-00805F9B34FB`;
+    case 8:
+      return `${uuid}-0000-1000-8000-00805F9B34FB`
+    case 36:
+      return uuid
+    default:
+      throw new Error("invalid uuid: " + uuid);
+  }
 }

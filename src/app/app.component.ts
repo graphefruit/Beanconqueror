@@ -1,50 +1,50 @@
 import { AfterViewInit, Component, ViewChild, ViewEncapsulation } from '@angular/core';
-
-import { IonRouterOutlet, MenuController, ModalController, Platform } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { AppMinimize } from '@ionic-native/app-minimize/ngx';
+import { Globalization } from '@ionic-native/globalization/ngx';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { UILog } from '../services/uiLog';
-import { UIBeanStorage } from '../services/uiBeanStorage';
-import { UIBrewStorage } from '../services/uiBrewStorage';
-import { UIPreparationStorage } from '../services/uiPreparationStorage';
-import { UIMillStorage } from '../services/uiMillStorage';
-import { UISettingsStorage } from '../services/uiSettingsStorage';
-import { AppMinimize } from '@ionic-native/app-minimize/ngx';
-import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { ThreeDeeTouch, ThreeDeeTouchQuickAction } from '@ionic-native/three-dee-touch/ngx';
-import { Router } from '@angular/router';
-import { UIBrewHelper } from '../services/uiBrewHelper';
-
-import { UIHelper } from '../services/uiHelper';
-import { UIAlert } from '../services/uiAlert';
+import { IonRouterOutlet, MenuController, ModalController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { Globalization } from '@ionic-native/globalization/ngx';
-import { Settings } from '../classes/settings/settings';
-import { STARTUP_VIEW_ENUM } from '../enums/settings/startupView';
-import { UIAnalytics } from '../services/uiAnalytics';
-import { WelcomePopoverComponent } from '../popover/welcome-popover/welcome-popover.component';
+import { Chart, registerables } from 'chart.js';
 /** Third party */
 import moment from 'moment';
-import { UIUpdate } from '../services/uiUpdate';
-import { UiVersionStorage } from '../services/uiVersionStorage';
-import { UIGreenBeanStorage } from '../services/uiGreenBeanStorage';
-import { UIRoastingMachineStorage } from '../services/uiRoastingMachineStorage';
-import { IntentHandlerService } from '../services/intentHandler/intent-handler.service';
+import { ScaleType } from 'src/classes/devices';
+import { Settings } from '../classes/settings/settings';
 import LINK_TRACKING from '../data/tracking/linkTracking';
 import STARTUP_TRACKING from '../data/tracking/startupTracking';
-import { AnalyticsPopoverComponent } from '../popover/analytics-popover/analytics-popover.component';
-import { IosPlatformService } from '../services/iosPlatform/ios-platform.service';
-import { AndroidPlatformService } from '../services/androidPlatform/android-platform.service';
+import { STARTUP_VIEW_ENUM } from '../enums/settings/startupView';
 import { environment } from '../environments/environment';
-import { UIWaterStorage } from '../services/uiWaterStorage';
-import { UIBeanHelper } from '../services/uiBeanHelper';
-import { UIMillHelper } from '../services/uiMillHelper';
-import { UIPreparationHelper } from '../services/uiPreparationHelper';
+import { AnalyticsPopoverComponent } from '../popover/analytics-popover/analytics-popover.component';
+import { WelcomePopoverComponent } from '../popover/welcome-popover/welcome-popover.component';
+import { AndroidPlatformService } from '../services/androidPlatform/android-platform.service';
 import { BleManagerService } from '../services/bleManager/ble-manager.service';
 import { CleanupService } from '../services/cleanupService/cleanup.service';
-import { ScaleType } from 'src/classes/devices';
+import { IntentHandlerService } from '../services/intentHandler/intent-handler.service';
+import { IosPlatformService } from '../services/iosPlatform/ios-platform.service';
+import { UIAlert } from '../services/uiAlert';
+import { UIAnalytics } from '../services/uiAnalytics';
+import { UIBeanHelper } from '../services/uiBeanHelper';
+import { UIBeanStorage } from '../services/uiBeanStorage';
+import { UIBrewHelper } from '../services/uiBrewHelper';
+import { UIBrewStorage } from '../services/uiBrewStorage';
+import { UIGreenBeanStorage } from '../services/uiGreenBeanStorage';
+import { UIHelper } from '../services/uiHelper';
+import { UILog } from '../services/uiLog';
+import { UIMillHelper } from '../services/uiMillHelper';
+import { UIMillStorage } from '../services/uiMillStorage';
+import { UIPreparationHelper } from '../services/uiPreparationHelper';
+import { UIPreparationStorage } from '../services/uiPreparationStorage';
+import { UIRoastingMachineStorage } from '../services/uiRoastingMachineStorage';
+import { UISettingsStorage } from '../services/uiSettingsStorage';
+import { UIUpdate } from '../services/uiUpdate';
+import { UiVersionStorage } from '../services/uiVersionStorage';
+import { UIWaterStorage } from '../services/uiWaterStorage';
 
-import { Chart, registerables } from 'chart.js';
+
+
 declare var AppRate;
 @Component({
   selector: 'app-root',

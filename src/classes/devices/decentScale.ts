@@ -1,3 +1,4 @@
+import { Platforms } from '@ionic/core';
 import {PeripheralData} from './ble.types';
 import {BluetoothScale, SCALE_TIMER_COMMAND, Weight} from './bluetoothDevice';
 import {EventEmitter} from '@angular/core';
@@ -31,8 +32,8 @@ export default class DecentScale extends BluetoothScale {
     return device && device.name && device.name.toLowerCase().startsWith('decent');
   }
 
-  constructor(data: PeripheralData) {
-    super(data);
+  constructor(data: PeripheralData, platforms: Platforms[]) {
+    super(data, platforms);
     this.batteryLevel = 0;
     this.buffer = new Uint8Array();
     this.connect();

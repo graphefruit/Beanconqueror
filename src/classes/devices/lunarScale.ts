@@ -1,6 +1,7 @@
-import {PeripheralData} from './ble.types';
-import {BluetoothScale, SCALE_TIMER_COMMAND, Weight} from './bluetoothDevice';
-import {AcaiaScale, EventType} from './acaia';
+import { Platforms } from '@ionic/core';
+import { PeripheralData } from './ble.types';
+import { BluetoothScale, SCALE_TIMER_COMMAND, Weight } from './bluetoothDevice';
+import { AcaiaScale, EventType } from './acaia';
 
 declare var ble;
 export default class LunarScale extends BluetoothScale {
@@ -16,10 +17,10 @@ export default class LunarScale extends BluetoothScale {
     return device && device.name && ['ACAIA', 'PYXIS', 'PROCH'].includes(device.name.slice(0, 5));
   }
 
-  constructor(data: PeripheralData) {
-    super(data);
+  constructor(data: PeripheralData, platforms: Platforms[]) {
+    super(data, platforms);
 
-    this.scale = new AcaiaScale(data.id, data.characteristics);
+    this.scale = new AcaiaScale(data.id, platforms, data.characteristics);
     this.connect();
   }
 

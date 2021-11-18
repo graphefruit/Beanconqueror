@@ -60,3 +60,10 @@ export interface DecoderLog {
 }
 
 export type WorkerResult = DecoderLog | DecoderResult;
+
+export type Platform =
+  'ios'
+  | 'android'
+  | 'web'
+  | 'mobile'
+ // they are more but we don't care
