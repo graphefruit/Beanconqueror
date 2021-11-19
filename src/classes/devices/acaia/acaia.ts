@@ -2,7 +2,7 @@ import { Platforms } from '@ionic/core';
 // Converted to TypeScript from Python from https://github.com/lucapinello/pyacaia
 
 import { Characteristic } from '../ble.types';
-import { MAGIC1, MAGIC2, SCALE_CHARACTERISTIC_UUID, SCALE_SERVICE_UUID } from './constants';
+import { MAGIC1, MAGIC2, LUNAR_CHARACTERISTIC_UUID, LUNAR_SERVICE_UUID, PYXIS_SERVICE_UUID, PYXIS_TX_CHARACTERISTIC_UUID, PYXIS_RX_CHARACTERISTIC_UUID } from './constants';
 import { Button, ParsedMessage, MessageType, ScaleMessageType, Units, WorkerResult, DecoderResultType, DEBUG } from './common';
 import { memoize } from 'lodash';
 import { UILog } from '../../../services/uiLog';
@@ -21,7 +21,7 @@ const log = (...args) => {
   if (DEBUG) {
     try {
       UILog.getInstance().log(`ACAIA: ${JSON.stringify(args)}`)
-    } catch(e) {}
+    } catch (e) { }
   }
 }
 
@@ -122,7 +122,8 @@ class DecoderWorker {
 
 export class AcaiaScale {
   private readonly device_id: string;
-  private char_uuid: string;
+  private tx_char_uuid: string;
+  private rx_char_uuid: string;
   private weight_uuid: string;
 
   // TODO(mike1808) Pyxis is not supported right now
@@ -171,10 +172,10 @@ export class AcaiaScale {
 
     if (!this.findBLEUUIDs()) {
       throw new Error("Cannot find weight service and characterstics on the scale");
+    } else {
+      this.logger.info("discovered following services and characterstics",
+        { service: this.weight_uuid, tx: this.tx_char_uuid, rx: this.rx_char_uuid, pyxis: this.isPyxisStyle })
     }
-
-    // this.char_uuid = SCALE_CHARACTERISTIC_UUID;
-    // this.weight_uuid = SCALE_SERVICE_UUID;
 
     this.command_queue = [];
     this.packet = null;
@@ -189,8 +190,6 @@ export class AcaiaScale {
     this.auto_off = null;
     this.beep_on = null;
     this.timer_running = false;
-
-
   }
 
   public getElapsedTime(): number {
@@ -219,8 +218,8 @@ export class AcaiaScale {
     }
 
     this.worker = new DecoderWorker(this.messageParseCallback.bind(this));
-    this.logger.log("Subscribing to notificatoins", { device_id: this.device_id, weight_uuid: this.weight_uuid, char_uuid: this.char_uuid });
-    ble.startNotification(this.device_id, this.weight_uuid, this.char_uuid, this.handleNotification.bind(this), (err) => {
+    this.logger.log("Subscribing to notificatoins", { device_id: this.device_id, weight_uuid: this.weight_uuid, char_uuid: this.rx_char_uuid });
+    ble.startNotification(this.device_id, this.weight_uuid, this.rx_char_uuid, this.handleNotification.bind(this), (err) => {
       this.logger.error("failed to subscribe to notifications " + JSON.stringify(err));
       this.disconnect()
         .catch(this.logger.error.bind(this.logger))
@@ -232,7 +231,7 @@ export class AcaiaScale {
 
   public async disconnect() {
     this.connected = false;
-    await promisify(ble.stopNotification)((this.device_id, this.weight_uuid, this.char_uuid));
+    await promisify(ble.stopNotification)((this.device_id, this.weight_uuid, this.tx_char_uuid));
   }
 
   public tare() {
@@ -275,13 +274,20 @@ export class AcaiaScale {
 
   private findBLEUUIDs() {
     for (let char of this.characteristics) {
-      if (to128bitUUID(char.characteristic) === to128bitUUID(SCALE_CHARACTERISTIC_UUID)) {
-        this.char_uuid = char.characteristic;
+      if (to128bitUUID(char.service) === to128bitUUID(LUNAR_SERVICE_UUID) &&
+        to128bitUUID(char.characteristic) === to128bitUUID(LUNAR_CHARACTERISTIC_UUID)) {
+        this.tx_char_uuid = char.characteristic;
+        this.rx_char_uuid = char.characteristic;
         this.weight_uuid = char.service;
-        if (to128bitUUID(this.weight_uuid) !== to128bitUUID(SCALE_SERVICE_UUID)) {
-          this.isPyxisStyle = true;
-        }
         return true;
+      } else if (to128bitUUID(char.service) === to128bitUUID(PYXIS_SERVICE_UUID)) {
+        this.isPyxisStyle = true;
+        this.weight_uuid = char.service;
+        if (to128bitUUID(char.characteristic) === to128bitUUID(PYXIS_TX_CHARACTERISTIC_UUID)) {
+          this.tx_char_uuid = char.characteristic
+        } else if (to128bitUUID(char.characteristic) === to128bitUUID(PYXIS_RX_CHARACTERISTIC_UUID)) {
+          this.rx_char_uuid = char.characteristic
+        }
       }
     }
     return false;
@@ -352,7 +358,7 @@ export class AcaiaScale {
   private write(data: ArrayBuffer, withoutResponse = false) {
     this.logger.debug("trying to write: ", new Uint8Array(data))
     return new Promise((resolve) => {
-      ble[withoutResponse ? 'writeWithoutResponse' : 'write'](this.device_id, this.weight_uuid, this.char_uuid, data,
+      ble[withoutResponse ? 'writeWithoutResponse' : 'write'](this.device_id, this.weight_uuid, this.tx_char_uuid, data,
         resolve, (err) => {
           this.logger.error("failed to write to characteristic, but we are ignoring it", err, withoutResponse);
           resolve(false) // resolve for both cases because sometimes write says it's an error but in reality it's fine
