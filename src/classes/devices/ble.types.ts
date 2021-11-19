@@ -14,7 +14,7 @@ export interface PeripheralData extends LimitedPeripheralData {
 
 export interface Characteristic {
   service: UUID;
-  chracterstic: UUID;
+  characteristic: UUID;
   propertis: Property[];
   descriptors?: Descriptor[];
 }

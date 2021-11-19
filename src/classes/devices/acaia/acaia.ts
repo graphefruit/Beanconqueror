@@ -23,9 +23,7 @@ const log = (...args) => {
     uiLogInstance.log('ACAIA - ' + JSON.stringify(args));
   }
   catch (ex) {
-
   }
-  console.log(...args);
 };
 
 const logError = (...args) => {
@@ -34,9 +32,7 @@ const logError = (...args) => {
     uiLogInstance.error('Error: ACAIA - ' + JSON.stringify(args));
   }
   catch (ex) {
-
   }
-  console.error(...args);
 };
 
 // DecodeWorkers receives array buffer from heartbeat notification and emits parsed messages if any
@@ -247,7 +243,7 @@ export class AcaiaScale {
 
   private findBLEUUIDs() {
     for (let char of this.characteristics) {
-      if (to128bitUUID(char.chracterstic) === to128bitUUID(SCALE_CHARACTERISTIC_UUID)) {
+      if (to128bitUUID(char.characteristic) === to128bitUUID(SCALE_CHARACTERISTIC_UUID)) {
         this.char_uuid = SCALE_CHARACTERISTIC_UUID;
         this.weight_uuid = char.service;
         if (to128bitUUID(this.weight_uuid) !== to128bitUUID(SCALE_SERVICE_UUID)) {
@@ -491,11 +487,11 @@ function to128bitUUID(uuid: string) {
   // nothing to do
   switch (uuid.length) {
     case 4:
-      return `0000${uuid}-0000-1000-8000-00805F9B34FB`;
+      return `0000${uuid.toUpperCase()}-0000-1000-8000-00805F9B34FB`;
     case 8:
-      return `${uuid}-0000-1000-8000-00805F9B34FB`
+      return `${uuid.toUpperCase()}-0000-1000-8000-00805F9B34FB`
     case 36:
-      return uuid
+      return uuid.toUpperCase()
     default:
       throw new Error("invalid uuid: " + uuid);
   }
