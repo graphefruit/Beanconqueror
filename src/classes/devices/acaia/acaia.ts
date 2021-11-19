@@ -244,7 +244,7 @@ export class AcaiaScale {
   private findBLEUUIDs() {
     for (let char of this.characteristics) {
       if (to128bitUUID(char.characteristic) === to128bitUUID(SCALE_CHARACTERISTIC_UUID)) {
-        this.char_uuid = SCALE_CHARACTERISTIC_UUID;
+        this.char_uuid = char.characteristic;
         this.weight_uuid = char.service;
         if (to128bitUUID(this.weight_uuid) !== to128bitUUID(SCALE_SERVICE_UUID)) {
           this.isPyxisStyle = true;
