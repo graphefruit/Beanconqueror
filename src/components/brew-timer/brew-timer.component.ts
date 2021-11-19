@@ -6,6 +6,7 @@ import {DatetimePopoverComponent} from '../../popover/datetime-popover/datetime-
 import {ModalController} from '@ionic/angular';
 import {BleManagerService} from '../../services/bleManager/ble-manager.service';
 import DecentScale from '../../classes/devices/decentScale';
+import {BluetoothScale} from '../../classes/devices';
 
 
 @Component({
@@ -31,6 +32,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   private _dripTimerVisible: boolean;
 
   private startedTimestamp: number = -1;
+
   get dripTimerVisible(): boolean {
     return this._dripTimerVisible;
   }
@@ -47,8 +49,6 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     return this._bloomTimerVisible;
   }
 
-
-
   public showBloomTimer: boolean = true;
   public showDripTimer: boolean = true;
 
@@ -56,6 +56,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     this._bloomTimerVisible = value;
     this.showBloomTimer = this._bloomTimerVisible;
   }
+
   public timer: ITimer;
 
   constructor(private readonly modalCtrl: ModalController, private readonly bleManager: BleManagerService) {
@@ -63,13 +64,8 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
   public smartScaleConnected() {
     try {
-      const smartScale: DecentScale = this.bleManager.getDecentScale();
-      if (smartScale === null) {
-        return false;
-      }
-      return true;
-    }catch(ex) {
-
+      return this.bleManager.getScale() !== null;
+    } catch (ex) {
     }
   }
 
@@ -81,7 +77,8 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   public isTimerRunning() {
     return this.timer.runTimer;
   }
-  public ngOnDestroy (): void {
+
+  public ngOnDestroy(): void {
     this.timer.runTimer = false;
   }
 
@@ -92,7 +89,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   public setTime(seconds: number): void {
     this.timer.seconds = seconds;
     this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
-    this.displayingTime = moment(this.displayingTime).startOf('day').add('seconds',this.timer.seconds).toISOString();
+    this.displayingTime = moment(this.displayingTime).startOf('day').add('seconds', this.timer.seconds).toISOString();
   }
 
   public initTimer(): void {
@@ -108,7 +105,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     this.showDripTimer = this.dripTimerVisible;
 
     this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
-    this.displayingTime = moment(this.displayingTime).startOf('day').add('seconds',this.timer.seconds).toISOString();
+    this.displayingTime = moment(this.displayingTime).startOf('day').add('seconds', this.timer.seconds).toISOString();
   }
 
   public startTimer(_resumed: boolean = false): void {
@@ -157,14 +154,14 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
       if (!this.timer.runTimer) {
         return;
       }
-      const currentTickTimestamp: number =  Math.floor(Date.now() / 1000);
+      const currentTickTimestamp: number = Math.floor(Date.now() / 1000);
       const delta: number = currentTickTimestamp - this.startedTimestamp;
 
-      this.timer.seconds  += delta;
+      this.timer.seconds += delta;
       this.startedTimestamp = currentTickTimestamp;
 
       this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
-      this.displayingTime = moment(this.displayingTime).startOf('day').add('seconds',this.timer.seconds).toISOString();
+      this.displayingTime = moment(this.displayingTime).startOf('day').add('seconds', this.timer.seconds).toISOString();
       this.timerTick();
       this.changeEvent();
     }, 1000);
@@ -179,6 +176,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     this.initTimer();
     this.changeEvent();
   }
+
   public formatSeconds(): string {
     const secs = this.getSeconds();
 
@@ -201,24 +199,28 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
     return `${hoursString}:${minutesString}:${secondsString}`;
   }
+
   public changeDate(_event) {
-    const durationPassed =  moment.duration(moment(_event).diff(moment(_event).startOf('day')));
+    const durationPassed = moment.duration(moment(_event).diff(moment(_event).startOf('day')));
     this.displayingTime = moment(_event).toISOString();
     this.timer.seconds = durationPassed.asSeconds();
     // Emit event so parent page can do something
     this.changeEvent();
   }
+
   public async showTimeOverlay(_event) {
     _event.stopPropagation();
     _event.stopImmediatePropagation();
 
-    const modal = await this.modalCtrl.create({component: DatetimePopoverComponent,
-      id:'datetime-popover',
+    const modal = await this.modalCtrl.create({
+      component: DatetimePopoverComponent,
+      id: 'datetime-popover',
       cssClass: 'half-bottom-modal',
       showBackdrop: true,
       backdropDismiss: true,
       swipeToClose: true,
-      componentProps: {displayingTime: this.displayingTime}});
+      componentProps: {displayingTime: this.displayingTime}
+    });
     await modal.present();
     const modalData = await modal.onWillDismiss();
     if (modalData.data.displayingTime !== undefined) {

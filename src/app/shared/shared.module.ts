@@ -146,7 +146,7 @@ import {BrewBeverageQuantityCalculatorComponent} from '../brew/brew-beverage-qua
 import {BrewFlavorPickerComponent} from '../brew/brew-flavor-picker/brew-flavor-picker.component';
 import {BrewChoosePreparationToBrewComponent} from '../brew/brew-choose-preparation-to-brew/brew-choose-preparation-to-brew.component';
 import {ShortPressDirective} from '../../directive/short-press.directive';
-import {DecentTestPage} from '../decent-test/decent-test.page';
+import {ScaleTestPage} from '../scale-test/scale-test.page';
 import {FileTransfer} from '@ionic-native/file-transfer/ngx';
 
 @NgModule({
@@ -235,7 +235,7 @@ import {FileTransfer} from '@ionic-native/file-transfer/ngx';
     TooltipDirective,
     DisableDoubleClickDirective,
     BrewPage,
-    DecentTestPage,
+    ScaleTestPage,
     BrewDetailComponent,
     BrewEditComponent,
     PhotoPopoverComponent,
@@ -336,7 +336,7 @@ import {FileTransfer} from '@ionic-native/file-transfer/ngx';
     BrewFlavorPickerComponent,
     BrewBeverageQuantityCalculatorComponent,
     BrewPage,
-    DecentTestPage,
+    ScaleTestPage,
     BrewDetailComponent,
     BrewEditComponent,
     PhotoPopoverComponent,
@@ -499,7 +499,7 @@ import {FileTransfer} from '@ionic-native/file-transfer/ngx';
     TooltipDirective,
     DisableDoubleClickDirective,
     BrewPage,
-    DecentTestPage,
+    ScaleTestPage,
     BrewDetailComponent,
     BrewEditComponent,
     PhotoPopoverComponent,

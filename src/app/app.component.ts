@@ -1,49 +1,50 @@
-import {AfterViewInit, Component, ViewChild, ViewEncapsulation} from '@angular/core';
-
-import {IonRouterOutlet, MenuController, ModalController, Platform} from '@ionic/angular';
-import {SplashScreen} from '@ionic-native/splash-screen/ngx';
-import {StatusBar} from '@ionic-native/status-bar/ngx';
-import {UILog} from '../services/uiLog';
-import {UIBeanStorage} from '../services/uiBeanStorage';
-import {UIBrewStorage} from '../services/uiBrewStorage';
-import {UIPreparationStorage} from '../services/uiPreparationStorage';
-import {UIMillStorage} from '../services/uiMillStorage';
-import {UISettingsStorage} from '../services/uiSettingsStorage';
-import {AppMinimize} from '@ionic-native/app-minimize/ngx';
-import {Keyboard} from '@ionic-native/keyboard/ngx';
-import {ThreeDeeTouch, ThreeDeeTouchQuickAction} from '@ionic-native/three-dee-touch/ngx';
-import {Router} from '@angular/router';
-import {UIBrewHelper} from '../services/uiBrewHelper';
-
-import {UIHelper} from '../services/uiHelper';
-import {UIAlert} from '../services/uiAlert';
-import {TranslateService} from '@ngx-translate/core';
-import {Globalization} from '@ionic-native/globalization/ngx';
-import {Settings} from '../classes/settings/settings';
-import {STARTUP_VIEW_ENUM} from '../enums/settings/startupView';
-import {UIAnalytics} from '../services/uiAnalytics';
-import {WelcomePopoverComponent} from '../popover/welcome-popover/welcome-popover.component';
+import { AfterViewInit, Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Router } from '@angular/router';
+import { AppMinimize } from '@ionic-native/app-minimize/ngx';
+import { Globalization } from '@ionic-native/globalization/ngx';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
+import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { ThreeDeeTouch, ThreeDeeTouchQuickAction } from '@ionic-native/three-dee-touch/ngx';
+import { IonRouterOutlet, MenuController, ModalController, Platform } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
+import { Chart, registerables } from 'chart.js';
 /** Third party */
 import moment from 'moment';
-import {UIUpdate} from '../services/uiUpdate';
-import {UiVersionStorage} from '../services/uiVersionStorage';
-import {UIGreenBeanStorage} from '../services/uiGreenBeanStorage';
-import {UIRoastingMachineStorage} from '../services/uiRoastingMachineStorage';
-import {IntentHandlerService} from '../services/intentHandler/intent-handler.service';
+import { ScaleType } from 'src/classes/devices';
+import { Settings } from '../classes/settings/settings';
 import LINK_TRACKING from '../data/tracking/linkTracking';
 import STARTUP_TRACKING from '../data/tracking/startupTracking';
-import {AnalyticsPopoverComponent} from '../popover/analytics-popover/analytics-popover.component';
-import {IosPlatformService} from '../services/iosPlatform/ios-platform.service';
-import {AndroidPlatformService} from '../services/androidPlatform/android-platform.service';
-import {environment} from '../environments/environment';
-import {UIWaterStorage} from '../services/uiWaterStorage';
-import {UIBeanHelper} from '../services/uiBeanHelper';
-import {UIMillHelper} from '../services/uiMillHelper';
-import {UIPreparationHelper} from '../services/uiPreparationHelper';
-import {BleManagerService} from '../services/bleManager/ble-manager.service';
-import {CleanupService} from '../services/cleanupService/cleanup.service';
+import { STARTUP_VIEW_ENUM } from '../enums/settings/startupView';
+import { environment } from '../environments/environment';
+import { AnalyticsPopoverComponent } from '../popover/analytics-popover/analytics-popover.component';
+import { WelcomePopoverComponent } from '../popover/welcome-popover/welcome-popover.component';
+import { AndroidPlatformService } from '../services/androidPlatform/android-platform.service';
+import { BleManagerService } from '../services/bleManager/ble-manager.service';
+import { CleanupService } from '../services/cleanupService/cleanup.service';
+import { IntentHandlerService } from '../services/intentHandler/intent-handler.service';
+import { IosPlatformService } from '../services/iosPlatform/ios-platform.service';
+import { UIAlert } from '../services/uiAlert';
+import { UIAnalytics } from '../services/uiAnalytics';
+import { UIBeanHelper } from '../services/uiBeanHelper';
+import { UIBeanStorage } from '../services/uiBeanStorage';
+import { UIBrewHelper } from '../services/uiBrewHelper';
+import { UIBrewStorage } from '../services/uiBrewStorage';
+import { UIGreenBeanStorage } from '../services/uiGreenBeanStorage';
+import { UIHelper } from '../services/uiHelper';
+import { UILog } from '../services/uiLog';
+import { UIMillHelper } from '../services/uiMillHelper';
+import { UIMillStorage } from '../services/uiMillStorage';
+import { UIPreparationHelper } from '../services/uiPreparationHelper';
+import { UIPreparationStorage } from '../services/uiPreparationStorage';
+import { UIRoastingMachineStorage } from '../services/uiRoastingMachineStorage';
+import { UISettingsStorage } from '../services/uiSettingsStorage';
+import { UIUpdate } from '../services/uiUpdate';
+import { UiVersionStorage } from '../services/uiVersionStorage';
+import { UIWaterStorage } from '../services/uiWaterStorage';
 
-import { Chart, registerables } from 'chart.js';
+
+
 declare var AppRate;
 @Component({
   selector: 'app-root',
@@ -53,31 +54,31 @@ declare var AppRate;
 export class AppComponent implements AfterViewInit {
   public toggleAbout: boolean = false;
   public registerBackFunction: any;
-  @ViewChild(IonRouterOutlet, {static: false}) public routerOutlet: IonRouterOutlet;
+  @ViewChild(IonRouterOutlet, { static: false }) public routerOutlet: IonRouterOutlet;
 
   public pages = {
-    home: {title: 'NAV_HOME', url: '/', icon: 'home-outline', active: true},
-    decent: {title: 'DECENT', url: '/decent-test', icon: 'home-outline', active: true},
-    roasting_section: {title: 'NAV_ROASTING_SECTION', url: '/roasting-section', active: false},
-    water_section: {title: 'NAV_WATER_SECTION', url: '/water-section', active: false},
-    settings: {title: 'NAV_SETTINGS', url: '/settings', icon: 'settings-outline', active: false},
+    home: { title: 'NAV_HOME', url: '/', icon: 'home-outline', active: true },
+    scale: { title: 'SCALE', url: '/scale-test', icon: 'home-outline', active: true },
+    roasting_section: { title: 'NAV_ROASTING_SECTION', url: '/roasting-section', active: false },
+    water_section: { title: 'NAV_WATER_SECTION', url: '/water-section', active: false },
+    settings: { title: 'NAV_SETTINGS', url: '/settings', icon: 'settings-outline', active: false },
 
-    info: {title: 'NAV_INFORMATION_TO_APP', url: '/info', icon: 'information-circle-outline', active: false},
-    about: {title: 'NAV_ABOUT_US', url: '/info/about', icon: 'information-circle-outline', active: false},
-    contact: {title: 'NAV_CONTACT', url: '/info/contact', icon: 'mail-outline', active: false},
-    privacy: {title: 'NAV_PRIVACY', url: '/info/privacy', icon: 'documents-outline', active: false},
-    credits: {title: 'NAV_CREDITS', url: '/info/credits', icon: 'documents-outline', active: false},
-    terms: {title: 'NAV_TERMS', url: '/info/terms', icon: 'documents-outline', active: false},
-    thanks: {title: 'NAV_THANKS', url: '/info/thanks', icon: 'happy-outline', active: false},
-    licences: {title: 'NAV_LICENCES', url: '/info/licences', icon: 'copy-outline', active: false},
+    info: { title: 'NAV_INFORMATION_TO_APP', url: '/info', icon: 'information-circle-outline', active: false },
+    about: { title: 'NAV_ABOUT_US', url: '/info/about', icon: 'information-circle-outline', active: false },
+    contact: { title: 'NAV_CONTACT', url: '/info/contact', icon: 'mail-outline', active: false },
+    privacy: { title: 'NAV_PRIVACY', url: '/info/privacy', icon: 'documents-outline', active: false },
+    credits: { title: 'NAV_CREDITS', url: '/info/credits', icon: 'documents-outline', active: false },
+    terms: { title: 'NAV_TERMS', url: '/info/terms', icon: 'documents-outline', active: false },
+    thanks: { title: 'NAV_THANKS', url: '/info/thanks', icon: 'happy-outline', active: false },
+    licences: { title: 'NAV_LICENCES', url: '/info/licences', icon: 'copy-outline', active: false },
 
-    statistic: {title: 'NAV_STATISTICS', url: '/statistic', icon: 'analytics-outline', active: false},
-    logs: {title: 'NAV_LOGS', url: '/info/logs', icon: 'logo-buffer', active: false},
+    statistic: { title: 'NAV_STATISTICS', url: '/statistic', icon: 'analytics-outline', active: false },
+    logs: { title: 'NAV_LOGS', url: '/info/logs', icon: 'logo-buffer', active: false },
 
-    helper: {title: 'NAV_HELPER', url: '/helper', icon: 'logo-buffer', active: false},
-    helper_brew_ratio: {title: 'PAGE_HELPER_BREW_RATIO', url: '/helper/brew-ratio', icon: 'construct-outline', active: false},
-    helper_water_hardness: {title: 'PAGE_HELPER_WATER_HARDNESS', url: '/helper/water-hardness', icon: 'construct-outline', active: false},
-    brew_parameter: {title: 'NAV_BREW_PARAMS', url: '/brew-parameter', icon: 'construct-outline', active: false}
+    helper: { title: 'NAV_HELPER', url: '/helper', icon: 'logo-buffer', active: false },
+    helper_brew_ratio: { title: 'PAGE_HELPER_BREW_RATIO', url: '/helper/brew-ratio', icon: 'construct-outline', active: false },
+    helper_water_hardness: { title: 'PAGE_HELPER_WATER_HARDNESS', url: '/helper/water-hardness', icon: 'construct-outline', active: false },
+    brew_parameter: { title: 'NAV_BREW_PARAMS', url: '/brew-parameter', icon: 'construct-outline', active: false }
   };
 
 
@@ -101,7 +102,7 @@ export class AppComponent implements AfterViewInit {
     private readonly uiHelper: UIHelper,
     private readonly uiAlert: UIAlert,
     private _translate: TranslateService,
-    private  globalization: Globalization,
+    private globalization: Globalization,
     private readonly uiAnalytics: UIAnalytics,
     private readonly menu: MenuController,
     private readonly uiUpdate: UIUpdate,
@@ -168,7 +169,7 @@ export class AppComponent implements AfterViewInit {
                 this.uiHelper.isBeanconqurorAppReady().then(async () => {
                   const payloadType = payload.type;
                   try {
-                    this.uiAnalytics.trackEvent(STARTUP_TRACKING.TITLE,STARTUP_TRACKING.ACTIONS.FORCE_TOUCH.CATEGORY,
+                    this.uiAnalytics.trackEvent(STARTUP_TRACKING.TITLE, STARTUP_TRACKING.ACTIONS.FORCE_TOUCH.CATEGORY,
                       STARTUP_TRACKING.ACTIONS.FORCE_TOUCH.DATA.TYPE, payloadType.toUpperCase());
                     this.uiLog.log(`iOS Device - Home icon was pressed`);
                   } catch (ex) {
@@ -248,7 +249,7 @@ export class AppComponent implements AfterViewInit {
               this.uiLog.error('App finished loading, but errors occured');
             });
 
-        } catch(ex) {
+        } catch (ex) {
           await this.uiAlert.showAppShetItSelfMessage();
           this.uiLog.error('App finished loading, but errors occured');
         }
@@ -258,8 +259,8 @@ export class AppComponent implements AfterViewInit {
 
   private async __checkUpdate() {
     try {
-    await this.uiUpdate.checkUpdate();
-    } catch(ex) {
+      await this.uiUpdate.checkUpdate();
+    } catch (ex) {
 
     }
   }
@@ -274,7 +275,7 @@ export class AppComponent implements AfterViewInit {
   private async __checkIOSBackup() {
     try {
       await this.iosPlatformService.checkIOSBackup();
-    } catch(ex) {
+    } catch (ex) {
 
     }
   }
@@ -386,14 +387,14 @@ export class AppComponent implements AfterViewInit {
     }
     switch (settings.startup_view) {
       case STARTUP_VIEW_ENUM.HOME_PAGE:
-        this.router.navigate(['/home/dashboard'], {replaceUrl: true});
+        this.router.navigate(['/home/dashboard'], { replaceUrl: true });
         break;
       case STARTUP_VIEW_ENUM.BREW_PAGE:
-        this.router.navigate(['/home/brews'], {replaceUrl: true});
+        this.router.navigate(['/home/brews'], { replaceUrl: true });
         break;
       case STARTUP_VIEW_ENUM.ADD_BREW:
         await this.__trackNewBrew();
-        this.router.navigate(['/home/brews'], {replaceUrl: true});
+        this.router.navigate(['/home/brews'], { replaceUrl: true });
         break;
     }
   }
@@ -406,7 +407,7 @@ export class AppComponent implements AfterViewInit {
     if (this.platform.is('cordova') && this.platform.is('android')) {
       try {
         await this.androidPlatformService.checkHasExternalStorage();
-      } catch(ex) {
+      } catch (ex) {
       }
     }
 
@@ -425,12 +426,13 @@ export class AppComponent implements AfterViewInit {
 
   }
 
-  private  __connectSmartScale() {
+  private __connectSmartScale() {
     const settings = this.uiSettingsStorage.getSettings();
-    const decent_scale_id: string = settings.decent_scale_id;
-    this.uiLog.log(`Connect smartscale? ${decent_scale_id}`);
-    if (decent_scale_id !== undefined && decent_scale_id !== '') {
-      this.bleManager.autoConnectDecentScale(decent_scale_id,true);
+    const scale_id: string = settings.scale_id;
+    const scale_type: ScaleType = settings.scale_type;
+    this.uiLog.log(`Connect smartscale? ${scale_id}`);
+    if (scale_id !== undefined && scale_id !== '') {
+      this.bleManager.autoConnectScale(scale_type, scale_id, true);
     } else {
       this.uiLog.log('Smartscale not connected, dont try to connect');
     }
@@ -441,10 +443,10 @@ export class AppComponent implements AfterViewInit {
     this.platform.pause.subscribe(async () => {
       const settings: Settings = this.uiSettingsStorage.getSettings();
       if (settings.bluetooth_scale_stay_connected === false) {
-        const decent_scale_id: string = settings.decent_scale_id;
+        const decent_scale_id: string = settings.scale_id;
         if (decent_scale_id !== undefined && decent_scale_id !== '') {
           // Don't show message on device pause.
-          this.bleManager.disconnect(settings.decent_scale_id,false);
+          this.bleManager.disconnect(settings.scale_id,false);
         }
       }
     });
@@ -516,7 +518,7 @@ export class AppComponent implements AfterViewInit {
 
     if (this.uiBrewHelper.canBrew()) {
       await this.uiBrewHelper.addBrew();
-      this.router.navigate(['/home/brews'], {replaceUrl: true});
+      this.router.navigate(['/home/brews'], { replaceUrl: true });
     }
 
   }
@@ -528,7 +530,7 @@ export class AppComponent implements AfterViewInit {
     const welcomePagedShowed: boolean = settings.welcome_page_showed;
 
     if (!welcomePagedShowed) {
-      const modal = await this.modalCtrl.create({component: WelcomePopoverComponent, id: 'welcome-popover'});
+      const modal = await this.modalCtrl.create({ component: WelcomePopoverComponent, id: 'welcome-popover' });
       await modal.present();
       await modal.onWillDismiss();
     }
@@ -540,7 +542,7 @@ export class AppComponent implements AfterViewInit {
     const settings = this.uiSettingsStorage.getSettings();
     const matomo_analytics: boolean = settings.matomo_analytics;
     if (matomo_analytics === undefined) {
-      const modal = await this.modalCtrl.create({component: AnalyticsPopoverComponent, id: AnalyticsPopoverComponent.POPOVER_ID});
+      const modal = await this.modalCtrl.create({ component: AnalyticsPopoverComponent, id: AnalyticsPopoverComponent.POPOVER_ID });
       await modal.present();
       await modal.onWillDismiss();
     }
@@ -548,19 +550,19 @@ export class AppComponent implements AfterViewInit {
 
   private async __trackNewBean() {
     await this.uiBeanHelper.addBean();
-    this.router.navigate(['/'], {replaceUrl: true});
+    this.router.navigate(['/'], { replaceUrl: true });
 
   }
 
   private async __trackNewPreparation() {
     await this.uiPreparationHelper.addPreparation();
-    this.router.navigate(['/'], {replaceUrl: true});
+    this.router.navigate(['/'], { replaceUrl: true });
 
   }
 
   private async __trackNewMill() {
     await this.uiMillHelper.addMill();
-    this.router.navigate(['/'], {replaceUrl: true});
+    this.router.navigate(['/'], { replaceUrl: true });
 
   }
 
@@ -576,7 +578,7 @@ export class AppComponent implements AfterViewInit {
         // or if that doesn't work, try
         // navigator['app'].exitApp();
       } else {
-        this.router.navigate(['/home/dashboard'], {replaceUrl: true});
+        this.router.navigate(['/home/dashboard'], { replaceUrl: true });
         // this.generic.showAlert("Exit", "Do you want to exit the app?", this.onYesHandler, this.onNoHandler, "backPress");
       }
     });
@@ -594,7 +596,7 @@ export class AppComponent implements AfterViewInit {
     this.uiAnalytics.trackEvent(LINK_TRACKING.TITLE, LINK_TRACKING.ACTIONS.FACEBOOK);
     this.uiHelper.openExternalWebpage('https://www.facebook.com/Beanconqueror/');
   }
-  public openDonatePage(){
+  public openDonatePage() {
     this.uiAnalytics.trackEvent(LINK_TRACKING.TITLE, LINK_TRACKING.ACTIONS.BUY_ME_A_COFFEE);
     this.uiHelper.openExternalWebpage('https://www.buymeacoffee.com/beanconqueror');
 

@@ -1,3 +1,4 @@
+import { ScaleType } from './../devices';
 /** Interfaces */
 /** Enums */
 import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
@@ -62,7 +63,8 @@ export class Settings implements ISettings {
   public show_water_section: boolean;
   public show_cupping_section: boolean;
 
-  public decent_scale_id: string;
+  public scale_id: string;
+  public scale_type: ScaleType;
   public bluetooth_scale_stay_connected: boolean;
 
   public currency: string;
@@ -139,7 +141,9 @@ export class Settings implements ISettings {
     this.welcome_page_showed = false;
     this.wake_lock = false;
     this.image_quality = 100;
-    this.decent_scale_id = '';
+
+    this.scale_id = '';
+    this.scale_type = null;
     this.bluetooth_scale_stay_connected = false;
 
     this.currency = 'EUR';
