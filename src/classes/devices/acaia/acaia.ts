@@ -192,7 +192,11 @@ export class AcaiaScale {
 
     this.worker = new DecoderWorker(this.messageParseCallback.bind(this));
     log("Subscribing to notificatoins", { device_id: this.device_id, weight_uuid: this.weight_uuid, char_uuid: this.char_uuid });
-    ble.startNotification(this.device_id, this.weight_uuid, this.char_uuid, this.handleNotification.bind(this));
+    ble.startNotification(this.device_id, this.weight_uuid, this.char_uuid, this.handleNotification.bind(this), (err) => {
+      logError("failed to subscribe to notifications " + JSON.stringify(err));
+      this.disconnect()
+        .catch(logError)
+    });
 
     await this.write(new Uint8Array([0, 1]).buffer);
     this.notificationsReady();
@@ -200,7 +204,7 @@ export class AcaiaScale {
 
   public async disconnect() {
     this.connected = false;
-    await ble.stopNotification(this.device_id, this.weight_uuid, this.char_uuid);
+    await promisify(ble.stopNotification)((this.device_id, this.weight_uuid, this.char_uuid));
   }
 
   public tare() {
