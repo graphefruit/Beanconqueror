@@ -18,43 +18,66 @@ export enum EventType {
 }
 
 const log = (...args) => {
-  try {
-    const uiLogInstance = UILog.getInstance();
-    uiLogInstance.log('ACAIA - ' + JSON.stringify(args));
+  if (DEBUG) {
+    try {
+      UILog.getInstance().log(`ACAIA: ${JSON.stringify(args)}`)
+    } catch(e) {}
   }
-  catch (ex) {
-  }
-};
+}
 
-const logError = (...args) => {
-  try {
-    const uiLogInstance = UILog.getInstance();
-    uiLogInstance.error('Error: ACAIA - ' + JSON.stringify(args));
+class Logger {
+  private uiLog: UILog
+  private prefix: string;
+
+  constructor(prefix = 'ACAIA') {
+    this.uiLog = UILog.getInstance();
+    this.prefix = prefix;
   }
-  catch (ex) {
+
+  log(...args) {
+    return this.uiLog.log(`${this.prefix}: ${JSON.stringify(args)}`);
   }
-};
+
+  info(...args) {
+    return this.uiLog.info(`${this.prefix} INFO: ${JSON.stringify(args)}`);
+  }
+
+  error(...args) {
+    return this.uiLog.error(`${this.prefix} ERROR: ${JSON.stringify(args)}`);
+  }
+
+  debug(...args) {
+    if (DEBUG) {
+      return this.uiLog.log(`${this.prefix} DEBUG: ${JSON.stringify(args)}`);
+    }
+  }
+}
 
 // DecodeWorkers receives array buffer from heartbeat notification and emits parsed messages if any
 class DecoderWorker {
   private worker: Worker;
   private readonly decodeCallback: (msgs: ParsedMessage[]) => any;
   private loading: Promise<unknown>;
+  private logger: Logger
+
 
   constructor(callback: (msgs: ParsedMessage[]) => any) {
     this.decodeCallback = callback;
+    this.logger = new Logger('ACAIA DecodeWorker container');
+
     if (typeof Worker !== 'undefined') {
-      log('Workers are supported. Creating a decode worker...')
+      this.logger.log('Workers are supported. Creating a decode worker...')
       this.worker = new Worker(new URL('./decode.worker', import.meta.url));
       this.worker.onmessage = this.handleMessage.bind(this);
     } else {
-      log('Workers are NOT supported. Import decoder...');
+      this.logger.log('Workers are NOT supported. Import decoder...');
       // fallback to running in setTimeout
       // dynamically imoprt './decoder' to prevent webpack including the code when we have Workers
       this.loading = import('./decoder')
         .then(({ Decoder }) => {
-          log('Decoder is imported, initalizing...')
-          const decoder = new Decoder(log);
+          this.logger.debug('Decoder is imported, initalizing...')
+          const l = new Logger('ACAIA DecodeWorker');
+          const decoder = new Decoder(l.debug.bind(l));
           // @ts-ignore
           this.worker = {
             postMessage: (message) => {
@@ -70,7 +93,7 @@ class DecoderWorker {
             },
           };
         })
-        .catch(logError);
+        .catch(this.logger.error.bind(this.logger));
     }
   }
 
@@ -83,11 +106,11 @@ class DecoderWorker {
   }
 
   private handleMessage({ data }) {
-    log("Decoder sent a message", data)
+    this.logger.debug("Decoder sent a message", data)
     if (data instanceof Object && data.hasOwnProperty('type') && data.hasOwnProperty('data')) {
       switch ((data as WorkerResult).type) {
         case DecoderResultType.LOG:
-          log(...data.data);
+          this.logger.debug(...data.data);
           break;
         case DecoderResultType.DECODE_RESULT:
           this.decodeCallback(data.data);
@@ -109,6 +132,8 @@ export class AcaiaScale {
   private platforms: Platforms[];
 
   private worker: DecoderWorker;
+
+  private logger: Logger;
 
   private connected: boolean;
   private packet: Uint8Array;
@@ -137,8 +162,10 @@ export class AcaiaScale {
     this.platforms = platforms;
     this.connected = false;
 
+    this.logger = new Logger();
+
     // TODO(mike1808): make it to work with new Lunar and Pyxis by auto-detecting service and char uuid
-    log("received charactersitics: ", JSON.stringify(characteristics))
+    this.logger.info("received charactersitics: ", JSON.stringify(characteristics))
     this.characteristics = characteristics;
     this.isPyxisStyle = false;
 
@@ -162,6 +189,8 @@ export class AcaiaScale {
     this.auto_off = null;
     this.beep_on = null;
     this.timer_running = false;
+
+
   }
 
   public getElapsedTime(): number {
@@ -173,9 +202,9 @@ export class AcaiaScale {
   }
 
   public async connect(callback) {
-    log('Connect scale');
+    this.logger.log('Connect scale');
     if (this.connected) {
-      log('Already connected, bail.')
+      this.logger.log('Already connected, bail.')
       return;
     }
 
@@ -185,17 +214,16 @@ export class AcaiaScale {
       try {
         await promisify(ble.requestMtu)(this.device_id, 247);
       } catch (e) {
-        log('failed to set MTU' + JSON.stringify(e));
-        console.error('failed to set MTU', e);
+        this.logger.error('failed to set MTU' + JSON.stringify(e));
       }
     }
 
     this.worker = new DecoderWorker(this.messageParseCallback.bind(this));
-    log("Subscribing to notificatoins", { device_id: this.device_id, weight_uuid: this.weight_uuid, char_uuid: this.char_uuid });
+    this.logger.log("Subscribing to notificatoins", { device_id: this.device_id, weight_uuid: this.weight_uuid, char_uuid: this.char_uuid });
     ble.startNotification(this.device_id, this.weight_uuid, this.char_uuid, this.handleNotification.bind(this), (err) => {
-      logError("failed to subscribe to notifications " + JSON.stringify(err));
+      this.logger.error("failed to subscribe to notifications " + JSON.stringify(err));
       this.disconnect()
-        .catch(logError)
+        .catch(this.logger.error.bind(this.logger))
     });
 
     await this.write(new Uint8Array([0, 1]).buffer);
@@ -266,7 +294,7 @@ export class AcaiaScale {
 
   private messageParseCallback(messages: ParsedMessage[]) {
     messages.forEach((msg) => {
-      log('Message recieved - ' + JSON.stringify(msg));
+      this.logger.debug('Message recieved - ' + JSON.stringify(msg));
       if (msg.type === MessageType.SETTINGS) {
         this.battery = msg.battery;
         this.units = msg.units;
@@ -277,7 +305,7 @@ export class AcaiaScale {
         if (msg.msgType === ScaleMessageType.WEIGHT) {
           this.weight = msg.weight;
           this.callback(EventType.WEIGHT, this.weight);
-          log('weight: ' + msg.weight + ' ' + Date.now());
+          this.logger.debug('weight: ' + msg.weight + ' ' + Date.now());
         } else {
           if (msg.msgType === ScaleMessageType.TIMER) {
             this.timer_start_time = Date.now() - msg.time;
@@ -317,16 +345,16 @@ export class AcaiaScale {
   private notificationsReady() {
     this.ident();
     this.last_heartbeat = Date.now();
-    log('Scale Ready!');
+    this.logger.info('Scale Ready!');
     this.connected = true;
   }
 
   private write(data: ArrayBuffer, withoutResponse = false) {
-    log("trying to write: ", new Uint8Array(data))
+    this.logger.debug("trying to write: ", new Uint8Array(data))
     return new Promise((resolve) => {
       ble[withoutResponse ? 'writeWithoutResponse' : 'write'](this.device_id, this.weight_uuid, this.char_uuid, data,
         resolve, (err) => {
-          logError("failed to write to characteristic, but we are ignoring it", err, withoutResponse);
+          this.logger.error("failed to write to characteristic, but we are ignoring it", err, withoutResponse);
           resolve(false) // resolve for both cases because sometimes write says it's an error but in reality it's fine
         }
       );
@@ -351,26 +379,26 @@ export class AcaiaScale {
         while (this.command_queue.length) {
           const packet = this.command_queue.shift();
           this.write(packet, true)
-            .catch(logError);
+            .catch(this.logger.error.bind(this.logger));
         }
 
         if (Date.now() >= this.last_heartbeat + 1000) {
-          log('Sending heartbeat...');
+          this.logger.debug('Sending heartbeat...');
           this.last_heartbeat = Date.now();
           if (this.isPyxisStyle) {
             this.write(encodeId(this.isPyxisStyle));
           }
           this.write(encodeHeartbeat(), false);
-          log('Heartbeat success');
+          this.logger.debug('Heartbeat success');
         }
         return true;
       } catch (e) {
-        log('Heartbeat failed ' + JSON.stringify(e));
+        this.logger.error('Heartbeat failed ' + JSON.stringify(e));
         console.error('Heartbeat failed ' + e);
         try {
           await this.disconnect();
         } catch (e) {
-          log('ERROR - ' + JSON.stringify(e));
+          this.logger.error(e)
           return false;
         }
       }

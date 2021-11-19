@@ -209,8 +209,8 @@ export class BleManagerService {
     });
   }
 
-  public async autoConnectScale(deviceType: ScaleType, deviceId: string, _retryScanForIOS: boolean = false,) {
-    if (_retryScanForIOS === true) {
+  public async autoConnectScale(deviceType: ScaleType, deviceId: string, _retryScanForIOS: boolean = false) {
+    if (_retryScanForIOS) {
       // iOS needs to know the scale, before auto connect can be done
       await this.__scanAutoConnectScaleIOS();
     }

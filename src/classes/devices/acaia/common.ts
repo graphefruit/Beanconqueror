@@ -1,4 +1,4 @@
-export const DEBUG = true;
+export const DEBUG = false;
 
 export enum ScaleMessageType {
   WEIGHT = 5,
