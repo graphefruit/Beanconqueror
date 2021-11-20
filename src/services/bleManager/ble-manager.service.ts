@@ -224,6 +224,7 @@ export class BleManagerService {
 
   private async __iOSAccessBleStackAndAutoConnect() {
     return await new Promise((resolve) => {
+      let counter: number = 1;
       const iOSScanInterval = setInterval(async() => {
         try {
           this.uiLog.log('AutoConnectScale - Try to get bluetooth state');
@@ -239,6 +240,12 @@ export class BleManagerService {
         }
         catch (ex) {
           this.uiLog.log('AutoConnectScale - Bluetooth error occured ' + JSON.stringify(ex));
+        }
+        counter ++;
+        if (counter > 10) {
+          this.uiLog.log('AutoConnectScale - iOS - Stop after 10 tries');
+          clearInterval(iOSScanInterval);
+          resolve(null);
         }
 
       },1000);
