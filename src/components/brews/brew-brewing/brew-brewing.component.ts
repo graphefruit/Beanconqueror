@@ -597,8 +597,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   private async readFlowProfile() {
     const flowProfilePath = 'brews/' + this.data.config.uuid + '_flow_profile.json';
-    const jsonParsed = await this.uiFileHelper.getJSONFile(flowProfilePath);
-    this.flow_profile_raw = jsonParsed;
+    try {
+      const jsonParsed = await this.uiFileHelper.getJSONFile(flowProfilePath);
+      this.flow_profile_raw = jsonParsed;
+
+    } catch(ex) {
+
+    }
+
   }
   private async deleteFlowProfile() {
     try {
@@ -935,6 +941,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.data.bean_weight_in = brew.bean_weight_in;
     }
 
+    this.data.flow_profile = '';
 
   }
 

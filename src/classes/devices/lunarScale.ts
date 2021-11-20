@@ -43,12 +43,14 @@ export default class LunarScale extends BluetoothScale {
   }
 
   public async setTimer(command: SCALE_TIMER_COMMAND) {
-    if (command === SCALE_TIMER_COMMAND.START) {
-      this.scale.startTimer();
-    } else if (command === SCALE_TIMER_COMMAND.STOP) {
-      this.scale.stopTimer();
-    } else {
-      this.scale.resetTimer();
+    if (this.scale.isConnected()) {
+      if (command === SCALE_TIMER_COMMAND.START) {
+        this.scale.startTimer();
+      } else if (command === SCALE_TIMER_COMMAND.STOP) {
+        this.scale.stopTimer();
+      } else {
+        this.scale.resetTimer();
+      }
     }
   }
 

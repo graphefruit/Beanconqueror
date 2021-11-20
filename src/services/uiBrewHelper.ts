@@ -226,6 +226,7 @@ export class UIBrewHelper {
     repeatBrew.bean_weight_in = _brewToCopy.bean_weight_in;
     repeatBrew.vessel_weight = _brewToCopy.vessel_weight;
     repeatBrew.vessel_name = _brewToCopy.vessel_name;
+    repeatBrew.flow_profile = '';
     return repeatBrew;
   }
 

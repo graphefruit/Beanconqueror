@@ -34,19 +34,19 @@ class Logger {
     this.prefix = prefix;
   }
 
-  log(...args) {
+  public log(...args) {
     return this.uiLog.log(`${this.prefix}: ${JSON.stringify(args)}`);
   }
 
-  info(...args) {
+  public info(...args) {
     return this.uiLog.info(`${this.prefix} INFO: ${JSON.stringify(args)}`);
   }
 
-  error(...args) {
+  public error(...args) {
     return this.uiLog.error(`${this.prefix} ERROR: ${JSON.stringify(args)}`);
   }
 
-  debug(...args) {
+  public debug(...args) {
     if (DEBUG) {
       return this.uiLog.log(`${this.prefix} DEBUG: ${JSON.stringify(args)}`);
     }
@@ -203,7 +203,7 @@ export class AcaiaScale {
   public async connect(callback) {
     this.logger.log('Connect scale');
     if (this.connected) {
-      this.logger.log('Already connected, bail.')
+      this.logger.log('Already connected, bail.');
       return;
     }
 
@@ -222,7 +222,7 @@ export class AcaiaScale {
     ble.startNotification(this.device_id, this.weight_uuid, this.rx_char_uuid, this.handleNotification.bind(this), (err) => {
       this.logger.error("failed to subscribe to notifications " + JSON.stringify(err));
       this.disconnect()
-        .catch(this.logger.error.bind(this.logger))
+        .catch(this.logger.error.bind(this.logger));
     });
 
     await this.write(new Uint8Array([0, 1]).buffer);
@@ -231,7 +231,14 @@ export class AcaiaScale {
 
   public async disconnect() {
     this.connected = false;
-    await promisify(ble.stopNotification)((this.device_id, this.weight_uuid, this.tx_char_uuid));
+    if (this.device_id && this.weight_uuid && this.tx_char_uuid) {
+      await promisify(ble.stopNotification)((this.device_id, this.weight_uuid, this.tx_char_uuid));
+    }
+
+  }
+
+  public isConnected(): boolean {
+    return this.connected;
   }
 
   public tare() {
@@ -273,7 +280,7 @@ export class AcaiaScale {
   }
 
   private findBLEUUIDs() {
-    for (let char of this.characteristics) {
+    for (const char of this.characteristics) {
       if (to128bitUUID(char.service) === to128bitUUID(LUNAR_SERVICE_UUID) &&
         to128bitUUID(char.characteristic) === to128bitUUID(LUNAR_CHARACTERISTIC_UUID)) {
         this.tx_char_uuid = char.characteristic;
@@ -294,11 +301,17 @@ export class AcaiaScale {
   }
 
   private handleNotification(value: ArrayBuffer) {
+    if (!this.connected) {
+      return false;
+    }
     this.worker.addBuffer(value);
     this.heartbeat();
   }
 
   private messageParseCallback(messages: ParsedMessage[]) {
+    if (!this.connected) {
+      return false;
+    }
     messages.forEach((msg) => {
       this.logger.debug('Message recieved - ' + JSON.stringify(msg));
       if (msg.type === MessageType.SETTINGS) {
@@ -356,8 +369,12 @@ export class AcaiaScale {
   }
 
   private write(data: ArrayBuffer, withoutResponse = false) {
-    this.logger.debug("trying to write: ", new Uint8Array(data))
+    this.logger.debug("trying to write: ", new Uint8Array(data));
     return new Promise((resolve) => {
+      if (!this.connected) {
+        resolve(false);
+        return false;
+      }
       ble[withoutResponse ? 'writeWithoutResponse' : 'write'](this.device_id, this.weight_uuid, this.tx_char_uuid, data,
         resolve, (err) => {
           this.logger.error("failed to write to characteristic, but we are ignoring it", err, withoutResponse);
@@ -384,8 +401,7 @@ export class AcaiaScale {
       try {
         while (this.command_queue.length) {
           const packet = this.command_queue.shift();
-          this.write(packet, true)
-            .catch(this.logger.error.bind(this.logger));
+          this.write(packet, true).catch(this.logger.error.bind(this.logger));
         }
 
         if (Date.now() >= this.last_heartbeat + 1000) {

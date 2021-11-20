@@ -89,8 +89,8 @@
     "@types/jasminewd2": "~2.0.8",
     "@types/lodash": "^4.14.170",
     "@types/node": "^12.20.5",
-    "cordova-android": "^9.1.0",
-    "cordova-ios": "^6.1.1",
+    "cordova-android": "^10.1.1",
+    "cordova-ios": "^6.2.0",
     "cordova-plugin-add-swift-support": "^2.0.2",
     "cordova-plugin-androidx": "^3.0.0",
     "cordova-plugin-androidx-adapter": "^1.1.3",
@@ -108,7 +108,7 @@
     "cordova-plugin-insomnia": "^4.3.0",
     "cordova-plugin-ionic-webview": "^5.0.0",
     "cordova-plugin-nativestorage": "^2.3.2",
-    "cordova-plugin-simple-file-chooser": "github:harshzalavadiya/cordova-plugin-simple-file-chooser",
+    "cordova-plugin-simple-file-chooser": "^2.2.1",
     "cordova-plugin-splashscreen": "^6.0.0",
     "cordova-plugin-telerik-imagepicker": "^2.3.3",
     "cordova-plugin-x-socialsharing": "^6.0.2",
@@ -203,17 +203,17 @@
         "DEEPLINK_5_SCHEME": " ",
         "DEEPLINK_5_HOST": " "
       },
-      "cordova-plugin-simple-file-chooser": {},
       "cordova-plugin-filepath": {},
       "cordova-plugin-file-transfer": {},
       "cordova-plugin-ble-central": {
         "BLUETOOTH_USAGE_DESCRIPTION": "Bluetooth access needed to connect smart scales",
         "IOS_INIT_ON_LOAD": "false"
-      }
+      },
+      "cordova-plugin-simple-file-chooser": {}
     },
     "platforms": [
-      "android",
-      "ios"
+      "ios",
+      "android"
     ]
   },
   "platforms": [

@@ -18,6 +18,7 @@ import {UIMillHelper} from '../../../services/uiMillHelper';
 import {TranslateService} from '@ngx-translate/core';
 import {BrewFlow} from '../../../classes/brew/brewFlow';
 import {UIFileHelper} from '../../../services/uiFileHelper';
+import {UIAlert} from '../../../services/uiAlert';
 
 @Component({
   selector: 'brew-detail',
@@ -49,7 +50,8 @@ export class BrewDetailComponent implements OnInit {
                private readonly uiPreparationHelper: UIPreparationHelper,
                private readonly uiMillHelper: UIMillHelper,
                private readonly translate: TranslateService,
-               private readonly uiFileHelper: UIFileHelper) {
+               private readonly uiFileHelper: UIFileHelper,
+               private readonly uiAlert: UIAlert) {
 
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -68,6 +70,7 @@ export class BrewDetailComponent implements OnInit {
         this.__loadCuppingChart();
       },150);
     }
+
     await this.readFlowProfile();
     setTimeout( ()=>{
       this.initializeFlowChart();
@@ -212,9 +215,16 @@ export class BrewDetailComponent implements OnInit {
 
   private async readFlowProfile() {
     if (this.data.flow_profile !== '') {
+      await this.uiAlert.showLoadingSpinner();
       const flowProfilePath = 'brews/' + this.data.config.uuid + '_flow_profile.json';
-      const jsonParsed = await this.uiFileHelper.getJSONFile(flowProfilePath);
-      this.flow_profile_raw = jsonParsed;
+      try {
+        const jsonParsed = await this.uiFileHelper.getJSONFile(flowProfilePath);
+        this.flow_profile_raw = jsonParsed;
+      } catch(ex) {
+
+      }
+
+      await this.uiAlert.hideLoadingSpinner();
     }
   }
   public async downloadFlowProfile() {

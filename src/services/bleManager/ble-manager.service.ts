@@ -114,10 +114,16 @@ export class BleManagerService {
 
       let timeoutVar: any = null;
       const stopScanningAndResolve = async () => {
-        await this.stopScanning();
+        try {
+          await this.stopScanning();
+        } catch(ex) {
+          // Grab error.
+        }
+
         this.uiLog.log('Scales found ' + JSON.stringify(devices));
         resolve(devices);
       };
+
 
       ble.startScan([], async (device) => {
         if (DecentScale.test(device) || LunarScale.test(device)) {
@@ -185,6 +191,8 @@ export class BleManagerService {
               this.uiLog.log('Scale not found, retry');
             }
           }, 61000);
+        } else {
+          resolve(true);
         }
 
       } else {
@@ -197,25 +205,58 @@ export class BleManagerService {
   public async tryToFindScale() {
     return new Promise<{ id: string, type: ScaleType }>(async (resolve, reject) => {
       const devices: Array<any> = await this.scanDevices();
+      this.uiLog.log('BleManager - Loop through devices');
       for (const device of devices) {
         if (DecentScale.test(device)) {
-          return resolve({id: device.id, type: ScaleType.DECENT});
+          this.uiLog.log('BleManager - We found a decent scale');
+          resolve({id: device.id, type: ScaleType.DECENT});
+          return;
         }
         if (LunarScale.test(device)) {
-          return resolve({id: device.id, type: ScaleType.LUNAR});
+          this.uiLog.log('BleManager - We found a lunar/acaia scale');
+          resolve({id: device.id, type: ScaleType.LUNAR});
+          return;
         }
       }
       resolve(undefined);
     });
   }
 
+  private async __iOSAccessBleStackAndAutoConnect() {
+    return await new Promise((resolve) => {
+      const iOSScanInterval = setInterval(async() => {
+        try {
+          this.uiLog.log('AutoConnectScale - Try to get bluetooth state');
+          const enabled: boolean = await this.isBleEnabled();
+          if (enabled === true) {
+            clearInterval(iOSScanInterval);
+            await this.__scanAutoConnectScaleIOS();
+            this.uiLog.log('AutoConnectScale - Scale for iOS found, resolve now');
+            resolve(null);
+          } else {
+            this.uiLog.log('AutoConnectScale - Bluetooth not enabled, try again');
+          }
+        }
+        catch (ex) {
+          this.uiLog.log('AutoConnectScale - Bluetooth error occured ' + JSON.stringify(ex));
+        }
+
+      },1000);
+    });
+  }
+
+
   public async autoConnectScale(deviceType: ScaleType, deviceId: string, _retryScanForIOS: boolean = false) {
     if (_retryScanForIOS) {
       // iOS needs to know the scale, before auto connect can be done
-      await this.__scanAutoConnectScaleIOS();
+      await this.__iOSAccessBleStackAndAutoConnect();
+
     }
 
+    this.uiLog.log('AutoConnectScale - We can start or we waited for iOS');
+
     return new Promise((resolve, reject) => {
+      this.uiLog.log('AutoConnectScale - We created our promise, and try to autoconnect to device now.');
       ble.autoConnect(deviceId, this.connectCallback.bind(this, resolve, deviceType), this.disconnectCallback.bind(this, reject));
     });
   }
