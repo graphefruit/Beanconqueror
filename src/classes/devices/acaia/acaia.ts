@@ -38,30 +38,35 @@ class Logger {
   }
 
   private isLogEnabled(): boolean {
-    return this.uiSettingsStorage.getSettings().scale_log;
+    try {
+      return this.uiSettingsStorage.getSettings().scale_log;
+    }catch(ex){
+      return false;
+    }
+
   }
 
   public log(...args) {
-    if (this.isLogEnabled || DEBUG) {
+    if (this.isLogEnabled() || DEBUG) {
       return this.uiLog.log(`${this.prefix}: ${JSON.stringify(args)}`);
     }
 
   }
 
   public info(...args) {
-    if (this.isLogEnabled || DEBUG) {
+    if (this.isLogEnabled() || DEBUG) {
       return this.uiLog.info(`${this.prefix} INFO: ${JSON.stringify(args)}`);
     }
   }
 
   public error(...args) {
-    if (this.isLogEnabled || DEBUG) {
+    if (this.isLogEnabled() || DEBUG) {
       return this.uiLog.error(`${this.prefix} ERROR: ${JSON.stringify(args)}`);
     }
   }
 
   public debug(...args) {
-    if (this.isLogEnabled || DEBUG) {
+    if (this.isLogEnabled() || DEBUG) {
       return this.uiLog.log(`${this.prefix} DEBUG: ${JSON.stringify(args)}`);
     }
   }
