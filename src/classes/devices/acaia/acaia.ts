@@ -6,6 +6,7 @@ import { MAGIC1, MAGIC2, LUNAR_CHARACTERISTIC_UUID, LUNAR_SERVICE_UUID, PYXIS_SE
 import { Button, ParsedMessage, MessageType, ScaleMessageType, Units, WorkerResult, DecoderResultType, DEBUG } from './common';
 import { memoize } from 'lodash';
 import { UILog } from '../../../services/uiLog';
+import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 declare var ble;
 
 export enum EventType {
@@ -20,34 +21,47 @@ export enum EventType {
 const log = (...args) => {
   if (DEBUG) {
     try {
-      UILog.getInstance().log(`ACAIA: ${JSON.stringify(args)}`)
+      UILog.getInstance().log(`ACAIA: ${JSON.stringify(args)}`);
     } catch (e) { }
   }
-}
+};
 
 class Logger {
-  private uiLog: UILog
+  private uiLog: UILog;
+  private uiSettingsStorage: UISettingsStorage;
   private prefix: string;
 
   constructor(prefix = 'ACAIA') {
     this.uiLog = UILog.getInstance();
+    this.uiSettingsStorage = UISettingsStorage.getInstance();
     this.prefix = prefix;
   }
 
+  private isLogEnabled(): boolean {
+    return this.uiSettingsStorage.getSettings().scale_log;
+  }
+
   public log(...args) {
-    return this.uiLog.log(`${this.prefix}: ${JSON.stringify(args)}`);
+    if (this.isLogEnabled || DEBUG) {
+      return this.uiLog.log(`${this.prefix}: ${JSON.stringify(args)}`);
+    }
+
   }
 
   public info(...args) {
-    return this.uiLog.info(`${this.prefix} INFO: ${JSON.stringify(args)}`);
+    if (this.isLogEnabled || DEBUG) {
+      return this.uiLog.info(`${this.prefix} INFO: ${JSON.stringify(args)}`);
+    }
   }
 
   public error(...args) {
-    return this.uiLog.error(`${this.prefix} ERROR: ${JSON.stringify(args)}`);
+    if (this.isLogEnabled || DEBUG) {
+      return this.uiLog.error(`${this.prefix} ERROR: ${JSON.stringify(args)}`);
+    }
   }
 
   public debug(...args) {
-    if (DEBUG) {
+    if (this.isLogEnabled || DEBUG) {
       return this.uiLog.log(`${this.prefix} DEBUG: ${JSON.stringify(args)}`);
     }
   }
@@ -58,7 +72,7 @@ class DecoderWorker {
   private worker: Worker;
   private readonly decodeCallback: (msgs: ParsedMessage[]) => any;
   private loading: Promise<unknown>;
-  private logger: Logger
+  private logger: Logger;
 
 
   constructor(callback: (msgs: ParsedMessage[]) => any) {
@@ -66,7 +80,7 @@ class DecoderWorker {
     this.logger = new Logger('ACAIA DecodeWorker container');
 
     if (typeof Worker !== 'undefined') {
-      this.logger.log('Workers are supported. Creating a decode worker...')
+      this.logger.log('Workers are supported. Creating a decode worker...');
       this.worker = new Worker(new URL('./decode.worker', import.meta.url));
       this.worker.onmessage = this.handleMessage.bind(this);
     } else {
@@ -106,7 +120,7 @@ class DecoderWorker {
   }
 
   private handleMessage({ data }) {
-    this.logger.debug("Decoder sent a message", data)
+    this.logger.debug("Decoder sent a message", data);
     if (data instanceof Object && data.hasOwnProperty('type') && data.hasOwnProperty('data')) {
       switch ((data as WorkerResult).type) {
         case DecoderResultType.LOG:
@@ -166,7 +180,7 @@ export class AcaiaScale {
     this.logger = new Logger();
 
     // TODO(mike1808): make it to work with new Lunar and Pyxis by auto-detecting service and char uuid
-    this.logger.info("received charactersitics: ", JSON.stringify(characteristics))
+    this.logger.info("received charactersitics: ", JSON.stringify(characteristics));
     this.characteristics = characteristics;
     this.isPyxisStyle = false;
 
@@ -174,7 +188,7 @@ export class AcaiaScale {
       throw new Error("Cannot find weight service and characterstics on the scale");
     } else {
       this.logger.info("discovered following services and characterstics",
-        { service: this.weight_uuid, tx: this.tx_char_uuid, rx: this.rx_char_uuid, pyxis: this.isPyxisStyle })
+        { service: this.weight_uuid, tx: this.tx_char_uuid, rx: this.rx_char_uuid, pyxis: this.isPyxisStyle });
     }
 
     this.command_queue = [];
@@ -291,9 +305,9 @@ export class AcaiaScale {
         this.isPyxisStyle = true;
         this.weight_uuid = char.service;
         if (to128bitUUID(char.characteristic) === to128bitUUID(PYXIS_TX_CHARACTERISTIC_UUID)) {
-          this.tx_char_uuid = char.characteristic
+          this.tx_char_uuid = char.characteristic;
         } else if (to128bitUUID(char.characteristic) === to128bitUUID(PYXIS_RX_CHARACTERISTIC_UUID)) {
-          this.rx_char_uuid = char.characteristic
+          this.rx_char_uuid = char.characteristic;
         }
       }
     }
@@ -420,7 +434,7 @@ export class AcaiaScale {
         try {
           await this.disconnect();
         } catch (e) {
-          this.logger.error(e)
+          this.logger.error(e);
           return false;
         }
       }
@@ -438,7 +452,6 @@ const encodeEventData = memoize((payload: number[]): ArrayBuffer => {
 });
 
 const encodeNotificationRequest = memoize((): ArrayBuffer => {
-  log("encodeNotificationRequest");
   const payload = [
     0,  // weight
     1,  // weight argument
@@ -453,7 +466,6 @@ const encodeNotificationRequest = memoize((): ArrayBuffer => {
 });
 
 const encodeId = memoize((isPyxisStyle = false): ArrayBuffer => {
-  log("encodeId");
   let payload: number[];
   if (isPyxisStyle) {
     payload = [
@@ -468,44 +480,38 @@ const encodeId = memoize((isPyxisStyle = false): ArrayBuffer => {
 });
 
 const encodeHeartbeat = memoize((): ArrayBuffer => {
-  log("encodeHeartbeat");
   const payload = [2, 0];
   return encode(0, payload);
 });
 
 const encodeTare = memoize((): ArrayBuffer => {
-  log("encodeTare");
   const payload = [0];
   return encode(4, payload);
 });
 
 const encodeGetSettings = memoize((): ArrayBuffer => {
-  log("encodeSettings");
   /* Settings are returned as a notification */
   const payload = new Array(16).fill(0);
   return encode(6, payload);
 });
 
 const encodeStartTimer = memoize((): ArrayBuffer => {
-  log("encodeStartTimer");
   const payload = [0, 0];
   return encode(13, payload);
 });
 
 const encodeStopTimer = memoize((): ArrayBuffer => {
-  log("encodeStopTimer");
   const payload = [0, 2];
   return encode(13, payload);
 });
 
 const encodeResetTimer = memoize((): ArrayBuffer => {
-  log("encodeResetTimer");
   const payload = [0, 1];
   return encode(13, payload);
 });
 
 function encode(msgType: number, payload: number[]): ArrayBuffer {
-  log("encode", { msgType, payload });
+  this.logger.log("encode", { msgType, payload });
   let cksum1, cksum2, val;
   const bytes = new Uint8Array(5 + payload.length);
   bytes[0] = MAGIC1;
@@ -543,9 +549,9 @@ function to128bitUUID(uuid: string) {
     case 4:
       return `0000${uuid.toUpperCase()}-0000-1000-8000-00805F9B34FB`;
     case 8:
-      return `${uuid.toUpperCase()}-0000-1000-8000-00805F9B34FB`
+      return `${uuid.toUpperCase()}-0000-1000-8000-00805F9B34FB`;
     case 36:
-      return uuid.toUpperCase()
+      return uuid.toUpperCase();
     default:
       throw new Error("invalid uuid: " + uuid);
   }

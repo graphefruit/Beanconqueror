@@ -1052,5 +1052,6 @@
   "BEAN_ROASTING_TYPE_FILTER":"Filter",
   "BEAN_ROASTING_TYPE_ESPRESSO":"Espresso",
   "BEAN_ROASTING_TYPE_OMNI":"Omni",
-  "BEAN_ROASTING_TYPE_UNKNOWN":"Unbekannt"
+  "BEAN_ROASTING_TYPE_UNKNOWN":"Unbekannt",
+  "SMART_SCALE_LOG": "Logfiles für Waage aktivieren"
 }

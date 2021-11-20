@@ -65,7 +65,9 @@ export class Settings implements ISettings {
 
   public scale_id: string;
   public scale_type: ScaleType;
+  public scale_log: boolean;
   public bluetooth_scale_stay_connected: boolean;
+
 
   public currency: string;
   public GET_BREW_FILTER(): IBrewPageFilter {
@@ -145,6 +147,7 @@ export class Settings implements ISettings {
     this.scale_id = '';
     this.scale_type = null;
     this.bluetooth_scale_stay_connected = false;
+    this.scale_log = false;
 
     this.currency = 'EUR';
 

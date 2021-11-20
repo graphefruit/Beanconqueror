@@ -166,6 +166,11 @@
           <ion-checkbox (ngModelChange)="saveSettings();"
                         [(ngModel)]="settings.bluetooth_scale_stay_connected" slot="end"></ion-checkbox>
         </ion-item>
+        <ion-item>
+          <ion-label class="ion-margin-end" style="white-space: normal;"><h2>{{"SMART_SCALE_LOG" | translate}}</h2></ion-label>
+          <ion-checkbox (ngModelChange)="saveSettings();"
+                        [(ngModel)]="settings.scale_log" slot="end"></ion-checkbox>
+        </ion-item>
 
       </ion-list>
 

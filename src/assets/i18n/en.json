@@ -1051,5 +1051,6 @@
   "BEAN_ROASTING_TYPE_FILTER":"Filter",
   "BEAN_ROASTING_TYPE_ESPRESSO":"Espresso",
   "BEAN_ROASTING_TYPE_OMNI":"Omni",
-  "BEAN_ROASTING_TYPE_UNKNOWN":"Unkown"
+  "BEAN_ROASTING_TYPE_UNKNOWN":"Unkown",
+  "SMART_SCALE_LOG": "Activate logfiles for smart scale"
 }
