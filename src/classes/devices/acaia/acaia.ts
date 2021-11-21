@@ -54,15 +54,11 @@ class Logger {
   }
 
   public info(...args) {
-    if (this.isLogEnabled() || DEBUG) {
       return this.uiLog.info(`${this.prefix} INFO: ${JSON.stringify(args)}`);
-    }
   }
 
   public error(...args) {
-    if (this.isLogEnabled() || DEBUG) {
-      return this.uiLog.error(`${this.prefix} ERROR: ${JSON.stringify(args)}`);
-    }
+    return this.uiLog.error(`${this.prefix} ERROR: ${JSON.stringify(args)}`);
   }
 
   public debug(...args) {
@@ -94,7 +90,7 @@ class DecoderWorker {
       // dynamically imoprt './decoder' to prevent webpack including the code when we have Workers
       this.loading = import('./decoder')
         .then(({ Decoder }) => {
-          this.logger.debug('Decoder is imported, initalizing...')
+          this.logger.debug('Decoder is imported, initalizing...');
           const l = new Logger('ACAIA DecodeWorker');
           const decoder = new Decoder(l.debug.bind(l));
           // @ts-ignore
@@ -237,15 +233,22 @@ export class AcaiaScale {
     }
 
     this.worker = new DecoderWorker(this.messageParseCallback.bind(this));
-    this.logger.log("Subscribing to notificatoins", { device_id: this.device_id, weight_uuid: this.weight_uuid, char_uuid: this.rx_char_uuid });
-    ble.startNotification(this.device_id, this.weight_uuid, this.rx_char_uuid, this.handleNotification.bind(this), (err) => {
-      this.logger.error("failed to subscribe to notifications " + JSON.stringify(err));
-      this.disconnect()
-        .catch(this.logger.error.bind(this.logger));
-    });
+    this.logger.info("Subscribing to notifcations", { device_id: this.device_id, weight_uuid: this.weight_uuid, char_uuid: this.rx_char_uuid });
 
-    await this.write(new Uint8Array([0, 1]).buffer);
-    this.notificationsReady();
+    if (this.device_id && this.weight_uuid && this.rx_char_uuid) {
+      ble.startNotification(this.device_id, this.weight_uuid, this.rx_char_uuid, this.handleNotification.bind(this), (err) => {
+        this.logger.error("failed to subscribe to notifications " + JSON.stringify(err));
+        this.disconnect()
+          .catch(this.logger.error.bind(this.logger));
+      });
+
+      await this.write(new Uint8Array([0, 1]).buffer);
+      this.notificationsReady();
+    } else {
+      this.logger.error("We could not subscribe to notifcations", { device_id: this.device_id, weight_uuid: this.weight_uuid, char_uuid: this.rx_char_uuid });
+
+    }
+
   }
 
   public async disconnect() {
@@ -397,7 +400,7 @@ export class AcaiaScale {
       ble[withoutResponse ? 'writeWithoutResponse' : 'write'](this.device_id, this.weight_uuid, this.tx_char_uuid, data,
         resolve, (err) => {
           this.logger.error("failed to write to characteristic, but we are ignoring it", err, withoutResponse);
-          resolve(false) // resolve for both cases because sometimes write says it's an error but in reality it's fine
+          resolve(false); // resolve for both cases because sometimes write says it's an error but in reality it's fine
         }
       );
     });
