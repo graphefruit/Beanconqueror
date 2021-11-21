@@ -89,7 +89,7 @@
     "@types/jasminewd2": "~2.0.8",
     "@types/lodash": "^4.14.170",
     "@types/node": "^12.20.5",
-    "cordova-android": "^10.1.1",
+    "cordova-android": "^9.1.0",
     "cordova-ios": "^6.2.0",
     "cordova-plugin-add-swift-support": "^2.0.2",
     "cordova-plugin-androidx": "^3.0.0",
