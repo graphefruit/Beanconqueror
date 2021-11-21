@@ -74,7 +74,7 @@ class DecoderWorker {
   private worker: Worker;
   private readonly decodeCallback: (msgs: ParsedMessage[]) => any;
   private loading: Promise<unknown>;
-  private logger: Logger
+  private logger: Logger;
 
 
   constructor(callback: (msgs: ParsedMessage[]) => any) {
@@ -91,7 +91,7 @@ class DecoderWorker {
       // dynamically imoprt './decoder' to prevent webpack including the code when we have Workers
       this.loading = import('./decoder')
         .then(({ Decoder }) => {
-          this.logger.debug('Decoder is imported, initalizing...')
+          this.logger.debug('Decoder is imported, initalizing...');
           const l = new Logger('ACAIA DecodeWorker');
           const decoder = new Decoder(l.debug.bind(l));
           // @ts-ignore
@@ -181,7 +181,7 @@ export class AcaiaScale {
     this.logger = new Logger();
 
     // TODO(mike1808): make it to work with new Lunar and Pyxis by auto-detecting service and char uuid
-    this.logger.info("received charactersitics: ", JSON.stringify(characteristics))
+    this.logger.info("received charactersitics: ", JSON.stringify(characteristics));
     this.characteristics = characteristics;
     this.isPyxisStyle = false;
 
@@ -220,7 +220,7 @@ export class AcaiaScale {
   public async connect(callback) {
     this.logger.log('Connect scale');
     if (this.connected) {
-      this.logger.log('Already connected, bail.')
+      this.logger.log('Already connected, bail.');
       return;
     }
 
@@ -246,9 +246,25 @@ export class AcaiaScale {
     this.notificationsReady();
   }
 
-  public async disconnect() {
+
+  public disconnectTriggered() {
+    this.logger.debug('Scale disconnect triggered');
+    // Class is still existing, therefore we should do something good maybe?
     this.connected = false;
-    await promisify(ble.stopNotification)((this.device_id, this.weight_uuid, this.char_uuid));
+  }
+  public async disconnect() {
+    this.logger.debug('Scale disconnected');
+    if (this.connected) {
+     if (this.device_id && this.weight_uuid && this.char_uuid) {
+       this.logger.debug('Disconnect the device with its characteristics');
+       await promisify(ble.stopNotification)((this.device_id, this.weight_uuid, this.char_uuid));
+     } else {
+       this.logger.debug('We cant disconnect because one of the characteristics is missing' + JSON.stringify({device_id: this.device_id, weight: this.weight_uuid, char_uuid: this.char_uuid}));
+     }
+     this.connected = false;
+   }
+
+
   }
 
   public tare() {
@@ -304,8 +320,11 @@ export class AcaiaScale {
   }
 
   private handleNotification(value: ArrayBuffer) {
-    this.worker.addBuffer(value);
-    this.heartbeat();
+    if (this.connected) {
+      this.worker.addBuffer(value);
+      this.heartbeat();
+    }
+
   }
 
   private messageParseCallback(messages: ParsedMessage[]) {
@@ -358,6 +377,10 @@ export class AcaiaScale {
     });
   }
 
+  public isConnected(): boolean {
+    return this.connected;
+  }
+
   private notificationsReady() {
     this.ident();
     this.last_heartbeat = Date.now();
@@ -368,12 +391,17 @@ export class AcaiaScale {
   private write(data: ArrayBuffer, withoutResponse = false) {
     this.logger.debug("trying to write: ", new Uint8Array(data));
     return new Promise((resolve) => {
-      ble[withoutResponse ? 'writeWithoutResponse' : 'write'](this.device_id, this.weight_uuid, this.char_uuid, data,
-        resolve, (err) => {
-          this.logger.error("failed to write to characteristic, but we are ignoring it", err, withoutResponse);
-          resolve(false); // resolve for both cases because sometimes write says it's an error but in reality it's fine
-        }
-      );
+      if (this.connected) {
+        ble[withoutResponse ? 'writeWithoutResponse' : 'write'](this.device_id, this.weight_uuid, this.char_uuid, data,
+          resolve, (err) => {
+            this.logger.error("failed to write to characteristic, but we are ignoring it", err, withoutResponse);
+            resolve(false); // resolve for both cases because sometimes write says it's an error but in reality it's fine
+          }
+        );
+      } else {
+        this.logger.debug("We didn't write, because scale wasn't connected anymore ", new Uint8Array(data));
+      }
+
     });
   }
 
@@ -392,6 +420,9 @@ export class AcaiaScale {
     }
     setTimeout(async () => {
       try {
+        if (!this.connected) {
+          return false;
+        }
         while (this.command_queue.length) {
           const packet = this.command_queue.shift();
           this.write(packet, true)
@@ -414,7 +445,7 @@ export class AcaiaScale {
         try {
           await this.disconnect();
         } catch (e) {
-          this.logger.error(e)
+          this.logger.error(e);
           return false;
         }
       }

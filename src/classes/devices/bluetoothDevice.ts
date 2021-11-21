@@ -73,6 +73,13 @@ export class BluetoothScale {
     return 0;
   }
 
+  /**
+   * Disconnect is triggered because the scale was turned off, battery shutdown, or something went broken.
+   */
+  public disconnectTriggered(): void {
+
+  }
+
   protected setWeight(_newWeight: number, _stableWeight: boolean = false) {
     // Allow negative weight
     // Each value effect the current weight bei 10%.

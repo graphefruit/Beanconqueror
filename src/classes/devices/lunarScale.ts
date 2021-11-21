@@ -24,6 +24,11 @@ export default class LunarScale extends BluetoothScale {
     this.connect();
   }
 
+
+  public disconnectTriggered (): void {
+    this.scale.disconnectTriggered();
+  }
+
   public async connect() {
     await this.scale.connect(this.onEvent.bind(this));
   }

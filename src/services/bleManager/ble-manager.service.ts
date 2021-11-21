@@ -306,6 +306,7 @@ export class BleManagerService {
 
   private disconnectCallback(callback) {
     if (this.scale) {
+      this.scale.disconnectTriggered();
       this.scale = null;
       this.uiToast.showInfoToastBottom('SCALE.DISCONNECTED_UNPLANNED');
       this.uiLog.log('Disconnected successfully');
