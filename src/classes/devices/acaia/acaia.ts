@@ -82,7 +82,7 @@ class DecoderWorker {
     this.logger = new Logger('ACAIA DecodeWorker container');
 
     if (typeof Worker !== 'undefined') {
-      this.logger.log('Workers are supported. Creating a decode worker...')
+      this.logger.log('Workers are supported. Creating a decode worker...');
       this.worker = new Worker(new URL('./decode.worker', import.meta.url));
       this.worker.onmessage = this.handleMessage.bind(this);
     } else {
@@ -236,6 +236,10 @@ export class AcaiaScale {
 
     this.worker = new DecoderWorker(this.messageParseCallback.bind(this));
     this.logger.log("Subscribing to notificatoins", { device_id: this.device_id, weight_uuid: this.weight_uuid, char_uuid: this.char_uuid });
+
+    //We moved this line from notifications ready to here.
+    this.connected = true;
+
     ble.startNotification(this.device_id, this.weight_uuid, this.char_uuid, this.handleNotification.bind(this), (err) => {
       this.logger.error("failed to subscribe to notifications " + JSON.stringify(err));
       this.disconnect()
@@ -243,6 +247,8 @@ export class AcaiaScale {
     });
 
     await this.write(new Uint8Array([0, 1]).buffer);
+
+
     this.notificationsReady();
   }
 
@@ -257,7 +263,9 @@ export class AcaiaScale {
     if (this.connected) {
      if (this.device_id && this.weight_uuid && this.char_uuid) {
        this.logger.debug('Disconnect the device with its characteristics');
-       await promisify(ble.stopNotification)((this.device_id, this.weight_uuid, this.char_uuid));
+       // Lars - I don't know if we need this, but the problem is when the scale is disconnected via settings, or shutdown, it will crash everything.
+       // Try catch won't help here, because the device is already deattached.
+       //await promisify(ble.stopNotification)((this.device_id, this.weight_uuid, this.char_uuid));
      } else {
        this.logger.debug('We cant disconnect because one of the characteristics is missing' + JSON.stringify({device_id: this.device_id, weight: this.weight_uuid, char_uuid: this.char_uuid}));
      }
@@ -385,7 +393,6 @@ export class AcaiaScale {
     this.ident();
     this.last_heartbeat = Date.now();
     this.logger.info('Scale Ready!');
-    this.connected = true;
   }
 
   private write(data: ArrayBuffer, withoutResponse = false) {
