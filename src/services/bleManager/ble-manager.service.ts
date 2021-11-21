@@ -252,6 +252,21 @@ export class BleManagerService {
     });
   }
 
+  //Delete me
+  public async autoConnectScaleWithoutBuildingDevice(deviceType: ScaleType, deviceId: string, _retryScanForIOS: boolean = false) {
+    if (_retryScanForIOS) {
+      // iOS needs to know the scale, before auto connect can be done
+      await this.__iOSAccessBleStackAndAutoConnect();
+
+    }
+
+    this.uiLog.log('AutoConnectScale - We can start or we waited for iOS');
+
+    return new Promise((resolve, reject) => {
+      this.uiLog.log('AutoConnectScale - We created our promise, and try to autoconnect to device now.');
+      ble.autoConnect(deviceId, this.connectCallbackToDelete.bind(this, resolve, deviceType), this.disconnectCallback.bind(this, reject));
+    });
+  }
 
   public async autoConnectScale(deviceType: ScaleType, deviceId: string, _retryScanForIOS: boolean = false) {
     if (_retryScanForIOS) {
@@ -272,6 +287,17 @@ export class BleManagerService {
     // wait for full data
     if (!this.scale || 'characteristics' in data) {
       this.scale = makeDevice(deviceType, data, this.platform.platforms() as Platforms[]);
+      this.uiLog.log('Connected successfully');
+      this.uiToast.showInfoToastBottom('SCALE.CONNECTED_SUCCESSFULLY');
+      callback();
+    }
+  }
+
+  private connectCallbackToDelete(callback, deviceType: ScaleType, data: PeripheralData) {
+    // wait for full data
+    this.uiLog.log('ACAIA - BLA1111 ' + JSON.stringify(data));
+    this.uiLog.log('ACAIA - BLA1112 ' + JSON.stringify(deviceType));
+    if (!this.scale || 'characteristics' in data) {
       this.uiLog.log('Connected successfully');
       this.uiToast.showInfoToastBottom('SCALE.CONNECTED_SUCCESSFULLY');
       callback();
