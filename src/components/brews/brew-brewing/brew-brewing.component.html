@@ -256,7 +256,7 @@
     ></timer>
   </ion-item>
 
-  <ion-item style="margin-top: -15px;" lines="none" [hidden]="smartScaleConnected() !== true"
+  <ion-item style="margin-top: -15px;" lines="none" [hidden]="shallFlowProfileBeHidden()"
             [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
                       data.getPreparation().brew_order.while.brew_time,
                       data.getPreparation().use_custom_parameters)">
@@ -295,7 +295,7 @@
     </ion-grid>
   </ion-item>
 
-  <ion-item class="ion-margin-top" [hidden]="smartScaleConnected() !== true"
+  <ion-item class="ion-margin-top" [hidden]="shallFlowProfileBeHidden()"
             [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
                       data.getPreparation().brew_order.while.brew_time,
                       data.getPreparation().use_custom_parameters)">

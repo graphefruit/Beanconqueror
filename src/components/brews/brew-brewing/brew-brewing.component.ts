@@ -77,6 +77,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public scaleTimerSubscription: Subscription = undefined;
   public scaleTareSubscription: Subscription = undefined;
   public scaleFlowSubscription: Subscription = undefined;
+  public bluetoothSubscription: Subscription = undefined;
   private flowProfileArr = [];
   private flowTime: number = undefined;
   private flowSecondTick: number = 0;
@@ -85,7 +86,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   @ViewChild('flowProfileChart', { static: false }) public flowProfileChart;
 
   public flowProfileChartEl: any = undefined;
-  public bluetoothScaleConnected: boolean = false;
 
 
   constructor(private readonly platform: Platform,
@@ -142,52 +142,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
 
       if (this.smartScaleConnected()) {
-        if (this.flowProfileChartEl === undefined) {
-          this.initializeFlowChart();
-        }
-        const scale: BluetoothScale = this.bleManager.getScale();
-        if (!this.scaleTimerSubscription) {
-
-          this.scaleTimerSubscription = scale.timerEvent.subscribe((event) => {
-            // Timer pressed
-            if (event) {
-              switch (event.command) {
-                case SCALE_TIMER_COMMAND.START:
-                  this.timer.startTimer();
-                  break;
-                case SCALE_TIMER_COMMAND.STOP:
-                  this.timer.pauseTimer();
-                  break;
-              }
-            } else {
-              if (this.timer.isTimerRunning() === true) {
-                this.timer.pauseTimer();
-              } else {
-                this.timer.startTimer();
-              }
-            }
-            this.changeDetectorRef.detectChanges();
-
-          });
-        }
-        if (!this.scaleTareSubscription) {
-          this.scaleTareSubscription = scale.tareEvent.subscribe(() => {
-            // Timer pressed
-            if (this.data.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO) {
-              this.data.brew_quantity = 0;
-            } else {
-              this.data.brew_beverage_quantity = 0;
-            }
-
-            this.changeDetectorRef.detectChanges();
-
-          });
-        }
-
-        await scale.tare();
-        await scale.setTimer(SCALE_TIMER_COMMAND.STOP);
-        await scale.setTimer(SCALE_TIMER_COMMAND.RESET);
+        this.__connectSmartScale(true);
       }
+
+
+      this.bluetoothSubscription = this.bleManager.attachOnEvent().subscribe((_type) => {
+        if (_type && _type.type === 'CONNECT') {
+          this.__connectSmartScale(false);
+        }
+      });
+
 
 
       // Trigger change rating
@@ -195,17 +159,74 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     });
   }
 
+  private async __connectSmartScale(_firstStart: boolean) {
+    if (this.smartScaleConnected()) {
+
+      this.deattachToWeightChange();
+      this.deattachToScaleEvents();
+      this.initializeFlowChart();
+
+      const scale: BluetoothScale = this.bleManager.getScale();
+      if (!this.scaleTimerSubscription) {
+
+        this.scaleTimerSubscription = scale.timerEvent.subscribe((event) => {
+          // Timer pressed
+          if (event) {
+            switch (event.command) {
+              case SCALE_TIMER_COMMAND.START:
+                this.timer.startTimer();
+                break;
+              case SCALE_TIMER_COMMAND.STOP:
+                this.timer.pauseTimer();
+                break;
+            }
+          } else {
+            if (this.timer.isTimerRunning() === true) {
+              this.timer.pauseTimer();
+            } else {
+              this.timer.startTimer();
+            }
+          }
+          this.changeDetectorRef.detectChanges();
+
+        });
+      }
+      if (!this.scaleTareSubscription) {
+        this.scaleTareSubscription = scale.tareEvent.subscribe(() => {
+          // Timer pressed
+          if (this.data.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO) {
+            this.data.brew_quantity = 0;
+          } else {
+            this.data.brew_beverage_quantity = 0;
+          }
+
+          this.changeDetectorRef.detectChanges();
+
+        });
+      }
+
+      if (_firstStart) {
+        await scale.tare();
+        await scale.setTimer(SCALE_TIMER_COMMAND.STOP);
+        await scale.setTimer(SCALE_TIMER_COMMAND.RESET);
+      }
+      if (this.timer.isTimerRunning() === true && _firstStart === false) {
+        this.attachToScaleWeightChange();
+      }
+
+    }
+  }
+
   public ngOnDestroy() {
     // We don't deattach the timer subscription in the deattach toscale events, else we couldn't start anymore.
-    if (this.scaleTimerSubscription) {
-      this.scaleTimerSubscription.unsubscribe();
-      this.scaleTimerSubscription = undefined;
+
+    if (this.bluetoothSubscription) {
+      this.bluetoothSubscription.unsubscribe();
+      this.bluetoothSubscription = undefined;
     }
-    if (this.scaleTareSubscription) {
-      this.scaleTareSubscription.unsubscribe();
-      this.scaleTareSubscription = undefined;
-    }
-    this.deattachToScaleChange();
+
+    this.deattachToWeightChange();
+    this.deattachToScaleEvents();
   }
 
   public preparationMethodFocused() {
@@ -230,11 +251,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     return !!scale;
   }
 
-  public attachToScaleEvents() {
+  public attachToScaleWeightChange() {
     const scale: BluetoothScale = this.bleManager.getScale();
     if (scale) {
-      this.bluetoothScaleConnected = true;
-      this.deattachToScaleChange();
+      this.deattachToWeightChange();
 
       this.scaleFlowSubscription = scale.flowChange.subscribe((_val) => {
         this.__setFlowProfile(_val);
@@ -349,12 +369,39 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }, 250);
   }
 
-  public deattachToScaleChange() {
-
+  public deattachToWeightChange() {
     if (this.scaleFlowSubscription) {
       this.scaleFlowSubscription.unsubscribe();
       this.scaleFlowSubscription = undefined;
     }
+
+  }
+
+  public shallFlowProfileBeHidden(): boolean {
+    if (this.smartScaleConnected() === true) {
+      return false;
+    }
+    if (this.smartScaleConnected() === false && this.isEdit === true && this.data.flow_profile !== '') {
+      return false;
+    }
+    if (this.smartScaleConnected() === false && this.flow_profile_raw.weight.length > 0) {
+      return false;
+    }
+
+    return true;
+  }
+
+  public deattachToScaleEvents() {
+
+    if (this.scaleTimerSubscription) {
+      this.scaleTimerSubscription.unsubscribe();
+      this.scaleTimerSubscription = undefined;
+    }
+    if (this.scaleTareSubscription) {
+      this.scaleTareSubscription.unsubscribe();
+      this.scaleTareSubscription = undefined;
+    }
+
 
   }
 
@@ -402,7 +449,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (scale) {
       await scale.tare();
       await scale.setTimer(SCALE_TIMER_COMMAND.START);
-      this.attachToScaleEvents();
+      this.attachToScaleWeightChange();
 
     }
   }
@@ -411,7 +458,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     const scale: BluetoothScale = this.bleManager.getScale();
     if (scale) {
       await scale.setTimer(SCALE_TIMER_COMMAND.START);
-      this.attachToScaleEvents();
+      this.attachToScaleWeightChange();
     }
   }
 
@@ -419,7 +466,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     const scale: BluetoothScale = this.bleManager.getScale();
     if (scale) {
       await scale.setTimer(SCALE_TIMER_COMMAND.STOP);
-      this.deattachToScaleChange();
+      this.deattachToWeightChange();
     }
   }
 
@@ -436,7 +483,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       await scale.tare();
       await scale.setTimer(SCALE_TIMER_COMMAND.STOP);
       await scale.setTimer(SCALE_TIMER_COMMAND.RESET);
-      this.deattachToScaleChange();
+      this.deattachToWeightChange();
 
 
       if (this.isEdit) {

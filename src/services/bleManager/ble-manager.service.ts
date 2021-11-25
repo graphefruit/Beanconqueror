@@ -6,6 +6,7 @@ import {Platform} from '@ionic/angular';
 import {UILog} from '../uiLog';
 import {UIToast} from '../uiToast';
 import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
+import {Observable, Subject} from 'rxjs';
 
 declare var ble;
 declare var window;
@@ -18,6 +19,8 @@ export class BleManagerService {
   public scales;
   public failed: boolean;
   public ready: boolean;
+
+  private eventSubject = new Subject<any>();
 
   constructor(private readonly platform: Platform,
               private readonly uiLog: UILog,
@@ -34,6 +37,16 @@ export class BleManagerService {
       return ble.stopScan(resolve, reject);
     });
   }
+
+
+  public attachOnEvent(): Observable<any> {
+    return this.eventSubject.asObservable();
+  }
+
+  private __sendEvent(_type: string) {
+    this.eventSubject.next({type: _type});
+  }
+
 
   public async hasLocationPermission(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
@@ -252,22 +265,6 @@ export class BleManagerService {
     });
   }
 
-  //Delete me
-  public async autoConnectScaleWithoutBuildingDevice(deviceType: ScaleType, deviceId: string, _retryScanForIOS: boolean = false) {
-    if (_retryScanForIOS) {
-      // iOS needs to know the scale, before auto connect can be done
-      await this.__iOSAccessBleStackAndAutoConnect();
-
-    }
-
-    this.uiLog.log('AutoConnectScale - We can start or we waited for iOS');
-
-    return new Promise((resolve, reject) => {
-      this.uiLog.log('AutoConnectScale - We created our promise, and try to autoconnect to device now.');
-      ble.autoConnect(deviceId, this.connectCallbackToDelete.bind(this, resolve, deviceType), this.disconnectCallback.bind(this, reject));
-    });
-  }
-
   public async autoConnectScale(deviceType: ScaleType, deviceId: string, _retryScanForIOS: boolean = false) {
     if (_retryScanForIOS) {
       // iOS needs to know the scale, before auto connect can be done
@@ -290,19 +287,10 @@ export class BleManagerService {
       this.uiLog.log('Connected successfully');
       this.uiToast.showInfoToastBottom('SCALE.CONNECTED_SUCCESSFULLY');
       callback();
+      this.__sendEvent('CONNECT');
     }
   }
 
-  private connectCallbackToDelete(callback, deviceType: ScaleType, data: PeripheralData) {
-    // wait for full data
-    this.uiLog.log('ACAIA - BLA1111 ' + JSON.stringify(data));
-    this.uiLog.log('ACAIA - BLA1112 ' + JSON.stringify(deviceType));
-    if (!this.scale || 'characteristics' in data) {
-      this.uiLog.log('Connected successfully');
-      this.uiToast.showInfoToastBottom('SCALE.CONNECTED_SUCCESSFULLY');
-      callback();
-    }
-  }
 
   private disconnectCallback(callback) {
     if (this.scale) {
@@ -311,6 +299,7 @@ export class BleManagerService {
       this.uiToast.showInfoToastBottom('SCALE.DISCONNECTED_UNPLANNED');
       this.uiLog.log('Disconnected successfully');
       callback();
+      this.__sendEvent('DISCONNECT');
     }
   }
 }

@@ -9,7 +9,6 @@ import {Router} from '@angular/router';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
 import {Bean} from '../../classes/bean/bean';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
-import {BleManagerService} from '../../services/bleManager/ble-manager.service';
 
 @Component({
   selector: 'dashboard',
@@ -28,47 +27,11 @@ export class DashboardPage implements OnInit {
               private readonly changeDetectorRef: ChangeDetectorRef,
               private readonly router: Router,
               private readonly uiBeanStorage: UIBeanStorage,
-              private readonly uiBeanHelper: UIBeanHelper,
-              private readonly bleManagerService: BleManagerService
+              private readonly uiBeanHelper: UIBeanHelper
   ) {
 
   }
 
-
-  public  async findDevices() {
-    try {
-      const bla = await this.bleManagerService.scanDevices();
-      alert(JSON.stringify(bla));
-    }
-    catch (ex) {
-      alert(JSON.stringify(ex));
-    }
-
-  }
-  public  async findScale() {
-    try {
-      const bla = await this.bleManagerService.scanDevices();
-      const scale = await this.bleManagerService.tryToFindScale();
-      alert("Device found" + JSON.stringify(scale));
-    }
-    catch (ex) {
-      alert(JSON.stringify(ex));
-    }
-
-  }
-
-  public  async connectDevice() {
-    try {
-      const bla = await this.bleManagerService.scanDevices();
-      const scale = await this.bleManagerService.tryToFindScale();
-      this.bleManagerService.autoConnectScaleWithoutBuildingDevice(scale.type, scale.id, false);
-      alert('Hallo sebastian');
-    }
-    catch (ex) {
-      alert(JSON.stringify(ex));
-    }
-
-  }
 
 
   public  ngOnInit() {
