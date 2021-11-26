@@ -19,7 +19,7 @@
       <ion-label>{{"CURRENT" | translate }}
       </ion-label>
     </ion-segment-button>
-    <ion-segment-button *ngIf="settings?.show_archived_mills" value="archive">
+    <ion-segment-button *ngIf="settings?.show_archived_preparations" value="archive">
       <ion-label>{{"TAB_ARCHIVE" | translate }}
       </ion-label>
     </ion-segment-button>
@@ -39,7 +39,7 @@
                                       [preparation]="preparation"></preparation-information-card>
       </div>
     </div>
-    <div *ngSwitchCase="'archive'">
+    <div *ngSwitchCase="'archive'" >
       <div *ngIf="getArchivedPreparations()?.length == 0" class="ion-padding ion-text-center">
         <div>
           <ion-icon color="inactive" name="beanconqueror-preparation" size="large"></ion-icon>
