@@ -597,12 +597,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (_wrongFlow === false || _weightDidntChange === true) {
       if (this.data.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO) {
         if (_weight > 0) {
-          this.data.brew_quantity = this.uiHelper.toFixedIfNecessary(_weight, 2);
+          this.data.brew_quantity = this.uiHelper.toFixedIfNecessary(_weight, 1);
         }
       } else {
         if (_weight > 0) {
           // If the drip timer is showing, we can set the first drip and not doing a reference to the normal weight.
-          this.data.brew_beverage_quantity = this.uiHelper.toFixedIfNecessary(_weight, 2);
+          this.data.brew_beverage_quantity = this.uiHelper.toFixedIfNecessary(_weight, 1);
         }
 
       }
@@ -667,10 +667,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
 
   private __setFlowProfile(_scaleChange: any) {
-    const weight: number = _scaleChange.actual;
-    const oldWeight: number = _scaleChange.old;
-    const smoothedWeight: number = _scaleChange.smoothed;
-    const oldSmoothedWeight: number = _scaleChange.oldSmoothed;
+    const weight: number = this.uiHelper.toFixedIfNecessary(_scaleChange.actual,1);
+    const oldWeight: number = this.uiHelper.toFixedIfNecessary(_scaleChange.old,1);
+    const smoothedWeight: number = this.uiHelper.toFixedIfNecessary(_scaleChange.smoothed,1);
+    const oldSmoothedWeight: number = this.uiHelper.toFixedIfNecessary(_scaleChange.oldSmoothed,1);
 
     if (this.flowTime === undefined) {
       this.flowTime = this.getTime();
@@ -857,7 +857,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public getActualScaleWeight() {
     try {
-      return this.bleManager.getScale().getWeight();
+      return this.uiHelper.toFixedIfNecessary(this.bleManager.getScale().getWeight(),1);
     } catch (ex) {
       return 0;
     }
