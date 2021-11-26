@@ -138,6 +138,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         if (this.data.flow_profile !== '') {
           // We had a flow profile, so read data now.
           await this.readFlowProfile();
+          this.initializeFlowChart();
         }
       }
 
