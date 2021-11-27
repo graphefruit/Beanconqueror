@@ -316,7 +316,7 @@ export class BeansPage implements OnInit {
       },() => {});
     } else {
       // Test sample for development
-      await this.intenthandler.handleQRCodeLink('https://beanconqueror.com/app/roaster/bean.html?id=f3244c61-da13-46d3-af69-f37a44976530');
+      await this.intenthandler.handleQRCodeLink('https://beanconqueror.com/?qr=f3244c61-da13-46d3-af69-f37a44976530');
       this.loadBeans();
     }
 
