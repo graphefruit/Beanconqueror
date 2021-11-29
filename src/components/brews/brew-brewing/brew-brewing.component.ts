@@ -265,8 +265,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   private getActualBluetoothWeight() {
-    const scale: BluetoothScale = this.bleManager.getScale();
-    return scale.getWeight();
+    try {
+      const scale: BluetoothScale = this.bleManager.getScale();
+      return this.uiHelper.toFixedIfNecessary(scale.getWeight(),1);
+    }catch(ex) {
+      return 0;
+    }
+
   }
 
   public bluetoothScaleSetGrindWeight() {
