@@ -286,7 +286,7 @@
   "WELCOME_PAGE_ACTIVATE_ANALYTICS_TITLE": "Analytics & Tracking",
   "WELCOME_PAGE_ACTIVATE_ANALYTICS_DESCRIPTION": "We’d like to continuously improve the app, the website and our future services for you. To do so, we need to track some data how you use the app and its features. But we promise, we will never track any personal data. To ensure these promises, we use Matomo a data-security and privacy focused open source service which is hosted on our own server - this makes sure, that only we have the data ownership. Our website provides all information about the parameters we track and furthermore you can check the source code which is 100% open source. You have questions? Then feel free to contact us.",
   "ANALYTICS_INFORMATION_TITLE": "Analytics & Tracking",
-  "ANALYTICS_INFORMATION_DESCRIPTION": "Supported scales are: Decent Scale and Lunar Scale (not 2021 models)",
+  "ANALYTICS_INFORMATION_DESCRIPTION": "As you know, the security of your data and your privacy is our top priority.<br/><br/>For this reason, we have switched from Google Analytics to the data-security and privacy focused open source service Matomo which is hosted on our own server - this means, that we have the full data ownership.<br/><br/>The tracked parameters haven’t changed, and we still promise that we will never track any personal data.<br/><br/>Our website provides all information about the parameters we track and furthermore you can check the source code which is 100% open source.<br/><br/>You have questions?<br/><br/>Then feel free to contact us.",
   "ACTIVATE": "Activate",
   "DO_NOT_ACTIVE": "Don't activate",
   "WELCOME_PAGE_BEAN_TITLE": "Bean",
@@ -1011,7 +1011,7 @@
       "LOCATION": "To find bluetooth scales, the app needs access to the location.",
       "BLUETOOTH": "To find bluetooth scales, the app needs access to bluetooth"
     },
-    "INFORMATION_DESCRIPTION": "The rawdata of flow profiles won't be saved (to big data), but you have the possibility to save them on the on the individual brew page."
+    "INFORMATION_DESCRIPTION": "Supported scales are: Decent Scale and Lunar Scale (not 2021 models)"
   },
   "QR":{
     "WRONG_QRCODE_DESCRIPTION": "Wrong qr code or wrong content",
