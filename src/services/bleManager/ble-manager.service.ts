@@ -160,7 +160,7 @@ export class BleManagerService {
       ble.disconnect(deviceId, () => {
         this.scale = null;
         if (show_toast) {
-          this.uiToast.showInfoToastBottom('SCALE.DISCONNECTED_SUCCESSFULLY');
+          this.uiToast.showInfoToast('SCALE.DISCONNECTED_SUCCESSFULLY');
         }
         resolve(true);
       }, () => {
@@ -285,7 +285,7 @@ export class BleManagerService {
     if (!this.scale || 'characteristics' in data) {
       this.scale = makeDevice(deviceType, data, this.platform.platforms() as Platforms[]);
       this.uiLog.log('Connected successfully');
-      this.uiToast.showInfoToastBottom('SCALE.CONNECTED_SUCCESSFULLY');
+      this.uiToast.showInfoToast('SCALE.CONNECTED_SUCCESSFULLY');
       callback();
       this.__sendEvent('CONNECT');
     }
@@ -296,7 +296,7 @@ export class BleManagerService {
     if (this.scale) {
       this.scale.disconnectTriggered();
       this.scale = null;
-      this.uiToast.showInfoToastBottom('SCALE.DISCONNECTED_UNPLANNED');
+      this.uiToast.showInfoToast('SCALE.DISCONNECTED_UNPLANNED');
       this.uiLog.log('Disconnected successfully');
       callback();
       this.__sendEvent('DISCONNECT');

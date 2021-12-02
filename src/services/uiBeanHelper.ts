@@ -110,7 +110,7 @@ export class UIBeanHelper {
     if (_scannedQRBean.error === null)
     {
       this.uiAnalytics.trackEvent(QR_TRACKING.TITLE, QR_TRACKING.ACTIONS.SCAN_SUCCESSFULLY);
-      this.uiToast.showInfoToastBottom('QR.BEAN_SUCCESSFULLY_SCANNED');
+      this.uiToast.showInfoToast('QR.BEAN_SUCCESSFULLY_SCANNED');
       await this.uiAlert.showLoadingSpinner();
       const newMapper = new BeanMapper();
       const bean: Bean = await newMapper.mapServerToClientBean(_scannedQRBean);

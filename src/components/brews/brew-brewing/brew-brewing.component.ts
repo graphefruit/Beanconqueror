@@ -150,6 +150,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.bluetoothSubscription = this.bleManager.attachOnEvent().subscribe((_type) => {
         if (_type && _type.type === 'CONNECT') {
           this.__connectSmartScale(false);
+        } else {
+          this.deattachToWeightChange();
+          this.deattachToScaleEvents();
+          //If scale disconnected, sometimes the timer run but the screen was not refreshed, so maybe it helpes to detect the change.
+          this.changeDetectorRef.detectChanges();
         }
       });
 
