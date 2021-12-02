@@ -302,8 +302,10 @@ export class BeansPage implements OnInit {
   }
 
   public async longPressAdd(event) {
-    event.stopPropagation();
-    event.stopImmediatePropagation();
+    if (event) {
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+    }
     await this.add();
   }
 

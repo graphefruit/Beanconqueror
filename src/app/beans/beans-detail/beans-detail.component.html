@@ -215,7 +215,7 @@
             <h2>{{"BEAN_DATA_URL" | translate}}:</h2>
             <h3>{{data.url}}</h3>
           </ion-label>
-            <ion-icon style="position: relative; top: 5px;" name="globe-outline" slot="end"></ion-icon>
+            <ion-icon *ngIf="data.url" style="position: relative; top: 5px;" name="globe-outline" slot="end"></ion-icon>
         </ion-item>
         <ion-item>
           <ion-label>
