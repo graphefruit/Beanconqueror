@@ -600,11 +600,9 @@
     "6.0.0": {
       "TITLE": "Versión 6.0: Ésto es lo nuevo",
       "DESCRIPTION": [
-        "<b>Código QR:</b>",
-        "Escanee los paquetes de café con toda la información de las torrefacciones admitidas :)",
-        "",
-        "<b>Balanza Bluetooth:</b>",
+        "<b>Balanza Bluetooth</b>",
         "Compatibilidad con la primera balanza Bluetooth - Decent-Scale - Muchas gracias a Decent Espresso",
+        "Compatibilidad - Acaia Lunar",
         "",
         "<b>Degustación de aromas</b>",
         "Prueba cada brebaje con sus respectivos aromas.",
@@ -617,7 +615,6 @@
         "",
         "<b>Mejoras</b>",
         "Ahora repite más rápido la preparación  con los métodos, presiona prolongadamente '+'",
-        "Soporte de una pulsación larga del botón '+' en los granos para agregar directamente un grano ",
         "Nuevos parámetros agregados",
         "Soporte de diferentes monedas",
         "Edición de la preparación en la vista detallada.",

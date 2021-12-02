@@ -601,11 +601,9 @@
     "6.0.0": {
       "TITLE": "Version 6.0: Das ist neu",
       "DESCRIPTION": [
-        "<b>QR-Code:</b>",
-        "Scanne Kaffeepackungen mit allen Informationen von unterstützen Röstereien ein :)",
-        "",
-        "<b>Bluetooth Waage:</b>",
+        "<b>Bluetooth Waage</b>",
         "Unterstützung der ersten Bluetooth Waage - Decent-Scale - Vielen Dank an Decent Espresso",
+        "Unterstützung von Acaia Lunar",
         "",
         "<b>Aromen Verkostung</b>",
         "Verkoste jede Brühung mit den jeweiligen Aromen",
@@ -618,7 +616,6 @@
         "",
         "<b>Verbesserungen</b>",
         "Wiederhole Brühungen mit Zubereitungsmethoden nun schneller, Drücke Lange '+'",
-        "Unterstützung von langem Drücken des '+' Buttons bei Bohnen, um direkt eine Bohne hinzuzufügen",
         "Neue Parameter hinzugefügt",
         "Unterstützung verschiedener Währungen",
         "Editierung der Brühung in der Detailansicht",
@@ -1015,7 +1012,7 @@
       "LOCATION": "Um Bluetooth-Waagen zu finden, muss der Standort freigegeben werden",
       "BLUETOOTH":  "Um Bluetooth-Waagen zu finden, muss Bluetooth freigegeben werden"
     },
-    "INFORMATION_DESCRIPTION": "Die Rohdaten von Gießprofilen werden nicht abgespeichert (zu viele Daten), du kannst dir diese aber nach dem Bezug auf der jeweiligen Bezugsseite herunterladen."
+    "INFORMATION_DESCRIPTION": "Unterstütze Waagen sind: Decent Scale sowie Lunar Scale (nicht 2021 Modelle)"
   },
   "QR":{
     "WRONG_QRCODE_DESCRIPTION": "Falscher QR-Code oder falscher Inhalt",
