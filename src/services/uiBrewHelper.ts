@@ -436,12 +436,12 @@ export class UIBrewHelper {
       },
 
       scale: {
-        ticks: {
+
           beginAtZero: true,
           max: 10,
           min: 0,
           step: 0.1
-        }
+
       },
       tooltips: {
         // Disable the on-canvas tooltip
