@@ -37,7 +37,6 @@ import {AnalyticsPopoverComponent} from '../../popover/analytics-popover/analyti
 import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
 import {BleManagerService} from '../../services/bleManager/ble-manager.service';
 import {CurrencyService} from '../../services/currencyService/currency.service';
-import DecentScale from '../../classes/devices/decentScale';
 import {GreenBean} from '../../classes/green-bean/green-bean';
 import {IGreenBean} from '../../interfaces/green-bean/iGreenBean';
 import {IMill} from '../../interfaces/mill/iMill';
@@ -81,8 +80,6 @@ export class SettingsPage implements OnInit {
 
   public currencies = {};
 
-  private scaleWeightSubscription: Subscription = undefined;
-
   private __cleanupAttachmentData(_data: Array<IBean | IBrew | IMill | IPreparation | IGreenBean | IRoastingMachine>): any {
     if (_data !== undefined && _data.length > 0) {
       for (const obj of _data) {
@@ -92,25 +89,10 @@ export class SettingsPage implements OnInit {
 
   }
 
-  private unsubscribeSmartScale() {
-    if (this.scaleWeightSubscription) {
-      this.scaleWeightSubscription.unsubscribe();
-      this.scaleWeightSubscription = undefined;
 
-    }
-  }
-
-  private async subscribeSmartScale() {
-    if (this.scaleWeightSubscription === undefined) {
-      const scale: BluetoothScale = this.bleManager.getScale();
-      if (scale) {
-        await scale.setLed(true, true);
-      }
-    }
-  }
 
   public ngOnDestroy() {
-    this.unsubscribeSmartScale();
+
   }
 
 
@@ -173,7 +155,6 @@ export class SettingsPage implements OnInit {
 
 
   public async ngOnInit() {
-    await this.subscribeSmartScale();
 
   }
 
@@ -205,17 +186,22 @@ export class SettingsPage implements OnInit {
       await this.uiAlert.hideLoadingSpinner();
       try {
         // We don't need to retry for iOS, because we just did scan before.
-        await this.bleManager.autoConnectScale(scale.type, scale.id, false);
+
+        // NEVER!!! Await here, else the bluetooth logic will get broken.
+        this.bleManager.autoConnectScale(scale.type, scale.id, false);
       } catch(ex) {
 
       }
 
       this.settings.scale_id = scale.id;
       this.settings.scale_type = scale.type;
-      this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.SCALE);
+
+      this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.SCALE.CATEGORY,SETTINGS_TRACKING.ACTIONS.SCALE.DATA.SCALE_TYPE,scale.type);
+
       await this.saveSettings();
-      this.unsubscribeSmartScale();
-      await this.subscribeSmartScale();
+
+      const connectedScale = this.bleManager.getScale();
+      await connectedScale.setLed(true, true);
 
     } else {
       await this.uiAlert.hideLoadingSpinner();
@@ -229,7 +215,6 @@ export class SettingsPage implements OnInit {
       this.settings.scale_id = '';
       this.settings.scale_type = null;
       await this.saveSettings();
-      this.unsubscribeSmartScale();
     }
   }
 
