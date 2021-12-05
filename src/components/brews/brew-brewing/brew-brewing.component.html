@@ -26,8 +26,8 @@
     <ion-input [(ngModel)]="data.grind_weight" inputmode="decimal"
                placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_GRIND_WEIGHT' | translate}}" prevent-characters
                remove-empty-number
-               type="text"></ion-input>
-    <ion-button *ngIf="smartScaleConnected()" style="margin-left:0px;" (click)="bluetoothScaleSetGrindWeight()"
+               type="text" tabIndex="2"></ion-input>
+    <ion-button *ngIf="smartScaleConnected()" style="margin-left:0px;" (click)="bluetoothScaleSetGrindWeight()" tabIndex="1"
                 class="big-icon-only" fill="clear" slot="end" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only"></ion-icon>
     </ion-button>
@@ -256,7 +256,7 @@
     ></timer>
   </ion-item>
 
-  <ion-item style="margin-top: -15px;" lines="none" [hidden]="smartScaleConnected() !== true || (isEdit === true && this.data?.flow_profile?.length > 0)"
+  <ion-item style="margin-top: -15px;" lines="none" [hidden]="shallFlowProfileBeHidden()"
             [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
                       data.getPreparation().brew_order.while.brew_time,
                       data.getPreparation().use_custom_parameters)">
@@ -265,8 +265,8 @@
         <ion-col size="5">
           <ion-card class="flow-profile ion-text-center" style="height: 100%;">
             <ion-card-header>
-              <div *ngIf="flow_profile_raw.length <= 0">? g</div>
-              <div  *ngIf="flow_profile_raw.length > 0" #smartScaleWeight>0 g</div>
+              <div *ngIf="flow_profile_raw.weight.length <= 0">? g</div>
+              <div  *ngIf="flow_profile_raw.weight.length > 0" #smartScaleWeight>0 g</div>
               <div>({{data.getBrewRatio()}})</div>
             </ion-card-header>
             <ion-card-content>
@@ -278,8 +278,8 @@
 
           <ion-card class="flow-profile ion-text-center" style="height: 100%;">
             <ion-card-header >
-              <div *ngIf="flow_profile_raw.length <= 0">? g</div>
-              <div  *ngIf="flow_profile_raw.length > 0" #smartScaleWeightPerSecond>0 g/s</div>
+              <div *ngIf="flow_profile_raw.waterFlow.length <= 0">? g</div>
+              <div  *ngIf="flow_profile_raw.waterFlow.length > 0" #smartScaleWeightPerSecond>0 g/s</div>
             </ion-card-header>
             <ion-card-content>
               {{"BREW_FLOW_WEIGHT_PER_SECOND" | translate}}
@@ -287,7 +287,7 @@
           </ion-card>
         </ion-col>
         <ion-col size="2">
-          <ion-button style="margin-top: 18px;" [disabled]="flow_profile_raw.length <= 0" (click)="downloadFlowProfile()" tappable fill="clear">
+          <ion-button style="margin-top: 18px;" *ngIf="flow_profile_raw.weight.length > 0" (click)="downloadFlowProfile()" tappable fill="clear">
             <ion-icon name="download" slot="icon-only"></ion-icon>
           </ion-button>
         </ion-col>
@@ -295,7 +295,7 @@
     </ion-grid>
   </ion-item>
 
-  <ion-item class="ion-margin-top" [hidden]="smartScaleConnected() !== true || (isEdit === true && this.data?.flow_profile?.length > 0)"
+  <ion-item class="ion-margin-top" [hidden]="shallFlowProfileBeHidden()"
             [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
                       data.getPreparation().brew_order.while.brew_time,
                       data.getPreparation().use_custom_parameters)">
@@ -393,7 +393,7 @@
           <ion-input [(ngModel)]="data.brew_quantity" inputmode="decimal"
                      placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_BREW_QUANTITY' | translate}}" prevent-characters
                      remove-empty-number
-                     type="text"></ion-input>
+                     type="text" tabIndex="2"></ion-input>
         </ion-item>
       </ion-col>
       <ion-col class="ion-no-padding ion-align-self-end" size="2">
@@ -409,7 +409,7 @@
         </ion-item>
       </ion-col>
     </ion-row>
-    <ion-button *ngIf="smartScaleConnected()" style="margin-left:0px;" (click)="bluetoothScaleSetBrewQuantityWeight()"
+    <ion-button *ngIf="smartScaleConnected()" style="margin-left:0px;" (click)="bluetoothScaleSetBrewQuantityWeight()" tabIndex="1"
                 class="big-icon-only" fill="clear" slot="end" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only"></ion-icon>
     </ion-button>
@@ -495,7 +495,7 @@
           <ion-input [(ngModel)]="data.brew_beverage_quantity" inputmode="decimal"
                      placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_BREW_BEVERAGE_QUANTITY' | translate}}" prevent-characters
                      remove-empty-number
-                     type="text"></ion-input>
+                     type="text" tabIndex="2"></ion-input>
         </ion-item>
       </ion-col>
       <ion-col class="ion-no-padding ion-align-self-end" size="2">
@@ -516,7 +516,7 @@
                 class="big-icon-only" fill="clear" slot="end" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-calculator" slot="icon-only"></ion-icon>
     </ion-button>
-    <ion-button *ngIf="smartScaleConnected()" style="margin-left:0px;" (click)="bluetoothScaleSetBrewBeverageQuantityWeight()"
+    <ion-button *ngIf="smartScaleConnected()" style="margin-left:0px;" (click)="bluetoothScaleSetBrewBeverageQuantityWeight()" tabIndex="1"
                 class="big-icon-only" fill="clear" slot="end" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only"></ion-icon>
     </ion-button>

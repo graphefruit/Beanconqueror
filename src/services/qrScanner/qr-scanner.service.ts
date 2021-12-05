@@ -3,6 +3,9 @@ import { Injectable } from '@angular/core';
 import {UILog} from '../uiLog';
 import {TranslateService} from '@ngx-translate/core';
 import {Observable} from 'rxjs';
+import {UIAnalytics} from '../uiAnalytics';
+import QR_TRACKING from '../../data/tracking/qrTracking';
+import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
 
 declare var cordova;
 @Injectable({
@@ -13,16 +16,22 @@ export class QrScannerService {
 
 
   constructor(private readonly uiLog: UILog,
-              private readonly translate: TranslateService) {
+              private readonly translate: TranslateService,
+              private readonly uiAnalytics: UIAnalytics) {
 
   }
 
 
              public scan(): Promise<string> {
 
-               const observable:Observable<string> = new Observable((subscriber) => {
+               const observable: Observable<string> = new Observable((subscriber) => {
                  cordova.plugins.barcodeScanner.scan(
                    (result) => {
+                     if ((result.cancelled === false || result.cancelled === 0))
+                     {
+                       this.uiAnalytics.trackEvent(QR_TRACKING.TITLE, QR_TRACKING.ACTIONS.SCANNED_LINK.CATEGORY, QR_TRACKING.ACTIONS.SCANNED_LINK.DATA.LINK, result.text as string);
+                     }
+
                      if ((result.cancelled === false || result.cancelled === 0) && result.format === 'QR_CODE') {
                        subscriber.next(result.text as string);
                        subscriber.complete();

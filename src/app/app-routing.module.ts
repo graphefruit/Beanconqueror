@@ -77,10 +77,10 @@ const routes: Routes = [
     loadChildren: () => import('./brew-parameter/brew-parameter.module').then(m => m.BrewParameterPageModule)
   },
   {
-    path: 'decent-test', resolve: {
+    path: 'scale-test', resolve: {
       resolver: RouteResolver
     },
-    loadChildren: () => import('./decent-test/decent-test.module').then( m => m.DecentTestPageModule)
+    loadChildren: () => import('./scale-test/scale-test.module').then( m => m.ScaleTestPageModule)
   }
 ];
 

@@ -142,20 +142,18 @@
   <ion-card class="margin-top-20">
     <ion-card-content>
       <ion-card-title>
-        Decent Scale&nbsp;<span *ngIf="actualScaleWeight !== undefined">
-          {{actualScaleWeight}}g
-        </span>
+        Scale
       </ion-card-title>
       <ion-list>
-        <ion-item lines="full" *ngIf="settings.decent_scale_id === ''" (click)="findAndConnectDecentScale()" tappable button >
+        <ion-item lines="full" *ngIf="settings.scale_id === ''" (click)="findAndConnectScale()" tappable button >
           <ion-label><h2>{{"CONNECT" | translate}}</h2></ion-label>
             <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
         </ion-item>
-        <ion-item  *ngIf="settings.decent_scale_id !== '' && isDecentScaleConnected() === false"  (click)="retryConnectDecentScale()" tappable button >
+        <ion-item  *ngIf="settings.scale_id !== '' && isScaleConnected() === false"  (click)="retryConnectScale()" tappable button >
           <ion-label><h2>{{"RETRY_CONNECT" | translate}}</h2></ion-label>
           <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
         </ion-item>
-        <ion-item  *ngIf="settings.decent_scale_id !== ''"  (click)="disconnectDecentScale()" tappable button >
+        <ion-item  *ngIf="settings.scale_id !== ''"  (click)="disconnectScale()" tappable button >
           <ion-label><h2>{{"DISCONNECT" | translate}}</h2></ion-label>
           <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
         </ion-item>
@@ -165,6 +163,11 @@
           <ion-label class="ion-margin-end" style="white-space: normal;"><h2>{{"SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE" | translate}}</h2></ion-label>
           <ion-checkbox (ngModelChange)="saveSettings();"
                         [(ngModel)]="settings.bluetooth_scale_stay_connected" slot="end"></ion-checkbox>
+        </ion-item>
+        <ion-item>
+          <ion-label class="ion-margin-end" style="white-space: normal;"><h2>{{"SMART_SCALE_LOG" | translate}}</h2></ion-label>
+          <ion-checkbox (ngModelChange)="saveSettings();"
+                        [(ngModel)]="settings.scale_log" slot="end"></ion-checkbox>
         </ion-item>
 
       </ion-list>

@@ -1,3 +1,4 @@
+import { ScaleType } from './../devices';
 /** Interfaces */
 /** Enums */
 import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
@@ -13,7 +14,7 @@ import {ManageBrewParameter} from '../parameter/manageBrewParameter';
 import {IBeanPageFilter} from '../../interfaces/bean/iBeanPageFilter';
 import {BEAN_SORT_AFTER} from '../../enums/beans/beanSortAfter';
 import {BEAN_SORT_ORDER} from '../../enums/beans/beanSortOrder';
-import {UISettingsStorage} from '../../services/uiSettingsStorage';
+
 
 export class Settings implements ISettings {
 
@@ -62,8 +63,11 @@ export class Settings implements ISettings {
   public show_water_section: boolean;
   public show_cupping_section: boolean;
 
-  public decent_scale_id: string;
+  public scale_id: string;
+  public scale_type: ScaleType;
+  public scale_log: boolean;
   public bluetooth_scale_stay_connected: boolean;
+
 
   public currency: string;
   public GET_BREW_FILTER(): IBrewPageFilter {
@@ -139,8 +143,11 @@ export class Settings implements ISettings {
     this.welcome_page_showed = false;
     this.wake_lock = false;
     this.image_quality = 100;
-    this.decent_scale_id = '';
+
+    this.scale_id = '';
+    this.scale_type = null;
     this.bluetooth_scale_stay_connected = false;
+    this.scale_log = false;
 
     this.currency = 'EUR';
 

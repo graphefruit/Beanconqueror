@@ -13,6 +13,7 @@ import {UIBrewHelper} from '../../services/uiBrewHelper';
 })
 export class CuppingRadarComponent implements AfterViewInit {
 
+  private chartEl: any = undefined;
   public model: ICupping = {
     body: 0,
     brightness: 0,
@@ -32,6 +33,7 @@ export class CuppingRadarComponent implements AfterViewInit {
 
   @Output() public cuppingChanged: EventEmitter<any> = new EventEmitter();
 
+  private debounceCounter: number = 0;
   constructor(private readonly translate: TranslateService, private uiBrewHelper: UIBrewHelper) {
   }
 
@@ -54,11 +56,12 @@ export class CuppingRadarComponent implements AfterViewInit {
     this.__loadCuppingChart();
   }
 
+
   public setCuppingValues(_values: ICupping) {
 
     this.model = _values;
-    this.debounceRadar.next();
-
+    this.debounceRadar.next(this.debounceCounter.toString());
+    this.debounceCounter++;
   }
 
   public getCuppingValues() {
@@ -83,13 +86,27 @@ export class CuppingRadarComponent implements AfterViewInit {
       this.model.complexity +
       this.model.uniformity +
       this.model.cuppers_correction;
+    return this.toFixedIfNecessary(score,2);
 
-    return score;
   }
 
+  private toFixedIfNecessary( value, dp ){
+    const parsedFloat = parseFloat(value);
+    if (isNaN(parsedFloat)) {
+      return 0;
+    }
+    return +parsedFloat.toFixed( dp );
+  }
   private __loadCuppingChart(): void {
 
-    const chartObj = new Chart(this.cuppingChart.nativeElement, this.uiBrewHelper.getCuppingChartData(this.model));
+    if (this.chartEl !== undefined) {
+      this.chartEl.destroy();
+      this.chartEl = undefined;
+    }
+
+    this.chartEl = new Chart(this.cuppingChart.nativeElement, this.uiBrewHelper.getCuppingChartData(this.model) as any);
+
+
 
   }
 

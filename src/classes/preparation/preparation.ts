@@ -84,8 +84,38 @@ export class Preparation implements IPreparation {
         return  PREPARATION_STYLE_TYPE.POUR_OVER;
       case PREPARATION_TYPES.FRENCH_PRESS:
         return PREPARATION_STYLE_TYPE.FULL_IMMERSION;
+      case PREPARATION_TYPES.GINA:
+        return  PREPARATION_STYLE_TYPE.POUR_OVER;
+      case PREPARATION_TYPES.KONO:
+        return  PREPARATION_STYLE_TYPE.POUR_OVER;
+      case PREPARATION_TYPES.CAFELAT:
+        return  PREPARATION_STYLE_TYPE.ESPRESSO;
+      case PREPARATION_TYPES.ORIGAMI:
+        return  PREPARATION_STYLE_TYPE.POUR_OVER;
+      case PREPARATION_TYPES.OREA:
+        return  PREPARATION_STYLE_TYPE.POUR_OVER;
+      case PREPARATION_TYPES.FLAIR:
+        return  PREPARATION_STYLE_TYPE.ESPRESSO;
+      case PREPARATION_TYPES.HAND_LEVER:
+        return  PREPARATION_STYLE_TYPE.ESPRESSO;
+      case PREPARATION_TYPES.COLD_DRIP:
+        return  PREPARATION_STYLE_TYPE.PERCOLATION;
+      case PREPARATION_TYPES.APRIL_BREWER:
+        return  PREPARATION_STYLE_TYPE.POUR_OVER;
+      case PREPARATION_TYPES.ESPRO_BLOOM:
+        return  PREPARATION_STYLE_TYPE.POUR_OVER;
+      case PREPARATION_TYPES.FELLOW_STAGG:
+        return  PREPARATION_STYLE_TYPE.POUR_OVER;
+      case PREPARATION_TYPES.HSIAO_50:
+        return  PREPARATION_STYLE_TYPE.POUR_OVER;
+      case PREPARATION_TYPES.KARLSBADER_KANNE:
+        return  PREPARATION_STYLE_TYPE.POUR_OVER;
+      case PREPARATION_TYPES.MOCCA_MASTER:
+        return  PREPARATION_STYLE_TYPE.PERCOLATION;
+      case PREPARATION_TYPES.SIPHON:
+        return  PREPARATION_STYLE_TYPE.FULL_IMMERSION;
       default:
-        return PREPARATION_STYLE_TYPE.POUR_OVER
+        return PREPARATION_STYLE_TYPE.POUR_OVER;
     }
   }
 
@@ -120,6 +150,36 @@ export class Preparation implements IPreparation {
           return 'beanconqueror-preparation-cold-brew';
       case PREPARATION_TYPES.BLUE_DRIPPER:
           return 'beanconqueror-preparation-blue-dripper';
+      case PREPARATION_TYPES.GINA:
+        return 'beanconqueror-preparation-gina';
+      case PREPARATION_TYPES.KONO:
+        return 'beanconqueror-preparation-kono';
+      case PREPARATION_TYPES.ORIGAMI:
+        return 'beanconqueror-preparation-origami';
+      case PREPARATION_TYPES.CAFELAT:
+        return 'beanconqueror-preparation-cafelat';
+      case PREPARATION_TYPES.OREA:
+        return 'beanconqueror-preparation-orea';
+      case PREPARATION_TYPES.FLAIR:
+        return 'beanconqueror-preparation-flair';
+      case PREPARATION_TYPES.HAND_LEVER:
+        return 'beanconqueror-preparation-hand-lever';
+      case PREPARATION_TYPES.COLD_DRIP:
+        return 'beanconqueror-preparation-cold-drip';
+      case PREPARATION_TYPES.APRIL_BREWER:
+        return 'beanconqueror-preparation-april-brewer';
+      case PREPARATION_TYPES.ESPRO_BLOOM:
+        return 'beanconqueror-preparation-espro-bloom';
+      case PREPARATION_TYPES.FELLOW_STAGG:
+        return 'beanconqueror-preparation-fellow-stagg';
+      case PREPARATION_TYPES.HSIAO_50:
+        return 'beanconqueror-preparation-hsiao-50';
+      case PREPARATION_TYPES.KARLSBADER_KANNE:
+        return 'beanconqueror-preparation-karlsbader-kanne';
+      case PREPARATION_TYPES.MOCCA_MASTER:
+        return 'beanconqueror-preparation-mocca-master';
+      case PREPARATION_TYPES.SIPHON:
+        return 'beanconqueror-preparation-siphon';
       default:
         return 'beanconqueror-preparation-custom';
     }

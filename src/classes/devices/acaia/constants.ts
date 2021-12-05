@@ -1,0 +1,5 @@
+export const SCALE_SERVICE_UUID = '00001820-0000-1000-8000-00805f9b34fb';
+export const SCALE_CHARACTERISTIC_UUID = '00002a80-0000-1000-8000-00805f9b34fb';
+
+export const MAGIC1 = 0xEF;
+export const MAGIC2 = 0xDD;

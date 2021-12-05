@@ -18,7 +18,7 @@ import {UIAlert} from './uiAlert';
 import {SocialSharing} from '@ionic-native/social-sharing/ngx';
 import {UIFileHelper} from './uiFileHelper';
 import {UIMillStorage} from './uiMillStorage';
-import {IBrewFlow} from '../interfaces/brew/iBrewFlow';
+import {BrewFlow} from '../classes/brew/brewFlow';
 import moment from 'moment';
 
 
@@ -59,11 +59,7 @@ export class UIExcel {
     return wb;
   }
 
-  private generateBrewFlowProfileRaw(_flow: Array<IBrewFlow>, _flowProfile: Array<{
-    value: number,
-    time: number,
-    timestamp: string,
-  }>): XLSX.WorkBook {
+  private generateBrewFlowProfileRaw(_flow: BrewFlow): XLSX.WorkBook {
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     const header: Array<string> = [];
     header.push('Timestamp');
@@ -76,7 +72,7 @@ export class UIExcel {
 
 
     const wsData: any[][] = [header];
-    for (const entry of _flow) {
+    for (const entry of _flow.weight) {
       const wbEntry: Array<any> = [
       entry.timestamp,
       entry.brew_time,
@@ -96,10 +92,10 @@ export class UIExcel {
     header.push('Value');
 
     const wsDataFlow: any[][] = [header_flow];
-    for (const entry of _flowProfile) {
+    for (const entry of _flow.waterFlow) {
       const wbEntry: Array<any> = [
         entry.timestamp,
-        entry.time,
+        entry.brew_time,
         entry.value,];
       wsDataFlow.push(wbEntry);
     }
@@ -239,7 +235,7 @@ export class UIExcel {
         entry.push(sortInformation.farmer);
       }
 
-      wsData.push(entry)
+      wsData.push(entry);
     }
 
     for (let i=0; i < maxSortRepeats; i++) {
@@ -338,13 +334,9 @@ export class UIExcel {
     XLSX.utils.book_append_sheet(_wb, ws,  this.translate.instant('NAV_BREWS'));
   }
 
-  public async exportBrewFlowProfile(_flow: Array<IBrewFlow>,_flowProfile: Array<{
-    value: number,
-    time: number,
-    timestamp: string,
-  }>) {
+  public async exportBrewFlowProfile(_flow: BrewFlow) {
     await this.uiAlert.showLoadingSpinner();
-    const wb: XLSX.WorkBook = this.generateBrewFlowProfileRaw(_flow, _flowProfile);
+    const wb: XLSX.WorkBook = this.generateBrewFlowProfileRaw(_flow);
 
 
 

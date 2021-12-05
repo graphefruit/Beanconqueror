@@ -351,6 +351,21 @@
   "PREPARATION_TYPE_TURKISH": "Turco",
   "PREPARATION_TYPE_BLUE_DRIPPER": "Blue Dripper",
   "PREPARATION_TYPE_ADD_CUSTOM": "Agregar método personalizado",
+  "PREPARATION_TYPE_GINA": "Gina",
+  "PREPARATION_TYPE_KONO": "Kono",
+  "PREPARATION_TYPE_ORIGAMI": "Origami",
+  "PREPARATION_TYPE_CAFELAT": "Cafelat",
+  "PREPARATION_TYPE_OREA": "Orea",
+  "PREPARATION_TYPE_COLD_DRIP": "Cold drip",
+  "PREPARATION_TYPE_HAND_LEVER": "Hand lever",
+  "PREPARATION_TYPE_FLAIR": "Flair",
+  "PREPARATION_TYPE_APRIL_BREWER": "April Brewer",
+  "PREPARATION_TYPE_ESPRO_BLOOM": "Espro Bloom",
+  "PREPARATION_TYPE_FELLOW_STAGG": "Fellow Stagg",
+  "PREPARATION_TYPE_HSIAO_50": "Hsiao 50",
+  "PREPARATION_TYPE_KARLSBADER_KANNE": "Karlsbader",
+  "PREPARATION_TYPE_MOCCA_MASTER": "Mocca Master",
+  "PREPARATION_TYPE_SIPHON": "Syphon",
   "CHOOSE_BEANS": "Seleccionar grano",
   "CHOOSE_BEAN": "Seleccionar granos",
   "CHOOSE_WATERS": "Select waters",
@@ -592,11 +607,9 @@
     "6.0.0": {
       "TITLE": "Versión 6.0: Ésto es lo nuevo",
       "DESCRIPTION": [
-        "<b>Código QR:</b>",
-        "Escanee los paquetes de café con toda la información de las torrefacciones admitidas :)",
-        "",
-        "<b>Balanza Bluetooth:</b>",
+        "<b>Balanza Bluetooth</b>",
         "Compatibilidad con la primera balanza Bluetooth - Decent-Scale - Muchas gracias a Decent Espresso",
+        "Soporte de la Acaia Lunar",
         "",
         "<b>Degustación de aromas</b>",
         "Prueba cada brebaje con sus respectivos aromas.",
@@ -609,7 +622,6 @@
         "",
         "<b>Mejoras</b>",
         "Ahora repite más rápido la preparación  con los métodos, presiona prolongadamente '+'",
-        "Soporte de una pulsación larga del botón '+' en los granos para agregar directamente un grano ",
         "Nuevos parámetros agregados",
         "Soporte de diferentes monedas",
         "Edición de la preparación en la vista detallada.",
@@ -1006,7 +1018,7 @@
       "LOCATION": "Para encontrar balanzas bluetooth, la aplicación necesita acceder a la ubicación.",
       "BLUETOOTH": "Para encontrar balanzas bluetooth, la aplicación necesita acceso a bluetooth"
     },
-    "INFORMATION_DESCRIPTION": "Los datos sin procesar de los perfiles de flujo no se guardarán (en big data), pero tienes la posibilidad de guardarlos en la página de preparación individual."
+    "INFORMATION_DESCRIPTION": "Básculas compatibles: Decent Scale y Acaia Lunar (Solo los modelos anteriores a 2021)."
   },
   "QR": {
     "WRONG_QRCODE_DESCRIPTION": "Código qr incorrecto o contenido incorrecto",
@@ -1043,5 +1055,6 @@
   "BEAN_ROASTING_TYPE_FILTER":"Filter",
   "BEAN_ROASTING_TYPE_ESPRESSO":"Espresso",
   "BEAN_ROASTING_TYPE_OMNI":"Omni",
-  "BEAN_ROASTING_TYPE_UNKNOWN":"Ignoto"
+  "BEAN_ROASTING_TYPE_UNKNOWN":"Ignoto",
+  "SMART_SCALE_LOG": "Activar los ficheros de log para básculas inteligentes (Unicamente se usaran los logs para el debug de la aplicación)."
 }

@@ -15,7 +15,6 @@ import {ImagePicker} from '@ionic-native/image-picker/ngx';
 import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
 ;
 import {Router} from '@angular/router';
-import {SearchPipe} from '../../pipes/search';
 import {BrewInformationComponent} from '../../components/brew-information/brew-information.component';
 import {SocialSharing} from '@ionic-native/social-sharing/ngx';
 
@@ -26,7 +25,7 @@ describe('BrewPage', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [TranslateModule.forRoot(), FormsModule, IonicStorageModule.forRoot(), CommonModule, IonicModule],
-      declarations: [BrewPage, KeysPipe, SearchPipe, BrewInformationComponent],
+      declarations: [BrewPage, KeysPipe, BrewInformationComponent],
       providers: [
         {provide: InAppBrowser},
         {provide: ModalController},

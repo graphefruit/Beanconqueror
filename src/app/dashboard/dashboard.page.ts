@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {UIStatistic} from '../../services/uiStatistic';
 import {ModalController} from '@ionic/angular';
 import {Brew} from '../../classes/brew/brew';
@@ -19,6 +19,7 @@ export class DashboardPage implements OnInit {
 
   public brews: Array<Brew> = [];
   private leftOverBeansWeight: number = undefined;
+  public flowProfileChartEl: any = undefined;
   constructor(public uiStatistic: UIStatistic,
               private readonly modalCtrl: ModalController,
               private readonly uiBrewStorage: UIBrewStorage,
@@ -28,7 +29,10 @@ export class DashboardPage implements OnInit {
               private readonly uiBeanStorage: UIBeanStorage,
               private readonly uiBeanHelper: UIBeanHelper
   ) {
+
   }
+
+
 
   public  ngOnInit() {
 

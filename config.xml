@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.beanconqueror.app" version="5.4.3" xmlns="http://www.w3.org/ns/widgets">
+<widget id="com.beanconqueror.app" version="6.0.0" xmlns="http://www.w3.org/ns/widgets">
     <name>Beanconqueror</name>
     <description />
     <author email="lars.saalbach@googlemail.com" href="https://github.com/graphefruit/beanconqueror">Lars Saalbach</author>
@@ -16,7 +16,7 @@
     <allow-navigation href="*" />
     <preference name="ScrollEnabled" value="false" />
     <preference name="android-minSdkVersion" value="22" />
-    <preference name="android-targetSdkVersion" value="29" />
+    <preference name="android-targetSdkVersion" value="30" />
     <preference name="SplashMaintainAspectRatio" value="true" />
     <preference name="FadeSplashScreenDuration" value="300" />
     <preference name="SplashShowOnlyFirstTime" value="false" />

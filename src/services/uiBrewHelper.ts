@@ -226,6 +226,7 @@ export class UIBrewHelper {
     repeatBrew.bean_weight_in = _brewToCopy.bean_weight_in;
     repeatBrew.vessel_weight = _brewToCopy.vessel_weight;
     repeatBrew.vessel_name = _brewToCopy.vessel_name;
+    repeatBrew.flow_profile = '';
     return repeatBrew;
   }
 
@@ -383,7 +384,7 @@ export class UIBrewHelper {
 
   public getCuppingChartData(_data: Brew | ICupping) {
 
-    let data:any;
+    let data: any;
     if (_data instanceof Brew) {
       data =_data.cupping;
     } else {
@@ -424,19 +425,22 @@ export class UIBrewHelper {
     };
     const chartOptions = {
       responsive: true,
-      legend: false,
       title: {
         display: false,
         text: '',
       },
+      plugins: {
+        legend: false,
+        tooltip: false,
+      },
 
       scale: {
-        ticks: {
+
           beginAtZero: true,
           max: 10,
           min: 0,
           step: 0.1
-        }
+
       },
       tooltips: {
         // Disable the on-canvas tooltip

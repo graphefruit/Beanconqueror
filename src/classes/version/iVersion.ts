@@ -9,7 +9,7 @@ export class Version implements IVersion {
 
   public config: Config;
   public alreadyDisplayedVersions: Array<string>;
-  public updatedDataVersions:Array<string>;
+  public updatedDataVersions: Array<string>;
 
 
   constructor() {

@@ -351,6 +351,21 @@
   "PREPARATION_TYPE_TURKISH": "Türkisch",
   "PREPARATION_TYPE_BLUE_DRIPPER": "Blue Dripper",
   "PREPARATION_TYPE_ADD_CUSTOM": "Eigene hinzufügen",
+  "PREPARATION_TYPE_GINA": "Gina",
+  "PREPARATION_TYPE_KONO": "Kono",
+  "PREPARATION_TYPE_ORIGAMI": "Origami",
+  "PREPARATION_TYPE_CAFELAT": "Cafelat",
+  "PREPARATION_TYPE_OREA": "Orea",
+  "PREPARATION_TYPE_COLD_DRIP": "Cold drip",
+  "PREPARATION_TYPE_HAND_LEVER": "Handhebler",
+  "PREPARATION_TYPE_FLAIR": "Flair",
+  "PREPARATION_TYPE_APRIL_BREWER": "April Brewer",
+  "PREPARATION_TYPE_ESPRO_BLOOM": "Espro Bloom",
+  "PREPARATION_TYPE_FELLOW_STAGG": "Fellow Stagg",
+  "PREPARATION_TYPE_HSIAO_50": "Hsiao 50",
+  "PREPARATION_TYPE_KARLSBADER_KANNE": "Karlsbader Kanne",
+  "PREPARATION_TYPE_MOCCA_MASTER": "Mocca Master",
+  "PREPARATION_TYPE_SIPHON": "Siphon",
   "CHOOSE_BEANS": "Bohnen auswählen",
   "CHOOSE_BEAN": "Bohne auswählen",
   "CHOOSE_WATERS": "Wasser auswählen",
@@ -593,11 +608,9 @@
     "6.0.0": {
       "TITLE": "Version 6.0: Das ist neu",
       "DESCRIPTION": [
-        "<b>QR-Code:</b>",
-        "Scanne Kaffeepackungen mit allen Informationen von unterstützen Röstereien ein :)",
-        "",
-        "<b>Bluetooth Waage:</b>",
+        "<b>Bluetooth Waage</b>",
         "Unterstützung der ersten Bluetooth Waage - Decent-Scale - Vielen Dank an Decent Espresso",
+        "Unterstützung von Acaia Lunar",
         "",
         "<b>Aromen Verkostung</b>",
         "Verkoste jede Brühung mit den jeweiligen Aromen",
@@ -610,7 +623,6 @@
         "",
         "<b>Verbesserungen</b>",
         "Wiederhole Brühungen mit Zubereitungsmethoden nun schneller, Drücke Lange '+'",
-        "Unterstützung von langem Drücken des '+' Buttons bei Bohnen, um direkt eine Bohne hinzuzufügen",
         "Neue Parameter hinzugefügt",
         "Unterstützung verschiedener Währungen",
         "Editierung der Brühung in der Detailansicht",
@@ -1007,7 +1019,7 @@
       "LOCATION": "Um Bluetooth-Waagen zu finden, muss der Standort freigegeben werden",
       "BLUETOOTH":  "Um Bluetooth-Waagen zu finden, muss Bluetooth freigegeben werden"
     },
-    "INFORMATION_DESCRIPTION": "Die Rohdaten von Gießprofilen werden nicht abgespeichert (zu viele Daten), du kannst dir diese aber nach dem Bezug auf der jeweiligen Bezugsseite herunterladen."
+    "INFORMATION_DESCRIPTION": "Unterstütze Waagen sind: Decent Scale sowie Lunar Scale (nicht 2021 Modelle)"
   },
   "QR":{
     "WRONG_QRCODE_DESCRIPTION": "Falscher QR-Code oder falscher Inhalt",
@@ -1044,5 +1056,6 @@
   "BEAN_ROASTING_TYPE_FILTER":"Filter",
   "BEAN_ROASTING_TYPE_ESPRESSO":"Espresso",
   "BEAN_ROASTING_TYPE_OMNI":"Omni",
-  "BEAN_ROASTING_TYPE_UNKNOWN":"Unbekannt"
+  "BEAN_ROASTING_TYPE_UNKNOWN":"Unbekannt",
+  "SMART_SCALE_LOG": "Logfiles für Waage aktivieren"
 }
