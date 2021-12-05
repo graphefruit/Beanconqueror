@@ -4,7 +4,7 @@ import {Bean} from '../../classes/bean/bean';
 import {BluetoothScale} from './../../classes/devices/bluetoothDevice';
 import {Brew} from '../../classes/brew/brew';
 import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 import {DirectoryEntry, FileEntry} from '@ionic-native/file';
 import {FileChooser} from '@ionic-native/file-chooser/ngx';
@@ -82,7 +82,6 @@ export class SettingsPage implements OnInit {
   public currencies = {};
 
   private scaleWeightSubscription: Subscription = undefined;
-  public actualScaleWeight: number = undefined;
 
   private __cleanupAttachmentData(_data: Array<IBean | IBrew | IMill | IPreparation | IGreenBean | IRoastingMachine>): any {
     if (_data !== undefined && _data.length > 0) {
@@ -99,24 +98,18 @@ export class SettingsPage implements OnInit {
       this.scaleWeightSubscription = undefined;
 
     }
-    this.actualScaleWeight = undefined;
   }
 
   private async subscribeSmartScale() {
     if (this.scaleWeightSubscription === undefined) {
       const scale: BluetoothScale = this.bleManager.getScale();
       if (scale) {
-        await scale.setLed(true, false);
-        this.scaleWeightSubscription = scale.weightChange.subscribe((_val) => {
-          this.actualScaleWeight = _val.actual;
-        });
+        await scale.setLed(true, true);
       }
-
     }
-
   }
 
-  private ionWillLeave() {
+  public ngOnDestroy() {
     this.unsubscribeSmartScale();
   }
 
@@ -210,13 +203,18 @@ export class SettingsPage implements OnInit {
     const scale = await this.bleManager.tryToFindScale();
     if (scale) {
       await this.uiAlert.hideLoadingSpinner();
-      // We don't need to retry for iOS, because we just did scan before.
-      this.bleManager.autoConnectScale(scale.type, scale.id, false);
+      try {
+        // We don't need to retry for iOS, because we just did scan before.
+        await this.bleManager.autoConnectScale(scale.type, scale.id, false);
+      } catch(ex) {
+
+      }
+
       this.settings.scale_id = scale.id;
       this.settings.scale_type = scale.type;
       this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.SCALE);
       await this.saveSettings();
-
+      this.unsubscribeSmartScale();
       await this.subscribeSmartScale();
 
     } else {

@@ -142,9 +142,7 @@
   <ion-card class="margin-top-20">
     <ion-card-content>
       <ion-card-title>
-        Scale&nbsp;<span *ngIf="actualScaleWeight !== undefined">
-          {{actualScaleWeight}}g
-        </span>
+        Scale
       </ion-card-title>
       <ion-list>
         <ion-item lines="full" *ngIf="settings.scale_id === ''" (click)="findAndConnectScale()" tappable button >
