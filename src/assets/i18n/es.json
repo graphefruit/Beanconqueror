@@ -602,7 +602,7 @@
       "DESCRIPTION": [
         "<b>Balanza Bluetooth</b>",
         "Compatibilidad con la primera balanza Bluetooth - Decent-Scale - Muchas gracias a Decent Espresso",
-        "Compatibilidad - Acaia Lunar",
+        "Soporte de la Acaia Lunar",
         "",
         "<b>Degustación de aromas</b>",
         "Prueba cada brebaje con sus respectivos aromas.",
@@ -1011,7 +1011,7 @@
       "LOCATION": "Para encontrar balanzas bluetooth, la aplicación necesita acceder a la ubicación.",
       "BLUETOOTH": "Para encontrar balanzas bluetooth, la aplicación necesita acceso a bluetooth"
     },
-    "INFORMATION_DESCRIPTION": "Los datos sin procesar de los perfiles de flujo no se guardarán (en big data), pero tienes la posibilidad de guardarlos en la página de preparación individual."
+    "INFORMATION_DESCRIPTION": "Básculas compatibles: Decent Scale y Acaia Lunar (Solo los modelos anteriores a 2021)."
   },
   "QR": {
     "WRONG_QRCODE_DESCRIPTION": "Código qr incorrecto o contenido incorrecto",
@@ -1049,5 +1049,5 @@
   "BEAN_ROASTING_TYPE_ESPRESSO":"Espresso",
   "BEAN_ROASTING_TYPE_OMNI":"Omni",
   "BEAN_ROASTING_TYPE_UNKNOWN":"Ignoto",
-  "SMART_SCALE_LOG": "Activate logfiles for smart scale"
+  "SMART_SCALE_LOG": "Activar los ficheros de log para básculas inteligentes (Unicamente se usaran los logs para el debug de la aplicación)."
 }
