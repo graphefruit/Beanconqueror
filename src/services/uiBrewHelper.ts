@@ -390,7 +390,6 @@ export class UIBrewHelper {
     } else {
       data = _data;
     }
-    console.log("hahaha");
     const cuppingData = {
       labels: [
         this.translate.instant('CUPPING_SCORE_DRY_FRAGRANCE'),
