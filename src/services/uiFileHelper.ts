@@ -376,7 +376,7 @@ export class UIFileHelper extends InstanceClass {
           fileObj.FILE_PATH = fileObj.FILE_PATH.substr(1);
         }
         if (fileObj.FILE_PATH.endsWith('/')) {
-          fileObj.FILE_PATH.substr(0,fileObj.FILE_PATH.length-1);
+          fileObj.FILE_PATH = fileObj.FILE_PATH.substr(0,fileObj.FILE_PATH.length-1);
         }
         if (fileObj.FILE_PATH.length > 0) {
           filePath = filePath + fileObj.FILE_PATH;
