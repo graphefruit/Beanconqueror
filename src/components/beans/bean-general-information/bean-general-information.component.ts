@@ -96,11 +96,13 @@ export class BeanGeneralInformationComponent implements OnInit {
     this.roasterFocused = false;
   }
   public chooseDate(_event) {
+    _event.target.blur();
+    _event.cancelBubble = true;
+    _event.preventDefault();
+    _event.stopImmediatePropagation();
+    _event.stopPropagation();
     if (this.platform.is('cordova')) {
-      _event.cancelBubble = true;
-      _event.preventDefault();
-      _event.stopImmediatePropagation();
-      _event.stopPropagation();
+
 
 
       const myDate = new Date(); // From model.

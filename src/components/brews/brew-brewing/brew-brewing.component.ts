@@ -250,7 +250,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public smartScaleConnected() {
     if (!this.platform.is('cordova')) {
-      return true;
+      return false;
     }
 
     const scale: BluetoothScale = this.bleManager.getScale();

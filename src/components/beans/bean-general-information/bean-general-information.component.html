@@ -21,8 +21,7 @@
   </ion-item>
   <ion-item>
     <ion-label position="stacked">{{"BEAN_DATA_ROASTING_DATE" | translate}}</ion-label>
-    <ion-datetime #roastingDate="ngModel" (click)="chooseDate($event);" [(ngModel)]="data.roastingDate" cancelText="{{'CANCEL' | translate}}" displayFormat="DD.MM.YYYY" doneText="{{'CHOOSE' | translate}}" max="2999-12-31" min="2000-01-01" mode="ios" name="roastingDate"
-                  placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROASTING_DATE' | translate}}"></ion-datetime>
+    <ion-input  #roastingDate="ngModel" (click)="chooseDate($event);" [(ngModel)]="data.roastingDate" cancelText="{{'CANCEL' | translate}}"   [transform-date] displayFormat="DD.MM.YYYY"  name="roastingDate" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROASTING_DATE' | translate}}"></ion-input>
   </ion-item>
 
   <ion-item>

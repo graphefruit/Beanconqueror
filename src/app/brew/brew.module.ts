@@ -16,17 +16,15 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    RouterModule.forChild(routes),
-    SharedModule
-  ],
-  declarations: [],
-  entryComponents: [],
-  providers: [],
-  exports: [
-  ]
+    imports: [
+        CommonModule,
+        FormsModule,
+        IonicModule,
+        RouterModule.forChild(routes),
+        SharedModule
+    ],
+    declarations: [],
+    providers: [],
+    exports: []
 })
 export class BrewPageModule {}
