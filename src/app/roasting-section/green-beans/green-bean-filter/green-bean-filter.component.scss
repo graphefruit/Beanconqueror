@@ -1,11 +1,5 @@
 :host {
 
-
-
-
-  ion-list{
-    background:#ffffff;
-  }
   ion-item.active {
     border: 1px solid var(--ion-color-accent-secondary);
   }
@@ -17,8 +11,5 @@
       padding-left: 16px;
       margin-right: 8px;
     }
-  }
-  ion-footer{
-    background:#ffffff;
   }
 }

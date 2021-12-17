@@ -1,14 +1,8 @@
-<ion-content (click)="dismiss(false)">
-
-</ion-content>
-<ion-footer class="ion-no-border">
-  <div style="width:100%;text-align:end;" class="ion-margin-top">
-    <ion-button (click)="dismiss(false)" tappable color="accent" fill="clear" >
-      <ion-icon name="close-outline" slot="icon-only"></ion-icon>
-    </ion-button>
-  </div>
+<ion-header translucent>
+</ion-header>
+<ion-content>
   <form #addPreparationForm="ngForm" novalidate>
-    <ion-item>
+    <ion-item class="ion-margin-top">
       <ion-label position="stacked">{{"PREPARATION_TYPE_NAME" | translate}}*</ion-label>
       <ion-input #name="ngModel" [(ngModel)]="data.name" autocapitalize="sentences" name="name"
                  placeholder="{{'PREPARATION.PLACE_HOLDER.PREPARATION_TYPE_NAME' | translate}}" required
@@ -53,5 +47,5 @@
       </ion-col>
 
     </ion-row>
-</ion-footer>
+</ion-content>
 

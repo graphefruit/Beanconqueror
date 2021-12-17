@@ -8,8 +8,8 @@
 
   <ion-item>
     <ion-label position="stacked">{{"BEAN_DATA_BUY_DATE" | translate}}</ion-label>
-    <ion-datetime #roastingDate="ngModel" (click)="chooseDate($event);" [(ngModel)]="data.date" cancelText="{{'CANCEL' | translate}}" displayFormat="DD.MM.YYYY" doneText="{{'CHOOSE' | translate}}" max="2999-12-31" min="2000-01-01" mode="ios" name="roastingDate"
-                  placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_BUY_DATE' | translate}}"></ion-datetime>
+    <ion-input readonly (click)="chooseDate($event);" [(data)]="data.date" [transform-date] displayFormat="DD.MM.YYYY" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_BUY_DATE' | translate}}"></ion-input>
+
   </ion-item>
   <ion-item>
     <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge

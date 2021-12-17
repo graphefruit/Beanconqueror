@@ -196,6 +196,8 @@ export class MillInformationCardComponent implements OnInit {
       componentProps: {mill: this.mill},
       id: MillPopoverActionsComponent.COMPONENT_ID,
       cssClass: 'popover-actions',
+      breakpoints: [0, 0.2, 0.5, 0.75, 1],
+      initialBreakpoint: 0.5,
     });
     await popover.present();
     const data = await popover.onWillDismiss();

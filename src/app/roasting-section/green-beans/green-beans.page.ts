@@ -133,7 +133,9 @@ export class GreenBeansPage implements OnInit {
       swipeToClose: true,
       id: GreenBeanFilterComponent.COMPONENT_ID,
       componentProps:
-        {bean_filter: beanFilter, segment: this.bean_segment}
+        {bean_filter: beanFilter, segment: this.bean_segment},
+      breakpoints: [0, 0.2, 0.5, 0.75, 1],
+      initialBreakpoint: 0.75,
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();

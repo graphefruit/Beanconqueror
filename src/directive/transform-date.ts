@@ -1,40 +1,63 @@
-import {Directive, ElementRef, HostListener, Input} from '@angular/core';
+import {AfterViewInit, Directive, ElementRef, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import {NgModel} from '@angular/forms';
 
-import {ModalController} from '@ionic/angular';
-import {UIBeanStorage} from '../services/uiBeanStorage';
+
 
 import moment from 'moment';
+import {IFlavor} from '../interfaces/flavor/iFlavor';
+import {Brew} from '../classes/brew/brew';
 
 @Directive({
     // tslint:disable-next-line:directive-selector
-    selector: '[ngModel][transform-date]',
+    selector: '[transform-date]',
 })
-export class TransformDateDirective {
+export class TransformDateDirective implements AfterViewInit{
 
   private oldModelValue: any = undefined;
 
   @Input('displayFormat') public displayFormat: string;
+  @Input('transform-date') public transformDate: string;
+  @Input('data') public data: string;
+  @Output() public dataChange = new EventEmitter<any>();
 
-  constructor(private readonly model: NgModel,
-              private readonly modalController: ModalController,
+
+  private viewInitIntv= undefined;
+
+  constructor(
+
               private el: ElementRef,
-              private uiBeanStorage: UIBeanStorage) {
+              ) {
 
 
   }
 
 
+  public ngAfterViewInit() {
 
+
+        this.viewInitIntv =  setInterval(() => {
+        if (this.el && this.el.nativeElement && this.el.nativeElement.getElementsByTagName('input').length > 0) {
+          this.__generateOutputText(this.data);
+          clearInterval(this.viewInitIntv);
+          this.viewInitIntv = undefined;
+        }
+      },25);
+
+  }
+
+  public ngOnDestroy() {
+    if (this.viewInitIntv !== undefined) {
+      clearInterval(this.viewInitIntv);
+      this.viewInitIntv = undefined;
+    }
+
+  }
 
   public ngDoCheck(): void {
     try {
-      if (this.oldModelValue !== this.model.model){
-        this.oldModelValue = this.model.model;
-        setTimeout(() => {
-          this.__generateOutputText(this.model.model);
-        },250);
-
+      if (this.oldModelValue !== this.data){
+        this.oldModelValue =this.data;
+        this.__generateOutputText(this.data);
       }
     }
     catch (ex){
@@ -47,17 +70,32 @@ export class TransformDateDirective {
   private __generateOutputText(_val) {
 
     const _date = moment(_val);
+
     if (_date.isValid()) {
       const _transformedDate = _date.format(this.displayFormat);
      // this.el.nativeElement.innerText =_transformedDate;
-      this.el.nativeElement.getElementsByTagName('input')[0].value = _transformedDate;
-    } else {
+      this.setText(_transformedDate);
 
-      this.el.nativeElement.getElementsByTagName('input')[0].value = '';
+    } else {
+      this.setText('');
+     // this.el.nativeElement.getElementsByTagName('input')[0].value = '';
 
     }
 
 
+  }
+  private setText(_text: string) {
+    if (this.transformDate !== undefined && this.transformDate === 'timer') {
+
+        this.el.nativeElement.innerText = _text;
+
+    } else {
+
+        if (this.el && this.el.nativeElement && this.el.nativeElement.getElementsByTagName('input').length > 0) {
+          this.el.nativeElement.getElementsByTagName('input')[0].value = _text;
+        }
+
+    }
   }
 
 

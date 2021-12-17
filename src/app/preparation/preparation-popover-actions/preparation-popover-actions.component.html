@@ -1,8 +1,8 @@
-<ion-content (click)="dismiss()">
+<ion-header translucent>
+</ion-header>
+<ion-content>
 
-</ion-content>
-<ion-footer>
-  <ion-list lines="full">
+<ion-list lines="full">
     <ion-item (click)="choose(getStaticActions().DETAIL)" button tappable>
       <ion-icon name="beanconqueror-detail" slot="start"></ion-icon>
       <span>{{"DETAIL" | translate}}</span>
@@ -29,4 +29,4 @@
   </ion-item>
 
 </ion-list>
-</ion-footer>
+</ion-content>

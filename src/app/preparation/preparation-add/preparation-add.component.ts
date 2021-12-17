@@ -41,11 +41,13 @@ export class PreparationAddComponent implements OnInit {
       component: PreparationAddTypeComponent,
       cssClass: 'popover-actions',
       id:  PreparationAddTypeComponent.COMPONENT_ID,
-      componentProps: {type: _prepType, hide_toast_message: this.hide_toast_message}
+      componentProps: {type: _prepType, hide_toast_message: this.hide_toast_message},
+      breakpoints: [0, 0.2, 0.5, 0.75, 1],
+      initialBreakpoint: 0.5,
     });
     await modal.present();
     const {data} = await modal.onDidDismiss();
-    if (data.added === true) {
+    if (data && data.added === true) {
       this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.ADD_FINISH);
       await this.dismiss();
     }

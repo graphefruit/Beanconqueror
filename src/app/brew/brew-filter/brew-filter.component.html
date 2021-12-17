@@ -1,12 +1,13 @@
-<ion-content (click)="dismiss()">
-
-</ion-content>
-<ion-footer class="ion-no-border">
-  <div style="width:100%;text-align:end;" class="ion-margin-top">
-    <ion-button (click)="dismiss()" tappable color="accent" fill="clear" >
-      <ion-icon name="close-outline" slot="icon-only"></ion-icon>
-    </ion-button>
-  </div>
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()" tappable color="accent" fill="clear" >
+        <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
   <ion-item>
     <ion-label position="stacked">{{"BREW_DATA_PREPARATION_METHOD" | translate}}</ion-label>
     <ion-select [(ngModel)]="filter.method_of_preparation"
@@ -59,5 +60,5 @@
                   tappable>{{"RESET_FILTER" | translate}}</ion-button>
 
   </ion-list>
-</ion-footer>
+</ion-content>
 

@@ -449,6 +449,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public brewTimeTicked(_event): void {
     if (this.timer) {
+      console.log(this.timer.getSeconds());
       this.data.brew_time = this.timer.getSeconds();
     } else {
       this.data.brew_time = 0;
@@ -522,6 +523,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public chooseDateTime(_event) {
     if (this.platform.is('cordova')) {
+      _event.target.blur();
       _event.cancelBubble = true;
       _event.preventDefault();
       _event.stopImmediatePropagation();

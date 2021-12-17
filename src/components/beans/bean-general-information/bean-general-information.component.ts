@@ -90,6 +90,7 @@ export class BeanGeneralInformationComponent implements OnInit {
   }
 
   public roasterSelected(selected: string): void {
+
     this.data.roaster = selected;
     this.roasterResults = [];
     this.roasterResultsAvailable = false;
@@ -101,10 +102,8 @@ export class BeanGeneralInformationComponent implements OnInit {
     _event.preventDefault();
     _event.stopImmediatePropagation();
     _event.stopPropagation();
+
     if (this.platform.is('cordova')) {
-
-
-
       const myDate = new Date(); // From model.
 
       cordova.plugins.DateTimePicker.show({

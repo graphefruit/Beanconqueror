@@ -562,9 +562,10 @@
                       data.getPreparation().use_custom_parameters)"
             lines="inset">
     <ion-label position="stacked">{{"BREW_CREATION_DATE" | translate }}</ion-label>
-    <ion-datetime (click)="chooseDateTime($event);" [(ngModel)]="customCreationDate" cancelText="{{'CANCEL' | translate}}" display-format="DD.MM.YYYY HH:mm" doneText="{{'CHOOSE' | translate}}" mode="ios"
-                  picker-format="DD.MM.YYYY HH:mm"
-                  placeholder="Select Date"></ion-datetime>
+
+
+    <ion-input readonly (click)="chooseDateTime($event);" [(data)]="customCreationDate"  [transform-date] displayFormat="DD.MM.YYYY HH:mm" ></ion-input>
+
   </ion-item>
   <div *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.attachments,
                       data.getPreparation().manage_parameters.attachments,
