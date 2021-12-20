@@ -25,14 +25,14 @@ public static COMPONENT_ID: string ='brew-choose-preparation-to-brew';
     this.modalController.dismiss({
       dismissed: true,
       preparation: _prep
-    },undefined, BrewChoosePreparationToBrewComponent.COMPONENT_ID)
+    },undefined, BrewChoosePreparationToBrewComponent.COMPONENT_ID);
 
 
   }
   public dismiss(): void {
     this.modalController.dismiss({
       dismissed: true
-    },undefined, BrewChoosePreparationToBrewComponent.COMPONENT_ID)
+    },undefined, BrewChoosePreparationToBrewComponent.COMPONENT_ID);
 
   }
 

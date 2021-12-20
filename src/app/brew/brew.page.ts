@@ -268,9 +268,13 @@ export class BrewPage implements OnInit {
   }
 
 
-  public async longPressAdd(event) {
-    event.stopPropagation();
-    event.stopImmediatePropagation();
+  public async longPressAdd(_event) {
+    _event.target.blur();
+    _event.cancelBubble = true;
+    _event.preventDefault();
+    _event.stopImmediatePropagation();
+    _event.stopPropagation();
+
     await this.uiBrewHelper.longPressAddBrew();
     this.loadBrews();
   }

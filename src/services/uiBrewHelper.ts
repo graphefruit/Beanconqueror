@@ -474,11 +474,24 @@ export class UIBrewHelper {
   }
   public async longPressAddBrew() {
     if (this.canBrewIfNotShowMessage()) {
+      const preparationCount = this.uiPreparationStorage.getAllEntries().length;
+
+      let initalBreakpoint = 0.2;
+      if (preparationCount > 10) {
+        initalBreakpoint = 1;
+      } else if (preparationCount > 6) {
+        initalBreakpoint = 0.75;
+      } else if (preparationCount > 2) {
+        initalBreakpoint = 0.5;
+      }
+
       this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.LONG_PRESS_ADD);
       const modal = await this.modalController.create({
         component: BrewChoosePreparationToBrewComponent,
         id: BrewChoosePreparationToBrewComponent.COMPONENT_ID,
         cssClass: 'popover-actions',
+        breakpoints: [0, 0.2, 0.5, 0.75, 1],
+        initialBreakpoint: initalBreakpoint,
       });
       await modal.present();
 

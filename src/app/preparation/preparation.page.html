@@ -13,8 +13,8 @@
     </ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content>
-  <ion-segment [(ngModel)]="segment" class="ion-padding-vertical" style="padding-top:0px;">
+<ion-content #preparationContent>
+  <ion-segment (ionChange)="segmentChanged()"  [(ngModel)]="segment" class="ion-padding-vertical" style="padding-top:0px;">
     <ion-segment-button value="open">
       <ion-label>{{"CURRENT" | translate }}
       </ion-label>
@@ -34,10 +34,11 @@
           {{"PAGE_PREPARATION_LIST_NO_PREPARATION_EXISTING" | translate}}
         </div>
       </div>
-      <div *ngFor="let preparation of getActivePreparations()">
+      <ag-virtual-scroll #openScroll [items]="openPreparationsView" height="100vh" min-row-height="165">
         <preparation-information-card (preparationAction)="preparationAction($event[0],$event[1])"
-                                      [preparation]="preparation"></preparation-information-card>
-      </div>
+                                      [preparation]="preparation"
+                                      *ngFor="let preparation of openScroll.items"></preparation-information-card>
+      </ag-virtual-scroll>
     </div>
     <div *ngSwitchCase="'archive'" >
       <div *ngIf="getArchivedPreparations()?.length == 0" class="ion-padding ion-text-center">
@@ -48,10 +49,12 @@
           {{"PAGE_PREPARATION_LIST_NO_ARCHIVED_PREPARATION_EXISTING" | translate}}
         </div>
       </div>
-      <div *ngFor="let preparation of getArchivedPreparations()">
+
+      <ag-virtual-scroll #archivedScroll [items]="archivePreparationsView" height="100vh" min-row-height="165">
         <preparation-information-card (preparationAction)="preparationAction($event[0],$event[1])"
-                                      [preparation]="preparation"></preparation-information-card>
-      </div>
+                                      [preparation]="preparation"
+                                      *ngFor="let preparation of archivedScroll.items"></preparation-information-card>
+      </ag-virtual-scroll>
     </div>
   </div>
 
