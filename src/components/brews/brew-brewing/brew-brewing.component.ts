@@ -588,7 +588,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
-    if (modalData.data.displayingTime !== undefined) {
+    if (modalData !== undefined && modalData.data.displayingTime !== undefined) {
       this.displayingBrewTime = modalData.data.displayingTime;
       this.data.brew_time = moment.duration(moment(modalData.data.displayingTime).diff(moment(modalData.data.displayingTime).startOf('day'))).asSeconds();
     }

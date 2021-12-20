@@ -168,7 +168,7 @@ export class BrewPage implements OnInit {
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
-    if (modalData.data.brew_filter !== undefined) {
+    if (modalData !== undefined && modalData.data.brew_filter !== undefined) {
       if (this.brew_segment === 'open') {
         this.openBrewsFilter = modalData.data.brew_filter;
 

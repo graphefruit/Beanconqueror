@@ -133,7 +133,7 @@ export class BeansPage implements OnInit {
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
-    if (modalData.data && modalData.data.bean_filter !== undefined) {
+    if (modalData !== undefined && modalData.data && modalData.data.bean_filter !== undefined) {
       if (this.bean_segment === 'open') {
         this.openBeansFilter = modalData.data.bean_filter;
 

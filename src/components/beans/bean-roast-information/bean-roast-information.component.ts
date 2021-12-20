@@ -36,7 +36,7 @@ export class BeanRoastInformationComponent implements OnInit {
       componentProps: {displayingTime: this.displayingTime}});
     await modal.present();
     const modalData = await modal.onWillDismiss();
-    if (modalData.data.displayingTime !== undefined) {
+    if (modalData !== undefined && modalData.data.displayingTime !== undefined) {
       this.displayingTime = modalData.data.displayingTime;
       this.data.bean_roast_information.roast_length =moment.duration(moment(modalData.data.displayingTime)
         .diff(moment(modalData.data.displayingTime).startOf('day'))).asSeconds();

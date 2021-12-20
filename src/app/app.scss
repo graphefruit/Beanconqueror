@@ -514,9 +514,13 @@ ion-menu:host .menu-inner {
 
   .popover-actions {
 
-    ion-toolbar {
-      --background: #FFFFFF;
+    ion-header {
+      ion-toolbar {
+        --background: #FFFFFF;
+        height: 40px;
+      }
     }
+
     ion-content {
       --background: #FFFFFF;
     }

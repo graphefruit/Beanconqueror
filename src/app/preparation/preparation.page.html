@@ -26,7 +26,7 @@
   </ion-segment>
   <div [ngSwitch]="segment">
     <div *ngSwitchCase="'open'">
-      <div *ngIf="getActivePreparations()?.length == 0" class="ion-padding ion-text-center">
+      <div *ngIf="openPreparationsView?.length == 0" class="ion-padding ion-text-center">
         <div>
           <ion-icon color="inactive" name="beanconqueror-preparation" size="large"></ion-icon>
         </div>
@@ -41,7 +41,7 @@
       </ag-virtual-scroll>
     </div>
     <div *ngSwitchCase="'archive'" >
-      <div *ngIf="getArchivedPreparations()?.length == 0" class="ion-padding ion-text-center">
+      <div *ngIf="archivePreparationsView?.length == 0" class="ion-padding ion-text-center">
         <div>
           <ion-icon color="inactive" name="beanconqueror-preparation" size="large"></ion-icon>
         </div>

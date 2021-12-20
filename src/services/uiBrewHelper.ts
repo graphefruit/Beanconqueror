@@ -490,6 +490,7 @@ export class UIBrewHelper {
         component: BrewChoosePreparationToBrewComponent,
         id: BrewChoosePreparationToBrewComponent.COMPONENT_ID,
         cssClass: 'popover-actions',
+        backdropDismiss: false,
         breakpoints: [0, 0.2, 0.5, 0.75, 1],
         initialBreakpoint: initalBreakpoint,
       });
