@@ -32,8 +32,8 @@ export class UIRoastingMachineHelper {
       component: RoastingMachineAddComponent,
       cssClass: 'popover-actions',
       id: RoastingMachineAddComponent.COMPONENT_ID,
-      breakpoints: [0, 0.2, 0.5, 0.75, 1],
-      initialBreakpoint: 0.2,
+      breakpoints: [0, 0.35, 0.5, 0.75, 1],
+      initialBreakpoint: 0.35,
     });
     await modal.present();
     await modal.onWillDismiss();
