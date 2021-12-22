@@ -42,8 +42,8 @@ export class PreparationAddComponent implements OnInit {
       cssClass: 'popover-actions',
       id:  PreparationAddTypeComponent.COMPONENT_ID,
       componentProps: {type: _prepType, hide_toast_message: this.hide_toast_message},
-      breakpoints: [0, 0.2, 0.5, 0.75, 1],
-      initialBreakpoint: 0.5,
+      breakpoints: [0, 0.25, 0.5, 0.75, 1],
+      initialBreakpoint: 0.75,
     });
     await modal.present();
     const {data} = await modal.onDidDismiss();

@@ -79,6 +79,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public scaleFlowSubscription: Subscription = undefined;
   public bluetoothSubscription: Subscription = undefined;
   private flowProfileArr = [];
+  private flowProfileArrCalculated = [];
   private flowTime: number = undefined;
   private flowSecondTick: number = 0;
   public flow_profile_raw: BrewFlow = new BrewFlow();
@@ -680,6 +681,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
 
   private __setFlowProfile(_scaleChange: any) {
+
+
     const weight: number = this.uiHelper.toFixedIfNecessary(_scaleChange.actual,1);
     const oldWeight: number = this.uiHelper.toFixedIfNecessary(_scaleChange.old,1);
     const smoothedWeight: number = this.uiHelper.toFixedIfNecessary(_scaleChange.smoothed,1);
@@ -709,17 +712,22 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             weightDidntChange = false;
             break;
           }
-          // Treat this as same level as other if and not else if.
-          if (val === nextVal) {
-            sameFlowPerTenHerzCounter += 1;
-            if (sameFlowPerTenHerzCounter >= 5) {
-              //
-              wrongFlow = true;
-              weightDidntChange = true;
-              // We don't get out of the loop here, why? because the next value could be negative, and we then need to say that the weight changed, else we would maybe set wrong data.
 
+          if ( this.data.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO) {
+            // Treat this as same level as other if and not else if.
+            //We just check this when we're not on espresso, cause sometimes we just get 0.1 or 0.2g changes in 1 second
+            if (val === nextVal) {
+              sameFlowPerTenHerzCounter += 1;
+              if (sameFlowPerTenHerzCounter >= 5) {
+                //
+                wrongFlow = true;
+                weightDidntChange = true;
+                // We don't get out of the loop here, why? because the next value could be negative, and we then need to say that the weight changed, else we would maybe set wrong data.
+
+              }
             }
           }
+
 
         } else {
           // This is the latest value of this time
@@ -734,9 +742,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           flowHasSomeMinusValueInIt = true;
         }
       }
+
+      //Maybe we got 8 tickets with minus values, we would set above that the weight didn't change, this would be wrong
       if (weightDidntChange === true && flowHasSomeMinusValueInIt === true) {
         weightDidntChange = false;
       }
+
+      //If the first anomalie check is done, we check the second anomalie
       if (wrongFlow === false) {
         const firstVal: number = this.flowProfileArr[0];
         const lastVal: number = this.flowProfileArr[this.flowProfileArr.length - 1];
@@ -781,13 +793,18 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       if (wrongFlow === false) {
         // Overwrite to make sure to have the latest data to save.
         // Get the latest flow, why?? -> Because we're on a new time actually, and thats why we need to get the latest push value
-        const lastFlow = this.flow_profile_raw.weight[this.flow_profile_raw.weight.length - 1];
-        let flowValue: number = (lastFlow.actual_smoothed_weight - lastFlow.old_smoothed_weight) * 10;
-        // Ignore flowing weight when we're below zero
-        if (flowValue < 0) {
-          flowValue = 0;
+
+        let calculatedFlowWeight = 0;
+        for (const flowWeight of this.flowProfileArrCalculated) {
+          calculatedFlowWeight+=flowWeight;
         }
-        actualFlowValue = flowValue;
+        calculatedFlowWeight = (calculatedFlowWeight / this.flowProfileArrCalculated.length) * 10;
+
+        // Ignore flowing weight when we're below zero
+        if (calculatedFlowWeight < 0) {
+          calculatedFlowWeight = 0;
+        }
+        actualFlowValue = calculatedFlowWeight;
       }
 
       if (actualFlowValue >= 70) {
@@ -829,12 +846,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.flowSecondTick = 0;
       this.flowProfileChartEl.update();
       this.flowProfileArr = [];
+      this.flowProfileArrCalculated = [];
 
     }
 
     this.flowProfileChartEl.data.labels.push(this.flowTime + '.' + this.flowSecondTick);
     this.flowProfileChartEl.data.datasets[0].data.push(weight);
     this.flowProfileArr.push(weight);
+    this.flowProfileArrCalculated.push(weight - oldWeight);
     this.pushFlowProfile(this.flowTime + '.' + this.flowSecondTick, weight, oldWeight, smoothedWeight, oldSmoothedWeight);
     this.flowSecondTick++;
   }
