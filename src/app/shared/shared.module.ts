@@ -149,6 +149,7 @@ import {ShortPressDirective} from '../../directive/short-press.directive';
 import {ScaleTestPage} from '../scale-test/scale-test.page';
 import {FileTransfer} from '@ionic-native/file-transfer/ngx';
 import {TransformDateDirective} from '../../directive/transform-date';
+import {PreparationEditToolComponent} from '../preparation/preparation-edit-tool/preparation-edit-tool.component';
 
 @NgModule({
     declarations: [
@@ -197,6 +198,7 @@ import {TransformDateDirective} from '../../directive/transform-date';
         PreparationPage,
         PreparationAddComponent,
         PreparationEditComponent,
+      PreparationEditToolComponent,
         PreparationCustomParametersComponent,
         MillPage,
         MillEditComponent,
@@ -360,6 +362,7 @@ import {TransformDateDirective} from '../../directive/transform-date';
         PreparationPage,
         PreparationAddComponent,
         PreparationEditComponent,
+      PreparationEditToolComponent,
         PreparationCustomParametersComponent,
         BrewFilterComponent,
         BeanFilterComponent,

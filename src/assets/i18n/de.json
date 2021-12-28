@@ -1057,5 +1057,6 @@
   "BEAN_ROASTING_TYPE_ESPRESSO":"Espresso",
   "BEAN_ROASTING_TYPE_OMNI":"Omni",
   "BEAN_ROASTING_TYPE_UNKNOWN":"Unbekannt",
-  "SMART_SCALE_LOG": "Logfiles für Waage aktivieren"
+  "SMART_SCALE_LOG": "Logfiles für Waage aktivieren",
+  "TOAST_PREPARATION_TOOL_EDITED_SUCCESSFULLY": "Zubereitungstool editiert"
 }

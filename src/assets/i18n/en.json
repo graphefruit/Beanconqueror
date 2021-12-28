@@ -1049,12 +1049,13 @@
   "ROAST_TYPE_VIEANNA_ROAST":"Vienna Roast",
   "ROAST_TYPE_FRENCH_ROAST":"French Roast",
   "ROAST_TYPE_CUSTOM_ROAST":"Custom",
-  "BEAN_MIX_UNKNOWN":"Unkown",
+  "BEAN_MIX_UNKNOWN":"Unknown",
   "BEAN_MIX_SINGLE_ORIGIN":"Single Origin",
   "BEAN_MIX_BLEND":"Blend",
   "BEAN_ROASTING_TYPE_FILTER":"Filter",
   "BEAN_ROASTING_TYPE_ESPRESSO":"Espresso",
   "BEAN_ROASTING_TYPE_OMNI":"Omni",
-  "BEAN_ROASTING_TYPE_UNKNOWN":"Unkown",
-  "SMART_SCALE_LOG": "Activate logfiles for smart scale (just use for sending logs to debug)"
+  "BEAN_ROASTING_TYPE_UNKNOWN":"Unknown",
+  "SMART_SCALE_LOG": "Activate logfiles for smart scale (just use for sending logs to debug)",
+  "TOAST_PREPARATION_TOOL_EDITED_SUCCESSFULLY": "Preparation tool edited"
 }
