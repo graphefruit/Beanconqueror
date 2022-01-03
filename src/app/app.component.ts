@@ -117,7 +117,7 @@ export class AppComponent implements AfterViewInit {
     private readonly uiMillHelper: UIMillHelper,
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly bleManager: BleManagerService,
-    private readonly cleanupService: CleanupService,
+    private readonly cleanupService: CleanupService
 
   ) {
 
@@ -416,10 +416,12 @@ export class AppComponent implements AfterViewInit {
     await this.__checkWelcomePage();
     await this.__checkAnalyticsInformationPage();
     await this.uiUpdate.checkUpdateScreen();
-    await this.__checkStartupView();
-    this.__connectSmartScale();
-    this.__instanceAppRating();
 
+    //#281 - Connect smartscale before checking the startup view
+    this.__connectSmartScale();
+
+    await this.__checkStartupView();
+    this.__instanceAppRating();
     this.__attachOnDevicePause();
     this.__attachOnDeviceResume();
 
