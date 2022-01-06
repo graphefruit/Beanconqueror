@@ -131,45 +131,7 @@ export class UIImage {
                   reject();
                 }
               });
-             /* this.fileChooser.open().then((uri) => {
-                this.filePath.resolveNativePath(uri).then((path) => {
-                  if (path && (path.toLowerCase().endsWith('.png') || path.toLowerCase().endsWith('.jpg') ||
-                    path.toLowerCase().endsWith('.jpeg') || path.toLowerCase().endsWith('.gif'))) {
-                      if (path.toLowerCase().indexOf('sdcard')===-1) {
 
-                        const newPath: string =path;
-                        let importPath: string = '';
-                        if (newPath.lastIndexOf('/Download/')>-1) {
-                          let pathFromDownload = newPath.substr(0,newPath.lastIndexOf('/Download/'));
-                          const decodedURI = decodeURIComponent(uri);
-                          pathFromDownload = pathFromDownload + decodedURI.substring(decodedURI.lastIndexOf('/Download/'));
-                          importPath = pathFromDownload;
-                        } else {
-                          importPath = newPath;
-                        }
-                        this.uiFileHelper.copyFileWithSpecificName(importPath).then((_fullPath) => {
-                          resolve(_fullPath);
-                        }, () => {
-                          reject();
-                        });
-                      } else {
-
-                        this.uiAlert.showMessage('EXTERNAL_STORAGE_NOT_SUPPORTED',undefined,undefined,true);
-                        reject();
-                      }
-
-                  } else {
-                    this.uiAlert.showMessage('WRONG_FILE_FORMAT',undefined,undefined,true);
-                    reject();
-                  }
-                }, () => {
-                  this.uiAlert.showMessage('COULD_NOT_ACCESS_FILE',undefined,undefined,true);
-                  reject();
-                });
-              }, () => {
-                this.uiAlert.showMessage('COULD_NOT_ACCESS_FILE',undefined,undefined,true);
-                reject();
-              });*/
             } else if (isCordova) {
               // https://github.com/Telerik-Verified-Plugins/ImagePicker/issues/173#issuecomment-559096572
               this.imagePicker.getPictures({maximumImagesCount: 5, outputType: 1, disable_popover: true, quality: this.getImageQuality()}).then(async (results) => {

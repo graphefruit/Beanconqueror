@@ -80,6 +80,8 @@ export class BeanMapper {
           iInformation.processing = information.processing;
           iInformation.region = information.region;
           iInformation.variety = information.variety;
+          iInformation.purchasing_price = information.purchasing_price;
+          iInformation.fob_price = information.fob_price;
           newBean.bean_information.push(iInformation);
         }
 

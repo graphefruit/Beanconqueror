@@ -104,6 +104,8 @@
   "BEAN_DATA_DECAFFEINATED": "Decaffeinated",
   "BEAN_DATA_URL": "Website",
   "BEAN_DATA_EAN": "EAN / Articlenumber",
+  "BEAN_DATA_PURCHASING_PRICE": "Purchasing price",
+  "BEAN_DATA_FOB_PRICE": "FOB price",
   "BEAN_DATA_CUPPING_POINTS": "Cupping points",
   "BREW_DATA_CUSTOM_BREW_TIME": "Custom brewing time",
   "BREW_CREATION_DATE": "Creation Date",
@@ -400,6 +402,8 @@
       "BEAN_DATA_URL": "Add the website url",
       "BEAN_DATA_EAN": "Add the ean or article number",
       "BEAN_DATA_CUPPING_POINTS": "Add the cupping points",
+      "BEAN_DATA_PURCHASING_PRICE": "Add the purchasing price",
+      "BEAN_DATA_FOB_PRICE": "Add the FOB price",
       "NOTES": "Add notes about these beans"
     }
   },
@@ -1057,5 +1061,9 @@
   "BEAN_ROASTING_TYPE_OMNI":"Omni",
   "BEAN_ROASTING_TYPE_UNKNOWN":"Unknown",
   "SMART_SCALE_LOG": "Activate logfiles for smart scale (just use for sending logs to debug)",
-  "TOAST_PREPARATION_TOOL_EDITED_SUCCESSFULLY": "Preparation tool edited"
+  "TOAST_PREPARATION_TOOL_EDITED_SUCCESSFULLY": "Preparation tool edited",
+  "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE": "Bluetooth scale",
+  "PAGE_SETTINGS_TAB_GENERAL": "General",
+  "SMART_SCALE_TARE_ON_BREW": "Tare scale on new brew",
+  "SMART_SCALE_TARE_ON_START_TIMER":  "Tare scale when starting timer"
 }

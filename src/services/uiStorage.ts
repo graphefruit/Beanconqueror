@@ -18,14 +18,33 @@ export class UIStorage {
   constructor (private readonly storage: Storage,private eventQueue: EventQueueService) {
   }
 
-  public async set (_key: string, _val: any): Promise<any> {
-    this.eventQueue.dispatch(new AppEvent(AppEventType.STORAGE_CHANGED, undefined));
-    return this.storage.set(_key, _val);
+  public async set (_key: string, _val: any): Promise<boolean> {
+    const promise = new Promise<boolean>((resolve, reject) => {
+      this.storage.ready().then(async () => {
+        this.eventQueue.dispatch(new AppEvent(AppEventType.STORAGE_CHANGED, undefined));
+        const data = await this.storage.set(_key, _val);
+        resolve(true);
+      }, (e) => {
+        reject(e);
+      });
+    });
+    return promise;
   }
 
   public async get (_key): Promise<any> {
-    return this.storage.get(_key);
+    const promise = new Promise((resolve, reject) => {
+      this.storage.ready().then(async() => {
+        const data = this.storage.get(_key);
+        resolve(data);
+      },(e) => {
+       reject(e);
+      });
+
+    });
+    return promise;
+
   }
+
 
   public async export (): Promise<any> {
 

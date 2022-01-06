@@ -62,6 +62,8 @@ export interface ISettings {
   scale_type: ScaleType;
   scale_log: boolean;
   bluetooth_scale_stay_connected: boolean;
+  bluetooth_scale_tare_on_brew: boolean;
+  bluetooth_scale_tare_on_start_timer: boolean;
 
   currency: string;
 }

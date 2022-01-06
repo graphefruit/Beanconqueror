@@ -178,6 +178,7 @@ export abstract class StorageClass {
     const promise = new Promise((resolve, reject) => {
       this.uiLog.log(`Initialize Storage - ${this.DB_PATH}`);
       this.uiStorage.get(this.DB_PATH).then((_data) => {
+
         if (_data === null || _data === undefined) {
           this.uiLog.log(`Storage empty but successfull - ${this.DB_PATH}`);
           // No beans have been added yet
@@ -185,6 +186,12 @@ export abstract class StorageClass {
           this.isInitialized = 1;
         } else {
           this.uiLog.log(`Storage successfull - ${this.DB_PATH}`);
+          try {
+            this.uiLog.log(`Storage successfull - ${this.DB_PATH} - Data amount: ${_data.length}`);
+          }catch (ex) {
+
+          }
+
           this.storedData = _data;
           this.isInitialized = 1;
         }
@@ -227,8 +234,9 @@ export abstract class StorageClass {
     await this.uiStorage.set(this.DB_PATH, this.storedData).then((e) => {
         this.uiLog.log('Storage - Save - Successfully');
       }, (e) => {
+        this.uiLog.log(`Storage - Save - Unsuccessfully - ${JSON.stringify(e)}`);
         this.uiHelper.showAlert(e.message,'CRITICAL ERROR');
-        this.uiLog.log('Storage - Save - Unsuccessfully');
+
       }
     );
   }

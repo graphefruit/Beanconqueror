@@ -67,6 +67,9 @@ export class Settings implements ISettings {
   public scale_type: ScaleType;
   public scale_log: boolean;
   public bluetooth_scale_stay_connected: boolean;
+  public bluetooth_scale_tare_on_brew: boolean;
+  public bluetooth_scale_tare_on_start_timer: boolean;
+
 
 
   public currency: string;
@@ -147,6 +150,9 @@ export class Settings implements ISettings {
     this.scale_id = '';
     this.scale_type = null;
     this.bluetooth_scale_stay_connected = false;
+    this.bluetooth_scale_tare_on_brew = true;
+    this.bluetooth_scale_tare_on_start_timer = true;
+
     this.scale_log = false;
 
     this.currency = 'EUR';

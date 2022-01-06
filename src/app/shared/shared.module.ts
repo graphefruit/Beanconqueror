@@ -29,6 +29,7 @@ import {TermsComponent} from '../info/terms/terms.component';
 import {ThanksComponent} from '../info/thanks/thanks.component';
 import {InAppBrowser} from '@ionic-native/in-app-browser/ngx';
 import {File} from '@ionic-native/file/ngx';
+import { Device } from '@ionic-native/device/ngx';
 import {FileChooser} from '@ionic-native/file-chooser/ngx';
 import {FilePath} from '@ionic-native/file-path/ngx';
 import {IOSFilePicker} from '@ionic-native/file-picker/ngx';
@@ -303,6 +304,7 @@ import {PreparationEditToolComponent} from '../preparation/preparation-edit-tool
         FormatDatePipe, KeysPipe, EnumToArrayPipe,
         InAppBrowser,
         File,
+        Device,
         FileChooser,
         FilePath,
         IOSFilePicker,
@@ -311,7 +313,7 @@ import {PreparationEditToolComponent} from '../preparation/preparation-edit-tool
         Keyboard,
         ThreeDeeTouch,
         Camera, ImagePicker, AndroidPermissions,
-        InAppBrowser, File, Globalization,
+        InAppBrowser, Globalization,
         Geolocation,
         Insomnia,
         Deeplinks,

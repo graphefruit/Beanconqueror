@@ -105,6 +105,8 @@
   "BEAN_DATA_URL": "Página web",
   "BEAN_DATA_EAN": "EAN / Código",
   "BEAN_DATA_CUPPING_POINTS": "Puntaje en cata",
+  "BEAN_DATA_PURCHASING_PRICE": "Purchasing price",
+  "BEAN_DATA_FOB_PRICE": "FOB price",
   "BREW_DATA_CUSTOM_BREW_TIME": "Hora (de la preparación)?",
   "BREW_CREATION_DATE": "Fecha (de la preparación)",
   "REPEAT": "Repetir",
@@ -400,6 +402,8 @@
       "BEAN_DATA_URL": "Agrega la página web",
       "BEAN_DATA_EAN": "Agerga el código EAN o código propietario del producto",
       "BEAN_DATA_CUPPING_POINTS": "Agrega el puntaje de cata ",
+      "BEAN_DATA_PURCHASING_PRICE": "Add the purchasing price",
+      "BEAN_DATA_FOB_PRICE": "Add the FOB price",
       "NOTES": "Agrega notas"
     }
   },
@@ -1057,5 +1061,9 @@
   "BEAN_ROASTING_TYPE_OMNI":"Omni",
   "BEAN_ROASTING_TYPE_UNKNOWN":"Ignoto",
   "SMART_SCALE_LOG": "Activar los ficheros de log para básculas inteligentes (Unicamente se usaran los logs para el debug de la aplicación).",
-  "TOAST_PREPARATION_TOOL_EDITED_SUCCESSFULLY": "Preparation tool edited"
+  "TOAST_PREPARATION_TOOL_EDITED_SUCCESSFULLY": "Preparation tool edited",
+  "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE": "Bluetooth scale",
+  "PAGE_SETTINGS_TAB_GENERAL": "Allgemein",
+  "SMART_SCALE_TARE_ON_BREW": "Tare scale on new brew",
+  "SMART_SCALE_TARE_ON_START_TIMER":  "Tare scale when starting timer"
 }

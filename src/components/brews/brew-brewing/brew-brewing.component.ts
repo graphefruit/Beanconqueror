@@ -213,7 +213,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
 
       if (_firstStart) {
-        await scale.tare();
+        if (this.settings.bluetooth_scale_tare_on_brew === true) {
+          await scale.tare();
+        }
         await scale.setTimer(SCALE_TIMER_COMMAND.STOP);
         await scale.setTimer(SCALE_TIMER_COMMAND.RESET);
       }
@@ -289,7 +291,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public bluetoothScaleSetBrewBeverageQuantityWeight() {
-    this.data.brew_beverage_quantity = this.getActualBluetoothWeight();
+    let vesselWeight: number = 0;
+    if (this.data.vessel_weight > 0) {
+      vesselWeight = this.data.vessel_weight;
+    }
+    this.data.brew_beverage_quantity =  this.uiHelper.toFixedIfNecessary(this.getActualBluetoothWeight() - vesselWeight,2);
   }
 
 
@@ -460,7 +466,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public async timerStarted(_event) {
     const scale: BluetoothScale = this.bleManager.getScale();
     if (scale) {
-      await scale.tare();
+      if (this.settings.bluetooth_scale_tare_on_start_timer === true) {
+        await scale.tare();
+      }
+
       await scale.setTimer(SCALE_TIMER_COMMAND.START);
       this.attachToScaleWeightChange();
 
