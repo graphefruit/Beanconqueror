@@ -20,6 +20,11 @@
     </ion-list>
   </ion-item>
   <ion-item>
+    <ion-label position="stacked">{{"BEAN_DATA_BUY_DATE" | translate}}</ion-label>
+    <ion-input readonly (click)="chooseBuyDate($event);" [(data)]="data.buyDate" [transform-date] displayFormat="DD.MM.YYYY" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_BUY_DATE' | translate}}"></ion-input>
+
+  </ion-item>
+  <ion-item>
     <ion-label position="stacked">{{"BEAN_DATA_ROASTING_DATE" | translate}}</ion-label>
     <ion-input readonly (click)="chooseDate($event);" [(data)]="data.roastingDate"  [transform-date] displayFormat="DD.MM.YYYY" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROASTING_DATE' | translate}}"></ion-input>
   </ion-item>

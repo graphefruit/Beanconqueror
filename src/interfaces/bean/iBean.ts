@@ -11,6 +11,7 @@ import {IBeanRoastInformation} from './iBeanRoastInformation';
 
 export interface IBean {
   name: string;
+  buyDate: string;
   roastingDate: string;
   // Blend / Single Origin.
   beanMix: BEAN_MIX_ENUM;
