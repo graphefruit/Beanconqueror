@@ -269,8 +269,7 @@
         <ion-col size="5">
           <ion-card class="flow-profile ion-text-center" style="height: 100%;">
             <ion-card-header>
-              <div *ngIf="flow_profile_raw.weight.length <= 0">? g</div>
-              <div  *ngIf="flow_profile_raw.weight.length > 0" #smartScaleWeight>0 g</div>
+              <div #smartScaleWeight>? g</div>
               <div>({{data.getBrewRatio()}})</div>
             </ion-card-header>
             <ion-card-content>
@@ -282,8 +281,7 @@
 
           <ion-card class="flow-profile ion-text-center" style="height: 100%;">
             <ion-card-header >
-              <div *ngIf="flow_profile_raw.waterFlow.length <= 0">? g</div>
-              <div  *ngIf="flow_profile_raw.waterFlow.length > 0" #smartScaleWeightPerSecond>0 g/s</div>
+              <div #smartScaleWeightPerSecond>? g/s</div>
             </ion-card-header>
             <ion-card-content>
               {{"BREW_FLOW_WEIGHT_PER_SECOND" | translate}}

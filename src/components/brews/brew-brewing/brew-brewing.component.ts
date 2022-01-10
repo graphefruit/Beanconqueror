@@ -78,6 +78,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public scaleTareSubscription: Subscription = undefined;
   public scaleFlowSubscription: Subscription = undefined;
   public bluetoothSubscription: Subscription = undefined;
+  private scaleFlowChangeSubscription: Subscription = undefined;
   private flowProfileArr = [];
   private flowProfileArrCalculated = [];
   private flowTime: number = undefined;
@@ -222,6 +223,15 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       if (this.timer.isTimerRunning() === true && _firstStart === false) {
         this.attachToScaleWeightChange();
       }
+      if (this.scaleFlowChangeSubscription) {
+        this.scaleFlowChangeSubscription.unsubscribe();
+        this.scaleFlowChangeSubscription = undefined;
+      }
+      this.scaleFlowChangeSubscription = scale.flowChange.subscribe((_val) => {
+
+        this.setActualSmartInformation();
+      });
+      this.changeDetectorRef.detectChanges();
 
     }
   }
@@ -232,6 +242,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (this.bluetoothSubscription) {
       this.bluetoothSubscription.unsubscribe();
       this.bluetoothSubscription = undefined;
+    }
+    if (this.scaleFlowChangeSubscription) {
+      this.scaleFlowChangeSubscription.unsubscribe();
+      this.scaleFlowChangeSubscription = undefined;
     }
 
     this.deattachToWeightChange();
@@ -267,7 +281,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
       this.scaleFlowSubscription = scale.flowChange.subscribe((_val) => {
         this.__setFlowProfile(_val);
-        this.setActualSmartInformation();
       });
     }
   }
@@ -472,7 +485,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (scale) {
       if (this.settings.bluetooth_scale_tare_on_start_timer === true) {
         await scale.tare();
-      }
+    }
 
       await scale.setTimer(SCALE_TIMER_COMMAND.START);
       this.attachToScaleWeightChange();

@@ -98,6 +98,8 @@ export class BeanGeneralInformationComponent implements OnInit {
   }
 
 
+
+
   public chooseBuyDate(_event) {
     _event.target.blur();
     _event.cancelBubble = true;
