@@ -285,6 +285,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public bluetoothScaleSetGrindWeight() {
     this.data.grind_weight = this.getActualBluetoothWeight();
   }
+  
+  public bluetoothScaleSetBeanWeightIn() {
+    this.data.bean_weight_in = this.getActualBluetoothWeight();
+  }
 
   public bluetoothScaleSetBrewQuantityWeight() {
     this.data.brew_quantity = this.getActualBluetoothWeight();
