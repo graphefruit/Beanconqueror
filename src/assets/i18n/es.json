@@ -1018,7 +1018,7 @@
       "LOCATION": "Para encontrar balanzas bluetooth, la aplicación necesita acceder a la ubicación.",
       "BLUETOOTH": "Para encontrar balanzas bluetooth, la aplicación necesita acceso a bluetooth"
     },
-    "INFORMATION_DESCRIPTION": "Básculas compatibles: Decent Scale y Acaia Lunar (Solo los modelos anteriores a 2021)."
+    "INFORMATION_DESCRIPTION": "Básculas compatibles: Decent Scale y Acaia Scales."
   },
   "QR": {
     "WRONG_QRCODE_DESCRIPTION": "Código qr incorrecto o contenido incorrecto",
