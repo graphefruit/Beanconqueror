@@ -367,36 +367,28 @@ export class AcaiaScale {
           this.weight = msg.weight;
           this.callback(EventType.WEIGHT, this.weight);
           this.logger.debug('weight: ' + msg.weight + ' ' + Date.now());
-        } else {
-          if (msg.msgType === ScaleMessageType.TIMER) {
-            this.timer_start_time = Date.now() - msg.time;
-            this.timer_running = true;
-            this.callback(EventType.TIMER_START, this.timer_start_time);
-          } else {
-            if (msg.msgType === ScaleMessageType.TARE_START_STOP_RESET) {
-              switch (msg.button) {
-                case Button.TARE:
-                  this.weight = 0;
-                  this.callback(EventType.TARE, 0);
-                  break;
-                case Button.START:
-                  this.timer_start_time =
-                    Date.now() - this.paused_time + this.transit_delay;
-                  this.timer_running = true;
-                  this.callback(EventType.TIMER_START, this.timer_start_time);
-                  break;
-                case Button.STOP:
-                  this.paused_time = msg.time;
-                  this.timer_running = false;
-                  this.callback(EventType.TIMER_STOP, this.paused_time);
-                  break;
-                case Button.RESET:
-                  this.paused_time = 0;
-                  this.timer_running = false;
-                  this.callback(EventType.TIMER_RESET, 0);
-                  break;
-              }
-            }
+        } else if (msg.msgType === ScaleMessageType.TARE_START_STOP_RESET) {
+          switch (msg.button) {
+            case Button.TARE:
+              this.weight = 0;
+              this.callback(EventType.TARE, 0);
+              break;
+            case Button.START:
+              this.timer_start_time =
+                Date.now() - this.paused_time + this.transit_delay;
+              this.timer_running = true;
+              this.callback(EventType.TIMER_START, this.timer_start_time);
+              break;
+            case Button.STOP:
+              this.paused_time = msg.time;
+              this.timer_running = false;
+              this.callback(EventType.TIMER_STOP, this.paused_time);
+              break;
+            case Button.RESET:
+              this.paused_time = 0;
+              this.timer_running = false;
+              this.callback(EventType.TIMER_RESET, 0);
+              break;
           }
         }
       }
