@@ -188,6 +188,10 @@
                placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_BEAN_WEIGHT_IN' | translate}}" prevent-characters
                remove-empty-number
                type="text"></ion-input>
+    <ion-button *ngIf="smartScaleConnected()" style="margin-left:0px;" (click)="bluetoothScaleSetBeanWeightIn()" tabIndex="1"
+                class="big-icon-only" fill="clear" slot="end" tappable>
+      <ion-icon class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only"></ion-icon>
+    </ion-button>
   </ion-item>
 
   <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.vessel,
