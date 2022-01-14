@@ -321,7 +321,7 @@ export class AcaiaScale {
   private findBLEUUIDs() {
     let foundRx = false;
     let foundTx = false;
-    for (let char of this.characteristics) {
+    for (const char of this.characteristics) {
       if (to128bitUUID(char.characteristic) === to128bitUUID(SCALE_CHARACTERISTIC_UUID)) {
         this.rx_char_uuid = char.characteristic;
         this.tx_char_uuid = char.characteristic;
