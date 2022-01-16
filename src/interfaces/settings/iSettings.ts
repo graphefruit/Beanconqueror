@@ -23,6 +23,7 @@ export interface ISettings {
   fast_brew_repeat: boolean;
   image_quality: number;
   brew_rating: number;
+  brew_rating_steps: number;
 
   show_archived_beans: boolean;
   show_archived_brews: boolean;

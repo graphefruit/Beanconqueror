@@ -1065,5 +1065,6 @@
   "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE": "Bluetooth scale",
   "PAGE_SETTINGS_TAB_GENERAL": "General",
   "SMART_SCALE_TARE_ON_BREW": "Tare scale on new brew",
-  "SMART_SCALE_TARE_ON_START_TIMER":  "Tare scale when starting timer"
+  "SMART_SCALE_TARE_ON_START_TIMER":  "Tare scale when starting timer",
+  "PAGE_SETTINGS_BREW_RATING_STEPS": "Rating steps"
 }

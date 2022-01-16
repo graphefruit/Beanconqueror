@@ -82,11 +82,35 @@
             <ion-icon name="information-outline" slot="end"
                       tooltip='{{"PAGE_SETTINGS_BREW_RATING_TOOLTIP" | translate}}'></ion-icon>
           </ion-item>
-          <ion-item style="top:-15px;">
+          <ion-item style="top:-15px;"  lines="none">
             <ion-range style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="5" snaps="true" max="100" step="1" (ionBlur)="changeBrewRating()" [(ngModel)]="settings.brew_rating">
               <ion-label slot="end">{{settings.brew_rating}}</ion-label>
             </ion-range>
+
           </ion-item>
+
+          <ion-item style="margin-top:-25px;">
+            <ion-label>{{"PAGE_SETTINGS_BREW_RATING_STEPS" | translate}}</ion-label>
+            <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.brew_rating_steps"
+                        cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
+              <ion-select-option value="1">
+                1
+              </ion-select-option>
+              <ion-select-option  value="0.75">
+                0.75
+              </ion-select-option>
+              <ion-select-option  value="0.5">
+                0.5
+              </ion-select-option>
+              <ion-select-option  value="0.25">
+                0.25
+              </ion-select-option>
+              <ion-select-option  value="0.1">
+                0.1
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+
           <ion-item>
             <ion-label>
               <h2>{{"PAGE_SETTINGS_ANALYTICS_INFORMATION" | translate}}</h2>

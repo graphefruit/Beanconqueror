@@ -155,7 +155,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         } else {
           this.deattachToWeightChange();
           this.deattachToScaleEvents();
-          //If scale disconnected, sometimes the timer run but the screen was not refreshed, so maybe it helpes to detect the change.
+          // If scale disconnected, sometimes the timer run but the screen was not refreshed, so maybe it helpes to detect the change.
           this.checkChanges();
         }
       });
@@ -237,7 +237,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private async checkChanges() {
+  private checkChanges() {
     this.changeDetectorRef.detectChanges();
     window.getComputedStyle(window.document.getElementsByTagName('body')[0]);
   }

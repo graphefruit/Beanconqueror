@@ -33,6 +33,7 @@ export class Settings implements ISettings {
   public fast_brew_repeat: boolean;
   public image_quality: number;
   public brew_rating: number;
+  public brew_rating_steps: number;
 
   public show_archived_beans: boolean;
   public show_archived_brews: boolean;
@@ -132,6 +133,7 @@ export class Settings implements ISettings {
       ARCHIVED: {} as IBeanPageFilter
     };
     this.brew_rating = 5;
+    this.brew_rating_steps = 1;
 
     this.brew_filter.OPEN = this.GET_BREW_FILTER();
     this.brew_filter.ARCHIVED = this.GET_BREW_FILTER();

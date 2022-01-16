@@ -75,7 +75,12 @@ export class BrewInformationComponent implements OnInit {
 
   public hasCustomRatingRange(): boolean {
     if (this.settings) {
-      return this.settings.brew_rating > 5;
+
+      if (this.settings.brew_rating_steps > 5) {
+        return true;
+      } else if (this.settings.brew_rating_steps !== 1) {
+        return true;
+      }
     }
     return false;
   }

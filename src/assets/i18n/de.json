@@ -1066,5 +1066,6 @@
   "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE": "Waage",
   "PAGE_SETTINGS_TAB_GENERAL": "Allgemein",
   "SMART_SCALE_TARE_ON_BREW": "Gewicht bei neuer Brühung zurücksetzen",
-  "SMART_SCALE_TARE_ON_START_TIMER":  "Gewicht bei starten der Brühzeit zurücksetzen"
+  "SMART_SCALE_TARE_ON_START_TIMER":  "Gewicht bei starten der Brühzeit zurücksetzen",
+  "PAGE_SETTINGS_BREW_RATING_STEPS": "Bewertungsschritte"
 }
