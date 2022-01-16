@@ -156,7 +156,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           this.deattachToWeightChange();
           this.deattachToScaleEvents();
           //If scale disconnected, sometimes the timer run but the screen was not refreshed, so maybe it helpes to detect the change.
-          this.changeDetectorRef.detectChanges();
+          this.checkChanges();
         }
       });
 
@@ -195,7 +195,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               this.timer.startTimer();
             }
           }
-          this.changeDetectorRef.detectChanges();
+          this.checkChanges();
 
         });
       }
@@ -208,7 +208,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             this.data.brew_beverage_quantity = 0;
           }
 
-          this.changeDetectorRef.detectChanges();
+          this.checkChanges();
 
         });
       }
@@ -231,11 +231,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
         this.setActualSmartInformation();
       });
-      this.changeDetectorRef.detectChanges();
+      this.checkChanges();
+
 
     }
   }
 
+  private async checkChanges() {
+    this.changeDetectorRef.detectChanges();
+    window.getComputedStyle(window.document.getElementsByTagName('body')[0]);
+  }
   public ngOnDestroy() {
     // We don't deattach the timer subscription in the deattach toscale events, else we couldn't start anymore.
 
@@ -401,6 +406,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           this.flowProfileChartEl.update();
         }
       }
+      // Check changes after all is done
+      this.checkChanges();
     }, 250);
   }
 
@@ -570,7 +577,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           if (newUnix !== this.data.config.unix_timestamp) {
             this.data.config.unix_timestamp = newUnix;
           }
-          this.changeDetectorRef.detectChanges();
+          this.checkChanges();
 
         }, error: () => {
 
@@ -646,7 +653,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         }
 
       }
-      this.changeDetectorRef.detectChanges();
+      this.checkChanges();
     } else {
       // Pah. Shit here.
     }
@@ -660,7 +667,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           this.data.getPreparation().use_custom_parameters)) {
           // The first time we set the weight, we have one sec delay, because of this do it -1 second
           this.data.coffee_first_drip_time = this.getTime() - 1;
-          this.changeDetectorRef.detectChanges();
+          this.checkChanges();
         }
       }
     }

@@ -302,7 +302,9 @@ export class BleManagerService {
       this.uiToast.showInfoToast('SCALE.DISCONNECTED_UNPLANNED');
       this.uiLog.log('Disconnected successfully');
       callback();
-      this.__sendEvent('DISCONNECT');
+
     }
+    //Send disconnect callback, even if scale is already null/not existing anymore
+    this.__sendEvent('DISCONNECT');
   }
 }
