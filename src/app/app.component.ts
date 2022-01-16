@@ -42,10 +42,12 @@ import { UISettingsStorage } from '../services/uiSettingsStorage';
 import { UIUpdate } from '../services/uiUpdate';
 import { UiVersionStorage } from '../services/uiVersionStorage';
 import { UIWaterStorage } from '../services/uiWaterStorage';
-
-
+import { Device } from '@ionic-native/device/ngx';
+import {AppVersion} from '@ionic-native/app-version/ngx';
+import {Storage} from '@ionic/storage';
 
 declare var AppRate;
+declare var window;
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -118,10 +120,27 @@ export class AppComponent implements AfterViewInit {
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly bleManager: BleManagerService,
     private readonly cleanupService: CleanupService,
+    private readonly device: Device,
+    private readonly appVersion: AppVersion,
+    private readonly storage: Storage,
 
   ) {
 
     // Dont remove androidPlatformService, we need to initialize it via constructor
+    try {
+      // Touch DB Factory to make sure, it is properly initialized even on iOS 14.6
+      const db = window.indexedDB;
+    } catch(ex) {
+
+    }
+    try {
+      // Touch DB Factory to make sure, it is properly initialized even on iOS 14.6
+      const db = window.sqlitePlugin;
+    } catch(ex) {
+
+    }
+
+
   }
 
   public ngOnInit() {
@@ -146,6 +165,21 @@ export class AppComponent implements AfterViewInit {
       .then(async () => {
 
 
+        try {
+
+        // #285 - Add more device loggings
+        this.uiLog.log(`Device-Model: ${this.device.model}`);
+        this.uiLog.log(`Manufacturer: ${this.device.manufacturer}`);
+        this.uiLog.log(`Platform: ${this.device.platform}`);
+        this.uiLog.log(`Version: ${this.device.version}`);
+        if (this.platform.is('cordova')) {
+          const versionCode: string | number = await this.appVersion.getVersionNumber();
+          this.uiLog.log(`App-Version: ${versionCode}`);
+          this.uiLog.log(`Storage-Driver: ${ this.storage.driver}`);
+        }
+        } catch (ex) {
+
+        }
 
         // Okay, so the platform is ready and our plugins are available.
         // Here you can do any higher level native things you might need.
@@ -199,6 +233,7 @@ export class AppComponent implements AfterViewInit {
         this._translate.setDefaultLang('en');
         await this._translate.use('en').toPromise();
         await this.__checkIOSBackup();
+
 
 
         try {
@@ -416,10 +451,12 @@ export class AppComponent implements AfterViewInit {
     await this.__checkWelcomePage();
     await this.__checkAnalyticsInformationPage();
     await this.uiUpdate.checkUpdateScreen();
-    await this.__checkStartupView();
-    this.__connectSmartScale();
-    this.__instanceAppRating();
 
+    //#281 - Connect smartscale before checking the startup view
+    this.__connectSmartScale();
+
+    await this.__checkStartupView();
+    this.__instanceAppRating();
     this.__attachOnDevicePause();
     this.__attachOnDeviceResume();
 

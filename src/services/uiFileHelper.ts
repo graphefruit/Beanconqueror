@@ -11,6 +11,7 @@ import {InstanceClass} from './instanceClass';
 /**
  * Handles every helping functionalities
  */
+declare var navigator: any;
 declare var window;
 @Injectable({
   providedIn: 'root'

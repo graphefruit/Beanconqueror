@@ -81,7 +81,7 @@ export class UILog {
   }
 
   private generateLogMessage(_type: LOGS_ENUM, _message: string) {
-    if (this.logs.length > 2000) {
+    if (this.logs.length > 3000) {
       // Make sure we don't exceed when something wents wrong inside the app.
       this.logs = [];
     }

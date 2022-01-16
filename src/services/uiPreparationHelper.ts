@@ -9,6 +9,8 @@ import {ModalController} from '@ionic/angular';
 import {PreparationEditComponent} from '../app/preparation/preparation-edit/preparation-edit.component';
 import {Preparation} from '../classes/preparation/preparation';
 import {PreparationDetailComponent} from '../app/preparation/preparation-detail/preparation-detail.component';
+import {PreparationTool} from '../classes/preparation/preparationTool';
+import {PreparationEditToolComponent} from '../app/preparation/preparation-edit-tool/preparation-edit-tool.component';
 
 /**
  * Handles every helping functionalities
@@ -64,6 +66,19 @@ export class UIPreparationHelper {
     const modal = await this.modalController.create({component: PreparationEditComponent,
       componentProps: {preparation: _preparation},
       id: PreparationEditComponent.COMPONENT_ID
+    });
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+
+  public async editPreparationTool(_preparation: Preparation, _preparationTool: PreparationTool) {
+    const modal = await this.modalController.create({component: PreparationEditToolComponent,
+      componentProps: {preparation: _preparation, preparationTool:_preparationTool },
+      id: PreparationEditToolComponent.COMPONENT_ID,
+      cssClass: 'popover-actions',
+      breakpoints: [0, 0.35, 0.5, 0.75, 1],
+      initialBreakpoint: 0.35,
+
     });
     await modal.present();
     await modal.onWillDismiss();

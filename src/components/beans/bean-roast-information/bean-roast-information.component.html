@@ -9,7 +9,7 @@
   </ion-item>
   <ion-item>
     <ion-label position="stacked">{{"ROASTING_SECTION.BEAN.ROAST_LENGTH" | translate}}</ion-label>
-    <ion-datetime (click)="showTimeOverlay($event);" [(ngModel)]="displayingTime" cancelText="{{'CANCEL' | translate}}" displayFormat="H:mm:ss" doneText="{{'CHOOSE' | translate}}" mode="ios"></ion-datetime>
+    <ion-input readonly (click)="showTimeOverlay($event);" [(data)]="displayingTime"  [transform-date] displayFormat="H:mm:ss" ></ion-input>
   </ion-item>
   <ion-item>
     <ion-label position="stacked">{{"ROASTING_SECTION.BEAN.ROASTER_MACHINE" | translate}}</ion-label>

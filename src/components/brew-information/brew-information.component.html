@@ -20,7 +20,7 @@
           </ngx-stars>
         </ion-col>
         <ion-col *ngIf="brew?.rating > 0  && hasCustomRatingRange() === true" size="2" class="ion-text-right">
-          <ion-badge>{{brew.rating}}</ion-badge>
+          <ion-badge>{{this.uiHelper.toFixedIfNecessary(brew.rating,2)}}</ion-badge>
         </ion-col>
       </ion-row>
       <ion-row>

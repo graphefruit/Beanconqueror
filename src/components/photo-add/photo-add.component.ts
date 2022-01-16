@@ -46,14 +46,14 @@ export class PhotoAddComponent implements OnInit {
                 this.emitChanges();
               }
 
-            });
+            },() => {});
         } else {
           // TAKE
           this.uiImage.takePhoto()
             .then((_path) => {
               this.data.attachments.push(_path.toString());
               this.emitChanges();
-            });
+            },() => {});
         }
       });
   }

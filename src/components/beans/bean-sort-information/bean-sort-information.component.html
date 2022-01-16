@@ -72,10 +72,26 @@
                  remove-empty-number
                  type="text"></ion-input>
     </ion-item>
-    <ion-item  class="ion-margin-bottom">
+    <ion-item>
       <ion-label position="stacked">{{"BEAN_DATA_CERTIFICATION" | translate}}</ion-label>
       <ion-input #certification="ngModel" [(ngModel)]="beanInformation.certification" autocapitalize="sentences"
                  name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_CERTIFICATION' | translate}}" spellcheck="false"
+                 type="text">
+      </ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">{{"BEAN_DATA_PURCHASING_PRICE" | translate}}</ion-label>
+      <ion-input #purchasingprice="ngModel" [(ngModel)]="beanInformation.purchasing_price" autocapitalize="off" inputmode="decimal"
+                 name="purchasingprice" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_PURCHASING_PRICE' | translate}}"
+                 prevent-characters remove-empty-number spellcheck="false"
+                 type="text">
+      </ion-input>
+    </ion-item>
+    <ion-item  class="ion-margin-bottom">
+      <ion-label position="stacked">{{"BEAN_DATA_FOB_PRICE" | translate}}</ion-label>
+      <ion-input #fobprice="ngModel" [(ngModel)]="beanInformation.fob_price" autocapitalize="off" inputmode="decimal"
+                 name="fobprice" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_FOB_PRICE' | translate}}"
+                 prevent-characters remove-empty-number spellcheck="false"
                  type="text">
       </ion-input>
     </ion-item>

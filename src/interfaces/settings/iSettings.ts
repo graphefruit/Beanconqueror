@@ -23,6 +23,7 @@ export interface ISettings {
   fast_brew_repeat: boolean;
   image_quality: number;
   brew_rating: number;
+  brew_rating_steps: number;
 
   show_archived_beans: boolean;
   show_archived_brews: boolean;
@@ -62,6 +63,8 @@ export interface ISettings {
   scale_type: ScaleType;
   scale_log: boolean;
   bluetooth_scale_stay_connected: boolean;
+  bluetooth_scale_tare_on_brew: boolean;
+  bluetooth_scale_tare_on_start_timer: boolean;
 
   currency: string;
 }

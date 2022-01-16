@@ -131,14 +131,14 @@ export class StatisticPage implements OnInit {
     // Create collection
     for (const brew of sortedBrews) {
       const day: string = this.uiHelper.formateDate(brew.config.unix_timestamp, 'DD');
-      const month: string = this.uiHelper.formateDate(brew.config.unix_timestamp, 'MMMM');
-      const year: string = this.uiHelper.formateDate(brew.config.unix_timestamp, 'YYYY');
-      if (collection[day +' - ' + month + ' - ' + year] === undefined) {
-        collection[day +' - ' + month + ' - ' + year] = {
+      const month: string = this.uiHelper.formateDate(brew.config.unix_timestamp, 'MM');
+      const year: string = this.uiHelper.formateDate(brew.config.unix_timestamp, 'YY');
+      if (collection[day +'.' + month + '.' + year] === undefined) {
+        collection[day +'.' + month + '.' + year] = {
           BREWS: []
         };
       }
-      collection[day +' - ' + month + ' - ' + year].BREWS.push(brew);
+      collection[day +'.' + month + '.' + year].BREWS.push(brew);
     }
 
     for (const key in collection) {

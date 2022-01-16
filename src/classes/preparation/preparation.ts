@@ -211,6 +211,18 @@ export class Preparation implements IPreparation {
     }
     return false;
   }
+  public updateTool(_tool: PreparationTool): boolean {
+    const tool: PreparationTool = _tool as PreparationTool;
+    for(let i = 0; i < this.tools.length; i++){
+
+      if ( this.tools[i].config.uuid === tool.config.uuid) {
+        this.tools[i] = _tool;
+        return true;
+      }
+
+    }
+    return false;
+  }
 
 
   public hasPhotos(): boolean {
