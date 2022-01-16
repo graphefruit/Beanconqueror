@@ -527,8 +527,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     const scale: BluetoothScale = this.bleManager.getScale();
     if (scale) {
       await scale.tare();
-      await scale.setTimer(SCALE_TIMER_COMMAND.STOP);
-      await scale.setTimer(SCALE_TIMER_COMMAND.RESET);
+
+      await setTimeout(async () => {
+        await scale.setTimer(SCALE_TIMER_COMMAND.STOP);
+      },50);
+
+
+      await setTimeout(async () => {
+        await scale.setTimer(SCALE_TIMER_COMMAND.RESET);
+      },50);
+
       this.deattachToWeightChange();
 
 
