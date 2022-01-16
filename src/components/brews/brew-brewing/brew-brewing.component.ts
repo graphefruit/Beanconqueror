@@ -47,6 +47,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   @ViewChild('smartScaleWeight', { read: ElementRef }) public smartScaleWeightEl: ElementRef;
   @ViewChild('smartScaleWeightPerSecond', { read: ElementRef }) public smartScaleWeightPerSecondEl: ElementRef;
+  @ViewChild('smartScaleAvgFlowPerSecond', { read: ElementRef }) public smartScaleAvgFlowPerSecondEl: ElementRef;
+
+
 
   @Input() public data: Brew;
   @Input() public brewTemplate: Brew;
@@ -438,6 +441,23 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
 
     return true;
+  }
+
+  public getAvgFlow(): number {
+
+    const waterFlows: Array<IBrewWaterFlow> = this.flow_profile_raw.waterFlow;
+    let calculatedFlow: number = 0;
+    let foundEntries: number = 0;
+    for (const water of waterFlows) {
+      if (water.value > 0) {
+        calculatedFlow +=water.value;
+        foundEntries +=1;
+      }
+    }
+    if (calculatedFlow > 0) {
+      return calculatedFlow / foundEntries;
+    }
+    return 0;
   }
 
   public deattachToScaleEvents() {
@@ -926,9 +946,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public setActualSmartInformation() {
     try {
       const weightEl = this.smartScaleWeightEl.nativeElement;
-      const secondEl = this.smartScaleWeightPerSecondEl.nativeElement;
+      const flowEl = this.smartScaleWeightPerSecondEl.nativeElement;
+      const avgFlowEl = this.smartScaleAvgFlowPerSecondEl.nativeElement;
       weightEl.textContent = this.getActualScaleWeight() + ' g';
-      secondEl.textContent = this.getActualSmoothedWeightPerSecond() + ' g/s';
+      flowEl.textContent = this.getActualSmoothedWeightPerSecond() + ' g/s';
+      avgFlowEl.textContent = 'Ø ' + this.uiHelper.toFixedIfNecessary(this.getAvgFlow(),2) + ' g/s';
     } catch (ex) {
 
     }

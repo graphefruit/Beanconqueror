@@ -16,7 +16,7 @@ import {UIBeanHelper} from '../../../services/uiBeanHelper';
 import {UIPreparationHelper} from '../../../services/uiPreparationHelper';
 import {UIMillHelper} from '../../../services/uiMillHelper';
 import {TranslateService} from '@ngx-translate/core';
-import {BrewFlow} from '../../../classes/brew/brewFlow';
+import {BrewFlow, IBrewWaterFlow} from '../../../classes/brew/brewFlow';
 import {UIFileHelper} from '../../../services/uiFileHelper';
 import {UIAlert} from '../../../services/uiAlert';
 
@@ -229,6 +229,23 @@ export class BrewDetailComponent implements OnInit {
   }
   public async downloadFlowProfile() {
     await this.uiExcel.exportBrewFlowProfile(this.flow_profile_raw);
+  }
+
+  public getAvgFlow(): number {
+
+    const waterFlows: Array<IBrewWaterFlow> = this.flow_profile_raw.waterFlow;
+    let calculatedFlow: number = 0;
+    let foundEntries: number = 0;
+    for (const water of waterFlows) {
+      if (water.value > 0) {
+        calculatedFlow +=water.value;
+        foundEntries +=1;
+      }
+    }
+    if (calculatedFlow > 0) {
+      return calculatedFlow / foundEntries;
+    }
+    return 0;
   }
 
 }
