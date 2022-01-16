@@ -201,7 +201,6 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   }
 
   public changeDate(_event) {
-    console.log("did i got triggered?");
     const durationPassed = moment.duration(moment(_event).diff(moment(_event).startOf('day')));
     this.displayingTime = moment(_event).toISOString();
     this.timer.seconds = durationPassed.asSeconds();
