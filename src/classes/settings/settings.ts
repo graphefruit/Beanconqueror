@@ -14,6 +14,7 @@ import {ManageBrewParameter} from '../parameter/manageBrewParameter';
 import {IBeanPageFilter} from '../../interfaces/bean/iBeanPageFilter';
 import {BEAN_SORT_AFTER} from '../../enums/beans/beanSortAfter';
 import {BEAN_SORT_ORDER} from '../../enums/beans/beanSortOrder';
+import {ListViewBrewParameter} from '../parameter/listViewBrewParameter';
 
 
 export class Settings implements ISettings {
@@ -26,7 +27,7 @@ export class Settings implements ISettings {
   public matomo_analytics: boolean;
   public manage_parameters: ManageBrewParameter;
   public default_last_coffee_parameters: DefaultBrewParameter;
-
+  public visible_list_view_parameters: ListViewBrewParameter;
   public brew_order: OrderBrewParameter;
   public config: Config;
   public language: string;
@@ -100,6 +101,7 @@ export class Settings implements ISettings {
 
     this.manage_parameters = new ManageBrewParameter();
     this.default_last_coffee_parameters = new DefaultBrewParameter();
+    this.visible_list_view_parameters = new ListViewBrewParameter();
     this.brew_order = new OrderBrewParameter();
     this.language = '';
     this.matomo_analytics = undefined;

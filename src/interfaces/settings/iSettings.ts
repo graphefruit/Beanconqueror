@@ -8,6 +8,7 @@ import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
 import {IOrderBrewParameter} from '../parameter/iOrderBrewParameter';
 import {IBrewPageFilter} from '../brew/iBrewPageFilter';
 import {IBeanPageFilter} from '../bean/iBeanPageFilter';
+import {ListViewBrewParameter} from '../../classes/parameter/listViewBrewParameter';
 
 export interface ISettings {
  // Properties
@@ -17,6 +18,7 @@ export interface ISettings {
   language: string;
   manage_parameters: IBrewParameter;
   default_last_coffee_parameters: IBrewParameter;
+  visible_list_view_parameters: IBrewParameter;
   brew_order: IOrderBrewParameter;
   matomo_analytics: boolean;
   track_brew_coordinates: boolean;

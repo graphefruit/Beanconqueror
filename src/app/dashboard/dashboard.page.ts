@@ -32,7 +32,7 @@ export class DashboardPage implements OnInit {
               private readonly uiBeanStorage: UIBeanStorage,
               private readonly uiBeanHelper: UIBeanHelper
   ) {
-setTimeout(() => {this.test();},3000);
+//setTimeout(() => {this.test();},3000);
   }
 
 private test() {

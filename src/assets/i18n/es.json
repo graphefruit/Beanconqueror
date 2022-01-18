@@ -1067,5 +1067,6 @@
   "SMART_SCALE_TARE_ON_BREW": "Tare scale on new brew",
   "SMART_SCALE_TARE_ON_START_TIMER":  "Tare scale when starting timer",
   "PAGE_SETTINGS_BREW_RATING_STEPS": "Rating steps",
-  "BREW_AVG_FLOW_WEIGHT_PER_SECOND": "Ø Flow"
+  "BREW_AVG_FLOW_WEIGHT_PER_SECOND": "Ø Flow",
+  "CUSTOM_LIST_VIEW_PARAMETERS": "List view parameters"
 }
