@@ -16,7 +16,7 @@ export class OrderBrewParameter implements IOrderBrewParameter {
     method_of_preparation_tool: number;
     brew_temperature: number;
     water: number;
-    vessel:number;
+    vessel: number;
     pressure_profile: number;
   };
 

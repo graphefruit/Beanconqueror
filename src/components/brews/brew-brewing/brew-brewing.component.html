@@ -304,6 +304,13 @@
 
     <canvas #flowProfileChart></canvas>
   </ion-item>
+  <ion-item class="ion-margin-top" [hidden]="shallFlowProfileBeHidden()"
+            [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
+                      data.getPreparation().brew_order.while.brew_time,
+                      data.getPreparation().use_custom_parameters)">
+
+    <canvas #flowProfileChartSecond></canvas>
+  </ion-item>
   <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.brew_time,
                       data.getPreparation().manage_parameters.brew_time,
                       data.getPreparation().use_custom_parameters)"

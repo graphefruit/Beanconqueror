@@ -19,6 +19,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {BrewFlow, IBrewWaterFlow} from '../../../classes/brew/brewFlow';
 import {UIFileHelper} from '../../../services/uiFileHelper';
 import {UIAlert} from '../../../services/uiAlert';
+import {SocialSharing} from '@ionic-native/social-sharing/ngx';
 
 @Component({
   selector: 'brew-detail',
@@ -51,7 +52,8 @@ export class BrewDetailComponent implements OnInit {
                private readonly uiMillHelper: UIMillHelper,
                private readonly translate: TranslateService,
                private readonly uiFileHelper: UIFileHelper,
-               private readonly uiAlert: UIAlert) {
+               private readonly uiAlert: UIAlert,
+               private readonly socialSharing: SocialSharing) {
 
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -195,7 +197,18 @@ export class BrewDetailComponent implements OnInit {
         this.flowProfileChartEl = new Chart(this.flowProfileChart.nativeElement, {
           type: 'line',
           data: drinkingData,
-          options: chartOptions
+          options: chartOptions,
+          plugins: {
+            id: 'custom-background-color',
+            beforeDraw: (chart) => {
+              const ctx = chart.canvas.getContext('2d');
+              ctx.save();
+              ctx.globalCompositeOperation = 'destination-over';
+              ctx.fillStyle = 'white';
+              ctx.fillRect(0, 0, chart.width, chart.height);
+              ctx.restore();
+            }
+          }
         } as any);
 
         if (this.flow_profile_raw.weight.length > 0) {
@@ -229,6 +242,11 @@ export class BrewDetailComponent implements OnInit {
   }
   public async downloadFlowProfile() {
     await this.uiExcel.exportBrewFlowProfile(this.flow_profile_raw);
+  }
+  public async shareFlowProfile() {
+
+    const fileShare: string = this.flowProfileChartEl.toBase64Image('image/jpeg', 1);
+    this.socialSharing.share(null,null,fileShare,null);
   }
 
   public getAvgFlow(): number {

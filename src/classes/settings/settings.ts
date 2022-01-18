@@ -26,6 +26,7 @@ export class Settings implements ISettings {
   public matomo_analytics: boolean;
   public manage_parameters: ManageBrewParameter;
   public default_last_coffee_parameters: DefaultBrewParameter;
+
   public brew_order: OrderBrewParameter;
   public config: Config;
   public language: string;

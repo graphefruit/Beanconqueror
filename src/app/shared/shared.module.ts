@@ -151,6 +151,8 @@ import {ScaleTestPage} from '../scale-test/scale-test.page';
 import {FileTransfer} from '@ionic-native/file-transfer/ngx';
 import {TransformDateDirective} from '../../directive/transform-date';
 import {PreparationEditToolComponent} from '../preparation/preparation-edit-tool/preparation-edit-tool.component';
+import {ListViewParameterComponent} from '../brew-parameter/list-view-parameter/list-view-parameter.component';
+import {ListViewCustomParameterComponent} from '../../components/parameter/list-view-custom-parameter/list-view-custom-parameter.component';
 
 @NgModule({
     declarations: [
@@ -200,6 +202,8 @@ import {PreparationEditToolComponent} from '../preparation/preparation-edit-tool
         PreparationAddComponent,
         PreparationEditComponent,
       PreparationEditToolComponent,
+      ListViewCustomParameterComponent,
+      ListViewParameterComponent,
         PreparationCustomParametersComponent,
         MillPage,
         MillEditComponent,
@@ -365,6 +369,8 @@ import {PreparationEditToolComponent} from '../preparation/preparation-edit-tool
         PreparationAddComponent,
         PreparationEditComponent,
       PreparationEditToolComponent,
+      ListViewCustomParameterComponent,
+      ListViewParameterComponent,
         PreparationCustomParametersComponent,
         BrewFilterComponent,
         BeanFilterComponent,

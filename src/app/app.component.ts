@@ -45,7 +45,8 @@ import { UIWaterStorage } from '../services/uiWaterStorage';
 import { Device } from '@ionic-native/device/ngx';
 import {AppVersion} from '@ionic-native/app-version/ngx';
 import {Storage} from '@ionic/storage';
-
+import 'chartjs-adapter-luxon';
+import ChartStreaming from 'chartjs-plugin-streaming';
 declare var AppRate;
 declare var window;
 @Component({
@@ -146,12 +147,15 @@ export class AppComponent implements AfterViewInit {
   public ngOnInit() {
 
 
+
+
   }
 
   public ngAfterViewInit(): void {
     this.uiLog.log('Platform ready, init app');
 
     Chart.register(...registerables);
+    Chart.register(ChartStreaming);
     this.__appReady();
   }
 

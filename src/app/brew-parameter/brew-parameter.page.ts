@@ -28,4 +28,10 @@ export class BrewParameterPage implements OnInit {
   public openDefaultParameters(): void {
     this.router.navigateByUrl('/brew-parameter/default');
   }
+
+  public openListViewParameters(): void {
+    this.router.navigateByUrl('/brew-parameter/listview');
+  }
+
+
 }

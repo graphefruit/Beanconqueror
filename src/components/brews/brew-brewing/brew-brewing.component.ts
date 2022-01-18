@@ -92,6 +92,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public flowProfileChartEl: any = undefined;
 
+  @ViewChild('flowProfileChartSecond', { static: false }) public flowProfileChartSecond;
+
+  public flowProfileChartSecondEl: any = undefined;
+
+
 
   constructor(private readonly platform: Platform,
     private readonly uiSettingsStorage: UISettingsStorage,
@@ -313,7 +318,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public bluetoothScaleSetGrindWeight() {
     this.data.grind_weight = this.getActualBluetoothWeight();
   }
-  
+
   public bluetoothScaleSetBeanWeightIn() {
     this.data.bean_weight_in = this.getActualBluetoothWeight();
   }
@@ -331,6 +336,90 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
 
+  private doSomeMoreShit() {
+
+      const drinkingData = {
+        labels: [],
+        datasets: [{
+          label: "asd",
+          data: [],
+          borderColor: 'rgb(159,140,111)',
+          backgroundColor: 'rgb(205,194,172)',
+          yAxisID: 'y',
+          pointRadius: 0,
+          borderWidth: 1,
+        },
+          {
+            label: "111",
+            data: [],
+            borderColor: 'rgb(96,125,139)',
+            backgroundColor: 'rgb(127,151,162)',
+            yAxisID: 'y1',
+            spanGaps: true,
+            pointRadius: 0,
+
+          }]
+      };
+
+
+
+
+
+      const chartOptions = {
+
+        scales: {
+          x: {
+
+
+            type: 'realtime',
+            display: true,
+            realtime: {
+              // How much timeseconds do we want to show
+              duration: 15000,
+              // when to pull new values
+              refresh: 100,
+              delay: 1000,
+              // data will be automatically deleted as it disappears off the chart
+              ttl: undefined,
+
+            },
+
+          },
+
+          y: {
+            type: 'linear',
+            display: true,
+            position: 'left',
+          },
+          y1: {
+            type: 'linear',
+            display: true,
+            position: 'right',
+            // grid line settings
+            grid: {
+              drawOnChartArea: false, // only want the grid lines for one axis to show up
+            }
+          }
+        },
+        interaction: {
+          intersect: false
+        }
+      };
+
+
+      this.flowProfileChartSecondEl = new Chart(this.flowProfileChartSecond.nativeElement, {
+        type: 'line',
+        data: drinkingData,
+        options: chartOptions
+      } as any);
+
+
+      this.flowProfileChartSecondEl.update();
+
+
+
+
+  }
   private initializeFlowChart(): void {
 
     setTimeout(() => {
@@ -342,6 +431,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         this.flowProfileArr = [];
       }
       if (this.flowProfileChartEl === undefined) {
+        this.doSomeMoreShit();
         const drinkingData = {
           labels: [],
           datasets: [{
@@ -896,9 +986,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         if (i === addRange - 1) {
           // We set last entry as value.
           this.flowProfileChartEl.data.datasets[1].data.push(actualFlowValue);
+          this.flowProfileChartSecondEl.data.datasets[1].data.push({x:Date.now(),y:actualFlowValue});
+
           waterFlow.value = actualFlowValue;
         } else {
           this.flowProfileChartEl.data.datasets[1].data.push(null);
+          this.flowProfileChartSecondEl.data.datasets[1].data.push({x:Date.now(),y:null});
           waterFlow.value = null;
         }
 
@@ -919,6 +1012,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
     this.flowProfileChartEl.data.labels.push(this.flowTime + '.' + this.flowSecondTick);
     this.flowProfileChartEl.data.datasets[0].data.push(weight);
+    this.flowProfileChartSecondEl.data.datasets[0].data.push({x:Date.now(),y:weight});
     this.flowProfileArr.push(weight);
     this.flowProfileArrCalculated.push(weight - oldWeight);
     this.pushFlowProfile(this.flowTime + '.' + this.flowSecondTick, weight, oldWeight, smoothedWeight, oldSmoothedWeight);
