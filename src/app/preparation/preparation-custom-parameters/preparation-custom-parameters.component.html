@@ -19,7 +19,7 @@
     </ion-card-content>
   </ion-card>
   <div *ngIf="data.use_custom_parameters">
-  <ion-segment [(ngModel)]="segment"  class="ion-padding-vertical">
+  <ion-segment scrollable="true" [(ngModel)]="segment"  class="ion-padding-vertical">
     <ion-segment-button value="manage">
       <ion-label>{{"CUSTOM_MANAGE_PARAMETERS" | translate}}</ion-label>
     </ion-segment-button>

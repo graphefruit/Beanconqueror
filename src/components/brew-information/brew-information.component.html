@@ -40,7 +40,7 @@
           <ion-text>{{brew?.getMill().name}}</ion-text>
         </ion-col>
       </ion-row>
-      <ion-row>
+      <ion-row  class="ion-padding-bottom-half">
         <ion-col size="6">
           <ion-label class="card-headline">{{"BREW_DATA_IN_OUT_BR" | translate}}</ion-label><br/>
           <ion-text *ngIf="brew?.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO">
@@ -66,8 +66,6 @@
           <ion-label class="card-headline">{{'BREW_DATA_FLAVOR' | translate}}</ion-label><br/>
           <ion-text>{{getCuppedBrewFlavors()}}</ion-text>
         </ion-col>
-      </ion-row>
-      <ion-row   class="ion-padding-bottom-half">
         <ion-col size="6" *ngIf="brew?.brew_temperature > 0 && uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.brew_temperature,
                       brew.getPreparation().visible_list_view_parameters.brew_temperature,
                       brew.getPreparation().use_custom_parameters)">
