@@ -48,7 +48,7 @@ export class BrewInformationComponent implements OnInit {
   public settings: Settings = null;
 
   constructor(private readonly uiSettingsStorage: UISettingsStorage,
-              private readonly uiBrewHelper: UIBrewHelper,
+              public readonly uiBrewHelper: UIBrewHelper,
               private readonly uiBrewStorage: UIBrewStorage,
               private readonly uiToast: UIToast,
               private readonly uiAnalytics: UIAnalytics,
