@@ -431,7 +431,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         this.flowProfileArr = [];
       }
       if (this.flowProfileChartEl === undefined) {
-        this.doSomeMoreShit();
+        //this.doSomeMoreShit();
         const drinkingData = {
           labels: [],
           datasets: [{
@@ -503,7 +503,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           for (const data of this.flow_profile_raw.waterFlow) {
             this.flowProfileChartEl.data.datasets[1].data.push(data.value);
           }
-          this.flowProfileChartEl.update();
+          this.flowProfileChartEl.update('none');
         }
       }
       // Check changes after all is done
@@ -1004,7 +1004,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       // Reset
       this.flowTime = this.getTime();
       this.flowSecondTick = 0;
-      this.flowProfileChartEl.update();
+      this.flowProfileChartEl.update('none');
       this.flowProfileArr = [];
       this.flowProfileArrCalculated = [];
 

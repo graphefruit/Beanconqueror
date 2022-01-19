@@ -32,10 +32,13 @@ export class DashboardPage implements OnInit {
               private readonly uiBeanStorage: UIBeanStorage,
               private readonly uiBeanHelper: UIBeanHelper
   ) {
-//setTimeout(() => {this.test();},3000);
+
+
+//setTimeout(() => {this.liveSample();},500);
+    //setTimeout(() => {this.notLiveSample();},500);
   }
 
-private test() {
+private liveSample() {
   const drinkingData = {
     labels: [],
     datasets: [{
@@ -121,8 +124,8 @@ console.error("ASHDASDAJSDJASD");
     const now = Date.now();
     let index =0;
 
-    this.flowProfileChartEl.data.datasets[0].data.push({x: now - 50000,y:this.getRandomInt(0,100)});
-    this.flowProfileChartEl.data.datasets[1].data.push({x: now,y:this.getRandomInt(0,100)});
+  //  this.flowProfileChartEl.data.datasets[0].data.push({x: now - 50000,y:this.getRandomInt(0,100)});
+    //this.flowProfileChartEl.data.datasets[1].data.push({x: now,y:this.getRandomInt(0,100)});
 
 
 
@@ -130,6 +133,93 @@ console.error("ASHDASDAJSDJASD");
   },100);
 
 
+
+}
+
+private notLiveSample() {
+  const drinkingData = {
+    labels: [],
+    datasets: [{
+      label: "asd",
+      data: [],
+      borderColor: 'rgb(159,140,111)',
+      backgroundColor: 'rgb(205,194,172)',
+      yAxisID: 'y',
+      pointRadius: 0,
+    },
+      {
+        label:"asd",
+        data: [],
+        borderColor: 'rgb(96,125,139)',
+        backgroundColor: 'rgb(127,151,162)',
+        yAxisID: 'y1',
+        spanGaps: true,
+        pointRadius: 0,
+      }]
+  };
+  const chartOptions = {
+    animation: true,
+    legend: {
+      display: false,
+      position: 'top'
+    },
+    responsive: true,
+    interaction: {
+      mode: 'index',
+      intersect: false,
+    },
+    stacked: false,
+
+    scales: {
+      y: {
+        type: 'linear',
+        display: true,
+        position: 'left',
+      },
+      y1: {
+        type: 'linear',
+        display: true,
+        position: 'right',
+        // grid line settings
+        grid: {
+          drawOnChartArea: false, // only want the grid lines for one axis to show up
+        },
+      },
+      xAxis: {
+        ticks: {
+          maxTicksLimit: 5,
+          min: 2,
+          max: 6
+        }
+      }
+    }
+  };
+
+  this.flowProfileChartEl = new Chart(this.flowProfileChart.nativeElement, {
+    type: 'line',
+    data: drinkingData,
+    options: chartOptions
+  } as any);
+
+
+    this.flowProfileChartEl.update();
+    let second =0;
+    let bla = 0;
+
+    let index=0;
+setInterval(() => {
+  second = second + 0.1;
+  bla = bla +0.2;
+  this.flowProfileChartEl.data.labels.push(second);
+  this.flowProfileChartEl.data.datasets[0].data.push(this.getRandomInt(0,100));
+
+ // this.flowProfileChartEl.data.datasets[1].data.push({x: second,y:bla});
+
+},100);
+
+setInterval(() => {
+  this.flowProfileChartEl.update('none');
+},60);
 
 }
   public getRandomInt (min, max) {
