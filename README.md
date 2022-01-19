@@ -62,7 +62,7 @@ Different features are supported by this app, a brief overview you'll find here.
 - Own roasting section
 - Own water section
 - Cup your brews by aromatics or flavors
-- Connect smart scales (Decent Scale, Acaia Lunar)
+- Connect smart scales (Decent Scale, Acaia Lunar, Hiroia Jimmy)
  
 
 ## Special thanks

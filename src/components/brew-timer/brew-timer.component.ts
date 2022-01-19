@@ -5,8 +5,6 @@ import moment from 'moment';
 import {DatetimePopoverComponent} from '../../popover/datetime-popover/datetime-popover.component';
 import {ModalController} from '@ionic/angular';
 import {BleManagerService} from '../../services/bleManager/ble-manager.service';
-import DecentScale from '../../classes/devices/decentScale';
-import {BluetoothScale} from '../../classes/devices';
 
 
 @Component({

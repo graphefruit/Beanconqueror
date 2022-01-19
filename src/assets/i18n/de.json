@@ -1019,7 +1019,7 @@
       "LOCATION": "Um Bluetooth-Waagen zu finden, muss der Standort freigegeben werden",
       "BLUETOOTH":  "Um Bluetooth-Waagen zu finden, muss Bluetooth freigegeben werden"
     },
-    "INFORMATION_DESCRIPTION": "Unterstütze Waagen sind: Decent Scale sowie Lunar Scale (nicht 2021 Modelle)"
+    "INFORMATION_DESCRIPTION": "Unterstütze Waagen sind: Decent Scale sowie Lunar Scale (nicht 2021 Modelle) und Hiroia Jimmy"
   },
   "QR":{
     "WRONG_QRCODE_DESCRIPTION": "Falscher QR-Code oder falscher Inhalt",

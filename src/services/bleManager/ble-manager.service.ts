@@ -1,7 +1,7 @@
 import { Platforms } from '@ionic/core';
 import {PeripheralData} from './../../classes/devices/ble.types';
 import {Injectable} from '@angular/core';
-import {BluetoothScale, ScaleType, makeDevice, LunarScale, DecentScale} from '../../classes/devices';
+import {BluetoothScale, ScaleType, makeDevice, LunarScale, DecentScale, JimmyScale} from '../../classes/devices';
 import {Platform} from '@ionic/angular';
 import {UILog} from '../uiLog';
 import {UIToast} from '../uiToast';
@@ -139,7 +139,7 @@ export class BleManagerService {
 
 
       ble.startScan([], async (device) => {
-        if (DecentScale.test(device) || LunarScale.test(device)) {
+        if (DecentScale.test(device) || LunarScale.test(device) || JimmyScale.test(device)) {
           // We found all needed devices.
           devices.push(device);
           clearTimeout(timeoutVar);
@@ -228,6 +228,11 @@ export class BleManagerService {
         if (LunarScale.test(device)) {
           this.uiLog.log('BleManager - We found a lunar/acaia scale');
           resolve({id: device.id, type: ScaleType.LUNAR});
+          return;
+        }
+        if (JimmyScale.test(device)) {
+          this.uiLog.log('BleManager - We found a jimmy scale');
+          resolve({id: device.id, type: ScaleType.JIMMY});
           return;
         }
       }
