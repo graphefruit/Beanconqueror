@@ -1069,5 +1069,8 @@
   "SMART_SCALE_TARE_ON_START_TIMER":  "Gewicht bei starten der Brühzeit zurücksetzen",
   "PAGE_SETTINGS_BREW_RATING_STEPS": "Bewertungsschritte",
   "BREW_AVG_FLOW_WEIGHT_PER_SECOND": "Ø Fluss",
-  "CUSTOM_LIST_VIEW_PARAMETERS": "Ansichtsparameter"
+  "CUSTOM_LIST_VIEW_PARAMETERS": "Ansichtsparameter",
+  "NAV_LIST_VIEW_CUSTOM_PARAMETERS": "Ansichtsparameter",
+  "PAGE_LIST_VIEW_CUSTOM_PARAMETERS_DESCRIPTION": "Entscheide welche Parameter der Kaffeebrühung auf den Übersichtskacheln angezeigt werden sollen",
+  "BREW_DATA_VESSEL_NAME_WEIGHT": "Gefäß Name/Gewicht"
 }

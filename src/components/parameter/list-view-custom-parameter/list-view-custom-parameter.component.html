@@ -58,7 +58,7 @@
     <ion-checkbox (ngModelChange)="save()"
                   [(ngModel)]="data.visible_list_view_parameters.method_of_preparation_tool"></ion-checkbox>
   </ion-item>
-  <ion-item [disabled]="true" tappable>
+  <ion-item  tappable>
     <ion-label>{{"BREW_DATA_BREW_TEMPERATURE" | translate}}</ion-label>
     <ion-checkbox (ngModelChange)="save()"
                   [(ngModel)]="data.visible_list_view_parameters.brew_temperature"></ion-checkbox>
@@ -80,7 +80,7 @@
                   [(ngModel)]="data.visible_list_view_parameters.vessel"></ion-checkbox>
   </ion-item>
 
-  <ion-item  lines="none" [disabled]="true" tappable>
+  <ion-item  lines="none" tappable>
     <ion-label>{{"BREW_DATA_PRESSURE_PROFILE" | translate}}</ion-label>
     <ion-checkbox (ngModelChange)="save()"
                   [(ngModel)]="data.visible_list_view_parameters.pressure_profile"></ion-checkbox>

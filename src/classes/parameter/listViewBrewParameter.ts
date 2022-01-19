@@ -34,21 +34,23 @@ export class ListViewBrewParameter implements IBrewParameter {
     this.grind_size = true;
     this.grind_weight = true;
     this.mill = true;
-    this.mill_timer = false;
     this.method_of_preparation = true;
     this.brew_quantity = true;
     this.bean_type = true;
+    this.mill_speed = true;
+    this.mill_timer = false;
+    this.brew_beverage_quantity = true;
+    this.tds = true;
+    this.coffee_first_drip_time = true;
+
+    this.pressure_profile = true;
     this.brew_temperature = true;
     this.note = false;
     this.coffee_type = false;
     this.coffee_concentration = false;
-    this.coffee_first_drip_time = false;
+
     this.coffee_blooming_time = false;
     this.rating = true;
-    this.mill_speed = true;
-    this.pressure_profile = false;
-    this.tds = true;
-    this.brew_beverage_quantity = true;
     this.method_of_preparation_tool = false;
     this.water = false;
     this.bean_weight_in = false;
