@@ -47,6 +47,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   @ViewChild('smartScaleWeight', { read: ElementRef }) public smartScaleWeightEl: ElementRef;
   @ViewChild('smartScaleWeightPerSecond', { read: ElementRef }) public smartScaleWeightPerSecondEl: ElementRef;
+  @ViewChild('smartScaleAvgFlowPerSecond', { read: ElementRef }) public smartScaleAvgFlowPerSecondEl: ElementRef;
+
+
 
   @Input() public data: Brew;
   @Input() public brewTemplate: Brew;
@@ -78,7 +81,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public scaleTareSubscription: Subscription = undefined;
   public scaleFlowSubscription: Subscription = undefined;
   public bluetoothSubscription: Subscription = undefined;
+  private scaleFlowChangeSubscription: Subscription = undefined;
   private flowProfileArr = [];
+  private flowProfileArrCalculated = [];
   private flowTime: number = undefined;
   private flowSecondTick: number = 0;
   public flow_profile_raw: BrewFlow = new BrewFlow();
@@ -86,6 +91,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   @ViewChild('flowProfileChart', { static: false }) public flowProfileChart;
 
   public flowProfileChartEl: any = undefined;
+
+  @ViewChild('flowProfileChartSecond', { static: false }) public flowProfileChartSecond;
+
+  public flowProfileChartSecondEl: any = undefined;
+
 
 
   constructor(private readonly platform: Platform,
@@ -153,8 +163,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         } else {
           this.deattachToWeightChange();
           this.deattachToScaleEvents();
-          //If scale disconnected, sometimes the timer run but the screen was not refreshed, so maybe it helpes to detect the change.
-          this.changeDetectorRef.detectChanges();
+          // If scale disconnected, sometimes the timer run but the screen was not refreshed, so maybe it helpes to detect the change.
+          this.checkChanges();
         }
       });
 
@@ -193,7 +203,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               this.timer.startTimer();
             }
           }
-          this.changeDetectorRef.detectChanges();
+          this.checkChanges();
 
         });
       }
@@ -206,29 +216,56 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             this.data.brew_beverage_quantity = 0;
           }
 
-          this.changeDetectorRef.detectChanges();
+          this.checkChanges();
 
         });
       }
 
       if (_firstStart) {
-        await scale.tare();
-        await scale.setTimer(SCALE_TIMER_COMMAND.STOP);
-        await scale.setTimer(SCALE_TIMER_COMMAND.RESET);
+        if (this.settings.bluetooth_scale_tare_on_brew === true) {
+          await scale.tare();
+        }
+
+        await setTimeout(async () => {
+          await scale.setTimer(SCALE_TIMER_COMMAND.STOP);
+        },50);
+
+
+        await setTimeout(async () => {
+          await scale.setTimer(SCALE_TIMER_COMMAND.RESET);
+        },50);
       }
       if (this.timer.isTimerRunning() === true && _firstStart === false) {
         this.attachToScaleWeightChange();
       }
+      if (this.scaleFlowChangeSubscription) {
+        this.scaleFlowChangeSubscription.unsubscribe();
+        this.scaleFlowChangeSubscription = undefined;
+      }
+      this.scaleFlowChangeSubscription = scale.flowChange.subscribe((_val) => {
+
+        this.setActualSmartInformation();
+      });
+      this.checkChanges();
+
 
     }
   }
 
+  private checkChanges() {
+    this.changeDetectorRef.detectChanges();
+    window.getComputedStyle(window.document.getElementsByTagName('body')[0]);
+  }
   public ngOnDestroy() {
     // We don't deattach the timer subscription in the deattach toscale events, else we couldn't start anymore.
 
     if (this.bluetoothSubscription) {
       this.bluetoothSubscription.unsubscribe();
       this.bluetoothSubscription = undefined;
+    }
+    if (this.scaleFlowChangeSubscription) {
+      this.scaleFlowChangeSubscription.unsubscribe();
+      this.scaleFlowChangeSubscription = undefined;
     }
 
     this.deattachToWeightChange();
@@ -250,7 +287,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public smartScaleConnected() {
     if (!this.platform.is('cordova')) {
-      return true;
+      return false;
     }
 
     const scale: BluetoothScale = this.bleManager.getScale();
@@ -264,7 +301,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
       this.scaleFlowSubscription = scale.flowChange.subscribe((_val) => {
         this.__setFlowProfile(_val);
-        this.setActualSmartInformation();
       });
     }
   }
@@ -283,15 +319,107 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.data.grind_weight = this.getActualBluetoothWeight();
   }
 
+  public bluetoothScaleSetBeanWeightIn() {
+    this.data.bean_weight_in = this.getActualBluetoothWeight();
+  }
+
   public bluetoothScaleSetBrewQuantityWeight() {
     this.data.brew_quantity = this.getActualBluetoothWeight();
   }
 
   public bluetoothScaleSetBrewBeverageQuantityWeight() {
-    this.data.brew_beverage_quantity = this.getActualBluetoothWeight();
+    let vesselWeight: number = 0;
+    if (this.data.vessel_weight > 0) {
+      vesselWeight = this.data.vessel_weight;
+    }
+    this.data.brew_beverage_quantity =  this.uiHelper.toFixedIfNecessary(this.getActualBluetoothWeight() - vesselWeight,2);
   }
 
 
+  private doSomeMoreShit() {
+
+      const drinkingData = {
+        labels: [],
+        datasets: [{
+          label: "asd",
+          data: [],
+          borderColor: 'rgb(159,140,111)',
+          backgroundColor: 'rgb(205,194,172)',
+          yAxisID: 'y',
+          pointRadius: 0,
+          borderWidth: 1,
+        },
+          {
+            label: "111",
+            data: [],
+            borderColor: 'rgb(96,125,139)',
+            backgroundColor: 'rgb(127,151,162)',
+            yAxisID: 'y1',
+            spanGaps: true,
+            pointRadius: 0,
+
+          }]
+      };
+
+
+
+
+
+      const chartOptions = {
+
+        scales: {
+          x: {
+
+
+            type: 'realtime',
+            display: true,
+            realtime: {
+              // How much timeseconds do we want to show
+              duration: 15000,
+              // when to pull new values
+              refresh: 100,
+              delay: 1000,
+              // data will be automatically deleted as it disappears off the chart
+              ttl: undefined,
+
+            },
+
+          },
+
+          y: {
+            type: 'linear',
+            display: true,
+            position: 'left',
+          },
+          y1: {
+            type: 'linear',
+            display: true,
+            position: 'right',
+            // grid line settings
+            grid: {
+              drawOnChartArea: false, // only want the grid lines for one axis to show up
+            }
+          }
+        },
+        interaction: {
+          intersect: false
+        }
+      };
+
+
+      this.flowProfileChartSecondEl = new Chart(this.flowProfileChartSecond.nativeElement, {
+        type: 'line',
+        data: drinkingData,
+        options: chartOptions
+      } as any);
+
+
+      this.flowProfileChartSecondEl.update();
+
+
+
+
+  }
   private initializeFlowChart(): void {
 
     setTimeout(() => {
@@ -303,6 +431,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         this.flowProfileArr = [];
       }
       if (this.flowProfileChartEl === undefined) {
+        //this.doSomeMoreShit();
         const drinkingData = {
           labels: [],
           datasets: [{
@@ -374,9 +503,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           for (const data of this.flow_profile_raw.waterFlow) {
             this.flowProfileChartEl.data.datasets[1].data.push(data.value);
           }
-          this.flowProfileChartEl.update();
+          this.flowProfileChartEl.update('none');
         }
       }
+      // Check changes after all is done
+      this.checkChanges();
     }, 250);
   }
 
@@ -400,6 +531,23 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
 
     return true;
+  }
+
+  public getAvgFlow(): number {
+
+    const waterFlows: Array<IBrewWaterFlow> = this.flow_profile_raw.waterFlow;
+    let calculatedFlow: number = 0;
+    let foundEntries: number = 0;
+    for (const water of waterFlows) {
+      if (water.value > 0) {
+        calculatedFlow +=water.value;
+        foundEntries +=1;
+      }
+    }
+    if (calculatedFlow > 0) {
+      return calculatedFlow / foundEntries;
+    }
+    return 0;
   }
 
   public deattachToScaleEvents() {
@@ -458,7 +606,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public async timerStarted(_event) {
     const scale: BluetoothScale = this.bleManager.getScale();
     if (scale) {
-      await scale.tare();
+      if (this.settings.bluetooth_scale_tare_on_start_timer === true) {
+        await scale.tare();
+    }
+
       await scale.setTimer(SCALE_TIMER_COMMAND.START);
       this.attachToScaleWeightChange();
 
@@ -492,8 +643,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     const scale: BluetoothScale = this.bleManager.getScale();
     if (scale) {
       await scale.tare();
-      await scale.setTimer(SCALE_TIMER_COMMAND.STOP);
-      await scale.setTimer(SCALE_TIMER_COMMAND.RESET);
+
+      await setTimeout(async () => {
+        await scale.setTimer(SCALE_TIMER_COMMAND.STOP);
+      },50);
+
+
+      await setTimeout(async () => {
+        await scale.setTimer(SCALE_TIMER_COMMAND.RESET);
+      },50);
+
       this.deattachToWeightChange();
 
 
@@ -522,6 +681,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public chooseDateTime(_event) {
     if (this.platform.is('cordova')) {
+      _event.target.blur();
       _event.cancelBubble = true;
       _event.preventDefault();
       _event.stopImmediatePropagation();
@@ -541,7 +701,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           if (newUnix !== this.data.config.unix_timestamp) {
             this.data.config.unix_timestamp = newUnix;
           }
-          this.changeDetectorRef.detectChanges();
+          this.checkChanges();
 
         }, error: () => {
 
@@ -586,7 +746,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
-    if (modalData.data.displayingTime !== undefined) {
+    if (modalData !== undefined && modalData.data.displayingTime !== undefined) {
       this.displayingBrewTime = modalData.data.displayingTime;
       this.data.brew_time = moment.duration(moment(modalData.data.displayingTime).diff(moment(modalData.data.displayingTime).startOf('day'))).asSeconds();
     }
@@ -617,7 +777,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         }
 
       }
-      this.changeDetectorRef.detectChanges();
+      this.checkChanges();
     } else {
       // Pah. Shit here.
     }
@@ -631,7 +791,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           this.data.getPreparation().use_custom_parameters)) {
           // The first time we set the weight, we have one sec delay, because of this do it -1 second
           this.data.coffee_first_drip_time = this.getTime() - 1;
-          this.changeDetectorRef.detectChanges();
+          this.checkChanges();
         }
       }
     }
@@ -678,6 +838,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
 
   private __setFlowProfile(_scaleChange: any) {
+
+
     const weight: number = this.uiHelper.toFixedIfNecessary(_scaleChange.actual,1);
     const oldWeight: number = this.uiHelper.toFixedIfNecessary(_scaleChange.old,1);
     const smoothedWeight: number = this.uiHelper.toFixedIfNecessary(_scaleChange.smoothed,1);
@@ -707,17 +869,22 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             weightDidntChange = false;
             break;
           }
-          // Treat this as same level as other if and not else if.
-          if (val === nextVal) {
-            sameFlowPerTenHerzCounter += 1;
-            if (sameFlowPerTenHerzCounter >= 5) {
-              //
-              wrongFlow = true;
-              weightDidntChange = true;
-              // We don't get out of the loop here, why? because the next value could be negative, and we then need to say that the weight changed, else we would maybe set wrong data.
 
+          if ( this.data.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO) {
+            // Treat this as same level as other if and not else if.
+            //We just check this when we're not on espresso, cause sometimes we just get 0.1 or 0.2g changes in 1 second
+            if (val === nextVal) {
+              sameFlowPerTenHerzCounter += 1;
+              if (sameFlowPerTenHerzCounter >= 5) {
+                //
+                wrongFlow = true;
+                weightDidntChange = true;
+                // We don't get out of the loop here, why? because the next value could be negative, and we then need to say that the weight changed, else we would maybe set wrong data.
+
+              }
             }
           }
+
 
         } else {
           // This is the latest value of this time
@@ -732,9 +899,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           flowHasSomeMinusValueInIt = true;
         }
       }
+
+      //Maybe we got 8 tickets with minus values, we would set above that the weight didn't change, this would be wrong
       if (weightDidntChange === true && flowHasSomeMinusValueInIt === true) {
         weightDidntChange = false;
       }
+
+      //If the first anomalie check is done, we check the second anomalie
       if (wrongFlow === false) {
         const firstVal: number = this.flowProfileArr[0];
         const lastVal: number = this.flowProfileArr[this.flowProfileArr.length - 1];
@@ -779,13 +950,18 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       if (wrongFlow === false) {
         // Overwrite to make sure to have the latest data to save.
         // Get the latest flow, why?? -> Because we're on a new time actually, and thats why we need to get the latest push value
-        const lastFlow = this.flow_profile_raw.weight[this.flow_profile_raw.weight.length - 1];
-        let flowValue: number = (lastFlow.actual_smoothed_weight - lastFlow.old_smoothed_weight) * 10;
-        // Ignore flowing weight when we're below zero
-        if (flowValue < 0) {
-          flowValue = 0;
+
+        let calculatedFlowWeight = 0;
+        for (const flowWeight of this.flowProfileArrCalculated) {
+          calculatedFlowWeight+=flowWeight;
         }
-        actualFlowValue = flowValue;
+        calculatedFlowWeight = (calculatedFlowWeight / this.flowProfileArrCalculated.length) * 10;
+
+        // Ignore flowing weight when we're below zero
+        if (calculatedFlowWeight < 0) {
+          calculatedFlowWeight = 0;
+        }
+        actualFlowValue = calculatedFlowWeight;
       }
 
       if (actualFlowValue >= 70) {
@@ -810,9 +986,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         if (i === addRange - 1) {
           // We set last entry as value.
           this.flowProfileChartEl.data.datasets[1].data.push(actualFlowValue);
+          this.flowProfileChartSecondEl.data.datasets[1].data.push({x:Date.now(),y:actualFlowValue});
+
           waterFlow.value = actualFlowValue;
         } else {
           this.flowProfileChartEl.data.datasets[1].data.push(null);
+          this.flowProfileChartSecondEl.data.datasets[1].data.push({x:Date.now(),y:null});
           waterFlow.value = null;
         }
 
@@ -825,14 +1004,17 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       // Reset
       this.flowTime = this.getTime();
       this.flowSecondTick = 0;
-      this.flowProfileChartEl.update();
+      this.flowProfileChartEl.update('none');
       this.flowProfileArr = [];
+      this.flowProfileArrCalculated = [];
 
     }
 
     this.flowProfileChartEl.data.labels.push(this.flowTime + '.' + this.flowSecondTick);
     this.flowProfileChartEl.data.datasets[0].data.push(weight);
+    this.flowProfileChartSecondEl.data.datasets[0].data.push({x:Date.now(),y:weight});
     this.flowProfileArr.push(weight);
+    this.flowProfileArrCalculated.push(weight - oldWeight);
     this.pushFlowProfile(this.flowTime + '.' + this.flowSecondTick, weight, oldWeight, smoothedWeight, oldSmoothedWeight);
     this.flowSecondTick++;
   }
@@ -858,9 +1040,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public setActualSmartInformation() {
     try {
       const weightEl = this.smartScaleWeightEl.nativeElement;
-      const secondEl = this.smartScaleWeightPerSecondEl.nativeElement;
+      const flowEl = this.smartScaleWeightPerSecondEl.nativeElement;
+      const avgFlowEl = this.smartScaleAvgFlowPerSecondEl.nativeElement;
       weightEl.textContent = this.getActualScaleWeight() + ' g';
-      secondEl.textContent = this.getActualSmoothedWeightPerSecond() + ' g/s';
+      flowEl.textContent = this.getActualSmoothedWeightPerSecond() + ' g/s';
+      avgFlowEl.textContent = 'Ø ' + this.uiHelper.toFixedIfNecessary(this.getAvgFlow(),2) + ' g/s';
     } catch (ex) {
 
     }

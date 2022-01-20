@@ -7,8 +7,7 @@ import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 import {ROASTING_MACHINE_ACTION} from '../../../enums/roasting-machine/roastingMachineAction';
 import {RoastingMachine} from '../../../classes/roasting-machine/roasting-machine';
 import {UIRoastingMachineStorage} from '../../../services/uiRoastingMachineStorage';
-import {RoastingMachineAddComponent} from './roasting-machine-add/roasting-machine-add.component';
-import ROASTING_MACHINE_TRACKING from '../../../data/tracking/roastingMachineTracking';
+
 import {UIAnalytics} from '../../../services/uiAnalytics';
 import {UIRoastingMachineHelper} from '../../../services/uiRoastingMachineHelper';
 

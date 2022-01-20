@@ -221,7 +221,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
-    if (modalData.data.displayingTime !== undefined) {
+    if (modalData !== undefined && modalData.data.displayingTime !== undefined) {
       this.displayingTime = modalData.data.displayingTime;
       this.timer.seconds = moment.duration(moment(this.displayingTime).diff(moment(this.displayingTime).startOf('day'))).asSeconds();
       this.changeEvent();

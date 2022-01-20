@@ -1,9 +1,14 @@
 :host {
 
   ion-card {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 10px;
+    margin-right: 10px;
+
     ion-card-content {
       padding: 8px;
-      padding-bottom: var(--padding-bottom);
+      padding-bottom: 0px;
       padding-top: var(--padding-top);
     }
   }
@@ -47,5 +52,3 @@
   }
 
 }
-
-

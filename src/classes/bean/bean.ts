@@ -15,6 +15,7 @@ import {IRoastingMachine} from '../../interfaces/roasting-machine/iRoastingMachi
 
 export class Bean implements IBean {
   public name: string;
+  public buyDate: string;
   public roastingDate: string;
   public note: string;
 
@@ -50,6 +51,7 @@ export class Bean implements IBean {
 
   constructor() {
     this.name = '';
+    this.buyDate = '';
     this.roastingDate = '';
     this.note = '';
 

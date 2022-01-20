@@ -14,6 +14,7 @@ import {ManageBrewParameter} from '../parameter/manageBrewParameter';
 import {IBeanPageFilter} from '../../interfaces/bean/iBeanPageFilter';
 import {BEAN_SORT_AFTER} from '../../enums/beans/beanSortAfter';
 import {BEAN_SORT_ORDER} from '../../enums/beans/beanSortOrder';
+import {ListViewBrewParameter} from '../parameter/listViewBrewParameter';
 
 
 export class Settings implements ISettings {
@@ -26,6 +27,7 @@ export class Settings implements ISettings {
   public matomo_analytics: boolean;
   public manage_parameters: ManageBrewParameter;
   public default_last_coffee_parameters: DefaultBrewParameter;
+  public visible_list_view_parameters: ListViewBrewParameter;
   public brew_order: OrderBrewParameter;
   public config: Config;
   public language: string;
@@ -33,6 +35,7 @@ export class Settings implements ISettings {
   public fast_brew_repeat: boolean;
   public image_quality: number;
   public brew_rating: number;
+  public brew_rating_steps: number;
 
   public show_archived_beans: boolean;
   public show_archived_brews: boolean;
@@ -67,6 +70,9 @@ export class Settings implements ISettings {
   public scale_type: ScaleType;
   public scale_log: boolean;
   public bluetooth_scale_stay_connected: boolean;
+  public bluetooth_scale_tare_on_brew: boolean;
+  public bluetooth_scale_tare_on_start_timer: boolean;
+
 
 
   public currency: string;
@@ -95,6 +101,7 @@ export class Settings implements ISettings {
 
     this.manage_parameters = new ManageBrewParameter();
     this.default_last_coffee_parameters = new DefaultBrewParameter();
+    this.visible_list_view_parameters = new ListViewBrewParameter();
     this.brew_order = new OrderBrewParameter();
     this.language = '';
     this.matomo_analytics = undefined;
@@ -129,6 +136,7 @@ export class Settings implements ISettings {
       ARCHIVED: {} as IBeanPageFilter
     };
     this.brew_rating = 5;
+    this.brew_rating_steps = 1;
 
     this.brew_filter.OPEN = this.GET_BREW_FILTER();
     this.brew_filter.ARCHIVED = this.GET_BREW_FILTER();
@@ -147,6 +155,9 @@ export class Settings implements ISettings {
     this.scale_id = '';
     this.scale_type = null;
     this.bluetooth_scale_stay_connected = false;
+    this.bluetooth_scale_tare_on_brew = true;
+    this.bluetooth_scale_tare_on_start_timer = true;
+
     this.scale_log = false;
 
     this.currency = 'EUR';

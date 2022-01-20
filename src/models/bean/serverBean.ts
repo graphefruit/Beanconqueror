@@ -27,7 +27,9 @@ export class ServerBean
         variety: string,
         processing: string,
         certification: string,
-        percentage: number
+        percentage: number,
+        fob_price: number,
+        purchasing_price: number
       }
     >;
     public bean_roasting_type: number;

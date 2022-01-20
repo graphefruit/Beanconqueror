@@ -13,7 +13,6 @@ import moment from 'moment';
 import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 import {ServerBean} from '../../../models/bean/serverBean';
-import {BeanMapper} from '../../../mapper/bean/beanMapper';
 import {UIAlert} from '../../../services/uiAlert';
 
 @Component({

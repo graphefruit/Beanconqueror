@@ -2,7 +2,7 @@
   <ion-label position="stacked">
     {{ label }}
   </ion-label>
-  <ion-datetime (click)="showTimeOverlay($event);" (ngModelChange)="changeDate($event)" [(ngModel)]="displayingTime" cancelText="{{'CANCEL' | translate}}" displayFormat="H:mm:ss" doneText="{{'CHOOSE' | translate}}" mode="ios"></ion-datetime>
+  <ion-input readonly (click)="showTimeOverlay($event);" (ngModelChange)="changeDate($event)"  [(data)]="displayingTime"  [transform-date]="'timer'"  displayFormat="H:mm:ss" ></ion-input>
   <ion-button (click)="bloomTime()" *ngIf="timer.runTimer && timer.hasStarted && !timer.hasFinished && showBloomTimer"
               class="big-icon-only" fill="clear" slot="end" tappable>
     <ion-icon class="ion-color-accent" name="beanconqueror-blooming" slot="icon-only"></ion-icon>

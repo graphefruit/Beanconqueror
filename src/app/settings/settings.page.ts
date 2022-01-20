@@ -55,6 +55,9 @@ import {UIUpdate} from '../../services/uiUpdate';
 import {UiVersionStorage} from '../../services/uiVersionStorage';
 import {UIWaterStorage} from '../../services/uiWaterStorage';
 import {Water} from '../../classes/water/water';
+import {AppEvent} from '../../classes/appEvent/appEvent';
+import {AppEventType} from '../../enums/appEvent/appEvent';
+import {EventQueueService} from '../../services/queueService/queue-service.service';
 
 
 declare var cordova: any;
@@ -80,6 +83,7 @@ export class SettingsPage implements OnInit {
 
   public currencies = {};
 
+  public settings_segment: string = "general";
   private __cleanupAttachmentData(_data: Array<IBean | IBrew | IMill | IPreparation | IGreenBean | IRoastingMachine>): any {
     if (_data !== undefined && _data.length > 0) {
       for (const obj of _data) {
@@ -135,7 +139,8 @@ export class SettingsPage implements OnInit {
               private readonly uiWaterStorage: UIWaterStorage,
               private readonly bleManager: BleManagerService,
               private readonly uiToast: UIToast,
-              private readonly currencyService: CurrencyService
+              private readonly currencyService: CurrencyService,
+              private readonly eventQueue: EventQueueService,
   ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -210,7 +215,14 @@ export class SettingsPage implements OnInit {
   }
 
   public async disconnectScale() {
-    const disconnected: boolean = await this.bleManager.disconnect(this.settings.scale_id);
+    this.eventQueue.dispatch(new AppEvent(AppEventType.BLUETOOTH_SCALE_DISCONNECT, undefined));
+    let disconnected: boolean = true;
+
+    //if scale is connected, we try to disconnect, if scale is not connected, we just forget scale :)
+    if (this.settings.scale_id !== '' && this.bleManager.getScale()) {
+      disconnected = await this.bleManager.disconnect(this.settings.scale_id);
+    }
+
     if (disconnected) {
       this.settings.scale_id = '';
       this.settings.scale_type = null;

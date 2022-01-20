@@ -90,19 +90,58 @@ export class BeanGeneralInformationComponent implements OnInit {
   }
 
   public roasterSelected(selected: string): void {
+
     this.data.roaster = selected;
     this.roasterResults = [];
     this.roasterResultsAvailable = false;
     this.roasterFocused = false;
   }
-  public chooseDate(_event) {
+
+
+
+
+  public chooseBuyDate(_event) {
+    _event.target.blur();
+    _event.cancelBubble = true;
+    _event.preventDefault();
+    _event.stopImmediatePropagation();
+    _event.stopPropagation();
+
     if (this.platform.is('cordova')) {
-      _event.cancelBubble = true;
-      _event.preventDefault();
-      _event.stopImmediatePropagation();
-      _event.stopPropagation();
+      const myDate = new Date(); // From model.
 
+      cordova.plugins.DateTimePicker.show({
+        mode: 'date',
+        date: myDate,
+        okText: this.translate.instant('CHOOSE'),
+        todayText: this.translate.instant('TODAY'),
+        cancelText: this.translate.instant('CANCEL'),
+        clearText: this.translate.instant('CLEAR'),
+        success: (newDate) => {
+          if (newDate === undefined) {
+            this.data.buyDate = '';
+          } else
+          {
+            this.data.buyDate = moment(newDate).toISOString();
+          }
 
+          this.changeDetectorRef.detectChanges();
+        }, error: () => {
+
+        }
+      });
+
+    }
+  }
+
+  public chooseDate(_event) {
+    _event.target.blur();
+    _event.cancelBubble = true;
+    _event.preventDefault();
+    _event.stopImmediatePropagation();
+    _event.stopPropagation();
+
+    if (this.platform.is('cordova')) {
       const myDate = new Date(); // From model.
 
       cordova.plugins.DateTimePicker.show({

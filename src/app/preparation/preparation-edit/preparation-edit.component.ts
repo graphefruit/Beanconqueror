@@ -87,19 +87,13 @@ export class PreparationEditComponent implements OnInit {
     }
   }
 
-  public deleteTool(_tool: PreparationTool) {
-   const relatedBrews: Array<Brew> =  this.uiPreparationHelper.getAllBrewsForThisPreparation(this.data.config.uuid).filter((e) => e.method_of_preparation_tools.includes(_tool.config.uuid));
-     this.uiAlert.showConfirm('DELETE_PREPARATION_TOOL_QUESTION', 'SURE_QUESTION', true).then(() => {
-         if (relatedBrews.length > 0) {
-           for (const brew of relatedBrews) {
-             this.uiBrewStorage.removeByUUID(brew.config.uuid);
-           }
-         }
-         this.data.deleteTool(_tool);
-       },
-       () => {
-         // No
-       });
+
+
+  public async editTool(_tool: PreparationTool) {
+    await this.uiPreparationHelper.editPreparationTool(this.data,_tool);
+    //Reinitialize
+    const prep = this.uiPreparationStorage.getByUUID(this.data.config.uuid);
+    this.data.initializeByObject(prep);
 
 
 

@@ -139,9 +139,12 @@ export class BleManagerService {
 
 
       ble.startScan([], async (device) => {
-        if (DecentScale.test(device) || LunarScale.test(device) || JimmyScale.test(device)) {
+        this.uiLog.log('Device found ' + JSON.stringify(device));
+        if (DecentScale.test(device) || LunarScale.test(device)) {
           // We found all needed devices.
           devices.push(device);
+
+          this.uiLog.log('Supported Scale found ' + JSON.stringify(device));
           clearTimeout(timeoutVar);
           timeoutVar = null;
           await stopScanningAndResolve();
@@ -304,7 +307,9 @@ export class BleManagerService {
       this.uiToast.showInfoToast('SCALE.DISCONNECTED_UNPLANNED');
       this.uiLog.log('Disconnected successfully');
       callback();
-      this.__sendEvent('DISCONNECT');
+
     }
+    //Send disconnect callback, even if scale is already null/not existing anymore
+    this.__sendEvent('DISCONNECT');
   }
 }

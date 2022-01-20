@@ -49,7 +49,7 @@
           </ion-button>
         </ion-item>
         <div class="ion-padding-horizontal">
-          <ion-chip (click)="deleteTool(tool)" *ngFor="let tool of data.tools;let i=index;">{{tool.name}} <ion-icon name="close"></ion-icon></ion-chip>
+          <ion-chip (click)="editTool(tool)" *ngFor="let tool of data.tools;let i=index;">{{tool.name}} <ion-icon name="beanconqueror-edit"></ion-icon></ion-chip>
         </div>
         <ion-item>
           <ion-label position="stacked">{{"ARCHIVED"|translate}}?</ion-label>

@@ -1,7 +1,9 @@
-<ion-content (click)="dismiss()">
+<ion-header translucent>
+  <ion-toolbar>
 
-</ion-content>
-<ion-footer>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
 <ion-list lines="full">
     <ion-item (click)="choose(getStaticActions().REPEAT)" button tappable>
       <ion-icon name="beanconqueror-repeat" slot="start"></ion-icon>
@@ -45,4 +47,4 @@
       <span>{{"POPOVER_BREWS_OPTION_DELETE" | translate}}</span>
     </ion-item>
   </ion-list>
-</ion-footer>
+</ion-content>

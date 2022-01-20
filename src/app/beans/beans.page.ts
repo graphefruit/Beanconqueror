@@ -128,10 +128,12 @@ export class BeansPage implements OnInit {
         {bean_filter: beanFilter, segment: this.bean_segment},
       id: BeanFilterComponent.COMPONENT_ID,
       cssClass: 'popover-actions',
+      breakpoints: [0, 0.2, 0.5, 0.75, 1],
+      initialBreakpoint: 0.75,
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
-    if (modalData.data && modalData.data.bean_filter !== undefined) {
+    if (modalData !== undefined && modalData.data && modalData.data.bean_filter !== undefined) {
       if (this.bean_segment === 'open') {
         this.openBeansFilter = modalData.data.bean_filter;
 

@@ -14,8 +14,8 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-segment [(ngModel)]="segment" class="ion-padding-vertical" style="padding-top:0px;">
+<ion-content #millContent>
+  <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="segment" class="ion-padding-vertical" style="padding-top:0px;">
     <ion-segment-button value="open">
       <ion-label>{{"CURRENT" | translate }}
       </ion-label>
@@ -36,9 +36,9 @@
           {{"PAGE_MILL_LIST_NO_MILL_EXISTING" | translate}}
         </div>
       </div>
-      <div *ngFor="let mill of getActiveMills()">
-        <mill-information-card (millAction)="millAction($event[0],$event[1])" [mill]="mill"></mill-information-card>
-      </div>
+      <ag-virtual-scroll #openScroll [items]="openMillsView" height="100vh" min-row-height="165">
+        <mill-information-card *ngFor="let mill of openScroll.items" (millAction)="millAction($event[0],$event[1])" [mill]="mill"></mill-information-card>
+      </ag-virtual-scroll>
     </div>
     <div *ngSwitchCase="'archive'">
       <div *ngIf="getArchivedMills()?.length == 0" class="ion-padding ion-text-center">
@@ -49,9 +49,10 @@
           {{"PAGE_MILL_LIST_NO_ARCHIVED_MILL_EXISTING" | translate}}
         </div>
       </div>
-      <div *ngFor="let mill of getArchivedMills()">
-        <mill-information-card (millAction)="millAction($event[0],$event[1])" [mill]="mill"></mill-information-card>
-      </div>
+
+      <ag-virtual-scroll #archivedScroll [items]="archiveMillsView" height="100vh" min-row-height="165">
+        <mill-information-card *ngFor="let mill of archivedScroll.items" (millAction)="millAction($event[0],$event[1])" [mill]="mill"></mill-information-card>
+      </ag-virtual-scroll>
     </div>
   </div>
 
