@@ -14,7 +14,7 @@ export default class LunarScale extends BluetoothScale {
   };
 
   public static test(device) {
-    return device && device.name && ['ACAIA', 'LUNAR', 'PYXIS', 'PROCH', 'PEARL'].includes(device.name.slice(0, 5));
+    return device && device.name && ['ACAIA', 'LUNAR', 'PYXIS', 'PROCH', 'PEARL', 'CINCO'].includes(device.name.slice(0, 5));
   }
 
   constructor(data: PeripheralData, platforms: Platforms[]) {
