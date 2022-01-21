@@ -1022,7 +1022,7 @@
       "LOCATION": "To find bluetooth scales, the app needs access to the location.",
       "BLUETOOTH": "To find bluetooth scales, the app needs access to bluetooth"
     },
-    "INFORMATION_DESCRIPTION": "Supported scales are: Decent Scale, Acaia Scales and Hirioa Jimmy"
+    "INFORMATION_DESCRIPTION": "Supported scales are: Decent Scale, Acaia Scales and Hiroia Jimmy"
   },
   "QR":{
     "WRONG_QRCODE_DESCRIPTION": "Wrong qr code or wrong content",
