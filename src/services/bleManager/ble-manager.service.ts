@@ -140,7 +140,7 @@ export class BleManagerService {
 
       ble.startScan([], async (device) => {
         this.uiLog.log('Device found ' + JSON.stringify(device));
-        if (DecentScale.test(device) || LunarScale.test(device)) {
+        if (DecentScale.test(device) || LunarScale.test(device) || JimmyScale.test(device)) {
           // We found all needed devices.
           devices.push(device);
 

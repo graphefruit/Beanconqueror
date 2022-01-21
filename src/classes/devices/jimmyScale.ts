@@ -33,8 +33,10 @@ export default class JimmyScale extends BluetoothScale {
 
   public async connect() {
     await this.attachNotification();
-    await this.setMode(JimmyMode.SCALE_ONLY);
-    await this.setUnit(JimmyUnit.GRAMM)
+    setTimeout(async () => {
+      await this.setUnit(JimmyUnit.GRAMM)
+      await this.setMode(JimmyMode.SCALE_ONLY);
+    }, 500);
   }
 
   private write(_bytes: number[]) {
@@ -125,14 +127,14 @@ export default class JimmyScale extends BluetoothScale {
   private async setUnit(unit: JimmyUnit) {
     if (this.unit !== unit) {
         await this.toggleUnit();
-        await setTimeout(() => this.setUnit(unit), 500);
+        await setTimeout(() => this.setUnit(unit), 250);
     }
   }
 
   private async setMode(mode: JimmyMode) {
     if (this.mode !== mode) {
         await this.toggleMode();
-        await setTimeout(() => this.setMode(mode), 500);
+        await setTimeout(() => this.setMode(mode), 250);
     }
   }
 }
