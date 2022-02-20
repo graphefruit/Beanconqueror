@@ -16,6 +16,7 @@ export interface IPreparation {
   finished: boolean;
   manage_parameters: IBrewParameter;
   default_last_coffee_parameters: IBrewParameter;
+  visible_list_view_parameters: IBrewParameter;
   brew_order: IOrderBrewParameter;
   use_custom_parameters: boolean;
   attachments: Array<string>;

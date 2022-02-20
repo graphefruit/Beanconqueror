@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ModalController} from '@ionic/angular';
 import {UIBrewStorage} from '../../../services/uiBrewStorage';
 import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
@@ -15,7 +15,12 @@ public static COMPONENT_ID: string ='brew-choose-preparation-to-brew';
               private readonly uiBrewStorage: UIBrewStorage,
               private readonly uiPreparationStorage: UIPreparationStorage) { }
 
-  public ngOnInit() {}
+
+
+  public ngOnInit() {
+
+
+  }
 
   public getPreparationMethods(): Array<Preparation> {
     return this.uiPreparationStorage.getAllEntries().filter((e)=>!e.finished);
@@ -25,14 +30,14 @@ public static COMPONENT_ID: string ='brew-choose-preparation-to-brew';
     this.modalController.dismiss({
       dismissed: true,
       preparation: _prep
-    },undefined, BrewChoosePreparationToBrewComponent.COMPONENT_ID)
+    },undefined, BrewChoosePreparationToBrewComponent.COMPONENT_ID);
 
 
   }
   public dismiss(): void {
     this.modalController.dismiss({
       dismissed: true
-    },undefined, BrewChoosePreparationToBrewComponent.COMPONENT_ID)
+    },undefined, BrewChoosePreparationToBrewComponent.COMPONENT_ID);
 
   }
 

@@ -105,6 +105,8 @@
   "BEAN_DATA_URL": "Página web",
   "BEAN_DATA_EAN": "EAN / Código",
   "BEAN_DATA_CUPPING_POINTS": "Puntaje en cata",
+  "BEAN_DATA_PURCHASING_PRICE": "Purchasing price",
+  "BEAN_DATA_FOB_PRICE": "FOB price",
   "BREW_DATA_CUSTOM_BREW_TIME": "Hora (de la preparación)?",
   "BREW_CREATION_DATE": "Fecha (de la preparación)",
   "REPEAT": "Repetir",
@@ -400,6 +402,8 @@
       "BEAN_DATA_URL": "Agrega la página web",
       "BEAN_DATA_EAN": "Agerga el código EAN o código propietario del producto",
       "BEAN_DATA_CUPPING_POINTS": "Agrega el puntaje de cata ",
+      "BEAN_DATA_PURCHASING_PRICE": "Add the purchasing price",
+      "BEAN_DATA_FOB_PRICE": "Add the FOB price",
       "NOTES": "Agrega notas"
     }
   },
@@ -1018,7 +1022,7 @@
       "LOCATION": "Para encontrar balanzas bluetooth, la aplicación necesita acceder a la ubicación.",
       "BLUETOOTH": "Para encontrar balanzas bluetooth, la aplicación necesita acceso a bluetooth"
     },
-    "INFORMATION_DESCRIPTION": "Básculas compatibles: Decent Scale y Acaia Lunar (Solo los modelos anteriores a 2021)."
+    "INFORMATION_DESCRIPTION": "Básculas compatibles: Decent Scale y Acaia Scales y Hiroia Jimmy."
   },
   "QR": {
     "WRONG_QRCODE_DESCRIPTION": "Código qr incorrecto o contenido incorrecto",
@@ -1056,5 +1060,21 @@
   "BEAN_ROASTING_TYPE_ESPRESSO":"Espresso",
   "BEAN_ROASTING_TYPE_OMNI":"Omni",
   "BEAN_ROASTING_TYPE_UNKNOWN":"Ignoto",
-  "SMART_SCALE_LOG": "Activar los ficheros de log para básculas inteligentes (Unicamente se usaran los logs para el debug de la aplicación)."
+  "SMART_SCALE_LOG": "Activar los ficheros de log para básculas inteligentes (Unicamente se usaran los logs para el debug de la aplicación).",
+  "TOAST_PREPARATION_TOOL_EDITED_SUCCESSFULLY": "Preparation tool edited",
+  "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE": "Bluetooth scale",
+  "PAGE_SETTINGS_TAB_GENERAL": "Allgemein",
+  "SMART_SCALE_TARE_ON_BREW": "Tare scale on new brew",
+  "SMART_SCALE_TARE_ON_START_TIMER":  "Tare scale when starting timer",
+  "PAGE_SETTINGS_BREW_RATING_STEPS": "Rating steps",
+  "BREW_AVG_FLOW_WEIGHT_PER_SECOND": "Ø Flow",
+  "CUSTOM_LIST_VIEW_PARAMETERS": "List view parameters",
+  "NAV_LIST_VIEW_CUSTOM_PARAMETERS": "List view parameters",
+  "PAGE_LIST_VIEW_CUSTOM_PARAMETERS_DESCRIPTION": "Decice which parameter of your coffee brew, should be displayed on the list view tiles",
+  "BREW_DATA_VESSEL_NAME_WEIGHT": "Vessle Name/Weight",
+  "IGNORE_NEGATIVE_VALUES": "Ignore negative weight values",
+  "IGNORE_ANOMALY_VALUES": "Ignore anomaly values",
+  "IGNORE_ANOMALY_VALUES_TOOLTIP": "For example: Swirl a cup on the scale",
+  "TOAST_BEAN_FAVOURITE_ADDED": "Agregar favorito",
+  "TOAST_BEAN_FAVOURITE_REMOVED": "Eliminar favorito"
 }

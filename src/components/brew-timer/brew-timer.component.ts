@@ -5,12 +5,10 @@ import moment from 'moment';
 import {DatetimePopoverComponent} from '../../popover/datetime-popover/datetime-popover.component';
 import {ModalController} from '@ionic/angular';
 import {BleManagerService} from '../../services/bleManager/ble-manager.service';
-import DecentScale from '../../classes/devices/decentScale';
-import {BluetoothScale} from '../../classes/devices';
 
 
 @Component({
-  selector: ' brew-timer',
+  selector: 'brew-timer',
   templateUrl: './brew-timer.component.html',
   styleUrls: ['./brew-timer.component.scss'],
 })
@@ -223,7 +221,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
-    if (modalData.data.displayingTime !== undefined) {
+    if (modalData !== undefined && modalData.data.displayingTime !== undefined) {
       this.displayingTime = modalData.data.displayingTime;
       this.timer.seconds = moment.duration(moment(this.displayingTime).diff(moment(this.displayingTime).startOf('day'))).asSeconds();
       this.changeEvent();

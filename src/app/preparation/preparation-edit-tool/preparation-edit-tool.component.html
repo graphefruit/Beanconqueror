@@ -1,0 +1,24 @@
+<ion-header translucent>
+  <ion-toolbar>
+
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-item class="ion-margin-top">
+        <ion-label position="stacked">{{"NAME" | translate}}*</ion-label>
+        <ion-input #name="ngModel" [(ngModel)]="data.name" name="name"
+                   placeholder="{{'MILL.PLACE_HOLDER.NAME' | translate}}" spellcheck="false" type="text"
+                   autocapitalize="sentences" required>
+        </ion-input>
+      </ion-item>
+  <ion-row>
+    <ion-col>
+      <ion-button (click)="deleteTool()" color="danger" expand="block" fill="outline"
+                  tappable>{{"DELETE" | translate}}</ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button (click)="editTool()" color="accent" expand="block" tappable
+                  type="submit">{{"SAVE" | translate}}</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-content>

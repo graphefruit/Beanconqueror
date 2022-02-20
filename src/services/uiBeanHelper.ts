@@ -179,6 +179,9 @@ export class UIBeanHelper {
         component: BeanArchivePopoverComponent,
         cssClass: 'popover-actions',
         id: BeanArchivePopoverComponent.COMPONENT_ID,
+        backdropDismiss: false,
+        breakpoints: [0,  0.5, 0.75, 1],
+        initialBreakpoint: 0.5,
         componentProps: {
           bean: _bean
         }

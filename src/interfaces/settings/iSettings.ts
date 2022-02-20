@@ -7,6 +7,8 @@ import {IBrewParameter} from '../parameter/iBrewParameter';
 import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
 import {IOrderBrewParameter} from '../parameter/iOrderBrewParameter';
 import {IBrewPageFilter} from '../brew/iBrewPageFilter';
+import {IBeanPageSort} from '../bean/iBeanPageSort';
+import {ListViewBrewParameter} from '../../classes/parameter/listViewBrewParameter';
 import {IBeanPageFilter} from '../bean/iBeanPageFilter';
 
 export interface ISettings {
@@ -17,12 +19,14 @@ export interface ISettings {
   language: string;
   manage_parameters: IBrewParameter;
   default_last_coffee_parameters: IBrewParameter;
+  visible_list_view_parameters: IBrewParameter;
   brew_order: IOrderBrewParameter;
   matomo_analytics: boolean;
   track_brew_coordinates: boolean;
   fast_brew_repeat: boolean;
   image_quality: number;
   brew_rating: number;
+  brew_rating_steps: number;
 
   show_archived_beans: boolean;
   show_archived_brews: boolean;
@@ -47,9 +51,15 @@ export interface ISettings {
     ARCHIVED: IBeanPageFilter
   };
 
-  green_bean_filter: {
-    OPEN: IBeanPageFilter,
-    ARCHIVED: IBeanPageFilter
+
+  bean_sort: {
+    OPEN: IBeanPageSort,
+    ARCHIVED: IBeanPageSort
+  };
+
+  green_bean_sort: {
+    OPEN: IBeanPageSort,
+    ARCHIVED: IBeanPageSort
   };
 
   welcome_page_showed: boolean;
@@ -62,6 +72,10 @@ export interface ISettings {
   scale_type: ScaleType;
   scale_log: boolean;
   bluetooth_scale_stay_connected: boolean;
+  bluetooth_scale_tare_on_brew: boolean;
+  bluetooth_scale_tare_on_start_timer: boolean;
+  bluetooth_ignore_negative_values: boolean;
+  bluetooth_ignore_anomaly_values: boolean;
 
   currency: string;
 }

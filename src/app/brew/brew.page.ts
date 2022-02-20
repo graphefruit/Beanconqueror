@@ -162,11 +162,13 @@ export class BrewPage implements OnInit {
       cssClass: 'popover-actions',
       id: BrewFilterComponent.COMPONENT_ID,
       componentProps:
-        {brew_filter: brewFilter, segment: this.brew_segment}
+        {brew_filter: brewFilter, segment: this.brew_segment},
+      breakpoints: [0, 0.2, 0.5, 0.75, 1],
+      initialBreakpoint: 0.75,
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
-    if (modalData.data.brew_filter !== undefined) {
+    if (modalData !== undefined && modalData.data.brew_filter !== undefined) {
       if (this.brew_segment === 'open') {
         this.openBrewsFilter = modalData.data.brew_filter;
 
@@ -266,9 +268,13 @@ export class BrewPage implements OnInit {
   }
 
 
-  public async longPressAdd(event) {
-    event.stopPropagation();
-    event.stopImmediatePropagation();
+  public async longPressAdd(_event) {
+    _event.target.blur();
+    _event.cancelBubble = true;
+    _event.preventDefault();
+    _event.stopImmediatePropagation();
+    _event.stopPropagation();
+
     await this.uiBrewHelper.longPressAddBrew();
     this.loadBrews();
   }

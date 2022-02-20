@@ -127,6 +127,15 @@ export class UIHelper {
       .format(format);
   }
 
+
+  public formatSeconds(_seconds,_format) {
+    try {
+      return   moment().startOf('day').add('seconds',_seconds).format(_format);
+    } catch (ex) {
+      return 0;
+    }
+
+  }
   public getActualTimeWithMilliseconds() {
     return moment(new Date()).format("HH:mm:ss.SSS");
   }

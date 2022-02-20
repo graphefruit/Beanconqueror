@@ -514,19 +514,16 @@ ion-menu:host .menu-inner {
 
   .popover-actions {
 
-    /**Background on ion-content will get transparent**/
-    .bottom-modal ion-content {
-      background: transparent;
-      --background:  transparent;
-    }
-    ion-content {
-      background: transparent;
-      --background:  transparent;
-    }
-     ion-content::part(scroll) {
-       background: transparent;
-       --background:  transparent;
+    ion-header {
+      ion-toolbar {
+        --background: #FFFFFF;
+        height: 40px;
       }
+    }
+
+    ion-content {
+      --background: #FFFFFF;
+    }
 
     ion-list {
       background: #ffffff;
@@ -550,12 +547,7 @@ ion-menu:host .menu-inner {
       padding-right:0px;
 
     }
-    ion-footer{
-      overflow: scroll;
-    }
-    .modal-wrapper {
-      background: transparent;
-    }
+
   }
 
 
@@ -627,15 +619,7 @@ ion-menu:host .menu-inner {
       --padding-start: 2.5%;
       --padding-end: 2.5%;
     }
-    /*.popover-actions {
 
-        ion-content {
-        --padding-start: 10%;
-        --padding-end: 10%;
-        background: rgba(0, 0, 0, 0);
-        --background: rgba(0, 0, 0, 0);
-      }
-    }*/
     ion-footer {
       padding-left: 2.5%;
       padding-right: 2.5%;

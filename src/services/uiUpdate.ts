@@ -24,6 +24,7 @@ import {UIAlert} from './uiAlert';
 import {TranslateService} from '@ngx-translate/core';
 import {UIStorage} from './uiStorage';
 import { maxBy, keys } from 'lodash';
+import {UIHelper} from './uiHelper';
 
 @Injectable({
   providedIn: 'root'
@@ -44,7 +45,8 @@ export class UIUpdate {
               private readonly file: File,
               private readonly uiAlert: UIAlert,
               private readonly translate: TranslateService,
-              private readonly uiStorage: UIStorage) {
+              private readonly uiStorage: UIStorage,
+              private readonly uiHelper: UIHelper) {
   }
 
   private async __updateDataVersion(_version): Promise<boolean> {
@@ -300,7 +302,6 @@ export class UIUpdate {
               }
             }
             break;
-
           case 'UPDATE_5':
 
             const settings_v5: any = this.uiSettingsStorage.getSettings();
@@ -324,6 +325,20 @@ export class UIUpdate {
                 await this.uiPreparationStorage.update(prep);
               }
             }
+            break;
+          case 'UPDATE_6':
+            const beans_v6: any = this.uiBeanStorage.getAllEntries();
+            for(const bean of beans_v6) {
+              // We have issues with references, so we deep copy to remove them
+              bean.bean_information = this.uiHelper.cloneData(bean.bean_information);
+              await this.uiBeanStorage.update(bean);
+            }
+
+            const settings_v6: any = this.uiSettingsStorage.getSettings();
+            //Delete old onces
+            delete settings_v6.bean_filter;
+            delete settings_v6.green_bean_filter;
+            await this.uiSettingsStorage.saveSettings(settings_v6);
             break;
           default:
             break;
@@ -386,6 +401,7 @@ export class UIUpdate {
     await this.__checkUpdateForDataVersion('UPDATE_3',!hasData);
     await this.__checkUpdateForDataVersion('UPDATE_4',!hasData);
     await this.__checkUpdateForDataVersion('UPDATE_5',!hasData);
+    // await this.__checkUpdateForDataVersion('UPDATE_6',!hasData);
 
   }
 

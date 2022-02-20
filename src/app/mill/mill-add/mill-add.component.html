@@ -1,14 +1,10 @@
+<ion-header translucent>
+  <ion-toolbar>
 
-<ion-content (click)="dismiss()">
-
-</ion-content>
-<ion-footer class="ion-no-border">
-  <div style="width:100%;text-align:end;" class="ion-margin-top">
-    <ion-button (click)="dismiss()" tappable color="accent" fill="clear" >
-      <ion-icon name="close-outline" slot="icon-only"></ion-icon>
-    </ion-button>
-  </div>
-    <ion-item class="ion-margin-bottom">
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-item class="ion-margin-top">
       <ion-label position="stacked">{{"NAME" | translate}}*</ion-label>
       <ion-input #name="ngModel" [(ngModel)]="data.name" name="name"
                  placeholder="{{'MILL.PLACE_HOLDER.NAME' | translate}}" spellcheck="false" type="text"
@@ -25,4 +21,4 @@
                   type="submit">{{"SAVE" | translate}}</ion-button>
     </ion-col>
   </ion-row>
-</ion-footer>
+</ion-content>

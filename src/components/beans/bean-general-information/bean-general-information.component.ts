@@ -9,6 +9,8 @@ import {BEAN_MIX_ENUM} from '../../../enums/beans/mix';
 import {BEAN_ROASTING_TYPE_ENUM} from '../../../enums/beans/beanRoastingType';
 import {NgxStarsComponent} from 'ngx-stars';
 import {IBeanInformation} from '../../../interfaces/bean/iBeanInformation';
+import {BluetoothScale} from '../../../classes/devices';
+import {BleManagerService} from '../../../services/bleManager/ble-manager.service';
 
 declare var cordova;
 @Component({
@@ -35,7 +37,8 @@ export class BeanGeneralInformationComponent implements OnInit {
   constructor(private readonly platform: Platform,
               private readonly uiBeanStorage: UIBeanStorage,
               private readonly translate: TranslateService,
-              private readonly changeDetectorRef: ChangeDetectorRef) { }
+              private readonly changeDetectorRef: ChangeDetectorRef,
+              private readonly bleManager: BleManagerService) { }
 
   public ngOnInit() {
 
@@ -47,6 +50,19 @@ export class BeanGeneralInformationComponent implements OnInit {
     },1000);
 
 
+  }
+
+  public smartScaleConnected() {
+    if (!this.platform.is('cordova')) {
+      return true;
+    }
+
+    const scale: BluetoothScale = this.bleManager.getScale();
+    return !!scale;
+  }
+
+  public bluetoothScaleSetBeanWeight() {
+    this.data.weight = this.bleManager.getScaleWeight();
   }
 
   public onRoasterSearchChange(event: any) {
@@ -90,19 +106,58 @@ export class BeanGeneralInformationComponent implements OnInit {
   }
 
   public roasterSelected(selected: string): void {
+
     this.data.roaster = selected;
     this.roasterResults = [];
     this.roasterResultsAvailable = false;
     this.roasterFocused = false;
   }
-  public chooseDate(_event) {
+
+
+
+
+  public chooseBuyDate(_event) {
+    _event.target.blur();
+    _event.cancelBubble = true;
+    _event.preventDefault();
+    _event.stopImmediatePropagation();
+    _event.stopPropagation();
+
     if (this.platform.is('cordova')) {
-      _event.cancelBubble = true;
-      _event.preventDefault();
-      _event.stopImmediatePropagation();
-      _event.stopPropagation();
+      const myDate = new Date(); // From model.
 
+      cordova.plugins.DateTimePicker.show({
+        mode: 'date',
+        date: myDate,
+        okText: this.translate.instant('CHOOSE'),
+        todayText: this.translate.instant('TODAY'),
+        cancelText: this.translate.instant('CANCEL'),
+        clearText: this.translate.instant('CLEAR'),
+        success: (newDate) => {
+          if (newDate === undefined) {
+            this.data.buyDate = '';
+          } else
+          {
+            this.data.buyDate = moment(newDate).toISOString();
+          }
 
+          this.changeDetectorRef.detectChanges();
+        }, error: () => {
+
+        }
+      });
+
+    }
+  }
+
+  public chooseDate(_event) {
+    _event.target.blur();
+    _event.cancelBubble = true;
+    _event.preventDefault();
+    _event.stopImmediatePropagation();
+    _event.stopPropagation();
+
+    if (this.platform.is('cordova')) {
       const myDate = new Date(); // From model.
 
       cordova.plugins.DateTimePicker.show({

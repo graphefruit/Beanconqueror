@@ -62,7 +62,7 @@ Different features are supported by this app, a brief overview you'll find here.
 - Own roasting section
 - Own water section
 - Cup your brews by aromatics or flavors
-- Connect smart scales (Decent Scale, Acaia Lunar)
+- Connect smart scales (Decent Scale, Acaia Lunar, Hiroia Jimmy)
  
 
 ## Special thanks
@@ -177,8 +177,12 @@ Don't use NPM V 7 right now, 6.14.11 works fine
 
 
 ### Android-Version:
-`ionic cordova platform add android@9.X`
-Android version 10 is not working yet.
+`ionic cordova platform add android@10.1.1`
 
 ### Github Page Hosting
 https://stackoverflow.com/questions/60357663/do-apple-app-site-association-files-work-with-github-pages-i-e-site-github-io
+
+
+### Upgrade Ionic if needed:
+`npm install @ionic/angular@6.0.8`
+-> Or the actual active version

@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { GreenBeanFilterComponent } from './green-bean-filter.component';
+import { PreparationEditToolComponent } from './preparation-edit-tool.component';
 
-describe('GreenBeanFilterComponent', () => {
-  let component: GreenBeanFilterComponent;
-  let fixture: ComponentFixture<GreenBeanFilterComponent>;
+describe('PreparationEditToolComponent', () => {
+  let component: PreparationEditToolComponent;
+  let fixture: ComponentFixture<PreparationEditToolComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ GreenBeanFilterComponent ],
+      declarations: [ PreparationEditToolComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(GreenBeanFilterComponent);
+    fixture = TestBed.createComponent(PreparationEditToolComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

@@ -12,6 +12,8 @@ import {Mill} from '../../../classes/mill/mill';
 import {Preparation} from '../../../classes/preparation/preparation';
 import {Settings} from '../../../classes/settings/settings';
 import {PreparationTool} from '../../../classes/preparation/preparationTool';
+import {UIBrewStorage} from '../../../services/uiBrewStorage';
+import {Brew} from '../../../classes/brew/brew';
 
 @Component({
   selector: 'brew-filter',
@@ -35,7 +37,8 @@ export class BrewFilterComponent implements OnInit {
               private readonly uiSettingsStorage: UISettingsStorage,
               private readonly uiPreparationStorage: UIPreparationStorage,
               private readonly uiBeanStorage: UIBeanStorage,
-              private readonly uiMillStorage: UIMillStorage) {
+              private readonly uiMillStorage: UIMillStorage,
+              private readonly uiBrewStorage: UIBrewStorage) {
 
     this.settings = this.uiSettingsStorage.getSettings();
     this.filter = this.settings.GET_BREW_FILTER();
@@ -48,7 +51,34 @@ export class BrewFilterComponent implements OnInit {
     this.__reloadFilterSettings();
   }
   public getMaxBrewRating() {
-    return this.settings.brew_rating;
+    const maxSettingsRating = this.settings.brew_rating;
+    const isOpen = this.segment === 'open';
+    let brewsFiltered: Array<Brew> = [];
+    if (isOpen) {
+      brewsFiltered =  this.uiBrewStorage.getAllEntries().filter((e) =>
+          e.getBean().finished === !isOpen &&
+          e.getMill().finished === !isOpen &&
+          e.getPreparation().finished === !isOpen
+        );
+      }
+    else {
+      brewsFiltered =  this.uiBrewStorage.getAllEntries().filter((e) =>
+        e.getBean().finished === !isOpen ||
+        e.getMill().finished === !isOpen ||
+        e.getPreparation().finished === !isOpen
+      );
+    }
+    let maxBrewRating = maxSettingsRating;
+    if (brewsFiltered.length > 0) {
+      const maxRating = brewsFiltered.reduce((p, c) => p.rating > c.rating ? p : c);
+      maxBrewRating = maxRating.rating;
+    }
+
+
+    if (maxBrewRating > maxSettingsRating) {
+      return maxBrewRating;
+    }
+    return maxSettingsRating;
   }
 
   public hasPreparationTools() {
@@ -71,13 +101,13 @@ export class BrewFilterComponent implements OnInit {
     const preparationTools: { name: string, tool: PreparationTool }[] = [];
     for (const uuid of this.filter.method_of_preparation) {
 
-      const preparation:Preparation = this.uiPreparationStorage.getByUUID(uuid);
+      const preparation: Preparation = this.uiPreparationStorage.getByUUID(uuid);
       if (preparation.tools.length > 0) {
         for (const tool of preparation.tools) {
           preparationTools.push({
             name:preparation.name,
             tool: tool
-          })
+          });
         }
 
       }
