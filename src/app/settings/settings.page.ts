@@ -739,6 +739,9 @@ export class SettingsPage implements OnInit {
               }
             }
             this.setLanguage();
+
+            this.settings.resetFilter();
+            await this.uiSettingsStorage.saveSettings(this.settings);
             await this.uiAlert.hideLoadingSpinner();
             await this.uiAlert.showMessage(this.translate.instant('IMPORT_SUCCESSFULLY'));
             if (this.settings.matomo_analytics === undefined) {
