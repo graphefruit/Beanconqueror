@@ -12,6 +12,7 @@ import moment from 'moment';
 import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
 import {UIAlert} from '../uiAlert';
 import {UISettingsStorage} from '../uiSettingsStorage';
+import {UIBrewStorage} from '../uiBrewStorage';
 @Injectable({
   providedIn: 'root'
 })
@@ -26,7 +27,8 @@ export class AndroidPlatformService {
               private readonly uiHelper: UIHelper,
               private readonly androidPermissions: AndroidPermissions,
               private readonly uiAlert: UIAlert,
-              private readonly uiSettingsStorage: UISettingsStorage) {
+              private readonly uiSettingsStorage: UISettingsStorage,
+              private readonly uiBrewStorage: UIBrewStorage) {
 
     if (this.platform.is('cordova') && this.platform.is('android')) {
       this.uiHelper.isBeanconqurorAppReady().then(() => {
@@ -52,8 +54,8 @@ export class AndroidPlatformService {
 
     const settings = this.uiSettingsStorage.getSettings();
     const welcomePagedShowed: boolean = settings.welcome_page_showed;
-
-    if (welcomePagedShowed === true) {
+    const brewsAdded: boolean = this.uiBrewStorage.getAllEntries().length > 0;
+    if (welcomePagedShowed === true && brewsAdded ===true) {
       //Just save the dumps after we showed the welcome page, else we ask user for permission and save automatically.
       this.uiLog.log('Android-Platform - Start to export JSON file');
       this.uiStorage.export().then((_data) => {
