@@ -134,8 +134,8 @@ export class GreenBeansPage implements OnInit {
       id: GreenBeanSortComponent.COMPONENT_ID,
       componentProps:
         {bean_filter: beanFilter, segment: this.bean_segment},
-      breakpoints: [0, 0.2, 0.5, 0.75, 1],
-      initialBreakpoint: 0.75,
+      breakpoints: [0, 0.75, 1],
+      initialBreakpoint: 1,
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();

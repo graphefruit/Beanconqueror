@@ -109,8 +109,8 @@ export class PreparationInformationCardComponent implements OnInit {
       id: PreparationPopoverActionsComponent.COMPONENT_ID,
       componentProps: {preparation: this.preparation},
       cssClass: 'popover-actions',
-      breakpoints: [0, 0.2, 0.5, 0.75, 1],
-      initialBreakpoint: 0.5,
+      breakpoints: [0, 0.75, 1],
+      initialBreakpoint: 0.75,
     });
     await popover.present();
     const data = await popover.onWillDismiss();

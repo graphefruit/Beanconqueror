@@ -1,7 +1,7 @@
 <div  *ngIf="layout === 'brew'">
 <ion-card class="long-card brew-layout" tappable (click)="showBrew()" (long-press)="longPressEditBrew($event)">
   <ion-card-content class="no-ion-col-vertical-padding ion-padding-top">
-    <ion-grid class="no-padding-bottom">
+    <ion-grid class="no-padding-bottom" style="padding-top:0px;">
       <ion-row style="height:60px;">
         <ion-col size-xs="3" size-xl="1" size-sm="1" size-md="1" size-lg="1" class="ion-no-padding"  *ngIf="!brew?.getPreparation().hasPhotos()">
           <ion-icon class="full-sized-icon" name="{{preparation.getIcon()}}"></ion-icon>

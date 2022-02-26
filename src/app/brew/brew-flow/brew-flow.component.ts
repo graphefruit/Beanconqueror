@@ -24,12 +24,12 @@ export class BrewFlowComponent implements OnInit, OnDestroy {
   @ViewChild('smartScaleAvgFlowPerSecond', {read: ElementRef}) public smartScaleAvgFlowPerSecondEl: ElementRef;
   public showBloomTimer: boolean = false;
   public showDripTimer: boolean = false;
-  @Input() private flowChart: any;
-  @Input() private flowChartEl: any;
+  @Input() public flowChart: any;
+  @Input() public flowChartEl: any;
   @Input() private brewFlowGraphEvent: EventEmitter<any>;
-  @Input() private brew: Brew;
-  @Input() private brewComponent: BrewBrewingComponent;
-  @Input() private isDetail: boolean = false;
+  @Input() public brew: Brew;
+  @Input() public brewComponent: BrewBrewingComponent;
+  @Input() public isDetail: boolean = false;
   private brewFlowGraphSubscription: Subscription;
   @ViewChild('flowContent',{read: ElementRef}) public flowContent: ElementRef;
   constructor (private readonly modalController: ModalController,

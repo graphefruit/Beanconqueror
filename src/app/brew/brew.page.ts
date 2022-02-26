@@ -163,8 +163,8 @@ export class BrewPage implements OnInit {
       id: BrewFilterComponent.COMPONENT_ID,
       componentProps:
         {brew_filter: brewFilter, segment: this.brew_segment},
-      breakpoints: [0, 0.2, 0.5, 0.75, 1],
-      initialBreakpoint: 0.75,
+      breakpoints: [0,  0.75, 1],
+      initialBreakpoint: 1,
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();

@@ -136,8 +136,8 @@ export class BeansPage implements OnInit {
         {bean_sort: beanSort, segment: this.bean_segment},
       id: BeanSortComponent.COMPONENT_ID,
       cssClass: 'popover-actions',
-      breakpoints: [0, 0.2, 0.5, 0.75, 1],
-      initialBreakpoint: 0.75,
+      breakpoints: [0,  0.75, 1],
+      initialBreakpoint: 1,
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
@@ -170,7 +170,7 @@ export class BeansPage implements OnInit {
       id: BeanFilterComponent.COMPONENT_ID,
       componentProps:
         {bean_filter: beanFilter, segment: this.bean_segment},
-      breakpoints: [0, 0.5, 0.75, 1],
+      breakpoints: [0, 0.75, 1],
       initialBreakpoint: 1,
     });
     await modal.present();
@@ -346,7 +346,19 @@ export class BeansPage implements OnInit {
               return 0;
             }
           );
-
+          break;
+        case BEAN_SORT_AFTER.RATING:
+          filterBeans = filterBeans.sort( (a,b) => {
+              if ( a.rating > b.rating ){
+                return -1;
+              }
+              if ( a.rating < b.rating ){
+                return 1;
+              }
+              return 0;
+            }
+          );
+          break;
       }
 
       if (sort.sort_order === BEAN_SORT_ORDER.DESCENDING) {

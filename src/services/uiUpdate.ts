@@ -338,6 +338,9 @@ export class UIUpdate {
             //Delete old onces
             delete settings_v6.bean_filter;
             delete settings_v6.green_bean_filter;
+
+            // Reset filter, because we got a new sort on beans
+            settings_v6.resetFilter();
             await this.uiSettingsStorage.saveSettings(settings_v6);
             break;
           default:
