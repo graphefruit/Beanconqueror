@@ -151,8 +151,6 @@ export class BeanGeneralInformationComponent implements OnInit {
   }
 
   public chooseDate(_event) {
-
-    this.data.roastingDate = moment(new Date()).subtract('day',1).toISOString();
     _event.target.blur();
     _event.cancelBubble = true;
     _event.preventDefault();
