@@ -16,6 +16,7 @@ import {BEAN_SORT_AFTER} from '../../enums/beans/beanSortAfter';
 import {BEAN_SORT_ORDER} from '../../enums/beans/beanSortOrder';
 import {ListViewBrewParameter} from '../parameter/listViewBrewParameter';
 import {IBeanPageFilter} from '../../interfaces/bean/iBeanPageFilter';
+import {BEAN_ROASTING_TYPE_ENUM} from '../../enums/beans/beanRoastingType';
 
 
 export class Settings implements ISettings {
@@ -93,7 +94,10 @@ export class Settings implements ISettings {
       rating: {
         upper: 5,
         lower: 0
-      }
+      },
+      bean_roasting_type: [],
+      roastingDateStart: '',
+      roastingDateEnd: ''
     } as IBeanPageFilter;
   }
 

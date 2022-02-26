@@ -404,7 +404,9 @@
       "BEAN_DATA_CUPPING_POINTS": "Add the cupping points",
       "BEAN_DATA_PURCHASING_PRICE": "Add the purchasing price",
       "BEAN_DATA_FOB_PRICE": "Add the FOB price",
-      "NOTES": "Add notes about these beans"
+      "NOTES": "Add notes about these beans",
+      "CHOOSE_DATA_ROASTER": "Choose roaster",
+      "CHOOSE_DATA_ROASTING_TYPE": "Choose roast typ"
     }
   },
   "PREPARATION": {

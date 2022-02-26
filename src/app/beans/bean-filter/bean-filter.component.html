@@ -7,6 +7,43 @@
   </ion-item>
 
   <ion-item>
+    <ion-label position="stacked">{{"BEAN_DATA_ROASTING_TYPE" | translate}}</ion-label>
+
+    <ion-select #bean_roasting_type="ngModel" [(ngModel)]="filter.bean_roasting_type" cancelText="{{'CANCEL'| translate }}" name="bean_roasting_type"
+                okText="{{'CHOOSE'| translate }}"
+                placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTING_TYPE' | translate}}"
+                style="padding-left:0px!important;width: 100%; min-width: 100%;"
+                multiple="true">
+      <ion-select-option *ngFor="let key of beanRoastingTypeEnum | keys" value="{{key}}">{{"BEAN_ROASTING_TYPE_" + key | translate}}</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">{{"BEAN_DATA_ROASTER" | translate}}</ion-label>
+    <ion-select #bean_roaster="ngModel" [(ngModel)]="filter.bean_roaster" cancelText="{{'CANCEL'| translate }}" name="bean_roaster"
+                okText="{{'CHOOSE'| translate }}"
+                placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTER' | translate}}"
+                style="padding-left:0px!important;width: 100%; min-width: 100%;"
+                multiple="true">
+      <ion-select-option *ngFor="let key of roasteries" value="{{key}}">{{key}}</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">{{"BEAN_DATA_ROASTING_DATE" | translate}}</ion-label>
+    <ion-grid class="ion-no-padding margin-top-5">
+      <ion-row>
+        <ion-col size="5">
+          <ion-input readonly  choose-date-overlay [(data)]="filter.roastingDateStart"  [transform-date] displayFormat="DD.MM.YYYY" placeholder="dd.mm.yyyy"></ion-input>
+        </ion-col>
+        <ion-col size="2" style="margin: auto 0;text-align:center">
+          /
+        </ion-col>
+        <ion-col size="5">
+          <ion-input readonly  choose-date-overlay [(data)]="filter.roastingDateEnd"  [transform-date] displayFormat="DD.MM.YYYY" placeholder="dd.mm.yyyy"></ion-input>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    </ion-item>
+  <ion-item>
     <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
       style="vertical-align: top;">{{filter.rating.lower}}&nbsp;-&nbsp;{{filter.rating.upper}} </ion-badge>
     </ion-label>

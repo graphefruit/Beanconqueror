@@ -68,7 +68,10 @@ export class TransformDateDirective implements AfterViewInit{
   }
 
   private __generateOutputText(_val) {
-
+    if (_val === undefined) {
+      this.setText('');
+      return;
+    }
     const _date = moment(_val);
 
     if (_date.isValid()) {

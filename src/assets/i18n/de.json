@@ -404,7 +404,9 @@
       "BEAN_DATA_CUPPING_POINTS": "Füge die Cupping Punkte hinzu",
       "BEAN_DATA_PURCHASING_PRICE": "Füge den Einkaufspreis hinzu",
       "BEAN_DATA_FOB_PRICE": "Füge den FOB Preis (USD) hinzu",
-      "NOTES": "Füge Notizen zu deiner Bohne hinzu"
+      "NOTES": "Füge Notizen zu deiner Bohne hinzu",
+      "CHOOSE_DATA_ROASTER": "Rösterei auswählen",
+      "CHOOSE_DATA_ROASTING_TYPE": "Rösttyp auswählen"
     }
   },
   "PREPARATION": {

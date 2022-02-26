@@ -2,27 +2,41 @@
 <ion-card class="long-card brew-layout" tappable (click)="showBrew()" (long-press)="longPressEditBrew($event)">
   <ion-card-content class="no-ion-col-vertical-padding ion-padding-top">
     <ion-grid class="no-padding-bottom">
-      <ion-row class="ion-padding-bottom-half">
-        <ion-col size="10">
-          <ion-title class="ion-no-padding font-size-18"><ion-icon style="top: 3px;position: relative;margin-right:5px;" *ngIf="brew.favourite" name="heart"></ion-icon><strong>{{brew.config.unix_timestamp | formatDate:["DD.MM.YYYY"]}}</strong><span class="ion-padding-start">{{brew.config.unix_timestamp | formatDate:["HH:mm"]}}</span></ion-title>
+      <ion-row style="height:60px;">
+        <ion-col class="ion-no-padding" size="3" *ngIf="!brew?.getPreparation().hasPhotos()">
+          <ion-icon class="full-sized-icon" name="{{preparation.getIcon()}}"></ion-icon>
         </ion-col>
-        <ion-col size="2">
-          <ion-button (click)="showBrewActions($event)" class="button-top-absolute" color="accent" fill="clear">
-            <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>
-          </ion-button>
+        <ion-col class="ion-no-padding" size="3" *ngIf="brew?.getPreparation().hasPhotos()">
+          <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
+            <async-image [filePath]="brew?.getPreparation().attachments[0]" class="bean-slider"></async-image>
+          </div>
+        </ion-col>
+        <ion-col size="9" style="margin: auto 0;">
+          <ion-grid class="ion-no-padding">
+            <ion-row class="ion-padding-bottom-half">
+              <ion-col size="10">
+                <ion-title class="ion-no-padding font-size-18"><ion-icon style="top: 3px;position: relative;margin-right:5px;" *ngIf="brew.favourite" name="heart"></ion-icon><strong>{{brew.config.unix_timestamp | formatDate:["DD.MM.YYYY"]}}</strong><span class="ion-padding-start">{{brew.config.unix_timestamp | formatDate:["HH:mm"]}}</span></ion-title>
+              </ion-col>
+              <ion-col size="2">
+                <ion-button (click)="showBrewActions($event)" class="button-top-absolute" color="accent" fill="clear">
+                  <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>
+                </ion-button>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col [size]="brew?.rating>0 ? (hasCustomRatingRange()? 10:8) :12"><div class="ion-no-padding font-size-20 ion-title brew-title">{{brew.getBean().name}}</div></ion-col>
+              <ion-col *ngIf="brew?.rating > 0 && hasCustomRatingRange() === false" size="4">
+                <ngx-stars #brewStars [color]="'#BFB9B0'" [initialStars]="brew.rating" [maxStars]="5"  [readonly]="true"  [wholeStars]="true" class="ion-float-right brew-stars" >
+                </ngx-stars>
+              </ion-col>
+              <ion-col *ngIf="brew?.rating > 0  && hasCustomRatingRange() === true" size="2" class="ion-text-right">
+                <ion-badge>{{this.uiHelper.toFixedIfNecessary(brew.rating,2)}}</ion-badge>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-col>
+      </ion-row>
 
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col [size]="brew?.rating>0 ? (hasCustomRatingRange()? 10:8) :12"><div class="ion-no-padding font-size-20 ion-title brew-title">{{brew.getBean().name}}</div></ion-col>
-        <ion-col *ngIf="brew?.rating > 0 && hasCustomRatingRange() === false" size="4">
-          <ngx-stars #brewStars [color]="'#BFB9B0'" [initialStars]="brew.rating" [maxStars]="5"  [readonly]="true"  [wholeStars]="true" class="ion-float-right brew-stars" >
-          </ngx-stars>
-        </ion-col>
-        <ion-col *ngIf="brew?.rating > 0  && hasCustomRatingRange() === true" size="2" class="ion-text-right">
-          <ion-badge>{{this.uiHelper.toFixedIfNecessary(brew.rating,2)}}</ion-badge>
-        </ion-col>
-      </ion-row>
       <ion-row>
         <ion-col>
           <hr />

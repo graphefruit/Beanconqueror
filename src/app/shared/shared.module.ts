@@ -156,6 +156,7 @@ import {ListViewCustomParameterComponent} from '../../components/parameter/list-
 import {BrewFlowComponent} from '../brew/brew-flow/brew-flow.component';
 import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
 import {BeanFilterComponent} from '../beans/bean-filter/bean-filter.component';
+import {ChooseDateOverlayDirective} from '../../directive/choose-date.directive';
 
 @NgModule({
     declarations: [
@@ -245,6 +246,7 @@ import {BeanFilterComponent} from '../beans/bean-filter/bean-filter.component';
         RoastingMachineOverlayDirective,
         PreparationOverlayDirective,
         WaterOverlayDirective,
+      ChooseDateOverlayDirective,
         TooltipDirective,
       TransformDateDirective,
         DisableDoubleClickDirective,
@@ -307,6 +309,7 @@ import {BeanFilterComponent} from '../beans/bean-filter/bean-filter.component';
         RoastingMachineOverlayDirective,
         PreparationOverlayDirective,
         WaterOverlayDirective,
+      ChooseDateOverlayDirective,
         TooltipDirective,
       TransformDateDirective,
         DisableDoubleClickDirective,
@@ -415,6 +418,7 @@ import {BeanFilterComponent} from '../beans/bean-filter/bean-filter.component';
         RoastingMachineOverlayDirective,
         PreparationOverlayDirective,
         WaterOverlayDirective,
+      ChooseDateOverlayDirective,
         TooltipDirective,
       TransformDateDirective,
         DisableDoubleClickDirective,

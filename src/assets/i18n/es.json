@@ -404,7 +404,9 @@
       "BEAN_DATA_CUPPING_POINTS": "Agrega el puntaje de cata ",
       "BEAN_DATA_PURCHASING_PRICE": "Add the purchasing price",
       "BEAN_DATA_FOB_PRICE": "Add the FOB price",
-      "NOTES": "Agrega notas"
+      "NOTES": "Agrega notas",
+      "CHOOSE_DATA_ROASTER": "Choose roaster",
+      "CHOOSE_DATA_ROASTING_TYPE": "Choose roast typ"
     }
   },
   "PREPARATION": {

@@ -44,7 +44,7 @@
     "@ionic-native/splash-screen": "^5.33.1",
     "@ionic-native/status-bar": "^5.33.1",
     "@ionic-native/three-dee-touch": "^5.33.1",
-    "@ionic/angular": "^6.0.8",
+    "@ionic/angular": "^6.0.9",
     "@ionic/cli": "^6.18.1",
     "@ionic/storage": "^2.3.1",
     "@ngx-translate/core": "^11.0.1",
@@ -103,7 +103,7 @@
     "cordova-plugin-androidx-adapter": "^1.1.3",
     "cordova-plugin-app-version": "^0.1.12",
     "cordova-plugin-apprate": "^1.7.2",
-    "cordova-plugin-ble-central": "^1.4.1",
+    "cordova-plugin-ble-central": "^1.4.3",
     "cordova-plugin-camera": "^6.0.0",
     "cordova-plugin-customurlscheme-ng": "^10.0.0",
     "cordova-plugin-dialogs": "^2.0.2",
@@ -204,11 +204,6 @@
       },
       "cordova-plugin-file-transfer": {},
       "cordova-plugin-simple-file-chooser": {},
-      "cordova-plugin-ble-central": {
-        "BLUETOOTH_USAGE_DESCRIPTION": "Bluetooth access needed to connect smartscales",
-        "IOS_INIT_ON_LOAD": "false",
-        "ACCESS_BACKGROUND_LOCATION": "false"
-      },
       "cordova-plugin-x-socialsharing": {
         "PHOTO_LIBRARY_ADD_USAGE_DESCRIPTION": "This app requires photo library access to function properly.",
         "PHOTO_LIBRARY_USAGE_DESCRIPTION": "This app requires photo library access to function properly."
@@ -217,6 +212,12 @@
       "cordova-plugin-filepath": {},
       "cordova-plugin-camera": {
         "ANDROIDX_CORE_VERSION": "1.6.+"
+      },
+      "cordova-plugin-ble-central": {
+        "BLUETOOTH_USAGE_DESCRIPTION": "Bluetooth access needed to connect smartscales",
+        "IOS_INIT_ON_LOAD": "false",
+        "ACCESS_BACKGROUND_LOCATION": "false",
+        "BLUETOOTH_RESTORE_STATE": "false"
       }
     },
     "platforms": [

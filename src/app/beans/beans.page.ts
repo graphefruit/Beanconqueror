@@ -19,7 +19,7 @@ import {IntentHandlerService} from '../../services/intentHandler/intent-handler.
 import {UIBeanHelper} from '../../services/uiBeanHelper';
 import {IBeanPageFilter} from '../../interfaces/bean/iBeanPageFilter';
 import {BeanFilterComponent} from './bean-filter/bean-filter.component';
-
+import moment from 'moment';
 import * as _ from 'lodash';
 @Component({
   selector: 'beans',
@@ -170,8 +170,8 @@ export class BeansPage implements OnInit {
       id: BeanFilterComponent.COMPONENT_ID,
       componentProps:
         {bean_filter: beanFilter, segment: this.bean_segment},
-      breakpoints: [0, 0.2, 0.5, 0.75, 1],
-      initialBreakpoint: 0.75,
+      breakpoints: [0, 0.5, 0.75, 1],
+      initialBreakpoint: 1,
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
@@ -231,6 +231,9 @@ export class BeansPage implements OnInit {
     const settings: Settings = this.uiSettingsStorage.getSettings();
     settings.bean_sort.OPEN = this.openBeansSort;
     settings.bean_sort.ARCHIVED = this.archivedBeansSort;
+
+    settings.bean_filter.OPEN = this.openBeansFilter;
+    settings.bean_filter.ARCHIVED = this.archivedBeansFilter;
     await this.uiSettingsStorage.saveSettings(settings);
   }
 
@@ -260,9 +263,42 @@ export class BeansPage implements OnInit {
     if (filter.favourite) {
       filterBeans = filterBeans.filter((e)=>e.favourite === true);
     }
-    if (filter.rating) {
-      filterBeans = filterBeans.filter((e: Bean)=> e.rating>= filter.rating.lower && e.rating <=filter.rating.upper  );
+
+    // Rating filter is always active
+    filterBeans = filterBeans.filter((e: Bean)=> e.rating>= filter.rating.lower && e.rating <=filter.rating.upper  );
+
+
+    if (filter.bean_roasting_type.length > 0) {
+      filterBeans = filterBeans.filter((e: Bean) => filter.bean_roasting_type.includes(e.bean_roasting_type) === true);
     }
+    if (filter.bean_roaster) {
+      filterBeans = filterBeans.filter((e: Bean) => filter.bean_roaster.includes(e.roaster) === true);
+    }
+
+    if (filter.roastingDateStart) {
+      const roastingStart = moment(filter.roastingDateStart).startOf('day').toDate();
+      filterBeans = filterBeans.filter((e: Bean) => {
+        if (e.roastingDate === undefined || e.roastingDate === '') {
+          return false;
+        }
+
+        const beanRoastingDate = moment(e.roastingDate).startOf('day').toDate();
+        return beanRoastingDate >=roastingStart;
+      });
+    }
+
+    if (filter.roastingDateEnd) {
+      const roastingDateEnd = moment(filter.roastingDateEnd).startOf('day').toDate();
+      filterBeans = filterBeans.filter((e: Bean) => {
+        if (e.roastingDate === undefined || e.roastingDate === '') {
+          return false;
+        }
+
+        const beanRoastingDate = moment(e.roastingDate).startOf('day').toDate();
+        return beanRoastingDate <=roastingDateEnd;
+      });
+    }
+
 
     // Skip if something is unkown, because no filter is active then
     if (sort.sort_order !== BEAN_SORT_ORDER.UNKOWN && sort.sort_after !== BEAN_SORT_AFTER.UNKOWN){

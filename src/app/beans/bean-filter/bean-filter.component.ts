@@ -11,6 +11,7 @@ import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
 import {UIBeanStorage} from '../../../services/uiBeanStorage';
 import {UIMillStorage} from '../../../services/uiMillStorage';
 import {IBeanPageFilter} from '../../../interfaces/bean/iBeanPageFilter';
+import {BEAN_ROASTING_TYPE_ENUM} from '../../../enums/beans/beanRoastingType';
 
 @Component({
   selector: 'app-bean-filter',
@@ -28,6 +29,10 @@ export class BeanFilterComponent implements OnInit {
   public mills: Array<Mill> = [];
   public segment: string = 'open';
 
+  public beanRoastingTypeEnum = BEAN_ROASTING_TYPE_ENUM;
+
+  public roasteries: Array<string> = undefined;
+
   constructor(private readonly modalController: ModalController,
               private readonly uiBrewHelper: UIBrewHelper,
               private readonly navParams: NavParams,
@@ -39,6 +44,22 @@ export class BeanFilterComponent implements OnInit {
 
     this.settings = this.uiSettingsStorage.getSettings();
     this.filter = this.settings.GET_BEAN_FILTER();
+    const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
+    this.roasteries = [...new Set(beans.map((e: Bean) => e.roaster))];
+    this.roasteries = this.roasteries.filter((name: string)=> name !== '').sort( (a,b) => {
+        const nameA = a.toUpperCase();
+        const nameB = b.toUpperCase();
+
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+
+        return 0;
+      }
+    );
   }
 
   public ngOnInit() {

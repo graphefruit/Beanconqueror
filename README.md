@@ -146,7 +146,7 @@ To get started with anything you need [Node.js](https://nodejs.org/en/download/)
 https://sonarcloud.io/dashboard?id=graphefruit_Beanconqueror
 
 ## Get Started
-npm install -g cordova@10.0.0
+npm install -g cordova@11.0.0
 npm install -g @ionic/cli
 
 ## Build iOS
@@ -184,5 +184,5 @@ https://stackoverflow.com/questions/60357663/do-apple-app-site-association-files
 
 
 ### Upgrade Ionic if needed:
-`npm install @ionic/angular@6.0.8`
+`npm install @ionic/angular@6.0.9`
 -> Or the actual active version
