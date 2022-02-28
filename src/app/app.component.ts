@@ -240,9 +240,12 @@ export class AppComponent implements AfterViewInit {
         // Before we update and show messages, we need atleast to set one default language.
         this._translate.setDefaultLang('en');
         await this._translate.use('en').toPromise();
-        await this.__checkIOSBackup();
 
-
+        if (this.platform.is('ios')) {
+          await this.__checkIOSBackup();
+        } else if (this.platform.is('android')) {
+          await this.__checkAndroidBackup();
+        }
 
         try {
           await this.uiBeanStorage.initializeStorage();
@@ -310,6 +313,14 @@ export class AppComponent implements AfterViewInit {
   private async __checkCleanup() {
     try {
       await this.cleanupService.cleanupOldBrewData();
+    } catch (ex) {
+
+    }
+  }
+
+  private async __checkAndroidBackup() {
+    try {
+      await this.androidPlatformService.checkAndroidBackup();
     } catch (ex) {
 
     }

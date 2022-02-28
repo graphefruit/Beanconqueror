@@ -139,5 +139,10 @@ export class BrewFlowComponent implements OnInit, OnDestroy {
 
   }
 
+  public dismiss() {
+    this.modalController.dismiss({
+      dismissed: true
+    },undefined,BrewFlowComponent.COMPONENT_ID);
+  }
 
 }

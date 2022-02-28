@@ -1,8 +1,7 @@
 <ion-header translucent>
-  <ion-toolbar>
-  </ion-toolbar>
 </ion-header>
 <ion-content #flowContent>
+
 <ion-card style="height:calc(100% - 20px)">
   <ion-grid class="ion-no-padding" style="padding:5px;">
     <ion-row>
@@ -84,5 +83,8 @@
         <ion-icon class="ion-color-accent" name="beanconqueror-scale-tare" slot="icon-only"></ion-icon>
       </ion-button>
 
+  <ion-button  color="accent" fill="outline"  style="position:absolute;right:10px;top:10px;" (click)="dismiss()"
+              tappable>{{"CLOSE" | translate}}</ion-button>
 </div>
+
 </ion-footer>

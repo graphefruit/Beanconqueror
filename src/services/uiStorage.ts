@@ -34,7 +34,8 @@ export class UIStorage {
   public async get (_key): Promise<any> {
     const promise = new Promise((resolve, reject) => {
       this.storage.ready().then(async() => {
-        const data = this.storage.get(_key);
+        // We didn't wait here, maybe this will fix some issues :O?
+        const data = await this.storage.get(_key);
         resolve(data);
       },(e) => {
        reject(e);
