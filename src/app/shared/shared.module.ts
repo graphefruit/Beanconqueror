@@ -157,6 +157,7 @@ import {BrewFlowComponent} from '../brew/brew-flow/brew-flow.component';
 import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
 import {BeanFilterComponent} from '../beans/bean-filter/bean-filter.component';
 import {ChooseDateOverlayDirective} from '../../directive/choose-date.directive';
+import {BeanPopoverAddComponent} from '../beans/bean-popover-add/bean-popover-add.component';
 
 @NgModule({
     declarations: [
@@ -258,6 +259,7 @@ import {ChooseDateOverlayDirective} from '../../directive/choose-date.directive'
         WaterPopoverActionsComponent,
         BrewPopoverActionsComponent,
         BeanPopoverActionsComponent,
+        BeanPopoverAddComponent,
         BeanArchivePopoverComponent,
         MillPopoverActionsComponent,
         BeanModalSelectComponent,
@@ -430,6 +432,7 @@ import {ChooseDateOverlayDirective} from '../../directive/choose-date.directive'
         BrewPopoverActionsComponent,
         WaterPopoverActionsComponent,
         BeanPopoverActionsComponent,
+        BeanPopoverAddComponent,
         BeanArchivePopoverComponent,
         BeanModalSelectComponent,
         WaterModalSelectComponent,

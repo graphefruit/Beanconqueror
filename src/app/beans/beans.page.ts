@@ -21,6 +21,9 @@ import {IBeanPageFilter} from '../../interfaces/bean/iBeanPageFilter';
 import {BeanFilterComponent} from './bean-filter/bean-filter.component';
 import moment from 'moment';
 import * as _ from 'lodash';
+import BEAN_TRACKING from '../../data/tracking/beanTracking';
+import {BeanPopoverAddComponent} from './bean-popover-add/bean-popover-add.component';
+import {BEAN_POPOVER_ADD_ACTION} from '../../enums/beans/beanPopoverAddAction';
 @Component({
   selector: 'beans',
   templateUrl: './beans.page.html',
@@ -70,7 +73,8 @@ export class BeansPage implements OnInit {
               private readonly qrScannerService: QrScannerService,
               private readonly intenthandler: IntentHandlerService,
               private readonly uiBeanHelper: UIBeanHelper,
-              private readonly platform: Platform) {
+              private readonly platform: Platform,
+              private readonly modalController: ModalController) {
 
 
   }
@@ -408,27 +412,46 @@ export class BeansPage implements OnInit {
 
 
   public async beanPopover() {
-    const actionSheet = await this.actionSheetController.create({
-      buttons: [{
-        text: this.translate.instant('ADD_BEAN'),
-        role: 'add',
-        icon: 'add-circle-outline',
-        handler: async () => {
-         this.add();
-        }
-      }, {
-        text: this.translate.instant('SCAN_BEAN'),
-        role: 'scan',
-        icon: 'qr-code-outline',
-        handler: async () => {
-          await this.scan();
 
+      this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.POPOVER_ACTIONS);
+      const popover = await this.modalController.create({
+        component: BeanPopoverAddComponent,
+        componentProps: {},
+        id:BeanPopoverAddComponent.COMPONENT_ID,
+        cssClass: 'popover-actions',
+        breakpoints: [0, 0.25, 0.5],
+        initialBreakpoint: 0.25,
+      });
+      await popover.present();
+      const data = await popover.onWillDismiss();
+      if (data.role !== undefined) {
+        switch (data.role as BEAN_POPOVER_ADD_ACTION) {
+          case BEAN_POPOVER_ADD_ACTION.ADD:
+            await this.add();
+            break;
+          case BEAN_POPOVER_ADD_ACTION.SCAN:
+            await this.scanBean();
+            break;
         }
-      }]
-    });
-    await actionSheet.present();
 
-    const { role } = await actionSheet.onDidDismiss();
+      }
+
+
+  }
+
+  public async scanBean() {
+
+    if (this.platform.is('cordova')) {
+      await this.qrScannerService.scan().then(async (scannedCode) => {
+        await this.intenthandler.handleQRCodeLink(scannedCode);
+      },() => {});
+    } else {
+      // Test sample for development
+      await this.intenthandler.handleQRCodeLink('https://beanconqueror.com/?qr=f3244c61-da13-46d3-af69-f37a44976530');
+    }
+    this.loadBeans();
+    return;
+
   }
 
   public async longPressAdd(event) {

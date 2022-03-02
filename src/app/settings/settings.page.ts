@@ -595,6 +595,7 @@ export class SettingsPage implements OnInit {
       this.__reinitializeStorages().then(async () => {
         this.uiAnalytics.disableTracking();
         this.__initializeSettings();
+        this.settings.resetFilter();
         this.setLanguage();
         await this.uiAlert.showMessage(this.translate.instant('IMPORT_SUCCESSFULLY'));
         if (this.settings.matomo_analytics === undefined) {

@@ -1,5 +1,5 @@
 /** Core */
-import {Injectable} from '@angular/core';
+import {Inject, Injectable, Injector} from '@angular/core';
 
 import {Brew} from '../classes/brew/brew';
 import {UIBrewStorage} from './uiBrewStorage';
@@ -8,7 +8,7 @@ import {Bean} from '../classes/bean/bean';
 import BEAN_TRACKING from '../data/tracking/beanTracking';
 import {BeansAddComponent} from '../app/beans/beans-add/beans-add.component';
 import {UIAnalytics} from './uiAnalytics';
-import {ModalController} from '@ionic/angular';
+import {ModalController, Platform} from '@ionic/angular';
 import {BeanArchivePopoverComponent} from '../app/beans/bean-archive-popover/bean-archive-popover.component';
 import {BeansEditComponent} from '../app/beans/beans-edit/beans-edit.component';
 import {BeansDetailComponent} from '../app/beans/beans-detail/beans-detail.component';
@@ -18,6 +18,8 @@ import {BeanMapper} from '../mapper/bean/beanMapper';
 import {UIAlert} from './uiAlert';
 import {UIToast} from './uiToast';
 import QR_TRACKING from '../data/tracking/qrTracking';
+
+
 
 
 /**
@@ -151,6 +153,9 @@ export class UIBeanHelper {
     await modal.present();
     await modal.onWillDismiss();
   }
+
+
+
 
   public async addRoastedBean(_greenBean: GreenBean) {
     const modal = await this.modalController.create({component:BeansAddComponent,
