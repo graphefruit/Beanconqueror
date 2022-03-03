@@ -242,6 +242,9 @@
             <pre>{{data.note}}</pre>
           </ion-label>
         </ion-item>
+        <div *ngIf="data?.attachments?.length > 0">
+          <photo-view [(data)]="data"></photo-view>
+        </div>
       </ion-card>
     </div>
     <div *ngSwitchCase="'sortinformation'">

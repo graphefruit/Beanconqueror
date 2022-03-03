@@ -158,6 +158,7 @@ import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
 import {BeanFilterComponent} from '../beans/bean-filter/bean-filter.component';
 import {ChooseDateOverlayDirective} from '../../directive/choose-date.directive';
 import {BeanPopoverAddComponent} from '../beans/bean-popover-add/bean-popover-add.component';
+import {PhotoViewComponent} from '../../components/photo-view/photo-view.component';
 
 @NgModule({
     declarations: [
@@ -274,6 +275,7 @@ import {BeanPopoverAddComponent} from '../beans/bean-popover-add/bean-popover-ad
         ManageCustomParameterComponent,
         BrewTimerComponent,
         PhotoAddComponent,
+        PhotoViewComponent,
         BeanRoastInformationComponent,
         BeanGeneralInformationComponent,
         BeanSortInformationComponent,
@@ -447,6 +449,7 @@ import {BeanPopoverAddComponent} from '../beans/bean-popover-add/bean-popover-ad
         ManageCustomParameterComponent,
         BrewTimerComponent,
         PhotoAddComponent,
+        PhotoViewComponent,
         BeanRoastInformationComponent,
         BeanGeneralInformationComponent,
         BeanSortInformationComponent,

@@ -425,6 +425,16 @@
       <pre>{{data.note}}</pre>
     </ion-label>
   </ion-item>
+
+  <div *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.attachments,
+                  data.getPreparation().manage_parameters.attachments,
+                  data.getPreparation().use_custom_parameters) && data?.attachments?.length>0"
+
+            [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.after.attachments,
+                  data.getPreparation().brew_order.after.attachments,
+                  data.getPreparation().use_custom_parameters)">
+    <photo-view [(data)]="data"></photo-view>
+  </div>
     <div class="last-item"></div>
   </ion-card>
   <ion-card  *ngIf="showCupping()" class="ion-margin-horizontal popover" style="display:flex; flex-direction: column;">
