@@ -126,7 +126,7 @@
                       brew.getPreparation().visible_list_view_parameters.coffee_first_drip_time,
                       brew.getPreparation().use_custom_parameters)">
           <ion-label class="card-headline">{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}</ion-label><br/>
-          <ion-text>{{brew?.coffee_blooming_time}}</ion-text>
+          <ion-text>{{brew?.coffee_first_drip_time}}</ion-text>
         </ion-col>
         <ion-col size="6" *ngIf="brew?.water !== '' && uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.water,
                       brew.getPreparation().visible_list_view_parameters.water,
