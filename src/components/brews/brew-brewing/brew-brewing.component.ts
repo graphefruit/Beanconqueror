@@ -550,24 +550,28 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               },
               suggestedMin: suggestedMinFlow,
               suggestedMax: suggestedMaxFlow,
-            },
-            y2: {
-              type: 'linear',
-              display: true,
-              position: 'right',
-              // grid line settings
-              grid: {
-                drawOnChartArea: false, // only want the grid lines for one axis to show up
-              },
-              // More then 12 bar should be strange.
-              suggestedMin: 0,
-              suggestedMax: 12,
             }
           },
           interaction: {
             intersect: false
           }
         };
+
+        if (pressureEnabled) {
+          chartOptions.scales['y2'] =  {
+            type: 'linear',
+            display: true,
+            position: 'right',
+            // grid line settings
+            grid: {
+              drawOnChartArea: false, // only want the grid lines for one axis to show up
+            },
+            // More then 12 bar should be strange.
+            suggestedMin: 0,
+            suggestedMax: 12,
+          };
+
+        }
 
         this.flowProfileChartEl = new Chart(this.flowProfileChart.nativeElement, {
           type: 'line',
