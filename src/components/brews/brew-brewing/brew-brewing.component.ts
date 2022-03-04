@@ -220,6 +220,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               case SCALE_TIMER_COMMAND.STOP:
                 this.timer.pauseTimer();
                 break;
+              case SCALE_TIMER_COMMAND.RESET:
+                this.timer.reset();
+                break;
             }
           } else {
             if (this.timer.isTimerRunning() === true) {
