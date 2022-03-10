@@ -368,6 +368,13 @@ export class AcaiaScale {
           this.callback(EventType.WEIGHT, this.weight);
           this.logger.debug('weight: ' + msg.weight + ' ' + Date.now());
         } else if (msg.msgType === ScaleMessageType.TARE_START_STOP_RESET) {
+          if (msg.button === "unknown") {
+            if (this.timer_running) {
+              msg.button = Button.STOP;
+            } else if (this.paused_time > 0) {
+              msg.button = Button.RESET;
+            }
+          }
           switch (msg.button) {
             case Button.TARE:
               this.weight = 0;
