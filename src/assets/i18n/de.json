@@ -1081,7 +1081,7 @@
   "TOAST_BEAN_FAVOURITE_ADDED":"Favorit hinzugefügt",
   "TOAST_BEAN_FAVOURITE_REMOVED":"Favorit entfernt",
   "QR_CODE_SCANNER_INFORMATION_TITLE": "QR Code",
-  "QR_CODE_SCANNER_INFORMATION_DESCRIPTION": "",
+  "QR_CODE_SCANNER_INFORMATION_DESCRIPTION": "Alle Informationen der eingescannten Bohnensorten stammen direkt von der jeweiligen Rösterei. <br/> Falls Sie Fehlerhafte oder falsche Informationen finden melden Sie diese bitte über e-mail an: info@beanconqueror.com.",
   "DONT_SHOW_AGAIN": "Nicht erneut zeigen",
   "ARCHIVED_TOOLS": "Archivierte Tools",
   "UNARCHIVE": "Wiederherstellen"
