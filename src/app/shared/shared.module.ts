@@ -159,6 +159,7 @@ import {BeanFilterComponent} from '../beans/bean-filter/bean-filter.component';
 import {ChooseDateOverlayDirective} from '../../directive/choose-date.directive';
 import {BeanPopoverAddComponent} from '../beans/bean-popover-add/bean-popover-add.component';
 import {PhotoViewComponent} from '../../components/photo-view/photo-view.component';
+import {QrCodeScannerPopoverComponent} from '../../popover/qr-code-scanner-popover/qr-code-scanner-popover.component';
 
 @NgModule({
     declarations: [
@@ -190,6 +191,7 @@ import {PhotoViewComponent} from '../../components/photo-view/photo-view.compone
         FilesystemErrorPopoverComponent,
         WelcomePopoverComponent,
         AnalyticsPopoverComponent,
+        QrCodeScannerPopoverComponent,
         UpdatePopoverComponent,
         DatetimePopoverComponent,
         CreditsComponent,
@@ -366,6 +368,7 @@ import {PhotoViewComponent} from '../../components/photo-view/photo-view.compone
         FilesystemErrorPopoverComponent,
         WelcomePopoverComponent,
         AnalyticsPopoverComponent,
+        QrCodeScannerPopoverComponent,
         UpdatePopoverComponent,
         DatetimePopoverComponent,
         CreditsComponent,

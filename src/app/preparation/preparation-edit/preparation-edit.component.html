@@ -49,7 +49,13 @@
           </ion-button>
         </ion-item>
         <div class="ion-padding-horizontal">
-          <ion-chip (click)="editTool(tool)" *ngFor="let tool of data.tools;let i=index;">{{tool.name}} <ion-icon name="beanconqueror-edit"></ion-icon></ion-chip>
+          <ion-chip (click)="editTool(tool)" *ngFor="let tool of getActiveTools();let i=index;">{{tool.name}} <ion-icon name="beanconqueror-edit"></ion-icon></ion-chip>
+        </div>
+        <ion-item lines="none" *ngIf="getArchivedTools().length > 0">
+          <ion-label>{{"ARCHIVED_TOOLS" | translate}}</ion-label>
+        </ion-item>
+        <div *ngIf="getArchivedTools().length > 0" class="ion-padding-horizontal">
+          <ion-chip (click)="editTool(tool)" *ngFor="let tool of getArchivedTools();let i=index;">{{tool.name}} <ion-icon name="beanconqueror-edit"></ion-icon></ion-chip>
         </div>
         <ion-item>
           <ion-label position="stacked">{{"ARCHIVED"|translate}}?</ion-label>

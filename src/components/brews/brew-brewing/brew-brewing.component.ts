@@ -45,6 +45,7 @@ import {BrewFlow, IBrewWaterFlow, IBrewWeightFlow} from '../../../classes/brew/b
 import {UIFileHelper} from '../../../services/uiFileHelper';
 import {BrewFlowComponent} from '../../../app/brew/brew-flow/brew-flow.component';
 import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
+import {PreparationTool} from '../../../classes/preparation/preparationTool';
 
 
 declare var cordova;
@@ -126,6 +127,23 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     private readonly uiFileHelper: UIFileHelper,
     private readonly screenOrientation: ScreenOrientation) {
 
+  }
+
+  public getActivePreparationTools() {
+    return this.data.getPreparation().tools.filter((e)=>e.archived === false);
+  }
+
+  public getChoosenPreparationToolsWhichAreArchived() {
+    const toolIds = this.data.method_of_preparation_tools;
+    const tools: Array<PreparationTool> = [];
+    for (const id of toolIds) {
+
+      const tool = this.data.getPreparation().tools.find((e) => e.config.uuid === id);
+      if (tool.archived === true){
+        tools.push(tool);
+      }
+    }
+    return tools;
   }
 
   public async ngAfterViewInit() {
@@ -1401,7 +1419,15 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.data.brew_beverage_quantity_type = brew.brew_beverage_quantity_type;
     }
     if (checkData.default_last_coffee_parameters.method_of_preparation_tool || _template === true) {
-      this.data.method_of_preparation_tools = brew.method_of_preparation_tools;
+      const repeatTools = brew.method_of_preparation_tools;
+      this.data.method_of_preparation_tools = [];
+      for (const id of repeatTools) {
+          const tool = this.data.getPreparation().tools.find((e) => e.config.uuid === id);
+          if (tool.archived === false){
+            this.data.method_of_preparation_tools.push(tool.config.uuid);
+          }
+
+      }
     }
     if (checkData.default_last_coffee_parameters.water || _template === true) {
       this.data.water = brew.water;

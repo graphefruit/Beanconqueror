@@ -27,6 +27,7 @@ export class Settings implements ISettings {
 
 
   public matomo_analytics: boolean;
+  public qr_scanner_information: boolean;
   public manage_parameters: ManageBrewParameter;
   public default_last_coffee_parameters: DefaultBrewParameter;
   public visible_list_view_parameters: ListViewBrewParameter;
@@ -130,6 +131,8 @@ export class Settings implements ISettings {
     this.brew_order = new OrderBrewParameter();
     this.language = '';
     this.matomo_analytics = undefined;
+
+    this.qr_scanner_information = false;
 
     this.track_brew_coordinates = false;
     this.fast_brew_repeat = false;

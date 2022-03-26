@@ -22,6 +22,7 @@ export interface ISettings {
   visible_list_view_parameters: IBrewParameter;
   brew_order: IOrderBrewParameter;
   matomo_analytics: boolean;
+  qr_scanner_information: boolean;
   track_brew_coordinates: boolean;
   fast_brew_repeat: boolean;
   image_quality: number;

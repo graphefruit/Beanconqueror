@@ -190,7 +190,7 @@
   "DELETE_MILL_QUESTION": "Mühle? Alle zugehörigen Brühungen werden hierdurch abgeändert.",
   "DELETE_GREEN_BEAN_QUESTION": "Bohne löschen? Alle zugehörigen Brühungen sowie gerösteten Bohnen werden mit entfernt",
   "DELETE_PREPARATION_METHOD_QUESTION": "Brühmethode löschen? Alle zugehörigen Brühungen werden mit entfernt.",
-  "DELETE_PREPARATION_TOOL_QUESTION": "Zubereitungstool löschen? Alle zugehörigen Brühungen mit diesem Tool werden mit entfernt.",
+  "DELETE_PREPARATION_TOOL_QUESTION": "Zubereitungstool löschen? Alle zugehörigen Brühungen mit diesem Tool werden überarbeited.",
   "APP_COULD_NOT_STARTED_CORRECTLY_BECAUSE_MISSING_FILESYSTEM": "Die App konnte nicht korrekt gestartet werden, da das Dateisystem nicht verfügbar ist",
   "CARE": "Achtung",
   "ERROR_OCCURED": "Fehler aufgetreten",
@@ -1079,5 +1079,10 @@
   "IGNORE_ANOMALY_VALUES": "Ignoriere Anomaliewerte",
   "IGNORE_ANOMALY_VALUES_TOOLTIP": "Beispiel: Schwenken einer Tasse auf der Waage",
   "TOAST_BEAN_FAVOURITE_ADDED":"Favorit hinzugefügt",
-  "TOAST_BEAN_FAVOURITE_REMOVED":"Favorit entfernt"
+  "TOAST_BEAN_FAVOURITE_REMOVED":"Favorit entfernt",
+  "QR_CODE_SCANNER_INFORMATION_TITLE": "QR Code",
+  "QR_CODE_SCANNER_INFORMATION_DESCRIPTION": "",
+  "DONT_SHOW_AGAIN": "Nicht erneut zeigen",
+  "ARCHIVED_TOOLS": "Archivierte Tools",
+  "UNARCHIVE": "Wiederherstellen"
 }

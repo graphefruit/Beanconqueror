@@ -12,11 +12,19 @@
         </ion-input>
       </ion-item>
   <ion-row>
-    <ion-col>
+    <ion-col size="12">
       <ion-button (click)="deleteTool()" color="danger" expand="block" fill="outline"
                   tappable>{{"DELETE" | translate}}</ion-button>
     </ion-col>
-    <ion-col>
+    <ion-col size="12" *ngIf="data.archived === false">
+      <ion-button (click)="archiveTool()" color="info" expand="block" fill="outline"
+                  tappable>{{"ARCHIVE" | translate}}</ion-button>
+    </ion-col>
+    <ion-col size="12" *ngIf="data.archived === true">
+      <ion-button (click)="archiveTool()" color="info" expand="block" fill="outline"
+                  tappable>{{"UNARCHIVE" | translate}}</ion-button>
+    </ion-col>
+    <ion-col size="12">
       <ion-button (click)="editTool()" color="accent" expand="block" tappable
                   type="submit">{{"SAVE" | translate}}</ion-button>
     </ion-col>

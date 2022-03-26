@@ -190,7 +190,7 @@
   "DELETE_GREEN_BEAN_QUESTION": "Delete green bean? All associated roasted beans, as well as brews will be deleted!",
   "DELETE_MILL_QUESTION": "Delete grinder? All associated brews will be deleted as well!",
   "DELETE_PREPARATION_METHOD_QUESTION": "Delete preparation method? All associated brews will be deleted as well!",
-  "DELETE_PREPARATION_TOOL_QUESTION": "Delete preparation tool? All associated brews with this tool will also be deleted.",
+  "DELETE_PREPARATION_TOOL_QUESTION": "Delete preparation tool? All associated brews with this tool will updated.",
   "APP_COULD_NOT_STARTED_CORRECTLY_BECAUSE_MISSING_FILESYSTEM": "App could not start correctly because of missing file system",
   "CARE": "Care",
   "ERROR_OCCURED": "An error occurred",
@@ -1078,5 +1078,10 @@
   "IGNORE_ANOMALY_VALUES": "Ignore anomaly values",
   "IGNORE_ANOMALY_VALUES_TOOLTIP": "For example: Swirl a cup on the scale",
   "TOAST_BEAN_FAVOURITE_ADDED":"Favourite added",
-  "TOAST_BEAN_FAVOURITE_REMOVED":"Favourite removed"
+  "TOAST_BEAN_FAVOURITE_REMOVED":"Favourite removed",
+  "QR_CODE_SCANNER_INFORMATION_TITLE": "QR Code",
+  "QR_CODE_SCANNER_INFORMATION_DESCRIPTION": "",
+  "DONT_SHOW_AGAIN": "Don't show again",
+  "ARCHIVED_TOOLS": "Archived tools",
+  "UNARCHIVE": "Restore"
 }

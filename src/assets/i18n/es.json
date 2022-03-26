@@ -190,7 +190,7 @@
   "DELETE_GREEN_BEAN_QUESTION": "¿Eliminar granos verdes? ¡Se eliminarán todos los granos tostados asociados, así como las preparaciones!",
   "DELETE_MILL_QUESTION": "Borrar molino? Todas las preparaciones asociadas se modificarán.",
   "DELETE_PREPARATION_METHOD_QUESTION": "Borrar métodos? Todas las preparaciones asociadas también se eliminarán.",
-  "DELETE_PREPARATION_TOOL_QUESTION": "Borrar herramientas de preparación? Todas las preparaciones asociadas también se eliminarán.",
+  "DELETE_PREPARATION_TOOL_QUESTION": "Borrar herramientas de preparación? Todos los preparativos asociados también se actualizarán.",
   "APP_COULD_NOT_STARTED_CORRECTLY_BECAUSE_MISSING_FILESYSTEM": "La aplicación no se pudo iniciar correctamente debido a la falta de un sistema de archivos",
   "CARE": "Alerta",
   "ERROR_OCCURED": "Se ha producido un error",
@@ -1078,5 +1078,10 @@
   "IGNORE_ANOMALY_VALUES": "Ignore anomaly values",
   "IGNORE_ANOMALY_VALUES_TOOLTIP": "For example: Swirl a cup on the scale",
   "TOAST_BEAN_FAVOURITE_ADDED": "Agregar favorito",
-  "TOAST_BEAN_FAVOURITE_REMOVED": "Eliminar favorito"
+  "TOAST_BEAN_FAVOURITE_REMOVED": "Eliminar favorito",
+  "QR_CODE_SCANNER_INFORMATION_TITLE": "",
+  "QR_CODE_SCANNER_INFORMATION_DESCRIPTION": "",
+  "DONT_SHOW_AGAIN": "Don't show again",
+  "ARCHIVED_TOOLS": "Archived tools",
+  "UNARCHIVE": "Restore"
 }

@@ -219,7 +219,17 @@ export class UIBrewHelper {
     repeatBrew.rating = _brewToCopy.rating;
     repeatBrew.note = _brewToCopy.note;
     repeatBrew.coordinates = _brewToCopy.coordinates;
-    repeatBrew.method_of_preparation_tools = _brewToCopy.method_of_preparation_tools;
+
+
+    repeatBrew.method_of_preparation_tools = [];
+    const repeatTools = _brewToCopy.method_of_preparation_tools;
+    for (const id of repeatTools) {
+      const tool = _brewToCopy.getPreparation().tools.find((e) => e.config.uuid === id);
+      if (tool.archived === false){
+        repeatBrew.method_of_preparation_tools.push(tool.config.uuid);
+      }
+
+    }
     repeatBrew.tds = _brewToCopy.tds;
     repeatBrew.brew_beverage_quantity = _brewToCopy.brew_beverage_quantity;
     repeatBrew.brew_beverage_quantity_type = _brewToCopy.brew_beverage_quantity_type;

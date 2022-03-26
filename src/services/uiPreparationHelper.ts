@@ -76,8 +76,8 @@ export class UIPreparationHelper {
       componentProps: {preparation: _preparation, preparationTool:_preparationTool },
       id: PreparationEditToolComponent.COMPONENT_ID,
       cssClass: 'popover-actions',
-      breakpoints: [0, 0.35, 0.5, 0.75, 1],
-      initialBreakpoint: 0.35,
+      breakpoints: [0, 0.5, 0.75, 1],
+      initialBreakpoint: 0.75,
 
     });
     await modal.present();

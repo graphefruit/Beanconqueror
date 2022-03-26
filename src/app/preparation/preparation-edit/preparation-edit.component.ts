@@ -10,7 +10,6 @@ import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationSty
 import {PreparationTool} from '../../../classes/preparation/preparationTool';
 import {UIAlert} from '../../../services/uiAlert';
 import {UIPreparationHelper} from '../../../services/uiPreparationHelper';
-import {Brew} from '../../../classes/brew/brew';
 import {UIBrewStorage} from '../../../services/uiBrewStorage';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
@@ -45,6 +44,13 @@ export class PreparationEditComponent implements OnInit {
       this.data.initializeByObject(this.preparation);
     }
 
+  }
+
+  public getActiveTools() {
+    return this.data.tools.filter((e)=>e.archived === false);
+  }
+  public getArchivedTools() {
+    return this.data.tools.filter((e)=>e.archived === true);
   }
   public typeChanged(): void {
     this.data.style_type = this.data.getPresetStyleType();
