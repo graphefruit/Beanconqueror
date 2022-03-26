@@ -1083,5 +1083,7 @@
   "QR_CODE_SCANNER_INFORMATION_DESCRIPTION": "All scanned bean information are directly from the roastery. <br/> If you find wrong or missleading information please inform me by e-mail: info@beanconqueror.com.",
   "DONT_SHOW_AGAIN": "Don't show again",
   "ARCHIVED_TOOLS": "Archived tools",
-  "UNARCHIVE": "Restore"
+  "UNARCHIVE": "Restore",
+  "PAGE_SETTINGS_HIDE_ARCHIVED_BREWS_DASHBOARD": "Show archived brews on dashboard",
+  "PAGE_SETTINGS_HIDE_ARCHIVED_BREWS_DASHBOARD_DESCRIPTION": "Should archived brews be displayed on home page?"
 }

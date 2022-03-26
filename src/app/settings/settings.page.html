@@ -193,6 +193,11 @@
                           [(ngModel)]="settings.show_archived_brews"></ion-checkbox>
           </ion-item>
           <ion-item>
+            <ion-label class="ion-margin-end"><h2>{{"PAGE_SETTINGS_HIDE_ARCHIVED_BREWS_DASHBOARD" | translate}}</h2>
+              <p>{{"PAGE_SETTINGS_HIDE_ARCHIVED_BREWS_DASHBOARD_DESCRIPTION" | translate}}</p></ion-label>
+            <ion-checkbox  (ngModelChange)="saveSettings();" [(ngModel)]="settings.show_archived_brews_on_dashboard"></ion-checkbox>
+          </ion-item>
+          <ion-item>
             <ion-label>{{"PAGE_SETTINGS_SHOW_ARCHIVED_PREPARATIONS" | translate}}</ion-label>
             <ion-checkbox (ngModelChange)="saveSettings();"
                           [(ngModel)]="settings.show_archived_preparations"></ion-checkbox>

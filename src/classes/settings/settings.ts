@@ -46,6 +46,7 @@ export class Settings implements ISettings {
   public show_archived_preparations: boolean;
   public show_archived_green_beans: boolean;
   public show_archived_waters: boolean;
+  public show_archived_brews_on_dashboard: boolean;
 
   public welcome_page_showed: boolean;
   public track_caffeine_consumption: boolean;
@@ -142,6 +143,7 @@ export class Settings implements ISettings {
     this.show_archived_preparations = true;
     this.show_archived_green_beans = true;
     this.show_archived_waters = true;
+    this.show_archived_brews_on_dashboard = true;
 
     this.track_caffeine_consumption = false;
 
