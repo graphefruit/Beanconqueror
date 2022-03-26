@@ -180,11 +180,20 @@ export class BeanInformationComponent implements OnInit {
     await this.uiImage.viewPhotos(this.bean);
   }
   public async beansConsumed() {
-    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ARCHIVE);
+
+    await this.uiBeanHelper.archiveBeanWithRatingQuestion(this.bean);
+
+    await this.resetSettings();
+
+    /* this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ARCHIVE);
     this.bean.finished = true;
     await this.uiBeanStorage.update(this.bean);
     this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');
-    await this.resetSettings();
+    */
+
+
+
+
   }
 
   public async toggleFavourite() {
