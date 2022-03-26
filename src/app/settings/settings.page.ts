@@ -731,12 +731,12 @@ export class SettingsPage implements OnInit {
               // We got an update and we got no mills yet, therefore we add a Standard mill.
               const data: Mill = new Mill();
               data.name = 'Standard';
-              this.uiMillStorage.add(data);
+              await this.uiMillStorage.add(data);
 
               const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
               for (const brew of brews) {
                 brew.mill = data.config.uuid;
-                this.uiBrewStorage.update(brew);
+                await this.uiBrewStorage.update(brew);
               }
             }
             this.setLanguage();
