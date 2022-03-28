@@ -2,6 +2,9 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ModalController} from '@ionic/angular';
 import {UIBeanStorage} from '../../../services/uiBeanStorage';
 import {Bean} from '../../../classes/bean/bean';
+import {Brew} from '../../../classes/brew/brew';
+import {UIBeanHelper} from '../../../services/uiBeanHelper';
+import {BEAN_ROASTING_TYPE_ENUM} from '../../../enums/beans/beanRoastingType';
 
 @Component({
   selector: 'bean-modal-select',
@@ -17,9 +20,11 @@ export class BeanModalSelectComponent implements OnInit {
   @Input() public multiple: boolean;
   @Input() public showFinished: boolean;
   @Input() private selectedValues: Array<string>;
+  public beanRoastingTypeEnum = BEAN_ROASTING_TYPE_ENUM;
 
   constructor(private readonly modalController: ModalController,
-              private readonly uiBeanStorage: UIBeanStorage) {
+              private readonly uiBeanStorage: UIBeanStorage,
+              private readonly uiBeanHelper: UIBeanHelper) {
 
 
     this.objs = this.uiBeanStorage.getAllEntries();
@@ -37,6 +42,19 @@ export class BeanModalSelectComponent implements OnInit {
         this.radioSelection = this.selectedValues[0];
       }
     }
+  }
+
+  public getUsedWeightCount(_bean: Bean): number {
+    let usedWeightCount: number = 0;
+    const relatedBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(_bean.config.uuid);
+    for (const brew of relatedBrews) {
+      if (brew.bean_weight_in > 0) {
+        usedWeightCount += brew.bean_weight_in;
+      } else {
+        usedWeightCount += brew.grind_weight;
+      }
+    }
+    return usedWeightCount;
   }
 
   public ngOnInit() {
