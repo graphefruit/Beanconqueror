@@ -1086,5 +1086,7 @@
   "ARCHIVED_TOOLS": "Archivierte Tools",
   "UNARCHIVE": "Wiederherstellen",
   "PAGE_SETTINGS_HIDE_ARCHIVED_BREWS_DASHBOARD": "Anzeige archivierter Brühungen auf Hauptseite",
-  "PAGE_SETTINGS_HIDE_ARCHIVED_BREWS_DASHBOARD_DESCRIPTION": "Sollen archivierte Brühungen auf der Hauptseite angezeigt werden?"
+  "PAGE_SETTINGS_HIDE_ARCHIVED_BREWS_DASHBOARD_DESCRIPTION": "Sollen archivierte Brühungen auf der Hauptseite angezeigt werden?",
+  "COPY": "Kopie",
+  "TOAST_PREPARATION_METHOD_REPEATED_SUCCESSFULLY": "Zubereitungsmethodik erfolgreich kopiert"
 }

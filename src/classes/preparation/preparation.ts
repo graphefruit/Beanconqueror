@@ -201,6 +201,20 @@ export class Preparation implements IPreparation {
     return false;
   }
 
+  public addToolByObject(_tool: PreparationTool): boolean {
+    const nextTool = _tool;
+    if (nextTool.name !== '') {
+      const prepTool: PreparationTool = new PreparationTool();
+      prepTool.name = nextTool.name;
+      prepTool.config.uuid = UIHelper.generateUUID();
+      prepTool.config.unix_timestamp = UIHelper.getUnixTimestamp();
+      prepTool.archived = _tool.archived;
+      this.tools.push(prepTool);
+      return true;
+    }
+    return false;
+  }
+
   public deleteTool(_tool: PreparationTool): boolean {
     const tool: PreparationTool = _tool as PreparationTool;
     for(let i = 0; i < this.tools.length; i++){

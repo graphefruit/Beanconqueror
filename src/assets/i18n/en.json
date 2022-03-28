@@ -1085,5 +1085,7 @@
   "ARCHIVED_TOOLS": "Archived tools",
   "UNARCHIVE": "Restore",
   "PAGE_SETTINGS_HIDE_ARCHIVED_BREWS_DASHBOARD": "Show archived brews on dashboard",
-  "PAGE_SETTINGS_HIDE_ARCHIVED_BREWS_DASHBOARD_DESCRIPTION": "Should archived brews be displayed on home page?"
+  "PAGE_SETTINGS_HIDE_ARCHIVED_BREWS_DASHBOARD_DESCRIPTION": "Should archived brews be displayed on home page?",
+  "COPY": "Copy",
+  "TOAST_PREPARATION_METHOD_REPEATED_SUCCESSFULLY": "Preparation method copied successfully"
 }

@@ -55,11 +55,19 @@ export class UIHelper {
       .unix();
   }
 
+  /**
+   * Clone without any reference
+   * @param _value
+   */
   public cloneData(_value) {
     const clone = cloneDeep(_value);
     return clone;
   }
 
+  /**
+   * Copy (references may exist)
+   * @param _value
+   */
   public copyData(_value: any): any {
     if (_value) {
       if (_value.constructor === Array) {

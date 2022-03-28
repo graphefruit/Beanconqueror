@@ -143,6 +143,9 @@ export class PreparationInformationCardComponent implements OnInit {
       case PREPARATION_ACTION.EDIT:
         await this.editPreparation();
         break;
+      case PREPARATION_ACTION.REPEAT:
+        await this.repeatPreparation();
+        break;
       case PREPARATION_ACTION.DELETE:
 
         try {
@@ -188,6 +191,12 @@ export class PreparationInformationCardComponent implements OnInit {
 
   public async editPreparation() {
     await this.uiPreparationHelper.editPreparation(this.preparation);
+  }
+
+  public async repeatPreparation() {
+    this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.REPEAT);
+    await this.uiPreparationHelper.repeatPreparation(this.preparation);
+    this.uiToast.showInfoToast('TOAST_PREPARATION_METHOD_REPEATED_SUCCESSFULLY');
   }
 
   public async detail() {

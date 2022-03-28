@@ -41,7 +41,7 @@ export class PreparationDetailComponent implements OnInit {
   }
 
   public getUsedTimes(_tool: PreparationTool) {
-      return this.brews.filter((e) => e.method_of_preparation_tools.includes(_tool.config.uuid)).length;
+      return this.brews.filter((e) => e.method_of_preparation === this.data.config.uuid && e.method_of_preparation_tools.includes(_tool.config.uuid)).length;
   }
 
   public ngOnInit() {}

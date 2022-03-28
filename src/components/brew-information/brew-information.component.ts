@@ -32,7 +32,7 @@ import {UIHealthKit} from '../../services/uiHealthKit';
 })
 export class BrewInformationComponent implements OnInit {
   @Input() public brew: Brew;
-  @Input() public layout:string = 'brew';
+  @Input() public layout: string = 'brew';
 
   @ViewChild('brewStars', {read: NgxStarsComponent, static: false}) public brewStars: NgxStarsComponent;
 
