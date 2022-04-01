@@ -342,6 +342,17 @@ export class UIUpdate {
             // Reset filter, because we got a new sort on beans
             settings_v6.resetFilter();
             await this.uiSettingsStorage.saveSettings(settings_v6);
+
+            const preparations_v6: Array<Preparation> = this.uiPreparationStorage.getAllEntries();
+            for (const prep_v6 of preparations_v6) {
+              for (const tool of prep_v6.tools)
+              {
+                tool.archived = false;
+              }
+              console.log(prep_v6);
+              await this.uiPreparationStorage.update(prep_v6);
+            }
+
             break;
           default:
             break;
@@ -404,7 +415,7 @@ export class UIUpdate {
     await this.__checkUpdateForDataVersion('UPDATE_3',!hasData);
     await this.__checkUpdateForDataVersion('UPDATE_4',!hasData);
     await this.__checkUpdateForDataVersion('UPDATE_5',!hasData);
-    // await this.__checkUpdateForDataVersion('UPDATE_6',!hasData);
+    //await this.__checkUpdateForDataVersion('UPDATE_6',!hasData);
 
   }
 
