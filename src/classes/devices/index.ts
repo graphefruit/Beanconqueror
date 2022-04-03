@@ -2,6 +2,7 @@ import { Platforms } from '@ionic/core';
 import { PeripheralData } from './ble.types';
 import { BluetoothScale } from './bluetoothDevice';
 import DecentScale from './decentScale';
+import FelicitaScale from './felicitaScale';
 import JimmyScale from './jimmyScale';
 import LunarScale from './lunarScale';
 
@@ -14,6 +15,7 @@ export enum ScaleType {
   DECENT = 'DECENT',
   LUNAR = 'LUNAR',
   JIMMY = 'JIMMY',
+  FELICITA = 'FELICITA',
 }
 
 export function makeDevice(type: ScaleType, data: PeripheralData, platforms: Platforms[]): BluetoothScale {
@@ -24,6 +26,8 @@ export function makeDevice(type: ScaleType, data: PeripheralData, platforms: Pla
       return new LunarScale(data, platforms);
     case ScaleType.JIMMY:
       return new JimmyScale(data, platforms);
+    case ScaleType.FELICITA:
+      return new FelicitaScale(data, platforms);
     default:
       return null;
   }

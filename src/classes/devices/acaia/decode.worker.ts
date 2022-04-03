@@ -1,9 +1,9 @@
 /// <reference lib="webworker" />
 
+import { DEBUG } from '../common/constants';
 import {
   WorkerResult,
   DecoderResultType,
-  DEBUG
 } from './common';
 
 import {Decoder} from './decoder';
