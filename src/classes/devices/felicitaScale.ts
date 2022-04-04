@@ -2,7 +2,9 @@ import { Platforms } from '@ionic/core';
 import {PeripheralData} from './ble.types';
 import {BluetoothScale, SCALE_TIMER_COMMAND, Weight} from './bluetoothDevice';
 import { Logger } from './common/logger';
-import { CMD_RESET_TIMER, CMD_START_TIMER, CMD_STOP_TIMER, CMD_TARE, DATA_CHARACTERISTIC, DATA_SERVICE, DEVICE_NAME, MAX_BATTERY_LEVEL, MIN_BATTERY_LEVEL, FELICITA_GRAM_UNIT, CMD_TOGGLE_UNIT, CMD_TOGGLE_PRECISION } from './felicita/constants';
+import { CMD_RESET_TIMER, CMD_START_TIMER, CMD_STOP_TIMER, CMD_TARE,
+  DATA_CHARACTERISTIC, DATA_SERVICE, DEVICE_NAME, MAX_BATTERY_LEVEL, MIN_BATTERY_LEVEL,
+  FELICITA_GRAM_UNIT, CMD_TOGGLE_UNIT, CMD_TOGGLE_PRECISION } from './felicita/constants';
 
 declare var ble;
 
@@ -17,7 +19,7 @@ export default class FelicitaScale extends BluetoothScale {
     super(data, platforms);
     this.batteryLevel = 0;
     this.scaleUnit = FELICITA_GRAM_UNIT;
-    this.logger = new Logger("FelicitaScale");
+    this.logger = new Logger('FelicitaScale');
 
     this.connect();
   }
@@ -55,7 +57,7 @@ export default class FelicitaScale extends BluetoothScale {
 
     await this.attachNotification();
   }
-  
+
   /**
    * Tares the Felicita Scale current weight to 0;
    */
@@ -103,7 +105,7 @@ export default class FelicitaScale extends BluetoothScale {
   }
 
   // Private Methods
-  
+
   /**
    * Writes a @param _bytes payload to Felicita Scale via BLE.
    * @param _bytes the payload to be written.
@@ -115,7 +117,7 @@ export default class FelicitaScale extends BluetoothScale {
         DATA_SERVICE,
         DATA_CHARACTERISTIC,
         new Uint8Array(_bytes).buffer,
-        (e) => { resolve(true); }, 
+        (e) => { resolve(true); },
         (e) => { resolve(false); });
     });
   }
@@ -131,7 +133,7 @@ export default class FelicitaScale extends BluetoothScale {
    * @param felicitaRawStatus The 18 length unsigned integer array retreived from BLE.
    */
   private parseStatusUpdate(felicitaRawStatus: Uint8Array) {
-    
+
     this.logger.log("felicitaRawStatus received is: " + felicitaRawStatus);
     if (this.isValidFelicitaRawStatus(felicitaRawStatus)) {
       let weight = this.getWeightFromFelicitaRawStatus(felicitaRawStatus);
@@ -146,15 +148,15 @@ export default class FelicitaScale extends BluetoothScale {
   }
 
   private async startTimer() {
-    this.write([CMD_START_TIMER])  
+    this.write([CMD_START_TIMER])
   }
 
   private async resetTimer() {
-    this.write([CMD_RESET_TIMER])  
+    this.write([CMD_RESET_TIMER])
   }
 
   private async stopTimer() {
-    this.write([CMD_STOP_TIMER])  
+    this.write([CMD_STOP_TIMER])
   }
 
   /**
@@ -178,7 +180,7 @@ export default class FelicitaScale extends BluetoothScale {
 
   private getWeightFromFelicitaRawStatus(felicitaRawStatus) {
     let weight = felicitaRawStatus.slice(3,9).map((value) => { return value - 48; }).join('');
-    
+
     this.logger.log("Weight is: " + weight);
     return weight;
   }
