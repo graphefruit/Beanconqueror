@@ -184,5 +184,5 @@ https://stackoverflow.com/questions/60357663/do-apple-app-site-association-files
 
 
 ### Upgrade Ionic if needed:
-`npm install @ionic/angular@6.0.14`
+`npm install @ionic/angular@6.0.15`
 -> Or the actual active version
