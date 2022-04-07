@@ -116,7 +116,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     private readonly translate: TranslateService,
     private readonly modalController: ModalController,
     private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly uiBrewHelper: UIBrewHelper,
+    public readonly uiBrewHelper: UIBrewHelper,
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiMillStorage: UIMillStorage,
     private readonly uiBeanStorage: UIBeanStorage,

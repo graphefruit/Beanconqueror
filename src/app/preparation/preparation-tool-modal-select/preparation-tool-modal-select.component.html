@@ -1,0 +1,91 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title *ngIf="multiple">{{"BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}</ion-title>
+    <ion-title *ngIf="!multiple">{{"BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()" class="big-icon-only">
+        <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content *ngIf="data !== null || datas.length > 0">
+
+  <ion-segment [(ngModel)]="preparation_segment">
+    <ion-segment-button value="open">
+      <ion-label>{{"CURRENT" | translate }}
+      </ion-label>
+    </ion-segment-button>
+    <ion-segment-button *ngIf="showFinished===true && getChoosenPreparationToolsWhichAreArchived().length > 0" value="archive">
+      <ion-label>{{"TAB_ARCHIVE" | translate }}
+      </ion-label>
+
+    </ion-segment-button>
+  </ion-segment>
+  <div  *ngIf="multiple">
+    <div [ngSwitch]="preparation_segment">
+      <div *ngSwitchCase="'open'">
+        <ion-card *ngIf="getActivePreparationTools().length > 0">
+          <ion-item *ngFor="let prep of getActivePreparationTools()" lines="none" tappable>
+
+            <ion-checkbox [(ngModel)]="multipleSelection[prep.config.uuid]" slot="start"></ion-checkbox>
+            <div>
+              <span class="font-size-16">{{prep.name}}</span>
+            </div>
+          </ion-item>
+        </ion-card>
+      </div>
+      <div *ngSwitchCase="'archive'">
+        <ion-card>
+          <ion-item *ngFor="let prep of getChoosenPreparationToolsWhichAreArchived()" lines="none" tappable>
+            <ion-checkbox [(ngModel)]="multipleSelection[prep.config.uuid]" slot="start"></ion-checkbox>
+            <div>
+              <span class="font-size-16">{{prep.name}}</span>
+            </div>
+          </ion-item>
+        </ion-card>
+      </div>
+    </div>
+  </div>
+
+  <div  *ngIf="!multiple">
+    <ion-radio-group [(ngModel)]="radioSelection">
+      <div [ngSwitch]="preparation_segment">
+        <div *ngSwitchCase="'open'">
+
+          <ion-card *ngIf="getActivePreparationTools().length > 0">
+            <ion-item *ngFor="let prep of getActivePreparationTools()" lines="none" tappable>
+              <ion-radio slot="start" value="{{prep.config.uuid}}"></ion-radio>
+              <div>
+                <span class="font-size-16">{{prep.name}}</span>
+              </div>
+            </ion-item>
+          </ion-card>
+        </div>
+        <div *ngSwitchCase="'archive'">
+          <ion-card>
+            <ion-item *ngFor="let prep of getChoosenPreparationToolsWhichAreArchived()" lines="none" tappable>
+              <ion-radio slot="start" value="{{prep.config.uuid}}"></ion-radio>
+              <div>
+                <span class="font-size-16">{{prep.name}}</span>
+              </div>
+            </ion-item>
+          </ion-card>
+        </div>
+      </div>
+    </ion-radio-group>
+  </div>
+</ion-content>
+<ion-footer class="ion-no-border">
+  <ion-row>
+    <ion-col size="6">
+      <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
+                  tappable>{{"CANCEL" | translate}}</ion-button>
+    </ion-col>
+    <ion-col size="6">
+      <ion-button (click)="choose()" color="accent" expand="block" tappable
+                  type="submit">{{"CHOOSE" | translate}}</ion-button>
+    </ion-col>
+
+  </ion-row>
+</ion-footer>
