@@ -463,7 +463,6 @@ export class SettingsPage implements OnInit {
   private async _exportFlowProfiles(_storedData: Array <Brew>) {
     for (const entry of _storedData) {
       if (entry.flow_profile) {
-        console.log(entry.flow_profile);
         await this._exportFile(entry.flow_profile);
       }
 

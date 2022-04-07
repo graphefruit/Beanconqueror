@@ -349,7 +349,6 @@ export class UIUpdate {
               {
                 tool.archived = false;
               }
-              console.log(prep_v6);
               await this.uiPreparationStorage.update(prep_v6);
             }
 
