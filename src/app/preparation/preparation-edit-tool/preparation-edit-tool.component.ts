@@ -12,6 +12,8 @@ import {Brew} from '../../../classes/brew/brew';
 import {UIAlert} from '../../../services/uiAlert';
 import {UIBrewStorage} from '../../../services/uiBrewStorage';
 import {UIPreparationHelper} from '../../../services/uiPreparationHelper';
+import {Settings} from '../../../classes/settings/settings';
+import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'app-preparation-edit-tool',
@@ -36,7 +38,8 @@ export class PreparationEditToolComponent implements OnInit {
                private readonly uiPreparationStorage: UIPreparationStorage,
                private readonly uiPreparationHelper: UIPreparationHelper,
                private readonly uiAlert: UIAlert,
-               private readonly uiBrewStorage: UIBrewStorage) {
+               private readonly uiBrewStorage: UIBrewStorage,
+               private readonly uiSettingsStorage: UISettingsStorage) {
 
   }
 
@@ -67,6 +70,10 @@ export class PreparationEditToolComponent implements OnInit {
 
         this.preparation.deleteTool(this.data);
         await this.uiPreparationStorage.update(this.preparation);
+        const settings: Settings = this.uiSettingsStorage.getSettings();
+        settings.resetFilter();
+        await this.uiSettingsStorage.saveSettings(settings);
+
         this.dismiss();
       },
       () => {
