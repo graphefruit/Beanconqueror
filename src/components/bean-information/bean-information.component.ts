@@ -17,6 +17,7 @@ import {UIImage} from '../../services/uiImage';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
 import BEAN_TRACKING from '../../data/tracking/beanTracking';
 import {ShareService} from '../../services/shareService/share-service.service';
+import {BEAN_ROASTING_TYPE_ENUM} from '../../enums/beans/beanRoastingType';
 
 @Component({
   selector: 'bean-information',
@@ -33,7 +34,7 @@ export class BeanInformationComponent implements OnInit {
 
   @Output() public beanAction: EventEmitter<any> = new EventEmitter();
 
-
+  public beanRoastingTypeEnum = BEAN_ROASTING_TYPE_ENUM;
   public roast_enum = ROASTS_ENUM;
 
   constructor(private readonly uiSettingsStorage: UISettingsStorage,
