@@ -53,10 +53,15 @@ export class QrScannerService {
     } catch (ex) {
 
     }
+    await new Promise((resolve) => {
+      setTimeout(async () => {
+        await this.uiAlert.hideLoadingSpinner();
+        resolve(undefined);
+      }, 50);
+    });
     const observable: Observable<string> = new Observable((subscriber) => {
       cordova.plugins.barcodeScanner.scan(
         (result) => {
-          this.uiAlert.hideLoadingSpinner();
           this.activateHardwareBackButton();
           if ((result.cancelled === false || result.cancelled === 0)) {
             this.uiAnalytics.trackEvent(QR_TRACKING.TITLE, QR_TRACKING.ACTIONS.SCANNED_LINK.CATEGORY, QR_TRACKING.ACTIONS.SCANNED_LINK.DATA.LINK, result.text as string);
@@ -71,7 +76,6 @@ export class QrScannerService {
 
         },
         (error) => {
-          this.uiAlert.hideLoadingSpinner();
           this.activateHardwareBackButton();
           subscriber.error();
         },
