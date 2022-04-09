@@ -8,6 +8,7 @@ import QR_TRACKING from '../../data/tracking/qrTracking';
 import {UISettingsStorage} from '../uiSettingsStorage';
 import {ModalController, Platform} from '@ionic/angular';
 import {QrCodeScannerPopoverComponent} from '../../popover/qr-code-scanner-popover/qr-code-scanner-popover.component';
+import {UIAlert} from '../uiAlert';
 
 declare var cordova;
 
@@ -22,7 +23,8 @@ export class QrScannerService {
                private readonly uiAnalytics: UIAnalytics,
                private readonly uiSettingsStorage: UISettingsStorage,
                private readonly modalController: ModalController,
-               private readonly platform: Platform) {
+               private readonly platform: Platform,
+               private readonly uiAlert: UIAlert) {
 
   }
 
@@ -43,6 +45,7 @@ export class QrScannerService {
   public async scan (): Promise<string> {
     await this.__checkQRCodeScannerInformationPage();
 
+    await this.uiAlert.showLoadingSpinner();
     try {
       this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(9999, (processNextHandler) => {
         // Don't do anything.
@@ -53,6 +56,7 @@ export class QrScannerService {
     const observable: Observable<string> = new Observable((subscriber) => {
       cordova.plugins.barcodeScanner.scan(
         (result) => {
+          this.uiAlert.hideLoadingSpinner();
           this.activateHardwareBackButton();
           if ((result.cancelled === false || result.cancelled === 0)) {
             this.uiAnalytics.trackEvent(QR_TRACKING.TITLE, QR_TRACKING.ACTIONS.SCANNED_LINK.CATEGORY, QR_TRACKING.ACTIONS.SCANNED_LINK.DATA.LINK, result.text as string);
@@ -67,6 +71,7 @@ export class QrScannerService {
 
         },
         (error) => {
+          this.uiAlert.hideLoadingSpinner();
           this.activateHardwareBackButton();
           subscriber.error();
         },
