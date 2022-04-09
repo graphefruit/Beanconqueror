@@ -28,22 +28,10 @@ export class QrScannerService {
 
   }
 
-  public async __checkQRCodeScannerInformationPage () {
 
-    const settings = this.uiSettingsStorage.getSettings();
-    const qr_scanner_information: boolean = settings.qr_scanner_information;
-    if (qr_scanner_information === false) {
-      const modal = await this.modalController.create({
-        component: QrCodeScannerPopoverComponent,
-        id: QrCodeScannerPopoverComponent.POPOVER_ID
-      });
-      await modal.present();
-      await modal.onWillDismiss();
-    }
-  }
 
   public async scan (): Promise<string> {
-    await this.__checkQRCodeScannerInformationPage();
+
 
     await this.uiAlert.showLoadingSpinner();
     try {

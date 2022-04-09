@@ -280,6 +280,9 @@ export class BeanInformationComponent implements OnInit {
     await this.uiBeanStorage.removeByObject(this.bean);
 
   }
+  public isBeanRoastUnknown() {
+    return this.bean.bean_roasting_type === 'UNKNOWN' as BEAN_ROASTING_TYPE_ENUM;
+  }
 
 
 

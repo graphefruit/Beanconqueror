@@ -1,12 +1,9 @@
-<ion-content (click)="dismiss()">
+<ion-header translucent>
+  <ion-toolbar>
 
-</ion-content>
-<ion-footer class="ion-no-border">
-  <div style="width:100%;text-align:end;" class="ion-margin-top">
-    <ion-button (click)="dismiss()" tappable color="accent" fill="clear" >
-      <ion-icon name="close-outline" slot="icon-only"></ion-icon>
-    </ion-button>
-  </div>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
   <ion-item lines="inset">
     <ion-label position="stacked">{{"BREW_BRIX_CALCULATION" | translate}}</ion-label>
     <ion-input [(ngModel)]="brix" placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_GRIND_SIZE' | translate}}"
@@ -22,4 +19,4 @@
                   type="submit">{{"SET_TDS" | translate}}</ion-button>
     </ion-col>
   </ion-row>
-</ion-footer>
+</ion-content>

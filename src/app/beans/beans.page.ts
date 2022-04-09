@@ -440,7 +440,11 @@ export class BeansPage implements OnInit {
   }
 
   public async scanBean() {
-
+    /**console.log("test");
+    await this.qrScannerService.scan().then(async (scannedCode) => {
+      await this.intenthandler.handleQRCodeLink(scannedCode);
+      this.loadBeans();
+    },() => {});**/
     if (this.platform.is('cordova')) {
       await this.qrScannerService.scan().then(async (scannedCode) => {
         await this.intenthandler.handleQRCodeLink(scannedCode);
@@ -462,21 +466,5 @@ export class BeansPage implements OnInit {
     await this.add();
   }
 
-  public async scan() {
-
-    if (this.platform.is('cordova')) {
-      await this.qrScannerService.scan().then(async (scannedCode) => {
-        await this.intenthandler.handleQRCodeLink(scannedCode);
-        this.loadBeans();
-      },() => {});
-    } else {
-      // Test sample for development
-      await this.intenthandler.handleQRCodeLink('https://beanconqueror.com/?qr=f3244c61-da13-46d3-af69-f37a44976530');
-      this.loadBeans();
-    }
-
-    return;
-
-  }
 
 }

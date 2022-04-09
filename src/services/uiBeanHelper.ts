@@ -18,6 +18,8 @@ import {BeanMapper} from '../mapper/bean/beanMapper';
 import {UIAlert} from './uiAlert';
 import {UIToast} from './uiToast';
 import QR_TRACKING from '../data/tracking/qrTracking';
+import {QrCodeScannerPopoverComponent} from '../popover/qr-code-scanner-popover/qr-code-scanner-popover.component';
+import {UISettingsStorage} from './uiSettingsStorage';
 
 
 
@@ -48,7 +50,8 @@ export class UIBeanHelper {
               private readonly uiAnalytics: UIAnalytics,
               private readonly modalController: ModalController,
               private readonly uiAlert: UIAlert,
-              private readonly uiToast: UIToast) {
+              private readonly uiToast: UIToast,
+              private readonly uiSettingsStorage: UISettingsStorage) {
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
       // If an brew is deleted, we need to reset our array for the next call.
       this.allStoredBrews = [];
@@ -106,17 +109,38 @@ export class UIBeanHelper {
 
   }
 
+  public async __checkQRCodeScannerInformationPage () {
+
+    const settings = this.uiSettingsStorage.getSettings();
+    const qr_scanner_information: boolean = settings.qr_scanner_information;
+    if (qr_scanner_information === false) {
+      const modal = await this.modalController.create({
+        component: QrCodeScannerPopoverComponent,
+        id: QrCodeScannerPopoverComponent.POPOVER_ID
+      });
+      await modal.present();
+      await modal.onWillDismiss();
+    }
+  }
 
   public async addScannedQRBean(_scannedQRBean: ServerBean) {
 
     if (_scannedQRBean.error === null)
     {
+
+
+
       this.uiAnalytics.trackEvent(QR_TRACKING.TITLE, QR_TRACKING.ACTIONS.SCAN_SUCCESSFULLY);
       this.uiToast.showInfoToast('QR.BEAN_SUCCESSFULLY_SCANNED');
       await this.uiAlert.showLoadingSpinner();
       const newMapper = new BeanMapper();
       const bean: Bean = await newMapper.mapServerToClientBean(_scannedQRBean);
       await this.uiAlert.hideLoadingSpinner();
+
+
+      //Show the information before the popup would come up
+      await this.__checkQRCodeScannerInformationPage();
+
       if (bean !== null) {
 
         const modal = await this.modalController.create({

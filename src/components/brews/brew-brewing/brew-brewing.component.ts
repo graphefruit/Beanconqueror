@@ -1566,6 +1566,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     const modal = await this.modalController.create({
       component: BrewBrixCalculatorComponent,
       cssClass: 'popover-actions',
+      breakpoints: [0, 0.25],
+      initialBreakpoint: 0.25,
       id: BrewBrixCalculatorComponent.COMPONENT_ID
     });
     await modal.present();
@@ -1586,6 +1588,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     const modal = await this.modalController.create({
       component: BrewBeverageQuantityCalculatorComponent,
       cssClass: 'popover-actions',
+      breakpoints: [0, 0.5],
+      initialBreakpoint: 0.5,
       componentProps: {
         vesselWeight: vesselWeight
       },
