@@ -117,6 +117,24 @@ export class Preparation implements IPreparation {
         return  PREPARATION_STYLE_TYPE.PERCOLATION;
       case PREPARATION_TYPES.SIPHON:
         return  PREPARATION_STYLE_TYPE.FULL_IMMERSION;
+      case PREPARATION_TYPES.CAFEC_FLOWER:
+        return  PREPARATION_STYLE_TYPE.POUR_OVER;
+      case PREPARATION_TYPES.DECEMBER_DRIPPER:
+        return  PREPARATION_STYLE_TYPE.POUR_OVER;
+      case PREPARATION_TYPES.DECENT_ESPRESSO:
+        return  PREPARATION_STYLE_TYPE.ESPRESSO;
+      case PREPARATION_TYPES.HARIO_SWITCH:
+        return  PREPARATION_STYLE_TYPE.FULL_IMMERSION;
+      case PREPARATION_TYPES.HARIO_WOODNECK:
+        return  PREPARATION_STYLE_TYPE.POUR_OVER;
+      case PREPARATION_TYPES.RATIO_SIX_COFFEE_BREWER:
+        return  PREPARATION_STYLE_TYPE.PERCOLATION;
+      case PREPARATION_TYPES.ROK:
+        return  PREPARATION_STYLE_TYPE.ESPRESSO;
+      case PREPARATION_TYPES.TORNADO_DUO:
+        return  PREPARATION_STYLE_TYPE.POUR_OVER;
+      case PREPARATION_TYPES.TRICOLATE:
+        return  PREPARATION_STYLE_TYPE.POUR_OVER;
       default:
         return PREPARATION_STYLE_TYPE.POUR_OVER;
     }
@@ -183,6 +201,24 @@ export class Preparation implements IPreparation {
         return 'beanconqueror-preparation-mocca-master';
       case PREPARATION_TYPES.SIPHON:
         return 'beanconqueror-preparation-siphon';
+      case PREPARATION_TYPES.CAFEC_FLOWER:
+        return 'beanconqueror-preparation-cafec-flower';
+      case PREPARATION_TYPES.DECEMBER_DRIPPER:
+        return 'beanconqueror-preparation-december-dripper';
+      case PREPARATION_TYPES.DECENT_ESPRESSO:
+        return 'beanconqueror-preparation-decent-espresso';
+      case PREPARATION_TYPES.HARIO_SWITCH:
+        return 'beanconqueror-preparation-hario-switch';
+      case PREPARATION_TYPES.HARIO_WOODNECK:
+        return 'beanconqueror-preparation-hario-woodneck';
+      case PREPARATION_TYPES.RATIO_SIX_COFFEE_BREWER:
+        return 'beanconqueror-preparation-ratio-six-coffee-brewer';
+      case PREPARATION_TYPES.ROK:
+        return 'beanconqueror-preparation-rok';
+      case PREPARATION_TYPES.TORNADO_DUO:
+        return 'beanconqueror-preparation-tornado-duo';
+      case PREPARATION_TYPES.TRICOLATE:
+        return 'beanconqueror-preparation-tricolate';
       default:
         return 'beanconqueror-preparation-custom';
     }
