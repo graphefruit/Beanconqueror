@@ -26,7 +26,11 @@ export class UIWaterHelper {
 
 
   public async addWater() {
-    const modal = await this.modalController.create({component:WaterAddComponent,id:WaterAddComponent.COMPONENT_ID, cssClass: 'popover-actions'});
+    const modal = await this.modalController.create({component:WaterAddComponent,
+      id:WaterAddComponent.COMPONENT_ID,
+      cssClass: 'popover-actions',
+      breakpoints: [0, 0.35, 0.5, 0.75, 1],
+      initialBreakpoint: 0.35});
     await modal.present();
     await modal.onWillDismiss();
   }

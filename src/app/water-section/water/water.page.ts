@@ -10,9 +10,7 @@ import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 import {GREEN_BEAN_ACTION} from '../../../enums/green-beans/greenBeanAction';
 import {GreenBean} from '../../../classes/green-bean/green-bean';
-import WATER_TRACKING from '../../../data/tracking/waterTracking';
 
-import {WaterAddComponent} from './water-add/water-add.component';
 import {UIWaterHelper} from '../../../services/uiWaterHelper';
 
 @Component({
