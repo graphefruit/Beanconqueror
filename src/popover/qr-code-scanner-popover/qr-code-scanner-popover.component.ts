@@ -12,7 +12,7 @@ import {UISettingsStorage} from '../../services/uiSettingsStorage';
 export class QrCodeScannerPopoverComponent implements OnInit {
 
   public static POPOVER_ID: string = 'qr-code-scanner-popover';
-  private readonly settings: Settings;
+  public readonly settings: Settings;
 
 
   private disableHardwareBack;

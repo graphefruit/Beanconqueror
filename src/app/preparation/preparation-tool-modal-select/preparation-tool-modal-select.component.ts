@@ -16,8 +16,8 @@ export class PreparationToolModalSelectComponent implements OnInit {
   public multipleSelection = {};
   public radioSelection: string;
   public preparation_segment: string = 'open';
-  private data: Preparation = null;
-  private datas: Array<Preparation> = [];
+  public data: Preparation = null;
+  public datas: Array<Preparation> = [];
   @Input() public multiple: boolean;
   @Input() private selectedValues: Array<string>;
   @Input() public showFinished: boolean;
