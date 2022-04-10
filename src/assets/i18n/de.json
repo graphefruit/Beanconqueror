@@ -467,7 +467,6 @@
   "PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION": "Aktiviert einen neuen Menüeintrag - über diesen kann die Brühung direkt wiederholt werden.",
   "PAGE_SETTINGS_TRACK_BREW_COORDINATES_DESCRIPTION": "Speichere die Koordinatien zu jeder Brühung.",
   "PAGE_SETTINGS_TRACK_CAFFEINE_CONSUMPTION_DESCRIPTION": "Speichere die zu dir genommene Koffeinmenge",
-
   "UPDATE_TITLE": "Was gibt's neues",
   "NEXT": "Weiter",
   "UPDATE_TEXT_TITLE_TITLE": {
@@ -680,11 +679,10 @@
         "",
         "<b>Bohnen</b>",
         "Erweiterung der Felder um: Kaufdatum, FOB-Preis, Einkaufspreis",
-        "Bohnenpackungen können nun Favoritisiert werden",
-        "Bohnen können nun gefiltert werden",
+        "Bohnen können nun favoritisiert und gefiltert werden",
         "Wenn Bohnen archiviert werden, können diese nun direkt Bewertet werden",
         "Beim Drücken auf das '+' kannst du nun auswählen ob du eine Bohne einscannen oder hinzufügen möchtest",
-        "Drücke Lange auf das '+' um direkt eine Bohne hinzuzufügen",
+        "Drücke lange auf das '+' um direkt eine Bohne hinzuzufügen",
         "",
         "<b>Zubereitungsmethoden</b>",
         "Zubereitungsmethoden können nun wiederholt werden mit allen dazugehörigen Einstellungen",
