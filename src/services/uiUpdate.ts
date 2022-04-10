@@ -335,7 +335,7 @@ export class UIUpdate {
             }
 
             const settings_v6: any = this.uiSettingsStorage.getSettings();
-            //Delete old onces
+            // Delete old onces
             delete settings_v6.bean_filter;
             delete settings_v6.green_bean_filter;
 
@@ -414,7 +414,7 @@ export class UIUpdate {
     await this.__checkUpdateForDataVersion('UPDATE_3',!hasData);
     await this.__checkUpdateForDataVersion('UPDATE_4',!hasData);
     await this.__checkUpdateForDataVersion('UPDATE_5',!hasData);
-    //await this.__checkUpdateForDataVersion('UPDATE_6',!hasData);
+    await this.__checkUpdateForDataVersion('UPDATE_6',!hasData);
 
   }
 

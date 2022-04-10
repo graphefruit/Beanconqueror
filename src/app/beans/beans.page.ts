@@ -153,7 +153,7 @@ export class BeansPage implements OnInit {
         this.archivedBeansSort = modalData.data.bean_sort;
       }
     }
-    this.__saveBeanFilter();
+    await this.__saveBeanFilter();
 
 
     this.loadBeans();
@@ -187,7 +187,7 @@ export class BeansPage implements OnInit {
         this.archivedBeansFilter = modalData.data.bean_filter;
       }
     }
-    this.__saveBeanFilter();
+    await this.__saveBeanFilter();
 
 
     this.loadBeans();
@@ -440,18 +440,14 @@ export class BeansPage implements OnInit {
   }
 
   public async scanBean() {
-    /**console.log("test");
-    await this.qrScannerService.scan().then(async (scannedCode) => {
-      await this.intenthandler.handleQRCodeLink(scannedCode);
-      this.loadBeans();
-    },() => {});**/
+
     if (this.platform.is('cordova')) {
       await this.qrScannerService.scan().then(async (scannedCode) => {
         await this.intenthandler.handleQRCodeLink(scannedCode);
       },() => {});
     } else {
       // Test sample for development
-      await this.intenthandler.handleQRCodeLink('https://beanconqueror.com/?qr=Yo8JHkY3');
+      // await this.intenthandler.handleQRCodeLink('https://beanconqueror.com/?qr=XYZ');
     }
     this.loadBeans();
     return;
