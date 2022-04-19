@@ -1,5 +1,8 @@
 :host {
-
+  ion-header {
+    height:40px;
+    background-color: #ffffff;
+  }
   ion-item.active {
     border: 1px solid var(--ion-color-accent-secondary);
   }
