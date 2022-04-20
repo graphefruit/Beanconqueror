@@ -107,9 +107,9 @@ export class SettingsPage implements OnInit {
       _data.brew_filter.ARCHIVED = this.settings.GET_BREW_FILTER();
       _data.brew_filter.OPEN = this.settings.GET_BREW_FILTER();
 
+      _data.bean_filter = {};
       _data.bean_filter.OPEN = this.settings.GET_BEAN_FILTER();
       _data.bean_filter.ARCHIVED = this.settings.GET_BEAN_FILTER();
-
     }
   }
 
@@ -637,6 +637,7 @@ export class SettingsPage implements OnInit {
           this.__importJSON(content, path);
         })
         .catch((err) => {
+          this.uiLog.error(`Could not read json file ${JSON.stringify(err)}` );
           reject(err);
 
         });
@@ -646,7 +647,7 @@ export class SettingsPage implements OnInit {
 
   private async __importJSON(_content: string, _importPath: string) {
     const parsedContent = JSON.parse(_content);
-
+    this.uiLog.log('Parsed import data successfully');
     const isIOS: boolean = this.platform.is('ios');
     // Set empty arrays if not existing.
     if (!parsedContent[this.uiPreparationStorage.getDBPath()]) {
@@ -677,23 +678,13 @@ export class SettingsPage implements OnInit {
       parsedContent[this.uiBeanStorage.getDBPath()] &&
       parsedContent[this.uiBrewStorage.getDBPath()] &&
       parsedContent[this.uiSettingsStorage.getDBPath()]) {
-      /**
-        * We don't need to remove the parsed image paths anymore, because they are stored inside the documents-storage and can be read there
-        if (isIOS) {
-        this.__cleanupAttachmentData(parsedContent[this.uiBeanStorage.getDBPath()]);
-        this.__cleanupAttachmentData(parsedContent[this.uiBrewStorage.getDBPath()]);
 
-        this.__cleanupAttachmentData(parsedContent[this.uiRoastingMachineStorage.getDBPath()]);
-        this.__cleanupAttachmentData(parsedContent[this.uiGreenBeanStorage.getDBPath()]);
-        this.__cleanupAttachmentData(parsedContent[this.uiPreparationStorage.getDBPath()]);
-        this.__cleanupAttachmentData(parsedContent[this.uiMillStorage.getDBPath()]);
-        this.__cleanupAttachmentData(parsedContent[this.uiWaterStorage.getDBPath()]);
-        }
-       **/
+      this.uiLog.log('All data existing');
       this.__cleanupImportSettingsData(parsedContent[this.uiSettingsStorage.getDBPath()]);
 
       // When exporting the value is a number, when importing it needs to be  a string.
       parsedContent['SETTINGS'][0]['brew_view'] = parsedContent['SETTINGS'][0]['brew_view'] + '';
+      this.uiLog.log('Cleaned all data');
       try {
         if (!parsedContent['SETTINGS'][0]['brew_order']['before'] === undefined) {
           this.uiLog.log('Old brew order structure');
