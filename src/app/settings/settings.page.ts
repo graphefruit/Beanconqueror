@@ -106,6 +106,10 @@ export class SettingsPage implements OnInit {
       _data.brew_filter = {};
       _data.brew_filter.ARCHIVED = this.settings.GET_BREW_FILTER();
       _data.brew_filter.OPEN = this.settings.GET_BREW_FILTER();
+
+      _data.bean_filter.OPEN = this.settings.GET_BEAN_FILTER();
+      _data.bean_filter.ARCHIVED = this.settings.GET_BEAN_FILTER();
+
     }
   }
 
@@ -673,8 +677,9 @@ export class SettingsPage implements OnInit {
       parsedContent[this.uiBeanStorage.getDBPath()] &&
       parsedContent[this.uiBrewStorage.getDBPath()] &&
       parsedContent[this.uiSettingsStorage.getDBPath()]) {
-
-      if (isIOS) {
+      /**
+        * We don't need to remove the parsed image paths anymore, because they are stored inside the documents-storage and can be read there
+        if (isIOS) {
         this.__cleanupAttachmentData(parsedContent[this.uiBeanStorage.getDBPath()]);
         this.__cleanupAttachmentData(parsedContent[this.uiBrewStorage.getDBPath()]);
 
@@ -683,8 +688,8 @@ export class SettingsPage implements OnInit {
         this.__cleanupAttachmentData(parsedContent[this.uiPreparationStorage.getDBPath()]);
         this.__cleanupAttachmentData(parsedContent[this.uiMillStorage.getDBPath()]);
         this.__cleanupAttachmentData(parsedContent[this.uiWaterStorage.getDBPath()]);
-
-      }
+        }
+       **/
       this.__cleanupImportSettingsData(parsedContent[this.uiSettingsStorage.getDBPath()]);
 
       // When exporting the value is a number, when importing it needs to be  a string.
