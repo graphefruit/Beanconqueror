@@ -447,7 +447,7 @@ export class BeansPage implements OnInit {
       },() => {});
     } else {
       // Test sample for development
-      // await this.intenthandler.handleQRCodeLink('https://beanconqueror.com/?qr=XYZ');
+       // await this.intenthandler.handleQRCodeLink('https://beanconqueror.com/?qr=f62fa1e9');
     }
     this.loadBeans();
     return;

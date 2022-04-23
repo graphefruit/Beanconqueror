@@ -127,9 +127,6 @@ export class UIBeanHelper {
 
     if (_scannedQRBean.error === null)
     {
-
-
-
       this.uiAnalytics.trackEvent(QR_TRACKING.TITLE, QR_TRACKING.ACTIONS.SCAN_SUCCESSFULLY);
       this.uiToast.showInfoToast('QR.BEAN_SUCCESSFULLY_SCANNED');
       await this.uiAlert.showLoadingSpinner();
