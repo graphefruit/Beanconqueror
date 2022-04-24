@@ -52,7 +52,7 @@ export class QrScannerService {
         (result) => {
           this.activateHardwareBackButton();
           if ((result.cancelled === false || result.cancelled === 0)) {
-            this.uiAnalytics.trackEvent(QR_TRACKING.TITLE, QR_TRACKING.ACTIONS.SCANNED_LINK.CATEGORY, QR_TRACKING.ACTIONS.SCANNED_LINK.DATA.LINK, result.text as string);
+            this.uiAnalytics.trackEvent(QR_TRACKING.TITLE, QR_TRACKING.ACTIONS.SCANNED_LINK.CATEGORY, result.text as string);
           }
 
           if ((result.cancelled === false || result.cancelled === 0) && result.format === 'QR_CODE') {
