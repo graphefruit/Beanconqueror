@@ -1,12 +1,15 @@
 import { Platforms } from '@ionic/core';
-import {PeripheralData} from './../../classes/devices/ble.types';
+import {PeripheralData} from '../../classes/devices/ble.types';
 import {Injectable} from '@angular/core';
-import {BluetoothScale, ScaleType, makeDevice, LunarScale, DecentScale} from '../../classes/devices';
+import {BluetoothScale, ScaleType, makeDevice, LunarScale, DecentScale, JimmyScale} from '../../classes/devices';
 import {Platform} from '@ionic/angular';
 import {UILog} from '../uiLog';
 import {UIToast} from '../uiToast';
 import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
 import {Observable, Subject} from 'rxjs';
+import {UIHelper} from '../uiHelper';
+import FelicitaScale from '../../classes/devices/felicitaScale';
+
 
 declare var ble;
 declare var window;
@@ -25,7 +28,8 @@ export class BleManagerService {
   constructor(private readonly platform: Platform,
               private readonly uiLog: UILog,
               private readonly uiToast: UIToast,
-              private androidPermissions: AndroidPermissions) {
+              private androidPermissions: AndroidPermissions,
+              private readonly uiHelper: UIHelper) {
 
     this.scales = [];
     this.failed = false;
@@ -139,9 +143,12 @@ export class BleManagerService {
 
 
       ble.startScan([], async (device) => {
-        if (DecentScale.test(device) || LunarScale.test(device)) {
+        this.uiLog.log('Device found ' + JSON.stringify(device));
+        if (DecentScale.test(device) || LunarScale.test(device) || JimmyScale.test(device) || FelicitaScale.test(device)) {
           // We found all needed devices.
           devices.push(device);
+
+          this.uiLog.log('Supported Scale found ' + JSON.stringify(device));
           clearTimeout(timeoutVar);
           timeoutVar = null;
           await stopScanningAndResolve();
@@ -184,6 +191,19 @@ export class BleManagerService {
 
   public getScale() {
     return this.scale;
+  }
+
+  public getScaleWeight() {
+    try {
+      if (this.scale) {
+        return this.uiHelper.toFixedIfNecessary(this.scale.getWeight(),1);
+      }
+      return 0;
+
+    }catch(ex) {
+      return 0;
+    }
+
   }
 
   private async __scanAutoConnectScaleIOS() {
@@ -230,6 +250,16 @@ export class BleManagerService {
           resolve({id: device.id, type: ScaleType.LUNAR});
           return;
         }
+        if (JimmyScale.test(device)) {
+          this.uiLog.log('BleManager - We found a jimmy scale');
+          resolve({id: device.id, type: ScaleType.JIMMY});
+          return;
+        }
+        if (FelicitaScale.test(device)) {
+          this.uiLog.log('BleManager - We found a felicita scale');
+          resolve({id: device.id, type: ScaleType.FELICITA});
+          return;
+        }
       }
       resolve(undefined);
     });
@@ -269,7 +299,6 @@ export class BleManagerService {
     if (_retryScanForIOS) {
       // iOS needs to know the scale, before auto connect can be done
       await this.__iOSAccessBleStackAndAutoConnect();
-
     }
 
     this.uiLog.log('AutoConnectScale - We can start or we waited for iOS');
@@ -299,7 +328,9 @@ export class BleManagerService {
       this.uiToast.showInfoToast('SCALE.DISCONNECTED_UNPLANNED');
       this.uiLog.log('Disconnected successfully');
       callback();
-      this.__sendEvent('DISCONNECT');
+
     }
+    //Send disconnect callback, even if scale is already null/not existing anymore
+    this.__sendEvent('DISCONNECT');
   }
 }

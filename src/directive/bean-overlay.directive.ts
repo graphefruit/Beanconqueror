@@ -10,7 +10,7 @@ import {Bean} from '../classes/bean/bean';
 })
 export class BeanOverlayDirective {
 
-  private oldModelValue:any = undefined;
+  private oldModelValue: any = undefined;
   @Input('multiple') public multipleSelect: boolean;
   @Input('show-finished') public showFinished: boolean = true;
 

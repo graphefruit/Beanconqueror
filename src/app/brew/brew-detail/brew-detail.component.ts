@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {UISettingsStorage} from '../../../services/uiSettingsStorage';
-import {IonSlides, ModalController, NavParams} from '@ionic/angular';
+import {IonSlides, ModalController, NavParams, Platform} from '@ionic/angular';
 import {UIHelper} from '../../../services/uiHelper';
 import {Brew} from '../../../classes/brew/brew';
 import {IBrew} from '../../../interfaces/brew/iBrew';
@@ -16,9 +16,12 @@ import {UIBeanHelper} from '../../../services/uiBeanHelper';
 import {UIPreparationHelper} from '../../../services/uiPreparationHelper';
 import {UIMillHelper} from '../../../services/uiMillHelper';
 import {TranslateService} from '@ngx-translate/core';
-import {BrewFlow} from '../../../classes/brew/brewFlow';
+import {BrewFlow, IBrewWaterFlow} from '../../../classes/brew/brewFlow';
 import {UIFileHelper} from '../../../services/uiFileHelper';
 import {UIAlert} from '../../../services/uiAlert';
+import {SocialSharing} from '@ionic-native/social-sharing/ngx';
+import {BrewFlowComponent} from '../brew-flow/brew-flow.component';
+import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
 
 @Component({
   selector: 'brew-detail',
@@ -51,7 +54,10 @@ export class BrewDetailComponent implements OnInit {
                private readonly uiMillHelper: UIMillHelper,
                private readonly translate: TranslateService,
                private readonly uiFileHelper: UIFileHelper,
-               private readonly uiAlert: UIAlert) {
+               private readonly uiAlert: UIAlert,
+               private readonly socialSharing: SocialSharing,
+               private readonly platform: Platform,
+               private readonly screenOrientation: ScreenOrientation) {
 
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -157,12 +163,37 @@ export class BrewDetailComponent implements OnInit {
             }]
         };
         const chartOptions = {
+
+          plugins: {
+              backgroundColorPlugin: {
+
+              },
+              zoom: {
+                pan: {
+                  enabled: true,
+                  mode: 'x',
+                },
+                zoom: {
+                  wheel: {
+                    enabled: false,
+                  },
+                  drag: {
+                    enabled: true,
+                  },
+                  pinch: {
+                    enabled: true
+                  },
+                  mode: 'x',
+                }
+              }
+            },
           animation: true,
           legend: {
             display: false,
             position: 'top'
           },
           responsive: true,
+          maintainAspectRatio: false,
           interaction: {
             mode: 'index',
             intersect: false,
@@ -195,7 +226,18 @@ export class BrewDetailComponent implements OnInit {
         this.flowProfileChartEl = new Chart(this.flowProfileChart.nativeElement, {
           type: 'line',
           data: drinkingData,
-          options: chartOptions
+          options: chartOptions,
+          plugins: [{
+            id: 'backgroundColorPlugin',
+            beforeDraw: (chart, args, options) => {
+              const ctx = chart.canvas.getContext('2d');
+              ctx.save();
+              ctx.globalCompositeOperation = 'destination-over';
+              ctx.fillStyle = 'white';
+              ctx.fillRect(0, 0, chart.width, chart.height);
+              ctx.restore();
+            }
+          }]
         } as any);
 
         if (this.flow_profile_raw.weight.length > 0) {
@@ -212,7 +254,70 @@ export class BrewDetailComponent implements OnInit {
       }
     },250);
   }
+  public async maximizeFlowGraph() {
+    let actualOrientation;
+    if (this.platform.is('cordova')) {
+      actualOrientation =  this.screenOrientation.type;
+    }
 
+    const oldCanvasHeight = document.getElementById('canvasContainerBrew').offsetHeight;
+
+    await new Promise(async (resolve) => {
+
+      if (this.platform.is('cordova')) {
+        await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
+      }
+      resolve(undefined);
+    });
+
+    const modal = await this.modalController.create({component: BrewFlowComponent,
+      id:BrewFlowComponent.COMPONENT_ID,
+      breakpoints: [0,1],
+      initialBreakpoint:1,
+      cssClass: 'popover-actions',
+      componentProps: {brewComponent: this, brew: this.data,flowChartEl: this.flowProfileChartEl, isDetail: true}});
+    await modal.present();
+    await modal.onWillDismiss().then(async () => {
+      // If responsive would be true, the add of the container would result into 0 width 0 height, therefore the hack
+      this.flowProfileChartEl.options.responsive = false;
+
+      this.flowProfileChartEl.update();
+
+      if (this.platform.is('cordova')) {
+        if (this.screenOrientation.type === this.screenOrientation.ORIENTATIONS.LANDSCAPE) {
+          if (this.screenOrientation.ORIENTATIONS.LANDSCAPE === actualOrientation) {
+            // Get back to portrait
+            setTimeout(async () => {
+              await this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT_PRIMARY);
+            }, 50);
+
+          }
+
+        }
+        setTimeout( () => {
+          this.screenOrientation.unlock();
+        },150);
+      }
+
+      await new Promise((resolve) => {
+        setTimeout(async () => {
+          document.getElementById('canvasContainerBrew').append(this.flowProfileChartEl.ctx.canvas);
+          resolve(undefined);
+        }, 50);
+      });
+
+      await new Promise((resolve) => {
+        setTimeout(async () => {
+          // If we would not set the old height, the graph would explode to big.
+          document.getElementById('canvasContainerBrew').style.height = oldCanvasHeight + 'px';
+          this.flowProfileChartEl.options.responsive = true;
+          this.flowProfileChartEl.update();
+          resolve(undefined);
+        }, 50);
+      });
+      this.flowProfileChartEl.resetZoom();
+    });
+  }
   private async readFlowProfile() {
     if (this.data.flow_profile !== '') {
       await this.uiAlert.showLoadingSpinner();
@@ -229,6 +334,28 @@ export class BrewDetailComponent implements OnInit {
   }
   public async downloadFlowProfile() {
     await this.uiExcel.exportBrewFlowProfile(this.flow_profile_raw);
+  }
+  public async shareFlowProfile() {
+
+    const fileShare: string = this.flowProfileChartEl.toBase64Image('image/jpeg', 1);
+    this.socialSharing.share(null,null,fileShare,null);
+  }
+
+  public getAvgFlow(): number {
+
+    const waterFlows: Array<IBrewWaterFlow> = this.flow_profile_raw.waterFlow;
+    let calculatedFlow: number = 0;
+    let foundEntries: number = 0;
+    for (const water of waterFlows) {
+      if (water.value > 0) {
+        calculatedFlow +=water.value;
+        foundEntries +=1;
+      }
+    }
+    if (calculatedFlow > 0) {
+      return calculatedFlow / foundEntries;
+    }
+    return 0;
   }
 
 }

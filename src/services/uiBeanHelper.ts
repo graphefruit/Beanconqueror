@@ -1,5 +1,5 @@
 /** Core */
-import {Injectable} from '@angular/core';
+import {Inject, Injectable, Injector} from '@angular/core';
 
 import {Brew} from '../classes/brew/brew';
 import {UIBrewStorage} from './uiBrewStorage';
@@ -8,7 +8,7 @@ import {Bean} from '../classes/bean/bean';
 import BEAN_TRACKING from '../data/tracking/beanTracking';
 import {BeansAddComponent} from '../app/beans/beans-add/beans-add.component';
 import {UIAnalytics} from './uiAnalytics';
-import {ModalController} from '@ionic/angular';
+import {ModalController, Platform} from '@ionic/angular';
 import {BeanArchivePopoverComponent} from '../app/beans/bean-archive-popover/bean-archive-popover.component';
 import {BeansEditComponent} from '../app/beans/beans-edit/beans-edit.component';
 import {BeansDetailComponent} from '../app/beans/beans-detail/beans-detail.component';
@@ -18,6 +18,10 @@ import {BeanMapper} from '../mapper/bean/beanMapper';
 import {UIAlert} from './uiAlert';
 import {UIToast} from './uiToast';
 import QR_TRACKING from '../data/tracking/qrTracking';
+import {QrCodeScannerPopoverComponent} from '../popover/qr-code-scanner-popover/qr-code-scanner-popover.component';
+import {UISettingsStorage} from './uiSettingsStorage';
+
+
 
 
 /**
@@ -46,7 +50,8 @@ export class UIBeanHelper {
               private readonly uiAnalytics: UIAnalytics,
               private readonly modalController: ModalController,
               private readonly uiAlert: UIAlert,
-              private readonly uiToast: UIToast) {
+              private readonly uiToast: UIToast,
+              private readonly uiSettingsStorage: UISettingsStorage) {
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
       // If an brew is deleted, we need to reset our array for the next call.
       this.allStoredBrews = [];
@@ -104,6 +109,19 @@ export class UIBeanHelper {
 
   }
 
+  public async __checkQRCodeScannerInformationPage () {
+
+    const settings = this.uiSettingsStorage.getSettings();
+    const qr_scanner_information: boolean = settings.qr_scanner_information;
+    if (qr_scanner_information === false) {
+      const modal = await this.modalController.create({
+        component: QrCodeScannerPopoverComponent,
+        id: QrCodeScannerPopoverComponent.POPOVER_ID
+      });
+      await modal.present();
+      await modal.onWillDismiss();
+    }
+  }
 
   public async addScannedQRBean(_scannedQRBean: ServerBean) {
 
@@ -115,6 +133,11 @@ export class UIBeanHelper {
       const newMapper = new BeanMapper();
       const bean: Bean = await newMapper.mapServerToClientBean(_scannedQRBean);
       await this.uiAlert.hideLoadingSpinner();
+
+
+      //Show the information before the popup would come up
+      await this.__checkQRCodeScannerInformationPage();
+
       if (bean !== null) {
 
         const modal = await this.modalController.create({
@@ -152,6 +175,9 @@ export class UIBeanHelper {
     await modal.onWillDismiss();
   }
 
+
+
+
   public async addRoastedBean(_greenBean: GreenBean) {
     const modal = await this.modalController.create({component:BeansAddComponent,
       id:BeansAddComponent.COMPONENT_ID,  componentProps: {greenBean : _greenBean}});
@@ -179,6 +205,9 @@ export class UIBeanHelper {
         component: BeanArchivePopoverComponent,
         cssClass: 'popover-actions',
         id: BeanArchivePopoverComponent.COMPONENT_ID,
+        backdropDismiss: false,
+        breakpoints: [0,  0.5, 0.75, 1],
+        initialBreakpoint: 0.5,
         componentProps: {
           bean: _bean
         }

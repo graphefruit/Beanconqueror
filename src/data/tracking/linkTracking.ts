@@ -1,14 +1,10 @@
 export default {
-
   TITLE:'LINK',
   ACTIONS: {
-
-
     GITHUB: 'GITHUB',
     INSTAGRAM: 'INSTAGRAM',
     FACEBOOK: 'FACEBOOK',
     BUY_ME_A_COFFEE:'BUY_ME_A_COFFEE',
     WEBSITE: 'WEBSITE'
   }
-
 }

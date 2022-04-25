@@ -9,6 +9,9 @@ import {Router} from '@angular/router';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
 import {Bean} from '../../classes/bean/bean';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
+import {Chart} from 'chart.js';
+import moment from 'moment';
+import {UISettingsStorage} from '../../services/uiSettingsStorage';
 
 @Component({
   selector: 'dashboard',
@@ -19,7 +22,8 @@ export class DashboardPage implements OnInit {
 
   public brews: Array<Brew> = [];
   private leftOverBeansWeight: number = undefined;
-  public flowProfileChartEl: any = undefined;
+ /*public flowProfileChartEl: any = undefined;
+   @ViewChild('flowProfileChart', { static: false }) public flowProfileChart;*/
   constructor(public uiStatistic: UIStatistic,
               private readonly modalCtrl: ModalController,
               private readonly uiBrewStorage: UIBrewStorage,
@@ -27,13 +31,17 @@ export class DashboardPage implements OnInit {
               private readonly changeDetectorRef: ChangeDetectorRef,
               private readonly router: Router,
               private readonly uiBeanStorage: UIBeanStorage,
-              private readonly uiBeanHelper: UIBeanHelper
+              private readonly uiBeanHelper: UIBeanHelper,
+              private readonly uiSettingsStorage: UISettingsStorage
   ) {
+
 
   }
 
 
-
+  public getRandomInt (min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
   public  ngOnInit() {
 
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
@@ -54,6 +62,14 @@ export class DashboardPage implements OnInit {
   public loadBrews() {
     this.brews = this.uiBrewStorage.getAllEntries();
     this.brews = UIBrewHelper.sortBrews(this.brews);
+    const settings = this.uiSettingsStorage.getSettings();
+    if (settings.show_archived_brews_on_dashboard === false) {
+      this.brews = this.brews.filter((e) =>
+        e.getBean().finished === false &&
+        e.getMill().finished === false &&
+        e.getPreparation().finished === false
+      );
+    }
     this.brews = this.brews.slice(0, 10);
     this.changeDetectorRef.detectChanges();
   }
@@ -77,6 +93,7 @@ export class DashboardPage implements OnInit {
   }
 
   public getBrews() {
+
     return this.brews;
   }
 

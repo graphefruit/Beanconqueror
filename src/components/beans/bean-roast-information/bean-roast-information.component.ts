@@ -3,6 +3,8 @@ import {Bean} from '../../../classes/bean/bean';
 import moment from 'moment';
 import {ModalController, Platform} from '@ionic/angular';
 import {DatetimePopoverComponent} from '../../../popover/datetime-popover/datetime-popover.component';
+import {BluetoothScale} from '../../../classes/devices';
+import {BleManagerService} from '../../../services/bleManager/ble-manager.service';
 
 
 @Component({
@@ -17,10 +19,26 @@ export class BeanRoastInformationComponent implements OnInit {
   public displayingTime: string = '';
 
   constructor(private readonly platform: Platform,
-              private readonly modalCtrl: ModalController) { }
+              private readonly modalCtrl: ModalController,
+              private readonly bleManager: BleManagerService) { }
 
   public ngOnInit() {
     this.displayingTime = moment().startOf('day').add('seconds',this.data.bean_roast_information.roast_length).toISOString();
+  }
+  public smartScaleConnected() {
+    if (!this.platform.is('cordova')) {
+      return true;
+    }
+
+    const scale: BluetoothScale = this.bleManager.getScale();
+    return !!scale;
+  }
+
+  public bluetoothScaleSetGreenBeanWeight() {
+    this.data.bean_roast_information.green_bean_weight = this.bleManager.getScaleWeight();
+  }
+  public bluetoothScaleSetRoastBeanWeight() {
+    this.data.weight = this.bleManager.getScaleWeight();
   }
 
   public async showTimeOverlay(_event) {
@@ -36,7 +54,7 @@ export class BeanRoastInformationComponent implements OnInit {
       componentProps: {displayingTime: this.displayingTime}});
     await modal.present();
     const modalData = await modal.onWillDismiss();
-    if (modalData.data.displayingTime !== undefined) {
+    if (modalData !== undefined && modalData.data.displayingTime !== undefined) {
       this.displayingTime = modalData.data.displayingTime;
       this.data.bean_roast_information.roast_length =moment.duration(moment(modalData.data.displayingTime)
         .diff(moment(modalData.data.displayingTime).startOf('day'))).asSeconds();

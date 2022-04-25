@@ -232,7 +232,6 @@ export class UIExcel {
         entry.push(sortInformation.harvest_time);
         entry.push(sortInformation.percentage);
         entry.push(sortInformation.certification);
-        entry.push(sortInformation.farmer);
       }
 
       wsData.push(entry);

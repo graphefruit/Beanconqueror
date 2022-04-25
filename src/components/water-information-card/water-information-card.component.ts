@@ -52,6 +52,8 @@ export class WaterInformationCardComponent implements OnInit {
       componentProps: {water: this.water},
       id: WaterPopoverActionsComponent.COMPONENT_ID,
       cssClass: 'popover-actions',
+      breakpoints: [0,  0.75, 1],
+      initialBreakpoint: 0.75,
     });
     await popover.present();
     const data = await popover.onWillDismiss();

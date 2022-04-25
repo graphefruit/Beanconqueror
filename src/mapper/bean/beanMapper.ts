@@ -29,7 +29,9 @@ export class BeanMapper {
         newBean.decaffeinated = _serverResponse.decaffeinated;
         newBean.ean_article_number = _serverResponse.ean_article_number;
         newBean.note = _serverResponse.note;
-        newBean.roastingDate = _serverResponse.roastingDate;
+        if ( _serverResponse.roastingDate !== null &&  _serverResponse.roastingDate !== ''){
+          newBean.roastingDate = _serverResponse.roastingDate;
+        }
         newBean.url = _serverResponse.url;
 
         newBean.beanMix = {
@@ -80,6 +82,8 @@ export class BeanMapper {
           iInformation.processing = information.processing;
           iInformation.region = information.region;
           iInformation.variety = information.variety;
+          iInformation.purchasing_price = information.purchasing_price;
+          iInformation.fob_price = information.fob_price;
           newBean.bean_information.push(iInformation);
         }
 

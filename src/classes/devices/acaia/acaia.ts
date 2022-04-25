@@ -2,11 +2,12 @@ import { Platforms } from '@ionic/core';
 // Converted to TypeScript from Python from https://github.com/lucapinello/pyacaia
 
 import { Characteristic } from '../ble.types';
-import { MAGIC1, MAGIC2, SCALE_CHARACTERISTIC_UUID, SCALE_SERVICE_UUID } from './constants';
-import { Button, ParsedMessage, MessageType, ScaleMessageType, Units, WorkerResult, DecoderResultType, DEBUG } from './common';
+import { MAGIC1, MAGIC2, SCALE_CHARACTERISTIC_UUID, PYXIS_RX_CHARACTERISTIC_UUID, PYXIS_TX_CHARACTERISTIC_UUID } from './constants';
+import { Button, ParsedMessage, MessageType, ScaleMessageType, Units, WorkerResult, DecoderResultType } from './common';
 import { memoize } from 'lodash';
 import { UILog } from '../../../services/uiLog';
-import {UISettingsStorage} from '../../../services/uiSettingsStorage';
+import { Logger } from '../common/logger';
+import { DEBUG } from '../common/constants';
 declare var ble;
 
 export enum EventType {
@@ -25,49 +26,6 @@ const log = (...args) => {
     } catch(e) {}
   }
 };
-
-class Logger {
-  private uiLog: UILog;
-  private uiSettingsStorage: UISettingsStorage;
-
-  private prefix: string;
-
-  constructor(prefix = 'ACAIA') {
-    this.uiLog = UILog.getInstance();
-    this.uiSettingsStorage = UISettingsStorage.getInstance();
-    this.prefix = prefix;
-  }
-
-  private isLogEnabled(): boolean {
-    try {
-      return this.uiSettingsStorage.getSettings().scale_log;
-    }catch(ex){
-      return false;
-    }
-
-  }
-
-  public log(...args) {
-    if (this.isLogEnabled() || DEBUG) {
-      return this.uiLog.log(`${this.prefix}: ${JSON.stringify(args)}`);
-    }
-
-  }
-
-  public info(...args) {
-    return this.uiLog.info(`${this.prefix} INFO: ${JSON.stringify(args)}`);
-  }
-
-  public error(...args) {
-    return this.uiLog.error(`${this.prefix} ERROR: ${JSON.stringify(args)}`);
-  }
-
-  public debug(...args) {
-    if (this.isLogEnabled() || DEBUG) {
-      return this.uiLog.log(`${this.prefix} DEBUG: ${JSON.stringify(args)}`);
-    }
-  }
-}
 
 // DecodeWorkers receives array buffer from heartbeat notification and emits parsed messages if any
 class DecoderWorker {
@@ -138,7 +96,8 @@ class DecoderWorker {
 
 export class AcaiaScale {
   private readonly device_id: string;
-  private char_uuid: string;
+  private rx_char_uuid: string;
+  private tx_char_uuid: string;
   private weight_uuid: string;
 
   // TODO(mike1808) Pyxis is not supported right now
@@ -235,12 +194,12 @@ export class AcaiaScale {
     }
 
     this.worker = new DecoderWorker(this.messageParseCallback.bind(this));
-    this.logger.log("Subscribing to notificatoins", { device_id: this.device_id, weight_uuid: this.weight_uuid, char_uuid: this.char_uuid });
+    this.logger.log("Subscribing to notifications", { device_id: this.device_id, weight_uuid: this.weight_uuid, char_uuid: this.rx_char_uuid });
 
     //We moved this line from notifications ready to here.
     this.connected = true;
 
-    ble.startNotification(this.device_id, this.weight_uuid, this.char_uuid, this.handleNotification.bind(this), (err) => {
+    ble.startNotification(this.device_id, this.weight_uuid, this.rx_char_uuid, this.handleNotification.bind(this), (err) => {
       this.logger.error("failed to subscribe to notifications " + JSON.stringify(err));
       this.disconnect()
         .catch(this.logger.error.bind(this.logger));
@@ -261,13 +220,13 @@ export class AcaiaScale {
   public async disconnect() {
     this.logger.debug('Scale disconnected');
     if (this.connected) {
-     if (this.device_id && this.weight_uuid && this.char_uuid) {
+     if (this.device_id && this.weight_uuid && this.tx_char_uuid) {
        this.logger.debug('Disconnect the device with its characteristics');
        // Lars - I don't know if we need this, but the problem is when the scale is disconnected via settings, or shutdown, it will crash everything.
        // Try catch won't help here, because the device is already deattached.
-       //await promisify(ble.stopNotification)((this.device_id, this.weight_uuid, this.char_uuid));
+       //await promisify(ble.stopNotification)((this.device_id, this.weight_uuid, this.tx_char_uuid));
      } else {
-       this.logger.debug('We cant disconnect because one of the characteristics is missing' + JSON.stringify({device_id: this.device_id, weight: this.weight_uuid, char_uuid: this.char_uuid}));
+       this.logger.debug('We cant disconnect because one of the characteristics is missing' + JSON.stringify({device_id: this.device_id, weight: this.weight_uuid, char_uuid: this.tx_char_uuid}));
      }
      this.connected = false;
    }
@@ -280,6 +239,7 @@ export class AcaiaScale {
       return false;
     }
 
+    this.logger.debug('taring...');
     this.command_queue.push(encodeTare());
     return true;
   }
@@ -288,6 +248,7 @@ export class AcaiaScale {
     if (!this.connected) {
       return false;
     }
+    this.logger.debug('start timer...');
     this.command_queue.push(encodeStartTimer());
     this.timer_start_time = Date.now();
     this.timer_running = true;
@@ -298,6 +259,7 @@ export class AcaiaScale {
     if (!this.connected) {
       return false;
     }
+    this.logger.debug('stop timer...');
     this.command_queue.push(encodeStopTimer());
     this.paused_time = Date.now() - this.timer_start_time;
     this.timer_running = false;
@@ -308,19 +270,33 @@ export class AcaiaScale {
     if (!this.connected) {
       return false;
     }
+    this.logger.debug('reset timer...');
     this.command_queue.push(encodeResetTimer());
     this.paused_time = 0;
     this.timer_running = false;
   }
 
   private findBLEUUIDs() {
-    for (let char of this.characteristics) {
+    let foundRx = false;
+    let foundTx = false;
+    for (const char of this.characteristics) {
       if (to128bitUUID(char.characteristic) === to128bitUUID(SCALE_CHARACTERISTIC_UUID)) {
-        this.char_uuid = char.characteristic;
+        this.rx_char_uuid = char.characteristic;
+        this.tx_char_uuid = char.characteristic;
         this.weight_uuid = char.service;
-        if (to128bitUUID(this.weight_uuid) !== to128bitUUID(SCALE_SERVICE_UUID)) {
-          this.isPyxisStyle = true;
-        }
+        this.isPyxisStyle = false;
+        foundRx = true;
+        foundTx = true;
+      } else if (to128bitUUID(char.characteristic) === to128bitUUID(PYXIS_RX_CHARACTERISTIC_UUID)) {
+        this.rx_char_uuid = char.characteristic;
+        foundRx = true;
+      } else if (to128bitUUID(char.characteristic) === to128bitUUID(PYXIS_TX_CHARACTERISTIC_UUID)) {
+        this.tx_char_uuid = char.characteristic;
+        this.weight_uuid = char.service;
+        this.isPyxisStyle = true;
+        foundTx = true;
+      }
+      if (foundRx && foundTx) {
         return true;
       }
     }
@@ -349,36 +325,35 @@ export class AcaiaScale {
           this.weight = msg.weight;
           this.callback(EventType.WEIGHT, this.weight);
           this.logger.debug('weight: ' + msg.weight + ' ' + Date.now());
-        } else {
-          if (msg.msgType === ScaleMessageType.TIMER) {
-            this.timer_start_time = Date.now() - msg.time;
-            this.timer_running = true;
-            this.callback(EventType.TIMER_START, this.timer_start_time);
-          } else {
-            if (msg.msgType === ScaleMessageType.TARE_START_STOP_RESET) {
-              switch (msg.button) {
-                case Button.TARE:
-                  this.weight = 0;
-                  this.callback(EventType.TARE, 0);
-                  break;
-                case Button.START:
-                  this.timer_start_time =
-                    Date.now() - this.paused_time + this.transit_delay;
-                  this.timer_running = true;
-                  this.callback(EventType.TIMER_START, this.timer_start_time);
-                  break;
-                case Button.STOP:
-                  this.paused_time = msg.time;
-                  this.timer_running = false;
-                  this.callback(EventType.TIMER_STOP, this.paused_time);
-                  break;
-                case Button.RESET:
-                  this.paused_time = 0;
-                  this.timer_running = false;
-                  this.callback(EventType.TIMER_RESET, 0);
-                  break;
-              }
+        } else if (msg.msgType === ScaleMessageType.TARE_START_STOP_RESET) {
+          if (msg.button === "unknown") {
+            if (this.timer_running) {
+              msg.button = Button.STOP;
+            } else if (this.paused_time > 0) {
+              msg.button = Button.RESET;
             }
+          }
+          switch (msg.button) {
+            case Button.TARE:
+              this.weight = 0;
+              this.callback(EventType.TARE, 0);
+              break;
+            case Button.START:
+              this.timer_start_time =
+                Date.now() - this.paused_time + this.transit_delay;
+              this.timer_running = true;
+              this.callback(EventType.TIMER_START, this.timer_start_time);
+              break;
+            case Button.STOP:
+              this.paused_time = msg.time;
+              this.timer_running = false;
+              this.callback(EventType.TIMER_STOP, this.paused_time);
+              break;
+            case Button.RESET:
+              this.paused_time = 0;
+              this.timer_running = false;
+              this.callback(EventType.TIMER_RESET, 0);
+              break;
           }
         }
       }
@@ -399,7 +374,7 @@ export class AcaiaScale {
     this.logger.debug("trying to write: ", new Uint8Array(data));
     return new Promise((resolve) => {
       if (this.connected) {
-        ble[withoutResponse ? 'writeWithoutResponse' : 'write'](this.device_id, this.weight_uuid, this.char_uuid, data,
+        ble[withoutResponse ? 'writeWithoutResponse' : 'write'](this.device_id, this.weight_uuid, this.tx_char_uuid, data,
           resolve, (err) => {
             this.logger.error("failed to write to characteristic, but we are ignoring it", err, withoutResponse);
             resolve(false); // resolve for both cases because sometimes write says it's an error but in reality it's fine

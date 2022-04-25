@@ -4,12 +4,12 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <!--<ion-button (short-press)="beanPopover()" (long-press)="longPressAdd($event)" tappable class="big-add-icon" fill="clear">
-        <ion-icon class="ion-color-accent" name="beanconqueror-add" slot="icon-only"></ion-icon>
-      </ion-button>-->
-      <ion-button (short-press)="longPressAdd($event)" (long-press)="longPressAdd($event)" tappable class="big-add-icon" fill="clear">
+      <ion-button (short-press)="beanPopover()" (long-press)="longPressAdd($event)" tappable class="big-add-icon" fill="clear">
         <ion-icon class="ion-color-accent" name="beanconqueror-add" slot="icon-only"></ion-icon>
       </ion-button>
+      <!--<ion-button (short-press)="longPressAdd($event)" (long-press)="longPressAdd($event)" tappable class="big-add-icon" fill="clear">
+        <ion-icon class="ion-color-accent" name="beanconqueror-add" slot="icon-only"></ion-icon>
+      </ion-button>-->
     </ion-buttons>
     <ion-title>
       {{"NAV_BEANS" | translate}}
@@ -30,13 +30,19 @@
   </ion-segment>
   <div [ngSwitch]="bean_segment">
     <div *ngSwitchCase="'open'">
-      <div *ngIf="openBeans?.length > 0 || isFilterActive()" class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
+      <div *ngIf="openBeans?.length > 0 || isTextSearchActive() || isFilterActive() || isSortActive()" class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
 
         <ion-searchbar (ionChange)="research()" [(ngModel)]="openBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
         <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
-          <ion-icon *ngIf="isFilterActive()"  name="beanconqueror-sort-active"
+          <ion-icon *ngIf="isFilterActive()"  name="beanconqueror-filter-active"
                     slot="icon-only"></ion-icon>
-          <ion-icon *ngIf="!isFilterActive()"  name="beanconqueror-sort-inactive"
+          <ion-icon *ngIf="!isFilterActive()"  name="beanconqueror-filter-inactive"
+                    slot="icon-only"></ion-icon>
+        </ion-button>
+        <ion-button (click)="showSort()" fill="clear" size="small" tappable>
+          <ion-icon *ngIf="isSortActive()"  name="beanconqueror-sort-active"
+                    slot="icon-only"></ion-icon>
+          <ion-icon *ngIf="!isSortActive()"  name="beanconqueror-sort-inactive"
                     slot="icon-only"></ion-icon>
         </ion-button>
       </div>
@@ -56,22 +62,22 @@
 
       </ag-virtual-scroll>
 
-        <!--<ion-virtual-scroll #openScroll [items]="openBeans" approxItemHeight="245px">
-          <bean-information (beanAction)="beanAction($event[0],$event[1])"  *virtualItem="let bean;"
-                            [bean]="bean"></bean-information>
-        </ion-virtual-scroll>
-      <div style="height:10px;" *ngIf="openBeans.length>0"></div>-->
-
     </div>
     <div *ngIf="settings?.show_archived_beans">
       <div *ngSwitchCase="'archiv'">
-        <div *ngIf="finishedBeans?.length > 0 || isFilterActive()" class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
+        <div *ngIf="finishedBeans?.length > 0 || isTextSearchActive() || isFilterActive() || isSortActive()" class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
 
           <ion-searchbar (ionChange)="research()" [(ngModel)]="archivedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
           <ion-button (click)="showFilter()" fill="clear" size="small" tappable>
-            <ion-icon *ngIf="isFilterActive()"  name="beanconqueror-sort-active"
+            <ion-icon *ngIf="isFilterActive()"  name="beanconqueror-filter-active"
                       slot="icon-only"></ion-icon>
-            <ion-icon *ngIf="!isFilterActive()"  name="beanconqueror-sort-inactive"
+            <ion-icon *ngIf="!isFilterActive()"  name="beanconqueror-filter-inactive"
+                      slot="icon-only"></ion-icon>
+          </ion-button>
+          <ion-button (click)="showSort()" fill="clear" size="small" tappable>
+            <ion-icon *ngIf="isSortActive()"  name="beanconqueror-sort-active"
+                      slot="icon-only"></ion-icon>
+            <ion-icon *ngIf="!isSortActive()"  name="beanconqueror-sort-inactive"
                       slot="icon-only"></ion-icon>
           </ion-button>
         </div>

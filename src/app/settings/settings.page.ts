@@ -55,6 +55,9 @@ import {UIUpdate} from '../../services/uiUpdate';
 import {UiVersionStorage} from '../../services/uiVersionStorage';
 import {UIWaterStorage} from '../../services/uiWaterStorage';
 import {Water} from '../../classes/water/water';
+import {AppEvent} from '../../classes/appEvent/appEvent';
+import {AppEventType} from '../../enums/appEvent/appEvent';
+import {EventQueueService} from '../../services/queueService/queue-service.service';
 
 
 declare var cordova: any;
@@ -80,6 +83,7 @@ export class SettingsPage implements OnInit {
 
   public currencies = {};
 
+  public settings_segment: string = "general";
   private __cleanupAttachmentData(_data: Array<IBean | IBrew | IMill | IPreparation | IGreenBean | IRoastingMachine>): any {
     if (_data !== undefined && _data.length > 0) {
       for (const obj of _data) {
@@ -102,6 +106,10 @@ export class SettingsPage implements OnInit {
       _data.brew_filter = {};
       _data.brew_filter.ARCHIVED = this.settings.GET_BREW_FILTER();
       _data.brew_filter.OPEN = this.settings.GET_BREW_FILTER();
+
+      _data.bean_filter = {};
+      _data.bean_filter.OPEN = this.settings.GET_BEAN_FILTER();
+      _data.bean_filter.ARCHIVED = this.settings.GET_BEAN_FILTER();
     }
   }
 
@@ -135,7 +143,8 @@ export class SettingsPage implements OnInit {
               private readonly uiWaterStorage: UIWaterStorage,
               private readonly bleManager: BleManagerService,
               private readonly uiToast: UIToast,
-              private readonly currencyService: CurrencyService
+              private readonly currencyService: CurrencyService,
+              private readonly eventQueue: EventQueueService,
   ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -196,7 +205,7 @@ export class SettingsPage implements OnInit {
       this.settings.scale_id = scale.id;
       this.settings.scale_type = scale.type;
 
-      this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.SCALE.CATEGORY,SETTINGS_TRACKING.ACTIONS.SCALE.DATA.SCALE_TYPE,scale.type);
+      this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.SCALE.CATEGORY,scale.type);
 
       await this.saveSettings();
 
@@ -210,7 +219,14 @@ export class SettingsPage implements OnInit {
   }
 
   public async disconnectScale() {
-    const disconnected: boolean = await this.bleManager.disconnect(this.settings.scale_id);
+    this.eventQueue.dispatch(new AppEvent(AppEventType.BLUETOOTH_SCALE_DISCONNECT, undefined));
+    let disconnected: boolean = true;
+
+    //if scale is connected, we try to disconnect, if scale is not connected, we just forget scale :)
+    if (this.settings.scale_id !== '' && this.bleManager.getScale()) {
+      disconnected = await this.bleManager.disconnect(this.settings.scale_id);
+    }
+
     if (disconnected) {
       this.settings.scale_id = '';
       this.settings.scale_type = null;
@@ -307,7 +323,7 @@ export class SettingsPage implements OnInit {
   public setLanguage(): void {
     this.translate.setDefaultLang(this.settings.language);
     this.translate.use(this.settings.language);
-    this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.SET_LANGUAGE.CATEGORY, SETTINGS_TRACKING.ACTIONS.SET_LANGUAGE.DATA.LANGUAGE, this.settings.language);
+    this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.SET_LANGUAGE.CATEGORY,  this.settings.language);
     this.uiSettingsStorage.saveSettings(this.settings);
     moment.locale(this.settings.language);
   }
@@ -330,17 +346,19 @@ export class SettingsPage implements OnInit {
                 const decodedURI = decodeURIComponent(uri);
                 pathFromDownload = pathFromDownload + decodedURI.substring(decodedURI.lastIndexOf('/Download/'));
                 importPath = pathFromDownload;
+                importPath = importPath.substring(0, importPath.lastIndexOf('/') + 1);
               } else {
-                importPath = newPath;
+                // After the new API-Changes we just can support this download path
+                importPath = this.file.externalRootDirectory + 'Download/Beanconqueror_export/';
               }
-              importPath = importPath.substring(0, importPath.lastIndexOf('/') + 1);
+
               this.__readAndroidJSONFile(fileEntry, importPath).then(() => {
                 // nothing todo
               }, (_err) => {
                 this.uiAlert.showMessage(this.translate.instant('ERROR_ON_FILE_READING') + ' (' + JSON.stringify(_err) + ')');
               });
             } catch (ex) {
-              this.uiAlert.showMessage(this.translate.instant('FILE_NOT_FOUND_INFORMATION') + ' (' + JSON.stringify(ex.message) + ')');
+              this.uiAlert.showMessage(this.translate.instant('FILE_NOT_FOUND_INFORMATION') + ' (' + JSON.stringify(ex) + ')');
             }
           });
       } else {
@@ -384,6 +402,12 @@ export class SettingsPage implements OnInit {
     await this._exportAttachments(exportObjects);
   }
 
+
+  private async exportFlowProfiles() {
+    const exportObjects: Array<any> =[...this.uiBrewStorage.getAllEntries()];
+    await this._exportFlowProfiles(exportObjects);
+  }
+
   public async export() {
 
     await this.uiAlert.showLoadingSpinner();
@@ -398,6 +422,7 @@ export class SettingsPage implements OnInit {
           if (this.platform.is('android')) {
 
             await this.exportAttachments();
+            await this.exportFlowProfiles();
             await this.uiAlert.hideLoadingSpinner();
 
             const alert = await this.alertCtrl.create({
@@ -439,6 +464,15 @@ export class SettingsPage implements OnInit {
       }
     }
   }
+  private async _exportFlowProfiles(_storedData: Array <Brew>) {
+    for (const entry of _storedData) {
+      if (entry.flow_profile) {
+        await this._exportFile(entry.flow_profile);
+      }
+
+    }
+  }
+
 
   private async _exportFile(_filePath) {
     let path: string;
@@ -471,13 +505,33 @@ export class SettingsPage implements OnInit {
           exclusive: false
         }, resolve)
       );
-      const exportDirectory: DirectoryEntry = await new Promise(async (resolve) =>
+      let exportDirectory: DirectoryEntry = await new Promise(async (resolve) =>
         await directory.getDirectory('Beanconqueror_export', {
           create: true,
           exclusive: false
         }, resolve)
       );
-      await this.file.copyFile(path, fileName, exportDirectory.nativeURL, fileName);
+
+      let exportingFilename = '';
+      const folders = fileName.split('/');
+      for (let i=0;i<folders.length;i++) {
+        const folderName = folders[i];
+        if (folderName.indexOf('.')>=0) {
+          //We found the filename woop
+          exportingFilename = folderName.trim();
+        } else if(folderName !=='') {
+          //We found another folder, create it or just get it
+          path = path + folderName + '/';
+          exportDirectory  = await new Promise(async (resolve) =>
+            await exportDirectory.getDirectory(folderName, {
+              create: true,
+              exclusive: false
+            }, resolve)
+          );
+        }
+      }
+
+      await this.file.copyFile(path, exportingFilename, exportDirectory.nativeURL, exportingFilename);
     } catch (ex) {
 
     }
@@ -544,6 +598,7 @@ export class SettingsPage implements OnInit {
       this.__reinitializeStorages().then(async () => {
         this.uiAnalytics.disableTracking();
         this.__initializeSettings();
+        this.settings.resetFilter();
         this.setLanguage();
         await this.uiAlert.showMessage(this.translate.instant('IMPORT_SUCCESSFULLY'));
         if (this.settings.matomo_analytics === undefined) {
@@ -582,6 +637,7 @@ export class SettingsPage implements OnInit {
           this.__importJSON(content, path);
         })
         .catch((err) => {
+          this.uiLog.error(`Could not read json file ${JSON.stringify(err)}` );
           reject(err);
 
         });
@@ -591,7 +647,7 @@ export class SettingsPage implements OnInit {
 
   private async __importJSON(_content: string, _importPath: string) {
     const parsedContent = JSON.parse(_content);
-
+    this.uiLog.log('Parsed import data successfully');
     const isIOS: boolean = this.platform.is('ios');
     // Set empty arrays if not existing.
     if (!parsedContent[this.uiPreparationStorage.getDBPath()]) {
@@ -623,21 +679,12 @@ export class SettingsPage implements OnInit {
       parsedContent[this.uiBrewStorage.getDBPath()] &&
       parsedContent[this.uiSettingsStorage.getDBPath()]) {
 
-      if (isIOS) {
-        this.__cleanupAttachmentData(parsedContent[this.uiBeanStorage.getDBPath()]);
-        this.__cleanupAttachmentData(parsedContent[this.uiBrewStorage.getDBPath()]);
-
-        this.__cleanupAttachmentData(parsedContent[this.uiRoastingMachineStorage.getDBPath()]);
-        this.__cleanupAttachmentData(parsedContent[this.uiGreenBeanStorage.getDBPath()]);
-        this.__cleanupAttachmentData(parsedContent[this.uiPreparationStorage.getDBPath()]);
-        this.__cleanupAttachmentData(parsedContent[this.uiMillStorage.getDBPath()]);
-        this.__cleanupAttachmentData(parsedContent[this.uiWaterStorage.getDBPath()]);
-
-      }
+      this.uiLog.log('All data existing');
       this.__cleanupImportSettingsData(parsedContent[this.uiSettingsStorage.getDBPath()]);
 
       // When exporting the value is a number, when importing it needs to be  a string.
       parsedContent['SETTINGS'][0]['brew_view'] = parsedContent['SETTINGS'][0]['brew_view'] + '';
+      this.uiLog.log('Cleaned all data');
       try {
         if (!parsedContent['SETTINGS'][0]['brew_order']['before'] === undefined) {
           this.uiLog.log('Old brew order structure');
@@ -679,15 +726,18 @@ export class SettingsPage implements OnInit {
               // We got an update and we got no mills yet, therefore we add a Standard mill.
               const data: Mill = new Mill();
               data.name = 'Standard';
-              this.uiMillStorage.add(data);
+              await this.uiMillStorage.add(data);
 
               const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
               for (const brew of brews) {
                 brew.mill = data.config.uuid;
-                this.uiBrewStorage.update(brew);
+                await this.uiBrewStorage.update(brew);
               }
             }
             this.setLanguage();
+
+            this.settings.resetFilter();
+            await this.uiSettingsStorage.saveSettings(this.settings);
             await this.uiAlert.hideLoadingSpinner();
             await this.uiAlert.showMessage(this.translate.instant('IMPORT_SUCCESSFULLY'));
             if (this.settings.matomo_analytics === undefined) {

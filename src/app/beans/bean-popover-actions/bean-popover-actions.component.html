@@ -1,7 +1,6 @@
-<ion-content (click)="dismiss()">
-
-</ion-content>
-  <ion-footer>
+<ion-header translucent>
+</ion-header>
+<ion-content>
   <ion-list lines="full">
     <ion-item (click)="choose(getStaticActions().DETAIL)" button tappable>
       <ion-icon name="beanconqueror-detail" slot="start"></ion-icon>
@@ -14,6 +13,11 @@
     <ion-item (click)="choose(getStaticActions().EDIT)" button tappable>
       <ion-icon name="beanconqueror-edit" slot="start"></ion-icon>
       <span>{{"EDIT" | translate}}</span>
+    </ion-item>
+    <ion-item (click)="choose(getStaticActions().TOGGLE_FAVOURITE)" button tappable>
+      <ion-icon *ngIf="!data.favourite" name="heart-outline" slot="start"></ion-icon>
+      <ion-icon *ngIf="data.favourite" name="heart" slot="start"></ion-icon>
+      <span>{{"POPOVER_BREWS_OPTION_TOGGLE_FAVOURITE" | translate}}</span>
     </ion-item>
     <ion-item (click)="choose(getStaticActions().SHARE)" button tappable>
       <ion-icon name="share-social-outline" slot="start"></ion-icon>
@@ -32,4 +36,4 @@
       <span>{{"DELETE" | translate}}</span>
     </ion-item>
   </ion-list>
-</ion-footer>
+</ion-content>

@@ -15,6 +15,7 @@ import {IRoastingMachine} from '../../interfaces/roasting-machine/iRoastingMachi
 
 export class Bean implements IBean {
   public name: string;
+  public buyDate: string;
   public roastingDate: string;
   public note: string;
 
@@ -48,8 +49,11 @@ export class Bean implements IBean {
 
   public qr_code: string;
 
+  public favourite: boolean;
+
   constructor() {
     this.name = '';
+    this.buyDate = '';
     this.roastingDate = '';
     this.note = '';
 
@@ -74,6 +78,7 @@ export class Bean implements IBean {
     this.bean_roast_information = new BeanRoastInformation();
     this.rating = 0;
     this.qr_code = '';
+    this.favourite = false;
   }
 
   public getRoastName(): string {
@@ -116,7 +121,7 @@ export class Bean implements IBean {
     return fixNeeded;
   }
   public beanAgeInDays(): number {
-    if (this.roastingDate !== undefined && this.roastingDate !== '') {
+    if (this.roastingDate !== null && this.roastingDate !== undefined && this.roastingDate !== '') {
       const today = moment(Date.now()).startOf('day');
       const roastingDate = moment(this.roastingDate).startOf('day');
 

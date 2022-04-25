@@ -79,7 +79,7 @@ export class UIAnalytics {
     }
   }
 
-  public trackEvent(_category, _action,_name?,_value?) {
+  public trackEvent(_category, _action,_name?,_value?: number) {
     if (this.canTrack) {
       try {
 

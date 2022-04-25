@@ -1,0 +1,17 @@
+:host {
+  ion-item {
+    --border-width: 0px;
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+  .swiper-pagination.swiper-pagination-bullets {
+    position: relative;
+    bottom:0px;
+  }
+  ::ng-deep ion-slides img {
+    width: 200px;
+    height: 200px;
+    display: block;
+    object-fit: contain;
+  }
+}

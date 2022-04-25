@@ -9,4 +9,6 @@ export interface IBeanInformation {
   processing: string;
   certification: string;
   percentage: number;
+  purchasing_price: number;
+  fob_price: number;
 }

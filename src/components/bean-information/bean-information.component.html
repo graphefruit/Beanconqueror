@@ -6,7 +6,8 @@
           <div class="ion-no-padding font-size-20 ion-title bean-title">
             <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="flame-outline" *ngIf="bean.isSelfRoasted()"></ion-icon>
             <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="qr-code-outline" *ngIf="bean.isScannedBean()"></ion-icon>
-            {{bean.name}}
+            <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="heart" *ngIf="bean.favourite" ></ion-icon>
+            {{bean.name}}&nbsp;<span *ngIf="!isBeanRoastUnknown()">({{"BEAN_ROASTING_TYPE_" + bean.bean_roasting_type | translate}})</span>
           </div>
         </ion-col>
         <ion-col *ngIf="bean?.roast_range !== 0 || bean?.rating !== 0" size="3">

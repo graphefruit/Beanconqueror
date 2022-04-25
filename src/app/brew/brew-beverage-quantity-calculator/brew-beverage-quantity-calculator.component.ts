@@ -35,7 +35,7 @@ export class BrewBeverageQuantityCalculatorComponent implements OnInit {
     this.modalController.dismiss({
       brew_beverage_quantity: brewBeverageQuantity,
       dismissed: true
-    },undefined, BrewBeverageQuantityCalculatorComponent.COMPONENT_ID)
+    },undefined, BrewBeverageQuantityCalculatorComponent.COMPONENT_ID);
 
   }
 
@@ -43,7 +43,7 @@ export class BrewBeverageQuantityCalculatorComponent implements OnInit {
   public dismiss(): void {
     this.modalController.dismiss({
       dismissed: true
-    },undefined, BrewBeverageQuantityCalculatorComponent.COMPONENT_ID)
+    },undefined, BrewBeverageQuantityCalculatorComponent.COMPONENT_ID);
 
   }
   public ngOnInit() {}

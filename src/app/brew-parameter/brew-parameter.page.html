@@ -28,6 +28,13 @@
     </ion-item>
   </ion-card>
 
+  <ion-card (click)="openListViewParameters()" tappable>
+    <ion-item class="ion-padding-horizontal" lines="none">
+      <ion-icon name="beanconqueror-list-view-parameter" slot="start"></ion-icon>
+      {{"NAV_LIST_VIEW_CUSTOM_PARAMETERS" | translate}}
+    </ion-item>
+  </ion-card>
+
   <ion-card class="ion-padding">
     <ion-card-title>{{"BREW_PARAMETER_CUSTOMIZE_TITLE" | translate}}</ion-card-title>
     <ion-card-content class="ion-no-padding">

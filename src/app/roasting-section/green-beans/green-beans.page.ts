@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
 import {Settings} from '../../../classes/settings/settings';
-import {IBeanPageFilter} from '../../../interfaces/bean/iBeanPageFilter';
+import {IBeanPageSort} from '../../../interfaces/bean/iBeanPageSort';
 import {BEAN_SORT_AFTER} from '../../../enums/beans/beanSortAfter';
 import {BEAN_SORT_ORDER} from '../../../enums/beans/beanSortOrder';
 import {ModalController} from '@ionic/angular';
@@ -10,7 +10,7 @@ import {UISettingsStorage} from '../../../services/uiSettingsStorage';
 import {GreenBean} from '../../../classes/green-bean/green-bean';
 import {UIGreenBeanStorage} from '../../../services/uiGreenBeanStorage';
 import {GREEN_BEAN_ACTION} from '../../../enums/green-beans/greenBeanAction';
-import {GreenBeanFilterComponent} from './green-bean-filter/green-bean-filter.component';
+import {GreenBeanSortComponent} from './green-bean-sort/green-bean-sort.component';
 import {AgVirtualSrollComponent} from 'ag-virtual-scroll';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 import {UIGreenBeanHelper} from '../../../services/uiGreenBeanHelper';
@@ -28,7 +28,7 @@ export class GreenBeansPage implements OnInit {
   public openBeans: Array<GreenBean> = [];
   public finishedBeans: Array<GreenBean> = [];
 
-  public openBeansFilter: IBeanPageFilter = {
+  public openBeansFilter: IBeanPageSort = {
     sort_after:  BEAN_SORT_AFTER.UNKOWN,
     sort_order: BEAN_SORT_ORDER.UNKOWN,
   };
@@ -39,7 +39,7 @@ export class GreenBeansPage implements OnInit {
   @ViewChild('openScroll', {read: AgVirtualSrollComponent, static: false}) public openScroll: AgVirtualSrollComponent;
   @ViewChild('archivedScroll', {read: AgVirtualSrollComponent, static: false}) public archivedScroll: AgVirtualSrollComponent;
   public bean_segment: string = 'open';
-  public archivedBeansFilter: IBeanPageFilter = {
+  public archivedBeansFilter: IBeanPageSort = {
     sort_after:  BEAN_SORT_AFTER.UNKOWN,
     sort_order: BEAN_SORT_ORDER.UNKOWN,
   };
@@ -65,8 +65,8 @@ export class GreenBeansPage implements OnInit {
 
   public ionViewWillEnter(): void {
     const settings = this.uiSettingsStorage.getSettings();
-    this.archivedBeansFilter = settings.green_bean_filter.ARCHIVED;
-    this.openBeansFilter = settings.green_bean_filter.OPEN;
+    this.archivedBeansFilter = settings.green_bean_sort.ARCHIVED;
+    this.openBeansFilter = settings.green_bean_sort.OPEN;
     this.loadBeans();
   }
 
@@ -118,7 +118,7 @@ export class GreenBeansPage implements OnInit {
   }
 
   public async showFilter() {
-    let beanFilter: IBeanPageFilter;
+    let beanFilter: IBeanPageSort;
     if (this.bean_segment === 'open') {
       beanFilter = {...this.openBeansFilter};
     } else {
@@ -126,18 +126,20 @@ export class GreenBeansPage implements OnInit {
     }
 
     const modal = await this.modalCtrl.create({
-      component: GreenBeanFilterComponent,
+      component: GreenBeanSortComponent,
       cssClass: 'popover-actions',
       showBackdrop: true,
       backdropDismiss: true,
       swipeToClose: true,
-      id: GreenBeanFilterComponent.COMPONENT_ID,
+      id: GreenBeanSortComponent.COMPONENT_ID,
       componentProps:
-        {bean_filter: beanFilter, segment: this.bean_segment}
+        {bean_filter: beanFilter, segment: this.bean_segment},
+      breakpoints: [0, 0.75, 1],
+      initialBreakpoint: 1,
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
-    if (modalData.data.bean_filter !== undefined) {
+    if (modalData !== undefined && modalData.data.bean_filter !== undefined) {
       if (this.bean_segment === 'open') {
         this.openBeansFilter = modalData.data.bean_filter;
 
@@ -145,7 +147,7 @@ export class GreenBeansPage implements OnInit {
         this.archivedBeansFilter = modalData.data.bean_filter;
       }
     }
-    this.__saveBeanFilter();
+    await this.__saveBeanFilter();
 
 
     this.loadBeans();
@@ -165,18 +167,18 @@ export class GreenBeansPage implements OnInit {
     this.__initializeBeansView(this.bean_segment);
   }
 
-  private __saveBeanFilter() {
+  private async __saveBeanFilter() {
     const settings: Settings = this.uiSettingsStorage.getSettings();
-    settings.green_bean_filter.OPEN = this.openBeansFilter;
-    settings.green_bean_filter.ARCHIVED = this.archivedBeansFilter;
-    this.uiSettingsStorage.saveSettings(settings);
+    settings.green_bean_sort.OPEN = this.openBeansFilter;
+    settings.green_bean_sort.ARCHIVED = this.archivedBeansFilter;
+    await this.uiSettingsStorage.saveSettings(settings);
   }
 
   private __initializeBeansView(_type: string) {
 // sort latest to top.
     const beansCopy: Array<GreenBean> = [...this.beans];
     const isOpen: boolean = (_type === 'open');
-    let filter: IBeanPageFilter;
+    let filter: IBeanPageSort;
     let sortedBeans : Array<GreenBean>;
     if (isOpen) {
       filter = this.openBeansFilter;

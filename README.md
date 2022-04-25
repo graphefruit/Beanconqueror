@@ -62,7 +62,7 @@ Different features are supported by this app, a brief overview you'll find here.
 - Own roasting section
 - Own water section
 - Cup your brews by aromatics or flavors
-- Connect smart scales (Decent Scale, Acaia Lunar)
+- Connect smart scales (Decent Scale, Acaia Lunar, Hiroia Jimmy)
  
 
 ## Special thanks
@@ -146,7 +146,7 @@ To get started with anything you need [Node.js](https://nodejs.org/en/download/)
 https://sonarcloud.io/dashboard?id=graphefruit_Beanconqueror
 
 ## Get Started
-npm install -g cordova@10.0.0
+npm install -g cordova@11.0.0
 npm install -g @ionic/cli
 
 ## Build iOS
@@ -177,8 +177,18 @@ Don't use NPM V 7 right now, 6.14.11 works fine
 
 
 ### Android-Version:
-`ionic cordova platform add android@9.X`
-Android version 10 is not working yet.
+`ionic cordova platform add android@10.1.1`
 
 ### Github Page Hosting
 https://stackoverflow.com/questions/60357663/do-apple-app-site-association-files-work-with-github-pages-i-e-site-github-io
+
+
+### Upgrade Ionic if needed:
+`npm install @ionic/angular@6.0.14`
+-> Or the actual active version
+
+### Installing AAB on your android (mac)
+https://stackoverflow.com/questions/50419286/install-android-app-bundle-on-device
+brew install bundletool
+bundletool build-apks --bundle=./app.aab --output=./app.apks
+bundletool install-apks --apks=app.apks

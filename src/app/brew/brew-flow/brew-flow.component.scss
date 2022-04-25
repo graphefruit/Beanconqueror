@@ -1,0 +1,62 @@
+:host {
+  ion-header{
+    height:30px;
+    background-color:#ffffff;
+  }
+  ion-toolbar{
+    height:0px!important;
+    padding-top:25px!important;
+  }
+  ion-footer {
+    background: #FFFFFF;
+    box-shadow:none;
+  }
+  #brewFlowContainer {
+    height:100%;
+  }
+  ion-grid {
+    height:100%;
+    ion-row {
+      height: 100%;
+      ion-col {
+        height:100%;
+      }
+    }
+  }
+
+  ion-label {
+    color: #938F89;
+    display:block;
+    position: relative;
+    top: 5px;
+  }
+  ion-text {
+    display:block;
+  }
+  .flow-icon-buttons {
+    ion-button {
+      margin: 0;
+      margin-top:-15px;
+    }
+
+  }
+
+  ion-card.flow-profile {
+    margin:0px;
+    ion-card-header {
+      color: #FFFFFF;
+      background-color: var(--ion-color-accent) !important;
+      font-size: 16px;
+      padding: 4px;
+      display: flex;
+      justify-content: space-evenly;
+      flex-direction: column;
+    }
+
+    ion-card-content {
+      color: #000000;
+      padding: 0px 2px;
+    }
+
+  }
+}

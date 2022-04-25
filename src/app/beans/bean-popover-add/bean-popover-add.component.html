@@ -1,0 +1,14 @@
+<ion-header translucent>
+</ion-header>
+<ion-content>
+  <ion-list lines="full">
+    <ion-item (click)="choose(getStaticActions().ADD)" button tappable>
+      <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+      <span>{{"ADD_BEAN" | translate}}</span>
+    </ion-item>
+    <ion-item (click)="choose(getStaticActions().SCAN)" button tappable>
+      <ion-icon name="qr-code-outline" slot="start"></ion-icon>
+      <span>{{"SCAN_BEAN" | translate}}</span>
+    </ion-item>
+  </ion-list>
+</ion-content>

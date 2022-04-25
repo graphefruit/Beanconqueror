@@ -55,7 +55,9 @@ export class UIMillHelper {
       component: MillAddComponent,
       cssClass: 'popover-actions',
       id: MillAddComponent.COMPONENT_ID,
-      componentProps: {hide_toast_message: _hideToastMessage}
+      componentProps: {hide_toast_message: _hideToastMessage},
+      breakpoints: [0, 0.35, 0.5, 0.75, 1],
+      initialBreakpoint: 0.35,
     });
     await modal.present();
     await modal.onWillDismiss();

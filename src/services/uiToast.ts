@@ -19,7 +19,7 @@ export class UIToast {
     const toast = await this.toastController.create({
       message: this.translate.instant(_message),
       duration: 2000,
-      position: 'top',
+      position: 'bottom',
     });
     toast.present();
   }

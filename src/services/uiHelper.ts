@@ -55,11 +55,19 @@ export class UIHelper {
       .unix();
   }
 
+  /**
+   * Clone without any reference
+   * @param _value
+   */
   public cloneData(_value) {
     const clone = cloneDeep(_value);
     return clone;
   }
 
+  /**
+   * Copy (references may exist)
+   * @param _value
+   */
   public copyData(_value: any): any {
     if (_value) {
       if (_value.constructor === Array) {
@@ -127,6 +135,15 @@ export class UIHelper {
       .format(format);
   }
 
+
+  public formatSeconds(_seconds,_format) {
+    try {
+      return   moment().startOf('day').add('seconds',_seconds).format(_format);
+    } catch (ex) {
+      return 0;
+    }
+
+  }
   public getActualTimeWithMilliseconds() {
     return moment(new Date()).format("HH:mm:ss.SSS");
   }
