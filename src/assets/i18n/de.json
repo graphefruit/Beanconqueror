@@ -701,12 +701,22 @@
         "Zubereitungsmethoden-Tools können nun editiert und archiviert werden",
         "",
         "<b>Fehlerbehebungen:</b>",
-        "Aufnahme / Auswahl von Bildern funktioniert nun auf den neusten Android Versionen",
         "Weitere Fehler gefunden, welche zu einem Datenverlust führen konnten",
         "Kleinere Fehlerbehebungen",
         "",
         "<b>Sonstiges:</b>",
         "Aktualisierung auf Ionic-Framework 6, hierdurch sind kleinere visuelle Änderungen gekommen"
+      ]
+    },
+    "6.1.3": {
+      "TITLE": "Version 6.1.3: Das ist neu",
+      "DESCRIPTION": [
+        "<b>Android - Achtung</b>",
+        "An aller erste Stelle: Entschuldigung!",
+        "Leider wurde durch die Umstellung von APK auf AAB das Dateisystem zurückgesetzt und die App startet (vermutlich) ohne Daten.",
+        "Während der Entwicklung konnte ich dieses Problem leider nicht feststellen oder ausmachen.",
+        "Falls die App leer gestartet wurde, bitte geh in die Einstellungen, und importiere unter 'Download/Beanconqueror_export/Beanconqueror_automatic_export_*.json' * steht für den letzten Zeitstempel das Backup.",
+        "Alle Daten sollten dann wie gewohnt wieder vorhanden sein, falls nicht schreib mir bitte eine E-Mail: info@beanconqueror.com."
       ]
     }
   },

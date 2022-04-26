@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {BEAN_SORT_AFTER} from '../../../../enums/beans/beanSortAfter';
 import {BEAN_SORT_ORDER} from '../../../../enums/beans/beanSortOrder';
-import {IBeanPageFilter} from '../../../../interfaces/bean/iBeanPageFilter';
+
 import {ModalController, NavParams} from '@ionic/angular';
 import {UIBrewHelper} from '../../../../services/uiBrewHelper';
 import {UIHelper} from '../../../../services/uiHelper';
@@ -18,10 +18,10 @@ export class GreenBeanFilterComponent implements OnInit {
 
   public beanSortAfterEnum = BEAN_SORT_AFTER;
   public beanSortOrderEnum = BEAN_SORT_ORDER;
-  public filter: IBeanPageFilter = {
+  /*public filter: IBeanPageFilter = {
     sort_order: BEAN_SORT_ORDER.UNKOWN,
     sort_after: BEAN_SORT_AFTER.UNKOWN,
-  };
+  };*/
 
   public segment: string = 'open';
 
@@ -36,7 +36,7 @@ export class GreenBeanFilterComponent implements OnInit {
   public ngOnInit() {
 
     this.segment = this.navParams.get('segment');
-    this.filter = this.uiHelper.copyData(this.navParams.get('bean_filter'));
+    //this.filter = this.uiHelper.copyData(this.navParams.get('bean_filter'));
   }
 
   public dismiss(): void {
@@ -46,38 +46,38 @@ export class GreenBeanFilterComponent implements OnInit {
   }
 
   public useFilter() {
-    this.modalController.dismiss({
+    /*this.modalController.dismiss({
       bean_filter: this.uiHelper.copyData(this.filter)
-    });
+    });*/
   }
 
   public resetFilter() {
-    this.filter = {
+    /*this.filter = {
       sort_order: BEAN_SORT_ORDER.UNKOWN,
       sort_after: BEAN_SORT_AFTER.UNKOWN,
     };
     this.modalController.dismiss({
       bean_filter: this.uiHelper.copyData(this.filter)
-    },undefined,GreenBeanFilterComponent.COMPONENT_ID);
+    },undefined,GreenBeanFilterComponent.COMPONENT_ID);*/
   }
 
   public setSortOrder(_order: any) {
-    this.filter.sort_order = _order;
+   /* this.filter.sort_order = _order;
     if (this.filter.sort_after === BEAN_SORT_AFTER.UNKOWN) {
       this.filter.sort_after = BEAN_SORT_AFTER.NAME;
-    }
+    }*/
   }
   public setSortAfter(_sort: any) {
-    this.filter.sort_after = _sort;
+    /*this.filter.sort_after = _sort;
     if (this.filter.sort_order === BEAN_SORT_ORDER.UNKOWN) {
       this.filter.sort_order = BEAN_SORT_ORDER.ASCENDING;
-    }
+    }*/
   }
   public isSortActive(_sort: any) {
-    return this.filter.sort_after === _sort;
+    return true; //return this.filter.sort_after === _sort;
   }
   public isOrderActive(_order: any) {
-    return this.filter.sort_order === _order;
+    return true; //return this.filter.sort_order === _order;
   }
 
 }

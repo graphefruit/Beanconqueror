@@ -517,10 +517,10 @@ export class SettingsPage implements OnInit {
       for (let i=0;i<folders.length;i++) {
         const folderName = folders[i];
         if (folderName.indexOf('.')>=0) {
-          //We found the filename woop
+          // We found the filename woop
           exportingFilename = folderName.trim();
         } else if(folderName !=='') {
-          //We found another folder, create it or just get it
+          // We found another folder, create it or just get it
           path = path + folderName + '/';
           exportDirectory  = await new Promise(async (resolve) =>
             await exportDirectory.getDirectory(folderName, {
@@ -568,13 +568,22 @@ export class SettingsPage implements OnInit {
     }
 
     try {
+      const fileExists: boolean = await this.file.checkFile(storageLocation,fileName);
+      if (fileExists === true) {
+        this.uiLog.log('File did exist and was copied - file:' +  storageLocation + '' + fileName + ' to: ' + path + '' + fileName);
+        await this.file.copyFile(storageLocation, fileName, path, fileName);
+
+      } else {
+        this.uiLog.log('File doesnt exist - file:' +  storageLocation + '' + fileName + ' to: ' + path + '' + fileName);
+      }
+
       try {
         // extra catch because maybe file is not existing
-        await this.file.removeFile(path, fileName);
+        // await this.file.removeFile(path, fileName);
       } catch (ex) {
 
       }
-      await this.file.copyFile(storageLocation, fileName, path, fileName);
+
     } catch (ex) {
       this.uiLog.error('Import file ' + ex.message);
     }

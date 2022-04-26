@@ -96,7 +96,7 @@
     "@types/lodash": "^4.14.178",
     "@types/node": "^12.20.5",
     "@wisdomgarden/cordova-plugin-filepath": "git+https://github.com/wisdom-garden/cordova-plugin-filepath.git",
-    "cordova-android": "^10.1.1",
+    "cordova-android": "^10.1.2",
     "cordova-ios": "^6.2.0",
     "cordova-plugin-add-swift-support": "^2.0.2",
     "cordova-plugin-androidx": "^3.0.0",
@@ -221,8 +221,8 @@
       }
     },
     "platforms": [
-      "android",
-      "ios"
+      "ios",
+      "android"
     ]
   },
   "platforms": [
