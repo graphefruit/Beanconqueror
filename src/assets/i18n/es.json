@@ -701,12 +701,22 @@
          "Las herramientas del método de preparación ahora se pueden editar y archivar",
         "",
         "<b>Corrección de errores:</b>",
-        "Grabar o elegir imágenes en Android ahora funciona en versiones más nuevas",
          "Se encontraron más problemas que podrían conducir a una pérdida de datos",
          "Pequeñas correcciones de errores",
         "",
         "<b>Otros:</b>",
         "Actualizado a Ionic-Framework 6, por lo tanto existen algunos pequeños cambios visuales"
+      ]
+    },
+    "6.1.3": {
+      "TITLE": "Version 6.1.3: Thats new!",
+      "DESCRIPTION": [
+        "<b>Android - Attention</b>",
+        "In first please: Sorry!",
+        "Sadly the database was resetted from going form APK to AAB format on Android Play Store, and your app will propably start without data.",
+        "I could not debug or control this situation, while development everything worked as expected",
+        "If your app started blank, please go into settings and import the file below 'Download/Beanconqueror_export/Beanconqueror_automatic_export_*.json' * stands for the latest timestamp, the backup.",
+        "All datas should then be back as normal, if not please write me an e-mail: info@beanconqueror.com."
       ]
     }
   },
