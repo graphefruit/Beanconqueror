@@ -8,6 +8,8 @@ import {UIToast} from '../../services/uiToast';
 import {IonSlides} from '@ionic/angular';
 import {Preparation} from '../../classes/preparation/preparation';
 import {Mill} from '../../classes/mill/mill';
+import {UIAlert} from '../../services/uiAlert';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'photo-add',
@@ -22,7 +24,9 @@ export class PhotoAddComponent implements OnInit {
 
   constructor(private readonly uiImage: UIImage,
               private readonly uiFileHelper: UIFileHelper,
-              private readonly uiToast: UIToast) { }
+              private readonly uiToast: UIToast,
+              private readonly uiAlert: UIAlert,
+              private readonly translate: TranslateService) { }
 
   public ngOnInit() {
     setTimeout(() => {
@@ -46,14 +50,18 @@ export class PhotoAddComponent implements OnInit {
                 this.emitChanges();
               }
 
-            },() => {});
+            },(_error) => {
+              this.uiAlert.showMessage(JSON.stringify(_error),this.translate.instant('ERROR_OCCURED'));
+            });
         } else {
           // TAKE
           this.uiImage.takePhoto()
             .then((_path) => {
               this.data.attachments.push(_path.toString());
               this.emitChanges();
-            },() => {});
+            },(_error) => {
+              this.uiAlert.showMessage(JSON.stringify(_error),this.translate.instant('ERROR_OCCURED'));
+            });
         }
       });
   }

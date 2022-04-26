@@ -72,12 +72,13 @@ export class UIImage {
             this.uiFileHelper.saveBase64File('beanconqueror_image', '.png', imageStr).then((_newURL) => {
               // const filePath = _newURL.replace(/^file:\/\//, '');
               resolve(_newURL);
-            },() => {
-              reject();
+              this.__cleanupCamera();
+            },(_error) => {
+              reject(_error);
             });
           },
-          (_err: any) => {
-            reject();
+          (_error: any) => {
+            reject(_error);
 
           }
         );
@@ -149,11 +150,11 @@ export class UIImage {
                   if (fileurls.length > 0) {
                     resolve(fileurls);
                   } else {
-                    reject();
+                    reject('We found no file urls');
                   }
 
                 }, (err) => {
-                  reject();
+                  reject(err);
                 });
               }
             } else {
@@ -184,11 +185,11 @@ export class UIImage {
                         });
 
                       }
-                    }, () => {
-                      reject();
+                    }, (_error) => {
+                      reject(_error);
                     });
                   } catch (ex) {
-
+                    reject(ex);
                   }
                 }
                 this.__cleanupCamera();
@@ -196,17 +197,17 @@ export class UIImage {
                 if (fileurls.length > 0) {
                   resolve(fileurls);
                 } else {
-                  reject();
+                  reject('We found no file urls');
                 }
-              },()=> {
-                reject();
+              },(_err)=> {
+                reject(_err);
               });
 
             }
           });
 
-        }, () => {
-          reject();
+        }, (_err) => {
+          reject(_err);
         }
       );
     });
