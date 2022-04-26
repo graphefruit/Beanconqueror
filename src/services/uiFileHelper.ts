@@ -96,6 +96,8 @@ export class UIFileHelper extends InstanceClass {
             reject();
           }
 
+        },() => {
+          reject();
         });
       } else {
         reject();
