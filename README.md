@@ -30,6 +30,7 @@ Download today, track your brews, change your recipes, to get the best tasting c
 - English: [Home-Barista](https://www.home-barista.com/knockbox/beanconqueror-app-t68236.html)
 - Dutch [tweakers](https://gathering.tweakers.net/forum/list_messages/1635607/44) [koffiepraat](https://www.koffiepraat.nl/forum/viewtopic.php?t=9842 )
 - Greek: [greekespresso](https://www.greekespresso.gr/forum/viewtopic.php?f=4&t=7251&p=97854&hilit=beanconqueror#p97854)
+- Turkish: [kahvekulubu](https://www.kahvekulubu.net/sosyal/threads/kahve-loglama-kayit-oneri-yontem-metodoloji.3483/)
 
 ## Rankings
 
