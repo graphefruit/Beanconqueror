@@ -378,10 +378,10 @@ export class BeansPage implements OnInit {
     }
 
     if (searchText) {
-      filterBeans = filterBeans.filter((e) => e.note.toLowerCase().includes(searchText) ||
-        e.name.toLowerCase().includes(searchText) ||
-        e.roaster.toLowerCase().includes(searchText) ||
-        e.aromatics.toLowerCase().includes(searchText));
+      filterBeans = filterBeans.filter((e) => e.note?.toLowerCase().includes(searchText) ||
+        e.name?.toLowerCase().includes(searchText) ||
+        e.roaster?.toLowerCase().includes(searchText) ||
+        e.aromatics?.toLowerCase().includes(searchText));
     }
     if (isOpen) {
      this.openBeans = filterBeans;
@@ -447,7 +447,7 @@ export class BeansPage implements OnInit {
       },() => {});
     } else {
       // Test sample for development
-       // await this.intenthandler.handleQRCodeLink('https://beanconqueror.com/?qr=f62fa1e9');
+        await this.intenthandler.handleQRCodeLink('https://beanconqueror.com/?qr=7b761a95');
     }
     this.loadBeans();
     return;
