@@ -82,7 +82,7 @@ export class IntentHandlerService {
 
           this.uiLog.log('Handle deeplink: ' + url);
           if (url.indexOf('https://beanconqueror.com/?qr=') === 0 || url.indexOf('https://beanconqueror.com?qr=') === 0) {
-            const qrCodeId: string = String(this.findGetParameter(_matchLink.queryString,'id'));
+            const qrCodeId: string = String(this.findGetParameter(_matchLink.queryString,'qr'));
             await this.addBeanFromServer(qrCodeId);
           } else if (url.indexOf('beanconqueror://ADD_BEAN_ONLINE?') === 0) {
             const qrCodeId: string = String(this.findGetParameter(_matchLink.queryString,'id'));
