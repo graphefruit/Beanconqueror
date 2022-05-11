@@ -1,6 +1,9 @@
 # 如何参与汉化 / How to join
 请打开[此文件](https://github.com/DC1024/Beanconqueror/blob/master/src/assets/i18n/zh-hans.json)并进行修改
-> 汉化完成后将请求合并
+> 汉化完成后将请求合并  
+  
+open and edit this file  
+https://github.com/DC1024/Beanconqueror/blob/master/src/assets/i18n/zh-hans.json
 
 # fork from：
 https://github.com/graphefruit/Beanconqueror
