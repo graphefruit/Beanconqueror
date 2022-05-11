@@ -1,20 +1,6 @@
 :host {
-  ion-list{
-    background:#ffffff;
-  }
-  ion-item.active {
-    border: 1px solid var(--ion-color-accent-secondary);
-  }
-  ion-item {
-    border-radius: 10px;
-    --background: #F0F0F0;
-
-    ion-icon{
-      padding-left: 16px;
-      margin-right: 8px;
-    }
-  }
-  ion-footer{
-    background:#ffffff;
+  ion-header{
+    height:30px;
+    background-color:#ffffff;
   }
 }

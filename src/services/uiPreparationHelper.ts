@@ -9,6 +9,12 @@ import {ModalController} from '@ionic/angular';
 import {PreparationEditComponent} from '../app/preparation/preparation-edit/preparation-edit.component';
 import {Preparation} from '../classes/preparation/preparation';
 import {PreparationDetailComponent} from '../app/preparation/preparation-detail/preparation-detail.component';
+import {PreparationTool} from '../classes/preparation/preparationTool';
+import {PreparationEditToolComponent} from '../app/preparation/preparation-edit-tool/preparation-edit-tool.component';
+import {UIHelper} from './uiHelper';
+import {Config} from '../classes/objectConfig/objectConfig';
+import {TranslateService} from '@ngx-translate/core';
+import {UIPreparationStorage} from './uiPreparationStorage';
 
 /**
  * Handles every helping functionalities
@@ -20,7 +26,10 @@ import {PreparationDetailComponent} from '../app/preparation/preparation-detail/
 export class UIPreparationHelper {
   private allStoredBrews: Array<Brew> = [];
   constructor(private readonly uiBrewStorage: UIBrewStorage,
-              private readonly modalController: ModalController) {
+              private readonly modalController: ModalController,
+              private readonly uiHelper: UIHelper,
+              private readonly translate: TranslateService,
+              private readonly uiPreparationStorage: UIPreparationStorage) {
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
       // If an brew is deleted, we need to reset our array for the next call.
       this.allStoredBrews = [];
@@ -47,7 +56,7 @@ export class UIPreparationHelper {
 
   }
 
-  public async addPreparation(_hideToastMessage:boolean = false) {
+  public async addPreparation(_hideToastMessage: boolean = false) {
 
     const modal = await this.modalController.create({
       component: PreparationAddComponent,
@@ -69,10 +78,42 @@ export class UIPreparationHelper {
     await modal.onWillDismiss();
   }
 
+  public async editPreparationTool(_preparation: Preparation, _preparationTool: PreparationTool) {
+    const modal = await this.modalController.create({component: PreparationEditToolComponent,
+      componentProps: {preparation: _preparation, preparationTool:_preparationTool },
+      id: PreparationEditToolComponent.COMPONENT_ID,
+      cssClass: 'popover-actions',
+      breakpoints: [0, 0.5, 0.75, 1],
+      initialBreakpoint: 0.75,
+
+    });
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+
   public async detailPreparation(_preparation: Preparation) {
     const modal = await this.modalController.create({component: PreparationDetailComponent, id:PreparationDetailComponent.COMPONENT_ID, componentProps: {preparation: _preparation}});
     await modal.present();
     await modal.onWillDismiss();
+  }
+
+  public async repeatPreparation(_preparation: Preparation) {
+   const clonedPreparation: Preparation =  this.uiHelper.cloneData(_preparation);
+   // Reset the id and the timestamp, so we'll create a new one
+   clonedPreparation.config = new Config();
+   clonedPreparation.name = this.translate.instant('COPY') + ' ' + clonedPreparation.name;
+
+   const newTools: Array<PreparationTool> = this.uiHelper.cloneData(clonedPreparation.tools);
+   clonedPreparation.tools = [];
+   for (const tool of newTools) {
+     const newTool: PreparationTool = this.uiHelper.cloneData(tool);
+     clonedPreparation.addToolByObject(newTool);
+   }
+
+   // No attachments.
+   clonedPreparation.attachments = [];
+   await this.uiPreparationStorage.add(clonedPreparation);
+
   }
 
 }

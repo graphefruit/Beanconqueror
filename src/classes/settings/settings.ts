@@ -11,9 +11,12 @@ import {STARTUP_VIEW_ENUM} from '../../enums/settings/startupView';
 import {OrderBrewParameter} from '../parameter/orderBrewParameter';
 import {IBrewPageFilter} from '../../interfaces/brew/iBrewPageFilter';
 import {ManageBrewParameter} from '../parameter/manageBrewParameter';
-import {IBeanPageFilter} from '../../interfaces/bean/iBeanPageFilter';
+import {IBeanPageSort} from '../../interfaces/bean/iBeanPageSort';
 import {BEAN_SORT_AFTER} from '../../enums/beans/beanSortAfter';
 import {BEAN_SORT_ORDER} from '../../enums/beans/beanSortOrder';
+import {ListViewBrewParameter} from '../parameter/listViewBrewParameter';
+import {IBeanPageFilter} from '../../interfaces/bean/iBeanPageFilter';
+import {BEAN_ROASTING_TYPE_ENUM} from '../../enums/beans/beanRoastingType';
 
 
 export class Settings implements ISettings {
@@ -24,8 +27,10 @@ export class Settings implements ISettings {
 
 
   public matomo_analytics: boolean;
+  public qr_scanner_information: boolean;
   public manage_parameters: ManageBrewParameter;
   public default_last_coffee_parameters: DefaultBrewParameter;
+  public visible_list_view_parameters: ListViewBrewParameter;
   public brew_order: OrderBrewParameter;
   public config: Config;
   public language: string;
@@ -33,6 +38,7 @@ export class Settings implements ISettings {
   public fast_brew_repeat: boolean;
   public image_quality: number;
   public brew_rating: number;
+  public brew_rating_steps: number;
 
   public show_archived_beans: boolean;
   public show_archived_brews: boolean;
@@ -40,6 +46,7 @@ export class Settings implements ISettings {
   public show_archived_preparations: boolean;
   public show_archived_green_beans: boolean;
   public show_archived_waters: boolean;
+  public show_archived_brews_on_dashboard: boolean;
 
   public welcome_page_showed: boolean;
   public track_caffeine_consumption: boolean;
@@ -47,14 +54,20 @@ export class Settings implements ISettings {
     OPEN: IBrewPageFilter,
     ARCHIVED: IBrewPageFilter
   };
+
   public bean_filter: {
     OPEN: IBeanPageFilter,
     ARCHIVED: IBeanPageFilter
   };
 
-  public green_bean_filter: {
-    OPEN: IBeanPageFilter,
-    ARCHIVED: IBeanPageFilter
+  public bean_sort: {
+    OPEN: IBeanPageSort,
+    ARCHIVED: IBeanPageSort
+  };
+
+  public green_bean_sort: {
+    OPEN: IBeanPageSort,
+    ARCHIVED: IBeanPageSort
   };
 
   public wake_lock: boolean;
@@ -67,9 +80,29 @@ export class Settings implements ISettings {
   public scale_type: ScaleType;
   public scale_log: boolean;
   public bluetooth_scale_stay_connected: boolean;
+  public bluetooth_scale_tare_on_brew: boolean;
+  public bluetooth_scale_tare_on_start_timer: boolean;
+  public bluetooth_ignore_negative_values: boolean;
+  public bluetooth_ignore_anomaly_values: boolean;
+
 
 
   public currency: string;
+
+
+  public GET_BEAN_FILTER(): IBeanPageFilter {
+    return {
+      favourite: false,
+      rating: {
+        upper: 5,
+        lower: 0
+      },
+      bean_roasting_type: [],
+      roastingDateStart: '',
+      roastingDateEnd: ''
+    } as IBeanPageFilter;
+  }
+
   public GET_BREW_FILTER(): IBrewPageFilter {
 
     const upperRating: number = this.brew_rating;
@@ -95,9 +128,12 @@ export class Settings implements ISettings {
 
     this.manage_parameters = new ManageBrewParameter();
     this.default_last_coffee_parameters = new DefaultBrewParameter();
+    this.visible_list_view_parameters = new ListViewBrewParameter();
     this.brew_order = new OrderBrewParameter();
     this.language = '';
     this.matomo_analytics = undefined;
+
+    this.qr_scanner_information = false;
 
     this.track_brew_coordinates = false;
     this.fast_brew_repeat = false;
@@ -107,6 +143,7 @@ export class Settings implements ISettings {
     this.show_archived_preparations = true;
     this.show_archived_green_beans = true;
     this.show_archived_waters = true;
+    this.show_archived_brews_on_dashboard = true;
 
     this.track_caffeine_consumption = false;
 
@@ -124,20 +161,29 @@ export class Settings implements ISettings {
       ARCHIVED: {} as IBeanPageFilter
     };
 
-    this.green_bean_filter = {
-      OPEN: {} as IBeanPageFilter,
-      ARCHIVED: {} as IBeanPageFilter
+    this.bean_sort = {
+      OPEN: {} as IBeanPageSort,
+      ARCHIVED: {} as IBeanPageSort
+    };
+
+    this.green_bean_sort = {
+      OPEN: {} as IBeanPageSort,
+      ARCHIVED: {} as IBeanPageSort
     };
     this.brew_rating = 5;
+    this.brew_rating_steps = 1;
 
     this.brew_filter.OPEN = this.GET_BREW_FILTER();
     this.brew_filter.ARCHIVED = this.GET_BREW_FILTER();
 
-    this.bean_filter.OPEN = {sort_after: BEAN_SORT_AFTER.UNKOWN, sort_order:  BEAN_SORT_ORDER.UNKOWN} as IBeanPageFilter;
-    this.bean_filter.ARCHIVED =  {sort_after: BEAN_SORT_AFTER.UNKOWN, sort_order:  BEAN_SORT_ORDER.UNKOWN} as IBeanPageFilter;
+    this.bean_filter.OPEN = this.GET_BEAN_FILTER();
+    this.bean_filter.ARCHIVED = this.GET_BEAN_FILTER();
 
-    this.green_bean_filter.OPEN = {sort_after: BEAN_SORT_AFTER.UNKOWN, sort_order:  BEAN_SORT_ORDER.UNKOWN} as IBeanPageFilter;
-    this.green_bean_filter.ARCHIVED =  {sort_after: BEAN_SORT_AFTER.UNKOWN, sort_order:  BEAN_SORT_ORDER.UNKOWN} as IBeanPageFilter;
+    this.bean_sort.OPEN = {sort_after: BEAN_SORT_AFTER.UNKOWN, sort_order:  BEAN_SORT_ORDER.UNKOWN} as IBeanPageSort;
+    this.bean_sort.ARCHIVED =  {sort_after: BEAN_SORT_AFTER.UNKOWN, sort_order:  BEAN_SORT_ORDER.UNKOWN} as IBeanPageSort;
+
+    this.green_bean_sort.OPEN = {sort_after: BEAN_SORT_AFTER.UNKOWN, sort_order:  BEAN_SORT_ORDER.UNKOWN} as IBeanPageSort;
+    this.green_bean_sort.ARCHIVED =  {sort_after: BEAN_SORT_AFTER.UNKOWN, sort_order:  BEAN_SORT_ORDER.UNKOWN} as IBeanPageSort;
 
 
     this.welcome_page_showed = false;
@@ -147,6 +193,11 @@ export class Settings implements ISettings {
     this.scale_id = '';
     this.scale_type = null;
     this.bluetooth_scale_stay_connected = false;
+    this.bluetooth_scale_tare_on_brew = true;
+    this.bluetooth_scale_tare_on_start_timer = true;
+    this.bluetooth_ignore_negative_values = false;
+    this.bluetooth_ignore_anomaly_values = false;
+
     this.scale_log = false;
 
     this.currency = 'EUR';
@@ -178,6 +229,13 @@ export class Settings implements ISettings {
     };
     this.brew_filter.OPEN = this.GET_BREW_FILTER();
     this.brew_filter.ARCHIVED = this.GET_BREW_FILTER();
+
+    this.bean_filter = {
+      OPEN: {} as IBeanPageFilter,
+      ARCHIVED: {} as IBeanPageFilter
+    };
+    this.bean_filter.OPEN = this.GET_BEAN_FILTER();
+    this.bean_filter.ARCHIVED = this.GET_BEAN_FILTER();
   }
 
 

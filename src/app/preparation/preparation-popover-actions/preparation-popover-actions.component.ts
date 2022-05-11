@@ -41,7 +41,7 @@ export class PreparationPopoverActionsComponent implements OnInit {
   }
 
   public async choose(_type: string): Promise<void> {
-    this.modalController.dismiss(undefined, _type, PreparationPopoverActionsComponent.COMPONENT_ID)
+    this.modalController.dismiss(undefined, _type, PreparationPopoverActionsComponent.COMPONENT_ID);
   }
   public async dismiss() {
     this.modalController.dismiss(undefined, undefined,PreparationPopoverActionsComponent.COMPONENT_ID);

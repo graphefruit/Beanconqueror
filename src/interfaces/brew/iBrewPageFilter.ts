@@ -4,9 +4,9 @@ export interface IBrewPageFilter {
   bean: Array<string>;
   method_of_preparation: Array<string>;
   method_of_preparation_tools: Array<string>;
-  favourite:boolean;
+  favourite: boolean;
   rating: {
-    upper:number,
-    lower:number,
-  }
+    upper: number,
+    lower: number,
+  };
 }

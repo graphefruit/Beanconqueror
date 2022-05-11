@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
 import {UIMillStorage} from '../../services/uiMillStorage';
 import {UIAlert} from '../../services/uiAlert';
 import {Mill} from '../../classes/mill/mill';
@@ -10,6 +10,7 @@ import {Settings} from '../../classes/settings/settings';
 import {UISettingsStorage} from '../../services/uiSettingsStorage';
 import {UIAnalytics} from '../../services/uiAnalytics';
 import {UIMillHelper} from '../../services/uiMillHelper';
+import {AgVirtualSrollComponent} from 'ag-virtual-scroll';
 
 
 @Component({
@@ -20,6 +21,13 @@ import {UIMillHelper} from '../../services/uiMillHelper';
 export class MillPage  implements OnInit  {
 
   public mills: Array<Mill> = [];
+
+  public openMillsView: Array<Mill> = [];
+  public archiveMillsView: Array<Mill> = [];
+
+  @ViewChild('openScroll', {read: AgVirtualSrollComponent, static: false}) public openScroll: AgVirtualSrollComponent;
+  @ViewChild('archivedScroll', {read: AgVirtualSrollComponent, static: false}) public archivedScroll: AgVirtualSrollComponent;
+  @ViewChild('millContent',{read: ElementRef}) public millContent: ElementRef;
 
   public settings: Settings;
   public segment: string = 'open';
@@ -38,19 +46,45 @@ export class MillPage  implements OnInit  {
   public ngOnInit(): void {
   }
 
+  public segmentChanged() {
+    this.retriggerScroll();
+  }
+
+  @HostListener('window:resize')
+  @HostListener('window:orientationchange', ['$event'])
+  public onOrientationChange(event) {
+    this.retriggerScroll();
+  }
+  private retriggerScroll() {
+
+    setTimeout(async () =>{
+
+      const el =  this.millContent.nativeElement;
+      let scrollComponent: AgVirtualSrollComponent;
+      if (this.openScroll !== undefined) {
+        scrollComponent = this.openScroll;
+      } else {
+        scrollComponent = this.archivedScroll;
+      }
+
+      scrollComponent.el.style.height = (el.offsetHeight - scrollComponent.el.offsetTop) + 'px';
+    },150);
+
+  }
+
+
   public ionViewWillEnter(): void {
     this.settings = this.uiSettingsStorage.getSettings();
     this.__initializeMills();
+    this.retriggerScroll();
   }
 
   public getActiveMills(): Array<Mill> {
-    return this.mills.filter(
-      (mill) => !mill.finished);
+    return this.openMillsView;
   }
 
   public getArchivedMills(): Array<Mill> {
-    return this.mills.filter(
-      (mill) => mill.finished);
+    return this.archiveMillsView;
   }
 
   public loadMills(): void {
@@ -69,8 +103,13 @@ export class MillPage  implements OnInit  {
   }
 
   private __initializeMills(): void {
+    this.openMillsView = [];
+    this.archiveMillsView = [];
     this.mills = this.uiMillStorage.getAllEntries()
         .sort((a, b) => a.name.localeCompare(b.name));
+
+    this.openMillsView = this.mills.filter((e)=> e.finished === false);
+    this.archiveMillsView = this.mills.filter((e)=> e.finished === true);
   }
 
 

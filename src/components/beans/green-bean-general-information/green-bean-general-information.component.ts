@@ -32,11 +32,12 @@ export class GreenBeanGeneralInformationComponent implements OnInit {
     }
   }
   public chooseDate(_event) {
+    _event.target.blur();
+    _event.cancelBubble = true;
+    _event.preventDefault();
+    _event.stopImmediatePropagation();
+    _event.stopPropagation();
     if (this.platform.is('cordova')) {
-      _event.cancelBubble = true;
-      _event.preventDefault();
-      _event.stopImmediatePropagation();
-      _event.stopPropagation();
 
 
       const myDate = new Date(); // From model.
@@ -47,8 +48,15 @@ export class GreenBeanGeneralInformationComponent implements OnInit {
         okText: this.translate.instant('CHOOSE'),
         todayText: this.translate.instant('TODAY'),
         cancelText: this.translate.instant('CANCEL'),
+        clearText: this.translate.instant('CLEAR'),
         success: (newDate) => {
-          this.data.date = moment(newDate).toISOString();
+          if (newDate === undefined) {
+            this.data.date ='';
+          } else
+          {
+            this.data.date = moment(newDate).toISOString();
+          }
+
           this.changeDetectorRef.detectChanges();
         }, error: () => {
 

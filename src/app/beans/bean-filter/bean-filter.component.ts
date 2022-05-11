@@ -1,11 +1,17 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import {Settings} from '../../../classes/settings/settings';
+import {Preparation} from '../../../classes/preparation/preparation';
+import {Bean} from '../../../classes/bean/bean';
+import {Mill} from '../../../classes/mill/mill';
 import {ModalController, NavParams} from '@ionic/angular';
 import {UIBrewHelper} from '../../../services/uiBrewHelper';
 import {UIHelper} from '../../../services/uiHelper';
+import {UISettingsStorage} from '../../../services/uiSettingsStorage';
+import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
+import {UIBeanStorage} from '../../../services/uiBeanStorage';
+import {UIMillStorage} from '../../../services/uiMillStorage';
 import {IBeanPageFilter} from '../../../interfaces/bean/iBeanPageFilter';
-import {BEAN_SORT_AFTER} from '../../../enums/beans/beanSortAfter';
-import {BEAN_SORT_ORDER} from '../../../enums/beans/beanSortOrder';
-
+import {BEAN_ROASTING_TYPE_ENUM} from '../../../enums/beans/beanRoastingType';
 
 @Component({
   selector: 'app-bean-filter',
@@ -15,21 +21,45 @@ import {BEAN_SORT_ORDER} from '../../../enums/beans/beanSortOrder';
 export class BeanFilterComponent implements OnInit {
 
   public static COMPONENT_ID = 'bean-filter';
-  public beanSortAfterEnum = BEAN_SORT_AFTER;
-  public beanSortOrderEnum = BEAN_SORT_ORDER;
-  public filter: IBeanPageFilter = {
-    sort_order: BEAN_SORT_ORDER.UNKOWN,
-    sort_after: BEAN_SORT_AFTER.UNKOWN,
-  };
+  public settings: Settings;
 
+  public filter: IBeanPageFilter;
+  public method_of_preparations: Array<Preparation> = [];
+  public beans: Array<Bean> = [];
+  public mills: Array<Mill> = [];
   public segment: string = 'open';
+
+  public beanRoastingTypeEnum = BEAN_ROASTING_TYPE_ENUM;
+
+  public roasteries: Array<string> = undefined;
 
   constructor(private readonly modalController: ModalController,
               private readonly uiBrewHelper: UIBrewHelper,
               private readonly navParams: NavParams,
-              private readonly uiHelper: UIHelper) {
+              private readonly uiHelper: UIHelper,
+              private readonly uiSettingsStorage: UISettingsStorage,
+              private readonly uiPreparationStorage: UIPreparationStorage,
+              private readonly uiBeanStorage: UIBeanStorage,
+              private readonly uiMillStorage: UIMillStorage) {
 
+    this.settings = this.uiSettingsStorage.getSettings();
+    this.filter = this.settings.GET_BEAN_FILTER();
+    const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
+    this.roasteries = [...new Set(beans.map((e: Bean) => e.roaster))];
+    this.roasteries = this.roasteries.filter((name: string)=> name !== '').sort( (a,b) => {
+        const nameA = a.toUpperCase();
+        const nameB = b.toUpperCase();
 
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+
+        return 0;
+      }
+    );
   }
 
   public ngOnInit() {
@@ -39,48 +69,42 @@ export class BeanFilterComponent implements OnInit {
     this.__reloadFilterSettings();
   }
 
+
   public dismiss(): void {
     this.modalController.dismiss({
       bean_filter: undefined
-    },undefined,'bean-filter');
+    });
   }
 
   public useFilter() {
     this.modalController.dismiss({
       bean_filter: this.uiHelper.copyData(this.filter)
-    },undefined, BeanFilterComponent.COMPONENT_ID);
+    });
   }
 
   public resetFilter() {
-    this.filter = {
-      sort_order: BEAN_SORT_ORDER.UNKOWN,
-      sort_after: BEAN_SORT_AFTER.UNKOWN,
-    };
-    this.useFilter();
-
+    this.filter = this.settings.GET_BEAN_FILTER();
+    this.modalController.dismiss({
+      bean_filter: this.uiHelper.copyData(this.filter)
+    },undefined,BeanFilterComponent.COMPONENT_ID);
   }
 
-  public setSortOrder(_order: any) {
-      this.filter.sort_order = _order;
-      if (this.filter.sort_after === BEAN_SORT_AFTER.UNKOWN) {
-        this.filter.sort_after = BEAN_SORT_AFTER.NAME;
-      }
-  }
-  public setSortAfter(_sort: any) {
-    this.filter.sort_after = _sort;
-    if (this.filter.sort_order === BEAN_SORT_ORDER.UNKOWN) {
-      this.filter.sort_order = BEAN_SORT_ORDER.ASCENDING;
+
+  private __reloadFilterSettings() {
+    this.method_of_preparations = this.uiPreparationStorage.getAllEntries()
+      .sort((a, b) => a.name.localeCompare(b.name));
+    this.beans = this.uiBeanStorage.getAllEntries()
+      .sort((a, b) => a.name.localeCompare(b.name));
+    this.mills = this.uiMillStorage.getAllEntries()
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    if (this.segment === 'open') {
+      this.beans = this.beans.filter((e) => e.finished === false);
+      this.mills = this.mills.filter((e) => e.finished === false);
+      this.method_of_preparations = this.method_of_preparations.filter((e) => e.finished === false);
+    } else {
+      this.beans = this.beans.filter((e) => e.finished === true);
     }
   }
-  public isSortActive(_sort: any) {
-    return this.filter.sort_after === _sort;
-  }
-  public isOrderActive(_order: any) {
-    return this.filter.sort_order === _order;
-  }
-  private __reloadFilterSettings() {
 
-
-  }
 }
-

@@ -109,6 +109,8 @@ export class PreparationInformationCardComponent implements OnInit {
       id: PreparationPopoverActionsComponent.COMPONENT_ID,
       componentProps: {preparation: this.preparation},
       cssClass: 'popover-actions',
+      breakpoints: [0, 0.75, 1],
+      initialBreakpoint: 0.75,
     });
     await popover.present();
     const data = await popover.onWillDismiss();
@@ -140,6 +142,9 @@ export class PreparationInformationCardComponent implements OnInit {
         break;
       case PREPARATION_ACTION.EDIT:
         await this.editPreparation();
+        break;
+      case PREPARATION_ACTION.REPEAT:
+        await this.repeatPreparation();
         break;
       case PREPARATION_ACTION.DELETE:
 
@@ -186,6 +191,12 @@ export class PreparationInformationCardComponent implements OnInit {
 
   public async editPreparation() {
     await this.uiPreparationHelper.editPreparation(this.preparation);
+  }
+
+  public async repeatPreparation() {
+    this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.REPEAT);
+    await this.uiPreparationHelper.repeatPreparation(this.preparation);
+    this.uiToast.showInfoToast('TOAST_PREPARATION_METHOD_REPEATED_SUCCESSFULLY');
   }
 
   public async detail() {

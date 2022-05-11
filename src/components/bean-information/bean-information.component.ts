@@ -9,9 +9,6 @@ import {Brew} from '../../classes/brew/brew';
 import {UIBeanHelper} from '../../services/uiBeanHelper';
 import {ROASTS_ENUM} from '../../enums/beans/roasts';
 import {NgxStarsComponent} from 'ngx-stars';
-import {BeansDetailComponent} from '../../app/beans/beans-detail/beans-detail.component';
-import {BeansAddComponent} from '../../app/beans/beans-add/beans-add.component';
-import {BeansEditComponent} from '../../app/beans/beans-edit/beans-edit.component';
 import {UIAnalytics} from '../../services/uiAnalytics';
 import {UIBrewStorage} from '../../services/uiBrewStorage';
 import {UIAlert} from '../../services/uiAlert';
@@ -20,6 +17,7 @@ import {UIImage} from '../../services/uiImage';
 import {UIBeanStorage} from '../../services/uiBeanStorage';
 import BEAN_TRACKING from '../../data/tracking/beanTracking';
 import {ShareService} from '../../services/shareService/share-service.service';
+
 @Component({
   selector: 'bean-information',
   templateUrl: './bean-information.component.html',
@@ -127,6 +125,8 @@ export class BeanInformationComponent implements OnInit {
       componentProps: {bean: this.bean},
       id:BeanPopoverActionsComponent.COMPONENT_ID,
       cssClass: 'popover-actions',
+      breakpoints: [0, 0.75, 1],
+      initialBreakpoint: 1,
     });
     await popover.present();
     const data = await popover.onWillDismiss();
@@ -160,6 +160,9 @@ export class BeanInformationComponent implements OnInit {
       case BEAN_ACTION.PHOTO_GALLERY:
         await this.viewPhotos();
         break;
+      case BEAN_ACTION.TOGGLE_FAVOURITE:
+        await this.toggleFavourite();
+        break;
       case BEAN_ACTION.SHARE:
         await this.shareBean();
         break;
@@ -177,12 +180,35 @@ export class BeanInformationComponent implements OnInit {
     await this.uiImage.viewPhotos(this.bean);
   }
   public async beansConsumed() {
-    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ARCHIVE);
+
+    await this.uiBeanHelper.archiveBeanWithRatingQuestion(this.bean);
+
+    await this.resetSettings();
+
+    /* this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ARCHIVE);
     this.bean.finished = true;
     await this.uiBeanStorage.update(this.bean);
     this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');
-    await this.resetSettings();
+    */
+
+
+
+
   }
+
+  public async toggleFavourite() {
+    if (!this.bean.favourite) {
+      this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ADD_FAVOURITE);
+      this.uiToast.showInfoToast('TOAST_BEAN_FAVOURITE_ADDED');
+      this.bean.favourite = true;
+    } else {
+      this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.REMOVE_FAVOURITE);
+      this.bean.favourite = false;
+      this.uiToast.showInfoToast('TOAST_BEAN_FAVOURITE_REMOVED');
+    }
+    await this.uiBeanStorage.update(this.bean);
+  }
+
 
   public async add() {
     await this.uiBeanHelper.addBean();

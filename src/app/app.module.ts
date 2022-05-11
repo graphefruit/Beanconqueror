@@ -20,38 +20,37 @@ export function HttpLoaderFactory(http: HttpClient) {
 }
 
 @NgModule({
-  declarations: [AppComponent],
-  entryComponents: [],
-  imports: [
-    BrowserModule,
-    HttpClientModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient]
-      }
-    }),
-    IonicModule.forRoot({
-      mode: 'md',
-      menuIcon: 'beanconqueror-menu',
-      swipeBackEnabled: true,
-      animated: true,
-      rippleEffect: false,
-    }),
-    IonicStorageModule.forRoot({
-      name: '__baristaDB',
-      driverOrder: ['indexeddb', 'sqlite', 'websql']
-    }),
-    AppRoutingModule,
-    SharedModule,
-  ],
-  providers: [
-    {provide: RouteReuseStrategy, useClass: IonicRouteStrategy},
-  ],
-  bootstrap: [AppComponent],
-  exports:[],
-  schemas: [ NO_ERRORS_SCHEMA ]
+    declarations: [AppComponent],
+    imports: [
+        BrowserModule,
+        HttpClientModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient]
+            }
+        }),
+        IonicModule.forRoot({
+            mode: 'md',
+            menuIcon: 'beanconqueror-menu',
+            swipeBackEnabled: true,
+            animated: true,
+            rippleEffect: false,
+        }),
+        IonicStorageModule.forRoot({
+            name: '__baristaDB',
+            driverOrder: ['indexeddb', 'sqlite', 'websql']
+        }),
+        AppRoutingModule,
+        SharedModule,
+    ],
+    providers: [
+        { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    ],
+    bootstrap: [AppComponent],
+    exports: [],
+    schemas: [NO_ERRORS_SCHEMA]
 })
 export class AppModule {
 }

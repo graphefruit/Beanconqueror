@@ -5,7 +5,9 @@ import {TranslateService} from '@ngx-translate/core';
 import {Observable} from 'rxjs';
 import {UIAnalytics} from '../uiAnalytics';
 import QR_TRACKING from '../../data/tracking/qrTracking';
-import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
+import {UISettingsStorage} from '../uiSettingsStorage';
+import {ModalController} from '@ionic/angular';
+import {QrCodeScannerPopoverComponent} from '../../popover/qr-code-scanner-popover/qr-code-scanner-popover.component';
 
 declare var cordova;
 @Injectable({
@@ -17,14 +19,27 @@ export class QrScannerService {
 
   constructor(private readonly uiLog: UILog,
               private readonly translate: TranslateService,
-              private readonly uiAnalytics: UIAnalytics) {
+              private readonly uiAnalytics: UIAnalytics,
+              private readonly uiSettingsStorage: UISettingsStorage,
+              private readonly modalController: ModalController) {
 
   }
 
+            public async __checkQRCodeScannerInformationPage() {
 
-             public scan(): Promise<string> {
+              const settings = this.uiSettingsStorage.getSettings();
+              const qr_scanner_information: boolean = settings.qr_scanner_information;
+              if (qr_scanner_information === false) {
+                const modal = await this.modalController.create({ component: QrCodeScannerPopoverComponent, id: QrCodeScannerPopoverComponent.POPOVER_ID });
+                await modal.present();
+                await modal.onWillDismiss();
+              }
+            }
+             public async scan(): Promise<string> {
+              await this.__checkQRCodeScannerInformationPage();
 
-               const observable: Observable<string> = new Observable((subscriber) => {
+
+              const observable: Observable<string> = new Observable((subscriber) => {
                  cordova.plugins.barcodeScanner.scan(
                    (result) => {
                      if ((result.cancelled === false || result.cancelled === 0))
@@ -59,7 +74,7 @@ export class QrScannerService {
                    }
                  );
                });
-               return observable.toPromise();
+              return observable.toPromise();
 
              }
 /*

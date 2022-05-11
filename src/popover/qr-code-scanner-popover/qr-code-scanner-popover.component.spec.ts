@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { GreenBeanFilterComponent } from './green-bean-filter.component';
+import { QrCodeScannerPopoverComponent } from './qr-code-scanner-popover.component';
 
-describe('GreenBeanFilterComponent', () => {
-  let component: GreenBeanFilterComponent;
-  let fixture: ComponentFixture<GreenBeanFilterComponent>;
+describe('QrCodeScannerPopoverComponent', () => {
+  let component: QrCodeScannerPopoverComponent;
+  let fixture: ComponentFixture<QrCodeScannerPopoverComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ GreenBeanFilterComponent ],
+      declarations: [ QrCodeScannerPopoverComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(GreenBeanFilterComponent);
+    fixture = TestBed.createComponent(QrCodeScannerPopoverComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

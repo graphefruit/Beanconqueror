@@ -177,7 +177,7 @@ export class BrewAddComponent implements OnInit {
         this.uiToast.showInfoToast('TOAST_BREW_ADDED_SUCCESSFULLY');
       }
 
-      this.brewTracking.trackBrew(this.data);
+      this.brewTracking.trackBrew(addedBrewObj);
 
 
 

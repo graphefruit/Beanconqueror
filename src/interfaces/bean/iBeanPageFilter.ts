@@ -1,8 +1,14 @@
-import {BEAN_SORT_AFTER} from '../../enums/beans/beanSortAfter';
-import {BEAN_SORT_ORDER} from '../../enums/beans/beanSortOrder';
+import {BEAN_ROASTING_TYPE_ENUM} from '../../enums/beans/beanRoastingType';
 
 export interface IBeanPageFilter {
-  sort_after: BEAN_SORT_AFTER,
-  sort_order: BEAN_SORT_ORDER
-
+  // Properties
+  favourite: boolean;
+  rating: {
+    upper: number,
+    lower: number,
+  };
+  bean_roasting_type: Array<BEAN_ROASTING_TYPE_ENUM>;
+  roastingDateStart: string;
+  roastingDateEnd: string;
+  bean_roaster: Array<string>;
 }

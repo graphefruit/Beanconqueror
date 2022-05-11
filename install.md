@@ -31,7 +31,9 @@ ionic cordova plugin add cordova-plugin-filechooser
 npm install @ionic-native/file-chooser
 
 #FilePath
-ionic cordova plugin add cordova-plugin-filepath
+### ionic cordova plugin add cordova-plugin-filepath
+ionic cordova plugin add https://github.com/wisdom-garden/cordova-plugin-filepath
+
 npm install @ionic-native/file-path
 
 
@@ -157,3 +159,8 @@ npm install @ionic-native/file-transfer
 
 ##Currency
 https://github.com/bengourley/currency-symbol-map
+
+
+## Screen Orientation 
+ionic cordova plugin add cordova-plugin-screen-orientation
+npm install @ionic-native/screen-orientation

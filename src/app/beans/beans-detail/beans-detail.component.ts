@@ -10,7 +10,7 @@ import {BEAN_MIX_ENUM} from '../../../enums/beans/mix';
 import {BEAN_ROASTING_TYPE_ENUM} from '../../../enums/beans/beanRoastingType';
 import {UIAnalytics} from '../../../services/uiAnalytics';
 import BEAN_TRACKING from '../../../data/tracking/beanTracking';
-
+import moment from 'moment';
 
 @Component({
   selector: 'app-beans-detail',
@@ -68,6 +68,15 @@ export class BeansDetailComponent implements OnInit {
     if (this.data.url) {
       this.uiHelper.openExternalWebpage(this.data.url);
     }
+  }
+
+  public getRoastLengthFormat() {
+
+      return moment(new Date()).startOf('day')
+        .seconds(this.data.bean_roast_information.roast_length)
+        .format('HH:mm:ss');
+
+
   }
 
 }

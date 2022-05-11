@@ -100,11 +100,26 @@ export class CuppingRadarComponent implements AfterViewInit {
   private __loadCuppingChart(): void {
 
     if (this.chartEl !== undefined) {
-      this.chartEl.destroy();
-      this.chartEl = undefined;
+
+
+      this.chartEl.data.datasets[0].data = [this.model.dry_fragrance,
+        this.model.wet_aroma,
+        this.model.brightness,
+        this.model.flavor,
+        this.model.body,
+        this.model.finish,
+        this.model.sweetness,
+        this.model.clean_cup,
+        this.model.complexity,
+        this.model.uniformity];
+      this.chartEl.update();
+     // this.chartEl.destroy();
+      // this.chartEl = undefined;
+    } else {
+      this.chartEl = new Chart(this.cuppingChart.nativeElement, this.uiBrewHelper.getCuppingChartData(this.model) as any);
     }
 
-    this.chartEl = new Chart(this.cuppingChart.nativeElement, this.uiBrewHelper.getCuppingChartData(this.model) as any);
+
 
 
 

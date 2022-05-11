@@ -5,6 +5,7 @@ import {BrewParameterPage} from './brew-parameter.page';
 import {ManageParameterComponent} from './manage-parameter/manage-parameter.component';
 import {SortParameterComponent} from './sort-parameter/sort-parameter.component';
 import {DefaultParameterComponent} from './default-parameter/default-parameter.component';
+import {ListViewParameterComponent} from './list-view-parameter/list-view-parameter.component';
 
 const routes: Routes = [
   {
@@ -23,6 +24,10 @@ const routes: Routes = [
     path: 'default',
     component: DefaultParameterComponent,
   },
+  {
+    path: 'listview',
+    component: ListViewParameterComponent,
+  }
 
 ];
 

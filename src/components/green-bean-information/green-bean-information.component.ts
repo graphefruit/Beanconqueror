@@ -92,6 +92,8 @@ export class GreenBeanInformationComponent implements OnInit {
       componentProps: {'green-bean': this.greenBean},
       id: GreenBeanPopoverActionsComponent.COMPONENT_ID,
       cssClass: 'popover-actions',
+      breakpoints: [0, 0.75, 1],
+      initialBreakpoint: 1,
     });
     await popover.present();
     const data = await popover.onWillDismiss();

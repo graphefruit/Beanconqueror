@@ -38,7 +38,7 @@
         <ion-item>
           <ion-label>
             <h2>{{"ROASTING_SECTION.BEAN.ROAST_LENGTH" | translate}}:</h2>
-            <h3>{{data.bean_roast_information.roast_length}}</h3>
+            <h3>{{getRoastLengthFormat()}}</h3>
           </ion-label>
         </ion-item>
 
@@ -120,6 +120,13 @@
           <ion-label>
             <h2>{{"BEAN_DATA_ROASTER" | translate}}:</h2>
             <h3>{{data.roaster}}</h3>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <h2>{{"BEAN_DATA_BUY_DATE" | translate}}:</h2>
+            <h3 *ngIf="data.buyDate">{{data.buyDate | formatDate:["DD.MM.YYYY"]}}</h3>
+            <h3 *ngIf="!data.buyDate">-</h3>
           </ion-label>
         </ion-item>
         <ion-item>
@@ -235,6 +242,9 @@
             <pre>{{data.note}}</pre>
           </ion-label>
         </ion-item>
+        <div *ngIf="data?.attachments?.length > 0">
+          <photo-view [(data)]="data"></photo-view>
+        </div>
       </ion-card>
     </div>
     <div *ngSwitchCase="'sortinformation'">

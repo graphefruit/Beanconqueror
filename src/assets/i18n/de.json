@@ -105,6 +105,8 @@
   "BEAN_DATA_URL": "Webseite",
   "BEAN_DATA_EAN": "EAN / Artikelnummer",
   "BEAN_DATA_CUPPING_POINTS": "Cupping Punkte",
+  "BEAN_DATA_PURCHASING_PRICE": "Einkaufspreis",
+  "BEAN_DATA_FOB_PRICE": "FOB Preis",
   "BREW_DATA_CUSTOM_BREW_TIME": "Uhrzeit (des Bezuges)?",
   "BREW_CREATION_DATE": "Uhrzeit (des Bezuges)",
   "REPEAT": "Wiederholen",
@@ -188,7 +190,7 @@
   "DELETE_MILL_QUESTION": "Mühle? Alle zugehörigen Brühungen werden hierdurch abgeändert.",
   "DELETE_GREEN_BEAN_QUESTION": "Bohne löschen? Alle zugehörigen Brühungen sowie gerösteten Bohnen werden mit entfernt",
   "DELETE_PREPARATION_METHOD_QUESTION": "Brühmethode löschen? Alle zugehörigen Brühungen werden mit entfernt.",
-  "DELETE_PREPARATION_TOOL_QUESTION": "Zubereitungstool löschen? Alle zugehörigen Brühungen mit diesem Tool werden mit entfernt.",
+  "DELETE_PREPARATION_TOOL_QUESTION": "Zubereitungstool löschen? Alle zugehörigen Brühungen mit diesem Tool werden überarbeited.",
   "APP_COULD_NOT_STARTED_CORRECTLY_BECAUSE_MISSING_FILESYSTEM": "Die App konnte nicht korrekt gestartet werden, da das Dateisystem nicht verfügbar ist",
   "CARE": "Achtung",
   "ERROR_OCCURED": "Fehler aufgetreten",
@@ -400,7 +402,11 @@
       "BEAN_DATA_URL": "Füge die Webseite hinzu",
       "BEAN_DATA_EAN": "Füge die EAN oder Artikelnummer hinzu",
       "BEAN_DATA_CUPPING_POINTS": "Füge die Cupping Punkte hinzu",
-      "NOTES": "Füge Notizen zu deiner Bohne hinzu"
+      "BEAN_DATA_PURCHASING_PRICE": "Füge den Einkaufspreis hinzu",
+      "BEAN_DATA_FOB_PRICE": "Füge den FOB Preis (USD) hinzu",
+      "NOTES": "Füge Notizen zu deiner Bohne hinzu",
+      "CHOOSE_DATA_ROASTER": "Rösterei auswählen",
+      "CHOOSE_DATA_ROASTING_TYPE": "Rösttyp auswählen"
     }
   },
   "PREPARATION": {
@@ -962,16 +968,16 @@
     "USED_TIMES": "Verwendet",
     "AMOUNT": "Verwendete Menge",
     "WATER": {
-      "GENERAL_HARDNESS":"Generelle Härte",
-      "TOTAL_ALKALINITY":"Totale Alkalinität",
+      "GENERAL_HARDNESS":"Gesamthärte",
+      "TOTAL_ALKALINITY":"Alkalinität",
       "CALCIUM": "Kalzium (Ca)",
       "MAGNESIUM":"Magnesium (Mg)",
       "SODIUM": "Natrium (Na)",
       "TDS": "Gelöste Stoffe (TDS [%])",
       "UNITS": "Einheiten",
       "PLACE_HOLDER": {
-        "GENERAL_HARDNESS":"Generelle Härte",
-        "TOTAL_ALKALINITY":"Totale Alkalinität",
+        "GENERAL_HARDNESS":"Gesamthärte",
+        "TOTAL_ALKALINITY":"Alkalinität",
         "CALCIUM": "Kalzium (Ca)",
         "MAGNESIUM":"Magnesium (Mg)",
         "SODIUM": "Natrium (Na)",
@@ -1019,7 +1025,7 @@
       "LOCATION": "Um Bluetooth-Waagen zu finden, muss der Standort freigegeben werden",
       "BLUETOOTH":  "Um Bluetooth-Waagen zu finden, muss Bluetooth freigegeben werden"
     },
-    "INFORMATION_DESCRIPTION": "Unterstütze Waagen sind: Decent Scale sowie Lunar Scale (nicht 2021 Modelle)"
+    "INFORMATION_DESCRIPTION": "Unterstütze Waagen sind: Decent Scale sowie Acaia Scales und Hiroia Jimmy"
   },
   "QR":{
     "WRONG_QRCODE_DESCRIPTION": "Falscher QR-Code oder falscher Inhalt",
@@ -1057,5 +1063,30 @@
   "BEAN_ROASTING_TYPE_ESPRESSO":"Espresso",
   "BEAN_ROASTING_TYPE_OMNI":"Omni",
   "BEAN_ROASTING_TYPE_UNKNOWN":"Unbekannt",
-  "SMART_SCALE_LOG": "Logfiles für Waage aktivieren"
+  "SMART_SCALE_LOG": "Logfiles für Waage aktivieren",
+  "TOAST_PREPARATION_TOOL_EDITED_SUCCESSFULLY": "Zubereitungstool editiert",
+  "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE": "Waage",
+  "PAGE_SETTINGS_TAB_GENERAL": "Allgemein",
+  "SMART_SCALE_TARE_ON_BREW": "Gewicht bei neuer Brühung zurücksetzen",
+  "SMART_SCALE_TARE_ON_START_TIMER":  "Gewicht bei starten der Brühzeit zurücksetzen",
+  "PAGE_SETTINGS_BREW_RATING_STEPS": "Bewertungsschritte",
+  "BREW_AVG_FLOW_WEIGHT_PER_SECOND": "Ø Fluss",
+  "CUSTOM_LIST_VIEW_PARAMETERS": "Ansichtsparameter",
+  "NAV_LIST_VIEW_CUSTOM_PARAMETERS": "Ansichtsparameter",
+  "PAGE_LIST_VIEW_CUSTOM_PARAMETERS_DESCRIPTION": "Entscheide welche Parameter der Kaffeebrühung auf den Übersichtskacheln angezeigt werden sollen",
+  "BREW_DATA_VESSEL_NAME_WEIGHT": "Gefäß Name/Gewicht",
+  "IGNORE_NEGATIVE_VALUES": "Ignoriere negative Gewichtswerte",
+  "IGNORE_ANOMALY_VALUES": "Ignoriere Anomaliewerte",
+  "IGNORE_ANOMALY_VALUES_TOOLTIP": "Beispiel: Schwenken einer Tasse auf der Waage",
+  "TOAST_BEAN_FAVOURITE_ADDED":"Favorit hinzugefügt",
+  "TOAST_BEAN_FAVOURITE_REMOVED":"Favorit entfernt",
+  "QR_CODE_SCANNER_INFORMATION_TITLE": "QR Code",
+  "QR_CODE_SCANNER_INFORMATION_DESCRIPTION": "Alle Informationen der eingescannten Bohnensorten stammen direkt von der jeweiligen Rösterei. <br/> Falls Sie Fehlerhafte oder falsche Informationen finden melden Sie diese bitte über e-mail an: info@beanconqueror.com.",
+  "DONT_SHOW_AGAIN": "Nicht erneut zeigen",
+  "ARCHIVED_TOOLS": "Archivierte Tools",
+  "UNARCHIVE": "Wiederherstellen",
+  "PAGE_SETTINGS_HIDE_ARCHIVED_BREWS_DASHBOARD": "Anzeige archivierter Brühungen auf Hauptseite",
+  "PAGE_SETTINGS_HIDE_ARCHIVED_BREWS_DASHBOARD_DESCRIPTION": "Sollen archivierte Brühungen auf der Hauptseite angezeigt werden?",
+  "COPY": "Kopie",
+  "TOAST_PREPARATION_METHOD_REPEATED_SUCCESSFULLY": "Zubereitungsmethodik erfolgreich kopiert"
 }

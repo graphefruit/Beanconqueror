@@ -22,6 +22,7 @@ import {Settings} from '../classes/settings/settings';
 import {Water} from '../classes/water/water';
 import {Mill} from '../classes/mill/mill';
 import {Preparation} from '../classes/preparation/preparation';
+import {UILog} from './uiLog';
 
 declare var chooser;
 @Injectable({
@@ -41,7 +42,8 @@ export class UIImage {
                private readonly filePath: FilePath,
                private readonly uiAlert: UIAlert,
                private readonly modalCtrl: ModalController,
-               private readonly uiSettingsStorage: UISettingsStorage) {
+               private readonly uiSettingsStorage: UISettingsStorage,
+               private readonly uiLog: UILog) {
   }
 
   private getImageQuality() {
@@ -59,19 +61,24 @@ export class UIImage {
         mediaType: this.camera.MediaType.PICTURE,
         sourceType: this.camera.PictureSourceType.CAMERA,
         saveToPhotoAlbum: false,
-        correctOrientation: true
+        correctOrientation: true,
+        cameraDirection: this.camera.Direction.BACK
       };
 
       this.camera.getPicture(options).then(
           (imageData) => {
+
             const imageStr: string = `data:image/jpeg;base64,${imageData}`;
             this.uiFileHelper.saveBase64File('beanconqueror_image', '.png', imageStr).then((_newURL) => {
               // const filePath = _newURL.replace(/^file:\/\//, '');
               resolve(_newURL);
+            },() => {
+              reject();
             });
           },
           (_err: any) => {
             reject();
+
           }
         );
     });
@@ -79,6 +86,26 @@ export class UIImage {
     return promise;
   }
 
+  private __cleanupCamera() {
+    try {
+      const isCordova: boolean = this.platform.is('cordova');
+      const isIOS: boolean = this.platform.is('ios');
+      if (isCordova && isIOS) {
+        this.uiLog.log('Cleanup camera');
+        this.camera.cleanup().then(() => {
+          this.uiLog.log('Cleanup camera - sucessfully');
+        }, () => {
+          this.uiLog.error('Cleanup camera - error');
+        });
+      }
+
+    } catch( ex) {
+
+    }
+
+
+
+  }
   public async choosePhoto (): Promise<any> {
     const promise = new Promise(async (resolve, reject) => {
       this.__checkPermission(async () => {
@@ -88,121 +115,93 @@ export class UIImage {
             const isCordova: boolean = this.platform.is('cordova');
             const isAndroid: boolean = this.platform.is('android');
             const fileurls: Array<string> = [];
-            if (isCordova && isAndroid) {
+            if (!(isCordova && isAndroid)) {
+              if (isCordova) {
+                // https://github.com/Telerik-Verified-Plugins/ImagePicker/issues/173#issuecomment-559096572
+                this.imagePicker.getPictures({
+                  maximumImagesCount: 5,
+                  outputType: 1,
+                  disable_popover: true,
+                  quality: this.getImageQuality()
+                }).then(async (results) => {
+                  this.uiAlert.showLoadingSpinner();
+                  for (const result of results) {
+                    if (result && result.length > 0 && result !== 0 && result !== ''
+                      && result !== 'OK' && result.length > 5) {
+
+                      try {
+                        const imageStr: string = `data:image/jpeg;base64,${result}`;
+                        await this.uiFileHelper.saveBase64File('beanconqueror_image', '.png', imageStr).then((_newURL) => {
+                          fileurls.push(_newURL);
+                        }, () => {
+                        });
+                      } catch (ex) {
+
+                      }
+
+
+                    } else {
+                    }
+
+                  }
+                  this.uiAlert.hideLoadingSpinner();
+                  this.__cleanupCamera();
+                  if (fileurls.length > 0) {
+                    resolve(fileurls);
+                  } else {
+                    reject();
+                  }
+
+                }, (err) => {
+                  reject();
+                });
+              }
+            } else {
               chooser.getFile().then(async (_files) => {
-                await this.uiAlert.showLoadingSpinner();
+                this.uiAlert.showLoadingSpinner();
 
                 for (const file of _files) {
                   try {
-                  await this.filePath.resolveNativePath(file.uri).then(async (path) => {
-                    if (path && (path.toLowerCase().endsWith('.png') || path.toLowerCase().endsWith('.jpg') ||
-                      path.toLowerCase().endsWith('.jpeg') || path.toLowerCase().endsWith('.gif')) &&
-                      path.toLowerCase().indexOf('sdcard')===-1) {
+                    await this.filePath.resolveNativePath(file.uri).then(async (path) => {
+                      if (path && (path.toLowerCase().endsWith('.png') || path.toLowerCase().endsWith('.jpg') ||
+                        path.toLowerCase().endsWith('.jpeg') || path.toLowerCase().endsWith('.gif')) &&
+                        path.toLowerCase().indexOf('sdcard') === -1) {
 
-                      const newPath: string =path;
-                      let importPath: string = '';
-                      if (newPath.lastIndexOf('/Download/')>-1) {
-                        let pathFromDownload = newPath.substr(0,newPath.lastIndexOf('/Download/'));
-                        const decodedURI = decodeURIComponent(file.uri);
-                        pathFromDownload = pathFromDownload + decodedURI.substring(decodedURI.lastIndexOf('/Download/'));
-                        importPath = pathFromDownload;
-                      } else {
-                        importPath = newPath;
-                      }
-                      await this.uiFileHelper.copyFileWithSpecificName(importPath).then(async(_fullPath) => {
-                        fileurls.push(_fullPath);
-                      }, () => {
-
-                      });
-
-                    }
-                  }, () => {
-                    reject();
-                  });
-                  }
-                  catch(ex) {
-
-                  }
-                }
-                await this.uiAlert.hideLoadingSpinner();
-                if (fileurls.length > 0) {
-                  resolve(fileurls);
-                } else {
-                  reject();
-                }
-              });
-             /* this.fileChooser.open().then((uri) => {
-                this.filePath.resolveNativePath(uri).then((path) => {
-                  if (path && (path.toLowerCase().endsWith('.png') || path.toLowerCase().endsWith('.jpg') ||
-                    path.toLowerCase().endsWith('.jpeg') || path.toLowerCase().endsWith('.gif'))) {
-                      if (path.toLowerCase().indexOf('sdcard')===-1) {
-
-                        const newPath: string =path;
+                        const newPath: string = path;
                         let importPath: string = '';
-                        if (newPath.lastIndexOf('/Download/')>-1) {
-                          let pathFromDownload = newPath.substr(0,newPath.lastIndexOf('/Download/'));
-                          const decodedURI = decodeURIComponent(uri);
+                        if (newPath.lastIndexOf('/Download/') > -1) {
+                          let pathFromDownload = newPath.substr(0, newPath.lastIndexOf('/Download/'));
+                          const decodedURI = decodeURIComponent(file.uri);
                           pathFromDownload = pathFromDownload + decodedURI.substring(decodedURI.lastIndexOf('/Download/'));
                           importPath = pathFromDownload;
                         } else {
                           importPath = newPath;
                         }
-                        this.uiFileHelper.copyFileWithSpecificName(importPath).then((_fullPath) => {
-                          resolve(_fullPath);
+                        await this.uiFileHelper.copyFileWithSpecificName(importPath).then(async (_fullPath) => {
+                          fileurls.push(_fullPath);
                         }, () => {
-                          reject();
+
                         });
-                      } else {
 
-                        this.uiAlert.showMessage('EXTERNAL_STORAGE_NOT_SUPPORTED',undefined,undefined,true);
-                        reject();
                       }
+                    }, () => {
+                      reject();
+                    });
+                  } catch (ex) {
 
-                  } else {
-                    this.uiAlert.showMessage('WRONG_FILE_FORMAT',undefined,undefined,true);
-                    reject();
                   }
-                }, () => {
-                  this.uiAlert.showMessage('COULD_NOT_ACCESS_FILE',undefined,undefined,true);
-                  reject();
-                });
-              }, () => {
-                this.uiAlert.showMessage('COULD_NOT_ACCESS_FILE',undefined,undefined,true);
-                reject();
-              });*/
-            } else if (isCordova) {
-              // https://github.com/Telerik-Verified-Plugins/ImagePicker/issues/173#issuecomment-559096572
-              this.imagePicker.getPictures({maximumImagesCount: 5, outputType: 1, disable_popover: true, quality: this.getImageQuality()}).then(async (results) => {
-
-                await this.uiAlert.showLoadingSpinner();
-                for (const result of results) {
-                  if (result && result.length > 0 && result !== 0 && result !== ''
-                    && result !== 'OK' && result.length > 5) {
-
-                    try {
-                      const imageStr: string = `data:image/jpeg;base64,${result}`;
-                      await this.uiFileHelper.saveBase64File('beanconqueror_image', '.png', imageStr).then((_newURL) => {
-                        fileurls.push(_newURL);
-                      });
-                    } catch(ex) {
-
-                    }
-
-
-                  } else {
-                  }
-
                 }
-                await this.uiAlert.hideLoadingSpinner();
+                this.__cleanupCamera();
+                this.uiAlert.hideLoadingSpinner();
                 if (fileurls.length > 0) {
                   resolve(fileurls);
                 } else {
                   reject();
                 }
-
-              }, (err) => {
+              },()=> {
                 reject();
               });
+
             }
           });
 

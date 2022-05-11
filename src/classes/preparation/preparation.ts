@@ -9,6 +9,7 @@ import {OrderBrewParameter} from '../parameter/orderBrewParameter';
 import {ManageBrewParameter} from '../parameter/manageBrewParameter';
 import {PreparationTool} from './preparationTool';
 import {UIHelper} from '../../services/uiHelper';
+import {ListViewBrewParameter} from '../parameter/listViewBrewParameter';
 
 
 export class Preparation implements IPreparation {
@@ -21,6 +22,7 @@ export class Preparation implements IPreparation {
   public use_custom_parameters: boolean;
   public manage_parameters: ManageBrewParameter;
   public default_last_coffee_parameters: DefaultBrewParameter;
+  public visible_list_view_parameters: ListViewBrewParameter;
   public brew_order: OrderBrewParameter;
   public tools: Array<PreparationTool>;
   public attachments: Array<string>;
@@ -36,6 +38,7 @@ export class Preparation implements IPreparation {
     this.use_custom_parameters = false;
     this.manage_parameters = new ManageBrewParameter();
     this.default_last_coffee_parameters = new DefaultBrewParameter();
+    this.visible_list_view_parameters = new ListViewBrewParameter();
     this.brew_order = new OrderBrewParameter();
     this.tools = [];
     this.attachments = [];
@@ -198,6 +201,20 @@ export class Preparation implements IPreparation {
     return false;
   }
 
+  public addToolByObject(_tool: PreparationTool): boolean {
+    const nextTool = _tool;
+    if (nextTool.name !== '') {
+      const prepTool: PreparationTool = new PreparationTool();
+      prepTool.name = nextTool.name;
+      prepTool.config.uuid = UIHelper.generateUUID();
+      prepTool.config.unix_timestamp = UIHelper.getUnixTimestamp();
+      prepTool.archived = _tool.archived;
+      this.tools.push(prepTool);
+      return true;
+    }
+    return false;
+  }
+
   public deleteTool(_tool: PreparationTool): boolean {
     const tool: PreparationTool = _tool as PreparationTool;
     for(let i = 0; i < this.tools.length; i++){
@@ -205,6 +222,18 @@ export class Preparation implements IPreparation {
       if ( this.tools[i].config.uuid === tool.config.uuid) {
 
         this.tools.splice(i, 1);
+        return true;
+      }
+
+    }
+    return false;
+  }
+  public updateTool(_tool: PreparationTool): boolean {
+    const tool: PreparationTool = _tool as PreparationTool;
+    for(let i = 0; i < this.tools.length; i++){
+
+      if ( this.tools[i].config.uuid === tool.config.uuid) {
+        this.tools[i] = _tool;
         return true;
       }
 
