@@ -1,6 +1,9 @@
-[![license](https://img.shields.io/badge/license-GPL%203.0-brightgreen.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html) [![Github All Releases](https://img.shields.io/github/downloads/graphefruit/beanconqueror/total.svg)](https://github.com/graphefruit/beanconqueror/releases) [![GitHub Release Date](https://img.shields.io/github/release-date/graphefruit/beanconqueror.svg)](https://github.com/graphefruit/beanconqueror/releases)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=graphefruit_Beanconqueror&metric=alert_status)](https://sonarcloud.io/dashboard?id=graphefruit_Beanconqueror)
-# Beanconqueror
+# 如何参与汉化
+请打开[此文件](https://github.com/DC1024/Beanconqueror/blob/master/src/assets/i18n/zh-hans.json)并进行修改
+> 汉化完成后将请求合并
+
+# fork from：
+https://github.com/graphefruit/Beanconqueror
 
 A cup of coffee is not the same anymore then back in the 80's, thats why I wanted to build a tool for the coffee community.
 
