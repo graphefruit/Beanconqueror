@@ -1,5 +1,3 @@
-export const DEBUG = false;
-
 export enum ScaleMessageType {
   WEIGHT = 5,
   HEARTBEAT = 11,

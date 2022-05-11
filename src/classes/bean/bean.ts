@@ -121,7 +121,7 @@ export class Bean implements IBean {
     return fixNeeded;
   }
   public beanAgeInDays(): number {
-    if (this.roastingDate !== undefined && this.roastingDate !== '') {
+    if (this.roastingDate !== null && this.roastingDate !== undefined && this.roastingDate !== '') {
       const today = moment(Date.now()).startOf('day');
       const roastingDate = moment(this.roastingDate).startOf('day');
 

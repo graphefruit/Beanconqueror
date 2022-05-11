@@ -147,7 +147,7 @@ export class GreenBeansPage implements OnInit {
         this.archivedBeansFilter = modalData.data.bean_filter;
       }
     }
-    this.__saveBeanFilter();
+    await this.__saveBeanFilter();
 
 
     this.loadBeans();
@@ -167,11 +167,11 @@ export class GreenBeansPage implements OnInit {
     this.__initializeBeansView(this.bean_segment);
   }
 
-  private __saveBeanFilter() {
+  private async __saveBeanFilter() {
     const settings: Settings = this.uiSettingsStorage.getSettings();
     settings.green_bean_sort.OPEN = this.openBeansFilter;
     settings.green_bean_sort.ARCHIVED = this.archivedBeansFilter;
-    this.uiSettingsStorage.saveSettings(settings);
+    await this.uiSettingsStorage.saveSettings(settings);
   }
 
   private __initializeBeansView(_type: string) {

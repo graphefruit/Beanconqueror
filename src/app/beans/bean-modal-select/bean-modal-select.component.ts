@@ -130,5 +130,10 @@ export class BeanModalSelectComponent implements OnInit {
   public async dismiss(): Promise<void> {
     this.modalController.dismiss(undefined,undefined,BeanModalSelectComponent.COMPONENT_ID);
   }
-
+  public isBeanRoastUnknown(_bean: Bean) {
+    if (_bean) {
+      return _bean.bean_roasting_type === 'UNKNOWN' as BEAN_ROASTING_TYPE_ENUM;
+    }
+    return true;
+  }
 }

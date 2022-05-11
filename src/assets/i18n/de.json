@@ -467,7 +467,6 @@
   "PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION": "Aktiviert einen neuen Menüeintrag - über diesen kann die Brühung direkt wiederholt werden.",
   "PAGE_SETTINGS_TRACK_BREW_COORDINATES_DESCRIPTION": "Speichere die Koordinatien zu jeder Brühung.",
   "PAGE_SETTINGS_TRACK_CAFFEINE_CONSUMPTION_DESCRIPTION": "Speichere die zu dir genommene Koffeinmenge",
-
   "UPDATE_TITLE": "Was gibt's neues",
   "NEXT": "Weiter",
   "UPDATE_TEXT_TITLE_TITLE": {
@@ -650,6 +649,74 @@
         "",
         "<b>Sonstiges:</b>",
         "Bohnen / Mühlen / Zubereitungsmethoden werden nun Alphabetisch sortiert in Auswahlfeldern"
+      ]
+    },
+    "6.1.0": {
+      "TITLE": "Version 6.1: Das ist neu",
+      "DESCRIPTION": [
+        "<b>QR Codes</b>",
+        "Scanne nun Kaffeepackungen ein! Alle Kaffeeinformationen wurden direkt durch die Rösterei bereitgestellt",
+        "",
+        "<b>Bluetooth Waage</b>",
+        "Unterstützung von Acaia Pearl 2021 - Danke an Micah und Mike",
+        "Unterstützung von Acaia Lunar 2021 - Danke an Micah und Mike",
+        "Unterstützung von Acaia Pyxis - Danke an Micah und Mike",
+        "Unterstützung von Hiroia Jimmy - Danke an Silas",
+        "Unterstützung von Felicita Arc - Danke an Herman",
+        "Achtung: Acaia Pearl < 2021 ist leider noch nicht unterstützt!",
+        "Gewichtsinformationen der Bluetoothwaage können auch bei der Bohnenseite verwendet werden",
+        "Gewichtsveränderungen werden auch ohne das Starten der Brühung übermittelt",
+        "",
+        "<b>Brühübersicht</b>",
+        "Individualisiere die anzuzeigenden Parameter in der Brühübersicht für alle Zubereitungsarten, oder je Zubereitungsart",
+        "Brühmethodenbilder werden in der Listenansicht angezeigt",
+        "",
+        "<b>Brühgraph</b>",
+        "Überarbeitung des Brühgraphs zu einer geschmeidigeren Ansicht",
+        "Brühgraph kann nun maximiert werden",
+        "Brühgraph kann in der Detailansicht nun exportiert und gezoomt werden",
+        "Durchschnittliche Flussmenge wird nun angezeigt",
+        "",
+        "<b>Bohnen</b>",
+        "Erweiterung der Felder um: Kaufdatum, FOB-Preis, Einkaufspreis",
+        "Bohnen können nun favoritisiert und gefiltert werden",
+        "Wenn Bohnen archiviert werden, können diese nun direkt Bewertet werden",
+        "Beim Drücken auf das '+' kannst du nun auswählen ob du eine Bohne einscannen oder hinzufügen möchtest",
+        "Drücke lange auf das '+' um direkt eine Bohne hinzuzufügen",
+        "",
+        "<b>Zubereitungsmethoden</b>",
+        "Zubereitungsmethoden können nun wiederholt werden mit allen dazugehörigen Einstellungen",
+        "Weitere Zubereitungsmethoden verfügbar - Danke an Nicola",
+        "Auswahl der jeweiligen Zubereitungsmethode bei einer Brühung zeigt nun ebenfalls das Bild an",
+        "",
+        "<b>Einstellungen</b>",
+        "Bewertungen können nun verschiedene Schritte beinhalten (1, 0.75, 0.5, 0.25, 0.1)",
+        "Bluetoothwaage - Stelle nun ein ob die Waage bei einer neuen Brühung oder beim Starten zurückgesetzt werden soll",
+        "Bluetoothwaage - Stelle ein ob du Anomalien oder negative Werte ignorieren möchtest - falls ja ist ein Live-Graph nicht möglich",
+        "Wähle nun aus, ob du archivierte Brühungen auf der Heimseite angezeigt bekommen möchtest",
+        "Exportieren - Exportiert nun auch die Rohdaten der protokollierten Waagenbrühungen",
+        "",
+        "<b>Verbesserungen</b>",
+        "Löschen von Zubereitungsmethoden-Tools löschen keine Brühungen mehr",
+        "Zubereitungsmethoden-Tools können nun editiert und archiviert werden",
+        "",
+        "<b>Fehlerbehebungen:</b>",
+        "Weitere Fehler gefunden, welche zu einem Datenverlust führen konnten",
+        "Kleinere Fehlerbehebungen",
+        "",
+        "<b>Sonstiges:</b>",
+        "Aktualisierung auf Ionic-Framework 6, hierdurch sind kleinere visuelle Änderungen gekommen"
+      ]
+    },
+    "6.1.3": {
+      "TITLE": "Version 6.1.3: Das ist neu",
+      "DESCRIPTION": [
+        "<b>Android - Achtung</b>",
+        "An aller erste Stelle: Entschuldigung!",
+        "Leider wurde durch die Umstellung von APK auf AAB das Dateisystem zurückgesetzt und die App startet (vermutlich) ohne Daten.",
+        "Während der Entwicklung konnte ich dieses Problem leider nicht feststellen oder ausmachen.",
+        "Falls die App leer gestartet wurde, bitte geh in die Einstellungen, und importiere unter 'Download/Beanconqueror_export/Beanconqueror_automatic_export_*.json' * steht für den letzten Zeitstempel das Backup.",
+        "Alle Daten sollten dann wie gewohnt wieder vorhanden sein, falls nicht schreib mir bitte eine E-Mail: info@beanconqueror.com."
       ]
     }
   },
@@ -1025,7 +1092,7 @@
       "LOCATION": "Um Bluetooth-Waagen zu finden, muss der Standort freigegeben werden",
       "BLUETOOTH":  "Um Bluetooth-Waagen zu finden, muss Bluetooth freigegeben werden"
     },
-    "INFORMATION_DESCRIPTION": "Unterstütze Waagen sind: Decent Scale sowie Acaia Scales und Hiroia Jimmy"
+    "INFORMATION_DESCRIPTION": "Unterstütze Waagen sind: Decent Scale sowie Acaia Scales, Felicita Scales und Hiroia Jimmy"
   },
   "QR":{
     "WRONG_QRCODE_DESCRIPTION": "Falscher QR-Code oder falscher Inhalt",
@@ -1088,5 +1155,14 @@
   "PAGE_SETTINGS_HIDE_ARCHIVED_BREWS_DASHBOARD": "Anzeige archivierter Brühungen auf Hauptseite",
   "PAGE_SETTINGS_HIDE_ARCHIVED_BREWS_DASHBOARD_DESCRIPTION": "Sollen archivierte Brühungen auf der Hauptseite angezeigt werden?",
   "COPY": "Kopie",
-  "TOAST_PREPARATION_METHOD_REPEATED_SUCCESSFULLY": "Zubereitungsmethodik erfolgreich kopiert"
+  "TOAST_PREPARATION_METHOD_REPEATED_SUCCESSFULLY": "Zubereitungsmethodik erfolgreich kopiert",
+  "PREPARATION_TYPE_CAFEC_FLOWER": "Cafec Flower",
+  "PREPARATION_TYPE_DECEMBER_DRIPPER": "December Dripper",
+  "PREPARATION_TYPE_DECENT_ESPRESSO": "Decent Espresso",
+  "PREPARATION_TYPE_HARIO_SWITCH": "Hario Switch",
+  "PREPARATION_TYPE_HARIO_WOODNECK": "Hario Woodneck",
+  "PREPARATION_TYPE_RATIO_SIX_COFFEE_BREWER": "Ratio Six Coffee Brewer",
+  "PREPARATION_TYPE_ROK": "ROK",
+  "PREPARATION_TYPE_TORNADO_DUO": "Tornado Duo",
+  "PREPARATION_TYPE_TRICOLATE": "Tricolate"
 }

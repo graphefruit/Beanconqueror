@@ -1,9 +1,6 @@
-:host {
-  ion-footer{
-    background:#ffffff;
-  }
-  /*Because we have a doubled overlay, the background effect is not working*/
-  ion-content {
-    --background: rgba(0,0,0,0.32);
+:host{
+  ion-header {
+    height:40px;
+    background-color: #ffffff;
   }
 }

@@ -8,7 +8,8 @@ export class FormatDatePipe implements PipeTransform {
   public transform(value, format, args?: Array<string>): any {
     // SAMPLE - http://jsfiddle.net/kunycrkb/
     try {
-    if (value === undefined || value === '') {
+
+    if (value === null || value === undefined || value === '') {
       return '';
     }
     let m: any;

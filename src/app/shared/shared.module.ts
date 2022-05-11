@@ -160,6 +160,10 @@ import {ChooseDateOverlayDirective} from '../../directive/choose-date.directive'
 import {BeanPopoverAddComponent} from '../beans/bean-popover-add/bean-popover-add.component';
 import {PhotoViewComponent} from '../../components/photo-view/photo-view.component';
 import {QrCodeScannerPopoverComponent} from '../../popover/qr-code-scanner-popover/qr-code-scanner-popover.component';
+import {
+  PreparationToolModalSelectComponent
+} from '../preparation/preparation-tool-modal-select/preparation-tool-modal-select.component';
+import {PreparationToolOverlayDirective} from '../../directive/preparation-tool-overlay.directive';
 
 @NgModule({
     declarations: [
@@ -249,6 +253,7 @@ import {QrCodeScannerPopoverComponent} from '../../popover/qr-code-scanner-popov
         MillOverlayDirective,
         RoastingMachineOverlayDirective,
         PreparationOverlayDirective,
+      PreparationToolOverlayDirective,
         WaterOverlayDirective,
       ChooseDateOverlayDirective,
         TooltipDirective,
@@ -270,6 +275,7 @@ import {QrCodeScannerPopoverComponent} from '../../popover/qr-code-scanner-popov
         RoastingMachineModalSelectComponent,
         MillModalSelectComponent,
         PreparationModalSelectComponent,
+        PreparationToolModalSelectComponent,
         PreparationPopoverActionsComponent,
         TimerComponent,
         DefaultCustomParameterComponent,
@@ -314,6 +320,7 @@ import {QrCodeScannerPopoverComponent} from '../../popover/qr-code-scanner-popov
         MillOverlayDirective,
         RoastingMachineOverlayDirective,
         PreparationOverlayDirective,
+        PreparationToolOverlayDirective,
         WaterOverlayDirective,
       ChooseDateOverlayDirective,
         TooltipDirective,
@@ -424,6 +431,7 @@ import {QrCodeScannerPopoverComponent} from '../../popover/qr-code-scanner-popov
         MillOverlayDirective,
         RoastingMachineOverlayDirective,
         PreparationOverlayDirective,
+      PreparationToolOverlayDirective,
         WaterOverlayDirective,
       ChooseDateOverlayDirective,
         TooltipDirective,
@@ -444,6 +452,7 @@ import {QrCodeScannerPopoverComponent} from '../../popover/qr-code-scanner-popov
         RoastingMachineModalSelectComponent,
         MillModalSelectComponent,
         PreparationModalSelectComponent,
+        PreparationToolModalSelectComponent,
         MillPopoverActionsComponent,
         PreparationPopoverActionsComponent,
         TimerComponent,

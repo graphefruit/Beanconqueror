@@ -1,5 +1,5 @@
 import { Platforms } from '@ionic/core';
-import {PeripheralData} from './../../classes/devices/ble.types';
+import {PeripheralData} from '../../classes/devices/ble.types';
 import {Injectable} from '@angular/core';
 import {BluetoothScale, ScaleType, makeDevice, LunarScale, DecentScale, JimmyScale} from '../../classes/devices';
 import {Platform} from '@ionic/angular';
@@ -8,6 +8,8 @@ import {UIToast} from '../uiToast';
 import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
 import {Observable, Subject} from 'rxjs';
 import {UIHelper} from '../uiHelper';
+import FelicitaScale from '../../classes/devices/felicitaScale';
+
 
 declare var ble;
 declare var window;
@@ -142,7 +144,7 @@ export class BleManagerService {
 
       ble.startScan([], async (device) => {
         this.uiLog.log('Device found ' + JSON.stringify(device));
-        if (DecentScale.test(device) || LunarScale.test(device) || JimmyScale.test(device)) {
+        if (DecentScale.test(device) || LunarScale.test(device) || JimmyScale.test(device) || FelicitaScale.test(device)) {
           // We found all needed devices.
           devices.push(device);
 
@@ -253,6 +255,11 @@ export class BleManagerService {
           resolve({id: device.id, type: ScaleType.JIMMY});
           return;
         }
+        if (FelicitaScale.test(device)) {
+          this.uiLog.log('BleManager - We found a felicita scale');
+          resolve({id: device.id, type: ScaleType.FELICITA});
+          return;
+        }
       }
       resolve(undefined);
     });
@@ -292,7 +299,6 @@ export class BleManagerService {
     if (_retryScanForIOS) {
       // iOS needs to know the scale, before auto connect can be done
       await this.__iOSAccessBleStackAndAutoConnect();
-
     }
 
     this.uiLog.log('AutoConnectScale - We can start or we waited for iOS');

@@ -153,7 +153,7 @@ export class BeansPage implements OnInit {
         this.archivedBeansSort = modalData.data.bean_sort;
       }
     }
-    this.__saveBeanFilter();
+    await this.__saveBeanFilter();
 
 
     this.loadBeans();
@@ -187,7 +187,7 @@ export class BeansPage implements OnInit {
         this.archivedBeansFilter = modalData.data.bean_filter;
       }
     }
-    this.__saveBeanFilter();
+    await this.__saveBeanFilter();
 
 
     this.loadBeans();
@@ -447,7 +447,7 @@ export class BeansPage implements OnInit {
       },() => {});
     } else {
       // Test sample for development
-      await this.intenthandler.handleQRCodeLink('https://beanconqueror.com/?qr=Yo8JHkY3');
+       // await this.intenthandler.handleQRCodeLink('https://beanconqueror.com/?qr=f62fa1e9');
     }
     this.loadBeans();
     return;
@@ -462,21 +462,5 @@ export class BeansPage implements OnInit {
     await this.add();
   }
 
-  public async scan() {
-
-    if (this.platform.is('cordova')) {
-      await this.qrScannerService.scan().then(async (scannedCode) => {
-        await this.intenthandler.handleQRCodeLink(scannedCode);
-        this.loadBeans();
-      },() => {});
-    } else {
-      // Test sample for development
-      await this.intenthandler.handleQRCodeLink('https://beanconqueror.com/?qr=f3244c61-da13-46d3-af69-f37a44976530');
-      this.loadBeans();
-    }
-
-    return;
-
-  }
 
 }

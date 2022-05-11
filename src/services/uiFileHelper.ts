@@ -57,7 +57,7 @@ export class UIFileHelper extends InstanceClass {
         _fileEntry.createWriter((writer) => {
           writer.onwriteend = () => {
             resolve(undefined);
-            this.uiLog.error('UILog - saveJSONFile - File saved successfully - ' + _fileName);
+            this.uiLog.info('UILog - saveJSONFile - File saved successfully - ' + _fileName);
           };
           writer.onerror = () => {
             reject();
@@ -96,6 +96,8 @@ export class UIFileHelper extends InstanceClass {
             reject();
           }
 
+        },() => {
+          reject();
         });
       } else {
         reject();

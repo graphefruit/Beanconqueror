@@ -189,5 +189,11 @@ https://stackoverflow.com/questions/60357663/do-apple-app-site-association-files
 
 
 ### Upgrade Ionic if needed:
-`npm install @ionic/angular@6.0.13`
+`npm install @ionic/angular@6.0.14`
 -> Or the actual active version
+
+### Installing AAB on your android (mac)
+https://stackoverflow.com/questions/50419286/install-android-app-bundle-on-device
+brew install bundletool
+bundletool build-apks --bundle=./app.aab --output=./app.apks
+bundletool install-apks --apks=app.apks

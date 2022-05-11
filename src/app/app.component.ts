@@ -211,8 +211,7 @@ export class AppComponent implements AfterViewInit {
                 this.uiHelper.isBeanconqurorAppReady().then(async () => {
                   const payloadType = payload.type;
                   try {
-                    this.uiAnalytics.trackEvent(STARTUP_TRACKING.TITLE, STARTUP_TRACKING.ACTIONS.FORCE_TOUCH.CATEGORY,
-                      STARTUP_TRACKING.ACTIONS.FORCE_TOUCH.DATA.TYPE, payloadType.toUpperCase());
+                    this.uiAnalytics.trackEvent(STARTUP_TRACKING.TITLE, STARTUP_TRACKING.ACTIONS.FORCE_TOUCH.CATEGORY, payloadType.toUpperCase());
                     this.uiLog.log(`iOS Device - Home icon was pressed`);
                   } catch (ex) {
                   }
@@ -436,7 +435,6 @@ export class AppComponent implements AfterViewInit {
 
       this.uiAnalytics.trackEvent(STARTUP_TRACKING.TITLE,
         STARTUP_TRACKING.ACTIONS.STARTUP_VIEW.CATEGORY,
-        STARTUP_TRACKING.ACTIONS.STARTUP_VIEW.DATA.TYPE,
         settings.startup_view);
     }
     switch (settings.startup_view) {

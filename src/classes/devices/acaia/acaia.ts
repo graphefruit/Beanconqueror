@@ -3,10 +3,11 @@ import { Platforms } from '@ionic/core';
 
 import { Characteristic } from '../ble.types';
 import { MAGIC1, MAGIC2, SCALE_CHARACTERISTIC_UUID, PYXIS_RX_CHARACTERISTIC_UUID, PYXIS_TX_CHARACTERISTIC_UUID } from './constants';
-import { Button, ParsedMessage, MessageType, ScaleMessageType, Units, WorkerResult, DecoderResultType, DEBUG } from './common';
+import { Button, ParsedMessage, MessageType, ScaleMessageType, Units, WorkerResult, DecoderResultType } from './common';
 import { memoize } from 'lodash';
 import { UILog } from '../../../services/uiLog';
-import {UISettingsStorage} from '../../../services/uiSettingsStorage';
+import { Logger } from '../common/logger';
+import { DEBUG } from '../common/constants';
 declare var ble;
 
 export enum EventType {
@@ -25,49 +26,6 @@ const log = (...args) => {
     } catch(e) {}
   }
 };
-
-class Logger {
-  private uiLog: UILog;
-  private uiSettingsStorage: UISettingsStorage;
-
-  private prefix: string;
-
-  constructor(prefix = 'ACAIA') {
-    this.uiLog = UILog.getInstance();
-    this.uiSettingsStorage = UISettingsStorage.getInstance();
-    this.prefix = prefix;
-  }
-
-  private isLogEnabled(): boolean {
-    try {
-      return this.uiSettingsStorage.getSettings().scale_log;
-    }catch(ex){
-      return false;
-    }
-
-  }
-
-  public log(...args) {
-    if (this.isLogEnabled() || DEBUG) {
-      return this.uiLog.log(`${this.prefix}: ${JSON.stringify(args)}`);
-    }
-
-  }
-
-  public info(...args) {
-    return this.uiLog.info(`${this.prefix} INFO: ${JSON.stringify(args)}`);
-  }
-
-  public error(...args) {
-    return this.uiLog.error(`${this.prefix} ERROR: ${JSON.stringify(args)}`);
-  }
-
-  public debug(...args) {
-    if (this.isLogEnabled() || DEBUG) {
-      return this.uiLog.log(`${this.prefix} DEBUG: ${JSON.stringify(args)}`);
-    }
-  }
-}
 
 // DecodeWorkers receives array buffer from heartbeat notification and emits parsed messages if any
 class DecoderWorker {
