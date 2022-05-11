@@ -5,6 +5,8 @@
 # fork from：
 https://github.com/graphefruit/Beanconqueror
 
+---
+
 A cup of coffee is not the same anymore then back in the 80's, thats why I wanted to build a tool for the coffee community.
 
 Coffee has been grown to like the new "black gold", more roasters and more tools outside are growing.
