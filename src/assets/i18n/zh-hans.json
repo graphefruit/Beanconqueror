@@ -707,8 +707,8 @@
         "<b>Android - 注意</b>",
         "首先：对不起！",
         "遗憾的是，数据库在 Android Play 商店中从 APK 格式重置为 AAB 格式，您的应用程序可能会在没有数据的情况下启动。",
-        "遗憾的是，数据库在 Android Play 商店中从 APK 格式重置为 AAB 格式，您的应用程序可能会在没有数据的情况下启动。",
-        "如果您的应用显示空白，请进入设置并导入下面的文件 'Download/Beanconqueror_export/Beanconqueror_automatic_export_*.json' * 代表最新的时间戳，备份。",
+        "我无法调试或控制这种情况，虽然开发工作都按预期进行。",
+        "如果您的应用显示空白，请进入设置并导入下面的文件 'Download/Beanconqueror_export/Beanconqueror_automatic_export_*.json' * 代表最新的数据备份。",
         "然后所有数据都应该恢复正常，如果没有，请给我写一封电子邮件：info@beanconqueror.com。"
       ]
     }
