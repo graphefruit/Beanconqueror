@@ -644,6 +644,74 @@
         "<b>Others</b>",
         "Beans, grinders and preparation methods are now sorted alphabetic in dropdowns"
       ]
+    },
+    "6.1.0": {
+      "TITLE": "版本 6.1: 这些是新东西!",
+      "DESCRIPTION": [
+        "<b>二维码</b>",
+        "扫描你的咖啡包装！ 所有咖啡信息都将从烘焙店中插入。",
+        "",
+        "<b>蓝牙电子秤</b>",
+        "支持 Acaia Pearl 2021 - 感谢 Micah 和 Mike",
+        "支持 Acaia Lunar 2021 - 感谢 Micah 和 Mike",
+        "支持 Acaia Pyxis - 感谢 Micah 和 Mike",
+        "支持Hiroia Jimmy - 感谢 Silas",
+        "支持 Felicita Arc - 感谢 Herman",
+        "注意：目前不支持 Acaia Pearl 2021 以下的电子秤",
+        "咖啡豆页面现在可以使用蓝牙电子秤获得的重量信息",
+        "现在无需通过计时器开始冲泡即可看到重量变化",
+        "",
+        "<b>冲泡概述</b>",
+        "自定义概览中的可见冲煮参数或针对每种冲泡方法",
+        "准备图像现在在列表视图中可见",
+        "",
+        "<b>冲泡视图</b>",
+        "重制了冲泡视图，相比以往更加平滑",
+        "冲泡视图现在可以最大化",
+        "冲泡视图现在可以在冲泡细节视图中放大以及导出",
+        "现在显示平均流量",
+        "",
+        "<b>咖啡豆</b>",
+        "添加字段：购买日期、FOB 价格、采购价格",
+        "现在可以收藏和筛选咖啡豆",
+        "如果咖啡豆被归档，您现在也可以对它进行评分",
+        "按“+”，您现在可以选择添加或扫描新的咖啡豆包装",
+        "长按'+'直接添加新的咖啡豆",
+        "",
+        "<b>Preparation methods</b>",
+        "Preparation methods can now be repeated with all settings",
+        "More preparation methods are available - Thanks to Nicola",
+        "Selecting a preparation method also displays the image",
+        "",
+        "<b>设置</b>",
+        "评级现在可以阶梯式进行（1、0.75、0.5、0.25、0.1）",
+        "蓝牙电子秤 - 定义在开始新的冲泡或启动计时器时是否应将秤设置为零重量",
+        "蓝牙电子秤 - 定义是否要忽略异常或负值 - 如果是，则无法生成实时图表",
+        "现在选择, 如果您想在主页上查看存档的咖啡豆",
+        "导出现在还导出保存的蓝牙值的原始数据",
+        "",
+        "<b>改进</b>",
+        "删除冲泡方法和工具时，不会再删除与其相关的咖啡豆",
+        "制备方法工具现在可以编辑和存档",
+        "",
+        "<b>Bug修复：</b>",
+        "发现更多可能导致数据丢失的问题",
+        "小错误修复",
+        "",
+        "<b>其它:</b>",
+        "更新到 Ionic-Framework 6，因此发生了一些小的视觉变化"
+      ]
+    },
+    "6.1.3": {
+      "TITLE": "版本 6.1.3: 这些是新东西!",
+      "DESCRIPTION": [
+        "<b>Android - 注意</b>",
+        "首先：对不起！",
+        "遗憾的是，数据库在 Android Play 商店中从 APK 格式重置为 AAB 格式，您的应用程序可能会在没有数据的情况下启动。",
+        "遗憾的是，数据库在 Android Play 商店中从 APK 格式重置为 AAB 格式，您的应用程序可能会在没有数据的情况下启动。",
+        "如果您的应用显示空白，请进入设置并导入下面的文件 'Download/Beanconqueror_export/Beanconqueror_automatic_export_*.json' * 代表最新的时间戳，备份。",
+        "然后所有数据都应该恢复正常，如果没有，请给我写一封电子邮件：info@beanconqueror.com。"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "自定义参数",
@@ -1018,7 +1086,7 @@
       "LOCATION": "软件需要位置权限来搜索电子秤",
       "BLUETOOTH": "软件需要蓝牙权限来搜索电子秤"
     },
-    "INFORMATION_DESCRIPTION": "支持的电子秤: Decent 电子秤与 Lunar 电子秤(不包括2021款)"
+    "INFORMATION_DESCRIPTION": "支持的电子秤: Decent 电子秤, Acaia 电子秤, Felicita 电子秤 and Hiroia Jimmy"
   },
   "QR":{
     "WRONG_QRCODE_DESCRIPTION": "错误的二维码或错误的内容",
