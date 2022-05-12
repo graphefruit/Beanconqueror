@@ -1143,7 +1143,7 @@
   "QR_CODE_SCANNER_INFORMATION_TITLE": "二维码",
   "QR_CODE_SCANNER_INFORMATION_DESCRIPTION": "所有扫描的咖啡豆信息都直接来自烘焙店。 <br/> 如果您发现错误或误导性信息，请通过电子邮件通知我: info@beanconqueror.com.",
   "DONT_SHOW_AGAIN": "不再显示",
-  "ARCHIVED_TOOLS": "归档工具,
+  "ARCHIVED_TOOLS": "归档工具",
   "UNARCHIVE": "Restore",
   "PAGE_SETTINGS_HIDE_ARCHIVED_BREWS_DASHBOARD": "在仪表盘上显示已归档的冲泡",
   "PAGE_SETTINGS_HIDE_ARCHIVED_BREWS_DASHBOARD_DESCRIPTION": "已归档的冲泡应该显示在主页上吗？",
