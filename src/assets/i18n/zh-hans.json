@@ -1123,7 +1123,7 @@
   "BEAN_ROASTING_TYPE_ESPRESSO":"意式浓缩/Espresso",
   "BEAN_ROASTING_TYPE_OMNI":"均可/Omni",
   "BEAN_ROASTING_TYPE_UNKNOWN":"不清楚",
-  "SMART_SCALE_LOG": "为智能规模激活日志文件（仅用于发送日志进行调试)"
+  "SMART_SCALE_LOG": "为智能规模激活日志文件（仅用于发送日志进行调试)",
   "TOAST_PREPARATION_TOOL_EDITED_SUCCESSFULLY": "杯测工具编辑",
   "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE": "蓝牙电子秤",
   "PAGE_SETTINGS_TAB_GENERAL": "常规",
