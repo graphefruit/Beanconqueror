@@ -18,6 +18,10 @@ import {UIBeanStorage} from '../../services/uiBeanStorage';
 import BEAN_TRACKING from '../../data/tracking/beanTracking';
 import {ShareService} from '../../services/shareService/share-service.service';
 import {BEAN_ROASTING_TYPE_ENUM} from '../../enums/beans/beanRoastingType';
+import {ServerBean} from '../../models/bean/serverBean';
+import QR_TRACKING from '../../data/tracking/qrTracking';
+import {BeanMapper} from '../../mapper/bean/beanMapper';
+import {ServerCommunicationService} from '../../services/serverCommunication/server-communication.service';
 
 @Component({
   selector: 'bean-information',
@@ -46,7 +50,8 @@ export class BeanInformationComponent implements OnInit {
               private readonly uiToast: UIToast,
               private readonly uiBeanStorage: UIBeanStorage,
               private readonly uiImage: UIImage,
-              private readonly shareService: ShareService) {
+              private readonly shareService: ShareService,
+              private readonly serverCommunicationService: ServerCommunicationService) {
 
   }
 
@@ -167,6 +172,9 @@ export class BeanInformationComponent implements OnInit {
       case BEAN_ACTION.SHARE:
         await this.shareBean();
         break;
+      case BEAN_ACTION.REFRESH_DATA_FROM_QR_CODE:
+        await this.refreshDataFromQRCode();
+        break;
       default:
         break;
     }
@@ -227,6 +235,46 @@ export class BeanInformationComponent implements OnInit {
 
   public async shareBean() {
     await this.shareService.shareBean(this.bean);
+  }
+  public async refreshDataFromQRCode() {
+    await this.uiAlert.showConfirm('QR_CODE_REFRESH_DATA_MESSAGE','CARE',true).then(async () => {
+      await this.uiAlert.showLoadingSpinner();
+      let errorOccured: boolean = false;
+      try {
+
+        const _scannedQRBean: ServerBean = await this.serverCommunicationService.getBeanInformation(this.bean.qr_code);
+        if (_scannedQRBean.error === null) {
+
+          this.uiAnalytics.trackEvent(QR_TRACKING.TITLE, QR_TRACKING.ACTIONS.REFRESH_SUCCESSFULLY);
+          this.uiToast.showInfoToast('QR.BEAN_SUCCESSFULLY_REFRESHED');
+          await this.uiAlert.showLoadingSpinner();
+          // Get the new bean from server, just save the uuid, all other information will be overwritten
+          const newMapper = new BeanMapper();
+          const newBean: Bean = await newMapper.mapServerToClientBean(_scannedQRBean);
+          const savedUUID = this.bean.config.uuid;
+          this.bean = newBean;
+          this.bean.config.uuid = savedUUID;
+          await this.uiBeanStorage.update(this.bean);
+        } else {
+          errorOccured = true;
+
+        }
+      }
+      catch (ex) {
+        errorOccured = true;
+      }
+      await this.uiAlert.hideLoadingSpinner();
+      if (errorOccured) {
+        this.uiAlert.showMessage('QR.SERVER.ERROR_OCCURED','ERROR_OCCURED',undefined,true);
+      }
+
+
+
+    },() => {
+
+    });
+
+
   }
 
 
