@@ -72,7 +72,7 @@ export class UIImage {
             this.uiFileHelper.saveBase64File('beanconqueror_image', '.jpg', imageStr).then((_newURL) => {
               // const filePath = _newURL.replace(/^file:\/\//, '');
               resolve(_newURL);
-              this.__cleanupCamera();
+              // this.__cleanupCamera();
             },(_error) => {
               reject(_error);
             });
@@ -149,7 +149,7 @@ export class UIImage {
                     this.uiAlert.hideLoadingSpinner();
                   },50);
 
-                  this.__cleanupCamera();
+                  // this.__cleanupCamera();
                   if (fileurls.length > 0) {
                     resolve(fileurls);
                   } else {
@@ -207,7 +207,7 @@ export class UIImage {
                 setTimeout(() => {
                   this.uiAlert.hideLoadingSpinner();
                 },50);
-                this.__cleanupCamera();
+                // this.__cleanupCamera();
 
                 if (fileurls.length > 0) {
                   resolve(fileurls);
