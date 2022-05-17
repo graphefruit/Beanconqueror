@@ -21,6 +21,10 @@ export class BeanModalSelectComponent implements OnInit {
   @Input() public showFinished: boolean;
   @Input() private selectedValues: Array<string>;
   public beanRoastingTypeEnum = BEAN_ROASTING_TYPE_ENUM;
+  public openBeansFilterText: string = '';
+  public openBeans: Array<Bean> = [];
+  public finishedBeansFilterText: string = '';
+  public finishedBeans: Array<Bean> = [];
 
   constructor(private readonly modalController: ModalController,
               private readonly uiBeanStorage: UIBeanStorage,
@@ -42,6 +46,7 @@ export class BeanModalSelectComponent implements OnInit {
         this.radioSelection = this.selectedValues[0];
       }
     }
+    this.research();
   }
 
   public getUsedWeightCount(_bean: Bean): number {
@@ -136,4 +141,46 @@ export class BeanModalSelectComponent implements OnInit {
     }
     return true;
   }
+
+
+
+  public research() {
+    this.__initializeBeansView('open');
+    this.__initializeBeansView('archiv');
+  }
+  private __initializeBeansView(_type: string) {
+    const beansCopy: Array<Bean> = [...this.objs];
+    const isOpen: boolean = (_type === 'open');
+
+    let filterBeans: Array<Bean>;
+    if (isOpen) {
+      filterBeans =  beansCopy.filter(
+        (bean) => !bean.finished);
+    } else {
+
+      filterBeans =  beansCopy.filter(
+        (bean) => bean.finished);
+    }
+
+    let searchText: string = '';
+    if (isOpen) {
+      searchText = this.openBeansFilterText.toLowerCase();
+    } else {
+      searchText = this.finishedBeansFilterText.toLowerCase();
+    }
+
+    if (searchText) {
+      filterBeans = filterBeans.filter((e) => e.note?.toLowerCase().includes(searchText) ||
+        e.name?.toLowerCase().includes(searchText) ||
+        e.roaster?.toLowerCase().includes(searchText) ||
+        e.aromatics?.toLowerCase().includes(searchText));
+    }
+    if (isOpen) {
+      this.openBeans = filterBeans;
+    } else {
+      this.finishedBeans = filterBeans;
+    }
+
+  }
+
 }

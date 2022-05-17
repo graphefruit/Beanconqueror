@@ -26,7 +26,9 @@
     <div [ngSwitch]="bean_segment">
       <div *ngSwitchCase="'open'">
           <ion-card *ngIf="getOpenBeans().length > 0">
-            <ion-item *ngFor="let bean of getOpenBeans()" lines="none" tappable>
+            <ion-searchbar *ngIf="getOpenBeans().length > 5" (ionChange)="research()" [(ngModel)]="openBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+            <hr *ngIf="getOpenBeans().length > 5"/>
+            <ion-item *ngFor="let bean of openBeans" lines="none" tappable>
               <ion-checkbox [(ngModel)]="multipleSelection[bean.config.uuid]" slot="start"></ion-checkbox>
               <div>
                 <h6>{{bean.name}}</h6>
@@ -43,11 +45,21 @@
                 </p>
               </div>
             </ion-item>
+            <div *ngIf="openBeans.length == 0" class="ion-padding ion-text-center">
+              <div>
+                <ion-icon color="inactive" name="beanconqueror-beans" size="large"></ion-icon>
+              </div>
+              <div class="text-color-inactive ion-margin-top">
+                {{"PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS" | translate}}
+              </div>
+            </div>
           </ion-card>
       </div>
       <div *ngSwitchCase="'archive'">
           <ion-card>
-            <ion-item *ngFor="let bean of getFinishedBeans()" lines="none" tappable>
+            <ion-searchbar *ngIf="getFinishedBeans().length > 5" (ionChange)="research()" [(ngModel)]="finishedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+            <hr *ngIf="getFinishedBeans().length > 5"/>
+            <ion-item *ngFor="let bean of finishedBeans" lines="none" tappable>
               <ion-checkbox [(ngModel)]="multipleSelection[bean.config.uuid]" slot="start"></ion-checkbox>
               <div>
                 <h6>{{bean.name}}</h6>
@@ -64,6 +76,14 @@
                 </p>
               </div>
             </ion-item>
+            <div *ngIf="finishedBeans.length == 0" class="ion-padding ion-text-center">
+              <div>
+                <ion-icon color="inactive" name="beanconqueror-beans" size="large"></ion-icon>
+              </div>
+              <div class="text-color-inactive ion-margin-top">
+                {{"PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS" | translate}}
+              </div>
+            </div>
           </ion-card>
       </div>
     </div>
@@ -74,7 +94,9 @@
     <div [ngSwitch]="bean_segment">
       <div *ngSwitchCase="'open'">
         <ion-card *ngIf="getOpenBeans().length > 0">
-          <ion-item *ngFor="let bean of getOpenBeans()" lines="none" tappable>
+          <ion-searchbar *ngIf="getOpenBeans().length > 5" (ionChange)="research()" [(ngModel)]="openBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+          <hr *ngIf="getOpenBeans().length > 5"/>
+          <ion-item *ngFor="let bean of openBeans" lines="none" tappable>
             <ion-radio slot="start" value="{{bean.config.uuid}}"></ion-radio>
             <div>
               <h6>{{bean.name}}</h6>
@@ -91,11 +113,21 @@
               </p>
             </div>
           </ion-item>
+          <div *ngIf="openBeans.length == 0" class="ion-padding ion-text-center">
+            <div>
+              <ion-icon color="inactive" name="beanconqueror-beans" size="large"></ion-icon>
+            </div>
+            <div class="text-color-inactive ion-margin-top">
+              {{"PAGE_BEANS_LIST_YOU_GOT_NO_FRESH_BEANS" | translate}}
+            </div>
+          </div>
         </ion-card>
       </div>
       <div *ngSwitchCase="'archive'">
         <ion-card>
-          <ion-item *ngFor="let bean of getFinishedBeans()" lines="none" tappable>
+          <ion-searchbar *ngIf="getFinishedBeans().length > 5" (ionChange)="research()" [(ngModel)]="finishedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+          <hr *ngIf="getFinishedBeans().length > 5"/>
+          <ion-item *ngFor="let bean of finishedBeans" lines="none" tappable>
             <ion-radio slot="start" value="{{bean.config.uuid}}"></ion-radio>
             <div>
               <h6>{{bean.name}}</h6>
@@ -112,6 +144,14 @@
               </p>
             </div>
           </ion-item>
+          <div *ngIf="finishedBeans.length == 0" class="ion-padding ion-text-center">
+            <div>
+              <ion-icon color="inactive" name="beanconqueror-beans" size="large"></ion-icon>
+            </div>
+            <div class="text-color-inactive ion-margin-top">
+              {{"PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS" | translate}}
+            </div>
+          </div>
         </ion-card>
       </div>
     </div>
