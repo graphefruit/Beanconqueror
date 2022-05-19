@@ -1109,7 +1109,7 @@
   "RETRY_CONNECT": "Retry connection",
   "SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE": "Let scale connected even when app is minimized/inactive",
   "BREW_FLOW_WEIGHT": "Weight",
-  "BREW_FLOW_WEIGHT_PER_SECOND": "Flow",
+  "BREW_FLOW_WEIGHT_PER_SECOND": "Flow (Calc.)",
   "ROAST_TYPE_UNKNOWN":"Unknown",
   "ROAST_TYPE_CINNAMON_ROAST":"Cinnamon Roast",
   "ROAST_TYPE_AMERICAN_ROAST":"American Roast",
@@ -1167,5 +1167,6 @@
   "PREPARATION_TYPE_TORNADO_DUO": "Tornado Duo",
   "PREPARATION_TYPE_TRICOLATE": "Tricolate",
   "QR_CODE_REFRESH_DATA_MESSAGE": "All information of the bean will be overwritten, start now?",
-  "POPOVER_QR_CODE_REFRESH": "Reload data"
+  "POPOVER_QR_CODE_REFRESH": "Reload data",
+  "BREW_FLOW_WEIGHT_REALTIME": "Flow (Realtime)"
 }

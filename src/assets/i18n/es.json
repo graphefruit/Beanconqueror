@@ -1167,5 +1167,6 @@
   "PREPARATION_TYPE_TORNADO_DUO": "Tornado Duo",
   "PREPARATION_TYPE_TRICOLATE": "Tricolate",
   "QR_CODE_REFRESH_DATA_MESSAGE": "All information of the bean will be overwritten, start now?",
-  "POPOVER_QR_CODE_REFRESH": "Reload data"
+  "POPOVER_QR_CODE_REFRESH": "Recargar datos",
+  "BREW_FLOW_WEIGHT_REALTIME": "Fujo (tiempo real)"
 }
