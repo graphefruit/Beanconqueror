@@ -107,7 +107,7 @@ export class UIImage {
 
 
   }
-  public async choosePhoto (): Promise<any> {
+  public async choosePhoto(): Promise<any> {
     const promise = new Promise(async (resolve, reject) => {
       this.__checkPermission(async () => {
 

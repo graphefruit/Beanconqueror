@@ -9,7 +9,6 @@ import {UIBrewHelper} from '../../../services/uiBrewHelper';
 import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
 import {Settings} from '../../../classes/settings/settings';
 import {BrewBrewingComponent} from '../../../components/brews/brew-brewing/brew-brewing.component';
-import {AgVirtualSrollComponent} from 'ag-virtual-scroll';
 
 
 @Component({
@@ -65,13 +64,12 @@ export class BrewFlowComponent implements OnInit, OnDestroy {
       // Looks funny but we need. if we would not calculate and substract 25px, the actual time graph would not be displayed :<
       setTimeout(() => {
         const el =  this.flowContent.nativeElement;
-        this.flowChartEl.ctx.canvas.style.height = (el.offsetHeight - 25) + 'px';
+        const newHeight = document.getElementById('brewFlowContainer').offsetHeight;
+        this.flowChartEl.ctx.canvas.style.height = (newHeight - 1) + 'px';
 
         resolve(undefined);
-      }, 25);
+      }, 100);
     });
-
-
 
 
 

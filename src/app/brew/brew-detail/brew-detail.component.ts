@@ -160,6 +160,16 @@ export class BrewDetailComponent implements OnInit {
               yAxisID: 'y1',
               spanGaps: true,
               pointRadius: 0,
+            },
+            {
+              label: this.translate.instant('BREW_FLOW_WEIGHT_REALTIME'),
+              data: [],
+              borderColor: 'rgb(144,60,99)',
+              backgroundColor: 'rgb(191,101,143)',
+              yAxisID: 'y2',
+              spanGaps: true,
+              pointRadius: 0,
+              tension: 0,
             }]
         };
         const chartOptions = {
@@ -215,6 +225,16 @@ export class BrewDetailComponent implements OnInit {
                 drawOnChartArea: false, // only want the grid lines for one axis to show up
               },
             },
+            y2: {
+              // Real time flow
+              type: 'linear',
+              display: false,
+              position: 'right',
+              // grid line settings
+              grid: {
+                drawOnChartArea: false, // only want the grid lines for one axis to show up
+              },
+            },
             xAxis: {
               ticks: {
                 maxTicksLimit: 10
@@ -248,6 +268,9 @@ export class BrewDetailComponent implements OnInit {
           }
           for (const data of this.flow_profile_raw.waterFlow) {
             this.flowProfileChartEl.data.datasets[1].data.push(data.value);
+          }
+          for (const data of this.flow_profile_raw.realtimeFlow) {
+            this.flowProfileChartEl.data.datasets[2].data.push(data.flow_value);
           }
           this.flowProfileChartEl.update();
         }

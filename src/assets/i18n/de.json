@@ -1109,7 +1109,7 @@
   "RETRY_CONNECT": "Erneut verbinden",
   "SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE": "Waage verbunden lassen bei App minimierung/inaktivität",
   "BREW_FLOW_WEIGHT": "Gewicht",
-  "BREW_FLOW_WEIGHT_PER_SECOND": "Fluss",
+  "BREW_FLOW_WEIGHT_PER_SECOND": "Fluss (Berechnet)",
   "ROAST_TYPE_UNKNOWN":"Unbekannt",
   "ROAST_TYPE_CINNAMON_ROAST":"Cinnamon Roast",
   "ROAST_TYPE_AMERICAN_ROAST":"American Roast",
@@ -1167,5 +1167,6 @@
   "PREPARATION_TYPE_TORNADO_DUO": "Tornado Duo",
   "PREPARATION_TYPE_TRICOLATE": "Tricolate",
   "QR_CODE_REFRESH_DATA_MESSAGE": "Alle Informationen der Bohne werden überschritten, jetzt fortfahren?",
-  "POPOVER_QR_CODE_REFRESH": "Daten neu laden"
+  "POPOVER_QR_CODE_REFRESH": "Daten neu laden",
+  "BREW_FLOW_WEIGHT_REALTIME": "Fluss (Echtzeit)"
 }

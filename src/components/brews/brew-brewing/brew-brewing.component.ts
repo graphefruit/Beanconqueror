@@ -41,7 +41,7 @@ import {BluetoothScale, SCALE_TIMER_COMMAND} from '../../../classes/devices';
 import {Chart} from 'chart.js';
 import {UIHelper} from '../../../services/uiHelper';
 import {UIExcel} from '../../../services/uiExcel';
-import {BrewFlow, IBrewWaterFlow, IBrewWeightFlow} from '../../../classes/brew/brewFlow';
+import {BrewFlow, IBrewRealtimeWaterFlow, IBrewWaterFlow, IBrewWeightFlow} from '../../../classes/brew/brewFlow';
 import {UIFileHelper} from '../../../services/uiFileHelper';
 import {BrewFlowComponent} from '../../../app/brew/brew-flow/brew-flow.component';
 import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
@@ -208,13 +208,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       // Trigger change rating
       this.changedRating();
     });
-  /* let b =0;
-    setInterval(() => {
-      b = b+1;
-      this.flowProfileChartEl.data.datasets[0].data.push(b);
-      this.flowProfileChartEl.data.labels.push(b);
-      this.flowProfileChartEl.update('none');
-    },1000);*/
+
   }
 
 
@@ -485,6 +479,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             spanGaps: true,
             pointRadius: 0,
             tension: 0,
+          },
+          {
+            label: this.translate.instant('BREW_FLOW_WEIGHT_REALTIME'),
+            data: [],
+            borderColor: 'rgb(144,60,99)',
+            backgroundColor: 'rgb(191,101,143)',
+            yAxisID: 'y2',
+            spanGaps: true,
+            pointRadius: 0,
+            tension: 0,
           }]
         };
 
@@ -512,15 +516,21 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
 
         const suggestedMinFlow: number = 0;
-        let suggestedMaxFlow: number = 30 ;
+        let suggestedMaxFlow: number = 20;
 
         const suggestedMinWeight: number = 0;
         let suggestedMaxWeight: number = 300;
         if (this.data.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
-          suggestedMaxFlow = 10;
-          suggestedMaxWeight = 100;
+          suggestedMaxFlow = 2.5;
+          suggestedMaxWeight = 30;
         }
         const chartOptions = {
+          legend: {
+            position: 'top',
+            onClick: (event, elem)=> {
+              console.log("legend click @ x: " + event.clientX + ", y:" + event.clientY);
+            }
+          },
           animation: false,  // disa
           scales: {
             x: {
@@ -571,6 +581,18 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               },
               suggestedMin: suggestedMinFlow,
               suggestedMax: suggestedMaxFlow,
+            },
+            y2: {
+              // Real time flow
+              type: 'linear',
+              display: false,
+              position: 'right',
+              // grid line settings
+              grid: {
+                drawOnChartArea: false, // only want the grid lines for one axis to show up
+              },
+              suggestedMin: suggestedMinFlow,
+              suggestedMax: suggestedMaxFlow,
             }
           },
           interaction: {
@@ -578,8 +600,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           }
         };
 
+
+
+
+
+
         if (pressureEnabled) {
-          chartOptions.scales['y2'] =  {
+          chartOptions.scales['y3'] =  {
             type: 'linear',
             display: true,
             position: 'right',
@@ -610,6 +637,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             dataDay.add('seconds',data.brew_time);
 
             this.flowProfileChartEl.data.datasets[1].data.push({x:dataDay.toDate().getTime(), y:data.value});
+          }
+          for (const data of this.flow_profile_raw.realtimeFlow) {
+            const dataDay = moment(new Date()).startOf('day');
+            dataDay.add('seconds',data.brew_time);
+            this.flowProfileChartEl.data.datasets[2].data.push({x:dataDay.toDate().getTime(), y:data.flow_value});
           }
 
         }
@@ -714,32 +746,42 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public async timerStarted(_event) {
     const scale: BluetoothScale = this.bleManager.getScale();
-
-   /* let weight=0;
-    let pressure = 0;
+/***
+    let weight=0;
+    let realtime_flow = 0;
     let flow = 0;
+    this.startingFlowTime = Date.now();
+    this.flowProfileChartEl.options.scales.x.realtime.pause = false;
+    const startingDay = moment(new Date()).startOf('day');
+    //IF brewtime has some seconds, we add this to the delay directly.
+    if (this.data.brew_time > 0) {
+      startingDay.add('seconds',this.data.brew_time);
+    }
+    const delay = Date.now() - startingDay.toDate().getTime();
+    this.flowProfileChartEl.options.scales.x.realtime.delay = delay;
+    this.flowProfileChartEl.update('quiet');
     setInterval(() => {
       flow = Math.floor(Math.random() * 11);
-      pressure = Math.floor(Math.random() * 11);
+      realtime_flow = Math.floor(Math.random() * 11);
       weight = weight + Math.floor(Math.random() * 11);
       const flowObj= {
         unixTime: moment(new Date()).startOf('day').add('milliseconds',Date.now() - this.startingFlowTime).toDate().getTime(),
         weight: weight,
-        pressure: pressure,
+        realtime_flow: realtime_flow,
         flow: flow
       };
       this.flowProfileChartEl.data.datasets[0].data.push(
         {x: flowObj.unixTime, y: flowObj.weight}
       );
       this.flowProfileChartEl.data.datasets[1].data.push(
-        {x: flowObj.unixTime, y: flowObj.pressure}
-      );
-      this.flowProfileChartEl.data.datasets[2].data.push(
         {x: flowObj.unixTime, y: flowObj.flow}
       );
+      this.flowProfileChartEl.data.datasets[2].data.push(
+        {x: flowObj.unixTime, y: flowObj.realtime_flow}
+      );
       this.flowProfileChartEl.update('quite');
-    },100);*/
-
+    },100);
+*/
     if (scale) {
       if (this.settings.bluetooth_scale_tare_on_start_timer === true) {
         await scale.tare();
@@ -1245,10 +1287,39 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.flowProfileArrObjs.push(flowObj);
     this.flowProfileArrCalculated.push(weight - oldWeight);
 
+
+    /* Realtime flow start**/
+    let lastRealtimeFlow = null;
+    if ( this.flow_profile_raw.realtimeFlow.length > 0) {
+      lastRealtimeFlow = this.flow_profile_raw.realtimeFlow[ this.flow_profile_raw.realtimeFlow.length - 1];
+    }
+
+    let oldRealtimeSmoothedValue = 0;
+    if (lastRealtimeFlow != null) {
+      oldRealtimeSmoothedValue = lastRealtimeFlow.smoothed_weight;
+    }
+    const newSmoothedWeight = (oldRealtimeSmoothedValue * 0.9) + (weight * 0.1);
+
+
+    const realtimeWaterFlow: IBrewRealtimeWaterFlow = {
+
+    } as IBrewRealtimeWaterFlow;
+
+    realtimeWaterFlow.brew_time = flowObj.flowTimeSecond;
+    realtimeWaterFlow.timestamp = this.uiHelper.getActualTimeWithMilliseconds();
+    realtimeWaterFlow.smoothed_weight = newSmoothedWeight;
+    realtimeWaterFlow.flow_value = (newSmoothedWeight - oldRealtimeSmoothedValue)*10;
+
+
+    this.flowProfileChartEl.data.datasets[2].data.push({x: flowObj.unixTime, y: realtimeWaterFlow.flow_value});
+    this.flow_profile_raw.realtimeFlow.push(realtimeWaterFlow);
+    /* Realtime flow End **/
+
     if (this.settings.bluetooth_ignore_anomaly_values === false &&
       this.settings.bluetooth_ignore_negative_values === false)
     {
       this.flowProfileChartEl.data.datasets[0].data.push({x: flowObj.unixTime, y: flowObj.weight});
+
       this.pushFlowProfile(flowObj.flowTimeSecond, flowObj.weight, flowObj.oldWeight, flowObj.smoothedWeight, flowObj.oldSmoothedWeight);
       this.flowProfileChartEl.update('quiet');
     }
@@ -1273,9 +1344,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     brewFlow.actual_smoothed_weight = _actualSmoothedWeight;
     brewFlow.old_smoothed_weight = _oldSmoothedWeight;
     this.flow_profile_raw.weight.push(brewFlow);
-  }
-  private overwriteFlowProfile(_index: number, _weight:number){
-
   }
 
   public setActualSmartInformation() {
