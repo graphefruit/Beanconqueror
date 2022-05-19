@@ -525,12 +525,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           suggestedMaxWeight = 30;
         }
         const chartOptions = {
-          legend: {
-            position: 'top',
-            onClick: (event, elem)=> {
-              console.log("legend click @ x: " + event.clientX + ", y:" + event.clientY);
-            }
-          },
           animation: false,  // disa
           scales: {
             x: {
