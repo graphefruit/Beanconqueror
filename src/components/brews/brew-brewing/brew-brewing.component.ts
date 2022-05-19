@@ -594,11 +594,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           }
         };
 
-
-
-
-
-
         if (pressureEnabled) {
           chartOptions.scales['y3'] =  {
             type: 'linear',
