@@ -123,26 +123,44 @@ export class AndroidPlatformService {
 
   public async checkAndroidBackup() {
     try {
-      if (this.platform.is('cordova') && this.platform.is('android')) {
+      const promise = new Promise(async(resolve, reject) => {
+        if (this.platform.is('cordova') && this.platform.is('android')) {
 
-        this.uiLog.log('android-Platform - Check Android Backup');
-        const hasData = await this.uiStorage.hasData();
-        this.uiLog.log('android-Platform - Check Android Backup - Has data ' + hasData);
-        if (!hasData) {
-          this.uiLog.log('android-Platform - Check Android Backup - No data are stored yet inside the app, so we try to find a backup file');
-          // If we don't got any data, we check now if there is a Beanconqueror.json saved.
-          this.uiFileHelper.getJSONFile('Beanconqueror.json').then((_json) => {
-            this.uiLog.log('android-Platform - We found a backup, try to import');
-            this.uiStorage.import(_json).then(() => {
-              this.uiLog.log('android-Platform sucessfully imported  Backup');
-            },() => {
-              this.uiLog.error('android-Platform could not import  Backup');
+          this.uiLog.log('android-Platform - Check Android Backup');
+          const hasData = await this.uiStorage.hasData();
+          this.uiLog.log('android-Platform - Check Android Backup - Has data ' + hasData);
+          if (!hasData) {
+            this.uiLog.log('android-Platform - Check Android Backup - No data are stored yet inside the app, so we try to find a backup file');
+            // If we don't got any data, we check now if there is a Beanconqueror.json saved.
+            this.uiFileHelper.getJSONFile('Beanconqueror.json').then(async (_json) => {
+              await this.uiAlert.showLoadingSpinner();
+              this.uiLog.log('android-Platform - We found a backup, try to import');
+              this.uiStorage.import(_json).then(async () => {
+                this.uiLog.log('android-Platform sucessfully imported  Backup');
+                setTimeout(() => {
+                  this.uiAlert.hideLoadingSpinner();
+                },150);
+                resolve(null);
+              },() => {
+                this.uiLog.error('android-Platform could not import  Backup');
+                setTimeout(() => {
+                  this.uiAlert.hideLoadingSpinner();
+                },150);
+                resolve(null);
+
+              });
+            }, () => {
+              this.uiLog.log('android-Platform - Check Android Backup - We couldnt retrieve any file');
+              resolve(null);
             });
-          }, () => {
-            this.uiLog.log('android-Platform - Check Android Backup - We couldnt retrieve any file');
-          });
+          } else {
+            resolve(null);
+          }
+        } else {
+          resolve(null);
         }
-      }
+      });
+      return promise;
     }catch(ex) {
 
     }

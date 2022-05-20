@@ -718,6 +718,27 @@
         "If your app started blank, please go into settings and import the file below 'Download/Beanconqueror_export/Beanconqueror_automatic_export_*.json' * stands for the latest timestamp, the backup.",
         "All datas should then be back as normal, if not please write me an e-mail: info@beanconqueror.com."
       ]
+    },
+    "6.1.5": {
+      "TITLE": "Versión 6.1.5: Ésto es lo nuevo!",
+      "DESCRIPTION": [
+        "<b>Android - Attention</b>",
+        "Si su aplicación comenzó en blanco y tenía datos la última vez que usó la aplicación, ingrese a la configuración e importe el archivo a continuación 'Descargar/Beanconqueror_export/Beanconqueror_automatic_export_*.json' * representa la última marca de tiempo, la copia de seguridad.",
+        "Todos los datos deberían volver a la normalidad, si no es así, escríbame un correo electrónico: info@beanconqueror.com.",
+        "",
+        "<b>Códigos QR</b>",
+        "Recargue beans que fueron escaneados a través de códigos qr",
+        "",
+        "<b>Gráfico de preparación</b>",
+        "El flujo de agua se calcula ahora en tiempo real",
+        "",
+        "<b>Granos</b>",
+        "Buscar frijoles ahora en la selección",
+        "",
+        "<b>Corrección de errores/b>",
+        "Después de tomar una foto, la rueda giratoria de carga no desapareció.",
+        "Pequeñas correcciones de errores"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Personalizar parámetros",
@@ -1166,7 +1187,7 @@
   "PREPARATION_TYPE_ROK": "ROK",
   "PREPARATION_TYPE_TORNADO_DUO": "Tornado Duo",
   "PREPARATION_TYPE_TRICOLATE": "Tricolate",
-  "QR_CODE_REFRESH_DATA_MESSAGE": "All information of the bean will be overwritten, start now?",
+  "QR_CODE_REFRESH_DATA_MESSAGE": "Toda la información del bean se sobrescribirá, ¿empezar ahora?",
   "POPOVER_QR_CODE_REFRESH": "Recargar datos",
   "BREW_FLOW_WEIGHT_REALTIME": "Fujo (tiempo real)"
 }
