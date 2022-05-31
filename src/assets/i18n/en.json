@@ -722,10 +722,6 @@
     "6.1.5": {
       "TITLE": "Version 6.1.5: Thats new!",
       "DESCRIPTION": [
-        "<b>Android - Attention</b>",
-        "If your app started blank and you had data the last time you used the app, please go into settings and import the file below 'Download/Beanconqueror_export/Beanconqueror_automatic_export_*.json' * stands for the latest timestamp, the backup.",
-        "All datas should then be back as normal, if not please write me an e-mail: info@beanconqueror.com.",
-        "",
         "<b>QR Codes</b>",
         "Reload beans which where scanned via qr-codes",
         "",
