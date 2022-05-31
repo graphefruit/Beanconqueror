@@ -722,10 +722,6 @@
     "6.1.5": {
       "TITLE": "Version 6.1.5: Das ist neu",
       "DESCRIPTION": [
-        "<b>Android - Achtung</b>",
-        "Falls die App leer gestartet wurde und du vorher Daten hattest, bitte geh in die Einstellungen, und importiere unter 'Download/Beanconqueror_export/Beanconqueror_automatic_export_*.json' * steht für den letzten Zeitstempel das Backup.",
-        "Alle Daten sollten dann wie gewohnt wieder vorhanden sein, falls nicht schreib mir bitte eine E-Mail: info@beanconqueror.com.",
-        "",
         "<b>QR Codes</b>",
         "Lade die QR-Code Daten der Rösterei nun erneut",
         "",

@@ -57,7 +57,7 @@ export class Version implements IVersion {
    * We dont set this to a variable, else it would be stored in DB and wrongly overwritten
    */
   private getUpdatedVersions() {
-    return ['5.0.0','5.1.0','5.2.0','5.3.1','5.4.0','6.0.0','6.1.0','6.1.3','6.1.5'];
+    return ['5.0.0','5.1.0','5.2.0','5.3.1','5.4.0','6.0.0','6.1.0','6.1.5'];
   }
 
   private  versionCompare(_actualAppVersion, _updateVersion) {

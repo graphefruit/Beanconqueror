@@ -722,10 +722,6 @@
     "6.1.5": {
       "TITLE": "Versión 6.1.5: Ésto es lo nuevo!",
       "DESCRIPTION": [
-        "<b>Android - Attention</b>",
-        "Si su aplicación comenzó en blanco y tenía datos la última vez que usó la aplicación, ingrese a la configuración e importe el archivo a continuación 'Descargar/Beanconqueror_export/Beanconqueror_automatic_export_*.json' * representa la última marca de tiempo, la copia de seguridad.",
-        "Todos los datos deberían volver a la normalidad, si no es así, escríbame un correo electrónico: info@beanconqueror.com.",
-        "",
         "<b>Códigos QR</b>",
         "Recargue beans que fueron escaneados a través de códigos qr",
         "",
