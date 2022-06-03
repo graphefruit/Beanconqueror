@@ -1,4 +1,4 @@
-import { ScaleType } from './../devices';
+import {PressureType, ScaleType} from './../devices';
 /** Interfaces */
 /** Enums */
 import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
@@ -79,13 +79,16 @@ export class Settings implements ISettings {
   public scale_id: string;
   public scale_type: ScaleType;
   public scale_log: boolean;
+
   public bluetooth_scale_stay_connected: boolean;
   public bluetooth_scale_tare_on_brew: boolean;
   public bluetooth_scale_tare_on_start_timer: boolean;
   public bluetooth_ignore_negative_values: boolean;
   public bluetooth_ignore_anomaly_values: boolean;
 
-
+  public pressure_id: string;
+  public pressure_type: PressureType;
+  public pressure_log: boolean;
 
   public currency: string;
 
@@ -199,6 +202,10 @@ export class Settings implements ISettings {
     this.bluetooth_ignore_anomaly_values = false;
 
     this.scale_log = false;
+
+    this.pressure_id = '';
+    this.pressure_type = null;
+    this.pressure_log = false;
 
     this.currency = 'EUR';
 

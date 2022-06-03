@@ -18,6 +18,10 @@
       <ion-label>{{"PAGE_SETTINGS_TAB_BLUETOOTH_SCALE" | translate }}
       </ion-label>
     </ion-segment-button>
+    <ion-segment-button  value="bluetoothpressure">
+      <ion-label>{{"PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE" | translate }}
+      </ion-label>
+    </ion-segment-button>
   </ion-segment>
   <div [ngSwitch]="settings_segment">
     <div *ngSwitchCase="'general'">
@@ -271,6 +275,42 @@
               <ion-label class="ion-margin-end" style="white-space: normal;"><h2>{{"SMART_SCALE_LOG" | translate}}</h2></ion-label>
               <ion-checkbox (ngModelChange)="saveSettings();"
                             [(ngModel)]="settings.scale_log" slot="end"></ion-checkbox>
+            </ion-item>
+
+          </ion-list>
+
+          <ion-label>
+            <ion-icon style="top: 3px; position: relative;" name="information-circle-outline"></ion-icon><p style="display: inline;">{{"SCALE.INFORMATION_DESCRIPTION" | translate}}</p>
+          </ion-label>
+        </ion-card-content>
+
+      </ion-card>
+    </div>
+    <div *ngSwitchCase="'bluetoothpressure'">
+      <ion-card>
+        <ion-card-content>
+          <ion-card-title>
+            {{"PAGE_SETTINGS_TAB_BLUETOOTH_Pressure" | translate }}
+          </ion-card-title>
+          <ion-list>
+            <ion-item lines="full" *ngIf="settings.pressure_id === ''" (click)="findAndConnectPressureDevice()" tappable button >
+              <ion-label><h2>{{"CONNECT" | translate}}</h2></ion-label>
+              <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
+            </ion-item>
+            <ion-item  *ngIf="settings.pressure_id !== '' && isPressureDeviceConnected() === false"  (click)="retryConnectPressureDevice()" tappable button >
+              <ion-label><h2>{{"RETRY_CONNECT" | translate}}</h2></ion-label>
+              <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
+            </ion-item>
+            <ion-item  *ngIf="settings.pressure_id !== ''"  (click)="disconnectPressureDevice()" tappable button >
+              <ion-label><h2>{{"DISCONNECT" | translate}}</h2></ion-label>
+              <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
+            </ion-item>
+
+
+            <ion-item>
+              <ion-label class="ion-margin-end" style="white-space: normal;"><h2>{{"PRESSURE_LOG" | translate}}</h2></ion-label>
+              <ion-checkbox (ngModelChange)="saveSettings();"
+                            [(ngModel)]="settings.pressure_log" slot="end"></ion-checkbox>
             </ion-item>
 
           </ion-list>

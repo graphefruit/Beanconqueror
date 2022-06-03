@@ -1,7 +1,15 @@
 import { Platforms } from '@ionic/core';
 import {PeripheralData} from '../../classes/devices/ble.types';
 import {Injectable} from '@angular/core';
-import {BluetoothScale, ScaleType, makeDevice, LunarScale, DecentScale, JimmyScale} from '../../classes/devices';
+import {
+  BluetoothScale,
+  ScaleType,
+  makeDevice,
+  LunarScale,
+  DecentScale,
+  JimmyScale,
+  PressureType, makePressureDevice
+} from '../../classes/devices';
 import {Platform} from '@ionic/angular';
 import {UILog} from '../uiLog';
 import {UIToast} from '../uiToast';
@@ -9,6 +17,8 @@ import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
 import {Observable, Subject} from 'rxjs';
 import {UIHelper} from '../uiHelper';
 import FelicitaScale from '../../classes/devices/felicitaScale';
+import PopsiclePressure from '../../classes/devices/popsiclePressure';
+import {PressureDevice} from '../../classes/devices/pressureBluetoothDevice';
 
 
 declare var ble;
@@ -19,7 +29,7 @@ declare var window;
 })
 export class BleManagerService {
   public scale: BluetoothScale = null;
-  public scales;
+  public pressureDevice: PressureDevice = null;
   public failed: boolean;
   public ready: boolean;
 
@@ -30,8 +40,6 @@ export class BleManagerService {
               private readonly uiToast: UIToast,
               private androidPermissions: AndroidPermissions,
               private readonly uiHelper: UIHelper) {
-
-    this.scales = [];
     this.failed = false;
     this.ready = true;
   }
@@ -117,14 +125,6 @@ export class BleManagerService {
   }
 
   public async scanDevices(): Promise<Array<any>> {
-    if (this.platform.is('android')) {
-      /**  await this.bluetoothle.requestPermission().then(() => {
-        }).catch(() => {
-        });
-       await this.bluetoothle.requestLocation().then(() => {
-        }).catch(() => {
-        });**/
-    }
 
     return new Promise<Array<any>>((resolve, reject) => {
       const devices: Array<any> = [];
@@ -162,10 +162,60 @@ export class BleManagerService {
     });
   }
 
+  public async scanPressureDevices(): Promise<Array<any>> {
+
+    return new Promise<Array<any>>((resolve, reject) => {
+      const devices: Array<any> = [];
+
+      let timeoutVar: any = null;
+      const stopScanningAndResolve = async () => {
+        try {
+          await this.stopScanning();
+        } catch(ex) {
+          // Grab error.
+        }
+
+        this.uiLog.log('Pressure devices found ' + JSON.stringify(devices));
+        resolve(devices);
+      };
+
+
+      ble.startScan([], async (device) => {
+        this.uiLog.log('Pressure devices found ' + JSON.stringify(device));
+        if (PopsiclePressure.test(device)) {
+          // We found all needed devices.
+          devices.push(device);
+
+          this.uiLog.log('Supported pressure devices found ' + JSON.stringify(device));
+          clearTimeout(timeoutVar);
+          timeoutVar = null;
+          await stopScanningAndResolve();
+        }
+      }, () => {
+        resolve(devices);
+      });
+      timeoutVar = setTimeout(async () => {
+        await stopScanningAndResolve();
+      }, 60000);
+    });
+  }
   public disconnect(deviceId: string, show_toast: boolean = true): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       ble.disconnect(deviceId, () => {
         this.scale = null;
+        if (show_toast) {
+          this.uiToast.showInfoToast('SCALE.DISCONNECTED_SUCCESSFULLY');
+        }
+        resolve(true);
+      }, () => {
+        resolve(false);
+      });
+    });
+  }
+  public disconnectPressureDevice(deviceId: string, show_toast: boolean = true): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      ble.disconnect(deviceId, () => {
+        this.pressureDevice = null;
         if (show_toast) {
           this.uiToast.showInfoToast('SCALE.DISCONNECTED_SUCCESSFULLY');
         }
@@ -191,6 +241,22 @@ export class BleManagerService {
 
   public getScale() {
     return this.scale;
+  }
+
+  public getPressureDevice() {
+    return this.pressureDevice;
+  }
+
+  public getPressure() {
+    try {
+      if (this.pressureDevice) {
+        return this.uiHelper.toFixedIfNecessary(this.pressureDevice.getPressure(),2);
+      }
+      return 0;
+
+    }catch(ex) {
+      return 0;
+    }
   }
 
   public getScaleWeight() {
@@ -234,6 +300,36 @@ export class BleManagerService {
     });
 
   }
+  private async __scanAutoConnectPressureDeviceIOS() {
+    return new Promise<boolean>(async (resolve, reject) => {
+      if (this.platform.is('ios')) {
+        // We just need to scan, then we can auto connect for iOS (lol)
+        this.uiLog.log('Try to find pressure on iOS');
+        const device = await this.tryToFindPressureDevice();
+        if (device === undefined) {
+          this.uiLog.log('Pressure device not found, retry');
+          // Try every 61 seconds, because the search algorythm goes 60 seconds at all.
+          const intV = setInterval(async () => {
+            const pressureStub = await this.tryToFindPressureDevice();
+            if (pressureStub !== undefined) {
+              resolve(true);
+              clearInterval(intV);
+            } else {
+              this.uiLog.log('Pressure device not found, retry');
+            }
+          }, 61000);
+        } else {
+          resolve(true);
+        }
+
+      } else {
+        resolve(true);
+      }
+    });
+
+  }
+
+
 
   public async tryToFindScale() {
     return new Promise<{ id: string, type: ScaleType }>(async (resolve, reject) => {
@@ -265,28 +361,49 @@ export class BleManagerService {
     });
   }
 
-  private async __iOSAccessBleStackAndAutoConnect() {
+  public async tryToFindPressureDevice() {
+    return new Promise<{ id: string, type: PressureType }>(async (resolve, reject) => {
+      const devices: Array<any> = await this.scanPressureDevices();
+      this.uiLog.log('BleManager - Loop through pressure devices');
+      for (const device of devices) {
+        if (PopsiclePressure.test(device)) {
+          this.uiLog.log('BleManager - We found a popsicle pressure device ');
+          resolve({id: device.id, type: PressureType.POPSICLE});
+          return;
+        }
+      }
+      resolve(undefined);
+    });
+  }
+  private async __iOSAccessBleStackAndAutoConnect(_findPressureDevice: boolean=false) {
     return await new Promise((resolve) => {
       let counter: number = 1;
       const iOSScanInterval = setInterval(async() => {
         try {
-          this.uiLog.log('AutoConnectScale - Try to get bluetooth state');
+          this.uiLog.log('__iOSAccessBleStackAndAutoConnect - Try to get bluetooth state');
           const enabled: boolean = await this.isBleEnabled();
           if (enabled === true) {
             clearInterval(iOSScanInterval);
-            await this.__scanAutoConnectScaleIOS();
-            this.uiLog.log('AutoConnectScale - Scale for iOS found, resolve now');
+            if (_findPressureDevice === false){
+              await this.__scanAutoConnectScaleIOS();
+              this.uiLog.log('__iOSAccessBleStackAndAutoConnect - Scale for iOS found, resolve now');
+            } else {
+              await this.__scanAutoConnectPressureDeviceIOS();
+              this.uiLog.log('__iOSAccessBleStackAndAutoConnect - Pressure devices for iOS found, resolve now');
+            }
+
+
             resolve(null);
           } else {
-            this.uiLog.log('AutoConnectScale - Bluetooth not enabled, try again');
+            this.uiLog.log('__iOSAccessBleStackAndAutoConnect - Bluetooth not enabled, try again');
           }
         }
         catch (ex) {
-          this.uiLog.log('AutoConnectScale - Bluetooth error occured ' + JSON.stringify(ex));
+          this.uiLog.log('__iOSAccessBleStackAndAutoConnect - Bluetooth error occured ' + JSON.stringify(ex));
         }
         counter ++;
         if (counter > 10) {
-          this.uiLog.log('AutoConnectScale - iOS - Stop after 10 tries');
+          this.uiLog.log('__iOSAccessBleStackAndAutoConnect - iOS - Stop after 10 tries');
           clearInterval(iOSScanInterval);
           resolve(null);
         }
@@ -309,6 +426,20 @@ export class BleManagerService {
     });
   }
 
+  public async autoConnectPressureDevice(pressureType: PressureType, deviceId: string, _retryScanForIOS: boolean = false) {
+    if (_retryScanForIOS) {
+      // iOS needs to know the scale, before auto connect can be done
+      await this.__iOSAccessBleStackAndAutoConnect(true);
+    }
+
+    this.uiLog.log('AutoConnectPressureDevice - We can start or we waited for iOS');
+
+    return new Promise((resolve, reject) => {
+      this.uiLog.log('AutoConnectPressureDevice - We created our promise, and try to autoconnect to device now.');
+      ble.autoConnect(deviceId, this.connectPressureCallback.bind(this, resolve, pressureType), this.disconnectPressureCallback.bind(this, reject));
+    });
+  }
+
   private connectCallback(callback, deviceType: ScaleType, data: PeripheralData) {
     // wait for full data
     if (!this.scale || 'characteristics' in data) {
@@ -326,6 +457,31 @@ export class BleManagerService {
       this.scale.disconnectTriggered();
       this.scale = null;
       this.uiToast.showInfoToast('SCALE.DISCONNECTED_UNPLANNED');
+      this.uiLog.log('Disconnected successfully');
+      callback();
+
+    }
+    //Send disconnect callback, even if scale is already null/not existing anymore
+    this.__sendEvent('DISCONNECT');
+  }
+
+  private connectPressureCallback(callback, pressureTaype: PressureType, data: PeripheralData) {
+    // wait for full data
+    if (!this.pressureDevice || 'characteristics' in data) {
+      this.pressureDevice = makePressureDevice(pressureTaype, data, this.platform.platforms() as Platforms[]);
+      this.uiLog.log('Pressure Connected successfully');
+      this.uiToast.showInfoToast('PRESSURE.CONNECTED_SUCCESSFULLY');
+      callback();
+      this.__sendEvent('CONNECT');
+    }
+  }
+
+
+  private disconnectPressureCallback(callback) {
+    if (this.scale) {
+      this.pressureDevice.disconnectTriggered();
+      this.pressureDevice = null;
+      this.uiToast.showInfoToast('PRESSURE.DISCONNECTED_UNPLANNED');
       this.uiLog.log('Disconnected successfully');
       callback();
 

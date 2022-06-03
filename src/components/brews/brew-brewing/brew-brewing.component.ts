@@ -46,6 +46,7 @@ import {UIFileHelper} from '../../../services/uiFileHelper';
 import {BrewFlowComponent} from '../../../app/brew/brew-flow/brew-flow.component';
 import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
 import {PreparationTool} from '../../../classes/preparation/preparationTool';
+import {PressureDevice} from '../../../classes/devices/pressureBluetoothDevice';
 
 
 declare var cordova;
@@ -109,6 +110,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public flowProfileChartEl: any = undefined;
   private startingFlowTime: number = undefined;
   private brewFlowGraphSubject: EventEmitter<any> = new EventEmitter();
+
+  public pressureDeviceSubscription: Subscription = undefined;
 
   constructor(private readonly platform: Platform,
     private readonly uiSettingsStorage: UISettingsStorage,
@@ -192,6 +195,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           this.__connectSmartScale(false);
         } else {
           this.deattachToWeightChange();
+          this.deattachToPressureChange();
           this.deattachToScaleEvents();
 
           this.flowProfileChartEl.options.scales.x.realtime.pause = true;
@@ -217,6 +221,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (this.smartScaleConnected()) {
 
       this.deattachToWeightChange();
+      this.deattachToPressureChange();
       this.deattachToScaleEvents();
       this.initializeFlowChart();
       const scale: BluetoothScale = this.bleManager.getScale();
@@ -283,6 +288,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
       if (this.timer.isTimerRunning() === true && _firstStart === false) {
         this.attachToScaleWeightChange();
+        this.attachToPressureChange();
       }
       if (this.scaleFlowChangeSubscription) {
         this.scaleFlowChangeSubscription.unsubscribe();
@@ -379,6 +385,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.flowProfileChartEl = undefined;
     }
     this.deattachToWeightChange();
+    this.deattachToPressureChange();
     this.deattachToScaleEvents();
   }
 
@@ -411,6 +418,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
       this.scaleFlowSubscription = scale.flowChange.subscribe((_val) => {
         this.__setFlowProfile(_val);
+      });
+    }
+  }
+  public attachToPressureChange() {
+    const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
+    if (pressureDevice) {
+      this.deattachToPressureChange();
+
+      this.pressureDeviceSubscription = pressureDevice.pressureChange.subscribe((_val) => {
+        this.__setPressureFlow(_val);
       });
     }
   }
@@ -493,14 +510,15 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         };
 
         const pressureEnabled: boolean = false;
-        if (pressureEnabled) {
+        const pressureDevice = this.bleManager.getPressureDevice();
+        if (pressureDevice!= null || !this.platform.is('cordova')) {
           drinkingData.datasets.push(
             {
-              label: this.translate.instant('BREW_FLOW_WEIGHT_PER_SECOND'),
+              label: this.translate.instant('PRESSURE'),
               data: [],
               borderColor: 'rgb(132,42,37)',
               backgroundColor: 'rgb(189,61,53)',
-              yAxisID: 'y2',
+              yAxisID: 'y3',
               spanGaps: true,
               pointRadius: 0,
               tension: 0,
@@ -594,7 +612,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           }
         };
 
-        if (pressureEnabled) {
+        if (pressureDevice != null || !this.platform.is('cordova')) {
           chartOptions.scales['y3'] =  {
             type: 'linear',
             display: true,
@@ -648,6 +666,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
 
   }
+  public deattachToPressureChange() {
+    if (this.pressureDeviceSubscription) {
+      this.pressureDeviceSubscription.unsubscribe();
+      this.pressureDeviceSubscription = undefined;
+    }
+
+  }
+
 
   public shallFlowProfileBeHidden(): boolean {
     if (this.smartScaleConnected() === true) {
@@ -735,10 +761,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public async timerStarted(_event) {
     const scale: BluetoothScale = this.bleManager.getScale();
-/***
+/**
     let weight=0;
     let realtime_flow = 0;
     let flow = 0;
+    let pressure = 0;
     this.startingFlowTime = Date.now();
     this.flowProfileChartEl.options.scales.x.realtime.pause = false;
     const startingDay = moment(new Date()).startOf('day');
@@ -753,6 +780,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       flow = Math.floor(Math.random() * 11);
       realtime_flow = Math.floor(Math.random() * 11);
       weight = weight + Math.floor(Math.random() * 11);
+      pressure = Math.floor(Math.random() * 11);
       const flowObj= {
         unixTime: moment(new Date()).startOf('day').add('milliseconds',Date.now() - this.startingFlowTime).toDate().getTime(),
         weight: weight,
@@ -768,9 +796,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.flowProfileChartEl.data.datasets[2].data.push(
         {x: flowObj.unixTime, y: flowObj.realtime_flow}
       );
+      this.flowProfileChartEl.data.datasets[3].data.push(
+        {x: flowObj.unixTime, y: pressure}
+      );
       this.flowProfileChartEl.update('quite');
     },100);
-*/
+**/
     if (scale) {
       if (this.settings.bluetooth_scale_tare_on_start_timer === true) {
         await scale.tare();
@@ -790,6 +821,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
 
       this.attachToScaleWeightChange();
+      this.attachToPressureChange();
 
     }
   }
@@ -818,6 +850,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.flowProfileChartEl.update('quiet');
 
       this.attachToScaleWeightChange();
+      this.attachToPressureChange();
 
     }
   }
@@ -829,6 +862,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       await scale.setTimer(SCALE_TIMER_COMMAND.STOP);
 
       this.deattachToWeightChange();
+      this.deattachToPressureChange();
       this.flowProfileChartEl.options.scales.x.realtime.pause = true;
       this.flowProfileChartEl.update('quiet');
 
@@ -863,6 +897,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       });
 
       this.deattachToWeightChange();
+      this.deattachToPressureChange();
 
 
       if (this.isEdit) {
@@ -1046,6 +1081,20 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
 
+  private __setPressureFlow(_pressure: any) {
+    //Nothing for storing etc. is done here actually
+    const actual: number = _pressure.actual;
+    const old: number =_pressure.old;
+    const actualUnixTime: number = moment(new Date()).startOf('day').add('milliseconds',Date.now() - this.startingFlowTime).toDate().getTime();
+    const pressureObj= {
+      unixTime:actualUnixTime,
+      actual: actual,
+      old: old,
+      flowTime: this.flowTime,
+      flowTimeSecond: this.flowTime + '.' + this.flowSecondTick,
+    };
+    this.flowProfileChartEl.data.datasets[3].data.push({x: pressureObj.unixTime, y: pressureObj.actual});
+  }
   private __setFlowProfile(_scaleChange: any) {
 
 

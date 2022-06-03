@@ -11,7 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Chart, registerables } from 'chart.js';
 /** Third party */
 import moment from 'moment';
-import { ScaleType } from 'src/classes/devices';
+import {PressureType, ScaleType} from 'src/classes/devices';
 import { Settings } from '../classes/settings/settings';
 import LINK_TRACKING from '../data/tracking/linkTracking';
 import STARTUP_TRACKING from '../data/tracking/startupTracking';
@@ -471,6 +471,7 @@ export class AppComponent implements AfterViewInit {
 
     //#281 - Connect smartscale before checking the startup view
     this.__connectSmartScale();
+    this.__connectPressureDevice();
 
     await this.__checkStartupView();
     this.__instanceAppRating();
@@ -489,6 +490,20 @@ export class AppComponent implements AfterViewInit {
         this.bleManager.autoConnectScale(scale_type, scale_id, true);
     } else {
       this.uiLog.log('Smartscale not connected, dont try to connect');
+    }
+
+  }
+
+
+  private __connectPressureDevice() {
+    const settings = this.uiSettingsStorage.getSettings();
+    const pressure_id: string = settings.pressure_id;
+    const pressure_type: PressureType = settings.pressure_type;
+    this.uiLog.log(`Connect pressure device? ${pressure_id}`);
+    if (pressure_id !== undefined && pressure_id !== '') {
+      this.bleManager.autoConnectPressureDevice(pressure_type, pressure_id, true);
+    } else {
+      this.uiLog.log('Pressure device not connected, dont try to connect');
     }
 
   }

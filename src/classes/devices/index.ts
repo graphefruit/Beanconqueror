@@ -5,6 +5,8 @@ import DecentScale from './decentScale';
 import FelicitaScale from './felicitaScale';
 import JimmyScale from './jimmyScale';
 import LunarScale from './lunarScale';
+import {PressureDevice} from './pressureBluetoothDevice';
+import PopsiclePressure from './popsiclePressure';
 
 export { BluetoothScale, SCALE_TIMER_COMMAND } from './bluetoothDevice';
 export { default as DecentScale } from './decentScale';
@@ -16,6 +18,10 @@ export enum ScaleType {
   LUNAR = 'LUNAR',
   JIMMY = 'JIMMY',
   FELICITA = 'FELICITA',
+}
+
+export enum PressureType {
+  POPSICLE = 'POPSICLE'
 }
 
 export function makeDevice(type: ScaleType, data: PeripheralData, platforms: Platforms[]): BluetoothScale {
@@ -32,3 +38,13 @@ export function makeDevice(type: ScaleType, data: PeripheralData, platforms: Pla
       return null;
   }
 }
+
+export function makePressureDevice(type: PressureType, data: PeripheralData, platforms: Platforms[]): PressureDevice {
+  switch (type) {
+    case PressureType.POPSICLE:
+      return new PopsiclePressure(data, platforms);
+    default:
+      return null;
+  }
+}
+
