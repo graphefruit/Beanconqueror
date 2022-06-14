@@ -1,87 +1,83 @@
 import { Platforms } from '@ionic/core';
-import {PeripheralData} from './ble.types';
+import { PeripheralData } from './ble.types';
 
-import {PressureDevice, Pressure} from './pressureBluetoothDevice';
+import { Pressure, PressureDevice } from './pressureBluetoothDevice';
 
 declare var ble;
 export default class PopsiclePressure extends PressureDevice {
-  public static WRITE_SERVICE_UUID = 'fff0';
-  public static WRITE_CHAR_UUID = '36f5';
+  public static PRESSURE_SERVICE_UUID = '<reducted>';
+  public static PRESSURE_CHAR_UUID = '<reducted>';
 
-  public static READ_SERVICE_UUID = 'fff0';
-  public static READ_CHAR_UUID = 'fff4';
-
-
-  public static HEADER = 0x03;
-
-
-  private buffer: Uint8Array;
+  public static ZERO_SERVICE_UUID = '<reducted>';
+  public static ZERO_CHAR_UUID = '<reducted>';
 
   protected Pressure: Pressure = {
     actual: 0,
     old: 0,
   };
 
-  public static notification_callback(event, scale) {
-
-  }
+  public static notification_callback(event, scale) {}
 
   public static test(device) {
-    return device && device.name && device.name.toLowerCase().startsWith('popsicle');
+    return (
+      device && device.name && device.name.toLowerCase().startsWith('popsicle')
+    );
   }
 
   constructor(data: PeripheralData, platforms: Platforms[]) {
     super(data, platforms);
-    this.buffer = new Uint8Array();
     this.connect();
   }
 
-  private getXOR(_bytes) {
-    return _bytes[0] ^ _bytes[1] ^ _bytes[2] ^ _bytes[3] ^ _bytes[4] ^ _bytes[5];
-  }
-
-
-
   public async connect() {
-
+    this.updateZero();
     await this.attachNotification();
   }
 
+  public async updateZero(): Promise<void> {
+    const data = new Uint8Array(1);
 
-
-
-  public getPressure() {
-    return this.pressure.actual;
-  }
-
-
-  public getOldPressure() {
-    return this.pressure.old;
+    return new Promise((resolve, reject) => {
+      ble.writeWithoutResponse(
+        this.device_id,
+        PopsiclePressure.ZERO_SERVICE_UUID,
+        PopsiclePressure.ZERO_CHAR_UUID,
+        data.buffer,
+        resolve,
+        reject
+      );
+    });
   }
 
   private async attachNotification() {
-    ble.startNotification(this.device_id, PopsiclePressure.READ_SERVICE_UUID, PopsiclePressure.READ_CHAR_UUID,
+    ble.startNotification(
+      this.device_id,
+      PopsiclePressure.PRESSURE_SERVICE_UUID,
+      PopsiclePressure.PRESSURE_CHAR_UUID,
       async (_data) => {
-        const scaleData = new Int8Array(_data);
-        const uScaleData = new Uint8Array(_data);
-
-        //You need to do the magic here to get the pressure information
-        this.setPressure(1);
-
-
-      }, (_data) => {
-
-      }
+        const v = new Uint16Array(_data);
+        const psi = swap16(v[0]) / 10;
+        this.setPressure(psiToBar(psi));
+      },
+      (_data) => {}
     );
   }
 
   private async deattachNotification() {
-    ble.stopNotification(this.device_id, PopsiclePressure.READ_SERVICE_UUID, PopsiclePressure.READ_CHAR_UUID,
-      (e) => {
-
-      },
-      (e) => {
-
-      });
+    ble.stopNotification(
+      this.device_id,
+      PopsiclePressure.PRESSURE_SERVICE_UUID,
+      PopsiclePressure.PRESSURE_CHAR_UUID,
+      (e) => {},
+      (e) => {}
+    );
   }
+}
+
+function psiToBar(v: number) {
+  return v * 0.0689476;
+}
+
+function swap16(val) {
+  return ((val & 0xff) << 8) | ((val >> 8) & 0xff);
 }
