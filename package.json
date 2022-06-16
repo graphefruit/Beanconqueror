@@ -131,6 +131,7 @@
     "karma-coverage-istanbul-reporter": "~3.0.2",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.5.0",
+    "prettier": "^2.6.2",
     "protractor": "~7.0.0",
     "skwas-cordova-plugin-datetimepicker": "^2.1.2",
     "stylelint": "^13.12.0",
@@ -228,5 +229,9 @@
   "platforms": [
     "android",
     "ios"
-  ]
+  ],
+  "prettier": {
+    "singleQuote": true,
+    "semi": true
+  }
 }
