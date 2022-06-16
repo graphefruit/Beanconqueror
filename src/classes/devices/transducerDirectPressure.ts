@@ -2,23 +2,22 @@ import { Platforms } from '@ionic/core';
 import { LimitedPeripheralData, PeripheralData } from './ble.types';
 
 import { Pressure, PressureDevice, psiToBar } from './pressureBluetoothDevice';
-import { to128bitUUID } from './common/util';
 
 declare var ble;
-export default class PopsiclePressure extends PressureDevice {
-  public static PRESSURE_SERVICE_UUID = '1c47e896-4922-4030-957c-32a5be64d3ba';
-  public static PRESSURE_CHAR_UUID = to128bitUUID('2A6D');
+export default class TransducerDirectPressure extends PressureDevice {
+  public static PRESSURE_SERVICE_UUID = 'CC4A6A80-51E0-11E3-B451-0002A5D5C51B';
+  public static PRESSURE_CHAR_UUID = '835AB4C0-51E4-11E3-A5BD-0002A5D5C51B';
 
-  public static ZERO_SERVICE_UUID = '1c47e896-4922-4030-957c-32a5be64d3ba';
-  public static ZERO_CHAR_UUID = 'ad029632-366d-4a52-ad6b-2a52fb369d3d';
+  public static ZERO_SERVICE_UUID = 'CC4A6A80-51E0-11E3-B451-0002A5D5C51B';
+  public static ZERO_CHAR_UUID = '8CD67DA0-DA9B-11E3-9087-0002A5D5C51B';
 
   public static test(device: LimitedPeripheralData) {
     return (
       device &&
       device.advertising &&
       device.advertising.length >= 2 &&
-      device.advertising[0] === 0xea &&
-      device.advertising[1] === 0xf0
+      device.advertising[0] === 0x0c &&
+      device.advertising[1] === 0x01
     );
   }
 
@@ -38,8 +37,8 @@ export default class PopsiclePressure extends PressureDevice {
     return new Promise((resolve, reject) => {
       ble.writeWithoutResponse(
         this.device_id,
-        PopsiclePressure.ZERO_SERVICE_UUID,
-        PopsiclePressure.ZERO_CHAR_UUID,
+        TransducerDirectPressure.ZERO_SERVICE_UUID,
+        TransducerDirectPressure.ZERO_CHAR_UUID,
         data.buffer,
         resolve,
         reject
@@ -50,11 +49,11 @@ export default class PopsiclePressure extends PressureDevice {
   private async attachNotification() {
     ble.startNotification(
       this.device_id,
-      PopsiclePressure.PRESSURE_SERVICE_UUID,
-      PopsiclePressure.PRESSURE_CHAR_UUID,
+      TransducerDirectPressure.PRESSURE_SERVICE_UUID,
+      TransducerDirectPressure.PRESSURE_CHAR_UUID,
       async (_data) => {
-        const v = new Float64Array(_data);
-        const psi = v[0];
+        const v = new Uint16Array(_data);
+        const psi = swap16(v[0]) / 10;
         this.setPressure(psiToBar(psi));
       },
       (_data) => {}
@@ -64,10 +63,14 @@ export default class PopsiclePressure extends PressureDevice {
   private async deattachNotification() {
     ble.stopNotification(
       this.device_id,
-      PopsiclePressure.PRESSURE_SERVICE_UUID,
-      PopsiclePressure.PRESSURE_CHAR_UUID,
+      TransducerDirectPressure.PRESSURE_SERVICE_UUID,
+      TransducerDirectPressure.PRESSURE_CHAR_UUID,
       (e) => {},
       (e) => {}
     );
   }
+}
+
+function swap16(val) {
+  return ((val & 0xff) << 8) | ((val >> 8) & 0xff);
 }

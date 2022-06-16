@@ -2,8 +2,6 @@ import { Platforms } from '@ionic/core';
 import { PeripheralData } from './ble.types';
 import { EventEmitter } from '@angular/core';
 
-declare var ble;
-
 export interface Pressure {
   actual: number;
   old: number;
@@ -42,9 +40,6 @@ export class PressureDevice {
     return this.pressure.old;
   }
 
-  /**
-   * Disconnect is triggered because the bluetooth was turned off, battery shutdown, or something went broken.
-   */
   public disconnectTriggered(): void {}
 
   protected setPressure(_newPressure: number) {
@@ -59,4 +54,8 @@ export class PressureDevice {
 
     this.pressure.old = _newPressure;
   }
+}
+
+export function psiToBar(v: number) {
+  return v * 0.0689476;
 }

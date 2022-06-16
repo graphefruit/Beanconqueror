@@ -1,6 +1,6 @@
 import { Platforms } from '@ionic/core';
-import {PeripheralData} from '../../classes/devices/ble.types';
-import {Injectable} from '@angular/core';
+import { PeripheralData } from '../../classes/devices/ble.types';
+import { Injectable } from '@angular/core';
 import {
   BluetoothScale,
   ScaleType,
@@ -8,24 +8,25 @@ import {
   LunarScale,
   DecentScale,
   JimmyScale,
-  PressureType, makePressureDevice
+  PressureType,
+  makePressureDevice,
 } from '../../classes/devices';
-import {Platform} from '@ionic/angular';
-import {UILog} from '../uiLog';
-import {UIToast} from '../uiToast';
-import {AndroidPermissions} from '@ionic-native/android-permissions/ngx';
-import {Observable, Subject} from 'rxjs';
-import {UIHelper} from '../uiHelper';
+import { Platform } from '@ionic/angular';
+import { UILog } from '../uiLog';
+import { UIToast } from '../uiToast';
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { Observable, Subject } from 'rxjs';
+import { UIHelper } from '../uiHelper';
 import FelicitaScale from '../../classes/devices/felicitaScale';
 import PopsiclePressure from '../../classes/devices/popsiclePressure';
-import {PressureDevice} from '../../classes/devices/pressureBluetoothDevice';
-
+import { PressureDevice } from '../../classes/devices/pressureBluetoothDevice';
+import TransducerDirectPressure from '../../classes/devices/transducerDirectPressure';
 
 declare var ble;
 declare var window;
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class BleManagerService {
   public scale: BluetoothScale = null;
@@ -35,11 +36,13 @@ export class BleManagerService {
 
   private eventSubject = new Subject<any>();
 
-  constructor(private readonly platform: Platform,
-              private readonly uiLog: UILog,
-              private readonly uiToast: UIToast,
-              private androidPermissions: AndroidPermissions,
-              private readonly uiHelper: UIHelper) {
+  constructor(
+    private readonly platform: Platform,
+    private readonly uiLog: UILog,
+    private readonly uiToast: UIToast,
+    private androidPermissions: AndroidPermissions,
+    private readonly uiHelper: UIHelper
+  ) {
     this.failed = false;
     this.ready = true;
   }
@@ -50,28 +53,33 @@ export class BleManagerService {
     });
   }
 
-
   public attachOnEvent(): Observable<any> {
     return this.eventSubject.asObservable();
   }
 
   private __sendEvent(_type: string) {
-    this.eventSubject.next({type: _type});
+    this.eventSubject.next({ type: _type });
   }
-
 
   public async hasLocationPermission(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       if (this.platform.is('android')) {
-        this.androidPermissions.hasPermission(this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION).then((_status) => {
-          if (_status.hasPermission === false) {
-            resolve(false);
-          } else {
-            resolve(true);
-          }
-        }, () => {
-          resolve(false);
-        });
+        this.androidPermissions
+          .hasPermission(
+            this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION
+          )
+          .then(
+            (_status) => {
+              if (_status.hasPermission === false) {
+                resolve(false);
+              } else {
+                resolve(true);
+              }
+            },
+            () => {
+              resolve(false);
+            }
+          );
       } else {
         resolve(true);
       }
@@ -81,15 +89,20 @@ export class BleManagerService {
   public async hasBluetoothPermission(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       if (this.platform.is('android')) {
-        this.androidPermissions.hasPermission(this.androidPermissions.PERMISSION.BLUETOOTH_ADMIN).then((_status) => {
-          if (_status.hasPermission === false) {
-            resolve(false);
-          } else {
-            resolve(true);
-          }
-        }, () => {
-          resolve(false);
-        });
+        this.androidPermissions
+          .hasPermission(this.androidPermissions.PERMISSION.BLUETOOTH_ADMIN)
+          .then(
+            (_status) => {
+              if (_status.hasPermission === false) {
+                resolve(false);
+              } else {
+                resolve(true);
+              }
+            },
+            () => {
+              resolve(false);
+            }
+          );
       } else {
         resolve(true);
       }
@@ -98,34 +111,45 @@ export class BleManagerService {
 
   public async requestBluetoothPermissions() {
     return new Promise<boolean>((resolve, reject) => {
-      this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.BLUETOOTH_ADMIN).then((_status) => {
-        if (_status.hasPermission === false) {
-          resolve(false);
-        } else {
-          resolve(true);
-        }
-      }, () => {
-        resolve(false);
-      });
+      this.androidPermissions
+        .requestPermission(this.androidPermissions.PERMISSION.BLUETOOTH_ADMIN)
+        .then(
+          (_status) => {
+            if (_status.hasPermission === false) {
+              resolve(false);
+            } else {
+              resolve(true);
+            }
+          },
+          () => {
+            resolve(false);
+          }
+        );
     });
   }
 
   public async requestLocationPermissions() {
     return new Promise<boolean>((resolve, reject) => {
-      this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION).then((_status) => {
-        if (_status.hasPermission === false) {
-          resolve(false);
-        } else {
-          resolve(true);
-        }
-      }, () => {
-        resolve(false);
-      });
+      this.androidPermissions
+        .requestPermission(
+          this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION
+        )
+        .then(
+          (_status) => {
+            if (_status.hasPermission === false) {
+              resolve(false);
+            } else {
+              resolve(true);
+            }
+          },
+          () => {
+            resolve(false);
+          }
+        );
     });
   }
 
   public async scanDevices(): Promise<Array<any>> {
-
     return new Promise<Array<any>>((resolve, reject) => {
       const devices: Array<any> = [];
 
@@ -133,7 +157,7 @@ export class BleManagerService {
       const stopScanningAndResolve = async () => {
         try {
           await this.stopScanning();
-        } catch(ex) {
+        } catch (ex) {
           // Grab error.
         }
 
@@ -141,21 +165,29 @@ export class BleManagerService {
         resolve(devices);
       };
 
+      ble.startScan(
+        [],
+        async (device) => {
+          this.uiLog.log('Device found ' + JSON.stringify(device));
+          if (
+            DecentScale.test(device) ||
+            LunarScale.test(device) ||
+            JimmyScale.test(device) ||
+            FelicitaScale.test(device)
+          ) {
+            // We found all needed devices.
+            devices.push(device);
 
-      ble.startScan([], async (device) => {
-        this.uiLog.log('Device found ' + JSON.stringify(device));
-        if (DecentScale.test(device) || LunarScale.test(device) || JimmyScale.test(device) || FelicitaScale.test(device)) {
-          // We found all needed devices.
-          devices.push(device);
-
-          this.uiLog.log('Supported Scale found ' + JSON.stringify(device));
-          clearTimeout(timeoutVar);
-          timeoutVar = null;
-          await stopScanningAndResolve();
+            this.uiLog.log('Supported Scale found ' + JSON.stringify(device));
+            clearTimeout(timeoutVar);
+            timeoutVar = null;
+            await stopScanningAndResolve();
+          }
+        },
+        () => {
+          resolve(devices);
         }
-      }, () => {
-        resolve(devices);
-      });
+      );
       timeoutVar = setTimeout(async () => {
         await stopScanningAndResolve();
       }, 60000);
@@ -163,7 +195,6 @@ export class BleManagerService {
   }
 
   public async scanPressureDevices(): Promise<Array<any>> {
-
     return new Promise<Array<any>>((resolve, reject) => {
       const devices: Array<any> = [];
 
@@ -171,7 +202,7 @@ export class BleManagerService {
       const stopScanningAndResolve = async () => {
         try {
           await this.stopScanning();
-        } catch(ex) {
+        } catch (ex) {
           // Grab error.
         }
 
@@ -179,50 +210,74 @@ export class BleManagerService {
         resolve(devices);
       };
 
+      ble.startScan(
+        [],
+        async (device) => {
+          this.uiLog.log('Pressure devices found ' + JSON.stringify(device));
+          if (
+            PopsiclePressure.test(device) ||
+            TransducerDirectPressure.test(device)
+          ) {
+            // We found all needed devices.
+            devices.push(device);
 
-      ble.startScan([], async (device) => {
-        this.uiLog.log('Pressure devices found ' + JSON.stringify(device));
-        if (PopsiclePressure.test(device)) {
-          // We found all needed devices.
-          devices.push(device);
-
-          this.uiLog.log('Supported pressure devices found ' + JSON.stringify(device));
-          clearTimeout(timeoutVar);
-          timeoutVar = null;
-          await stopScanningAndResolve();
+            this.uiLog.log(
+              'Supported pressure devices found ' + JSON.stringify(device)
+            );
+            clearTimeout(timeoutVar);
+            timeoutVar = null;
+            await stopScanningAndResolve();
+          }
+        },
+        () => {
+          resolve(devices);
         }
-      }, () => {
-        resolve(devices);
-      });
+      );
       timeoutVar = setTimeout(async () => {
         await stopScanningAndResolve();
       }, 60000);
     });
   }
-  public disconnect(deviceId: string, show_toast: boolean = true): Promise<boolean> {
+
+  public disconnect(
+    deviceId: string,
+    show_toast: boolean = true
+  ): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      ble.disconnect(deviceId, () => {
-        this.scale = null;
-        if (show_toast) {
-          this.uiToast.showInfoToast('SCALE.DISCONNECTED_SUCCESSFULLY');
+      ble.disconnect(
+        deviceId,
+        () => {
+          this.scale = null;
+          if (show_toast) {
+            this.uiToast.showInfoToast('SCALE.DISCONNECTED_SUCCESSFULLY');
+          }
+          resolve(true);
+        },
+        () => {
+          resolve(false);
         }
-        resolve(true);
-      }, () => {
-        resolve(false);
-      });
+      );
     });
   }
-  public disconnectPressureDevice(deviceId: string, show_toast: boolean = true): Promise<boolean> {
+
+  public disconnectPressureDevice(
+    deviceId: string,
+    show_toast: boolean = true
+  ): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      ble.disconnect(deviceId, () => {
-        this.pressureDevice = null;
-        if (show_toast) {
-          this.uiToast.showInfoToast('SCALE.DISCONNECTED_SUCCESSFULLY');
+      ble.disconnect(
+        deviceId,
+        () => {
+          this.pressureDevice = null;
+          if (show_toast) {
+            this.uiToast.showInfoToast('SCALE.DISCONNECTED_SUCCESSFULLY');
+          }
+          resolve(true);
+        },
+        () => {
+          resolve(false);
         }
-        resolve(true);
-      }, () => {
-        resolve(false);
-      });
+      );
     });
   }
 
@@ -250,11 +305,13 @@ export class BleManagerService {
   public getPressure() {
     try {
       if (this.pressureDevice) {
-        return this.uiHelper.toFixedIfNecessary(this.pressureDevice.getPressure(),2);
+        return this.uiHelper.toFixedIfNecessary(
+          this.pressureDevice.getPressure(),
+          2
+        );
       }
       return 0;
-
-    }catch(ex) {
+    } catch (ex) {
       return 0;
     }
   }
@@ -262,14 +319,12 @@ export class BleManagerService {
   public getScaleWeight() {
     try {
       if (this.scale) {
-        return this.uiHelper.toFixedIfNecessary(this.scale.getWeight(),1);
+        return this.uiHelper.toFixedIfNecessary(this.scale.getWeight(), 1);
       }
       return 0;
-
-    }catch(ex) {
+    } catch (ex) {
       return 0;
     }
-
   }
 
   private async __scanAutoConnectScaleIOS() {
@@ -293,13 +348,12 @@ export class BleManagerService {
         } else {
           resolve(true);
         }
-
       } else {
         resolve(true);
       }
     });
-
   }
+
   private async __scanAutoConnectPressureDeviceIOS() {
     return new Promise<boolean>(async (resolve, reject) => {
       if (this.platform.is('ios')) {
@@ -321,98 +375,121 @@ export class BleManagerService {
         } else {
           resolve(true);
         }
-
       } else {
         resolve(true);
       }
     });
-
   }
 
-
-
   public async tryToFindScale() {
-    return new Promise<{ id: string, type: ScaleType }>(async (resolve, reject) => {
-      const devices: Array<any> = await this.scanDevices();
-      this.uiLog.log('BleManager - Loop through devices');
-      for (const device of devices) {
-        if (DecentScale.test(device)) {
-          this.uiLog.log('BleManager - We found a decent scale');
-          resolve({id: device.id, type: ScaleType.DECENT});
-          return;
+    return new Promise<{ id: string; type: ScaleType }>(
+      async (resolve, reject) => {
+        const devices: Array<any> = await this.scanDevices();
+        this.uiLog.log('BleManager - Loop through devices');
+        for (const device of devices) {
+          if (DecentScale.test(device)) {
+            this.uiLog.log('BleManager - We found a decent scale');
+            resolve({ id: device.id, type: ScaleType.DECENT });
+            return;
+          }
+          if (LunarScale.test(device)) {
+            this.uiLog.log('BleManager - We found a lunar/acaia scale');
+            resolve({ id: device.id, type: ScaleType.LUNAR });
+            return;
+          }
+          if (JimmyScale.test(device)) {
+            this.uiLog.log('BleManager - We found a jimmy scale');
+            resolve({ id: device.id, type: ScaleType.JIMMY });
+            return;
+          }
+          if (FelicitaScale.test(device)) {
+            this.uiLog.log('BleManager - We found a felicita scale');
+            resolve({ id: device.id, type: ScaleType.FELICITA });
+            return;
+          }
         }
-        if (LunarScale.test(device)) {
-          this.uiLog.log('BleManager - We found a lunar/acaia scale');
-          resolve({id: device.id, type: ScaleType.LUNAR});
-          return;
-        }
-        if (JimmyScale.test(device)) {
-          this.uiLog.log('BleManager - We found a jimmy scale');
-          resolve({id: device.id, type: ScaleType.JIMMY});
-          return;
-        }
-        if (FelicitaScale.test(device)) {
-          this.uiLog.log('BleManager - We found a felicita scale');
-          resolve({id: device.id, type: ScaleType.FELICITA});
-          return;
-        }
+        resolve(undefined);
       }
-      resolve(undefined);
-    });
+    );
   }
 
   public async tryToFindPressureDevice() {
-    return new Promise<{ id: string, type: PressureType }>(async (resolve, reject) => {
-      const devices: Array<any> = await this.scanPressureDevices();
-      this.uiLog.log('BleManager - Loop through pressure devices');
-      for (const device of devices) {
-        if (PopsiclePressure.test(device)) {
-          this.uiLog.log('BleManager - We found a popsicle pressure device ');
-          resolve({id: device.id, type: PressureType.POPSICLE});
-          return;
+    return new Promise<{ id: string; type: PressureType }>(
+      async (resolve, reject) => {
+        const devices: Array<any> = await this.scanPressureDevices();
+        this.uiLog.log('BleManager - Loop through pressure devices');
+        for (const device of devices) {
+          if (PopsiclePressure.test(device)) {
+            this.uiLog.log('BleManager - We found a popsicle pressure device ');
+            resolve({ id: device.id, type: PressureType.POPSICLE });
+            return;
+          } else if (TransducerDirectPressure.test(device)) {
+            this.uiLog.log(
+              'BleManager - We found a Transducer Direct pressure device '
+            );
+            resolve({ id: device.id, type: PressureType.DIRECT });
+            return;
+          }
         }
+        resolve(undefined);
       }
-      resolve(undefined);
-    });
+    );
   }
-  private async __iOSAccessBleStackAndAutoConnect(_findPressureDevice: boolean=false) {
+
+  private async __iOSAccessBleStackAndAutoConnect(
+    _findPressureDevice: boolean = false
+  ) {
     return await new Promise((resolve) => {
       let counter: number = 1;
-      const iOSScanInterval = setInterval(async() => {
+      const iOSScanInterval = setInterval(async () => {
         try {
-          this.uiLog.log('__iOSAccessBleStackAndAutoConnect - Try to get bluetooth state');
+          this.uiLog.log(
+            '__iOSAccessBleStackAndAutoConnect - Try to get bluetooth state'
+          );
           const enabled: boolean = await this.isBleEnabled();
           if (enabled === true) {
             clearInterval(iOSScanInterval);
-            if (_findPressureDevice === false){
+            if (_findPressureDevice === false) {
               await this.__scanAutoConnectScaleIOS();
-              this.uiLog.log('__iOSAccessBleStackAndAutoConnect - Scale for iOS found, resolve now');
+              this.uiLog.log(
+                '__iOSAccessBleStackAndAutoConnect - Scale for iOS found, resolve now'
+              );
             } else {
               await this.__scanAutoConnectPressureDeviceIOS();
-              this.uiLog.log('__iOSAccessBleStackAndAutoConnect - Pressure devices for iOS found, resolve now');
+              this.uiLog.log(
+                '__iOSAccessBleStackAndAutoConnect - Pressure devices for iOS found, resolve now'
+              );
             }
-
 
             resolve(null);
           } else {
-            this.uiLog.log('__iOSAccessBleStackAndAutoConnect - Bluetooth not enabled, try again');
+            this.uiLog.log(
+              '__iOSAccessBleStackAndAutoConnect - Bluetooth not enabled, try again'
+            );
           }
+        } catch (ex) {
+          this.uiLog.log(
+            '__iOSAccessBleStackAndAutoConnect - Bluetooth error occured ' +
+              JSON.stringify(ex)
+          );
         }
-        catch (ex) {
-          this.uiLog.log('__iOSAccessBleStackAndAutoConnect - Bluetooth error occured ' + JSON.stringify(ex));
-        }
-        counter ++;
+        counter++;
         if (counter > 10) {
-          this.uiLog.log('__iOSAccessBleStackAndAutoConnect - iOS - Stop after 10 tries');
+          this.uiLog.log(
+            '__iOSAccessBleStackAndAutoConnect - iOS - Stop after 10 tries'
+          );
           clearInterval(iOSScanInterval);
           resolve(null);
         }
-
-      },1000);
+      }, 1000);
     });
   }
 
-  public async autoConnectScale(deviceType: ScaleType, deviceId: string, _retryScanForIOS: boolean = false) {
+  public async autoConnectScale(
+    deviceType: ScaleType,
+    deviceId: string,
+    _retryScanForIOS: boolean = false
+  ) {
     if (_retryScanForIOS) {
       // iOS needs to know the scale, before auto connect can be done
       await this.__iOSAccessBleStackAndAutoConnect();
@@ -421,36 +498,61 @@ export class BleManagerService {
     this.uiLog.log('AutoConnectScale - We can start or we waited for iOS');
 
     return new Promise((resolve, reject) => {
-      this.uiLog.log('AutoConnectScale - We created our promise, and try to autoconnect to device now.');
-      ble.autoConnect(deviceId, this.connectCallback.bind(this, resolve, deviceType), this.disconnectCallback.bind(this, reject));
+      this.uiLog.log(
+        'AutoConnectScale - We created our promise, and try to autoconnect to device now.'
+      );
+      ble.autoConnect(
+        deviceId,
+        this.connectCallback.bind(this, resolve, deviceType),
+        this.disconnectCallback.bind(this, reject)
+      );
     });
   }
 
-  public async autoConnectPressureDevice(pressureType: PressureType, deviceId: string, _retryScanForIOS: boolean = false) {
+  public async autoConnectPressureDevice(
+    pressureType: PressureType,
+    deviceId: string,
+    _retryScanForIOS: boolean = false
+  ) {
     if (_retryScanForIOS) {
       // iOS needs to know the scale, before auto connect can be done
       await this.__iOSAccessBleStackAndAutoConnect(true);
     }
 
-    this.uiLog.log('AutoConnectPressureDevice - We can start or we waited for iOS');
+    this.uiLog.log(
+      'AutoConnectPressureDevice - We can start or we waited for iOS'
+    );
 
     return new Promise((resolve, reject) => {
-      this.uiLog.log('AutoConnectPressureDevice - We created our promise, and try to autoconnect to device now.');
-      ble.autoConnect(deviceId, this.connectPressureCallback.bind(this, resolve, pressureType), this.disconnectPressureCallback.bind(this, reject));
+      this.uiLog.log(
+        'AutoConnectPressureDevice - We created our promise, and try to autoconnect to device now.'
+      );
+      ble.autoConnect(
+        deviceId,
+        this.connectPressureCallback.bind(this, resolve, pressureType),
+        this.disconnectPressureCallback.bind(this, reject)
+      );
     });
   }
 
-  private connectCallback(callback, deviceType: ScaleType, data: PeripheralData) {
+  private connectCallback(
+    callback,
+    deviceType: ScaleType,
+    data: PeripheralData
+  ) {
     // wait for full data
     if (!this.scale || 'characteristics' in data) {
-      this.scale = makeDevice(deviceType, data, this.platform.platforms() as Platforms[]);
+      this.scale = makeDevice(
+        deviceType,
+        data,
+        this.platform.platforms() as Platforms[]
+      );
       this.uiLog.log('Connected successfully');
       this.uiToast.showInfoToast('SCALE.CONNECTED_SUCCESSFULLY');
       callback();
       this.__sendEvent('CONNECT');
     }
   }
-
 
   private disconnectCallback(callback) {
     if (this.scale) {
@@ -459,23 +561,29 @@ export class BleManagerService {
       this.uiToast.showInfoToast('SCALE.DISCONNECTED_UNPLANNED');
       this.uiLog.log('Disconnected successfully');
       callback();
-
     }
     //Send disconnect callback, even if scale is already null/not existing anymore
     this.__sendEvent('DISCONNECT');
   }
 
-  private connectPressureCallback(callback, pressureTaype: PressureType, data: PeripheralData) {
+  private connectPressureCallback(
+    callback,
+    pressureTaype: PressureType,
+    data: PeripheralData
+  ) {
     // wait for full data
     if (!this.pressureDevice || 'characteristics' in data) {
-      this.pressureDevice = makePressureDevice(pressureTaype, data, this.platform.platforms() as Platforms[]);
+      this.pressureDevice = makePressureDevice(
+        pressureTaype,
+        data,
+        this.platform.platforms() as Platforms[]
+      );
       this.uiLog.log('Pressure Connected successfully');
       this.uiToast.showInfoToast('PRESSURE.CONNECTED_SUCCESSFULLY');
       callback();
       this.__sendEvent('CONNECT');
     }
   }
-
 
   private disconnectPressureCallback(callback) {
     if (this.scale) {
@@ -484,7 +592,6 @@ export class BleManagerService {
       this.uiToast.showInfoToast('PRESSURE.DISCONNECTED_UNPLANNED');
       this.uiLog.log('Disconnected successfully');
       callback();
-
     }
     //Send disconnect callback, even if scale is already null/not existing anymore
     this.__sendEvent('DISCONNECT');
