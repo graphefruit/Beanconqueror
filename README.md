@@ -70,6 +70,9 @@ Different features are supported by this app, a brief overview you'll find here.
 
 - Nicola for giving the app a whole new design.
 - Frank for translating the app into spanish.
+- [Halil Portakal](https://www.kahvekulubu.net/sosyal/members/portakalhalil.3158/) for Turkish translation
+- [Jiageng Ding](https://github.com/JiagengDing) for Chinese translation
+
 
 ## Getting the App
 The App is a cross platform application, running on the ionic framework.
