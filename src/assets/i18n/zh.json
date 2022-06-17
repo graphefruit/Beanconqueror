@@ -56,7 +56,8 @@
   "PAGE_SETTINGS_LANGUAGE_GERMAN": "German",
   "PAGE_SETTINGS_LANGUAGE_ENGLISH": "English",
   "PAGE_SETTINGS_LANGUAGE_SPANISH": "Spanish",
-  "PAGE_SETTINGS_LANGUAGE_CHINESE": "Chinese",
+  "PAGE_SETTINGS_LANGUAGE_TURKISH": "土耳其",
+  "PAGE_SETTINGS_LANGUAGE_CHINESE": "中国人",
   "PAGE_SETTINGS_GENERAL_SETTINGS": "常规设置",
   "PAGE_SETTINGS_TRANSFER": "数据转移",
   "PAGE_SETTINGS_PRESET_LAST_BREW": "使用预设值?",
@@ -719,6 +720,23 @@
         "如果您的应用显示空白，请进入设置并导入下面的文件 'Download/Beanconqueror_export/Beanconqueror_automatic_export_*.json' * 代表最新的数据备份。",
         "然后所有数据都应该恢复正常，如果没有，请给我写一封电子邮件：info@beanconqueror.com。"
       ]
+    },
+    "6.1.5": {
+      "TITLE": "Version 6.1.5: Das ist neu",
+      "DESCRIPTION": [
+        "<b>QR Codes</b>",
+        "Lade die QR-Code Daten der Rösterei nun erneut",
+        "",
+        "<b>Brühgraph</b>",
+        "Wasserfluss wird nun in Echtzeit berechnet",
+        "",
+        "<b>Bohnen</b>",
+        "Suchfeld bei der Auswahl der Bohnen",
+        "",
+        "<b>Fehlerbehebungen:</b>",
+        "Nach Aufnahme eines Bildes war der Ladebalken nicht verschwunden",
+        "Kleinere Fehlerbehebungen"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "自定义参数",
@@ -1165,5 +1183,8 @@
   "PREPARATION_TYPE_RATIO_SIX_COFFEE_BREWER": "Ratio Six Coffee Brewer",
   "PREPARATION_TYPE_ROK": "ROK 手压咖啡机",
   "PREPARATION_TYPE_TORNADO_DUO": "Tornado Duo",
-  "PREPARATION_TYPE_TRICOLATE": "Tricolate 聪明杯"
+  "PREPARATION_TYPE_TRICOLATE": "Tricolate 聪明杯",
+  "QR_CODE_REFRESH_DATA_MESSAGE": "Alle Informationen der Bohne werden überschritten, jetzt fortfahren?",
+  "POPOVER_QR_CODE_REFRESH": "Daten neu laden",
+  "BREW_FLOW_WEIGHT_REALTIME": "Fluss (Echtzeit)"
 }
