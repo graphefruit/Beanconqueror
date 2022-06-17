@@ -2,8 +2,6 @@ import { Platforms } from '@ionic/core';
 import { PeripheralData } from './ble.types';
 import { EventEmitter } from '@angular/core';
 
-declare var ble;
-
 export interface Pressure {
   actual: number;
   old: number;
@@ -13,7 +11,7 @@ export interface PressureChangeEvent extends Pressure {
   date: Date;
 }
 
-export class PressureDevice {
+export abstract class PressureDevice {
   public device_id: string;
   protected pressure: Pressure;
   protected platforms: Platforms[];
@@ -21,7 +19,7 @@ export class PressureDevice {
 
   public pressureChange: EventEmitter<PressureChangeEvent> = new EventEmitter();
 
-  constructor(data: PeripheralData, platforms: Platforms[]) {
+  protected constructor(data: PeripheralData, platforms: Platforms[]) {
     this.device_id = data.id;
     this.platforms = platforms;
     this.pressure = {
@@ -30,9 +28,9 @@ export class PressureDevice {
     };
   }
 
-  public async connect() {}
-
-  public async updateZero() {}
+  public abstract connect(): Promise<void>;
+  public abstract disconnect(): void;
+  public abstract updateZero(): Promise<void>;
 
   public getPressure() {
     return this.pressure.actual;
@@ -41,11 +39,6 @@ export class PressureDevice {
   public getOldPressure() {
     return this.pressure.old;
   }
-
-  /**
-   * Disconnect is triggered because the bluetooth was turned off, battery shutdown, or something went broken.
-   */
-  public disconnectTriggered(): void {}
 
   protected setPressure(_newPressure: number) {
     this.pressure.actual = _newPressure;
@@ -59,4 +52,8 @@ export class PressureDevice {
 
     this.pressure.old = _newPressure;
   }
+}
+
+export function psiToBar(v: number) {
+  return v * 0.0689476;
 }
