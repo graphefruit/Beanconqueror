@@ -56,6 +56,8 @@
   "PAGE_SETTINGS_LANGUAGE_GERMAN": "Deutsch",
   "PAGE_SETTINGS_LANGUAGE_ENGLISH": "Englisch",
   "PAGE_SETTINGS_LANGUAGE_SPANISH": "Español",
+  "PAGE_SETTINGS_LANGUAGE_TURKISH": "Turco",
+  "PAGE_SETTINGS_LANGUAGE_CHINESE": "Chino (simplificado)",
   "PAGE_SETTINGS_GENERAL_SETTINGS": "Configuraciones generales",
   "PAGE_SETTINGS_TRANSFER": "Transferencia de datos",
   "PAGE_SETTINGS_PRESET_LAST_BREW": "¿Guardar ultima preparación como plantilla?",
