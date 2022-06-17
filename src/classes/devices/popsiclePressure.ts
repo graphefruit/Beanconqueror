@@ -2,7 +2,7 @@ import { Platforms } from '@ionic/core';
 import { LimitedPeripheralData, PeripheralData } from './ble.types';
 
 import { Pressure, PressureDevice, psiToBar } from './pressureBluetoothDevice';
-import { to128bitUUID } from './common/util';
+import { parseAdvertisingManufacturerData, to128bitUUID } from './common/util';
 
 declare var ble;
 export default class PopsiclePressure extends PressureDevice {
@@ -13,13 +13,11 @@ export default class PopsiclePressure extends PressureDevice {
   public static ZERO_CHAR_UUID = 'ad029632-366d-4a52-ad6b-2a52fb369d3d';
 
   public static test(device: LimitedPeripheralData) {
-    return (
+    const adv =
       device &&
       device.advertising &&
-      device.advertising.length >= 2 &&
-      device.advertising[0] === 0xea &&
-      device.advertising[1] === 0xf0
-    );
+      parseAdvertisingManufacturerData(device.advertising);
+    return adv && adv.length >= 2 && adv[0] === 0xea && adv[1] === 0xf0;
   }
 
   constructor(data: PeripheralData, platforms: Platforms[]) {
