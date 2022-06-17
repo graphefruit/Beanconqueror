@@ -11,7 +11,7 @@ export interface PressureChangeEvent extends Pressure {
   date: Date;
 }
 
-export class PressureDevice {
+export abstract class PressureDevice {
   public device_id: string;
   protected pressure: Pressure;
   protected platforms: Platforms[];
@@ -19,7 +19,7 @@ export class PressureDevice {
 
   public pressureChange: EventEmitter<PressureChangeEvent> = new EventEmitter();
 
-  constructor(data: PeripheralData, platforms: Platforms[]) {
+  protected constructor(data: PeripheralData, platforms: Platforms[]) {
     this.device_id = data.id;
     this.platforms = platforms;
     this.pressure = {
@@ -28,9 +28,9 @@ export class PressureDevice {
     };
   }
 
-  public async connect() {}
-
-  public async updateZero() {}
+  public abstract connect(): Promise<void>;
+  public abstract disconnect(): void;
+  public abstract updateZero(): Promise<void>;
 
   public getPressure() {
     return this.pressure.actual;
@@ -39,8 +39,6 @@ export class PressureDevice {
   public getOldPressure() {
     return this.pressure.old;
   }
-
-  public disconnectTriggered(): void {}
 
   protected setPressure(_newPressure: number) {
     this.pressure.actual = _newPressure;

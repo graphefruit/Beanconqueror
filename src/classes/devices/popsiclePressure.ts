@@ -27,12 +27,12 @@ export default class PopsiclePressure extends PressureDevice {
     this.connect();
   }
 
-  public async connect() {
-    this.updateZero();
-    await this.attachNotification();
+  public connect() {
+    this.attachNotification();
+    return this.updateZero().catch(() => {});
   }
 
-  public async updateZero(): Promise<void> {
+  public updateZero(): Promise<void> {
     const data = new Uint8Array(1);
 
     return new Promise((resolve, reject) => {
@@ -47,13 +47,17 @@ export default class PopsiclePressure extends PressureDevice {
     });
   }
 
-  private async attachNotification() {
+  public disconnect() {
+    this.deattachNotification();
+  }
+
+  private attachNotification() {
     ble.startNotification(
       this.device_id,
       PopsiclePressure.PRESSURE_SERVICE_UUID,
       PopsiclePressure.PRESSURE_CHAR_UUID,
       async (_data) => {
-        const v = new Float64Array(_data);
+        const v = new Float32Array(_data);
         const psi = v[0];
         this.setPressure(psiToBar(psi));
       },
@@ -61,7 +65,7 @@ export default class PopsiclePressure extends PressureDevice {
     );
   }
 
-  private async deattachNotification() {
+  private deattachNotification() {
     ble.stopNotification(
       this.device_id,
       PopsiclePressure.PRESSURE_SERVICE_UUID,

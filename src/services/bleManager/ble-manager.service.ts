@@ -562,7 +562,7 @@ export class BleManagerService {
       this.uiLog.log('Disconnected successfully');
       callback();
     }
-    //Send disconnect callback, even if scale is already null/not existing anymore
+    // Send disconnect callback, even if scale is already null/not existing anymore
     this.__sendEvent('DISCONNECT');
   }
 
@@ -587,13 +587,13 @@ export class BleManagerService {
 
   private disconnectPressureCallback(callback) {
     if (this.scale) {
-      this.pressureDevice.disconnectTriggered();
+      this.pressureDevice.disconnect();
       this.pressureDevice = null;
       this.uiToast.showInfoToast('PRESSURE.DISCONNECTED_UNPLANNED');
       this.uiLog.log('Disconnected successfully');
       callback();
     }
-    //Send disconnect callback, even if scale is already null/not existing anymore
+    // Send disconnect callback, even if scale is already null/not existing anymore
     this.__sendEvent('DISCONNECT');
   }
 }

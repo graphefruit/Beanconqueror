@@ -26,9 +26,10 @@ export default class TransducerDirectPressure extends PressureDevice {
     this.connect();
   }
 
-  public async connect() {
-    this.updateZero();
-    await this.attachNotification();
+  public connect(): Promise<void> {
+    this.attachNotification();
+
+    return this.updateZero().catch(() => {}); // ignore error
   }
 
   public async updateZero(): Promise<void> {
@@ -46,12 +47,16 @@ export default class TransducerDirectPressure extends PressureDevice {
     });
   }
 
-  private async attachNotification() {
+  public disconnect() {
+    this.deattachNotification();
+  }
+
+  private attachNotification() {
     ble.startNotification(
       this.device_id,
       TransducerDirectPressure.PRESSURE_SERVICE_UUID,
       TransducerDirectPressure.PRESSURE_CHAR_UUID,
-      async (_data) => {
+      (_data) => {
         const v = new Uint16Array(_data);
         const psi = swap16(v[0]) / 10;
         this.setPressure(psiToBar(psi));
@@ -60,7 +65,7 @@ export default class TransducerDirectPressure extends PressureDevice {
     );
   }
 
-  private async deattachNotification() {
+  private deattachNotification() {
     ble.stopNotification(
       this.device_id,
       TransducerDirectPressure.PRESSURE_SERVICE_UUID,
