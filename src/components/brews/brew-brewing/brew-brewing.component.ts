@@ -40,7 +40,7 @@ import { Chart } from 'chart.js';
 import { UIHelper } from '../../../services/uiHelper';
 import { UIExcel } from '../../../services/uiExcel';
 import {
-  BrewFlow,
+  BrewFlow, IBrewPressureFlow,
   IBrewRealtimeWaterFlow,
   IBrewWaterFlow,
   IBrewWeightFlow,
@@ -197,26 +197,50 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         }
       }
 
+      let isSomethingConnected: boolean = false;
       if (this.smartScaleConnected()) {
-        this.__connectSmartScale(true);
+        await this.__connectSmartScale(true);
+        isSomethingConnected = true;
+      }
+      if (this.pressureDeviceConnected()) {
+        await this.__connectPressureDevice(true);
+        isSomethingConnected = true;
+      }
+      if (isSomethingConnected === true) {
+        this.initializeFlowChart();
       }
 
       this.bluetoothSubscription = this.bleManager
         .attachOnEvent()
         .subscribe((_type) => {
-          if (_type && _type.type === 'CONNECT') {
+          let disconnectTriggered: boolean = false;
+
+          if (_type && _type.type === 'CONNECT_SCALE') {
             this.__connectSmartScale(false);
-          } else {
+          } else if (_type && _type.type === 'DISCONNECT_SCALE') {
             this.deattachToWeightChange();
-            this.deattachToPressureChange();
+            this.deattachToFlowChange();
             this.deattachToScaleEvents();
-
-            this.flowProfileChartEl.options.scales.x.realtime.pause = true;
-            this.flowProfileChartEl.update('quiet');
-
-            // If scale disconnected, sometimes the timer run but the screen was not refreshed, so maybe it helpes to detect the change.
-            this.checkChanges();
+            disconnectTriggered = true;
           }
+          else  if (_type && _type.type === 'CONNECT_PRESSURE') {
+            this.__connectPressureDevice(false);
+          }
+          else  if (_type && _type.type === 'DISCONNECT_PRESSURE') {
+            this.deattachToPressureChange();
+            disconnectTriggered = true;
+          }
+
+          if (disconnectTriggered) {
+            if (!this.smartScaleConnected() && !this.pressureDeviceConnected()) {
+              // When one is connected we don't pause
+              this.flowProfileChartEl.options.scales.x.realtime.pause = true;
+              this.flowProfileChartEl.update('quiet');
+            }
+
+          }
+          // If scale disconnected, sometimes the timer run but the screen was not refreshed, so maybe it helpes to detect the change.
+          this.checkChanges();
         });
 
       // Trigger change rating
@@ -227,9 +251,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   private async __connectSmartScale(_firstStart: boolean) {
     if (this.smartScaleConnected()) {
       this.deattachToWeightChange();
-      this.deattachToPressureChange();
       this.deattachToScaleEvents();
-      this.initializeFlowChart();
+
       const scale: BluetoothScale = this.bleManager.getScale();
       if (!this.scaleTimerSubscription) {
         this.scaleTimerSubscription = scale.timerEvent.subscribe((event) => {
@@ -293,19 +316,28 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
       if (this.timer.isTimerRunning() === true && _firstStart === false) {
         this.attachToScaleWeightChange();
-        this.attachToPressureChange();
+        this.attachToFlowChange();
       }
-      if (this.scaleFlowChangeSubscription) {
-        this.scaleFlowChangeSubscription.unsubscribe();
-        this.scaleFlowChangeSubscription = undefined;
-      }
-      this.scaleFlowChangeSubscription = scale.flowChange.subscribe((_val) => {
-        this.setActualSmartInformation();
-      });
+
       this.checkChanges();
     }
   }
 
+  private async __connectPressureDevice(_firstStart: boolean) {
+    if (this.pressureDeviceConnected()) {
+      this.deattachToPressureChange();
+
+      if (_firstStart) {
+        const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
+        await pressureDevice.updateZero();
+      }
+      if (this.timer.isTimerRunning() === true && _firstStart === false) {
+        this.attachToPressureChange();
+      }
+
+      this.checkChanges();
+    }
+  }
   public async maximizeFlowGraph() {
     let actualOrientation;
     if (this.platform.is('cordova')) {
@@ -400,15 +432,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.bluetoothSubscription.unsubscribe();
       this.bluetoothSubscription = undefined;
     }
-    if (this.scaleFlowChangeSubscription) {
-      this.scaleFlowChangeSubscription.unsubscribe();
-      this.scaleFlowChangeSubscription = undefined;
-    }
     if (this.flowProfileChartEl) {
       this.flowProfileChartEl.destroy();
       this.flowProfileChartEl = undefined;
     }
     this.deattachToWeightChange();
+    this.deattachToFlowChange();
     this.deattachToPressureChange();
     this.deattachToScaleEvents();
   }
@@ -434,6 +463,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     return !!scale;
   }
 
+  public pressureDeviceConnected() {
+    if (!this.platform.is('cordova')) {
+      return true;
+    }
+
+    const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
+    return !!pressureDevice;
+  }
+
+
   public attachToScaleWeightChange() {
     const scale: BluetoothScale = this.bleManager.getScale();
     if (scale) {
@@ -441,6 +480,17 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
       this.scaleFlowSubscription = scale.flowChange.subscribe((_val) => {
         this.__setFlowProfile(_val);
+      });
+    }
+  }
+
+  public attachToFlowChange() {
+    const scale: BluetoothScale = this.bleManager.getScale();
+    if (scale) {
+      this.deattachToFlowChange();
+
+      this.scaleFlowChangeSubscription = scale.flowChange.subscribe((_val) => {
+        this.setActualSmartInformation();
       });
     }
   }
@@ -536,7 +586,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           ],
         };
 
-        const pressureEnabled: boolean = false;
+
         const pressureDevice = this.bleManager.getPressureDevice();
         if (pressureDevice != null || !this.platform.is('cordova')) {
           drinkingData.datasets.push({
@@ -701,6 +751,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
   }
 
+  public deattachToFlowChange() {
+    if (this.scaleFlowChangeSubscription) {
+      this.scaleFlowChangeSubscription.unsubscribe();
+      this.scaleFlowChangeSubscription = undefined;
+    }
+  }
+
   public deattachToPressureChange() {
     if (this.pressureDeviceSubscription) {
       this.pressureDeviceSubscription.unsubscribe();
@@ -709,18 +766,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public shallFlowProfileBeHidden(): boolean {
-    if (this.smartScaleConnected() === true) {
+    if (this.smartScaleConnected() === true || this.pressureDeviceConnected() === true) {
       return false;
     }
     if (
-      this.smartScaleConnected() === false &&
       this.isEdit === true &&
       this.data.flow_profile !== ''
     ) {
       return false;
     }
     if (
-      this.smartScaleConnected() === false &&
       this.flow_profile_raw.weight.length > 0
     ) {
       return false;
@@ -799,6 +854,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public async timerStarted(_event) {
     const scale: BluetoothScale = this.bleManager.getScale();
+    const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
     /**
      let weight=0;
      let realtime_flow = 0;
@@ -840,11 +896,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.flowProfileChartEl.update('quite');
     },100);
      **/
-    if (scale) {
-      if (this.settings.bluetooth_scale_tare_on_start_timer === true) {
-        await scale.tare();
+    if (scale || pressureDevice ) {
+      if (scale) {
+        if (this.settings.bluetooth_scale_tare_on_start_timer === true) {
+          await scale.tare();
+        }
+        await scale.setTimer(SCALE_TIMER_COMMAND.START);
       }
-      await scale.setTimer(SCALE_TIMER_COMMAND.START);
 
       this.startingFlowTime = Date.now();
       this.flowProfileChartEl.options.scales.x.realtime.pause = false;
@@ -857,17 +915,25 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.flowProfileChartEl.options.scales.x.realtime.delay = delay;
       this.flowProfileChartEl.update('quiet');
 
-      this.attachToScaleWeightChange();
-      this.attachToPressureChange();
+      if (scale) {
+        this.attachToScaleWeightChange();
+        this.attachToFlowChange();
+      }
+      if (pressureDevice) {
+        this.attachToPressureChange();
+      }
+
     }
   }
 
   public async timerResumed(_event) {
     const scale: BluetoothScale = this.bleManager.getScale();
+    const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
 
-    if (scale) {
-      await scale.setTimer(SCALE_TIMER_COMMAND.START);
-
+    if (scale || pressureDevice) {
+      if (scale){
+        await scale.setTimer(SCALE_TIMER_COMMAND.START);
+      }
       this.startingFlowTime = Date.now();
 
       this.flowProfileChartEl.options.scales.x.realtime.pause = false;
@@ -885,19 +951,29 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.flowProfileChartEl.options.scales.x.realtime.delay = delay;
       this.flowProfileChartEl.update('quiet');
 
-      this.attachToScaleWeightChange();
-      this.attachToPressureChange();
+      if (scale) {
+        this.attachToScaleWeightChange();
+        this.attachToFlowChange();
+      }
+      if (pressureDevice) {
+        this.attachToPressureChange();
+      }
+
     }
   }
 
   public async timerPaused(_event) {
     const scale: BluetoothScale = this.bleManager.getScale();
-
-    if (scale) {
-      await scale.setTimer(SCALE_TIMER_COMMAND.STOP);
-
-      this.deattachToWeightChange();
-      this.deattachToPressureChange();
+    const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
+    if (scale || pressureDevice) {
+      if (scale) {
+        await scale.setTimer(SCALE_TIMER_COMMAND.STOP);
+        this.deattachToWeightChange();
+        this.deattachToFlowChange();
+      }
+      if (pressureDevice) {
+        this.deattachToPressureChange();
+      }
       this.flowProfileChartEl.options.scales.x.realtime.pause = true;
       this.flowProfileChartEl.update('quiet');
     }
@@ -912,25 +988,32 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public async timerReset(_event) {
     const scale: BluetoothScale = this.bleManager.getScale();
-    if (scale) {
-      await scale.tare();
+    const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
+    if (scale || pressureDevice) {
+      if (scale) {
+        await scale.tare();
 
-      await new Promise((resolve) => {
-        setTimeout(async () => {
-          await scale.setTimer(SCALE_TIMER_COMMAND.STOP);
-          resolve(undefined);
-        }, 50);
-      });
+        await new Promise((resolve) => {
+          setTimeout(async () => {
+            await scale.setTimer(SCALE_TIMER_COMMAND.STOP);
+            resolve(undefined);
+          }, 50);
+        });
 
-      await new Promise((resolve) => {
-        setTimeout(async () => {
-          await scale.setTimer(SCALE_TIMER_COMMAND.RESET);
-          resolve(undefined);
-        }, 50);
-      });
+        await new Promise((resolve) => {
+          setTimeout(async () => {
+            await scale.setTimer(SCALE_TIMER_COMMAND.RESET);
+            resolve(undefined);
+          }, 50);
+        });
 
-      this.deattachToWeightChange();
-      this.deattachToPressureChange();
+        this.deattachToWeightChange();
+        this.deattachToFlowChange();
+      }
+
+      if (pressureDevice) {
+        this.deattachToPressureChange();
+      }
 
       if (this.isEdit) {
         await this.deleteFlowProfile();
@@ -1145,11 +1228,23 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     // Nothing for storing etc. is done here actually
     const actual: number = _pressure.actual;
     const old: number = _pressure.old;
+
+
+    // If no smartscale is connected, the set pressure flow needs to be the master to set flowtime and flowtime seconds, else we just retrieve from the scale.
+    const isSmartScaleConnected = this.smartScaleConnected();
+    if (!isSmartScaleConnected) {
+      if (this.flowTime === undefined) {
+        this.flowTime = this.getTime();
+      }
+    }
+
+
     const actualUnixTime: number = moment(new Date())
       .startOf('day')
       .add('milliseconds', Date.now() - this.startingFlowTime)
       .toDate()
       .getTime();
+
     const pressureObj = {
       unixTime: actualUnixTime,
       actual: actual,
@@ -1157,10 +1252,27 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       flowTime: this.flowTime,
       flowTimeSecond: this.flowTime + '.' + this.flowSecondTick,
     };
+
+    if (!isSmartScaleConnected) {
+      if (this.flowTime !== this.getTime()) {
+        this.flowTime = this.getTime();
+        this.flowSecondTick = 0;
+      }
+    }
     this.flowProfileChartEl.data.datasets[3].data.push({
       x: pressureObj.unixTime,
       y: pressureObj.actual,
     });
+    this.pushPressureProfile(
+      pressureObj.flowTimeSecond,
+      pressureObj.actual,
+      pressureObj.old
+    );
+
+    this.flowProfileChartEl.update('quiet');
+    if (!isSmartScaleConnected) {
+      this.flowSecondTick++;
+    }
   }
 
   private __setFlowProfile(_scaleChange: any) {
@@ -1487,6 +1599,20 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     brewFlow.actual_smoothed_weight = _actualSmoothedWeight;
     brewFlow.old_smoothed_weight = _oldSmoothedWeight;
     this.flow_profile_raw.weight.push(brewFlow);
+  }
+
+  private pushPressureProfile(
+    _brewTime: string,
+    _actualPressure: number,
+    _oldPressure: number,
+  ) {
+    const pressureFlow: IBrewPressureFlow = {} as IBrewPressureFlow;
+    pressureFlow.timestamp = this.uiHelper.getActualTimeWithMilliseconds();
+    pressureFlow.brew_time = _brewTime;
+    pressureFlow.actual_pressure = _actualPressure;
+    pressureFlow.old_pressure = _oldPressure;
+
+    this.flow_profile_raw.pressureFlow.push(pressureFlow);
   }
 
   public setActualSmartInformation() {

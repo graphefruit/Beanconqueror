@@ -497,16 +497,16 @@ export class BleManagerService {
 
     this.uiLog.log('AutoConnectScale - We can start or we waited for iOS');
 
-    return new Promise((resolve, reject) => {
-      this.uiLog.log(
-        'AutoConnectScale - We created our promise, and try to autoconnect to device now.'
-      );
-      ble.autoConnect(
-        deviceId,
-        this.connectCallback.bind(this, resolve, deviceType),
-        this.disconnectCallback.bind(this, reject)
-      );
-    });
+
+    this.uiLog.log(
+      'AutoConnectScale - We created our promise, and try to autoconnect to device now.'
+    );
+    ble.autoConnect(
+      deviceId,
+      this.connectCallback.bind(this, deviceType),
+      this.disconnectCallback.bind(this)
+    );
+
   }
 
   public async autoConnectPressureDevice(
@@ -523,20 +523,19 @@ export class BleManagerService {
       'AutoConnectPressureDevice - We can start or we waited for iOS'
     );
 
-    return new Promise((resolve, reject) => {
-      this.uiLog.log(
-        'AutoConnectPressureDevice - We created our promise, and try to autoconnect to device now.'
-      );
-      ble.autoConnect(
-        deviceId,
-        this.connectPressureCallback.bind(this, resolve, pressureType),
-        this.disconnectPressureCallback.bind(this, reject)
-      );
-    });
+
+    this.uiLog.log(
+      'AutoConnectPressureDevice - We created our promise, and try to autoconnect to device now.'
+    );
+    ble.autoConnect(
+      deviceId,
+      this.connectPressureCallback.bind(this, pressureType),
+      this.disconnectPressureCallback.bind(this)
+    );
+
   }
 
   private connectCallback(
-    callback,
     deviceType: ScaleType,
     data: PeripheralData
   ) {
@@ -549,8 +548,7 @@ export class BleManagerService {
       );
       this.uiLog.log('Connected successfully');
       this.uiToast.showInfoToast('SCALE.CONNECTED_SUCCESSFULLY');
-      callback();
-      this.__sendEvent('CONNECT');
+      this.__sendEvent('CONNECT_SCALE');
     }
   }
 
@@ -560,14 +558,12 @@ export class BleManagerService {
       this.scale = null;
       this.uiToast.showInfoToast('SCALE.DISCONNECTED_UNPLANNED');
       this.uiLog.log('Disconnected successfully');
-      callback();
     }
     // Send disconnect callback, even if scale is already null/not existing anymore
-    this.__sendEvent('DISCONNECT');
+    this.__sendEvent('DISCONNECT_SCALE');
   }
 
   private connectPressureCallback(
-    callback,
     pressureTaype: PressureType,
     data: PeripheralData
   ) {
@@ -580,20 +576,18 @@ export class BleManagerService {
       );
       this.uiLog.log('Pressure Connected successfully');
       this.uiToast.showInfoToast('PRESSURE.CONNECTED_SUCCESSFULLY');
-      callback();
-      this.__sendEvent('CONNECT');
+      this.__sendEvent('CONNECT_PRESSURE');
     }
   }
 
-  private disconnectPressureCallback(callback) {
+  private disconnectPressureCallback() {
     if (this.scale) {
       this.pressureDevice.disconnect();
       this.pressureDevice = null;
       this.uiToast.showInfoToast('PRESSURE.DISCONNECTED_UNPLANNED');
       this.uiLog.log('Disconnected successfully');
-      callback();
     }
     // Send disconnect callback, even if scale is already null/not existing anymore
-    this.__sendEvent('DISCONNECT');
+    this.__sendEvent('DISCONNECT_PRESSURE');
   }
 }
