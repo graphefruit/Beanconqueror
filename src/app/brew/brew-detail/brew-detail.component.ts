@@ -243,6 +243,21 @@ export class BrewDetailComponent implements OnInit {
           }
         };
 
+        if (this.flow_profile_raw.pressureFlow && this.flow_profile_raw.pressureFlow.length > 0) {
+          chartOptions.scales['y3'] = {
+            type: 'linear',
+            display: true,
+            position: 'right',
+            // grid line settings
+            grid: {
+              drawOnChartArea: false, // only want the grid lines for one axis to show up
+            },
+            // More then 12 bar should be strange.
+            suggestedMin: 0,
+            suggestedMax: 12,
+          };
+        }
+
         this.flowProfileChartEl = new Chart(this.flowProfileChart.nativeElement, {
           type: 'line',
           data: drinkingData,
@@ -269,9 +284,18 @@ export class BrewDetailComponent implements OnInit {
           for (const data of this.flow_profile_raw.waterFlow) {
             this.flowProfileChartEl.data.datasets[1].data.push(data.value);
           }
-          for (const data of this.flow_profile_raw.realtimeFlow) {
-            this.flowProfileChartEl.data.datasets[2].data.push(data.flow_value);
+          if (this.flow_profile_raw.realtimeFlow) {
+            for (const data of this.flow_profile_raw.realtimeFlow) {
+              this.flowProfileChartEl.data.datasets[2].data.push(data.flow_value);
+            }
           }
+
+          if (this.flow_profile_raw.pressureFlow) {
+            for (const data of this.flow_profile_raw.pressureFlow) {
+              this.flowProfileChartEl.data.datasets[3].data.push(data.actual_pressure);
+            }
+          }
+
           this.flowProfileChartEl.update();
         }
       }

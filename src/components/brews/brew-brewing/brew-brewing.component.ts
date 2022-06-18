@@ -549,6 +549,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         this.flowSecondTick = 0;
         this.flowProfileArr = [];
         this.flowProfileArrObjs = [];
+        this.flowProfileArrCalculated = [];
       }
       if (this.flowProfileChartEl === undefined) {
         const drinkingData = {
@@ -728,14 +729,27 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               y: data.value,
             });
           }
-          for (const data of this.flow_profile_raw.realtimeFlow) {
-            const dataDay = moment(new Date()).startOf('day');
-            dataDay.add('seconds', data.brew_time);
-            this.flowProfileChartEl.data.datasets[2].data.push({
-              x: dataDay.toDate().getTime(),
-              y: data.flow_value,
-            });
+          if (this.flow_profile_raw.realtimeFlow)  {
+            for (const data of this.flow_profile_raw.realtimeFlow) {
+              const dataDay = moment(new Date()).startOf('day');
+              dataDay.add('seconds', data.brew_time);
+              this.flowProfileChartEl.data.datasets[2].data.push({
+                x: dataDay.toDate().getTime(),
+                y: data.flow_value,
+              });
+            }
           }
+          if ( this.flow_profile_raw.pressureFlow) {
+            for (const data of this.flow_profile_raw.pressureFlow) {
+              const dataDay = moment(new Date()).startOf('day');
+              dataDay.add('seconds', data.brew_time);
+              this.flowProfileChartEl.data.datasets[3].data.push({
+                x: dataDay.toDate().getTime(),
+                y: data.actual_pressure,
+              });
+            }
+          }
+
         }
         this.flowProfileChartEl.update('quite');
       }
