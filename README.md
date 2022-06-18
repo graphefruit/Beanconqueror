@@ -181,14 +181,14 @@ Don't use NPM V 7 right now, 6.14.11 works fine
 
 
 ### Android-Version:
-`ionic cordova platform add android@10.1.1`
+`ionic cordova platform add android@10.1.2`
 
 ### Github Page Hosting
 https://stackoverflow.com/questions/60357663/do-apple-app-site-association-files-work-with-github-pages-i-e-site-github-io
 
 
 ### Upgrade Ionic if needed:
-`npm install @ionic/angular@6.0.14`
+`npm install @ionic/angular@6.1.10`
 -> Or the actual active version
 
 ### Installing AAB on your android (mac)

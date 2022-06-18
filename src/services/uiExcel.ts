@@ -102,24 +102,46 @@ export class UIExcel {
     const wsFlow: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsDataFlow);
     XLSX.utils.book_append_sheet(wb, wsFlow, this.translate.instant('Flow profile calculated'));
 
-    const header_flow_realtime: Array<string> = [];
-    header.push('Timestamp');
-    header.push('Time');
-    header.push('Flow value');
-    header.push('Smoothed weight');
+    if (_flow.hasOwnProperty('realtimeFlow')) {
+      const header_flow_realtime: Array<string> = [];
+      header.push('Timestamp');
+      header.push('Time');
+      header.push('Flow value');
+      header.push('Smoothed weight');
 
-    const wsDataFlowRealtime: any[][] = [header_flow_realtime];
-    for (const entry of _flow.realtimeFlow) {
-      const wbEntry: Array<any> = [
-        entry.timestamp,
-        entry.brew_time,
-        entry.flow_value,
-        entry.smoothed_weight];
-      wsDataFlowRealtime.push(wbEntry);
+      const wsDataFlowRealtime: any[][] = [header_flow_realtime];
+      for (const entry of _flow.realtimeFlow) {
+        const wbEntry: Array<any> = [
+          entry.timestamp,
+          entry.brew_time,
+          entry.flow_value,
+          entry.smoothed_weight];
+        wsDataFlowRealtime.push(wbEntry);
+      }
+      const wsFlowRealtime: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsDataFlowRealtime);
+      XLSX.utils.book_append_sheet(wb, wsFlowRealtime, this.translate.instant('Flow profile realtime'));
     }
-    const wsFlowRealtime: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsDataFlowRealtime);
-    XLSX.utils.book_append_sheet(wb, wsFlowRealtime, this.translate.instant('Flow profile realtime'));
 
+    if (_flow.hasOwnProperty('pressureFlow')) {
+
+      const header_pressure_flow: Array<string> = [];
+      header.push('Timestamp');
+      header.push('Time');
+      header.push('Actual');
+      header.push('Old');
+
+      const wsDataPressureFlow: any[][] = [header_pressure_flow];
+      for (const entry of _flow.pressureFlow) {
+        const wbEntry: Array<any> = [
+          entry.timestamp,
+          entry.brew_time,
+          entry.actual_pressure,
+          entry.old_pressure];
+        wsDataPressureFlow.push(wbEntry);
+      }
+      const wsFlowRealtime: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsDataPressureFlow);
+      XLSX.utils.book_append_sheet(wb, wsFlowRealtime, this.translate.instant('Flow pressure'));
+    }
     return wb;
   }
 
