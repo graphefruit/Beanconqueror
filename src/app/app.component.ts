@@ -476,8 +476,13 @@ export class AppComponent implements AfterViewInit {
     await this.uiUpdate.checkUpdateScreen();
 
     //#281 - Connect smartscale before checking the startup view
-    this.__connectSmartScale();
-    this.__connectPressureDevice();
+    setTimeout(() =>
+    {
+      // Just connect after 5 seconds, to get some time, and maybe handle all the connection errors
+      this.__connectSmartScale();
+      this.__connectPressureDevice();
+    },5000);
+
 
     await this.__checkStartupView();
     this.__instanceAppRating();
