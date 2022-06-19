@@ -893,7 +893,7 @@
   "PAGE_SETTINGS_IMAGE_QUALITY": "Image quality",
   "PAGE_SETTINGS_IMAGE_QUALITY_TOOLTIP": "Define which quality your images should have. This allows you to lower your data usage.",
   "PAGE_SETTINGS_BREW_RATING": "Brew rating",
-  "PAGE_SETTINGS_BREW_RATING_TOOLTIP": "-1 to 5 are to less for rating your brew? You can set up to 100 'points'.",
+  "PAGE_SETTINGS_BREW_RATING_TOOLTIP": "Is the default '-1 to 5' not the right rating for you? You can instead use a '-1 to 100' scale",
   "UPDATE_ENTRY_OF": "Update entry {{index}} of {{count}}",
   "WEBSITE": "Website",
   "SHARE": "Share",
