@@ -76,6 +76,8 @@ export interface ISettings {
   bluetooth_scale_stay_connected: boolean;
   bluetooth_scale_tare_on_brew: boolean;
   bluetooth_scale_tare_on_start_timer: boolean;
+  bluetooth_scale_reset_timer_on_brew: boolean;
+  bluetooth_scale_stop_timer_on_brew: boolean;
   bluetooth_ignore_negative_values: boolean;
   bluetooth_ignore_anomaly_values: boolean;
 

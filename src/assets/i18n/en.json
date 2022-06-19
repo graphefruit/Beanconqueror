@@ -1187,5 +1187,7 @@
   "PREPARATION_TYPE_TRICOLATE": "Tricolate",
   "QR_CODE_REFRESH_DATA_MESSAGE": "All information of the bean will be overwritten, start now?",
   "POPOVER_QR_CODE_REFRESH": "Reload data",
-  "BREW_FLOW_WEIGHT_REALTIME": "Flow (Realtime)"
+  "BREW_FLOW_WEIGHT_REALTIME": "Flow (Realtime)",
+  "SMART_SCALE_STOP_TIMER_ON_BREW": "Stop scale timer on new brew",
+  "SMART_SCALE_RESET_TIMER_ON_BREW": "Reset scale timer on new brew"
 }
