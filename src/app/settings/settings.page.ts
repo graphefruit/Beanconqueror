@@ -378,8 +378,10 @@ export class SettingsPage implements OnInit {
   }
 
   public async changeBrewRating() {
-    this.settings.resetFilter();
+
+    // #379 - First save then reset filter ;)
     await this.saveSettings();
+    this.settings.resetFilter();
   }
 
   public async saveSettings() {
