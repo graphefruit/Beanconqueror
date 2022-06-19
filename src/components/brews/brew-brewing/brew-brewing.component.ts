@@ -1323,6 +1323,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       oldSmoothedWeight: oldSmoothedWeight,
       flowTime: this.flowTime,
       flowTimeSecond: this.flowTime + '.' + this.flowSecondTick,
+      flowTimestamp: this.uiHelper.getActualTimeWithMilliseconds()
     };
 
     if (this.flowTime !== this.getTime()) {
@@ -1505,6 +1506,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             y: weightToAdd,
           });
           this.pushFlowProfile(
+            item.flowTimestamp,
             item.flowTimeSecond,
             weightToAdd,
             item.oldWeight,
@@ -1586,6 +1588,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       });
 
       this.pushFlowProfile(
+        flowObj.flowTimestamp,
         flowObj.flowTimeSecond,
         flowObj.weight,
         flowObj.oldWeight,
@@ -1599,6 +1602,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   private pushFlowProfile(
+    _timestamp: string,
     _brewTime: string,
     _actualWeight: number,
     _oldWeight: number,
@@ -1606,7 +1610,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     _oldSmoothedWeight: number
   ) {
     const brewFlow: IBrewWeightFlow = {} as IBrewWeightFlow;
-    brewFlow.timestamp = this.uiHelper.getActualTimeWithMilliseconds();
+    brewFlow.timestamp = _timestamp;
     brewFlow.brew_time = _brewTime;
     brewFlow.actual_weight = _actualWeight;
     brewFlow.old_weight = _oldWeight;
