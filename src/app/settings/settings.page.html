@@ -251,6 +251,17 @@
               <ion-checkbox (ngModelChange)="saveSettings();"
                             [(ngModel)]="settings.bluetooth_scale_tare_on_brew" slot="end"></ion-checkbox>
             </ion-item>
+            <ion-item>
+              <ion-label class="ion-margin-end" style="white-space: normal;"><h2>{{"SMART_SCALE_STOP_TIMER_ON_BREW" | translate}}</h2></ion-label>
+              <ion-checkbox (ngModelChange)="saveSettings();"
+                            [(ngModel)]="settings.bluetooth_scale_stop_timer_on_brew" slot="end"></ion-checkbox>
+            </ion-item>
+            <ion-item>
+              <ion-label class="ion-margin-end" style="white-space: normal;"><h2>{{"SMART_SCALE_RESET_TIMER_ON_BREW" | translate}}</h2></ion-label>
+              <ion-checkbox (ngModelChange)="saveSettings();"
+                            [(ngModel)]="settings.bluetooth_scale_reset_timer_on_brew" slot="end"></ion-checkbox>
+            </ion-item>
+
 
             <ion-item>
               <ion-label class="ion-margin-end" style="white-space: normal;"><h2>{{"SMART_SCALE_TARE_ON_START_TIMER" | translate}}</h2></ion-label>

@@ -83,8 +83,11 @@ export class Settings implements ISettings {
   public bluetooth_scale_stay_connected: boolean;
   public bluetooth_scale_tare_on_brew: boolean;
   public bluetooth_scale_tare_on_start_timer: boolean;
+  public bluetooth_scale_reset_timer_on_brew: boolean;
+  public bluetooth_scale_stop_timer_on_brew: boolean;
   public bluetooth_ignore_negative_values: boolean;
   public bluetooth_ignore_anomaly_values: boolean;
+
 
   public pressure_id: string;
   public pressure_type: PressureType;
@@ -198,6 +201,8 @@ export class Settings implements ISettings {
     this.bluetooth_scale_stay_connected = false;
     this.bluetooth_scale_tare_on_brew = true;
     this.bluetooth_scale_tare_on_start_timer = true;
+    this.bluetooth_scale_stop_timer_on_brew = true;
+    this.bluetooth_scale_reset_timer_on_brew = true;
     this.bluetooth_ignore_negative_values = false;
     this.bluetooth_ignore_anomaly_values = false;
 

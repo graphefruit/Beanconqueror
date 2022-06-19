@@ -1187,5 +1187,7 @@
   "PREPARATION_TYPE_TRICOLATE": "Tricolate",
   "QR_CODE_REFRESH_DATA_MESSAGE": "Alle Informationen der Bohne werden überschritten, jetzt fortfahren?",
   "POPOVER_QR_CODE_REFRESH": "Daten neu laden",
-  "BREW_FLOW_WEIGHT_REALTIME": "Fluss (Echtzeit)"
+  "BREW_FLOW_WEIGHT_REALTIME": "Fluss (Echtzeit)",
+  "SMART_SCALE_STOP_TIMER_ON_BREW": "Waagenzeit bei neuer Brühung anhalten",
+  "SMART_SCALE_RESET_TIMER_ON_BREW": "Waagenzeit bei neuer Brühung zurücksetzten"
 }

@@ -300,19 +300,25 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           await scale.tare();
         }
 
-        await new Promise((resolve) => {
-          setTimeout(async () => {
-            await scale.setTimer(SCALE_TIMER_COMMAND.STOP);
-            resolve(undefined);
-          }, 50);
-        });
+        if (this.settings.bluetooth_scale_stop_timer_on_brew === true) {
+          await new Promise((resolve) => {
+            setTimeout(async () => {
+              await scale.setTimer(SCALE_TIMER_COMMAND.STOP);
+              resolve(undefined);
+            }, 50);
+          });
+        }
 
-        await new Promise((resolve) => {
-          setTimeout(async () => {
-            await scale.setTimer(SCALE_TIMER_COMMAND.RESET);
-            resolve(undefined);
-          }, 50);
-        });
+        if (this.settings.bluetooth_scale_reset_timer_on_brew === true) {
+          await new Promise((resolve) => {
+            setTimeout(async () => {
+              await scale.setTimer(SCALE_TIMER_COMMAND.RESET);
+              resolve(undefined);
+            }, 50);
+          });
+        }
+
+
       }
       if (this.timer.isTimerRunning() === true && _firstStart === false) {
         this.attachToScaleWeightChange();
