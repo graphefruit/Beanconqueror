@@ -503,8 +503,12 @@ export class BleManagerService {
     );
     ble.autoConnect(
       deviceId,
-      this.connectCallback.bind(this, deviceType),
-      this.disconnectCallback.bind(this)
+      (data: PeripheralData) => {
+        this.connectCallback(deviceType,data);
+      },
+      () => {
+        this.disconnectCallback();
+      }
     );
 
   }
@@ -529,8 +533,12 @@ export class BleManagerService {
     );
     ble.autoConnect(
       deviceId,
-      this.connectPressureCallback.bind(this, pressureType),
-      this.disconnectPressureCallback.bind(this)
+      (data: PeripheralData) => {
+        this.connectPressureCallback(pressureType,data);
+      },
+      () => {
+        this.disconnectPressureCallback();
+      }
     );
 
   }
@@ -552,7 +560,7 @@ export class BleManagerService {
     }
   }
 
-  private disconnectCallback(callback) {
+  private disconnectCallback() {
     if (this.scale) {
       this.scale.disconnectTriggered();
       this.scale = null;
