@@ -254,7 +254,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.deattachToScaleEvents();
 
       const scale: BluetoothScale = this.bleManager.getScale();
-      if (!this.scaleTimerSubscription) {
+      if (scale && !this.scaleTimerSubscription) {
         this.scaleTimerSubscription = scale.timerEvent.subscribe((event) => {
           // Timer pressed
           if (event) {
@@ -279,7 +279,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           this.checkChanges();
         });
       }
-      if (!this.scaleTareSubscription) {
+      if (scale && !this.scaleTareSubscription) {
         this.scaleTareSubscription = scale.tareEvent.subscribe(() => {
           // Timer pressed
           if (
@@ -297,13 +297,18 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
       if (_firstStart) {
         if (this.settings.bluetooth_scale_tare_on_brew === true) {
-          await scale.tare();
+          if (scale) {
+            await scale.tare();
+          }
         }
 
         if (this.settings.bluetooth_scale_stop_timer_on_brew === true) {
           await new Promise((resolve) => {
             setTimeout(async () => {
-              await scale.setTimer(SCALE_TIMER_COMMAND.STOP);
+              if (scale) {
+                await scale.setTimer(SCALE_TIMER_COMMAND.STOP);
+              }
+
               resolve(undefined);
             }, 50);
           });
@@ -312,7 +317,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         if (this.settings.bluetooth_scale_reset_timer_on_brew === true) {
           await new Promise((resolve) => {
             setTimeout(async () => {
-              await scale.setTimer(SCALE_TIMER_COMMAND.RESET);
+              if (scale) {
+                await scale.setTimer(SCALE_TIMER_COMMAND.RESET);
+              }
               resolve(undefined);
             }, 50);
           });
@@ -335,7 +342,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
       if (_firstStart) {
         const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
-        await pressureDevice.updateZero();
+        if (pressureDevice) {
+          await pressureDevice.updateZero();
+        }
+
       }
       if (this.timer.isTimerRunning() === true && _firstStart === false) {
         this.attachToPressureChange();
@@ -457,6 +467,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (this.preparationMethodHasBeenFocused === true) {
       this.data.method_of_preparation_tools = [];
       this.preparationMethodHasBeenFocused = false;
+      if (this.timer.isTimerRunning()===false) {
+        this.initializeFlowChart();
+      }
     }
   }
 
@@ -548,6 +561,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   private initializeFlowChart(): void {
     setTimeout(() => {
+
       if (this.flowProfileChartEl) {
         this.flowProfileChartEl.destroy();
         this.flowProfileChartEl = undefined;
@@ -597,7 +611,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         const pressureDevice = this.bleManager.getPressureDevice();
         if (pressureDevice != null || !this.platform.is('cordova')) {
           drinkingData.datasets.push({
-            label: this.translate.instant('PRESSURE'),
+            label: this.translate.instant('BREW_PRESSURE_FLOW'),
             data: [],
             borderColor: 'rgb(132,42,37)',
             backgroundColor: 'rgb(189,61,53)',

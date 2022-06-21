@@ -1189,5 +1189,6 @@
   "POPOVER_QR_CODE_REFRESH": "Daten neu laden",
   "BREW_FLOW_WEIGHT_REALTIME": "Fluss (Echtzeit)",
   "SMART_SCALE_STOP_TIMER_ON_BREW": "Waagenzeit bei neuer Brühung anhalten",
-  "SMART_SCALE_RESET_TIMER_ON_BREW": "Waagenzeit bei neuer Brühung zurücksetzten"
+  "SMART_SCALE_RESET_TIMER_ON_BREW": "Waagenzeit bei neuer Brühung zurücksetzten",
+  "BREW_PRESSURE_FLOW": "Druck"
 }
