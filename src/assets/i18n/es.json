@@ -1189,5 +1189,6 @@
   "POPOVER_QR_CODE_REFRESH": "Recargar datos",
   "BREW_FLOW_WEIGHT_REALTIME": "Fujo (tiempo real)",
   "SMART_SCALE_STOP_TIMER_ON_BREW": "Stop scale timer on new brew",
-  "SMART_SCALE_RESET_TIMER_ON_BREW": "Reset scale timer on new brew"
+  "SMART_SCALE_RESET_TIMER_ON_BREW": "Reset scale timer on new brew",
+  "BREW_PRESSURE_FLOW": "Pressure"
 }
