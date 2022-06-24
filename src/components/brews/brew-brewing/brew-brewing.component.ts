@@ -2038,7 +2038,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
     const { data } = await modal.onWillDismiss();
     if (data !== undefined && data.brew_beverage_quantity > 0) {
-      this.data.brew_beverage_quantity = data.brew_beverage_quantity;
+      this.data.brew_beverage_quantity = this.uiHelper.toFixedIfNecessary(data.brew_beverage_quantity, 1);
     }
   }
 }
