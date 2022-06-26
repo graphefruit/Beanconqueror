@@ -11,7 +11,6 @@ export default class TransducerDirectPressure extends PressureDevice {
 
   public static ZERO_SERVICE_UUID = 'CC4A6A80-51E0-11E3-B451-0002A5D5C51B';
   public static ZERO_CHAR_UUID = '8CD67DA0-DA9B-11E3-9087-0002A5D5C51B';
-
   public static test(device: LimitedPeripheralData) {
     const adv =
       device &&
@@ -42,8 +41,11 @@ export default class TransducerDirectPressure extends PressureDevice {
         TransducerDirectPressure.ZERO_SERVICE_UUID,
         TransducerDirectPressure.ZERO_CHAR_UUID,
         data.buffer,
-        resolve,
-        reject
+        () => {
+          resolve();
+        }, () => {
+          reject();
+        }
       );
     });
   }
