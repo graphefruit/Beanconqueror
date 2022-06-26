@@ -15,6 +15,21 @@ export default class FelicitaScale extends BluetoothScale {
 
   // Constructor
 
+  // Class Members
+
+  private logger: Logger;
+
+  public scaleUnit = FELICITA_GRAM_UNIT;
+
+  public batteryLevel: number;
+
+  protected weight: Weight = {
+    actual: 0,
+    old: 0,
+    smoothed: 0,
+    oldSmoothed: 0,
+  };
+
   constructor(data: PeripheralData, platforms: Platforms[]) {
     super(data, platforms);
     this.batteryLevel = 0;
@@ -117,8 +132,14 @@ export default class FelicitaScale extends BluetoothScale {
         DATA_SERVICE,
         DATA_CHARACTERISTIC,
         new Uint8Array(_bytes).buffer,
-        (e) => { resolve(true); },
-        (e) => { resolve(false); });
+        (e) => {
+          this.logger.debug('Write successfully');
+          resolve(true);
+        },
+        (e) => {
+          this.logger.debug('Write unsuccessfully');
+          resolve(false);
+      });
     });
   }
 
@@ -148,15 +169,18 @@ export default class FelicitaScale extends BluetoothScale {
   }
 
   private async startTimer() {
-    this.write([CMD_START_TIMER])
+    this.logger.debug('Write - Start timer');
+    await this.write([CMD_START_TIMER]);
   }
 
   private async resetTimer() {
-    this.write([CMD_RESET_TIMER])
+    this.logger.debug('Write - Reset timer');
+    await this.write([CMD_RESET_TIMER]);
   }
 
   private async stopTimer() {
-    this.write([CMD_STOP_TIMER])
+    this.logger.debug('Write - Stop timer');
+    await this.write([CMD_STOP_TIMER]);
   }
 
   /**
@@ -199,18 +223,5 @@ export default class FelicitaScale extends BluetoothScale {
       });
   }
 
-  // Class Members
 
-  private logger: Logger;
-
-  public scaleUnit = FELICITA_GRAM_UNIT;
-
-  public batteryLevel: number;
-
-  protected weight: Weight = {
-    actual: 0,
-    old: 0,
-    smoothed: 0,
-    oldSmoothed: 0,
-  };
 }

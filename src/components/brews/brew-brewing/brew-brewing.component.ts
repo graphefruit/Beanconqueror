@@ -650,7 +650,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               realtime: {
                 // How much timeseconds do we want to show
                 duration: 20000,
-
                 delay: delay,
                 // data will be automatically deleted as it disappears off the chart
                 ttl: undefined,
@@ -939,7 +938,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
 
       this.startingFlowTime = Date.now();
-      this.flowProfileChartEl.options.scales.x.realtime.pause = false;
       const startingDay = moment(new Date()).startOf('day');
       // IF brewtime has some seconds, we add this to the delay directly.
       if (this.data.brew_time > 0) {
@@ -947,6 +945,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
       const delay = Date.now() - startingDay.toDate().getTime();
       this.flowProfileChartEl.options.scales.x.realtime.delay = delay;
+      this.flowProfileChartEl.options.scales.x.realtime.pause = false;
       this.flowProfileChartEl.update('quiet');
 
       if (scale) {
@@ -970,7 +969,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
       this.startingFlowTime = Date.now();
 
-      this.flowProfileChartEl.options.scales.x.realtime.pause = false;
+
       const startingDay = moment(new Date()).startOf('day');
       // IF brewtime has some seconds, we add this to the delay directly.
       if (this.data.brew_time > 0) {
@@ -983,6 +982,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
       const delay = Date.now() - startingDay.toDate().getTime();
       this.flowProfileChartEl.options.scales.x.realtime.delay = delay;
+      this.flowProfileChartEl.options.scales.x.realtime.pause = false;
       this.flowProfileChartEl.update('quiet');
 
       if (scale) {

@@ -56,7 +56,9 @@ class DecoderWorker {
     if (typeof Worker !== 'undefined') {
       this.logger.log('Workers are supported. Creating a decode worker...');
       this.worker = new Worker(new URL('./decode.worker', import.meta.url));
-      this.worker.onmessage = this.handleMessage.bind(this);
+      this.worker.onmessage = (_result) => {
+        this.handleMessage({ data: _result });
+      };
     } else {
       this.logger.log('Workers are NOT supported. Import decoder...');
       // fallback to running in setTimeout
@@ -232,7 +234,9 @@ export class AcaiaScale {
       this.device_id,
       this.weight_uuid,
       this.rx_char_uuid,
-      this.handleNotification.bind(this),
+      (_arrBuffer) => {
+        this.handleNotification(_arrBuffer);
+      },
       (err) => {
         this.logger.error(
           'failed to subscribe to notifications ' + JSON.stringify(err)
@@ -243,7 +247,7 @@ export class AcaiaScale {
 
     await this.write(new Uint8Array([0, 1]).buffer);
 
-    this.notificationsReady();
+    await this.notificationsReady();
   }
 
   public disconnectTriggered() {
@@ -351,10 +355,10 @@ export class AcaiaScale {
     return false;
   }
 
-  private handleNotification(value: ArrayBuffer) {
+  private async handleNotification(value: ArrayBuffer) {
     if (this.connected) {
       this.worker.addBuffer(value);
-      this.heartbeat();
+      await this.heartbeat();
     }
   }
 
@@ -411,8 +415,8 @@ export class AcaiaScale {
     return this.connected;
   }
 
-  private notificationsReady() {
-    this.ident();
+  private async notificationsReady() {
+    await this.ident();
     this.last_heartbeat = Date.now();
     this.logger.info('Scale Ready!');
   }
@@ -426,7 +430,9 @@ export class AcaiaScale {
           this.weight_uuid,
           this.tx_char_uuid,
           data,
-          resolve,
+          () => {
+            resolve(true);
+          },
           (err) => {
             this.logger.error(
               'failed to write to characteristic, but we are ignoring it',
@@ -452,7 +458,7 @@ export class AcaiaScale {
     ]);
   }
 
-  private heartbeat() {
+  private async heartbeat() {
     if (!this.connected) {
       return false;
     }
@@ -463,16 +469,16 @@ export class AcaiaScale {
         }
         while (this.command_queue.length) {
           const packet = this.command_queue.shift();
-          this.write(packet, true).catch(this.logger.error.bind(this.logger));
+          await this.write(packet, true).catch(this.logger.error.bind(this.logger));
         }
 
         if (Date.now() >= this.last_heartbeat + 1000) {
           this.logger.debug('Sending heartbeat...');
           this.last_heartbeat = Date.now();
           if (this.isPyxisStyle) {
-            this.write(encodeId(this.isPyxisStyle));
+            await this.write(encodeId(this.isPyxisStyle));
           }
-          this.write(encodeHeartbeat(), false);
+          await this.write(encodeHeartbeat(), false);
           this.logger.debug('Heartbeat success');
         }
         return true;
