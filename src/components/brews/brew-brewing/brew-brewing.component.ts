@@ -958,6 +958,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         });
 
       }
+      if (pressureDevice) {
+        await pressureDevice.updateZero();
+      }
+
 
       this.startingFlowTime = Date.now();
       const startingDay = moment(new Date()).startOf('day');
