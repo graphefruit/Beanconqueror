@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ModalController, Platform} from '@ionic/angular';
 import {Subscription} from 'rxjs';
 import {Brew} from '../../../classes/brew/brew';
@@ -16,7 +16,7 @@ import {BrewBrewingComponent} from '../../../components/brews/brew-brewing/brew-
   templateUrl: './brew-flow.component.html',
   styleUrls: ['./brew-flow.component.scss'],
 })
-export class BrewFlowComponent implements OnInit, OnDestroy {
+export class BrewFlowComponent implements AfterViewInit, OnDestroy {
   public static COMPONENT_ID: string = 'brew-flow';
   @ViewChild('smartScaleWeight', {read: ElementRef}) public smartScaleWeightEl: ElementRef;
   @ViewChild('smartScaleWeightPerSecond', {read: ElementRef}) public smartScaleWeightPerSecondEl: ElementRef;
@@ -38,7 +38,7 @@ export class BrewFlowComponent implements OnInit, OnDestroy {
                private readonly uiBrewHelper: UIBrewHelper) {
   }
 
-  public async ngOnInit () {
+  public async ngAfterViewInit () {
 
 
     this.flowChartEl.options.responsive = false;
@@ -133,7 +133,7 @@ export class BrewFlowComponent implements OnInit, OnDestroy {
     }
 
     this.flowChartEl.maintainAspectRatio = false;
-    this.flowChartEl.update();
+    this.flowChartEl.update('quite');
 
   }
 
