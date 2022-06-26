@@ -104,6 +104,8 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
     this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
     this.displayingTime = moment(this.displayingTime).startOf('day').add('seconds', this.timer.seconds).toISOString();
+
+
   }
 
   public startTimer(_resumed: boolean = false): void {

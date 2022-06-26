@@ -4,6 +4,7 @@ import { PeripheralData } from './ble.types';
 declare var ble;
 
 import { EventEmitter } from '@angular/core';
+import {Logger} from './common/logger';
 
 export enum SCALE_TIMER_COMMAND {
   STOP = 'STOP',
@@ -37,7 +38,7 @@ export class BluetoothScale {
   protected weight: Weight;
   protected platforms: Platforms[];
   public batteryLevel: number;
-
+  private blueToothParentlogger: Logger;
   public weightChange: EventEmitter<WeightChangeEvent> = new EventEmitter();
   public flowChange: EventEmitter<FlowChangeEvent> = new EventEmitter();
 
@@ -47,6 +48,8 @@ export class BluetoothScale {
   constructor(data: PeripheralData, platforms: Platforms[]) {
     this.device_id = data.id;
     this.platforms = platforms;
+    this.blueToothParentlogger = new Logger();
+
   }
 
   public async connect() {
@@ -86,11 +89,19 @@ export class BluetoothScale {
     // (A3 * 03 + b2 * 0.7)
     //  Actual value * 03 + smoothed value * 0.7
 
+    this.blueToothParentlogger.log('Bluetooth Scale - New weight recieved ' + _newWeight);
+
     this.weight.oldSmoothed = this.weight.smoothed;
     this.weight.smoothed = this.calculateSmoothedWeight(_newWeight, this.weight.smoothed);
 
     // We passed every shake change, seems like everything correct, set the new weight.
     this.weight.actual = _newWeight;
+
+    try {
+      this.blueToothParentlogger.log('Bluetooth Scale - Are weight subscriptions existing? ' + this.weightChange?.observers?.length);
+    }catch(ex) {
+
+    }
     this.weightChange.emit({
       actual: this.weight.actual,
       smoothed: this.weight.smoothed,
@@ -108,6 +119,12 @@ export class BluetoothScale {
 
   protected triggerFlow(_stableWeight: boolean = false) {
     const actualDate = new Date();
+    this.blueToothParentlogger.log('Bluetooth Scale - Flow triggered');
+    try {
+      this.blueToothParentlogger.log('Bluetooth Scale - Are flow subscriptions existing? ' + this.flowChange?.observers?.length);
+    }catch(ex) {
+
+    }
     this.flowChange.emit({
       actual: this.weight.actual,
       smoothed: this.weight.smoothed,
