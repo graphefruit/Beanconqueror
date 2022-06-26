@@ -50,6 +50,7 @@ import { BrewFlowComponent } from '../../../app/brew/brew-flow/brew-flow.compone
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { PreparationTool } from '../../../classes/preparation/preparationTool';
 import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
+import {UIAlert} from '../../../services/uiAlert';
 
 declare var cordova;
 
@@ -132,7 +133,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     private readonly uiHelper: UIHelper,
     private readonly uiExcel: UIExcel,
     private readonly uiFileHelper: UIFileHelper,
-    private readonly screenOrientation: ScreenOrientation
+    private readonly screenOrientation: ScreenOrientation,
+    private readonly uiAlert: UIAlert,
   ) {}
 
   public getActivePreparationTools() {
@@ -214,8 +216,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         .attachOnEvent()
         .subscribe((_type) => {
           let disconnectTriggered: boolean = false;
+          let connectTriggered: boolean = false;
 
           if (_type && _type.type === 'CONNECT_SCALE') {
+            connectTriggered = true;
             this.__connectSmartScale(false);
           } else if (_type && _type.type === 'DISCONNECT_SCALE') {
             this.deattachToWeightChange();
@@ -224,6 +228,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             disconnectTriggered = true;
           }
           else  if (_type && _type.type === 'CONNECT_PRESSURE') {
+            connectTriggered = true;
             this.__connectPressureDevice(false);
           }
           else  if (_type && _type.type === 'DISCONNECT_PRESSURE') {
@@ -238,6 +243,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               this.flowProfileChartEl.update('quiet');
             }
 
+          }
+          if (connectTriggered) {
+            if (!this.flowProfileChartEl) {
+              this.initializeFlowChart();
+            }
           }
           // If scale disconnected, sometimes the timer run but the screen was not refreshed, so maybe it helpes to detect the change.
           this.checkChanges();
@@ -932,9 +942,21 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (scale || pressureDevice ) {
       if (scale) {
         if (this.settings.bluetooth_scale_tare_on_start_timer === true) {
-          await scale.tare();
+          await new Promise((resolve) => {
+            setTimeout(async () => {
+              await scale.tare();
+              resolve(undefined);
+            }, 50);
+          });
+
         }
-        await scale.setTimer(SCALE_TIMER_COMMAND.START);
+        await new Promise((resolve) => {
+          setTimeout(async () => {
+            await scale.setTimer(SCALE_TIMER_COMMAND.START);
+            resolve(undefined);
+          }, 50);
+        });
+
       }
 
       this.startingFlowTime = Date.now();
@@ -1024,6 +1046,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     const scale: BluetoothScale = this.bleManager.getScale();
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
     if (scale || pressureDevice) {
+      await this.uiAlert.showLoadingSpinner();
       if (scale) {
         await scale.tare();
 
@@ -1057,6 +1080,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.flow_profile_raw = new BrewFlow();
 
       this.initializeFlowChart();
+      await this.uiAlert.hideLoadingSpinner();
     }
   }
 
