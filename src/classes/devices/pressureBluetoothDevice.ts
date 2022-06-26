@@ -1,6 +1,7 @@
 import { Platforms } from '@ionic/core';
 import { PeripheralData } from './ble.types';
 import { EventEmitter } from '@angular/core';
+import {Logger} from './common/logger';
 
 export interface Pressure {
   actual: number;
@@ -16,7 +17,7 @@ export abstract class PressureDevice {
   protected pressure: Pressure;
   protected platforms: Platforms[];
   public batteryLevel: number;
-
+  private pressureParentLogger: Logger;
   public pressureChange: EventEmitter<PressureChangeEvent> = new EventEmitter();
 
   protected constructor(data: PeripheralData, platforms: Platforms[]) {
@@ -26,6 +27,7 @@ export abstract class PressureDevice {
       actual: 0,
       old: 0,
     };
+    this.pressureParentLogger = new Logger();
   }
 
   public abstract connect(): Promise<void>;
@@ -41,9 +43,14 @@ export abstract class PressureDevice {
   }
 
   protected setPressure(_newPressure: number) {
+    this.pressureParentLogger.log('Bluetooth Pressure Device - New pressure recieved ' + _newPressure);
     this.pressure.actual = _newPressure;
     const actualDate = new Date();
+    try {
+      this.pressureParentLogger.log('Bluetooth Pressure Device - Are subscriptions existing? ' + this.pressureChange?.observers?.length);
+    }catch(ex) {
 
+    }
     this.pressureChange.emit({
       actual: this.pressure.actual,
       old: this.pressure.old,
