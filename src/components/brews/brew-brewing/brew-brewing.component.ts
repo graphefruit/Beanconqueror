@@ -398,7 +398,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     await modal.onWillDismiss().then(async () => {
       // If responsive would be true, the add of the container would result into 0 width 0 height, therefore the hack
       this.flowProfileChartEl.options.responsive = false;
-      this.flowProfileChartEl.update();
+      this.flowProfileChartEl.update('quite');
 
       if (this.platform.is('cordova')) {
         if (
@@ -972,7 +972,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       const delay = Date.now() - startingDay.toDate().getTime();
       this.flowProfileChartEl.options.scales.x.realtime.delay = delay;
       this.flowProfileChartEl.options.scales.x.realtime.pause = false;
-      this.flowProfileChartEl.update('quiet');
+      //Don't update quietly.
+      this.flowProfileChartEl.update();
 
       if (scale) {
         this.attachToScaleWeightChange();
@@ -1084,7 +1085,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.flow_profile_raw = new BrewFlow();
 
       this.initializeFlowChart();
-      await this.uiAlert.hideLoadingSpinner();
+
+      // Give the buttons a bit of time, 100ms won't be an issue for user flow
+      await new Promise((resolve) => {
+        setTimeout(async () => {
+          await this.uiAlert.hideLoadingSpinner();
+          resolve(undefined);
+        }, 100);
+      });
+
+
     }
   }
 
