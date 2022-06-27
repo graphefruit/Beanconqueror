@@ -113,6 +113,8 @@ class DecoderWorker {
   }
 }
 
+const HEARTBEAT_INTERVAL = 1000;
+
 export class AcaiaScale {
   private readonly device_id: string;
   private rx_char_uuid: string;
@@ -146,6 +148,8 @@ export class AcaiaScale {
   private command_queue: ArrayBuffer[];
   private set_interval_thread: ReturnType<typeof setInterval>;
   private callback: (eventType: EventType, data?: any) => any;
+
+  private heartbeat_monitor_interval: ReturnType<typeof setInterval>;
 
   constructor(
     device_id: string,
@@ -245,13 +249,17 @@ export class AcaiaScale {
     await this.write(new Uint8Array([0, 1]).buffer);
 
     await this.notificationsReady();
+
+    this.startHeartbeatMonitor();
   }
 
   public disconnectTriggered() {
     this.logger.debug('Scale disconnect triggered');
     // Class is still existing, therefore we should do something good maybe?
     this.connected = false;
+    this.stopHeartbeatMonitor();
   }
+
   public async disconnect() {
     this.logger.debug('Scale disconnected');
     if (this.connected) {
@@ -359,6 +367,22 @@ export class AcaiaScale {
     }
   }
 
+  private startHeartbeatMonitor() {
+    this.heartbeat_monitor_interval = setInterval(async () => {
+      if (Date.now() > this.last_heartbeat + HEARTBEAT_INTERVAL) {
+        await this.initScales();
+        this.logger.info('Sent heartbeat reviving request.');
+      }
+    }, HEARTBEAT_INTERVAL * 2);
+  }
+
+  private stopHeartbeatMonitor() {
+    if (this.heartbeat_monitor_interval) {
+      clearInterval(this.heartbeat_monitor_interval);
+      this.heartbeat_monitor_interval = null;
+    }
+  }
+
   private messageParseCallback(messages: ParsedMessage[]) {
     messages.forEach((msg) => {
       this.logger.debug('Message recieved - ' + JSON.stringify(msg));
@@ -412,9 +436,13 @@ export class AcaiaScale {
     return this.connected;
   }
 
-  private async notificationsReady() {
+  private async initScales() {
     await this.ident();
     this.last_heartbeat = Date.now();
+  }
+
+  private async notificationsReady() {
+    await this.initScales();
     this.logger.info('Scale Ready!');
   }
 
@@ -467,7 +495,7 @@ export class AcaiaScale {
           this.write(packet, true).catch(this.logger.error.bind(this.logger));
         }
 
-        if (Date.now() >= this.last_heartbeat + 1000) {
+        if (Date.now() >= this.last_heartbeat + HEARTBEAT_INTERVAL) {
           this.logger.debug('Sending heartbeat...');
           this.last_heartbeat = Date.now();
           if (this.isPyxisStyle) {
