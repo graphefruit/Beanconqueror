@@ -44,10 +44,11 @@ const log = (...args) => {
 
 // DecodeWorkers receives array buffer from heartbeat notification and emits parsed messages if any
 class DecoderWorker {
-  private worker: Worker;
+  private readonly worker: Worker;
   private readonly decodeCallback: (msgs: ParsedMessage[]) => any;
+  private readonly logger: Logger;
+
   private loading: Promise<unknown>;
-  private logger: Logger;
 
   constructor(callback: (msgs: ParsedMessage[]) => any) {
     this.decodeCallback = callback;
@@ -56,9 +57,7 @@ class DecoderWorker {
     if (typeof Worker !== 'undefined') {
       this.logger.log('Workers are supported. Creating a decode worker...');
       this.worker = new Worker(new URL('./decode.worker', import.meta.url));
-      this.worker.onmessage = (_result) => {
-        this.handleMessage({ data: _result });
-      };
+      this.worker.onmessage = this.handleMessage.bind(this);
     } else {
       this.logger.log('Workers are NOT supported. Import decoder...');
       // fallback to running in setTimeout
@@ -128,7 +127,7 @@ export class AcaiaScale {
 
   private worker: DecoderWorker;
 
-  private logger: Logger;
+  private readonly logger: Logger;
 
   private connected: boolean;
   private packet: Uint8Array;
@@ -165,7 +164,7 @@ export class AcaiaScale {
 
     // TODO(mike1808): make it to work with new Lunar and Pyxis by auto-detecting service and char uuid
     this.logger.info(
-      'received charactersitics: ',
+      'received characteristics: ',
       JSON.stringify(characteristics)
     );
     this.characteristics = characteristics;
@@ -173,7 +172,7 @@ export class AcaiaScale {
 
     if (!this.findBLEUUIDs()) {
       throw new Error(
-        'Cannot find weight service and characterstics on the scale'
+        'Cannot find weight service and characteristics on the scale'
       );
     }
 
@@ -227,16 +226,14 @@ export class AcaiaScale {
       char_uuid: this.rx_char_uuid,
     });
 
-    //We moved this line from notifications ready to here.
+    // We moved this line from notifications ready to here.
     this.connected = true;
 
     ble.startNotification(
       this.device_id,
       this.weight_uuid,
       this.rx_char_uuid,
-      (_arrBuffer) => {
-        this.handleNotification(_arrBuffer);
-      },
+      this.handleNotification.bind(this),
       (err) => {
         this.logger.error(
           'failed to subscribe to notifications ' + JSON.stringify(err)
@@ -262,7 +259,7 @@ export class AcaiaScale {
         this.logger.debug('Disconnect the device with its characteristics');
         // Lars - I don't know if we need this, but the problem is when the scale is disconnected via settings, or shutdown, it will crash everything.
         // Try catch won't help here, because the device is already deattached.
-        //await promisify(ble.stopNotification)((this.device_id, this.weight_uuid, this.tx_char_uuid));
+        // await promisify(ble.stopNotification)((this.device_id, this.weight_uuid, this.tx_char_uuid));
       } else {
         this.logger.debug(
           'We cant disconnect because one of the characteristics is missing' +
@@ -355,10 +352,10 @@ export class AcaiaScale {
     return false;
   }
 
-  private async handleNotification(value: ArrayBuffer) {
+  private handleNotification(value: ArrayBuffer) {
     if (this.connected) {
       this.worker.addBuffer(value);
-      await this.heartbeat();
+      this.heartbeat();
     }
   }
 
@@ -430,9 +427,7 @@ export class AcaiaScale {
           this.weight_uuid,
           this.tx_char_uuid,
           data,
-          () => {
-            resolve(true);
-          },
+          resolve,
           (err) => {
             this.logger.error(
               'failed to write to characteristic, but we are ignoring it',
@@ -458,7 +453,7 @@ export class AcaiaScale {
     ]);
   }
 
-  private async heartbeat() {
+  private heartbeat() {
     if (!this.connected) {
       return false;
     }
@@ -469,16 +464,20 @@ export class AcaiaScale {
         }
         while (this.command_queue.length) {
           const packet = this.command_queue.shift();
-          await this.write(packet, true).catch(this.logger.error.bind(this.logger));
+          this.write(packet, true).catch(this.logger.error.bind(this.logger));
         }
 
         if (Date.now() >= this.last_heartbeat + 1000) {
           this.logger.debug('Sending heartbeat...');
           this.last_heartbeat = Date.now();
           if (this.isPyxisStyle) {
-            await this.write(encodeId(this.isPyxisStyle));
+            this.write(encodeId(this.isPyxisStyle)).catch(
+              this.logger.error.bind(this.logger)
+            );
           }
-          await this.write(encodeHeartbeat(), false);
+          this.write(encodeHeartbeat(), false).catch(
+            this.logger.error.bind(this.logger)
+          );
           this.logger.debug('Heartbeat success');
         }
         return true;
