@@ -582,6 +582,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         this.flowProfileArrCalculated = [];
       }
       if (this.flowProfileChartEl === undefined) {
+        let graphSettings = this.settings.graph.FILTER;
+        if ( this.data.getPreparation().style_type ===
+          PREPARATION_STYLE_TYPE.ESPRESSO) {
+          graphSettings = this.settings.graph.ESPRESSO;
+        }
+
         const drinkingData = {
           labels: [],
           datasets: [
@@ -593,6 +599,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               yAxisID: 'y',
               pointRadius: 0,
               tension: 0,
+              hidden: !graphSettings.weight
             },
             {
               label: this.translate.instant('BREW_FLOW_WEIGHT_PER_SECOND'),
@@ -603,6 +610,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               spanGaps: true,
               pointRadius: 0,
               tension: 0,
+              hidden: !graphSettings.calc_flow
             },
             {
               label: this.translate.instant('BREW_FLOW_WEIGHT_REALTIME'),
@@ -613,6 +621,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               spanGaps: true,
               pointRadius: 0,
               tension: 0,
+              hidden: !graphSettings.calc_flow
             },
           ],
         };
@@ -629,6 +638,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             spanGaps: true,
             pointRadius: 0,
             tension: 0,
+            hidden: !graphSettings.pressure,
           });
         }
 
@@ -651,6 +661,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           suggestedMaxFlow = 2.5;
           suggestedMaxWeight = 30;
         }
+
+
+
+
         const chartOptions = {
           animation: false, // disa
           scales: {

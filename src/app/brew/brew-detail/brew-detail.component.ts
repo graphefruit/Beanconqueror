@@ -142,6 +142,12 @@ export class BrewDetailComponent implements OnInit {
         this.flowProfileChartEl = undefined;
       }
       if (this.flowProfileChartEl === undefined) {
+        let graphSettings = this.settings.graph.FILTER;
+        if ( this.data.getPreparation().style_type ===
+          PREPARATION_STYLE_TYPE.ESPRESSO) {
+          graphSettings = this.settings.graph.ESPRESSO;
+        }
+
         const drinkingData = {
           labels: [],
           datasets: [{
@@ -151,6 +157,7 @@ export class BrewDetailComponent implements OnInit {
             backgroundColor: 'rgb(205,194,172)',
             yAxisID: 'y',
             pointRadius: 0,
+            hidden: !graphSettings.weight
           },
             {
               label: this.translate.instant('BREW_FLOW_WEIGHT_PER_SECOND'),
@@ -160,6 +167,7 @@ export class BrewDetailComponent implements OnInit {
               yAxisID: 'y1',
               spanGaps: true,
               pointRadius: 0,
+              hidden: !graphSettings.calc_flow
             },
             {
               label: this.translate.instant('BREW_FLOW_WEIGHT_REALTIME'),
@@ -170,6 +178,7 @@ export class BrewDetailComponent implements OnInit {
               spanGaps: true,
               pointRadius: 0,
               tension: 0,
+              hidden: !graphSettings.realtime_flow
             }]
         };
         const chartOptions = {

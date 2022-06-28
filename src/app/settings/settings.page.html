@@ -261,8 +261,6 @@
               <ion-checkbox (ngModelChange)="saveSettings();"
                             [(ngModel)]="settings.bluetooth_scale_reset_timer_on_brew" slot="end"></ion-checkbox>
             </ion-item>
-
-
             <ion-item>
               <ion-label class="ion-margin-end" style="white-space: normal;"><h2>{{"SMART_SCALE_TARE_ON_START_TIMER" | translate}}</h2></ion-label>
               <ion-checkbox (ngModelChange)="saveSettings();"
@@ -296,14 +294,59 @@
             <ion-icon style="top: 3px; position: relative;" name="information-circle-outline"></ion-icon><p style="display: inline;">{{"SCALE.INFORMATION_DESCRIPTION" | translate}}</p>
           </ion-label>
         </ion-card-content>
-
+      </ion-card>
+      <ion-card>
+        <ion-card-content>
+          <ion-card-title>
+            {{"PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_SHOW_GRAPHS_FILTER" | translate }}
+          </ion-card-title>
+          <ion-list>
+            <ion-item>
+              <ion-label>{{"BREW_FLOW_WEIGHT" | translate}}</ion-label>
+              <ion-checkbox (ngModelChange)="saveSettings();"
+                            [(ngModel)]="settings.graph.FILTER.weight"></ion-checkbox>
+            </ion-item>
+            <ion-item>
+              <ion-label>{{"BREW_FLOW_WEIGHT_PER_SECOND" | translate}}</ion-label>
+              <ion-checkbox (ngModelChange)="saveSettings();"
+                            [(ngModel)]="settings.graph.FILTER.calc_flow"></ion-checkbox>
+            </ion-item>
+            <ion-item>
+              <ion-label>{{"BREW_FLOW_WEIGHT_REALTIME" | translate}}</ion-label>
+              <ion-checkbox (ngModelChange)="saveSettings();"
+                            [(ngModel)]="settings.graph.FILTER.realtime_flow"></ion-checkbox>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+      <ion-card>
+        <ion-card-content>
+          <ion-card-title>
+            {{"PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_SHOW_GRAPHS_ESPRESSO" | translate }}
+          </ion-card-title>
+          <ion-item>
+            <ion-label>{{"BREW_FLOW_WEIGHT" | translate}}</ion-label>
+            <ion-checkbox (ngModelChange)="saveSettings();"
+                          [(ngModel)]="settings.graph.ESPRESSO.weight"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label>{{"BREW_FLOW_WEIGHT_PER_SECOND" | translate}}</ion-label>
+            <ion-checkbox (ngModelChange)="saveSettings();"
+                          [(ngModel)]="settings.graph.ESPRESSO.calc_flow"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label>{{"BREW_FLOW_WEIGHT_REALTIME" | translate}}</ion-label>
+            <ion-checkbox (ngModelChange)="saveSettings();"
+                          [(ngModel)]="settings.graph.ESPRESSO.realtime_flow"></ion-checkbox>
+          </ion-item>
+        </ion-card-content>
       </ion-card>
     </div>
     <div *ngSwitchCase="'bluetoothpressure'">
       <ion-card>
         <ion-card-content>
           <ion-card-title>
-            {{"PAGE_SETTINGS_TAB_BLUETOOTH_Pressure" | translate }}
+            {{"PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE" | translate }}
           </ion-card-title>
           <ion-list>
             <ion-item lines="full" *ngIf="settings.pressure_id === ''" (click)="findAndConnectPressureDevice()" tappable button >

@@ -10,6 +10,7 @@ import {IBrewPageFilter} from '../brew/iBrewPageFilter';
 import {IBeanPageSort} from '../bean/iBeanPageSort';
 import {ListViewBrewParameter} from '../../classes/parameter/listViewBrewParameter';
 import {IBeanPageFilter} from '../bean/iBeanPageFilter';
+import {IBrewGraphs} from '../brew/iBrewGraphs';
 
 export interface ISettings {
  // Properties
@@ -62,6 +63,11 @@ export interface ISettings {
   green_bean_sort: {
     OPEN: IBeanPageSort,
     ARCHIVED: IBeanPageSort
+  };
+
+  graph: {
+    ESPRESSO: IBrewGraphs,
+    FILTER: IBrewGraphs,
   };
 
   welcome_page_showed: boolean;

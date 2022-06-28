@@ -1190,5 +1190,8 @@
   "BREW_FLOW_WEIGHT_REALTIME": "Fluss (Echtzeit)",
   "SMART_SCALE_STOP_TIMER_ON_BREW": "Waagenzeit bei neuer Brühung anhalten",
   "SMART_SCALE_RESET_TIMER_ON_BREW": "Waagenzeit bei neuer Brühung zurücksetzten",
-  "BREW_PRESSURE_FLOW": "Druck"
+  "BREW_PRESSURE_FLOW": "Druck",
+  "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_SHOW_GRAPHS_FILTER": "Anzeige der Graphen für Filterbrühungen",
+  "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_SHOW_GRAPHS_ESPRESSO": "Anzeige der Graphen für Espressobrühungen",
+  "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE": "Druck Geräte"
 }
