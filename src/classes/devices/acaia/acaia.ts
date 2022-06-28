@@ -262,6 +262,7 @@ export class AcaiaScale {
 
   public async disconnect() {
     this.logger.debug('Scale disconnected');
+    this.stopHeartbeatMonitor();
     if (this.connected) {
       if (this.device_id && this.weight_uuid && this.tx_char_uuid) {
         this.logger.debug('Disconnect the device with its characteristics');
