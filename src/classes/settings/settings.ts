@@ -17,6 +17,7 @@ import {BEAN_SORT_ORDER} from '../../enums/beans/beanSortOrder';
 import {ListViewBrewParameter} from '../parameter/listViewBrewParameter';
 import {IBeanPageFilter} from '../../interfaces/bean/iBeanPageFilter';
 import {BEAN_ROASTING_TYPE_ENUM} from '../../enums/beans/beanRoastingType';
+import {IBrewGraphs} from '../../interfaces/brew/iBrewGraphs';
 
 
 export class Settings implements ISettings {
@@ -55,6 +56,8 @@ export class Settings implements ISettings {
     ARCHIVED: IBrewPageFilter
   };
 
+
+
   public bean_filter: {
     OPEN: IBeanPageFilter,
     ARCHIVED: IBeanPageFilter
@@ -68,6 +71,12 @@ export class Settings implements ISettings {
   public green_bean_sort: {
     OPEN: IBeanPageSort,
     ARCHIVED: IBeanPageSort
+  };
+
+
+  public graph: {
+    ESPRESSO: IBrewGraphs,
+    FILTER: IBrewGraphs,
   };
 
   public wake_lock: boolean;
@@ -126,6 +135,15 @@ export class Settings implements ISettings {
     } as IBrewPageFilter;
   }
 
+  public GET_BREW_GRAPHS(): IBrewGraphs {
+    return {
+      weight: true,
+      calc_flow: true,
+      realtime_flow: true,
+      pressure: true
+    } as IBrewGraphs;
+  }
+
   constructor() {
     this.brew_view = BREW_VIEW_ENUM.SINGLE_PAGE;
     this.startup_view = STARTUP_VIEW_ENUM.HOME_PAGE;
@@ -176,6 +194,15 @@ export class Settings implements ISettings {
       OPEN: {} as IBeanPageSort,
       ARCHIVED: {} as IBeanPageSort
     };
+
+    this.graph = {
+      ESPRESSO: {} as IBrewGraphs,
+        FILTER: {} as IBrewGraphs,
+    };
+
+    this.graph.ESPRESSO = this.GET_BREW_GRAPHS();
+    this.graph.FILTER = this.GET_BREW_GRAPHS();
+    this.graph.FILTER.realtime_flow = false;
     this.brew_rating = 5;
     this.brew_rating_steps = 1;
 
