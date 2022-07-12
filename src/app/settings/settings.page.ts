@@ -1,7 +1,7 @@
 import {AlertController, ModalController, Platform} from '@ionic/angular';
 import BeanconquerorSettingsDummy from '../../assets/BeanconquerorTestData.json';
 import {Bean} from '../../classes/bean/bean';
-import {BluetoothScale} from './../../classes/devices/bluetoothDevice';
+import {BluetoothScale, SCALE_TIMER_COMMAND} from './../../classes/devices/bluetoothDevice';
 import {Brew} from '../../classes/brew/brew';
 import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
 import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
@@ -240,7 +240,7 @@ export class SettingsPage implements OnInit {
     this.uiAlert.setLoadingSpinnerMessage('SCALE.BLUETOOTH_SCAN_RUNNING', true);
     const scale = await this.bleManager.tryToFindScale();
     if (scale) {
-      await this.uiAlert.hideLoadingSpinner();
+
       try {
         // We don't need to retry for iOS, because we just did scan before.
 
@@ -257,8 +257,24 @@ export class SettingsPage implements OnInit {
 
       await this.saveSettings();
 
-      const connectedScale = this.bleManager.getScale();
-      await connectedScale.setLed(true, true);
+      let skipLoop = 0;
+      for (let i=0;i<5;i++) {
+        await new Promise((resolve) => {
+          setTimeout(async () => {
+            const connectedScale = this.bleManager.getScale();
+            if(connectedScale !== null && connectedScale !== undefined) {
+              skipLoop = 1;
+              await connectedScale.setLed(true, true);
+            }
+            resolve(undefined);
+          }, 1000);
+        });
+        if (skipLoop === 1) {
+          break;
+        }
+
+      }
+      await this.uiAlert.hideLoadingSpinner();
 
     } else {
       await this.uiAlert.hideLoadingSpinner();

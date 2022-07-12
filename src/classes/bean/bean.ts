@@ -50,6 +50,7 @@ export class Bean implements IBean {
   public qr_code: string;
 
   public favourite: boolean;
+  public shared:boolean;
 
   constructor() {
     this.name = '';
@@ -79,6 +80,7 @@ export class Bean implements IBean {
     this.rating = 0;
     this.qr_code = '';
     this.favourite = false;
+    this.shared = false;
   }
 
   public getRoastName(): string {

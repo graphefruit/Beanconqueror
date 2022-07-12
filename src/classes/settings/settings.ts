@@ -101,6 +101,8 @@ export class Settings implements ISettings {
   public pressure_id: string;
   public pressure_type: PressureType;
   public pressure_log: boolean;
+  public pressure_threshold_active: boolean;
+  public pressure_threshold_bar: number;
 
   public currency: string;
 
@@ -238,6 +240,8 @@ export class Settings implements ISettings {
     this.pressure_id = '';
     this.pressure_type = null;
     this.pressure_log = false;
+    this.pressure_threshold_active = false;
+    this.pressure_threshold_bar = 0.5;
 
     this.currency = 'EUR';
 

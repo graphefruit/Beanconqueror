@@ -204,7 +204,19 @@ export class Decoder {
           if (unit === 4) {
             value /= 10000.0;
           } else {
-            throw new Error(`unit value not in range ${unit}`);
+            try
+            {
+
+            for (const v of weight_payload) {
+              console.log("0x" + v.toString(16));
+            }
+           // console.log(weight_payload.map((v) => `0x${ ("" + v).toString(16)}`));
+            console.error(`unit value not in range ${unit}`);
+            //throw new Error(`unit value not in range ${unit}`);
+            }
+            catch(ex){
+
+            }
           }
         }
       }

@@ -359,6 +359,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
       if (this.timer.isTimerRunning() === true && _firstStart === false) {
         this.attachToPressureChange();
+      } else if (this.settings.pressure_threshold_active) {
+        this.attachToPressureChange();
       }
 
       this.checkChanges();
@@ -531,7 +533,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
       this.pressureDeviceSubscription = pressureDevice.pressureChange.subscribe(
         (_val) => {
-          this.__setPressureFlow(_val);
+          if (this.timer.isTimerRunning()) {
+            this.__setPressureFlow(_val);
+          } else {
+            if (this.settings.pressure_threshold_active && _val.actual > this.settings.pressure_threshold_bar) {
+              this.timer.startTimer();
+            }
+          }
         }
       );
     }

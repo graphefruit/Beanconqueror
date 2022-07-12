@@ -7,7 +7,8 @@ import {Brew} from '../../classes/brew/brew';
 import {UIAnalytics} from '../uiAnalytics';
 import BREW_TRACKING from '../../data/tracking/brewTracking';
 import BEAN_TRACKING from '../../data/tracking/beanTracking';
-
+import JSURL from 'jsurl';
+import LZString from 'lz-string';
 @Injectable({
   providedIn: 'root'
 })
@@ -84,7 +85,11 @@ export class ShareService {
 
   public async shareBean(_bean: Bean) {
     try {
-      const beanMessage: string = this.generateBeanMessage(_bean);
+
+      const stringifyBean = JSURL.stringify(_bean);
+      const compressedBean = LZString.compressToEncodedURIComponent(stringifyBean);
+
+      const beanMessage: string = 'https://beanconqueror.com?shareUserBean=' + compressedBean;
       this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.SHARE);
       await this.socialShare.share(beanMessage,null,null,null);
     }

@@ -66,7 +66,7 @@
       </div>
     </ion-range>
   </ion-item>
-  <ion-item *ngIf="data.roast.toString() =='CUSTOM_ROAST'">
+  <ion-item *ngIf="data?.roast?.toString() =='CUSTOM_ROAST'">
     <ion-label position="stacked">{{"BEAN_DATA_CUSTOM_ROAST_NAME" | translate}}</ion-label>
     <ion-input #roast_custom="ngModel" [(ngModel)]="data.roast_custom" autocapitalize="off"
                name="roast_custom" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROAST_NAME' | translate}}" spellcheck="false"
