@@ -1,8 +1,33 @@
+export enum CommandType {
+  SYSTEM_SA,
+  STR_SA,
+  BATTERY_S,
+  WEIGHT_S,
+  TARE_S,
+  CUSTOM_SA,
+  STATUS_S,
+  INFO_A,
+  STATUS_A,
+  ISP_S,
+  SETTING_CHG_S,
+  IDENTIFY_S,
+  EVENT_SA,
+  TIMER_S,
+  FILE_S,
+  SETPWD_S,
+  PCS_WEIGHT_S,
+  PRETARE_S,
+  SIZE,
+}
+
 export enum ScaleMessageType {
   WEIGHT = 5,
-  HEARTBEAT = 11,
+  BATTERY = 6,
   TIMER = 7,
-  TARE_START_STOP_RESET = 8,
+  KEY = 8,
+  SETTINGS = 9,
+  CD = 10,
+  ACK = 11,
 }
 
 export enum Button {
@@ -59,9 +84,5 @@ export interface DecoderLog {
 
 export type WorkerResult = DecoderLog | DecoderResult;
 
-export type Platform =
-  'ios'
-  | 'android'
-  | 'web'
-  | 'mobile'
- // they are more but we don't care
+export type Platform = 'ios' | 'android' | 'web' | 'mobile';
+// they are more but we don't care
