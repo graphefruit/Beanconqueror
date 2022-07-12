@@ -121,7 +121,6 @@ export class AcaiaScale {
   private tx_char_uuid: string;
   private weight_uuid: string;
 
-  // TODO(mike1808) Pyxis is not supported right now
   private isPyxisStyle: boolean;
   private readonly characteristics: Characteristic[];
 
@@ -333,9 +332,9 @@ export class AcaiaScale {
         to128bitUUID(char.characteristic) ===
         to128bitUUID(SCALE_CHARACTERISTIC_UUID)
       ) {
-        this.rx_char_uuid = char.characteristic;
-        this.tx_char_uuid = char.characteristic;
-        this.weight_uuid = char.service;
+        this.rx_char_uuid = char.characteristic.toLowerCase();
+        this.tx_char_uuid = char.characteristic.toLowerCase();
+        this.weight_uuid = char.service.toLowerCase();
         this.isPyxisStyle = false;
         foundRx = true;
         foundTx = true;
@@ -343,17 +342,26 @@ export class AcaiaScale {
         to128bitUUID(char.characteristic) ===
         to128bitUUID(PYXIS_RX_CHARACTERISTIC_UUID)
       ) {
-        this.rx_char_uuid = char.characteristic;
+        this.rx_char_uuid = char.characteristic.toLowerCase();
         foundRx = true;
       } else if (
         to128bitUUID(char.characteristic) ===
         to128bitUUID(PYXIS_TX_CHARACTERISTIC_UUID)
       ) {
-        this.tx_char_uuid = char.characteristic;
-        this.weight_uuid = char.service;
+        this.tx_char_uuid = char.characteristic.toLowerCase();
+        this.weight_uuid = char.service.toLowerCase();
         this.isPyxisStyle = true;
         foundTx = true;
       }
+      this.logger.log('findBleeUIDS', {
+        device_id: this.device_id,
+        weight_uuid: this.weight_uuid,
+        char_uuid: this.rx_char_uuid,
+        isPyxis: this.isPyxisStyle,
+        foundRx: foundRx,
+        foundTx: foundTx,
+
+      });
       if (foundRx && foundTx) {
         return true;
       }

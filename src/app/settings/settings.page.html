@@ -361,7 +361,17 @@
               <ion-label><h2>{{"DISCONNECT" | translate}}</h2></ion-label>
               <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
             </ion-item>
-
+            <ion-item>
+              <ion-label style="white-space: normal;"><h2>{{"PRESSURE_THRESHOLD_ACTIVE" | translate}}</h2></ion-label>
+              <ion-checkbox (ngModelChange)="saveSettings();"
+                            [(ngModel)]="settings.pressure_threshold_active" slot="end"></ion-checkbox>
+            </ion-item>
+            <ion-item *ngIf="settings.pressure_threshold_active">
+              <ion-label style="white-space: normal;"><h2>{{"PRESSURE_THRESHOLD_BAR" | translate}}</h2></ion-label>
+              <ion-range style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="0.1" snaps="true" max="12" step="0.1" (ionBlur)="saveSettings()" [(ngModel)]="settings.pressure_threshold_bar">
+                <ion-label slot="end">{{this.uiHelper.toFixedIfNecessary(settings.pressure_threshold_bar,1)}}</ion-label>
+              </ion-range>
+            </ion-item>
 
             <ion-item>
               <ion-label class="ion-margin-end" style="white-space: normal;"><h2>{{"PRESSURE_LOG" | translate}}</h2></ion-label>

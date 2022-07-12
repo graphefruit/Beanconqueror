@@ -46,4 +46,5 @@ export interface IBean {
 
   rating: number;
   qr_code: string;
+  shared: boolean;
 }

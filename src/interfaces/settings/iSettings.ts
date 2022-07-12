@@ -91,6 +91,8 @@ export interface ISettings {
   pressure_id: string;
   pressure_type: PressureType;
   pressure_log: boolean;
+  pressure_threshold_active: boolean;
+  pressure_threshold_bar: number;
 
   currency: string;
 }

@@ -174,7 +174,6 @@ export class AppComponent implements AfterViewInit {
 
 
         try {
-
         // #285 - Add more device loggings
         this.uiLog.log(`Device-Model: ${this.device.model}`);
         this.uiLog.log(`Manufacturer: ${this.device.manufacturer}`);
