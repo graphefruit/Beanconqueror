@@ -89,7 +89,23 @@ export class ShareService {
       const stringifyBean = JSURL.stringify(_bean);
       const compressedBean = LZString.compressToEncodedURIComponent(stringifyBean);
 
-      const beanMessage: string = 'https://beanconqueror.com?shareUserBean=' + compressedBean;
+
+      const loops = Math.ceil(compressedBean.length / 400);
+
+      let jsonParams = '';
+      for (let i=0;i<loops;i++) {
+        if (jsonParams === '') {
+          jsonParams = 'shareUserBean'+ i + '=' + compressedBean.substr(0,400);
+        }
+        else {
+          jsonParams += '&shareUserBean'+ i + '=' + compressedBean.substr(i*400,400);
+        }
+      }
+
+
+
+      const beanMessage: string = 'https://beanconqueror.com?' + jsonParams;
+      console.log(beanMessage);
       this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.SHARE);
       await this.socialShare.share(beanMessage,null,null,null);
     }

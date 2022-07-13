@@ -187,7 +187,7 @@ export class UIBeanHelper {
       const objectedBean = JSURL.parse(decompressedString);
       const newMapper = new BeanMapper();
       const bean: Bean = await newMapper.mapSharedUserBean(objectedBean);
-      console.log(objectedBean);
+      await this.uiAlert.hideLoadingSpinner();
       if (bean !== null) {
 
         const modal = await this.modalController.create({
@@ -201,10 +201,10 @@ export class UIBeanHelper {
         this.uiAlert.showMessage('QR.SERVER.ERROR_OCCURED', 'ERROR_OCCURED', undefined, true);
       }
 
-
-      console.log(bean);
     } catch (ex) {
 
+    }finally {
+      this.uiAlert.hideLoadingSpinner();
     }
 
   }

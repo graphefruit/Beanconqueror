@@ -34,14 +34,10 @@ export class IntentHandlerService {
     IonicDeeplink.route({
       '/NO_LINK_EVER_WILL_WORK_HERE/':  '/NO_LINK_EVER_WILL_WORK_HERE/'
     }, (match) => {
-      this.uiLog.log('Deeplink matched ' + JSON.stringify(match.$link));
       this.uiLog.log('Deeplink matched ' + JSON.stringify(match));
       this.handleDeepLink(match.$link);
     }, (nomatch) => {
-      this.uiLog.log('Deeplink not matched ' + JSON.stringify(nomatch.$link));
       this.uiLog.log('Deeplink not matched ' + JSON.stringify(nomatch));
-
-
       this.handleDeepLink(nomatch.$link);
     });
   }
@@ -78,7 +74,7 @@ export class IntentHandlerService {
     });
   }
 
-  private async handleDeepLink(_matchLink) {
+  public async handleDeepLink(_matchLink) {
     try {
       if (_matchLink && _matchLink.url) {
         await this.uiHelper.isBeanconqurorAppReady().then(async () => {
@@ -92,15 +88,29 @@ export class IntentHandlerService {
             const qrCodeId: string = String(this.findGetParameter(_matchLink.queryString,'id'));
             await this.addBeanFromServer(qrCodeId);
           }
-          else if (url.indexOf('https://beanconqueror.com/?shareUserBean=') === 0 || url.indexOf('https://beanconqueror.com?shareUserBean=') === 0) {
-            const userBeanJSON: string = String(this.findGetParameter(_matchLink.queryString,'shareUserBean'));
+          else if (url.indexOf('https://beanconqueror.com/?shareUserBean0=') === 0 || url.indexOf('https://beanconqueror.com?shareUserBean0=') === 0) {
+            let userBeanJSON: string = '';
+
+            const regex = /((shareUserBean)[0-9]+\=)/gi;
+            const foundJSONParams = url.match(regex);
+            for (const param of foundJSONParams) {
+              userBeanJSON += String(this.findGetParameter(_matchLink.queryString,param));
+            }
+            console.log(userBeanJSON);
             if (userBeanJSON) {
               await this.addBeanFromUser(userBeanJSON);
             }
 
           }
           else if (url.indexOf('beanconqueror://ADD_USER_BEAN?') === 0) {
-            const userBeanJSON: string = String(this.findGetParameter(_matchLink.queryString,'json'));
+            let userBeanJSON: string = '';
+
+            const regex = /((shareUserBean)[0-9]+(?=\=))/gi;
+            const foundJSONParams = url.match(regex);
+            for (const param of foundJSONParams) {
+              userBeanJSON += String(this.findGetParameter(_matchLink.queryString,param));
+            }
+            console.log(userBeanJSON);
             if (userBeanJSON) {
               await this.addBeanFromUser(userBeanJSON);
             }
