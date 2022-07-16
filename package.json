@@ -11,7 +11,8 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "sonar": "sh /Users/larssaalbach/Downloads/sonarqube-7.0/bin/macosx-universal-64/sonar.sh console",
-    "sonar_scan": "/Users/larssaalbach/Downloads/sonar-scanner-4.2.0.1873-macosx/bin/sonar-scanner"
+    "sonar_scan": "/Users/larssaalbach/Downloads/sonar-scanner-4.2.0.1873-macosx/bin/sonar-scanner",
+    "prepare": "husky install"
   },
   "private": true,
   "dependencies": {
@@ -125,6 +126,7 @@
     "elliptic": ">=6.5.4",
     "es6-promise-plugin": "^4.2.2",
     "fttx-phonegap-plugin-barcodescanner": "github:fttx/phonegap-plugin-barcodescanner",
+    "husky": "^8.0.1",
     "ionic-plugin-deeplinks": "^1.0.22",
     "jasmine-core": "~3.6.0",
     "jasmine-spec-reporter": "~5.0.0",
@@ -133,7 +135,8 @@
     "karma-coverage-istanbul-reporter": "~3.0.2",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.5.0",
-    "prettier": "^2.6.2",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1",
     "protractor": "~7.0.0",
     "skwas-cordova-plugin-datetimepicker": "^2.1.2",
     "stylelint": "^13.12.0",
@@ -235,5 +238,9 @@
   "prettier": {
     "singleQuote": true,
     "semi": true
+  },
+  "lint-staged": {
+    "*.css": "stylelint --fix",
+    "*.{ts,js,css,md}": "prettier --write"
   }
 }
