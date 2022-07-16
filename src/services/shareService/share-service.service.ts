@@ -9,6 +9,7 @@ import BREW_TRACKING from '../../data/tracking/brewTracking';
 import BEAN_TRACKING from '../../data/tracking/beanTracking';
 import JSURL from 'jsurl';
 import LZString from 'lz-string';
+import {UILog} from '../uiLog';
 @Injectable({
   providedIn: 'root'
 })
@@ -17,7 +18,8 @@ export class ShareService {
   constructor(private readonly socialShare: SocialSharing,
               private readonly translate: TranslateService,
               private readonly uiHelper: UIHelper,
-              private readonly uiAnalytics: UIAnalytics) {
+              private readonly uiAnalytics: UIAnalytics,
+              private readonly uiLog: UILog) {
 
   }
 
@@ -105,7 +107,7 @@ export class ShareService {
 
 
       const beanMessage: string = 'https://beanconqueror.com?' + jsonParams;
-      console.log(beanMessage);
+      this.uiLog.debug(beanMessage);
       this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.SHARE);
       await this.socialShare.share(beanMessage,null,null,null);
     }
