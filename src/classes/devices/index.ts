@@ -5,6 +5,7 @@ import DecentScale from './decentScale';
 import FelicitaScale from './felicitaScale';
 import JimmyScale from './jimmyScale';
 import LunarScale from './lunarScale';
+import EurekaPrecisaScale from './eurekaPrecisaScale';
 
 export { BluetoothScale, SCALE_TIMER_COMMAND } from './bluetoothDevice';
 export { default as DecentScale } from './decentScale';
@@ -16,6 +17,7 @@ export enum ScaleType {
   LUNAR = 'LUNAR',
   JIMMY = 'JIMMY',
   FELICITA = 'FELICITA',
+  EUREKAPRECISA = 'EUREKAPRECISA',
 }
 
 export function makeDevice(type: ScaleType, data: PeripheralData, platforms: Platforms[]): BluetoothScale {
@@ -28,6 +30,8 @@ export function makeDevice(type: ScaleType, data: PeripheralData, platforms: Pla
       return new JimmyScale(data, platforms);
     case ScaleType.FELICITA:
       return new FelicitaScale(data, platforms);
+    case ScaleType.EUREKAPRECISA:
+      return new EurekaPrecisaScale(data, platforms);
     default:
       return null;
   }
