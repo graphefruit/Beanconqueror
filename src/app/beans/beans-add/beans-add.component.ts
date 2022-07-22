@@ -26,6 +26,8 @@ export class BeansAddComponent implements OnInit {
   public data: Bean = new Bean();
   @Input() private readonly bean_template: Bean;
   @Input() private readonly server_bean: ServerBean;
+  @Input() private readonly user_shared_bean: Bean;
+
 
 
   @Input() private hide_toast_message: boolean;
@@ -59,12 +61,12 @@ export class BeansAddComponent implements OnInit {
     // Download images after loading the bean, else they would be copied :O
     if (this.server_bean && this.platform.is('cordova')) {
       if (this.server_bean.attachment.length > 0) {
-        await this.uiAlert.showLoadingSpinner();
-        this.uiAlert.setLoadingSpinnerMessage('QR.IMAGES_GETTING_DOWNLOADED');
+        // await this.uiAlert.showLoadingSpinner();
+        // this.uiAlert.setLoadingSpinnerMessage('QR.IMAGES_GETTING_DOWNLOADED');
         // We don't support attachments yet.
         // const newMapper = new BeanMapper();
         // await newMapper.downloadAndAttachAttachments(this.data, this.server_bean.attachment);
-        await this.uiAlert.hideLoadingSpinner();
+        // await this.uiAlert.hideLoadingSpinner();
       }
 
     }
@@ -157,7 +159,6 @@ export class BeansAddComponent implements OnInit {
     }
     this.data.attachments = copyAttachments;
 
-/// TODO SOLVE
     this.data.qr_code = _bean.qr_code;
 
 

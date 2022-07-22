@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ModalController, Platform} from '@ionic/angular';
 import {Subscription} from 'rxjs';
 import {Brew} from '../../../classes/brew/brew';
@@ -9,7 +9,6 @@ import {UIBrewHelper} from '../../../services/uiBrewHelper';
 import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
 import {Settings} from '../../../classes/settings/settings';
 import {BrewBrewingComponent} from '../../../components/brews/brew-brewing/brew-brewing.component';
-import {AgVirtualSrollComponent} from 'ag-virtual-scroll';
 
 
 @Component({
@@ -17,7 +16,7 @@ import {AgVirtualSrollComponent} from 'ag-virtual-scroll';
   templateUrl: './brew-flow.component.html',
   styleUrls: ['./brew-flow.component.scss'],
 })
-export class BrewFlowComponent implements OnInit, OnDestroy {
+export class BrewFlowComponent implements AfterViewInit, OnDestroy {
   public static COMPONENT_ID: string = 'brew-flow';
   @ViewChild('smartScaleWeight', {read: ElementRef}) public smartScaleWeightEl: ElementRef;
   @ViewChild('smartScaleWeightPerSecond', {read: ElementRef}) public smartScaleWeightPerSecondEl: ElementRef;
@@ -39,7 +38,7 @@ export class BrewFlowComponent implements OnInit, OnDestroy {
                private readonly uiBrewHelper: UIBrewHelper) {
   }
 
-  public async ngOnInit () {
+  public async ngAfterViewInit () {
 
 
     this.flowChartEl.options.responsive = false;
@@ -65,13 +64,12 @@ export class BrewFlowComponent implements OnInit, OnDestroy {
       // Looks funny but we need. if we would not calculate and substract 25px, the actual time graph would not be displayed :<
       setTimeout(() => {
         const el =  this.flowContent.nativeElement;
-        this.flowChartEl.ctx.canvas.style.height = (el.offsetHeight - 25) + 'px';
+        const newHeight = document.getElementById('brewFlowContainer').offsetHeight;
+        this.flowChartEl.ctx.canvas.style.height = (newHeight - 1) + 'px';
 
         resolve(undefined);
-      }, 25);
+      }, 100);
     });
-
-
 
 
 
@@ -135,7 +133,7 @@ export class BrewFlowComponent implements OnInit, OnDestroy {
     }
 
     this.flowChartEl.maintainAspectRatio = false;
-    this.flowChartEl.update();
+    this.flowChartEl.update('quite');
 
   }
 

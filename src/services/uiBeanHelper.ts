@@ -21,7 +21,8 @@ import QR_TRACKING from '../data/tracking/qrTracking';
 import {QrCodeScannerPopoverComponent} from '../popover/qr-code-scanner-popover/qr-code-scanner-popover.component';
 import {UISettingsStorage} from './uiSettingsStorage';
 
-
+import JSURL from 'jsurl';
+import LZString from 'lz-string';
 
 
 /**
@@ -36,22 +37,13 @@ export class UIBeanHelper {
   private allStoredBrews: Array<Brew> = [];
   private allStoredBeans: Array<Bean> = [];
 
-  public static getInstance(): UIBeanHelper {
-    if (UIBeanHelper.instance) {
-      return UIBeanHelper.instance;
-    }
-    // noinspection TsLint
-
-    return undefined;
-  }
-
-  constructor(private readonly uiBrewStorage: UIBrewStorage,
-              private readonly uiBeanStorage: UIBeanStorage,
-              private readonly uiAnalytics: UIAnalytics,
-              private readonly modalController: ModalController,
-              private readonly uiAlert: UIAlert,
-              private readonly uiToast: UIToast,
-              private readonly uiSettingsStorage: UISettingsStorage) {
+  constructor (private readonly uiBrewStorage: UIBrewStorage,
+               private readonly uiBeanStorage: UIBeanStorage,
+               private readonly uiAnalytics: UIAnalytics,
+               private readonly modalController: ModalController,
+               private readonly uiAlert: UIAlert,
+               private readonly uiToast: UIToast,
+               private readonly uiSettingsStorage: UISettingsStorage) {
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
       // If an brew is deleted, we need to reset our array for the next call.
       this.allStoredBrews = [];
@@ -68,7 +60,16 @@ export class UIBeanHelper {
     }
   }
 
-  public getAllBrewsForThisBean(_uuid: string): Array<Brew> {
+  public static getInstance (): UIBeanHelper {
+    if (UIBeanHelper.instance) {
+      return UIBeanHelper.instance;
+    }
+    // noinspection TsLint
+
+    return undefined;
+  }
+
+  public getAllBrewsForThisBean (_uuid: string): Array<Brew> {
 
     if (this.allStoredBrews.length <= 0) {
       // Load just if needed, performance reasons
@@ -87,7 +88,7 @@ export class UIBeanHelper {
 
   }
 
-  public getAllRoastedBeansForThisGreenBean(_uuid: string): Array<Bean> {
+  public getAllRoastedBeansForThisGreenBean (_uuid: string): Array<Bean> {
 
     if (this.allStoredBeans.length <= 0) {
       // Load just if needed, performance reasons
@@ -98,7 +99,8 @@ export class UIBeanHelper {
     return roastedBeans;
 
   }
-  public getAllRoastedBeansForRoastingMachine(_uuid: string) {
+
+  public getAllRoastedBeansForRoastingMachine (_uuid: string) {
     if (this.allStoredBeans.length <= 0) {
       // Load just if needed, performance reasons
       this.allStoredBeans = this.uiBeanStorage.getAllEntries();
@@ -123,10 +125,9 @@ export class UIBeanHelper {
     }
   }
 
-  public async addScannedQRBean(_scannedQRBean: ServerBean) {
+  public async addScannedQRBean (_scannedQRBean: ServerBean) {
 
-    if (_scannedQRBean.error === null)
-    {
+    if (_scannedQRBean.error === null) {
       this.uiAnalytics.trackEvent(QR_TRACKING.TITLE, QR_TRACKING.ACTIONS.SCAN_SUCCESSFULLY);
       this.uiToast.showInfoToast('QR.BEAN_SUCCESSFULLY_SCANNED');
       await this.uiAlert.showLoadingSpinner();
@@ -141,31 +142,36 @@ export class UIBeanHelper {
       if (bean !== null) {
 
         const modal = await this.modalController.create({
-          component:BeansAddComponent,
-          id:BeansAddComponent.COMPONENT_ID,
+          component: BeansAddComponent,
+          id: BeansAddComponent.COMPONENT_ID,
           componentProps: {bean_template: bean, server_bean: _scannedQRBean}
         });
         await modal.present();
         await modal.onWillDismiss();
       } else {
-        this.uiAlert.showMessage('QR.SERVER.ERROR_OCCURED','ERROR_OCCURED',undefined,true);
+        this.uiAlert.showMessage('QR.SERVER.ERROR_OCCURED', 'ERROR_OCCURED', undefined, true);
       }
 
 
-    }  else {
+    } else {
       this.uiAnalytics.trackEvent(QR_TRACKING.TITLE, QR_TRACKING.ACTIONS.SCAN);
       await this.uiAlert.hideLoadingSpinner();
-      this.uiAlert.showMessage('QR.SERVER.ERROR_OCCURED','ERROR_OCCURED',undefined,true);
+      this.uiAlert.showMessage('QR.SERVER.ERROR_OCCURED', 'ERROR_OCCURED', undefined, true);
     }
 
   }
 
-  public async addBean(_hideToastMessage: boolean = false) {
-    const modal = await this.modalController.create({component:BeansAddComponent,id: BeansAddComponent.COMPONENT_ID,  componentProps: {hide_toast_message: _hideToastMessage}});
+  public async addBean (_hideToastMessage: boolean = false) {
+    const modal = await this.modalController.create({
+      component: BeansAddComponent,
+      id: BeansAddComponent.COMPONENT_ID,
+      componentProps: {hide_toast_message: _hideToastMessage}
+    });
     await modal.present();
     await modal.onWillDismiss();
   }
-  public async repeatBean(_bean: Bean) {
+
+  public async repeatBean (_bean: Bean) {
     const modal = await this.modalController.create({
       component: BeansAddComponent,
       id: BeansAddComponent.COMPONENT_ID,
@@ -175,44 +181,81 @@ export class UIBeanHelper {
     await modal.onWillDismiss();
   }
 
+  public async addUserSharedBean (_compressedJson: string) {
+    try {
+      const decompressedString = LZString.decompressFromEncodedURIComponent(_compressedJson);
+      const objectedBean = JSURL.parse(decompressedString);
+      const newMapper = new BeanMapper();
+      const bean: Bean = await newMapper.mapSharedUserBean(objectedBean);
+      await this.uiAlert.hideLoadingSpinner();
+      if (bean !== null) {
+
+        const modal = await this.modalController.create({
+          component: BeansAddComponent,
+          id: BeansAddComponent.COMPONENT_ID,
+          componentProps: {bean_template: bean, user_shared_bean: bean}
+        });
+        await modal.present();
+        await modal.onWillDismiss();
+      } else {
+        this.uiAlert.showMessage('QR.SERVER.ERROR_OCCURED', 'ERROR_OCCURED', undefined, true);
+      }
+
+    } catch (ex) {
+
+    }finally {
+      this.uiAlert.hideLoadingSpinner();
+    }
+
+  }
 
 
-
-  public async addRoastedBean(_greenBean: GreenBean) {
-    const modal = await this.modalController.create({component:BeansAddComponent,
-      id:BeansAddComponent.COMPONENT_ID,  componentProps: {greenBean : _greenBean}});
+  public async addRoastedBean (_greenBean: GreenBean) {
+    const modal = await this.modalController.create({
+      component: BeansAddComponent,
+      id: BeansAddComponent.COMPONENT_ID, componentProps: {greenBean: _greenBean}
+    });
     await modal.present();
     await modal.onWillDismiss();
   }
-  public async editBean(_bean: Bean) {
 
-    const modal = await this.modalController.create({component:BeansEditComponent, id: BeansEditComponent.COMPONENT_ID,  componentProps: {bean : _bean}});
+  public async editBean (_bean: Bean) {
+
+    const modal = await this.modalController.create({
+      component: BeansEditComponent,
+      id: BeansEditComponent.COMPONENT_ID,
+      componentProps: {bean: _bean}
+    });
     await modal.present();
     await modal.onWillDismiss();
   }
 
-  public async detailBean(_bean: Bean) {
-    const modal = await this.modalController.create({component: BeansDetailComponent, id: BeansDetailComponent.COMPONENT_ID, componentProps: {bean: _bean}});
+  public async detailBean (_bean: Bean) {
+    const modal = await this.modalController.create({
+      component: BeansDetailComponent,
+      id: BeansDetailComponent.COMPONENT_ID,
+      componentProps: {bean: _bean}
+    });
     await modal.present();
     await modal.onWillDismiss();
   }
 
-  public async archiveBeanWithRatingQuestion(_bean: Bean) {
+  public async archiveBeanWithRatingQuestion (_bean: Bean) {
 
-      this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ARCHIVE);
+    this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ARCHIVE);
 
-      const modal = await this.modalController.create({
-        component: BeanArchivePopoverComponent,
-        cssClass: 'popover-actions',
-        id: BeanArchivePopoverComponent.COMPONENT_ID,
-        backdropDismiss: false,
-        breakpoints: [0,  0.5, 0.75, 1],
-        initialBreakpoint: 0.5,
-        componentProps: {
-          bean: _bean
-        }
-      });
-      await modal.present();
-      await modal.onWillDismiss();
+    const modal = await this.modalController.create({
+      component: BeanArchivePopoverComponent,
+      cssClass: 'popover-actions',
+      id: BeanArchivePopoverComponent.COMPONENT_ID,
+      backdropDismiss: false,
+      breakpoints: [0, 0.5, 0.75, 1],
+      initialBreakpoint: 0.5,
+      componentProps: {
+        bean: _bean
+      }
+    });
+    await modal.present();
+    await modal.onWillDismiss();
   }
 }

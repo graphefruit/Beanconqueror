@@ -13,6 +13,67 @@ export class BeanMapper {
 
   }
 
+  public async mapSharedUserBean(_userSharedBean: any): Promise<Bean>  {
+    return new Promise<Bean>(async (resolve, reject) => {
+      try {
+        const newBean: Bean = new Bean();
+
+        newBean.name = _userSharedBean.name;
+        newBean.roaster = _userSharedBean.roaster;
+        newBean.roast_range = _userSharedBean.roast_range;
+        newBean.aromatics = _userSharedBean.aromatics;
+        newBean.weight = _userSharedBean.weight;
+        newBean.qr_code = _userSharedBean.qr_code;
+        newBean.cost = _userSharedBean.cost;
+        newBean.cupping_points = _userSharedBean.cupping_points;
+        newBean.decaffeinated = _userSharedBean.decaffeinated;
+        newBean.ean_article_number = _userSharedBean.ean_article_number;
+        newBean.note = _userSharedBean.note;
+        if ( _userSharedBean.roastingDate !== null &&  _userSharedBean.roastingDate !== ''){
+          newBean.roastingDate = _userSharedBean.roastingDate;
+        }
+        newBean.url = _userSharedBean.url;
+
+        newBean.beanMix =  _userSharedBean.beanMix;
+        newBean.roast = _userSharedBean.roast;
+
+        if (newBean.roast === 'CUSTOM_ROAST' as ROASTS_ENUM.CUSTOM_ROAST) {
+          newBean.roast_custom = _userSharedBean.roast_custom;
+        }
+
+
+        newBean.bean_roasting_type  = _userSharedBean.bean_roasting_type;
+
+        for (const information of _userSharedBean.bean_information) {
+          const iInformation = {} as IBeanInformation;
+          iInformation.certification = information.certification;
+          iInformation.country = information.country;
+          iInformation.elevation = information.elevation;
+          iInformation.farm = information.farm;
+          iInformation.farmer = information.farmer;
+          iInformation.harvest_time = information.harvest_time;
+          iInformation.percentage = information.percentage;
+          iInformation.processing = information.processing;
+          iInformation.region = information.region;
+          iInformation.variety = information.variety;
+          iInformation.purchasing_price = information.purchasing_price;
+          iInformation.fob_price = information.fob_price;
+          newBean.bean_information.push(iInformation);
+        }
+
+        newBean.shared = true;
+        resolve(newBean);
+
+      }
+      catch(ex) {
+        resolve(null);
+      }
+
+    });
+  }
+
+
+
   public async mapServerToClientBean(_serverResponse: ServerBean): Promise<Bean> {
     return new Promise<Bean>(async (resolve, reject) => {
       try {

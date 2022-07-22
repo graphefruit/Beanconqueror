@@ -142,6 +142,12 @@ export class BrewDetailComponent implements OnInit {
         this.flowProfileChartEl = undefined;
       }
       if (this.flowProfileChartEl === undefined) {
+        let graphSettings = this.settings.graph.FILTER;
+        if ( this.data.getPreparation().style_type ===
+          PREPARATION_STYLE_TYPE.ESPRESSO) {
+          graphSettings = this.settings.graph.ESPRESSO;
+        }
+
         const drinkingData = {
           labels: [],
           datasets: [{
@@ -151,6 +157,7 @@ export class BrewDetailComponent implements OnInit {
             backgroundColor: 'rgb(205,194,172)',
             yAxisID: 'y',
             pointRadius: 0,
+            hidden: !graphSettings.weight
           },
             {
               label: this.translate.instant('BREW_FLOW_WEIGHT_PER_SECOND'),
@@ -160,6 +167,18 @@ export class BrewDetailComponent implements OnInit {
               yAxisID: 'y1',
               spanGaps: true,
               pointRadius: 0,
+              hidden: !graphSettings.calc_flow
+            },
+            {
+              label: this.translate.instant('BREW_FLOW_WEIGHT_REALTIME'),
+              data: [],
+              borderColor: 'rgb(144,60,99)',
+              backgroundColor: 'rgb(191,101,143)',
+              yAxisID: 'y2',
+              spanGaps: true,
+              pointRadius: 0,
+              tension: 0,
+              hidden: !graphSettings.realtime_flow
             }]
         };
         const chartOptions = {
@@ -215,6 +234,16 @@ export class BrewDetailComponent implements OnInit {
                 drawOnChartArea: false, // only want the grid lines for one axis to show up
               },
             },
+            y2: {
+              // Real time flow
+              type: 'linear',
+              display: false,
+              position: 'right',
+              // grid line settings
+              grid: {
+                drawOnChartArea: false, // only want the grid lines for one axis to show up
+              },
+            },
             xAxis: {
               ticks: {
                 maxTicksLimit: 10
@@ -222,6 +251,21 @@ export class BrewDetailComponent implements OnInit {
             }
           }
         };
+
+        if (this.flow_profile_raw.pressureFlow && this.flow_profile_raw.pressureFlow.length > 0) {
+          chartOptions.scales['y3'] = {
+            type: 'linear',
+            display: true,
+            position: 'right',
+            // grid line settings
+            grid: {
+              drawOnChartArea: false, // only want the grid lines for one axis to show up
+            },
+            // More then 12 bar should be strange.
+            suggestedMin: 0,
+            suggestedMax: 12,
+          };
+        }
 
         this.flowProfileChartEl = new Chart(this.flowProfileChart.nativeElement, {
           type: 'line',
@@ -249,6 +293,18 @@ export class BrewDetailComponent implements OnInit {
           for (const data of this.flow_profile_raw.waterFlow) {
             this.flowProfileChartEl.data.datasets[1].data.push(data.value);
           }
+          if (this.flow_profile_raw.realtimeFlow) {
+            for (const data of this.flow_profile_raw.realtimeFlow) {
+              this.flowProfileChartEl.data.datasets[2].data.push(data.flow_value);
+            }
+          }
+
+          if (this.flow_profile_raw.pressureFlow) {
+            for (const data of this.flow_profile_raw.pressureFlow) {
+              this.flowProfileChartEl.data.datasets[3].data.push(data.actual_pressure);
+            }
+          }
+
           this.flowProfileChartEl.update();
         }
       }

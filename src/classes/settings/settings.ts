@@ -1,4 +1,4 @@
-import { ScaleType } from './../devices';
+import {PressureType, ScaleType} from './../devices';
 /** Interfaces */
 /** Enums */
 import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
@@ -17,6 +17,7 @@ import {BEAN_SORT_ORDER} from '../../enums/beans/beanSortOrder';
 import {ListViewBrewParameter} from '../parameter/listViewBrewParameter';
 import {IBeanPageFilter} from '../../interfaces/bean/iBeanPageFilter';
 import {BEAN_ROASTING_TYPE_ENUM} from '../../enums/beans/beanRoastingType';
+import {IBrewGraphs} from '../../interfaces/brew/iBrewGraphs';
 
 
 export class Settings implements ISettings {
@@ -55,6 +56,8 @@ export class Settings implements ISettings {
     ARCHIVED: IBrewPageFilter
   };
 
+
+
   public bean_filter: {
     OPEN: IBeanPageFilter,
     ARCHIVED: IBeanPageFilter
@@ -70,6 +73,12 @@ export class Settings implements ISettings {
     ARCHIVED: IBeanPageSort
   };
 
+
+  public graph: {
+    ESPRESSO: IBrewGraphs,
+    FILTER: IBrewGraphs,
+  };
+
   public wake_lock: boolean;
 
   public show_roasting_section: boolean;
@@ -79,13 +88,21 @@ export class Settings implements ISettings {
   public scale_id: string;
   public scale_type: ScaleType;
   public scale_log: boolean;
+
   public bluetooth_scale_stay_connected: boolean;
   public bluetooth_scale_tare_on_brew: boolean;
   public bluetooth_scale_tare_on_start_timer: boolean;
+  public bluetooth_scale_reset_timer_on_brew: boolean;
+  public bluetooth_scale_stop_timer_on_brew: boolean;
   public bluetooth_ignore_negative_values: boolean;
   public bluetooth_ignore_anomaly_values: boolean;
 
 
+  public pressure_id: string;
+  public pressure_type: PressureType;
+  public pressure_log: boolean;
+  public pressure_threshold_active: boolean;
+  public pressure_threshold_bar: number;
 
   public currency: string;
 
@@ -118,6 +135,15 @@ export class Settings implements ISettings {
         lower:-1
       }
     } as IBrewPageFilter;
+  }
+
+  public GET_BREW_GRAPHS(): IBrewGraphs {
+    return {
+      weight: true,
+      calc_flow: true,
+      realtime_flow: true,
+      pressure: true
+    } as IBrewGraphs;
   }
 
   constructor() {
@@ -170,6 +196,15 @@ export class Settings implements ISettings {
       OPEN: {} as IBeanPageSort,
       ARCHIVED: {} as IBeanPageSort
     };
+
+    this.graph = {
+      ESPRESSO: {} as IBrewGraphs,
+        FILTER: {} as IBrewGraphs,
+    };
+
+    this.graph.ESPRESSO = this.GET_BREW_GRAPHS();
+    this.graph.FILTER = this.GET_BREW_GRAPHS();
+    this.graph.FILTER.realtime_flow = false;
     this.brew_rating = 5;
     this.brew_rating_steps = 1;
 
@@ -195,10 +230,18 @@ export class Settings implements ISettings {
     this.bluetooth_scale_stay_connected = false;
     this.bluetooth_scale_tare_on_brew = true;
     this.bluetooth_scale_tare_on_start_timer = true;
+    this.bluetooth_scale_stop_timer_on_brew = true;
+    this.bluetooth_scale_reset_timer_on_brew = true;
     this.bluetooth_ignore_negative_values = false;
     this.bluetooth_ignore_anomaly_values = false;
 
     this.scale_log = false;
+
+    this.pressure_id = '';
+    this.pressure_type = null;
+    this.pressure_log = false;
+    this.pressure_threshold_active = false;
+    this.pressure_threshold_bar = 0.5;
 
     this.currency = 'EUR';
 

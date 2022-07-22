@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ModalController} from '@ionic/angular';
+import {UIHelper} from '../../../services/uiHelper';
 
 @Component({
   selector: 'app-brew-beverage-quantity-calculator',
@@ -15,7 +16,8 @@ export class BrewBeverageQuantityCalculatorComponent implements OnInit {
   @Input('vesselWeight') public vesselWeight: number = 0;
   public calculatedWeight: number = 0;
 
-  constructor(private readonly modalController: ModalController) {
+  constructor(private readonly modalController: ModalController,
+              private readonly uiHelper: UIHelper) {
 
   }
 
@@ -23,7 +25,11 @@ export class BrewBeverageQuantityCalculatorComponent implements OnInit {
   }
 
   public calculateWeight() {
-    this.calculatedWeight = this.totalWeight - this.vesselWeight
+    this.calculatedWeight = this.totalWeight - this.vesselWeight;
+    if (this.calculatedWeight && this.calculatedWeight > 0) {
+      this.calculatedWeight = this.uiHelper.toFixedIfNecessary(this.calculatedWeight,1);
+    }
+
   }
 
   public async setBrewBeverage() {

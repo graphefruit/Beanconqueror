@@ -1,9 +1,17 @@
 export type UUID = string;
 
+export interface IOSAdvertisingData {
+  kCBAdvDataLocalName?: string;
+  kCBAdvDataManufacturerData?: ArrayBuffer;
+  kCBAdvDataServiceUUIDs?: string[];
+  kCBAdvDataIsConnectable?: boolean;
+  kCBAdvDataServiceData?: { [k: string]: ArrayBuffer };
+}
+
 export interface LimitedPeripheralData {
   name: string;
   id: string;
-  advertising: number[];
+  advertising: ArrayBuffer | IOSAdvertisingData;
   rssi: number;
 }
 

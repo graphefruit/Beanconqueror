@@ -12,6 +12,7 @@ import {FileEntry} from '@ionic-native/file';
 import {UIHelper} from '../uiHelper';
 import {UIBrewStorage} from '../uiBrewStorage';
 import {UISettingsStorage} from '../uiSettingsStorage';
+import {UIAlert} from '../uiAlert';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,8 @@ export class IosPlatformService {
               private readonly platform: Platform,
               private readonly uiHelper: UIHelper,
               private readonly uiSettingsStorage: UISettingsStorage,
-              private readonly uiBrewStorage: UIBrewStorage) {
+              private readonly uiBrewStorage: UIBrewStorage,
+              private readonly uiAlert: UIAlert) {
 
     if (this.platform.is('cordova') && this.platform.is('ios')) {
       this.uiHelper.isBeanconqurorAppReady().then(() => {
@@ -80,6 +82,7 @@ export class IosPlatformService {
   }
   public async checkIOSBackup() {
     try {
+      const promise = new Promise(async(resolve, reject) => {
       if (this.platform.is('cordova') && this.platform.is('ios')) {
 
         this.uiLog.log('iOS-Platform - Check IOS Backup');
@@ -88,18 +91,34 @@ export class IosPlatformService {
         if (!hasData) {
           this.uiLog.log('iOS-Platform - Check IOS Backup - No data are stored yet inside the app, so we try to find a backup file - maybe its an iCloud installation');
           // If we don't got any data, we check now if there is a Beanconqueror.json saved.
-          this.uiFileHelper.getJSONFile('Beanconqueror.json').then((_json) => {
+          this.uiFileHelper.getJSONFile('Beanconqueror.json').then(async (_json) => {
+            await this.uiAlert.showLoadingSpinner();
             this.uiLog.log('iOS-Platform - We found an iCloud backup, try to import');
-            this.uiStorage.import(_json).then(() => {
+            this.uiStorage.import(_json).then(async () => {
               this.uiLog.log('iOS-Platform sucessfully imported iCloud Backup');
+              setTimeout(() => {
+                this.uiAlert.hideLoadingSpinner();
+              },150);
+              resolve(null);
             },() => {
               this.uiLog.error('iOS-Platform could not import iCloud Backup');
+              setTimeout(() => {
+                this.uiAlert.hideLoadingSpinner();
+              },150);
+              resolve(null);
             });
           }, () => {
             this.uiLog.log('iOS-Platform - Check IOS Backup - We couldnt retrieve any file');
+            resolve(null);
           });
+        } else {
+          resolve(null);
         }
+      } else {
+        resolve(null);
       }
+      });
+      return promise;
     }catch(ex) {
 
     }

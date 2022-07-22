@@ -50,6 +50,17 @@ export class UIHelper {
     });
   }
 
+  public static jsonToArray = function(json)
+  {
+    const str = JSON.stringify(json, null, 0);
+    const ret = new Uint8Array(str.length);
+    for (let i = 0; i < str.length; i++) {
+      ret[i] = str.charCodeAt(i);
+    }
+    return ret
+  };
+
+
   public static getUnixTimestamp(): number {
     return moment()
       .unix();

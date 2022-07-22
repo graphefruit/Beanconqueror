@@ -11,7 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Chart, registerables } from 'chart.js';
 /** Third party */
 import moment from 'moment';
-import { ScaleType } from 'src/classes/devices';
+import {PressureType, ScaleType} from 'src/classes/devices';
 import { Settings } from '../classes/settings/settings';
 import LINK_TRACKING from '../data/tracking/linkTracking';
 import STARTUP_TRACKING from '../data/tracking/startupTracking';
@@ -174,7 +174,6 @@ export class AppComponent implements AfterViewInit {
 
 
         try {
-
         // #285 - Add more device loggings
         this.uiLog.log(`Device-Model: ${this.device.model}`);
         this.uiLog.log(`Manufacturer: ${this.device.manufacturer}`);
@@ -234,7 +233,9 @@ export class AppComponent implements AfterViewInit {
         if (this.platform.is('cordova')) {
           // Just support deeplinks on devices.
           this.intentHandlerService.attachOnHandleOpenUrl();
+
         }
+
 
         // Before we update and show messages, we need atleast to set one default language.
         this._translate.setDefaultLang('en');
@@ -367,6 +368,12 @@ export class AppComponent implements AfterViewInit {
               }  else if (systemLanguage === 'es') {
                 settingLanguage = 'es';
               }
+              else if (systemLanguage === 'tr') {
+                settingLanguage = 'tr';
+              }
+              else if (systemLanguage === 'zh') {
+                settingLanguage = 'zh';
+              }
               else  {
                 settingLanguage = 'en';
               }
@@ -469,8 +476,14 @@ export class AppComponent implements AfterViewInit {
     await this.__checkAnalyticsInformationPage();
     await this.uiUpdate.checkUpdateScreen();
 
-    //#281 - Connect smartscale before checking the startup view
-    this.__connectSmartScale();
+    // #281 - Connect smartscale before checking the startup view
+    setTimeout(() =>
+    {
+      // Just connect after 5 seconds, to get some time, and maybe handle all the connection errors
+      this.__connectSmartScale();
+      this.__connectPressureDevice();
+    },5000);
+
 
     await this.__checkStartupView();
     this.__instanceAppRating();
@@ -489,6 +502,20 @@ export class AppComponent implements AfterViewInit {
         this.bleManager.autoConnectScale(scale_type, scale_id, true);
     } else {
       this.uiLog.log('Smartscale not connected, dont try to connect');
+    }
+
+  }
+
+
+  private __connectPressureDevice() {
+    const settings = this.uiSettingsStorage.getSettings();
+    const pressure_id: string = settings.pressure_id;
+    const pressure_type: PressureType = settings.pressure_type;
+    this.uiLog.log(`Connect pressure device? ${pressure_id}`);
+    if (pressure_id !== undefined && pressure_id !== '') {
+      this.bleManager.autoConnectPressureDevice(pressure_type, pressure_id, true);
+    } else {
+      this.uiLog.log('Pressure device not connected, dont try to connect');
     }
 
   }

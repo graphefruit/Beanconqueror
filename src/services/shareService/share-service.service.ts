@@ -7,7 +7,9 @@ import {Brew} from '../../classes/brew/brew';
 import {UIAnalytics} from '../uiAnalytics';
 import BREW_TRACKING from '../../data/tracking/brewTracking';
 import BEAN_TRACKING from '../../data/tracking/beanTracking';
-
+import JSURL from 'jsurl';
+import LZString from 'lz-string';
+import {UILog} from '../uiLog';
 @Injectable({
   providedIn: 'root'
 })
@@ -16,7 +18,8 @@ export class ShareService {
   constructor(private readonly socialShare: SocialSharing,
               private readonly translate: TranslateService,
               private readonly uiHelper: UIHelper,
-              private readonly uiAnalytics: UIAnalytics) {
+              private readonly uiAnalytics: UIAnalytics,
+              private readonly uiLog: UILog) {
 
   }
 
@@ -84,7 +87,27 @@ export class ShareService {
 
   public async shareBean(_bean: Bean) {
     try {
-      const beanMessage: string = this.generateBeanMessage(_bean);
+
+      const stringifyBean = JSURL.stringify(_bean);
+      const compressedBean = LZString.compressToEncodedURIComponent(stringifyBean);
+
+
+      const loops = Math.ceil(compressedBean.length / 400);
+
+      let jsonParams = '';
+      for (let i=0;i<loops;i++) {
+        if (jsonParams === '') {
+          jsonParams = 'shareUserBean'+ i + '=' + compressedBean.substr(0,400);
+        }
+        else {
+          jsonParams += '&shareUserBean'+ i + '=' + compressedBean.substr(i*400,400);
+        }
+      }
+
+
+
+      const beanMessage: string = 'https://beanconqueror.com?' + jsonParams;
+      this.uiLog.debug(beanMessage);
       this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.SHARE);
       await this.socialShare.share(beanMessage,null,null,null);
     }

@@ -1,7 +1,7 @@
 import {AlertController, ModalController, Platform} from '@ionic/angular';
 import BeanconquerorSettingsDummy from '../../assets/BeanconquerorTestData.json';
 import {Bean} from '../../classes/bean/bean';
-import {BluetoothScale} from './../../classes/devices/bluetoothDevice';
+import {BluetoothScale, SCALE_TIMER_COMMAND} from './../../classes/devices/bluetoothDevice';
 import {Brew} from '../../classes/brew/brew';
 import {BREW_VIEW_ENUM} from '../../enums/settings/brewView';
 import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
@@ -167,6 +167,54 @@ export class SettingsPage implements OnInit {
 
   }
 
+  public async findAndConnectPressureDevice(_retry: boolean = false) {
+    const hasLocationPermission: boolean = await this.bleManager.hasLocationPermission();
+    if (!hasLocationPermission) {
+      await this.uiAlert.showMessage('SCALE.REQUEST_PERMISSION.LOCATION', undefined, undefined, true);
+      await this.bleManager.requestLocationPermissions();
+    }
+
+    const hasBluetoothPermission: boolean = await this.bleManager.hasBluetoothPermission();
+    if (!hasBluetoothPermission) {
+      await this.uiAlert.showMessage('SCALE.REQUEST_PERMISSION.BLUETOOTH', undefined, undefined, true);
+      await this.bleManager.requestBluetoothPermissions();
+    }
+
+
+    const bleEnabled: boolean = await this.bleManager.isBleEnabled();
+    if (bleEnabled === false) {
+      await this.uiAlert.showMessage('SCALE.BLUETOOTH_NOT_ENABLED', undefined, undefined, true);
+      return;
+    }
+
+
+    await this.uiAlert.showLoadingSpinner();
+    this.uiAlert.setLoadingSpinnerMessage('SCALE.BLUETOOTH_SCAN_RUNNING', true);
+    const pressureDevice = await this.bleManager.tryToFindPressureDevice();
+    if (pressureDevice) {
+      await this.uiAlert.hideLoadingSpinner();
+      try {
+        // We don't need to retry for iOS, because we just did scan before.
+
+        // NEVER!!! Await here, else the bluetooth logic will get broken.
+        this.bleManager.autoConnectPressureDevice(pressureDevice.type, pressureDevice.id, false);
+      } catch(ex) {
+
+      }
+
+      this.settings.pressure_id = pressureDevice.id;
+      this.settings.pressure_type = pressureDevice.type;
+
+      //this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.SCALE.CATEGORY,scale.type);
+
+      await this.saveSettings();
+
+    } else {
+      await this.uiAlert.hideLoadingSpinner();
+      this.uiAlert.showMessage('SCALE.CONNECTION_NOT_ESTABLISHED', undefined, undefined, true);
+    }
+  }
+
   public async findAndConnectScale(_retry: boolean = false) {
     const hasLocationPermission: boolean = await this.bleManager.hasLocationPermission();
     if (!hasLocationPermission) {
@@ -192,7 +240,7 @@ export class SettingsPage implements OnInit {
     this.uiAlert.setLoadingSpinnerMessage('SCALE.BLUETOOTH_SCAN_RUNNING', true);
     const scale = await this.bleManager.tryToFindScale();
     if (scale) {
-      await this.uiAlert.hideLoadingSpinner();
+
       try {
         // We don't need to retry for iOS, because we just did scan before.
 
@@ -209,8 +257,24 @@ export class SettingsPage implements OnInit {
 
       await this.saveSettings();
 
-      const connectedScale = this.bleManager.getScale();
-      await connectedScale.setLed(true, true);
+      let skipLoop = 0;
+      for (let i=0;i<5;i++) {
+        await new Promise((resolve) => {
+          setTimeout(async () => {
+            const connectedScale = this.bleManager.getScale();
+            if(connectedScale !== null && connectedScale !== undefined) {
+              skipLoop = 1;
+              await connectedScale.setLed(true, true);
+            }
+            resolve(undefined);
+          }, 1000);
+        });
+        if (skipLoop === 1) {
+          break;
+        }
+
+      }
+      await this.uiAlert.hideLoadingSpinner();
 
     } else {
       await this.uiAlert.hideLoadingSpinner();
@@ -234,6 +298,29 @@ export class SettingsPage implements OnInit {
     }
   }
 
+
+  public async disconnectPressureDevice() {
+    this.eventQueue.dispatch(new AppEvent(AppEventType.BLUETOOTH_PRESSURE_DEVICE_DISCONNECT, undefined));
+    let disconnected: boolean = true;
+
+    //if scale is connected, we try to disconnect, if scale is not connected, we just forget scale :)
+    if (this.settings.pressure_id !== '' && this.bleManager.getPressureDevice()) {
+      disconnected = await this.bleManager.disconnectPressureDevice(this.settings.pressure_id);
+    }
+
+    if (disconnected) {
+      this.settings.pressure_id = '';
+      this.settings.pressure_type = null;
+      await this.saveSettings();
+    }
+  }
+
+
+
+
+  public async retryConnectPressureDevice() {
+    await this.findAndConnectPressureDevice(true);
+  }
   public async retryConnectScale() {
     await this.findAndConnectScale(true);
   }
@@ -241,6 +328,12 @@ export class SettingsPage implements OnInit {
   public isScaleConnected(): boolean {
     return this.bleManager.getScale() !== null;
   }
+
+  public isPressureDeviceConnected(): boolean {
+    return this.bleManager.pressureDevice !== null;
+  }
+
+
 
 
   public async checkWaterSection() {
@@ -301,8 +394,10 @@ export class SettingsPage implements OnInit {
   }
 
   public async changeBrewRating() {
-    this.settings.resetFilter();
+
+    // #379 - First save then reset filter ;)
     await this.saveSettings();
+    this.settings.resetFilter();
   }
 
   public async saveSettings() {
