@@ -35,8 +35,10 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
   private _dripTimerVisible: boolean;
 
-  private startedTimestamp: number = -1;
-
+  private startingDay;
+  private startedTimer;
+  private pausedTimer;
+  private startedOffset;
   get dripTimerVisible(): boolean {
     return this._dripTimerVisible;
   }
@@ -90,15 +92,6 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     return this.timer.hasFinished;
   }
 
-  public setTime(seconds: number): void {
-    this.timer.seconds = seconds;
-    this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
-    this.displayingTime = moment(this.displayingTime)
-      .startOf('day')
-      .add('seconds', this.timer.seconds)
-      .toISOString();
-  }
-
   public initTimer(): void {
     // tslint:disable-next-line
     this.timer = {
@@ -106,6 +99,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
       hasStarted: false,
       hasFinished: false,
       seconds: 0,
+      milliseconds: 0,
     } as ITimer;
     this.showBloomTimer = this.bloomTimerVisible;
     this.showDripTimer = this.dripTimerVisible;
@@ -118,11 +112,21 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   }
 
   public startTimer(_resumed: boolean = false): void {
-    this.startedTimestamp = Math.floor(Date.now() / 1000);
-
+    if (_resumed === false) {
+      const startingDate = new Date();
+      this.startingDay = moment(startingDate).startOf('day');
+      this.startedTimer = moment(startingDate);
+      this.startedOffset = this.startedTimer.diff(this.startingDay);
+    } else {
+      const restartTimer = moment(new Date());
+      console.log(this.startedOffset);
+      console.log(restartTimer.diff(this.pausedTimer));
+      this.startedOffset += restartTimer.diff(this.pausedTimer);
+    }
     this.timer.hasStarted = true;
     this.timer.runTimer = true;
     this.timerTick();
+    this.millisecondTick();
     if (_resumed === false) {
       this.timerStarted.emit();
     }
@@ -135,6 +139,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   }
 
   public pauseTimer(): void {
+    this.pausedTimer = moment(new Date());
     this.timerPaused.emit();
     this.timer.runTimer = false;
     this.timerPaused.emit();
@@ -156,27 +161,47 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     this.timerResumed.emit();
   }
 
+  public millisecondTick(): void {
+    setTimeout(() => {
+      if (!this.timer.runTimer) {
+        return;
+      }
+      const milliSecondTimer = moment(new Date()).subtract(this.startedOffset);
+
+      this.timer.milliseconds = milliSecondTimer.milliseconds();
+
+      this.displayingTime = moment(this.displayingTime)
+        .startOf('day')
+        .add('seconds', this.timer.seconds)
+        .add('milliseconds', this.timer.milliseconds)
+        .toISOString();
+      this.millisecondTick();
+    }, 10);
+  }
   public timerTick(): void {
     setTimeout(() => {
       if (!this.timer.runTimer) {
         return;
       }
-      const currentTickTimestamp: number = Math.floor(Date.now() / 1000);
-      const delta: number = currentTickTimestamp - this.startedTimestamp;
 
-      this.timer.seconds += delta;
-      this.startedTimestamp = currentTickTimestamp;
+      const actualDate = new Date();
 
+      const actualTimerTick = moment(actualDate).subtract(this.startedOffset);
+
+      const passedSeconds = actualTimerTick.diff(this.startingDay, 'seconds');
+      this.timer.seconds = passedSeconds;
       this.timer.displayTime = this.getSecondsAsDigitalClock(
         this.timer.seconds
       );
       this.displayingTime = moment(this.displayingTime)
         .startOf('day')
         .add('seconds', this.timer.seconds)
+        .add('milliseconds', this.timer.milliseconds)
         .toISOString();
+
       this.timerTick();
       this.changeEvent();
-    }, 1000);
+    }, 10);
   }
 
   public getSeconds(): number {
@@ -198,6 +223,14 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
   public changeEvent() {
     this.timerTicked.emit();
+  }
+  public setTime(seconds: number): void {
+    this.timer.seconds = seconds;
+    this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
+    this.displayingTime = moment(this.displayingTime)
+      .startOf('day')
+      .add('seconds', this.timer.seconds)
+      .toISOString();
   }
 
   public getSecondsAsDigitalClock(inputSeconds: number): string {
