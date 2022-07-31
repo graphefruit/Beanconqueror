@@ -24,7 +24,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { Chart, registerables } from 'chart.js';
 /** Third party */
 import moment from 'moment';
-import { PressureType, ScaleType } from 'src/classes/devices';
 import { Settings } from '../classes/settings/settings';
 import LINK_TRACKING from '../data/tracking/linkTracking';
 import STARTUP_TRACKING from '../data/tracking/startupTracking';
@@ -33,7 +32,7 @@ import { environment } from '../environments/environment';
 import { AnalyticsPopoverComponent } from '../popover/analytics-popover/analytics-popover.component';
 import { WelcomePopoverComponent } from '../popover/welcome-popover/welcome-popover.component';
 import { AndroidPlatformService } from '../services/androidPlatform/android-platform.service';
-import { BleManagerService } from '../services/bleManager/ble-manager.service';
+
 import { CleanupService } from '../services/cleanupService/cleanup.service';
 import { IntentHandlerService } from '../services/intentHandler/intent-handler.service';
 import { IosPlatformService } from '../services/iosPlatform/ios-platform.service';
@@ -62,6 +61,10 @@ import 'chartjs-adapter-luxon';
 import ChartStreaming from 'chartjs-plugin-streaming';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import annotationPlugin from 'chartjs-plugin-annotation';
+
+import { PressureType, ScaleType } from '@graphefruit/coffee-bluetooth-devices';
+import { CoffeeBluetoothDevicesService } from '@graphefruit/coffee-bluetooth-devices';
+
 declare var AppRate;
 declare var window;
 @Component({
@@ -222,12 +225,13 @@ export class AppComponent implements AfterViewInit {
     private readonly uiBeanHelper: UIBeanHelper,
     private readonly uiMillHelper: UIMillHelper,
     private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly bleManager: BleManagerService,
+    private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly cleanupService: CleanupService,
     private readonly device: Device,
     private readonly appVersion: AppVersion,
     private readonly storage: Storage
   ) {
+    console.log(1);
     // Dont remove androidPlatformService, we need to initialize it via constructor
     try {
       // Touch DB Factory to make sure, it is properly initialized even on iOS 14.6
@@ -237,11 +241,15 @@ export class AppComponent implements AfterViewInit {
       // Touch DB Factory to make sure, it is properly initialized even on iOS 14.6
       const db = window.sqlitePlugin;
     } catch (ex) {}
+    console.log(2);
   }
 
-  public ngOnInit() {}
+  public ngOnInit() {
+    console.log(3);
+  }
 
   public ngAfterViewInit(): void {
+    console.log(4);
     this.uiLog.log('Platform ready, init app');
 
     Chart.register(...registerables);
@@ -256,6 +264,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   private __appReady(): void {
+    this.uiLog.log(`App Ready, wait for Platform ready`);
     this.platform.ready().then(async () => {
       try {
         // #285 - Add more device loggings
