@@ -1,15 +1,15 @@
 /**
  * Created by lars on 10/18/2017.
  */
-import {BREW_QUANTITY_TYPES_ENUM} from '../../enums/brews/brewQuantityTypes';
-import {IConfig} from '../objectConfig/iObjectConfig';
-import {ICupping} from '../cupping/iCupping';
-import {IBrewCoordinates} from './iBrewCoordinates';
-import {IFlavor} from '../flavor/iFlavor';
-import {BrewFlow} from '../../classes/brew/brewFlow';
+import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
+import { IConfig } from '../objectConfig/iObjectConfig';
+import { ICupping } from '../cupping/iCupping';
+import { IBrewCoordinates } from './iBrewCoordinates';
+import { IFlavor } from '../flavor/iFlavor';
+import { BrewFlow } from '../../classes/brew/brewFlow';
 
 export interface IBrew {
- // Properties
+  // Properties
   /**
    * Inherits the grind size set on your hand/electric grinder
    */
@@ -52,10 +52,14 @@ export interface IBrew {
    * Inherits the temperature surfing time for the coffee-
    */
   brew_temperature_time: number;
+
+  brew_temperature_time_milliseconds: number;
   /**
    * Inherits the brewing time for the coffee, shot-time, infusion-time etc.
    */
   brew_time: number;
+
+  brew_time_milliseconds: number;
   /**
    * Inherits the output (user specific in g or ml)
    */
@@ -89,10 +93,14 @@ export interface IBrew {
    */
   coffee_first_drip_time: number;
 
+  coffee_first_drip_time_milliseconds: number;
+
   /**
    * Inherits the blooming / pid time
    */
   coffee_blooming_time: number;
+
+  coffee_blooming_time_milliseconds: number;
   /**
    * Image attachments
    */
@@ -145,5 +153,4 @@ export interface IBrew {
 
   // Functions
   formateDate(): string;
-
 }

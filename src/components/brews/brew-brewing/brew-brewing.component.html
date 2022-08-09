@@ -268,9 +268,8 @@
                       data.getPreparation().use_custom_parameters)"
             lines="inset">
     <timer #brewTemperatureTime
-           (timeChanged)="temperatureTimeChanged($event)"
+           (timerTicked)="temperatureTimeChanged($event)"
            label="{{'BREW_DATA_TEMPERATURE_TIME' | translate}}" timeInSeconds="0"
-
     ></timer>
   </ion-item>
 
@@ -368,11 +367,15 @@
                       data.getPreparation().brew_order.while.coffee_blooming_time,
                       data.getPreparation().use_custom_parameters)"
             lines="inset">
-    <ion-label position="stacked">{{"BREW_DATA_COFFEE_BLOOMING_TIME" | translate}}</ion-label>
-    <ion-input [(ngModel)]="data.coffee_blooming_time" inputmode="decimal"
+    <timer #brewCoffeeBloomingTime hide-control-buttons="true"
+           (timerTicked)="coffeeBloomingTimeChanged($event)"
+           label="{{'BREW_DATA_COFFEE_BLOOMING_TIME' | translate}}"
+    ></timer>
+    <!--<ion-input [(ngModel)]="data.coffee_blooming_time" inputmode="decimal"
                placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_COFFEE_BLOOMING_TIME' | translate}}" prevent-characters
                remove-empty-number
-               type="text"></ion-input>
+               type="text"></ion-input>-->
+
   </ion-item>
   <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_first_drip_time,
                       data.getPreparation().manage_parameters.coffee_first_drip_time,
@@ -382,11 +385,14 @@
                       data.getPreparation().brew_order.while.coffee_first_drip_time,
                       data.getPreparation().use_custom_parameters)"
             lines="inset">
-    <ion-label position="stacked">{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}</ion-label>
-    <ion-input [(ngModel)]="data.coffee_first_drip_time" inputmode="decimal"
+    <timer #brewFirstDripTime hide-control-buttons="true"
+           (timerTicked)="coffeeFirstDripTimeChanged($event)"
+           label="{{'BREW_DATA_COFFEE_FIRST_DRIP_TIME' | translate}}"
+    ></timer>
+    <!--<ion-input [(ngModel)]="data.coffee_first_drip_time" inputmode="decimal"
                placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_COFFEE_FIRST_DRIP_TIME' | translate}}" prevent-characters
                remove-empty-number
-               type="text"></ion-input>
+               type="text"></ion-input>-->
   </ion-item>
   <div class="last-item"></div>
 </ion-card>

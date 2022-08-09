@@ -231,7 +231,6 @@ export class AppComponent implements AfterViewInit {
     private readonly appVersion: AppVersion,
     private readonly storage: Storage
   ) {
-    console.log(1);
     // Dont remove androidPlatformService, we need to initialize it via constructor
     try {
       // Touch DB Factory to make sure, it is properly initialized even on iOS 14.6
@@ -241,15 +240,11 @@ export class AppComponent implements AfterViewInit {
       // Touch DB Factory to make sure, it is properly initialized even on iOS 14.6
       const db = window.sqlitePlugin;
     } catch (ex) {}
-    console.log(2);
   }
 
-  public ngOnInit() {
-    console.log(3);
-  }
+  public ngOnInit() {}
 
   public ngAfterViewInit(): void {
-    console.log(4);
     this.uiLog.log('Platform ready, init app');
 
     Chart.register(...registerables);
