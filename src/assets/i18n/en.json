@@ -1196,5 +1196,8 @@
   "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE": "Pressure device",
   "PRESSURE_LOG": "Activate logfiles for pressure device",
   "PRESSURE_THRESHOLD_ACTIVE": "Start timer with predefined pressure",
-  "PRESSURE_THRESHOLD_BAR": "Threshold pressure"
+  "PRESSURE_THRESHOLD_BAR": "Threshold pressure",
+  "TIMER_MILLISECONDS": "MS",
+  "PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS": "Milliseconds?",
+  "PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS_DESCRIPTION": "Use milliseconds to even more accurately analyze your brews"
 }

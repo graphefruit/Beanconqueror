@@ -68,6 +68,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   @ViewChild('timer', { static: false }) public timer: BrewTimerComponent;
   @ViewChild('brewTemperatureTime', { static: false })
   public brewTemperatureTime: TimerComponent;
+  @ViewChild('brewCoffeeBloomingTime', { static: false })
+  public brewCoffeeBloomingTime: TimerComponent;
+  @ViewChild('brewFirstDripTime', { static: false })
+  public brewFirstDripTime: TimerComponent;
   @ViewChild('brewStars', { read: NgxStarsComponent, static: false })
   public brewStars: NgxStarsComponent;
 
@@ -189,13 +193,37 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         }
       } else {
         if (this.timer) {
-          this.timer.setTime(this.data.brew_time);
+          this.timer.setTime(
+            this.data.brew_time,
+            this.data.brew_time_milliseconds
+          );
         }
         if (
           this.brewTemperatureTime &&
           this.settings.manage_parameters.brew_temperature_time
         ) {
-          this.brewTemperatureTime.setTime(this.data.brew_temperature_time);
+          this.brewTemperatureTime.setTime(
+            this.data.brew_temperature_time,
+            this.data.brew_temperature_time_milliseconds
+          );
+        }
+        if (
+          this.brewCoffeeBloomingTime &&
+          this.settings.manage_parameters.coffee_blooming_time
+        ) {
+          this.brewCoffeeBloomingTime.setTime(
+            this.data.coffee_blooming_time,
+            this.data.coffee_blooming_time_milliseconds
+          );
+        }
+        if (
+          this.brewFirstDripTime &&
+          this.settings.manage_parameters.coffee_first_drip_time
+        ) {
+          this.brewFirstDripTime.setTime(
+            this.data.coffee_first_drip_time,
+            this.data.coffee_first_drip_time_milliseconds
+          );
         }
         if (this.data.flow_profile !== '') {
           // We had a flow profile, so read data now.
@@ -902,15 +930,34 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public setCoffeeDripTime($event): void {
     this.data.coffee_first_drip_time = this.getTime();
+    if (this.settings.brew_milliseconds) {
+      this.data.coffee_first_drip_time_milliseconds =
+        this.timer.getMilliseconds();
+    }
+    this.brewFirstDripTime.setTime(
+      this.data.coffee_first_drip_time,
+      this.data.coffee_first_drip_time_milliseconds
+    );
   }
 
   public setCoffeeBloomingTime($event): void {
     this.data.coffee_blooming_time = this.getTime();
+    if (this.settings.brew_milliseconds) {
+      this.data.coffee_blooming_time_milliseconds =
+        this.timer.getMilliseconds();
+    }
+    this.brewCoffeeBloomingTime.setTime(
+      this.data.coffee_blooming_time,
+      this.data.coffee_blooming_time_milliseconds
+    );
   }
 
   public brewTimeTicked(_event): void {
     if (this.timer) {
       this.data.brew_time = this.timer.getSeconds();
+      if (this.settings.brew_milliseconds) {
+        this.data.brew_time_milliseconds = this.timer.getMilliseconds();
+      }
     } else {
       this.data.brew_time = 0;
     }
@@ -1114,8 +1161,38 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public temperatureTimeChanged(_event): void {
     if (this.brewTemperatureTime) {
       this.data.brew_temperature_time = this.brewTemperatureTime.getSeconds();
+      if (this.settings.brew_milliseconds) {
+        this.data.brew_temperature_time_milliseconds =
+          this.brewTemperatureTime.getMilliseconds();
+      }
     } else {
       this.data.brew_temperature_time = 0;
+      this.data.brew_temperature_time_milliseconds = 0;
+    }
+  }
+
+  public coffeeBloomingTimeChanged(_event): void {
+    if (this.brewTemperatureTime) {
+      this.data.coffee_blooming_time = this.brewCoffeeBloomingTime.getSeconds();
+      if (this.settings.brew_milliseconds) {
+        this.data.coffee_blooming_time_milliseconds =
+          this.brewCoffeeBloomingTime.getMilliseconds();
+      }
+    } else {
+      this.data.coffee_blooming_time = 0;
+      this.data.coffee_blooming_time_milliseconds = 0;
+    }
+  }
+  public coffeeFirstDripTimeChanged(_event): void {
+    if (this.brewTemperatureTime) {
+      this.data.coffee_first_drip_time = this.brewFirstDripTime.getSeconds();
+      if (this.settings.brew_milliseconds) {
+        this.data.coffee_first_drip_time_milliseconds =
+          this.brewFirstDripTime.getMilliseconds();
+      }
+    } else {
+      this.data.coffee_first_drip_time = 0;
+      this.data.coffee_first_drip_time_milliseconds = 0;
     }
   }
 
@@ -1243,31 +1320,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.checkChanges();
     } else {
       // Pah. Shit here.
-    }
-
-    if (
-      this.data.getPreparation().style_type ===
-        PREPARATION_STYLE_TYPE.ESPRESSO &&
-      _weight > 0
-    ) {
-      // If the drip timer is showing, we can set the first drip and not doing a reference to the normal weight.
-      if (
-        this.timer.showDripTimer === true &&
-        this.data.coffee_first_drip_time <= 0
-      ) {
-        // First drip is incoming
-        if (
-          this.uiBrewHelper.fieldVisible(
-            this.settings.manage_parameters.coffee_first_drip_time,
-            this.data.getPreparation().manage_parameters.coffee_first_drip_time,
-            this.data.getPreparation().use_custom_parameters
-          )
-        ) {
-          // The first time we set the weight, we have one sec delay, because of this do it -1 second
-          this.data.coffee_first_drip_time = this.getTime() - 1;
-          this.checkChanges();
-        }
-      }
     }
   }
 
@@ -1648,6 +1700,35 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     /* Realtime flow End **/
 
     if (
+      this.data.getPreparation().style_type ===
+        PREPARATION_STYLE_TYPE.ESPRESSO &&
+      flowObj.weight > 0
+    ) {
+      // If the drip timer is showing, we can set the first drip and not doing a reference to the normal weight.
+      if (
+        this.timer.showDripTimer === true &&
+        this.data.coffee_first_drip_time <= 0
+      ) {
+        // First drip is incoming
+        if (
+          this.uiBrewHelper.fieldVisible(
+            this.settings.manage_parameters.coffee_first_drip_time,
+            this.data.getPreparation().manage_parameters.coffee_first_drip_time,
+            this.data.getPreparation().use_custom_parameters
+          )
+        ) {
+          // The first time we set the weight, we have one sec delay, because of this do it -1 second
+          this.data.coffee_first_drip_time = this.timer.getSeconds();
+          if (this.settings.brew_milliseconds) {
+            this.data.coffee_first_drip_time_milliseconds =
+              this.timer.getMilliseconds();
+          }
+          this.checkChanges();
+        }
+      }
+    }
+
+    if (
       this.settings.bluetooth_ignore_anomaly_values === false &&
       this.settings.bluetooth_ignore_negative_values === false
     ) {
@@ -1834,7 +1915,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         _template === true
       ) {
         this.data.brew_temperature_time = brew.brew_temperature_time;
-        this.brewTemperatureTime.setTime(this.data.brew_temperature_time);
+        if (this.settings.brew_milliseconds) {
+          this.data.brew_temperature_time_milliseconds =
+            brew.brew_temperature_time_milliseconds;
+        }
+        setTimeout(() => {
+          this.brewTemperatureTime.setTime(
+            this.data.brew_temperature_time,
+            this.data.brew_temperature_time_milliseconds
+          );
+        }, 250);
       }
     }
 
@@ -1844,7 +1934,15 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         _template === true
       ) {
         this.data.brew_time = brew.brew_time;
-        this.timer.setTime(this.data.brew_time);
+        if (this.settings.brew_milliseconds) {
+          this.data.brew_time_milliseconds = brew.brew_time_milliseconds;
+        }
+        setTimeout(() => {
+          this.timer.setTime(
+            this.data.brew_time,
+            this.data.brew_time_milliseconds
+          );
+        }, 250);
       }
     }
 
@@ -1872,12 +1970,38 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       _template === true
     ) {
       this.data.coffee_first_drip_time = brew.coffee_first_drip_time;
+      if (this.settings.brew_milliseconds) {
+        this.data.coffee_first_drip_time_milliseconds =
+          brew.coffee_first_drip_time_milliseconds;
+      }
+
+      setTimeout(() => {
+        if (this.brewFirstDripTime) {
+          this.brewFirstDripTime.setTime(
+            this.data.coffee_first_drip_time,
+            this.data.coffee_first_drip_time_milliseconds
+          );
+        }
+      }, 250);
     }
     if (
       checkData.default_last_coffee_parameters.coffee_blooming_time ||
       _template === true
     ) {
       this.data.coffee_blooming_time = brew.coffee_blooming_time;
+      if (this.settings.brew_milliseconds) {
+        this.data.coffee_blooming_time_milliseconds =
+          brew.coffee_blooming_time_milliseconds;
+      }
+
+      setTimeout(() => {
+        if (this.brewCoffeeBloomingTime) {
+          this.brewCoffeeBloomingTime.setTime(
+            this.data.coffee_blooming_time,
+            this.data.coffee_blooming_time_milliseconds
+          );
+        }
+      }, 250);
     }
 
     if (checkData.default_last_coffee_parameters.rating || _template === true) {

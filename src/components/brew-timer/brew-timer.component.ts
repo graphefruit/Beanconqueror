@@ -13,6 +13,8 @@ import { DatetimePopoverComponent } from '../../popover/datetime-popover/datetim
 import { ModalController } from '@ionic/angular';
 
 import { CoffeeBluetoothDevicesService } from '@graphefruit/coffee-bluetooth-devices';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { Settings } from '../../classes/settings/settings';
 
 @Component({
   selector: 'brew-timer',
@@ -64,11 +66,14 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   }
 
   public timer: ITimer;
-
+  public settings: Settings;
   constructor(
     private readonly modalCtrl: ModalController,
-    private readonly bleManager: CoffeeBluetoothDevicesService
-  ) {}
+    private readonly bleManager: CoffeeBluetoothDevicesService,
+    private readonly uiSettingsStorage: UISettingsStorage
+  ) {
+    this.settings = this.uiSettingsStorage.getSettings();
+  }
 
   public smartScaleConnected() {
     try {
@@ -104,10 +109,10 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     this.showBloomTimer = this.bloomTimerVisible;
     this.showDripTimer = this.dripTimerVisible;
 
-    this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
     this.displayingTime = moment(this.displayingTime)
       .startOf('day')
       .add('seconds', this.timer.seconds)
+      .add('milliseconds', this.timer.milliseconds)
       .toISOString();
   }
 
@@ -119,14 +124,16 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
       this.startedOffset = this.startedTimer.diff(this.startingDay);
     } else {
       const restartTimer = moment(new Date());
-      console.log(this.startedOffset);
-      console.log(restartTimer.diff(this.pausedTimer));
+
       this.startedOffset += restartTimer.diff(this.pausedTimer);
     }
     this.timer.hasStarted = true;
     this.timer.runTimer = true;
     this.timerTick();
-    this.millisecondTick();
+    if (this.settings?.brew_milliseconds) {
+      this.millisecondTick();
+    }
+
     if (_resumed === false) {
       this.timerStarted.emit();
     }
@@ -190,9 +197,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
       const passedSeconds = actualTimerTick.diff(this.startingDay, 'seconds');
       this.timer.seconds = passedSeconds;
-      this.timer.displayTime = this.getSecondsAsDigitalClock(
-        this.timer.seconds
-      );
+
       this.displayingTime = moment(this.displayingTime)
         .startOf('day')
         .add('seconds', this.timer.seconds)
@@ -206,6 +211,9 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
   public getSeconds(): number {
     return this.timer.seconds;
+  }
+  public getMilliseconds(): number {
+    return this.timer.milliseconds;
   }
 
   public reset() {
@@ -224,12 +232,15 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   public changeEvent() {
     this.timerTicked.emit();
   }
-  public setTime(seconds: number): void {
+  public setTime(seconds: number, milliseconds: number = 0): void {
     this.timer.seconds = seconds;
-    this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
+    if (milliseconds !== 0) {
+      this.timer.milliseconds = milliseconds;
+    }
     this.displayingTime = moment(this.displayingTime)
       .startOf('day')
       .add('seconds', this.timer.seconds)
+      .add('milliseconds', this.timer.milliseconds)
       .toISOString();
   }
 
@@ -282,6 +293,9 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
           )
         )
         .asSeconds();
+      this.timer.milliseconds = moment(this.displayingTime)
+        .startOf('day')
+        .milliseconds();
       this.changeEvent();
     }
   }

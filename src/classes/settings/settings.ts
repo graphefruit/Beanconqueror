@@ -33,6 +33,7 @@ export class Settings implements ISettings {
   public language: string;
   public track_brew_coordinates: boolean;
   public fast_brew_repeat: boolean;
+  public brew_milliseconds: boolean;
   public image_quality: number;
   public brew_rating: number;
   public brew_rating_steps: number;
@@ -153,6 +154,7 @@ export class Settings implements ISettings {
 
     this.track_brew_coordinates = false;
     this.fast_brew_repeat = false;
+    this.brew_milliseconds = false;
     this.show_archived_beans = true;
     this.show_archived_brews = true;
     this.show_archived_mills = true;

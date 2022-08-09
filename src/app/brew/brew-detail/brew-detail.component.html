@@ -221,7 +221,7 @@
                       data.getPreparation().use_custom_parameters)">
       <ion-label>
         <h2>{{'BREW_DATA_TEMPERATURE_TIME' | translate}} / {{'BREW_DATA_SURF_TIME' | translate}}:</h2>
-        <h3>{{data.brew_temperature_time}}</h3>
+        <h3>{{formatSeconds(data.brew_temperature_time,data.brew_temperature_time_milliseconds)}}</h3>
       </ion-label>
     </ion-item>
     <ion-item lines="none" *ngIf="data.flow_profile !== ''"
@@ -303,7 +303,7 @@
                       data.getPreparation().use_custom_parameters)">
       <ion-label>
         <h2>{{"BREW_DATA_COFFEE_BLOOMING_TIME" | translate}}:</h2>
-        <h3>{{data.coffee_blooming_time}}</h3>
+        <h3>{{formatSeconds(data.coffee_blooming_time,data.coffee_blooming_time_milliseconds)}}</h3>
       </ion-label>
     </ion-item>
     <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_first_drip_time,
@@ -315,7 +315,7 @@
                       data.getPreparation().use_custom_parameters)">
       <ion-label>
         <h2>{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}:</h2>
-        <h3>{{data.coffee_first_drip_time}}</h3>
+        <h3>{{formatSeconds(data.coffee_first_drip_time,data.coffee_first_drip_time_milliseconds)}}</h3>
       </ion-label>
     </ion-item>
     <div class="last-item"></div>

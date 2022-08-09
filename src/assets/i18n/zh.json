@@ -1189,5 +1189,14 @@
   "BREW_FLOW_WEIGHT_REALTIME": "Flow (Realtime)",
   "SMART_SCALE_STOP_TIMER_ON_BREW": "Stop scale timer on new brew",
   "SMART_SCALE_RESET_TIMER_ON_BREW": "Reset scale timer on new brew",
-  "BREW_PRESSURE_FLOW": "Pressure"
+  "BREW_PRESSURE_FLOW": "Pressure",
+  "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_SHOW_GRAPHS_FILTER": "Show graphs for filter",
+  "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_SHOW_GRAPHS_ESPRESSO": "Show graphs for espresso",
+  "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE": "Pressure device",
+  "PRESSURE_LOG": "Activate logfiles for pressure device",
+  "PRESSURE_THRESHOLD_ACTIVE": "Start timer with predefined pressure",
+  "PRESSURE_THRESHOLD_BAR": "Threshold pressure",
+  "TIMER_MILLISECONDS": "MS",
+  "PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS": "Milliseconds?",
+  "PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS_DESCRIPTION": "Use milliseconds to even more accurately analyze your brews"
 }

@@ -1196,5 +1196,8 @@
   "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE": "Druck Geräte",
   "PRESSURE_LOG": "Logfiles für Druck aktivieren",
   "PRESSURE_THRESHOLD_ACTIVE": "Zeit starten ab bestimmten Druck?",
-  "PRESSURE_THRESHOLD_BAR": "Schwellenwert Druck"
+  "PRESSURE_THRESHOLD_BAR": "Schwellenwert Druck",
+  "TIMER_MILLISECONDS": "MS",
+  "PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS": "Millisekunden?",
+  "PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS_DESCRIPTION": "Verwende Millisekunden um noch akkurater deine Brühungen zu Analysieren"
 }

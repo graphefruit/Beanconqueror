@@ -1,30 +1,30 @@
 /** Interfaces */
-import {IBean} from '../../interfaces/bean/iBean';
-import {IBrew} from '../../interfaces/brew/iBrew';
-import {IPreparation} from '../../interfaces/preparation/iPreparation';
+import { IBean } from '../../interfaces/bean/iBean';
+import { IBrew } from '../../interfaces/brew/iBrew';
+import { IPreparation } from '../../interfaces/preparation/iPreparation';
 /** Classes */
 /** Third party */
 import moment from 'moment';
-import {BREW_QUANTITY_TYPES_ENUM} from '../../enums/brews/brewQuantityTypes';
-import {IMill} from '../../interfaces/mill/iMill';
+import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
+import { IMill } from '../../interfaces/mill/iMill';
 /** Services */
-import {UIBeanStorage} from '../../services/uiBeanStorage';
-import {UIMillStorage} from '../../services/uiMillStorage';
-import {UIPreparationStorage} from '../../services/uiPreparationStorage';
-import {Bean} from '../bean/bean';
-import {Mill} from '../mill/mill';
-import {Config} from '../objectConfig/objectConfig';
-import {Preparation} from '../preparation/preparation';
-import {ICupping} from '../../interfaces/cupping/iCupping';
-import {IBrewCoordinates} from '../../interfaces/brew/iBrewCoordinates';
-import {PREPARATION_STYLE_TYPE} from '../../enums/preparations/preparationStyleTypes';
-import {PreparationTool} from '../preparation/preparationTool';
-import {IFlavor} from '../../interfaces/flavor/iFlavor';
-import {UIWaterStorage} from '../../services/uiWaterStorage';
+import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { UIMillStorage } from '../../services/uiMillStorage';
+import { UIPreparationStorage } from '../../services/uiPreparationStorage';
+import { Bean } from '../bean/bean';
+import { Mill } from '../mill/mill';
+import { Config } from '../objectConfig/objectConfig';
+import { Preparation } from '../preparation/preparation';
+import { ICupping } from '../../interfaces/cupping/iCupping';
+import { IBrewCoordinates } from '../../interfaces/brew/iBrewCoordinates';
+import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
+import { PreparationTool } from '../preparation/preparationTool';
+import { IFlavor } from '../../interfaces/flavor/iFlavor';
+import { UIWaterStorage } from '../../services/uiWaterStorage';
 
-import {IWater} from '../../interfaces/water/iWater';
-import {Water} from '../water/water';
-
+import { IWater } from '../../interfaces/water/iWater';
+import { Water } from '../water/water';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
 
 export class Brew implements IBrew {
   // tslint:disable-next-line
@@ -48,8 +48,12 @@ export class Brew implements IBrew {
   public brew_temperature: number;
   // tslint:disable-next-line
   public brew_temperature_time: number;
+
+  public brew_temperature_time_milliseconds: number;
+
   // tslint:disable-next-line
   public brew_time: number;
+  public brew_time_milliseconds: number;
   // tslint:disable-next-line
   public brew_quantity: number;
   // tslint:disable-next-line
@@ -62,8 +66,10 @@ export class Brew implements IBrew {
   public coffee_concentration: string;
   // tslint:disable-next-line
   public coffee_first_drip_time: number;
+  public coffee_first_drip_time_milliseconds: number;
   // tslint:disable-next-line
   public coffee_blooming_time: number;
+  public coffee_blooming_time_milliseconds: number;
   public attachments: Array<string>;
   public tds: number;
   // UUID
@@ -75,14 +81,12 @@ export class Brew implements IBrew {
 
   public coordinates: IBrewCoordinates;
 
-
   public brew_beverage_quantity: number;
 
   public brew_beverage_quantity_type: BREW_QUANTITY_TYPES_ENUM;
   public config: Config;
 
   public cupping: ICupping;
-
 
   public cupped_flavor: IFlavor;
 
@@ -94,7 +98,6 @@ export class Brew implements IBrew {
   public flow_profile: string;
 
   constructor() {
-
     this.grind_size = '';
     this.grind_weight = 0;
     this.method_of_preparation = '';
@@ -120,14 +123,18 @@ export class Brew implements IBrew {
     this.brew_beverage_quantity = 0;
     this.brew_beverage_quantity_type = 'GR' as BREW_QUANTITY_TYPES_ENUM;
 
-    this.coordinates ={
-       accuracy: null,
-       altitude: null,
-       altitudeAccuracy:null,
-       heading:null,
-       latitude: null,
-       longitude: null,
-       speed: null
+    this.brew_time_milliseconds = 0;
+    this.brew_temperature_time_milliseconds = 0;
+    this.coffee_first_drip_time_milliseconds = 0;
+    this.coffee_blooming_time_milliseconds = 0;
+    this.coordinates = {
+      accuracy: null,
+      altitude: null,
+      altitudeAccuracy: null,
+      heading: null,
+      latitude: null,
+      longitude: null,
+      speed: null,
     } as IBrewCoordinates;
 
     this.cupping = {
@@ -146,10 +153,8 @@ export class Brew implements IBrew {
     };
 
     this.cupped_flavor = {
-      predefined_flavors: {
-
-      },
-      custom_flavors: []
+      predefined_flavors: {},
+      custom_flavors: [],
     } as IFlavor;
 
     this.method_of_preparation_tools = [];
@@ -183,10 +188,8 @@ export class Brew implements IBrew {
     }
     if (this.cupped_flavor === undefined) {
       this.cupped_flavor = {
-        predefined_flavors: {
-
-        },
-        custom_flavors: []
+        predefined_flavors: {},
+        custom_flavors: [],
       } as IFlavor;
     }
   }
@@ -206,43 +209,44 @@ export class Brew implements IBrew {
   }
 
   public getBean(): Bean {
-    const iBean: IBean = this.getBeanStorageInstance()
-      .getByUUID(this.bean) as IBean;
+    const iBean: IBean = this.getBeanStorageInstance().getByUUID(
+      this.bean
+    ) as IBean;
     const bean: Bean = new Bean();
     bean.initializeByObject(iBean);
 
     return bean;
-
   }
 
   public getPreparation(): Preparation {
-    const iPreparation: IPreparation = this.getPreparationStorageInstance()
-      .getByUUID(this.method_of_preparation) as IPreparation;
+    const iPreparation: IPreparation =
+      this.getPreparationStorageInstance().getByUUID(
+        this.method_of_preparation
+      ) as IPreparation;
     const preparation: Preparation = new Preparation();
     preparation.initializeByObject(iPreparation);
 
     return preparation;
-
   }
 
   public getMill(): Mill {
-    const iMill: IMill = this.getMillStorageInstance()
-      .getByUUID(this.mill) as IMill;
+    const iMill: IMill = this.getMillStorageInstance().getByUUID(
+      this.mill
+    ) as IMill;
     const mill: Mill = new Mill();
     mill.initializeByObject(iMill);
 
     return mill;
-
   }
 
   public getWater(): Water {
-    const iWater: IWater = this.getWaterStorageInstance()
-      .getByUUID(this.water) as IWater;
+    const iWater: IWater = this.getWaterStorageInstance().getByUUID(
+      this.water
+    ) as IWater;
     const water: Water = new Water();
     water.initializeByObject(iWater);
 
     return water;
-
   }
 
   /**
@@ -250,9 +254,9 @@ export class Brew implements IBrew {
    * If no age could be calculated it returns -1
    */
   public getCalculatedBeanAge(): number {
-
-    const bean: IBean = this.getBeanStorageInstance()
-      .getByUUID(this.bean) as IBean;
+    const bean: IBean = this.getBeanStorageInstance().getByUUID(
+      this.bean
+    ) as IBean;
     if (bean) {
       if (bean.roastingDate) {
         const roastingDate = moment(bean.roastingDate);
@@ -271,26 +275,32 @@ export class Brew implements IBrew {
     const brewBeverageQuantity: number = this.brew_beverage_quantity;
     const tds: number = this.tds;
 
-    if (this.getPreparation().style_type === PREPARATION_STYLE_TYPE.FULL_IMMERSION && brewQuantity > 0)
-    {
+    if (
+      this.getPreparation().style_type ===
+        PREPARATION_STYLE_TYPE.FULL_IMMERSION &&
+      brewQuantity > 0
+    ) {
       // #262
       // ey=(tds*total water)/dose
-      return this.toFixedIfNecessary(((brewQuantity * tds) / grindWeight),2).toString();
-
+      return this.toFixedIfNecessary(
+        (brewQuantity * tds) / grindWeight,
+        2
+      ).toString();
     }
 
-    return this.toFixedIfNecessary(((brewBeverageQuantity * tds) / grindWeight),2).toString();
-
+    return this.toFixedIfNecessary(
+      (brewBeverageQuantity * tds) / grindWeight,
+      2
+    ).toString();
   }
 
-  private toFixedIfNecessary( value, dp ){
+  private toFixedIfNecessary(value, dp) {
     const parsedFloat = parseFloat(value);
     if (isNaN(parsedFloat)) {
       return 0;
     }
-    return +parsedFloat.toFixed( dp );
+    return +parsedFloat.toFixed(dp);
   }
-
 
   public getBrewRatio(): string {
     const grindWeight: number = this.grind_weight;
@@ -310,7 +320,6 @@ export class Brew implements IBrew {
     }
 
     return ratio;
-
   }
 
   public getGramsPerLiter() {
@@ -323,53 +332,84 @@ export class Brew implements IBrew {
       brewQuantity = this.brew_beverage_quantity;
     }
 
-
     let ratio: string = '';
 
     if (brewQuantity > 0 && grindWeight > 0) {
-      ratio = this.toFixedIfNecessary((grindWeight * 1000) / brewQuantity,2) + ' g/l';
+      ratio =
+        this.toFixedIfNecessary((grindWeight * 1000) / brewQuantity, 2) +
+        ' g/l';
     } else {
       ratio = '? g/l';
     }
 
     return ratio;
-
   }
 
   public getPreparationToolName(_uuid: string): string {
-    const tool: PreparationTool = this.getPreparation().tools.find((e) => e.config.uuid === _uuid);
+    const tool: PreparationTool = this.getPreparation().tools.find(
+      (e) => e.config.uuid === _uuid
+    );
     if (tool) {
       return tool.name;
     }
     return '';
   }
 
-
   public formateDate(_format?: string): string {
     let format: string = 'DD.MM.YYYY, HH:mm:ss';
     if (_format) {
       format = _format;
-
     }
 
-    return moment.unix(this.config.unix_timestamp)
-      .format(format);
+    return moment.unix(this.config.unix_timestamp).format(format);
   }
 
   public getFormattedTotalCoffeeBrewTime(): string {
     const secs = this.brew_time;
 
-    let formatted = moment.utc(secs * 1000).format('mm:ss');
+    const millisecondsEnabled: boolean =
+      this.getSettingsStorageInstance().getSettings().brew_milliseconds;
+    let formatted = '';
+    if (millisecondsEnabled) {
+      formatted = moment
+        .utc(secs * 1000)
+        .add('milliseconds', this.brew_time_milliseconds)
+        .format('mm:ss.SSS');
+    } else {
+      formatted = moment
+        .utc(secs * 1000)
+        .add('milliseconds', this.brew_time_milliseconds)
+        .format('mm:ss');
+    }
+
     if (moment.utc(secs * 1000).hours() > 0) {
-      formatted = moment.utc(secs * 1000).format('HH:mm:ss');
+      if (millisecondsEnabled) {
+        formatted = moment
+          .utc(secs * 1000)
+          .add('milliseconds', this.brew_time_milliseconds)
+          .format('HH:mm:ss.SSS');
+      } else {
+        formatted = moment
+          .utc(secs * 1000)
+          .add('milliseconds', this.brew_time_milliseconds)
+          .format('HH:mm:ss');
+      }
     }
     return formatted;
   }
 
   public getFormattedBrewTime(): string {
     const secs = this.brew_time;
-
-    const formatted = moment.utc(secs * 1000).format('HH:mm:ss');
+    let formattingStr: string = 'HH:mm:ss';
+    const millisecondsEnabled: boolean =
+      this.getSettingsStorageInstance().getSettings().brew_milliseconds;
+    if (millisecondsEnabled) {
+      formattingStr = 'HH:mm:ss.SSS';
+    }
+    const formatted = moment
+      .utc(secs * 1000)
+      .add('milliseconds', this.brew_time_milliseconds)
+      .format(formattingStr);
     return formatted;
   }
 
@@ -383,19 +423,32 @@ export class Brew implements IBrew {
 
   public getFormattedCoffeeBrewTime(): string {
     const secs = this.brew_time;
-    const start = moment().startOf('day').add('seconds',secs);
-    if (this.coffee_first_drip_time > 0) {
-      const diffing = moment().startOf('day').add('seconds',this.coffee_first_drip_time);
+    let formattingStr: string = 'HH:mm:ss';
+    const millisecondsEnabled: boolean =
+      this.getSettingsStorageInstance().getSettings().brew_milliseconds;
+    if (millisecondsEnabled) {
+      formattingStr = 'HH:mm:ss.SSS';
+    }
+    const start = moment()
+      .startOf('day')
+      .add('seconds', secs)
+      .add('milliseconds', this.brew_time_milliseconds);
+    if (
+      this.coffee_first_drip_time > 0 ||
+      this.coffee_first_drip_time_milliseconds
+    ) {
+      const diffing = moment()
+        .startOf('day')
+        .add('seconds', this.coffee_first_drip_time)
+        .add('milliseconds', this.coffee_first_drip_time_milliseconds);
       if (this.coffee_first_drip_time > this.brew_time) {
-        return ' - ' +  moment.utc(diffing.diff(start)).format('HH:mm:ss');
+        return ' - ' + moment.utc(diffing.diff(start)).format(formattingStr);
       } else {
-        return moment.utc(start.diff(diffing)).format('HH:mm:ss');
+        return moment.utc(start.diff(diffing)).format(formattingStr);
       }
     } else {
-      return start.format('HH:mm:ss');
+      return start.format(formattingStr);
     }
-
-
   }
 
   private getBeanStorageInstance(): UIBeanStorage {
@@ -411,48 +464,49 @@ export class Brew implements IBrew {
 
     return uiPreparationStorage;
   }
-  private getMillStorageInstance(): UIMillStorage  {
+  private getSettingsStorageInstance(): UISettingsStorage {
+    let uiSettingsStorage: UISettingsStorage;
+    uiSettingsStorage = UISettingsStorage.getInstance();
+
+    return uiSettingsStorage;
+  }
+  private getMillStorageInstance(): UIMillStorage {
     let uiMillStorage: UIMillStorage;
     uiMillStorage = UIMillStorage.getInstance();
 
     return uiMillStorage;
   }
 
-  private getWaterStorageInstance(): UIWaterStorage  {
+  private getWaterStorageInstance(): UIWaterStorage {
     let uiWaterStorage: UIWaterStorage;
     uiWaterStorage = UIWaterStorage.getInstance();
 
     return uiWaterStorage;
   }
-  
+
   public getCoordinateMapLink(): string {
-
     if (this.coordinates && this.coordinates.latitude) {
-      return `https://maps.google.com/?q=${this.coordinates.latitude},${this.coordinates.longitude}`
-
+      return `https://maps.google.com/?q=${this.coordinates.latitude},${this.coordinates.longitude}`;
     }
     return undefined;
   }
-  
+
   public isArchived(): boolean {
     const bean: Bean = this.getBean();
     const mill: Mill = this.getMill();
     const preparation: Preparation = this.getPreparation();
-    
+
     if (bean.finished || mill.finished || preparation.finished) {
       return true;
     }
     return false;
   }
 
-
-
   /**
    * Sorry for this, but angular hates inputs which are string and needs numbers
    */
   public fixDataTypes(): boolean {
     let fixNeeded: boolean = false;
-
 
     if (Number(this.brew_quantity) !== this.brew_quantity) {
       this.brew_quantity = Number(this.brew_quantity);
@@ -463,7 +517,6 @@ export class Brew implements IBrew {
       this.grind_weight = Number(this.grind_weight);
       fixNeeded = true;
     }
-
 
     if (Number(this.mill_speed) !== this.mill_speed) {
       this.mill_speed = Number(this.mill_speed);
@@ -484,7 +537,6 @@ export class Brew implements IBrew {
       fixNeeded = true;
     }
 
-
     if (Number(this.brew_quantity) !== this.brew_quantity) {
       this.brew_quantity = Number(this.brew_quantity);
       fixNeeded = true;
@@ -502,6 +554,4 @@ export class Brew implements IBrew {
 
     return fixNeeded;
   }
-
-
 }

@@ -26,6 +26,7 @@ export interface ISettings {
   qr_scanner_information: boolean;
   track_brew_coordinates: boolean;
   fast_brew_repeat: boolean;
+  brew_milliseconds: boolean;
   image_quality: number;
   brew_rating: number;
   brew_rating_steps: number;
