@@ -20,6 +20,9 @@ import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
 
 import { CoffeeBluetoothDevicesService } from '@graphefruit/coffee-bluetooth-devices';
 import { BluetoothScale } from '@graphefruit/coffee-bluetooth-devices';
+import { Settings } from '../../../classes/settings/settings';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { UIHelper } from '../../../services/uiHelper';
 
 declare var cordova;
 @Component({
@@ -43,15 +46,23 @@ export class BeanGeneralInformationComponent implements OnInit {
   public roasterResults: string[] = [];
   public roasterFocused: boolean = false;
 
+  public maxBeanRating: number = 5;
+  public settings: Settings = undefined;
+
   constructor(
     private readonly platform: Platform,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly translate: TranslateService,
     private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly bleManager: CoffeeBluetoothDevicesService
-  ) {}
+    private readonly bleManager: CoffeeBluetoothDevicesService,
+    private readonly uiSettingsStorage: UISettingsStorage,
+    private readonly uiHelper: UIHelper
+  ) {
+    this.settings = this.uiSettingsStorage.getSettings();
+  }
 
   public ngOnInit() {
+    this.maxBeanRating = this.settings.bean_rating;
     setTimeout(() => {
       if (this.beanStars && this.beanStars.setRating) {
         this.beanStars.setRating(this.data.roast_range);

@@ -462,6 +462,11 @@ export class SettingsPage implements OnInit {
     this.settings.resetFilter();
   }
 
+  public async changeBeanRating() {
+    await this.saveSettings();
+    this.settings.resetFilter();
+  }
+
   public async saveSettings() {
     this.changeDetectorRef.detectChanges();
     await this.uiSettingsStorage.saveSettings(this.settings);
