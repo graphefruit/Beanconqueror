@@ -1111,7 +1111,7 @@
       "LOCATION": "Um Bluetooth-Waagen zu finden, muss der Standort freigegeben werden",
       "BLUETOOTH": "Um Bluetooth-Waagen zu finden, muss Bluetooth freigegeben werden"
     },
-    "INFORMATION_DESCRIPTION": "Unterstütze Waagen sind: Decent Scale sowie Acaia Scales, Felicita Scales und Hiroia Jimmy"
+    "INFORMATION_DESCRIPTION": "Unterstütze Waagen sind: Decent Scale sowie Acaia Scales, Felicita Scales, Hiroia Jimmy und Eureka Precisa. Achtung: Falls die Eureka Precisa einen negativen Wert bekommt, stoppt der Timer automatisch"
   },
   "QR": {
     "WRONG_QRCODE_DESCRIPTION": "Falscher QR-Code oder falscher Inhalt",
@@ -1203,5 +1203,6 @@
   "PAGE_SETTINGS_BEAN_RATING": "Bohnenbewertung",
   "PAGE_SETTINGS_BEAN_RATING_TOOLTIP": "0 bis 5 sind dir zu wenig zur Bewertung deiner Bohne? Du kannst bis zu 100 'Punkten' vergeben",
   "PAGE_SETTINGS_BEAN_RATING_STEPS": "Bohnen Bewertungsschritte",
-  "COFFEE_GRAMS_BREWED": "Grams gebrüht"
+  "COFFEE_GRAMS_BREWED": "Grams gebrüht",
+  "PRESSURE_INFORMATION_DESCRIPTION": "Aktuell nur das Do It Yourself Projekt 'Popsicle' unterstützt"
 }

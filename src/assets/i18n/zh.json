@@ -1111,7 +1111,7 @@
       "LOCATION": "软件需要位置权限来搜索电子秤",
       "BLUETOOTH": "软件需要蓝牙权限来搜索电子秤"
     },
-    "INFORMATION_DESCRIPTION": "支持的电子秤: Decent 电子秤, Acaia 电子秤, Felicita 电子秤以及 Hiroia Jimmy"
+    "INFORMATION_DESCRIPTION": "支持的电子秤: Decent 电子秤, Acaia 电子秤, Felicita 电子秤以及 Hiroia Jimmy and Eureka Precisa. Care: If the Eureka Precisa recieves a negative value, the timer stops"
   },
   "QR": {
     "WRONG_QRCODE_DESCRIPTION": "错误的二维码或错误的内容",
@@ -1202,5 +1202,6 @@
   "PAGE_SETTINGS_BEAN_RATING": "Bean rating",
   "PAGE_SETTINGS_BEAN_RATING_TOOLTIP": "Is the default '0 to 5' not the right rating for you? You can instead use a '0 to 100' scale",
   "PAGE_SETTINGS_BEAN_RATING_STEPS": "Bean rating steps",
-  "COFFEE_GRAMS_BREWED": "Grams brewed"
+  "COFFEE_GRAMS_BREWED": "Grams brewed",
+  "PRESSURE_INFORMATION_DESCRIPTION": "Actually just the DIY project 'Popsicle' supported"
 }

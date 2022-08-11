@@ -1111,7 +1111,7 @@
       "LOCATION": "Para encontrar balanzas bluetooth, la aplicación necesita acceder a la ubicación.",
       "BLUETOOTH": "Para encontrar balanzas bluetooth, la aplicación necesita acceso a bluetooth"
     },
-    "INFORMATION_DESCRIPTION": "Básculas compatibles: Decent Scale y Acaia Scales y Felicita Scales y Hiroia Jimmy."
+    "INFORMATION_DESCRIPTION": "Básculas compatibles: Decent Scale y Acaia Scales y Felicita Scales y Hiroia Jimmy y Eureka Precisa. Care: If the Eureka Precisa recieves a negative value, the timer stops"
   },
   "QR": {
     "WRONG_QRCODE_DESCRIPTION": "Código qr incorrecto o contenido incorrecto",
@@ -1203,5 +1203,6 @@
   "PAGE_SETTINGS_BEAN_RATING": "Bean rating",
   "PAGE_SETTINGS_BEAN_RATING_TOOLTIP": "Is the default '0 to 5' not the right rating for you? You can instead use a '0 to 100' scale",
   "PAGE_SETTINGS_BEAN_RATING_STEPS": "Bean rating steps",
-  "COFFEE_GRAMS_BREWED": "Grams brewed"
+  "COFFEE_GRAMS_BREWED": "Grams brewed",
+  "PRESSURE_INFORMATION_DESCRIPTION": "Actually just the DIY project 'Popsicle' supported"
 }

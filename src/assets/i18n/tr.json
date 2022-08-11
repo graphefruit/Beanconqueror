@@ -1111,7 +1111,7 @@
       "LOCATION": "Bluetooth ile terazisiyi bulmak için uygulamanın konuma erişmesi gerekiyor.",
       "BLUETOOTH": "Bluetooth ile terazisiyi bulmak için uygulamanın bluetooth erişimi gerekiyor."
     },
-    "INFORMATION_DESCRIPTION": "Desteklenen tartılar: Decent Tartı, Acaia Tartı, Felicita Tartı and Hiroia Jimmy"
+    "INFORMATION_DESCRIPTION": "Desteklenen tartılar: Decent Tartı, Acaia Tartı, Felicita Tartı, Hiroia Jimmy and Eureka Precisa. Care: If the Eureka Precisa recieves a negative value, the timer stops"
   },
   "QR":{
     "WRONG_QRCODE_DESCRIPTION": "Yanlış qr kodu veya yanlış içerik",
@@ -1203,5 +1203,6 @@
   "PAGE_SETTINGS_BEAN_RATING": "Bean rating",
   "PAGE_SETTINGS_BEAN_RATING_TOOLTIP": "Is the default '0 to 5' not the right rating for you? You can instead use a '0 to 100' scale",
   "PAGE_SETTINGS_BEAN_RATING_STEPS": "Bean rating steps",
-  "COFFEE_GRAMS_BREWED": "Grams brewed"
+  "COFFEE_GRAMS_BREWED": "Grams brewed",
+  "PRESSURE_INFORMATION_DESCRIPTION": "Actually just the DIY project 'Popsicle' supported"
 }
