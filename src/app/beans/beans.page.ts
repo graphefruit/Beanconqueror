@@ -1,38 +1,48 @@
-import {ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
-import {UIAlert} from '../../services/uiAlert';
-import {UIBeanStorage} from '../../services/uiBeanStorage';
-import {ActionSheetController, ModalController, Platform} from '@ionic/angular';
-import {UIBrewStorage} from '../../services/uiBrewStorage';
-import {Bean} from '../../classes/bean/bean';
-import {UISettingsStorage} from '../../services/uiSettingsStorage';
-import {Settings} from '../../classes/settings/settings';
-import {BEAN_ACTION} from '../../enums/beans/beanAction';
-import {BeanSortComponent} from './bean-sort/bean-sort.component';
-import {IBeanPageSort} from '../../interfaces/bean/iBeanPageSort';
-import {BEAN_SORT_AFTER} from '../../enums/beans/beanSortAfter';
-import {BEAN_SORT_ORDER} from '../../enums/beans/beanSortOrder';
-import {AgVirtualSrollComponent} from 'ag-virtual-scroll';
-import {UIAnalytics} from '../../services/uiAnalytics';
-import {TranslateService} from '@ngx-translate/core';
-import {QrScannerService} from '../../services/qrScanner/qr-scanner.service';
-import {IntentHandlerService} from '../../services/intentHandler/intent-handler.service';
-import {UIBeanHelper} from '../../services/uiBeanHelper';
-import {IBeanPageFilter} from '../../interfaces/bean/iBeanPageFilter';
-import {BeanFilterComponent} from './bean-filter/bean-filter.component';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import { UIAlert } from '../../services/uiAlert';
+import { UIBeanStorage } from '../../services/uiBeanStorage';
+import {
+  ActionSheetController,
+  ModalController,
+  Platform,
+} from '@ionic/angular';
+import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { Bean } from '../../classes/bean/bean';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { Settings } from '../../classes/settings/settings';
+import { BEAN_ACTION } from '../../enums/beans/beanAction';
+import { BeanSortComponent } from './bean-sort/bean-sort.component';
+import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
+import { BEAN_SORT_AFTER } from '../../enums/beans/beanSortAfter';
+import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
+import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { UIAnalytics } from '../../services/uiAnalytics';
+import { TranslateService } from '@ngx-translate/core';
+import { QrScannerService } from '../../services/qrScanner/qr-scanner.service';
+import { IntentHandlerService } from '../../services/intentHandler/intent-handler.service';
+import { UIBeanHelper } from '../../services/uiBeanHelper';
+import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
+import { BeanFilterComponent } from './bean-filter/bean-filter.component';
 import moment from 'moment';
 import * as _ from 'lodash';
 import BEAN_TRACKING from '../../data/tracking/beanTracking';
-import {BeanPopoverAddComponent} from './bean-popover-add/bean-popover-add.component';
-import {BEAN_POPOVER_ADD_ACTION} from '../../enums/beans/beanPopoverAddAction';
+import { BeanPopoverAddComponent } from './bean-popover-add/bean-popover-add.component';
+import { BEAN_POPOVER_ADD_ACTION } from '../../enums/beans/beanPopoverAddAction';
+
 @Component({
   selector: 'beans',
   templateUrl: './beans.page.html',
   styleUrls: ['./beans.page.scss'],
 })
 export class BeansPage implements OnInit {
-
   public beans: Array<Bean> = [];
-
 
   public settings: Settings;
 
@@ -40,44 +50,48 @@ export class BeansPage implements OnInit {
   public finishedBeans: Array<Bean> = [];
 
   public openBeansSort: IBeanPageSort = {
-    sort_after:  BEAN_SORT_AFTER.UNKOWN,
+    sort_after: BEAN_SORT_AFTER.UNKOWN,
     sort_order: BEAN_SORT_ORDER.UNKOWN,
   };
 
-  @ViewChild('openScroll', {read: AgVirtualSrollComponent, static: false}) public openScroll: AgVirtualSrollComponent;
-  @ViewChild('archivedScroll', {read: AgVirtualSrollComponent, static: false}) public archivedScroll: AgVirtualSrollComponent;
-  @ViewChild('beanContent',{read: ElementRef}) public beanContent: ElementRef;
+  @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
+  public openScroll: AgVirtualSrollComponent;
+  @ViewChild('archivedScroll', {
+    read: AgVirtualSrollComponent,
+    static: false,
+  })
+  public archivedScroll: AgVirtualSrollComponent;
+  @ViewChild('beanContent', { read: ElementRef })
+  public beanContent: ElementRef;
 
   public bean_segment: string = 'open';
   public archivedBeansSort: IBeanPageSort = {
-    sort_after:  BEAN_SORT_AFTER.UNKOWN,
+    sort_after: BEAN_SORT_AFTER.UNKOWN,
     sort_order: BEAN_SORT_ORDER.UNKOWN,
   };
 
   public archivedBeansFilterText: string = '';
   public openBeansFilterText: string = '';
 
-
   public archivedBeansFilter: IBeanPageFilter;
   public openBeansFilter: IBeanPageFilter;
 
-  constructor(private readonly modalCtrl: ModalController,
-              private readonly changeDetectorRef: ChangeDetectorRef,
-              private readonly uiBeanStorage: UIBeanStorage,
-              private readonly uiAlert: UIAlert,
-              private readonly uiBrewStorage: UIBrewStorage,
-              private readonly uiSettingsStorage: UISettingsStorage,
-              private readonly uiAnalytics: UIAnalytics,
-              private readonly translate: TranslateService,
-              private readonly actionSheetController: ActionSheetController,
-              private readonly qrScannerService: QrScannerService,
-              private readonly intenthandler: IntentHandlerService,
-              private readonly uiBeanHelper: UIBeanHelper,
-              private readonly platform: Platform,
-              private readonly modalController: ModalController) {
-
-
-  }
+  constructor(
+    private readonly modalCtrl: ModalController,
+    private readonly changeDetectorRef: ChangeDetectorRef,
+    private readonly uiBeanStorage: UIBeanStorage,
+    private readonly uiAlert: UIAlert,
+    private readonly uiBrewStorage: UIBrewStorage,
+    private readonly uiSettingsStorage: UISettingsStorage,
+    private readonly uiAnalytics: UIAnalytics,
+    private readonly translate: TranslateService,
+    private readonly actionSheetController: ActionSheetController,
+    private readonly qrScannerService: QrScannerService,
+    private readonly intenthandler: IntentHandlerService,
+    private readonly uiBeanHelper: UIBeanHelper,
+    private readonly platform: Platform,
+    private readonly modalController: ModalController
+  ) {}
 
   public ionViewWillEnter(): void {
     this.settings = this.uiSettingsStorage.getSettings();
@@ -89,9 +103,7 @@ export class BeansPage implements OnInit {
     this.loadBeans();
   }
 
-
   public loadBeans(): void {
-
     this.__initializeBeans();
     this.changeDetectorRef.detectChanges();
     this.retriggerScroll();
@@ -100,6 +112,7 @@ export class BeansPage implements OnInit {
   public segmentChanged() {
     this.retriggerScroll();
   }
+
   public async beanAction(action: BEAN_ACTION, bean: Bean): Promise<void> {
     this.loadBeans();
   }
@@ -109,71 +122,54 @@ export class BeansPage implements OnInit {
   public onOrientationChange(event) {
     this.retriggerScroll();
   }
-  private retriggerScroll() {
-
-    setTimeout(async () =>{
-
-      const el =  this.beanContent.nativeElement;
-      let scrollComponent: AgVirtualSrollComponent;
-      if (this.openScroll !== undefined) {
-        scrollComponent = this.openScroll;
-      } else {
-        scrollComponent = this.archivedScroll;
-      }
-
-      scrollComponent.el.style.height = (el.offsetHeight - scrollComponent.el.offsetTop) + 'px';
-    },250);
-
-  }
 
   public async showSort() {
     let beanSort: IBeanPageSort;
     if (this.bean_segment === 'open') {
-      beanSort = {...this.openBeansSort};
+      beanSort = { ...this.openBeansSort };
     } else {
-      beanSort = {...this.archivedBeansSort};
+      beanSort = { ...this.archivedBeansSort };
     }
 
     const modal = await this.modalCtrl.create({
       component: BeanSortComponent,
-      componentProps:
-        {bean_sort: beanSort, segment: this.bean_segment},
+      componentProps: { bean_sort: beanSort, segment: this.bean_segment },
       id: BeanSortComponent.COMPONENT_ID,
       cssClass: 'popover-actions',
-      breakpoints: [0,  0.75, 1],
+      breakpoints: [0, 0.75, 1],
       initialBreakpoint: 1,
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
-    if (modalData !== undefined && modalData.data && modalData.data.bean_sort !== undefined) {
+    if (
+      modalData !== undefined &&
+      modalData.data &&
+      modalData.data.bean_sort !== undefined
+    ) {
       if (this.bean_segment === 'open') {
         this.openBeansSort = modalData.data.bean_sort;
-
       } else {
         this.archivedBeansSort = modalData.data.bean_sort;
       }
     }
     await this.__saveBeanFilter();
 
-
     this.loadBeans();
   }
-
 
   public async showFilter() {
     let beanFilter: IBeanPageFilter;
     if (this.bean_segment === 'open') {
-      beanFilter = {...this.openBeansFilter};
+      beanFilter = { ...this.openBeansFilter };
     } else {
-      beanFilter = {...this.archivedBeansFilter};
+      beanFilter = { ...this.archivedBeansFilter };
     }
 
     const modal = await this.modalCtrl.create({
       component: BeanFilterComponent,
       cssClass: 'popover-actions',
       id: BeanFilterComponent.COMPONENT_ID,
-      componentProps:
-        {bean_filter: beanFilter, segment: this.bean_segment},
+      componentProps: { bean_filter: beanFilter, segment: this.bean_segment },
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 1,
     });
@@ -182,25 +178,26 @@ export class BeansPage implements OnInit {
     if (modalData !== undefined && modalData.data.bean_filter !== undefined) {
       if (this.bean_segment === 'open') {
         this.openBeansFilter = modalData.data.bean_filter;
-
       } else {
         this.archivedBeansFilter = modalData.data.bean_filter;
       }
     }
     await this.__saveBeanFilter();
 
-
     this.loadBeans();
   }
 
-
   public isSortActive(): boolean {
     if (this.bean_segment === 'open') {
-      return (this.openBeansSort.sort_order !== BEAN_SORT_ORDER.UNKOWN &&
-        this.openBeansSort.sort_after !== BEAN_SORT_AFTER.UNKOWN);
+      return (
+        this.openBeansSort.sort_order !== BEAN_SORT_ORDER.UNKOWN &&
+        this.openBeansSort.sort_after !== BEAN_SORT_AFTER.UNKOWN
+      );
     } else {
-      return (this.archivedBeansSort.sort_order !== BEAN_SORT_ORDER.UNKOWN &&
-        this.archivedBeansSort.sort_after !== BEAN_SORT_AFTER.UNKOWN);
+      return (
+        this.archivedBeansSort.sort_order !== BEAN_SORT_ORDER.UNKOWN &&
+        this.archivedBeansSort.sort_after !== BEAN_SORT_AFTER.UNKOWN
+      );
     }
   }
 
@@ -214,21 +211,128 @@ export class BeansPage implements OnInit {
 
   public isFilterActive(): boolean {
     let isFilterActive: boolean = false;
+
     if (this.settings) {
-
-        if (this.bean_segment === 'open') {
-          isFilterActive =  !(_.isEqual( this.settings.GET_BEAN_FILTER(),this.openBeansFilter));
-        } else {
-          isFilterActive =  !(_.isEqual( this.settings.GET_BEAN_FILTER(),this.archivedBeansFilter));
-        }
-
-
+      let checkingFilter: IBeanPageFilter;
+      if (this.bean_segment === 'open') {
+        checkingFilter = this.openBeansFilter;
+      } else {
+        checkingFilter = this.archivedBeansFilter;
+      }
+      isFilterActive = !_.isEqual(
+        this.settings?.GET_BEAN_FILTER(),
+        checkingFilter
+      );
+      /** let didRatingFilterChanged: boolean = false;
+      if (isFilterActive === false && checkingFilter.rating) {
+        didRatingFilterChanged = (checkingFilter.rating.upper !== this.settings?.bean_rating || checkingFilter.rating.lower !== -1);
+      }
+      if (didRatingFilterChanged === true) {
+        isFilterActive = true;
+      } **/
     }
+
     return isFilterActive;
+  }
+
+  public shallBarBeDisplayed() {
+    let shallBarDisplayed: boolean = false;
+    if (this.settings) {
+      const isOpenSegment = this.bean_segment === 'open';
+      let checkingEntries: Array<Bean> = [];
+      if (isOpenSegment) {
+        checkingEntries = this.openBeans;
+      } else {
+        checkingEntries = this.finishedBeans;
+      }
+      if (checkingEntries.length <= 0) {
+        const entriesExisting = this.uiBeanStorage
+          .getAllEntries()
+          .filter((e) => e.finished !== isOpenSegment).length;
+        if (entriesExisting > 0) {
+          shallBarDisplayed = true;
+        }
+      }
+    }
+
+    return shallBarDisplayed;
   }
 
   public research() {
     this.__initializeBeansView(this.bean_segment);
+  }
+
+  public ngOnInit() {}
+
+  public async add() {
+    await this.uiBeanHelper.addBean();
+    this.loadBeans();
+  }
+
+  public async beanPopover() {
+    this.uiAnalytics.trackEvent(
+      BEAN_TRACKING.TITLE,
+      BEAN_TRACKING.ACTIONS.POPOVER_ACTIONS
+    );
+    const popover = await this.modalController.create({
+      component: BeanPopoverAddComponent,
+      componentProps: {},
+      id: BeanPopoverAddComponent.COMPONENT_ID,
+      cssClass: 'popover-actions',
+      breakpoints: [0, 0.25, 0.5],
+      initialBreakpoint: 0.25,
+    });
+    await popover.present();
+    const data = await popover.onWillDismiss();
+    if (data.role !== undefined) {
+      switch (data.role as BEAN_POPOVER_ADD_ACTION) {
+        case BEAN_POPOVER_ADD_ACTION.ADD:
+          await this.add();
+          break;
+        case BEAN_POPOVER_ADD_ACTION.SCAN:
+          await this.scanBean();
+          break;
+      }
+    }
+  }
+
+  public async scanBean() {
+    if (this.platform.is('cordova')) {
+      await this.qrScannerService.scan().then(
+        async (scannedCode) => {
+          await this.intenthandler.handleQRCodeLink(scannedCode);
+        },
+        () => {}
+      );
+    } else {
+      // Test sample for development
+      //await this.intenthandler.handleQRCodeLink('https://beanconqueror.com/?qr=7b761a95');
+    }
+    this.loadBeans();
+    return;
+  }
+
+  public async longPressAdd(event) {
+    if (event) {
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+    }
+    await this.add();
+  }
+
+  private retriggerScroll() {
+    setTimeout(async () => {
+      const el = this.beanContent.nativeElement;
+      let scrollComponent: AgVirtualSrollComponent;
+      if (this.openScroll !== undefined) {
+        scrollComponent = this.openScroll;
+      } else {
+        scrollComponent = this.archivedScroll;
+      }
+
+      scrollComponent.el.style.height =
+        el.offsetHeight - scrollComponent.el.offsetTop + 'px';
+    }, 250);
   }
 
   private async __saveBeanFilter() {
@@ -242,19 +346,17 @@ export class BeansPage implements OnInit {
   }
 
   private __initializeBeansView(_type: string) {
-// sort latest to top.
+    // sort latest to top.
     const beansCopy: Array<Bean> = [...this.beans];
-    const isOpen: boolean = (_type === 'open');
+    const isOpen: boolean = _type === 'open';
     let sort: IBeanPageSort;
     let filterBeans: Array<Bean>;
     if (isOpen) {
       sort = this.openBeansSort;
-      filterBeans =  beansCopy.filter(
-        (bean) => !bean.finished);
+      filterBeans = beansCopy.filter((bean) => !bean.finished);
     } else {
       sort = this.archivedBeansSort;
-      filterBeans =  beansCopy.filter(
-        (bean) => bean.finished);
+      filterBeans = beansCopy.filter((bean) => bean.finished);
     }
 
     let filter: IBeanPageFilter;
@@ -265,51 +367,64 @@ export class BeansPage implements OnInit {
     }
 
     if (filter.favourite) {
-      filterBeans = filterBeans.filter((e)=>e.favourite === true);
+      filterBeans = filterBeans.filter((e) => e.favourite === true);
     }
 
+    console.log(filter);
     // Rating filter is always active
-    filterBeans = filterBeans.filter((e: Bean)=> e.rating>= filter.rating.lower && e.rating <=filter.rating.upper  );
-
+    filterBeans = filterBeans.filter(
+      (e: Bean) =>
+        e.rating >= filter.rating.lower && e.rating <= filter.rating.upper
+    );
 
     if (filter.bean_roasting_type.length > 0) {
-      filterBeans = filterBeans.filter((e: Bean) => filter.bean_roasting_type.includes(e.bean_roasting_type) === true);
+      filterBeans = filterBeans.filter(
+        (e: Bean) =>
+          filter.bean_roasting_type.includes(e.bean_roasting_type) === true
+      );
     }
     if (filter.bean_roaster) {
-      filterBeans = filterBeans.filter((e: Bean) => filter.bean_roaster.includes(e.roaster) === true);
+      filterBeans = filterBeans.filter(
+        (e: Bean) => filter.bean_roaster.includes(e.roaster) === true
+      );
     }
 
     if (filter.roastingDateStart) {
-      const roastingStart = moment(filter.roastingDateStart).startOf('day').toDate();
+      const roastingStart = moment(filter.roastingDateStart)
+        .startOf('day')
+        .toDate();
       filterBeans = filterBeans.filter((e: Bean) => {
         if (e.roastingDate === undefined || e.roastingDate === '') {
           return false;
         }
 
         const beanRoastingDate = moment(e.roastingDate).startOf('day').toDate();
-        return beanRoastingDate >=roastingStart;
+        return beanRoastingDate >= roastingStart;
       });
     }
 
     if (filter.roastingDateEnd) {
-      const roastingDateEnd = moment(filter.roastingDateEnd).startOf('day').toDate();
+      const roastingDateEnd = moment(filter.roastingDateEnd)
+        .startOf('day')
+        .toDate();
       filterBeans = filterBeans.filter((e: Bean) => {
         if (e.roastingDate === undefined || e.roastingDate === '') {
           return false;
         }
 
         const beanRoastingDate = moment(e.roastingDate).startOf('day').toDate();
-        return beanRoastingDate <=roastingDateEnd;
+        return beanRoastingDate <= roastingDateEnd;
       });
     }
 
-
     // Skip if something is unkown, because no filter is active then
-    if (sort.sort_order !== BEAN_SORT_ORDER.UNKOWN && sort.sort_after !== BEAN_SORT_AFTER.UNKOWN){
-
+    if (
+      sort.sort_order !== BEAN_SORT_ORDER.UNKOWN &&
+      sort.sort_after !== BEAN_SORT_AFTER.UNKOWN
+    ) {
       switch (sort.sort_after) {
         case BEAN_SORT_AFTER.NAME:
-          filterBeans = filterBeans.sort( (a,b) => {
+          filterBeans = filterBeans.sort((a, b) => {
             const nameA = a.name.toUpperCase();
             const nameB = b.name.toUpperCase();
 
@@ -321,11 +436,10 @@ export class BeansPage implements OnInit {
             }
 
             return 0;
-            }
-          );
+          });
           break;
         case BEAN_SORT_AFTER.ROASTER:
-          filterBeans = filterBeans.sort( (a,b) => {
+          filterBeans = filterBeans.sort((a, b) => {
             const roasterA = a.roaster.toUpperCase();
             const roasterB = b.roaster.toUpperCase();
             if (roasterA < roasterB) {
@@ -336,39 +450,35 @@ export class BeansPage implements OnInit {
             }
 
             return 0;
-            }
-          );
+          });
           break;
         case BEAN_SORT_AFTER.ROASTING_DATE:
-          filterBeans = filterBeans.sort( (a,b) => {
-              if ( a.roastingDate > b.roastingDate ){
-                return -1;
-              }
-              if ( a.roastingDate < b.roastingDate ){
-                return 1;
-              }
-              return 0;
+          filterBeans = filterBeans.sort((a, b) => {
+            if (a.roastingDate > b.roastingDate) {
+              return -1;
             }
-          );
+            if (a.roastingDate < b.roastingDate) {
+              return 1;
+            }
+            return 0;
+          });
           break;
         case BEAN_SORT_AFTER.RATING:
-          filterBeans = filterBeans.sort( (a,b) => {
-              if ( a.rating > b.rating ){
-                return -1;
-              }
-              if ( a.rating < b.rating ){
-                return 1;
-              }
-              return 0;
+          filterBeans = filterBeans.sort((a, b) => {
+            if (a.rating > b.rating) {
+              return -1;
             }
-          );
+            if (a.rating < b.rating) {
+              return 1;
+            }
+            return 0;
+          });
           break;
       }
 
       if (sort.sort_order === BEAN_SORT_ORDER.DESCENDING) {
         filterBeans.reverse();
       }
-
     }
     let searchText: string = '';
     if (isOpen) {
@@ -378,25 +488,25 @@ export class BeansPage implements OnInit {
     }
 
     if (searchText) {
-      filterBeans = filterBeans.filter((e) => e.note?.toLowerCase().includes(searchText) ||
-        e.name?.toLowerCase().includes(searchText) ||
-        e.roaster?.toLowerCase().includes(searchText) ||
-        e.aromatics?.toLowerCase().includes(searchText));
+      filterBeans = filterBeans.filter(
+        (e) =>
+          e.note?.toLowerCase().includes(searchText) ||
+          e.name?.toLowerCase().includes(searchText) ||
+          e.roaster?.toLowerCase().includes(searchText) ||
+          e.aromatics?.toLowerCase().includes(searchText)
+      );
     }
     if (isOpen) {
-     this.openBeans = filterBeans;
+      this.openBeans = filterBeans;
     } else {
-     this.finishedBeans = filterBeans;
+      this.finishedBeans = filterBeans;
     }
     this.retriggerScroll();
   }
 
-
-  public ngOnInit() {
-  }
-
   private __initializeBeans(): void {
-    this.beans = this.uiBeanStorage.getAllEntries()
+    this.beans = this.uiBeanStorage
+      .getAllEntries()
       .sort((a, b) => a.name.localeCompare(b.name));
 
     this.openBeans = [];
@@ -404,63 +514,4 @@ export class BeansPage implements OnInit {
     this.__initializeBeansView('open');
     this.__initializeBeansView('archiv');
   }
-
-  public async add() {
-   await this.uiBeanHelper.addBean();
-   this.loadBeans();
-  }
-
-
-  public async beanPopover() {
-
-      this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.POPOVER_ACTIONS);
-      const popover = await this.modalController.create({
-        component: BeanPopoverAddComponent,
-        componentProps: {},
-        id:BeanPopoverAddComponent.COMPONENT_ID,
-        cssClass: 'popover-actions',
-        breakpoints: [0, 0.25, 0.5],
-        initialBreakpoint: 0.25,
-      });
-      await popover.present();
-      const data = await popover.onWillDismiss();
-      if (data.role !== undefined) {
-        switch (data.role as BEAN_POPOVER_ADD_ACTION) {
-          case BEAN_POPOVER_ADD_ACTION.ADD:
-            await this.add();
-            break;
-          case BEAN_POPOVER_ADD_ACTION.SCAN:
-            await this.scanBean();
-            break;
-        }
-
-      }
-
-
-  }
-
-  public async scanBean() {
-
-    if (this.platform.is('cordova')) {
-      await this.qrScannerService.scan().then(async (scannedCode) => {
-        await this.intenthandler.handleQRCodeLink(scannedCode);
-      },() => {});
-    } else {
-      // Test sample for development
-        //await this.intenthandler.handleQRCodeLink('https://beanconqueror.com/?qr=7b761a95');
-    }
-    this.loadBeans();
-    return;
-
-  }
-
-  public async longPressAdd(event) {
-    if (event) {
-      event.stopPropagation();
-      event.stopImmediatePropagation();
-    }
-    await this.add();
-  }
-
-
 }

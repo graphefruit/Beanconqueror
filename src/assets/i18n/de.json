@@ -1199,5 +1199,9 @@
   "PRESSURE_THRESHOLD_BAR": "Schwellenwert Druck",
   "TIMER_MILLISECONDS": "MS",
   "PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS": "Millisekunden?",
-  "PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS_DESCRIPTION": "Verwende Millisekunden um noch akkurater deine Brühungen zu Analysieren"
+  "PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS_DESCRIPTION": "Verwende Millisekunden um noch akkurater deine Brühungen zu Analysieren",
+  "PAGE_SETTINGS_BEAN_RATING": "Bohnenbewertung",
+  "PAGE_SETTINGS_BEAN_RATING_TOOLTIP": "0 bis 5 sind dir zu wenig zur Bewertung deiner Bohne? Du kannst bis zu 100 'Punkten' vergeben",
+  "PAGE_SETTINGS_BEAN_RATING_STEPS": "Bohnen Bewertungsschritte",
+  "COFFEE_GRAMS_BREWED": "Grams gebrüht"
 }

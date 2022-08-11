@@ -1,21 +1,31 @@
-<ion-card class="long-card"  tappable (click)="showBean()" (long-press)="longPressEditBean($event)">
+<ion-card class="long-card" tappable (click)="showBean()" (long-press)="longPressEditBean($event)">
   <ion-card-content class="no-ion-col-vertical-padding ion-padding-top">
     <ion-grid class="no-padding-bottom">
       <ion-row>
         <ion-col [size]="(bean?.roast_range!== 0 || bean?.rating !== 0)?8:11" style="margin: auto 0;">
           <div class="ion-no-padding font-size-20 ion-title bean-title">
-            <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="flame-outline" *ngIf="bean.isSelfRoasted()"></ion-icon>
-            <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="qr-code-outline" *ngIf="bean.isScannedBean()"></ion-icon>
-            <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="heart" *ngIf="bean.favourite" ></ion-icon>
-            {{bean.name}}&nbsp;<span *ngIf="!isBeanRoastUnknown()">({{"BEAN_ROASTING_TYPE_" + bean.bean_roasting_type | translate}})</span>
+            <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="flame-outline"
+                      *ngIf="bean.isSelfRoasted()"></ion-icon>
+            <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="qr-code-outline"
+                      *ngIf="bean.isScannedBean()"></ion-icon>
+            <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="heart"
+                      *ngIf="bean.favourite"></ion-icon>
+            {{bean.name}}&nbsp;<span
+            *ngIf="!isBeanRoastUnknown()">({{"BEAN_ROASTING_TYPE_" + bean.bean_roasting_type | translate}})</span>
           </div>
         </ion-col>
         <ion-col *ngIf="bean?.roast_range !== 0 || bean?.rating !== 0" size="3">
 
-          <ngx-stars *ngIf="bean?.roast_range !== 0" #beanStars [initialStars]="bean.roast_range" [readonly]="true" [size]="1" class="bean-display ion-float-right"></ngx-stars><div style="clear:both;" *ngIf="bean?.roast_range !== 0 && bean?.rating !== 0"></div>
+          <ngx-stars *ngIf="bean?.roast_range !== 0" #beanStars [initialStars]="bean.roast_range" [readonly]="true"
+                     [size]="1" class="bean-display ion-float-right"></ngx-stars>
+          <div style="clear:both;" *ngIf="bean?.roast_range !== 0 && bean?.rating !== 0"></div>
 
-            <ngx-stars *ngIf="bean?.rating !== 0" #beanRating [color]="'#BFB9B0'" [initialStars]="bean.rating" [maxStars]="5"  [readonly]="true"  [wholeStars]="true" class="ion-float-right brew-stars" >
-            </ngx-stars>
+          <ngx-stars *ngIf="bean?.rating !== 0 && hasCustomRatingRange() === false" #beanRating [color]="'#BFB9B0'" [initialStars]="bean.rating"
+                     [maxStars]="5" [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars">
+          </ngx-stars>
+          <div  *ngIf="bean?.rating > 0  && hasCustomRatingRange() === true" class="ion-text-right">
+              <ion-badge>{{this.uiHelper.toFixedIfNecessary(bean.rating,2)}}</ion-badge>
+          </div>
 
 
         </ion-col>
@@ -27,7 +37,7 @@
       </ion-row>
       <ion-row>
         <ion-col>
-          <hr />
+          <hr/>
         </ion-col>
       </ion-row>
     </ion-grid>
@@ -38,7 +48,8 @@
           <ion-grid class="ion-no-padding">
             <ion-row>
               <ion-col size="6">
-                <ion-label class="card-headline">{{"BEAN_DATA_ROASTING_DATE" | translate}}</ion-label><br/>
+                <ion-label class="card-headline">{{"BEAN_DATA_ROASTING_DATE" | translate}}</ion-label>
+                <br/>
 
                 <ion-text *ngIf="bean?.roastingDate">
                   {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}</ion-text>
@@ -47,21 +58,25 @@
                 </ion-text>
               </ion-col>
               <ion-col size="6">
-                <ion-label class="card-headline">{{"BEAN_DATA_ROASTER" | translate}}</ion-label><br/>
+                <ion-label class="card-headline">{{"BEAN_DATA_ROASTER" | translate}}</ion-label>
+                <br/>
 
                 <ion-text *ngIf="bean.roaster">
                   {{bean.roaster}}</ion-text>
-                <ion-text  *ngIf="!bean.roaster">
+                <ion-text *ngIf="!bean.roaster">
                   -
                 </ion-text>
               </ion-col>
 
               <ion-col size="6">
-                <ion-label class="card-headline">{{"BEAN_DATA_ROAST_NAME" | translate}}</ion-label><br/>
+                <ion-label class="card-headline">{{"BEAN_DATA_ROAST_NAME" | translate}}</ion-label>
+                <br/>
 
-                <ion-text *ngIf="bean.roast === getRoastEnum(roast_enum.CUSTOM_ROAST) && bean.roast !== getRoastEnum(roast_enum.UNKNOWN)">
+                <ion-text
+                  *ngIf="bean.roast === getRoastEnum(roast_enum.CUSTOM_ROAST) && bean.roast !== getRoastEnum(roast_enum.UNKNOWN)">
                   {{bean.roast_custom}}</ion-text>
-                <ion-text *ngIf="bean.roast !== getRoastEnum(roast_enum.CUSTOM_ROAST) && bean.roast !== getRoastEnum(roast_enum.UNKNOWN)">
+                <ion-text
+                  *ngIf="bean.roast !== getRoastEnum(roast_enum.CUSTOM_ROAST) && bean.roast !== getRoastEnum(roast_enum.UNKNOWN)">
                   {{roast_enum[bean.roast]}}
                 </ion-text>
                 <ion-text *ngIf=" bean.roast === getRoastEnum(roast_enum.UNKNOWN)">
@@ -69,17 +84,21 @@
                 </ion-text>
               </ion-col>
               <ion-col size="6">
-                <ion-label class="card-headline">{{"PAGE_HOME_TOTAL_BREWS" | translate}}</ion-label><br/>
+                <ion-label class="card-headline">{{"PAGE_HOME_TOTAL_BREWS" | translate}}</ion-label>
+                <br/>
                 <ion-text>{{brewCounts()}}</ion-text>
               </ion-col>
               <ion-col size="6">
-                <ion-label class="card-headline">{{"ROASTED_BEFORE" | translate}}</ion-label><br/>
+                <ion-label class="card-headline">{{"ROASTED_BEFORE" | translate}}</ion-label>
+                <br/>
                 <ion-text *ngIf="daysOld() === 1">{{daysOld()}}&nbsp;{{"DAY_OLD" | translate}}</ion-text>
                 <ion-text *ngIf="!(daysOld() === 1)">{{daysOld()}}&nbsp;{{"DAYS_OLD" | translate}}</ion-text>
               </ion-col>
               <ion-col size="6">
-                <ion-label class="card-headline">{{"BEANS_AMOUNT_USED" | translate}}</ion-label><br/>
-                <ion-text [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount() | number : '.0-2', gramTotal: bean?.weight}">{{daysOld()}}</ion-text>
+                <ion-label class="card-headline">{{"BEANS_AMOUNT_USED" | translate}}</ion-label>
+                <br/>
+                <ion-text
+                  [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount() | number : '.0-2', gramTotal: bean?.weight}">{{daysOld()}}</ion-text>
               </ion-col>
             </ion-row>
           </ion-grid>

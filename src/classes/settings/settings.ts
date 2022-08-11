@@ -37,6 +37,8 @@ export class Settings implements ISettings {
   public image_quality: number;
   public brew_rating: number;
   public brew_rating_steps: number;
+  public bean_rating: number;
+  public bean_rating_steps: number;
 
   public show_archived_beans: boolean;
   public show_archived_brews: boolean;
@@ -100,10 +102,11 @@ export class Settings implements ISettings {
   public currency: string;
 
   public GET_BEAN_FILTER(): IBeanPageFilter {
+    const upperRating: number = this.bean_rating;
     return {
       favourite: false,
       rating: {
-        upper: 5,
+        upper: upperRating,
         lower: 0,
       },
       bean_roasting_type: [],
@@ -199,6 +202,8 @@ export class Settings implements ISettings {
     this.graph.FILTER.realtime_flow = false;
     this.brew_rating = 5;
     this.brew_rating_steps = 1;
+    this.bean_rating = 5;
+    this.bean_rating_steps = 1;
 
     this.brew_filter.OPEN = this.GET_BREW_FILTER();
     this.brew_filter.ARCHIVED = this.GET_BREW_FILTER();

@@ -57,11 +57,11 @@
   </ion-item>
   <ion-item>
     <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
-      style="vertical-align: top;">{{data.rating}}</ion-badge>
+      style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(data.rating,2)}}</ion-badge>
     </ion-label>
-    <ion-range (ionChange)="changedRating()" [(ngModel)]="data.rating" debounce="500s" max="5" min="0" snaps="true" step="1">
+    <ion-range (ionChange)="changedRating()" [(ngModel)]="data.rating" [max]="maxBeanRating" min="0" snaps="true" [step]="settings?.bean_rating_steps">
 
-      <div slot="end">
+      <div slot="end" *ngIf="maxBeanRating === 5 && settings?.bean_rating_steps === 1">
         <ngx-stars #beanRating [color]="'#BFB9B0'"  [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars" ></ngx-stars>
       </div>
     </ion-range>

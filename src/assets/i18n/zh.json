@@ -1198,5 +1198,9 @@
   "PRESSURE_THRESHOLD_BAR": "Threshold pressure",
   "TIMER_MILLISECONDS": "MS",
   "PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS": "Milliseconds?",
-  "PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS_DESCRIPTION": "Use milliseconds to even more accurately analyze your brews"
+  "PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS_DESCRIPTION": "Use milliseconds to even more accurately analyze your brews",
+  "PAGE_SETTINGS_BEAN_RATING": "Bean rating",
+  "PAGE_SETTINGS_BEAN_RATING_TOOLTIP": "Is the default '0 to 5' not the right rating for you? You can instead use a '0 to 100' scale",
+  "PAGE_SETTINGS_BEAN_RATING_STEPS": "Bean rating steps",
+  "COFFEE_GRAMS_BREWED": "Grams brewed"
 }
