@@ -1,41 +1,40 @@
 /** Core */
-import {Injectable} from '@angular/core';
-import {UIBeanStorage} from './uiBeanStorage';
-import {UIBrewStorage} from './uiBrewStorage';
-import {UIHelper} from './uiHelper';
-import {UIPreparationStorage} from './uiPreparationStorage';
+import { Injectable } from '@angular/core';
+import { UIBeanStorage } from './uiBeanStorage';
+import { UIBrewStorage } from './uiBrewStorage';
+import { UIHelper } from './uiHelper';
+import { UIPreparationStorage } from './uiPreparationStorage';
 /** Interfaces */
-import {Bean} from '../classes/bean/bean';
-import {IBrew} from '../interfaces/brew/iBrew';
-import {UIMillStorage} from './uiMillStorage';
-import {UISettingsStorage} from './uiSettingsStorage';
-import {TranslateService} from '@ngx-translate/core';
-import {IPreparation} from '../interfaces/preparation/iPreparation';
-import {IMill} from '../interfaces/mill/iMill';
-import {IBean} from '../interfaces/bean/iBean';
-import {IGreenBean} from '../interfaces/green-bean/iGreenBean';
-import {IRoastingMachine} from '../interfaces/roasting-machine/iRoastingMachine';
-import {UIGreenBeanStorage} from './uiGreenBeanStorage';
-import {UIRoastingMachineStorage} from './uiRoastingMachineStorage';
+import { Bean } from '../classes/bean/bean';
+import { IBrew } from '../interfaces/brew/iBrew';
+import { UIMillStorage } from './uiMillStorage';
+import { UISettingsStorage } from './uiSettingsStorage';
+import { TranslateService } from '@ngx-translate/core';
+import { IPreparation } from '../interfaces/preparation/iPreparation';
+import { IMill } from '../interfaces/mill/iMill';
+import { IBean } from '../interfaces/bean/iBean';
+import { IGreenBean } from '../interfaces/green-bean/iGreenBean';
+import { IRoastingMachine } from '../interfaces/roasting-machine/iRoastingMachine';
+import { UIGreenBeanStorage } from './uiGreenBeanStorage';
+import { UIRoastingMachineStorage } from './uiRoastingMachineStorage';
 
 /** Services  */
 
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UIStatistic {
-
-  constructor (private readonly uiPreparationStorage: UIPreparationStorage,
-               private readonly uiBeanStorage: UIBeanStorage,
-               private readonly uiBrewStorage: UIBrewStorage,
-               private readonly uiMillStorage: UIMillStorage,
-               private readonly uiGreenBeanStorage: UIGreenBeanStorage,
-               private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
-               private readonly uiHelper: UIHelper,
-               private readonly uiSettings: UISettingsStorage,
-               private readonly translate: TranslateService) {
-  }
+  constructor(
+    private readonly uiPreparationStorage: UIPreparationStorage,
+    private readonly uiBeanStorage: UIBeanStorage,
+    private readonly uiBrewStorage: UIBrewStorage,
+    private readonly uiMillStorage: UIMillStorage,
+    private readonly uiGreenBeanStorage: UIGreenBeanStorage,
+    private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
+    private readonly uiHelper: UIHelper,
+    private readonly uiSettings: UISettingsStorage,
+    private readonly translate: TranslateService
+  ) {}
 
   public getSpentMoneyForCoffeeBeans(): number {
     let costs: number = 0;
@@ -68,17 +67,21 @@ export class UIStatistic {
   public getLastDrunkBrewTimestamp(): string {
     const lastBrew: IBrew = this.getLastBrew();
     if (lastBrew !== undefined) {
-      return this.uiHelper.formateDate(lastBrew.config.unix_timestamp, 'DD.MM.YYYY, HH:mm:ss');
+      return this.uiHelper.formateDate(
+        lastBrew.config.unix_timestamp,
+        'DD.MM.YYYY, HH:mm:ss'
+      );
     }
 
     return '';
   }
 
-
   public getTimePassedSinceLastBrewMessage(): string {
     const lastBrew: IBrew = this.getLastBrew();
     if (lastBrew !== undefined) {
-      const timeDiff = this.uiHelper.timeDifference(lastBrew.config.unix_timestamp);
+      const timeDiff = this.uiHelper.timeDifference(
+        lastBrew.config.unix_timestamp
+      );
 
       if (timeDiff.DAYS === 1) {
         return this.translate.instant('ONE_DAY');
@@ -107,7 +110,9 @@ export class UIStatistic {
   public getTimePassedSinceLastBrew(): string {
     const lastBrew: IBrew = this.getLastBrew();
     if (lastBrew !== undefined) {
-      const timeDiff = this.uiHelper.timeDifference(lastBrew.config.unix_timestamp);
+      const timeDiff = this.uiHelper.timeDifference(
+        lastBrew.config.unix_timestamp
+      );
 
       if (timeDiff.DAYS === 1) {
         return '1';
@@ -136,7 +141,9 @@ export class UIStatistic {
   public getSloganTimePassedSinceLastBrew(): string {
     const timePassed = this.getTimePassedSinceLastBrew();
     if (timePassed !== '') {
-      return `${this.getTimePassedSinceLastBrewMessage()} ${this.translate.instant('WITHOUT_COFFEE')}`;
+      return `${this.getTimePassedSinceLastBrewMessage()} ${this.translate.instant(
+        'WITHOUT_COFFEE'
+      )}`;
     }
 
     return this.translate.instant('NO_COFFEE_DRUNK');
@@ -154,7 +161,9 @@ export class UIStatistic {
   public getLastPreparationMethodUsed(): string {
     const lastBrew: IBrew = this.getLastBrew();
     if (lastBrew !== undefined) {
-      return this.uiPreparationStorage.getPreparationNameByUUID(lastBrew.method_of_preparation);
+      return this.uiPreparationStorage.getPreparationNameByUUID(
+        lastBrew.method_of_preparation
+      );
     }
 
     return this.translate.instant('NOT_FOUND');
@@ -173,22 +182,19 @@ export class UIStatistic {
    * Returns in KG
    */
   public getTotalGround(): number {
-
-      const brews: Array<IBrew> = this.uiBrewStorage.getAllEntries();
-      if (brews.length > 0) {
-        let sum = 0;
-        for (const brew of brews) {
-          if (brew.bean_weight_in > 0 ) {
-            sum += +brew.bean_weight_in;
-          } else {
-            sum += +brew.grind_weight;
-          }
-
-
+    const brews: Array<IBrew> = this.uiBrewStorage.getAllEntries();
+    if (brews.length > 0) {
+      let sum = 0;
+      for (const brew of brews) {
+        if (brew.bean_weight_in > 0) {
+          sum += +brew.bean_weight_in;
+        } else {
+          sum += +brew.grind_weight;
         }
-
-        return Math.round((sum / 1000) * 100) / 100;
       }
+
+      return Math.round((sum / 1000) * 100) / 100;
+    }
 
     return 0;
   }
@@ -201,7 +207,12 @@ export class UIStatistic {
     if (brews.length > 0) {
       let sum = 0;
       for (const brew of brews) {
-        sum += brew.brew_quantity;
+        // # 400
+        if (brew.brew_beverage_quantity > 0) {
+          sum += brew.brew_beverage_quantity;
+        } else {
+          sum += brew.brew_quantity;
+        }
       }
       return Math.round((sum / 1000) * 100) / 100;
     }
@@ -215,18 +226,21 @@ export class UIStatistic {
       for (const brew of brews) {
         sum += brew.brew_time;
       }
-      return sum/60;
+      return sum / 60;
     }
     return 0;
   }
   public photosTaken() {
-    const allEntries: Array<IBrew | IMill | IPreparation | IBean | IGreenBean | IRoastingMachine> =
-      [...this.uiBrewStorage.getAllEntries(),
-        ...this.uiMillStorage.getAllEntries(),
-        ...this.uiPreparationStorage.getAllEntries(),
-        ...this.uiBeanStorage.getAllEntries(),
-        ...this.uiGreenBeanStorage.getAllEntries(),
-        ...this.uiRoastingMachineStorage.getAllEntries()];
+    const allEntries: Array<
+      IBrew | IMill | IPreparation | IBean | IGreenBean | IRoastingMachine
+    > = [
+      ...this.uiBrewStorage.getAllEntries(),
+      ...this.uiMillStorage.getAllEntries(),
+      ...this.uiPreparationStorage.getAllEntries(),
+      ...this.uiBeanStorage.getAllEntries(),
+      ...this.uiGreenBeanStorage.getAllEntries(),
+      ...this.uiRoastingMachineStorage.getAllEntries(),
+    ];
 
     if (allEntries.length > 0) {
       let sum = 0;
@@ -240,7 +254,7 @@ export class UIStatistic {
 
   private getLastBrew(): IBrew {
     const brews: Array<IBrew> = this.uiBrewStorage.getAllEntries();
-    const sortedBrews = brews.sort((n1,n2) => {
+    const sortedBrews = brews.sort((n1, n2) => {
       if (n1.config.unix_timestamp > n2.config.unix_timestamp) {
         return 1;
       }
@@ -260,7 +274,5 @@ export class UIStatistic {
     }
 
     return undefined;
-
   }
-
 }
