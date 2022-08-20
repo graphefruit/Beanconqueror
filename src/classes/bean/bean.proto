@@ -1,0 +1,109 @@
+syntax = "proto3";
+package beanconqueror;
+
+message BeanProto {
+  string name = 1;
+  optional string buyDate = 2;
+  optional string roastingDate = 3;
+  optional string note = 4;
+
+  optional string roaster = 5;
+  optional Config config = 6;
+  optional Roast roast = 7;
+  optional uint64 roast_range = 8;
+  optional BeanMix beanMix = 9;
+
+  optional string roast_custom = 10;
+  optional string aromatics = 11;
+  optional uint64 weight = 12;
+  optional bool finished = 13;
+  optional uint64 cost = 14;
+  repeated string attachments = 15;
+  optional string cupping_points = 16;
+  optional bool decaffeinated = 17;
+  optional string url = 18;
+  optional string ean_article_number = 19;
+
+  optional uint32 rating = 20;
+
+  repeated BeanInformation bean_information = 21;
+
+  optional BeanRoastingType bean_roasting_type = 22;
+  optional BeanRoastInformation bean_roast_information = 23;
+
+  optional string qr_code = 24;
+
+  optional bool favourite = 25;
+  optional bool shared = 26;
+}
+
+message Config {
+  string uuid = 1;
+  uint64 unix_timestamp = 2;
+}
+
+message BeanInformation {
+  optional string country = 1;
+  optional string region = 2;
+  optional string farm = 3;
+  optional string farmer = 4;
+  optional string elevation = 5;
+  optional string harvest_time = 6;
+  optional string variety = 7;
+  optional string processing = 8;
+  optional string certification = 9;
+  optional uint32 percentage = 10;
+  optional uint32 purchasing_price = 11;
+  optional uint32 fob_price = 12;
+}
+
+message BeanRoastInformation {
+  optional uint32 drop_temperature = 1;
+  optional uint64 roast_length = 2;
+  optional string roaster_machine = 3;
+  optional uint64 green_bean_weight = 4;
+  optional uint32 outside_temperature = 5;
+  optional uint32 humidity = 6;
+  optional string bean_uuid = 7;
+  optional uint32 first_crack_minute = 8;
+  optional uint32 first_crack_temperature = 9;
+  optional uint32 second_crack_minute = 10;
+  optional uint32 second_crack_temperature = 11;
+}
+
+enum Roast {
+  // UNKOWN
+  UNKNOWN_ROAST = 0;
+  // LIGHT
+  CINNAMON_ROAST = 1;
+  AMERICAN_ROAST = 2;
+  NEW_ENGLAND_ROAST = 3;
+  HALF_CITY_ROAST = 4;
+  MODERATE_LIGHT_ROAST = 5;
+
+  // MEDIUM
+  CITY_ROAST = 6;
+  CITY_PLUS_ROAST = 7;
+  FULL_CITY_ROAST = 8;
+
+  // DARK
+  FULL_CITY_PLUS_ROAST = 9;
+  ITALIAN_ROAST = 10;
+  VIEANNA_ROAST = 11;
+  FRENCH_ROAST = 12;
+
+  CUSTOM_ROAST = 13;
+}
+
+enum BeanMix {
+  UNKNOWN_BEAN_MIX = 0;
+  SINGLE_ORIGIN = 1;
+  BLEND = 2;
+}
+
+enum BeanRoastingType {
+  UNKNOWN_BEAN_ROASTING_TYPE = 0;
+  FILTER = 1;
+  ESPRESSO = 2;
+  OMNI = 3;
+}
