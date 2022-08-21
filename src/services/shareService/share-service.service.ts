@@ -10,8 +10,16 @@ import BREW_TRACKING from '../../data/tracking/brewTracking';
 import BEAN_TRACKING from '../../data/tracking/beanTracking';
 
 import { UILog } from '../uiLog';
-import { BeanProto } from '../../generated/src/classes/bean/bean';
+import {
+  BeanMix,
+  BeanProto,
+  BeanRoastingType,
+  Roast,
+} from '../../generated/src/classes/bean/bean';
 import { Config } from '../../classes/objectConfig/objectConfig';
+import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
+import { ROASTS_ENUM } from '../../enums/beans/roasts';
+import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
 
 @Injectable({
   providedIn: 'root',
@@ -34,119 +42,21 @@ export class ShareService {
     protoBean.favourite = false;
     protoBean.rating = 0;
     protoBean.archived = false;
-    console.log(protoBean);
 
-    /*  protoBean.name = _bean.name;
-    if (_bean.roastingDate) {
-      protoBean.roastingDate = _bean.roastingDate;
+    if (_bean.bean_roasting_type === ('UNKNOWN' as BEAN_ROASTING_TYPE_ENUM)) {
+      protoBean.bean_roasting_type =
+        BeanRoastingType.UNKNOWN_BEAN_ROASTING_TYPE;
     }
-    if (_bean.note) {
-      protoBean.note = _bean.note;
-    }
-    if (_bean.roaster) {
-      protoBean.roaster = _bean.roaster;
-    }
-    if (_bean.roast) {
-      protoBean.roast = _bean.roast;
-    }
-    if (_bean.beanMix) {
-      protoBean.beanMix = _bean.beanMix;
-    }
-    if (_bean.buyDate) {
-      protoBean.buyDate = _bean.buyDate;
-    }
-    if (_bean.roast_custom) {
-      protoBean.roast_custom = _bean.roast_custom;
-    }
-    if (_bean.aromatics) {
-      protoBean.aromatics = _bean.aromatics;
-    }
-    if (_bean.weight) {
-      protoBean.weight = _bean.weight;
-    }
-    if (_bean.finished) {
-      protoBean.finished = _bean.finished;
-    }
-    if (_bean.cost) {
-      protoBean.cost = _bean.cost;
-    }
-    if (_bean.bean_roasting_type) {
-      protoBean.bean_roasting_type = _bean.bean_roasting_type;
-    }
-    if (_bean.decaffeinated) {
-      protoBean.decaffeinated = _bean.decaffeinated;
-    }
-    if (_bean.url) {
-      protoBean.url = _bean.url;
-    }
-    if (_bean.url) {
-      protoBean.url = _bean.url;
-    }
-    if (_bean.ean_article_number) {
-      protoBean.ean_article_number = _bean.ean_article_number;
-    }
-    if (_bean.bean_information) {
-      protoBean.bean_information = [];
-
-      for (const info of _bean.bean_information) {
-        const beanInformation: any= {};
-        if (info.country){
-          beanInformation.country = info.country;
-        }
-        if (info.region){
-          beanInformation.region = info.region;
-        }
-        if (info.farm){
-          beanInformation.farm = info.farm;
-        }
-        if (info.farmer){
-          beanInformation.farmer = info.farmer;
-        }
-        if (info.elevation){
-          beanInformation.elevation = info.elevation;
-        }
-        if (info.harvest_time){
-          beanInformation.harvest_time = info.harvest_time;
-        }
-        if (info.variety){
-          beanInformation.variety = info.variety;
-        }
-        if (info.processing){
-          beanInformation.processing = info.processing;
-        }
-        if (info.certification){
-          beanInformation.certification = info.certification;
-        }
-        if (info.percentage){
-          beanInformation.percentage = info.percentage;
-        }
-        if (info.purchasing_price){
-          beanInformation.purchasingPrice = info.purchasing_price;
-        }
-
-        if (info.fob_price){
-          beanInformation.fob_price = info.fob_price;
-        }
-        protoBean.beanInformation.push(beanInformation);
-      }
-
+    if (_bean.roast === ('UNKNOWN' as ROASTS_ENUM)) {
+      protoBean.roast = Roast.UNKNOWN_ROAST;
     }
 
-    if (_bean.cupping_points) {
-      protoBean.cupping_points = _bean.cupping_points;
+    if (_bean.beanMix === ('UNKNOWN' as BEAN_MIX_ENUM)) {
+      protoBean.beanMix = BeanMix.UNKNOWN_BEAN_MIX;
     }
-    if (_bean.roast_range) {
-      protoBean.roast_range = _bean.roast_range;
-    }
-    if (_bean.qr_code) {
-      protoBean.qr_code = _bean.qr_code;
-    }
-
-*/
-
     const bytes = BeanProto.encode(protoBean).finish();
 
-    const base64String = this.uiHelper.encode(bytes); //btoa(String.fromCharCode(...new Uint8Array(bytes)));
+    const base64String = this.uiHelper.encode(bytes);
 
     const loops = Math.ceil(base64String.length / 400);
 
@@ -166,36 +76,9 @@ export class ShareService {
       BEAN_TRACKING.TITLE,
       BEAN_TRACKING.ACTIONS.SHARE
     );
-    //await this.socialShare.share(beanMessage,null,null,null);
-
-    //decode
-
-    /** const stringifyBean = JSURL.stringify(_bean);
-     const compressedBean = LZString.compressToEncodedURIComponent(stringifyBean);
-
-
-     const loops = Math.ceil(compressedBean.length / 400);
-
-     let jsonParams = '';
-     for (let i=0;i<loops;i++) {
-        if (jsonParams === '') {
-          jsonParams = 'shareUserBean'+ i + '=' + compressedBean.substr(0,400);
-        }
-        else {
-          jsonParams += '&shareUserBean'+ i + '=' + compressedBean.substr(i*400,400);
-        }
-      }
-
-
-
-     const beanMessage: string = 'https://beanconqueror.com?' + jsonParams;
-     this.uiLog.debug(beanMessage);
-     this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.SHARE);
-     await this.socialShare.share(beanMessage,null,null,null);
-     }
-     catch (ex) {
-
-    }**/
+    try {
+      await this.socialShare.share(beanMessage, null, null, null);
+    } catch (ex) {}
   }
 
   public async shareBrew(_brew: Brew) {
