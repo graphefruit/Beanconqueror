@@ -179,7 +179,7 @@ export class IntentHandlerService {
     }
   }
 
-  private async addBeanFromUser(_userBeanJSON: string) {
+  public async addBeanFromUser(_userBeanJSON: string) {
     this.uiLog.log(
       'Load bean information from shared user context: ' + _userBeanJSON
     );
