@@ -1204,5 +1204,6 @@
   "PAGE_SETTINGS_BEAN_RATING_TOOLTIP": "0 bis 5 sind dir zu wenig zur Bewertung deiner Bohne? Du kannst bis zu 100 'Punkten' vergeben",
   "PAGE_SETTINGS_BEAN_RATING_STEPS": "Bohnen Bewertungsschritte",
   "COFFEE_GRAMS_BREWED": "Grams gebrüht",
-  "PRESSURE_INFORMATION_DESCRIPTION": "Aktuell nur das Do It Yourself Projekt 'Popsicle' unterstützt"
+  "PRESSURE_INFORMATION_DESCRIPTION": "Aktuell nur das Do It Yourself Projekt 'Popsicle' unterstützt",
+  "SMART_SCALE_MAXIMIZE_ON_START_TIMER": "Bei Zeitstart Echtzeitgrafik maximieren"
 }
