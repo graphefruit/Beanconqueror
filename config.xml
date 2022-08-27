@@ -271,7 +271,6 @@
     </platform>
     <plugin name="cordova-plugin-statusbar" spec="~2.4.2" />
     <plugin name="cordova-plugin-device" spec="~2.0.2" />
-    <plugin name="cordova-plugin-file" spec="^6.0.2" />
     <plugin name="cordova-plugin-filechooser" spec="~1.2.0" />
     <plugin name="cordova-plugin-filepicker" spec="~1.1.6" />
     <plugin name="cordova-plugin-appminimize" spec="~1.0.1" />
