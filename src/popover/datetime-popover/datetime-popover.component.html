@@ -1,20 +1,20 @@
-<ion-content class="ion-padding-top">
+<ion-header translucent>
+</ion-header>
+<ion-content>
   <ion-grid class="ion-no-padding">
     <ion-row>
       <ion-col size="{{settings?.brew_milliseconds?3:4}}">{{"TIMER_HOUR" | translate}}</ion-col>
       <ion-col size="{{settings?.brew_milliseconds?3:4}}">{{"TIMER_MINUTES" | translate}}</ion-col>
       <ion-col size="{{settings?.brew_milliseconds?3:4}}">{{"TIMER_SECONDS" | translate}}</ion-col>
-      <ion-col size="{{settings?.brew_milliseconds?3:4}}">{{"TIMER_MILLISECONDS" | translate}}</ion-col>
+      <ion-col *ngIf="settings?.brew_milliseconds" size="{{settings?.brew_milliseconds?3:4}}">{{"TIMER_MILLISECONDS" | translate}}</ion-col>
     </ion-row>
     <ion-row>
       <ion-col size="{{settings?.brew_milliseconds?3:4}}"><ion-input maxlength="2" [(ngModel)]="timer.HOURS" max-number-value="23" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
       <ion-col size="{{settings?.brew_milliseconds?3:4}}"><ion-input maxlength="2" [(ngModel)]="timer.MINUTES" max-number-value="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
       <ion-col size="{{settings?.brew_milliseconds?3:4}}"><ion-input maxlength="2" [(ngModel)]="timer.SECONDS" max-number-value="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
-      <ion-col size="{{settings?.brew_milliseconds?3:4}}"><ion-input maxlength="3" [(ngModel)]="timer.MILLISECONDS" max-number-value="999" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
+      <ion-col  *ngIf="settings?.brew_milliseconds" size="{{settings?.brew_milliseconds?3:4}}"><ion-input maxlength="3" [(ngModel)]="timer.MILLISECONDS" max-number-value="999" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
     </ion-row>
-  </ion-grid>
-</ion-content>
-<ion-footer class="ion-no-border">
+
   <ion-row>
     <ion-col>
       <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
@@ -25,4 +25,5 @@
                   type="submit">{{"CHOOSE" | translate}}</ion-button>
     </ion-col>
   </ion-row>
-</ion-footer>
+  </ion-grid>
+

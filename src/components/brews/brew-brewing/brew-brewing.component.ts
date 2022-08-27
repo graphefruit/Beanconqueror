@@ -1254,16 +1254,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     const modal = await this.modalController.create({
       component: DatetimePopoverComponent,
       id: 'datetime-popover',
-      cssClass: 'half-bottom-modal',
-      showBackdrop: true,
-      backdropDismiss: true,
-      swipeToClose: true,
+      cssClass: 'popover-actions',
+      breakpoints: [0, 0.5, 0.75, 1],
+      initialBreakpoint: 0.5,
       componentProps: { displayingTime: this.displayingBrewTime },
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
     if (
       modalData !== undefined &&
+      modalData.data &&
       modalData.data.displayingTime !== undefined
     ) {
       this.displayingBrewTime = modalData.data.displayingTime;
