@@ -370,7 +370,6 @@ export class BeansPage implements OnInit {
       filterBeans = filterBeans.filter((e) => e.favourite === true);
     }
 
-    console.log(filter);
     // Rating filter is always active
     filterBeans = filterBeans.filter(
       (e: Bean) =>
