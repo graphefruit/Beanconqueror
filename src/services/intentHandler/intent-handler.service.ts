@@ -139,7 +139,6 @@ export class IntentHandlerService {
                 this.findGetParameter(_matchLink.queryString, param)
               );
             }
-            console.log(userBeanJSON);
             if (userBeanJSON) {
               await this.addBeanFromUser(userBeanJSON);
             }
