@@ -1028,6 +1028,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         await pressureDevice.updateZero();
       }
 
+      if (this.settings.bluetooth_scale_maximize_on_start_timer === true) {
+        this.maximizeFlowGraph();
+      }
+
       this.startingFlowTime = Date.now();
       const startingDay = moment(new Date()).startOf('day');
       // IF brewtime has some seconds, we add this to the delay directly.

@@ -320,7 +320,6 @@ export class AppComponent implements AfterViewInit {
         // Just support deeplinks on devices.
         this.intentHandlerService.attachOnHandleOpenUrl();
       }
-
       // Before we update and show messages, we need atleast to set one default language.
       this._translate.setDefaultLang('en');
       await this._translate.use('en').toPromise();

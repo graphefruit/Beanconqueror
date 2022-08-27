@@ -278,7 +278,6 @@
               <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
             </ion-item>
 
-
             <ion-item>
               <ion-label class="ion-margin-end" style="white-space: normal;"><h2>{{"SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE" | translate}}</h2></ion-label>
               <ion-checkbox (ngModelChange)="saveSettings();"
@@ -304,6 +303,11 @@
               <ion-label class="ion-margin-end" style="white-space: normal;"><h2>{{"SMART_SCALE_TARE_ON_START_TIMER" | translate}}</h2></ion-label>
               <ion-checkbox (ngModelChange)="saveSettings();"
                             [(ngModel)]="settings.bluetooth_scale_tare_on_start_timer" slot="end"></ion-checkbox>
+            </ion-item>
+            <ion-item>
+              <ion-label  style="white-space: normal;"><h2>{{"SMART_SCALE_MAXIMIZE_ON_START_TIMER" | translate}}</h2></ion-label>
+              <ion-checkbox (ngModelChange)="saveSettings();"
+                            [(ngModel)]="settings.bluetooth_scale_maximize_on_start_timer" slot="end"></ion-checkbox>
             </ion-item>
             <ion-item>
               <ion-label class="ion-margin-end" style="white-space: normal;"><h2>{{"IGNORE_NEGATIVE_VALUES" | translate}}</h2></ion-label>
@@ -411,7 +415,11 @@
                 <ion-label slot="end">{{this.uiHelper.toFixedIfNecessary(settings.pressure_threshold_bar,1)}}</ion-label>
               </ion-range>
             </ion-item>
-
+            <ion-item>
+              <ion-label style="white-space: normal;"><h2>{{"SMART_SCALE_MAXIMIZE_ON_START_TIMER" | translate}}</h2></ion-label>
+              <ion-checkbox (ngModelChange)="saveSettings();"
+                            [(ngModel)]="settings.bluetooth_scale_maximize_on_start_timer" slot="end"></ion-checkbox>
+            </ion-item>
             <ion-item>
               <ion-label class="ion-margin-end" style="white-space: normal;"><h2>{{"PRESSURE_LOG" | translate}}</h2></ion-label>
               <ion-checkbox (ngModelChange)="saveSettings();"

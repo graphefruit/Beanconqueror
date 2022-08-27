@@ -37,7 +37,8 @@
               </ion-card>
               <ion-card style="margin-top:8px;" class="flow-profile ion-text-center">
                 <ion-card-header>
-                  <div>{{this.uiHelper.formatSeconds(brew.brew_time,'mm:ss')}}</div>
+                  <div *ngIf="settings?.brew_milliseconds === false">{{this.uiHelper.formatSeconds(brew.brew_time,'mm:ss')}}</div>
+                  <div *ngIf="settings?.brew_milliseconds === true">{{this.uiHelper.formatSecondsAndMilliseconds(brew.brew_time,brew.brew_time_milliseconds,'mm:ss.SSS')}}</div>
                 </ion-card-header>
                 <ion-card-content>
                   {{"BREW_DATA_TIME" | translate}}

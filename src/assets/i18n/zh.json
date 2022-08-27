@@ -1203,5 +1203,6 @@
   "PAGE_SETTINGS_BEAN_RATING_TOOLTIP": "Is the default '0 to 5' not the right rating for you? You can instead use a '0 to 100' scale",
   "PAGE_SETTINGS_BEAN_RATING_STEPS": "Bean rating steps",
   "COFFEE_GRAMS_BREWED": "Grams brewed",
-  "PRESSURE_INFORMATION_DESCRIPTION": "Actually just the DIY project 'Popsicle' supported"
+  "PRESSURE_INFORMATION_DESCRIPTION": "Actually just the DIY project 'Popsicle' supported",
+  "SMART_SCALE_MAXIMIZE_ON_START_TIMER": "Maximize realtime graphic on timer start"
 }
