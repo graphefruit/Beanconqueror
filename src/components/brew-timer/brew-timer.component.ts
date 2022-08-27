@@ -273,16 +273,16 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     const modal = await this.modalCtrl.create({
       component: DatetimePopoverComponent,
       id: 'datetime-popover',
-      cssClass: 'half-bottom-modal',
-      showBackdrop: true,
-      backdropDismiss: true,
-      swipeToClose: true,
+      cssClass: 'popover-actions',
+      breakpoints: [0, 0.5, 0.75, 1],
+      initialBreakpoint: 0.5,
       componentProps: { displayingTime: this.displayingTime },
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
     if (
       modalData !== undefined &&
+      modalData.data &&
       modalData.data.displayingTime !== undefined
     ) {
       this.displayingTime = modalData.data.displayingTime;
