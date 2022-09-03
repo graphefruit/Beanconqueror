@@ -26,8 +26,38 @@
     <div [ngSwitch]="bean_segment">
       <div *ngSwitchCase="'open'">
           <ion-card *ngIf="getOpenBeans().length > 0">
-            <ion-searchbar *ngIf="getOpenBeans().length > 5" (ionChange)="research()" [(ngModel)]="openBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
-            <hr *ngIf="getOpenBeans().length > 5"/>
+            <div class="ion-justify-content-end container">
+              <ion-searchbar (ionChange)="research()" [(ngModel)]="openBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+              <ion-button (click)="showFilter('open')" fill="clear" size="small" tappable>
+                <ion-icon *ngIf="isFilterActive('open')"  name="beanconqueror-filter-active"
+                          slot="icon-only"></ion-icon>
+                <ion-icon *ngIf="!isFilterActive('open')"  name="beanconqueror-filter-inactive"
+                          slot="icon-only"></ion-icon>
+              </ion-button>
+            </div>
+
+            <ion-item *ngIf="isFilterActive('open')">
+              <ion-label position="stacked">{{"BEAN_DATA_ROASTING_TYPE" | translate}}</ion-label>
+
+              <ion-select #bean_roasting_type="ngModel"  (ionChange)="research()" [(ngModel)]="filter_open.bean_roasting_type" cancelText="{{'CANCEL'| translate }}" name="bean_roasting_type"
+                          okText="{{'CHOOSE'| translate }}"
+                          placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTING_TYPE' | translate}}"
+                          style="padding-left:0px!important;width: 100%; min-width: 100%;"
+                          multiple="true">
+                <ion-select-option *ngFor="let key of beanRoastingTypeEnum | keys" value="{{key}}">{{"BEAN_ROASTING_TYPE_" + key | translate}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <ion-item *ngIf="isFilterActive('open')">
+              <ion-label position="stacked">{{"BEAN_DATA_ROASTER" | translate}}</ion-label>
+              <ion-select #bean_roaster="ngModel" (ionChange)="research()" [(ngModel)]="filter_open.bean_roaster" cancelText="{{'CANCEL'| translate }}" name="bean_roaster"
+                          okText="{{'CHOOSE'| translate }}"
+                          placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTER' | translate}}"
+                          style="padding-left:0px!important;width: 100%; min-width: 100%;"
+                          multiple="true">
+                <ion-select-option *ngFor="let key of open_roasteries" value="{{key}}">{{key}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <hr />
             <ion-item *ngFor="let bean of openBeans" lines="none" tappable>
               <ion-checkbox [(ngModel)]="multipleSelection[bean.config.uuid]" slot="start"></ion-checkbox>
               <div>
@@ -57,8 +87,37 @@
       </div>
       <div *ngSwitchCase="'archive'">
           <ion-card>
-            <ion-searchbar *ngIf="getFinishedBeans().length > 5" (ionChange)="research()" [(ngModel)]="finishedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
-            <hr *ngIf="getFinishedBeans().length > 5"/>
+            <div class="ion-justify-content-end container">
+            <ion-searchbar  (ionChange)="research()" [(ngModel)]="finishedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+              <ion-button (click)="showFilter('archive')" fill="clear" size="small" tappable>
+                <ion-icon *ngIf="isFilterActive('archive')"  name="beanconqueror-filter-active"
+                          slot="icon-only"></ion-icon>
+                <ion-icon *ngIf="!isFilterActive('archive')"  name="beanconqueror-filter-inactive"
+                          slot="icon-only"></ion-icon>
+              </ion-button>
+            </div>
+            <ion-item  *ngIf="isFilterActive('archive')" >
+              <ion-label position="stacked">{{"BEAN_DATA_ROASTING_TYPE" | translate}}</ion-label>
+
+              <ion-select #bean_roasting_type="ngModel"  (ionChange)="research()" [(ngModel)]="filter_finished.bean_roasting_type" cancelText="{{'CANCEL'| translate }}" name="bean_roasting_type"
+                          okText="{{'CHOOSE'| translate }}"
+                          placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTING_TYPE' | translate}}"
+                          style="padding-left:0px!important;width: 100%; min-width: 100%;"
+                          multiple="true">
+                <ion-select-option *ngFor="let key of beanRoastingTypeEnum | keys" value="{{key}}">{{"BEAN_ROASTING_TYPE_" + key | translate}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <ion-item  *ngIf="isFilterActive('archive')" >
+              <ion-label position="stacked">{{"BEAN_DATA_ROASTER" | translate}}</ion-label>
+              <ion-select #bean_roaster="ngModel"  (ionChange)="research()" [(ngModel)]="filter_finished.bean_roaster" cancelText="{{'CANCEL'| translate }}" name="bean_roaster"
+                          okText="{{'CHOOSE'| translate }}"
+                          placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTER' | translate}}"
+                          style="padding-left:0px!important;width: 100%; min-width: 100%;"
+                          multiple="true">
+                <ion-select-option *ngFor="let key of finished_roasteries" value="{{key}}">{{key}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <hr />
             <ion-item *ngFor="let bean of finishedBeans" lines="none" tappable>
               <ion-checkbox [(ngModel)]="multipleSelection[bean.config.uuid]" slot="start"></ion-checkbox>
               <div>
@@ -94,8 +153,38 @@
     <div [ngSwitch]="bean_segment">
       <div *ngSwitchCase="'open'">
         <ion-card *ngIf="getOpenBeans().length > 0">
-          <ion-searchbar *ngIf="getOpenBeans().length > 5" (ionChange)="research()" [(ngModel)]="openBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
-          <hr *ngIf="getOpenBeans().length > 5"/>
+          <div class="ion-justify-content-end container">>
+          <ion-searchbar (ionChange)="research()" [(ngModel)]="openBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+            <ion-button (click)="showFilter('open')" fill="clear" size="small" tappable>
+              <ion-icon *ngIf="isFilterActive('open')"  name="beanconqueror-filter-active"
+                        slot="icon-only"></ion-icon>
+              <ion-icon *ngIf="!isFilterActive('open')"  name="beanconqueror-filter-inactive"
+                        slot="icon-only"></ion-icon>
+            </ion-button>
+          </div>
+
+          <ion-item *ngIf="isFilterActive('open')">
+            <ion-label position="stacked">{{"BEAN_DATA_ROASTING_TYPE" | translate}}</ion-label>
+
+            <ion-select #bean_roasting_type="ngModel"  (ionChange)="research()" [(ngModel)]="filter_open.bean_roasting_type" cancelText="{{'CANCEL'| translate }}" name="bean_roasting_type"
+                        okText="{{'CHOOSE'| translate }}"
+                        placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTING_TYPE' | translate}}"
+                        style="padding-left:0px!important;width: 100%; min-width: 100%;"
+                        multiple="true">
+              <ion-select-option *ngFor="let key of beanRoastingTypeEnum | keys" value="{{key}}">{{"BEAN_ROASTING_TYPE_" + key | translate}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item *ngIf="isFilterActive('open')">
+            <ion-label position="stacked">{{"BEAN_DATA_ROASTER" | translate}}</ion-label>
+            <ion-select #bean_roaster="ngModel" (ionChange)="research()" [(ngModel)]="filter_open.bean_roaster" cancelText="{{'CANCEL'| translate }}" name="bean_roaster"
+                        okText="{{'CHOOSE'| translate }}"
+                        placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTER' | translate}}"
+                        style="padding-left:0px!important;width: 100%; min-width: 100%;"
+                        multiple="true">
+              <ion-select-option *ngFor="let key of open_roasteries" value="{{key}}">{{key}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <hr/>
           <ion-item *ngFor="let bean of openBeans" lines="none" tappable>
             <ion-radio slot="start" value="{{bean.config.uuid}}"></ion-radio>
             <div>
@@ -125,8 +214,37 @@
       </div>
       <div *ngSwitchCase="'archive'">
         <ion-card>
-          <ion-searchbar *ngIf="getFinishedBeans().length > 5" (ionChange)="research()" [(ngModel)]="finishedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
-          <hr *ngIf="getFinishedBeans().length > 5"/>
+          <div class="ion-justify-content-end container">
+            <ion-searchbar  (ionChange)="research()" [(ngModel)]="finishedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+            <ion-button (click)="showFilter('archive')" fill="clear" size="small" tappable>
+              <ion-icon *ngIf="isFilterActive('archive')"  name="beanconqueror-filter-active"
+                        slot="icon-only"></ion-icon>
+              <ion-icon *ngIf="!isFilterActive('archive')"  name="beanconqueror-filter-inactive"
+                        slot="icon-only"></ion-icon>
+            </ion-button>
+          </div>
+          <ion-item  *ngIf="isFilterActive('archive')" >
+            <ion-label position="stacked">{{"BEAN_DATA_ROASTING_TYPE" | translate}}</ion-label>
+
+            <ion-select #bean_roasting_type="ngModel"  (ionChange)="research()" [(ngModel)]="filter_finished.bean_roasting_type" cancelText="{{'CANCEL'| translate }}" name="bean_roasting_type"
+                        okText="{{'CHOOSE'| translate }}"
+                        placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTING_TYPE' | translate}}"
+                        style="padding-left:0px!important;width: 100%; min-width: 100%;"
+                        multiple="true">
+              <ion-select-option *ngFor="let key of beanRoastingTypeEnum | keys" value="{{key}}">{{"BEAN_ROASTING_TYPE_" + key | translate}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item  *ngIf="isFilterActive('archive')" >
+            <ion-label position="stacked">{{"BEAN_DATA_ROASTER" | translate}}</ion-label>
+            <ion-select #bean_roaster="ngModel"  (ionChange)="research()" [(ngModel)]="filter_finished.bean_roaster" cancelText="{{'CANCEL'| translate }}" name="bean_roaster"
+                        okText="{{'CHOOSE'| translate }}"
+                        placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTER' | translate}}"
+                        style="padding-left:0px!important;width: 100%; min-width: 100%;"
+                        multiple="true">
+              <ion-select-option *ngFor="let key of finished_roasteries" value="{{key}}">{{key}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <hr />
           <ion-item *ngFor="let bean of finishedBeans" lines="none" tappable>
             <ion-radio slot="start" value="{{bean.config.uuid}}"></ion-radio>
             <div>
