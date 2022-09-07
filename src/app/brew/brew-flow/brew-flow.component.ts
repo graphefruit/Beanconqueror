@@ -18,6 +18,11 @@ import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { Settings } from '../../../classes/settings/settings';
 import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
+import { TranslateService } from '@ngx-translate/core';
+import {
+  CoffeeBluetoothDevicesService,
+  PressureDevice,
+} from '@graphefruit/coffee-bluetooth-devices';
 
 @Component({
   selector: 'brew-flow',
@@ -34,22 +39,34 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy {
   public smartScaleAvgFlowPerSecondEl: ElementRef;
   public showBloomTimer: boolean = false;
   public showDripTimer: boolean = false;
+  public gaugeVisible: boolean = false;
   @Input() public flowChart: any;
   @Input() public flowChartEl: any;
   @Input() private brewFlowGraphEvent: EventEmitter<any>;
+  @Input() private brewPressureGraphEvent: EventEmitter<any>;
+
   @Input() public brew: Brew;
   @Input() public brewComponent: BrewBrewingComponent;
   @Input() public isDetail: boolean = false;
   private brewFlowGraphSubscription: Subscription;
-  @ViewChild('flowContent', { read: ElementRef })
-  public flowContent: ElementRef;
+  private brewPressureGraphSubscription: Subscription;
+
   public settings: Settings;
+
+  public gaugeType = 'semi';
+  public gaugeValue = 0;
+  public gaugeLabel = '';
+  public gaugeSize = 50;
+
   constructor(
     private readonly modalController: ModalController,
     private readonly screenOrientation: ScreenOrientation,
     private readonly uiHelper: UIHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiBrewHelper: UIBrewHelper
+    private readonly uiBrewHelper: UIBrewHelper,
+    private readonly translate: TranslateService,
+    private readonly bleManager: CoffeeBluetoothDevicesService,
+    private readonly platform: Platform
   ) {}
 
   public async ngAfterViewInit() {
@@ -57,6 +74,14 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy {
     this.flowChartEl.options.responsive = false;
     this.flowChartEl.update('quite');
 
+    setTimeout(() => {
+      const offsetWidth = document.getElementById('brewPanel').offsetWidth;
+
+      // -16 because of padding
+      this.gaugeSize = offsetWidth - 16;
+    }, 1000);
+
+    this.gaugeLabel = this.translate.instant('BREW_PRESSURE_FLOW');
     await new Promise((resolve) => {
       setTimeout(() => {
         document
@@ -77,7 +102,6 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy {
     await new Promise((resolve) => {
       // Looks funny but we need. if we would not calculate and substract 25px, the actual time graph would not be displayed :<
       setTimeout(() => {
-        const el = this.flowContent.nativeElement;
         const newHeight =
           document.getElementById('brewFlowContainer').offsetHeight;
         this.flowChartEl.ctx.canvas.style.height = newHeight - 1 + 'px';
@@ -92,6 +116,10 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy {
           this.setActualScaleInformation(_val);
         }
       );
+      this.brewPressureGraphSubscription =
+        this.brewPressureGraphEvent.subscribe((_val) => {
+          this.setActualPressureInformation(_val);
+        });
 
       const settings: Settings = this.uiSettingsStorage.getSettings();
 
@@ -111,7 +139,14 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy {
           PREPARATION_STYLE_TYPE.ESPRESSO;
     }
   }
+  public pressureDeviceConnected() {
+    if (!this.platform.is('cordova')) {
+      return true;
+    }
 
+    const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
+    return !!pressureDevice;
+  }
   public startTimer() {
     this.brewComponent.timer.startTimer();
   }
@@ -147,16 +182,33 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy {
     avgFlowEl.textContent = _val.avgFlow;
   }
 
+  public setActualPressureInformation(_val: any) {
+    this.gaugeValue = _val.pressure;
+  }
+
   public ngOnDestroy() {
     if (this.brewFlowGraphSubscription) {
       this.brewFlowGraphSubscription.unsubscribe();
       this.brewFlowGraphSubscription = undefined;
+    }
+    if (this.brewPressureGraphSubscription) {
+      this.brewPressureGraphSubscription.unsubscribe();
+      this.brewPressureGraphSubscription = undefined;
     }
 
     this.flowChartEl.maintainAspectRatio = false;
     this.flowChartEl.update('quite');
   }
 
+  public resetPressure() {
+    if (this.pressureDeviceConnected()) {
+      const pressureDevice: PressureDevice =
+        this.bleManager.getPressureDevice();
+      try {
+        pressureDevice.updateZero();
+      } catch (ex) {}
+    }
+  }
   public dismiss() {
     this.modalController.dismiss(
       {

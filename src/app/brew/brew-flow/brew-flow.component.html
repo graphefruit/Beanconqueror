@@ -1,7 +1,7 @@
 <ion-header translucent>
 
 </ion-header>
-<ion-content #flowContent>
+<ion-content>
 
 <ion-card style="height:calc(100% - 20px)">
   <ion-grid class="ion-no-padding" style="padding:5px;">
@@ -14,7 +14,18 @@
       <ion-col *ngIf="isDetail===false" size="2" style="text-align:center;">
         <ion-grid>
           <ion-row>
-            <ion-col size="12">
+            <ion-col id="brewPanel" size="12">
+              <ion-card *ngIf="pressureDeviceConnected()" (click)="resetPressure()" class="flow-profile" style="margin-bottom:8px;padding: 8px!important;">
+                <ngx-gauge [type]="gaugeType"
+                           [value]="gaugeValue"
+                           [label]="gaugeLabel"
+                           [size]="gaugeSize"
+                           min="0"
+                           max="12"
+                           duration="1"
+                           thick="5" >
+                </ngx-gauge>
+              </ion-card>
               <ion-card class="flow-profile ion-text-center">
                 <ion-card-header>
                   <div #smartScaleWeightPerSecond>? g/s</div>

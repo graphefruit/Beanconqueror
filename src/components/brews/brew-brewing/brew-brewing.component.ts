@@ -123,7 +123,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public flowProfileChartEl: any = undefined;
   private startingFlowTime: number = undefined;
   private brewFlowGraphSubject: EventEmitter<any> = new EventEmitter();
-
+  private brewPressureGraphSubject: EventEmitter<any> = new EventEmitter();
   public pressureDeviceSubscription: Subscription = undefined;
 
   constructor(
@@ -425,6 +425,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         brew: this.data,
         flowChartEl: this.flowProfileChartEl,
         brewFlowGraphEvent: this.brewFlowGraphSubject,
+        brewPressureGraphEvent: this.brewPressureGraphSubject,
       },
     });
     await modal.present();
@@ -1412,6 +1413,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (!isSmartScaleConnected) {
       this.flowSecondTick++;
     }
+    this.brewPressureGraphSubject.next({
+      pressure: pressureObj.actual,
+    });
   }
 
   private __setFlowProfile(_scaleChange: any) {
