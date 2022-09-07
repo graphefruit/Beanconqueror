@@ -162,6 +162,7 @@ import { QrCodeScannerPopoverComponent } from '../../popover/qr-code-scanner-pop
 import { PreparationToolModalSelectComponent } from '../preparation/preparation-tool-modal-select/preparation-tool-modal-select.component';
 import { PreparationToolOverlayDirective } from '../../directive/preparation-tool-overlay.directive';
 import { CoffeeBluetoothDevicesService } from '@graphefruit/coffee-bluetooth-devices';
+import { NgxGaugeModule } from 'ngx-gauge';
 
 @NgModule({
   declarations: [
@@ -307,6 +308,7 @@ import { CoffeeBluetoothDevicesService } from '@graphefruit/coffee-bluetooth-dev
     RouterModule,
     NgxStarsModule,
     AgVirtualScrollModule,
+    NgxGaugeModule,
   ],
   providers: [
     AppVersion,

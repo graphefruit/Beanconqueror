@@ -78,6 +78,7 @@
     "luxon": "^2.3.0",
     "lz-string": "^1.4.4",
     "moment": "^2.29.1",
+    "ngx-gauge": "^6.0.0",
     "ngx-stars": "^1.4.3",
     "postcss": "^8.3.5",
     "rxjs": "^6.6.6",
