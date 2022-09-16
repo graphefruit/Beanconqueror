@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  API_URL: 'https://backend.beanconqueror.com/'
+  API_URL: 'https://localhost:5001/',
 };
 
 /*

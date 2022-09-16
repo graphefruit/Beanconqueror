@@ -201,7 +201,7 @@
   "ADD_BREW": "Add brew",
   "CHOOSE": "Choose",
   "CHOOSE_PHOTO_OR_LIBRARY": "Record photo or choose from photo gallery.",
-  "RECORD": "Record",
+  "RECORD": "Take photo",
   "PAGE_BEAN_INFORMATION": "Bean information",
   "PAGE_BEAN_INFORMATION_GOOD_BREWS": "Good",
   "PAGE_BEAN_INFORMATION_BAD_BREWS": "Bad",
@@ -1205,5 +1205,12 @@
   "PAGE_SETTINGS_BEAN_RATING_STEPS": "Bean rating steps",
   "COFFEE_GRAMS_BREWED": "Grams brewed",
   "PRESSURE_INFORMATION_DESCRIPTION": "Actually just the DIY project 'Popsicle' supported",
-  "SMART_SCALE_MAXIMIZE_ON_START_TIMER": "Maximize realtime graphic on timer start"
+  "SMART_SCALE_MAXIMIZE_ON_START_TIMER": "Maximize realtime graphic on timer start",
+  "PRESSURE": {
+    "CONNECTION_NOT_ESTABLISHED": "Pressure device not found found or connection could not be established",
+    "CONNECTED_SUCCESSFULLY": "Pressure device connected",
+    "DISCONNECTED_SUCCESSFULLY": "Pressure device disconnected",
+    "DISCONNECTED_UNPLANNED": "Pressure device disconnected unplanned",
+    "INFORMATION_DESCRIPTION": "Supported devices are: PRS and Popsicle"
+  }
 }

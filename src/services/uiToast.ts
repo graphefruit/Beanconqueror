@@ -1,23 +1,25 @@
 /** Core */
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 /** Ionic */
-import {ToastController} from '@ionic/angular';
-import {TranslateService} from '@ngx-translate/core';
-
+import { ToastController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UIToast {
+  constructor(
+    private readonly translate: TranslateService,
+    private readonly toastController: ToastController
+  ) {}
 
-  constructor(private readonly translate: TranslateService,
-              private readonly toastController: ToastController) {
-  }
-
-
-  public async showInfoToast(_message: string) {
+  public async showInfoToast(_message: string, translate: boolean = true) {
+    let message = _message;
+    if (translate === true) {
+      message = this.translate.instant(_message);
+    }
     const toast = await this.toastController.create({
-      message: this.translate.instant(_message),
+      message: message,
       duration: 2000,
       position: 'bottom',
     });
@@ -29,11 +31,7 @@ export class UIToast {
       message: this.translate.instant(_message),
       duration: 2000,
       position: 'bottom',
-
     });
     toast.present();
   }
-
-
-
 }
