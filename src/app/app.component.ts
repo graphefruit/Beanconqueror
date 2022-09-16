@@ -62,8 +62,13 @@ import ChartStreaming from 'chartjs-plugin-streaming';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import annotationPlugin from 'chartjs-plugin-annotation';
 
-import { PressureType, ScaleType } from '@graphefruit/coffee-bluetooth-devices';
+import {
+  CoffeeBluetoothServiceEvent,
+  PressureType,
+  ScaleType,
+} from '@graphefruit/coffee-bluetooth-devices';
 import { CoffeeBluetoothDevicesService } from '@graphefruit/coffee-bluetooth-devices';
+import { UIToast } from '../services/uiToast';
 
 declare var AppRate;
 declare var window;
@@ -229,7 +234,8 @@ export class AppComponent implements AfterViewInit {
     private readonly cleanupService: CleanupService,
     private readonly device: Device,
     private readonly appVersion: AppVersion,
-    private readonly storage: Storage
+    private readonly storage: Storage,
+    private readonly uiToast: UIToast
   ) {
     // Dont remove androidPlatformService, we need to initialize it via constructor
     try {
@@ -573,6 +579,36 @@ export class AppComponent implements AfterViewInit {
     this.__instanceAppRating();
     this.__attachOnDevicePause();
     this.__attachOnDeviceResume();
+
+    const bleSubscription = this.bleManager
+      .attachOnEvent()
+      .subscribe((_type) => {
+        if (_type === CoffeeBluetoothServiceEvent.CONNECTED_SCALE) {
+          this.uiToast.showInfoToast(
+            this._translate.instant('SCALE.CONNECTED_SUCCESSFULLY') +
+              ' - ' +
+              this.bleManager.getScale().device_name +
+              ' / ' +
+              this.bleManager.getScale().device_id,
+            false
+          );
+        } else if (_type === CoffeeBluetoothServiceEvent.DISCONNECTED_SCALE) {
+          this.uiToast.showInfoToast('SCALE.DISCONNECTED_UNPLANNED');
+        } else if (_type === CoffeeBluetoothServiceEvent.CONNECTED_PRESSURE) {
+          this.uiToast.showInfoToast(
+            this._translate.instant('PRESSURE.CONNECTED_SUCCESSFULLY') +
+              ' - ' +
+              this.bleManager.getPressureDevice().device_name +
+              ' / ' +
+              this.bleManager.getPressureDevice().device_id,
+            false
+          );
+        } else if (
+          _type === CoffeeBluetoothServiceEvent.DISCONNECTED_PRESSURE
+        ) {
+          this.uiToast.showInfoToast('PRESSURE.DISCONNECTED_UNPLANNED');
+        }
+      });
   }
 
   private __connectSmartScale() {
@@ -582,12 +618,12 @@ export class AppComponent implements AfterViewInit {
     this.uiLog.log(`Connect smartscale? ${scale_id}`);
     if (scale_id !== undefined && scale_id !== '') {
       this.bleManager.autoConnectScale(scale_type, scale_id, true);
-      setTimeout(() => {
+      /**setTimeout(() => {
         this.bleManager.disconnect(scale_id);
         setTimeout(() => {
           this.bleManager.autoConnectScale(scale_type, scale_id, true);
         }, 2000);
-      }, 10000);
+      }, 10000);**/
     } else {
       this.uiLog.log('Smartscale not connected, dont try to connect');
     }

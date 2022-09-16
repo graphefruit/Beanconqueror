@@ -303,7 +303,9 @@ export class SettingsPage implements OnInit {
             const connectedScale = this.bleManager.getScale();
             if (connectedScale !== null && connectedScale !== undefined) {
               skipLoop = 1;
-              await connectedScale.setLed(true, true);
+              try {
+                await connectedScale.setLed(true, true);
+              } catch (ex) {}
             }
             resolve(undefined);
           }, 1000);

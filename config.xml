@@ -82,6 +82,7 @@
         <icon density="xxhdpi" src="resources/android/icon/drawable-xxhdpi-icon.png" />
         <icon density="xxxhdpi" src="resources/android/icon/drawable-xxxhdpi-icon.png" />
         <icon density="mdpi" src="resources/android/icon/drawable-mdpi-icon.png" />
+        <hook src="plugins/cordova-plugin-ble-central/stripDuplicatePermissions.js" type="after_prepare" />
     </platform>
     <platform name="ios">
         <preference name="BackupWebStorage" value="cloud" />

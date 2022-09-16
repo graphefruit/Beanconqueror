@@ -1205,5 +1205,12 @@
   "PAGE_SETTINGS_BEAN_RATING_STEPS": "Bohnen Bewertungsschritte",
   "COFFEE_GRAMS_BREWED": "Grams gebrüht",
   "PRESSURE_INFORMATION_DESCRIPTION": "Aktuell nur das Do It Yourself Projekt 'Popsicle' unterstützt",
-  "SMART_SCALE_MAXIMIZE_ON_START_TIMER": "Bei Zeitstart Echtzeitgrafik maximieren"
+  "SMART_SCALE_MAXIMIZE_ON_START_TIMER": "Bei Zeitstart Echtzeitgrafik maximieren",
+  "PRESSURE": {
+    "CONNECTION_NOT_ESTABLISHED": "Druckgerät konnte nicht gefunden oder verbunden werden",
+    "CONNECTED_SUCCESSFULLY": "Druckgerät verbunden",
+    "DISCONNECTED_SUCCESSFULLY": "Druckgerät getrennt",
+    "DISCONNECTED_UNPLANNED": "Druckgerät ungeplant getrennt",
+    "INFORMATION_DESCRIPTION": "Unterstütze Druckgeräte sind Popsicle, sowie PRS"
+  }
 }

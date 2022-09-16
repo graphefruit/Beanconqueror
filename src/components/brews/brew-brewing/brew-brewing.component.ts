@@ -52,7 +52,10 @@ import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import { PreparationTool } from '../../../classes/preparation/preparationTool';
 
 import { UIAlert } from '../../../services/uiAlert';
-import { CoffeeBluetoothDevicesService } from '@graphefruit/coffee-bluetooth-devices';
+import {
+  CoffeeBluetoothDevicesService,
+  CoffeeBluetoothServiceEvent,
+} from '@graphefruit/coffee-bluetooth-devices';
 import { BluetoothScale } from '@graphefruit/coffee-bluetooth-devices';
 import { SCALE_TIMER_COMMAND } from '@graphefruit/coffee-bluetooth-devices';
 import { PressureDevice } from '@graphefruit/coffee-bluetooth-devices';
@@ -251,18 +254,20 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           let disconnectTriggered: boolean = false;
           let connectTriggered: boolean = false;
 
-          if (_type && _type.type === 'CONNECT_SCALE') {
+          if (_type === CoffeeBluetoothServiceEvent.CONNECTED_SCALE) {
             connectTriggered = true;
             this.__connectSmartScale(false);
-          } else if (_type && _type.type === 'DISCONNECT_SCALE') {
+          } else if (_type === CoffeeBluetoothServiceEvent.DISCONNECTED_SCALE) {
             this.deattachToWeightChange();
             this.deattachToFlowChange();
             this.deattachToScaleEvents();
             disconnectTriggered = true;
-          } else if (_type && _type.type === 'CONNECT_PRESSURE') {
+          } else if (_type === CoffeeBluetoothServiceEvent.CONNECTED_PRESSURE) {
             connectTriggered = true;
             this.__connectPressureDevice(false);
-          } else if (_type && _type.type === 'DISCONNECT_PRESSURE') {
+          } else if (
+            _type === CoffeeBluetoothServiceEvent.DISCONNECTED_PRESSURE
+          ) {
             this.deattachToPressureChange();
             disconnectTriggered = true;
           }
