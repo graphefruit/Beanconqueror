@@ -99,6 +99,7 @@ export class Settings implements ISettings {
   public pressure_log: boolean;
   public pressure_threshold_active: boolean;
   public pressure_threshold_bar: number;
+  public pressure_stay_connected: boolean;
 
   public currency: string;
 
@@ -252,6 +253,7 @@ export class Settings implements ISettings {
     this.pressure_log = false;
     this.pressure_threshold_active = false;
     this.pressure_threshold_bar = 0.5;
+    this.pressure_stay_connected = false;
 
     this.currency = 'EUR';
   }

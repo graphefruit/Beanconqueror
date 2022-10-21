@@ -35,6 +35,8 @@ message BeanProto {
 
   optional bool favourite = 25;
   optional bool shared = 26;
+  optional ICupping cupping = 27;
+  optional IFlavor cupped_flavor = 28;
 }
 
 message Config {
@@ -70,6 +72,29 @@ message BeanRoastInformation {
   optional uint32 second_crack_minute = 10;
   optional uint32 second_crack_temperature = 11;
 }
+
+message ICupping {
+  optional uint64 dry_fragrance = 1;
+  optional uint64 wet_aroma = 2;
+  optional uint64 brightness = 3;
+  optional uint64 flavor = 4;
+  optional uint64 body = 5;
+  optional uint64 finish = 6;
+  optional uint64 sweetness = 7;
+  optional uint64 clean_cup = 8;
+  optional uint64 complexity = 9;
+  optional uint64 uniformity = 10;
+  optional uint64 cuppers_correction = 11;
+}
+
+message IFlavor {
+
+  repeated uint64 predefined_flavors = 1;
+  repeated string custom_flavors = 2;
+
+}
+
+
 
 enum Roast {
   // UNKOWN

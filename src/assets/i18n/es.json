@@ -737,6 +737,52 @@
         "Después de tomar una foto, la rueda giratoria de carga no desapareció.",
         "Pequeñas correcciones de errores"
       ]
+    },
+    "6.2.0": {
+      "TITLE": "Version 6.2.0: Thats new",
+      "DESCRIPTION": [
+        "<b>Pressure devices</b>",
+        "Support of  PRS - Sensor",
+        "Support of 'Do it yourself' Popsicle - Sensor - Thanks to Mike and Shay",
+        "Autostart timer on a specific pressure - editable in settings",
+        "Press of pressure gauge, will reset pressure to 0",
+        "Display name of pressure device and mac-address on connect",
+        "",
+        "<b>Bluetooth scales</b>",
+        "Support of Eureka Precisa - Thanks to Mimoja",
+        "Define the behavior of the bluetooth scale on a new brew - editable in settings",
+        "Define which graphs should be displayed on filter or espresso - editable in settings",
+        "Sequential processing of bluetooth commands to reduce issues",
+        "Display name of bluetooth scale and mac-address on connect",
+        "",
+        "<b>Brews</b>",
+        "Supports now milliseconds - Activate in settings",
+        "Filtersystem expanded, search for roast type and roastery",
+        "You can reconnect your bluetooth scale or pressure device on the brew add/edit page",
+        "",
+        "<b>Beans</b>",
+        "Share your bean (without server needed) - Thanks to Mike",
+        "Show all brews to your bean",
+        "Support bean rating like for brews - editable in settings",
+        "",
+        "<b>More languages</b>",
+        "Support of Turkish - Thanks to Halil Portakal",
+        "Support of Chinese - Thanks to Jiageng",
+        "",
+        "<b>Mills</b>",
+        "Display of the last used grind setting, aswell as the last used bean",
+        "",
+        "<b>Improvements</b>",
+        "Error message when a bean is scanned, which has not been approved yet",
+        "The edit of the brew-date is not activated by default",
+        "",
+        "<b>Others</b>",
+        "Typos fixed",
+        "Fixed an issue that you didn't see the star-rating even with normal settings",
+        "Older brew graphics can now be exported again",
+        "Update to Ionic 6.3.0",
+        "Smaller bug fixes"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Personalizar parámetros",
@@ -1119,7 +1165,8 @@
     "WRONG_LINK_DESCRIPTION": "Enlace de aplicación incorrecto",
     "WRONG_LINK_TITLE": "Error",
     "SERVER": {
-      "ERROR_OCCURED": "Se ha producido un error, no se pudo leer el código qr, inténtalo de nuevo."
+      "ERROR_OCCURED": "Se ha producido un error, no se pudo leer el código qr, inténtalo de nuevo.",
+      "BEAN_NOT_APPROVED": "Bean has not been approved yet,please try later again"
     },
     "BEAN_SUCCESSFULLY_SCANNED": "Grano escaneado correctamente",
     "BEAN_SUCCESSFULLY_REFRESHED": "Grano actualizado con éxito",
@@ -1204,6 +1251,23 @@
   "PAGE_SETTINGS_BEAN_RATING_TOOLTIP": "Is the default '0 to 5' not the right rating for you? You can instead use a '0 to 100' scale",
   "PAGE_SETTINGS_BEAN_RATING_STEPS": "Bean rating steps",
   "COFFEE_GRAMS_BREWED": "Grams brewed",
-  "PRESSURE_INFORMATION_DESCRIPTION": "Actually just the DIY project 'Popsicle' supported",
-  "SMART_SCALE_MAXIMIZE_ON_START_TIMER": "Maximize realtime graphic on timer start"
+  "SMART_SCALE_MAXIMIZE_ON_START_TIMER": "Maximize realtime graphic on timer start",
+  "PRESSURE": {
+    "CONNECTION_NOT_ESTABLISHED": "Pressure device not found found or connection could not be established",
+    "CONNECTED_SUCCESSFULLY": "Pressure device connected",
+    "DISCONNECTED_SUCCESSFULLY": "Pressure device disconnected",
+    "DISCONNECTED_UNPLANNED": "Pressure device disconnected unplanned",
+    "INFORMATION_DESCRIPTION": "Supported devices are: Popsicle",
+    "BLUETOOTH_SCAN_RUNNING": "Pressure device will be searched for 60 seconds, please wait",
+    "BLUETOOTH_NOT_ENABLED": "Bluetooth not activated, please activate to work properly",
+    "REQUEST_PERMISSION": {
+      "LOCATION": "To find pressure devices, the app needs access to the location.",
+      "BLUETOOTH": "To find pressure devices, the app needs access to bluetooth"
+    }
+  },
+  "POPOVER_BLUETOOTH_ACTION_RECONNECT_SCALE": "Reconnect scale",
+  "POPOVER_BLUETOOTH_ACTION_RECONNECT_PRESSURE_DEVICE": "Reconnect pressure device",
+  "POPOVER_SHOW_BREWS": "Show brews",
+  "LAST_USED_GRIND_SIZE_SETTING": "Last grind setting",
+  "LAST_USED_BEAN": "Last bean"
 }

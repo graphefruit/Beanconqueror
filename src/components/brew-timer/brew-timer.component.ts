@@ -33,6 +33,9 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   @Output() public dripTimer = new EventEmitter();
   @Output() public tareScale = new EventEmitter();
 
+  @Output() public timerStartPressed = new EventEmitter();
+  @Output() public timerResumedPressed = new EventEmitter();
+
   public displayingTime: string = moment().startOf('day').toISOString();
 
   private _dripTimerVisible: boolean;
@@ -116,11 +119,27 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
       .toISOString();
   }
 
+  public __startTimer() {
+    if (this.timerStartPressed.observers.length > 0) {
+      this.timerStartPressed.emit();
+    } else {
+      this.startTimer();
+    }
+  }
+
   public startTimer(_resumed: boolean = false): void {
     if (_resumed === false) {
       const startingDate = new Date();
       this.startingDay = moment(startingDate).startOf('day');
-      this.startedTimer = moment(startingDate);
+      if (this.timer.seconds > 0 || this.timer.milliseconds > 0) {
+        // We need to subtract, if the time is already given on start (like repeat or preset)
+        this.startedTimer = moment(startingDate)
+          .subtract(this.timer.seconds, 'seconds')
+          .subtract(this.timer.milliseconds, 'milliseconds');
+      } else {
+        this.startedTimer = moment(startingDate);
+      }
+
       this.startedOffset = this.startedTimer.diff(this.startingDay);
     } else {
       const restartTimer = moment(new Date());
@@ -129,13 +148,17 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     }
     this.timer.hasStarted = true;
     this.timer.runTimer = true;
-    this.timerTick();
+
     if (this.settings?.brew_milliseconds) {
       this.millisecondTick();
+    } else {
+      this.timerTick();
     }
 
     if (_resumed === false) {
-      this.timerStarted.emit();
+      if (this.timerStartPressed.observers.length <= 0) {
+        this.timerStarted.emit();
+      }
     }
 
     this.changeEvent();
@@ -163,9 +186,19 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     this.dripTimer.emit(this.getSeconds());
   }
 
+  public __resumeTimer() {
+    if (this.timerResumedPressed.observers.length > 0) {
+      this.timerResumedPressed.emit();
+    } else {
+      this.resumeTimer();
+    }
+  }
+
   public resumeTimer(): void {
     this.startTimer(true);
-    this.timerResumed.emit();
+    if (this.timerResumedPressed.observers.length <= 0) {
+      this.timerResumed.emit();
+    }
   }
 
   public millisecondTick(): void {
@@ -176,6 +209,8 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
       const milliSecondTimer = moment(new Date()).subtract(this.startedOffset);
 
       this.timer.milliseconds = milliSecondTimer.milliseconds();
+      const passedSeconds = milliSecondTimer.diff(this.startingDay, 'seconds');
+      this.timer.seconds = passedSeconds;
 
       this.displayingTime = moment(this.displayingTime)
         .startOf('day')
@@ -183,6 +218,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
         .add('milliseconds', this.timer.milliseconds)
         .toISOString();
       this.millisecondTick();
+      this.changeEvent();
     }, 10);
   }
   public timerTick(): void {
@@ -206,7 +242,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
       this.timerTick();
       this.changeEvent();
-    }, 10);
+    }, 1000);
   }
 
   public getSeconds(): number {

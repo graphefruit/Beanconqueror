@@ -7,14 +7,11 @@ export class Visualizer {
   public timers: {};
   public pressure: {
     pressure: Array<string>;
-    goal: Array<string>;
   };
 
   public flow: {
     flow: Array<string>;
     by_weight: Array<string>;
-    by_weight_raw: Array<string>;
-    goal: Array<string>;
   };
 
   public temperature: {
@@ -27,10 +24,6 @@ export class Visualizer {
     weight: Array<string>;
     water_dispensed: Array<string>;
   };
-  public resistance: {
-    resistance: Array<string>;
-    by_weight: Array<string>;
-  };
   public state_change: Array<string>;
 
   public profile: {
@@ -38,7 +31,7 @@ export class Visualizer {
     author: string;
     notes: string;
     beverage_type: string;
-    steps: Array<any>;
+    version: string;
   };
 
   public meta: {
@@ -67,6 +60,22 @@ export class Visualizer {
   public app: {
     app_name: string;
     app_version: string;
+    data: {
+      settings: {
+        my_name: string;
+        beverage_type: string;
+        bean_brand: string;
+        bean_type: string;
+        roast_date: string;
+        grinder_dose_weight: string;
+        running_weight: string;
+        drink_weight: string;
+        preinfusion_stop_timeout: string;
+        language: string;
+        grinder_setting: string;
+        drink_tds: string;
+      };
+    };
   };
 
   constructor() {
@@ -81,14 +90,11 @@ export class Visualizer {
     this.timers = {};
     this.pressure = {
       pressure: [],
-      goal: [],
     };
 
     this.flow = {
       flow: [],
       by_weight: [],
-      by_weight_raw: [],
-      goal: [],
     };
 
     this.temperature = {
@@ -101,10 +107,6 @@ export class Visualizer {
       weight: [],
       water_dispensed: [],
     };
-    this.resistance = {
-      resistance: [],
-      by_weight: [],
-    };
 
     this.state_change = [];
 
@@ -113,7 +115,7 @@ export class Visualizer {
       author: '',
       notes: '',
       beverage_type: '',
-      steps: [],
+      version: '2',
     };
     this.meta = {
       bean: {
@@ -139,8 +141,24 @@ export class Visualizer {
     };
 
     this.app = {
-      app_name: 'beanconqueror',
+      app_name: 'Beanconqueror',
       app_version: '2',
+      data: {
+        settings: {
+          my_name: 'Beanconqueror',
+          beverage_type: '',
+          bean_brand: '',
+          bean_type: '',
+          roast_date: '',
+          grinder_dose_weight: '',
+          running_weight: '',
+          drink_weight: '',
+          preinfusion_stop_timeout: '',
+          language: '',
+          grinder_setting: '',
+          drink_tds: '',
+        },
+      },
     };
   }
 }

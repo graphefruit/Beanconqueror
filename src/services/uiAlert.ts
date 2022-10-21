@@ -1,22 +1,25 @@
 /** Core */
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 /** Ionic */
-import {AlertController, LoadingController, ModalController} from '@ionic/angular';
-import {TranslateService} from '@ngx-translate/core';
-import {CustomPopoverComponent} from '../popover/custom-popover/custom-popover.component';
-import {FilesystemErrorPopoverComponent} from '../popover/filesystem-error-popover/filesystem-error-popover.component';
+import {
+  AlertController,
+  LoadingController,
+  ModalController,
+} from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
+import { CustomPopoverComponent } from '../popover/custom-popover/custom-popover.component';
+import { FilesystemErrorPopoverComponent } from '../popover/filesystem-error-popover/filesystem-error-popover.component';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UIAlert {
-
-  constructor(private readonly alertController: AlertController,
-              private readonly translate: TranslateService,
-              private readonly modalController: ModalController,
-              private readonly loadingController: LoadingController) {
-  }
-
+  constructor(
+    private readonly alertController: AlertController,
+    private readonly translate: TranslateService,
+    private readonly modalController: ModalController,
+    private readonly loadingController: LoadingController
+  ) {}
 
   private loadingSpinner;
 
@@ -25,11 +28,9 @@ export class UIAlert {
       await this.hideLoadingSpinner();
     }
     this.loadingSpinner = await this.loadingController.create({
-      message: this.translate.instant('PLEASE_WAIT')
+      message: this.translate.instant('PLEASE_WAIT'),
     });
     this.loadingSpinner.present();
-
-
   }
 
   public setLoadingSpinnerMessage(message: string, translate: boolean = false) {
@@ -39,9 +40,7 @@ export class UIAlert {
       } else {
         this.loadingSpinner.message = this.translate.instant(message);
       }
-
     }
-
   }
 
   public async hideLoadingSpinner() {
@@ -49,20 +48,17 @@ export class UIAlert {
       await this.loadingSpinner.dismiss();
       this.loadingSpinner = undefined;
     }
-
   }
 
   /**
    * @method showMessage
    */
   public async showAppShetItSelfMessage() {
-
-    const modal = await this.modalController.create(
-      {
-        component: FilesystemErrorPopoverComponent,
-        cssClass: 'half-bottom-modal',
-        showBackdrop: true,
-      });
+    const modal = await this.modalController.create({
+      component: FilesystemErrorPopoverComponent,
+      cssClass: 'half-bottom-modal',
+      showBackdrop: true,
+    });
     await modal.present();
     await modal.onWillDismiss();
   }
@@ -70,7 +66,12 @@ export class UIAlert {
   /**
    * @method showMessage
    */
-  public async showMessage(_message: string, _title?: string, _ok?: string, _translate?: boolean): Promise<any> {
+  public async showMessage(
+    _message: string,
+    _title?: string,
+    _ok?: string,
+    _translate?: boolean
+  ): Promise<any> {
     if (_translate === true) {
       _message = this.translate.instant(_message);
 
@@ -95,16 +96,20 @@ export class UIAlert {
             text: okText,
             handler: () => {
               resolve(undefined);
-            }
-          }
-        ]
+            },
+          },
+        ],
       });
       await alert.present();
     });
 
     return promise;
   }
-  public async showConfirm(_message: string, _title?: string, _translate?: boolean): Promise<any> {
+  public async showConfirm(
+    _message: string,
+    _title?: string,
+    _translate?: boolean
+  ): Promise<any> {
     if (_translate === true) {
       _message = this.translate.instant(_message);
 
@@ -124,35 +129,25 @@ export class UIAlert {
             role: 'cancel',
             handler: () => {
               reject();
-            }
+            },
           },
           {
             text: this.translate.instant('YES'),
             handler: () => {
               resolve(undefined);
-            }
-          }
-        ]
+            },
+          },
+        ],
       });
       await alert.present();
     });
   }
 
-  public async presentCustomPopover(_title: string, _description: string, _okText: string) {
-
-    const modal = await this.modalController.create(
-      {
-        component: CustomPopoverComponent,
-        cssClass: 'half-bottom-modal',
-        showBackdrop: true,
-        componentProps: {
-          title: _title,
-          description: _description,
-          okText: _okText
-        }
-      });
-    await modal.present();
-    await modal.onWillDismiss();
+  public async presentCustomPopover(
+    _title: string,
+    _description: string,
+    _okText: string
+  ) {
+    await this.showMessage(_description, _title, _okText, true);
   }
-
 }

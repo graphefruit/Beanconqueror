@@ -13,6 +13,8 @@ import { RoastingMachine } from '../roasting-machine/roasting-machine';
 import { UIRoastingMachineStorage } from '../../services/uiRoastingMachineStorage';
 import { IRoastingMachine } from '../../interfaces/roasting-machine/iRoastingMachine';
 import { BeanProto } from '../../generated/src/classes/bean/bean';
+import { ICupping } from '../../interfaces/cupping/iCupping';
+import { IFlavor } from '../../interfaces/flavor/iFlavor';
 
 export class Bean implements IBean {
   public name: string;
@@ -51,6 +53,9 @@ export class Bean implements IBean {
 
   public favourite: boolean;
   public shared: boolean;
+  public cupping: ICupping;
+
+  public cupped_flavor: IFlavor;
 
   constructor() {
     this.name = '';
@@ -81,6 +86,26 @@ export class Bean implements IBean {
     this.qr_code = '';
     this.favourite = false;
     this.shared = false;
+
+    this.cupping = {
+      body: 0,
+      brightness: 0,
+      clean_cup: 0,
+      complexity: 0,
+      cuppers_correction: 0,
+      dry_fragrance: 0,
+      finish: 0,
+      flavor: 0,
+      sweetness: 0,
+      uniformity: 0,
+      wet_aroma: 0,
+      notes: '',
+    };
+
+    this.cupped_flavor = {
+      predefined_flavors: {},
+      custom_flavors: [],
+    } as IFlavor;
   }
 
   public getRoastName(): string {
@@ -116,8 +141,37 @@ export class Bean implements IBean {
         beanObj.bean_roast_information
       );
     }
-  }
 
+    //Older bean versions may not have this information when initialization
+    if (this.cupping === undefined) {
+      this.cupping = {
+        body: 0,
+        brightness: 0,
+        clean_cup: 0,
+        complexity: 0,
+        cuppers_correction: 0,
+        dry_fragrance: 0,
+        finish: 0,
+        flavor: 0,
+        sweetness: 0,
+        uniformity: 0,
+        wet_aroma: 0,
+        notes: '',
+      };
+    }
+    if (this.cupped_flavor === undefined) {
+      this.cupped_flavor = {
+        predefined_flavors: {},
+        custom_flavors: [],
+      } as IFlavor;
+    }
+  }
+  public hasCustomFlavors(): boolean {
+    return this.cupped_flavor.custom_flavors.length > 0;
+  }
+  public hasPredefinedFlavors(): boolean {
+    return Object.keys(this.cupped_flavor.predefined_flavors).length > 0;
+  }
   public fixDataTypes(): boolean {
     let fixNeeded: boolean = false;
 

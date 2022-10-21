@@ -50,7 +50,10 @@ export class IntentHandlerService {
       tmp = [];
     _url.split('&').forEach((item) => {
       tmp = item.split('=');
-      if (tmp[0] === _parameterName) {
+      if (
+        tmp[0] === _parameterName ||
+        tmp[0] === _parameterName.replace('=', '')
+      ) {
         result = decodeURIComponent(tmp[1]);
       }
     });
@@ -99,7 +102,8 @@ export class IntentHandlerService {
           this.uiLog.log('Handle deeplink: ' + url);
           if (
             url.indexOf('https://beanconqueror.com/?qr=') === 0 ||
-            url.indexOf('https://beanconqueror.com?qr=') === 0
+            url.indexOf('https://beanconqueror.com?qr=') === 0 ||
+            url.indexOf('?qr=') >= 0
           ) {
             const qrCodeId: string = String(
               this.findGetParameter(_matchLink.queryString, 'qr')
@@ -112,11 +116,12 @@ export class IntentHandlerService {
             await this.addBeanFromServer(qrCodeId);
           } else if (
             url.indexOf('https://beanconqueror.com/?shareUserBean0=') === 0 ||
-            url.indexOf('https://beanconqueror.com?shareUserBean0=') === 0
+            url.indexOf('https://beanconqueror.com?shareUserBean0=') === 0 ||
+            url.indexOf('?shareUserBean0=') >= 0
           ) {
             let userBeanJSON: string = '';
 
-            const regex = /((shareUserBean)[0-9]+\=)/gi;
+            const regex = /((shareUserBean)[0-9]+(?=\=))/gi;
             const foundJSONParams = url.match(regex);
             try {
               for (const param of foundJSONParams) {

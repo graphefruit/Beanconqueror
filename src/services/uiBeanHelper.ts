@@ -26,6 +26,8 @@ import { UIHelper } from './uiHelper';
 import { BEAN_MIX_ENUM } from '../enums/beans/mix';
 import { ROASTS_ENUM } from '../enums/beans/roasts';
 import { BEAN_ROASTING_TYPE_ENUM } from '../enums/beans/beanRoastingType';
+import { BeanAssociatedBrewsComponent } from '../app/beans/bean-associated-brews/bean-associated-brews.component';
+import { BrewCuppingComponent } from '../app/brew/brew-cupping/brew-cupping.component';
 
 /**
  * Handles every helping functionalities
@@ -131,6 +133,7 @@ export class UIBeanHelper {
   }
 
   public async addScannedQRBean(_scannedQRBean: ServerBean) {
+    console.log(_scannedQRBean.error);
     if (_scannedQRBean.error === null) {
       this.uiAnalytics.trackEvent(
         QR_TRACKING.TITLE,
@@ -162,14 +165,26 @@ export class UIBeanHelper {
         );
       }
     } else {
-      this.uiAnalytics.trackEvent(QR_TRACKING.TITLE, QR_TRACKING.ACTIONS.SCAN);
-      await this.uiAlert.hideLoadingSpinner();
-      this.uiAlert.showMessage(
-        'QR.SERVER.ERROR_OCCURED',
-        'ERROR_OCCURED',
-        undefined,
-        true
+      this.uiAnalytics.trackEvent(
+        QR_TRACKING.TITLE,
+        QR_TRACKING.ACTIONS.SCAN_FAILED
       );
+      await this.uiAlert.hideLoadingSpinner();
+      if (_scannedQRBean.error.errorCode === 'beannotapproved') {
+        this.uiAlert.showMessage(
+          'QR.SERVER.BEAN_NOT_APPROVED',
+          'ERROR_OCCURED',
+          undefined,
+          true
+        );
+      } else {
+        this.uiAlert.showMessage(
+          'QR.SERVER.ERROR_OCCURED',
+          'ERROR_OCCURED',
+          undefined,
+          true
+        );
+      }
     }
   }
 
@@ -178,6 +193,16 @@ export class UIBeanHelper {
       component: BeansAddComponent,
       id: BeansAddComponent.COMPONENT_ID,
       componentProps: { hide_toast_message: _hideToastMessage },
+    });
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+
+  public async showAssociatedBrewsForBean(_bean: Bean) {
+    const modal = await this.modalController.create({
+      component: BeanAssociatedBrewsComponent,
+      id: BeanAssociatedBrewsComponent.COMPONENT_ID,
+      componentProps: { bean: _bean },
     });
     await modal.present();
     await modal.onWillDismiss();
@@ -206,6 +231,24 @@ export class UIBeanHelper {
       bean.favourite = false;
       bean.rating = 0;
 
+      // Empty it.
+      const newPredefinedFlavors = {};
+      if (
+        'cupped_flavor' in protoBean &&
+        'predefined_flavors' in protoBean.cupped_flavor &&
+        protoBean.cupped_flavor.predefined_flavors.length > 0
+      ) {
+        for (const flavKey of protoBean.cupped_flavor.predefined_flavors) {
+          newPredefinedFlavors[flavKey] = true;
+        }
+      }
+      bean.cupped_flavor.predefined_flavors = newPredefinedFlavors;
+
+      if (bean.bean_information && Object.keys(bean.bean_information)) {
+      } else {
+        bean.bean_information = [];
+      }
+
       bean.beanMix = {
         0: 'UNKNOWN' as BEAN_MIX_ENUM,
         1: 'SINGLE_ORIGIN' as BEAN_MIX_ENUM,
@@ -230,10 +273,10 @@ export class UIBeanHelper {
       }[protoBean.roast];
 
       bean.bean_roasting_type = {
-        0: 'FILTER' as BEAN_ROASTING_TYPE_ENUM,
-        1: 'ESPRESSO' as BEAN_ROASTING_TYPE_ENUM,
-        2: 'OMNI' as BEAN_ROASTING_TYPE_ENUM,
-        3: 'UNKNOWN' as BEAN_ROASTING_TYPE_ENUM,
+        0: 'UNKNOWN' as BEAN_ROASTING_TYPE_ENUM,
+        1: 'FILTER' as BEAN_ROASTING_TYPE_ENUM,
+        2: 'ESPRESSO' as BEAN_ROASTING_TYPE_ENUM,
+        3: 'OMNI' as BEAN_ROASTING_TYPE_ENUM,
       }[protoBean.bean_roasting_type];
 
       await this.uiAlert.hideLoadingSpinner();
@@ -305,6 +348,16 @@ export class UIBeanHelper {
       componentProps: {
         bean: _bean,
       },
+    });
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+
+  public async cupBean(_bean: Bean) {
+    const modal = await this.modalController.create({
+      component: BrewCuppingComponent,
+      id: BrewCuppingComponent.COMPONENT_ID,
+      componentProps: { bean: _bean },
     });
     await modal.present();
     await modal.onWillDismiss();

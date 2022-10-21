@@ -163,6 +163,8 @@ import { PreparationToolModalSelectComponent } from '../preparation/preparation-
 import { PreparationToolOverlayDirective } from '../../directive/preparation-tool-overlay.directive';
 import { CoffeeBluetoothDevicesService } from '@graphefruit/coffee-bluetooth-devices';
 import { NgxGaugeModule } from 'ngx-gauge';
+import { SettingsPopoverBluetoothActionsComponent } from '../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
+import { BeanAssociatedBrewsComponent } from '../beans/bean-associated-brews/bean-associated-brews.component';
 
 @NgModule({
   declarations: [
@@ -267,11 +269,13 @@ import { NgxGaugeModule } from 'ngx-gauge';
     PhotoPopoverComponent,
     WaterPopoverActionsComponent,
     BrewPopoverActionsComponent,
+    SettingsPopoverBluetoothActionsComponent,
     BeanPopoverActionsComponent,
     BeanPopoverAddComponent,
     BeanArchivePopoverComponent,
     MillPopoverActionsComponent,
     BeanModalSelectComponent,
+    BeanAssociatedBrewsComponent,
     WaterModalSelectComponent,
     RoastingMachineModalSelectComponent,
     MillModalSelectComponent,
@@ -450,11 +454,13 @@ import { NgxGaugeModule } from 'ngx-gauge';
     BrewEditComponent,
     PhotoPopoverComponent,
     BrewPopoverActionsComponent,
+    SettingsPopoverBluetoothActionsComponent,
     WaterPopoverActionsComponent,
     BeanPopoverActionsComponent,
     BeanPopoverAddComponent,
     BeanArchivePopoverComponent,
     BeanModalSelectComponent,
+    BeanAssociatedBrewsComponent,
     WaterModalSelectComponent,
     RoastingMachineModalSelectComponent,
     MillModalSelectComponent,

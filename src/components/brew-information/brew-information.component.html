@@ -1,6 +1,6 @@
 <div  *ngIf="layout === 'brew'">
 <ion-card class="long-card brew-layout" tappable (click)="showBrew()" (long-press)="longPressEditBrew($event)">
-  <ion-card-content class="no-ion-col-vertical-padding ion-padding-top">
+  <ion-card-content #card class="no-ion-col-vertical-padding ion-padding-top">
     <ion-grid class="no-padding-bottom" style="padding-top:0px;">
       <ion-row style="height:60px;">
         <ion-col size-xs="3" size-xl="1" size-sm="1" size-md="1" size-lg="1" class="ion-no-padding"  *ngIf="!brew?.getPreparation().hasPhotos()">
@@ -78,7 +78,7 @@
         </ion-col>
         <ion-col *ngIf="(brew?.hasCustomFlavors() || brew?.hasPredefinedFlavors())" size="12">
           <ion-label class="card-headline">{{'BREW_DATA_FLAVOR' | translate}}</ion-label><br/>
-          <ion-text>{{getCuppedBrewFlavors()}}</ion-text>
+          <ion-text class="ion-text-wrap">{{getCuppedBrewFlavors()}}</ion-text>
         </ion-col>
         <ion-col size="6" *ngIf="brew?.brew_temperature > 0 && uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.brew_temperature,
                       brew.getPreparation().visible_list_view_parameters.brew_temperature,
@@ -168,6 +168,7 @@
   <div style="height:10px;"></div>
 </div>
 <ion-card class="long-card dashboard-layout" tappable (click)="showBrew()" (long-press)="longPressEditBrew($event)" *ngIf="layout === 'dashboard'">
+  <ion-card-content class="no-ion-padding no-ion-margin" #card>
   <ion-grid class="ion-no-padding">
     <ion-row>
       <ion-col size="3" size-xs="4">
@@ -219,4 +220,5 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+  </ion-card-content>
 </ion-card>

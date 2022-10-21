@@ -41,6 +41,14 @@
                 <ion-text *ngIf="getBrewsCount()> 0">{{lastUsed() | formatDate:["DD.MM.YYYY"]}}</ion-text>
                 <ion-text *ngIf="getBrewsCount() <= 0">-</ion-text>
               </ion-col>
+              <ion-col size="6">
+                <ion-label class="card-headline">{{"LAST_USED_GRIND_SIZE_SETTING" | translate}}</ion-label><br/>
+                <ion-text>{{getLastUsedGrindSizeForBrew()}}</ion-text>
+              </ion-col>
+              <ion-col size="6">
+                <ion-label class="card-headline">{{"LAST_USED_BEAN" | translate}}</ion-label><br/>
+                <ion-text>{{getLastUsedBean()}}</ion-text>
+              </ion-col>
             </ion-row>
           </ion-grid>
         </ion-col>

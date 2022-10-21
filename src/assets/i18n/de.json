@@ -737,6 +737,51 @@
         "Nach Aufnahme eines Bildes war der Ladebalken nicht verschwunden",
         "Kleinere Fehlerbehebungen"
       ]
+    },
+    "6.2.0": {
+      "TITLE": "Version 6.2.0: Das ist neu",
+      "DESCRIPTION": [
+        "<b>Druckgeräte</b>",
+        "Unterstützung von 'Do it yourself' Popsicle - Sensor - Danke an Mike und Shay ",
+        "Autostart Timer bei einem Gewissen Wasserdruck - Editierbar in den Einstellungen",
+        "Drücken der Druck-Anzeige setzt den Druck auf '0' zurück",
+        "Anzeige des Druckgerättypes und der Mac-Adresse beim Verbinden",
+        "",
+        "<b>Bluetooth Waage</b>",
+        "Unterstützung von Eureka Precisa - Danke an Mimoja",
+        "Bestimmte das Verhalten der Bluetooth Waage bei einer neuen Brühung - Editierbar in den Einstellungen",
+        "Bestimmte welche Graphen bei Filter oder Espresso angezeigt werden sollen - Editierbar in den Einstellungen",
+        "Sequenzielle Abarbeitung von Bluetooth-Befehlen um Fehlerfälle zu reduzieren",
+        "Anzeige des Waagentypes und der Mac-Adresse beim Verbinden",
+        "",
+        "<b>Brühungen</b>",
+        "Unterstützung von Millisekunden - Aktivierbar in den Einstellungen",
+        "Filtersystem erweitert, damit man bei Bohnen auch Rösttyp und Röster suchen kann",
+        "Bei einer verbundenen Bluetoothwaage sowie Druckgerät kann nun auf der Brühseite, die Verbindung erneut aufgebaut werden",
+        "",
+        "<b>Bohnen</b>",
+        "Teile deine Bohnen (ohne Server) - Danke an Mike",
+        "Zeige alle Brühungen zu der Bohne",
+        "Unterstützung der Bohnenbewertung - wie bei Brühungen - Editierbar in den Einstellungen",
+        "",
+        "<b>Weitere Sprachen</b>",
+        "Unterstützung von Türkisch - Danke an Halil Portakal",
+        "Unterstützung von Chinesisch - Danke an Jiageng",
+        "",
+        "<b>Mühlen</b>",
+        "Anzeige des letztens Mahlgrades sowie der letzten Bohne",
+        "",
+        "<b>Verbesserungen</b>",
+        "Fehlermeldung beim Scannen einer Bohne, wenn diese noch nicht Freigegeben wurde",
+        "Die Editierung des Brühdatums ist nun Standardmäßig aktiviert",
+        "",
+        "<b>Sonstiges:</b>",
+        "Typo fehler behoben",
+        "Behebung eines Fehlers, dass Sternbewertungen nicht mehr zu sehen waren, trotz Grundeinstellungen",
+        "Ältere Brühgraphen durch eine Bluetoothwaage können wieder exportiert werden",
+        "Aktualisierung auf Ionic 6.3.0",
+        "Kleinere Fehlerbehebungen"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Parameter individualisieren",
@@ -1119,7 +1164,8 @@
     "WRONG_LINK_DESCRIPTION": "Falsche App-Verlinkung",
     "WRONG_LINK_TITLE": "Fehler",
     "SERVER": {
-      "ERROR_OCCURED": "Ein Fehler ist aufgetreten, QR-Code konnte nicht ausgelesen werden, bitte versuche es erneut."
+      "ERROR_OCCURED": "Ein Fehler ist aufgetreten, QR-Code konnte nicht ausgelesen werden, bitte versuche es erneut.",
+      "BEAN_NOT_APPROVED": "Bohne wurde noch nicht freigegeben, bitte versuche es später erneut"
     },
     "BEAN_SUCCESSFULLY_SCANNED": "Bohne erfolgreich gescannt",
     "BEAN_SUCCESSFULLY_REFRESHED": "Bohne erfolgreich aktualisiert",
@@ -1204,13 +1250,23 @@
   "PAGE_SETTINGS_BEAN_RATING_TOOLTIP": "0 bis 5 sind dir zu wenig zur Bewertung deiner Bohne? Du kannst bis zu 100 'Punkten' vergeben",
   "PAGE_SETTINGS_BEAN_RATING_STEPS": "Bohnen Bewertungsschritte",
   "COFFEE_GRAMS_BREWED": "Grams gebrüht",
-  "PRESSURE_INFORMATION_DESCRIPTION": "Aktuell nur das Do It Yourself Projekt 'Popsicle' unterstützt",
   "SMART_SCALE_MAXIMIZE_ON_START_TIMER": "Bei Zeitstart Echtzeitgrafik maximieren",
   "PRESSURE": {
     "CONNECTION_NOT_ESTABLISHED": "Druckgerät konnte nicht gefunden oder verbunden werden",
     "CONNECTED_SUCCESSFULLY": "Druckgerät verbunden",
     "DISCONNECTED_SUCCESSFULLY": "Druckgerät getrennt",
     "DISCONNECTED_UNPLANNED": "Druckgerät ungeplant getrennt",
-    "INFORMATION_DESCRIPTION": "Unterstütze Druckgeräte sind Popsicle, sowie PRS"
-  }
+    "INFORMATION_DESCRIPTION": "Unterstütze Druckgeräte sind Popsicle",
+    "BLUETOOTH_SCAN_RUNNING": "Druckgeräte werden für 60 Sekunden versucht zu finden, bitte warten",
+    "BLUETOOTH_NOT_ENABLED": "Bluetooth ist nicht aktiviert, bitte aktiviere dies in den Einstellungen",
+    "REQUEST_PERMISSION": {
+      "LOCATION": "Um Druckgeräte zu finden, muss der Standort freigegeben werden",
+      "BLUETOOTH": "Um Druckgeräte zu finden, muss Bluetooth freigegeben werden"
+    }
+  },
+  "POPOVER_BLUETOOTH_ACTION_RECONNECT_SCALE": "Waage neu verbinden",
+  "POPOVER_BLUETOOTH_ACTION_RECONNECT_PRESSURE_DEVICE": "Druckgerät neu verbinden",
+  "POPOVER_SHOW_BREWS": "Zugehörige Brühungen",
+  "LAST_USED_GRIND_SIZE_SETTING": "Letzter Mahlgrad",
+  "LAST_USED_BEAN": "Letzte Bohne"
 }

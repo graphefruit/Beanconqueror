@@ -9,10 +9,8 @@ import { Router } from '@angular/router';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { Bean } from '../../classes/bean/bean';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
-import { Chart } from 'chart.js';
-import moment from 'moment';
+
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { CoffeeBluetoothDevicesService } from '@graphefruit/coffee-bluetooth-devices';
 
 @Component({
   selector: 'dashboard',
@@ -22,8 +20,7 @@ import { CoffeeBluetoothDevicesService } from '@graphefruit/coffee-bluetooth-dev
 export class DashboardPage implements OnInit {
   public brews: Array<Brew> = [];
   private leftOverBeansWeight: number = undefined;
-  /*public flowProfileChartEl: any = undefined;
-   @ViewChild('flowProfileChart', { static: false }) public flowProfileChart;*/
+
   constructor(
     public uiStatistic: UIStatistic,
     private readonly modalCtrl: ModalController,
@@ -33,36 +30,9 @@ export class DashboardPage implements OnInit {
     private readonly router: Router,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly bleManager: CoffeeBluetoothDevicesService
+    private readonly uiSettingsStorage: UISettingsStorage
   ) {}
-  private scale: any = undefined;
-  public async doShit() {
-    if (this.scale) {
-      this.bleManager.disconnect(this.scale.id);
-      setTimeout(() => {
-        this.scale = null;
-      }, 150);
-    } else {
-      this.scale = await this.bleManager.tryToFindScale();
-      if (this.scale) {
-        try {
-          // We don't need to retry for iOS, because we just did scan before.
 
-          // NEVER!!! Await here, else the bluetooth logic will get broken.
-          this.bleManager.autoConnectScale(
-            this.scale.type,
-            this.scale.id,
-            false
-          );
-        } catch (ex) {}
-      }
-    }
-  }
-
-  public getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
   public ngOnInit() {
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
       // If an brew is deleted, we need to reset our array for the next call.
