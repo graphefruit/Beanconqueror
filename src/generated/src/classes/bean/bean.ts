@@ -224,6 +224,8 @@ export interface BeanProto {
   qr_code?: string | undefined;
   favourite?: boolean | undefined;
   shared?: boolean | undefined;
+  cupping?: ICupping | undefined;
+  cupped_flavor?: IFlavor | undefined;
 }
 
 export interface Config {
@@ -260,6 +262,25 @@ export interface BeanRoastInformation {
   second_crack_temperature?: number | undefined;
 }
 
+export interface ICupping {
+  dry_fragrance?: number | undefined;
+  wet_aroma?: number | undefined;
+  brightness?: number | undefined;
+  flavor?: number | undefined;
+  body?: number | undefined;
+  finish?: number | undefined;
+  sweetness?: number | undefined;
+  clean_cup?: number | undefined;
+  complexity?: number | undefined;
+  uniformity?: number | undefined;
+  cuppers_correction?: number | undefined;
+}
+
+export interface IFlavor {
+  predefined_flavors: number[];
+  custom_flavors: string[];
+}
+
 function createBaseBeanProto(): BeanProto {
   return {
     name: '',
@@ -288,6 +309,8 @@ function createBaseBeanProto(): BeanProto {
     qr_code: undefined,
     favourite: undefined,
     shared: undefined,
+    cupping: undefined,
+    cupped_flavor: undefined,
   };
 }
 
@@ -376,6 +399,12 @@ export const BeanProto = {
     }
     if (message.shared !== undefined) {
       writer.uint32(208).bool(message.shared);
+    }
+    if (message.cupping !== undefined) {
+      ICupping.encode(message.cupping, writer.uint32(218).fork()).ldelim();
+    }
+    if (message.cupped_flavor !== undefined) {
+      IFlavor.encode(message.cupped_flavor, writer.uint32(226).fork()).ldelim();
     }
     return writer;
   },
@@ -470,6 +499,12 @@ export const BeanProto = {
         case 26:
           message.shared = reader.bool();
           break;
+        case 27:
+          message.cupping = ICupping.decode(reader, reader.uint32());
+          break;
+        case 28:
+          message.cupped_flavor = IFlavor.decode(reader, reader.uint32());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -530,6 +565,12 @@ export const BeanProto = {
         ? Boolean(object.favourite)
         : undefined,
       shared: isSet(object.shared) ? Boolean(object.shared) : undefined,
+      cupping: isSet(object.cupping)
+        ? ICupping.fromJSON(object.cupping)
+        : undefined,
+      cupped_flavor: isSet(object.cupped_flavor)
+        ? IFlavor.fromJSON(object.cupped_flavor)
+        : undefined,
     };
   },
 
@@ -591,6 +632,14 @@ export const BeanProto = {
     message.qr_code !== undefined && (obj.qr_code = message.qr_code);
     message.favourite !== undefined && (obj.favourite = message.favourite);
     message.shared !== undefined && (obj.shared = message.shared);
+    message.cupping !== undefined &&
+      (obj.cupping = message.cupping
+        ? ICupping.toJSON(message.cupping)
+        : undefined);
+    message.cupped_flavor !== undefined &&
+      (obj.cupped_flavor = message.cupped_flavor
+        ? IFlavor.toJSON(message.cupped_flavor)
+        : undefined);
     return obj;
   },
 
@@ -632,6 +681,14 @@ export const BeanProto = {
     message.qr_code = object.qr_code ?? undefined;
     message.favourite = object.favourite ?? undefined;
     message.shared = object.shared ?? undefined;
+    message.cupping =
+      object.cupping !== undefined && object.cupping !== null
+        ? ICupping.fromPartial(object.cupping)
+        : undefined;
+    message.cupped_flavor =
+      object.cupped_flavor !== undefined && object.cupped_flavor !== null
+        ? IFlavor.fromPartial(object.cupped_flavor)
+        : undefined;
     return message;
   },
 };
@@ -1070,6 +1127,266 @@ export const BeanRoastInformation = {
     message.second_crack_minute = object.second_crack_minute ?? undefined;
     message.second_crack_temperature =
       object.second_crack_temperature ?? undefined;
+    return message;
+  },
+};
+
+function createBaseICupping(): ICupping {
+  return {
+    dry_fragrance: undefined,
+    wet_aroma: undefined,
+    brightness: undefined,
+    flavor: undefined,
+    body: undefined,
+    finish: undefined,
+    sweetness: undefined,
+    clean_cup: undefined,
+    complexity: undefined,
+    uniformity: undefined,
+    cuppers_correction: undefined,
+  };
+}
+
+export const ICupping = {
+  encode(
+    message: ICupping,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (message.dry_fragrance !== undefined) {
+      writer.uint32(8).uint64(message.dry_fragrance);
+    }
+    if (message.wet_aroma !== undefined) {
+      writer.uint32(16).uint64(message.wet_aroma);
+    }
+    if (message.brightness !== undefined) {
+      writer.uint32(24).uint64(message.brightness);
+    }
+    if (message.flavor !== undefined) {
+      writer.uint32(32).uint64(message.flavor);
+    }
+    if (message.body !== undefined) {
+      writer.uint32(40).uint64(message.body);
+    }
+    if (message.finish !== undefined) {
+      writer.uint32(48).uint64(message.finish);
+    }
+    if (message.sweetness !== undefined) {
+      writer.uint32(56).uint64(message.sweetness);
+    }
+    if (message.clean_cup !== undefined) {
+      writer.uint32(64).uint64(message.clean_cup);
+    }
+    if (message.complexity !== undefined) {
+      writer.uint32(72).uint64(message.complexity);
+    }
+    if (message.uniformity !== undefined) {
+      writer.uint32(80).uint64(message.uniformity);
+    }
+    if (message.cuppers_correction !== undefined) {
+      writer.uint32(88).uint64(message.cuppers_correction);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): ICupping {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseICupping();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.dry_fragrance = longToNumber(reader.uint64() as Long);
+          break;
+        case 2:
+          message.wet_aroma = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.brightness = longToNumber(reader.uint64() as Long);
+          break;
+        case 4:
+          message.flavor = longToNumber(reader.uint64() as Long);
+          break;
+        case 5:
+          message.body = longToNumber(reader.uint64() as Long);
+          break;
+        case 6:
+          message.finish = longToNumber(reader.uint64() as Long);
+          break;
+        case 7:
+          message.sweetness = longToNumber(reader.uint64() as Long);
+          break;
+        case 8:
+          message.clean_cup = longToNumber(reader.uint64() as Long);
+          break;
+        case 9:
+          message.complexity = longToNumber(reader.uint64() as Long);
+          break;
+        case 10:
+          message.uniformity = longToNumber(reader.uint64() as Long);
+          break;
+        case 11:
+          message.cuppers_correction = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): ICupping {
+    return {
+      dry_fragrance: isSet(object.dry_fragrance)
+        ? Number(object.dry_fragrance)
+        : undefined,
+      wet_aroma: isSet(object.wet_aroma) ? Number(object.wet_aroma) : undefined,
+      brightness: isSet(object.brightness)
+        ? Number(object.brightness)
+        : undefined,
+      flavor: isSet(object.flavor) ? Number(object.flavor) : undefined,
+      body: isSet(object.body) ? Number(object.body) : undefined,
+      finish: isSet(object.finish) ? Number(object.finish) : undefined,
+      sweetness: isSet(object.sweetness) ? Number(object.sweetness) : undefined,
+      clean_cup: isSet(object.clean_cup) ? Number(object.clean_cup) : undefined,
+      complexity: isSet(object.complexity)
+        ? Number(object.complexity)
+        : undefined,
+      uniformity: isSet(object.uniformity)
+        ? Number(object.uniformity)
+        : undefined,
+      cuppers_correction: isSet(object.cuppers_correction)
+        ? Number(object.cuppers_correction)
+        : undefined,
+    };
+  },
+
+  toJSON(message: ICupping): unknown {
+    const obj: any = {};
+    message.dry_fragrance !== undefined &&
+      (obj.dry_fragrance = Math.round(message.dry_fragrance));
+    message.wet_aroma !== undefined &&
+      (obj.wet_aroma = Math.round(message.wet_aroma));
+    message.brightness !== undefined &&
+      (obj.brightness = Math.round(message.brightness));
+    message.flavor !== undefined && (obj.flavor = Math.round(message.flavor));
+    message.body !== undefined && (obj.body = Math.round(message.body));
+    message.finish !== undefined && (obj.finish = Math.round(message.finish));
+    message.sweetness !== undefined &&
+      (obj.sweetness = Math.round(message.sweetness));
+    message.clean_cup !== undefined &&
+      (obj.clean_cup = Math.round(message.clean_cup));
+    message.complexity !== undefined &&
+      (obj.complexity = Math.round(message.complexity));
+    message.uniformity !== undefined &&
+      (obj.uniformity = Math.round(message.uniformity));
+    message.cuppers_correction !== undefined &&
+      (obj.cuppers_correction = Math.round(message.cuppers_correction));
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<ICupping>, I>>(object: I): ICupping {
+    const message = createBaseICupping();
+    message.dry_fragrance = object.dry_fragrance ?? undefined;
+    message.wet_aroma = object.wet_aroma ?? undefined;
+    message.brightness = object.brightness ?? undefined;
+    message.flavor = object.flavor ?? undefined;
+    message.body = object.body ?? undefined;
+    message.finish = object.finish ?? undefined;
+    message.sweetness = object.sweetness ?? undefined;
+    message.clean_cup = object.clean_cup ?? undefined;
+    message.complexity = object.complexity ?? undefined;
+    message.uniformity = object.uniformity ?? undefined;
+    message.cuppers_correction = object.cuppers_correction ?? undefined;
+    return message;
+  },
+};
+
+function createBaseIFlavor(): IFlavor {
+  return { predefined_flavors: [], custom_flavors: [] };
+}
+
+export const IFlavor = {
+  encode(
+    message: IFlavor,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    writer.uint32(10).fork();
+    for (const v of message.predefined_flavors) {
+      writer.uint64(v);
+    }
+    writer.ldelim();
+    for (const v of message.custom_flavors) {
+      writer.uint32(18).string(v!);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): IFlavor {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseIFlavor();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          if ((tag & 7) === 2) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.predefined_flavors.push(
+                longToNumber(reader.uint64() as Long)
+              );
+            }
+          } else {
+            message.predefined_flavors.push(
+              longToNumber(reader.uint64() as Long)
+            );
+          }
+          break;
+        case 2:
+          message.custom_flavors.push(reader.string());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): IFlavor {
+    return {
+      predefined_flavors: Array.isArray(object?.predefined_flavors)
+        ? object.predefined_flavors.map((e: any) => Number(e))
+        : [],
+      custom_flavors: Array.isArray(object?.custom_flavors)
+        ? object.custom_flavors.map((e: any) => String(e))
+        : [],
+    };
+  },
+
+  toJSON(message: IFlavor): unknown {
+    const obj: any = {};
+    if (message.predefined_flavors) {
+      obj.predefined_flavors = message.predefined_flavors.map((e) =>
+        Math.round(e)
+      );
+    } else {
+      obj.predefined_flavors = [];
+    }
+    if (message.custom_flavors) {
+      obj.custom_flavors = message.custom_flavors.map((e) => e);
+    } else {
+      obj.custom_flavors = [];
+    }
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<IFlavor>, I>>(object: I): IFlavor {
+    const message = createBaseIFlavor();
+    message.predefined_flavors = object.predefined_flavors?.map((e) => e) || [];
+    message.custom_flavors = object.custom_flavors?.map((e) => e) || [];
     return message;
   },
 };

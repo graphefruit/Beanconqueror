@@ -64,6 +64,7 @@ import annotationPlugin from 'chartjs-plugin-annotation';
 
 import {
   CoffeeBluetoothServiceEvent,
+  Logger,
   PressureType,
   ScaleType,
 } from '@graphefruit/coffee-bluetooth-devices';
@@ -280,6 +281,22 @@ export class AppComponent implements AfterViewInit {
           this.uiLog.log(`Storage-Driver: ${this.storage.driver}`);
         }
       } catch (ex) {}
+      try {
+        Logger.attachOnLog().subscribe((_msg) => {
+          if (_msg.type === 'LOG') {
+            this.uiLog.log(_msg.log);
+          }
+          if (_msg.type === 'INFO') {
+            this.uiLog.info(_msg.log);
+          }
+          if (_msg.type === 'ERROR') {
+            this.uiLog.error(_msg.log);
+          }
+          if (_msg.type === 'DEBUG') {
+            this.uiLog.debug(_msg.log);
+          }
+        });
+      } catch (ex) {}
 
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
@@ -292,6 +309,7 @@ export class AppComponent implements AfterViewInit {
         // When we're in cordova, disable the log messages
         this.uiLog.disable();
       }
+      Logger.disableLog();
 
       if (this.platform.is('ios')) {
         this.uiLog.log(`iOS Device - attach to home icon pressed`);
@@ -575,6 +593,13 @@ export class AppComponent implements AfterViewInit {
       this.__connectPressureDevice();
     }, 5000);
 
+    const settings = this.uiSettingsStorage.getSettings();
+    if (settings.scale_log === true || settings.pressure_log === true) {
+      Logger.enableLog();
+    } else {
+      Logger.disableLog();
+    }
+
     await this.__checkStartupView();
     this.__instanceAppRating();
     this.__attachOnDevicePause();
@@ -618,12 +643,6 @@ export class AppComponent implements AfterViewInit {
     this.uiLog.log(`Connect smartscale? ${scale_id}`);
     if (scale_id !== undefined && scale_id !== '') {
       this.bleManager.autoConnectScale(scale_type, scale_id, true);
-      /**setTimeout(() => {
-        this.bleManager.disconnect(scale_id);
-        setTimeout(() => {
-          this.bleManager.autoConnectScale(scale_type, scale_id, true);
-        }, 2000);
-      }, 10000);**/
     } else {
       this.uiLog.log('Smartscale not connected, dont try to connect');
     }
@@ -655,6 +674,16 @@ export class AppComponent implements AfterViewInit {
           this.bleManager.disconnect(settings.scale_id, false);
         }
       }
+
+      if (settings.pressure_stay_connected === false) {
+        const pressure_id: string = settings.pressure_id;
+        if (pressure_id !== undefined && pressure_id !== '') {
+          // Don't show message on device pause.
+          this.bleManager.disconnect(settings.pressure_id, false);
+        }
+      }
+
+      /// Add pressure profile.
     });
   }
   private __attachOnDeviceResume() {
@@ -662,6 +691,9 @@ export class AppComponent implements AfterViewInit {
       const settings: Settings = this.uiSettingsStorage.getSettings();
       if (settings.bluetooth_scale_stay_connected === false) {
         this.__connectSmartScale();
+      }
+      if (settings.pressure_stay_connected === false) {
+        this.__connectPressureDevice();
       }
     });
   }

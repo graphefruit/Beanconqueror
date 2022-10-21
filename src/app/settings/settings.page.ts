@@ -63,7 +63,10 @@ import { Water } from '../../classes/water/water';
 import { AppEvent } from '../../classes/appEvent/appEvent';
 import { AppEventType } from '../../enums/appEvent/appEvent';
 import { EventQueueService } from '../../services/queueService/queue-service.service';
-import { CoffeeBluetoothDevicesService } from '@graphefruit/coffee-bluetooth-devices';
+import {
+  CoffeeBluetoothDevicesService,
+  Logger,
+} from '@graphefruit/coffee-bluetooth-devices';
 
 declare var cordova: any;
 declare var device: any;
@@ -174,7 +177,7 @@ export class SettingsPage implements OnInit {
       await this.bleManager.hasLocationPermission();
     if (!hasLocationPermission) {
       await this.uiAlert.showMessage(
-        'SCALE.REQUEST_PERMISSION.LOCATION',
+        'PRESSURE.REQUEST_PERMISSION.LOCATION',
         undefined,
         undefined,
         true
@@ -186,7 +189,7 @@ export class SettingsPage implements OnInit {
       await this.bleManager.hasBluetoothPermission();
     if (!hasBluetoothPermission) {
       await this.uiAlert.showMessage(
-        'SCALE.REQUEST_PERMISSION.BLUETOOTH',
+        'PRESSURE.REQUEST_PERMISSION.BLUETOOTH',
         undefined,
         undefined,
         true
@@ -197,7 +200,7 @@ export class SettingsPage implements OnInit {
     const bleEnabled: boolean = await this.bleManager.isBleEnabled();
     if (bleEnabled === false) {
       await this.uiAlert.showMessage(
-        'SCALE.BLUETOOTH_NOT_ENABLED',
+        'PRESSURE.BLUETOOTH_NOT_ENABLED',
         undefined,
         undefined,
         true
@@ -206,7 +209,10 @@ export class SettingsPage implements OnInit {
     }
 
     await this.uiAlert.showLoadingSpinner();
-    this.uiAlert.setLoadingSpinnerMessage('SCALE.BLUETOOTH_SCAN_RUNNING', true);
+    this.uiAlert.setLoadingSpinnerMessage(
+      'PRESSURE.BLUETOOTH_SCAN_RUNNING',
+      true
+    );
     const pressureDevice = await this.bleManager.tryToFindPressureDevice();
     if (pressureDevice) {
       await this.uiAlert.hideLoadingSpinner();
@@ -230,7 +236,7 @@ export class SettingsPage implements OnInit {
     } else {
       await this.uiAlert.hideLoadingSpinner();
       this.uiAlert.showMessage(
-        'SCALE.CONNECTION_NOT_ESTABLISHED',
+        'PRESSURE.CONNECTION_NOT_ESTABLISHED',
         undefined,
         undefined,
         true
@@ -471,6 +477,18 @@ export class SettingsPage implements OnInit {
 
   public async saveSettings() {
     this.changeDetectorRef.detectChanges();
+    await this.uiSettingsStorage.saveSettings(this.settings);
+  }
+
+  public async toggleLog() {
+    if (
+      this.settings.scale_log === true ||
+      this.settings.pressure_log === true
+    ) {
+      Logger.enableLog();
+    } else {
+      Logger.disableLog();
+    }
     await this.uiSettingsStorage.saveSettings(this.settings);
   }
 

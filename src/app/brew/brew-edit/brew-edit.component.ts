@@ -14,6 +14,7 @@ import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Insomnia } from '@ionic-native/insomnia/ngx';
 import { Settings } from '../../../classes/settings/settings';
+import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
 
 @Component({
   selector: 'brew-edit',
@@ -97,6 +98,18 @@ export class BrewEditComponent implements OnInit {
       BREW_TRACKING.ACTIONS.EDIT_FINISH
     );
     this.dismiss();
+  }
+  public async popoverActionsBrew() {
+    const popover = await this.modalController.create({
+      component: SettingsPopoverBluetoothActionsComponent,
+      componentProps: {},
+      id: SettingsPopoverBluetoothActionsComponent.COMPONENT_ID,
+      cssClass: 'popover-actions',
+      breakpoints: [0, 0.5],
+      initialBreakpoint: 0.5,
+    });
+    await popover.present();
+    await popover.onWillDismiss();
   }
 
   public ngOnInit() {

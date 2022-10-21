@@ -30,6 +30,7 @@ import QR_TRACKING from '../../data/tracking/qrTracking';
 import { BeanMapper } from '../../mapper/bean/beanMapper';
 import { ServerCommunicationService } from '../../services/serverCommunication/server-communication.service';
 import { UIHelper } from '../../services/uiHelper';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'bean-information',
@@ -62,7 +63,8 @@ export class BeanInformationComponent implements OnInit {
     private readonly uiImage: UIImage,
     private readonly shareService: ShareService,
     private readonly serverCommunicationService: ServerCommunicationService,
-    private readonly uiHelper: UIHelper
+    private readonly uiHelper: UIHelper,
+    private readonly translate: TranslateService
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -92,6 +94,16 @@ export class BeanInformationComponent implements OnInit {
       this.bean.config.uuid
     );
     return relatedBrews.length;
+  }
+
+  public getCuppedBrewFlavors(): Array<string> {
+    const flavors: Array<string> = [...this.bean.cupped_flavor.custom_flavors];
+    for (const key in this.bean.cupped_flavor.predefined_flavors) {
+      if (this.bean.cupped_flavor.predefined_flavors.hasOwnProperty(key)) {
+        flavors.push(this.translate.instant('CUPPING_' + key));
+      }
+    }
+    return flavors;
   }
 
   public daysOld(): number {
@@ -178,6 +190,9 @@ export class BeanInformationComponent implements OnInit {
       case BEAN_ACTION.PHOTO_GALLERY:
         await this.viewPhotos();
         break;
+      case BEAN_ACTION.CUPPING:
+        await this.cupBean();
+        break;
       case BEAN_ACTION.TOGGLE_FAVOURITE:
         await this.toggleFavourite();
         break;
@@ -187,6 +202,9 @@ export class BeanInformationComponent implements OnInit {
       case BEAN_ACTION.REFRESH_DATA_FROM_QR_CODE:
         await this.refreshDataFromQRCode();
         break;
+      case BEAN_ACTION.SHOW_BREWS:
+        await this.showBrews();
+        break;
       default:
         break;
     }
@@ -195,7 +213,9 @@ export class BeanInformationComponent implements OnInit {
   public async detailBean() {
     await this.uiBeanHelper.detailBean(this.bean);
   }
-
+  public async cupBean() {
+    await this.uiBeanHelper.cupBean(this.bean);
+  }
   private async viewPhotos() {
     this.uiAnalytics.trackEvent(
       BEAN_TRACKING.TITLE,
@@ -250,6 +270,10 @@ export class BeanInformationComponent implements OnInit {
 
   public async shareBean() {
     await this.shareService.shareBean(this.bean);
+  }
+
+  public async showBrews() {
+    await this.uiBeanHelper.showAssociatedBrewsForBean(this.bean);
   }
   public async refreshDataFromQRCode() {
     await this.uiAlert

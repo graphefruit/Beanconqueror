@@ -147,8 +147,20 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy {
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
     return !!pressureDevice;
   }
-  public startTimer() {
-    this.brewComponent.timer.startTimer();
+  public async startTimer() {
+    await this.brewComponent.timerStartPressed(undefined);
+
+    // Looks funny but we need. if we would not calculate and substract 25px, the actual time graph would not be displayed :<
+    setTimeout(() => {
+      try {
+        const newHeight =
+          document.getElementById('brewFlowContainer').offsetHeight;
+        document
+          .getElementById('brewFlowContainer')
+          .getElementsByTagName('canvas')[0].style.height =
+          newHeight - 1 + 'px';
+      } catch (ex) {}
+    }, 250);
   }
   public pauseTimer() {
     this.brewComponent.timer.pauseTimer();
@@ -157,7 +169,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy {
     this.brewComponent.timer.reset();
   }
   public resumeTimer() {
-    this.brewComponent.timer.resumeTimer();
+    this.brewComponent.timerResumedPressed(undefined);
   }
   public __tareScale() {
     this.brewComponent.timer.__tareScale();

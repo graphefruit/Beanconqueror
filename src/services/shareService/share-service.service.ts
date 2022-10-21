@@ -30,8 +30,20 @@ export class ShareService {
     private readonly translate: TranslateService,
     private readonly uiHelper: UIHelper,
     private readonly uiAnalytics: UIAnalytics,
+
     private readonly uiLog: UILog
   ) {}
+
+  public async shareImage(_dataUrl: string) {
+    try {
+      await this.socialShare.share('', '', _dataUrl, null);
+    } catch (ex) {}
+  }
+  public async shareFile(_filename: string, _dataUrl: string) {
+    try {
+      await this.socialShare.share('', _filename, _dataUrl, null);
+    } catch (ex) {}
+  }
 
   public async shareBean(_bean: Bean) {
     // try {
@@ -54,6 +66,16 @@ export class ShareService {
     if (_bean.beanMix === ('UNKNOWN' as BEAN_MIX_ENUM)) {
       protoBean.beanMix = BeanMix.UNKNOWN_BEAN_MIX;
     }
+
+    // We need to get the key/value pairing to a simple int list.
+    if (
+      'cupped_flavor' in _bean &&
+      'predefined_flavors' in _bean.cupped_flavor
+    ) {
+      const keys = Object.keys(_bean.cupped_flavor.predefined_flavors);
+      protoBean.cupped_flavor.predefined_flavors = keys;
+    }
+
     const bytes = BeanProto.encode(protoBean).finish();
 
     const base64String = this.uiHelper.encode(bytes);
@@ -89,6 +111,12 @@ export class ShareService {
         BREW_TRACKING.ACTIONS.SHARE
       );
       await this.socialShare.share(brewMessage, null, null, null);
+    } catch (ex) {}
+  }
+
+  public async shareText(_text: string) {
+    try {
+      await this.socialShare.share(_text, null, null, null);
     } catch (ex) {}
   }
 

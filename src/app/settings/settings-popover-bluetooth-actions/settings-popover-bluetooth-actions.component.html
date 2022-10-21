@@ -1,0 +1,14 @@
+<ion-header translucent>
+</ion-header>
+<ion-content>
+  <ion-list lines="full">
+    <ion-item (click)="reconnectScale()" *ngIf="this.settings.scale_id" button tappable>
+      <ion-icon name="bluetooth-outline" slot="start"></ion-icon>
+      <span>{{"POPOVER_BLUETOOTH_ACTION_RECONNECT_SCALE" | translate}}</span>
+    </ion-item>
+    <ion-item (click)="reconnectPressureDevice()" *ngIf="this.settings.pressure_id" button tappable>
+      <ion-icon name="bluetooth-outline" slot="start"></ion-icon>
+      <span>{{"POPOVER_BLUETOOTH_ACTION_RECONNECT_PRESSURE_DEVICE" | translate}}</span>
+    </ion-item>
+  </ion-list>
+</ion-content>

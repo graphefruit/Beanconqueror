@@ -56,7 +56,7 @@ export class BeanGeneralInformationComponent implements OnInit {
     private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiHelper: UIHelper
+    public readonly uiHelper: UIHelper
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
