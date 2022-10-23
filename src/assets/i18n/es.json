@@ -742,7 +742,6 @@
       "TITLE": "Versión 6.2.0: Novedades",
       "DESCRIPTION": [
         "<b>Dispositivos de presión</b>",
-        "Añadido soporte para sensor PRS",
         "Añadido soporte para sensor 'Do it yourself' Popsicle - Gracias a Mike y Shay",
         "Inicio automático del temporizador al llegar a cierta presión - editable en la configuración",
         "Presionar el manómetro resetea la presión a 0.",
@@ -1257,7 +1256,7 @@
     "CONNECTED_SUCCESSFULLY": "Dispositivo presión conectado",
     "DISCONNECTED_SUCCESSFULLY": "Dispositivo de presión desconectado",
     "DISCONNECTED_UNPLANNED": "Desconexión no planificada del dispositivo de presión",
-    "INFORMATION_DESCRIPTION": "Dispositivos soportados: PRS y Popsicle",
+    "INFORMATION_DESCRIPTION": "Dispositivos soportados: Popsicle",
     "BLUETOOTH_SCAN_RUNNING": "Se buscará el dispositivo de presión durante 60 segundos, espere",
     "BLUETOOTH_NOT_ENABLED": "Bluetooth desactivado, actívelo para que funcione correctamente",
     "REQUEST_PERMISSION": {
