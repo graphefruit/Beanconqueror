@@ -398,6 +398,73 @@ export class Brew implements IBrew {
     return formatted;
   }
 
+  public getFormattedTotalCoffeeTemperatureTime(): string {
+    const secs = this.brew_temperature_time;
+
+    const millisecondsEnabled: boolean =
+      this.getSettingsStorageInstance().getSettings().brew_milliseconds;
+    let formatted = '';
+    if (millisecondsEnabled) {
+      formatted = moment
+        .utc(secs * 1000)
+        .add('milliseconds', this.brew_temperature_time_milliseconds)
+        .format('mm:ss.SSS');
+    } else {
+      formatted = moment
+        .utc(secs * 1000)
+        .add('milliseconds', this.brew_temperature_time_milliseconds)
+        .format('mm:ss');
+    }
+
+    if (moment.utc(secs * 1000).hours() > 0) {
+      if (millisecondsEnabled) {
+        formatted = moment
+          .utc(secs * 1000)
+          .add('milliseconds', this.brew_temperature_time_milliseconds)
+          .format('HH:mm:ss.SSS');
+      } else {
+        formatted = moment
+          .utc(secs * 1000)
+          .add('milliseconds', this.brew_temperature_time_milliseconds)
+          .format('HH:mm:ss');
+      }
+    }
+    return formatted;
+  }
+  public getFormattedTotalCoffeeBloomingTime(): string {
+    const secs = this.coffee_blooming_time;
+
+    const millisecondsEnabled: boolean =
+      this.getSettingsStorageInstance().getSettings().brew_milliseconds;
+    let formatted = '';
+    if (millisecondsEnabled) {
+      formatted = moment
+        .utc(secs * 1000)
+        .add('milliseconds', this.coffee_blooming_time_milliseconds)
+        .format('mm:ss.SSS');
+    } else {
+      formatted = moment
+        .utc(secs * 1000)
+        .add('milliseconds', this.coffee_blooming_time_milliseconds)
+        .format('mm:ss');
+    }
+
+    if (moment.utc(secs * 1000).hours() > 0) {
+      if (millisecondsEnabled) {
+        formatted = moment
+          .utc(secs * 1000)
+          .add('milliseconds', this.coffee_blooming_time_milliseconds)
+          .format('HH:mm:ss.SSS');
+      } else {
+        formatted = moment
+          .utc(secs * 1000)
+          .add('milliseconds', this.coffee_blooming_time_milliseconds)
+          .format('HH:mm:ss');
+      }
+    }
+    return formatted;
+  }
+
   public getFormattedBrewTime(): string {
     const secs = this.brew_time;
     let formattingStr: string = 'HH:mm:ss';
