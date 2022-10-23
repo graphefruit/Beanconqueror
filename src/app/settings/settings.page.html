@@ -98,19 +98,19 @@
             <ion-label>{{"PAGE_SETTINGS_BREW_RATING_STEPS" | translate}}</ion-label>
             <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.brew_rating_steps"
                         cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
-              <ion-select-option value="1">
+              <ion-select-option [value]="1">
                 1
               </ion-select-option>
-              <ion-select-option  value="0.75">
+              <ion-select-option  [value]="0.75">
                 0.75
               </ion-select-option>
-              <ion-select-option  value="0.5">
+              <ion-select-option  [value]="0.5">
                 0.5
               </ion-select-option>
-              <ion-select-option  value="0.25">
+              <ion-select-option  [value]="0.25">
                 0.25
               </ion-select-option>
-              <ion-select-option  value="0.1">
+              <ion-select-option [value]="0.1">
                 0.1
               </ion-select-option>
             </ion-select>
@@ -133,19 +133,19 @@
             <ion-label>{{"PAGE_SETTINGS_BEAN_RATING_STEPS" | translate}}</ion-label>
             <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.bean_rating_steps"
                         cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
-              <ion-select-option value="1">
+              <ion-select-option [value]="1">
                 1
               </ion-select-option>
-              <ion-select-option  value="0.75">
+              <ion-select-option  [value]="0.75">
                 0.75
               </ion-select-option>
-              <ion-select-option  value="0.5">
+              <ion-select-option  [value]="0.5">
                 0.5
               </ion-select-option>
-              <ion-select-option  value="0.25">
+              <ion-select-option  [value]="0.25">
                 0.25
               </ion-select-option>
-              <ion-select-option  value="0.1">
+              <ion-select-option [value]="0.1">
                 0.1
               </ion-select-option>
             </ion-select>
@@ -327,7 +327,7 @@
 
             <ion-item>
               <ion-label class="ion-margin-end" style="white-space: normal;"><h2>{{"SMART_SCALE_LOG" | translate}}</h2></ion-label>
-              <ion-checkbox (ngModelChange)="saveSettings();"
+              <ion-checkbox (ionBlur)="toggleLog();"
                             [(ngModel)]="settings.scale_log" slot="end"></ion-checkbox>
             </ion-item>
 
@@ -422,14 +422,14 @@
             </ion-item>
             <ion-item>
               <ion-label class="ion-margin-end" style="white-space: normal;"><h2>{{"PRESSURE_LOG" | translate}}</h2></ion-label>
-              <ion-checkbox (ngModelChange)="saveSettings();"
+              <ion-checkbox (ionBlur)="toggleLog();"
                             [(ngModel)]="settings.pressure_log" slot="end"></ion-checkbox>
             </ion-item>
 
           </ion-list>
 
           <ion-label>
-            <ion-icon style="top: 3px; position: relative;" name="information-circle-outline"></ion-icon><p style="display: inline;">{{"PRESSURE_INFORMATION_DESCRIPTION" | translate}}</p>
+            <ion-icon style="top: 3px; position: relative;" name="information-circle-outline"></ion-icon><p style="display: inline;">{{"PRESSURE.INFORMATION_DESCRIPTION" | translate}}</p>
           </ion-label>
         </ion-card-content>
 

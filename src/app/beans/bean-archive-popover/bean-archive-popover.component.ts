@@ -28,7 +28,7 @@ export class BeanArchivePopoverComponent implements OnInit {
     private readonly modalController: ModalController,
     private readonly uiToast: UIToast,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiHelper: UIHelper
+    public readonly uiHelper: UIHelper
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     this.maxBeanRating = this.settings.bean_rating;

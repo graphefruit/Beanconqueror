@@ -254,7 +254,7 @@
   <ion-item lines="none">
     <span class="ion-title ion-padding-top">{{"BREW_HEADER_WHILE_BREW" | translate }}</span>
 
-      <ion-button slot="end" style="margin-top: -10px;" *ngIf="flow_profile_raw.weight.length > 0" (click)="downloadFlowProfile()" tappable fill="clear">
+      <ion-button slot="end" style="margin-top: -10px;" *ngIf="flow_profile_raw?.weight.length > 0 || flow_profile_raw?.pressureFlow.length > 0" (click)="downloadFlowProfile()" tappable fill="clear">
         <ion-icon name="download" slot="icon-only"></ion-icon>
       </ion-button>
 
@@ -331,6 +331,8 @@
                 (bloomTimer)="setCoffeeBloomingTime($event)"
                 (dripTimer)="setCoffeeDripTime($event)"
                 (timerTicked)="brewTimeTicked($event)"
+                (timerStartPressed)="timerStartPressed($event)"
+                (timerResumedPressed)="timerResumedPressed($event)"
                 (timerStarted)="timerStarted($event)"
                 (timerResumed)="timerResumed($event)"
                 (timerPaused)="timerPaused($event)"

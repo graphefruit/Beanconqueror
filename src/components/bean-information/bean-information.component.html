@@ -8,6 +8,9 @@
                       *ngIf="bean.isSelfRoasted()"></ion-icon>
             <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="qr-code-outline"
                       *ngIf="bean.isScannedBean()"></ion-icon>
+            <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="share-social-outline"
+                      *ngIf="bean.shared"></ion-icon>
+
             <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="heart"
                       *ngIf="bean.favourite"></ion-icon>
             {{bean.name}}&nbsp;<span
@@ -99,6 +102,10 @@
                 <br/>
                 <ion-text
                   [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount() | number : '.0-2', gramTotal: bean?.weight}">{{daysOld()}}</ion-text>
+              </ion-col>
+              <ion-col *ngIf="(bean?.hasCustomFlavors() || bean?.hasPredefinedFlavors())" size="12">
+                <ion-label class="card-headline">{{'BREW_DATA_FLAVOR' | translate}}</ion-label><br/>
+                <ion-text class="ion-text-wrap">{{getCuppedBrewFlavors()}}</ion-text>
               </ion-col>
             </ion-row>
           </ion-grid>
