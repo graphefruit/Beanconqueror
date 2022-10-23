@@ -37,7 +37,7 @@ export class BeanFilterComponent implements OnInit {
     private readonly modalController: ModalController,
     private readonly uiBrewHelper: UIBrewHelper,
     private readonly navParams: NavParams,
-    private readonly uiHelper: UIHelper,
+    public readonly uiHelper: UIHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiBeanStorage: UIBeanStorage,
