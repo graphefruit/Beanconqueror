@@ -182,35 +182,57 @@ export class BrewDetailComponent implements OnInit {
             {
               label: this.translate.instant('BREW_FLOW_WEIGHT'),
               data: [],
-              borderColor: 'rgb(159,140,111)',
+              borderColor: 'rgb(205,194,172)',
               backgroundColor: 'rgb(205,194,172)',
               yAxisID: 'y',
               pointRadius: 0,
+              tension: 0,
+              borderWidth: 2,
               hidden: !graphSettings.weight,
             },
             {
               label: this.translate.instant('BREW_FLOW_WEIGHT_PER_SECOND'),
               data: [],
-              borderColor: 'rgb(96,125,139)',
+              borderColor: 'rgb(127,151,162)',
               backgroundColor: 'rgb(127,151,162)',
               yAxisID: 'y1',
               spanGaps: true,
               pointRadius: 0,
+              tension: 0,
+              borderWidth: 2,
               hidden: !graphSettings.calc_flow,
             },
             {
               label: this.translate.instant('BREW_FLOW_WEIGHT_REALTIME'),
               data: [],
-              borderColor: 'rgb(144,60,99)',
-              backgroundColor: 'rgb(191,101,143)',
+              borderColor: 'rgb(9,72,93)',
+              backgroundColor: 'rgb(9,72,93)',
               yAxisID: 'y2',
               spanGaps: true,
               pointRadius: 0,
               tension: 0,
+              borderWidth: 2,
               hidden: !graphSettings.realtime_flow,
             },
           ],
         };
+        if (
+          this.flow_profile_raw.pressureFlow &&
+          this.flow_profile_raw.pressureFlow.length > 0
+        ) {
+          drinkingData.datasets.push({
+            label: this.translate.instant('BREW_PRESSURE_FLOW'),
+            data: [],
+            borderColor: 'rgb(5,199,147)',
+            backgroundColor: 'rgb(5,199,147)',
+            yAxisID: 'y3',
+            spanGaps: true,
+            pointRadius: 0,
+            tension: 0,
+            borderWidth: 2,
+            hidden: !graphSettings.pressure,
+          });
+        }
         const chartOptions = {
           plugins: {
             backgroundColorPlugin: {},
@@ -338,7 +360,10 @@ export class BrewDetailComponent implements OnInit {
             }
           }
 
-          if (this.flow_profile_raw.pressureFlow) {
+          if (
+            this.flow_profile_raw.pressureFlow &&
+            this.flow_profile_raw.pressureFlow.length > 0
+          ) {
             for (const data of this.flow_profile_raw.pressureFlow) {
               this.flowProfileChartEl.data.datasets[3].data.push(
                 data.actual_pressure
