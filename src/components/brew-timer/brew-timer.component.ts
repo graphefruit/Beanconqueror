@@ -1,11 +1,20 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 
-import {ITimer} from '../../interfaces/timer/iTimer';
+import { ITimer } from '../../interfaces/timer/iTimer';
 import moment from 'moment';
-import {DatetimePopoverComponent} from '../../popover/datetime-popover/datetime-popover.component';
-import {ModalController} from '@ionic/angular';
-import {BleManagerService} from '../../services/bleManager/ble-manager.service';
+import { DatetimePopoverComponent } from '../../popover/datetime-popover/datetime-popover.component';
+import { ModalController } from '@ionic/angular';
 
+import { CoffeeBluetoothDevicesService } from '@graphefruit/coffee-bluetooth-devices';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { Settings } from '../../classes/settings/settings';
 
 @Component({
   selector: 'brew-timer',
@@ -14,7 +23,6 @@ import {BleManagerService} from '../../services/bleManager/ble-manager.service';
 })
 export class BrewTimerComponent implements OnInit, OnDestroy {
   @Input() public label: string;
-
 
   @Output() public timerStarted = new EventEmitter();
   @Output() public timerPaused = new EventEmitter();
@@ -25,12 +33,17 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   @Output() public dripTimer = new EventEmitter();
   @Output() public tareScale = new EventEmitter();
 
+  @Output() public timerStartPressed = new EventEmitter();
+  @Output() public timerResumedPressed = new EventEmitter();
+
   public displayingTime: string = moment().startOf('day').toISOString();
 
   private _dripTimerVisible: boolean;
 
-  private startedTimestamp: number = -1;
-
+  private startingDay;
+  private startedTimer;
+  private pausedTimer;
+  private startedOffset;
   get dripTimerVisible(): boolean {
     return this._dripTimerVisible;
   }
@@ -56,20 +69,23 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   }
 
   public timer: ITimer;
-
-  constructor(private readonly modalCtrl: ModalController, private readonly bleManager: BleManagerService) {
+  public settings: Settings;
+  constructor(
+    private readonly modalCtrl: ModalController,
+    private readonly bleManager: CoffeeBluetoothDevicesService,
+    private readonly uiSettingsStorage: UISettingsStorage
+  ) {
+    this.settings = this.uiSettingsStorage.getSettings();
   }
 
   public smartScaleConnected() {
     try {
       return this.bleManager.getScale() !== null;
-    } catch (ex) {
-    }
+    } catch (ex) {}
   }
 
   public ngOnInit(): void {
     this.initTimer();
-
   }
 
   public isTimerRunning() {
@@ -84,36 +100,65 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     return this.timer.hasFinished;
   }
 
-  public setTime(seconds: number): void {
-    this.timer.seconds = seconds;
-    this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
-    this.displayingTime = moment(this.displayingTime).startOf('day').add('seconds', this.timer.seconds).toISOString();
-  }
-
   public initTimer(): void {
-
     // tslint:disable-next-line
     this.timer = {
       runTimer: false,
       hasStarted: false,
       hasFinished: false,
       seconds: 0,
+      milliseconds: 0,
     } as ITimer;
     this.showBloomTimer = this.bloomTimerVisible;
     this.showDripTimer = this.dripTimerVisible;
 
-    this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
-    this.displayingTime = moment(this.displayingTime).startOf('day').add('seconds', this.timer.seconds).toISOString();
+    this.displayingTime = moment(this.displayingTime)
+      .startOf('day')
+      .add('seconds', this.timer.seconds)
+      .add('milliseconds', this.timer.milliseconds)
+      .toISOString();
+  }
+
+  public __startTimer() {
+    if (this.timerStartPressed.observers.length > 0) {
+      this.timerStartPressed.emit();
+    } else {
+      this.startTimer();
+    }
   }
 
   public startTimer(_resumed: boolean = false): void {
-    this.startedTimestamp = Math.floor(Date.now() / 1000);
+    if (_resumed === false) {
+      const startingDate = new Date();
+      this.startingDay = moment(startingDate).startOf('day');
+      if (this.timer.seconds > 0 || this.timer.milliseconds > 0) {
+        // We need to subtract, if the time is already given on start (like repeat or preset)
+        this.startedTimer = moment(startingDate)
+          .subtract(this.timer.seconds, 'seconds')
+          .subtract(this.timer.milliseconds, 'milliseconds');
+      } else {
+        this.startedTimer = moment(startingDate);
+      }
 
+      this.startedOffset = this.startedTimer.diff(this.startingDay);
+    } else {
+      const restartTimer = moment(new Date());
+
+      this.startedOffset += restartTimer.diff(this.pausedTimer);
+    }
     this.timer.hasStarted = true;
     this.timer.runTimer = true;
-    this.timerTick();
+
+    if (this.settings?.brew_milliseconds) {
+      this.millisecondTick();
+    } else {
+      this.timerTick();
+    }
+
     if (_resumed === false) {
-      this.timerStarted.emit();
+      if (this.timerStartPressed.observers.length <= 0) {
+        this.timerStarted.emit();
+      }
     }
 
     this.changeEvent();
@@ -124,6 +169,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   }
 
   public pauseTimer(): void {
+    this.pausedTimer = moment(new Date());
     this.timerPaused.emit();
     this.timer.runTimer = false;
     this.timerPaused.emit();
@@ -133,7 +179,6 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   public bloomTime(): void {
     this.showBloomTimer = false;
     this.bloomTimer.emit(this.getSeconds());
-
   }
 
   public dripTime(): void {
@@ -141,25 +186,60 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     this.dripTimer.emit(this.getSeconds());
   }
 
-  public resumeTimer(): void {
-    this.startTimer(true);
-    this.timerResumed.emit();
+  public __resumeTimer() {
+    if (this.timerResumedPressed.observers.length > 0) {
+      this.timerResumedPressed.emit();
+    } else {
+      this.resumeTimer();
+    }
   }
 
-  public timerTick(): void {
+  public resumeTimer(): void {
+    this.startTimer(true);
+    if (this.timerResumedPressed.observers.length <= 0) {
+      this.timerResumed.emit();
+    }
+  }
 
+  public millisecondTick(): void {
     setTimeout(() => {
       if (!this.timer.runTimer) {
         return;
       }
-      const currentTickTimestamp: number = Math.floor(Date.now() / 1000);
-      const delta: number = currentTickTimestamp - this.startedTimestamp;
+      const milliSecondTimer = moment(new Date()).subtract(this.startedOffset);
 
-      this.timer.seconds += delta;
-      this.startedTimestamp = currentTickTimestamp;
+      this.timer.milliseconds = milliSecondTimer.milliseconds();
+      const passedSeconds = milliSecondTimer.diff(this.startingDay, 'seconds');
+      this.timer.seconds = passedSeconds;
 
-      this.timer.displayTime = this.getSecondsAsDigitalClock(this.timer.seconds);
-      this.displayingTime = moment(this.displayingTime).startOf('day').add('seconds', this.timer.seconds).toISOString();
+      this.displayingTime = moment(this.displayingTime)
+        .startOf('day')
+        .add('seconds', this.timer.seconds)
+        .add('milliseconds', this.timer.milliseconds)
+        .toISOString();
+      this.millisecondTick();
+      this.changeEvent();
+    }, 10);
+  }
+  public timerTick(): void {
+    setTimeout(() => {
+      if (!this.timer.runTimer) {
+        return;
+      }
+
+      const actualDate = new Date();
+
+      const actualTimerTick = moment(actualDate).subtract(this.startedOffset);
+
+      const passedSeconds = actualTimerTick.diff(this.startingDay, 'seconds');
+      this.timer.seconds = passedSeconds;
+
+      this.displayingTime = moment(this.displayingTime)
+        .startOf('day')
+        .add('seconds', this.timer.seconds)
+        .add('milliseconds', this.timer.milliseconds)
+        .toISOString();
+
       this.timerTick();
       this.changeEvent();
     }, 1000);
@@ -167,6 +247,9 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
   public getSeconds(): number {
     return this.timer.seconds;
+  }
+  public getMilliseconds(): number {
+    return this.timer.milliseconds;
   }
 
   public reset() {
@@ -185,21 +268,34 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   public changeEvent() {
     this.timerTicked.emit();
   }
+  public setTime(seconds: number, milliseconds: number = 0): void {
+    this.timer.seconds = seconds;
+    if (milliseconds !== 0) {
+      this.timer.milliseconds = milliseconds;
+    }
+    this.displayingTime = moment(this.displayingTime)
+      .startOf('day')
+      .add('seconds', this.timer.seconds)
+      .add('milliseconds', this.timer.milliseconds)
+      .toISOString();
+  }
 
   public getSecondsAsDigitalClock(inputSeconds: number): string {
     const sec_num = parseInt(inputSeconds.toString(), 10); // don't forget the second param
     const hours = Math.floor(sec_num / 3600);
-    const minutes = Math.floor((sec_num - (hours * 3600)) / 60);
-    const seconds = sec_num - (hours * 3600) - (minutes * 60);
-    const hoursString = (hours < 10) ? `0${hours}` : hours.toString();
-    const minutesString = (minutes < 10) ? `0${minutes}` : minutes.toString();
-    const secondsString = (seconds < 10) ? `0${seconds}` : seconds.toString();
+    const minutes = Math.floor((sec_num - hours * 3600) / 60);
+    const seconds = sec_num - hours * 3600 - minutes * 60;
+    const hoursString = hours < 10 ? `0${hours}` : hours.toString();
+    const minutesString = minutes < 10 ? `0${minutes}` : minutes.toString();
+    const secondsString = seconds < 10 ? `0${seconds}` : seconds.toString();
 
     return `${hoursString}:${minutesString}:${secondsString}`;
   }
 
   public changeDate(_event) {
-    const durationPassed = moment.duration(moment(_event).diff(moment(_event).startOf('day')));
+    const durationPassed = moment.duration(
+      moment(_event).diff(moment(_event).startOf('day'))
+    );
     this.displayingTime = moment(_event).toISOString();
     this.timer.seconds = durationPassed.asSeconds();
     // Emit event so parent page can do something
@@ -213,19 +309,30 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     const modal = await this.modalCtrl.create({
       component: DatetimePopoverComponent,
       id: 'datetime-popover',
-      cssClass: 'half-bottom-modal',
-      showBackdrop: true,
-      backdropDismiss: true,
-      swipeToClose: true,
-      componentProps: {displayingTime: this.displayingTime}
+      cssClass: 'popover-actions',
+      breakpoints: [0, 0.5, 0.75, 1],
+      initialBreakpoint: 0.5,
+      componentProps: { displayingTime: this.displayingTime },
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
-    if (modalData !== undefined && modalData.data.displayingTime !== undefined) {
+    if (
+      modalData !== undefined &&
+      modalData.data &&
+      modalData.data.displayingTime !== undefined
+    ) {
       this.displayingTime = modalData.data.displayingTime;
-      this.timer.seconds = moment.duration(moment(this.displayingTime).diff(moment(this.displayingTime).startOf('day'))).asSeconds();
+      this.timer.seconds = moment
+        .duration(
+          moment(this.displayingTime).diff(
+            moment(this.displayingTime).startOf('day')
+          )
+        )
+        .asSeconds();
+      this.timer.milliseconds = moment(this.displayingTime)
+        .startOf('day')
+        .milliseconds();
       this.changeEvent();
     }
-
   }
 }

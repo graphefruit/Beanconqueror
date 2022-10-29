@@ -1,6 +1,6 @@
 /** Interfacdes */
 
-import {IManageBrewParameter} from '../../interfaces/parameter/iManageBrewParameter';
+import { IManageBrewParameter } from '../../interfaces/parameter/iManageBrewParameter';
 
 export class ManageBrewParameter implements IManageBrewParameter {
   public brew_time: boolean;
@@ -56,7 +56,8 @@ export class ManageBrewParameter implements IManageBrewParameter {
     this.brew_beverage_quantity = true;
     this.attachments = false;
     this.set_last_coffee_brew = false;
-    this.set_custom_brew_time = false;
+    // #401
+    this.set_custom_brew_time = true;
     this.method_of_preparation_tool = false;
     this.water = false;
     this.bean_weight_in = false;

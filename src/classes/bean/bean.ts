@@ -1,17 +1,20 @@
 /** Interfaces */
-import {BEAN_MIX_ENUM} from '../../enums/beans/mix';
+import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
 /** Enums */
-import {ROASTS_ENUM} from '../../enums/beans/roasts';
-import {IBean} from '../../interfaces/bean/iBean';
+import { ROASTS_ENUM } from '../../enums/beans/roasts';
+import { IBean } from '../../interfaces/bean/iBean';
 /** Classes */
-import {Config} from '../objectConfig/objectConfig';
+import { Config } from '../objectConfig/objectConfig';
 import moment from 'moment';
-import {BEAN_ROASTING_TYPE_ENUM} from '../../enums/beans/beanRoastingType';
-import {IBeanInformation} from '../../interfaces/bean/iBeanInformation';
-import {BeanRoastInformation} from './beanRoastInformation';
-import {RoastingMachine} from '../roasting-machine/roasting-machine';
-import {UIRoastingMachineStorage} from '../../services/uiRoastingMachineStorage';
-import {IRoastingMachine} from '../../interfaces/roasting-machine/iRoastingMachine';
+import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
+import { IBeanInformation } from '../../interfaces/bean/iBeanInformation';
+import { BeanRoastInformation } from './beanRoastInformation';
+import { RoastingMachine } from '../roasting-machine/roasting-machine';
+import { UIRoastingMachineStorage } from '../../services/uiRoastingMachineStorage';
+import { IRoastingMachine } from '../../interfaces/roasting-machine/iRoastingMachine';
+import { BeanProto } from '../../generated/src/classes/bean/bean';
+import { ICupping } from '../../interfaces/cupping/iCupping';
+import { IFlavor } from '../../interfaces/flavor/iFlavor';
 
 export class Bean implements IBean {
   public name: string;
@@ -39,7 +42,6 @@ export class Bean implements IBean {
 
   public rating: number;
 
-
   public bean_information: Array<IBeanInformation>;
 
   public bean_roasting_type: BEAN_ROASTING_TYPE_ENUM;
@@ -50,6 +52,10 @@ export class Bean implements IBean {
   public qr_code: string;
 
   public favourite: boolean;
+  public shared: boolean;
+  public cupping: ICupping;
+
+  public cupped_flavor: IFlavor;
 
   constructor() {
     this.name = '';
@@ -79,6 +85,27 @@ export class Bean implements IBean {
     this.rating = 0;
     this.qr_code = '';
     this.favourite = false;
+    this.shared = false;
+
+    this.cupping = {
+      body: 0,
+      brightness: 0,
+      clean_cup: 0,
+      complexity: 0,
+      cuppers_correction: 0,
+      dry_fragrance: 0,
+      finish: 0,
+      flavor: 0,
+      sweetness: 0,
+      uniformity: 0,
+      wet_aroma: 0,
+      notes: '',
+    };
+
+    this.cupped_flavor = {
+      predefined_flavors: {},
+      custom_flavors: [],
+    } as IFlavor;
   }
 
   public getRoastName(): string {
@@ -97,45 +124,87 @@ export class Bean implements IBean {
     // Newer version, this information may not exist
     if (beanObj.bean_roast_information) {
       this.bean_roast_information = new BeanRoastInformation();
-      Object.assign(this.bean_roast_information, beanObj.bean_roast_information);
+      Object.assign(
+        this.bean_roast_information,
+        beanObj.bean_roast_information
+      );
+    }
+  }
+  public initializeBySharedProtoBean(beanObj: BeanProto): void {
+    Object.assign(this, beanObj);
+
+    // Newer version, this information may not exist
+    if (beanObj.bean_roast_information) {
+      this.bean_roast_information = new BeanRoastInformation();
+      Object.assign(
+        this.bean_roast_information,
+        beanObj.bean_roast_information
+      );
     }
 
+    //Older bean versions may not have this information when initialization
+    if (this.cupping === undefined) {
+      this.cupping = {
+        body: 0,
+        brightness: 0,
+        clean_cup: 0,
+        complexity: 0,
+        cuppers_correction: 0,
+        dry_fragrance: 0,
+        finish: 0,
+        flavor: 0,
+        sweetness: 0,
+        uniformity: 0,
+        wet_aroma: 0,
+        notes: '',
+      };
+    }
+    if (this.cupped_flavor === undefined) {
+      this.cupped_flavor = {
+        predefined_flavors: {},
+        custom_flavors: [],
+      } as IFlavor;
+    }
   }
-
+  public hasCustomFlavors(): boolean {
+    return this.cupped_flavor.custom_flavors.length > 0;
+  }
+  public hasPredefinedFlavors(): boolean {
+    return Object.keys(this.cupped_flavor.predefined_flavors).length > 0;
+  }
   public fixDataTypes(): boolean {
     let fixNeeded: boolean = false;
-
 
     if (Number(this.cost) !== this.cost) {
       this.cost = Number(this.cost);
       fixNeeded = true;
     }
 
-
     if (Number(this.weight) !== this.weight) {
       this.weight = Number(this.weight);
       fixNeeded = true;
     }
 
-
     return fixNeeded;
   }
   public beanAgeInDays(): number {
-    if (this.roastingDate !== null && this.roastingDate !== undefined && this.roastingDate !== '') {
+    if (
+      this.roastingDate !== null &&
+      this.roastingDate !== undefined &&
+      this.roastingDate !== ''
+    ) {
       const today = moment(Date.now()).startOf('day');
       const roastingDate = moment(this.roastingDate).startOf('day');
 
-      return today.diff(roastingDate,'days');
+      return today.diff(roastingDate, 'days');
     }
     return 0;
-
   }
 
   /**
    * Get the calculated bean age for this brew
    */
   public getCalculatedBeanAge(): number {
-
     const roastingDate = moment(this.roastingDate);
     const brewTime = moment.unix(moment().unix());
 
@@ -163,19 +232,17 @@ export class Bean implements IBean {
   }
 
   public getRoastingMachine(): RoastingMachine {
-    const iRoastingMachine: IRoastingMachine = this.getRoastingMachineStorage()
-      .getByUUID(this.bean_roast_information.roaster_machine) as IRoastingMachine;
+    const iRoastingMachine: IRoastingMachine =
+      this.getRoastingMachineStorage().getByUUID(
+        this.bean_roast_information.roaster_machine
+      ) as IRoastingMachine;
     const roastingMachine: RoastingMachine = new RoastingMachine();
     roastingMachine.initializeByObject(iRoastingMachine);
 
     return roastingMachine;
-
   }
-
 
   public hasPhotos() {
-    return (this.attachments && this.attachments.length > 0);
+    return this.attachments && this.attachments.length > 0;
   }
-
-
 }

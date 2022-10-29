@@ -14,6 +14,18 @@
       <ion-icon name="beanconqueror-edit" slot="start"></ion-icon>
       <span>{{"EDIT" | translate}}</span>
     </ion-item>
+    <ion-item  (click)="choose(getStaticActions().SHOW_BREWS)" button tappable>
+      <ion-icon name="beanconqueror-brew" slot="start"></ion-icon>
+      <span>{{"POPOVER_SHOW_BREWS" | translate}}</span>
+    </ion-item>
+    <ion-item (click)="choose(getStaticActions().CUPPING)" button tappable>
+      <ion-icon name="beanconqueror-cupping" slot="start"></ion-icon>
+      <span>{{"POPOVER_BREWS_OPTION_CUPPING" | translate}}</span>
+    </ion-item>
+    <ion-item *ngIf="data.qr_code" (click)="choose(getStaticActions().REFRESH_DATA_FROM_QR_CODE)" button tappable>
+      <ion-icon name="beanconqueror-refresh-barcode" slot="start"></ion-icon>
+      <span>{{"POPOVER_QR_CODE_REFRESH" | translate}}</span>
+    </ion-item>
     <ion-item (click)="choose(getStaticActions().TOGGLE_FAVOURITE)" button tappable>
       <ion-icon *ngIf="!data.favourite" name="heart-outline" slot="start"></ion-icon>
       <ion-icon *ngIf="data.favourite" name="heart" slot="start"></ion-icon>

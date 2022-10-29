@@ -46,7 +46,7 @@
 
   <ion-item>
     <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
-      style="vertical-align: top;">{{filter.rating.lower}}&nbsp;-&nbsp;{{filter.rating.upper}} </ion-badge>
+      style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(filter.rating.lower,2)}}&nbsp;-&nbsp;{{this.uiHelper.toFixedIfNecessary(filter.rating.upper,2)}} </ion-badge>
     </ion-label>
     <ion-range min="-1" dualKnobs="true" snaps="true" [max]="getMaxBrewRating()" step="1" [(ngModel)]="filter.rating">
       <ion-icon size="small" slot="start" name="beanconqueror-brew-rating-empty"></ion-icon>

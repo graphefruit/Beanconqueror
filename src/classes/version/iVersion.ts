@@ -1,16 +1,13 @@
 /** Interfaces */
 /** Enums */
 /** Classes */
-import {Config} from '../objectConfig/objectConfig';
-import {IVersion} from '../../interfaces/version/iVersion';
-
+import { Config } from '../objectConfig/objectConfig';
+import { IVersion } from '../../interfaces/version/iVersion';
 
 export class Version implements IVersion {
-
   public config: Config;
   public alreadyDisplayedVersions: Array<string>;
   public updatedDataVersions: Array<string>;
-
 
   constructor() {
     this.alreadyDisplayedVersions = [];
@@ -22,18 +19,22 @@ export class Version implements IVersion {
     Object.assign(this, versionObj);
   }
 
-  public whichUpdateScreensShallBeDisplayed(actualAppVersion: string): Array<string> {
-      const versionCode: string = actualAppVersion;
-      const filteredVersions = this.getUpdatedVersions().filter((e)=> this.alreadyDisplayedVersions.filter((b) => b === e).length === 0);
+  public whichUpdateScreensShallBeDisplayed(
+    actualAppVersion: string
+  ): Array<string> {
+    const versionCode: string = actualAppVersion;
+    const filteredVersions = this.getUpdatedVersions().filter(
+      (e) => this.alreadyDisplayedVersions.filter((b) => b === e).length === 0
+    );
 
-      const displayVersions: Array<string> = [];
-      for (const v of filteredVersions) {
-        const compare = this.versionCompare(versionCode,v);
-        if (compare >=0) {
-          displayVersions.push(v);
-        }
+    const displayVersions: Array<string> = [];
+    for (const v of filteredVersions) {
+      const compare = this.versionCompare(versionCode, v);
+      if (compare >= 0) {
+        displayVersions.push(v);
       }
-      return displayVersions;
+    }
+    return displayVersions;
   }
 
   public pushUpdatedVersion(updatedVersion: string) {
@@ -45,11 +46,13 @@ export class Version implements IVersion {
   }
 
   public checkIfDataVersionWasUpdated(_updatedDataVersion: string) {
-   const foundEntries=  this.updatedDataVersions.find((e)=> e === _updatedDataVersion);
-   if (foundEntries && foundEntries.length > 0) {
+    const foundEntries = this.updatedDataVersions.find(
+      (e) => e === _updatedDataVersion
+    );
+    if (foundEntries && foundEntries.length > 0) {
       return true;
-   }
-   return false;
+    }
+    return false;
   }
 
   /**
@@ -57,21 +60,27 @@ export class Version implements IVersion {
    * We dont set this to a variable, else it would be stored in DB and wrongly overwritten
    */
   private getUpdatedVersions() {
-    return ['5.0.0','5.1.0','5.2.0','5.3.1','5.4.0','6.0.0','6.1.0','6.1.3'];
+    return [
+      '5.0.0',
+      '5.1.0',
+      '5.2.0',
+      '5.3.1',
+      '5.4.0',
+      '6.0.0',
+      '6.1.0',
+      '6.1.5',
+      '6.2.0',
+    ];
   }
 
-  private  versionCompare(_actualAppVersion, _updateVersion) {
-    const actualVersion = parseInt(_actualAppVersion.replace(/[.]/g,''),0);
-    const replacedVersion = parseInt(_updateVersion.replace(/[.]/g,''),0);
+  private versionCompare(_actualAppVersion, _updateVersion) {
+    const actualVersion = parseInt(_actualAppVersion.replace(/[.]/g, ''), 0);
+    const replacedVersion = parseInt(_updateVersion.replace(/[.]/g, ''), 0);
     if (actualVersion > replacedVersion) {
       return -1;
     } else if (actualVersion === replacedVersion) {
       return 0;
     }
     return 1;
-
-
   }
-
-
 }

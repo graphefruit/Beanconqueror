@@ -1,13 +1,15 @@
 /**
  * Created by lars on 10/18/2017.
  */
-import {IConfig} from '../objectConfig/iObjectConfig';
+import { IConfig } from '../objectConfig/iObjectConfig';
 /** Enums */
-import {BEAN_MIX_ENUM} from '../../enums/beans/mix';
-import {ROASTS_ENUM} from '../../enums/beans/roasts';
-import {BEAN_ROASTING_TYPE_ENUM} from '../../enums/beans/beanRoastingType';
-import {IBeanInformation} from './iBeanInformation';
-import {IBeanRoastInformation} from './iBeanRoastInformation';
+import { BEAN_MIX_ENUM } from '../../enums/beans/mix';
+import { ROASTS_ENUM } from '../../enums/beans/roasts';
+import { BEAN_ROASTING_TYPE_ENUM } from '../../enums/beans/beanRoastingType';
+import { IBeanInformation } from './iBeanInformation';
+import { IBeanRoastInformation } from './iBeanRoastInformation';
+import { IFlavor } from '../flavor/iFlavor';
+import { ICupping } from '../cupping/iCupping';
 
 export interface IBean {
   name: string;
@@ -15,7 +17,6 @@ export interface IBean {
   roastingDate: string;
   // Blend / Single Origin.
   beanMix: BEAN_MIX_ENUM;
-
 
   // Aromatics
   aromatics: string;
@@ -46,4 +47,7 @@ export interface IBean {
 
   rating: number;
   qr_code: string;
+  shared: boolean;
+  cupping: ICupping;
+  cupped_flavor: IFlavor;
 }

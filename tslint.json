@@ -140,6 +140,7 @@
     "no-string-literal": false,
     "no-trailing-whitespace": false,
     "one-line": false,
+    "allowSyntheticDefaultImports": true,
     "object-literal-shorthand": false,
     "variable-name": {
       "options": [

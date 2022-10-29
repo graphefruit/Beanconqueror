@@ -48,6 +48,12 @@ export class UILog {
     return this.logs;
   }
 
+  public debug(_message): void {
+    this.generateLogMessage(LOGS_ENUM.LOG, _message);
+    if (!this.disabled) {
+      console.log(_message);
+    }
+  }
   public log(_message: string): void {
     this.generateLogMessage(LOGS_ENUM.LOG, _message);
     if (!this.disabled) {

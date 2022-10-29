@@ -69,10 +69,10 @@ export class UIImage {
           (imageData) => {
 
             const imageStr: string = `data:image/jpeg;base64,${imageData}`;
-            this.uiFileHelper.saveBase64File('beanconqueror_image', '.png', imageStr).then((_newURL) => {
+            this.uiFileHelper.saveBase64File('beanconqueror_image', '.jpg', imageStr).then((_newURL) => {
               // const filePath = _newURL.replace(/^file:\/\//, '');
               resolve(_newURL);
-              this.__cleanupCamera();
+              // this.__cleanupCamera();
             },(_error) => {
               reject(_error);
             });
@@ -107,7 +107,7 @@ export class UIImage {
 
 
   }
-  public async choosePhoto (): Promise<any> {
+  public async choosePhoto(): Promise<any> {
     const promise = new Promise(async (resolve, reject) => {
       this.__checkPermission(async () => {
 
@@ -125,14 +125,14 @@ export class UIImage {
                   disable_popover: true,
                   quality: this.getImageQuality()
                 }).then(async (results) => {
-                  this.uiAlert.showLoadingSpinner();
+                  await this.uiAlert.showLoadingSpinner();
                   for (const result of results) {
                     if (result && result.length > 0 && result !== 0 && result !== ''
                       && result !== 'OK' && result.length > 5) {
 
                       try {
                         const imageStr: string = `data:image/jpeg;base64,${result}`;
-                        await this.uiFileHelper.saveBase64File('beanconqueror_image', '.png', imageStr).then((_newURL) => {
+                        await this.uiFileHelper.saveBase64File('beanconqueror_image', '.jpg', imageStr).then((_newURL) => {
                           fileurls.push(_newURL);
                         }, () => {
                         });
@@ -145,8 +145,11 @@ export class UIImage {
                     }
 
                   }
-                  this.uiAlert.hideLoadingSpinner();
-                  this.__cleanupCamera();
+                  setTimeout(() => {
+                    this.uiAlert.hideLoadingSpinner();
+                  },50);
+
+                  // this.__cleanupCamera();
                   if (fileurls.length > 0) {
                     resolve(fileurls);
                   } else {
@@ -154,12 +157,15 @@ export class UIImage {
                   }
 
                 }, (err) => {
+                  setTimeout(() => {
+                    this.uiAlert.hideLoadingSpinner();
+                  },50);
                   reject(err);
                 });
               }
             } else {
               chooser.getFile().then(async (_files) => {
-                this.uiAlert.showLoadingSpinner();
+                await this.uiAlert.showLoadingSpinner();
 
                 for (const file of _files) {
                   try {
@@ -186,20 +192,32 @@ export class UIImage {
 
                       }
                     }, (_error) => {
+                      setTimeout(() => {
+                        this.uiAlert.hideLoadingSpinner();
+                      },50);
                       reject(_error);
                     });
                   } catch (ex) {
+                    setTimeout(() => {
+                      this.uiAlert.hideLoadingSpinner();
+                    },50);
                     reject(ex);
                   }
                 }
-                this.__cleanupCamera();
-                this.uiAlert.hideLoadingSpinner();
+                setTimeout(() => {
+                  this.uiAlert.hideLoadingSpinner();
+                },50);
+                // this.__cleanupCamera();
+
                 if (fileurls.length > 0) {
                   resolve(fileurls);
                 } else {
                   reject('We found no file urls');
                 }
               },(_err)=> {
+                setTimeout(() => {
+                  this.uiAlert.hideLoadingSpinner();
+                },50);
                 reject(_err);
               });
 
@@ -207,6 +225,9 @@ export class UIImage {
           });
 
         }, (_err) => {
+          setTimeout(() => {
+            this.uiAlert.hideLoadingSpinner();
+          },50);
           reject(_err);
         }
       );

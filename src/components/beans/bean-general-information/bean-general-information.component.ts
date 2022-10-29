@@ -1,16 +1,28 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {Bean} from '../../../classes/bean/bean';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
+import { Bean } from '../../../classes/bean/bean';
 import moment from 'moment';
-import {Platform} from '@ionic/angular';
-import {UIBeanStorage} from '../../../services/uiBeanStorage';
-import {TranslateService} from '@ngx-translate/core';
-import {ROASTS_ENUM} from '../../../enums/beans/roasts';
-import {BEAN_MIX_ENUM} from '../../../enums/beans/mix';
-import {BEAN_ROASTING_TYPE_ENUM} from '../../../enums/beans/beanRoastingType';
-import {NgxStarsComponent} from 'ngx-stars';
-import {IBeanInformation} from '../../../interfaces/bean/iBeanInformation';
-import {BluetoothScale} from '../../../classes/devices';
-import {BleManagerService} from '../../../services/bleManager/ble-manager.service';
+import { Platform } from '@ionic/angular';
+import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { TranslateService } from '@ngx-translate/core';
+import { ROASTS_ENUM } from '../../../enums/beans/roasts';
+import { BEAN_MIX_ENUM } from '../../../enums/beans/mix';
+import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
+import { NgxStarsComponent } from 'ngx-stars';
+import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
+
+import { CoffeeBluetoothDevicesService } from '@graphefruit/coffee-bluetooth-devices';
+import { BluetoothScale } from '@graphefruit/coffee-bluetooth-devices';
+import { Settings } from '../../../classes/settings/settings';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { UIHelper } from '../../../services/uiHelper';
 
 declare var cordova;
 @Component({
@@ -19,12 +31,12 @@ declare var cordova;
   styleUrls: ['./bean-general-information.component.scss'],
 })
 export class BeanGeneralInformationComponent implements OnInit {
-
-  @Input() public data: Bean ;
+  @Input() public data: Bean;
   @Output() public dataChange = new EventEmitter<Bean>();
-  @ViewChild('beanStars', {read: NgxStarsComponent, static: false}) public beanStars: NgxStarsComponent;
-  @ViewChild('beanRating', {read: NgxStarsComponent, static: false}) public beanRating: NgxStarsComponent;
-
+  @ViewChild('beanStars', { read: NgxStarsComponent, static: false })
+  public beanStars: NgxStarsComponent;
+  @ViewChild('beanRating', { read: NgxStarsComponent, static: false })
+  public beanRating: NgxStarsComponent;
 
   public roastsEnum = ROASTS_ENUM;
   public mixEnum = BEAN_MIX_ENUM;
@@ -34,22 +46,28 @@ export class BeanGeneralInformationComponent implements OnInit {
   public roasterResults: string[] = [];
   public roasterFocused: boolean = false;
 
-  constructor(private readonly platform: Platform,
-              private readonly uiBeanStorage: UIBeanStorage,
-              private readonly translate: TranslateService,
-              private readonly changeDetectorRef: ChangeDetectorRef,
-              private readonly bleManager: BleManagerService) { }
+  public maxBeanRating: number = 5;
+  public settings: Settings = undefined;
+
+  constructor(
+    private readonly platform: Platform,
+    private readonly uiBeanStorage: UIBeanStorage,
+    private readonly translate: TranslateService,
+    private readonly changeDetectorRef: ChangeDetectorRef,
+    private readonly bleManager: CoffeeBluetoothDevicesService,
+    private readonly uiSettingsStorage: UISettingsStorage,
+    public readonly uiHelper: UIHelper
+  ) {
+    this.settings = this.uiSettingsStorage.getSettings();
+  }
 
   public ngOnInit() {
-
+    this.maxBeanRating = this.settings.bean_rating;
     setTimeout(() => {
-      if (this.beanStars && this.beanStars.setRating)
-      {
+      if (this.beanStars && this.beanStars.setRating) {
         this.beanStars.setRating(this.data.roast_range);
       }
-    },1000);
-
-
+    }, 1000);
   }
 
   public smartScaleConnected() {
@@ -76,45 +94,42 @@ export class BeanGeneralInformationComponent implements OnInit {
       return;
     }
 
-
     actualSearchValue = actualSearchValue.toLowerCase();
-    const filteredEntries = this.uiBeanStorage.getAllEntries().filter((e)=>e.roaster.toLowerCase().includes(actualSearchValue));
+    const filteredEntries = this.uiBeanStorage
+      .getAllEntries()
+      .filter((e) => e.roaster.toLowerCase().includes(actualSearchValue));
 
     for (const entry of filteredEntries) {
       this.roasterResults.push(entry.roaster);
     }
     // Distinct values
-    this.roasterResults = Array.from(new Set(this.roasterResults.map((e) => e)));
+    this.roasterResults = Array.from(
+      new Set(this.roasterResults.map((e) => e))
+    );
 
     if (this.roasterResults.length > 0) {
       this.roasterResultsAvailable = true;
     } else {
       this.roasterResultsAvailable = false;
     }
-
   }
   public onRoasterSearchLeave($event) {
     setTimeout(() => {
       this.roasterResultsAvailable = false;
       this.roasterResults = [];
       this.roasterFocused = false;
-    },150);
-
+    }, 150);
   }
   public onRoasterSearchFocus($event) {
     this.roasterFocused = true;
   }
 
   public roasterSelected(selected: string): void {
-
     this.data.roaster = selected;
     this.roasterResults = [];
     this.roasterResultsAvailable = false;
     this.roasterFocused = false;
   }
-
-
-
 
   public chooseBuyDate(_event) {
     _event.target.blur();
@@ -136,17 +151,14 @@ export class BeanGeneralInformationComponent implements OnInit {
         success: (newDate) => {
           if (newDate === undefined) {
             this.data.buyDate = '';
-          } else
-          {
+          } else {
             this.data.buyDate = moment(newDate).toISOString();
           }
 
           this.changeDetectorRef.detectChanges();
-        }, error: () => {
-
-        }
+        },
+        error: () => {},
       });
-
     }
   }
 
@@ -170,23 +182,19 @@ export class BeanGeneralInformationComponent implements OnInit {
         success: (newDate) => {
           if (newDate === undefined) {
             this.data.roastingDate = '';
-          } else
-          {
+          } else {
             this.data.roastingDate = moment(newDate).toISOString();
           }
 
           this.changeDetectorRef.detectChanges();
-        }, error: () => {
-
-        }
+        },
+        error: () => {},
       });
-
     }
   }
 
-
   public changedRating() {
-    if (typeof(this.beanRating) !== 'undefined') {
+    if (typeof this.beanRating !== 'undefined') {
       this.beanRating.setRating(this.data.rating);
     }
   }

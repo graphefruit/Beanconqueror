@@ -1,10 +1,13 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {IBean} from '../../../interfaces/bean/iBean';
-import {Bean} from '../../../classes/bean/bean';
-import {UIBeanStorage} from '../../../services/uiBeanStorage';
-import {ModalController} from '@ionic/angular';
-import {UIToast} from '../../../services/uiToast';
-import {NgxStarsComponent} from 'ngx-stars';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { IBean } from '../../../interfaces/bean/iBean';
+import { Bean } from '../../../classes/bean/bean';
+import { UIBeanStorage } from '../../../services/uiBeanStorage';
+import { ModalController } from '@ionic/angular';
+import { UIToast } from '../../../services/uiToast';
+import { NgxStarsComponent } from 'ngx-stars';
+import { Settings } from '../../../classes/settings/settings';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
   selector: 'app-bean-archive-popover',
@@ -14,27 +17,31 @@ import {NgxStarsComponent} from 'ngx-stars';
 export class BeanArchivePopoverComponent implements OnInit {
   public static COMPONENT_ID = 'bean-archive-popover';
   @Input() public bean: IBean;
-  @ViewChild('beanRating', {read: NgxStarsComponent, static: false}) public beanRating: NgxStarsComponent;
+  @ViewChild('beanRating', { read: NgxStarsComponent, static: false })
+  public beanRating: NgxStarsComponent;
   public data: Bean = new Bean();
 
-
-  constructor(private readonly uiBeanStorage: UIBeanStorage,
-              private readonly modalController: ModalController,
-              private readonly uiToast: UIToast) { }
-
-  public ngOnInit() {
-
+  public maxBeanRating: number = 5;
+  public settings: Settings = undefined;
+  constructor(
+    private readonly uiBeanStorage: UIBeanStorage,
+    private readonly modalController: ModalController,
+    private readonly uiToast: UIToast,
+    private readonly uiSettingsStorage: UISettingsStorage,
+    public readonly uiHelper: UIHelper
+  ) {
+    this.settings = this.uiSettingsStorage.getSettings();
+    this.maxBeanRating = this.settings.bean_rating;
   }
+
+  public ngOnInit() {}
   public ionViewWillEnter(): void {
-
-
     if (this.bean !== undefined) {
       this.data.initializeByObject(this.bean);
       if (this.data.rating > 0) {
         this.changedRating();
       }
     }
-
   }
 
   public async archive() {
@@ -45,14 +52,17 @@ export class BeanArchivePopoverComponent implements OnInit {
   }
 
   public dismiss(): void {
-    this.modalController.dismiss({
-      dismissed: true
-    }, undefined, BeanArchivePopoverComponent.COMPONENT_ID);
+    this.modalController.dismiss(
+      {
+        dismissed: true,
+      },
+      undefined,
+      BeanArchivePopoverComponent.COMPONENT_ID
+    );
   }
   public changedRating() {
-    if (typeof(this.beanRating) !== 'undefined') {
+    if (typeof this.beanRating !== 'undefined') {
       this.beanRating.setRating(this.data.rating);
     }
   }
-
 }

@@ -3,6 +3,7 @@
  */
 export interface ITimer {
   seconds: number;
+  milliseconds: number;
   runTimer: boolean;
   hasStarted: boolean;
   hasFinished: boolean;

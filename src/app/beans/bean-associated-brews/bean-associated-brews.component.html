@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{"NAV_BREWS" | translate}}</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()" class="big-icon-only">
+        <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div *ngIf="beanBrews?.length == 0" class="ion-padding ion-text-center">
+    <div>
+      <ion-icon color="inactive" name="beanconqueror-cup" size="large"></ion-icon>
+    </div>
+    <div class="text-color-inactive ion-margin-top">
+      {{"PAGE_BREWS_NO_ENTRIES" | translate}}
+    </div>
+  </div>
+  <div *ngFor="let brew of beanBrews">
+    <brew-information (brewAction)="brewAction($event[0],$event[1])"
+                      [brew]="brew"></brew-information>
+  </div>
+
+</ion-content>
