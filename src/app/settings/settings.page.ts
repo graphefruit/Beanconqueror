@@ -280,7 +280,14 @@ export class SettingsPage implements OnInit {
       return;
     }
 
-    await this.uiAlert.showLoadingSpinner();
+    await new Promise(async (resolve) => {
+      // Give some time
+      await this.uiAlert.showLoadingSpinner();
+      setTimeout(async () => {
+        resolve(undefined);
+      }, 50);
+    });
+
     this.uiAlert.setLoadingSpinnerMessage('SCALE.BLUETOOTH_SCAN_RUNNING', true);
     const scale = await this.bleManager.tryToFindScale();
     if (scale) {
@@ -290,6 +297,14 @@ export class SettingsPage implements OnInit {
         // NEVER!!! Await here, else the bluetooth logic will get broken.
         this.bleManager.autoConnectScale(scale.type, scale.id, false);
       } catch (ex) {}
+
+      await new Promise(async (resolve) => {
+        // Give some time
+        setTimeout(async () => {
+          await this.uiAlert.hideLoadingSpinner();
+          resolve(undefined);
+        }, 50);
+      });
 
       this.settings.scale_id = scale.id;
       this.settings.scale_type = scale.type;
@@ -320,9 +335,14 @@ export class SettingsPage implements OnInit {
           break;
         }
       }
-      await this.uiAlert.hideLoadingSpinner();
     } else {
-      await this.uiAlert.hideLoadingSpinner();
+      await new Promise(async (resolve) => {
+        // Give some time
+        setTimeout(async () => {
+          await this.uiAlert.hideLoadingSpinner();
+          resolve(undefined);
+        }, 50);
+      });
       this.uiAlert.showMessage(
         'SCALE.CONNECTION_NOT_ESTABLISHED',
         undefined,

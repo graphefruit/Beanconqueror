@@ -465,6 +465,40 @@ export class Brew implements IBrew {
     return formatted;
   }
 
+  public getFormattedTotalCoffeeFirstDripTime(): string {
+    const secs = this.coffee_first_drip_time;
+
+    const millisecondsEnabled: boolean =
+      this.getSettingsStorageInstance().getSettings().brew_milliseconds;
+    let formatted = '';
+    if (millisecondsEnabled) {
+      formatted = moment
+        .utc(secs * 1000)
+        .add('milliseconds', this.coffee_first_drip_time_milliseconds)
+        .format('mm:ss.SSS');
+    } else {
+      formatted = moment
+        .utc(secs * 1000)
+        .add('milliseconds', this.coffee_first_drip_time_milliseconds)
+        .format('mm:ss');
+    }
+
+    if (moment.utc(secs * 1000).hours() > 0) {
+      if (millisecondsEnabled) {
+        formatted = moment
+          .utc(secs * 1000)
+          .add('milliseconds', this.coffee_first_drip_time_milliseconds)
+          .format('HH:mm:ss.SSS');
+      } else {
+        formatted = moment
+          .utc(secs * 1000)
+          .add('milliseconds', this.coffee_first_drip_time_milliseconds)
+          .format('HH:mm:ss');
+      }
+    }
+    return formatted;
+  }
+
   public getFormattedBrewTime(): string {
     const secs = this.brew_time;
     let formattingStr: string = 'HH:mm:ss';

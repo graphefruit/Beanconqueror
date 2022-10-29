@@ -364,12 +364,12 @@ export class UIExcel {
       let dripTime: string = String(brew.coffee_first_drip_time);
       let temperatureTime: string = String(brew.brew_temperature_time);
       if (millisecondsEnabled) {
-        brewTime = brewTime + ',' + brew.brew_time_milliseconds;
+        brewTime = brewTime + '.' + brew.brew_time_milliseconds;
         bloomingTime =
-          bloomingTime + ',' + brew.coffee_blooming_time_milliseconds;
-        dripTime = dripTime + ',' + brew.coffee_first_drip_time_milliseconds;
+          bloomingTime + '.' + brew.coffee_blooming_time_milliseconds;
+        dripTime = dripTime + '.' + brew.coffee_first_drip_time_milliseconds;
         temperatureTime =
-          temperatureTime + ',' + brew.brew_temperature_time_milliseconds;
+          temperatureTime + '.' + brew.brew_temperature_time_milliseconds;
       }
       const entry: Array<any> = [
         brew.grind_size,
