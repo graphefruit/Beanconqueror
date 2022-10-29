@@ -348,7 +348,7 @@ export class BrewInformationComponent implements OnInit {
       BREW_TRACKING.TITLE,
       BREW_TRACKING.ACTIONS.SHARE
     );
-    this.uiAlert.showLoadingSpinner();
+    await this.uiAlert.showLoadingSpinner();
     if (this.platform.is('ios')) {
       htmlToImage
         .toJpeg(this.cardEl.nativeElement)
@@ -357,33 +357,33 @@ export class BrewInformationComponent implements OnInit {
           setTimeout(() => {
             htmlToImage
               .toJpeg(this.cardEl.nativeElement)
-              .then((_dataURLSecond) => {
-                this.uiAlert.hideLoadingSpinner();
+              .then(async (_dataURLSecond) => {
+                await this.uiAlert.hideLoadingSpinner();
                 setTimeout(() => {
                   this.shareService.shareImage(_dataURLSecond);
                 }, 50);
               })
-              .catch((error) => {
-                this.uiAlert.hideLoadingSpinner();
+              .catch(async (error) => {
+                await this.uiAlert.hideLoadingSpinner();
                 console.error('oops, something went wrong!', error);
               });
           }, 500);
         })
-        .catch((error) => {
-          this.uiAlert.hideLoadingSpinner();
+        .catch(async (error) => {
+          await this.uiAlert.hideLoadingSpinner();
           console.error('oops, something went wrong!', error);
         });
     } else {
       htmlToImage
         .toJpeg(this.cardEl.nativeElement)
-        .then((_dataURL) => {
-          this.uiAlert.hideLoadingSpinner();
+        .then(async (_dataURL) => {
+          await this.uiAlert.hideLoadingSpinner();
           setTimeout(() => {
             this.shareService.shareImage(_dataURL);
           }, 50);
         })
-        .catch((error) => {
-          this.uiAlert.hideLoadingSpinner();
+        .catch(async (error) => {
+          await this.uiAlert.hideLoadingSpinner();
           console.error('oops, something went wrong!', error);
         });
     }

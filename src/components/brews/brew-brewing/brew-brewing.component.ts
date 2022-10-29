@@ -861,7 +861,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public coffeeFirstDripTimeChanged(_event): void {
-    if (this.brewTemperatureTime) {
+    if (this.brewFirstDripTime) {
       this.data.coffee_first_drip_time = this.brewFirstDripTime.getSeconds();
       if (this.settings.brew_milliseconds) {
         this.data.coffee_first_drip_time_milliseconds =
