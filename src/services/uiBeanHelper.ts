@@ -133,7 +133,6 @@ export class UIBeanHelper {
   }
 
   public async addScannedQRBean(_scannedQRBean: ServerBean) {
-    console.log(_scannedQRBean.error);
     if (_scannedQRBean.error === null) {
       this.uiAnalytics.trackEvent(
         QR_TRACKING.TITLE,

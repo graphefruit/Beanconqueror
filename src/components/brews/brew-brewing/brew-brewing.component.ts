@@ -282,7 +282,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             }
           }
           if (connectTriggered) {
-            if (!this.flowProfileChartEl) {
+            if (this.flowProfileChartEl === undefined) {
               this.initializeFlowChart();
             }
           }

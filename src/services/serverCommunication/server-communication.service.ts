@@ -18,8 +18,7 @@ export class ServerCommunicationService {
       const httpOptions = {
         headers: new HttpHeaders({
           'Content-Type': 'application/json',
-          Authorization:
-            'Basic ' + btoa('account@beanconqueror.com:q5gsZM9Pbte2FEb'),
+          Authorization: 'Basic ' + btoa('123:1234'),
         }),
       };
       this.http
