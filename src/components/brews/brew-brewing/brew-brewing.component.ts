@@ -459,6 +459,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
       this.pressureDeviceSubscription = pressureDevice.pressureChange.subscribe(
         (_val) => {
+          const actual: number = _val.actual;
+          const old: number = _val.old;
+          //Reset to 0, as a temporary fix to exclude the "451" bar
+          if (actual > 15) {
+            _val.actual = 0;
+          }
           if (this.timer.isTimerRunning()) {
             this.__setPressureFlow(_val);
           } else {

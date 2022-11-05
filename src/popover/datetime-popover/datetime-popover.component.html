@@ -12,7 +12,7 @@
       <ion-col size="{{settings?.brew_milliseconds?3:4}}"><ion-input maxlength="2" [(ngModel)]="timer.HOURS" max-number-value="23" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
       <ion-col size="{{settings?.brew_milliseconds?3:4}}"><ion-input maxlength="2" [(ngModel)]="timer.MINUTES" max-number-value="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
       <ion-col size="{{settings?.brew_milliseconds?3:4}}"><ion-input maxlength="2" [(ngModel)]="timer.SECONDS" max-number-value="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
-      <ion-col  *ngIf="settings?.brew_milliseconds" size="{{settings?.brew_milliseconds?3:4}}"><ion-input maxlength="3" [(ngModel)]="timer.MILLISECONDS" max-number-value="999" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
+      <ion-col  *ngIf="settings?.brew_milliseconds" size="{{settings?.brew_milliseconds?3:4}}"><ion-input maxlength="3" [(ngModel)]="timer.MILLISECONDS" [max-number-value]="getMaxMillisecondNumber()" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
     </ion-row>
 
   <ion-row>

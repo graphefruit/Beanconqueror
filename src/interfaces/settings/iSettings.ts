@@ -27,6 +27,7 @@ export interface ISettings {
   track_brew_coordinates: boolean;
   fast_brew_repeat: boolean;
   brew_milliseconds: boolean;
+  brew_milliseconds_leading_digits: number;
   image_quality: number;
   brew_rating: number;
   brew_rating_steps: number;

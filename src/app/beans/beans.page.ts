@@ -487,13 +487,21 @@ export class BeansPage implements OnInit {
     }
 
     if (searchText) {
-      filterBeans = filterBeans.filter(
-        (e) =>
-          e.note?.toLowerCase().includes(searchText) ||
-          e.name?.toLowerCase().includes(searchText) ||
-          e.roaster?.toLowerCase().includes(searchText) ||
-          e.aromatics?.toLowerCase().includes(searchText)
-      );
+      const splittingSearch = searchText.split(',');
+      filterBeans = filterBeans.filter((e) => {
+        return splittingSearch.find((sc) => {
+          const searchStr = sc.toLowerCase().trim();
+          return (
+            e.note?.toLowerCase().includes(searchStr) ||
+            e.name?.toLowerCase().includes(searchStr) ||
+            e.roaster?.toLowerCase().includes(searchStr) ||
+            e.aromatics?.toLowerCase().includes(searchStr) ||
+            e.bean_information?.find((bi) => {
+              return bi?.variety?.toLowerCase().includes(searchStr);
+            })
+          );
+        });
+      });
     }
     if (isOpen) {
       this.openBeans = filterBeans;

@@ -233,6 +233,18 @@ export class BrewDetailComponent implements OnInit {
             hidden: !graphSettings.pressure,
           });
         }
+        const suggestedMinFlow: number = 0;
+        let suggestedMaxFlow: number = 20;
+
+        const suggestedMinWeight: number = 0;
+        let suggestedMaxWeight: number = 300;
+        if (
+          this.data.getPreparation().style_type ===
+          PREPARATION_STYLE_TYPE.ESPRESSO
+        ) {
+          suggestedMaxFlow = 2.5;
+          suggestedMaxWeight = 30;
+        }
         const chartOptions = {
           plugins: {
             backgroundColorPlugin: {},
@@ -273,6 +285,8 @@ export class BrewDetailComponent implements OnInit {
               type: 'linear',
               display: true,
               position: 'left',
+              suggestedMin: suggestedMinWeight,
+              suggestedMax: suggestedMaxWeight,
             },
             y1: {
               type: 'linear',
@@ -282,6 +296,8 @@ export class BrewDetailComponent implements OnInit {
               grid: {
                 drawOnChartArea: false, // only want the grid lines for one axis to show up
               },
+              suggestedMin: suggestedMinFlow,
+              suggestedMax: suggestedMaxFlow,
             },
             y2: {
               // Real time flow
@@ -292,6 +308,8 @@ export class BrewDetailComponent implements OnInit {
               grid: {
                 drawOnChartArea: false, // only want the grid lines for one axis to show up
               },
+              suggestedMin: suggestedMinFlow,
+              suggestedMax: suggestedMaxFlow,
             },
             xAxis: {
               ticks: {

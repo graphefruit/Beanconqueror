@@ -178,6 +178,22 @@
               <p>{{"PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS_DESCRIPTION" | translate}}</p></ion-label>
             <ion-checkbox  (ngModelChange)="saveSettings();" [(ngModel)]="settings.brew_milliseconds"></ion-checkbox>
           </ion-item>
+          <ion-item>
+            <ion-label class="ion-margin-end"><h2>{{"PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS" | translate}}</h2>
+              <p>{{"PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS_DESCRIPTION" | translate}}</p></ion-label>
+            <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.brew_milliseconds_leading_digits"
+                        cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
+              <ion-select-option [value]="3">
+                3
+              </ion-select-option>
+              <ion-select-option  [value]="2">
+               2
+              </ion-select-option>
+              <ion-select-option  [value]="1">
+                1
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
 
           <ion-item>
             <ion-label>{{"PAGE_SETTINGS_CURRENCY" | translate}}</ion-label>

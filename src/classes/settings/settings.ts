@@ -34,6 +34,7 @@ export class Settings implements ISettings {
   public track_brew_coordinates: boolean;
   public fast_brew_repeat: boolean;
   public brew_milliseconds: boolean;
+  public brew_milliseconds_leading_digits: number;
   public image_quality: number;
   public brew_rating: number;
   public brew_rating_steps: number;
@@ -256,6 +257,7 @@ export class Settings implements ISettings {
     this.pressure_stay_connected = false;
 
     this.currency = 'EUR';
+    this.brew_milliseconds_leading_digits = 3;
   }
 
   public initializeByObject(settingsObj: ISettings): void {

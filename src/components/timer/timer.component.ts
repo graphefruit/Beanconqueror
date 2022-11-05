@@ -68,6 +68,40 @@ export class TimerComponent implements OnInit, OnDestroy {
     return this.timer.hasFinished;
   }
 
+  public returnWantedDisplayFormat() {
+    let showMinutes: boolean = false;
+    let showHours: boolean = false;
+    let showMilliseconds: boolean = false;
+    if (this.timer.seconds >= 3600) {
+      showHours = true;
+      showMinutes = true;
+    }
+    if (this.timer.seconds >= 60) {
+      showMinutes = true;
+    }
+    if (this.settings?.brew_milliseconds) {
+      showMilliseconds = true;
+    }
+
+    let returnStr: string = '';
+    if (showMilliseconds) {
+      if (this.settings.brew_milliseconds_leading_digits === 3) {
+        returnStr = '.SSS';
+      } else if (this.settings.brew_milliseconds_leading_digits === 2) {
+        returnStr = '.SS';
+      } else {
+        returnStr = '.S';
+      }
+    }
+    if (showHours) {
+      return 'H:mm:ss' + returnStr;
+    } else if (showMinutes) {
+      return 'mm:ss' + returnStr;
+    } else {
+      return 'ss' + returnStr;
+    }
+  }
+
   public initTimer(): void {
     // tslint:disable-next-line
     this.timer = {
