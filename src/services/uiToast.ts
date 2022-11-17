@@ -39,6 +39,14 @@ export class UIToast {
       message: this.translate.instant(_message),
       duration: 2000,
       position: 'bottom',
+      buttons: [
+        {
+          side: 'end',
+          text: 'X',
+          role: 'cancel',
+          handler: () => {},
+        },
+      ],
     });
     toast.present();
   }
