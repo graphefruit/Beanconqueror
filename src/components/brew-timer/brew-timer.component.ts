@@ -89,16 +89,13 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   }
 
   public returnWantedDisplayFormat() {
-    let showMinutes: boolean = false;
+    const showMinutes: boolean = true;
     let showHours: boolean = false;
     let showMilliseconds: boolean = false;
     if (this.timer.seconds >= 3600) {
       showHours = true;
-      showMinutes = true;
     }
-    if (this.timer.seconds >= 60) {
-      showMinutes = true;
-    }
+
     if (this.settings?.brew_milliseconds) {
       showMilliseconds = true;
     }

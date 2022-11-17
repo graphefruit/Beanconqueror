@@ -210,7 +210,8 @@ https://stackoverflow.com/questions/60357663/do-apple-app-site-association-files
 
 ### Upgrade Ionic if needed:
 
-`npm install @ionic/angular@6.3.4`
+We stick to 6.3.3, because 6.3.4 produces an issue with brew-timer information click events
+`npm install @ionic/angular@6.3.3`
 -> Or the actual active version
 
 ### Installing AAB on your android (mac)
