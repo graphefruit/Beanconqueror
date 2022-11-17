@@ -21,7 +21,15 @@ export class UIToast {
     const toast = await this.toastController.create({
       message: message,
       duration: 2000,
-      position: 'bottom',
+      position: 'top',
+      buttons: [
+        {
+          side: 'end',
+          text: 'X',
+          role: 'cancel',
+          handler: () => {},
+        },
+      ],
     });
     toast.present();
   }
