@@ -1268,5 +1268,6 @@
   "POPOVER_BLUETOOTH_ACTION_RECONNECT_PRESSURE_DEVICE": "Basınç cihazını yeniden bağla",
   "POPOVER_SHOW_BREWS": "Demlemeleri göster",
   "LAST_USED_GRIND_SIZE_SETTING": "Son öğütüm ayarı",
-  "LAST_USED_BEAN": "Son çekirdek"
+  "LAST_USED_BEAN": "Son çekirdek",
+  "PAGE_SETTINGS_BREW_MILLISECONDS_DECIMAL_PLACES_DESCRIPTION": "How many decimal points shall be displayed?"
 }

@@ -1268,5 +1268,6 @@
   "POPOVER_BLUETOOTH_ACTION_RECONNECT_PRESSURE_DEVICE": "Druckgerät neu verbinden",
   "POPOVER_SHOW_BREWS": "Zugehörige Brühungen",
   "LAST_USED_GRIND_SIZE_SETTING": "Letzter Mahlgrad",
-  "LAST_USED_BEAN": "Letzte Bohne"
+  "LAST_USED_BEAN": "Letzte Bohne",
+  "PAGE_SETTINGS_BREW_MILLISECONDS_DECIMAL_PLACES_DESCRIPTION": "Wieviele Nachkommastellen sollen angezeigt werden?"
 }

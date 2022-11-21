@@ -1268,5 +1268,6 @@
   "POPOVER_BLUETOOTH_ACTION_RECONNECT_PRESSURE_DEVICE": "Reconectar dispositivo de presión",
   "POPOVER_SHOW_BREWS": "Mostrar preparaciones",
   "LAST_USED_GRIND_SIZE_SETTING": "Último ajuste",
-  "LAST_USED_BEAN": "Último grano"
+  "LAST_USED_BEAN": "Último grano",
+  "PAGE_SETTINGS_BREW_MILLISECONDS_DECIMAL_PLACES_DESCRIPTION": "How many decimal points shall be displayed?"
 }

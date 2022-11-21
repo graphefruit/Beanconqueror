@@ -173,14 +173,13 @@
               <p>{{"PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION" | translate}}</p></ion-label>
             <ion-checkbox  (ngModelChange)="saveSettings();" [(ngModel)]="settings.fast_brew_repeat"></ion-checkbox>
           </ion-item>
-          <ion-item>
+          <ion-item [lines]="settings.brew_milliseconds?'none':'full'">
             <ion-label class="ion-margin-end"><h2>{{"PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS" | translate}}</h2>
               <p>{{"PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS_DESCRIPTION" | translate}}</p></ion-label>
             <ion-checkbox  (ngModelChange)="saveSettings();" [(ngModel)]="settings.brew_milliseconds"></ion-checkbox>
           </ion-item>
-          <ion-item>
-            <ion-label class="ion-margin-end"><h2>{{"PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS" | translate}}</h2>
-              <p>{{"PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS_DESCRIPTION" | translate}}</p></ion-label>
+          <ion-item *ngIf="settings?.brew_milliseconds===true">
+            <ion-label class="ion-margin-end"><p>{{"PAGE_SETTINGS_BREW_MILLISECONDS_DECIMAL_PLACES_DESCRIPTION" | translate}}</p></ion-label>
             <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.brew_milliseconds_leading_digits"
                         cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
               <ion-select-option [value]="3">

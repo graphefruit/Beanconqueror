@@ -35,12 +35,7 @@ export class DatetimePopoverComponent implements OnInit {
   }
 
   public getMaxMillisecondNumber() {
-    if (this.settings.brew_milliseconds_leading_digits === 3) {
-      return 999;
-    } else if (this.settings.brew_milliseconds_leading_digits === 2) {
-      return 99;
-    }
-    return 9;
+    return 999;
   }
 
   public dismiss(): void {
@@ -56,13 +51,6 @@ export class DatetimePopoverComponent implements OnInit {
   public choose() {
     const newDisplayingTime = moment().startOf('day');
     if (this.timer.MILLISECONDS > 0) {
-      if (this.settings.brew_milliseconds_leading_digits === 3) {
-        // do nothing
-      } else if (this.settings.brew_milliseconds_leading_digits === 2) {
-        this.timer.MILLISECONDS = this.timer.MILLISECONDS * 10;
-      } else {
-        this.timer.MILLISECONDS = this.timer.MILLISECONDS * 100;
-      }
       newDisplayingTime.add('milliseconds', this.timer.MILLISECONDS);
     }
     if (this.timer.SECONDS > 0) {

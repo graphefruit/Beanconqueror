@@ -444,6 +444,24 @@ export class UIUpdate {
             await this.uiSettingsStorage.saveSettings(settings_v7);
 
             break;
+          case 'UPDATE_8':
+            const settings_v8: any = this.uiSettingsStorage.getSettings();
+            // Convert to number, after we've missed out
+            if (
+              settings_v8.brew_rating_steps === null ||
+              settings_v8.brew_rating_steps === undefined
+            ) {
+              settings_v8.brew_rating_steps = 1;
+            }
+            if (
+              settings_v8.bean_rating_steps === null ||
+              settings_v8.bean_rating_steps === undefined
+            ) {
+              settings_v8.bean_rating_steps = 1;
+            }
+            await this.uiSettingsStorage.saveSettings(settings_v8);
+
+            break;
           default:
             break;
         }
@@ -508,6 +526,7 @@ export class UIUpdate {
     await this.__checkUpdateForDataVersion('UPDATE_5', !hasData);
     await this.__checkUpdateForDataVersion('UPDATE_6', !hasData);
     await this.__checkUpdateForDataVersion('UPDATE_7', !hasData);
+    await this.__checkUpdateForDataVersion('UPDATE_8', !hasData);
   }
 
   public async checkUpdateScreen(): Promise<any> {

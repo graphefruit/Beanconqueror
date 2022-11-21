@@ -1080,6 +1080,18 @@ export class SettingsPage implements OnInit {
                 }
                 this.setLanguage();
 
+                if (
+                  this.settings.brew_rating_steps === null ||
+                  this.settings.brew_rating_steps === undefined
+                ) {
+                  this.settings.brew_rating_steps = 1;
+                }
+                if (
+                  this.settings.bean_rating_steps === null ||
+                  this.settings.bean_rating_steps === undefined
+                ) {
+                  this.settings.bean_rating_steps = 1;
+                }
                 this.settings.resetFilter();
                 await this.uiSettingsStorage.saveSettings(this.settings);
                 await this.uiAlert.hideLoadingSpinner();
