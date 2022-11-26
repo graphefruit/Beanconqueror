@@ -1269,5 +1269,7 @@
   "POPOVER_SHOW_BREWS": "Zugehörige Brühungen",
   "LAST_USED_GRIND_SIZE_SETTING": "Letzter Mahlgrad",
   "LAST_USED_BEAN": "Letzte Bohne",
-  "PAGE_SETTINGS_BREW_MILLISECONDS_DECIMAL_PLACES_DESCRIPTION": "Wieviele Nachkommastellen sollen angezeigt werden?"
+  "PAGE_SETTINGS_BREW_MILLISECONDS_DECIMAL_PLACES_DESCRIPTION": "Wieviele Nachkommastellen sollen angezeigt werden?",
+  "SMART_SCALE_COMMAND_DELAY": "Kommando Verzug",
+  "SMART_SCALE_COMMAND_DELAY_TOOLTIP": "Wieviel Zeit soll zwischen den jeweiligen Bluetooth Befehlen gewartet werden?"
 }

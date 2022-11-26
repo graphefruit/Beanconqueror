@@ -691,14 +691,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             scale.tare();
             setTimeout(async () => {
               resolve(undefined);
-            }, 50);
+            }, this.settings.bluetooth_command_delay);
           });
         }
         await new Promise((resolve) => {
           scale.setTimer(SCALE_TIMER_COMMAND.START);
           setTimeout(async () => {
             resolve(undefined);
-          }, 50);
+          }, this.settings.bluetooth_command_delay);
         });
       }
       if (pressureDevice) {
@@ -803,14 +803,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           setTimeout(async () => {
             scale.setTimer(SCALE_TIMER_COMMAND.STOP);
             resolve(undefined);
-          }, 50);
+          }, this.settings.bluetooth_command_delay);
         });
 
         await new Promise((resolve) => {
           setTimeout(async () => {
             scale.setTimer(SCALE_TIMER_COMMAND.RESET);
             resolve(undefined);
-          }, 50);
+          }, this.settings.bluetooth_command_delay);
         });
 
         this.deattachToWeightChange();
@@ -1250,7 +1250,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               }
 
               resolve(undefined);
-            }, 50);
+            }, this.settings.bluetooth_command_delay);
           });
         }
 
@@ -1262,7 +1262,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               }
 
               resolve(undefined);
-            }, 50);
+            }, this.settings.bluetooth_command_delay);
           });
         }
 
@@ -1273,7 +1273,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
                 scale.setTimer(SCALE_TIMER_COMMAND.RESET);
               }
               resolve(undefined);
-            }, 50);
+            }, this.settings.bluetooth_command_delay);
           });
         }
       }

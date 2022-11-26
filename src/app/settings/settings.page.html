@@ -340,6 +340,18 @@
 
             </ion-item>
 
+            <ion-item lines="none">
+              <ion-label>
+                <h2>{{"SMART_SCALE_COMMAND_DELAY" | translate}}</h2>
+              </ion-label>
+              <ion-icon name="information-outline" slot="end"
+                        tooltip='{{"SMART_SCALE_COMMAND_DELAY_TOOLTIP" | translate}}'></ion-icon>
+            </ion-item>
+            <ion-item style="top:-15px;">
+              <ion-range style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="50" snaps="true" max="1000" step="1" (ionBlur)="saveSettings()" [(ngModel)]="settings.bluetooth_command_delay">
+                <ion-label slot="end">{{settings.bluetooth_command_delay}} ms</ion-label>
+              </ion-range>
+            </ion-item>
             <ion-item>
               <ion-label class="ion-margin-end" style="white-space: normal;"><h2>{{"SMART_SCALE_LOG" | translate}}</h2></ion-label>
               <ion-checkbox (ionBlur)="toggleLog();"
