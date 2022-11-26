@@ -53,12 +53,12 @@ import { PreparationTool } from '../../../classes/preparation/preparationTool';
 
 import { UIAlert } from '../../../services/uiAlert';
 import {
+  BluetoothScale,
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
+  PressureDevice,
+  SCALE_TIMER_COMMAND,
 } from '@graphefruit/coffee-bluetooth-devices';
-import { BluetoothScale } from '@graphefruit/coffee-bluetooth-devices';
-import { SCALE_TIMER_COMMAND } from '@graphefruit/coffee-bluetooth-devices';
-import { PressureDevice } from '@graphefruit/coffee-bluetooth-devices';
 
 declare var cordova;
 
@@ -230,7 +230,24 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         if (this.data.flow_profile !== '') {
           // We had a flow profile, so read data now.
           await this.readFlowProfile();
+
           this.initializeFlowChart();
+          setTimeout(() => {
+            // Fix that you also see the brew weight
+            const weightEl = this.smartScaleWeightEl.nativeElement;
+            if (
+              this.data.getPreparation().getPresetStyleType() ===
+              PREPARATION_STYLE_TYPE.ESPRESSO
+            ) {
+              weightEl.textContent = this.data.brew_beverage_quantity + ' g';
+            } else {
+              if (this.data.brew_beverage_quantity > 0) {
+                weightEl.textContent = this.data.brew_beverage_quantity + ' g';
+              } else {
+                weightEl.textContent = this.data.brew_quantity + ' g';
+              }
+            }
+          }, 350);
         }
       }
 
