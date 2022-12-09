@@ -100,4 +100,5 @@ export interface ISettings {
   pressure_stay_connected: boolean;
 
   currency: string;
+  brew_display_bean_image: boolean;
 }

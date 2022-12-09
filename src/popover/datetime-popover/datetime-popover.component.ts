@@ -34,6 +34,12 @@ export class DatetimePopoverComponent implements OnInit {
     this.timer.MILLISECONDS = passedDisplayingTime.milliseconds();
   }
 
+  public reset() {
+    this.timer.HOURS = 0;
+    this.timer.MINUTES = 0;
+    this.timer.SECONDS = 0;
+    this.timer.MILLISECONDS = 0;
+  }
   public getMaxMillisecondNumber() {
     return 999;
   }

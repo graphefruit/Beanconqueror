@@ -814,18 +814,23 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (scale || pressureDevice) {
       await this.uiAlert.showLoadingSpinner();
       if (scale) {
-        scale.tare();
-
         await new Promise((resolve) => {
+          scale.tare();
           setTimeout(async () => {
-            scale.setTimer(SCALE_TIMER_COMMAND.STOP);
             resolve(undefined);
           }, this.settings.bluetooth_command_delay);
         });
 
         await new Promise((resolve) => {
+          scale.setTimer(SCALE_TIMER_COMMAND.STOP);
           setTimeout(async () => {
-            scale.setTimer(SCALE_TIMER_COMMAND.RESET);
+            resolve(undefined);
+          }, this.settings.bluetooth_command_delay);
+        });
+
+        await new Promise((resolve) => {
+          scale.setTimer(SCALE_TIMER_COMMAND.RESET);
+          setTimeout(async () => {
             resolve(undefined);
           }, this.settings.bluetooth_command_delay);
         });
@@ -1261,11 +1266,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       if (_firstStart) {
         if (this.settings.bluetooth_scale_tare_on_brew === true) {
           await new Promise((resolve) => {
+            if (scale) {
+              scale.tare();
+            }
             setTimeout(async () => {
-              if (scale) {
-                scale.tare();
-              }
-
               resolve(undefined);
             }, this.settings.bluetooth_command_delay);
           });
@@ -1273,11 +1277,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
         if (this.settings.bluetooth_scale_stop_timer_on_brew === true) {
           await new Promise((resolve) => {
+            if (scale) {
+              scale.setTimer(SCALE_TIMER_COMMAND.STOP);
+            }
             setTimeout(async () => {
-              if (scale) {
-                scale.setTimer(SCALE_TIMER_COMMAND.STOP);
-              }
-
               resolve(undefined);
             }, this.settings.bluetooth_command_delay);
           });
@@ -1285,10 +1288,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
         if (this.settings.bluetooth_scale_reset_timer_on_brew === true) {
           await new Promise((resolve) => {
+            if (scale) {
+              scale.setTimer(SCALE_TIMER_COMMAND.RESET);
+            }
             setTimeout(async () => {
-              if (scale) {
-                scale.setTimer(SCALE_TIMER_COMMAND.RESET);
-              }
               resolve(undefined);
             }, this.settings.bluetooth_command_delay);
           });

@@ -16,11 +16,15 @@
     </ion-row>
 
   <ion-row>
-    <ion-col>
+    <ion-col size="6">
       <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
                   tappable>{{"CANCEL" | translate}}</ion-button>
     </ion-col>
-    <ion-col>
+    <ion-col size="6">
+      <ion-button (click)="reset()" color="danger" expand="block" fill="outline"
+                  tappable>{{"CLEAR" | translate}}</ion-button>
+    </ion-col>
+    <ion-col size="12">
       <ion-button (click)="choose()" color="accent" disable-double-click expand="block" tappable
                   type="submit">{{"CHOOSE" | translate}}</ion-button>
     </ion-col>

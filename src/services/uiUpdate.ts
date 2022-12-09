@@ -459,6 +459,8 @@ export class UIUpdate {
             ) {
               settings_v8.bean_rating_steps = 1;
             }
+            // Reset matomo analytics to undefined, so we get another update
+            settings_v8.matomo_analytics = undefined;
             await this.uiSettingsStorage.saveSettings(settings_v8);
 
             break;

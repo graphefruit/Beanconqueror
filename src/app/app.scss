@@ -1,8 +1,8 @@
 // App Styles
 // ----------------------------------------------------------------------------
-// Put style rules here that you want to apply to the entire application. These 
-// styles are for the entire app and not just one component. Additionally, this 
-// file can hold Sass mixins, functions, and placeholder classes to be imported 
+// Put style rules here that you want to apply to the entire application. These
+// styles are for the entire app and not just one component. Additionally, this
+// file can hold Sass mixins, functions, and placeholder classes to be imported
 // and used throughout the application.
 
 @font-face {
@@ -576,6 +576,10 @@ ion-menu:host .menu-inner {
     --padding-start: 12px !important;
     --padding-end: 12px !important;
     margin-bottom: 10px;
+
+    textarea {
+      overflow: visible!important;
+    }
   }
 
   .popover {

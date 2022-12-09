@@ -1267,5 +1267,6 @@
 	"POPOVER_SHOW_BREWS": "显示冲泡",
 	"LAST_USED_GRIND_SIZE_SETTING": "上次研磨设置",
 	"LAST_USED_BEAN": "上次的咖啡豆",
-  "PAGE_SETTINGS_BREW_MILLISECONDS_DECIMAL_PLACES_DESCRIPTION": "How many decimal points shall be displayed?"
+  "PAGE_SETTINGS_BREW_MILLISECONDS_DECIMAL_PLACES_DESCRIPTION": "How many decimal points shall be displayed?",
+  "SUPPORT_ME": "Donation"
 }

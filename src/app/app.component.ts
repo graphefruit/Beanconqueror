@@ -845,6 +845,25 @@ export class AppComponent implements AfterViewInit {
       'https://www.facebook.com/Beanconqueror/'
     );
   }
+
+  public openPaypal() {
+    this.uiAnalytics.trackEvent(
+      LINK_TRACKING.TITLE,
+      LINK_TRACKING.ACTIONS.PAYPAL
+    );
+    this.uiHelper.openExternalWebpage(
+      'https://www.paypal.com/paypalme/LarsSaalbach'
+    );
+  }
+  public openGithubSponsor() {
+    this.uiAnalytics.trackEvent(
+      LINK_TRACKING.TITLE,
+      LINK_TRACKING.ACTIONS.GITHUB_SPONSOR
+    );
+    this.uiHelper.openExternalWebpage(
+      'https://github.com/sponsors/graphefruit'
+    );
+  }
   public openDonatePage() {
     this.uiAnalytics.trackEvent(
       LINK_TRACKING.TITLE,

@@ -269,6 +269,22 @@ export class TimerComponent implements OnInit, OnDestroy {
       this.timer.milliseconds = moment(this.displayingTime)
         .startOf('day')
         .milliseconds();
+
+      // We need to calculate new, else when user starts timer again, the wrong times will be used
+      const startingDate = new Date();
+      this.pausedTimer = moment(new Date());
+      this.startingDay = moment(startingDate).startOf('day');
+      if (this.timer.seconds > 0 || this.timer.milliseconds > 0) {
+        // We need to subtract, if the time is already given on start (like repeat or preset)
+        this.startedTimer = moment(startingDate)
+          .subtract(this.timer.seconds, 'seconds')
+          .subtract(this.timer.milliseconds, 'milliseconds');
+      } else {
+        this.startedTimer = moment(startingDate);
+      }
+
+      this.startedOffset = this.startedTimer.diff(this.startingDay);
+
       this.changeEvent();
     }
   }

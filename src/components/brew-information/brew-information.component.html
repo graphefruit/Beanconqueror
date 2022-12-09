@@ -3,12 +3,17 @@
   <ion-card-content #card class="no-ion-col-vertical-padding ion-padding-top">
     <ion-grid class="no-padding-bottom" style="padding-top:0px;">
       <ion-row style="height:60px;">
-        <ion-col size-xs="3" size-xl="1" size-sm="1" size-md="1" size-lg="1" class="ion-no-padding"  *ngIf="!brew?.getPreparation().hasPhotos()">
+        <ion-col size-xs="3" size-xl="1" size-sm="1" size-md="1" size-lg="1" class="ion-no-padding"  *ngIf="(settings?.brew_display_bean_image != true || brew?.getBean().hasPhotos() === false) && !brew?.getPreparation().hasPhotos()">
           <ion-icon class="full-sized-icon" name="{{preparation.getIcon()}}"></ion-icon>
         </ion-col>
-        <ion-col size-xs="3" size-xl="1" size-sm="1" size-md="1" size-lg="1" class="ion-no-padding" size="1" *ngIf="brew?.getPreparation().hasPhotos()">
+        <ion-col size-xs="3" size-xl="1" size-sm="1" size-md="1" size-lg="1" class="ion-no-padding" size="1" *ngIf="(settings?.brew_display_bean_image != true || brew?.getBean().hasPhotos() === false) && brew?.getPreparation().hasPhotos()">
           <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
             <async-image [filePath]="brew?.getPreparation().attachments[0]" class="bean-slider"></async-image>
+          </div>
+        </ion-col>
+        <ion-col size-xs="3" size-xl="1" size-sm="1" size-md="1" size-lg="1" class="ion-no-padding" size="1" *ngIf="settings?.brew_display_bean_image == true && brew?.getBean().hasPhotos()">
+          <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
+            <async-image [filePath]="brew?.getBean().attachments[0]" class="bean-slider"></async-image>
           </div>
         </ion-col>
         <ion-col size-xs="9" size-xl="11" size-sm="11" size-md="11" size-lg="11" style="margin: auto 0;">
