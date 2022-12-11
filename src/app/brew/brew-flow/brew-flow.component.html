@@ -66,8 +66,8 @@
   </ion-grid>
 </ion-card>
 </ion-content>
-<ion-footer *ngIf="isDetail===false" class="ion-no-border" style="height:40px;">
-<div class="ion-text-center flow-icon-buttons" style="height:40px;">
+<ion-footer *ngIf="isDetail===false" class="ion-no-border" >
+<div class="ion-text-center flow-icon-buttons">
       <ion-button (click)="setCoffeeBloomingTime()" *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && showBloomTimer"
                   class="big-icon-only" fill="clear" tappable>
         <ion-icon class="ion-color-accent" name="beanconqueror-blooming" slot="icon-only"></ion-icon>
@@ -97,10 +97,10 @@
         <ion-icon class="ion-color-accent" name="beanconqueror-scale-tare" slot="icon-only"></ion-icon>
       </ion-button>
 
-  <ion-button  color="accent" fill="outline"  style="position:absolute;right:10px;top:10px;" (click)="dismiss()"
-              tappable>{{"CLOSE" | translate}}</ion-button>
-</div>
 
+</div>
+  <ion-button  (click)="dismiss()" color="accent"  fill="outline" style="position:absolute;right:10px;top:10px;"
+               tappable>{{"CLOSE" | translate}}</ion-button>
 </ion-footer>
 <ion-footer *ngIf="isDetail===true" class="ion-no-border">
 
