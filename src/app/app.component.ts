@@ -827,6 +827,16 @@ export class AppComponent implements AfterViewInit {
       'https://github.com/graphefruit/Beanconqueror'
     );
   }
+  public openDiscord() {
+    this.uiAnalytics.trackEvent(
+      LINK_TRACKING.TITLE,
+      LINK_TRACKING.ACTIONS.DISCORD
+    );
+    this.uiHelper.openExternalWebpage(
+      'https://discordapp.com/users/205027003106066432'
+    );
+  }
+
   public openInstagram() {
     this.uiAnalytics.trackEvent(
       LINK_TRACKING.TITLE,
