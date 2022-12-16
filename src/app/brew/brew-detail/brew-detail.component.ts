@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import {
+  AlertController,
   IonSlides,
   ModalController,
   NavParams,
@@ -64,7 +65,8 @@ export class BrewDetailComponent implements OnInit {
     private readonly uiAlert: UIAlert,
     private readonly socialSharing: SocialSharing,
     private readonly platform: Platform,
-    private readonly screenOrientation: ScreenOrientation
+    private readonly screenOrientation: ScreenOrientation,
+    private readonly alertCtrl: AlertController
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -476,22 +478,47 @@ export class BrewDetailComponent implements OnInit {
       this.flowProfileChartEl.resetZoom();
     });
   }
+
+  public async downloadJSONProfile() {
+    if (this.data.flow_profile !== '') {
+      const jsonParsed = await this.uiFileHelper.getJSONFile(
+        this.data.flow_profile
+      );
+      const filename: string =
+        'Beanconqueror_Flowprofile_JSON_' +
+        moment().format('HH_mm_ss_DD_MM_YYYY').toString() +
+        '.json';
+      await this.uiHelper.exportJSON(filename, JSON.stringify(jsonParsed));
+      if (this.platform.is('android')) {
+        const alert = await this.alertCtrl.create({
+          header: this.translate.instant('DOWNLOADED'),
+          subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
+            fileName: filename,
+          }),
+          buttons: ['OK'],
+        });
+        await alert.present();
+      }
+    }
+  }
+  public async downloadFlowProfile() {
+    await this.uiExcel.exportBrewFlowProfile(this.flow_profile_raw);
+  }
+
   private async readFlowProfile() {
     if (this.data.flow_profile !== '') {
       await this.uiAlert.showLoadingSpinner();
-      const flowProfilePath =
-        'brews/' + this.data.config.uuid + '_flow_profile.json';
       try {
-        const jsonParsed = await this.uiFileHelper.getJSONFile(flowProfilePath);
+        const jsonParsed = await this.uiFileHelper.getJSONFile(
+          this.data.flow_profile
+        );
         this.flow_profile_raw = jsonParsed;
       } catch (ex) {}
 
       await this.uiAlert.hideLoadingSpinner();
     }
   }
-  public async downloadFlowProfile() {
-    await this.uiExcel.exportBrewFlowProfile(this.flow_profile_raw);
-  }
+
   public async shareFlowProfile() {
     const fileShare: string = this.flowProfileChartEl.toBase64Image(
       'image/jpeg',

@@ -243,9 +243,19 @@
             </ion-card>
           </ion-col>
           <ion-col size="2" style="margin:auto">
-            <ion-button (click)="downloadFlowProfile()" tappable fill="clear">
+            <ion-button fill="clear" id="popover-button" tappable>
               <ion-icon name="download" slot="icon-only"></ion-icon>
             </ion-button>
+            <ion-popover [dismissOnSelect]="true" trigger="popover-button">
+              <ng-template>
+                <ion-content style="--background:white;">
+                  <ion-list style="padding:0;background:white;">
+                    <ion-item (click)="downloadFlowProfile()" [button]="true" [detail]="false" class="ion-padding-horizontal">{{"DOWNLOAD_XLSX" | translate}}</ion-item>
+                    <ion-item (click)="downloadJSONProfile()"[button]="true" [detail]="false" class="ion-padding-horizontal" >{{"DOWNLOAD_JSON" | translate}}</ion-item>
+                  </ion-list>
+                </ion-content>
+              </ng-template>
+            </ion-popover>
           </ion-col>
           <ion-col size="2" style="margin:auto">
 

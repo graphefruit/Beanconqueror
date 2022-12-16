@@ -1274,5 +1274,7 @@
   "SMART_SCALE_COMMAND_DELAY_TOOLTIP": "Wieviel Zeit soll zwischen den jeweiligen Bluetooth Befehlen gewartet werden?",
   "SUPPORT_ME": "Spenden",
   "PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE": "Anzeige Bohnenbilder bei Brühungen?",
-  "PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE_DESCRIPTION": "Falls ein Bohnenbild hinterlegt wurde, wird dies anstatt des Zubereitungsbildes angezeigt"
+  "PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE_DESCRIPTION": "Falls ein Bohnenbild hinterlegt wurde, wird dies anstatt des Zubereitungsbildes angezeigt",
+  "DOWNLOAD_XLSX": "Excel herunterladen",
+  "DOWNLOAD_JSON": "JSON herunterladen"
 }

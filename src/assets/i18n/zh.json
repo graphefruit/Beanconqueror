@@ -1268,5 +1268,9 @@
 	"LAST_USED_GRIND_SIZE_SETTING": "上次研磨设置",
 	"LAST_USED_BEAN": "上次的咖啡豆",
   "PAGE_SETTINGS_BREW_MILLISECONDS_DECIMAL_PLACES_DESCRIPTION": "How many decimal points shall be displayed?",
-  "SUPPORT_ME": "Donation"
+  "SUPPORT_ME": "Donation",
+  "PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE": "Display bean images on brews?",
+  "PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE_DESCRIPTION": "If a bean image exists, this one will be used, instead of the preparation image",
+  "DOWNLOAD_XLSX": "Download excel",
+  "DOWNLOAD_JSON": "Download JSON"
 }

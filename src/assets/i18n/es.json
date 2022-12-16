@@ -1270,5 +1270,9 @@
   "LAST_USED_GRIND_SIZE_SETTING": "Último ajuste",
   "LAST_USED_BEAN": "Último grano",
   "PAGE_SETTINGS_BREW_MILLISECONDS_DECIMAL_PLACES_DESCRIPTION": "How many decimal points shall be displayed?",
-  "SUPPORT_ME": "Donation"
+  "SUPPORT_ME": "Donation",
+  "PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE": "Display bean images on brews?",
+  "PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE_DESCRIPTION": "If a bean image exists, this one will be used, instead of the preparation image",
+  "DOWNLOAD_XLSX": "Download excel",
+  "DOWNLOAD_JSON": "Download JSON"
 }

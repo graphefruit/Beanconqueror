@@ -1274,5 +1274,7 @@
   "SMART_SCALE_COMMAND_DELAY_TOOLTIP": "How many time shall be passed between each bluetooth command?",
   "SUPPORT_ME": "Donation",
   "PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE": "Display bean images on brews?",
-  "PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE_DESCRIPTION": "If a bean image exists, this one will be used, instead of the preparation image"
+  "PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE_DESCRIPTION": "If a bean image exists, this one will be used, instead of the preparation image",
+  "DOWNLOAD_XLSX": "Download excel",
+  "DOWNLOAD_JSON": "Download JSON"
 }
