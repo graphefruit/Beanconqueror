@@ -782,6 +782,40 @@
         "Aktualisierung auf Ionic 6.3.0",
         "Kleinere Fehlerbehebungen"
       ]
+    },
+    "6.3.0": {
+      "TITLE": "Version 6.3.0: Das ist neu",
+      "DESCRIPTION": [
+        "<b>Bluetooth Waage</b>",
+        "Definiere wielange Millisekunden zwischen den Bluetooth befehlen gewartet werden soll",
+        "",
+        "<b>Brühungen</b>",
+        "Zurücksetzten der Bezugszeit-Daten",
+        "Bei verbundener Bluetooth-Waage, wird nun das letzte Bezugsgewicht in der Kachel angezeigt",
+        "Größere Buttons bei der Brühmaximierung",
+        "Herunterladen der Brühdaten als Excel oder JSON",
+        "Bohnenbilder können nun anstatt der Zubereitungsmethodenbilder angezeigt werden -> Aktivierbar in den Einstellungen",
+        "",
+        "<b>Bohnen</b>",
+        "Bohnen können nun auch nach Varietäten durchsucht werden",
+        "",
+        "<b>Mühlen</b>",
+        "Anzeigte der Notizen in der Listen- sowie Detailansicht",
+        "",
+        "<b>Verbesserungen</b>",
+        "Wähle aus, wieviel Millisekunden-Nachkommastellen angezeigt werden sollen (Einzugeben bleiben weiterhin 3-Stellen)",
+        "Spenden-Buttons eingebaut",
+        "Textboxen sind nun Scrollbar",
+        "Brühzeit in den Statistiken werden nun Formatiert angezeigt",
+        "Benachrichtungslabels erscheinen nun oben und können mit einem X geschlossen werden",
+        "Deaktivierte Detail-Parameter wurden freigeschaltet, z.B. kann nun auch die Mühle ausgeblendet werden",
+        "Analytische Datenerhebung kann deaktiviert oder aktiviert werden",
+        "",
+        "<b>Sonstiges:</b>",
+        "Typo Fehler behoben",
+        "Aktualisierung auf Ionic 6.4.0",
+        "Kleinere Fehlerbehebungen"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Parameter individualisieren",
