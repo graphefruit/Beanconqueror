@@ -70,6 +70,7 @@ export class Version implements IVersion {
       '6.1.0',
       '6.1.5',
       '6.2.0',
+      '6.3.0',
     ];
   }
 
