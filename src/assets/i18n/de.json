@@ -787,7 +787,7 @@
       "TITLE": "Version 6.3.0: Das ist neu",
       "DESCRIPTION": [
         "<b>Bluetooth Waage</b>",
-        "Definiere wielange Millisekunden zwischen den Bluetooth befehlen gewartet werden soll",
+        "Definiere wieviele Millisekunden zwischen den Bluetooth befehlen gewartet werden soll",
         "",
         "<b>Brühungen</b>",
         "Zurücksetzten der Bezugszeit-Daten",
