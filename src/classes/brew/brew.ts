@@ -540,7 +540,7 @@ export class Brew implements IBrew {
     const millisecondsEnabled: boolean =
       this.getSettingsStorageInstance().getSettings().brew_milliseconds;
     if (millisecondsEnabled) {
-      formattingStr = 'HH:mm:ss.SSS';
+      formattingStr = 'HH:mm:ss' + this.getMillisecondsFormat();
     }
     const start = moment()
       .startOf('day')
