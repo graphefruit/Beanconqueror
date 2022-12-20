@@ -226,3 +226,8 @@ cordova-plugin-telerik-imagepicker
 
 fttx-phonegap-plugin-barcodescanner
 `<activity android:name="com.google.zxing.client.android.encode.EncodeActivity" android:exported="false" android:label="Share"/>`
+
+cordova-plugin-file/src/android
+ContentFileSystem.java
+-> Temp fix for import
+` String encodedPath = inputURL.uri.getEncodedPath(); String authorityAndPath = encodedPath.substring(encodedPath.indexOf(this.name) + 1 + this.name.length() + 2);`
