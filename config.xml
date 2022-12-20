@@ -16,7 +16,7 @@
     <allow-navigation href="*" />
     <preference name="ScrollEnabled" value="false" />
     <preference name="android-minSdkVersion" value="22" />
-    <preference name="android-targetSdkVersion" value="30" />
+    <preference name="android-targetSdkVersion" value="31" />
     <preference name="SplashMaintainAspectRatio" value="true" />
     <preference name="FadeSplashScreenDuration" value="300" />
     <preference name="SplashShowOnlyFirstTime" value="false" />
@@ -30,7 +30,7 @@
     <platform name="android">
         <preference name="Fullscreen" value="false" />
         <edit-file file="app/src/main/AndroidManifest.xml" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
-            <activity android:label="webIntentFilter" android:name="com.beanconqueror.app">
+            <activity android:exported="true" android:label="webIntentFilter" android:name="com.beanconqueror.app">
                 <intent-filter android:autoVerify="true">
                     <action android:name="android.intent.action.VIEW" />
                     <category android:name="android.intent.category.DEFAULT" />

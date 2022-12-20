@@ -265,6 +265,15 @@ export class AppComponent implements AfterViewInit {
     this.menu.close();
   }
 
+  public isAndroid() {
+    try {
+      const isAndroid: boolean = this.platform.is('android');
+      return isAndroid;
+    } catch (ex) {
+      return false;
+    }
+  }
+
   private __appReady(): void {
     this.uiLog.log(`App Ready, wait for Platform ready`);
     this.platform.ready().then(async () => {
