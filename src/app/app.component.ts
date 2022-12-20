@@ -265,6 +265,15 @@ export class AppComponent implements AfterViewInit {
     this.menu.close();
   }
 
+  public isAndroid() {
+    try {
+      const isAndroid: boolean = this.platform.is('android');
+      return isAndroid;
+    } catch (ex) {
+      return false;
+    }
+  }
+
   private __appReady(): void {
     this.uiLog.log(`App Ready, wait for Platform ready`);
     this.platform.ready().then(async () => {
@@ -827,6 +836,16 @@ export class AppComponent implements AfterViewInit {
       'https://github.com/graphefruit/Beanconqueror'
     );
   }
+  public openDiscord() {
+    this.uiAnalytics.trackEvent(
+      LINK_TRACKING.TITLE,
+      LINK_TRACKING.ACTIONS.DISCORD
+    );
+    this.uiHelper.openExternalWebpage(
+      'https://discordapp.com/users/205027003106066432'
+    );
+  }
+
   public openInstagram() {
     this.uiAnalytics.trackEvent(
       LINK_TRACKING.TITLE,
@@ -843,6 +862,25 @@ export class AppComponent implements AfterViewInit {
     );
     this.uiHelper.openExternalWebpage(
       'https://www.facebook.com/Beanconqueror/'
+    );
+  }
+
+  public openPaypal() {
+    this.uiAnalytics.trackEvent(
+      LINK_TRACKING.TITLE,
+      LINK_TRACKING.ACTIONS.PAYPAL
+    );
+    this.uiHelper.openExternalWebpage(
+      'https://www.paypal.com/paypalme/LarsSaalbach'
+    );
+  }
+  public openGithubSponsor() {
+    this.uiAnalytics.trackEvent(
+      LINK_TRACKING.TITLE,
+      LINK_TRACKING.ACTIONS.GITHUB_SPONSOR
+    );
+    this.uiHelper.openExternalWebpage(
+      'https://github.com/sponsors/graphefruit'
     );
   }
   public openDonatePage() {

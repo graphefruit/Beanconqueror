@@ -56,8 +56,8 @@
 	"PAGE_SETTINGS_LANGUAGE_GERMAN": "German",
 	"PAGE_SETTINGS_LANGUAGE_ENGLISH": "English",
 	"PAGE_SETTINGS_LANGUAGE_SPANISH": "Spanish",
-	"PAGE_SETTINGS_LANGUAGE_TURKISH": "土耳其",
-	"PAGE_SETTINGS_LANGUAGE_CHINESE": "中国人",
+	"PAGE_SETTINGS_LANGUAGE_TURKISH": "土耳其语",
+	"PAGE_SETTINGS_LANGUAGE_CHINESE": "汉语",
 	"PAGE_SETTINGS_GENERAL_SETTINGS": "常规设置",
 	"PAGE_SETTINGS_TRANSFER": "数据转移",
 	"PAGE_SETTINGS_PRESET_LAST_BREW": "使用预设值?",
@@ -781,7 +781,41 @@
 				"更新到 Ionic 6.3.0",
 				"小错误修复"
 			]
-		}
+		},
+    "6.3.0": {
+      "TITLE": "版本 6.3.0: 更新内容",
+      "DESCRIPTION": [
+        "<b>蓝牙电子称</b>",
+        "定义等待下一个蓝牙命令的时间",
+        "",
+        "<b>冲泡</b>",
+        "重置冲泡时间",
+        "如果连接了蓝牙秤，将显示最后一次冲泡重量",
+        "冲泡图最大化上更大的按钮",
+        "通过下载Excel或json文件导入冲泡数据",
+        "现在可以显示咖啡豆图片，而不是预置图标/图片 -> 在设置中激活",
+        "",
+        "<b>咖啡豆</b>",
+        "现在可以通过品种搜索豆类",
+        "",
+        "<b>Mills</b>",
+        "在列表和详细视图中显示注释",
+        "",
+        "<b>提升</b>",
+        "选择要显示多少毫秒（输入的值仍然需要小数点后三位）",
+        "添加捐赠按钮",
+        "文本区域现在可以滚动",
+        "统计数据的冲泡时间现在已格式化",
+        "通知弹出窗口现在出现在顶部，可以通过 X 关闭",
+        "提供禁用详细参数功能，例如现在可以隐藏磨豆机",
+        "可以停用或激活分析",
+        "",
+        "<b>其他:</b>",
+        "修复排版错误",
+        "更新到 Ionic 6.4.0",
+        "修复小 bug "
+      ]
+    }
 	},
 	"CUSTOM_PARAMETERS": "自定义参数",
 	"CUSTOM_DEFAULT_PARAMETERS": "默认",
@@ -1266,5 +1300,13 @@
 	"POPOVER_BLUETOOTH_ACTION_RECONNECT_PRESSURE_DEVICE": "重连压强设备",
 	"POPOVER_SHOW_BREWS": "显示冲泡",
 	"LAST_USED_GRIND_SIZE_SETTING": "上次研磨设置",
-	"LAST_USED_BEAN": "上次的咖啡豆"
+	"LAST_USED_BEAN": "上次的咖啡豆",
+  "PAGE_SETTINGS_BREW_MILLISECONDS_DECIMAL_PLACES_DESCRIPTION": "显示多少位小数？",
+  "SMART_SCALE_COMMAND_DELAY": "命令延迟",
+  "SMART_SCALE_COMMAND_DELAY_TOOLTIP": "相邻蓝牙命令之间应间隔多少时间？",
+  "SUPPORT_ME": "捐助",
+  "PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE": "显示咖啡豆图片吗？",
+  "PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE_DESCRIPTION": "如果存在咖啡豆图像将使用该图像，而不是预置图像",
+  "DOWNLOAD_XLSX": "下载 excel",
+  "DOWNLOAD_JSON": "下载 JSON"
 }

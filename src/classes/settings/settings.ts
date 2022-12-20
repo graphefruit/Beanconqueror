@@ -34,6 +34,7 @@ export class Settings implements ISettings {
   public track_brew_coordinates: boolean;
   public fast_brew_repeat: boolean;
   public brew_milliseconds: boolean;
+  public brew_milliseconds_leading_digits: number;
   public image_quality: number;
   public brew_rating: number;
   public brew_rating_steps: number;
@@ -93,6 +94,7 @@ export class Settings implements ISettings {
   public bluetooth_scale_maximize_on_start_timer: boolean;
   public bluetooth_ignore_negative_values: boolean;
   public bluetooth_ignore_anomaly_values: boolean;
+  public bluetooth_command_delay: number;
 
   public pressure_id: string;
   public pressure_type: PressureType;
@@ -102,6 +104,7 @@ export class Settings implements ISettings {
   public pressure_stay_connected: boolean;
 
   public currency: string;
+  public brew_display_bean_image: boolean;
 
   public GET_BEAN_FILTER(): IBeanPageFilter {
     const upperRating: number = this.bean_rating;
@@ -245,6 +248,7 @@ export class Settings implements ISettings {
     this.bluetooth_scale_maximize_on_start_timer = false;
     this.bluetooth_ignore_negative_values = false;
     this.bluetooth_ignore_anomaly_values = false;
+    this.bluetooth_command_delay = 50;
 
     this.scale_log = false;
 
@@ -256,6 +260,8 @@ export class Settings implements ISettings {
     this.pressure_stay_connected = false;
 
     this.currency = 'EUR';
+    this.brew_milliseconds_leading_digits = 3;
+    this.brew_display_bean_image = false;
   }
 
   public initializeByObject(settingsObj: ISettings): void {

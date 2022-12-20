@@ -420,7 +420,7 @@
   "MILL": {
     "PLACE_HOLDER": {
       "NAME": "Füge einen Namen hinzu",
-      "NOTES": "Füge Notizen zu deiner Mühler hinzu"
+      "NOTES": "Füge Notizen zu deiner Mühle hinzu"
     }
   },
   "BREW": {
@@ -467,7 +467,7 @@
   "PREPARATION_STYLE_PERCOLATION": "Perkolation",
   "PREPARATION_TYPE_STYLE": "Zubereitungsart",
   "PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION": "Aktiviert einen neuen Menüeintrag - über diesen kann die Brühung direkt wiederholt werden.",
-  "PAGE_SETTINGS_TRACK_BREW_COORDINATES_DESCRIPTION": "Speichere die Koordinatien zu jeder Brühung.",
+  "PAGE_SETTINGS_TRACK_BREW_COORDINATES_DESCRIPTION": "Speichere die Koordinaten zu jeder Brühung.",
   "PAGE_SETTINGS_TRACK_CAFFEINE_CONSUMPTION_DESCRIPTION": "Speichere die zu dir genommene Koffeinmenge",
   "UPDATE_TITLE": "Was gibt's neues",
   "NEXT": "Weiter",
@@ -780,6 +780,40 @@
         "Behebung eines Fehlers, dass Sternbewertungen nicht mehr zu sehen waren, trotz Grundeinstellungen",
         "Ältere Brühgraphen durch eine Bluetoothwaage können wieder exportiert werden",
         "Aktualisierung auf Ionic 6.3.0",
+        "Kleinere Fehlerbehebungen"
+      ]
+    },
+    "6.3.0": {
+      "TITLE": "Version 6.3.0: Das ist neu",
+      "DESCRIPTION": [
+        "<b>Bluetooth Waage</b>",
+        "Definiere wieviele Millisekunden zwischen den Bluetooth befehlen gewartet werden soll",
+        "",
+        "<b>Brühungen</b>",
+        "Zurücksetzten der Bezugszeit-Daten",
+        "Bei verbundener Bluetooth-Waage, wird nun das letzte Bezugsgewicht in der Kachel angezeigt",
+        "Größere Buttons bei der Brühmaximierung",
+        "Herunterladen der Brühdaten als Excel oder JSON",
+        "Bohnenbilder können nun anstatt der Zubereitungsmethodenbilder angezeigt werden -> Aktivierbar in den Einstellungen",
+        "",
+        "<b>Bohnen</b>",
+        "Bohnen können nun auch nach Varietäten durchsucht werden",
+        "",
+        "<b>Mühlen</b>",
+        "Anzeigte der Notizen in der Listen- sowie Detailansicht",
+        "",
+        "<b>Verbesserungen</b>",
+        "Wähle aus, wieviel Millisekunden-Nachkommastellen angezeigt werden sollen (Einzugeben bleiben weiterhin 3-Stellen)",
+        "Spenden-Buttons eingebaut",
+        "Textboxen sind nun Scrollbar",
+        "Brühzeit in den Statistiken werden nun Formatiert angezeigt",
+        "Benachrichtungslabels erscheinen nun oben und können mit einem X geschlossen werden",
+        "Deaktivierte Detail-Parameter wurden freigeschaltet, z.B. kann nun auch die Mühle ausgeblendet werden",
+        "Analytische Datenerhebung kann deaktiviert oder aktiviert werden",
+        "",
+        "<b>Sonstiges:</b>",
+        "Typo Fehler behoben",
+        "Aktualisierung auf Ionic 6.4.0",
         "Kleinere Fehlerbehebungen"
       ]
     }
@@ -1268,5 +1302,13 @@
   "POPOVER_BLUETOOTH_ACTION_RECONNECT_PRESSURE_DEVICE": "Druckgerät neu verbinden",
   "POPOVER_SHOW_BREWS": "Zugehörige Brühungen",
   "LAST_USED_GRIND_SIZE_SETTING": "Letzter Mahlgrad",
-  "LAST_USED_BEAN": "Letzte Bohne"
+  "LAST_USED_BEAN": "Letzte Bohne",
+  "PAGE_SETTINGS_BREW_MILLISECONDS_DECIMAL_PLACES_DESCRIPTION": "Wieviele Nachkommastellen sollen angezeigt werden?",
+  "SMART_SCALE_COMMAND_DELAY": "Kommando Verzug",
+  "SMART_SCALE_COMMAND_DELAY_TOOLTIP": "Wieviel Zeit soll zwischen den jeweiligen Bluetooth Befehlen gewartet werden?",
+  "SUPPORT_ME": "Spenden",
+  "PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE": "Anzeige Bohnenbilder bei Brühungen?",
+  "PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE_DESCRIPTION": "Falls ein Bohnenbild hinterlegt wurde, wird dies anstatt des Zubereitungsbildes angezeigt",
+  "DOWNLOAD_XLSX": "Excel herunterladen",
+  "DOWNLOAD_JSON": "JSON herunterladen"
 }

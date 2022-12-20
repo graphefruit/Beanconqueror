@@ -23,12 +23,19 @@ export class UIAlert {
 
   private loadingSpinner;
 
-  public async showLoadingSpinner() {
+  public async showLoadingSpinner(
+    message: string = 'PLEASE_WAIT',
+    translate: boolean = true
+  ) {
     if (this.loadingSpinner) {
       await this.hideLoadingSpinner();
     }
+    let msg = message;
+    if (translate) {
+      msg = this.translate.instant(message);
+    }
     this.loadingSpinner = await this.loadingController.create({
-      message: this.translate.instant('PLEASE_WAIT'),
+      message: msg,
     });
     this.loadingSpinner.present();
   }

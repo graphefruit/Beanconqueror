@@ -2,7 +2,7 @@
   <ion-label position="stacked">
     {{ label }}
   </ion-label>
-  <ion-input readonly (click)="showTimeOverlay($event);" [(data)]="displayingTime"  [transform-date]="'timer'"  displayFormat="{{settings?.brew_milliseconds?'H:mm:ss.SSS':'H:mm:ss'}}"></ion-input>
+  <ion-input readonly (click)="showTimeOverlay($event);" [(data)]="displayingTime"  [transform-date]="'timer'"  displayFormat="{{returnWantedDisplayFormat()}}"></ion-input>
   <ion-button (click)="bloomTime()" *ngIf="timer.runTimer && timer.hasStarted && !timer.hasFinished && showBloomTimer"
               class="big-icon-only" fill="clear" slot="end" tappable>
     <ion-icon class="ion-color-accent" name="beanconqueror-blooming" slot="icon-only"></ion-icon>

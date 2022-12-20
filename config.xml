@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.beanconqueror.app" version="6.2.0" xmlns="http://www.w3.org/ns/widgets">
+<widget id="com.beanconqueror.app" version="6.3.0" xmlns="http://www.w3.org/ns/widgets">
     <name>Beanconqueror</name>
     <description />
     <author email="info@beanconqueror.com" href="https://github.com/graphefruit/beanconqueror">Lars Saalbach</author>
@@ -16,7 +16,7 @@
     <allow-navigation href="*" />
     <preference name="ScrollEnabled" value="false" />
     <preference name="android-minSdkVersion" value="22" />
-    <preference name="android-targetSdkVersion" value="30" />
+    <preference name="android-targetSdkVersion" value="31" />
     <preference name="SplashMaintainAspectRatio" value="true" />
     <preference name="FadeSplashScreenDuration" value="300" />
     <preference name="SplashShowOnlyFirstTime" value="false" />
@@ -30,7 +30,7 @@
     <platform name="android">
         <preference name="Fullscreen" value="false" />
         <edit-file file="app/src/main/AndroidManifest.xml" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
-            <activity android:label="webIntentFilter" android:name="com.beanconqueror.app">
+            <activity android:exported="true" android:label="webIntentFilter" android:name="com.beanconqueror.app">
                 <intent-filter android:autoVerify="true">
                     <action android:name="android.intent.action.VIEW" />
                     <category android:name="android.intent.category.DEFAULT" />
@@ -269,6 +269,25 @@
         <splash src="resources/ios/splash/Default@3x~iphone~comany.png" />
         <splash src="resources/ios/splash/Default@2x~ipad~anyany.png" />
         <splash src="resources/ios/splash/Default@2x~ipad~comany.png" />
+        <splash height="1136" src="resources/ios/splash/Default-568h@2x~iphone.png" width="640" />
+        <splash height="1334" src="resources/ios/splash/Default-667h.png" width="750" />
+        <splash height="2688" src="resources/ios/splash/Default-2688h~iphone.png" width="1242" />
+        <splash height="1242" src="resources/ios/splash/Default-Landscape-2688h~iphone.png" width="2688" />
+        <splash height="1792" src="resources/ios/splash/Default-1792h~iphone.png" width="828" />
+        <splash height="828" src="resources/ios/splash/Default-Landscape-1792h~iphone.png" width="1792" />
+        <splash height="2436" src="resources/ios/splash/Default-2436h.png" width="1125" />
+        <splash height="1125" src="resources/ios/splash/Default-Landscape-2436h.png" width="2436" />
+        <splash height="2208" src="resources/ios/splash/Default-736h.png" width="1242" />
+        <splash height="1242" src="resources/ios/splash/Default-Landscape-736h.png" width="2208" />
+        <splash height="1536" src="resources/ios/splash/Default-Landscape@2x~ipad.png" width="2048" />
+        <splash height="2048" src="resources/ios/splash/Default-Landscape@~ipadpro.png" width="2732" />
+        <splash height="768" src="resources/ios/splash/Default-Landscape~ipad.png" width="1024" />
+        <splash height="2048" src="resources/ios/splash/Default-Portrait@2x~ipad.png" width="1536" />
+        <splash height="2732" src="resources/ios/splash/Default-Portrait@~ipadpro.png" width="2048" />
+        <splash height="1024" src="resources/ios/splash/Default-Portrait~ipad.png" width="768" />
+        <splash height="960" src="resources/ios/splash/Default@2x~iphone.png" width="640" />
+        <splash height="480" src="resources/ios/splash/Default~iphone.png" width="320" />
+        <splash height="2732" src="resources/ios/splash/Default@2x~universal~anyany.png" width="2732" />
     </platform>
     <plugin name="cordova-plugin-statusbar" spec="~2.4.2" />
     <plugin name="cordova-plugin-device" spec="~2.0.2" />

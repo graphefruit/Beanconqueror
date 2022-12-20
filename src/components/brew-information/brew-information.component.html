@@ -3,12 +3,17 @@
   <ion-card-content #card class="no-ion-col-vertical-padding ion-padding-top">
     <ion-grid class="no-padding-bottom" style="padding-top:0px;">
       <ion-row style="height:60px;">
-        <ion-col size-xs="3" size-xl="1" size-sm="1" size-md="1" size-lg="1" class="ion-no-padding"  *ngIf="!brew?.getPreparation().hasPhotos()">
+        <ion-col size-xs="3" size-xl="1" size-sm="1" size-md="1" size-lg="1" class="ion-no-padding"  *ngIf="(settings?.brew_display_bean_image != true || brew?.getBean().hasPhotos() === false) && !brew?.getPreparation().hasPhotos()">
           <ion-icon class="full-sized-icon" name="{{preparation.getIcon()}}"></ion-icon>
         </ion-col>
-        <ion-col size-xs="3" size-xl="1" size-sm="1" size-md="1" size-lg="1" class="ion-no-padding" size="1" *ngIf="brew?.getPreparation().hasPhotos()">
+        <ion-col size-xs="3" size-xl="1" size-sm="1" size-md="1" size-lg="1" class="ion-no-padding" size="1" *ngIf="(settings?.brew_display_bean_image != true || brew?.getBean().hasPhotos() === false) && brew?.getPreparation().hasPhotos()">
           <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
             <async-image [filePath]="brew?.getPreparation().attachments[0]" class="bean-slider"></async-image>
+          </div>
+        </ion-col>
+        <ion-col size-xs="3" size-xl="1" size-sm="1" size-md="1" size-lg="1" class="ion-no-padding" size="1" *ngIf="settings?.brew_display_bean_image == true && brew?.getBean().hasPhotos()">
+          <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
+            <async-image [filePath]="brew?.getBean().attachments[0]" class="bean-slider"></async-image>
           </div>
         </ion-col>
         <ion-col size-xs="9" size-xl="11" size-sm="11" size-md="11" size-lg="11" style="margin: auto 0;">
@@ -25,11 +30,15 @@
             </ion-row>
             <ion-row>
               <ion-col [size]="brew?.rating>0 ? (hasCustomRatingRange()? 10:8) :12"><div class="ion-no-padding font-size-20 ion-title brew-title">{{brew.getBean().name}}<span class="font-size-16" *ngIf="brew.getBean().roaster">&nbsp;({{brew.getBean().roaster}})</span></div></ion-col>
-              <ion-col *ngIf="brew?.rating > 0 && hasCustomRatingRange() === false" size="4">
+              <ion-col *ngIf="uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.rating,
+                      brew.getPreparation().visible_list_view_parameters.rating,
+                      brew.getPreparation().use_custom_parameters) && (brew?.rating > 0 && hasCustomRatingRange() === false)" size="4">
                 <ngx-stars #brewStars [color]="'#BFB9B0'" [initialStars]="brew.rating" [maxStars]="5"  [readonly]="true"  [wholeStars]="true" class="ion-float-right brew-stars" >
                 </ngx-stars>
               </ion-col>
-              <ion-col *ngIf="brew?.rating > 0  && hasCustomRatingRange() === true" size="2" class="ion-text-right">
+              <ion-col *ngIf="uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.rating,
+                      brew.getPreparation().visible_list_view_parameters.rating,
+                      brew.getPreparation().use_custom_parameters) && (brew?.rating > 0  && hasCustomRatingRange() === true)" size="2" class="ion-text-right">
                 <ion-badge>{{this.uiHelper.toFixedIfNecessary(brew.rating,2)}}</ion-badge>
               </ion-col>
             </ion-row>
@@ -44,17 +53,19 @@
       </ion-row>
     </ion-grid>
     <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow">
-      <ion-row>
-        <ion-col size="6">
+      <ion-row class="ion-padding-bottom-half">
+        <ion-col size="6" *ngIf="uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.method_of_preparation,
+                      brew.getPreparation().visible_list_view_parameters.method_of_preparation,
+                      brew.getPreparation().use_custom_parameters)">
           <ion-label class="card-headline">{{"BREW_DATA_PREPARATION_METHOD" | translate}}</ion-label><br/>
           <ion-text>{{brew?.getPreparation().name}}</ion-text>
         </ion-col>
-        <ion-col size="6">
+        <ion-col size="6" *ngIf="uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.mill,
+                      brew.getPreparation().visible_list_view_parameters.mill,
+                      brew.getPreparation().use_custom_parameters)">
           <ion-label class="card-headline">{{"BREW_DATA_MILL" |translate}}</ion-label><br/>
           <ion-text>{{brew?.getMill().name}}</ion-text>
         </ion-col>
-      </ion-row>
-      <ion-row  class="ion-padding-bottom-half">
         <ion-col size="6">
           <ion-label class="card-headline">{{"BREW_DATA_IN_OUT_BR" | translate}}</ion-label><br/>
           <ion-text *ngIf="brew?.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO">
@@ -64,13 +75,23 @@
             {{brew?.grind_weight | number : '.0-2'}}gr / {{brew.brew_beverage_quantity | number : '.0-2'}}{{brewQuantityEnum[brew?.brew_beverage_quantity_type]}}&nbsp;({{brew?.getBrewRatio()}})
           </ion-text>
         </ion-col>
-        <ion-col *ngIf="brew?.brew_time" size="6">
+        <ion-col *ngIf="brew?.brew_time && uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.brew_time,
+                      brew.getPreparation().visible_list_view_parameters.brew_time,
+                      brew.getPreparation().use_custom_parameters)" size="6">
           <ion-label class="card-headline">{{'BREW_DATA_TIME' | translate}}</ion-label><br/>
           <ion-text>{{brew?.getFormattedTotalCoffeeBrewTime()}}</ion-text>
         </ion-col>
-        <ion-col *ngIf="brew?.grind_size != ''"  size="6">
+        <ion-col *ngIf="(brew?.grind_size != '' && uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.grind_size,
+                      brew.getPreparation().visible_list_view_parameters.grind_size,
+                      brew.getPreparation().use_custom_parameters)) ||  (brew?.mill_speed > 0 && uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.mill_speed,
+                      brew.getPreparation().visible_list_view_parameters.mill_speed,
+                      brew.getPreparation().use_custom_parameters))"  size="6">
           <ion-label class="card-headline">{{'BREW_DATA_GRIND_SIZE' | translate}}</ion-label><br/>
-          <ion-text>{{brew?.grind_size}}<span *ngIf="brew?.mill_speed > 0">&nbsp;@&nbsp;{{ brew?.mill_speed }}</span></ion-text>
+          <ion-text><span *ngIf="brew?.grind_size != '' && uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.grind_size,
+                      brew.getPreparation().visible_list_view_parameters.grind_size,
+                      brew.getPreparation().use_custom_parameters)">{{brew?.grind_size}}</span><span *ngIf="brew?.mill_speed > 0 && uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.mill_speed,
+                      brew.getPreparation().visible_list_view_parameters.mill_speed,
+                      brew.getPreparation().use_custom_parameters)">&nbsp;@&nbsp;{{ brew?.mill_speed }}</span></ion-text>
         </ion-col>
         <ion-col *ngIf="brew?.tds > 0 && brew?.brew_beverage_quantity>0"  size="6">
           <ion-label class="card-headline">{{'BREW_DATA_TDS_EY' | translate}}</ion-label><br/>

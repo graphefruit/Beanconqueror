@@ -53,12 +53,12 @@ import { PreparationTool } from '../../../classes/preparation/preparationTool';
 
 import { UIAlert } from '../../../services/uiAlert';
 import {
+  BluetoothScale,
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
+  PressureDevice,
+  SCALE_TIMER_COMMAND,
 } from '@graphefruit/coffee-bluetooth-devices';
-import { BluetoothScale } from '@graphefruit/coffee-bluetooth-devices';
-import { SCALE_TIMER_COMMAND } from '@graphefruit/coffee-bluetooth-devices';
-import { PressureDevice } from '@graphefruit/coffee-bluetooth-devices';
 
 declare var cordova;
 
@@ -230,7 +230,24 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         if (this.data.flow_profile !== '') {
           // We had a flow profile, so read data now.
           await this.readFlowProfile();
+
           this.initializeFlowChart();
+          setTimeout(() => {
+            // Fix that you also see the brew weight
+            const weightEl = this.smartScaleWeightEl.nativeElement;
+            if (
+              this.data.getPreparation().getPresetStyleType() ===
+              PREPARATION_STYLE_TYPE.ESPRESSO
+            ) {
+              weightEl.textContent = this.data.brew_beverage_quantity + ' g';
+            } else {
+              if (this.data.brew_beverage_quantity > 0) {
+                weightEl.textContent = this.data.brew_beverage_quantity + ' g';
+              } else {
+                weightEl.textContent = this.data.brew_quantity + ' g';
+              }
+            }
+          }, 350);
         }
       }
 
@@ -459,6 +476,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
       this.pressureDeviceSubscription = pressureDevice.pressureChange.subscribe(
         (_val) => {
+          const actual: number = _val.actual;
+          const old: number = _val.old;
+          //Reset to 0, as a temporary fix to exclude the "451" bar
+          if (actual > 15) {
+            _val.actual = 0;
+          }
           if (this.timer.isTimerRunning()) {
             this.__setPressureFlow(_val);
           } else {
@@ -682,17 +705,17 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       if (scale) {
         if (this.settings.bluetooth_scale_tare_on_start_timer === true) {
           await new Promise((resolve) => {
+            scale.tare();
             setTimeout(async () => {
-              scale.tare();
               resolve(undefined);
-            }, 50);
+            }, this.settings.bluetooth_command_delay);
           });
         }
         await new Promise((resolve) => {
+          scale.setTimer(SCALE_TIMER_COMMAND.START);
           setTimeout(async () => {
-            scale.setTimer(SCALE_TIMER_COMMAND.START);
             resolve(undefined);
-          }, 50);
+          }, this.settings.bluetooth_command_delay);
         });
       }
       if (pressureDevice) {
@@ -791,20 +814,25 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (scale || pressureDevice) {
       await this.uiAlert.showLoadingSpinner();
       if (scale) {
-        scale.tare();
-
         await new Promise((resolve) => {
+          scale.tare();
           setTimeout(async () => {
-            scale.setTimer(SCALE_TIMER_COMMAND.STOP);
             resolve(undefined);
-          }, 50);
+          }, this.settings.bluetooth_command_delay);
         });
 
         await new Promise((resolve) => {
+          scale.setTimer(SCALE_TIMER_COMMAND.STOP);
           setTimeout(async () => {
-            scale.setTimer(SCALE_TIMER_COMMAND.RESET);
             resolve(undefined);
-          }, 50);
+          }, this.settings.bluetooth_command_delay);
+        });
+
+        await new Promise((resolve) => {
+          scale.setTimer(SCALE_TIMER_COMMAND.RESET);
+          setTimeout(async () => {
+            resolve(undefined);
+          }, this.settings.bluetooth_command_delay);
         });
 
         this.deattachToWeightChange();
@@ -1238,36 +1266,34 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       if (_firstStart) {
         if (this.settings.bluetooth_scale_tare_on_brew === true) {
           await new Promise((resolve) => {
+            if (scale) {
+              scale.tare();
+            }
             setTimeout(async () => {
-              if (scale) {
-                scale.tare();
-              }
-
               resolve(undefined);
-            }, 50);
+            }, this.settings.bluetooth_command_delay);
           });
         }
 
         if (this.settings.bluetooth_scale_stop_timer_on_brew === true) {
           await new Promise((resolve) => {
+            if (scale) {
+              scale.setTimer(SCALE_TIMER_COMMAND.STOP);
+            }
             setTimeout(async () => {
-              if (scale) {
-                scale.setTimer(SCALE_TIMER_COMMAND.STOP);
-              }
-
               resolve(undefined);
-            }, 50);
+            }, this.settings.bluetooth_command_delay);
           });
         }
 
         if (this.settings.bluetooth_scale_reset_timer_on_brew === true) {
           await new Promise((resolve) => {
+            if (scale) {
+              scale.setTimer(SCALE_TIMER_COMMAND.RESET);
+            }
             setTimeout(async () => {
-              if (scale) {
-                scale.setTimer(SCALE_TIMER_COMMAND.RESET);
-              }
               resolve(undefined);
-            }, 50);
+            }, this.settings.bluetooth_command_delay);
           });
         }
       }

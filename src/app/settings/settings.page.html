@@ -151,12 +151,12 @@
             </ion-select>
           </ion-item>
 
-          <ion-item>
+          <ion-item (click)="showAnalyticsInformation()" tappable button >
             <ion-label>
               <h2>{{"PAGE_SETTINGS_ANALYTICS_INFORMATION" | translate}}</h2>
-              <p>{{"PAGE_SETTINGS_ANALYTICS_INFORMATION_TOOLTIP" | translate}}</p>
             </ion-label>
-            <ion-icon (click)="showAnalyticsInformation()" tappable name="information-outline"></ion-icon>
+            <ion-checkbox (ngModelChange)="saveSettings();"
+                          [(ngModel)]="settings.matomo_analytics"></ion-checkbox>
           </ion-item>
           <ion-item>
             <ion-label>{{"PAGE_SETTINGS_WAKE_LOCK" | translate}}</ion-label>
@@ -173,12 +173,31 @@
               <p>{{"PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION" | translate}}</p></ion-label>
             <ion-checkbox  (ngModelChange)="saveSettings();" [(ngModel)]="settings.fast_brew_repeat"></ion-checkbox>
           </ion-item>
-          <ion-item>
+          <ion-item [lines]="settings.brew_milliseconds?'none':'full'">
             <ion-label class="ion-margin-end"><h2>{{"PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS" | translate}}</h2>
               <p>{{"PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS_DESCRIPTION" | translate}}</p></ion-label>
             <ion-checkbox  (ngModelChange)="saveSettings();" [(ngModel)]="settings.brew_milliseconds"></ion-checkbox>
           </ion-item>
-
+          <ion-item *ngIf="settings?.brew_milliseconds===true">
+            <ion-label class="ion-margin-end"><p>{{"PAGE_SETTINGS_BREW_MILLISECONDS_DECIMAL_PLACES_DESCRIPTION" | translate}}</p></ion-label>
+            <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.brew_milliseconds_leading_digits"
+                        cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
+              <ion-select-option [value]="3">
+                3
+              </ion-select-option>
+              <ion-select-option  [value]="2">
+               2
+              </ion-select-option>
+              <ion-select-option  [value]="1">
+                1
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-label class="ion-margin-end"><h2>{{"PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE" | translate}}</h2>
+              <p>{{"PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE_DESCRIPTION" | translate}}</p></ion-label>
+            <ion-checkbox  (ngModelChange)="saveSettings();" [(ngModel)]="settings.brew_display_bean_image"></ion-checkbox>
+          </ion-item>
           <ion-item>
             <ion-label>{{"PAGE_SETTINGS_CURRENCY" | translate}}</ion-label>
             <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.currency"
@@ -325,6 +344,18 @@
 
             </ion-item>
 
+            <ion-item lines="none">
+              <ion-label>
+                <h2>{{"SMART_SCALE_COMMAND_DELAY" | translate}}</h2>
+              </ion-label>
+              <ion-icon name="information-outline" slot="end"
+                        tooltip='{{"SMART_SCALE_COMMAND_DELAY_TOOLTIP" | translate}}'></ion-icon>
+            </ion-item>
+            <ion-item style="top:-15px;">
+              <ion-range style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="50" snaps="true" max="1000" step="1" (ionBlur)="saveSettings()" [(ngModel)]="settings.bluetooth_command_delay">
+                <ion-label slot="end">{{settings.bluetooth_command_delay}} ms</ion-label>
+              </ion-range>
+            </ion-item>
             <ion-item>
               <ion-label class="ion-margin-end" style="white-space: normal;"><h2>{{"SMART_SCALE_LOG" | translate}}</h2></ion-label>
               <ion-checkbox (ionBlur)="toggleLog();"

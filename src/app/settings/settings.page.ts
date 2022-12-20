@@ -208,14 +208,14 @@ export class SettingsPage implements OnInit {
       return;
     }
 
-    await this.uiAlert.showLoadingSpinner();
-    this.uiAlert.setLoadingSpinnerMessage(
+    await this.uiAlert.showLoadingSpinner(
       'PRESSURE.BLUETOOTH_SCAN_RUNNING',
       true
     );
+
     const pressureDevice = await this.bleManager.tryToFindPressureDevice();
+    await this.uiAlert.hideLoadingSpinner();
     if (pressureDevice) {
-      await this.uiAlert.hideLoadingSpinner();
       try {
         // We don't need to retry for iOS, because we just did scan before.
 
@@ -234,7 +234,6 @@ export class SettingsPage implements OnInit {
 
       await this.saveSettings();
     } else {
-      await this.uiAlert.hideLoadingSpinner();
       this.uiAlert.showMessage(
         'PRESSURE.CONNECTION_NOT_ESTABLISHED',
         undefined,
@@ -282,14 +281,38 @@ export class SettingsPage implements OnInit {
 
     await new Promise(async (resolve) => {
       // Give some time
-      await this.uiAlert.showLoadingSpinner();
+      await this.uiAlert.showLoadingSpinner(
+        'SCALE.BLUETOOTH_SCAN_RUNNING',
+        true
+      );
       setTimeout(async () => {
+        resolve(undefined);
+      }, 100);
+    });
+    if (_retry) {
+      await new Promise(async (resolve) => {
+        // Give some time
+        if (this.settings.scale_id !== '' && this.bleManager.getScale()) {
+          const disconnected = await this.bleManager.disconnect(
+            this.settings.scale_id
+          );
+        }
+        setTimeout(async () => {
+          resolve(undefined);
+        }, 250);
+      });
+    }
+
+    const scale = await this.bleManager.tryToFindScale();
+
+    await new Promise(async (resolve) => {
+      // Give some time
+      setTimeout(async () => {
+        await this.uiAlert.hideLoadingSpinner();
         resolve(undefined);
       }, 50);
     });
 
-    this.uiAlert.setLoadingSpinnerMessage('SCALE.BLUETOOTH_SCAN_RUNNING', true);
-    const scale = await this.bleManager.tryToFindScale();
     if (scale) {
       try {
         // We don't need to retry for iOS, because we just did scan before.
@@ -297,14 +320,6 @@ export class SettingsPage implements OnInit {
         // NEVER!!! Await here, else the bluetooth logic will get broken.
         this.bleManager.autoConnectScale(scale.type, scale.id, false);
       } catch (ex) {}
-
-      await new Promise(async (resolve) => {
-        // Give some time
-        setTimeout(async () => {
-          await this.uiAlert.hideLoadingSpinner();
-          resolve(undefined);
-        }, 50);
-      });
 
       this.settings.scale_id = scale.id;
       this.settings.scale_type = scale.type;
@@ -325,7 +340,7 @@ export class SettingsPage implements OnInit {
             if (connectedScale !== null && connectedScale !== undefined) {
               skipLoop = 1;
               try {
-                await connectedScale.setLed(true, true);
+                connectedScale.setLed(true, true);
               } catch (ex) {}
             }
             resolve(undefined);
@@ -336,13 +351,6 @@ export class SettingsPage implements OnInit {
         }
       }
     } else {
-      await new Promise(async (resolve) => {
-        // Give some time
-        setTimeout(async () => {
-          await this.uiAlert.hideLoadingSpinner();
-          resolve(undefined);
-        }, 50);
-      });
       this.uiAlert.showMessage(
         'SCALE.CONNECTION_NOT_ESTABLISHED',
         undefined,
@@ -397,7 +405,9 @@ export class SettingsPage implements OnInit {
     await this.findAndConnectPressureDevice(true);
   }
   public async retryConnectScale() {
-    await this.findAndConnectScale(true);
+    if (this.isScaleConnected() === false) {
+      await this.findAndConnectScale(true);
+    }
   }
 
   public isScaleConnected(): boolean {
@@ -549,7 +559,7 @@ export class SettingsPage implements OnInit {
           try {
             const fileEntry: any = await new Promise(
               async (resolve) =>
-                await window.resolveLocalFileSystemURL(uri, resolve)
+                await window.resolveLocalFileSystemURL(uri, resolve, () => {})
             );
             const newPath: string = await this.filePath.resolveNativePath(
               fileEntry.nativeURL
@@ -1070,6 +1080,18 @@ export class SettingsPage implements OnInit {
                 }
                 this.setLanguage();
 
+                if (
+                  this.settings.brew_rating_steps === null ||
+                  this.settings.brew_rating_steps === undefined
+                ) {
+                  this.settings.brew_rating_steps = 1;
+                }
+                if (
+                  this.settings.bean_rating_steps === null ||
+                  this.settings.bean_rating_steps === undefined
+                ) {
+                  this.settings.bean_rating_steps = 1;
+                }
                 this.settings.resetFilter();
                 await this.uiSettingsStorage.saveSettings(this.settings);
                 await this.uiAlert.hideLoadingSpinner();

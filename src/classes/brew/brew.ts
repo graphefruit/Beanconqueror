@@ -364,6 +364,18 @@ export class Brew implements IBrew {
     return moment.unix(this.config.unix_timestamp).format(format);
   }
 
+  public getMillisecondsFormat() {
+    const millisecondsDigits: number =
+      this.getSettingsStorageInstance().getSettings()
+        .brew_milliseconds_leading_digits;
+    if (millisecondsDigits === 3) {
+      return '.SSS';
+    } else if (millisecondsDigits === 2) {
+      return '.SS';
+    }
+    return '.S';
+  }
+
   public getFormattedTotalCoffeeBrewTime(): string {
     const secs = this.brew_time;
 
@@ -374,7 +386,7 @@ export class Brew implements IBrew {
       formatted = moment
         .utc(secs * 1000)
         .add('milliseconds', this.brew_time_milliseconds)
-        .format('mm:ss.SSS');
+        .format('mm:ss' + this.getMillisecondsFormat());
     } else {
       formatted = moment
         .utc(secs * 1000)
@@ -387,7 +399,7 @@ export class Brew implements IBrew {
         formatted = moment
           .utc(secs * 1000)
           .add('milliseconds', this.brew_time_milliseconds)
-          .format('HH:mm:ss.SSS');
+          .format('HH:mm:ss' + this.getMillisecondsFormat());
       } else {
         formatted = moment
           .utc(secs * 1000)
@@ -408,7 +420,7 @@ export class Brew implements IBrew {
       formatted = moment
         .utc(secs * 1000)
         .add('milliseconds', this.brew_temperature_time_milliseconds)
-        .format('mm:ss.SSS');
+        .format('mm:ss' + this.getMillisecondsFormat());
     } else {
       formatted = moment
         .utc(secs * 1000)
@@ -421,7 +433,7 @@ export class Brew implements IBrew {
         formatted = moment
           .utc(secs * 1000)
           .add('milliseconds', this.brew_temperature_time_milliseconds)
-          .format('HH:mm:ss.SSS');
+          .format('HH:mm:ss' + this.getMillisecondsFormat());
       } else {
         formatted = moment
           .utc(secs * 1000)
@@ -441,7 +453,7 @@ export class Brew implements IBrew {
       formatted = moment
         .utc(secs * 1000)
         .add('milliseconds', this.coffee_blooming_time_milliseconds)
-        .format('mm:ss.SSS');
+        .format('mm:ss' + this.getMillisecondsFormat());
     } else {
       formatted = moment
         .utc(secs * 1000)
@@ -454,7 +466,7 @@ export class Brew implements IBrew {
         formatted = moment
           .utc(secs * 1000)
           .add('milliseconds', this.coffee_blooming_time_milliseconds)
-          .format('HH:mm:ss.SSS');
+          .format('HH:mm:ss' + this.getMillisecondsFormat());
       } else {
         formatted = moment
           .utc(secs * 1000)
@@ -475,7 +487,7 @@ export class Brew implements IBrew {
       formatted = moment
         .utc(secs * 1000)
         .add('milliseconds', this.coffee_first_drip_time_milliseconds)
-        .format('mm:ss.SSS');
+        .format('mm:ss' + this.getMillisecondsFormat());
     } else {
       formatted = moment
         .utc(secs * 1000)
@@ -488,7 +500,7 @@ export class Brew implements IBrew {
         formatted = moment
           .utc(secs * 1000)
           .add('milliseconds', this.coffee_first_drip_time_milliseconds)
-          .format('HH:mm:ss.SSS');
+          .format('HH:mm:ss' + this.getMillisecondsFormat());
       } else {
         formatted = moment
           .utc(secs * 1000)
@@ -505,7 +517,7 @@ export class Brew implements IBrew {
     const millisecondsEnabled: boolean =
       this.getSettingsStorageInstance().getSettings().brew_milliseconds;
     if (millisecondsEnabled) {
-      formattingStr = 'HH:mm:ss.SSS';
+      formattingStr = 'HH:mm:ss' + this.getMillisecondsFormat();
     }
     const formatted = moment
       .utc(secs * 1000)
@@ -528,7 +540,7 @@ export class Brew implements IBrew {
     const millisecondsEnabled: boolean =
       this.getSettingsStorageInstance().getSettings().brew_milliseconds;
     if (millisecondsEnabled) {
-      formattingStr = 'HH:mm:ss.SSS';
+      formattingStr = 'HH:mm:ss' + this.getMillisecondsFormat();
     }
     const start = moment()
       .startOf('day')

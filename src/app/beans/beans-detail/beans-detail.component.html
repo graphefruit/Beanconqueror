@@ -170,7 +170,10 @@
           <ion-range disabled="true" [(ngModel)]="data.rating" debounce="500s" max="5" min="0" snaps="true" step="1">
 
             <div slot="end">
-              <ngx-stars #beanRating [color]="'#BFB9B0'"  [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars" ></ngx-stars>
+              <ngx-stars *ngIf="bean?.rating !== 0 && hasCustomRatingRange() === false"  #beanRating [color]="'#BFB9B0'"  [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars" ></ngx-stars>
+              <div  *ngIf="bean?.rating > 0  && hasCustomRatingRange() === true" class="ion-text-right">
+                <ion-badge>{{this.uiHelper.toFixedIfNecessary(bean.rating,2)}}</ion-badge>
+              </div>
             </div>
           </ion-range>
         </ion-item>

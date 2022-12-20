@@ -13,8 +13,11 @@
 <ion-footer class="ion-no-border">
 
         <ion-row class="ion-padding-top">
-          <ion-col size="12">
-            <ion-button (click)="finish()" color="accent" expand="block" tappable>{{"ACCEPT" | translate}}</ion-button>
+          <ion-col size="6">
+            <ion-button (click)="dontActivate()" fill="outline" color="accent" expand="block" tappable>{{"DO_NOT_ACTIVE" | translate}}</ion-button>
+          </ion-col>
+          <ion-col size="6">
+            <ion-button (click)="finish()" color="accent" expand="block" tappable>{{"ACTIVATE" | translate}}</ion-button>
           </ion-col>
         </ion-row>
 

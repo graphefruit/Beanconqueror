@@ -88,6 +88,37 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     this.initTimer();
   }
 
+  public returnWantedDisplayFormat() {
+    const showMinutes: boolean = true;
+    let showHours: boolean = false;
+    let showMilliseconds: boolean = false;
+    if (this.timer.seconds >= 3600) {
+      showHours = true;
+    }
+
+    if (this.settings?.brew_milliseconds) {
+      showMilliseconds = true;
+    }
+
+    let returnStr: string = '';
+    if (showMilliseconds) {
+      if (this.settings.brew_milliseconds_leading_digits === 3) {
+        returnStr = '.SSS';
+      } else if (this.settings.brew_milliseconds_leading_digits === 2) {
+        returnStr = '.SS';
+      } else {
+        returnStr = '.S';
+      }
+    }
+    if (showHours) {
+      return 'H:mm:ss' + returnStr;
+    } else if (showMinutes) {
+      return 'mm:ss' + returnStr;
+    } else {
+      return 'ss' + returnStr;
+    }
+  }
+
   public isTimerRunning() {
     return this.timer.runTimer;
   }
@@ -332,6 +363,22 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
       this.timer.milliseconds = moment(this.displayingTime)
         .startOf('day')
         .milliseconds();
+
+      // We need to calculate new, else when user starts timer again, the wrong times will be used
+      const startingDate = new Date();
+      this.pausedTimer = moment(new Date());
+      this.startingDay = moment(startingDate).startOf('day');
+      if (this.timer.seconds > 0 || this.timer.milliseconds > 0) {
+        // We need to subtract, if the time is already given on start (like repeat or preset)
+        this.startedTimer = moment(startingDate)
+          .subtract(this.timer.seconds, 'seconds')
+          .subtract(this.timer.milliseconds, 'milliseconds');
+      } else {
+        this.startedTimer = moment(startingDate);
+      }
+
+      this.startedOffset = this.startedTimer.diff(this.startingDay);
+
       this.changeEvent();
     }
   }

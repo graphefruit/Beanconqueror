@@ -226,9 +226,9 @@ export class UIStatistic {
       for (const brew of brews) {
         sum += brew.brew_time;
       }
-      return sum / 60;
+      return this.uiHelper.formatSeconds(sum, 'HH:mm:ss');
     }
-    return 0;
+    return this.uiHelper.formatSeconds(0, 'HH:mm:ss');
   }
   public photosTaken() {
     const allEntries: Array<

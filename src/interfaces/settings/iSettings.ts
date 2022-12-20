@@ -27,6 +27,7 @@ export interface ISettings {
   track_brew_coordinates: boolean;
   fast_brew_repeat: boolean;
   brew_milliseconds: boolean;
+  brew_milliseconds_leading_digits: number;
   image_quality: number;
   brew_rating: number;
   brew_rating_steps: number;
@@ -89,6 +90,7 @@ export interface ISettings {
   bluetooth_scale_maximize_on_start_timer: boolean;
   bluetooth_ignore_negative_values: boolean;
   bluetooth_ignore_anomaly_values: boolean;
+  bluetooth_command_delay: number;
 
   pressure_id: string;
   pressure_type: PressureType;
@@ -98,4 +100,5 @@ export interface ISettings {
   pressure_stay_connected: boolean;
 
   currency: string;
+  brew_display_bean_image: boolean;
 }
