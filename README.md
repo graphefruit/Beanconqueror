@@ -214,3 +214,15 @@ https://stackoverflow.com/questions/50419286/install-android-app-bundle-on-devic
 brew install bundletool
 bundletool build-apks --bundle=./app.aab --output=./app.apks
 bundletool install-apks --apks=app.apks
+
+#Overwrite plugin.xmls
+After SDK Target 31 needs to be supported, and older plugins doesn't have the android-export flag, we need to add them ourself...
+
+Cordova-plugin-x-socialsharing
+`<receiver android:name="nl.xservices.plugins.ShareChooserPendingIntent" android:exported="false" android:enabled="true">`
+
+cordova-plugin-telerik-imagepicker
+`<activity android:exported="false" android:label="@string/multi_app_name" android:name="com.synconset.MultiImageChooserActivity" android:theme="@style/Theme.AppCompat.Light">`
+
+fttx-phonegap-plugin-barcodescanner
+`<activity android:name="com.google.zxing.client.android.encode.EncodeActivity" android:exported="false" android:label="Share"/>`
