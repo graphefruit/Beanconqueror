@@ -497,7 +497,16 @@ export class BeansPage implements OnInit {
             e.roaster?.toLowerCase().includes(searchStr) ||
             e.aromatics?.toLowerCase().includes(searchStr) ||
             e.bean_information?.find((bi) => {
-              return bi?.variety?.toLowerCase().includes(searchStr);
+              return (
+                bi?.variety?.toLowerCase().includes(searchStr) ||
+                bi?.country?.toLowerCase().includes(searchStr) ||
+                bi?.region?.toLowerCase().includes(searchStr) ||
+                bi?.farm?.toLowerCase().includes(searchStr) ||
+                bi?.farmer?.toLowerCase().includes(searchStr) ||
+                bi?.harvest_time?.toLowerCase().includes(searchStr) ||
+                bi?.elevation?.toLowerCase().includes(searchStr) ||
+                bi?.processing?.toLowerCase().includes(searchStr)
+              );
             })
           );
         });
