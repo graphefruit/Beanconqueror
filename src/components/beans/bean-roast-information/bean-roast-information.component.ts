@@ -3,9 +3,8 @@ import { Bean } from '../../../classes/bean/bean';
 import moment from 'moment';
 import { ModalController, Platform } from '@ionic/angular';
 import { DatetimePopoverComponent } from '../../../popover/datetime-popover/datetime-popover.component';
-
-import { CoffeeBluetoothDevicesService } from '@graphefruit/coffee-bluetooth-devices';
-import { BluetoothScale } from '@graphefruit/coffee-bluetooth-devices';
+import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { BluetoothScale } from '../../../classes/devices';
 
 @Component({
   selector: 'bean-roast-information',

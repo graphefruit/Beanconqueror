@@ -19,10 +19,8 @@ import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationS
 import { Settings } from '../../../classes/settings/settings';
 import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  CoffeeBluetoothDevicesService,
-  PressureDevice,
-} from '@graphefruit/coffee-bluetooth-devices';
+import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
+import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 
 @Component({
   selector: 'brew-flow',

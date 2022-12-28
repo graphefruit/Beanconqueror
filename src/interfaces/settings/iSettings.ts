@@ -7,10 +7,11 @@ import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
 import { IOrderBrewParameter } from '../parameter/iOrderBrewParameter';
 import { IBrewPageFilter } from '../brew/iBrewPageFilter';
 import { IBeanPageSort } from '../bean/iBeanPageSort';
-import { ListViewBrewParameter } from '../../classes/parameter/listViewBrewParameter';
 import { IBeanPageFilter } from '../bean/iBeanPageFilter';
 import { IBrewGraphs } from '../brew/iBrewGraphs';
-import { PressureType, ScaleType } from '@graphefruit/coffee-bluetooth-devices';
+import { IBeanParameter } from '../parameter/iBeanParameter';
+import { PressureType, ScaleType } from '../../classes/devices';
+import { BeanListViewParameter } from '../../classes/parameter/beanListViewParameter';
 
 export interface ISettings {
   // Properties
@@ -22,6 +23,9 @@ export interface ISettings {
   default_last_coffee_parameters: IBrewParameter;
   visible_list_view_parameters: IBrewParameter;
   brew_order: IOrderBrewParameter;
+
+  bean_manage_parameters: IBeanParameter;
+  bean_visible_list_view_parameters: IBeanParameter;
   matomo_analytics: boolean;
   qr_scanner_information: boolean;
   track_brew_coordinates: boolean;

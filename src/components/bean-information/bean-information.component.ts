@@ -53,7 +53,7 @@ export class BeanInformationComponent implements OnInit {
   public settings: Settings = null;
   constructor(
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiBeanHelper: UIBeanHelper,
+    public readonly uiBeanHelper: UIBeanHelper,
     private readonly modalController: ModalController,
     private readonly uiAnalytics: UIAnalytics,
     private readonly uiBrewStorage: UIBrewStorage,

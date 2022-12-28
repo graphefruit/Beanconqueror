@@ -1310,5 +1310,11 @@
   "PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE": "Anzeige Bohnenbilder bei Brühungen?",
   "PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE_DESCRIPTION": "Falls ein Bohnenbild hinterlegt wurde, wird dies anstatt des Zubereitungsbildes angezeigt",
   "DOWNLOAD_XLSX": "Excel herunterladen",
-  "DOWNLOAD_JSON": "JSON herunterladen"
+  "DOWNLOAD_JSON": "JSON herunterladen",
+  "NAV_BEAN_PARAMS": "Bohnenparameter",
+  "BEAN_DATA_ROAST_NAME_TYPE": "Rösttyp",
+  "ENABLE_BEAN_SORT_INFORMATION": "Aktiviere Sorteninformation",
+  "BEAN_SORT_MIX": "Bohnenmischung",
+  "PAGE_MANAGE_BEAN_PARAMETERS_DESCRIPTION": "Lege fest, welche Parameter beim Erfassen einer Bohne angezeigt werden sollen.",
+  "PAGE_BEAN_LIST_VIEW_CUSTOM_PARAMETERS_DESCRIPTION": "Entscheide welche Parameter der Bohne auf den Übersichtskacheln angezeigt werden sollen"
 }
