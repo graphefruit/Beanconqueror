@@ -43,5 +43,9 @@
       <ion-icon name="beanconqueror-delete" slot="start"></ion-icon>
       <span>{{"POPOVER_BREWS_OPTION_DELETE" | translate}}</span>
     </ion-item>
+  <ion-item (click)="choose(getStaticActions().VISUALIZER)" *ngIf="false" button tappable>
+    <ion-icon name="beanconqueror-delete" slot="start"></ion-icon>
+    <span>{{"VISUALIZER" | translate}}</span>
+  </ion-item>
   </ion-list>
 </ion-content>
