@@ -53,12 +53,11 @@ import { PreparationTool } from '../../../classes/preparation/preparationTool';
 
 import { UIAlert } from '../../../services/uiAlert';
 import {
-  BluetoothScale,
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
-  PressureDevice,
-  SCALE_TIMER_COMMAND,
-} from '@graphefruit/coffee-bluetooth-devices';
+} from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
+import { BluetoothScale, SCALE_TIMER_COMMAND } from '../../../classes/devices';
 
 declare var cordova;
 

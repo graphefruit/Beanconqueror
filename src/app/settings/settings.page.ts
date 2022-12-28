@@ -63,10 +63,8 @@ import { Water } from '../../classes/water/water';
 import { AppEvent } from '../../classes/appEvent/appEvent';
 import { AppEventType } from '../../enums/appEvent/appEvent';
 import { EventQueueService } from '../../services/queueService/queue-service.service';
-import {
-  CoffeeBluetoothDevicesService,
-  Logger,
-} from '@graphefruit/coffee-bluetooth-devices';
+import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { Logger } from '../../classes/devices/common/logger';
 
 declare var cordova: any;
 declare var device: any;

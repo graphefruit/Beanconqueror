@@ -18,11 +18,12 @@ import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
 import { NgxStarsComponent } from 'ngx-stars';
 import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
 
-import { CoffeeBluetoothDevicesService } from '@graphefruit/coffee-bluetooth-devices';
-import { BluetoothScale } from '@graphefruit/coffee-bluetooth-devices';
 import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIHelper } from '../../../services/uiHelper';
+import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { BluetoothScale } from '../../../classes/devices';
+import { UIBeanHelper } from '../../../services/uiBeanHelper';
 
 declare var cordova;
 @Component({
@@ -32,6 +33,7 @@ declare var cordova;
 })
 export class BeanGeneralInformationComponent implements OnInit {
   @Input() public data: Bean;
+  public initialBeanData: Bean;
   @Output() public dataChange = new EventEmitter<Bean>();
   @ViewChild('beanStars', { read: NgxStarsComponent, static: false })
   public beanStars: NgxStarsComponent;
@@ -56,13 +58,15 @@ export class BeanGeneralInformationComponent implements OnInit {
     private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly uiSettingsStorage: UISettingsStorage,
-    public readonly uiHelper: UIHelper
+    public readonly uiHelper: UIHelper,
+    public readonly uiBeanHelper: UIBeanHelper
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
 
   public ngOnInit() {
     this.maxBeanRating = this.settings.bean_rating;
+    this.initialBeanData = this.uiHelper.cloneData(this.data);
     setTimeout(() => {
       if (this.beanStars && this.beanStars.setRating) {
         this.beanStars.setRating(this.data.roast_range);

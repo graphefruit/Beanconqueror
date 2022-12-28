@@ -62,14 +62,13 @@ import ChartStreaming from 'chartjs-plugin-streaming';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import annotationPlugin from 'chartjs-plugin-annotation';
 
-import {
-  CoffeeBluetoothServiceEvent,
-  Logger,
-  PressureType,
-  ScaleType,
-} from '@graphefruit/coffee-bluetooth-devices';
-import { CoffeeBluetoothDevicesService } from '@graphefruit/coffee-bluetooth-devices';
 import { UIToast } from '../services/uiToast';
+import {
+  CoffeeBluetoothDevicesService,
+  CoffeeBluetoothServiceEvent,
+} from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { PressureType, ScaleType } from '../classes/devices';
+import { Logger } from '../classes/devices/common/logger';
 
 declare var AppRate;
 declare var window;
@@ -192,6 +191,12 @@ export class AppComponent implements AfterViewInit {
     brew_parameter: {
       title: 'NAV_BREW_PARAMS',
       url: '/brew-parameter',
+      icon: 'construct-outline',
+      active: false,
+    },
+    bean_parameter: {
+      title: 'NAV_BEAN_PARAMS',
+      url: '/bean-parameter',
       icon: 'construct-outline',
       active: false,
     },

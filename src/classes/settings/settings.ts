@@ -17,7 +17,10 @@ import { ListViewBrewParameter } from '../parameter/listViewBrewParameter';
 import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
 
 import { IBrewGraphs } from '../../interfaces/brew/iBrewGraphs';
-import { PressureType, ScaleType } from '@graphefruit/coffee-bluetooth-devices';
+
+import { BeanManageParameter } from '../parameter/beanManageParameter';
+import { PressureType, ScaleType } from '../devices';
+import { BeanListViewParameter } from '../parameter/beanListViewParameter';
 
 export class Settings implements ISettings {
   public brew_view: BREW_VIEW_ENUM;
@@ -29,6 +32,9 @@ export class Settings implements ISettings {
   public default_last_coffee_parameters: DefaultBrewParameter;
   public visible_list_view_parameters: ListViewBrewParameter;
   public brew_order: OrderBrewParameter;
+
+  public bean_manage_parameters: BeanManageParameter;
+  public bean_visible_list_view_parameters: BeanListViewParameter;
   public config: Config;
   public language: string;
   public track_brew_coordinates: boolean;
@@ -155,6 +161,10 @@ export class Settings implements ISettings {
     this.default_last_coffee_parameters = new DefaultBrewParameter();
     this.visible_list_view_parameters = new ListViewBrewParameter();
     this.brew_order = new OrderBrewParameter();
+
+    this.bean_manage_parameters = new BeanManageParameter();
+    this.bean_visible_list_view_parameters = new BeanListViewParameter();
+
     this.language = '';
     this.matomo_analytics = undefined;
 
@@ -278,6 +288,18 @@ export class Settings implements ISettings {
     Object.assign(
       this.default_last_coffee_parameters,
       settingsObj.default_last_coffee_parameters
+    );
+
+    this.bean_manage_parameters = new BeanManageParameter();
+    Object.assign(
+      this.bean_manage_parameters,
+      settingsObj.bean_manage_parameters
+    );
+
+    this.bean_visible_list_view_parameters = new BeanListViewParameter();
+    Object.assign(
+      this.bean_visible_list_view_parameters,
+      settingsObj.bean_visible_list_view_parameters
     );
   }
 

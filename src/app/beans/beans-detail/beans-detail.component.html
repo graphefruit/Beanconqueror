@@ -19,7 +19,7 @@
       <ion-label>{{"BEAN_TAB_GENERAL_INFORMATION" | translate }}
       </ion-label>
     </ion-segment-button>
-    <ion-segment-button value="sortinformation">
+    <ion-segment-button *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.bean_information)" value="sortinformation">
       <ion-label>{{"BEAN_TAB_SORT_INFORMATION" | translate }}
       </ion-label>
     </ion-segment-button>
@@ -110,39 +110,39 @@
     </div>
     <div *ngSwitchCase="'general'">
       <ion-card class="popover" style="display:flex; flex-direction: column;">
-        <ion-item>
+        <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.name)">
           <ion-label>
             <h2>{{"BEAN_DATA_NAME" | translate}}:</h2>
             <h3>{{data.name}}</h3>
           </ion-label>
         </ion-item>
-        <ion-item>
+        <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.roaster)">
           <ion-label>
             <h2>{{"BEAN_DATA_ROASTER" | translate}}:</h2>
             <h3>{{data.roaster}}</h3>
           </ion-label>
         </ion-item>
-        <ion-item>
+        <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.buyDate)">
           <ion-label>
             <h2>{{"BEAN_DATA_BUY_DATE" | translate}}:</h2>
             <h3 *ngIf="data.buyDate">{{data.buyDate | formatDate:["DD.MM.YYYY"]}}</h3>
             <h3 *ngIf="!data.buyDate">-</h3>
           </ion-label>
         </ion-item>
-        <ion-item>
+        <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.roastingDate)">
           <ion-label>
             <h2>{{"BEAN_DATA_ROASTING_DATE" | translate}}:</h2>
             <h3>{{data.roastingDate | formatDate:["DD.MM.YYYY"]}}</h3>
           </ion-label>
         </ion-item>
 
-        <ion-item>
+        <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.bean_roasting_type)">
           <ion-label>
             <h2>{{"BEAN_DATA_ROASTING_TYPE" | translate}}:</h2>
             <h3>{{"BEAN_ROASTING_TYPE_" + data.bean_roasting_type | translate}}</h3>
           </ion-label>
         </ion-item>
-        <ion-item>
+        <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.roast_range)">
           <ion-label  position="stacked" style="min-height:30px;">{{"BEAN_DATA_ROAST_NAME" | translate}}</ion-label>
           <ion-range disabled="true" [(ngModel)]="data.roast_range" snaps="true" max="5" min="0" step="0.5">
             <div slot="end">
@@ -150,7 +150,7 @@
             </div>
           </ion-range>
         </ion-item>
-        <ion-item>
+        <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.roast)">
           <ion-label>
             <h2>{{"BEAN_DATA_ROAST_NAME" | translate}}:</h2>
             <h3 *ngIf="bean.roast === getRoastEnum(roast_enum.CUSTOM_ROAST) && bean.roast !== getRoastEnum(roast_enum.UNKNOWN)">
@@ -163,7 +163,7 @@
             </h3>
           </ion-label>
         </ion-item>
-        <ion-item>
+        <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.rating)">
           <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
             style="vertical-align: top;">{{data.rating}}</ion-badge>
           </ion-label>
@@ -178,7 +178,7 @@
           </ion-range>
         </ion-item>
 
-        <ion-item class="ion-margin-bottom">
+        <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.beanMix)" class="ion-margin-bottom">
           <ion-label>
             <h2>{{"BEAN_DATA_MIX" | translate}}:</h2>
             <h3>{{"BEAN_MIX_" + data.beanMix | translate}}</h3>
@@ -190,44 +190,44 @@
         <ion-item lines="none">
           <span class="ion-title ion-padding-top ion-no-padding-bottom">{{"BEAN_SORT_MORE_INFORMATION" | translate }}</span>
         </ion-item>
-        <ion-item>
+        <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.weight)">
           <ion-label>
             <h2>{{"BEAN_DATA_WEIGHT" | translate}}:</h2>
             <h3>{{data.weight}}</h3>
           </ion-label>
         </ion-item>
-        <ion-item>
+        <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.cost)">
           <ion-label>
             <h2>{{"BEAN_DATA_COST" | translate}}:</h2>
             <h3>{{data.cost}}</h3>
           </ion-label>
         </ion-item>
-        <ion-item>
+        <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.aromatics)">
           <ion-label>
             <h2>{{"BEAN_DATA_AROMATICS" | translate}}:</h2>
             <h3>{{data.aromatics}}</h3>
           </ion-label>
         </ion-item>
-        <ion-item>
+        <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.cupping_points)">
           <ion-label>
             <h2>{{"BEAN_DATA_CUPPING_POINTS" | translate}}:</h2>
             <h3>{{data.cupping_points}}</h3>
           </ion-label>
         </ion-item>
-        <ion-item>
+        <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.decaffeinated)">
           <ion-label>
             <h2>{{"BEAN_DATA_DECAFFEINATED" | translate}}:</h2>
           </ion-label>
           <ion-checkbox [(ngModel)]="data.decaffeinated" disabled="true"></ion-checkbox>
         </ion-item>
-        <ion-item button (click)="openURL()" lines="inset">
+        <ion-item (click)="openURL()" *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.url)" button lines="inset">
           <ion-label >
             <h2>{{"BEAN_DATA_URL" | translate}}:</h2>
             <h3>{{data.url}}</h3>
           </ion-label>
             <ion-icon *ngIf="data.url" style="position: relative; top: 5px;" name="globe-outline" slot="end"></ion-icon>
         </ion-item>
-        <ion-item>
+        <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.ean_article_number)">
           <ion-label>
             <h2>{{"BEAN_DATA_EAN" | translate}}:</h2>
             <h3>{{data.ean_article_number}}</h3>
@@ -239,13 +239,13 @@
           </ion-label>
           <ion-checkbox [(ngModel)]="data.finished" disabled="true"></ion-checkbox>
         </ion-item>
-        <ion-item  class="ion-margin-bottom">
+        <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.note)"  class="ion-margin-bottom">
           <ion-label>
             <h2>{{"NOTES" | translate}}:</h2>
             <pre>{{data.note}}</pre>
           </ion-label>
         </ion-item>
-        <div *ngIf="data?.attachments?.length > 0">
+        <div *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.attachments) && data?.attachments?.length > 0">
           <photo-view [(data)]="data"></photo-view>
         </div>
       </ion-card>
@@ -254,12 +254,6 @@
       <bean-detail-sort-information  *ngIf="data" [(data)]="data"></bean-detail-sort-information>
     </div>
   </div>
-
-
-
-
-
-
 </ion-content>
 <ion-footer class="ion-no-border">
   <ion-row>

@@ -14,6 +14,9 @@ import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { ServerBean } from '../../../models/bean/serverBean';
 import { UIAlert } from '../../../services/uiAlert';
+import { UIBeanHelper } from '../../../services/uiBeanHelper';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { Settings } from '../../../classes/settings/settings';
 
 @Component({
   selector: 'beans-add',
@@ -31,6 +34,7 @@ export class BeansAddComponent implements OnInit {
   @Input() private greenBean: GreenBean;
 
   public bean_segment = 'general';
+  public settings: Settings = undefined;
 
   constructor(
     private readonly modalController: ModalController,
@@ -42,8 +46,14 @@ export class BeansAddComponent implements OnInit {
     private readonly uiToast: UIToast,
     private readonly uiAnalytics: UIAnalytics,
     private readonly uiAlert: UIAlert,
-    private readonly platform: Platform
+    private readonly platform: Platform,
+    public readonly uiBeanHelper: UIBeanHelper,
+    private readonly uiSettingsStorage: UISettingsStorage
   ) {}
+
+  public ngOnInit() {
+    this.settings = this.uiSettingsStorage.getSettings();
+  }
 
   public async ionViewWillEnter() {
     this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ADD);
@@ -175,6 +185,4 @@ export class BeansAddComponent implements OnInit {
 
     return valid;
   }
-
-  public ngOnInit() {}
 }

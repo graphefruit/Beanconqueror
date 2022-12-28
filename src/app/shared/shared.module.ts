@@ -161,10 +161,12 @@ import { PhotoViewComponent } from '../../components/photo-view/photo-view.compo
 import { QrCodeScannerPopoverComponent } from '../../popover/qr-code-scanner-popover/qr-code-scanner-popover.component';
 import { PreparationToolModalSelectComponent } from '../preparation/preparation-tool-modal-select/preparation-tool-modal-select.component';
 import { PreparationToolOverlayDirective } from '../../directive/preparation-tool-overlay.directive';
-import { CoffeeBluetoothDevicesService } from '@graphefruit/coffee-bluetooth-devices';
 import { NgxGaugeModule } from 'ngx-gauge';
 import { SettingsPopoverBluetoothActionsComponent } from '../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
 import { BeanAssociatedBrewsComponent } from '../beans/bean-associated-brews/bean-associated-brews.component';
+import { BeanParameterPage } from '../bean-parameter/bean-parameter.page';
+import { BeanListViewParameterComponent } from '../bean-parameter/bean-list-view-parameter/bean-list-view-parameter.component';
+import { BeanManageParameterComponent } from '../bean-parameter/bean-manage-parameter/bean-manage-parameter.component';
 
 @NgModule({
   declarations: [
@@ -172,6 +174,7 @@ import { BeanAssociatedBrewsComponent } from '../beans/bean-associated-brews/bea
     StatisticPage,
     HomePage,
     BrewParameterPage,
+    BeanParameterPage,
     DashboardPage,
     RoastingSectionPage,
     WaterSectionPage,
@@ -207,6 +210,8 @@ import { BeanAssociatedBrewsComponent } from '../beans/bean-associated-brews/bea
     DefaultParameterComponent,
     SortParameterComponent,
     ManageParameterComponent,
+    BeanListViewParameterComponent,
+    BeanManageParameterComponent,
     HelperBrewRatioComponent,
     HelperWaterHardnessComponent,
     BrewCuppingComponent,
@@ -362,6 +367,7 @@ import { BeanAssociatedBrewsComponent } from '../beans/bean-associated-brews/bea
     StatisticPage,
     HomePage,
     BrewParameterPage,
+    BeanParameterPage,
     BeansPage,
     HelperPage,
     RoastingSectionPage,
@@ -396,6 +402,8 @@ import { BeanAssociatedBrewsComponent } from '../beans/bean-associated-brews/bea
     DefaultParameterComponent,
     SortParameterComponent,
     ManageParameterComponent,
+    BeanListViewParameterComponent,
+    BeanManageParameterComponent,
     HelperBrewRatioComponent,
     HelperWaterHardnessComponent,
     BrewCuppingComponent,

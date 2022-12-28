@@ -21,7 +21,6 @@
     "@angular/platform-browser": "^14.1.0",
     "@angular/platform-browser-dynamic": "^14.1.0",
     "@angular/router": "^14.1.0",
-    "@graphefruit/coffee-bluetooth-devices": "file:../../graphefruit-coffee-bluetooth-devices-0.0.1.tgz",
     "@ionic-native/android-permissions": "^5.33.1",
     "@ionic-native/app-minimize": "^5.33.1",
     "@ionic-native/app-version": "^5.33.1",

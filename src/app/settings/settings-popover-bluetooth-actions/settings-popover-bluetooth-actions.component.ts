@@ -3,8 +3,8 @@ import { Settings } from '../../../classes/settings/settings';
 import { ModalController, NavParams } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { CoffeeBluetoothDevicesService } from '@graphefruit/coffee-bluetooth-devices';
 import { UIAlert } from '../../../services/uiAlert';
+import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 
 @Component({
   selector: 'app-settings-popover-bluetooth-actions',

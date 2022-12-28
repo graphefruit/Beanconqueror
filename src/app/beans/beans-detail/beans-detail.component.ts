@@ -13,6 +13,7 @@ import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import moment from 'moment';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
+import { UIBeanHelper } from '../../../services/uiBeanHelper';
 
 @Component({
   selector: 'app-beans-detail',
@@ -34,12 +35,15 @@ export class BeansDetailComponent implements OnInit {
 
   public settings: Settings = undefined;
   public bean_segment = 'general';
+
   constructor(
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
     public uiHelper: UIHelper,
     private readonly uiAnalytics: UIAnalytics,
-    private readonly uiSettings: UISettingsStorage
+    private readonly uiSettings: UISettingsStorage,
+    public readonly uiBeanHelper: UIBeanHelper,
+    private readonly uiSettingsStorage: UISettingsStorage
   ) {}
 
   public ionViewWillEnter() {
@@ -48,7 +52,7 @@ export class BeansDetailComponent implements OnInit {
       BEAN_TRACKING.ACTIONS.DETAIL
     );
     this.bean = this.navParams.get('bean');
-    this.settings = this.uiSettings.getSettings();
+
     if (this.bean) {
       const copy: IBean = this.uiHelper.copyData(this.bean);
       this.data.initializeByObject(copy);
@@ -56,7 +60,10 @@ export class BeansDetailComponent implements OnInit {
     this.beanStars.setRating(this.data.roast_range);
     this.beanRating.setRating(this.data.rating);
   }
-  public ngOnInit() {}
+  public ngOnInit() {
+    this.settings = this.uiSettingsStorage.getSettings();
+  }
+
   public dismiss(): void {
     this.modalController.dismiss(
       {

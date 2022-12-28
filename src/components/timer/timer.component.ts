@@ -12,8 +12,8 @@ import { DatetimePopoverComponent } from '../../popover/datetime-popover/datetim
 import moment from 'moment';
 import { ModalController } from '@ionic/angular';
 import { Settings } from '../../classes/settings/settings';
-import { CoffeeBluetoothDevicesService } from '@graphefruit/coffee-bluetooth-devices';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 
 @Component({
   selector: 'timer',
