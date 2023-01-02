@@ -127,7 +127,7 @@ export class SkaleScale extends BluetoothScale {
       SkaleScale.SERVICE_UUID,
       SkaleScale.READ_CHAR_UUID,
       async (_data: any) => {
-        this.parseStatusUpdate(new Uint8Array(_data));
+        this.parseStatusUpdate(_data);
       },
       (_data: any) => {}
     );
@@ -136,17 +136,14 @@ export class SkaleScale extends BluetoothScale {
     await this.setGrams();
   }
 
-  private parseStatusUpdate(buf: Uint8Array) {
-    const dataLength = buf[0];
-    const manufacturerData = buf[1];
-    const serviceHeader1 = buf[2];
-    const serviceHeader2 = buf[3];
-    const weight1 = buf[4];
-    const weight2 = buf[5];
-    const weight3 = buf[6];
-    const weight4 = buf[7];
-    // timer state is also in buffer, but currently not read by this implemenation
+  private parseStatusUpdate(_data: any) {
+    const scaleData = new Int8Array(_data);
+    const uScaleData = new Uint8Array(_data);
+    let newWeight = (uScaleData[2] << 8) + uScaleData[1];
+    if (newWeight > 2001) {
+      newWeight = (scaleData[2] << 8) + scaleData[1];
+    }
 
-    this.setWeight(1 / 10);
+    this.setWeight(newWeight / 10);
   }
 }
