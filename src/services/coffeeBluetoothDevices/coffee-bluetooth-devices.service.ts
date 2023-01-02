@@ -18,6 +18,7 @@ import { Observable, Subject } from 'rxjs';
 import { LunarScale } from '../../classes/devices/lunarScale';
 import { PopsiclePressure } from '../../classes/devices/popsiclePressure';
 import { JimmyScale } from '../../classes/devices/jimmyScale';
+import { SkaleScale } from '../../classes/devices/skale';
 
 declare var device: any;
 declare var ble: any;
@@ -182,7 +183,8 @@ export class CoffeeBluetoothDevicesService {
             LunarScale.test(device) ||
             JimmyScale.test(device) ||
             FelicitaScale.test(device) ||
-            EurekaPrecisaScale.test(device)
+            EurekaPrecisaScale.test(device) ||
+            SkaleScale.test(device)
           ) {
             // We found all needed devices.
             devices.push(device);
@@ -367,6 +369,11 @@ export class CoffeeBluetoothDevicesService {
             resolve({ id: device.id, type: ScaleType.EUREKAPRECISA });
             return;
           }
+          if (SkaleScale.test(device)) {
+            this.logger.log('BleManager - We found a skale scale');
+            resolve({ id: device.id, type: ScaleType.SKALE });
+            return;
+          }
         }
         resolve(undefined);
       }
@@ -401,6 +408,13 @@ export class CoffeeBluetoothDevicesService {
             supportedDevices.push({
               id: device.id,
               type: ScaleType.EUREKAPRECISA,
+            });
+          }
+          if (SkaleScale.test(device)) {
+            this.logger.log('BleManager - We found a skale scale');
+            supportedDevices.push({
+              id: device.id,
+              type: ScaleType.SKALE,
             });
           }
         }

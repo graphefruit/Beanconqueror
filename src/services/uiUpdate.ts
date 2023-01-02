@@ -49,6 +49,20 @@ export class UIUpdate {
     private readonly uiHelper: UIHelper
   ) {}
 
+  public async checkUpdate() {
+    this.uiLog.info('Check updates');
+    const hasData: boolean = await this.uiStorage.hasData();
+    await this.__checkUpdateForDataVersion('UPDATE_1', !hasData);
+    await this.__checkUpdateForDataVersion('UPDATE_2', !hasData);
+    await this.__checkUpdateForDataVersion('UPDATE_3', !hasData);
+    await this.__checkUpdateForDataVersion('UPDATE_4', !hasData);
+    await this.__checkUpdateForDataVersion('UPDATE_5', !hasData);
+    await this.__checkUpdateForDataVersion('UPDATE_6', !hasData);
+    await this.__checkUpdateForDataVersion('UPDATE_7', !hasData);
+    await this.__checkUpdateForDataVersion('UPDATE_8', !hasData);
+    await this.__checkUpdateForDataVersion('UPDATE_9', !hasData);
+  }
+
   private async __updateDataVersion(_version): Promise<boolean> {
     const promise: Promise<boolean> = new Promise(async (resolve, reject) => {
       try {
@@ -464,6 +478,21 @@ export class UIUpdate {
             await this.uiSettingsStorage.saveSettings(settings_v8);
 
             break;
+
+          case 'UPDATE_9':
+            const beansList: Array<Bean> = this.uiBeanStorage.getAllEntries();
+            if (beansList.length > 0) {
+              this.uiLog.info(
+                'Update 9 - We found more then zero beans, therefore its an existing instance, we need to update the beans, so the user will see all details again'
+              );
+              // Already existing installation which has more then one bean.
+              const settings_v9: any = this.uiSettingsStorage.getSettings();
+              settings_v9.bean_manage_parameters.activateAll();
+              settings_v9.bean_visible_list_view_parameters.activateAll();
+              await this.uiSettingsStorage.saveSettings(settings_v9);
+            }
+            break;
+
           default:
             break;
         }
@@ -514,21 +543,8 @@ export class UIUpdate {
     }
 
     if (somethingUpdated) {
-      await this.uiVersionStorage.saveVersion(version);
+      //await this.uiVersionStorage.saveVersion(version);
     }
-  }
-
-  public async checkUpdate() {
-    this.uiLog.info('Check updates');
-    const hasData: boolean = await this.uiStorage.hasData();
-    await this.__checkUpdateForDataVersion('UPDATE_1', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_2', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_3', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_4', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_5', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_6', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_7', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_8', !hasData);
   }
 
   public async checkUpdateScreen(): Promise<any> {

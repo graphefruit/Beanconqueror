@@ -19,6 +19,8 @@ export class DecentScale extends BluetoothScale {
   private tareCounter: number = 0;
   private buffer: Uint8Array;
 
+  private apiVersion: string = undefined;
+
   constructor(data: PeripheralData) {
     super(data);
     this.batteryLevel = 0;
@@ -178,6 +180,29 @@ export class DecentScale extends BluetoothScale {
       DecentScale.READ_SERVICE_UUID,
       DecentScale.READ_CHAR_UUID,
       async (_data: any) => {
+        if (this.apiVersion === undefined) {
+          this.blueToothParentlogger.log('Determinate decent api version');
+          try {
+            if (_data.byteLength === 10) {
+              this.blueToothParentlogger.log(
+                'Determinating decent scale api version - byte length 10'
+              );
+              this.apiVersion = '>1.3';
+              // API Version > 1.3
+            } else if (_data.byteLength === 7) {
+              // API version < 1.3
+              this.blueToothParentlogger.log(
+                'Determinating decent scale api version - byte length 7'
+              );
+              this.apiVersion = '<1.3';
+            }
+          } catch (ex) {
+            this.blueToothParentlogger.log(
+              'Error determinating decent scale api version'
+            );
+            this.apiVersion = '<1.3';
+          }
+        }
         const scaleData = new Int8Array(_data);
         const uScaleData = new Uint8Array(_data);
         // console.log("Received: " + scaleData[1] + " - " + scaleData[2] + " - "+ scaleData[3]);

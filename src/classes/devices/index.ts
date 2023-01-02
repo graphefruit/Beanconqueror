@@ -9,6 +9,7 @@ import { PopsiclePressure } from './popsiclePressure';
 import { TransducerDirectPressure } from './transducerDirectPressure';
 import { EurekaPrecisaScale } from './eurekaPrecisaScale';
 import { PrsPressure } from './prsPressure';
+import { SkaleScale } from './skale';
 export { BluetoothScale, SCALE_TIMER_COMMAND } from './bluetoothDevice';
 
 export enum ScaleType {
@@ -17,6 +18,7 @@ export enum ScaleType {
   JIMMY = 'JIMMY',
   FELICITA = 'FELICITA',
   EUREKAPRECISA = 'EUREKAPRECISA',
+  SKALE = 'SKALE',
 }
 
 export enum PressureType {
@@ -40,6 +42,8 @@ export function makeDevice(
       return new FelicitaScale(data);
     case ScaleType.EUREKAPRECISA:
       return new EurekaPrecisaScale(data);
+    case ScaleType.SKALE:
+      return new SkaleScale(data);
     default:
       return null;
   }
