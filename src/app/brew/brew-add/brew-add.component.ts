@@ -26,9 +26,10 @@ import { UIAlert } from '../../../services/uiAlert';
 import { BrewTrackingService } from '../../../services/brewTracking/brew-tracking.service';
 import BREW_TRACKING from '../../../data/tracking/brewTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
-import { BrewPopoverActionsComponent } from '../brew-popover-actions/brew-popover-actions.component';
-import { BREW_ACTION } from '../../../enums/brews/brewAction';
+
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
+import { BluetoothScale, SCALE_TIMER_COMMAND } from '../../../classes/devices';
+import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 
 @Component({
   selector: 'brew-add',
@@ -67,7 +68,8 @@ export class BrewAddComponent implements OnInit {
     private readonly insomnia: Insomnia,
     private readonly uiAlert: UIAlert,
     private readonly brewTracking: BrewTrackingService,
-    private readonly uiAnalytics: UIAnalytics
+    private readonly uiAnalytics: UIAnalytics,
+    private readonly bleManager: CoffeeBluetoothDevicesService
   ) {
     // Initialize to standard in drop down
 
@@ -161,6 +163,7 @@ export class BrewAddComponent implements OnInit {
   }
 
   public async dismiss() {
+    this.stopScaleTimer();
     this.modalController.dismiss(
       {
         dismissed: true,
@@ -168,6 +171,12 @@ export class BrewAddComponent implements OnInit {
       undefined,
       BrewAddComponent.COMPONENT_ID
     );
+  }
+  private stopScaleTimer() {
+    const scale: BluetoothScale = this.bleManager.getScale();
+    if (scale) {
+      scale.setTimer(SCALE_TIMER_COMMAND.STOP);
+    }
   }
 
   public async finish() {

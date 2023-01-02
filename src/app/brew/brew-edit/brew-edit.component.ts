@@ -15,6 +15,8 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Insomnia } from '@ionic-native/insomnia/ngx';
 import { Settings } from '../../../classes/settings/settings';
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
+import { BluetoothScale, SCALE_TIMER_COMMAND } from '../../../classes/devices';
+import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 
 @Component({
   selector: 'brew-edit',
@@ -39,7 +41,8 @@ export class BrewEditComponent implements OnInit {
     private readonly brewTracking: BrewTrackingService,
     private readonly uiAnalytics: UIAnalytics,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly insomnia: Insomnia
+    private readonly insomnia: Insomnia,
+    private readonly bleManager: CoffeeBluetoothDevicesService
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
@@ -68,6 +71,7 @@ export class BrewEditComponent implements OnInit {
   }
 
   public dismiss(): void {
+    this.stopScaleTimer();
     this.modalController.dismiss(
       {
         dismissed: true,
@@ -75,6 +79,12 @@ export class BrewEditComponent implements OnInit {
       undefined,
       BrewEditComponent.COMPONENT_ID
     );
+  }
+  private stopScaleTimer() {
+    const scale: BluetoothScale = this.bleManager.getScale();
+    if (scale) {
+      scale.setTimer(SCALE_TIMER_COMMAND.STOP);
+    }
   }
 
   public async updateBrew() {
