@@ -1313,6 +1313,7 @@
   "DOWNLOAD_JSON": "Download JSON",
   "NAV_BEAN_PARAMS": "Bean parameter",
   "BEAN_DATA_ROAST_NAME_TYPE": "Roasting type",
+  "ENABLE_BEAN_SORT_INFORMATION": "Enable sort information",
   "BEAN_SORT_MIX": "Bean mix",
   "PAGE_MANAGE_BEAN_PARAMETERS_DESCRIPTION": "Mark parameters to be shown when editing bean information.",
   "PAGE_BEAN_LIST_VIEW_CUSTOM_PARAMETERS_DESCRIPTION": "Decice which parameter of your bean, should be displayed on the list view tiles"

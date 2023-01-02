@@ -71,4 +71,39 @@ export class BeanListViewParameter implements IBeanParameter {
     this.purchasing_price = false;
     this.fob_price = false;
   }
+
+  public activateAll() {
+    this.name = true;
+    this.buyDate = true;
+    this.roastingDate = true;
+    this.beanMix = true;
+    this.aromatics = true;
+    this.note = true;
+    this.roaster = true;
+    this.roast = true;
+    this.roast_range = true;
+    this.weight = true;
+    this.cost = true;
+    this.attachments = true;
+    this.url = true;
+    this.ean_article_number = true;
+    this.cupping_points = true;
+    this.decaffeinated = true;
+    this.bean_roasting_type = true;
+    this.rating = true;
+
+    this.bean_information = true;
+    this.country = true;
+    this.region = true;
+    this.farm = true;
+    this.farmer = true;
+    this.elevation = true;
+    this.harvest_time = true;
+    this.variety = true;
+    this.processing = true;
+    this.certification = true;
+    this.percentage = true;
+    this.purchasing_price = true;
+    this.fob_price = true;
+  }
 }
