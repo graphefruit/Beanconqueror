@@ -1346,5 +1346,7 @@
   "BEAN_DATA_PERCENTAGE_TOOLTIP": "How much percentage of these beans are in the bag",
   "BEAN_DATA_CERTIFICATION_TOOLTIP": "Which certificate has these beans (fairtrade e.g.) ",
   "BEAN_DATA_PURCHASING_PRICE_TOOLTIP": "What was the purchasing price from the roaster for this bean",
-  "BEAN_DATA_FOB_PRICE_TOOLTIP": "What was the free on board price when purchased by the roaster"
+  "BEAN_DATA_FOB_PRICE_TOOLTIP": "What was the free on board price when purchased by the roaster",
+  "BEAN_PARAMETER_CUSTOMIZE_TITLE": "Customize your bean information which you want to use",
+  "BEAN_PARAMETER_CUSTOMIZE_DESCRIPTION": "A lot of bean information can be entered or used. Choose your own parameters you want to fill in, and also which shall be displayed"
 }
