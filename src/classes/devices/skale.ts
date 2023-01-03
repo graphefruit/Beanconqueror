@@ -88,8 +88,7 @@ export class SkaleScale extends BluetoothScale {
   }
 
   public override async setTimer(_timer: SCALE_TIMER_COMMAND) {
-    // Jimmy scale only supports a toggle timer command [0x05, 0x00]
-    // therefore we don't use its timer to avoid drift between scale timer and app timer state in case of conn problems
+    //Not supported but needed
   }
 
   public override getWeight() {
@@ -131,6 +130,7 @@ export class SkaleScale extends BluetoothScale {
       },
       (_data: any) => {}
     );
+    // We need to put LED on on first conneciton, aswell as starting the current weight and toggling mode to grams.
     await this.setLed(true);
     await this.displayCurrentWeight();
     await this.setGrams();
