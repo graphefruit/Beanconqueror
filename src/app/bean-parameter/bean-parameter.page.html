@@ -9,6 +9,12 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
+  <ion-card class="ion-padding">
+    <ion-card-title>{{"BEAN_PARAMETER_CUSTOMIZE_TITLE" | translate}}</ion-card-title>
+    <ion-card-content class="ion-no-padding">
+      {{"BEAN_PARAMETER_CUSTOMIZE_DESCRIPTION" | translate}}
+    </ion-card-content>
+  </ion-card>
   <ion-card (click)="openManageParameters()" tappable>
     <ion-item class="ion-padding-horizontal" lines="none">
       <ion-icon name="beanconqueror-manage-parameter" slot="start"></ion-icon>
