@@ -69,30 +69,22 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy {
 
   public async ngAfterViewInit() {
     this.settings = this.uiSettingsStorage.getSettings();
-    this.flowChartEl.options.responsive = false;
-    this.flowChartEl.update('quite');
 
-    setTimeout(() => {
-      const offsetWidth = document.getElementById('brewPanel').offsetWidth;
+    if (this.isDetail === false) {
+      setTimeout(() => {
+        const offsetWidth = document.getElementById('brewPanel').offsetWidth;
 
-      // -16 because of padding
-      this.gaugeSize = offsetWidth - 16;
-    }, 1000);
+        // -16 because of padding
+        this.gaugeSize = offsetWidth - 16;
+      }, 1000);
 
-    this.gaugeLabel = this.translate.instant('BREW_PRESSURE_FLOW');
+      this.gaugeLabel = this.translate.instant('BREW_PRESSURE_FLOW');
+    }
     await new Promise((resolve) => {
       setTimeout(() => {
         document
           .getElementById('brewFlowContainer')
-          .append(this.flowChartEl.ctx.canvas);
-        resolve(undefined);
-      }, 50);
-    });
-
-    await new Promise((resolve) => {
-      setTimeout(() => {
-        this.flowChartEl.options.responsive = true;
-        this.flowChartEl.update('quite');
+          .append(document.getElementById('flowProfileChart'));
         resolve(undefined);
       }, 50);
     });
@@ -102,7 +94,8 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy {
       setTimeout(() => {
         const newHeight =
           document.getElementById('brewFlowContainer').offsetHeight;
-        this.flowChartEl.ctx.canvas.style.height = newHeight - 1 + 'px';
+        document.getElementById('flowProfileChart').style.height =
+          newHeight - 1 + 'px';
 
         resolve(undefined);
       }, 100);
@@ -136,6 +129,13 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy {
         this.brew.getPreparation().style_type ===
           PREPARATION_STYLE_TYPE.ESPRESSO;
     }
+    setTimeout(() => {
+      if (this.isDetail) {
+        this.brewComponent.initializeFlowChart();
+      } else {
+        this.brewComponent.updateChart();
+      }
+    }, 150);
   }
   public pressureDeviceConnected() {
     if (!this.platform.is('cordova')) {
@@ -205,9 +205,6 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy {
       this.brewPressureGraphSubscription.unsubscribe();
       this.brewPressureGraphSubscription = undefined;
     }
-
-    this.flowChartEl.maintainAspectRatio = false;
-    this.flowChartEl.update('quite');
   }
 
   public resetPressure() {

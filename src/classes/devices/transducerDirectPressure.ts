@@ -59,7 +59,7 @@ export class TransducerDirectPressure extends PressureDevice {
       TransducerDirectPressure.PRESSURE_SERVICE_UUID,
       TransducerDirectPressure.PRESSURE_CHAR_UUID,
       (_data: any) => {
-        const v = new Uint16Array(_data);
+        const v = new Int16Array(_data);
 
         const psi = swap16(v[0]) / 10;
         this.setPressure(psiToBar(psi), _data, v);

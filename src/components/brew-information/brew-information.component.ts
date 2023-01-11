@@ -34,7 +34,7 @@ import { BrewTrackingService } from '../../services/brewTracking/brew-tracking.s
 import { UIHealthKit } from '../../services/uiHealthKit';
 import * as htmlToImage from 'html-to-image';
 import { Visualizer } from '../../classes/visualizer/visualizer';
-import moment from 'moment';
+
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { BrewFlow } from '../../classes/brew/brewFlow';
 declare var window;
