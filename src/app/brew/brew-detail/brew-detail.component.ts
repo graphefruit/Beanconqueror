@@ -29,7 +29,9 @@ import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { BrewFlowComponent } from '../brew-flow/brew-flow.component';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import moment from 'moment';
-
+import BeanconquerorFlowTestDataDummy from '../../../assets/BeanconquerorFlowTestData.json';
+import { UILog } from '../../../services/uiLog';
+declare var Plotly;
 @Component({
   selector: 'brew-detail',
   templateUrl: './brew-detail.component.html',
@@ -45,10 +47,14 @@ export class BrewDetailComponent implements OnInit {
   @ViewChild('cuppingChart', { static: false }) public cuppingChart;
   private brew: IBrew;
   public loaded: boolean = false;
-  @ViewChild('flowProfileChart', { static: false }) public flowProfileChart;
-  public flowProfileChartEl: any = undefined;
 
   public flow_profile_raw: BrewFlow = new BrewFlow();
+
+  private weightTrace: any;
+  private flowPerSecondTrace: any;
+  private realtimeFlowTrace: any;
+  private pressureTrace: any;
+  private maximizeFlowGraphIsShown: boolean = false;
   constructor(
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
@@ -66,7 +72,8 @@ export class BrewDetailComponent implements OnInit {
     private readonly socialSharing: SocialSharing,
     private readonly platform: Platform,
     private readonly screenOrientation: ScreenOrientation,
-    private readonly alertCtrl: AlertController
+    private readonly alertCtrl: AlertController,
+    private readonly uiLog: UILog
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -122,6 +129,9 @@ export class BrewDetailComponent implements OnInit {
     return this.uiBrewHelper.showSectionBeforeBrew(this.getPreparation());
   }
   public dismiss(): void {
+    try {
+      Plotly.purge('flowProfileChart');
+    } catch (ex) {}
     this.modalController.dismiss(
       {
         dismissed: true,
@@ -163,249 +173,150 @@ export class BrewDetailComponent implements OnInit {
       this.uiBrewHelper.getCuppingChartData(this.data) as any
     );
   }
-  private initializeFlowChart(): void {
+
+  public initializeFlowChart(): void {
     setTimeout(() => {
-      if (this.flowProfileChartEl) {
-        this.flowProfileChartEl.destroy();
-        this.flowProfileChartEl = undefined;
+      let graphSettings = this.settings.graph.FILTER;
+      if (
+        this.data.getPreparation().style_type ===
+        PREPARATION_STYLE_TYPE.ESPRESSO
+      ) {
+        graphSettings = this.settings.graph.ESPRESSO;
       }
-      if (this.flowProfileChartEl === undefined) {
-        let graphSettings = this.settings.graph.FILTER;
-        if (
-          this.data.getPreparation().style_type ===
-          PREPARATION_STYLE_TYPE.ESPRESSO
-        ) {
-          graphSettings = this.settings.graph.ESPRESSO;
+
+      this.weightTrace = {
+        x: [],
+        y: [],
+        name: this.translate.instant('BREW_FLOW_WEIGHT'),
+        yaxis: 'y',
+        type: 'scatter',
+        line: {
+          shape: 'spline',
+          color: '#cdc2ac',
+          width: 1,
+        },
+        visible: graphSettings.weight ? true : 'legendonly',
+      };
+      this.flowPerSecondTrace = {
+        x: [],
+        y: [],
+        name: this.translate.instant('BREW_FLOW_WEIGHT_PER_SECOND'),
+        yaxis: 'y2',
+        type: 'scatter',
+        line: {
+          shape: 'spline',
+          color: '#7F97A2',
+          width: 1,
+        },
+        visible: graphSettings.calc_flow ? true : 'legendonly',
+      };
+
+      this.realtimeFlowTrace = {
+        x: [],
+        y: [],
+        name: this.translate.instant('BREW_FLOW_WEIGHT_REALTIME'),
+        yaxis: 'y2',
+        type: 'scatter',
+        line: {
+          shape: 'spline',
+          color: '#09485D',
+          width: 1,
+        },
+        visible: graphSettings.realtime_flow ? true : 'legendonly',
+      };
+
+      this.pressureTrace = {
+        x: [],
+        y: [],
+        name: this.translate.instant('BREW_PRESSURE_FLOW'),
+        yaxis: 'y4',
+        type: 'scatter',
+        line: {
+          shape: 'spline',
+          color: '#05C793',
+          width: 1,
+        },
+        visible: graphSettings.pressure ? true : 'legendonly',
+      };
+      const startingDay = moment(new Date()).startOf('day');
+      // IF brewtime has some seconds, we add this to the delay directly.
+
+      let firstTimestamp;
+      if (this.flow_profile_raw.weight.length > 0) {
+        firstTimestamp = this.flow_profile_raw.weight[0].timestamp;
+      } else {
+        firstTimestamp = this.flow_profile_raw.pressureFlow[0].timestamp;
+      }
+      const delay =
+        moment(firstTimestamp, 'HH:mm:ss.SSS').toDate().getTime() -
+        startingDay.toDate().getTime();
+      if (this.flow_profile_raw.weight.length > 0) {
+        for (const data of this.flow_profile_raw.weight) {
+          this.weightTrace.x.push(
+            new Date(
+              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay
+            )
+          );
+          this.weightTrace.y.push(data.actual_weight);
         }
-
-        const drinkingData = {
-          labels: [],
-          datasets: [
-            {
-              label: this.translate.instant('BREW_FLOW_WEIGHT'),
-              data: [],
-              borderColor: 'rgb(205,194,172)',
-              backgroundColor: 'rgb(205,194,172)',
-              yAxisID: 'y',
-              pointRadius: 0,
-              tension: 0,
-              borderWidth: 2,
-              hidden: !graphSettings.weight,
-            },
-            {
-              label: this.translate.instant('BREW_FLOW_WEIGHT_PER_SECOND'),
-              data: [],
-              borderColor: 'rgb(127,151,162)',
-              backgroundColor: 'rgb(127,151,162)',
-              yAxisID: 'y1',
-              spanGaps: true,
-              pointRadius: 0,
-              tension: 0,
-              borderWidth: 2,
-              hidden: !graphSettings.calc_flow,
-            },
-            {
-              label: this.translate.instant('BREW_FLOW_WEIGHT_REALTIME'),
-              data: [],
-              borderColor: 'rgb(9,72,93)',
-              backgroundColor: 'rgb(9,72,93)',
-              yAxisID: 'y2',
-              spanGaps: true,
-              pointRadius: 0,
-              tension: 0,
-              borderWidth: 2,
-              hidden: !graphSettings.realtime_flow,
-            },
-          ],
-        };
-        if (
-          this.flow_profile_raw.pressureFlow &&
-          this.flow_profile_raw.pressureFlow.length > 0
-        ) {
-          drinkingData.datasets.push({
-            label: this.translate.instant('BREW_PRESSURE_FLOW'),
-            data: [],
-            borderColor: 'rgb(5,199,147)',
-            backgroundColor: 'rgb(5,199,147)',
-            yAxisID: 'y3',
-            spanGaps: true,
-            pointRadius: 0,
-            tension: 0,
-            borderWidth: 2,
-            hidden: !graphSettings.pressure,
-          });
+        for (const data of this.flow_profile_raw.waterFlow) {
+          this.flowPerSecondTrace.x.push(
+            new Date(
+              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay
+            )
+          );
+          this.flowPerSecondTrace.y.push(data.value);
         }
-        const suggestedMinFlow: number = 0;
-        let suggestedMaxFlow: number = 20;
-
-        const suggestedMinWeight: number = 0;
-        let suggestedMaxWeight: number = 300;
-        if (
-          this.data.getPreparation().style_type ===
-          PREPARATION_STYLE_TYPE.ESPRESSO
-        ) {
-          suggestedMaxFlow = 2.5;
-          suggestedMaxWeight = 30;
-        }
-        const chartOptions = {
-          plugins: {
-            backgroundColorPlugin: {},
-            zoom: {
-              pan: {
-                enabled: true,
-                mode: 'x',
-              },
-              zoom: {
-                wheel: {
-                  enabled: false,
-                },
-                drag: {
-                  enabled: true,
-                },
-                pinch: {
-                  enabled: true,
-                },
-                mode: 'x',
-              },
-            },
-          },
-          animation: true,
-          legend: {
-            display: false,
-            position: 'top',
-          },
-          responsive: true,
-          maintainAspectRatio: false,
-          interaction: {
-            mode: 'index',
-            intersect: false,
-          },
-          stacked: false,
-
-          scales: {
-            y: {
-              type: 'linear',
-              display: true,
-              position: 'left',
-              suggestedMin: suggestedMinWeight,
-              suggestedMax: suggestedMaxWeight,
-            },
-            y1: {
-              type: 'linear',
-              display: true,
-              position: 'right',
-              // grid line settings
-              grid: {
-                drawOnChartArea: false, // only want the grid lines for one axis to show up
-              },
-              suggestedMin: suggestedMinFlow,
-              suggestedMax: suggestedMaxFlow,
-            },
-            y2: {
-              // Real time flow
-              type: 'linear',
-              display: false,
-              position: 'right',
-              // grid line settings
-              grid: {
-                drawOnChartArea: false, // only want the grid lines for one axis to show up
-              },
-              suggestedMin: suggestedMinFlow,
-              suggestedMax: suggestedMaxFlow,
-            },
-            xAxis: {
-              ticks: {
-                maxTicksLimit: 10,
-              },
-            },
-          },
-        };
-
-        if (
-          this.flow_profile_raw.pressureFlow &&
-          this.flow_profile_raw.pressureFlow.length > 0
-        ) {
-          chartOptions.scales['y3'] = {
-            type: 'linear',
-            display: true,
-            position: 'right',
-            // grid line settings
-            grid: {
-              drawOnChartArea: false, // only want the grid lines for one axis to show up
-            },
-            // More then 12 bar should be strange.
-            suggestedMin: 0,
-            suggestedMax: 12,
-          };
-        }
-
-        this.flowProfileChartEl = new Chart(
-          this.flowProfileChart.nativeElement,
-          {
-            type: 'line',
-            data: drinkingData,
-            options: chartOptions,
-            plugins: [
-              {
-                id: 'backgroundColorPlugin',
-                beforeDraw: (chart, args, options) => {
-                  const ctx = chart.canvas.getContext('2d');
-                  ctx.save();
-                  ctx.globalCompositeOperation = 'destination-over';
-                  ctx.fillStyle = 'white';
-                  ctx.fillRect(0, 0, chart.width, chart.height);
-                  ctx.restore();
-                },
-              },
-            ],
-          } as any
-        );
-
-        if (this.flow_profile_raw.weight.length > 0) {
-          for (const data of this.flow_profile_raw.weight) {
-            this.flowProfileChartEl.data.datasets[0].data.push(
-              data.actual_weight
+        if (this.flow_profile_raw.realtimeFlow) {
+          for (const data of this.flow_profile_raw.realtimeFlow) {
+            this.realtimeFlowTrace.x.push(
+              new Date(
+                moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
+                  delay
+              )
             );
-
-            this.flowProfileChartEl.data.labels.push(data.brew_time);
+            this.realtimeFlowTrace.y.push(data.flow_value);
           }
-          for (const data of this.flow_profile_raw.waterFlow) {
-            this.flowProfileChartEl.data.datasets[1].data.push(data.value);
-          }
-          if (this.flow_profile_raw.realtimeFlow) {
-            for (const data of this.flow_profile_raw.realtimeFlow) {
-              this.flowProfileChartEl.data.datasets[2].data.push(
-                data.flow_value
-              );
-            }
-          }
-
-          if (
-            this.flow_profile_raw.pressureFlow &&
-            this.flow_profile_raw.pressureFlow.length > 0
-          ) {
-            for (const data of this.flow_profile_raw.pressureFlow) {
-              this.flowProfileChartEl.data.datasets[3].data.push(
-                data.actual_pressure
-              );
-            }
-          }
-
-          this.flowProfileChartEl.update();
         }
       }
-    }, 250);
+      if (
+        this.flow_profile_raw.pressureFlow &&
+        this.flow_profile_raw.pressureFlow.length > 0
+      ) {
+        for (const data of this.flow_profile_raw.pressureFlow) {
+          this.pressureTrace.x.push(
+            new Date(
+              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay
+            )
+          );
+          this.pressureTrace.y.push(data.actual_pressure);
+        }
+      }
+      const chartData = [
+        this.weightTrace,
+        this.flowPerSecondTrace,
+        this.realtimeFlowTrace,
+      ];
+
+      const layout = this.getChartLayout();
+      if (layout['yaxis4']) {
+        chartData.push(this.pressureTrace);
+      }
+
+      Plotly.newPlot(
+        'flowProfileChart',
+        chartData,
+        layout,
+        this.getChartConfig()
+      );
+    }, 100);
   }
+
   public async maximizeFlowGraph() {
     let actualOrientation;
     if (this.platform.is('cordova')) {
       actualOrientation = this.screenOrientation.type;
     }
-
-    const oldCanvasHeight = document.getElementById(
-      'canvasContainerBrew'
-    ).offsetHeight;
-
     await new Promise(async (resolve) => {
       if (this.platform.is('cordova')) {
         await this.screenOrientation.lock(
@@ -424,16 +335,14 @@ export class BrewDetailComponent implements OnInit {
       componentProps: {
         brewComponent: this,
         brew: this.data,
-        flowChartEl: this.flowProfileChartEl,
         isDetail: true,
       },
     });
+    this.maximizeFlowGraphIsShown = true;
     await modal.present();
     await modal.onWillDismiss().then(async () => {
+      this.maximizeFlowGraphIsShown = false;
       // If responsive would be true, the add of the container would result into 0 width 0 height, therefore the hack
-      this.flowProfileChartEl.options.responsive = false;
-
-      this.flowProfileChartEl.update();
 
       if (this.platform.is('cordova')) {
         if (
@@ -460,7 +369,7 @@ export class BrewDetailComponent implements OnInit {
         setTimeout(async () => {
           document
             .getElementById('canvasContainerBrew')
-            .append(this.flowProfileChartEl.ctx.canvas);
+            .append(document.getElementById('flowProfileChart'));
           resolve(undefined);
         }, 50);
       });
@@ -468,15 +377,107 @@ export class BrewDetailComponent implements OnInit {
       await new Promise((resolve) => {
         setTimeout(async () => {
           // If we would not set the old height, the graph would explode to big.
-          document.getElementById('canvasContainerBrew').style.height =
-            oldCanvasHeight + 'px';
-          this.flowProfileChartEl.options.responsive = true;
-          this.flowProfileChartEl.update();
+          this.initializeFlowChart();
           resolve(undefined);
         }, 50);
       });
-      this.flowProfileChartEl.resetZoom();
     });
+  }
+
+  public async shareFlowProfile() {
+    /* const fileShare: string = this.flowProfileChartEl.toBase64Image(
+      'image/jpeg',
+      1
+    );*/
+    Plotly.Snapshot.toImage(document.getElementById('flowProfileChart'), {
+      format: 'jpeg',
+    }).once('success', async (url) => {
+      try {
+        this.socialSharing.share(null, null, url, null);
+      } catch (err) {
+        this.uiLog.error('Cant share profilechart ' + err.message);
+      }
+    });
+  }
+
+  private getChartLayout() {
+    const xAxisVisible: boolean = true;
+
+    let chartWidth: number = undefined;
+    let chartHeight: number = 150;
+    if (this.maximizeFlowGraphIsShown === true) {
+      chartHeight = undefined;
+    }
+
+    let tickFormat = '%S';
+
+    if (this.data.brew_time > 59) {
+      tickFormat = '%M:' + tickFormat;
+    }
+    /*  yaxis3: {
+        title: '',
+        titlefont: {color: '#09485D'},
+        tickfont: {color: '#09485D'},
+        anchor: 'x',
+        overlaying: 'y',
+        side: 'right',
+        position: 1
+
+      },*/
+    const layout = {
+      width: chartWidth,
+      height: chartHeight,
+      margin: {
+        l: 20,
+        r: 20,
+        b: 20,
+        t: 20,
+        pad: 2,
+      },
+      showlegend: true,
+      legend: {
+        x: 0,
+        y: 1.3,
+        orientation: 'h',
+        font: {
+          family: 'Karla',
+          size: 10,
+          color: '#000',
+        },
+      },
+      xaxis: {
+        tickformat: tickFormat,
+        visible: xAxisVisible,
+        domain: [0.1, 0.9],
+      },
+      yaxis: {
+        title: '',
+        titlefont: { color: '#cdc2ac' },
+        tickfont: { color: '#cdc2ac' },
+      },
+      yaxis2: {
+        title: '',
+        titlefont: { color: '#7F97A2' },
+        tickfont: { color: '#7F97A2' },
+        anchor: 'x',
+        overlaying: 'y',
+        side: 'right',
+        position: 1,
+      },
+    };
+
+    if (this.flow_profile_raw.pressureFlow.length > 0) {
+      layout['yaxis4'] = {
+        title: '',
+        titlefont: { color: '#05C793' },
+        tickfont: { color: '#05C793' },
+        anchor: 'free',
+        overlaying: 'y',
+        side: 'right',
+        position: 0.95,
+      };
+    }
+    return layout;
   }
 
   public async downloadJSONProfile() {
@@ -505,26 +506,30 @@ export class BrewDetailComponent implements OnInit {
     await this.uiExcel.exportBrewFlowProfile(this.flow_profile_raw);
   }
 
-  private async readFlowProfile() {
-    if (this.data.flow_profile !== '') {
-      await this.uiAlert.showLoadingSpinner();
-      try {
-        const jsonParsed = await this.uiFileHelper.getJSONFile(
-          this.data.flow_profile
-        );
-        this.flow_profile_raw = jsonParsed;
-      } catch (ex) {}
-
-      await this.uiAlert.hideLoadingSpinner();
-    }
+  private getChartConfig() {
+    const config = {
+      displayModeBar: false, // this is the line that hides the bar.
+      responsive: true,
+    };
+    return config;
   }
 
-  public async shareFlowProfile() {
-    const fileShare: string = this.flowProfileChartEl.toBase64Image(
-      'image/jpeg',
-      1
-    );
-    this.socialSharing.share(null, null, fileShare, null);
+  private async readFlowProfile() {
+    if (this.platform.is('cordova')) {
+      if (this.data.flow_profile !== '') {
+        await this.uiAlert.showLoadingSpinner();
+        try {
+          const jsonParsed = await this.uiFileHelper.getJSONFile(
+            this.data.flow_profile
+          );
+          this.flow_profile_raw = jsonParsed;
+        } catch (ex) {}
+
+        await this.uiAlert.hideLoadingSpinner();
+      }
+    } else {
+      this.flow_profile_raw = BeanconquerorFlowTestDataDummy as any;
+    }
   }
 
   public getAvgFlow(): number {

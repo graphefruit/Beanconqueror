@@ -30,7 +30,7 @@ import { UIAnalytics } from '../../../services/uiAnalytics';
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
 import { BluetoothScale, SCALE_TIMER_COMMAND } from '../../../classes/devices';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-
+declare var Plotly;
 @Component({
   selector: 'brew-add',
   templateUrl: './brew-add.component.html',
@@ -164,6 +164,9 @@ export class BrewAddComponent implements OnInit {
 
   public async dismiss() {
     this.stopScaleTimer();
+    try {
+      Plotly.purge('flowProfileChart');
+    } catch (ex) {}
     this.modalController.dismiss(
       {
         dismissed: true,
