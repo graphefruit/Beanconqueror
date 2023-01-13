@@ -133,6 +133,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   private graphTimerTest: any = undefined;
 
+  private lastChartLayout: any = undefined;
+
   constructor(
     private readonly platform: Platform,
     private readonly uiSettingsStorage: UISettingsStorage,
@@ -1408,6 +1410,18 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         },
       });
     }
+    if (this.timer.getSeconds() >= 29) {
+      const chartLayout = this.getChartLayout();
+
+      const delay = moment(new Date()).startOf('day').toDate().getTime();
+      const delayedTime: number = moment(new Date())
+        .startOf('day')
+        .add('seconds', 60)
+        .toDate()
+        .getTime();
+      chartLayout.xaxis.range = [delay, delayedTime];
+      Plotly.relayout('flowProfileChart', chartLayout);
+    }
   }
 
   public initializeFlowChart(): void {
@@ -1485,15 +1499,15 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         this.realtimeFlowTrace,
       ];
 
-      const layout = this.getChartLayout();
-      if (layout['yaxis4']) {
+      this.lastChartLayout = this.getChartLayout();
+      if (this.lastChartLayout['yaxis4']) {
         chartData.push(this.pressureTrace);
       }
 
       Plotly.newPlot(
         'flowProfileChart',
         chartData,
-        layout,
+        this.lastChartLayout,
         this.getChartConfig()
       );
     }, 100);
@@ -1552,6 +1566,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
     }
 
+    const startRange = moment(new Date()).startOf('day').toDate().getTime();
+    const endRange: number = moment(new Date())
+      .startOf('day')
+      .add('seconds', 30)
+      .toDate()
+      .getTime();
+
     const layout = {
       width: chartWidth,
       height: chartHeight,
@@ -1575,14 +1596,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       },
       xaxis: {
         tickformat: tickFormat,
-        visible: xAxisVisible,
+        visible: true,
         domain: [0.1, 0.9],
         fixedrange: true,
         type: 'date',
-        range: [
-          this.startingFlowTime,
-          moment(this.startingFlowTime).add(3, 'seconds').toDate().getTime(),
-        ],
+        range: [startRange, endRange],
       },
       yaxis: {
         title: '',
@@ -1616,9 +1634,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         fixedrange: true,
         range: [0, 12],
       };
-    }
-    if (!window['layout']) {
-      window['layout'] = layout;
     }
 
     return layout;
