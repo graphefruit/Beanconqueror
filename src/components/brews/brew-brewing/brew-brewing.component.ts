@@ -58,6 +58,7 @@ import {
 } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
 import { BluetoothScale, SCALE_TIMER_COMMAND } from '../../../classes/devices';
+import { IBrewGraphs } from '../../../interfaces/brew/iBrewGraphs';
 
 declare var cordova;
 declare var Plotly;
@@ -125,15 +126,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   private brewPressureGraphSubject: EventEmitter<any> = new EventEmitter();
   private maximizeFlowGraphIsShown: boolean = false;
 
-  private weightTrace: any;
-  private flowPerSecondTrace: any;
-  private realtimeFlowTrace: any;
-  private pressureTrace: any;
+  public weightTrace: any;
+  public flowPerSecondTrace: any;
+  public realtimeFlowTrace: any;
+  public pressureTrace: any;
 
   private graphTimerTest: any = undefined;
 
   public lastChartLayout: any = undefined;
   public lastChartRenderingInstance: number = 0;
+  public graphSettings: IBrewGraphs = undefined;
 
   constructor(
     private readonly platform: Platform,
@@ -804,6 +806,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public async timerReset(_event) {
     const scale: BluetoothScale = this.bleManager.getScale();
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
+
     if (scale || pressureDevice) {
       await this.uiAlert.showLoadingSpinner();
       if (scale) {
@@ -1335,6 +1338,17 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
   }
 
+  public toggleChartLines(_type: string) {
+    if (_type === 'weight') {
+      this.weightTrace.visible = !this.weightTrace.visible;
+    } else if (_type === 'calc_flow') {
+      this.flowPerSecondTrace.visible = !this.flowPerSecondTrace.visible;
+    } else if (_type === 'realtime_flow') {
+      this.realtimeFlowTrace.visible = !this.realtimeFlowTrace.visible;
+    } else if (_type === 'pressure') {
+      this.pressureTrace.visible = !this.pressureTrace.visible;
+    }
+  }
   public updateChart() {
     if (this.lastChartLayout['yaxis4']) {
       Plotly.extendTraces(
@@ -1396,12 +1410,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public initializeFlowChart(): void {
     setTimeout(() => {
-      let graphSettings = this.settings.graph.FILTER;
+      this.graphSettings = this.uiHelper.cloneData(this.settings.graph.FILTER);
       if (
         this.data.getPreparation().style_type ===
         PREPARATION_STYLE_TYPE.ESPRESSO
       ) {
-        graphSettings = this.settings.graph.ESPRESSO;
+        this.graphSettings = this.uiHelper.cloneData(
+          this.settings.graph.ESPRESSO
+        );
       }
 
       this.weightTrace = {
@@ -1416,7 +1432,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           color: '#cdc2ac',
           width: 2,
         },
-        visible: graphSettings.weight ? true : 'legendonly',
+        visible: this.graphSettings.weight ? true : 'legendonly',
       };
       this.flowPerSecondTrace = {
         x: [],
@@ -1430,7 +1446,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           color: '#7F97A2',
           width: 2,
         },
-        visible: graphSettings.calc_flow ? true : 'legendonly',
+        visible: this.graphSettings.calc_flow ? true : 'legendonly',
       };
 
       this.realtimeFlowTrace = {
@@ -1445,7 +1461,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           color: '#09485D',
           width: 2,
         },
-        visible: graphSettings.realtime_flow ? true : 'legendonly',
+        visible: this.graphSettings.realtime_flow ? true : 'legendonly',
       };
 
       this.pressureTrace = {
@@ -1460,7 +1476,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           color: '#05C793',
           width: 2,
         },
-        visible: graphSettings.pressure ? true : 'legendonly',
+        visible: this.graphSettings.pressure ? true : 'legendonly',
       };
 
       const chartData = [
@@ -1548,7 +1564,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         orientation: 'h',
         font: {
           family: 'Karla',
-          size: 10,
+          size: 14,
           color: '#000',
         },
       },
