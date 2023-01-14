@@ -55,6 +55,8 @@ export class BrewDetailComponent implements OnInit {
   private realtimeFlowTrace: any;
   private pressureTrace: any;
   private maximizeFlowGraphIsShown: boolean = false;
+
+  public lastChartLayout: any = undefined;
   constructor(
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
@@ -402,12 +404,10 @@ export class BrewDetailComponent implements OnInit {
 
   private getChartLayout() {
     const xAxisVisible: boolean = true;
-
-    let chartWidth: number = undefined;
-    let chartHeight: number = 150;
-    if (this.maximizeFlowGraphIsShown === true) {
-      chartHeight = undefined;
-    }
+    const chartWidth: number = document.getElementById(
+      'canvasContainerBrew'
+    ).offsetWidth;
+    const chartHeight: number = 150;
 
     let tickFormat = '%S';
 
@@ -477,6 +477,7 @@ export class BrewDetailComponent implements OnInit {
         position: 0.95,
       };
     }
+    this.lastChartLayout = layout;
     return layout;
   }
 

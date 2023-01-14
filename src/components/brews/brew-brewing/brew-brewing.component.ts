@@ -37,7 +37,6 @@ import { BrewBeverageQuantityCalculatorComponent } from '../../../app/brew/brew-
 
 import { Subscription } from 'rxjs';
 
-import { Chart } from 'chart.js';
 import { UIHelper } from '../../../services/uiHelper';
 import { UIExcel } from '../../../services/uiExcel';
 import {
@@ -133,7 +132,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   private graphTimerTest: any = undefined;
 
-  private lastChartLayout: any = undefined;
+  public lastChartLayout: any = undefined;
+  public lastChartRenderingInstance: number = 0;
 
   constructor(
     private readonly platform: Platform,
@@ -342,7 +342,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
     const modal = await this.modalController.create({
       component: BrewFlowComponent,
-      breakpoints: [0, 1],
+      breakpoints: [1],
       initialBreakpoint: 1,
       id: BrewFlowComponent.COMPONENT_ID,
       cssClass: 'popover-actions',
@@ -354,8 +354,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       },
     });
     this.maximizeFlowGraphIsShown = true;
-    await modal.present();
 
+    await modal.present();
     await modal.onWillDismiss().then(async () => {
       this.maximizeFlowGraphIsShown = false;
       // If responsive would be true, the add of the container would result into 0 width 0 height, therefore the hack
@@ -395,7 +395,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       });
       await new Promise((resolve) => {
         setTimeout(async () => {
-          this.updateChart();
+          this.lastChartLayout.height = 150;
+          this.lastChartLayout.width = document.getElementById(
+            'canvasContainerBrew'
+          ).offsetWidth;
+          Plotly.relayout('flowProfileChart', this.lastChartLayout);
           resolve(undefined);
         }, 50);
       });
@@ -1332,18 +1336,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public updateChart() {
-    const chartData = [
-      this.weightTrace,
-      this.flowPerSecondTrace,
-      this.realtimeFlowTrace,
-    ];
-
-    const layout = this.getChartLayout();
-    if (layout['yaxis4']) {
-      chartData.push(this.pressureTrace);
-    }
-
-    if (layout['yaxis4']) {
+    if (this.lastChartLayout['yaxis4']) {
       Plotly.extendTraces(
         'flowProfileChart',
         {
@@ -1381,46 +1374,23 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       );
     }
 
-    const suggestedMinFlow: number = 0;
-    let suggestedMaxFlow: number = 20;
-
-    const suggestedMinWeight: number = 0;
-    let suggestedMaxWeight: number = 300;
+    const newRenderingInstance = Math.floor(this.timer.getSeconds() / 20);
     if (
-      this.data.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO
+      Math.floor(this.timer.getSeconds() / 20) > this.lastChartRenderingInstance
     ) {
-      suggestedMaxFlow = 2.5;
-      suggestedMaxWeight = 30;
-    }
-    let needsUpdate = false;
-    if (this.weightTrace.y.length > 0) {
-      const lastWeightData: number =
-        this.weightTrace.y[this.weightTrace.y.length - 1];
-      if (lastWeightData > suggestedMaxWeight) {
-        //Scale a bit up
-        suggestedMaxWeight = lastWeightData * 1.5;
-        needsUpdate = true;
-      }
-    }
-
-    if (needsUpdate === true) {
-      Plotly.relayout('flowProfileChart', {
-        yaxis: {
-          range: [0, suggestedMaxWeight],
-        },
-      });
-    }
-    if (this.timer.getSeconds() >= 29) {
-      const chartLayout = this.getChartLayout();
-
-      const delay = moment(new Date()).startOf('day').toDate().getTime();
-      const delayedTime: number = moment(new Date())
+      const delay = moment(new Date())
         .startOf('day')
-        .add('seconds', 60)
+        .add('seconds', this.timer.getSeconds() - 10)
         .toDate()
         .getTime();
-      chartLayout.xaxis.range = [delay, delayedTime];
-      Plotly.relayout('flowProfileChart', chartLayout);
+      const delayedTime: number = moment(new Date())
+        .startOf('day')
+        .add('seconds', this.timer.getSeconds() + 30)
+        .toDate()
+        .getTime();
+      this.lastChartLayout.xaxis.range = [delay, delayedTime];
+      Plotly.relayout('flowProfileChart', this.lastChartLayout);
+      this.lastChartRenderingInstance = newRenderingInstance;
     }
   }
 
@@ -1444,7 +1414,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         line: {
           shape: 'linear',
           color: '#cdc2ac',
-          width: 1,
+          width: 2,
         },
         visible: graphSettings.weight ? true : 'legendonly',
       };
@@ -1458,7 +1428,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         line: {
           shape: 'linear',
           color: '#7F97A2',
-          width: 1,
+          width: 2,
         },
         visible: graphSettings.calc_flow ? true : 'legendonly',
       };
@@ -1473,7 +1443,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         line: {
           shape: 'linear',
           color: '#09485D',
-          width: 1,
+          width: 2,
         },
         visible: graphSettings.realtime_flow ? true : 'legendonly',
       };
@@ -1488,7 +1458,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         line: {
           shape: 'linear',
           color: '#05C793',
-          width: 1,
+          width: 2,
         },
         visible: graphSettings.pressure ? true : 'legendonly',
       };
@@ -1514,26 +1484,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   private getChartLayout() {
-    let xAxisVisible: boolean = false;
-    let chartWidth: number = undefined;
-    let chartHeight: number = 150;
-    if (this.maximizeFlowGraphIsShown === true) {
-      chartHeight = undefined;
-    }
-    if (this.weightTrace.x.length > 0 || this.pressureTrace.x.length > 0) {
-      xAxisVisible = true;
-    }
-    let tickFormat = '%S';
+    const xAxisVisible: boolean = true;
+    const chartWidth: number = document.getElementById(
+      'canvasContainerBrew'
+    ).offsetWidth;
+    const chartHeight: number = 150;
 
-    if (this.timer.getSeconds() > 59) {
-      tickFormat = '%M:' + tickFormat;
-    }
-    if (
-      this.settings.brew_milliseconds === true &&
-      this.timer.getSeconds() < 10
-    ) {
-      tickFormat = tickFormat + '.%L';
-    }
+    const tickFormat = '%M:%S';
+
     /*  yaxis3: {
         title: '',
         titlefont: {color: '#09485D'},
@@ -1583,7 +1541,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         t: 20,
         pad: 2,
       },
-      showlegend: true,
+      showlegend: false,
       legend: {
         x: 0,
         y: 1.3,
@@ -1607,7 +1565,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         titlefont: { color: '#cdc2ac' },
         tickfont: { color: '#cdc2ac' },
         fixedrange: true,
-        range: [suggestedMinWeight, suggestedMaxWeight],
       },
       yaxis2: {
         title: '',
@@ -1618,7 +1575,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         side: 'right',
         position: 1,
         fixedrange: true,
-        range: [suggestedMinFlow, suggestedMaxFlow],
       },
     };
     const pressureDevice = this.bleManager.getPressureDevice();
