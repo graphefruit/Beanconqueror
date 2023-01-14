@@ -4,10 +4,17 @@
 <ion-content>
 
 <ion-card style="height:calc(100% - 20px)">
+  <div class="ion-margin-top ion-text-center">
+
+    <ion-chip (click)="brewComponent.toggleChartLines('weight')" [outline]="!brewComponent.weightTrace?.visible" class="weight">{{'BREW_FLOW_WEIGHT' | translate}}</ion-chip>
+    <ion-chip (click)="brewComponent.toggleChartLines('calc_flow')" [outline]="!brewComponent.flowPerSecondTrace?.visible"  class="flowcalculated">{{'BREW_FLOW_WEIGHT_PER_SECOND' | translate}}</ion-chip>
+    <ion-chip (click)="brewComponent.toggleChartLines('realtime_flow')" [outline]="!brewComponent.realtimeFlowTrace?.visible"  class="flowreal">{{'BREW_FLOW_WEIGHT_REALTIME' | translate}}</ion-chip>
+    <ion-chip (click)="brewComponent.toggleChartLines('pressure')" *ngIf="pressureDeviceConnected()"  [outline]="!brewComponent.pressureTrace?.visible" class="pressure">{{'BREW_PRESSURE_FLOW' | translate}}</ion-chip>
+  </div>
   <ion-grid class="ion-no-padding" style="padding:5px;">
     <ion-row>
       <ion-col size="{{isDetail?12:10}}">
-        <div style="display:block" id="brewFlowContainer" style="height:calc(100% - 1px)">
+        <div id="brewFlowContainer" style="display:block" style="height:calc(100% - 50px)">
 
         </div>
       </ion-col>

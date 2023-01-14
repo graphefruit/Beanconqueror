@@ -168,6 +168,9 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy {
   }
   public resetTimer() {
     this.brewComponent.timer.reset();
+    setTimeout(() => {
+      this.onOrientationChange();
+    }, 500);
   }
   public resumeTimer() {
     this.brewComponent.timerResumedPressed(undefined);

@@ -62,4 +62,21 @@
     }
 
   }
+
+  ion-chip.weight {
+    --background: #cdc2ac;
+    --color: black;
+  }
+  ion-chip.flowcalculated {
+    --background: #7F97A2;
+    --color: black;
+  }
+  ion-chip.flowreal {
+    --background: #09485D;
+    --color: black;
+  }
+  ion-chip.pressure {
+    --background: #05C793;
+    --color: black;
+  }
 }
