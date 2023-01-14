@@ -3,6 +3,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  HostListener,
   Input,
   OnDestroy,
   OnInit,
@@ -21,7 +22,7 @@ import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/bre
 import { TranslateService } from '@ngx-translate/core';
 import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-
+declare var Plotly;
 @Component({
   selector: 'brew-flow',
   templateUrl: './brew-flow.component.html',
@@ -89,17 +90,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy {
       }, 50);
     });
 
-    await new Promise((resolve) => {
-      // Looks funny but we need. if we would not calculate and substract 25px, the actual time graph would not be displayed :<
-      setTimeout(() => {
-        const newHeight =
-          document.getElementById('brewFlowContainer').offsetHeight;
-        document.getElementById('flowProfileChart').style.height =
-          newHeight - 1 + 'px';
-
-        resolve(undefined);
-      }, 100);
-    });
+    this.onOrientationChange();
 
     if (this.isDetail === false) {
       this.brewFlowGraphSubscription = this.brewFlowGraphEvent.subscribe(
@@ -131,12 +122,24 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy {
     }
     setTimeout(() => {
       if (this.isDetail) {
-        this.brewComponent.initializeFlowChart();
       } else {
         this.brewComponent.updateChart();
       }
     }, 150);
   }
+
+  @HostListener('window:resize')
+  @HostListener('window:orientationchange', ['$event'])
+  public onOrientationChange() {
+    setTimeout(() => {
+      this.brewComponent.lastChartLayout.height =
+        document.getElementById('brewFlowContainer').offsetHeight;
+      this.brewComponent.lastChartLayout.width =
+        document.getElementById('brewFlowContainer').offsetWidth;
+      Plotly.relayout('flowProfileChart', this.brewComponent.lastChartLayout);
+    }, 50);
+  }
+
   public pressureDeviceConnected() {
     if (!this.platform.is('cordova')) {
       return true;
