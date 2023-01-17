@@ -1,6 +1,5 @@
 :host {
   ion-header{
-    height:30px;
     background-color:#ffffff;
   }
   ion-toolbar{
@@ -14,15 +13,16 @@
   #brewFlowContainer {
     height:100%;
   }
-  ion-grid {
-    height:100%;
-    ion-row {
-      height: 100%;
-      ion-col {
-        height:100%;
-      }
-    }
+#informationContainer {
+display:flex;
+  font-size:24px;
+  ion-icon {
+    margin-right:2px;
   }
+  span {
+    vertical-align:top;
+  }
+}
 
   ion-label {
     color: #938F89;
@@ -66,17 +66,25 @@
   ion-chip.weight {
     --background: #cdc2ac;
     --color: black;
+    margin-right:0px;
+    margin-left:10px;
   }
   ion-chip.flowcalculated {
     --background: #7F97A2;
-    --color: black;
+    --color: white;
+    margin-right:0px;
+  }
+  ion-chip.chip-outline {
+    --color:black!important;
   }
   ion-chip.flowreal {
     --background: #09485D;
-    --color: black;
+    --color: white;
+    margin-right:0px;
   }
   ion-chip.pressure {
     --background: #05C793;
     --color: black;
+    margin-right:0px;
   }
 }

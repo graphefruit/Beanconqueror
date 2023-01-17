@@ -30,12 +30,7 @@ declare var Plotly;
 })
 export class BrewFlowComponent implements AfterViewInit, OnDestroy {
   public static COMPONENT_ID: string = 'brew-flow';
-  @ViewChild('smartScaleWeight', { read: ElementRef })
-  public smartScaleWeightEl: ElementRef;
-  @ViewChild('smartScaleWeightPerSecond', { read: ElementRef })
-  public smartScaleWeightPerSecondEl: ElementRef;
-  @ViewChild('smartScaleAvgFlowPerSecond', { read: ElementRef })
-  public smartScaleAvgFlowPerSecondEl: ElementRef;
+
   public showBloomTimer: boolean = false;
   public showDripTimer: boolean = false;
   public gaugeVisible: boolean = false;
@@ -57,6 +52,15 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy {
   public gaugeLabel = '';
   public gaugeSize = 50;
 
+  @ViewChild('smartScaleWeightDetail', { read: ElementRef })
+  public smartScaleWeightDetail: ElementRef;
+  @ViewChild('smartScaleWeightPerSecondDetail', { read: ElementRef })
+  public smartScaleWeightPerSecondDetail: ElementRef;
+  @ViewChild('smartScaleAvgFlowPerSecondDetail', { read: ElementRef })
+  public smartScaleAvgFlowPerSecondDetail: ElementRef;
+  @ViewChild('pressureDetail', { read: ElementRef })
+  public pressureDetail: ElementRef;
+
   constructor(
     private readonly modalController: ModalController,
     private readonly screenOrientation: ScreenOrientation,
@@ -71,7 +75,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy {
   public async ngAfterViewInit() {
     this.settings = this.uiSettingsStorage.getSettings();
 
-    if (this.isDetail === false) {
+    /*if (this.isDetail === false) {
       setTimeout(() => {
         const offsetWidth = document.getElementById('brewPanel').offsetWidth;
 
@@ -80,7 +84,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy {
       }, 1000);
 
       this.gaugeLabel = this.translate.instant('BREW_PRESSURE_FLOW');
-    }
+    }*/
     await new Promise((resolve) => {
       setTimeout(() => {
         document
@@ -132,8 +136,14 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy {
   @HostListener('window:orientationchange', ['$event'])
   public onOrientationChange() {
     setTimeout(() => {
+      const flowHeight = document.getElementById('flowCard').offsetHeight;
+      const informationContainerHeight = document.getElementById(
+        'informationContainer'
+      ).offsetHeight;
+
       this.brewComponent.lastChartLayout.height =
-        document.getElementById('brewFlowContainer').offsetHeight;
+        flowHeight - informationContainerHeight;
+
       this.brewComponent.lastChartLayout.width =
         document.getElementById('brewFlowContainer').offsetWidth;
       Plotly.relayout('flowProfileChart', this.brewComponent.lastChartLayout);
@@ -190,19 +200,20 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy {
   }
 
   public setActualScaleInformation(_val: any) {
-    const weightEl = this.smartScaleWeightEl.nativeElement;
-    const flowEl = this.smartScaleWeightPerSecondEl.nativeElement;
-    const avgFlowEl = this.smartScaleAvgFlowPerSecondEl.nativeElement;
+    const weightEl = this.smartScaleWeightDetail.nativeElement;
+    const flowEl = this.smartScaleWeightPerSecondDetail.nativeElement;
+    const avgFlowEl = this.smartScaleAvgFlowPerSecondDetail.nativeElement;
     weightEl.textContent = _val.scaleWeight;
     flowEl.textContent = _val.smoothedWeight;
-    avgFlowEl.textContent = _val.avgFlow;
+    avgFlowEl.textContent = 'Ø ' + _val.avgFlow;
   }
 
   public setActualPressureInformation(_val: any) {
-    this.gaugeValue = _val.pressure;
+    const pressureEl = this.pressureDetail.nativeElement;
+    pressureEl.textContent = _val.pressure;
   }
 
-  public ngOnDestroy() {
+  public async ngOnDestroy() {
     if (this.brewFlowGraphSubscription) {
       this.brewFlowGraphSubscription.unsubscribe();
       this.brewFlowGraphSubscription = undefined;
@@ -223,6 +234,10 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy {
     }
   }
   public dismiss() {
+    document
+      .getElementById('canvasContainerBrew')
+      .append(document.getElementById('flowProfileChart'));
+
     this.modalController.dismiss(
       {
         dismissed: true,

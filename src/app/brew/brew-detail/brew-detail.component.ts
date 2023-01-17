@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import {
   AlertController,
@@ -176,6 +176,27 @@ export class BrewDetailComponent implements OnInit {
     );
   }
 
+  public toggleChartLines(_type: string) {
+    if (_type === 'weight') {
+      this.weightTrace.visible = !this.weightTrace.visible;
+    } else if (_type === 'calc_flow') {
+      this.flowPerSecondTrace.visible = !this.flowPerSecondTrace.visible;
+    } else if (_type === 'realtime_flow') {
+      this.realtimeFlowTrace.visible = !this.realtimeFlowTrace.visible;
+    } else if (_type === 'pressure') {
+      this.pressureTrace.visible = !this.pressureTrace.visible;
+    }
+
+    Plotly.relayout('flowProfileChart', this.lastChartLayout);
+  }
+  @HostListener('window:resize')
+  @HostListener('window:orientationchange', ['$event'])
+  public onOrientationChange() {
+    if (this.data.flow_profile !== '') {
+      Plotly.relayout('flowProfileChart', this.getChartLayout());
+    }
+  }
+
   public initializeFlowChart(): void {
     setTimeout(() => {
       let graphSettings = this.settings.graph.FILTER;
@@ -191,26 +212,28 @@ export class BrewDetailComponent implements OnInit {
         y: [],
         name: this.translate.instant('BREW_FLOW_WEIGHT'),
         yaxis: 'y',
-        type: 'scatter',
+        type: 'scattergl',
+        mode: 'lines',
         line: {
-          shape: 'spline',
+          shape: 'linear',
           color: '#cdc2ac',
-          width: 1,
+          width: 2,
         },
-        visible: graphSettings.weight ? true : 'legendonly',
+        visible: graphSettings.weight,
       };
       this.flowPerSecondTrace = {
         x: [],
         y: [],
         name: this.translate.instant('BREW_FLOW_WEIGHT_PER_SECOND'),
         yaxis: 'y2',
-        type: 'scatter',
+        type: 'scattergl',
+        mode: 'lines',
         line: {
-          shape: 'spline',
+          shape: 'linear',
           color: '#7F97A2',
-          width: 1,
+          width: 2,
         },
-        visible: graphSettings.calc_flow ? true : 'legendonly',
+        visible: graphSettings.calc_flow,
       };
 
       this.realtimeFlowTrace = {
@@ -218,13 +241,14 @@ export class BrewDetailComponent implements OnInit {
         y: [],
         name: this.translate.instant('BREW_FLOW_WEIGHT_REALTIME'),
         yaxis: 'y2',
-        type: 'scatter',
+        type: 'scattergl',
+        mode: 'lines',
         line: {
-          shape: 'spline',
+          shape: 'linear',
           color: '#09485D',
-          width: 1,
+          width: 2,
         },
-        visible: graphSettings.realtime_flow ? true : 'legendonly',
+        visible: graphSettings.realtime_flow,
       };
 
       this.pressureTrace = {
@@ -232,13 +256,14 @@ export class BrewDetailComponent implements OnInit {
         y: [],
         name: this.translate.instant('BREW_PRESSURE_FLOW'),
         yaxis: 'y4',
-        type: 'scatter',
+        type: 'scattergl',
+        mode: 'lines',
         line: {
-          shape: 'spline',
+          shape: 'linear',
           color: '#05C793',
-          width: 1,
+          width: 2,
         },
-        visible: graphSettings.pressure ? true : 'legendonly',
+        visible: graphSettings.pressure,
       };
       const startingDay = moment(new Date()).startOf('day');
       // IF brewtime has some seconds, we add this to the delay directly.
@@ -331,8 +356,6 @@ export class BrewDetailComponent implements OnInit {
     const modal = await this.modalController.create({
       component: BrewFlowComponent,
       id: BrewFlowComponent.COMPONENT_ID,
-      breakpoints: [0, 1],
-      initialBreakpoint: 1,
       cssClass: 'popover-actions',
       componentProps: {
         brewComponent: this,
@@ -366,15 +389,6 @@ export class BrewDetailComponent implements OnInit {
           this.screenOrientation.unlock();
         }, 150);
       }
-
-      await new Promise((resolve) => {
-        setTimeout(async () => {
-          document
-            .getElementById('canvasContainerBrew')
-            .append(document.getElementById('flowProfileChart'));
-          resolve(undefined);
-        }, 50);
-      });
 
       await new Promise((resolve) => {
         setTimeout(async () => {
@@ -434,17 +448,8 @@ export class BrewDetailComponent implements OnInit {
         t: 20,
         pad: 2,
       },
-      showlegend: true,
-      legend: {
-        x: 0,
-        y: 1.3,
-        orientation: 'h',
-        font: {
-          family: 'Karla',
-          size: 10,
-          color: '#000',
-        },
-      },
+      showlegend: false,
+      dragmode: false,
       xaxis: {
         tickformat: tickFormat,
         visible: xAxisVisible,
