@@ -1608,7 +1608,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         tickfont: { color: '#cdc2ac' },
         fixedrange: true,
         side: 'left',
-        position: 0.02,
+        position: 0.05,
         rangemode: 'nonnegative',
         range: [suggestedMinWeight, suggestedMaxWeight],
       },
