@@ -37,7 +37,7 @@
       <div>
         <ion-icon name="water-outline"></ion-icon><span #smartScaleWeightPerSecondDetail>?g</span><span #smartScaleAvgFlowPerSecondDetail></span></div>
       <div (click)="resetPressure()" *ngIf="pressureDeviceConnected()">
-        <ion-icon name="beanconqueror-pressure"></ion-icon><span #pressureDetail>?g</span></div>
+        <ion-icon name="beanconqueror-pressure"></ion-icon><span #pressureDetail>?</span></div>
       <div>
         <ion-icon name="time-outline"></ion-icon><span
         *ngIf="settings?.brew_milliseconds === false">{{this.uiHelper.formatSeconds(brew.brew_time, 'mm:ss')}}</span>

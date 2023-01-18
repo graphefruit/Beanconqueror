@@ -254,10 +254,12 @@
   <ion-item lines="none">
     <span class="ion-title ion-padding-top">{{"BREW_HEADER_WHILE_BREW" | translate }}</span>
 
-      <ion-button slot="end" style="margin-top: -10px;" *ngIf="flow_profile_raw?.weight.length > 0 || flow_profile_raw?.pressureFlow.length > 0" (click)="downloadFlowProfile()" tappable fill="clear">
+      <ion-button (click)="downloadFlowProfile()" *ngIf="flow_profile_raw?.weight.length > 0 || flow_profile_raw?.pressureFlow.length > 0" fill="clear" slot="end" style="margin-top: -4px;" tappable>
         <ion-icon name="download" slot="icon-only"></ion-icon>
       </ion-button>
-
+      <ion-button  (click)="maximizeFlowGraph()" *ngIf="!shallFlowProfileBeHidden()" fill="clear" slot="end" tappable>
+        <ion-icon name="expand-outline"  slot="icon-only"></ion-icon>
+      </ion-button>
   </ion-item>
   <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.brew_temperature_time,
                       data.getPreparation().manage_parameters.brew_temperature_time,
@@ -272,56 +274,58 @@
            label="{{'BREW_DATA_TEMPERATURE_TIME' | translate}}" timeInSeconds="0"
     ></timer>
   </ion-item>
-
-  <ion-item style="margin-top: -15px;" lines="none" [hidden]="shallFlowProfileBeHidden()"
+  <ion-item [hidden]="shallFlowProfileBeHidden()" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
+                      data.getPreparation().brew_order.while.brew_time,
+                      data.getPreparation().use_custom_parameters)"
+            class="ion-padding-bottom-half" lines="none">
+    <div class="ion-text-center" style="width:100%">
+      <ion-chip (click)="toggleChartLines('weight')" [outline]="!this.weightTrace?.visible" class="weight">{{'BREW_FLOW_WEIGHT' | translate}}</ion-chip>
+      <ion-chip (click)="toggleChartLines('calc_flow')" [outline]="!this.flowPerSecondTrace?.visible"  class="flowcalculated">{{'BREW_FLOW_WEIGHT_PER_SECOND' | translate}}</ion-chip>
+      <ion-chip (click)="toggleChartLines('realtime_flow')" [outline]="!this.realtimeFlowTrace?.visible"  class="flowreal">{{'BREW_FLOW_WEIGHT_REALTIME' | translate}}</ion-chip>
+      <ion-chip (click)="toggleChartLines('pressure')" *ngIf="pressureDeviceConnected()"  [outline]="!this.pressureTrace?.visible" class="pressure">{{'BREW_PRESSURE_FLOW' | translate}}</ion-chip>
+    </div>
+  </ion-item>
+  <ion-item [hidden]="shallFlowProfileBeHidden()" lines="none"
             [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
                       data.getPreparation().brew_order.while.brew_time,
                       data.getPreparation().use_custom_parameters)">
-    <ion-grid class="ion-text-center" style="padding-left: 0px; padding-right: 0px; padding-top: 0px;">
-      <ion-row class="ion-no-padding">
-        <ion-col size="5">
+    <ion-grid class="ion-text-center ion-no-padding brew-information-panel">
+      <ion-row style="padding-bottom:5px;">
+        <ion-col size="4" style="padding-right:5px;">
           <ion-card class="flow-profile ion-text-center" style="height: 100%;">
             <ion-card-header>
               <div #smartScaleWeight>? g</div>
               <div>({{data.getBrewRatio()}})</div>
             </ion-card-header>
             <ion-card-content>
-              {{"BREW_FLOW_WEIGHT" | translate}}
+              <ion-icon name="beanconqueror-scale-outline"></ion-icon>
             </ion-card-content>
           </ion-card>
           </ion-col>
-        <ion-col size="5">
-
+        <ion-col size="4" style="padding-right:5px;">
           <ion-card class="flow-profile ion-text-center" style="height: 100%;">
             <ion-card-header >
               <div #smartScaleWeightPerSecond>? g/s</div>
               <div #smartScaleAvgFlowPerSecond>? g/s</div>
             </ion-card-header>
             <ion-card-content>
-              {{"BREW_FLOW_WEIGHT_PER_SECOND" | translate}}
+              <ion-icon name="water-outline"></ion-icon>
             </ion-card-content>
           </ion-card>
         </ion-col>
-        <ion-col size="2" style="margin:auto 0;">
-          <ion-button (click)="maximizeFlowGraph()" tappable fill="clear">
-            <ion-icon name="expand-outline"  slot="icon-only"></ion-icon>
-          </ion-button>
+        <ion-col (click)="resetPressure()" *ngIf="pressureDeviceConnected()" size="4">
+          <ion-card class="flow-profile ion-text-center" style="height: 100%;">
+            <ion-card-header>
+              <div #pressure>?</div>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-icon name="beanconqueror-pressure"></ion-icon>
+            </ion-card-content>
+          </ion-card>
         </ion-col>
+
       </ion-row>
     </ion-grid>
-  </ion-item>
-  <ion-item [hidden]="shallFlowProfileBeHidden()" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
-                      data.getPreparation().brew_order.while.brew_time,
-                      data.getPreparation().use_custom_parameters)"
-            class="ion-margin-top" lines="none">
-<div class="ion-text-center" style="width:100%">
-
-
-    <ion-chip (click)="toggleChartLines('weight')" [outline]="!this.weightTrace?.visible" class="weight">{{'BREW_FLOW_WEIGHT' | translate}}</ion-chip>
-    <ion-chip (click)="toggleChartLines('calc_flow')" [outline]="!this.flowPerSecondTrace?.visible"  class="flowcalculated">{{'BREW_FLOW_WEIGHT_PER_SECOND' | translate}}</ion-chip>
-    <ion-chip (click)="toggleChartLines('realtime_flow')" [outline]="!this.realtimeFlowTrace?.visible"  class="flowreal">{{'BREW_FLOW_WEIGHT_REALTIME' | translate}}</ion-chip>
-    <ion-chip (click)="toggleChartLines('pressure')" *ngIf="pressureDeviceConnected()"  [outline]="!this.pressureTrace?.visible" class="pressure">{{'BREW_PRESSURE_FLOW' | translate}}</ion-chip>
-</div>
   </ion-item>
   <ion-item class="ion-margin-top" [hidden]="shallFlowProfileBeHidden()"
             [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
