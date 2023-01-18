@@ -504,6 +504,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               _val.actual > this.settings.pressure_threshold_bar
             ) {
               this.timer.startTimer();
+              this.checkChanges();
             }
           }
         }
@@ -1250,12 +1251,15 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             switch (event.command) {
               case SCALE_TIMER_COMMAND.START:
                 this.timer.startTimer();
+                this.checkChanges();
                 break;
               case SCALE_TIMER_COMMAND.STOP:
                 this.timer.pauseTimer();
+                this.checkChanges();
                 break;
               case SCALE_TIMER_COMMAND.RESET:
                 this.timer.reset();
+                this.checkChanges();
                 break;
             }
           } else {

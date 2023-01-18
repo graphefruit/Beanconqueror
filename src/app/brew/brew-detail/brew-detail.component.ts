@@ -417,7 +417,6 @@ export class BrewDetailComponent implements OnInit {
   }
 
   private getChartLayout() {
-    const xAxisVisible: boolean = true;
     const chartWidth: number = document.getElementById(
       'canvasContainerBrew'
     ).offsetWidth;
@@ -449,16 +448,18 @@ export class BrewDetailComponent implements OnInit {
         pad: 2,
       },
       showlegend: false,
-      dragmode: false,
       xaxis: {
         tickformat: tickFormat,
-        visible: xAxisVisible,
-        domain: [0.1, 0.9],
+        visible: true,
+        domain: [0, 1],
+        type: 'date',
       },
       yaxis: {
         title: '',
         titlefont: { color: '#cdc2ac' },
         tickfont: { color: '#cdc2ac' },
+        side: 'left',
+        position: 0.05,
       },
       yaxis2: {
         title: '',
@@ -467,7 +468,8 @@ export class BrewDetailComponent implements OnInit {
         anchor: 'x',
         overlaying: 'y',
         side: 'right',
-        position: 1,
+        position: 0.95,
+        showgrid: false,
       },
     };
 
@@ -479,7 +481,9 @@ export class BrewDetailComponent implements OnInit {
         anchor: 'free',
         overlaying: 'y',
         side: 'right',
-        position: 0.95,
+        showgrid: false,
+        position: 0.93,
+        range: [0, 12],
       };
     }
     this.lastChartLayout = layout;
