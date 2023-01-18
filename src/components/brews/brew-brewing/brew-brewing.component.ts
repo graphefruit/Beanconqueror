@@ -85,6 +85,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   @ViewChild('smartScaleAvgFlowPerSecond', { read: ElementRef })
   public smartScaleAvgFlowPerSecondEl: ElementRef;
 
+  @ViewChild('pressure', { read: ElementRef })
+  public pressureEl: ElementRef;
+
   @Input() public data: Brew;
   @Input() public brewTemplate: Brew;
   @Input() public loadSpecificLastPreparation: Preparation;
@@ -448,6 +451,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     return !!pressureDevice;
   }
 
+  public resetPressure() {
+    if (this.pressureDeviceConnected()) {
+      const pressureDevice: PressureDevice =
+        this.bleManager.getPressureDevice();
+      try {
+        pressureDevice.updateZero();
+      } catch (ex) {}
+    }
+  }
+
   public attachToScaleWeightChange() {
     const scale: BluetoothScale = this.bleManager.getScale();
     if (scale) {
@@ -500,14 +513,17 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public bluetoothScaleSetGrindWeight() {
     this.data.grind_weight = this.getActualBluetoothWeight();
+    this.checkChanges();
   }
 
   public bluetoothScaleSetBeanWeightIn() {
     this.data.bean_weight_in = this.getActualBluetoothWeight();
+    this.checkChanges();
   }
 
   public bluetoothScaleSetBrewQuantityWeight() {
     this.data.brew_quantity = this.getActualBluetoothWeight();
+    this.checkChanges();
   }
 
   public bluetoothScaleSetBrewBeverageQuantityWeight() {
@@ -519,6 +535,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.getActualBluetoothWeight() - vesselWeight,
       2
     );
+    this.checkChanges();
   }
 
   public deattachToWeightChange() {
@@ -1020,7 +1037,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       });
     } catch (ex) {}
   }
+  public setActualPressureInformation(_pressure) {
+    try {
+      const pressureEl = this.pressureEl.nativeElement;
 
+      pressureEl.textContent = _pressure;
+    } catch (ex) {}
+  }
   public getActualScaleWeight() {
     try {
       return this.uiHelper.toFixedIfNecessary(
@@ -1636,7 +1659,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         overlaying: 'y',
         side: 'right',
         showgrid: false,
-        position: 0.95,
+        position: 0.93,
         fixedrange: true,
         range: [0, 12],
       };
@@ -1769,6 +1792,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.brewPressureGraphSubject.next({
       pressure: pressureObj.actual,
     });
+    this.setActualPressureInformation(pressureObj.actual);
   }
 
   private __setFlowProfile(_scaleChange: any) {
