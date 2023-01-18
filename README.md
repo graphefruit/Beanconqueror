@@ -205,7 +205,7 @@ https://stackoverflow.com/questions/60357663/do-apple-app-site-association-files
 
 ### Upgrade Ionic if needed:
 
-`npm install @ionic/angular@6.4.0`
+`npm install @ionic/angular@6.5.0`
 -> Or the actual active version
 
 ### Installing AAB on your android (mac)

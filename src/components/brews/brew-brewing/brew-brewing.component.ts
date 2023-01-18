@@ -865,7 +865,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
 
       this.flow_profile_raw = new BrewFlow();
-
+      try {
+        Plotly.purge('flowProfileChart');
+      } catch (ex) {}
       this.initializeFlowChart(false);
 
       // Give the buttons a bit of time, 100ms won't be an issue for user flow
@@ -1034,7 +1036,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.brewFlowGraphSubject.next({
         scaleWeight: actualScaleWeight + ' g',
         smoothedWeight: actualSmoothedWeightPerSecond + ' g/s',
-        avgFlow: 'Ø ' + avgFlow + ' g/s',
+        avgFlow: 'Ø ' + avgFlow,
       });
     } catch (ex) {}
   }
@@ -1220,7 +1222,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     const modal = await this.modalController.create({
       component: BrewBeverageQuantityCalculatorComponent,
       cssClass: 'popover-actions',
-      breakpoints: [0, 0.5],
+      breakpoints: [0, 0.5, 1],
       initialBreakpoint: 0.5,
       componentProps: {
         vesselWeight: vesselWeight,
@@ -1971,11 +1973,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         if (dataVal !== null) {
           if (
             this.settings.bluetooth_ignore_negative_values === true &&
-            dataVal.y > 0
+            dataVal?.y > 0
           ) {
             lastFoundRightValue = dataVal.y;
           } else {
-            lastFoundRightValue = dataVal.y;
           }
 
           break;

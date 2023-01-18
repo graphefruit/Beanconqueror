@@ -205,7 +205,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy {
     const avgFlowEl = this.smartScaleAvgFlowPerSecondDetail.nativeElement;
     weightEl.textContent = _val.scaleWeight;
     flowEl.textContent = _val.smoothedWeight;
-    avgFlowEl.textContent = 'Ø ' + _val.avgFlow;
+    avgFlowEl.textContent = _val.avgFlow;
   }
 
   public setActualPressureInformation(_val: any) {
