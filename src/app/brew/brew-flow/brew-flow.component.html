@@ -29,16 +29,15 @@
 
   <div id="flowCard" style="height:100%">
 
-    <div class="ion-justify-content-evenly" id="informationContainer">
-      <div>
+    <div  id="informationContainer">
+      <div style="min-width:170px;">
         <ion-icon name="beanconqueror-scale-outline"></ion-icon><span #smartScaleWeightDetail>?g</span>
-        ({{brew.getBrewRatio()}})
       </div>
-      <div>
+      <div  style="min-width:80px;">
         <ion-icon name="water-outline"></ion-icon><span #smartScaleWeightPerSecondDetail>?g</span><span #smartScaleAvgFlowPerSecondDetail></span></div>
-      <div (click)="resetPressure()" *ngIf="pressureDeviceConnected()">
+      <div (click)="resetPressure()" *ngIf="pressureDeviceConnected()"  style="min-width:80px;">
         <ion-icon name="beanconqueror-pressure"></ion-icon><span #pressureDetail>?</span></div>
-      <div>
+      <div  style="min-width:150px;">
         <ion-icon name="time-outline"></ion-icon><span
         *ngIf="settings?.brew_milliseconds === false">{{this.uiHelper.formatSeconds(brew.brew_time, 'mm:ss')}}</span>
         <span

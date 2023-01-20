@@ -14,10 +14,13 @@
     height:100%;
   }
 #informationContainer {
-display:flex;
+  display:flex;
   font-size:24px;
+  margin-left:11px;
+  overflow:scroll;
   ion-icon {
     margin-right:2px;
+    margin-left:5px;
   }
   span {
     vertical-align:top;
