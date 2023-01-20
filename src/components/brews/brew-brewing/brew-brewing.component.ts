@@ -201,8 +201,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           if (foundBrews.length > 0) {
             this.__loadBrew(foundBrews[0], false);
           } else {
-            // Fallback
-            this.__loadLastBrew();
+            /** We start an empty new brew, and set the preparation method for it
+             * so when the next brew will come, data can or will be preset
+             * **/
+            const newBrew = new Brew();
+            newBrew.method_of_preparation =
+              this.loadSpecificLastPreparation.config.uuid;
+            this.__loadBrew(newBrew, false);
           }
         } else {
           this.__loadLastBrew();
