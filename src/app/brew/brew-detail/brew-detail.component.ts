@@ -57,6 +57,7 @@ export class BrewDetailComponent implements OnInit {
   private maximizeFlowGraphIsShown: boolean = false;
 
   public lastChartLayout: any = undefined;
+  public editActive: boolean = false;
   constructor(
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
@@ -145,7 +146,19 @@ export class BrewDetailComponent implements OnInit {
 
   public ngOnInit() {}
   public async edit() {
+    try {
+      Plotly.purge('flowProfileChart');
+    } catch (ex) {}
+    this.editActive = true;
+    //Wait 50ms, so the dom will be new rendered and the id will be removed from the flowprofilechart
+    await new Promise(async (resolve) => {
+      setTimeout(() => {
+        resolve(undefined);
+      }, 50);
+    });
+
     const returningBrew: Brew = await this.uiBrewHelper.editBrew(this.data);
+    this.editActive = false;
     if (returningBrew) {
       this.data = returningBrew;
       await this.readFlowProfile();
@@ -199,6 +212,9 @@ export class BrewDetailComponent implements OnInit {
 
   public initializeFlowChart(): void {
     setTimeout(() => {
+      try {
+        Plotly.purge('flowProfileChart');
+      } catch (ex) {}
       let graphSettings = this.settings.graph.FILTER;
       if (
         this.data.getPreparation().style_type ===

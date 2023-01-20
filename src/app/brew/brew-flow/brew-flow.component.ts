@@ -28,7 +28,7 @@ declare var Plotly;
   templateUrl: './brew-flow.component.html',
   styleUrls: ['./brew-flow.component.scss'],
 })
-export class BrewFlowComponent implements AfterViewInit, OnDestroy {
+export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
   public static COMPONENT_ID: string = 'brew-flow';
 
   public showBloomTimer: boolean = false;
@@ -60,7 +60,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy {
   public smartScaleAvgFlowPerSecondDetail: ElementRef;
   @ViewChild('pressureDetail', { read: ElementRef })
   public pressureDetail: ElementRef;
-
+  private disableHardwareBack;
   constructor(
     private readonly modalController: ModalController,
     private readonly screenOrientation: ScreenOrientation,
@@ -71,7 +71,16 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy {
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly platform: Platform
   ) {}
-
+  public ngOnInit() {
+    try {
+      this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(
+        9999,
+        (processNextHandler) => {
+          this.dismiss();
+        }
+      );
+    } catch (ex) {}
+  }
   public async ngAfterViewInit() {
     this.settings = this.uiSettingsStorage.getSettings();
 
@@ -237,7 +246,9 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy {
     document
       .getElementById('canvasContainerBrew')
       .append(document.getElementById('flowProfileChart'));
-
+    try {
+      this.disableHardwareBack.unsubscribe();
+    } catch (ex) {}
     this.modalController.dismiss(
       {
         dismissed: true,

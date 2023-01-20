@@ -365,9 +365,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     });
     this.maximizeFlowGraphIsShown = true;
 
+    // will force rerender :D
+    this.lastChartRenderingInstance = -1;
     await modal.present();
     await modal.onWillDismiss().then(async () => {
       this.maximizeFlowGraphIsShown = false;
+      // will force rerender :D
+      this.lastChartRenderingInstance = -1;
       // If responsive would be true, the add of the container would result into 0 width 0 height, therefore the hack
       this.updateChart();
 
@@ -668,6 +672,20 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public async timerStartPressed(_event) {
+    if (this.data.brew_time > 0) {
+      const scale: BluetoothScale = this.bleManager.getScale();
+      const pressureDevice: PressureDevice =
+        this.bleManager.getPressureDevice();
+      if (scale || pressureDevice || !this.platform.is('cordova')) {
+        this.uiAlert.showMessage(
+          'BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_DESCRIPTION',
+          'BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_TITLE',
+          undefined,
+          true
+        );
+        return;
+      }
+    }
     await this.timerStarted(_event);
     this.timer.startTimer();
   }
@@ -747,6 +765,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
 
       this.startingFlowTime = Date.now();
+      if (this.data.brew_time > 0) {
+        // IF brewtime has some seconds, we add this to the delay directly.
+        const startingDay = moment(new Date()).startOf('day');
+        startingDay.add('seconds', this.data.brew_time);
+        this.startingFlowTime = startingDay.toDate().getTime();
+      }
       this.updateChart();
 
       if (scale) {
@@ -865,9 +889,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
 
       this.flow_profile_raw = new BrewFlow();
-      try {
-        Plotly.purge('flowProfileChart');
-      } catch (ex) {}
+
       this.initializeFlowChart(false);
 
       // Give the buttons a bit of time, 100ms won't be an issue for user flow
@@ -1420,44 +1442,59 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         );
       }
 
-      const newRenderingInstance = Math.floor(this.timer.getSeconds() / 20);
-      if (
-        Math.floor(this.timer.getSeconds() / 20) >
-        this.lastChartRenderingInstance
-      ) {
-        const delay = moment(new Date())
-          .startOf('day')
-          .add('seconds', this.timer.getSeconds() - 10)
-          .toDate()
-          .getTime();
-        const delayedTime: number = moment(new Date())
-          .startOf('day')
-          .add('seconds', this.timer.getSeconds() + 30)
-          .toDate()
-          .getTime();
-        this.lastChartLayout.xaxis.range = [delay, delayedTime];
-        Plotly.relayout('flowProfileChart', this.lastChartLayout);
-        this.lastChartRenderingInstance = newRenderingInstance;
-      }
+      setTimeout(() => {
+        /**Timeout is needed, because on mobile devices, the trace and the relayout bothers each other, which results into not refreshing the graph*/
+        let newRenderingInstance = 0;
+        if (this.maximizeFlowGraphIsShown === true) {
+          newRenderingInstance = Math.floor(this.timer.getSeconds() / 40);
+        } else {
+          newRenderingInstance = Math.floor(this.timer.getSeconds() / 20);
+        }
 
-      if (this.weightTrace.y.length > 0) {
-        const lastWeightData: number =
-          this.weightTrace.y[this.weightTrace.y.length - 1];
-        if (lastWeightData > this.lastChartLayout.yaxis.range[1]) {
-          //Scale a bit up
-          this.lastChartLayout.yaxis.range[1] = lastWeightData * 1.5;
+        if (
+          newRenderingInstance > this.lastChartRenderingInstance ||
+          this.lastChartRenderingInstance === -1
+        ) {
+          let subtractTime: number = this.maximizeFlowGraphIsShown ? 20 : 10;
+          const addTime: number = this.maximizeFlowGraphIsShown ? 50 : 30;
+          if (this.data.brew_time <= 10) {
+            subtractTime = 0;
+          }
+
+          const delay = moment(new Date())
+            .startOf('day')
+            .add('seconds', this.timer.getSeconds() - subtractTime)
+            .toDate()
+            .getTime();
+          const delayedTime: number = moment(new Date())
+            .startOf('day')
+            .add('seconds', this.timer.getSeconds() + addTime)
+            .toDate()
+            .getTime();
+          this.lastChartLayout.xaxis.range = [delay, delayedTime];
           Plotly.relayout('flowProfileChart', this.lastChartLayout);
+          this.lastChartRenderingInstance = newRenderingInstance;
         }
-      }
-      if (this.realtimeFlowTrace.y.length > 0) {
-        const lastRealtimeFlowVal: number =
-          this.realtimeFlowTrace.y[this.realtimeFlowTrace.y.length - 1];
-        if (lastRealtimeFlowVal > this.lastChartLayout.yaxis2.range[1]) {
-          //Scale a bit up
-          this.lastChartLayout.yaxis2.range[1] = lastRealtimeFlowVal * 1.5;
-          Plotly.relayout('flowProfileChart', this.lastChartLayout);
+
+        if (this.weightTrace.y.length > 0) {
+          const lastWeightData: number =
+            this.weightTrace.y[this.weightTrace.y.length - 1];
+          if (lastWeightData > this.lastChartLayout.yaxis.range[1]) {
+            //Scale a bit up
+            this.lastChartLayout.yaxis.range[1] = lastWeightData * 1.5;
+            Plotly.relayout('flowProfileChart', this.lastChartLayout);
+          }
         }
-      }
+        if (this.realtimeFlowTrace.y.length > 0) {
+          const lastRealtimeFlowVal: number =
+            this.realtimeFlowTrace.y[this.realtimeFlowTrace.y.length - 1];
+          if (lastRealtimeFlowVal > this.lastChartLayout.yaxis2.range[1]) {
+            //Scale a bit up
+            this.lastChartLayout.yaxis2.range[1] = lastRealtimeFlowVal * 1.5;
+            Plotly.relayout('flowProfileChart', this.lastChartLayout);
+          }
+        }
+      }, 25);
     } catch (ex) {}
   }
 
@@ -1467,6 +1504,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       timeout = 1000;
     }
     setTimeout(() => {
+      try {
+        Plotly.purge('flowProfileChart');
+      } catch (ex) {}
       this.graphSettings = this.uiHelper.cloneData(this.settings.graph.FILTER);
       if (
         this.data.getPreparation().style_type ===
@@ -1550,6 +1590,70 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         },
         visible: this.graphSettings.weight,
       };
+
+      if (
+        this.flow_profile_raw.weight.length > 0 ||
+        this.flow_profile_raw.pressureFlow.length > 0
+      ) {
+        const startingDay = moment(new Date()).startOf('day');
+        // IF brewtime has some seconds, we add this to the delay directly.
+
+        let firstTimestamp;
+        if (this.flow_profile_raw.weight.length > 0) {
+          firstTimestamp = this.flow_profile_raw.weight[0].timestamp;
+        } else {
+          firstTimestamp = this.flow_profile_raw.pressureFlow[0].timestamp;
+        }
+        const delay =
+          moment(firstTimestamp, 'HH:mm:ss.SSS').toDate().getTime() -
+          startingDay.toDate().getTime();
+        if (this.flow_profile_raw.weight.length > 0) {
+          for (const data of this.flow_profile_raw.weight) {
+            this.weightTrace.x.push(
+              new Date(
+                moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
+                  delay
+              )
+            );
+            this.weightTrace.y.push(data.actual_weight);
+          }
+          for (const data of this.flow_profile_raw.waterFlow) {
+            this.flowPerSecondTrace.x.push(
+              new Date(
+                moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
+                  delay
+              )
+            );
+            this.flowPerSecondTrace.y.push(data.value);
+          }
+          if (this.flow_profile_raw.realtimeFlow) {
+            for (const data of this.flow_profile_raw.realtimeFlow) {
+              this.realtimeFlowTrace.x.push(
+                new Date(
+                  moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
+                    delay
+                )
+              );
+              this.realtimeFlowTrace.y.push(data.flow_value);
+            }
+          }
+        }
+        if (
+          this.flow_profile_raw.pressureFlow &&
+          this.flow_profile_raw.pressureFlow.length > 0
+        ) {
+          for (const data of this.flow_profile_raw.pressureFlow) {
+            this.pressureTrace.x.push(
+              new Date(
+                moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
+                  delay
+              )
+            );
+            this.pressureTrace.y.push(data.actual_pressure);
+          }
+        }
+      }
+
       const chartData = [
         this.weightTrace,
         this.flowPerSecondTrace,
@@ -1596,7 +1700,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     let suggestedMaxFlow: number = 20;
 
     const suggestedMinWeight: number = 0;
-    let suggestedMaxWeight: number = 400;
+    let suggestedMaxWeight: number = 250;
+
     if (
       this.data.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO
     ) {
@@ -1637,7 +1742,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         tickfont: { color: '#cdc2ac' },
         fixedrange: true,
         side: 'left',
-        position: 0.05,
+        position: 0.03,
         rangemode: 'nonnegative',
         range: [suggestedMinWeight, suggestedMaxWeight],
       },
@@ -1645,12 +1750,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         title: '',
         titlefont: { color: '#7F97A2' },
         tickfont: { color: '#7F97A2' },
-        anchor: 'x',
+        anchor: 'free',
         overlaying: 'y',
         side: 'right',
-        position: 0.95,
-        fixedrange: true,
         showgrid: false,
+        position: 0.97,
+        fixedrange: true,
         rangemode: 'nonnegative',
         range: [suggestedMinFlow, suggestedMaxFlow],
       },
@@ -1665,9 +1770,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         overlaying: 'y',
         side: 'right',
         showgrid: false,
-        position: 0.93,
+        position: 0.91,
         fixedrange: true,
-        range: [0, 12],
+        range: [0, 10],
       };
     }
     if (!window['layout']) {
@@ -1751,8 +1856,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   private __setPressureFlow(_pressure: any) {
     // Nothing for storing etc. is done here actually
-    const actual: number = _pressure.actual;
-    const old: number = _pressure.old;
+    const actual: number = this.uiHelper.toFixedIfNecessary(
+      _pressure.actual,
+      2
+    );
+    const old: number = this.uiHelper.toFixedIfNecessary(_pressure.old, 2);
 
     // If no smartscale is connected, the set pressure flow needs to be the master to set flowtime and flowtime seconds, else we just retrieve from the scale.
     const isSmartScaleConnected = this.smartScaleConnected();

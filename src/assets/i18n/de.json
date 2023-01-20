@@ -1317,4 +1317,6 @@
   "BEAN_SORT_MIX": "Bohnenmischung",
   "PAGE_MANAGE_BEAN_PARAMETERS_DESCRIPTION": "Lege fest, welche Parameter beim Erfassen einer Bohne angezeigt werden sollen.",
   "PAGE_BEAN_LIST_VIEW_CUSTOM_PARAMETERS_DESCRIPTION": "Entscheide welche Parameter der Bohne auf den Übersichtskacheln angezeigt werden sollen",
+  "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_TITLE": "Timer zurücksetzten!",
+  "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_DESCRIPTION": "Da du ein Bluetooth-Gerät verbunden hast, setzte bitte deinen Timer bevor du startest zurück"
 }
