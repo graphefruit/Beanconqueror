@@ -1407,28 +1407,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.pressureTrace.visible = !this.pressureTrace.visible;
     }
   }
-  public updateChart() {
+  public updateChart(_type: string = 'weight') {
     try {
-      if (this.lastChartLayout['yaxis4']) {
-        Plotly.extendTraces(
-          'flowProfileChart',
-          {
-            x: [
-              [this.weightTrace.x[this.weightTrace.x.length - 1]],
-              [this.flowPerSecondTrace.x[this.flowPerSecondTrace.x.length - 1]],
-              [this.realtimeFlowTrace.x[this.realtimeFlowTrace.x.length - 1]],
-              [this.pressureTrace.x[this.pressureTrace.x.length - 1]],
-            ],
-            y: [
-              [this.weightTrace.y[this.weightTrace.y.length - 1]],
-              [this.flowPerSecondTrace.y[this.flowPerSecondTrace.y.length - 1]],
-              [this.realtimeFlowTrace.y[this.realtimeFlowTrace.y.length - 1]],
-              [this.pressureTrace.y[this.pressureTrace.y.length - 1]],
-            ],
-          },
-          [0, 1, 2, 3]
-        );
-      } else {
+      if (_type === 'weight') {
         Plotly.extendTraces(
           'flowProfileChart',
           {
@@ -1444,6 +1425,25 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             ],
           },
           [0, 1, 2]
+        );
+      } else {
+        Plotly.extendTraces(
+          'flowProfileChart',
+          {
+            x: [
+              [],
+              [],
+              [],
+              [this.pressureTrace.x[this.pressureTrace.x.length - 1]],
+            ],
+            y: [
+              [],
+              [],
+              [],
+              [this.pressureTrace.y[this.pressureTrace.y.length - 1]],
+            ],
+          },
+          [3]
         );
       }
 
@@ -1908,7 +1908,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       pressureObj.old
     );
 
-    this.updateChart();
+    this.updateChart('pressure');
     if (!isSmartScaleConnected) {
       this.flowSecondTick++;
     }
