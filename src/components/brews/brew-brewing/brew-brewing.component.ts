@@ -1448,6 +1448,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
 
       setTimeout(() => {
+        let newLayoutIsNeeded: boolean = false;
         /**Timeout is needed, because on mobile devices, the trace and the relayout bothers each other, which results into not refreshing the graph*/
         let newRenderingInstance = 0;
         if (this.maximizeFlowGraphIsShown === true) {
@@ -1477,7 +1478,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             .toDate()
             .getTime();
           this.lastChartLayout.xaxis.range = [delay, delayedTime];
-          Plotly.relayout('flowProfileChart', this.lastChartLayout);
+          newLayoutIsNeeded = true;
           this.lastChartRenderingInstance = newRenderingInstance;
         }
 
@@ -1487,7 +1488,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           if (lastWeightData > this.lastChartLayout.yaxis.range[1]) {
             //Scale a bit up
             this.lastChartLayout.yaxis.range[1] = lastWeightData * 1.5;
-            Plotly.relayout('flowProfileChart', this.lastChartLayout);
+            newLayoutIsNeeded = true;
           }
         }
         if (this.realtimeFlowTrace.y.length > 0) {
@@ -1496,8 +1497,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           if (lastRealtimeFlowVal > this.lastChartLayout.yaxis2.range[1]) {
             //Scale a bit up
             this.lastChartLayout.yaxis2.range[1] = lastRealtimeFlowVal * 1.5;
-            Plotly.relayout('flowProfileChart', this.lastChartLayout);
+            newLayoutIsNeeded = true;
           }
+        }
+        if (newLayoutIsNeeded) {
+          Plotly.relayout('flowProfileChart', this.lastChartLayout);
         }
       }, 25);
     } catch (ex) {}
