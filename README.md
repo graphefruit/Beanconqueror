@@ -231,3 +231,6 @@ cordova-plugin-file/src/android
 ContentFileSystem.java
 -> Temp fix for import
 ` String encodedPath = inputURL.uri.getEncodedPath(); String authorityAndPath = encodedPath.substring(encodedPath.indexOf(this.name) + 1 + this.name.length() + 2);`
+
+Fixing SocialSharing.java
+-> https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin/pull/1202/commits
