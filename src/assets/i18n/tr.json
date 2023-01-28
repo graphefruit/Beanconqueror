@@ -338,7 +338,7 @@
   "TOAST_MILL_ARCHIVED_SUCCESSFULLY": "Öğütücü arşivlendi",
   "TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY": "Hazırlama metodu arşivlendi",
   "TOAST_WATER_ARCHIVED_SUCCESSFULLY": "Su arşivlendi",
-  "BEAN_WEIGHT_ALREADY_USED": "{{gramUsed}}g of {{gramTotal}}g",
+  "BEAN_WEIGHT_ALREADY_USED": "{{gramUsed}}g of {{gramTotal}}g ({{leftOver}}g)",
   "PREPARATION_TYPE_CUSTOM_PREPARATION": "Özel hazırlama yöntemi",
   "PREPARATION_TYPE_AEROPRESS": "Aeropress",
   "PREPARATION_TYPE_V60": "V60",
