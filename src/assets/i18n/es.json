@@ -338,7 +338,7 @@
   "TOAST_MILL_ARCHIVED_SUCCESSFULLY": "Molino archivado",
   "TOAST_PREPARATION_ARCHIVED_SUCCESSFULLY": "Método archivado",
   "TOAST_WATER_ARCHIVED_SUCCESSFULLY": "Se ha archivado el agua",
-  "BEAN_WEIGHT_ALREADY_USED": "{{gramUsed}}g de {{gramTotal}}g",
+  "BEAN_WEIGHT_ALREADY_USED": "{{gramUsed}}g de {{gramTotal}}g ({{leftOver}}g)",
   "PREPARATION_TYPE_CUSTOM_PREPARATION": "Método de preparación personalizado",
   "PREPARATION_TYPE_AEROPRESS": "Aeropress",
   "PREPARATION_TYPE_V60": "V60",

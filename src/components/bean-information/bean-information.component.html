@@ -101,7 +101,7 @@
                 <ion-label class="card-headline">{{"BEANS_AMOUNT_USED" | translate}}</ion-label>
                 <br/>
                 <ion-text
-                  [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount() | number : '.0-2', gramTotal: bean?.weight}">{{daysOld()}}</ion-text>
+                  [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount() | number : '.0-2', gramTotal: bean?.weight,leftOver: bean?.weight - getUsedWeightCount()}"></ion-text>
               </ion-col>
               <ion-col *ngIf="(bean?.hasCustomFlavors() || bean?.hasPredefinedFlavors())" size="12">
                 <ion-label class="card-headline">{{'BREW_DATA_FLAVOR' | translate}}</ion-label><br/>
