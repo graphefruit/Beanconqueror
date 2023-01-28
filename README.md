@@ -189,7 +189,11 @@ cordova-check-plugins
 
 ### NPM-Version
 
-Don't use NPM V 7 right now, 6.14.11 works fine
+npm-v -> 9.4.0 - works
+
+### NodeJS-Version
+
+node -v -> v16.15.0 -> works
 
 ### iOS-Version:
 
