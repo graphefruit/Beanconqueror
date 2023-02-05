@@ -358,7 +358,9 @@ ion-menu:host .menu-inner {
 .ion-no-padding-right {
   padding-right:0px;
 }
-
+.ion-no-padding-left {
+  padding-left:0px;
+}
   ion-range {
     --bar-background: #CCCCCC;
     --bar-background-active: var(--ion-color-accent-secondary);
