@@ -61,6 +61,8 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
   @ViewChild('pressureDetail', { read: ElementRef })
   public pressureDetail: ElementRef;
   private disableHardwareBack;
+
+  protected heightInformationBlock: number = 50;
   constructor(
     private readonly modalController: ModalController,
     private readonly screenOrientation: ScreenOrientation,
@@ -149,6 +151,8 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
       const informationContainerHeight = document.getElementById(
         'informationContainer'
       ).offsetHeight;
+
+      this.heightInformationBlock = informationContainerHeight;
 
       this.brewComponent.lastChartLayout.height =
         flowHeight - informationContainerHeight;

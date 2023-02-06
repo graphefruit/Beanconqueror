@@ -1452,7 +1452,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         /**Timeout is needed, because on mobile devices, the trace and the relayout bothers each other, which results into not refreshing the graph*/
         let newRenderingInstance = 0;
         if (this.maximizeFlowGraphIsShown === true) {
-          newRenderingInstance = Math.floor(this.timer.getSeconds() / 40);
+          newRenderingInstance = Math.floor(this.timer.getSeconds() / 60);
         } else {
           newRenderingInstance = Math.floor(this.timer.getSeconds() / 20);
         }
@@ -1461,8 +1461,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           newRenderingInstance > this.lastChartRenderingInstance ||
           this.lastChartRenderingInstance === -1
         ) {
-          let subtractTime: number = this.maximizeFlowGraphIsShown ? 20 : 10;
-          const addTime: number = this.maximizeFlowGraphIsShown ? 50 : 30;
+          let subtractTime: number = this.maximizeFlowGraphIsShown ? 40 : 10;
+          const addTime: number = this.maximizeFlowGraphIsShown ? 70 : 30;
           if (this.data.brew_time <= 10) {
             subtractTime = 0;
           }

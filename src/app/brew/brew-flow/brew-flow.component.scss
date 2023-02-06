@@ -11,16 +11,17 @@
     box-shadow:none;
   }
   #brewFlowContainer {
-    height:100%;
+
   }
 #informationContainer {
   display:flex;
   font-size:24px;
-  margin-left:11px;
+  margin-left:5px;
   overflow:scroll;
   ion-icon {
     margin-right:2px;
     margin-left:5px;
+    margin-top:5px;
   }
   span {
     vertical-align:top;
@@ -52,7 +53,7 @@
     ion-card-header {
       color: #FFFFFF;
       background-color: var(--ion-color-accent) !important;
-      font-size: 16px;
+      font-size: 24px;
       padding: 4px;
       display: flex;
       justify-content: space-evenly;
@@ -62,6 +63,9 @@
     ion-card-content {
       color: #000000;
       padding: 0px 2px;
+      ion-icon{
+        font-size:24px;
+      }
     }
 
   }
