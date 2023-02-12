@@ -45,7 +45,7 @@
           <ion-col size="{{pressureDeviceConnected()?3:4}}" style="padding-right:5px;">
             <ion-card class="flow-profile ion-text-center" style="height: 100%;">
               <ion-card-header>
-                <div #smartScaleWeightPerSecondDetail>? g/s</div>
+                <div><span #smartScaleWeightPerSecondDetail>?</span> (<span #smartScaleAvgFlowPerSecondDetail>?</span>) g/s</div>
               </ion-card-header>
               <ion-card-content>
                 <ion-icon name="water-outline"></ion-icon>
@@ -62,7 +62,7 @@
               </ion-card-content>
             </ion-card>
           </ion-col>
-          <ion-col size="{{pressureDeviceConnected()?3:4}}">
+          <ion-col size="{{pressureDeviceConnected()?3:4}}" style="padding-right:5px;">
             <ion-card class="flow-profile ion-text-center" style="height: 100%;">
               <ion-card-header>
                <span

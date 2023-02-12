@@ -904,6 +904,21 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           resolve(undefined);
         }, 200);
       });
+    } else if (
+      this.flow_profile_raw?.weight.length > 0 ||
+      this.flow_profile_raw?.pressureFlow.length > 0
+    ) {
+      await this.uiAlert.showLoadingSpinner();
+      //The pressure or weight went down and we need to reset the graph now still
+      this.flow_profile_raw = new BrewFlow();
+      this.initializeFlowChart(false);
+      // Give the buttons a bit of time, 100ms won't be an issue for user flow
+      await new Promise((resolve) => {
+        setTimeout(async () => {
+          await this.uiAlert.hideLoadingSpinner();
+          resolve(undefined);
+        }, 200);
+      });
     }
   }
 
@@ -1675,13 +1690,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
 
       //chartData.push(this.weightTraceNew);
-
-      Plotly.newPlot(
-        'flowProfileChart',
-        chartData,
-        this.lastChartLayout,
-        this.getChartConfig()
-      );
+      try {
+        Plotly.newPlot(
+          'flowProfileChart',
+          chartData,
+          this.lastChartLayout,
+          this.getChartConfig()
+        );
+      } catch (ex) {}
     }, timeout);
   }
 
