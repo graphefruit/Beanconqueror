@@ -581,6 +581,9 @@ export class AppComponent implements AfterViewInit {
         await this.__trackNewBrew();
         this.router.navigate(['/home/brews'], { replaceUrl: true });
         break;
+      case STARTUP_VIEW_ENUM.BEANS_PAGE:
+        this.router.navigate(['/home/beans'], { replaceUrl: true });
+        break;
     }
   }
 
