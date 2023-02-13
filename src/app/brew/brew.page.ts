@@ -141,6 +141,7 @@ export class BrewPage implements OnInit {
       checkingFilter.method_of_preparation.length > 0 ||
       checkingFilter.mill.length > 0 ||
       checkingFilter.favourite ||
+      checkingFilter.chart_data ||
       didRatingFilterChanged ||
       checkingFilterText !== ''
     );
@@ -291,6 +292,11 @@ export class BrewPage implements OnInit {
     }
     if (filter.favourite) {
       brewsFilters = brewsFilters.filter((e) => e.favourite === true);
+    }
+    if (filter.chart_data) {
+      brewsFilters = brewsFilters.filter(
+        (e) => e.flow_profile !== '' && e.flow_profile !== undefined
+      );
     }
     if (filter.rating) {
       brewsFilters = brewsFilters.filter(

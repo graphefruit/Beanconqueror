@@ -1350,5 +1350,6 @@
   "BEAN_PARAMETER_CUSTOMIZE_TITLE": "Individualisiere die Bohneninformationen, welche verwendet werden soll",
   "BEAN_PARAMETER_CUSTOMIZE_DESCRIPTION": "Viele Informationen zur Bohne können eingetragen und verwendet werden. Individualisiere die Bohneninformationen, welche ausgefüllt und verwendet werden sollen, sowie welche in der Listenansicht angezeigt werden sollen",
   "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_TITLE": "Timer zurücksetzen!",
-  "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_DESCRIPTION": "Da du ein Bluetooth-Gerät verbunden hast, setzte bitte deinen Timer bevor du startest zurück"
+  "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_DESCRIPTION": "Da du ein Bluetooth-Gerät verbunden hast, setzte bitte deinen Timer bevor du startest zurück",
+  "BREW_FILTER_JUST_CHART_DATA": "Nur Graphen"
 }

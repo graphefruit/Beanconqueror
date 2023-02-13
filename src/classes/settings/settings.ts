@@ -135,6 +135,7 @@ export class Settings implements ISettings {
       method_of_preparation: [],
       method_of_preparation_tools: [],
       favourite: false,
+      chart_data: false,
       rating: {
         upper: upperRating,
         lower: -1,
