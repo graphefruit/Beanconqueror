@@ -333,11 +333,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   @HostListener('window:orientationchange', ['$event'])
   public onOrientationChange() {
     if (this.smartScaleConnected() || this.pressureDeviceConnected()) {
-      this.lastChartLayout.height = 150;
-      this.lastChartLayout.width = document.getElementById(
-        'canvasContainerBrew'
-      ).offsetWidth;
-      this.updateChart();
+      setTimeout(() => {
+        this.lastChartLayout.height = 150;
+        this.lastChartLayout.width = document.getElementById(
+          'canvasContainerBrew'
+        ).offsetWidth;
+        Plotly.relayout('flowProfileChart', this.lastChartLayout);
+      }, 50);
     }
   }
 
