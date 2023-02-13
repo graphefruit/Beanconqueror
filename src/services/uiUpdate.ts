@@ -489,6 +489,8 @@ export class UIUpdate {
               const settings_v9: any = this.uiSettingsStorage.getSettings();
               settings_v9.bean_manage_parameters.activateAll();
               settings_v9.bean_visible_list_view_parameters.activateAll();
+              // Reset filter, because we got a new sort on beans
+              settings_v9.resetFilter();
               await this.uiSettingsStorage.saveSettings(settings_v9);
             }
             break;
