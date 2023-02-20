@@ -1342,6 +1342,7 @@
   "BEAN_DATA_FARMER_TOOLTIP": "Welcher Farmer hat die Bohne angebaut",
   "BEAN_DATA_ELEVATION_TOOLTIP": "In welcher Anbauhöhe wurde die Bohne angebaut",
   "BEAN_DATA_PROCESSING_TOOLTIP": "Wie wurde die Bohne aufbereitet",
+  "BEAN_DATA_VARIETY_TOOLTIP": "Die Kaffee Varietät (SL28 z.B.)",
   "BEAN_DATA_HARVEST_TIME_TOOLTIP": "Wann wurde die Bohne geerntet (Monat, Jahr?)",
   "BEAN_DATA_PERCENTAGE_TOOLTIP": "Prozentualer Anteil der Bohne in der Tüte",
   "BEAN_DATA_CERTIFICATION_TOOLTIP": "Welches Zertifikat hat die Bohne (Fair Trade z.B.)",

@@ -167,6 +167,8 @@ import { BeanAssociatedBrewsComponent } from '../beans/bean-associated-brews/bea
 import { BeanParameterPage } from '../bean-parameter/bean-parameter.page';
 import { BeanListViewParameterComponent } from '../bean-parameter/bean-list-view-parameter/bean-list-view-parameter.component';
 import { BeanManageParameterComponent } from '../bean-parameter/bean-manage-parameter/bean-manage-parameter.component';
+import { BrewRatioCardComponent } from '../../components/brew-ratio-card/brew-ratio-card.component';
+import { BrewRatioCalculatorComponent } from '../brew/brew-ratio-calculator/brew-ratio-calculator.component';
 
 @NgModule({
   declarations: [
@@ -236,6 +238,7 @@ import { BeanManageParameterComponent } from '../bean-parameter/bean-manage-para
     MillAddComponent,
     BrewAddComponent,
     BrewBrixCalculatorComponent,
+    BrewRatioCalculatorComponent,
     BrewChoosePreparationToBrewComponent,
     BrewFlavorPickerComponent,
     BrewBeverageQuantityCalculatorComponent,
@@ -308,6 +311,7 @@ import { BeanManageParameterComponent } from '../bean-parameter/bean-manage-para
     RoastingMachinePage,
     RoastingMachinePopoverActionsComponent,
     WaterAddComponent,
+    BrewRatioCardComponent,
   ],
   imports: [
     CommonModule,
@@ -426,6 +430,7 @@ import { BeanManageParameterComponent } from '../bean-parameter/bean-manage-para
     MillAddComponent,
     BrewAddComponent,
     BrewBrixCalculatorComponent,
+    BrewRatioCalculatorComponent,
     BrewChoosePreparationToBrewComponent,
     BrewFlavorPickerComponent,
     BrewBeverageQuantityCalculatorComponent,
@@ -497,6 +502,7 @@ import { BeanManageParameterComponent } from '../bean-parameter/bean-manage-para
     RoastingMachinePage,
     RoastingMachinePopoverActionsComponent,
     WaterAddComponent,
+    BrewRatioCardComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
