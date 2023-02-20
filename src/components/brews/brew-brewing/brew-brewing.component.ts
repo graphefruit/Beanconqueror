@@ -59,6 +59,7 @@ import {
 import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
 import { BluetoothScale, SCALE_TIMER_COMMAND } from '../../../classes/devices';
 import { IBrewGraphs } from '../../../interfaces/brew/iBrewGraphs';
+import { BrewRatioCalculatorComponent } from '../../../app/brew/brew-ratio-calculator/brew-ratio-calculator.component';
 
 declare var cordova;
 declare var Plotly;
@@ -1240,6 +1241,31 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     return (
       this.uiWaterStorage.getAllEntries().filter((e) => !e.finished).length > 0
     );
+  }
+
+  public async brewRatioCalculator() {
+    let waterQuantity: number = 0;
+    if (
+      this.data.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO
+    ) {
+      waterQuantity = this.data.brew_beverage_quantity;
+    } else {
+      waterQuantity = this.data.brew_quantity;
+    }
+    const modal = await this.modalController.create({
+      component: BrewRatioCalculatorComponent,
+      cssClass: 'popover-actions',
+      breakpoints: [0, 1],
+      initialBreakpoint: 1,
+      id: BrewRatioCalculatorComponent.COMPONENT_ID,
+      componentProps: {
+        grindWeight: this.data.grind_weight,
+        waterQuantity: waterQuantity,
+      },
+    });
+    await modal.present();
+
+    const { data } = await modal.onWillDismiss();
   }
 
   public async calculateBrixToTds() {

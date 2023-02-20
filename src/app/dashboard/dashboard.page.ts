@@ -120,7 +120,11 @@ export class DashboardPage implements OnInit {
       _bean.config.uuid
     );
     for (const brew of relatedBrews) {
-      usedWeightCount += brew.grind_weight;
+      if (brew?.bean_weight_in > 0) {
+        usedWeightCount += brew.bean_weight_in;
+      } else {
+        usedWeightCount += brew.grind_weight;
+      }
     }
     return usedWeightCount;
   }

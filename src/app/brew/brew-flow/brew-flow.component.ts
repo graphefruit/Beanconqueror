@@ -148,9 +148,14 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
   public onOrientationChange() {
     setTimeout(() => {
       const flowHeight = document.getElementById('flowCard').offsetHeight;
-      const informationContainerHeight = document.getElementById(
-        'informationContainer'
-      ).offsetHeight;
+      let informationContainerHeight = 0;
+      try {
+        informationContainerHeight = document.getElementById(
+          'informationContainer'
+        ).offsetHeight;
+      } catch (ex) {
+        informationContainerHeight = 0;
+      }
 
       this.heightInformationBlock = informationContainerHeight;
 

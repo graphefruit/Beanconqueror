@@ -29,7 +29,7 @@
 
   <div id="flowCard" style="height:100%">
 
-    <div  id="informationContainer">
+    <div  *ngIf="isDetail===false" id="informationContainer">
       <ion-grid class="ion-text-center ion-no-padding brew-information-panel">
         <ion-row style="padding-bottom:5px;">
           <ion-col size="{{pressureDeviceConnected()?3:4}}" style="padding-right:5px;">
