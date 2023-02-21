@@ -1330,8 +1330,20 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
                 this.checkChanges();
                 break;
               case SCALE_TIMER_COMMAND.RESET:
-                this.timer.reset();
-                this.checkChanges();
+                this.uiAlert
+                  .showConfirm(
+                    'SCALE_RESET_TRIGGERED_DESCRIPTION',
+                    'SCALE_RESET_TRIGGERED_TITLE',
+                    true
+                  )
+                  .then(
+                    () => {
+                      this.timer.reset();
+                      this.checkChanges();
+                    },
+                    () => {}
+                  );
+
                 break;
             }
           } else {
@@ -2334,7 +2346,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
     }
     let checkData: Settings | Preparation;
+
     if (
+      _template === true &&
+      this.getPreparation().use_custom_parameters === true &&
+      this.getPreparation().repeat_coffee_parameters.repeat_coffee_active ===
+        true
+    ) {
+      checkData = this.getPreparation();
+    } else if (
+      _template === false &&
       this.getPreparation().use_custom_parameters === true &&
       this.getPreparation().manage_parameters.set_last_coffee_brew === true
     ) {
@@ -2344,8 +2365,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
 
     if (
-      checkData.default_last_coffee_parameters.bean_type ||
-      _template === true
+      (_template === false &&
+        checkData.default_last_coffee_parameters.bean_type) ||
+      (_template === true && checkData.repeat_coffee_parameters.bean_type)
     ) {
       const brewBean: IBean = this.uiBeanStorage.getByUUID(brew.bean);
       if (!brewBean.finished) {
@@ -2354,53 +2376,66 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
 
     if (
-      checkData.default_last_coffee_parameters.grind_size ||
-      _template === true
+      (_template === false &&
+        checkData.default_last_coffee_parameters.grind_size) ||
+      (_template === true && checkData.repeat_coffee_parameters.grind_size)
     ) {
       this.data.grind_size = brew.grind_size;
     }
     if (
-      checkData.default_last_coffee_parameters.grind_weight ||
-      _template === true
+      (_template === false &&
+        checkData.default_last_coffee_parameters.grind_weight) ||
+      (_template === true && checkData.repeat_coffee_parameters.grind_weight)
     ) {
       this.data.grind_weight = brew.grind_weight;
     }
 
-    if (checkData.default_last_coffee_parameters.mill || _template === true) {
+    if (
+      (_template === false && checkData.default_last_coffee_parameters.mill) ||
+      (_template === true && checkData.repeat_coffee_parameters.mill)
+    ) {
       const brewMill: IMill = this.uiMillStorage.getByUUID(brew.mill);
       if (!brewMill.finished) {
         this.data.mill = brewMill.config.uuid;
       }
     }
     if (
-      checkData.default_last_coffee_parameters.mill_timer ||
-      _template === true
+      (_template === false &&
+        checkData.default_last_coffee_parameters.mill_timer) ||
+      (_template === true && checkData.repeat_coffee_parameters.mill_timer)
     ) {
       this.data.mill_timer = brew.mill_timer;
     }
     if (
-      checkData.default_last_coffee_parameters.mill_speed ||
-      _template === true
+      (_template === false &&
+        checkData.default_last_coffee_parameters.mill_speed) ||
+      (_template === true && checkData.repeat_coffee_parameters.mill_speed)
     ) {
       this.data.mill_speed = brew.mill_speed;
     }
     if (
-      checkData.default_last_coffee_parameters.pressure_profile ||
-      _template === true
+      (_template === false &&
+        checkData.default_last_coffee_parameters.pressure_profile) ||
+      (_template === true &&
+        checkData.repeat_coffee_parameters.pressure_profile)
     ) {
       this.data.pressure_profile = brew.pressure_profile;
     }
     if (
-      checkData.default_last_coffee_parameters.brew_temperature ||
-      _template === true
+      (_template === false &&
+        checkData.default_last_coffee_parameters.brew_temperature) ||
+      (_template === true &&
+        checkData.repeat_coffee_parameters.brew_temperature)
     ) {
       this.data.brew_temperature = brew.brew_temperature;
     }
 
     if (this.brewTemperatureTime) {
       if (
-        checkData.default_last_coffee_parameters.brew_temperature_time ||
-        _template === true
+        (_template === false &&
+          checkData.default_last_coffee_parameters.brew_temperature_time) ||
+        (_template === true &&
+          checkData.repeat_coffee_parameters.brew_temperature_time)
       ) {
         this.data.brew_temperature_time = brew.brew_temperature_time;
         if (this.settings.brew_milliseconds) {
@@ -2418,8 +2453,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
     if (this.timer) {
       if (
-        checkData.default_last_coffee_parameters.brew_time ||
-        _template === true
+        (_template === false &&
+          checkData.default_last_coffee_parameters.brew_time) ||
+        (_template === true && checkData.repeat_coffee_parameters.brew_time)
       ) {
         this.data.brew_time = brew.brew_time;
         if (this.settings.brew_milliseconds) {
@@ -2435,27 +2471,33 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
 
     if (
-      checkData.default_last_coffee_parameters.brew_quantity ||
-      _template === true
+      (_template === false &&
+        checkData.default_last_coffee_parameters.brew_quantity) ||
+      (_template === true && checkData.repeat_coffee_parameters.brew_quantity)
     ) {
       this.data.brew_quantity = brew.brew_quantity;
       this.data.brew_quantity_type = brew.brew_quantity_type;
     }
     if (
-      checkData.default_last_coffee_parameters.coffee_type ||
-      _template === true
+      (_template === false &&
+        checkData.default_last_coffee_parameters.coffee_type) ||
+      (_template === true && checkData.repeat_coffee_parameters.coffee_type)
     ) {
       this.data.coffee_type = brew.coffee_type;
     }
     if (
-      checkData.default_last_coffee_parameters.coffee_concentration ||
-      _template === true
+      (_template === false &&
+        checkData.default_last_coffee_parameters.coffee_concentration) ||
+      (_template === true &&
+        checkData.repeat_coffee_parameters.coffee_concentration)
     ) {
       this.data.coffee_concentration = brew.coffee_concentration;
     }
     if (
-      checkData.default_last_coffee_parameters.coffee_first_drip_time ||
-      _template === true
+      (_template === false &&
+        checkData.default_last_coffee_parameters.coffee_first_drip_time) ||
+      (_template === true &&
+        checkData.repeat_coffee_parameters.coffee_first_drip_time)
     ) {
       this.data.coffee_first_drip_time = brew.coffee_first_drip_time;
       if (this.settings.brew_milliseconds) {
@@ -2473,8 +2515,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }, 250);
     }
     if (
-      checkData.default_last_coffee_parameters.coffee_blooming_time ||
-      _template === true
+      (_template === false &&
+        checkData.default_last_coffee_parameters.coffee_blooming_time) ||
+      (_template === true &&
+        checkData.repeat_coffee_parameters.coffee_blooming_time)
     ) {
       this.data.coffee_blooming_time = brew.coffee_blooming_time;
       if (this.settings.brew_milliseconds) {
@@ -2492,25 +2536,39 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }, 250);
     }
 
-    if (checkData.default_last_coffee_parameters.rating || _template === true) {
+    if (
+      (_template === false &&
+        checkData.default_last_coffee_parameters.rating) ||
+      (_template === true && checkData.repeat_coffee_parameters.rating)
+    ) {
       this.data.rating = brew.rating;
     }
-    if (checkData.default_last_coffee_parameters.note || _template === true) {
+    if (
+      (_template === false && checkData.default_last_coffee_parameters.note) ||
+      (_template === true && checkData.repeat_coffee_parameters.note)
+    ) {
       this.data.note = brew.note;
     }
-    if (checkData.default_last_coffee_parameters.tds || _template === true) {
+    if (
+      (_template === false && checkData.default_last_coffee_parameters.tds) ||
+      (_template === true && checkData.repeat_coffee_parameters.tds)
+    ) {
       this.data.tds = brew.tds;
     }
     if (
-      checkData.default_last_coffee_parameters.brew_beverage_quantity ||
-      _template === true
+      (_template === false &&
+        checkData.default_last_coffee_parameters.brew_beverage_quantity) ||
+      (_template === true &&
+        checkData.repeat_coffee_parameters.brew_beverage_quantity)
     ) {
       this.data.brew_beverage_quantity = brew.brew_beverage_quantity;
       this.data.brew_beverage_quantity_type = brew.brew_beverage_quantity_type;
     }
     if (
-      checkData.default_last_coffee_parameters.method_of_preparation_tool ||
-      _template === true
+      (_template === false &&
+        checkData.default_last_coffee_parameters.method_of_preparation_tool) ||
+      (_template === true &&
+        checkData.repeat_coffee_parameters.method_of_preparation_tool)
     ) {
       const repeatTools = brew.method_of_preparation_tools;
       this.data.method_of_preparation_tools = [];
@@ -2523,17 +2581,25 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         }
       }
     }
-    if (checkData.default_last_coffee_parameters.water || _template === true) {
+    if (
+      (_template === false && checkData.default_last_coffee_parameters.water) ||
+      (_template === true && checkData.repeat_coffee_parameters.water)
+    ) {
       this.data.water = brew.water;
     }
 
-    if (checkData.default_last_coffee_parameters.vessel || _template === true) {
+    if (
+      (_template === false &&
+        checkData.default_last_coffee_parameters.vessel) ||
+      (_template === true && checkData.repeat_coffee_parameters.vessel)
+    ) {
       this.data.vessel_name = brew.vessel_name;
       this.data.vessel_weight = brew.vessel_weight;
     }
     if (
-      checkData.default_last_coffee_parameters.bean_weight_in ||
-      _template === true
+      (_template === false &&
+        checkData.default_last_coffee_parameters.bean_weight_in) ||
+      (_template === true && checkData.repeat_coffee_parameters.bean_weight_in)
     ) {
       this.data.bean_weight_in = brew.bean_weight_in;
     }
