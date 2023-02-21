@@ -1352,5 +1352,11 @@
   "BEAN_PARAMETER_CUSTOMIZE_DESCRIPTION": "Viele Informationen zur Bohne können eingetragen und verwendet werden. Individualisiere die Bohneninformationen, welche ausgefüllt und verwendet werden sollen, sowie welche in der Listenansicht angezeigt werden sollen",
   "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_TITLE": "Timer zurücksetzen!",
   "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_DESCRIPTION": "Da du ein Bluetooth-Gerät verbunden hast, setzte bitte deinen Timer bevor du startest zurück",
-  "BREW_FILTER_JUST_CHART_DATA": "Nur Graphen"
+  "BREW_FILTER_JUST_CHART_DATA": "Nur Graphen",
+  "SCALE_RESET_TRIGGERED_DESCRIPTION": "Die Waage, möchte den den App-Timer sowie die Brühgraphik zurücksetzten, möchtest du das wirklich?",
+  "SCALE_RESET_TRIGGERED_TITLE": "Zurücksetzten?",
+  "NAV_REPEAT_PARAMETERS": "Wiederholung festlegen",
+  "PAGE_REPEAT_PARAMETERS_DESCRIPTION": "Lege fest, welche Parameter übernommen werden sollen, wenn du eine Brühung wiederholst.",
+  "CUSTOM_REPEAT_PARAMETERS": "Wiederholen",
+  "CUSTOM_REPEAT_PARAMETERS_DESCRIPTION": "Individuelle Wiederholung aktivieren?"
 }

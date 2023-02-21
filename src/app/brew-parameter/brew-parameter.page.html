@@ -27,6 +27,12 @@
       {{"NAV_DEFAULT_PARAMETERS" | translate}}
     </ion-item>
   </ion-card>
+  <ion-card (click)="openRepeatParameters()" tappable>
+    <ion-item class="ion-padding-horizontal" lines="none">
+      <ion-icon name="beanconqueror-repeat-round" slot="start"></ion-icon>
+      {{"NAV_REPEAT_PARAMETERS" | translate}}
+    </ion-item>
+  </ion-card>
 
   <ion-card (click)="openListViewParameters()" tappable>
     <ion-item class="ion-padding-horizontal" lines="none">

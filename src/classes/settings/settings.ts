@@ -21,6 +21,7 @@ import { IBrewGraphs } from '../../interfaces/brew/iBrewGraphs';
 import { BeanManageParameter } from '../parameter/beanManageParameter';
 import { PressureType, ScaleType } from '../devices';
 import { BeanListViewParameter } from '../parameter/beanListViewParameter';
+import { RepeatBrewParameter } from '../parameter/repeatBrewParameter';
 
 export class Settings implements ISettings {
   public brew_view: BREW_VIEW_ENUM;
@@ -30,6 +31,7 @@ export class Settings implements ISettings {
   public qr_scanner_information: boolean;
   public manage_parameters: ManageBrewParameter;
   public default_last_coffee_parameters: DefaultBrewParameter;
+  public repeat_coffee_parameters: RepeatBrewParameter;
   public visible_list_view_parameters: ListViewBrewParameter;
   public brew_order: OrderBrewParameter;
 
@@ -161,6 +163,8 @@ export class Settings implements ISettings {
     this.manage_parameters = new ManageBrewParameter();
     this.default_last_coffee_parameters = new DefaultBrewParameter();
     this.visible_list_view_parameters = new ListViewBrewParameter();
+    this.repeat_coffee_parameters = new RepeatBrewParameter();
+
     this.brew_order = new OrderBrewParameter();
 
     this.bean_manage_parameters = new BeanManageParameter();
@@ -289,6 +293,12 @@ export class Settings implements ISettings {
     Object.assign(
       this.default_last_coffee_parameters,
       settingsObj.default_last_coffee_parameters
+    );
+
+    this.repeat_coffee_parameters = new RepeatBrewParameter();
+    Object.assign(
+      this.repeat_coffee_parameters,
+      settingsObj.repeat_coffee_parameters
     );
 
     this.bean_manage_parameters = new BeanManageParameter();

@@ -21,6 +21,7 @@ export interface ISettings {
   language: string;
   manage_parameters: IBrewParameter;
   default_last_coffee_parameters: IBrewParameter;
+  repeat_coffee_parameters: IBrewParameter;
   visible_list_view_parameters: IBrewParameter;
   brew_order: IOrderBrewParameter;
 

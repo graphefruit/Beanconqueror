@@ -1352,5 +1352,11 @@
   "BEAN_PARAMETER_CUSTOMIZE_DESCRIPTION": "A lot of bean information can be entered or used. Choose your own parameters you want to fill in, and also which shall be displayed",
   "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_TITLE": "Reset timer!",
   "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_DESCRIPTION": "Because you've connected a bluetooth device, you need to reset your timer first before you can start",
-  "BREW_FILTER_JUST_CHART_DATA": "Just graphs"
+  "BREW_FILTER_JUST_CHART_DATA": "Just graphs",
+  "SCALE_RESET_TRIGGERED_DESCRIPTION": "The bluetooth scale, wants to reset the app-timer aswell as the brew graphic, do you realy want to procceed?",
+  "SCALE_RESET_TRIGGERED_TITLE": "Reset?",
+  "NAV_REPEAT_PARAMETERS": "Define repeat parameters",
+  "PAGE_REPEAT_PARAMETERS_DESCRIPTION": "Mark which parameters should be preset, when you repeat a specific brew",
+  "CUSTOM_REPEAT_PARAMETERS": "Repeat",
+  "CUSTOM_REPEAT_PARAMETERS_DESCRIPTION": "Activate customized repeat?"
 }

@@ -169,6 +169,8 @@ import { BeanListViewParameterComponent } from '../bean-parameter/bean-list-view
 import { BeanManageParameterComponent } from '../bean-parameter/bean-manage-parameter/bean-manage-parameter.component';
 import { BrewRatioCardComponent } from '../../components/brew-ratio-card/brew-ratio-card.component';
 import { BrewRatioCalculatorComponent } from '../brew/brew-ratio-calculator/brew-ratio-calculator.component';
+import { RepeatCustomParameterComponent } from '../../components/parameter/repeat-custom-parameter/repeat-custom-parameter.component';
+import { RepeatParameterComponent } from '../brew-parameter/repeat-parameter/repeat-parameter.component';
 
 @NgModule({
   declarations: [
@@ -210,6 +212,7 @@ import { BrewRatioCalculatorComponent } from '../brew/brew-ratio-calculator/brew
     LicencesComponent,
     PrivacyComponent,
     DefaultParameterComponent,
+    RepeatParameterComponent,
     SortParameterComponent,
     ManageParameterComponent,
     BeanListViewParameterComponent,
@@ -292,6 +295,7 @@ import { BrewRatioCalculatorComponent } from '../brew/brew-ratio-calculator/brew
     PreparationPopoverActionsComponent,
     TimerComponent,
     DefaultCustomParameterComponent,
+    RepeatCustomParameterComponent,
     SortCustomParameterComponent,
     ManageCustomParameterComponent,
     BrewTimerComponent,
@@ -404,6 +408,7 @@ import { BrewRatioCalculatorComponent } from '../brew/brew-ratio-calculator/brew
     LicencesComponent,
     PrivacyComponent,
     DefaultParameterComponent,
+    RepeatParameterComponent,
     SortParameterComponent,
     ManageParameterComponent,
     BeanListViewParameterComponent,
@@ -483,6 +488,7 @@ import { BrewRatioCalculatorComponent } from '../brew/brew-ratio-calculator/brew
     PreparationPopoverActionsComponent,
     TimerComponent,
     DefaultCustomParameterComponent,
+    RepeatCustomParameterComponent,
     SortCustomParameterComponent,
     ManageCustomParameterComponent,
     BrewTimerComponent,
