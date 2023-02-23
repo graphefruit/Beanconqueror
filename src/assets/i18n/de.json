@@ -1358,5 +1358,7 @@
   "NAV_REPEAT_PARAMETERS": "Wiederholung festlegen",
   "PAGE_REPEAT_PARAMETERS_DESCRIPTION": "Lege fest, welche Parameter übernommen werden sollen, wenn du eine Brühung wiederholst.",
   "CUSTOM_REPEAT_PARAMETERS": "Wiederholen",
-  "CUSTOM_REPEAT_PARAMETERS_DESCRIPTION": "Individuelle Wiederholung aktivieren?"
+  "CUSTOM_REPEAT_PARAMETERS_DESCRIPTION": "Individuelle Wiederholung aktivieren?",
+  "PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE": "Numerische Tastatur für Mahlgrad?",
+  "PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE_DESCRIPTION": "Möchtest du bei der Mahlgrad Einstellung nur die Numerische Tastatur angezeigt bekommen, anstatt der normalen?"
 }

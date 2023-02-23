@@ -52,6 +52,7 @@ export interface ISettings {
   show_roasting_section: boolean;
   show_water_section: boolean;
   show_cupping_section: boolean;
+  use_numeric_keyboard_for_grind_size: boolean;
 
   brew_filter: {
     OPEN: IBrewPageFilter;

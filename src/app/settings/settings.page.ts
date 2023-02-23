@@ -65,6 +65,7 @@ import { AppEventType } from '../../enums/appEvent/appEvent';
 import { EventQueueService } from '../../services/queueService/queue-service.service';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { Logger } from '../../classes/devices/common/logger';
+import { UIFileHelper } from '../../services/uiFileHelper';
 
 declare var cordova: any;
 declare var device: any;
@@ -147,7 +148,8 @@ export class SettingsPage implements OnInit {
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly uiToast: UIToast,
     private readonly currencyService: CurrencyService,
-    private readonly eventQueue: EventQueueService
+    private readonly eventQueue: EventQueueService,
+    private readonly uiFileHelper: UIFileHelper
   ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -735,11 +737,90 @@ export class SettingsPage implements OnInit {
   private async _exportFlowProfiles(_storedData: Array<Brew>) {
     for (const entry of _storedData) {
       if (entry.flow_profile) {
-        await this._exportFile(entry.flow_profile);
+        await this._exportFlowProfileFile(entry.flow_profile);
       }
     }
   }
+  private async _exportFlowProfileFile(_filePath) {
+    let path: string;
+    let fileName: string;
+    path = this.file.dataDirectory;
+    fileName = _filePath;
+    if (fileName.startsWith('/')) {
+      fileName = fileName.slice(1);
+    }
+    let storageLocation: string = '';
 
+    switch (device.platform) {
+      case 'Android':
+        storageLocation = cordova.file.externalRootDirectory;
+        break;
+      case 'iOS':
+        storageLocation = cordova.file.documentsDirectory;
+        break;
+    }
+
+    try {
+      const fileSystem: any = await new Promise(
+        async (resolve) =>
+          await window.resolveLocalFileSystemURL(storageLocation, resolve)
+      );
+
+      const directory: DirectoryEntry = await new Promise(
+        async (resolve) =>
+          await fileSystem.getDirectory(
+            'Download',
+            {
+              create: true,
+              exclusive: false,
+            },
+            resolve
+          )
+      );
+      let exportDirectory: DirectoryEntry = await new Promise(
+        async (resolve) =>
+          await directory.getDirectory(
+            'Beanconqueror_export',
+            {
+              create: true,
+              exclusive: false,
+            },
+            resolve
+          )
+      );
+
+      let exportingFilename = '';
+      const folders = fileName.split('/');
+      for (let i = 0; i < folders.length; i++) {
+        const folderName = folders[i];
+        if (folderName.indexOf('.') >= 0) {
+          // We found the filename woop
+          exportingFilename = folderName.trim();
+        } else if (folderName !== '') {
+          // We found another folder, create it or just get it
+          path = path + folderName + '/';
+          exportDirectory = await new Promise(
+            async (resolve) =>
+              await exportDirectory.getDirectory(
+                folderName,
+                {
+                  create: true,
+                  exclusive: false,
+                },
+                resolve
+              )
+          );
+        }
+      }
+
+      await this.file.copyFile(
+        path,
+        exportingFilename,
+        exportDirectory.nativeURL,
+        exportingFilename.replace('.json', '.png')
+      );
+    } catch (ex) {}
+  }
   private async _exportFile(_filePath) {
     let path: string;
     let fileName: string;
@@ -839,13 +920,43 @@ export class SettingsPage implements OnInit {
     }
   }
 
-  private async _importFile(_filePath: string, _importPath: string) {
+  private async _importFlowProfileFiles(
+    _storedData: Array<Brew>,
+    _importPath: string
+  ) {
+    for (const entry of _storedData) {
+      if (entry.flow_profile) {
+        await this._importFileFlowProfile(
+          entry.flow_profile.replace('.json', '.png'),
+          _importPath
+        );
+      }
+    }
+  }
+  private async _importFileFlowProfile(_filePath: string, _importPath: string) {
     let path: string;
     let fileName: string;
-    path = this.file.dataDirectory;
+    if (this.platform.is('ios') && this.platform.is('cordova')) {
+      path = this.file.documentsDirectory;
+    } else {
+      path = this.file.dataDirectory;
+    }
     fileName = _filePath;
     if (fileName.startsWith('/')) {
       fileName = fileName.slice(1);
+    }
+    let addSubFolder = '';
+    if (fileName.indexOf('/') > -1) {
+      //we still got a slash inside
+      const splittedFileName = fileName.split('/');
+      fileName = splittedFileName[splittedFileName.length - 1];
+      for (let i = 0; i < splittedFileName.length; i++) {
+        if (i + 1 === splittedFileName.length) {
+          //Ignore last one
+        } else {
+          addSubFolder += splittedFileName[i] + '/';
+        }
+      }
     }
     let storageLocation: string = '';
 
@@ -859,10 +970,19 @@ export class SettingsPage implements OnInit {
     }
 
     try {
+      await this.uiFileHelper.createFolder(_filePath);
+    } catch (ex) {
+      this.uiLog.error(
+        'Settings - import file - We could not create folders ' + _filePath
+      );
+    }
+
+    try {
       const fileExists: boolean = await this.file.checkFile(
         storageLocation,
         fileName
       );
+
       if (fileExists === true) {
         this.uiLog.log(
           'File did exist and was copied - file:' +
@@ -874,7 +994,13 @@ export class SettingsPage implements OnInit {
             '' +
             fileName
         );
-        await this.file.copyFile(storageLocation, fileName, path, fileName);
+
+        await this.file.copyFile(
+          storageLocation,
+          fileName,
+          path + addSubFolder,
+          fileName.replace('.png', '.json')
+        );
       } else {
         this.uiLog.log(
           'File doesnt exist - file:' +
@@ -883,6 +1009,98 @@ export class SettingsPage implements OnInit {
             fileName +
             ' to: ' +
             path +
+            addSubFolder +
+            '' +
+            fileName
+        );
+      }
+
+      try {
+        // extra catch because maybe file is not existing
+        // await this.file.removeFile(path, fileName);
+      } catch (ex) {}
+    } catch (ex) {
+      this.uiLog.error('Import file ' + ex.message);
+    }
+  }
+
+  private async _importFile(_filePath: string, _importPath: string) {
+    let path: string;
+    let fileName: string;
+    if (this.platform.is('ios') && this.platform.is('cordova')) {
+      path = this.file.documentsDirectory;
+    } else {
+      path = this.file.dataDirectory;
+    }
+    fileName = _filePath;
+    if (fileName.startsWith('/')) {
+      fileName = fileName.slice(1);
+    }
+    let addSubFolder = '';
+    if (fileName.indexOf('/') > -1) {
+      //we still got a slash inside
+      const splittedFileName = fileName.split('/');
+      fileName = splittedFileName[splittedFileName.length - 1];
+      for (let i = 0; i < splittedFileName.length; i++) {
+        if (i + 1 === splittedFileName.length) {
+          //Ignore last one
+        } else {
+          addSubFolder += splittedFileName[i] + '/';
+        }
+      }
+    }
+    let storageLocation: string = '';
+
+    switch (device.platform) {
+      case 'Android':
+        storageLocation = _importPath;
+        break;
+      case 'iOS':
+        storageLocation = cordova.file.documentsDirectory;
+        break;
+    }
+
+    try {
+      await this.uiFileHelper.createFolder(_filePath);
+    } catch (ex) {
+      this.uiLog.error(
+        'Settings - import file - We could not create folders ' + _filePath
+      );
+    }
+
+    try {
+      const fileExists: boolean = await this.file.checkFile(
+        storageLocation,
+        fileName
+      );
+
+      if (fileExists === true) {
+        this.uiLog.log(
+          'File did exist and was copied - file:' +
+            storageLocation +
+            '' +
+            fileName +
+            ' to: ' +
+            path +
+            '' +
+            fileName
+        );
+
+        await this.file.copyFile(
+          storageLocation,
+          fileName,
+          path + addSubFolder,
+          fileName
+        );
+      } else {
+        this.uiLog.log(
+          'File doesnt exist - file:' +
+            storageLocation +
+            '' +
+            fileName +
+            ' to: ' +
+            path +
+            addSubFolder +
             '' +
             fileName
         );
@@ -1033,6 +1251,8 @@ export class SettingsPage implements OnInit {
           if (_data.BACKUP === false) {
             this.__reinitializeStorages().then(
               async () => {
+                // Show loadingspinner again, because the reintializestorages hides it.
+                await this.uiAlert.showLoadingSpinner();
                 this.uiAnalytics.disableTracking();
                 this.__initializeSettings();
 
@@ -1059,6 +1279,16 @@ export class SettingsPage implements OnInit {
                   await this._importFiles(greenBeanData, _importPath);
                   await this._importFiles(roastingMachineData, _importPath);
                   await this._importFiles(waterData, _importPath);
+
+                  /*** WAIT!!, before you try to understand whats going on here
+                  After the latest file system changes of android, we can't copy .JSON Files, or other types, but .PNG, and .JPG works.
+                  Thats why we exported all the raw-jsons as a .PNG Type (but with JSON-Data), and when reimporting them, we load the .PNG and save it as .JSON
+                  Therefore we can transfer the brew history, else this would not be possible
+                   */
+                  await this._importFlowProfileFiles(
+                    brewsData,
+                    _importPath + 'brews/'
+                  );
                 }
 
                 if (
