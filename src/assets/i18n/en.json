@@ -1358,5 +1358,7 @@
   "NAV_REPEAT_PARAMETERS": "Define repeat parameters",
   "PAGE_REPEAT_PARAMETERS_DESCRIPTION": "Mark which parameters should be preset, when you repeat a specific brew",
   "CUSTOM_REPEAT_PARAMETERS": "Repeat",
-  "CUSTOM_REPEAT_PARAMETERS_DESCRIPTION": "Activate customized repeat?"
+  "CUSTOM_REPEAT_PARAMETERS_DESCRIPTION": "Activate customized repeat?",
+  "PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE": "Numeric keyboard for grind setting?",
+  "PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE_DESCRIPTION": "Do you want have the numeric keyboard for the grind setting, instead of the usage of the whole keyboard?"
 }

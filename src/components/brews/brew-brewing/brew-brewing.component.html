@@ -12,7 +12,11 @@
                       data.getPreparation().use_custom_parameters)"
             lines="inset">
     <ion-label position="stacked">{{"BREW_DATA_GRIND_SIZE" | translate}}</ion-label>
-    <ion-input [(ngModel)]="data.grind_size" placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_GRIND_SIZE' | translate}}"
+    <ion-input *ngIf="settings.use_numeric_keyboard_for_grind_size !== true" [(ngModel)]="data.grind_size" placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_GRIND_SIZE' | translate}}"
+               type="text"></ion-input>
+
+    <ion-input *ngIf="settings.use_numeric_keyboard_for_grind_size === true" [(ngModel)]="data.grind_size" inputmode="decimal"  placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_GRIND_SIZE' | translate}}" prevent-characters
+               remove-empty-number
                type="text"></ion-input>
   </ion-item>
   <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.grind_weight,
@@ -23,8 +27,8 @@
                       data.getPreparation().use_custom_parameters)"
             lines="inset">
     <ion-label position="stacked">{{"BREW_DATA_GRIND_WEIGHT" | translate}}</ion-label>
-    <ion-input [(ngModel)]="data.grind_weight" inputmode="decimal"
-               placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_GRIND_WEIGHT' | translate}}" prevent-characters
+    <ion-input [(ngModel)]="data.grind_weight"
+               inputmode="decimal" placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_GRIND_WEIGHT' | translate}}" prevent-characters
                remove-empty-number
                type="text" tabIndex="2"></ion-input>
     <ion-button (click)="brewRatioCalculator()" class="big-icon-only" fill="clear"

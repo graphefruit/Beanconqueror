@@ -57,6 +57,8 @@ export class Settings implements ISettings {
   public show_archived_waters: boolean;
   public show_archived_brews_on_dashboard: boolean;
 
+  public use_numeric_keyboard_for_grind_size: boolean;
+
   public welcome_page_showed: boolean;
   public track_caffeine_consumption: boolean;
   public brew_filter: {
@@ -191,6 +193,8 @@ export class Settings implements ISettings {
     this.show_roasting_section = false;
     this.show_water_section = false;
     this.show_cupping_section = false;
+
+    this.use_numeric_keyboard_for_grind_size = false;
 
     this.brew_filter = {
       OPEN: {} as IBrewPageFilter,
