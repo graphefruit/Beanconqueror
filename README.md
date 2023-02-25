@@ -3,17 +3,40 @@
 
 # Beanconqueror
 
-A cup of coffee is not the same anymore then back in the 80's, thats why I wanted to build a tool for the coffee community.
+Beanconqueror - The Ultimate Coffee Companion
 
-Coffee has been grown to like the new "black gold", more roasters and more tools outside are growing.
+You’re a coffee afficiando, and so am I!
+Beanconqueror is the product of our shared love of the drink in our cups and in our hearts.
+Whether you're just starting out, or are an experienced barista, Beanconqueror will help you get the most out of your coffee.
 
-Apart from the mechanical tools like grinders, portafilters etc, the app stores are pretty full of coffee apps.
+Optimize your brews:
+Beanconqueror offers a wide range of preparation methods, including V60, Aeropress, Espresso, Orea v3, Mokkamaster and more.
+Each comes setup ready to go, or you can customize your preparation methods with just the parameters you want to use.
+This way, you can get your perfect brew every time.
 
-But none is taken care about the community needs are open source and neither grew up from the own coffee fascination like on my side.
+Keep track of your beans:
+Beanconqueror makes it easy to keep track of all your beans.
+You can easily scan or import detailed information of roasted coffee from your favourite roasters, or even from your own roasting setup.
+It’ll even keep track of your running total of beans so you know when you’re running low.
 
-Thats why I build and maintain the Beanconqueror app for you, for me, for every coffee lover outside there.
+Track your roasts:
+Add all the details for your green beans, roast them in batches tracking the variables you need to to maintain consistency, and automatically transfer your finished roasts to use for brewing.
 
-Download today, track your brews, change your recipes, to get the best tasting cup of coffee you've ever had.
+Dedicated water section:
+Beanconqueror also has a dedicated water section where you can add your custom waters to be used in the brew section.
+Save all the key information for your water recipes, such as general hardness, sodium, calcium, magnesium, and more.
+
+Flexibility and Convenience:
+Beanconqueror is available for both iOS and Android, so you can take it with you wherever you go.
+It also supports several languages, including English, German, Spanish, Chinese, and Turkish, and more will be added in the future. Beanconqueror is also Open Source and free to use.
+
+Flow & Pressure Profiling:
+Beanconqueror is compatible with a range of bluetooth scales and pressure profile devices, including Decent Scale, Acaia Scales, Felicita Scales, Hiroia Jimmy, Eureka Precisa, Skale2, Smart Espresso Profiler, and Pressensor.
+It can even produce graphs to track your brew live and help you repeat your favourite brews more easily.
+
+Track your caffeine consume into Apple Health and have a look there.
+
+Whether you're looking to track your coffee journey, optimise your brews, or simply keep track of your coffee beans, Beanconqueror has everything you need to perfect your brew from green to cup.
 
 ##### Follow me
 
