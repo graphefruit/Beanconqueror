@@ -2350,7 +2350,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (
       _template === true &&
       this.getPreparation().use_custom_parameters === true &&
-      this.getPreparation().repeat_coffee_parameters.repeat_coffee_active ===
+      this.getPreparation()?.repeat_coffee_parameters?.repeat_coffee_active ===
         true
     ) {
       checkData = this.getPreparation();
