@@ -11,7 +11,7 @@
 
     <ion-select #bean_roasting_type="ngModel" [(ngModel)]="filter.bean_roasting_type" cancelText="{{'CANCEL'| translate }}" name="bean_roasting_type"
                 okText="{{'CHOOSE'| translate }}"
-      placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTING_TYPE' | translate}}"
+                placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTING_TYPE' | translate}}"
                 style="padding-left:0px!important;width: 100%; min-width: 100%;"
                 multiple="true">
       <ion-select-option *ngFor="let key of beanRoastingTypeEnum | keys" value="{{key}}">{{"BEAN_ROASTING_TYPE_" + key | translate}}</ion-select-option>
@@ -21,7 +21,7 @@
     <ion-label position="stacked">{{"BEAN_DATA_ROASTER" | translate}}</ion-label>
     <ion-select #bean_roaster="ngModel" [(ngModel)]="filter.bean_roaster" cancelText="{{'CANCEL'| translate }}" name="bean_roaster"
                 okText="{{'CHOOSE'| translate }}"
-      placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTER' | translate}}"
+                placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTER' | translate}}"
                 style="padding-left:0px!important;width: 100%; min-width: 100%;"
                 multiple="true">
       <ion-select-option *ngFor="let key of roasteries" value="{{key}}">{{key}}</ion-select-option>
@@ -54,7 +54,7 @@
 
   <ion-item>
     <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
-      style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(filter.rating.lower,2)}}&nbsp;-&nbsp;{{this.uiHelper.toFixedIfNecessary(filter.rating.upper,2)}} </ion-badge>
+                style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(filter.rating.lower,2)}}&nbsp;-&nbsp;{{this.uiHelper.toFixedIfNecessary(filter.rating.upper,2)}} </ion-badge>
     </ion-label>
     <ion-range min="0" dualKnobs="true" snaps="true" [max]="getMaxBeanRating()" step="1" [(ngModel)]="filter.rating">
       <ion-icon size="small" slot="start" name="beanconqueror-brew-rating-empty"></ion-icon>
