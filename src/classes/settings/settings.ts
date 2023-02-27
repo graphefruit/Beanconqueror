@@ -120,6 +120,10 @@ export class Settings implements ISettings {
         upper: upperRating,
         lower: 0,
       },
+      roast_range: {
+        upper: 5,
+        lower: 0,
+      },
       bean_roasting_type: [],
       roastingDateStart: '',
       roastingDateEnd: '',
