@@ -491,10 +491,10 @@ export class UIUpdate {
               );
 
               settings_v9.bean_manage_parameters.activateAll();
-              // Reset filter, because we got a new sort on beans
-              settings_v9.resetFilter();
-              await this.uiSettingsStorage.saveSettings(settings_v9);
             }
+            // Reset filter, because we got a new sort on beans
+            settings_v9.resetFilter();
+            await this.uiSettingsStorage.saveSettings(settings_v9);
             const preparationListV9: Array<Preparation> =
               this.uiPreparationStorage.getAllEntries();
             for (const prep of preparationListV9) {
