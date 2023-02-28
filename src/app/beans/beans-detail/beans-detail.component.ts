@@ -35,7 +35,7 @@ export class BeansDetailComponent implements OnInit {
 
   public settings: Settings = undefined;
   public bean_segment = 'general';
-
+  public maxBeanRating: number = 5;
   constructor(
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
@@ -46,7 +46,7 @@ export class BeansDetailComponent implements OnInit {
     private readonly uiSettingsStorage: UISettingsStorage
   ) {}
 
-  public ionViewWillEnter() {
+  public ionViewDidEnter() {
     this.uiAnalytics.trackEvent(
       BEAN_TRACKING.TITLE,
       BEAN_TRACKING.ACTIONS.DETAIL
@@ -57,11 +57,16 @@ export class BeansDetailComponent implements OnInit {
       const copy: IBean = this.uiHelper.copyData(this.bean);
       this.data.initializeByObject(copy);
     }
-    this.beanStars.setRating(this.data.roast_range);
-    this.beanRating.setRating(this.data.rating);
+    setTimeout(() => {
+      this.beanStars.setRating(this.data.roast_range);
+      if (this.hasCustomRatingRange() === false) {
+        this.beanRating.setRating(this.data.rating);
+      }
+    }, 150);
   }
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
+    this.maxBeanRating = this.settings.bean_rating;
   }
 
   public dismiss(): void {
