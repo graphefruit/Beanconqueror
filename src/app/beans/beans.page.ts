@@ -382,6 +382,13 @@ export class BeansPage implements OnInit {
           filter.bean_roasting_type.includes(e.bean_roasting_type) === true
       );
     }
+
+    filterBeans = filterBeans.filter(
+      (e: Bean) =>
+        e.roast_range >= filter.roast_range.lower &&
+        e.roast_range <= filter.roast_range.upper
+    );
+
     if (filter.bean_roaster) {
       filterBeans = filterBeans.filter(
         (e: Bean) => filter.bean_roaster.includes(e.roaster) === true
