@@ -27,7 +27,7 @@ import { UIAnalytics } from '../../services/uiAnalytics';
   styleUrls: ['./brew.page.scss'],
 })
 export class BrewPage implements OnInit {
-  private brews: Array<Brew>;
+  public brews: Array<Brew>;
   public openBrewsView: Array<Brew> = [];
   public archiveBrewsView: Array<Brew> = [];
 

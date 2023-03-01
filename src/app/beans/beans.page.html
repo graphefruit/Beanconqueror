@@ -21,7 +21,7 @@
 
   <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="bean_segment" class="ion-padding-vertical" style="padding-top:0px;">
     <ion-segment-button value="open">
-      <ion-label>{{"PAGE_BEANS_LIST_OBTAINABLE" | translate}}
+      <ion-label>{{"PAGE_BEANS_LIST_OBTAINABLE" | translate}} ( {{ openBeans?.length }} / {{ beans.length }} )
       </ion-label>
     </ion-segment-button>
     <ion-segment-button *ngIf="settings?.show_archived_beans" value="archiv">
