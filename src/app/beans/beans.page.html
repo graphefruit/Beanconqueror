@@ -19,13 +19,19 @@
 </ion-header>
 <ion-content #beanContent>
 
-  <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="bean_segment" class="ion-padding-vertical" style="padding-top:0px;">
-    <ion-segment-button value="open">
-      <ion-label>{{"PAGE_BEANS_LIST_OBTAINABLE" | translate}} ( {{ openBeans?.length }} / {{ beans.length }} )
+  <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="bean_segment" class="ion-padding-vertical tabs" >
+    <ion-segment-button value="open"  >
+      <ion-label>
+        {{"PAGE_BEANS_LIST_OBTAINABLE" | translate}}
+        <br />
+        <span class="value">( {{ openBeans?.length }} / {{ beans.length - finishedBeans?.length }} )</span>
       </ion-label>
     </ion-segment-button>
     <ion-segment-button *ngIf="settings?.show_archived_beans" value="archiv">
-      <ion-label>{{"TAB_ARCHIVE" | translate}}
+      <ion-label>
+        {{"TAB_ARCHIVE" | translate}}
+        <br />
+        <span class="value">( {{ finishedBeans?.length }} )</span>
       </ion-label>
     </ion-segment-button>
   </ion-segment>
