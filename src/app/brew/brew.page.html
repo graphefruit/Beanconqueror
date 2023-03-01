@@ -20,7 +20,7 @@
 <ion-content #brewContent>
     <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="brew_segment" class="ion-padding-vertical" style="padding-top:0px;">
       <ion-segment-button value="open">
-        <ion-label>{{"CURRENT" | translate }}
+        <ion-label>{{"CURRENT" | translate }} ( {{ openBrewsView?.length }} / {{ brews?.length }} )
         </ion-label>
       </ion-segment-button>
       <ion-segment-button *ngIf="settings?.show_archived_brews" value="archive">
