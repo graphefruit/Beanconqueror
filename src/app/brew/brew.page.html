@@ -18,13 +18,19 @@
   </ion-toolbar>
 </ion-header>
 <ion-content #brewContent>
-    <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="brew_segment" class="ion-padding-vertical" style="padding-top:0px;">
+    <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="brew_segment" class="ion-padding-vertical tabs" >
       <ion-segment-button value="open">
-        <ion-label>{{"CURRENT" | translate }} ( {{ openBrewsView?.length }} / {{ brews?.length }} )
+        <ion-label>
+          {{"CURRENT" | translate }} 
+          <br/>
+          <span class="value">( {{ openBrewsView?.length }} / {{ brews?.length - archiveBrewsView?.length }} )</span>
         </ion-label>
       </ion-segment-button>
       <ion-segment-button *ngIf="settings?.show_archived_brews" value="archive">
-        <ion-label>{{"TAB_ARCHIVE" | translate }}
+        <ion-label>
+          {{"TAB_ARCHIVE" | translate }}
+          <br/>
+          <span class="value">( {{ archiveBrewsView?.length }} )</span>
         </ion-label>
       </ion-segment-button>
     </ion-segment>
