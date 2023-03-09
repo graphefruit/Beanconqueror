@@ -23,7 +23,10 @@
         <ion-label>
           {{"CURRENT" | translate }} 
           <br/>
-          <span class="value">( {{ openBrewsView?.length }} / {{ brews?.length - archiveBrewsView?.length }} )</span>
+          <span class="value" *ngIf="isFilterActive()">( {{ openBrewsView?.length }} / {{ brews?.length - archiveBrewsView?.length }} )</span>
+          <span class="value" *ngIf="!isFilterActive()">
+            ( {{ openBrewsView?.length }} )
+          </span>
         </ion-label>
       </ion-segment-button>
       <ion-segment-button *ngIf="settings?.show_archived_brews" value="archive">

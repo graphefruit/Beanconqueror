@@ -24,7 +24,10 @@
       <ion-label>
         {{"PAGE_BEANS_LIST_OBTAINABLE" | translate}}
         <br />
-        <span class="value">( {{ openBeans?.length }} / {{ beans.length - finishedBeans?.length }} )</span>
+        <span class="value" *ngIf="isFilterActive()">
+          ( {{ openBeans?.length }} / {{ beans.length - finishedBeans?.length }} )
+        </span>
+        <span class="value" *ngIf="!isFilterActive()">( {{ openBeans?.length }} )</span>
       </ion-label>
     </ion-segment-button>
     <ion-segment-button *ngIf="settings?.show_archived_beans" value="archiv">
