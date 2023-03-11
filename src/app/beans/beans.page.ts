@@ -49,6 +49,9 @@ export class BeansPage implements OnInit {
   public openBeans: Array<Bean> = [];
   public finishedBeans: Array<Bean> = [];
 
+  public finishedBeansLength: number = 0;
+  public openBeansLength: number = 0;
+
   public openBeansSort: IBeanPageSort = {
     sort_after: BEAN_SORT_AFTER.UNKOWN,
     sort_order: BEAN_SORT_ORDER.UNKOWN,
@@ -64,7 +67,7 @@ export class BeansPage implements OnInit {
   @ViewChild('beanContent', { read: ElementRef })
   public beanContent: ElementRef;
 
-  public bean_segment: string = 'open';
+  public bean_segment: 'open' | 'archiv' = 'open';
   public archivedBeansSort: IBeanPageSort = {
     sort_after: BEAN_SORT_AFTER.UNKOWN,
     sort_order: BEAN_SORT_ORDER.UNKOWN,
@@ -531,6 +534,12 @@ export class BeansPage implements OnInit {
     this.beans = this.uiBeanStorage
       .getAllEntries()
       .sort((a, b) => a.name.localeCompare(b.name));
+
+    this.openBeansLength = this.beans.reduce(
+      (n, e) => (!e.finished ? n + 1 : n),
+      0
+    );
+    this.finishedBeansLength = this.beans.length - this.openBeansLength;
 
     this.openBeans = [];
     this.finishedBeans = [];
