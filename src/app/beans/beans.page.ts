@@ -67,7 +67,7 @@ export class BeansPage implements OnInit {
   @ViewChild('beanContent', { read: ElementRef })
   public beanContent: ElementRef;
 
-  public bean_segment: 'open' | 'archiv' = 'open';
+  public bean_segment: 'open' | 'archive' = 'open';
   public archivedBeansSort: IBeanPageSort = {
     sort_after: BEAN_SORT_AFTER.UNKOWN,
     sort_order: BEAN_SORT_ORDER.UNKOWN,
@@ -544,6 +544,6 @@ export class BeansPage implements OnInit {
     this.openBeans = [];
     this.finishedBeans = [];
     this.__initializeBeansView('open');
-    this.__initializeBeansView('archiv');
+    this.__initializeBeansView('archive');
   }
 }
