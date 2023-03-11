@@ -24,17 +24,24 @@
       <ion-label>
         {{"PAGE_BEANS_LIST_OBTAINABLE" | translate}}
         <br />
-        <span class="value" *ngIf="isFilterActive()">
-          ( {{ openBeans?.length }} / {{ beans.length - finishedBeans?.length }} )
+        <span class="value" *ngIf="isFilterActive() && bean_segment === 'open'; else openCountSimplified">
+          ( {{ openBeans?.length }} / {{ openBeansLength }} )
         </span>
-        <span class="value" *ngIf="!isFilterActive()">( {{ openBeans?.length }} )</span>
+        <ng-template #openCountSimplified>
+          <span class="value">( {{ openBeansLength }} )</span>
+        </ng-template>
       </ion-label>
     </ion-segment-button>
     <ion-segment-button *ngIf="settings?.show_archived_beans" value="archiv">
       <ion-label>
         {{"TAB_ARCHIVE" | translate}}
-        <br />
-        <span class="value">( {{ finishedBeans?.length }} )</span>
+        <br /> 
+        <span class="value" *ngIf="isFilterActive() && bean_segment === 'archiv'; else finishedCountSimplified">
+          ( {{ finishedBeans?.length }} / {{ finishedBeansLength }} )
+        </span>
+        <ng-template #finishedCountSimplified>
+          <span class="value">( {{ finishedBeansLength }} )</span>
+        </ng-template>
       </ion-label>
     </ion-segment-button>
   </ion-segment>
