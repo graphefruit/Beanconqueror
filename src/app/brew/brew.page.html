@@ -23,17 +23,24 @@
         <ion-label>
           {{"CURRENT" | translate }} 
           <br/>
-          <span class="value" *ngIf="isFilterActive()">( {{ openBrewsView?.length }} / {{ brews?.length - archiveBrewsView?.length }} )</span>
-          <span class="value" *ngIf="!isFilterActive()">
-            ( {{ openBrewsView?.length }} )
+          <span class="value" *ngIf="isFilterActive() && brew_segment === 'open'; else openCountSimplified">
+            ( {{ openBrewsView?.length }} / {{ openBrewsLength }} )
           </span>
+          <ng-template #openCountSimplified>
+            <span class="value">( {{ openBrewsLength }} )</span>
+          </ng-template>
         </ion-label>
       </ion-segment-button>
       <ion-segment-button *ngIf="settings?.show_archived_brews" value="archive">
         <ion-label>
           {{"TAB_ARCHIVE" | translate }}
-          <br/>
-          <span class="value">( {{ archiveBrewsView?.length }} )</span>
+          <br/>  
+          <span class="value" *ngIf="isFilterActive() && brew_segment === 'archive'; else archiveCountSimplified">
+            ( {{ archiveBrewsView?.length }} / {{ archiveBrewsLength }} )
+          </span>
+          <ng-template #archiveCountSimplified>
+            <span class="value">( {{ archiveBrewsLength }} )</span>
+          </ng-template>
         </ion-label>
       </ion-segment-button>
     </ion-segment>

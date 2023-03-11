@@ -31,7 +31,10 @@ export class BrewPage implements OnInit {
   public openBrewsView: Array<Brew> = [];
   public archiveBrewsView: Array<Brew> = [];
 
-  public brew_segment: string = 'open';
+  public openBrewsLength: number = 0;
+  public archiveBrewsLength: number = 0;
+
+  public brew_segment: 'open' | 'archive' = 'open';
 
   @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
   public openScroll: AgVirtualSrollComponent;
@@ -115,6 +118,12 @@ export class BrewPage implements OnInit {
     this.brews = this.uiBrewStorage.getAllEntries();
     this.openBrewsView = [];
     this.archiveBrewsView = [];
+
+    this.openBrewsLength = this.brews.reduce(
+      (n, e) => (!e.getBean().finished ? n + 1 : n),
+      0
+    );
+    this.archiveBrewsLength = this.brews.length - this.openBrewsLength;
 
     this.__initializeBrewView('open');
     this.__initializeBrewView('archiv');
