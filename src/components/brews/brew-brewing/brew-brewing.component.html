@@ -30,12 +30,12 @@
     <ion-input [(ngModel)]="data.grind_weight"
                inputmode="decimal" placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_GRIND_WEIGHT' | translate}}" prevent-characters
                remove-empty-number
-               type="text" tabIndex="2"></ion-input>
+               tabIndex="1" type="text"></ion-input>
     <ion-button (click)="brewRatioCalculator()" class="big-icon-only" fill="clear"
-                slot="end" style="margin-left:0px;" tabIndex="1" tappable>
+                slot="end" style="margin-left:0px;" tabIndex="2" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-brew-ratio" slot="icon-only"></ion-icon>
     </ion-button>
-    <ion-button (click)="bluetoothScaleSetGrindWeight()" *ngIf="smartScaleConnected()" style="margin-left:0px;" tabIndex="2"
+    <ion-button (click)="bluetoothScaleSetGrindWeight()" *ngIf="smartScaleConnected()" style="margin-left:0px;" tabIndex="3"
                 class="big-icon-only" fill="clear" slot="end" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only"></ion-icon>
     </ion-button>

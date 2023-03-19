@@ -11,6 +11,7 @@ import { PreparationTool } from './preparationTool';
 import { UIHelper } from '../../services/uiHelper';
 import { ListViewBrewParameter } from '../parameter/listViewBrewParameter';
 import { RepeatBrewParameter } from '../parameter/repeatBrewParameter';
+import { ConnectedPreparationDevice } from '../preparationDevice/connectedPreparationDevice';
 
 export class Preparation implements IPreparation {
   public name: string;
@@ -27,6 +28,7 @@ export class Preparation implements IPreparation {
   public brew_order: OrderBrewParameter;
   public tools: Array<PreparationTool>;
   public attachments: Array<string>;
+  public connectedPreparationDevice: ConnectedPreparationDevice;
 
   constructor() {
     this.name = '';
@@ -49,6 +51,8 @@ export class Preparation implements IPreparation {
     this.brew_order = new OrderBrewParameter();
     this.tools = [];
     this.attachments = [];
+
+    this.connectedPreparationDevice = new ConnectedPreparationDevice();
   }
 
   public initializeByObject(preparationObj: IPreparation): void {

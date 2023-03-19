@@ -28,6 +28,8 @@
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
     <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
     <platform name="android">
+        <preference name="scheme" value="https" />
+        <preference name="hostname" value="beanconqueror.com" />
         <preference name="Fullscreen" value="false" />
         <edit-file file="app/src/main/AndroidManifest.xml" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
             <activity android:exported="true" android:label="webIntentFilter" android:name="com.beanconqueror.app">

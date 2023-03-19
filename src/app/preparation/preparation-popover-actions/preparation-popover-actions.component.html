@@ -23,6 +23,14 @@
     <ion-icon name="beanconqueror-finished" slot="start"></ion-icon>
     <span>{{"ARCHIVE" | translate}}</span>
   </ion-item>
+  <ion-item (click)="choose(getStaticActions().CONNECT_DEVICE)" *ngIf="isEspresso() === true && !isPortafilterConnected()" button tappable>
+    <ion-icon name="beanconqueror-finished" slot="start"></ion-icon>
+    <span>{{"CONNECT_PORTAFILTER" | translate}}</span>
+  </ion-item>
+  <ion-item (click)="choose(getStaticActions().CONNECT_DEVICE)" *ngIf="isEspresso() === true && isPortafilterConnected()" button tappable>
+    <ion-icon name="beanconqueror-finished" slot="start"></ion-icon>
+    <span>{{"CONNECT_PORTAFILTER" | translate}}</span>
+  </ion-item>
     <ion-item (click)="choose(getStaticActions().PHOTO_GALLERY)" *ngIf="hasPhotos()" button tappable>
       <ion-icon name="beanconqueror-photo-gallery" slot="start"></ion-icon>
       <span>{{"POPOVER_BREWS_OPTION_PHOTO_GALLERY" | translate}}</span>

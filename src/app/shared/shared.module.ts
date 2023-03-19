@@ -171,6 +171,7 @@ import { BrewRatioCardComponent } from '../../components/brew-ratio-card/brew-ra
 import { BrewRatioCalculatorComponent } from '../brew/brew-ratio-calculator/brew-ratio-calculator.component';
 import { RepeatCustomParameterComponent } from '../../components/parameter/repeat-custom-parameter/repeat-custom-parameter.component';
 import { RepeatParameterComponent } from '../brew-parameter/repeat-parameter/repeat-parameter.component';
+import { PreparationConnectedDeviceComponent } from '../preparation/preparation-connected-device/preparation-connected-device.component';
 
 @NgModule({
   declarations: [
@@ -231,6 +232,7 @@ import { RepeatParameterComponent } from '../brew-parameter/repeat-parameter/rep
     ListViewCustomParameterComponent,
     ListViewParameterComponent,
     PreparationCustomParametersComponent,
+    PreparationConnectedDeviceComponent,
     MillPage,
     MillEditComponent,
     MillDetailComponent,
@@ -425,6 +427,7 @@ import { RepeatParameterComponent } from '../brew-parameter/repeat-parameter/rep
     ListViewCustomParameterComponent,
     ListViewParameterComponent,
     PreparationCustomParametersComponent,
+    PreparationConnectedDeviceComponent,
     BrewFilterComponent,
     BeanFilterComponent,
     BeanSortComponent,
