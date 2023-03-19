@@ -6,6 +6,7 @@ import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyl
 import { IBrewParameter } from '../parameter/iBrewParameter';
 import { IOrderBrewParameter } from '../parameter/iOrderBrewParameter';
 import { PreparationTool } from '../../classes/preparation/preparationTool';
+import { IConnectedPreparationDevice } from '../preparationDevices/iConnectedPreparationDevice';
 
 export interface IPreparation {
   name: string;
@@ -21,4 +22,5 @@ export interface IPreparation {
   brew_order: IOrderBrewParameter;
   use_custom_parameters: boolean;
   attachments: Array<string>;
+  connectedPreparationDevice: IConnectedPreparationDevice;
 }

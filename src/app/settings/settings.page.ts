@@ -736,7 +736,7 @@ export class SettingsPage implements OnInit {
   }
   private async _exportFlowProfiles(_storedData: Array<Brew>) {
     for (const entry of _storedData) {
-      if (entry.flow_profile) {
+      if (entry.flow_profile && entry.flow_profile.length) {
         await this._exportFlowProfileFile(entry.flow_profile);
       }
     }

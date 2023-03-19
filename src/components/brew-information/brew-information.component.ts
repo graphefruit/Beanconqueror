@@ -156,10 +156,14 @@ export class BrewInformationComponent implements OnInit {
     vS.mapPreparation(this.brew.getPreparation());
     vS.mapMill(this.brew.getMill());
     vS.brewFlow = await this.readFlowProfile();
-    console.log(vS);
-    //console.log(JSON.stringify(t));
 
-    this.saveTemplateAsFile('bla.json', vS);
+    try {
+      await this.uiHelper.exportJSON(
+        'visualizer.json',
+        JSON.stringify(vS),
+        true
+      );
+    } catch (ex) {}
   }
 
   public async fastRepeatBrew() {

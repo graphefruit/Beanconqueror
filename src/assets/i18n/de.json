@@ -1360,5 +1360,15 @@
   "CUSTOM_REPEAT_PARAMETERS": "Wiederholen",
   "CUSTOM_REPEAT_PARAMETERS_DESCRIPTION": "Individuelle Wiederholung aktivieren?",
   "PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE": "Numerische Tastatur für Mahlgrad?",
-  "PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE_DESCRIPTION": "Möchtest du bei der Mahlgrad Einstellung nur die Numerische Tastatur angezeigt bekommen, anstatt der normalen?"
+  "PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE_DESCRIPTION": "Möchtest du bei der Mahlgrad Einstellung nur die Numerische Tastatur angezeigt bekommen, anstatt der normalen?",
+  "PREPARATION_DEVICE": {
+    "TYPE": {
+      "NONE": "None",
+      "XENIA": "Xenia"
+    },
+    "CONNECTION": {
+      "UNSUCCESFULLY": "Verbindung zur Maschine konnte nicht hergestellt werden",
+      "SUCCESFULLY": "Verbindung zur Maschine konnte hergestellt werden"
+    }
+  }
 }

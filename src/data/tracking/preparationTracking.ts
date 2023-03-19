@@ -1,6 +1,5 @@
 export default {
-
-  TITLE:'PREPARATION',
+  TITLE: 'PREPARATION',
   ACTIONS: {
     ADD: 'ADD',
     ADD_FINISH: 'ADD_FINISH',
@@ -17,7 +16,7 @@ export default {
     PHOTO_VIEW: 'PHOTO_VIEW',
     EDIT_TOOL: 'EDIT_TOOL',
     EDIT_TOOL_FINISH: 'EDIT_TOOL_FINISH',
-    TOOL_DELETED: 'TOOL_DELETED'
-  }
-
-}
+    TOOL_DELETED: 'TOOL_DELETED',
+    CONNECT_DEVICE: 'CONNECT_DEVICE',
+  },
+};

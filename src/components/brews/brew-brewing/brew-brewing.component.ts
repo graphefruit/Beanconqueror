@@ -167,6 +167,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     return this.data.getPreparation().tools.filter((e) => e.archived === false);
   }
 
+  @HostListener('keyboardDidShow', ['$event'])
+  public aa() {}
+
   public getChoosenPreparationToolsWhichAreArchived() {
     const toolIds = this.data.method_of_preparation_tools;
     const tools: Array<PreparationTool> = [];
