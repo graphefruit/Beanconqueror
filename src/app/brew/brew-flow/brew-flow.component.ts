@@ -147,24 +147,26 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
   @HostListener('window:orientationchange', ['$event'])
   public onOrientationChange() {
     setTimeout(() => {
-      const flowHeight = document.getElementById('flowCard').offsetHeight;
-      let informationContainerHeight = 0;
       try {
-        informationContainerHeight = document.getElementById(
-          'informationContainer'
-        ).offsetHeight;
-      } catch (ex) {
-        informationContainerHeight = 0;
-      }
+        const flowHeight = document.getElementById('flowCard').offsetHeight;
+        let informationContainerHeight = 0;
+        try {
+          informationContainerHeight = document.getElementById(
+            'informationContainer'
+          ).offsetHeight;
+        } catch (ex) {
+          informationContainerHeight = 0;
+        }
 
-      this.heightInformationBlock = informationContainerHeight;
+        this.heightInformationBlock = informationContainerHeight;
 
-      this.brewComponent.lastChartLayout.height =
-        flowHeight - informationContainerHeight;
+        this.brewComponent.lastChartLayout.height =
+          flowHeight - informationContainerHeight;
 
-      this.brewComponent.lastChartLayout.width =
-        document.getElementById('brewFlowContainer').offsetWidth;
-      Plotly.relayout('flowProfileChart', this.brewComponent.lastChartLayout);
+        this.brewComponent.lastChartLayout.width =
+          document.getElementById('brewFlowContainer').offsetWidth;
+        Plotly.relayout('flowProfileChart', this.brewComponent.lastChartLayout);
+      } catch (ex) {}
     }, 50);
   }
 

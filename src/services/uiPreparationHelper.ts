@@ -135,7 +135,7 @@ export class UIPreparationHelper {
     await this.uiPreparationStorage.add(clonedPreparation);
   }
 
-  public getConnectedDevice(_preparation: Preparation): XeniaDevice {
+  public getConnectedDevice(_preparation: Preparation): PreparationDevice {
     if (
       _preparation.connectedPreparationDevice.type !==
         PreparationDeviceType.NONE &&

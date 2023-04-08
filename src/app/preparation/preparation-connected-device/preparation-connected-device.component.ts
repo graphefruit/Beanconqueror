@@ -29,7 +29,9 @@ export class PreparationConnectedDeviceComponent implements OnInit {
   public preparationTypeEnum = PREPARATION_TYPES;
   public segment: string = 'manage';
   public PREPARATION_DEVICE_TYPE = PreparationDeviceType;
-  @Input() private preparation: IPreparation;
+  @Input() public preparation: IPreparation;
+
+  public scriptid: number = 11;
 
   constructor(
     private readonly navParams: NavParams,
@@ -85,21 +87,21 @@ export class PreparationConnectedDeviceComponent implements OnInit {
 
   public getScripts() {
     const connectedDevice: XeniaDevice =
-      this.uiPreparationHelper.getConnectedDevice(this.data);
+      this.uiPreparationHelper.getConnectedDevice(this.data) as XeniaDevice;
     if (connectedDevice) {
       connectedDevice.getScripts();
     }
   }
-  public startScripts() {
+  public startScript() {
     const connectedDevice: XeniaDevice =
-      this.uiPreparationHelper.getConnectedDevice(this.data);
+      this.uiPreparationHelper.getConnectedDevice(this.data) as XeniaDevice;
     if (connectedDevice) {
-      connectedDevice.startScript(11);
+      connectedDevice.startScript(this.scriptid);
     }
   }
   public stopScript() {
     const connectedDevice: XeniaDevice =
-      this.uiPreparationHelper.getConnectedDevice(this.data);
+      this.uiPreparationHelper.getConnectedDevice(this.data) as XeniaDevice;
     if (connectedDevice) {
       connectedDevice.stopScript();
     }

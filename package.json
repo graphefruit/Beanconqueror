@@ -102,6 +102,7 @@
     "@wisdomgarden/cordova-plugin-filepath": "git+https://github.com/wisdom-garden/cordova-plugin-filepath.git",
     "cordova-ios": "^6.2.0",
     "cordova-plugin-add-swift-support": "^2.0.2",
+    "cordova-plugin-advanced-http": "^3.3.1",
     "cordova-plugin-androidx": "^3.0.0",
     "cordova-plugin-androidx-adapter": "^1.1.3",
     "cordova-plugin-app-version": "^0.1.12",
@@ -228,6 +229,9 @@
       },
       "cordova-plugin-file": {
         "ANDROIDX_WEBKIT_VERSION": "1.4.0"
+      },
+      "cordova-plugin-advanced-http": {
+        "ANDROIDBLACKLISTSECURESOCKETPROTOCOLS": "SSLv3,TLSv1"
       }
     },
     "platforms": [

@@ -1361,6 +1361,7 @@
   "CUSTOM_REPEAT_PARAMETERS_DESCRIPTION": "Individuelle Wiederholung aktivieren?",
   "PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE": "Numerische Tastatur für Mahlgrad?",
   "PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE_DESCRIPTION": "Möchtest du bei der Mahlgrad Einstellung nur die Numerische Tastatur angezeigt bekommen, anstatt der normalen?",
+  "PRESSURE_STAY_CONNECTED_ON_APP_MINIMIZE": "Druckgerät verbunden lassen bei App minimierung/inaktivität",
   "PREPARATION_DEVICE": {
     "TYPE": {
       "NONE": "None",
@@ -1369,6 +1370,15 @@
     "CONNECTION": {
       "UNSUCCESFULLY": "Verbindung zur Maschine konnte nicht hergestellt werden",
       "SUCCESFULLY": "Verbindung zur Maschine konnte hergestellt werden"
+    },
+    "TYPE_XENIA": {
+      "TITLE": "Xenia Maschine",
+      "PRESS_START_SCRIPT": "Script beim Start ausführen",
+      "FIRST_DRIP_SCRIPT": "Script beim ersten Tropfen ausführen",
+      "SCRIPT_AT_WEIGHT": "Script bei Gewichtserreichung ausführen",
+      "SCRIPT_LIST_GENERAL_0": "Nichts",
+      "SCRIPT_LIST_GENERAL_1": "Espresso, 25 Sekunden",
+      "SCRIPT_LIST_GENERAL_2": "Espresso, Endlos"
     }
   }
 }
