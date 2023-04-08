@@ -28,6 +28,7 @@
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
     <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
     <platform name="android">
+        <preference name="AndroidBlacklistSecureSocketProtocols" value="SSLv3,TLSv1" />
         <preference name="scheme" value="https" />
         <preference name="hostname" value="beanconqueror.com" />
         <preference name="Fullscreen" value="false" />

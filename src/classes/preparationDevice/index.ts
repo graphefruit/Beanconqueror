@@ -12,7 +12,7 @@ export function makePreparationDevice(
   _type: PreparationDeviceType,
   _http: HttpClient,
   _preparation: Preparation
-): XeniaDevice | null {
+): PreparationDevice | null {
   switch (_type) {
     case PreparationDeviceType.XENIA:
       return new XeniaDevice(_http, _preparation);

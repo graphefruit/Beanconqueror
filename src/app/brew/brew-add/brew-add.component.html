@@ -16,7 +16,7 @@
 <ion-content>
   <brew-brewing #brewBrewing [loadSpecificLastPreparation]="loadSpecificLastPreparation" [brewTemplate]="brew_template" [(data)]="data"></brew-brewing>
 </ion-content>
-<ion-footer class="ion-no-border">
+<ion-footer *ngIf="showFooter" class="ion-no-border">
   <ion-row>
     <ion-col>
       <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"

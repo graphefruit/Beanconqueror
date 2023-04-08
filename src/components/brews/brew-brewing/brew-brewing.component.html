@@ -255,6 +255,44 @@
 
   <div class="last-item"></div>
 </ion-card>
+<ion-card *ngIf="preparationDeviceConnected()" class="popover" style="display:flex; flex-direction: column;">
+  <ion-item lines="none">
+    <span class="ion-title ion-padding-top">{{"PREPARATION_DEVICE.TYPE_XENIA.TITLE" | translate }}</span>
+  </ion-item>
+  <ion-item lines="inset">
+    <ion-label position="stacked">{{"PREPARATION_DEVICE.TYPE_XENIA.PRESS_START_SCRIPT" | translate}}</ion-label>
+    <ion-select [(ngModel)]="preparationDevice.scriptStartId"
+                placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
+    </ion-select>
+  </ion-item>
+  <ion-item lines="inset">
+      <ion-label position="stacked">{{"PREPARATION_DEVICE.TYPE_XENIA.FIRST_DRIP_SCRIPT" | translate}}</ion-label>
+    <ion-select [(ngModel)]="preparationDevice.scriptAtFirstDripId"
+                placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
+      <ion-select-option [value]="0">
+        {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_0" | translate}}
+      </ion-select-option>
+      <ion-select-option [value]="1">
+        {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_1" | translate}}
+      </ion-select-option>
+      <ion-select-option [value]="2">
+        {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_2" | translate}}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-item *ngIf="smartScaleConnected()"
+            lines="inset">
+    <ion-label position="stacked">{{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_AT_WEIGHT" | translate}}</ion-label>
+    <ion-input [(ngModel)]="preparationDevice.scriptAtWeightReachedNumber"
+               inputmode="decimal" prevent-characters
+               remove-empty-number
+               tabIndex="1" type="text"></ion-input>
+    <ion-select (ionChange)="resetPreparationTools();"
+                (ionFocus)="preparationMethodFocused()"
+                [(ngModel)]="preparationDevice.scriptAtWeightReachedId" [show-finished]="false" placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}" preparation-overlay>
+    </ion-select>
+  </ion-item>
+</ion-card>
 <ion-card *ngIf="showSectionWhileBrew()"
           class="popover" style="display:flex; flex-direction: column;">
 

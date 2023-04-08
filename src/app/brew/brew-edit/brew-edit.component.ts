@@ -18,6 +18,7 @@ import { SettingsPopoverBluetoothActionsComponent } from '../../settings/setting
 import { BluetoothScale, SCALE_TIMER_COMMAND } from '../../../classes/devices';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 declare var Plotly;
+declare var window;
 @Component({
   selector: 'brew-edit',
   templateUrl: './brew-edit.component.html',
@@ -29,7 +30,7 @@ export class BrewEditComponent implements OnInit {
   public brewBrewing: BrewBrewingComponent;
   public data: Brew = new Brew();
   public settings: Settings;
-
+  public showFooter: boolean = true;
   constructor(
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
@@ -51,6 +52,15 @@ export class BrewEditComponent implements OnInit {
     if (brew !== undefined) {
       this.data.initializeByObject(brew);
     }
+    window.addEventListener('keyboardWillShow', (event) => {
+      // Describe your logic which will be run each time when keyboard is about to be shown.
+      this.showFooter = false;
+    });
+
+    window.addEventListener('keyboardWillHide', () => {
+      // Describe your logic which will be run each time when keyboard is about to be closed.
+      this.showFooter = true;
+    });
   }
 
   public ionViewDidEnter(): void {
