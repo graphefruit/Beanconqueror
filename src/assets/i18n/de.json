@@ -1380,5 +1380,7 @@
       "SCRIPT_LIST_GENERAL_1": "Espresso, 25 Sekunden",
       "SCRIPT_LIST_GENERAL_2": "Espresso, Endlos"
     }
-  }
+  },
+  "DEVICE_CONNECTION": "Geräteverbindung",
+  "PREPARATION_DEVICE_CONNECTION": "Geräteverbindung"
 }

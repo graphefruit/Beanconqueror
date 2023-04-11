@@ -23,13 +23,9 @@
     <ion-icon name="beanconqueror-finished" slot="start"></ion-icon>
     <span>{{"ARCHIVE" | translate}}</span>
   </ion-item>
-  <ion-item (click)="choose(getStaticActions().CONNECT_DEVICE)" *ngIf="isEspresso() === true && !isPortafilterConnected()" button tappable>
-    <ion-icon name="beanconqueror-finished" slot="start"></ion-icon>
-    <span>{{"CONNECT_PORTAFILTER" | translate}}</span>
-  </ion-item>
-  <ion-item (click)="choose(getStaticActions().CONNECT_DEVICE)" *ngIf="isEspresso() === true && isPortafilterConnected()" button tappable>
-    <ion-icon name="beanconqueror-finished" slot="start"></ion-icon>
-    <span>{{"CONNECT_PORTAFILTER" | translate}}</span>
+  <ion-item (click)="choose(getStaticActions().CONNECT_DEVICE)" *ngIf="isEspresso() === true " button tappable>
+    <ion-icon name="wifi-outline" slot="start"></ion-icon>
+    <span>{{"DEVICE_CONNECTION" | translate}}</span>
   </ion-item>
     <ion-item (click)="choose(getStaticActions().PHOTO_GALLERY)" *ngIf="hasPhotos()" button tappable>
       <ion-icon name="beanconqueror-photo-gallery" slot="start"></ion-icon>
