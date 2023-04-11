@@ -287,9 +287,17 @@
                inputmode="decimal" prevent-characters
                remove-empty-number
                tabIndex="1" type="text"></ion-input>
-    <ion-select (ionChange)="resetPreparationTools();"
-                (ionFocus)="preparationMethodFocused()"
-                [(ngModel)]="preparationDevice.scriptAtWeightReachedId" [show-finished]="false" placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}" preparation-overlay>
+    <ion-select *ngIf='preparationDevice.scriptAtWeightReachedNumber>0' [(ngModel)]="preparationDevice.scriptAtWeightReachedId"
+                placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
+      <ion-select-option [value]="0">
+        {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_0" | translate}}
+      </ion-select-option>
+      <ion-select-option [value]="1">
+        {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_1" | translate}}
+      </ion-select-option>
+      <ion-select-option [value]="2">
+        {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_2" | translate}}
+      </ion-select-option>
     </ion-select>
   </ion-item>
 </ion-card>
