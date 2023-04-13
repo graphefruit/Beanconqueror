@@ -515,7 +515,11 @@ export class BrewDetailComponent implements OnInit {
         'Beanconqueror_Flowprofile_JSON_' +
         moment().format('HH_mm_ss_DD_MM_YYYY').toString() +
         '.json';
-      await this.uiHelper.exportJSON(filename, JSON.stringify(jsonParsed));
+      await this.uiHelper.exportJSON(
+        filename,
+        JSON.stringify(jsonParsed),
+        true
+      );
       if (this.platform.is('android')) {
         const alert = await this.alertCtrl.create({
           header: this.translate.instant('DOWNLOADED'),

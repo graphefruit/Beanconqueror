@@ -311,7 +311,7 @@ export class UIFileHelper extends InstanceClass {
                         fileEntry.createWriter(
                           (writer) => {
                             writer.onwriteend = () => {
-                              if (this.platform.is('ios') && _share === true) {
+                              if (_share === true) {
                                 this.socialSharing.share(
                                   undefined,
                                   undefined,
