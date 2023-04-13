@@ -849,9 +849,7 @@ export class AppComponent implements AfterViewInit {
       LINK_TRACKING.TITLE,
       LINK_TRACKING.ACTIONS.DISCORD
     );
-    this.uiHelper.openExternalWebpage(
-      'https://discordapp.com/users/205027003106066432'
-    );
+    this.uiHelper.openExternalWebpage('https://discord.gg/vDzA5dZjG8');
   }
 
   public openInstagram() {
