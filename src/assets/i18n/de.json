@@ -1382,5 +1382,6 @@
     }
   },
   "DEVICE_CONNECTION": "Geräteverbindung",
-  "PREPARATION_DEVICE_CONNECTION": "Geräteverbindung"
+  "PREPARATION_DEVICE_CONNECTION": "Geräteverbindung",
+  "MANUAL_EXPORT_TO_VISUALIZER": "Exportieren zu Visualizer"
 }

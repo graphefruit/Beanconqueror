@@ -159,7 +159,7 @@ export class BrewInformationComponent implements OnInit {
 
     try {
       await this.uiHelper.exportJSON(
-        'visualizer.json',
+        this.brew.config.uuid + '_visualizer.json',
         JSON.stringify(vS),
         true
       );
