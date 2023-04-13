@@ -896,8 +896,6 @@ export class AppComponent implements AfterViewInit {
       LINK_TRACKING.TITLE,
       LINK_TRACKING.ACTIONS.BUY_ME_A_COFFEE
     );
-    this.uiHelper.openExternalWebpage(
-      'https://www.buymeacoffee.com/beanconqueror'
-    );
+    this.uiHelper.openExternalWebpage('https://ko-fi.com/beanconqueror');
   }
 }
