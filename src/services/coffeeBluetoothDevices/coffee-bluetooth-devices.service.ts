@@ -223,18 +223,21 @@ export class CoffeeBluetoothDevicesService {
 
       ble.startScan(
         [],
-        async (device: any) => {
-          this.logger.log('Pressure devices found ' + JSON.stringify(device));
+        async (devicePressure: any) => {
+          this.logger.log(
+            'Pressure devices found ' + JSON.stringify(devicePressure)
+          );
           if (
-            PrsPressure.test(device) ||
-            PopsiclePressure.test(device) ||
-            TransducerDirectPressure.test(device)
+            PrsPressure.test(devicePressure) ||
+            PopsiclePressure.test(devicePressure) ||
+            TransducerDirectPressure.test(devicePressure)
           ) {
             // We found all needed devices.
-            devices.push(device);
+            devices.push(devicePressure);
 
             this.logger.log(
-              'Supported pressure devices found ' + JSON.stringify(device)
+              'Supported pressure devices found ' +
+                JSON.stringify(devicePressure)
             );
             clearTimeout(timeoutVar);
             timeoutVar = null;
@@ -343,35 +346,35 @@ export class CoffeeBluetoothDevicesService {
         this.logger.log('BleManager - Start looping through devices');
         const devices: Array<any> = await this.scanDevices();
         this.logger.log('BleManager - Ended looping through devices');
-        for (const device of devices) {
-          if (DecentScale.test(device)) {
+        for (const deviceScale of devices) {
+          if (DecentScale.test(deviceScale)) {
             this.logger.log('BleManager - We found a decent scale');
-            resolve({ id: device.id, type: ScaleType.DECENT });
+            resolve({ id: deviceScale.id, type: ScaleType.DECENT });
             return;
           }
-          if (LunarScale.test(device)) {
+          if (LunarScale.test(deviceScale)) {
             this.logger.log('BleManager - We found a lunar/acaia scale');
-            resolve({ id: device.id, type: ScaleType.LUNAR });
+            resolve({ id: deviceScale.id, type: ScaleType.LUNAR });
             return;
           }
-          if (JimmyScale.test(device)) {
+          if (JimmyScale.test(deviceScale)) {
             this.logger.log('BleManager - We found a jimmy scale');
-            resolve({ id: device.id, type: ScaleType.JIMMY });
+            resolve({ id: deviceScale.id, type: ScaleType.JIMMY });
             return;
           }
-          if (FelicitaScale.test(device)) {
+          if (FelicitaScale.test(deviceScale)) {
             this.logger.log('BleManager - We found a felicita scale');
-            resolve({ id: device.id, type: ScaleType.FELICITA });
+            resolve({ id: deviceScale.id, type: ScaleType.FELICITA });
             return;
           }
-          if (EurekaPrecisaScale.test(device)) {
+          if (EurekaPrecisaScale.test(deviceScale)) {
             this.logger.log('BleManager - We found a eureka scale');
-            resolve({ id: device.id, type: ScaleType.EUREKAPRECISA });
+            resolve({ id: deviceScale.id, type: ScaleType.EUREKAPRECISA });
             return;
           }
-          if (SkaleScale.test(device)) {
+          if (SkaleScale.test(deviceScale)) {
             this.logger.log('BleManager - We found a skale scale');
-            resolve({ id: device.id, type: ScaleType.SKALE });
+            resolve({ id: deviceScale.id, type: ScaleType.SKALE });
             return;
           }
         }
@@ -386,34 +389,46 @@ export class CoffeeBluetoothDevicesService {
         const devices: Array<any> = await this.scanDevices();
         this.logger.log('BleManager - Loop through devices');
         const supportedDevices: Array<{ id: string; type: ScaleType }> = [];
-        for (const device of devices) {
-          if (DecentScale.test(device)) {
+        for (const deviceScale of devices) {
+          if (DecentScale.test(deviceScale)) {
             this.logger.log('BleManager - We found a decent scale');
-            supportedDevices.push({ id: device.id, type: ScaleType.DECENT });
+            supportedDevices.push({
+              id: deviceScale.id,
+              type: ScaleType.DECENT,
+            });
           }
-          if (LunarScale.test(device)) {
+          if (LunarScale.test(deviceScale)) {
             this.logger.log('BleManager - We found a lunar/acaia scale');
-            supportedDevices.push({ id: device.id, type: ScaleType.LUNAR });
+            supportedDevices.push({
+              id: deviceScale.id,
+              type: ScaleType.LUNAR,
+            });
           }
-          if (JimmyScale.test(device)) {
+          if (JimmyScale.test(deviceScale)) {
             this.logger.log('BleManager - We found a jimmy scale');
-            supportedDevices.push({ id: device.id, type: ScaleType.JIMMY });
+            supportedDevices.push({
+              id: deviceScale.id,
+              type: ScaleType.JIMMY,
+            });
           }
-          if (FelicitaScale.test(device)) {
+          if (FelicitaScale.test(deviceScale)) {
             this.logger.log('BleManager - We found a felicita scale');
-            supportedDevices.push({ id: device.id, type: ScaleType.FELICITA });
+            supportedDevices.push({
+              id: deviceScale.id,
+              type: ScaleType.FELICITA,
+            });
           }
-          if (EurekaPrecisaScale.test(device)) {
+          if (EurekaPrecisaScale.test(deviceScale)) {
             this.logger.log('BleManager - We found a eureka scale');
             supportedDevices.push({
-              id: device.id,
+              id: deviceScale.id,
               type: ScaleType.EUREKAPRECISA,
             });
           }
-          if (SkaleScale.test(device)) {
+          if (SkaleScale.test(deviceScale)) {
             this.logger.log('BleManager - We found a skale scale');
             supportedDevices.push({
-              id: device.id,
+              id: deviceScale.id,
               type: ScaleType.SKALE,
             });
           }
@@ -429,28 +444,34 @@ export class CoffeeBluetoothDevicesService {
         const devices: Array<any> = await this.scanPressureDevices();
         this.logger.log('BleManager - Loop through pressure devices');
         const supportedDevices: Array<{ id: string; type: PressureType }> = [];
-        for (const device of devices) {
-          if (PrsPressure.test(device)) {
+        for (const devicePressure of devices) {
+          if (PrsPressure.test(devicePressure)) {
             this.logger.log(
               'BleManager - We found a PRS Direct pressure device ' +
-                JSON.stringify(device)
-            );
-            supportedDevices.push({ id: device.id, type: PressureType.PRS });
-          } else if (PopsiclePressure.test(device)) {
-            this.logger.log(
-              'BleManager - We found a popsicle pressure device ' +
-                JSON.stringify(device)
+                JSON.stringify(devicePressure)
             );
             supportedDevices.push({
-              id: device.id,
+              id: devicePressure.id,
+              type: PressureType.PRS,
+            });
+          } else if (PopsiclePressure.test(devicePressure)) {
+            this.logger.log(
+              'BleManager - We found a popsicle pressure device ' +
+                JSON.stringify(devicePressure)
+            );
+            supportedDevices.push({
+              id: devicePressure.id,
               type: PressureType.POPSICLE,
             });
-          } else if (TransducerDirectPressure.test(device)) {
+          } else if (TransducerDirectPressure.test(devicePressure)) {
             this.logger.log(
               'BleManager - We found a Transducer Direct pressure device ' +
-                JSON.stringify(device)
+                JSON.stringify(devicePressure)
             );
-            supportedDevices.push({ id: device.id, type: PressureType.DIRECT });
+            supportedDevices.push({
+              id: devicePressure.id,
+              type: PressureType.DIRECT,
+            });
           }
         }
         resolve(supportedDevices);
@@ -463,27 +484,27 @@ export class CoffeeBluetoothDevicesService {
       async (resolve, reject) => {
         const devices: Array<any> = await this.scanPressureDevices();
         this.logger.log('BleManager - Loop through pressure devices');
-        for (const device of devices) {
-          if (PopsiclePressure.test(device)) {
+        for (const devicePressure of devices) {
+          if (PopsiclePressure.test(devicePressure)) {
             this.logger.log(
               'BleManager - We found a popsicle pressure device '
             );
-            resolve({ id: device.id, type: PressureType.POPSICLE });
+            resolve({ id: devicePressure.id, type: PressureType.POPSICLE });
             return;
-          } else if (TransducerDirectPressure.test(device)) {
+          } else if (TransducerDirectPressure.test(devicePressure)) {
             this.logger.log(
               'BleManager - We found a Transducer Direct pressure device '
             );
-            resolve({ id: device.id, type: PressureType.DIRECT });
+            resolve({ id: devicePressure.id, type: PressureType.DIRECT });
             return;
           } else {
           }
 
-          if (PrsPressure.test(device)) {
+          if (PrsPressure.test(devicePressure)) {
             this.logger.log(
               'BleManager - We found a PRS Direct pressure device '
             );
-            resolve({ id: device.id, type: PressureType.PRS });
+            resolve({ id: devicePressure.id, type: PressureType.PRS });
             return;
           }
         }
@@ -501,7 +522,7 @@ export class CoffeeBluetoothDevicesService {
     ble.disconnect(
       deviceId,
       () => {
-        //Success
+        // Success
         setTimeout(() => {
           this.autoConnectScale(
             deviceType,
@@ -528,7 +549,7 @@ export class CoffeeBluetoothDevicesService {
     ble.disconnect(
       deviceId,
       () => {
-        //Success
+        // Success
         setTimeout(() => {
           this.autoConnectPressureDevice(
             pressureType,
@@ -631,8 +652,8 @@ export class CoffeeBluetoothDevicesService {
       if (device !== null && device.platform === 'iOS') {
         // We just need to scan, then we can auto connect for iOS (lol)
         this.logger.log('Try to find scale on iOS');
-        const device = await this.tryToFindScale();
-        if (device === undefined) {
+        const deviceScale = await this.tryToFindScale();
+        if (deviceScale === undefined) {
           this.logger.log('Scale not found, retry');
           // Try every 11 seconds, because the search algorythm goes 10 seconds at all.
           const intV = setInterval(async () => {
@@ -658,8 +679,8 @@ export class CoffeeBluetoothDevicesService {
       if (device !== null && device.platform === 'iOS') {
         // We just need to scan, then we can auto connect for iOS (lol)
         this.logger.log('Try to find pressure on iOS');
-        const device = await this.tryToFindPressureDevice();
-        if (device === undefined) {
+        const devicePressure = await this.tryToFindPressureDevice();
+        if (devicePressure === undefined) {
           this.logger.log('Pressure device not found, retry');
           // Try every 61 seconds, because the search algorythm goes 60 seconds at all.
           const intV = setInterval(async () => {
