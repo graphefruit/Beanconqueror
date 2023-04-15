@@ -97,10 +97,6 @@
           <ion-label class="card-headline">{{'BREW_DATA_TDS_EY' | translate}}</ion-label><br/>
           <ion-text>{{brew?.tds}},&nbsp;%{{brew?.getExtractionYield()}}</ion-text>
         </ion-col>
-        <ion-col *ngIf="(brew?.hasCustomFlavors() || brew?.hasPredefinedFlavors())" size="12">
-          <ion-label class="card-headline">{{'BREW_DATA_FLAVOR' | translate}}</ion-label><br/>
-          <ion-text class="ion-text-wrap">{{getCuppedBrewFlavors()}}</ion-text>
-        </ion-col>
         <ion-col size="6" *ngIf="brew?.brew_temperature > 0 && uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.brew_temperature,
                       brew.getPreparation().visible_list_view_parameters.brew_temperature,
                       brew.getPreparation().use_custom_parameters)">
@@ -174,6 +170,10 @@
           <div>
           <ion-chip *ngFor="let uuid of brew?.method_of_preparation_tools;let i=index;">{{brew?.getPreparationToolName(uuid)}}</ion-chip>
           </div>
+        </ion-col>
+        <ion-col *ngIf="(brew?.hasCustomFlavors() || brew?.hasPredefinedFlavors())" size="12">
+          <ion-label class="card-headline">{{'BREW_DATA_FLAVOR' | translate}}</ion-label><br/>
+          <ion-text class="ion-text-wrap">{{getCuppedBrewFlavors()}}</ion-text>
         </ion-col>
         <ion-col size="12" *ngIf="brew?.note != '' && uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.note,
                       brew.getPreparation().visible_list_view_parameters.note,
