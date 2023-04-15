@@ -1607,8 +1607,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   private checkChanges() {
-    this.changeDetectorRef.detectChanges();
-    window.getComputedStyle(window.document.getElementsByTagName('body')[0]);
+    // #507 Wrapping check changes in set timeout so all values get checked
+    setTimeout(() => {
+      this.changeDetectorRef.detectChanges();
+      window.getComputedStyle(window.document.getElementsByTagName('body')[0]);
+    }, 15);
   }
 
   private getActualBluetoothWeight() {
