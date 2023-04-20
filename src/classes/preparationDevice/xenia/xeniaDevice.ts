@@ -10,6 +10,8 @@ export class XeniaDevice extends PreparationDevice {
   public scriptAtWeightReachedId: number = 0;
   public scriptAtWeightReachedNumber: number = 0;
 
+  public scriptList: Array<{ INDEX: number; TITLE: string }> = [];
+
   constructor(protected httpClient: HttpClient, _preparation: Preparation) {
     super(httpClient, _preparation);
     if (typeof cordova !== 'undefined') {
@@ -69,6 +71,18 @@ export class XeniaDevice extends PreparationDevice {
       );
     });
     return promise;
+  }
+
+  public mapScriptsAndSaveTemp(_serverRespList: any) {
+    this.scriptList = [];
+    for (let i = 0; i < _serverRespList.index_list.length; i++) {
+      const addIndex = _serverRespList.index_list[i];
+      const addTitle = _serverRespList.title_list[i];
+      this.scriptList.push({
+        TITLE: addTitle,
+        INDEX: addIndex,
+      });
+    }
   }
 
   public startScript(_id: any) {

@@ -6,11 +6,6 @@ import { ModalController, NavParams } from '@ionic/angular';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
-import { ServerBrew } from '../../../classes/server/brew/brew';
-import { environment } from '../../../environments/environment';
-import { catchError, timeout } from 'rxjs/operators';
-import { of } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { PreparationDevice } from '../../../classes/preparationDevice/preparationDevice';
 import { UIToast } from '../../../services/uiToast';
@@ -59,6 +54,18 @@ export class PreparationConnectedDeviceComponent implements OnInit {
   }
 
   public async save() {
+    if (
+      this.data.connectedPreparationDevice.type === PreparationDeviceType.XENIA
+    ) {
+      if (this.data.connectedPreparationDevice.url === '') {
+        this.data.connectedPreparationDevice.url = 'http://xenia.local';
+      } else {
+        if (this.data.connectedPreparationDevice.url.endsWith('/') === true) {
+          this.data.connectedPreparationDevice.url =
+            this.data.connectedPreparationDevice.url.slice(0, -1);
+        }
+      }
+    }
     await this.uiPreparationStorage.update(this.data);
   }
 

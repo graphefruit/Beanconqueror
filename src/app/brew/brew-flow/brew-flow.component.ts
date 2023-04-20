@@ -211,6 +211,18 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
 
   public setCoffeeDripTime(): void {
     this.brew.coffee_first_drip_time = this.brew.brew_time;
+    // Run first drip script
+    if (
+      !this.brewComponent.smartScaleConnected() &&
+      this.brewComponent.preparationDeviceConnected()
+    ) {
+      // If scale is not connected but the device, we can now choose that still the script is executed if existing.
+      if (this.brewComponent.preparationDevice.scriptAtFirstDripId > 0) {
+        this.brewComponent.preparationDevice.startScript(
+          this.brewComponent.preparationDevice.scriptAtFirstDripId
+        );
+      }
+    }
     this.showDripTimer = false;
   }
 
@@ -225,7 +237,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
     const avgFlowEl = this.smartScaleAvgFlowPerSecondDetail.nativeElement;
     weightEl.textContent = _val.scaleWeight;
     flowEl.textContent = _val.smoothedWeight;
-    avgFlowEl.textContent = _val.avgFlow;
+    avgFlowEl.textContent = 'Ø ' + _val.avgFlow;
   }
 
   public setActualPressureInformation(_val: any) {
