@@ -88,6 +88,7 @@
         <hook src="plugins/cordova-plugin-ble-central/stripDuplicatePermissions.js" type="after_prepare" />
     </platform>
     <platform name="ios">
+        <preference name="InspectableWebview" value="true" />
         <preference name="BackupWebStorage" value="cloud" />
         <preference name="WKWebViewOnly" value="true" />
         <feature name="CDVWKWebViewEngine">
