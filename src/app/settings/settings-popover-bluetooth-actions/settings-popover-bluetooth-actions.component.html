@@ -10,5 +10,9 @@
       <ion-icon name="bluetooth-outline" slot="start"></ion-icon>
       <span>{{"POPOVER_BLUETOOTH_ACTION_RECONNECT_PRESSURE_DEVICE" | translate}}</span>
     </ion-item>
+    <ion-item (click)="reconnectTemperatureDevice()" *ngIf="this.settings.temperature_id" button tappable>
+      <ion-icon name="bluetooth-outline" slot="start"></ion-icon>
+      <span>{{"POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE" | translate}}</span>
+    </ion-item>
   </ion-list>
 </ion-content>

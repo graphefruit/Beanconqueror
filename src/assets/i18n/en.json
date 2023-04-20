@@ -816,6 +816,15 @@
         "Update to Ionic 6.4.0",
         "Smaller bug fixes"
       ]
+    },
+    "6.4.0": {
+      "TITLE": "Version 6.4.0: What's new?",
+      "DESCRIPTION": [
+        "<b>Bluetooth thermometers</b>",
+        "Support for ETI Ltd thermometers (ThermaQ Blue, BlueTherm, etc) - Sensors - Thanks to Myles",
+        "Autostart timer on a specific temperature - editable in settings",
+        "Display name of temperature device and mac-address on connect"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Customize parameter",
@@ -1206,7 +1215,7 @@
     "IMAGES_GETTING_DOWNLOADED": "Images getting downloaded"
   },
   "RETRY_CONNECT": "Retry connection",
-  "SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE": "Let scale connected even when app is minimized/inactive",
+  "SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE": "Keep scale connected even when app is in the background",
   "BREW_FLOW_WEIGHT": "Weight",
   "BREW_FLOW_WEIGHT_PER_SECOND": "Flow (Calc.)",
   "ROAST_TYPE_UNKNOWN": "Unknown",
@@ -1271,9 +1280,11 @@
   "SMART_SCALE_STOP_TIMER_ON_BREW": "Stop scale timer on new brew",
   "SMART_SCALE_RESET_TIMER_ON_BREW": "Reset scale timer on new brew",
   "BREW_PRESSURE_FLOW": "Pressure",
+  "BREW_TEMPERATURE_REALTIME": "Temperature",
   "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_SHOW_GRAPHS_FILTER": "Show graphs for filter",
   "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_SHOW_GRAPHS_ESPRESSO": "Show graphs for espresso",
   "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE": "Pressure device",
+  "PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE": "Temperature device",
   "PRESSURE_LOG": "Activate logfiles for pressure device",
   "PRESSURE_THRESHOLD_ACTIVE": "Start timer with predefined pressure",
   "PRESSURE_THRESHOLD_BAR": "Threshold pressure",
@@ -1290,7 +1301,8 @@
     "CONNECTED_SUCCESSFULLY": "Pressure device connected",
     "DISCONNECTED_SUCCESSFULLY": "Pressure device disconnected",
     "DISCONNECTED_UNPLANNED": "Pressure device disconnected unplanned",
-    "INFORMATION_DESCRIPTION": "Supported devices are: Popsicle",
+    "STAY_CONNECTED_ON_APP_MINIMIZE": "Keep scale connected even when app is in the background",
+    "INFORMATION_DESCRIPTION": "Supported devices are: Popsicle, Direct Transducer, Pressensor",
     "BLUETOOTH_SCAN_RUNNING": "Pressure device will be searched for 60 seconds, please wait",
     "BLUETOOTH_NOT_ENABLED": "Bluetooth not activated, please activate to work properly",
     "REQUEST_PERMISSION": {
@@ -1298,8 +1310,26 @@
       "BLUETOOTH": "To find pressure devices, the app needs access to bluetooth"
     }
   },
+  "TEMPERATURE": {
+    "CONNECTION_NOT_ESTABLISHED": "Temperature device not found found or connection could not be established",
+    "CONNECTED_SUCCESSFULLY": "Temperature device connected",
+    "DISCONNECTED_SUCCESSFULLY": "Temperature device disconnected",
+    "DISCONNECTED_UNPLANNED": "Temperature device disconnected unplanned",
+    "STAY_CONNECTED_ON_APP_MINIMIZE": "Keep thermometer connected even when app is in the background",
+    "INFORMATION_DESCRIPTION": "Supported devices are: ETI Ltd Thermometers (ThermaQ Blue, BlueTherm, etc)",
+    "BLUETOOTH_SCAN_RUNNING": "Temperature device will be searched for 60 seconds, please wait",
+    "BLUETOOTH_NOT_ENABLED": "Bluetooth not activated, please activate to work properly",
+    "REQUEST_PERMISSION": {
+      "LOCATION": "To find temperature devices, the app needs access to the location.",
+      "BLUETOOTH": "To find temperature devices, the app needs access to bluetooth"
+    },
+    "LOG": "Activate logfiles for temperature device",
+    "THRESHOLD_ACTIVE": "Start timer with predefined temperature",
+    "THRESHOLD_TEMP": "Threshold temperature"
+  },
   "POPOVER_BLUETOOTH_ACTION_RECONNECT_SCALE": "Reconnect scale",
   "POPOVER_BLUETOOTH_ACTION_RECONNECT_PRESSURE_DEVICE": "Reconnect pressure device",
+  "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "Reconnect temperature device",
   "POPOVER_SHOW_BREWS": "Show brews",
   "LAST_USED_GRIND_SIZE_SETTING": "Last grind setting",
   "LAST_USED_BEAN": "Last bean",
