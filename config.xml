@@ -234,6 +234,9 @@
         <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryUsageDescription">
             <string>The app needs photo library access, so that you can choose from already taken pictures from coffee beans, coffee bags, your own coffee brews etc. This pictures are stored inside the app.</string>
         </edit-config>
+        <edit-config file="*-Info.plist" mode="merge" target="NSLocationAlwaysAndWhenInUseUsageDescription">
+            <string>Location is used when enabled in settings, default off. Used for track your location where you brewed your coffee.</string>
+        </edit-config>
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
         <icon height="57" src="resources/ios/icon/icon.png" width="57" />

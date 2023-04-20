@@ -516,7 +516,7 @@ export class UIBrewHelper {
     if (this.canBrewIfNotShowMessage()) {
       const preparationCount = this.uiPreparationStorage.getAllEntries().length;
 
-      let initalBreakpoint = 0.2;
+      let initalBreakpoint = 0.35;
       if (preparationCount > 10) {
         initalBreakpoint = 1;
       } else if (preparationCount > 6) {
@@ -534,7 +534,7 @@ export class UIBrewHelper {
         id: BrewChoosePreparationToBrewComponent.COMPONENT_ID,
         cssClass: 'popover-actions',
         backdropDismiss: false,
-        breakpoints: [0, 0.2, 0.5, 0.75, 1],
+        breakpoints: [0, 0.35, 0.5, 0.75, 1],
         initialBreakpoint: initalBreakpoint,
       });
       await modal.present();

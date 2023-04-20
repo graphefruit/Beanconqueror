@@ -174,22 +174,25 @@ export class CoffeeBluetoothDevicesService {
         resolve(devices);
       };
 
-      ble.startScan(
+      ble.startScanWithOptions(
         [],
-        async (device: any) => {
-          this.logger.log('Device found ' + JSON.stringify(device));
+        { reportDuplicates: true },
+        async (scanDevice: any) => {
+          this.logger.log('Device found ' + JSON.stringify(scanDevice));
           if (
-            DecentScale.test(device) ||
-            LunarScale.test(device) ||
-            JimmyScale.test(device) ||
-            FelicitaScale.test(device) ||
-            EurekaPrecisaScale.test(device) ||
-            SkaleScale.test(device)
+            DecentScale.test(scanDevice) ||
+            LunarScale.test(scanDevice) ||
+            JimmyScale.test(scanDevice) ||
+            FelicitaScale.test(scanDevice) ||
+            EurekaPrecisaScale.test(scanDevice) ||
+            SkaleScale.test(scanDevice)
           ) {
             // We found all needed devices.
-            devices.push(device);
+            devices.push(scanDevice);
 
-            this.logger.log('Supported Scale found ' + JSON.stringify(device));
+            this.logger.log(
+              'Supported Scale found ' + JSON.stringify(scanDevice)
+            );
             clearTimeout(timeoutVar);
             timeoutVar = null;
             await stopScanningAndResolve();
@@ -221,8 +224,9 @@ export class CoffeeBluetoothDevicesService {
         resolve(devices);
       };
 
-      ble.startScan(
+      ble.startScanWithOptions(
         [],
+        { reportDuplicates: true },
         async (devicePressure: any) => {
           this.logger.log(
             'Pressure devices found ' + JSON.stringify(devicePressure)

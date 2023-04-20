@@ -1190,7 +1190,7 @@
       "LOCATION": "To find bluetooth scales, the app needs access to the location.",
       "BLUETOOTH": "To find bluetooth scales, the app needs access to bluetooth"
     },
-    "INFORMATION_DESCRIPTION": "Supported scales are: Decent Scale, Acaia Scales, Felicita Scales, Hiroia Jimmy and Eureka Precisa. Care: If the Eureka Precisa recieves a negative value, the timer stops"
+    "INFORMATION_DESCRIPTION": "Supported scales are: Decent Scale, Acaia Scales, Felicita Scales, Hiroia Jimmy, Skale 2 and Eureka Precisa. Care: If the Eureka Precisa recieves a negative value, the timer stops"
   },
   "QR": {
     "WRONG_QRCODE_DESCRIPTION": "Wrong qr code or wrong content",
@@ -1290,7 +1290,7 @@
     "CONNECTED_SUCCESSFULLY": "Pressure device connected",
     "DISCONNECTED_SUCCESSFULLY": "Pressure device disconnected",
     "DISCONNECTED_UNPLANNED": "Pressure device disconnected unplanned",
-    "INFORMATION_DESCRIPTION": "Supported devices are: Popsicle",
+    "INFORMATION_DESCRIPTION": "Supported devices are: Popsicle, Pressensor, Smart Espresso Profiler",
     "BLUETOOTH_SCAN_RUNNING": "Pressure device will be searched for 60 seconds, please wait",
     "BLUETOOTH_NOT_ENABLED": "Bluetooth not activated, please activate to work properly",
     "REQUEST_PERMISSION": {

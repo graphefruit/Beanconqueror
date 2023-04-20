@@ -263,9 +263,23 @@
     <ion-label position="stacked">{{"PREPARATION_DEVICE.TYPE_XENIA.PRESS_START_SCRIPT" | translate}}</ion-label>
     <ion-select [(ngModel)]="preparationDevice.scriptStartId"
                 placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
+        <ion-select-option [value]="0">
+          {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_0" | translate}}
+        </ion-select-option>
+        <ion-select-option [value]="1">
+          {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_1" | translate}}
+        </ion-select-option>
+        <ion-select-option [value]="2">
+          {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_2" | translate}}
+        </ion-select-option>
+        <ion-select-option *ngFor='let script of preparationDevice?.scriptList' [value]='script.INDEX'>
+          {{script.TITLE}}
+        </ion-select-option>
     </ion-select>
   </ion-item>
-  <ion-item lines="inset">
+  <ion-item lines="inset" *ngIf="(uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_first_drip_time,
+                      data.getPreparation().manage_parameters.coffee_first_drip_time,
+                      data.getPreparation().use_custom_parameters) && getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO) && preparationDevice.scriptStartId > 0">
       <ion-label position="stacked">{{"PREPARATION_DEVICE.TYPE_XENIA.FIRST_DRIP_SCRIPT" | translate}}</ion-label>
     <ion-select [(ngModel)]="preparationDevice.scriptAtFirstDripId"
                 placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
@@ -278,27 +292,32 @@
       <ion-select-option [value]="2">
         {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_2" | translate}}
       </ion-select-option>
+      <ion-select-option *ngFor='let script of preparationDevice?.scriptList' [value]='script.INDEX'>
+        {{script.TITLE}}
+      </ion-select-option>
     </ion-select>
   </ion-item>
   <ion-item *ngIf="smartScaleConnected()"
+            lines="none">
+        <ion-label position="stacked">{{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_AT_WEIGHT" | translate}}</ion-label>
+        <ion-input [(ngModel)]="preparationDevice.scriptAtWeightReachedNumber"
+                   inputmode="decimal" prevent-characters
+                   remove-empty-number
+                   tabIndex="1" type="text"></ion-input>
+  </ion-item>
+  <ion-item *ngIf="smartScaleConnected() && preparationDevice.scriptAtWeightReachedNumber>0"
             lines="inset">
-    <ion-label position="stacked">{{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_AT_WEIGHT" | translate}}</ion-label>
-    <ion-input [(ngModel)]="preparationDevice.scriptAtWeightReachedNumber"
-               inputmode="decimal" prevent-characters
-               remove-empty-number
-               tabIndex="1" type="text"></ion-input>
-    <ion-select *ngIf='preparationDevice.scriptAtWeightReachedNumber>0' [(ngModel)]="preparationDevice.scriptAtWeightReachedId"
-                placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
-      <ion-select-option [value]="0">
-        {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_0" | translate}}
-      </ion-select-option>
-      <ion-select-option [value]="1">
-        {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_1" | translate}}
-      </ion-select-option>
-      <ion-select-option [value]="2">
-        {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_2" | translate}}
-      </ion-select-option>
-    </ion-select>
+        <ion-label position="stacked">{{"PREPARATION_DEVICE.TYPE_XENIA.CHOOSE_SCRIPT_AT_WEIGHT" | translate}}</ion-label>
+
+        <ion-select  [(ngModel)]="preparationDevice.scriptAtWeightReachedId"
+                    placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
+          <ion-select-option [value]="0">
+            {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_STOP" | translate}}
+          </ion-select-option>
+          <ion-select-option *ngFor='let script of preparationDevice?.scriptList' [value]='script.INDEX'>
+            {{script.TITLE}}
+          </ion-select-option>
+        </ion-select>
   </ion-item>
 </ion-card>
 <ion-card *ngIf="showSectionWhileBrew()"
