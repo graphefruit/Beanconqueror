@@ -585,9 +585,9 @@
                 <h2>{{"TEMPERATURE.THRESHOLD_TEMP" | translate}}</h2>
               </ion-label>
               <ion-range style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="60" snaps="true" max="100"
-                step="0.1" (ionBlur)="saveSettings()" [(ngModel)]="settings.temperature_threshold_bar">
+                step="0.1" (ionBlur)="saveSettings()" [(ngModel)]="settings.temperature_threshold_temp">
                 <ion-label
-                  slot="end">{{this.uiHelper.toFixedIfNecessary(settings.temperature_threshold_bar,1)}}</ion-label>
+                  slot="end">{{this.uiHelper.toFixedIfNecessary(settings.temperature_threshold_temp,1)}}</ion-label>
               </ion-range>
             </ion-item>
             <ion-item>

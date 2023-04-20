@@ -117,7 +117,7 @@ export class Settings implements ISettings {
   public temperature_type: TemperatureType;
   public temperature_log: boolean;
   public temperature_threshold_active: boolean;
-  public temperature_threshold_bar: number;
+  public temperature_threshold_temp: number;
   public temperature_stay_connected: boolean;
   public currency: string;
   public brew_display_bean_image: boolean;

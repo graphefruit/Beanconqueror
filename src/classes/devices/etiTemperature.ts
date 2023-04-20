@@ -58,7 +58,7 @@ export class ETITemperature extends TemperatureDevice {
       ETITemperature.TEMPERATURE_CHANNEL_1_TEMP_CHAR_UUID,
 
       async (_data: any) => {
-        this.parseStatusUpdate(new Uint8Array(_data));
+        this.parseStatusUpdate(new Float32Array(_data));
       },
 
       (_data: any) => {}
@@ -69,19 +69,14 @@ export class ETITemperature extends TemperatureDevice {
    * ETI Temperature data is a Little Endian IEEE 754 encoded float
    * @param temperatureRawStatus The raw byte array retreived from BLE.
    */
-  private parseStatusUpdate(temperatureRawStatus: Uint8Array) {
+  private parseStatusUpdate(temperatureRawStatus: Float32Array) {
     this.logger.log(
       'temperatureRawStatus received is: ' + temperatureRawStatus
     );
 
-    // ETI Temperature data is a Little Endian IEEE 754 encoded float
-    var temperatureDataString = temperatureRawStatus.toString();
-    this.logger.log('temperatureDataString is: ' + temperatureDataString);
-
+    var temperatureString = temperatureRawStatus.toString();
     let temperature: any = 0.0;
-    temperature = parseFloat(
-      '0x' + temperatureDataString.match(/../g).reverse().join('')
-    );
+    temperature = parseFloat(temperatureString).toFixed(2);
     this.logger.log('temperature is: ' + temperature);
 
     this.setTemperature(temperature, temperatureRawStatus);

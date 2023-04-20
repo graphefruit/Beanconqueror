@@ -67,7 +67,7 @@ import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
 } from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { PressureType, ScaleType } from '../classes/devices';
+import { PressureType, ScaleType, TemperatureType } from '../classes/devices';
 import { Logger } from '../classes/devices/common/logger';
 
 declare var AppRate;
@@ -608,10 +608,15 @@ export class AppComponent implements AfterViewInit {
       // Just connect after 5 seconds, to get some time, and maybe handle all the connection errors
       this.__connectSmartScale();
       this.__connectPressureDevice();
+      this.__connectTemperatureDevice();
     }, 5000);
 
     const settings = this.uiSettingsStorage.getSettings();
-    if (settings.scale_log === true || settings.pressure_log === true) {
+    if (
+      settings.scale_log === true ||
+      settings.pressure_log === true ||
+      settings.temperature_log === true
+    ) {
       Logger.enableLog();
     } else {
       Logger.disableLog();
@@ -649,6 +654,21 @@ export class AppComponent implements AfterViewInit {
           _type === CoffeeBluetoothServiceEvent.DISCONNECTED_PRESSURE
         ) {
           this.uiToast.showInfoToast('PRESSURE.DISCONNECTED_UNPLANNED');
+        } else if (
+          _type === CoffeeBluetoothServiceEvent.CONNECTED_TEMPERATURE
+        ) {
+          this.uiToast.showInfoToast(
+            this._translate.instant('TEMPERATURE.CONNECTED_SUCCESSFULLY') +
+              ' - ' +
+              this.bleManager.getTemperatureDevice().device_name +
+              ' / ' +
+              this.bleManager.getTemperatureDevice().device_id,
+            false
+          );
+        } else if (
+          _type === CoffeeBluetoothServiceEvent.DISCONNECTED_TEMPERATURE
+        ) {
+          this.uiToast.showInfoToast('TEMPERATURE.DISCONNECTED_UNPLANNED');
         }
       });
   }
@@ -681,6 +701,22 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
+  private __connectTemperatureDevice() {
+    const settings = this.uiSettingsStorage.getSettings();
+    const temperature_id: string = settings.temperature_id;
+    const temperature_type: TemperatureType = settings.temperature_type;
+    this.uiLog.log(`Connect temperature device? ${temperature_id}`);
+    if (temperature_id !== undefined && temperature_id !== '') {
+      this.bleManager.autoConnectTemperatureDevice(
+        temperature_type,
+        temperature_id,
+        true
+      );
+    } else {
+      this.uiLog.log('Temperature device not connected, dont try to connect');
+    }
+  }
+
   private __attachOnDevicePause() {
     this.platform.pause.subscribe(async () => {
       const settings: Settings = this.uiSettingsStorage.getSettings();
@@ -700,6 +736,14 @@ export class AppComponent implements AfterViewInit {
         }
       }
 
+      if (settings.temperature_stay_connected === false) {
+        const temperature_id: string = settings.temperature_id;
+        if (temperature_id !== undefined && temperature_id !== '') {
+          // Don't show message on device pause.
+          this.bleManager.disconnect(settings.temperature_id, false);
+        }
+      }
+
       /// Add pressure profile.
     });
   }
@@ -711,6 +755,9 @@ export class AppComponent implements AfterViewInit {
       }
       if (settings.pressure_stay_connected === false) {
         this.__connectPressureDevice();
+      }
+      if (settings.temperature_stay_connected === false) {
+        this.__connectTemperatureDevice();
       }
     });
   }

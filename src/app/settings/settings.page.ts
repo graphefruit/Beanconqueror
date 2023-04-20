@@ -620,7 +620,8 @@ export class SettingsPage implements OnInit {
   public async toggleLog() {
     if (
       this.settings.scale_log === true ||
-      this.settings.pressure_log === true
+      this.settings.pressure_log === true ||
+      this.settings.temperature_log === true
     ) {
       Logger.enableLog();
     } else {
