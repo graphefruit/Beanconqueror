@@ -76,7 +76,9 @@ export class ETITemperature extends TemperatureDevice {
 
     var temperatureString = temperatureRawStatus.toString();
     let temperature: any = 0.0;
-    temperature = parseFloat(temperatureString).toFixed(2);
+    // Temperature precision of a K-type thermocouple is ~0.75% or +-0.5C at 0-100C
+    // therefore rounding to 1 significant figure is sufficient
+    temperature = parseFloat(temperatureString).toFixed(1);
     this.logger.log('temperature is: ' + temperature);
 
     this.setTemperature(temperature, temperatureRawStatus);

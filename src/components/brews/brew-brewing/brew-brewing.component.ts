@@ -804,7 +804,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         realtime_flow = Math.floor(Math.random() * 11);
         weight = weight + Math.floor(Math.random() * 11);
         pressure = Math.floor(Math.random() * 11);
-        temperature = Math.floor(Math.random() * 11);
+        temperature = Math.floor(Math.random() * 90);
         this.__setPressureFlow({ actual: pressure, old: pressure });
         this.__setTemperatureFlow({ actual: temperature, old: temperature });
         this.__setFlowProfile({
@@ -1217,26 +1217,49 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           [0, 1, 2, 3]
         );
       } else if (_type === 'temperature') {
-        Plotly.extendTraces(
-          'flowProfileChart',
-          {
-            x: [
-              [],
-              [],
-              [],
-              [],
-              [this.temperatureTrace.x[this.temperatureTrace.x.length - 1]],
-            ],
-            y: [
-              [],
-              [],
-              [],
-              [],
-              [this.temperatureTrace.y[this.temperatureTrace.y.length - 1]],
-            ],
-          },
-          [0, 1, 2, 3, 4]
-        );
+        if (this.lastChartLayout['yaxis4']) {
+          // Pressure device is connected, we got 5 entries
+          Plotly.extendTraces(
+            'flowProfileChart',
+            {
+              x: [
+                [],
+                [],
+                [],
+                [],
+                [this.temperatureTrace.x[this.temperatureTrace.x.length - 1]],
+              ],
+              y: [
+                [],
+                [],
+                [],
+                [],
+                [this.temperatureTrace.y[this.temperatureTrace.y.length - 1]],
+              ],
+            },
+            [0, 1, 2, 3, 4]
+          );
+        } else {
+          // Pressure device is not connected, so temp takes his place
+          Plotly.extendTraces(
+            'flowProfileChart',
+            {
+              x: [
+                [],
+                [],
+                [],
+                [this.temperatureTrace.x[this.temperatureTrace.x.length - 1]],
+              ],
+              y: [
+                [],
+                [],
+                [],
+                [this.temperatureTrace.y[this.temperatureTrace.y.length - 1]],
+              ],
+            },
+            [0, 1, 2, 3]
+          );
+        }
       }
       setTimeout(() => {
         let newLayoutIsNeeded: boolean = false;
@@ -1887,7 +1910,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         mode: 'lines',
         line: {
           shape: 'linear',
-          color: '#C70639',
+          color: '#CC3311',
           width: 2,
         },
         visible: this.graphSettings.temperature,

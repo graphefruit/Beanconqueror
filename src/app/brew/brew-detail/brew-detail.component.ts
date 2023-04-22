@@ -289,12 +289,12 @@ export class BrewDetailComponent implements OnInit {
         x: [],
         y: [],
         name: this.translate.instant('BREW_TEMPERATURE_REALTIME'),
-        yaxis: 'y4',
+        yaxis: 'y5',
         type: 'scattergl',
         mode: 'lines',
         line: {
           shape: 'linear',
-          color: '#C70639',
+          color: '#CC3311',
           width: 2,
         },
         visible: graphSettings.temperature,
@@ -541,8 +541,8 @@ export class BrewDetailComponent implements OnInit {
     if (this.flow_profile_raw.temperatureFlow.length > 0) {
       layout['yaxis5'] = {
         title: '',
-        titlefont: { color: '#C70639' },
-        tickfont: { color: '#C70639' },
+        titlefont: { color: '#CC3311' },
+        tickfont: { color: '#CC3311' },
         anchor: 'free',
         overlaying: 'y',
         side: 'right',

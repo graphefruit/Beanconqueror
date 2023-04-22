@@ -7,19 +7,19 @@
   }
 
 
-  ion-card
-  {
+  ion-card {
     div.last-item {
-      margin-bottom:16px;
+      margin-bottom: 16px;
       /*Last one*/
-      order:10000;
+      order: 10000;
     }
 
   }
 
 
   ion-card.flow-profile {
-    margin:0px;
+    margin: 0px;
+
     ion-card-header {
       color: #FFFFFF;
       background-color: var(--ion-color-accent) !important;
@@ -38,23 +38,33 @@
     }
 
   }
+
   ion-chip.weight {
     --background: #cdc2ac;
     --color: black;
   }
+
   ion-chip.flowcalculated {
     --background: #7F97A2;
     --color: white;
   }
+
   ion-chip.chip-outline {
-    --color:black!important;
+    --color: black !important;
   }
+
   ion-chip.flowreal {
     --background: #09485D;
     --color: white;
   }
+
   ion-chip.pressure {
     --background: #05C793;
     --color: black;
+  }
+
+  ion-chip.temperature {
+    --background: #CC3311;
+    --color: white;
   }
 }

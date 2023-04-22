@@ -163,6 +163,7 @@ export class Settings implements ISettings {
       calc_flow: true,
       realtime_flow: true,
       pressure: true,
+      temperature: true,
     } as IBrewGraphs;
   }
 
