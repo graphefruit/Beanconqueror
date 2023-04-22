@@ -297,6 +297,7 @@ export class BrewDetailComponent implements OnInit {
           color: '#CC3311',
           width: 2,
         },
+        visible: graphSettings.temperature,
       };
 
       const startingDay = moment(new Date()).startOf('day');
@@ -305,8 +306,12 @@ export class BrewDetailComponent implements OnInit {
       let firstTimestamp;
       if (this.flow_profile_raw.weight.length > 0) {
         firstTimestamp = this.flow_profile_raw.weight[0].timestamp;
-      } else {
+      } else if (this.flow_profile_raw.pressureFlow.length > 0) {
         firstTimestamp = this.flow_profile_raw.pressureFlow[0].timestamp;
+      } else if (this.flow_profile_raw.temperatureFlow.length > 0) {
+        firstTimestamp = this.flow_profile_raw.temperatureFlow[0].timestamp;
+      } else {
+        firstTimestamp = 0;
       }
       const delay =
         moment(firstTimestamp, 'HH:mm:ss.SSS').toDate().getTime() -
@@ -465,7 +470,6 @@ export class BrewDetailComponent implements OnInit {
   }
 
   private getChartLayout() {
-    debugger;
     const chartWidth: number = document.getElementById(
       'canvasContainerBrew'
     ).offsetWidth;
