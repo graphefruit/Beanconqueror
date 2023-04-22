@@ -60,11 +60,17 @@
     ion-card-header {
       color: #FFFFFF;
       background-color: var(--ion-color-accent) !important;
-      font-size: 24px;
-      padding: 4px;
+      font-size: 20px;
+      padding: 2px;
       display: flex;
       justify-content: space-evenly;
       flex-direction: column;
+    }
+    @media (max-width: 480px) {
+      ion-card-header {
+        min-height:50px;
+        height:50px;
+      }
     }
 
     ion-card-content {

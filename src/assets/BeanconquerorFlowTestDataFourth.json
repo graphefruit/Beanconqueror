@@ -2668,7 +2668,104 @@
       "flow_value": 3.6217652303113113
     }
   ],
-  "pressureFlow": [],
+  "pressureFlow": [
+    {
+      "timestamp": "21:46:13.600",
+      "brew_time": "0.1",
+      "actual_pressure": 7,
+      "old_pressure": 6
+    },
+    {
+      "timestamp": "21:46:16.571",
+      "brew_time": "0.11",
+      "actual_pressure": 9,
+      "old_pressure": 6
+    },
+    {
+      "timestamp": "21:46:17.651",
+      "brew_time": "1.9",
+      "actual_pressure": 2,
+      "old_pressure": 6
+    },
+    {
+      "timestamp": "21:46:18.596",
+      "brew_time": "2.8",
+      "actual_pressure": 3,
+      "old_pressure": 6
+    },
+    {
+      "timestamp": "21:46:19.676",
+      "brew_time": "3.9",
+      "actual_pressure": 4,
+      "old_pressure": 6
+    },
+    {
+      "timestamp": "21:46:20.621",
+      "brew_time": "4.9",
+      "actual_pressure": 7,
+      "old_pressure": 6
+    },
+    {
+      "timestamp": "21:46:21.701",
+      "brew_time": "5.10",
+      "actual_pressure": 7,
+      "old_pressure": 6
+    },
+    {
+      "timestamp": "21:46:22.646",
+      "brew_time": "6.9",
+      "actual_pressure": 7,
+      "old_pressure": 6
+    },
+    {
+      "timestamp": "21:46:23.733",
+      "brew_time": "7.10",
+      "actual_pressure": 7,
+      "old_pressure": 6
+    },
+    {
+      "timestamp": "21:46:24.672",
+      "brew_time": "8.8",
+      "actual_pressure": 7,
+      "old_pressure": 6
+    },
+    {
+      "timestamp": "21:46:25.750",
+      "brew_time": "9.10",
+      "actual_pressure": 7,
+      "old_pressure": 6
+    },
+    {
+      "timestamp": "21:46:26.702",
+      "brew_time": "10.9",
+      "actual_pressure": 7,
+      "old_pressure": 6
+    },
+    {
+      "timestamp": "21:46:27.775",
+      "brew_time": "11.10",
+      "actual_pressure": 7,
+      "old_pressure": 6
+    },
+    {
+      "timestamp": "21:46:28.721",
+      "brew_time": "12.9",
+      "actual_pressure": 7,
+      "old_pressure": 6
+    },
+    {
+      "timestamp": "21:46:29.801",
+      "brew_time": "13.9",
+      "actual_pressure": 7,
+      "old_pressure": 6
+    },
+    {
+      "timestamp": "21:46:30.748",
+      "brew_time": "14.10",
+      "actual_pressure": 1,
+      "old_pressure": 6
+    }
+  ],
   "temperatureFlow": [
     {
       "timestamp": "21:46:13.600",
@@ -2751,7 +2848,7 @@
     {
       "timestamp": "21:46:28.721",
       "brew_time": "12.9",
-      "actual_temperature": 23.5,
+      "actual_temperature": 90,
       "old_temperature": 23.5
     },
     {
@@ -2763,7 +2860,7 @@
     {
       "timestamp": "21:46:30.748",
       "brew_time": "14.10",
-      "actual_temperature": 23.5,
+      "actual_temperature": 70,
       "old_temperature": 23.5
     }
   ]
