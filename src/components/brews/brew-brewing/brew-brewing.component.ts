@@ -2147,8 +2147,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         overlaying: 'y',
         side: 'right',
         showgrid: false,
-        position: 0.87,
+        position: 0.8,
         fixedrange: true,
+        visible: false,
         range: [0, 100],
       };
     }

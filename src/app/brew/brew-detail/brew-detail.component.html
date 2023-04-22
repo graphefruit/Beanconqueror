@@ -15,7 +15,7 @@
 </ion-header>
 <ion-content *ngIf="loaded">
 
-  <ion-card *ngIf=" showSectionBeforeBrew()" class="ion-margin-horizontal popover"
+  <ion-card *ngIf=" showSectionBeforeBrew()" class="popover"
     style="display:flex; flex-direction: column;">
 
     <ion-item lines="none">
@@ -177,7 +177,7 @@
     </ion-item>
     <div class="last-item"></div>
   </ion-card>
-  <ion-card *ngIf="showSectionWhileBrew()" class="ion-margin-horizontal popover"
+  <ion-card *ngIf="showSectionWhileBrew()" class="popover"
     style="display:flex; flex-direction: column;">
 
     <ion-item lines="none">
@@ -247,15 +247,15 @@
     </ion-item>
     <ion-item [hidden]="data.flow_profile.length<=0 && this.platform.is('cordova')" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
                       data.getPreparation().brew_order.while.brew_time,
-                      data.getPreparation().use_custom_parameters)" class="ion-margin-top" lines="none">
+                      data.getPreparation().use_custom_parameters)"  class="ion-padding-bottom-half" lines="none">
       <div class="ion-text-center" style="width:100%">
 
 
-        <ion-chip (click)="toggleChartLines('weight')" [outline]="!this.weightTrace?.visible"
+        <ion-chip (click)="toggleChartLines('weight')"  *ngIf="this.weightTrace?.x.length > 0" [outline]="!this.weightTrace?.visible"
           class="weight">{{'BREW_FLOW_WEIGHT' | translate}}</ion-chip>
-        <ion-chip (click)="toggleChartLines('calc_flow')" [outline]="!this.flowPerSecondTrace?.visible"
+        <ion-chip (click)="toggleChartLines('calc_flow')"  *ngIf="this.flowPerSecondTrace?.x.length > 0"  [outline]="!this.flowPerSecondTrace?.visible"
           class="flowcalculated">{{'BREW_FLOW_WEIGHT_PER_SECOND' | translate}}</ion-chip>
-        <ion-chip (click)="toggleChartLines('realtime_flow')" [outline]="!this.realtimeFlowTrace?.visible"
+        <ion-chip (click)="toggleChartLines('realtime_flow')" *ngIf="this.realtimeFlowTrace?.x.length > 0" [outline]="!this.realtimeFlowTrace?.visible"
           class="flowreal">{{'BREW_FLOW_WEIGHT_REALTIME' | translate}}</ion-chip>
         <ion-chip (click)="toggleChartLines('pressure')" *ngIf="this.pressureTrace?.x.length > 0"
           [outline]="!this.pressureTrace?.visible" class="pressure">{{'BREW_PRESSURE_FLOW' | translate}}</ion-chip>
@@ -317,7 +317,7 @@
     </ion-item>
     <div class="last-item"></div>
   </ion-card>
-  <ion-card *ngIf="showSectionAfterBrew()" class="ion-margin-horizontal popover"
+  <ion-card *ngIf="showSectionAfterBrew()" class="popover"
     style="display:flex; flex-direction: column;">
     <ion-item lines="none">
       <span class="ion-title ion-padding-top">{{"BREW_HEADER_AFTER_BREW" | translate }}</span>
@@ -419,7 +419,7 @@
     </div>
     <div class="last-item"></div>
   </ion-card>
-  <ion-card *ngIf="showCupping()" class="ion-margin-horizontal popover" style="display:flex; flex-direction: column;">
+  <ion-card *ngIf="showCupping()" class="popover" style="display:flex; flex-direction: column;">
     <ion-item lines="none">
       <span class="ion-title ion-padding-top">{{"BREW_HEADER_CUPPING" | translate }}</span>
     </ion-item>

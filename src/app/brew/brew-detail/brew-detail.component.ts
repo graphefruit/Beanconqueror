@@ -29,7 +29,7 @@ import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { BrewFlowComponent } from '../brew-flow/brew-flow.component';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import moment from 'moment';
-import BeanconquerorFlowTestDataDummy from '../../../assets/BeanconquerorFlowTestData.json';
+import BeanconquerorFlowTestDataDummy from '../../../assets/BeanconquerorFlowTestDataFourth.json';
 import { UILog } from '../../../services/uiLog';
 declare var Plotly;
 @Component({
@@ -297,7 +297,6 @@ export class BrewDetailComponent implements OnInit {
           color: '#CC3311',
           width: 2,
         },
-        visible: graphSettings.temperature,
       };
 
       const startingDay = moment(new Date()).startOf('day');
@@ -374,12 +373,10 @@ export class BrewDetailComponent implements OnInit {
       ];
 
       const layout = this.getChartLayout();
-      if (layout['yaxis4']) {
-        chartData.push(this.pressureTrace);
-      }
-      if (layout['yaxis5']) {
-        chartData.push(this.temperatureTrace);
-      }
+
+      chartData.push(this.pressureTrace);
+
+      chartData.push(this.temperatureTrace);
 
       Plotly.newPlot(
         'flowProfileChart',
@@ -468,6 +465,7 @@ export class BrewDetailComponent implements OnInit {
   }
 
   private getChartLayout() {
+    debugger;
     const chartWidth: number = document.getElementById(
       'canvasContainerBrew'
     ).offsetWidth;
@@ -524,33 +522,30 @@ export class BrewDetailComponent implements OnInit {
       },
     };
 
-    if (this.flow_profile_raw.pressureFlow.length > 0) {
-      layout['yaxis4'] = {
-        title: '',
-        titlefont: { color: '#05C793' },
-        tickfont: { color: '#05C793' },
-        anchor: 'free',
-        overlaying: 'y',
-        side: 'right',
-        showgrid: false,
-        position: 0.93,
-        range: [0, 12],
-      };
-    }
+    layout['yaxis4'] = {
+      title: '',
+      titlefont: { color: '#05C793' },
+      tickfont: { color: '#05C793' },
+      anchor: 'free',
+      overlaying: 'y',
+      side: 'right',
+      showgrid: false,
+      position: 0.93,
+      range: [0, 12],
+    };
 
-    if (this.flow_profile_raw.temperatureFlow.length > 0) {
-      layout['yaxis5'] = {
-        title: '',
-        titlefont: { color: '#CC3311' },
-        tickfont: { color: '#CC3311' },
-        anchor: 'free',
-        overlaying: 'y',
-        side: 'right',
-        showgrid: false,
-        position: 0.93,
-        range: [0, 12],
-      };
-    }
+    layout['yaxis5'] = {
+      title: '',
+      titlefont: { color: '#CC3311' },
+      tickfont: { color: '#CC3311' },
+      anchor: 'free',
+      overlaying: 'y',
+      side: 'right',
+      showgrid: false,
+      position: 0.8,
+      fixedrange: true,
+      range: [0, 100],
+    };
 
     this.lastChartLayout = layout;
     return layout;
