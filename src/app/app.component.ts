@@ -78,6 +78,10 @@ declare var window;
   encapsulation: ViewEncapsulation.None,
 })
 export class AppComponent implements AfterViewInit {
+  private bluetoothConnectionState = {
+    SCALE: false,
+    PRESSURE: false,
+  };
   public toggleAbout: boolean = false;
   public registerBackFunction: any;
   @ViewChild(IonRouterOutlet, { static: false })
@@ -657,9 +661,29 @@ export class AppComponent implements AfterViewInit {
     const settings = this.uiSettingsStorage.getSettings();
     const scale_id: string = settings.scale_id;
     const scale_type: ScaleType = settings.scale_type;
+    let isIOS = this.platform.is('ios');
+    if (this.bluetoothConnectionState.SCALE === true) {
+      // We already connected to pressure before
+      // We don't need to search again
+      isIOS = false;
+    }
     this.uiLog.log(`Connect smartscale? ${scale_id}`);
     if (scale_id !== undefined && scale_id !== '') {
-      this.bleManager.autoConnectScale(scale_type, scale_id, true);
+      this.bleManager.autoConnectScale(
+        scale_type,
+        scale_id,
+        isIOS,
+        () => {
+          if (isIOS) {
+            this.bluetoothConnectionState.SCALE = true;
+          }
+        },
+        () => {
+          if (isIOS) {
+            this.bluetoothConnectionState.SCALE = false;
+          }
+        }
+      );
     } else {
       this.uiLog.log('Smartscale not connected, dont try to connect');
     }
@@ -669,12 +693,28 @@ export class AppComponent implements AfterViewInit {
     const settings = this.uiSettingsStorage.getSettings();
     const pressure_id: string = settings.pressure_id;
     const pressure_type: PressureType = settings.pressure_type;
+    let isIOS = this.platform.is('ios');
+    if (this.bluetoothConnectionState.PRESSURE === true) {
+      // We already connected to pressure before
+      // We don't need to search again
+      isIOS = false;
+    }
     this.uiLog.log(`Connect pressure device? ${pressure_id}`);
     if (pressure_id !== undefined && pressure_id !== '') {
       this.bleManager.autoConnectPressureDevice(
         pressure_type,
         pressure_id,
-        true
+        isIOS,
+        () => {
+          if (isIOS) {
+            this.bluetoothConnectionState.PRESSURE = true;
+          }
+        },
+        () => {
+          if (isIOS) {
+            this.bluetoothConnectionState.PRESSURE = false;
+          }
+        }
       );
     } else {
       this.uiLog.log('Pressure device not connected, dont try to connect');
@@ -699,8 +739,6 @@ export class AppComponent implements AfterViewInit {
           this.bleManager.disconnect(settings.pressure_id, false);
         }
       }
-
-      /// Add pressure profile.
     });
   }
   private __attachOnDeviceResume() {
