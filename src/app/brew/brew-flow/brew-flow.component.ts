@@ -22,6 +22,7 @@ import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/bre
 import { TranslateService } from '@ngx-translate/core';
 import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { BluetoothScale } from '../../../classes/devices';
 declare var Plotly;
 @Component({
   selector: 'brew-flow',
@@ -177,6 +178,15 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
 
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
     return !!pressureDevice;
+  }
+
+  public smartScaleConnected() {
+    if (!this.platform.is('cordova')) {
+      return true;
+    }
+
+    const scale: BluetoothScale = this.bleManager.getScale();
+    return !!scale;
   }
   public async startTimer() {
     await this.brewComponent.timerStartPressed(undefined);
