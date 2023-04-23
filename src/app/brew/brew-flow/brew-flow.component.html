@@ -4,12 +4,12 @@
 
       <ion-col size="11">
         <div>
-          <ion-chip (click)="brewComponent.toggleChartLines('weight')" [outline]="!brewComponent.weightTrace?.visible"
+          <ion-chip *ngIf="smartScaleConnected()" (click)="brewComponent.toggleChartLines('weight')" [outline]="!brewComponent.weightTrace?.visible"
                     class="weight">{{'BREW_FLOW_WEIGHT' | translate}}</ion-chip>
-          <ion-chip (click)="brewComponent.toggleChartLines('calc_flow')"
+          <ion-chip *ngIf="smartScaleConnected()"  (click)="brewComponent.toggleChartLines('calc_flow')"
                     [outline]="!brewComponent.flowPerSecondTrace?.visible"
                     class="flowcalculated">{{'BREW_FLOW_WEIGHT_PER_SECOND' | translate}}</ion-chip>
-          <ion-chip (click)="brewComponent.toggleChartLines('realtime_flow')"
+          <ion-chip *ngIf="smartScaleConnected()"  (click)="brewComponent.toggleChartLines('realtime_flow')"
                     [outline]="!brewComponent.realtimeFlowTrace?.visible"
                     class="flowreal">{{'BREW_FLOW_WEIGHT_REALTIME' | translate}}</ion-chip>
           <ion-chip (click)="brewComponent.toggleChartLines('pressure')" *ngIf="pressureDeviceConnected()"

@@ -352,9 +352,9 @@
                       data.getPreparation().use_custom_parameters)"
             class="ion-padding-bottom-half" lines="none">
     <div class="ion-text-center" style="width:100%">
-      <ion-chip (click)="toggleChartLines('weight')" [outline]="!this.weightTrace?.visible" class="weight">{{'BREW_FLOW_WEIGHT' | translate}}</ion-chip>
-      <ion-chip (click)="toggleChartLines('calc_flow')" [outline]="!this.flowPerSecondTrace?.visible"  class="flowcalculated">{{'BREW_FLOW_WEIGHT_PER_SECOND' | translate}}</ion-chip>
-      <ion-chip (click)="toggleChartLines('realtime_flow')" [outline]="!this.realtimeFlowTrace?.visible"  class="flowreal">{{'BREW_FLOW_WEIGHT_REALTIME' | translate}}</ion-chip>
+      <ion-chip (click)="toggleChartLines('weight')" *ngIf="smartScaleConnected()" [outline]="!this.weightTrace?.visible" class="weight">{{'BREW_FLOW_WEIGHT' | translate}}</ion-chip>
+      <ion-chip (click)="toggleChartLines('calc_flow')" *ngIf="smartScaleConnected()" [outline]="!this.flowPerSecondTrace?.visible"  class="flowcalculated">{{'BREW_FLOW_WEIGHT_PER_SECOND' | translate}}</ion-chip>
+      <ion-chip (click)="toggleChartLines('realtime_flow')" *ngIf="smartScaleConnected()" [outline]="!this.realtimeFlowTrace?.visible"  class="flowreal">{{'BREW_FLOW_WEIGHT_REALTIME' | translate}}</ion-chip>
       <ion-chip (click)="toggleChartLines('pressure')" *ngIf="pressureDeviceConnected()"  [outline]="!this.pressureTrace?.visible" class="pressure">{{'BREW_PRESSURE_FLOW' | translate}}</ion-chip>
     </div>
   </ion-item>
