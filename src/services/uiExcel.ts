@@ -438,10 +438,12 @@ export class UIExcel {
       try {
         const downloadFile: FileEntry = await this.uiFileHelper.downloadFile(
           filename,
-          blob
+          blob,
+          true
         );
         await this.uiAlert.hideLoadingSpinner();
-        if (this.platform.is('android')) {
+        // We share directly, so we don'T download into download folders.
+        /**if (this.platform.is('android')) {
           const alert = await this.alertCtrl.create({
             header: this.translate.instant('DOWNLOADED'),
             subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
@@ -450,7 +452,7 @@ export class UIExcel {
             buttons: ['OK'],
           });
           await alert.present();
-        }
+        }**/
       } catch (ex) {}
     } catch (e) {
       if (e.message.match(/It was determined/)) {
