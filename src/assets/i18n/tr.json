@@ -1290,6 +1290,7 @@
     "CONNECTED_SUCCESSFULLY": "Basınç cihazı bağlı",
     "DISCONNECTED_SUCCESSFULLY": "Basınç cihazı bağlantısı kesildi",
     "DISCONNECTED_UNPLANNED": "Basınç cihazının bağlantısı beklenmeyen bir şekilde kesildi ",
+    "STAY_CONNECTED_ON_APP_MINIMIZE": "Keep pressure device connected even when app is in the background",
     "INFORMATION_DESCRIPTION": "Desteklenen cihazlar şunlardır: Popsicle, Pressensor, Smart Espresso Profiler",
     "BLUETOOTH_SCAN_RUNNING": "Basınç cihazı 60 saniye aranacak, lütfen bekleyin",
     "BLUETOOTH_NOT_ENABLED": "Bluetooth aktif değil, lütfen düzgün çalışması için etkinleştirin",

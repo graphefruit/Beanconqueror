@@ -1290,6 +1290,7 @@
     "CONNECTED_SUCCESSFULLY": "Dispositivo presión conectado",
     "DISCONNECTED_SUCCESSFULLY": "Dispositivo de presión desconectado",
     "DISCONNECTED_UNPLANNED": "Desconexión no planificada del dispositivo de presión",
+    "STAY_CONNECTED_ON_APP_MINIMIZE": "Keep pressure device connected even when app is in the background",
     "INFORMATION_DESCRIPTION": "Dispositivos soportados: Popsicle, Pressensor, Smart Espresso Profiler",
     "BLUETOOTH_SCAN_RUNNING": "Se buscará el dispositivo de presión durante 60 segundos, espere",
     "BLUETOOTH_NOT_ENABLED": "Bluetooth desactivado, actívelo para que funcione correctamente",

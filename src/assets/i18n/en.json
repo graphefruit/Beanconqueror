@@ -1301,7 +1301,7 @@
     "CONNECTED_SUCCESSFULLY": "Pressure device connected",
     "DISCONNECTED_SUCCESSFULLY": "Pressure device disconnected",
     "DISCONNECTED_UNPLANNED": "Pressure device disconnected unplanned",
-    "STAY_CONNECTED_ON_APP_MINIMIZE": "Keep scale connected even when app is in the background",
+    "STAY_CONNECTED_ON_APP_MINIMIZE": "Keep pressure device connected even when app is in the background",
     "INFORMATION_DESCRIPTION": "Supported devices are: Popsicle, Pressensor, Smart Espresso Profiler",
     "BLUETOOTH_SCAN_RUNNING": "Pressure device will be searched for 60 seconds, please wait",
     "BLUETOOTH_NOT_ENABLED": "Bluetooth not activated, please activate to work properly",
@@ -1310,26 +1310,8 @@
       "BLUETOOTH": "To find pressure devices, the app needs access to bluetooth"
     }
   },
-  "TEMPERATURE": {
-    "CONNECTION_NOT_ESTABLISHED": "Temperature device not found found or connection could not be established",
-    "CONNECTED_SUCCESSFULLY": "Temperature device connected",
-    "DISCONNECTED_SUCCESSFULLY": "Temperature device disconnected",
-    "DISCONNECTED_UNPLANNED": "Temperature device disconnected unplanned",
-    "STAY_CONNECTED_ON_APP_MINIMIZE": "Keep thermometer connected even when app is in the background",
-    "INFORMATION_DESCRIPTION": "Supported devices are: ETI Ltd Thermometers (ThermaQ Blue, BlueTherm, etc)",
-    "BLUETOOTH_SCAN_RUNNING": "Temperature device will be searched for 60 seconds, please wait",
-    "BLUETOOTH_NOT_ENABLED": "Bluetooth not activated, please activate to work properly",
-    "REQUEST_PERMISSION": {
-      "LOCATION": "To find temperature devices, the app needs access to the location.",
-      "BLUETOOTH": "To find temperature devices, the app needs access to bluetooth"
-    },
-    "LOG": "Activate logfiles for temperature device",
-    "THRESHOLD_ACTIVE": "Start timer with predefined temperature",
-    "THRESHOLD_TEMP": "Threshold temperature"
-  },
   "POPOVER_BLUETOOTH_ACTION_RECONNECT_SCALE": "Reconnect scale",
   "POPOVER_BLUETOOTH_ACTION_RECONNECT_PRESSURE_DEVICE": "Reconnect pressure device",
-  "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "Reconnect temperature device",
   "POPOVER_SHOW_BREWS": "Show brews",
   "LAST_USED_GRIND_SIZE_SETTING": "Last grind setting",
   "LAST_USED_BEAN": "Last bean",
@@ -1390,5 +1372,23 @@
   "CUSTOM_REPEAT_PARAMETERS": "Repeat",
   "CUSTOM_REPEAT_PARAMETERS_DESCRIPTION": "Activate customized repeat?",
   "PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE": "Numeric keyboard for grind setting?",
-  "PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE_DESCRIPTION": "Do you want have the numeric keyboard for the grind setting, instead of the usage of the whole keyboard?"
+  "PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE_DESCRIPTION": "Do you want have the numeric keyboard for the grind setting, instead of the usage of the whole keyboard?",
+  "TEMPERATURE": {
+    "CONNECTION_NOT_ESTABLISHED": "Temperature device not found found or connection could not be established",
+    "CONNECTED_SUCCESSFULLY": "Temperature device connected",
+    "DISCONNECTED_SUCCESSFULLY": "Temperature device disconnected",
+    "DISCONNECTED_UNPLANNED": "Temperature device disconnected unplanned",
+    "STAY_CONNECTED_ON_APP_MINIMIZE": "Keep thermometer connected even when app is in the background",
+    "INFORMATION_DESCRIPTION": "Supported devices are: ETI Ltd Thermometers (ThermaQ Blue, BlueTherm, etc)",
+    "BLUETOOTH_SCAN_RUNNING": "Temperature device will be searched for 60 seconds, please wait",
+    "BLUETOOTH_NOT_ENABLED": "Bluetooth not activated, please activate to work properly",
+    "REQUEST_PERMISSION": {
+      "LOCATION": "To find temperature devices, the app needs access to the location.",
+      "BLUETOOTH": "To find temperature devices, the app needs access to bluetooth"
+    },
+    "LOG": "Activate logfiles for temperature device",
+    "THRESHOLD_ACTIVE": "Start timer with predefined temperature",
+    "THRESHOLD_TEMP": "Threshold temperature"
+  },
+  "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "Reconnect temperature device"
 }
