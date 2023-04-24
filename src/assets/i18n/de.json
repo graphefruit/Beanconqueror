@@ -1290,6 +1290,7 @@
     "CONNECTED_SUCCESSFULLY": "Druckgerät verbunden",
     "DISCONNECTED_SUCCESSFULLY": "Druckgerät getrennt",
     "DISCONNECTED_UNPLANNED": "Druckgerät ungeplant getrennt",
+    "STAY_CONNECTED_ON_APP_MINIMIZE": "Druckgerät verbunden lassen bei App minimierung/inaktivität",
     "INFORMATION_DESCRIPTION": "Unterstütze Druckgeräte sind Popsicle, Pressensor, Smart Espresso Profiler ",
     "BLUETOOTH_SCAN_RUNNING": "Druckgeräte werden für 60 Sekunden versucht zu finden, bitte warten",
     "BLUETOOTH_NOT_ENABLED": "Bluetooth ist nicht aktiviert, bitte aktiviere dies in den Einstellungen",
@@ -1361,7 +1362,6 @@
   "CUSTOM_REPEAT_PARAMETERS_DESCRIPTION": "Individuelle Wiederholung aktivieren?",
   "PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE": "Numerische Tastatur für Mahlgrad?",
   "PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE_DESCRIPTION": "Möchtest du bei der Mahlgrad Einstellung nur die Numerische Tastatur angezeigt bekommen, anstatt der normalen?",
-  "PRESSURE_STAY_CONNECTED_ON_APP_MINIMIZE": "Druckgerät verbunden lassen bei App minimierung/inaktivität",
   "PREPARATION_DEVICE": {
     "TYPE": {
       "NONE": "None",
@@ -1388,5 +1388,25 @@
   "DEVICE_CONNECTION": "Geräteverbindung",
   "PREPARATION_DEVICE_CONNECTION": "Geräteverbindung",
   "MANUAL_EXPORT_TO_VISUALIZER": "Exportieren zu Visualizer",
-  "ONLY_FAVOURITES": "Nur Favoriten"
+  "ONLY_FAVOURITES": "Nur Favoriten",
+  "TEMPERATURE": {
+    "CONNECTION_NOT_ESTABLISHED": "Temperature device not found found or connection could not be established",
+    "CONNECTED_SUCCESSFULLY": "Temperature device connected",
+    "DISCONNECTED_SUCCESSFULLY": "Temperature device disconnected",
+    "DISCONNECTED_UNPLANNED": "Temperature device disconnected unplanned",
+    "STAY_CONNECTED_ON_APP_MINIMIZE": "Keep thermometer connected even when app is in the background",
+    "INFORMATION_DESCRIPTION": "Supported devices are: ETI Ltd Thermometers (ThermaQ Blue, BlueTherm, etc)",
+    "BLUETOOTH_SCAN_RUNNING": "Temperature device will be searched for 60 seconds, please wait",
+    "BLUETOOTH_NOT_ENABLED": "Bluetooth not activated, please activate to work properly",
+    "REQUEST_PERMISSION": {
+      "LOCATION": "To find temperature devices, the app needs access to the location.",
+      "BLUETOOTH": "To find temperature devices, the app needs access to bluetooth"
+    },
+    "LOG": "Activate logfiles for temperature device",
+    "THRESHOLD_ACTIVE": "Start timer with predefined temperature",
+    "THRESHOLD_TEMP": "Threshold temperature"
+  },
+  "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "Reconnect temperature device",
+  "BREW_TEMPERATURE_REALTIME": "Temperature",
+  "PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE": "Temperature device"
 }

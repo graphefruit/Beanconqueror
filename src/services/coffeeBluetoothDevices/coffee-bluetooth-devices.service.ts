@@ -281,18 +281,19 @@ export class CoffeeBluetoothDevicesService {
         resolve(devices);
       };
 
-      ble.startScan(
+      ble.startScanWithOptions(
         [],
+        { reportDuplicates: true },
         async (deviceTemperature: any) => {
           this.logger.log(
-            'Pressure devices found ' + JSON.stringify(deviceTemperature)
+            'Temperature devices found ' + JSON.stringify(deviceTemperature)
           );
           if (ETITemperature.test(deviceTemperature)) {
             // We found all needed devices.
             devices.push(deviceTemperature);
 
             this.logger.log(
-              'Supported pressure devices found ' +
+              'Supported temperature devices found ' +
                 JSON.stringify(deviceTemperature)
             );
             clearTimeout(timeoutVar);
@@ -770,7 +771,7 @@ export class CoffeeBluetoothDevicesService {
   ) {
     if (_retryScanForIOS) {
       // iOS needs to know the scale, before auto connect can be done
-      await this.__iOSAccessBleStackAndAutoConnect(true);
+      await this.__iOSAccessBleStackAndAutoConnect('pressure');
     }
 
     this.logger.log(
@@ -802,7 +803,7 @@ export class CoffeeBluetoothDevicesService {
   ) {
     if (_retryScanForIOS) {
       // iOS needs to know the scale, before auto connect can be done
-      await this.__iOSAccessBleStackAndAutoConnect(false, true);
+      await this.__iOSAccessBleStackAndAutoConnect('temperature');
     }
 
     this.logger.log(
@@ -925,8 +926,7 @@ export class CoffeeBluetoothDevicesService {
   }
 
   private async __iOSAccessBleStackAndAutoConnect(
-    _findPressureDevice: boolean = false,
-    _findTemperatureDevice: boolean = false
+    _findSpecificDevice: string = 'scale'
   ) {
     return await new Promise((resolve) => {
       let counter: number = 1;
@@ -938,19 +938,17 @@ export class CoffeeBluetoothDevicesService {
           const enabled: boolean = await this.isBleEnabled();
           if (enabled === true) {
             clearInterval(iOSScanInterval);
-            if (_findPressureDevice === false) {
+            if (_findSpecificDevice === 'scale') {
               await this.__scanAutoConnectScaleIOS();
               this.logger.log(
                 '__iOSAccessBleStackAndAutoConnect - Scale for iOS found, resolve now'
               );
-            } else {
+            } else if (_findSpecificDevice === 'pressure') {
               await this.__scanAutoConnectPressureDeviceIOS();
               this.logger.log(
                 '__iOSAccessBleStackAndAutoConnect - Pressure devices for iOS found, resolve now'
               );
-            }
-
-            if (_findTemperatureDevice === true) {
+            } else if (_findSpecificDevice === 'temperature') {
               await this.__scanAutoConnectTemperatureDeviceIOS();
               this.logger.log(
                 '__iOSAccessBleStackAndAutoConnect - Thermometer device for iOS found, resolve now'

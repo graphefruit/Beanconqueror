@@ -684,7 +684,7 @@ export class AppComponent implements AfterViewInit {
     const scale_type: ScaleType = settings.scale_type;
     let isIOS = this.platform.is('ios');
     if (this.bluetoothConnectionState.SCALE === true) {
-      // We already connected to pressure before
+      // We already connected to scale before
       // We don't need to search again
       isIOS = false;
     }
@@ -748,7 +748,7 @@ export class AppComponent implements AfterViewInit {
     const temperature_type: TemperatureType = settings.temperature_type;
     let isIOS = this.platform.is('ios');
     if (this.bluetoothConnectionState.TEMPERATURE === true) {
-      // We already connected to pressure before
+      // We already connected to temperature before
       // We don't need to search again
       isIOS = false;
     }
@@ -789,7 +789,7 @@ export class AppComponent implements AfterViewInit {
         const pressure_id: string = settings.pressure_id;
         if (pressure_id !== undefined && pressure_id !== '') {
           // Don't show message on device pause.
-          this.bleManager.disconnect(settings.pressure_id, false);
+          this.bleManager.disconnectPressureDevice(settings.pressure_id, false);
         }
       }
 
@@ -797,11 +797,12 @@ export class AppComponent implements AfterViewInit {
         const temperature_id: string = settings.temperature_id;
         if (temperature_id !== undefined && temperature_id !== '') {
           // Don't show message on device pause.
-          this.bleManager.disconnect(settings.temperature_id, false);
+          this.bleManager.disconnectTemperatureDevice(
+            settings.temperature_id,
+            false
+          );
         }
       }
-
-      /// Add pressure profile.
     });
   }
   private __attachOnDeviceResume() {
