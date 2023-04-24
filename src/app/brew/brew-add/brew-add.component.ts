@@ -200,7 +200,11 @@ export class BrewAddComponent implements OnInit {
       this.uiBrewHelper.cleanInvisibleBrewData(this.data);
       const addedBrewObj: Brew = await this.uiBrewStorage.add(this.data);
 
-      if (this.brewBrewing.flow_profile_raw.weight.length > 0) {
+      if (
+        this.brewBrewing.flow_profile_raw.weight.length > 0 ||
+        this.brewBrewing.flow_profile_raw.pressureFlow.length > 0 ||
+        this.brewBrewing.flow_profile_raw.temperatureFlow.length > 0
+      ) {
         const savedPath = this.brewBrewing.saveFlowProfile(
           addedBrewObj.config.uuid
         );

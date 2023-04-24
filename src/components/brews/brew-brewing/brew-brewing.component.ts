@@ -716,7 +716,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (this.isEdit === true && this.data.flow_profile !== '') {
       return false;
     }
-    if (this.flow_profile_raw.weight.length > 0) {
+    if (
+      this.flow_profile_raw.weight.length > 0 ||
+      this.flow_profile_raw.pressureFlow.length > 0 ||
+      this.flow_profile_raw.temperatureFlow.length > 0
+    ) {
       return false;
     }
 
