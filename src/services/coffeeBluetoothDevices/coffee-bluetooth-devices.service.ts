@@ -951,7 +951,7 @@ export class CoffeeBluetoothDevicesService {
             }
 
             if (_findTemperatureDevice === true) {
-              await this.__scanAutoConnectScaleIOS();
+              await this.__scanAutoConnectTemperatureDeviceIOS();
               this.logger.log(
                 '__iOSAccessBleStackAndAutoConnect - Thermometer device for iOS found, resolve now'
               );

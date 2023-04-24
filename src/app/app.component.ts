@@ -81,6 +81,7 @@ export class AppComponent implements AfterViewInit {
   private bluetoothConnectionState = {
     SCALE: false,
     PRESSURE: false,
+    TEMPERATURE: false,
   };
   public toggleAbout: boolean = false;
   public registerBackFunction: any;
@@ -745,12 +746,28 @@ export class AppComponent implements AfterViewInit {
     const settings = this.uiSettingsStorage.getSettings();
     const temperature_id: string = settings.temperature_id;
     const temperature_type: TemperatureType = settings.temperature_type;
+    let isIOS = this.platform.is('ios');
+    if (this.bluetoothConnectionState.TEMPERATURE === true) {
+      // We already connected to pressure before
+      // We don't need to search again
+      isIOS = false;
+    }
     this.uiLog.log(`Connect temperature device? ${temperature_id}`);
     if (temperature_id !== undefined && temperature_id !== '') {
       this.bleManager.autoConnectTemperatureDevice(
         temperature_type,
         temperature_id,
-        true
+        isIOS,
+        () => {
+          if (isIOS) {
+            this.bluetoothConnectionState.TEMPERATURE = true;
+          }
+        },
+        () => {
+          if (isIOS) {
+            this.bluetoothConnectionState.TEMPERATURE = false;
+          }
+        }
       );
     } else {
       this.uiLog.log('Temperature device not connected, dont try to connect');
