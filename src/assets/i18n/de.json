@@ -1364,7 +1364,7 @@
   "PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE_DESCRIPTION": "Möchtest du bei der Mahlgrad Einstellung nur die Numerische Tastatur angezeigt bekommen, anstatt der normalen?",
   "PREPARATION_DEVICE": {
     "TYPE": {
-      "NONE": "None",
+      "NONE": "Keins",
       "XENIA": "Xenia"
     },
     "URL": "Url",

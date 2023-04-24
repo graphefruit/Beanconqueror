@@ -58,7 +58,6 @@ export class XeniaDevice extends PreparationDevice {
         (response) => {
           try {
             const parsedJSON = JSON.parse(response.data);
-            console.log(parsedJSON);
             resolve(parsedJSON);
           } catch (e) {
             reject();
@@ -99,7 +98,6 @@ export class XeniaDevice extends PreparationDevice {
         (response) => {
           try {
             const parsedJSON = JSON.parse(response.data);
-            console.log(parsedJSON);
             resolve(parsedJSON);
           } catch (e) {
             reject();
@@ -126,7 +124,6 @@ export class XeniaDevice extends PreparationDevice {
         (response) => {
           try {
             const parsedJSON = JSON.parse(response.data);
-            console.log(parsedJSON);
             resolve(parsedJSON);
           } catch (e) {
             reject();
