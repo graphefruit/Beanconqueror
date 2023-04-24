@@ -172,6 +172,78 @@ export class SettingsPage implements OnInit {
 
   public async ngOnInit() {}
 
+  public async findAndConnectTemperatureDevice(_retry: boolean = false) {
+    const hasLocationPermission: boolean =
+      await this.bleManager.hasLocationPermission();
+    if (!hasLocationPermission) {
+      await this.uiAlert.showMessage(
+        'TEMPERATURE.REQUEST_PERMISSION.LOCATION',
+        undefined,
+        undefined,
+        true
+      );
+      await this.bleManager.requestLocationPermissions();
+    }
+
+    const hasBluetoothPermission: boolean =
+      await this.bleManager.hasBluetoothPermission();
+    if (!hasBluetoothPermission) {
+      await this.uiAlert.showMessage(
+        'TEMPERATURE.REQUEST_PERMISSION.BLUETOOTH',
+        undefined,
+        undefined,
+        true
+      );
+      await this.bleManager.requestBluetoothPermissions();
+    }
+
+    const bleEnabled: boolean = await this.bleManager.isBleEnabled();
+    if (bleEnabled === false) {
+      await this.uiAlert.showMessage(
+        'TEMPERATURE.BLUETOOTH_NOT_ENABLED',
+        undefined,
+        undefined,
+        true
+      );
+      return;
+    }
+
+    await this.uiAlert.showLoadingSpinner(
+      'TEMPERATURE.BLUETOOTH_SCAN_RUNNING',
+      true
+    );
+
+    const temperatureDevice =
+      await this.bleManager.tryToFindTemperatureDevice();
+    await this.uiAlert.hideLoadingSpinner();
+    if (temperatureDevice) {
+      try {
+        // We don't need to retry for iOS, because we just did scan before.
+
+        // NEVER!!! Await here, else the bluetooth logic will get broken.
+        this.bleManager.autoConnectTemperatureDevice(
+          temperatureDevice.type,
+          temperatureDevice.id,
+          false
+        );
+      } catch (ex) {}
+
+      this.settings.temperature_id = temperatureDevice.id;
+      this.settings.temperature_type = temperatureDevice.type;
+
+      //this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.SCALE.CATEGORY,scale.type);
+
+      await this.saveSettings();
+    } else {
+      this.uiAlert.showMessage(
+        'TEMPERATURE.CONNECTION_NOT_ESTABLISHED',
+        undefined,
+        undefined,
+        true
+      );
+    }
+  }
+
   public async findAndConnectPressureDevice(_retry: boolean = false) {
     const hasLocationPermission: boolean =
       await this.bleManager.hasLocationPermission();
@@ -360,6 +432,32 @@ export class SettingsPage implements OnInit {
     }
   }
 
+  public async disconnectTemperatureDevice() {
+    this.eventQueue.dispatch(
+      new AppEvent(
+        AppEventType.BLUETOOTH_TEMPERATURE_DEVICE_DISCONNECT,
+        undefined
+      )
+    );
+    let disconnected: boolean = true;
+
+    //if scale is connected, we try to disconnect, if scale is not connected, we just forget scale :)
+    if (
+      this.settings.temperature_id !== '' &&
+      this.bleManager.getTemperatureDevice()
+    ) {
+      disconnected = await this.bleManager.disconnectTemperatureDevice(
+        this.settings.temperature_id
+      );
+    }
+
+    if (disconnected) {
+      this.settings.temperature_id = '';
+      this.settings.temperature_type = null;
+      await this.saveSettings();
+    }
+  }
+
   public async disconnectScale() {
     this.eventQueue.dispatch(
       new AppEvent(AppEventType.BLUETOOTH_SCALE_DISCONNECT, undefined)
@@ -401,13 +499,22 @@ export class SettingsPage implements OnInit {
     }
   }
 
+  public async retryConnectTemperatureDevice() {
+    await this.findAndConnectTemperatureDevice(true);
+  }
+
   public async retryConnectPressureDevice() {
     await this.findAndConnectPressureDevice(true);
   }
+
   public async retryConnectScale() {
     if (this.isScaleConnected() === false) {
       await this.findAndConnectScale(true);
     }
+  }
+
+  public isTemperatureDeviceConnected(): boolean {
+    return this.bleManager.temperatureDevice !== null;
   }
 
   public isScaleConnected(): boolean {
@@ -513,7 +620,8 @@ export class SettingsPage implements OnInit {
   public async toggleLog() {
     if (
       this.settings.scale_log === true ||
-      this.settings.pressure_log === true
+      this.settings.pressure_log === true ||
+      this.settings.temperature_log === true
     ) {
       Logger.enableLog();
     } else {

@@ -82,6 +82,32 @@ export class SettingsPopoverBluetoothActionsComponent implements OnInit {
       this.uiAlert.hideLoadingSpinner();
     }, 60000);
   }
+  public reconnectTemperatureDevice() {
+    let timeoutVar: any = null;
+    const temperatureId = this.settings.temperature_id;
+    const temperatureType = this.settings.temperature_type;
+    if (temperatureId && temperatureType) {
+      this.uiAlert.showLoadingSpinner();
+      this.bluetoothService.reconnectTemperatureDevice(
+        temperatureType,
+        temperatureId,
+        () => {
+          this.uiAlert.hideLoadingSpinner();
+          clearTimeout(timeoutVar);
+          timeoutVar = null;
+        },
+        () => {
+          this.uiAlert.hideLoadingSpinner();
+          clearTimeout(timeoutVar);
+          timeoutVar = null;
+        }
+      );
+    }
+
+    timeoutVar = setTimeout(async () => {
+      this.uiAlert.hideLoadingSpinner();
+    }, 60000);
+  }
 
   public async choose(_type: string): Promise<void> {}
 }

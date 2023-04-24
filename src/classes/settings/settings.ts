@@ -19,7 +19,7 @@ import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
 import { IBrewGraphs } from '../../interfaces/brew/iBrewGraphs';
 
 import { BeanManageParameter } from '../parameter/beanManageParameter';
-import { PressureType, ScaleType } from '../devices';
+import { TemperatureType, PressureType, ScaleType } from '../devices';
 import { BeanListViewParameter } from '../parameter/beanListViewParameter';
 import { RepeatBrewParameter } from '../parameter/repeatBrewParameter';
 
@@ -113,6 +113,12 @@ export class Settings implements ISettings {
   public pressure_threshold_bar: number;
   public pressure_stay_connected: boolean;
 
+  public temperature_id: string;
+  public temperature_type: TemperatureType;
+  public temperature_log: boolean;
+  public temperature_threshold_active: boolean;
+  public temperature_threshold_temp: number;
+  public temperature_stay_connected: boolean;
   public currency: string;
   public brew_display_bean_image: boolean;
 
@@ -157,6 +163,7 @@ export class Settings implements ISettings {
       calc_flow: true,
       realtime_flow: true,
       pressure: true,
+      temperature: true,
     } as IBrewGraphs;
   }
 

@@ -29,7 +29,7 @@ import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { BrewFlowComponent } from '../brew-flow/brew-flow.component';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import moment from 'moment';
-import BeanconquerorFlowTestDataDummy from '../../../assets/BeanconquerorFlowTestData.json';
+import BeanconquerorFlowTestDataDummy from '../../../assets/BeanconquerorFlowTestDataFourth.json';
 import { UILog } from '../../../services/uiLog';
 declare var Plotly;
 @Component({
@@ -54,6 +54,7 @@ export class BrewDetailComponent implements OnInit {
   private flowPerSecondTrace: any;
   private realtimeFlowTrace: any;
   private pressureTrace: any;
+  private temperatureTrace: any;
   private maximizeFlowGraphIsShown: boolean = false;
 
   public lastChartLayout: any = undefined;
@@ -198,6 +199,8 @@ export class BrewDetailComponent implements OnInit {
       this.realtimeFlowTrace.visible = !this.realtimeFlowTrace.visible;
     } else if (_type === 'pressure') {
       this.pressureTrace.visible = !this.pressureTrace.visible;
+    } else if (_type === 'temperature') {
+      this.temperatureTrace.visible = !this.temperatureTrace.visible;
     }
 
     Plotly.relayout('flowProfileChart', this.lastChartLayout);
@@ -281,14 +284,34 @@ export class BrewDetailComponent implements OnInit {
         },
         visible: graphSettings.pressure,
       };
+
+      this.temperatureTrace = {
+        x: [],
+        y: [],
+        name: this.translate.instant('BREW_TEMPERATURE_REALTIME'),
+        yaxis: 'y5',
+        type: 'scattergl',
+        mode: 'lines',
+        line: {
+          shape: 'linear',
+          color: '#CC3311',
+          width: 2,
+        },
+        visible: graphSettings.temperature,
+      };
+
       const startingDay = moment(new Date()).startOf('day');
       // IF brewtime has some seconds, we add this to the delay directly.
 
       let firstTimestamp;
       if (this.flow_profile_raw.weight.length > 0) {
         firstTimestamp = this.flow_profile_raw.weight[0].timestamp;
-      } else {
+      } else if (this.flow_profile_raw.pressureFlow.length > 0) {
         firstTimestamp = this.flow_profile_raw.pressureFlow[0].timestamp;
+      } else if (this.flow_profile_raw.temperatureFlow.length > 0) {
+        firstTimestamp = this.flow_profile_raw.temperatureFlow[0].timestamp;
+      } else {
+        firstTimestamp = 0;
       }
       const delay =
         moment(firstTimestamp, 'HH:mm:ss.SSS').toDate().getTime() -
@@ -335,6 +358,19 @@ export class BrewDetailComponent implements OnInit {
           this.pressureTrace.y.push(data.actual_pressure);
         }
       }
+      if (
+        this.flow_profile_raw.temperatureFlow &&
+        this.flow_profile_raw.temperatureFlow.length > 0
+      ) {
+        for (const data of this.flow_profile_raw.temperatureFlow) {
+          this.temperatureTrace.x.push(
+            new Date(
+              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay
+            )
+          );
+          this.temperatureTrace.y.push(data.actual_temperature);
+        }
+      }
       const chartData = [
         this.weightTrace,
         this.flowPerSecondTrace,
@@ -342,9 +378,10 @@ export class BrewDetailComponent implements OnInit {
       ];
 
       const layout = this.getChartLayout();
-      if (layout['yaxis4']) {
-        chartData.push(this.pressureTrace);
-      }
+
+      chartData.push(this.pressureTrace);
+
+      chartData.push(this.temperatureTrace);
 
       Plotly.newPlot(
         'flowProfileChart',
@@ -489,19 +526,31 @@ export class BrewDetailComponent implements OnInit {
       },
     };
 
-    if (this.flow_profile_raw.pressureFlow.length > 0) {
-      layout['yaxis4'] = {
-        title: '',
-        titlefont: { color: '#05C793' },
-        tickfont: { color: '#05C793' },
-        anchor: 'free',
-        overlaying: 'y',
-        side: 'right',
-        showgrid: false,
-        position: 0.93,
-        range: [0, 12],
-      };
-    }
+    layout['yaxis4'] = {
+      title: '',
+      titlefont: { color: '#05C793' },
+      tickfont: { color: '#05C793' },
+      anchor: 'free',
+      overlaying: 'y',
+      side: 'right',
+      showgrid: false,
+      position: 0.93,
+      range: [0, 12],
+    };
+
+    layout['yaxis5'] = {
+      title: '',
+      titlefont: { color: '#CC3311' },
+      tickfont: { color: '#CC3311' },
+      anchor: 'free',
+      overlaying: 'y',
+      side: 'right',
+      showgrid: false,
+      position: 0.8,
+      fixedrange: true,
+      range: [0, 100],
+    };
+
     this.lastChartLayout = layout;
     return layout;
   }

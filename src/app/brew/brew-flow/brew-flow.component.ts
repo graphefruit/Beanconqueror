@@ -21,6 +21,7 @@ import { Settings } from '../../../classes/settings/settings';
 import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
 import { TranslateService } from '@ngx-translate/core';
 import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
+import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { BluetoothScale } from '../../../classes/devices';
 declare var Plotly;
@@ -39,12 +40,14 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
   @Input() public flowChartEl: any;
   @Input() private brewFlowGraphEvent: EventEmitter<any>;
   @Input() private brewPressureGraphEvent: EventEmitter<any>;
+  @Input() private brewTemperatureGraphEvent: EventEmitter<any>;
 
   @Input() public brew: Brew;
   @Input() public brewComponent: BrewBrewingComponent;
   @Input() public isDetail: boolean = false;
   private brewFlowGraphSubscription: Subscription;
   private brewPressureGraphSubscription: Subscription;
+  private brewTemperatureGraphSubscription: Subscription;
 
   public settings: Settings;
 
@@ -61,6 +64,8 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
   public smartScaleAvgFlowPerSecondDetail: ElementRef;
   @ViewChild('pressureDetail', { read: ElementRef })
   public pressureDetail: ElementRef;
+  @ViewChild('temperatureDetail', { read: ElementRef })
+  public temperatureDetail: ElementRef;
   private disableHardwareBack;
 
   protected heightInformationBlock: number = 50;
@@ -117,6 +122,10 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
       this.brewPressureGraphSubscription =
         this.brewPressureGraphEvent.subscribe((_val) => {
           this.setActualPressureInformation(_val);
+        });
+      this.brewTemperatureGraphSubscription =
+        this.brewTemperatureGraphEvent.subscribe((_val) => {
+          this.setActualTemperatureInformation(_val);
         });
 
       const settings: Settings = this.uiSettingsStorage.getSettings();
@@ -180,14 +189,24 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
     return !!pressureDevice;
   }
 
-  public smartScaleConnected() {
+  public temperatureDeviceConnected() {
     if (!this.platform.is('cordova')) {
       return true;
     }
 
+    const temperatureDevice: TemperatureDevice =
+      this.bleManager.getTemperatureDevice();
+    return !!temperatureDevice;
+  }
+
+  public smartScaleConnected() {
+    if (!this.platform.is('cordova')) {
+      return true;
+    }
     const scale: BluetoothScale = this.bleManager.getScale();
     return !!scale;
   }
+
   public async startTimer() {
     await this.brewComponent.timerStartPressed(undefined);
 
@@ -255,6 +274,11 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
     pressureEl.textContent = _val.pressure;
   }
 
+  public setActualTemperatureInformation(_val: any) {
+    const temperatureEl = this.temperatureDetail.nativeElement;
+    temperatureEl.textContent = _val.temperature;
+  }
+
   public async ngOnDestroy() {
     if (this.brewFlowGraphSubscription) {
       this.brewFlowGraphSubscription.unsubscribe();
@@ -263,6 +287,10 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
     if (this.brewPressureGraphSubscription) {
       this.brewPressureGraphSubscription.unsubscribe();
       this.brewPressureGraphSubscription = undefined;
+    }
+    if (this.brewTemperatureGraphSubscription) {
+      this.brewTemperatureGraphSubscription.unsubscribe();
+      this.brewTemperatureGraphSubscription = undefined;
     }
   }
 
