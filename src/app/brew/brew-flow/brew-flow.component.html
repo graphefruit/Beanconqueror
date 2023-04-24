@@ -4,17 +4,20 @@
 
       <ion-col size="11">
         <div>
-          <ion-chip *ngIf="smartScaleConnected()" (click)="brewComponent.toggleChartLines('weight')" [outline]="!brewComponent.weightTrace?.visible"
-                    class="weight">{{'BREW_FLOW_WEIGHT' | translate}}</ion-chip>
-          <ion-chip *ngIf="smartScaleConnected()"  (click)="brewComponent.toggleChartLines('calc_flow')"
-                    [outline]="!brewComponent.flowPerSecondTrace?.visible"
-                    class="flowcalculated">{{'BREW_FLOW_WEIGHT_PER_SECOND' | translate}}</ion-chip>
-          <ion-chip *ngIf="smartScaleConnected()"  (click)="brewComponent.toggleChartLines('realtime_flow')"
-                    [outline]="!brewComponent.realtimeFlowTrace?.visible"
-                    class="flowreal">{{'BREW_FLOW_WEIGHT_REALTIME' | translate}}</ion-chip>
+          <ion-chip (click)="brewComponent.toggleChartLines('weight')" [outline]="!brewComponent.weightTrace?.visible"
+            class="weight">{{'BREW_FLOW_WEIGHT' | translate}}</ion-chip>
+          <ion-chip (click)="brewComponent.toggleChartLines('calc_flow')"
+            [outline]="!brewComponent.flowPerSecondTrace?.visible"
+            class="flowcalculated">{{'BREW_FLOW_WEIGHT_PER_SECOND' | translate}}</ion-chip>
+          <ion-chip (click)="brewComponent.toggleChartLines('realtime_flow')"
+            [outline]="!brewComponent.realtimeFlowTrace?.visible" class="flowreal">{{'BREW_FLOW_WEIGHT_REALTIME' |
+            translate}}</ion-chip>
           <ion-chip (click)="brewComponent.toggleChartLines('pressure')" *ngIf="pressureDeviceConnected()"
-                    [outline]="!brewComponent.pressureTrace?.visible"
-                    class="pressure">{{'BREW_PRESSURE_FLOW' | translate}}</ion-chip>
+            [outline]="!brewComponent.pressureTrace?.visible" class="pressure">{{'BREW_PRESSURE_FLOW' |
+            translate}}</ion-chip>
+          <ion-chip (click)="brewComponent.toggleChartLines('temperature')" *ngIf="temperatureDeviceConnected()"
+            [outline]="!brewComponent.temperatureTrace?.visible" class="temperature">{{'BREW_TEMPERATURE_REALTIME' |
+            translate}}</ion-chip>
         </div>
       </ion-col>
       <ion-col class="ion-text-right" size="1">
@@ -29,11 +32,13 @@
 
   <div id="flowCard" style="height:100%">
 
-    <div  *ngIf="isDetail===false" id="informationContainer">
+    <div *ngIf="isDetail===false" id="informationContainer">
       <ion-grid class="ion-text-center ion-no-padding brew-information-panel">
         <ion-row style="padding-bottom:5px;">
-          <ion-col size="{{pressureDeviceConnected()?3:4}}" style="padding-right:5px;">
-            <ion-card class="flow-profile ion-text-center" style="height: 100%;">
+          <ion-col
+            size="{{(pressureDeviceConnected() && temperatureDeviceConnected())?2:3 || pressureDeviceConnected()?3:4 || temperatureDeviceConnected()?3:4}}"
+            style="padding-right:5px;">
+            <ion-card class="flow-profile ion-text-center weight-card" style="height: 100%;">
               <ion-card-header>
                 <div #smartScaleWeightDetail>? g</div>
               </ion-card-header>
@@ -42,33 +47,64 @@
               </ion-card-content>
             </ion-card>
           </ion-col>
-          <ion-col size="{{pressureDeviceConnected()?3:4}}" style="padding-right:5px;">
-            <ion-card class="flow-profile ion-text-center" style="height: 100%;">
+          <ion-col
+            size="{{(pressureDeviceConnected() && temperatureDeviceConnected())?2:3 || pressureDeviceConnected()?3:4 || temperatureDeviceConnected()?3:4}}"
+            style="padding-right:5px;">
+            <ion-card class="flow-profile ion-text-center flow-avg-card" style="height: 100%;">
               <ion-card-header>
-                <div><span #smartScaleWeightPerSecondDetail>?</span> (<span #smartScaleAvgFlowPerSecondDetail>?</span>) g/s</div>
+                <div><span #smartScaleAvgFlowPerSecondDetail>?</span> g/s</div>
               </ion-card-header>
               <ion-card-content>
                 <ion-icon name="water-outline"></ion-icon>
               </ion-card-content>
             </ion-card>
           </ion-col>
-          <ion-col  (click)="resetPressure()" *ngIf="pressureDeviceConnected()" size="{{pressureDeviceConnected()?3:4}}" style="padding-right:5px;">
-            <ion-card class="flow-profile ion-text-center" style="height: 100%;">
+          <ion-col
+            size="{{(pressureDeviceConnected() && temperatureDeviceConnected())?2:3 || pressureDeviceConnected()?3:4 || temperatureDeviceConnected()?3:4}}"
+            style="padding-right:5px;">
+            <ion-card class="flow-profile ion-text-center flow-card" style="height: 100%;">
               <ion-card-header>
-                <div #pressureDetail>?</div>
+                <div><span #smartScaleWeightPerSecondDetail>?</span> g/s</div>
+              </ion-card-header>
+              <ion-card-content>
+                <ion-icon name="water-outline"></ion-icon>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col (click)="resetPressure()" *ngIf="pressureDeviceConnected()"
+            size="{{(pressureDeviceConnected() && temperatureDeviceConnected())?2:3 || pressureDeviceConnected()?3:4 || temperatureDeviceConnected()?3:4}}"
+            style="padding-right:5px;">
+            <ion-card class="flow-profile ion-text-center pressure-card" style="height: 100%;">
+              <ion-card-header>
+                <div #pressureDetail>? bar</div>
               </ion-card-header>
               <ion-card-content>
                 <ion-icon name="beanconqueror-pressure"></ion-icon>
               </ion-card-content>
             </ion-card>
           </ion-col>
-          <ion-col size="{{pressureDeviceConnected()?3:4}}" style="padding-right:5px;">
-            <ion-card class="flow-profile ion-text-center" style="height: 100%;">
+          <ion-col *ngIf="temperatureDeviceConnected()"
+            size="{{(pressureDeviceConnected() && temperatureDeviceConnected())?2:3 || pressureDeviceConnected()?3:4 || temperatureDeviceConnected()?3:4}}"
+            style="padding-right:5px;">
+            <ion-card class="flow-profile ion-text-center temperature-card" style="height: 100%;">
               <ion-card-header>
-               <span
-                 *ngIf="settings?.brew_milliseconds === false">{{this.uiHelper.formatSeconds(brew.brew_time, 'mm:ss')}}</span>
+                <div #temperatureDetail>? °C</div>
+              </ion-card-header>
+              <ion-card-content>
+                <ion-icon name="thermometer-outline"></ion-icon>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col
+            size="{{(pressureDeviceConnected() && temperatureDeviceConnected())?2:3 || pressureDeviceConnected()?3:4 || temperatureDeviceConnected()?3:4}}"
+            style="padding-right:5px;">
+            <ion-card class="flow-profile ion-text-center timer-card" style="height: 100%;">
+              <ion-card-header>
+                <span *ngIf="settings?.brew_milliseconds === false">{{this.uiHelper.formatSeconds(brew.brew_time,
+                  'mm:ss')}}</span>
                 <span
-                  *ngIf="settings?.brew_milliseconds === true">{{this.uiHelper.formatSecondsAndMilliseconds(brew.brew_time, brew.brew_time_milliseconds, 'mm:ss.SSS')}}</span>
+                  *ngIf="settings?.brew_milliseconds === true">{{this.uiHelper.formatSecondsAndMilliseconds(brew.brew_time,
+                  brew.brew_time_milliseconds, 'mm:ss.SSS')}}</span>
               </ion-card-header>
               <ion-card-content>
                 <ion-icon name="time-outline"></ion-icon>
@@ -82,45 +118,46 @@
 
     </div>
 
-    <div [ngStyle]="{'height': 'calc(100% - ' + heightInformationBlock + 'px)'}" id="brewFlowContainer" style="display:block"></div>
+    <div [ngStyle]="{'height': 'calc(100% - ' + heightInformationBlock + 'px)'}" id="brewFlowContainer"
+      style="display:block"></div>
 
   </div>
 </ion-content>
 <ion-footer *ngIf="isDetail===false" class="ion-no-border">
   <div class="ion-text-center flow-icon-buttons">
     <ion-button (click)="setCoffeeBloomingTime()"
-                *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && showBloomTimer"
-                class="big-icon-only" fill="clear" tappable>
+      *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && showBloomTimer"
+      class="big-icon-only" fill="clear" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-blooming" slot="icon-only"></ion-icon>
     </ion-button>
     <ion-button (click)="setCoffeeDripTime()"
-                *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && showDripTimer"
-                class="big-icon-only" fill="clear" tappable>
+      *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && showDripTimer"
+      class="big-icon-only" fill="clear" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-water-drop" slot="icon-only"></ion-icon>
     </ion-button>
     <ion-button (click)="pauseTimer()"
-                *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished"
-                class="big-icon-only" fill="clear" tappable>
+      *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished"
+      class="big-icon-only" fill="clear" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-pause" slot="icon-only"></ion-icon>
 
     </ion-button>
     <ion-button (click)="resetTimer()"
-                *ngIf="(!brewComponent.timer.timer.hasStarted || !brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished) && brewComponent.timer.getSeconds()>0"
-                class="big-icon-only" fill="clear" tappable>
+      *ngIf="(!brewComponent.timer.timer.hasStarted || !brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished) && brewComponent.timer.getSeconds()>0"
+      class="big-icon-only" fill="clear" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-full-reset" slot="icon-only"></ion-icon>
     </ion-button>
 
     <ion-button (click)="resumeTimer()"
-                *ngIf="!brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished"
-                class="big-icon-only" fill="clear" tappable>
+      *ngIf="!brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished"
+      class="big-icon-only" fill="clear" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only"></ion-icon>
     </ion-button>
     <ion-button (click)="startTimer()" *ngIf="!brewComponent.timer.timer.hasStarted" class="big-icon-only" fill="clear"
-                tappable>
+      tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only"></ion-icon>
     </ion-button>
     <ion-button (click)="__tareScale()" *ngIf="brewComponent.smartScaleConnected()" class="big-icon-only" fill="clear"
-                tappable>
+      tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-scale-tare" slot="icon-only"></ion-icon>
     </ion-button>
 

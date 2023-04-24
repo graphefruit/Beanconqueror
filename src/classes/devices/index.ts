@@ -10,6 +10,8 @@ import { TransducerDirectPressure } from './transducerDirectPressure';
 import { EurekaPrecisaScale } from './eurekaPrecisaScale';
 import { PrsPressure } from './prsPressure';
 import { SkaleScale } from './skale';
+import { TemperatureDevice } from './temperatureBluetoothDevice';
+import { ETITemperature } from './etiTemperature';
 export { BluetoothScale, SCALE_TIMER_COMMAND } from './bluetoothDevice';
 
 export enum ScaleType {
@@ -25,6 +27,10 @@ export enum PressureType {
   POPSICLE = 'POPSICLE',
   DIRECT = 'DIRECT',
   PRS = 'PRS',
+}
+
+export enum TemperatureType {
+  ETI = 'ETI',
 }
 
 export function makeDevice(
@@ -60,6 +66,18 @@ export function makePressureDevice(
       return new TransducerDirectPressure(data);
     case PressureType.PRS:
       return new PrsPressure(data);
+    default:
+      return null;
+  }
+}
+
+export function makeTemperatureDevice(
+  type: TemperatureType,
+  data: PeripheralData
+): TemperatureDevice | null {
+  switch (type) {
+    case TemperatureType.ETI:
+      return new ETITemperature(data);
     default:
       return null;
   }
