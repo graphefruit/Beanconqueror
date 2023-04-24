@@ -3013,6 +3013,4 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
     this.data.flow_profile = '';
   }
-
-  protected readonly undefined = undefined;
 }

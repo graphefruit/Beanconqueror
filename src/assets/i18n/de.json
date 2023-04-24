@@ -1390,23 +1390,23 @@
   "MANUAL_EXPORT_TO_VISUALIZER": "Exportieren zu Visualizer",
   "ONLY_FAVOURITES": "Nur Favoriten",
   "TEMPERATURE": {
-    "CONNECTION_NOT_ESTABLISHED": "Temperature device not found found or connection could not be established",
-    "CONNECTED_SUCCESSFULLY": "Temperature device connected",
-    "DISCONNECTED_SUCCESSFULLY": "Temperature device disconnected",
-    "DISCONNECTED_UNPLANNED": "Temperature device disconnected unplanned",
-    "STAY_CONNECTED_ON_APP_MINIMIZE": "Keep thermometer connected even when app is in the background",
-    "INFORMATION_DESCRIPTION": "Supported devices are: ETI Ltd Thermometers (ThermaQ Blue, BlueTherm, etc)",
-    "BLUETOOTH_SCAN_RUNNING": "Temperature device will be searched for 60 seconds, please wait",
-    "BLUETOOTH_NOT_ENABLED": "Bluetooth not activated, please activate to work properly",
+    "CONNECTION_NOT_ESTABLISHED": "Temperaturgerät konnte nicht gefunden oder verbunden werden",
+    "CONNECTED_SUCCESSFULLY": "Temperaturgerät verbunden",
+    "DISCONNECTED_SUCCESSFULLY":  "Temperaturgerät getrennt",
+    "DISCONNECTED_UNPLANNED":  "Temperaturgerät ungeplant getrennt",
+    "STAY_CONNECTED_ON_APP_MINIMIZE": "Temperaturgerät verbunden lassen bei App minimierung/inaktivität",
+    "INFORMATION_DESCRIPTION": "Unterstützte Temperaturgeräte sind: ETI Ltd Thermometers (ThermaQ Blue, BlueTherm, etc)",
+    "BLUETOOTH_SCAN_RUNNING": "Temperaturgeräte werden für 60 Sekunden versucht zu finden, bitte warten",
+    "BLUETOOTH_NOT_ENABLED": "Bluetooth ist nicht aktiviert, bitte aktiviere dies in den Einstellungen",
     "REQUEST_PERMISSION": {
-      "LOCATION": "To find temperature devices, the app needs access to the location.",
-      "BLUETOOTH": "To find temperature devices, the app needs access to bluetooth"
+      "LOCATION": "Um Temperaturegeräte zu finden, muss der Standort freigegeben werden",
+      "BLUETOOTH": "Um Temperaturegeräte zu finden, muss Bluetooth freigegeben werden"
     },
-    "LOG": "Activate logfiles for temperature device",
-    "THRESHOLD_ACTIVE": "Start timer with predefined temperature",
-    "THRESHOLD_TEMP": "Threshold temperature"
+    "LOG": "Logfiles für Temperaturgeräte aktivieren",
+    "THRESHOLD_ACTIVE": "Zeit starten mit einer vordefinierten Temperatur",
+    "THRESHOLD_TEMP": "Schwellenwert Temperatur temperature"
   },
   "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "Reconnect temperature device",
-  "BREW_TEMPERATURE_REALTIME": "Temperature",
-  "PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE": "Temperature device"
+  "BREW_TEMPERATURE_REALTIME": "Temperatur",
+  "PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE": "Temperatur device"
 }
