@@ -16,6 +16,7 @@ import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIImage } from '../../services/uiImage';
 import PREPARATION_TRACKING from '../../data/tracking/preparationTracking';
 import { PreparationConnectedDeviceComponent } from '../../app/preparation/preparation-connected-device/preparation-connected-device.component';
+import { PreparationDeviceType } from '../../classes/preparationDevice';
 
 @Component({
   selector: 'preparation-information-card',
@@ -278,5 +279,11 @@ export class PreparationInformationCardComponent implements OnInit {
     }
 
     await this.uiPreparationStorage.removeByObject(this.preparation);
+  }
+  public preparationHasDeviceConnection() {
+    return (
+      this.preparation?.connectedPreparationDevice.type !==
+      PreparationDeviceType.NONE
+    );
   }
 }

@@ -3,7 +3,10 @@
   <ion-card-content class="no-ion-col-vertical-padding ion-padding-top">
     <ion-grid class="no-padding-bottom">
       <ion-row>
-        <ion-col size="11"><div class="ion-no-padding font-size-20 ion-title">{{preparation.name}}</div>
+        <ion-col size="11"><div class="ion-no-padding font-size-20 ion-title">
+          <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="wifi-outline"
+                    *ngIf='preparationHasDeviceConnection()'></ion-icon>
+          {{preparation.name}}</div>
           <span *ngIf="preparation.use_custom_parameters" class="ion-color-accent-secondary">{{"PREPARATION_PARAMETERS_CUSTOMIZED" | translate}}</span>
         </ion-col>
         <ion-col size="1">

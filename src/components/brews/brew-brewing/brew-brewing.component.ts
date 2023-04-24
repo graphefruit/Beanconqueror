@@ -362,16 +362,19 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public resetPreparationTools() {
-    if (this.preparationMethodHasBeenFocused === true) {
-      this.data.method_of_preparation_tools = [];
-      this.preparationMethodHasBeenFocused = false;
+    setTimeout(() => {
+      // Wait for 150ms, so we get the new preparation
+      if (this.preparationMethodHasBeenFocused === true) {
+        this.data.method_of_preparation_tools = [];
+        this.preparationMethodHasBeenFocused = false;
 
-      this.instancePreparationDevice();
+        this.instancePreparationDevice();
 
-      if (this.timer.isTimerRunning() === false) {
-        this.initializeFlowChart();
+        if (this.timer.isTimerRunning() === false) {
+          this.initializeFlowChart();
+        }
       }
-    }
+    }, 150);
   }
 
   @HostListener('window:resize')
@@ -492,8 +495,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
       this.scaleFlowSubscription = scale.flowChange.subscribe((_val) => {
         if (
+          this.timer.isTimerRunning() &&
           this.preparationDeviceConnected() &&
-          this.preparationDevice.scriptAtWeightReachedId > -1 &&
           this.preparationDevice.scriptAtWeightReachedNumber > 0
         ) {
           const weight: number = this.uiHelper.toFixedIfNecessary(
@@ -508,8 +511,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             } else {
               // Instant stop!
               this.preparationDevice.stopScript();
-              this.timer.pauseTimer();
             }
+            this.timer.pauseTimer();
           }
         }
         this.__setFlowProfile(_val);
@@ -876,7 +879,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
     }
     if (this.preparationDeviceConnected()) {
-      if (this.preparationDevice.scriptStartId > -1) {
+      if (this.preparationDevice.scriptStartId > 0) {
         this.preparationDevice.startScript(
           this.preparationDevice.scriptStartId
         );
@@ -948,8 +951,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.data.coffee_first_drip_time_milliseconds = 0;
     }
     if (!this.smartScaleConnected() && this.preparationDeviceConnected()) {
-      //If scale is not connected but the device, we can now choose that still the script is executed if existing.
-      if (this.preparationDevice.scriptAtFirstDripId > -1) {
+      // If scale is not connected but the device, we can now choose that still the script is executed if existing.
+      if (this.preparationDevice.scriptAtFirstDripId > 0) {
         this.preparationDevice.startScript(
           this.preparationDevice.scriptAtFirstDripId
         );
@@ -1019,6 +1022,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
       this.updateChart();
     }
+    if (this.preparationDeviceConnected()) {
+      //If we press pause, stop scripts.
+      this.preparationDevice.stopScript();
+    }
     if (!this.platform.is('cordova')) {
       window.clearInterval(this.graphTimerTest);
     }
@@ -1036,6 +1043,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
     const temperatureDevice: TemperatureDevice =
       this.bleManager.getTemperatureDevice();
+
+    if (this.preparationDeviceConnected()) {
+      //If users rests, we reset also drip time, else the script would not recognize it.
+      this.data.coffee_first_drip_time = 0;
+      this.data.coffee_first_drip_time_milliseconds = 0;
+    }
 
     if (scale || pressureDevice || temperatureDevice) {
       await this.uiAlert.showLoadingSpinner();
@@ -1399,9 +1412,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       avgFlowEl.textContent = 'Ø ' + avgFlow + ' g/s';
 
       this.brewFlowGraphSubject.next({
-        scaleWeight: actualScaleWeight + ' g',
-        smoothedWeight: actualSmoothedWeightPerSecond + ' g/s',
-        avgFlow: 'Ø ' + avgFlow,
+        scaleWeight: actualScaleWeight,
+        smoothedWeight: actualSmoothedWeightPerSecond,
+        avgFlow: avgFlow,
       });
     } catch (ex) {}
   }
@@ -1813,11 +1826,15 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private instancePreparationDevice() {
+  private async instancePreparationDevice() {
     const connectedDevice: PreparationDevice =
       this.uiPreparationHelper.getConnectedDevice(this.data.getPreparation());
     if (connectedDevice) {
       this.preparationDevice = connectedDevice as XeniaDevice;
+      try {
+        const xeniaScripts = await this.preparationDevice.getScripts();
+        this.preparationDevice.mapScriptsAndSaveTemp(xeniaScripts);
+      } catch (ex) {}
     } else {
       this.preparationDevice = undefined;
     }
@@ -2751,9 +2768,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         checkData.default_last_coffee_parameters.bean_type) ||
       (_template === true && checkData.repeat_coffee_parameters.bean_type)
     ) {
-      const brewBean: IBean = this.uiBeanStorage.getByUUID(brew.bean);
-      if (!brewBean.finished) {
-        this.data.bean = brewBean.config.uuid;
+      if (brew.bean) {
+        const brewBean: IBean = this.uiBeanStorage.getByUUID(brew.bean);
+        if (!brewBean.finished) {
+          this.data.bean = brewBean.config.uuid;
+        }
       }
     }
 
@@ -2776,9 +2795,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       (_template === false && checkData.default_last_coffee_parameters.mill) ||
       (_template === true && checkData.repeat_coffee_parameters.mill)
     ) {
-      const brewMill: IMill = this.uiMillStorage.getByUUID(brew.mill);
-      if (!brewMill.finished) {
-        this.data.mill = brewMill.config.uuid;
+      if (brew.mill) {
+        const brewMill: IMill = this.uiMillStorage.getByUUID(brew.mill);
+        if (!brewMill.finished) {
+          this.data.mill = brewMill.config.uuid;
+        }
       }
     }
     if (
@@ -2988,4 +3009,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
     this.data.flow_profile = '';
   }
+
+  protected readonly undefined = undefined;
 }

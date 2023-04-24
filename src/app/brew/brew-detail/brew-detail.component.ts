@@ -569,7 +569,8 @@ export class BrewDetailComponent implements OnInit {
         JSON.stringify(jsonParsed),
         true
       );
-      if (this.platform.is('android')) {
+      // No popup needed anymore, because we share the file now
+      /*if (this.platform.is('android')) {
         const alert = await this.alertCtrl.create({
           header: this.translate.instant('DOWNLOADED'),
           subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
@@ -578,7 +579,7 @@ export class BrewDetailComponent implements OnInit {
           buttons: ['OK'],
         });
         await alert.present();
-      }
+      }*/
     }
   }
   public async downloadFlowProfile() {

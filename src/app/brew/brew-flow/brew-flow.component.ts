@@ -23,6 +23,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
 import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { BluetoothScale } from '../../../classes/devices';
 declare var Plotly;
 @Component({
   selector: 'brew-flow',
@@ -198,6 +199,14 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
     return !!temperatureDevice;
   }
 
+  public smartScaleConnected() {
+    if (!this.platform.is('cordova')) {
+      return true;
+    }
+    const scale: BluetoothScale = this.bleManager.getScale();
+    return !!scale;
+  }
+
   public async startTimer() {
     await this.brewComponent.timerStartPressed(undefined);
 
@@ -231,6 +240,18 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
 
   public setCoffeeDripTime(): void {
     this.brew.coffee_first_drip_time = this.brew.brew_time;
+    // Run first drip script
+    if (
+      !this.brewComponent.smartScaleConnected() &&
+      this.brewComponent.preparationDeviceConnected()
+    ) {
+      // If scale is not connected but the device, we can now choose that still the script is executed if existing.
+      if (this.brewComponent.preparationDevice.scriptAtFirstDripId > 0) {
+        this.brewComponent.preparationDevice.startScript(
+          this.brewComponent.preparationDevice.scriptAtFirstDripId
+        );
+      }
+    }
     this.showDripTimer = false;
   }
 
@@ -245,7 +266,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
     const avgFlowEl = this.smartScaleAvgFlowPerSecondDetail.nativeElement;
     weightEl.textContent = _val.scaleWeight;
     flowEl.textContent = _val.smoothedWeight;
-    avgFlowEl.textContent = _val.avgFlow;
+    avgFlowEl.textContent = 'Ø ' + _val.avgFlow;
   }
 
   public setActualPressureInformation(_val: any) {

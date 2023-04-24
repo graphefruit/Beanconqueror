@@ -1190,7 +1190,7 @@
       "LOCATION": "Um Bluetooth-Waagen zu finden, muss der Standort freigegeben werden",
       "BLUETOOTH": "Um Bluetooth-Waagen zu finden, muss Bluetooth freigegeben werden"
     },
-    "INFORMATION_DESCRIPTION": "Unterstütze Waagen sind: Decent Scale sowie Acaia Scales, Felicita Scales, Hiroia Jimmy und Eureka Precisa. Achtung: Falls die Eureka Precisa einen negativen Wert bekommt, stoppt der Timer automatisch"
+    "INFORMATION_DESCRIPTION": "Unterstütze Waagen sind: Decent Scale sowie Acaia Scales, Felicita Scales, Hiroia Jimmy, Skale 2 und Eureka Precisa. Achtung: Falls die Eureka Precisa einen negativen Wert bekommt, stoppt der Timer automatisch"
   },
   "QR": {
     "WRONG_QRCODE_DESCRIPTION": "Falscher QR-Code oder falscher Inhalt",
@@ -1290,7 +1290,7 @@
     "CONNECTED_SUCCESSFULLY": "Druckgerät verbunden",
     "DISCONNECTED_SUCCESSFULLY": "Druckgerät getrennt",
     "DISCONNECTED_UNPLANNED": "Druckgerät ungeplant getrennt",
-    "INFORMATION_DESCRIPTION": "Unterstütze Druckgeräte sind Popsicle",
+    "INFORMATION_DESCRIPTION": "Unterstütze Druckgeräte sind Popsicle, Pressensor, Smart Espresso Profiler ",
     "BLUETOOTH_SCAN_RUNNING": "Druckgeräte werden für 60 Sekunden versucht zu finden, bitte warten",
     "BLUETOOTH_NOT_ENABLED": "Bluetooth ist nicht aktiviert, bitte aktiviere dies in den Einstellungen",
     "REQUEST_PERMISSION": {
@@ -1367,6 +1367,8 @@
       "NONE": "None",
       "XENIA": "Xenia"
     },
+    "URL": "Url",
+    "CHOOSE_DEVICE": "Gerät auswählen",
     "CONNECTION": {
       "UNSUCCESFULLY": "Verbindung zur Maschine konnte nicht hergestellt werden",
       "SUCCESFULLY": "Verbindung zur Maschine konnte hergestellt werden"
@@ -1375,10 +1377,12 @@
       "TITLE": "Xenia Maschine",
       "PRESS_START_SCRIPT": "Script beim Start ausführen",
       "FIRST_DRIP_SCRIPT": "Script beim ersten Tropfen ausführen",
-      "SCRIPT_AT_WEIGHT": "Script bei Gewichtserreichung ausführen",
+      "SCRIPT_AT_WEIGHT": "Gewicht für Scriptausführung",
       "SCRIPT_LIST_GENERAL_0": "Nichts",
       "SCRIPT_LIST_GENERAL_1": "Espresso, 25 Sekunden",
-      "SCRIPT_LIST_GENERAL_2": "Espresso, Endlos"
+      "SCRIPT_LIST_GENERAL_2": "Espresso, Endlos",
+      "SCRIPT_LIST_GENERAL_STOP": "Bezug stoppen",
+      "CHOOSE_SCRIPT_AT_WEIGHT": "Script auswählen für Gewichtserreichung"
     }
   },
   "DEVICE_CONNECTION": "Geräteverbindung",

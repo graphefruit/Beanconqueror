@@ -119,12 +119,6 @@ export class BrewPage implements OnInit {
     this.openBrewsView = [];
     this.archiveBrewsView = [];
 
-    this.openBrewsLength = this.brews.reduce(
-      (n, e) => (!e.getBean().finished ? n + 1 : n),
-      0
-    );
-    this.archiveBrewsLength = this.brews.length - this.openBrewsLength;
-
     this.__initializeBrewView('open');
     this.__initializeBrewView('archiv');
   }
@@ -255,6 +249,9 @@ export class BrewPage implements OnInit {
           e.getMill().finished === !isOpen &&
           e.getPreparation().finished === !isOpen
       );
+
+      this.openBrewsLength = brewsFilters.length;
+      this.archiveBrewsLength = this.brews.length - this.openBrewsLength;
     } else {
       brewsFilters = brewsCopy.filter(
         (e) =>

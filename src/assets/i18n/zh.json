@@ -1189,7 +1189,7 @@
 			"LOCATION": "软件需要位置权限来搜索电子秤",
 			"BLUETOOTH": "软件需要蓝牙权限来搜索电子秤"
 		},
-		"INFORMATION_DESCRIPTION": "支持的电子秤: Decent 电子秤, Acaia 电子秤, Felicita 电子秤以及 Hiroia Jimmy and Eureka Precisa. Care: If the Eureka Precisa recieves a negative value, the timer stops"
+		"INFORMATION_DESCRIPTION": "支持的电子秤: Decent 电子秤, Acaia 电子秤, Felicita 电子秤以及 Hiroia Jimmy, Skale 2 and Eureka Precisa. Care: If the Eureka Precisa recieves a negative value, the timer stops"
 	},
 	"QR": {
 		"WRONG_QRCODE_DESCRIPTION": "错误的二维码或错误的内容",
@@ -1288,7 +1288,7 @@
 		"CONNECTED_SUCCESSFULLY": "压强设备已连接",
 		"DISCONNECTED_SUCCESSFULLY": "压强设备未连接",
 		"DISCONNECTED_UNPLANNED": "压强设备意外断开连接",
-		"INFORMATION_DESCRIPTION": "支持设备：Popsicle",
+		"INFORMATION_DESCRIPTION": "支持设备：Popsicle, Pressensor, Smart Espresso Profiler",
 		"BLUETOOTH_SCAN_RUNNING": "压强设备搜索将会花费60秒，稍等",
 		"BLUETOOTH_NOT_ENABLED": "蓝牙未开启，请开启以正常工作",
 		"REQUEST_PERMISSION": {
