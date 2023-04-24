@@ -1404,9 +1404,9 @@
     },
     "LOG": "Logfiles für Temperaturgeräte aktivieren",
     "THRESHOLD_ACTIVE": "Zeit starten mit einer vordefinierten Temperatur",
-    "THRESHOLD_TEMP": "Schwellenwert Temperatur temperature"
+    "THRESHOLD_TEMP": "Schwellenwert Temperatur"
   },
-  "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "Reconnect temperature device",
+  "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "Temperaturgerät neu verbinden",
   "BREW_TEMPERATURE_REALTIME": "Temperatur",
-  "PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE": "Temperatur device"
+  "PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE": "Temperaturgerät"
 }
