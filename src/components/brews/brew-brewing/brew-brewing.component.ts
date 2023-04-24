@@ -505,12 +505,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           );
           if (weight >= this.preparationDevice.scriptAtWeightReachedNumber) {
             if (this.preparationDevice.scriptAtWeightReachedId > 0) {
-              this.preparationDevice.startScript(
-                this.preparationDevice.scriptAtWeightReachedId
-              );
+              this.preparationDevice
+                .startScript(this.preparationDevice.scriptAtWeightReachedId)
+                .catch(() => {});
             } else {
               // Instant stop!
-              this.preparationDevice.stopScript();
+              this.preparationDevice.stopScript().catch(() => {});
             }
             this.timer.pauseTimer();
           }
@@ -644,9 +644,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.preparationDeviceConnected() &&
       this.preparationDevice.scriptAtFirstDripId > -1
     ) {
-      this.preparationDevice.startScript(
-        this.preparationDevice.scriptAtFirstDripId
-      );
+      this.preparationDevice
+        .startScript(this.preparationDevice.scriptAtFirstDripId)
+        .catch(() => {});
     }
   }
 
@@ -884,9 +884,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
     if (this.preparationDeviceConnected()) {
       if (this.preparationDevice.scriptStartId > 0) {
-        this.preparationDevice.startScript(
-          this.preparationDevice.scriptStartId
-        );
+        this.preparationDevice
+          .startScript(this.preparationDevice.scriptStartId)
+          .catch(() => {});
       }
     }
   }
@@ -957,9 +957,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (!this.smartScaleConnected() && this.preparationDeviceConnected()) {
       // If scale is not connected but the device, we can now choose that still the script is executed if existing.
       if (this.preparationDevice.scriptAtFirstDripId > 0) {
-        this.preparationDevice.startScript(
-          this.preparationDevice.scriptAtFirstDripId
-        );
+        this.preparationDevice
+          .startScript(this.preparationDevice.scriptAtFirstDripId)
+          .catch(() => {});
       }
     }
   }
@@ -1028,7 +1028,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
     if (this.preparationDeviceConnected()) {
       //If we press pause, stop scripts.
-      this.preparationDevice.stopScript();
+      this.preparationDevice.stopScript().catch(() => {});
     }
     if (!this.platform.is('cordova')) {
       window.clearInterval(this.graphTimerTest);
