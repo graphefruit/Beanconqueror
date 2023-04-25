@@ -9,7 +9,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-segment [(ngModel)]="settings_segment" class="ion-padding-vertical" style="padding-top:0px;">
+  <ion-segment scrollable="true" [(ngModel)]="settings_segment" class="ion-padding-vertical" style="padding-top:0px;">
     <ion-segment-button value="general">
       <ion-label>{{"PAGE_SETTINGS_TAB_GENERAL" | translate }}
       </ion-label>
@@ -534,6 +534,10 @@
           <ion-label>
             <ion-icon style="top: 3px; position: relative;" name="information-circle-outline"></ion-icon>
             <p style="display: inline;">{{"PRESSURE.INFORMATION_DESCRIPTION" | translate}}</p>
+          </ion-label><br/>
+          <ion-label>
+            <ion-icon style="top: 3px; position: relative;" name="information-circle-outline"></ion-icon>
+            <p style="display: inline;">{{"PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO" | translate}}</p>
           </ion-label>
         </ion-card-content>
 

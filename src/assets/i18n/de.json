@@ -816,6 +816,14 @@
         "Aktualisierung auf Ionic 6.4.0",
         "Kleinere Fehlerbehebungen"
       ]
+    },
+    "6.4.0": {
+      "TITLE": "Version 6.4.0: Das ist neu",
+      "DESCRIPTION": [
+        "<b>Bluetooth Thermometer</b>",
+        "Unterstützung von ETI Ltd Thermometern (ThermaQ Blue, BlueTherm, etc) - Sensors - Danke an Myles",
+        "Autostart timer bei einger gewissen Temperatur - Einstellbar in den Einstellungen"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Parameter individualisieren",
@@ -1408,5 +1416,6 @@
   },
   "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "Temperaturgerät neu verbinden",
   "BREW_TEMPERATURE_REALTIME": "Temperatur",
-  "PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE": "Temperaturgerät"
+  "PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE": "Temperaturgerät",
+  "PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO": "Druckgerät ist nur Verwendbar bei Zubereitungsmethoden der Zubereitungsart 'Espresso'"
 }

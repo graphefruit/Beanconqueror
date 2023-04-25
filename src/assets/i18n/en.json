@@ -822,8 +822,7 @@
       "DESCRIPTION": [
         "<b>Bluetooth thermometers</b>",
         "Support for ETI Ltd thermometers (ThermaQ Blue, BlueTherm, etc) - Sensors - Thanks to Myles",
-        "Autostart timer on a specific temperature - editable in settings",
-        "Display name of temperature device and mac-address on connect"
+        "Autostart timer on a specific temperature - editable in settings"
       ]
     }
   },
@@ -1373,6 +1372,33 @@
   "CUSTOM_REPEAT_PARAMETERS_DESCRIPTION": "Activate customized repeat?",
   "PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE": "Numeric keyboard for grind setting?",
   "PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE_DESCRIPTION": "Do you want have the numeric keyboard for the grind setting, instead of the usage of the whole keyboard?",
+  "PREPARATION_DEVICE": {
+    "TYPE": {
+      "NONE": "None",
+      "XENIA": "Xenia"
+    },
+    "URL": "Url",
+    "CHOOSE_DEVICE": "Choose device",
+    "CONNECTION": {
+      "UNSUCCESFULLY": "Connection could not be established to machine",
+      "SUCCESFULLY": "Connection could be established to machine"
+    },
+    "TYPE_XENIA": {
+      "TITLE": "Xenia Machine",
+      "PRESS_START_SCRIPT": "Start script on start",
+      "FIRST_DRIP_SCRIPT": "Start script on first drip",
+      "SCRIPT_AT_WEIGHT": "Weight for script execution",
+      "SCRIPT_LIST_GENERAL_0": "Nothing",
+      "SCRIPT_LIST_GENERAL_1": "Espresso, 25 seconds",
+      "SCRIPT_LIST_GENERAL_2": "Espresso, endless",
+      "SCRIPT_LIST_GENERAL_STOP": "Stop shot",
+      "CHOOSE_SCRIPT_AT_WEIGHT": "Choose script for reached weight"
+    }
+  },
+  "DEVICE_CONNECTION": "Device connection",
+  "PREPARATION_DEVICE_CONNECTION": "Device connection",
+  "MANUAL_EXPORT_TO_VISUALIZER": "Export to Visualizer",
+  "ONLY_FAVOURITES": "Just favorites",
   "TEMPERATURE": {
     "CONNECTION_NOT_ESTABLISHED": "Temperature device not found found or connection could not be established",
     "CONNECTED_SUCCESSFULLY": "Temperature device connected",
@@ -1390,5 +1416,6 @@
     "THRESHOLD_ACTIVE": "Start timer with predefined temperature",
     "THRESHOLD_TEMP": "Threshold temperature"
   },
-  "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "Reconnect temperature device"
+  "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "Reconnect temperature device",
+  "PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO": "Pressure device is just useable on preparation style 'espresso'"
 }
