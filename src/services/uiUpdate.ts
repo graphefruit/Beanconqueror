@@ -562,7 +562,7 @@ export class UIUpdate {
     }
 
     if (somethingUpdated) {
-      //await this.uiVersionStorage.saveVersion(version);
+      await this.uiVersionStorage.saveVersion(version);
     }
   }
 

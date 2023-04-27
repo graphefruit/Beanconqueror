@@ -67,6 +67,13 @@ export class PreparationConnectedDeviceComponent implements OnInit {
             this.data.connectedPreparationDevice.url =
               this.data.connectedPreparationDevice.url.slice(0, -1);
           }
+          if (
+            this.data.connectedPreparationDevice.url.startsWith('http') ===
+            false
+          ) {
+            this.data.connectedPreparationDevice.url =
+              'http://' + this.data.connectedPreparationDevice.url;
+          }
         }
       }
       await this.uiPreparationStorage.update(this.data);
