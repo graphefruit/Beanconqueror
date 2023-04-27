@@ -171,14 +171,13 @@ export class CoffeeBluetoothDevicesService {
 
       let timeoutVar: any = null;
       const stopScanningAndResolve = async () => {
+        this.logger.log('Scales found ' + JSON.stringify(devices));
+        resolve(devices);
         try {
-          await this.stopScanning();
+          this.stopScanning();
         } catch (ex) {
           // Grab error.
         }
-
-        this.logger.log('Scales found ' + JSON.stringify(devices));
-        resolve(devices);
       };
 
       ble.startScanWithOptions(
@@ -202,15 +201,17 @@ export class CoffeeBluetoothDevicesService {
             );
             clearTimeout(timeoutVar);
             timeoutVar = null;
-            await stopScanningAndResolve();
+            stopScanningAndResolve();
           }
         },
         () => {
+          clearTimeout(timeoutVar);
+          timeoutVar = null;
           resolve(devices);
         }
       );
       timeoutVar = setTimeout(async () => {
-        await stopScanningAndResolve();
+        stopScanningAndResolve();
       }, 60000);
     });
   }
@@ -221,14 +222,13 @@ export class CoffeeBluetoothDevicesService {
 
       let timeoutVar: any = null;
       const stopScanningAndResolve = async () => {
+        this.logger.log('Pressure devices found ' + JSON.stringify(devices));
+        resolve(devices);
         try {
-          await this.stopScanning();
+          this.stopScanning();
         } catch (ex) {
           // Grab error.
         }
-
-        this.logger.log('Pressure devices found ' + JSON.stringify(devices));
-        resolve(devices);
       };
 
       ble.startScanWithOptions(
@@ -252,15 +252,62 @@ export class CoffeeBluetoothDevicesService {
             );
             clearTimeout(timeoutVar);
             timeoutVar = null;
-            await stopScanningAndResolve();
+            stopScanningAndResolve();
           }
         },
         () => {
+          clearTimeout(timeoutVar);
+          timeoutVar = null;
           resolve(devices);
         }
       );
       timeoutVar = setTimeout(async () => {
-        await stopScanningAndResolve();
+        stopScanningAndResolve();
+      }, 60000);
+    });
+  }
+
+  public async findDeviceWithDirectId(_id): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      let timeoutVar: any = null;
+      const stopScanningAndResolve = async (_found: boolean) => {
+        resolve(_found);
+        try {
+          this.stopScanning();
+        } catch (ex) {
+          // Grab error.
+        }
+      };
+
+      ble.startScanWithOptions(
+        [],
+        { reportDuplicates: true },
+        async (searchedDevice: any) => {
+          this.logger.log(
+            'findDeviceWithDirectId devices found ' +
+              JSON.stringify(searchedDevice)
+          );
+          if (
+            searchedDevice.id &&
+            searchedDevice.id.toLowerCase() === _id.toLowerCase()
+          ) {
+            this.logger.log(
+              'findDeviceWithDirectId - we found the exact searched device  ' +
+                JSON.stringify(searchedDevice)
+            );
+            clearTimeout(timeoutVar);
+            timeoutVar = null;
+            stopScanningAndResolve(true);
+          }
+        },
+        () => {
+          clearTimeout(timeoutVar);
+          timeoutVar = null;
+          resolve(false);
+        }
+      );
+      timeoutVar = setTimeout(async () => {
+        stopScanningAndResolve(false);
       }, 60000);
     });
   }
@@ -271,14 +318,13 @@ export class CoffeeBluetoothDevicesService {
 
       let timeoutVar: any = null;
       const stopScanningAndResolve = async () => {
+        this.logger.log('Temperature devices found ' + JSON.stringify(devices));
+        resolve(devices);
         try {
-          await this.stopScanning();
+          this.stopScanning();
         } catch (ex) {
           // Grab error.
         }
-
-        this.logger.log('Temperature devices found ' + JSON.stringify(devices));
-        resolve(devices);
       };
 
       ble.startScanWithOptions(
@@ -298,15 +344,17 @@ export class CoffeeBluetoothDevicesService {
             );
             clearTimeout(timeoutVar);
             timeoutVar = null;
-            await stopScanningAndResolve();
+            stopScanningAndResolve();
           }
         },
         () => {
+          clearTimeout(timeoutVar);
+          timeoutVar = null;
           resolve(devices);
         }
       );
       timeoutVar = setTimeout(async () => {
-        await stopScanningAndResolve();
+        stopScanningAndResolve();
       }, 60000);
     });
   }
@@ -662,14 +710,15 @@ export class CoffeeBluetoothDevicesService {
       () => {
         // Success
         setTimeout(() => {
+          const isiOS = device !== null && device.platform === 'iOS';
           this.autoConnectScale(
             deviceType,
             deviceId,
-            true,
+            isiOS,
             successCallback,
             errorCallback
           );
-        }, 1000);
+        }, 5000);
       },
       () => {
         //Fail
@@ -689,14 +738,15 @@ export class CoffeeBluetoothDevicesService {
       () => {
         // Success
         setTimeout(() => {
+          const isiOS = device !== null && device.platform === 'iOS';
           this.autoConnectPressureDevice(
             pressureType,
             deviceId,
-            true,
+            isiOS,
             successCallback,
             errorCallback
           );
-        }, 1000);
+        }, 5000);
       },
       () => {
         //Fail
@@ -716,14 +766,15 @@ export class CoffeeBluetoothDevicesService {
       () => {
         // Success
         setTimeout(() => {
+          const isiOS = device !== null && device.platform === 'iOS';
           this.autoConnectTemperatureDevice(
             temperatureType,
             deviceId,
-            true,
+            isiOS,
             successCallback,
             errorCallback
           );
-        }, 1000);
+        }, 5000);
       },
       () => {
         //Fail
@@ -741,7 +792,7 @@ export class CoffeeBluetoothDevicesService {
   ) {
     if (_retryScanForIOS) {
       // iOS needs to know the scale, before auto connect can be done
-      await this.__iOSAccessBleStackAndAutoConnect();
+      await this.findDeviceWithDirectId(deviceId);
     }
 
     this.logger.log('AutoConnectScale - We can start or we waited for iOS');
@@ -752,10 +803,12 @@ export class CoffeeBluetoothDevicesService {
     ble.autoConnect(
       deviceId,
       (data: PeripheralData) => {
+        this.logger.log('AutoConnectScale - Scale device connected.');
         this.connectCallback(deviceType, data);
         successCallback();
       },
       () => {
+        this.logger.log('AutoConnectScale - Scale device disconnected.');
         this.disconnectCallback();
         errorCallback();
       }
@@ -771,7 +824,7 @@ export class CoffeeBluetoothDevicesService {
   ) {
     if (_retryScanForIOS) {
       // iOS needs to know the scale, before auto connect can be done
-      await this.__iOSAccessBleStackAndAutoConnect('pressure');
+      await this.findDeviceWithDirectId(deviceId);
     }
 
     this.logger.log(
@@ -784,10 +837,14 @@ export class CoffeeBluetoothDevicesService {
     ble.autoConnect(
       deviceId,
       (data: PeripheralData) => {
+        this.logger.log(
+          'AutoConnectPressureDevice - Pressure device connected.'
+        );
         this.connectPressureCallback(pressureType, data);
         successCallback();
       },
       () => {
+        'AutoConnectPressureDevice - Pressure device disconnected.';
         this.disconnectPressureCallback();
         errorCallback();
       }
@@ -803,7 +860,7 @@ export class CoffeeBluetoothDevicesService {
   ) {
     if (_retryScanForIOS) {
       // iOS needs to know the scale, before auto connect can be done
-      await this.__iOSAccessBleStackAndAutoConnect('temperature');
+      await this.findDeviceWithDirectId(deviceId);
     }
 
     this.logger.log(
@@ -816,10 +873,16 @@ export class CoffeeBluetoothDevicesService {
     ble.autoConnect(
       deviceId,
       (data: PeripheralData) => {
+        this.logger.log(
+          'AutoConnectTemperatureDevice - Temperature device connected.'
+        );
         this.connectTemperatureCallback(temperatureType, data);
         successCallback();
       },
       () => {
+        this.logger.log(
+          'AutoConnectTemperatureDevice - Temperature device disconnected.'
+        );
         this.disconnectTemperatureCallback();
         errorCallback();
       }
@@ -828,7 +891,14 @@ export class CoffeeBluetoothDevicesService {
 
   private stopScanning() {
     return new Promise((resolve, reject) => {
-      return ble.stopScan(resolve, reject);
+      return ble.stopScan(
+        () => {
+          resolve(undefined);
+        },
+        () => {
+          reject();
+        }
+      );
     });
   }
 
