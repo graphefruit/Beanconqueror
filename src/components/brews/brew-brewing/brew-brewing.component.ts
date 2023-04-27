@@ -512,7 +512,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               // Instant stop!
               this.preparationDevice.stopScript().catch(() => {});
             }
-            this.timer.pauseTimer();
+            this.timer.pauseTimer('xenia');
           }
         }
         this.__setFlowProfile(_val);
@@ -536,6 +536,37 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
     return !!pressureDevice;
+  }
+
+  public getGraphIonColSize() {
+    let bluetoothDeviceConnections = 0;
+    let smartScaleConnected: boolean = false;
+    if (this.pressureDeviceConnected()) {
+      bluetoothDeviceConnections += 1;
+    }
+    if (this.temperatureDeviceConnected()) {
+      bluetoothDeviceConnections += 1;
+    }
+    if (this.smartScaleConnected()) {
+      bluetoothDeviceConnections += 1;
+      smartScaleConnected = true;
+    }
+
+    if (bluetoothDeviceConnections === 3) {
+      return 3;
+    } else if (bluetoothDeviceConnections === 2) {
+      if (smartScaleConnected) {
+        return 4;
+      } else {
+        return 6;
+      }
+    } else if (bluetoothDeviceConnections === 1) {
+      if (smartScaleConnected) {
+        return 6;
+      } else {
+        return 12;
+      }
+    }
   }
 
   public temperatureDeviceConnected() {
@@ -1026,7 +1057,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
       this.updateChart();
     }
-    if (this.preparationDeviceConnected()) {
+
+    if (this.preparationDeviceConnected() && _event !== 'xenia') {
+      // If the event is not xenia, we pressed buttons, if the event was triggerd by xenia, timer already stopped.
       //If we press pause, stop scripts.
       this.preparationDevice.stopScript().catch(() => {});
     }

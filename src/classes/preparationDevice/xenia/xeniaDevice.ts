@@ -32,14 +32,17 @@ export class XeniaDevice extends PreparationDevice {
             if (parsedJSON && 'MA_STATUS' in parsedJSON) {
               resolve(true);
             } else {
+              // alert("Error in Resolve MA Status not given");
               reject();
             }
           } catch (e) {
+            // alert("Error in Resolve " + JSON.stringify(e));
             reject();
           }
         },
         (response) => {
           // prints 403
+          // alert("Error " + JSON.stringify(response));
           reject();
         }
       );

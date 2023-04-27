@@ -53,20 +53,24 @@ export class PreparationConnectedDeviceComponent implements OnInit {
     );
   }
 
+  public async setUrl() {}
   public async save() {
-    if (
-      this.data.connectedPreparationDevice.type === PreparationDeviceType.XENIA
-    ) {
-      if (this.data.connectedPreparationDevice.url === '') {
-        this.data.connectedPreparationDevice.url = 'http://xenia.local';
-      } else {
-        if (this.data.connectedPreparationDevice.url.endsWith('/') === true) {
-          this.data.connectedPreparationDevice.url =
-            this.data.connectedPreparationDevice.url.slice(0, -1);
+    setTimeout(async () => {
+      if (
+        this.data.connectedPreparationDevice.type ===
+        PreparationDeviceType.XENIA
+      ) {
+        if (this.data.connectedPreparationDevice.url === '') {
+          this.data.connectedPreparationDevice.url = 'http://xenia.local';
+        } else {
+          if (this.data.connectedPreparationDevice.url.endsWith('/') === true) {
+            this.data.connectedPreparationDevice.url =
+              this.data.connectedPreparationDevice.url.slice(0, -1);
+          }
         }
       }
-    }
-    await this.uiPreparationStorage.update(this.data);
+      await this.uiPreparationStorage.update(this.data);
+    }, 150);
   }
 
   public checkURL(): void {

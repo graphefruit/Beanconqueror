@@ -89,6 +89,38 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
       );
     } catch (ex) {}
   }
+
+  public getGraphIonColSize() {
+    let bluetoothDeviceConnections = 0;
+    let smartScaleConnected: boolean = false;
+    if (this.pressureDeviceConnected()) {
+      bluetoothDeviceConnections += 1;
+    }
+    if (this.temperatureDeviceConnected()) {
+      bluetoothDeviceConnections += 1;
+    }
+    if (this.smartScaleConnected()) {
+      bluetoothDeviceConnections += 1;
+      smartScaleConnected = true;
+    }
+
+    if (bluetoothDeviceConnections === 3) {
+      return 2;
+    } else if (bluetoothDeviceConnections === 2) {
+      if (smartScaleConnected) {
+        return 2;
+      } else {
+        return 4;
+      }
+    } else if (bluetoothDeviceConnections === 1) {
+      if (smartScaleConnected) {
+        return 3;
+      } else {
+        return 6;
+      }
+    }
+  }
+
   public async ngAfterViewInit() {
     this.settings = this.uiSettingsStorage.getSettings();
 
