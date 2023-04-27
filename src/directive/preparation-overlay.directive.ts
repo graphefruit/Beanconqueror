@@ -55,11 +55,11 @@ export class PreparationOverlayDirective {
     await modal.present();
     const { data } = await modal.onWillDismiss();
     if (data !== undefined) {
-      debugger;
       if (this.multipleSelect) {
         this.model.control.setValue(data.selected_values);
         this.model.viewToModelUpdate(data.selected_values);
         this.ngModelChange.emit(data.selected_values);
+
         this.__generateOutputText(data.selected_values);
       } else {
         this.model.control.setValue(data.selected_values[0]);

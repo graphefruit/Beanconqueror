@@ -53,7 +53,7 @@
     <ion-label position="stacked">{{"BREW_DATA_PREPARATION_METHOD" | translate}}</ion-label>
     <ion-select [(ngModel)]="data.method_of_preparation"
       placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}" [show-finished]="false"
-      preparation-overlay (ionFocus)="preparationMethodFocused()" (ionChange)="resetPreparationTools();">
+      preparation-overlay (click)="preparationMethodFocused()" (ionChange)='resetPreparationTools()'>
     </ion-select>
   </ion-item>
   <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.bean_type,
@@ -225,9 +225,9 @@
     </ion-select>
   </ion-item>
   <ion-item lines="inset"
-    *ngIf="preparationDevice.scriptStartId > 0 && (uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_first_drip_time,
+    [disabled]="!(preparationDevice.scriptStartId > 0 && (uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_first_drip_time,
                       data.getPreparation().manage_parameters.coffee_first_drip_time,
-                      data.getPreparation().use_custom_parameters) && getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO)">
+                      data.getPreparation().use_custom_parameters) && getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO))">
     <ion-label position="stacked">{{"PREPARATION_DEVICE.TYPE_XENIA.FIRST_DRIP_SCRIPT" | translate}}</ion-label>
     <ion-select [(ngModel)]="preparationDevice.scriptAtFirstDripId"
       placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
@@ -245,12 +245,12 @@
       </ion-select-option>
     </ion-select>
   </ion-item>
-  <ion-item *ngIf="preparationDevice.scriptStartId > 0 && smartScaleConnected()" lines="none">
+  <ion-item [disabled]="!(preparationDevice.scriptStartId > 0 && smartScaleConnected())" lines="none">
     <ion-label position="stacked">{{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_AT_WEIGHT" | translate}}</ion-label>
     <ion-input [(ngModel)]="preparationDevice.scriptAtWeightReachedNumber" inputmode="decimal" prevent-characters
       remove-empty-number tabIndex="1" type="text"></ion-input>
   </ion-item>
-  <ion-item *ngIf="preparationDevice.scriptStartId > 0 && smartScaleConnected() && preparationDevice.scriptAtWeightReachedNumber>0" lines="inset">
+  <ion-item [disabled]="!(preparationDevice.scriptStartId > 0 && smartScaleConnected() && preparationDevice.scriptAtWeightReachedNumber>0)" lines="inset">
     <ion-label position="stacked">{{"PREPARATION_DEVICE.TYPE_XENIA.CHOOSE_SCRIPT_AT_WEIGHT" | translate}}</ion-label>
     <ion-select [(ngModel)]="preparationDevice.scriptAtWeightReachedId"
       placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
@@ -310,7 +310,8 @@
                       data.getPreparation().use_custom_parameters)">
     <ion-grid class="ion-text-center ion-no-padding brew-information-panel">
       <ion-row style="padding-bottom:5px;">
-        <ion-col size="3" style="padding-right:5px;">
+        <ion-col *ngIf='smartScaleConnected()' size="{{this.getGraphIonColSize()}}"
+                 style="padding-right:5px;">
           <ion-card class="flow-profile ion-text-center weight-card" style="height: 100%;">
             <ion-card-header>
               <div #smartScaleWeight>? g</div>
@@ -321,7 +322,8 @@
             </ion-card-content>
           </ion-card>
         </ion-col>
-        <ion-col size="3" style="padding-right:5px;">
+        <ion-col *ngIf='smartScaleConnected()' size="{{this.getGraphIonColSize()}}"
+                 style="padding-right:5px;">
           <ion-card class="flow-profile ion-text-center flow-card" style="height: 100%;">
             <ion-card-header>
               <div #smartScaleWeightPerSecond>? g/s</div>
@@ -332,7 +334,8 @@
             </ion-card-content>
           </ion-card>
         </ion-col>
-        <ion-col (click)="resetPressure()" *ngIf="pressureDeviceConnected()" style="padding-right:5px;" size="3">
+        <ion-col (click)="resetPressure()" *ngIf="pressureDeviceConnected()" style="padding-right:5px;"
+                 size="{{this.getGraphIonColSize()}}">
           <ion-card class="flow-profile ion-text-center pressure-card" style="height: 100%;">
             <ion-card-header>
               <div #pressure>? bar</div>
@@ -342,7 +345,8 @@
             </ion-card-content>
           </ion-card>
         </ion-col>
-        <ion-col *ngIf="temperatureDeviceConnected()" size="3">
+        <ion-col *ngIf="temperatureDeviceConnected()"
+                 size="{{this.getGraphIonColSize()}}">
           <ion-card class="flow-profile ion-text-center temperature-card" style="height: 100%;">
             <ion-card-header>
               <div #temperature>? °C</div>

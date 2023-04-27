@@ -355,13 +355,11 @@ export class BrewInformationComponent implements OnInit {
               })
               .catch(async (error) => {
                 await this.uiAlert.hideLoadingSpinner();
-                console.error('oops, something went wrong!', error);
               });
           }, 500);
         })
         .catch(async (error) => {
           await this.uiAlert.hideLoadingSpinner();
-          console.error('oops, something went wrong!', error);
         });
     } else {
       htmlToImage
@@ -374,7 +372,6 @@ export class BrewInformationComponent implements OnInit {
         })
         .catch(async (error) => {
           await this.uiAlert.hideLoadingSpinner();
-          console.error('oops, something went wrong!', error);
         });
     }
 

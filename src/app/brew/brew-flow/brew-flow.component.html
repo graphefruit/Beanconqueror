@@ -35,8 +35,8 @@
     <div *ngIf="isDetail===false" id="informationContainer">
       <ion-grid class="ion-text-center ion-no-padding brew-information-panel">
         <ion-row style="padding-bottom:5px;">
-          <ion-col
-            size="{{(pressureDeviceConnected() && temperatureDeviceConnected())?2:3 || pressureDeviceConnected()?3:4 || temperatureDeviceConnected()?3:4}}"
+          <ion-col  *ngIf="smartScaleConnected()"
+            size="{{this.getGraphIonColSize()}}"
             style="padding-right:5px;">
             <ion-card class="flow-profile ion-text-center weight-card" style="height: 100%;">
               <ion-card-header>
@@ -47,8 +47,8 @@
               </ion-card-content>
             </ion-card>
           </ion-col>
-          <ion-col
-            size="{{(pressureDeviceConnected() && temperatureDeviceConnected())?2:3 || pressureDeviceConnected()?3:4 || temperatureDeviceConnected()?3:4}}"
+          <ion-col  *ngIf="smartScaleConnected()"
+            size="{{this.getGraphIonColSize()}}"
             style="padding-right:5px;">
             <ion-card class="flow-profile ion-text-center flow-avg-card" style="height: 100%;">
               <ion-card-header>
@@ -59,8 +59,8 @@
               </ion-card-content>
             </ion-card>
           </ion-col>
-          <ion-col
-            size="{{(pressureDeviceConnected() && temperatureDeviceConnected())?2:3 || pressureDeviceConnected()?3:4 || temperatureDeviceConnected()?3:4}}"
+          <ion-col  *ngIf="smartScaleConnected()"
+            size="{{this.getGraphIonColSize()}}"
             style="padding-right:5px;">
             <ion-card class="flow-profile ion-text-center flow-card" style="height: 100%;">
               <ion-card-header>
@@ -72,7 +72,7 @@
             </ion-card>
           </ion-col>
           <ion-col (click)="resetPressure()" *ngIf="pressureDeviceConnected()"
-            size="{{(pressureDeviceConnected() && temperatureDeviceConnected())?2:3 || pressureDeviceConnected()?3:4 || temperatureDeviceConnected()?3:4}}"
+            size="{{this.getGraphIonColSize()}}"
             style="padding-right:5px;">
             <ion-card class="flow-profile ion-text-center pressure-card" style="height: 100%;">
               <ion-card-header>
@@ -84,7 +84,7 @@
             </ion-card>
           </ion-col>
           <ion-col *ngIf="temperatureDeviceConnected()"
-            size="{{(pressureDeviceConnected() && temperatureDeviceConnected())?2:3 || pressureDeviceConnected()?3:4 || temperatureDeviceConnected()?3:4}}"
+                   size="{{this.getGraphIonColSize()}}"
             style="padding-right:5px;">
             <ion-card class="flow-profile ion-text-center temperature-card" style="height: 100%;">
               <ion-card-header>
@@ -96,7 +96,7 @@
             </ion-card>
           </ion-col>
           <ion-col
-            size="{{(pressureDeviceConnected() && temperatureDeviceConnected())?2:3 || pressureDeviceConnected()?3:4 || temperatureDeviceConnected()?3:4}}"
+            size="{{this.getGraphIonColSize()}}"
             style="padding-right:5px;">
             <ion-card class="flow-profile ion-text-center timer-card" style="height: 100%;">
               <ion-card-header>

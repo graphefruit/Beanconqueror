@@ -199,11 +199,10 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     this.tareScale.emit();
   }
 
-  public pauseTimer(): void {
+  public pauseTimer(_type = 'click'): void {
     this.timer.runTimer = false;
     this.pausedTimer = moment(new Date());
-    this.timerPaused.emit();
-    this.timerPaused.emit();
+    this.timerPaused.emit(_type);
     this.changeEvent();
   }
 
