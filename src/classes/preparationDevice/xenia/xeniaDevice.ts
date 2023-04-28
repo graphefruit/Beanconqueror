@@ -3,17 +3,15 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, timeout } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { Preparation } from '../../preparation/preparation';
+import { IConfig } from '../../../interfaces/objectConfig/iObjectConfig';
+import { IXeniaParams } from '../../../interfaces/preparationDevices/iXeniaParams';
 declare var cordova;
 export class XeniaDevice extends PreparationDevice {
-  public scriptStartId: number = 0;
-  public scriptAtFirstDripId: number = 0;
-  public scriptAtWeightReachedId: number = 0;
-  public scriptAtWeightReachedNumber: number = 0;
-
   public scriptList: Array<{ INDEX: number; TITLE: string }> = [];
 
   constructor(protected httpClient: HttpClient, _preparation: Preparation) {
     super(httpClient, _preparation);
+
     if (typeof cordova !== 'undefined') {
     }
   }
@@ -140,4 +138,13 @@ export class XeniaDevice extends PreparationDevice {
     });
     return promise;
   }
+}
+
+export class XeniaParams implements IXeniaParams {
+  public scriptStartId: number = 0;
+  public scriptAtFirstDripId: number = 0;
+  public scriptAtWeightReachedId: number = 0;
+  public scriptAtWeightReachedNumber: number = 0;
+
+  constructor() {}
 }

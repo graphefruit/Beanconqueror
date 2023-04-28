@@ -25,6 +25,8 @@ import { UIWaterStorage } from '../../services/uiWaterStorage';
 import { IWater } from '../../interfaces/water/iWater';
 import { Water } from '../water/water';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { IPreparationDeviceBrew } from '../../interfaces/brew/iPreparationDeviceBrew';
+import { PreparationDeviceBrew } from './preparationDeviceBrew';
 
 export class Brew implements IBrew {
   // tslint:disable-next-line
@@ -97,6 +99,8 @@ export class Brew implements IBrew {
   // Inherits the saved json path
   public flow_profile: string;
 
+  public preparationDeviceBrew: IPreparationDeviceBrew;
+
   constructor() {
     this.grind_size = '';
     this.grind_weight = 0;
@@ -165,6 +169,8 @@ export class Brew implements IBrew {
     this.vessel_weight = 0;
 
     this.flow_profile = '';
+
+    this.preparationDeviceBrew = new PreparationDeviceBrew();
   }
 
   public initializeByObject(brewObj: IBrew): void {
