@@ -63,8 +63,13 @@ import { IBrewGraphs } from '../../../interfaces/brew/iBrewGraphs';
 import { BrewRatioCalculatorComponent } from '../../../app/brew/brew-ratio-calculator/brew-ratio-calculator.component';
 import { PreparationDevice } from '../../../classes/preparationDevice/preparationDevice';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
-import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
+import {
+  XeniaDevice,
+  XeniaParams,
+} from '../../../classes/preparationDevice/xenia/xeniaDevice';
 import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
+import { PreparationDeviceType } from '../../../classes/preparationDevice';
+import { IXeniaParams } from '../../../interfaces/preparationDevices/iXeniaParams';
 
 declare var cordova;
 declare var Plotly;
@@ -283,6 +288,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             }
           }, 350);
         }
+
+        this.instancePreparationDevice();
       }
 
       let isSomethingConnected: boolean = false;
@@ -301,8 +308,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       if (isSomethingConnected === true) {
         this.initializeFlowChart();
       }
-
-      this.instancePreparationDevice();
 
       this.bluetoothSubscription = this.bleManager
         .attachOnEvent()
@@ -497,16 +502,23 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         if (
           this.timer.isTimerRunning() &&
           this.preparationDeviceConnected() &&
-          this.preparationDevice.scriptAtWeightReachedNumber > 0
+          this.data.preparationDeviceBrew.params.scriptAtWeightReachedNumber > 0
         ) {
           const weight: number = this.uiHelper.toFixedIfNecessary(
             _val.actual,
             1
           );
-          if (weight >= this.preparationDevice.scriptAtWeightReachedNumber) {
-            if (this.preparationDevice.scriptAtWeightReachedId > 0) {
+          if (
+            weight >=
+            this.data.preparationDeviceBrew.params.scriptAtWeightReachedNumber
+          ) {
+            if (
+              this.data.preparationDeviceBrew.params.scriptAtWeightReachedId > 0
+            ) {
               this.preparationDevice
-                .startScript(this.preparationDevice.scriptAtWeightReachedId)
+                .startScript(
+                  this.data.preparationDeviceBrew.params.scriptAtWeightReachedId
+                )
                 .catch(() => {});
             } else {
               // Instant stop!
@@ -673,10 +685,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
     if (
       this.preparationDeviceConnected() &&
-      this.preparationDevice.scriptAtFirstDripId > -1
+      this.data.preparationDeviceBrew.params.scriptAtFirstDripId > -1
     ) {
       this.preparationDevice
-        .startScript(this.preparationDevice.scriptAtFirstDripId)
+        .startScript(this.data.preparationDeviceBrew.params.scriptAtFirstDripId)
         .catch(() => {});
     }
   }
@@ -914,9 +926,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
     }
     if (this.preparationDeviceConnected()) {
-      if (this.preparationDevice.scriptStartId > 0) {
+      if (this.data.preparationDeviceBrew.params.scriptStartId > 0) {
         this.preparationDevice
-          .startScript(this.preparationDevice.scriptStartId)
+          .startScript(this.data.preparationDeviceBrew.params.scriptStartId)
           .catch(() => {});
       }
     }
@@ -987,9 +999,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
     if (!this.smartScaleConnected() && this.preparationDeviceConnected()) {
       // If scale is not connected but the device, we can now choose that still the script is executed if existing.
-      if (this.preparationDevice.scriptAtFirstDripId > 0) {
+      if (this.data.preparationDeviceBrew.params.scriptAtFirstDripId > 0) {
         this.preparationDevice
-          .startScript(this.preparationDevice.scriptAtFirstDripId)
+          .startScript(
+            this.data.preparationDeviceBrew.params.scriptAtFirstDripId
+          )
           .catch(() => {});
       }
     }
@@ -1863,14 +1877,113 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private async instancePreparationDevice() {
+  private async instancePreparationDevice(_brew: Brew = null) {
     const connectedDevice: PreparationDevice =
       this.uiPreparationHelper.getConnectedDevice(this.data.getPreparation());
     if (connectedDevice) {
       this.preparationDevice = connectedDevice as XeniaDevice;
       try {
-        const xeniaScripts = await this.preparationDevice.getScripts();
-        this.preparationDevice.mapScriptsAndSaveTemp(xeniaScripts);
+        try {
+          await this.preparationDevice.deviceConnected().then(
+            () => {
+              // No popup needed
+            },
+            () => {
+              this.uiAlert.showMessage(
+                'PREPARATION_DEVICE.TYPE_XENIA.ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED',
+                'ERROR_OCCURED',
+                undefined,
+                true
+              );
+            }
+          );
+        } catch (ex) {}
+        try {
+          const xeniaScripts = await this.preparationDevice.getScripts();
+          this.preparationDevice.mapScriptsAndSaveTemp(xeniaScripts);
+        } catch (ex) {}
+        // We didn't set any data yet
+        if (
+          this.data.preparationDeviceBrew.type === PreparationDeviceType.NONE
+        ) {
+          if (!this.isEdit) {
+            // If a brew was passed, we came from loading, else we just swapped the preparation toolings
+            let wasSomethingSet: boolean = false;
+            if (_brew) {
+              if (
+                _brew.preparationDeviceBrew.type !== PreparationDeviceType.NONE
+              ) {
+                this.data.preparationDeviceBrew = this.uiHelper.cloneData(
+                  _brew.preparationDeviceBrew
+                );
+                wasSomethingSet = true;
+              }
+            }
+
+            if (wasSomethingSet === false) {
+              // maybe the passed brew, didn't had any params in it - why ever?!
+              // Is add
+              const brews: Array<Brew> = this.uiHelper
+                .cloneData(this.uiBrewStorage.getAllEntries())
+                .reverse();
+              if (brews.length > 0) {
+                const foundEntry = brews.find(
+                  (b) =>
+                    b.preparationDeviceBrew.type !== PreparationDeviceType.NONE
+                );
+                this.data.preparationDeviceBrew = this.uiHelper.cloneData(
+                  foundEntry.preparationDeviceBrew
+                );
+                wasSomethingSet = true;
+              }
+            }
+
+            if (wasSomethingSet) {
+              //Check if all scripts exists
+              let isAScriptMissing: boolean = false;
+              const xeniaParams: XeniaParams = this.data.preparationDeviceBrew
+                .params as XeniaParams;
+              if (
+                xeniaParams.scriptStartId > 2 &&
+                this.preparationDevice.scriptList.findIndex(
+                  (e) => e.INDEX === xeniaParams.scriptStartId
+                ) === -1
+              ) {
+                // Script not found.
+                this.data.preparationDeviceBrew.params.scriptStartId = 0;
+                isAScriptMissing = true;
+              }
+              if (
+                xeniaParams.scriptAtFirstDripId > 2 &&
+                this.preparationDevice.scriptList.findIndex(
+                  (e) => e.INDEX === xeniaParams.scriptAtFirstDripId
+                ) === -1
+              ) {
+                // Script not found.
+                this.data.preparationDeviceBrew.params.scriptAtFirstDripId = 0;
+                isAScriptMissing = true;
+              }
+              if (
+                xeniaParams.scriptAtWeightReachedId > 2 &&
+                this.preparationDevice.scriptList.findIndex(
+                  (e) => e.INDEX === xeniaParams.scriptAtWeightReachedId
+                ) === -1
+              ) {
+                // Script not found.
+                this.data.preparationDeviceBrew.params.scriptAtWeightReachedId = 0;
+                isAScriptMissing = true;
+              }
+              if (!isAScriptMissing) {
+                this.uiAlert.showMessage(
+                  'PREPARATION_DEVICE.TYPE_XENIA.ERROR_NOT_ALL_SCRIPTS_FOUND',
+                  'CARE',
+                  undefined,
+                  true
+                );
+              }
+            }
+          }
+        }
       } catch (ex) {}
     } else {
       this.preparationDevice = undefined;
@@ -3045,5 +3158,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
 
     this.data.flow_profile = '';
+
+    this.instancePreparationDevice(brew);
   }
 }

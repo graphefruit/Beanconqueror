@@ -30,6 +30,9 @@ import { UIAnalytics } from '../../../services/uiAnalytics';
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
 import { BluetoothScale, SCALE_TIMER_COMMAND } from '../../../classes/devices';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { PreparationDeviceType } from '../../../classes/preparationDevice';
+import { UIHelper } from '../../../services/uiHelper';
+
 declare var Plotly;
 declare var window;
 @Component({
@@ -71,7 +74,8 @@ export class BrewAddComponent implements OnInit {
     private readonly uiAlert: UIAlert,
     private readonly brewTracking: BrewTrackingService,
     private readonly uiAnalytics: UIAnalytics,
-    private readonly bleManager: CoffeeBluetoothDevicesService
+    private readonly bleManager: CoffeeBluetoothDevicesService,
+    private readonly uiHelper: UIHelper
   ) {
     // Initialize to standard in drop down
 

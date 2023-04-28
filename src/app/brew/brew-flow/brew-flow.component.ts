@@ -278,9 +278,9 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
       this.brewComponent.preparationDeviceConnected()
     ) {
       // If scale is not connected but the device, we can now choose that still the script is executed if existing.
-      if (this.brewComponent.preparationDevice.scriptAtFirstDripId > 0) {
+      if (this.brew.preparationDeviceBrew.params.scriptAtFirstDripId > 0) {
         this.brewComponent.preparationDevice.startScript(
-          this.brewComponent.preparationDevice.scriptAtFirstDripId
+          this.brew.preparationDeviceBrew.params.scriptAtFirstDripId
         );
       }
     }

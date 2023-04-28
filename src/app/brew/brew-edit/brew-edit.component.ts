@@ -17,6 +17,7 @@ import { Settings } from '../../../classes/settings/settings';
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
 import { BluetoothScale, SCALE_TIMER_COMMAND } from '../../../classes/devices';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { PreparationDeviceType } from '../../../classes/preparationDevice';
 declare var Plotly;
 declare var window;
 @Component({
@@ -115,6 +116,7 @@ export class BrewEditComponent implements OnInit {
       const savedPath = this.brewBrewing.saveFlowProfile(this.data.config.uuid);
       this.data.flow_profile = savedPath;
     }
+
     await this.uiBrewStorage.update(this.data);
 
     this.brewTracking.trackBrew(this.data);
