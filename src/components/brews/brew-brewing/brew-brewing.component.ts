@@ -1881,23 +1881,30 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     const connectedDevice: PreparationDevice =
       this.uiPreparationHelper.getConnectedDevice(this.data.getPreparation());
     if (connectedDevice) {
+      let preparationDeviceNotConnected: boolean = false;
+      try {
+        await connectedDevice.deviceConnected().then(
+          () => {
+            // No popup needed
+          },
+          () => {
+            preparationDeviceNotConnected = true;
+            this.uiAlert.showMessage(
+              'PREPARATION_DEVICE.TYPE_XENIA.ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED',
+              'ERROR_OCCURED',
+              undefined,
+              true
+            );
+          }
+        );
+        if (preparationDeviceNotConnected) {
+          this.preparationDevice = undefined;
+          return;
+        }
+      } catch (ex) {}
+
       this.preparationDevice = connectedDevice as XeniaDevice;
       try {
-        try {
-          await this.preparationDevice.deviceConnected().then(
-            () => {
-              // No popup needed
-            },
-            () => {
-              this.uiAlert.showMessage(
-                'PREPARATION_DEVICE.TYPE_XENIA.ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED',
-                'ERROR_OCCURED',
-                undefined,
-                true
-              );
-            }
-          );
-        } catch (ex) {}
         try {
           const xeniaScripts = await this.preparationDevice.getScripts();
           this.preparationDevice.mapScriptsAndSaveTemp(xeniaScripts);
