@@ -67,6 +67,16 @@ export class Preparation implements IPreparation {
       this.default_last_coffee_parameters,
       preparationObj.default_last_coffee_parameters
     );
+
+    // Maybe the connectedPreparationDevice is not existing as parameter, so we cant assign it.
+    if ('connectedPreparationDevice' in preparationObj) {
+      Object.assign(
+        this.connectedPreparationDevice,
+        preparationObj.connectedPreparationDevice
+      );
+    } else {
+      this.connectedPreparationDevice = new ConnectedPreparationDevice();
+    }
   }
 
   public getPresetStyleType() {
