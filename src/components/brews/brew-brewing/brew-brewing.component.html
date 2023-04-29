@@ -208,7 +208,7 @@
   </ion-item>
   <ion-item lines="inset">
     <ion-label position="stacked">{{"PREPARATION_DEVICE.TYPE_XENIA.PRESS_START_SCRIPT" | translate}}</ion-label>
-    <ion-select [(ngModel)]="data.preparationDeviceBrew?.params.scriptStartId"
+    <ion-select [(ngModel)]="data.preparationDeviceBrew?.params.scriptStartId" (ionChange)='checkXeniaScripts()'
       placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
       <ion-select-option [value]="0">
         {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_0" | translate}}

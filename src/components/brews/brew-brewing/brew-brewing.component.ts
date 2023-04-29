@@ -985,6 +985,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.timer.startTimer();
   }
 
+  public checkXeniaScripts() {
+    setTimeout(() => {
+      if (this.data.preparationDeviceBrew.params.scriptStartId === 0) {
+        this.data.preparationDeviceBrew.params.scriptAtFirstDripId = 0;
+        this.data.preparationDeviceBrew.params.scriptAtWeightReachedId = 0;
+      }
+    }, 50);
+  }
   public coffeeFirstDripTimeChanged(_event): void {
     if (this.brewFirstDripTime) {
       this.data.coffee_first_drip_time = this.brewFirstDripTime.getSeconds();
