@@ -208,7 +208,7 @@
   </ion-item>
   <ion-item lines="inset">
     <ion-label position="stacked">{{"PREPARATION_DEVICE.TYPE_XENIA.PRESS_START_SCRIPT" | translate}}</ion-label>
-    <ion-select [(ngModel)]="data.preparationDeviceBrew.params.scriptStartId"
+    <ion-select [(ngModel)]="data.preparationDeviceBrew?.params.scriptStartId"
       placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
       <ion-select-option [value]="0">
         {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_0" | translate}}
@@ -225,11 +225,11 @@
     </ion-select>
   </ion-item>
   <ion-item lines="inset"
-    [disabled]="!(data.preparationDeviceBrew.params.scriptStartId > 0 && (uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_first_drip_time,
+    [disabled]="!(data.preparationDeviceBrew?.params.scriptStartId > 0 && (uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_first_drip_time,
                       data.getPreparation().manage_parameters.coffee_first_drip_time,
                       data.getPreparation().use_custom_parameters) && getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO))">
     <ion-label position="stacked">{{"PREPARATION_DEVICE.TYPE_XENIA.FIRST_DRIP_SCRIPT" | translate}}</ion-label>
-    <ion-select [(ngModel)]="data.preparationDeviceBrew.params.scriptAtFirstDripId"
+    <ion-select [(ngModel)]="data.preparationDeviceBrew?.params.scriptAtFirstDripId"
       placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
       <ion-select-option [value]="0">
         {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_0" | translate}}
@@ -245,14 +245,14 @@
       </ion-select-option>
     </ion-select>
   </ion-item>
-  <ion-item [disabled]="!(data.preparationDeviceBrew.params.scriptStartId > 0 && smartScaleConnected())" lines="none">
+  <ion-item [disabled]="!(data.preparationDeviceBrew?.params.scriptStartId > 0 && smartScaleConnected())" lines="none">
     <ion-label position="stacked">{{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_AT_WEIGHT" | translate}}</ion-label>
-    <ion-input [(ngModel)]="data.preparationDeviceBrew.params.scriptAtWeightReachedNumber" inputmode="decimal" prevent-characters
+    <ion-input [(ngModel)]="data.preparationDeviceBrew?.params.scriptAtWeightReachedNumber" inputmode="decimal" prevent-characters
       remove-empty-number tabIndex="1" type="text"></ion-input>
   </ion-item>
-  <ion-item [disabled]="!(data.preparationDeviceBrew.params.scriptStartId > 0 && smartScaleConnected() && data.preparationDeviceBrew.params.scriptAtWeightReachedNumber>0)" lines="inset">
+  <ion-item [disabled]="!(data.preparationDeviceBrew?.params.scriptStartId > 0 && smartScaleConnected() && data.preparationDeviceBrew?.params.scriptAtWeightReachedNumber>0)" lines="inset">
     <ion-label position="stacked">{{"PREPARATION_DEVICE.TYPE_XENIA.CHOOSE_SCRIPT_AT_WEIGHT" | translate}}</ion-label>
-    <ion-select [(ngModel)]="data.preparationDeviceBrew.params.scriptAtWeightReachedId"
+    <ion-select [(ngModel)]="data.preparationDeviceBrew?.params.scriptAtWeightReachedId"
       placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
       <ion-select-option [value]="0">
         {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_STOP" | translate}}

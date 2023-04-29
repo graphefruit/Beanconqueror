@@ -69,7 +69,6 @@ import {
 } from '../../../classes/preparationDevice/xenia/xeniaDevice';
 import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
-import { IXeniaParams } from '../../../interfaces/preparationDevices/iXeniaParams';
 
 declare var cordova;
 declare var Plotly;
@@ -1199,7 +1198,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public preparationDeviceConnected(): boolean {
-    if (this.preparationDevice) {
+    if (
+      this.preparationDevice &&
+      this.data.preparationDeviceBrew.type !== PreparationDeviceType.NONE
+    ) {
       return true;
     }
     return false;
@@ -1883,6 +1885,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (connectedDevice) {
       let preparationDeviceNotConnected: boolean = false;
       try {
+        await this.uiAlert.showLoadingSpinner(
+          'PREPARATION_DEVICE.TYPE_XENIA.CHECKING_CONNECTION_TO_PORTAFILTER'
+        );
         await connectedDevice.deviceConnected().then(
           () => {
             // No popup needed
@@ -1898,12 +1903,21 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           }
         );
         if (preparationDeviceNotConnected) {
+          await this.uiAlert.hideLoadingSpinner();
           this.preparationDevice = undefined;
           return;
         }
       } catch (ex) {}
 
+      if (this.timer.isTimerRunning()) {
+        //If timer is running, we need to stop, else scripts would get execute which would get realy bad in the end :O
+        this.timer.pauseTimer();
+      }
       this.preparationDevice = connectedDevice as XeniaDevice;
+      await this.uiAlert.setLoadingSpinnerMessage(
+        'PREPARATION_DEVICE.TYPE_XENIA.GRABING_SCRIPTS',
+        true
+      );
       try {
         try {
           const xeniaScripts = await this.preparationDevice.getScripts();
@@ -1938,14 +1952,23 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
                   (b) =>
                     b.preparationDeviceBrew.type !== PreparationDeviceType.NONE
                 );
-                this.data.preparationDeviceBrew = this.uiHelper.cloneData(
-                  foundEntry.preparationDeviceBrew
-                );
-                wasSomethingSet = true;
+                if (foundEntry) {
+                  this.data.preparationDeviceBrew = this.uiHelper.cloneData(
+                    foundEntry.preparationDeviceBrew
+                  );
+                  wasSomethingSet = true;
+                }
               }
             }
 
             if (wasSomethingSet) {
+              if (
+                this.data.preparationDeviceBrew.params === undefined ||
+                this.data.preparationDeviceBrew.params === null
+              ) {
+                //Something completly broke. reset.
+                this.data.preparationDeviceBrew.params = new XeniaParams();
+              }
               //Check if all scripts exists
               let isAScriptMissing: boolean = false;
               const xeniaParams: XeniaParams = this.data.preparationDeviceBrew
@@ -1980,7 +2003,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
                 this.data.preparationDeviceBrew.params.scriptAtWeightReachedId = 0;
                 isAScriptMissing = true;
               }
-              if (!isAScriptMissing) {
+              if (isAScriptMissing) {
                 this.uiAlert.showMessage(
                   'PREPARATION_DEVICE.TYPE_XENIA.ERROR_NOT_ALL_SCRIPTS_FOUND',
                   'CARE',
@@ -1988,10 +2011,17 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
                   true
                 );
               }
+            } else {
+              this.data.preparationDeviceBrew.type =
+                PreparationDeviceType.XENIA;
+              this.data.preparationDeviceBrew.params = new XeniaParams();
+              // Atleast set xenia, reset is not needed
             }
           }
         }
       } catch (ex) {}
+
+      await this.uiAlert.hideLoadingSpinner();
     } else {
       this.preparationDevice = undefined;
     }

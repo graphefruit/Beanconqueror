@@ -1392,7 +1392,9 @@
       "SCRIPT_LIST_GENERAL_STOP": "Bezug stoppen",
       "CHOOSE_SCRIPT_AT_WEIGHT": "Script auswählen für Gewichtserreichung",
       "ERROR_NOT_ALL_SCRIPTS_FOUND":"Ein oder mehrere Xenia-Scripte konnten nicht mehr gefunden werden, diese wurden auf Standard zurückgesetzt",
-      "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "Die Verbindung zur Xenia-Siebträgermaschine konnte nicht hergestellt werden, bitte überprüfe ob du im richtigen Netz (WLAN) unterwegs bist, ob die Verbindung richtig hinterlegt wurde, oder ob andere Probleme vorhanden sind"
+      "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "Die Verbindung zur Xenia-Siebträgermaschine konnte nicht hergestellt werden, bitte überprüfe ob du im richtigen Netz (WLAN) unterwegs bist, ob die Verbindung richtig hinterlegt wurde, oder ob andere Probleme vorhanden sind",
+      "CHECKING_CONNECTION_TO_PORTAFILTER": "Verbindung zur Xenia wird überprüft",
+      "GRABING_SCRIPTS": "Scripte werden von der Xenia geholt"
     }
   },
   "DEVICE_CONNECTION": "Geräteverbindung",
