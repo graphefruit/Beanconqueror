@@ -288,7 +288,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           }, 350);
         }
 
-        this.instancePreparationDevice();
+        this.instancePreparationDevice(this.data);
       }
 
       let isSomethingConnected: boolean = false;
@@ -2381,6 +2381,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   // tslint:disable-next-line
   private __loadLastBrew(): void {
+    let wasAnythingLoaded: boolean = false;
     if (
       this.settings.manage_parameters.set_last_coffee_brew ||
       this.data.getPreparation().manage_parameters.set_last_coffee_brew
@@ -2388,9 +2389,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
       if (brews.length > 0) {
         const lastBrew: Brew = brews[brews.length - 1];
-
         this.__loadBrew(lastBrew, false);
+        wasAnythingLoaded = true;
       }
+    }
+    if (!wasAnythingLoaded) {
+      //If we didn't load any brew, we didn't fire instancePreparationDevice with a brew, so we need to fire it here in the end at all.
+      this.instancePreparationDevice();
     }
   }
 
