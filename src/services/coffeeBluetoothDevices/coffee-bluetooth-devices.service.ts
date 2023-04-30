@@ -791,6 +791,7 @@ export class CoffeeBluetoothDevicesService {
     errorCallback: any = () => {}
   ) {
     if (_retryScanForIOS) {
+      this.logger.log('AutoConnectScale - Wait for iOS');
       // iOS needs to know the scale, before auto connect can be done
       await this.findDeviceWithDirectId(deviceId);
     }
@@ -824,6 +825,7 @@ export class CoffeeBluetoothDevicesService {
   ) {
     if (_retryScanForIOS) {
       // iOS needs to know the scale, before auto connect can be done
+      this.logger.log('AutoConnectPressureDevice - Wait for iOS');
       await this.findDeviceWithDirectId(deviceId);
     }
 
@@ -860,6 +862,7 @@ export class CoffeeBluetoothDevicesService {
   ) {
     if (_retryScanForIOS) {
       // iOS needs to know the scale, before auto connect can be done
+      this.logger.log('AutoConnectTemperatureDevice - Wait for iOS');
       await this.findDeviceWithDirectId(deviceId);
     }
 
