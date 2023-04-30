@@ -268,7 +268,8 @@ export class CoffeeBluetoothDevicesService {
   }
 
   public async findDeviceWithDirectId(_id): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
+    return await new Promise((resolve) => {
+      let counter: number = 1;
       let timeoutVar: any = null;
       const stopScanningAndResolve = async (_found: boolean) => {
         resolve(_found);
@@ -278,37 +279,66 @@ export class CoffeeBluetoothDevicesService {
           // Grab error.
         }
       };
-
-      ble.startScanWithOptions(
-        [],
-        { reportDuplicates: true },
-        async (searchedDevice: any) => {
+      const iOSScanInterval = setInterval(async () => {
+        try {
           this.logger.log(
-            'findDeviceWithDirectId devices found ' +
-              JSON.stringify(searchedDevice)
+            '__iOSAccessBleStackAndAutoConnect - Try to get bluetooth state'
           );
-          if (
-            searchedDevice.id &&
-            searchedDevice.id.toLowerCase() === _id.toLowerCase()
-          ) {
-            this.logger.log(
-              'findDeviceWithDirectId - we found the exact searched device  ' +
-                JSON.stringify(searchedDevice)
+          //We need to check iOS if bluetooth enabled, else devices would not get connected.
+          const enabled: boolean = await this.isBleEnabled();
+          if (enabled === true) {
+            clearInterval(iOSScanInterval);
+
+            ble.startScanWithOptions(
+              [],
+              { reportDuplicates: true },
+              async (searchedDevice: any) => {
+                this.logger.log(
+                  'findDeviceWithDirectId devices found ' +
+                    JSON.stringify(searchedDevice)
+                );
+                if (
+                  searchedDevice.id &&
+                  searchedDevice.id.toLowerCase() === _id.toLowerCase()
+                ) {
+                  this.logger.log(
+                    'findDeviceWithDirectId - we found the exact searched device  ' +
+                      JSON.stringify(searchedDevice)
+                  );
+                  clearTimeout(timeoutVar);
+                  timeoutVar = null;
+                  stopScanningAndResolve(true);
+                }
+              },
+              () => {
+                clearTimeout(timeoutVar);
+                timeoutVar = null;
+                resolve(false);
+              }
             );
-            clearTimeout(timeoutVar);
-            timeoutVar = null;
-            stopScanningAndResolve(true);
+            timeoutVar = setTimeout(async () => {
+              stopScanningAndResolve(false);
+            }, 60000);
+          } else {
+            this.logger.log(
+              'findDeviceWithDirectId - Bluetooth not enabled, try again'
+            );
           }
-        },
-        () => {
-          clearTimeout(timeoutVar);
-          timeoutVar = null;
+        } catch (ex) {
+          this.logger.log(
+            'findDeviceWithDirectId - Bluetooth error occured ' +
+              JSON.stringify(ex)
+          );
+        }
+        counter++;
+        if (counter > 10) {
+          this.logger.log(
+            '__iOSAccessBleStackAndAutoConnect - iOS - Stop after 10 tries'
+          );
+          clearInterval(iOSScanInterval);
           resolve(false);
         }
-      );
-      timeoutVar = setTimeout(async () => {
-        stopScanningAndResolve(false);
-      }, 60000);
+      }, 1000);
     });
   }
 
@@ -777,7 +807,7 @@ export class CoffeeBluetoothDevicesService {
         }, 5000);
       },
       () => {
-        //Fail
+        // Fail
         errorCallback();
       }
     );
