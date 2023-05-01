@@ -50,6 +50,8 @@ export class CoffeeBluetoothDevicesService {
   private eventSubject = new Subject<CoffeeBluetoothServiceEvent>();
   private androidPermissions: any = null;
 
+  private scanBluetoothTimeout: any = null;
+
   constructor() {
     this.logger = new Logger('CoffeeBluetoothDevices');
     this.failed = false;
@@ -165,26 +167,61 @@ export class CoffeeBluetoothDevicesService {
     });
   }
 
+  private clearScanAllBluetoothDevicesAndPassBackTimeout() {
+    if (this.scanBluetoothTimeout !== null) {
+      clearTimeout(this.scanBluetoothTimeout);
+      this.scanBluetoothTimeout = null;
+    }
+  }
+  public async scanAllBluetoothDevicesAndPassBack(
+    _foundDeviceFunction,
+    _finishedFunction
+  ) {
+    const devicesFound: Array<any> = [];
+    const stopScanningAndFinish = async () => {
+      this.logger.log('Error called or 60 seconds exceeded');
+      this.stopScanning();
+      if (_finishedFunction) {
+        _finishedFunction(devicesFound);
+      }
+    };
+
+    let searchOptions: any = {
+      reportDuplicates: true,
+    };
+    if (device !== null && device.platform === 'Android') {
+      searchOptions = {
+        reportDuplicates: true,
+        legacy: false,
+        matchMode: 'aggressive',
+        scanMode: 'lowLatency',
+      };
+    }
+
+    ble.startScanWithOptions(
+      [],
+      searchOptions,
+      async (scanDevice: any) => {
+        this.logger.log('Device found ' + JSON.stringify(scanDevice));
+        devicesFound.push(scanDevice);
+        if (_foundDeviceFunction) {
+          _foundDeviceFunction(scanDevice);
+        }
+      },
+      () => {
+        this.clearScanAllBluetoothDevicesAndPassBackTimeout();
+        stopScanningAndFinish();
+      }
+    );
+    this.scanBluetoothTimeout = setTimeout(async () => {
+      stopScanningAndFinish();
+    }, 60000);
+  }
   public async scanDevices(): Promise<Array<any>> {
     return new Promise<Array<any>>((resolve, reject) => {
-      const devices: Array<any> = [];
-
-      let timeoutVar: any = null;
-      const stopScanningAndResolve = async () => {
-        this.logger.log('Scales found ' + JSON.stringify(devices));
-        resolve(devices);
-        try {
-          this.stopScanning();
-        } catch (ex) {
-          // Grab error.
-        }
-      };
-
-      ble.startScanWithOptions(
-        [],
-        { reportDuplicates: true },
-        async (scanDevice: any) => {
-          this.logger.log('Device found ' + JSON.stringify(scanDevice));
+      let promiseResolved: boolean = false;
+      this.scanAllBluetoothDevicesAndPassBack(
+        (scanDevice) => {
           if (
             DecentScale.test(scanDevice) ||
             LunarScale.test(scanDevice) ||
@@ -194,131 +231,180 @@ export class CoffeeBluetoothDevicesService {
             SkaleScale.test(scanDevice)
           ) {
             // We found all needed devices.
-            devices.push(scanDevice);
-
+            promiseResolved = true;
+            this.clearScanAllBluetoothDevicesAndPassBackTimeout();
+            this.stopScanning();
+            const devices = [scanDevice];
+            resolve(devices);
             this.logger.log(
               'Supported Scale found ' + JSON.stringify(scanDevice)
             );
-            clearTimeout(timeoutVar);
-            timeoutVar = null;
-            stopScanningAndResolve();
           }
         },
-        () => {
-          clearTimeout(timeoutVar);
-          timeoutVar = null;
-          resolve(devices);
+        (_devices: Array<any>) => {
+          if (promiseResolved === false) {
+            // If we didn't resolve, we didn't find a matching one.
+            resolve([]);
+          }
         }
       );
-      timeoutVar = setTimeout(async () => {
-        stopScanningAndResolve();
-      }, 60000);
     });
   }
 
   public async scanPressureDevices(): Promise<Array<any>> {
     return new Promise<Array<any>>((resolve, reject) => {
-      const devices: Array<any> = [];
-
-      let timeoutVar: any = null;
-      const stopScanningAndResolve = async () => {
-        this.logger.log('Pressure devices found ' + JSON.stringify(devices));
-        resolve(devices);
-        try {
-          this.stopScanning();
-        } catch (ex) {
-          // Grab error.
-        }
-      };
-
-      ble.startScanWithOptions(
-        [],
-        { reportDuplicates: true },
-        async (devicePressure: any) => {
-          this.logger.log(
-            'Pressure devices found ' + JSON.stringify(devicePressure)
-          );
+      let promiseResolved: boolean = false;
+      this.scanAllBluetoothDevicesAndPassBack(
+        (scanDevice) => {
           if (
-            PrsPressure.test(devicePressure) ||
-            PopsiclePressure.test(devicePressure) ||
-            TransducerDirectPressure.test(devicePressure)
+            PrsPressure.test(scanDevice) ||
+            PopsiclePressure.test(scanDevice) ||
+            TransducerDirectPressure.test(scanDevice)
           ) {
             // We found all needed devices.
-            devices.push(devicePressure);
-
+            promiseResolved = true;
+            this.clearScanAllBluetoothDevicesAndPassBackTimeout();
+            this.stopScanning();
+            const devices = [scanDevice];
+            resolve(devices);
             this.logger.log(
-              'Supported pressure devices found ' +
-                JSON.stringify(devicePressure)
+              'Supported Presure found ' + JSON.stringify(scanDevice)
             );
-            clearTimeout(timeoutVar);
-            timeoutVar = null;
-            stopScanningAndResolve();
           }
         },
-        () => {
-          clearTimeout(timeoutVar);
-          timeoutVar = null;
-          resolve(devices);
+        (_devices: Array<any>) => {
+          if (promiseResolved === false) {
+            // If we didn't resolve, we didn't find a matching one.
+            resolve([]);
+          }
         }
       );
-      timeoutVar = setTimeout(async () => {
-        stopScanningAndResolve();
-      }, 60000);
     });
   }
 
+  public async findDeviceWithDirectIds(_ids: Array<any>): Promise<boolean> {
+    return await new Promise((resolve) => {
+      let counter: number = 1;
+
+      if (_ids && _ids.length <= 0) {
+        resolve(false);
+      }
+
+      const iOSScanInterval = setInterval(async () => {
+        try {
+          this.logger.log(
+            'findDeviceWithDirectIds - Try to get bluetooth state'
+          );
+          // We need to check iOS if bluetooth enabled, else devices would not get connected.
+          const enabled: boolean = await this.isBleEnabled();
+          if (enabled === true) {
+            clearInterval(iOSScanInterval);
+
+            const checkIds = {};
+            for (const deviceId of _ids) {
+              checkIds[deviceId.toLowerCase()] = false;
+            }
+
+            let promiseResolved: boolean = false;
+            this.scanAllBluetoothDevicesAndPassBack(
+              (scanDevice) => {
+                if (
+                  scanDevice.id &&
+                  checkIds[scanDevice.id.toLowerCase()] === false
+                ) {
+                  checkIds[scanDevice.id.toLowerCase()] = true;
+                  this.logger.log(
+                    'findDeviceWithDirectIds - we found the exact searched device  ' +
+                      JSON.stringify(scanDevice)
+                  );
+
+                  let areAllDevicesFound: boolean = true;
+                  for (const deviceKey in checkIds) {
+                    if (checkIds[deviceKey] === false) {
+                      areAllDevicesFound = false;
+                      return;
+                    }
+                  }
+
+                  this.logger.log(
+                    'findDeviceWithDirectIds - we found ALL to searching devices '
+                  );
+
+                  // We found all needed devices.
+                  promiseResolved = true;
+                  this.clearScanAllBluetoothDevicesAndPassBackTimeout();
+                  this.stopScanning();
+                  resolve(true);
+                }
+              },
+              (_devices: Array<any>) => {
+                if (promiseResolved === false) {
+                  // If we didn't resolve, we didn't find a matching one.
+                  resolve(false);
+                }
+              }
+            );
+          } else {
+            this.logger.log(
+              'findDeviceWithDirectId - Bluetooth not enabled, try again'
+            );
+          }
+        } catch (ex) {
+          this.logger.log(
+            'findDeviceWithDirectId - Bluetooth error occured ' +
+              JSON.stringify(ex)
+          );
+        }
+        counter++;
+        if (counter > 10) {
+          this.logger.log(
+            '__iOSAccessBleStackAndAutoConnect - iOS - Stop after 10 tries'
+          );
+          clearInterval(iOSScanInterval);
+          resolve(false);
+        }
+      }, 1000);
+    });
+  }
   public async findDeviceWithDirectId(_id): Promise<boolean> {
     return await new Promise((resolve) => {
       let counter: number = 1;
-      let timeoutVar: any = null;
-      const stopScanningAndResolve = async (_found: boolean) => {
-        resolve(_found);
-        try {
-          this.stopScanning();
-        } catch (ex) {
-          // Grab error.
-        }
-      };
+
       const iOSScanInterval = setInterval(async () => {
         try {
           this.logger.log(
             '__iOSAccessBleStackAndAutoConnect - Try to get bluetooth state'
           );
-          //We need to check iOS if bluetooth enabled, else devices would not get connected.
+          // We need to check iOS if bluetooth enabled, else devices would not get connected.
           const enabled: boolean = await this.isBleEnabled();
           if (enabled === true) {
             clearInterval(iOSScanInterval);
 
-            ble.startScanWithOptions(
-              [],
-              { reportDuplicates: true },
-              async (searchedDevice: any) => {
-                this.logger.log(
-                  'findDeviceWithDirectId devices found ' +
-                    JSON.stringify(searchedDevice)
-                );
+            let promiseResolved: boolean = false;
+            this.scanAllBluetoothDevicesAndPassBack(
+              (scanDevice) => {
                 if (
-                  searchedDevice.id &&
-                  searchedDevice.id.toLowerCase() === _id.toLowerCase()
+                  scanDevice.id &&
+                  scanDevice.id.toLowerCase() === _id.toLowerCase()
                 ) {
                   this.logger.log(
                     'findDeviceWithDirectId - we found the exact searched device  ' +
-                      JSON.stringify(searchedDevice)
+                      JSON.stringify(scanDevice)
                   );
-                  clearTimeout(timeoutVar);
-                  timeoutVar = null;
-                  stopScanningAndResolve(true);
+                  // We found all needed devices.
+                  promiseResolved = true;
+                  this.clearScanAllBluetoothDevicesAndPassBackTimeout();
+                  this.stopScanning();
+                  resolve(true);
                 }
               },
-              () => {
-                clearTimeout(timeoutVar);
-                timeoutVar = null;
-                resolve(false);
+              (_devices: Array<any>) => {
+                if (promiseResolved === false) {
+                  // If we didn't resolve, we didn't find a matching one.
+                  resolve(false);
+                }
               }
             );
-            timeoutVar = setTimeout(async () => {
-              stopScanningAndResolve(false);
-            }, 60000);
           } else {
             this.logger.log(
               'findDeviceWithDirectId - Bluetooth not enabled, try again'
@@ -344,48 +430,28 @@ export class CoffeeBluetoothDevicesService {
 
   public async scanTemperatureDevices(): Promise<Array<any>> {
     return new Promise<Array<any>>((resolve, reject) => {
-      const devices: Array<any> = [];
-
-      let timeoutVar: any = null;
-      const stopScanningAndResolve = async () => {
-        this.logger.log('Temperature devices found ' + JSON.stringify(devices));
-        resolve(devices);
-        try {
-          this.stopScanning();
-        } catch (ex) {
-          // Grab error.
-        }
-      };
-
-      ble.startScanWithOptions(
-        [],
-        { reportDuplicates: true },
-        async (deviceTemperature: any) => {
-          this.logger.log(
-            'Temperature devices found ' + JSON.stringify(deviceTemperature)
-          );
-          if (ETITemperature.test(deviceTemperature)) {
+      let promiseResolved: boolean = false;
+      this.scanAllBluetoothDevicesAndPassBack(
+        (scanDevice) => {
+          if (ETITemperature.test(scanDevice)) {
             // We found all needed devices.
-            devices.push(deviceTemperature);
-
+            promiseResolved = true;
+            this.clearScanAllBluetoothDevicesAndPassBackTimeout();
+            this.stopScanning();
+            const devices = [scanDevice];
+            resolve(devices);
             this.logger.log(
-              'Supported temperature devices found ' +
-                JSON.stringify(deviceTemperature)
+              'Temperature devices found ' + JSON.stringify(scanDevice)
             );
-            clearTimeout(timeoutVar);
-            timeoutVar = null;
-            stopScanningAndResolve();
           }
         },
-        () => {
-          clearTimeout(timeoutVar);
-          timeoutVar = null;
-          resolve(devices);
+        (_devices: Array<any>) => {
+          if (promiseResolved === false) {
+            // If we didn't resolve, we didn't find a matching one.
+            resolve([]);
+          }
         }
       );
-      timeoutVar = setTimeout(async () => {
-        stopScanningAndResolve();
-      }, 60000);
     });
   }
 
@@ -393,21 +459,18 @@ export class CoffeeBluetoothDevicesService {
     deviceId: string,
     show_toast: boolean = true
   ): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-      ble.disconnect(
-        deviceId,
-        () => {
-          this.scale?.disconnectTriggered();
-          this.scale = null;
-          if (show_toast) {
-            // this.uiToast.showInfoToast('SCALE.DISCONNECTED_SUCCESSFULLY');
-          }
-          resolve(true);
-        },
-        () => {
-          resolve(false);
+    return new Promise<boolean>(async (resolve, reject) => {
+      try {
+        await ble.withPromises.disconnect(deviceId);
+        this.scale?.disconnectTriggered();
+        this.scale = null;
+        if (show_toast) {
+          // this.uiToast.showInfoToast('SCALE.DISCONNECTED_SUCCESSFULLY');
         }
-      );
+        resolve(true);
+      } catch (ex) {
+        resolve(false);
+      }
     });
   }
 
@@ -415,20 +478,17 @@ export class CoffeeBluetoothDevicesService {
     deviceId: string,
     show_toast: boolean = true
   ): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-      ble.disconnect(
-        deviceId,
-        () => {
-          this.pressureDevice = null;
-          if (show_toast) {
-            // this.uiToast.showInfoToast('SCALE.DISCONNECTED_SUCCESSFULLY');
-          }
-          resolve(true);
-        },
-        () => {
-          resolve(false);
+    return new Promise<boolean>(async (resolve, reject) => {
+      try {
+        await ble.withPromises.disconnect(deviceId);
+        this.pressureDevice = null;
+        if (show_toast) {
+          // this.uiToast.showInfoToast('SCALE.DISCONNECTED_SUCCESSFULLY');
         }
-      );
+        resolve(true);
+      } catch (ex) {
+        resolve(false);
+      }
     });
   }
 
@@ -436,33 +496,28 @@ export class CoffeeBluetoothDevicesService {
     deviceId: string,
     show_toast: boolean = true
   ): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-      ble.disconnect(
-        deviceId,
-        () => {
-          this.temperatureDevice = null;
-          if (show_toast) {
-            // this.uiToast.showInfoToast('SCALE.DISCONNECTED_SUCCESSFULLY');
-          }
-          resolve(true);
-        },
-        () => {
-          resolve(false);
+    return new Promise<boolean>(async (resolve, reject) => {
+      try {
+        await ble.withPromises.disconnect(deviceId);
+        this.temperatureDevice = null;
+        if (show_toast) {
+          // this.uiToast.showInfoToast('SCALE.DISCONNECTED_SUCCESSFULLY');
         }
-      );
+        resolve(true);
+      } catch (ex) {
+        resolve(false);
+      }
     });
   }
 
   public isBleEnabled(): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      ble.isEnabled(
-        () => {
-          resolve(true);
-        },
-        () => {
-          resolve(false);
-        }
-      );
+    return new Promise(async (resolve, reject) => {
+      try {
+        await ble.withPromises.isEnabled();
+        resolve(true);
+      } catch (ex) {
+        resolve(false);
+      }
     });
   }
 
@@ -729,88 +784,73 @@ export class CoffeeBluetoothDevicesService {
     );
   }
 
-  public reconnectScale(
+  public async reconnectScale(
     deviceType: ScaleType,
     deviceId: string,
     successCallback: any = () => {},
     errorCallback: any = () => {}
   ) {
-    ble.disconnect(
-      deviceId,
-      () => {
-        // Success
-        setTimeout(() => {
-          const isiOS = device !== null && device.platform === 'iOS';
-          this.autoConnectScale(
-            deviceType,
-            deviceId,
-            isiOS,
-            successCallback,
-            errorCallback
-          );
-        }, 5000);
-      },
-      () => {
-        //Fail
-        errorCallback();
-      }
-    );
+    try {
+      await ble.withPromises.disconnect(deviceId);
+      setTimeout(() => {
+        const isiOS = device !== null && device.platform === 'iOS';
+        this.autoConnectScale(
+          deviceType,
+          deviceId,
+          isiOS,
+          successCallback,
+          errorCallback
+        );
+      }, 5000);
+    } catch (ex) {
+      errorCallback();
+    }
   }
 
-  public reconnectPressureDevice(
+  public async reconnectPressureDevice(
     pressureType: PressureType,
     deviceId: string,
     successCallback: any = () => {},
     errorCallback: any = () => {}
   ) {
-    ble.disconnect(
-      deviceId,
-      () => {
-        // Success
-        setTimeout(() => {
-          const isiOS = device !== null && device.platform === 'iOS';
-          this.autoConnectPressureDevice(
-            pressureType,
-            deviceId,
-            isiOS,
-            successCallback,
-            errorCallback
-          );
-        }, 5000);
-      },
-      () => {
-        //Fail
-        errorCallback();
-      }
-    );
+    try {
+      await ble.withPromises.disconnect(deviceId);
+      setTimeout(() => {
+        const isiOS = device !== null && device.platform === 'iOS';
+        this.autoConnectPressureDevice(
+          pressureType,
+          deviceId,
+          isiOS,
+          successCallback,
+          errorCallback
+        );
+      }, 10000);
+    } catch (ex) {
+      errorCallback();
+    }
   }
 
-  public reconnectTemperatureDevice(
+  public async reconnectTemperatureDevice(
     temperatureType: TemperatureType,
     deviceId: string,
     successCallback: any = () => {},
     errorCallback: any = () => {}
   ) {
-    ble.disconnect(
-      deviceId,
-      () => {
-        // Success
-        setTimeout(() => {
-          const isiOS = device !== null && device.platform === 'iOS';
-          this.autoConnectTemperatureDevice(
-            temperatureType,
-            deviceId,
-            isiOS,
-            successCallback,
-            errorCallback
-          );
-        }, 5000);
-      },
-      () => {
-        // Fail
-        errorCallback();
-      }
-    );
+    try {
+      await ble.withPromises.disconnect(deviceId);
+      setTimeout(() => {
+        const isiOS = device !== null && device.platform === 'iOS';
+        this.autoConnectTemperatureDevice(
+          temperatureType,
+          deviceId,
+          isiOS,
+          successCallback,
+          errorCallback
+        );
+      }, 5000);
+    } catch (ex) {
+      errorCallback();
+    }
   }
 
   public async autoConnectScale(
@@ -923,15 +963,13 @@ export class CoffeeBluetoothDevicesService {
   }
 
   private stopScanning() {
-    return new Promise((resolve, reject) => {
-      return ble.stopScan(
-        () => {
-          resolve(undefined);
-        },
-        () => {
-          reject();
-        }
-      );
+    return new Promise(async (resolve, reject) => {
+      try {
+        await ble.withPromises.stopScan();
+        resolve(undefined);
+      } catch (ex) {
+        resolve(undefined);
+      }
     });
   }
 
