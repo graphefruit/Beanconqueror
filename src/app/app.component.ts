@@ -609,8 +609,12 @@ export class AppComponent implements AfterViewInit {
     await this.uiUpdate.checkUpdateScreen();
 
     // #281 - Connect smartscale before checking the startup view
-    setTimeout(() => {
+    setTimeout(async () => {
       // Just connect after 5 seconds, to get some time, and maybe handle all the connection errors
+
+      if (this.platform.is('ios')) {
+        await this.__checkIOSBluetoothDevices();
+      }
       this.__connectSmartScale();
       this.__connectPressureDevice();
       this.__connectTemperatureDevice();
@@ -678,6 +682,24 @@ export class AppComponent implements AfterViewInit {
       });
   }
 
+  private async __checkIOSBluetoothDevices() {
+    const settings = this.uiSettingsStorage.getSettings();
+    const scale_id: string = settings.scale_id;
+    const pressure_id: string = settings.pressure_id;
+    const temperature_id: string = settings.temperature_id;
+
+    const searchIds: Array<any> = [];
+    if (scale_id) {
+      searchIds.push(scale_id);
+    }
+    if (pressure_id) {
+      searchIds.push(pressure_id);
+    }
+    if (temperature_id) {
+      searchIds.push(temperature_id);
+    }
+    await this.bleManager.findDeviceWithDirectIds(searchIds);
+  }
   private __connectSmartScale() {
     const settings = this.uiSettingsStorage.getSettings();
     const scale_id: string = settings.scale_id;
@@ -693,7 +715,7 @@ export class AppComponent implements AfterViewInit {
       this.bleManager.autoConnectScale(
         scale_type,
         scale_id,
-        isIOS,
+        false,
         () => {
           if (isIOS) {
             this.bluetoothConnectionState.SCALE = true;
@@ -720,12 +742,13 @@ export class AppComponent implements AfterViewInit {
       // We don't need to search again
       isIOS = false;
     }
+
     this.uiLog.log(`Connect pressure device? ${pressure_id}`);
     if (pressure_id !== undefined && pressure_id !== '') {
       this.bleManager.autoConnectPressureDevice(
         pressure_type,
         pressure_id,
-        isIOS,
+        false,
         () => {
           if (isIOS) {
             this.bluetoothConnectionState.PRESSURE = true;
@@ -757,7 +780,7 @@ export class AppComponent implements AfterViewInit {
       this.bleManager.autoConnectTemperatureDevice(
         temperature_type,
         temperature_id,
-        isIOS,
+        false,
         () => {
           if (isIOS) {
             this.bluetoothConnectionState.TEMPERATURE = true;

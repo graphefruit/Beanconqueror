@@ -488,7 +488,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public preparationMethodFocused() {
-    // Needs to set set, because ion-change triggers on smartphones but not on websites, and therefore the value is overwritten when you use a brew template
+    // Needs to set , because ion-change triggers on smartphones but not on websites, and therefore the value is overwritten when you use a brew template
     this.preparationMethodHasBeenFocused = true;
   }
 
