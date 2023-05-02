@@ -26,7 +26,9 @@ export class PopsiclePressure extends PressureDevice {
 
   public connect() {
     this.attachNotification();
-    return this.updateZero().catch(() => {});
+    setTimeout(() => {
+      this.updateZero().catch(() => {});
+    }, 1000);
   }
 
   public updateZero(): Promise<void> {
