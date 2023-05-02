@@ -26,7 +26,10 @@ export class PrsPressure extends PressureDevice {
 
   public connect() {
     this.attachNotification();
-    return this.updateZero().catch(() => {});
+    //Wait after connection for updating to zero.
+    setTimeout(() => {
+      this.updateZero().catch(() => {});
+    }, 1000);
   }
 
   public updateZero(): Promise<void> {

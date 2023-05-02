@@ -24,10 +24,12 @@ export class TransducerDirectPressure extends PressureDevice {
     return adv && adv.length >= 2 && adv[0] === 0x0c && adv[1] === 0x01;
   }
 
-  public connect(): Promise<void> {
+  public connect() {
     this.attachNotification();
 
-    return this.updateZero().catch(() => {}); // ignore error
+    setTimeout(() => {
+      this.updateZero().catch(() => {});
+    }, 1000);
   }
 
   public async updateZero(): Promise<void> {

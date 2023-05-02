@@ -41,7 +41,7 @@ export abstract class PressureDevice {
     this.pressureParentLogger = new Logger();
   }
 
-  public abstract connect(): Promise<void>;
+  public abstract connect(): void;
   public abstract disconnect(): void;
   public abstract updateZero(): Promise<void>;
 

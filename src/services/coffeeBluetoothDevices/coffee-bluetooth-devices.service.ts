@@ -175,11 +175,14 @@ export class CoffeeBluetoothDevicesService {
   }
   public async scanAllBluetoothDevicesAndPassBack(
     _foundDeviceFunction,
-    _finishedFunction
+    _finishedFunction,
+    _timeout: number = 60000
   ) {
     const devicesFound: Array<any> = [];
     const stopScanningAndFinish = async () => {
-      this.logger.log('Error called or 60 seconds exceeded');
+      this.logger.log(
+        'Error called or timeout' + _timeout + ' milliseconds exceeded'
+      );
       this.stopScanning();
       if (_finishedFunction) {
         _finishedFunction(devicesFound);
@@ -214,8 +217,9 @@ export class CoffeeBluetoothDevicesService {
       }
     );
     this.scanBluetoothTimeout = setTimeout(async () => {
+      this.logger.log('scanAllBluetoothDevicesAndPassBack timeout triggered');
       stopScanningAndFinish();
-    }, 60000);
+    }, _timeout);
   }
   public async scanDevices(): Promise<Array<any>> {
     return new Promise<Array<any>>((resolve, reject) => {
@@ -282,7 +286,10 @@ export class CoffeeBluetoothDevicesService {
     });
   }
 
-  public async findDeviceWithDirectIds(_ids: Array<any>): Promise<boolean> {
+  public async findDeviceWithDirectIds(
+    _ids: Array<any>,
+    _timeout: number = 60000
+  ): Promise<boolean> {
     return await new Promise((resolve) => {
       let counter: number = 1;
 
@@ -366,7 +373,10 @@ export class CoffeeBluetoothDevicesService {
       }, 1000);
     });
   }
-  public async findDeviceWithDirectId(_id): Promise<boolean> {
+  public async findDeviceWithDirectId(
+    _id,
+    _timeout: number = 15000
+  ): Promise<boolean> {
     return await new Promise((resolve) => {
       let counter: number = 1;
 
@@ -793,15 +803,14 @@ export class CoffeeBluetoothDevicesService {
     try {
       await ble.withPromises.disconnect(deviceId);
       setTimeout(() => {
-        const isiOS = device !== null && device.platform === 'iOS';
         this.autoConnectScale(
           deviceType,
           deviceId,
-          isiOS,
+          true,
           successCallback,
           errorCallback
         );
-      }, 5000);
+      }, 2000);
     } catch (ex) {
       errorCallback();
     }
@@ -816,15 +825,14 @@ export class CoffeeBluetoothDevicesService {
     try {
       await ble.withPromises.disconnect(deviceId);
       setTimeout(() => {
-        const isiOS = device !== null && device.platform === 'iOS';
         this.autoConnectPressureDevice(
           pressureType,
           deviceId,
-          isiOS,
+          true,
           successCallback,
           errorCallback
         );
-      }, 10000);
+      }, 2000);
     } catch (ex) {
       errorCallback();
     }
@@ -839,15 +847,14 @@ export class CoffeeBluetoothDevicesService {
     try {
       await ble.withPromises.disconnect(deviceId);
       setTimeout(() => {
-        const isiOS = device !== null && device.platform === 'iOS';
         this.autoConnectTemperatureDevice(
           temperatureType,
           deviceId,
-          isiOS,
+          true,
           successCallback,
           errorCallback
         );
-      }, 5000);
+      }, 2000);
     } catch (ex) {
       errorCallback();
     }
@@ -856,14 +863,15 @@ export class CoffeeBluetoothDevicesService {
   public async autoConnectScale(
     deviceType: ScaleType,
     deviceId: string,
-    _retryScanForIOS: boolean = false,
+    _scanForDevices: boolean = false,
     successCallback: any = () => {},
-    errorCallback: any = () => {}
+    errorCallback: any = () => {},
+    _timeout: number = 60000
   ) {
-    if (_retryScanForIOS) {
-      this.logger.log('AutoConnectScale - Wait for iOS');
+    if (_scanForDevices) {
+      this.logger.log('AutoConnectScale - Scan for device');
       // iOS needs to know the scale, before auto connect can be done
-      await this.findDeviceWithDirectId(deviceId);
+      await this.findDeviceWithDirectId(deviceId, _timeout);
     }
 
     this.logger.log('AutoConnectScale - We can start or we waited for iOS');
@@ -889,14 +897,15 @@ export class CoffeeBluetoothDevicesService {
   public async autoConnectPressureDevice(
     pressureType: PressureType,
     deviceId: string,
-    _retryScanForIOS: boolean = false,
+    _scanForDevices: boolean = false,
     successCallback: any = () => {},
-    errorCallback: any = () => {}
+    errorCallback: any = () => {},
+    _timeout: number = 15000
   ) {
-    if (_retryScanForIOS) {
+    if (_scanForDevices) {
       // iOS needs to know the scale, before auto connect can be done
-      this.logger.log('AutoConnectPressureDevice - Wait for iOS');
-      await this.findDeviceWithDirectId(deviceId);
+      this.logger.log('AutoConnectPressureDevice - Scan for device');
+      await this.findDeviceWithDirectId(deviceId, _timeout);
     }
 
     this.logger.log(
@@ -926,14 +935,15 @@ export class CoffeeBluetoothDevicesService {
   public async autoConnectTemperatureDevice(
     temperatureType: TemperatureType,
     deviceId: string,
-    _retryScanForIOS: boolean = false,
+    _scanForDevices: boolean = false,
     successCallback: any = () => {},
-    errorCallback: any = () => {}
+    errorCallback: any = () => {},
+    _timeout: number = 15000
   ) {
-    if (_retryScanForIOS) {
+    if (_scanForDevices) {
       // iOS needs to know the scale, before auto connect can be done
-      this.logger.log('AutoConnectTemperatureDevice - Wait for iOS');
-      await this.findDeviceWithDirectId(deviceId);
+      this.logger.log('AutoConnectTemperatureDevice - Scan for device');
+      await this.findDeviceWithDirectId(deviceId, _timeout);
     }
 
     this.logger.log(

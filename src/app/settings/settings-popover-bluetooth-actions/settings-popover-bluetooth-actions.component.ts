@@ -123,7 +123,7 @@ export class SettingsPopoverBluetoothActionsComponent implements OnInit {
           subscrip = undefined;
         }
         this.uiAlert.hideLoadingSpinner();
-      }, 60000);
+      }, 15000);
     }
   }
   public async reconnectTemperatureDevice() {
@@ -172,7 +172,7 @@ export class SettingsPopoverBluetoothActionsComponent implements OnInit {
           subscrip = undefined;
         }
         this.uiAlert.hideLoadingSpinner();
-      }, 60000);
+      }, 15000);
     }
   }
 

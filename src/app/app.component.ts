@@ -611,14 +611,11 @@ export class AppComponent implements AfterViewInit {
     // #281 - Connect smartscale before checking the startup view
     setTimeout(async () => {
       // Just connect after 5 seconds, to get some time, and maybe handle all the connection errors
-
-      if (this.platform.is('ios')) {
-        await this.__checkIOSBluetoothDevices();
-      }
-      this.__connectSmartScale();
+      await this.__checkBluetoothDevices();
       this.__connectPressureDevice();
+      this.__connectSmartScale();
       this.__connectTemperatureDevice();
-    }, 5000);
+    }, 3000);
 
     const settings = this.uiSettingsStorage.getSettings();
     if (
@@ -682,15 +679,19 @@ export class AppComponent implements AfterViewInit {
       });
   }
 
-  private async __checkIOSBluetoothDevices() {
+  private async __checkBluetoothDevices() {
     const settings = this.uiSettingsStorage.getSettings();
-    const scale_id: string = settings.scale_id;
+
     const pressure_id: string = settings.pressure_id;
     const temperature_id: string = settings.temperature_id;
 
     const searchIds: Array<any> = [];
-    if (scale_id) {
-      searchIds.push(scale_id);
+    if (this.platform.is('ios')) {
+      //Don't search on Android for scale, because its working somehow, but we need to search for pressure id...
+      const scale_id: string = settings.scale_id;
+      if (scale_id) {
+        searchIds.push(scale_id);
+      }
     }
     if (pressure_id) {
       searchIds.push(pressure_id);
@@ -698,7 +699,7 @@ export class AppComponent implements AfterViewInit {
     if (temperature_id) {
       searchIds.push(temperature_id);
     }
-    await this.bleManager.findDeviceWithDirectIds(searchIds);
+    await this.bleManager.findDeviceWithDirectIds(searchIds, 15000);
   }
   private __connectSmartScale() {
     const settings = this.uiSettingsStorage.getSettings();
