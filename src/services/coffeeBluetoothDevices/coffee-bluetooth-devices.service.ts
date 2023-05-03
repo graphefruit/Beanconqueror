@@ -195,9 +195,6 @@ export class CoffeeBluetoothDevicesService {
     if (device !== null && device.platform === 'Android') {
       searchOptions = {
         reportDuplicates: true,
-        legacy: false,
-        matchMode: 'aggressive',
-        scanMode: 'lowLatency',
       };
     }
 
@@ -874,12 +871,13 @@ export class CoffeeBluetoothDevicesService {
       await this.findDeviceWithDirectId(deviceId, _timeout);
     }
 
-    this.logger.log('AutoConnectScale - We can start or we waited for iOS');
-
     this.logger.log(
-      'AutoConnectScale - We created our promise, and try to autoconnect to device now.'
+      'AutoConnectScale - We can start to connect to the id ' +
+        deviceId +
+        ' and type ' +
+        deviceType
     );
-    ble.autoConnect(
+    ble.connect(
       deviceId,
       (data: PeripheralData) => {
         this.logger.log('AutoConnectScale - Scale device connected.');
@@ -890,6 +888,18 @@ export class CoffeeBluetoothDevicesService {
         this.logger.log('AutoConnectScale - Scale device disconnected.');
         this.disconnectCallback();
         errorCallback();
+
+        this.logger.log(
+          'AutoConnectScale - Scale device disconnected - Try to connect again'
+        );
+        this.autoConnectScale(
+          deviceType,
+          deviceId,
+          _scanForDevices,
+          successCallback,
+          errorCallback,
+          _timeout
+        );
       }
     );
   }
@@ -909,13 +919,12 @@ export class CoffeeBluetoothDevicesService {
     }
 
     this.logger.log(
-      'AutoConnectPressureDevice - We can start or we waited for iOS'
+      'AutoConnectPressureDevice - We can start to connect to the id ' +
+        deviceId +
+        ' and type ' +
+        pressureType
     );
-
-    this.logger.log(
-      'AutoConnectPressureDevice - We created our promise, and try to autoconnect to device now.'
-    );
-    ble.autoConnect(
+    ble.connect(
       deviceId,
       (data: PeripheralData) => {
         this.logger.log(
@@ -928,6 +937,18 @@ export class CoffeeBluetoothDevicesService {
         'AutoConnectPressureDevice - Pressure device disconnected.';
         this.disconnectPressureCallback();
         errorCallback();
+
+        this.logger.log(
+          'AutoConnectPressureDevice - Pressure device disconnected - Try to connect again'
+        );
+        this.autoConnectPressureDevice(
+          pressureType,
+          deviceId,
+          _scanForDevices,
+          successCallback,
+          errorCallback,
+          _timeout
+        );
       }
     );
   }
@@ -947,13 +968,12 @@ export class CoffeeBluetoothDevicesService {
     }
 
     this.logger.log(
-      'AutoConnectTemperatureDevice - We can start or we waited for iOS'
+      'AutoConnectTemperatureDevice - We can start to connect to the id ' +
+        deviceId +
+        ' and type ' +
+        temperatureType
     );
-
-    this.logger.log(
-      'AutoConnectTemperatureDevice - We created our promise, and try to autoconnect to device now.'
-    );
-    ble.autoConnect(
+    ble.connect(
       deviceId,
       (data: PeripheralData) => {
         this.logger.log(
@@ -968,6 +988,18 @@ export class CoffeeBluetoothDevicesService {
         );
         this.disconnectTemperatureCallback();
         errorCallback();
+
+        this.logger.log(
+          'AutoConnectTemperatureDevice - Temperature device disconnected - Try to connect again'
+        );
+        this.autoConnectTemperatureDevice(
+          temperatureType,
+          deviceId,
+          _scanForDevices,
+          successCallback,
+          errorCallback,
+          _timeout
+        );
       }
     );
   }
