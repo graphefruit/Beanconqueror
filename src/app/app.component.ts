@@ -78,11 +78,6 @@ declare var window;
   encapsulation: ViewEncapsulation.None,
 })
 export class AppComponent implements AfterViewInit {
-  private bluetoothConnectionState = {
-    SCALE: false,
-    PRESSURE: false,
-    TEMPERATURE: false,
-  };
   public toggleAbout: boolean = false;
   public registerBackFunction: any;
   @ViewChild(IonRouterOutlet, { static: false })
@@ -611,7 +606,7 @@ export class AppComponent implements AfterViewInit {
     // #281 - Connect smartscale before checking the startup view
     setTimeout(async () => {
       // Just connect after 5 seconds, to get some time, and maybe handle all the connection errors
-      await this.__checkBluetoothDevices();
+      this.__checkBluetoothDevices();
       this.__connectPressureDevice();
       this.__connectSmartScale();
       this.__connectTemperatureDevice();
@@ -686,12 +681,10 @@ export class AppComponent implements AfterViewInit {
     const temperature_id: string = settings.temperature_id;
 
     const searchIds: Array<any> = [];
-    if (this.platform.is('ios')) {
-      //Don't search on Android for scale, because its working somehow, but we need to search for pressure id...
-      const scale_id: string = settings.scale_id;
-      if (scale_id) {
-        searchIds.push(scale_id);
-      }
+
+    const scale_id: string = settings.scale_id;
+    if (scale_id) {
+      searchIds.push(scale_id);
     }
     if (pressure_id) {
       searchIds.push(pressure_id);
@@ -699,34 +692,22 @@ export class AppComponent implements AfterViewInit {
     if (temperature_id) {
       searchIds.push(temperature_id);
     }
-    await this.bleManager.findDeviceWithDirectIds(searchIds, 15000);
+    try {
+      this.bleManager.findDeviceWithDirectIds(searchIds, 60000);
+    } catch (ex) {}
   }
   private __connectSmartScale() {
     const settings = this.uiSettingsStorage.getSettings();
     const scale_id: string = settings.scale_id;
     const scale_type: ScaleType = settings.scale_type;
-    let isIOS = this.platform.is('ios');
-    if (this.bluetoothConnectionState.SCALE === true) {
-      // We already connected to scale before
-      // We don't need to search again
-      isIOS = false;
-    }
     this.uiLog.log(`Connect smartscale? ${scale_id}`);
     if (scale_id !== undefined && scale_id !== '') {
       this.bleManager.autoConnectScale(
         scale_type,
         scale_id,
         false,
-        () => {
-          if (isIOS) {
-            this.bluetoothConnectionState.SCALE = true;
-          }
-        },
-        () => {
-          if (isIOS) {
-            this.bluetoothConnectionState.SCALE = false;
-          }
-        }
+        () => {},
+        () => {}
       );
     } else {
       this.uiLog.log('Smartscale not connected, dont try to connect');
@@ -737,12 +718,6 @@ export class AppComponent implements AfterViewInit {
     const settings = this.uiSettingsStorage.getSettings();
     const pressure_id: string = settings.pressure_id;
     const pressure_type: PressureType = settings.pressure_type;
-    let isIOS = this.platform.is('ios');
-    if (this.bluetoothConnectionState.PRESSURE === true) {
-      // We already connected to pressure before
-      // We don't need to search again
-      isIOS = false;
-    }
 
     this.uiLog.log(`Connect pressure device? ${pressure_id}`);
     if (pressure_id !== undefined && pressure_id !== '') {
@@ -750,16 +725,8 @@ export class AppComponent implements AfterViewInit {
         pressure_type,
         pressure_id,
         false,
-        () => {
-          if (isIOS) {
-            this.bluetoothConnectionState.PRESSURE = true;
-          }
-        },
-        () => {
-          if (isIOS) {
-            this.bluetoothConnectionState.PRESSURE = false;
-          }
-        }
+        () => {},
+        () => {}
       );
     } else {
       this.uiLog.log('Pressure device not connected, dont try to connect');
@@ -770,28 +737,15 @@ export class AppComponent implements AfterViewInit {
     const settings = this.uiSettingsStorage.getSettings();
     const temperature_id: string = settings.temperature_id;
     const temperature_type: TemperatureType = settings.temperature_type;
-    let isIOS = this.platform.is('ios');
-    if (this.bluetoothConnectionState.TEMPERATURE === true) {
-      // We already connected to temperature before
-      // We don't need to search again
-      isIOS = false;
-    }
+
     this.uiLog.log(`Connect temperature device? ${temperature_id}`);
     if (temperature_id !== undefined && temperature_id !== '') {
       this.bleManager.autoConnectTemperatureDevice(
         temperature_type,
         temperature_id,
         false,
-        () => {
-          if (isIOS) {
-            this.bluetoothConnectionState.TEMPERATURE = true;
-          }
-        },
-        () => {
-          if (isIOS) {
-            this.bluetoothConnectionState.TEMPERATURE = false;
-          }
-        }
+        () => {},
+        () => {}
       );
     } else {
       this.uiLog.log('Temperature device not connected, dont try to connect');
