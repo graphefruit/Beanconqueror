@@ -298,7 +298,7 @@
       <ion-chip (click)="toggleChartLines('realtime_flow')" *ngIf="smartScaleConnected()"
         [outline]="!this.realtimeFlowTrace?.visible" class="flowreal">{{'BREW_FLOW_WEIGHT_REALTIME' |
         translate}}</ion-chip>
-      <ion-chip (click)="toggleChartLines('pressure')" *ngIf="pressureDeviceConnected()"
+      <ion-chip (click)="toggleChartLines('pressure')" *ngIf="pressureDeviceConnected() && getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
         [outline]="!this.pressureTrace?.visible" class="pressure">{{'BREW_PRESSURE_FLOW' | translate}}</ion-chip>
       <ion-chip (click)="toggleChartLines('temperature')" *ngIf="temperatureDeviceConnected()"
         [outline]="!this.temperatureTrace?.visible" class="temperature">{{'BREW_TEMPERATURE_REALTIME' |
@@ -334,7 +334,7 @@
             </ion-card-content>
           </ion-card>
         </ion-col>
-        <ion-col (click)="resetPressure()" *ngIf="pressureDeviceConnected()" style="padding-right:5px;"
+        <ion-col (click)="resetPressure()" *ngIf="pressureDeviceConnected() && getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO" style="padding-right:5px;"
                  size="{{this.getGraphIonColSize()}}">
           <ion-card class="flow-profile ion-text-center pressure-card" style="height: 100%;">
             <ion-card-header>

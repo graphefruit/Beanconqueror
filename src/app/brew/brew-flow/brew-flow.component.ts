@@ -93,7 +93,10 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
   public getGraphIonColSize() {
     let bluetoothDeviceConnections = 0;
     let smartScaleConnected: boolean = false;
-    if (this.pressureDeviceConnected()) {
+    if (
+      this.pressureDeviceConnected() &&
+      this.brew.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO
+    ) {
       bluetoothDeviceConnections += 1;
     }
     if (this.temperatureDeviceConnected()) {
@@ -350,4 +353,6 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
       BrewFlowComponent.COMPONENT_ID
     );
   }
+
+  protected readonly PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
 }

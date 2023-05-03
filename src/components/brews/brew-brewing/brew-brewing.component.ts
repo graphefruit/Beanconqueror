@@ -296,7 +296,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         await this.__connectSmartScale(true);
         isSomethingConnected = true;
       }
-      if (this.pressureDeviceConnected()) {
+      if (
+        this.pressureDeviceConnected() &&
+        this.data.getPreparation().style_type ===
+          PREPARATION_STYLE_TYPE.ESPRESSO
+      ) {
         await this.__connectPressureDevice(true);
         isSomethingConnected = true;
       }
@@ -552,7 +556,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public getGraphIonColSize() {
     let bluetoothDeviceConnections = 0;
     let smartScaleConnected: boolean = false;
-    if (this.pressureDeviceConnected()) {
+    if (
+      this.pressureDeviceConnected() &&
+      this.data.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO
+    ) {
       bluetoothDeviceConnections += 1;
     }
     if (this.temperatureDeviceConnected()) {
@@ -750,8 +757,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public shallFlowProfileBeHidden(): boolean {
     if (
       this.smartScaleConnected() === true ||
-      this.pressureDeviceConnected() === true ||
-      this.temperatureDeviceConnected() === true
+      this.temperatureDeviceConnected() === true ||
+      (this.pressureDeviceConnected() === true &&
+        this.data.getPreparation().style_type ===
+          PREPARATION_STYLE_TYPE.ESPRESSO)
     ) {
       return false;
     }
@@ -1151,7 +1160,15 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
       this.flow_profile_raw = new BrewFlow();
 
-      this.initializeFlowChart(false);
+      if (
+        scale ||
+        temperatureDevice ||
+        (pressureDevice &&
+          this.data.getPreparation().style_type ===
+            PREPARATION_STYLE_TYPE.ESPRESSO)
+      ) {
+        this.initializeFlowChart(false);
+      }
 
       // Give the buttons a bit of time, 100ms won't be an issue for user flow
       await new Promise((resolve) => {
@@ -2335,7 +2352,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       },
     };
     const pressureDevice = this.bleManager.getPressureDevice();
-    if (pressureDevice != null || !this.platform.is('cordova')) {
+    if (
+      (pressureDevice != null &&
+        this.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO) ||
+      !this.platform.is('cordova')
+    ) {
       layout['yaxis4'] = {
         title: '',
         titlefont: { color: '#05C793' },
