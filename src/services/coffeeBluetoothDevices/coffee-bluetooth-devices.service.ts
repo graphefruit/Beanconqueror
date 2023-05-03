@@ -877,7 +877,7 @@ export class CoffeeBluetoothDevicesService {
         ' and type ' +
         deviceType
     );
-    ble.connect(
+    ble.autoConnect(
       deviceId,
       (data: PeripheralData) => {
         this.logger.log('AutoConnectScale - Scale device connected.');
@@ -888,18 +888,6 @@ export class CoffeeBluetoothDevicesService {
         this.logger.log('AutoConnectScale - Scale device disconnected.');
         this.disconnectCallback();
         errorCallback();
-
-        this.logger.log(
-          'AutoConnectScale - Scale device disconnected - Try to connect again'
-        );
-        this.autoConnectScale(
-          deviceType,
-          deviceId,
-          _scanForDevices,
-          successCallback,
-          errorCallback,
-          _timeout
-        );
       }
     );
   }
@@ -924,7 +912,7 @@ export class CoffeeBluetoothDevicesService {
         ' and type ' +
         pressureType
     );
-    ble.connect(
+    ble.autoConnect(
       deviceId,
       (data: PeripheralData) => {
         this.logger.log(
@@ -937,18 +925,6 @@ export class CoffeeBluetoothDevicesService {
         'AutoConnectPressureDevice - Pressure device disconnected.';
         this.disconnectPressureCallback();
         errorCallback();
-
-        this.logger.log(
-          'AutoConnectPressureDevice - Pressure device disconnected - Try to connect again'
-        );
-        this.autoConnectPressureDevice(
-          pressureType,
-          deviceId,
-          _scanForDevices,
-          successCallback,
-          errorCallback,
-          _timeout
-        );
       }
     );
   }
@@ -973,7 +949,7 @@ export class CoffeeBluetoothDevicesService {
         ' and type ' +
         temperatureType
     );
-    ble.connect(
+    ble.autoConnect(
       deviceId,
       (data: PeripheralData) => {
         this.logger.log(
@@ -988,18 +964,6 @@ export class CoffeeBluetoothDevicesService {
         );
         this.disconnectTemperatureCallback();
         errorCallback();
-
-        this.logger.log(
-          'AutoConnectTemperatureDevice - Temperature device disconnected - Try to connect again'
-        );
-        this.autoConnectTemperatureDevice(
-          temperatureType,
-          deviceId,
-          _scanForDevices,
-          successCallback,
-          errorCallback,
-          _timeout
-        );
       }
     );
   }
