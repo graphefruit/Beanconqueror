@@ -606,6 +606,9 @@ export class AppComponent implements AfterViewInit {
     // #281 - Connect smartscale before checking the startup view
     setTimeout(async () => {
       // Just connect after 5 seconds, to get some time, and maybe handle all the connection errors
+      if (this.platform.is('ios')) {
+        await this.bleManager.enableIOSBluetooth();
+      }
       this.__checkBluetoothDevices();
       this.__connectPressureDevice();
       this.__connectSmartScale();

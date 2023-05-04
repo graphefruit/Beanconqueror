@@ -372,6 +372,44 @@ export class CoffeeBluetoothDevicesService {
       }, 1000);
     });
   }
+
+  public async enableIOSBluetooth() {
+    return await new Promise((resolve) => {
+      let counter: number = 1;
+
+      const iOSScanInterval = setInterval(async () => {
+        try {
+          this.logger.log(
+            '__iOSAccessBleStackAndAutoConnect - Try to get bluetooth state'
+          );
+          // We need to check iOS if bluetooth enabled, else devices would not get connected.
+          const enabled: boolean = await this.isBleEnabled();
+          if (enabled === true) {
+            clearInterval(iOSScanInterval);
+
+            resolve(true);
+          } else {
+            this.logger.log(
+              'findDeviceWithDirectId - Bluetooth not enabled, try again'
+            );
+          }
+        } catch (ex) {
+          this.logger.log(
+            'findDeviceWithDirectId - Bluetooth error occured ' +
+              JSON.stringify(ex)
+          );
+        }
+        counter++;
+        if (counter > 10) {
+          this.logger.log(
+            '__iOSAccessBleStackAndAutoConnect - iOS - Stop after 10 tries'
+          );
+          clearInterval(iOSScanInterval);
+          resolve(false);
+        }
+      }, 1000);
+    });
+  }
   public async findDeviceWithDirectId(
     _id,
     _timeout: number = 15000
@@ -980,7 +1018,9 @@ export class CoffeeBluetoothDevicesService {
           successCallback();
         },
         () => {
-          'AutoConnectPressureDevice - Pressure device disconnected.';
+          this.logger.log(
+            'AutoConnectPressureDevice - Pressure device disconnected.'
+          );
           this.disconnectPressureCallback();
           errorCallback();
 
