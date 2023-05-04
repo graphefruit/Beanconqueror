@@ -304,11 +304,11 @@ export class BrewDetailComponent implements OnInit {
       // IF brewtime has some seconds, we add this to the delay directly.
 
       let firstTimestamp;
-      if (this.flow_profile_raw.weight.length > 0) {
+      if (this.flow_profile_raw.weight?.length > 0) {
         firstTimestamp = this.flow_profile_raw.weight[0].timestamp;
-      } else if (this.flow_profile_raw.pressureFlow.length > 0) {
+      } else if (this.flow_profile_raw.pressureFlow?.length > 0) {
         firstTimestamp = this.flow_profile_raw.pressureFlow[0].timestamp;
-      } else if (this.flow_profile_raw.temperatureFlow.length > 0) {
+      } else if (this.flow_profile_raw.temperatureFlow?.length > 0) {
         firstTimestamp = this.flow_profile_raw.temperatureFlow[0].timestamp;
       } else {
         firstTimestamp = 0;
@@ -316,7 +316,7 @@ export class BrewDetailComponent implements OnInit {
       const delay =
         moment(firstTimestamp, 'HH:mm:ss.SSS').toDate().getTime() -
         startingDay.toDate().getTime();
-      if (this.flow_profile_raw.weight.length > 0) {
+      if (this.flow_profile_raw.weight?.length > 0) {
         for (const data of this.flow_profile_raw.weight) {
           this.weightTrace.x.push(
             new Date(
@@ -333,7 +333,7 @@ export class BrewDetailComponent implements OnInit {
           );
           this.flowPerSecondTrace.y.push(data.value);
         }
-        if (this.flow_profile_raw.realtimeFlow) {
+        if (this.flow_profile_raw?.realtimeFlow) {
           for (const data of this.flow_profile_raw.realtimeFlow) {
             this.realtimeFlowTrace.x.push(
               new Date(
@@ -346,7 +346,7 @@ export class BrewDetailComponent implements OnInit {
         }
       }
       if (
-        this.flow_profile_raw.pressureFlow &&
+        this.flow_profile_raw?.pressureFlow &&
         this.flow_profile_raw.pressureFlow.length > 0
       ) {
         for (const data of this.flow_profile_raw.pressureFlow) {
@@ -359,7 +359,7 @@ export class BrewDetailComponent implements OnInit {
         }
       }
       if (
-        this.flow_profile_raw.temperatureFlow &&
+        this.flow_profile_raw?.temperatureFlow &&
         this.flow_profile_raw.temperatureFlow.length > 0
       ) {
         for (const data of this.flow_profile_raw.temperatureFlow) {
@@ -371,6 +371,7 @@ export class BrewDetailComponent implements OnInit {
           this.temperatureTrace.y.push(data.actual_temperature);
         }
       }
+
       const chartData = [
         this.weightTrace,
         this.flowPerSecondTrace,
@@ -380,7 +381,6 @@ export class BrewDetailComponent implements OnInit {
       const layout = this.getChartLayout();
 
       chartData.push(this.pressureTrace);
-
       chartData.push(this.temperatureTrace);
 
       Plotly.newPlot(
@@ -513,6 +513,7 @@ export class BrewDetailComponent implements OnInit {
         tickfont: { color: '#cdc2ac' },
         side: 'left',
         position: 0.05,
+        visible: true,
       },
       yaxis2: {
         title: '',
@@ -523,6 +524,7 @@ export class BrewDetailComponent implements OnInit {
         side: 'right',
         position: 0.95,
         showgrid: false,
+        visible: true,
       },
     };
 
@@ -536,6 +538,7 @@ export class BrewDetailComponent implements OnInit {
       showgrid: false,
       position: 0.93,
       range: [0, 12],
+      visible: true,
     };
 
     layout['yaxis5'] = {
@@ -549,7 +552,27 @@ export class BrewDetailComponent implements OnInit {
       position: 0.8,
       fixedrange: true,
       range: [0, 100],
+      visible: true,
     };
+
+    if (this.weightTrace.x && this.weightTrace.x.length > 0) {
+      layout['yaxis'].visible = true;
+      layout['yaxis2'].visible = true;
+    } else {
+      layout['yaxis'].visible = false;
+      layout['yaxis2'].visible = false;
+    }
+    if (this.pressureTrace.x && this.pressureTrace.x.length > 0) {
+      layout['yaxis4'].visible = true;
+    } else {
+      layout['yaxis4'].visible = false;
+    }
+
+    if (this.temperatureTrace.x && this.temperatureTrace.x.length > 0) {
+      layout['yaxis5'].visible = true;
+    } else {
+      layout['yaxis5'].visible = false;
+    }
 
     this.lastChartLayout = layout;
     return layout;
@@ -613,18 +636,24 @@ export class BrewDetailComponent implements OnInit {
   }
 
   public getAvgFlow(): number {
-    const waterFlows: Array<IBrewWaterFlow> = this.flow_profile_raw.waterFlow;
-    let calculatedFlow: number = 0;
-    let foundEntries: number = 0;
-    for (const water of waterFlows) {
-      if (water.value > 0) {
-        calculatedFlow += water.value;
-        foundEntries += 1;
+    if (
+      this.flow_profile_raw?.waterFlow &&
+      this.flow_profile_raw.waterFlow.length > 0
+    ) {
+      const waterFlows: Array<IBrewWaterFlow> = this.flow_profile_raw.waterFlow;
+      let calculatedFlow: number = 0;
+      let foundEntries: number = 0;
+      for (const water of waterFlows) {
+        if (water.value > 0) {
+          calculatedFlow += water.value;
+          foundEntries += 1;
+        }
       }
+      if (calculatedFlow > 0) {
+        return calculatedFlow / foundEntries;
+      }
+
+      return 0;
     }
-    if (calculatedFlow > 0) {
-      return calculatedFlow / foundEntries;
-    }
-    return 0;
   }
 }

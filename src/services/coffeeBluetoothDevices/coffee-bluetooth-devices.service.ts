@@ -174,8 +174,8 @@ export class CoffeeBluetoothDevicesService {
     }
   }
   public async scanAllBluetoothDevicesAndPassBack(
-    _foundDeviceFunction,
-    _finishedFunction,
+    _foundDeviceFunction = (foundDevice: any) => {},
+    _finishedFunction = (finsishedDevices: any) => {},
     _timeout: number = 60000
   ) {
     const devicesFound: Array<any> = [];
@@ -202,7 +202,9 @@ export class CoffeeBluetoothDevicesService {
       [],
       searchOptions,
       async (scanDevice: any) => {
-        this.logger.log('Device found ' + JSON.stringify(scanDevice));
+        this.logger.log(
+          Date().toString() + 'Device found ' + JSON.stringify(scanDevice)
+        );
         devicesFound.push(scanDevice);
         if (_foundDeviceFunction) {
           _foundDeviceFunction(scanDevice);
@@ -827,7 +829,9 @@ export class CoffeeBluetoothDevicesService {
           deviceId,
           true,
           successCallback,
-          errorCallback
+          errorCallback,
+          15000,
+          0
         );
       }, 2000);
     } catch (ex) {
@@ -877,19 +881,21 @@ export class CoffeeBluetoothDevicesService {
         ' and type ' +
         deviceType
     );
-    ble.autoConnect(
-      deviceId,
-      (data: PeripheralData) => {
-        this.logger.log('AutoConnectScale - Scale device connected.');
-        this.connectCallback(deviceType, data);
-        successCallback();
-      },
-      () => {
-        this.logger.log('AutoConnectScale - Scale device disconnected.');
-        this.disconnectCallback();
-        errorCallback();
-      }
-    );
+    try {
+      ble.autoConnect(
+        deviceId,
+        (data: PeripheralData) => {
+          this.logger.log('AutoConnectScale - Scale device connected.');
+          this.connectCallback(deviceType, data);
+          successCallback();
+        },
+        () => {
+          this.logger.log('AutoConnectScale - Scale device disconnected.');
+          this.disconnectCallback();
+          errorCallback();
+        }
+      );
+    } catch (ex) {}
   }
 
   public async autoConnectPressureDevice(
@@ -898,7 +904,8 @@ export class CoffeeBluetoothDevicesService {
     _scanForDevices: boolean = false,
     successCallback: any = () => {},
     errorCallback: any = () => {},
-    _timeout: number = 15000
+    _timeout: number = 15000,
+    _connectionRetry: number = 0
   ) {
     if (_scanForDevices) {
       // iOS needs to know the scale, before auto connect can be done
@@ -912,21 +919,86 @@ export class CoffeeBluetoothDevicesService {
         ' and type ' +
         pressureType
     );
-    ble.autoConnect(
-      deviceId,
-      (data: PeripheralData) => {
-        this.logger.log(
-          'AutoConnectPressureDevice - Pressure device connected.'
-        );
-        this.connectPressureCallback(pressureType, data);
-        successCallback();
-      },
-      () => {
-        'AutoConnectPressureDevice - Pressure device disconnected.';
-        this.disconnectPressureCallback();
-        errorCallback();
+    try {
+      if (
+        _connectionRetry === 0 &&
+        this.getPressureDevice() === null &&
+        device !== null &&
+        device.platform === 'Android'
+      ) {
+        setTimeout(() => {
+          //Yes doublicated code, but when the pressure device got connected now, we should be happy and don't trigger a disconenct.
+          if (
+            _connectionRetry === 0 &&
+            this.getPressureDevice() === null &&
+            device !== null &&
+            device.platform === 'Android'
+          ) {
+            ble.disconnect(
+              deviceId,
+              () => {
+                this.logger.log(
+                  'AutoConnectPressureDevice - We disconnected a first round on Android'
+                );
+                this.autoConnectPressureDevice(
+                  pressureType,
+                  deviceId,
+                  _scanForDevices,
+                  successCallback,
+                  errorCallback,
+                  _timeout,
+                  _connectionRetry + 1
+                );
+              },
+              () => {
+                this.logger.log(
+                  'AutoConnectPressureDevice - We disconnected a first round on Android, but it failed, anyhow connect again'
+                );
+                this.autoConnectPressureDevice(
+                  pressureType,
+                  deviceId,
+                  _scanForDevices,
+                  successCallback,
+                  errorCallback,
+                  _timeout,
+                  0
+                );
+              }
+            );
+          }
+        }, 15000);
       }
-    );
+      ble.connect(
+        deviceId,
+        (data: PeripheralData) => {
+          //Update the connection retry, because we're in
+          _connectionRetry = _connectionRetry + 1;
+          this.logger.log(
+            'AutoConnectPressureDevice - Pressure device connected.'
+          );
+          this.connectPressureCallback(pressureType, data);
+          successCallback();
+        },
+        () => {
+          'AutoConnectPressureDevice - Pressure device disconnected.';
+          this.disconnectPressureCallback();
+          errorCallback();
+
+          //Just try once to reconnect
+          if (_connectionRetry === 0) {
+            this.autoConnectPressureDevice(
+              pressureType,
+              deviceId,
+              _scanForDevices,
+              successCallback,
+              errorCallback,
+              _timeout,
+              _connectionRetry + 1
+            );
+          }
+        }
+      );
+    } catch (ex) {}
   }
 
   public async autoConnectTemperatureDevice(
@@ -949,23 +1021,25 @@ export class CoffeeBluetoothDevicesService {
         ' and type ' +
         temperatureType
     );
-    ble.autoConnect(
-      deviceId,
-      (data: PeripheralData) => {
-        this.logger.log(
-          'AutoConnectTemperatureDevice - Temperature device connected.'
-        );
-        this.connectTemperatureCallback(temperatureType, data);
-        successCallback();
-      },
-      () => {
-        this.logger.log(
-          'AutoConnectTemperatureDevice - Temperature device disconnected.'
-        );
-        this.disconnectTemperatureCallback();
-        errorCallback();
-      }
-    );
+    try {
+      ble.autoConnect(
+        deviceId,
+        (data: PeripheralData) => {
+          this.logger.log(
+            'AutoConnectTemperatureDevice - Temperature device connected.'
+          );
+          this.connectTemperatureCallback(temperatureType, data);
+          successCallback();
+        },
+        () => {
+          this.logger.log(
+            'AutoConnectTemperatureDevice - Temperature device disconnected.'
+          );
+          this.disconnectTemperatureCallback();
+          errorCallback();
+        }
+      );
+    } catch (ex) {}
   }
 
   private stopScanning() {

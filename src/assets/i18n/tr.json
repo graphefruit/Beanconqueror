@@ -1203,7 +1203,8 @@
     },
     "BEAN_SUCCESSFULLY_SCANNED": "Çekirdek başarıyla tarandı",
     "BEAN_SUCCESSFULLY_REFRESHED": "Çekirdek başarıyla güncellendi",
-    "IMAGES_GETTING_DOWNLOADED": "Görüntü ayarları indirildi"
+    "IMAGES_GETTING_DOWNLOADED": "Görüntü ayarları indirildi",
+    "BEAN_SUCCESSFULLY_REFRESHED": "Bean successfully refreshed"
   },
   "RETRY_CONNECT": "Bağlantıyı yeniden dene",
   "SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE": "Uygulama simge durumuna küçültülmüş/etkin değilken bile tartının bağlanmasına izin ver",
@@ -1382,7 +1383,11 @@
       "SCRIPT_LIST_GENERAL_1": "Espresso, 25 seconds",
       "SCRIPT_LIST_GENERAL_2": "Espresso, endless",
       "SCRIPT_LIST_GENERAL_STOP": "Stop shot",
-      "CHOOSE_SCRIPT_AT_WEIGHT": "Choose script for reached weight"
+      "CHOOSE_SCRIPT_AT_WEIGHT": "Choose script for reached weight",
+      "ERROR_NOT_ALL_SCRIPTS_FOUND":"One or more scripts could not be found, they were reset",
+      "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "The connection to the xenia portafilter machine could not be established. Please make sure you're in the right net (WLAN), if you entered the right connection adress, or check other issues.",
+      "CHECKING_CONNECTION_TO_PORTAFILTER": "Connection to Xenia is beeing checked",
+      "GRABING_SCRIPTS": "Scripts are loaded from Xenia"
     }
   },
   "DEVICE_CONNECTION": "Device connection",
