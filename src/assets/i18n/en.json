@@ -1393,7 +1393,10 @@
       "SCRIPT_LIST_GENERAL_2": "Espresso, endless",
       "SCRIPT_LIST_GENERAL_STOP": "Stop shot",
       "CHOOSE_SCRIPT_AT_WEIGHT": "Choose script for reached weight",
-      "ERROR_NOT_ALL_SCRIPTS_FOUND":"One or more scripts could not be found, they were reset"
+      "ERROR_NOT_ALL_SCRIPTS_FOUND":"One or more scripts could not be found, they were reset",
+      "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "The connection to the xenia portafilter machine could not be established. Please make sure you're in the right net (WLAN), if you entered the right connection adress, or check other issues.",
+      "CHECKING_CONNECTION_TO_PORTAFILTER": "Connection to Xenia is beeing checked",
+      "GRABING_SCRIPTS": "Scripts are loaded from Xenia"
     }
   },
   "DEVICE_CONNECTION": "Device connection",

@@ -693,6 +693,7 @@ export class AppComponent implements AfterViewInit {
       searchIds.push(temperature_id);
     }
     try {
+      //this.bleManager.scanAllBluetoothDevicesAndPassBack();
       this.bleManager.findDeviceWithDirectIds(searchIds, 60000);
     } catch (ex) {}
   }
