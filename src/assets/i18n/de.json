@@ -1421,5 +1421,6 @@
   "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "Temperaturgerät neu verbinden",
   "BREW_TEMPERATURE_REALTIME": "Temperatur",
   "PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE": "Temperaturgerät",
-  "PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO": "Druckgerät ist nur Verwendbar bei Zubereitungsmethoden der Zubereitungsart 'Espresso'"
+  "PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO": "Druckgerät ist nur Verwendbar bei Zubereitungsmethoden der Zubereitungsart 'Espresso'",
+  "PRESSURE_MESSAGE_AFTER_CONNECTION": "Bekanntes Verhalten (in Analyse): Bitte beachte, dass der Verbindungsaufbau nach dem Neustart deines Telefons oder nach längerer Zeit, ohne, dass die App verwendet worden ist, auch länger dauern kann (30 Sekunden bis 1 Minute) danach sollte das Problem nicht mehr auftreten. "
 }

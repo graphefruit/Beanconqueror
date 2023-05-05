@@ -970,54 +970,6 @@ export class CoffeeBluetoothDevicesService {
         pressureType
     );
     try {
-      if (
-        _connectionRetry === 0 &&
-        this.getPressureDevice() === null &&
-        device !== null &&
-        device.platform === 'Android'
-      ) {
-        setTimeout(() => {
-          //Yes doublicated code, but when the pressure device got connected now, we should be happy and don't trigger a disconenct.
-          if (
-            _connectionRetry === 0 &&
-            this.getPressureDevice() === null &&
-            device !== null &&
-            device.platform === 'Android'
-          ) {
-            ble.disconnect(
-              deviceId,
-              () => {
-                this.logger.log(
-                  'AutoConnectPressureDevice - We disconnected a first round on Android'
-                );
-                this.autoConnectPressureDevice(
-                  pressureType,
-                  deviceId,
-                  _scanForDevices,
-                  successCallback,
-                  errorCallback,
-                  _timeout,
-                  _connectionRetry + 1
-                );
-              },
-              () => {
-                this.logger.log(
-                  'AutoConnectPressureDevice - We disconnected a first round on Android, but it failed, anyhow connect again'
-                );
-                this.autoConnectPressureDevice(
-                  pressureType,
-                  deviceId,
-                  _scanForDevices,
-                  successCallback,
-                  errorCallback,
-                  _timeout,
-                  0
-                );
-              }
-            );
-          }
-        }, 1115000);
-      }
       ble.connect(
         deviceId,
         (data: PeripheralData) => {
