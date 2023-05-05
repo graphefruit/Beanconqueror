@@ -297,6 +297,15 @@ export class SettingsPage implements OnInit {
           pressureDevice.id,
           false
         );
+
+        if (this.platform.is('android')) {
+          this.uiAlert.showMessage(
+            'PRESSURE_MESSAGE_AFTER_CONNECTION',
+            'CARE',
+            undefined,
+            true
+          );
+        }
       } catch (ex) {}
 
       this.settings.pressure_id = pressureDevice.id;
