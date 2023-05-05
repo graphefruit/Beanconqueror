@@ -568,6 +568,18 @@ export class CoffeeBluetoothDevicesService {
     });
   }
 
+  public enableBLE(): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Or using await with promises
+        ble.withPromises.enable();
+        resolve(undefined);
+      } catch (ex) {
+        resolve(undefined);
+      }
+    });
+  }
+
   public getScale() {
     return this.scale;
   }
@@ -1004,7 +1016,7 @@ export class CoffeeBluetoothDevicesService {
               }
             );
           }
-        }, 15000);
+        }, 1115000);
       }
       ble.connect(
         deviceId,
@@ -1017,10 +1029,11 @@ export class CoffeeBluetoothDevicesService {
           this.connectPressureCallback(pressureType, data);
           successCallback();
         },
-        () => {
+        (e) => {
           this.logger.log(
             'AutoConnectPressureDevice - Pressure device disconnected.'
           );
+          console.log(JSON.stringify(e));
           this.disconnectPressureCallback();
           errorCallback();
 
