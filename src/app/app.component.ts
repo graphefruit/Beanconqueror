@@ -608,6 +608,8 @@ export class AppComponent implements AfterViewInit {
       // Just connect after 5 seconds, to get some time, and maybe handle all the connection errors
       if (this.platform.is('ios')) {
         await this.bleManager.enableIOSBluetooth();
+      } else {
+        //await this.bleManager.enableBLE();
       }
       this.__checkBluetoothDevices();
       this.__connectPressureDevice();
