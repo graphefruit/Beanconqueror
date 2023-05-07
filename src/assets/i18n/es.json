@@ -816,6 +816,52 @@
         "Actualización a Ionic 6.4.0",
         "Corrección de errores menores"
       ]
+    },
+    "6.4.0": {
+      "TITLE": "Version 6.4.0: What's new?",
+      "DESCRIPTION": [
+        "<b>Bluetooth thermometers</b>",
+        "Support for ETI Ltd thermometers (ThermaQ Blue, BlueTherm, etc) - Sensors - Thanks to Myles",
+        "Autostart timer on a specific temperature - editable in settings",
+        "",
+        "<b>Bluetooth scales</b>",
+        "Support of Skale 2",
+        "If a bluetooth scale wants to reset a brew, the user will get a security-popup",
+        "",
+        "<b>Visualizer</b>",
+        "Upload your recorded brews with used bluetooth-devices manually - Thanks to Miha for your support",
+        "(Step 2: Automatic upload)",
+        "",
+        "<b>Bean</b>",
+        "Beanparameter and list parameter can now be individualized and changed",
+        "Beans can now be filtered by roasting degree",
+        "Beanpage, can now be set as starting page - See settings",
+        "Type ahead fields for specific fields added, e.g. Variety",
+        "Bean variety information can now be searched in the free-text",
+        "",
+        "<b>Brews</b>",
+        "New button, where a direct preparation method can be choosen",
+        "Individualize which parameter shall be preset when choosing 'Repeat' - Default: all",
+        "Filter all brews, which have used bluetooth-devices",
+        "Overwork of live brew graphic",
+        "Added brew-ratio calculator for brew add/edit for a fast calculation",
+        "Pressing 'Save' will stop the timer",
+        "",
+        "<b>Discord</b>",
+        "Join the Beanconqueror Discord Server to discuss, ask or give feedback",
+        "",
+        "<b>Android</b>",
+        "Sharing functionality is working again",
+        "Export and import your brew graphs",
+        "",
+        "<b>Improvements</b>",
+        "Displaying the amount of entries which are existing, or after filtering",
+        "On brew add/edit, the save or cancel button will be hidden as long as the keyboard is shown",
+        "Activate in settings, to see a numeric keyboard on the grind size field",
+        "",
+        "<b>Others:</b>",
+        "Smaller bug fixes"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Personalizar parámetros",
@@ -1204,7 +1250,6 @@
     "BEAN_SUCCESSFULLY_SCANNED": "Grano escaneado correctamente",
     "BEAN_SUCCESSFULLY_REFRESHED": "Grano actualizado con éxito",
     "IMAGES_GETTING_DOWNLOADED": "Se están descargando imágenes",
-    "BEAN_SUCCESSFULLY_REFRESHED": "Bean successfully refreshed"
   },
   "RETRY_CONNECT": "Reintentar la conexión",
   "SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE": "Permitir que la báscula esté conectada incluso cuando la aplicación esté en segundo plano",
@@ -1413,5 +1458,7 @@
   },
   "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "Reconnect temperature device",
   "PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO": "Pressure device is just useable on preparation style 'espresso'",
-  "PRESSURE_MESSAGE_AFTER_CONNECTION": "Known Behavior (in analyse): Please care, that after restarting your phone or if you didn't use the app a long time, the connection can take longer (30 seconds to 1 minute), after that the issue should be gone."
+  "PRESSURE_MESSAGE_AFTER_CONNECTION": "Known Behavior (in analyse): Please care, that after restarting your phone or if you didn't use the app a long time, the connection can take longer (30 seconds to 1 minute), after that the issue should be gone.",
+  "BREW_TEMPERATURE_REALTIME": "Temperature",
+  "PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE": "Temperature device"
 }
