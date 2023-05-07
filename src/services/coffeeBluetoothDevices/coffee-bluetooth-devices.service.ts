@@ -23,6 +23,7 @@ import { LunarScale } from '../../classes/devices/lunarScale';
 import { PopsiclePressure } from '../../classes/devices/popsiclePressure';
 import { JimmyScale } from '../../classes/devices/jimmyScale';
 import { SkaleScale } from '../../classes/devices/skale';
+import { UISettingsStorage } from '../uiSettingsStorage';
 
 declare var device: any;
 declare var ble: any;
@@ -52,7 +53,7 @@ export class CoffeeBluetoothDevicesService {
 
   private scanBluetoothTimeout: any = null;
 
-  constructor() {
+  constructor(private readonly uiStettingsStorage: UISettingsStorage) {
     this.logger = new Logger('CoffeeBluetoothDevices');
     this.failed = false;
     this.ready = true;
@@ -176,7 +177,7 @@ export class CoffeeBluetoothDevicesService {
   public async scanAllBluetoothDevicesAndPassBack(
     _foundDeviceFunction = (foundDevice: any) => {},
     _finishedFunction = (finsishedDevices: any) => {},
-    _timeout: number = 60000
+    _timeout: number = 1060000
   ) {
     const devicesFound: Array<any> = [];
     const stopScanningAndFinish = async () => {
@@ -970,6 +971,8 @@ export class CoffeeBluetoothDevicesService {
         pressureType
     );
     try {
+    } catch (ex) {}
+    try {
       ble.connect(
         deviceId,
         (data: PeripheralData) => {
@@ -989,8 +992,9 @@ export class CoffeeBluetoothDevicesService {
           this.disconnectPressureCallback();
           errorCallback();
 
-          //Just try once to reconnect
-          if (_connectionRetry === 0) {
+          const settings = this.uiStettingsStorage.getSettings();
+          if (settings.pressure_id && settings.pressure_id === deviceId) {
+            // as long as the pressure id is known, and the device id is still the same try to reconnect.
             this.autoConnectPressureDevice(
               pressureType,
               deviceId,
