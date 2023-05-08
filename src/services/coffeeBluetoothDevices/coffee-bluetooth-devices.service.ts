@@ -988,7 +988,6 @@ export class CoffeeBluetoothDevicesService {
           this.logger.log(
             'AutoConnectPressureDevice - Pressure device disconnected.'
           );
-          console.log(JSON.stringify(e));
           this.disconnectPressureCallback();
           errorCallback();
 
