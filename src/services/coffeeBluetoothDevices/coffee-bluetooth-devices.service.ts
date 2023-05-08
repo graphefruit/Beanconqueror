@@ -177,7 +177,7 @@ export class CoffeeBluetoothDevicesService {
   public async scanAllBluetoothDevicesAndPassBack(
     _foundDeviceFunction = (foundDevice: any) => {},
     _finishedFunction = (finsishedDevices: any) => {},
-    _timeout: number = 1060000
+    _timeout: number = 60000
   ) {
     const devicesFound: Array<any> = [];
     const stopScanningAndFinish = async () => {
