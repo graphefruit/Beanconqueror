@@ -1249,7 +1249,7 @@
     },
     "BEAN_SUCCESSFULLY_SCANNED": "Çekirdek başarıyla tarandı",
     "BEAN_SUCCESSFULLY_REFRESHED": "Çekirdek başarıyla güncellendi",
-    "IMAGES_GETTING_DOWNLOADED": "Görüntü ayarları indirildi",
+    "IMAGES_GETTING_DOWNLOADED": "Görüntü ayarları indirildi"
   },
   "RETRY_CONNECT": "Bağlantıyı yeniden dene",
   "SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE": "Uygulama simge durumuna küçültülmüş/etkin değilken bile tartının bağlanmasına izin ver",

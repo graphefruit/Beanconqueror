@@ -349,7 +349,8 @@ export class CoffeeBluetoothDevicesService {
                   // If we didn't resolve, we didn't find a matching one.
                   resolve(false);
                 }
-              }
+              },
+              _timeout
             );
           } else {
             this.logger.log(
@@ -451,7 +452,8 @@ export class CoffeeBluetoothDevicesService {
                   // If we didn't resolve, we didn't find a matching one.
                   resolve(false);
                 }
-              }
+              },
+              _timeout
             );
           } else {
             this.logger.log(
@@ -984,7 +986,7 @@ export class CoffeeBluetoothDevicesService {
           this.connectPressureCallback(pressureType, data);
           successCallback();
         },
-        (e) => {
+        async (e) => {
           this.logger.log(
             'AutoConnectPressureDevice - Pressure device disconnected.'
           );
@@ -993,6 +995,15 @@ export class CoffeeBluetoothDevicesService {
 
           const settings = this.uiStettingsStorage.getSettings();
           if (settings.pressure_id && settings.pressure_id === deviceId) {
+            if (device !== null && device.platform === 'Android') {
+              await this.findDeviceWithDirectId(deviceId, 6000);
+              // Give it a short delay before reconnect
+              await new Promise((resolve) => {
+                setTimeout(async () => {
+                  resolve(undefined);
+                }, 500);
+              });
+            }
             // as long as the pressure id is known, and the device id is still the same try to reconnect.
             this.autoConnectPressureDevice(
               pressureType,

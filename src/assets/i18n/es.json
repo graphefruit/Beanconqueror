@@ -1249,7 +1249,7 @@
     },
     "BEAN_SUCCESSFULLY_SCANNED": "Grano escaneado correctamente",
     "BEAN_SUCCESSFULLY_REFRESHED": "Grano actualizado con éxito",
-    "IMAGES_GETTING_DOWNLOADED": "Se están descargando imágenes",
+    "IMAGES_GETTING_DOWNLOADED": "Se están descargando imágenes"
   },
   "RETRY_CONNECT": "Reintentar la conexión",
   "SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE": "Permitir que la báscula esté conectada incluso cuando la aplicación esté en segundo plano",

@@ -611,7 +611,12 @@ export class AppComponent implements AfterViewInit {
       } else {
         //await this.bleManager.enableBLE();
       }
-      this.__checkBluetoothDevices();
+      await this.__checkBluetoothDevices();
+      await new Promise((resolve) => {
+        setTimeout(async () => {
+          resolve(undefined);
+        }, 500);
+      });
       this.__connectPressureDevice();
       this.__connectSmartScale();
       this.__connectTemperatureDevice();
@@ -688,17 +693,23 @@ export class AppComponent implements AfterViewInit {
     const searchIds: Array<any> = [];
 
     const scale_id: string = settings.scale_id;
+
+    let isAndroidAndPressureDevice: boolean = false;
+    if (this.platform.is('android') && pressure_id) {
+      isAndroidAndPressureDevice = true;
+      // Try to find the pressure device firstly, and then we scall for the rest.
+      await this.bleManager.findDeviceWithDirectId(pressure_id, 6000);
+    }
     if (scale_id) {
       searchIds.push(scale_id);
     }
-    if (pressure_id) {
+    if (pressure_id && isAndroidAndPressureDevice === false) {
       searchIds.push(pressure_id);
     }
     if (temperature_id) {
       searchIds.push(temperature_id);
     }
     try {
-      //this.bleManager.scanAllBluetoothDevicesAndPassBack();
       this.bleManager.findDeviceWithDirectIds(searchIds, 60000);
     } catch (ex) {}
   }
