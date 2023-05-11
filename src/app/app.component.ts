@@ -710,7 +710,10 @@ export class AppComponent implements AfterViewInit {
       searchIds.push(temperature_id);
     }
     try {
-      this.bleManager.findDeviceWithDirectIds(searchIds, 60000);
+      if (searchIds.length > 0) {
+        //Just search if we raly got id's
+        this.bleManager.findDeviceWithDirectIds(searchIds, 60000);
+      }
     } catch (ex) {}
   }
   private __connectSmartScale() {
