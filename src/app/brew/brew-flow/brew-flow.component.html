@@ -104,7 +104,7 @@
                   'mm:ss')}}</span>
                 <span
                   *ngIf="settings?.brew_milliseconds === true">{{this.uiHelper.formatSecondsAndMilliseconds(brew.brew_time,
-                  brew.brew_time_milliseconds, 'mm:ss.SSS')}}</span>
+                  brew.brew_time_milliseconds, this.returnWantedDisplayFormat())}}</span>
               </ion-card-header>
               <ion-card-content>
                 <ion-icon name="time-outline"></ion-icon>
