@@ -90,6 +90,37 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
     } catch (ex) {}
   }
 
+  public returnWantedDisplayFormat() {
+    const showMinutes: boolean = true;
+    let showHours: boolean = false;
+    let showMilliseconds: boolean = false;
+    if (this.brew.brew_time >= 3600) {
+      showHours = true;
+    }
+
+    if (this.settings?.brew_milliseconds) {
+      showMilliseconds = true;
+    }
+
+    let returnStr: string = '';
+    if (showMilliseconds) {
+      if (this.settings.brew_milliseconds_leading_digits === 3) {
+        returnStr = '.SSS';
+      } else if (this.settings.brew_milliseconds_leading_digits === 2) {
+        returnStr = '.SS';
+      } else {
+        returnStr = '.S';
+      }
+    }
+    if (showHours) {
+      return 'H:mm:ss' + returnStr;
+    } else if (showMinutes) {
+      return 'mm:ss' + returnStr;
+    } else {
+      return 'ss' + returnStr;
+    }
+  }
+
   public getGraphIonColSize() {
     let bluetoothDeviceConnections = 0;
     let smartScaleConnected: boolean = false;
