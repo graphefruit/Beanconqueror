@@ -129,7 +129,7 @@
               </ion-col>
               <ion-col *ngIf="uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.decaffeinated)" size="6">
                 <ion-label class="card-headline">{{'BEAN_DATA_DECAFFEINATED' | translate}}</ion-label><br/>
-                <ion-text>{{bean?.decaffeinated}}</ion-text>
+                <ion-text>{{bean?.decaffeinated?('YES' | translate):('NO' | translate)}}</ion-text>
               </ion-col>
               <ion-col *ngIf="bean?.url !== '' && uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.url)" size="6">
                 <ion-label class="card-headline">{{'BEAN_DATA_URL' | translate}}</ion-label><br/>
