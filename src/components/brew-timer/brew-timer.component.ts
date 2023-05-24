@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -73,7 +74,8 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   constructor(
     private readonly modalCtrl: ModalController,
     private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly uiSettingsStorage: UISettingsStorage
+    private readonly uiSettingsStorage: UISettingsStorage,
+    private readonly changeDetectorRef: ChangeDetectorRef
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -156,6 +158,13 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     } else {
       this.startTimer();
     }
+  }
+  public checkChanges() {
+    // #507 Wrapping check changes in set timeout so all values get checked
+    setTimeout(() => {
+      this.changeDetectorRef.detectChanges();
+      window.getComputedStyle(window.document.getElementsByTagName('body')[0]);
+    }, 15);
   }
 
   public startTimer(_resumed: boolean = false): void {

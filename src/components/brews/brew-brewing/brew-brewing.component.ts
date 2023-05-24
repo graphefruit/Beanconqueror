@@ -6,6 +6,7 @@ import {
   EventEmitter,
   HostListener,
   Input,
+  NgZone,
   OnInit,
   Output,
   ViewChild,
@@ -178,7 +179,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     private readonly uiFileHelper: UIFileHelper,
     private readonly screenOrientation: ScreenOrientation,
     private readonly uiAlert: UIAlert,
-    private readonly uiPreparationHelper: UIPreparationHelper
+    private readonly uiPreparationHelper: UIPreparationHelper,
+    private readonly ngZone: NgZone
   ) {}
 
   public getActivePreparationTools() {
@@ -621,7 +623,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.pressureDeviceSubscription = pressureDevice.pressureChange.subscribe(
         (_val) => {
           const actual: number = _val.actual;
-          const old: number = _val.old;
           //Reset to 0, as a temporary fix to exclude the "451" bar
           if (actual > 15) {
             _val.actual = 0;
@@ -631,10 +632,17 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           } else {
             if (
               this.settings.pressure_threshold_active &&
-              _val.actual > this.settings.pressure_threshold_bar
+              _val.actual >= this.settings.pressure_threshold_bar
             ) {
-              this.timer.startTimer();
-              this.checkChanges();
+              this.ngZone.run(() => {
+                this.timer.startTimer();
+
+                setTimeout(() => {
+                  this.changeDetectorRef.markForCheck();
+                  this.timer.checkChanges();
+                  this.checkChanges();
+                });
+              });
             }
           }
         }
@@ -890,7 +898,19 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         // If maximizeFlowGraphIsShown===true, we already started once and resetted, don't show overlay again
         // First maximize, then go on with the timer, else it will lag hard.
 
-        this.maximizeFlowGraph();
+        if (scale || temperatureDevice) {
+          this.maximizeFlowGraph();
+        } else {
+          if (
+            this.data.getPreparation().style_type ===
+              PREPARATION_STYLE_TYPE.ESPRESSO &&
+            pressureDevice
+          ) {
+            this.maximizeFlowGraph();
+          } else {
+            //Don't maximize because pressure is connected, but preparation is not right
+          }
+        }
       }
 
       if (scale) {
