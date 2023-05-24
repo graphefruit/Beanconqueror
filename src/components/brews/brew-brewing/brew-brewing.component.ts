@@ -406,6 +406,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public async maximizeFlowGraph() {
+    if (this.maximizeFlowGraphIsShown === true) {
+      return;
+    }
+    this.maximizeFlowGraphIsShown = true;
+
     let actualOrientation;
     if (this.platform.is('cordova')) {
       actualOrientation = this.screenOrientation.type;
@@ -433,7 +438,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         brewTemperatureGraphEvent: this.brewTemperatureGraphSubject,
       },
     });
-    this.maximizeFlowGraphIsShown = true;
 
     // will force rerender :D
     this.lastChartRenderingInstance = -1;
