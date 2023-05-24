@@ -162,6 +162,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public preparationDevice: XeniaDevice = undefined;
 
   private pressureThresholdWasHit: boolean = false;
+  private temperatureThresholdWasHit: boolean = false;
 
   constructor(
     private readonly platform: Platform,
@@ -663,21 +664,29 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     const temperatureDevice: TemperatureDevice =
       this.bleManager.getTemperatureDevice();
     if (temperatureDevice) {
+      this.temperatureThresholdWasHit = false;
       this.deattachToTemperatureChange();
 
       this.temperatureDeviceSubscription =
         temperatureDevice.temperatureChange.subscribe((_val) => {
-          const actual: number = _val.actual;
-          const old: number = _val.old;
           if (this.timer.isTimerRunning()) {
             this.__setTemperatureFlow(_val);
           } else {
             if (
+              this.temperatureThresholdWasHit === false &&
               this.settings.temperature_threshold_active &&
-              _val.actual > this.settings.temperature_threshold_temp
+              _val.actual >= this.settings.temperature_threshold_temp
             ) {
-              this.timer.startTimer();
-              this.checkChanges();
+              this.temperatureThresholdWasHit = true;
+              this.ngZone.run(() => {
+                this.timerStartPressed(undefined);
+
+                setTimeout(() => {
+                  this.changeDetectorRef.markForCheck();
+                  this.timer.checkChanges();
+                  this.checkChanges();
+                });
+              });
             }
           }
         });
@@ -959,7 +968,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       if (pressureDevice && this.settings.pressure_threshold_active === false) {
         this.attachToPressureChange();
       }
-      if (temperatureDevice) {
+      if (
+        temperatureDevice &&
+        this.settings.temperature_threshold_active === false
+      ) {
         this.attachToTemperatureChange();
       }
     }
@@ -1185,6 +1197,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
       if (temperatureDevice) {
         this.deattachToTemperatureChange();
+        if (this.settings.temperature_threshold_active === true) {
+          // After attaching attach again
+          this.attachToTemperatureChange();
+        }
       }
 
       if (this.isEdit) {
