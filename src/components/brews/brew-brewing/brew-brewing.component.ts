@@ -161,6 +161,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public preparationDevice: XeniaDevice = undefined;
 
+  private pressureThresholdWasHit: boolean = false;
+
   constructor(
     private readonly platform: Platform,
     private readonly uiSettingsStorage: UISettingsStorage,
@@ -616,6 +618,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public attachToPressureChange() {
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
     if (pressureDevice) {
+      this.pressureThresholdWasHit = false;
       this.deattachToPressureChange();
 
       const isEspressoBrew: boolean =
@@ -635,9 +638,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             this.__setPressureFlow(_val);
           } else {
             if (
+              this.pressureThresholdWasHit === false &&
               this.settings.pressure_threshold_active &&
               _val.actual >= this.settings.pressure_threshold_bar
             ) {
+              this.pressureThresholdWasHit = true;
               this.ngZone.run(() => {
                 this.timerStartPressed(undefined);
 
@@ -933,7 +938,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           }, this.settings.bluetooth_command_delay);
         });
       }
-      if (pressureDevice) {
+      if (pressureDevice && this.settings.pressure_threshold_active === false) {
+        // Just update to zero if there is no threshold active
         pressureDevice.updateZero();
       }
 
@@ -950,7 +956,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         this.attachToScaleWeightChange();
         this.attachToFlowChange();
       }
-      if (pressureDevice) {
+      if (pressureDevice && this.settings.pressure_threshold_active === false) {
         this.attachToPressureChange();
       }
       if (temperatureDevice) {
@@ -1171,6 +1177,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
       if (pressureDevice) {
         this.deattachToPressureChange();
+        if (this.settings.pressure_threshold_active === true) {
+          // After attaching attach again
+          this.attachToPressureChange();
+        }
       }
 
       if (temperatureDevice) {
