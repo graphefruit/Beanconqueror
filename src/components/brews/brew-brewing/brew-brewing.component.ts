@@ -635,7 +635,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               _val.actual >= this.settings.pressure_threshold_bar
             ) {
               this.ngZone.run(() => {
-                this.timer.startTimer();
+                this.timerStartPressed(undefined);
 
                 setTimeout(() => {
                   this.changeDetectorRef.markForCheck();
