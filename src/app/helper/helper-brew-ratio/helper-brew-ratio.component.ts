@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'helper-brew-ratio',
@@ -6,31 +6,7 @@ import {Component, OnInit} from '@angular/core';
   styleUrls: ['./helper-brew-ratio.component.scss'],
 })
 export class HelperBrewRatioComponent implements OnInit {
+  constructor() {}
 
-  public brewRatio: any = {
-    water: 0,
-    ground_coffee: 0
-  };
-
-  constructor() {
-  }
-
-  public ngOnInit() {
-  }
-
-
-  public getBrewRatio() {
-    const grindWeight: number = this.brewRatio.ground_coffee;
-    const brewQuantity: number = this.brewRatio.water;
-    let ratio: string = '1 / ';
-
-    if (brewQuantity > 0 && grindWeight > 0) {
-      ratio += (brewQuantity / grindWeight).toFixed(2);
-    } else {
-      ratio += '?';
-    }
-
-    return ratio;
-  }
-
+  public ngOnInit() {}
 }

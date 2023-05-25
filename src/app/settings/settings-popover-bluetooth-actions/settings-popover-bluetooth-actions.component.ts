@@ -4,7 +4,10 @@ import { ModalController, NavParams } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIAlert } from '../../../services/uiAlert';
-import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import {
+  CoffeeBluetoothDevicesService,
+  CoffeeBluetoothServiceEvent,
+} from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 
 @Component({
   selector: 'app-settings-popover-bluetooth-actions',
@@ -30,57 +33,147 @@ export class SettingsPopoverBluetoothActionsComponent implements OnInit {
   public ionViewDidEnter(): void {}
   public ngOnInit() {}
 
-  public reconnectScale() {
+  public async reconnectScale() {
     let timeoutVar: any = null;
     const scaleId = this.settings.scale_id;
     const scaleType = this.settings.scale_type;
     if (scaleId && scaleType) {
-      this.uiAlert.showLoadingSpinner();
+      await this.uiAlert.showLoadingSpinner();
+      let subscrip = this.bluetoothService
+        .attachOnEvent()
+        .subscribe((_type) => {
+          if (_type === CoffeeBluetoothServiceEvent.CONNECTED_SCALE) {
+            this.uiAlert.hideLoadingSpinner();
+            if (subscrip) {
+              subscrip.unsubscribe();
+              subscrip = undefined;
+            }
+          }
+        });
+
       this.bluetoothService.reconnectScale(
         scaleType,
         scaleId,
         () => {
+          if (subscrip) {
+            subscrip.unsubscribe();
+            subscrip = undefined;
+          }
           this.uiAlert.hideLoadingSpinner();
           clearTimeout(timeoutVar);
           timeoutVar = null;
         },
         () => {
+          if (subscrip) {
+            subscrip.unsubscribe();
+            subscrip = undefined;
+          }
           this.uiAlert.hideLoadingSpinner();
           clearTimeout(timeoutVar);
           timeoutVar = null;
         }
       );
+      timeoutVar = setTimeout(async () => {
+        this.uiAlert.hideLoadingSpinner();
+      }, 60000);
     }
-
-    timeoutVar = setTimeout(async () => {
-      this.uiAlert.hideLoadingSpinner();
-    }, 60000);
   }
-  public reconnectPressureDevice() {
+  public async reconnectPressureDevice() {
     let timeoutVar: any = null;
     const pressureId = this.settings.pressure_id;
     const pressureType = this.settings.pressure_type;
     if (pressureId && pressureType) {
-      this.uiAlert.showLoadingSpinner();
+      await this.uiAlert.showLoadingSpinner();
+      let subscrip = this.bluetoothService
+        .attachOnEvent()
+        .subscribe((_type) => {
+          if (_type === CoffeeBluetoothServiceEvent.CONNECTED_PRESSURE) {
+            this.uiAlert.hideLoadingSpinner();
+            if (subscrip) {
+              subscrip.unsubscribe();
+              subscrip = undefined;
+            }
+          }
+        });
       this.bluetoothService.reconnectPressureDevice(
         pressureType,
         pressureId,
         () => {
+          if (subscrip) {
+            subscrip.unsubscribe();
+            subscrip = undefined;
+          }
           this.uiAlert.hideLoadingSpinner();
           clearTimeout(timeoutVar);
           timeoutVar = null;
         },
         () => {
+          if (subscrip) {
+            subscrip.unsubscribe();
+            subscrip = undefined;
+          }
           this.uiAlert.hideLoadingSpinner();
           clearTimeout(timeoutVar);
           timeoutVar = null;
         }
       );
+      timeoutVar = setTimeout(async () => {
+        if (subscrip) {
+          subscrip.unsubscribe();
+          subscrip = undefined;
+        }
+        this.uiAlert.hideLoadingSpinner();
+      }, 15000);
     }
+  }
+  public async reconnectTemperatureDevice() {
+    let timeoutVar: any = null;
+    const temperatureId = this.settings.temperature_id;
+    const temperatureType = this.settings.temperature_type;
+    if (temperatureId && temperatureType) {
+      await this.uiAlert.showLoadingSpinner();
+      let subscrip = this.bluetoothService
+        .attachOnEvent()
+        .subscribe((_type) => {
+          if (_type === CoffeeBluetoothServiceEvent.CONNECTED_TEMPERATURE) {
+            this.uiAlert.hideLoadingSpinner();
+            if (subscrip) {
+              subscrip.unsubscribe();
+              subscrip = undefined;
+            }
+          }
+        });
+      this.bluetoothService.reconnectTemperatureDevice(
+        temperatureType,
+        temperatureId,
+        () => {
+          if (subscrip) {
+            subscrip.unsubscribe();
+            subscrip = undefined;
+          }
+          this.uiAlert.hideLoadingSpinner();
+          clearTimeout(timeoutVar);
+          timeoutVar = null;
+        },
+        () => {
+          if (subscrip) {
+            subscrip.unsubscribe();
+            subscrip = undefined;
+          }
+          this.uiAlert.hideLoadingSpinner();
+          clearTimeout(timeoutVar);
+          timeoutVar = null;
+        }
+      );
 
-    timeoutVar = setTimeout(async () => {
-      this.uiAlert.hideLoadingSpinner();
-    }, 60000);
+      timeoutVar = setTimeout(async () => {
+        if (subscrip) {
+          subscrip.unsubscribe();
+          subscrip = undefined;
+        }
+        this.uiAlert.hideLoadingSpinner();
+      }, 15000);
+    }
   }
 
   public async choose(_type: string): Promise<void> {}

@@ -1,0 +1,42 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{"PREPARATION_DEVICE_CONNECTION" | translate}}</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()" class="big-icon-only">
+        <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-card>
+    <ion-card-content>
+      <ion-item>
+        <ion-label>{{"PREPARATION_DEVICE.CHOOSE_DEVICE" | translate}}</ion-label>
+        <ion-select (ngModelChange)="save()"  [(ngModel)]="preparation.connectedPreparationDevice.type"
+                    cancelText="{{'CANCEL'| translate }}" cancelText="{{'CANCEL'| translate }}"
+                    okText="{{'CHOOSE'| translate }}" okText="{{'CHOOSE'| translate }}" (ionChange)='setUrl()'>
+          <ion-select-option value="{{PREPARATION_DEVICE_TYPE.NONE}}">{{"PREPARATION_DEVICE.TYPE.NONE" | translate}}</ion-select-option>
+          <ion-select-option value="{{PREPARATION_DEVICE_TYPE.XENIA}}">{{"PREPARATION_DEVICE.TYPE.XENIA" | translate}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item  *ngIf="preparation.connectedPreparationDevice.type ===  PREPARATION_DEVICE_TYPE.XENIA">
+        <ion-label>{{"PREPARATION_DEVICE.URL" | translate}}</ion-label>
+        <ion-input (ionBlur)="save()" [(ngModel)]="preparation.connectedPreparationDevice.url" placeholder="{{'PREPARATION_DEVICE.URL' | translate}}"
+                   tabIndex="1" type="text"></ion-input>
+        <ion-button (click)="checkURL()" class="big-icon-only" fill="clear"
+                    slot="end" style="margin-left:0px;" tabIndex="2" tappable>
+          <ion-icon class="ion-color-accent" name="checkmark-circle-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+
+
+  <!--<ion-button (click)="getScripts()">get scripts</ion-button>
+  <ion-button (click)="startScript()">start script</ion-button>
+  <ion-input [(ngModel)]="scriptid" placeholder="scriptid" type="number"></ion-input>
+  <ion-button (click)="stopScript()">stop script</ion-button>-->
+
+</ion-content>

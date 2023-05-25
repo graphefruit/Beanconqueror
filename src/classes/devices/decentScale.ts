@@ -221,8 +221,8 @@ export class DecentScale extends BluetoothScale {
           this.setWeight(newWeight, weightIsStable);
         } else if (uScaleData[1] === 0xaa && uScaleData[2] === 0x01) {
           // Tare button pressed.
-          this.tareEvent.emit();
-          await this.tare();
+          //this.tareEvent.emit();
+          //await this.tare();
         } else if (uScaleData[1] === 0xaa && uScaleData[2] === 0x02) {
           // Timer button pressed
           this.timerEvent.emit(null);

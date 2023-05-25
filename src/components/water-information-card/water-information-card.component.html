@@ -30,7 +30,7 @@
               <ion-col size="6">
                 <ion-label class="card-headline">{{"WATER_SECTION.AMOUNT" | translate}}</ion-label><br/>
 
-                <ion-text>{{getAmount()}}</ion-text>
+                <ion-text>{{getAmount() | number : '.0-2'}}</ion-text>
               </ion-col>
             </ion-row>
           </ion-grid>

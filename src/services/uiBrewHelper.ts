@@ -27,6 +27,8 @@ import { IBrew } from '../interfaces/brew/iBrew';
 import { BrewDetailComponent } from '../app/brew/brew-detail/brew-detail.component';
 import { BrewCuppingComponent } from '../app/brew/brew-cupping/brew-cupping.component';
 import { BrewFlowComponent } from '../app/brew/brew-flow/brew-flow.component';
+import { PreparationDeviceType } from '../classes/preparationDevice';
+import { UIHelper } from './uiHelper';
 
 /**
  * Handles every helping functionalities
@@ -86,7 +88,8 @@ export class UIBrewHelper {
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly translate: TranslateService,
     private readonly uiAnalytics: UIAnalytics,
-    private readonly modalController: ModalController
+    private readonly modalController: ModalController,
+    private readonly uiHelper: UIHelper
   ) {
     this.uiBeanStorage.attachOnEvent().subscribe(() => {
       this.canBrewBoolean = undefined;
@@ -257,6 +260,17 @@ export class UIBrewHelper {
     repeatBrew.vessel_weight = _brewToCopy.vessel_weight;
     repeatBrew.vessel_name = _brewToCopy.vessel_name;
     repeatBrew.flow_profile = '';
+
+    if (
+      _brewToCopy.preparationDeviceBrew &&
+      _brewToCopy.preparationDeviceBrew.type &&
+      _brewToCopy.preparationDeviceBrew.type !== PreparationDeviceType.NONE
+    ) {
+      repeatBrew.preparationDeviceBrew = this.uiHelper.cloneData(
+        _brewToCopy.preparationDeviceBrew
+      );
+    }
+
     return repeatBrew;
   }
 
@@ -516,7 +530,7 @@ export class UIBrewHelper {
     if (this.canBrewIfNotShowMessage()) {
       const preparationCount = this.uiPreparationStorage.getAllEntries().length;
 
-      let initalBreakpoint = 0.2;
+      let initalBreakpoint = 0.35;
       if (preparationCount > 10) {
         initalBreakpoint = 1;
       } else if (preparationCount > 6) {
@@ -534,7 +548,7 @@ export class UIBrewHelper {
         id: BrewChoosePreparationToBrewComponent.COMPONENT_ID,
         cssClass: 'popover-actions',
         backdropDismiss: false,
-        breakpoints: [0, 0.2, 0.5, 0.75, 1],
+        breakpoints: [0, 0.35, 0.5, 0.75, 1],
         initialBreakpoint: initalBreakpoint,
       });
       await modal.present();

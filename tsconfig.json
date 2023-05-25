@@ -7,11 +7,10 @@
     "declaration": false,
     "module": "es2020",
     "moduleResolution": "node",
-    //https://stackoverflow.com/a/59424454/3747399
     "emitDecoratorMetadata": false,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es2020",
+    "target": "ES2022",
     "typeRoots": [
       "node_modules/@types"
     ],
@@ -20,6 +19,7 @@
       "dom"
     ],
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "useDefineForClassFields": false
   }
 }

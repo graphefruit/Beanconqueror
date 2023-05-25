@@ -24,10 +24,12 @@ export class TransducerDirectPressure extends PressureDevice {
     return adv && adv.length >= 2 && adv[0] === 0x0c && adv[1] === 0x01;
   }
 
-  public connect(): Promise<void> {
+  public connect() {
     this.attachNotification();
 
-    return this.updateZero().catch(() => {}); // ignore error
+    setTimeout(() => {
+      this.updateZero().catch(() => {});
+    }, 1000);
   }
 
   public async updateZero(): Promise<void> {
@@ -59,7 +61,7 @@ export class TransducerDirectPressure extends PressureDevice {
       TransducerDirectPressure.PRESSURE_SERVICE_UUID,
       TransducerDirectPressure.PRESSURE_CHAR_UUID,
       (_data: any) => {
-        const v = new Uint16Array(_data);
+        const v = new Int16Array(_data);
 
         const psi = swap16(v[0]) / 10;
         this.setPressure(psiToBar(psi), _data, v);

@@ -91,7 +91,7 @@
                 <br/>
                 <ion-text>{{brewCounts()}}</ion-text>
               </ion-col>
-              <ion-col size="6">
+              <ion-col *ngIf="uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.roastingDate)" size="6">
                 <ion-label class="card-headline">{{"ROASTED_BEFORE" | translate}}</ion-label>
                 <br/>
                 <ion-text *ngIf="daysOld() === 1">{{daysOld()}}&nbsp;{{"DAY_OLD" | translate}}</ion-text>
@@ -101,7 +101,7 @@
                 <ion-label class="card-headline">{{"BEANS_AMOUNT_USED" | translate}}</ion-label>
                 <br/>
                 <ion-text
-                  [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount() | number : '.0-2', gramTotal: bean?.weight}">{{daysOld()}}</ion-text>
+                  [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount() | number : '.0-2', gramTotal: bean?.weight,leftOver: bean?.weight - getUsedWeightCount() | number : '.0-2'}">{{daysOld()}}</ion-text>
               </ion-col>
               <ion-col *ngIf="(bean?.hasCustomFlavors() || bean?.hasPredefinedFlavors())" size="12">
                 <ion-label class="card-headline">{{'BREW_DATA_FLAVOR' | translate}}</ion-label><br/>
@@ -129,7 +129,7 @@
               </ion-col>
               <ion-col *ngIf="uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.decaffeinated)" size="6">
                 <ion-label class="card-headline">{{'BEAN_DATA_DECAFFEINATED' | translate}}</ion-label><br/>
-                <ion-text>{{bean?.decaffeinated}}</ion-text>
+                <ion-text>{{bean?.decaffeinated?('YES' | translate):('NO' | translate)}}</ion-text>
               </ion-col>
               <ion-col *ngIf="bean?.url !== '' && uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.url)" size="6">
                 <ion-label class="card-headline">{{'BEAN_DATA_URL' | translate}}</ion-label><br/>

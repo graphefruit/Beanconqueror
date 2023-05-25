@@ -45,15 +45,15 @@ export class BeanListViewParameter implements IBeanParameter {
     this.aromatics = true;
     this.note = true;
     this.roaster = true;
-    this.roast = false;
+    this.roast = true;
     this.roast_range = false;
     this.weight = true;
     this.cost = true;
     this.attachments = true;
-    this.url = true;
+    this.url = false;
     this.ean_article_number = false;
     this.cupping_points = false;
-    this.decaffeinated = true;
+    this.decaffeinated = false;
     this.bean_roasting_type = true;
     this.rating = true;
 

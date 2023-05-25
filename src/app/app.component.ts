@@ -67,7 +67,7 @@ import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
 } from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { PressureType, ScaleType } from '../classes/devices';
+import { PressureType, ScaleType, TemperatureType } from '../classes/devices';
 import { Logger } from '../classes/devices/common/logger';
 
 declare var AppRate;
@@ -581,6 +581,9 @@ export class AppComponent implements AfterViewInit {
         await this.__trackNewBrew();
         this.router.navigate(['/home/brews'], { replaceUrl: true });
         break;
+      case STARTUP_VIEW_ENUM.BEANS_PAGE:
+        this.router.navigate(['/home/beans'], { replaceUrl: true });
+        break;
     }
   }
 
@@ -601,14 +604,30 @@ export class AppComponent implements AfterViewInit {
     await this.uiUpdate.checkUpdateScreen();
 
     // #281 - Connect smartscale before checking the startup view
-    setTimeout(() => {
+    setTimeout(async () => {
       // Just connect after 5 seconds, to get some time, and maybe handle all the connection errors
-      this.__connectSmartScale();
+      if (this.platform.is('ios')) {
+        await this.bleManager.enableIOSBluetooth();
+      } else {
+        //await this.bleManager.enableBLE();
+      }
+      await this.__checkBluetoothDevices();
+      await new Promise((resolve) => {
+        setTimeout(async () => {
+          resolve(undefined);
+        }, 500);
+      });
       this.__connectPressureDevice();
-    }, 5000);
+      this.__connectSmartScale();
+      this.__connectTemperatureDevice();
+    }, 3000);
 
     const settings = this.uiSettingsStorage.getSettings();
-    if (settings.scale_log === true || settings.pressure_log === true) {
+    if (
+      settings.scale_log === true ||
+      settings.pressure_log === true ||
+      settings.temperature_log === true
+    ) {
       Logger.enableLog();
     } else {
       Logger.disableLog();
@@ -646,17 +665,70 @@ export class AppComponent implements AfterViewInit {
           _type === CoffeeBluetoothServiceEvent.DISCONNECTED_PRESSURE
         ) {
           this.uiToast.showInfoToast('PRESSURE.DISCONNECTED_UNPLANNED');
+        } else if (
+          _type === CoffeeBluetoothServiceEvent.CONNECTED_TEMPERATURE
+        ) {
+          this.uiToast.showInfoToast(
+            this._translate.instant('TEMPERATURE.CONNECTED_SUCCESSFULLY') +
+              ' - ' +
+              this.bleManager.getTemperatureDevice().device_name +
+              ' / ' +
+              this.bleManager.getTemperatureDevice().device_id,
+            false
+          );
+        } else if (
+          _type === CoffeeBluetoothServiceEvent.DISCONNECTED_TEMPERATURE
+        ) {
+          this.uiToast.showInfoToast('TEMPERATURE.DISCONNECTED_UNPLANNED');
         }
       });
   }
 
+  private async __checkBluetoothDevices() {
+    const settings = this.uiSettingsStorage.getSettings();
+
+    const pressure_id: string = settings.pressure_id;
+    const temperature_id: string = settings.temperature_id;
+
+    const searchIds: Array<any> = [];
+
+    const scale_id: string = settings.scale_id;
+
+    let isAndroidAndPressureDevice: boolean = false;
+    if (this.platform.is('android') && pressure_id) {
+      isAndroidAndPressureDevice = true;
+      // Try to find the pressure device firstly, and then we scall for the rest.
+      await this.bleManager.findDeviceWithDirectId(pressure_id, 6000);
+    }
+    if (scale_id) {
+      searchIds.push(scale_id);
+    }
+    if (pressure_id && isAndroidAndPressureDevice === false) {
+      searchIds.push(pressure_id);
+    }
+    if (temperature_id) {
+      searchIds.push(temperature_id);
+    }
+    try {
+      if (searchIds.length > 0) {
+        //Just search if we raly got id's
+        this.bleManager.findDeviceWithDirectIds(searchIds, 60000);
+      }
+    } catch (ex) {}
+  }
   private __connectSmartScale() {
     const settings = this.uiSettingsStorage.getSettings();
     const scale_id: string = settings.scale_id;
     const scale_type: ScaleType = settings.scale_type;
     this.uiLog.log(`Connect smartscale? ${scale_id}`);
     if (scale_id !== undefined && scale_id !== '') {
-      this.bleManager.autoConnectScale(scale_type, scale_id, true);
+      this.bleManager.autoConnectScale(
+        scale_type,
+        scale_id,
+        false,
+        () => {},
+        () => {}
+      );
     } else {
       this.uiLog.log('Smartscale not connected, dont try to connect');
     }
@@ -666,15 +738,37 @@ export class AppComponent implements AfterViewInit {
     const settings = this.uiSettingsStorage.getSettings();
     const pressure_id: string = settings.pressure_id;
     const pressure_type: PressureType = settings.pressure_type;
+
     this.uiLog.log(`Connect pressure device? ${pressure_id}`);
     if (pressure_id !== undefined && pressure_id !== '') {
       this.bleManager.autoConnectPressureDevice(
         pressure_type,
         pressure_id,
-        true
+        false,
+        () => {},
+        () => {}
       );
     } else {
       this.uiLog.log('Pressure device not connected, dont try to connect');
+    }
+  }
+
+  private __connectTemperatureDevice() {
+    const settings = this.uiSettingsStorage.getSettings();
+    const temperature_id: string = settings.temperature_id;
+    const temperature_type: TemperatureType = settings.temperature_type;
+
+    this.uiLog.log(`Connect temperature device? ${temperature_id}`);
+    if (temperature_id !== undefined && temperature_id !== '') {
+      this.bleManager.autoConnectTemperatureDevice(
+        temperature_type,
+        temperature_id,
+        false,
+        () => {},
+        () => {}
+      );
+    } else {
+      this.uiLog.log('Temperature device not connected, dont try to connect');
     }
   }
 
@@ -693,11 +787,20 @@ export class AppComponent implements AfterViewInit {
         const pressure_id: string = settings.pressure_id;
         if (pressure_id !== undefined && pressure_id !== '') {
           // Don't show message on device pause.
-          this.bleManager.disconnect(settings.pressure_id, false);
+          this.bleManager.disconnectPressureDevice(settings.pressure_id, false);
         }
       }
 
-      /// Add pressure profile.
+      if (settings.temperature_stay_connected === false) {
+        const temperature_id: string = settings.temperature_id;
+        if (temperature_id !== undefined && temperature_id !== '') {
+          // Don't show message on device pause.
+          this.bleManager.disconnectTemperatureDevice(
+            settings.temperature_id,
+            false
+          );
+        }
+      }
     });
   }
   private __attachOnDeviceResume() {
@@ -708,6 +811,9 @@ export class AppComponent implements AfterViewInit {
       }
       if (settings.pressure_stay_connected === false) {
         this.__connectPressureDevice();
+      }
+      if (settings.temperature_stay_connected === false) {
+        this.__connectTemperatureDevice();
       }
     });
   }
@@ -846,9 +952,7 @@ export class AppComponent implements AfterViewInit {
       LINK_TRACKING.TITLE,
       LINK_TRACKING.ACTIONS.DISCORD
     );
-    this.uiHelper.openExternalWebpage(
-      'https://discordapp.com/users/205027003106066432'
-    );
+    this.uiHelper.openExternalWebpage('https://discord.gg/vDzA5dZjG8');
   }
 
   public openInstagram() {
@@ -893,8 +997,6 @@ export class AppComponent implements AfterViewInit {
       LINK_TRACKING.TITLE,
       LINK_TRACKING.ACTIONS.BUY_ME_A_COFFEE
     );
-    this.uiHelper.openExternalWebpage(
-      'https://www.buymeacoffee.com/beanconqueror'
-    );
+    this.uiHelper.openExternalWebpage('https://ko-fi.com/beanconqueror');
   }
 }

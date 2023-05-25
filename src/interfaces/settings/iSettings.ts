@@ -21,6 +21,7 @@ export interface ISettings {
   language: string;
   manage_parameters: IBrewParameter;
   default_last_coffee_parameters: IBrewParameter;
+  repeat_coffee_parameters: IBrewParameter;
   visible_list_view_parameters: IBrewParameter;
   brew_order: IOrderBrewParameter;
 
@@ -51,6 +52,7 @@ export interface ISettings {
   show_roasting_section: boolean;
   show_water_section: boolean;
   show_cupping_section: boolean;
+  use_numeric_keyboard_for_grind_size: boolean;
 
   brew_filter: {
     OPEN: IBrewPageFilter;

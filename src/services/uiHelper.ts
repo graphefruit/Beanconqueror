@@ -247,7 +247,7 @@ export class UIHelper {
   public async exportJSON(
     fileName: string,
     jsonContent: string,
-    _share: boolean = true
+    _share: boolean = false
   ): Promise<any> {
     const promise = new Promise(async (resolve, reject) => {
       // Fixed umlaut issue

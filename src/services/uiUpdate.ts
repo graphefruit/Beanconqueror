@@ -25,6 +25,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { UIStorage } from './uiStorage';
 import { maxBy, keys } from 'lodash';
 import { UIHelper } from './uiHelper';
+import { RepeatBrewParameter } from '../classes/parameter/repeatBrewParameter';
 
 @Injectable({
   providedIn: 'root',
@@ -480,17 +481,35 @@ export class UIUpdate {
             break;
 
           case 'UPDATE_9':
-            const beansList: Array<Bean> = this.uiBeanStorage.getAllEntries();
-            if (beansList.length > 0) {
+            // Already existing installation which has more then one bean.
+            const settings_v9: Settings = this.uiSettingsStorage.getSettings();
+            settings_v9.repeat_coffee_parameters = new RepeatBrewParameter();
+            const beansListV9: Array<Bean> = this.uiBeanStorage.getAllEntries();
+            if (beansListV9.length > 0) {
               this.uiLog.info(
                 'Update 9 - We found more then zero beans, therefore its an existing instance, we need to update the beans, so the user will see all details again'
               );
-              // Already existing installation which has more then one bean.
-              const settings_v9: any = this.uiSettingsStorage.getSettings();
+
               settings_v9.bean_manage_parameters.activateAll();
-              settings_v9.bean_visible_list_view_parameters.activateAll();
-              await this.uiSettingsStorage.saveSettings(settings_v9);
             }
+
+            settings_v9.graph.FILTER.temperature = true;
+            settings_v9.graph.ESPRESSO.temperature = true;
+
+            // Reset filter, because we got a new sort on beans
+            settings_v9.resetFilter();
+            await this.uiSettingsStorage.saveSettings(settings_v9);
+            const preparationListV9: Array<Preparation> =
+              this.uiPreparationStorage.getAllEntries();
+            for (const prep of preparationListV9) {
+              prep.repeat_coffee_parameters = new RepeatBrewParameter();
+              prep.repeat_coffee_parameters.repeat_coffee_active = false;
+              prep.repeat_coffee_parameters.coffee_first_drip_time = false;
+              prep.repeat_coffee_parameters.brew_beverage_quantity = false;
+              prep.repeat_coffee_parameters.brew_quantity = false;
+              await this.uiPreparationStorage.update(prep);
+            }
+
             break;
 
           default:
@@ -543,7 +562,7 @@ export class UIUpdate {
     }
 
     if (somethingUpdated) {
-      //await this.uiVersionStorage.saveVersion(version);
+      await this.uiVersionStorage.saveVersion(version);
     }
   }
 
@@ -554,7 +573,7 @@ export class UIUpdate {
         versionCode = await this.appVersion.getVersionNumber();
       } else {
         // Hardcored for testing
-        versionCode = '6.3.0';
+        versionCode = '6.4.0';
       }
       const version: Version = this.uiVersionStorage.getVersion();
       const displayingVersions =

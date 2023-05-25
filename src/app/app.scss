@@ -358,7 +358,9 @@ ion-menu:host .menu-inner {
 .ion-no-padding-right {
   padding-right:0px;
 }
-
+.ion-no-padding-left {
+  padding-left:0px;
+}
   ion-range {
     --bar-background: #CCCCCC;
     --bar-background-active: var(--ion-color-accent-secondary);
@@ -851,4 +853,19 @@ ion-menu:host .menu-inner {
   color: white !important;
 }
 
+ion-segment.tabs {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
 
+  padding-top:0px;
+
+  ion-segment-button{
+    width: 100%; 
+
+    .value{
+      font-size: 14px;
+      opacity: 0.8;
+    }
+  }
+}

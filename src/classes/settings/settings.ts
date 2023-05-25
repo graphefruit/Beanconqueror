@@ -19,8 +19,9 @@ import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
 import { IBrewGraphs } from '../../interfaces/brew/iBrewGraphs';
 
 import { BeanManageParameter } from '../parameter/beanManageParameter';
-import { PressureType, ScaleType } from '../devices';
+import { TemperatureType, PressureType, ScaleType } from '../devices';
 import { BeanListViewParameter } from '../parameter/beanListViewParameter';
+import { RepeatBrewParameter } from '../parameter/repeatBrewParameter';
 
 export class Settings implements ISettings {
   public brew_view: BREW_VIEW_ENUM;
@@ -30,6 +31,7 @@ export class Settings implements ISettings {
   public qr_scanner_information: boolean;
   public manage_parameters: ManageBrewParameter;
   public default_last_coffee_parameters: DefaultBrewParameter;
+  public repeat_coffee_parameters: RepeatBrewParameter;
   public visible_list_view_parameters: ListViewBrewParameter;
   public brew_order: OrderBrewParameter;
 
@@ -54,6 +56,8 @@ export class Settings implements ISettings {
   public show_archived_green_beans: boolean;
   public show_archived_waters: boolean;
   public show_archived_brews_on_dashboard: boolean;
+
+  public use_numeric_keyboard_for_grind_size: boolean;
 
   public welcome_page_showed: boolean;
   public track_caffeine_consumption: boolean;
@@ -109,6 +113,12 @@ export class Settings implements ISettings {
   public pressure_threshold_bar: number;
   public pressure_stay_connected: boolean;
 
+  public temperature_id: string;
+  public temperature_type: TemperatureType;
+  public temperature_log: boolean;
+  public temperature_threshold_active: boolean;
+  public temperature_threshold_temp: number;
+  public temperature_stay_connected: boolean;
   public currency: string;
   public brew_display_bean_image: boolean;
 
@@ -118,6 +128,10 @@ export class Settings implements ISettings {
       favourite: false,
       rating: {
         upper: upperRating,
+        lower: 0,
+      },
+      roast_range: {
+        upper: 5,
         lower: 0,
       },
       bean_roasting_type: [],
@@ -135,6 +149,7 @@ export class Settings implements ISettings {
       method_of_preparation: [],
       method_of_preparation_tools: [],
       favourite: false,
+      chart_data: false,
       rating: {
         upper: upperRating,
         lower: -1,
@@ -148,6 +163,7 @@ export class Settings implements ISettings {
       calc_flow: true,
       realtime_flow: true,
       pressure: true,
+      temperature: true,
     } as IBrewGraphs;
   }
 
@@ -160,6 +176,8 @@ export class Settings implements ISettings {
     this.manage_parameters = new ManageBrewParameter();
     this.default_last_coffee_parameters = new DefaultBrewParameter();
     this.visible_list_view_parameters = new ListViewBrewParameter();
+    this.repeat_coffee_parameters = new RepeatBrewParameter();
+
     this.brew_order = new OrderBrewParameter();
 
     this.bean_manage_parameters = new BeanManageParameter();
@@ -186,6 +204,8 @@ export class Settings implements ISettings {
     this.show_roasting_section = false;
     this.show_water_section = false;
     this.show_cupping_section = false;
+
+    this.use_numeric_keyboard_for_grind_size = false;
 
     this.brew_filter = {
       OPEN: {} as IBrewPageFilter,
@@ -288,6 +308,12 @@ export class Settings implements ISettings {
     Object.assign(
       this.default_last_coffee_parameters,
       settingsObj.default_last_coffee_parameters
+    );
+
+    this.repeat_coffee_parameters = new RepeatBrewParameter();
+    Object.assign(
+      this.repeat_coffee_parameters,
+      settingsObj.repeat_coffee_parameters
     );
 
     this.bean_manage_parameters = new BeanManageParameter();

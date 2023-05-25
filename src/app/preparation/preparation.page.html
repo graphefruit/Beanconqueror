@@ -14,16 +14,19 @@
   </ion-toolbar>
 </ion-header>
 <ion-content #preparationContent>
-  <ion-segment (ionChange)="segmentChanged()"  [(ngModel)]="segment" class="ion-padding-vertical" style="padding-top:0px;">
+  <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="segment" class="ion-padding-vertical class">
     <ion-segment-button value="open">
-      <ion-label>{{"CURRENT" | translate }}
+      <ion-label>
+        {{"CURRENT" | translate }}
       </ion-label>
     </ion-segment-button>
     <ion-segment-button *ngIf="settings?.show_archived_preparations" value="archive">
-      <ion-label>{{"TAB_ARCHIVE" | translate }}
+      <ion-label>
+        {{"TAB_ARCHIVE" | translate }}
       </ion-label>
     </ion-segment-button>
   </ion-segment>
+
   <div [ngSwitch]="segment">
     <div *ngSwitchCase="'open'">
       <div *ngIf="openPreparationsView?.length == 0" class="ion-padding ion-text-center">

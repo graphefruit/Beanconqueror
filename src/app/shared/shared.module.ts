@@ -167,6 +167,11 @@ import { BeanAssociatedBrewsComponent } from '../beans/bean-associated-brews/bea
 import { BeanParameterPage } from '../bean-parameter/bean-parameter.page';
 import { BeanListViewParameterComponent } from '../bean-parameter/bean-list-view-parameter/bean-list-view-parameter.component';
 import { BeanManageParameterComponent } from '../bean-parameter/bean-manage-parameter/bean-manage-parameter.component';
+import { BrewRatioCardComponent } from '../../components/brew-ratio-card/brew-ratio-card.component';
+import { BrewRatioCalculatorComponent } from '../brew/brew-ratio-calculator/brew-ratio-calculator.component';
+import { RepeatCustomParameterComponent } from '../../components/parameter/repeat-custom-parameter/repeat-custom-parameter.component';
+import { RepeatParameterComponent } from '../brew-parameter/repeat-parameter/repeat-parameter.component';
+import { PreparationConnectedDeviceComponent } from '../preparation/preparation-connected-device/preparation-connected-device.component';
 
 @NgModule({
   declarations: [
@@ -208,6 +213,7 @@ import { BeanManageParameterComponent } from '../bean-parameter/bean-manage-para
     LicencesComponent,
     PrivacyComponent,
     DefaultParameterComponent,
+    RepeatParameterComponent,
     SortParameterComponent,
     ManageParameterComponent,
     BeanListViewParameterComponent,
@@ -226,6 +232,7 @@ import { BeanManageParameterComponent } from '../bean-parameter/bean-manage-para
     ListViewCustomParameterComponent,
     ListViewParameterComponent,
     PreparationCustomParametersComponent,
+    PreparationConnectedDeviceComponent,
     MillPage,
     MillEditComponent,
     MillDetailComponent,
@@ -236,6 +243,7 @@ import { BeanManageParameterComponent } from '../bean-parameter/bean-manage-para
     MillAddComponent,
     BrewAddComponent,
     BrewBrixCalculatorComponent,
+    BrewRatioCalculatorComponent,
     BrewChoosePreparationToBrewComponent,
     BrewFlavorPickerComponent,
     BrewBeverageQuantityCalculatorComponent,
@@ -289,6 +297,7 @@ import { BeanManageParameterComponent } from '../bean-parameter/bean-manage-para
     PreparationPopoverActionsComponent,
     TimerComponent,
     DefaultCustomParameterComponent,
+    RepeatCustomParameterComponent,
     SortCustomParameterComponent,
     ManageCustomParameterComponent,
     BrewTimerComponent,
@@ -308,6 +317,7 @@ import { BeanManageParameterComponent } from '../bean-parameter/bean-manage-para
     RoastingMachinePage,
     RoastingMachinePopoverActionsComponent,
     WaterAddComponent,
+    BrewRatioCardComponent,
   ],
   imports: [
     CommonModule,
@@ -400,6 +410,7 @@ import { BeanManageParameterComponent } from '../bean-parameter/bean-manage-para
     LicencesComponent,
     PrivacyComponent,
     DefaultParameterComponent,
+    RepeatParameterComponent,
     SortParameterComponent,
     ManageParameterComponent,
     BeanListViewParameterComponent,
@@ -416,6 +427,7 @@ import { BeanManageParameterComponent } from '../bean-parameter/bean-manage-para
     ListViewCustomParameterComponent,
     ListViewParameterComponent,
     PreparationCustomParametersComponent,
+    PreparationConnectedDeviceComponent,
     BrewFilterComponent,
     BeanFilterComponent,
     BeanSortComponent,
@@ -426,6 +438,7 @@ import { BeanManageParameterComponent } from '../bean-parameter/bean-manage-para
     MillAddComponent,
     BrewAddComponent,
     BrewBrixCalculatorComponent,
+    BrewRatioCalculatorComponent,
     BrewChoosePreparationToBrewComponent,
     BrewFlavorPickerComponent,
     BrewBeverageQuantityCalculatorComponent,
@@ -478,6 +491,7 @@ import { BeanManageParameterComponent } from '../bean-parameter/bean-manage-para
     PreparationPopoverActionsComponent,
     TimerComponent,
     DefaultCustomParameterComponent,
+    RepeatCustomParameterComponent,
     SortCustomParameterComponent,
     ManageCustomParameterComponent,
     BrewTimerComponent,
@@ -497,6 +511,7 @@ import { BeanManageParameterComponent } from '../bean-parameter/bean-manage-para
     RoastingMachinePage,
     RoastingMachinePopoverActionsComponent,
     WaterAddComponent,
+    BrewRatioCardComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

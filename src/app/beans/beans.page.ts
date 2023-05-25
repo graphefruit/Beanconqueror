@@ -49,6 +49,9 @@ export class BeansPage implements OnInit {
   public openBeans: Array<Bean> = [];
   public finishedBeans: Array<Bean> = [];
 
+  public finishedBeansLength: number = 0;
+  public openBeansLength: number = 0;
+
   public openBeansSort: IBeanPageSort = {
     sort_after: BEAN_SORT_AFTER.UNKOWN,
     sort_order: BEAN_SORT_ORDER.UNKOWN,
@@ -64,7 +67,7 @@ export class BeansPage implements OnInit {
   @ViewChild('beanContent', { read: ElementRef })
   public beanContent: ElementRef;
 
-  public bean_segment: string = 'open';
+  public bean_segment: 'open' | 'archive' = 'open';
   public archivedBeansSort: IBeanPageSort = {
     sort_after: BEAN_SORT_AFTER.UNKOWN,
     sort_order: BEAN_SORT_ORDER.UNKOWN,
@@ -382,6 +385,13 @@ export class BeansPage implements OnInit {
           filter.bean_roasting_type.includes(e.bean_roasting_type) === true
       );
     }
+
+    filterBeans = filterBeans.filter(
+      (e: Bean) =>
+        e.roast_range >= filter.roast_range.lower &&
+        e.roast_range <= filter.roast_range.upper
+    );
+
     if (filter.bean_roaster) {
       filterBeans = filterBeans.filter(
         (e: Bean) => filter.bean_roaster.includes(e.roaster) === true
@@ -525,9 +535,15 @@ export class BeansPage implements OnInit {
       .getAllEntries()
       .sort((a, b) => a.name.localeCompare(b.name));
 
+    this.openBeansLength = this.beans.reduce(
+      (n, e) => (!e.finished ? n + 1 : n),
+      0
+    );
+    this.finishedBeansLength = this.beans.length - this.openBeansLength;
+
     this.openBeans = [];
     this.finishedBeans = [];
     this.__initializeBeansView('open');
-    this.__initializeBeansView('archiv');
+    this.__initializeBeansView('archive');
   }
 }

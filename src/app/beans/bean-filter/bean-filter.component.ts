@@ -12,7 +12,6 @@ import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIMillStorage } from '../../../services/uiMillStorage';
 import { IBeanPageFilter } from '../../../interfaces/bean/iBeanPageFilter';
 import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
-import { Brew } from '../../../classes/brew/brew';
 
 @Component({
   selector: 'app-bean-filter',

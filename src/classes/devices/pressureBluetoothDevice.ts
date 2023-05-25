@@ -14,6 +14,8 @@ export interface PressureChangeEvent extends Pressure {
   date: Date;
 }
 
+const UPDATE_EVERY_MS = 1000 / 10;
+
 export abstract class PressureDevice {
   public static BATTERY_SERVICE_UUID = to128bitUUID('180F');
   public static BATTERY_CHAR_UUID = to128bitUUID('2A19');
@@ -24,6 +26,8 @@ export abstract class PressureDevice {
   public pressureChange: EventEmitter<PressureChangeEvent> = new EventEmitter();
   protected pressure: Pressure;
   protected pressureParentLogger: Logger;
+
+  private lastPressureSetTime: number = 0;
 
   protected constructor(data: PeripheralData) {
     this.device_id = data.id;
@@ -37,7 +41,7 @@ export abstract class PressureDevice {
     this.pressureParentLogger = new Logger();
   }
 
-  public abstract connect(): Promise<void>;
+  public abstract connect(): void;
   public abstract disconnect(): void;
   public abstract updateZero(): Promise<void>;
 
@@ -79,6 +83,11 @@ export abstract class PressureDevice {
     _rawData: any,
     _parsedData: Uint16Array | Float32Array | any
   ) {
+    if (Date.now() - this.lastPressureSetTime < UPDATE_EVERY_MS) {
+      return;
+    }
+    this.lastPressureSetTime = Date.now();
+
     this.pressureParentLogger.log(
       'Bluetooth Pressure Device - New pressure recieved ' +
         _newPressure +

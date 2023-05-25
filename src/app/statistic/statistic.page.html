@@ -18,15 +18,15 @@
       <ion-label>{{"STATISTIC_TAB_BREWS" | translate }}
       </ion-label>
     </ion-segment-button>
-    <ion-segment-button *ngIf="false"  value="BEANS" (click)="loadBeanCharts()">
+    <ion-segment-button *ngIf="false" value="BEANS" (click)="loadBeanCharts()">
       <ion-label>{{"STATISTIC_TAB_BEANS" | translate }}
       </ion-label>
     </ion-segment-button>
-    <ion-segment-button value="PREPARATIONS"  (click)="loadPreparationCharts()">
+    <ion-segment-button value="PREPARATIONS" (click)="loadPreparationCharts()">
       <ion-label>{{"STATISTIC_TAB_PREPARATIONS" | translate }}
       </ion-label>
     </ion-segment-button>
-    <ion-segment-button value="GRINDERS"  (click)="loadGrinderCharts()">
+    <ion-segment-button value="GRINDERS" (click)="loadGrinderCharts()">
       <ion-label>{{"STATISTIC_TAB_GRINDERS" | translate }}
       </ion-label>
     </ion-segment-button>
@@ -65,7 +65,8 @@
         <ion-col class="ion-text-center" size="6">
           <ion-card class="small-card" style="height: 100%;">
             <ion-card-header class="card-background"
-                             style="font-size: 1.2em;">{{uiStatistic.getSpentMoneyForCoffeeBeans() | number : '.0-2'}}&nbsp; {{getCurrencySymbol()}}
+              style="font-size: 1.2em;">{{uiStatistic.getSpentMoneyForCoffeeBeans() | number : '.0-2'}}&nbsp;
+              {{getCurrencySymbol()}}
             </ion-card-header>
             <ion-card-content>
               {{"PAGE_STATISTICS_MONEY_SPENT_FOR_COFFEE" | translate}}
@@ -86,7 +87,7 @@
             <ion-card-header class="card-background" style="font-size: 1.2em;">{{uiStatistic.getTotalDrunk() | number : '.0-2'}}
             </ion-card-header>
             <ion-card-content>
-              {{"PAGE_STATISTICS_DRUNKEN_QUANTITY" | translate}} (kg | l)
+              {{"PAGE_STATISTICS_DRUNKEN_QUANTITY" | translate}} (kg / l)
             </ion-card-content>
           </ion-card>
         </ion-col>
@@ -112,20 +113,24 @@
     </div>
     <div *ngSwitchCase="'BREWS'">
       <ion-card>
-        <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">{{"PAGE_STATISTICS_BREW_PROCESSES" | translate}}</ion-card-header>
+        <ion-card-header class="card-background"
+          style="font-size: 1.2em;text-align:center;">{{"PAGE_STATISTICS_BREW_PROCESSES" | translate}}</ion-card-header>
         <ion-card-content class="ion-margin-top">
           <canvas #brewChart></canvas>
         </ion-card-content>
       </ion-card>
       <ion-card>
-        <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">{{"PAGE_STATISTICS_BREW_PER_DAYPROCESSES" | translate}}</ion-card-header>
+        <ion-card-header class="card-background"
+          style="font-size: 1.2em;text-align:center;">{{"PAGE_STATISTICS_BREW_PER_DAYPROCESSES" |
+          translate}}</ion-card-header>
         <ion-card-content class="ion-margin-top">
           <canvas #brewsPerDayChart></canvas>
         </ion-card-content>
       </ion-card>
 
       <ion-card>
-        <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">{{"PAGE_STATISTICS_DRUNKEN_QUANTITY" | translate}} (kg | l)</ion-card-header>
+        <ion-card-header class="card-background"
+          style="font-size: 1.2em;text-align:center;">{{"PAGE_STATISTICS_DRUNKEN_QUANTITY" | translate}} (kg / l)</ion-card-header>
         <ion-card-content class="ion-margin-top">
           <canvas #drinkingChart></canvas>
         </ion-card-content>
@@ -135,14 +140,17 @@
     </div>
     <div *ngSwitchCase="'PREPARATIONS'">
       <ion-card>
-        <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">{{"STATISTICS_PREPARATION_USAGES" | translate}}
+        <ion-card-header class="card-background"
+          style="font-size: 1.2em;text-align:center;">{{"STATISTICS_PREPARATION_USAGES" | translate}}
         </ion-card-header>
         <ion-card-content class="ion-margin-top">
           <canvas #preparationUsageChart></canvas>
         </ion-card-content>
       </ion-card>
       <ion-card>
-        <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">{{"STATISTICS_PREPARATION_TIMELINE_USAGES" | translate}}</ion-card-header>
+        <ion-card-header class="card-background"
+          style="font-size: 1.2em;text-align:center;">{{"STATISTICS_PREPARATION_TIMELINE_USAGES" |
+          translate}}</ion-card-header>
         <ion-card-content class="ion-margin-top">
           <canvas #preparationUsageTimelineChart style="min-height:300px"></canvas>
         </ion-card-content>
@@ -150,13 +158,17 @@
     </div>
     <div *ngSwitchCase="'GRINDERS'">
       <ion-card>
-        <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">{{"PAGE_STATISTICS_BEAN_WEIGHT_USED" | translate}} (g)</ion-card-header>
+        <ion-card-header class="card-background"
+          style="font-size: 1.2em;text-align:center;">{{"PAGE_STATISTICS_BEAN_WEIGHT_USED" | translate}}
+          (g)</ion-card-header>
         <ion-card-content class="ion-margin-top">
           <canvas #grindingChart></canvas>
         </ion-card-content>
       </ion-card>
       <ion-card>
-        <ion-card-header class="card-background" style="font-size: 1.2em;text-align:center;">{{"STATISTICS_GRINDER_TIMELINE_USAGES" | translate}}</ion-card-header>
+        <ion-card-header class="card-background"
+          style="font-size: 1.2em;text-align:center;">{{"STATISTICS_GRINDER_TIMELINE_USAGES" |
+          translate}}</ion-card-header>
         <ion-card-content class="ion-margin-top">
           <canvas #grinderUsageTimelineChart style="min-height:300px"></canvas>
         </ion-card-content>

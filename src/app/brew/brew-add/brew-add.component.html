@@ -7,24 +7,26 @@
       </ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button *ngIf="settings.scale_id || settings.pressure_id" (click)="popoverActionsBrew()" tappable>
+      <ion-button *ngIf="settings.scale_id || settings.pressure_id || settings.temperature_id"
+        (click)="popoverActionsBrew()" tappable>
         <ion-icon name="beanconqueror-dots" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <brew-brewing #brewBrewing [loadSpecificLastPreparation]="loadSpecificLastPreparation" [brewTemplate]="brew_template" [(data)]="data"></brew-brewing>
+  <brew-brewing #brewBrewing [loadSpecificLastPreparation]="loadSpecificLastPreparation" [brewTemplate]="brew_template"
+    [(data)]="data"></brew-brewing>
 </ion-content>
-<ion-footer class="ion-no-border">
+<ion-footer *ngIf="showFooter" class="ion-no-border">
   <ion-row>
     <ion-col>
-      <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
-                  tappable>{{"CANCEL" | translate}}</ion-button>
+      <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline" tappable>{{"CANCEL" |
+        translate}}</ion-button>
     </ion-col>
     <ion-col>
-      <ion-button (click)="finish()" color="accent" disable-double-click expand="block" tappable
-                  type="submit">{{"SAVE" | translate}}</ion-button>
+      <ion-button (click)="finish()" color="accent" disable-double-click expand="block" tappable type="submit">{{"SAVE"
+        | translate}}</ion-button>
     </ion-col>
   </ion-row>
 </ion-footer>

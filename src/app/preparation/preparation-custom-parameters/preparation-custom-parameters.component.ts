@@ -1,10 +1,10 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {Preparation} from '../../../classes/preparation/preparation';
-import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
-import {IPreparation} from '../../../interfaces/preparation/iPreparation';
-import {PREPARATION_TYPES} from '../../../enums/preparations/preparationTypes';
-import {ModalController, NavParams} from '@ionic/angular';
-import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
+import { Component, Input, OnInit } from '@angular/core';
+import { Preparation } from '../../../classes/preparation/preparation';
+import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
+import { IPreparation } from '../../../interfaces/preparation/iPreparation';
+import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
+import { ModalController, NavParams } from '@ionic/angular';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 
 @Component({
   selector: 'app-preparation-custom-parameters',
@@ -16,14 +16,14 @@ export class PreparationCustomParametersComponent implements OnInit {
   public data: Preparation = new Preparation();
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   public preparationTypeEnum = PREPARATION_TYPES;
-  public segment:string ='manage';
+  public segment: string = 'manage';
   @Input() private preparation: IPreparation;
 
-  constructor (private readonly navParams: NavParams,
-               private readonly modalController: ModalController,
-               private readonly uiPreparationStorage: UIPreparationStorage) {
-
-  }
+  constructor(
+    private readonly navParams: NavParams,
+    private readonly modalController: ModalController,
+    private readonly uiPreparationStorage: UIPreparationStorage
+  ) {}
 
   public ionViewWillEnter(): void {
     if (this.preparation !== undefined) {
@@ -31,11 +31,14 @@ export class PreparationCustomParametersComponent implements OnInit {
     }
   }
 
-
   public dismiss(): void {
-    this.modalController.dismiss({
-      dismissed: true
-    }, undefined, PreparationCustomParametersComponent.COMPONENT_ID);
+    this.modalController.dismiss(
+      {
+        dismissed: true,
+      },
+      undefined,
+      PreparationCustomParametersComponent.COMPONENT_ID
+    );
   }
 
   public async save() {
@@ -43,5 +46,4 @@ export class PreparationCustomParametersComponent implements OnInit {
   }
 
   public ngOnInit() {}
-
 }

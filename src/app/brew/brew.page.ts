@@ -27,11 +27,14 @@ import { UIAnalytics } from '../../services/uiAnalytics';
   styleUrls: ['./brew.page.scss'],
 })
 export class BrewPage implements OnInit {
-  private brews: Array<Brew>;
+  public brews: Array<Brew>;
   public openBrewsView: Array<Brew> = [];
   public archiveBrewsView: Array<Brew> = [];
 
-  public brew_segment: string = 'open';
+  public openBrewsLength: number = 0;
+  public archiveBrewsLength: number = 0;
+
+  public brew_segment: 'open' | 'archive' = 'open';
 
   @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
   public openScroll: AgVirtualSrollComponent;
@@ -141,6 +144,7 @@ export class BrewPage implements OnInit {
       checkingFilter.method_of_preparation.length > 0 ||
       checkingFilter.mill.length > 0 ||
       checkingFilter.favourite ||
+      checkingFilter.chart_data ||
       didRatingFilterChanged ||
       checkingFilterText !== ''
     );
@@ -245,6 +249,9 @@ export class BrewPage implements OnInit {
           e.getMill().finished === !isOpen &&
           e.getPreparation().finished === !isOpen
       );
+
+      this.openBrewsLength = brewsFilters.length;
+      this.archiveBrewsLength = this.brews.length - this.openBrewsLength;
     } else {
       brewsFilters = brewsCopy.filter(
         (e) =>
@@ -291,6 +298,11 @@ export class BrewPage implements OnInit {
     }
     if (filter.favourite) {
       brewsFilters = brewsFilters.filter((e) => e.favourite === true);
+    }
+    if (filter.chart_data) {
+      brewsFilters = brewsFilters.filter(
+        (e) => e.flow_profile !== '' && e.flow_profile !== undefined
+      );
     }
     if (filter.rating) {
       brewsFilters = brewsFilters.filter(

@@ -34,7 +34,7 @@ import { BrewTrackingService } from '../../services/brewTracking/brew-tracking.s
 import { UIHealthKit } from '../../services/uiHealthKit';
 import * as htmlToImage from 'html-to-image';
 import { Visualizer } from '../../classes/visualizer/visualizer';
-import moment from 'moment';
+
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { BrewFlow } from '../../classes/brew/brewFlow';
 declare var window;
@@ -156,10 +156,14 @@ export class BrewInformationComponent implements OnInit {
     vS.mapPreparation(this.brew.getPreparation());
     vS.mapMill(this.brew.getMill());
     vS.brewFlow = await this.readFlowProfile();
-    console.log(vS);
-    //console.log(JSON.stringify(t));
 
-    this.saveTemplateAsFile('bla.json', vS);
+    try {
+      await this.uiHelper.exportJSON(
+        this.brew.config.uuid + '_visualizer.json',
+        JSON.stringify(vS),
+        true
+      );
+    } catch (ex) {}
   }
 
   public async fastRepeatBrew() {
@@ -351,13 +355,11 @@ export class BrewInformationComponent implements OnInit {
               })
               .catch(async (error) => {
                 await this.uiAlert.hideLoadingSpinner();
-                console.error('oops, something went wrong!', error);
               });
           }, 500);
         })
         .catch(async (error) => {
           await this.uiAlert.hideLoadingSpinner();
-          console.error('oops, something went wrong!', error);
         });
     } else {
       htmlToImage
@@ -370,7 +372,6 @@ export class BrewInformationComponent implements OnInit {
         })
         .catch(async (error) => {
           await this.uiAlert.hideLoadingSpinner();
-          console.error('oops, something went wrong!', error);
         });
     }
 

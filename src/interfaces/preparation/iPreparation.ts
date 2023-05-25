@@ -1,11 +1,12 @@
 /**
  * Created by lars on 10/18/2017.
  */
-import {IConfig} from '../objectConfig/iObjectConfig';
-import {PREPARATION_STYLE_TYPE} from '../../enums/preparations/preparationStyleTypes';
-import {IBrewParameter} from '../parameter/iBrewParameter';
-import {IOrderBrewParameter} from '../parameter/iOrderBrewParameter';
-import {PreparationTool} from '../../classes/preparation/preparationTool';
+import { IConfig } from '../objectConfig/iObjectConfig';
+import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
+import { IBrewParameter } from '../parameter/iBrewParameter';
+import { IOrderBrewParameter } from '../parameter/iOrderBrewParameter';
+import { PreparationTool } from '../../classes/preparation/preparationTool';
+import { IConnectedPreparationDevice } from '../preparationDevices/iConnectedPreparationDevice';
 
 export interface IPreparation {
   name: string;
@@ -17,7 +18,9 @@ export interface IPreparation {
   manage_parameters: IBrewParameter;
   default_last_coffee_parameters: IBrewParameter;
   visible_list_view_parameters: IBrewParameter;
+  repeat_coffee_parameters: IBrewParameter;
   brew_order: IOrderBrewParameter;
   use_custom_parameters: boolean;
   attachments: Array<string>;
+  connectedPreparationDevice: IConnectedPreparationDevice;
 }

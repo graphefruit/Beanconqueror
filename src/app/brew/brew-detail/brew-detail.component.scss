@@ -7,19 +7,19 @@
   }
 
 
-  ion-card
-  {
+  ion-card {
     div.last-item {
-      margin-bottom:16px;
+      margin-bottom: 16px;
       /*Last one*/
-      order:10000;
+      order: 10000;
     }
 
   }
 
 
   ion-card.flow-profile {
-    margin:0px;
+    margin: 0px;
+
     ion-card-header {
       color: #FFFFFF;
       background-color: var(--ion-color-accent) !important;
@@ -37,5 +37,84 @@
       padding-bottom: 4px;
     }
 
+  }
+
+  ion-card.flow-profile.temperature-card {
+    ion-card-header {
+      background-color: #CC3311 !important;
+    }
+
+    ion-icon {
+      color: #CC3311 !important;
+    }
+  }
+
+  ion-card.flow-profile.pressure-card {
+    ion-card-header {
+      background-color: #05C793 !important;
+    }
+
+    ion-icon {
+      color: #05C793 !important;
+    }
+
+    ion-icon>div.icon-inner>svg.s-ion-icon>g {
+      fill: #05C793 !important;
+    }
+  }
+
+  ion-card.flow-profile.flow-card {
+    ion-card-header {
+      background-color: #09485D !important;
+    }
+
+    ion-icon {
+      color: #09485D !important;
+    }
+  }
+
+  ion-card.flow-profile.weight-card {
+    ion-card-header {
+      background-color: #cdc2ac !important;
+    }
+
+    ion-icon {
+      color: #cdc2ac !important;
+    }
+  }
+
+  ion-chip.weight {
+    --background: #cdc2ac;
+    --color: black;
+  }
+
+  ion-chip.flowcalculated {
+    --background: #7F97A2;
+    --color: white;
+  }
+
+  ion-chip.chip-outline {
+    --color: black !important;
+  }
+
+  ion-chip.flowreal {
+    --background: #09485D;
+    --color: white;
+  }
+
+  ion-chip.pressure {
+    --background: #05C793;
+    --color: black;
+  }
+
+  ion-chip.temperature {
+    --background: #CC3311;
+    --color: white;
+  }
+
+  .brew-information-panel {
+    ion-icon {
+      font-size: 30px;
+    }
   }
 }
