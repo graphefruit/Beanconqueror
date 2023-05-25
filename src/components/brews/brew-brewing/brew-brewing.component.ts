@@ -415,16 +415,22 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.maximizeFlowGraphIsShown = true;
 
     let actualOrientation;
-    if (this.platform.is('cordova')) {
-      actualOrientation = this.screenOrientation.type;
-    }
+    try {
+      if (this.platform.is('cordova')) {
+        actualOrientation = this.screenOrientation.type;
+      }
+    } catch (ex) {}
+
     await new Promise(async (resolve) => {
       this.updateChart();
-      if (this.platform.is('cordova')) {
-        await this.screenOrientation.lock(
-          this.screenOrientation.ORIENTATIONS.LANDSCAPE
-        );
-      }
+      try {
+        if (this.platform.is('cordova')) {
+          await this.screenOrientation.lock(
+            this.screenOrientation.ORIENTATIONS.LANDSCAPE
+          );
+        }
+      } catch (ex) {}
+
       resolve(undefined);
     });
 
@@ -451,30 +457,32 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.lastChartRenderingInstance = -1;
       // If responsive would be true, the add of the container would result into 0 width 0 height, therefore the hack
       this.updateChart();
-
-      if (this.platform.is('cordova')) {
-        if (
-          this.screenOrientation.type ===
-          this.screenOrientation.ORIENTATIONS.LANDSCAPE
-        ) {
+      try {
+        if (this.platform.is('cordova')) {
           if (
-            this.screenOrientation.ORIENTATIONS.LANDSCAPE === actualOrientation
+            this.screenOrientation.type ===
+            this.screenOrientation.ORIENTATIONS.LANDSCAPE
           ) {
-            // Get back to portrait
-            await new Promise((resolve) => {
-              setTimeout(async () => {
-                await this.screenOrientation.lock(
-                  this.screenOrientation.ORIENTATIONS.PORTRAIT_PRIMARY
-                );
-                resolve(undefined);
-              }, 50);
-            });
+            if (
+              this.screenOrientation.ORIENTATIONS.LANDSCAPE ===
+              actualOrientation
+            ) {
+              // Get back to portrait
+              await new Promise((resolve) => {
+                setTimeout(async () => {
+                  await this.screenOrientation.lock(
+                    this.screenOrientation.ORIENTATIONS.PORTRAIT_PRIMARY
+                  );
+                  resolve(undefined);
+                }, 50);
+              });
+            }
           }
+          setTimeout(() => {
+            this.screenOrientation.unlock();
+          }, 150);
         }
-        setTimeout(() => {
-          this.screenOrientation.unlock();
-        }, 150);
-      }
+      } catch (ex) {}
 
       await new Promise((resolve) => {
         setTimeout(async () => {
