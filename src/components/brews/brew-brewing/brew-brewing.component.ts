@@ -645,7 +645,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             ) {
               this.pressureThresholdWasHit = true;
               this.ngZone.run(() => {
-                this.timerStartPressed(undefined);
+                this.timerStartPressed(true);
 
                 setTimeout(() => {
                   this.changeDetectorRef.markForCheck();
@@ -679,7 +679,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             ) {
               this.temperatureThresholdWasHit = true;
               this.ngZone.run(() => {
-                this.timerStartPressed(undefined);
+                this.timerStartPressed(true);
 
                 setTimeout(() => {
                   this.changeDetectorRef.markForCheck();
@@ -965,12 +965,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         this.attachToScaleWeightChange();
         this.attachToFlowChange();
       }
-      if (pressureDevice && this.settings.pressure_threshold_active === false) {
+      if (
+        pressureDevice &&
+        (this.settings.pressure_threshold_active === false || _event !== true)
+      ) {
         this.attachToPressureChange();
       }
       if (
         temperatureDevice &&
-        this.settings.temperature_threshold_active === false
+        (this.settings.temperature_threshold_active === false ||
+          _event !== true)
       ) {
         this.attachToTemperatureChange();
       }
