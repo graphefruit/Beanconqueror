@@ -607,7 +607,14 @@ export class AppComponent implements AfterViewInit {
     setTimeout(async () => {
       // Just connect after 5 seconds, to get some time, and maybe handle all the connection errors
       if (this.platform.is('ios')) {
-        await this.bleManager.enableIOSBluetooth();
+        const checkDevices = this.uiSettingsStorage.getSettings();
+        const pressure_id: string = checkDevices.pressure_id;
+        const temperature_id: string = checkDevices.temperature_id;
+        const scale_id: string = checkDevices.scale_id;
+        //If one of these is there, enable bluetooth
+        if (pressure_id || temperature_id || scale_id) {
+          await this.bleManager.enableIOSBluetooth();
+        }
       } else {
         //await this.bleManager.enableBLE();
       }
