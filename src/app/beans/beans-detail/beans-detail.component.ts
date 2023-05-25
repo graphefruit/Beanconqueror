@@ -58,9 +58,14 @@ export class BeansDetailComponent implements OnInit {
       this.data.initializeByObject(copy);
     }
     setTimeout(() => {
-      this.beanStars.setRating(this.data.roast_range);
+      if (this.beanStars && this.beanStars?.setRating) {
+        this.beanStars.setRating(this.data.roast_range);
+      }
+
       if (this.hasCustomRatingRange() === false) {
-        this.beanRating.setRating(this.data.rating);
+        if (this.beanRating && this.beanRating?.setRating) {
+          this.beanRating.setRating(this.data.rating);
+        }
       }
     }, 150);
   }
