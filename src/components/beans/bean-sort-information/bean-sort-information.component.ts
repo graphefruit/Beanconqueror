@@ -79,9 +79,7 @@ export class BeanSortInformationComponent implements OnInit {
 
       for (const beanInfoEntry of beanInfoList) {
         if (beanInfoEntry && beanInfoEntry.hasOwnProperty(_type)) {
-          const splittedInfos = beanInfoEntry[_type]
-            .replace(/\s/g, '')
-            .split(/(?:,|; )+/);
+          const splittedInfos = beanInfoEntry[_type].split(/(?:,|; )+/);
           this.typeaheadSearch[_type + 'Results'].push(...splittedInfos);
         }
       }
