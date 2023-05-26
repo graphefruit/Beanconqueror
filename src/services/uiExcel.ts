@@ -87,9 +87,9 @@ export class UIExcel {
     );
 
     const header_flow: Array<string> = [];
-    header.push('Timestamp');
-    header.push('Time');
-    header.push('Value');
+    header_flow.push('Timestamp');
+    header_flow.push('Time');
+    header_flow.push('Value');
 
     const wsDataFlow: any[][] = [header_flow];
     for (const entry of _flow.waterFlow) {
@@ -109,10 +109,10 @@ export class UIExcel {
 
     if (_flow.hasOwnProperty('realtimeFlow')) {
       const header_flow_realtime: Array<string> = [];
-      header.push('Timestamp');
-      header.push('Time');
-      header.push('Flow value');
-      header.push('Smoothed weight');
+      header_flow_realtime.push('Timestamp');
+      header_flow_realtime.push('Time');
+      header_flow_realtime.push('Flow value');
+      header_flow_realtime.push('Smoothed weight');
 
       const wsDataFlowRealtime: any[][] = [header_flow_realtime];
       for (const entry of _flow.realtimeFlow) {
@@ -135,10 +135,10 @@ export class UIExcel {
 
     if (_flow.hasOwnProperty('pressureFlow')) {
       const header_pressure_flow: Array<string> = [];
-      header.push('Timestamp');
-      header.push('Time');
-      header.push('Actual');
-      header.push('Old');
+      header_pressure_flow.push('Timestamp');
+      header_pressure_flow.push('Time');
+      header_pressure_flow.push('Actual');
+      header_pressure_flow.push('Old');
 
       const wsDataPressureFlow: any[][] = [header_pressure_flow];
       for (const entry of _flow.pressureFlow) {
@@ -156,6 +156,32 @@ export class UIExcel {
         wb,
         wsFlowRealtime,
         this.translate.instant('Flow pressure')
+      );
+    }
+    if (_flow.hasOwnProperty('temperatureFlow')) {
+      const header_temperature_flow: Array<string> = [];
+      header_temperature_flow.push('Timestamp');
+      header_temperature_flow.push('Time');
+      header_temperature_flow.push('Actual');
+      header_temperature_flow.push('Old');
+
+      const wsDataTemperatureFlow: any[][] = [header_temperature_flow];
+      for (const entry of _flow.temperatureFlow) {
+        const wbEntry: Array<any> = [
+          entry.timestamp,
+          entry.brew_time,
+          entry.actual_temperature,
+          entry.old_temperature,
+        ];
+        wsDataTemperatureFlow.push(wbEntry);
+      }
+      const wsFlowRealtime: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(
+        wsDataTemperatureFlow
+      );
+      XLSX.utils.book_append_sheet(
+        wb,
+        wsFlowRealtime,
+        this.translate.instant('Flow temperature')
       );
     }
     return wb;
@@ -438,10 +464,12 @@ export class UIExcel {
       try {
         const downloadFile: FileEntry = await this.uiFileHelper.downloadFile(
           filename,
-          blob
+          blob,
+          true
         );
         await this.uiAlert.hideLoadingSpinner();
-        if (this.platform.is('android')) {
+        // We share directly, so we don'T download into download folders.
+        /**if (this.platform.is('android')) {
           const alert = await this.alertCtrl.create({
             header: this.translate.instant('DOWNLOADED'),
             subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
@@ -450,7 +478,7 @@ export class UIExcel {
             buttons: ['OK'],
           });
           await alert.present();
-        }
+        }**/
       } catch (ex) {}
     } catch (e) {
       if (e.message.match(/It was determined/)) {

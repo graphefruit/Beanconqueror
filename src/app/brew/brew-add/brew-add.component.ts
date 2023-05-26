@@ -26,10 +26,15 @@ import { UIAlert } from '../../../services/uiAlert';
 import { BrewTrackingService } from '../../../services/brewTracking/brew-tracking.service';
 import BREW_TRACKING from '../../../data/tracking/brewTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
-import { BrewPopoverActionsComponent } from '../brew-popover-actions/brew-popover-actions.component';
-import { BREW_ACTION } from '../../../enums/brews/brewAction';
-import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
 
+import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
+import { BluetoothScale, SCALE_TIMER_COMMAND } from '../../../classes/devices';
+import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { PreparationDeviceType } from '../../../classes/preparationDevice';
+import { UIHelper } from '../../../services/uiHelper';
+
+declare var Plotly;
+declare var window;
 @Component({
   selector: 'brew-add',
   templateUrl: './brew-add.component.html',
@@ -48,6 +53,7 @@ export class BrewAddComponent implements OnInit {
 
   @Input() private hide_toast_message: boolean;
 
+  public showFooter: boolean = true;
   constructor(
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
@@ -67,7 +73,9 @@ export class BrewAddComponent implements OnInit {
     private readonly insomnia: Insomnia,
     private readonly uiAlert: UIAlert,
     private readonly brewTracking: BrewTrackingService,
-    private readonly uiAnalytics: UIAnalytics
+    private readonly uiAnalytics: UIAnalytics,
+    private readonly bleManager: CoffeeBluetoothDevicesService,
+    private readonly uiHelper: UIHelper
   ) {
     // Initialize to standard in drop down
 
@@ -92,6 +100,16 @@ export class BrewAddComponent implements OnInit {
       .getAllEntries()
       .filter((e) => !e.finished)
       .sort((a, b) => a.name.localeCompare(b.name))[0].config.uuid;
+
+    window.addEventListener('keyboardWillShow', (event) => {
+      // Describe your logic which will be run each time when keyboard is about to be shown.
+      this.showFooter = false;
+    });
+
+    window.addEventListener('keyboardWillHide', () => {
+      // Describe your logic which will be run each time when keyboard is about to be closed.
+      this.showFooter = true;
+    });
   }
 
   public ionViewDidEnter(): void {
@@ -161,6 +179,10 @@ export class BrewAddComponent implements OnInit {
   }
 
   public async dismiss() {
+    this.stopScaleTimer();
+    try {
+      Plotly.purge('flowProfileChart');
+    } catch (ex) {}
     this.modalController.dismiss(
       {
         dismissed: true,
@@ -169,6 +191,12 @@ export class BrewAddComponent implements OnInit {
       BrewAddComponent.COMPONENT_ID
     );
   }
+  private stopScaleTimer() {
+    const scale: BluetoothScale = this.bleManager.getScale();
+    if (scale) {
+      scale.setTimer(SCALE_TIMER_COMMAND.STOP);
+    }
+  }
 
   public async finish() {
     await this.uiAlert.showLoadingSpinner();
@@ -176,7 +204,11 @@ export class BrewAddComponent implements OnInit {
       this.uiBrewHelper.cleanInvisibleBrewData(this.data);
       const addedBrewObj: Brew = await this.uiBrewStorage.add(this.data);
 
-      if (this.brewBrewing.flow_profile_raw.weight.length > 0) {
+      if (
+        this.brewBrewing.flow_profile_raw.weight.length > 0 ||
+        this.brewBrewing.flow_profile_raw.pressureFlow.length > 0 ||
+        this.brewBrewing.flow_profile_raw.temperatureFlow.length > 0
+      ) {
         const savedPath = this.brewBrewing.saveFlowProfile(
           addedBrewObj.config.uuid
         );

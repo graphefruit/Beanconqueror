@@ -120,13 +120,19 @@ const routes: Routes = [
         (m) => m.BrewParameterPageModule
       ),
   },
+  {
+    path: 'bean-parameter',
+    loadChildren: () =>
+      import('./bean-parameter/bean-parameter.module').then(
+        (m) => m.BeanParameterPageModule
+      ),
+  },
 ];
 
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, {
       preloadingStrategy: PreloadAllModules,
-      relativeLinkResolution: 'legacy',
     }),
   ],
   exports: [RouterModule],

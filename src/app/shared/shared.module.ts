@@ -161,10 +161,17 @@ import { PhotoViewComponent } from '../../components/photo-view/photo-view.compo
 import { QrCodeScannerPopoverComponent } from '../../popover/qr-code-scanner-popover/qr-code-scanner-popover.component';
 import { PreparationToolModalSelectComponent } from '../preparation/preparation-tool-modal-select/preparation-tool-modal-select.component';
 import { PreparationToolOverlayDirective } from '../../directive/preparation-tool-overlay.directive';
-import { CoffeeBluetoothDevicesService } from '@graphefruit/coffee-bluetooth-devices';
 import { NgxGaugeModule } from 'ngx-gauge';
 import { SettingsPopoverBluetoothActionsComponent } from '../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
 import { BeanAssociatedBrewsComponent } from '../beans/bean-associated-brews/bean-associated-brews.component';
+import { BeanParameterPage } from '../bean-parameter/bean-parameter.page';
+import { BeanListViewParameterComponent } from '../bean-parameter/bean-list-view-parameter/bean-list-view-parameter.component';
+import { BeanManageParameterComponent } from '../bean-parameter/bean-manage-parameter/bean-manage-parameter.component';
+import { BrewRatioCardComponent } from '../../components/brew-ratio-card/brew-ratio-card.component';
+import { BrewRatioCalculatorComponent } from '../brew/brew-ratio-calculator/brew-ratio-calculator.component';
+import { RepeatCustomParameterComponent } from '../../components/parameter/repeat-custom-parameter/repeat-custom-parameter.component';
+import { RepeatParameterComponent } from '../brew-parameter/repeat-parameter/repeat-parameter.component';
+import { PreparationConnectedDeviceComponent } from '../preparation/preparation-connected-device/preparation-connected-device.component';
 
 @NgModule({
   declarations: [
@@ -172,6 +179,7 @@ import { BeanAssociatedBrewsComponent } from '../beans/bean-associated-brews/bea
     StatisticPage,
     HomePage,
     BrewParameterPage,
+    BeanParameterPage,
     DashboardPage,
     RoastingSectionPage,
     WaterSectionPage,
@@ -205,8 +213,11 @@ import { BeanAssociatedBrewsComponent } from '../beans/bean-associated-brews/bea
     LicencesComponent,
     PrivacyComponent,
     DefaultParameterComponent,
+    RepeatParameterComponent,
     SortParameterComponent,
     ManageParameterComponent,
+    BeanListViewParameterComponent,
+    BeanManageParameterComponent,
     HelperBrewRatioComponent,
     HelperWaterHardnessComponent,
     BrewCuppingComponent,
@@ -221,6 +232,7 @@ import { BeanAssociatedBrewsComponent } from '../beans/bean-associated-brews/bea
     ListViewCustomParameterComponent,
     ListViewParameterComponent,
     PreparationCustomParametersComponent,
+    PreparationConnectedDeviceComponent,
     MillPage,
     MillEditComponent,
     MillDetailComponent,
@@ -231,6 +243,7 @@ import { BeanAssociatedBrewsComponent } from '../beans/bean-associated-brews/bea
     MillAddComponent,
     BrewAddComponent,
     BrewBrixCalculatorComponent,
+    BrewRatioCalculatorComponent,
     BrewChoosePreparationToBrewComponent,
     BrewFlavorPickerComponent,
     BrewBeverageQuantityCalculatorComponent,
@@ -284,6 +297,7 @@ import { BeanAssociatedBrewsComponent } from '../beans/bean-associated-brews/bea
     PreparationPopoverActionsComponent,
     TimerComponent,
     DefaultCustomParameterComponent,
+    RepeatCustomParameterComponent,
     SortCustomParameterComponent,
     ManageCustomParameterComponent,
     BrewTimerComponent,
@@ -303,6 +317,7 @@ import { BeanAssociatedBrewsComponent } from '../beans/bean-associated-brews/bea
     RoastingMachinePage,
     RoastingMachinePopoverActionsComponent,
     WaterAddComponent,
+    BrewRatioCardComponent,
   ],
   imports: [
     CommonModule,
@@ -362,6 +377,7 @@ import { BeanAssociatedBrewsComponent } from '../beans/bean-associated-brews/bea
     StatisticPage,
     HomePage,
     BrewParameterPage,
+    BeanParameterPage,
     BeansPage,
     HelperPage,
     RoastingSectionPage,
@@ -394,8 +410,11 @@ import { BeanAssociatedBrewsComponent } from '../beans/bean-associated-brews/bea
     LicencesComponent,
     PrivacyComponent,
     DefaultParameterComponent,
+    RepeatParameterComponent,
     SortParameterComponent,
     ManageParameterComponent,
+    BeanListViewParameterComponent,
+    BeanManageParameterComponent,
     HelperBrewRatioComponent,
     HelperWaterHardnessComponent,
     BrewCuppingComponent,
@@ -408,6 +427,7 @@ import { BeanAssociatedBrewsComponent } from '../beans/bean-associated-brews/bea
     ListViewCustomParameterComponent,
     ListViewParameterComponent,
     PreparationCustomParametersComponent,
+    PreparationConnectedDeviceComponent,
     BrewFilterComponent,
     BeanFilterComponent,
     BeanSortComponent,
@@ -418,6 +438,7 @@ import { BeanAssociatedBrewsComponent } from '../beans/bean-associated-brews/bea
     MillAddComponent,
     BrewAddComponent,
     BrewBrixCalculatorComponent,
+    BrewRatioCalculatorComponent,
     BrewChoosePreparationToBrewComponent,
     BrewFlavorPickerComponent,
     BrewBeverageQuantityCalculatorComponent,
@@ -470,6 +491,7 @@ import { BeanAssociatedBrewsComponent } from '../beans/bean-associated-brews/bea
     PreparationPopoverActionsComponent,
     TimerComponent,
     DefaultCustomParameterComponent,
+    RepeatCustomParameterComponent,
     SortCustomParameterComponent,
     ManageCustomParameterComponent,
     BrewTimerComponent,
@@ -489,6 +511,7 @@ import { BeanAssociatedBrewsComponent } from '../beans/bean-associated-brews/bea
     RoastingMachinePage,
     RoastingMachinePopoverActionsComponent,
     WaterAddComponent,
+    BrewRatioCardComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

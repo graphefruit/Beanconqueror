@@ -71,7 +71,7 @@
                 <p *ngIf="bean?.roaster">{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</p>
                 <p *ngIf="bean && !isBeanRoastUnknown(bean)">{{"BEAN_DATA_ROASTING_TYPE" | translate}}: {{"BEAN_ROASTING_TYPE_" + bean.bean_roasting_type | translate}}</p>
                 <p *ngIf="bean?.weight > 0">
-                  {{"BEANS_AMOUNT_USED" | translate}}:&nbsp;<span style="margin: 0;padding: 0;display: inline;"  [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount(bean) | number : '.0-2', gramTotal: bean?.weight}"></span>
+                  {{"BEANS_AMOUNT_USED" | translate}}:&nbsp;<span [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount(bean) | number : '.0-2', gramTotal: bean?.weight,leftOver: bean?.weight - getUsedWeightCount(bean) | number : '.0-2'}"  style="margin: 0;padding: 0;display: inline;"></span>
                 </p>
               </div>
             </ion-item>
@@ -131,7 +131,7 @@
                 <p *ngIf="bean?.roaster">{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</p>
                 <p *ngIf="bean && !isBeanRoastUnknown(bean)">{{"BEAN_DATA_ROASTING_TYPE" | translate}}: {{"BEAN_ROASTING_TYPE_" + bean.bean_roasting_type | translate}}</p>
                 <p *ngIf="bean?.weight > 0">
-                  {{"BEANS_AMOUNT_USED" | translate}}:&nbsp;<span style="margin: 0;padding: 0;display: inline;"  [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount(bean) | number : '.0-2', gramTotal: bean?.weight}"></span>
+                  {{"BEANS_AMOUNT_USED" | translate}}:&nbsp;<span [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount(bean) | number : '.0-2', gramTotal: bean?.weight,leftOver: bean?.weight - getUsedWeightCount(bean)| number : '.0-2'}"  style="margin: 0;padding: 0;display: inline;"></span>
                 </p>
               </div>
             </ion-item>
@@ -198,7 +198,7 @@
               <p *ngIf="bean?.roaster">{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</p>
               <p *ngIf="bean && !isBeanRoastUnknown(bean)">{{"BEAN_DATA_ROASTING_TYPE" | translate}}: {{"BEAN_ROASTING_TYPE_" + bean.bean_roasting_type | translate}}</p>
               <p *ngIf="bean?.weight > 0">
-                {{"BEANS_AMOUNT_USED" | translate}}:&nbsp;<span style="margin: 0;padding: 0;display: inline;"  [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount(bean) | number : '.0-2', gramTotal: bean?.weight}"></span>
+                {{"BEANS_AMOUNT_USED" | translate}}:&nbsp;<span [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount(bean) | number : '.0-2', gramTotal: bean?.weight, leftOver: bean?.weight - getUsedWeightCount(bean)| number : '.0-2'}"  style="margin: 0;padding: 0;display: inline;"></span>
               </p>
             </div>
           </ion-item>
@@ -258,7 +258,7 @@
               <p *ngIf="bean?.roaster">{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</p>
               <p *ngIf="bean && !isBeanRoastUnknown(bean)">{{"BEAN_DATA_ROASTING_TYPE" | translate}}: {{"BEAN_ROASTING_TYPE_" + bean.bean_roasting_type | translate}}</p>
               <p *ngIf="bean?.weight > 0">
-                {{"BEANS_AMOUNT_USED" | translate}}:&nbsp;<span style="margin: 0;padding: 0;display: inline;"  [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount(bean) | number : '.0-2', gramTotal: bean?.weight}"></span>
+                {{"BEANS_AMOUNT_USED" | translate}}:&nbsp;<span [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount(bean) | number : '.0-2', gramTotal: bean?.weight,leftOver: bean?.weight - getUsedWeightCount(bean) | number : '.0-2'}"  style="margin: 0;padding: 0;display: inline;"></span>
               </p>
             </div>
           </ion-item>

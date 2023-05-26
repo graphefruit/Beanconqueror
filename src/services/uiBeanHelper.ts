@@ -75,6 +75,13 @@ export class UIBeanHelper {
     return undefined;
   }
 
+  public fieldVisible(_settingsField: boolean, _data?: any) {
+    if (_settingsField === true) {
+      return true;
+    }
+    return false;
+  }
+
   public getAllBrewsForThisBean(_uuid: string): Array<Brew> {
     if (this.allStoredBrews.length <= 0) {
       // Load just if needed, performance reasons

@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {UIHelper} from '../../../services/uiHelper';
+import { Component, OnInit } from '@angular/core';
+import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
   selector: 'licences',
@@ -34,7 +34,7 @@ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
 NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`,
     },
     chartjs: {
       TITLE: 'Chart.js',
@@ -48,7 +48,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`,
     },
     icons8: {
       TITLE: 'Icons 8',
@@ -56,7 +56,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
       ACTIVE: false,
       DESCRIPTION: `For smartphone apps, please set a link to https://icons8.com in the About dialog or settings.
 
-Also, please credit our work in your App Store or Google Play description (something like "Icons by Icons8" is fine).`
+Also, please credit our work in your App Store or Google Play description (something like "Icons by Icons8" is fine).`,
     },
     font_karla_licence: {
       TITLE: 'Font Karla',
@@ -66,7 +66,7 @@ Also, please credit our work in your App Store or Google Play description (somet
 
 You can use them freely in your products & projects - print or digital, commercial or otherwise. However, you can't sell the fonts on their own.
 
-This isn't legal advice, please consider consulting a lawyer and see the full license for all details.`
+This isn't legal advice, please consider consulting a lawyer and see the full license for all details.`,
     },
     font_baloo_tamma_licence: {
       TITLE: 'Font Baloo Tamma 2',
@@ -76,7 +76,7 @@ This isn't legal advice, please consider consulting a lawyer and see the full li
 
 You can use them freely in your products & projects - print or digital, commercial or otherwise. However, you can't sell the fonts on their own.
 
-This isn't legal advice, please consider consulting a lawyer and see the full license for all details.`
+This isn't legal advice, please consider consulting a lawyer and see the full license for all details.`,
     },
     sheet_js: {
       TITLE: 'SheetJS js-xlsx',
@@ -282,7 +282,7 @@ This isn't legal advice, please consider consulting a lawyer and see the full li
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
-   limitations under the License.`
+   limitations under the License.`,
     },
     javascript_color_gradient: {
       TITLE: 'Javascript-Color-Gradient',
@@ -308,13 +308,13 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.`
+SOFTWARE.`,
     },
     moment: {
-      TITLE:'Momentjs',
-      LINK:'https://github.com/moment/moment',
-      ACTIVE:false,
-      DESCRIPTION:`Copyright (c) JS Foundation and other contributors
+      TITLE: 'Momentjs',
+      LINK: 'https://github.com/moment/moment',
+      ACTIVE: false,
+      DESCRIPTION: `Copyright (c) JS Foundation and other contributors
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
@@ -335,13 +335,13 @@ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
 HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-OTHER DEALINGS IN THE SOFTWARE.`
+OTHER DEALINGS IN THE SOFTWARE.`,
     },
     ngx_stars: {
-      TITLE:'ngx-stars',
-      LINK:'https://github.com/hughjdavey/ngx-stars',
-      ACTIVE:false,
-      DESCRIPTION:`CC0 1.0 Universal
+      TITLE: 'ngx-stars',
+      LINK: 'https://github.com/hughjdavey/ngx-stars',
+      ACTIVE: false,
+      DESCRIPTION: `CC0 1.0 Universal
 
 Statement of Purpose
 
@@ -456,13 +456,13 @@ Affirmer's express Statement of Purpose.
   CC0 or use of the Work.
 
 For more information, please see
-http://creativecommons.org/publicdomain/zero/1.0/`
+http://creativecommons.org/publicdomain/zero/1.0/`,
     },
     ag_virtual_scroll: {
-      TITLE:'ag-virtual-scroll',
-      LINK:'https://www.npmjs.com/package/ag-virtual-scroll',
-      ACTIVE:false,
-      DESCRIPTION:`Copyright (c) 2021 AgVirtualScroll
+      TITLE: 'ag-virtual-scroll',
+      LINK: 'https://www.npmjs.com/package/ag-virtual-scroll',
+      ACTIVE: false,
+      DESCRIPTION: `Copyright (c) 2021 AgVirtualScroll
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -480,13 +480,13 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.`
+THE SOFTWARE.`,
     },
     'currency-symbol-map': {
-      TITLE:'currency-symbol-map',
-      LINK:'https://github.com/bengourley/currency-symbol-map/blob/master/LICENSE.md',
-      ACTIVE:false,
-      DESCRIPTION:`Copyright (c) 2017, Ben Gourley
+      TITLE: 'currency-symbol-map',
+      LINK: 'https://github.com/bengourley/currency-symbol-map/blob/master/LICENSE.md',
+      ACTIVE: false,
+      DESCRIPTION: `Copyright (c) 2017, Ben Gourley
 
 All rights reserved.
 
@@ -497,12 +497,124 @@ Redistribution and use in source and binary forms, with or without modification,
 * Redistributions in binary form must reproduce the above copyright notice,
   this list of conditions and the following disclaimer in the documentation
   and/or other materials provided with the distribution.
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.`
-    }
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.`,
+    },
+    plotly: {
+      TITLE: 'plotly',
+      LINK: 'https://github.com/plotly/plotly.js/blob/master/LICENSE',
+      ACTIVE: false,
+      DESCRIPTION: `The MIT License (MIT)
 
+Copyright (c) 2021 Plotly, Inc
 
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.`,
+    },
+    htmltoimage: {
+      TITLE: 'Html-To-Image',
+      LINK: 'https://github.com/bubkoo/html-to-image/blob/master/LICENSE',
+      ACTIVE: false,
+      DESCRIPTION: `MIT License
+
+Copyright (c) 2017-2023 W.Y.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.`,
+    },
+    chartjsluxon: {
+      TITLE: 'Chartjs-adapter-luxon',
+      LINK: 'https://github.com/chartjs/chartjs-adapter-luxon/blob/master/LICENSE.md',
+      ACTIVE: false,
+      DESCRIPTION: `The MIT License (MIT)
+
+Copyright (c) 2019 Chart.js Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`,
+    },
+    chartjsannotation: {
+      TITLE: 'Chartjs-plugin-annotation',
+      LINK: 'https://github.com/chartjs/chartjs-plugin-annotation/blob/master/LICENSE.md',
+      ACTIVE: false,
+      DESCRIPTION: `The MIT License (MIT)
+
+Copyright (c) 2016-2021 chartjs-plugin-annotation Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`,
+    },
+    chartjsstreaming: {
+      TITLE: 'Chartjs-Streaming',
+      LINK: 'https://github.com/nagix/chartjs-plugin-streaming/blob/master/LICENSE.md',
+      ACTIVE: false,
+      DESCRIPTION: `The MIT License (MIT)
+
+Copyright (c) 2017-2021 Akihiko Kusanagi
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`,
+    },
+    chartjszoom: {
+      TITLE: 'Chartjs-Zoom',
+      LINK: 'https://github.com/chartjs/chartjs-plugin-zoom/blob/master/LICENSE.md',
+      ACTIVE: false,
+      DESCRIPTION: `The MIT License (MIT)
+
+Copyright (c) 2013-2021 chartjs-plugin-zoom contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`,
+    },
+    jsurl: {
+      TITLE: 'JS Url',
+      LINK: 'https://github.com/Sage/jsurl',
+      ACTIVE: false,
+      DESCRIPTION: `This work is licensed under the MIT license.`,
+    },
   };
-  constructor(private readonly uiHelper: UIHelper) { }
+  constructor(private readonly uiHelper: UIHelper) {}
 
   public ngOnInit() {}
 
@@ -510,7 +622,5 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     event.cancelBubble = true;
     event.preventDefault();
     this.uiHelper.openExternalWebpage(_link);
-
   }
-
 }

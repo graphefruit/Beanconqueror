@@ -12,8 +12,8 @@ import { DatetimePopoverComponent } from '../../popover/datetime-popover/datetim
 import moment from 'moment';
 import { ModalController } from '@ionic/angular';
 import { Settings } from '../../classes/settings/settings';
-import { CoffeeBluetoothDevicesService } from '@graphefruit/coffee-bluetooth-devices';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 
 @Component({
   selector: 'timer',
@@ -278,7 +278,6 @@ export class TimerComponent implements OnInit, OnDestroy {
       this.timer.milliseconds = moment(this.displayingTime)
         .startOf('day')
         .milliseconds();
-      console.log('test');
       // We need to calculate new, else when user starts timer again, the wrong times will be used
       const startingDate = new Date();
       this.pausedTimer = moment(new Date());

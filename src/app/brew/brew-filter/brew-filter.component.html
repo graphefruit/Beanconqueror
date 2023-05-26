@@ -40,8 +40,12 @@
     </ion-select>
   </ion-item>
   <ion-item>
-    <ion-label position="stacked" style="top: -5px;position: relative;">{{"BREW_FILTER_JUST_FAVOURITE" | translate }}</ion-label>
+    <ion-label position="stacked" style="top: -5px;position: relative;">{{"ONLY_FAVOURITES" | translate }}</ion-label>
     <ion-toggle slot="end" [(ngModel)]="filter.favourite"></ion-toggle>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked" style="top: -5px;position: relative;">{{"BREW_FILTER_JUST_CHART_DATA" | translate }}</ion-label>
+    <ion-toggle [(ngModel)]="filter.chart_data" slot="end"></ion-toggle>
   </ion-item>
 
   <ion-item>

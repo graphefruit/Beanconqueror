@@ -13,7 +13,7 @@
 
         <ion-label position="stacked">{{"BREW_DATA_VESSEL_WEIGHT" | translate}}</ion-label>
         <ion-input [(ngModel)]="vesselWeight"  (ionChange)="calculateWeight()" placeholder="{{'BREW_DATA_VESSEL_WEIGHT' | translate}}"
-                   type="text"></ion-input>
+                   inputmode="decimal" prevent-characters remove-empty-number type="text"></ion-input>
   </ion-item>
   <ion-item lines="inset">
         <ion-label position="stacked">{{"CALCULATED_WEIGHT" | translate}}</ion-label>

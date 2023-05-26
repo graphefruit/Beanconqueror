@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.beanconqueror.app" version="6.3.0" xmlns="http://www.w3.org/ns/widgets">
+<widget id="com.beanconqueror.app" version="6.4.0" xmlns="http://www.w3.org/ns/widgets">
     <name>Beanconqueror</name>
     <description />
     <author email="info@beanconqueror.com" href="https://github.com/graphefruit/beanconqueror">Lars Saalbach</author>
@@ -28,8 +28,15 @@
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
     <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
     <platform name="android">
+        <preference name="AndroidBlacklistSecureSocketProtocols" value="SSLv3,TLSv1" />
+        <preference name="scheme" value="https" />
+        <preference name="hostname" value="beanconqueror.com" />
         <preference name="Fullscreen" value="false" />
         <edit-file file="app/src/main/AndroidManifest.xml" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
+            <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
+                <application android:networkSecurityConfig="@xml/network_security_config" />
+            </edit-config>
+            <resource-file src="resources/android/xml/network_security_config.xml" target="app/src/main/res/xml/network_security_config.xml" />
             <activity android:exported="true" android:label="webIntentFilter" android:name="com.beanconqueror.app">
                 <intent-filter android:autoVerify="true">
                     <action android:name="android.intent.action.VIEW" />
@@ -85,6 +92,7 @@
         <hook src="plugins/cordova-plugin-ble-central/stripDuplicatePermissions.js" type="after_prepare" />
     </platform>
     <platform name="ios">
+        <preference name="InspectableWebview" value="true" />
         <preference name="BackupWebStorage" value="cloud" />
         <preference name="WKWebViewOnly" value="true" />
         <feature name="CDVWKWebViewEngine">
@@ -230,6 +238,9 @@
         </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryUsageDescription">
             <string>The app needs photo library access, so that you can choose from already taken pictures from coffee beans, coffee bags, your own coffee brews etc. This pictures are stored inside the app.</string>
+        </edit-config>
+        <edit-config file="*-Info.plist" mode="merge" target="NSLocationAlwaysAndWhenInUseUsageDescription">
+            <string>Location is used when enabled in settings, default off. Used for track your location where you brewed your coffee.</string>
         </edit-config>
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />

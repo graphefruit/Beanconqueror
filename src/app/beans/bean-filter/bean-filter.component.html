@@ -2,7 +2,7 @@
 </ion-header>
 <ion-content>
   <ion-item>
-    <ion-label position="stacked" style="top: -5px;position: relative;">{{"BREW_FILTER_JUST_FAVOURITE" | translate }}</ion-label>
+    <ion-label position="stacked" style="top: -5px;position: relative;">{{"ONLY_FAVOURITES" | translate }}</ion-label>
     <ion-toggle slot="end" [(ngModel)]="filter.favourite"></ion-toggle>
   </ion-item>
 
@@ -42,7 +42,16 @@
         </ion-col>
       </ion-row>
     </ion-grid>
-    </ion-item>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked" style="min-height:30px;">{{"BEAN_DATA_ROAST_NAME" | translate}}</ion-label>
+    <ion-range min="0" dualKnobs="true" snaps="true" max="5" snaps="true" step="0.5" [(ngModel)]="filter.roast_range">
+      <ion-icon size="small" slot="start" name="beanconqueror-bean-rating-empty"></ion-icon>
+      <ion-icon slot="end" name="beanconqueror-bean-rating-full"></ion-icon>
+    </ion-range>
+  </ion-item>
+
   <ion-item>
     <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
       style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(filter.rating.lower,2)}}&nbsp;-&nbsp;{{this.uiHelper.toFixedIfNecessary(filter.rating.upper,2)}} </ion-badge>

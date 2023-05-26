@@ -15,7 +15,11 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Insomnia } from '@ionic-native/insomnia/ngx';
 import { Settings } from '../../../classes/settings/settings';
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
-
+import { BluetoothScale, SCALE_TIMER_COMMAND } from '../../../classes/devices';
+import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { PreparationDeviceType } from '../../../classes/preparationDevice';
+declare var Plotly;
+declare var window;
 @Component({
   selector: 'brew-edit',
   templateUrl: './brew-edit.component.html',
@@ -27,7 +31,7 @@ export class BrewEditComponent implements OnInit {
   public brewBrewing: BrewBrewingComponent;
   public data: Brew = new Brew();
   public settings: Settings;
-
+  public showFooter: boolean = true;
   constructor(
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
@@ -39,7 +43,8 @@ export class BrewEditComponent implements OnInit {
     private readonly brewTracking: BrewTrackingService,
     private readonly uiAnalytics: UIAnalytics,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly insomnia: Insomnia
+    private readonly insomnia: Insomnia,
+    private readonly bleManager: CoffeeBluetoothDevicesService
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
@@ -48,6 +53,15 @@ export class BrewEditComponent implements OnInit {
     if (brew !== undefined) {
       this.data.initializeByObject(brew);
     }
+    window.addEventListener('keyboardWillShow', (event) => {
+      // Describe your logic which will be run each time when keyboard is about to be shown.
+      this.showFooter = false;
+    });
+
+    window.addEventListener('keyboardWillHide', () => {
+      // Describe your logic which will be run each time when keyboard is about to be closed.
+      this.showFooter = true;
+    });
   }
 
   public ionViewDidEnter(): void {
@@ -68,6 +82,10 @@ export class BrewEditComponent implements OnInit {
   }
 
   public dismiss(): void {
+    this.stopScaleTimer();
+    try {
+      Plotly.purge('flowProfileChart');
+    } catch (ex) {}
     this.modalController.dismiss(
       {
         dismissed: true,
@@ -75,6 +93,12 @@ export class BrewEditComponent implements OnInit {
       undefined,
       BrewEditComponent.COMPONENT_ID
     );
+  }
+  private stopScaleTimer() {
+    const scale: BluetoothScale = this.bleManager.getScale();
+    if (scale) {
+      scale.setTimer(SCALE_TIMER_COMMAND.STOP);
+    }
   }
 
   public async updateBrew() {
@@ -84,10 +108,15 @@ export class BrewEditComponent implements OnInit {
     }
     this.uiBrewHelper.cleanInvisibleBrewData(this.data);
 
-    if (this.brewBrewing.flow_profile_raw.weight.length > 0) {
+    if (
+      this.brewBrewing.flow_profile_raw.weight.length > 0 ||
+      this.brewBrewing.flow_profile_raw.pressureFlow.length > 0 ||
+      this.brewBrewing.flow_profile_raw.temperatureFlow.length > 0
+    ) {
       const savedPath = this.brewBrewing.saveFlowProfile(this.data.config.uuid);
       this.data.flow_profile = savedPath;
     }
+
     await this.uiBrewStorage.update(this.data);
 
     this.brewTracking.trackBrew(this.data);

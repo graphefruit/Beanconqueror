@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -12,9 +13,9 @@ import moment from 'moment';
 import { DatetimePopoverComponent } from '../../popover/datetime-popover/datetime-popover.component';
 import { ModalController } from '@ionic/angular';
 
-import { CoffeeBluetoothDevicesService } from '@graphefruit/coffee-bluetooth-devices';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
+import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 
 @Component({
   selector: 'brew-timer',
@@ -73,7 +74,8 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   constructor(
     private readonly modalCtrl: ModalController,
     private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly uiSettingsStorage: UISettingsStorage
+    private readonly uiSettingsStorage: UISettingsStorage,
+    private readonly changeDetectorRef: ChangeDetectorRef
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -157,6 +159,13 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
       this.startTimer();
     }
   }
+  public checkChanges() {
+    // #507 Wrapping check changes in set timeout so all values get checked
+    setTimeout(() => {
+      this.changeDetectorRef.detectChanges();
+      window.getComputedStyle(window.document.getElementsByTagName('body')[0]);
+    }, 15);
+  }
 
   public startTimer(_resumed: boolean = false): void {
     if (_resumed === false) {
@@ -199,11 +208,10 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     this.tareScale.emit();
   }
 
-  public pauseTimer(): void {
-    this.pausedTimer = moment(new Date());
-    this.timerPaused.emit();
+  public pauseTimer(_type = 'click'): void {
     this.timer.runTimer = false;
-    this.timerPaused.emit();
+    this.pausedTimer = moment(new Date());
+    this.timerPaused.emit(_type);
     this.changeEvent();
   }
 

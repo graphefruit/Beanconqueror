@@ -1,0 +1,165 @@
+<ion-card *ngIf="isPreparation() === true" class="ion-padding">
+  <ion-item lines="none">
+    <ion-label>{{"CUSTOM_REPEAT_PARAMETERS_DESCRIPTION" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="save()"
+                  [(ngModel)]="data.repeat_coffee_parameters.repeat_coffee_active"></ion-checkbox>
+  </ion-item>
+</ion-card>
+<ion-card *ngIf="data.repeat_coffee_parameters.repeat_coffee_active==true" class="ion-padding" style="margin-top:30px;">
+
+  <ion-title class="ion-no-padding">{{"SORT_PARAMETERS_BEFORE" | translate  }}</ion-title>
+  <ion-item tappable>
+    <ion-label>{{"BREW_DATA_BEAN_TYPE" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="save()"
+                  [(ngModel)]="data.repeat_coffee_parameters.bean_type"></ion-checkbox>
+  </ion-item>
+  <ion-item tappable>
+    <ion-label>
+      <h2>{{"BREW_DATA_BEAN_WEIGHT_IN" | translate}}</h2>
+      <p>{{"BEAN_WEIGHT_IN_PLACEHOLDER" | translate}}</p>
+    </ion-label>
+    <ion-checkbox (ngModelChange)="save()"
+                  [(ngModel)]="data.repeat_coffee_parameters.bean_weight_in"></ion-checkbox>
+  </ion-item>
+  <ion-item tappable>
+    <ion-label>
+      <h2>{{"BREW_DATA_GRIND_WEIGHT" | translate}}</h2>
+      <p>{{"GRIND_WEIGHT_PLACEHOLDER" | translate}}</p>
+    </ion-label>
+    <ion-checkbox (ngModelChange)="save()"
+                  [(ngModel)]="data.repeat_coffee_parameters.grind_weight"></ion-checkbox>
+  </ion-item>
+  <ion-item tappable>
+    <ion-label>{{"BREW_DATA_MILL" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="save()"
+                  [(ngModel)]="data.repeat_coffee_parameters.mill"></ion-checkbox>
+  </ion-item>
+  <ion-item tappable>
+    <ion-label>{{"BREW_DATA_GRIND_SIZE" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="save()"
+                  [(ngModel)]="data.repeat_coffee_parameters.grind_size"></ion-checkbox>
+  </ion-item>
+  <ion-item tappable>
+    <ion-label>{{"BREW_DATA_MILL_TIMER" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="save()"
+                  [(ngModel)]="data.repeat_coffee_parameters.mill_timer"></ion-checkbox>
+  </ion-item>
+  <ion-item tappable>
+    <ion-label>{{"BREW_DATA_MILL_SPEED" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="save()"
+                  [(ngModel)]="data.repeat_coffee_parameters.mill_speed"></ion-checkbox>
+  </ion-item>
+  <ion-item [disabled]="true" tappable>
+    <ion-label>
+      <h2>{{"BREW_DATA_PREPARATION_METHOD" | translate}}</h2>
+    </ion-label>
+    <ion-checkbox (ngModelChange)="save()"
+                  [(ngModel)]="data.repeat_coffee_parameters.method_of_preparation"></ion-checkbox>
+  </ion-item>
+  <ion-item tappable>
+    <ion-label>
+      <h2>{{"BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}</h2>
+      <p>{{"PREPARATION_TOOLS_PLACEHOLDER" | translate}}</p>
+    </ion-label>
+    <ion-checkbox (ngModelChange)="save()"
+                  [(ngModel)]="data.repeat_coffee_parameters.method_of_preparation_tool"></ion-checkbox>
+  </ion-item>
+  <ion-item tappable>
+    <ion-label>{{"BREW_DATA_BREW_TEMPERATURE" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="save()"
+                  [(ngModel)]="data.repeat_coffee_parameters.brew_temperature"></ion-checkbox>
+  </ion-item>
+  <ion-item tappable>
+    <ion-label>
+      <h2>{{"BREW_DATA_WATER" | translate}}</h2>
+      <p>{{"WATER_PLACEHOLDER" | translate}}</p>
+    </ion-label>
+    <ion-checkbox (ngModelChange)="save()"
+                  [(ngModel)]="data.repeat_coffee_parameters.water"></ion-checkbox>
+  </ion-item>
+  <ion-item tappable>
+    <ion-label>
+      <h2>{{"BREW_DATA_VESSEL" | translate}}</h2>
+      <p>{{"VESSEL_PLACEHOLDER" | translate}}</p>
+    </ion-label>
+    <ion-checkbox (ngModelChange)="save()"
+                  [(ngModel)]="data.repeat_coffee_parameters.vessel"></ion-checkbox>
+  </ion-item>
+
+  <ion-item  lines="none"  tappable>
+    <ion-label>{{"BREW_DATA_PRESSURE_PROFILE" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="save()"
+                  [(ngModel)]="data.repeat_coffee_parameters.pressure_profile"></ion-checkbox>
+  </ion-item>
+
+</ion-card>
+<ion-card *ngIf="data.repeat_coffee_parameters.repeat_coffee_active==true" class="ion-padding" style="margin-top:30px;">
+  <ion-title class="ion-no-padding">{{"SORT_PARAMETERS_MEANWHILE" | translate  }}</ion-title>
+
+  <ion-item tappable>
+    <ion-label>{{"BREW_DATA_TEMPERATURE_TIME" | translate}} / {{"BREW_DATA_SURF_TIME" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="save()"
+                  [(ngModel)]="data.repeat_coffee_parameters.brew_temperature_time"></ion-checkbox>
+  </ion-item>
+  <ion-item tappable>
+    <ion-label>{{"BREW_DATA_TIME" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="save()"
+                  [(ngModel)]="data.repeat_coffee_parameters.brew_time"></ion-checkbox>
+  </ion-item>
+  <ion-item [disabled]="firstDripDisabled()" tappable>
+    <ion-label>
+      <h2>{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME" | translate}}</h2>
+      <p>{{"BREW_DATA_COFFEE_FIRST_DRIP_TIME_TOOLTIP" | translate}}</p>
+    </ion-label>
+    <ion-checkbox (ngModelChange)="save()"
+                  [(ngModel)]="data.repeat_coffee_parameters.coffee_first_drip_time"></ion-checkbox>
+  </ion-item>
+  <ion-item lines="none" tappable>
+    <ion-label>{{"BREW_DATA_COFFEE_BLOOMING_TIME" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="save()"
+                  [(ngModel)]="data.repeat_coffee_parameters.coffee_blooming_time"></ion-checkbox>
+  </ion-item>
+</ion-card>
+<ion-card *ngIf="data.repeat_coffee_parameters.repeat_coffee_active==true" class="ion-padding" style="margin-top:30px;">
+
+  <ion-title  class="ion-no-padding">{{"SORT_PARAMETERS_AFTER" | translate  }}</ion-title>
+  <ion-item tappable>
+    <ion-label>{{"BREW_DATA_COFFEE_TYPE" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="save()"
+                  [(ngModel)]="data.repeat_coffee_parameters.coffee_type"></ion-checkbox>
+  </ion-item>
+  <ion-item tappable>
+    <ion-label>{{"BREW_DATA_COFFEE_CONCENTRATION" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="save()"
+                  [(ngModel)]="data.repeat_coffee_parameters.coffee_concentration"></ion-checkbox>
+  </ion-item>
+  <ion-item [disabled]="brewQuantityDisabled()" tappable>
+    <ion-label>
+      <h2>{{"BREW_DATA_BREW_QUANTITY" | translate}}</h2>
+      <p>{{"BREW_DATA_BREW_QUANTITY_TOOLTIP" | translate}}</p>
+    </ion-label>
+    <ion-checkbox (ngModelChange)="save()"
+                  [(ngModel)]="data.repeat_coffee_parameters.brew_quantity"></ion-checkbox>
+  </ion-item>
+  <ion-item tappable>
+    <ion-label>{{"BREW_DATA_BREW_BEVERAGE_QUANTITY" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="save()"
+                  [(ngModel)]="data.repeat_coffee_parameters.brew_beverage_quantity"></ion-checkbox>
+  </ion-item>
+  <ion-item tappable>
+    <ion-label>{{"BREW_DATA_TDS" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="save()"
+                  [(ngModel)]="data.repeat_coffee_parameters.tds"></ion-checkbox>
+  </ion-item>
+  <ion-item tappable>
+    <ion-label>{{"BREW_DATA_RATING" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="save()"
+                  [(ngModel)]="data.repeat_coffee_parameters.rating"></ion-checkbox>
+  </ion-item>
+  <ion-item  lines="none" tappable>
+    <ion-label>{{"BREW_DATA_NOTES" | translate}}</ion-label>
+    <ion-checkbox (ngModelChange)="save()"
+                  [(ngModel)]="data.repeat_coffee_parameters.note"></ion-checkbox>
+  </ion-item>
+
+</ion-card>

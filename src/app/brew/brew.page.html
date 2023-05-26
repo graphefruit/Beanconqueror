@@ -3,7 +3,11 @@
     <ion-buttons slot="start">
       <ion-menu-button show="back"></ion-menu-button>
     </ion-buttons>
+
     <ion-buttons slot="end">
+      <ion-button (click)="longPressAdd($event);" class="big-add-icon" fill="clear" tappable>
+        <ion-icon class="ion-color-accent" name="beanconqueror-list-add" slot="icon-only"></ion-icon>
+      </ion-button>
       <ion-button tappable (short-press)="add()" (long-press)="longPressAdd($event);" class="big-add-icon" fill="clear">
         <ion-icon class="ion-color-accent" name="beanconqueror-add" slot="icon-only"></ion-icon>
       </ion-button>
@@ -14,13 +18,29 @@
   </ion-toolbar>
 </ion-header>
 <ion-content #brewContent>
-    <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="brew_segment" class="ion-padding-vertical" style="padding-top:0px;">
+    <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="brew_segment" class="ion-padding-vertical tabs" >
       <ion-segment-button value="open">
-        <ion-label>{{"CURRENT" | translate }}
+        <ion-label>
+          {{"CURRENT" | translate }}
+          <br/>
+          <span class="value" *ngIf="openBrewsView?.length !== openBrewsLength ; else openCountSimplified">
+            ( {{ openBrewsView?.length }} / {{ openBrewsLength }} )
+          </span>
+          <ng-template #openCountSimplified>
+            <span class="value">( {{ openBrewsLength }} )</span>
+          </ng-template>
         </ion-label>
       </ion-segment-button>
       <ion-segment-button *ngIf="settings?.show_archived_brews" value="archive">
-        <ion-label>{{"TAB_ARCHIVE" | translate }}
+        <ion-label>
+          {{"TAB_ARCHIVE" | translate }}
+          <br/>
+          <span class="value" *ngIf="archiveBrewsView?.length !== archiveBrewsLength ; else archiveCountSimplified">
+            ( {{ archiveBrewsView?.length }} / {{ archiveBrewsLength }} )
+          </span>
+          <ng-template #archiveCountSimplified>
+            <span class="value">( {{ archiveBrewsLength }} )</span>
+          </ng-template>
         </ion-label>
       </ion-segment-button>
     </ion-segment>

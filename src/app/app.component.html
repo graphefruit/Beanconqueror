@@ -37,6 +37,10 @@
                         replaceUrl="true">
                 <ion-label> {{pages.brew_parameter.title | translate}}</ion-label>
               </ion-item>
+              <ion-item [class.active]="pages.bean_parameter.active" [routerLink]="[pages.bean_parameter.url]"
+                        replaceUrl="true">
+                <ion-label> {{pages.bean_parameter.title | translate}}</ion-label>
+              </ion-item>
               <ion-item [class.active]="pages.helper.active"
                         [routerLink]="[pages.helper.url]" replaceUrl="true">
                 <ion-label> {{pages.helper.title | translate}}</ion-label>

@@ -34,7 +34,9 @@ import { BrewTrackingService } from '../../services/brewTracking/brew-tracking.s
 import { UIHealthKit } from '../../services/uiHealthKit';
 import * as htmlToImage from 'html-to-image';
 import { Visualizer } from '../../classes/visualizer/visualizer';
-import moment from 'moment';
+
+import { UIFileHelper } from '../../services/uiFileHelper';
+import { BrewFlow } from '../../classes/brew/brewFlow';
 declare var window;
 @Component({
   selector: 'brew-information',
@@ -73,7 +75,8 @@ export class BrewInformationComponent implements OnInit {
     private readonly translate: TranslateService,
     private readonly brewTracking: BrewTrackingService,
     private readonly uiHealthKit: UIHealthKit,
-    private readonly platform: Platform
+    private readonly platform: Platform,
+    private readonly uiFileHelper: UIFileHelper
   ) {}
 
   public ngOnInit() {
@@ -144,43 +147,23 @@ export class BrewInformationComponent implements OnInit {
     }
   }
 
-  private async internalBrewAction(action: BREW_ACTION) {
-    switch (action) {
-      case BREW_ACTION.REPEAT:
-        await this.repeatBrew();
-        break;
-      case BREW_ACTION.DETAIL:
-        await this.detailBrew();
-        break;
-      case BREW_ACTION.EDIT:
-        await this.editBrew();
-        break;
-      case BREW_ACTION.DELETE:
-        try {
-          await this.deleteBrew();
-        } catch (ex) {}
-        break;
-      case BREW_ACTION.PHOTO_GALLERY:
-        await this.viewPhotos();
-        break;
-      case BREW_ACTION.CUPPING:
-        await this.cupBrew();
-        break;
-      case BREW_ACTION.SHOW_MAP_COORDINATES:
-        await this.showMapCoordinates();
-        break;
-      case BREW_ACTION.FAST_REPEAT:
-        await this.fastRepeatBrew();
-        break;
-      case BREW_ACTION.TOGGLE_FAVOURITE:
-        await this.toggleFavourite();
-        break;
-      case BREW_ACTION.SHARE:
-        await this.share();
-        break;
-      default:
-        break;
-    }
+  public async shareToVisualizer() {
+    const vS: Visualizer = new Visualizer();
+
+    vS.mapBrew(this.brew);
+    vS.mapBean(this.brew.getBean());
+    vS.mapWater(this.brew.getWater());
+    vS.mapPreparation(this.brew.getPreparation());
+    vS.mapMill(this.brew.getMill());
+    vS.brewFlow = await this.readFlowProfile();
+
+    try {
+      await this.uiHelper.exportJSON(
+        this.brew.config.uuid + '_visualizer.json',
+        JSON.stringify(vS),
+        true
+      );
+    } catch (ex) {}
   }
 
   public async fastRepeatBrew() {
@@ -275,51 +258,58 @@ export class BrewInformationComponent implements OnInit {
     await this.uiImage.viewPhotos(this.brew);
   }
 
-  public shareToVisualizer() {
-    const t: Visualizer = new Visualizer();
-    t.meta.in = this.brew.grind_weight.toString();
-    if (
-      this.brew.getPreparation().getPresetStyleType() ===
-      PREPARATION_STYLE_TYPE.ESPRESSO
-    ) {
-      t.meta.out = this.brew.brew_beverage_quantity.toString();
-    } else {
-      t.meta.out = this.brew.brew_quantity.toString();
+  private async internalBrewAction(action: BREW_ACTION) {
+    switch (action) {
+      case BREW_ACTION.REPEAT:
+        await this.repeatBrew();
+        break;
+      case BREW_ACTION.DETAIL:
+        await this.detailBrew();
+        break;
+      case BREW_ACTION.EDIT:
+        await this.editBrew();
+        break;
+      case BREW_ACTION.DELETE:
+        try {
+          await this.deleteBrew();
+        } catch (ex) {}
+        break;
+      case BREW_ACTION.PHOTO_GALLERY:
+        await this.viewPhotos();
+        break;
+      case BREW_ACTION.CUPPING:
+        await this.cupBrew();
+        break;
+      case BREW_ACTION.SHOW_MAP_COORDINATES:
+        await this.showMapCoordinates();
+        break;
+      case BREW_ACTION.FAST_REPEAT:
+        await this.fastRepeatBrew();
+        break;
+      case BREW_ACTION.TOGGLE_FAVOURITE:
+        await this.toggleFavourite();
+        break;
+      case BREW_ACTION.SHARE:
+        await this.share();
+        break;
+      case BREW_ACTION.VISUALIZER:
+        await this.shareToVisualizer();
+        break;
+      default:
+        break;
     }
+  }
 
-    t.meta.time =
-      this.brew.brew_time.toString() +
-      '.' +
-      this.brew.brew_time_milliseconds.toString();
-    t.meta.bean.brand = this.brew.getBean().roaster;
-    t.meta.bean.type = this.brew.getBean().name;
-    //t.meta.bean.roast_level = "medium-light";
-    //t.meta.bean.roast_date = "2022-05";
-    t.meta.shot.enjoyment = this.brew.rating.toString();
-    t.meta.shot.tds = this.brew.tds.toString();
-    t.meta.shot.ey = this.brew.getExtractionYield();
-    t.meta.grinder.setting = this.brew.grind_size.toString();
-    t.version = '2';
-    t.profile.title = 'Beanconqueror';
-    t.profile.author = 'Beanconqueror';
-    t.profile.beverage_type = 'espresso';
-    t.timestamp = this.brew.config.unix_timestamp.toString();
-    t.clock = this.brew.config.unix_timestamp.toString();
-    t.date = moment.unix(this.brew.config.unix_timestamp).toDate().toString();
-    t.elapsed.push('0.045');
-    t.elapsed.push('0.248');
-    t.elapsed.push('0.552');
-    t.elapsed.push('0.761');
-    t.elapsed.push('1.0');
-    t.totals.weight.push('1');
-    t.totals.weight.push('2');
-    t.totals.weight.push('3');
-    t.totals.weight.push('4');
-    t.totals.weight.push('5');
+  private async readFlowProfile(): Promise<BrewFlow> {
+    try {
+      const jsonParsed = await this.uiFileHelper.getJSONFile(
+        this.brew.flow_profile
+      );
 
-    //console.log(JSON.stringify(t));
-
-    // this.saveTemplateAsFile('bla.json',t);
+      const brewFlow: BrewFlow = new BrewFlow();
+      Object.assign(brewFlow, jsonParsed);
+      return brewFlow;
+    } catch (ex) {}
   }
   public saveTemplateAsFile(filename, dataObjToWrite) {
     const blob = new Blob([JSON.stringify(dataObjToWrite)], {
@@ -365,13 +355,11 @@ export class BrewInformationComponent implements OnInit {
               })
               .catch(async (error) => {
                 await this.uiAlert.hideLoadingSpinner();
-                console.error('oops, something went wrong!', error);
               });
           }, 500);
         })
         .catch(async (error) => {
           await this.uiAlert.hideLoadingSpinner();
-          console.error('oops, something went wrong!', error);
         });
     } else {
       htmlToImage
@@ -384,7 +372,6 @@ export class BrewInformationComponent implements OnInit {
         })
         .catch(async (error) => {
           await this.uiAlert.hideLoadingSpinner();
-          console.error('oops, something went wrong!', error);
         });
     }
 

@@ -19,13 +19,29 @@
 </ion-header>
 <ion-content #beanContent>
 
-  <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="bean_segment" class="ion-padding-vertical" style="padding-top:0px;">
-    <ion-segment-button value="open">
-      <ion-label>{{"PAGE_BEANS_LIST_OBTAINABLE" | translate}}
+  <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="bean_segment" class="ion-padding-vertical tabs" >
+    <ion-segment-button value="open"  >
+      <ion-label>
+        {{"PAGE_BEANS_LIST_OBTAINABLE" | translate}}
+        <br />
+        <span class="value" *ngIf="openBeans?.length !== openBeansLength; else openCountSimplified">
+          ( {{ openBeans?.length }} / {{ openBeansLength }} )
+        </span>
+        <ng-template #openCountSimplified>
+          <span class="value">( {{ openBeansLength }} )</span>
+        </ng-template>
       </ion-label>
     </ion-segment-button>
-    <ion-segment-button *ngIf="settings?.show_archived_beans" value="archiv">
-      <ion-label>{{"TAB_ARCHIVE" | translate}}
+    <ion-segment-button *ngIf="settings?.show_archived_beans" value="archive">
+      <ion-label>
+        {{"TAB_ARCHIVE" | translate}}
+        <br />
+        <span class="value" *ngIf="finishedBeans?.length !== finishedBeansLength ; else finishedCountSimplified">
+          ( {{ finishedBeans?.length }} / {{ finishedBeansLength }} )
+        </span>
+        <ng-template #finishedCountSimplified>
+          <span class="value">( {{ finishedBeansLength }} )</span>
+        </ng-template>
       </ion-label>
     </ion-segment-button>
   </ion-segment>
@@ -65,7 +81,7 @@
 
     </div>
     <div *ngIf="settings?.show_archived_beans">
-      <div *ngSwitchCase="'archiv'">
+      <div *ngSwitchCase="'archive'">
         <div *ngIf="finishedBeans?.length > 0 || shallBarBeDisplayed() || isTextSearchActive() || isFilterActive() || isSortActive()" class="ion-justify-content-end container" style="margin-left:10px;margin-right:10px;margin-bottom:20px;">
 
           <ion-searchbar (ionChange)="research()" [(ngModel)]="archivedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>

@@ -32,6 +32,9 @@
     <ion-segment-button value="view">
       <ion-label>{{"CUSTOM_LIST_VIEW_PARAMETERS" | translate}}</ion-label>
     </ion-segment-button>
+    <ion-segment-button value="repeat">
+      <ion-label>{{"CUSTOM_REPEAT_PARAMETERS" | translate}}</ion-label>
+    </ion-segment-button>
   </ion-segment>
 
   <div [ngSwitch]="segment">
@@ -46,6 +49,9 @@
     </div>
     <div *ngSwitchCase="'view'">
       <list-view-custom-parameter [data]="data"></list-view-custom-parameter>
+    </div>
+    <div *ngSwitchCase="'repeat'">
+      <repeat-custom-parameter [data]="data"></repeat-custom-parameter>
     </div>
   </div>
   </div>

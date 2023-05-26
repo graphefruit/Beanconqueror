@@ -1,111 +1,167 @@
-<ion-header translucent>
-
-</ion-header>
-<ion-content>
-
-<ion-card style="height:calc(100% - 20px)">
-  <ion-grid class="ion-no-padding" style="padding:5px;">
+<ion-header>
+  <ion-grid class="ion-no-padding">
     <ion-row>
-      <ion-col size="{{isDetail?12:10}}">
-        <div style="display:block" id="brewFlowContainer" style="height:calc(100% - 1px)">
 
+      <ion-col size="11">
+        <div>
+          <ion-chip (click)="brewComponent.toggleChartLines('weight')" [outline]="!brewComponent.weightTrace?.visible" *ngIf="smartScaleConnected()"
+            class="weight">{{'BREW_FLOW_WEIGHT' | translate}}</ion-chip>
+          <ion-chip (click)="brewComponent.toggleChartLines('calc_flow')" *ngIf="smartScaleConnected()"
+            [outline]="!brewComponent.flowPerSecondTrace?.visible"
+            class="flowcalculated">{{'BREW_FLOW_WEIGHT_PER_SECOND' | translate}}</ion-chip>
+          <ion-chip (click)="brewComponent.toggleChartLines('realtime_flow')" *ngIf="smartScaleConnected()"
+            [outline]="!brewComponent.realtimeFlowTrace?.visible" class="flowreal">{{'BREW_FLOW_WEIGHT_REALTIME' |
+            translate}}</ion-chip>
+          <ion-chip (click)="brewComponent.toggleChartLines('pressure')" *ngIf="pressureDeviceConnected() && this.brew.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
+            [outline]="!brewComponent.pressureTrace?.visible" class="pressure">{{'BREW_PRESSURE_FLOW' |
+            translate}}</ion-chip>
+          <ion-chip (click)="brewComponent.toggleChartLines('temperature')" *ngIf="temperatureDeviceConnected()"
+            [outline]="!brewComponent.temperatureTrace?.visible" class="temperature">{{'BREW_TEMPERATURE_REALTIME' |
+            translate}}</ion-chip>
         </div>
       </ion-col>
-      <ion-col *ngIf="isDetail===false" size="2" style="text-align:center;">
-        <ion-grid style="overflow:auto;">
-          <ion-row>
-            <ion-col id="brewPanel" size="12">
-              <ion-card *ngIf="pressureDeviceConnected()" (click)="resetPressure()" class="flow-profile" style="margin-bottom:8px;padding: 8px!important;">
-                <ngx-gauge [type]="gaugeType"
-                           [value]="gaugeValue"
-                           [label]="gaugeLabel"
-                           [size]="gaugeSize"
-                           min="0"
-                           max="12"
-                           duration="1"
-                           thick="5"
-                           [animate]="false">
-                </ngx-gauge>
-              </ion-card>
-              <ion-card  class="flow-profile ion-text-center">
-                <ion-card-header>
-                  <div #smartScaleWeightPerSecond>? g/s</div>
-                  <div #smartScaleAvgFlowPerSecond>? g/s</div>
-                </ion-card-header>
-                <ion-card-content>
-                  {{"BREW_FLOW_WEIGHT_PER_SECOND" | translate}}
-                </ion-card-content>
-              </ion-card>
-
-              <ion-card style="margin-top:8px;" class="flow-profile ion-text-center">
-                <ion-card-header>
-                  <div #smartScaleWeight>? g</div>
-                  <div>({{brew.getBrewRatio()}})</div>
-                </ion-card-header>
-                <ion-card-content>
-                  {{"BREW_FLOW_WEIGHT" | translate}}
-
-                </ion-card-content>
-              </ion-card>
-              <ion-card style="margin-top:8px;" class="flow-profile ion-text-center">
-                <ion-card-header>
-                  <div *ngIf="settings?.brew_milliseconds === false">{{this.uiHelper.formatSeconds(brew.brew_time,'mm:ss')}}</div>
-                  <div *ngIf="settings?.brew_milliseconds === true">{{this.uiHelper.formatSecondsAndMilliseconds(brew.brew_time,brew.brew_time_milliseconds,'mm:ss.SSS')}}</div>
-                </ion-card-header>
-                <ion-card-content>
-                  {{"BREW_DATA_TIME" | translate}}
-                </ion-card-content>
-              </ion-card>
-
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-
+      <ion-col class="ion-text-right" size="1">
+        <ion-button (click)="dismiss()" fill="clear" style="margin-top: -1px;margin-left:-15px;">
+          <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+        </ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>
-</ion-card>
+</ion-header>
+<ion-content>
+
+  <div id="flowCard" style="height:100%">
+
+    <div *ngIf="isDetail===false" id="informationContainer">
+      <ion-grid class="ion-text-center ion-no-padding brew-information-panel">
+        <ion-row style="padding-bottom:5px;">
+          <ion-col  *ngIf="smartScaleConnected()"
+            size="{{this.getGraphIonColSize()}}"
+            style="padding-right:5px;">
+            <ion-card class="flow-profile ion-text-center weight-card" style="height: 100%;">
+              <ion-card-header>
+                <div #smartScaleWeightDetail>? g</div>
+              </ion-card-header>
+              <ion-card-content>
+                <ion-icon name="beanconqueror-scale-outline"></ion-icon>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col  *ngIf="smartScaleConnected()"
+            size="{{this.getGraphIonColSize()}}"
+            style="padding-right:5px;">
+            <ion-card class="flow-profile ion-text-center flow-avg-card" style="height: 100%;">
+              <ion-card-header>
+                <div><span #smartScaleAvgFlowPerSecondDetail>?</span> g/s</div>
+              </ion-card-header>
+              <ion-card-content>
+                <ion-icon name="water-outline"></ion-icon>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col  *ngIf="smartScaleConnected()"
+            size="{{this.getGraphIonColSize()}}"
+            style="padding-right:5px;">
+            <ion-card class="flow-profile ion-text-center flow-card" style="height: 100%;">
+              <ion-card-header>
+                <div><span #smartScaleWeightPerSecondDetail>?</span> g/s</div>
+              </ion-card-header>
+              <ion-card-content>
+                <ion-icon name="water-outline"></ion-icon>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col (click)="resetPressure()" *ngIf="pressureDeviceConnected() && this.brew.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
+            size="{{this.getGraphIonColSize()}}"
+            style="padding-right:5px;">
+            <ion-card class="flow-profile ion-text-center pressure-card" style="height: 100%;">
+              <ion-card-header>
+                <div #pressureDetail>? bar</div>
+              </ion-card-header>
+              <ion-card-content>
+                <ion-icon name="beanconqueror-pressure"></ion-icon>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col *ngIf="temperatureDeviceConnected()"
+                   size="{{this.getGraphIonColSize()}}"
+            style="padding-right:5px;">
+            <ion-card class="flow-profile ion-text-center temperature-card" style="height: 100%;">
+              <ion-card-header>
+                <div #temperatureDetail>? °C</div>
+              </ion-card-header>
+              <ion-card-content>
+                <ion-icon name="thermometer-outline"></ion-icon>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col
+            size="{{this.getGraphIonColSize()}}"
+            style="padding-right:5px;">
+            <ion-card class="flow-profile ion-text-center timer-card" style="height: 100%;">
+              <ion-card-header>
+                <span *ngIf="settings?.brew_milliseconds === false">{{this.uiHelper.formatSeconds(brew.brew_time,
+                  'mm:ss')}}</span>
+                <span
+                  *ngIf="settings?.brew_milliseconds === true">{{this.uiHelper.formatSecondsAndMilliseconds(brew.brew_time,
+                  brew.brew_time_milliseconds, this.returnWantedDisplayFormat())}}</span>
+              </ion-card-header>
+              <ion-card-content>
+                <ion-icon name="time-outline"></ion-icon>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+
+        </ion-row>
+      </ion-grid>
+
+
+    </div>
+
+    <div [ngStyle]="{'height': 'calc(100% - ' + heightInformationBlock + 'px)'}" id="brewFlowContainer"
+      style="display:block"></div>
+
+  </div>
 </ion-content>
-<ion-footer *ngIf="isDetail===false" class="ion-no-border" >
-<div class="ion-text-center flow-icon-buttons">
-      <ion-button (click)="setCoffeeBloomingTime()" *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && showBloomTimer"
-                  class="big-icon-only" fill="clear" tappable>
-        <ion-icon class="ion-color-accent" name="beanconqueror-blooming" slot="icon-only"></ion-icon>
-      </ion-button>
-      <ion-button (click)="setCoffeeDripTime()" *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && showDripTimer"
-                  class="big-icon-only" fill="clear" tappable>
-        <ion-icon class="ion-color-accent" name="beanconqueror-water-drop" slot="icon-only"></ion-icon>
-      </ion-button>
-      <ion-button (click)="pauseTimer()" *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished"
-                  class="big-icon-only" fill="clear" tappable>
-        <ion-icon class="ion-color-accent" name="beanconqueror-pause" slot="icon-only"></ion-icon>
+<ion-footer *ngIf="isDetail===false" class="ion-no-border">
+  <div class="ion-text-center flow-icon-buttons">
+    <ion-button (click)="setCoffeeBloomingTime()"
+      *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && showBloomTimer"
+      class="big-icon-only" fill="clear" tappable>
+      <ion-icon class="ion-color-accent" name="beanconqueror-blooming" slot="icon-only"></ion-icon>
+    </ion-button>
+    <ion-button (click)="setCoffeeDripTime()"
+      *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished && showDripTimer"
+      class="big-icon-only" fill="clear" tappable>
+      <ion-icon class="ion-color-accent" name="beanconqueror-water-drop" slot="icon-only"></ion-icon>
+    </ion-button>
+    <ion-button (click)="pauseTimer()"
+      *ngIf="brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished"
+      class="big-icon-only" fill="clear" tappable>
+      <ion-icon class="ion-color-accent" name="beanconqueror-pause" slot="icon-only"></ion-icon>
 
-      </ion-button>
-      <ion-button (click)="resetTimer()" *ngIf="(!brewComponent.timer.timer.hasStarted || !brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished) && brewComponent.timer.getSeconds()>0"
-                  class="big-icon-only" fill="clear" tappable>
-        <ion-icon class="ion-color-accent" name="beanconqueror-full-reset" slot="icon-only"></ion-icon>
-      </ion-button>
+    </ion-button>
+    <ion-button (click)="resetTimer()"
+      *ngIf="(!brewComponent.timer.timer.hasStarted || !brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished) && brewComponent.timer.getSeconds()>0"
+      class="big-icon-only" fill="clear" tappable>
+      <ion-icon class="ion-color-accent" name="beanconqueror-full-reset" slot="icon-only"></ion-icon>
+    </ion-button>
 
-      <ion-button (click)="resumeTimer()" *ngIf="!brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished"
-                  class="big-icon-only" fill="clear" tappable>
-        <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only"></ion-icon>
-      </ion-button>
-      <ion-button (click)="startTimer()" *ngIf="!brewComponent.timer.timer.hasStarted" class="big-icon-only" fill="clear" tappable>
-        <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only"></ion-icon>
-      </ion-button>
-      <ion-button (click)="__tareScale()" *ngIf="brewComponent.smartScaleConnected()"  class="big-icon-only" fill="clear" tappable>
-        <ion-icon class="ion-color-accent" name="beanconqueror-scale-tare" slot="icon-only"></ion-icon>
-      </ion-button>
+    <ion-button (click)="resumeTimer()"
+      *ngIf="!brewComponent.timer.timer.runTimer && brewComponent.timer.timer.hasStarted && !brewComponent.timer.timer.hasFinished"
+      class="big-icon-only" fill="clear" tappable>
+      <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only"></ion-icon>
+    </ion-button>
+    <ion-button (click)="startTimer()" *ngIf="!brewComponent.timer.timer.hasStarted" class="big-icon-only" fill="clear"
+      tappable>
+      <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only"></ion-icon>
+    </ion-button>
+    <ion-button (click)="__tareScale()" *ngIf="brewComponent.smartScaleConnected()" class="big-icon-only" fill="clear"
+      tappable>
+      <ion-icon class="ion-color-accent" name="beanconqueror-scale-tare" slot="icon-only"></ion-icon>
+    </ion-button>
 
 
-</div>
-  <ion-button  (click)="dismiss()" color="accent"  fill="outline" style="position:absolute;right:10px;top:10px;"
-               tappable>{{"CLOSE" | translate}}</ion-button>
-</ion-footer>
-<ion-footer *ngIf="isDetail===true" class="ion-no-border">
-
-    <ion-button  color="accent" fill="outline" expand="block" (click)="dismiss()"
-                 tappable>{{"CLOSE" | translate}}</ion-button>
-
+  </div>
 
 </ion-footer>

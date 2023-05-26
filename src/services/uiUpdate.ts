@@ -25,6 +25,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { UIStorage } from './uiStorage';
 import { maxBy, keys } from 'lodash';
 import { UIHelper } from './uiHelper';
+import { RepeatBrewParameter } from '../classes/parameter/repeatBrewParameter';
 
 @Injectable({
   providedIn: 'root',
@@ -48,6 +49,20 @@ export class UIUpdate {
     private readonly uiStorage: UIStorage,
     private readonly uiHelper: UIHelper
   ) {}
+
+  public async checkUpdate() {
+    this.uiLog.info('Check updates');
+    const hasData: boolean = await this.uiStorage.hasData();
+    await this.__checkUpdateForDataVersion('UPDATE_1', !hasData);
+    await this.__checkUpdateForDataVersion('UPDATE_2', !hasData);
+    await this.__checkUpdateForDataVersion('UPDATE_3', !hasData);
+    await this.__checkUpdateForDataVersion('UPDATE_4', !hasData);
+    await this.__checkUpdateForDataVersion('UPDATE_5', !hasData);
+    await this.__checkUpdateForDataVersion('UPDATE_6', !hasData);
+    await this.__checkUpdateForDataVersion('UPDATE_7', !hasData);
+    await this.__checkUpdateForDataVersion('UPDATE_8', !hasData);
+    await this.__checkUpdateForDataVersion('UPDATE_9', !hasData);
+  }
 
   private async __updateDataVersion(_version): Promise<boolean> {
     const promise: Promise<boolean> = new Promise(async (resolve, reject) => {
@@ -464,6 +479,39 @@ export class UIUpdate {
             await this.uiSettingsStorage.saveSettings(settings_v8);
 
             break;
+
+          case 'UPDATE_9':
+            // Already existing installation which has more then one bean.
+            const settings_v9: Settings = this.uiSettingsStorage.getSettings();
+            settings_v9.repeat_coffee_parameters = new RepeatBrewParameter();
+            const beansListV9: Array<Bean> = this.uiBeanStorage.getAllEntries();
+            if (beansListV9.length > 0) {
+              this.uiLog.info(
+                'Update 9 - We found more then zero beans, therefore its an existing instance, we need to update the beans, so the user will see all details again'
+              );
+
+              settings_v9.bean_manage_parameters.activateAll();
+            }
+
+            settings_v9.graph.FILTER.temperature = true;
+            settings_v9.graph.ESPRESSO.temperature = true;
+
+            // Reset filter, because we got a new sort on beans
+            settings_v9.resetFilter();
+            await this.uiSettingsStorage.saveSettings(settings_v9);
+            const preparationListV9: Array<Preparation> =
+              this.uiPreparationStorage.getAllEntries();
+            for (const prep of preparationListV9) {
+              prep.repeat_coffee_parameters = new RepeatBrewParameter();
+              prep.repeat_coffee_parameters.repeat_coffee_active = false;
+              prep.repeat_coffee_parameters.coffee_first_drip_time = false;
+              prep.repeat_coffee_parameters.brew_beverage_quantity = false;
+              prep.repeat_coffee_parameters.brew_quantity = false;
+              await this.uiPreparationStorage.update(prep);
+            }
+
+            break;
+
           default:
             break;
         }
@@ -518,19 +566,6 @@ export class UIUpdate {
     }
   }
 
-  public async checkUpdate() {
-    this.uiLog.info('Check updates');
-    const hasData: boolean = await this.uiStorage.hasData();
-    await this.__checkUpdateForDataVersion('UPDATE_1', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_2', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_3', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_4', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_5', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_6', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_7', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_8', !hasData);
-  }
-
   public async checkUpdateScreen(): Promise<any> {
     const promise = new Promise(async (resolve, reject) => {
       let versionCode: string;
@@ -538,7 +573,7 @@ export class UIUpdate {
         versionCode = await this.appVersion.getVersionNumber();
       } else {
         // Hardcored for testing
-        versionCode = '6.3.0';
+        versionCode = '6.4.0';
       }
       const version: Version = this.uiVersionStorage.getVersion();
       const displayingVersions =

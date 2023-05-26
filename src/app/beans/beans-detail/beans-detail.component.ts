@@ -13,6 +13,7 @@ import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import moment from 'moment';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
+import { UIBeanHelper } from '../../../services/uiBeanHelper';
 
 @Component({
   selector: 'app-beans-detail',
@@ -34,29 +35,45 @@ export class BeansDetailComponent implements OnInit {
 
   public settings: Settings = undefined;
   public bean_segment = 'general';
+  public maxBeanRating: number = 5;
   constructor(
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
     public uiHelper: UIHelper,
     private readonly uiAnalytics: UIAnalytics,
-    private readonly uiSettings: UISettingsStorage
+    private readonly uiSettings: UISettingsStorage,
+    public readonly uiBeanHelper: UIBeanHelper,
+    private readonly uiSettingsStorage: UISettingsStorage
   ) {}
 
-  public ionViewWillEnter() {
+  public ionViewDidEnter() {
     this.uiAnalytics.trackEvent(
       BEAN_TRACKING.TITLE,
       BEAN_TRACKING.ACTIONS.DETAIL
     );
     this.bean = this.navParams.get('bean');
-    this.settings = this.uiSettings.getSettings();
+
     if (this.bean) {
       const copy: IBean = this.uiHelper.copyData(this.bean);
       this.data.initializeByObject(copy);
     }
-    this.beanStars.setRating(this.data.roast_range);
-    this.beanRating.setRating(this.data.rating);
+    setTimeout(() => {
+      if (this.beanStars && this.beanStars?.setRating) {
+        this.beanStars.setRating(this.data.roast_range);
+      }
+
+      if (this.hasCustomRatingRange() === false) {
+        if (this.beanRating && this.beanRating?.setRating) {
+          this.beanRating.setRating(this.data.rating);
+        }
+      }
+    }, 150);
   }
-  public ngOnInit() {}
+  public ngOnInit() {
+    this.settings = this.uiSettingsStorage.getSettings();
+    this.maxBeanRating = this.settings.bean_rating;
+  }
+
   public dismiss(): void {
     this.modalController.dismiss(
       {

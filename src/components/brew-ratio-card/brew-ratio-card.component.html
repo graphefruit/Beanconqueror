@@ -1,0 +1,35 @@
+
+<ion-grid>
+  <ion-row>
+    <ion-col size="3"></ion-col>
+    <ion-col size="6">
+      <ion-card class="small-card ion-text-center" style="height: 100%;">
+        <ion-card-header class="card-background" style="font-size: 2em;">
+          {{getBrewRatio()}}
+        </ion-card-header>
+        <ion-card-content>
+          {{"PAGE_HELPER_BREW_RATIO_CALCULATED" | translate}}
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+    <ion-col size="3"></ion-col>
+  </ion-row>
+</ion-grid>
+<ion-card>
+
+  <ion-card-content>
+    <ion-item>
+      <ion-label position="stacked">{{"PAGE_HELPER_BREW_RATIO_GROUND_COFFEE" | translate}}</ion-label>
+      <ion-input [(ngModel)]="brewRatio.ground_coffee" inputmode="decimal" prevent-characters remove-empty-number
+                 type="text"></ion-input>
+    </ion-item>
+
+    <ion-item lines="none">
+      <ion-label position="stacked">{{"PAGE_HELPER_BREW_RATIO_WATER" | translate}}</ion-label>
+      <ion-input [(ngModel)]="brewRatio.water" inputmode="decimal" prevent-characters remove-empty-number
+                 type="text"></ion-input>
+    </ion-item>
+
+
+  </ion-card-content>
+</ion-card>
