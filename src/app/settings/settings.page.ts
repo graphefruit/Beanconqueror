@@ -790,8 +790,9 @@ export class SettingsPage implements OnInit {
 
     this.uiStorage.export().then(
       (_data) => {
+        const isIOS = this.platform.is('ios');
         this.uiHelper
-          .exportJSON('Beanconqueror.json', JSON.stringify(_data))
+          .exportJSON('Beanconqueror.json', JSON.stringify(_data), isIOS)
           .then(
             async (_fileEntry: FileEntry) => {
               if (this.platform.is('cordova')) {
