@@ -603,7 +603,7 @@ function encode(msgType: number, payload: number[]): ArrayBuffer {
   bytes[2] = msgType;
   cksum1 = 0;
   cksum2 = 0;
-  for (let i = 0, _pj_a = payload.length; i < _pj_a; i += 1) {
+  for (let i = 0, l = payload.length; i < l; i += 1) {
     val = payload[i] & 0xff;
     bytes[3 + i] = val;
     if (i % 2 === 0) {

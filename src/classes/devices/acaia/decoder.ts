@@ -66,7 +66,7 @@ export class Decoder {
     let messageStart, msgType, payloadIn;
     messageStart = -1;
 
-    for (let i = 0, _pj_a = bytes.length - 1; i < _pj_a; i += 1) {
+    for (let i = 0, l = bytes.length - 1; i < l; i++) {
       if (bytes[i] === MAGIC1 && bytes[i + 1] === MAGIC2) {
         messageStart = i;
         break;
@@ -76,7 +76,18 @@ export class Decoder {
       // @ts-ignore
       return [null, bytes.buffer];
     }
-    const messageEnd = messageStart + bytes[messageStart + 3] + 5;
+    let messageEnd = messageStart + bytes[messageStart + 3] + 5;
+
+    // todo: ideally we want to check message integrity but for now just do this
+    // verify that the message doesn't contain another message
+    for (let i = messageStart; i < messageEnd; i++) {
+      if (bytes[i] === MAGIC1 && bytes[i + 1] === MAGIC2) {
+        messageEnd = i;
+        this.log.log('Packet contains another packet');
+        break;
+      }
+    }
+
     if (messageEnd > bytes.length) {
       // @ts-ignore
       return [null, bytes.buffer];
