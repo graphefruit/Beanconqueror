@@ -164,6 +164,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   private pressureThresholdWasHit: boolean = false;
   private temperatureThresholdWasHit: boolean = false;
 
+  public customXeniaOptions = {
+    cssClass: 'xenia-script-chooser',
+  };
+
   constructor(
     private readonly platform: Platform,
     private readonly uiSettingsStorage: UISettingsStorage,
