@@ -96,7 +96,7 @@ export class BrewDetailComponent implements OnInit {
       // Set timeout else element wont be visible
       setTimeout(() => {
         this.__loadCuppingChart();
-      }, 150);
+      }, 1000);
     }
 
     await this.readFlowProfile();
