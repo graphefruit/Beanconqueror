@@ -713,7 +713,7 @@ export class AppComponent implements AfterViewInit {
     if (pressure_id && isAndroidAndPressureDevice === false) {
       searchIds.push(pressure_id);
     }
-    if (temperature_id) {
+    if (temperature_id && !this.platform.is('android')) {
       searchIds.push(temperature_id);
     }
     try {

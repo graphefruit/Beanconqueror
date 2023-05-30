@@ -90,7 +90,7 @@ class DecoderWorker {
   }
 }
 
-const HEARTBEAT_INTERVAL = 400;
+const HEARTBEAT_INTERVAL = 1000;
 
 export class AcaiaScale {
   private readonly device_id: string;
