@@ -1460,5 +1460,7 @@
   "PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO": "El sensor de presión solo se puede usar en espresso",
   "PRESSURE_MESSAGE_AFTER_CONNECTION": "Comportamiento conocido (en estudio): tenga en cuenta que tras reiniciar su teléfono o tras no usar la aplicación durante un tiempo, la conexión puede llevar más tiempo del habitual (de 30 segundos a 1 minutos). Tras eso, el comportamiento debería el habitual.",
   "BREW_TEMPERATURE_REALTIME": "Temperatura",
-  "PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE": "Sensor de temperatura"
+  "PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE": "Sensor de temperatura",
+  "SMART_SCALE_ACAIA_HEARTBEAT_TIMER": "Heartbeat timer - Just for Acaia Scales",
+  "SMART_SCALE_ACAIA_HEARTBEAT_TIMER_TOOLTIP": "Just used for Acaia scales!!! - Older Acaia scales need an heartbeat, if you encounter issues, try to minimize the heartbeat to a faster frequence"
 }

@@ -22,6 +22,7 @@ import { Logger } from '../common/logger';
 import { DEBUG } from '../common/constants';
 import { to128bitUUID } from '../common/util';
 import { Decoder } from './decoder';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 declare var window: any;
 declare var device: any;
@@ -90,7 +91,7 @@ class DecoderWorker {
   }
 }
 
-const HEARTBEAT_INTERVAL = 1000;
+let HEARTBEAT_INTERVAL = 1000;
 
 export class AcaiaScale {
   private readonly device_id: string;
@@ -136,6 +137,12 @@ export class AcaiaScale {
 
     this.logger = new Logger();
 
+    try {
+      // #548
+      const uiSettingsStorage = UISettingsStorage.getInstance();
+      const settingsInst = uiSettingsStorage.getSettings();
+      HEARTBEAT_INTERVAL = settingsInst.acaia_heartbeat_command_delay;
+    } catch (ex) {}
     // TODO(mike1808): make it to work with new Lunar and Pyxis by auto-detecting service and char uuid
     this.logger.info(
       'received characteristics: ',

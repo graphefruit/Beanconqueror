@@ -1459,5 +1459,7 @@
 	"PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO": "压力设备仅在 'espresso' 模式中可用",
 	"PRESSURE_MESSAGE_AFTER_CONNECTION": "已知行为 (在分析中): 请注意, 如果您重启手机或长时间未使用应用程序, 则连接可能需要更长时间 (30 秒至 1 分钟) ",
 	"BREW_TEMPERATURE_REALTIME": "温度",
-	"PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE": "温度设备"
+	"PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE": "温度设备",
+  "SMART_SCALE_ACAIA_HEARTBEAT_TIMER": "Heartbeat timer - Just for Acaia Scales",
+  "SMART_SCALE_ACAIA_HEARTBEAT_TIMER_TOOLTIP": "Just used for Acaia scales!!! - Older Acaia scales need an heartbeat, if you encounter issues, try to minimize the heartbeat to a faster frequence"
 	}
