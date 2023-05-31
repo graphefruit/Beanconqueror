@@ -268,3 +268,7 @@ ContentFileSystem.java
 
 Fixing SocialSharing.java
 -> https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin/pull/1202/commits
+
+Compile deson't work on android?
+Try:
+`cordova build android -- --jvmargs='-Xmx2048M -Dkotlin.daemon.jvm.options\="-Xmx2048M" --add-exports=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED'`
