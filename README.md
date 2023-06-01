@@ -255,12 +255,20 @@ After SDK Target 31 needs to be supported, and older plugins doesn't have the an
 Cordova-plugin-x-socialsharing
 `<receiver android:name="nl.xservices.plugins.ShareChooserPendingIntent" android:exported="false" android:enabled="true">`
 
+Fixing SocialSharing.java
+` int flag = PendingIntent.FLAG_MUTABLE;
+if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.S) {
+flag = PendingIntent.FLAG_UPDATE_CURRENT;
+}
+final PendingIntent pendingIntent = PendingIntent.getBroadcast(cordova.getActivity().getApplicationContext(), 0, receiverIntent, flag);`
+-> https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin/pull/1202/commits
+
 cordova-plugin-telerik-imagepicker
 
 1. `<activity android:exported="false" android:label="@string/multi_app_name" android:name="com.synconset.MultiImageChooserActivity" android:theme="@style/Theme.AppCompat.Light">`
 2. `  <config-file file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
-   <application android:requestLegacyExternalStorage="true" />
-   </config-file>` -> change edit-config to config-file
+<application android:requestLegacyExternalStorage="true" />
+</config-file>` -> change edit-config to config-file
    fttx-phonegap-plugin-barcodescanner
    `<activity android:name="com.google.zxing.client.android.encode.EncodeActivity" android:exported="false" android:label="Share"/>`
 
@@ -269,14 +277,6 @@ ContentFileSystem.java
 -> Temp fix for import
 `        String encodedPath = inputURL.uri.getEncodedPath();
 String authorityAndPath = encodedPath.substring(encodedPath.indexOf(this.name) + 1 + this.name.length() + 2);`
-
-Fixing SocialSharing.java
-` int flag = PendingIntent.FLAG_MUTABLE;
-if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.S) {
-flag = PendingIntent.FLAG_UPDATE_CURRENT;
-}
-final PendingIntent pendingIntent = PendingIntent.getBroadcast(cordova.getActivity().getApplicationContext(), 0, receiverIntent, flag);`
--> https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin/pull/1202/commits
 
 Compile deson't work on android?
 Try:
