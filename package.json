@@ -113,6 +113,7 @@
     "cordova-plugin-dialogs": "^2.0.2",
     "cordova-plugin-file": "^7.0.0",
     "cordova-plugin-file-transfer": "github:dpa99c/cordova-plugin-file-transfer",
+    "cordova-plugin-filepath": "^1.6.0",
     "cordova-plugin-geolocation": "^4.1.0",
     "cordova-plugin-health": "^2.0.0",
     "cordova-plugin-inappbrowser": "^5.0.0",
