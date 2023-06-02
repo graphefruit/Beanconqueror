@@ -1201,6 +1201,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
         this.deattachToWeightChange();
         this.deattachToFlowChange();
+        // 551 - Always attach to flow change, even when reset is triggerd
+        this.attachToFlowChange();
       }
 
       if (pressureDevice) {
