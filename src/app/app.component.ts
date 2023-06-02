@@ -718,8 +718,8 @@ export class AppComponent implements AfterViewInit {
     }
     try {
       if (searchIds.length > 0) {
-        //Just search if we raly got id's
-        this.bleManager.findDeviceWithDirectIds(searchIds, 10000);
+        // Just search if we raly got id's
+        await this.bleManager.findDeviceWithDirectIds(searchIds, 8000);
       }
     } catch (ex) {}
   }
