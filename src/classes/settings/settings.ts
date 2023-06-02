@@ -105,6 +105,7 @@ export class Settings implements ISettings {
   public bluetooth_ignore_negative_values: boolean;
   public bluetooth_ignore_anomaly_values: boolean;
   public bluetooth_command_delay: number;
+  public acaia_heartbeat_command_delay: number;
 
   public pressure_id: string;
   public pressure_type: PressureType;
@@ -279,6 +280,7 @@ export class Settings implements ISettings {
     this.bluetooth_ignore_negative_values = false;
     this.bluetooth_ignore_anomaly_values = false;
     this.bluetooth_command_delay = 50;
+    this.acaia_heartbeat_command_delay = 1000;
 
     this.scale_log = false;
 

@@ -2,7 +2,7 @@
 <div class="ion-padding" style="display: block">
   <canvas #cuppingChart></canvas>
 </div>
-<div class="ion-text-center">{{"CUPPING_SCORE_CUPPERS_CORRECTION" | translate}} {{ this.model.cuppers_correction}}</div>
+<div class="ion-text-center">{{"CUPPING_SCORE_CUPPERS_CORRECTION" | translate}} {{ this.model.cuppers_correction| number : '.1-1'}}</div>
 <div class="ion-text-center">{{"CUPPING_SCORE" | translate}}: {{getScore()| number : '.1-1'}}</div>
 <div class="ion-text-center">
   <ion-icon name="information-outline" size="large" slot="end"
