@@ -21,39 +21,44 @@ export class UIAlert {
     private readonly loadingController: LoadingController
   ) {}
 
-  private loadingSpinner;
+  private existingLoadingSpinners = [];
 
   public async showLoadingSpinner(
     message: string = 'PLEASE_WAIT',
     translate: boolean = true
   ) {
-    if (this.loadingSpinner) {
+    if (this.existingLoadingSpinners.length > 0) {
       await this.hideLoadingSpinner();
     }
     let msg = message;
     if (translate) {
       msg = this.translate.instant(message);
     }
-    this.loadingSpinner = await this.loadingController.create({
+    const loadingSpinner = await this.loadingController.create({
       message: msg,
     });
-    this.loadingSpinner.present();
+    this.existingLoadingSpinners.push(loadingSpinner);
+    loadingSpinner.present();
   }
 
   public setLoadingSpinnerMessage(message: string, translate: boolean = false) {
-    if (this.loadingSpinner) {
-      if (translate === false) {
-        this.loadingSpinner.message = message;
-      } else {
-        this.loadingSpinner.message = this.translate.instant(message);
+    if (this.existingLoadingSpinners.length > 0) {
+      for (const spinner of this.existingLoadingSpinners) {
+        if (translate === false) {
+          spinner.message = message;
+        } else {
+          spinner.message = this.translate.instant(message);
+        }
       }
     }
   }
 
   public async hideLoadingSpinner() {
-    if (this.loadingSpinner) {
-      await this.loadingSpinner.dismiss();
-      this.loadingSpinner = undefined;
+    if (this.existingLoadingSpinners.length > 0) {
+      for (const spinner of this.existingLoadingSpinners) {
+        spinner.dismiss();
+      }
+      this.existingLoadingSpinners = [];
     }
   }
 

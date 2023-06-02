@@ -362,7 +362,7 @@
                       data.getPreparation().use_custom_parameters)">
       <ion-label>
         <h2>{{"BREW_DATA_RATING" | translate }}:</h2>
-        <h3>{{data.rating}}</h3>
+        <h3>{{data.rating | number : '.0-2'}}</h3>
       </ion-label>
 
     </ion-item>

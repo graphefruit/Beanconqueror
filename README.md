@@ -255,16 +255,29 @@ After SDK Target 31 needs to be supported, and older plugins doesn't have the an
 Cordova-plugin-x-socialsharing
 `<receiver android:name="nl.xservices.plugins.ShareChooserPendingIntent" android:exported="false" android:enabled="true">`
 
-cordova-plugin-telerik-imagepicker
-`<activity android:exported="false" android:label="@string/multi_app_name" android:name="com.synconset.MultiImageChooserActivity" android:theme="@style/Theme.AppCompat.Light">`
+Fixing SocialSharing.java
+` int flag = PendingIntent.FLAG_MUTABLE;
+if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.S) {
+flag = PendingIntent.FLAG_UPDATE_CURRENT;
+}
+final PendingIntent pendingIntent = PendingIntent.getBroadcast(cordova.getActivity().getApplicationContext(), 0, receiverIntent, flag);`
+-> https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin/pull/1202/commits
 
-fttx-phonegap-plugin-barcodescanner
-`<activity android:name="com.google.zxing.client.android.encode.EncodeActivity" android:exported="false" android:label="Share"/>`
+cordova-plugin-telerik-imagepicker
+
+1. `<activity android:exported="false" android:label="@string/multi_app_name" android:name="com.synconset.MultiImageChooserActivity" android:theme="@style/Theme.AppCompat.Light">`
+2. `  <config-file file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
+<application android:requestLegacyExternalStorage="true" />
+</config-file>` -> change edit-config to config-file
+   fttx-phonegap-plugin-barcodescanner
+   `<activity android:name="com.google.zxing.client.android.encode.EncodeActivity" android:exported="false" android:label="Share"/>`
 
 cordova-plugin-file/src/android
 ContentFileSystem.java
 -> Temp fix for import
-` String encodedPath = inputURL.uri.getEncodedPath(); String authorityAndPath = encodedPath.substring(encodedPath.indexOf(this.name) + 1 + this.name.length() + 2);`
+`        String encodedPath = inputURL.uri.getEncodedPath();
+String authorityAndPath = encodedPath.substring(encodedPath.indexOf(this.name) + 1 + this.name.length() + 2);`
 
-Fixing SocialSharing.java
--> https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin/pull/1202/commits
+Compile deson't work on android?
+Try:
+`cordova build android -- --jvmargs='-Xmx2048M -Dkotlin.daemon.jvm.options\="-Xmx2048M" --add-exports=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED'`

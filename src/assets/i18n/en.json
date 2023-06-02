@@ -862,6 +862,13 @@
         "<b>Others:</b>",
         "Small bug fixes"
       ]
+    },
+    "6.4.10": {
+      "TITLE": "Version 6.4.1: What's new?",
+      "DESCRIPTION": [
+        "<b>Others:</b>",
+        "Small bug fixes"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Customize parameters",
@@ -1460,5 +1467,7 @@
   },
   "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "Reconnect temperature device",
   "PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO": "Pressure device is only usable with the preparation style 'Espresso'",
-  "PRESSURE_MESSAGE_AFTER_CONNECTION": "Known Behavior (in analyse): Note, that after restarting your phone or when not using the app for a long time, the connection can take longer (30 seconds to 1 minute), after that time elapses the connection issue should be resolved."
+  "PRESSURE_MESSAGE_AFTER_CONNECTION": "Known Behavior (in analyse): Note, that after restarting your phone or when not using the app for a long time, the connection can take longer (30 seconds to 1 minute), after that time elapses the connection issue should be resolved.",
+  "SMART_SCALE_ACAIA_HEARTBEAT_TIMER": "Heartbeat timer - Just for Acaia Scales",
+  "SMART_SCALE_ACAIA_HEARTBEAT_TIMER_TOOLTIP": "Just used for Acaia scales!!! - Older Acaia scales need an heartbeat, if you encounter issues, try to minimize the heartbeat to a faster frequence"
 }
