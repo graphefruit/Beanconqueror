@@ -96,7 +96,7 @@ export class BrewDetailComponent implements OnInit {
       // Set timeout else element wont be visible
       setTimeout(() => {
         this.__loadCuppingChart();
-      }, 150);
+      }, 1000);
     }
 
     await this.readFlowProfile();
@@ -464,15 +464,34 @@ export class BrewDetailComponent implements OnInit {
       'image/jpeg',
       1
     );*/
-    Plotly.Snapshot.toImage(document.getElementById('flowProfileChart'), {
-      format: 'jpeg',
-    }).once('success', async (url) => {
-      try {
-        this.socialSharing.share(null, null, url, null);
-      } catch (err) {
-        this.uiLog.error('Cant share profilechart ' + err.message);
-      }
-    });
+    if (this.platform.is('ios')) {
+      //#544 - we need to do it twice... don't know why, ios issue
+      Plotly.Snapshot.toImage(document.getElementById('flowProfileChart'), {
+        format: 'jpeg',
+      }).once('success', async (url) => {
+        setTimeout(() => {
+          Plotly.Snapshot.toImage(document.getElementById('flowProfileChart'), {
+            format: 'jpeg',
+          }).once('success', async (urlNew) => {
+            try {
+              this.socialSharing.share(null, null, urlNew, null);
+            } catch (err) {
+              this.uiLog.error('Cant share profilechart ' + err.message);
+            }
+          });
+        }, 750);
+      });
+    } else {
+      Plotly.Snapshot.toImage(document.getElementById('flowProfileChart'), {
+        format: 'jpeg',
+      }).once('success', async (url) => {
+        try {
+          this.socialSharing.share(null, null, url, null);
+        } catch (err) {
+          this.uiLog.error('Cant share profilechart ' + err.message);
+        }
+      });
+    }
   }
 
   private getChartLayout() {

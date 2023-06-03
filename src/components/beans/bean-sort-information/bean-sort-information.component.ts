@@ -9,6 +9,7 @@ import { UIHelper } from '../../../services/uiHelper';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { BeanInformation } from '../../../generated/src/classes/bean/bean';
+import { distinct } from 'rxjs/operators';
 
 @Component({
   selector: 'bean-sort-information',
@@ -80,14 +81,25 @@ export class BeanSortInformationComponent implements OnInit {
       for (const beanInfoEntry of beanInfoList) {
         if (beanInfoEntry && beanInfoEntry.hasOwnProperty(_type)) {
           const splittedInfos = beanInfoEntry[_type].split(/(?:,|; )+/);
-          this.typeaheadSearch[_type + 'Results'].push(...splittedInfos);
+          const filterSplittedInfos = splittedInfos.filter((be) => {
+            return be.toLowerCase().includes(actualSearchValue);
+          });
+
+          this.typeaheadSearch[_type + 'Results'].push(
+            ...new Set(filterSplittedInfos)
+          );
         }
       }
     }
+
+    const distictedValues = [];
+    this.typeaheadSearch[_type + 'Results'].forEach((element) => {
+      if (!distictedValues.includes(element.trim())) {
+        distictedValues.push(element.trim());
+      }
+    });
     // Distinct values
-    this.typeaheadSearch[_type + 'Results'] = Array.from(
-      new Set(this.typeaheadSearch[_type + 'Results'].map((e) => e))
-    );
+    this.typeaheadSearch[_type + 'Results'] = distictedValues;
 
     if (this.typeaheadSearch[_type + 'Results'].length > 0) {
       this.typeaheadSearch[_type + 'ResultsAvailable'] = true;

@@ -164,6 +164,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   private pressureThresholdWasHit: boolean = false;
   private temperatureThresholdWasHit: boolean = false;
 
+  public customXeniaOptions = {
+    cssClass: 'xenia-script-chooser',
+  };
+
   constructor(
     private readonly platform: Platform,
     private readonly uiSettingsStorage: UISettingsStorage,
@@ -1197,6 +1201,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
         this.deattachToWeightChange();
         this.deattachToFlowChange();
+        // 551 - Always attach to flow change, even when reset is triggerd
+        this.attachToFlowChange();
       }
 
       if (pressureDevice) {
@@ -2812,14 +2818,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       for (let i = this.weightTrace.y.length - 1; i >= 0; i--) {
         const dataVal = this.weightTrace.y[i];
         if (dataVal !== null) {
-          if (
-            this.settings.bluetooth_ignore_negative_values === true &&
-            dataVal?.y > 0
-          ) {
-            lastFoundRightValue = dataVal.y;
-          } else {
-          }
-
+          lastFoundRightValue = dataVal;
           break;
         }
       }

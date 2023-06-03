@@ -862,6 +862,13 @@
         "<b>Sonstiges:</b>",
         "Kleinere Fehlerbehebungen"
       ]
+    },
+    "6.4.10": {
+      "TITLE": "Version 6.4.1: Das ist neu",
+      "DESCRIPTION": [
+        "<b>Sonstiges:</b>",
+        "Kleinere Fehlerbehebungen"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Parameter individualisieren",
@@ -1460,5 +1467,7 @@
   "BREW_TEMPERATURE_REALTIME": "Temperatur",
   "PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE": "Temperaturgerät",
   "PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO": "Druckgerät ist nur Verwendbar bei Zubereitungsmethoden der Zubereitungsart 'Espresso'",
-  "PRESSURE_MESSAGE_AFTER_CONNECTION": "Bekanntes Verhalten (in Analyse): Bitte beachte, dass der Verbindungsaufbau nach dem Neustart deines Telefons oder nach längerer Zeit, ohne, dass die App verwendet worden ist, auch länger dauern kann (30 Sekunden bis 1 Minute) danach sollte das Problem nicht mehr auftreten. "
+  "PRESSURE_MESSAGE_AFTER_CONNECTION": "Bekanntes Verhalten (in Analyse): Bitte beachte, dass der Verbindungsaufbau nach dem Neustart deines Telefons oder nach längerer Zeit, ohne, dass die App verwendet worden ist, auch länger dauern kann (30 Sekunden bis 1 Minute) danach sollte das Problem nicht mehr auftreten. ",
+  "SMART_SCALE_ACAIA_HEARTBEAT_TIMER": "Heartbeat timer - Nur Acaia Waagen!",
+  "SMART_SCALE_ACAIA_HEARTBEAT_TIMER_TOOLTIP": "Wird nur für Acaia Waagen verwendet!!! Alte Acaia Wagen benötigen ein Heartbeat timer, falls du Probleme mit der Waage hast, versuch die Zeit zu minimieren "
 }

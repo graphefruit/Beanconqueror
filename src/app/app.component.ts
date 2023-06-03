@@ -713,13 +713,13 @@ export class AppComponent implements AfterViewInit {
     if (pressure_id && isAndroidAndPressureDevice === false) {
       searchIds.push(pressure_id);
     }
-    if (temperature_id) {
+    if (temperature_id && !this.platform.is('android')) {
       searchIds.push(temperature_id);
     }
     try {
       if (searchIds.length > 0) {
-        //Just search if we raly got id's
-        this.bleManager.findDeviceWithDirectIds(searchIds, 60000);
+        // Just search if we raly got id's
+        await this.bleManager.findDeviceWithDirectIds(searchIds, 8000);
       }
     } catch (ex) {}
   }

@@ -935,17 +935,39 @@ export class CoffeeBluetoothDevicesService {
         deviceType
     );
     try {
-      ble.autoConnect(
+      ble.connect(
         deviceId,
         (data: PeripheralData) => {
           this.logger.log('AutoConnectScale - Scale device connected.');
           this.connectCallback(deviceType, data);
           successCallback();
         },
-        () => {
+        async () => {
           this.logger.log('AutoConnectScale - Scale device disconnected.');
           this.disconnectCallback();
           errorCallback();
+
+          const settings = this.uiStettingsStorage.getSettings();
+          if (settings.scale_id && settings.scale_id === deviceId) {
+            if (device !== null && device.platform === 'Android') {
+              await this.findDeviceWithDirectId(deviceId, 6000);
+              // Give it a short delay before reconnect
+              await new Promise((resolve) => {
+                setTimeout(async () => {
+                  resolve(undefined);
+                }, 500);
+              });
+            }
+            // as long as the pressure id is known, and the device id is still the same try to reconnect.
+            this.autoConnectScale(
+              deviceType,
+              deviceId,
+              _scanForDevices,
+              successCallback,
+              errorCallback,
+              _timeout
+            );
+          }
         }
       );
     } catch (ex) {}

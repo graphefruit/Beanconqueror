@@ -97,6 +97,7 @@ export interface ISettings {
   bluetooth_ignore_negative_values: boolean;
   bluetooth_ignore_anomaly_values: boolean;
   bluetooth_command_delay: number;
+  acaia_heartbeat_command_delay: number;
 
   pressure_id: string;
   pressure_type: PressureType;

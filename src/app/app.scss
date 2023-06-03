@@ -861,11 +861,21 @@ ion-segment.tabs {
   padding-top:0px;
 
   ion-segment-button{
-    width: 100%; 
+    width: 100%;
 
     .value{
       font-size: 14px;
       opacity: 0.8;
     }
+  }
+}
+
+.xenia-script-chooser {
+  max-width:100%;
+  width:100%;
+  .alert-wrapper {
+    max-width:100%;
+    width:90%;
+
   }
 }
