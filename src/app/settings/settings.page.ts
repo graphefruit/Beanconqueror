@@ -66,12 +66,13 @@ import { EventQueueService } from '../../services/queueService/queue-service.ser
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { Logger } from '../../classes/devices/common/logger';
 import { UIFileHelper } from '../../services/uiFileHelper';
+import { UIExportHelper } from '../../services/uiExportHelper';
 
 declare var cordova: any;
 declare var device: any;
 
 declare var window: any;
-
+declare var JSZip;
 @Component({
   selector: 'settings',
   templateUrl: './settings.page.html',
@@ -149,7 +150,8 @@ export class SettingsPage implements OnInit {
     private readonly uiToast: UIToast,
     private readonly currencyService: CurrencyService,
     private readonly eventQueue: EventQueueService,
-    private readonly uiFileHelper: UIFileHelper
+    private readonly uiFileHelper: UIFileHelper,
+    private readonly uiExportHelper: UIExportHelper
   ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -703,6 +705,8 @@ export class SettingsPage implements OnInit {
                 'Download/Beanconqueror_export/';
             }
 
+            this.__readZipFile(fileEntry);
+            return;
             this.__readAndroidJSONFile(fileEntry, importPath).then(
               () => {
                 // nothing todo
@@ -788,48 +792,70 @@ export class SettingsPage implements OnInit {
       SETTINGS_TRACKING.ACTIONS.EXPORT
     );
 
-    this.uiStorage.export().then(
-      (_data) => {
-        const isIOS = this.platform.is('ios');
-        this.uiHelper
-          .exportJSON('Beanconqueror.json', JSON.stringify(_data), isIOS)
-          .then(
-            async (_fileEntry: FileEntry) => {
-              if (this.platform.is('cordova')) {
-                if (this.platform.is('android')) {
-                  await this.exportAttachments();
-                  await this.exportFlowProfiles();
-                  await this.uiAlert.hideLoadingSpinner();
+    this.uiExportHelper.buildExportZIP().then(
+      async (_blob) => {
+        const file: FileEntry = await this.uiFileHelper.downloadFile(
+          'Beanconqueror.zip',
+          _blob,
+          true
+        );
 
-                  const alert = await this.alertCtrl.create({
-                    header: this.translate.instant('DOWNLOADED'),
-                    subHeader: this.translate.instant(
-                      'FILE_DOWNLOADED_SUCCESSFULLY',
-                      { fileName: _fileEntry.name }
-                    ),
-                    buttons: ['OK'],
-                  });
-                  await alert.present();
-                } else {
-                  await this.uiAlert.hideLoadingSpinner();
-                  // File already downloaded
-                  // We don't support image export yet, because
-                }
-              } else {
-                await this.uiAlert.hideLoadingSpinner();
-                // File already downloaded
-                // We don't support image export yet, because
-              }
-            },
-            async () => {
-              await this.uiAlert.hideLoadingSpinner();
-            }
-          );
+        if (this.platform.is('cordova')) {
+          if (this.platform.is('android')) {
+            await this.exportAttachments();
+            await this.exportFlowProfiles();
+            await this.uiAlert.hideLoadingSpinner();
+          }
+        }
       },
-      async () => {
-        await this.uiAlert.hideLoadingSpinner();
+      () => {
+        // Error
+        // Do the old conventional way
+        this.uiStorage.export().then(
+          (_data) => {
+            const isIOS = this.platform.is('ios');
+            this.uiHelper
+              .exportJSON('Beanconqueror.json', JSON.stringify(_data), isIOS)
+              .then(
+                async (_fileEntry: FileEntry) => {
+                  if (this.platform.is('cordova')) {
+                    if (this.platform.is('android')) {
+                      await this.exportAttachments();
+                      await this.exportFlowProfiles();
+                      await this.uiAlert.hideLoadingSpinner();
+
+                      const alert = await this.alertCtrl.create({
+                        header: this.translate.instant('DOWNLOADED'),
+                        subHeader: this.translate.instant(
+                          'FILE_DOWNLOADED_SUCCESSFULLY',
+                          { fileName: _fileEntry.name }
+                        ),
+                        buttons: ['OK'],
+                      });
+                      await alert.present();
+                    } else {
+                      await this.uiAlert.hideLoadingSpinner();
+                      // File already downloaded
+                      // We don't support image export yet, because
+                    }
+                  } else {
+                    await this.uiAlert.hideLoadingSpinner();
+                    // File already downloaded
+                    // We don't support image export yet, because
+                  }
+                },
+                async () => {
+                  await this.uiAlert.hideLoadingSpinner();
+                }
+              );
+          },
+          async () => {
+            await this.uiAlert.hideLoadingSpinner();
+          }
+        );
       }
     );
+    return;
   }
 
   public excelExport(): void {
@@ -1262,6 +1288,39 @@ export class SettingsPage implements OnInit {
         } else {
           this.uiAnalytics.enableTracking();
         }
+      });
+    });
+  }
+
+  private async __readZipFile(_fileEntry: FileEntry): Promise<any> {
+    return new Promise((resolve, reject) => {
+      _fileEntry.file(async (file) => {
+        const reader = new FileReader();
+        reader.onloadend = (event: Event) => {
+          const readBlob = new Blob([reader.result as any], {
+            type: 'application/zip',
+          });
+
+          // Creates a BlobReader object used to read `zipFileBlob`.
+          const zipFileReader = new BlobReader(readBlob);
+          // Creates a TextWriter object where the content of the first entry in the zip
+          // will be written.
+          const helloWorldWriter = new TextWriter();
+
+          // Creates a ZipReader object reading the zip content via `zipFileReader`,
+          // retrieves metadata (name, dates, etc.) of the first entry, retrieves its
+          // content via `helloWorldWriter`, and closes the reader.
+          const zipReader = new ZipReader(zipFileReader);
+          const firstEntry = (await zipReader.getEntries()).shift();
+          const helloWorldText = await firstEntry.getData(helloWorldWriter);
+          console.log(helloWorldText);
+          await zipReader.close();
+        };
+        reader.onerror = (event: Event) => {
+          reject();
+        };
+
+        reader.readAsArrayBuffer(file);
       });
     });
   }

@@ -117,6 +117,38 @@ export class UIFileHelper extends InstanceClass {
     });
   }
 
+  public async saveBlob(
+    _fileName: string,
+    _fileExtension: string,
+    _blob: any
+  ): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      this.generateFileName(
+        this.getFileDirectory(),
+        _fileName,
+        _fileExtension
+      ).then((_newName) => {
+        // console.log('New Filename' + _newName);
+        let newBlob: Blob = _blob;
+        if (newBlob === undefined) {
+          reject();
+        } else {
+          this.file.writeFile(this.getFileDirectory(), _newName, newBlob).then(
+            (_t) => {
+              newBlob = null;
+              this.uiLog.log('Save file below: ' + _t.fullPath);
+              resolve(_t.fullPath);
+            },
+            (e) => {
+              this.uiLog.error('Cant save file: ' + JSON.stringify(e));
+              reject();
+            }
+          );
+        }
+      });
+    });
+  }
+
   public async saveBase64File(
     _fileName: string,
     _fileExtension: string,
