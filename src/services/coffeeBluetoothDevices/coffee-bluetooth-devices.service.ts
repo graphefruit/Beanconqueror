@@ -24,6 +24,8 @@ import { PopsiclePressure } from '../../classes/devices/popsiclePressure';
 import { JimmyScale } from '../../classes/devices/jimmyScale';
 import { SkaleScale } from '../../classes/devices/skale';
 import { UISettingsStorage } from '../uiSettingsStorage';
+import { TranslateService } from '@ngx-translate/core';
+import { UIToast } from '../uiToast';
 
 declare var device: any;
 declare var ble: any;
@@ -53,7 +55,11 @@ export class CoffeeBluetoothDevicesService {
 
   private scanBluetoothTimeout: any = null;
 
-  constructor(private readonly uiStettingsStorage: UISettingsStorage) {
+  constructor(
+    private readonly uiStettingsStorage: UISettingsStorage,
+    private readonly translate: TranslateService,
+    private readonly uiToast: UIToast
+  ) {
     this.logger = new Logger('CoffeeBluetoothDevices');
     this.failed = false;
     this.ready = true;
@@ -920,7 +926,8 @@ export class CoffeeBluetoothDevicesService {
     _scanForDevices: boolean = false,
     successCallback: any = () => {},
     errorCallback: any = () => {},
-    _timeout: number = 60000
+    _timeout: number = 60000,
+    _connectionRetry: number = 0
   ) {
     if (_scanForDevices) {
       this.logger.log('AutoConnectScale - Scan for device');
@@ -939,11 +946,27 @@ export class CoffeeBluetoothDevicesService {
         deviceId,
         (data: PeripheralData) => {
           this.logger.log('AutoConnectScale - Scale device connected.');
+          _connectionRetry = 0;
           this.connectCallback(deviceType, data);
           successCallback();
+
+          try {
+            this.uiToast.showInfoToast(
+              this.translate.instant('SCALE.CONNECTED_SUCCESSFULLY') +
+                ' - ' +
+                this.getScale().device_name +
+                ' / ' +
+                this.getScale().device_id,
+              false
+            );
+          } catch (ex) {}
         },
         async () => {
           this.logger.log('AutoConnectScale - Scale device disconnected.');
+          if (_connectionRetry === 0) {
+            this.uiToast.showInfoToast('SCALE.DISCONNECTED_UNPLANNED');
+          }
+
           this.disconnectCallback();
           errorCallback();
 
@@ -958,6 +981,14 @@ export class CoffeeBluetoothDevicesService {
                 }, 500);
               });
             }
+
+            await new Promise((resolve) => {
+              setTimeout(async () => {
+                resolve(undefined);
+              }, 2000);
+            });
+
+            _connectionRetry = _connectionRetry + 1;
             // as long as the pressure id is known, and the device id is still the same try to reconnect.
             this.autoConnectScale(
               deviceType,
@@ -965,7 +996,8 @@ export class CoffeeBluetoothDevicesService {
               _scanForDevices,
               successCallback,
               errorCallback,
-              _timeout
+              _timeout,
+              _connectionRetry
             );
           }
         }
@@ -1001,17 +1033,32 @@ export class CoffeeBluetoothDevicesService {
         deviceId,
         (data: PeripheralData) => {
           //Update the connection retry, because we're in
-          _connectionRetry = _connectionRetry + 1;
+          _connectionRetry = 0;
           this.logger.log(
             'AutoConnectPressureDevice - Pressure device connected.'
           );
           this.connectPressureCallback(pressureType, data);
           successCallback();
+
+          try {
+            this.uiToast.showInfoToast(
+              this.translate.instant('PRESSURE.CONNECTED_SUCCESSFULLY') +
+                ' - ' +
+                this.getPressureDevice().device_name +
+                ' / ' +
+                this.getPressureDevice().device_id,
+              false
+            );
+          } catch (ex) {}
         },
         async (e) => {
           this.logger.log(
             'AutoConnectPressureDevice - Pressure device disconnected.'
           );
+          if (_connectionRetry === 0) {
+            this.uiToast.showInfoToast('PRESSURE.DISCONNECTED_UNPLANNED');
+          }
+
           this.disconnectPressureCallback();
           errorCallback();
 
@@ -1026,6 +1073,14 @@ export class CoffeeBluetoothDevicesService {
                 }, 500);
               });
             }
+
+            await new Promise((resolve) => {
+              setTimeout(async () => {
+                resolve(undefined);
+              }, 2000);
+            });
+
+            _connectionRetry = _connectionRetry + 1;
             // as long as the pressure id is known, and the device id is still the same try to reconnect.
             this.autoConnectPressureDevice(
               pressureType,
@@ -1048,7 +1103,8 @@ export class CoffeeBluetoothDevicesService {
     _scanForDevices: boolean = false,
     successCallback: any = () => {},
     errorCallback: any = () => {},
-    _timeout: number = 15000
+    _timeout: number = 15000,
+    _connectionRetry: number = 0
   ) {
     if (_scanForDevices) {
       // iOS needs to know the scale, before auto connect can be done
@@ -1069,13 +1125,26 @@ export class CoffeeBluetoothDevicesService {
           this.logger.log(
             'AutoConnectTemperatureDevice - Temperature device connected.'
           );
+
           this.connectTemperatureCallback(temperatureType, data);
           successCallback();
+
+          try {
+            this.uiToast.showInfoToast(
+              this.translate.instant('TEMPERATURE.CONNECTED_SUCCESSFULLY') +
+                ' - ' +
+                this.getTemperatureDevice().device_name +
+                ' / ' +
+                this.getTemperatureDevice().device_id,
+              false
+            );
+          } catch (ex) {}
         },
         () => {
           this.logger.log(
             'AutoConnectTemperatureDevice - Temperature device disconnected.'
           );
+          this.uiToast.showInfoToast('TEMPERATURE.DISCONNECTED_UNPLANNED');
           this.disconnectTemperatureCallback();
           errorCallback();
         }

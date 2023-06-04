@@ -869,6 +869,13 @@
         "<b>Sonstiges:</b>",
         "Kleinere Fehlerbehebungen"
       ]
+    },
+    "6.4.20": {
+      "TITLE": "Version 6.4.2: Das ist neu",
+      "DESCRIPTION": [
+        "Startcrash behoben",
+        "Neuladen der App wurde gefixt, wenn eine Bluetooth Waage nicht verbunden werden konnte"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Parameter individualisieren",
