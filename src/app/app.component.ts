@@ -644,51 +644,6 @@ export class AppComponent implements AfterViewInit {
     this.__instanceAppRating();
     this.__attachOnDevicePause();
     this.__attachOnDeviceResume();
-
-    const bleSubscription = this.bleManager
-      .attachOnEvent()
-      .subscribe((_type) => {
-        if (_type === CoffeeBluetoothServiceEvent.CONNECTED_SCALE) {
-          this.uiToast.showInfoToast(
-            this._translate.instant('SCALE.CONNECTED_SUCCESSFULLY') +
-              ' - ' +
-              this.bleManager.getScale().device_name +
-              ' / ' +
-              this.bleManager.getScale().device_id,
-            false
-          );
-        } else if (_type === CoffeeBluetoothServiceEvent.DISCONNECTED_SCALE) {
-          this.uiToast.showInfoToast('SCALE.DISCONNECTED_UNPLANNED');
-        } else if (_type === CoffeeBluetoothServiceEvent.CONNECTED_PRESSURE) {
-          this.uiToast.showInfoToast(
-            this._translate.instant('PRESSURE.CONNECTED_SUCCESSFULLY') +
-              ' - ' +
-              this.bleManager.getPressureDevice().device_name +
-              ' / ' +
-              this.bleManager.getPressureDevice().device_id,
-            false
-          );
-        } else if (
-          _type === CoffeeBluetoothServiceEvent.DISCONNECTED_PRESSURE
-        ) {
-          this.uiToast.showInfoToast('PRESSURE.DISCONNECTED_UNPLANNED');
-        } else if (
-          _type === CoffeeBluetoothServiceEvent.CONNECTED_TEMPERATURE
-        ) {
-          this.uiToast.showInfoToast(
-            this._translate.instant('TEMPERATURE.CONNECTED_SUCCESSFULLY') +
-              ' - ' +
-              this.bleManager.getTemperatureDevice().device_name +
-              ' / ' +
-              this.bleManager.getTemperatureDevice().device_id,
-            false
-          );
-        } else if (
-          _type === CoffeeBluetoothServiceEvent.DISCONNECTED_TEMPERATURE
-        ) {
-          this.uiToast.showInfoToast('TEMPERATURE.DISCONNECTED_UNPLANNED');
-        }
-      });
   }
 
   private async __checkBluetoothDevices() {

@@ -869,6 +869,13 @@
         "<b>Diğerleri:</b>",
         "Daha küçük hata düzeltmeleri"
       ]
+    },
+    "6.4.20": {
+      "TITLE": "Version 6.4.2: What's new?",
+      "DESCRIPTION": [
+        "Fixing crash on startup",
+        "Fixing recycle when a bluetooth scale could not connect"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Parametreyi özelleştir",

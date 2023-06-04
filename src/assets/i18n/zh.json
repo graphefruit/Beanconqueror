@@ -868,6 +868,13 @@
         "<b>其他：</b>",
         "修复了一些小错误"
       ]
+    },
+    "6.4.20": {
+      "TITLE": "Version 6.4.2: What's new?",
+      "DESCRIPTION": [
+        "Fixing crash on startup",
+        "Fixing recycle when a bluetooth scale could not connect"
+      ]
     }
 	},
 	"CUSTOM_PARAMETERS": "自定义参数",
