@@ -66,13 +66,13 @@ import { EventQueueService } from '../../services/queueService/queue-service.ser
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { Logger } from '../../classes/devices/common/logger';
 import { UIFileHelper } from '../../services/uiFileHelper';
-import { UIExportHelper } from '../../services/uiExportHelper';
+import { UIExportImportHelper } from '../../services/uiExportImportHelper';
 
 declare var cordova: any;
 declare var device: any;
 
 declare var window: any;
-declare var JSZip;
+
 @Component({
   selector: 'settings',
   templateUrl: './settings.page.html',
@@ -151,7 +151,7 @@ export class SettingsPage implements OnInit {
     private readonly currencyService: CurrencyService,
     private readonly eventQueue: EventQueueService,
     private readonly uiFileHelper: UIFileHelper,
-    private readonly uiExportHelper: UIExportHelper
+    private readonly uiExportImportHelper: UIExportImportHelper
   ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -705,18 +705,23 @@ export class SettingsPage implements OnInit {
                 'Download/Beanconqueror_export/';
             }
 
-            this.__readZipFile(fileEntry);
-            return;
-            this.__readAndroidJSONFile(fileEntry, importPath).then(
-              () => {
-                // nothing todo
+            this.__readZipFile(fileEntry).then(
+              (_importData) => {
+                this.__importJSON(_importData, importPath);
               },
               (_err) => {
-                this.uiAlert.showMessage(
-                  this.translate.instant('ERROR_ON_FILE_READING') +
-                    ' (' +
-                    JSON.stringify(_err) +
-                    ')'
+                this.__readAndroidJSONFile(fileEntry, importPath).then(
+                  () => {
+                    // nothing todo
+                  },
+                  (_err2) => {
+                    this.uiAlert.showMessage(
+                      this.translate.instant('ERROR_ON_FILE_READING') +
+                        ' (' +
+                        JSON.stringify(_err2) +
+                        ')'
+                    );
+                  }
                 );
               }
             );
@@ -792,12 +797,14 @@ export class SettingsPage implements OnInit {
       SETTINGS_TRACKING.ACTIONS.EXPORT
     );
 
-    this.uiExportHelper.buildExportZIP().then(
+    this.uiExportImportHelper.buildExportZIP().then(
       async (_blob) => {
+        this.uiLog.log('New zip-export way');
+        const isIOS = this.platform.is('ios');
         const file: FileEntry = await this.uiFileHelper.downloadFile(
           'Beanconqueror.zip',
           _blob,
-          true
+          isIOS
         );
 
         if (this.platform.is('cordova')) {
@@ -807,12 +814,14 @@ export class SettingsPage implements OnInit {
             await this.uiAlert.hideLoadingSpinner();
           }
         }
+        await this.uiAlert.hideLoadingSpinner();
       },
       () => {
         // Error
         // Do the old conventional way
         this.uiStorage.export().then(
           (_data) => {
+            this.uiLog.log('Old JSON-Export way');
             const isIOS = this.platform.is('ios');
             this.uiHelper
               .exportJSON('Beanconqueror.json', JSON.stringify(_data), isIOS)
@@ -1293,36 +1302,7 @@ export class SettingsPage implements OnInit {
   }
 
   private async __readZipFile(_fileEntry: FileEntry): Promise<any> {
-    return new Promise((resolve, reject) => {
-      _fileEntry.file(async (file) => {
-        const reader = new FileReader();
-        reader.onloadend = (event: Event) => {
-          const readBlob = new Blob([reader.result as any], {
-            type: 'application/zip',
-          });
-
-          // Creates a BlobReader object used to read `zipFileBlob`.
-          const zipFileReader = new BlobReader(readBlob);
-          // Creates a TextWriter object where the content of the first entry in the zip
-          // will be written.
-          const helloWorldWriter = new TextWriter();
-
-          // Creates a ZipReader object reading the zip content via `zipFileReader`,
-          // retrieves metadata (name, dates, etc.) of the first entry, retrieves its
-          // content via `helloWorldWriter`, and closes the reader.
-          const zipReader = new ZipReader(zipFileReader);
-          const firstEntry = (await zipReader.getEntries()).shift();
-          const helloWorldText = await firstEntry.getData(helloWorldWriter);
-          console.log(helloWorldText);
-          await zipReader.close();
-        };
-        reader.onerror = (event: Event) => {
-          reject();
-        };
-
-        reader.readAsArrayBuffer(file);
-      });
-    });
+    return this.uiExportImportHelper.importZIPFile(_fileEntry);
   }
 
   /* tslint:enable */
@@ -1334,7 +1314,8 @@ export class SettingsPage implements OnInit {
       _fileEntry.file(async (file) => {
         const reader = new FileReader();
         reader.onloadend = (event: Event) => {
-          this.__importJSON(reader.result as string, _importPath);
+          const parsedJSON = JSON.parse(reader.result as string);
+          this.__importJSON(parsedJSON, _importPath);
         };
         reader.onerror = (event: Event) => {
           reject();
@@ -1360,8 +1341,8 @@ export class SettingsPage implements OnInit {
     });
   }
 
-  private async __importJSON(_content: string, _importPath: string) {
-    const parsedContent = JSON.parse(_content);
+  private async __importJSON(_parsedJSON: any, _importPath: string) {
+    const parsedContent = _parsedJSON;
     this.uiLog.log('Parsed import data successfully');
     const isIOS: boolean = this.platform.is('ios');
     // Set empty arrays if not existing.

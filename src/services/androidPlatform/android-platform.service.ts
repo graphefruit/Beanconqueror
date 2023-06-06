@@ -13,6 +13,7 @@ import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { UIAlert } from '../uiAlert';
 import { UISettingsStorage } from '../uiSettingsStorage';
 import { UIBrewStorage } from '../uiBrewStorage';
+import { UIExportImportHelper } from '../uiExportImportHelper';
 @Injectable({
   providedIn: 'root',
 })
@@ -27,7 +28,8 @@ export class AndroidPlatformService {
     private readonly androidPermissions: AndroidPermissions,
     private readonly uiAlert: UIAlert,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiBrewStorage: UIBrewStorage
+    private readonly uiBrewStorage: UIBrewStorage,
+    private readonly uiExportImportHelper: UIExportImportHelper
   ) {
     if (this.platform.is('cordova') && this.platform.is('android')) {
       this.uiHelper.isBeanconqurorAppReady().then(
@@ -58,19 +60,21 @@ export class AndroidPlatformService {
   }
 
   private __saveBeanconquerorDump() {
-    this.uiLog.log('android-Platform - Start to export JSON file');
-    this.uiStorage.export().then((_data) => {
-      this.uiFileHelper
-        .saveJSONFile('Beanconqueror.json', JSON.stringify(_data))
-        .then(
-          async () => {
-            this.uiLog.log('android-Platform - JSON file successfully saved');
-          },
-          () => {
-            this.uiLog.error('android-Platform - JSON file could not be saved');
-          }
+    this.uiLog.log('android-Platform - Start to export ZIP file');
+
+    this.uiExportImportHelper.buildExportZIP().then(
+      async (_blob) => {
+        const file: FileEntry = await this.uiFileHelper.downloadFile(
+          'Beanconqueror.zip',
+          _blob,
+          false
         );
-    });
+        this.uiLog.log('android-Platform - ZIP file successfully saved');
+      },
+      () => {
+        this.uiLog.error('android-Platform - ZIP file could not be saved');
+      }
+    );
   }
   private __saveAutomaticBeanconquerorDump() {
     const settings = this.uiSettingsStorage.getSettings();
