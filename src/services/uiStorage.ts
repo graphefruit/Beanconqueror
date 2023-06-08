@@ -68,6 +68,9 @@ export class UIStorage {
     return promise;
   }
 
+  public clearStorage() {
+    this.storage.clear();
+  }
   public async hasData(): Promise<boolean> {
     const promise: Promise<boolean> = new Promise((resolve, reject) => {
       let hasData: boolean = false;

@@ -11,6 +11,8 @@ import { Bean } from '../../classes/bean/bean';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
 
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { UIStorage } from '../../services/uiStorage';
+import { UIFileHelper } from '../../services/uiFileHelper';
 
 @Component({
   selector: 'dashboard',
@@ -32,7 +34,9 @@ export class DashboardPage implements OnInit {
     private readonly router: Router,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage
+    private readonly uiSettingsStorage: UISettingsStorage,
+    private readonly uiStorage: UIStorage,
+    private readonly uiFileHelper: UIFileHelper
   ) {}
 
   public ngOnInit() {
@@ -47,6 +51,14 @@ export class DashboardPage implements OnInit {
     });
   }
 
+  public clear() {
+    this.uiStorage.clearStorage();
+  }
+  public bruh() {
+    this.uiFileHelper
+      .getZIPFile('Beanconqueror.zip')
+      .then(async (_arrayBuffer) => {});
+  }
   public ionViewWillEnter() {
     this.loadBrews();
   }

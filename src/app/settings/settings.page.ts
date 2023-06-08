@@ -736,24 +736,37 @@ export class SettingsPage implements OnInit {
         });
       } else {
         this.iosFilePicker.pickFile().then((uri) => {
-          if (uri && uri.endsWith('.json')) {
+          if (uri && (uri.endsWith('.zip') || uri.endsWith('.json'))) {
             let path = uri.substring(0, uri.lastIndexOf('/'));
             const file = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
             if (path.indexOf('file://') !== 0) {
               path = 'file://' + path;
             }
-            this.__readJSONFile(path, file)
-              .then(() => {
-                // nothing todo
-              })
-              .catch((_err) => {
-                this.uiAlert.showMessage(
-                  this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
-                    ' (' +
-                    JSON.stringify(_err) +
-                    ')'
-                );
-              });
+
+            this.uiFileHelper.getZIPFileByPathAndFile(path, file).then(
+              async (_arrayBuffer) => {
+                const parsedJSON =
+                  await this.uiExportImportHelper.getJSONFromZIPArrayBufferContent(
+                    _arrayBuffer
+                  );
+                this.__importJSON(parsedJSON, path);
+              },
+              () => {
+                // Backup, maybe it was a .JSON?
+                this.__readJSONFile(path, file)
+                  .then(() => {
+                    // nothing todo
+                  })
+                  .catch((_err) => {
+                    this.uiAlert.showMessage(
+                      this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
+                        ' (' +
+                        JSON.stringify(_err) +
+                        ')'
+                    );
+                  });
+              }
+            );
           } else {
             this.uiAlert.showMessage(
               this.translate.instant('INVALID_FILE_FORMAT')
