@@ -23,6 +23,8 @@ import { LunarScale } from '../../classes/devices/lunarScale';
 import { PopsiclePressure } from '../../classes/devices/popsiclePressure';
 import { JimmyScale } from '../../classes/devices/jimmyScale';
 import { SkaleScale } from '../../classes/devices/skale';
+import { SmartchefScale } from 'src/classes/devices/smartchefScale';
+import { DifluidMicrobalance } from 'src/classes/devices/difluidMicrobalance';
 import { UISettingsStorage } from '../uiSettingsStorage';
 import { TranslateService } from '@ngx-translate/core';
 import { UIToast } from '../uiToast';
@@ -238,7 +240,9 @@ export class CoffeeBluetoothDevicesService {
             JimmyScale.test(scanDevice) ||
             FelicitaScale.test(scanDevice) ||
             EurekaPrecisaScale.test(scanDevice) ||
-            SkaleScale.test(scanDevice)
+            SkaleScale.test(scanDevice) ||
+            SmartchefScale.test(scanDevice) ||
+            DifluidMicrobalance.test(scanDevice)
           ) {
             // We found all needed devices.
             promiseResolved = true;
@@ -674,6 +678,21 @@ export class CoffeeBluetoothDevicesService {
             resolve({ id: deviceScale.id, type: ScaleType.SKALE });
             return;
           }
+          if (SmartchefScale.test(deviceScale)) {
+            this.logger.log('BleManager - We found a smartchef scale');
+            resolve({ id: deviceScale.id, type: ScaleType.SMARTCHEF });
+            return;
+          }
+          if (DifluidMicrobalance.test(deviceScale)) {
+            this.logger.log('BleManager - We found a difluid scale');
+            resolve({
+              id: deviceScale.id,
+              type: ScaleType.DIFLUIDMICROBALANCE,
+            });
+            return;
+          } else {
+            this.logger.log('issue testing difluid');
+          }
         }
         resolve(undefined);
       }
@@ -727,6 +746,20 @@ export class CoffeeBluetoothDevicesService {
             supportedDevices.push({
               id: deviceScale.id,
               type: ScaleType.SKALE,
+            });
+          }
+          if (SmartchefScale.test(deviceScale)) {
+            this.logger.log('BleManager - We found a smartchef scale');
+            supportedDevices.push({
+              id: deviceScale.id,
+              type: ScaleType.SMARTCHEF,
+            });
+          }
+          if (DifluidMicrobalance.test(deviceScale)) {
+            this.logger.log('BleManager - We found a difluid scale');
+            supportedDevices.push({
+              id: deviceScale.id,
+              type: ScaleType.DIFLUIDMICROBALANCE,
             });
           }
         }
