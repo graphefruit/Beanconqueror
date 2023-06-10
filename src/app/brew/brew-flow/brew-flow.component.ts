@@ -327,22 +327,28 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   public setActualScaleInformation(_val: any) {
-    const weightEl = this.smartScaleWeightDetail.nativeElement;
-    const flowEl = this.smartScaleWeightPerSecondDetail.nativeElement;
-    const avgFlowEl = this.smartScaleAvgFlowPerSecondDetail.nativeElement;
-    weightEl.textContent = _val.scaleWeight;
-    flowEl.textContent = _val.smoothedWeight;
-    avgFlowEl.textContent = 'Ø ' + _val.avgFlow;
+    if (this.smartScaleWeightDetail?.nativeElement) {
+      const weightEl = this.smartScaleWeightDetail.nativeElement;
+      const flowEl = this.smartScaleWeightPerSecondDetail.nativeElement;
+      const avgFlowEl = this.smartScaleAvgFlowPerSecondDetail.nativeElement;
+      weightEl.textContent = _val.scaleWeight;
+      flowEl.textContent = _val.smoothedWeight;
+      avgFlowEl.textContent = 'Ø ' + _val.avgFlow;
+    }
   }
 
   public setActualPressureInformation(_val: any) {
-    const pressureEl = this.pressureDetail.nativeElement;
-    pressureEl.textContent = _val.pressure;
+    if (this.pressureDetail?.nativeElement) {
+      const pressureEl = this.pressureDetail.nativeElement;
+      pressureEl.textContent = _val.pressure;
+    }
   }
 
   public setActualTemperatureInformation(_val: any) {
-    const temperatureEl = this.temperatureDetail.nativeElement;
-    temperatureEl.textContent = _val.temperature;
+    if (this.temperatureDetail?.nativeElement) {
+      const temperatureEl = this.temperatureDetail.nativeElement;
+      temperatureEl.textContent = _val.temperature;
+    }
   }
 
   public async ngOnDestroy() {

@@ -1228,6 +1228,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
       this.flow_profile_raw = new BrewFlow();
 
+      // We just initialize flow chart for the pressure sensor when the type is espresso
       if (
         scale ||
         temperatureDevice ||
@@ -1420,63 +1421,79 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           );
         }
       }
-      setTimeout(() => {
-        let newLayoutIsNeeded: boolean = false;
-        /**Timeout is needed, because on mobile devices, the trace and the relayout bothers each other, which results into not refreshing the graph*/
-        let newRenderingInstance = 0;
-        if (this.maximizeFlowGraphIsShown === true) {
-          newRenderingInstance = Math.floor(this.timer.getSeconds() / 60);
-        } else {
-          newRenderingInstance = Math.floor(this.timer.getSeconds() / 20);
-        }
 
-        if (
-          newRenderingInstance > this.lastChartRenderingInstance ||
-          this.lastChartRenderingInstance === -1
-        ) {
-          let subtractTime: number = this.maximizeFlowGraphIsShown ? 40 : 10;
-          const addTime: number = this.maximizeFlowGraphIsShown ? 70 : 30;
-          if (this.data.brew_time <= 10) {
-            subtractTime = 0;
+      if (this.timer.isTimerRunning() === true) {
+        setTimeout(() => {
+          let newLayoutIsNeeded: boolean = false;
+          /**Timeout is needed, because on mobile devices, the trace and the relayout bothers each other, which results into not refreshing the graph*/
+          let newRenderingInstance = 0;
+          if (this.maximizeFlowGraphIsShown === true) {
+            newRenderingInstance = Math.floor(this.timer.getSeconds() / 60);
+          } else {
+            newRenderingInstance = Math.floor(this.timer.getSeconds() / 20);
           }
 
-          const delay = moment(new Date())
-            .startOf('day')
-            .add('seconds', this.timer.getSeconds() - subtractTime)
-            .toDate()
-            .getTime();
-          const delayedTime: number = moment(new Date())
-            .startOf('day')
-            .add('seconds', this.timer.getSeconds() + addTime)
-            .toDate()
-            .getTime();
-          this.lastChartLayout.xaxis.range = [delay, delayedTime];
-          newLayoutIsNeeded = true;
-          this.lastChartRenderingInstance = newRenderingInstance;
-        }
+          if (
+            newRenderingInstance > this.lastChartRenderingInstance ||
+            this.lastChartRenderingInstance === -1
+          ) {
+            let subtractTime: number = this.maximizeFlowGraphIsShown ? 40 : 10;
+            const addTime: number = this.maximizeFlowGraphIsShown ? 70 : 30;
+            if (this.data.brew_time <= 10) {
+              subtractTime = 0;
+            }
 
-        if (this.weightTrace.y.length > 0) {
-          const lastWeightData: number =
-            this.weightTrace.y[this.weightTrace.y.length - 1];
-          if (lastWeightData > this.lastChartLayout.yaxis.range[1]) {
-            //Scale a bit up
-            this.lastChartLayout.yaxis.range[1] = lastWeightData * 1.5;
+            const delay = moment(new Date())
+              .startOf('day')
+              .add('seconds', this.timer.getSeconds() - subtractTime)
+              .toDate()
+              .getTime();
+            const delayedTime: number = moment(new Date())
+              .startOf('day')
+              .add('seconds', this.timer.getSeconds() + addTime)
+              .toDate()
+              .getTime();
+            this.lastChartLayout.xaxis.range = [delay, delayedTime];
             newLayoutIsNeeded = true;
+            this.lastChartRenderingInstance = newRenderingInstance;
           }
-        }
-        if (this.realtimeFlowTrace.y.length > 0) {
-          const lastRealtimeFlowVal: number =
-            this.realtimeFlowTrace.y[this.realtimeFlowTrace.y.length - 1];
-          if (lastRealtimeFlowVal > this.lastChartLayout.yaxis2.range[1]) {
-            //Scale a bit up
-            this.lastChartLayout.yaxis2.range[1] = lastRealtimeFlowVal * 1.5;
-            newLayoutIsNeeded = true;
+
+          if (this.weightTrace.y.length > 0) {
+            const lastWeightData: number =
+              this.weightTrace.y[this.weightTrace.y.length - 1];
+            if (lastWeightData > this.lastChartLayout.yaxis.range[1]) {
+              // Scale a bit up
+              this.lastChartLayout.yaxis.range[1] = lastWeightData * 1.5;
+              newLayoutIsNeeded = true;
+            }
           }
-        }
-        if (newLayoutIsNeeded) {
-          Plotly.relayout('flowProfileChart', this.lastChartLayout);
-        }
-      }, 25);
+          if (this.realtimeFlowTrace.y.length > 0) {
+            const lastRealtimeFlowVal: number =
+              this.realtimeFlowTrace.y[this.realtimeFlowTrace.y.length - 1];
+            if (lastRealtimeFlowVal > this.lastChartLayout.yaxis2.range[1]) {
+              // Scale a bit up
+              this.lastChartLayout.yaxis2.range[1] = lastRealtimeFlowVal * 1.5;
+              newLayoutIsNeeded = true;
+            }
+          }
+          if (newLayoutIsNeeded) {
+            Plotly.relayout('flowProfileChart', this.lastChartLayout);
+          }
+        }, 25);
+      } else {
+        const delay = moment(new Date())
+          .startOf('day')
+          .add('seconds', 0)
+          .toDate()
+          .getTime();
+        const delayedTime: number = moment(new Date())
+          .startOf('day')
+          .add('seconds', this.timer.getSeconds() + 5)
+          .toDate()
+          .getTime();
+        this.lastChartLayout.xaxis.range = [delay, delayedTime];
+        Plotly.relayout('flowProfileChart', this.lastChartLayout);
+      }
     } catch (ex) {}
   }
 
@@ -2369,9 +2386,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
 
     const startRange = moment(new Date()).startOf('day').toDate().getTime();
+    let addSecondsOfEndRange = 30;
+    // When reset is triggered, we maybe are already in the maximized screen, so we go for the 70sec directly.
+    if (this.maximizeFlowGraphIsShown === true) {
+      addSecondsOfEndRange = 70;
+    }
     const endRange: number = moment(new Date())
       .startOf('day')
-      .add('seconds', 30)
+      .add('seconds', addSecondsOfEndRange)
       .toDate()
       .getTime();
 
