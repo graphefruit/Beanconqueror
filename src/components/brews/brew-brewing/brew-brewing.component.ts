@@ -2348,6 +2348,15 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           this.lastChartLayout,
           this.getChartConfig()
         );
+        setTimeout(() => {
+          if (
+            this.flow_profile_raw.weight.length > 0 ||
+            this.flow_profile_raw.pressureFlow.length > 0 ||
+            this.flow_profile_raw.temperatureFlow.length > 0
+          ) {
+            this.updateChart();
+          }
+        }, 250);
       } catch (ex) {}
     }, timeout);
   }
