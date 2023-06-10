@@ -51,14 +51,6 @@ export class DashboardPage implements OnInit {
     });
   }
 
-  public clear() {
-    this.uiStorage.clearStorage();
-  }
-  public bruh() {
-    this.uiFileHelper
-      .getZIPFile('Beanconqueror.zip')
-      .then(async (_arrayBuffer) => {});
-  }
   public ionViewWillEnter() {
     this.loadBrews();
   }
