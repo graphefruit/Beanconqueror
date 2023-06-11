@@ -31,9 +31,7 @@ export class DashboardPage implements OnInit {
     private readonly router: Router,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiStorage: UIStorage,
-    private readonly uiFileHelper: UIFileHelper
+    private readonly uiSettingsStorage: UISettingsStorage
   ) {}
 
   public ngOnInit() {
