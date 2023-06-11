@@ -11,9 +11,6 @@ import { Bean } from '../../classes/bean/bean';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
 
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { UIStorage } from '../../services/uiStorage';
-import { UIFileHelper } from '../../services/uiFileHelper';
-
 @Component({
   selector: 'dashboard',
   templateUrl: './dashboard.page.html',
