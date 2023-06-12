@@ -6,13 +6,14 @@ import { EventQueueService } from '../queueService/queue-service.service';
 import { Platform } from '@ionic/angular';
 import { AppEventType } from '../../enums/appEvent/appEvent';
 import { debounceTime } from 'rxjs/operators';
-import { FileEntry } from '@ionic-native/file';
+
 import { UIHelper } from '../uiHelper';
-import moment from 'moment';
+
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { UIAlert } from '../uiAlert';
 import { UISettingsStorage } from '../uiSettingsStorage';
 import { UIBrewStorage } from '../uiBrewStorage';
+import { UIExportImportHelper } from '../uiExportImportHelper';
 @Injectable({
   providedIn: 'root',
 })
@@ -27,13 +28,14 @@ export class AndroidPlatformService {
     private readonly androidPermissions: AndroidPermissions,
     private readonly uiAlert: UIAlert,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiBrewStorage: UIBrewStorage
+    private readonly uiBrewStorage: UIBrewStorage,
+    private readonly uiExportImportHelper: UIExportImportHelper
   ) {
     if (this.platform.is('cordova') && this.platform.is('android')) {
       this.uiHelper.isBeanconqurorAppReady().then(
         () => {
           // Delete on startup old json backup files
-          this.uiFileHelper.deleteJSONBackupsOlderThenSevenDays().then(
+          this.uiFileHelper.deleteZIPBackupsOlderThenSevenDays().then(
             () => {},
             () => {}
           );
@@ -47,58 +49,11 @@ export class AndroidPlatformService {
           debounceTime(3000)
         )
         .subscribe((event) => {
-          this.__saveBeanconquerorDump();
-          this.__saveAutomaticBeanconquerorDump();
+          this.uiLog.log('android-Platform - Start to export ZIP file');
+          try {
+            this.uiExportImportHelper.saveAutomaticBackups();
+          } catch (ex) {}
         });
-    }
-  }
-
-  private getAutomatedBackupFilename(): string {
-    return moment().format('DD_MM_YYYY').toString();
-  }
-
-  private __saveBeanconquerorDump() {
-    this.uiLog.log('android-Platform - Start to export JSON file');
-    this.uiStorage.export().then((_data) => {
-      this.uiFileHelper
-        .saveJSONFile('Beanconqueror.json', JSON.stringify(_data))
-        .then(
-          async () => {
-            this.uiLog.log('android-Platform - JSON file successfully saved');
-          },
-          () => {
-            this.uiLog.error('android-Platform - JSON file could not be saved');
-          }
-        );
-    });
-  }
-  private __saveAutomaticBeanconquerorDump() {
-    const settings = this.uiSettingsStorage.getSettings();
-    const welcomePagedShowed: boolean = settings.welcome_page_showed;
-    const brewsAdded: boolean = this.uiBrewStorage.getAllEntries().length > 0;
-    if (welcomePagedShowed === true && brewsAdded === true) {
-      //Just save the dumps after we showed the welcome page, else we ask user for permission and save automatically.
-      this.uiLog.log('Android-Platform - Start to export JSON file');
-      this.uiStorage.export().then((_data) => {
-        this.uiHelper
-          .exportJSON(
-            'Beanconqueror_automatic_export_' +
-              this.getAutomatedBackupFilename() +
-              '.json',
-            JSON.stringify(_data),
-            false
-          )
-          .then(
-            async (_fileEntry: FileEntry) => {
-              this.uiLog.log('Android-Platform - JSON file successfully saved');
-            },
-            () => {
-              this.uiLog.error(
-                'Android-Platform - JSON file could not be saved'
-              );
-            }
-          );
-      });
     }
   }
 
@@ -157,64 +112,5 @@ export class AndroidPlatformService {
         );
     });
     return promise;
-  }
-
-  public async checkAndroidBackup() {
-    try {
-      const promise = new Promise(async (resolve, reject) => {
-        if (this.platform.is('cordova') && this.platform.is('android')) {
-          this.uiLog.log('android-Platform - Check Android Backup');
-          const hasData = await this.uiStorage.hasData();
-          this.uiLog.log(
-            'android-Platform - Check Android Backup - Has data ' + hasData
-          );
-          if (!hasData) {
-            this.uiLog.log(
-              'android-Platform - Check Android Backup - No data are stored yet inside the app, so we try to find a backup file'
-            );
-            // If we don't got any data, we check now if there is a Beanconqueror.json saved.
-            this.uiFileHelper.getJSONFile('Beanconqueror.json').then(
-              async (_json) => {
-                await this.uiAlert.showLoadingSpinner();
-                this.uiLog.log(
-                  'android-Platform - We found a backup, try to import'
-                );
-                this.uiStorage.import(_json).then(
-                  async () => {
-                    this.uiLog.log(
-                      'android-Platform sucessfully imported  Backup'
-                    );
-                    setTimeout(() => {
-                      this.uiAlert.hideLoadingSpinner();
-                    }, 150);
-                    resolve(null);
-                  },
-                  () => {
-                    this.uiLog.error(
-                      'android-Platform could not import  Backup'
-                    );
-                    setTimeout(() => {
-                      this.uiAlert.hideLoadingSpinner();
-                    }, 150);
-                    resolve(null);
-                  }
-                );
-              },
-              () => {
-                this.uiLog.log(
-                  'android-Platform - Check Android Backup - We couldnt retrieve any file'
-                );
-                resolve(null);
-              }
-            );
-          } else {
-            resolve(null);
-          }
-        } else {
-          resolve(null);
-        }
-      });
-      return promise;
-    } catch (ex) {}
   }
 }

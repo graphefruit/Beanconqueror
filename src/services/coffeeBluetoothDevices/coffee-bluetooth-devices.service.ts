@@ -889,8 +889,7 @@ export class CoffeeBluetoothDevicesService {
           true,
           successCallback,
           errorCallback,
-          15000,
-          0
+          15000
         );
       }, 2000);
     } catch (ex) {
@@ -927,7 +926,7 @@ export class CoffeeBluetoothDevicesService {
     successCallback: any = () => {},
     errorCallback: any = () => {},
     _timeout: number = 60000,
-    _connectionRetry: number = 0
+    _wasConnected: boolean = false
   ) {
     if (_scanForDevices) {
       this.logger.log('AutoConnectScale - Scan for device');
@@ -946,7 +945,7 @@ export class CoffeeBluetoothDevicesService {
         deviceId,
         (data: PeripheralData) => {
           this.logger.log('AutoConnectScale - Scale device connected.');
-          _connectionRetry = 0;
+          _wasConnected = true;
           this.connectCallback(deviceType, data);
           successCallback();
 
@@ -963,8 +962,9 @@ export class CoffeeBluetoothDevicesService {
         },
         async () => {
           this.logger.log('AutoConnectScale - Scale device disconnected.');
-          if (_connectionRetry === 0) {
+          if (_wasConnected === true) {
             this.uiToast.showInfoToast('SCALE.DISCONNECTED_UNPLANNED');
+            _wasConnected = false;
           }
 
           this.disconnectCallback();
@@ -988,7 +988,6 @@ export class CoffeeBluetoothDevicesService {
               }, 2000);
             });
 
-            _connectionRetry = _connectionRetry + 1;
             // as long as the pressure id is known, and the device id is still the same try to reconnect.
             this.autoConnectScale(
               deviceType,
@@ -997,7 +996,7 @@ export class CoffeeBluetoothDevicesService {
               successCallback,
               errorCallback,
               _timeout,
-              _connectionRetry
+              _wasConnected
             );
           }
         }
@@ -1012,7 +1011,7 @@ export class CoffeeBluetoothDevicesService {
     successCallback: any = () => {},
     errorCallback: any = () => {},
     _timeout: number = 15000,
-    _connectionRetry: number = 0
+    _wasConnected: boolean = false
   ) {
     if (_scanForDevices) {
       // iOS needs to know the scale, before auto connect can be done
@@ -1032,8 +1031,8 @@ export class CoffeeBluetoothDevicesService {
       ble.connect(
         deviceId,
         (data: PeripheralData) => {
-          //Update the connection retry, because we're in
-          _connectionRetry = 0;
+          // Update the connection retry, because we're in
+          _wasConnected = true;
           this.logger.log(
             'AutoConnectPressureDevice - Pressure device connected.'
           );
@@ -1055,8 +1054,9 @@ export class CoffeeBluetoothDevicesService {
           this.logger.log(
             'AutoConnectPressureDevice - Pressure device disconnected.'
           );
-          if (_connectionRetry === 0) {
+          if (_wasConnected === true) {
             this.uiToast.showInfoToast('PRESSURE.DISCONNECTED_UNPLANNED');
+            _wasConnected = false;
           }
 
           this.disconnectPressureCallback();
@@ -1080,7 +1080,6 @@ export class CoffeeBluetoothDevicesService {
               }, 2000);
             });
 
-            _connectionRetry = _connectionRetry + 1;
             // as long as the pressure id is known, and the device id is still the same try to reconnect.
             this.autoConnectPressureDevice(
               pressureType,
@@ -1089,7 +1088,7 @@ export class CoffeeBluetoothDevicesService {
               successCallback,
               errorCallback,
               _timeout,
-              _connectionRetry + 1
+              _wasConnected
             );
           }
         }
@@ -1104,7 +1103,7 @@ export class CoffeeBluetoothDevicesService {
     successCallback: any = () => {},
     errorCallback: any = () => {},
     _timeout: number = 15000,
-    _connectionRetry: number = 0
+    _wasConnected: boolean = false
   ) {
     if (_scanForDevices) {
       // iOS needs to know the scale, before auto connect can be done

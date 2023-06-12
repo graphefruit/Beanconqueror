@@ -69,6 +69,7 @@ import {
 } from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { PressureType, ScaleType, TemperatureType } from '../classes/devices';
 import { Logger } from '../classes/devices/common/logger';
+import { UIExportImportHelper } from '../services/uiExportImportHelper';
 
 declare var AppRate;
 declare var window;
@@ -241,7 +242,8 @@ export class AppComponent implements AfterViewInit {
     private readonly device: Device,
     private readonly appVersion: AppVersion,
     private readonly storage: Storage,
-    private readonly uiToast: UIToast
+    private readonly uiToast: UIToast,
+    private readonly uiExportImportHelper: UIExportImportHelper
   ) {
     // Dont remove androidPlatformService, we need to initialize it via constructor
     try {
@@ -362,10 +364,10 @@ export class AppComponent implements AfterViewInit {
       this._translate.setDefaultLang('en');
       await this._translate.use('en').toPromise();
 
-      if (this.platform.is('ios')) {
-        await this.__checkIOSBackup();
-      } else if (this.platform.is('android')) {
-        await this.__checkAndroidBackup();
+      if (this.platform.is('cordova')) {
+        try {
+          await this.uiExportImportHelper.checkBackup();
+        } catch (ex) {}
       }
 
       try {
@@ -434,18 +436,6 @@ export class AppComponent implements AfterViewInit {
   private async __checkCleanup() {
     try {
       await this.cleanupService.cleanupOldBrewData();
-    } catch (ex) {}
-  }
-
-  private async __checkAndroidBackup() {
-    try {
-      await this.androidPlatformService.checkAndroidBackup();
-    } catch (ex) {}
-  }
-
-  private async __checkIOSBackup() {
-    try {
-      await this.iosPlatformService.checkIOSBackup();
     } catch (ex) {}
   }
 
@@ -611,12 +601,12 @@ export class AppComponent implements AfterViewInit {
         const pressure_id: string = checkDevices.pressure_id;
         const temperature_id: string = checkDevices.temperature_id;
         const scale_id: string = checkDevices.scale_id;
-        //If one of these is there, enable bluetooth
+        // If one of these is there, enable bluetooth
         if (pressure_id || temperature_id || scale_id) {
           await this.bleManager.enableIOSBluetooth();
         }
       } else {
-        //await this.bleManager.enableBLE();
+        // await this.bleManager.enableBLE();
       }
       await this.__checkBluetoothDevices();
       await new Promise((resolve) => {

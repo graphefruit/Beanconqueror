@@ -66,6 +66,7 @@ import { EventQueueService } from '../../services/queueService/queue-service.ser
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { Logger } from '../../classes/devices/common/logger';
 import { UIFileHelper } from '../../services/uiFileHelper';
+import { UIExportImportHelper } from '../../services/uiExportImportHelper';
 
 declare var cordova: any;
 declare var device: any;
@@ -149,7 +150,8 @@ export class SettingsPage implements OnInit {
     private readonly uiToast: UIToast,
     private readonly currencyService: CurrencyService,
     private readonly eventQueue: EventQueueService,
-    private readonly uiFileHelper: UIFileHelper
+    private readonly uiFileHelper: UIFileHelper,
+    private readonly uiExportImportHelper: UIExportImportHelper
   ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -703,16 +705,23 @@ export class SettingsPage implements OnInit {
                 'Download/Beanconqueror_export/';
             }
 
-            this.__readAndroidJSONFile(fileEntry, importPath).then(
-              () => {
-                // nothing todo
+            this.__readZipFile(fileEntry).then(
+              (_importData) => {
+                this.__importJSON(_importData, importPath);
               },
               (_err) => {
-                this.uiAlert.showMessage(
-                  this.translate.instant('ERROR_ON_FILE_READING') +
-                    ' (' +
-                    JSON.stringify(_err) +
-                    ')'
+                this.__readAndroidJSONFile(fileEntry, importPath).then(
+                  () => {
+                    // nothing todo
+                  },
+                  (_err2) => {
+                    this.uiAlert.showMessage(
+                      this.translate.instant('ERROR_ON_FILE_READING') +
+                        ' (' +
+                        JSON.stringify(_err2) +
+                        ')'
+                    );
+                  }
                 );
               }
             );
@@ -727,24 +736,37 @@ export class SettingsPage implements OnInit {
         });
       } else {
         this.iosFilePicker.pickFile().then((uri) => {
-          if (uri && uri.endsWith('.json')) {
+          if (uri && (uri.endsWith('.zip') || uri.endsWith('.json'))) {
             let path = uri.substring(0, uri.lastIndexOf('/'));
             const file = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
             if (path.indexOf('file://') !== 0) {
               path = 'file://' + path;
             }
-            this.__readJSONFile(path, file)
-              .then(() => {
-                // nothing todo
-              })
-              .catch((_err) => {
-                this.uiAlert.showMessage(
-                  this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
-                    ' (' +
-                    JSON.stringify(_err) +
-                    ')'
-                );
-              });
+
+            this.uiFileHelper.getZIPFileByPathAndFile(path, file).then(
+              async (_arrayBuffer) => {
+                const parsedJSON =
+                  await this.uiExportImportHelper.getJSONFromZIPArrayBufferContent(
+                    _arrayBuffer
+                  );
+                this.__importJSON(parsedJSON, path);
+              },
+              () => {
+                // Backup, maybe it was a .JSON?
+                this.__readJSONFile(path, file)
+                  .then(() => {
+                    // nothing todo
+                  })
+                  .catch((_err) => {
+                    this.uiAlert.showMessage(
+                      this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
+                        ' (' +
+                        JSON.stringify(_err) +
+                        ')'
+                    );
+                  });
+              }
+            );
           } else {
             this.uiAlert.showMessage(
               this.translate.instant('INVALID_FILE_FORMAT')
@@ -788,48 +810,74 @@ export class SettingsPage implements OnInit {
       SETTINGS_TRACKING.ACTIONS.EXPORT
     );
 
-    this.uiStorage.export().then(
-      (_data) => {
+    this.uiExportImportHelper.buildExportZIP().then(
+      async (_blob) => {
+        this.uiLog.log('New zip-export way');
         const isIOS = this.platform.is('ios');
-        this.uiHelper
-          .exportJSON('Beanconqueror.json', JSON.stringify(_data), isIOS)
-          .then(
-            async (_fileEntry: FileEntry) => {
-              if (this.platform.is('cordova')) {
-                if (this.platform.is('android')) {
-                  await this.exportAttachments();
-                  await this.exportFlowProfiles();
-                  await this.uiAlert.hideLoadingSpinner();
+        const file: FileEntry = await this.uiFileHelper.downloadFile(
+          'Beanconqueror.zip',
+          _blob,
+          isIOS
+        );
 
-                  const alert = await this.alertCtrl.create({
-                    header: this.translate.instant('DOWNLOADED'),
-                    subHeader: this.translate.instant(
-                      'FILE_DOWNLOADED_SUCCESSFULLY',
-                      { fileName: _fileEntry.name }
-                    ),
-                    buttons: ['OK'],
-                  });
-                  await alert.present();
-                } else {
-                  await this.uiAlert.hideLoadingSpinner();
-                  // File already downloaded
-                  // We don't support image export yet, because
-                }
-              } else {
-                await this.uiAlert.hideLoadingSpinner();
-                // File already downloaded
-                // We don't support image export yet, because
-              }
-            },
-            async () => {
-              await this.uiAlert.hideLoadingSpinner();
-            }
-          );
-      },
-      async () => {
+        if (this.platform.is('cordova')) {
+          if (this.platform.is('android')) {
+            await this.exportAttachments();
+            await this.exportFlowProfiles();
+            await this.uiAlert.hideLoadingSpinner();
+          }
+        }
         await this.uiAlert.hideLoadingSpinner();
+      },
+      () => {
+        // Error
+        // Do the old conventional way
+        this.uiStorage.export().then(
+          (_data) => {
+            this.uiLog.log('Old JSON-Export way');
+            const isIOS = this.platform.is('ios');
+            this.uiHelper
+              .exportJSON('Beanconqueror.json', JSON.stringify(_data), isIOS)
+              .then(
+                async (_fileEntry: FileEntry) => {
+                  if (this.platform.is('cordova')) {
+                    if (this.platform.is('android')) {
+                      await this.exportAttachments();
+                      await this.exportFlowProfiles();
+                      await this.uiAlert.hideLoadingSpinner();
+
+                      const alert = await this.alertCtrl.create({
+                        header: this.translate.instant('DOWNLOADED'),
+                        subHeader: this.translate.instant(
+                          'FILE_DOWNLOADED_SUCCESSFULLY',
+                          { fileName: _fileEntry.name }
+                        ),
+                        buttons: ['OK'],
+                      });
+                      await alert.present();
+                    } else {
+                      await this.uiAlert.hideLoadingSpinner();
+                      // File already downloaded
+                      // We don't support image export yet, because
+                    }
+                  } else {
+                    await this.uiAlert.hideLoadingSpinner();
+                    // File already downloaded
+                    // We don't support image export yet, because
+                  }
+                },
+                async () => {
+                  await this.uiAlert.hideLoadingSpinner();
+                }
+              );
+          },
+          async () => {
+            await this.uiAlert.hideLoadingSpinner();
+          }
+        );
       }
     );
+    return;
   }
 
   public excelExport(): void {
@@ -1266,6 +1314,10 @@ export class SettingsPage implements OnInit {
     });
   }
 
+  private async __readZipFile(_fileEntry: FileEntry): Promise<any> {
+    return this.uiExportImportHelper.importZIPFile(_fileEntry);
+  }
+
   /* tslint:enable */
   private async __readAndroidJSONFile(
     _fileEntry: FileEntry,
@@ -1275,7 +1327,8 @@ export class SettingsPage implements OnInit {
       _fileEntry.file(async (file) => {
         const reader = new FileReader();
         reader.onloadend = (event: Event) => {
-          this.__importJSON(reader.result as string, _importPath);
+          const parsedJSON = JSON.parse(reader.result as string);
+          this.__importJSON(parsedJSON, _importPath);
         };
         reader.onerror = (event: Event) => {
           reject();
@@ -1301,8 +1354,8 @@ export class SettingsPage implements OnInit {
     });
   }
 
-  private async __importJSON(_content: string, _importPath: string) {
-    const parsedContent = JSON.parse(_content);
+  private async __importJSON(_parsedJSON: any, _importPath: string) {
+    const parsedContent = _parsedJSON;
     this.uiLog.log('Parsed import data successfully');
     const isIOS: boolean = this.platform.is('ios');
     // Set empty arrays if not existing.
