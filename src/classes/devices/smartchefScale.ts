@@ -38,7 +38,7 @@ export class SmartchefScale extends BluetoothScale {
    * @returns boolean If support is provided for device.
    */
   public static test(device: any): boolean {
-    return device && device.name && this.DEVICE_NAME.includes(device.name);
+    return device && device.name && this.DEVICE_NAME.includes(device.name.toLowerCase());
   }
 
   public override getWeight() {
