@@ -690,9 +690,7 @@ export class CoffeeBluetoothDevicesService {
               type: ScaleType.DIFLUIDMICROBALANCE,
             });
             return;
-          } else {
-            this.logger.log('issue testing difluid');
-          }
+          } 
         }
         resolve(undefined);
       }
