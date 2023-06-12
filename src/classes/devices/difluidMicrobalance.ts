@@ -4,7 +4,7 @@ import { Logger } from './common/logger';
 
 declare var ble: any;
 export class DifluidMicrobalance extends BluetoothScale {
-  public static DEVICE_NAME = 'difluidmicrobalance';
+  public static DEVICE_NAME = 'microbalance';
   public static SERVICE_UUID = '00EE';
   public static CHAR_UUID = 'AA01';
 
@@ -16,7 +16,6 @@ export class DifluidMicrobalance extends BluetoothScale {
   };
 
   private logger: Logger;
-  public scaleUnit = 'g';
 
   constructor(data: PeripheralData) {
     super(data);
@@ -26,16 +25,19 @@ export class DifluidMicrobalance extends BluetoothScale {
 
   public static test(device: any): boolean {
     return (
-      device && device.name
-      // && this.DEVICE_NAME.includes(device.name)
+      device && device.name && this.DEVICE_NAME.includes(device.name.toLowerCase())
     );
   }
 
   public override async connect() {
     this.logger.log('connecting...');
     await this.attachNotification();
-    await this.setUnitToGram();
-    await this.enableAutoNotifications();
+    await setTimeout(async () => {
+      await this.setUnitToGram();
+    }, 100);
+    await setTimeout(async () => {
+      await this.enableAutoNotifications();
+    }, 100);
   }
 
   public override async tare() {
@@ -72,9 +74,6 @@ export class DifluidMicrobalance extends BluetoothScale {
     } else if (_timer === SCALE_TIMER_COMMAND.STOP) {
       await this.write(
         new Uint8Array([0xdf, 0xdf, 0x03, 0x01, 0x01, 0x00, 0xc3])
-      );
-      await this.write(
-        new Uint8Array([0xdf, 0xdf, 0x03, 0x02, 0x01, 0x00, 0xc4])
       );
     }
   }
@@ -117,11 +116,9 @@ export class DifluidMicrobalance extends BluetoothScale {
         DifluidMicrobalance.CHAR_UUID,
         _bytes.buffer,
         (e: any) => {
-          this.logger.log(e);
           resolve(true);
         },
         (e: any) => {
-          this.logger.log(e);
           resolve(false);
         }
       );
@@ -141,21 +138,7 @@ export class DifluidMicrobalance extends BluetoothScale {
   }
   private async parseStatusUpdate(difluidRawStatus: Uint8Array) {
     if (difluidRawStatus.length >= 19 && difluidRawStatus[3] == 0) {
-      switch (difluidRawStatus[17]) {
-        case 0:
-          this.scaleUnit = 'g';
-          break;
-        case 1:
-          this.scaleUnit = 'oz';
-          break;
-        case 2:
-          this.scaleUnit = 'gering';
-          break;
-        default:
-          this.scaleUnit = 'g';
-      }
-
-      var weight = await this.getInt(difluidRawStatus.slice(5, 9));
+      const weight = await this.getInt(difluidRawStatus.slice(5, 9));
       this.setWeight(weight / 10);
     }
   }
