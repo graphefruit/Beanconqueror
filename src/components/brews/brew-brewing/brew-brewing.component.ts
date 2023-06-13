@@ -167,6 +167,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public customXeniaOptions = {
     cssClass: 'xenia-script-chooser',
   };
+  private xeniaOverviewInterval: any = undefined;
 
   constructor(
     private readonly platform: Platform,
@@ -215,7 +216,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         // We need a short timeout because of ViewChild, else we get an exception
 
         if (this.brewTemplate) {
-          this.__loadBrew(this.brewTemplate, true);
+          await this.__loadBrew(this.brewTemplate, true);
         } else if (this.loadSpecificLastPreparation) {
           const foundBrews: Array<Brew> = UIBrewHelper.sortBrews(
             this.uiBrewStorage
@@ -227,7 +228,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               )
           );
           if (foundBrews.length > 0) {
-            this.__loadBrew(foundBrews[0], false);
+            await this.__loadBrew(foundBrews[0], false);
           } else {
             /** We start an empty new brew, and set the preparation method for it
              * so when the next brew will come, data can or will be preset
@@ -235,10 +236,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             const newBrew = new Brew();
             newBrew.method_of_preparation =
               this.loadSpecificLastPreparation.config.uuid;
-            this.__loadBrew(newBrew, false);
+            await this.__loadBrew(newBrew, false);
           }
         } else {
-          this.__loadLastBrew();
+          await this.__loadLastBrew();
         }
       } else {
         if (this.timer) {
@@ -274,6 +275,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             this.data.coffee_first_drip_time_milliseconds
           );
         }
+        // This needs to be done before initialize the flow chart
+        await this.instancePreparationDevice(this.data);
+
         if (this.data.flow_profile !== '') {
           // We had a flow profile, so read data now.
           await this.readFlowProfile();
@@ -296,8 +300,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             }
           }, 350);
         }
-
-        this.instancePreparationDevice(this.data);
       }
 
       let isSomethingConnected: boolean = false;
@@ -510,6 +512,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.deattachToPressureChange();
     this.deattachToScaleEvents();
     this.deattachToTemperatureChange();
+    this.stopFetchingAndSettingDataFromXenia();
   }
 
   public preparationMethodFocused() {
@@ -544,9 +547,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
                   this.data.preparationDeviceBrew.params.scriptAtWeightReachedId
                 )
                 .catch(() => {});
+              this.stopFetchingAndSettingDataFromXenia();
             } else {
               // Instant stop!
               this.preparationDevice.stopScript().catch(() => {});
+              this.stopFetchingAndSettingDataFromXenia();
             }
             this.timer.pauseTimer('xenia');
           }
@@ -578,12 +583,15 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     let bluetoothDeviceConnections = 0;
     let smartScaleConnected: boolean = false;
     if (
-      this.pressureDeviceConnected() &&
+      (this.pressureDeviceConnected() || this.preparationDeviceConnected()) &&
       this.data.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO
     ) {
       bluetoothDeviceConnections += 1;
     }
-    if (this.temperatureDeviceConnected()) {
+    if (
+      this.temperatureDeviceConnected() ||
+      this.preparationDeviceConnected()
+    ) {
       bluetoothDeviceConnections += 1;
     }
     if (this.smartScaleConnected()) {
@@ -997,6 +1005,38 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           .startScript(this.data.preparationDeviceBrew.params.scriptStartId)
           .catch(() => {});
       }
+      this.startFetchingAndSettingDataFromXenia();
+    }
+  }
+
+  public startFetchingAndSettingDataFromXenia() {
+    this.stopFetchingAndSettingDataFromXenia();
+
+    const setTempAndPressure = () => {
+      const temp = this.preparationDevice.getTemperature();
+      const press = this.preparationDevice.getPressure();
+      this.__setPressureFlow({ actual: press, old: press });
+      this.__setTemperatureFlow({ actual: temp, old: temp });
+    };
+    this.preparationDevice.fetchPressureAndTemperature(() => {
+      //before we start the interval, we fetch the data once to overwrite, and set them.
+      setTempAndPressure();
+    });
+    this.xeniaOverviewInterval = setInterval(async () => {
+      try {
+        // We don't use the callback function to make sure we don't have to many performance issues
+        this.preparationDevice.fetchPressureAndTemperature(() => {
+          //before we start the interval, we fetch the data once to overwrite, and set them.
+          setTempAndPressure();
+        });
+      } catch (ex) {}
+    }, 500);
+  }
+
+  public stopFetchingAndSettingDataFromXenia() {
+    if (this.xeniaOverviewInterval !== undefined) {
+      clearInterval(this.xeniaOverviewInterval);
+      this.xeniaOverviewInterval = undefined;
     }
   }
 
@@ -1150,6 +1190,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       // If the event is not xenia, we pressed buttons, if the event was triggerd by xenia, timer already stopped.
       //If we press pause, stop scripts.
       this.preparationDevice.stopScript().catch(() => {});
+      this.stopFetchingAndSettingDataFromXenia();
     }
     if (!this.platform.is('cordova')) {
       window.clearInterval(this.graphTimerTest);
@@ -1422,7 +1463,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         }
       }
 
-      if (this.timer.isTimerRunning() === true) {
+      if (this.timer.isTimerRunning() === true || this.data.brew_time === 0) {
         setTimeout(() => {
           let newLayoutIsNeeded: boolean = false;
           /**Timeout is needed, because on mobile devices, the trace and the relayout bothers each other, which results into not refreshing the graph*/
@@ -2454,6 +2495,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (
       (pressureDevice != null &&
         this.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO) ||
+      this.preparationDeviceConnected() ||
       !this.platform.is('cordova')
     ) {
       layout['yaxis4'] = {
@@ -2470,7 +2512,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       };
     }
     const temperatureDevice = this.bleManager.getTemperatureDevice();
-    if (temperatureDevice != null || !this.platform.is('cordova')) {
+    if (
+      temperatureDevice != null ||
+      this.preparationDeviceConnected() ||
+      !this.platform.is('cordova')
+    ) {
       layout['yaxis5'] = {
         title: '',
         titlefont: { color: '#CC3311' },
@@ -2500,7 +2546,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   // tslint:disable-next-line
-  private __loadLastBrew(): void {
+  private async __loadLastBrew() {
     let wasAnythingLoaded: boolean = false;
     if (
       this.settings.manage_parameters.set_last_coffee_brew ||
@@ -2509,13 +2555,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
       if (brews.length > 0) {
         const lastBrew: Brew = brews[brews.length - 1];
-        this.__loadBrew(lastBrew, false);
+        await this.__loadBrew(lastBrew, false);
         wasAnythingLoaded = true;
       }
     }
     if (!wasAnythingLoaded) {
       //If we didn't load any brew, we didn't fire instancePreparationDevice with a brew, so we need to fire it here in the end at all.
-      this.instancePreparationDevice();
+      await this.instancePreparationDevice();
     }
   }
 
@@ -3045,7 +3091,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.flow_profile_raw.temperatureFlow.push(temperatureFlow);
   }
 
-  private __loadBrew(brew: Brew, _template: boolean) {
+  private async __loadBrew(brew: Brew, _template: boolean) {
     if (
       this.settings.default_last_coffee_parameters.method_of_preparation ||
       _template === true
@@ -3322,6 +3368,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
     this.data.flow_profile = '';
 
-    this.instancePreparationDevice(brew);
+    await this.instancePreparationDevice(brew);
   }
 }

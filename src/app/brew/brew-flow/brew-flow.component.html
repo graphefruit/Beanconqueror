@@ -12,10 +12,10 @@
           <ion-chip (click)="brewComponent.toggleChartLines('realtime_flow')" *ngIf="smartScaleConnected()"
             [outline]="!brewComponent.realtimeFlowTrace?.visible" class="flowreal">{{'BREW_FLOW_WEIGHT_REALTIME' |
             translate}}</ion-chip>
-          <ion-chip (click)="brewComponent.toggleChartLines('pressure')" *ngIf="pressureDeviceConnected() && this.brew.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
+          <ion-chip (click)="brewComponent.toggleChartLines('pressure')" *ngIf="(pressureDeviceConnected() || brewComponent.preparationDeviceConnected()) && this.brew.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
             [outline]="!brewComponent.pressureTrace?.visible" class="pressure">{{'BREW_PRESSURE_FLOW' |
             translate}}</ion-chip>
-          <ion-chip (click)="brewComponent.toggleChartLines('temperature')" *ngIf="temperatureDeviceConnected()"
+          <ion-chip (click)="brewComponent.toggleChartLines('temperature')" *ngIf="temperatureDeviceConnected() || brewComponent.preparationDeviceConnected()"
             [outline]="!brewComponent.temperatureTrace?.visible" class="temperature">{{'BREW_TEMPERATURE_REALTIME' |
             translate}}</ion-chip>
         </div>
@@ -71,7 +71,7 @@
               </ion-card-content>
             </ion-card>
           </ion-col>
-          <ion-col (click)="resetPressure()" *ngIf="pressureDeviceConnected() && this.brew.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
+          <ion-col (click)="resetPressure()" *ngIf="(pressureDeviceConnected() || brewComponent.preparationDeviceConnected()) && this.brew.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
             size="{{this.getGraphIonColSize()}}"
             style="padding-right:5px;">
             <ion-card class="flow-profile ion-text-center pressure-card" style="height: 100%;">
@@ -83,7 +83,7 @@
               </ion-card-content>
             </ion-card>
           </ion-col>
-          <ion-col *ngIf="temperatureDeviceConnected()"
+          <ion-col *ngIf="temperatureDeviceConnected() || brewComponent.preparationDeviceConnected()"
                    size="{{this.getGraphIonColSize()}}"
             style="padding-right:5px;">
             <ion-card class="flow-profile ion-text-center temperature-card" style="height: 100%;">

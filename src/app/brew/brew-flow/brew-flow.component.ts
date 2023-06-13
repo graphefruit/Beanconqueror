@@ -125,12 +125,16 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
     let bluetoothDeviceConnections = 0;
     let smartScaleConnected: boolean = false;
     if (
-      this.pressureDeviceConnected() &&
+      (this.pressureDeviceConnected() ||
+        this.brewComponent.preparationDeviceConnected()) &&
       this.brew.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO
     ) {
       bluetoothDeviceConnections += 1;
     }
-    if (this.temperatureDeviceConnected()) {
+    if (
+      this.temperatureDeviceConnected() ||
+      this.brewComponent.preparationDeviceConnected()
+    ) {
       bluetoothDeviceConnections += 1;
     }
     if (this.smartScaleConnected()) {

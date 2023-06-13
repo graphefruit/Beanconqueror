@@ -48,8 +48,65 @@ export class XeniaDevice extends PreparationDevice {
     return promise;
   }
 
+  public getPressure() {
+    return this.pressure;
+  }
+  public getTemperature() {
+    return this.temperature;
+  }
+
+  public fetchPressureAndTemperature(_callback: any = null) {
+    const options = {
+      method: 'get',
+    };
+    cordova.plugin.http.sendRequest(
+      this.getPreparation().connectedPreparationDevice.url + '/overview',
+      options,
+      (response) => {
+        try {
+          const parsedJSON = JSON.parse(response.data);
+          const temp = parsedJSON.BG_SENS_TEMP_A;
+          const press = parsedJSON.PU_SENS_PRESS;
+
+          this.temperature = temp;
+          this.pressure = press;
+          if (_callback) {
+            _callback();
+          }
+        } catch (e) {}
+      },
+      (response) => {
+        // prints 403
+      }
+    );
+  }
+  public getOverview(): Promise<any> {
+    const promise = new Promise<any>((resolve, reject) => {
+      const options = {
+        method: 'get',
+      };
+      cordova.plugin.http.sendRequest(
+        this.getPreparation().connectedPreparationDevice.url + '/overview',
+        options,
+        (response) => {
+          try {
+            const parsedJSON = JSON.parse(response.data);
+            resolve(parsedJSON);
+          } catch (e) {
+            reject();
+          }
+        },
+        (response) => {
+          // prints 403
+          reject();
+        }
+      );
+    });
+    return promise;
+  }
+
   public getScripts() {
-    const promise = new Promise<boolean>((resolve, reject) => {
+    const promise = new Promise<any>((resolve, reject) => {
       const options = {
         method: 'get',
       };
