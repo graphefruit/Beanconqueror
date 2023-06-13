@@ -367,7 +367,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             }
           }
           if (connectTriggered) {
-            if (this.weightTrace === undefined) {
+            //Always initialize new as long as the timer is not running
+            if (this.timer.isTimerRunning() === false) {
               this.initializeFlowChart();
             }
           }
@@ -1534,6 +1535,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           .getTime();
         this.lastChartLayout.xaxis.range = [delay, delayedTime];
         Plotly.relayout('flowProfileChart', this.lastChartLayout);
+        this.lastChartRenderingInstance = -1;
       }
     } catch (ex) {}
   }
@@ -2389,6 +2391,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           this.lastChartLayout,
           this.getChartConfig()
         );
+        this.lastChartRenderingInstance = -1;
         setTimeout(() => {
           if (
             this.flow_profile_raw.weight.length > 0 ||
