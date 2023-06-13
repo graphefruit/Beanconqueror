@@ -12,6 +12,8 @@ import { PrsPressure } from './prsPressure';
 import { SkaleScale } from './skale';
 import { TemperatureDevice } from './temperatureBluetoothDevice';
 import { ETITemperature } from './etiTemperature';
+import { SmartchefScale } from './smartchefScale';
+import { DifluidMicrobalance } from './difluidMicrobalance';
 export { BluetoothScale, SCALE_TIMER_COMMAND } from './bluetoothDevice';
 
 export enum ScaleType {
@@ -21,6 +23,8 @@ export enum ScaleType {
   FELICITA = 'FELICITA',
   EUREKAPRECISA = 'EUREKAPRECISA',
   SKALE = 'SKALE',
+  SMARTCHEF = 'SMARTCHEF',
+  DIFLUIDMICROBALANCE = 'DIFLUIDMIRCROBALANCE',
 }
 
 export enum PressureType {
@@ -50,6 +54,10 @@ export function makeDevice(
       return new EurekaPrecisaScale(data);
     case ScaleType.SKALE:
       return new SkaleScale(data);
+    case ScaleType.SMARTCHEF:
+      return new SmartchefScale(data);
+    case ScaleType.DIFLUIDMICROBALANCE:
+      return new DifluidMicrobalance(data);
     default:
       return null;
   }
