@@ -1476,5 +1476,9 @@
   "PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO": "Druckgerät ist nur Verwendbar bei Zubereitungsmethoden der Zubereitungsart 'Espresso'",
   "PRESSURE_MESSAGE_AFTER_CONNECTION": "Bekanntes Verhalten (in Analyse): Bitte beachte, dass der Verbindungsaufbau nach dem Neustart deines Telefons oder nach längerer Zeit, ohne, dass die App verwendet worden ist, auch länger dauern kann (30 Sekunden bis 1 Minute) danach sollte das Problem nicht mehr auftreten. ",
   "SMART_SCALE_ACAIA_HEARTBEAT_TIMER": "Heartbeat timer - Nur Acaia Waagen!",
-  "SMART_SCALE_ACAIA_HEARTBEAT_TIMER_TOOLTIP": "Wird nur für Acaia Waagen verwendet!!! Alte Acaia Wagen benötigen ein Heartbeat timer, falls du Probleme mit der Waage hast, versuch die Zeit zu minimieren "
+  "SMART_SCALE_ACAIA_HEARTBEAT_TIMER_TOOLTIP": "Wird nur für Acaia Waagen verwendet!!! Alte Acaia Wagen benötigen ein Heartbeat timer, falls du Probleme mit der Waage hast, versuch die Zeit zu minimieren",
+  "SHARE_BEAN_URL": "Teilen als URL",
+  "SHARE_BEAN_IMAGE": "Teilen als Bild",
+  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE": "",
+  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION": ""
 }
