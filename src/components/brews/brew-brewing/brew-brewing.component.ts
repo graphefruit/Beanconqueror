@@ -725,9 +725,24 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (scale) {
       this.deattachToFlowChange();
 
+      let didWeReceiveAnyFlow: boolean = false;
       this.scaleFlowChangeSubscription = scale.flowChange.subscribe((_val) => {
         this.setActualSmartInformation();
+        didWeReceiveAnyFlow = true;
       });
+      setTimeout(() => {
+        if (
+          didWeReceiveAnyFlow === false &&
+          this.timer.isTimerRunning() === false
+        ) {
+          this.uiAlert.showMessage(
+            'SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION',
+            'SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE',
+            undefined,
+            true
+          );
+        }
+      }, 1000);
     }
   }
 
