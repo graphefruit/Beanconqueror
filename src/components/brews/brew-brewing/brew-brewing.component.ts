@@ -548,13 +548,19 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
                   this.data.preparationDeviceBrew.params.scriptAtWeightReachedId
                 )
                 .catch(() => {});
-              this.stopFetchingAndSettingDataFromXenia();
             } else {
               // Instant stop!
               this.preparationDevice.stopScript().catch(() => {});
-              this.stopFetchingAndSettingDataFromXenia();
             }
-            this.timer.pauseTimer('xenia');
+            if (
+              this.settings
+                .bluetooth_scale_espresso_stop_on_no_weight_change === false
+            ) {
+              this.stopFetchingAndSettingDataFromXenia();
+              this.timer.pauseTimer('xenia');
+            } else {
+              // We weight for the normal "setFlow" to stop the detection of the graph, there then aswell is the stop fetch of the xenia triggered.
+            }
           }
         }
         this.__setFlowProfile(_val);
@@ -930,6 +936,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
 
     if (scale || pressureDevice || temperatureDevice) {
+      this.lastChartRenderingInstance = -1;
       if (
         this.settings.bluetooth_scale_maximize_on_start_timer === true &&
         this.maximizeFlowGraphIsShown === false
@@ -1535,7 +1542,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           .getTime();
         this.lastChartLayout.xaxis.range = [delay, delayedTime];
         Plotly.relayout('flowProfileChart', this.lastChartLayout);
-        this.lastChartRenderingInstance = -1;
       }
     } catch (ex) {}
   }
@@ -3045,7 +3051,56 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.updateChart();
     }
 
+    if (this.hasEspressoShotEnded()) {
+      if (this.preparationDeviceConnected()) {
+        this.stopFetchingAndSettingDataFromXenia();
+      }
+      // We have found a written weight which is above 5 grams at least
+      this.__setScaleWeight(weight, false, false);
+      this.timer.pauseTimer();
+      this.changeDetectorRef.markForCheck();
+      this.timer.checkChanges();
+      this.checkChanges();
+    }
+
     this.flowSecondTick++;
+  }
+
+  private hasEspressoShotEnded(): boolean {
+    // Minimum 50 scale values which means atleast 5 seconds
+    if (
+      this.data.getPreparation().style_type !== PREPARATION_STYLE_TYPE.ESPRESSO
+    ) {
+      return false;
+    }
+
+    if (
+      this.settings.bluetooth_scale_espresso_stop_on_no_weight_change ===
+        false ||
+      this.weightTrace.y.length < 50 ||
+      this.data.brew_time <= 5
+    ) {
+      return false; // Not enough readings or start time not set yet, or we didn't elapse 5 seconds
+    }
+
+    let grindWeight = this.data.grind_weight;
+    if (grindWeight && grindWeight > 0) {
+    } else {
+      grindWeight = 5;
+    }
+    const valFound = this.weightTrace.y.find((v) => v >= grindWeight);
+    if (valFound === undefined || valFound === null) {
+      return false; // We want to be atleast a ratio of 1:1
+    }
+    const flowThreshold: number = 0.1;
+    if (
+      this.realtimeFlowTrace.y[this.realtimeFlowTrace.y.length - 1] <=
+      flowThreshold
+    ) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   private pushFlowProfile(
