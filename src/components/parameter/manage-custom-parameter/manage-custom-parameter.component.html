@@ -114,11 +114,15 @@
     <ion-label>
       <h2>{{"BREW_DATA_BREW_QUANTITY" | translate}}</h2>
       <p>{{"BREW_DATA_BREW_QUANTITY_TOOLTIP" | translate}}</p>
+      <p>{{"BREW_DATA_BREW_QUANTITY_TOOLTIP_BREW_RATIO" | translate}}</p>
     </ion-label>
     <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.brew_quantity"></ion-checkbox>
   </ion-item>
   <ion-item tappable>
-    <ion-label>{{"BREW_DATA_BREW_BEVERAGE_QUANTITY" | translate}}</ion-label>
+    <ion-label>
+      <h2>{{"BREW_DATA_BREW_BEVERAGE_QUANTITY" | translate}}</h2>
+      <p>{{"BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO" | translate}}</p>
+    </ion-label>
     <ion-checkbox (ngModelChange)="triggerChanges($event)" [(ngModel)]="data.manage_parameters.brew_beverage_quantity"></ion-checkbox>
   </ion-item>
   <ion-item tappable>

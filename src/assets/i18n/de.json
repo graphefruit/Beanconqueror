@@ -1479,6 +1479,8 @@
   "SMART_SCALE_ACAIA_HEARTBEAT_TIMER_TOOLTIP": "Wird nur für Acaia Waagen verwendet!!! Alte Acaia Wagen benötigen ein Heartbeat timer, falls du Probleme mit der Waage hast, versuch die Zeit zu minimieren",
   "SHARE_BEAN_URL": "Teilen als URL",
   "SHARE_BEAN_IMAGE": "Teilen als Bild",
-  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE": "",
-  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION": ""
+  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE": "Espresso - Stoppe die Brühung automatisch",
+  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION": "Diese Einstellung wird nur für Zubereitungsmethoden mit 'Espresso' kalkuliert. Die Brühung wird automiathsc gestoppt, sobald keine Flussveränderung mehr erkannt wird.",
+  "BREW_DATA_BREW_QUANTITY_TOOLTIP_BREW_RATIO": "Die Brührate wird für alle Zubereitungsmethoden außer 'Espresso' hiermit kalkuliert",
+  "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "Die Brührate wird hiermit für alle Zubereitungsmethoden mit 'Espresso' kalkuliert"
 }
