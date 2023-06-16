@@ -1250,7 +1250,7 @@
       "LOCATION": "To find bluetooth scales, the app needs access to the location.",
       "BLUETOOTH": "To find bluetooth scales, the app needs access to bluetooth"
     },
-    "INFORMATION_DESCRIPTION": "Supported scales are: Decent Scale, Acaia Scales, Felicita Scales, Hiroia Jimmy, Skale 2 and Eureka Precisa. Note: If the Eureka Precisa recieves a negative value, the timer stops"
+    "INFORMATION_DESCRIPTION": "Supported scales are: Decent Scale, Acaia Scales, Felicita Scales, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale and Eureka Precisa. Note: If the Eureka Precisa recieves a negative value, the timer stops"
   },
   "QR": {
     "WRONG_QRCODE_DESCRIPTION": "Invalid QR code or unrecognised content",

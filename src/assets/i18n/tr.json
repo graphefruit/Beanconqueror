@@ -1250,7 +1250,7 @@
       "LOCATION": "Bluetooth ile terazisiyi bulmak için uygulamanın konuma erişmesi gerekiyor.",
       "BLUETOOTH": "Bluetooth ile terazisiyi bulmak için uygulamanın bluetooth erişimi gerekiyor."
     },
-    "INFORMATION_DESCRIPTION": "Desteklenen tartılar: Decent Tartı, Acaia Tartı, Felicita Tartı, Hiroia Jimmy, Skale 2 and Eureka Precisa. Care: If the Eureka Precisa recieves a negative value, the timer stops"
+    "INFORMATION_DESCRIPTION": "Desteklenen tartılar: Decent Tartı, Acaia Tartı, Felicita Tartı, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale and Eureka Precisa. Care: If the Eureka Precisa recieves a negative value, the timer stops"
   },
   "QR":{
     "WRONG_QRCODE_DESCRIPTION": "Yanlış qr kodu veya yanlış içerik",

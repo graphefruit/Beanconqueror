@@ -1250,7 +1250,7 @@
       "LOCATION": "Um Bluetooth-Waagen zu finden, muss der Standort freigegeben werden",
       "BLUETOOTH": "Um Bluetooth-Waagen zu finden, muss Bluetooth freigegeben werden"
     },
-    "INFORMATION_DESCRIPTION": "Unterstütze Waagen sind: Decent Scale sowie Acaia Scales, Felicita Scales, Hiroia Jimmy, Skale 2 und Eureka Precisa. Achtung: Falls die Eureka Precisa einen negativen Wert bekommt, stoppt der Timer automatisch"
+    "INFORMATION_DESCRIPTION": "Unterstütze Waagen sind: Decent Scale sowie Acaia Scales, Felicita Scales, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale und Eureka Precisa. Achtung: Falls die Eureka Precisa einen negativen Wert bekommt, stoppt der Timer automatisch"
   },
   "QR": {
     "WRONG_QRCODE_DESCRIPTION": "Falscher QR-Code oder falscher Inhalt",
