@@ -1476,5 +1476,14 @@
   "BREW_TEMPERATURE_REALTIME": "Sıcaklık",
   "PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE": "Termometre",
   "SMART_SCALE_ACAIA_HEARTBEAT_TIMER": "Heartbeat timer - Just for Acaia Scales",
-  "SMART_SCALE_ACAIA_HEARTBEAT_TIMER_TOOLTIP": "Just used for Acaia scales!!! - Older Acaia scales need an heartbeat, if you encounter issues, try to minimize the heartbeat to a faster frequence"
+  "SMART_SCALE_ACAIA_HEARTBEAT_TIMER_TOOLTIP": "Just used for Acaia scales!!! - Older Acaia scales need an heartbeat, if you encounter issues, try to minimize the heartbeat to a faster frequence",
+  "SHARE_BEAN_URL": "Share as url",
+  "SHARE_BEAN_IMAGE": "Share as image",
+  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE": "Espresso - Stop brew automatic",
+  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION": "This setting is just used for preparation methods of type 'espresso'. The brew will be automatic stopped when no flow change is detected anymore.",
+  "BREW_DATA_BREW_QUANTITY_TOOLTIP_BREW_RATIO": "The brew ratio will be calculated with this value for all preparation methods, but not for type 'espresso'",
+  "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "The brew ratio will be calculated with this value just for preparation methods of type 'espresso'",
+  "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "It looks like, that the bluetooth scale was not connected rightly to Beanconqueror. This happens in most cases on iOS-Devices with combined Acaia Scales, please reconnect the scale again, and care about that the weight tile is updated",
+  "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": "No weight values?",
+  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "At which minimum flow rate should the brew be stopped? The brew will just be stopped when a minimum of 5 seconds aswell as 5 grams or the grind weight is reached, so that atleast a 1:1 brew ratio is reached. After that, the set minimum flow rate will be checked"
 }
