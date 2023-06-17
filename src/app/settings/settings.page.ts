@@ -628,6 +628,16 @@ export class SettingsPage implements OnInit {
     await this.uiSettingsStorage.saveSettings(this.settings);
   }
 
+  public async fixWeightChangeMinFlowNumber() {
+    //We need to trigger this, because the slider sometimes procudes values like 0.60000001, and we need to fix this before saving
+    this.settings.bluetooth_scale_espresso_stop_on_no_weight_change_min_flow =
+      this.uiHelper.toFixedIfNecessary(
+        this.settings
+          .bluetooth_scale_espresso_stop_on_no_weight_change_min_flow,
+        2
+      );
+  }
+
   public async toggleLog() {
     if (
       this.settings.scale_log === true ||

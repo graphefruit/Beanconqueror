@@ -526,6 +526,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (scale) {
       this.deattachToWeightChange();
 
+      let xeniaScriptStopWasTriggered: boolean = false;
       this.scaleFlowSubscription = scale.flowChange.subscribe((_val) => {
         if (
           this.timer.isTimerRunning() &&
@@ -540,26 +541,31 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             weight >=
             this.data.preparationDeviceBrew.params.scriptAtWeightReachedNumber
           ) {
-            if (
-              this.data.preparationDeviceBrew.params.scriptAtWeightReachedId > 0
-            ) {
-              this.preparationDevice
-                .startScript(
-                  this.data.preparationDeviceBrew.params.scriptAtWeightReachedId
-                )
-                .catch(() => {});
-            } else {
-              // Instant stop!
-              this.preparationDevice.stopScript().catch(() => {});
-            }
-            if (
-              this.settings
-                .bluetooth_scale_espresso_stop_on_no_weight_change === false
-            ) {
-              this.stopFetchingAndSettingDataFromXenia();
-              this.timer.pauseTimer('xenia');
-            } else {
-              // We weight for the normal "setFlow" to stop the detection of the graph, there then aswell is the stop fetch of the xenia triggered.
+            if (xeniaScriptStopWasTriggered === false) {
+              if (
+                this.data.preparationDeviceBrew.params.scriptAtWeightReachedId >
+                0
+              ) {
+                this.preparationDevice
+                  .startScript(
+                    this.data.preparationDeviceBrew.params
+                      .scriptAtWeightReachedId
+                  )
+                  .catch(() => {});
+              } else {
+                // Instant stop!
+                this.preparationDevice.stopScript().catch(() => {});
+              }
+              if (
+                this.settings
+                  .bluetooth_scale_espresso_stop_on_no_weight_change === false
+              ) {
+                this.stopFetchingAndSettingDataFromXenia();
+                this.timer.pauseTimer('xenia');
+              } else {
+                // We weight for the normal "setFlow" to stop the detection of the graph, there then aswell is the stop fetch of the xenia triggered.
+              }
+              xeniaScriptStopWasTriggered = true;
             }
           }
         }
@@ -742,7 +748,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             true
           );
         }
-      }, 1000);
+      }, 2500);
     }
   }
 
@@ -3107,7 +3113,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (valFound === undefined || valFound === null) {
       return false; // We want to be atleast a ratio of 1:1
     }
-    const flowThreshold: number = 0.1;
+    const flowThreshold: number =
+      this.settings.bluetooth_scale_espresso_stop_on_no_weight_change_min_flow;
     if (
       this.realtimeFlowTrace.y[this.realtimeFlowTrace.y.length - 1] <=
       flowThreshold

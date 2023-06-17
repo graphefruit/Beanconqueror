@@ -99,6 +99,7 @@ export interface ISettings {
   bluetooth_command_delay: number;
   acaia_heartbeat_command_delay: number;
   bluetooth_scale_espresso_stop_on_no_weight_change: boolean;
+  bluetooth_scale_espresso_stop_on_no_weight_change_min_flow: number;
 
   pressure_id: string;
   pressure_type: PressureType;
