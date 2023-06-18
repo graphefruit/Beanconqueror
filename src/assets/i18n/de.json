@@ -1480,7 +1480,7 @@
   "SHARE_BEAN_URL": "Teilen als URL",
   "SHARE_BEAN_IMAGE": "Teilen als Bild",
   "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE": "Espresso - Stoppe die Brühung automatisch",
-  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION": "Diese Einstellung wird nur für Zubereitungsmethoden mit 'Espresso' kalkuliert. Die Brühung wird automatisch gestoppt, sobald keine Flussveränderung mehr erkannt wird.",
+  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION": "Diese Einstellung wird nur für Zubereitungsmethoden mit 'Espresso' verwendet. Die Brühung wird automatisch gestoppt, sobald keine Flussveränderung mehr erkannt wird.",
   "BREW_DATA_BREW_QUANTITY_TOOLTIP_BREW_RATIO": "Die Brührate wird für alle Zubereitungsmethoden außer 'Espresso' hiermit kalkuliert",
   "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "Die Brührate wird hiermit für alle Zubereitungsmethoden mit 'Espresso' kalkuliert",
   "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "Es scheint so, als ob die Waage nicht richtig mit Beanconqueror verbunden werden konnte, dies passiert in den meisten Fällen nur mit iOS-Geräten und Acaia Waagen, bitte verbinde die Waage erneut und achte darauf, dass das Gewicht in der Kachel aktualisiert wird.",
