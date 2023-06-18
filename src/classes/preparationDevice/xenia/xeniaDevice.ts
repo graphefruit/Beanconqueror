@@ -31,17 +31,17 @@ export class XeniaDevice extends PreparationDevice {
               resolve(true);
             } else {
               // alert("Error in Resolve MA Status not given");
-              reject();
+              reject('');
             }
           } catch (e) {
             // alert("Error in Resolve " + JSON.stringify(e));
-            reject();
+            reject(JSON.stringify(e));
           }
         },
         (response) => {
           // prints 403
           // alert("Error " + JSON.stringify(response));
-          reject();
+          reject(JSON.stringify(response));
         }
       );
     });
@@ -93,12 +93,12 @@ export class XeniaDevice extends PreparationDevice {
             const parsedJSON = JSON.parse(response.data);
             resolve(parsedJSON);
           } catch (e) {
-            reject();
+            reject(JSON.stringify(e));
           }
         },
         (response) => {
           // prints 403
-          reject();
+          reject(JSON.stringify(response));
         }
       );
     });
@@ -118,12 +118,12 @@ export class XeniaDevice extends PreparationDevice {
             const parsedJSON = JSON.parse(response.data);
             resolve(parsedJSON);
           } catch (e) {
-            reject();
+            reject(JSON.stringify(e));
           }
         },
         (response) => {
           // prints 403
-          reject();
+          reject(JSON.stringify(response));
         }
       );
     });
@@ -158,12 +158,12 @@ export class XeniaDevice extends PreparationDevice {
             const parsedJSON = JSON.parse(response.data);
             resolve(parsedJSON);
           } catch (e) {
-            reject();
+            reject(JSON.stringify(e));
           }
         },
         (response) => {
           // prints 403
-          reject();
+          reject(JSON.stringify(response));
         }
       );
     });
@@ -184,12 +184,12 @@ export class XeniaDevice extends PreparationDevice {
             const parsedJSON = JSON.parse(response.data);
             resolve(parsedJSON);
           } catch (e) {
-            reject();
+            reject(JSON.stringify(e));
           }
         },
         (response) => {
           // prints 403
-          reject();
+          reject(JSON.stringify(response));
         }
       );
     });

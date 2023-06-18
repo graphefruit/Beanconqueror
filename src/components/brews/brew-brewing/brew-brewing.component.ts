@@ -70,6 +70,7 @@ import {
 } from '../../../classes/preparationDevice/xenia/xeniaDevice';
 import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
+import { UIToast } from '../../../services/uiToast';
 
 declare var cordova;
 declare var Plotly;
@@ -188,7 +189,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     private readonly screenOrientation: ScreenOrientation,
     private readonly uiAlert: UIAlert,
     private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly ngZone: NgZone
+    private readonly ngZone: NgZone,
+    private readonly uiToast: UIToast
   ) {}
 
   public getActivePreparationTools() {
@@ -551,10 +553,20 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
                     this.data.preparationDeviceBrew.params
                       .scriptAtWeightReachedId
                   )
-                  .catch(() => {});
+                  .catch((_msg) => {
+                    this.uiToast.showInfoToast(
+                      'We could not start script at weight: ' + _msg,
+                      false
+                    );
+                  });
               } else {
                 // Instant stop!
-                this.preparationDevice.stopScript().catch(() => {});
+                this.preparationDevice.stopScript().catch((_msg) => {
+                  this.uiToast.showInfoToast(
+                    'We could not stop script at weight: ' + _msg,
+                    false
+                  );
+                });
               }
               if (
                 this.settings
@@ -769,7 +781,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     ) {
       this.preparationDevice
         .startScript(this.data.preparationDeviceBrew.params.scriptAtFirstDripId)
-        .catch(() => {});
+        .catch((_msg) => {
+          this.uiToast.showInfoToast(
+            'We could not start script at first drip: ' + _msg,
+            false
+          );
+        });
     }
   }
 
@@ -1032,7 +1049,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       if (this.data.preparationDeviceBrew.params.scriptStartId > 0) {
         this.preparationDevice
           .startScript(this.data.preparationDeviceBrew.params.scriptStartId)
-          .catch(() => {});
+          .catch((_msg) => {
+            this.uiToast.showInfoToast(
+              'We could not start script: ' + _msg,
+              false
+            );
+          });
       }
       this.startFetchingAndSettingDataFromXenia();
     }
@@ -1147,7 +1169,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           .startScript(
             this.data.preparationDeviceBrew.params.scriptAtFirstDripId
           )
-          .catch(() => {});
+          .catch((_msg) => {
+            this.uiToast.showInfoToast(
+              'We could not start script at first drip - manual  triggered: ' +
+                _msg,
+              false
+            );
+          });
       }
     }
   }
@@ -1218,7 +1246,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (this.preparationDeviceConnected() && _event !== 'xenia') {
       // If the event is not xenia, we pressed buttons, if the event was triggerd by xenia, timer already stopped.
       //If we press pause, stop scripts.
-      this.preparationDevice.stopScript().catch(() => {});
+      this.preparationDevice.stopScript().catch((_msg) => {
+        this.uiToast.showInfoToast(
+          'We could not stop script - manual triggered: ' + _msg,
+          false
+        );
+      });
       this.stopFetchingAndSettingDataFromXenia();
     }
     if (!this.platform.is('cordova')) {
@@ -2102,7 +2135,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         try {
           const xeniaScripts = await this.preparationDevice.getScripts();
           this.preparationDevice.mapScriptsAndSaveTemp(xeniaScripts);
-        } catch (ex) {}
+        } catch (ex) {
+          this.uiToast.showInfoToast(
+            'We could not get scripts from xenia: ' + JSON.stringify(ex),
+            false
+          );
+        }
         // We didn't set any data yet
         if (
           this.data.preparationDeviceBrew.type === PreparationDeviceType.NONE
