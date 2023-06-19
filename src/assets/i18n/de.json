@@ -876,6 +876,34 @@
         "Startcrash behoben",
         "Neuladen der App wurde gefixt, wenn eine Bluetooth Waage nicht verbunden werden konnte"
       ]
+    },
+    "6.5.0": {
+      "TITLE": "Version 6.5.0: Das ist neu",
+      "DESCRIPTION": [
+        "<b>Bluetooth Waage</b>",
+        "Unterstützung von DiFluid Microbalance sowie Smart Chef Scale - Vielen Dank an Yannick!",
+        "Nur für Espresso-Zubereitungsmethoden: Aktiviere in den Einstellungen, dass die Brühung automatisch gestoppt wird, sobald keine Flussveränderung mehr erkannt wird",
+        "Sicherheitshinweis eingebaut, sobald Beanconqueror von der Waage keine Gewichtswerte übermittelt bekommt",
+        "",
+        "<b>Bohnen</b>",
+        "Teile deine Bohne nun ebenfalls als Bild oder URL",
+        "",
+        "<b>Xenia</b>",
+        "Die Druckdaten sowie die Temperaturdaten während der Brühung werden nun ebenfalls aus der Xenia ausgelesen und dargestellt sowie gespeichert",
+        "",
+        "<b>Brühung</b>",
+        "Sobald eine Brühung gestoppt wird, wird der Brühgraph nun vollständig dargestellt",
+        "",
+        "<b>Export/Import</b>",
+        "Anstatt von .JSON-Dateien werden nun .ZIP-Dateien für das Importieren sowie Exportieren verwendet.",
+        "Bitte gehe daher, einmal in die Einstellungen und mache dieses mal ein Sicherheitsbackup, zusätzlich zu den automatisch geschriebenen",
+        "",
+        "<b>Verbesserungen</b>",
+        "Kleine Verbesserungen",
+        "",
+        "<b>Sonstiges</b>",
+        "Kleinere Fehlerbehebungen"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Parameter individualisieren",

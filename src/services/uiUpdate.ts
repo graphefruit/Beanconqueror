@@ -573,7 +573,7 @@ export class UIUpdate {
         versionCode = await this.appVersion.getVersionNumber();
       } else {
         // Hardcored for testing
-        versionCode = '6.4.20';
+        versionCode = '6.5.0';
       }
       const version: Version = this.uiVersionStorage.getVersion();
       const displayingVersions =

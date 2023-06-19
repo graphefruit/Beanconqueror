@@ -875,6 +875,34 @@
         "Fixing crash on startup",
         "Fixing recycle when a bluetooth scale could not connect"
       ]
+    },
+    "6.5.0": {
+      "TITLE": "Version 6.5.0: What's new?",
+      "DESCRIPTION": [
+        "<b>Bluetooth scales</b>",
+        "Support of DiFluid Microbalance aswell as Smart Chef Scale - Thanks to Yannick!",
+        "Just for Espresso preparations: Activate in Settings, that a brew will be automatic stopped, when no flow rate is detected anymore",
+        "Added safety popup, when Beanconqueror doesn't receive any weight updates from a scale",
+        "",
+        "<b>Bean</b>",
+        "Share beans as an image now as well as an url",
+        "",
+        "<b>Xenia</b>",
+        "The shot data of pressure and temperature are recorded now as well",
+        "",
+        "<b>Brews</b>",
+        "If a brew is stopped, the brew graph is now fully displayed",
+        "",
+        "<b>Export/Import</b>",
+        "Instead of a .JSON-File we're now using .ZIP-Files, which are now used for import and export",
+        "Please make sure to go to the settings and do ONCE this time a safety backup, combined with the already existing automatic backup logic",
+        "",
+        "<b>Improvements</b>",
+        "Small improvements",
+        "",
+        "<b>Others</b>",
+        "Small bug fixes"
+      ]
     }
 	},
 	"CUSTOM_PARAMETERS": "自定义参数",
