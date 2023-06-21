@@ -5,6 +5,7 @@ import {
   EventEmitter,
   HostListener,
   Input,
+  NgZone,
   OnDestroy,
   OnInit,
   ViewChild,
@@ -67,7 +68,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
   @ViewChild('temperatureDetail', { read: ElementRef })
   public temperatureDetail: ElementRef;
   private disableHardwareBack;
-
+  protected readonly PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   protected heightInformationBlock: number = 50;
   constructor(
     private readonly modalController: ModalController,
@@ -77,7 +78,8 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
     private readonly uiBrewHelper: UIBrewHelper,
     private readonly translate: TranslateService,
     private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly platform: Platform
+    private readonly platform: Platform,
+    private readonly ngZone: NgZone
   ) {}
   public ngOnInit() {
     try {
@@ -331,28 +333,34 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   public setActualScaleInformation(_val: any) {
-    if (this.smartScaleWeightDetail?.nativeElement) {
-      const weightEl = this.smartScaleWeightDetail.nativeElement;
-      const flowEl = this.smartScaleWeightPerSecondDetail.nativeElement;
-      const avgFlowEl = this.smartScaleAvgFlowPerSecondDetail.nativeElement;
-      weightEl.textContent = _val.scaleWeight;
-      flowEl.textContent = _val.smoothedWeight;
-      avgFlowEl.textContent = 'Ø ' + _val.avgFlow;
-    }
+    this.ngZone.runOutsideAngular(() => {
+      if (this.smartScaleWeightDetail?.nativeElement) {
+        const weightEl = this.smartScaleWeightDetail.nativeElement;
+        const flowEl = this.smartScaleWeightPerSecondDetail.nativeElement;
+        const avgFlowEl = this.smartScaleAvgFlowPerSecondDetail.nativeElement;
+        weightEl.textContent = _val.scaleWeight;
+        flowEl.textContent = _val.smoothedWeight;
+        avgFlowEl.textContent = 'Ø ' + _val.avgFlow;
+      }
+    });
   }
 
   public setActualPressureInformation(_val: any) {
-    if (this.pressureDetail?.nativeElement) {
-      const pressureEl = this.pressureDetail.nativeElement;
-      pressureEl.textContent = _val.pressure;
-    }
+    this.ngZone.runOutsideAngular(() => {
+      if (this.pressureDetail?.nativeElement) {
+        const pressureEl = this.pressureDetail.nativeElement;
+        pressureEl.textContent = _val.pressure;
+      }
+    });
   }
 
   public setActualTemperatureInformation(_val: any) {
-    if (this.temperatureDetail?.nativeElement) {
-      const temperatureEl = this.temperatureDetail.nativeElement;
-      temperatureEl.textContent = _val.temperature;
-    }
+    this.ngZone.runOutsideAngular(() => {
+      if (this.temperatureDetail?.nativeElement) {
+        const temperatureEl = this.temperatureDetail.nativeElement;
+        temperatureEl.textContent = _val.temperature;
+      }
+    });
   }
 
   public async ngOnDestroy() {
@@ -394,6 +402,4 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
       BrewFlowComponent.COMPONENT_ID
     );
   }
-
-  protected readonly PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
 }

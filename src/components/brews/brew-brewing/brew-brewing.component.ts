@@ -962,14 +962,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           smoothed: 1,
           oldSmoothed: 1,
         });
-
-        this.brewPressureGraphSubject.next({
-          pressure: pressure,
-        });
-
-        this.brewTemperatureGraphSubject.next({
-          temperature: temperature,
-        });
       }, 1);
     }
 
@@ -1442,162 +1434,119 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public updateChart(_type: string = 'weight') {
-    try {
-      if (_type === 'weight') {
-        Plotly.extendTraces(
-          'flowProfileChart',
-          {
-            x: [
-              [this.weightTrace.x[this.weightTrace.x.length - 1]],
-              [this.flowPerSecondTrace.x[this.flowPerSecondTrace.x.length - 1]],
-              [this.realtimeFlowTrace.x[this.realtimeFlowTrace.x.length - 1]],
-            ],
-            y: [
-              [this.weightTrace.y[this.weightTrace.y.length - 1]],
-              [this.flowPerSecondTrace.y[this.flowPerSecondTrace.y.length - 1]],
-              [this.realtimeFlowTrace.y[this.realtimeFlowTrace.y.length - 1]],
-            ],
-          },
-          [0, 1, 2]
-        );
-      } else if (_type === 'pressure') {
-        Plotly.extendTraces(
-          'flowProfileChart',
-          {
-            x: [
-              [],
-              [],
-              [],
-              [this.pressureTrace.x[this.pressureTrace.x.length - 1]],
-            ],
-            y: [
-              [],
-              [],
-              [],
-              [this.pressureTrace.y[this.pressureTrace.y.length - 1]],
-            ],
-          },
-          [0, 1, 2, 3]
-        );
-      } else if (_type === 'temperature') {
-        if (this.lastChartLayout['yaxis4']) {
-          // Pressure device is connected, we got 5 entries
-          Plotly.extendTraces(
-            'flowProfileChart',
-            {
-              x: [
-                [],
-                [],
-                [],
-                [],
-                [this.temperatureTrace.x[this.temperatureTrace.x.length - 1]],
-              ],
-              y: [
-                [],
-                [],
-                [],
-                [],
-                [this.temperatureTrace.y[this.temperatureTrace.y.length - 1]],
-              ],
-            },
-            [0, 1, 2, 3, 4]
-          );
-        } else {
-          // Pressure device is not connected, so temp takes his place
-          Plotly.extendTraces(
-            'flowProfileChart',
-            {
-              x: [
-                [],
-                [],
-                [],
-                [this.temperatureTrace.x[this.temperatureTrace.x.length - 1]],
-              ],
-              y: [
-                [],
-                [],
-                [],
-                [this.temperatureTrace.y[this.temperatureTrace.y.length - 1]],
-              ],
-            },
-            [0, 1, 2, 3]
-          );
-        }
-      }
-
-      if (this.timer.isTimerRunning() === true || this.data.brew_time === 0) {
-        setTimeout(() => {
-          let newLayoutIsNeeded: boolean = false;
-          /**Timeout is needed, because on mobile devices, the trace and the relayout bothers each other, which results into not refreshing the graph*/
-          let newRenderingInstance = 0;
-          if (this.maximizeFlowGraphIsShown === true) {
-            newRenderingInstance = Math.floor(this.timer.getSeconds() / 60);
+    this.ngZone.runOutsideAngular(() => {
+      try {
+        let xData;
+        let yData;
+        let tracesData;
+        if (_type === 'weight') {
+          xData = [[], [], []];
+          yData = [[], [], []];
+          tracesData = [0, 1, 2];
+        } else if (_type === 'pressure') {
+          xData = [[], [], [], []];
+          yData = [[], [], [], []];
+          tracesData = [0, 1, 2, 3];
+        } else if (_type === 'temperature') {
+          if (this.lastChartLayout['yaxis4']) {
+            // Pressure device is connected, we got 5 entries
+            xData = [[], [], [], [], []];
+            yData = [[], [], [], [], []];
+            tracesData = [0, 1, 2, 3, 4];
           } else {
-            newRenderingInstance = Math.floor(this.timer.getSeconds() / 20);
+            // Pressure device is not connected, so temp takes his place
+            xData = [[], [], [], []];
+            yData = [[], [], [], []];
+            tracesData = [0, 1, 2, 3];
           }
+        }
 
-          if (
-            newRenderingInstance > this.lastChartRenderingInstance ||
-            this.lastChartRenderingInstance === -1
-          ) {
-            let subtractTime: number = this.maximizeFlowGraphIsShown ? 40 : 10;
-            const addTime: number = this.maximizeFlowGraphIsShown ? 70 : 30;
-            if (this.data.brew_time <= 10) {
-              subtractTime = 0;
+        Plotly.extendTraces(
+          'flowProfileChart',
+          {
+            x: xData,
+            y: yData,
+          },
+          tracesData
+        );
+
+        if (this.timer.isTimerRunning() === true || this.data.brew_time === 0) {
+          setTimeout(() => {
+            let newLayoutIsNeeded: boolean = false;
+            /**Timeout is needed, because on mobile devices, the trace and the relayout bothers each other, which results into not refreshing the graph*/
+            let newRenderingInstance = 0;
+            if (this.maximizeFlowGraphIsShown === true) {
+              newRenderingInstance = Math.floor(this.timer.getSeconds() / 60);
+            } else {
+              newRenderingInstance = Math.floor(this.timer.getSeconds() / 20);
             }
 
-            const delay = moment(new Date())
-              .startOf('day')
-              .add('seconds', this.timer.getSeconds() - subtractTime)
-              .toDate()
-              .getTime();
-            const delayedTime: number = moment(new Date())
-              .startOf('day')
-              .add('seconds', this.timer.getSeconds() + addTime)
-              .toDate()
-              .getTime();
-            this.lastChartLayout.xaxis.range = [delay, delayedTime];
-            newLayoutIsNeeded = true;
-            this.lastChartRenderingInstance = newRenderingInstance;
-          }
+            if (
+              newRenderingInstance > this.lastChartRenderingInstance ||
+              this.lastChartRenderingInstance === -1
+            ) {
+              let subtractTime: number = this.maximizeFlowGraphIsShown
+                ? 40
+                : 10;
+              const addTime: number = this.maximizeFlowGraphIsShown ? 70 : 30;
+              if (this.data.brew_time <= 10) {
+                subtractTime = 0;
+              }
 
-          if (this.weightTrace.y.length > 0) {
-            const lastWeightData: number =
-              this.weightTrace.y[this.weightTrace.y.length - 1];
-            if (lastWeightData > this.lastChartLayout.yaxis.range[1]) {
-              // Scale a bit up
-              this.lastChartLayout.yaxis.range[1] = lastWeightData * 1.5;
+              const delay = moment(new Date())
+                .startOf('day')
+                .add('seconds', this.timer.getSeconds() - subtractTime)
+                .toDate()
+                .getTime();
+              const delayedTime: number = moment(new Date())
+                .startOf('day')
+                .add('seconds', this.timer.getSeconds() + addTime)
+                .toDate()
+                .getTime();
+              this.lastChartLayout.xaxis.range = [delay, delayedTime];
               newLayoutIsNeeded = true;
+              this.lastChartRenderingInstance = newRenderingInstance;
             }
-          }
-          if (this.realtimeFlowTrace.y.length > 0) {
-            const lastRealtimeFlowVal: number =
-              this.realtimeFlowTrace.y[this.realtimeFlowTrace.y.length - 1];
-            if (lastRealtimeFlowVal > this.lastChartLayout.yaxis2.range[1]) {
-              // Scale a bit up
-              this.lastChartLayout.yaxis2.range[1] = lastRealtimeFlowVal * 1.5;
-              newLayoutIsNeeded = true;
+
+            if (this.weightTrace.y.length > 0) {
+              const lastWeightData: number =
+                this.weightTrace.y[this.weightTrace.y.length - 1];
+              if (lastWeightData > this.lastChartLayout.yaxis.range[1]) {
+                // Scale a bit up
+                this.lastChartLayout.yaxis.range[1] = lastWeightData * 1.5;
+                newLayoutIsNeeded = true;
+              }
             }
-          }
-          if (newLayoutIsNeeded) {
-            Plotly.relayout('flowProfileChart', this.lastChartLayout);
-          }
-        }, 25);
-      } else {
-        const delay = moment(new Date())
-          .startOf('day')
-          .add('seconds', 0)
-          .toDate()
-          .getTime();
-        const delayedTime: number = moment(new Date())
-          .startOf('day')
-          .add('seconds', this.timer.getSeconds() + 5)
-          .toDate()
-          .getTime();
-        this.lastChartLayout.xaxis.range = [delay, delayedTime];
-        Plotly.relayout('flowProfileChart', this.lastChartLayout);
-      }
-    } catch (ex) {}
+            if (this.realtimeFlowTrace.y.length > 0) {
+              const lastRealtimeFlowVal: number =
+                this.realtimeFlowTrace.y[this.realtimeFlowTrace.y.length - 1];
+              if (lastRealtimeFlowVal > this.lastChartLayout.yaxis2.range[1]) {
+                // Scale a bit up
+                this.lastChartLayout.yaxis2.range[1] =
+                  lastRealtimeFlowVal * 1.5;
+                newLayoutIsNeeded = true;
+              }
+            }
+            if (newLayoutIsNeeded) {
+              Plotly.relayout('flowProfileChart', this.lastChartLayout);
+            }
+          }, 25);
+        } else {
+          const delay = moment(new Date())
+            .startOf('day')
+            .add('seconds', 0)
+            .toDate()
+            .getTime();
+          const delayedTime: number = moment(new Date())
+            .startOf('day')
+            .add('seconds', this.timer.getSeconds() + 5)
+            .toDate()
+            .getTime();
+          this.lastChartLayout.xaxis.range = [delay, delayedTime];
+          Plotly.relayout('flowProfileChart', this.lastChartLayout);
+        }
+      } catch (ex) {}
+    });
   }
 
   public showSectionWhileBrew(): boolean {
@@ -1664,39 +1613,66 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public setActualSmartInformation() {
-    try {
-      const weightEl = this.smartScaleWeightEl.nativeElement;
-      const flowEl = this.smartScaleWeightPerSecondEl.nativeElement;
-      const avgFlowEl = this.smartScaleAvgFlowPerSecondEl.nativeElement;
+    this.ngZone.runOutsideAngular(() => {
+      if (this.maximizeFlowGraphIsShown === true) {
+        //We don't need to update the tiles, if the maxed graph is shown
+        return;
+      }
 
-      const actualScaleWeight = this.getActualScaleWeight();
-      const actualSmoothedWeightPerSecond =
-        this.getActualSmoothedWeightPerSecond();
-      const avgFlow = this.uiHelper.toFixedIfNecessary(this.getAvgFlow(), 2);
-      weightEl.textContent = actualScaleWeight + ' g';
-      flowEl.textContent = actualSmoothedWeightPerSecond + ' g/s';
-      avgFlowEl.textContent = 'Ø ' + avgFlow + ' g/s';
+      try {
+        const weightEl = this.smartScaleWeightEl.nativeElement;
+        const flowEl = this.smartScaleWeightPerSecondEl.nativeElement;
+        const avgFlowEl = this.smartScaleAvgFlowPerSecondEl.nativeElement;
 
-      this.brewFlowGraphSubject.next({
-        scaleWeight: actualScaleWeight,
-        smoothedWeight: actualSmoothedWeightPerSecond,
-        avgFlow: avgFlow,
-      });
-    } catch (ex) {}
+        const actualScaleWeight = this.getActualScaleWeight();
+        const actualSmoothedWeightPerSecond =
+          this.getActualSmoothedWeightPerSecond();
+        const avgFlow = this.uiHelper.toFixedIfNecessary(this.getAvgFlow(), 2);
+        weightEl.textContent = actualScaleWeight + ' g';
+        flowEl.textContent = actualSmoothedWeightPerSecond + ' g/s';
+        avgFlowEl.textContent = 'Ø ' + avgFlow + ' g/s';
+
+        this.brewFlowGraphSubject.next({
+          scaleWeight: actualScaleWeight,
+          smoothedWeight: actualSmoothedWeightPerSecond,
+          avgFlow: avgFlow,
+        });
+      } catch (ex) {}
+    });
   }
   public setActualPressureInformation(_pressure) {
-    try {
-      const pressureEl = this.pressureEl.nativeElement;
+    this.ngZone.runOutsideAngular(() => {
+      if (this.maximizeFlowGraphIsShown === true) {
+        //We don't need to update the tiles, if the maxed graph is shown
+        return;
+      }
 
-      pressureEl.textContent = _pressure;
-    } catch (ex) {}
+      try {
+        const pressureEl = this.pressureEl.nativeElement;
+
+        pressureEl.textContent = _pressure;
+        this.brewPressureGraphSubject.next({
+          pressure: _pressure,
+        });
+      } catch (ex) {}
+    });
   }
   public setActualTemperatureInformation(_temperature) {
-    try {
-      const temperatureEl = this.temperatureEl.nativeElement;
+    this.ngZone.runOutsideAngular(() => {
+      if (this.maximizeFlowGraphIsShown === true) {
+        //We don't need to update the tiles, if the maxed graph is shown
+        return;
+      }
 
-      temperatureEl.textContent = _temperature;
-    } catch (ex) {}
+      try {
+        const temperatureEl = this.temperatureEl.nativeElement;
+
+        temperatureEl.textContent = _temperature;
+        this.brewTemperatureGraphSubject.next({
+          temperature: _temperature,
+        });
+      } catch (ex) {}
+    });
   }
   public getActualScaleWeight() {
     try {
@@ -2277,6 +2253,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           width: 2,
         },
         visible: this.graphSettings.weight,
+        hoverinfo: 'skip',
+        showlegend: false,
       };
       this.flowPerSecondTrace = {
         x: [],
@@ -2291,6 +2269,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           width: 2,
         },
         visible: this.graphSettings.calc_flow,
+        hoverinfo: 'skip',
+        showlegend: false,
       };
 
       this.realtimeFlowTrace = {
@@ -2306,6 +2286,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           width: 2,
         },
         visible: this.graphSettings.realtime_flow,
+        hoverinfo: 'skip',
+        showlegend: false,
       };
 
       this.pressureTrace = {
@@ -2321,6 +2303,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           width: 2,
         },
         visible: this.graphSettings.pressure,
+        hoverinfo: 'skip',
+        showlegend: false,
       };
 
       this.temperatureTrace = {
@@ -2336,6 +2320,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           width: 2,
         },
         visible: this.graphSettings.temperature,
+        hoverinfo: 'skip',
+        showlegend: false,
       };
 
       this.weightTraceNew = {
@@ -2478,18 +2464,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
     const tickFormat = '%M:%S';
 
-    /*  yaxis3: {
-        title: '',
-        titlefont: {color: '#09485D'},
-        tickfont: {color: '#09485D'},
-        anchor: 'x',
-        overlaying: 'y',
-        side: 'right',
-        position: 1,
-        fixedrange: true
-
-      },*/
-
     const suggestedMinFlow: number = 0;
     let suggestedMaxFlow: number = 20;
 
@@ -2527,6 +2501,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       },
       showlegend: false,
       dragmode: false,
+      hovermode: false,
+      clickmode: 'none',
+      extendtreemapcolors: false,
+      extendiciclecolors: false,
       xaxis: {
         tickformat: tickFormat,
         visible: true,
@@ -2608,6 +2586,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   private getChartConfig() {
     const config = {
+      responsive: false,
+      scrollZoom: false,
       displayModeBar: false, // this is the line that hides the bar.
     };
     return config;
@@ -2732,9 +2712,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (!isSmartScaleConnected) {
       this.flowSecondTick++;
     }
-    this.brewPressureGraphSubject.next({
-      pressure: pressureObj.actual,
-    });
+
     this.setActualPressureInformation(pressureObj.actual);
   }
 
@@ -2787,9 +2765,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (!isSmartScaleConnected) {
       this.flowSecondTick++;
     }
-    this.brewTemperatureGraphSubject.next({
-      temperature: temperatureObj.actual,
-    });
+
     this.setActualTemperatureInformation(temperatureObj.actual);
   }
 
@@ -2828,7 +2804,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       flowTime: this.flowTime,
       flowTimeSecond: this.flowTime + '.' + this.flowSecondTick,
       flowTimestamp: this.uiHelper.getActualTimeWithMilliseconds(),
+      dateUnixTime: undefined,
     };
+    flowObj.dateUnixTime = new Date(flowObj.unixTime);
 
     if (this.flowTime !== this.getTime()) {
       // Old solution: We wait for 10 entries,
@@ -2993,7 +2971,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             weightToAdd = lastFoundRightValue;
           }
 
-          this.weightTrace.x.push(new Date(item.unixTime));
+          this.weightTrace.x.push(item.dateUnixTime);
           this.weightTrace.y.push(weightToAdd);
 
           this.pushFlowProfile(
@@ -3007,15 +2985,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         }
       }
 
-      const timestamp = this.uiHelper.getActualTimeWithMilliseconds();
-
       for (const item of this.flowProfileArrObjs) {
         const waterFlow: IBrewWaterFlow = {} as IBrewWaterFlow;
 
         waterFlow.brew_time = this.flowTime.toString();
-        waterFlow.timestamp = timestamp;
+        waterFlow.timestamp = flowObj.flowTimestamp;
         waterFlow.value = actualFlowValue;
-        this.flowPerSecondTrace.x.push(new Date(item.unixTime));
+        this.flowPerSecondTrace.x.push(item.dateUnixTime);
         this.flowPerSecondTrace.y.push(actualFlowValue);
         this.flow_profile_raw.waterFlow.push(waterFlow);
       }
@@ -3037,17 +3013,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.flowProfileArrCalculated.push(weight - oldWeight);
 
     /* Realtime flow start**/
-    let lastRealtimeFlow = null;
-    if (this.flow_profile_raw.realtimeFlow.length > 0) {
-      lastRealtimeFlow =
-        this.flow_profile_raw.realtimeFlow[
-          this.flow_profile_raw.realtimeFlow.length - 1
-        ];
-    }
-
     let oldRealtimeSmoothedValue = 0;
-    if (lastRealtimeFlow != null) {
-      oldRealtimeSmoothedValue = lastRealtimeFlow.smoothed_weight;
+    const realtimeFlowLength = this.flow_profile_raw.realtimeFlow.length;
+    if (realtimeFlowLength > 0) {
+      oldRealtimeSmoothedValue =
+        this.flow_profile_raw.realtimeFlow[realtimeFlowLength - 1]
+          .smoothed_weight;
     }
     const newSmoothedWeight = oldRealtimeSmoothedValue * 0.9 + weight * 0.1;
 
@@ -3055,12 +3026,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       {} as IBrewRealtimeWaterFlow;
 
     realtimeWaterFlow.brew_time = flowObj.flowTimeSecond;
-    realtimeWaterFlow.timestamp = this.uiHelper.getActualTimeWithMilliseconds();
+    realtimeWaterFlow.timestamp = flowObj.flowTimestamp;
     realtimeWaterFlow.smoothed_weight = newSmoothedWeight;
     realtimeWaterFlow.flow_value =
       (newSmoothedWeight - oldRealtimeSmoothedValue) * 10;
 
-    this.realtimeFlowTrace.x.push(new Date(flowObj.unixTime));
+    this.realtimeFlowTrace.x.push(flowObj.dateUnixTime);
     this.realtimeFlowTrace.y.push(realtimeWaterFlow.flow_value);
 
     this.flow_profile_raw.realtimeFlow.push(realtimeWaterFlow);
@@ -3096,7 +3067,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.settings.bluetooth_ignore_anomaly_values === false &&
       this.settings.bluetooth_ignore_negative_values === false
     ) {
-      this.weightTrace.x.push(new Date(flowObj.unixTime));
+      this.weightTrace.x.push(flowObj.dateUnixTime);
       this.weightTrace.y.push(flowObj.weight);
 
       this.pushFlowProfile(
@@ -3122,7 +3093,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.checkChanges();
     }
 
-    this.flowSecondTick++;
+    this.flowSecondTick = this.flowSecondTick + 1;
   }
 
   private hasEspressoShotEnded(): boolean {

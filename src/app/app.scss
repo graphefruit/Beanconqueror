@@ -879,3 +879,7 @@ ion-segment.tabs {
 
   }
 }
+
+.js-plotly-plot .plotly .main-svg {
+  shape-rendering:  optimizeSpeed;
+}
