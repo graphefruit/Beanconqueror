@@ -105,6 +105,7 @@ Different features are supported by this app, a brief overview you'll find here.
 - [Mike](https://github.com/mike1808) - For supporting Acaia Scales & DIY Pressure Sensor
 - [Myles](https://github.com/mylesagray) - For supporting Thermo Bluetooth Devices
 - [Herman](https://github.com/hermanmak) - For supporting Felicita Arc
+- [Yannick](https://github.com/randomcoffeesnob) - For supporting DiFluid Microbalance & Smart Chef Scale
 
 ## Getting the App
 
@@ -143,6 +144,22 @@ I welcome pull requests, but you will be required to sign the Beanconqueror CLA 
 ![Graphefruit github stats](https://github-readme-stats.vercel.app/api?username=graphefruit&theme=dark&repo=Beanconqueror)
 
 ![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=graphefruit&theme=dark)
+
+## Third Party Apps
+
+Beanconqueror Universe is growing outside :)
+Therefore some users did third party apps, where I don't have any stakes in it.
+Important: Beanconqueror doesn't take any warranty here.
+
+Add beans to share directly from a webform:
+https://beanstats.vercel.app/beanconqueror/share/create
+(Uses the minify-logic of the add.beanl.ink aswell)
+
+Minify your shared bean-link:
+https://add.beanl.ink/
+
+Get some more statistics:
+https://beanstats.vercel.app/
 
 ## Questions
 
