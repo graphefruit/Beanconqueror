@@ -753,30 +753,34 @@ export class SettingsPage implements OnInit {
               path = 'file://' + path;
             }
 
-            this.uiFileHelper.getZIPFileByPathAndFile(path, file).then(
-              async (_arrayBuffer) => {
-                const parsedJSON =
-                  await this.uiExportImportHelper.getJSONFromZIPArrayBufferContent(
-                    _arrayBuffer
-                  );
-                this.__importJSON(parsedJSON, path);
-              },
-              () => {
-                // Backup, maybe it was a .JSON?
-                this.__readJSONFile(path, file)
-                  .then(() => {
-                    // nothing todo
-                  })
-                  .catch((_err) => {
-                    this.uiAlert.showMessage(
-                      this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
-                        ' (' +
-                        JSON.stringify(_err) +
-                        ')'
+            if (uri.endsWith('.zip')) {
+              this.uiFileHelper.getZIPFileByPathAndFile(path, file).then(
+                async (_arrayBuffer) => {
+                  const parsedJSON =
+                    await this.uiExportImportHelper.getJSONFromZIPArrayBufferContent(
+                      _arrayBuffer
                     );
-                  });
-              }
-            );
+                  this.__importJSON(parsedJSON, path);
+                },
+                () => {
+                  // Backup, maybe it was a .JSON?
+                }
+              );
+            } else {
+              console.log('read json file ios???');
+              this.__readJSONFile(path, file)
+                .then(() => {
+                  // nothing todo
+                })
+                .catch((_err) => {
+                  this.uiAlert.showMessage(
+                    this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
+                      ' (' +
+                      JSON.stringify(_err) +
+                      ')'
+                  );
+                });
+            }
           } else {
             this.uiAlert.showMessage(
               this.translate.instant('INVALID_FILE_FORMAT')
@@ -1368,6 +1372,7 @@ export class SettingsPage implements OnInit {
     const parsedContent = _parsedJSON;
     this.uiLog.log('Parsed import data successfully');
     const isIOS: boolean = this.platform.is('ios');
+    console.log(parsedContent);
     // Set empty arrays if not existing.
     if (!parsedContent[this.uiPreparationStorage.getDBPath()]) {
       parsedContent[this.uiPreparationStorage.getDBPath()] = [];
