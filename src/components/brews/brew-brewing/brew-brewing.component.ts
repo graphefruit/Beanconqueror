@@ -1614,7 +1614,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public setActualSmartInformation() {
     this.ngZone.runOutsideAngular(() => {
+      const actualScaleWeight = this.getActualScaleWeight();
+      const actualSmoothedWeightPerSecond =
+        this.getActualSmoothedWeightPerSecond();
+      const avgFlow = this.uiHelper.toFixedIfNecessary(this.getAvgFlow(), 2);
       if (this.maximizeFlowGraphIsShown === true) {
+        this.brewFlowGraphSubject.next({
+          scaleWeight: actualScaleWeight,
+          smoothedWeight: actualSmoothedWeightPerSecond,
+          avgFlow: avgFlow,
+        });
         //We don't need to update the tiles, if the maxed graph is shown
         return;
       }
@@ -1624,25 +1633,18 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         const flowEl = this.smartScaleWeightPerSecondEl.nativeElement;
         const avgFlowEl = this.smartScaleAvgFlowPerSecondEl.nativeElement;
 
-        const actualScaleWeight = this.getActualScaleWeight();
-        const actualSmoothedWeightPerSecond =
-          this.getActualSmoothedWeightPerSecond();
-        const avgFlow = this.uiHelper.toFixedIfNecessary(this.getAvgFlow(), 2);
         weightEl.textContent = actualScaleWeight + ' g';
         flowEl.textContent = actualSmoothedWeightPerSecond + ' g/s';
         avgFlowEl.textContent = 'Ø ' + avgFlow + ' g/s';
-
-        this.brewFlowGraphSubject.next({
-          scaleWeight: actualScaleWeight,
-          smoothedWeight: actualSmoothedWeightPerSecond,
-          avgFlow: avgFlow,
-        });
       } catch (ex) {}
     });
   }
   public setActualPressureInformation(_pressure) {
     this.ngZone.runOutsideAngular(() => {
       if (this.maximizeFlowGraphIsShown === true) {
+        this.brewPressureGraphSubject.next({
+          pressure: _pressure,
+        });
         //We don't need to update the tiles, if the maxed graph is shown
         return;
       }
@@ -1651,9 +1653,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         const pressureEl = this.pressureEl.nativeElement;
 
         pressureEl.textContent = _pressure;
-        this.brewPressureGraphSubject.next({
-          pressure: _pressure,
-        });
       } catch (ex) {}
     });
   }
@@ -1661,6 +1660,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.ngZone.runOutsideAngular(() => {
       if (this.maximizeFlowGraphIsShown === true) {
         //We don't need to update the tiles, if the maxed graph is shown
+        this.brewTemperatureGraphSubject.next({
+          temperature: _temperature,
+        });
         return;
       }
 
@@ -1668,9 +1670,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         const temperatureEl = this.temperatureEl.nativeElement;
 
         temperatureEl.textContent = _temperature;
-        this.brewTemperatureGraphSubject.next({
-          temperature: _temperature,
-        });
       } catch (ex) {}
     });
   }
