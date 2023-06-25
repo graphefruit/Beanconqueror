@@ -210,7 +210,9 @@ export class UIExportImportHelper {
                 reader.result as any
               );
               resolve(parsedJSON);
-            } catch (ex) {}
+            } catch (ex) {
+              reject();
+            }
           };
           reader.onerror = (event: Event) => {
             reject();

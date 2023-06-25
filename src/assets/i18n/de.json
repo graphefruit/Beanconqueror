@@ -876,6 +876,34 @@
         "Startcrash behoben",
         "Neuladen der App wurde gefixt, wenn eine Bluetooth Waage nicht verbunden werden konnte"
       ]
+    },
+    "6.5.0": {
+      "TITLE": "Version 6.5.0: Das ist neu",
+      "DESCRIPTION": [
+        "<b>Bluetooth Waage</b>",
+        "Unterstützung von DiFluid Microbalance sowie Smart Chef Scale - Vielen Dank an Yannick!",
+        "Nur für Espresso-Zubereitungsmethoden: Aktiviere in den Einstellungen, dass die Brühung automatisch gestoppt wird, sobald keine Flussveränderung mehr erkannt wird",
+        "Sicherheitshinweis eingebaut, sobald Beanconqueror von der Waage keine Gewichtswerte übermittelt bekommt",
+        "",
+        "<b>Bohnen</b>",
+        "Teile deine Bohne nun ebenfalls als Bild oder URL",
+        "",
+        "<b>Xenia</b>",
+        "Die Druckdaten sowie die Temperaturdaten während der Brühung werden nun ebenfalls aus der Xenia ausgelesen und dargestellt sowie gespeichert",
+        "",
+        "<b>Brühung</b>",
+        "Sobald eine Brühung gestoppt wird, wird der Brühgraph nun vollständig dargestellt",
+        "",
+        "<b>Export/Import</b>",
+        "Anstatt von .JSON-Dateien werden nun .ZIP-Dateien für das Importieren sowie Exportieren verwendet.",
+        "Bitte gehe daher, einmal in die Einstellungen und mache dieses mal ein Sicherheitsbackup, zusätzlich zu den automatisch geschriebenen",
+        "",
+        "<b>Verbesserungen</b>",
+        "Kleine Verbesserungen",
+        "",
+        "<b>Sonstiges</b>",
+        "Kleinere Fehlerbehebungen"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Parameter individualisieren",
@@ -1250,7 +1278,7 @@
       "LOCATION": "Um Bluetooth-Waagen zu finden, muss der Standort freigegeben werden",
       "BLUETOOTH": "Um Bluetooth-Waagen zu finden, muss Bluetooth freigegeben werden"
     },
-    "INFORMATION_DESCRIPTION": "Unterstütze Waagen sind: Decent Scale sowie Acaia Scales, Felicita Scales, Hiroia Jimmy, Skale 2 und Eureka Precisa. Achtung: Falls die Eureka Precisa einen negativen Wert bekommt, stoppt der Timer automatisch"
+    "INFORMATION_DESCRIPTION": "Unterstütze Waagen sind: Decent Scale sowie Acaia Scales, Felicita Scales, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale und Eureka Precisa. Achtung: Falls die Eureka Precisa einen negativen Wert bekommt, stoppt der Timer automatisch"
   },
   "QR": {
     "WRONG_QRCODE_DESCRIPTION": "Falscher QR-Code oder falscher Inhalt",
@@ -1476,5 +1504,14 @@
   "PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO": "Druckgerät ist nur Verwendbar bei Zubereitungsmethoden der Zubereitungsart 'Espresso'",
   "PRESSURE_MESSAGE_AFTER_CONNECTION": "Bekanntes Verhalten (in Analyse): Bitte beachte, dass der Verbindungsaufbau nach dem Neustart deines Telefons oder nach längerer Zeit, ohne, dass die App verwendet worden ist, auch länger dauern kann (30 Sekunden bis 1 Minute) danach sollte das Problem nicht mehr auftreten. ",
   "SMART_SCALE_ACAIA_HEARTBEAT_TIMER": "Heartbeat timer - Nur Acaia Waagen!",
-  "SMART_SCALE_ACAIA_HEARTBEAT_TIMER_TOOLTIP": "Wird nur für Acaia Waagen verwendet!!! Alte Acaia Wagen benötigen ein Heartbeat timer, falls du Probleme mit der Waage hast, versuch die Zeit zu minimieren "
+  "SMART_SCALE_ACAIA_HEARTBEAT_TIMER_TOOLTIP": "Wird nur für Acaia Waagen verwendet!!! Alte Acaia Wagen benötigen ein Heartbeat timer, falls du Probleme mit der Waage hast, versuch die Zeit zu minimieren",
+  "SHARE_BEAN_URL": "Teilen als URL",
+  "SHARE_BEAN_IMAGE": "Teilen als Bild",
+  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE": "Espresso - Stoppe die Brühung automatisch",
+  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION": "Diese Einstellung wird nur für Zubereitungsmethoden mit 'Espresso' verwendet. Die Brühung wird automatisch gestoppt, sobald keine Flussveränderung mehr erkannt wird.",
+  "BREW_DATA_BREW_QUANTITY_TOOLTIP_BREW_RATIO": "Die Brührate wird für alle Zubereitungsmethoden außer 'Espresso' hiermit kalkuliert",
+  "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "Die Brührate wird hiermit für alle Zubereitungsmethoden mit 'Espresso' kalkuliert",
+  "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "Es scheint so, als ob die Waage nicht richtig mit Beanconqueror verbunden werden konnte, dies passiert in den meisten Fällen nur mit iOS-Geräten und Acaia Waagen, bitte verbinde die Waage erneut und achte darauf, dass das Gewicht in der Kachel aktualisiert wird.",
+  "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": "Keine Gewichtswerte?",
+  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "Ab welcher minimum Flussrate, soll die Brühung gestoppt werden? Die Brühung wird erst gestoppt wenn mindestens 5 Sekunden sowie 5 Gram oder die eingegebene Bohnen-Mahlmenge erreicht wurde, sodass mindestens eine 1:1 Brührate erreicht wurde. Ab dann, wird die hinterlegte Flussrate überprüft sowie verwendet"
 }

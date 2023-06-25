@@ -33,7 +33,11 @@
     </ion-item>
     <ion-item (click)="choose(getStaticActions().SHARE)" button tappable>
       <ion-icon name="share-social-outline" slot="start"></ion-icon>
-      <span>{{"SHARE" | translate}}</span>
+      <span>{{"SHARE_BEAN_URL" | translate}}</span>
+    </ion-item>
+    <ion-item (click)="choose(getStaticActions().SHARE_IMAGE)" button tappable>
+      <ion-icon name="beanconqueror-share-image" slot="start"></ion-icon>
+      <span>{{"SHARE_BEAN_IMAGE" | translate}}</span>
     </ion-item>
     <ion-item (click)="choose(getStaticActions().BEANS_CONSUMED)" *ngIf="data.finished === false" button tappable>
       <ion-icon name="beanconqueror-finished" slot="start"></ion-icon>

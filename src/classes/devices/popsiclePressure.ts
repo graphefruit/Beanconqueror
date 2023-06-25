@@ -40,8 +40,12 @@ export class PopsiclePressure extends PressureDevice {
         PopsiclePressure.ZERO_SERVICE_UUID,
         PopsiclePressure.ZERO_CHAR_UUID,
         data.buffer,
-        resolve,
-        reject
+        () => {
+          resolve();
+        },
+        () => {
+          reject();
+        }
       );
     });
   }

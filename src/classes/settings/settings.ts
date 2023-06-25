@@ -106,6 +106,8 @@ export class Settings implements ISettings {
   public bluetooth_ignore_anomaly_values: boolean;
   public bluetooth_command_delay: number;
   public acaia_heartbeat_command_delay: number;
+  public bluetooth_scale_espresso_stop_on_no_weight_change: boolean;
+  public bluetooth_scale_espresso_stop_on_no_weight_change_min_flow: number;
 
   public pressure_id: string;
   public pressure_type: PressureType;
@@ -281,6 +283,8 @@ export class Settings implements ISettings {
     this.bluetooth_ignore_anomaly_values = false;
     this.bluetooth_command_delay = 50;
     this.acaia_heartbeat_command_delay = 1000;
+    this.bluetooth_scale_espresso_stop_on_no_weight_change = false;
+    this.bluetooth_scale_espresso_stop_on_no_weight_change_min_flow = 0.1;
 
     this.scale_log = false;
 

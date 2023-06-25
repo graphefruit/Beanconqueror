@@ -41,8 +41,12 @@ export class PrsPressure extends PressureDevice {
         PrsPressure.ZERO_SERVICE_UUID,
         PrsPressure.ZERO_CHAR_UUID,
         data.buffer,
-        resolve,
-        reject
+        () => {
+          resolve();
+        },
+        () => {
+          reject();
+        }
       );
     });
   }

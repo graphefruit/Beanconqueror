@@ -1,5 +1,5 @@
 <ion-card class="long-card" tappable (click)="showBean()" (long-press)="longPressEditBean($event)">
-  <ion-card-content class="no-ion-col-vertical-padding ion-padding-top">
+  <ion-card-content #card  class="no-ion-col-vertical-padding ion-padding-top">
     <ion-grid class="no-padding-bottom">
       <ion-row>
         <ion-col [size]="((bean?.roast_range!== 0 && uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.roast_range)) || (bean?.rating !== 0 &&  uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.rating)))?8:11" style="margin: auto 0;">

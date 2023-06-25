@@ -876,6 +876,34 @@
         "Fixing crash on startup",
         "Fixing recycle when a bluetooth scale could not connect"
       ]
+    },
+    "6.5.0": {
+      "TITLE": "Versiyon 6.5.0: Yenilikler",
+      "DESCRIPTION": [
+        "<b>Bluetooth tartılar</b>",
+        "DiFluid Microbalance ve Smart Chef Scale'in desteği - Yannick'e teşekkürler!",
+        "Sadece Espresso hazırlamaları için: Ayarlarda, akış hızı algılanmadığında otomatik olarak demleme durdurulacak şekilde etkinleştirebilirsiniz",
+        "Beanconqueror'a bir tartıdan herhangi bir ağırlık güncellemesi alınmadığında güvenlik uyarısı eklendi",
+        "",
+        "<b>Çekirdek</b>",
+        "Çekirdekleri artık resim olarak ve URL olarak paylaşabilirsiniz",
+        "",
+        "<b>Xenia</b>",
+        "Basınç ve sıcaklık verileri artık kaydediliyor",
+        "",
+        "<b>Demlemeler</b>",
+        "Bir demleme durdurulduğunda, demleme grafiği tam olarak görüntülenir",
+        "",
+        "<b>Dışa Aktar/İçe Aktar</b>",
+        "Artık .JSON dosyaları yerine .ZIP dosyaları kullanıyoruz, bu dosyalar içe ve dışa aktarma için kullanılıyor",
+        "Lütfen, güvenlik yedeklemesi ile birlikte zaten mevcut olan otomatik yedekleme mantığıyla bir kez ayarlara giderek bu sefer güvenlik yedeklemesi yapmayı unutmayın",
+        "",
+        "<b>Geliştirmeler</b>",
+        "Küçük geliştirmeler",
+        "",
+        "<b>Diğer</b>",
+        "Küçük hata düzeltmeleri"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Parametreyi özelleştir",
@@ -1250,7 +1278,7 @@
       "LOCATION": "Bluetooth ile terazisiyi bulmak için uygulamanın konuma erişmesi gerekiyor.",
       "BLUETOOTH": "Bluetooth ile terazisiyi bulmak için uygulamanın bluetooth erişimi gerekiyor."
     },
-    "INFORMATION_DESCRIPTION": "Desteklenen tartılar: Decent Tartı, Acaia Tartı, Felicita Tartı, Hiroia Jimmy, Skale 2 and Eureka Precisa. Care: If the Eureka Precisa recieves a negative value, the timer stops"
+    "INFORMATION_DESCRIPTION": "Desteklenen tartılar: Decent Tartı, Acaia Tartı, Felicita Tartı, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale and Eureka Precisa. Care: If the Eureka Precisa recieves a negative value, the timer stops"
   },
   "QR":{
     "WRONG_QRCODE_DESCRIPTION": "Yanlış qr kodu veya yanlış içerik",
@@ -1470,11 +1498,20 @@
     "THRESHOLD_ACTIVE": "Önceden tanımlanmış sıcaklıkla zamanlayıcıyı başlat",
     "THRESHOLD_TEMP": "Eşik sıcaklık"
   },
-  "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "Sıcaklık cihazını yeniden bağlayın",
-  "PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO": "Basınç cihazı sadece 'espresso' hazırlama stilinde kullanılabilir",
+  "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "Sıcaklık ölçme cihazını yeniden bağlayın",
+  "PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO": "Basınç ölçme cihazı sadece 'espresso' hazırlama stilinde kullanılabilir",
   "PRESSURE_MESSAGE_AFTER_CONNECTION": "Bilinen davranış (analizde): Lütfen dikkat edin, telefonunuzu yeniden başlattıktan veya uygulamayı uzun süre kullanmadıysanız, bağlantı daha uzun sürebilir (30 saniye ila 1 dakika), sonra sorun çözülmelidir.",
   "BREW_TEMPERATURE_REALTIME": "Sıcaklık",
   "PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE": "Termometre",
-  "SMART_SCALE_ACAIA_HEARTBEAT_TIMER": "Heartbeat timer - Just for Acaia Scales",
-  "SMART_SCALE_ACAIA_HEARTBEAT_TIMER_TOOLTIP": "Just used for Acaia scales!!! - Older Acaia scales need an heartbeat, if you encounter issues, try to minimize the heartbeat to a faster frequence"
+  "SMART_SCALE_ACAIA_HEARTBEAT_TIMER": "Kalp atışı zamanlayıcısı - Sadece Acaia Tartıları içindir (Acaia tartının çalıştığına emin olmak ve bağlantıyı kesmemek için tartıya sinyal gönderir",
+  "SMART_SCALE_ACAIA_HEARTBEAT_TIMER_TOOLTIP": "Sadece Acaia tartıları için kullanılır!!! - Eski Acaia tartıları daha hızlı bir frekansta bir sinyale ihtiyaç duyar, sorunlarla karşılaşırsanız, sinyal miktarını en aza indirmeyi deneyin",
+  "SHARE_BEAN_URL": "URL olarak paylaş",
+  "SHARE_BEAN_IMAGE": "Resim olarak paylaş",
+  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE": "Espresso - Demlemeyi otomatik olarak durdur",
+  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION": "Bu ayar yalnızca 'espresso' türündeki hazırlama yöntemleri için kullanılır. Akış değişikliği algılanmadığında demleme otomatik olarak durdurulur.",
+  "BREW_DATA_BREW_QUANTITY_TOOLTIP_BREW_RATIO": "Bu değerle tüm hazırlama yöntemleri için demleme oranı hesaplanabilir, ancak 'espresso' türü için değildir",
+  "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "Bu değerle sadece 'espresso' türü hazırlama yöntemleri için demleme oranı hesaplanabilir",
+  "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "Bluetooth tartının Beanconqueror'a düzgün bir şekilde bağlanmadığı görünüyor. Bu durum genellikle iOS cihazlarındaki kombinasyonlu Acaia tartılarında olur, tartıyı tekrar bağlayın ve ağırlık verisinin güncellendiğine dikkat edin",
+  "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": "Ağırlık değerleri gelmiyor mu?",
+  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "Demleme ne kadar düşük akış hızında durdurulsun? Demleme en az 5 saniye ve 5 gram veya öğütme ağırlığına ulaşıldığında durdurulur, böylece en az 1:1 demleme oranına ulaşılır. Bundan sonra, belirtilen minimum akış hızı kontrol edilecektir"
 }
