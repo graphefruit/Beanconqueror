@@ -250,9 +250,18 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             this.data.brew_time_milliseconds
           );
         }
+
+        // If the preparation method is customized, and we're in the edit view, we need to check if custom parameters are used
+        // #570
+        let checkData;
+        if (this.getPreparation().use_custom_parameters === true) {
+          checkData = this.getPreparation();
+        } else {
+          checkData = this.settings;
+        }
         if (
           this.brewTemperatureTime &&
-          this.settings.manage_parameters.brew_temperature_time
+          checkData.manage_parameters.brew_temperature_time
         ) {
           this.brewTemperatureTime.setTime(
             this.data.brew_temperature_time,
@@ -261,7 +270,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         }
         if (
           this.brewCoffeeBloomingTime &&
-          this.settings.manage_parameters.coffee_blooming_time
+          checkData.manage_parameters.coffee_blooming_time
         ) {
           this.brewCoffeeBloomingTime.setTime(
             this.data.coffee_blooming_time,
@@ -270,7 +279,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         }
         if (
           this.brewFirstDripTime &&
-          this.settings.manage_parameters.coffee_first_drip_time
+          checkData.manage_parameters.coffee_first_drip_time
         ) {
           this.brewFirstDripTime.setTime(
             this.data.coffee_first_drip_time,
