@@ -298,3 +298,7 @@ String authorityAndPath = encodedPath.substring(encodedPath.indexOf(this.name) +
 Compile deson't work on android?
 Try:
 `cordova build android -- --jvmargs='-Xmx2048M -Dkotlin.daemon.jvm.options\="-Xmx2048M" --add-exports=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED'`
+
+iOS:
+Always check
+That `    wkWebView.inspectable = YES;` is never be in the code, else it wont work on older iOS devices
