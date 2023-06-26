@@ -40,32 +40,6 @@ export class DashboardPage implements OnInit {
     private readonly uiMillStorage: UIMillStorage
   ) {}
 
-  public async importTestData() {
-    const prep: Preparation = new Preparation();
-    prep.name = 'Test 1';
-    await this.uiPreparationStorage.add(prep);
-
-    const mill: Mill = new Mill();
-    prep.name = 'Test 1';
-    await this.uiMillStorage.add(prep);
-    for (let i = 0; i < 1000; i++) {
-      const bean: Bean = new Bean();
-      bean.name = 'Test ' + i;
-      await this.uiBeanStorage.add(bean);
-    }
-    const uuidPrep = this.uiPreparationStorage.getAllEntries()[0].config.uuid;
-    const uuidBean = this.uiBeanStorage.getAllEntries()[0].config.uuid;
-    const uuidMilll = this.uiMillStorage.getAllEntries()[0].config.uuid;
-    for (let i = 0; i < 4000; i++) {
-      const brew: Brew = new Brew();
-      brew.method_of_preparation = uuidPrep;
-      brew.bean = uuidBean;
-      brew.mill = uuidMilll;
-      await this.uiBrewStorage.add(brew);
-    }
-    console.log('finished');
-  }
-
   public ngOnInit() {
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
       // If an brew is deleted, we need to reset our array for the next call.
