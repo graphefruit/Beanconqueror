@@ -1,5 +1,6 @@
 import {
   Component,
+  ElementRef,
   EventEmitter,
   Input,
   OnInit,
@@ -9,7 +10,7 @@ import {
 import { Bean } from '../../classes/bean/bean';
 import { Settings } from '../../classes/settings/settings';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { ModalController } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 import { BeanPopoverActionsComponent } from '../../app/beans/bean-popover-actions/bean-popover-actions.component';
 import { BEAN_ACTION } from '../../enums/beans/beanAction';
 import { Brew } from '../../classes/brew/brew';
@@ -31,6 +32,8 @@ import { BeanMapper } from '../../mapper/bean/beanMapper';
 import { ServerCommunicationService } from '../../services/serverCommunication/server-communication.service';
 import { UIHelper } from '../../services/uiHelper';
 import { TranslateService } from '@ngx-translate/core';
+import BREW_TRACKING from '../../data/tracking/brewTracking';
+import * as htmlToImage from 'html-to-image';
 
 @Component({
   selector: 'bean-information',
@@ -41,6 +44,8 @@ export class BeanInformationComponent implements OnInit {
   @Input() public bean: Bean;
   @Input() public showActions: boolean = true;
 
+  @ViewChild('card', { read: ElementRef })
+  public cardEl: ElementRef;
   @ViewChild('beanStars', { read: NgxStarsComponent, static: false })
   public beanStars: NgxStarsComponent;
   @ViewChild('beanRating', { read: NgxStarsComponent, static: false })
@@ -64,7 +69,8 @@ export class BeanInformationComponent implements OnInit {
     private readonly shareService: ShareService,
     private readonly serverCommunicationService: ServerCommunicationService,
     private readonly uiHelper: UIHelper,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly platform: Platform
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -199,6 +205,9 @@ export class BeanInformationComponent implements OnInit {
       case BEAN_ACTION.SHARE:
         await this.shareBean();
         break;
+      case BEAN_ACTION.SHARE_IMAGE:
+        await this.shareBeanImage();
+        break;
       case BEAN_ACTION.REFRESH_DATA_FROM_QR_CODE:
         await this.refreshDataFromQRCode();
         break;
@@ -270,6 +279,49 @@ export class BeanInformationComponent implements OnInit {
 
   public async shareBean() {
     await this.shareService.shareBean(this.bean);
+  }
+  public async shareBeanImage() {
+    this.uiAnalytics.trackEvent(
+      BEAN_TRACKING.TITLE,
+      BEAN_TRACKING.ACTIONS.SHARE_IMAGE
+    );
+    await this.uiAlert.showLoadingSpinner();
+    if (this.platform.is('ios')) {
+      htmlToImage
+        .toJpeg(this.cardEl.nativeElement)
+        .then((_dataURL) => {
+          // On iOS we need to do this a second time, because the rendering doesn't render everything (strange thing)
+          setTimeout(() => {
+            htmlToImage
+              .toJpeg(this.cardEl.nativeElement)
+              .then(async (_dataURLSecond) => {
+                await this.uiAlert.hideLoadingSpinner();
+                setTimeout(() => {
+                  this.shareService.shareImage(_dataURLSecond);
+                }, 50);
+              })
+              .catch(async (error) => {
+                await this.uiAlert.hideLoadingSpinner();
+              });
+          }, 500);
+        })
+        .catch(async (error) => {
+          await this.uiAlert.hideLoadingSpinner();
+        });
+    } else {
+      htmlToImage
+        .toJpeg(this.cardEl.nativeElement)
+        .then(async (_dataURL) => {
+          await this.uiAlert.hideLoadingSpinner();
+
+          setTimeout(() => {
+            this.shareService.shareImage(_dataURL);
+          }, 50);
+        })
+        .catch(async (error) => {
+          await this.uiAlert.hideLoadingSpinner();
+        });
+    }
   }
 
   public async showBrews() {

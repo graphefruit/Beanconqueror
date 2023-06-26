@@ -66,6 +66,7 @@ import { EventQueueService } from '../../services/queueService/queue-service.ser
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { Logger } from '../../classes/devices/common/logger';
 import { UIFileHelper } from '../../services/uiFileHelper';
+import { UIExportImportHelper } from '../../services/uiExportImportHelper';
 
 declare var cordova: any;
 declare var device: any;
@@ -89,6 +90,7 @@ export class SettingsPage implements OnInit {
   public currencies = {};
 
   public settings_segment: string = 'general';
+
   private __cleanupAttachmentData(
     _data: Array<
       IBean | IBrew | IMill | IPreparation | IGreenBean | IRoastingMachine
@@ -149,7 +151,8 @@ export class SettingsPage implements OnInit {
     private readonly uiToast: UIToast,
     private readonly currencyService: CurrencyService,
     private readonly eventQueue: EventQueueService,
-    private readonly uiFileHelper: UIFileHelper
+    private readonly uiFileHelper: UIFileHelper,
+    private readonly uiExportImportHelper: UIExportImportHelper
   ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -626,6 +629,16 @@ export class SettingsPage implements OnInit {
     await this.uiSettingsStorage.saveSettings(this.settings);
   }
 
+  public async fixWeightChangeMinFlowNumber() {
+    //We need to trigger this, because the slider sometimes procudes values like 0.60000001, and we need to fix this before saving
+    this.settings.bluetooth_scale_espresso_stop_on_no_weight_change_min_flow =
+      this.uiHelper.toFixedIfNecessary(
+        this.settings
+          .bluetooth_scale_espresso_stop_on_no_weight_change_min_flow,
+        2
+      );
+  }
+
   public async toggleLog() {
     if (
       this.settings.scale_log === true ||
@@ -703,16 +716,23 @@ export class SettingsPage implements OnInit {
                 'Download/Beanconqueror_export/';
             }
 
-            this.__readAndroidJSONFile(fileEntry, importPath).then(
-              () => {
-                // nothing todo
+            this.__readZipFile(fileEntry).then(
+              (_importData) => {
+                this.__importJSON(_importData, importPath);
               },
               (_err) => {
-                this.uiAlert.showMessage(
-                  this.translate.instant('ERROR_ON_FILE_READING') +
-                    ' (' +
-                    JSON.stringify(_err) +
-                    ')'
+                this.__readAndroidJSONFile(fileEntry, importPath).then(
+                  () => {
+                    // nothing todo
+                  },
+                  (_err2) => {
+                    this.uiAlert.showMessage(
+                      this.translate.instant('ERROR_ON_FILE_READING') +
+                        ' (' +
+                        JSON.stringify(_err2) +
+                        ')'
+                    );
+                  }
                 );
               }
             );
@@ -727,24 +747,40 @@ export class SettingsPage implements OnInit {
         });
       } else {
         this.iosFilePicker.pickFile().then((uri) => {
-          if (uri && uri.endsWith('.json')) {
+          if (uri && (uri.endsWith('.zip') || uri.endsWith('.json'))) {
             let path = uri.substring(0, uri.lastIndexOf('/'));
             const file = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
             if (path.indexOf('file://') !== 0) {
               path = 'file://' + path;
             }
-            this.__readJSONFile(path, file)
-              .then(() => {
-                // nothing todo
-              })
-              .catch((_err) => {
-                this.uiAlert.showMessage(
-                  this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
-                    ' (' +
-                    JSON.stringify(_err) +
-                    ')'
-                );
-              });
+
+            if (uri.endsWith('.zip')) {
+              this.uiFileHelper.getZIPFileByPathAndFile(path, file).then(
+                async (_arrayBuffer) => {
+                  const parsedJSON =
+                    await this.uiExportImportHelper.getJSONFromZIPArrayBufferContent(
+                      _arrayBuffer
+                    );
+                  this.__importJSON(parsedJSON, path);
+                },
+                () => {
+                  // Backup, maybe it was a .JSON?
+                }
+              );
+            } else {
+              this.__readJSONFile(path, file)
+                .then(() => {
+                  // nothing todo
+                })
+                .catch((_err) => {
+                  this.uiAlert.showMessage(
+                    this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
+                      ' (' +
+                      JSON.stringify(_err) +
+                      ')'
+                  );
+                });
+            }
           } else {
             this.uiAlert.showMessage(
               this.translate.instant('INVALID_FILE_FORMAT')
@@ -788,48 +824,74 @@ export class SettingsPage implements OnInit {
       SETTINGS_TRACKING.ACTIONS.EXPORT
     );
 
-    this.uiStorage.export().then(
-      (_data) => {
+    this.uiExportImportHelper.buildExportZIP().then(
+      async (_blob) => {
+        this.uiLog.log('New zip-export way');
         const isIOS = this.platform.is('ios');
-        this.uiHelper
-          .exportJSON('Beanconqueror.json', JSON.stringify(_data), isIOS)
-          .then(
-            async (_fileEntry: FileEntry) => {
-              if (this.platform.is('cordova')) {
-                if (this.platform.is('android')) {
-                  await this.exportAttachments();
-                  await this.exportFlowProfiles();
-                  await this.uiAlert.hideLoadingSpinner();
+        const file: FileEntry = await this.uiFileHelper.downloadFile(
+          'Beanconqueror.zip',
+          _blob,
+          isIOS
+        );
 
-                  const alert = await this.alertCtrl.create({
-                    header: this.translate.instant('DOWNLOADED'),
-                    subHeader: this.translate.instant(
-                      'FILE_DOWNLOADED_SUCCESSFULLY',
-                      { fileName: _fileEntry.name }
-                    ),
-                    buttons: ['OK'],
-                  });
-                  await alert.present();
-                } else {
-                  await this.uiAlert.hideLoadingSpinner();
-                  // File already downloaded
-                  // We don't support image export yet, because
-                }
-              } else {
-                await this.uiAlert.hideLoadingSpinner();
-                // File already downloaded
-                // We don't support image export yet, because
-              }
-            },
-            async () => {
-              await this.uiAlert.hideLoadingSpinner();
-            }
-          );
-      },
-      async () => {
+        if (this.platform.is('cordova')) {
+          if (this.platform.is('android')) {
+            await this.exportAttachments();
+            await this.exportFlowProfiles();
+            await this.uiAlert.hideLoadingSpinner();
+          }
+        }
         await this.uiAlert.hideLoadingSpinner();
+      },
+      () => {
+        // Error
+        // Do the old conventional way
+        this.uiStorage.export().then(
+          (_data) => {
+            this.uiLog.log('Old JSON-Export way');
+            const isIOS = this.platform.is('ios');
+            this.uiHelper
+              .exportJSON('Beanconqueror.json', JSON.stringify(_data), isIOS)
+              .then(
+                async (_fileEntry: FileEntry) => {
+                  if (this.platform.is('cordova')) {
+                    if (this.platform.is('android')) {
+                      await this.exportAttachments();
+                      await this.exportFlowProfiles();
+                      await this.uiAlert.hideLoadingSpinner();
+
+                      const alert = await this.alertCtrl.create({
+                        header: this.translate.instant('DOWNLOADED'),
+                        subHeader: this.translate.instant(
+                          'FILE_DOWNLOADED_SUCCESSFULLY',
+                          { fileName: _fileEntry.name }
+                        ),
+                        buttons: ['OK'],
+                      });
+                      await alert.present();
+                    } else {
+                      await this.uiAlert.hideLoadingSpinner();
+                      // File already downloaded
+                      // We don't support image export yet, because
+                    }
+                  } else {
+                    await this.uiAlert.hideLoadingSpinner();
+                    // File already downloaded
+                    // We don't support image export yet, because
+                  }
+                },
+                async () => {
+                  await this.uiAlert.hideLoadingSpinner();
+                }
+              );
+          },
+          async () => {
+            await this.uiAlert.hideLoadingSpinner();
+          }
+        );
       }
     );
+    return;
   }
 
   public excelExport(): void {
@@ -852,6 +914,7 @@ export class SettingsPage implements OnInit {
       }
     }
   }
+
   private async _exportFlowProfiles(_storedData: Array<Brew>) {
     for (const entry of _storedData) {
       if (entry.flow_profile && entry.flow_profile.length) {
@@ -859,6 +922,7 @@ export class SettingsPage implements OnInit {
       }
     }
   }
+
   private async _exportFlowProfileFile(_filePath) {
     let path: string;
     let fileName: string;
@@ -939,6 +1003,7 @@ export class SettingsPage implements OnInit {
       );
     } catch (ex) {}
   }
+
   private async _exportFile(_filePath) {
     let path: string;
     let fileName: string;
@@ -1051,6 +1116,7 @@ export class SettingsPage implements OnInit {
       }
     }
   }
+
   private async _importFileFlowProfile(_filePath: string, _importPath: string) {
     let path: string;
     let fileName: string;
@@ -1266,6 +1332,10 @@ export class SettingsPage implements OnInit {
     });
   }
 
+  private async __readZipFile(_fileEntry: FileEntry): Promise<any> {
+    return this.uiExportImportHelper.importZIPFile(_fileEntry);
+  }
+
   /* tslint:enable */
   private async __readAndroidJSONFile(
     _fileEntry: FileEntry,
@@ -1275,7 +1345,8 @@ export class SettingsPage implements OnInit {
       _fileEntry.file(async (file) => {
         const reader = new FileReader();
         reader.onloadend = (event: Event) => {
-          this.__importJSON(reader.result as string, _importPath);
+          const parsedJSON = JSON.parse(reader.result as string);
+          this.__importJSON(parsedJSON, _importPath);
         };
         reader.onerror = (event: Event) => {
           reject();
@@ -1292,7 +1363,8 @@ export class SettingsPage implements OnInit {
       this.file
         .readAsText(path, file)
         .then((content) => {
-          this.__importJSON(content, path);
+          const parsedContent = JSON.parse(content);
+          this.__importJSON(parsedContent, path);
         })
         .catch((err) => {
           this.uiLog.error(`Could not read json file ${JSON.stringify(err)}`);
@@ -1301,175 +1373,182 @@ export class SettingsPage implements OnInit {
     });
   }
 
-  private async __importJSON(_content: string, _importPath: string) {
-    const parsedContent = JSON.parse(_content);
-    this.uiLog.log('Parsed import data successfully');
-    const isIOS: boolean = this.platform.is('ios');
-    // Set empty arrays if not existing.
-    if (!parsedContent[this.uiPreparationStorage.getDBPath()]) {
-      parsedContent[this.uiPreparationStorage.getDBPath()] = [];
-    }
-    if (!parsedContent[this.uiBeanStorage.getDBPath()]) {
-      parsedContent[this.uiBeanStorage.getDBPath()] = [];
-    }
-    if (!parsedContent[this.uiBrewStorage.getDBPath()]) {
-      parsedContent[this.uiBrewStorage.getDBPath()] = [];
-    }
-    if (!parsedContent[this.uiSettingsStorage.getDBPath()]) {
-      parsedContent[this.uiSettingsStorage.getDBPath()] = [];
-    }
-    if (!parsedContent[this.uiRoastingMachineStorage.getDBPath()]) {
-      parsedContent[this.uiRoastingMachineStorage.getDBPath()] = [];
-    }
-    if (!parsedContent[this.uiGreenBeanStorage.getDBPath()]) {
-      parsedContent[this.uiGreenBeanStorage.getDBPath()] = [];
-    }
-    if (!parsedContent[this.uiWaterStorage.getDBPath()]) {
-      parsedContent[this.uiWaterStorage.getDBPath()] = [];
-    }
-    if (!parsedContent[this.uiVersionStorage.getDBPath()]) {
-      parsedContent[this.uiVersionStorage.getDBPath()] = [];
-    }
-    if (
-      parsedContent[this.uiPreparationStorage.getDBPath()] &&
-      parsedContent[this.uiBeanStorage.getDBPath()] &&
-      parsedContent[this.uiBrewStorage.getDBPath()] &&
-      parsedContent[this.uiSettingsStorage.getDBPath()]
-    ) {
-      this.uiLog.log('All data existing');
-      this.__cleanupImportSettingsData(
+  private async __importJSON(_parsedJSON: any, _importPath: string) {
+    try {
+      const parsedContent = _parsedJSON;
+      this.uiLog.log('Parsed import data successfully');
+      const isIOS: boolean = this.platform.is('ios');
+      // Set empty arrays if not existing.
+      if (!parsedContent[this.uiPreparationStorage.getDBPath()]) {
+        parsedContent[this.uiPreparationStorage.getDBPath()] = [];
+      }
+      if (!parsedContent[this.uiBeanStorage.getDBPath()]) {
+        parsedContent[this.uiBeanStorage.getDBPath()] = [];
+      }
+      if (!parsedContent[this.uiBrewStorage.getDBPath()]) {
+        parsedContent[this.uiBrewStorage.getDBPath()] = [];
+      }
+      if (!parsedContent[this.uiSettingsStorage.getDBPath()]) {
+        parsedContent[this.uiSettingsStorage.getDBPath()] = [];
+      }
+      if (!parsedContent[this.uiRoastingMachineStorage.getDBPath()]) {
+        parsedContent[this.uiRoastingMachineStorage.getDBPath()] = [];
+      }
+      if (!parsedContent[this.uiGreenBeanStorage.getDBPath()]) {
+        parsedContent[this.uiGreenBeanStorage.getDBPath()] = [];
+      }
+      if (!parsedContent[this.uiWaterStorage.getDBPath()]) {
+        parsedContent[this.uiWaterStorage.getDBPath()] = [];
+      }
+      if (!parsedContent[this.uiVersionStorage.getDBPath()]) {
+        parsedContent[this.uiVersionStorage.getDBPath()] = [];
+      }
+      if (
+        parsedContent[this.uiPreparationStorage.getDBPath()] &&
+        parsedContent[this.uiBeanStorage.getDBPath()] &&
+        parsedContent[this.uiBrewStorage.getDBPath()] &&
         parsedContent[this.uiSettingsStorage.getDBPath()]
-      );
+      ) {
+        this.uiLog.log('All data existing');
+        this.__cleanupImportSettingsData(
+          parsedContent[this.uiSettingsStorage.getDBPath()]
+        );
 
-      // When exporting the value is a number, when importing it needs to be  a string.
-      parsedContent['SETTINGS'][0]['brew_view'] =
-        parsedContent['SETTINGS'][0]['brew_view'] + '';
-      this.uiLog.log('Cleaned all data');
-      try {
-        if (
-          !parsedContent['SETTINGS'][0]['brew_order']['before'] === undefined
-        ) {
-          this.uiLog.log('Old brew order structure');
-          // Breaking change, we need to throw away the old order types by import
+        // When exporting the value is a number, when importing it needs to be  a string.
+        parsedContent['SETTINGS'][0]['brew_view'] =
+          parsedContent['SETTINGS'][0]['brew_view'] + '';
+        this.uiLog.log('Cleaned all data');
+        try {
+          if (
+            !parsedContent['SETTINGS'][0]['brew_order']['before'] === undefined
+          ) {
+            this.uiLog.log('Old brew order structure');
+            // Breaking change, we need to throw away the old order types by import
+            const settingsConst = new Settings();
+            parsedContent['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(
+              settingsConst.brew_order
+            );
+          }
+        } catch (ex) {
           const settingsConst = new Settings();
           parsedContent['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(
             settingsConst.brew_order
           );
         }
-      } catch (ex) {
-        const settingsConst = new Settings();
-        parsedContent['SETTINGS'][0]['brew_order'] = this.uiHelper.copyData(
-          settingsConst.brew_order
-        );
-      }
 
-      await this.uiAlert.showLoadingSpinner();
-      this.uiStorage.import(parsedContent).then(
-        async (_data) => {
-          if (_data.BACKUP === false) {
-            this.__reinitializeStorages().then(
-              async () => {
-                // Show loadingspinner again, because the reintializestorages hides it.
-                await this.uiAlert.showLoadingSpinner();
-                this.uiAnalytics.disableTracking();
-                this.__initializeSettings();
+        await this.uiAlert.showLoadingSpinner();
+        this.uiStorage.import(parsedContent).then(
+          async (_data) => {
+            if (_data.BACKUP === false) {
+              this.__reinitializeStorages().then(
+                async () => {
+                  // Show loadingspinner again, because the reintializestorages hides it.
+                  await this.uiAlert.showLoadingSpinner();
+                  this.uiAnalytics.disableTracking();
+                  this.__initializeSettings();
 
-                if (!isIOS) {
-                  const brewsData: Array<Brew> =
-                    this.uiBrewStorage.getAllEntries();
-                  const beansData: Array<Bean> =
-                    this.uiBeanStorage.getAllEntries();
-                  const preparationData: Array<Preparation> =
-                    this.uiPreparationStorage.getAllEntries();
-                  const millData: Array<Mill> =
-                    this.uiMillStorage.getAllEntries();
-                  const greenBeanData: Array<GreenBean> =
-                    this.uiGreenBeanStorage.getAllEntries();
-                  const roastingMachineData: Array<RoastingMachine> =
-                    this.uiRoastingMachineStorage.getAllEntries();
-                  const waterData: Array<Water> =
-                    this.uiWaterStorage.getAllEntries();
+                  if (!isIOS) {
+                    const brewsData: Array<Brew> =
+                      this.uiBrewStorage.getAllEntries();
+                    const beansData: Array<Bean> =
+                      this.uiBeanStorage.getAllEntries();
+                    const preparationData: Array<Preparation> =
+                      this.uiPreparationStorage.getAllEntries();
+                    const millData: Array<Mill> =
+                      this.uiMillStorage.getAllEntries();
+                    const greenBeanData: Array<GreenBean> =
+                      this.uiGreenBeanStorage.getAllEntries();
+                    const roastingMachineData: Array<RoastingMachine> =
+                      this.uiRoastingMachineStorage.getAllEntries();
+                    const waterData: Array<Water> =
+                      this.uiWaterStorage.getAllEntries();
 
-                  await this._importFiles(brewsData, _importPath);
-                  await this._importFiles(beansData, _importPath);
-                  await this._importFiles(preparationData, _importPath);
-                  await this._importFiles(millData, _importPath);
-                  await this._importFiles(greenBeanData, _importPath);
-                  await this._importFiles(roastingMachineData, _importPath);
-                  await this._importFiles(waterData, _importPath);
+                    await this._importFiles(brewsData, _importPath);
+                    await this._importFiles(beansData, _importPath);
+                    await this._importFiles(preparationData, _importPath);
+                    await this._importFiles(millData, _importPath);
+                    await this._importFiles(greenBeanData, _importPath);
+                    await this._importFiles(roastingMachineData, _importPath);
+                    await this._importFiles(waterData, _importPath);
 
-                  /*** WAIT!!, before you try to understand whats going on here
-                  After the latest file system changes of android, we can't copy .JSON Files, or other types, but .PNG, and .JPG works.
-                  Thats why we exported all the raw-jsons as a .PNG Type (but with JSON-Data), and when reimporting them, we load the .PNG and save it as .JSON
-                  Therefore we can transfer the brew history, else this would not be possible
-                   */
-                  await this._importFlowProfileFiles(
-                    brewsData,
-                    _importPath + 'brews/'
-                  );
-                }
-
-                if (
-                  this.uiBrewStorage.getAllEntries().length > 0 &&
-                  this.uiMillStorage.getAllEntries().length <= 0
-                ) {
-                  // We got an update and we got no mills yet, therefore we add a Standard mill.
-                  const data: Mill = new Mill();
-                  data.name = 'Standard';
-                  await this.uiMillStorage.add(data);
-
-                  const brews: Array<Brew> = this.uiBrewStorage.getAllEntries();
-                  for (const brew of brews) {
-                    brew.mill = data.config.uuid;
-                    await this.uiBrewStorage.update(brew);
+                    /*** WAIT!!, before you try to understand whats going on here
+                     After the latest file system changes of android, we can't copy .JSON Files, or other types, but .PNG, and .JPG works.
+                     Thats why we exported all the raw-jsons as a .PNG Type (but with JSON-Data), and when reimporting them, we load the .PNG and save it as .JSON
+                     Therefore we can transfer the brew history, else this would not be possible
+                     */
+                    await this._importFlowProfileFiles(
+                      brewsData,
+                      _importPath + 'brews/'
+                    );
                   }
-                }
-                this.setLanguage();
 
-                if (
-                  this.settings.brew_rating_steps === null ||
-                  this.settings.brew_rating_steps === undefined
-                ) {
-                  this.settings.brew_rating_steps = 1;
+                  if (
+                    this.uiBrewStorage.getAllEntries().length > 0 &&
+                    this.uiMillStorage.getAllEntries().length <= 0
+                  ) {
+                    // We got an update and we got no mills yet, therefore we add a Standard mill.
+                    const data: Mill = new Mill();
+                    data.name = 'Standard';
+                    await this.uiMillStorage.add(data);
+
+                    const brews: Array<Brew> =
+                      this.uiBrewStorage.getAllEntries();
+                    for (const brew of brews) {
+                      brew.mill = data.config.uuid;
+                      await this.uiBrewStorage.update(brew);
+                    }
+                  }
+                  this.setLanguage();
+
+                  if (
+                    this.settings.brew_rating_steps === null ||
+                    this.settings.brew_rating_steps === undefined
+                  ) {
+                    this.settings.brew_rating_steps = 1;
+                  }
+                  if (
+                    this.settings.bean_rating_steps === null ||
+                    this.settings.bean_rating_steps === undefined
+                  ) {
+                    this.settings.bean_rating_steps = 1;
+                  }
+                  this.settings.resetFilter();
+                  await this.uiSettingsStorage.saveSettings(this.settings);
+                  await this.uiAlert.hideLoadingSpinner();
+                  await this.uiAlert.showMessage(
+                    this.translate.instant('IMPORT_SUCCESSFULLY')
+                  );
+                  if (this.settings.matomo_analytics === undefined) {
+                    await this.showAnalyticsInformation();
+                  } else {
+                    this.uiAnalytics.enableTracking();
+                  }
+                },
+                async () => {
+                  await this.uiAlert.hideLoadingSpinner();
                 }
-                if (
-                  this.settings.bean_rating_steps === null ||
-                  this.settings.bean_rating_steps === undefined
-                ) {
-                  this.settings.bean_rating_steps = 1;
-                }
-                this.settings.resetFilter();
-                await this.uiSettingsStorage.saveSettings(this.settings);
-                await this.uiAlert.hideLoadingSpinner();
-                await this.uiAlert.showMessage(
-                  this.translate.instant('IMPORT_SUCCESSFULLY')
-                );
-                if (this.settings.matomo_analytics === undefined) {
-                  await this.showAnalyticsInformation();
-                } else {
-                  this.uiAnalytics.enableTracking();
-                }
-              },
-              async () => {
-                await this.uiAlert.hideLoadingSpinner();
-              }
-            );
-          } else {
+              );
+            } else {
+              await this.uiAlert.hideLoadingSpinner();
+              this.uiAlert.showMessage(
+                this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED')
+              );
+            }
+          },
+          async () => {
             await this.uiAlert.hideLoadingSpinner();
             this.uiAlert.showMessage(
               this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED')
             );
           }
-        },
-        async () => {
-          await this.uiAlert.hideLoadingSpinner();
-          this.uiAlert.showMessage(
-            this.translate.instant('IMPORT_UNSUCCESSFULLY_DATA_NOT_CHANGED')
-          );
-        }
+        );
+      } else {
+        this.uiAlert.showMessage(this.translate.instant('INVALID_FILE_DATA'));
+      }
+    } catch (ex) {
+      this.uiAlert.showMessage(
+        this.translate.instant('INVALID_FILE_DATA') + ' ' + JSON.stringify(ex)
       );
-    } else {
-      this.uiAlert.showMessage(this.translate.instant('INVALID_FILE_DATA'));
     }
   }
 

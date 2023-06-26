@@ -11,6 +11,9 @@ export class PreparationDevice {
 
   private http: HttpClient;
 
+  protected temperature: number;
+  protected pressure: number;
+
   constructor(protected _http: HttpClient, _preparation: Preparation) {
     this.blueToothParentlogger = new Logger();
     this.preparation = _preparation;

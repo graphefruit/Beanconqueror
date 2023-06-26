@@ -11,7 +11,10 @@ import { Bean } from '../../classes/bean/bean';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
 
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
-
+import { Preparation } from '../../classes/preparation/preparation';
+import { UIPreparationStorage } from '../../services/uiPreparationStorage';
+import { UIMillStorage } from '../../services/uiMillStorage';
+import { Mill } from '../../classes/mill/mill';
 @Component({
   selector: 'dashboard',
   templateUrl: './dashboard.page.html',
@@ -32,7 +35,9 @@ export class DashboardPage implements OnInit {
     private readonly router: Router,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage
+    private readonly uiSettingsStorage: UISettingsStorage,
+    private readonly uiPreparationStorage: UIPreparationStorage,
+    private readonly uiMillStorage: UIMillStorage
   ) {}
 
   public ngOnInit() {

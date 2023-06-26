@@ -42,6 +42,41 @@ export class UIFileHelper extends InstanceClass {
     }
   }
 
+  public async saveZIPFile(_fileName: string, _blob: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      const blob = _blob;
+      try {
+        await this.createFolder(_fileName);
+      } catch (ex) {
+        this.uiLog.error(
+          'UILog - saveZIPFile - We could not create folders ' + _fileName
+        );
+      }
+
+      this.file.createFile(this.getFileDirectory(), _fileName, true).then(
+        (_fileEntry: FileEntry) => {
+          _fileEntry.createWriter((writer) => {
+            writer.onwriteend = () => {
+              resolve(undefined);
+              this.uiLog.info(
+                'UILog - saveZIPFile - File saved successfully - ' + _fileName
+              );
+            };
+            writer.onerror = () => {
+              reject();
+            };
+            writer.seek(0);
+            writer.write(blob); // You need to put the file, blob or base64 representation here.
+          });
+        },
+        () => {
+          reject();
+          this.uiLog.error('Could not save file');
+        }
+      );
+    });
+  }
+
   public async saveJSONFile(
     _fileName: string,
     _jsonContent: string
@@ -117,6 +152,96 @@ export class UIFileHelper extends InstanceClass {
     });
   }
 
+  public async getZIPFile(_fileName: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      if (this.platform.is('cordova')) {
+        // let filePath: string;
+        // filePath = _filePath;
+        // filePath.slice(0, filePath.lastIndexOf('/'));
+        let path: string;
+        let fileName: string;
+        path = this.getFileDirectory();
+        fileName = _fileName;
+        if (fileName.startsWith('/')) {
+          fileName = fileName.slice(1);
+        }
+
+        this.file.readAsArrayBuffer(path, fileName).then(
+          (result) => {
+            try {
+              resolve(result as any);
+            } catch (ex) {
+              this.uiLog.error('We could not read zip file ' + ex.message);
+              reject();
+            }
+          },
+          () => {
+            reject();
+          }
+        );
+      } else {
+        reject();
+      }
+    });
+  }
+
+  public async getZIPFileByPathAndFile(
+    _path: string,
+    _fileName: string
+  ): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      if (this.platform.is('cordova')) {
+        this.file.readAsArrayBuffer(_path, _fileName).then(
+          (result) => {
+            try {
+              resolve(result as any);
+            } catch (ex) {
+              this.uiLog.error('We could not read zip file ' + ex.message);
+              reject();
+            }
+          },
+          () => {
+            reject();
+          }
+        );
+      } else {
+        reject();
+      }
+    });
+  }
+
+  public async saveBlob(
+    _fileName: string,
+    _fileExtension: string,
+    _blob: any
+  ): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      this.generateFileName(
+        this.getFileDirectory(),
+        _fileName,
+        _fileExtension
+      ).then((_newName) => {
+        // console.log('New Filename' + _newName);
+        let newBlob: Blob = _blob;
+        if (newBlob === undefined) {
+          reject();
+        } else {
+          this.file.writeFile(this.getFileDirectory(), _newName, newBlob).then(
+            (_t) => {
+              newBlob = null;
+              this.uiLog.log('Save file below: ' + _t.fullPath);
+              resolve(_t.fullPath);
+            },
+            (e) => {
+              this.uiLog.error('Cant save file: ' + JSON.stringify(e));
+              reject();
+            }
+          );
+        }
+      });
+    });
+  }
+
   public async saveBase64File(
     _fileName: string,
     _fileExtension: string,
@@ -149,7 +274,7 @@ export class UIFileHelper extends InstanceClass {
     });
   }
 
-  public async deleteJSONBackupsOlderThenSevenDays(): Promise<any> {
+  public async deleteZIPBackupsOlderThenSevenDays(): Promise<any> {
     const promise: Promise<any> = new Promise(async (resolve, reject) => {
       if (this.platform.is('cordova')) {
         let storageLocation: string = '';
@@ -163,7 +288,7 @@ export class UIFileHelper extends InstanceClass {
         for (let i = 0; i < 8; i++) {
           const day: string = moment().subtract(i, 'days').format('DD_MM_YYYY');
           const automatedBackupFileName: string =
-            'Beanconqueror_automatic_export_' + day + '.json';
+            'Beanconqueror_automatic_export_' + day + '.zip';
           lastSevenDays.push(automatedBackupFileName);
         }
 
