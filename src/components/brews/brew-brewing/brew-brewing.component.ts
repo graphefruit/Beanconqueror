@@ -70,6 +70,8 @@ import {
 } from '../../../classes/preparationDevice/xenia/xeniaDevice';
 import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
+import { RefractometerDevice } from 'src/classes/devices/refractometerBluetoothDevice';
+import { delay } from 'lodash';
 
 declare var cordova;
 declare var Plotly;
@@ -572,6 +574,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
     return !!pressureDevice;
+  }
+
+  public refractometerConnected() {
+    if (!this.platform.is('cordova')) {
+      return true;
+    }
+
+    const refractometer: RefractometerDevice =
+      this.bleManager.getRefractometerDevice();
+    return !!refractometer;
   }
 
   public getGraphIonColSize() {
@@ -1768,6 +1780,15 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (data !== undefined) {
       this.data.tds = data.tds;
     }
+  }
+
+  public async requestRefractometerRead() {
+    const refractometerDevice: RefractometerDevice =
+      this.bleManager.getRefractometerDevice();
+    refractometerDevice.currentlyTesting = true;
+    refractometerDevice.requestRead();
+
+    this.data.tds = refractometerDevice.getLastReading().tds;
   }
 
   public async calculateBrewBeverageQuantity() {

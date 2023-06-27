@@ -67,7 +67,12 @@ import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
 } from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { PressureType, ScaleType, TemperatureType } from '../classes/devices';
+import {
+  PressureType,
+  RefractometerType,
+  ScaleType,
+  TemperatureType,
+} from '../classes/devices';
 import { Logger } from '../classes/devices/common/logger';
 
 declare var AppRate;
@@ -627,6 +632,7 @@ export class AppComponent implements AfterViewInit {
       this.__connectPressureDevice();
       this.__connectSmartScale();
       this.__connectTemperatureDevice();
+      this.__connectRefractometerDevice();
     }, 3000);
 
     const settings = this.uiSettingsStorage.getSettings();
@@ -731,6 +737,25 @@ export class AppComponent implements AfterViewInit {
       );
     } else {
       this.uiLog.log('Temperature device not connected, dont try to connect');
+    }
+  }
+
+  private __connectRefractometerDevice() {
+    const settings = this.uiSettingsStorage.getSettings();
+    const refractometer_id: string = settings.refractometer_id;
+    const refractometer_type: RefractometerType = settings.refractometer_type;
+
+    this.uiLog.log(`Connect refractometer device? ${refractometer_id}`);
+    if (refractometer_id !== undefined && refractometer_id !== '') {
+      this.bleManager.autoConnectRefractometerDevice(
+        refractometer_type,
+        refractometer_id,
+        false,
+        () => {},
+        () => {}
+      );
+    } else {
+      this.uiLog.log('Refractometer device not connected, dont try to connect');
     }
   }
 

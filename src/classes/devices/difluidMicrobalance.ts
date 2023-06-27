@@ -25,7 +25,9 @@ export class DifluidMicrobalance extends BluetoothScale {
 
   public static test(device: any): boolean {
     return (
-      device && device.name && this.DEVICE_NAME.includes(device.name.toLowerCase())
+      device &&
+      device.name &&
+      device.name.toLowerCase().startsWith('microbalance')
     );
   }
 

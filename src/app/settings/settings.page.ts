@@ -172,6 +172,78 @@ export class SettingsPage implements OnInit {
 
   public async ngOnInit() {}
 
+  public async findAndConnectRefractometerDevice(_retry: boolean = false) {
+    const hasLocationPermission: boolean =
+      await this.bleManager.hasLocationPermission();
+    if (!hasLocationPermission) {
+      await this.uiAlert.showMessage(
+        'REFRACTOMETER.REQUEST_PERMISSION.LOCATION',
+        undefined,
+        undefined,
+        true
+      );
+      await this.bleManager.requestLocationPermissions();
+    }
+
+    const hasBluetoothPermission: boolean =
+      await this.bleManager.hasBluetoothPermission();
+    if (!hasBluetoothPermission) {
+      await this.uiAlert.showMessage(
+        'REFRACTOMETER.REQUEST_PERMISSION.BLUETOOTH',
+        undefined,
+        undefined,
+        true
+      );
+      await this.bleManager.requestBluetoothPermissions();
+    }
+
+    const bleEnabled: boolean = await this.bleManager.isBleEnabled();
+    if (bleEnabled === false) {
+      await this.uiAlert.showMessage(
+        'REFRACTOMETER.BLUETOOTH_NOT_ENABLED',
+        undefined,
+        undefined,
+        true
+      );
+      return;
+    }
+
+    await this.uiAlert.showLoadingSpinner(
+      'REFRACTOMETER.BLUETOOTH_SCAN_RUNNING',
+      true
+    );
+
+    const refractometerDevice =
+      await this.bleManager.tryToFindRefractometerDevice();
+    await this.uiAlert.hideLoadingSpinner();
+    if (refractometerDevice) {
+      try {
+        // We don't need to retry for iOS, because we just did scan before.
+
+        // NEVER!!! Await here, else the bluetooth logic will get broken.
+        this.bleManager.autoConnectRefractometerDevice(
+          refractometerDevice.type,
+          refractometerDevice.id,
+          false
+        );
+      } catch (ex) {}
+
+      this.settings.refractometer_id = refractometerDevice.id;
+      this.settings.refractometer_type = refractometerDevice.type;
+
+      //this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.SCALE.CATEGORY,scale.type);
+
+      await this.saveSettings();
+    } else {
+      this.uiAlert.showMessage(
+        'REFRACTOMETER.CONNECTION_NOT_ESTABLISHED',
+        undefined,
+        undefined,
+        true
+      );
+    }
+  }
+
   public async findAndConnectTemperatureDevice(_retry: boolean = false) {
     const hasLocationPermission: boolean =
       await this.bleManager.hasLocationPermission();
@@ -508,6 +580,10 @@ export class SettingsPage implements OnInit {
     }
   }
 
+  public async retryConnectRefractometerDevice() {
+    await this.findAndConnectRefractometerDevice(true);
+  }
+
   public async retryConnectTemperatureDevice() {
     await this.findAndConnectTemperatureDevice(true);
   }
@@ -520,6 +596,10 @@ export class SettingsPage implements OnInit {
     if (this.isScaleConnected() === false) {
       await this.findAndConnectScale(true);
     }
+  }
+
+  public isRefractometerDeviceConnected(): boolean {
+    return this.bleManager.refractometerDevice !== null;
   }
 
   public isTemperatureDeviceConnected(): boolean {

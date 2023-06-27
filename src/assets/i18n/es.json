@@ -1470,11 +1470,27 @@
     "THRESHOLD_ACTIVE": "Iniciar temporizador al llegar a una temperatura preestablecida",
     "THRESHOLD_TEMP": "Umbral de temperatura"
   },
+  "REFRACTOMETER": {
+    "CONNECTION_NOT_ESTABLISHED": "Refractometer device not found, or connection could not be established",
+    "CONNECTED_SUCCESSFULLY": "Refractometer device connected",
+    "DISCONNECTED_SUCCESSFULLY": "Refractometer device disconnected",
+    "DISCONNECTED_UNPLANNED": "Refractometer device disconnected unexpectedly",
+    "STAY_CONNECTED_ON_APP_MINIMIZE": "Keep thermometer connected even when app is in the background",
+    "INFORMATION_DESCRIPTION": "Supported devices are: DiFluid R2",
+    "BLUETOOTH_SCAN_RUNNING": "Searching for refractometer device for up to 60s",
+    "BLUETOOTH_NOT_ENABLED": "Bluetooth not activated, please activate to work properly",
+    "REQUEST_PERMISSION": {
+      "LOCATION": "To find refractometer devices, the app needs access to the location.",
+      "BLUETOOTH": "To find refractometer devices, the app needs access to bluetooth"
+    },
+    "LOG": "Activate log files for refractometer device"
+  },
   "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "Reconectar dispositivo de temperatura",
   "PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO": "El sensor de presión solo se puede usar en espresso",
   "PRESSURE_MESSAGE_AFTER_CONNECTION": "Comportamiento conocido (en estudio): tenga en cuenta que tras reiniciar su teléfono o tras no usar la aplicación durante un tiempo, la conexión puede llevar más tiempo del habitual (de 30 segundos a 1 minutos). Tras eso, el comportamiento debería el habitual.",
   "BREW_TEMPERATURE_REALTIME": "Temperatura",
   "PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE": "Sensor de temperatura",
+  "PAGE_SETTINGS_TAB_BLUETOOTH_REFRACTOMETER": "Refractometer device",
   "SMART_SCALE_ACAIA_HEARTBEAT_TIMER": "Heartbeat timer - Just for Acaia Scales",
   "SMART_SCALE_ACAIA_HEARTBEAT_TIMER_TOOLTIP": "Just used for Acaia scales!!! - Older Acaia scales need an heartbeat, if you encounter issues, try to minimize the heartbeat to a faster frequence"
 }

@@ -19,7 +19,12 @@ import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
 import { IBrewGraphs } from '../../interfaces/brew/iBrewGraphs';
 
 import { BeanManageParameter } from '../parameter/beanManageParameter';
-import { TemperatureType, PressureType, ScaleType } from '../devices';
+import {
+  TemperatureType,
+  PressureType,
+  ScaleType,
+  RefractometerType,
+} from '../devices';
 import { BeanListViewParameter } from '../parameter/beanListViewParameter';
 import { RepeatBrewParameter } from '../parameter/repeatBrewParameter';
 
@@ -116,6 +121,8 @@ export class Settings implements ISettings {
 
   public temperature_id: string;
   public temperature_type: TemperatureType;
+  public refractometer_id: string;
+  public refractometer_type: RefractometerType;
   public temperature_log: boolean;
   public temperature_threshold_active: boolean;
   public temperature_threshold_temp: number;

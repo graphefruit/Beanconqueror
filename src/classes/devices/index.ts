@@ -14,6 +14,8 @@ import { TemperatureDevice } from './temperatureBluetoothDevice';
 import { ETITemperature } from './etiTemperature';
 import { SmartchefScale } from './smartchefScale';
 import { DifluidMicrobalance } from './difluidMicrobalance';
+import { RefractometerDevice } from './refractometerBluetoothDevice';
+import { DiFluidR2Refractometer } from './difluidR2Refractometer';
 export { BluetoothScale, SCALE_TIMER_COMMAND } from './bluetoothDevice';
 
 export enum ScaleType {
@@ -35,6 +37,10 @@ export enum PressureType {
 
 export enum TemperatureType {
   ETI = 'ETI',
+}
+
+export enum RefractometerType {
+  R2 = 'R2',
 }
 
 export function makeDevice(
@@ -86,6 +92,18 @@ export function makeTemperatureDevice(
   switch (type) {
     case TemperatureType.ETI:
       return new ETITemperature(data);
+    default:
+      return null;
+  }
+}
+
+export function makeRefractometerDevice(
+  type: RefractometerType,
+  data: PeripheralData
+): RefractometerDevice | null {
+  switch (type) {
+    case RefractometerType.R2:
+      return new DiFluidR2Refractometer(data);
     default:
       return null;
   }
