@@ -904,6 +904,13 @@
         "<b>Diğer</b>",
         "Küçük hata düzeltmeleri"
       ]
+    },
+    "6.5.1": {
+      "TITLE": "Version 6.5.1: Neler yeni?",
+      "DESCRIPTION": [
+        "<b>Diğerleri:</b>",
+        "Daha küçük hata düzeltmeleri"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Parametreyi özelleştir",

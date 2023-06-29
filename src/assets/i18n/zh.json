@@ -897,8 +897,12 @@
 				"<b>其他</b>",
 				"修复了一些小错误"
 			]
-		}
-	},
+		},
+    "6.5.1": {
+      "TITLE": "版本 6.5.1: 更新内容",
+      "DESCRIPTION": ["<b>其他：</b>", "修复了一些小错误"]
+    }
+  },
 	"CUSTOM_PARAMETERS": "自定义参数",
 	"CUSTOM_DEFAULT_PARAMETERS": "默认",
 	"CUSTOM_MANAGE_PARAMETERS": "管理",
