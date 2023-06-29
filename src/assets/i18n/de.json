@@ -904,6 +904,13 @@
         "<b>Sonstiges</b>",
         "Kleinere Fehlerbehebungen"
       ]
+    },
+    "6.5.1": {
+      "TITLE": "Version 6.5.1: Das ist neu",
+      "DESCRIPTION": [
+        "<b>Sonstiges</b>",
+        "Kleinere Fehlerbehebungen"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Parameter individualisieren",
