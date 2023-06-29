@@ -904,6 +904,13 @@
         "<b>Otros</b>",
         "Corrección de errores menores"
       ]
+    },
+    "6.5.1": {
+      "TITLE": "Versión 6.5.1: Novedades",
+      "DESCRIPTION": [
+        "<b>Otros</b>",
+        "Corrección de errores menores"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Personalizar parámetros",

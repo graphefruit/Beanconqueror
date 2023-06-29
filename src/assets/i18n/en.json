@@ -904,6 +904,13 @@
         "<b>Others</b>",
         "Small bug fixes"
       ]
+    },
+    "6.5.1": {
+      "TITLE": "Version 6.5.1: What's new?",
+      "DESCRIPTION": [
+        "<b>Others:</b>",
+        "Small bug fixes"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Customize parameters",
