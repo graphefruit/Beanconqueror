@@ -77,7 +77,13 @@ export class UIExportImportHelper {
 
         const zipFileWriter = new BlobWriter();
         const beanconquerorJSON = new TextReader(JSON.stringify(originalJSON));
-        const zipWriter = new ZipWriter(zipFileWriter);
+        let zipWriter;
+        if (this.platform.is('ios')) {
+          // iOS got corrupt zip file, when compression is used, removing this, results into a bigger zip file, but leads into a working zip file again.
+          zipWriter = new ZipWriter(zipFileWriter, { level: 0 });
+        } else {
+          zipWriter = new ZipWriter(zipFileWriter);
+        }
 
         await zipWriter.add('Beanconqueror.json', beanconquerorJSON);
 
