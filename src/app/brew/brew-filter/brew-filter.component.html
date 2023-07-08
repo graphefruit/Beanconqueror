@@ -58,6 +58,12 @@
     </ion-range>
   </ion-item>
 
+  <ion-item *ngIf='profiles?.length>0'>
+    <ion-label position="stacked" style="top: -5px;position: relative;">{{"BREW_DATA_PRESSURE_PROFILE" | translate }}</ion-label>
+    <ion-select placeholder='{{"BREW.PLACE_HOLDER.BREW_DATA_PRESSURE_PROFILE"| translate}}' [interfaceOptions]="selectOptions" [(ngModel)]="filter.profiles" [multiple]='true' >
+      <ion-select-option *ngFor="let data of profiles" value="{{data}}">{{data}}</ion-select-option>
+    </ion-select>
+  </ion-item>
   <ion-list class="ion-no-padding ion-padding-top ion-margin-horizontal">
       <ion-button (click)="useFilter()" color="accent" expand="block" tappable
                   type="submit">{{"USE_FILTER" | translate}}</ion-button>

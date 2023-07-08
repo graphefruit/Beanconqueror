@@ -205,6 +205,9 @@ export class BrewInformationComponent implements OnInit {
   public async editBrew() {
     await this.uiBrewHelper.editBrew(this.brew);
   }
+  public async ratingBrew() {
+    await this.uiBrewHelper.rateBrew(this.brew);
+  }
   public async repeatBrew() {
     if (this.uiBrewHelper.canBrewIfNotShowMessage()) {
       this.uiAnalytics.trackEvent(
@@ -294,6 +297,9 @@ export class BrewInformationComponent implements OnInit {
         break;
       case BREW_ACTION.VISUALIZER:
         await this.shareToVisualizer();
+        break;
+      case BREW_ACTION.RATING:
+        await this.ratingBrew();
         break;
       default:
         break;

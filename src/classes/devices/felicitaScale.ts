@@ -15,6 +15,7 @@ import {
   CMD_TOGGLE_UNIT,
   CMD_TOGGLE_PRECISION,
 } from './felicita/constants';
+import { ScaleType } from './index';
 
 declare var ble: any;
 
@@ -36,8 +37,8 @@ export class FelicitaScale extends BluetoothScale {
   };
   private logger: Logger;
 
-  constructor(data: PeripheralData) {
-    super(data);
+  constructor(data: PeripheralData, type: ScaleType) {
+    super(data, type);
     this.batteryLevel = 0;
     this.scaleUnit = FELICITA_GRAM_UNIT;
     this.logger = new Logger('FelicitaScale');

@@ -43,21 +43,21 @@ export function makeDevice(
 ): BluetoothScale | null {
   switch (type) {
     case ScaleType.DECENT:
-      return new DecentScale(data);
+      return new DecentScale(data, type);
     case ScaleType.LUNAR:
-      return new LunarScale(data);
+      return new LunarScale(data, type);
     case ScaleType.JIMMY:
-      return new JimmyScale(data);
+      return new JimmyScale(data, type);
     case ScaleType.FELICITA:
-      return new FelicitaScale(data);
+      return new FelicitaScale(data, type);
     case ScaleType.EUREKAPRECISA:
-      return new EurekaPrecisaScale(data);
+      return new EurekaPrecisaScale(data, type);
     case ScaleType.SKALE:
-      return new SkaleScale(data);
+      return new SkaleScale(data, type);
     case ScaleType.SMARTCHEF:
-      return new SmartchefScale(data);
+      return new SmartchefScale(data, type);
     case ScaleType.DIFLUIDMICROBALANCE:
-      return new DifluidMicrobalance(data);
+      return new DifluidMicrobalance(data, type);
     default:
       return null;
   }

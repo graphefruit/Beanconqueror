@@ -30,6 +30,10 @@ export class BrewFilterComponent implements OnInit {
   public mills: Array<Mill> = [];
   public segment: string = 'open';
 
+  public profiles: Array<string> = [];
+  public selectOptions = {
+    cssClass: 'select-max-width',
+  };
   constructor(
     private readonly modalController: ModalController,
     private readonly uiBrewHelper: UIBrewHelper,
@@ -49,6 +53,7 @@ export class BrewFilterComponent implements OnInit {
     this.segment = this.navParams.get('segment');
     this.filter = this.uiHelper.copyData(this.navParams.get('brew_filter'));
     this.__reloadFilterSettings();
+    this.profiles = this.getProfiles();
   }
   public getMaxBrewRating() {
     const maxSettingsRating = this.settings.brew_rating;
@@ -118,6 +123,28 @@ export class BrewFilterComponent implements OnInit {
     return preparationTools;
   }
 
+  public getProfiles() {
+    const brews: Array<Brew> = this.uiBrewStorage
+      .getAllEntries()
+      .filter((e) => e.pressure_profile !== '');
+    const profiles = [];
+    for (const brew of brews) {
+      if (profiles.indexOf(brew.pressure_profile) <= -1) {
+        profiles.push(brew.pressure_profile);
+      }
+    }
+    profiles.sort((a, b) => {
+      if (a < b) {
+        return -1;
+      }
+      if (a > b) {
+        return 1;
+      }
+      return 0;
+    });
+    return profiles;
+  }
+
   public dismiss(): void {
     this.modalController.dismiss({
       brew_filter: undefined,
@@ -125,6 +152,7 @@ export class BrewFilterComponent implements OnInit {
   }
 
   public useFilter() {
+    console.log(this.filter);
     this.modalController.dismiss({
       brew_filter: this.uiHelper.copyData(this.filter),
     });

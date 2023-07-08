@@ -59,7 +59,11 @@ import {
   CoffeeBluetoothServiceEvent,
 } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
-import { BluetoothScale, SCALE_TIMER_COMMAND } from '../../../classes/devices';
+import {
+  BluetoothScale,
+  SCALE_TIMER_COMMAND,
+  ScaleType,
+} from '../../../classes/devices';
 import { IBrewGraphs } from '../../../interfaces/brew/iBrewGraphs';
 import { BrewRatioCalculatorComponent } from '../../../app/brew/brew-ratio-calculator/brew-ratio-calculator.component';
 import { PreparationDevice } from '../../../classes/preparationDevice/preparationDevice';
@@ -138,6 +142,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   private flowProfileArr = [];
   private flowProfileArrObjs = [];
   private flowProfileArrCalculated = [];
+  private flowProfileTempAll = [];
   private flowTime: number = undefined;
   private flowSecondTick: number = 0;
   private startingFlowTime: number = undefined;
@@ -960,7 +965,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.graphTimerTest = setInterval(() => {
         flow = Math.floor(Math.random() * 11);
         realtime_flow = Math.floor(Math.random() * 11);
-        weight = weight + Math.floor(Math.random() * 11);
+        weight = weight + Math.floor(Math.random() * 2);
         pressure = Math.floor(Math.random() * 11);
         temperature = Math.floor(Math.random() * 90);
         this.__setPressureFlow({ actual: pressure, old: pressure });
@@ -971,7 +976,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           smoothed: 1,
           oldSmoothed: 1,
         });
-      }, 1);
+      }, 100);
     }
 
     if (scale || pressureDevice || temperatureDevice) {
@@ -1331,6 +1336,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
 
       this.flow_profile_raw = new BrewFlow();
+      this.flowProfileTempAll = [];
 
       // We just initialize flow chart for the pressure sensor when the type is espresso
       if (
@@ -1358,6 +1364,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       await this.uiAlert.showLoadingSpinner();
       //The pressure or weight went down and we need to reset the graph now still
       this.flow_profile_raw = new BrewFlow();
+      this.flowProfileTempAll = [];
       this.initializeFlowChart(false);
       // Give the buttons a bit of time, 100ms won't be an issue for user flow
       await new Promise((resolve) => {
@@ -2816,6 +2823,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     };
     flowObj.dateUnixTime = new Date(flowObj.unixTime);
 
+    this.flowProfileTempAll.push(flowObj);
+
     if (this.flowTime !== this.getTime()) {
       // Old solution: We wait for 10 entries,
       // New solution: We wait for the new second, even when their are just 8 entries.
@@ -3036,8 +3045,26 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     realtimeWaterFlow.brew_time = flowObj.flowTimeSecond;
     realtimeWaterFlow.timestamp = flowObj.flowTimestamp;
     realtimeWaterFlow.smoothed_weight = newSmoothedWeight;
-    realtimeWaterFlow.flow_value =
-      (newSmoothedWeight - oldRealtimeSmoothedValue) * 10;
+
+    const scaleType = this.bleManager.getScale()?.getScaleType();
+    if (
+      scaleType === ScaleType.EUREKAPRECISA ||
+      scaleType === ScaleType.SMARTCHEF
+    ) {
+      let timeStampDelta: any = 0;
+      // After the flowProfileTempAll will be stored directly, we'd have one entry at start already, but we need to wait for another one
+      if (this.flowProfileTempAll.length > 1) {
+        timeStampDelta =
+          flowObj.unixTime -
+          this.flowProfileTempAll[this.flowProfileTempAll.length - 2].unixTime;
+      }
+
+      realtimeWaterFlow.flow_value =
+        (newSmoothedWeight - oldRealtimeSmoothedValue) * (1 / timeStampDelta);
+    } else {
+      realtimeWaterFlow.flow_value =
+        (newSmoothedWeight - oldRealtimeSmoothedValue) * 10;
+    }
 
     this.realtimeFlowTrace.x.push(flowObj.dateUnixTime);
     this.realtimeFlowTrace.y.push(realtimeWaterFlow.flow_value);

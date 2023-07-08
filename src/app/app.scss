@@ -869,7 +869,15 @@ ion-segment.tabs {
     }
   }
 }
+.select-max-width {
+  max-width:100%;
+  width:100%;
+  .alert-wrapper {
+    max-width:100%;
+    width:90%;
 
+  }
+}
 .xenia-script-chooser {
   max-width:100%;
   width:100%;
