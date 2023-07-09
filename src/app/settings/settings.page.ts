@@ -513,6 +513,31 @@ export class SettingsPage implements OnInit {
     }
   }
 
+  public async disconnectRefractometerDevice() {
+    this.eventQueue.dispatch(
+      new AppEvent(
+        AppEventType.BLUETOOTH_REFRACTOMETER_DEVICE_DISCONNECT,
+        undefined
+      )
+    );
+    let disconnected: boolean = true;
+
+    if (
+      this.settings.refractometer_id !== '' &&
+      this.bleManager.getRefractometerDevice()
+    ) {
+      disconnected = await this.bleManager.disconnectTemperatureDevice(
+        this.settings.refractometer_id
+      );
+    }
+
+    if (disconnected) {
+      this.settings.refractometer_id = '';
+      this.settings.refractometer_type = null;
+      await this.saveSettings();
+    }
+  }
+
   public async disconnectTemperatureDevice() {
     this.eventQueue.dispatch(
       new AppEvent(

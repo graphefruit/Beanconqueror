@@ -1,4 +1,5 @@
 import { PeripheralData } from './ble.types';
+import { EventEmitter } from '@angular/core';
 import { Logger } from './common/logger';
 
 export interface RefractometerReading {
@@ -6,12 +7,16 @@ export interface RefractometerReading {
   temp: number;
 }
 
+export interface RefractionResultEvent extends RefractometerReading {
+  date: Date;
+}
+
 declare var ble: any;
 export abstract class RefractometerDevice {
   public device_id: string;
   public device_name: string;
   protected reading: RefractometerReading;
-  public currentlyTesting: boolean;
+  public resultEvent: EventEmitter<RefractionResultEvent> = new EventEmitter();
   protected bluetoothParentLogger: Logger;
 
   constructor(data: PeripheralData) {
@@ -37,13 +42,13 @@ export abstract class RefractometerDevice {
 
   public disconnectTriggered(): void {}
 
-  protected setTdsReading(_tds: number) {
+  public setTdsReading(_tds: number) {
     this.bluetoothParentLogger.log(
       'Bluetooth Refractometer - New tds reading recieved ' + _tds
     );
     this.reading.tds = _tds;
   }
-  protected setTempReading(_temp: number) {
+  public setTempReading(_temp: number) {
     this.bluetoothParentLogger.log(
       'Bluetooth Refractometer - New temp reading recieved '
     );

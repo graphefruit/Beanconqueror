@@ -788,6 +788,17 @@ export class AppComponent implements AfterViewInit {
           );
         }
       }
+
+      if (settings.refractometer_stay_connected === false) {
+        const refractometer_id: string = settings.refractometer_id;
+        if (refractometer_id !== undefined && refractometer_id !== '') {
+          // Don't show message on device pause.
+          this.bleManager.disconnectRefractometerDevice(
+            settings.refractometer_id,
+            false
+          );
+        }
+      }
     });
   }
   private __attachOnDeviceResume() {
@@ -801,6 +812,9 @@ export class AppComponent implements AfterViewInit {
       }
       if (settings.temperature_stay_connected === false) {
         this.__connectTemperatureDevice();
+      }
+      if (settings.refractometer_stay_connected === false) {
+        this.__connectRefractometerDevice();
       }
     });
   }

@@ -92,7 +92,6 @@ export class DiFluidR2Refractometer extends RefractometerDevice {
     );
   }
   private async parseStatusUpdate(difluidRawStatus: Uint8Array) {
-    this.logger.log(difluidRawStatus);
     if (difluidRawStatus[3] == 254) {
       this.logger.log('no liquid');
     }
@@ -110,7 +109,7 @@ export class DiFluidR2Refractometer extends RefractometerDevice {
       this.logger.log('tds result received');
       const tds = await this.getInt(difluidRawStatus.slice(6, 8));
       this.setTdsReading(tds / 100);
-      // this.currentlyTesting = false;
+      this.resultEvent.emit(null);
     }
   }
 

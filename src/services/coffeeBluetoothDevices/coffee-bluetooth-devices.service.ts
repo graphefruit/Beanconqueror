@@ -604,6 +604,24 @@ export class CoffeeBluetoothDevicesService {
     });
   }
 
+  public disconnectRefractometerDevice(
+    deviceId: string,
+    show_toast: boolean = true
+  ): Promise<boolean> {
+    return new Promise<boolean>(async (resolve, reject) => {
+      try {
+        await ble.withPromises.disconnect(deviceId);
+        this.refractometerDevice = null;
+        if (show_toast) {
+          // this.uiToast.showInfoToast('REFRACTOMETER.DISCONNECTED_SUCCESSFULLY');
+        }
+        resolve(true);
+      } catch (ex) {
+        resolve(false);
+      }
+    });
+  }
+
   public isBleEnabled(): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1443,6 +1461,33 @@ export class CoffeeBluetoothDevicesService {
     });
   }
 
+  private async __scanAutoConnectRefractometerDeviceIOS() {
+    return new Promise<boolean>(async (resolve, reject) => {
+      if (device !== null && device.platform === 'iOS') {
+        // We just need to scan, then we can auto connect for iOS (lol)
+        this.logger.log('Try to find refractometer on iOS');
+        const deviceRefractometer = await this.tryToFindRefractometerDevice();
+        if (deviceRefractometer === undefined) {
+          this.logger.log('Refractometer device not found, retry');
+          // Try every 61 seconds, because the search algorythm goes 60 seconds at all.
+          const intV = setInterval(async () => {
+            const refractometerStub = await this.tryToFindRefractometerDevice();
+            if (refractometerStub !== undefined) {
+              resolve(true);
+              clearInterval(intV);
+            } else {
+              this.logger.log('Refractometer device not found, retry');
+            }
+          }, 61000);
+        } else {
+          resolve(true);
+        }
+      } else {
+        resolve(true);
+      }
+    });
+  }
+
   private async __iOSAccessBleStackAndAutoConnect(
     _findSpecificDevice: string = 'scale'
   ) {
@@ -1470,6 +1515,11 @@ export class CoffeeBluetoothDevicesService {
               await this.__scanAutoConnectTemperatureDeviceIOS();
               this.logger.log(
                 '__iOSAccessBleStackAndAutoConnect - Thermometer device for iOS found, resolve now'
+              );
+            } else if (_findSpecificDevice === 'refractometer') {
+              await this.__scanAutoConnectRefractometerDeviceIOS();
+              this.logger.log(
+                '__iOSAccessBleStackAndAutoConnect - Refractometer device for iOS found, resolve now'
               );
             }
 

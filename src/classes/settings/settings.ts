@@ -123,6 +123,7 @@ export class Settings implements ISettings {
   public temperature_type: TemperatureType;
   public refractometer_id: string;
   public refractometer_type: RefractometerType;
+  public refractometer_stay_connected: boolean;
   public temperature_log: boolean;
   public temperature_threshold_active: boolean;
   public temperature_threshold_temp: number;
