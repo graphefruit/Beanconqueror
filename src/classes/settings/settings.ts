@@ -152,6 +152,7 @@ export class Settings implements ISettings {
       method_of_preparation: [],
       method_of_preparation_tools: [],
       favourite: false,
+      best_brew: false,
       chart_data: false,
       profiles: [],
       rating: {

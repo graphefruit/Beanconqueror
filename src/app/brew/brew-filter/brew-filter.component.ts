@@ -152,7 +152,6 @@ export class BrewFilterComponent implements OnInit {
   }
 
   public useFilter() {
-    console.log(this.filter);
     this.modalController.dismiss({
       brew_filter: this.uiHelper.copyData(this.filter),
     });

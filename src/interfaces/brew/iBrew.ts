@@ -145,6 +145,8 @@ export interface IBrew {
 
   favourite: boolean;
 
+  best_brew: boolean;
+
   vessel_weight: number;
   vessel_name: string;
 

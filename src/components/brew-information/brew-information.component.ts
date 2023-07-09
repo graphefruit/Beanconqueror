@@ -37,6 +37,8 @@ import { Visualizer } from '../../classes/visualizer/visualizer';
 
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { BrewFlow } from '../../classes/brew/brewFlow';
+import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { UIBeanHelper } from '../../services/uiBeanHelper';
 declare var window;
 @Component({
   selector: 'brew-information',
@@ -76,7 +78,9 @@ export class BrewInformationComponent implements OnInit {
     private readonly brewTracking: BrewTrackingService,
     private readonly uiHealthKit: UIHealthKit,
     private readonly platform: Platform,
-    private readonly uiFileHelper: UIFileHelper
+    private readonly uiFileHelper: UIFileHelper,
+    private readonly uiBeanStorage: UIBeanStorage,
+    private readonly uiBeanHelper: UIBeanHelper
   ) {}
 
   public ngOnInit() {
@@ -237,6 +241,35 @@ export class BrewInformationComponent implements OnInit {
     await this.uiBrewStorage.update(this.brew);
   }
 
+  public async toggleBestBrew() {
+    let doOtherBestBrewsNeedsToBeDetoggled: boolean = false;
+    if (this.brew.best_brew) {
+      // Its the same brew we toggle back again :)
+      this.brew.best_brew = false;
+    } else {
+      this.brew.best_brew = true;
+      //Do we need to search for other brews which should be detoggled?
+      doOtherBestBrewsNeedsToBeDetoggled = true;
+    }
+
+    if (doOtherBestBrewsNeedsToBeDetoggled) {
+      const brewsForBeans = this.uiBeanHelper.getAllBrewsForThisBean(
+        this.brew.getBean().config.uuid
+      );
+      for (const iterateBrew of brewsForBeans) {
+        if (
+          iterateBrew.best_brew === true &&
+          iterateBrew.config.uuid !== this.brew.config.uuid
+        ) {
+          iterateBrew.best_brew = false;
+          await this.uiBrewStorage.update(iterateBrew);
+        }
+      }
+    }
+
+    await this.uiBrewStorage.update(this.brew);
+  }
+
   public async detailBrew() {
     await this.uiBrewHelper.detailBrew(this.brew);
   }
@@ -300,6 +333,9 @@ export class BrewInformationComponent implements OnInit {
         break;
       case BREW_ACTION.RATING:
         await this.ratingBrew();
+        break;
+      case BREW_ACTION.TOGGLE_BEST_BREW:
+        await this.toggleBestBrew();
         break;
       default:
         break;

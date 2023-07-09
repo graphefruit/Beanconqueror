@@ -310,6 +310,9 @@ export class BrewPage implements OnInit {
     if (filter.favourite) {
       brewsFilters = brewsFilters.filter((e) => e.favourite === true);
     }
+    if (filter.best_brew) {
+      brewsFilters = brewsFilters.filter((e) => e.best_brew === true);
+    }
     if (filter.chart_data) {
       brewsFilters = brewsFilters.filter(
         (e) => e.flow_profile !== '' && e.flow_profile !== undefined
