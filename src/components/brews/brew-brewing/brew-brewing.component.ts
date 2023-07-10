@@ -976,7 +976,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           smoothed: 1,
           oldSmoothed: 1,
         });
-      }, 100);
+      }, 300);
     }
 
     if (scale || pressureDevice || temperatureDevice) {
@@ -2805,6 +2805,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (this.flowTime === undefined) {
       this.flowTime = this.getTime();
     }
+    const scaleType = this.bleManager.getScale()?.getScaleType();
 
     const flowObj = {
       unixTime: moment(new Date())
@@ -2939,8 +2940,46 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         for (const flowWeight of this.flowProfileArrCalculated) {
           calculatedFlowWeight += flowWeight;
         }
-        calculatedFlowWeight =
-          (calculatedFlowWeight / this.flowProfileArrCalculated.length) * 10;
+
+        if (
+          scaleType === ScaleType.EUREKAPRECISA ||
+          scaleType === ScaleType.SMARTCHEF
+        ) {
+          if (this.flowProfileArrCalculated.length > 1) {
+            let avgWeight = 0;
+            let avgTimeDelta: number = 0;
+
+            //Don't get the last one, because this is already one new entry
+            const avgEntries = this.flowProfileTempAll.slice(
+              this.flowProfileTempAll.length -
+                1 -
+                this.flowProfileArrCalculated.length,
+              this.flowProfileTempAll.length - 1
+            );
+            for (let i = 0; i < this.flowProfileArrCalculated.length - 1; i++) {
+              avgWeight =
+                avgWeight +
+                (this.flowProfileArrCalculated[i + 1] -
+                  this.flowProfileArrCalculated[i]);
+            }
+            for (let i = 0; i < avgEntries.length - 1; i++) {
+              avgTimeDelta =
+                avgTimeDelta +
+                (avgEntries[i + 1].unixTime - avgEntries[i].unixTime);
+            }
+            avgTimeDelta = avgTimeDelta / avgEntries.length;
+
+            calculatedFlowWeight =
+              (avgWeight / this.flowProfileArrCalculated.length) *
+              ((1000 - avgTimeDelta) / avgTimeDelta);
+          } else {
+            //Saftey when somehow just one value was provided.
+            calculatedFlowWeight = 0;
+          }
+        } else {
+          calculatedFlowWeight =
+            (calculatedFlowWeight / this.flowProfileArrCalculated.length) * 10;
+        }
 
         // Ignore flowing weight when we're below zero
         if (calculatedFlowWeight < 0) {
@@ -3046,7 +3085,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     realtimeWaterFlow.timestamp = flowObj.flowTimestamp;
     realtimeWaterFlow.smoothed_weight = newSmoothedWeight;
 
-    const scaleType = this.bleManager.getScale()?.getScaleType();
     if (
       scaleType === ScaleType.EUREKAPRECISA ||
       scaleType === ScaleType.SMARTCHEF
@@ -3060,7 +3098,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
 
       realtimeWaterFlow.flow_value =
-        (newSmoothedWeight - oldRealtimeSmoothedValue) * (1 / timeStampDelta);
+        (newSmoothedWeight - oldRealtimeSmoothedValue) *
+        (1000 / timeStampDelta);
     } else {
       realtimeWaterFlow.flow_value =
         (newSmoothedWeight - oldRealtimeSmoothedValue) * 10;
