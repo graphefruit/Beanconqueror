@@ -172,6 +172,7 @@ import { BrewRatioCalculatorComponent } from '../brew/brew-ratio-calculator/brew
 import { RepeatCustomParameterComponent } from '../../components/parameter/repeat-custom-parameter/repeat-custom-parameter.component';
 import { RepeatParameterComponent } from '../brew-parameter/repeat-parameter/repeat-parameter.component';
 import { PreparationConnectedDeviceComponent } from '../preparation/preparation-connected-device/preparation-connected-device.component';
+import { BrewRatingComponent } from '../brew/brew-rating/brew-rating.component';
 
 @NgModule({
   declarations: [
@@ -196,6 +197,7 @@ import { PreparationConnectedDeviceComponent } from '../preparation/preparation-
     BrewFlowComponent,
     BeansEditComponent,
     BeansDetailComponent,
+    BrewRatingComponent,
     AboutComponent,
     ContactComponent,
     InfoComponent,
@@ -387,6 +389,7 @@ import { PreparationConnectedDeviceComponent } from '../preparation/preparation-
     BeansAddComponent,
     BrewFlowComponent,
     BeansEditComponent,
+    BrewRatingComponent,
     GreenBeanAddComponent,
     GreenBeanEditComponent,
     GreenBeanDetailComponent,

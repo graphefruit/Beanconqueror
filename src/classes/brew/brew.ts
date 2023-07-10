@@ -96,6 +96,8 @@ export class Brew implements IBrew {
 
   public favourite: boolean;
 
+  public best_brew: boolean;
+
   // Inherits the saved json path
   public flow_profile: string;
 
@@ -164,6 +166,7 @@ export class Brew implements IBrew {
     this.method_of_preparation_tools = [];
     this.bean_weight_in = 0;
     this.favourite = false;
+    this.best_brew = false;
     this.water = '';
     this.vessel_name = '';
     this.vessel_weight = 0;

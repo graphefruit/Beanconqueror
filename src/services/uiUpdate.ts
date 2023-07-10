@@ -62,6 +62,7 @@ export class UIUpdate {
     await this.__checkUpdateForDataVersion('UPDATE_7', !hasData);
     await this.__checkUpdateForDataVersion('UPDATE_8', !hasData);
     await this.__checkUpdateForDataVersion('UPDATE_9', !hasData);
+    await this.__checkUpdateForDataVersion('UPDATE_10', !hasData);
   }
 
   private async __updateDataVersion(_version): Promise<boolean> {
@@ -511,7 +512,11 @@ export class UIUpdate {
             }
 
             break;
-
+          case 'UPDATE_10':
+            const settings_v10: Settings = this.uiSettingsStorage.getSettings();
+            settings_v10.resetFilter();
+            await this.uiSettingsStorage.saveSettings(settings_v10);
+            break;
           default:
             break;
         }

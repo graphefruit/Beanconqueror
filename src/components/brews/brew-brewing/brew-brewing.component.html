@@ -502,7 +502,7 @@
           [wholeStars]="true" class="ion-float-right brew-stars"></ngx-stars>
       </div>
       <div slot="end" *ngIf="maxBrewRating !== 5">
-        {{this.uiHelper.toFixedIfNecessary(data.rating,0)}}
+        {{this.uiHelper.toFixedIfNecessary(data.rating,2)}}
       </div>
     </ion-range>
 

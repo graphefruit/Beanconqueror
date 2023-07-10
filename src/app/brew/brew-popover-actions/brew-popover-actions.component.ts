@@ -6,6 +6,7 @@ import { UIHelper } from '../../../services/uiHelper';
 import { BREW_ACTION } from '../../../enums/brews/brewAction';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
+import { UIBrewHelper } from '../../../services/uiBrewHelper';
 
 @Component({
   selector: 'brew-popover-actions',
@@ -21,7 +22,8 @@ export class BrewPopoverActionsComponent implements OnInit {
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
     private readonly uiHelper: UIHelper,
-    private readonly uiSettings: UISettingsStorage
+    private readonly uiSettings: UISettingsStorage,
+    private readonly uiBrewHelper: UIBrewHelper
   ) {
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
     const brew: IBrew = this.uiHelper.copyData(this.navParams.get('brew'));
@@ -46,6 +48,14 @@ export class BrewPopoverActionsComponent implements OnInit {
       this.data.coordinates.latitude !== undefined &&
       this.data.coordinates.latitude !== null &&
       this.data.coordinates.latitude !== 0
+    );
+  }
+
+  public isRatingEnabled() {
+    return this.uiBrewHelper.fieldVisible(
+      this.settings.manage_parameters.rating,
+      this.data.getPreparation().manage_parameters.rating,
+      this.data.getPreparation().use_custom_parameters
     );
   }
 

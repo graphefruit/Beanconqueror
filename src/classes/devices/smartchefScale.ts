@@ -1,6 +1,7 @@
 import { PeripheralData } from './ble.types';
 import { BluetoothScale, SCALE_TIMER_COMMAND, Weight } from './bluetoothDevice';
 import { Logger } from './common/logger';
+import { ScaleType } from './index';
 
 declare var ble: any;
 
@@ -24,8 +25,8 @@ export class SmartchefScale extends BluetoothScale {
   };
   private logger: Logger;
 
-  constructor(data: PeripheralData) {
-    super(data);
+  constructor(data: PeripheralData, type: ScaleType) {
+    super(data, type);
     this.logger = new Logger('SmartchefScale');
     this.connect();
   }

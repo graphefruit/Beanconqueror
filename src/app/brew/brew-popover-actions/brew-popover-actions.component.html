@@ -15,6 +15,11 @@
       <ion-icon *ngIf="data.favourite" name="heart" slot="start"></ion-icon>
       <span>{{"POPOVER_BREWS_OPTION_TOGGLE_FAVOURITE" | translate}}</span>
     </ion-item>
+  <ion-item (click)="choose(getStaticActions().TOGGLE_BEST_BREW)" button tappable>
+    <ion-icon *ngIf="!data.best_brew" name="trophy-outline" slot="start"></ion-icon>
+    <ion-icon *ngIf="data.best_brew" name="trophy" slot="start"></ion-icon>
+    <span>{{"POPOVER_BEST_BREW" | translate}}</span>
+  </ion-item>
     <ion-item (click)="choose(getStaticActions().DETAIL)" button tappable>
       <ion-icon name="beanconqueror-detail" slot="start"></ion-icon>
       <span>{{"POPOVER_BREWS_OPTION_DETAIL" | translate}}</span>
@@ -22,6 +27,10 @@
     <ion-item (click)="choose(getStaticActions().EDIT)" button tappable>
       <ion-icon name="beanconqueror-edit" slot="start"></ion-icon>
       <span>{{"POPOVER_BREWS_OPTION_EDIT" | translate}}</span>
+    </ion-item>
+    <ion-item (click)="choose(getStaticActions().RATING)" *ngIf='isRatingEnabled()' button tappable>
+      <ion-icon name="beanconqueror-brew-rating-empty" slot="start"></ion-icon>
+      <span>{{"BREW_DATA_RATING" | translate}}</span>
     </ion-item>
     <ion-item (click)="choose(getStaticActions().CUPPING)" button tappable>
       <ion-icon name="beanconqueror-cupping" slot="start"></ion-icon>

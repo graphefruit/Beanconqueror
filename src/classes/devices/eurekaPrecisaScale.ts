@@ -1,6 +1,7 @@
 import { PeripheralData } from './ble.types';
 import { BluetoothScale, SCALE_TIMER_COMMAND, Weight } from './bluetoothDevice';
 import { Logger } from './common/logger';
+import { ScaleType } from './index';
 
 const DEVICE_NAME = 'CFS-9002';
 
@@ -44,8 +45,8 @@ export class EurekaPrecisaScale extends BluetoothScale {
   };
   private logger: Logger;
 
-  constructor(data: PeripheralData) {
-    super(data);
+  constructor(data: PeripheralData, type: ScaleType) {
+    super(data, type);
     this.batteryLevel = 0;
     this.scaleUnit = EURECA_PRECISA_GRAM_UNIT;
     this.logger = new Logger('EurekaPrecisaScale');
