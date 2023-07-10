@@ -241,6 +241,13 @@
             <ion-checkbox (click)="checkHealthPlugin()"
               [(ngModel)]="settings.track_caffeine_consumption"></ion-checkbox>
           </ion-item>
+          <ion-item>
+            <ion-label class="ion-margin-end">
+              <h2>{{"PAGE_SETTINGS_BEST_BREW" | translate}}</h2>
+              <p>{{"PAGE_SETTINGS_BEST_BREW_DESCRIPTION" | translate}}</p>
+            </ion-label>
+            <ion-checkbox (ngModelChange)="saveSettings();" [(ngModel)]="settings.best_brew"></ion-checkbox>
+          </ion-item>
 
         </ion-card-content>
       </ion-card>

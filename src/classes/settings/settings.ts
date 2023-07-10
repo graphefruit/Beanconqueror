@@ -124,6 +124,7 @@ export class Settings implements ISettings {
   public temperature_stay_connected: boolean;
   public currency: string;
   public brew_display_bean_image: boolean;
+  public best_brew: boolean;
 
   public GET_BEAN_FILTER(): IBeanPageFilter {
     const upperRating: number = this.bean_rating;
@@ -300,6 +301,7 @@ export class Settings implements ISettings {
     this.currency = 'EUR';
     this.brew_milliseconds_leading_digits = 3;
     this.brew_display_bean_image = false;
+    this.best_brew = false;
   }
 
   public initializeByObject(settingsObj: ISettings): void {

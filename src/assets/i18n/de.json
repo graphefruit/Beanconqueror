@@ -1520,5 +1520,9 @@
   "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "Die Brührate wird hiermit für alle Zubereitungsmethoden mit 'Espresso' kalkuliert",
   "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "Es scheint so, als ob die Waage nicht richtig mit Beanconqueror verbunden werden konnte, dies passiert in den meisten Fällen nur mit iOS-Geräten und Acaia Waagen, bitte verbinde die Waage erneut und achte darauf, dass das Gewicht in der Kachel aktualisiert wird.",
   "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": "Keine Gewichtswerte?",
-  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "Ab welcher minimum Flussrate, soll die Brühung gestoppt werden? Die Brühung wird erst gestoppt wenn mindestens 5 Sekunden sowie 5 Gramm oder die eingegebene Bohnen-Mahlmenge erreicht wurde, sodass mindestens eine 1:1 Brührate erreicht wurde. Ab dann, wird die hinterlegte Flussrate überprüft sowie verwendet"
+  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "Ab welcher minimum Flussrate, soll die Brühung gestoppt werden? Die Brühung wird erst gestoppt wenn mindestens 5 Sekunden sowie 5 Gramm oder die eingegebene Bohnen-Mahlmenge erreicht wurde, sodass mindestens eine 1:1 Brührate erreicht wurde. Ab dann, wird die hinterlegte Flussrate überprüft sowie verwendet",
+  "ONLY_BEST_BREWS": "Nur beste Brühungen",
+  "POPOVER_BEST_BREW": "Beste Brühung",
+  "PAGE_SETTINGS_BEST_BREW": "Aktiviere beste Brühungen",
+  "PAGE_SETTINGS_BEST_BREW_DESCRIPTION": "Markiere deine Brühung zu einer gewissen Bohne als beste Brühung. Jede Bohne kann nur eine beste Brühung haben im Gegensatz zu Favouriten."
 }

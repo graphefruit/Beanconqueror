@@ -16,7 +16,7 @@ import { UIBrewHelper } from '../../../services/uiBrewHelper';
 export class BrewPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID = 'brew-popover-actions';
   public data: Brew = new Brew();
-  private settings: Settings;
+  public settings: Settings;
 
   constructor(
     private readonly modalController: ModalController,

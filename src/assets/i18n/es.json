@@ -1520,5 +1520,9 @@
   "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "El ratio se calculará con este valor para métodos de preparación de tipo 'espresso'",
   "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "Parece que la báscula bluetooth no se conectó correctamente a Beanconqueror. Suele suceder en dispositivos iOS y básculas Acaia. Por favor, conecta la báscula de nuevo y verifica que el peso se transfiere correctamente.",
   "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": "¿No hay peso?",
-  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "¿Con qué valor mínimo de flujo debería detenerse el temporizador? El temporizador se detendrá únicamente si han transcurrido 5 segundos y se han superado los 5 gramos o si se han superado los gramos del café molido, consiguiendo así un ratio mínimo de 1:1. Tras eso, se comprobará el valor mínimo de flujo configurado"
+  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "¿Con qué valor mínimo de flujo debería detenerse el temporizador? El temporizador se detendrá únicamente si han transcurrido 5 segundos y se han superado los 5 gramos o si se han superado los gramos del café molido, consiguiendo así un ratio mínimo de 1:1. Tras eso, se comprobará el valor mínimo de flujo configurado",
+  "ONLY_BEST_BREWS": "Nur beste Brühungen",
+  "POPOVER_BEST_BREW": "Beste Brühung",
+  "PAGE_SETTINGS_BEST_BREW": "Aktiviere beste Brühungen",
+  "PAGE_SETTINGS_BEST_BREW_DESCRIPTION": "Markiere deine Brühung zu einer gewissen Bohne als beste Brühung. Jede Bohne kann nur eine beste Brühung haben im Gegensatz zu Favouriten."
 }

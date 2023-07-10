@@ -1520,5 +1520,9 @@
   "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "Bu değerle sadece 'espresso' türü hazırlama yöntemleri için demleme oranı hesaplanabilir",
   "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "Bluetooth tartının Beanconqueror'a düzgün bir şekilde bağlanmadığı görünüyor. Bu durum genellikle iOS cihazlarındaki kombinasyonlu Acaia tartılarında olur, tartıyı tekrar bağlayın ve ağırlık verisinin güncellendiğine dikkat edin",
   "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": "Ağırlık değerleri gelmiyor mu?",
-  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "Demleme ne kadar düşük akış hızında durdurulsun? Demleme en az 5 saniye ve 5 gram veya öğütme ağırlığına ulaşıldığında durdurulur, böylece en az 1:1 demleme oranına ulaşılır. Bundan sonra, belirtilen minimum akış hızı kontrol edilecektir"
+  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "Demleme ne kadar düşük akış hızında durdurulsun? Demleme en az 5 saniye ve 5 gram veya öğütme ağırlığına ulaşıldığında durdurulur, böylece en az 1:1 demleme oranına ulaşılır. Bundan sonra, belirtilen minimum akış hızı kontrol edilecektir",
+  "ONLY_BEST_BREWS": "Nur beste Brühungen",
+  "POPOVER_BEST_BREW": "Beste Brühung",
+  "PAGE_SETTINGS_BEST_BREW": "Aktiviere beste Brühungen",
+  "PAGE_SETTINGS_BEST_BREW_DESCRIPTION": "Markiere deine Brühung zu einer gewissen Bohne als beste Brühung. Jede Bohne kann nur eine beste Brühung haben im Gegensatz zu Favouriten."
 }

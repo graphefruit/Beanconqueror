@@ -1510,5 +1510,9 @@
 	"BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "该值仅用于计算'浓缩咖啡'类型的冲泡方式的冲泡比例。",
 	"SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "看起来你的蓝牙秤没有正确连接到 Beanconqueror。这在大多数情况下发生在使用带有Acaia电子秤的iOS设备上，请重新连接秤，并确保重量数据已更新。",
 	"SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": "没有重量数值？",
-	"SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "停止冲泡所需的最小流量？冲泡将仅在达到至少5秒和5克或研磨重量的1:1冲泡比例时停止。之后，将检查设置的最小流量。"
+	"SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "停止冲泡所需的最小流量？冲泡将仅在达到至少5秒和5克或研磨重量的1:1冲泡比例时停止。之后，将检查设置的最小流量。",
+  "ONLY_BEST_BREWS": "Nur beste Brühungen",
+  "POPOVER_BEST_BREW": "Beste Brühung",
+  "PAGE_SETTINGS_BEST_BREW": "Aktiviere beste Brühungen",
+  "PAGE_SETTINGS_BEST_BREW_DESCRIPTION": "Markiere deine Brühung zu einer gewissen Bohne als beste Brühung. Jede Bohne kann nur eine beste Brühung haben im Gegensatz zu Favouriten."
 }

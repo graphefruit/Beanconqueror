@@ -110,4 +110,5 @@ export interface ISettings {
 
   currency: string;
   brew_display_bean_image: boolean;
+  best_brew: boolean;
 }
