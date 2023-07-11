@@ -176,5 +176,55 @@ export class SettingsPopoverBluetoothActionsComponent implements OnInit {
     }
   }
 
+  public async reconnectRefractometer() {
+    let timeoutVar: any = null;
+    const refractometerId = this.settings.refractometer_id;
+    const refractometerType = this.settings.refractometer_type;
+    if (refractometerId && refractometerType) {
+      await this.uiAlert.showLoadingSpinner();
+      let subscrip = this.bluetoothService
+        .attachOnEvent()
+        .subscribe((_type) => {
+          if (_type === CoffeeBluetoothServiceEvent.CONNECTED_REFRACTOMETER) {
+            this.uiAlert.hideLoadingSpinner();
+            if (subscrip) {
+              subscrip.unsubscribe();
+              subscrip = undefined;
+            }
+          }
+        });
+      this.bluetoothService.reconnectRefractometerDevice(
+        refractometerType,
+        refractometerId,
+        () => {
+          if (subscrip) {
+            subscrip.unsubscribe();
+            subscrip = undefined;
+          }
+          this.uiAlert.hideLoadingSpinner();
+          clearTimeout(timeoutVar);
+          timeoutVar = null;
+        },
+        () => {
+          if (subscrip) {
+            subscrip.unsubscribe();
+            subscrip = undefined;
+          }
+          this.uiAlert.hideLoadingSpinner();
+          clearTimeout(timeoutVar);
+          timeoutVar = null;
+        }
+      );
+
+      timeoutVar = setTimeout(async () => {
+        if (subscrip) {
+          subscrip.unsubscribe();
+          subscrip = undefined;
+        }
+        this.uiAlert.hideLoadingSpinner();
+      }, 15000);
+    }
+  }
+
   public async choose(_type: string): Promise<void> {}
 }
