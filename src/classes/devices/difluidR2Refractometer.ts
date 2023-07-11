@@ -92,20 +92,20 @@ export class DiFluidR2Refractometer extends RefractometerDevice {
     );
   }
   private async parseStatusUpdate(difluidRawStatus: Uint8Array) {
-    if (difluidRawStatus[3] == 254) {
+    if (difluidRawStatus[3] === 254) {
       this.logger.log('no liquid');
     }
-    if (difluidRawStatus[4] == 3 && difluidRawStatus[5] == 0) {
-      if (difluidRawStatus[6] == 11) {
+    if (difluidRawStatus[4] === 3 && difluidRawStatus[5] === 0) {
+      if (difluidRawStatus[6] === 11) {
         this.logger.log('test started');
-      } else if (difluidRawStatus[6] == 0) {
+      } else if (difluidRawStatus[6] === 0) {
         this.logger.log('test finished');
       }
-    } else if (difluidRawStatus[4] == 6 && difluidRawStatus[5] == 1) {
+    } else if (difluidRawStatus[4] === 6 && difluidRawStatus[5] === 1) {
       this.logger.log('temp result received');
       const tempTank = await this.getInt(difluidRawStatus.slice(9, 11));
       this.setTempReading(tempTank / 10);
-    } else if (difluidRawStatus[4] == 7 && difluidRawStatus[5] == 2) {
+    } else if (difluidRawStatus[4] === 7 && difluidRawStatus[5] === 2) {
       this.logger.log('tds result received');
       const tds = await this.getInt(difluidRawStatus.slice(6, 8));
       this.setTdsReading(tds / 100);
@@ -121,7 +121,7 @@ export class DiFluidR2Refractometer extends RefractometerDevice {
       list[i] = buffer[i];
       i++;
     }
-    if (buffer.length == 2) {
+    if (buffer.length === 2) {
       return bytes.getInt16(0, false);
     } else {
       return bytes.getInt32(0, false);
