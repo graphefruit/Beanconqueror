@@ -82,11 +82,6 @@ export class BlackcoffeeScale extends BluetoothScale {
 
   // Private Methods
 
-  /**
-   * Writes a @param _bytes payload to Blackcoffee Scale via BLE.
-   * @param _bytes the payload to be written.
-   * @returns Asyncronous in nature, returns a callback.
-   */
   private write(_bytes: number[]) {
     return new Promise((resolve, reject) => {
       ble.write(
@@ -118,10 +113,6 @@ export class BlackcoffeeScale extends BluetoothScale {
     );
   }
 
-  /**
-   * Blackcoffee Scales provide status updates via a 18 length unsigned integer array.
-   * @param BlackCoffeeRawStatus The 18 length unsigned integer array retreived from BLE.
-   */
   private parseStatusUpdate(BlackcoffeeRawStatus: Uint8Array) {
     if (BlackcoffeeRawStatus.length > 14) {
       const hex = Array
