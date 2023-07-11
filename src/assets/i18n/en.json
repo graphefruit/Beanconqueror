@@ -1521,7 +1521,8 @@
       "LOCATION": "To find refractometer devices, the app needs access to the location.",
       "BLUETOOTH": "To find refractometer devices, the app needs access to bluetooth"
     },
-    "LOG": "Activate log files for refractometer device"
+    "LOG": "Activate log files for refractometer device",
+    "READ_END": "Test finished - result received"
   },
   "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "Reconnect temperature device",
   "PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO": "Pressure device is only usable with the preparation style 'Espresso'",

@@ -1508,7 +1508,8 @@
 		  "LOCATION": "To find refractometer devices, the app needs access to the location.",
 		  "BLUETOOTH": "To find refractometer devices, the app needs access to bluetooth"
 		},
-		"LOG": "Activate log files for refractometer device"
+		"LOG": "Activate log files for refractometer device",
+		"READ_END": "Test finished - result received"
 	  },
 	"POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "重新连接温度设备",
 	"PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO": "压力设备仅在 'espresso' 模式中可用",

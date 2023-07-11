@@ -1518,7 +1518,8 @@
       "LOCATION": "To find refractometer devices, the app needs access to the location.",
       "BLUETOOTH": "To find refractometer devices, the app needs access to bluetooth"
     },
-    "LOG": "Activate log files for refractometer device"
+    "LOG": "Activate log files for refractometer device",
+    "READ_END": "Test finished - result received"
   },
   "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "Reconectar dispositivo de temperatura",
   "PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO": "El sensor de presión solo se puede usar en espresso",
