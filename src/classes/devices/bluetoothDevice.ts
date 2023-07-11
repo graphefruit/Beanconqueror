@@ -41,12 +41,14 @@ export class BluetoothScale {
   public flowChange: EventEmitter<FlowChangeEvent> = new EventEmitter();
   public timerEvent: EventEmitter<TimerEvent | null> = new EventEmitter();
   public tareEvent: EventEmitter<TareEvent> = new EventEmitter();
+  public supportsTaring: boolean;
   protected weight: Weight;
   protected blueToothParentlogger: Logger;
   private scaleType = undefined;
 
   constructor(data: PeripheralData, type: ScaleType) {
     this.device_id = data.id;
+    this.supportsTaring = true;
     try {
       this.device_name = data.name;
     } catch (ex) {}

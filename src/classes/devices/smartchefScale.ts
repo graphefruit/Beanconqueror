@@ -28,6 +28,7 @@ export class SmartchefScale extends BluetoothScale {
   constructor(data: PeripheralData, type: ScaleType) {
     super(data, type);
     this.logger = new Logger('SmartchefScale');
+    this.supportsTaring = false;
     this.connect();
   }
 

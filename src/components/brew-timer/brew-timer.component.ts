@@ -86,6 +86,12 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     } catch (ex) {}
   }
 
+  public smartScaleSupportsTaring() {
+    try {
+      return this.bleManager.getScale().supportsTaring;
+    } catch (ex) {}
+  }
+
   public ngOnInit(): void {
     this.initTimer();
   }
