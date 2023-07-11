@@ -3029,7 +3029,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
         if (
           scaleType === ScaleType.EUREKAPRECISA ||
-          scaleType === ScaleType.SMARTCHEF
+          scaleType === ScaleType.SMARTCHEF ||
+          scaleType === ScaleType.BLACKCOFFEE
         ) {
           if (this.flowProfileArrCalculated.length > 1) {
             let avgWeight = 0;

@@ -32,6 +32,7 @@ import { RefractometerDevice } from 'src/classes/devices/refractometerBluetoothD
 import { UISettingsStorage } from '../uiSettingsStorage';
 import { TranslateService } from '@ngx-translate/core';
 import { UIToast } from '../uiToast';
+import { BlackcoffeeScale } from 'src/classes/devices/blackcoffeeScale';
 
 declare var device: any;
 declare var ble: any;
@@ -249,7 +250,8 @@ export class CoffeeBluetoothDevicesService {
             EurekaPrecisaScale.test(scanDevice) ||
             SkaleScale.test(scanDevice) ||
             SmartchefScale.test(scanDevice) ||
-            DifluidMicrobalance.test(scanDevice)
+            DifluidMicrobalance.test(scanDevice) ||
+            BlackcoffeeScale.test(scanDevice)
           ) {
             // We found all needed devices.
             promiseResolved = true;
@@ -747,6 +749,11 @@ export class CoffeeBluetoothDevicesService {
             });
             return;
           } 
+          if (BlackcoffeeScale.test(deviceScale)) {
+            this.logger.log('BleManager - We found a blackcoffee scale');
+            resolve({ id: deviceScale.id, type: ScaleType.BLACKCOFFEE });
+            return;
+          }
         }
         resolve(undefined);
       }
@@ -814,6 +821,13 @@ export class CoffeeBluetoothDevicesService {
             supportedDevices.push({
               id: deviceScale.id,
               type: ScaleType.DIFLUIDMICROBALANCE,
+            });
+          }
+          if (BlackcoffeeScale.test(deviceScale)) {
+            this.logger.log('BleManager - We found a blackcoffee scale');
+            supportedDevices.push({
+              id: deviceScale.id,
+              type: ScaleType.BLACKCOFFEE,
             });
           }
         }
