@@ -174,8 +174,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public preparationDevice: XeniaDevice = undefined;
 
-  public refractometerDevice: RefractometerDevice = undefined;
-
   private pressureThresholdWasHit: boolean = false;
   private temperatureThresholdWasHit: boolean = false;
 
@@ -783,10 +781,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public attachToRefractometerChanges() {
     if (this.refractometerConnected()) {
       this.deattachToRefractometerChange();
-      this.refractometerDevice = this.bleManager.getRefractometerDevice();
+      const refractometerDevice = this.bleManager.getRefractometerDevice();
       this.refractometerDeviceSubscription =
-        this.refractometerDevice.resultEvent.subscribe(() => {
-          this.data.tds = this.refractometerDevice.getLastReading().tds;
+        refractometerDevice.resultEvent.subscribe(() => {
+          this.data.tds = refractometerDevice.getLastReading().tds;
           this.uiAlert.hideLoadingSpinner();
           this.uiToast.showInfoToastBottom('REFRACTOMETER.READ_END');
           this.checkChanges();
@@ -1932,7 +1930,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public async requestRefractometerRead() {
     if (this.refractometerConnected()) {
-      this.refractometerDevice.requestRead();
+      const refractometerDevice = this.bleManager.getRefractometerDevice();
+      refractometerDevice.requestRead();
       this.uiAlert.showLoadingSpinner();
 
       let refractometerSubscription;
@@ -1944,7 +1943,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           refractometerSubscription.unsubscribe();
         } catch (ex) {}
       }, 5000);
-      refractometerSubscription = this.refractometerDevice.resultEvent.subscribe(
+      refractometerSubscription = refractometerDevice.resultEvent.subscribe(
         () => {
           try {
             //We got triggered, cancel set timeout
@@ -1955,7 +1954,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       );
     }
   }
-
 
   public async calculateBrewBeverageQuantity() {
     let vesselWeight: number = 0;
