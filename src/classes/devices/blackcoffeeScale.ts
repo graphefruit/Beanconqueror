@@ -41,7 +41,11 @@ export class BlackcoffeeScale extends BluetoothScale {
    * @returns boolean If support is provided for device.
    */
   public static test(device: any): boolean {
-    return device && device.name && device.name.toLowerCase().includes(this.DEVICE_NAME);
+    return (
+      device &&
+      device.name &&
+      device.name.toLowerCase().includes(this.DEVICE_NAME)
+    );
   }
 
   public override getWeight() {
@@ -116,16 +120,16 @@ export class BlackcoffeeScale extends BluetoothScale {
 
   private parseStatusUpdate(BlackcoffeeRawStatus: Uint8Array) {
     if (BlackcoffeeRawStatus.length > 14) {
-      const hex = Array
-      .from(new Uint8Array(BlackcoffeeRawStatus.buffer))
-      .map(b => b.toString(16).padStart(2, "0"))
-      .join("")
+      const hex = Array.from(new Uint8Array(BlackcoffeeRawStatus.buffer))
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('');
 
-    const isNegative = hex[4] == "8" || hex[4] == "c"
-    const isStill = hex[5] == "1"
+      const isNegative = hex[4] == '8' || hex[4] == 'c';
+      const isStill = hex[5] == '1';
 
-    const hexWeight = hex.slice(7, 14)
-    const weight = (isNegative ? -1 : 1) * parseInt(hexWeight, 16) / 1000  // weight is in gram
+      const hexWeight = hex.slice(7, 14);
+      // weight is in gram
+      const weight = ((isNegative ? -1 : 1) * parseInt(hexWeight, 16)) / 1000;
       this.setWeight(weight);
     } else {
       this.logger.log(
