@@ -6,12 +6,12 @@ import { ScaleType } from './index';
 declare var ble: any;
 
 /**
- * Provides BluetoothScale integration for Smartchef Scales.
+ * Provides BluetoothScale integration for Blackcoffee Scales.
  */
-export class SmartchefScale extends BluetoothScale {
-  public static DEVICE_NAME = 'smartchef';
-  public static DATA_SERVICE = 'FFF0';
-  public static DATA_CHARACTERISTIC = 'FFF1';
+export class BlackcoffeeScale extends BluetoothScale {
+  public static DEVICE_NAME = 'blackcoffee';
+  public static DATA_SERVICE = '0000ffb0-0000-1000-8000-00805f9b34fb';
+  public static DATA_CHARACTERISTIC = '0000ffb2-0000-1000-8000-00805f9b34fb';
   // Constructor
 
   // Class Members
@@ -27,8 +27,9 @@ export class SmartchefScale extends BluetoothScale {
 
   constructor(data: PeripheralData, type: ScaleType) {
     super(data, type);
-    this.logger = new Logger('SmartchefScale');
+    this.logger = new Logger('BlackCoffeeScale');
     this.supportsTaring = false;
+
     this.connect();
   }
 
@@ -62,7 +63,7 @@ export class SmartchefScale extends BluetoothScale {
   // Public Methods
 
   public override async setTimer(command: SCALE_TIMER_COMMAND) {
-    this.logger.log('The smartchef scale doesnt feature a timer');
+    this.logger.log('The blackcoffee scale doesnt feature a timer');
   }
 
   public override async connect() {
@@ -72,10 +73,10 @@ export class SmartchefScale extends BluetoothScale {
   }
 
   /**
-   * Tares the Smartchef Scale current weight to 0;
+   * Tares the Blackcoffee Scale current weight to 0;
    */
   public override async tare() {
-    this.logger.log('Taring is not possible with the smartchef scale');
+    this.logger.log('Taring is not possible with the blackcoffee scale');
   }
 
   public override disconnectTriggered(): void {
@@ -86,17 +87,12 @@ export class SmartchefScale extends BluetoothScale {
 
   // Private Methods
 
-  /**
-   * Writes a @param _bytes payload to Smartchef Scale via BLE.
-   * @param _bytes the payload to be written.
-   * @returns Asyncronous in nature, returns a callback.
-   */
   private write(_bytes: number[]) {
     return new Promise((resolve, reject) => {
       ble.write(
         this.device_id,
-        SmartchefScale.DATA_SERVICE,
-        SmartchefScale.DATA_CHARACTERISTIC,
+        BlackcoffeeScale.DATA_SERVICE,
+        BlackcoffeeScale.DATA_CHARACTERISTIC,
         new Uint8Array(_bytes).buffer,
         (e: any) => {
           this.logger.debug('Write successfully');
@@ -113,8 +109,8 @@ export class SmartchefScale extends BluetoothScale {
   private async attachNotification() {
     ble.startNotification(
       this.device_id,
-      SmartchefScale.DATA_SERVICE,
-      SmartchefScale.DATA_CHARACTERISTIC,
+      BlackcoffeeScale.DATA_SERVICE,
+      BlackcoffeeScale.DATA_CHARACTERISTIC,
       async (_data: any) => {
         this.parseStatusUpdate(new Uint8Array(_data));
       },
@@ -122,16 +118,18 @@ export class SmartchefScale extends BluetoothScale {
     );
   }
 
-  /**
-   * Smartchef Scales provide status updates via a 18 length unsigned integer array.
-   * @param SmartchefRawStatus The 18 length unsigned integer array retreived from BLE.
-   */
-  private parseStatusUpdate(smartChefRawStatus: Uint8Array) {
-    if (smartChefRawStatus.length > 8) {
-      let weight = ((smartChefRawStatus[5] << 8) + smartChefRawStatus[6]) / 10;
-      if (smartChefRawStatus[3] > 10) {
-        weight = weight * -1;
-      }
+  private parseStatusUpdate(BlackcoffeeRawStatus: Uint8Array) {
+    if (BlackcoffeeRawStatus.length > 14) {
+      const hex = Array.from(new Uint8Array(BlackcoffeeRawStatus.buffer))
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('');
+
+      const isNegative = hex[4] == '8' || hex[4] == 'c';
+      const isStill = hex[5] == '1';
+
+      const hexWeight = hex.slice(7, 14);
+      // weight is in gram
+      const weight = ((isNegative ? -1 : 1) * parseInt(hexWeight, 16)) / 1000;
       this.setWeight(weight);
     } else {
       this.logger.log(
@@ -143,8 +141,8 @@ export class SmartchefScale extends BluetoothScale {
   private async deattachNotification() {
     ble.stopNotification(
       this.device_id,
-      SmartchefScale.DATA_SERVICE,
-      SmartchefScale.DATA_CHARACTERISTIC,
+      BlackcoffeeScale.DATA_SERVICE,
+      BlackcoffeeScale.DATA_CHARACTERISTIC,
       (e: any) => {},
       (e: any) => {}
     );

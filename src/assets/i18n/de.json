@@ -1285,7 +1285,7 @@
       "LOCATION": "Um Bluetooth-Waagen zu finden, muss der Standort freigegeben werden",
       "BLUETOOTH": "Um Bluetooth-Waagen zu finden, muss Bluetooth freigegeben werden"
     },
-    "INFORMATION_DESCRIPTION": "Unterstütze Waagen sind: Decent Scale sowie Acaia Scales, Felicita Scales, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale und Eureka Precisa. Achtung: Falls die Eureka Precisa einen negativen Wert bekommt, stoppt der Timer automatisch"
+    "INFORMATION_DESCRIPTION": "Unterstütze Waagen sind: Decent Scale sowie Acaia Scales, Felicita Scales, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale, Blackcoffee.io und Eureka Precisa. Achtung: Falls die Eureka Precisa einen negativen Wert bekommt, stoppt der Timer automatisch"
   },
   "QR": {
     "WRONG_QRCODE_DESCRIPTION": "Falscher QR-Code oder falscher Inhalt",
@@ -1369,6 +1369,7 @@
   "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_SHOW_GRAPHS_FILTER": "Anzeige der Graphen für Filterbrühungen",
   "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_SHOW_GRAPHS_ESPRESSO": "Anzeige der Graphen für Espressobrühungen",
   "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE": "Druck Geräte",
+  "PAGE_SETTINGS_TAB_BLUETOOTH_REFRACTOMETER": "Refraktometergerät",
   "PRESSURE_LOG": "Logfiles für Druck aktivieren",
   "PRESSURE_THRESHOLD_ACTIVE": "Zeit starten ab bestimmten Druck?",
   "PRESSURE_THRESHOLD_BAR": "Schwellenwert Druck",
@@ -1478,7 +1479,7 @@
       "SCRIPT_LIST_GENERAL_2": "Espresso, Endlos",
       "SCRIPT_LIST_GENERAL_STOP": "Bezug stoppen",
       "CHOOSE_SCRIPT_AT_WEIGHT": "Script auswählen für Gewichtserreichung",
-      "ERROR_NOT_ALL_SCRIPTS_FOUND":"Ein oder mehrere Xenia-Scripte konnten nicht mehr gefunden werden, diese wurden auf Standard zurückgesetzt",
+      "ERROR_NOT_ALL_SCRIPTS_FOUND": "Ein oder mehrere Xenia-Scripte konnten nicht mehr gefunden werden, diese wurden auf Standard zurückgesetzt",
       "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "Die Verbindung zur Xenia-Siebträgermaschine konnte nicht hergestellt werden, bitte überprüfe ob du im richtigen Netz (WLAN) unterwegs bist, ob die Verbindung richtig hinterlegt wurde, oder ob andere Probleme vorhanden sind",
       "CHECKING_CONNECTION_TO_PORTAFILTER": "Verbindung zur Xenia wird überprüft",
       "GRABING_SCRIPTS": "Scripte werden von der Xenia geholt"
@@ -1491,8 +1492,8 @@
   "TEMPERATURE": {
     "CONNECTION_NOT_ESTABLISHED": "Temperaturgerät konnte nicht gefunden oder verbunden werden",
     "CONNECTED_SUCCESSFULLY": "Temperaturgerät verbunden",
-    "DISCONNECTED_SUCCESSFULLY":  "Temperaturgerät getrennt",
-    "DISCONNECTED_UNPLANNED":  "Temperaturgerät ungeplant getrennt",
+    "DISCONNECTED_SUCCESSFULLY": "Temperaturgerät getrennt",
+    "DISCONNECTED_UNPLANNED": "Temperaturgerät ungeplant getrennt",
     "STAY_CONNECTED_ON_APP_MINIMIZE": "Temperaturgerät verbunden lassen bei App minimierung/inaktivität",
     "INFORMATION_DESCRIPTION": "Unterstützte Temperaturgeräte sind: ETI Ltd Thermometers (ThermaQ Blue, BlueTherm, etc)",
     "BLUETOOTH_SCAN_RUNNING": "Temperaturgeräte werden für 60 Sekunden versucht zu finden, bitte warten",
@@ -1504,6 +1505,22 @@
     "LOG": "Logfiles für Temperaturgeräte aktivieren",
     "THRESHOLD_ACTIVE": "Zeit starten mit einer vordefinierten Temperatur",
     "THRESHOLD_TEMP": "Schwellenwert Temperatur"
+  },
+  "REFRACTOMETER": {
+    "CONNECTION_NOT_ESTABLISHED": "Refraktometer konnte nicht gefunden oder verbunden werden",
+    "CONNECTED_SUCCESSFULLY": "Refraktometer verbunden",
+    "DISCONNECTED_SUCCESSFULLY": "Refraktometer getrennt",
+    "DISCONNECTED_UNPLANNED": "Refraktometer ungeplant getrennt",
+    "STAY_CONNECTED_ON_APP_MINIMIZE": "Refraktometer verbunden lassen bei App minimierung/inaktivität",
+    "INFORMATION_DESCRIPTION": "Unterstützte Refraktometer sind: DiFluid R2",
+    "BLUETOOTH_SCAN_RUNNING": "Refraktometer werden für 60 Sekunden versucht zu finden, bitte warten",
+    "BLUETOOTH_NOT_ENABLED": "Bluetooth ist nicht aktiviert, bitte aktiviere dies in den Einstellungen",
+    "REQUEST_PERMISSION": {
+      "LOCATION": "Um Bluetooth Refraktometer zu finden, muss der Standort freigegeben werden",
+      "BLUETOOTH": "Um Bluetooth Refraktometer zu finden, muss Bluetooth freigegeben werden"
+    },
+    "LOG": "Logfiles für Refraktometer aktivieren",
+    "READ_END": "Test wurde abgeschlossen, Wert wurde übertragen"
   },
   "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "Temperaturgerät neu verbinden",
   "BREW_TEMPERATURE_REALTIME": "Temperatur",

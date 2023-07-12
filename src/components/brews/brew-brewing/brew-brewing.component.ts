@@ -74,7 +74,13 @@ import {
 } from '../../../classes/preparationDevice/xenia/xeniaDevice';
 import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
+import {
+  RefractionResultEvent,
+  RefractometerDevice,
+} from 'src/classes/devices/refractometerBluetoothDevice';
+import { delay } from 'lodash';
 import { UIToast } from '../../../services/uiToast';
+import { DiFluidR2Refractometer } from '../../../classes/devices/difluidR2Refractometer';
 
 declare var cordova;
 declare var Plotly;
@@ -136,6 +142,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public scaleFlowSubscription: Subscription = undefined;
   public bluetoothSubscription: Subscription = undefined;
   public flow_profile_raw: BrewFlow = new BrewFlow();
+  public refractometerDeviceSubscription: Subscription = undefined;
   public pressureDeviceSubscription: Subscription = undefined;
   public temperatureDeviceSubscription: Subscription = undefined;
   private scaleFlowChangeSubscription: Subscription = undefined;
@@ -371,6 +378,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           ) {
             this.deattachToTemperatureChange();
             disconnectTriggered = true;
+          } else if (
+            _type === CoffeeBluetoothServiceEvent.CONNECTED_REFRACTOMETER
+          ) {
+            this.__connectRefractometerDevice(false);
+          } else if (
+            _type === CoffeeBluetoothServiceEvent.DISCONNECTED_REFRACTOMETER
+          ) {
+            this.deattachToRefractometerChange();
           }
 
           if (disconnectTriggered) {
@@ -529,6 +544,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.deattachToPressureChange();
     this.deattachToScaleEvents();
     this.deattachToTemperatureChange();
+    this.deattachToRefractometerChange();
     this.stopFetchingAndSettingDataFromXenia();
   }
 
@@ -616,6 +632,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
     return !!pressureDevice;
+  }
+
+  public refractometerConnected() {
+    if (!this.platform.is('cordova')) {
+      return true;
+    }
+
+    const refractometer: RefractometerDevice =
+      this.bleManager.getRefractometerDevice();
+    return !!refractometer;
   }
 
   public getGraphIonColSize() {
@@ -752,6 +778,20 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
   }
 
+  public attachToRefractometerChanges() {
+    if (this.refractometerConnected()) {
+      this.deattachToRefractometerChange();
+      const refractometerDevice = this.bleManager.getRefractometerDevice();
+      this.refractometerDeviceSubscription =
+        refractometerDevice.resultEvent.subscribe(() => {
+          this.data.tds = refractometerDevice.getLastReading().tds;
+          this.uiAlert.hideLoadingSpinner();
+          this.uiToast.showInfoToastBottom('REFRACTOMETER.READ_END');
+          this.checkChanges();
+        });
+    }
+  }
+
   public attachToFlowChange() {
     const scale: BluetoothScale = this.bleManager.getScale();
     if (scale) {
@@ -856,6 +896,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (this.temperatureDeviceSubscription) {
       this.temperatureDeviceSubscription.unsubscribe();
       this.temperatureDeviceSubscription = undefined;
+    }
+  }
+
+  public deattachToRefractometerChange() {
+    if (this.refractometerDeviceSubscription) {
+      this.refractometerDeviceSubscription.unsubscribe();
+      this.refractometerDeviceSubscription = undefined;
     }
   }
 
@@ -1881,6 +1928,33 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
   }
 
+  public async requestRefractometerRead() {
+    if (this.refractometerConnected()) {
+      const refractometerDevice = this.bleManager.getRefractometerDevice();
+      refractometerDevice.requestRead();
+      this.uiAlert.showLoadingSpinner();
+
+      let refractometerSubscription;
+      const hideLoadingSpinnerTimeout = setTimeout(() => {
+        try {
+          if (this.uiAlert.isLoadingSpinnerShown()) {
+            this.uiAlert.hideLoadingSpinner();
+          }
+          refractometerSubscription.unsubscribe();
+        } catch (ex) {}
+      }, 5000);
+      refractometerSubscription = refractometerDevice.resultEvent.subscribe(
+        () => {
+          try {
+            //We got triggered, cancel set timeout
+            clearTimeout(hideLoadingSpinnerTimeout);
+            refractometerSubscription.unsubscribe();
+          } catch (ex) {}
+        }
+      );
+    }
+  }
+
   public async calculateBrewBeverageQuantity() {
     let vesselWeight: number = 0;
     if (this.data.vessel_weight > 0) {
@@ -2047,6 +2121,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       } else if (this.settings.temperature_threshold_active) {
         this.attachToTemperatureChange();
       }
+
+      this.checkChanges();
+    }
+  }
+
+  private async __connectRefractometerDevice(_firstStart: boolean) {
+    if (this.refractometerConnected()) {
+      this.deattachToRefractometerChange();
+
+      this.attachToRefractometerChanges();
 
       this.checkChanges();
     }
@@ -2943,7 +3027,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
         if (
           scaleType === ScaleType.EUREKAPRECISA ||
-          scaleType === ScaleType.SMARTCHEF
+          scaleType === ScaleType.SMARTCHEF ||
+          scaleType === ScaleType.BLACKCOFFEE
         ) {
           if (this.flowProfileArrCalculated.length > 1) {
             let avgWeight = 0;

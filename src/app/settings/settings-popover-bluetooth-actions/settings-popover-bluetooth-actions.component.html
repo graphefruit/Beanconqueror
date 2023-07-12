@@ -14,5 +14,9 @@
       <ion-icon name="bluetooth-outline" slot="start"></ion-icon>
       <span>{{"POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE" | translate}}</span>
     </ion-item>
+    <ion-item (click)="reconnectRefractometer()" *ngIf="this.settings.refractometer_id" button tappable>
+      <ion-icon name="bluetooth-outline" slot="start"></ion-icon>
+      <span>{{"POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER" | translate}}</span>
+    </ion-item>
   </ion-list>
 </ion-content>

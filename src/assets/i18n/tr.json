@@ -1285,7 +1285,7 @@
       "LOCATION": "Bluetooth ile terazisiyi bulmak için uygulamanın konuma erişmesi gerekiyor.",
       "BLUETOOTH": "Bluetooth ile terazisiyi bulmak için uygulamanın bluetooth erişimi gerekiyor."
     },
-    "INFORMATION_DESCRIPTION": "Desteklenen tartılar: Decent Tartı, Acaia Tartı, Felicita Tartı, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale and Eureka Precisa. Care: If the Eureka Precisa recieves a negative value, the timer stops"
+    "INFORMATION_DESCRIPTION": "Desteklenen tartılar: Decent Tartı, Acaia Tartı, Felicita Tartı, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale, Blackcoffee.io and Eureka Precisa. Care: If the Eureka Precisa recieves a negative value, the timer stops"
   },
   "QR":{
     "WRONG_QRCODE_DESCRIPTION": "Yanlış qr kodu veya yanlış içerik",
@@ -1505,11 +1505,28 @@
     "THRESHOLD_ACTIVE": "Önceden tanımlanmış sıcaklıkla zamanlayıcıyı başlat",
     "THRESHOLD_TEMP": "Eşik sıcaklık"
   },
+  "REFRACTOMETER": {
+    "CONNECTION_NOT_ESTABLISHED": "Refractometer device not found, or connection could not be established",
+    "CONNECTED_SUCCESSFULLY": "Refractometer device connected",
+    "DISCONNECTED_SUCCESSFULLY": "Refractometer device disconnected",
+    "DISCONNECTED_UNPLANNED": "Refractometer device disconnected unexpectedly",
+    "STAY_CONNECTED_ON_APP_MINIMIZE": "Keep thermometer connected even when app is in the background",
+    "INFORMATION_DESCRIPTION": "Supported devices are: DiFluid R2",
+    "BLUETOOTH_SCAN_RUNNING": "Searching for refractometer device for up to 60s",
+    "BLUETOOTH_NOT_ENABLED": "Bluetooth not activated, please activate to work properly",
+    "REQUEST_PERMISSION": {
+      "LOCATION": "To find refractometer devices, the app needs access to the location.",
+      "BLUETOOTH": "To find refractometer devices, the app needs access to bluetooth"
+    },
+    "LOG": "Activate log files for refractometer device",
+    "READ_END": "Test finished - result received"
+  },
   "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "Sıcaklık ölçme cihazını yeniden bağlayın",
   "PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO": "Basınç ölçme cihazı sadece 'espresso' hazırlama stilinde kullanılabilir",
   "PRESSURE_MESSAGE_AFTER_CONNECTION": "Bilinen davranış (analizde): Lütfen dikkat edin, telefonunuzu yeniden başlattıktan veya uygulamayı uzun süre kullanmadıysanız, bağlantı daha uzun sürebilir (30 saniye ila 1 dakika), sonra sorun çözülmelidir.",
   "BREW_TEMPERATURE_REALTIME": "Sıcaklık",
   "PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE": "Termometre",
+  "PAGE_SETTINGS_TAB_BLUETOOTH_REFRACTOMETER": "Refractometer device",
   "SMART_SCALE_ACAIA_HEARTBEAT_TIMER": "Kalp atışı zamanlayıcısı - Sadece Acaia Tartıları içindir (Acaia tartının çalıştığına emin olmak ve bağlantıyı kesmemek için tartıya sinyal gönderir",
   "SMART_SCALE_ACAIA_HEARTBEAT_TIMER_TOOLTIP": "Sadece Acaia tartıları için kullanılır!!! - Eski Acaia tartıları daha hızlı bir frekansta bir sinyale ihtiyaç duyar, sorunlarla karşılaşırsanız, sinyal miktarını en aza indirmeyi deneyin",
   "SHARE_BEAN_URL": "URL olarak paylaş",

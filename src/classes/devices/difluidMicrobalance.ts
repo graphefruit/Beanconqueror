@@ -140,7 +140,15 @@ export class DifluidMicrobalance extends BluetoothScale {
     );
   }
   private async parseStatusUpdate(difluidRawStatus: Uint8Array) {
-    if (difluidRawStatus.length >= 19 && difluidRawStatus[3] == 0) {
+    if (
+      difluidRawStatus[2] === 3 &&
+      difluidRawStatus[3] === 2 &&
+      difluidRawStatus[5] === 2
+    ) {
+      // left button pressed - starting timer
+      this.timerEvent.emit(null);
+    }
+    if (difluidRawStatus.length >= 19 && difluidRawStatus[3] === 0) {
       const weight = await this.getInt(difluidRawStatus.slice(5, 9));
       this.setWeight(weight / 10);
     }

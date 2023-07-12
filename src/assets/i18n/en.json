@@ -1285,7 +1285,7 @@
       "LOCATION": "To find bluetooth scales, the app needs access to the location.",
       "BLUETOOTH": "To find bluetooth scales, the app needs access to bluetooth"
     },
-    "INFORMATION_DESCRIPTION": "Supported scales are: Decent Scale, Acaia, Felicita, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale and Eureka Precisa. Note: If the Eureka Precisa recieves a negative value, the timer stops"
+    "INFORMATION_DESCRIPTION": "Supported scales are: Decent Scale, Acaia, Felicita, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale, Blackcoffee.io and Eureka Precisa. Note: If the Eureka Precisa recieves a negative value, the timer stops"
   },
   "QR": {
     "WRONG_QRCODE_DESCRIPTION": "Invalid QR code or unrecognised content",
@@ -1371,6 +1371,7 @@
   "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_SHOW_GRAPHS_ESPRESSO": "Show graphs for espresso",
   "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE": "Pressure device",
   "PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE": "Temperature device",
+  "PAGE_SETTINGS_TAB_BLUETOOTH_REFRACTOMETER": "Refractometer device",
   "PRESSURE_LOG": "Activate log files for pressure device",
   "PRESSURE_THRESHOLD_ACTIVE": "Start timer with predefined pressure",
   "PRESSURE_THRESHOLD_BAR": "Threshold pressure",
@@ -1506,6 +1507,22 @@
     "LOG": "Activate log files for temperature device",
     "THRESHOLD_ACTIVE": "Start timer with predefined temperature",
     "THRESHOLD_TEMP": "Threshold temperature"
+  },
+  "REFRACTOMETER": {
+    "CONNECTION_NOT_ESTABLISHED": "Refractometer device not found, or connection could not be established",
+    "CONNECTED_SUCCESSFULLY": "Refractometer device connected",
+    "DISCONNECTED_SUCCESSFULLY": "Refractometer device disconnected",
+    "DISCONNECTED_UNPLANNED": "Refractometer device disconnected unexpectedly",
+    "STAY_CONNECTED_ON_APP_MINIMIZE": "Keep thermometer connected even when app is in the background",
+    "INFORMATION_DESCRIPTION": "Supported devices are: DiFluid R2",
+    "BLUETOOTH_SCAN_RUNNING": "Searching for refractometer device for up to 60s",
+    "BLUETOOTH_NOT_ENABLED": "Bluetooth not activated, please activate to work properly",
+    "REQUEST_PERMISSION": {
+      "LOCATION": "To find refractometer devices, the app needs access to the location.",
+      "BLUETOOTH": "To find refractometer devices, the app needs access to bluetooth"
+    },
+    "LOG": "Activate log files for refractometer device",
+    "READ_END": "Test finished - result received"
   },
   "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "Reconnect temperature device",
   "PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO": "Pressure device is only usable with the preparation style 'Espresso'",
