@@ -26,7 +26,7 @@ export class DiFluidR2Refractometer extends RefractometerDevice {
 
   public override async connect() {
     this.logger.log('connecting...');
-    await this.attachNotification();
+    this.attachNotification();
     await setTimeout(async () => {
       await this.enableAutoNotifications();
     }, 100);
