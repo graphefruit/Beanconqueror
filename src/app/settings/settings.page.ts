@@ -237,6 +237,9 @@ export class SettingsPage implements OnInit {
       //this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.SCALE.CATEGORY,scale.type);
 
       await this.saveSettings();
+
+      await this.enableTdsParameter();
+
     } else {
       this.uiAlert.showMessage(
         'REFRACTOMETER.CONNECTION_NOT_ESTABLISHED',
@@ -245,6 +248,30 @@ export class SettingsPage implements OnInit {
         true
       );
     }
+  }
+
+
+  private async enableTdsParameter() {
+    await this.uiAlert.showLoadingSpinner();
+    try {
+      if (this.settings.manage_parameters.tds === false) {
+        this.settings.manage_parameters.tds = true;
+        await this.saveSettings();
+      }
+
+      const preps: Array<Preparation> =
+        this.uiPreparationStorage.getAllEntries();
+      if (preps.length > 0) {
+        for (const prep of preps) {
+          if (prep.manage_parameters.tds === false) {
+            prep.manage_parameters.tds = true;
+            await this.uiPreparationStorage.update(prep);
+          }
+        }
+      }
+    } catch (ex) {}
+
+    await this.uiAlert.hideLoadingSpinner();
   }
 
 
@@ -541,7 +568,6 @@ export class SettingsPage implements OnInit {
       await this.saveSettings();
     }
   }
-
 
   public async disconnectTemperatureDevice() {
     this.eventQueue.dispatch(
