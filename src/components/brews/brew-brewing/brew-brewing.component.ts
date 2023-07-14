@@ -78,9 +78,7 @@ import {
   RefractionResultEvent,
   RefractometerDevice,
 } from 'src/classes/devices/refractometerBluetoothDevice';
-import { delay } from 'lodash';
 import { UIToast } from '../../../services/uiToast';
-import { DiFluidR2Refractometer } from '../../../classes/devices/difluidR2Refractometer';
 
 declare var cordova;
 declare var Plotly;
