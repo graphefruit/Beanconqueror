@@ -145,6 +145,7 @@ export class BrewPage implements OnInit {
       checkingFilter.mill.length > 0 ||
       checkingFilter.favourite ||
       checkingFilter.chart_data ||
+      checkingFilter.best_brew ||
       checkingFilter.profiles?.length > 0 ||
       didRatingFilterChanged ||
       checkingFilterText !== ''

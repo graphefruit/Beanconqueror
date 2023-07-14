@@ -239,7 +239,6 @@ export class SettingsPage implements OnInit {
       await this.saveSettings();
 
       await this.enableTdsParameter();
-
     } else {
       this.uiAlert.showMessage(
         'REFRACTOMETER.CONNECTION_NOT_ESTABLISHED',
@@ -249,7 +248,6 @@ export class SettingsPage implements OnInit {
       );
     }
   }
-
 
   private async enableTdsParameter() {
     await this.uiAlert.showLoadingSpinner();
@@ -273,7 +271,6 @@ export class SettingsPage implements OnInit {
 
     await this.uiAlert.hideLoadingSpinner();
   }
-
 
   public async findAndConnectTemperatureDevice(_retry: boolean = false) {
     const hasLocationPermission: boolean =
@@ -760,6 +757,10 @@ export class SettingsPage implements OnInit {
   public async saveSettings() {
     this.changeDetectorRef.detectChanges();
     await this.uiSettingsStorage.saveSettings(this.settings);
+  }
+
+  public async resetFilter() {
+    this.settings.resetFilter();
   }
 
   public async fixWeightChangeMinFlowNumber() {
