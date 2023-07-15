@@ -1495,28 +1495,11 @@
 		"THRESHOLD_ACTIVE": "使用预定义的温度启动计时器",
 		"THRESHOLD_TEMP": "温度阈值"
 	},
-	"REFRACTOMETER": {
-		"CONNECTION_NOT_ESTABLISHED": "Refractometer device not found, or connection could not be established",
-		"CONNECTED_SUCCESSFULLY": "Refractometer device connected",
-		"DISCONNECTED_SUCCESSFULLY": "Refractometer device disconnected",
-		"DISCONNECTED_UNPLANNED": "Refractometer device disconnected unexpectedly",
-		"STAY_CONNECTED_ON_APP_MINIMIZE": "Keep thermometer connected even when app is in the background",
-		"INFORMATION_DESCRIPTION": "Supported devices are: DiFluid R2",
-		"BLUETOOTH_SCAN_RUNNING": "Searching for refractometer device for up to 60s",
-		"BLUETOOTH_NOT_ENABLED": "Bluetooth not activated, please activate to work properly",
-		"REQUEST_PERMISSION": {
-		  "LOCATION": "To find refractometer devices, the app needs access to the location.",
-		  "BLUETOOTH": "To find refractometer devices, the app needs access to bluetooth"
-		},
-		"LOG": "Activate log files for refractometer device",
-		"READ_END": "Test finished - result received"
-	  },
 	"POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "重新连接温度设备",
 	"PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO": "压力设备仅在 'espresso' 模式中可用",
 	"PRESSURE_MESSAGE_AFTER_CONNECTION": "已知行为 (在分析中): 请注意, 如果您重启手机或长时间未使用应用程序, 则连接可能需要更长时间 (30 秒至 1 分钟) ",
 	"BREW_TEMPERATURE_REALTIME": "温度",
 	"PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE": "温度设备",
-	"PAGE_SETTINGS_TAB_BLUETOOTH_REFRACTOMETER": "Refractometer device",
 	"SMART_SCALE_ACAIA_HEARTBEAT_TIMER": "Heartbeat 计时器 - 仅适用于Acaia电子秤",
 	"SMART_SCALE_ACAIA_HEARTBEAT_TIMER_TOOLTIP": "仅适用于Acaia电子秤！较旧的Acaia电子秤需要一次 heartbeat，如果遇到问题，请尝试将 Heartbeat 频率设置得更快。",
 	"SHARE_BEAN_URL": "以URL方式分享",
@@ -1531,5 +1514,24 @@
   "ONLY_BEST_BREWS": "Nur beste Brühungen",
   "POPOVER_BEST_BREW": "Beste Brühung",
   "PAGE_SETTINGS_BEST_BREW": "Aktiviere beste Brühungen",
-  "PAGE_SETTINGS_BEST_BREW_DESCRIPTION": "Markiere deine Brühung zu einer gewissen Bohne als beste Brühung. Jede Bohne kann nur eine beste Brühung haben im Gegensatz zu Favouriten."
+  "PAGE_SETTINGS_BEST_BREW_DESCRIPTION": "Markiere deine Brühung zu einer gewissen Bohne als beste Brühung. Jede Bohne kann nur eine beste Brühung haben im Gegensatz zu Favouriten.",
+  "PAGE_SETTINGS_TAB_BLUETOOTH_REFRACTOMETER": "Refractometer device",
+  "REFRACTOMETER": {
+    "CONNECTION_NOT_ESTABLISHED": "Refractometer device not found, or connection could not be established",
+    "CONNECTED_SUCCESSFULLY": "Refractometer device connected",
+    "DISCONNECTED_SUCCESSFULLY": "Refractometer device disconnected",
+    "DISCONNECTED_UNPLANNED": "Refractometer device disconnected unexpectedly",
+    "STAY_CONNECTED_ON_APP_MINIMIZE": "Keep thermometer connected even when app is in the background",
+    "INFORMATION_DESCRIPTION": "Supported devices are: DiFluid R2",
+    "BLUETOOTH_SCAN_RUNNING": "Searching for refractometer device for up to 60s",
+    "BLUETOOTH_NOT_ENABLED": "Bluetooth not activated, please activate to work properly",
+    "REQUEST_PERMISSION": {
+      "LOCATION": "To find refractometer devices, the app needs access to the location.",
+      "BLUETOOTH": "To find refractometer devices, the app needs access to bluetooth"
+    },
+    "LOG": "Activate log files for refractometer device",
+    "READ_END": "Test finished - result received"
+  },
+  "COPIED_TO_CLIPBOARD_SUCCESSFULLY": "Added to clipboard",
+  "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "Could not be added to clipboard"
 }
