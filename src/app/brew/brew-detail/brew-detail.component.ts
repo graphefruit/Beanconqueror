@@ -31,6 +31,7 @@ import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import moment from 'moment';
 import BeanconquerorFlowTestDataDummy from '../../../assets/BeanconquerorFlowTestDataFourth.json';
 import { UILog } from '../../../services/uiLog';
+import { UIToast } from '../../../services/uiToast';
 declare var Plotly;
 @Component({
   selector: 'brew-detail',
@@ -77,7 +78,8 @@ export class BrewDetailComponent implements OnInit {
     private readonly platform: Platform,
     private readonly screenOrientation: ScreenOrientation,
     private readonly alertCtrl: AlertController,
-    private readonly uiLog: UILog
+    private readonly uiLog: UILog,
+    private readonly uiToast: UIToast
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -107,6 +109,9 @@ export class BrewDetailComponent implements OnInit {
     this.loaded = true;
   }
 
+  public copyNotesToClipboard() {
+    this.uiHelper.copyToClipboard(this.data.note);
+  }
   public async detailBean() {
     await this.uiBeanHelper.detailBean(this.data.getBean());
   }

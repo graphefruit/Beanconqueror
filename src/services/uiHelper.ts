@@ -17,10 +17,10 @@ declare var cordova: any;
 declare var device: any;
 declare var window: any;
 import { cloneDeep } from 'lodash';
+import { UIToast } from './uiToast';
 /**
  * Handles every helping functionalities
  */
-
 @Injectable({
   providedIn: 'root',
 })
@@ -37,7 +37,8 @@ export class UIHelper {
     private readonly file: File,
     private readonly uiFileHelper: UIFileHelper,
     private readonly uiLog: UILog,
-    private readonly uiAlert: UIAlert
+    private readonly uiAlert: UIAlert,
+    private readonly uiToast: UIToast
   ) {}
 
   public static generateUUID(): string {
@@ -84,6 +85,22 @@ export class UIHelper {
       return { ..._value };
     }
     return undefined;
+  }
+
+  public copyToClipboard(_text: string) {
+    try {
+      window.cordova.plugins.clipboard.copy(
+        _text,
+        () => {
+          this.uiToast.showInfoToastBottom('COPIED_TO_CLIPBOARD_SUCCESSFULLY');
+        },
+        () => {
+          this.uiToast.showInfoToastBottom(
+            'COPIED_TO_CLIPBOARD_UNSUCCESSFULLY'
+          );
+        }
+      );
+    } catch (ex) {}
   }
 
   public generateUUID(): string {

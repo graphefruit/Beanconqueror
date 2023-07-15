@@ -1369,7 +1369,6 @@
   "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_SHOW_GRAPHS_FILTER": "Anzeige der Graphen für Filterbrühungen",
   "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_SHOW_GRAPHS_ESPRESSO": "Anzeige der Graphen für Espressobrühungen",
   "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE": "Druck Geräte",
-  "PAGE_SETTINGS_TAB_BLUETOOTH_REFRACTOMETER": "Refraktometergerät",
   "PRESSURE_LOG": "Logfiles für Druck aktivieren",
   "PRESSURE_THRESHOLD_ACTIVE": "Zeit starten ab bestimmten Druck?",
   "PRESSURE_THRESHOLD_BAR": "Schwellenwert Druck",
@@ -1506,22 +1505,6 @@
     "THRESHOLD_ACTIVE": "Zeit starten mit einer vordefinierten Temperatur",
     "THRESHOLD_TEMP": "Schwellenwert Temperatur"
   },
-  "REFRACTOMETER": {
-    "CONNECTION_NOT_ESTABLISHED": "Refraktometer konnte nicht gefunden oder verbunden werden",
-    "CONNECTED_SUCCESSFULLY": "Refraktometer verbunden",
-    "DISCONNECTED_SUCCESSFULLY": "Refraktometer getrennt",
-    "DISCONNECTED_UNPLANNED": "Refraktometer ungeplant getrennt",
-    "STAY_CONNECTED_ON_APP_MINIMIZE": "Refraktometer verbunden lassen bei App minimierung/inaktivität",
-    "INFORMATION_DESCRIPTION": "Unterstützte Refraktometer sind: DiFluid R2",
-    "BLUETOOTH_SCAN_RUNNING": "Refraktometer werden für 60 Sekunden versucht zu finden, bitte warten",
-    "BLUETOOTH_NOT_ENABLED": "Bluetooth ist nicht aktiviert, bitte aktiviere dies in den Einstellungen",
-    "REQUEST_PERMISSION": {
-      "LOCATION": "Um Bluetooth Refraktometer zu finden, muss der Standort freigegeben werden",
-      "BLUETOOTH": "Um Bluetooth Refraktometer zu finden, muss Bluetooth freigegeben werden"
-    },
-    "LOG": "Logfiles für Refraktometer aktivieren",
-    "READ_END": "Test wurde abgeschlossen, Wert wurde übertragen"
-  },
   "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "Temperaturgerät neu verbinden",
   "BREW_TEMPERATURE_REALTIME": "Temperatur",
   "PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE": "Temperaturgerät",
@@ -1541,5 +1524,24 @@
   "ONLY_BEST_BREWS": "Nur beste Brühungen",
   "POPOVER_BEST_BREW": "Beste Brühung",
   "PAGE_SETTINGS_BEST_BREW": "Aktiviere beste Brühungen",
-  "PAGE_SETTINGS_BEST_BREW_DESCRIPTION": "Markiere deine Brühung zu einer gewissen Bohne als beste Brühung. Jede Bohne kann nur eine beste Brühung haben im Gegensatz zu Favouriten."
+  "PAGE_SETTINGS_BEST_BREW_DESCRIPTION": "Markiere deine Brühung zu einer gewissen Bohne als beste Brühung. Jede Bohne kann nur eine beste Brühung haben im Gegensatz zu Favouriten.",
+  "PAGE_SETTINGS_TAB_BLUETOOTH_REFRACTOMETER": "Refraktometergerät",
+  "REFRACTOMETER": {
+    "CONNECTION_NOT_ESTABLISHED": "Refraktometer konnte nicht gefunden oder verbunden werden",
+    "CONNECTED_SUCCESSFULLY": "Refraktometer verbunden",
+    "DISCONNECTED_SUCCESSFULLY": "Refraktometer getrennt",
+    "DISCONNECTED_UNPLANNED": "Refraktometer ungeplant getrennt",
+    "STAY_CONNECTED_ON_APP_MINIMIZE": "Refraktometer verbunden lassen bei App minimierung/inaktivität",
+    "INFORMATION_DESCRIPTION": "Unterstützte Refraktometer sind: DiFluid R2",
+    "BLUETOOTH_SCAN_RUNNING": "Refraktometer werden für 60 Sekunden versucht zu finden, bitte warten",
+    "BLUETOOTH_NOT_ENABLED": "Bluetooth ist nicht aktiviert, bitte aktiviere dies in den Einstellungen",
+    "REQUEST_PERMISSION": {
+      "LOCATION": "Um Bluetooth Refraktometer zu finden, muss der Standort freigegeben werden",
+      "BLUETOOTH": "Um Bluetooth Refraktometer zu finden, muss Bluetooth freigegeben werden"
+    },
+    "LOG": "Logfiles für Refraktometer aktivieren",
+    "READ_END": "Test wurde abgeschlossen, Wert wurde übertragen"
+  },
+  "COPIED_TO_CLIPBOARD_SUCCESSFULLY": "Zum Clipboard hinzugefügt",
+  "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "Konnte nicht zum Clipboard hinzugefügt werden"
 }
