@@ -203,6 +203,50 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     private readonly uiToast: UIToast
   ) {}
 
+  private writeExecutionTimeToNotes(
+    _message: string,
+    _scriptId: number,
+    _scriptName: string
+  ) {
+    let scriptInformation: string = '';
+
+    let timestamp: string = this.data.brew_time + '';
+    if (this.settings.brew_milliseconds) {
+      timestamp = '.' + this.data.brew_time_milliseconds;
+    }
+    scriptInformation =
+      timestamp +
+      ': ' +
+      _message +
+      ' - ' +
+      _scriptName +
+      ' (' +
+      _scriptId +
+      ')';
+
+    if (this.data.note !== '') {
+      this.data.note = this.data.note + '\r\n' + scriptInformation;
+    } else {
+      this.data.note = scriptInformation;
+    }
+  }
+  private getScriptName(_index: number) {
+    try {
+      if (_index <= 2) {
+        return this.translate.instant(
+          'PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_' + _index
+        );
+      } else {
+        for (const script of this.preparationDevice?.scriptList) {
+          if (script.INDEX === _index) {
+            return script.TITLE;
+          }
+        }
+      }
+    } catch (ex) {
+      return 'Script not found';
+    }
+  }
   public getActivePreparationTools() {
     return this.data.getPreparation().tools.filter((e) => e.archived === false);
   }
@@ -587,6 +631,15 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
                       false
                     );
                   });
+                this.writeExecutionTimeToNotes(
+                  'Weight reached script',
+                  this.data.preparationDeviceBrew.params
+                    .scriptAtWeightReachedId,
+                  this.getScriptName(
+                    this.data.preparationDeviceBrew.params
+                      .scriptAtWeightReachedId
+                  )
+                );
               } else {
                 // Instant stop!
                 this.preparationDevice.stopScript().catch((_msg) => {
@@ -595,6 +648,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
                     false
                   );
                 });
+                this.writeExecutionTimeToNotes(
+                  'Stop script',
+                  0,
+                  this.getScriptName(0)
+                );
               }
               if (
                 this.settings
@@ -839,6 +897,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             false
           );
         });
+      this.writeExecutionTimeToNotes(
+        'First drip script',
+        this.data.preparationDeviceBrew.params.scriptAtFirstDripId,
+        this.getScriptName(
+          this.data.preparationDeviceBrew.params.scriptAtFirstDripId
+        )
+      );
     }
   }
 
@@ -1023,6 +1088,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         });
       }, 300);
     }
+    setTimeout(() => {
+      this.writeExecutionTimeToNotes('test', 0, '123');
+    });
 
     if (scale || pressureDevice || temperatureDevice) {
       this.lastChartRenderingInstance = -1;
@@ -1106,6 +1174,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               false
             );
           });
+        this.writeExecutionTimeToNotes(
+          'Start script',
+          this.data.preparationDeviceBrew.params.scriptStartId,
+          this.getScriptName(
+            this.data.preparationDeviceBrew.params.scriptStartId
+          )
+        );
       }
       this.startFetchingAndSettingDataFromXenia();
     }
@@ -1227,6 +1302,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               false
             );
           });
+        this.writeExecutionTimeToNotes(
+          'First drip script',
+          this.data.preparationDeviceBrew.params.scriptAtFirstDripId,
+          this.getScriptName(
+            this.data.preparationDeviceBrew.params.scriptAtFirstDripId
+          )
+        );
       }
     }
   }
@@ -1303,6 +1385,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           false
         );
       });
+      this.writeExecutionTimeToNotes('Stop script', 0, this.getScriptName(0));
       this.stopFetchingAndSettingDataFromXenia();
     }
     if (!this.platform.is('cordova')) {
