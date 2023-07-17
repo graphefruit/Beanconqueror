@@ -1033,6 +1033,66 @@ export class SettingsPage implements OnInit {
     this.uiExcel.export();
   }
 
+  public importBeansExcel(): void {
+    if (this.platform.is('cordova')) {
+      this.uiAnalytics.trackEvent(
+        SETTINGS_TRACKING.TITLE,
+        SETTINGS_TRACKING.ACTIONS.IMPORT
+      );
+      this.uiLog.log('Import real data');
+      if (this.platform.is('android')) {
+        this.fileChooser.open().then(async (uri) => {
+          try {
+            const fileEntry: any = await new Promise(
+              async (resolve) =>
+                await window.resolveLocalFileSystemURL(uri, resolve, () => {})
+            );
+
+            this.uiFileHelper.readFileEntryAsArrayBuffer(fileEntry).then(
+              async (_arrayBuffer) => {
+                this.uiExcel.importBeansByExcel(_arrayBuffer);
+              },
+              () => {
+                // Backup, maybe it was a .JSON?
+              }
+            );
+          } catch (ex) {
+            this.uiAlert.showMessage(
+              this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
+                ' (' +
+                JSON.stringify(ex) +
+                ')'
+            );
+          }
+        });
+      } else {
+        this.iosFilePicker.pickFile().then((uri) => {
+          if (uri && uri.endsWith('.xlsx')) {
+            let path = uri.substring(0, uri.lastIndexOf('/'));
+            const file = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
+            if (path.indexOf('file://') !== 0) {
+              path = 'file://' + path;
+            }
+            this.uiFileHelper.readFileAsArrayBuffer(path, file).then(
+              async (_arrayBuffer) => {
+                this.uiExcel.importBeansByExcel(_arrayBuffer);
+              },
+              () => {
+                // Backup, maybe it was a .JSON?
+              }
+            );
+          } else {
+            this.uiAlert.showMessage(
+              this.translate.instant('INVALID_FILE_FORMAT')
+            );
+          }
+        });
+      }
+    } else {
+      this.__importDummyData();
+    }
+  }
+
   private async _exportAttachments(
     _storedData:
       | Array<Bean>
