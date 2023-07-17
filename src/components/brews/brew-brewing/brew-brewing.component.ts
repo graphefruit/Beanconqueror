@@ -1188,7 +1188,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public startFetchingAndSettingDataFromXenia() {
     this.stopFetchingAndSettingDataFromXenia();
-
     const setTempAndPressure = () => {
       const temp = this.preparationDevice.getTemperature();
       const press = this.preparationDevice.getPressure();
@@ -1198,6 +1197,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.preparationDevice.fetchPressureAndTemperature(() => {
       //before we start the interval, we fetch the data once to overwrite, and set them.
       setTempAndPressure();
+      this.data.brew_temperature = this.preparationDevice.getTemperature();
     });
     this.xeniaOverviewInterval = setInterval(async () => {
       try {
