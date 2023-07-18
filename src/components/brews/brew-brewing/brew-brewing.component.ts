@@ -1088,9 +1088,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         });
       }, 300);
     }
-    setTimeout(() => {
-      this.writeExecutionTimeToNotes('test', 0, '123');
-    });
 
     if (scale || pressureDevice || temperatureDevice) {
       this.lastChartRenderingInstance = -1;
@@ -1197,7 +1194,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.preparationDevice.fetchPressureAndTemperature(() => {
       //before we start the interval, we fetch the data once to overwrite, and set them.
       setTempAndPressure();
-      this.data.brew_temperature = this.preparationDevice.getTemperature();
+      this.data.brew_temperature = this.uiHelper.toFixedIfNecessary(
+        this.preparationDevice.getSetBrewTemperature(),
+        2
+      );
     });
     this.xeniaOverviewInterval = setInterval(async () => {
       try {
