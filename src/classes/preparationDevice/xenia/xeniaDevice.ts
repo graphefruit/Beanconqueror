@@ -54,6 +54,9 @@ export class XeniaDevice extends PreparationDevice {
   public getTemperature() {
     return this.temperature;
   }
+  public getSetBrewTemperature() {
+    return this.setBrewTemperature;
+  }
 
   public fetchPressureAndTemperature(_callback: any = null) {
     const options = {
@@ -67,9 +70,11 @@ export class XeniaDevice extends PreparationDevice {
           const parsedJSON = JSON.parse(response.data);
           const temp = parsedJSON.BG_SENS_TEMP_A;
           const press = parsedJSON.PU_SENS_PRESS;
+          const setBrewTemp = parsedJSON.BG_SENS_TEMP_A;
 
           this.temperature = temp;
           this.pressure = press;
+          this.setBrewTemperature = setBrewTemp;
           if (_callback) {
             _callback();
           }
