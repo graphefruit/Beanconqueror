@@ -1071,13 +1071,18 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
 
       weight = 0;
-
+      const genRand = (min, max, decimalPlaces) => {
+        const rand = Math.random() * (max - min) + min;
+        const power = Math.pow(10, decimalPlaces);
+        return Math.floor(rand * power) / power;
+      };
       this.graphTimerTest = setInterval(() => {
         flow = Math.floor(Math.random() * 11);
         realtime_flow = Math.floor(Math.random() * 11);
-        weight = weight + Math.floor(Math.random() * 2);
+        weight = weight + genRand(0.1, 2, 2);
         pressure = Math.floor(Math.random() * 11);
         temperature = Math.floor(Math.random() * 90);
+
         this.__setPressureFlow({ actual: pressure, old: pressure });
         this.__setTemperatureFlow({ actual: temperature, old: temperature });
         this.__setFlowProfile({
@@ -3112,7 +3117,34 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           scaleType === ScaleType.BLACKCOFFEE
         ) {
           if (this.flowProfileArrCalculated.length > 1) {
-            let avgWeight = 0;
+            /*On the poor scales, we know that the realtime flow value is pretty "accurate" with the new math formular,
+               thats why we take the realtime flow value, look back for 2 seconds in the timestamp, and if we don'T have enough values, we just use
+               the values which are given*/
+            const time2StampDelta =
+              flowObj.unixTime -
+              this.flowProfileTempAll[this.flowProfileTempAll.length - 2]
+                .unixTime;
+            let twoSecondsLookBack: any = 0;
+
+            twoSecondsLookBack = 2 * Math.floor(1000 / time2StampDelta);
+            if (
+              this.flow_profile_raw.realtimeFlow.length < twoSecondsLookBack
+            ) {
+              twoSecondsLookBack = this.flow_profile_raw.realtimeFlow.length;
+            }
+            let totalflow = 0;
+            for (let i = 0; i < twoSecondsLookBack; i++) {
+              totalflow =
+                totalflow +
+                this.flow_profile_raw.realtimeFlow[
+                  this.flow_profile_raw.realtimeFlow.length - 1 - i
+                ].flow_value;
+            }
+
+            calculatedFlowWeight = totalflow / twoSecondsLookBack;
+          }
+          /*  Old solution, don't know if we'll ever need it again, but lets stay it here
+          let avgWeight = 0;
             let avgTimeDelta: number = 0;
 
             //Don't get the last one, because this is already one new entry
@@ -3141,7 +3173,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           } else {
             //Saftey when somehow just one value was provided.
             calculatedFlowWeight = 0;
-          }
+          }*/
         } else {
           calculatedFlowWeight =
             (calculatedFlowWeight / this.flowProfileArrCalculated.length) * 10;
@@ -3253,7 +3285,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
     if (
       scaleType === ScaleType.EUREKAPRECISA ||
-      scaleType === ScaleType.SMARTCHEF
+      scaleType === ScaleType.SMARTCHEF ||
+      scaleType === ScaleType.BLACKCOFFEE
     ) {
       let timeStampDelta: any = 0;
       // After the flowProfileTempAll will be stored directly, we'd have one entry at start already, but we need to wait for another one
