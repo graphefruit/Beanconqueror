@@ -54,8 +54,8 @@ export class XeniaDevice extends PreparationDevice {
   public getTemperature() {
     return this.temperature;
   }
-  public getSetBrewTemperature() {
-    return this.setBrewTemperature;
+  public getDevicetemperature() {
+    return this.deviceTemperature;
   }
 
   public fetchPressureAndTemperature(_callback: any = null) {
@@ -70,11 +70,9 @@ export class XeniaDevice extends PreparationDevice {
           const parsedJSON = JSON.parse(response.data);
           const temp = parsedJSON.BG_SENS_TEMP_A;
           const press = parsedJSON.PU_SENS_PRESS;
-          const setBrewTemp = parsedJSON.BG_SENS_TEMP_A;
 
           this.temperature = temp;
           this.pressure = press;
-          this.setBrewTemperature = setBrewTemp;
           if (_callback) {
             _callback();
           }
@@ -85,6 +83,30 @@ export class XeniaDevice extends PreparationDevice {
       }
     );
   }
+  public fetchAndSetDeviceTemperature(_callback: any = null) {
+    const options = {
+      method: 'get',
+    };
+    cordova.plugin.http.sendRequest(
+      this.getPreparation().connectedPreparationDevice.url + '/overview_single',
+      options,
+      (response) => {
+        try {
+          const parsedJSON = JSON.parse(response.data);
+          const setDevicetemp = parsedJSON.BG_SET_TEMP;
+
+          this.deviceTemperature = setDevicetemp;
+          if (_callback) {
+            _callback();
+          }
+        } catch (e) {}
+      },
+      (response) => {
+        // prints 403
+      }
+    );
+  }
+
   public getOverview(): Promise<any> {
     const promise = new Promise<any>((resolve, reject) => {
       const options = {

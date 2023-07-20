@@ -13,7 +13,7 @@ export class PreparationDevice {
 
   protected temperature: number;
   protected pressure: number;
-  protected setBrewTemperature: number;
+  protected deviceTemperature: number;
 
   constructor(protected _http: HttpClient, _preparation: Preparation) {
     this.blueToothParentlogger = new Logger();

@@ -1199,11 +1199,19 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.preparationDevice.fetchPressureAndTemperature(() => {
       //before we start the interval, we fetch the data once to overwrite, and set them.
       setTempAndPressure();
-      this.data.brew_temperature = this.uiHelper.toFixedIfNecessary(
-        this.preparationDevice.getSetBrewTemperature(),
-        2
-      );
     });
+    setTimeout(() => {
+      //Give the machine some time :)
+      this.preparationDevice.fetchAndSetDeviceTemperature(() => {
+        try {
+          this.data.brew_temperature = this.uiHelper.toFixedIfNecessary(
+            this.preparationDevice.getDevicetemperature(),
+            2
+          );
+        } catch (ex) {}
+      });
+    }, 100);
+
     this.xeniaOverviewInterval = setInterval(async () => {
       try {
         // We don't use the callback function to make sure we don't have to many performance issues
