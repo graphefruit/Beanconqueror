@@ -35,6 +35,7 @@ export class BeansAddComponent implements OnInit {
 
   public bean_segment = 'general';
   public settings: Settings = undefined;
+  private default_bean_stringified: String = '';
 
   constructor(
     private readonly modalController: ModalController,
@@ -85,6 +86,8 @@ export class BeansAddComponent implements OnInit {
     if (this.greenBean) {
       this.loadGreenBeanInformation();
     }
+
+    this.default_bean_stringified = JSON.stringify(this.data);
   }
 
   public async addBean() {
@@ -122,7 +125,7 @@ export class BeansAddComponent implements OnInit {
     }
   }
 
-  public dismiss(): void {
+  private dismiss(): void {
     this.modalController.dismiss(
       {
         dismissed: true,
@@ -130,6 +133,23 @@ export class BeansAddComponent implements OnInit {
       undefined,
       BeansAddComponent.COMPONENT_ID
     );
+  }
+
+  public confirmDismiss(): void {
+    if (JSON.stringify(this.data) !== this.default_bean_stringified) {
+      this.uiAlert
+        .showConfirm('PAGE_BEANS_DISCARD_CONFIRM', 'SURE_QUESTION', true)
+        .then(
+          async () => {
+            this.dismiss();
+          },
+          () => {
+            // No
+          }
+        );
+    } else {
+      this.dismiss();
+    }
   }
 
   private async __loadBean(_bean: Bean) {
