@@ -1084,6 +1084,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         temperature = Math.floor(Math.random() * 90);
 
         this.__setPressureFlow({ actual: pressure, old: pressure });
+
         this.__setTemperatureFlow({ actual: temperature, old: temperature });
         this.__setFlowProfile({
           actual: weight,
@@ -1091,6 +1092,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           smoothed: 1,
           oldSmoothed: 1,
         });
+        this.setActualSmartInformation();
       }, 300);
     }
 
@@ -1843,12 +1845,55 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public getActualSmoothedWeightPerSecond(): number {
     try {
-      const lastflow =
-        this.flow_profile_raw.weight[this.flow_profile_raw.weight.length - 1];
-      const smoothedWeight = lastflow.actual_smoothed_weight;
-      const oldSmoothedWeight = lastflow.old_smoothed_weight;
-      const flowValue: number = (smoothedWeight - oldSmoothedWeight) * 10;
-      return this.uiHelper.toFixedIfNecessary(flowValue, 2);
+      const scaleType = this.bleManager.getScale()?.getScaleType();
+      if (
+        scaleType === ScaleType.EUREKAPRECISA ||
+        scaleType === ScaleType.SMARTCHEF ||
+        scaleType === ScaleType.BLACKCOFFEE
+      ) {
+        if (this.flow_profile_raw.weight.length <= 3) {
+          return 0;
+        }
+
+        const lastSecond = moment(
+          this.flow_profile_raw.weight[this.flow_profile_raw.weight.length - 1]
+            .timestamp,
+          'HH:mm:ss'
+        ).seconds();
+        const lastWeight =
+          this.flow_profile_raw.weight[this.flow_profile_raw.weight.length - 1]
+            .actual_weight;
+        let lastSubtractWeight: number = 0;
+        for (let i = this.flow_profile_raw.weight.length - 2; i >= 0; i--) {
+          const newSecond = moment(
+            this.flow_profile_raw.weight[i].timestamp,
+            'HH:mm:ss'
+          ).seconds();
+          if (lastSecond === newSecond) {
+            // Still the same range
+            lastSubtractWeight = this.flow_profile_raw.weight[i].actual_weight;
+          } else {
+            // Break
+            // If we didn't found one value in range, we take the second before.
+            if (lastSubtractWeight === 0) {
+              lastSubtractWeight =
+                this.flow_profile_raw.weight[i].actual_weight;
+            }
+            break;
+          }
+        }
+        return this.uiHelper.toFixedIfNecessary(
+          lastWeight - lastSubtractWeight,
+          2
+        );
+      } else {
+        const lastflow =
+          this.flow_profile_raw.weight[this.flow_profile_raw.weight.length - 1];
+        const smoothedWeight = lastflow.actual_smoothed_weight;
+        const oldSmoothedWeight = lastflow.old_smoothed_weight;
+        const flowValue: number = (smoothedWeight - oldSmoothedWeight) * 10;
+        return this.uiHelper.toFixedIfNecessary(flowValue, 2);
+      }
     } catch (ex) {
       return 0;
     }
