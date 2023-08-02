@@ -32,6 +32,7 @@ import moment from 'moment';
 import BeanconquerorFlowTestDataDummy from '../../../assets/BeanconquerorFlowTestDataFourth.json';
 import { UILog } from '../../../services/uiLog';
 import { UIToast } from '../../../services/uiToast';
+import { Visualizer } from '../../../classes/visualizer/visualizer';
 declare var Plotly;
 @Component({
   selector: 'brew-detail',
@@ -606,6 +607,25 @@ export class BrewDetailComponent implements OnInit {
 
     this.lastChartLayout = layout;
     return layout;
+  }
+
+  public async downloadVisualizerProfile() {
+    const vS: Visualizer = new Visualizer();
+
+    vS.mapBrew(this.data);
+    vS.mapBean(this.data.getBean());
+    vS.mapWater(this.data.getWater());
+    vS.mapPreparation(this.data.getPreparation());
+    vS.mapMill(this.data.getMill());
+    vS.brewFlow = this.flow_profile_raw;
+
+    try {
+      await this.uiHelper.exportJSON(
+        this.brew.config.uuid + '_visualizer.json',
+        JSON.stringify(vS),
+        true
+      );
+    } catch (ex) {}
   }
 
   public async downloadJSONProfile() {
