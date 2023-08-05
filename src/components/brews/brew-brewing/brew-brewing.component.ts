@@ -1206,10 +1206,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       //Give the machine some time :)
       this.preparationDevice.fetchAndSetDeviceTemperature(() => {
         try {
-          this.data.brew_temperature = this.uiHelper.toFixedIfNecessary(
-            this.preparationDevice.getDevicetemperature(),
-            2
-          );
+          const temp = this.preparationDevice.getDevicetemperature();
+          if (temp > 70) {
+            this.data.brew_temperature = this.uiHelper.toFixedIfNecessary(
+              temp,
+              2
+            );
+          }
         } catch (ex) {}
       });
     }, 100);

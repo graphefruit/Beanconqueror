@@ -911,6 +911,34 @@
         "<b>Sonstiges</b>",
         "Kleinere Fehlerbehebungen"
       ]
+    },
+    "6.6.0": {
+      "TITLE": "Version 6.6.0: Das ist neu",
+      "DESCRIPTION": [
+        "<b>Refraktometer</b>",
+        "Unterstützung des R2 DiFluid Refraktometers - Vielen Dank an Yannick!",
+        "",
+        "<b>Bluetooth Waage</b>",
+        "Unterstützung von Blackcoffee.io - Vielen Dank an Yannick!",
+        "Verbesserung der Wasser-Fluss Berechnung für billige Waagen",
+        "",
+        "<b>Brühungen</b>",
+        "Markiere eine Brühung zu einer Bohne als 'Beste Brühung' - Aktivierbar in den Einstellungen",
+        "Kopiere den Inhalt deiner Notizen in der Detailansicht",
+        "Filtere deine Brühungen nach verwendeten Profilen",
+        "Bewerte deine Brühung über das Listenmenü",
+        "Lade die Visualizer Datei ebenfalls in der Detailansicht herunter",
+        "",
+        "<b>Xenia</b>",
+        "Script-Ausführungen werden in die Notizen hinterlegt",
+        "Brühtemperatur der Maschine wird nun beim Start des Bezugs aus der Maschine ausgelesen und hinterlegt",
+        "",
+        "<b>Verbesserungen</b>",
+        "Kleine Verbesserungen",
+        "",
+        "<b>Sonstiges</b>",
+        "Kleinere Fehlerbehebungen"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Parameter individualisieren",

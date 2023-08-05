@@ -901,6 +901,34 @@
     "6.5.1": {
       "TITLE": "版本 6.5.1: 更新内容",
       "DESCRIPTION": ["<b>其他：</b>", "修复了一些小错误"]
+    },
+    "6.6.0": {
+      "TITLE": "Version 6.6.0: What's new?",
+      "DESCRIPTION": [
+        "<b>Refractometer</b>",
+        "Support of DiFluid R2- Thanks to Yannick!",
+        "",
+        "<b>Bluetooth scales</b>",
+        "Support of Blackcoffee.io - Thanks to Yannick!",
+        "Tweaking the flow-rate for pour scales",
+        "",
+        "<b>Brews</b>",
+        "Mark a brew for one bean as 'best brew' - Activateable in settings",
+        "Copy your notes in the detailview now",
+        "Filter your brews by the used profiles",
+        "Rate your brew directly by the list menu",
+        "Download the visualizer file now also in the detail view",
+        "",
+        "<b>Xenia</b>",
+        "Script executes are now written into the notes",
+        "Setting the brew temperature of the machine when the brew starts",
+        "",
+        "<b>Improvements</b>",
+        "Small improvements",
+        "",
+        "<b>Others</b>",
+        "Small bug fixes"
+      ]
     }
   },
 	"CUSTOM_PARAMETERS": "自定义参数",
