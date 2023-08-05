@@ -88,6 +88,10 @@ export class Version implements IVersion {
     } else if (actualVersion === replacedVersion) {
       return 0;
     }
+    if (replacedVersion > 1000) {
+      //Fixing 6420 and 6410...
+      return -1;
+    }
     return 1;
   }
 }
