@@ -23,7 +23,7 @@ export class BrewRatingComponent implements OnInit {
   public brewStars: NgxStarsComponent;
 
   constructor(
-    private readonly uiHelper: UIHelper,
+    public readonly uiHelper: UIHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly navParams: NavParams,
     private readonly modalController: ModalController,
