@@ -1560,7 +1560,7 @@
     "DISCONNECTED_SUCCESSFULLY": "Refractómetro desconectado",
     "DISCONNECTED_UNPLANNED": "Desconexión no planificada del refractómetro",
     "STAY_CONNECTED_ON_APP_MINIMIZE": "Mantener el refractrómetro conectado con la aplicación en segundo plano",
-    "INFORMATION_DESCRIPTION": "Dispositivos soportado: DiFluid R2",
+    "INFORMATION_DESCRIPTION": "Dispositivos soportados: DiFluid R2",
     "BLUETOOTH_SCAN_RUNNING": "Se buscará el refractómetro durante 60 segundos",
     "BLUETOOTH_NOT_ENABLED": "Bluetooth no activado, actívelo para el correcto funcionamiento",
     "REQUEST_PERMISSION": {
