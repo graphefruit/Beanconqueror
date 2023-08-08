@@ -79,6 +79,7 @@ import {
   RefractometerDevice,
 } from 'src/classes/devices/refractometerBluetoothDevice';
 import { UIToast } from '../../../services/uiToast';
+import { UILog } from '../../../services/uiLog';
 
 declare var cordova;
 declare var Plotly;
@@ -200,7 +201,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     private readonly uiAlert: UIAlert,
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly ngZone: NgZone,
-    private readonly uiToast: UIToast
+    private readonly uiToast: UIToast,
+    private readonly uiLog: UILog
   ) {}
 
   private writeExecutionTimeToNotes(
@@ -620,6 +622,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
                 this.data.preparationDeviceBrew.params.scriptAtWeightReachedId >
                 0
               ) {
+                this.uiLog.log(
+                  `Xenia Script - Weight Reached: ${weight} - Trigger custom script`
+                );
                 this.preparationDevice
                   .startScript(
                     this.data.preparationDeviceBrew.params
@@ -641,6 +646,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
                   )
                 );
               } else {
+                this.uiLog.log(
+                  `Xenia Script - Weight Reached - Trigger stop script`
+                );
                 // Instant stop!
                 this.preparationDevice.stopScript().catch((_msg) => {
                   this.uiToast.showInfoToast(
@@ -889,6 +897,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.preparationDeviceConnected() &&
       this.data.preparationDeviceBrew.params.scriptAtFirstDripId > -1
     ) {
+      this.uiLog.log(
+        `Xenia Script - Script at first drip -  Trigger custom script`
+      );
       this.preparationDevice
         .startScript(this.data.preparationDeviceBrew.params.scriptAtFirstDripId)
         .catch((_msg) => {
@@ -1170,6 +1181,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
     if (this.preparationDeviceConnected()) {
       if (this.data.preparationDeviceBrew.params.scriptStartId > 0) {
+        this.uiLog.log(`Xenia Script - Script start -  Trigger script`);
         this.preparationDevice
           .startScript(this.data.preparationDeviceBrew.params.scriptStartId)
           .catch((_msg) => {
@@ -1309,6 +1321,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (!this.smartScaleConnected() && this.preparationDeviceConnected()) {
       // If scale is not connected but the device, we can now choose that still the script is executed if existing.
       if (this.data.preparationDeviceBrew.params.scriptAtFirstDripId > 0) {
+        this.uiLog.log(
+          `Xenia Script - Script at first drip -  Trigger custom script`
+        );
         this.preparationDevice
           .startScript(
             this.data.preparationDeviceBrew.params.scriptAtFirstDripId
@@ -1397,6 +1412,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (this.preparationDeviceConnected() && _event !== 'xenia') {
       // If the event is not xenia, we pressed buttons, if the event was triggerd by xenia, timer already stopped.
       //If we press pause, stop scripts.
+      this.uiLog.log(`Xenia Script - Pause button pressed, stop script`);
       this.preparationDevice.stopScript().catch((_msg) => {
         this.uiToast.showInfoToast(
           'We could not stop script - manual triggered: ' + _msg,
