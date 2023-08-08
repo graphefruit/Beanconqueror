@@ -1558,7 +1558,7 @@
     "CONNECTED_SUCCESSFULLY": "浓度仪设备已连接",
     "DISCONNECTED_SUCCESSFULLY": "浓度仪已断开连接",
     "DISCONNECTED_UNPLANNED": "浓度仪意外断开连接",
-    "STAY_CONNECTED_ON_APP_MINIMIZE": "将温度计保持连接，即使应用在后台运行",
+    "STAY_CONNECTED_ON_APP_MINIMIZE": "即使应用程序在后台运行，也能保持折光仪连接",
     "INFORMATION_DESCRIPTION": "支持的设备: DiFluid R2",
     "BLUETOOTH_SCAN_RUNNING": "搜索浓度仪设备, 最长时间为60秒",
     "BLUETOOTH_NOT_ENABLED": "未激活蓝牙，请激活以正常工作",
