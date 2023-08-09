@@ -492,6 +492,19 @@ export class UIExcel {
     await this.uiAlert.hideLoadingSpinner();
   }
 
+  public async importBeansByExcel(_arrayBuffer) {
+    try {
+      /* data is an ArrayBuffer */
+      const wb = XLSX.read(_arrayBuffer);
+      const data = XLSX.utils.sheet_to_json(wb.Sheets['Beans']);
+      for (const entry of data) {
+        //const bean: Bean = new Bean();
+        //bean.bean_information
+      }
+      console.log(data);
+      console.log(wb);
+    } catch (ex) {}
+  }
   /* Export button */
   public async export() {
     await this.uiAlert.showLoadingSpinner();

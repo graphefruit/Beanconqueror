@@ -117,7 +117,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 
   public startTimer(_resumed: boolean = false): void {
     if (_resumed === false) {
-      const startingDate = new Date();
+      const startingDate = moment().toDate();
       this.startingDay = moment(startingDate).startOf('day');
       if (this.timer.seconds > 0 || this.timer.milliseconds > 0) {
         // We need to subtract, if the time is already given on start (like repeat or preset)
@@ -130,7 +130,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 
       this.startedOffset = this.startedTimer.diff(this.startingDay);
     } else {
-      const restartTimer = moment(new Date());
+      const restartTimer = moment(moment().toDate());
 
       this.startedOffset += restartTimer.diff(this.pausedTimer);
     }
@@ -150,7 +150,7 @@ export class TimerComponent implements OnInit, OnDestroy {
   }
 
   public pauseTimer(): void {
-    this.pausedTimer = moment(new Date());
+    this.pausedTimer = moment(moment().toDate());
     this.timerPaused.emit();
     this.timer.runTimer = false;
     this.timerPaused.emit();
@@ -167,7 +167,9 @@ export class TimerComponent implements OnInit, OnDestroy {
       if (!this.timer.runTimer) {
         return;
       }
-      const milliSecondTimer = moment(new Date()).subtract(this.startedOffset);
+      const milliSecondTimer = moment(moment().toDate()).subtract(
+        this.startedOffset
+      );
 
       this.timer.milliseconds = milliSecondTimer.milliseconds();
 
@@ -185,7 +187,7 @@ export class TimerComponent implements OnInit, OnDestroy {
         return;
       }
 
-      const actualDate = new Date();
+      const actualDate = moment().toDate();
 
       const actualTimerTick = moment(actualDate).subtract(this.startedOffset);
 
@@ -279,8 +281,8 @@ export class TimerComponent implements OnInit, OnDestroy {
         .startOf('day')
         .milliseconds();
       // We need to calculate new, else when user starts timer again, the wrong times will be used
-      const startingDate = new Date();
-      this.pausedTimer = moment(new Date());
+      const startingDate = moment().toDate();
+      this.pausedTimer = moment(moment().toDate());
       this.startingDay = moment(startingDate).startOf('day');
       if (this.timer.seconds > 0 || this.timer.milliseconds > 0) {
         // We need to subtract, if the time is already given on start (like repeat or preset)

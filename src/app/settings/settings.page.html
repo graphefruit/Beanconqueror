@@ -26,6 +26,10 @@
       <ion-label>{{"PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE" | translate }}
       </ion-label>
     </ion-segment-button>
+    <ion-segment-button value="bluetoothrefractometer">
+      <ion-label>{{"PAGE_SETTINGS_TAB_BLUETOOTH_REFRACTOMETER" | translate }}
+      </ion-label>
+    </ion-segment-button>
   </ion-segment>
   <div [ngSwitch]="settings_segment">
     <div *ngSwitchCase="'general'">
@@ -43,6 +47,10 @@
           </ion-item>
           <ion-item (click)="excelExport()" button lines="none" tappable>
             <ion-label>{{"EXCEL_EXPORT" | translate}}</ion-label>
+            <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+          </ion-item>
+          <ion-item *ngIf='false' (click)="importBeansExcel()" button lines="none" tappable>
+            <ion-label>{{"IMPORT_BEANS_EXCEL" | translate}}</ion-label>
             <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
           </ion-item>
         </ion-card-content>
@@ -240,6 +248,13 @@
             </ion-label>
             <ion-checkbox (click)="checkHealthPlugin()"
               [(ngModel)]="settings.track_caffeine_consumption"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label class="ion-margin-end">
+              <h2>{{"PAGE_SETTINGS_BEST_BREW" | translate}}</h2>
+              <p>{{"PAGE_SETTINGS_BEST_BREW_DESCRIPTION" | translate}}</p>
+            </ion-label>
+            <ion-checkbox (ngModelChange)="resetFilter();saveSettings();" [(ngModel)]="settings.best_brew"></ion-checkbox>
           </ion-item>
 
         </ion-card-content>
@@ -641,6 +656,58 @@
           <ion-label>
             <ion-icon style="top: 3px; position: relative;" name="information-circle-outline"></ion-icon>
             <p style="display: inline;">{{"TEMPERATURE.INFORMATION_DESCRIPTION" | translate}}</p>
+          </ion-label>
+        </ion-card-content>
+
+      </ion-card>
+    </div>
+    <div *ngSwitchCase="'bluetoothrefractometer'">
+      <ion-card>
+        <ion-card-content>
+          <ion-card-title>
+            {{"PAGE_SETTINGS_TAB_BLUETOOTH_REFRACTOMETER" | translate }}
+          </ion-card-title>
+          <ion-list>
+            <ion-item lines="full" *ngIf="settings.refractometer_id === ''" (click)="findAndConnectRefractometerDevice()"
+              tappable button>
+              <ion-label>
+                <h2>{{"CONNECT" | translate}}</h2>
+              </ion-label>
+              <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
+            </ion-item>
+            <ion-item *ngIf="settings.refractometer_id !== '' && isRefractometerDeviceConnected() === false"
+              (click)="retryConnectRefractometerDevice()" tappable button>
+              <ion-label>
+                <h2>{{"RETRY_CONNECT" | translate}}</h2>
+              </ion-label>
+              <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
+            </ion-item>
+            <ion-item *ngIf="settings.refractometer_id !== ''" (click)="disconnectRefractometerDevice()" tappable button>
+              <ion-label>
+                <h2>{{"DISCONNECT" | translate}}</h2>
+              </ion-label>
+              <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
+            </ion-item>
+            <ion-item>
+              <ion-label class="ion-margin-end" style="white-space: normal;">
+                <h2>{{"REFRACTOMETER.STAY_CONNECTED_ON_APP_MINIMIZE" | translate}}</h2>
+              </ion-label>
+              <ion-checkbox (ngModelChange)="saveSettings();" [(ngModel)]="settings.refractometer_stay_connected"
+                slot="end"></ion-checkbox>
+            </ion-item>
+
+            <ion-item>
+              <ion-label class="ion-margin-end" style="white-space: normal;">
+                <h2>{{"REFRACTOMETER.LOG" | translate}}</h2>
+              </ion-label>
+              <ion-checkbox (ionBlur)="toggleLog();" [(ngModel)]="settings.refractometer_log" slot="end"></ion-checkbox>
+            </ion-item>
+
+          </ion-list>
+
+          <ion-label>
+            <ion-icon style="top: 3px; position: relative;" name="information-circle-outline"></ion-icon>
+            <p style="display: inline;">{{"REFRACTOMETER.INFORMATION_DESCRIPTION" | translate}}</p>
           </ion-label>
         </ion-card-content>
 

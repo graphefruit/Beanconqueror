@@ -175,6 +175,103 @@ export class SettingsPage implements OnInit {
 
   public async ngOnInit() {}
 
+  public async findAndConnectRefractometerDevice(_retry: boolean = false) {
+    const hasLocationPermission: boolean =
+      await this.bleManager.hasLocationPermission();
+    if (!hasLocationPermission) {
+      await this.uiAlert.showMessage(
+        'REFRACTOMETER.REQUEST_PERMISSION.LOCATION',
+        undefined,
+        undefined,
+        true
+      );
+      await this.bleManager.requestLocationPermissions();
+    }
+
+    const hasBluetoothPermission: boolean =
+      await this.bleManager.hasBluetoothPermission();
+    if (!hasBluetoothPermission) {
+      await this.uiAlert.showMessage(
+        'REFRACTOMETER.REQUEST_PERMISSION.BLUETOOTH',
+        undefined,
+        undefined,
+        true
+      );
+      await this.bleManager.requestBluetoothPermissions();
+    }
+
+    const bleEnabled: boolean = await this.bleManager.isBleEnabled();
+    if (bleEnabled === false) {
+      await this.uiAlert.showMessage(
+        'REFRACTOMETER.BLUETOOTH_NOT_ENABLED',
+        undefined,
+        undefined,
+        true
+      );
+      return;
+    }
+
+    await this.uiAlert.showLoadingSpinner(
+      'REFRACTOMETER.BLUETOOTH_SCAN_RUNNING',
+      true
+    );
+
+    const refractometerDevice =
+      await this.bleManager.tryToFindRefractometerDevice();
+    await this.uiAlert.hideLoadingSpinner();
+    if (refractometerDevice) {
+      try {
+        // We don't need to retry for iOS, because we just did scan before.
+
+        // NEVER!!! Await here, else the bluetooth logic will get broken.
+        this.bleManager.autoConnectRefractometerDevice(
+          refractometerDevice.type,
+          refractometerDevice.id,
+          false
+        );
+      } catch (ex) {}
+
+      this.settings.refractometer_id = refractometerDevice.id;
+      this.settings.refractometer_type = refractometerDevice.type;
+
+      //this.uiAnalytics.trackEvent(SETTINGS_TRACKING.TITLE, SETTINGS_TRACKING.ACTIONS.SCALE.CATEGORY,scale.type);
+
+      await this.saveSettings();
+
+      await this.enableTdsParameter();
+    } else {
+      this.uiAlert.showMessage(
+        'REFRACTOMETER.CONNECTION_NOT_ESTABLISHED',
+        undefined,
+        undefined,
+        true
+      );
+    }
+  }
+
+  private async enableTdsParameter() {
+    await this.uiAlert.showLoadingSpinner();
+    try {
+      if (this.settings.manage_parameters.tds === false) {
+        this.settings.manage_parameters.tds = true;
+        await this.saveSettings();
+      }
+
+      const preps: Array<Preparation> =
+        this.uiPreparationStorage.getAllEntries();
+      if (preps.length > 0) {
+        for (const prep of preps) {
+          if (prep.manage_parameters.tds === false) {
+            prep.manage_parameters.tds = true;
+            await this.uiPreparationStorage.update(prep);
+          }
+        }
+      }
+    } catch (ex) {}
+
+    await this.uiAlert.hideLoadingSpinner();
+  }
+
   public async findAndConnectTemperatureDevice(_retry: boolean = false) {
     const hasLocationPermission: boolean =
       await this.bleManager.hasLocationPermission();
@@ -300,15 +397,6 @@ export class SettingsPage implements OnInit {
           pressureDevice.id,
           false
         );
-
-        if (this.platform.is('android')) {
-          this.uiAlert.showMessage(
-            'PRESSURE_MESSAGE_AFTER_CONNECTION',
-            'CARE',
-            undefined,
-            true
-          );
-        }
       } catch (ex) {}
 
       this.settings.pressure_id = pressureDevice.id;
@@ -444,6 +532,31 @@ export class SettingsPage implements OnInit {
     }
   }
 
+  public async disconnectRefractometerDevice() {
+    this.eventQueue.dispatch(
+      new AppEvent(
+        AppEventType.BLUETOOTH_REFRACTOMETER_DEVICE_DISCONNECT,
+        undefined
+      )
+    );
+    let disconnected: boolean = true;
+
+    if (
+      this.settings.refractometer_id !== '' &&
+      this.bleManager.getRefractometerDevice()
+    ) {
+      disconnected = await this.bleManager.disconnectRefractometerDevice(
+        this.settings.refractometer_id
+      );
+    }
+
+    if (disconnected) {
+      this.settings.refractometer_id = '';
+      this.settings.refractometer_type = null;
+      await this.saveSettings();
+    }
+  }
+
   public async disconnectTemperatureDevice() {
     this.eventQueue.dispatch(
       new AppEvent(
@@ -511,6 +624,10 @@ export class SettingsPage implements OnInit {
     }
   }
 
+  public async retryConnectRefractometerDevice() {
+    await this.findAndConnectRefractometerDevice(true);
+  }
+
   public async retryConnectTemperatureDevice() {
     await this.findAndConnectTemperatureDevice(true);
   }
@@ -523,6 +640,10 @@ export class SettingsPage implements OnInit {
     if (this.isScaleConnected() === false) {
       await this.findAndConnectScale(true);
     }
+  }
+
+  public isRefractometerDeviceConnected(): boolean {
+    return this.bleManager.refractometerDevice !== null;
   }
 
   public isTemperatureDeviceConnected(): boolean {
@@ -629,6 +750,10 @@ export class SettingsPage implements OnInit {
     await this.uiSettingsStorage.saveSettings(this.settings);
   }
 
+  public async resetFilter() {
+    this.settings.resetFilter();
+  }
+
   public async fixWeightChangeMinFlowNumber() {
     //We need to trigger this, because the slider sometimes procudes values like 0.60000001, and we need to fix this before saving
     this.settings.bluetooth_scale_espresso_stop_on_no_weight_change_min_flow =
@@ -643,7 +768,8 @@ export class SettingsPage implements OnInit {
     if (
       this.settings.scale_log === true ||
       this.settings.pressure_log === true ||
-      this.settings.temperature_log === true
+      this.settings.temperature_log === true ||
+      this.settings.refractometer_log === true
     ) {
       Logger.enableLog();
     } else {
@@ -896,6 +1022,66 @@ export class SettingsPage implements OnInit {
 
   public excelExport(): void {
     this.uiExcel.export();
+  }
+
+  public importBeansExcel(): void {
+    if (this.platform.is('cordova')) {
+      this.uiAnalytics.trackEvent(
+        SETTINGS_TRACKING.TITLE,
+        SETTINGS_TRACKING.ACTIONS.IMPORT
+      );
+      this.uiLog.log('Import real data');
+      if (this.platform.is('android')) {
+        this.fileChooser.open().then(async (uri) => {
+          try {
+            const fileEntry: any = await new Promise(
+              async (resolve) =>
+                await window.resolveLocalFileSystemURL(uri, resolve, () => {})
+            );
+
+            this.uiFileHelper.readFileEntryAsArrayBuffer(fileEntry).then(
+              async (_arrayBuffer) => {
+                this.uiExcel.importBeansByExcel(_arrayBuffer);
+              },
+              () => {
+                // Backup, maybe it was a .JSON?
+              }
+            );
+          } catch (ex) {
+            this.uiAlert.showMessage(
+              this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
+                ' (' +
+                JSON.stringify(ex) +
+                ')'
+            );
+          }
+        });
+      } else {
+        this.iosFilePicker.pickFile().then((uri) => {
+          if (uri && uri.endsWith('.xlsx')) {
+            let path = uri.substring(0, uri.lastIndexOf('/'));
+            const file = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
+            if (path.indexOf('file://') !== 0) {
+              path = 'file://' + path;
+            }
+            this.uiFileHelper.readFileAsArrayBuffer(path, file).then(
+              async (_arrayBuffer) => {
+                this.uiExcel.importBeansByExcel(_arrayBuffer);
+              },
+              () => {
+                // Backup, maybe it was a .JSON?
+              }
+            );
+          } else {
+            this.uiAlert.showMessage(
+              this.translate.instant('INVALID_FILE_FORMAT')
+            );
+          }
+        });
+      }
+    } else {
+      this.__importDummyData();
+    }
   }
 
   private async _exportAttachments(

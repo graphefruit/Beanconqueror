@@ -911,6 +911,34 @@
         "<b>Otros</b>",
         "Corrección de errores menores"
       ]
+    },
+    "6.6.0": {
+      "TITLE": "Version 6.6.0: Novedades",
+      "DESCRIPTION": [
+        "<b>Refractómetro</b>",
+        "Añadido soporte para DiFluid R2 - Gracias a Yannick",
+        "",
+        "<b>Básculas Bluetooth</b>",
+        "Añadido soporte para Blackcoffee.io - Gracias a Yannick",
+        "Solucionado un fallo que no mostraba el flujo correcto en algunas básculas",
+        "",
+        "<b>Preparaciones</b>",
+        "Selecciona una preparación de un café como 'mejor preparación' - Activable en configuración",
+        "Es posible copiar las notas desde la vista de lista",
+        "Filtra tus preparaciones según el perfil usado",
+        "Puntua tus preparaciones desde el menú contextual",
+        "Descarga el fichero de Visualizer en la vista de lista",
+        "",
+        "<b>Xenia</b>",
+        "Ahora se guarda qué script se ha ejecutado en las notas",
+        "Elige la temperatura de extracción cuando se inicia una preparación",
+        "",
+        "<b>Mejoras</b>",
+        "Pequeñas mejoras",
+        "",
+        "<b>Otros</b>",
+        "Corrección de errores menores"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Personalizar parámetros",
@@ -1285,7 +1313,7 @@
       "LOCATION": "Para encontrar básculas bluetooth, la aplicación necesita acceder a la ubicación.",
       "BLUETOOTH": "Para encontrar básculas bluetooth, la aplicación necesita acceso al bluetooth"
     },
-    "INFORMATION_DESCRIPTION": "Básculas compatibles: Decent, Acaia, Felicita, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale y Eureka Precise. Atención: Si la báscula Eureka Precise recibe un valor negativo, el temporizador se detiene"
+    "INFORMATION_DESCRIPTION": "Básculas compatibles: Decent, Acaia, Felicita, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale, Blackcoffee.io y Eureka Precise. Atención: Si la báscula Eureka Precise recibe un valor negativo, el temporizador se detiene"
   },
   "QR": {
     "WRONG_QRCODE_DESCRIPTION": "Código QR incorrecto o contenido incorrecto",
@@ -1520,5 +1548,28 @@
   "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "El ratio se calculará con este valor para métodos de preparación de tipo 'espresso'",
   "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "Parece que la báscula bluetooth no se conectó correctamente a Beanconqueror. Suele suceder en dispositivos iOS y básculas Acaia. Por favor, conecta la báscula de nuevo y verifica que el peso se transfiere correctamente.",
   "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": "¿No hay peso?",
-  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "¿Con qué valor mínimo de flujo debería detenerse el temporizador? El temporizador se detendrá únicamente si han transcurrido 5 segundos y se han superado los 5 gramos o si se han superado los gramos del café molido, consiguiendo así un ratio mínimo de 1:1. Tras eso, se comprobará el valor mínimo de flujo configurado"
+  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "¿Con qué valor mínimo de flujo debería detenerse el temporizador? El temporizador se detendrá únicamente si han transcurrido 5 segundos y se han superado los 5 gramos o si se han superado los gramos del café molido, consiguiendo así un ratio mínimo de 1:1. Tras eso, se comprobará el valor mínimo de flujo configurado",
+  "ONLY_BEST_BREWS": "Sólo mejores preparaciones",
+  "POPOVER_BEST_BREW": "Mejor preparación",
+  "PAGE_SETTINGS_BEST_BREW": "Activa mejores preparaciones",
+  "PAGE_SETTINGS_BEST_BREW_DESCRIPTION": "Elige la mejor preparación de un café. Un café solo puede tener una preparación como 'la mejor' en vez de varias favoritas.",
+  "PAGE_SETTINGS_TAB_BLUETOOTH_REFRACTOMETER": "Refractómetro",
+  "REFRACTOMETER": {
+    "CONNECTION_NOT_ESTABLISHED": "No se encontró el refractómetro o no se pudo establecer la conexión",
+    "CONNECTED_SUCCESSFULLY": "Refractómetro conectado",
+    "DISCONNECTED_SUCCESSFULLY": "Refractómetro desconectado",
+    "DISCONNECTED_UNPLANNED": "Desconexión no planificada del refractómetro",
+    "STAY_CONNECTED_ON_APP_MINIMIZE": "Mantener el refractrómetro conectado con la aplicación en segundo plano",
+    "INFORMATION_DESCRIPTION": "Dispositivos soportados: DiFluid R2",
+    "BLUETOOTH_SCAN_RUNNING": "Se buscará el refractómetro durante 60 segundos",
+    "BLUETOOTH_NOT_ENABLED": "Bluetooth no activado, actívelo para el correcto funcionamiento",
+    "REQUEST_PERMISSION": {
+      "LOCATION": "Para buscar un refractómetro, la aplicación necesita permisos de ubicación.",
+      "BLUETOOTH": "Para buscar un refractómetro, la aplicación necesita acceso al bluetooth."
+    },
+    "LOG": "Activar logs para el refractómetro",
+    "READ_END": "Prueba finalizada - resultado recibido"
+  },
+  "COPIED_TO_CLIPBOARD_SUCCESSFULLY": "Copiado al portapapeles",
+  "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "No se ha podido copiar al portapeles"
 }

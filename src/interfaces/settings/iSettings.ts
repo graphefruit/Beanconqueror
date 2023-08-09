@@ -10,7 +10,10 @@ import { IBeanPageSort } from '../bean/iBeanPageSort';
 import { IBeanPageFilter } from '../bean/iBeanPageFilter';
 import { IBrewGraphs } from '../brew/iBrewGraphs';
 import { IBeanParameter } from '../parameter/iBeanParameter';
-import { PressureType, ScaleType } from '../../classes/devices';
+import {  PressureType,
+  RefractometerType,
+  ScaleType,
+  TemperatureType } from '../../classes/devices';
 import { BeanListViewParameter } from '../../classes/parameter/beanListViewParameter';
 
 export interface ISettings {
@@ -108,6 +111,19 @@ export interface ISettings {
   pressure_threshold_bar: number;
   pressure_stay_connected: boolean;
 
+  temperature_id: string;
+  temperature_type: TemperatureType;
+  temperature_log: boolean;
+  temperature_threshold_active: boolean;
+  temperature_threshold_temp: number;
+  temperature_stay_connected: boolean;
+
+  refractometer_id: string;
+  refractometer_type: RefractometerType;
+  refractometer_stay_connected: boolean;
+  refractometer_log: boolean;
+
   currency: string;
   brew_display_bean_image: boolean;
+  best_brew: boolean;
 }

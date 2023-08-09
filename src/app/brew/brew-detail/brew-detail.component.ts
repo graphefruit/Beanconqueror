@@ -31,6 +31,8 @@ import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import moment from 'moment';
 import BeanconquerorFlowTestDataDummy from '../../../assets/BeanconquerorFlowTestDataFourth.json';
 import { UILog } from '../../../services/uiLog';
+import { UIToast } from '../../../services/uiToast';
+import { Visualizer } from '../../../classes/visualizer/visualizer';
 declare var Plotly;
 @Component({
   selector: 'brew-detail',
@@ -77,7 +79,8 @@ export class BrewDetailComponent implements OnInit {
     private readonly platform: Platform,
     private readonly screenOrientation: ScreenOrientation,
     private readonly alertCtrl: AlertController,
-    private readonly uiLog: UILog
+    private readonly uiLog: UILog,
+    private readonly uiToast: UIToast
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -107,6 +110,9 @@ export class BrewDetailComponent implements OnInit {
     this.loaded = true;
   }
 
+  public copyNotesToClipboard() {
+    this.uiHelper.copyToClipboard(this.data.note);
+  }
   public async detailBean() {
     await this.uiBeanHelper.detailBean(this.data.getBean());
   }
@@ -601,6 +607,25 @@ export class BrewDetailComponent implements OnInit {
 
     this.lastChartLayout = layout;
     return layout;
+  }
+
+  public async downloadVisualizerProfile() {
+    const vS: Visualizer = new Visualizer();
+
+    vS.mapBrew(this.data);
+    vS.mapBean(this.data.getBean());
+    vS.mapWater(this.data.getWater());
+    vS.mapPreparation(this.data.getPreparation());
+    vS.mapMill(this.data.getMill());
+    vS.brewFlow = this.flow_profile_raw;
+
+    try {
+      await this.uiHelper.exportJSON(
+        this.brew.config.uuid + '_visualizer.json',
+        JSON.stringify(vS),
+        true
+      );
+    } catch (ex) {}
   }
 
   public async downloadJSONProfile() {

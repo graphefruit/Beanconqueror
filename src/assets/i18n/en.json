@@ -911,6 +911,34 @@
         "<b>Others:</b>",
         "Small bug fixes"
       ]
+    },
+    "6.6.0": {
+      "TITLE": "Version 6.6.0: What's new?",
+      "DESCRIPTION": [
+        "<b>Refractometer</b>",
+        "Support of DiFluid R2- Thanks to Yannick!",
+        "",
+        "<b>Bluetooth scales</b>",
+        "Support of Blackcoffee.io - Thanks to Yannick!",
+        "Tweaking the flow-rate for pour scales",
+        "",
+        "<b>Brews</b>",
+        "Mark a brew for one bean as 'best brew' - Activatable in settings",
+        "Copy your notes in the detailview now",
+        "Filter your brews by the used profiles",
+        "Rate your brew directly by the list menu",
+        "Download the visualizer file now also in the detail view",
+        "",
+        "<b>Xenia</b>",
+        "Script executes are now written into the notes",
+        "Setting the brew temperature of the machine when the brew starts",
+        "",
+        "<b>Improvements</b>",
+        "Small improvements",
+        "",
+        "<b>Others</b>",
+        "Small bug fixes"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Customize parameters",
@@ -1285,7 +1313,7 @@
       "LOCATION": "To find bluetooth scales, the app needs access to the location.",
       "BLUETOOTH": "To find bluetooth scales, the app needs access to bluetooth"
     },
-    "INFORMATION_DESCRIPTION": "Supported scales are: Decent Scale, Acaia, Felicita, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale and Eureka Precisa. Note: If the Eureka Precisa recieves a negative value, the timer stops"
+    "INFORMATION_DESCRIPTION": "Supported scales are: Decent Scale, Acaia, Felicita, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale, Blackcoffee.io and Eureka Precisa. Note: If the Eureka Precisa recieves a negative value, the timer stops"
   },
   "QR": {
     "WRONG_QRCODE_DESCRIPTION": "Invalid QR code or unrecognised content",
@@ -1520,5 +1548,28 @@
   "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "The brew ratio will be calculated with this value only for brews of type 'espresso'",
   "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "It looks like the bluetooth scale was not connected correctly. This usually happens on iOS-Devices with Acaia scales, please reconnect the scale and make sure the weight tile is updated",
   "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": "No weight values?",
-  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "The flow rate at which the brew should be stopped. The brew will only be stopped when a minimum of 5 seconds has passed, 5 grams is in the cup or if you entered ground coffee weight - at least a 1:1 brew ratio is achieved (e.g: 18g in, 18g out). After those conditions are me, the minimum flow rate set here will be checked"
+  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "The flow rate at which the brew should be stopped. The brew will only be stopped when a minimum of 5 seconds has passed, 5 grams is in the cup or if you entered ground coffee weight - at least a 1:1 brew ratio is achieved (e.g: 18g in, 18g out). After those conditions are me, the minimum flow rate set here will be checked",
+  "ONLY_BEST_BREWS": "Only best brews",
+  "POPOVER_BEST_BREW": "Best brew",
+  "PAGE_SETTINGS_BEST_BREW": "Activate best brews",
+  "PAGE_SETTINGS_BEST_BREW_DESCRIPTION": "Mark your best brew for a specific bean. Each bean just can have one best brew instead of multiple favourites.",
+  "PAGE_SETTINGS_TAB_BLUETOOTH_REFRACTOMETER": "Refractometer device",
+  "REFRACTOMETER": {
+    "CONNECTION_NOT_ESTABLISHED": "Refractometer device not found, or connection could not be established",
+    "CONNECTED_SUCCESSFULLY": "Refractometer device connected",
+    "DISCONNECTED_SUCCESSFULLY": "Refractometer device disconnected",
+    "DISCONNECTED_UNPLANNED": "Refractometer device disconnected unexpectedly",
+    "STAY_CONNECTED_ON_APP_MINIMIZE": "Keep refractometer connected even when app is in the background",
+    "INFORMATION_DESCRIPTION": "Supported devices are: DiFluid R2",
+    "BLUETOOTH_SCAN_RUNNING": "Searching for refractometer device for up to 60s",
+    "BLUETOOTH_NOT_ENABLED": "Bluetooth not activated, please activate to work properly",
+    "REQUEST_PERMISSION": {
+      "LOCATION": "To find refractometer devices, the app needs access to the location.",
+      "BLUETOOTH": "To find refractometer devices, the app needs access to bluetooth"
+    },
+    "LOG": "Activate log files for refractometer device",
+    "READ_END": "Test finished - result received"
+  },
+  "COPIED_TO_CLIPBOARD_SUCCESSFULLY": "Added to clipboard",
+  "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "Could not be added to clipboard"
 }

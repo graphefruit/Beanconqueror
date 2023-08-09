@@ -43,6 +43,10 @@
     <ion-label position="stacked" style="top: -5px;position: relative;">{{"ONLY_FAVOURITES" | translate }}</ion-label>
     <ion-toggle slot="end" [(ngModel)]="filter.favourite"></ion-toggle>
   </ion-item>
+  <ion-item *ngIf='settings.best_brew'>
+    <ion-label position="stacked" style="top: -5px;position: relative;">{{"ONLY_BEST_BREWS" | translate }}</ion-label>
+    <ion-toggle slot="end" [(ngModel)]="filter.best_brew"></ion-toggle>
+  </ion-item>
   <ion-item>
     <ion-label position="stacked" style="top: -5px;position: relative;">{{"BREW_FILTER_JUST_CHART_DATA" | translate }}</ion-label>
     <ion-toggle [(ngModel)]="filter.chart_data" slot="end"></ion-toggle>
@@ -58,6 +62,12 @@
     </ion-range>
   </ion-item>
 
+  <ion-item *ngIf='profiles?.length>0'>
+    <ion-label position="stacked" style="top: -5px;position: relative;">{{"BREW_DATA_PRESSURE_PROFILE" | translate }}</ion-label>
+    <ion-select placeholder='{{"BREW.PLACE_HOLDER.BREW_DATA_PRESSURE_PROFILE"| translate}}' [interfaceOptions]="selectOptions" [(ngModel)]="filter.profiles" [multiple]='true' >
+      <ion-select-option *ngFor="let data of profiles" value="{{data}}">{{data}}</ion-select-option>
+    </ion-select>
+  </ion-item>
   <ion-list class="ion-no-padding ion-padding-top ion-margin-horizontal">
       <ion-button (click)="useFilter()" color="accent" expand="block" tappable
                   type="submit">{{"USE_FILTER" | translate}}</ion-button>

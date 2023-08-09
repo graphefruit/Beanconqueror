@@ -1,6 +1,7 @@
 import { PeripheralData } from './ble.types';
 import { BluetoothScale, SCALE_TIMER_COMMAND, Weight } from './bluetoothDevice';
 import { Logger } from './common/logger';
+import { ScaleType } from './index';
 
 declare var ble: any;
 export class DifluidMicrobalance extends BluetoothScale {
@@ -17,8 +18,8 @@ export class DifluidMicrobalance extends BluetoothScale {
 
   private logger: Logger;
 
-  constructor(data: PeripheralData) {
-    super(data);
+  constructor(data: PeripheralData, type: ScaleType) {
+    super(data, type);
     this.logger = new Logger('DiFluid Scale');
     this.connect();
   }
@@ -139,7 +140,15 @@ export class DifluidMicrobalance extends BluetoothScale {
     );
   }
   private async parseStatusUpdate(difluidRawStatus: Uint8Array) {
-    if (difluidRawStatus.length >= 19 && difluidRawStatus[3] == 0) {
+    if (
+      difluidRawStatus[2] === 3 &&
+      difluidRawStatus[3] === 2 &&
+      difluidRawStatus[5] === 2
+    ) {
+      // left button pressed - starting timer
+      this.timerEvent.emit(null);
+    }
+    if (difluidRawStatus.length >= 19 && difluidRawStatus[3] === 0) {
       const weight = await this.getInt(difluidRawStatus.slice(5, 9));
       this.setWeight(weight / 10);
     }

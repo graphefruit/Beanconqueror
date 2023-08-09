@@ -17,6 +17,7 @@ import {
   ZipReader,
   ZipWriter,
 } from '@zip.js/zip.js';
+import * as zip from '@zip.js/zip.js';
 import { FileEntry } from '@ionic-native/file';
 import { UILog } from './uiLog';
 import { Platform } from '@ionic/angular';
@@ -80,7 +81,8 @@ export class UIExportImportHelper {
         let zipWriter;
         if (this.platform.is('ios')) {
           // iOS got corrupt zip file, when compression is used, removing this, results into a bigger zip file, but leads into a working zip file again.
-          zipWriter = new ZipWriter(zipFileWriter, { level: 0 });
+          zip.configure({ useCompressionStream: false });
+          zipWriter = new ZipWriter(zipFileWriter);
         } else {
           zipWriter = new ZipWriter(zipFileWriter);
         }

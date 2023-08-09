@@ -76,6 +76,7 @@ export class Version implements IVersion {
       '6.4.20',
       '6.5.0',
       '6.5.1',
+      '6.6.0',
     ];
   }
 
@@ -86,6 +87,10 @@ export class Version implements IVersion {
       return -1;
     } else if (actualVersion === replacedVersion) {
       return 0;
+    }
+    if (replacedVersion > 1000) {
+      //Fixing 6420 and 6410...
+      return -1;
     }
     return 1;
   }

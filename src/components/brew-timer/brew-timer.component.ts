@@ -86,6 +86,12 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     } catch (ex) {}
   }
 
+  public smartScaleSupportsTaring() {
+    try {
+      return this.bleManager.getScale().supportsTaring;
+    } catch (ex) {}
+  }
+
   public ngOnInit(): void {
     this.initTimer();
   }
@@ -169,7 +175,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
   public startTimer(_resumed: boolean = false): void {
     if (_resumed === false) {
-      const startingDate = new Date();
+      const startingDate = moment().toDate();
       this.startingDay = moment(startingDate).startOf('day');
       if (this.timer.seconds > 0 || this.timer.milliseconds > 0) {
         // We need to subtract, if the time is already given on start (like repeat or preset)
@@ -182,7 +188,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
       this.startedOffset = this.startedTimer.diff(this.startingDay);
     } else {
-      const restartTimer = moment(new Date());
+      const restartTimer = moment(moment().toDate());
 
       this.startedOffset += restartTimer.diff(this.pausedTimer);
     }
@@ -210,7 +216,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
   public pauseTimer(_type = 'click'): void {
     this.timer.runTimer = false;
-    this.pausedTimer = moment(new Date());
+    this.pausedTimer = moment(moment().toDate());
     this.timerPaused.emit(_type);
     this.changeEvent();
   }
@@ -245,7 +251,9 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
       if (!this.timer.runTimer) {
         return;
       }
-      const milliSecondTimer = moment(new Date()).subtract(this.startedOffset);
+      const milliSecondTimer = moment(moment().toDate()).subtract(
+        this.startedOffset
+      );
 
       this.timer.milliseconds = milliSecondTimer.milliseconds();
       const passedSeconds = milliSecondTimer.diff(this.startingDay, 'seconds');
@@ -266,7 +274,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
         return;
       }
 
-      const actualDate = new Date();
+      const actualDate = moment().toDate();
 
       const actualTimerTick = moment(actualDate).subtract(this.startedOffset);
 
@@ -373,8 +381,8 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
         .milliseconds();
 
       // We need to calculate new, else when user starts timer again, the wrong times will be used
-      const startingDate = new Date();
-      this.pausedTimer = moment(new Date());
+      const startingDate = moment().toDate();
+      this.pausedTimer = moment(moment().toDate());
       this.startingDay = moment(startingDate).startOf('day');
       if (this.timer.seconds > 0 || this.timer.milliseconds > 0) {
         // We need to subtract, if the time is already given on start (like repeat or preset)

@@ -1,5 +1,6 @@
 import { PeripheralData } from './ble.types';
 import { BluetoothScale, SCALE_TIMER_COMMAND, Weight } from './bluetoothDevice';
+import { ScaleType } from './index';
 
 declare var ble: any;
 
@@ -21,8 +22,8 @@ export class SkaleScale extends BluetoothScale {
     oldSmoothed: 0,
   };
 
-  constructor(data: PeripheralData) {
-    super(data);
+  constructor(data: PeripheralData, type: ScaleType) {
+    super(data, type);
     this.connect();
   }
 

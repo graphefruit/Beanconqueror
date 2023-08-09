@@ -1,6 +1,7 @@
 import { PeripheralData } from './ble.types';
 import { BluetoothScale, SCALE_TIMER_COMMAND, Weight } from './bluetoothDevice';
 import { AcaiaScale, EventType } from './acaia';
+import { ScaleType } from './index';
 
 export class LunarScale extends BluetoothScale {
   protected override weight: Weight = {
@@ -11,8 +12,8 @@ export class LunarScale extends BluetoothScale {
   };
   private scale: AcaiaScale;
 
-  constructor(data: PeripheralData) {
-    super(data);
+  constructor(data: PeripheralData, type: ScaleType) {
+    super(data, type);
 
     this.scale = new AcaiaScale(data.id, data.characteristics);
 

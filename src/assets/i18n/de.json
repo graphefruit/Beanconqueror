@@ -911,6 +911,34 @@
         "<b>Sonstiges</b>",
         "Kleinere Fehlerbehebungen"
       ]
+    },
+    "6.6.0": {
+      "TITLE": "Version 6.6.0: Das ist neu",
+      "DESCRIPTION": [
+        "<b>Refraktometer</b>",
+        "Unterstützung des R2 DiFluid Refraktometers - Vielen Dank an Yannick!",
+        "",
+        "<b>Bluetooth Waage</b>",
+        "Unterstützung von Blackcoffee.io - Vielen Dank an Yannick!",
+        "Verbesserung der Wasser-Fluss Berechnung für billige Waagen",
+        "",
+        "<b>Brühungen</b>",
+        "Markiere eine Brühung zu einer Bohne als 'Beste Brühung' - Aktivierbar in den Einstellungen",
+        "Kopiere den Inhalt deiner Notizen in der Detailansicht",
+        "Filtere deine Brühungen nach verwendeten Profilen",
+        "Bewerte deine Brühung über das Listenmenü",
+        "Lade die Visualizer Datei ebenfalls in der Detailansicht herunter",
+        "",
+        "<b>Xenia</b>",
+        "Script-Ausführungen werden in die Notizen hinterlegt",
+        "Brühtemperatur der Maschine wird nun beim Start des Bezugs aus der Maschine ausgelesen und hinterlegt",
+        "",
+        "<b>Verbesserungen</b>",
+        "Kleine Verbesserungen",
+        "",
+        "<b>Sonstiges</b>",
+        "Kleinere Fehlerbehebungen"
+      ]
     }
   },
   "CUSTOM_PARAMETERS": "Parameter individualisieren",
@@ -1285,7 +1313,7 @@
       "LOCATION": "Um Bluetooth-Waagen zu finden, muss der Standort freigegeben werden",
       "BLUETOOTH": "Um Bluetooth-Waagen zu finden, muss Bluetooth freigegeben werden"
     },
-    "INFORMATION_DESCRIPTION": "Unterstütze Waagen sind: Decent Scale sowie Acaia Scales, Felicita Scales, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale und Eureka Precisa. Achtung: Falls die Eureka Precisa einen negativen Wert bekommt, stoppt der Timer automatisch"
+    "INFORMATION_DESCRIPTION": "Unterstütze Waagen sind: Decent Scale sowie Acaia Scales, Felicita Scales, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale, Blackcoffee.io und Eureka Precisa. Achtung: Falls die Eureka Precisa einen negativen Wert bekommt, stoppt der Timer automatisch"
   },
   "QR": {
     "WRONG_QRCODE_DESCRIPTION": "Falscher QR-Code oder falscher Inhalt",
@@ -1478,7 +1506,7 @@
       "SCRIPT_LIST_GENERAL_2": "Espresso, Endlos",
       "SCRIPT_LIST_GENERAL_STOP": "Bezug stoppen",
       "CHOOSE_SCRIPT_AT_WEIGHT": "Script auswählen für Gewichtserreichung",
-      "ERROR_NOT_ALL_SCRIPTS_FOUND":"Ein oder mehrere Xenia-Scripte konnten nicht mehr gefunden werden, diese wurden auf Standard zurückgesetzt",
+      "ERROR_NOT_ALL_SCRIPTS_FOUND": "Ein oder mehrere Xenia-Scripte konnten nicht mehr gefunden werden, diese wurden auf Standard zurückgesetzt",
       "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "Die Verbindung zur Xenia-Siebträgermaschine konnte nicht hergestellt werden, bitte überprüfe ob du im richtigen Netz (WLAN) unterwegs bist, ob die Verbindung richtig hinterlegt wurde, oder ob andere Probleme vorhanden sind",
       "CHECKING_CONNECTION_TO_PORTAFILTER": "Verbindung zur Xenia wird überprüft",
       "GRABING_SCRIPTS": "Scripte werden von der Xenia geholt"
@@ -1491,8 +1519,8 @@
   "TEMPERATURE": {
     "CONNECTION_NOT_ESTABLISHED": "Temperaturgerät konnte nicht gefunden oder verbunden werden",
     "CONNECTED_SUCCESSFULLY": "Temperaturgerät verbunden",
-    "DISCONNECTED_SUCCESSFULLY":  "Temperaturgerät getrennt",
-    "DISCONNECTED_UNPLANNED":  "Temperaturgerät ungeplant getrennt",
+    "DISCONNECTED_SUCCESSFULLY": "Temperaturgerät getrennt",
+    "DISCONNECTED_UNPLANNED": "Temperaturgerät ungeplant getrennt",
     "STAY_CONNECTED_ON_APP_MINIMIZE": "Temperaturgerät verbunden lassen bei App minimierung/inaktivität",
     "INFORMATION_DESCRIPTION": "Unterstützte Temperaturgeräte sind: ETI Ltd Thermometers (ThermaQ Blue, BlueTherm, etc)",
     "BLUETOOTH_SCAN_RUNNING": "Temperaturgeräte werden für 60 Sekunden versucht zu finden, bitte warten",
@@ -1520,5 +1548,28 @@
   "BREW_DATA_BREW_BEVERAGE_QUANTITY_TOOLTIP_BREW_RATIO": "Die Brührate wird hiermit für alle Zubereitungsmethoden mit 'Espresso' kalkuliert",
   "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_DESCRIPTION": "Es scheint so, als ob die Waage nicht richtig mit Beanconqueror verbunden werden konnte, dies passiert in den meisten Fällen nur mit iOS-Geräten und Acaia Waagen, bitte verbinde die Waage erneut und achte darauf, dass das Gewicht in der Kachel aktualisiert wird.",
   "SMART_SCALE_DID_NOT_SEND_ANY_WEIGHT_TITLE": "Keine Gewichtswerte?",
-  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "Ab welcher minimum Flussrate, soll die Brühung gestoppt werden? Die Brühung wird erst gestoppt wenn mindestens 5 Sekunden sowie 5 Gramm oder die eingegebene Bohnen-Mahlmenge erreicht wurde, sodass mindestens eine 1:1 Brührate erreicht wurde. Ab dann, wird die hinterlegte Flussrate überprüft sowie verwendet"
+  "SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION": "Ab welcher minimum Flussrate, soll die Brühung gestoppt werden? Die Brühung wird erst gestoppt wenn mindestens 5 Sekunden sowie 5 Gramm oder die eingegebene Bohnen-Mahlmenge erreicht wurde, sodass mindestens eine 1:1 Brührate erreicht wurde. Ab dann, wird die hinterlegte Flussrate überprüft sowie verwendet",
+  "ONLY_BEST_BREWS": "Nur beste Brühungen",
+  "POPOVER_BEST_BREW": "Beste Brühung",
+  "PAGE_SETTINGS_BEST_BREW": "Aktiviere beste Brühungen",
+  "PAGE_SETTINGS_BEST_BREW_DESCRIPTION": "Markiere deine Brühung zu einer gewissen Bohne als beste Brühung. Jede Bohne kann nur eine beste Brühung haben im Gegensatz zu Favouriten.",
+  "PAGE_SETTINGS_TAB_BLUETOOTH_REFRACTOMETER": "Refraktometergerät",
+  "REFRACTOMETER": {
+    "CONNECTION_NOT_ESTABLISHED": "Refraktometer konnte nicht gefunden oder verbunden werden",
+    "CONNECTED_SUCCESSFULLY": "Refraktometer verbunden",
+    "DISCONNECTED_SUCCESSFULLY": "Refraktometer getrennt",
+    "DISCONNECTED_UNPLANNED": "Refraktometer ungeplant getrennt",
+    "STAY_CONNECTED_ON_APP_MINIMIZE": "Refraktometer verbunden lassen bei App minimierung/inaktivität",
+    "INFORMATION_DESCRIPTION": "Unterstützte Refraktometer sind: DiFluid R2",
+    "BLUETOOTH_SCAN_RUNNING": "Refraktometer werden für 60 Sekunden versucht zu finden, bitte warten",
+    "BLUETOOTH_NOT_ENABLED": "Bluetooth ist nicht aktiviert, bitte aktiviere dies in den Einstellungen",
+    "REQUEST_PERMISSION": {
+      "LOCATION": "Um Bluetooth Refraktometer zu finden, muss der Standort freigegeben werden",
+      "BLUETOOTH": "Um Bluetooth Refraktometer zu finden, muss Bluetooth freigegeben werden"
+    },
+    "LOG": "Logfiles für Refraktometer aktivieren",
+    "READ_END": "Test wurde abgeschlossen, Wert wurde übertragen"
+  },
+  "COPIED_TO_CLIPBOARD_SUCCESSFULLY": "Zum Clipboard hinzugefügt",
+  "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "Konnte nicht zum Clipboard hinzugefügt werden"
 }

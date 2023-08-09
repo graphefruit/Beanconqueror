@@ -184,7 +184,53 @@ export class UIFileHelper extends InstanceClass {
       }
     });
   }
+  public async readFileEntryAsArrayBuffer(_fileEntry: FileEntry): Promise<any> {
+    return new Promise((resolve, reject) => {
+      _fileEntry.file(async (file) => {
+        try {
+          const reader = new FileReader();
+          reader.onloadend = async (event: Event) => {
+            try {
+              resolve(reader.result);
+            } catch (ex) {
+              reject();
+            }
+          };
+          reader.onerror = (event: Event) => {
+            reject();
+          };
 
+          reader.readAsArrayBuffer(file);
+        } catch (ex) {
+          reject();
+        }
+      });
+    });
+  }
+  public async readFileAsArrayBuffer(
+    _path: string,
+    _fileName: string
+  ): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      if (this.platform.is('cordova')) {
+        this.file.readAsArrayBuffer(_path, _fileName).then(
+          (result) => {
+            try {
+              resolve(result as any);
+            } catch (ex) {
+              this.uiLog.error('We could not read  file ' + ex.message);
+              reject();
+            }
+          },
+          () => {
+            reject();
+          }
+        );
+      } else {
+        reject();
+      }
+    });
+  }
   public async getZIPFileByPathAndFile(
     _path: string,
     _fileName: string
