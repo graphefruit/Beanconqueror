@@ -847,9 +847,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.deattachToRefractometerChange();
       const refractometerDevice = this.bleManager.getRefractometerDevice();
       this.refractometerDeviceSubscription =
-        refractometerDevice.resultEvent.subscribe(() => {
+        refractometerDevice.resultEvent.subscribe(async () => {
+          this.uiLog.log('Got Refractometer Read');
           this.data.tds = refractometerDevice.getLastReading().tds;
-          this.uiAlert.hideLoadingSpinner();
+          this.uiLog.log(
+            'Got Refractometer Read - Set new value:' + this.data.tds
+          );
+          await this.uiAlert.hideLoadingSpinner();
           this.uiToast.showInfoToastBottom('REFRACTOMETER.READ_END');
           this.checkChanges();
         });
@@ -2088,28 +2092,28 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public async requestRefractometerRead() {
     if (this.refractometerConnected()) {
+      await this.uiAlert.showLoadingSpinner();
       const refractometerDevice = this.bleManager.getRefractometerDevice();
-      refractometerDevice.requestRead();
-      this.uiAlert.showLoadingSpinner();
 
       let refractometerSubscription;
-      const hideLoadingSpinnerTimeout = setTimeout(() => {
+      const hideLoadingSpinnerTimeout = setTimeout(async () => {
         try {
-          if (this.uiAlert.isLoadingSpinnerShown()) {
-            this.uiAlert.hideLoadingSpinner();
-          }
+          await this.uiAlert.hideLoadingSpinner();
           refractometerSubscription.unsubscribe();
         } catch (ex) {}
       }, 5000);
       refractometerSubscription = refractometerDevice.resultEvent.subscribe(
         () => {
           try {
-            //We got triggered, cancel set timeout
+            // We got triggered, cancel set timeout
             clearTimeout(hideLoadingSpinnerTimeout);
             refractometerSubscription.unsubscribe();
           } catch (ex) {}
         }
       );
+
+      // Changed to the bottom, subscribe first, and start the loading spinner.
+      refractometerDevice.requestRead();
     }
   }
 
