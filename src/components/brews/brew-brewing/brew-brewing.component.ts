@@ -1870,7 +1870,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     try {
       const scaleType = this.bleManager.getScale()?.getScaleType();
       if (
-        scaleType === ScaleType.EUREKAPRECISA ||
         scaleType === ScaleType.SMARTCHEF ||
         scaleType === ScaleType.BLACKCOFFEE
       ) {
@@ -3188,7 +3187,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         }
 
         if (
-          scaleType === ScaleType.EUREKAPRECISA ||
           scaleType === ScaleType.SMARTCHEF ||
           scaleType === ScaleType.BLACKCOFFEE
         ) {
@@ -3360,7 +3358,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     realtimeWaterFlow.smoothed_weight = newSmoothedWeight;
 
     if (
-      scaleType === ScaleType.EUREKAPRECISA ||
       scaleType === ScaleType.SMARTCHEF ||
       scaleType === ScaleType.BLACKCOFFEE
     ) {
