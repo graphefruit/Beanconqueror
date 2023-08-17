@@ -1571,5 +1571,6 @@
     "READ_END": "Test wurde abgeschlossen, Wert wurde übertragen"
   },
   "COPIED_TO_CLIPBOARD_SUCCESSFULLY": "Zum Clipboard hinzugefügt",
-  "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "Konnte nicht zum Clipboard hinzugefügt werden"
+  "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "Konnte nicht zum Clipboard hinzugefügt werden",
+  "POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER": "Refraktometer neu verbinden"
 }

@@ -1571,5 +1571,6 @@
     "READ_END": "Test finished - result received"
   },
   "COPIED_TO_CLIPBOARD_SUCCESSFULLY": "Added to clipboard",
-  "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "Could not be added to clipboard"
+  "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "Could not be added to clipboard",
+  "POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER": "Reconnect refractometer"
 }
