@@ -1571,5 +1571,6 @@
         "READ_END": "Prueba finalizada - resultado recibido"
     },
     "COPIED_TO_CLIPBOARD_SUCCESSFULLY": "Copiado al portapapeles",
-    "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "No se ha podido copiar al portapeles"
+    "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "No se ha podido copiar al portapeles",
+    "PAGE_SETTINGS_LANGUAGE_FRENCH": "Francés"
 }

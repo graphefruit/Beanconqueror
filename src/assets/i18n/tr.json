@@ -1571,5 +1571,6 @@
         "READ_END": "Test tamamlandı - sonuç alındı"
     },
     "COPIED_TO_CLIPBOARD_SUCCESSFULLY": "Panoya eklendi",
-    "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "Panoya eklenemedi"
+    "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "Panoya eklenemedi",
+    "PAGE_SETTINGS_LANGUAGE_FRENCH": "Fransızca"
 }
