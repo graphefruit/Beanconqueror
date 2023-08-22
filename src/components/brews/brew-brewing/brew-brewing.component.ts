@@ -389,6 +389,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       if (isSomethingConnected === true) {
         this.initializeFlowChart();
       }
+      if (this.refractometerConnected()) {
+        await this.__connectRefractometerDevice(true);
+      }
 
       this.bluetoothSubscription = this.bleManager
         .attachOnEvent()
@@ -2102,11 +2105,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         } catch (ex) {}
       }, 5000);
       refractometerSubscription = refractometerDevice.resultEvent.subscribe(
-        () => {
+        async () => {
           try {
             // We got triggered, cancel set timeout
             clearTimeout(hideLoadingSpinnerTimeout);
             refractometerSubscription.unsubscribe();
+            await this.uiAlert.hideLoadingSpinner();
           } catch (ex) {}
         }
       );

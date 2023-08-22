@@ -52,7 +52,7 @@ export class DiFluidR2Refractometer extends RefractometerDevice {
   public async enableAutoNotifications() {
     this.logger.log('enabling auto notifications');
     await this.write(
-      new Uint8Array([0xdf, 0xdf, 0x01, 0x00, 0x01, 0x01, 0xc1])
+      new Uint8Array([0xdf, 0xdf, 0x01, 0x01, 0x01, 0x00, 0xc1])
     );
   }
 
