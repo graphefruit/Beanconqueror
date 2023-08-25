@@ -939,7 +939,14 @@
                 "<b>Diğerleri<\/b>",
                 "Küçük hata düzeltmeleri"
             ]
-        }
+        },
+      "6.6.1": {
+        "TITLE": "Version 6.6.1: Neler yeni?",
+        "DESCRIPTION": [
+          "<b>Diğerleri:<\/b>",
+          "Daha küçük hata düzeltmeleri"
+        ]
+      }
     },
     "CUSTOM_PARAMETERS": "Parametreyi özelleştir",
     "CUSTOM_DEFAULT_PARAMETERS": "Varsayılan",

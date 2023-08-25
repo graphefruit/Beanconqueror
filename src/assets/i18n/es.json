@@ -939,7 +939,14 @@
                 "<b>Otros<\/b>",
                 "Corrección de errores menores"
             ]
-        }
+        },
+      "6.6.1": {
+        "TITLE": "Versión 6.6.1: Novedades",
+        "DESCRIPTION": [
+          "<b>Otros<\/b>",
+          "Corrección de errores menores"
+        ]
+      }
     },
     "CUSTOM_PARAMETERS": "Personalizar parámetros",
     "CUSTOM_DEFAULT_PARAMETERS": "Predeterminado",

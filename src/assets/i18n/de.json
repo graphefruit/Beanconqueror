@@ -939,7 +939,14 @@
                 "<b>Sonstiges<\/b>",
                 "Kleinere Fehlerbehebungen"
             ]
-        }
+        },
+      "6.6.1": {
+        "TITLE": "Version 6.6.1: Das ist neu",
+        "DESCRIPTION": [
+          "<b>Sonstiges:<\/b>",
+          "Kleinere Fehlerbehebungen"
+        ]
+      }
     },
     "CUSTOM_PARAMETERS": "Parameter individualisieren",
     "CUSTOM_DEFAULT_PARAMETERS": "Vorbelegung",
