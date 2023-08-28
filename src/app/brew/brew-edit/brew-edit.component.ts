@@ -12,7 +12,7 @@ import { BrewTrackingService } from '../../../services/brewTracking/brew-trackin
 import BREW_TRACKING from '../../../data/tracking/brewTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { Insomnia } from '@ionic-native/insomnia/ngx';
+import { Insomnia } from '@awesome-cordova-plugins/insomnia/ngx';
 import { Settings } from '../../../classes/settings/settings';
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
 import { BluetoothScale, SCALE_TIMER_COMMAND } from '../../../classes/devices';

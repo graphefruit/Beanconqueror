@@ -12,17 +12,16 @@ import {
   ViewChild,
 } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { DirectoryEntry, FileEntry } from '@ionic-native/file';
-import { FileChooser } from '@ionic-native/file-chooser/ngx';
-import { File } from '@ionic-native/file/ngx';
-import { FilePath } from '@ionic-native/file-path/ngx';
+import { DirectoryEntry, FileEntry } from '@awesome-cordova-plugins/file';
+import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
+import { File } from '@awesome-cordova-plugins/file/ngx';
+import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
 import { IBean } from '../../interfaces/bean/iBean';
 import { IBrew } from '../../interfaces/brew/iBrew';
-import { IOSFilePicker } from '@ionic-native/file-picker/ngx';
 import { ISettings } from '../../interfaces/settings/iSettings';
 import { Mill } from '../../classes/mill/mill';
 import { Settings } from '../../classes/settings/settings';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
 import { Subject, Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -39,7 +38,7 @@ import { UIStorage } from '../../services/uiStorage';
 
 /** Third party */
 import { AnalyticsPopoverComponent } from '../../popover/analytics-popover/analytics-popover.component';
-import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 
 import { CurrencyService } from '../../services/currencyService/currency.service';
 import { GreenBean } from '../../classes/green-bean/green-bean';
@@ -72,6 +71,7 @@ declare var cordova: any;
 declare var device: any;
 
 declare var window: any;
+declare var FilePicker;
 
 @Component({
   selector: 'settings',
@@ -132,7 +132,6 @@ export class SettingsPage implements OnInit {
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiMillStorage: UIMillStorage,
-    private readonly iosFilePicker: IOSFilePicker,
     private readonly socialSharing: SocialSharing,
     private readonly uiLog: UILog,
     private readonly translate: TranslateService,
@@ -872,47 +871,50 @@ export class SettingsPage implements OnInit {
           }
         });
       } else {
-        this.iosFilePicker.pickFile().then((uri) => {
-          if (uri && (uri.endsWith('.zip') || uri.endsWith('.json'))) {
-            let path = uri.substring(0, uri.lastIndexOf('/'));
-            const file = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
-            if (path.indexOf('file://') !== 0) {
-              path = 'file://' + path;
-            }
+        FilePicker.pickFile(
+          (uri) => {
+            if (uri && (uri.endsWith('.zip') || uri.endsWith('.json'))) {
+              let path = uri.substring(0, uri.lastIndexOf('/'));
+              const file = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
+              if (path.indexOf('file://') !== 0) {
+                path = 'file://' + path;
+              }
 
-            if (uri.endsWith('.zip')) {
-              this.uiFileHelper.getZIPFileByPathAndFile(path, file).then(
-                async (_arrayBuffer) => {
-                  const parsedJSON =
-                    await this.uiExportImportHelper.getJSONFromZIPArrayBufferContent(
-                      _arrayBuffer
+              if (uri.endsWith('.zip')) {
+                this.uiFileHelper.getZIPFileByPathAndFile(path, file).then(
+                  async (_arrayBuffer) => {
+                    const parsedJSON =
+                      await this.uiExportImportHelper.getJSONFromZIPArrayBufferContent(
+                        _arrayBuffer
+                      );
+                    this.__importJSON(parsedJSON, path);
+                  },
+                  () => {
+                    // Backup, maybe it was a .JSON?
+                  }
+                );
+              } else {
+                this.__readJSONFile(path, file)
+                  .then(() => {
+                    // nothing todo
+                  })
+                  .catch((_err) => {
+                    this.uiAlert.showMessage(
+                      this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
+                        ' (' +
+                        JSON.stringify(_err) +
+                        ')'
                     );
-                  this.__importJSON(parsedJSON, path);
-                },
-                () => {
-                  // Backup, maybe it was a .JSON?
-                }
-              );
+                  });
+              }
             } else {
-              this.__readJSONFile(path, file)
-                .then(() => {
-                  // nothing todo
-                })
-                .catch((_err) => {
-                  this.uiAlert.showMessage(
-                    this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
-                      ' (' +
-                      JSON.stringify(_err) +
-                      ')'
-                  );
-                });
+              this.uiAlert.showMessage(
+                this.translate.instant('INVALID_FILE_FORMAT')
+              );
             }
-          } else {
-            this.uiAlert.showMessage(
-              this.translate.instant('INVALID_FILE_FORMAT')
-            );
-          }
-        });
+          },
+          () => {}
+        );
       }
     } else {
       this.__importDummyData();
@@ -1057,27 +1059,30 @@ export class SettingsPage implements OnInit {
           }
         });
       } else {
-        this.iosFilePicker.pickFile().then((uri) => {
-          if (uri && uri.endsWith('.xlsx')) {
-            let path = uri.substring(0, uri.lastIndexOf('/'));
-            const file = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
-            if (path.indexOf('file://') !== 0) {
-              path = 'file://' + path;
-            }
-            this.uiFileHelper.readFileAsArrayBuffer(path, file).then(
-              async (_arrayBuffer) => {
-                this.uiExcel.importBeansByExcel(_arrayBuffer);
-              },
-              () => {
-                // Backup, maybe it was a .JSON?
+        FilePicker.pickFile(
+          (uri) => {
+            if (uri && uri.endsWith('.xlsx')) {
+              let path = uri.substring(0, uri.lastIndexOf('/'));
+              const file = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
+              if (path.indexOf('file://') !== 0) {
+                path = 'file://' + path;
               }
-            );
-          } else {
-            this.uiAlert.showMessage(
-              this.translate.instant('INVALID_FILE_FORMAT')
-            );
-          }
-        });
+              this.uiFileHelper.readFileAsArrayBuffer(path, file).then(
+                async (_arrayBuffer) => {
+                  this.uiExcel.importBeansByExcel(_arrayBuffer);
+                },
+                () => {
+                  // Backup, maybe it was a .JSON?
+                }
+              );
+            } else {
+              this.uiAlert.showMessage(
+                this.translate.instant('INVALID_FILE_FORMAT')
+              );
+            }
+          },
+          () => {}
+        );
       }
     } else {
       this.__importDummyData();

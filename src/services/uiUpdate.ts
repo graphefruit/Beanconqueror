@@ -14,12 +14,12 @@ import { UISettingsStorage } from './uiSettingsStorage';
 import { UILog } from './uiLog';
 import { UiVersionStorage } from './uiVersionStorage';
 import { Version } from '../classes/version/iVersion';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { ModalController, Platform } from '@ionic/angular';
 import { UpdatePopoverComponent } from '../popover/update-popover/update-popover.component';
 import { IBeanInformation } from '../interfaces/bean/iBeanInformation';
 import { UIFileHelper } from './uiFileHelper';
-import { File } from '@ionic-native/file/ngx';
+import { File } from '@awesome-cordova-plugins/file/ngx';
 import { UIAlert } from './uiAlert';
 import { TranslateService } from '@ngx-translate/core';
 import { UIStorage } from './uiStorage';
@@ -578,7 +578,7 @@ export class UIUpdate {
         versionCode = await this.appVersion.getVersionNumber();
       } else {
         // Hardcored for testing
-        versionCode = '6.6.1';
+        versionCode = '6.6.0';
       }
       const version: Version = this.uiVersionStorage.getVersion();
       const displayingVersions =
@@ -604,7 +604,6 @@ export class UIUpdate {
       id: 'update-popover',
       showBackdrop: true,
       backdropDismiss: true,
-      swipeToClose: true,
       componentProps: { versions: showingVersions },
     });
     await modal.present();

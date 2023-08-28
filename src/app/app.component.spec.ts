@@ -1,23 +1,21 @@
-import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed, waitForAsync } from '@angular/core/testing';
 
-import {ModalController, Platform} from '@ionic/angular';
-import {SplashScreen} from '@ionic-native/splash-screen/ngx';
-import {StatusBar} from '@ionic-native/status-bar/ngx';
-import {RouterTestingModule} from '@angular/router/testing';
+import { ModalController, Platform } from '@ionic/angular';
+import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
+import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
+import { RouterTestingModule } from '@angular/router/testing';
 
-import {AppComponent} from './app.component';
-import {TranslateModule} from '@ngx-translate/core';
-import {Storage} from '@ionic/storage';
-import {InAppBrowser} from '@ionic-native/in-app-browser/ngx';
-import {File} from '@ionic-native/file/ngx';
-import {AppMinimize} from '@ionic-native/app-minimize/ngx';
-import {Keyboard} from '@ionic-native/keyboard/ngx';
-import {ThreeDeeTouch} from '@ionic-native/three-dee-touch/ngx';
-import {Globalization} from '@ionic-native/globalization/ngx';
+import { AppComponent } from './app.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { Storage } from '@ionic/storage';
+import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
+import { File } from '@awesome-cordova-plugins/file/ngx';
+import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
+import { ThreeDeeTouch } from '@awesome-cordova-plugins/three-dee-touch/ngx';
+import { Globalization } from '@awesome-cordova-plugins/globalization/ngx';
 
 describe('AppComponent', () => {
-
   let statusBarSpy, splashScreenSpy, platformReadySpy, platformSpy;
 
   beforeEach(waitForAsync(() => {
@@ -33,15 +31,13 @@ describe('AppComponent', () => {
         { provide: StatusBar, useValue: statusBarSpy },
         { provide: SplashScreen, useValue: splashScreenSpy },
         { provide: Platform, useValue: platformSpy },
-        {provide: Storage},
-        {provide: InAppBrowser},
-        {provide: File},
-        {provide: AppMinimize},
-        {provide: Keyboard},
-        {provide: ThreeDeeTouch},
-        {provide: ModalController},
-        {provide: Globalization},
-
+        { provide: Storage },
+        { provide: InAppBrowser },
+        { provide: File },
+        { provide: Keyboard },
+        { provide: ThreeDeeTouch },
+        { provide: ModalController },
+        { provide: Globalization },
       ],
       imports: [RouterTestingModule.withRoutes([]), TranslateModule.forRoot()],
     }).compileComponents();
@@ -80,5 +76,4 @@ describe('AppComponent', () => {
     expect(menuItems[0].getAttribute('ng-reflect-router-link')).toEqual('/home');
     expect(menuItems[1].getAttribute('ng-reflect-router-link')).toEqual('/list');
   });**/
-
 });

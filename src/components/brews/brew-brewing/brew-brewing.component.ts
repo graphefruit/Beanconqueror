@@ -50,7 +50,7 @@ import {
 } from '../../../classes/brew/brewFlow';
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { BrewFlowComponent } from '../../../app/brew/brew-flow/brew-flow.component';
-import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
+import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { PreparationTool } from '../../../classes/preparation/preparationTool';
 
 import { UIAlert } from '../../../services/uiAlert';

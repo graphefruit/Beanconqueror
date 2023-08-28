@@ -9,7 +9,7 @@ import { debounceTime } from 'rxjs/operators';
 
 import { UIHelper } from '../uiHelper';
 
-import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { UIAlert } from '../uiAlert';
 import { UISettingsStorage } from '../uiSettingsStorage';
 import { UIBrewStorage } from '../uiBrewStorage';

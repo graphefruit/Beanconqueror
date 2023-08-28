@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { Bean } from '../../classes/bean/bean';
 
 import { TranslateService } from '@ngx-translate/core';
