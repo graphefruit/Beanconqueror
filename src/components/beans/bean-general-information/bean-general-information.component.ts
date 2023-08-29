@@ -212,4 +212,6 @@ export class BeanGeneralInformationComponent implements OnInit {
       this.data.bean_information.push(beanInfo);
     }
   }
+
+  protected readonly undefined = undefined;
 }

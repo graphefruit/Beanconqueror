@@ -127,9 +127,10 @@ ion-segment-button {
   min-height: 30px;
   margin:auto;
 
-  ion-label {
+  ion-label, .ion-label {
     font-size: 18px !important;
   }
+
 
 }
 
@@ -420,6 +421,29 @@ ion-menu:host .menu-inner {
     --checkbox-background-checked: var(--ion-color-accent);
     --border-color: transparent;
     --border-color-checked: transparent;
+    .ion-label {
+      h2 {
+        margin-left: 0;
+        margin-right: 0;
+        margin-top: 2px;
+        margin-bottom: 2px;
+        font-size: 16px;
+        font-weight: normal;
+      }
+      p {
+        white-space: normal;
+        margin-left: 0;
+        margin-right: 0;
+        margin-top: 0;
+        margin-bottom: 2px;
+        font-size: 14px;
+        line-height: 20px;
+        text-overflow: inherit;
+        overflow: inherit;
+        color: var(--ion-color-step-600, #666666);
+
+      }
+    }
   }
 
   ion-card-title {
@@ -926,3 +950,14 @@ swiper-slide img {
   height: auto;
   max-height: 100%;
 }
+ion-input {
+  label {
+    .label-text-wrapper {
+      transform: none!important;
+      -webkit-transform: none!important;
+      max-width: 100%;
+      margin-top:8px;
+    }
+  }
+}
+[hidden] { display: none !important;}

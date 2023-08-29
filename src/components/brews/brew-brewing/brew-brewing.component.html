@@ -395,7 +395,7 @@
                       data.getPreparation().brew_order.while.coffee_blooming_time,
                       data.getPreparation().use_custom_parameters)" lines="inset">
     <timer #brewCoffeeBloomingTime hide-control-buttons="true" (timerTicked)="coffeeBloomingTimeChanged($event)"
-           label-id='brewCoffeeBloomingTime' label="{{'BREW_DATA_COFFEE_BLOOMING_TIME' | translate}}"></timer>
+           label-id='brewTemperatureTime' label="{{'BREW_DATA_COFFEE_BLOOMING_TIME' | translate}}"></timer>
     <!--<ion-input [(ngModel)]="data.coffee_blooming_time" inputmode="decimal"
                placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_COFFEE_BLOOMING_TIME' | translate}}" prevent-characters
                remove-empty-number
@@ -483,7 +483,7 @@
                       data.getPreparation().use_custom_parameters)" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.after.rating,
                       data.getPreparation().brew_order.after.rating,
                       data.getPreparation().use_custom_parameters)" lines="none">
-    <ion-label id='rating' position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
+    <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
       style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(data.rating,2)}}</ion-badge>
     </ion-label>
   </ion-item>
@@ -512,7 +512,7 @@
                       data.getPreparation().brew_order.after.note,
                       data.getPreparation().use_custom_parameters)" lines="inset">
     <ion-label id='note' position="stacked">{{"BREW_DATA_NOTES" | translate }}</ion-label>
-    <ion-textarea aria-labelledby='note' [(ngModel)]="data.note" autocapitalize="sentences" autocomplete="true" autocorrect="true"
+    <ion-textarea style='margin-top:20px;' aria-labelledby='note' [(ngModel)]="data.note" autocapitalize="sentences" autocomplete="true" autocorrect="true"
       placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_NOTES' | translate}}" rows="5" spellcheck="true"></ion-textarea>
   </ion-item>
 
