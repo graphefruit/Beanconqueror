@@ -67,7 +67,12 @@ import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
 } from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { PressureType, ScaleType, TemperatureType, RefractometerType } from '../classes/devices';
+import {
+  PressureType,
+  ScaleType,
+  TemperatureType,
+  RefractometerType,
+} from '../classes/devices';
 import { Logger } from '../classes/devices/common/logger';
 import { UIExportImportHelper } from '../services/uiExportImportHelper';
 
@@ -583,7 +588,7 @@ export class AppComponent implements AfterViewInit {
     // After we set the right device language, we check now if we can request external storage
     if (this.platform.is('cordova') && this.platform.is('android')) {
       try {
-        await this.androidPlatformService.checkHasExternalStorage();
+        //TODO -  await this.androidPlatformService.checkHasExternalStorage();
       } catch (ex) {}
     }
 

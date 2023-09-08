@@ -817,50 +817,14 @@ export class SettingsPage implements OnInit {
               async (resolve) =>
                 await window.resolveLocalFileSystemURL(uri, resolve, () => {})
             );
-            const newPath: string = await this.filePath.resolveNativePath(
-              fileEntry.nativeURL
-            );
-            let importPath: string = '';
-            if (newPath.lastIndexOf('/Download/') > -1) {
-              let pathFromDownload = newPath.substr(
-                0,
-                newPath.lastIndexOf('/Download/')
-              );
-              const decodedURI = decodeURIComponent(uri);
-              pathFromDownload =
-                pathFromDownload +
-                decodedURI.substring(decodedURI.lastIndexOf('/Download/'));
-              importPath = pathFromDownload;
-              importPath = importPath.substring(
-                0,
-                importPath.lastIndexOf('/') + 1
-              );
-            } else {
-              // After the new API-Changes we just can support this download path
-              importPath =
-                this.file.externalRootDirectory +
-                'Download/Beanconqueror_export/';
-            }
 
             this.__readZipFile(fileEntry).then(
               (_importData) => {
-                this.__importJSON(_importData, importPath);
+                console.log(_importData);
+                //TODO IMPORT REALY THE DATA HERE.
+                //this.__importJSON(_importData, importPath);
               },
-              (_err) => {
-                this.__readAndroidJSONFile(fileEntry, importPath).then(
-                  () => {
-                    // nothing todo
-                  },
-                  (_err2) => {
-                    this.uiAlert.showMessage(
-                      this.translate.instant('ERROR_ON_FILE_READING') +
-                        ' (' +
-                        JSON.stringify(_err2) +
-                        ')'
-                    );
-                  }
-                );
-              }
+              (_err) => {}
             );
           } catch (ex) {
             this.uiAlert.showMessage(
@@ -952,21 +916,24 @@ export class SettingsPage implements OnInit {
 
     this.uiExportImportHelper.buildExportZIP().then(
       async (_blob) => {
-        this.uiLog.log('New zip-export way');
-        const isIOS = this.platform.is('ios');
-        const file: FileEntry = await this.uiFileHelper.downloadFile(
-          'Beanconqueror.zip',
-          _blob,
-          isIOS
-        );
+        try {
+          this.uiLog.log('New zip-export way');
+          const isIOS = this.platform.is('ios');
+          const file: FileEntry = await this.uiFileHelper.downloadFile(
+            'Beanconqueror.zip',
+            _blob,
+            isIOS
+          );
 
-        if (this.platform.is('cordova')) {
-          if (this.platform.is('android')) {
-            await this.exportAttachments();
-            await this.exportFlowProfiles();
-            await this.uiAlert.hideLoadingSpinner();
+          if (this.platform.is('cordova')) {
+            if (this.platform.is('android')) {
+              await this.exportAttachments();
+              await this.exportFlowProfiles();
+              await this.uiAlert.hideLoadingSpinner();
+            }
           }
-        }
+        } catch (ex) {}
+
         await this.uiAlert.hideLoadingSpinner();
       },
       () => {
@@ -1121,7 +1088,7 @@ export class SettingsPage implements OnInit {
 
     switch (device.platform) {
       case 'Android':
-        storageLocation = cordova.file.externalRootDirectory;
+        storageLocation = cordova.file.externalDataDirectory;
         break;
       case 'iOS':
         storageLocation = cordova.file.documentsDirectory;
@@ -1202,7 +1169,7 @@ export class SettingsPage implements OnInit {
 
     switch (device.platform) {
       case 'Android':
-        storageLocation = cordova.file.externalRootDirectory;
+        storageLocation = cordova.file.externalDataDirectory;
         break;
       case 'iOS':
         storageLocation = cordova.file.documentsDirectory;

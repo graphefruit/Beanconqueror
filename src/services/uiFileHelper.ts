@@ -325,7 +325,7 @@ export class UIFileHelper extends InstanceClass {
       if (this.platform.is('cordova')) {
         let storageLocation: string = '';
         if (this.platform.is('android')) {
-          storageLocation = this.file.externalRootDirectory;
+          storageLocation = this.file.externalDataDirectory;
         } else {
           storageLocation = this.file.documentsDirectory;
         }
@@ -449,7 +449,7 @@ export class UIFileHelper extends InstanceClass {
       if (this.platform.is('cordova')) {
         let storageLocation: string = '';
         if (this.platform.is('android')) {
-          storageLocation = this.file.externalRootDirectory;
+          storageLocation = this.file.externalDataDirectory;
         } else {
           storageLocation = this.file.documentsDirectory;
         }

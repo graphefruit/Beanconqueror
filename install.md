@@ -8,7 +8,8 @@ ionic cordova plugin add cordova-plugin-inappbrowser
 npm install @ionic-native/in-app-browser
 
 #Image picker
-ionic cordova plugin add cordova-plugin-telerik-imagepicker
+//ionic cordova plugin add cordova-plugin-telerik-imagepicker
+ionic cordova plugin add spoonconsulting/cordova-plugin-telerik-imagepicker
 npm install @ionic-native/image-picker
 
 #Camera
@@ -66,9 +67,6 @@ npm install @ionic-native/three-dee-touch
 #ChartJS
 npm install chart.js --save
 
-##Support grade release
-ionic cordova plugin add cordova-android-support-gradle-release
-
 ##Globalization
 ionic cordova plugin add cordova-plugin-globalization
 npm install @ionic-native/globalization
@@ -76,9 +74,6 @@ npm install @ionic-native/globalization
 ##App version
 ionic cordova plugin add cordova-plugin-app-version
 npm install @ionic-native/app-version
-
-##MultiDex support on Android
-ionic cordova plugin add cordova-plugin-enable-multidex
 
 ###https://github.com/hughjdavey/ngx-stars
 npm install --save ngx-stars
@@ -104,7 +99,7 @@ npm install -g cordova-check-plugins
 
 ##Healthkit
 https://github.com/dariosalvi78/cordova-plugin-health
-cordova plugin add cordova-plugin-health --variable HEALTH_READ_PERMISSION='App needs read access to see the caffeinate amount which was tracked with this coffee app' --variable HEALTH_WRITE_PERMISSION='App needs write access to add the drunken caffeinate amount with the tracked brews'
+ionic cordova plugin add cordova-plugin-health --variable HEALTH_READ_PERMISSION='App needs read access to see the caffeinate amount which was tracked with this coffee app' --variable HEALTH_WRITE_PERMISSION='App needs write access to add the drunken caffeinate amount with the tracked brews'
 
 ##https://ionicframework.com/docs/native/insomnia
 ionic cordova plugin add cordova-plugin-insomnia
@@ -129,10 +124,6 @@ npm install @ionic-native/deeplinks
 
 https://search.google.com/search-console/not-verified?original_url=/search-console/ownership&original_resource_id
 
-##Ionic Cordova Plugin Adapter X
-ionic cordova plugin add cordova-plugin-androidx-adapter
-ionic cordova plugin add cordova-plugin-androidx
-
 ##Bluetooth
 We combine both plugins, because the other plugins asks all of the permissions.
 
@@ -156,3 +147,17 @@ npm install @ionic-native/screen-orientation
 ## Gauge
 
 https://ashish-chopra.github.io/ngx-gauge/#demos
+
+## Diagnostics
+
+ionic cordova plugin add cordova.plugins.diagnostic
+
+##MultiDex support on Android
+ionic cordova plugin add cordova-plugin-enable-multidex)
+
+##Ionic Cordova Plugin Adapter X
+ionic cordova plugin add cordova-plugin-androidx-adapter
+ionic cordova plugin add cordova-plugin-androidx
+
+##Support grade release
+ionic cordova plugin add cordova-android-support-gradle-release
