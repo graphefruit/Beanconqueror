@@ -927,8 +927,8 @@ export class SettingsPage implements OnInit {
 
           if (this.platform.is('cordova')) {
             if (this.platform.is('android')) {
-              await this.exportAttachments();
-              await this.exportFlowProfiles();
+              // await this.exportAttachments();
+              // await this.exportFlowProfiles();
               await this.uiAlert.hideLoadingSpinner();
             }
           }

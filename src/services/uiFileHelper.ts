@@ -142,7 +142,7 @@ export class UIFileHelper extends InstanceClass {
               reject();
             }
           },
-          () => {
+          (ex) => {
             reject();
           }
         );
@@ -223,6 +223,35 @@ export class UIFileHelper extends InstanceClass {
             }
           },
           () => {
+            reject();
+          }
+        );
+      } else {
+        reject();
+      }
+    });
+  }
+  public async readFileAsBinaryString(_filePath: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      if (this.platform.is('cordova')) {
+        let path: string;
+        let fileName: string;
+        path = this.getFileDirectory();
+        fileName = _filePath;
+        if (fileName.startsWith('/')) {
+          fileName = fileName.slice(1);
+        }
+
+        this.file.readAsBinaryString(path, fileName).then(
+          (result) => {
+            try {
+              resolve(result as any);
+            } catch (ex) {
+              this.uiLog.error('We could not read  file ' + ex.message);
+              reject();
+            }
+          },
+          (ex) => {
             reject();
           }
         );
