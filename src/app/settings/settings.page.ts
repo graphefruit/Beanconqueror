@@ -817,31 +817,11 @@ export class SettingsPage implements OnInit {
               async (resolve) =>
                 await window.resolveLocalFileSystemURL(uri, resolve, () => {})
             );
-            const newPath: string = await this.filePath.resolveNativePath(
-              fileEntry.nativeURL
-            );
-            let importPath: string = '';
-            if (newPath.lastIndexOf('/Download/') > -1) {
-              let pathFromDownload = newPath.substr(
-                0,
-                newPath.lastIndexOf('/Download/')
-              );
-              const decodedURI = decodeURIComponent(uri);
-              pathFromDownload =
-                pathFromDownload +
-                decodedURI.substring(decodedURI.lastIndexOf('/Download/'));
-              importPath = pathFromDownload;
-              importPath = importPath.substring(
-                0,
-                importPath.lastIndexOf('/') + 1
-              );
-            } else {
-              // After the new API-Changes we just can support this download path
-              importPath =
-                this.file.externalRootDirectory +
-                'Download/Beanconqueror_export/';
-            }
 
+            // After the new API-Changes we just can support this download path
+            const importPath =
+              this.file.externalDataDirectory +
+              'Download/Beanconqueror_export/';
             this.__readZipFile(fileEntry).then(
               (_importData) => {
                 this.__importJSON(_importData, importPath);
@@ -950,23 +930,54 @@ export class SettingsPage implements OnInit {
       SETTINGS_TRACKING.ACTIONS.EXPORT
     );
 
+    if (this.platform.is('cordova')) {
+      if (this.platform.is('android')) {
+        const storageLocation = cordova.file.externalDataDirectory;
+        if (storageLocation === null || storageLocation === undefined) {
+          await this.uiAlert.hideLoadingSpinner();
+          await this.uiAlert.showMessage(
+            'ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION',
+            'ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE',
+            undefined,
+            true
+          );
+          //We cant export because no file system existing, so break.
+          this.uiExportImportHelper.buildExportZIP().then(async (_blob) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(_blob);
+            reader.onloadend = () => {
+              let base64data = reader.result.toString();
+              console.log(base64data);
+              base64data = base64data.replace(
+                'data:application/octet-stream;',
+                'data:application/zip;'
+              );
+              this.socialSharing.share(undefined, 'Beanconqueror', base64data);
+            };
+          });
+
+          return;
+        }
+      }
+    }
+
     this.uiExportImportHelper.buildExportZIP().then(
       async (_blob) => {
         this.uiLog.log('New zip-export way');
         const isIOS = this.platform.is('ios');
-        const file: FileEntry = await this.uiFileHelper.downloadFile(
-          'Beanconqueror.zip',
-          _blob,
-          isIOS
-        );
 
         if (this.platform.is('cordova')) {
           if (this.platform.is('android')) {
             await this.exportAttachments();
             await this.exportFlowProfiles();
-            await this.uiAlert.hideLoadingSpinner();
           }
         }
+        const file: FileEntry = await this.uiFileHelper.downloadFile(
+          'Beanconqueror.zip',
+          _blob,
+          true
+        );
+
         await this.uiAlert.hideLoadingSpinner();
       },
       () => {
@@ -1121,7 +1132,7 @@ export class SettingsPage implements OnInit {
 
     switch (device.platform) {
       case 'Android':
-        storageLocation = cordova.file.externalRootDirectory;
+        storageLocation = cordova.file.externalDataDirectory;
         break;
       case 'iOS':
         storageLocation = cordova.file.documentsDirectory;
@@ -1185,7 +1196,7 @@ export class SettingsPage implements OnInit {
         path,
         exportingFilename,
         exportDirectory.nativeURL,
-        exportingFilename.replace('.json', '.png')
+        exportingFilename
       );
     } catch (ex) {}
   }
@@ -1202,7 +1213,7 @@ export class SettingsPage implements OnInit {
 
     switch (device.platform) {
       case 'Android':
-        storageLocation = cordova.file.externalRootDirectory;
+        storageLocation = cordova.file.externalDataDirectory;
         break;
       case 'iOS':
         storageLocation = cordova.file.documentsDirectory;
@@ -1295,10 +1306,7 @@ export class SettingsPage implements OnInit {
   ) {
     for (const entry of _storedData) {
       if (entry.flow_profile) {
-        await this._importFileFlowProfile(
-          entry.flow_profile.replace('.json', '.png'),
-          _importPath
-        );
+        await this._importFileFlowProfile(entry.flow_profile, _importPath);
       }
     }
   }
@@ -1369,7 +1377,7 @@ export class SettingsPage implements OnInit {
           storageLocation,
           fileName,
           path + addSubFolder,
-          fileName.replace('.png', '.json')
+          fileName
         );
       } else {
         this.uiLog.log(

@@ -946,6 +946,18 @@
           "<b>Sonstiges:<\/b>",
           "Kleinere Fehlerbehebungen"
         ]
+      },
+      "6.6.2": {
+        "TITLE": "Version 6.6.2: Das ist neu",
+        "DESCRIPTION": [
+          "[ANDROID]<b>Android 13 - Dateisystem Veränderungen:<\/b>",
+          "[ANDROID]Durch die Veränderungen der Dateisystemrechte in Android, mussten die Zugriffswege, wie Dateien gesichert und Importiert werden überarbeitet werden. Weiterhin hatten Kamera sowie Bildzugriffe nicht mehr funktioniert bei Android 13 Geräten und wurden mit diesem Update nun behoben.",
+          "[ANDROID]Die Mindestanforderung für diese App musste ebenfalls auf Android 7.0 angehoben werden, durch diese Veränderungen.",
+          "[ANDROID]Wie der Import/Export nun Funktioniert findest du hier:https://beanconqueror.com/faq",
+          "",
+          "[IOS]<b>iOS - Aktualisierung Bibliotheken<\/b>",
+          "[IOS]Aktualisierung der Cordova-Bibliotheken, die mit diesem Release aktualisiert wurden :)"
+        ]
       }
     },
     "CUSTOM_PARAMETERS": "Parameter individualisieren",
@@ -1320,7 +1332,7 @@
             "LOCATION": "Um Bluetooth-Waagen zu finden, muss der Standort freigegeben werden",
             "BLUETOOTH": "Um Bluetooth-Waagen zu finden, muss Bluetooth freigegeben werden"
         },
-        "INFORMATION_DESCRIPTION": "Unterstütze Waagen sind: Decent Scale sowie Acaia Scales, Felicita Scales, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale, Blackcoffee.io und Eureka Precisa. Achtung: Falls die Eureka Precisa einen negativen Wert bekommt, stoppt der Timer automatisch"
+        "INFORMATION_DESCRIPTION": "Unterstütze Waagen sind: Decent Scale sowie Acaia Scales, Felicita Scales, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale (V1), Blackcoffee.io und Eureka Precisa. Achtung: Falls die Eureka Precisa einen negativen Wert bekommt, stoppt der Timer automatisch"
     },
     "QR": {
         "WRONG_QRCODE_DESCRIPTION": "Falscher QR-Code oder falscher Inhalt",
@@ -1578,5 +1590,7 @@
         "READ_END": "Test wurde abgeschlossen, Wert wurde übertragen"
     },
     "COPIED_TO_CLIPBOARD_SUCCESSFULLY": "Zum Clipboard hinzugefügt",
-    "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "Konnte nicht zum Clipboard hinzugefügt werden"
+    "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "Konnte nicht zum Clipboard hinzugefügt werden",
+    "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": "Daten können nicht extern gespeichert werden",
+    "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "Leider unterstützt dein Android-Handy keine externen Dateisysteme zum abspeichern, daher wird dir im nachfolgenden Schritt die ZIP-Datei ohne Media-Dateien zum herunterladen angeboten. Bitte schaue unter https://beanconqueror.com/faq für mehr Infromationen"
 }

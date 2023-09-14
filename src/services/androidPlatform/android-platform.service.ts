@@ -57,7 +57,7 @@ export class AndroidPlatformService {
     }
   }
 
-  private requestExternalStorageAccess() {
+  /* private requestExternalStorageAccess() {
     const promise = new Promise((resolve, reject) => {
       this.androidPermissions
         .requestPermission(
@@ -112,5 +112,5 @@ export class AndroidPlatformService {
         );
     });
     return promise;
-  }
+  }*/
 }

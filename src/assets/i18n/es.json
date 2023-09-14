@@ -946,6 +946,18 @@
           "<b>Otros<\/b>",
           "Corrección de errores menores"
         ]
+      },
+      "6.6.2": {
+        "TITLE": "Version 6.6.2: What's new",
+        "DESCRIPTION": [
+          "[ANDROID]<b>Android 13 - Filestorage permissions<\/b>",
+          "[ANDROID]Due to changes in the file system permissions in Android, the access paths for how files are backed up and imported had to be revised. In addition, camera and image access no longer worked on Android 13 devices and got fixed with this update.",
+          "[ANDROID]Due to these changes, the minimum requirement for this app also had to be raised to Android 7.0.",
+          "[ANDROID]You can find out how Import/Export works now here: https://beanconqueror.com/faq",
+          "",
+          "[IOS]<b>iOS - Updated libraries<\/b>",
+          "[IOS]Due to library changes in cordova, this is a release to match all these :)"
+        ]
       }
     },
     "CUSTOM_PARAMETERS": "Personalizar parámetros",
@@ -1320,7 +1332,7 @@
             "LOCATION": "Para encontrar básculas bluetooth, la aplicación necesita acceder a la ubicación.",
             "BLUETOOTH": "Para encontrar básculas bluetooth, la aplicación necesita acceso al bluetooth"
         },
-        "INFORMATION_DESCRIPTION": "Básculas compatibles: Decent, Acaia, Felicita, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale, Blackcoffee.io y Eureka Precise. Atención: Si la báscula Eureka Precise recibe un valor negativo, el temporizador se detiene"
+        "INFORMATION_DESCRIPTION": "Básculas compatibles: Decent, Acaia, Felicita, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale (V1), Blackcoffee.io y Eureka Precise. Atención: Si la báscula Eureka Precise recibe un valor negativo, el temporizador se detiene"
     },
     "QR": {
         "WRONG_QRCODE_DESCRIPTION": "Código QR incorrecto o contenido incorrecto",
@@ -1578,5 +1590,7 @@
         "READ_END": "Prueba finalizada - resultado recibido"
     },
     "COPIED_TO_CLIPBOARD_SUCCESSFULLY": "Copiado al portapapeles",
-    "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "No se ha podido copiar al portapeles"
+    "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "No se ha podido copiar al portapeles",
+    "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": "Data can't be saved due to Android restrictions",
+    "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "Your Android phone doesn't support external file systems, so you'll need to download the ZIP file without media files. For more information, please visit https://beanconqueror.com/faq."
 }
