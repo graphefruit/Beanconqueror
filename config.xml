@@ -201,6 +201,18 @@
             </array>
         </edit-config>
         <edit-file file="*-Info.plist" mode="merge" target="NSHealthShareUsageDescription">
+            <string>App needs access to Health to read, write and update the amount of caffeine by each coffee brew, which was recorded with this app.</string>
+        </edit-file>
+        <edit-file file="*-Info.plist" mode="merge" target="NSHealthUpdateUsageDescription">
+            <string>App needs access to Health to read, write and update the amount of caffeine by each coffee brew, which was recorded with this app.</string>
+        </edit-file>
+        <edit-file file="*-Info.plist" mode="merge" target="NSBluetoothPeripheralUsageDescription">
+            <string>Blutooth access needed to connect smartscales, pressure devices, thermo devices or refractometer. With this these data to each coffee brew can be logged.</string>
+        </edit-file>
+        <edit-file file="*-Info.plist" mode="merge" target="NSBluetoothAlwaysUsageDescription">
+            <string>Blutooth access needed to connect smartscales, pressure devices, thermo devices or refractometer. With this these data to each coffee brew can be logged.</string>
+        </edit-file>
+        <edit-file file="*-Info.plist" mode="merge" target="NSHealthShareUsageDescription">
             <string>App needs read access to see the caffeinate amount which was tracked with this coffee app</string>
         </edit-file>
         <edit-file file="*-Info.plist" mode="merge" target="NSHealthUpdateUsageDescription">
