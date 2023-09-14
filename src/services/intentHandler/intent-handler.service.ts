@@ -31,19 +31,21 @@ export class IntentHandlerService {
   ) {}
 
   public attachOnHandleOpenUrl() {
-    IonicDeeplink.route(
-      {
-        '/NO_LINK_EVER_WILL_WORK_HERE/': '/NO_LINK_EVER_WILL_WORK_HERE/',
-      },
-      (match) => {
-        this.uiLog.log('Deeplink matched ' + JSON.stringify(match));
-        this.handleDeepLink(match.$link);
-      },
-      (nomatch) => {
-        this.uiLog.log('Deeplink not matched ' + JSON.stringify(nomatch));
-        this.handleDeepLink(nomatch.$link);
-      }
-    );
+    if (typeof IonicDeeplink !== 'undefined') {
+      IonicDeeplink.route(
+        {
+          '/NO_LINK_EVER_WILL_WORK_HERE/': '/NO_LINK_EVER_WILL_WORK_HERE/',
+        },
+        (match) => {
+          this.uiLog.log('Deeplink matched ' + JSON.stringify(match));
+          this.handleDeepLink(match.$link);
+        },
+        (nomatch) => {
+          this.uiLog.log('Deeplink not matched ' + JSON.stringify(nomatch));
+          this.handleDeepLink(nomatch.$link);
+        }
+      );
+    }
   }
   private findGetParameter(_url: string, _parameterName: string) {
     let result = null,

@@ -946,6 +946,18 @@
           "<b>Diğerleri:<\/b>",
           "Daha küçük hata düzeltmeleri"
         ]
+      },
+      "6.6.2": {
+        "TITLE": "Version 6.6.2: What's new",
+        "DESCRIPTION": [
+          "[ANDROID]<b>Android 13 - Filestorage permissions<\/b>",
+          "[ANDROID]Due to changes in the file system permissions in Android, the access paths for how files are backed up and imported had to be revised. In addition, camera and image access no longer worked on Android 13 devices and got fixed with this update.",
+          "[ANDROID]Due to these changes, the minimum requirement for this app also had to be raised to Android 7.0.",
+          "[ANDROID]You can find out how Import/Export works now here: https://beanconqueror.com/faq",
+          "",
+          "[IOS]<b>iOS - Updated libraries<\/b>",
+          "[IOS]Due to library changes in cordova, this is a release to match all these :)"
+        ]
       }
     },
     "CUSTOM_PARAMETERS": "Parametreyi özelleştir",
@@ -1320,7 +1332,7 @@
             "LOCATION": "Bluetooth ile terazisiyi bulmak için uygulamanın konuma erişmesi gerekiyor.",
             "BLUETOOTH": "Bluetooth ile terazisiyi bulmak için uygulamanın bluetooth erişimi gerekiyor."
         },
-        "INFORMATION_DESCRIPTION": "Desteklenen tartılar: Decent Tartı, Acaia Tartı, Felicita Tartı, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale, Blackcoffee.io and Eureka Precisa. Care: If the Eureka Precisa recieves a negative value, the timer stops"
+        "INFORMATION_DESCRIPTION": "Desteklenen tartılar: Decent Tartı, Acaia Tartı, Felicita Tartı, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale (V1), Blackcoffee.io and Eureka Precisa. Care: If the Eureka Precisa recieves a negative value, the timer stops"
     },
     "QR": {
         "WRONG_QRCODE_DESCRIPTION": "Yanlış qr kodu veya yanlış içerik",
@@ -1578,5 +1590,7 @@
         "READ_END": "Test tamamlandı - sonuç alındı"
     },
     "COPIED_TO_CLIPBOARD_SUCCESSFULLY": "Panoya eklendi",
-    "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "Panoya eklenemedi"
+    "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "Panoya eklenemedi",
+    "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": "Data can't be saved due to Android restrictions",
+    "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "Your Android phone doesn't support external file systems, so you'll need to download the ZIP file without media files. For more information, please visit https://beanconqueror.com/faq."
 }

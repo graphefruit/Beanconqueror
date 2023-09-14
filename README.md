@@ -105,7 +105,7 @@ Different features are supported by this app, a brief overview you'll find here.
 - [Mike](https://github.com/mike1808) - For supporting Acaia Scales & DIY Pressure Sensor
 - [Myles](https://github.com/mylesagray) - For supporting Thermo Bluetooth Devices
 - [Herman](https://github.com/hermanmak) - For supporting Felicita Arc
-- [Yannick](https://github.com/randomcoffeesnob) - For supporting DiFluid Microbalance & Smart Chef Scale
+- [Yannick](https://github.com/randomcoffeesnob) - For supporting DiFluid Microbalance & Smart Chef Scale, BlackCoffee.IO. Also for adding Lokalise
 
 ## Getting the App
 
@@ -177,6 +177,10 @@ Thats why just Android is support by now.
 
 You can backup Beanconqueror via iCloud, with this you can transfer all data to another device without any loss.
 
+### Android - Backup & Restore
+
+Have a look here: [FAQ](https://beanconqueror.com/faq)
+
 ### Analytics
 
 All tracked data/analytics are visible here: ![Website](https://beanconqueror.com/data-tracking.html)
@@ -185,7 +189,7 @@ All tracked data/analytics are visible here: ![Website](https://beanconqueror.co
 
 The app needs access to your filesystem aswell as the camera
 
-- _Filesytem_: Needed to save images which you took on beans/brews etc or exporting your settings.
+- _Filesytem_: Needed to save images which you took on beans/brews etc or exporting your settings. - Outdated after Android 13 changes.
 - _Camera_: Needed to take picures or access the photo library to set images for your beans/brews
 - _Internet_: NOT NEEDED! But needed if you want to send me some analytics information to make the app better :)
 - _GPS_: NOT NEEDED! Activated through settings, saves the brew location
@@ -206,11 +210,13 @@ https://sonarcloud.io/dashboard?id=graphefruit_Beanconqueror
 
 ## Get Started
 
-npm install -g cordova@11.0.0
+npm install -g cordova@12.0.0
 npm install -g @ionic/cli
 npm run prepare
 
 ## Build iOS
+
+Always use the .workspace-File to open in Xcode
 
 ```
 ionic cordova build ios
@@ -236,19 +242,19 @@ cordova-check-plugins
 
 ### NPM-Version
 
-npm-v -> 9.4.0 - works
+npm -v -> 9.6.4 - works
 
 ### NodeJS-Version
 
-node -v -> v16.15.0 -> works
+node -v -> v18.15.0 -> works
 
 ### iOS-Version:
 
-`ionic cordova platform add ios@6.2.0`
+`ionic cordova platform add ios@7.0.1`
 
 ### Android-Version:
 
-`ionic cordova platform add android@10.1.2`
+`ionic cordova platform add android@12.0.0`
 
 ### Github Page Hosting
 
@@ -266,39 +272,6 @@ brew install bundletool
 bundletool build-apks --bundle=./app.aab --output=./app.apks
 bundletool install-apks --apks=app.apks
 
-#Overwrite plugin.xmls
-After SDK Target 31 needs to be supported, and older plugins doesn't have the android-export flag, we need to add them ourself...
-
-Cordova-plugin-x-socialsharing
-`<receiver android:name="nl.xservices.plugins.ShareChooserPendingIntent" android:exported="false" android:enabled="true">`
-
-Fixing SocialSharing.java
-` int flag = PendingIntent.FLAG_MUTABLE;
-if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.S) {
-flag = PendingIntent.FLAG_UPDATE_CURRENT;
-}
-final PendingIntent pendingIntent = PendingIntent.getBroadcast(cordova.getActivity().getApplicationContext(), 0, receiverIntent, flag);`
--> https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin/pull/1202/commits
-
-cordova-plugin-telerik-imagepicker
-
-1. `<activity android:exported="false" android:label="@string/multi_app_name" android:name="com.synconset.MultiImageChooserActivity" android:theme="@style/Theme.AppCompat.Light">`
-2. `  <config-file file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
-<application android:requestLegacyExternalStorage="true" />
-</config-file>` -> change edit-config to config-file
-   fttx-phonegap-plugin-barcodescanner
-   `<activity android:name="com.google.zxing.client.android.encode.EncodeActivity" android:exported="false" android:label="Share"/>`
-
-cordova-plugin-file/src/android
-ContentFileSystem.java
--> Temp fix for import
-`        String encodedPath = inputURL.uri.getEncodedPath();
-String authorityAndPath = encodedPath.substring(encodedPath.indexOf(this.name) + 1 + this.name.length() + 2);`
-
 Compile deson't work on android?
 Try:
 `cordova build android -- --jvmargs='-Xmx2048M -Dkotlin.daemon.jvm.options\="-Xmx2048M" --add-exports=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED'`
-
-iOS:
-Always check
-That `    wkWebView.inspectable = YES;` is never be in the code, else it wont work on older iOS devices
