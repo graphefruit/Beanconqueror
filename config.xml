@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.beanconqueror.app" version="6.6.1" xmlns="http://www.w3.org/ns/widgets">
+<widget id="com.beanconqueror.app" version="6.6.2" xmlns="http://www.w3.org/ns/widgets">
     <name>Beanconqueror</name>
     <description />
     <author email="info@beanconqueror.com" href="https://github.com/graphefruit/beanconqueror">Lars Saalbach</author>
@@ -15,7 +15,7 @@
     <allow-intent href="ionic:" />
     <allow-navigation href="*" />
     <preference name="ScrollEnabled" value="false" />
-    <preference name="android-minSdkVersion" value="22" />
+    <preference name="android-minSdkVersion" value="24" />
     <preference name="android-targetSdkVersion" value="33" />
     <preference name="android-compileSdkVersion" value="33" />
     <preference name="SplashMaintainAspectRatio" value="true" />
@@ -40,7 +40,7 @@
                 <item name="postSplashScreenTheme">@style/MyTheme</item>
             </style>
         </edit-file>
-        <preference name="AndroidWindowSplashScreenAnimatedIcon" value="resources/android/splash/drawable-land-xxxhdpi-screen.png" />
+        <preference name="AndroidWindowSplashScreenAnimatedIcon" value="resources/android/adaptiveicon/mipmap-xxxhdpi/ic_launcher.png" />
         <preference name="AndroidBlacklistSecureSocketProtocols" value="SSLv3,TLSv1" />
         <preference name="scheme" value="https" />
         <preference name="hostname" value="beanconqueror.com" />
@@ -94,7 +94,6 @@
         <hook src="plugins/cordova-plugin-ble-central/stripDuplicatePermissions.js" type="after_prepare" />
     </platform>
     <platform name="ios">
-        <preference name="InspectableWebview" value="true" />
         <preference name="BackupWebStorage" value="cloud" />
         <preference name="WKWebViewOnly" value="true" />
         <feature name="CDVWKWebViewEngine">
@@ -308,12 +307,6 @@
     <plugin name="cordova-plugin-filepicker" spec="~1.1.6" />
     <plugin name="cordova-plugin-appminimize" spec="~1.0.1" />
     <plugin name="cordova-plugin-3dtouch" spec="^1.3.7" />
-    <plugin name="cordova-plugin-health" source="npm">
-        <variable name="HEALTH_READ_PERMISSION" value="App needs read access to see the caffeinate amount which was tracked with this coffee app" />
-        <variable name="HEALTH_WRITE_PERMISSION" value="App needs write access to add the drunken caffeinate amount with the tracked brews" />
-        <variable name="PLAY_AUTH_VERSION" value="18.1.0" />
-        <variable name="FIT_API_VERSION" value="19.0.0" />
-    </plugin>
     <universal-links>
         <ios-team-id value="W8B7XY7WGY" />
         <host name="beanconqueror.com">

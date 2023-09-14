@@ -29,7 +29,7 @@
     "@ionic-native/deeplinks": "^5.33.1",
     "@ionic-native/device": "^5.33.1",
     "@ionic-native/file": "^5.33.1",
-    "@ionic-native/file-chooser": "^5.33.1",
+    "@ionic-native/file-chooser": "^5.36.0",
     "@ionic-native/file-path": "^5.33.1",
     "@ionic-native/file-picker": "^5.33.1",
     "@ionic-native/file-transfer": "^5.34.0",
@@ -92,6 +92,7 @@
     "@angular/compiler-cli": "^15.2.3",
     "@angular/language-service": "^15.2.3",
     "@ionic/angular-toolkit": "^8.0.0",
+    "@red-mobile/cordova-plugin-barcodescanner": "^9.1.0",
     "@spoonconsulting/cordova-plugin-telerik-imagepicker": "github:spoonconsulting/cordova-plugin-telerik-imagepicker",
     "@types/jasmine": "~3.6.0",
     "@types/jasminewd2": "~2.0.8",
@@ -101,7 +102,7 @@
     "cordova-android": "^12.0.1",
     "cordova-android-support-gradle-release": "^3.0.1",
     "cordova-clipboard": "^1.3.0",
-    "cordova-ios": "^6.3.0",
+    "cordova-ios": "^7.0.1",
     "cordova-plugin-add-swift-support": "^2.0.2",
     "cordova-plugin-advanced-http": "^3.3.1",
     "cordova-plugin-android-permissions": "^1.1.5",
@@ -110,7 +111,7 @@
     "cordova-plugin-app-version": "^0.1.14",
     "cordova-plugin-apprate": "^1.7.2",
     "cordova-plugin-ble-central": "^1.7.0",
-    "cordova-plugin-camera": "^6.0.0",
+    "cordova-plugin-camera": "^7.0.0",
     "cordova-plugin-customurlscheme-ng": "^10.0.0",
     "cordova-plugin-dialogs": "^2.0.2",
     "cordova-plugin-enable-multidex": "^0.2.0",
@@ -121,15 +122,15 @@
     "cordova-plugin-health": "^2.1.0",
     "cordova-plugin-inappbrowser": "^5.0.0",
     "cordova-plugin-insomnia": "^4.3.0",
-    "cordova-plugin-ionic-webview": "^5.0.0",
+    "cordova-plugin-ionic-webview": "^5.0.1",
     "cordova-plugin-nativestorage": "^2.3.2",
     "cordova-plugin-screen-orientation": "^3.0.2",
-    "cordova-plugin-splashscreen": "^6.0.2",
+    "cordova-plugin-splashscreen": "^6.0.1",
+    "cordova-plugin-x-socialsharing": "^6.0.4",
     "cordova-sqlite-storage": "^5.1.0",
     "cordova.plugins.diagnostic": "^7.1.2",
     "elliptic": ">=6.5.4",
     "es6-promise-plugin": "^4.2.2",
-    "fttx-phonegap-plugin-barcodescanner": "github:fttx/phonegap-plugin-barcodescanner",
     "husky": "^8.0.1",
     "ionic-plugin-deeplinks": "^1.0.22",
     "jasmine-core": "~3.8.0",
@@ -163,15 +164,11 @@
       "cordova-plugin-globalization": {},
       "cordova-plugin-ionic-keyboard": {},
       "cordova-sqlite-storage": {},
-      "cordova-plugin-ionic-webview": {},
       "cordova-plugin-inappbrowser": {},
       "cordova-plugin-geolocation": {
         "GPS_REQUIRED": "true"
       },
       "cordova-plugin-insomnia": {},
-      "fttx-phonegap-plugin-barcodescanner": {
-        "ANDROID_SUPPORT_V4_VERSION": "27.+"
-      },
       "ionic-plugin-deeplinks": {
         "URL_SCHEME": "beanconqueror",
         "DEEPLINK_SCHEME": "https",
@@ -206,16 +203,10 @@
       "cordova-plugin-apprate": {
         "PLAY_CORE_VERSION": "1.+"
       },
-      "cordova-plugin-app-version": {},
       "cordova-plugin-android-permissions": {},
       "cordova-plugin-file": {
         "ANDROIDX_WEBKIT_VERSION": "1.4.0"
       },
-      "cordova-plugin-camera": {
-        "ANDROIDX_CORE_VERSION": "1.6.+"
-      },
-      "cordova-plugin-splashscreen": {},
-      "skwas-cordova-plugin-datetimepicker": {},
       "cordova.plugins.diagnostic": {
         "ANDROIDX_VERSION": "1.0.0",
         "ANDROIDX_APPCOMPAT_VERSION": "1.3.1"
@@ -226,17 +217,33 @@
       "cordova-plugin-enable-multidex": {},
       "cordova-plugin-androidx-adapter": {},
       "cordova-plugin-androidx": {},
-      "cordova-plugin-health": {
-        "HEALTH_READ_PERMISSION": "App needs read access to see the caffeinate amount which was tracked with this coffee app",
-        "HEALTH_WRITE_PERMISSION": "App needs write access to add the drunken caffeinate amount with the tracked brews",
-        "FIT_API_VERSION": "21.1.0",
-        "PLAY_AUTH_VERSION": "20.2.0"
+      "@spoonconsulting/cordova-plugin-telerik-imagepicker": {
+        "PHOTO_LIBRARY_USAGE_DESCRIPTION": "The app needs photo library access, so that you can choose from already taken pictures from coffee beans, coffee bags, your own coffee brews etc. This pictures are stored inside the app."
       },
-      "@spoonconsulting/cordova-plugin-telerik-imagepicker": {}
+      "cordova-plugin-camera": {
+        "ANDROIDX_CORE_VERSION": "1.6.+"
+      },
+      "cordova-plugin-x-socialsharing": {
+        "PHOTO_LIBRARY_ADD_USAGE_DESCRIPTION": "This app requires photo library access to function properly.",
+        "PHOTO_LIBRARY_USAGE_DESCRIPTION": "This app requires photo library access to function properly."
+      },
+      "@red-mobile/cordova-plugin-barcodescanner": {
+        "ANDROIDX_LEGACY_SUPPORT_V4_VERSION": "1.0.0"
+      },
+      "cordova-plugin-splashscreen": {},
+      "cordova-plugin-app-version": {},
+      "cordova-plugin-health": {
+        "FIT_API_VERSION": "21.1.0",
+        "PLAY_AUTH_VERSION": "20.2.0",
+        "HEALTH_READ_PERMISSION": " ",
+        "HEALTH_WRITE_PERMISSION": " "
+      },
+      "skwas-cordova-plugin-datetimepicker": {},
+      "cordova-plugin-ionic-webview": {}
     },
     "platforms": [
-      "ios",
-      "android"
+      "android",
+      "ios"
     ]
   },
   "platforms": [

@@ -112,6 +112,9 @@ npm install @ionic-native/insomnia
 npm install ag-virtual-scroll@1.3.0
 
 ##QRCode Scanner
+New plugin 09/23:ionic cordova plugin add @red-mobile/cordova-plugin-barcodescanner
+
+This plugin crashed on android, so we removed it.
 Prio 1: https://github.com/fttx/phonegap-plugin-barcodescanner
 ionic cordova plugin add https://github.com/fttx/phonegap-plugin-barcodescanner.git --save-dev
 (Next possible fallback: https://openbase.com/js/@red-mobile/cordova-plugin-barcodescanner)

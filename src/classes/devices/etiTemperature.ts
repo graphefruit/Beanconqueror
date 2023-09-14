@@ -12,6 +12,7 @@ declare var ble: any;
 
 export class ETITemperature extends TemperatureDevice {
   public static DEVICE_NAME = 'THERMAQBLUE';
+  public static DEVICE_NAME_SECOND = 'THERMAQ BLUE';
   public static TEMPERATURE_SERVICE_UUID =
     '45544942-4c55-4554-4845-524db87ad700';
   public static TEMPERATURE_CHANNEL_1_TEMP_CHAR_UUID =
@@ -39,7 +40,8 @@ export class ETITemperature extends TemperatureDevice {
     return (
       device &&
       device.name &&
-      device.name.toUpperCase().includes(ETITemperature.DEVICE_NAME)
+      (device.name.toUpperCase().includes(ETITemperature.DEVICE_NAME) ||
+        device.name.toUpperCase().includes(ETITemperature.DEVICE_NAME_SECOND))
     );
   }
 

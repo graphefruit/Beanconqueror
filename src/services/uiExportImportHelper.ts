@@ -18,29 +18,13 @@ import {
   ZipWriter,
 } from '@zip.js/zip.js';
 import * as zip from '@zip.js/zip.js';
-import { DirectoryEntry, FileEntry } from '@ionic-native/file';
+import { FileEntry } from '@ionic-native/file';
 import { UILog } from './uiLog';
 import { Platform } from '@ionic/angular';
 import { UIFileHelper } from './uiFileHelper';
 import { UIAlert } from './uiAlert';
 import moment from 'moment';
 import { UIBrewStorage } from './uiBrewStorage';
-import { Bean } from '../classes/bean/bean';
-import { Brew } from '../classes/brew/brew';
-import { Preparation } from '../classes/preparation/preparation';
-import { Mill } from '../classes/mill/mill';
-import { GreenBean } from '../classes/green-bean/green-bean';
-import { RoastingMachine } from '../classes/roasting-machine/roasting-machine';
-import { Water } from '../classes/water/water';
-import { UIPreparationStorage } from './uiPreparationStorage';
-import { UIBeanStorage } from './uiBeanStorage';
-import { UIMillStorage } from './uiMillStorage';
-import { UIRoastingMachineStorage } from './uiRoastingMachineStorage';
-import { UIGreenBeanStorage } from './uiGreenBeanStorage';
-import { UIWaterStorage } from './uiWaterStorage';
-
-declare var device;
-declare var cordova;
 @Injectable({
   providedIn: 'root',
 })
@@ -59,16 +43,10 @@ export class UIExportImportHelper {
     private readonly uiFileHelper: UIFileHelper,
     private readonly uiAlert: UIAlert,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiMillStorage: UIMillStorage,
-    private readonly uiRoastingMachineStorage: UIRoastingMachineStorage,
-    private readonly uiGreenBeanStorage: UIGreenBeanStorage,
-    private readonly uiWaterStorage: UIWaterStorage
+    private readonly uiBrewStorage: UIBrewStorage
   ) {}
 
-  public async buildExportZIP(_withData: boolean = false): Promise<any> {
+  public async buildExportZIP(): Promise<any> {
     return new Promise(async (resolve, reject) => {
       this.uiStorage.export().then(async (_data) => {
         const clonedData = this.uiHelper.cloneData(_data);
@@ -130,97 +108,10 @@ export class UIExportImportHelper {
             beanconquerorBeanJSON
           );
         }
-
-        // if (_withData===true) {
-        await this.exportAttachments(zipWriter);
-        await this.exportFlowProfiles(zipWriter);
-        //}
         const zipFileBlob = await zipWriter.close();
         resolve(zipFileBlob);
       });
     });
-  }
-  private async exportAttachments(_zipWriter: ZipWriter<any>) {
-    const exportObjects: Array<any> = [
-      ...this.uiBeanStorage.getAllEntries(),
-      ...this.uiBrewStorage.getAllEntries(),
-      ...this.uiPreparationStorage.getAllEntries(),
-      ...this.uiMillStorage.getAllEntries(),
-      ...this.uiWaterStorage.getAllEntries(),
-      ...this.uiGreenBeanStorage.getAllEntries(),
-      ...this.uiRoastingMachineStorage.getAllEntries(),
-    ];
-
-    await this._exportAttachments(exportObjects, _zipWriter);
-  }
-  private async _exportAttachments(
-    _storedData:
-      | Array<Bean>
-      | Array<Brew>
-      | Array<Preparation>
-      | Array<Mill>
-      | Array<GreenBean>
-      | Array<RoastingMachine>
-      | Array<Water>,
-    _zipWriter: ZipWriter<any>
-  ) {
-    let didWeCreateFolder: boolean = false;
-    for (const entry of _storedData) {
-      for (const attachment of entry.attachments) {
-        if (didWeCreateFolder === false) {
-          await _zipWriter.add('images/', null, { directory: true });
-          didWeCreateFolder = true;
-        }
-        await this._exportFile(attachment, _zipWriter);
-      }
-    }
-  }
-
-  private async _exportFile(_filePath, _zipWriter: ZipWriter<any>) {
-    try {
-      let fileName = '';
-      if (_filePath.lastIndexOf('/') <= -1) {
-        fileName = _filePath;
-      } else {
-        fileName = _filePath.substring(_filePath.lastIndexOf('/') + 1);
-      }
-      const binaryString = await this.uiFileHelper.readFileAsBinaryString(
-        _filePath
-      );
-      const BLOB = new Blob([binaryString], {
-        type: zip.getMimeType(fileName),
-      });
-      await _zipWriter.add('images/' + fileName, new zip.BlobReader(BLOB));
-    } catch (ex) {}
-  }
-
-  private async exportFlowProfiles(_zipWriter: ZipWriter<any>) {
-    const exportObjects: Array<any> = [...this.uiBrewStorage.getAllEntries()];
-    await this._exportFlowProfiles(exportObjects, _zipWriter);
-  }
-  private async _exportFlowProfiles(
-    _storedData: Array<Brew>,
-    _zipWriter: ZipWriter<any>
-  ) {
-    let didWeCreateFolder: boolean = false;
-
-    for (const entry of _storedData) {
-      if (entry.flow_profile && entry.flow_profile.length) {
-        if (didWeCreateFolder === false) {
-          await _zipWriter.add('brews/', null, { directory: true });
-          didWeCreateFolder = true;
-        }
-        await this._exportFlowProfileFile(entry.flow_profile, _zipWriter);
-      }
-    }
-  }
-  private async _exportFlowProfileFile(_filePath, _zipWriter: ZipWriter<any>) {
-    try {
-      const jsonParsed = await this.uiFileHelper.getJSONFile(_filePath);
-      const flowProfileJSON = new TextReader(JSON.stringify(jsonParsed));
-      const fileName = _filePath.substring(_filePath.lastIndexOf('/') + 1);
-      await _zipWriter.add('brews/' + fileName, flowProfileJSON);
-    } catch (ex) {}
   }
 
   public async getJSONFromZIPArrayBufferContent(_arrayBuffer): Promise<any> {

@@ -9,7 +9,6 @@ import { AlertController, ModalController, Platform } from '@ionic/angular';
 import { UIHelper } from './uiHelper';
 import { UIFileHelper } from './uiFileHelper';
 import { TranslateService } from '@ngx-translate/core';
-import { FileChooser } from '@ionic-native/file-chooser/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { UIAlert } from './uiAlert';
 import { PhotoPopoverComponent } from '../popover/photo-popover/photo-popover.component';
@@ -24,7 +23,6 @@ import { Mill } from '../classes/mill/mill';
 import { Preparation } from '../classes/preparation/preparation';
 import { UILog } from './uiLog';
 
-declare var chooser;
 @Injectable({
   providedIn: 'root',
 })
@@ -38,7 +36,6 @@ export class UIImage {
     private readonly uiHelper: UIHelper,
     private readonly uiFileHelper: UIFileHelper,
     private readonly translate: TranslateService,
-    private readonly fileChooser: FileChooser,
     private readonly filePath: FilePath,
     private readonly uiAlert: UIAlert,
     private readonly modalCtrl: ModalController,

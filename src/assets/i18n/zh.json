@@ -946,6 +946,18 @@
           "<b>其他：<\/b>",
           "修复了一些小错误"
         ]
+      },
+      "6.6.2": {
+        "TITLE": "Version 6.6.2: What's new",
+        "DESCRIPTION": [
+          "[ANDROID]<b>Android 13 - Filestorage permissions<\/b>",
+          "[ANDROID]Due to changes in the file system permissions in Android, the access paths for how files are backed up and imported had to be revised. In addition, camera and image access no longer worked on Android 13 devices and got fixed with this update.",
+          "[ANDROID]Due to these changes, the minimum requirement for this app also had to be raised to Android 7.0.",
+          "[ANDROID]You can find out how Import/Export works now here: https://beanconqueror.com/faq",
+          "",
+          "[IOS]<b>iOS - Updated libraries<\/b>",
+          "[IOS]Due to library changes in cordova, this is a release to match all these :)"
+        ]
       }
     },
     "CUSTOM_PARAMETERS": "自定义参数",
@@ -1320,7 +1332,7 @@
             "LOCATION": "软件需要位置权限来搜索电子秤",
             "BLUETOOTH": "软件需要蓝牙权限来搜索电子秤"
         },
-        "INFORMATION_DESCRIPTION": "支持的电子秤: Decent 电子秤, Acaia 电子秤, Felicita 电子秤以及 Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale, Blackcoffee.io and Eureka Precisa. Care: If the Eureka Precisa recieves a negative value, the timer stops"
+        "INFORMATION_DESCRIPTION": "支持的电子秤: Decent 电子秤, Acaia 电子秤, Felicita 电子秤以及 Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale (V1), Blackcoffee.io and Eureka Precisa. Care: If the Eureka Precisa recieves a negative value, the timer stops"
     },
     "QR": {
         "WRONG_QRCODE_DESCRIPTION": "错误的二维码或错误的内容",
@@ -1578,5 +1590,7 @@
         "READ_END": "测试完成 - 收到结果"
     },
     "COPIED_TO_CLIPBOARD_SUCCESSFULLY": "已复制到剪贴板",
-    "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "无法复制到剪贴板"
+    "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "无法复制到剪贴板",
+    "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": "Data can't be saved due to Android restrictions",
+    "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "Your Android phone doesn't support external file systems, so you'll need to download the ZIP file without media files. For more information, please visit https://beanconqueror.com/faq."
 }

@@ -324,7 +324,10 @@ export class AppComponent implements AfterViewInit {
       // #7
       this.statusBar.show();
       this.statusBar.styleDefault();
-      this.splashScreen.hide();
+      try {
+        this.splashScreen.hide();
+      } catch (ex) {}
+
       this.keyboard.hideFormAccessoryBar(false);
       if (environment.production === true) {
         // When we're in cordova, disable the log messages
