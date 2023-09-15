@@ -57,10 +57,6 @@ import { UIWaterStorage } from '../services/uiWaterStorage';
 import { Device } from '@awesome-cordova-plugins/device/ngx';
 import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { Storage } from '@ionic/storage';
-import 'chartjs-adapter-luxon';
-import ChartStreaming from 'chartjs-plugin-streaming';
-import zoomPlugin from 'chartjs-plugin-zoom';
-import annotationPlugin from 'chartjs-plugin-annotation';
 
 import { UIToast } from '../services/uiToast';
 import {
@@ -269,9 +265,6 @@ export class AppComponent implements AfterViewInit {
     this.uiLog.log('Platform ready, init app');
 
     Chart.register(...registerables);
-    Chart.register(ChartStreaming);
-    Chart.register(zoomPlugin);
-    Chart.register(annotationPlugin);
     this.__appReady();
   }
 
