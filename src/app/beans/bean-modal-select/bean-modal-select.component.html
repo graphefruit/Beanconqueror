@@ -37,9 +37,7 @@
             </div>
 
             <ion-item *ngIf="isFilterActive('open')">
-              <ion-label position="stacked">{{"BEAN_DATA_ROASTING_TYPE" | translate}}</ion-label>
-
-              <ion-select #bean_roasting_type="ngModel"  (ionChange)="research()" [(ngModel)]="filter_open.bean_roasting_type" cancelText="{{'CANCEL'| translate }}" name="bean_roasting_type"
+              <ion-select label-placement="stacked" label='{{"BEAN_DATA_ROASTING_TYPE" | translate}}' #bean_roasting_type="ngModel"  (ionChange)="research()" [(ngModel)]="filter_open.bean_roasting_type" cancelText="{{'CANCEL'| translate }}" name="bean_roasting_type"
                           okText="{{'CHOOSE'| translate }}"
                           placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTING_TYPE' | translate}}"
                           style="padding-left:0px!important;width: 100%; min-width: 100%;"
@@ -48,8 +46,7 @@
               </ion-select>
             </ion-item>
             <ion-item *ngIf="isFilterActive('open')">
-              <ion-label position="stacked">{{"BEAN_DATA_ROASTER" | translate}}</ion-label>
-              <ion-select #bean_roaster="ngModel" (ionChange)="research()" [(ngModel)]="filter_open.bean_roaster" cancelText="{{'CANCEL'| translate }}" name="bean_roaster"
+              <ion-select label-placement="stacked" label='{{"BEAN_DATA_ROASTER" | translate}}' #bean_roaster="ngModel" (ionChange)="research()" [(ngModel)]="filter_open.bean_roaster" cancelText="{{'CANCEL'| translate }}" name="bean_roaster"
                           okText="{{'CHOOSE'| translate }}"
                           placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTER' | translate}}"
                           style="padding-left:0px!important;width: 100%; min-width: 100%;"
@@ -59,21 +56,23 @@
             </ion-item>
             <hr />
             <ion-item *ngFor="let bean of openBeans" lines="none" tappable>
-              <ion-checkbox [(ngModel)]="multipleSelection[bean.config.uuid]" slot="start"></ion-checkbox>
-              <div>
-                <h6>{{bean.name}}</h6>
-                <p *ngIf="bean?.roastingDate">{{"BEAN_DATA_ROASTING_DATE" | translate}}
-                  : {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}&nbsp;
-                  ({{bean.beanAgeInDays()}}
-                  <span *ngIf="bean.beanAgeInDays() === 1">{{"DAY" | translate}}</span>
-                  <span *ngIf="bean.beanAgeInDays() !== 1">{{"DAYS" | translate}}</span>)
-                </p>
-                <p *ngIf="bean?.roaster">{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</p>
-                <p *ngIf="bean && !isBeanRoastUnknown(bean)">{{"BEAN_DATA_ROASTING_TYPE" | translate}}: {{"BEAN_ROASTING_TYPE_" + bean.bean_roasting_type | translate}}</p>
-                <p *ngIf="bean?.weight > 0">
-                  {{"BEANS_AMOUNT_USED" | translate}}:&nbsp;<span [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount(bean) | number : '.0-2', gramTotal: bean?.weight,leftOver: bean?.weight - getUsedWeightCount(bean) | number : '.0-2'}"  style="margin: 0;padding: 0;display: inline;"></span>
-                </p>
-              </div>
+              <ion-checkbox justify="start" label-placement="end" [(ngModel)]="multipleSelection[bean.config.uuid]">
+                <div style='margin-top:5px;'>
+                  <h6>{{bean.name}}</h6>
+                  <p *ngIf="bean?.roastingDate">{{"BEAN_DATA_ROASTING_DATE" | translate}}
+                    : {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}&nbsp;
+                    ({{bean.beanAgeInDays()}}
+                    <span *ngIf="bean.beanAgeInDays() === 1">{{"DAY" | translate}}</span>
+                    <span *ngIf="bean.beanAgeInDays() !== 1">{{"DAYS" | translate}}</span>)
+                  </p>
+                  <p *ngIf="bean?.roaster">{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</p>
+                  <p *ngIf="bean && !isBeanRoastUnknown(bean)">{{"BEAN_DATA_ROASTING_TYPE" | translate}}: {{"BEAN_ROASTING_TYPE_" + bean.bean_roasting_type | translate}}</p>
+                  <p *ngIf="bean?.weight > 0">
+                    {{"BEANS_AMOUNT_USED" | translate}}:&nbsp;<span [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount(bean) | number : '.0-2', gramTotal: bean?.weight,leftOver: bean?.weight - getUsedWeightCount(bean) | number : '.0-2'}"  style="margin: 0;padding: 0;display: inline;"></span>
+                  </p>
+                </div>
+              </ion-checkbox>
+
             </ion-item>
             <div *ngIf="openBeans.length == 0" class="ion-padding ion-text-center">
               <div>
@@ -97,9 +96,7 @@
               </ion-button>
             </div>
             <ion-item  *ngIf="isFilterActive('archive')" >
-              <ion-label position="stacked">{{"BEAN_DATA_ROASTING_TYPE" | translate}}</ion-label>
-
-              <ion-select #bean_roasting_type="ngModel"  (ionChange)="research()" [(ngModel)]="filter_finished.bean_roasting_type" cancelText="{{'CANCEL'| translate }}" name="bean_roasting_type"
+              <ion-select label-placement="stacked" label='{{"BEAN_DATA_ROASTING_TYPE" | translate}}' #bean_roasting_type="ngModel"  (ionChange)="research()" [(ngModel)]="filter_finished.bean_roasting_type" cancelText="{{'CANCEL'| translate }}" name="bean_roasting_type"
                           okText="{{'CHOOSE'| translate }}"
                           placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTING_TYPE' | translate}}"
                           style="padding-left:0px!important;width: 100%; min-width: 100%;"
@@ -108,8 +105,7 @@
               </ion-select>
             </ion-item>
             <ion-item  *ngIf="isFilterActive('archive')" >
-              <ion-label position="stacked">{{"BEAN_DATA_ROASTER" | translate}}</ion-label>
-              <ion-select #bean_roaster="ngModel"  (ionChange)="research()" [(ngModel)]="filter_finished.bean_roaster" cancelText="{{'CANCEL'| translate }}" name="bean_roaster"
+              <ion-select  label-placement="stacked" label='{{"BEAN_DATA_ROASTER" | translate}}' #bean_roaster="ngModel"  (ionChange)="research()" [(ngModel)]="filter_finished.bean_roaster" cancelText="{{'CANCEL'| translate }}" name="bean_roaster"
                           okText="{{'CHOOSE'| translate }}"
                           placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTER' | translate}}"
                           style="padding-left:0px!important;width: 100%; min-width: 100%;"
@@ -119,21 +115,22 @@
             </ion-item>
             <hr />
             <ion-item *ngFor="let bean of finishedBeans" lines="none" tappable>
-              <ion-checkbox [(ngModel)]="multipleSelection[bean.config.uuid]" slot="start"></ion-checkbox>
-              <div>
-                <h6>{{bean.name}}</h6>
-                <p *ngIf="bean?.roastingDate">{{"BEAN_DATA_ROASTING_DATE" | translate}}
-                  : {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}&nbsp;
-                  ({{bean.beanAgeInDays()}}
-                  <span *ngIf="bean.beanAgeInDays() === 1">{{"DAY" | translate}}</span>
-                  <span *ngIf="bean.beanAgeInDays() !== 1">{{"DAYS" | translate}}</span>)
-                </p>
-                <p *ngIf="bean?.roaster">{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</p>
-                <p *ngIf="bean && !isBeanRoastUnknown(bean)">{{"BEAN_DATA_ROASTING_TYPE" | translate}}: {{"BEAN_ROASTING_TYPE_" + bean.bean_roasting_type | translate}}</p>
-                <p *ngIf="bean?.weight > 0">
-                  {{"BEANS_AMOUNT_USED" | translate}}:&nbsp;<span [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount(bean) | number : '.0-2', gramTotal: bean?.weight,leftOver: bean?.weight - getUsedWeightCount(bean)| number : '.0-2'}"  style="margin: 0;padding: 0;display: inline;"></span>
-                </p>
-              </div>
+              <ion-checkbox justify="start" label-placement="end" [(ngModel)]="multipleSelection[bean.config.uuid]" slot="start">
+                <div style='margin-top:5px;'>
+                  <h6>{{bean.name}}</h6>
+                  <p *ngIf="bean?.roastingDate">{{"BEAN_DATA_ROASTING_DATE" | translate}}
+                    : {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}&nbsp;
+                    ({{bean.beanAgeInDays()}}
+                    <span *ngIf="bean.beanAgeInDays() === 1">{{"DAY" | translate}}</span>
+                    <span *ngIf="bean.beanAgeInDays() !== 1">{{"DAYS" | translate}}</span>)
+                  </p>
+                  <p *ngIf="bean?.roaster">{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</p>
+                  <p *ngIf="bean && !isBeanRoastUnknown(bean)">{{"BEAN_DATA_ROASTING_TYPE" | translate}}: {{"BEAN_ROASTING_TYPE_" + bean.bean_roasting_type | translate}}</p>
+                  <p *ngIf="bean?.weight > 0">
+                    {{"BEANS_AMOUNT_USED" | translate}}:&nbsp;<span [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount(bean) | number : '.0-2', gramTotal: bean?.weight,leftOver: bean?.weight - getUsedWeightCount(bean)| number : '.0-2'}"  style="margin: 0;padding: 0;display: inline;"></span>
+                  </p>
+                </div>
+              </ion-checkbox>
             </ion-item>
             <div *ngIf="finishedBeans.length == 0" class="ion-padding ion-text-center">
               <div>
@@ -164,9 +161,7 @@
           </div>
 
           <ion-item *ngIf="isFilterActive('open')">
-            <ion-label position="stacked">{{"BEAN_DATA_ROASTING_TYPE" | translate}}</ion-label>
-
-            <ion-select #bean_roasting_type="ngModel"  (ionChange)="research()" [(ngModel)]="filter_open.bean_roasting_type" cancelText="{{'CANCEL'| translate }}" name="bean_roasting_type"
+            <ion-select label-placement="stacked" label='{{"BEAN_DATA_ROASTING_TYPE" | translate}}' #bean_roasting_type="ngModel"  (ionChange)="research()" [(ngModel)]="filter_open.bean_roasting_type" cancelText="{{'CANCEL'| translate }}" name="bean_roasting_type"
                         okText="{{'CHOOSE'| translate }}"
                         placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTING_TYPE' | translate}}"
                         style="padding-left:0px!important;width: 100%; min-width: 100%;"
@@ -175,8 +170,7 @@
             </ion-select>
           </ion-item>
           <ion-item *ngIf="isFilterActive('open')">
-            <ion-label position="stacked">{{"BEAN_DATA_ROASTER" | translate}}</ion-label>
-            <ion-select #bean_roaster="ngModel" (ionChange)="research()" [(ngModel)]="filter_open.bean_roaster" cancelText="{{'CANCEL'| translate }}" name="bean_roaster"
+            <ion-select label-placement="stacked" label='{{"BEAN_DATA_ROASTER" | translate}}' #bean_roaster="ngModel" (ionChange)="research()" [(ngModel)]="filter_open.bean_roaster" cancelText="{{'CANCEL'| translate }}" name="bean_roaster"
                         okText="{{'CHOOSE'| translate }}"
                         placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTER' | translate}}"
                         style="padding-left:0px!important;width: 100%; min-width: 100%;"
@@ -186,21 +180,22 @@
           </ion-item>
           <hr/>
           <ion-item *ngFor="let bean of openBeans" lines="none" tappable>
-            <ion-radio slot="start" value="{{bean.config.uuid}}"></ion-radio>
-            <div>
-              <h6>{{bean.name}}</h6>
-              <p *ngIf="bean?.roastingDate">{{"BEAN_DATA_ROASTING_DATE" | translate}}
-                : {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}&nbsp;
-                ({{bean.beanAgeInDays()}}
-                <span *ngIf="bean.beanAgeInDays() === 1">{{"DAY" | translate}}</span>
-                <span *ngIf="bean.beanAgeInDays() !== 1">{{"DAYS" | translate}}</span>)
-              </p>
-              <p *ngIf="bean?.roaster">{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</p>
-              <p *ngIf="bean && !isBeanRoastUnknown(bean)">{{"BEAN_DATA_ROASTING_TYPE" | translate}}: {{"BEAN_ROASTING_TYPE_" + bean.bean_roasting_type | translate}}</p>
-              <p *ngIf="bean?.weight > 0">
-                {{"BEANS_AMOUNT_USED" | translate}}:&nbsp;<span [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount(bean) | number : '.0-2', gramTotal: bean?.weight, leftOver: bean?.weight - getUsedWeightCount(bean)| number : '.0-2'}"  style="margin: 0;padding: 0;display: inline;"></span>
-              </p>
-            </div>
+            <ion-radio justify="start" label-placement="end"  value="{{bean.config.uuid}}">
+              <div style='margin-top:5px;'>
+                <h6>{{bean.name}}</h6>
+                <p *ngIf="bean?.roastingDate">{{"BEAN_DATA_ROASTING_DATE" | translate}}
+                  : {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}&nbsp;
+                  ({{bean.beanAgeInDays()}}
+                  <span *ngIf="bean.beanAgeInDays() === 1">{{"DAY" | translate}}</span>
+                  <span *ngIf="bean.beanAgeInDays() !== 1">{{"DAYS" | translate}}</span>)
+                </p>
+                <p *ngIf="bean?.roaster">{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</p>
+                <p *ngIf="bean && !isBeanRoastUnknown(bean)">{{"BEAN_DATA_ROASTING_TYPE" | translate}}: {{"BEAN_ROASTING_TYPE_" + bean.bean_roasting_type | translate}}</p>
+                <p *ngIf="bean?.weight > 0">
+                  {{"BEANS_AMOUNT_USED" | translate}}:&nbsp;<span [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount(bean) | number : '.0-2', gramTotal: bean?.weight, leftOver: bean?.weight - getUsedWeightCount(bean)| number : '.0-2'}"  style="margin: 0;padding: 0;display: inline;"></span>
+                </p>
+              </div>
+            </ion-radio>
           </ion-item>
           <div *ngIf="openBeans.length == 0" class="ion-padding ion-text-center">
             <div>
@@ -224,9 +219,7 @@
             </ion-button>
           </div>
           <ion-item  *ngIf="isFilterActive('archive')" >
-            <ion-label position="stacked">{{"BEAN_DATA_ROASTING_TYPE" | translate}}</ion-label>
-
-            <ion-select #bean_roasting_type="ngModel"  (ionChange)="research()" [(ngModel)]="filter_finished.bean_roasting_type" cancelText="{{'CANCEL'| translate }}" name="bean_roasting_type"
+            <ion-select label-placement="stacked" label='{{"BEAN_DATA_ROASTING_TYPE" | translate}}' #bean_roasting_type="ngModel"  (ionChange)="research()" [(ngModel)]="filter_finished.bean_roasting_type" cancelText="{{'CANCEL'| translate }}" name="bean_roasting_type"
                         okText="{{'CHOOSE'| translate }}"
                         placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTING_TYPE' | translate}}"
                         style="padding-left:0px!important;width: 100%; min-width: 100%;"
@@ -235,8 +228,7 @@
             </ion-select>
           </ion-item>
           <ion-item  *ngIf="isFilterActive('archive')" >
-            <ion-label position="stacked">{{"BEAN_DATA_ROASTER" | translate}}</ion-label>
-            <ion-select #bean_roaster="ngModel"  (ionChange)="research()" [(ngModel)]="filter_finished.bean_roaster" cancelText="{{'CANCEL'| translate }}" name="bean_roaster"
+            <ion-select label-placement="stacked" label='{{"BEAN_DATA_ROASTER" | translate}}' #bean_roaster="ngModel"  (ionChange)="research()" [(ngModel)]="filter_finished.bean_roaster" cancelText="{{'CANCEL'| translate }}" name="bean_roaster"
                         okText="{{'CHOOSE'| translate }}"
                         placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTER' | translate}}"
                         style="padding-left:0px!important;width: 100%; min-width: 100%;"
@@ -246,21 +238,22 @@
           </ion-item>
           <hr />
           <ion-item *ngFor="let bean of finishedBeans" lines="none" tappable>
-            <ion-radio slot="start" value="{{bean.config.uuid}}"></ion-radio>
-            <div>
-              <h6>{{bean.name}}</h6>
-              <p *ngIf="bean?.roastingDate">{{"BEAN_DATA_ROASTING_DATE" | translate}}
-                : {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}&nbsp;
-                ({{bean.beanAgeInDays()}}
-                <span *ngIf="bean.beanAgeInDays() === 1">{{"DAY" | translate}}</span>
-                <span *ngIf="bean.beanAgeInDays() !== 1">{{"DAYS" | translate}}</span>)
-              </p>
-              <p *ngIf="bean?.roaster">{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</p>
-              <p *ngIf="bean && !isBeanRoastUnknown(bean)">{{"BEAN_DATA_ROASTING_TYPE" | translate}}: {{"BEAN_ROASTING_TYPE_" + bean.bean_roasting_type | translate}}</p>
-              <p *ngIf="bean?.weight > 0">
-                {{"BEANS_AMOUNT_USED" | translate}}:&nbsp;<span [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount(bean) | number : '.0-2', gramTotal: bean?.weight,leftOver: bean?.weight - getUsedWeightCount(bean) | number : '.0-2'}"  style="margin: 0;padding: 0;display: inline;"></span>
-              </p>
-            </div>
+            <ion-radio justify="start" label-placement="end"  value="{{bean.config.uuid}}">
+              <div style='margin-top:5px;'>
+                <h6>{{bean.name}}</h6>
+                <p *ngIf="bean?.roastingDate">{{"BEAN_DATA_ROASTING_DATE" | translate}}
+                  : {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}&nbsp;
+                  ({{bean.beanAgeInDays()}}
+                  <span *ngIf="bean.beanAgeInDays() === 1">{{"DAY" | translate}}</span>
+                  <span *ngIf="bean.beanAgeInDays() !== 1">{{"DAYS" | translate}}</span>)
+                </p>
+                <p *ngIf="bean?.roaster">{{"BEAN_DATA_ROASTER" | translate}}: {{bean.roaster}}</p>
+                <p *ngIf="bean && !isBeanRoastUnknown(bean)">{{"BEAN_DATA_ROASTING_TYPE" | translate}}: {{"BEAN_ROASTING_TYPE_" + bean.bean_roasting_type | translate}}</p>
+                <p *ngIf="bean?.weight > 0">
+                  {{"BEANS_AMOUNT_USED" | translate}}:&nbsp;<span [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount(bean) | number : '.0-2', gramTotal: bean?.weight,leftOver: bean?.weight - getUsedWeightCount(bean) | number : '.0-2'}"  style="margin: 0;padding: 0;display: inline;"></span>
+                </p>
+              </div>
+            </ion-radio>
           </ion-item>
           <div *ngIf="finishedBeans.length == 0" class="ion-padding ion-text-center">
             <div>

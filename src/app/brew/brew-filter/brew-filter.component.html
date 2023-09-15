@@ -2,17 +2,14 @@
 </ion-header>
 <ion-content>
   <ion-item>
-    <ion-label position="stacked">{{"BREW_DATA_PREPARATION_METHOD" | translate}}</ion-label>
-    <ion-select [(ngModel)]="filter.method_of_preparation"
+    <ion-select label-placement="stacked" label='{{"BREW_DATA_PREPARATION_METHOD" | translate}}' [(ngModel)]="filter.method_of_preparation"
                 [show-finished]="segment !== 'open'"
                 multiple="true"
                 preparation-overlay (ionChange)="resetPreparationTools();">
     </ion-select>
   </ion-item>
   <ion-item *ngIf="hasPreparationTools()">
-    <ion-label position="stacked">{{"BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}</ion-label>
-
-    <ion-select [(ngModel)]="filter.method_of_preparation_tools"
+    <ion-select label-placement="stacked" label='{{"BREW_DATA_PREPARATION_METHOD_TOOL" | translate}}' [(ngModel)]="filter.method_of_preparation_tools"
                 placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}"
                 [show-finished]="true"
                 multiple="true"
@@ -24,39 +21,47 @@
     </ion-select>-->
   </ion-item>
   <ion-item>
-    <ion-label position="stacked">{{"BREW_DATA_BEAN_TYPE" | translate}}</ion-label>
-    <ion-select [(ngModel)]="filter.bean"
+    <ion-select label-placement="stacked" label='{{"BREW_DATA_BEAN_TYPE" | translate}}' [(ngModel)]="filter.bean"
                 [multiple]="true"
                 [show-finished]="segment !== 'open'"
                 bean-overlay>
     </ion-select>
   </ion-item>
   <ion-item>
-    <ion-label position="stacked">{{"BREW_DATA_MILL" | translate }}</ion-label>
-    <ion-select [(ngModel)]="filter.mill"
+    <ion-select label-placement="stacked" label='{{"BREW_DATA_MILL" | translate}}'  [(ngModel)]="filter.mill"
                 [show-finished]="segment !== 'open'"
                 mill-overlay
                 multiple="true">
     </ion-select>
   </ion-item>
   <ion-item>
-    <ion-label position="stacked" style="top: -5px;position: relative;">{{"ONLY_FAVOURITES" | translate }}</ion-label>
-    <ion-toggle slot="end" [(ngModel)]="filter.favourite"></ion-toggle>
+    <ion-toggle label-placement='start' [(ngModel)]="filter.favourite">
+      <div class="ion-label">
+        <p>{{"ONLY_FAVOURITES" | translate}}</p>
+      </div>
+    </ion-toggle>
   </ion-item>
   <ion-item *ngIf='settings.best_brew'>
-    <ion-label position="stacked" style="top: -5px;position: relative;">{{"ONLY_BEST_BREWS" | translate }}</ion-label>
-    <ion-toggle slot="end" [(ngModel)]="filter.best_brew"></ion-toggle>
+    <ion-toggle label-placement='start'  [(ngModel)]="filter.best_brew">
+      <div class="ion-label">
+        <p>{{"ONLY_BEST_BREWS" | translate}}</p>
+      </div>
+    </ion-toggle>
   </ion-item>
   <ion-item>
-    <ion-label position="stacked" style="top: -5px;position: relative;">{{"BREW_FILTER_JUST_CHART_DATA" | translate }}</ion-label>
-    <ion-toggle [(ngModel)]="filter.chart_data" slot="end"></ion-toggle>
+    <ion-toggle label-placement='start' [(ngModel)]="filter.chart_data">
+      <div class="ion-label">
+        <p>{{"BREW_FILTER_JUST_CHART_DATA" | translate}}</p>
+      </div>
+    </ion-toggle>
   </ion-item>
-
-  <ion-item>
-    <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
-      style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(filter.rating.lower,2)}}&nbsp;-&nbsp;{{this.uiHelper.toFixedIfNecessary(filter.rating.upper,2)}} </ion-badge>
-    </ion-label>
-    <ion-range min="-1" dualKnobs="true" snaps="true" [max]="getMaxBrewRating()" step="1" [(ngModel)]="filter.rating">
+    <ion-item lines="none">
+      <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
+        style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(filter.rating.lower,2)}}&nbsp;-&nbsp;{{this.uiHelper.toFixedIfNecessary(filter.rating.upper,2)}} </ion-badge>
+      </ion-label>
+    </ion-item>
+  <ion-item style="top:-15px;">
+    <ion-range  min="-1" dualKnobs="true" snaps="true" [max]="getMaxBrewRating()" step="1" [(ngModel)]="filter.rating">
       <ion-icon size="small" slot="start" name="beanconqueror-brew-rating-empty"></ion-icon>
       <ion-icon slot="end" name="beanconqueror-brew-rating-full"></ion-icon>
     </ion-range>
