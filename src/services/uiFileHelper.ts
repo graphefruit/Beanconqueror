@@ -1,15 +1,20 @@
 /** Core */
 import { Injectable } from '@angular/core';
-import { DirectoryEntry, Entry, File, FileEntry } from '@ionic-native/file/ngx';
+import {
+  DirectoryEntry,
+  Entry,
+  File,
+  FileEntry,
+} from '@awesome-cordova-plugins/file/ngx';
 import { Platform } from '@ionic/angular';
 import { DomSanitizer } from '@angular/platform-browser';
 import { UILog } from './uiLog';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import moment from 'moment';
 import {
   FileTransfer,
   FileTransferObject,
-} from '@ionic-native/file-transfer/ngx';
+} from '@awesome-cordova-plugins/file-transfer/ngx';
 import { InstanceClass } from './instanceClass';
 /**
  * Handles every helping functionalities

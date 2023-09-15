@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UIHelper } from '../uiHelper';
-import { Deeplinks } from '@ionic-native/deeplinks/ngx';
+import { Deeplinks } from '@awesome-cordova-plugins/deeplinks/ngx';
 
 import { UILog } from '../uiLog';
 import { ServerCommunicationService } from '../serverCommunication/server-communication.service';

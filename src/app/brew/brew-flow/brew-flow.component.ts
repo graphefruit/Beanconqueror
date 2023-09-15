@@ -14,7 +14,7 @@ import { ModalController, Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { Brew } from '../../../classes/brew/brew';
 import { UIHelper } from '../../../services/uiHelper';
-import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
+import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';

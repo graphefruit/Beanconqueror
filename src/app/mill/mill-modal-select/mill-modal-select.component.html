@@ -27,20 +27,15 @@
       <div *ngSwitchCase="'open'">
         <ion-card *ngIf="getOpenMills().length > 0">
           <ion-item *ngFor="let mill of getOpenMills()" lines="none" tappable>
-            <ion-checkbox [(ngModel)]="multipleSelection[mill.config.uuid]" slot="start"></ion-checkbox>
-            <div>
-              <span class="font-size-16">{{mill.name}}</span>
-            </div>
+            <ion-checkbox  justify="start" label-placement="end" [(ngModel)]="multipleSelection[mill.config.uuid]">{{mill.name}}</ion-checkbox>
+
           </ion-item>
         </ion-card>
       </div>
       <div *ngSwitchCase="'archive'">
         <ion-card>
           <ion-item *ngFor="let mill of getArchivedMills()" lines="none" tappable>
-            <ion-checkbox [(ngModel)]="multipleSelection[mill.config.uuid]" slot="start"></ion-checkbox>
-            <div>
-              <span class="font-size-16">{{mill.name}}</span>
-            </div>
+            <ion-checkbox justify="start" label-placement="end" [(ngModel)]="multipleSelection[mill.config.uuid]">{{mill.name}}</ion-checkbox>
           </ion-item>
         </ion-card>
       </div>
@@ -53,20 +48,14 @@
 
           <ion-card *ngIf="getOpenMills().length > 0">
             <ion-item *ngFor="let mill of getOpenMills()" lines="none" tappable>
-              <ion-radio slot="start" value="{{mill.config.uuid}}"></ion-radio>
-              <div>
-                <h6>{{mill.name}}</h6>
-              </div>
+              <ion-radio justify="start" label-placement="end" value="{{mill.config.uuid}}">{{mill.name}}</ion-radio>
             </ion-item>
           </ion-card>
         </div>
         <div *ngSwitchCase="'archive'">
           <ion-card>
             <ion-item *ngFor="let mill of getArchivedMills()" lines="none" tappable>
-              <ion-radio slot="start" value="{{mill.config.uuid}}"></ion-radio>
-              <div>
-                <span class="font-size-16">{{mill.name}}</span>
-              </div>
+              <ion-radio justify="start" label-placement="end" value="{{mill.config.uuid}}">{{mill.name}}</ion-radio>
             </ion-item>
           </ion-card>
         </div>

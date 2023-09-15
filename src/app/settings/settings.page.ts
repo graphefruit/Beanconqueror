@@ -12,17 +12,16 @@ import {
   ViewChild,
 } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { DirectoryEntry, FileEntry } from '@ionic-native/file';
-import { FileChooser } from '@ionic-native/file-chooser/ngx';
-import { File } from '@ionic-native/file/ngx';
-import { FilePath } from '@ionic-native/file-path/ngx';
+import { DirectoryEntry, FileEntry } from '@awesome-cordova-plugins/file';
+import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
+import { File } from '@awesome-cordova-plugins/file/ngx';
+import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
 import { IBean } from '../../interfaces/bean/iBean';
 import { IBrew } from '../../interfaces/brew/iBrew';
-import { IOSFilePicker } from '@ionic-native/file-picker/ngx';
 import { ISettings } from '../../interfaces/settings/iSettings';
 import { Mill } from '../../classes/mill/mill';
 import { Settings } from '../../classes/settings/settings';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
 import { Subject, Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -39,7 +38,7 @@ import { UIStorage } from '../../services/uiStorage';
 
 /** Third party */
 import { AnalyticsPopoverComponent } from '../../popover/analytics-popover/analytics-popover.component';
-import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 
 import { CurrencyService } from '../../services/currencyService/currency.service';
 import { GreenBean } from '../../classes/green-bean/green-bean';
@@ -72,7 +71,7 @@ declare var cordova: any;
 declare var device: any;
 
 declare var window: any;
-
+declare var Filepicker;
 @Component({
   selector: 'settings',
   templateUrl: './settings.page.html',
@@ -132,7 +131,6 @@ export class SettingsPage implements OnInit {
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiMillStorage: UIMillStorage,
-    private readonly iosFilePicker: IOSFilePicker,
     private readonly socialSharing: SocialSharing,
     private readonly uiLog: UILog,
     private readonly translate: TranslateService,
@@ -852,7 +850,7 @@ export class SettingsPage implements OnInit {
           }
         });
       } else {
-        this.iosFilePicker.pickFile().then((uri) => {
+        Filepicker.pickFile().then((uri) => {
           if (uri && (uri.endsWith('.zip') || uri.endsWith('.json'))) {
             let path = uri.substring(0, uri.lastIndexOf('/'));
             const file = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
@@ -1068,7 +1066,7 @@ export class SettingsPage implements OnInit {
           }
         });
       } else {
-        this.iosFilePicker.pickFile().then((uri) => {
+        Filepicker.pickFile().then((uri) => {
           if (uri && uri.endsWith('.xlsx')) {
             let path = uri.substring(0, uri.lastIndexOf('/'));
             const file = uri.substring(uri.lastIndexOf('/') + 1, uri.length);

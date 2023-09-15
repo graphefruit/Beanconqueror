@@ -6,14 +6,15 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { IonicStorageModule } from '@ionic/storage';
-
+import { Drivers } from '@ionic/storage';
+import { IonicStorageModule } from '@ionic/storage-angular';
 import { SharedModule } from './shared/shared.module';
 
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import CordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -40,7 +41,11 @@ export function HttpLoaderFactory(http: HttpClient) {
     }),
     IonicStorageModule.forRoot({
       name: '__baristaDB',
-      driverOrder: ['indexeddb', 'sqlite', 'websql'],
+      driverOrder: [
+        Drivers.IndexedDB,
+        CordovaSQLiteDriver._driver,
+        Drivers.LocalStorage,
+      ],
     }),
     AppRoutingModule,
     SharedModule,
@@ -48,6 +53,6 @@ export function HttpLoaderFactory(http: HttpClient) {
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],
   exports: [],
-  schemas: [NO_ERRORS_SCHEMA],
+  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AppModule {}

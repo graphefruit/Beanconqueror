@@ -28,10 +28,8 @@
         <ion-card *ngIf="getOpenPreparations().length > 0">
           <ion-item *ngFor="let prep of getOpenPreparations()" lines="none" tappable>
 
-            <ion-checkbox [(ngModel)]="multipleSelection[prep.config.uuid]" slot="start"></ion-checkbox>
-            <div>
-              <span class="font-size-16">{{prep.name}}</span>
-            </div>
+            <ion-checkbox justify="start" label-placement="end"  [(ngModel)]="multipleSelection[prep.config.uuid]">{{prep.name}}</ion-checkbox>
+
             <ion-thumbnail slot="end">
               <ion-icon *ngIf="!prep.hasPhotos()" class="full-sized-icon" name="{{prep.getIcon()}}"></ion-icon>
               <div   *ngIf="prep.hasPhotos()" style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
@@ -44,10 +42,7 @@
       <div *ngSwitchCase="'archive'">
         <ion-card>
           <ion-item *ngFor="let prep of getArchivedPreparations()" lines="none" tappable>
-            <ion-checkbox [(ngModel)]="multipleSelection[prep.config.uuid]" slot="start"></ion-checkbox>
-            <div>
-              <span class="font-size-16">{{prep.name}}</span>
-            </div>
+            <ion-checkbox justify="start" label-placement="end"  [(ngModel)]="multipleSelection[prep.config.uuid]">{{prep.name}}</ion-checkbox>
             <ion-thumbnail slot="end">
               <ion-icon *ngIf="!prep.hasPhotos()" class="full-sized-icon" name="{{prep.getIcon()}}"></ion-icon>
               <div   *ngIf="prep.hasPhotos()" style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
@@ -67,9 +62,9 @@
 
           <ion-card *ngIf="getOpenPreparations().length > 0">
             <ion-item *ngFor="let prep of getOpenPreparations()" lines="none" tappable>
-              <ion-radio slot="start" value="{{prep.config.uuid}}"></ion-radio>
+              <ion-radio justify="start" label-placement="end" value="{{prep.config.uuid}}">{{prep.name}}</ion-radio>
               <div>
-                <span class="font-size-16">{{prep.name}}</span>
+                <span class="font-size-16"></span>
               </div>
               <ion-thumbnail slot="end">
                 <ion-icon *ngIf="!prep.hasPhotos()" class="full-sized-icon" name="{{prep.getIcon()}}"></ion-icon>
@@ -83,10 +78,7 @@
         <div *ngSwitchCase="'archive'">
           <ion-card>
             <ion-item *ngFor="let prep of getArchivedPreparations()" lines="none" tappable>
-              <ion-radio slot="start" value="{{prep.config.uuid}}"></ion-radio>
-              <div>
-                <span class="font-size-16">{{prep.name}}</span>
-              </div>
+              <ion-radio justify="start" label-placement="end" value="{{prep.config.uuid}}">{{prep.name}}</ion-radio>
               <ion-thumbnail slot="end">
                 <ion-icon *ngIf="!prep.hasPhotos()" class="full-sized-icon" name="{{prep.getIcon()}}"></ion-icon>
                 <div   *ngIf="prep.hasPhotos()" style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>

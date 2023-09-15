@@ -5,15 +5,15 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { AppMinimize } from '@ionic-native/app-minimize/ngx';
-import { Globalization } from '@ionic-native/globalization/ngx';
-import { Keyboard } from '@ionic-native/keyboard/ngx';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
+
+import { Globalization } from '@awesome-cordova-plugins/globalization/ngx';
+import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
+import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
+import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
 import {
   ThreeDeeTouch,
   ThreeDeeTouchQuickAction,
-} from '@ionic-native/three-dee-touch/ngx';
+} from '@awesome-cordova-plugins/three-dee-touch/ngx';
 import {
   IonRouterOutlet,
   MenuController,
@@ -54,8 +54,8 @@ import { UISettingsStorage } from '../services/uiSettingsStorage';
 import { UIUpdate } from '../services/uiUpdate';
 import { UiVersionStorage } from '../services/uiVersionStorage';
 import { UIWaterStorage } from '../services/uiWaterStorage';
-import { Device } from '@ionic-native/device/ngx';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { Device } from '@awesome-cordova-plugins/device/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { Storage } from '@ionic/storage';
 import 'chartjs-adapter-luxon';
 import ChartStreaming from 'chartjs-plugin-streaming';
@@ -78,6 +78,9 @@ import { UIExportImportHelper } from '../services/uiExportImportHelper';
 
 declare var AppRate;
 declare var window;
+import { register } from 'swiper/element/bundle';
+
+register();
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -220,7 +223,6 @@ export class AppComponent implements AfterViewInit {
     private readonly uiMillStorage: UIMillStorage,
     private readonly uiBrewHelper: UIBrewHelper,
     private readonly menuCtrl: MenuController,
-    private readonly appMinimize: AppMinimize,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly keyboard: Keyboard,
     private readonly threeDeeTouch: ThreeDeeTouch,
@@ -929,7 +931,7 @@ export class AppComponent implements AfterViewInit {
       ) {
         this.routerOutlet.pop();
       } else if (this.router.url.indexOf('/home') >= 0) {
-        this.appMinimize.minimize();
+        window.plugins.appMinimize.minimize();
         // or if that doesn't work, try
         // navigator['app'].exitApp();
       } else {

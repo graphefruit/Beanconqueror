@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { IonSlides, ModalController, Platform } from '@ionic/angular';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ModalController, Platform } from '@ionic/angular';
 import { BeansAddComponent } from '../../app/beans/beans-add/beans-add.component';
 import { PreparationAddComponent } from '../../app/preparation/preparation-add/preparation-add.component';
 import { MillAddComponent } from '../../app/mill/mill-add/mill-add.component';
@@ -23,7 +23,9 @@ export class WelcomePopoverComponent implements OnInit {
   };
 
   public slide: number = 1;
-  @ViewChild('slider', { static: false }) public welcomeSlider: IonSlides;
+  @ViewChild('slider', { static: false }) public welcomeSlider:
+    | ElementRef
+    | undefined;
 
   private settings: Settings;
 
@@ -40,7 +42,7 @@ export class WelcomePopoverComponent implements OnInit {
   private __triggerUpdate() {
     // Fix, specialy on new devices which will see 2 update screens, the slider was white
     setTimeout(() => {
-      this.welcomeSlider.update();
+      //TODO this.welcomeSlider.update();
     });
   }
   public ngOnInit() {
@@ -60,7 +62,8 @@ export class WelcomePopoverComponent implements OnInit {
     this.uiAnalytics.disableTracking();
     await this.uiSettingsStorage.saveSettings(this.settings);
     this.slide++;
-    this.welcomeSlider.slideNext();
+    this.welcomeSlider?.nativeElement.swiper.slideNext();
+    //TODO this.welcomeSlider.slideNext();
     this.__triggerUpdate();
   }
 
@@ -69,20 +72,20 @@ export class WelcomePopoverComponent implements OnInit {
     this.uiAnalytics.enableTracking();
     await this.uiSettingsStorage.saveSettings(this.settings);
     this.slide++;
-
-    this.welcomeSlider.slideNext();
+    this.welcomeSlider?.nativeElement.swiper.slideNext();
+    //TODO this.welcomeSlider.slideNext();
     this.__triggerUpdate();
   }
 
   public async skip() {
     this.slide++;
-    this.welcomeSlider.slideNext();
+    this.welcomeSlider?.nativeElement.swiper.slideNext();
     this.__triggerUpdate();
   }
 
   public next() {
     this.slide++;
-    this.welcomeSlider.slideNext();
+    this.welcomeSlider?.nativeElement.swiper.slideNext();
     this.__triggerUpdate();
   }
 

@@ -18,7 +18,7 @@ import {
   ZipWriter,
 } from '@zip.js/zip.js';
 import * as zip from '@zip.js/zip.js';
-import { FileEntry } from '@ionic-native/file';
+import { FileEntry } from '@awesome-cordova-plugins/file';
 import { UILog } from './uiLog';
 import { Platform } from '@ionic/angular';
 import { UIFileHelper } from './uiFileHelper';

@@ -1,8 +1,7 @@
+
 <ion-item class="no-bottom-border item" lines="none">
-  <ion-label position="stacked">
-    {{ label }}
-  </ion-label>
-  <ion-input readonly (click)="showTimeOverlay($event);" [(data)]="displayingTime"  [transform-date]="'timer'"  displayFormat="{{returnWantedDisplayFormat()}}"></ion-input>
+
+  <ion-input  label-placement="stacked" label='{{label}}' readonly (click)="showTimeOverlay($event);" [(data)]="displayingTime"  [transform-date]="'timer'"  displayFormat="{{returnWantedDisplayFormat()}}"></ion-input>
 
   <ion-button  (click)="pauseTimer()" *ngIf="hideControlButtons == false && timer.runTimer && timer.hasStarted && !timer.hasFinished"
               class="big-icon-only" fill="clear" slot="end" tappable>

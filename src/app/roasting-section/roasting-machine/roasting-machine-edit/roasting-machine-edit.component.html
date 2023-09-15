@@ -12,23 +12,24 @@
   <ion-card class="popover">
     <form #editRoastingMachine="ngForm" novalidate>
       <ion-item>
-        <ion-label position="stacked">{{"NAME" | translate}}*</ion-label>
-        <ion-input #name="ngModel" [(ngModel)]="data.name" name="name"
+        <ion-label id='roastMachineName' position="stacked">{{"NAME" | translate}}*</ion-label>
+        <ion-input aria-labelledby='roastMachineName' #name="ngModel" [(ngModel)]="data.name" name="name"
                    placeholder="{{'ROASTING_MACHINE.PLACE_HOLDER.NAME' | translate}}" spellcheck="false" type="text"
                    autocapitalize="sentences" required>
         </ion-input>
       </ion-item>
       <ion-item>
-        <ion-label position="stacked">{{"ARCHIVED"|translate}}?</ion-label>
-        <ion-checkbox #finished="ngModel" [(ngModel)]="data.finished" name="finished"></ion-checkbox>
+        <ion-checkbox label-placement='start' #finished="ngModel" [(ngModel)]="data.finished" name="finished">
+          <div class='ion-label'>{{"ARCHIVED"|translate}}?</div>
+        </ion-checkbox>
       </ion-item>
       <ion-item lines="none">
-        <ion-label position="stacked">{{"NOTES" | translate}}</ion-label>
-        <ion-textarea #note="ngModel" [(ngModel)]="data.note" autocapitalize="sentences" autocomplete="true"
+        <ion-label id='note' position="stacked">{{"NOTES" | translate}}</ion-label>
+        <ion-textarea aria-labelledby='note' style='margin-top:20px;' #note="ngModel" [(ngModel)]="data.note" autocapitalize="sentences" autocomplete="true"
                       placeholder="{{'ROASTING_MACHINE.PLACE_HOLDER.NOTES' | translate}}"
                       autocorrect="true" name="note" rows="5" spellcheck="true"></ion-textarea>
       </ion-item>
-      <photo-add [(data)]="data" ></photo-add>
+      <photo-add [(data)]="data"></photo-add>
     </form>
   </ion-card>
 </ion-content>

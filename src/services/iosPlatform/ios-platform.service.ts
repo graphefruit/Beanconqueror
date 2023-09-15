@@ -8,7 +8,7 @@ import { AppEventType } from '../../enums/appEvent/appEvent';
 import { Platform } from '@ionic/angular';
 import { debounceTime } from 'rxjs/operators';
 import moment from 'moment';
-import { FileEntry } from '@ionic-native/file';
+import { FileEntry } from '@awesome-cordova-plugins/file';
 import { UIHelper } from '../uiHelper';
 import { UIBrewStorage } from '../uiBrewStorage';
 import { UISettingsStorage } from '../uiSettingsStorage';

@@ -2,7 +2,6 @@ import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import {
   AlertController,
-  IonSlides,
   ModalController,
   NavParams,
   Platform,
@@ -25,9 +24,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { BrewFlow, IBrewWaterFlow } from '../../../classes/brew/brewFlow';
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UIAlert } from '../../../services/uiAlert';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { BrewFlowComponent } from '../brew-flow/brew-flow.component';
-import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
+import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import moment from 'moment';
 import BeanconquerorFlowTestDataDummy from '../../../assets/BeanconquerorFlowTestDataFourth.json';
 import { UILog } from '../../../services/uiLog';
@@ -42,7 +41,6 @@ declare var Plotly;
 export class BrewDetailComponent implements OnInit {
   public static COMPONENT_ID = 'brew-detail';
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
-  @ViewChild('photoSlides', { static: false }) public photoSlides: IonSlides;
   public data: Brew = new Brew();
   public settings: Settings;
 

@@ -1,15 +1,16 @@
 /** Core */
 import { Injectable } from '@angular/core';
-import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 /** Ionic native  */
-import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
-import { ImagePicker } from '@ionic-native/image-picker/ngx';
+import { Camera, CameraOptions } from '@awesome-cordova-plugins/camera/ngx';
+import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 /** Ionic */
 import { AlertController, ModalController, Platform } from '@ionic/angular';
 import { UIHelper } from './uiHelper';
 import { UIFileHelper } from './uiFileHelper';
 import { TranslateService } from '@ngx-translate/core';
-import { FilePath } from '@ionic-native/file-path/ngx';
+import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
+import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
 import { UIAlert } from './uiAlert';
 import { PhotoPopoverComponent } from '../popover/photo-popover/photo-popover.component';
 import { Brew } from '../classes/brew/brew';
