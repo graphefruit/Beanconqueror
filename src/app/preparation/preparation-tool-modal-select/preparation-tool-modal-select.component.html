@@ -27,21 +27,14 @@
       <div *ngSwitchCase="'open'">
         <ion-card *ngIf="getActivePreparationTools().length > 0">
           <ion-item *ngFor="let prep of getActivePreparationTools()" lines="none" tappable>
-
-            <ion-checkbox [(ngModel)]="multipleSelection[prep.config.uuid]" slot="start"></ion-checkbox>
-            <div>
-              <span class="font-size-16">{{prep.name}}</span>
-            </div>
+            <ion-checkbox [(ngModel)]="multipleSelection[prep.config.uuid]" justify="start" label-placement="end">{{prep.name}}</ion-checkbox>
           </ion-item>
         </ion-card>
       </div>
       <div *ngSwitchCase="'archive'">
         <ion-card>
           <ion-item *ngFor="let prep of getChoosenPreparationToolsWhichAreArchived()" lines="none" tappable>
-            <ion-checkbox [(ngModel)]="multipleSelection[prep.config.uuid]" slot="start"></ion-checkbox>
-            <div>
-              <span class="font-size-16">{{prep.name}}</span>
-            </div>
+            <ion-checkbox [(ngModel)]="multipleSelection[prep.config.uuid]" justify="start" label-placement="end">{{prep.name}}</ion-checkbox>
           </ion-item>
         </ion-card>
       </div>
@@ -55,20 +48,14 @@
 
           <ion-card *ngIf="getActivePreparationTools().length > 0">
             <ion-item *ngFor="let prep of getActivePreparationTools()" lines="none" tappable>
-              <ion-radio slot="start" value="{{prep.config.uuid}}"></ion-radio>
-              <div>
-                <span class="font-size-16">{{prep.name}}</span>
-              </div>
+              <ion-radio justify="start" label-placement="end" value="{{prep.config.uuid}}"{{prep.name}}></ion-radio>
             </ion-item>
           </ion-card>
         </div>
         <div *ngSwitchCase="'archive'">
           <ion-card>
             <ion-item *ngFor="let prep of getChoosenPreparationToolsWhichAreArchived()" lines="none" tappable>
-              <ion-radio slot="start" value="{{prep.config.uuid}}"></ion-radio>
-              <div>
-                <span class="font-size-16">{{prep.name}}</span>
-              </div>
+              <ion-radio justify="start" label-placement="end" value="{{prep.config.uuid}}">{{prep.name}}</ion-radio>
             </ion-item>
           </ion-card>
         </div>

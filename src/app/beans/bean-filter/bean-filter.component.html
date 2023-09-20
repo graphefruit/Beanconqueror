@@ -2,8 +2,11 @@
 </ion-header>
 <ion-content>
   <ion-item>
-    <ion-label position="stacked" style="top: -5px;position: relative;">{{"ONLY_FAVOURITES" | translate }}</ion-label>
-    <ion-toggle slot="end" [(ngModel)]="filter.favourite"></ion-toggle>
+    <ion-toggle label-placement='start' [(ngModel)]="filter.favourite">
+      <div class="ion-label">
+        <p>{{"ONLY_FAVOURITES" | translate}}</p>
+      </div>
+    </ion-toggle>
   </ion-item>
 
   <ion-item>

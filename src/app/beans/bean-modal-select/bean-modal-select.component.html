@@ -27,7 +27,7 @@
       <div *ngSwitchCase="'open'">
           <ion-card *ngIf="getOpenBeans().length > 0">
             <div class="ion-justify-content-end container">
-              <ion-searchbar (ionChange)="research()" [(ngModel)]="openBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+              <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="openBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
               <ion-button (click)="showFilter('open')" fill="clear" size="small" tappable>
                 <ion-icon *ngIf="isFilterActive('open')"  name="beanconqueror-filter-active"
                           slot="icon-only"></ion-icon>
@@ -87,7 +87,7 @@
       <div *ngSwitchCase="'archive'">
           <ion-card>
             <div class="ion-justify-content-end container">
-            <ion-searchbar  (ionChange)="research()" [(ngModel)]="finishedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+            <ion-searchbar  (ionChange)="research()" (ionInput)="research()" [(ngModel)]="finishedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
               <ion-button (click)="showFilter('archive')" fill="clear" size="small" tappable>
                 <ion-icon *ngIf="isFilterActive('archive')"  name="beanconqueror-filter-active"
                           slot="icon-only"></ion-icon>
@@ -151,7 +151,7 @@
       <div *ngSwitchCase="'open'">
         <ion-card *ngIf="getOpenBeans().length > 0">
           <div class="ion-justify-content-end container">
-          <ion-searchbar (ionChange)="research()" [(ngModel)]="openBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+          <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="openBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
             <ion-button (click)="showFilter('open')" fill="clear" size="small" tappable>
               <ion-icon *ngIf="isFilterActive('open')"  name="beanconqueror-filter-active"
                         slot="icon-only"></ion-icon>
@@ -210,7 +210,7 @@
       <div *ngSwitchCase="'archive'">
         <ion-card>
           <div class="ion-justify-content-end container">
-            <ion-searchbar  (ionChange)="research()" [(ngModel)]="finishedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+            <ion-searchbar  (ionChange)="research()" (ionInput)="research()" [(ngModel)]="finishedBeansFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
             <ion-button (click)="showFilter('archive')" fill="clear" size="small" tappable>
               <ion-icon *ngIf="isFilterActive('archive')"  name="beanconqueror-filter-active"
                         slot="icon-only"></ion-icon>
