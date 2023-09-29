@@ -27,14 +27,14 @@
       <div *ngSwitchCase="'open'">
         <ion-card *ngIf="getActivePreparationTools().length > 0">
           <ion-item *ngFor="let prep of getActivePreparationTools()" lines="none" tappable>
-            <ion-checkbox [(ngModel)]="multipleSelection[prep.config.uuid]" justify="start" label-placement="end">{{prep.name}}</ion-checkbox>
+            <ion-checkbox [(ngModel)]="multipleSelection[prep.config.uuid]" justify="start" label-placement="end"><h6>{{prep.name}}</h6></ion-checkbox>
           </ion-item>
         </ion-card>
       </div>
       <div *ngSwitchCase="'archive'">
         <ion-card>
           <ion-item *ngFor="let prep of getChoosenPreparationToolsWhichAreArchived()" lines="none" tappable>
-            <ion-checkbox [(ngModel)]="multipleSelection[prep.config.uuid]" justify="start" label-placement="end">{{prep.name}}</ion-checkbox>
+            <ion-checkbox [(ngModel)]="multipleSelection[prep.config.uuid]" justify="start" label-placement="end"><h6>{{prep.name}}</h6></ion-checkbox>
           </ion-item>
         </ion-card>
       </div>
@@ -48,14 +48,14 @@
 
           <ion-card *ngIf="getActivePreparationTools().length > 0">
             <ion-item *ngFor="let prep of getActivePreparationTools()" lines="none" tappable>
-              <ion-radio justify="start" label-placement="end" value="{{prep.config.uuid}}"{{prep.name}}></ion-radio>
+              <ion-radio justify="start" label-placement="end" value="{{prep.config.uuid}}"><h6>{{prep.name}}</h6></ion-radio>
             </ion-item>
           </ion-card>
         </div>
         <div *ngSwitchCase="'archive'">
           <ion-card>
             <ion-item *ngFor="let prep of getChoosenPreparationToolsWhichAreArchived()" lines="none" tappable>
-              <ion-radio justify="start" label-placement="end" value="{{prep.config.uuid}}">{{prep.name}}</ion-radio>
+              <ion-radio justify="start" label-placement="end" value="{{prep.config.uuid}}"><h6>{{prep.name}}</h6></ion-radio>
             </ion-item>
           </ion-card>
         </div>
