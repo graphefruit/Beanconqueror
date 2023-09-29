@@ -10,6 +10,8 @@ declare var ble: any;
  */
 export class BlackcoffeeScale extends BluetoothScale {
   public static DEVICE_NAME = 'blackcoffee';
+  public static DEVICE_NAME_SECOND = 'my_scale';
+
   public static DATA_SERVICE = '0000ffb0-0000-1000-8000-00805f9b34fb';
   public static DATA_CHARACTERISTIC = '0000ffb2-0000-1000-8000-00805f9b34fb';
   // Constructor
@@ -44,7 +46,8 @@ export class BlackcoffeeScale extends BluetoothScale {
     return (
       device &&
       device.name &&
-      device.name.toLowerCase().includes(this.DEVICE_NAME)
+      (device.name.toLowerCase().includes(this.DEVICE_NAME) ||
+        device.name.toLowerCase().includes(this.DEVICE_NAME_SECOND))
     );
   }
 

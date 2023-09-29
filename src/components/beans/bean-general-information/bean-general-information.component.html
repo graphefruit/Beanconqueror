@@ -5,7 +5,7 @@
     </ion-input>
   </ion-item>
   <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.roaster,initialBeanData.roaster)">
-    <ion-input label-placement="stacked" label='{{"BEAN_DATA_ROASTER" | translate}}' #roaster="ngModel" (ionFocus)="onRoasterSearchFocus($event);" (ionBlur)="onRoasterSearchLeave($event)" (ionChange)="onRoasterSearchChange($event)" [(ngModel)]="data.roaster" autocapitalize="sentences"
+    <ion-input label-placement="stacked" label='{{"BEAN_DATA_ROASTER" | translate}}' #roaster="ngModel" (ionFocus)="onRoasterSearchFocus($event);" (ionBlur)="onRoasterSearchLeave($event)" (ionInput)="onRoasterSearchChange($event)" [(ngModel)]="data.roaster" autocapitalize="sentences"
                name="roaster" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROASTER' | translate}}" spellcheck="false"
                type="text">
     </ion-input>

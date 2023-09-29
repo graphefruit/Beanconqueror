@@ -13,7 +13,7 @@
 
       <ion-input label-placement="stacked" label='{{"BEAN_DATA_COUNTRY" | translate}}' #country="ngModel"
                  (ionBlur)="onSearchLeave('country')"
-                 (ionChange)="onSearchChange('country',$event)"
+                 (ionInput)="onSearchChange('country',$event)"
                  (ionFocus)="onSearchFocus('country');"
                  [(ngModel)]="beanInformation.country" autocapitalize="sentences"
                  name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_COUNTRY' | translate}}" spellcheck="false"
@@ -30,7 +30,7 @@
     <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.region)">
       <ion-input label-placement="stacked" label='{{"BEAN_DATA_REGION" | translate}}' #region="ngModel"
                  (ionBlur)="onSearchLeave('region')"
-                 (ionChange)="onSearchChange('region',$event)"
+                 (ionInput)="onSearchChange('region',$event)"
                  (ionFocus)="onSearchFocus('region');"
                  [(ngModel)]="beanInformation.region" autocapitalize="sentences"
                  name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_REGION' | translate}}" spellcheck="false"
@@ -47,7 +47,7 @@
     <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.farm)">
       <ion-input label-placement="stacked" label='{{"BEAN_DATA_FARM" | translate}}' #farm="ngModel"
                  (ionBlur)="onSearchLeave('farm')"
-                 (ionChange)="onSearchChange('farm',$event)"
+                 (ionInput)="onSearchChange('farm',$event)"
                  (ionFocus)="onSearchFocus('farm');"
                  [(ngModel)]="beanInformation.farm" autocapitalize="sentences"
                  name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_FARM' | translate}}" spellcheck="false"
@@ -64,7 +64,7 @@
     <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.farmer)">
       <ion-input label-placement="stacked" label='{{"BEAN_DATA_FARMER" | translate}}' #farmer="ngModel"
                  (ionBlur)="onSearchLeave('farmer')"
-                 (ionChange)="onSearchChange('farmer',$event)"
+                 (ionInput)="onSearchChange('farmer',$event)"
                  (ionFocus)="onSearchFocus('farmer');"
                  [(ngModel)]="beanInformation.farmer" autocapitalize="sentences"
                  name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_FARMER' | translate}}" spellcheck="false"
@@ -87,7 +87,7 @@
     <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.variety)">
       <ion-input label-placement="stacked" label='{{"BEAN_DATA_VARIETY" | translate}}' #variety="ngModel"
                  (ionBlur)="onSearchLeave('variety')"
-                 (ionChange)="onSearchChange('variety',$event)"
+                 (ionInput)="onSearchChange('variety',$event)"
                  (ionFocus)="onSearchFocus('variety');"
                  [(ngModel)]="beanInformation.variety" autocapitalize="sentences"
                  name="variety" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_VARIETY' | translate}}" spellcheck="false"
@@ -104,7 +104,7 @@
     <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.processing)">
       <ion-input label-placement="stacked" label='{{"BEAN_DATA_PROCESSING" | translate}}' #processing="ngModel"
                  (ionBlur)="onSearchLeave('processing')"
-                 (ionChange)="onSearchChange('processing',$event)"
+                 (ionInput)="onSearchChange('processing',$event)"
                  (ionFocus)="onSearchFocus('processing');"
                  [(ngModel)]="beanInformation.processing" autocapitalize="sentences"
                  name="processing" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_PROCESSING' | translate}}" spellcheck="false"
@@ -133,7 +133,7 @@
     <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.certification)">
       <ion-input label-placement="stacked" label='{{"BEAN_DATA_CERTIFICATION" | translate}}' #certification="ngModel"
                  (ionBlur)="onSearchLeave('certification')"
-                 (ionChange)="onSearchChange('certification',$event)"
+                 (ionInput)="onSearchChange('certification',$event)"
                  (ionFocus)="onSearchFocus('certification');"
                  [(ngModel)]="beanInformation.certification" autocapitalize="sentences"
                  name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_CERTIFICATION' | translate}}" spellcheck="false"

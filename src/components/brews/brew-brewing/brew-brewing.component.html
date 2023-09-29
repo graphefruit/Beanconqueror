@@ -94,7 +94,7 @@
                       data.getPreparation().brew_order.before.pressure_profile,
                       data.getPreparation().use_custom_parameters)" lines="inset">
     <ion-input label-placement="stacked" label='{{"BREW_DATA_PRESSURE_PROFILE" | translate}}'  (ionFocus)="onProfileSearchFocus($event);" (ionBlur)="onProfileSearchLeave($event)"
-      (ionChange)="onProfileSearchChange($event)" [(ngModel)]="data.pressure_profile" autocapitalize="sentences"
+      (ionInput)="onProfileSearchChange($event)" [(ngModel)]="data.pressure_profile" autocapitalize="sentences"
       placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PRESSURE_PROFILE' | translate}}" spellcheck="false"
       type="text"></ion-input>
   </ion-item>
@@ -160,7 +160,7 @@
     <ion-row style="width:100%" class="ion-no-padding">
       <ion-col class="ion-no-padding" size="7">
         <ion-input label-placement="stacked" label='{{"BREW_DATA_VESSEL_NAME" | translate}}' (ionFocus)="onVesselSearchFocus($event);" (ionBlur)="onVesselSearchLeave($event)"
-          (ionChange)="onVesselSearchChange($event)" [(ngModel)]="data.vessel_name"
+          (ionInput)="onVesselSearchChange($event)" [(ngModel)]="data.vessel_name"
           placeholder="{{'BREW_DATA_VESSEL_NAME' | translate}}" type="text"></ion-input>
       </ion-col>
       <ion-col class="ion-no-padding" size="5">
