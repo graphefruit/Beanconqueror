@@ -864,8 +864,8 @@ ion-menu:host .menu-inner {
   }
 
   ion-toggle {
-    --background: var(--ion-color-inactive);
-    --background-checked: var(--ion-color-accent);
+    --track-background: var(--ion-color-inactive);
+    --track-background-checked: var(--ion-color-accent);
 
     --handle-background:  var(--ion-color-inactive);
     --handle-background-checked: var(--ion-color-accent);
