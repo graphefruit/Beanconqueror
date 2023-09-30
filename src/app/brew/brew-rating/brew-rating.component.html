@@ -1,11 +1,14 @@
 <ion-header translucent>
 </ion-header>
 <ion-content>
-  <ion-item lines="inset">
+  <ion-item lines='none'>
     <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
       style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(data.rating,2)}}</ion-badge>
     </ion-label>
-    <ion-range (ionChange)="changedRating()" [(ngModel)]="data.rating" [max]="maxBrewRating" min="-1" snaps="true"
+  </ion-item>
+  <ion-item style="top:-10px;" lines="inset">
+
+    <ion-range style='padding-left:10px;padding-right:0px;padding-top:0px;padding-bottom:0px;' (ionChange)="changedRating()" [(ngModel)]="data.rating" [max]="maxBrewRating" min="-1" snaps="true"
                [step]="settings.brew_rating_steps">
 
       <div slot="end" *ngIf="maxBrewRating=== 5 && settings.brew_rating_steps === 1">

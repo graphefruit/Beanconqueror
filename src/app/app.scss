@@ -957,8 +957,10 @@ ion-input {
       -webkit-transform: none!important;
       max-width: 100%;
       margin-top:8px;
+      color:inherit!important;
     }
   }
+
 }
 [hidden] { display: none !important;}
 .ion-label:not([slot="end"]) {
@@ -970,3 +972,4 @@ ion-select::part(label) {
   font-size: 16px;
   transform: none;
 }
+
