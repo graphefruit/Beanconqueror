@@ -42,7 +42,7 @@
     "@awesome-cordova-plugins/splash-screen": "^6.4.0",
     "@awesome-cordova-plugins/status-bar": "^6.4.0",
     "@awesome-cordova-plugins/three-dee-touch": "^6.4.0",
-    "@ionic/angular": "^7.4.0",
+    "@ionic/angular": "^7.4.2",
     "@ionic/cli": "^6.20.9",
     "@ionic/cordova-builders": "^8.0.0",
     "@ionic/storage": "^4.0.0",
