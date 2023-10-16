@@ -52,7 +52,7 @@ export class UIAlert {
       }
     }
   }
-  
+
   public isLoadingSpinnerShown() {
     return this.existingLoadingSpinners?.length > 0;
   }
@@ -105,7 +105,6 @@ export class UIAlert {
       const alert = await this.alertController.create({
         header: _title,
         message: _message,
-        backdropDismiss: false,
         buttons: [
           {
             text: okText,

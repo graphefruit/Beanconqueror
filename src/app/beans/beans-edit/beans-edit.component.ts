@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, NavParams } from '@ionic/angular';
+import { ModalController, NavParams, Platform } from '@ionic/angular';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 
 import { UIHelper } from '../../../services/uiHelper';
@@ -12,6 +12,7 @@ import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { UIAlert } from '../../../services/uiAlert';
 
 @Component({
   selector: 'beans-edit',
@@ -24,6 +25,8 @@ export class BeansEditComponent implements OnInit {
   public data: Bean;
   @Input() public bean: IBean;
   public bean_segment = 'general';
+  private initialBeanData: string = '';
+  private disableHardwareBack;
   constructor(
     private readonly navParams: NavParams,
     private readonly modalController: ModalController,
@@ -33,7 +36,9 @@ export class BeansEditComponent implements OnInit {
     private readonly uiToast: UIToast,
     private readonly uiAnalytics: UIAnalytics,
     public readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage
+    private readonly uiSettingsStorage: UISettingsStorage,
+    private readonly uiAlert: UIAlert,
+    private readonly platform: Platform
   ) {}
 
   public ionViewWillEnter(): void {
@@ -43,6 +48,7 @@ export class BeansEditComponent implements OnInit {
     );
     this.data = new Bean();
     this.data.initializeByObject(this.bean);
+    this.initialBeanData = JSON.stringify(this.data);
   }
 
   public async editBean() {
@@ -50,8 +56,33 @@ export class BeansEditComponent implements OnInit {
       await this.__editBean();
     }
   }
+  public confirmDismiss(): void {
+    if (this.settings.security_check_when_going_back === false) {
+      this.dismiss();
+      return;
+    }
+    if (JSON.stringify(this.data) !== this.initialBeanData) {
+      this.uiAlert
+        .showConfirm('PAGE_BEANS_DISCARD_CONFIRM', 'SURE_QUESTION', true)
+        .then(
+          async () => {
+            this.dismiss();
+          },
+          () => {
+            // No
+          }
+        );
+    } else {
+      this.dismiss();
+    }
+  }
 
   public dismiss(): void {
+    try {
+      if (this.settings.security_check_when_going_back === true) {
+        this.disableHardwareBack.unsubscribe();
+      }
+    } catch (ex) {}
     this.modalController.dismiss(
       {
         dismissed: true,
@@ -82,5 +113,14 @@ export class BeansEditComponent implements OnInit {
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
+    if (this.settings.security_check_when_going_back === true) {
+      this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(
+        9999,
+        (processNextHandler) => {
+          // Don't do anything.
+          this.confirmDismiss();
+        }
+      );
+    }
   }
 }

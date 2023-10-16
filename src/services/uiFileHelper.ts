@@ -103,7 +103,10 @@ export class UIFileHelper extends InstanceClass {
         (_fileEntry: FileEntry) => {
           _fileEntry.createWriter((writer) => {
             writer.onwriteend = () => {
-              resolve(undefined);
+              resolve({
+                NATIVE_URL: _fileEntry.nativeURL,
+                FULL_PATH: _fileEntry.fullPath,
+              });
               this.uiLog.info(
                 'UILog - saveJSONFile - File saved successfully - ' + _fileName
               );
@@ -881,6 +884,25 @@ export class UIFileHelper extends InstanceClass {
     });
   }
 
+  public async getBase64FileFromExternalAndroid(
+    _filePath: string
+  ): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      if (this.platform.is('cordova')) {
+        let path: string;
+        let fileName: string;
+        path = _filePath.substring(0, _filePath.lastIndexOf('/') + 1);
+        fileName = _filePath.substring(_filePath.lastIndexOf('/') + 1);
+
+        this.file.readAsDataURL(path, fileName).then((_dataUrl: string) => {
+          resolve(_dataUrl);
+        });
+      } else {
+        resolve('');
+      }
+    });
+  }
+
   public async getBase64File(_filePath: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       if (this.platform.is('cordova')) {
@@ -963,6 +985,7 @@ export class UIFileHelper extends InstanceClass {
 
       const newBlob = new Blob([ia], { type: mimeString });
       ia = null;
+      dataURI = null;
       return newBlob;
     } catch (ex) {
       return undefined;

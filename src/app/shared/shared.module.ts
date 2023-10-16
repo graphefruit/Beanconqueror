@@ -161,7 +161,7 @@ import { QrCodeScannerPopoverComponent } from '../../popover/qr-code-scanner-pop
 import { PreparationToolModalSelectComponent } from '../preparation/preparation-tool-modal-select/preparation-tool-modal-select.component';
 import { PreparationToolOverlayDirective } from '../../directive/preparation-tool-overlay.directive';
 import { SettingsPopoverBluetoothActionsComponent } from '../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
-import { BeanAssociatedBrewsComponent } from '../beans/bean-associated-brews/bean-associated-brews.component';
+import { AssociatedBrewsComponent } from '../brew/associated-brews/associated-brews.component';
 import { BeanParameterPage } from '../bean-parameter/bean-parameter.page';
 import { BeanListViewParameterComponent } from '../bean-parameter/bean-list-view-parameter/bean-list-view-parameter.component';
 import { BeanManageParameterComponent } from '../bean-parameter/bean-manage-parameter/bean-manage-parameter.component';
@@ -171,6 +171,9 @@ import { RepeatCustomParameterComponent } from '../../components/parameter/repea
 import { RepeatParameterComponent } from '../brew-parameter/repeat-parameter/repeat-parameter.component';
 import { PreparationConnectedDeviceComponent } from '../preparation/preparation-connected-device/preparation-connected-device.component';
 import { BrewRatingComponent } from '../brew/brew-rating/brew-rating.component';
+import { BrewMaximizeControlsComponent } from '../brew/brew-maximize-controls/brew-maximize-controls.component';
+import { BrewChooseGraphReferenceComponent } from '../brew/brew-choose-graph-reference/brew-choose-graph-reference.component';
+import { BrewGraphReferenceCardComponent } from '../../components/brew-graph-reference-card/brew-graph-reference-card.component';
 
 @NgModule({
   declarations: [
@@ -193,6 +196,8 @@ import { BrewRatingComponent } from '../brew/brew-rating/brew-rating.component';
     HelperPage,
     BeansAddComponent,
     BrewFlowComponent,
+    BrewChooseGraphReferenceComponent,
+    BrewMaximizeControlsComponent,
     BeansEditComponent,
     BeansDetailComponent,
     BrewRatingComponent,
@@ -252,6 +257,7 @@ import { BrewRatingComponent } from '../brew/brew-rating/brew-rating.component';
     EnumToArrayPipe,
     AsyncImageComponent,
     BrewInformationComponent,
+    BrewGraphReferenceCardComponent,
     BeanInformationComponent,
     PreparationInformationCardComponent,
     MillInformationCardComponent,
@@ -288,7 +294,7 @@ import { BrewRatingComponent } from '../brew/brew-rating/brew-rating.component';
     BeanArchivePopoverComponent,
     MillPopoverActionsComponent,
     BeanModalSelectComponent,
-    BeanAssociatedBrewsComponent,
+    AssociatedBrewsComponent,
     WaterModalSelectComponent,
     RoastingMachineModalSelectComponent,
     MillModalSelectComponent,
@@ -384,6 +390,8 @@ import { BrewRatingComponent } from '../brew/brew-rating/brew-rating.component';
     GreenBeansPage,
     BeansAddComponent,
     BrewFlowComponent,
+    BrewChooseGraphReferenceComponent,
+    BrewMaximizeControlsComponent,
     BeansEditComponent,
     BrewRatingComponent,
     GreenBeanAddComponent,
@@ -446,6 +454,7 @@ import { BrewRatingComponent } from '../brew/brew-rating/brew-rating.component';
     EnumToArrayPipe,
     AsyncImageComponent,
     BrewInformationComponent,
+    BrewGraphReferenceCardComponent,
     BeanInformationComponent,
     PreparationInformationCardComponent,
     MillInformationCardComponent,
@@ -480,7 +489,7 @@ import { BrewRatingComponent } from '../brew/brew-rating/brew-rating.component';
     BeanPopoverAddComponent,
     BeanArchivePopoverComponent,
     BeanModalSelectComponent,
-    BeanAssociatedBrewsComponent,
+    AssociatedBrewsComponent,
     WaterModalSelectComponent,
     RoastingMachineModalSelectComponent,
     MillModalSelectComponent,

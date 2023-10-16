@@ -12,8 +12,7 @@
   <ion-card class="popover">
     <form #editRoastingMachine="ngForm" novalidate>
       <ion-item>
-        <ion-label id='roastMachineName' position="stacked">{{"NAME" | translate}}*</ion-label>
-        <ion-input aria-labelledby='roastMachineName' #name="ngModel" [(ngModel)]="data.name" name="name"
+        <ion-input label-placement="stacked" label='{{"NAME" | translate}}*' aria-labelledby='roastMachineName' #name="ngModel" [(ngModel)]="data.name" name="name"
                    placeholder="{{'ROASTING_MACHINE.PLACE_HOLDER.NAME' | translate}}" spellcheck="false" type="text"
                    autocapitalize="sentences" required>
         </ion-input>

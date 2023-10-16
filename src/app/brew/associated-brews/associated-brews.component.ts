@@ -13,18 +13,22 @@ import { BREW_ACTION } from '../../../enums/brews/brewAction';
 import { Brew } from '../../../classes/brew/brew';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
+import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
+import { UIMillHelper } from '../../../services/uiMillHelper';
 
 @Component({
   selector: 'app-bean-associated-brews',
-  templateUrl: './bean-associated-brews.component.html',
-  styleUrls: ['./bean-associated-brews.component.scss'],
+  templateUrl: './associated-brews.component.html',
+  styleUrls: ['./associated-brews.component.scss'],
 })
-export class BeanAssociatedBrewsComponent implements OnInit {
-  public static COMPONENT_ID = 'bean-associated-brews';
+export class AssociatedBrewsComponent implements OnInit {
+  public static COMPONENT_ID = 'associated-brews';
   public data: Bean = new Bean();
-  @Input() private readonly bean: Bean;
 
-  public beanBrews: Array<Brew> = [];
+  @Input() private readonly uuid: string;
+  @Input() private readonly type: string;
+
+  public associatedBrews: Array<Brew> = [];
   constructor(
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
@@ -34,7 +38,9 @@ export class BeanAssociatedBrewsComponent implements OnInit {
     private readonly uiHelper: UIHelper,
     private readonly uiFileHelper: UIFileHelper,
     private readonly uiToast: UIToast,
-    private readonly uiAnalytics: UIAnalytics
+    private readonly uiAnalytics: UIAnalytics,
+    private readonly uiPreparationHelper: UIPreparationHelper,
+    private readonly uiMillHelper: UIMillHelper
   ) {}
 
   public async ionViewWillEnter() {
@@ -47,11 +53,19 @@ export class BeanAssociatedBrewsComponent implements OnInit {
   }
 
   public loadBrews() {
-    const relatedBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(
-      this.bean.config.uuid
-    );
+    let relatedBrews: Array<Brew> = [];
 
-    this.beanBrews = UIBrewHelper.sortBrews(relatedBrews);
+    if (this.type === 'preparation') {
+      relatedBrews = this.uiPreparationHelper.getAllBrewsForThisPreparation(
+        this.uuid
+      );
+    } else if (this.type === 'mill') {
+      relatedBrews = this.uiMillHelper.getAllBrewsForThisMill(this.uuid);
+    } else {
+      relatedBrews = this.uiBeanHelper.getAllBrewsForThisBean(this.uuid);
+    }
+
+    this.associatedBrews = UIBrewHelper.sortBrews(relatedBrews);
   }
 
   public async brewAction(action: BREW_ACTION, brew: Brew): Promise<void> {
@@ -64,7 +78,7 @@ export class BeanAssociatedBrewsComponent implements OnInit {
         dismissed: true,
       },
       undefined,
-      BeanAssociatedBrewsComponent.COMPONENT_ID
+      AssociatedBrewsComponent.COMPONENT_ID
     );
   }
 

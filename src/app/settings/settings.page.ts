@@ -4,13 +4,7 @@ import { Bean } from '../../classes/bean/bean';
 
 import { Brew } from '../../classes/brew/brew';
 import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
-import {
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { DirectoryEntry, FileEntry } from '@awesome-cordova-plugins/file';
 import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
@@ -23,7 +17,7 @@ import { Mill } from '../../classes/mill/mill';
 import { Settings } from '../../classes/settings/settings';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
-import { Subject, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { UIAlert } from '../../services/uiAlert';
 import { UIAnalytics } from '../../services/uiAnalytics';
@@ -66,6 +60,9 @@ import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDev
 import { Logger } from '../../classes/devices/common/logger';
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { UIExportImportHelper } from '../../services/uiExportImportHelper';
+import { ScaleType } from '../../classes/devices';
+import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
+import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
 
 declare var cordova: any;
 declare var device: any;
@@ -89,6 +86,8 @@ export class SettingsPage implements OnInit {
   public currencies = {};
 
   public settings_segment: string = 'general';
+
+  public visualizerServerEnum = VISUALIZER_SERVER_ENUM;
 
   private __cleanupAttachmentData(
     _data: Array<
@@ -150,7 +149,8 @@ export class SettingsPage implements OnInit {
     private readonly currencyService: CurrencyService,
     private readonly eventQueue: EventQueueService,
     private readonly uiFileHelper: UIFileHelper,
-    private readonly uiExportImportHelper: UIExportImportHelper
+    private readonly uiExportImportHelper: UIExportImportHelper,
+    private readonly visualizerService: VisualizerService
   ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -494,6 +494,13 @@ export class SettingsPage implements OnInit {
       this.settings.scale_id = scale.id;
       this.settings.scale_type = scale.type;
 
+      if (scale.type === ScaleType.DIFLUIDMICROBALANCE) {
+        //If there are multiple commands, and also to reset the sclae, the difluid have issues with this, therefore set delay to 300ms
+        this.settings.bluetooth_command_delay = 300;
+      } else if (scale.type === ScaleType.FELICITA) {
+        this.settings.bluetooth_command_delay = 100;
+      }
+
       this.uiAnalytics.trackEvent(
         SETTINGS_TRACKING.TITLE,
         SETTINGS_TRACKING.ACTIONS.SCALE.CATEGORY,
@@ -746,6 +753,63 @@ export class SettingsPage implements OnInit {
   public async saveSettings() {
     this.changeDetectorRef.detectChanges();
     await this.uiSettingsStorage.saveSettings(this.settings);
+  }
+  public async visualizerServerHasChanged() {
+    if (this.settings.visualizer_server === VISUALIZER_SERVER_ENUM.VISUALIZER) {
+      this.settings.visualizer_url = 'https://visualizer.coffee/';
+    } else {
+      if (!this.settings.visualizer_url.endsWith('/')) {
+        this.settings.visualizer_url = this.settings.visualizer_url + '/';
+      }
+    }
+  }
+  public async checkVisualizerURL() {
+    if (this.settings.visualizer_url === '') {
+      this.settings.visualizer_url = 'https://visualizer.coffee/';
+    }
+    if (!this.settings.visualizer_url.endsWith('/')) {
+      this.settings.visualizer_url = this.settings.visualizer_url + '/';
+    }
+  }
+
+  public async uploadBrewsToVisualizer() {
+    const brewEntries = this.uiBrewStorage.getAllEntries();
+    const uploadShots = brewEntries.filter(
+      (b) => b.flow_profile && !b.customInformation.visualizer_id
+    );
+    let couldABrewNotBeUploaded: boolean = false;
+    await this.uiAlert.showLoadingSpinner();
+    for (const shot of uploadShots) {
+      try {
+        await this.visualizerService.uploadToVisualizer(shot, false);
+      } catch (ex) {
+        couldABrewNotBeUploaded = true;
+      }
+    }
+
+    await this.uiAlert.hideLoadingSpinner();
+
+    if (couldABrewNotBeUploaded) {
+      this.uiAlert.showMessage(
+        'VISUALIZER.NOT_ALL_SHOTS_UPLOADED',
+        undefined,
+        undefined,
+        true
+      );
+    } else {
+      this.uiAlert.showMessage(
+        'VISUALIZER.ALL_SHOTS_UPLOADED',
+        undefined,
+        undefined,
+        true
+      );
+    }
+  }
+  public howManyBrewsAreNotUploadedToVisualizer() {
+    const brewEntries = this.uiBrewStorage.getAllEntries();
+    return brewEntries.filter(
+      (b) => b.flow_profile && !b.customInformation.visualizer_id
+    ).length;
   }
 
   public async resetFilter() {
@@ -1795,5 +1859,23 @@ export class SettingsPage implements OnInit {
         }
       );
     });
+  }
+
+  public checkVisualizerConnection() {
+    this.visualizerService.checkConnection().then(
+      () => {
+        //Works
+        this.uiToast.showInfoToastBottom('VISUALIZER.CONNECTION.SUCCESSFULLY');
+      },
+      () => {
+        // Didn't work
+        this.uiAlert.showMessage(
+          'VISUALIZER.CONNECTION.UNSUCCESSFULLY',
+          undefined,
+          undefined,
+          true
+        );
+      }
+    );
   }
 }

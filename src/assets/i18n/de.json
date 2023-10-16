@@ -967,7 +967,6 @@
     "BREW_PARAMETER_CUSTOMIZE_TITLE": "Individuelle Parameter pro Zubereitungsart",
     "BREW_PARAMETER_CUSTOMIZE_DESCRIPTION": "Du willst für einzelne Zubereitungsarten verschiedene Parameter festlegen? Navigiere dazu zum Menüpunkt \"Zubereitung\", öffne das Menü der entsprechenden Zubereitungsart und klicke auf \"Parameter individualisieren\". Lege nun fest, welche Parameter nur für diese Zubereitungsmethode erfasst werden sollen!",
     "BREW_DATA_BREW_QUANTITY_TOOLTIP": "Wassermenge nicht nutzbar für Espresso",
-    "BREW_DATA_COFFEE_FIRST_DRIP_TIME_TOOLTIP": "Erster Kaffeetropfen nur für Espresso nutzbar",
     "BREW_DATA_PREPARATION_METHOD_TOOLTIP": "Zubereitungsmethode wird nur individualisierbar, wenn aktiviert",
     "PAGE_SETTINGS_GENERAL": "Allgemeine Einstellungen",
     "EDIT_PREPARATION_CUSTOM_PARAMETERS": "Parameter individualisieren",
@@ -1592,5 +1591,44 @@
     "COPIED_TO_CLIPBOARD_SUCCESSFULLY": "Zum Clipboard hinzugefügt",
     "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "Konnte nicht zum Clipboard hinzugefügt werden",
     "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": "Daten können nicht extern gespeichert werden",
-    "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "Leider unterstützt dein Android-Handy keine externen Dateisysteme zum abspeichern, daher wird dir im nachfolgenden Schritt die ZIP-Datei ohne Media-Dateien zum herunterladen angeboten. Bitte schaue unter https://beanconqueror.com/faq für mehr Infromationen"
+    "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "Leider unterstützt dein Android-Handy keine externen Dateisysteme zum abspeichern, daher wird dir im nachfolgenden Schritt die ZIP-Datei ohne Media-Dateien zum herunterladen angeboten. Bitte schaue unter https://beanconqueror.com/faq für mehr Infromationen",
+    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK": "Sicherheitsmeldung vor Verlassen?",
+    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK_DESCRIPTION": "Überprüfe ob die Daten sich verändert haben bei Brühung/Bohne hinzufügen/editieren, falls ja, wird beim zurückgehen ein Sicherheitshinweis angezeigt.",
+    "PAGE_BEANS_DISCARD_CONFIRM": "Bohneninformationen wurden verändert, sicher dass du die Seite ohne speichern verlassen möchtest?",
+    "PAGE_BREW_DISCARD_CONFIRM": "Brühinformationen wurden verändert, sicher dass du die Seite ohne speichern verlassen möchtest?",
+    "NO_ENTRIES_FOUND": "Keine Einträge gefunden",
+    "BREW_DATA_COFFEE_FIRST_DRIP_TIME_TOOLTIP": "Erster Kaffeetropfen nur für Espresso nutzbar oder für spezielle Filtermethoden",
+    "POPOVER_BEANS_OPTION_REPEAT": "Wiederhole letzte Brühung",
+    "REPEAT_LAST_BREW": "Letzte Brühung wiederholen",
+    "REPEAT_BEST_BREW": "Beste Brühung wiederholen",
+
+    "PAGE_SETTINGS_VISUALIZER_SECTION": "Visualizer",
+    "VISUALIZER": {
+      "ACTIVATE": "Visualizer Aktivieren",
+      "CHOOSE_SERVER": "Server auswählen",
+      "CONNECTION": {
+        "UNSUCCESSFULLY": "Verbindung konnte nicht hergestellt werden",
+        "SUCCESSFULLY": "Verbindung konnte hergestellt werden"
+      },
+      "SERVER":
+      {
+        "VISUALIZER": "Visualizer Server",
+        "CUSTOM": "Eigener Server"
+      },
+      "SHOT": {
+        "UPLOAD_SUCCESSFULLY": "Brühung zu Visualizer hochgeladen",
+        "UPLOAD_UNSUCCESSFULLY": "Brühung konnte nicht zu Visualizer hochgeladen werden"
+
+      },
+      "URL": "Server Url",
+      "USERNAME": "Benutzername",
+      "PASSWORD": "Passwort",
+      "UPLOAD_AUTOMATIC": "Jede Brühung automatisch hochladen?",
+      "UPLOAD_AUTOMATIC_TOOLTIP": "Bitte stelle sicher, dass du beim Speichern deiner Brühung eine aktive Internet verbindung hast.",
+      "UPLOAD_ALL": "Alle Brühungen hochladen",
+      "NOT_ALL_SHOTS_UPLOADED": "Nicht alle Brühungen konnten hochgeladen werden",
+      "ALL_SHOTS_UPLOADED": "Alle Brühungen konnten hochgeladen werden"
+    },
+    "SMART_SCALE_AUTO_START_LISTENING": "Timer automatisch starten?",
+    "SMART_SCALE_AUTO_START_LISTENING_DESCRIPTION": "Timer automatisch starten, bei der Erreichung folgendes Waagen:"
 }

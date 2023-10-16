@@ -1,0 +1,11 @@
+<ion-item lines='none' tappable>
+<ion-radio justify="start" label-placement="end" value='{{this.brew.config.uuid}}'>
+<ion-card class='brew-layout'>
+ {{this.brew.getPreparation().name}}
+  <div #canvaContainer style="width:200px;height:180px;">
+    <div  #profileDiv></div>
+  </div>
+</ion-card>
+<div style="height:10px;"></div>
+</ion-radio>
+</ion-item>

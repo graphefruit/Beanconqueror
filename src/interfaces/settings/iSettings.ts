@@ -10,11 +10,14 @@ import { IBeanPageSort } from '../bean/iBeanPageSort';
 import { IBeanPageFilter } from '../bean/iBeanPageFilter';
 import { IBrewGraphs } from '../brew/iBrewGraphs';
 import { IBeanParameter } from '../parameter/iBeanParameter';
-import {  PressureType,
+import {
+  PressureType,
   RefractometerType,
   ScaleType,
-  TemperatureType } from '../../classes/devices';
+  TemperatureType,
+} from '../../classes/devices';
 import { BeanListViewParameter } from '../../classes/parameter/beanListViewParameter';
+import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 
 export interface ISettings {
   // Properties
@@ -85,6 +88,7 @@ export interface ISettings {
   welcome_page_showed: boolean;
 
   wake_lock: boolean;
+  security_check_when_going_back: boolean;
 
   config: IConfig;
 
@@ -103,6 +107,8 @@ export interface ISettings {
   acaia_heartbeat_command_delay: number;
   bluetooth_scale_espresso_stop_on_no_weight_change: boolean;
   bluetooth_scale_espresso_stop_on_no_weight_change_min_flow: number;
+  bluetooth_scale_listening_threshold_start: number;
+  bluetooth_scale_listening_threshold_active: boolean;
 
   pressure_id: string;
   pressure_type: PressureType;
@@ -126,4 +132,11 @@ export interface ISettings {
   currency: string;
   brew_display_bean_image: boolean;
   best_brew: boolean;
+
+  visualizer_active: boolean;
+  visualizer_url: string;
+  visualizer_server: VISUALIZER_SERVER_ENUM;
+  visualizer_username: string;
+  visualizer_password: string;
+  visualizer_upload_automatic: boolean;
 }

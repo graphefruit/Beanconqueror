@@ -130,7 +130,6 @@ export class GreenBeansPage implements OnInit {
       component: GreenBeanSortComponent,
       cssClass: 'popover-actions',
       showBackdrop: true,
-      backdropDismiss: true,
       id: GreenBeanSortComponent.COMPONENT_ID,
       componentProps: { bean_filter: beanFilter, segment: this.bean_segment },
       breakpoints: [0, 0.75, 1],

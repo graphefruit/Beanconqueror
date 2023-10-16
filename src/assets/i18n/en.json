@@ -967,7 +967,6 @@
     "BREW_PARAMETER_CUSTOMIZE_TITLE": "Custom parameters for each preparation method",
     "BREW_PARAMETER_CUSTOMIZE_DESCRIPTION": "Do you want to choose custom parameters for each preparation method? Navigate to \"Methods\", open the menu of the specific preparation method and choose \"Customize parameters\". There you can choose which parameters will be used for this preparation!",
     "BREW_DATA_BREW_QUANTITY_TOOLTIP": "Amount of water (not usable for espresso)",
-    "BREW_DATA_COFFEE_FIRST_DRIP_TIME_TOOLTIP": "Coffee first drip time (espresso only)",
     "BREW_DATA_PREPARATION_METHOD_TOOLTIP": "Preparation (only customizable when active)",
     "PAGE_SETTINGS_GENERAL": "General settings",
     "EDIT_PREPARATION_CUSTOM_PARAMETERS": "Customize parameters",
@@ -1592,5 +1591,6 @@
     "COPIED_TO_CLIPBOARD_SUCCESSFULLY": "Added to clipboard",
     "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "Could not be added to clipboard",
     "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": "Data can't be saved due to Android restrictions",
-    "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "Your Android phone doesn't support external file systems, so you'll need to download the ZIP file without media files. For more information, please visit https://beanconqueror.com/faq."
+    "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "Your Android phone doesn't support external file systems, so you'll need to download the ZIP file without media files. For more information, please visit https://beanconqueror.com/faq.",
+    "BREW_DATA_COFFEE_FIRST_DRIP_TIME_TOOLTIP": "Coffee first drip time (espresso only or just for specific filter methods)"
 }

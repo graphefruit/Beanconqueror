@@ -36,6 +36,8 @@ export class BeansAddComponent implements OnInit {
   public bean_segment = 'general';
   public settings: Settings = undefined;
 
+  private initialBeanData: string = '';
+  private disableHardwareBack;
   constructor(
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
@@ -53,6 +55,15 @@ export class BeansAddComponent implements OnInit {
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
+    if (this.settings.security_check_when_going_back === true) {
+      this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(
+        9999,
+        (processNextHandler) => {
+          // Don't do anything.
+          this.confirmDismiss();
+        }
+      );
+    }
   }
 
   public async ionViewWillEnter() {
@@ -85,6 +96,7 @@ export class BeansAddComponent implements OnInit {
     if (this.greenBean) {
       this.loadGreenBeanInformation();
     }
+    this.initialBeanData = JSON.stringify(this.data);
   }
 
   public async addBean() {
@@ -110,6 +122,27 @@ export class BeansAddComponent implements OnInit {
     }
   }
 
+  public confirmDismiss(): void {
+    if (this.settings.security_check_when_going_back === false) {
+      this.dismiss();
+      return;
+    }
+    if (JSON.stringify(this.data) !== this.initialBeanData) {
+      this.uiAlert
+        .showConfirm('PAGE_BEANS_DISCARD_CONFIRM', 'SURE_QUESTION', true)
+        .then(
+          async () => {
+            this.dismiss();
+          },
+          () => {
+            // No
+          }
+        );
+    } else {
+      this.dismiss();
+    }
+  }
+
   public async __addBean() {
     await this.uiBeanStorage.add(this.data);
     this.uiAnalytics.trackEvent(
@@ -123,6 +156,11 @@ export class BeansAddComponent implements OnInit {
   }
 
   public dismiss(): void {
+    try {
+      if (this.settings.security_check_when_going_back === true) {
+        this.disableHardwareBack.unsubscribe();
+      }
+    } catch (ex) {}
     this.modalController.dismiss(
       {
         dismissed: true,

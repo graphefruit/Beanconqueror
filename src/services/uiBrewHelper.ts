@@ -30,6 +30,7 @@ import { BrewFlowComponent } from '../app/brew/brew-flow/brew-flow.component';
 import { PreparationDeviceType } from '../classes/preparationDevice';
 import { UIHelper } from './uiHelper';
 import { BrewRatingComponent } from '../app/brew/brew-rating/brew-rating.component';
+import { AssociatedBrewsComponent } from '../app/brew/associated-brews/associated-brews.component';
 
 /**
  * Handles every helping functionalities
@@ -548,7 +549,6 @@ export class UIBrewHelper {
         component: BrewChoosePreparationToBrewComponent,
         id: BrewChoosePreparationToBrewComponent.COMPONENT_ID,
         cssClass: 'popover-actions',
-        backdropDismiss: false,
         breakpoints: [0, 0.35, 0.5, 0.75, 1],
         initialBreakpoint: initalBreakpoint,
       });
@@ -590,7 +590,7 @@ export class UIBrewHelper {
         component: BrewRatingComponent,
         id: BrewRatingComponent.COMPONENT_ID,
         componentProps: { brew: _brew },
-        breakpoints: [0, 0.35, 0.5, 0.75, 1],
+        breakpoints: [0, 0.35, 0.5, 0.75],
         initialBreakpoint: 0.35,
       });
       await modal.present();
@@ -618,6 +618,24 @@ export class UIBrewHelper {
       component: BrewCuppingComponent,
       id: BrewCuppingComponent.COMPONENT_ID,
       componentProps: { brew: _brew },
+    });
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+
+  /**
+   *
+   * @param _uuid - the uuid of the bean, preparation or mill
+   * @param type - bean, preparation, mill
+   */
+  public async showAssociatedBrews(_uuid: string, _type: string) {
+    const modal = await this.modalController.create({
+      component: AssociatedBrewsComponent,
+      id: AssociatedBrewsComponent.COMPONENT_ID,
+      componentProps: {
+        uuid: _uuid,
+        type: _type,
+      },
     });
     await modal.present();
     await modal.onWillDismiss();

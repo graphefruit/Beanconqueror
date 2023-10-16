@@ -150,6 +150,23 @@ export class BrewDetailComponent implements OnInit {
   }
 
   public ngOnInit() {}
+
+  public async repeat() {
+    try {
+      Plotly.purge('flowProfileChart');
+    } catch (ex) {}
+    this.editActive = true;
+    //Wait 50ms, so the dom will be new rendered and the id will be removed from the flowprofilechart
+    await new Promise(async (resolve) => {
+      setTimeout(() => {
+        resolve(undefined);
+      }, 50);
+    });
+    await this.uiBrewHelper.repeatBrew(this.data);
+    this.editActive = false;
+    await this.readFlowProfile();
+    this.initializeFlowChart();
+  }
   public async edit() {
     try {
       Plotly.purge('flowProfileChart');

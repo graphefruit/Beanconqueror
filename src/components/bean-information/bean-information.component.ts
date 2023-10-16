@@ -10,7 +10,11 @@ import {
 import { Bean } from '../../classes/bean/bean';
 import { Settings } from '../../classes/settings/settings';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { ModalController, Platform } from '@ionic/angular';
+import {
+  ActionSheetController,
+  ModalController,
+  Platform,
+} from '@ionic/angular';
 import { BeanPopoverActionsComponent } from '../../app/beans/bean-popover-actions/bean-popover-actions.component';
 import { BEAN_ACTION } from '../../enums/beans/beanAction';
 import { Brew } from '../../classes/brew/brew';
@@ -34,6 +38,7 @@ import { UIHelper } from '../../services/uiHelper';
 import { TranslateService } from '@ngx-translate/core';
 import BREW_TRACKING from '../../data/tracking/brewTracking';
 import * as htmlToImage from 'html-to-image';
+import { UIBrewHelper } from '../../services/uiBrewHelper';
 
 @Component({
   selector: 'bean-information',
@@ -70,7 +75,9 @@ export class BeanInformationComponent implements OnInit {
     private readonly serverCommunicationService: ServerCommunicationService,
     private readonly uiHelper: UIHelper,
     private readonly translate: TranslateService,
-    private readonly platform: Platform
+    private readonly platform: Platform,
+    private readonly uiBrewHelper: UIBrewHelper,
+    private actionSheetCtrl: ActionSheetController
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -162,6 +169,7 @@ export class BeanInformationComponent implements OnInit {
       componentProps: { bean: this.bean },
       id: BeanPopoverActionsComponent.COMPONENT_ID,
       cssClass: 'popover-actions',
+      animated: false,
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 1,
     });
@@ -213,6 +221,9 @@ export class BeanInformationComponent implements OnInit {
         break;
       case BEAN_ACTION.SHOW_BREWS:
         await this.showBrews();
+        break;
+      case BEAN_ACTION.REPEAT_LAST_OR_BEST_BREW:
+        await this.repeatLastOrBestBrew();
         break;
       default:
         break;
@@ -325,7 +336,55 @@ export class BeanInformationComponent implements OnInit {
   }
 
   public async showBrews() {
-    await this.uiBeanHelper.showAssociatedBrewsForBean(this.bean);
+    await this.uiBrewHelper.showAssociatedBrews(this.bean.config.uuid, 'bean');
+  }
+
+  public async repeatLastOrBestBrew() {
+    let associatedBrews: Array<Brew> = this.uiBeanHelper.getAllBrewsForThisBean(
+      this.bean.config.uuid
+    );
+    associatedBrews = associatedBrews.filter(
+      (e) =>
+        e.getBean().finished === false &&
+        e.getMill().finished === false &&
+        e.getPreparation().finished === false
+    );
+    let hasBestBrews: boolean = false;
+    if (associatedBrews.length > 0) {
+      associatedBrews = UIBrewHelper.sortBrews(associatedBrews);
+
+      if (this.settings.best_brew) {
+        hasBestBrews =
+          associatedBrews.filter((b) => b.best_brew === true).length > 0;
+      }
+
+      if (hasBestBrews) {
+        const actionSheet = await this.actionSheetCtrl.create({
+          header: this.translate.instant('CHOOSE'),
+          buttons: [
+            {
+              text: this.translate.instant('REPEAT_LAST_BREW'),
+              handler: async () => {
+                await this.uiBrewHelper.repeatBrew(associatedBrews[0]);
+              },
+            },
+            {
+              text: this.translate.instant('REPEAT_BEST_BREW'),
+              handler: async () => {
+                const bestBrew = associatedBrews.filter(
+                  (b) => b.best_brew === true
+                )[0];
+                await this.uiBrewHelper.repeatBrew(bestBrew);
+              },
+            },
+          ],
+        });
+
+        const waitingSheet = await actionSheet.present();
+      } else {
+        await this.uiBrewHelper.repeatBrew(associatedBrews[0]);
+      }
+    }
   }
   public async refreshDataFromQRCode() {
     await this.uiAlert

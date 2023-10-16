@@ -32,6 +32,7 @@ import { BluetoothScale, SCALE_TIMER_COMMAND } from '../../../classes/devices';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { UIHelper } from '../../../services/uiHelper';
+import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
 
 declare var Plotly;
 declare var window;
@@ -54,6 +55,8 @@ export class BrewAddComponent implements OnInit {
   @Input() private hide_toast_message: boolean;
 
   public showFooter: boolean = true;
+  private initialBeanData: string = '';
+  private disableHardwareBack;
   constructor(
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
@@ -75,7 +78,8 @@ export class BrewAddComponent implements OnInit {
     private readonly brewTracking: BrewTrackingService,
     private readonly uiAnalytics: UIAnalytics,
     private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly uiHelper: UIHelper
+    private readonly uiHelper: UIHelper,
+    private readonly visualizerService: VisualizerService
   ) {
     // Initialize to standard in drop down
 
@@ -122,6 +126,28 @@ export class BrewAddComponent implements OnInit {
     }
 
     this.getCoordinates(true);
+    this.initialBeanData = JSON.stringify(this.data);
+  }
+
+  public confirmDismiss(): void {
+    if (this.settings.security_check_when_going_back === false) {
+      this.dismiss();
+      return;
+    }
+    if (JSON.stringify(this.data) !== this.initialBeanData) {
+      this.uiAlert
+        .showConfirm('PAGE_BREW_DISCARD_CONFIRM', 'SURE_QUESTION', true)
+        .then(
+          async () => {
+            this.dismiss();
+          },
+          () => {
+            // No
+          }
+        );
+    } else {
+      this.dismiss();
+    }
   }
 
   public ionViewWillLeave() {
@@ -179,6 +205,11 @@ export class BrewAddComponent implements OnInit {
   }
 
   public async dismiss() {
+    try {
+      if (this.settings.security_check_when_going_back === true) {
+        this.disableHardwareBack.unsubscribe();
+      }
+    } catch (ex) {}
     this.stopScaleTimer();
     try {
       Plotly.purge('flowProfileChart');
@@ -230,6 +261,12 @@ export class BrewAddComponent implements OnInit {
         await this.uiBrewStorage.update(addedBrewObj);
       }
 
+      if (this.settings.visualizer_active) {
+        if (addedBrewObj.flow_profile) {
+          this.visualizerService.uploadToVisualizer(addedBrewObj);
+        }
+      }
+
       if (
         this.settings.track_caffeine_consumption &&
         this.data.grind_weight > 0 &&
@@ -261,5 +298,15 @@ export class BrewAddComponent implements OnInit {
     return this.uiPreparationStorage.getByUUID(this.data.method_of_preparation);
   }
 
-  public ngOnInit() {}
+  public ngOnInit() {
+    if (this.settings.security_check_when_going_back === true) {
+      this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(
+        9999,
+        (processNextHandler) => {
+          // Don't do anything.
+          this.confirmDismiss();
+        }
+      );
+    }
+  }
 }

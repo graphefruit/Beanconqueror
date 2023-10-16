@@ -603,7 +603,6 @@ export class UIUpdate {
       component: UpdatePopoverComponent,
       id: 'update-popover',
       showBackdrop: true,
-      backdropDismiss: true,
       componentProps: { versions: showingVersions },
     });
     await modal.present();

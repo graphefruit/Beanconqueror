@@ -967,7 +967,6 @@
     "BREW_PARAMETER_CUSTOMIZE_TITLE": "自定义每种冲泡器具的参数",
     "BREW_PARAMETER_CUSTOMIZE_DESCRIPTION": "您想为每种冲泡器具选择自定义参数吗？跳转到“器具”，打开具体冲泡器具的选项，选择“自定义参数”。现在您可以选择将用于此准备的参数！",
     "BREW_DATA_BREW_QUANTITY_TOOLTIP": "不能用于意式浓缩咖啡的水量",
-    "BREW_DATA_COFFEE_FIRST_DRIP_TIME_TOOLTIP": "第一个可用于意式浓缩咖啡的滴漏咖啡o",
     "BREW_DATA_PREPARATION_METHOD_TOOLTIP": "冲泡活动时可自定义",
     "PAGE_SETTINGS_GENERAL": "常规设置",
     "EDIT_PREPARATION_CUSTOM_PARAMETERS": "自定义参数",

@@ -14,6 +14,10 @@
       <ion-icon name="beanconqueror-edit" slot="start"></ion-icon>
       <span>{{"EDIT" | translate}}</span>
     </ion-item>
+    <ion-item *ngIf='hasBrews()' (click)="choose(getStaticActions().REPEAT_LAST_OR_BEST_BREW)" button tappable>
+      <ion-icon name="beanconqueror-repeat" slot="start"></ion-icon>
+      <span>{{"POPOVER_BEANS_OPTION_REPEAT" | translate}}</span>
+    </ion-item>
     <ion-item  (click)="choose(getStaticActions().SHOW_BREWS)" button tappable>
       <ion-icon name="beanconqueror-brew" slot="start"></ion-icon>
       <span>{{"POPOVER_SHOW_BREWS" | translate}}</span>

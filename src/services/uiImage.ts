@@ -173,6 +173,7 @@ export class UIImage {
                   );
               }
             } else {
+              // Android
               this.imagePicker
                 .getPictures({
                   maximumImagesCount: 5,
@@ -184,24 +185,51 @@ export class UIImage {
                   async (_files) => {
                     await this.uiAlert.showLoadingSpinner();
 
-                    for (let file of _files) {
+                    for (const file of _files) {
+                      let newFileName = file;
                       try {
                         // We cant copy the file if it doesn't start with file:///,
                         if (file.indexOf('file:') <= -1) {
                           if (file.indexOf('/') === 0) {
-                            file = 'file://' + file;
+                            newFileName = 'file://' + file;
                           } else {
-                            file = 'file:///' + file;
+                            newFileName = 'file:///' + file;
                           }
                         }
+
+                        const result =
+                          await this.uiFileHelper.getBase64FileFromExternalAndroid(
+                            newFileName
+                          );
+                        let imageStr: string = '';
+                        if (result.indexOf('data:image') >= 0) {
+                          // All good
+                          imageStr = result;
+                        } else {
+                          imageStr = `data:image/jpeg;base64,${result}`;
+                        }
+
                         await this.uiFileHelper
-                          .copyFileWithSpecificName(file)
+                          .saveBase64File(
+                            'beanconqueror_image',
+                            '.jpg',
+                            imageStr
+                          )
+                          .then(
+                            (_newURL) => {
+                              fileurls.push(_newURL);
+                            },
+                            () => {}
+                          );
+
+                        /**await this.uiFileHelper
+                          .copyFileWithSpecificName(newFileName)
                           .then(
                             async (_fullPath) => {
                               fileurls.push(_fullPath);
                             },
                             () => {}
-                          );
+                          );**/
                       } catch (ex) {
                         setTimeout(() => {
                           this.uiAlert.hideLoadingSpinner();

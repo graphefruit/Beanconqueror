@@ -948,7 +948,6 @@
     "BREW_PARAMETER_CUSTOMIZE_TITLE": "Paramètres personnalisés pour chaque méthode de préparation",
     "BREW_PARAMETER_CUSTOMIZE_DESCRIPTION": "Tu veux choisir des paramètres personnalisés pour chaque méthode de préparation ? Navigues jusqu'à \"Méthodes\", ouvre le menu de la méthode de préparation spécifique et choisissez \"Personnaliser les paramètres\". Là, tu peux choisir quels paramètres seront utilisés pour cette préparation !",
     "BREW_DATA_BREW_QUANTITY_TOOLTIP": "Quantité d'eau (non utilisable pour l'espresso)",
-    "BREW_DATA_COFFEE_FIRST_DRIP_TIME_TOOLTIP": "Premier temps d'égouttage du café (espresso uniquement)",
     "BREW_DATA_PREPARATION_METHOD_TOOLTIP": "Préparation (uniquement personnalisable lorsqu'elle est active)",
     "PAGE_SETTINGS_GENERAL": "Paramètres généraux",
     "EDIT_PREPARATION_CUSTOM_PARAMETERS": "Personnaliser les paramètres",

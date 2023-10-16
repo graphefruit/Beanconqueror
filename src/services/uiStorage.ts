@@ -55,6 +55,12 @@ export class UIStorage {
           exportObj[_key] = _value;
         })
         .then(() => {
+          // #520 - Remove username and password before export.
+          if (exportObj && 'SETTINGS' in exportObj) {
+            exportObj['SETTINGS'][0].visualizer_username = '';
+            exportObj['SETTINGS'][0].visualizer_password = '';
+          }
+
           resolve(exportObj);
         });
     });

@@ -9,7 +9,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <div *ngIf="beanBrews?.length == 0" class="ion-padding ion-text-center">
+  <div *ngIf="associatedBrews?.length == 0" class="ion-padding ion-text-center">
     <div>
       <ion-icon color="inactive" name="beanconqueror-cup" size="large"></ion-icon>
     </div>
@@ -17,7 +17,7 @@
       {{"PAGE_BREWS_NO_ENTRIES" | translate}}
     </div>
   </div>
-  <div *ngFor="let brew of beanBrews">
+  <div *ngFor="let brew of associatedBrews">
     <brew-information (brewAction)="brewAction($event[0],$event[1])"
                       [brew]="brew"></brew-information>
   </div>

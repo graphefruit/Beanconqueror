@@ -967,7 +967,6 @@
     "BREW_PARAMETER_CUSTOMIZE_TITLE": "Her hazırlama yöntemi için özel parametreler",
     "BREW_PARAMETER_CUSTOMIZE_DESCRIPTION": "Her hazırlama yöntemi için özel parametreler seçmek mi istiyorsunuz?  \" Yöntemler \" seçeneğine gidin , belirli hazırlama yönteminin menüsünü açın ve   \" Parametreleri özelleştir \" öğesini seçin. Artık hangi parametrelerin kullanılacağını seçebilirsiniz. bu hazırlık için!",
     "BREW_DATA_BREW_QUANTITY_TOOLTIP": "Espresso için kullanılamayan su miktarı",
-    "BREW_DATA_COFFEE_FIRST_DRIP_TIME_TOOLTIP": "İlk kahve damlası sadece espresso için kullanılabilir",
     "BREW_DATA_PREPARATION_METHOD_TOOLTIP": "Hazırlık sadece aktifken özelleştirilebilir",
     "PAGE_SETTINGS_GENERAL": "Genel ayarlar",
     "EDIT_PREPARATION_CUSTOM_PARAMETERS": "Parametreleri özelleştir",

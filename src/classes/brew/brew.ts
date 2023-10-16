@@ -27,6 +27,8 @@ import { Water } from '../water/water';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { IPreparationDeviceBrew } from '../../interfaces/brew/iPreparationDeviceBrew';
 import { PreparationDeviceBrew } from './preparationDeviceBrew';
+import { ICustomInformationBrew } from '../../interfaces/brew/ICustomInformationBrew';
+import { CustomInformationBrew } from './customInformationBrew';
 
 export class Brew implements IBrew {
   // tslint:disable-next-line
@@ -102,7 +104,7 @@ export class Brew implements IBrew {
   public flow_profile: string;
 
   public preparationDeviceBrew: IPreparationDeviceBrew;
-
+  public customInformation: ICustomInformationBrew;
   constructor() {
     this.grind_size = '';
     this.grind_weight = 0;
@@ -174,6 +176,7 @@ export class Brew implements IBrew {
     this.flow_profile = '';
 
     this.preparationDeviceBrew = new PreparationDeviceBrew();
+    this.customInformation = new CustomInformationBrew();
   }
 
   public initializeByObject(brewObj: IBrew): void {

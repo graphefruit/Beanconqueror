@@ -967,7 +967,6 @@
     "BREW_PARAMETER_CUSTOMIZE_TITLE": "Parámetros individuales por tipo de preparación",
     "BREW_PARAMETER_CUSTOMIZE_DESCRIPTION": "¿Deseas establecer diferentes parámetros para tipos de preparación individuales? Para hacer esto, navega hasta el elemento de menú \"Preparación\", abre el menú del tipo de preparación correspondiente y haz clic en \"Individualizar parámetros\". ¡Ahora determina qué parámetros deben registrarse solo para este método de preparación!",
     "BREW_DATA_BREW_QUANTITY_TOOLTIP": "Cantidad de agua no utilizable para espresso",
-    "BREW_DATA_COFFEE_FIRST_DRIP_TIME_TOOLTIP": "Las primeras gotas de café solo se puede usar para espresso",
     "BREW_DATA_PREPARATION_METHOD_TOOLTIP": "El método de preparación solo se puede personalizar si está activado",
     "PAGE_SETTINGS_GENERAL": "Configuración general",
     "EDIT_PREPARATION_CUSTOM_PARAMETERS": "Personalizar parámetros",

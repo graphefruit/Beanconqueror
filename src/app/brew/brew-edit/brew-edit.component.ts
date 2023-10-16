@@ -18,6 +18,8 @@ import { SettingsPopoverBluetoothActionsComponent } from '../../settings/setting
 import { BluetoothScale, SCALE_TIMER_COMMAND } from '../../../classes/devices';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
+import { UIAlert } from '../../../services/uiAlert';
+import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
 declare var Plotly;
 declare var window;
 @Component({
@@ -32,6 +34,8 @@ export class BrewEditComponent implements OnInit {
   public data: Brew = new Brew();
   public settings: Settings;
   public showFooter: boolean = true;
+  private initialBeanData: string = '';
+  private disableHardwareBack;
   constructor(
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
@@ -44,7 +48,9 @@ export class BrewEditComponent implements OnInit {
     private readonly uiAnalytics: UIAnalytics,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly insomnia: Insomnia,
-    private readonly bleManager: CoffeeBluetoothDevicesService
+    private readonly bleManager: CoffeeBluetoothDevicesService,
+    private readonly uiAlert: UIAlert,
+    private readonly visualizerService: VisualizerService
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
@@ -71,6 +77,7 @@ export class BrewEditComponent implements OnInit {
         () => {}
       );
     }
+    this.initialBeanData = JSON.stringify(this.data);
   }
   public ionViewWillLeave() {
     if (this.settings.wake_lock) {
@@ -81,7 +88,33 @@ export class BrewEditComponent implements OnInit {
     }
   }
 
+  public confirmDismiss(): void {
+    if (this.settings.security_check_when_going_back === false) {
+      this.dismiss();
+      return;
+    }
+    if (JSON.stringify(this.data) !== this.initialBeanData) {
+      this.uiAlert
+        .showConfirm('PAGE_BREW_DISCARD_CONFIRM', 'SURE_QUESTION', true)
+        .then(
+          async () => {
+            this.dismiss();
+          },
+          () => {
+            // No
+          }
+        );
+    } else {
+      this.dismiss();
+    }
+  }
+
   public dismiss(): void {
+    try {
+      if (this.settings.security_check_when_going_back === true) {
+        this.disableHardwareBack.unsubscribe();
+      }
+    } catch (ex) {}
     this.stopScaleTimer();
     try {
       Plotly.purge('flowProfileChart');
@@ -119,6 +152,12 @@ export class BrewEditComponent implements OnInit {
 
     await this.uiBrewStorage.update(this.data);
 
+    if (this.settings.visualizer_active) {
+      if (this.data.flow_profile) {
+        this.visualizerService.uploadToVisualizer(this.data);
+      }
+    }
+
     this.brewTracking.trackBrew(this.data);
 
     this.uiToast.showInfoToast('TOAST_BREW_EDITED_SUCCESSFULLY');
@@ -146,5 +185,14 @@ export class BrewEditComponent implements OnInit {
       BREW_TRACKING.TITLE,
       BREW_TRACKING.ACTIONS.EDIT
     );
+    if (this.settings.security_check_when_going_back === true) {
+      this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(
+        9999,
+        (processNextHandler) => {
+          // Don't do anything.
+          this.confirmDismiss();
+        }
+      );
+    }
   }
 }

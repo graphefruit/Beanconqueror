@@ -19,9 +19,15 @@ import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
 import { IBrewGraphs } from '../../interfaces/brew/iBrewGraphs';
 
 import { BeanManageParameter } from '../parameter/beanManageParameter';
-import { TemperatureType, PressureType, ScaleType, RefractometerType } from '../devices';
+import {
+  PressureType,
+  RefractometerType,
+  ScaleType,
+  TemperatureType,
+} from '../devices';
 import { BeanListViewParameter } from '../parameter/beanListViewParameter';
 import { RepeatBrewParameter } from '../parameter/repeatBrewParameter';
+import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 
 export class Settings implements ISettings {
   public brew_view: BREW_VIEW_ENUM;
@@ -87,6 +93,7 @@ export class Settings implements ISettings {
   };
 
   public wake_lock: boolean;
+  public security_check_when_going_back: boolean;
 
   public show_roasting_section: boolean;
   public show_water_section: boolean;
@@ -108,6 +115,8 @@ export class Settings implements ISettings {
   public acaia_heartbeat_command_delay: number;
   public bluetooth_scale_espresso_stop_on_no_weight_change: boolean;
   public bluetooth_scale_espresso_stop_on_no_weight_change_min_flow: number;
+  public bluetooth_scale_listening_threshold_start: number;
+  public bluetooth_scale_listening_threshold_active: boolean;
 
   public pressure_id: string;
   public pressure_type: PressureType;
@@ -131,6 +140,13 @@ export class Settings implements ISettings {
   public currency: string;
   public brew_display_bean_image: boolean;
   public best_brew: boolean;
+
+  public visualizer_active: boolean;
+  public visualizer_url: string;
+  public visualizer_server: VISUALIZER_SERVER_ENUM;
+  public visualizer_username: string;
+  public visualizer_password: string;
+  public visualizer_upload_automatic: boolean;
 
   public GET_BEAN_FILTER(): IBeanPageFilter {
     const upperRating: number = this.bean_rating;
@@ -278,6 +294,7 @@ export class Settings implements ISettings {
 
     this.welcome_page_showed = false;
     this.wake_lock = false;
+    this.security_check_when_going_back;
     this.image_quality = 100;
 
     this.scale_id = '';
@@ -294,6 +311,8 @@ export class Settings implements ISettings {
     this.acaia_heartbeat_command_delay = 1000;
     this.bluetooth_scale_espresso_stop_on_no_weight_change = false;
     this.bluetooth_scale_espresso_stop_on_no_weight_change_min_flow = 0.1;
+    this.bluetooth_scale_listening_threshold_start = 0.1;
+    this.bluetooth_scale_listening_threshold_active = false;
 
     this.scale_log = false;
 
@@ -320,6 +339,13 @@ export class Settings implements ISettings {
     this.brew_milliseconds_leading_digits = 3;
     this.brew_display_bean_image = false;
     this.best_brew = false;
+
+    this.visualizer_active = false;
+    this.visualizer_url = 'https://visualizer.coffee/';
+    this.visualizer_server = VISUALIZER_SERVER_ENUM.VISUALIZER;
+    this.visualizer_username = '';
+    this.visualizer_password = '';
+    this.visualizer_upload_automatic = false;
   }
 
   public initializeByObject(settingsObj: ISettings): void {
