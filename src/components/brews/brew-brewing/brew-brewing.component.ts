@@ -3448,12 +3448,27 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         // We ignore the latest value in this check.
         if (i !== this.flowProfileArr.length - 1) {
           const nextVal = this.flowProfileArr[i + 1];
+
           if (val > nextVal || val < 0) {
             // The first value is taller then the second value... somethings is wrong
             // Also if the value is negative, something strange happend.
-            wrongFlow = true;
-            weightDidntChange = false;
-            break;
+
+            let skip = false;
+            if (scaleType === ScaleType.LUNAR) {
+              let overNextVal = val - 0.2;
+              if (i + 2 !== this.flowProfileArr.length - 1) {
+                overNextVal = this.flowProfileArr[i + 2];
+              }
+              if (overNextVal >= nextVal) {
+                skip = true;
+              }
+            }
+
+            if (skip === false) {
+              wrongFlow = true;
+              weightDidntChange = false;
+              break;
+            }
           }
 
           if (
