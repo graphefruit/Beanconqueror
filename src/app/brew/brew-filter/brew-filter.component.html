@@ -48,7 +48,7 @@
       </div>
     </ion-toggle>
   </ion-item>
-  <ion-item>
+  <ion-item *ngIf="showOption('chart_data')">
     <ion-toggle label-placement='start' [(ngModel)]="filter.chart_data">
       <div class="ion-label">
         <p>{{"BREW_FILTER_JUST_CHART_DATA" | translate}}</p>

@@ -1,4 +1,11 @@
 :host {
+
+  ion-item {
+    margin-left: 16px;
+    margin-right: 16px;
+    line-height: 12px;
+    font-size: 12px;
+  }
   ion-card-content {
     background:#FFFFFF;
   }
@@ -7,15 +14,13 @@
     height: 100%;
     max-height:60px!important;
   }
-  ion-card.brew-layout {
+  div.brew-layout {
+    /** Z-index -1, lets us scroll **/
+    z-index: -1;
     margin-top:0px;
     margin-bottom:0px;
     margin-left:10px;
     margin-right:10px;
-    ion-card-content {
-      padding: 8px;
-      padding-bottom: 0px;
-      padding-top: var(--padding-top);
-    }
+
   }
 }

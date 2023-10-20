@@ -90,6 +90,11 @@ export class BrewGraphReferenceCardComponent implements OnInit {
         pad: 2,
       },
       showlegend: false,
+      dragmode: false,
+      hovermode: false,
+      clickmode: 'none',
+      extendtreemapcolors: false,
+      extendiciclecolors: false,
       xaxis: {
         tickformat: tickFormat,
         visible: true,
@@ -126,7 +131,7 @@ export class BrewGraphReferenceCardComponent implements OnInit {
       side: 'right',
       showgrid: false,
       position: 0.93,
-      range: [0, 12],
+      range: [0, 10],
       visible: true,
     };
 

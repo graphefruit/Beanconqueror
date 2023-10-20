@@ -1630,5 +1630,7 @@
       "ALL_SHOTS_UPLOADED": "Alle Brühungen konnten hochgeladen werden"
     },
     "SMART_SCALE_AUTO_START_LISTENING": "Timer automatisch starten?",
-    "SMART_SCALE_AUTO_START_LISTENING_DESCRIPTION": "Timer automatisch starten, bei der Erreichung folgendes Waagen:"
+    "SMART_SCALE_AUTO_START_LISTENING_DESCRIPTION": "Timer automatisch starten, bei der Erreichung folgendes Gewichtswertes",
+    "CHOOSE_REFERENCE_GRAPH": "Referenzgraph auswählen",
+    "RESET": "Zurücksetzten"
 }
