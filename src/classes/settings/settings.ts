@@ -92,6 +92,27 @@ export class Settings implements ISettings {
     FILTER: IBrewGraphs;
   };
 
+  public graph_weight: {
+    ESPRESSO: {
+      upper: number;
+      lower: number;
+    };
+    FILTER: {
+      upper: number;
+      lower: number;
+    };
+  };
+  public graph_flow: {
+    ESPRESSO: {
+      upper: number;
+      lower: number;
+    };
+    FILTER: {
+      upper: number;
+      lower: number;
+    };
+  };
+
   public wake_lock: boolean;
   public security_check_when_going_back: boolean;
 
@@ -263,6 +284,28 @@ export class Settings implements ISettings {
     this.graph.ESPRESSO = this.GET_BREW_GRAPHS();
     this.graph.FILTER = this.GET_BREW_GRAPHS();
     this.graph.FILTER.realtime_flow = false;
+
+    this.graph_weight = {
+      ESPRESSO: {
+        lower: 0,
+        upper: 50,
+      },
+      FILTER: {
+        lower: 0,
+        upper: 300,
+      },
+    };
+    this.graph_flow = {
+      ESPRESSO: {
+        lower: 0,
+        upper: 2.5,
+      },
+      FILTER: {
+        lower: 0,
+        upper: 20,
+      },
+    };
+
     this.brew_rating = 5;
     this.brew_rating_steps = 1;
     this.bean_rating = 5;
@@ -294,7 +337,7 @@ export class Settings implements ISettings {
 
     this.welcome_page_showed = false;
     this.wake_lock = false;
-    this.security_check_when_going_back;
+    this.security_check_when_going_back = false;
     this.image_quality = 100;
 
     this.scale_id = '';

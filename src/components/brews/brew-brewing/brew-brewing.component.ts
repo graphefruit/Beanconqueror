@@ -1698,7 +1698,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.flow_profile_raw?.temperatureFlow.length > 0
     ) {
       await this.uiAlert.showLoadingSpinner();
-      //The pressure or weight went down and we need to reset the graph now still
+      // The pressure or weight went down and we need to reset the graph now still
       this.flow_profile_raw = new BrewFlow();
       this.flowProfileTempAll = [];
       this.initializeFlowChart(false);
@@ -3105,18 +3105,23 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
     const tickFormat = '%M:%S';
 
-    const suggestedMinFlow: number = 0;
-    let suggestedMaxFlow: number = 20;
-
-    const suggestedMinWeight: number = 0;
-    let suggestedMaxWeight: number = 250;
-
+    let graph_weight_settings;
+    let graph_flow_settings;
     if (
       this.data.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO
     ) {
-      suggestedMaxFlow = 2.5;
-      suggestedMaxWeight = 50;
+      graph_weight_settings = this.settings.graph_weight.ESPRESSO;
+      graph_flow_settings = this.settings.graph_flow.ESPRESSO;
+    } else {
+      graph_weight_settings = this.settings.graph_weight.FILTER;
+      graph_flow_settings = this.settings.graph_flow.FILTER;
     }
+
+    const suggestedMinFlow: number = graph_flow_settings.lower;
+    const suggestedMaxFlow: number = graph_flow_settings.upper;
+
+    const suggestedMinWeight: number = graph_weight_settings.lower;
+    const suggestedMaxWeight: number = graph_weight_settings.upper;
 
     const startRange = moment(new Date()).startOf('day').toDate().getTime();
     let addSecondsOfEndRange = 30;

@@ -84,6 +84,26 @@ export interface ISettings {
     ESPRESSO: IBrewGraphs;
     FILTER: IBrewGraphs;
   };
+  graph_weight: {
+    ESPRESSO: {
+      upper: number;
+      lower: number;
+    };
+    FILTER: {
+      upper: number;
+      lower: number;
+    };
+  };
+  graph_flow: {
+    ESPRESSO: {
+      upper: number;
+      lower: number;
+    };
+    FILTER: {
+      upper: number;
+      lower: number;
+    };
+  };
 
   welcome_page_showed: boolean;
 

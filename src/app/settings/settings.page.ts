@@ -1,4 +1,9 @@
-import { AlertController, ModalController, Platform } from '@ionic/angular';
+import {
+  AlertController,
+  ModalController,
+  Platform,
+  ScrollDetail,
+} from '@ionic/angular';
 import BeanconquerorSettingsDummy from '../../assets/BeanconquerorTestData.json';
 import { Bean } from '../../classes/bean/bean';
 
@@ -89,6 +94,8 @@ export class SettingsPage implements OnInit {
 
   public visualizerServerEnum = VISUALIZER_SERVER_ENUM;
 
+  public isScrolling: boolean = false;
+
   private __cleanupAttachmentData(
     _data: Array<
       IBean | IBrew | IMill | IPreparation | IGreenBean | IRoastingMachine
@@ -172,6 +179,20 @@ export class SettingsPage implements OnInit {
   }
 
   public async ngOnInit() {}
+
+  public handleScrollStart() {
+    this.isScrolling = true;
+  }
+
+  public handleScroll(ev: CustomEvent<ScrollDetail>) {
+    this.isScrolling = true;
+  }
+
+  public handleScrollEnd() {
+    setTimeout(() => {
+      this.isScrolling = false;
+    }, 1000);
+  }
 
   public async findAndConnectRefractometerDevice(_retry: boolean = false) {
     const hasLocationPermission: boolean =

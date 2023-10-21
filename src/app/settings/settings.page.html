@@ -8,7 +8,10 @@
     </ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content>
+<ion-content [scrollEvents]="true"
+             (ionScrollStart)="handleScrollStart()"
+             (ionScroll)="handleScroll($any($event))"
+             (ionScrollEnd)="handleScrollEnd()">
   <ion-segment scrollable="true" [(ngModel)]="settings_segment" class="ion-padding-vertical" style="padding-top:0px;">
     <ion-segment-button value="general">
       <ion-label>{{"PAGE_SETTINGS_TAB_GENERAL" | translate }}
@@ -90,7 +93,7 @@
               tooltip='{{"PAGE_SETTINGS_IMAGE_QUALITY_TOOLTIP" | translate}}'></ion-icon>
           </ion-item>
           <ion-item style="top:-10px;">
-            <ion-range style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" min="50" snaps="true" max="100"
+            <ion-range  [disabled]='isScrolling' style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" min="50" snaps="true" max="100"
               step="1" (ionBlur)="saveSettings()" [(ngModel)]="settings.image_quality">
               <div class='ion-label' slot="end">{{settings.image_quality}}%</div>
             </ion-range>
@@ -103,7 +106,7 @@
               tooltip='{{"PAGE_SETTINGS_BREW_RATING_TOOLTIP" | translate}}'></ion-icon>
           </ion-item>
           <ion-item style="top:-10px;" lines="none">
-            <ion-range style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" min="5" snaps="true" max="100"
+            <ion-range [disabled]='isScrolling' style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" min="5" snaps="true" max="100"
               step="1" (ionBlur)="changeBrewRating()" [(ngModel)]="settings.brew_rating">
               <div class='ion-label' slot="end">{{settings.brew_rating}}</div>
             </ion-range>
@@ -138,7 +141,7 @@
               tooltip='{{"PAGE_SETTINGS_BEAN_RATING_TOOLTIP" | translate}}'></ion-icon>
           </ion-item>
           <ion-item style="top:-10px;" lines="none">
-            <ion-range style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" min="5" snaps="true" max="100"
+            <ion-range [disabled]='isScrolling' style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" min="5" snaps="true" max="100"
               step="1" (ionBlur)="changeBeanRating()" [(ngModel)]="settings.bean_rating">
               <div class='ion-label' slot="end">{{settings.bean_rating}}</div>
             </ion-range>
@@ -484,7 +487,7 @@
               </ion-label>
             </ion-item>
             <ion-item *ngIf="settings.bluetooth_scale_listening_threshold_active">
-              <ion-range style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="0.1" snaps="true" max="5"
+              <ion-range [disabled]='isScrolling' style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="0.1" snaps="true" max="5"
                          step="0.1" (ionBlur)="saveSettings()" [(ngModel)]="settings.bluetooth_scale_listening_threshold_start">
                 <div class='ion-label'
                      slot="end">{{this.uiHelper.toFixedIfNecessary(settings.bluetooth_scale_listening_threshold_start,1)}}</div>
@@ -506,7 +509,7 @@
               </ion-label>
             </ion-item>
             <ion-item style="top:-10px;" *ngIf="settings?.bluetooth_scale_espresso_stop_on_no_weight_change===true">
-              <ion-range style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" min="0.05" snaps="true" max="1"
+              <ion-range [disabled]='isScrolling' style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" min="0.05" snaps="true" max="1"
                          step="0.01" (ionBlur)="fixWeightChangeMinFlowNumber();saveSettings()" [(ngModel)]="settings.bluetooth_scale_espresso_stop_on_no_weight_change_min_flow">
                 <div class='ion-label' slot="end">{{settings.bluetooth_scale_espresso_stop_on_no_weight_change_min_flow | number : '.0-2'}} g/s</div>
               </ion-range>
@@ -535,7 +538,7 @@
                 tooltip='{{"SMART_SCALE_COMMAND_DELAY_TOOLTIP" | translate}}'></ion-icon>
             </ion-item>
             <ion-item style="top:-10px;">
-              <ion-range style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" min="50" snaps="true" max="1000"
+              <ion-range [disabled]='isScrolling' style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" min="50" snaps="true" max="1000"
                 step="1" (ionBlur)="saveSettings()" [(ngModel)]="settings.bluetooth_command_delay">
                 <div class='ion-label' slot="end">{{settings.bluetooth_command_delay}} ms</div>
               </ion-range>
@@ -549,7 +552,7 @@
                         tooltip='{{"SMART_SCALE_ACAIA_HEARTBEAT_TIMER_TOOLTIP" | translate}}'></ion-icon>
             </ion-item>
             <ion-item style="top:-10px;">
-              <ion-range style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" min="200" snaps="true" max="1000"
+              <ion-range [disabled]='isScrolling' style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" min="200" snaps="true" max="1000"
                          step="1" (ionBlur)="saveSettings()" [(ngModel)]="settings.acaia_heartbeat_command_delay">
                 <div class='ion-label' slot="end">{{settings.acaia_heartbeat_command_delay}} ms</div>
               </ion-range>
@@ -620,6 +623,53 @@
           </ion-item>
         </ion-card-content>
       </ion-card>
+
+      <ion-card>
+        <ion-card-content>
+          <ion-card-title>
+            {{"PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_AXIS" | translate }}
+            <p>{{"PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_AXIS_DESCRIPTION" | translate}}</p>
+          </ion-card-title>
+          <ion-list>
+            <ion-item lines="none">
+              <ion-label>{{"PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_FILTER_WEIGHT" | translate}}&nbsp;<ion-badge
+                style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(settings.graph_weight.FILTER.lower,2)}}&nbsp;-&nbsp;{{this.uiHelper.toFixedIfNecessary(settings.graph_weight.FILTER.upper,2)}} </ion-badge>
+              </ion-label>
+            </ion-item>
+            <ion-item style="top:-10px;">
+              <ion-range [disabled]='isScrolling'  min="0" dualKnobs="true" snaps="true" [max]="300" step="1" [(ngModel)]="settings.graph_weight.FILTER">
+              </ion-range>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label>{{"PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_FILTER_FLOW" | translate}}&nbsp;<ion-badge
+                style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(settings.graph_flow.FILTER.lower,2)}}&nbsp;-&nbsp;{{this.uiHelper.toFixedIfNecessary(settings.graph_flow.FILTER.upper,2)}} </ion-badge>
+              </ion-label>
+            </ion-item>
+            <ion-item style="top:-10px;">
+              <ion-range [disabled]='isScrolling'  min="0" dualKnobs="true" snaps="true" [max]="20" step="0.1" [(ngModel)]="settings.graph_flow.FILTER">
+              </ion-range>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label>{{"PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_WEIGHT" | translate}}&nbsp;<ion-badge
+                style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(settings.graph_weight.ESPRESSO.lower,2)}}&nbsp;-&nbsp;{{this.uiHelper.toFixedIfNecessary(settings.graph_weight.ESPRESSO.upper,2)}} </ion-badge>
+              </ion-label>
+            </ion-item>
+            <ion-item style="top:-10px;">
+              <ion-range [disabled]='isScrolling' min="0" dualKnobs="true" snaps="true" [max]="70" step="1" [(ngModel)]="settings.graph_weight.ESPRESSO">
+              </ion-range>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label>{{"PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_FLOW" | translate}}&nbsp;<ion-badge
+                style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(settings.graph_flow.ESPRESSO.lower,2)}}&nbsp;-&nbsp;{{this.uiHelper.toFixedIfNecessary(settings.graph_flow.ESPRESSO.upper,2)}} </ion-badge>
+              </ion-label>
+            </ion-item>
+            <ion-item style="top:-10px;">
+              <ion-range [disabled]='isScrolling'  min="0" dualKnobs="true" snaps="true" [max]="10" step="0.1" [(ngModel)]="settings.graph_flow.ESPRESSO">
+              </ion-range>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
     </div>
     <div *ngSwitchCase="'bluetoothpressure'">
       <ion-card>
@@ -665,7 +715,7 @@
               <div class='ion-label' style="white-space: normal;">
                 <h2>{{"PRESSURE_THRESHOLD_BAR" | translate}}</h2>
               </div>
-              <ion-range style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="0.1" snaps="true" max="12"
+              <ion-range [disabled]='isScrolling' style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="0.1" snaps="true" max="12"
                 step="0.1" (ionBlur)="saveSettings()" [(ngModel)]="settings.pressure_threshold_bar">
                 <div class='ion-label'
                   slot="end">{{this.uiHelper.toFixedIfNecessary(settings.pressure_threshold_bar,1)}}</div>
@@ -743,7 +793,7 @@
               <div class='ion-label' style="white-space: normal;">
                 <h2>{{"TEMPERATURE.THRESHOLD_TEMP" | translate}}</h2>
               </div>
-              <ion-range style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="60" snaps="true" max="100"
+              <ion-range [disabled]='isScrolling' style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="60" snaps="true" max="100"
                 step="0.1" (ionBlur)="saveSettings()" [(ngModel)]="settings.temperature_threshold_temp">
                 <div class='ion-label'
                   slot="end">{{this.uiHelper.toFixedIfNecessary(settings.temperature_threshold_temp,1)}}</div>

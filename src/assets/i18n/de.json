@@ -1632,5 +1632,11 @@
     "SMART_SCALE_AUTO_START_LISTENING": "Timer automatisch starten?",
     "SMART_SCALE_AUTO_START_LISTENING_DESCRIPTION": "Timer automatisch starten, bei der Erreichung folgendes Gewichtswertes",
     "CHOOSE_REFERENCE_GRAPH": "Referenzgraph auswählen",
-    "RESET": "Zurücksetzten"
+    "RESET": "Zurücksetzten",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_AXIS": "Definierte Start axen des Graphens",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_AXIS_DESCRIPTION": "Setzte die Startgröße der Axen für Filter sowie Espresso fest",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_FILTER_WEIGHT": "Filter - Gewicht",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_FILTER_FLOW": "Filter - Fluss",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_WEIGHT": "Espresso - Gewicht",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_FLOW": "Espresso - Fluss"
 }
