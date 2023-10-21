@@ -908,7 +908,9 @@ export class BrewDetailComponent implements OnInit {
             _brew.reference_flow_profile
           );
           this.reference_profile_raw = jsonParsed;
-        } catch (ex) {}
+        } catch (ex) {
+          // Maybe the reference flow has been deleted.
+        }
       }
       await this.uiAlert.hideLoadingSpinner();
     } else {

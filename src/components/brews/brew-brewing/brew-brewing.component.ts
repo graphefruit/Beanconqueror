@@ -4216,6 +4216,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
 
     this.data.flow_profile = '';
+    this.data.reference_flow_profile = '';
 
     await this.instancePreparationDevice(brew);
   }
