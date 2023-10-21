@@ -1194,6 +1194,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       await this.timerReset(undefined);
       await this.timer.resetWithoutEmit(false);
 
+      this.timer.checkChanges();
+      this.checkChanges();
+
       await this.uiAlert.hideLoadingSpinner();
 
       this.uiToast.showInfoToast('We started now listening to scale changes');
