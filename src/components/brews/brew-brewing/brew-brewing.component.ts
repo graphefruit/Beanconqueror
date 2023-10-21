@@ -583,12 +583,17 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     await modal.present();
     const rData = await modal.onWillDismiss();
     if (rData?.data?.brew) {
+      // Set the new reference flow profile
+      this.data.reference_flow_profile = rData?.data?.brew.flow_profile;
+      console.log(this.data.reference_flow_profile);
       const presetGraphData: any = await this.returnFlowProfile(
         rData?.data?.brew
       );
       this.reference_profile_raw = presetGraphData;
       this.initializeFlowChart(true);
     } else if (rData?.data?.reset) {
+      // Reset the reference flow profile
+      this.data.reference_flow_profile = '';
       this.reference_profile_raw = new BrewFlow();
       this.initializeFlowChart(true);
     }

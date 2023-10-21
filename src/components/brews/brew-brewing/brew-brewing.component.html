@@ -255,7 +255,7 @@
       <ion-icon name="download" slot="icon-only"></ion-icon>
     </ion-button>
 
-    <ion-button (click)="chooseGraphToSetAsReference()" fill="clear" slot="end" tappable>
+    <ion-button (click)="chooseGraphToSetAsReference()" *ngIf="!shallFlowProfileBeHidden()" fill="clear" slot="end" tappable>
       <ion-icon name="apps-outline" slot="icon-only"></ion-icon>
     </ion-button>
     <ion-button (click)="maximizeFlowGraph()" *ngIf="!shallFlowProfileBeHidden()" fill="clear" slot="end" tappable>

@@ -103,6 +103,9 @@ export class Brew implements IBrew {
   // Inherits the saved json path
   public flow_profile: string;
 
+  // Inherits the referenced saved json path
+  public reference_flow_profile: string;
+
   public preparationDeviceBrew: IPreparationDeviceBrew;
   public customInformation: ICustomInformationBrew;
   constructor() {
@@ -174,6 +177,7 @@ export class Brew implements IBrew {
     this.vessel_weight = 0;
 
     this.flow_profile = '';
+    this.reference_flow_profile = '';
 
     this.preparationDeviceBrew = new PreparationDeviceBrew();
     this.customInformation = new CustomInformationBrew();

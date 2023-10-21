@@ -155,6 +155,8 @@ export interface IBrew {
 
   flow_profile: string;
 
+  reference_flow_profile: string;
+
   preparationDeviceBrew: IPreparationDeviceBrew;
 
   customInformation: ICustomInformationBrew;
