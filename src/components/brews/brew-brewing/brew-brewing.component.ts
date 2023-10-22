@@ -1204,7 +1204,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         const weight: number = this.uiHelper.toFixedIfNecessary(_val.actual, 1);
 
         if (this.timer.isTimerRunning()) {
-          //Ignore.
+          // Ignore.
         } else {
           if (
             scaleThresholdWasHit === false &&
@@ -1214,7 +1214,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             scaleThresholdWasHit = true;
             this.ngZone.run(() => {
               this.timerStartPressed('AUTO_LISTEN_SCALE');
-              //Deattach now directly.
+              // Deattach now directly.
               this.deattachToScaleListening();
               setTimeout(() => {
                 this.changeDetectorRef.markForCheck();
