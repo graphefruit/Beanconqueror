@@ -496,9 +496,6 @@
         <ngx-stars #brewStars [color]="'#BFB9B0'" [initialStars]="data.rating" [maxStars]="5" [readonly]="true"
           [wholeStars]="true" class="ion-float-right brew-stars"></ngx-stars>
       </div>
-      <div slot="end" *ngIf="maxBrewRating !== 5">
-        {{this.uiHelper.toFixedIfNecessary(data.rating,2)}}
-      </div>
     </ion-range>
 
   </ion-item>
