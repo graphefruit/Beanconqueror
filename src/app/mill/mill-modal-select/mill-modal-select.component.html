@@ -27,7 +27,19 @@
       <div *ngSwitchCase="'open'">
         <ion-card *ngIf="getOpenMills().length > 0">
           <ion-item *ngFor="let mill of getOpenMills()" lines="none" tappable>
-            <ion-checkbox  justify="start" label-placement="end" [(ngModel)]="multipleSelection[mill.config.uuid]"><h6>{{mill.name}}</h6></ion-checkbox>
+            <ion-checkbox  justify="start" label-placement="end" [(ngModel)]="multipleSelection[mill.config.uuid]">
+              <h6>{{mill.name}}</h6>
+              <p>{{"LAST_USE" | translate}}:
+                <span  *ngIf="getBrewsCount(mill)> 0">{{lastUsed(mill) | formatDate:["DD.MM.YYYY"]}}</span>
+                <span *ngIf="getBrewsCount(mill) <= 0">-</span>
+              </p>
+              <p>
+                {{"LAST_USED_GRIND_SIZE_SETTING" | translate}}:
+                <span>
+                    {{getLastUsedGrindSizeForBrew(mill)}}
+                  </span>
+              </p>
+            </ion-checkbox>
 
           </ion-item>
         </ion-card>
@@ -35,7 +47,19 @@
       <div *ngSwitchCase="'archive'">
         <ion-card>
           <ion-item *ngFor="let mill of getArchivedMills()" lines="none" tappable>
-            <ion-checkbox justify="start" label-placement="end" [(ngModel)]="multipleSelection[mill.config.uuid]"><h6>{{mill.name}}</h6></ion-checkbox>
+            <ion-checkbox justify="start" label-placement="end" [(ngModel)]="multipleSelection[mill.config.uuid]">
+              <h6>{{mill.name}}</h6>
+              <p>{{"LAST_USE" | translate}}:
+                <span  *ngIf="getBrewsCount(mill)> 0">{{lastUsed(mill) | formatDate:["DD.MM.YYYY"]}}</span>
+                <span *ngIf="getBrewsCount(mill) <= 0">-</span>
+              </p>
+              <p>
+                {{"LAST_USED_GRIND_SIZE_SETTING" | translate}}:
+                <span>
+                    {{getLastUsedGrindSizeForBrew(mill)}}
+                  </span>
+              </p>
+            </ion-checkbox>
           </ion-item>
         </ion-card>
       </div>
@@ -48,14 +72,38 @@
 
           <ion-card *ngIf="getOpenMills().length > 0">
             <ion-item *ngFor="let mill of getOpenMills()" lines="none" tappable>
-              <ion-radio justify="start" label-placement="end" value="{{mill.config.uuid}}"><h6>{{mill.name}}</h6></ion-radio>
+              <ion-radio justify="start" label-placement="end" value="{{mill.config.uuid}}">
+                <h6>{{mill.name}}</h6>
+                <p>{{"LAST_USE" | translate}}:
+                  <span  *ngIf="getBrewsCount(mill)> 0">{{lastUsed(mill) | formatDate:["DD.MM.YYYY"]}}</span>
+                  <span *ngIf="getBrewsCount(mill) <= 0">-</span>
+                </p>
+                <p>
+                  {{"LAST_USED_GRIND_SIZE_SETTING" | translate}}:
+                  <span>
+                    {{getLastUsedGrindSizeForBrew(mill)}}
+                  </span>
+                </p>
+              </ion-radio>
             </ion-item>
           </ion-card>
         </div>
         <div *ngSwitchCase="'archive'">
           <ion-card>
             <ion-item *ngFor="let mill of getArchivedMills()" lines="none" tappable>
-              <ion-radio justify="start" label-placement="end" value="{{mill.config.uuid}}"><h6>{{mill.name}}</h6></ion-radio>
+              <ion-radio justify="start" label-placement="end" value="{{mill.config.uuid}}">
+                <h6>{{mill.name}}</h6>
+                <p>{{"LAST_USE" | translate}}:
+                  <span  *ngIf="getBrewsCount(mill)> 0">{{lastUsed(mill) | formatDate:["DD.MM.YYYY"]}}</span>
+                  <span *ngIf="getBrewsCount(mill) <= 0">-</span>
+                </p>
+                <p>
+                  {{"LAST_USED_GRIND_SIZE_SETTING" | translate}}:
+                  <span>
+                    {{getLastUsedGrindSizeForBrew(mill)}}
+                  </span>
+                </p>
+              </ion-radio>
             </ion-item>
           </ion-card>
         </div>
