@@ -1872,7 +1872,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
                   this.data.getPreparation().style_type ===
                   PREPARATION_STYLE_TYPE.ESPRESSO
                 ) {
-                  this.lastChartLayout.yaxis.range[1] = lastWeightData * 0.25;
+                  this.lastChartLayout.yaxis.range[1] = lastWeightData * 1.25;
                 } else {
                   this.lastChartLayout.yaxis.range[1] = lastWeightData * 1.5;
                 }

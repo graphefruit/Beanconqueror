@@ -8,7 +8,7 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content>
+<ion-content #brewContent>
   <div *ngIf="associatedBrews?.length == 0" class="ion-padding ion-text-center">
     <div>
       <ion-icon color="inactive" name="beanconqueror-cup" size="large"></ion-icon>
@@ -17,9 +17,11 @@
       {{"PAGE_BREWS_NO_ENTRIES" | translate}}
     </div>
   </div>
-  <div *ngFor="let brew of associatedBrews">
-    <brew-information (brewAction)="brewAction($event[0],$event[1])"
+
+  <ag-virtual-scroll #openScroll [items]="associatedBrews" height="100vh" min-row-height="180">
+    <brew-information (brewAction)="brewAction($event[0],$event[1])" *ngFor="let brew of openScroll.items"
                       [brew]="brew"></brew-information>
-  </div>
+
+  </ag-virtual-scroll>
 
 </ion-content>

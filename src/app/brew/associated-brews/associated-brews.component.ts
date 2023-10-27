@@ -1,4 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { Bean } from '../../../classes/bean/bean';
 import { ModalController, NavParams, Platform } from '@ionic/angular';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
@@ -7,7 +14,6 @@ import { UIHelper } from '../../../services/uiHelper';
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UIToast } from '../../../services/uiToast';
 import { UIAnalytics } from '../../../services/uiAnalytics';
-import { UIAlert } from '../../../services/uiAlert';
 import BEAN_TRACKING from '../../../data/tracking/beanTracking';
 import { BREW_ACTION } from '../../../enums/brews/brewAction';
 import { Brew } from '../../../classes/brew/brew';
@@ -15,6 +21,7 @@ import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIMillHelper } from '../../../services/uiMillHelper';
+import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
 
 @Component({
   selector: 'app-bean-associated-brews',
@@ -29,6 +36,13 @@ export class AssociatedBrewsComponent implements OnInit {
   @Input() private readonly type: string;
 
   public associatedBrews: Array<Brew> = [];
+
+  @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
+  public openScroll: AgVirtualSrollComponent;
+
+  @ViewChild('brewContent', { read: ElementRef })
+  public brewContent: ElementRef;
+
   constructor(
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
@@ -52,6 +66,22 @@ export class AssociatedBrewsComponent implements OnInit {
     this.loadBrews();
   }
 
+  @HostListener('window:resize')
+  @HostListener('window:orientationchange', ['$event'])
+  public onOrientationChange(event) {
+    this.retriggerScroll();
+  }
+
+  private retriggerScroll() {
+    setTimeout(async () => {
+      const el = this.brewContent.nativeElement;
+      let scrollComponent: AgVirtualSrollComponent;
+      scrollComponent = this.openScroll;
+      scrollComponent.el.style.height =
+        el.offsetHeight - scrollComponent.el.offsetTop + 'px';
+    }, 150);
+  }
+
   public loadBrews() {
     let relatedBrews: Array<Brew> = [];
 
@@ -66,6 +96,7 @@ export class AssociatedBrewsComponent implements OnInit {
     }
 
     this.associatedBrews = UIBrewHelper.sortBrews(relatedBrews);
+    this.retriggerScroll();
   }
 
   public async brewAction(action: BREW_ACTION, brew: Brew): Promise<void> {

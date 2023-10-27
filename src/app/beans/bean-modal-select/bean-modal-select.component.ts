@@ -1,4 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { Bean } from '../../../classes/bean/bean';
@@ -8,6 +15,7 @@ import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
 import { IBeanPageFilter } from '../../../interfaces/bean/iBeanPageFilter';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
+import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
 
 @Component({
   selector: 'bean-modal-select',
@@ -40,6 +48,19 @@ export class BeanModalSelectComponent implements OnInit {
     open: false,
     archived: false,
   };
+
+  @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
+  public openScroll: AgVirtualSrollComponent;
+  @ViewChild('archivedScroll', {
+    read: AgVirtualSrollComponent,
+    static: false,
+  })
+  public archivedScroll: AgVirtualSrollComponent;
+  @ViewChild('beanContent', { read: ElementRef })
+  public beanContent: ElementRef;
+
+  @ViewChild('footerContent', { read: ElementRef })
+  public footerContent: ElementRef;
 
   constructor(
     private readonly modalController: ModalController,
@@ -92,6 +113,30 @@ export class BeanModalSelectComponent implements OnInit {
 
         return 0;
       });
+  }
+  @HostListener('window:resize')
+  @HostListener('window:orientationchange', ['$event'])
+  public onOrientationChange(event) {
+    this.retriggerScroll();
+  }
+  private retriggerScroll() {
+    setTimeout(async () => {
+      const el = this.beanContent.nativeElement;
+      let scrollComponent: AgVirtualSrollComponent;
+      if (this.openScroll !== undefined) {
+        scrollComponent = this.openScroll;
+      } else {
+        scrollComponent = this.archivedScroll;
+      }
+      const footerEl = this.footerContent.nativeElement;
+
+      scrollComponent.el.style.height =
+        el.offsetHeight -
+        footerEl.offsetHeight -
+        10 -
+        scrollComponent.el.offsetTop +
+        'px';
+    }, 250);
   }
 
   public ionViewDidEnter(): void {
@@ -223,6 +268,7 @@ export class BeanModalSelectComponent implements OnInit {
   public research() {
     this.__initializeBeansView('open');
     this.__initializeBeansView('archiv');
+    this.retriggerScroll();
   }
   private __initializeBeansView(_type: string) {
     const beansCopy: Array<Bean> = [...this.objs];
