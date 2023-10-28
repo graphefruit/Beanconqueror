@@ -1638,5 +1638,7 @@
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_FILTER_WEIGHT": "Filter - Gewicht",
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_FILTER_FLOW": "Filter - Fluss",
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_WEIGHT": "Espresso - Gewicht",
-    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_FLOW": "Espresso - Fluss"
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_FLOW": "Espresso - Fluss",
+    "SMART_SCALE_IGNORE_INCOMING_WEIGHT": "Ignoriere das aktuelle Übertragungsgewicht",
+    "SMART_SCALE_IGNORE_INCOMING_WEIGHT_TOOLTIP": "Ein neuer Button erscheint in der Brühung, hierdurch werden neue Gewichtswerte der Bluetooth-Waage ignoriert"
 }

@@ -190,6 +190,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   };
   private xeniaOverviewInterval: any = undefined;
 
+  public ignoreScaleWeight: boolean = false;
+
   constructor(
     private readonly platform: Platform,
     private readonly uiSettingsStorage: UISettingsStorage,
@@ -718,10 +720,17 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           this.preparationDeviceConnected() &&
           this.data.preparationDeviceBrew.params.scriptAtWeightReachedNumber > 0
         ) {
-          const weight: number = this.uiHelper.toFixedIfNecessary(
-            _val.actual,
-            1
-          );
+          let weight: number = this.uiHelper.toFixedIfNecessary(_val.actual, 1);
+          if (this.ignoreScaleWeight === true) {
+            if (this.flowProfileTempAll.length > 0) {
+              const oldFlowProfileTemp =
+                this.flowProfileTempAll[this.flowProfileTempAll.length - 1];
+              weight = this.uiHelper.toFixedIfNecessary(
+                oldFlowProfileTemp.weight,
+                1
+              );
+            }
+          }
           if (
             weight >=
             this.data.preparationDeviceBrew.params.scriptAtWeightReachedNumber
@@ -784,7 +793,21 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             }
           }
         }
-        this.__setFlowProfile(_val);
+        if (this.ignoreScaleWeight === false) {
+          this.__setFlowProfile(_val);
+        } else {
+          if (this.flowProfileTempAll.length > 0) {
+            const oldFlowProfileTemp =
+              this.flowProfileTempAll[this.flowProfileTempAll.length - 1];
+            const passVal = {
+              actual: oldFlowProfileTemp.weight,
+              old: oldFlowProfileTemp.oldWeight,
+              smoothed: oldFlowProfileTemp.smoothedWeight,
+              oldSmoothed: oldFlowProfileTemp.oldSmoothedWeight,
+            };
+            this.__setFlowProfile(passVal);
+          }
+        }
       });
     }
   }
@@ -1566,6 +1589,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
   }
 
+  public ignoreWeightClicked() {
+    this.ignoreScaleWeight = true;
+  }
+  public unignoreWeightClicked() {
+    this.ignoreScaleWeight = false;
+  }
   public async timerPaused(_event) {
     const scale: BluetoothScale = this.bleManager.getScale();
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();

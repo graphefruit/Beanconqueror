@@ -138,6 +138,7 @@ export class Settings implements ISettings {
   public bluetooth_scale_espresso_stop_on_no_weight_change_min_flow: number;
   public bluetooth_scale_listening_threshold_start: number;
   public bluetooth_scale_listening_threshold_active: boolean;
+  public bluetooth_scale_ignore_weight_button_active: boolean;
 
   public pressure_id: string;
   public pressure_type: PressureType;
@@ -356,6 +357,7 @@ export class Settings implements ISettings {
     this.bluetooth_scale_espresso_stop_on_no_weight_change_min_flow = 0.1;
     this.bluetooth_scale_listening_threshold_start = 0.1;
     this.bluetooth_scale_listening_threshold_active = false;
+    this.bluetooth_scale_ignore_weight_button_active = false;
 
     this.scale_log = false;
 

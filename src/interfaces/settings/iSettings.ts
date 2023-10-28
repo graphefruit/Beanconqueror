@@ -129,6 +129,7 @@ export interface ISettings {
   bluetooth_scale_espresso_stop_on_no_weight_change_min_flow: number;
   bluetooth_scale_listening_threshold_start: number;
   bluetooth_scale_listening_threshold_active: boolean;
+  bluetooth_scale_ignore_weight_button_active: boolean;
 
   pressure_id: string;
   pressure_type: PressureType;

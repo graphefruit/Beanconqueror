@@ -34,6 +34,8 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   @Output() public dripTimer = new EventEmitter();
   @Output() public tareScale = new EventEmitter();
   @Output() public listeningToScaleChange = new EventEmitter();
+  @Output() public ignoreWeight = new EventEmitter();
+  @Output() public unignoreWeight = new EventEmitter();
 
   @Output() public timerStartPressed = new EventEmitter();
   @Output() public timerResumedPressed = new EventEmitter();
@@ -79,6 +81,19 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   public get listeningButtonVisible(): boolean {
     return this._listeningButtonVisible;
   }
+
+  private _ignoreScaleWeightButtonVisible: boolean;
+  @Input() set ignoreScaleWeightButtonVisible(value: boolean) {
+    this._ignoreScaleWeightButtonVisible = value;
+    this.ignoreScaleWeightButtonVisible = this._ignoreScaleWeightButtonVisible;
+  }
+
+  public get ignoreScaleWeightButtonVisible(): boolean {
+    return this._ignoreScaleWeightButtonVisible;
+  }
+
+  public ignoreWeightButtonActive: boolean = true;
+  public unignoreWeightButtonActive: boolean = false;
 
   public timer: ITimer;
   public settings: Settings;
@@ -237,6 +252,17 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     this.pausedTimer = moment(moment().toDate());
     this.timerPaused.emit(_type);
     this.changeEvent();
+  }
+
+  public ignoreScaleWeight() {
+    this.ignoreWeightButtonActive = false;
+    this.unignoreWeightButtonActive = true;
+    this.ignoreWeight.emit();
+  }
+  public unignoreScaleWeight() {
+    this.ignoreWeightButtonActive = true;
+    this.unignoreWeightButtonActive = false;
+    this.unignoreWeight.emit();
   }
 
   public startListening() {

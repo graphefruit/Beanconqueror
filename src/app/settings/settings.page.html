@@ -529,6 +529,14 @@
                 </div>
               </ion-checkbox>
             </ion-item>
+            <ion-item>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_scale_ignore_weight_button_active">
+                <div class="ion-label" style="white-space: normal;">
+                  <h2>{{"SMART_SCALE_IGNORE_INCOMING_WEIGHT" | translate}}</h2>
+                  <p>{{"SMART_SCALE_IGNORE_INCOMING_WEIGHT_TOOLTIP" | translate}}</p>
+                </div>
+              </ion-checkbox>
+            </ion-item>
 
             <ion-item lines="none">
               <ion-label>
