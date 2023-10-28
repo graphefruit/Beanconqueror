@@ -7,7 +7,10 @@
 
   <ion-list>
     <ion-item *ngFor="let prep of getPreparationMethods();let last = last" detail="true" (click)="choosePreparation(prep)" lines="{{last?'none':''}}" tappable>
-      {{prep.name}}
+      {{prep.name}}<span style='font-size: 12px; margin-top: 2px;'>&nbsp;({{"LAST_USE" | translate}}:
+      <span  *ngIf="getBrewsCount(prep)> 0">{{lastUsed(prep) | formatDate:["DD.MM.YYYY"]}}</span>
+      <span *ngIf="getBrewsCount(prep) <= 0">-</span>)
+    </span>
     </ion-item>
   </ion-list>
 
