@@ -9,6 +9,8 @@ import { Settings } from '../../classes/settings/settings';
 import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
 import { TranslateService } from '@ngx-translate/core';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
+import { UIBrewHelper } from '../../services/uiBrewHelper';
 declare var Plotly;
 @Component({
   selector: 'brew-graph-reference-card',
@@ -34,17 +36,22 @@ export class BrewGraphReferenceCardComponent implements OnInit {
   public canvaContainer: ElementRef;
   @ViewChild('profileDiv', { read: ElementRef, static: true })
   public profileDiv: ElementRef;
+  @ViewChild('radioEl', { read: ElementRef, static: true })
+  public radioEl: ElementRef;
   constructor(
     private readonly platform: Platform,
     private readonly uiFileHelper: UIFileHelper,
     private readonly translate: TranslateService,
-    private readonly uiSettingsStorage: UISettingsStorage
+    private readonly uiSettingsStorage: UISettingsStorage,
+    private readonly uiBrewHelper: UIBrewHelper
   ) {}
 
   public async ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
     await this.readFlowProfile();
     setTimeout(() => {
+      console.log('bla');
+      console.log();
       this.initializeFlowChart();
     }, 250);
   }
@@ -60,7 +67,7 @@ export class BrewGraphReferenceCardComponent implements OnInit {
     /* Important - we use scatter instead of scattergl, because we can't have many openGL contexts
      * - https://github.com/plotly/plotly.js/issues/2333 -
      * */
-    const chartWidth: number = this.canvaContainer.nativeElement.offsetWidth;
+    const chartWidth: number = this.radioEl.nativeElement.offsetWidth - 50;
 
     const chartHeight: number = 150;
 
@@ -98,6 +105,7 @@ export class BrewGraphReferenceCardComponent implements OnInit {
       xaxis: {
         tickformat: tickFormat,
         visible: true,
+        fixedrange: true,
         domain: [0, 1],
         type: 'date',
       },
@@ -108,6 +116,7 @@ export class BrewGraphReferenceCardComponent implements OnInit {
         side: 'left',
         position: 0.05,
         visible: true,
+        fixedrange: true,
       },
       yaxis2: {
         title: '',
@@ -118,6 +127,7 @@ export class BrewGraphReferenceCardComponent implements OnInit {
         side: 'right',
         position: 0.95,
         showgrid: false,
+        fixedrange: true,
         visible: true,
       },
     };
@@ -129,6 +139,7 @@ export class BrewGraphReferenceCardComponent implements OnInit {
       anchor: 'free',
       overlaying: 'y',
       side: 'right',
+      fixedrange: true,
       showgrid: false,
       position: 0.93,
       range: [0, 10],
@@ -368,4 +379,6 @@ export class BrewGraphReferenceCardComponent implements OnInit {
       Plotly.purge(this.profileDiv.nativeElement);
     } catch (ex) {}
   }
+
+  protected readonly BREW_QUANTITY_TYPES_ENUM = BREW_QUANTITY_TYPES_ENUM;
 }

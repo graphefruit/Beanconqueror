@@ -67,7 +67,7 @@
             <hr/>
             <ng-container *ngIf='archiveBrewsView?.length > 0'>
               <ion-radio-group  [(ngModel)]="radioSelection">
-                <ag-virtual-scroll #archivedScroll [items]="archiveBrewsView" height="100vh" min-row-height="180">
+                <ag-virtual-scroll #archivedScroll [items]="archiveBrewsView" height="100vh" min-row-height="385">
                   <brew-graph-reference-card  *ngFor="let brew of archivedScroll.items" [brew]="brew"></brew-graph-reference-card>
                 </ag-virtual-scroll>
               </ion-radio-group>

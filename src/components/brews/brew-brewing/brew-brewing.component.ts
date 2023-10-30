@@ -1895,7 +1895,18 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             if (this.weightTrace.y.length > 0) {
               const lastWeightData: number =
                 this.weightTrace.y[this.weightTrace.y.length - 1];
-              if (lastWeightData > this.lastChartLayout.yaxis.range[1]) {
+              // add some tolerance
+              let toleranceAdd = 10;
+              if (
+                this.data.getPreparation().style_type ===
+                PREPARATION_STYLE_TYPE.ESPRESSO
+              ) {
+                toleranceAdd = 1;
+              }
+              if (
+                lastWeightData >
+                this.lastChartLayout.yaxis.range[1] + toleranceAdd
+              ) {
                 // Scale a bit up
                 if (
                   this.data.getPreparation().style_type ===
