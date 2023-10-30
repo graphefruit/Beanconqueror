@@ -132,7 +132,7 @@ export class BeanModalSelectComponent implements OnInit {
         scrollComponent = this.archivedScroll;
       }
       const footerEl = this.footerContent.nativeElement;
-
+      // right bracing
       scrollComponent.el.style.height =
         el.offsetHeight -
         footerEl.offsetHeight -
