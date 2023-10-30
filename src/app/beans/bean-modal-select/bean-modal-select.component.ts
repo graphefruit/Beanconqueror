@@ -119,6 +119,9 @@ export class BeanModalSelectComponent implements OnInit {
   public onOrientationChange(event) {
     this.retriggerScroll();
   }
+  public segmentChanged() {
+    this.retriggerScroll();
+  }
   private retriggerScroll() {
     setTimeout(async () => {
       const el = this.beanContent.nativeElement;
