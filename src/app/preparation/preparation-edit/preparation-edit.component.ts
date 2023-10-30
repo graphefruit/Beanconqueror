@@ -45,7 +45,6 @@ export class PreparationEditComponent implements OnInit {
     );
     if (this.preparation !== undefined) {
       this.data.initializeByObject(this.preparation);
-      console.log(this.data);
     }
   }
 
@@ -106,18 +105,10 @@ export class PreparationEditComponent implements OnInit {
   }
 
   public async editTool(_tool: PreparationTool) {
-    console.log('start edit tool');
-    console.log(this.data);
     await this.uiPreparationHelper.editPreparationTool(this.data, _tool);
     //Reinitialize
-    console.log('finished editing');
-    console.log(this.data);
     const prep = this.uiPreparationStorage.getByUUID(this.data.config.uuid);
-    console.log('new  start');
-    console.log(prep);
     this.data.initializeByObject(prep);
-    console.log('new way of lifestart');
-    console.log(this.data);
   }
 
   public ngOnInit() {}

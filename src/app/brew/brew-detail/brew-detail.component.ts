@@ -287,7 +287,6 @@ export class BrewDetailComponent implements OnInit {
       this.realtimeFlowTraceReference = undefined;
       this.pressureTraceReference = undefined;
       this.temperatureTraceReference = undefined;
-      console.log(this.reference_profile_raw);
       if (
         this.reference_profile_raw.weight.length > 0 ||
         this.reference_profile_raw.pressureFlow.length > 0 ||
