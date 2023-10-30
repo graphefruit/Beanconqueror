@@ -43,7 +43,7 @@ export class BrewGraphReferenceCardComponent implements OnInit {
     private readonly uiFileHelper: UIFileHelper,
     private readonly translate: TranslateService,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiBrewHelper: UIBrewHelper
+    protected readonly uiBrewHelper: UIBrewHelper
   ) {}
 
   public async ngOnInit() {
