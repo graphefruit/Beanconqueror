@@ -31,6 +31,7 @@ export class BrewGraphReferenceCardComponent implements OnInit {
   public lastChartLayout: any = undefined;
 
   public radioSelection: string;
+  public flowProfileLoading: boolean = true;
 
   @ViewChild('canvaContainer', { read: ElementRef, static: true })
   public canvaContainer: ElementRef;
@@ -50,8 +51,6 @@ export class BrewGraphReferenceCardComponent implements OnInit {
     this.settings = this.uiSettingsStorage.getSettings();
     await this.readFlowProfile();
     setTimeout(() => {
-      console.log('bla');
-      console.log();
       this.initializeFlowChart();
     }, 250);
   }
@@ -357,6 +356,7 @@ export class BrewGraphReferenceCardComponent implements OnInit {
         layout,
         this.getChartConfig()
       );
+      this.flowProfileLoading = false;
     }, 100);
   }
 

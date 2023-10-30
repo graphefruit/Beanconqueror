@@ -38,7 +38,7 @@
               class="big-icon-only" fill="clear" slot="end" tappable>
     <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only"></ion-icon>
   </ion-button>
-  <ion-button (click)="__startTimer()" *ngIf="(settings.bluetooth_scale_listening_threshold_active === true && showListeningButton === true && !timer.hasStarted) || (settings.bluetooth_scale_listening_threshold_active === false && !timer.hasStarted) " class="big-icon-only" fill="clear" slot="end" tappable>
+  <ion-button (click)="__startTimer()" *ngIf="(showListeningButton === true && !timer.hasStarted) || (settings.bluetooth_scale_listening_threshold_active === false && !timer.hasStarted) " class="big-icon-only" fill="clear" slot="end" tappable>
     <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only"></ion-icon>
   </ion-button>
   <ion-button (click)="__tareScale()" *ngIf="smartScaleConnected() && smartScaleSupportsTaring()"  class="big-icon-only" fill="clear" slot="end" tappable>
