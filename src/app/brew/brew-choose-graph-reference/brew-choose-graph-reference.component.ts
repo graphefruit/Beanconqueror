@@ -1,4 +1,10 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { Brew } from '../../../classes/brew/brew';
@@ -60,6 +66,11 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
   public ngOnInit() {}
 
   public segmentChanged() {
+    this.retriggerScroll();
+  }
+  @HostListener('window:resize')
+  @HostListener('window:orientationchange', ['$event'])
+  public onOrientationChange(event) {
     this.retriggerScroll();
   }
 

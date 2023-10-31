@@ -1,4 +1,11 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { Brew } from '../../classes/brew/brew';
 import BeanconquerorFlowTestDataDummy from '../../assets/BeanconquerorFlowTestDataFourth.json';
 import { Platform } from '@ionic/angular';
@@ -54,6 +61,13 @@ export class BrewGraphReferenceCardComponent implements OnInit {
       this.initializeFlowChart();
     }, 250);
   }
+
+  @HostListener('window:resize')
+  @HostListener('window:orientationchange', ['$event'])
+  public onOrientationChange(event) {
+    this.initializeFlowChart();
+  }
+
   private getChartConfig() {
     const config = {
       responsive: false,
@@ -184,6 +198,7 @@ export class BrewGraphReferenceCardComponent implements OnInit {
   public initializeFlowChart(): void {
     setTimeout(() => {
       try {
+        Plotly.purge(this.profileDiv.nativeElement);
       } catch (ex) {}
       let graphSettings = this.settings.graph.FILTER;
       if (

@@ -6,8 +6,7 @@
 <ion-content>
   <form #addPreparationForm="ngForm" novalidate>
     <ion-item class="ion-margin-top">
-      <ion-label id='name' position="stacked">{{"PREPARATION_TYPE_NAME" | translate}}*</ion-label>
-      <ion-input aria-labelledby='name' #name="ngModel" [(ngModel)]="data.name" autocapitalize="sentences" name="name"
+      <ion-input label-placement="stacked" label='{{"PREPARATION_TYPE_NAME" | translate}}*' aria-labelledby='name' #name="ngModel" [(ngModel)]="data.name" autocapitalize="sentences" name="name"
                  placeholder="{{'PREPARATION.PLACE_HOLDER.PREPARATION_TYPE_NAME' | translate}}" required
                  spellcheck="false" type="text">
       </ion-input>
