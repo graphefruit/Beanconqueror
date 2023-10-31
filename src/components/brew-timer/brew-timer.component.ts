@@ -109,7 +109,9 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   public smartScaleConnected() {
     try {
       return this.bleManager.getScale() !== null;
-    } catch (ex) {}
+    } catch (ex) {
+      return false;
+    }
   }
 
   public smartScaleSupportsTaring() {
