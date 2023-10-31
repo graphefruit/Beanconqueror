@@ -1896,16 +1896,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               const lastWeightData: number =
                 this.weightTrace.y[this.weightTrace.y.length - 1];
               // add some tolerance
-              let toleranceAdd = 10;
+              let toleranceMinus = 10;
               if (
                 this.data.getPreparation().style_type ===
                 PREPARATION_STYLE_TYPE.ESPRESSO
               ) {
-                toleranceAdd = 1;
+                toleranceMinus = 1;
               }
               if (
-                lastWeightData >
-                this.lastChartLayout.yaxis.range[1] + toleranceAdd
+                lastWeightData >=
+                this.lastChartLayout.yaxis.range[1] - toleranceMinus
               ) {
                 // Scale a bit up
                 if (
@@ -1923,7 +1923,19 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             if (this.realtimeFlowTrace.y.length > 0) {
               const lastRealtimeFlowVal: number =
                 this.realtimeFlowTrace.y[this.realtimeFlowTrace.y.length - 1];
-              if (lastRealtimeFlowVal > this.lastChartLayout.yaxis2.range[1]) {
+              // add some tolerance
+              let toleranceMinus = 3;
+              if (
+                this.data.getPreparation().style_type ===
+                PREPARATION_STYLE_TYPE.ESPRESSO
+              ) {
+                toleranceMinus = 0.5;
+              }
+
+              if (
+                lastRealtimeFlowVal >=
+                this.lastChartLayout.yaxis2.range[1] - toleranceMinus
+              ) {
                 // Scale a bit up
                 if (
                   this.data.getPreparation().style_type ===
