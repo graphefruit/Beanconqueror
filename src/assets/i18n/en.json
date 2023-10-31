@@ -1592,5 +1592,52 @@
     "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "Could not be added to clipboard",
     "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": "Data can't be saved due to Android restrictions",
     "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "Your Android phone doesn't support external file systems, so you'll need to download the ZIP file without media files. For more information, please visit https://beanconqueror.com/faq.",
-    "BREW_DATA_COFFEE_FIRST_DRIP_TIME_TOOLTIP": "Coffee first drip time (espresso only or just for specific filter methods)"
+    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK": "Security message before exit?",
+    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK_DESCRIPTION": "Check if the data has changed when brewing/adding/editing beans; if so, a safety warning will be displayed when going back.",
+    "PAGE_BEANS_DISCARD_CONFIRM": "Bean information has been changed. Are you sure you want to leave the page without saving?",
+    "PAGE_BREW_DISCARD_CONFIRM": "Brewing information has been modified. Are you sure you want to leave the page without saving?",
+    "NO_ENTRIES_FOUND": "No entries found",
+    "BREW_DATA_COFFEE_FIRST_DRIP_TIME_TOOLTIP": "Coffee first drip time (espresso only or just for specific filter methods)",
+    "POPOVER_BEANS_OPTION_REPEAT": "Repeat last brew",
+    "REPEAT_LAST_BREW": "Repeat last brew",
+    "REPEAT_BEST_BREW": "Repeat best brew",
+    "PAGE_SETTINGS_VISUALIZER_SECTION": "Visualizer",
+    "VISUALIZER": {
+      "ACTIVATE": "Activate Visualizer",
+      "CHOOSE_SERVER": "Choose server",
+      "CONNECTION": {
+        "UNSUCCESSFULLY": "Connection could not be established.",
+        "SUCCESSFULLY": "Connection could be established."
+      },
+      "SERVER":
+      {
+        "VISUALIZER": "Visualizer server",
+        "CUSTOM": "Custom server"
+      },
+      "SHOT": {
+        "UPLOAD_SUCCESSFULLY": "Brewing uploaded to visualizer.",
+        "UPLOAD_UNSUCCESSFULLY": "Brewing could not be uploaded to the visualizer."
+
+      },
+      "URL": "Server url",
+      "USERNAME": "Username",
+      "PASSWORD": "Password",
+      "UPLOAD_AUTOMATIC": "Upload each brewing automatically?",
+      "UPLOAD_AUTOMATIC_TOOLTIP": "Please make sure you have an active internet connection when saving your brewing.",
+      "UPLOAD_ALL": "Upload all brews",
+      "NOT_ALL_SHOTS_UPLOADED": "Not all brews could be uploaded",
+      "ALL_SHOTS_UPLOADED": "All brews have been uploaded"
+    },
+    "SMART_SCALE_AUTO_START_LISTENING": "Start timer automatically?",
+    "SMART_SCALE_AUTO_START_LISTENING_DESCRIPTION": "Start timer automatically when reaching the following weight value",
+    "CHOOSE_REFERENCE_GRAPH": "Select reference graph",
+    "RESET": "Reset",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_AXIS": "Define the starting axes of the graph",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_AXIS_DESCRIPTION": "Set the starting size of the axes for both filter and espresso.",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_FILTER_WEIGHT": "Filter - Weight",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_FILTER_FLOW": "Filter - Flow",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_WEIGHT": "Espresso - Weight",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_FLOW": "Espresso - Flow",
+    "SMART_SCALE_IGNORE_INCOMING_WEIGHT": "Ignore the current transfer weight.",
+    "SMART_SCALE_IGNORE_INCOMING_WEIGHT_TOOLTIP": "A new button appears in the brew section, which will ignore new weight values from the Bluetooth scale."
 }
