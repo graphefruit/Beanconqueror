@@ -34,8 +34,8 @@
     </ion-select>
   </ion-item>
   <ion-item lines='none' *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.roast_range,initialBeanData.roast_range)">
-    <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
-      style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(data.rating,2)}}</ion-badge>
+    <ion-label position="stacked" style="min-height:30px;">{{"BEAN_DATA_ROAST_NAME" | translate }}&nbsp;<ion-badge
+      style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(data.roast_range,2)}}</ion-badge>
     </ion-label>
   </ion-item>
   <ion-item style="top:-10px;" *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.roast_range,initialBeanData.roast_range)">
@@ -68,7 +68,7 @@
   </ion-item>
   <ion-item style="top:-10px;" *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.rating,initialBeanData.rating)">
 
-    <ion-range style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" (ionChange)="changedRating()" [(ngModel)]="data.rating" [max]="maxBeanRating" min="0" snaps="true" [step]="settings?.bean_rating_steps">
+    <ion-range style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:10px;" (ionChange)="changedRating()" [(ngModel)]="data.rating" [max]="maxBeanRating" min="0" snaps="true" [step]="settings?.bean_rating_steps">
 
       <div slot="end" *ngIf="maxBeanRating === 5 && settings?.bean_rating_steps === 1">
         <ngx-stars #beanRating [color]="'#BFB9B0'"  [initialStars]="data.rating"  [maxStars]="5"  [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars" ></ngx-stars>
