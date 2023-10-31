@@ -67,6 +67,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   public showBloomTimer: boolean = true;
   public showDripTimer: boolean = true;
   public showListeningButton: boolean = true;
+  public showIgnoreScaleWeightButtonVisible: boolean = true;
 
   @Input() set bloomTimerVisible(value: boolean) {
     this._bloomTimerVisible = value;
@@ -85,7 +86,8 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   private _ignoreScaleWeightButtonVisible: boolean;
   @Input() set ignoreScaleWeightButtonVisible(value: boolean) {
     this._ignoreScaleWeightButtonVisible = value;
-    this.ignoreScaleWeightButtonVisible = this._ignoreScaleWeightButtonVisible;
+    this.showIgnoreScaleWeightButtonVisible =
+      this._ignoreScaleWeightButtonVisible;
   }
 
   public get ignoreScaleWeightButtonVisible(): boolean {
