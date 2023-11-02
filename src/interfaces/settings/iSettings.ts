@@ -52,12 +52,14 @@ export interface ISettings {
   show_archived_preparations: boolean;
   show_archived_green_beans: boolean;
   show_archived_waters: boolean;
+  show_archived_graphs: boolean;
 
   track_caffeine_consumption: boolean;
 
   show_roasting_section: boolean;
   show_water_section: boolean;
   show_cupping_section: boolean;
+  show_graph_section: boolean;
   use_numeric_keyboard_for_grind_size: boolean;
 
   brew_filter: {

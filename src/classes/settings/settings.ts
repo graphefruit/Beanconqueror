@@ -62,6 +62,7 @@ export class Settings implements ISettings {
   public show_archived_green_beans: boolean;
   public show_archived_waters: boolean;
   public show_archived_brews_on_dashboard: boolean;
+  public show_archived_graphs: boolean;
 
   public use_numeric_keyboard_for_grind_size: boolean;
 
@@ -119,6 +120,7 @@ export class Settings implements ISettings {
   public show_roasting_section: boolean;
   public show_water_section: boolean;
   public show_cupping_section: boolean;
+  public show_graph_section: boolean;
 
   public scale_id: string;
   public scale_type: ScaleType;
@@ -248,12 +250,14 @@ export class Settings implements ISettings {
     this.show_archived_green_beans = true;
     this.show_archived_waters = true;
     this.show_archived_brews_on_dashboard = true;
+    this.show_archived_graphs = true;
 
     this.track_caffeine_consumption = false;
 
     this.show_roasting_section = false;
     this.show_water_section = false;
     this.show_cupping_section = false;
+    this.show_graph_section = false;
 
     this.use_numeric_keyboard_for_grind_size = false;
 

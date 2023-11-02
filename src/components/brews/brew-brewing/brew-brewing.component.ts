@@ -2110,13 +2110,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public getActualSmoothedWeightPerSecond(): number {
     try {
-      // const scaleType = this.bleManager.getScale()?.getScaleType();
-      /**
-       *  scaleType === ScaleType.SMARTCHEF ||
-       *         scaleType === ScaleType.BLACKCOFFEE
-       *         */
+      const scaleType = this.bleManager.getScale()?.getScaleType();
 
-      if (true) {
+      if (
+        scaleType === ScaleType.SMARTCHEF ||
+        scaleType === ScaleType.BLACKCOFFEE ||
+        this.data.getPreparation().style_type ===
+          PREPARATION_STYLE_TYPE.ESPRESSO
+      ) {
         if (this.flow_profile_raw.weight.length <= 3) {
           return 0;
         }

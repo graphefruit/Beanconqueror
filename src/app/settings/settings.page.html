@@ -285,12 +285,19 @@
               <div class='ion-label'>{{"PAGE_SETTINGS_SHOW_ROASTING_SECTION" | translate}}</div>
             </ion-checkbox>
           </ion-item>
-          <ion-item lines="none">
+          <ion-item>
             <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" (click)="checkWaterSection()"
               [(ngModel)]="settings.show_water_section">
               <div class='ion-label'>{{"PAGE_SETTINGS_SHOW_WATER_SECTION" | translate}}</div>
             </ion-checkbox>
           </ion-item>
+          <ion-item lines="none">
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+                          [(ngModel)]="settings.show_graph_section">
+              <div class='ion-label'>{{"PAGE_SETTINGS_SHOW_GRAPH_SECTION" | translate}}</div>
+            </ion-checkbox>
+          </ion-item>
+
           <ion-item *ngIf="false">
             <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.show_cupping_section">
               <div class='ion-label'>{{"PAGE_SETTINGS_SHOW_CUPPING_SECTION" | translate}}</div>
@@ -316,6 +323,11 @@
           <ion-item>
             <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.show_archived_brews">
               <div class='ion-label'>{{"PAGE_SETTINGS_SHOW_ARCHIVED_BREWS" | translate}}</div>
+            </ion-checkbox>
+          </ion-item>
+          <ion-item *ngIf="settings.show_graph_section">
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.show_archived_graphs">
+              <div class='ion-label'>{{"PAGE_SETTINGS_SHOW_ARCHIVED_GRAPHS" | translate}}</div>
             </ion-checkbox>
           </ion-item>
           <ion-item>

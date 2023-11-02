@@ -6,28 +6,29 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { Brew } from '../../classes/brew/brew';
-import BeanconquerorFlowTestDataDummy from '../../assets/BeanconquerorFlowTestDataFourth.json';
-import { Platform } from '@ionic/angular';
-import { UIFileHelper } from '../../services/uiFileHelper';
-import { BrewFlow } from '../../classes/brew/brewFlow';
 import moment from 'moment/moment';
-import { Settings } from '../../classes/settings/settings';
-import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
+import BeanconquerorFlowTestDataDummy from '../../../../assets/BeanconquerorFlowTestDataFourth.json';
+import { BrewFlow } from '../../../../classes/brew/brewFlow';
+import { Settings } from '../../../../classes/settings/settings';
 import { TranslateService } from '@ngx-translate/core';
-import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
-import { UIBrewHelper } from '../../services/uiBrewHelper';
+import { Graph } from '../../../../classes/graph/graph';
+import { IGraph } from '../../../../interfaces/graph/iGraph';
+import GRAPH_TRACKING from '../../../../data/tracking/graphTracking';
+import { UIAnalytics } from '../../../../services/uiAnalytics';
+import { UIHelper } from '../../../../services/uiHelper';
+import { ModalController, Platform } from '@ionic/angular';
+import { UIFileHelper } from '../../../../services/uiFileHelper';
+import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
 declare var Plotly;
 @Component({
-  selector: 'brew-graph-reference-card',
-  templateUrl: './brew-graph-reference-card.component.html',
-  styleUrls: ['./brew-graph-reference-card.component.scss'],
+  selector: 'app-graph-detail',
+  templateUrl: './graph-detail.component.html',
+  styleUrls: ['./graph-detail.component.scss'],
 })
-export class BrewGraphReferenceCardComponent implements OnInit {
-  @Input() public brew: Brew;
+export class GraphDetailComponent implements OnInit {
+  public static COMPONENT_ID = 'graph-detail';
   public flow_profile_raw: BrewFlow = new BrewFlow();
-  public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
+
   public settings: Settings;
 
   private weightTrace: any;
@@ -36,42 +37,72 @@ export class BrewGraphReferenceCardComponent implements OnInit {
   private pressureTrace: any;
   private temperatureTrace: any;
   public lastChartLayout: any = undefined;
-
-  public radioSelection: string;
   public flowProfileLoading: boolean = true;
 
   @ViewChild('canvaContainer', { read: ElementRef, static: true })
   public canvaContainer: ElementRef;
   @ViewChild('profileDiv', { read: ElementRef, static: true })
   public profileDiv: ElementRef;
-  @ViewChild('radioEl', { read: ElementRef, static: true })
-  public radioEl: ElementRef;
+
+  @ViewChild('graphDetail', { read: ElementRef, static: true })
+  public graphDetail: ElementRef;
+  @ViewChild('graphHeader', { read: ElementRef, static: true })
+  public graphHeader: ElementRef;
+
+  public data: Graph = new Graph();
+
+  @Input() private graph: IGraph;
+
   constructor(
+    private readonly translate: TranslateService,
+    private readonly uiAnalytics: UIAnalytics,
+    private readonly uiHelper: UIHelper,
     private readonly platform: Platform,
     private readonly uiFileHelper: UIFileHelper,
-    private readonly translate: TranslateService,
     private readonly uiSettingsStorage: UISettingsStorage,
-    protected readonly uiBrewHelper: UIBrewHelper
+    private readonly modalController: ModalController
   ) {}
 
-  public async ngOnInit() {
+  public ngOnInit() {}
+  public async ionViewWillEnter() {
     this.settings = this.uiSettingsStorage.getSettings();
     await this.readFlowProfile();
+    this.uiAnalytics.trackEvent(
+      GRAPH_TRACKING.TITLE,
+      GRAPH_TRACKING.ACTIONS.DETAIL
+    );
+    this.data = this.uiHelper.copyData(this.graph);
     setTimeout(() => {
       this.initializeFlowChart();
-    }, 250);
+    }, 750);
+  }
+  public toggleChartLines(_type: string) {
+    if (_type === 'weight') {
+      this.weightTrace.visible = !this.weightTrace.visible;
+    } else if (_type === 'calc_flow') {
+      this.flowPerSecondTrace.visible = !this.flowPerSecondTrace.visible;
+    } else if (_type === 'realtime_flow') {
+      this.realtimeFlowTrace.visible = !this.realtimeFlowTrace.visible;
+    } else if (_type === 'pressure') {
+      this.pressureTrace.visible = !this.pressureTrace.visible;
+    } else if (_type === 'temperature') {
+      this.temperatureTrace.visible = !this.temperatureTrace.visible;
+    }
+
+    Plotly.relayout(this.profileDiv.nativeElement, this.lastChartLayout);
   }
 
   @HostListener('window:resize')
   @HostListener('window:orientationchange', ['$event'])
   public onOrientationChange(event) {
-    this.initializeFlowChart();
+    setTimeout(() => {
+      this.initializeFlowChart();
+    }, 250);
   }
 
   private getChartConfig() {
     const config = {
-      responsive: false,
-      scrollZoom: false,
+      responsive: true,
       displayModeBar: false, // this is the line that hides the bar.
     };
     return config;
@@ -80,15 +111,14 @@ export class BrewGraphReferenceCardComponent implements OnInit {
     /* Important - we use scatter instead of scattergl, because we can't have many openGL contexts
      * - https://github.com/plotly/plotly.js/issues/2333 -
      * */
-    const chartWidth: number = this.radioEl.nativeElement.offsetWidth - 50;
+    const chartWidth: number = this.canvaContainer.nativeElement.offsetWidth;
 
-    const chartHeight: number = 150;
+    const chartHeight: number = this.canvaContainer.nativeElement.offsetHeight;
 
     let tickFormat = '%S';
 
-    if (this.brew.brew_time > 59) {
-      tickFormat = '%M:' + tickFormat;
-    }
+    tickFormat = '%M:' + tickFormat;
+
     /*  yaxis3: {
         title: '',
         titlefont: {color: '#09485D'},
@@ -110,15 +140,9 @@ export class BrewGraphReferenceCardComponent implements OnInit {
         pad: 2,
       },
       showlegend: false,
-      dragmode: false,
-      hovermode: false,
-      clickmode: 'none',
-      extendtreemapcolors: false,
-      extendiciclecolors: false,
       xaxis: {
         tickformat: tickFormat,
         visible: true,
-        fixedrange: true,
         domain: [0, 1],
         type: 'date',
       },
@@ -129,7 +153,6 @@ export class BrewGraphReferenceCardComponent implements OnInit {
         side: 'left',
         position: 0.05,
         visible: true,
-        fixedrange: true,
       },
       yaxis2: {
         title: '',
@@ -140,7 +163,6 @@ export class BrewGraphReferenceCardComponent implements OnInit {
         side: 'right',
         position: 0.95,
         showgrid: false,
-        fixedrange: true,
         visible: true,
       },
     };
@@ -152,7 +174,6 @@ export class BrewGraphReferenceCardComponent implements OnInit {
       anchor: 'free',
       overlaying: 'y',
       side: 'right',
-      fixedrange: true,
       showgrid: false,
       position: 0.93,
       range: [0, 10],
@@ -200,13 +221,7 @@ export class BrewGraphReferenceCardComponent implements OnInit {
       try {
         Plotly.purge(this.profileDiv.nativeElement);
       } catch (ex) {}
-      let graphSettings = this.settings.graph.FILTER;
-      if (
-        this.brew.getPreparation().style_type ===
-        PREPARATION_STYLE_TYPE.ESPRESSO
-      ) {
-        graphSettings = this.settings.graph.ESPRESSO;
-      }
+      const graphSettings = this.settings.graph.FILTER;
 
       this.weightTrace = {
         x: [],
@@ -377,10 +392,10 @@ export class BrewGraphReferenceCardComponent implements OnInit {
 
   private async readFlowProfile() {
     if (this.platform.is('cordova')) {
-      if (this.brew.flow_profile !== '') {
+      if (this.graph.flow_profile !== '') {
         try {
           const jsonParsed = await this.uiFileHelper.getJSONFile(
-            this.brew.flow_profile
+            this.graph.flow_profile
           );
           this.flow_profile_raw = jsonParsed;
         } catch (ex) {}
@@ -393,5 +408,14 @@ export class BrewGraphReferenceCardComponent implements OnInit {
     try {
       Plotly.purge(this.profileDiv.nativeElement);
     } catch (ex) {}
+  }
+  public dismiss(): void {
+    this.modalController.dismiss(
+      {
+        dismissed: true,
+      },
+      undefined,
+      GraphDetailComponent.COMPONENT_ID
+    );
   }
 }

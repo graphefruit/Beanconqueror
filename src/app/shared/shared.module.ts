@@ -174,6 +174,13 @@ import { BrewRatingComponent } from '../brew/brew-rating/brew-rating.component';
 import { BrewMaximizeControlsComponent } from '../brew/brew-maximize-controls/brew-maximize-controls.component';
 import { BrewChooseGraphReferenceComponent } from '../brew/brew-choose-graph-reference/brew-choose-graph-reference.component';
 import { BrewGraphReferenceCardComponent } from '../../components/brew-graph-reference-card/brew-graph-reference-card.component';
+import { GraphInformationCardComponent } from '../../components/graph-information-card/graph-information-card.component';
+import { GraphPopoverActionsComponent } from '../graph-section/graph/graph-popover-actions/graph-popover-actions.component';
+import { GraphSectionPage } from '../graph-section/graph-section.page';
+import { GraphPage } from '../graph-section/graph/graph.page';
+import { GraphEditComponent } from '../graph-section/graph/graph-edit/graph-edit.component';
+import { GraphAddComponent } from '../graph-section/graph/graph-add/graph-add.component';
+import { GraphDetailComponent } from '../graph-section/graph/graph-detail/graph-detail.component';
 
 @NgModule({
   declarations: [
@@ -185,7 +192,9 @@ import { BrewGraphReferenceCardComponent } from '../../components/brew-graph-ref
     DashboardPage,
     RoastingSectionPage,
     WaterSectionPage,
+    GraphSectionPage,
     WaterPage,
+    GraphPage,
     GreenBeansPage,
     GreenBeanAddComponent,
     GreenBeanEditComponent,
@@ -262,8 +271,12 @@ import { BrewGraphReferenceCardComponent } from '../../components/brew-graph-ref
     PreparationInformationCardComponent,
     MillInformationCardComponent,
     WaterInformationCardComponent,
+    GraphInformationCardComponent,
     WaterEditComponent,
     WaterDetailComponent,
+    GraphEditComponent,
+    GraphAddComponent,
+    GraphDetailComponent,
     CuppingRadarComponent,
     CuppingFlavorsComponent,
     RemoveEmptyNumberDirective,
@@ -287,6 +300,7 @@ import { BrewGraphReferenceCardComponent } from '../../components/brew-graph-ref
     BrewEditComponent,
     PhotoPopoverComponent,
     WaterPopoverActionsComponent,
+    GraphPopoverActionsComponent,
     BrewPopoverActionsComponent,
     SettingsPopoverBluetoothActionsComponent,
     BeanPopoverActionsComponent,
@@ -386,7 +400,9 @@ import { BrewGraphReferenceCardComponent } from '../../components/brew-graph-ref
     HelperPage,
     RoastingSectionPage,
     WaterSectionPage,
+    GraphSectionPage,
     WaterPage,
+    GraphPage,
     GreenBeansPage,
     BeansAddComponent,
     BrewFlowComponent,
@@ -459,8 +475,12 @@ import { BrewGraphReferenceCardComponent } from '../../components/brew-graph-ref
     PreparationInformationCardComponent,
     MillInformationCardComponent,
     WaterInformationCardComponent,
+    GraphInformationCardComponent,
     WaterEditComponent,
     WaterDetailComponent,
+    GraphEditComponent,
+    GraphAddComponent,
+    GraphDetailComponent,
     CuppingRadarComponent,
     CuppingFlavorsComponent,
     RemoveEmptyNumberDirective,
@@ -485,6 +505,7 @@ import { BrewGraphReferenceCardComponent } from '../../components/brew-graph-ref
     BrewPopoverActionsComponent,
     SettingsPopoverBluetoothActionsComponent,
     WaterPopoverActionsComponent,
+    GraphPopoverActionsComponent,
     BeanPopoverActionsComponent,
     BeanPopoverAddComponent,
     BeanArchivePopoverComponent,

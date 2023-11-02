@@ -4,9 +4,8 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { WaterSectionPageRoutingModule } from './water-section-routing.module';
+import { GraphSectionPageRoutingModule } from './graph-section-routing.module';
 
-import { WaterSectionPage } from './water-section.page';
 import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
@@ -14,9 +13,9 @@ import { SharedModule } from '../shared/shared.module';
     CommonModule,
     FormsModule,
     IonicModule,
-    WaterSectionPageRoutingModule,
+    GraphSectionPageRoutingModule,
     SharedModule,
   ],
   declarations: [],
 })
-export class WaterSectionPageModule {}
+export class GraphSectionPageModule {}

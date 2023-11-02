@@ -1,0 +1,68 @@
+:host {
+  ion-header {
+    background-color: #ffffff;
+  }
+
+  ion-toolbar {
+    height: 0px !important;
+    padding-top: 25px !important;
+  }
+
+
+  ion-label {
+    color: #938F89;
+    display: block;
+    position: relative;
+    top: 5px;
+  }
+
+  ion-text {
+    display: block;
+  }
+
+  .flow-icon-buttons {
+    ion-button {
+
+      --padding-bottom: 0px;
+      --padding-end: 0px;
+      --padding-start: 0px;
+      --padding-top: 0px;
+    }
+
+  }
+
+  ion-chip.weight {
+    --background: #cdc2ac;
+    --color: black;
+    margin-right: 0px;
+    margin-left: 10px;
+  }
+
+  ion-chip.flowcalculated {
+    --background: #7F97A2;
+    --color: white;
+    margin-right: 0px;
+  }
+
+  ion-chip.chip-outline {
+    --color: black !important;
+  }
+
+  ion-chip.flowreal {
+    --background: #09485D;
+    --color: white;
+    margin-right: 0px;
+  }
+
+  ion-chip.pressure {
+    --background: #05C793;
+    --color: black;
+    margin-right: 0px;
+  }
+
+  ion-chip.temperature {
+    --background: #CC3311;
+    --color: white;
+    margin-right: 0px;
+  }
+}

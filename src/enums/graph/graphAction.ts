@@ -1,0 +1,6 @@
+export enum GRAPH_ACTION {
+  DETAIL = 'DETAIL',
+  EDIT = 'EDIT',
+  DELETE = 'DELETE',
+  ARCHIVE = 'ARCHIVE',
+}

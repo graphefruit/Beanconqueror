@@ -75,6 +75,7 @@ import { UIExportImportHelper } from '../services/uiExportImportHelper';
 declare var AppRate;
 declare var window;
 import { register } from 'swiper/element/bundle';
+import { UIGraphStorage } from '../services/uiGraphStorage.service';
 
 register();
 @Component({
@@ -104,6 +105,11 @@ export class AppComponent implements AfterViewInit {
     water_section: {
       title: 'NAV_WATER_SECTION',
       url: '/water-section',
+      active: false,
+    },
+    graph_section: {
+      title: 'NAV_GRAPH_SECTION',
+      url: '/graph-section',
       active: false,
     },
     settings: {
@@ -246,7 +252,8 @@ export class AppComponent implements AfterViewInit {
     private readonly appVersion: AppVersion,
     private readonly storage: Storage,
     private readonly uiToast: UIToast,
-    private readonly uiExportImportHelper: UIExportImportHelper
+    private readonly uiExportImportHelper: UIExportImportHelper,
+    private readonly uiGraphStorage: UIGraphStorage
   ) {
     // Dont remove androidPlatformService, we need to initialize it via constructor
     try {
@@ -383,6 +390,7 @@ export class AppComponent implements AfterViewInit {
         await this.uiGreenBeanStorage.initializeStorage();
         await this.uiRoastingMachineStorage.initializeStorage();
         await this.uiWaterStorage.initializeStorage();
+        await this.uiGraphStorage.initializeStorage();
 
         // Wait for every necessary service to be ready before starting the app
         // Settings and version, will create a new object on start, so we need to wait for this in the end.
@@ -399,6 +407,7 @@ export class AppComponent implements AfterViewInit {
         const roastingMachineStorageCallback =
           this.uiRoastingMachineStorage.storageReady();
         const waterStorageCallback = this.uiWaterStorage.storageReady();
+        const graphStorageCallback = this.uiGraphStorage.storageReady();
 
         Promise.all([
           beanStorageReadyCallback,
@@ -410,6 +419,7 @@ export class AppComponent implements AfterViewInit {
           greenBeanStorageCallback,
           roastingMachineStorageCallback,
           waterStorageCallback,
+          graphStorageCallback,
         ]).then(
           async () => {
             this.uiLog.log('App finished loading');
@@ -450,6 +460,10 @@ export class AppComponent implements AfterViewInit {
   public showWaterSection() {
     const settings: Settings = this.uiSettingsStorage.getSettings();
     return settings.show_water_section;
+  }
+  public showGraphSection() {
+    const settings: Settings = this.uiSettingsStorage.getSettings();
+    return settings.show_graph_section;
   }
 
   private async __setDeviceLanguage(): Promise<any> {

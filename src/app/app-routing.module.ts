@@ -127,6 +127,13 @@ const routes: Routes = [
         (m) => m.BeanParameterPageModule
       ),
   },
+  {
+    path: 'graph-section',
+    loadChildren: () =>
+      import('./graph-section/graph-section.module').then(
+        (m) => m.GraphSectionPageModule
+      ),
+  },
 ];
 
 @NgModule({
