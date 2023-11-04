@@ -1,8 +1,8 @@
 <ion-item tappable>
-<ion-radio #radioEl justify="start" label-placement="end" value='{{this.brew.config.uuid}}'>
+<ion-radio #radioEl justify="start" label-placement="end"  value='{{isGraphType()===false?this.brew.config.uuid:this.graph.config.uuid}}'>
 <div class='brew-layout'>
 
-  <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow">
+  <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow"  *ngIf='isGraphType()===false'>
     <ion-row class="ion-padding-bottom-half">
       <ion-col size="6" *ngIf="uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.method_of_preparation,
                       brew.getPreparation().visible_list_view_parameters.method_of_preparation,
@@ -97,6 +97,9 @@
       </ion-col>
 
     </ion-row>
+  </ion-grid>
+  <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow"  *ngIf='isGraphType()===true'>
+    <h2>{{graph.name}}</h2>
   </ion-grid>
 
   <ion-spinner *ngIf='flowProfileLoading === true' name="dots"></ion-spinner>

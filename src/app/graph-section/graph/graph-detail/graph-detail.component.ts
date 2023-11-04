@@ -52,6 +52,7 @@ export class GraphDetailComponent implements OnInit {
   public data: Graph = new Graph();
 
   @Input() private graph: IGraph;
+  @Input() private flowProfileData: any;
 
   constructor(
     private readonly translate: TranslateService,
@@ -66,12 +67,18 @@ export class GraphDetailComponent implements OnInit {
   public ngOnInit() {}
   public async ionViewWillEnter() {
     this.settings = this.uiSettingsStorage.getSettings();
-    await this.readFlowProfile();
+
     this.uiAnalytics.trackEvent(
       GRAPH_TRACKING.TITLE,
       GRAPH_TRACKING.ACTIONS.DETAIL
     );
-    this.data = this.uiHelper.copyData(this.graph);
+    if (this.graph) {
+      this.data = this.uiHelper.copyData(this.graph);
+      await this.readFlowProfile();
+    } else {
+      this.flow_profile_raw = this.uiHelper.cloneData(this.flowProfileData);
+    }
+
     setTimeout(() => {
       this.initializeFlowChart();
     }, 750);

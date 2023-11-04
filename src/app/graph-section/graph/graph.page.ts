@@ -98,7 +98,7 @@ export class GraphPage implements OnInit {
   }
 
   public async add() {
-    this.uiGraphHelper.addGraph();
+    await this.uiGraphHelper.addGraph();
     this.load();
   }
 

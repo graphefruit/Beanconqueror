@@ -584,13 +584,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.lastChartRenderingInstance = -1;
     await modal.present();
     const rData = await modal.onWillDismiss();
-    if (rData?.data?.brew) {
+    if (rData?.data?.flow_profile) {
+      const flowProfileRtr = rData?.data?.flow_profile;
       // Set the new reference flow profile
-      this.data.reference_flow_profile = rData?.data?.brew.flow_profile;
-      console.log(this.data.reference_flow_profile);
-      const presetGraphData: any = await this.returnFlowProfile(
-        rData?.data?.brew
-      );
+      this.data.reference_flow_profile = flowProfileRtr;
+      const presetGraphData: any = await this.returnFlowProfile(flowProfileRtr);
       this.reference_profile_raw = presetGraphData;
       this.initializeFlowChart(true);
     } else if (rData?.data?.reset) {
@@ -2022,12 +2020,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
    * @param _uuid
    */
   public saveFlowProfile(_uuid: string): string {
-    const random = Math.floor(Math.random() * 10) + 1;
-
-    const t = [];
-    for (let i = 0; i < random; i++) {
-      t.push(i);
-    }
     const savingPath = 'brews/' + _uuid + '_flow_profile.json';
     this.uiFileHelper.saveJSONFile(
       savingPath,
@@ -3348,13 +3340,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private async returnFlowProfile(_brew: Brew) {
+  private async returnFlowProfile(_flowProfile: string) {
     const promiseRtr = new Promise(async (resolve) => {
       if (this.platform.is('cordova')) {
-        if (_brew.flow_profile !== '') {
+        if (_flowProfile !== '') {
           try {
             const jsonParsed = await this.uiFileHelper.getJSONFile(
-              _brew.flow_profile
+              _flowProfile
             );
             resolve(jsonParsed);
           } catch (ex) {}

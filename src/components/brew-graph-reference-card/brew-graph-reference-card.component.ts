@@ -16,8 +16,8 @@ import { Settings } from '../../classes/settings/settings';
 import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyleTypes';
 import { TranslateService } from '@ngx-translate/core';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { BREW_QUANTITY_TYPES_ENUM } from '../../enums/brews/brewQuantityTypes';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
+import { Graph } from '../../classes/graph/graph';
 declare var Plotly;
 @Component({
   selector: 'brew-graph-reference-card',
@@ -26,6 +26,7 @@ declare var Plotly;
 })
 export class BrewGraphReferenceCardComponent implements OnInit {
   @Input() public brew: Brew;
+  @Input() public graph: Graph;
   public flow_profile_raw: BrewFlow = new BrewFlow();
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   public settings: Settings;
@@ -62,6 +63,13 @@ export class BrewGraphReferenceCardComponent implements OnInit {
     }, 250);
   }
 
+  public isGraphType() {
+    if (this.graph !== null && this.graph !== undefined) {
+      return true;
+    }
+    return false;
+  }
+
   @HostListener('window:resize')
   @HostListener('window:orientationchange', ['$event'])
   public onOrientationChange(event) {
@@ -86,9 +94,14 @@ export class BrewGraphReferenceCardComponent implements OnInit {
 
     let tickFormat = '%S';
 
-    if (this.brew.brew_time > 59) {
+    if (!this.isGraphType()) {
+      if (this.brew.brew_time > 59) {
+        tickFormat = '%M:' + tickFormat;
+      }
+    } else {
       tickFormat = '%M:' + tickFormat;
     }
+
     /*  yaxis3: {
         title: '',
         titlefont: {color: '#09485D'},
@@ -201,11 +214,13 @@ export class BrewGraphReferenceCardComponent implements OnInit {
         Plotly.purge(this.profileDiv.nativeElement);
       } catch (ex) {}
       let graphSettings = this.settings.graph.FILTER;
-      if (
-        this.brew.getPreparation().style_type ===
-        PREPARATION_STYLE_TYPE.ESPRESSO
-      ) {
-        graphSettings = this.settings.graph.ESPRESSO;
+      if (!this.isGraphType()) {
+        if (
+          this.brew.getPreparation().style_type ===
+          PREPARATION_STYLE_TYPE.ESPRESSO
+        ) {
+          graphSettings = this.settings.graph.ESPRESSO;
+        }
       }
 
       this.weightTrace = {
@@ -377,10 +392,16 @@ export class BrewGraphReferenceCardComponent implements OnInit {
 
   private async readFlowProfile() {
     if (this.platform.is('cordova')) {
-      if (this.brew.flow_profile !== '') {
+      let flowProfilePath: string = '';
+      if (this.isGraphType()) {
+        flowProfilePath = this.graph.flow_profile;
+      } else {
+        flowProfilePath = this.brew.flow_profile;
+      }
+      if (flowProfilePath !== '') {
         try {
           const jsonParsed = await this.uiFileHelper.getJSONFile(
-            this.brew.flow_profile
+            flowProfilePath
           );
           this.flow_profile_raw = jsonParsed;
         } catch (ex) {}

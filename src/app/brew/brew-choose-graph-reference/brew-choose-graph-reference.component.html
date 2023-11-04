@@ -10,27 +10,53 @@
   </ion-toolbar>
 </ion-header>
 <ion-content #brewContent>
-  <ion-segment  (ionChange)="segmentChanged()" [(ngModel)]="brew_segment">
-    <ion-segment-button value="open">
-      <ion-label>{{"CURRENT" | translate }}
+  <ion-segment scrollable="true"  (ionChange)="segmentChanged()" [(ngModel)]="brew_segment">
+    <ion-segment-button value="graphs-open" *ngIf='graphOpenView?.length > 0'>
+      <ion-label>{{"GRAPHS" | translate }}
       </ion-label>
     </ion-segment-button>
-    <ion-segment-button value="archive">
-      <ion-label>{{"TAB_ARCHIVE" | translate }}
+    <ion-segment-button value="brews-open">
+      <ion-label>{{"BREWS_ACTIVE" | translate }}
+      </ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="brews-archive">
+      <ion-label>{{"BREWS_ARCHIVED" | translate }}
       </ion-label>
 
     </ion-segment-button>
   </ion-segment>
     <ion-radio-group [(ngModel)]="radioSelection">
       <div [ngSwitch]="brew_segment">
-        <div *ngSwitchCase="'open'">
+        <div *ngSwitchCase="'graphs-open'">
+          <ion-card *ngIf="graphOpenView.length > 0">
+            <ng-container *ngIf='graphOpenView?.length > 0'>
+              <ion-radio-group  [(ngModel)]="radioSelection">
+                <ag-virtual-scroll #graphOpenScroll [items]="graphOpenView" height="100vh" min-row-height="180">
+                  <brew-graph-reference-card  *ngFor="let graph of graphOpenScroll.items" [graph]="graph"></brew-graph-reference-card>
+                </ag-virtual-scroll>
+              </ion-radio-group>
+            </ng-container>
+            <div *ngIf="graphOpenView?.length == 0" class="ion-padding ion-text-center">
+              <div>
+                <ion-icon color="inactive" name="beanconqueror-cup" size="large"></ion-icon>
+              </div>
+              <div class="text-color-inactive ion-margin-top">
+                {{"PAGE_BREWS_NO_ENTRIES" | translate}}
+              </div>
+            </div>
+          </ion-card>
+        </div>
+
+
+
+        <div *ngSwitchCase="'brews-open'">
           <ion-card *ngIf="brewsOpen.length > 0">
             <div class="ion-justify-content-end container">
               <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="openBrewsFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
-              <ion-button (click)="showFilter('open')" fill="clear" size="small" tappable>
-                <ion-icon *ngIf="isFilterActive('open')"  name="beanconqueror-filter-active"
+              <ion-button (click)="showFilter('brews-open')" fill="clear" size="small" tappable>
+                <ion-icon *ngIf="isFilterActive('brews-open')"  name="beanconqueror-filter-active"
                           slot="icon-only"></ion-icon>
-                <ion-icon *ngIf="!isFilterActive('open')"  name="beanconqueror-filter-inactive"
+                <ion-icon *ngIf="!isFilterActive('brews-open')"  name="beanconqueror-filter-inactive"
                           slot="icon-only"></ion-icon>
               </ion-button>
             </div>
@@ -53,14 +79,14 @@
             </div>
           </ion-card>
         </div>
-        <div *ngSwitchCase="'archive'">
+        <div *ngSwitchCase="'brews-archive'">
           <ion-card *ngIf="brewsArchived.length > 0">
             <div class="ion-justify-content-end container">
               <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedBrewsFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
-              <ion-button (click)="showFilter('archive')" fill="clear" size="small" tappable>
-                <ion-icon *ngIf="isFilterActive('archive')"  name="beanconqueror-filter-active"
+              <ion-button (click)="showFilter('brews-archive')" fill="clear" size="small" tappable>
+                <ion-icon *ngIf="isFilterActive('brews-archive')"  name="beanconqueror-filter-active"
                           slot="icon-only"></ion-icon>
-                <ion-icon *ngIf="!isFilterActive('archive')"  name="beanconqueror-filter-inactive"
+                <ion-icon *ngIf="!isFilterActive('brews-archive')"  name="beanconqueror-filter-inactive"
                           slot="icon-only"></ion-icon>
               </ion-button>
             </div>

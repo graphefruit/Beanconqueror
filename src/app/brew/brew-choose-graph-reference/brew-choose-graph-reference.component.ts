@@ -14,6 +14,8 @@ import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
 import { BrewFilterComponent } from '../brew-filter/brew-filter.component';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
+import { UIGraphStorage } from '../../../services/uiGraphStorage.service';
+import { Graph } from '../../../classes/graph/graph';
 
 @Component({
   selector: 'app-brew-choose-graph-reference',
@@ -22,18 +24,20 @@ import { Settings } from '../../../classes/settings/settings';
 })
 export class BrewChooseGraphReferenceComponent implements OnInit {
   public static COMPONENT_ID: string = 'brew-choose-graph-reference';
-  public brew_segment: string = 'open';
+  public brew_segment: string = 'brews-open';
   public radioSelection: string;
+  public graphOpenView: Array<Graph> = [];
   public openBrewsView: Array<Brew> = [];
   public archiveBrewsView: Array<Brew> = [];
 
+  public graphsOpen: Array<Graph> = [];
   public brewsOpen: Array<Brew> = [];
   public brewsArchived: Array<Brew> = [];
 
   public openBrewsLength: number = 0;
   public archiveBrewsLength: number = 0;
   public brews: Array<Brew>;
-
+  public graphs: Array<Graph>;
   public openBrewsFilterText: string = '';
   public archivedBrewsFilterText: string = '';
 
@@ -45,6 +49,11 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
   public openScroll: AgVirtualSrollComponent;
   @ViewChild('archivedScroll', { read: AgVirtualSrollComponent, static: false })
   public archivedScroll: AgVirtualSrollComponent;
+  @ViewChild('graphOpenScroll', {
+    read: AgVirtualSrollComponent,
+    static: false,
+  })
+  public graphOpenScroll: AgVirtualSrollComponent;
 
   @ViewChild('brewContent', { read: ElementRef })
   public brewContent: ElementRef;
@@ -56,14 +65,20 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
     private readonly modalController: ModalController,
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly modalCtrl: ModalController,
-    private readonly uiSettingsStorage: UISettingsStorage
+    private readonly uiSettingsStorage: UISettingsStorage,
+    private readonly uiGraphStorage: UIGraphStorage
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     this.archivedBrewsFilter = this.settings.GET_BREW_FILTER();
     this.openBrewsFilter = this.settings.GET_BREW_FILTER();
   }
 
-  public ngOnInit() {}
+  public ngOnInit() {
+    const graphs = this.uiGraphStorage.getAllEntries();
+    if (graphs.filter((e) => e.finished === false).length > 0) {
+      this.brew_segment = 'graphs-open';
+    }
+  }
 
   public segmentChanged() {
     this.retriggerScroll();
@@ -83,16 +98,19 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
       let scrollComponent: AgVirtualSrollComponent;
       if (this.openScroll !== undefined) {
         scrollComponent = this.openScroll;
-      } else {
+      } else if (this.archivedScroll !== undefined) {
         scrollComponent = this.archivedScroll;
+      } else if (this.graphOpenScroll !== undefined) {
+        scrollComponent = this.graphOpenScroll;
       }
-
-      scrollComponent.el.style.height =
-        el.offsetHeight -
-        footerEl.offsetHeight -
-        10 -
-        scrollComponent.el.offsetTop +
-        'px';
+      if (scrollComponent) {
+        scrollComponent.el.style.height =
+          el.offsetHeight -
+          footerEl.offsetHeight -
+          10 -
+          scrollComponent.el.offsetTop +
+          'px';
+      }
     }, 150);
   }
 
@@ -101,16 +119,21 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
   }
   private __initializeBrews(): void {
     this.brews = this.uiBrewStorage.getAllEntries();
+    this.graphs = this.uiGraphStorage.getAllEntries();
     this.openBrewsView = [];
     this.archiveBrewsView = [];
+    this.graphsOpen = [];
 
-    this.__initializeBrewView('open');
-    this.__initializeBrewView('archiv');
+    this.__initializeBrewView('brews-open');
+    this.__initializeBrewView('brews-archiv');
+    this.__initializeGraphView('graphs-open');
+
     this.retriggerScroll();
   }
   public research() {
-    this.__initializeBrewView('open');
-    this.__initializeBrewView('archiv');
+    this.__initializeBrewView('brews-open');
+    this.__initializeBrewView('brews-archiv');
+    this.__initializeGraphView('graphs-open');
     this.retriggerScroll();
   }
 
@@ -155,7 +178,7 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
   public isFilterActive(_type: string) {
     let checkingFilter: IBrewPageFilter;
     let checkingFilterText: string = '';
-    if (_type === 'open') {
+    if (_type === 'brews-open') {
       checkingFilter = this.openBrewsFilter;
       checkingFilterText = this.openBrewsFilterText;
     } else {
@@ -181,12 +204,30 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
     );
   }
 
+  private __initializeGraphView(_type: string) {
+    const graphsCopy: Array<Graph> = [...this.graphs];
+    let graphsFilters: Array<Graph>;
+
+    const isOpen: boolean = _type === 'graphs-open';
+    if (isOpen) {
+      graphsFilters = graphsCopy.filter((e) => e.finished === false);
+    } else {
+      graphsFilters = graphsCopy.filter((e) => e.finished === true);
+    }
+
+    if (_type === 'graphs-open') {
+      this.graphOpenView = graphsFilters;
+    } else {
+      //this.archiveBrewsView = sortedBrews;
+    }
+  }
+
   private __initializeBrewView(_type: string): void {
     // sort latest to top.
     const brewsCopy: Array<Brew> = [...this.brews];
     let brewsFilters: Array<Brew>;
 
-    const isOpen: boolean = _type === 'open';
+    const isOpen: boolean = _type === 'brews-open';
     if (isOpen) {
       brewsFilters = brewsCopy.filter(
         (e) =>
@@ -280,7 +321,7 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
 
     let sortedBrews: Array<Brew> = UIBrewHelper.sortBrews(brewsFilters);
     let searchText: string = '';
-    if (_type === 'open') {
+    if (_type === 'brews-open') {
       searchText = this.openBrewsFilterText.toLowerCase();
     } else {
       searchText = this.archivedBrewsFilterText.toLowerCase();
@@ -295,17 +336,17 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
       );
     }
 
-    if (_type === 'open') {
+    if (_type === 'brews-open') {
       this.openBrewsView = sortedBrews;
     } else {
       this.archiveBrewsView = sortedBrews;
     }
   }
-  public chooseGraph(_brew: Brew) {
+  public chooseGraph(_flow_profile: string) {
     this.modalController.dismiss(
       {
         dismissed: true,
-        brew: _brew,
+        flow_profile: _flow_profile,
       },
       undefined,
       BrewChooseGraphReferenceComponent.COMPONENT_ID
@@ -313,7 +354,12 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
   }
   public choose() {
     const choosenBrew = this.uiBrewStorage.getByUUID(this.radioSelection);
-    this.chooseGraph(choosenBrew);
+    if (choosenBrew) {
+      this.chooseGraph(choosenBrew.flow_profile);
+    } else {
+      const choosenGraph = this.uiGraphStorage.getByUUID(this.radioSelection);
+      this.chooseGraph(choosenGraph.flow_profile);
+    }
   }
   public reset() {
     this.modalController.dismiss(

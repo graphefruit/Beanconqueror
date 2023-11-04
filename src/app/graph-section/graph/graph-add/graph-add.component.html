@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>{{"EDIT_GRAPH" | translate}}</ion-title>
+    <ion-title>{{"ADD_GRAPH" | translate}}</ion-title>
     <ion-buttons slot="start">
       <ion-button (click)="dismiss()" class="big-icon-only">
         <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
@@ -17,9 +17,14 @@
                    autocapitalize="sentences" required>
         </ion-input>
       </ion-item>
-      <ion-item [button]="true" (click)='chooseGraph()'>
+      <ion-item [button]="true" (click)='uploadGraph()'>
         <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
-        <ion-label>{{"VISUALIZER.UPLOAD_ALL" | translate}}</ion-label>
+        <ion-label>{{"GRAPH.UPLOAD" | translate}}</ion-label>
+      </ion-item>
+      <ion-item [button]="true" (click)='showGraph()'>
+        <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
+        <ion-label>{{"GRAPH.SHOW" | translate}}</ion-label>
+
       </ion-item>
       <ion-item lines="none">
         <ion-label id='notes' position="stacked">{{"NOTES" | translate}}</ion-label>
