@@ -926,6 +926,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               this.ngZone.run(() => {
                 this.timerStartPressed('AUTO_START_PRESSURE');
 
+                //User can press both, so deattach to scale listening, because pressure will hit before then first drops normaly.
+                this.deattachToScaleListening();
+
                 setTimeout(() => {
                   this.changeDetectorRef.markForCheck();
                   this.timer.checkChanges();

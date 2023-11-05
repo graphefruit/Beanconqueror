@@ -186,7 +186,6 @@ export class GraphInformationCardComponent implements OnInit {
     if (this.graph.flow_profile) {
       await this.uiFileHelper.deleteFile(this.graph.flow_profile);
     }
-
     await this.uiGraphStorage.removeByObject(this.graph);
   }
 
