@@ -9,6 +9,7 @@ import { IFlavor } from '../flavor/iFlavor';
 import { BrewFlow } from '../../classes/brew/brewFlow';
 import { IPreparationDeviceBrew } from './iPreparationDeviceBrew';
 import { ICustomInformationBrew } from './ICustomInformationBrew';
+import { IReferenceGraph } from './iReferenceGraph';
 
 export interface IBrew {
   // Properties
@@ -155,7 +156,7 @@ export interface IBrew {
 
   flow_profile: string;
 
-  reference_flow_profile: string;
+  reference_flow_profile: IReferenceGraph;
 
   preparationDeviceBrew: IPreparationDeviceBrew;
 

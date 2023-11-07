@@ -16,6 +16,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
 import { UIGraphStorage } from '../../../services/uiGraphStorage.service';
 import { Graph } from '../../../classes/graph/graph';
+import { UIGraphHelper } from '../../../services/uiGraphHelper';
 
 @Component({
   selector: 'app-brew-choose-graph-reference',
@@ -66,7 +67,8 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly modalCtrl: ModalController,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiGraphStorage: UIGraphStorage
+    private readonly uiGraphStorage: UIGraphStorage,
+    private readonly uiGraphHelper: UIGraphHelper
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     this.archivedBrewsFilter = this.settings.GET_BREW_FILTER();
@@ -89,6 +91,16 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
     this.retriggerScroll();
   }
 
+  public async addOwnGraph() {
+    await this.uiGraphHelper.addGraph();
+    const graphs = this.uiGraphStorage.getAllEntries();
+    if (graphs.filter((e) => e.finished === false).length === 1) {
+      // Means we just added one, so jump to this section now
+      this.brew_segment = 'graphs-open';
+    }
+    this.__initializeBrews();
+  }
+
   private retriggerScroll() {
     setTimeout(async () => {
       const el = this.brewContent.nativeElement;
@@ -107,7 +119,7 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
         scrollComponent.el.style.height =
           el.offsetHeight -
           footerEl.offsetHeight -
-          10 -
+          15 -
           scrollComponent.el.offsetTop +
           'px';
       }
@@ -342,23 +354,27 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
       this.archiveBrewsView = sortedBrews;
     }
   }
-  public chooseGraph(_flow_profile: string) {
+  public chooseGraph(_brew: Brew = null, _graph: Graph = null) {
     this.modalController.dismiss(
       {
         dismissed: true,
-        flow_profile: _flow_profile,
+        brew: _brew,
+        graph: _graph,
       },
       undefined,
       BrewChooseGraphReferenceComponent.COMPONENT_ID
     );
   }
   public choose() {
-    const choosenBrew = this.uiBrewStorage.getByUUID(this.radioSelection);
-    if (choosenBrew) {
-      this.chooseGraph(choosenBrew.flow_profile);
+    const radioSelection = this.radioSelection;
+    if (radioSelection.startsWith('BREW-')) {
+      const brewId = radioSelection.replace('BREW-', '');
+      const choosenBrew: Brew = this.uiBrewStorage.getByUUID(brewId);
+      this.chooseGraph(choosenBrew, null);
     } else {
-      const choosenGraph = this.uiGraphStorage.getByUUID(this.radioSelection);
-      this.chooseGraph(choosenGraph.flow_profile);
+      const graphId = radioSelection.replace('GRAPH-', '');
+      const choosenGraph: Graph = this.uiGraphStorage.getByUUID(graphId);
+      this.chooseGraph(null, choosenGraph);
     }
   }
   public reset() {

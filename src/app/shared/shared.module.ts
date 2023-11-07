@@ -181,6 +181,7 @@ import { GraphPage } from '../graph-section/graph/graph.page';
 import { GraphEditComponent } from '../graph-section/graph/graph-edit/graph-edit.component';
 import { GraphAddComponent } from '../graph-section/graph/graph-add/graph-add.component';
 import { GraphDetailComponent } from '../graph-section/graph/graph-detail/graph-detail.component';
+import { GraphDisplayCardComponent } from '../../components/graph-display-card/graph-display-card.component';
 
 @NgModule({
   declarations: [
@@ -267,6 +268,7 @@ import { GraphDetailComponent } from '../graph-section/graph/graph-detail/graph-
     AsyncImageComponent,
     BrewInformationComponent,
     BrewGraphReferenceCardComponent,
+    GraphDisplayCardComponent,
     BeanInformationComponent,
     PreparationInformationCardComponent,
     MillInformationCardComponent,
@@ -471,6 +473,7 @@ import { GraphDetailComponent } from '../graph-section/graph/graph-detail/graph-
     AsyncImageComponent,
     BrewInformationComponent,
     BrewGraphReferenceCardComponent,
+    GraphDisplayCardComponent,
     BeanInformationComponent,
     PreparationInformationCardComponent,
     MillInformationCardComponent,

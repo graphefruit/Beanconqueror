@@ -17,15 +17,19 @@
                    autocapitalize="sentences" required>
         </ion-input>
       </ion-item>
-      <ion-item [button]="true" (click)='uploadGraph()'>
-        <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
+      <ion-item [button]="true" *ngIf='flowData === undefined' (click)='uploadGraph()'>
         <ion-label>{{"GRAPH.UPLOAD" | translate}}</ion-label>
+        <ion-icon slot="end" name="cloud-upload-outline"></ion-icon>
       </ion-item>
-      <ion-item [button]="true" (click)='showGraph()'>
-        <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
-        <ion-label>{{"GRAPH.SHOW" | translate}}</ion-label>
-
-      </ion-item>
+      <ng-container  *ngIf='flowData !== undefined'>
+        <div style='padding-left:10px;padding-right:10px;'>
+          <graph-display-card (click)='showGraph()' [flowProfileData]='flowData'></graph-display-card>
+        </div>
+        <ion-item [button]="true" (click)='deleteGraph()'>
+          <ion-label>{{"GRAPH.DELETE" | translate}}</ion-label>
+          <ion-icon slot="end" name="trash-outline"></ion-icon>
+        </ion-item>
+      </ng-container>
       <ion-item lines="none">
         <ion-label id='notes' position="stacked">{{"NOTES" | translate}}</ion-label>
         <ion-textarea style='margin-top:20px;' aria-labelledby='notes' #note="ngModel" [(ngModel)]="data.note" autocapitalize="sentences" autocomplete="true"
@@ -42,7 +46,7 @@
                   tappable>{{"CANCEL" | translate}}</ion-button>
     </ion-col>
     <ion-col>
-      <ion-button (click)="addGraph(addGraphForm)" color="accent" expand="block" tappable
+      <ion-button [disabled]='saveDisabled()' (click)="addGraph(addGraphForm)" color="accent" expand="block" tappable
                   type="submit">{{"SAVE" | translate}}</ion-button>
     </ion-col>
   </ion-row>

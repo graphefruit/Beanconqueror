@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Graph } from '../../../../classes/graph/graph';
 
-import { ModalController, NavParams } from '@ionic/angular';
+import { ModalController, NavParams, Platform } from '@ionic/angular';
 import { UIGraphStorage } from '../../../../services/uiGraphStorage.service';
 import { UIHelper } from '../../../../services/uiHelper';
 import { UIToast } from '../../../../services/uiToast';
@@ -9,6 +9,7 @@ import { UIAnalytics } from '../../../../services/uiAnalytics';
 import GRAPH_TRACKING from '../../../../data/tracking/graphTracking';
 import { UIGraphHelper } from '../../../../services/uiGraphHelper';
 import { BrewFlow } from '../../../../classes/brew/brewFlow';
+import BeanconquerorFlowTestDataDummy from '../../../../assets/BeanconquerorFlowTestDataFifth.json';
 
 @Component({
   selector: 'app-graph-add',
@@ -18,7 +19,7 @@ import { BrewFlow } from '../../../../classes/brew/brewFlow';
 export class GraphAddComponent implements OnInit {
   public static COMPONENT_ID = 'graph-add';
   public data: Graph = new Graph();
-  public flowData: BrewFlow;
+  public flowData: BrewFlow = undefined;
 
   constructor(
     private readonly navParams: NavParams,
@@ -27,7 +28,8 @@ export class GraphAddComponent implements OnInit {
     private readonly uiHelper: UIHelper,
     private readonly uiToast: UIToast,
     private readonly uiAnalytics: UIAnalytics,
-    private readonly uiGraphHelper: UIGraphHelper
+    private readonly uiGraphHelper: UIGraphHelper,
+    private readonly platform: Platform
   ) {}
 
   public ionViewWillEnter(): void {
@@ -37,6 +39,16 @@ export class GraphAddComponent implements OnInit {
     );
   }
 
+  public saveDisabled(): boolean {
+    if (
+      this.data.name === undefined ||
+      this.data.name === '' ||
+      this.flowData === undefined
+    ) {
+      return true;
+    }
+    return false;
+  }
   public async addGraph(form) {
     if (form.valid) {
       await this.__addGraph();
@@ -45,14 +57,21 @@ export class GraphAddComponent implements OnInit {
 
   public async uploadGraph() {
     try {
-      const data: any = await this.uiGraphHelper.chooseGraph();
-      if (
-        data &&
-        (data?.weight || data?.pressureFlow || data?.temperatureFlow)
-      ) {
-        this.flowData = data as BrewFlow;
+      if (this.platform.is('cordova')) {
+        const data: any = await this.uiGraphHelper.chooseGraph();
+        if (
+          data &&
+          (data?.weight || data?.pressureFlow || data?.temperatureFlow)
+        ) {
+          this.flowData = data as BrewFlow;
+        }
+      } else {
+        this.flowData = BeanconquerorFlowTestDataDummy as BrewFlow;
       }
     } catch (ex) {}
+  }
+  public async deleteGraph() {
+    this.flowData = undefined;
   }
 
   public async showGraph() {

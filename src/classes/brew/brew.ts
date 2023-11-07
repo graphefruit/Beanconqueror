@@ -29,6 +29,8 @@ import { IPreparationDeviceBrew } from '../../interfaces/brew/iPreparationDevice
 import { PreparationDeviceBrew } from './preparationDeviceBrew';
 import { ICustomInformationBrew } from '../../interfaces/brew/ICustomInformationBrew';
 import { CustomInformationBrew } from './customInformationBrew';
+import { IReferenceGraph } from '../../interfaces/brew/iReferenceGraph';
+import { ReferenceGraph } from './referenceGraph';
 
 export class Brew implements IBrew {
   // tslint:disable-next-line
@@ -104,7 +106,7 @@ export class Brew implements IBrew {
   public flow_profile: string;
 
   // Inherits the referenced saved json path
-  public reference_flow_profile: string;
+  public reference_flow_profile: IReferenceGraph;
 
   public preparationDeviceBrew: IPreparationDeviceBrew;
   public customInformation: ICustomInformationBrew;
@@ -177,7 +179,7 @@ export class Brew implements IBrew {
     this.vessel_weight = 0;
 
     this.flow_profile = '';
-    this.reference_flow_profile = '';
+    this.reference_flow_profile = new ReferenceGraph();
 
     this.preparationDeviceBrew = new PreparationDeviceBrew();
     this.customInformation = new CustomInformationBrew();
@@ -682,5 +684,9 @@ export class Brew implements IBrew {
     }
 
     return fixNeeded;
+  }
+  public getGraphPath() {
+    const savingPath = 'brews/' + this.config.uuid + '_flow_profile.json';
+    return savingPath;
   }
 }

@@ -74,15 +74,14 @@ import {
 } from '../../../classes/preparationDevice/xenia/xeniaDevice';
 import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
-import {
-  RefractionResultEvent,
-  RefractometerDevice,
-} from 'src/classes/devices/refractometerBluetoothDevice';
+import { RefractometerDevice } from 'src/classes/devices/refractometerBluetoothDevice';
 import { UIToast } from '../../../services/uiToast';
 import { UILog } from '../../../services/uiLog';
 import { BrewMaximizeControlsComponent } from '../../../app/brew/brew-maximize-controls/brew-maximize-controls.component';
 import { BrewChooseGraphReferenceComponent } from '../../../app/brew/brew-choose-graph-reference/brew-choose-graph-reference.component';
 import BeanconquerorFlowTestDataDummy from '../../../assets/BeanconquerorFlowTestDataFifth.json';
+import { ReferenceGraph } from '../../../classes/brew/referenceGraph';
+import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
 
 declare var cordova;
 declare var Plotly;
@@ -584,16 +583,28 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.lastChartRenderingInstance = -1;
     await modal.present();
     const rData = await modal.onWillDismiss();
-    if (rData?.data?.flow_profile) {
-      const flowProfileRtr = rData?.data?.flow_profile;
+    if (rData?.data?.brew || rData?.data?.graph) {
+      let flowProfileRtr: string = '';
       // Set the new reference flow profile
-      this.data.reference_flow_profile = flowProfileRtr;
+      const refGraph: ReferenceGraph = new ReferenceGraph();
+
+      if (rData?.data?.brew) {
+        refGraph.type = REFERENCE_GRAPH_TYPE.BREW;
+        refGraph.uuid = rData?.data?.brew.config.uuid;
+        flowProfileRtr = rData?.data?.brew.flow_profile;
+      } else {
+        refGraph.uuid = rData?.data?.graph.config.uuid;
+        refGraph.type = REFERENCE_GRAPH_TYPE.GRAPH;
+        flowProfileRtr = rData?.data?.graph.flow_profile;
+      }
+      this.data.reference_flow_profile = refGraph;
+
       const presetGraphData: any = await this.returnFlowProfile(flowProfileRtr);
       this.reference_profile_raw = presetGraphData;
       this.initializeFlowChart(true);
     } else if (rData?.data?.reset) {
       // Reset the reference flow profile
-      this.data.reference_flow_profile = '';
+      this.data.reference_flow_profile = new ReferenceGraph();
       this.reference_profile_raw = new BrewFlow();
       this.initializeFlowChart(true);
     }
@@ -4274,7 +4285,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
 
     this.data.flow_profile = '';
-    this.data.reference_flow_profile = '';
+    this.data.reference_flow_profile = new ReferenceGraph();
 
     await this.instancePreparationDevice(brew);
   }

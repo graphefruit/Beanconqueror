@@ -68,6 +68,8 @@ import { UIExportImportHelper } from '../../services/uiExportImportHelper';
 import { ScaleType } from '../../classes/devices';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
+import { UIGraphStorage } from '../../services/uiGraphStorage.service';
+import { Graph } from '../../classes/graph/graph';
 
 declare var cordova: any;
 declare var device: any;
@@ -136,6 +138,7 @@ export class SettingsPage implements OnInit {
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiBrewStorage: UIBrewStorage,
+    private readonly uiGraphStorage: UIGraphStorage,
     private readonly uiMillStorage: UIMillStorage,
     private readonly socialSharing: SocialSharing,
     private readonly uiLog: UILog,
@@ -1004,6 +1007,10 @@ export class SettingsPage implements OnInit {
     const exportObjects: Array<any> = [...this.uiBrewStorage.getAllEntries()];
     await this._exportFlowProfiles(exportObjects);
   }
+  private async exportGraphProfiles() {
+    const exportObjects: Array<any> = [...this.uiGraphStorage.getAllEntries()];
+    await this._exportGraphProfiles(exportObjects);
+  }
 
   public async export() {
     await this.uiAlert.showLoadingSpinner();
@@ -1053,6 +1060,7 @@ export class SettingsPage implements OnInit {
           if (this.platform.is('android')) {
             await this.exportAttachments();
             await this.exportFlowProfiles();
+            await this.exportGraphProfiles();
           }
         }
         const file: FileEntry = await this.uiFileHelper.downloadFile(
@@ -1078,6 +1086,7 @@ export class SettingsPage implements OnInit {
                     if (this.platform.is('android')) {
                       await this.exportAttachments();
                       await this.exportFlowProfiles();
+                      await this.exportGraphProfiles();
                       await this.uiAlert.hideLoadingSpinner();
 
                       const alert = await this.alertCtrl.create({
@@ -1196,6 +1205,14 @@ export class SettingsPage implements OnInit {
   }
 
   private async _exportFlowProfiles(_storedData: Array<Brew>) {
+    for (const entry of _storedData) {
+      if (entry.flow_profile && entry.flow_profile.length) {
+        await this._exportFlowProfileFile(entry.flow_profile);
+      }
+    }
+  }
+
+  private async _exportGraphProfiles(_storedData: Array<Graph>) {
     for (const entry of _storedData) {
       if (entry.flow_profile && entry.flow_profile.length) {
         await this._exportFlowProfileFile(entry.flow_profile);
@@ -1385,6 +1402,16 @@ export class SettingsPage implements OnInit {
 
   private async _importFlowProfileFiles(
     _storedData: Array<Brew>,
+    _importPath: string
+  ) {
+    for (const entry of _storedData) {
+      if (entry.flow_profile) {
+        await this._importFileFlowProfile(entry.flow_profile, _importPath);
+      }
+    }
+  }
+  private async _importGraphProfileFiles(
+    _storedData: Array<Graph>,
     _importPath: string
   ) {
     for (const entry of _storedData) {
@@ -1680,6 +1707,9 @@ export class SettingsPage implements OnInit {
       if (!parsedContent[this.uiVersionStorage.getDBPath()]) {
         parsedContent[this.uiVersionStorage.getDBPath()] = [];
       }
+      if (!parsedContent[this.uiGraphStorage.getDBPath()]) {
+        parsedContent[this.uiGraphStorage.getDBPath()] = [];
+      }
       if (
         parsedContent[this.uiPreparationStorage.getDBPath()] &&
         parsedContent[this.uiBeanStorage.getDBPath()] &&
@@ -1739,6 +1769,8 @@ export class SettingsPage implements OnInit {
                       this.uiRoastingMachineStorage.getAllEntries();
                     const waterData: Array<Water> =
                       this.uiWaterStorage.getAllEntries();
+                    const graphData: Array<Graph> =
+                      this.uiGraphStorage.getAllEntries();
 
                     await this._importFiles(brewsData, _importPath);
                     await this._importFiles(beansData, _importPath);
@@ -1756,6 +1788,11 @@ export class SettingsPage implements OnInit {
                     await this._importFlowProfileFiles(
                       brewsData,
                       _importPath + 'brews/'
+                    );
+
+                    await this._importGraphProfileFiles(
+                      graphData,
+                      _importPath + 'graphs/'
                     );
                   }
 

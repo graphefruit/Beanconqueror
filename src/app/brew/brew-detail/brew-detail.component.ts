@@ -34,6 +34,11 @@ import BeanconquerorFlowTestDataDummySecond from '../../../assets/BeanconquerorF
 import { UILog } from '../../../services/uiLog';
 import { UIToast } from '../../../services/uiToast';
 import { Visualizer } from '../../../classes/visualizer/visualizer';
+import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
+import { UIGraphStorage } from '../../../services/uiGraphStorage.service';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { Graph } from '../../../classes/graph/graph';
+
 declare var Plotly;
 @Component({
   selector: 'brew-detail',
@@ -88,7 +93,9 @@ export class BrewDetailComponent implements OnInit {
     private readonly screenOrientation: ScreenOrientation,
     private readonly alertCtrl: AlertController,
     private readonly uiLog: UILog,
-    private readonly uiToast: UIToast
+    private readonly uiToast: UIToast,
+    private readonly uiGraphStorage: UIGraphStorage,
+    private readonly uiBrewStorage: UIBrewStorage
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -900,15 +907,27 @@ export class BrewDetailComponent implements OnInit {
 
   private async readReferenceFlowProfile(_brew: Brew) {
     if (this.platform.is('cordova')) {
-      if (_brew.reference_flow_profile !== '') {
-        await this.uiAlert.showLoadingSpinner();
-        try {
-          const jsonParsed = await this.uiFileHelper.getJSONFile(
-            _brew.reference_flow_profile
-          );
-          this.reference_profile_raw = jsonParsed;
-        } catch (ex) {
-          // Maybe the reference flow has been deleted.
+      if (_brew.reference_flow_profile.type !== REFERENCE_GRAPH_TYPE.NONE) {
+        let referencePath: string = '';
+        const uuid = _brew.reference_flow_profile.uuid;
+        let referenceObj: Brew | Graph = null;
+        if (_brew.reference_flow_profile.type === REFERENCE_GRAPH_TYPE.BREW) {
+          referenceObj = this.uiBrewStorage.getByUUID(uuid);
+        } else {
+          referenceObj = this.uiGraphStorage.getByUUID(uuid);
+        }
+        if (referenceObj) {
+          referencePath = referenceObj.getGraphPath();
+
+          await this.uiAlert.showLoadingSpinner();
+          try {
+            const jsonParsed = await this.uiFileHelper.getJSONFile(
+              referencePath
+            );
+            this.reference_profile_raw = jsonParsed;
+          } catch (ex) {
+            // Maybe the reference flow has been deleted.
+          }
         }
       }
       await this.uiAlert.hideLoadingSpinner();

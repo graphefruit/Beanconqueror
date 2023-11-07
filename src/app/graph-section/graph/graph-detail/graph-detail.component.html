@@ -1,4 +1,4 @@
-<ion-header #graphHeader>
+<ion-header>
   <ion-grid class="ion-no-padding">
     <ion-row>
 
@@ -28,8 +28,7 @@
     </ion-row>
   </ion-grid>
 </ion-header>
-<ion-content #graphDetail>
-
+<ion-content>
   <ion-spinner *ngIf='flowProfileLoading === true' name="dots"></ion-spinner>
   <div #canvaContainer style='height:100%'>
     <div  #profileDiv></div>

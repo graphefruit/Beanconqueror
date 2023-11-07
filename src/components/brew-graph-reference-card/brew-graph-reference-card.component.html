@@ -1,5 +1,5 @@
-<ion-item tappable>
-<ion-radio #radioEl justify="start" label-placement="end"  value='{{isGraphType()===false?this.brew.config.uuid:this.graph.config.uuid}}'>
+<ion-item #ionItemEl tappable>
+<ion-radio #radioEl justify="start" label-placement="end"  value='{{isGraphType()===false?"BREW-" + this.brew.config.uuid:"GRAPH-" + this.graph.config.uuid}}'>
 <div class='brew-layout'>
 
   <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow"  *ngIf='isGraphType()===false'>
@@ -101,12 +101,12 @@
   <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow"  *ngIf='isGraphType()===true'>
     <h2>{{graph.name}}</h2>
   </ion-grid>
-
-  <ion-spinner *ngIf='flowProfileLoading === true' name="dots"></ion-spinner>
-  <div #canvaContainer>
-    <div  #profileDiv></div>
-  </div>
-
+  <ng-container *ngIf='isGraphType() && graph.flow_profile'>
+     <graph-display-card [chartWidth]='getElementOffsetWidth()' [flowProfilePath]='graph.flow_profile'></graph-display-card>
+  </ng-container>
+  <ng-container *ngIf='!isGraphType() && brew.flow_profile'>
+    <graph-display-card [chartWidth]='getElementOffsetWidth()' [flowProfilePath]='brew.flow_profile'></graph-display-card>
+  </ng-container>
 </div>
 <div style="height:10px;"></div>
 </ion-radio>

@@ -6,27 +6,28 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import moment from 'moment/moment';
-import BeanconquerorFlowTestDataDummy from '../../../../assets/BeanconquerorFlowTestDataFourth.json';
-import { BrewFlow } from '../../../../classes/brew/brewFlow';
-import { Settings } from '../../../../classes/settings/settings';
+import { BrewFlow } from '../../classes/brew/brewFlow';
+import { Settings } from '../../classes/settings/settings';
+import moment from 'moment';
+import BeanconquerorFlowTestDataDummy from '../../assets/BeanconquerorFlowTestDataFourth.json';
 import { TranslateService } from '@ngx-translate/core';
-import { Graph } from '../../../../classes/graph/graph';
-import { IGraph } from '../../../../interfaces/graph/iGraph';
-import GRAPH_TRACKING from '../../../../data/tracking/graphTracking';
-import { UIAnalytics } from '../../../../services/uiAnalytics';
-import { UIHelper } from '../../../../services/uiHelper';
-import { ModalController, Platform } from '@ionic/angular';
-import { UIFileHelper } from '../../../../services/uiFileHelper';
-import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
+import { UIHelper } from '../../services/uiHelper';
+import { UIFileHelper } from '../../services/uiFileHelper';
+import { Platform } from '@ionic/angular';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+
 declare var Plotly;
 @Component({
-  selector: 'app-graph-detail',
-  templateUrl: './graph-detail.component.html',
-  styleUrls: ['./graph-detail.component.scss'],
+  selector: 'graph-display-card',
+  templateUrl: './graph-display-card.component.html',
+  styleUrls: ['./graph-display-card.component.scss'],
 })
-export class GraphDetailComponent implements OnInit {
-  public static COMPONENT_ID = 'graph-detail';
+export class GraphDisplayCardComponent implements OnInit {
+  @Input() private flowProfileData: any;
+  @Input() private flowProfilePath: any;
+
+  @Input() private chartWidth: number;
+
   public flow_profile_raw: BrewFlow = new BrewFlow();
 
   public settings: Settings;
@@ -36,67 +37,31 @@ export class GraphDetailComponent implements OnInit {
   private realtimeFlowTrace: any;
   private pressureTrace: any;
   private temperatureTrace: any;
-  public lastChartLayout: any = undefined;
+
   public flowProfileLoading: boolean = true;
 
   @ViewChild('canvaContainer', { read: ElementRef, static: true })
   public canvaContainer: ElementRef;
   @ViewChild('profileDiv', { read: ElementRef, static: true })
   public profileDiv: ElementRef;
-
-  public data: Graph = new Graph();
-
-  @Input() private graph: IGraph;
-  @Input() private flowProfileData: any;
-
   constructor(
     private readonly translate: TranslateService,
-    private readonly uiAnalytics: UIAnalytics,
     private readonly uiHelper: UIHelper,
-    private readonly platform: Platform,
     private readonly uiFileHelper: UIFileHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly modalController: ModalController
+    private readonly platform: Platform,
+    private readonly uiSettingsStorage: UISettingsStorage
   ) {}
 
-  public ngOnInit() {}
-  public async ionViewWillEnter() {
+  public async ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
-
-    this.uiAnalytics.trackEvent(
-      GRAPH_TRACKING.TITLE,
-      GRAPH_TRACKING.ACTIONS.DETAIL
-    );
-    if (this.graph) {
-      this.data = this.uiHelper.copyData(this.graph);
+    if (this.flowProfilePath) {
       await this.readFlowProfile();
     } else {
       this.flow_profile_raw = this.uiHelper.cloneData(this.flowProfileData);
     }
-  }
-  public async ionViewDidEnter() {
     setTimeout(() => {
       this.initializeFlowChart();
-      setTimeout(() => {
-        // After the chips are not visible actually, we need to relayout, when we're in portrait format, else we get a scrolling bar, because the chips are higher
-        Plotly.relayout(this.profileDiv.nativeElement, this.getChartLayout());
-      }, 300);
     }, 50);
-  }
-  public toggleChartLines(_type: string) {
-    if (_type === 'weight') {
-      this.weightTrace.visible = !this.weightTrace.visible;
-    } else if (_type === 'calc_flow') {
-      this.flowPerSecondTrace.visible = !this.flowPerSecondTrace.visible;
-    } else if (_type === 'realtime_flow') {
-      this.realtimeFlowTrace.visible = !this.realtimeFlowTrace.visible;
-    } else if (_type === 'pressure') {
-      this.pressureTrace.visible = !this.pressureTrace.visible;
-    } else if (_type === 'temperature') {
-      this.temperatureTrace.visible = !this.temperatureTrace.visible;
-    }
-
-    Plotly.relayout(this.profileDiv.nativeElement, this.lastChartLayout);
   }
 
   @HostListener('window:resize')
@@ -109,7 +74,8 @@ export class GraphDetailComponent implements OnInit {
 
   private getChartConfig() {
     const config = {
-      responsive: true,
+      responsive: false,
+      scrollZoom: false,
       displayModeBar: false, // this is the line that hides the bar.
     };
     return config;
@@ -118,9 +84,12 @@ export class GraphDetailComponent implements OnInit {
     /* Important - we use scatter instead of scattergl, because we can't have many openGL contexts
      * - https://github.com/plotly/plotly.js/issues/2333 -
      * */
-    const chartWidth: number = this.canvaContainer.nativeElement.offsetWidth;
+    let chartWidth: number = this.canvaContainer.nativeElement.offsetWidth - 10;
+    if (this.chartWidth && this.chartWidth > 0) {
+      chartWidth = this.chartWidth;
+    }
 
-    const chartHeight: number = this.canvaContainer.nativeElement.offsetHeight;
+    const chartHeight: number = 150;
 
     let tickFormat = '%S';
 
@@ -147,9 +116,15 @@ export class GraphDetailComponent implements OnInit {
         pad: 2,
       },
       showlegend: false,
+      dragmode: false,
+      hovermode: false,
+      clickmode: 'none',
+      extendtreemapcolors: false,
+      extendiciclecolors: false,
       xaxis: {
         tickformat: tickFormat,
         visible: true,
+        fixedrange: true,
         domain: [0, 1],
         type: 'date',
       },
@@ -160,6 +135,7 @@ export class GraphDetailComponent implements OnInit {
         side: 'left',
         position: 0.05,
         visible: true,
+        fixedrange: true,
       },
       yaxis2: {
         title: '',
@@ -170,6 +146,7 @@ export class GraphDetailComponent implements OnInit {
         side: 'right',
         position: 0.95,
         showgrid: false,
+        fixedrange: true,
         visible: true,
       },
     };
@@ -181,6 +158,7 @@ export class GraphDetailComponent implements OnInit {
       anchor: 'free',
       overlaying: 'y',
       side: 'right',
+      fixedrange: true,
       showgrid: false,
       position: 0.93,
       range: [0, 10],
@@ -220,7 +198,6 @@ export class GraphDetailComponent implements OnInit {
       layout['yaxis5'].visible = false;
     }
 
-    this.lastChartLayout = layout;
     return layout;
   }
   public initializeFlowChart(): void {
@@ -399,10 +376,10 @@ export class GraphDetailComponent implements OnInit {
 
   private async readFlowProfile() {
     if (this.platform.is('cordova')) {
-      if (this.graph.flow_profile !== '') {
+      if (this.flowProfilePath !== '') {
         try {
           const jsonParsed = await this.uiFileHelper.getJSONFile(
-            this.graph.flow_profile
+            this.flowProfilePath
           );
           this.flow_profile_raw = jsonParsed;
         } catch (ex) {}
@@ -415,14 +392,5 @@ export class GraphDetailComponent implements OnInit {
     try {
       Plotly.purge(this.profileDiv.nativeElement);
     } catch (ex) {}
-  }
-  public dismiss(): void {
-    this.modalController.dismiss(
-      {
-        dismissed: true,
-      },
-      undefined,
-      GraphDetailComponent.COMPONENT_ID
-    );
   }
 }

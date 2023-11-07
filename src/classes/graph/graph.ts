@@ -21,4 +21,8 @@ export class Graph implements IGraph {
   public initializeByObject(graphObj: IGraph): void {
     Object.assign(this, graphObj);
   }
+  public getGraphPath() {
+    const savingPath = 'graphs/' + this.config.uuid + '_flow_profile.json';
+    return savingPath;
+  }
 }
