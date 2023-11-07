@@ -9,5 +9,6 @@ export default {
     EDIT_FINISH: 'EDIT_FINISH',
     DELETE: 'DELETE',
     ARCHIVE: 'ARCHIVE',
+    SHARE: 'SHARE',
   },
 };

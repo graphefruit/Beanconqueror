@@ -15,6 +15,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { FileEntry } from '@awesome-cordova-plugins/file';
 import { UILog } from './uiLog';
 import { UIFileHelper } from './uiFileHelper';
+import BeanconquerorFlowTestDataDummy from '../assets/BeanconquerorFlowTestDataFourth.json';
 
 /**
  * Handles every helping functionalities
@@ -154,6 +155,27 @@ export class UIGraphHelper {
     const savingPath = 'graphs/' + _uuid + '_flow_profile.json';
     this.uiFileHelper.saveJSONFile(savingPath, JSON.stringify(_jsonObj));
     return savingPath;
+  }
+
+  public async readFlowProfile(_flowProfilePath: string) {
+    return new Promise(async (resolve, reject) => {
+      if (this.platform.is('cordova')) {
+        if (_flowProfilePath !== '') {
+          try {
+            const jsonParsed = await this.uiFileHelper.getJSONFile(
+              _flowProfilePath
+            );
+            resolve(jsonParsed);
+          } catch (ex) {
+            reject();
+          }
+        } else {
+          reject();
+        }
+      } else {
+        resolve(BeanconquerorFlowTestDataDummy as any);
+      }
+    });
   }
 
   private async __readAndroidJSONFile(_fileEntry: FileEntry): Promise<any> {

@@ -3,4 +3,5 @@ export enum GRAPH_ACTION {
   EDIT = 'EDIT',
   DELETE = 'DELETE',
   ARCHIVE = 'ARCHIVE',
+  SHARE = 'SHARE',
 }

@@ -28,6 +28,8 @@ import { UIFileHelper } from '../../services/uiFileHelper';
 import { TranslateService } from '@ngx-translate/core';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
+import { BrewFlow } from '../../classes/brew/brewFlow';
+import { UIHelper } from '../../services/uiHelper';
 
 declare var Plotly;
 @Component({
@@ -54,7 +56,8 @@ export class GraphInformationCardComponent implements OnInit {
     private readonly uiFileHelper: UIFileHelper,
     private readonly translate: TranslateService,
     private readonly uiSettingsStorage: UISettingsStorage,
-    protected readonly uiBrewHelper: UIBrewHelper
+    protected readonly uiBrewHelper: UIBrewHelper,
+    private readonly uiHelper: UIHelper
   ) {}
 
   public async ngOnInit() {
@@ -106,6 +109,9 @@ export class GraphInformationCardComponent implements OnInit {
       case GRAPH_ACTION.ARCHIVE:
         await this.archive();
         break;
+      case GRAPH_ACTION.SHARE:
+        await this.share();
+        break;
       default:
         break;
     }
@@ -118,6 +124,30 @@ export class GraphInformationCardComponent implements OnInit {
     this.graph.finished = true;
     await this.uiGraphStorage.update(this.graph);
     this.uiToast.showInfoToast('TOAST_GRAPH_ARCHIVED_SUCCESSFULLY');
+  }
+
+  public async share() {
+    this.uiAnalytics.trackEvent(
+      GRAPH_TRACKING.TITLE,
+      GRAPH_TRACKING.ACTIONS.SHARE
+    );
+    try {
+      const flowData: BrewFlow = (await this.uiGraphHelper.readFlowProfile(
+        this.graph.flow_profile
+      )) as BrewFlow;
+      const exportData = {
+        NAME: this.graph.name,
+        NOTE: this.graph.note,
+        DATA: flowData,
+      };
+      try {
+        await this.uiHelper.exportJSON(
+          this.graph.config.uuid + '_export.json',
+          JSON.stringify(exportData),
+          true
+        );
+      } catch (ex) {}
+    } catch (ex) {}
   }
 
   public async longPressEdit(event) {

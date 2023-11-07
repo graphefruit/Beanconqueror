@@ -4,18 +4,18 @@
 
       <ion-col size="11">
 <div>
-          <ion-chip (click)="toggleChartLines('weight')" [outline]="!weightTrace?.visible" *ngIf="weightTrace.x.length > 0"
+          <ion-chip (click)="toggleChartLines('weight')" [outline]="!weightTrace?.visible" *ngIf="weightTrace?.x?.length > 0"
                     class="weight">{{'BREW_FLOW_WEIGHT' | translate}}</ion-chip>
-          <ion-chip (click)="toggleChartLines('calc_flow')"  *ngIf="weightTrace.x.length > 0"
+          <ion-chip (click)="toggleChartLines('calc_flow')"  *ngIf="weightTrace?.x?.length > 0"
                     [outline]="!flowPerSecondTrace?.visible"
                     class="flowcalculated">{{'BREW_FLOW_WEIGHT_PER_SECOND' | translate}}</ion-chip>
-          <ion-chip (click)="toggleChartLines('realtime_flow')"  *ngIf="weightTrace.x.length > 0"
+          <ion-chip (click)="toggleChartLines('realtime_flow')"  *ngIf="weightTrace?.x?.length > 0"
                     [outline]="!realtimeFlowTrace?.visible" class="flowreal">{{'BREW_FLOW_WEIGHT_REALTIME' |
             translate}}</ion-chip>
-          <ion-chip (click)="toggleChartLines('pressure')"  *ngIf="pressureTrace.x.length > 0"
+          <ion-chip (click)="toggleChartLines('pressure')"  *ngIf="pressureTrace?.x?.length > 0"
                     [outline]="!pressureTrace?.visible" class="pressure">{{'BREW_PRESSURE_FLOW' |
             translate}}</ion-chip>
-          <ion-chip (click)="toggleChartLines('temperature')" *ngIf="temperatureTrace.x.length > 0"
+          <ion-chip (click)="toggleChartLines('temperature')" *ngIf="temperatureTrace?.x?.length > 0"
                     [outline]="!temperatureTrace?.visible" class="temperature">{{'BREW_TEMPERATURE_REALTIME' |
             translate}}</ion-chip>
 </div>

@@ -109,7 +109,24 @@ export class GraphEditComponent implements OnInit {
           data &&
           (data?.weight || data?.pressureFlow || data?.temperatureFlow)
         ) {
+          // Export from a normal flow data
           this.flowData = data as BrewFlow;
+        } else {
+          // Export from graph object
+          if (
+            data &&
+            (data?.DATA?.weight ||
+              data?.DATA?.pressureFlow ||
+              data?.DATA?.temperatureFlow)
+          ) {
+            this.flowData = data.DATA as BrewFlow;
+            if (data.NAME) {
+              this.data.name = data.NAME;
+            }
+            if (data.NOTE) {
+              this.data.note = data.NOTE;
+            }
+          }
         }
       } else {
         this.flowData = BeanconquerorFlowTestDataDummy as BrewFlow;

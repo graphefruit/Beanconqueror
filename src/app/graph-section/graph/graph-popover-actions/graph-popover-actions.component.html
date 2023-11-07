@@ -10,6 +10,10 @@
       <ion-icon name="beanconqueror-edit" slot="start"></ion-icon>
       <span>{{"EDIT" | translate}}</span>
     </ion-item>
+    <ion-item (click)="choose(getStaticActions().SHARE)" button tappable>
+      <ion-icon name="share-social-outline" slot="start"></ion-icon>
+      <span>{{"SHARE" | translate}}</span>
+    </ion-item>
     <ion-item (click)="choose(getStaticActions().ARCHIVE)" *ngIf="data.finished === false" button tappable>
       <ion-icon name="beanconqueror-finished" slot="start"></ion-icon>
       <span>{{"ARCHIVE" | translate}}</span>

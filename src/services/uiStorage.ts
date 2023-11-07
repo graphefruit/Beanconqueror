@@ -76,7 +76,6 @@ export class UIStorage {
       let hasData: boolean = false;
       this.storage
         .forEach((_value, _key, _index) => {
-          console.log(_value);
           if (_key === 'SETTINGS' || _key === 'VERSION') {
             //Settings and version will be set realy early... so we don't relay on those
           } else if (
