@@ -105,17 +105,18 @@ export class GraphAddComponent implements OnInit {
 
   public async __addGraph() {
     const addedGraphObj: Graph = await this.uiGraphStorage.add(this.data);
-    const flowPath: string = this.uiGraphHelper.saveGraph(
-      addedGraphObj.config.uuid,
-      this.flowData
-    );
-    addedGraphObj.flow_profile = flowPath;
-    await this.uiGraphStorage.update(addedGraphObj);
-
+    try {
+      const flowPath: string = await this.uiGraphHelper.saveGraph(
+        addedGraphObj.config.uuid,
+        this.flowData
+      );
+      addedGraphObj.flow_profile = flowPath;
+      await this.uiGraphStorage.update(addedGraphObj);
+    } catch (ex) {}
     this.uiToast.showInfoToast('TOAST_GRAPH_ADD_SUCCESSFULLY');
     this.uiAnalytics.trackEvent(
       GRAPH_TRACKING.TITLE,
-      GRAPH_TRACKING.ACTIONS.EDIT_FINISH
+      GRAPH_TRACKING.ACTIONS.ADD_FINISH
     );
     this.dismiss();
   }

@@ -72,11 +72,13 @@ export class GraphEditComponent implements OnInit {
   public async __editGraph() {
     if (this.flowDataHasBeenChanged === true) {
       // Resave the new flow because a user has updated to a new one.
-      const flowPath: string = this.uiGraphHelper.saveGraph(
-        this.data.config.uuid,
-        this.flowData
-      );
-      this.data.flow_profile = flowPath;
+      try {
+        const flowPath: string = await this.uiGraphHelper.saveGraph(
+          this.data.config.uuid,
+          this.flowData
+        );
+        this.data.flow_profile = flowPath;
+      } catch (ex) {}
     }
     await this.uiGraphStorage.update(this.data);
     this.uiToast.showInfoToast('TOAST_GRAPH_EDITED_SUCCESSFULLY');
