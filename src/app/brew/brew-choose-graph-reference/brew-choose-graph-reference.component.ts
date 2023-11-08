@@ -17,6 +17,7 @@ import { Settings } from '../../../classes/settings/settings';
 import { UIGraphStorage } from '../../../services/uiGraphStorage.service';
 import { Graph } from '../../../classes/graph/graph';
 import { UIGraphHelper } from '../../../services/uiGraphHelper';
+import { UIAlert } from '../../../services/uiAlert';
 
 @Component({
   selector: 'app-brew-choose-graph-reference',
@@ -68,7 +69,8 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
     private readonly modalCtrl: ModalController,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiGraphStorage: UIGraphStorage,
-    private readonly uiGraphHelper: UIGraphHelper
+    private readonly uiGraphHelper: UIGraphHelper,
+    private readonly uiAlert: UIAlert
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     this.archivedBrewsFilter = this.settings.GET_BREW_FILTER();
@@ -103,6 +105,13 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
       if (this.settings.show_graph_section === false) {
         this.settings.show_graph_section = true;
         await this.uiSettingsStorage.update(this.settings);
+
+        this.uiAlert.showMessage(
+          'GRAPH_SECTION.SECTION_HAS_BEEN_ACTIVATED',
+          undefined,
+          undefined,
+          true
+        );
       }
     }
     this.__initializeBrews();

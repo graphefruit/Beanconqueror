@@ -1647,11 +1647,13 @@
     "GRAPH_SECTION": {
       "NAV_GRAPH": "Grafen",
       "NO_ARCHIVED_ENTRIES": "Keine archivierten Einträge",
-      "NO_ENTRIES": "Keine Einträge"
+      "NO_ENTRIES": "Keine Einträge",
+      "SECTION_HAS_BEEN_ACTIVATED": "Grafbereich wurde aktiviert"
     },
     "TOAST_GRAPH_ARCHIVED_SUCCESSFULLY": "Graf archiviert",
     "TOAST_GRAPH_DELETED_SUCCESSFULLY": "Graf gelöscht",
     "TOAST_GRAPH_EDITED_SUCCESSFULLY": "Graf editiert",
+    "TOAST_GRAPH_ADD_SUCCESSFULLY": "Graf hinzugefügt",
     "NAV_GRAPH_SECTION": "Grafen",
     "DELETE_GRAPH_QUESTION": "Möchtest du diesen Grafen löschen?",
     "PAGE_SETTINGS_SHOW_ARCHIVED_GRAPHS": "Anzeige archivierter Grafen",
