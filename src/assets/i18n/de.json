@@ -1643,5 +1643,28 @@
     "SMART_SCALE_IGNORE_INCOMING_WEIGHT_TOOLTIP": "Ein neuer Button erscheint in der Brühung, hierdurch werden neue Gewichtswerte der Bluetooth-Waage ignoriert",
     "BREWS_ACTIVE": "Aktive Brühungen",
     "BREWS_ARCHIVED": "Archivierte Brühungen",
-    "GRAPHS": "Grafen"
+    "GRAPHS": "Grafen",
+    "GRAPH_SECTION": {
+      "NAV_GRAPH": "Grafen",
+      "NO_ARCHIVED_ENTRIES": "Keine archivierten Einträge"
+    },
+    "TOAST_GRAPH_ARCHIVED_SUCCESSFULLY": "Graf archiviert",
+    "TOAST_GRAPH_DELETED_SUCCESSFULLY": "Graf gelöscht",
+    "TOAST_GRAPH_EDITED_SUCCESSFULLY": "Graf editiert",
+    "NAV_GRAPH_SECTION": "Grafen",
+    "DELETE_GRAPH_QUESTION": "Möchtest du diesen Grafen löschen?",
+    "PAGE_SETTINGS_SHOW_ARCHIVED_GRAPHS": "Anzeige archivierter Grafen",
+    "PAGE_SETTINGS_SHOW_GRAPH_SECTION": "Grafenbereich aktivieren",
+    "EDIT_GRAPH": "Graf editieren",
+    "ADD_GRAPH": "Graf hinzufügen",
+    "GRAPH": {
+      "PLACE_HOLDER":{
+        "NAME": "Grafen name",
+        "NOTES": "Notizen"
+      },
+      "UPLOAD": "Graf hochladen",
+      "DELETE": "Graf löschen"
+    }
+
+
 }

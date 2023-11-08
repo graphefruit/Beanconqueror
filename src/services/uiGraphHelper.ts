@@ -23,6 +23,7 @@ import BeanconquerorFlowTestDataDummy from '../assets/BeanconquerorFlowTestDataF
 
 declare var window: any;
 declare var Filepicker;
+
 @Injectable({
   providedIn: 'root',
 })
@@ -69,6 +70,7 @@ export class UIGraphHelper {
     await modal.present();
     await modal.onWillDismiss();
   }
+
   public async detailGraphRawData(_flowData: any) {
     const modal = await this.modalController.create({
       component: GraphDetailComponent,
@@ -93,21 +95,27 @@ export class UIGraphHelper {
                 )
             );
 
-            this.__readAndroidJSONFile(fileEntry).then(
-              (_data) => {
-                // nothing todo
-                resolve(_data);
-              },
-              (_err2) => {
-                reject();
-                this.uiAlert.showMessage(
-                  this.translate.instant('ERROR_ON_FILE_READING') +
-                    ' (' +
-                    JSON.stringify(_err2) +
-                    ')'
-                );
-              }
-            );
+            if (fileEntry.name.toLowerCase().endsWith('.json')) {
+              this.__readAndroidJSONFile(fileEntry).then(
+                (_data) => {
+                  // nothing todo
+                  resolve(_data);
+                },
+                (_err2) => {
+                  reject();
+                  this.uiAlert.showMessage(
+                    this.translate.instant('ERROR_ON_FILE_READING') +
+                      ' (' +
+                      JSON.stringify(_err2) +
+                      ')'
+                  );
+                }
+              );
+            } else {
+              this.uiAlert.showMessage(
+                this.translate.instant('INVALID_FILE_FORMAT')
+              );
+            }
           } catch (ex) {
             reject();
             this.uiAlert.showMessage(

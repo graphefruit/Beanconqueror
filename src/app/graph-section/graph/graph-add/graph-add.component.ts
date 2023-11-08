@@ -10,6 +10,8 @@ import GRAPH_TRACKING from '../../../../data/tracking/graphTracking';
 import { UIGraphHelper } from '../../../../services/uiGraphHelper';
 import { BrewFlow } from '../../../../classes/brew/brewFlow';
 import BeanconquerorFlowTestDataDummy from '../../../../assets/BeanconquerorFlowTestDataFifth.json';
+import { UIAlert } from '../../../../services/uiAlert';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-graph-add',
@@ -29,7 +31,9 @@ export class GraphAddComponent implements OnInit {
     private readonly uiToast: UIToast,
     private readonly uiAnalytics: UIAnalytics,
     private readonly uiGraphHelper: UIGraphHelper,
-    private readonly platform: Platform
+    private readonly platform: Platform,
+    private readonly uiAlert: UIAlert,
+    private readonly translate: TranslateService
   ) {}
 
   public ionViewWillEnter(): void {
@@ -80,6 +84,10 @@ export class GraphAddComponent implements OnInit {
             if (data.NOTE) {
               this.data.note = data.NOTE;
             }
+          } else {
+            this.uiAlert.showMessage(
+              this.translate.instant('INVALID_FILE_FORMAT')
+            );
           }
         }
       } else {
