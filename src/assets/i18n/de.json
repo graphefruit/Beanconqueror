@@ -1646,7 +1646,8 @@
     "GRAPHS": "Grafen",
     "GRAPH_SECTION": {
       "NAV_GRAPH": "Grafen",
-      "NO_ARCHIVED_ENTRIES": "Keine archivierten Einträge"
+      "NO_ARCHIVED_ENTRIES": "Keine archivierten Einträge",
+      "NO_ENTRIES": "Keine Einträge"
     },
     "TOAST_GRAPH_ARCHIVED_SUCCESSFULLY": "Graf archiviert",
     "TOAST_GRAPH_DELETED_SUCCESSFULLY": "Graf gelöscht",
