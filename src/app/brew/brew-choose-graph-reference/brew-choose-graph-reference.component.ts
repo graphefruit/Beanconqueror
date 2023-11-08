@@ -94,9 +94,16 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
   public async addOwnGraph() {
     await this.uiGraphHelper.addGraph();
     const graphs = this.uiGraphStorage.getAllEntries();
-    if (graphs.filter((e) => e.finished === false).length === 1) {
+    const activeGraphs = graphs.filter((e) => e.finished === false).length;
+    if (activeGraphs === 1) {
       // Means we just added one, so jump to this section now
       this.brew_segment = 'graphs-open';
+    }
+    if (activeGraphs >= 1) {
+      if (this.settings.show_graph_section === false) {
+        this.settings.show_graph_section = true;
+        await this.uiSettingsStorage.update(this.settings);
+      }
     }
     this.__initializeBrews();
   }
