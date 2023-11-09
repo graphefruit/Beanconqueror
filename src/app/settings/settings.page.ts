@@ -1037,7 +1037,6 @@ export class SettingsPage implements OnInit {
             reader.readAsDataURL(_blob);
             reader.onloadend = () => {
               let base64data = reader.result.toString();
-              console.log(base64data);
               base64data = base64data.replace(
                 'data:application/octet-stream;',
                 'data:application/zip;'

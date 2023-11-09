@@ -38,7 +38,10 @@ export class BrewGraphReferenceCardComponent implements OnInit {
   ) {}
 
   public getElementOffsetWidth() {
-    return this.ionItemEl?.nativeElement?.offsetWidth - 50;
+    if (this.ionItemEl?.nativeElement?.offsetWidth) {
+      return this.ionItemEl?.nativeElement?.offsetWidth - 50;
+    }
+    return 0;
   }
 
   public async ngOnInit() {
