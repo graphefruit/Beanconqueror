@@ -85,6 +85,7 @@ import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
 
 declare var cordova;
 declare var Plotly;
+
 @Component({
   selector: 'brew-brewing',
   templateUrl: './brew-brewing.component.html',
@@ -242,6 +243,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.data.note = scriptInformation;
     }
   }
+
   private getScriptName(_index: number) {
     try {
       if (_index <= 2) {
@@ -259,6 +261,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       return 'Script not found';
     }
   }
+
   public getActivePreparationTools() {
     return this.data.getPreparation().tools.filter((e) => e.archived === false);
   }
@@ -609,6 +612,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.initializeFlowChart(true);
     }
   }
+
   public async maximizeFlowGraph() {
     if (this.maximizeFlowGraphIsShown === true) {
       return;
@@ -729,76 +733,84 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           this.preparationDeviceConnected() &&
           this.data.preparationDeviceBrew.params.scriptAtWeightReachedNumber > 0
         ) {
-          let weight: number = this.uiHelper.toFixedIfNecessary(_val.actual, 1);
-          if (this.ignoreScaleWeight === true) {
-            if (this.flowProfileTempAll.length > 0) {
-              const oldFlowProfileTemp =
-                this.flowProfileTempAll[this.flowProfileTempAll.length - 1];
-              weight = this.uiHelper.toFixedIfNecessary(
-                oldFlowProfileTemp.weight,
-                1
-              );
+          if (this.isFirstXeniaScriptSet()) {
+            let weight: number = this.uiHelper.toFixedIfNecessary(
+              _val.actual,
+              1
+            );
+            if (this.ignoreScaleWeight === true) {
+              if (this.flowProfileTempAll.length > 0) {
+                const oldFlowProfileTemp =
+                  this.flowProfileTempAll[this.flowProfileTempAll.length - 1];
+                weight = this.uiHelper.toFixedIfNecessary(
+                  oldFlowProfileTemp.weight,
+                  1
+                );
+              }
             }
-          }
-          if (
-            weight >=
-            this.data.preparationDeviceBrew.params.scriptAtWeightReachedNumber
-          ) {
-            if (xeniaScriptStopWasTriggered === false) {
-              if (
-                this.data.preparationDeviceBrew.params.scriptAtWeightReachedId >
-                0
-              ) {
-                this.uiLog.log(
-                  `Xenia Script - Weight Reached: ${weight} - Trigger custom script`
-                );
-                this.preparationDevice
-                  .startScript(
+            if (
+              weight >=
+              this.data.preparationDeviceBrew.params.scriptAtWeightReachedNumber
+            ) {
+              if (this.isFirstXeniaScriptSet()) {
+                if (xeniaScriptStopWasTriggered === false) {
+                  if (
                     this.data.preparationDeviceBrew.params
-                      .scriptAtWeightReachedId
-                  )
-                  .catch((_msg) => {
-                    this.uiToast.showInfoToast(
-                      'We could not start script at weight: ' + _msg,
-                      false
+                      .scriptAtWeightReachedId > 0
+                  ) {
+                    this.uiLog.log(
+                      `Xenia Script - Weight Reached: ${weight} - Trigger custom script`
                     );
-                  });
-                this.writeExecutionTimeToNotes(
-                  'Weight reached script',
-                  this.data.preparationDeviceBrew.params
-                    .scriptAtWeightReachedId,
-                  this.getScriptName(
-                    this.data.preparationDeviceBrew.params
-                      .scriptAtWeightReachedId
-                  )
-                );
-              } else {
-                this.uiLog.log(
-                  `Xenia Script - Weight Reached - Trigger stop script`
-                );
-                // Instant stop!
-                this.preparationDevice.stopScript().catch((_msg) => {
-                  this.uiToast.showInfoToast(
-                    'We could not stop script at weight: ' + _msg,
+                    this.preparationDevice
+                      .startScript(
+                        this.data.preparationDeviceBrew.params
+                          .scriptAtWeightReachedId
+                      )
+                      .catch((_msg) => {
+                        this.uiToast.showInfoToast(
+                          'We could not start script at weight: ' + _msg,
+                          false
+                        );
+                      });
+                    this.writeExecutionTimeToNotes(
+                      'Weight reached script',
+                      this.data.preparationDeviceBrew.params
+                        .scriptAtWeightReachedId,
+                      this.getScriptName(
+                        this.data.preparationDeviceBrew.params
+                          .scriptAtWeightReachedId
+                      )
+                    );
+                  } else {
+                    this.uiLog.log(
+                      `Xenia Script - Weight Reached - Trigger stop script`
+                    );
+                    // Instant stop!
+                    this.preparationDevice.stopScript().catch((_msg) => {
+                      this.uiToast.showInfoToast(
+                        'We could not stop script at weight: ' + _msg,
+                        false
+                      );
+                    });
+                    this.writeExecutionTimeToNotes(
+                      'Stop script',
+                      0,
+                      this.getScriptName(0)
+                    );
+                  }
+                  if (
+                    this.settings
+                      .bluetooth_scale_espresso_stop_on_no_weight_change ===
                     false
-                  );
-                });
-                this.writeExecutionTimeToNotes(
-                  'Stop script',
-                  0,
-                  this.getScriptName(0)
-                );
+                  ) {
+                    this.stopFetchingAndSettingDataFromXenia();
+                    this.timer.pauseTimer('xenia');
+                  } else {
+                    // We weight for the normal "setFlow" to stop the detection of the graph, there then aswell is the stop fetch of the xenia triggered.
+                  }
+                  xeniaScriptStopWasTriggered = true;
+                }
               }
-              if (
-                this.settings
-                  .bluetooth_scale_espresso_stop_on_no_weight_change === false
-              ) {
-                this.stopFetchingAndSettingDataFromXenia();
-                this.timer.pauseTimer('xenia');
-              } else {
-                // We weight for the normal "setFlow" to stop the detection of the graph, there then aswell is the stop fetch of the xenia triggered.
-              }
-              xeniaScriptStopWasTriggered = true;
             }
           }
         }
@@ -1045,24 +1057,28 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.preparationDeviceConnected() &&
       this.data.preparationDeviceBrew.params.scriptAtFirstDripId > -1
     ) {
-      this.uiLog.log(
-        `Xenia Script - Script at first drip -  Trigger custom script`
-      );
-      this.preparationDevice
-        .startScript(this.data.preparationDeviceBrew.params.scriptAtFirstDripId)
-        .catch((_msg) => {
-          this.uiToast.showInfoToast(
-            'We could not start script at first drip: ' + _msg,
-            false
-          );
-        });
-      this.writeExecutionTimeToNotes(
-        'First drip script',
-        this.data.preparationDeviceBrew.params.scriptAtFirstDripId,
-        this.getScriptName(
-          this.data.preparationDeviceBrew.params.scriptAtFirstDripId
-        )
-      );
+      if (this.isFirstXeniaScriptSet()) {
+        this.uiLog.log(
+          `Xenia Script - Script at first drip -  Trigger custom script`
+        );
+        this.preparationDevice
+          .startScript(
+            this.data.preparationDeviceBrew.params.scriptAtFirstDripId
+          )
+          .catch((_msg) => {
+            this.uiToast.showInfoToast(
+              'We could not start script at first drip: ' + _msg,
+              false
+            );
+          });
+        this.writeExecutionTimeToNotes(
+          'First drip script',
+          this.data.preparationDeviceBrew.params.scriptAtFirstDripId,
+          this.getScriptName(
+            this.data.preparationDeviceBrew.params.scriptAtFirstDripId
+          )
+        );
+      }
     }
   }
 
@@ -1414,6 +1430,15 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
   }
 
+  private isFirstXeniaScriptSet() {
+    if (this.preparationDeviceConnected()) {
+      if (this.data.preparationDeviceBrew.params.scriptStartId > 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public startFetchingAndSettingDataFromXenia() {
     this.stopFetchingAndSettingDataFromXenia();
     const setTempAndPressure = () => {
@@ -1519,6 +1544,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
     }, 50);
   }
+
   public coffeeFirstDripTimeChanged(_event): void {
     if (this.brewFirstDripTime) {
       this.data.coffee_first_drip_time = this.brewFirstDripTime.getSeconds();
@@ -1532,28 +1558,30 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
     if (!this.smartScaleConnected() && this.preparationDeviceConnected()) {
       // If scale is not connected but the device, we can now choose that still the script is executed if existing.
-      if (this.data.preparationDeviceBrew.params.scriptAtFirstDripId > 0) {
-        this.uiLog.log(
-          `Xenia Script - Script at first drip -  Trigger custom script`
-        );
-        this.preparationDevice
-          .startScript(
-            this.data.preparationDeviceBrew.params.scriptAtFirstDripId
-          )
-          .catch((_msg) => {
-            this.uiToast.showInfoToast(
-              'We could not start script at first drip - manual  triggered: ' +
-                _msg,
-              false
-            );
-          });
-        this.writeExecutionTimeToNotes(
-          'First drip script',
-          this.data.preparationDeviceBrew.params.scriptAtFirstDripId,
-          this.getScriptName(
-            this.data.preparationDeviceBrew.params.scriptAtFirstDripId
-          )
-        );
+      if (this.isFirstXeniaScriptSet()) {
+        if (this.data.preparationDeviceBrew.params.scriptAtFirstDripId > 0) {
+          this.uiLog.log(
+            `Xenia Script - Script at first drip -  Trigger custom script`
+          );
+          this.preparationDevice
+            .startScript(
+              this.data.preparationDeviceBrew.params.scriptAtFirstDripId
+            )
+            .catch((_msg) => {
+              this.uiToast.showInfoToast(
+                'We could not start script at first drip - manual  triggered: ' +
+                  _msg,
+                false
+              );
+            });
+          this.writeExecutionTimeToNotes(
+            'First drip script',
+            this.data.preparationDeviceBrew.params.scriptAtFirstDripId,
+            this.getScriptName(
+              this.data.preparationDeviceBrew.params.scriptAtFirstDripId
+            )
+          );
+        }
       }
     }
   }
@@ -1604,9 +1632,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public ignoreWeightClicked() {
     this.ignoreScaleWeight = true;
   }
+
   public unignoreWeightClicked() {
     this.ignoreScaleWeight = false;
   }
+
   public async timerPaused(_event) {
     const scale: BluetoothScale = this.bleManager.getScale();
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
@@ -2069,6 +2099,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       } catch (ex) {}
     });
   }
+
   public setActualPressureInformation(_pressure) {
     this.ngZone.runOutsideAngular(() => {
       if (this.maximizeFlowGraphIsShown === true) {
@@ -2086,6 +2117,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       } catch (ex) {}
     });
   }
+
   public setActualTemperatureInformation(_temperature) {
     this.ngZone.runOutsideAngular(() => {
       if (this.maximizeFlowGraphIsShown === true) {
@@ -2103,6 +2135,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       } catch (ex) {}
     });
   }
+
   public getActualScaleWeight() {
     try {
       return this.uiHelper.toFixedIfNecessary(
