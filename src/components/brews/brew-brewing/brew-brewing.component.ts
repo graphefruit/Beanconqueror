@@ -752,64 +752,61 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               weight >=
               this.data.preparationDeviceBrew.params.scriptAtWeightReachedNumber
             ) {
-              if (this.isFirstXeniaScriptSet()) {
-                if (xeniaScriptStopWasTriggered === false) {
-                  if (
-                    this.data.preparationDeviceBrew.params
-                      .scriptAtWeightReachedId > 0
-                  ) {
-                    this.uiLog.log(
-                      `Xenia Script - Weight Reached: ${weight} - Trigger custom script`
-                    );
-                    this.preparationDevice
-                      .startScript(
-                        this.data.preparationDeviceBrew.params
-                          .scriptAtWeightReachedId
-                      )
-                      .catch((_msg) => {
-                        this.uiToast.showInfoToast(
-                          'We could not start script at weight: ' + _msg,
-                          false
-                        );
-                      });
-                    this.writeExecutionTimeToNotes(
-                      'Weight reached script',
+              if (xeniaScriptStopWasTriggered === false) {
+                if (
+                  this.data.preparationDeviceBrew.params
+                    .scriptAtWeightReachedId > 0
+                ) {
+                  this.uiLog.log(
+                    `Xenia Script - Weight Reached: ${weight} - Trigger custom script`
+                  );
+                  this.preparationDevice
+                    .startScript(
                       this.data.preparationDeviceBrew.params
-                        .scriptAtWeightReachedId,
-                      this.getScriptName(
-                        this.data.preparationDeviceBrew.params
-                          .scriptAtWeightReachedId
-                      )
-                    );
-                  } else {
-                    this.uiLog.log(
-                      `Xenia Script - Weight Reached - Trigger stop script`
-                    );
-                    // Instant stop!
-                    this.preparationDevice.stopScript().catch((_msg) => {
+                        .scriptAtWeightReachedId
+                    )
+                    .catch((_msg) => {
                       this.uiToast.showInfoToast(
-                        'We could not stop script at weight: ' + _msg,
+                        'We could not start script at weight: ' + _msg,
                         false
                       );
                     });
-                    this.writeExecutionTimeToNotes(
-                      'Stop script',
-                      0,
-                      this.getScriptName(0)
+                  this.writeExecutionTimeToNotes(
+                    'Weight reached script',
+                    this.data.preparationDeviceBrew.params
+                      .scriptAtWeightReachedId,
+                    this.getScriptName(
+                      this.data.preparationDeviceBrew.params
+                        .scriptAtWeightReachedId
+                    )
+                  );
+                } else {
+                  this.uiLog.log(
+                    `Xenia Script - Weight Reached - Trigger stop script`
+                  );
+                  // Instant stop!
+                  this.preparationDevice.stopScript().catch((_msg) => {
+                    this.uiToast.showInfoToast(
+                      'We could not stop script at weight: ' + _msg,
+                      false
                     );
-                  }
-                  if (
-                    this.settings
-                      .bluetooth_scale_espresso_stop_on_no_weight_change ===
-                    false
-                  ) {
-                    this.stopFetchingAndSettingDataFromXenia();
-                    this.timer.pauseTimer('xenia');
-                  } else {
-                    // We weight for the normal "setFlow" to stop the detection of the graph, there then aswell is the stop fetch of the xenia triggered.
-                  }
-                  xeniaScriptStopWasTriggered = true;
+                  });
+                  this.writeExecutionTimeToNotes(
+                    'Stop script',
+                    0,
+                    this.getScriptName(0)
+                  );
                 }
+                if (
+                  this.settings
+                    .bluetooth_scale_espresso_stop_on_no_weight_change === false
+                ) {
+                  this.stopFetchingAndSettingDataFromXenia();
+                  this.timer.pauseTimer('xenia');
+                } else {
+                  // We weight for the normal "setFlow" to stop the detection of the graph, there then aswell is the stop fetch of the xenia triggered.
+                }
+                xeniaScriptStopWasTriggered = true;
               }
             }
           }
