@@ -62,4 +62,12 @@ export class UIGraphStorage extends StorageClass {
     }
     return this.graphs;
   }
+
+  public getEntryByUUID(_uuid: string): Graph {
+    const graphEntries: Array<any> = super.getAllEntries();
+    const graphEntry = graphEntries.find((e) => e.config.uuid === _uuid);
+    const graphObj: Graph = new Graph();
+    graphObj.initializeByObject(graphEntry);
+    return graphObj;
+  }
 }

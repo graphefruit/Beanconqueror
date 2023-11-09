@@ -1,20 +1,17 @@
 /** Core */
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 /** Class */
-import {Brew} from '../classes/brew/brew';
+import { Brew } from '../classes/brew/brew';
 /** Services */
-import {StorageClass} from '../classes/storageClass';
-import {UIHelper} from './uiHelper';
-import {UILog} from './uiLog';
-import {UIStorage} from './uiStorage';
-
+import { StorageClass } from '../classes/storageClass';
+import { UIHelper } from './uiHelper';
+import { UILog } from './uiLog';
+import { UIStorage } from './uiStorage';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UIBrewStorage extends StorageClass {
-
-
   /**
    * Singelton instance
    */
@@ -30,10 +27,11 @@ export class UIBrewStorage extends StorageClass {
     return undefined;
   }
 
-  constructor(protected uiStorage: UIStorage,
-              protected uiHelper: UIHelper,
-              protected uiLog: UILog) {
-
+  constructor(
+    protected uiStorage: UIStorage,
+    protected uiHelper: UIHelper,
+    protected uiLog: UILog
+  ) {
     super(uiStorage, uiHelper, uiLog, 'BREWS');
 
     if (UIBrewStorage.instance === undefined) {
@@ -56,6 +54,14 @@ export class UIBrewStorage extends StorageClass {
     return this.brews;
   }
 
+  public getEntryByUUID(_uuid: string): Brew {
+    const brewEntries: Array<any> = super.getAllEntries();
+    const brewEntry = brewEntries.find((e) => e.config.uuid === _uuid);
+    const brewObj: Brew = new Brew();
+    brewObj.initializeByObject(brewEntry);
+    return brewObj;
+  }
+
   public async initializeStorage() {
     this.brews = [];
     await super.__initializeStorage();
@@ -73,5 +79,4 @@ export class UIBrewStorage extends StorageClass {
     });
     return promise;
   }
-
 }

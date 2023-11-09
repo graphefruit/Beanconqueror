@@ -912,9 +912,9 @@ export class BrewDetailComponent implements OnInit {
         const uuid = _brew.reference_flow_profile.uuid;
         let referenceObj: Brew | Graph = null;
         if (_brew.reference_flow_profile.type === REFERENCE_GRAPH_TYPE.BREW) {
-          referenceObj = this.uiBrewStorage.getByUUID(uuid);
+          referenceObj = this.uiBrewStorage.getEntryByUUID(uuid);
         } else {
-          referenceObj = this.uiGraphStorage.getByUUID(uuid);
+          referenceObj = this.uiGraphStorage.getEntryByUUID(uuid);
         }
         if (referenceObj) {
           referencePath = referenceObj.getGraphPath();
