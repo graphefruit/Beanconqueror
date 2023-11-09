@@ -580,6 +580,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     const modal = await this.modalController.create({
       component: BrewChooseGraphReferenceComponent,
       id: BrewChooseGraphReferenceComponent.COMPONENT_ID,
+      componentProps: {
+        brew: this.data,
+      },
     });
 
     // will force rerender :D

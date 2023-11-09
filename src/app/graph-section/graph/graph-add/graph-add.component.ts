@@ -39,7 +39,7 @@ export class GraphAddComponent implements OnInit {
   public ionViewWillEnter(): void {
     this.uiAnalytics.trackEvent(
       GRAPH_TRACKING.TITLE,
-      GRAPH_TRACKING.ACTIONS.EDIT
+      GRAPH_TRACKING.ACTIONS.ADD
     );
   }
 

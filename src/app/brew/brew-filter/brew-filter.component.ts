@@ -53,6 +53,7 @@ export class BrewFilterComponent implements OnInit {
 
   public ngOnInit() {
     this.segment = this.navParams.get('segment');
+
     this.filter = this.uiHelper.copyData(this.navParams.get('brew_filter'));
 
     this.hide_options = this.navParams.get('hide_options');

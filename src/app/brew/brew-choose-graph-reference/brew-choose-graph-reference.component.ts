@@ -2,6 +2,7 @@ import {
   Component,
   ElementRef,
   HostListener,
+  Input,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -18,6 +19,7 @@ import { UIGraphStorage } from '../../../services/uiGraphStorage.service';
 import { Graph } from '../../../classes/graph/graph';
 import { UIGraphHelper } from '../../../services/uiGraphHelper';
 import { UIAlert } from '../../../services/uiAlert';
+import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
   selector: 'app-brew-choose-graph-reference',
@@ -46,6 +48,8 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
   public openBrewsFilter: IBrewPageFilter;
   public archivedBrewsFilter: IBrewPageFilter;
 
+  @Input() public brew: Brew;
+
   public settings: Settings = undefined;
   @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
   public openScroll: AgVirtualSrollComponent;
@@ -70,7 +74,8 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiGraphStorage: UIGraphStorage,
     private readonly uiGraphHelper: UIGraphHelper,
-    private readonly uiAlert: UIAlert
+    private readonly uiAlert: UIAlert,
+    private readonly uiHelper: UIHelper
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     this.archivedBrewsFilter = this.settings.GET_BREW_FILTER();
@@ -82,6 +87,9 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
     if (graphs.filter((e) => e.finished === false).length > 0) {
       this.brew_segment = 'graphs-open';
     }
+    this.openBrewsFilter.method_of_preparation.push(
+      this.brew.method_of_preparation
+    );
   }
 
   public segmentChanged() {
@@ -167,11 +175,12 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
 
   public async showFilter(_type: string) {
     let brewFilter: IBrewPageFilter;
-    if (_type === 'open') {
-      brewFilter = { ...this.openBrewsFilter };
+    if (_type === 'brews-open') {
+      brewFilter = this.uiHelper.cloneData(this.openBrewsFilter);
     } else {
-      brewFilter = { ...this.archivedBrewsFilter };
+      brewFilter = this.uiHelper.cloneData(this.archivedBrewsFilter);
     }
+    console.log(brewFilter);
     const modal = await this.modalCtrl.create({
       component: BrewFilterComponent,
       cssClass: 'popover-actions',
@@ -193,7 +202,7 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
       modalData.data &&
       modalData.data.brew_filter !== undefined
     ) {
-      if (this.brew_segment === 'open') {
+      if (this.brew_segment === 'brews-open') {
         this.openBrewsFilter = modalData.data.brew_filter;
       } else {
         this.archivedBrewsFilter = modalData.data.brew_filter;
