@@ -90,6 +90,9 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
     this.openBrewsFilter.method_of_preparation.push(
       this.brew.method_of_preparation
     );
+    this.archivedBrewsFilter.method_of_preparation.push(
+      this.brew.method_of_preparation
+    );
   }
 
   public segmentChanged() {
