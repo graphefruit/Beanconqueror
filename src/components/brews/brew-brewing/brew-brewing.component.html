@@ -502,7 +502,7 @@
           [wholeStars]="true" class="ion-float-right brew-stars"></ngx-stars>
       </div>
       <div slot="end" *ngIf="maxBrewRating !== 5">
-        {{this.uiHelper.toFixedIfNecessary(data.rating,0)}}
+        {{this.uiHelper.toFixedIfNecessary(data.rating,2)}}
       </div>
     </ion-range>
 
@@ -574,6 +574,9 @@
       type="text"></ion-input>
     <ion-button (click)="calculateBrixToTds()" class="big-icon-only" fill="clear" slot="end" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-refractometer" slot="icon-only"></ion-icon>
+    </ion-button>
+    <ion-button *ngIf="refractometerConnected()" style="margin-left:0px;" (click)="requestRefractometerRead()" class="big-icon-only" fill="clear" slot="end" tappable>
+      <ion-icon class="ion-color-accent" name="beanconqueror-microscope" slot="icon-only"></ion-icon>
     </ion-button>
   </ion-item>
 

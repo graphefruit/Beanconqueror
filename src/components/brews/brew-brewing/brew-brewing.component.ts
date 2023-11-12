@@ -59,7 +59,11 @@ import {
   CoffeeBluetoothServiceEvent,
 } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
-import { BluetoothScale, SCALE_TIMER_COMMAND } from '../../../classes/devices';
+import {
+  BluetoothScale,
+  SCALE_TIMER_COMMAND,
+  ScaleType,
+} from '../../../classes/devices';
 import { IBrewGraphs } from '../../../interfaces/brew/iBrewGraphs';
 import { BrewRatioCalculatorComponent } from '../../../app/brew/brew-ratio-calculator/brew-ratio-calculator.component';
 import { PreparationDevice } from '../../../classes/preparationDevice/preparationDevice';
@@ -70,7 +74,12 @@ import {
 } from '../../../classes/preparationDevice/xenia/xeniaDevice';
 import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
+import {
+  RefractionResultEvent,
+  RefractometerDevice,
+} from 'src/classes/devices/refractometerBluetoothDevice';
 import { UIToast } from '../../../services/uiToast';
+import { UILog } from '../../../services/uiLog';
 
 declare var cordova;
 declare var Plotly;
@@ -132,12 +141,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public scaleFlowSubscription: Subscription = undefined;
   public bluetoothSubscription: Subscription = undefined;
   public flow_profile_raw: BrewFlow = new BrewFlow();
+  public refractometerDeviceSubscription: Subscription = undefined;
   public pressureDeviceSubscription: Subscription = undefined;
   public temperatureDeviceSubscription: Subscription = undefined;
   private scaleFlowChangeSubscription: Subscription = undefined;
   private flowProfileArr = [];
   private flowProfileArrObjs = [];
   private flowProfileArrCalculated = [];
+  private flowProfileTempAll = [];
   private flowTime: number = undefined;
   private flowSecondTick: number = 0;
   private startingFlowTime: number = undefined;
@@ -190,9 +201,54 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     private readonly uiAlert: UIAlert,
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly ngZone: NgZone,
-    private readonly uiToast: UIToast
+    private readonly uiToast: UIToast,
+    private readonly uiLog: UILog
   ) {}
 
+  private writeExecutionTimeToNotes(
+    _message: string,
+    _scriptId: number,
+    _scriptName: string
+  ) {
+    let scriptInformation: string = '';
+
+    let timestamp: string = this.data.brew_time + '';
+    if (this.settings.brew_milliseconds) {
+      timestamp = '.' + this.data.brew_time_milliseconds;
+    }
+    scriptInformation =
+      timestamp +
+      ': ' +
+      _message +
+      ' - ' +
+      _scriptName +
+      ' (' +
+      _scriptId +
+      ')';
+
+    if (this.data.note !== '') {
+      this.data.note = this.data.note + '\r\n' + scriptInformation;
+    } else {
+      this.data.note = scriptInformation;
+    }
+  }
+  private getScriptName(_index: number) {
+    try {
+      if (_index <= 2) {
+        return this.translate.instant(
+          'PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_' + _index
+        );
+      } else {
+        for (const script of this.preparationDevice?.scriptList) {
+          if (script.INDEX === _index) {
+            return script.TITLE;
+          }
+        }
+      }
+    } catch (ex) {
+      return 'Script not found';
+    }
+  }
   public getActivePreparationTools() {
     return this.data.getPreparation().tools.filter((e) => e.archived === false);
   }
@@ -333,6 +389,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       if (isSomethingConnected === true) {
         this.initializeFlowChart();
       }
+      if (this.refractometerConnected()) {
+        await this.__connectRefractometerDevice(true);
+      }
 
       this.bluetoothSubscription = this.bleManager
         .attachOnEvent()
@@ -366,6 +425,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           ) {
             this.deattachToTemperatureChange();
             disconnectTriggered = true;
+          } else if (
+            _type === CoffeeBluetoothServiceEvent.CONNECTED_REFRACTOMETER
+          ) {
+            this.__connectRefractometerDevice(false);
+          } else if (
+            _type === CoffeeBluetoothServiceEvent.DISCONNECTED_REFRACTOMETER
+          ) {
+            this.deattachToRefractometerChange();
           }
 
           if (disconnectTriggered) {
@@ -524,6 +591,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.deattachToPressureChange();
     this.deattachToScaleEvents();
     this.deattachToTemperatureChange();
+    this.deattachToRefractometerChange();
     this.stopFetchingAndSettingDataFromXenia();
   }
 
@@ -557,6 +625,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
                 this.data.preparationDeviceBrew.params.scriptAtWeightReachedId >
                 0
               ) {
+                this.uiLog.log(
+                  `Xenia Script - Weight Reached: ${weight} - Trigger custom script`
+                );
                 this.preparationDevice
                   .startScript(
                     this.data.preparationDeviceBrew.params
@@ -568,7 +639,19 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
                       false
                     );
                   });
+                this.writeExecutionTimeToNotes(
+                  'Weight reached script',
+                  this.data.preparationDeviceBrew.params
+                    .scriptAtWeightReachedId,
+                  this.getScriptName(
+                    this.data.preparationDeviceBrew.params
+                      .scriptAtWeightReachedId
+                  )
+                );
               } else {
+                this.uiLog.log(
+                  `Xenia Script - Weight Reached - Trigger stop script`
+                );
                 // Instant stop!
                 this.preparationDevice.stopScript().catch((_msg) => {
                   this.uiToast.showInfoToast(
@@ -576,6 +659,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
                     false
                   );
                 });
+                this.writeExecutionTimeToNotes(
+                  'Stop script',
+                  0,
+                  this.getScriptName(0)
+                );
               }
               if (
                 this.settings
@@ -611,6 +699,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
     return !!pressureDevice;
+  }
+
+  public refractometerConnected() {
+    if (!this.platform.is('cordova')) {
+      return true;
+    }
+
+    const refractometer: RefractometerDevice =
+      this.bleManager.getRefractometerDevice();
+    return !!refractometer;
   }
 
   public getGraphIonColSize() {
@@ -747,6 +845,24 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
   }
 
+  public attachToRefractometerChanges() {
+    if (this.refractometerConnected()) {
+      this.deattachToRefractometerChange();
+      const refractometerDevice = this.bleManager.getRefractometerDevice();
+      this.refractometerDeviceSubscription =
+        refractometerDevice.resultEvent.subscribe(async () => {
+          this.uiLog.log('Got Refractometer Read');
+          this.data.tds = refractometerDevice.getLastReading().tds;
+          this.uiLog.log(
+            'Got Refractometer Read - Set new value:' + this.data.tds
+          );
+          await this.uiAlert.hideLoadingSpinner();
+          this.uiToast.showInfoToastBottom('REFRACTOMETER.READ_END');
+          this.checkChanges();
+        });
+    }
+  }
+
   public attachToFlowChange() {
     const scale: BluetoothScale = this.bleManager.getScale();
     if (scale) {
@@ -788,6 +904,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.preparationDeviceConnected() &&
       this.data.preparationDeviceBrew.params.scriptAtFirstDripId > -1
     ) {
+      this.uiLog.log(
+        `Xenia Script - Script at first drip -  Trigger custom script`
+      );
       this.preparationDevice
         .startScript(this.data.preparationDeviceBrew.params.scriptAtFirstDripId)
         .catch((_msg) => {
@@ -796,6 +915,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             false
           );
         });
+      this.writeExecutionTimeToNotes(
+        'First drip script',
+        this.data.preparationDeviceBrew.params.scriptAtFirstDripId,
+        this.getScriptName(
+          this.data.preparationDeviceBrew.params.scriptAtFirstDripId
+        )
+      );
     }
   }
 
@@ -851,6 +977,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (this.temperatureDeviceSubscription) {
       this.temperatureDeviceSubscription.unsubscribe();
       this.temperatureDeviceSubscription = undefined;
+    }
+  }
+
+  public deattachToRefractometerChange() {
+    if (this.refractometerDeviceSubscription) {
+      this.refractometerDeviceSubscription.unsubscribe();
+      this.refractometerDeviceSubscription = undefined;
     }
   }
 
@@ -956,14 +1089,20 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
 
       weight = 0;
-
+      const genRand = (min, max, decimalPlaces) => {
+        const rand = Math.random() * (max - min) + min;
+        const power = Math.pow(10, decimalPlaces);
+        return Math.floor(rand * power) / power;
+      };
       this.graphTimerTest = setInterval(() => {
         flow = Math.floor(Math.random() * 11);
         realtime_flow = Math.floor(Math.random() * 11);
-        weight = weight + Math.floor(Math.random() * 11);
+        weight = weight + genRand(0.1, 2, 2);
         pressure = Math.floor(Math.random() * 11);
         temperature = Math.floor(Math.random() * 90);
+
         this.__setPressureFlow({ actual: pressure, old: pressure });
+
         this.__setTemperatureFlow({ actual: temperature, old: temperature });
         this.__setFlowProfile({
           actual: weight,
@@ -971,7 +1110,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           smoothed: 1,
           oldSmoothed: 1,
         });
-      }, 1);
+        this.setActualSmartInformation();
+      }, 300);
     }
 
     if (scale || pressureDevice || temperatureDevice) {
@@ -1048,6 +1188,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
     if (this.preparationDeviceConnected()) {
       if (this.data.preparationDeviceBrew.params.scriptStartId > 0) {
+        this.uiLog.log(`Xenia Script - Script start -  Trigger script`);
         this.preparationDevice
           .startScript(this.data.preparationDeviceBrew.params.scriptStartId)
           .catch((_msg) => {
@@ -1056,6 +1197,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               false
             );
           });
+        this.writeExecutionTimeToNotes(
+          'Start script',
+          this.data.preparationDeviceBrew.params.scriptStartId,
+          this.getScriptName(
+            this.data.preparationDeviceBrew.params.scriptStartId
+          )
+        );
       }
       this.startFetchingAndSettingDataFromXenia();
     }
@@ -1063,7 +1211,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public startFetchingAndSettingDataFromXenia() {
     this.stopFetchingAndSettingDataFromXenia();
-
     const setTempAndPressure = () => {
       const temp = this.preparationDevice.getTemperature();
       const press = this.preparationDevice.getPressure();
@@ -1074,6 +1221,21 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       //before we start the interval, we fetch the data once to overwrite, and set them.
       setTempAndPressure();
     });
+    setTimeout(() => {
+      //Give the machine some time :)
+      this.preparationDevice.fetchAndSetDeviceTemperature(() => {
+        try {
+          const temp = this.preparationDevice.getDevicetemperature();
+          if (temp > 70) {
+            this.data.brew_temperature = this.uiHelper.toFixedIfNecessary(
+              temp,
+              2
+            );
+          }
+        } catch (ex) {}
+      });
+    }, 100);
+
     this.xeniaOverviewInterval = setInterval(async () => {
       try {
         // We don't use the callback function to make sure we don't have to many performance issues
@@ -1166,6 +1328,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (!this.smartScaleConnected() && this.preparationDeviceConnected()) {
       // If scale is not connected but the device, we can now choose that still the script is executed if existing.
       if (this.data.preparationDeviceBrew.params.scriptAtFirstDripId > 0) {
+        this.uiLog.log(
+          `Xenia Script - Script at first drip -  Trigger custom script`
+        );
         this.preparationDevice
           .startScript(
             this.data.preparationDeviceBrew.params.scriptAtFirstDripId
@@ -1177,6 +1342,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               false
             );
           });
+        this.writeExecutionTimeToNotes(
+          'First drip script',
+          this.data.preparationDeviceBrew.params.scriptAtFirstDripId,
+          this.getScriptName(
+            this.data.preparationDeviceBrew.params.scriptAtFirstDripId
+          )
+        );
       }
     }
   }
@@ -1247,12 +1419,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (this.preparationDeviceConnected() && _event !== 'xenia') {
       // If the event is not xenia, we pressed buttons, if the event was triggerd by xenia, timer already stopped.
       //If we press pause, stop scripts.
+      this.uiLog.log(`Xenia Script - Pause button pressed, stop script`);
       this.preparationDevice.stopScript().catch((_msg) => {
         this.uiToast.showInfoToast(
           'We could not stop script - manual triggered: ' + _msg,
           false
         );
       });
+      this.writeExecutionTimeToNotes('Stop script', 0, this.getScriptName(0));
       this.stopFetchingAndSettingDataFromXenia();
     }
     if (!this.platform.is('cordova')) {
@@ -1331,6 +1505,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
 
       this.flow_profile_raw = new BrewFlow();
+      this.flowProfileTempAll = [];
 
       // We just initialize flow chart for the pressure sensor when the type is espresso
       if (
@@ -1358,6 +1533,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       await this.uiAlert.showLoadingSpinner();
       //The pressure or weight went down and we need to reset the graph now still
       this.flow_profile_raw = new BrewFlow();
+      this.flowProfileTempAll = [];
       this.initializeFlowChart(false);
       // Give the buttons a bit of time, 100ms won't be an issue for user flow
       await new Promise((resolve) => {
@@ -1695,12 +1871,54 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public getActualSmoothedWeightPerSecond(): number {
     try {
-      const lastflow =
-        this.flow_profile_raw.weight[this.flow_profile_raw.weight.length - 1];
-      const smoothedWeight = lastflow.actual_smoothed_weight;
-      const oldSmoothedWeight = lastflow.old_smoothed_weight;
-      const flowValue: number = (smoothedWeight - oldSmoothedWeight) * 10;
-      return this.uiHelper.toFixedIfNecessary(flowValue, 2);
+      const scaleType = this.bleManager.getScale()?.getScaleType();
+      if (
+        scaleType === ScaleType.SMARTCHEF ||
+        scaleType === ScaleType.BLACKCOFFEE
+      ) {
+        if (this.flow_profile_raw.weight.length <= 3) {
+          return 0;
+        }
+
+        const lastSecond = moment(
+          this.flow_profile_raw.weight[this.flow_profile_raw.weight.length - 1]
+            .timestamp,
+          'HH:mm:ss'
+        ).seconds();
+        const lastWeight =
+          this.flow_profile_raw.weight[this.flow_profile_raw.weight.length - 1]
+            .actual_weight;
+        let lastSubtractWeight: number = 0;
+        for (let i = this.flow_profile_raw.weight.length - 2; i >= 0; i--) {
+          const newSecond = moment(
+            this.flow_profile_raw.weight[i].timestamp,
+            'HH:mm:ss'
+          ).seconds();
+          if (lastSecond === newSecond) {
+            // Still the same range
+            lastSubtractWeight = this.flow_profile_raw.weight[i].actual_weight;
+          } else {
+            // Break
+            // If we didn't found one value in range, we take the second before.
+            if (lastSubtractWeight === 0) {
+              lastSubtractWeight =
+                this.flow_profile_raw.weight[i].actual_weight;
+            }
+            break;
+          }
+        }
+        return this.uiHelper.toFixedIfNecessary(
+          lastWeight - lastSubtractWeight,
+          2
+        );
+      } else {
+        const lastflow =
+          this.flow_profile_raw.weight[this.flow_profile_raw.weight.length - 1];
+        const smoothedWeight = lastflow.actual_smoothed_weight;
+        const oldSmoothedWeight = lastflow.old_smoothed_weight;
+        const flowValue: number = (smoothedWeight - oldSmoothedWeight) * 10;
+        return this.uiHelper.toFixedIfNecessary(flowValue, 2);
+      }
     } catch (ex) {
       return 0;
     }
@@ -1874,6 +2092,34 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
   }
 
+  public async requestRefractometerRead() {
+    if (this.refractometerConnected()) {
+      await this.uiAlert.showLoadingSpinner();
+      const refractometerDevice = this.bleManager.getRefractometerDevice();
+
+      let refractometerSubscription;
+      const hideLoadingSpinnerTimeout = setTimeout(async () => {
+        try {
+          await this.uiAlert.hideLoadingSpinner();
+          refractometerSubscription.unsubscribe();
+        } catch (ex) {}
+      }, 5000);
+      refractometerSubscription = refractometerDevice.resultEvent.subscribe(
+        async () => {
+          try {
+            // We got triggered, cancel set timeout
+            clearTimeout(hideLoadingSpinnerTimeout);
+            refractometerSubscription.unsubscribe();
+            await this.uiAlert.hideLoadingSpinner();
+          } catch (ex) {}
+        }
+      );
+
+      // Changed to the bottom, subscribe first, and start the loading spinner.
+      refractometerDevice.requestRead();
+    }
+  }
+
   public async calculateBrewBeverageQuantity() {
     let vesselWeight: number = 0;
     if (this.data.vessel_weight > 0) {
@@ -2040,6 +2286,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       } else if (this.settings.temperature_threshold_active) {
         this.attachToTemperatureChange();
       }
+
+      this.checkChanges();
+    }
+  }
+
+  private async __connectRefractometerDevice(_firstStart: boolean) {
+    if (this.refractometerConnected()) {
+      this.deattachToRefractometerChange();
+
+      this.attachToRefractometerChanges();
 
       this.checkChanges();
     }
@@ -2798,6 +3054,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (this.flowTime === undefined) {
       this.flowTime = this.getTime();
     }
+    const scaleType = this.bleManager.getScale()?.getScaleType();
 
     const flowObj = {
       unixTime: moment(new Date())
@@ -2815,6 +3072,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       dateUnixTime: undefined,
     };
     flowObj.dateUnixTime = new Date(flowObj.unixTime);
+
+    this.flowProfileTempAll.push(flowObj);
 
     if (this.flowTime !== this.getTime()) {
       // Old solution: We wait for 10 entries,
@@ -2930,8 +3189,73 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         for (const flowWeight of this.flowProfileArrCalculated) {
           calculatedFlowWeight += flowWeight;
         }
-        calculatedFlowWeight =
-          (calculatedFlowWeight / this.flowProfileArrCalculated.length) * 10;
+
+        if (
+          scaleType === ScaleType.SMARTCHEF ||
+          scaleType === ScaleType.BLACKCOFFEE
+        ) {
+          if (this.flowProfileArrCalculated.length > 1) {
+            /*On the poor scales, we know that the realtime flow value is pretty "accurate" with the new math formular,
+               thats why we take the realtime flow value, look back for 2 seconds in the timestamp, and if we don'T have enough values, we just use
+               the values which are given*/
+            const time2StampDelta =
+              flowObj.unixTime -
+              this.flowProfileTempAll[this.flowProfileTempAll.length - 2]
+                .unixTime;
+            let twoSecondsLookBack: any = 0;
+
+            twoSecondsLookBack = 2 * Math.floor(1000 / time2StampDelta);
+            if (
+              this.flow_profile_raw.realtimeFlow.length < twoSecondsLookBack
+            ) {
+              twoSecondsLookBack = this.flow_profile_raw.realtimeFlow.length;
+            }
+            let totalflow = 0;
+            for (let i = 0; i < twoSecondsLookBack; i++) {
+              totalflow =
+                totalflow +
+                this.flow_profile_raw.realtimeFlow[
+                  this.flow_profile_raw.realtimeFlow.length - 1 - i
+                ].flow_value;
+            }
+
+            calculatedFlowWeight = totalflow / twoSecondsLookBack;
+          }
+          /*  Old solution, don't know if we'll ever need it again, but lets stay it here
+          let avgWeight = 0;
+            let avgTimeDelta: number = 0;
+
+            //Don't get the last one, because this is already one new entry
+            const avgEntries = this.flowProfileTempAll.slice(
+              this.flowProfileTempAll.length -
+                1 -
+                this.flowProfileArrCalculated.length,
+              this.flowProfileTempAll.length - 1
+            );
+            for (let i = 0; i < this.flowProfileArrCalculated.length - 1; i++) {
+              avgWeight =
+                avgWeight +
+                (this.flowProfileArrCalculated[i + 1] -
+                  this.flowProfileArrCalculated[i]);
+            }
+            for (let i = 0; i < avgEntries.length - 1; i++) {
+              avgTimeDelta =
+                avgTimeDelta +
+                (avgEntries[i + 1].unixTime - avgEntries[i].unixTime);
+            }
+            avgTimeDelta = avgTimeDelta / avgEntries.length;
+
+            calculatedFlowWeight =
+              (avgWeight / this.flowProfileArrCalculated.length) *
+              ((1000 - avgTimeDelta) / avgTimeDelta);
+          } else {
+            //Saftey when somehow just one value was provided.
+            calculatedFlowWeight = 0;
+          }*/
+        } else {
+          calculatedFlowWeight =
+            (calculatedFlowWeight / this.flowProfileArrCalculated.length) * 10;
+        }
 
         // Ignore flowing weight when we're below zero
         if (calculatedFlowWeight < 0) {
@@ -3036,8 +3360,26 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     realtimeWaterFlow.brew_time = flowObj.flowTimeSecond;
     realtimeWaterFlow.timestamp = flowObj.flowTimestamp;
     realtimeWaterFlow.smoothed_weight = newSmoothedWeight;
-    realtimeWaterFlow.flow_value =
-      (newSmoothedWeight - oldRealtimeSmoothedValue) * 10;
+
+    if (
+      scaleType === ScaleType.SMARTCHEF ||
+      scaleType === ScaleType.BLACKCOFFEE
+    ) {
+      let timeStampDelta: any = 0;
+      // After the flowProfileTempAll will be stored directly, we'd have one entry at start already, but we need to wait for another one
+      if (this.flowProfileTempAll.length > 1) {
+        timeStampDelta =
+          flowObj.unixTime -
+          this.flowProfileTempAll[this.flowProfileTempAll.length - 2].unixTime;
+      }
+
+      realtimeWaterFlow.flow_value =
+        (newSmoothedWeight - oldRealtimeSmoothedValue) *
+        (1000 / timeStampDelta);
+    } else {
+      realtimeWaterFlow.flow_value =
+        (newSmoothedWeight - oldRealtimeSmoothedValue) * 10;
+    }
 
     this.realtimeFlowTrace.x.push(flowObj.dateUnixTime);
     this.realtimeFlowTrace.y.push(realtimeWaterFlow.flow_value);

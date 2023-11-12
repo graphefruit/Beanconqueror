@@ -10,9 +10,11 @@ import {
   makeDevice,
   makePressureDevice,
   makeTemperatureDevice,
+  makeRefractometerDevice,
   PressureType,
   ScaleType,
   TemperatureType,
+  RefractometerType,
 } from '../../classes/devices';
 import { DecentScale } from '../../classes/devices/decentScale';
 import { TransducerDirectPressure } from '../../classes/devices/transducerDirectPressure';
@@ -25,9 +27,12 @@ import { JimmyScale } from '../../classes/devices/jimmyScale';
 import { SkaleScale } from '../../classes/devices/skale';
 import { SmartchefScale } from 'src/classes/devices/smartchefScale';
 import { DifluidMicrobalance } from 'src/classes/devices/difluidMicrobalance';
+import { DiFluidR2Refractometer } from 'src/classes/devices/difluidR2Refractometer';
+import { RefractometerDevice } from 'src/classes/devices/refractometerBluetoothDevice';
 import { UISettingsStorage } from '../uiSettingsStorage';
 import { TranslateService } from '@ngx-translate/core';
 import { UIToast } from '../uiToast';
+import { BlackcoffeeScale } from 'src/classes/devices/blackcoffeeScale';
 
 declare var device: any;
 declare var ble: any;
@@ -40,6 +45,8 @@ export enum CoffeeBluetoothServiceEvent {
   DISCONNECTED_PRESSURE,
   CONNECTED_TEMPERATURE,
   DISCONNECTED_TEMPERATURE,
+  CONNECTED_REFRACTOMETER,
+  DISCONNECTED_REFRACTOMETER,
 }
 
 @Injectable({
@@ -49,6 +56,7 @@ export class CoffeeBluetoothDevicesService {
   public scale: BluetoothScale | null = null;
   public pressureDevice: PressureDevice | null = null;
   public temperatureDevice: TemperatureDevice | null = null;
+  public refractometerDevice: RefractometerDevice | null = null;
   public failed: boolean;
   public ready: boolean;
   private readonly logger: Logger;
@@ -242,7 +250,8 @@ export class CoffeeBluetoothDevicesService {
             EurekaPrecisaScale.test(scanDevice) ||
             SkaleScale.test(scanDevice) ||
             SmartchefScale.test(scanDevice) ||
-            DifluidMicrobalance.test(scanDevice)
+            DifluidMicrobalance.test(scanDevice) ||
+            BlackcoffeeScale.test(scanDevice)
           ) {
             // We found all needed devices.
             promiseResolved = true;
@@ -283,6 +292,33 @@ export class CoffeeBluetoothDevicesService {
             resolve(devices);
             this.logger.log(
               'Supported Presure found ' + JSON.stringify(scanDevice)
+            );
+          }
+        },
+        (_devices: Array<any>) => {
+          if (promiseResolved === false) {
+            // If we didn't resolve, we didn't find a matching one.
+            resolve([]);
+          }
+        }
+      );
+    });
+  }
+
+  public async scanRefractometerDevices(): Promise<Array<any>> {
+    return new Promise<Array<any>>((resolve, reject) => {
+      let promiseResolved: boolean = false;
+      this.scanAllBluetoothDevicesAndPassBack(
+        (scanDevice) => {
+          if (DiFluidR2Refractometer.test(scanDevice)) {
+            // We found all needed devices.
+            promiseResolved = true;
+            this.clearScanAllBluetoothDevicesAndPassBackTimeout();
+            this.stopScanning();
+            const devices = [scanDevice];
+            resolve(devices);
+            this.logger.log(
+              'Supported Refractometer found ' + JSON.stringify(scanDevice)
             );
           }
         },
@@ -570,6 +606,24 @@ export class CoffeeBluetoothDevicesService {
     });
   }
 
+  public disconnectRefractometerDevice(
+    deviceId: string,
+    show_toast: boolean = true
+  ): Promise<boolean> {
+    return new Promise<boolean>(async (resolve, reject) => {
+      try {
+        await ble.withPromises.disconnect(deviceId);
+        this.refractometerDevice = null;
+        if (show_toast) {
+          // this.uiToast.showInfoToast('REFRACTOMETER.DISCONNECTED_SUCCESSFULLY');
+        }
+        resolve(true);
+      } catch (ex) {
+        resolve(false);
+      }
+    });
+  }
+
   public isBleEnabled(): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -603,6 +657,10 @@ export class CoffeeBluetoothDevicesService {
 
   public getTemperatureDevice() {
     return this.temperatureDevice;
+  }
+
+  public getRefractometerDevice() {
+    return this.refractometerDevice;
   }
 
   public getPressure() {
@@ -690,7 +748,12 @@ export class CoffeeBluetoothDevicesService {
               type: ScaleType.DIFLUIDMICROBALANCE,
             });
             return;
-          } 
+          }
+          if (BlackcoffeeScale.test(deviceScale)) {
+            this.logger.log('BleManager - We found a blackcoffee scale');
+            resolve({ id: deviceScale.id, type: ScaleType.BLACKCOFFEE });
+            return;
+          }
         }
         resolve(undefined);
       }
@@ -758,6 +821,13 @@ export class CoffeeBluetoothDevicesService {
             supportedDevices.push({
               id: deviceScale.id,
               type: ScaleType.DIFLUIDMICROBALANCE,
+            });
+          }
+          if (BlackcoffeeScale.test(deviceScale)) {
+            this.logger.log('BleManager - We found a blackcoffee scale');
+            supportedDevices.push({
+              id: deviceScale.id,
+              type: ScaleType.BLACKCOFFEE,
             });
           }
         }
@@ -883,6 +953,47 @@ export class CoffeeBluetoothDevicesService {
     );
   }
 
+  public async tryToFindRefractometerDevices() {
+    return new Promise<
+      Array<{ id: string; type: RefractometerType }> | undefined
+    >(async (resolve, reject) => {
+      const devices: Array<any> = await this.scanRefractometerDevices();
+      this.logger.log('BleManager - Loop through refractometer devices');
+      const supportedDevices: Array<{ id: string; type: RefractometerType }> =
+        [];
+      for (const deviceRefractometer of devices) {
+        if (DiFluidR2Refractometer.test(deviceRefractometer)) {
+          this.logger.log(
+            'BleManager - We found a DiFLuid R2 device ' +
+              JSON.stringify(deviceRefractometer)
+          );
+          supportedDevices.push({
+            id: deviceRefractometer.id,
+            type: RefractometerType.R2,
+          });
+        }
+      }
+      resolve(supportedDevices);
+    });
+  }
+
+  public async tryToFindRefractometerDevice() {
+    return new Promise<{ id: string; type: RefractometerType } | undefined>(
+      async (resolve, reject) => {
+        const devices: Array<any> = await this.scanRefractometerDevices();
+        this.logger.log('BleManager - Loop through refractometer devices');
+        for (const deviceRefractometer of devices) {
+          if (DiFluidR2Refractometer.test(deviceRefractometer)) {
+            this.logger.log('BleManager - We found a Difluid R2 device ');
+            resolve({ id: deviceRefractometer.id, type: RefractometerType.R2 });
+            return;
+          }
+        }
+        resolve(undefined);
+      }
+    );
+  }
+
   public async reconnectScale(
     deviceType: ScaleType,
     deviceId: string,
@@ -939,6 +1050,28 @@ export class CoffeeBluetoothDevicesService {
       setTimeout(() => {
         this.autoConnectTemperatureDevice(
           temperatureType,
+          deviceId,
+          true,
+          successCallback,
+          errorCallback
+        );
+      }, 2000);
+    } catch (ex) {
+      errorCallback();
+    }
+  }
+
+  public async reconnectRefractometerDevice(
+    refractometerType: RefractometerType,
+    deviceId: string,
+    successCallback: any = () => {},
+    errorCallback: any = () => {}
+  ) {
+    try {
+      await ble.withPromises.disconnect(deviceId);
+      setTimeout(() => {
+        this.autoConnectRefractometerDevice(
+          refractometerType,
           deviceId,
           true,
           successCallback,
@@ -1182,6 +1315,61 @@ export class CoffeeBluetoothDevicesService {
     } catch (ex) {}
   }
 
+  public async autoConnectRefractometerDevice(
+    refractometerType: RefractometerType,
+    deviceId: string,
+    _scanForDevices: boolean = false,
+    successCallback: any = () => {},
+    errorCallback: any = () => {},
+    _timeout: number = 15000,
+    _connectionRetry: number = 0
+  ) {
+    if (_scanForDevices) {
+      // iOS needs to know the scale, before auto connect can be done
+      this.logger.log('AutoConnectRefractometerDevice - Scan for device');
+      await this.findDeviceWithDirectId(deviceId, _timeout);
+    }
+
+    this.logger.log(
+      'AutoConnectRefractometerDevice - We can start to connect to the id ' +
+        deviceId +
+        ' and type ' +
+        refractometerType
+    );
+    try {
+      ble.autoConnect(
+        deviceId,
+        (data: PeripheralData) => {
+          this.logger.log(
+            'AutoConnectRefractometerDevice - Refractometer device connected.'
+          );
+
+          this.connectRefractometerCallback(refractometerType, data);
+          successCallback();
+
+          try {
+            this.uiToast.showInfoToast(
+              this.translate.instant('REFRACTOMETER.CONNECTED_SUCCESSFULLY') +
+                ' - ' +
+                this.getRefractometerDevice().device_name +
+                ' / ' +
+                this.getRefractometerDevice().device_id,
+              false
+            );
+          } catch (ex) {}
+        },
+        () => {
+          this.logger.log(
+            'AutoConnectRefractometerDevice - Refractometer device disconnected.'
+          );
+          this.uiToast.showInfoToast('REFRACTOMETER.DISCONNECTED_UNPLANNED');
+          this.disconnectRefractometerCallback();
+          errorCallback();
+        }
+      );
+    } catch (ex) {}
+  }
+
   private stopScanning() {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1286,6 +1474,33 @@ export class CoffeeBluetoothDevicesService {
     });
   }
 
+  private async __scanAutoConnectRefractometerDeviceIOS() {
+    return new Promise<boolean>(async (resolve, reject) => {
+      if (device !== null && device.platform === 'iOS') {
+        // We just need to scan, then we can auto connect for iOS (lol)
+        this.logger.log('Try to find refractometer on iOS');
+        const deviceRefractometer = await this.tryToFindRefractometerDevice();
+        if (deviceRefractometer === undefined) {
+          this.logger.log('Refractometer device not found, retry');
+          // Try every 61 seconds, because the search algorythm goes 60 seconds at all.
+          const intV = setInterval(async () => {
+            const refractometerStub = await this.tryToFindRefractometerDevice();
+            if (refractometerStub !== undefined) {
+              resolve(true);
+              clearInterval(intV);
+            } else {
+              this.logger.log('Refractometer device not found, retry');
+            }
+          }, 61000);
+        } else {
+          resolve(true);
+        }
+      } else {
+        resolve(true);
+      }
+    });
+  }
+
   private async __iOSAccessBleStackAndAutoConnect(
     _findSpecificDevice: string = 'scale'
   ) {
@@ -1313,6 +1528,11 @@ export class CoffeeBluetoothDevicesService {
               await this.__scanAutoConnectTemperatureDeviceIOS();
               this.logger.log(
                 '__iOSAccessBleStackAndAutoConnect - Thermometer device for iOS found, resolve now'
+              );
+            } else if (_findSpecificDevice === 'refractometer') {
+              await this.__scanAutoConnectRefractometerDeviceIOS();
+              this.logger.log(
+                '__iOSAccessBleStackAndAutoConnect - Refractometer device for iOS found, resolve now'
               );
             }
 
@@ -1407,5 +1627,30 @@ export class CoffeeBluetoothDevicesService {
     }
     // Send disconnect callback, even if scale is already null/not existing anymore
     this.__sendEvent(CoffeeBluetoothServiceEvent.DISCONNECTED_TEMPERATURE);
+  }
+
+  private connectRefractometerCallback(
+    refractometerType: RefractometerType,
+    data: PeripheralData
+  ) {
+    // wait for full data
+    if (!this.refractometerDevice || 'characteristics' in data) {
+      this.refractometerDevice = makeRefractometerDevice(
+        refractometerType,
+        data
+      );
+      this.logger.log('Refractometer Connected successfully');
+      this.__sendEvent(CoffeeBluetoothServiceEvent.CONNECTED_REFRACTOMETER);
+    }
+  }
+
+  private disconnectRefractometerCallback() {
+    if (this.refractometerDevice) {
+      this.refractometerDevice.disconnect();
+      this.refractometerDevice = null;
+      this.logger.log('Disconnected successfully');
+    }
+    // Send disconnect callback, even if scale is already null/not existing anymore
+    this.__sendEvent(CoffeeBluetoothServiceEvent.DISCONNECTED_REFRACTOMETER);
   }
 }

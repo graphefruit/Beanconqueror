@@ -29,6 +29,7 @@ import { BrewCuppingComponent } from '../app/brew/brew-cupping/brew-cupping.comp
 import { BrewFlowComponent } from '../app/brew/brew-flow/brew-flow.component';
 import { PreparationDeviceType } from '../classes/preparationDevice';
 import { UIHelper } from './uiHelper';
+import { BrewRatingComponent } from '../app/brew/brew-rating/brew-rating.component';
 
 /**
  * Handles every helping functionalities
@@ -582,7 +583,26 @@ export class UIBrewHelper {
     });
     return promise;
   }
+  public async rateBrew(_brew: Brew): Promise<Brew> {
+    const promise: Promise<Brew> = new Promise(async (resolve, reject) => {
+      const modal = await this.modalController.create({
+        cssClass: 'popover-actions',
+        component: BrewRatingComponent,
+        id: BrewRatingComponent.COMPONENT_ID,
+        componentProps: { brew: _brew },
+        breakpoints: [0, 0.35, 0.5, 0.75, 1],
+        initialBreakpoint: 0.35,
+      });
+      await modal.present();
+      await modal.onWillDismiss();
 
+      const iBrew: IBrew = this.uiBrewStorage.getByUUID(_brew.config.uuid);
+      const returningBrew: Brew = new Brew();
+      returningBrew.initializeByObject(iBrew);
+      resolve(returningBrew);
+    });
+    return promise;
+  }
   public async detailBrew(_brew: Brew) {
     const modal = await this.modalController.create({
       component: BrewDetailComponent,

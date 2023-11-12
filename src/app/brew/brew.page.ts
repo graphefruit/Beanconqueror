@@ -145,6 +145,8 @@ export class BrewPage implements OnInit {
       checkingFilter.mill.length > 0 ||
       checkingFilter.favourite ||
       checkingFilter.chart_data ||
+      checkingFilter.best_brew ||
+      checkingFilter.profiles?.length > 0 ||
       didRatingFilterChanged ||
       checkingFilterText !== ''
     );
@@ -214,7 +216,11 @@ export class BrewPage implements OnInit {
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
-    if (modalData !== undefined && modalData.data.brew_filter !== undefined) {
+    if (
+      modalData !== undefined &&
+      modalData.data &&
+      modalData.data.brew_filter !== undefined
+    ) {
       if (this.brew_segment === 'open') {
         this.openBrewsFilter = modalData.data.brew_filter;
       } else {
@@ -278,6 +284,12 @@ export class BrewPage implements OnInit {
         (e) => filter.bean.filter((z) => z === e.bean).length > 0
       );
     }
+    if (filter.profiles.length > 0) {
+      brewsFilters = brewsFilters.filter(
+        (e) =>
+          filter.profiles.filter((z) => z === e.pressure_profile).length > 0
+      );
+    }
     if (filter.method_of_preparation.length > 0) {
       brewsFilters = brewsFilters.filter(
         (e) =>
@@ -298,6 +310,9 @@ export class BrewPage implements OnInit {
     }
     if (filter.favourite) {
       brewsFilters = brewsFilters.filter((e) => e.favourite === true);
+    }
+    if (filter.best_brew) {
+      brewsFilters = brewsFilters.filter((e) => e.best_brew === true);
     }
     if (filter.chart_data) {
       brewsFilters = brewsFilters.filter(

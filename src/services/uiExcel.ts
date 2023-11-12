@@ -492,6 +492,19 @@ export class UIExcel {
     await this.uiAlert.hideLoadingSpinner();
   }
 
+  public async importBeansByExcel(_arrayBuffer) {
+    try {
+      /* data is an ArrayBuffer */
+      const wb = XLSX.read(_arrayBuffer);
+      const data = XLSX.utils.sheet_to_json(wb.Sheets['Beans']);
+      for (const entry of data) {
+        //const bean: Bean = new Bean();
+        //bean.bean_information
+      }
+      console.log(data);
+      console.log(wb);
+    } catch (ex) {}
+  }
   /* Export button */
   public async export() {
     await this.uiAlert.showLoadingSpinner();
@@ -514,19 +527,10 @@ export class UIExcel {
       try {
         const downloadFile: FileEntry = await this.uiFileHelper.downloadFile(
           filename,
-          blob
+          blob,
+          true
         );
         await this.uiAlert.hideLoadingSpinner();
-        if (this.platform.is('android')) {
-          const alert = await this.alertCtrl.create({
-            header: this.translate.instant('DOWNLOADED'),
-            subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
-              fileName: filename,
-            }),
-            buttons: ['OK'],
-          });
-          await alert.present();
-        }
       } catch (ex) {}
     } catch (e) {
       if (e.message.match(/It was determined/)) {

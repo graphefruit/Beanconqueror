@@ -53,6 +53,9 @@ export class UIAlert {
     }
   }
 
+  public isLoadingSpinnerShown() {
+    return this.existingLoadingSpinners?.length > 0;
+  }
   public async hideLoadingSpinner() {
     if (this.existingLoadingSpinners.length > 0) {
       for (const spinner of this.existingLoadingSpinners) {

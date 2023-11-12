@@ -224,6 +224,8 @@
                       class="ion-padding-horizontal">{{"DOWNLOAD_XLSX" | translate}}</ion-item>
                     <ion-item (click)="downloadJSONProfile()" [button]="true" [detail]="false"
                       class="ion-padding-horizontal">{{"DOWNLOAD_JSON" | translate}}</ion-item>
+                    <ion-item (click)="downloadVisualizerProfile()" [button]="true" [detail]="false"
+                              class="ion-padding-horizontal">{{"MANUAL_EXPORT_TO_VISUALIZER" | translate}}</ion-item>
                   </ion-list>
                 </ion-content>
               </ng-template>
@@ -408,6 +410,11 @@
         <h2>{{"BREW_DATA_NOTES" | translate }}:</h2>
         <pre>{{data.note}}</pre>
       </ion-label>
+      <ion-button (click)='copyNotesToClipboard()'
+                  tabIndex="1" class="big-icon-only" fill="clear" slot="end" tappable>
+        <ion-icon class="ion-color-accent" name="clipboard-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+
     </ion-item>
 
     <div *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.attachments,

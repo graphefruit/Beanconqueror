@@ -67,7 +67,12 @@ import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
 } from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { PressureType, ScaleType, TemperatureType } from '../classes/devices';
+import {
+  PressureType,
+  ScaleType,
+  TemperatureType,
+  RefractometerType,
+} from '../classes/devices';
 import { Logger } from '../classes/devices/common/logger';
 import { UIExportImportHelper } from '../services/uiExportImportHelper';
 
@@ -319,7 +324,10 @@ export class AppComponent implements AfterViewInit {
       // #7
       this.statusBar.show();
       this.statusBar.styleDefault();
-      this.splashScreen.hide();
+      try {
+        this.splashScreen.hide();
+      } catch (ex) {}
+
       this.keyboard.hideFormAccessoryBar(false);
       if (environment.production === true) {
         // When we're in cordova, disable the log messages
@@ -583,7 +591,7 @@ export class AppComponent implements AfterViewInit {
     // After we set the right device language, we check now if we can request external storage
     if (this.platform.is('cordova') && this.platform.is('android')) {
       try {
-        await this.androidPlatformService.checkHasExternalStorage();
+        //TODO -  await this.androidPlatformService.checkHasExternalStorage();
       } catch (ex) {}
     }
 
@@ -601,8 +609,9 @@ export class AppComponent implements AfterViewInit {
         const pressure_id: string = checkDevices.pressure_id;
         const temperature_id: string = checkDevices.temperature_id;
         const scale_id: string = checkDevices.scale_id;
+        const refractometer_id: string = checkDevices.refractometer_id;
         // If one of these is there, enable bluetooth
-        if (pressure_id || temperature_id || scale_id) {
+        if (pressure_id || temperature_id || scale_id || refractometer_id) {
           await this.bleManager.enableIOSBluetooth();
         }
       } else {
@@ -617,13 +626,15 @@ export class AppComponent implements AfterViewInit {
       this.__connectPressureDevice();
       this.__connectSmartScale();
       this.__connectTemperatureDevice();
+      this.__connectRefractometerDevice();
     }, 3000);
 
     const settings = this.uiSettingsStorage.getSettings();
     if (
       settings.scale_log === true ||
       settings.pressure_log === true ||
-      settings.temperature_log === true
+      settings.temperature_log === true ||
+      settings.refractometer_log === true
     ) {
       Logger.enableLog();
     } else {
@@ -646,6 +657,8 @@ export class AppComponent implements AfterViewInit {
 
     const scale_id: string = settings.scale_id;
 
+    const refractometer_id: string = settings.refractometer_id;
+
     let isAndroidAndPressureDevice: boolean = false;
     if (this.platform.is('android') && pressure_id) {
       isAndroidAndPressureDevice = true;
@@ -660,6 +673,9 @@ export class AppComponent implements AfterViewInit {
     }
     if (temperature_id && !this.platform.is('android')) {
       searchIds.push(temperature_id);
+    }
+    if (refractometer_id && !this.platform.is('android')) {
+      searchIds.push(refractometer_id);
     }
     try {
       if (searchIds.length > 0) {
@@ -724,6 +740,25 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
+  private __connectRefractometerDevice() {
+    const settings = this.uiSettingsStorage.getSettings();
+    const refractometer_id: string = settings.refractometer_id;
+    const refractometer_type: RefractometerType = settings.refractometer_type;
+
+    this.uiLog.log(`Connect refractometer device? ${refractometer_id}`);
+    if (refractometer_id !== undefined && refractometer_id !== '') {
+      this.bleManager.autoConnectRefractometerDevice(
+        refractometer_type,
+        refractometer_id,
+        false,
+        () => {},
+        () => {}
+      );
+    } else {
+      this.uiLog.log('Refractometer device not connected, dont try to connect');
+    }
+  }
+
   private __attachOnDevicePause() {
     this.platform.pause.subscribe(async () => {
       const settings: Settings = this.uiSettingsStorage.getSettings();
@@ -753,6 +788,17 @@ export class AppComponent implements AfterViewInit {
           );
         }
       }
+
+      if (settings.refractometer_stay_connected === false) {
+        const refractometer_id: string = settings.refractometer_id;
+        if (refractometer_id !== undefined && refractometer_id !== '') {
+          // Don't show message on device pause.
+          this.bleManager.disconnectRefractometerDevice(
+            settings.refractometer_id,
+            false
+          );
+        }
+      }
     });
   }
   private __attachOnDeviceResume() {
@@ -766,6 +812,9 @@ export class AppComponent implements AfterViewInit {
       }
       if (settings.temperature_stay_connected === false) {
         this.__connectTemperatureDevice();
+      }
+      if (settings.refractometer_stay_connected === false) {
+        this.__connectRefractometerDevice();
       }
     });
   }

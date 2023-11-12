@@ -1,0 +1,31 @@
+<ion-header translucent>
+</ion-header>
+<ion-content>
+  <ion-item lines="inset">
+    <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
+      style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(data.rating,2)}}</ion-badge>
+    </ion-label>
+    <ion-range (ionChange)="changedRating()" [(ngModel)]="data.rating" [max]="maxBrewRating" min="-1" snaps="true"
+               [step]="settings.brew_rating_steps">
+
+      <div slot="end" *ngIf="maxBrewRating=== 5 && settings.brew_rating_steps === 1">
+        <ngx-stars #brewStars [color]="'#BFB9B0'" [initialStars]="data.rating" [maxStars]="5" [readonly]="true"
+                   [wholeStars]="true" class="ion-float-right brew-stars"></ngx-stars>
+      </div>
+      <div slot="end" *ngIf="maxBrewRating !== 5">
+        {{this.uiHelper.toFixedIfNecessary(data.rating,2)}}
+      </div>
+    </ion-range>
+
+  </ion-item>
+  <ion-row>
+    <ion-col>
+      <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
+                  tappable>{{"CANCEL" | translate}}</ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button (click)="save()" color="accent" disable-double-click expand="block" tappable
+                  type="submit">{{"SAVE" | translate}}</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-content>

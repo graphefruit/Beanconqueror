@@ -142,7 +142,7 @@ export class UIFileHelper extends InstanceClass {
               reject();
             }
           },
-          () => {
+          (ex) => {
             reject();
           }
         );
@@ -184,7 +184,82 @@ export class UIFileHelper extends InstanceClass {
       }
     });
   }
+  public async readFileEntryAsArrayBuffer(_fileEntry: FileEntry): Promise<any> {
+    return new Promise((resolve, reject) => {
+      _fileEntry.file(async (file) => {
+        try {
+          const reader = new FileReader();
+          reader.onloadend = async (event: Event) => {
+            try {
+              resolve(reader.result);
+            } catch (ex) {
+              reject();
+            }
+          };
+          reader.onerror = (event: Event) => {
+            reject();
+          };
 
+          reader.readAsArrayBuffer(file);
+        } catch (ex) {
+          reject();
+        }
+      });
+    });
+  }
+  public async readFileAsArrayBuffer(
+    _path: string,
+    _fileName: string
+  ): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      if (this.platform.is('cordova')) {
+        this.file.readAsArrayBuffer(_path, _fileName).then(
+          (result) => {
+            try {
+              resolve(result as any);
+            } catch (ex) {
+              this.uiLog.error('We could not read  file ' + ex.message);
+              reject();
+            }
+          },
+          () => {
+            reject();
+          }
+        );
+      } else {
+        reject();
+      }
+    });
+  }
+  public async readFileAsBinaryString(_filePath: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      if (this.platform.is('cordova')) {
+        let path: string;
+        let fileName: string;
+        path = this.getFileDirectory();
+        fileName = _filePath;
+        if (fileName.startsWith('/')) {
+          fileName = fileName.slice(1);
+        }
+
+        this.file.readAsBinaryString(path, fileName).then(
+          (result) => {
+            try {
+              resolve(result as any);
+            } catch (ex) {
+              this.uiLog.error('We could not read  file ' + ex.message);
+              reject();
+            }
+          },
+          (ex) => {
+            reject();
+          }
+        );
+      } else {
+        reject();
+      }
+    });
+  }
   public async getZIPFileByPathAndFile(
     _path: string,
     _fileName: string
@@ -279,86 +354,95 @@ export class UIFileHelper extends InstanceClass {
       if (this.platform.is('cordova')) {
         let storageLocation: string = '';
         if (this.platform.is('android')) {
-          storageLocation = this.file.externalRootDirectory;
+          storageLocation = this.file.externalDataDirectory;
         } else {
           storageLocation = this.file.documentsDirectory;
         }
 
-        const lastSevenDays: Array<string> = [];
-        for (let i = 0; i < 8; i++) {
-          const day: string = moment().subtract(i, 'days').format('DD_MM_YYYY');
-          const automatedBackupFileName: string =
-            'Beanconqueror_automatic_export_' + day + '.zip';
-          lastSevenDays.push(automatedBackupFileName);
-        }
+        if (storageLocation !== null && storageLocation !== undefined) {
+          const lastSevenDays: Array<string> = [];
+          for (let i = 0; i < 8; i++) {
+            const day: string = moment()
+              .subtract(i, 'days')
+              .format('DD_MM_YYYY');
+            const automatedBackupFileName: string =
+              'Beanconqueror_automatic_export_' + day + '.zip';
+            lastSevenDays.push(automatedBackupFileName);
+          }
 
-        window.resolveLocalFileSystemURL(
-          storageLocation,
-          (fileSystem) => {
-            fileSystem.getDirectory(
-              'Download',
-              {
-                create: true,
-                exclusive: false,
-              },
-              (directory) => {
-                directory.getDirectory(
-                  'Beanconqueror_export',
-                  {
-                    create: true,
-                    exclusive: false,
-                  },
-                  (directory_export: DirectoryEntry) => {
-                    const directoryReader = directory_export.createReader();
-                    directoryReader.readEntries(
-                      (entries: Entry[]) => {
-                        for (const entry of entries) {
-                          if (entry.isFile) {
-                            if (
-                              lastSevenDays.indexOf(entry.name) === -1 &&
-                              entry.name.indexOf(
-                                'Beanconqueror_automatic_export_'
-                              ) === 0
-                            ) {
-                              const filename: string = entry.name;
-                              entry.remove(
-                                () => {
-                                  this.uiLog.log(
-                                    'Removed automated backup file ' + filename
-                                  );
-                                },
-                                () => {
-                                  this.uiLog.log(
-                                    'Could not remove automated backup file ' +
-                                      filename
-                                  );
-                                }
-                              );
-                            } else if (lastSevenDays.indexOf(entry.name) > -1) {
-                              this.uiLog.log(
-                                'We found a backup file not older then 7 days, so dont delete it'
-                              );
+          window.resolveLocalFileSystemURL(
+            storageLocation,
+            (fileSystem) => {
+              fileSystem.getDirectory(
+                'Download',
+                {
+                  create: true,
+                  exclusive: false,
+                },
+                (directory) => {
+                  directory.getDirectory(
+                    'Beanconqueror_export',
+                    {
+                      create: true,
+                      exclusive: false,
+                    },
+                    (directory_export: DirectoryEntry) => {
+                      const directoryReader = directory_export.createReader();
+                      directoryReader.readEntries(
+                        (entries: Entry[]) => {
+                          for (const entry of entries) {
+                            if (entry.isFile) {
+                              if (
+                                lastSevenDays.indexOf(entry.name) === -1 &&
+                                entry.name.indexOf(
+                                  'Beanconqueror_automatic_export_'
+                                ) === 0
+                              ) {
+                                const filename: string = entry.name;
+                                entry.remove(
+                                  () => {
+                                    this.uiLog.log(
+                                      'Removed automated backup file ' +
+                                        filename
+                                    );
+                                  },
+                                  () => {
+                                    this.uiLog.log(
+                                      'Could not remove automated backup file ' +
+                                        filename
+                                    );
+                                  }
+                                );
+                              } else if (
+                                lastSevenDays.indexOf(entry.name) > -1
+                              ) {
+                                this.uiLog.log(
+                                  'We found a backup file not older then 7 days, so dont delete it'
+                                );
+                              }
                             }
                           }
-                        }
-                      },
-                      () => {}
-                    );
-                  },
-                  () => {
-                    reject();
-                  }
-                );
-              },
-              () => {
-                reject();
-              }
-            );
-          },
-          () => {
-            reject();
-          }
-        );
+                        },
+                        () => {}
+                      );
+                    },
+                    () => {
+                      reject();
+                    }
+                  );
+                },
+                () => {
+                  reject();
+                }
+              );
+            },
+            () => {
+              reject();
+            }
+          );
+        } else {
+          reject();
+        }
       } else {
         reject(undefined);
       }
@@ -403,76 +487,79 @@ export class UIFileHelper extends InstanceClass {
       if (this.platform.is('cordova')) {
         let storageLocation: string = '';
         if (this.platform.is('android')) {
-          storageLocation = this.file.externalRootDirectory;
+          storageLocation = this.file.externalDataDirectory;
         } else {
           storageLocation = this.file.documentsDirectory;
         }
+        if (storageLocation !== null && storageLocation !== undefined) {
+          window.resolveLocalFileSystemURL(
+            storageLocation,
+            (fileSystem) => {
+              fileSystem.getDirectory(
+                'Download',
+                {
+                  create: true,
+                  exclusive: false,
+                },
+                (directory) => {
+                  directory.getDirectory(
+                    'Beanconqueror_export',
+                    {
+                      create: true,
+                      exclusive: false,
+                    },
+                    (directory_export) => {
+                      // You need to put the name you would like to use for the file here.
+                      directory_export.getFile(
+                        _filename,
+                        {
+                          create: true,
+                          exclusive: false,
+                        },
+                        (fileEntry: FileEntry) => {
+                          fileEntry.createWriter(
+                            (writer) => {
+                              writer.onwriteend = () => {
+                                if (_share === true) {
+                                  this.socialSharing.share(
+                                    undefined,
+                                    undefined,
+                                    fileEntry.nativeURL
+                                  );
+                                }
+                                resolve(fileEntry);
+                              };
 
-        window.resolveLocalFileSystemURL(
-          storageLocation,
-          (fileSystem) => {
-            fileSystem.getDirectory(
-              'Download',
-              {
-                create: true,
-                exclusive: false,
-              },
-              (directory) => {
-                directory.getDirectory(
-                  'Beanconqueror_export',
-                  {
-                    create: true,
-                    exclusive: false,
-                  },
-                  (directory_export) => {
-                    // You need to put the name you would like to use for the file here.
-                    directory_export.getFile(
-                      _filename,
-                      {
-                        create: true,
-                        exclusive: false,
-                      },
-                      (fileEntry: FileEntry) => {
-                        fileEntry.createWriter(
-                          (writer) => {
-                            writer.onwriteend = () => {
-                              if (_share === true) {
-                                this.socialSharing.share(
-                                  undefined,
-                                  undefined,
-                                  fileEntry.nativeURL
-                                );
-                              }
-                              resolve(fileEntry);
-                            };
-
-                            writer.seek(0);
-                            writer.write(_blob); // You need to put the file, blob or base64 representation here.
-                          },
-                          () => {
-                            reject();
-                          }
-                        );
-                      },
-                      () => {
-                        reject();
-                      }
-                    );
-                  },
-                  () => {
-                    reject();
-                  }
-                );
-              },
-              () => {
-                reject();
-              }
-            );
-          },
-          () => {
-            reject();
-          }
-        );
+                              writer.seek(0);
+                              writer.write(_blob); // You need to put the file, blob or base64 representation here.
+                            },
+                            () => {
+                              reject();
+                            }
+                          );
+                        },
+                        () => {
+                          reject();
+                        }
+                      );
+                    },
+                    () => {
+                      reject();
+                    }
+                  );
+                },
+                () => {
+                  reject();
+                }
+              );
+            },
+            () => {
+              reject();
+            }
+          );
+        } else {
+          reject();
+        }
       } else {
         resolve(undefined);
         setTimeout(() => {
