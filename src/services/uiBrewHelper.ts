@@ -533,9 +533,9 @@ export class UIBrewHelper {
       const preparationCount = this.uiPreparationStorage.getAllEntries().length;
 
       let initalBreakpoint = 0.35;
-      if (preparationCount > 10) {
+      if (preparationCount > 9) {
         initalBreakpoint = 1;
-      } else if (preparationCount > 6) {
+      } else if (preparationCount > 4) {
         initalBreakpoint = 0.75;
       } else if (preparationCount > 2) {
         initalBreakpoint = 0.5;
@@ -549,9 +549,15 @@ export class UIBrewHelper {
         component: BrewChoosePreparationToBrewComponent,
         id: BrewChoosePreparationToBrewComponent.COMPONENT_ID,
         cssClass: 'popover-actions',
+        backdropDismiss: false,
         breakpoints: [0, 0.35, 0.5, 0.75, 1],
         initialBreakpoint: initalBreakpoint,
       });
+      //A hack - when the user long-presses to upen op the modal, the backdrop would be "triggered" by removing the thumb, and the menu would dismiss directly.
+      //Therefore give some time and enable dismiss then again.
+      setTimeout(() => {
+        modal.backdropDismiss = true;
+      }, 3000);
       await modal.present();
 
       const { data } = await modal.onWillDismiss();

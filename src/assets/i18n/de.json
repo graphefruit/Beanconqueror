@@ -1667,7 +1667,8 @@
       },
       "UPLOAD": "Graf hochladen",
       "DELETE": "Graf löschen"
-    }
+    },
+    "SHOW_VISUALIZER": "Visualizer anzeigen"
 
 
 }
