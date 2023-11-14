@@ -958,6 +958,60 @@
           "[IOS]<b>iOS - Aktualisierung Bibliotheken<\/b>",
           "[IOS]Aktualisierung der Cordova-Bibliotheken, die mit diesem Release aktualisiert wurden :)"
         ]
+      },
+      "7.0.0": {
+        "TITLE": "Version 7.0: Das ist neu",
+        "DESCRIPTION": [
+          "<b>Bluetooth Waagen Modus</b>",
+          "Start des Timers bei der ersten erkannten Gewichtsänderung - Aktivierbar in den Einstellung (neuer Button sichtbar)",
+          "Ignoriere das aktuelle übertragene Gewicht - z.B. für Swirls, Stirs oder runternehmen eines Gewichts ohne gewollte Graf Ausschläge - Aktivierbar in den Einstellungen (neuer Button sichtbar)",
+          "",
+          "<b>Bluetooth Waagen</b>",
+          "Unterstützung einer Bluetooth-No-Name Waage",
+          "Beim Verbinden einer DiFluid Microbalance oder Felicita Waage wird das Kommando-Delay direkt gesetzt",
+          "",
+          "<b>Grafen Bereich</b>",
+          "Aktiviere den Grafen-Bereich in den Einstellungen",
+          "Hinterlege einen Brühgraf für eine neue Brühung um diese Nachzufahren",
+          "Grafen können von einer Brühung her stammen oder aus dem individuellen Grafen Bereich",
+          "Lade einen eigenen Grafen hoch - Exportiere hierfür aus eine deiner Brühungen die .JSON-Datei",
+          "",
+          "<b>Visualizer</b>",
+          "Lade jede neue Brühung mit einem verbundenen Graf direkt zu Visualizer hoch - Aktivierbar in den Einstellungen",
+          "Lade bei Bedarf, alle Brühungen zu Visualizer Hoch",
+          "Vielen Dank an Miha für die Unterstützung!",
+          "",
+          "<b>Brühungen</b>",
+          "Wiederhole eine Brühung aus der Detailansicht",
+          "Erster-Tropfen kann nun bei einer Zubereitungsmethodik aktiviert werden, auch wenn es sich nicht um eine Espresso-Methdoik handelt (z.B. Pulsar)",
+          "Anzeige der Brührate mit verbundener Waage bei der maximierten Ansicht",
+          "Letzte Brühungen werden nun Alphabetisch sortiert und das letzte verwendete Datum wird angezeigt",
+          "",
+          "<b>Bohnen</b>",
+          "Wiederhole die letzte Brühung oder die beste Brühung aus der Bohnenansichtskarte",
+          "",
+          "<b>Zubereitungsmethodik</b>",
+          "Zubereitungstools werden nun Alphabetisch sortiert und können gefiltert werden",
+          "",
+          "<b>Mühlen</b>",
+          "Letzer Mahlgrad sowie letzte Benutzung ist beim Auswählen einer Mühle nun sichtbar",
+          "",
+          "<b>Einstellungen</b>",
+          "Einblendung einer Sicherheitsabfrage falls du etwas bei einer Brühung oder einer Bohne verändert hast - Ektivierbar in den Einstellungen",
+          "Setze nun deine individuelle Start X- und Y-Axe für Brühungen mit Bluetooth-Geräten",
+          "",
+          "<b>Ionic 7</b>",
+          "Update von Ionic 6 auf Ionic 7",
+          "[IOS]Mindestversion für iOS ist nun iOS 14",
+          "[Android] Mindestversion für Android ist nun Android 7.1",
+          "",
+          "<b>Lokalise</b>",
+          "Verwendung von Lokalise für alle Übersetzungen - Vielen Dank an Yannick",
+          "Du willst auch Übersetzten - Mit Lokalise ist dies nun ganz einfach? Melde dich: info@beanconqueror.com",
+          "",
+          "<b>Sonstiges:</b>",
+          "Kleinere Fehlerbehebungen"
+        ]
       }
     },
     "CUSTOM_PARAMETERS": "Parameter individualisieren",
@@ -1668,7 +1722,9 @@
       "UPLOAD": "Graf hochladen",
       "DELETE": "Graf löschen"
     },
-    "SHOW_VISUALIZER": "Visualizer anzeigen"
+    "SHOW_VISUALIZER": "Visualizer anzeigen",
+    "NO_BREWS_FOUND": "Keine Brühungen gefunden",
+    "NO_GRAPHS_FOUND": "Keine Grafen gefunden"
 
 
 }
