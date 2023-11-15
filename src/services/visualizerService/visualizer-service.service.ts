@@ -68,7 +68,6 @@ export class VisualizerService {
         const credentials = btoa(username + ':' + password);
         const headers = {
           Authorization: 'Basic ' + credentials,
-          timeout: 30,
         };
 
         const url = settings.visualizer_url + 'api/shots/upload'; // 'https://visualizer.coffee/api/shots/upload';
@@ -126,7 +125,6 @@ export class VisualizerService {
       const options = {
         method: 'get',
         headers: { Authorization: 'Basic ' + credentials },
-        timeout: 10,
       };
       cordova.plugin.http.sendRequest(
         url,
