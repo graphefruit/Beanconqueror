@@ -1723,7 +1723,8 @@
         "NOTES": "Notizen"
       },
       "UPLOAD": "Graf hochladen",
-      "DELETE": "Graf löschen"
+      "DELETE": "Graf löschen",
+      "UPLOAD_DESCRIPTION": "Importiere eine .JSON-Datei welche du in der Brühdetailansicht herunterladen kannst. Andernfalls kannst du auch geteilte Grafen welche vom Typ .JSON sind von der Community importieren"
     },
     "SHOW_VISUALIZER": "Visualizer anzeigen",
     "NO_BREWS_FOUND": "Keine Brühungen gefunden",

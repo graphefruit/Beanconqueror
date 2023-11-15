@@ -21,6 +21,13 @@
         <ion-label>{{"GRAPH.UPLOAD" | translate}}</ion-label>
         <ion-icon slot="end" name="cloud-upload-outline"></ion-icon>
       </ion-item>
+      <ion-item  *ngIf='flowData === undefined'>
+        <ion-label>
+          <ion-icon style="top: 3px; position: relative;" name="information-circle-outline"></ion-icon>
+          <p style="display: inline;">{{"GRAPH.UPLOAD_DESCRIPTION" | translate}}</p>
+        </ion-label>
+      </ion-item>
+
       <ng-container  *ngIf='flowData !== undefined'>
         <div style='padding-left:10px;padding-right:10px;'>
           <graph-display-card (click)='showGraph()' [flowProfileData]='flowData'></graph-display-card>
