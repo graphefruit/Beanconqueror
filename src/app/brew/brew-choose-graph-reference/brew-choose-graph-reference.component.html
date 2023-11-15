@@ -55,8 +55,8 @@
 
 
         <div *ngSwitchCase="'brews-open'">
-          <ion-card *ngIf="brewsOpen.length > 0">
-            <div class="ion-justify-content-end container">
+          <ion-card>
+            <div class="ion-justify-content-end container"  *ngIf="brewsOpen?.length > 0">
               <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="openBrewsFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
               <ion-button (click)="showFilter('brews-open')" fill="clear" size="small" tappable>
                 <ion-icon *ngIf="isFilterActive('brews-open')"  name="beanconqueror-filter-active"
@@ -65,7 +65,7 @@
                           slot="icon-only"></ion-icon>
               </ion-button>
             </div>
-            <hr/>
+            <hr  *ngIf="brewsOpen?.length > 0" />
 
             <ng-container *ngIf='openBrewsView?.length > 0'>
               <ion-radio-group  [(ngModel)]="radioSelection">
@@ -85,8 +85,8 @@
           </ion-card>
         </div>
         <div *ngSwitchCase="'brews-archive'">
-          <ion-card *ngIf="brewsArchived.length > 0">
-            <div class="ion-justify-content-end container">
+          <ion-card>
+            <div class="ion-justify-content-end container"  *ngIf="archiveBrewsView.length > 0">
               <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedBrewsFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
               <ion-button (click)="showFilter('brews-archive')" fill="clear" size="small" tappable>
                 <ion-icon *ngIf="isFilterActive('brews-archive')"  name="beanconqueror-filter-active"
@@ -95,7 +95,7 @@
                           slot="icon-only"></ion-icon>
               </ion-button>
             </div>
-            <hr/>
+            <hr  *ngIf="archiveBrewsView?.length > 0" />
             <ng-container *ngIf='archiveBrewsView?.length > 0'>
               <ion-radio-group  [(ngModel)]="radioSelection">
                 <ag-virtual-scroll #archivedScroll [items]="archiveBrewsView" height="100vh" min-row-height="385">

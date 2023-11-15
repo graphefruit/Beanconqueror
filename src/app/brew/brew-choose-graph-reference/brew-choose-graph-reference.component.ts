@@ -258,7 +258,6 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
     if (_type === 'graphs-open') {
       this.graphOpenView = graphsFilters;
     } else {
-      //this.archiveBrewsView = sortedBrews;
     }
   }
 
@@ -380,6 +379,7 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
       this.openBrewsView = sortedBrews;
     } else {
       this.archiveBrewsView = sortedBrews;
+      console.log(this.archiveBrewsView.length);
     }
   }
   public chooseGraph(_brew: Brew = null, _graph: Graph = null) {
