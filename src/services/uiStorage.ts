@@ -76,17 +76,14 @@ export class UIStorage {
       let hasData: boolean = false;
       this.storage
         .forEach((_value, _key, _index) => {
-          if (_key === 'SETTINGS' || _key === 'VERSION') {
-            //Settings and version will be set realy early... so we don't relay on those
-          } else if (
-            _key === 'BEANS' ||
-            _key === 'MILL' ||
-            _key === 'BREWS' ||
-            _key === 'PREPARATION'
-          ) {
+          if (_key === 'VERSION') {
             try {
-              if (_value && _value?.length > 0) {
+              if (
+                _value?.length > 0 ||
+                _value['updatedDataVersions'].length > 0
+              ) {
                 hasData = true;
+                return true;
               }
             } catch (ex) {}
           }

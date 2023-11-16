@@ -45,7 +45,6 @@ describe('SettingsPage', () => {
         { provide: Router },
         { provide: FileChooser },
         { provide: FilePath },
-        { provide: IOSFilePicker },
         { provide: SocialSharing },
       ],
     }).compileComponents();

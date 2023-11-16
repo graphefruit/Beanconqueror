@@ -22,7 +22,7 @@ import BeanconquerorFlowTestDataDummy from '../assets/BeanconquerorFlowTestDataF
  */
 
 declare var window: any;
-declare var Filepicker;
+declare var FilePicker;
 
 @Injectable({
   providedIn: 'root',
@@ -127,34 +127,37 @@ export class UIGraphHelper {
           }
         });
       } else {
-        Filepicker.pickFile().then((uri) => {
-          if (uri.endsWith('.json')) {
-            let path = uri.substring(0, uri.lastIndexOf('/'));
-            const file = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
-            if (path.indexOf('file://') !== 0) {
-              path = 'file://' + path;
-            }
+        FilePicker.pickFile(
+          (uri) => {
+            if (uri.endsWith('.json')) {
+              let path = uri.substring(0, uri.lastIndexOf('/'));
+              const file = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
+              if (path.indexOf('file://') !== 0) {
+                path = 'file://' + path;
+              }
 
-            this.__readJSONFile(path, file)
-              .then((_data) => {
-                // nothing todo
-                resolve(_data);
-              })
-              .catch((_err) => {
-                reject();
-                this.uiAlert.showMessage(
-                  this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
-                    ' (' +
-                    JSON.stringify(_err) +
-                    ')'
-                );
-              });
-          } else {
-            this.uiAlert.showMessage(
-              this.translate.instant('INVALID_FILE_FORMAT')
-            );
-          }
-        });
+              this.__readJSONFile(path, file)
+                .then((_data) => {
+                  // nothing todo
+                  resolve(_data);
+                })
+                .catch((_err) => {
+                  reject();
+                  this.uiAlert.showMessage(
+                    this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
+                      ' (' +
+                      JSON.stringify(_err) +
+                      ')'
+                  );
+                });
+            } else {
+              this.uiAlert.showMessage(
+                this.translate.instant('INVALID_FILE_FORMAT')
+              );
+            }
+          },
+          () => {}
+        );
       }
     });
   }
