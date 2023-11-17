@@ -260,6 +260,7 @@ export class BeanModalSelectComponent implements OnInit {
     } else {
       this.filterVisible.archived = !this.filterVisible.archived;
     }
+    this.retriggerScroll();
   }
   public isFilterActive(_type: string) {
     if (_type === 'open') {

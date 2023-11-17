@@ -405,7 +405,7 @@
                 </div>
               </ion-checkbox>
             </ion-item>
-            <ion-item [button]="true"  *ngIf='howManyBrewsAreNotUploadedToVisualizer() > 0' (click)='uploadBrewsToVisualizer()'>
+            <ion-item [button]="true"  *ngIf='howManyBrewsAreNotUploadedToVisualizer() > 0 && settings.visualizer_password && settings.visualizer_username' (click)='uploadBrewsToVisualizer()'>
               <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
               <ion-label>{{"VISUALIZER.UPLOAD_ALL" | translate}}</ion-label>
               <ion-note slot="end">{{howManyBrewsAreNotUploadedToVisualizer()}}</ion-note>

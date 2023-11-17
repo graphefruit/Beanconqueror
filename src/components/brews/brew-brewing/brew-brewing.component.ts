@@ -1984,7 +1984,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
                   PREPARATION_STYLE_TYPE.ESPRESSO
                 ) {
                   this.lastChartLayout.yaxis2.range[1] =
-                    lastRealtimeFlowVal * 0.25;
+                    lastRealtimeFlowVal * 1.25;
                 } else {
                   this.lastChartLayout.yaxis2.range[1] =
                     lastRealtimeFlowVal * 1.5;
