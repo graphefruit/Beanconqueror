@@ -183,7 +183,6 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
     } else {
       brewFilter = this.uiHelper.cloneData(this.archivedBrewsFilter);
     }
-    console.log(brewFilter);
     const modal = await this.modalCtrl.create({
       component: BrewFilterComponent,
       cssClass: 'popover-actions',
@@ -379,7 +378,6 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
       this.openBrewsView = sortedBrews;
     } else {
       this.archiveBrewsView = sortedBrews;
-      console.log(this.archiveBrewsView.length);
     }
   }
   public chooseGraph(_brew: Brew = null, _graph: Graph = null) {

@@ -36,7 +36,7 @@ export function HttpLoaderFactory(http: HttpClient) {
       mode: 'md',
       menuIcon: 'beanconqueror-menu',
       swipeBackEnabled: true,
-      animated: false,
+      animated: true,
       rippleEffect: false,
     }),
     IonicStorageModule.forRoot({
