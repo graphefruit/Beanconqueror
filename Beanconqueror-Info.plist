@@ -2,92 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>en_US</string>
-	<key>CFBundleDisplayName</key>
-	<string>Beanconqueror</string>
-	<key>CFBundleExecutable</key>
-	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>$(PRODUCT_NAME)</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>6.6.2</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleVersion</key>
-	<string>6.6.2</string>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
-	<key>NSMainNibFile</key>
-	<string/>
-	<key>NSMainNibFile~ipad</key>
-	<string/>
-	<key>UILaunchStoryboardName</key>
-	<string>CDVLaunchScreen</string>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>UISupportedInterfaceOrientations~ipad</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
-	<key>UIApplicationShortcutItems</key>
-	<array>
-		<dict>
-			<key>UIApplicationShortcutItemIconType</key>
-			<string>UIApplicationShortcutIconTypeAdd</string>
-			<key>UIApplicationShortcutItemTitle</key>
-			<string>Brew</string>
-			<key>UIApplicationShortcutItemType</key>
-			<string>Brew</string>
-		</dict>
-		<dict>
-			<key>UIApplicationShortcutItemIconType</key>
-			<string>UIApplicationShortcutIconTypeAdd</string>
-			<key>UIApplicationShortcutItemTitle</key>
-			<string>Bean</string>
-			<key>UIApplicationShortcutItemType</key>
-			<string>Bean</string>
-		</dict>
-		<dict>
-			<key>UIApplicationShortcutItemIconType</key>
-			<string>UIApplicationShortcutIconTypeAdd</string>
-			<key>UIApplicationShortcutItemTitle</key>
-			<string>Preparation method</string>
-			<key>UIApplicationShortcutItemType</key>
-			<string>Preparation</string>
-		</dict>
-		<dict>
-			<key>UIApplicationShortcutItemIconType</key>
-			<string>UIApplicationShortcutIconTypeAdd</string>
-			<key>UIApplicationShortcutItemTitle</key>
-			<string>Grinder</string>
-			<key>UIApplicationShortcutItemType</key>
-			<string>Mill</string>
-		</dict>
-	</array>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>The app needs photo library access, so that you can choose from already taken pictures from coffee beans, coffee bags, your own coffee brews etc. This pictures are stored inside the app.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Blutooth access needed to connect smartscales, pressure devices, thermo devices or refractometer. With this these data to each coffee brew can be logged./string>
+	<string>Blutooth access needed to connect smartscales, pressure devices, thermo devices or refractometer. With this these data to each coffee brew can be logged.</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Blutooth access needed to connect smartscales, pressure devices, thermo devices or refractometer. With this these data to each coffee brew can be logged.</string>
 	<key>NSHealthShareUsageDescription</key>
@@ -96,25 +14,8 @@
 	<string>App needs read access to see the caffeinate amount which was tracked with this coffee app</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>The app needs photo library access, so that you can choose from already taken pictures from coffee beans, coffee bags, your own coffee brews etc. This pictures are stored inside the app.</string>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>beanconqueror</string>
-			</array>
-		</dict>
-	</array>
-	<key>UIFileSharingEnabled</key>
-	<true/>
-	<key>LSSupportsOpeningDocumentsInPlace</key>
-	<true/>
-	<key>UIRequiresFullScreen</key>
-	<false/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Location is used when enabled in settings, default off. Used for track your location where you brewed your coffee.</string>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
 	<key>NSCameraUsageDescription</key>
 	<string>The app needs camera access, so that you can take pictures from coffee beans, coffee bags, your own coffee brews etc. This pictures are stored inside the app.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
