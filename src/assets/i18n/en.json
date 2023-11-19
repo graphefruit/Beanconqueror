@@ -958,6 +958,65 @@
           "[IOS]<b>iOS - Updated libraries<\/b>",
           "[IOS]Due to library changes in cordova, this is a release to match all these :)"
         ]
+      },
+      "7.0.0": {
+        "TITLE": "Version 7.00: What's new",
+        "DESCRIPTION": [
+          "<b>Bluetooth Scale Mode</b>",
+          "Start the timer on the first detected change in weight - Activatable in the settings (new button visible)",
+          "Ignore the current transmitted weight - e.g., for swirls, stirs, or removing weight without intentional graph spikes - Activatable in the settings (new button visible)",
+          "",
+          "<b>Bluetooth Scales</b>",
+          "Support for a Bluetooth-No-Name scale",
+          "When connecting a DiFluid Microbalance or Felicita scale, the command delay is set directly",
+          "",
+          "<b>Graph Area</b>",
+          "Activate the graph area in the settings",
+          "Set a brew graph for a new brew to follow it",
+          "Graphs can come from a brew or from the individual graph area",
+          "Upload your own graph - Export a .JSON file for your brews",
+          "",
+          "<b>Visualizer</b>",
+          "Automatically upload each new brew with a connected graph to Visualizer - Activatable in the settings",
+          "Manually upload all brews to Visualizer if needed",
+          "-->Many thanks to Miha for the support!<--",
+          "",
+          "<b>Brews</b>",
+          "Repeat a brew from the detail view",
+          "First-drop can now be activated for a preparation methodology, even if it is not an espresso methodology (e.g., Pulsar)",
+          "Display of brew rate with a connected scale in the maximized view",
+          "Last brews are now sorted alphabetically, and the last used date is displayed",
+          "Real-time flow with a connected scale now shows values under 1g/s for espresso",
+          "",
+          "<b>Beans</b>",
+          "Repeat the last brew or the best brew from the beans view card",
+          "",
+          "<b>Preparation Methodology</b>",
+          "Preparation tools are now sorted alphabetically and can be filtered",
+          "Last usage of the preparation methodology is now displayed when selected",
+          "",
+          "<b>Grinders</b>",
+          "Last grind size and last usage are now visible when selecting a grinder",
+          "",
+          "<b>Xenia</b>",
+          "Bug fix: Deactivated scripts are no longer executed",
+          "",
+          "<b>Settings</b>",
+          "Display of a security prompt if you have made changes to a brew or a bean - Activatable in the settings",
+          "Now set your individual start X- and Y-Axis for brews with Bluetooth devices",
+          "",
+          "<b>Ionic 7</b>",
+          "Update from Ionic 6 to Ionic 7",
+          "[IOS] Minimum version for iOS is now iOS 14",
+          "[ANDROID] Minimum version for Android is now Android 7.1",
+          "",
+          "<b>Lokalise</b>",
+          "Use of Lokalise for all translations - Many thanks to Yannick",
+          "Want to translate too? With Localize, it's now easy. Contact us: info@beanconqueror.com",
+          "",
+          "<b>Other</b>",
+          "Minor bug fixes"
+        ]
       }
     },
     "CUSTOM_PARAMETERS": "Customize parameters",
@@ -1617,7 +1676,6 @@
       "SHOT": {
         "UPLOAD_SUCCESSFULLY": "Brewing uploaded to visualizer.",
         "UPLOAD_UNSUCCESSFULLY": "Brewing could not be uploaded to the visualizer."
-
       },
       "URL": "Server url",
       "USERNAME": "Username",
@@ -1639,5 +1697,36 @@
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_WEIGHT": "Espresso - Weight",
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_FLOW": "Espresso - Flow",
     "SMART_SCALE_IGNORE_INCOMING_WEIGHT": "Ignore the current transfer weight.",
-    "SMART_SCALE_IGNORE_INCOMING_WEIGHT_TOOLTIP": "A new button appears in the brew section, which will ignore new weight values from the Bluetooth scale."
+    "SMART_SCALE_IGNORE_INCOMING_WEIGHT_TOOLTIP": "A new button appears in the brew section, which will ignore new weight values from the bluetooth scale.",
+    "BREWS_ACTIVE": "Active Brews",
+    "BREWS_ARCHIVED": "Archived Brews",
+    "GRAPHS": "Graphs",
+    "GRAPH_SECTION": {
+      "NAV_GRAPH": "Graphs",
+      "NO_ARCHIVED_ENTRIES": "No archived entries",
+      "NO_ENTRIES": "No entries",
+      "SECTION_HAS_BEEN_ACTIVATED": "Graph section has been activated"
+    },
+    "TOAST_GRAPH_ARCHIVED_SUCCESSFULLY": "Graph archived",
+    "TOAST_GRAPH_DELETED_SUCCESSFULLY": "Graph deleted",
+    "TOAST_GRAPH_EDITED_SUCCESSFULLY": "Graph edited",
+    "TOAST_GRAPH_ADD_SUCCESSFULLY": "Graph added",
+    "NAV_GRAPH_SECTION": "Graphs",
+    "DELETE_GRAPH_QUESTION": "Do you want to delete this graph?",
+    "PAGE_SETTINGS_SHOW_ARCHIVED_GRAPHS": "Show archived graphs",
+    "PAGE_SETTINGS_SHOW_GRAPH_SECTION": "Activate graph section",
+    "EDIT_GRAPH": "Edit graph",
+    "ADD_GRAPH": "Add graph",
+    "GRAPH": {
+      "PLACE_HOLDER":{
+        "NAME": "Graph name",
+        "NOTES": "Notes"
+      },
+      "UPLOAD": "Upload graph",
+      "DELETE": "Delete graph",
+      "UPLOAD_DESCRIPTION": "Import a .JSON file that you can download in the brew detail view. Alternatively, you can also import shared graphs from the community that are of type .JSON"
+    },
+    "SHOW_VISUALIZER": "Show Visualizer",
+    "NO_BREWS_FOUND": "No brews found",
+    "NO_GRAPHS_FOUND": "No graphs found"
 }
