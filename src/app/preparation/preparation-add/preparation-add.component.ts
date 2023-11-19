@@ -40,7 +40,7 @@ export class PreparationAddComponent implements OnInit {
     const modal = await this.modalController.create({
       component: PreparationAddTypeComponent,
       cssClass: 'popover-actions',
-      animated: false,
+      animated: true,
       id: PreparationAddTypeComponent.COMPONENT_ID,
       componentProps: {
         type: _prepType,

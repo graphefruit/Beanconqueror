@@ -139,7 +139,7 @@ export class BrewInformationComponent implements OnInit {
     //Animated false, else backdrop would sometimes not disappear and stay until user touches again.
     const popover = await this.modalCtrl.create({
       component: BrewPopoverActionsComponent,
-      animated: false,
+      animated: true,
       componentProps: { brew: this.brew },
       id: BrewPopoverActionsComponent.COMPONENT_ID,
       cssClass: 'popover-actions',

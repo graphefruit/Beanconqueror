@@ -169,7 +169,7 @@ export class BeanInformationComponent implements OnInit {
       componentProps: { bean: this.bean },
       id: BeanPopoverActionsComponent.COMPONENT_ID,
       cssClass: 'popover-actions',
-      animated: false,
+      animated: true,
       breakpoints: [0, 0.75, 1],
       initialBreakpoint: 1,
     });

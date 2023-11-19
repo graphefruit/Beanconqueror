@@ -2036,7 +2036,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       component: DatetimePopoverComponent,
       id: 'datetime-popover',
       cssClass: 'popover-actions',
-      animated: false,
+      animated: true,
       breakpoints: [0, 0.5, 0.75, 1],
       initialBreakpoint: 0.5,
       componentProps: { displayingTime: this.displayingBrewTime },
