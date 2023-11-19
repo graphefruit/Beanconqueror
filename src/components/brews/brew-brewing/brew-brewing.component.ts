@@ -1324,7 +1324,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           oldSmoothed: 1,
         });
         this.setActualSmartInformation();
-      }, 300);
+      }, 100);
     }
 
     if (scale || pressureDevice || temperatureDevice) {
@@ -2160,7 +2160,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         if (this.flow_profile_raw.weight.length <= 3) {
           return 0;
         }
-
         const lastSecond = moment(
           this.flow_profile_raw.weight[this.flow_profile_raw.weight.length - 1]
             .timestamp,
@@ -2170,7 +2169,25 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           this.flow_profile_raw.weight[this.flow_profile_raw.weight.length - 1]
             .actual_weight;
         let lastSubtractWeight: number = 0;
-        for (let i = this.flow_profile_raw.weight.length - 2; i >= 0; i--) {
+
+        let subtractLength = 2;
+        if (
+          scaleType === ScaleType.SMARTCHEF ||
+          scaleType === ScaleType.BLACKCOFFEE
+        ) {
+          subtractLength = 2;
+        } else {
+          if (this.flow_profile_raw.weight.length >= 11) {
+            // We got a better scale, so atleast subtract 10
+            subtractLength = 10;
+          }
+        }
+
+        for (
+          let i = this.flow_profile_raw.weight.length - subtractLength;
+          i >= 0;
+          i--
+        ) {
           const newSecond = moment(
             this.flow_profile_raw.weight[i].timestamp,
             'HH:mm:ss'
