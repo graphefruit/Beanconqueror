@@ -222,7 +222,7 @@
         <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.decaffeinated)">
           <ion-checkbox justify="start" label-placement="start" [(ngModel)]="data.decaffeinated" disabled="true">{{"BEAN_DATA_DECAFFEINATED" | translate}}:</ion-checkbox>
         </ion-item>
-        <ion-item (click)="openURL()" *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.url)" button lines="inset">
+        <ion-item (click)="openURL()" tappable *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.url)" button lines="inset">
           <ion-label >
             <h2>{{"BEAN_DATA_URL" | translate}}:</h2>
             <h3>{{data.url}}</h3>

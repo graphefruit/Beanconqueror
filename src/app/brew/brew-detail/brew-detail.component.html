@@ -223,11 +223,11 @@
               <ng-template>
                 <ion-content style="--background:white;">
                   <ion-list style="padding:0;background:white;">
-                    <ion-item (click)="downloadFlowProfile()" [button]="true" [detail]="false"
+                    <ion-item (click)="downloadFlowProfile()" tappable [button]="true" [detail]="false"
                       class="ion-padding-horizontal">{{"DOWNLOAD_XLSX" | translate}}</ion-item>
-                    <ion-item (click)="downloadJSONProfile()" [button]="true" [detail]="false"
+                    <ion-item (click)="downloadJSONProfile()" tappable [button]="true" [detail]="false"
                       class="ion-padding-horizontal">{{"DOWNLOAD_JSON" | translate}}</ion-item>
-                    <ion-item (click)="downloadVisualizerProfile()" [button]="true" [detail]="false"
+                    <ion-item (click)="downloadVisualizerProfile()" tappable [button]="true" [detail]="false"
                               class="ion-padding-horizontal">{{"MANUAL_EXPORT_TO_VISUALIZER" | translate}}</ion-item>
                   </ion-list>
                 </ion-content>
