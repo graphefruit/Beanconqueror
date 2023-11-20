@@ -312,7 +312,7 @@ export class BrewDetailComponent implements OnInit {
             width: 2,
           },
           visible: graphSettings.weight,
-          hoverinfo: 'skip',
+
           showlegend: false,
         };
         this.flowPerSecondTraceReference = {
@@ -328,7 +328,7 @@ export class BrewDetailComponent implements OnInit {
             width: 2,
           },
           visible: graphSettings.calc_flow,
-          hoverinfo: 'skip',
+
           showlegend: false,
         };
 
@@ -345,7 +345,7 @@ export class BrewDetailComponent implements OnInit {
             width: 2,
           },
           visible: graphSettings.realtime_flow,
-          hoverinfo: 'skip',
+
           showlegend: false,
         };
 
@@ -362,7 +362,7 @@ export class BrewDetailComponent implements OnInit {
             width: 2,
           },
           visible: graphSettings.pressure,
-          hoverinfo: 'skip',
+
           showlegend: false,
         };
 
@@ -379,7 +379,7 @@ export class BrewDetailComponent implements OnInit {
             width: 2,
           },
           visible: graphSettings.temperature,
-          hoverinfo: 'skip',
+
           showlegend: false,
         };
 
