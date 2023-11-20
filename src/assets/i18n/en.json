@@ -950,12 +950,12 @@
       "6.6.2": {
         "TITLE": "Version 6.6.2: What's new",
         "DESCRIPTION": [
-          "[ANDROID]<b>Android 13 - Filestorage permissions<\/b>",
+          "[ANDROID]<b>Android 13 - Filestorage permissions</b>",
           "[ANDROID]Due to changes in the file system permissions in Android, the access paths for how files are backed up and imported had to be revised. In addition, camera and image access no longer worked on Android 13 devices and got fixed with this update.",
           "[ANDROID]Due to these changes, the minimum requirement for this app also had to be raised to Android 7.0.",
           "[ANDROID]You can find out how Import/Export works now here: https://beanconqueror.com/faq",
           "",
-          "[IOS]<b>iOS - Updated libraries<\/b>",
+          "[IOS]<b>iOS - Updated libraries</b>",
           "[IOS]Due to library changes in cordova, this is a release to match all these :)"
         ]
       },
