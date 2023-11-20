@@ -48,7 +48,7 @@
       <ion-icon name="beanconqueror-photo-gallery" slot="start"></ion-icon>
       <span>{{"POPOVER_BREWS_OPTION_PHOTO_GALLERY" | translate}}</span>
     </ion-item>
-    <ion-item (click)="choose(getStaticActions().VISUALIZER)" *ngIf="hasFlowProfile() && settings.visualizer_active && settings.visualizer_upload_automatic === false && settings.visualizer_username && settings.visualizer_password" button tappable>
+    <ion-item (click)="choose(getStaticActions().VISUALIZER)" *ngIf="hasFlowProfile() && settings.visualizer_active && settings.visualizer_upload_automatic === false && settings.visualizer_username && settings.visualizer_password && !data?.customInformation?.visualizer_id" button tappable>
       <ion-icon name="beanconqueror-visualizer" slot="start"></ion-icon>
       <span>{{"MANUAL_EXPORT_TO_VISUALIZER" | translate}}</span>
     </ion-item>
