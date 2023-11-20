@@ -57,9 +57,12 @@ export class UIBrewStorage extends StorageClass {
   public getEntryByUUID(_uuid: string): Brew {
     const brewEntries: Array<any> = super.getAllEntries();
     const brewEntry = brewEntries.find((e) => e.config.uuid === _uuid);
-    const brewObj: Brew = new Brew();
-    brewObj.initializeByObject(brewEntry);
-    return brewObj;
+    if (brewEntry) {
+      const brewObj: Brew = new Brew();
+      brewObj.initializeByObject(brewEntry);
+      return brewObj;
+    }
+    return null;
   }
 
   public async initializeStorage() {

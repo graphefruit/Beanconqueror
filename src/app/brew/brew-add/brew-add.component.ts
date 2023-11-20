@@ -261,7 +261,10 @@ export class BrewAddComponent implements OnInit {
         await this.uiBrewStorage.update(addedBrewObj);
       }
 
-      if (this.settings.visualizer_active) {
+      if (
+        this.settings.visualizer_active &&
+        this.settings.visualizer_upload_automatic
+      ) {
         if (addedBrewObj.flow_profile) {
           this.visualizerService.uploadToVisualizer(addedBrewObj);
         }

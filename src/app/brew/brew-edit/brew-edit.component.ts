@@ -152,7 +152,10 @@ export class BrewEditComponent implements OnInit {
 
     await this.uiBrewStorage.update(this.data);
 
-    if (this.settings.visualizer_active) {
+    if (
+      this.settings.visualizer_active &&
+      this.settings.visualizer_upload_automatic
+    ) {
       if (this.data.flow_profile) {
         this.visualizerService.uploadToVisualizer(this.data);
       }
