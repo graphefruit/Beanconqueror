@@ -31,11 +31,11 @@ export class GraphDetailComponent implements OnInit {
 
   public settings: Settings;
 
-  private weightTrace: any;
-  private flowPerSecondTrace: any;
-  private realtimeFlowTrace: any;
-  private pressureTrace: any;
-  private temperatureTrace: any;
+  public weightTrace: any;
+  public flowPerSecondTrace: any;
+  public realtimeFlowTrace: any;
+  public pressureTrace: any;
+  public temperatureTrace: any;
   public lastChartLayout: any = undefined;
   public flowProfileLoading: boolean = true;
 
