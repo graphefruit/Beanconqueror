@@ -17,7 +17,7 @@
                    autocapitalize="sentences" required>
         </ion-input>
       </ion-item>
-      <ion-item [button]="true" *ngIf='flowData === undefined' (click)='uploadGraph()'>
+      <ion-item tappable [button]="true" *ngIf='flowData === undefined' (click)='uploadGraph()'>
         <ion-label>{{"GRAPH.UPLOAD" | translate}}</ion-label>
         <ion-icon slot="end" name="cloud-upload-outline"></ion-icon>
       </ion-item>
@@ -32,7 +32,7 @@
         <div style='padding-left:10px;padding-right:10px;'>
           <graph-display-card (click)='showGraph()' [flowProfileData]='flowData'></graph-display-card>
         </div>
-        <ion-item [button]="true" (click)='deleteGraph()'>
+        <ion-item tappable [button]="true" (click)='deleteGraph()'>
           <ion-label>{{"GRAPH.DELETE" | translate}}</ion-label>
           <ion-icon slot="end" name="trash-outline"></ion-icon>
         </ion-item>
