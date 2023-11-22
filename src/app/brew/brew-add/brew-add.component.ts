@@ -266,8 +266,15 @@ export class BrewAddComponent implements OnInit {
         this.settings.visualizer_upload_automatic
       ) {
         if (addedBrewObj.flow_profile) {
+          this.uiLog.log('Upload shot to visualizer');
           this.visualizerService.uploadToVisualizer(addedBrewObj);
+        } else {
+          this.uiLog.log('No flow profile given, dont upload');
         }
+      } else {
+        this.uiLog.log(
+          'Visualizer not active or upload automatic not activated'
+        );
       }
 
       if (

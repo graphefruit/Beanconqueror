@@ -94,28 +94,21 @@ export class UIGraphHelper {
                   () => {}
                 )
             );
-
-            if (fileEntry.name.toLowerCase().endsWith('.json')) {
-              this.__readAndroidJSONFile(fileEntry).then(
-                (_data) => {
-                  // nothing todo
-                  resolve(_data);
-                },
-                (_err2) => {
-                  reject();
-                  this.uiAlert.showMessage(
-                    this.translate.instant('ERROR_ON_FILE_READING') +
-                      ' (' +
-                      JSON.stringify(_err2) +
-                      ')'
-                  );
-                }
-              );
-            } else {
-              this.uiAlert.showMessage(
-                this.translate.instant('INVALID_FILE_FORMAT')
-              );
-            }
+            this.__readAndroidJSONFile(fileEntry).then(
+              (_data) => {
+                // nothing todo
+                resolve(_data);
+              },
+              (_err2) => {
+                reject();
+                this.uiAlert.showMessage(
+                  this.translate.instant('ERROR_ON_FILE_READING') +
+                    ' (' +
+                    JSON.stringify(_err2) +
+                    ')'
+                );
+              }
+            );
           } catch (ex) {
             reject();
             this.uiAlert.showMessage(
@@ -203,8 +196,13 @@ export class UIGraphHelper {
       _fileEntry.file(async (file) => {
         const reader = new FileReader();
         reader.onloadend = (event: Event) => {
-          const parsedJSON = JSON.parse(reader.result as string);
-          resolve(parsedJSON);
+          try {
+            const parsedJSON = JSON.parse(reader.result as string);
+            resolve(parsedJSON);
+          } catch (ex) {
+            //Not a json one
+            reject();
+          }
         };
         reader.onerror = (event: Event) => {
           reject();

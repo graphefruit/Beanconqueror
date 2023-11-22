@@ -51,6 +51,7 @@ export class VisualizerService {
         vS.brewFlow = await this.readFlowProfile(_brew);
       } catch (ex) {}
       if (vS.brewFlow === null || vS.brewFlow === undefined) {
+        this.uiLog.log('Upload visualizer shot - We did not find any brewflow');
         // We could not read the data - maybe import data where missing.
         reject();
         return;
@@ -72,6 +73,12 @@ export class VisualizerService {
 
         const url = settings.visualizer_url + 'api/shots/upload'; // 'https://visualizer.coffee/api/shots/upload';
 
+        this.uiLog.log(
+          'Upload visualizer shot - ' +
+            'VisualizerUploadShotTemp_' +
+            _brew.config.uuid +
+            '.json'
+        );
         cordova.plugin.http.uploadFile(
           url,
           undefined,
@@ -82,11 +89,15 @@ export class VisualizerService {
             try {
               await this.uiFileHelper.deleteFile(fileData.FULL_PATH);
             } catch (ex) {}
+
             if (_successData && 'data' in _successData) {
+              this.uiLog.log('Upload visualizer shot successfully');
               const dataObj = JSON.parse(_successData.data);
               const visualizerId = dataObj.id;
               _brew.customInformation.visualizer_id = visualizerId;
               await this.uiBrewStorage.update(_brew);
+            } else {
+              this.uiLog.log('Upload visualizer shot not successfully');
             }
 
             setTimeout(() => {
@@ -100,6 +111,7 @@ export class VisualizerService {
             }, 50);
           },
           (_errorData) => {
+            this.uiLog.log('Upload visualizer shot error occured');
             if (_showToast === true) {
               this.uiToast.showInfoToastBottom(
                 'VISUALIZER.SHOT.UPLOAD_UNSUCCESSFULLY'
@@ -109,7 +121,11 @@ export class VisualizerService {
             this.uiLog.error(JSON.stringify(_errorData));
           }
         );
-      } catch (ex) {}
+      } catch (ex) {
+        this.uiLog.log(
+          'Upload visualizer shot excpection occured' + ex.message
+        );
+      }
     });
     return promise;
   }

@@ -1,9 +1,7 @@
 import { PreparationDevice } from '../preparationDevice';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { catchError, timeout } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 import { Preparation } from '../../preparation/preparation';
-import { IConfig } from '../../../interfaces/objectConfig/iObjectConfig';
+
 import { IXeniaParams } from '../../../interfaces/preparationDevices/iXeniaParams';
 declare var cordova;
 export class XeniaDevice extends PreparationDevice {
@@ -22,7 +20,8 @@ export class XeniaDevice extends PreparationDevice {
         method: 'get',
       };
       cordova.plugin.http.sendRequest(
-        this.getPreparation().connectedPreparationDevice.url + '/overview',
+        this.getPreparation().connectedPreparationDevice.url +
+          '/api/v2/overview',
         options,
         (response) => {
           try {
@@ -63,7 +62,7 @@ export class XeniaDevice extends PreparationDevice {
       method: 'get',
     };
     cordova.plugin.http.sendRequest(
-      this.getPreparation().connectedPreparationDevice.url + '/overview',
+      this.getPreparation().connectedPreparationDevice.url + '/api/v2/overview',
       options,
       (response) => {
         try {
@@ -88,7 +87,8 @@ export class XeniaDevice extends PreparationDevice {
       method: 'get',
     };
     cordova.plugin.http.sendRequest(
-      this.getPreparation().connectedPreparationDevice.url + '/overview_single',
+      this.getPreparation().connectedPreparationDevice.url +
+        '/api/v2/overview_single',
       options,
       (response) => {
         try {
@@ -138,7 +138,8 @@ export class XeniaDevice extends PreparationDevice {
         method: 'get',
       };
       cordova.plugin.http.sendRequest(
-        this.getPreparation().connectedPreparationDevice.url + '/scripts_list',
+        this.getPreparation().connectedPreparationDevice.url +
+          '/api/v2/scripts/list',
         options,
         (response) => {
           try {
@@ -204,7 +205,8 @@ export class XeniaDevice extends PreparationDevice {
       };
 
       cordova.plugin.http.sendRequest(
-        this.getPreparation().connectedPreparationDevice.url + '/stop_script',
+        this.getPreparation().connectedPreparationDevice.url +
+          '/api/v2/scripts/stop',
         options,
         (response) => {
           try {
