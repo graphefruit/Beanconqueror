@@ -1413,6 +1413,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         this.preparationDevice
           .startScript(this.data.preparationDeviceBrew.params.scriptStartId)
           .catch((_msg) => {
+            this.uiLog.log('We could not start script: ' + _msg);
             this.uiToast.showInfoToast(
               'We could not start script: ' + _msg,
               false

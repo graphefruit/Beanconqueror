@@ -175,11 +175,16 @@ export class XeniaDevice extends PreparationDevice {
       const options = {
         method: 'post',
         data: { ID: _id },
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        },
       };
+
+      //application/x-www-form-urlencoded; charset=UTF-8
 
       cordova.plugin.http.sendRequest(
         this.getPreparation().connectedPreparationDevice.url +
-          '/execute_script',
+          '/api/v2/scripts/execute',
         options,
         (response) => {
           try {
