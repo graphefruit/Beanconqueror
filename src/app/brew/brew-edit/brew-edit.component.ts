@@ -146,8 +146,12 @@ export class BrewEditComponent implements OnInit {
       this.brewBrewing.flow_profile_raw.pressureFlow.length > 0 ||
       this.brewBrewing.flow_profile_raw.temperatureFlow.length > 0
     ) {
-      const savedPath = this.brewBrewing.saveFlowProfile(this.data.config.uuid);
-      this.data.flow_profile = savedPath;
+      const savedPath: string = await this.brewBrewing.saveFlowProfile(
+        this.data.config.uuid
+      );
+      if (savedPath !== '') {
+        this.data.flow_profile = savedPath;
+      }
     }
 
     await this.uiBrewStorage.update(this.data);

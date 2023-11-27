@@ -240,11 +240,13 @@ export class BrewAddComponent implements OnInit {
         this.brewBrewing.flow_profile_raw.pressureFlow.length > 0 ||
         this.brewBrewing.flow_profile_raw.temperatureFlow.length > 0
       ) {
-        const savedPath = this.brewBrewing.saveFlowProfile(
+        const savedPath: string = await this.brewBrewing.saveFlowProfile(
           addedBrewObj.config.uuid
         );
-        addedBrewObj.flow_profile = savedPath;
-        await this.uiBrewStorage.update(addedBrewObj);
+        if (savedPath !== '') {
+          addedBrewObj.flow_profile = savedPath;
+          await this.uiBrewStorage.update(addedBrewObj);
+        }
       }
 
       let checkData: Settings | Preparation;

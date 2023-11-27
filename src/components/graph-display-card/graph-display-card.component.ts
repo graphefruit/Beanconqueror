@@ -219,7 +219,7 @@ export class GraphDisplayCardComponent implements OnInit {
           color: '#cdc2ac',
           width: 2,
         },
-        visible: graphSettings.weight,
+        visible: true,
       };
       this.flowPerSecondTrace = {
         x: [],
@@ -233,7 +233,7 @@ export class GraphDisplayCardComponent implements OnInit {
           color: '#7F97A2',
           width: 2,
         },
-        visible: graphSettings.calc_flow,
+        visible: true,
       };
 
       this.realtimeFlowTrace = {
@@ -248,7 +248,7 @@ export class GraphDisplayCardComponent implements OnInit {
           color: '#09485D',
           width: 2,
         },
-        visible: graphSettings.realtime_flow,
+        visible: true,
       };
 
       this.pressureTrace = {
@@ -263,7 +263,7 @@ export class GraphDisplayCardComponent implements OnInit {
           color: '#05C793',
           width: 2,
         },
-        visible: graphSettings.pressure,
+        visible: true,
       };
 
       this.temperatureTrace = {
@@ -278,7 +278,7 @@ export class GraphDisplayCardComponent implements OnInit {
           color: '#CC3311',
           width: 2,
         },
-        visible: graphSettings.temperature,
+        visible: true,
       };
 
       const startingDay = moment(new Date()).startOf('day');
