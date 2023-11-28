@@ -3555,7 +3555,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   private __setFlowProfile(_scaleChange: any) {
-    const weight: number = this.uiHelper.toFixedIfNecessary(
+    let weight: number = this.uiHelper.toFixedIfNecessary(
       _scaleChange.actual,
       1
     );
@@ -3576,6 +3576,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.flowTime = this.getTime();
     }
     const scaleType = this.bleManager.getScale()?.getScaleType();
+    //Yeay yeay yeay, sometimes the lunar scale is reporting wrongly cause of closed api, therefore try to tackle this issues down with the lunar
+    if (scaleType === ScaleType.LUNAR) {
+      if (weight > 5000) {
+        // Wrong scale values reported. - Fix it back
+        weight = oldWeight;
+      } else if (weight <= 0 && oldWeight >= 10) {
+        // I don't know if old_weight could just be bigger then 0
+        weight = oldWeight;
+      }
+    }
 
     const flowObj = {
       unixTime: moment(new Date())
@@ -3604,6 +3614,22 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       let sameFlowPerTenHerzCounter: number = 0;
 
       let flowHasSomeMinusValueInIt: boolean = false;
+      /**if (scaleType === ScaleType.LUNAR) {
+        // Fix weight values :O
+        for (let i = 0; i < this.flowProfileArr.length; i++) {
+          const theProfileTempEntry = this.flowProfileTempAll[this.flowProfileTempAll.length - (i+1)];
+          if (theProfileTempEntry.actual_weight > 3000) {
+            // Wrong scale values reported. - Fix it back
+            theProfileTempEntry.actual_weight = theProfileTempEntry.old_weight;
+            this.flowProfileArr[i] = theProfileTempEntry.actual_weight;
+          } else if (theProfileTempEntry.actual_weight <= 0 && theProfileTempEntry.old_weight >= 10) {
+            // I don't know if old_weight could just be bigger then 0
+            theProfileTempEntry.actual_weight = theProfileTempEntry.old_weight;
+            this.flowProfileArr[i] = theProfileTempEntry.actual_weight;
+          }
+        }
+      }*/
+
       for (let i = 0; i < this.flowProfileArr.length; i++) {
         const val: number = this.flowProfileArr[i];
 
