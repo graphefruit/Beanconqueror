@@ -3581,9 +3581,33 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       if (weight > 5000) {
         // Wrong scale values reported. - Fix it back
         weight = oldWeight;
-      } else if (weight <= 0 && oldWeight >= 10) {
-        // I don't know if old_weight could just be bigger then 0
-        weight = oldWeight;
+      } else {
+        if (weight <= 0) {
+          if (this.flowProfileTempAll.length >= 3) {
+            let weAreDecreasing: boolean = false;
+            for (
+              let i = this.flowProfileTempAll.length - 1;
+              i >= this.flowProfileTempAll.length - 2;
+              i--
+            ) {
+              if (
+                this.flowProfileTempAll[i].weight <
+                this.flowProfileTempAll[i - 1].weight
+              ) {
+                weAreDecreasing = true;
+              } else {
+                // We are decreasing, break directly, that the value is not overwritten again.
+                weAreDecreasing = false;
+                break;
+              }
+            }
+            // We checked that we're not going to degreese
+            if (weAreDecreasing === false) {
+              // I don't know if old_weight could just be bigger then 0
+              weight = oldWeight;
+            }
+          }
+        }
       }
     }
 
