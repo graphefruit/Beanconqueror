@@ -1886,6 +1886,7 @@ export class SettingsPage implements OnInit {
       await this.uiGreenBeanStorage.reinitializeStorage();
       await this.uiRoastingMachineStorage.reinitializeStorage();
       await this.uiWaterStorage.reinitializeStorage();
+      await this.uiGraphStorage.reinitializeStorage();
 
       // Wait for every necessary service to be ready before starting the app
       // Settings and version, will create a new object on start, so we need to wait for this in the end.
@@ -1901,6 +1902,7 @@ export class SettingsPage implements OnInit {
       const roastingMachineStorageCallback =
         this.uiRoastingMachineStorage.storageReady();
       const waterStorageCallback = this.uiWaterStorage.storageReady();
+      const graphStorageCallback = this.uiGraphStorage.storageReady();
 
       Promise.all([
         beanStorageReadyCallback,
@@ -1912,6 +1914,7 @@ export class SettingsPage implements OnInit {
         greenBeanStorageCallback,
         roastingMachineStorageCallback,
         waterStorageCallback,
+        graphStorageCallback,
       ]).then(
         async () => {
           await this.uiUpdate.checkUpdate();
