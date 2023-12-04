@@ -960,11 +960,11 @@
         ]
       },
       "7.0.0": {
-        "TITLE": "Version 7.00: Novedades",
+        "TITLE": "Version 7.0.0: Novedades",
         "DESCRIPTION": [
-          "<b>Bluetooth Scale Mode</b>",
-          "Start the timer on the first detected change in weight - Activable en configuración (new button visible)",
-          "Ignore the current transmitted weight - e.g., for swirls, stirs, or removing weight without intentional graph spikes - Activable en configuración (new button visible)",
+          "<b>Modos en básculas Bluetooth</b>",
+          "Inicia el temporizador automáticamente al detectar un cambio de peso - Activable en configuración (aparecerá un icono nuevo)",
+          "Ignora temporalmente la transferencia de peso - para, por ejemplo, menear, agitar o mover sin que el gráfico genere picos de manera intencionada - Activable en configuración (aparecerá un icono nuevo)",
           "",
           "<b>Básculas Bluetooth</b>",
           "Añadido soporte para una báscula genérica",
