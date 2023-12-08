@@ -39,15 +39,21 @@ export class VisualizerService {
 
   public async uploadToVisualizer(_brew: Brew, _showToast: boolean = true) {
     const promise: Promise<boolean> = new Promise(async (resolve, reject) => {
+      if (
+        _brew.flow_profile === null ||
+        _brew.flow_profile === undefined ||
+        _brew.flow_profile === ''
+      ) {
+        return;
+      }
       const settings: Settings = this.uiSettingsStorage.getSettings();
       const vS: Visualizer = new Visualizer();
-
-      vS.mapBrew(_brew);
-      vS.mapBean(_brew.getBean());
-      vS.mapWater(_brew.getWater());
-      vS.mapPreparation(_brew.getPreparation());
-      vS.mapMill(_brew.getMill());
       try {
+        vS.mapBrew(_brew);
+        vS.mapBean(_brew.getBean());
+        vS.mapWater(_brew.getWater());
+        vS.mapPreparation(_brew.getPreparation());
+        vS.mapMill(_brew.getMill());
         vS.brewFlow = await this.readFlowProfile(_brew);
       } catch (ex) {}
       if (vS.brewFlow === null || vS.brewFlow === undefined) {
@@ -108,7 +114,7 @@ export class VisualizerService {
               }
 
               resolve(undefined);
-            }, 50);
+            }, 75);
           },
           (_errorData) => {
             this.uiLog.log('Upload visualizer shot error occured');
@@ -117,14 +123,15 @@ export class VisualizerService {
                 'VISUALIZER.SHOT.UPLOAD_UNSUCCESSFULLY'
               );
             }
-
             this.uiLog.error(JSON.stringify(_errorData));
+            reject();
           }
         );
       } catch (ex) {
         this.uiLog.log(
           'Upload visualizer shot excpection occured' + ex.message
         );
+        reject();
       }
     });
     return promise;
