@@ -36,6 +36,7 @@ if (typeof window.Matomo !== 'object') {
       af = 0,
       X = 0,
       m = false;
+
     function p(at) {
       try {
         return V(at);
@@ -43,25 +44,32 @@ if (typeof window.Matomo !== 'object') {
         return unescape(at);
       }
     }
+
     function M(au) {
       var at = typeof au;
       return at !== 'undefined';
     }
+
     function C(at) {
       return typeof at === 'function';
     }
+
     function Z(at) {
       return typeof at === 'object';
     }
+
     function x(at) {
       return typeof at === 'string' || at instanceof String;
     }
+
     function ak(at) {
       return typeof at === 'number' || at instanceof Number;
     }
+
     function ac(at) {
       return M(at) && (ak(at) || (x(at) && at.length));
     }
+
     function D(au) {
       if (!au) {
         return true;
@@ -74,12 +82,14 @@ if (typeof window.Matomo !== 'object') {
       }
       return true;
     }
+
     function ao(at) {
       var au = typeof console;
       if (au !== 'undefined' && console && console.error) {
         console.error(at);
       }
     }
+
     function aj() {
       var ay, ax, aA, au, at;
       for (ay = 0; ay < arguments.length; ay += 1) {
@@ -144,6 +154,7 @@ if (typeof window.Matomo !== 'object') {
         }
       }
     }
+
     function ar(aw, av, au, at) {
       if (aw.addEventListener) {
         aw.addEventListener(av, au, at);
@@ -154,6 +165,7 @@ if (typeof window.Matomo !== 'object') {
       }
       aw['on' + av] = au;
     }
+
     function n(at) {
       if (J.readyState === 'complete') {
         at();
@@ -167,6 +179,7 @@ if (typeof window.Matomo !== 'object') {
         }
       }
     }
+
     function q(aw) {
       var at = false;
       if (J.attachEvent) {
@@ -226,6 +239,7 @@ if (typeof window.Matomo !== 'object') {
         false
       );
     }
+
     function ag(au, az, aA) {
       if (!au) {
         return '';
@@ -249,6 +263,7 @@ if (typeof window.Matomo !== 'object') {
       }
       return at;
     }
+
     function am(au) {
       var at;
       m = true;
@@ -264,6 +279,7 @@ if (typeof window.Matomo !== 'object') {
         } while (at.getTimeAlias() < r);
       }
     }
+
     function o(av, au) {
       var at = J.createElement('script');
       at.type = 'text/javascript';
@@ -281,6 +297,7 @@ if (typeof window.Matomo !== 'object') {
       }
       J.getElementsByTagName('head')[0].appendChild(at);
     }
+
     function N() {
       var at = '';
       try {
@@ -299,19 +316,23 @@ if (typeof window.Matomo !== 'object') {
       }
       return at;
     }
+
     function s(at) {
       var av = new RegExp('^([a-z]+):'),
         au = av.exec(at);
       return au ? au[1] : null;
     }
+
     function d(at) {
       var av = new RegExp('^(?:(?:https?|ftp):)/*(?:[^@]+@)?([^:/#]+)'),
         au = av.exec(at);
       return au ? au[1] : at;
     }
+
     function G(at) {
       return /^[0-9][0-9]*(\.[0-9]+)?$/.test(at);
     }
+
     function Q(av, aw) {
       var at = {},
         au;
@@ -322,6 +343,7 @@ if (typeof window.Matomo !== 'object') {
       }
       return at;
     }
+
     function B(av) {
       var at = {},
         au;
@@ -342,6 +364,7 @@ if (typeof window.Matomo !== 'object') {
       }
       return at;
     }
+
     function l(au) {
       var av = '',
         at;
@@ -352,22 +375,27 @@ if (typeof window.Matomo !== 'object') {
       }
       return av;
     }
+
     function an(au, at) {
       au = String(au);
       return au.lastIndexOf(at, 0) === 0;
     }
+
     function U(au, at) {
       au = String(au);
       return au.indexOf(at, au.length - at.length) !== -1;
     }
+
     function A(au, at) {
       au = String(au);
       return au.indexOf(at) !== -1;
     }
+
     function f(au, at) {
       au = String(au);
       return au.substr(0, au.length - at);
     }
+
     function I(aw, av, ay) {
       aw = String(aw);
       if (!ay) {
@@ -389,6 +417,7 @@ if (typeof window.Matomo !== 'object') {
       }
       return ax + t(av) + '=' + t(ay) + au;
     }
+
     function j(au, av) {
       au = String(au);
       if (
@@ -429,21 +458,25 @@ if (typeof window.Matomo !== 'object') {
       }
       return aA;
     }
+
     function e(av, au) {
       var at = '[\\?&#]' + au + '=([^&#]*)';
       var ax = new RegExp(at);
       var aw = ax.exec(av);
       return aw ? p(aw[1]) : '';
     }
+
     function a(at) {
       if (at && String(at) === at) {
         return at.replace(/^\s+|\s+$/g, '');
       }
       return at;
     }
+
     function F(at) {
       return unescape(t(at));
     }
+
     function aq(aI) {
       var av = function (aO, aN) {
           return (aO << aN) | (aO >>> (32 - aN));
@@ -577,6 +610,7 @@ if (typeof window.Matomo !== 'object') {
       aM = aJ(aC) + aJ(aA) + aJ(az) + aJ(ax) + aJ(aw);
       return aM.toLowerCase();
     }
+
     function ae(av, at, au) {
       if (!av) {
         av = '';
@@ -602,6 +636,7 @@ if (typeof window.Matomo !== 'object') {
       }
       return [av, at, au];
     }
+
     function O(au) {
       var at = au.length;
       if (au.charAt(--at) === '.') {
@@ -615,6 +650,7 @@ if (typeof window.Matomo !== 'object') {
       }
       return au;
     }
+
     function ap(au) {
       au = au && au.text ? au.text : au;
       if (!x(au)) {
@@ -625,6 +661,7 @@ if (typeof window.Matomo !== 'object') {
       }
       return au;
     }
+
     function S(at) {
       if (!at) {
         return [];
@@ -637,6 +674,7 @@ if (typeof window.Matomo !== 'object') {
       }
       return [];
     }
+
     function Y(au, at) {
       if (!au || !at) {
         return false;
@@ -652,6 +690,7 @@ if (typeof window.Matomo !== 'object') {
       }
       return false;
     }
+
     function P(av, aw) {
       if (av && av.indexOf) {
         return av.indexOf(aw);
@@ -675,10 +714,12 @@ if (typeof window.Matomo !== 'object') {
       }
       return -1;
     }
+
     function i(av) {
       if (!av) {
         return false;
       }
+
       function at(ax, ay) {
         if (W.getComputedStyle) {
           return J.defaultView.getComputedStyle(ax, null)[ay];
@@ -687,6 +728,7 @@ if (typeof window.Matomo !== 'object') {
           return ax.currentStyle[ay];
         }
       }
+
       function aw(ax) {
         ax = ax.parentNode;
         while (ax) {
@@ -697,6 +739,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return false;
       }
+
       function au(az, aF, ax, aC, aA, aD, aB) {
         var ay = az.parentNode,
           aE = 1;
@@ -750,8 +793,10 @@ if (typeof window.Matomo !== 'object') {
         }
         return true;
       }
+
       return au(av);
     }
+
     var ai = {
       htmlCollectionToArray: function (av) {
         var at = [],
@@ -1412,6 +1457,7 @@ if (typeof window.Matomo !== 'object') {
         return false;
       },
     };
+
     function aa(au, ax) {
       if (ax) {
         return ax;
@@ -1439,6 +1485,7 @@ if (typeof window.Matomo !== 'object') {
       }
       return au;
     }
+
     function R(az) {
       var aB = 'Matomo_Overlay';
       var au = new RegExp(
@@ -1465,6 +1512,7 @@ if (typeof window.Matomo !== 'object') {
       var aA = W.name.split('###');
       return aA.length === 4 && aA[0] === aB;
     }
+
     function ad(au, az, av) {
       var ay = W.name.split('###'),
         ax = ay[1],
@@ -1475,6 +1523,7 @@ if (typeof window.Matomo !== 'object') {
         Matomo_Overlay_Client.initialize(aA, av, ax, at, aw);
       });
     }
+
     function v() {
       var av;
       try {
@@ -1493,6 +1542,7 @@ if (typeof window.Matomo !== 'object') {
         return true;
       }
     }
+
     function T(co, ci) {
       var bR = this,
         bk = 'mtm_consent',
@@ -1676,6 +1726,7 @@ if (typeof window.Matomo !== 'object') {
       } catch (cO) {
         bq = '';
       }
+
       function aH(dE) {
         if (bt && dE !== c2) {
           return 0;
@@ -1684,7 +1735,9 @@ if (typeof window.Matomo !== 'object') {
           dD = dC.exec(J.cookie);
         return dD ? V(dD[2]) : 0;
       }
+
       bL = !aH(c2);
+
       function dx(dG, dH, dK, dJ, dE, dF, dI) {
         if (bt && dG !== c2) {
           return;
@@ -1716,6 +1769,7 @@ if (typeof window.Matomo !== 'object') {
           ao(dC);
         }
       }
+
       function cb(dC) {
         var dE, dD;
         dC = j(dC, az);
@@ -1730,6 +1784,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return dC;
       }
+
       function b4(dE, dC) {
         var dF = s(dC),
           dD;
@@ -1750,6 +1805,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return dE + dC;
       }
+
       function cX(dE, dC) {
         var dD;
         dE = String(dE).toLowerCase();
@@ -1768,6 +1824,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return false;
       }
+
       function cw(dC) {
         var dD = document.createElement('a');
         if (dC.indexOf('//') !== 0 && dC.indexOf('http') !== 0) {
@@ -1785,6 +1842,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return '';
       }
+
       function ba(dD, dC) {
         if (!an(dC, '/')) {
           dC = '/' + dC;
@@ -1820,6 +1878,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return dD.indexOf(dC) === 0;
       }
+
       function aw(dG, dI) {
         var dD, dC, dE, dF, dH;
         for (dD = 0; dD < aC.length; dD++) {
@@ -1831,6 +1890,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return false;
       }
+
       function a2(dF) {
         var dD, dC, dE;
         for (dD = 0; dD < aC.length; dD++) {
@@ -1850,6 +1910,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return false;
       }
+
       function cD(dC) {
         var dD, dF, dH, dE, dG;
         if (!dC.length || !cM.length) {
@@ -1872,6 +1933,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return false;
       }
+
       function cA(dC, dE) {
         dC = dC.replace('send_image=0', 'send_image=1');
         var dD = new Image(1, 1);
@@ -1888,12 +1950,14 @@ if (typeof window.Matomo !== 'object') {
         };
         dD.src = aI + (aI.indexOf('?') < 0 ? '?' : '&') + dC;
       }
+
       function cU(dC) {
         if (dt === 'POST') {
           return true;
         }
         return dC && (dC.length > 2000 || dC.indexOf('{"requests"') === 0);
       }
+
       function aP() {
         return (
           'object' === typeof g &&
@@ -1901,6 +1965,7 @@ if (typeof window.Matomo !== 'object') {
           'function' === typeof Blob
         );
       }
+
       function bd(dG, dJ, dI) {
         var dE = aP();
         if (!dE) {
@@ -1929,6 +1994,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return dK;
       }
+
       function dm(dD, dE, dC) {
         if (!M(dC) || null === dC) {
           dC = true;
@@ -1987,6 +2053,7 @@ if (typeof window.Matomo !== 'object') {
           }
         }, 50);
       }
+
       function cq(dD) {
         var dC = new Date();
         var dE = dC.getTime() + dD;
@@ -1994,19 +2061,23 @@ if (typeof window.Matomo !== 'object') {
           r = dE;
         }
       }
+
       function bh() {
         bj = true;
         cN = new Date().getTime();
       }
+
       function dw() {
         var dC = new Date().getTime();
         return !cN || dC - cN > bc;
       }
+
       function aD() {
         if (dw()) {
           b0();
         }
       }
+
       function a1() {
         if (J.visibilityState === 'hidden' && dw()) {
           b0();
@@ -2016,6 +2087,7 @@ if (typeof window.Matomo !== 'object') {
           }
         }
       }
+
       function dz() {
         if (aS || !bc) {
           return;
@@ -2033,6 +2105,7 @@ if (typeof window.Matomo !== 'object') {
           },
         });
       }
+
       function cS(dG) {
         var dD = new Date();
         var dC = dD.getTime();
@@ -2050,6 +2123,7 @@ if (typeof window.Matomo !== 'object') {
         }
         dG();
       }
+
       function aT() {
         if (aH(c2)) {
           bL = false;
@@ -2059,6 +2133,7 @@ if (typeof window.Matomo !== 'object') {
           }
         }
       }
+
       function bT(dE) {
         if (!aZ) {
           return dE;
@@ -2074,6 +2149,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return dE;
       }
+
       function cB(dC) {
         if (
           !de ||
@@ -2111,6 +2187,7 @@ if (typeof window.Matomo !== 'object') {
             }
           );
       }
+
       function bO(dD, dC, dE) {
         if (!bu) {
           cj.push(dD);
@@ -2144,12 +2221,14 @@ if (typeof window.Matomo !== 'object') {
           dz();
         }
       }
+
       function cv(dC) {
         if (c6) {
           return false;
         }
         return dC && dC.length;
       }
+
       function dl(dC, dG) {
         if (!dG || dG >= dC.length) {
           return [dC];
@@ -2162,6 +2241,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return dF;
       }
+
       function dy(dD, dC) {
         if (!cv(dD)) {
           return;
@@ -2193,12 +2273,15 @@ if (typeof window.Matomo !== 'object') {
           cq(dC);
         });
       }
+
       function aY(dC) {
         return br + dC + '.' + cf + '.' + bx;
       }
+
       function b8(dE, dD, dC) {
         dx(dE, '', -129600000, dD, dC);
       }
+
       function ce() {
         if (bt) {
           return '0';
@@ -2212,9 +2295,11 @@ if (typeof window.Matomo !== 'object') {
         b8(dC);
         return dD;
       }
+
       function bp() {
         bx = cg((df || da) + (by || '/')).slice(0, 4);
       }
+
       function cY() {
         cB(function () {
           var dI, dH;
@@ -2276,6 +2361,7 @@ if (typeof window.Matomo !== 'object') {
         dq.res = parseInt(dE, 10) + 'x' + parseInt(dC, 10);
         return dq;
       }
+
       function b6() {
         var dD = aY('cvar'),
           dC = aH(dD);
@@ -2287,11 +2373,13 @@ if (typeof window.Matomo !== 'object') {
         }
         return {};
       }
+
       function cV() {
         if (aV === false) {
           aV = b6();
         }
       }
+
       function c7() {
         var dC = cY();
         return cg(
@@ -2302,21 +2390,25 @@ if (typeof window.Matomo !== 'object') {
             Math.random()
         ).slice(0, 16);
       }
+
       function aF() {
         var dC = cY();
         return cg(
           (g.userAgent || '') + (g.platform || '') + W.JSON.stringify(dC)
         ).slice(0, 6);
       }
+
       function bm() {
         return Math.floor(new Date().getTime() / 1000);
       }
+
       function aO() {
         var dD = bm();
         var dE = aF();
         var dC = String(dD) + dE;
         return dC;
       }
+
       function dk(dE) {
         dE = String(dE);
         var dH = aF();
@@ -2334,6 +2426,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return false;
       }
+
       function dA(dC) {
         if (!c3) {
           return '';
@@ -2353,6 +2446,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return '';
       }
+
       function c4() {
         if (!bX) {
           bX = dA(bW);
@@ -2383,6 +2477,7 @@ if (typeof window.Matomo !== 'object') {
         dG = ['1', dF, dC];
         return dG;
       }
+
       function a5() {
         var dF = c4(),
           dD = dF[0],
@@ -2390,6 +2485,7 @@ if (typeof window.Matomo !== 'object') {
           dC = dF[2];
         return { newVisitor: dD, uuid: dE, createTs: dC };
       }
+
       function aL() {
         var dF = new Date(),
           dD = dF.getTime(),
@@ -2398,6 +2494,7 @@ if (typeof window.Matomo !== 'object') {
         var dE = dC * 1000 + c0 - dD;
         return dE;
       }
+
       function aR(dC) {
         if (!cf) {
           return;
@@ -2410,6 +2507,7 @@ if (typeof window.Matomo !== 'object') {
         var dF = dC.uuid + '.' + dC.createTs + '.';
         dx(aY('id'), dF, aL(), by, df, b1, aN);
       }
+
       function bV() {
         var dC = aH(aY('ref'));
         if (dC.length) {
@@ -2422,6 +2520,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return ['', '', 0, ''];
       }
+
       function bF(dE) {
         var dD = br + 'testcookie_domain';
         var dC = 'testvalue';
@@ -2432,6 +2531,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return false;
       }
+
       function aJ() {
         var dD = bt;
         bt = false;
@@ -2444,9 +2544,11 @@ if (typeof window.Matomo !== 'object') {
         }
         bt = dD;
       }
+
       function cc(dC) {
         cf = dC;
       }
+
       function dB(dG) {
         if (!dG || !Z(dG)) {
           return;
@@ -2467,9 +2569,11 @@ if (typeof window.Matomo !== 'object') {
         }
         return dH;
       }
+
       function cn() {
         dx(aY('ses'), '1', cz, by, df, b1, aN);
       }
+
       function bn() {
         var dF = '';
         var dD =
@@ -2481,6 +2585,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return dF;
       }
+
       function aE(dD) {
         if (cy !== '') {
           dD += cy;
@@ -2550,11 +2655,13 @@ if (typeof window.Matomo !== 'object') {
         }
         return dD + dC;
       }
+
       function cm(dC) {
         return (
           e(dC, 'ignore_referrer') === '1' || e(dC, 'ignore_referer') === '1'
         );
       }
+
       function ds() {
         var dM,
           dF = new Date(),
@@ -2623,6 +2730,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return dP;
       }
+
       function cF(dD, dP, dQ) {
         var dO,
           dC = new Date(),
@@ -2712,6 +2820,7 @@ if (typeof window.Matomo !== 'object') {
             dD += '&data=' + t(W.JSON.stringify(at));
           }
         }
+
         function dG(dV, dW) {
           var dX = W.JSON.stringify(dV);
           if (dX.length > 2) {
@@ -2719,6 +2828,7 @@ if (typeof window.Matomo !== 'object') {
           }
           return '';
         }
+
         var dS = dB(b5);
         var dL = dB(cx);
         dD += dG(dS, 'cvar');
@@ -2754,6 +2864,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return dD;
       }
+
       b0 = function be() {
         var dC = new Date();
         dC = dC.getTime();
@@ -2766,6 +2877,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return false;
       };
+
       function bz(dF, dE, dJ, dG, dC, dM) {
         var dI = 'idgoal=0',
           dD = new Date(),
@@ -2814,16 +2926,19 @@ if (typeof window.Matomo !== 'object') {
           di = {};
         }
       }
+
       function b7(dC, dG, dF, dE, dD, dH) {
         if (String(dC).length && M(dG)) {
           bz(dC, dG, dF, dE, dD, dH);
         }
       }
+
       function bB(dC) {
         if (M(dC)) {
           bz('', dC, '', '', '', '');
         }
       }
+
       function b9(dD, dF, dE) {
         if (!bJ) {
           aQ = bn();
@@ -2834,6 +2949,7 @@ if (typeof window.Matomo !== 'object') {
         }
         bO(dC, bS, dE);
       }
+
       function a7(dE, dD) {
         var dF,
           dC = '(^| )(piwik[_-]' + dD + '|matomo[_-]' + dD;
@@ -2845,9 +2961,11 @@ if (typeof window.Matomo !== 'object') {
         dC += ')( |$)';
         return new RegExp(dC);
       }
+
       function a0(dC) {
         return aI && dC && 0 === String(dC).indexOf(aI);
       }
+
       function cJ(dG, dC, dH, dD) {
         if (a0(dC)) {
           return 0;
@@ -2866,6 +2984,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return 'link';
       }
+
       function ay(dD) {
         var dC;
         dC = dD.parentNode;
@@ -2878,6 +2997,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return dD;
       }
+
       function dv(dH) {
         dH = ay(dH);
         if (!ai.hasNodeAttribute(dH, 'href')) {
@@ -2907,6 +3027,7 @@ if (typeof window.Matomo !== 'object') {
           }
         }
       }
+
       function aU(dC, dD, dE, dF) {
         var dG = w.buildInteractionRequestParams(dC, dD, dE, dF);
         if (!dG) {
@@ -2914,6 +3035,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return cF(dG, null, 'contentInteraction');
       }
+
       function bi(dC, dD) {
         if (!dC || !dD) {
           return false;
@@ -2928,6 +3050,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return true;
       }
+
       function cI(dE, dD, dG) {
         if (!dE) {
           return;
@@ -2953,6 +3076,7 @@ if (typeof window.Matomo !== 'object') {
           dF.target
         );
       }
+
       function a3(dD) {
         if (!ck || !ck.length) {
           return false;
@@ -2971,6 +3095,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return false;
       }
+
       function a4(dC) {
         return function (dG) {
           if (!dC) {
@@ -3001,6 +3126,7 @@ if (typeof window.Matomo !== 'object') {
           return bR.trackContentInteractionNode(dD, 'click');
         };
       }
+
       function ca(dE) {
         if (!dE || !dE.length) {
           return;
@@ -3014,6 +3140,7 @@ if (typeof window.Matomo !== 'object') {
           }
         }
       }
+
       function bG(dE, dF) {
         if (!dE || !dE.length) {
           return [];
@@ -3048,10 +3175,12 @@ if (typeof window.Matomo !== 'object') {
         }
         return dG;
       }
+
       function cP(dD) {
         var dC = w.collectContent(dD);
         return bG(dC, dD);
       }
+
       function bg(dD) {
         if (!dD || !dD.length) {
           return [];
@@ -3068,10 +3197,12 @@ if (typeof window.Matomo !== 'object') {
         }
         return cP(dD);
       }
+
       function aK(dE, dC, dD) {
         var dF = w.buildImpressionRequestParams(dE, dC, dD);
         return cF(dF, null, 'contentImpression');
       }
+
       function du(dF, dD) {
         if (!dF) {
           return;
@@ -3086,6 +3217,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return aU(dD, dE.name, dE.piece, dE.target);
       }
+
       function c5(dD, dF, dC, dE) {
         return (
           'e_c=' +
@@ -3097,6 +3229,7 @@ if (typeof window.Matomo !== 'object') {
           '&ca=1'
         );
       }
+
       function ax(dE, dG, dC, dF, dI, dH) {
         if (!ac(dE) || !ac(dG)) {
           ao(
@@ -3107,6 +3240,7 @@ if (typeof window.Matomo !== 'object') {
         var dD = cF(c5(dE, dG, dC, dF), dI, 'event');
         bO(dD, bS, dH);
       }
+
       function ch(dC, dF, dD, dG) {
         var dE = cF(
           'search=' +
@@ -3118,10 +3252,12 @@ if (typeof window.Matomo !== 'object') {
         );
         bO(dE, bS);
       }
+
       function c9(dC, dG, dF, dE) {
         var dD = cF('idgoal=' + dC + (dG ? '&revenue=' + dG : ''), dF, 'goal');
         bO(dD, bS, dE);
       }
+
       function dj(dF, dC, dJ, dI, dE) {
         var dH = dC + '=' + t(cb(dF));
         var dD = cI(dE, 'click', dF);
@@ -3131,12 +3267,14 @@ if (typeof window.Matomo !== 'object') {
         var dG = cF(dH, dJ, 'link');
         bO(dG, bS, dI);
       }
+
       function b3(dD, dC) {
         if (dD !== '') {
           return dD + dC.charAt(0).toUpperCase() + dC.slice(1);
         }
         return dC;
       }
+
       function cr(dH) {
         var dG,
           dC,
@@ -3162,11 +3300,13 @@ if (typeof window.Matomo !== 'object') {
         }
         dH();
       }
+
       function bA() {
         var dD = bR.getVisitorId();
         var dC = aO();
         return dD + dC;
       }
+
       function cu(dC) {
         if (!dC) {
           return;
@@ -3186,6 +3326,7 @@ if (typeof window.Matomo !== 'object') {
         dD = I(dD, az, dE);
         ai.setAnyAttribute(dC, 'href', dD);
       }
+
       function bs(dF) {
         var dG = ai.getAttributeValueFromNode(dF, 'href');
         if (!dG) {
@@ -3209,6 +3350,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return false;
       }
+
       function cW(dC) {
         var dD = dv(dC);
         if (dD && dD.type) {
@@ -3223,9 +3365,11 @@ if (typeof window.Matomo !== 'object') {
           }
         }
       }
+
       function cK() {
         return J.all && !J.addEventListener;
       }
+
       function db(dC) {
         var dE = dC.which;
         var dD = typeof dC.button;
@@ -3258,6 +3402,7 @@ if (typeof window.Matomo !== 'object') {
         }
         return dE;
       }
+
       function b2(dC) {
         switch (db(dC)) {
           case 1:
@@ -3268,12 +3413,15 @@ if (typeof window.Matomo !== 'object') {
             return 'right';
         }
       }
+
       function a8(dC) {
         return dC.target || dC.srcElement;
       }
+
       function dc(dC) {
         return dC === 'A' || dC === 'AREA';
       }
+
       function aG(dC) {
         function dD(dF) {
           var dG = a8(dF);
@@ -3287,6 +3435,7 @@ if (typeof window.Matomo !== 'object') {
             return dG;
           }
         }
+
         return function (dG) {
           dG = dG || W.event;
           var dH = dD(dG);
@@ -3325,6 +3474,7 @@ if (typeof window.Matomo !== 'object') {
           }
         };
       }
+
       function av(dF, dE, dC) {
         var dD = typeof dE;
         if (dD === 'undefined') {
@@ -3337,6 +3487,7 @@ if (typeof window.Matomo !== 'object') {
           ar(dF, 'contextmenu', aG(dE), dC);
         }
       }
+
       function aX(dD, dG, dH) {
         if (cp) {
           return true;
@@ -3344,9 +3495,11 @@ if (typeof window.Matomo !== 'object') {
         cp = true;
         var dI = false;
         var dF, dE;
+
         function dC() {
           dI = true;
         }
+
         n(function () {
           function dJ(dL) {
             setTimeout(function () {
@@ -3358,6 +3511,7 @@ if (typeof window.Matomo !== 'object') {
               dJ(dL);
             }, dL);
           }
+
           function dK(dL) {
             setTimeout(function () {
               if (!cp) {
@@ -3370,6 +3524,7 @@ if (typeof window.Matomo !== 'object') {
               dK(dL);
             }, dL);
           }
+
           if (dD) {
             dF = ['scroll', 'resize'];
             for (dE = 0; dE < dF.length; dE++) {
@@ -3387,6 +3542,7 @@ if (typeof window.Matomo !== 'object') {
           }
         });
       }
+
       var bM = {
         enabled: true,
         requests: [],
@@ -4350,9 +4506,11 @@ if (typeof window.Matomo !== 'object') {
         },
       });
     }
+
     function K() {
       return { push: aj };
     }
+
     function c(ay, ax) {
       var az = {};
       var av, aw;
@@ -4383,6 +4541,7 @@ if (typeof window.Matomo !== 'object') {
       }
       return ay;
     }
+
     var E = [
       'addTracker',
       'forgetCookieConsentGiven',
@@ -4415,6 +4574,7 @@ if (typeof window.Matomo !== 'object') {
       'setExcludedQueryParams',
       'setExcludedReferrers',
     ];
+
     function ah(av, au) {
       var at = new T(av, au);
       L.push(at);
@@ -4428,6 +4588,7 @@ if (typeof window.Matomo !== 'object') {
       u.trigger('TrackerAdded', [at]);
       return at;
     }
+
     ar(W, 'beforeunload', am, false);
     ar(
       W,
@@ -4488,6 +4649,7 @@ if (typeof window.Matomo !== 'object') {
         if (!av) {
           return;
         }
+
         function at(aE) {
           var aG = J.getElementsByTagName('iframe');
           for (aw = 0; aw < aG.length; aw++) {
@@ -4503,6 +4665,7 @@ if (typeof window.Matomo !== 'object') {
             }
           }
         }
+
         if (M(av.maq_initial_value)) {
           at({
             maq_opted_in: av.maq_initial_value && aA.hasConsent(),
@@ -4658,6 +4821,7 @@ if (typeof window.Matomo !== 'object') {
     }
     return !!_paq.length;
   }
+
   if (
     window &&
     'object' === typeof window.matomoPluginAsyncInit &&
@@ -4712,6 +4876,7 @@ if (typeof window.piwik_log !== 'function') {
       } catch (i) {}
       return;
     }
+
     var d,
       a = window.Matomo.getTracker(g, e);
     a.setDocumentTitle(c);

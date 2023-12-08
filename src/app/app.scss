@@ -54,6 +54,8 @@ ion-toolbar[with-add-button] {
   padding-top: 19px!important;
 }
 ion-header {
+  box-shadow:none!important;
+  -webkit-box-shadow:none!important;
   background-color: #F0F0F0;
   &.header-md:after {
     background: none;
@@ -125,9 +127,10 @@ ion-segment-button {
   min-height: 30px;
   margin:auto;
 
-  ion-label {
+  ion-label, .ion-label {
     font-size: 18px !important;
   }
+
 
 }
 
@@ -414,10 +417,33 @@ ion-menu:host .menu-inner {
 
   ion-checkbox {
 
-    --background: #D1D1D1;
-    --background-checked: var(--ion-color-accent);
+    --checkbox-background: #D1D1D1;
+    --checkbox-background-checked: var(--ion-color-accent);
     --border-color: transparent;
     --border-color-checked: transparent;
+    .ion-label {
+      h2 {
+        margin-left: 0;
+        margin-right: 0;
+        margin-top: 2px;
+        margin-bottom: 2px;
+        font-size: 16px;
+        font-weight: normal;
+      }
+      p {
+        white-space: normal;
+        margin-left: 0;
+        margin-right: 0;
+        margin-top: 0;
+        margin-bottom: 2px;
+        font-size: 14px;
+        line-height: 20px;
+        text-overflow: inherit;
+        overflow: inherit;
+        color: var(--ion-color-step-600, #666666);
+
+      }
+    }
   }
 
   ion-card-title {
@@ -838,8 +864,8 @@ ion-menu:host .menu-inner {
   }
 
   ion-toggle {
-    --background: var(--ion-color-inactive);
-    --background-checked: var(--ion-color-accent);
+    --track-background: var(--ion-color-inactive);
+    --track-background-checked: var(--ion-color-accent);
 
     --handle-background:  var(--ion-color-inactive);
     --handle-background-checked: var(--ion-color-accent);
@@ -890,4 +916,63 @@ ion-segment.tabs {
 
 .js-plotly-plot .plotly .main-svg {
   shape-rendering:  optimizeSpeed;
+}
+
+swiper-container {
+  --swiper-pagination-bullet-inactive-color: var(--ion-color-step-200, #cccccc);
+  --swiper-pagination-color: #AE9F87;
+  --swiper-pagination-progressbar-bg-color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.25);
+  --swiper-scrollbar-bg-color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.1);
+  --swiper-scrollbar-drag-bg-color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.5);
+}
+
+swiper-slide {
+  display: flex;
+  position: relative;
+
+  flex-direction: column;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+
+  font-size: 18px;
+
+  text-align: center;
+  box-sizing: border-box;
+}
+
+swiper-slide img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 100%;
+}
+ion-input {
+  label {
+    .label-text-wrapper {
+      transform: none!important;
+      -webkit-transform: none!important;
+      max-width: 100%;
+      margin-top:8px;
+      color:inherit!important;
+    }
+  }
+
+}
+[hidden] { display: none !important;}
+.ion-label:not([slot="end"]) {
+  flex: 1 1 0%;
+}
+
+ion-select::part(label) {
+  padding-top: 5px;
+  font-size: 16px;
+  transform: none;
+}
+
+h6 {
+  margin-top:10px;
 }

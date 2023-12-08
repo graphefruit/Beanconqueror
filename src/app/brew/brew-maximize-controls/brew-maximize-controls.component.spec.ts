@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { BeanAssociatedBrewsComponent } from './bean-associated-brews.component';
+import { BrewMaximizeControlsComponent } from './brew-maximize-controls.component';
 
-describe('BeanAssociatedBrewsComponent', () => {
-  let component: BeanAssociatedBrewsComponent;
-  let fixture: ComponentFixture<BeanAssociatedBrewsComponent>;
+describe('BrewMaximizeControlsComponent', () => {
+  let component: BrewMaximizeControlsComponent;
+  let fixture: ComponentFixture<BrewMaximizeControlsComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [BeanAssociatedBrewsComponent],
+      declarations: [BrewMaximizeControlsComponent],
       imports: [IonicModule.forRoot()],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(BeanAssociatedBrewsComponent);
+    fixture = TestBed.createComponent(BrewMaximizeControlsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

@@ -8,7 +8,10 @@
     </ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content>
+<ion-content [scrollEvents]="true"
+             (ionScrollStart)="handleScrollStart()"
+             (ionScroll)="handleScroll($any($event))"
+             (ionScrollEnd)="handleScrollEnd()">
   <ion-segment scrollable="true" [(ngModel)]="settings_segment" class="ion-padding-vertical" style="padding-top:0px;">
     <ion-segment-button value="general">
       <ion-label>{{"PAGE_SETTINGS_TAB_GENERAL" | translate }}
@@ -61,10 +64,10 @@
         <ion-card-content>
           <ion-card-title>{{"PAGE_SETTINGS_GENERAL" | translate}}</ion-card-title>
           <ion-item>
-            <ion-label>{{"PAGE_SETTINGS_LANGUAGE" | translate}}</ion-label>
             <ion-select (ngModelChange)="languageChanged($event)" [(ngModel)]="settings.language"
               cancelText="{{'CANCEL'| translate }}" cancelText="{{'CANCEL'| translate }}"
               okText="{{'CHOOSE'| translate }}" okText="{{'CHOOSE'| translate }}">
+              <div slot="label">{{"PAGE_SETTINGS_LANGUAGE" | translate}}</div>
               <ion-select-option value="de">{{"PAGE_SETTINGS_LANGUAGE_GERMAN" | translate}}</ion-select-option>
               <ion-select-option value="en">{{"PAGE_SETTINGS_LANGUAGE_ENGLISH" | translate}}</ion-select-option>
               <ion-select-option value="es">{{"PAGE_SETTINGS_LANGUAGE_SPANISH" | translate}}</ion-select-option>
@@ -73,9 +76,9 @@
             </ion-select>
           </ion-item>
           <ion-item>
-            <ion-label>{{"PAGE_SETTINGS_STARTUP_VIEW" | translate}}</ion-label>
             <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.startup_view"
               cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
+              <div slot="label">{{"PAGE_SETTINGS_STARTUP_VIEW" | translate}}</div>
               <ion-select-option value="{{STARTUP_VIEW.HOME_PAGE}}">{{"NAV_HOME" | translate}}</ion-select-option>
               <ion-select-option value="{{STARTUP_VIEW.BREW_PAGE}}">{{"NAV_BREWS" | translate}}</ion-select-option>
               <ion-select-option value="{{STARTUP_VIEW.ADD_BREW}}">{{"ADD_BREW" | translate}}</ion-select-option>
@@ -89,10 +92,10 @@
             <ion-icon name="information-outline" slot="end"
               tooltip='{{"PAGE_SETTINGS_IMAGE_QUALITY_TOOLTIP" | translate}}'></ion-icon>
           </ion-item>
-          <ion-item style="top:-15px;">
-            <ion-range style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="50" snaps="true" max="100"
+          <ion-item style="top:-10px;">
+            <ion-range  [disabled]='isScrolling' style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" min="50" snaps="true" max="100"
               step="1" (ionBlur)="saveSettings()" [(ngModel)]="settings.image_quality">
-              <ion-label slot="end">{{settings.image_quality}}%</ion-label>
+              <div class='ion-label' slot="end">{{settings.image_quality}}%</div>
             </ion-range>
           </ion-item>
           <ion-item lines="none">
@@ -102,17 +105,17 @@
             <ion-icon name="information-outline" slot="end"
               tooltip='{{"PAGE_SETTINGS_BREW_RATING_TOOLTIP" | translate}}'></ion-icon>
           </ion-item>
-          <ion-item style="top:-15px;" lines="none">
-            <ion-range style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="5" snaps="true" max="100"
+          <ion-item style="top:-10px;" lines="none">
+            <ion-range [disabled]='isScrolling' style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" min="5" snaps="true" max="100"
               step="1" (ionBlur)="changeBrewRating()" [(ngModel)]="settings.brew_rating">
-              <ion-label slot="end">{{settings.brew_rating}}</ion-label>
+              <div class='ion-label' slot="end">{{settings.brew_rating}}</div>
             </ion-range>
 
           </ion-item>
           <ion-item style="margin-top:-25px;">
-            <ion-label>{{"PAGE_SETTINGS_BREW_RATING_STEPS" | translate}}</ion-label>
             <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.brew_rating_steps"
               cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
+              <div slot="label">{{"PAGE_SETTINGS_BREW_RATING_STEPS" | translate}}</div>
               <ion-select-option [value]="1">
                 1
               </ion-select-option>
@@ -137,18 +140,18 @@
             <ion-icon name="information-outline" slot="end"
               tooltip='{{"PAGE_SETTINGS_BEAN_RATING_TOOLTIP" | translate}}'></ion-icon>
           </ion-item>
-          <ion-item style="top:-15px;" lines="none">
-            <ion-range style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="5" snaps="true" max="100"
+          <ion-item style="top:-10px;" lines="none">
+            <ion-range [disabled]='isScrolling' style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" min="5" snaps="true" max="100"
               step="1" (ionBlur)="changeBeanRating()" [(ngModel)]="settings.bean_rating">
-              <ion-label slot="end">{{settings.bean_rating}}</ion-label>
+              <div class='ion-label' slot="end">{{settings.bean_rating}}</div>
             </ion-range>
 
           </ion-item>
 
           <ion-item style="margin-top:-25px;">
-            <ion-label>{{"PAGE_SETTINGS_BEAN_RATING_STEPS" | translate}}</ion-label>
             <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.bean_rating_steps"
               cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
+              <div slot="label">{{"PAGE_SETTINGS_BEAN_RATING_STEPS" | translate}}</div>
               <ion-select-option [value]="1">
                 1
               </ion-select-option>
@@ -168,43 +171,54 @@
           </ion-item>
 
           <ion-item (click)="showAnalyticsInformation()" tappable button>
-            <ion-label>
-              <h2>{{"PAGE_SETTINGS_ANALYTICS_INFORMATION" | translate}}</h2>
-            </ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings();" [(ngModel)]="settings.matomo_analytics"></ion-checkbox>
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.matomo_analytics">
+              <div class='ion-label'>
+                <h2>{{"PAGE_SETTINGS_ANALYTICS_INFORMATION" | translate}}</h2>
+              </div>
+            </ion-checkbox>
           </ion-item>
           <ion-item>
-            <ion-label>{{"PAGE_SETTINGS_WAKE_LOCK" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings();" [(ngModel)]="settings.wake_lock"></ion-checkbox>
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.wake_lock">
+              <div class='ion-label'>{{"PAGE_SETTINGS_WAKE_LOCK" | translate}}</div>
+            </ion-checkbox>
           </ion-item>
           <ion-item>
-            <ion-label class="ion-margin-end">
-              <h2>{{"PAGE_SETTINGS_TRACK_BREW_COORDINATES" | translate}}</h2>
-              <p>{{"PAGE_SETTINGS_TRACK_BREW_COORDINATES_DESCRIPTION" | translate}}</p>
-            </ion-label>
-            <ion-checkbox (ionChange)="checkCoordinates()" (ngModelChange)="saveSettings();"
-              [(ngModel)]="settings.track_brew_coordinates"></ion-checkbox>
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.security_check_when_going_back">
+              <div class="ion-label">
+                <h2>{{"PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK" | translate}}</h2>
+                <p>{{"PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK_DESCRIPTION" | translate}}</p>
+              </div>
+            </ion-checkbox>
           </ion-item>
           <ion-item>
-            <ion-label class="ion-margin-end">
-              <h2>{{"PAGE_SETTINGS_FAST_REPEAT" | translate}}</h2>
-              <p>{{"PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION" | translate}}</p>
-            </ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings();" [(ngModel)]="settings.fast_brew_repeat"></ion-checkbox>
+            <ion-checkbox label-placement='start' (ionChange)="checkCoordinates()" (ngModelChange)="saveSettings();"
+              [(ngModel)]="settings.track_brew_coordinates">
+              <div class="ion-label">
+                <h2>{{"PAGE_SETTINGS_TRACK_BREW_COORDINATES" | translate}}</h2>
+                <p>{{"PAGE_SETTINGS_TRACK_BREW_COORDINATES_DESCRIPTION" | translate}}</p>
+              </div>
+            </ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.fast_brew_repeat">
+              <div class="ion-label">
+                <h2>{{"PAGE_SETTINGS_FAST_REPEAT" | translate}}</h2>
+                <p>{{"PAGE_SETTINGS_FAST_REPEAT_DESCRIPTION" | translate}}</p>
+              </div>
+            </ion-checkbox>
           </ion-item>
           <ion-item [lines]="settings.brew_milliseconds?'none':'full'">
-            <ion-label class="ion-margin-end">
-              <h2>{{"PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS" | translate}}</h2>
-              <p>{{"PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS_DESCRIPTION" | translate}}</p>
-            </ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings();" [(ngModel)]="settings.brew_milliseconds"></ion-checkbox>
+            <ion-checkbox  label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.brew_milliseconds">
+              <div class="ion-label">
+                <h2>{{"PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS" | translate}}</h2>
+                <p>{{"PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS_DESCRIPTION" | translate}}</p>
+              </div>
+            </ion-checkbox>
           </ion-item>
           <ion-item *ngIf="settings?.brew_milliseconds===true">
-            <ion-label class="ion-margin-end">
-              <p>{{"PAGE_SETTINGS_BREW_MILLISECONDS_DECIMAL_PLACES_DESCRIPTION" | translate}}</p>
-            </ion-label>
             <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.brew_milliseconds_leading_digits"
               cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
+              <div slot="label">{{"PAGE_SETTINGS_BREW_MILLISECONDS_DECIMAL_PLACES_DESCRIPTION" | translate}}</div>
               <ion-select-option [value]="3">
                 3
               </ion-select-option>
@@ -217,46 +231,49 @@
             </ion-select>
           </ion-item>
           <ion-item>
-            <ion-label class="ion-margin-end">
-              <h2>{{"PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE" | translate}}</h2>
-              <p>{{"PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE_DESCRIPTION" | translate}}</p>
-            </ion-label>
             <ion-checkbox (ngModelChange)="saveSettings();"
-              [(ngModel)]="settings.brew_display_bean_image"></ion-checkbox>
+              [(ngModel)]="settings.brew_display_bean_image">
+              <div class="ion-label">
+                <h2>{{"PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE" | translate}}</h2>
+                <p>{{"PAGE_SETTINGS_BREW_DISPLAY_BEAN_IMAGE_DESCRIPTION" | translate}}</p>
+              </div>
+            </ion-checkbox>
           </ion-item>
           <ion-item>
-            <ion-label class="ion-margin-end">
-              <h2>{{"PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE" | translate}}</h2>
-              <p>{{"PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE_DESCRIPTION" | translate}}</p>
-            </ion-label>
             <ion-checkbox (ngModelChange)="saveSettings();"
-              [(ngModel)]="settings.use_numeric_keyboard_for_grind_size"></ion-checkbox>
+              [(ngModel)]="settings.use_numeric_keyboard_for_grind_size">
+              <div class="ion-label">
+                <h2>{{"PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE" | translate}}</h2>
+                <p>{{"PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE_DESCRIPTION" | translate}}</p>
+              </div>
+            </ion-checkbox>
           </ion-item>
           <ion-item>
-            <ion-label>{{"PAGE_SETTINGS_CURRENCY" | translate}}</ion-label>
             <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.currency"
               cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
+              <div slot="label">{{"PAGE_SETTINGS_CURRENCY" | translate}}</div>
               <ion-select-option *ngFor="let key of currencies | keys" value="{{key}}">
                 {{key}} ({{currencies[key]}})
               </ion-select-option>
             </ion-select>
           </ion-item>
           <ion-item *ngIf="isHealthSectionAvailable" lines="none">
-            <ion-label class="ion-margin-end">
-              <h2>{{"PAGE_SETTINGS_TRACK_CAFFEINE_CONSUMPTION" | translate}}</h2>
-              <p>{{"PAGE_SETTINGS_TRACK_CAFFEINE_CONSUMPTION_DESCRIPTION" | translate}}</p>
-            </ion-label>
-            <ion-checkbox (click)="checkHealthPlugin()"
-              [(ngModel)]="settings.track_caffeine_consumption"></ion-checkbox>
+            <ion-checkbox label-placement='start' (click)="checkHealthPlugin()"
+              [(ngModel)]="settings.track_caffeine_consumption">
+              <div class="ion-label">
+                <h2>{{"PAGE_SETTINGS_TRACK_CAFFEINE_CONSUMPTION" | translate}}</h2>
+                <p>{{"PAGE_SETTINGS_TRACK_CAFFEINE_CONSUMPTION_DESCRIPTION" | translate}}</p>
+              </div>
+            </ion-checkbox>
           </ion-item>
           <ion-item>
-            <ion-label class="ion-margin-end">
-              <h2>{{"PAGE_SETTINGS_BEST_BREW" | translate}}</h2>
-              <p>{{"PAGE_SETTINGS_BEST_BREW_DESCRIPTION" | translate}}</p>
-            </ion-label>
-            <ion-checkbox (ngModelChange)="resetFilter();saveSettings();" [(ngModel)]="settings.best_brew"></ion-checkbox>
+            <ion-checkbox label-placement='start' (ngModelChange)="resetFilter();saveSettings();" [(ngModel)]="settings.best_brew">
+              <div class="ion-label">
+                <h2>{{"PAGE_SETTINGS_BEST_BREW" | translate}}</h2>
+                <p>{{"PAGE_SETTINGS_BEST_BREW_DESCRIPTION" | translate}}</p>
+              </div>
+            </ion-checkbox>
           </ion-item>
-
         </ion-card-content>
       </ion-card>
 
@@ -264,17 +281,27 @@
         <ion-card-content>
           <ion-card-title>{{"PAGE_SETTINGS_MANAGE_SECTIONS" | translate}}</ion-card-title>
           <ion-item>
-            <ion-label>{{"PAGE_SETTINGS_SHOW_ROASTING_SECTION" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings();" [(ngModel)]="settings.show_roasting_section"></ion-checkbox>
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.show_roasting_section">
+              <div class='ion-label'>{{"PAGE_SETTINGS_SHOW_ROASTING_SECTION" | translate}}</div>
+            </ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" (click)="checkWaterSection()"
+              [(ngModel)]="settings.show_water_section">
+              <div class='ion-label'>{{"PAGE_SETTINGS_SHOW_WATER_SECTION" | translate}}</div>
+            </ion-checkbox>
           </ion-item>
           <ion-item lines="none">
-            <ion-label>{{"PAGE_SETTINGS_SHOW_WATER_SECTION" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings();" (click)="checkWaterSection()"
-              [(ngModel)]="settings.show_water_section"></ion-checkbox>
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+                          [(ngModel)]="settings.show_graph_section">
+              <div class='ion-label'>{{"PAGE_SETTINGS_SHOW_GRAPH_SECTION" | translate}}</div>
+            </ion-checkbox>
           </ion-item>
+
           <ion-item *ngIf="false">
-            <ion-label>{{"PAGE_SETTINGS_SHOW_CUPPING_SECTION" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings();" [(ngModel)]="settings.show_cupping_section"></ion-checkbox>
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.show_cupping_section">
+              <div class='ion-label'>{{"PAGE_SETTINGS_SHOW_CUPPING_SECTION" | translate}}</div>
+            </ion-checkbox>
           </ion-item>
         </ion-card-content>
       </ion-card>
@@ -284,36 +311,106 @@
         <ion-card-content>
           <ion-card-title>{{"PAGE_SETTINGS_MANAGE_ARCHIVE" | translate}}</ion-card-title>
           <ion-item>
-            <ion-label>{{"PAGE_SETTINGS_SHOW_ARCHIVED_BEANS" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings();" [(ngModel)]="settings.show_archived_beans"></ion-checkbox>
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.show_archived_beans">
+              <div class='ion-label'>{{"PAGE_SETTINGS_SHOW_ARCHIVED_BEANS" | translate}}</div>
+            </ion-checkbox>
           </ion-item>
           <ion-item *ngIf="settings.show_roasting_section">
-            <ion-label>{{"PAGE_SETTINGS_SHOW_ARCHIVED_GREEN_BEANS" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings();" [(ngModel)]="settings.show_archived_mills"></ion-checkbox>
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.show_archived_mills">
+              <div class='ion-label'>{{"PAGE_SETTINGS_SHOW_ARCHIVED_GREEN_BEANS" | translate}}</div>
+            </ion-checkbox>
           </ion-item>
           <ion-item>
-            <ion-label>{{"PAGE_SETTINGS_SHOW_ARCHIVED_BREWS" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings();" [(ngModel)]="settings.show_archived_brews"></ion-checkbox>
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.show_archived_brews">
+              <div class='ion-label'>{{"PAGE_SETTINGS_SHOW_ARCHIVED_BREWS" | translate}}</div>
+            </ion-checkbox>
+          </ion-item>
+          <ion-item *ngIf="settings.show_graph_section">
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.show_archived_graphs">
+              <div class='ion-label'>{{"PAGE_SETTINGS_SHOW_ARCHIVED_GRAPHS" | translate}}</div>
+            </ion-checkbox>
           </ion-item>
           <ion-item>
-            <ion-label class="ion-margin-end">
-              <h2>{{"PAGE_SETTINGS_HIDE_ARCHIVED_BREWS_DASHBOARD" | translate}}</h2>
-              <p>{{"PAGE_SETTINGS_HIDE_ARCHIVED_BREWS_DASHBOARD_DESCRIPTION" | translate}}</p>
-            </ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings();"
-              [(ngModel)]="settings.show_archived_brews_on_dashboard"></ion-checkbox>
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+              [(ngModel)]="settings.show_archived_brews_on_dashboard">
+              <div class="ion-label">
+                <h2>{{"PAGE_SETTINGS_HIDE_ARCHIVED_BREWS_DASHBOARD" | translate}}</h2>
+                <p>{{"PAGE_SETTINGS_HIDE_ARCHIVED_BREWS_DASHBOARD_DESCRIPTION" | translate}}</p>
+              </div>
+            </ion-checkbox>
           </ion-item>
           <ion-item>
-            <ion-label>{{"PAGE_SETTINGS_SHOW_ARCHIVED_PREPARATIONS" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings();"
-              [(ngModel)]="settings.show_archived_preparations"></ion-checkbox>
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+              [(ngModel)]="settings.show_archived_preparations">
+              <div class='ion-label'>{{"PAGE_SETTINGS_SHOW_ARCHIVED_PREPARATIONS" | translate}}</div>
+            </ion-checkbox>
           </ion-item>
           <ion-item lines="none">
-            <ion-label>{{"PAGE_SETTINGS_SHOW_ARCHIVED_MILLS" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings();" [(ngModel)]="settings.show_archived_mills"></ion-checkbox>
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.show_archived_mills">
+              <div class='ion-label'>{{"PAGE_SETTINGS_SHOW_ARCHIVED_MILLS" | translate}}</div>
+            </ion-checkbox>
           </ion-item>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card class="margin-top-20">
+        <ion-card-content>
+          <ion-card-title>{{"PAGE_SETTINGS_VISUALIZER_SECTION" | translate}}</ion-card-title>
+          <ion-item>
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.visualizer_active">
+              <div class='ion-label'>{{"VISUALIZER.ACTIVATE" | translate}}</div>
+            </ion-checkbox>
+          </ion-item>
+          <ng-container *ngIf='settings.visualizer_active'>
+            <ion-item>
 
 
+            <ion-select label-placement="stacked" label='{{"VISUALIZER.CHOOSE_SERVER" | translate}}' #visualizer_server="ngModel" (ionChange)='visualizerServerHasChanged();' (ngModelChange)="saveSettings();" [(ngModel)]="settings.visualizer_server" cancelText="{{'CANCEL'| translate }}" name="visualizer_server"
+                        okText="{{'CHOOSE'| translate }}"
+                        placeholder="{{'VISUALIZER.CHOOSE_SERVER' | translate}}"
+                        style="padding-left:0px!important;width: 100%; min-width: 100%;">
+              <ion-select-option *ngFor="let key of visualizerServerEnum | keys" value="{{key}}">{{"VISUALIZER.SERVER." + key | translate}}</ion-select-option>
+            </ion-select>
+            </ion-item>
+            <ion-item>
+              <ion-input [disabled]='settings.visualizer_server === visualizerServerEnum.VISUALIZER' (ionBlur)='checkVisualizerURL();' (ngModelChange)="saveSettings();" label-placement="stacked" label='{{"VISUALIZER.URL" | translate}}' #visualizer_url="ngModel" [(ngModel)]="settings.visualizer_url" autocapitalize="sentences" name="visualizer_url"
+                         placeholder="{{'VISUALIZER.URL' | translate}}"
+                         spellcheck="false" type="text">
+              </ion-input>
+
+              <ion-button (click)="checkVisualizerConnection()" class="big-icon-only" fill="clear"
+                          slot="end" style="margin-left:0px;" tabIndex="2" tappable>
+                <ion-icon class="ion-color-accent" name="checkmark-circle-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+            </ion-item>
+
+            <ion-item>
+              <ion-input label-placement="stacked" label='{{"VISUALIZER.USERNAME" | translate}}' (ngModelChange)="saveSettings();" #visualizer_username="ngModel" [(ngModel)]="settings.visualizer_username"  name="visualizer_username"
+                         placeholder="{{'VISUALIZER.USERNAME' | translate}}"
+                         spellcheck="false" type="text">
+              </ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-input label-placement="stacked" label='{{"VISUALIZER.PASSWORD" | translate}}' (ngModelChange)="saveSettings();" #visualizer_password="ngModel" [(ngModel)]="settings.visualizer_password"  name="visualizer_password"
+                         placeholder="{{'VISUALIZER.PASSWORD' | translate}}"
+                         spellcheck="false" type="password">
+              </ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.visualizer_upload_automatic">
+                <div class='ion-label'>
+                  <h2>{{"VISUALIZER.UPLOAD_AUTOMATIC" | translate}}</h2>
+                  <p>{{"VISUALIZER.UPLOAD_AUTOMATIC_TOOLTIP" | translate}}</p>
+                </div>
+              </ion-checkbox>
+            </ion-item>
+            <ion-item [button]="true" tappable *ngIf='howManyBrewsAreNotUploadedToVisualizer() > 0 && settings.visualizer_password && settings.visualizer_username' (click)='uploadBrewsToVisualizer()'>
+              <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
+              <ion-label>{{"VISUALIZER.UPLOAD_ALL" | translate}}</ion-label>
+              <ion-note slot="end">{{howManyBrewsAreNotUploadedToVisualizer()}}</ion-note>
+            </ion-item>
+          </ng-container>
         </ion-card-content>
       </ion-card>
 
@@ -346,85 +443,111 @@
             </ion-item>
 
             <ion-item>
-              <ion-label class="ion-margin-end" style="white-space: normal;">
-                <h2>{{"SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE" | translate}}</h2>
-              </ion-label>
-              <ion-checkbox (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_scale_stay_connected"
-                slot="end"></ion-checkbox>
-            </ion-item>
-
-            <ion-item>
-              <ion-label class="ion-margin-end" style="white-space: normal;">
-                <h2>{{"SMART_SCALE_TARE_ON_BREW" | translate}}</h2>
-              </ion-label>
-              <ion-checkbox (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_scale_tare_on_brew"
-                slot="end"></ion-checkbox>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_scale_stay_connected">
+                <div class='ion-label' style="white-space: normal;">
+                  <h2>{{"SMART_SCALE_STAY_CONNECTED_ON_APP_MINIMIZE" | translate}}</h2>
+                </div>
+              </ion-checkbox>
             </ion-item>
             <ion-item>
-              <ion-label class="ion-margin-end" style="white-space: normal;">
-                <h2>{{"SMART_SCALE_STOP_TIMER_ON_BREW" | translate}}</h2>
-              </ion-label>
-              <ion-checkbox (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_scale_stop_timer_on_brew"
-                slot="end"></ion-checkbox>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_scale_tare_on_brew">
+                <div class="ion-label" style="white-space: normal;">
+                  <h2>{{"SMART_SCALE_TARE_ON_BREW" | translate}}</h2>
+                </div>
+              </ion-checkbox>
             </ion-item>
             <ion-item>
-              <ion-label class="ion-margin-end" style="white-space: normal;">
-                <h2>{{"SMART_SCALE_RESET_TIMER_ON_BREW" | translate}}</h2>
-              </ion-label>
-              <ion-checkbox (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_scale_reset_timer_on_brew"
-                slot="end"></ion-checkbox>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_scale_stop_timer_on_brew">
+                <div class="ion-label" style="white-space: normal;">
+                  <h2>{{"SMART_SCALE_STOP_TIMER_ON_BREW" | translate}}</h2>
+                </div>
+              </ion-checkbox>
             </ion-item>
             <ion-item>
-              <ion-label class="ion-margin-end" style="white-space: normal;">
-                <h2>{{"SMART_SCALE_TARE_ON_START_TIMER" | translate}}</h2>
-              </ion-label>
-              <ion-checkbox (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_scale_tare_on_start_timer"
-                slot="end"></ion-checkbox>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_scale_reset_timer_on_brew">
+                <div class="ion-label" style="white-space: normal;">
+                  <h2>{{"SMART_SCALE_RESET_TIMER_ON_BREW" | translate}}</h2>
+                </div>
+              </ion-checkbox>
             </ion-item>
             <ion-item>
-              <ion-label style="white-space: normal;">
-                <h2>{{"SMART_SCALE_MAXIMIZE_ON_START_TIMER" | translate}}</h2>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_scale_tare_on_start_timer">
+                <div class="ion-label" style="white-space: normal;">
+                  <h2>{{"SMART_SCALE_TARE_ON_START_TIMER" | translate}}</h2>
+                </div>
+              </ion-checkbox>
+            </ion-item>
+            <ion-item>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+                [(ngModel)]="settings.bluetooth_scale_maximize_on_start_timer">
+                <div class='ion-label' style="white-space: normal;">
+                  <h2>{{"SMART_SCALE_MAXIMIZE_ON_START_TIMER" | translate}}</h2>
+                </div>
+              </ion-checkbox>
+            </ion-item>
+            <ion-item [lines]="settings.bluetooth_scale_listening_threshold_active?'none':'full'">
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+                            [(ngModel)]="settings.bluetooth_scale_listening_threshold_active">
+                <div class='ion-label' style="white-space: normal;">
+                  <h2>{{"SMART_SCALE_AUTO_START_LISTENING" | translate}}</h2>
+                </div>
+              </ion-checkbox>
+            </ion-item>
+            <ion-item lines='none' *ngIf="settings.bluetooth_scale_listening_threshold_active">
+              <ion-label class="ion-margin-end">
+                <p>{{"SMART_SCALE_AUTO_START_LISTENING_DESCRIPTION" | translate}}</p>
               </ion-label>
-              <ion-checkbox (ngModelChange)="saveSettings();"
-                [(ngModel)]="settings.bluetooth_scale_maximize_on_start_timer" slot="end"></ion-checkbox>
+            </ion-item>
+            <ion-item *ngIf="settings.bluetooth_scale_listening_threshold_active">
+              <ion-range [disabled]='isScrolling' style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="0.1" snaps="true" max="5"
+                         step="0.1" (ionBlur)="saveSettings()" [(ngModel)]="settings.bluetooth_scale_listening_threshold_start">
+                <div class='ion-label'
+                     slot="end">{{this.uiHelper.toFixedIfNecessary(settings.bluetooth_scale_listening_threshold_start,1)}}</div>
+              </ion-range>
             </ion-item>
             <ion-item [lines]="settings.bluetooth_scale_espresso_stop_on_no_weight_change?'none':'full'">
-              <ion-label style="white-space: normal;">
-                <h2>{{"SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE" | translate}}</h2>
-                <p>{{"SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION" | translate}}</p>
-              </ion-label>
-              <ion-checkbox (ngModelChange)="saveSettings();"
-                            [(ngModel)]="settings.bluetooth_scale_espresso_stop_on_no_weight_change" slot="end"></ion-checkbox>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+                            [(ngModel)]="settings.bluetooth_scale_espresso_stop_on_no_weight_change">
+                <div class='ion-label' style="white-space: normal;">
+                  <h2>{{"SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE" | translate}}</h2>
+                  <p>{{"SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_DESCRIPTION" | translate}}</p>
+                </div>
+              </ion-checkbox>
             </ion-item>
 
             <ion-item lines='none' *ngIf="settings?.bluetooth_scale_espresso_stop_on_no_weight_change===true">
               <ion-label class="ion-margin-end">
                 <p>{{"SMART_SCALE_ESPRESSO_STOP_ON_NO_WEIGHT_CHANGE_MIN_FLOW_DESCRIPTION" | translate}}</p>
               </ion-label>
-
             </ion-item>
-            <ion-item style="top:-15px;" *ngIf="settings?.bluetooth_scale_espresso_stop_on_no_weight_change===true">
-              <ion-range style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="0.05" snaps="true" max="1"
+            <ion-item style="top:-10px;" *ngIf="settings?.bluetooth_scale_espresso_stop_on_no_weight_change===true">
+              <ion-range [disabled]='isScrolling' style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" min="0.05" snaps="true" max="1"
                          step="0.01" (ionBlur)="fixWeightChangeMinFlowNumber();saveSettings()" [(ngModel)]="settings.bluetooth_scale_espresso_stop_on_no_weight_change_min_flow">
-                <ion-label slot="end">{{settings.bluetooth_scale_espresso_stop_on_no_weight_change_min_flow | number : '.0-2'}} g/s</ion-label>
+                <div class='ion-label' slot="end">{{settings.bluetooth_scale_espresso_stop_on_no_weight_change_min_flow | number : '.0-2'}} g/s</div>
               </ion-range>
             </ion-item>
             <ion-item>
-              <ion-label class="ion-margin-end" style="white-space: normal;">
-                <h2>{{"IGNORE_NEGATIVE_VALUES" | translate}}</h2>
-              </ion-label>
-              <ion-checkbox (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_ignore_negative_values"
-                slot="end"></ion-checkbox>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_ignore_negative_values">
+                <div class="ion-label" style="white-space: normal;">
+                  <h2>{{"IGNORE_NEGATIVE_VALUES" | translate}}</h2>
+                </div>
+              </ion-checkbox>
             </ion-item>
             <ion-item>
-
-              <ion-label>
-                <h2>{{"IGNORE_ANOMALY_VALUES" | translate}}</h2>
-                <p>{{"IGNORE_ANOMALY_VALUES_TOOLTIP" | translate}}</p>
-              </ion-label>
-              <ion-checkbox (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_ignore_anomaly_values"
-                slot="end"></ion-checkbox>
-
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_ignore_anomaly_values">
+                <div class='ion-label'>
+                  <h2>{{"IGNORE_ANOMALY_VALUES" | translate}}</h2>
+                  <p>{{"IGNORE_ANOMALY_VALUES_TOOLTIP" | translate}}</p>
+                </div>
+              </ion-checkbox>
+            </ion-item>
+            <ion-item>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_scale_ignore_weight_button_active">
+                <div class="ion-label" style="white-space: normal;">
+                  <h2>{{"SMART_SCALE_IGNORE_INCOMING_WEIGHT" | translate}}</h2>
+                  <p>{{"SMART_SCALE_IGNORE_INCOMING_WEIGHT_TOOLTIP" | translate}}</p>
+                </div>
+              </ion-checkbox>
             </ion-item>
 
             <ion-item lines="none">
@@ -434,10 +557,10 @@
               <ion-icon name="information-outline" slot="end"
                 tooltip='{{"SMART_SCALE_COMMAND_DELAY_TOOLTIP" | translate}}'></ion-icon>
             </ion-item>
-            <ion-item style="top:-15px;">
-              <ion-range style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="50" snaps="true" max="1000"
+            <ion-item style="top:-10px;">
+              <ion-range [disabled]='isScrolling' style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" min="50" snaps="true" max="1000"
                 step="1" (ionBlur)="saveSettings()" [(ngModel)]="settings.bluetooth_command_delay">
-                <ion-label slot="end">{{settings.bluetooth_command_delay}} ms</ion-label>
+                <div class='ion-label' slot="end">{{settings.bluetooth_command_delay}} ms</div>
               </ion-range>
             </ion-item>
 
@@ -448,17 +571,18 @@
               <ion-icon name="information-outline" slot="end"
                         tooltip='{{"SMART_SCALE_ACAIA_HEARTBEAT_TIMER_TOOLTIP" | translate}}'></ion-icon>
             </ion-item>
-            <ion-item style="top:-15px;">
-              <ion-range style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="200" snaps="true" max="1000"
+            <ion-item style="top:-10px;">
+              <ion-range [disabled]='isScrolling' style="padding-left:10px;padding-top:0;padding-bottom:0px;padding-right:0px;" min="200" snaps="true" max="1000"
                          step="1" (ionBlur)="saveSettings()" [(ngModel)]="settings.acaia_heartbeat_command_delay">
-                <ion-label slot="end">{{settings.acaia_heartbeat_command_delay}} ms</ion-label>
+                <div class='ion-label' slot="end">{{settings.acaia_heartbeat_command_delay}} ms</div>
               </ion-range>
             </ion-item>
             <ion-item>
-              <ion-label class="ion-margin-end" style="white-space: normal;">
-                <h2>{{"SMART_SCALE_LOG" | translate}}</h2>
-              </ion-label>
-              <ion-checkbox (ionBlur)="toggleLog();" [(ngModel)]="settings.scale_log" slot="end"></ion-checkbox>
+              <ion-checkbox label-placement='start' (ionBlur)="toggleLog();" [(ngModel)]="settings.scale_log">
+                <div class="ion-label" style="white-space: normal;">
+                  <h2>{{"SMART_SCALE_LOG" | translate}}</h2>
+                </div>
+              </ion-checkbox>
             </ion-item>
 
           </ion-list>
@@ -476,18 +600,21 @@
           </ion-card-title>
           <ion-list>
             <ion-item>
-              <ion-label>{{"BREW_FLOW_WEIGHT" | translate}}</ion-label>
-              <ion-checkbox (ngModelChange)="saveSettings();" [(ngModel)]="settings.graph.FILTER.weight"></ion-checkbox>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.graph.FILTER.weight">
+                <div class='ion-label'>{{"BREW_FLOW_WEIGHT" | translate}}</div>
+              </ion-checkbox>
             </ion-item>
             <ion-item>
-              <ion-label>{{"BREW_FLOW_WEIGHT_PER_SECOND" | translate}}</ion-label>
-              <ion-checkbox (ngModelChange)="saveSettings();"
-                [(ngModel)]="settings.graph.FILTER.calc_flow"></ion-checkbox>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+                [(ngModel)]="settings.graph.FILTER.calc_flow">
+                <div class='ion-label'>{{"BREW_FLOW_WEIGHT_PER_SECOND" | translate}}</div>
+              </ion-checkbox>
             </ion-item>
             <ion-item>
-              <ion-label>{{"BREW_FLOW_WEIGHT_REALTIME" | translate}}</ion-label>
-              <ion-checkbox (ngModelChange)="saveSettings();"
-                [(ngModel)]="settings.graph.FILTER.realtime_flow"></ion-checkbox>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+                [(ngModel)]="settings.graph.FILTER.realtime_flow">
+                <div class='ion-label'>{{"BREW_FLOW_WEIGHT_REALTIME" | translate}}</div>
+              </ion-checkbox>
             </ion-item>
           </ion-list>
         </ion-card-content>
@@ -498,19 +625,69 @@
             {{"PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_SHOW_GRAPHS_ESPRESSO" | translate }}
           </ion-card-title>
           <ion-item>
-            <ion-label>{{"BREW_FLOW_WEIGHT" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings();" [(ngModel)]="settings.graph.ESPRESSO.weight"></ion-checkbox>
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.graph.ESPRESSO.weight">
+              <div class='ion-label'>{{"BREW_FLOW_WEIGHT" | translate}}</div>
+            </ion-checkbox>
           </ion-item>
           <ion-item>
-            <ion-label>{{"BREW_FLOW_WEIGHT_PER_SECOND" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings();"
-              [(ngModel)]="settings.graph.ESPRESSO.calc_flow"></ion-checkbox>
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+              [(ngModel)]="settings.graph.ESPRESSO.calc_flow">
+              <div class='ion-label'>{{"BREW_FLOW_WEIGHT_PER_SECOND" | translate}}</div>
+            </ion-checkbox>
           </ion-item>
           <ion-item>
-            <ion-label>{{"BREW_FLOW_WEIGHT_REALTIME" | translate}}</ion-label>
-            <ion-checkbox (ngModelChange)="saveSettings();"
-              [(ngModel)]="settings.graph.ESPRESSO.realtime_flow"></ion-checkbox>
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+              [(ngModel)]="settings.graph.ESPRESSO.realtime_flow">
+              <div class='ion-label'>{{"BREW_FLOW_WEIGHT_REALTIME" | translate}}</div>
+            </ion-checkbox>
           </ion-item>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card>
+        <ion-card-content>
+          <ion-card-title>
+            {{"PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_AXIS" | translate }}
+            <p>{{"PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_AXIS_DESCRIPTION" | translate}}</p>
+          </ion-card-title>
+          <ion-list>
+            <ion-item lines="none">
+              <ion-label>{{"PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_FILTER_WEIGHT" | translate}}&nbsp;<ion-badge
+                style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(settings.graph_weight.FILTER.lower,2)}}&nbsp;-&nbsp;{{this.uiHelper.toFixedIfNecessary(settings.graph_weight.FILTER.upper,2)}} </ion-badge>
+              </ion-label>
+            </ion-item>
+            <ion-item style="top:-10px;">
+              <ion-range [disabled]='isScrolling'  min="0" dualKnobs="true" snaps="true" [max]="300" step="1" [(ngModel)]="settings.graph_weight.FILTER">
+              </ion-range>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label>{{"PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_FILTER_FLOW" | translate}}&nbsp;<ion-badge
+                style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(settings.graph_flow.FILTER.lower,2)}}&nbsp;-&nbsp;{{this.uiHelper.toFixedIfNecessary(settings.graph_flow.FILTER.upper,2)}} </ion-badge>
+              </ion-label>
+            </ion-item>
+            <ion-item style="top:-10px;">
+              <ion-range [disabled]='isScrolling'  min="0" dualKnobs="true" snaps="true" [max]="20" step="0.1" [(ngModel)]="settings.graph_flow.FILTER">
+              </ion-range>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label>{{"PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_WEIGHT" | translate}}&nbsp;<ion-badge
+                style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(settings.graph_weight.ESPRESSO.lower,2)}}&nbsp;-&nbsp;{{this.uiHelper.toFixedIfNecessary(settings.graph_weight.ESPRESSO.upper,2)}} </ion-badge>
+              </ion-label>
+            </ion-item>
+            <ion-item style="top:-10px;">
+              <ion-range [disabled]='isScrolling' min="0" dualKnobs="true" snaps="true" [max]="70" step="1" [(ngModel)]="settings.graph_weight.ESPRESSO">
+              </ion-range>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label>{{"PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_FLOW" | translate}}&nbsp;<ion-badge
+                style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(settings.graph_flow.ESPRESSO.lower,2)}}&nbsp;-&nbsp;{{this.uiHelper.toFixedIfNecessary(settings.graph_flow.ESPRESSO.upper,2)}} </ion-badge>
+              </ion-label>
+            </ion-item>
+            <ion-item style="top:-10px;">
+              <ion-range [disabled]='isScrolling'  min="0" dualKnobs="true" snaps="true" [max]="10" step="0.1" [(ngModel)]="settings.graph_flow.ESPRESSO">
+              </ion-range>
+            </ion-item>
+          </ion-list>
         </ion-card-content>
       </ion-card>
     </div>
@@ -521,8 +698,7 @@
             {{"PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE" | translate }}
           </ion-card-title>
           <ion-list>
-            <ion-item lines="full" *ngIf="settings.pressure_id === ''" (click)="findAndConnectPressureDevice()" tappable
-              button>
+            <ion-item lines="full" *ngIf="settings.pressure_id === ''" (click)="findAndConnectPressureDevice()" tappable button>
               <ion-label>
                 <h2>{{"CONNECT" | translate}}</h2>
               </ion-label>
@@ -542,45 +718,45 @@
               <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
             </ion-item>
             <ion-item>
-              <ion-label class="ion-margin-end" style="white-space: normal;">
-                <h2>{{"PRESSURE.STAY_CONNECTED_ON_APP_MINIMIZE" | translate}}</h2>
-              </ion-label>
-              <ion-checkbox (ngModelChange)="saveSettings();" [(ngModel)]="settings.pressure_stay_connected"
-                slot="end"></ion-checkbox>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.pressure_stay_connected">
+                <div class="ion-label" style="white-space: normal;">
+                  <h2>{{"PRESSURE.STAY_CONNECTED_ON_APP_MINIMIZE" | translate}}</h2>
+                </div>
+              </ion-checkbox>
             </ion-item>
             <ion-item>
-              <ion-label style="white-space: normal;">
-                <h2>{{"PRESSURE_THRESHOLD_ACTIVE" | translate}}</h2>
-              </ion-label>
-              <ion-checkbox (ngModelChange)="saveSettings();" [(ngModel)]="settings.pressure_threshold_active"
-                slot="end"></ion-checkbox>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.pressure_threshold_active">
+                <div class='ion-label' style="white-space: normal;">
+                  <h2>{{"PRESSURE_THRESHOLD_ACTIVE" | translate}}</h2>
+                </div>
+              </ion-checkbox>
             </ion-item>
             <ion-item *ngIf="settings.pressure_threshold_active">
-              <ion-label style="white-space: normal;">
+              <div class='ion-label' style="white-space: normal;">
                 <h2>{{"PRESSURE_THRESHOLD_BAR" | translate}}</h2>
-              </ion-label>
-              <ion-range style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="0.1" snaps="true" max="12"
+              </div>
+              <ion-range [disabled]='isScrolling' style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="0.1" snaps="true" max="12"
                 step="0.1" (ionBlur)="saveSettings()" [(ngModel)]="settings.pressure_threshold_bar">
-                <ion-label
-                  slot="end">{{this.uiHelper.toFixedIfNecessary(settings.pressure_threshold_bar,1)}}</ion-label>
+                <div class='ion-label'
+                  slot="end">{{this.uiHelper.toFixedIfNecessary(settings.pressure_threshold_bar,1)}}</div>
               </ion-range>
             </ion-item>
             <ion-item>
-              <ion-label style="white-space: normal;">
-                <h2>{{"SMART_SCALE_MAXIMIZE_ON_START_TIMER" | translate}}</h2>
-              </ion-label>
-              <ion-checkbox (ngModelChange)="saveSettings();"
-                [(ngModel)]="settings.bluetooth_scale_maximize_on_start_timer" slot="end"></ion-checkbox>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+                [(ngModel)]="settings.bluetooth_scale_maximize_on_start_timer">
+                <div class='ion-label' style="white-space: normal;">
+                  <h2>{{"SMART_SCALE_MAXIMIZE_ON_START_TIMER" | translate}}</h2>
+                </div>
+              </ion-checkbox>
             </ion-item>
             <ion-item>
-              <ion-label class="ion-margin-end" style="white-space: normal;">
-                <h2>{{"PRESSURE_LOG" | translate}}</h2>
-              </ion-label>
-              <ion-checkbox (ionBlur)="toggleLog();" [(ngModel)]="settings.pressure_log" slot="end"></ion-checkbox>
+              <ion-checkbox label-placement='start' (ionBlur)="toggleLog();" [(ngModel)]="settings.pressure_log">
+                <div class="ion-label" style="white-space: normal;">
+                  <h2>{{"PRESSURE_LOG" | translate}}</h2>
+                </div>
+              </ion-checkbox>
             </ion-item>
-
           </ion-list>
-
           <ion-label>
             <ion-icon style="top: 3px; position: relative;" name="information-circle-outline"></ion-icon>
             <p style="display: inline;">{{"PRESSURE.INFORMATION_DESCRIPTION" | translate}}</p>
@@ -590,7 +766,6 @@
             <p style="display: inline;">{{"PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO" | translate}}</p>
           </ion-label>
         </ion-card-content>
-
       </ion-card>
     </div>
     <div *ngSwitchCase="'bluetoothtemperature'">
@@ -621,34 +796,35 @@
               <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
             </ion-item>
             <ion-item>
-              <ion-label class="ion-margin-end" style="white-space: normal;">
-                <h2>{{"TEMPERATURE.STAY_CONNECTED_ON_APP_MINIMIZE" | translate}}</h2>
-              </ion-label>
-              <ion-checkbox (ngModelChange)="saveSettings();" [(ngModel)]="settings.temperature_stay_connected"
-                slot="end"></ion-checkbox>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.temperature_stay_connected">
+                <div class="ion-label" style="white-space: normal;">
+                  <h2>{{"TEMPERATURE.STAY_CONNECTED_ON_APP_MINIMIZE" | translate}}</h2>
+                </div>
+              </ion-checkbox>
             </ion-item>
             <ion-item>
-              <ion-label style="white-space: normal;">
-                <h2>{{"TEMPERATURE.THRESHOLD_ACTIVE" | translate}}</h2>
-              </ion-label>
-              <ion-checkbox (ngModelChange)="saveSettings();" [(ngModel)]="settings.temperature_threshold_active"
-                slot="end"></ion-checkbox>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.temperature_threshold_active">
+                <div class='ion-label' style="white-space: normal;">
+                  <h2>{{"TEMPERATURE.THRESHOLD_ACTIVE" | translate}}</h2>
+                </div>
+              </ion-checkbox>
             </ion-item>
             <ion-item *ngIf="settings.temperature_threshold_active">
-              <ion-label style="white-space: normal;">
+              <div class='ion-label' style="white-space: normal;">
                 <h2>{{"TEMPERATURE.THRESHOLD_TEMP" | translate}}</h2>
-              </ion-label>
-              <ion-range style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="60" snaps="true" max="100"
+              </div>
+              <ion-range [disabled]='isScrolling' style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="60" snaps="true" max="100"
                 step="0.1" (ionBlur)="saveSettings()" [(ngModel)]="settings.temperature_threshold_temp">
-                <ion-label
-                  slot="end">{{this.uiHelper.toFixedIfNecessary(settings.temperature_threshold_temp,1)}}</ion-label>
+                <div class='ion-label'
+                  slot="end">{{this.uiHelper.toFixedIfNecessary(settings.temperature_threshold_temp,1)}}</div>
               </ion-range>
             </ion-item>
             <ion-item>
-              <ion-label class="ion-margin-end" style="white-space: normal;">
-                <h2>{{"TEMPERATURE.LOG" | translate}}</h2>
-              </ion-label>
-              <ion-checkbox (ionBlur)="toggleLog();" [(ngModel)]="settings.temperature_log" slot="end"></ion-checkbox>
+              <ion-checkbox label-placement='start' (ionBlur)="toggleLog();" [(ngModel)]="settings.temperature_log">
+                <div class="ion-label" style="white-space: normal;">
+                  <h2>{{"TEMPERATURE.LOG" | translate}}</h2>
+                </div>
+              </ion-checkbox>
             </ion-item>
 
           </ion-list>
@@ -689,18 +865,19 @@
               <ion-icon name="beanconqueror-bluetooth-off" slot="end"></ion-icon>
             </ion-item>
             <ion-item>
-              <ion-label class="ion-margin-end" style="white-space: normal;">
-                <h2>{{"REFRACTOMETER.STAY_CONNECTED_ON_APP_MINIMIZE" | translate}}</h2>
-              </ion-label>
-              <ion-checkbox (ngModelChange)="saveSettings();" [(ngModel)]="settings.refractometer_stay_connected"
-                slot="end"></ion-checkbox>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.refractometer_stay_connected">
+                <div class="ion-label" style="white-space: normal;">
+                  <h2>{{"REFRACTOMETER.STAY_CONNECTED_ON_APP_MINIMIZE" | translate}}</h2>
+                </div>
+              </ion-checkbox>
             </ion-item>
 
             <ion-item>
-              <ion-label class="ion-margin-end" style="white-space: normal;">
-                <h2>{{"REFRACTOMETER.LOG" | translate}}</h2>
-              </ion-label>
-              <ion-checkbox (ionBlur)="toggleLog();" [(ngModel)]="settings.refractometer_log" slot="end"></ion-checkbox>
+              <ion-checkbox label-placement='start' (ionBlur)="toggleLog();" [(ngModel)]="settings.refractometer_log">
+                <div class="ion-label" style="white-space: normal;">
+                  <h2>{{"REFRACTOMETER.LOG" | translate}}</h2>
+                </div>
+              </ion-checkbox>
             </ion-item>
 
           </ion-list>

@@ -2,7 +2,7 @@
   <ion-toolbar>
     <ion-title>{{"EDIT_BREW" | translate}}</ion-title>
     <ion-buttons slot="start">
-      <ion-button (click)="dismiss()" class="big-icon-only">
+      <ion-button (click)="confirmDismiss()" class="big-icon-only">
         <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -21,7 +21,7 @@
 <ion-footer *ngIf="showFooter" class="ion-no-border">
   <ion-row>
     <ion-col>
-      <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline" tappable>{{"CANCEL" |
+      <ion-button (click)="confirmDismiss()" color="accent" expand="block" fill="outline" tappable>{{"CANCEL" |
         translate}}</ion-button>
     </ion-col>
     <ion-col>

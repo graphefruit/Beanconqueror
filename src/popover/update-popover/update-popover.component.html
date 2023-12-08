@@ -1,19 +1,19 @@
 <ion-content #updateContent class="ion-padding-top">
 
-  <ion-slides #slider [options]="slideOpts" pager="true">
-    <ion-slide *ngFor="let version of versions;let last = last;let i=index;" >
-      <div [style.display]="i+1===this.slide?'block':'none'" class="ion-padding-horizontal">
+  <swiper-container #slider  [pagination]="{ dragable: false, clickable: false }" pager="true">
+    <swiper-slide *ngFor="let version of versions;let last = last;let i=index;" >
+      <div [style.display]="i+1===this.slide?'block':'none'" class="ion-padding-horizontal" style='text-align:center;'>
         <div>
           <ion-title>
             {{"UPDATE_TEXT_TITLE_TITLE." + version + ".TITLE" | translate}}
           </ion-title>
           <ion-img src="assets/icon/beanconqueror_round.png" style="width:100%;height:50px;"></ion-img>
           <ul>
-              <div  *ngFor="let desc of getDescription(version)">
+              <ng-container  *ngFor="let desc of getDescription(version)">
                 <li  *ngIf="desc != '' && !desc.startsWith('<b>') && canRenderDesc(desc)" [innerHTML]="this.getDesc(desc)"> </li>
                 <li  *ngIf="desc != '' && desc.startsWith('<b>') && canRenderDesc(desc)" style="list-style-type:none" [innerHTML]="this.getDesc(desc)"> </li>
                 <li  *ngIf="desc === ''" style="list-style-type:none">&nbsp;</li>
-              </div>
+              </ng-container>
           </ul>
         </div>
         <ion-row class="ion-padding-top">
@@ -25,6 +25,6 @@
           <ion-col size="3"></ion-col>
         </ion-row>
       </div>
-    </ion-slide>
-  </ion-slides>
+    </swiper-slide>
+  </swiper-container>
 </ion-content>

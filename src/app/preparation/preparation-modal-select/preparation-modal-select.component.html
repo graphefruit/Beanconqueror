@@ -28,10 +28,12 @@
         <ion-card *ngIf="getOpenPreparations().length > 0">
           <ion-item *ngFor="let prep of getOpenPreparations()" lines="none" tappable>
 
-            <ion-checkbox [(ngModel)]="multipleSelection[prep.config.uuid]" slot="start"></ion-checkbox>
-            <div>
-              <span class="font-size-16">{{prep.name}}</span>
-            </div>
+            <ion-checkbox justify="start" label-placement="end"  [(ngModel)]="multipleSelection[prep.config.uuid]"> <h6>{{prep.name}}</h6>
+              <p>{{"LAST_USE" | translate}}:
+                <span  *ngIf="getBrewsCount(prep)> 0">{{lastUsed(prep) | formatDate:["DD.MM.YYYY"]}}</span>
+                <span *ngIf="getBrewsCount(prep) <= 0">-</span>
+              </p>
+            </ion-checkbox>
             <ion-thumbnail slot="end">
               <ion-icon *ngIf="!prep.hasPhotos()" class="full-sized-icon" name="{{prep.getIcon()}}"></ion-icon>
               <div   *ngIf="prep.hasPhotos()" style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
@@ -44,10 +46,13 @@
       <div *ngSwitchCase="'archive'">
         <ion-card>
           <ion-item *ngFor="let prep of getArchivedPreparations()" lines="none" tappable>
-            <ion-checkbox [(ngModel)]="multipleSelection[prep.config.uuid]" slot="start"></ion-checkbox>
-            <div>
-              <span class="font-size-16">{{prep.name}}</span>
-            </div>
+            <ion-checkbox justify="start" label-placement="end"  [(ngModel)]="multipleSelection[prep.config.uuid]">
+              <h6>{{prep.name}}</h6>
+              <p>{{"LAST_USE" | translate}}:
+                <span  *ngIf="getBrewsCount(prep)> 0">{{lastUsed(prep) | formatDate:["DD.MM.YYYY"]}}</span>
+                <span *ngIf="getBrewsCount(prep) <= 0">-</span>
+              </p>
+            </ion-checkbox>
             <ion-thumbnail slot="end">
               <ion-icon *ngIf="!prep.hasPhotos()" class="full-sized-icon" name="{{prep.getIcon()}}"></ion-icon>
               <div   *ngIf="prep.hasPhotos()" style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
@@ -67,10 +72,12 @@
 
           <ion-card *ngIf="getOpenPreparations().length > 0">
             <ion-item *ngFor="let prep of getOpenPreparations()" lines="none" tappable>
-              <ion-radio slot="start" value="{{prep.config.uuid}}"></ion-radio>
-              <div>
-                <span class="font-size-16">{{prep.name}}</span>
-              </div>
+              <ion-radio justify="start" label-placement="end" value="{{prep.config.uuid}}"> <h6>{{prep.name}}</h6>
+                <p>{{"LAST_USE" | translate}}:
+                  <span  *ngIf="getBrewsCount(prep)> 0">{{lastUsed(prep) | formatDate:["DD.MM.YYYY"]}}</span>
+                  <span *ngIf="getBrewsCount(prep) <= 0">-</span>
+                </p>
+              </ion-radio>
               <ion-thumbnail slot="end">
                 <ion-icon *ngIf="!prep.hasPhotos()" class="full-sized-icon" name="{{prep.getIcon()}}"></ion-icon>
                 <div   *ngIf="prep.hasPhotos()" style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
@@ -83,10 +90,13 @@
         <div *ngSwitchCase="'archive'">
           <ion-card>
             <ion-item *ngFor="let prep of getArchivedPreparations()" lines="none" tappable>
-              <ion-radio slot="start" value="{{prep.config.uuid}}"></ion-radio>
-              <div>
-                <span class="font-size-16">{{prep.name}}</span>
-              </div>
+              <ion-radio justify="start" label-placement="end" value="{{prep.config.uuid}}">
+                <h6>{{prep.name}}</h6>
+                <p>{{"LAST_USE" | translate}}:
+                  <span  *ngIf="getBrewsCount(prep)> 0">{{lastUsed(prep) | formatDate:["DD.MM.YYYY"]}}</span>
+                  <span *ngIf="getBrewsCount(prep) <= 0">-</span>
+                </p>
+              </ion-radio>
               <ion-thumbnail slot="end">
                 <ion-icon *ngIf="!prep.hasPhotos()" class="full-sized-icon" name="{{prep.getIcon()}}"></ion-icon>
                 <div   *ngIf="prep.hasPhotos()" style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>

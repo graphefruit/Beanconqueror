@@ -10,10 +10,10 @@
 
   <div>
     <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.country)">
-      <ion-label position="stacked">{{"BEAN_DATA_COUNTRY" | translate}}</ion-label>
-      <ion-input #country="ngModel"
+
+      <ion-input label-placement="stacked" label='{{"BEAN_DATA_COUNTRY" | translate}}' #country="ngModel"
                  (ionBlur)="onSearchLeave('country')"
-                 (ionChange)="onSearchChange('country',$event)"
+                 (ionInput)="onSearchChange('country',$event)"
                  (ionFocus)="onSearchFocus('country');"
                  [(ngModel)]="beanInformation.country" autocapitalize="sentences"
                  name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_COUNTRY' | translate}}" spellcheck="false"
@@ -28,10 +28,9 @@
       </ion-list>
     </ion-item>
     <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.region)">
-      <ion-label position="stacked">{{"BEAN_DATA_REGION" | translate}}</ion-label>
-      <ion-input #region="ngModel"
+      <ion-input label-placement="stacked" label='{{"BEAN_DATA_REGION" | translate}}' #region="ngModel"
                  (ionBlur)="onSearchLeave('region')"
-                 (ionChange)="onSearchChange('region',$event)"
+                 (ionInput)="onSearchChange('region',$event)"
                  (ionFocus)="onSearchFocus('region');"
                  [(ngModel)]="beanInformation.region" autocapitalize="sentences"
                  name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_REGION' | translate}}" spellcheck="false"
@@ -46,10 +45,9 @@
       </ion-list>
     </ion-item>
     <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.farm)">
-      <ion-label position="stacked">{{"BEAN_DATA_FARM" | translate}}</ion-label>
-      <ion-input #farm="ngModel"
+      <ion-input label-placement="stacked" label='{{"BEAN_DATA_FARM" | translate}}' #farm="ngModel"
                  (ionBlur)="onSearchLeave('farm')"
-                 (ionChange)="onSearchChange('farm',$event)"
+                 (ionInput)="onSearchChange('farm',$event)"
                  (ionFocus)="onSearchFocus('farm');"
                  [(ngModel)]="beanInformation.farm" autocapitalize="sentences"
                  name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_FARM' | translate}}" spellcheck="false"
@@ -64,10 +62,9 @@
       </ion-list>
     </ion-item>
     <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.farmer)">
-      <ion-label position="stacked">{{"BEAN_DATA_FARMER" | translate}}</ion-label>
-      <ion-input #farmer="ngModel"
+      <ion-input label-placement="stacked" label='{{"BEAN_DATA_FARMER" | translate}}' #farmer="ngModel"
                  (ionBlur)="onSearchLeave('farmer')"
-                 (ionChange)="onSearchChange('farmer',$event)"
+                 (ionInput)="onSearchChange('farmer',$event)"
                  (ionFocus)="onSearchFocus('farmer');"
                  [(ngModel)]="beanInformation.farmer" autocapitalize="sentences"
                  name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_FARMER' | translate}}" spellcheck="false"
@@ -82,17 +79,15 @@
       </ion-list>
     </ion-item>
     <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.elevation)">
-      <ion-label position="stacked">{{"BEAN_DATA_ELEVATION" | translate}}</ion-label>
-      <ion-input #elevation="ngModel" [(ngModel)]="beanInformation.elevation" autocapitalize="sentences"
+      <ion-input label-placement="stacked" label='{{"BEAN_DATA_ELEVATION" | translate}}' #elevation="ngModel" [(ngModel)]="beanInformation.elevation" autocapitalize="sentences"
                  name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ELEVATION' | translate}}" spellcheck="false"
                  type="text">
       </ion-input>
     </ion-item>
     <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.variety)">
-      <ion-label position="stacked">{{"BEAN_DATA_VARIETY" | translate}}</ion-label>
-      <ion-input #variety="ngModel"
+      <ion-input label-placement="stacked" label='{{"BEAN_DATA_VARIETY" | translate}}' #variety="ngModel"
                  (ionBlur)="onSearchLeave('variety')"
-                 (ionChange)="onSearchChange('variety',$event)"
+                 (ionInput)="onSearchChange('variety',$event)"
                  (ionFocus)="onSearchFocus('variety');"
                  [(ngModel)]="beanInformation.variety" autocapitalize="sentences"
                  name="variety" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_VARIETY' | translate}}" spellcheck="false"
@@ -107,10 +102,9 @@
       </ion-list>
     </ion-item>
     <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.processing)">
-      <ion-label position="stacked">{{"BEAN_DATA_PROCESSING" | translate}}</ion-label>
-      <ion-input #processing="ngModel"
+      <ion-input label-placement="stacked" label='{{"BEAN_DATA_PROCESSING" | translate}}' #processing="ngModel"
                  (ionBlur)="onSearchLeave('processing')"
-                 (ionChange)="onSearchChange('processing',$event)"
+                 (ionInput)="onSearchChange('processing',$event)"
                  (ionFocus)="onSearchFocus('processing');"
                  [(ngModel)]="beanInformation.processing" autocapitalize="sentences"
                  name="processing" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_PROCESSING' | translate}}" spellcheck="false"
@@ -125,24 +119,21 @@
       </ion-list>
     </ion-item>
     <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.harvest_time)">
-      <ion-label position="stacked">{{"BEAN_DATA_HARVEST_TIME" | translate}}</ion-label>
-      <ion-input #harvestTime="ngModel" [(ngModel)]="beanInformation.harvest_time" autocapitalize="sentences"
+      <ion-input label-placement="stacked" label='{{"BEAN_DATA_HARVEST_TIME" | translate}}' #harvestTime="ngModel" [(ngModel)]="beanInformation.harvest_time" autocapitalize="sentences"
                  name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_HARVEST_TIME' | translate}}" spellcheck="false"
                  type="text">
       </ion-input>
     </ion-item>
     <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.percentage)">
-      <ion-label position="stacked">{{"BEAN_DATA_PERCENTAGE" | translate}}</ion-label>
-      <ion-input #percentage="ngModel" [(ngModel)]="beanInformation.percentage" inputmode="decimal"
+      <ion-input label-placement="stacked" label='{{"BEAN_DATA_PERCENTAGE" | translate}}' #percentage="ngModel" [(ngModel)]="beanInformation.percentage" inputmode="decimal"
                  placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_PERCENTAGE' | translate}}" prevent-characters
                  remove-empty-number
                  type="text"></ion-input>
     </ion-item>
     <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.certification)">
-      <ion-label position="stacked">{{"BEAN_DATA_CERTIFICATION" | translate}}</ion-label>
-      <ion-input #certification="ngModel"
+      <ion-input label-placement="stacked" label='{{"BEAN_DATA_CERTIFICATION" | translate}}' #certification="ngModel"
                  (ionBlur)="onSearchLeave('certification')"
-                 (ionChange)="onSearchChange('certification',$event)"
+                 (ionInput)="onSearchChange('certification',$event)"
                  (ionFocus)="onSearchFocus('certification');"
                  [(ngModel)]="beanInformation.certification" autocapitalize="sentences"
                  name="country" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_CERTIFICATION' | translate}}" spellcheck="false"
@@ -157,16 +148,14 @@
       </ion-list>
     </ion-item>
     <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.purchasing_price)">
-      <ion-label position="stacked">{{"BEAN_DATA_PURCHASING_PRICE" | translate}}</ion-label>
-      <ion-input #purchasingprice="ngModel" [(ngModel)]="beanInformation.purchasing_price" autocapitalize="off" inputmode="decimal"
+      <ion-input label-placement="stacked" label='{{"BEAN_DATA_PURCHASING_PRICE" | translate}}' #purchasingprice="ngModel" [(ngModel)]="beanInformation.purchasing_price" autocapitalize="off" inputmode="decimal"
                  name="purchasingprice" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_PURCHASING_PRICE' | translate}}"
                  prevent-characters remove-empty-number spellcheck="false"
                  type="text">
       </ion-input>
     </ion-item>
     <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.fob_price)"  class="ion-margin-bottom">
-      <ion-label position="stacked">{{"BEAN_DATA_FOB_PRICE" | translate}}</ion-label>
-      <ion-input #fobprice="ngModel" [(ngModel)]="beanInformation.fob_price" autocapitalize="off" inputmode="decimal"
+      <ion-input label-placement="stacked" label='{{"BEAN_DATA_FOB_PRICE" | translate}}' #fobprice="ngModel" [(ngModel)]="beanInformation.fob_price" autocapitalize="off" inputmode="decimal"
                  name="fobprice" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_FOB_PRICE' | translate}}"
                  prevent-characters remove-empty-number spellcheck="false"
                  type="text">

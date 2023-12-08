@@ -19,8 +19,10 @@ export class Visualizer implements IVisualizer {
   public water: WaterVisualizer;
 
   public brewFlow: BrewFlow;
+  public application: string;
 
   constructor() {
+    this.application = 'BEANCONQUEROR';
     this.bean = new BeanVisualizer();
     this.brew = new BrewVisualizer();
     this.mill = new MillVisualizer();

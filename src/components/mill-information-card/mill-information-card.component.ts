@@ -17,6 +17,7 @@ import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIImage } from '../../services/uiImage';
 import MILL_TRACKING from '../../data/tracking/millTracking';
+import { PREPARATION_ACTION } from '../../enums/preparations/preparationAction';
 @Component({
   selector: 'mill-information-card',
   templateUrl: './mill-information-card.component.html',
@@ -36,7 +37,8 @@ export class MillInformationCardComponent implements OnInit {
     private readonly uiMillStorage: UIMillStorage,
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiAnalytics: UIAnalytics,
-    private readonly uiImage: UIImage
+    private readonly uiImage: UIImage,
+    private readonly uiBrewHelper: UIBrewHelper
   ) {}
 
   public ngOnInit() {}
@@ -139,6 +141,9 @@ export class MillInformationCardComponent implements OnInit {
       case MILL_ACTION.PHOTO_GALLERY:
         await this.viewPhotos();
         break;
+      case MILL_ACTION.SHOW_BREWS:
+        await this.showBrews();
+        break;
       default:
         break;
     }
@@ -233,5 +238,8 @@ export class MillInformationCardComponent implements OnInit {
       await this.internalMillAction(data.role as MILL_ACTION);
       this.millAction.emit([data.role as MILL_ACTION, this.mill]);
     }
+  }
+  public async showBrews() {
+    await this.uiBrewHelper.showAssociatedBrews(this.mill.config.uuid, 'mill');
   }
 }

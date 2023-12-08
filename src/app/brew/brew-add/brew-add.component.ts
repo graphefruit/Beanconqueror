@@ -14,13 +14,13 @@ import { Brew } from '../../../classes/brew/brew';
 import moment from 'moment';
 import { UIToast } from '../../../services/uiToast';
 import { TranslateService } from '@ngx-translate/core';
-import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { UILog } from '../../../services/uiLog';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { Settings } from '../../../classes/settings/settings';
 import { UIHealthKit } from '../../../services/uiHealthKit';
-import { Insomnia } from '@ionic-native/insomnia/ngx';
+import { Insomnia } from '@awesome-cordova-plugins/insomnia/ngx';
 import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
 import { UIAlert } from '../../../services/uiAlert';
 import { BrewTrackingService } from '../../../services/brewTracking/brew-tracking.service';
@@ -32,6 +32,7 @@ import { BluetoothScale, SCALE_TIMER_COMMAND } from '../../../classes/devices';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { UIHelper } from '../../../services/uiHelper';
+import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
 
 declare var Plotly;
 declare var window;
@@ -54,6 +55,8 @@ export class BrewAddComponent implements OnInit {
   @Input() private hide_toast_message: boolean;
 
   public showFooter: boolean = true;
+  private initialBeanData: string = '';
+  private disableHardwareBack;
   constructor(
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
@@ -75,7 +78,8 @@ export class BrewAddComponent implements OnInit {
     private readonly brewTracking: BrewTrackingService,
     private readonly uiAnalytics: UIAnalytics,
     private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly uiHelper: UIHelper
+    private readonly uiHelper: UIHelper,
+    private readonly visualizerService: VisualizerService
   ) {
     // Initialize to standard in drop down
 
@@ -122,6 +126,28 @@ export class BrewAddComponent implements OnInit {
     }
 
     this.getCoordinates(true);
+    this.initialBeanData = JSON.stringify(this.data);
+  }
+
+  public confirmDismiss(): void {
+    if (this.settings.security_check_when_going_back === false) {
+      this.dismiss();
+      return;
+    }
+    if (JSON.stringify(this.data) !== this.initialBeanData) {
+      this.uiAlert
+        .showConfirm('PAGE_BREW_DISCARD_CONFIRM', 'SURE_QUESTION', true)
+        .then(
+          async () => {
+            this.dismiss();
+          },
+          () => {
+            // No
+          }
+        );
+    } else {
+      this.dismiss();
+    }
   }
 
   public ionViewWillLeave() {
@@ -179,6 +205,11 @@ export class BrewAddComponent implements OnInit {
   }
 
   public async dismiss() {
+    try {
+      if (this.settings.security_check_when_going_back === true) {
+        this.disableHardwareBack.unsubscribe();
+      }
+    } catch (ex) {}
     this.stopScaleTimer();
     try {
       Plotly.purge('flowProfileChart');
@@ -209,11 +240,13 @@ export class BrewAddComponent implements OnInit {
         this.brewBrewing.flow_profile_raw.pressureFlow.length > 0 ||
         this.brewBrewing.flow_profile_raw.temperatureFlow.length > 0
       ) {
-        const savedPath = this.brewBrewing.saveFlowProfile(
+        const savedPath: string = await this.brewBrewing.saveFlowProfile(
           addedBrewObj.config.uuid
         );
-        addedBrewObj.flow_profile = savedPath;
-        await this.uiBrewStorage.update(addedBrewObj);
+        if (savedPath !== '') {
+          addedBrewObj.flow_profile = savedPath;
+          await this.uiBrewStorage.update(addedBrewObj);
+        }
       }
 
       let checkData: Settings | Preparation;
@@ -228,6 +261,22 @@ export class BrewAddComponent implements OnInit {
           this.brewBrewing.customCreationDate
         ).unix();
         await this.uiBrewStorage.update(addedBrewObj);
+      }
+
+      if (
+        this.settings.visualizer_active &&
+        this.settings.visualizer_upload_automatic
+      ) {
+        if (addedBrewObj.flow_profile) {
+          this.uiLog.log('Upload shot to visualizer');
+          this.visualizerService.uploadToVisualizer(addedBrewObj);
+        } else {
+          this.uiLog.log('No flow profile given, dont upload');
+        }
+      } else {
+        this.uiLog.log(
+          'Visualizer not active or upload automatic not activated'
+        );
       }
 
       if (
@@ -261,5 +310,15 @@ export class BrewAddComponent implements OnInit {
     return this.uiPreparationStorage.getByUUID(this.data.method_of_preparation);
   }
 
-  public ngOnInit() {}
+  public ngOnInit() {
+    if (this.settings.security_check_when_going_back === true) {
+      this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(
+        9999,
+        (processNextHandler) => {
+          // Don't do anything.
+          this.confirmDismiss();
+        }
+      );
+    }
+  }
 }

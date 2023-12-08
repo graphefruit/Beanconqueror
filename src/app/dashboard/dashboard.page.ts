@@ -11,10 +11,10 @@ import { Bean } from '../../classes/bean/bean';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
 
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { Preparation } from '../../classes/preparation/preparation';
+
 import { UIPreparationStorage } from '../../services/uiPreparationStorage';
 import { UIMillStorage } from '../../services/uiMillStorage';
-import { Mill } from '../../classes/mill/mill';
+
 @Component({
   selector: 'dashboard',
   templateUrl: './dashboard.page.html',

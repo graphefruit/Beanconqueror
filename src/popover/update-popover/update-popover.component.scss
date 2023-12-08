@@ -12,8 +12,51 @@
     background:#ffffff;
     --background:#ffffff;
   }
-  .slider {
-    min-height: 100%;
-    background-color: #eee;
+  swiper-slide {
+    div {
+      margin-bottom:20px;
+    }
+  }
+
+}
+:root {
+  .swiper-pagination-bullet {
+    background-color: #282013;
+  }
+  .swiper-pagination-bullet active-bullet {
+
+    background-color: #AE9F87;
+  }
+
+  swiper-slide {
+    display: flex;
+    position: relative;
+
+    flex-direction: column;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+
+    font-size: 18px;
+
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  swiper-slide img {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 100%;
+  }
+  .swiper-pagination-bullet {
+    background-color: #282013;
+  }
+  .swiper-pagination-bullet.active-bullet {
+
+    background-color: #AE9F87!important;
   }
 }

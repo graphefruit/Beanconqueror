@@ -7,17 +7,16 @@ import { IonicModule } from '@ionic/angular';
 import { WaterSectionPageRoutingModule } from './water-section-routing.module';
 
 import { WaterSectionPage } from './water-section.page';
-import {SharedModule} from '../shared/shared.module';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-
     WaterSectionPageRoutingModule,
     SharedModule,
   ],
-  declarations: []
+  declarations: [],
 })
 export class WaterSectionPageModule {}

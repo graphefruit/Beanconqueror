@@ -14,7 +14,7 @@ import { ModalController, Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { Brew } from '../../../classes/brew/brew';
 import { UIHelper } from '../../../services/uiHelper';
-import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
+import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
@@ -25,6 +25,7 @@ import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice
 import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { BluetoothScale } from '../../../classes/devices';
+import { UIAlert } from '../../../services/uiAlert';
 declare var Plotly;
 @Component({
   selector: 'brew-flow',
@@ -79,7 +80,8 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
     private readonly translate: TranslateService,
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly platform: Platform,
-    private readonly ngZone: NgZone
+    private readonly ngZone: NgZone,
+    private readonly uiAlert: UIAlert
   ) {}
   public ngOnInit() {
     try {
@@ -297,8 +299,41 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
   public pauseTimer() {
     this.brewComponent.timer.pauseTimer();
   }
-  public resetTimer() {
+  public async startListening() {
+    this.brewComponent.timer.startListening();
+
+    //await this.waitForPleaseWaitToBeFinished();
+    //After start listening did a reset, we need to change orientation, else the graph is to small
+    setTimeout(() => {
+      this.onOrientationChange();
+    }, 500);
+  }
+  private waitForPleaseWaitToBeFinished() {
+    // #604
+    const promise = new Promise((resolve, reject) => {
+      let waitForPleaseWaitInterval = setInterval(async () => {
+        if (this.uiAlert.isLoadingSpinnerShown() === true) {
+          // wait another round
+        } else {
+          clearInterval(waitForPleaseWaitInterval);
+          waitForPleaseWaitInterval = undefined;
+          resolve(undefined);
+        }
+      });
+      setTimeout(() => {
+        if (waitForPleaseWaitInterval !== undefined) {
+          clearInterval(waitForPleaseWaitInterval);
+          waitForPleaseWaitInterval = undefined;
+          resolve(undefined);
+        }
+      }, 5000);
+    });
+    return promise;
+  }
+  public async resetTimer() {
     this.brewComponent.timer.reset();
+
+    //await this.waitForPleaseWaitToBeFinished();
     setTimeout(() => {
       this.onOrientationChange();
     }, 500);
@@ -311,6 +346,8 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   public setCoffeeDripTime(): void {
+    this.brewComponent.setCoffeeDripTime(undefined);
+    /**
     this.brew.coffee_first_drip_time = this.brew.brew_time;
     // Run first drip script
     if (
@@ -323,12 +360,13 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
           this.brew.preparationDeviceBrew.params.scriptAtFirstDripId
         );
       }
-    }
+    }**/
     this.showDripTimer = false;
   }
 
   public setCoffeeBloomingTime(): void {
-    this.brew.coffee_blooming_time = this.brew.brew_time;
+    //this.brew.coffee_blooming_time = this.brew.brew_time;
+    this.brewComponent.setCoffeeBloomingTime(undefined);
     this.showBloomTimer = false;
   }
 

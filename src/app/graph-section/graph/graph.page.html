@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-toolbar with-add-button>
+    <ion-buttons slot="start">
+      <ion-menu-button show="back"></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="add()"  class="big-add-icon" fill="clear">
+        <ion-icon class="ion-color-accent" name="beanconqueror-add" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      {{"GRAPH_SECTION.NAV_GRAPH" | translate }}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #graphContent>
+  <ion-segment (ionChange)="segmentChanged()" [(ngModel)]="segment" class="ion-padding-vertical" style="padding-top:0px;">
+    <ion-segment-button value="open">
+      <ion-label>{{"CURRENT" | translate}}
+      </ion-label>
+    </ion-segment-button>
+    <ion-segment-button *ngIf="settings?.show_archived_graphs" value="archiv">
+      <ion-label>{{"TAB_ARCHIVE" | translate}}
+      </ion-label>
+    </ion-segment-button>
+  </ion-segment>
+  <div [ngSwitch]="segment">
+    <div *ngSwitchCase="'open'">
+
+      <div *ngIf="openGraphs.length == 0" class="ion-padding ion-text-center">
+        <div>
+          <ion-icon color="inactive" name="analytics-outline" size="large"></ion-icon>
+        </div>
+        <div class="text-color-inactive ion-margin-top">
+          {{"GRAPH_SECTION.NO_ENTRIES" | translate}}
+        </div>
+      </div>
+      <ag-virtual-scroll #openScroll [items]="openGraphs" height="100vh" min-row-height="165">
+        <graph-information-card (graphAction)="triggerAction($event[0],$event[1])" *ngFor="let graph of openScroll.items" [graph]="graph"></graph-information-card>
+      </ag-virtual-scroll>
+    </div>
+    <div *ngIf="settings?.show_archived_beans">
+      <div *ngSwitchCase="'archiv'">
+
+
+        <div *ngIf="finishedGraphs.length == 0" class="ion-padding ion-text-center">
+          <div>
+            <ion-icon color="inactive" name="analytics-outline" size="large"></ion-icon>
+          </div>
+          <div class="text-color-inactive ion-margin-top">
+            {{"GRAPH_SECTION.NO_ARCHIVED_ENTRIES" | translate}}
+          </div>
+        </div>
+
+
+
+        <ag-virtual-scroll #archivedScroll [items]="finishedGraphs" height="100vh" min-row-height="165">
+          <graph-information-card (graphAction)="triggerAction($event[0],$event[1])" *ngFor="let graph of archivedScroll.items" [graph]="graph"></graph-information-card>
+        </ag-virtual-scroll>
+      </div>
+    </div>
+  </div>
+</ion-content>

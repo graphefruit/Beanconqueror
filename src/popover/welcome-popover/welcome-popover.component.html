@@ -30,119 +30,119 @@
 </ion-content>
 <!--We just add 50% height for first slide of analytics, else the image wouldn't be displayed -->
 <ion-footer  class="ion-no-border" [style.maxHeight]="slide==1 ? '50%' : 'inherit'" style="overflow:auto;">
-    <ion-slides #slider [options]="slideOpts" pager="true">
-      <ion-slide >
-        <!--Hide the long text, because else the slide would have a scrollable context -->
-        <div [hidden]="slide!=1"  class="ion-padding-top ion-margin-horizontal">
-          <div class="welcome-content-text">
-            <ion-title>
-              {{"WELCOME_PAGE_ACTIVATE_ANALYTICS_TITLE" | translate}}
-            </ion-title>
-            <div [innerHTML]="'WELCOME_PAGE_ACTIVATE_ANALYTICS_DESCRIPTION' | translate">
-            </div>
+  <swiper-container #slider [options]="slideOpts" [pagination]="{ dragable: false, clickable: false }" pager="true">
+    <swiper-slide>
+      <!--Hide the long text, because else the slide would have a scrollable context -->
+      <div [hidden]="slide!=1"  class="ion-padding-top ion-margin-horizontal">
+        <div class="welcome-content-text">
+          <ion-title>
+            {{"WELCOME_PAGE_ACTIVATE_ANALYTICS_TITLE" | translate}}
+          </ion-title>
+          <div [innerHTML]="'WELCOME_PAGE_ACTIVATE_ANALYTICS_DESCRIPTION' | translate">
           </div>
-          <ion-row class="ion-padding-top">
-            <ion-col size="6">
-              <ion-button (click)="dontActivateAnalytics()" color="accent" fill="outline" expand="block" tappable>{{"DO_NOT_ACTIVE" | translate}}</ion-button>
-            </ion-col>
-            <ion-col size="6">
-              <ion-button (click)="understoodAnalytics()" color="accent"
-                          expand="block">{{"ACTIVATE" | translate}}</ion-button>
-            </ion-col>
-          </ion-row>
         </div>
-      </ion-slide>
-      <ion-slide>
-        <div class="ion-padding-top ion-margin-horizontal">
-          <div class="welcome-content-text">
-            <ion-title>
-              {{"WELCOME_PAGE_BEAN_TITLE" | translate}}
-            </ion-title>
-            <div>
-              {{"WELCOME_PAGE_BEAN_DESCRIPTION" | translate}}
-            </div>
+        <ion-row class="ion-padding-top">
+          <ion-col size="6">
+            <ion-button (click)="dontActivateAnalytics()" color="accent" fill="outline" expand="block" tappable>{{"DO_NOT_ACTIVE" | translate}}</ion-button>
+          </ion-col>
+          <ion-col size="6">
+            <ion-button (click)="understoodAnalytics()" color="accent"
+                        expand="block">{{"ACTIVATE" | translate}}</ion-button>
+          </ion-col>
+        </ion-row>
+      </div>
+    </swiper-slide>
+    <swiper-slide>
+      <div class="ion-padding-top ion-margin-horizontal">
+        <div class="welcome-content-text">
+          <ion-title>
+            {{"WELCOME_PAGE_BEAN_TITLE" | translate}}
+          </ion-title>
+          <div>
+            {{"WELCOME_PAGE_BEAN_DESCRIPTION" | translate}}
           </div>
-          <ion-row class="ion-padding-top">
-            <ion-col size="12">
-              <ion-button (click)="addBean()" color="accent"
-                          expand="block">{{"WELCOME_PAGE_BEAN_ADD" | translate}}</ion-button>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col size="12">
-              <ion-button (click)="skip()" color="dark" expand="block"
-                          fill="clear">{{"SKIP" | translate}}</ion-button>
-            </ion-col>
-          </ion-row>
         </div>
-      </ion-slide>
-      <ion-slide>
-        <div class="ion-padding-top ion-margin-horizontal">
-          <div class="welcome-content-text">
-            <ion-title>
-              {{"WELCOME_PAGE_PREPARATION_TITLE" | translate}}
-            </ion-title>
-            <div>
-              {{"WELCOME_PAGE_PREPARATION_DESCRIPTION" | translate}}
-            </div>
+        <ion-row class="ion-padding-top">
+          <ion-col size="12">
+            <ion-button (click)="addBean()" color="accent"
+                        expand="block">{{"WELCOME_PAGE_BEAN_ADD" | translate}}</ion-button>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12">
+            <ion-button (click)="skip()" color="dark" expand="block"
+                        fill="clear">{{"SKIP" | translate}}</ion-button>
+          </ion-col>
+        </ion-row>
+      </div>
+    </swiper-slide>
+    <swiper-slide>
+      <div class="ion-padding-top ion-margin-horizontal">
+        <div class="welcome-content-text">
+          <ion-title>
+            {{"WELCOME_PAGE_PREPARATION_TITLE" | translate}}
+          </ion-title>
+          <div>
+            {{"WELCOME_PAGE_PREPARATION_DESCRIPTION" | translate}}
           </div>
-          <ion-row class="ion-padding-top">
-            <ion-col size="12">
-              <ion-button (click)="addPreparation()" color="accent"
-                          expand="block">{{"WELCOME_PAGE_PREPARATION_ADD" | translate}}</ion-button>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col size="12">
-              <ion-button (click)="skip()" color="dark" expand="block"
-                          fill="clear">{{"SKIP" | translate}}</ion-button>
-            </ion-col>
-          </ion-row>
         </div>
-      </ion-slide>
-      <ion-slide>
-        <div class="ion-padding-top ion-margin-horizontal">
-          <div class="welcome-content-text">
-            <ion-title>
-              {{"WELCOME_PAGE_MILL_TITLE" | translate}}
-            </ion-title>
-            <div>
-              {{"WELCOME_PAGE_MILL_DESCRIPTION" | translate}}
-            </div>
+        <ion-row class="ion-padding-top">
+          <ion-col size="12">
+            <ion-button (click)="addPreparation()" color="accent"
+                        expand="block">{{"WELCOME_PAGE_PREPARATION_ADD" | translate}}</ion-button>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12">
+            <ion-button (click)="skip()" color="dark" expand="block"
+                        fill="clear">{{"SKIP" | translate}}</ion-button>
+          </ion-col>
+        </ion-row>
+      </div>
+    </swiper-slide>
+    <swiper-slide>
+      <div class="ion-padding-top ion-margin-horizontal">
+        <div class="welcome-content-text">
+          <ion-title>
+            {{"WELCOME_PAGE_MILL_TITLE" | translate}}
+          </ion-title>
+          <div>
+            {{"WELCOME_PAGE_MILL_DESCRIPTION" | translate}}
           </div>
-          <ion-row class="ion-padding-top">
-            <ion-col size="12">
-              <ion-button (click)="addMill()" color="accent"
-                          expand="block">{{"WELCOME_PAGE_MILL_ADD" | translate}}</ion-button>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col size="12">
-              <ion-button (click)="skip()" color="dark" expand="block"
-                          fill="clear">{{"SKIP" | translate}}</ion-button>
-            </ion-col>
-          </ion-row>
         </div>
-      </ion-slide>
-      <ion-slide>
-        <div class="ion-padding-top ion-margin-horizontal">
-          <div class="welcome-content-text">
-            <ion-title>
-              {{"WELCOME_PAGE_LETS_START_TITLE" | translate}}
-            </ion-title>
-            <div>
-              {{"WELCOME_PAGE_LETS_START_DESCRIPTION" | translate}}
-            </div>
+        <ion-row class="ion-padding-top">
+          <ion-col size="12">
+            <ion-button (click)="addMill()" color="accent"
+                        expand="block">{{"WELCOME_PAGE_MILL_ADD" | translate}}</ion-button>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12">
+            <ion-button (click)="skip()" color="dark" expand="block"
+                        fill="clear">{{"SKIP" | translate}}</ion-button>
+          </ion-col>
+        </ion-row>
+      </div>
+    </swiper-slide>
+    <swiper-slide>
+      <div class="ion-padding-top ion-margin-horizontal">
+        <div class="welcome-content-text">
+          <ion-title>
+            {{"WELCOME_PAGE_LETS_START_TITLE" | translate}}
+          </ion-title>
+          <div>
+            {{"WELCOME_PAGE_LETS_START_DESCRIPTION" | translate}}
           </div>
-          <ion-row class="ion-padding-top">
-            <ion-col size="12">
-              <ion-button (click)="finish()" class="big-icon-96-only" fill="clear" tappable>
-                <ion-icon  name="beanconqueror-next" slot="icon-only"></ion-icon>
-              </ion-button>
-            </ion-col>
-          </ion-row>
+        </div>
+        <ion-row class="ion-padding-top">
+          <ion-col size="12">
+            <ion-button (click)="finish()" class="big-icon-96-only" fill="clear" tappable>
+              <ion-icon  name="beanconqueror-next" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-col>
+        </ion-row>
 
-        </div>
-      </ion-slide>
-    </ion-slides>
+      </div>
+    </swiper-slide>
+  </swiper-container>
 </ion-footer>

@@ -12,8 +12,7 @@
   <ion-card>
     <ion-card-content>
       <ion-item>
-        <ion-label>{{"PREPARATION_DEVICE.CHOOSE_DEVICE" | translate}}</ion-label>
-        <ion-select (ngModelChange)="save()"  [(ngModel)]="preparation.connectedPreparationDevice.type"
+        <ion-select label-placement="stacked" label='{{"PREPARATION_DEVICE.CHOOSE_DEVICE" | translate}}' (ngModelChange)="save()"  [(ngModel)]="preparation.connectedPreparationDevice.type"
                     cancelText="{{'CANCEL'| translate }}" cancelText="{{'CANCEL'| translate }}"
                     okText="{{'CHOOSE'| translate }}" okText="{{'CHOOSE'| translate }}" (ionChange)='setUrl()'>
           <ion-select-option value="{{PREPARATION_DEVICE_TYPE.NONE}}">{{"PREPARATION_DEVICE.TYPE.NONE" | translate}}</ion-select-option>
@@ -21,8 +20,8 @@
         </ion-select>
       </ion-item>
       <ion-item  *ngIf="preparation.connectedPreparationDevice.type ===  PREPARATION_DEVICE_TYPE.XENIA">
-        <ion-label>{{"PREPARATION_DEVICE.URL" | translate}}</ion-label>
-        <ion-input (ionBlur)="save()" [(ngModel)]="preparation.connectedPreparationDevice.url" placeholder="{{'PREPARATION_DEVICE.URL' | translate}}"
+        <ion-label id='preparationURL'>{{"PREPARATION_DEVICE.URL" | translate}}</ion-label>
+        <ion-input aria-labelledby='preparationURL' (ionBlur)="save()" [(ngModel)]="preparation.connectedPreparationDevice.url" placeholder="{{'PREPARATION_DEVICE.URL' | translate}}"
                    tabIndex="1" type="text"></ion-input>
         <ion-button (click)="checkURL()" class="big-icon-only" fill="clear"
                     slot="end" style="margin-left:0px;" tabIndex="2" tappable>

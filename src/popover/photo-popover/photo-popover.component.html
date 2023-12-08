@@ -10,10 +10,10 @@
 </ion-header>
 <ion-content>
   <div *ngIf="data?.attachments && data.attachments.length > 0">
-    <ion-slides #photoSlides pager="true">
-      <ion-slide *ngFor="let attachment of data.attachments;let i = index">
-          <async-image class="brew-image" filePath="{{attachment}}"></async-image>
-      </ion-slide>
-    </ion-slides>
+    <swiper-container  [pagination]="{ clickable: true, dragable:true }"   #photoSlides pager="true">
+      <swiper-slide *ngFor="let attachment of data.attachments;let i = index">
+        <async-image class="brew-image" filePath="{{attachment}}"></async-image>
+      </swiper-slide>
+    </swiper-container>
   </div>
 </ion-content>

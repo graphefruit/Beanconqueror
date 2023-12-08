@@ -19,14 +19,12 @@
 
   <ion-card-content>
     <ion-item>
-      <ion-label position="stacked">{{"PAGE_HELPER_BREW_RATIO_GROUND_COFFEE" | translate}}</ion-label>
-      <ion-input [(ngModel)]="brewRatio.ground_coffee" inputmode="decimal" prevent-characters remove-empty-number
+      <ion-input label-placement="stacked" label='{{"PAGE_HELPER_BREW_RATIO_GROUND_COFFEE" | translate}}' [(ngModel)]="brewRatio.ground_coffee" inputmode="decimal" prevent-characters remove-empty-number
                  type="text"></ion-input>
     </ion-item>
 
     <ion-item lines="none">
-      <ion-label position="stacked">{{"PAGE_HELPER_BREW_RATIO_WATER" | translate}}</ion-label>
-      <ion-input [(ngModel)]="brewRatio.water" inputmode="decimal" prevent-characters remove-empty-number
+      <ion-input label-placement="stacked" label='{{"PAGE_HELPER_BREW_RATIO_WATER" | translate}}' [(ngModel)]="brewRatio.water" inputmode="decimal" prevent-characters remove-empty-number
                  type="text"></ion-input>
     </ion-item>
 

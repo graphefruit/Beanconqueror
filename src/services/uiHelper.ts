@@ -1,6 +1,6 @@
 /** Core */
 import { Injectable } from '@angular/core';
-import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 /** Ionic */
 import { Platform } from '@ionic/angular';
 /** Third party */
@@ -8,7 +8,7 @@ import moment from 'moment';
 // tslint:disable-next-line
 import 'moment/locale/de';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { File, FileEntry } from '@ionic-native/file/ngx';
+import { File, FileEntry } from '@awesome-cordova-plugins/file/ngx';
 import { UIFileHelper } from './uiFileHelper';
 import { UILog } from './uiLog';
 import { UIAlert } from './uiAlert';

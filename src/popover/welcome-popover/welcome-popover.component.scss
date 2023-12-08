@@ -1,7 +1,8 @@
 :host {
-  .slider {
-    min-height: 100%;
-    background-color: #eee;
+  swiper-slide {
+    div {
+      margin-bottom:20px;
+    }
   }
   [hidden] {
     display: none;

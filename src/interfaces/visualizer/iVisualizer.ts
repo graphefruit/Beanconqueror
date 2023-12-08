@@ -12,4 +12,5 @@ export interface IVisualizer {
   preparation: IPreparationVisualizer;
   water: IWaterVisualizer;
   brewFlow: BrewFlow;
+  application: string;
 }

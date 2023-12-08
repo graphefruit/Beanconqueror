@@ -14,14 +14,15 @@
   <ion-list-header>
     {{"PREDEFINED_FLAVORS_AROMAS" | translate }}
   </ion-list-header>
-  <ion-searchbar [(ngModel)]="searchFlavorText" debounce="500" (ionChange)="searchFlavors()" (ionClear)="resetFlavors()"></ion-searchbar>
+  <ion-searchbar [(ngModel)]="searchFlavorText" debounce="500" (ionInput)='searchFlavors()' (ionChange)="searchFlavors()" (ionClear)="resetFlavors()"></ion-searchbar>
   <div class="ion-margin-horizontal" *ngFor="let flavor of displayingFlavors">
     <div  *ngIf="flavor.display">
       <ion-item style="--background:{{flavor.color}}">
-        <div class="margin-left-first">
-          <ion-label [ngStyle]="{'color': flavor.text}">{{flavor.translatedLabel}}</ion-label>
-        </div>
-        <ion-checkbox [(ngModel)]="selectedFlavors[flavor.value]" slot="end" class="ion-margin-end"></ion-checkbox>
+        <ion-checkbox label-placement='start' [(ngModel)]="selectedFlavors[flavor.value]" class="ion-margin-end">
+          <div class='ion-label margin-left-first' [ngStyle]="{'color': flavor.text}">
+            {{flavor.translatedLabel}}
+          </div>
+        </ion-checkbox>
       </ion-item>
 
 
@@ -31,23 +32,23 @@
         <div *ngFor="let childFlavor of flavor.children">
           <div *ngIf="childFlavor.display">
             <ion-item style="--background:{{childFlavor.color}}">
-              <div class="margin-left-second">
-                <ion-label [ngStyle]="{'color': childFlavor.text}">{{childFlavor.translatedLabel}}</ion-label>
-
-              </div>
-              <ion-checkbox [(ngModel)]="selectedFlavors[childFlavor.value]" slot="end"
-                            class="ion-margin-end"></ion-checkbox>
+              <ion-checkbox label-placement='start' [(ngModel)]="selectedFlavors[childFlavor.value]"
+                            class="ion-margin-end">
+                <div class='ion-label margin-left-second' [ngStyle]="{'color': childFlavor.text}">
+                  {{childFlavor.translatedLabel}}
+                </div>
+              </ion-checkbox>
             </ion-item>
 
             <div *ngFor="let childChildFlavor of childFlavor.children"
                  style="--background:{{childChildFlavor.color}}">
               <ion-item *ngIf="childChildFlavor.display" style="--background:{{childChildFlavor.color}}">
-                <div class="margin-left-third">
-                  <ion-label
-                    [ngStyle]="{'color': childChildFlavor.text}">{{childChildFlavor.translatedLabel}}</ion-label>
-                </div>
-                <ion-checkbox [(ngModel)]="selectedFlavors[childChildFlavor.value]" slot="end"
-                              class="ion-margin-end"></ion-checkbox>
+                <ion-checkbox label-placement='start' [(ngModel)]="selectedFlavors[childChildFlavor.value]"
+                              class="ion-margin-end">
+                  <div class='ion-label margin-left-third' [ngStyle]="{'color': childChildFlavor.text}">
+                    {{childChildFlavor.translatedLabel}}
+                  </div>
+                </ion-checkbox>
               </ion-item>
             </div>
           </div>
