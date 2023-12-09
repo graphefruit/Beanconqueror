@@ -1,6 +1,6 @@
 <ion-content #updateContent class="ion-padding-top">
 
-  <swiper-container #slider  [pagination]="{ dragable: false, clickable: false }" pager="true">
+  <swiper-container #slider allow-touch-move='false'  [pagination]="{ draggable: false, clickable: false }" pager="true">
     <swiper-slide *ngFor="let version of versions;let last = last;let i=index;" >
       <div [style.display]="i+1===this.slide?'block':'none'" class="ion-padding-horizontal" style='text-align:center;'>
         <div>

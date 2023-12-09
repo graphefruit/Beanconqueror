@@ -30,8 +30,8 @@
 </ion-content>
 <!--We just add 50% height for first slide of analytics, else the image wouldn't be displayed -->
 <ion-footer  class="ion-no-border" [style.maxHeight]="slide==1 ? '50%' : 'inherit'" style="overflow:auto;">
-  <swiper-container #slider [options]="slideOpts" [pagination]="{ dragable: false, clickable: false }" pager="true">
-    <swiper-slide>
+  <swiper-container #slider allow-touch-move='false'   [pagination]="{ draggable: false, clickable: false }"  pager="true">
+    <swiper-slide >
       <!--Hide the long text, because else the slide would have a scrollable context -->
       <div [hidden]="slide!=1"  class="ion-padding-top ion-margin-horizontal">
         <div class="welcome-content-text">

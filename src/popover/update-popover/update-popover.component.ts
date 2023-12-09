@@ -10,13 +10,7 @@ import { Platform } from '@ionic/angular';
 })
 export class UpdatePopoverComponent implements OnInit {
   @Input() public versions: Array<string>;
-  public config = {
-    slidesPerView: 3,
-    spaceBetween: 50,
-    navigation: true,
-    pagination: { clickable: true },
-    scrollbar: { draggable: true },
-  };
+
   public slide: number = 1;
   @ViewChild('slider', { static: false }) public updateSlider:
     | ElementRef
