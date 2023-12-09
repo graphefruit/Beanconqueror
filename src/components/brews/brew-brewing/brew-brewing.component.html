@@ -493,7 +493,7 @@
                       data.getPreparation().brew_order.after.rating,
                       data.getPreparation().use_custom_parameters)" lines="inset">
 
-    <ion-range style='padding-left:10px;padding-right:10px;padding-top:0px;padding-bottom:0px;' (ionChange)="changedRating()" [(ngModel)]="data.rating" [max]="maxBrewRating" min="-1" snaps="true"
+    <ion-range style='padding-left:20px;padding-right:10px;padding-top:0px;padding-bottom:0px;' (ionChange)="changedRating()" [(ngModel)]="data.rating" [max]="maxBrewRating" min="-1" snaps="true"
       [step]="settings.brew_rating_steps">
       <div slot="end" *ngIf="maxBrewRating=== 5 && settings.brew_rating_steps === 1">
         <ngx-stars #brewStars [color]="'#BFB9B0'" [initialStars]="data.rating" [maxStars]="5" [readonly]="true"
