@@ -13,10 +13,6 @@ import { GreenBean } from '../../classes/green-bean/green-bean';
 import { Mill } from '../../classes/mill/mill';
 import { Preparation } from '../../classes/preparation/preparation';
 
-import { UIImage } from '../../services/uiImage';
-import { UIFileHelper } from '../../services/uiFileHelper';
-import { UIToast } from '../../services/uiToast';
-
 @Component({
   selector: 'photo-view',
   templateUrl: './photo-view.component.html',
@@ -31,11 +27,7 @@ export class PhotoViewComponent implements OnInit {
     | ElementRef
     | undefined;
 
-  constructor(
-    private readonly uiImage: UIImage,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiToast: UIToast
-  ) {}
+  constructor() {}
 
   public ngOnInit() {
     setTimeout(() => {
@@ -46,7 +38,9 @@ export class PhotoViewComponent implements OnInit {
 
   private async updateSlider() {
     if (this.photoSlides) {
-      //TODO await this.photoSlides.update();
+      setTimeout(() => {
+        this.photoSlides.nativeElement.swiper.update();
+      }, 250);
     }
   }
 }

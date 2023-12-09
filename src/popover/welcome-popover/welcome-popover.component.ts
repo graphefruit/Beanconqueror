@@ -63,7 +63,6 @@ export class WelcomePopoverComponent implements OnInit {
     await this.uiSettingsStorage.saveSettings(this.settings);
     this.slide++;
     this.welcomeSlider?.nativeElement.swiper.slideNext();
-    //TODO this.welcomeSlider.slideNext();
     this.__triggerUpdate();
   }
 
@@ -73,7 +72,6 @@ export class WelcomePopoverComponent implements OnInit {
     await this.uiSettingsStorage.saveSettings(this.settings);
     this.slide++;
     this.welcomeSlider?.nativeElement.swiper.slideNext();
-    //TODO this.welcomeSlider.slideNext();
     this.__triggerUpdate();
   }
 

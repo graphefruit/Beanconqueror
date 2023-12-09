@@ -94,7 +94,9 @@ export class PhotoAddComponent implements OnInit {
 
   private async updateSlider() {
     if (this.photoSlides) {
-      //TODO await this.photoSlides.update();
+      setTimeout(() => {
+        this.photoSlides.nativeElement.swiper.update();
+      }, 250);
     }
   }
 
@@ -108,10 +110,6 @@ export class PhotoAddComponent implements OnInit {
       } catch (ex) {
         this.uiToast.showInfoToast('IMAGE_NOT_DELETED');
       }
-    }
-    if (this.data.attachments.length > 0) {
-      // Slide to one item before
-      //TODO this.photoSlides.slideTo(_index - 1, 0);
     }
   }
 }
