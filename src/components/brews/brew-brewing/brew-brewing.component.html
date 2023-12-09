@@ -49,7 +49,7 @@
                       data.getPreparation().use_custom_parameters)" lines="inset">
     <ion-select label-placement="stacked" label='{{"BREW_DATA_PREPARATION_METHOD" | translate}}' [(ngModel)]="data.method_of_preparation"
       placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}" [show-finished]="false"
-      preparation-overlay (click)="preparationMethodFocused()" (ionChange)='resetPreparationTools()'>
+        preparation-overlay (click)="preparationMethodFocused()">
     </ion-select>
   </ion-item>
   <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.bean_type,

@@ -82,6 +82,8 @@ import { BrewChooseGraphReferenceComponent } from '../../../app/brew/brew-choose
 import BeanconquerorFlowTestDataDummy from '../../../assets/BeanconquerorFlowTestDataFifth.json';
 import { ReferenceGraph } from '../../../classes/brew/referenceGraph';
 import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
+import { AppEventType } from '../../../enums/appEvent/appEvent';
+import { EventQueueService } from '../../../services/queueService/queue-service.service';
 
 declare var cordova;
 declare var Plotly;
@@ -129,8 +131,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public maxBrewRating: number = 5;
 
-  public preparationMethodHasBeenFocused: boolean = false;
-
   public profileResultsAvailable: boolean = false;
   public profileResults: string[] = [];
   public profileFocused: boolean = false;
@@ -150,6 +150,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public temperatureDeviceSubscription: Subscription = undefined;
   private scaleFlowChangeSubscription: Subscription = undefined;
   private scaleListeningSubscription: Subscription = undefined;
+  private preparationMethodFocusedSubscription: Subscription = undefined;
+
   private flowProfileArr = [];
   private flowProfileArrObjs = [];
   private flowProfileArrCalculated = [];
@@ -213,7 +215,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly ngZone: NgZone,
     private readonly uiToast: UIToast,
-    private readonly uiLog: UILog
+    private readonly uiLog: UILog,
+    private readonly eventQueue: EventQueueService
   ) {}
 
   private writeExecutionTimeToNotes(
@@ -474,16 +477,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public resetPreparationTools() {
     setTimeout(() => {
-      // Wait for 150ms, so we get the new preparation
-      if (this.preparationMethodHasBeenFocused === true) {
-        this.data.method_of_preparation_tools = [];
-        this.preparationMethodHasBeenFocused = false;
+      this.data.method_of_preparation_tools = [];
 
-        this.instancePreparationDevice();
+      this.instancePreparationDevice();
 
-        if (this.timer.isTimerRunning() === false) {
-          this.initializeFlowChart();
-        }
+      if (this.timer.isTimerRunning() === false) {
+        this.initializeFlowChart();
       }
     }, 150);
   }
@@ -717,11 +716,18 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.deattachToRefractometerChange();
     this.deattachToScaleListening();
     this.stopFetchingAndSettingDataFromXenia();
+    this.deattachToPreparationMethodFocused();
   }
 
   public preparationMethodFocused() {
-    // Needs to set , because ion-change triggers on smartphones but not on websites, and therefore the value is overwritten when you use a brew template
-    this.preparationMethodHasBeenFocused = true;
+    this.deattachToPreparationMethodFocused();
+    const eventSubs = this.eventQueue.on(
+      AppEventType.PREPARATION_SELECTION_CHANGED
+    );
+    this.preparationMethodFocusedSubscription = eventSubs.subscribe((next) => {
+      this.resetPreparationTools();
+      this.deattachToPreparationMethodFocused();
+    });
   }
 
   public attachToScaleWeightChange() {
@@ -1148,6 +1154,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (this.scaleListeningSubscription) {
       this.scaleListeningSubscription.unsubscribe();
       this.scaleListeningSubscription = undefined;
+    }
+  }
+  public deattachToPreparationMethodFocused() {
+    if (this.preparationMethodFocusedSubscription) {
+      this.preparationMethodFocusedSubscription.unsubscribe();
+      this.preparationMethodFocusedSubscription = undefined;
     }
   }
 
