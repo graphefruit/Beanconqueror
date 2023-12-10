@@ -1000,7 +1000,6 @@
           "",
           "<b>Xenia</b>",
           "Bug fix: Deactivated scripts are no longer executed",
-          "Please update to the latest firmware that the scripts can be supported",
           "",
           "<b>Settings</b>",
           "Display of a security prompt if you have made changes to a brew or a bean - Activatable in the settings",
