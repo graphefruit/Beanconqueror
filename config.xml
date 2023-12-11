@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.beanconqueror.app" version="6.9.1" xmlns="http://www.w3.org/ns/widgets">
+<widget id="com.beanconqueror.app" version="6.9.2" xmlns="http://www.w3.org/ns/widgets">
     <name>Beanconqueror</name>
     <description />
     <author email="info@beanconqueror.com" href="https://github.com/graphefruit/beanconqueror">Lars Saalbach</author>
@@ -113,54 +113,56 @@
             <param name="ios-package" value="CDVWKWebViewEngine" />
         </feature>
         <preference name="CordovaWebViewEngine" value="CDVWKWebViewEngine" />
-        <edit-file file="*-Debug.plist" mode="merge" target="com.apple.developer.healthkit">
+        <edit-config file="*-Debug.plist" mode="merge" target="com.apple.developer.healthkit">
             <true />
-        </edit-file>
-        <edit-file file="*-Debug.plist" mode="merge" target="com.apple.developer.icloud-container-identifiers">
+        </edit-config>
+        <edit-config file="*-Debug.plist" mode="merge" target="com.apple.developer.icloud-container-identifiers">
             <array>
                 <string>iCloud.com.beanconqueror.app</string>
             </array>
-        </edit-file>
-        <edit-file file="*-Debug.plist" mode="merge" target="com.apple.developer.icloud-services">
+        </edit-config>
+        <edit-config file="*-Debug.plist" mode="merge" target="com.apple.developer.icloud-services">
             <array>
                 <string>CloudDocuments</string>
             </array>
-        </edit-file>
-        <edit-file file="*-Debug.plist" mode="merge" target="com.apple.developer.ubiquity-container-identifiers">
+        </edit-config>
+        <edit-config file="*-Debug.plist" mode="merge" target="com.apple.developer.ubiquity-container-identifiers">
             <array>
                 <string>iCloud.com.beanconqueror.app</string>
             </array>
-        </edit-file>
-        <edit-file file="*-Debug.plist" mode="merge" target="com.apple.developer.associated-domains">
+        </edit-config>
+        <edit-config file="*-Debug.plist" mode="merge" target="com.apple.developer.associated-domains">
             <array>
                 <string>webcredentials:beanconqueror.com</string>
                 <string>applinks:beanconqueror.com</string>
+                <string>activitycontinuation:beanconqueror.com</string>
             </array>
-        </edit-file>
-        <edit-file file="*-Release.plist" mode="merge" target="com.apple.developer.healthkit">
+        </edit-config>
+        <edit-config file="*-Release.plist" mode="merge" target="com.apple.developer.healthkit">
             <true />
-        </edit-file>
-        <edit-file file="*-Release.plist" mode="merge" target="com.apple.developer.icloud-container-identifiers">
+        </edit-config>
+        <edit-config file="*-Release.plist" mode="merge" target="com.apple.developer.icloud-container-identifiers">
             <array>
                 <string>iCloud.com.beanconqueror.app</string>
             </array>
-        </edit-file>
-        <edit-file file="*-Release.plist" mode="merge" target="com.apple.developer.icloud-services">
+        </edit-config>
+        <edit-config file="*-Release.plist" mode="merge" target="com.apple.developer.icloud-services">
             <array>
                 <string>CloudDocuments</string>
             </array>
-        </edit-file>
-        <edit-file file="*-Release.plist" mode="merge" target="com.apple.developer.ubiquity-container-identifiers">
+        </edit-config>
+        <edit-config file="*-Release.plist" mode="merge" target="com.apple.developer.ubiquity-container-identifiers">
             <array>
                 <string>iCloud.com.beanconqueror.app</string>
             </array>
-        </edit-file>
-        <edit-file file="*-Release.plist" mode="merge" target="com.apple.developer.associated-domains">
+        </edit-config>
+        <edit-config file="*-Release.plist" mode="merge" target="com.apple.developer.associated-domains">
             <array>
                 <string>webcredentials:beanconqueror.com</string>
                 <string>applinks:beanconqueror.com</string>
+                <string>activitycontinuation:beanconqueror.com</string>
             </array>
-        </edit-file>
+        </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="CFBundleURLTypes">
             <array>
                 <dict>
@@ -213,33 +215,33 @@
                 </dict>
             </array>
         </edit-config>
-        <edit-file file="*-Info.plist" mode="merge" target="NSHealthShareUsageDescription">
+        <edit-config file="*-Info.plist" mode="merge" target="NSHealthShareUsageDescription">
             <string>App needs access to Health to read, write and update the amount of caffeine by each coffee brew, which was recorded with this app.</string>
-        </edit-file>
-        <edit-file file="*-Info.plist" mode="merge" target="NSHealthUpdateUsageDescription">
+        </edit-config>
+        <edit-config file="*-Info.plist" mode="merge" target="NSHealthUpdateUsageDescription">
             <string>App needs access to Health to read, write and update the amount of caffeine by each coffee brew, which was recorded with this app.</string>
-        </edit-file>
-        <edit-file file="*-Info.plist" mode="merge" target="NSBluetoothPeripheralUsageDescription">
+        </edit-config>
+        <edit-config file="*-Info.plist" mode="merge" target="NSBluetoothPeripheralUsageDescription">
             <string>Blutooth access needed to connect smartscales, pressure devices, thermo devices or refractometer. With this these data to each coffee brew can be logged.</string>
-        </edit-file>
-        <edit-file file="*-Info.plist" mode="merge" target="NSBluetoothAlwaysUsageDescription">
+        </edit-config>
+        <edit-config file="*-Info.plist" mode="merge" target="NSBluetoothAlwaysUsageDescription">
             <string>Blutooth access needed to connect smartscales, pressure devices, thermo devices or refractometer. With this these data to each coffee brew can be logged.</string>
-        </edit-file>
-        <edit-file file="*-Info.plist" mode="merge" target="NSHealthShareUsageDescription">
+        </edit-config>
+        <edit-config file="*-Info.plist" mode="merge" target="NSHealthShareUsageDescription">
             <string>App needs read access to see the caffeinate amount which was tracked with this coffee app</string>
-        </edit-file>
-        <edit-file file="*-Info.plist" mode="merge" target="NSHealthUpdateUsageDescription">
+        </edit-config>
+        <edit-config file="*-Info.plist" mode="merge" target="NSHealthUpdateUsageDescription">
             <string>App needs write access to add the drunken caffeinate amount with the tracked brews</string>
-        </edit-file>
+        </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="UIRequiresFullScreen">
             <false />
         </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="NSLocationWhenInUseUsageDescription">
             <string>Location is used when enabled in settings, default off. Used for track your location where you brewed your coffee</string>
         </edit-config>
-        <edit-file file="*-Info.plist" mode="merge" target="UIUserInterfaceStyle">
+        <edit-config file="*-Info.plist" mode="merge" target="UIUserInterfaceStyle">
             <string>Light</string>
-        </edit-file>
+        </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="UISupportedInterfaceOrientations">
             <array>
                 <string>UIInterfaceOrientationPortrait</string>
@@ -263,6 +265,9 @@
             <string>The app needs camera access, so that you can take pictures from coffee beans, coffee bags, your own coffee brews etc. This pictures are stored inside the app.</string>
         </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryUsageDescription">
+            <string>The app needs photo library access, so that you can choose from already taken pictures from coffee beans, coffee bags, your own coffee brews etc. This pictures are stored inside the app.</string>
+        </edit-config>
+        <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryAddUsageDescription">
             <string>The app needs photo library access, so that you can choose from already taken pictures from coffee beans, coffee bags, your own coffee brews etc. This pictures are stored inside the app.</string>
         </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="NSLocationAlwaysAndWhenInUseUsageDescription">
