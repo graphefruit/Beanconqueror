@@ -6,6 +6,7 @@ import { ScaleType } from './index';
 declare var ble: any;
 export class DifluidMicrobalance extends BluetoothScale {
   public static DEVICE_NAME = 'microbalance';
+  public static DEVICE_NAME_TWO = 'mb ti';
   public static SERVICE_UUID = '00EE';
   public static CHAR_UUID = 'AA01';
 
@@ -28,7 +29,8 @@ export class DifluidMicrobalance extends BluetoothScale {
     return (
       device &&
       device.name &&
-      device.name.toLowerCase().includes(this.DEVICE_NAME)
+      (device.name.toLowerCase().includes(this.DEVICE_NAME) ||
+        device.name.toLowerCase().includes(this.DEVICE_NAME_TWO))
     );
   }
 
