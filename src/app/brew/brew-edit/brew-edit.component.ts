@@ -135,6 +135,16 @@ export class BrewEditComponent implements OnInit {
   }
 
   public async updateBrew() {
+    if (this.brewBrewing.timer.isTimerRunning()) {
+      this.brewBrewing.timer.pauseTimer('click');
+
+      await new Promise(async (resolve) => {
+        setTimeout(() => {
+          resolve(undefined);
+        }, 100);
+      });
+    }
+
     const newUnix = moment(this.brewBrewing.customCreationDate).unix();
     if (newUnix !== this.data.config.unix_timestamp) {
       this.data.config.unix_timestamp = newUnix;
