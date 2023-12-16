@@ -275,6 +275,14 @@ export class BrewDetailComponent implements OnInit {
   }
 
   public initializeFlowChart(): void {
+    if (
+      this.data.flow_profile === null ||
+      this.data.flow_profile === undefined ||
+      this.data.flow_profile === ''
+    ) {
+      return;
+    }
+
     setTimeout(() => {
       try {
         Plotly.purge('flowProfileChart');
