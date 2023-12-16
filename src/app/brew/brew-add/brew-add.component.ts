@@ -241,11 +241,7 @@ export class BrewAddComponent implements OnInit {
           }, 100);
         });
       }
-      await new Promise(async (resolve) => {
-        setTimeout(() => {
-          resolve(undefined);
-        }, 100);
-      });
+
       this.uiBrewHelper.cleanInvisibleBrewData(this.data);
       const addedBrewObj: Brew = await this.uiBrewStorage.add(this.data);
 
