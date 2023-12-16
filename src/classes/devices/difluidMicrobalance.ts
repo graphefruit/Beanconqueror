@@ -29,8 +29,7 @@ export class DifluidMicrobalance extends BluetoothScale {
     return (
       device &&
       device.name &&
-      (device.name.toLowerCase().includes(this.DEVICE_NAME) ||
-        device.name.toLowerCase().includes(this.DEVICE_NAME_TWO))
+      device.name.toLowerCase().includes(this.DEVICE_NAME)
     );
   }
 
