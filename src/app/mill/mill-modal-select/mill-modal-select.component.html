@@ -30,7 +30,7 @@
             <ion-checkbox  justify="start" label-placement="end" [(ngModel)]="multipleSelection[mill.config.uuid]">
               <h6>{{mill.name}}</h6>
               <p>{{"LAST_USE" | translate}}:
-                <span  *ngIf="getBrewsCount(mill)> 0">{{lastUsed(mill) | formatDate:["DD.MM.YYYY"]}}</span>
+                <span  *ngIf="getBrewsCount(mill)> 0">{{lastUsed(mill) | formatDate:[settings?.date_format]}}</span>
                 <span *ngIf="getBrewsCount(mill) <= 0">-</span>
               </p>
               <p>
@@ -50,7 +50,7 @@
             <ion-checkbox justify="start" label-placement="end" [(ngModel)]="multipleSelection[mill.config.uuid]">
               <h6>{{mill.name}}</h6>
               <p>{{"LAST_USE" | translate}}:
-                <span  *ngIf="getBrewsCount(mill)> 0">{{lastUsed(mill) | formatDate:["DD.MM.YYYY"]}}</span>
+                <span  *ngIf="getBrewsCount(mill)> 0">{{lastUsed(mill) | formatDate:[settings?.date_format]}}</span>
                 <span *ngIf="getBrewsCount(mill) <= 0">-</span>
               </p>
               <p>
@@ -75,7 +75,7 @@
               <ion-radio justify="start" label-placement="end" value="{{mill.config.uuid}}">
                 <h6>{{mill.name}}</h6>
                 <p>{{"LAST_USE" | translate}}:
-                  <span  *ngIf="getBrewsCount(mill)> 0">{{lastUsed(mill) | formatDate:["DD.MM.YYYY"]}}</span>
+                  <span  *ngIf="getBrewsCount(mill)> 0">{{lastUsed(mill) | formatDate:[settings?.date_format]}}</span>
                   <span *ngIf="getBrewsCount(mill) <= 0">-</span>
                 </p>
                 <p>
@@ -94,7 +94,7 @@
               <ion-radio justify="start" label-placement="end" value="{{mill.config.uuid}}">
                 <h6>{{mill.name}}</h6>
                 <p>{{"LAST_USE" | translate}}:
-                  <span  *ngIf="getBrewsCount(mill)> 0">{{lastUsed(mill) | formatDate:["DD.MM.YYYY"]}}</span>
+                  <span  *ngIf="getBrewsCount(mill)> 0">{{lastUsed(mill) | formatDate:[settings?.date_format]}}</span>
                   <span *ngIf="getBrewsCount(mill) <= 0">-</span>
                 </p>
                 <p>

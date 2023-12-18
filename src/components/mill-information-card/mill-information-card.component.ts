@@ -27,7 +27,7 @@ export class MillInformationCardComponent implements OnInit {
   @Input() public mill: Mill;
 
   @Output() public millAction: EventEmitter<any> = new EventEmitter();
-
+  public settings: Settings;
   constructor(
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly modalController: ModalController,
@@ -39,7 +39,9 @@ export class MillInformationCardComponent implements OnInit {
     private readonly uiAnalytics: UIAnalytics,
     private readonly uiImage: UIImage,
     private readonly uiBrewHelper: UIBrewHelper
-  ) {}
+  ) {
+    this.settings = this.uiSettingsStorage.getSettings();
+  }
 
   public ngOnInit() {}
 

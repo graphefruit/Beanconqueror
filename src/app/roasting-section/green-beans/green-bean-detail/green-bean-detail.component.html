@@ -36,7 +36,7 @@
         <ion-item>
           <ion-label>
             <h2>{{"BEAN_DATA_BUY_DATE" | translate}}:</h2>
-            <h3 *ngIf="data.date">{{data.date | formatDate:["DD.MM.YYYY"]}}</h3>
+            <h3 *ngIf="data.date">{{data.date | formatDate:[settings?.date_format]}}</h3>
             <h3 *ngIf="!data.date">-</h3>
           </ion-label>
         </ion-item>

@@ -18,6 +18,7 @@ declare var device: any;
 declare var window: any;
 import { cloneDeep } from 'lodash';
 import { UIToast } from './uiToast';
+import { UISettingsStorage } from './uiSettingsStorage';
 /**
  * Handles every helping functionalities
  */
@@ -72,6 +73,13 @@ export class UIHelper {
     return clone;
   }
 
+  private getSettingsStorageInstance(): UISettingsStorage {
+    let uiSettingsStorage: UISettingsStorage;
+    uiSettingsStorage = UISettingsStorage.getInstance();
+
+    return uiSettingsStorage;
+  }
+
   /**
    * Copy (references may exist)
    * @param _value
@@ -124,7 +132,9 @@ export class UIHelper {
   }
 
   public formateDatestr(_unix: string, _format?: string): string {
-    let format: string = 'DD.MM.YYYY, HH:mm:ss';
+    let format: string =
+      this.getSettingsStorageInstance().getSettings().date_format +
+      ', HH:mm:ss';
     if (_format) {
       format = _format;
     }
@@ -149,7 +159,9 @@ export class UIHelper {
   }
 
   public formateDate(_unix: number, _format?: string): string {
-    let format: string = 'DD.MM.YYYY, HH:mm:ss';
+    let format: string =
+      this.getSettingsStorageInstance().getSettings().date_format +
+      ', HH:mm:ss';
     if (_format) {
       format = _format;
     }

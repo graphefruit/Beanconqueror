@@ -6,6 +6,8 @@ import { Preparation } from '../../../classes/preparation/preparation';
 import { Brew } from '../../../classes/brew/brew';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
+import { Settings } from '../../../classes/settings/settings';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
 @Component({
   selector: 'preparation-modal-select',
@@ -21,12 +23,15 @@ export class PreparationModalSelectComponent implements OnInit {
   @Input() public multiple: boolean;
   @Input() private selectedValues: Array<string>;
   @Input() public showFinished: boolean;
+  public settings: Settings;
   constructor(
     private readonly modalController: ModalController,
     private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiPreparationHelper: UIPreparationHelper
+    private readonly uiPreparationHelper: UIPreparationHelper,
+    private readonly uiSettings: UISettingsStorage
   ) {
     this.objs = this.uiPreparationStorage.getAllEntries();
+    this.settings = this.uiSettings.getSettings();
   }
 
   public ionViewDidEnter(): void {

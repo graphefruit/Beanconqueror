@@ -497,6 +497,8 @@ export class AppComponent implements AfterViewInit {
                   settingLanguage = 'tr';
                 } else if (systemLanguage === 'zh') {
                   settingLanguage = 'zh';
+                } else if (systemLanguage === 'fr') {
+                  settingLanguage = 'fr';
                 } else {
                   settingLanguage = 'en';
                 }

@@ -125,14 +125,14 @@
         <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.buyDate)">
           <ion-label>
             <h2>{{"BEAN_DATA_BUY_DATE" | translate}}:</h2>
-            <h3 *ngIf="data.buyDate">{{data.buyDate | formatDate:["DD.MM.YYYY"]}}</h3>
+            <h3 *ngIf="data.buyDate">{{data.buyDate | formatDate:[settings?.date_format]}}</h3>
             <h3 *ngIf="!data.buyDate">-</h3>
           </ion-label>
         </ion-item>
         <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.roastingDate)">
           <ion-label>
             <h2>{{"BEAN_DATA_ROASTING_DATE" | translate}}:</h2>
-            <h3>{{data.roastingDate | formatDate:["DD.MM.YYYY"]}}</h3>
+            <h3>{{data.roastingDate | formatDate:[settings?.date_format]}}</h3>
           </ion-label>
         </ion-item>
 

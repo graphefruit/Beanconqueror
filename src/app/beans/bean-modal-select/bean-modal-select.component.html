@@ -71,7 +71,7 @@
                     <div style='margin-top:5px;'>
                       <h6>{{bean.name}}</h6>
                       <p *ngIf='bean?.roastingDate'>{{"BEAN_DATA_ROASTING_DATE" | translate}}
-                        : {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}&nbsp;
+                        : {{bean.roastingDate | formatDate:[settings?.date_format]}}&nbsp;
                         ({{bean.beanAgeInDays()}}
                         <span *ngIf='bean.beanAgeInDays() === 1'>{{"DAY" | translate}}</span>
                         <span *ngIf='bean.beanAgeInDays() !== 1'>{{"DAYS" | translate}}</span>)
@@ -147,7 +147,7 @@
                     <div style='margin-top:5px;'>
                       <h6>{{bean.name}}</h6>
                       <p *ngIf='bean?.roastingDate'>{{"BEAN_DATA_ROASTING_DATE" | translate}}
-                        : {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}&nbsp;
+                        : {{bean.roastingDate | formatDate:[settings?.date_format]}}&nbsp;
                         ({{bean.beanAgeInDays()}}
                         <span *ngIf='bean.beanAgeInDays() === 1'>{{"DAY" | translate}}</span>
                         <span *ngIf='bean.beanAgeInDays() !== 1'>{{"DAYS" | translate}}</span>)
@@ -231,7 +231,7 @@
 
                       <h6>{{bean.name}}</h6>
                       <p *ngIf='bean?.roastingDate'>{{"BEAN_DATA_ROASTING_DATE" | translate}}
-                        : {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}&nbsp;
+                        : {{bean.roastingDate | formatDate:[settings?.date_format]}}&nbsp;
                         ({{bean.beanAgeInDays()}}
                         <span *ngIf='bean.beanAgeInDays() === 1'>{{"DAY" | translate}}</span>
                         <span *ngIf='bean.beanAgeInDays() !== 1'>{{"DAYS" | translate}}</span>)
@@ -309,7 +309,7 @@
 
                       <h6>{{bean.name}}</h6>
                       <p *ngIf='bean?.roastingDate'>{{"BEAN_DATA_ROASTING_DATE" | translate}}
-                        : {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}&nbsp;
+                        : {{bean.roastingDate | formatDate:[settings?.date_format]}}&nbsp;
                         ({{bean.beanAgeInDays()}}
                         <span *ngIf='bean.beanAgeInDays() === 1'>{{"DAY" | translate}}</span>
                         <span *ngIf='bean.beanAgeInDays() !== 1'>{{"DAYS" | translate}}</span>)

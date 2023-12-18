@@ -32,6 +32,7 @@ import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 export class Settings implements ISettings {
   public brew_view: BREW_VIEW_ENUM;
   public startup_view: STARTUP_VIEW_ENUM;
+  public date_format: string;
 
   public matomo_analytics: boolean;
   public qr_scanner_information: boolean;
@@ -222,7 +223,7 @@ export class Settings implements ISettings {
   constructor() {
     this.brew_view = BREW_VIEW_ENUM.SINGLE_PAGE;
     this.startup_view = STARTUP_VIEW_ENUM.HOME_PAGE;
-
+    this.date_format = 'DD.MM.YYYY';
     this.config = new Config();
 
     this.manage_parameters = new ManageBrewParameter();

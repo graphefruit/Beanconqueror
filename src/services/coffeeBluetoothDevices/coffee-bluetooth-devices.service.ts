@@ -33,6 +33,7 @@ import { UISettingsStorage } from '../uiSettingsStorage';
 import { TranslateService } from '@ngx-translate/core';
 import { UIToast } from '../uiToast';
 import { BlackcoffeeScale } from 'src/classes/devices/blackcoffeeScale';
+import { DifluidMicrobalanceTi } from '../../classes/devices/difluidMicrobalanceTi';
 
 declare var device: any;
 declare var ble: any;
@@ -251,6 +252,7 @@ export class CoffeeBluetoothDevicesService {
             SkaleScale.test(scanDevice) ||
             SmartchefScale.test(scanDevice) ||
             DifluidMicrobalance.test(scanDevice) ||
+            DifluidMicrobalanceTi.test(scanDevice) ||
             BlackcoffeeScale.test(scanDevice)
           ) {
             // We found all needed devices.
@@ -748,7 +750,15 @@ export class CoffeeBluetoothDevicesService {
               type: ScaleType.DIFLUIDMICROBALANCE,
             });
             return;
-          } 
+          }
+          if (DifluidMicrobalanceTi.test(deviceScale)) {
+            this.logger.log('BleManager - We found a difluid ti scale');
+            resolve({
+              id: deviceScale.id,
+              type: ScaleType.DIFLUIDMICROBALANCETI,
+            });
+            return;
+          }
           if (BlackcoffeeScale.test(deviceScale)) {
             this.logger.log('BleManager - We found a blackcoffee scale');
             resolve({ id: deviceScale.id, type: ScaleType.BLACKCOFFEE });
@@ -821,6 +831,13 @@ export class CoffeeBluetoothDevicesService {
             supportedDevices.push({
               id: deviceScale.id,
               type: ScaleType.DIFLUIDMICROBALANCE,
+            });
+          }
+          if (DifluidMicrobalanceTi.test(deviceScale)) {
+            this.logger.log('BleManager - We found a difluid ti scale');
+            supportedDevices.push({
+              id: deviceScale.id,
+              type: ScaleType.DIFLUIDMICROBALANCETI,
             });
           }
           if (BlackcoffeeScale.test(deviceScale)) {

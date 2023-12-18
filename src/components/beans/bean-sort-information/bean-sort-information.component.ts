@@ -26,7 +26,8 @@ export class BeanSortInformationComponent implements OnInit {
   constructor(
     private readonly uiSettingsStorage: UISettingsStorage,
     public readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiBeanStorage: UIBeanStorage
+    private readonly uiBeanStorage: UIBeanStorage,
+    private readonly uiHelper: UIHelper
   ) {}
 
   public ngOnInit() {
@@ -40,6 +41,14 @@ export class BeanSortInformationComponent implements OnInit {
 
   public deleteSortInformation(_index: number) {
     this.data.bean_information.splice(_index, 1);
+  }
+
+  public copyInformation(_index: number) {
+    const clonedData = this.uiHelper.cloneData(
+      this.data.bean_information[_index]
+    );
+    this.data.bean_information.push(clonedData);
+    // this.data.bean_information.splice(_index, 1);
   }
   public isBlend() {
     if (this.data instanceof Bean) {

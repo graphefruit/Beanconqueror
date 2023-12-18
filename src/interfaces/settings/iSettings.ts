@@ -23,6 +23,7 @@ export interface ISettings {
   // Properties
   brew_view: BREW_VIEW_ENUM;
   startup_view: STARTUP_VIEW_ENUM;
+  date_format: string;
 
   language: string;
   manage_parameters: IBrewParameter;

@@ -20,7 +20,7 @@
           <ion-grid class="ion-no-padding">
             <ion-row class="ion-padding-bottom-half">
               <ion-col size="10">
-                <ion-title class="ion-no-padding font-size-18"><ion-icon *ngIf="brew.best_brew" name="trophy" style="top: 3px;position: relative;margin-right:5px;"></ion-icon><ion-icon *ngIf="brew.favourite" name="heart" style="top: 3px;position: relative;margin-right:5px;"></ion-icon><ion-icon *ngIf="brew?.flow_profile" name="analytics-outline" style="top: 3px;position: relative;margin-right:5px;"></ion-icon><strong>{{brew.config.unix_timestamp | formatDate:["DD.MM.YYYY"]}}</strong><span class="ion-padding-start">{{brew.config.unix_timestamp | formatDate:["HH:mm"]}}</span></ion-title>
+                <ion-title class="ion-no-padding font-size-18"><ion-icon *ngIf="brew.best_brew" name="trophy" style="top: 3px;position: relative;margin-right:5px;"></ion-icon><ion-icon *ngIf="brew.favourite" name="heart" style="top: 3px;position: relative;margin-right:5px;"></ion-icon><ion-icon *ngIf="brew?.flow_profile" name="analytics-outline" style="top: 3px;position: relative;margin-right:5px;"></ion-icon><strong>{{brew.config.unix_timestamp | formatDate:[settings?.date_format]}}</strong><span class="ion-padding-start">{{brew.config.unix_timestamp | formatDate:["HH:mm"]}}</span></ion-title>
               </ion-col>
               <ion-col size="2">
                 <ion-button (click)="showBrewActions($event)" class="button-top-absolute" color="accent" fill="clear">

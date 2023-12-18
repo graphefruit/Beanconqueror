@@ -7,6 +7,8 @@ import { Brew } from '../../../classes/brew/brew';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIHelper } from '../../../services/uiHelper';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { Settings } from '../../../classes/settings/settings';
 
 @Component({
   selector: 'app-brew-choose-preparation-to-brew',
@@ -15,14 +17,17 @@ import { UIHelper } from '../../../services/uiHelper';
 })
 export class BrewChoosePreparationToBrewComponent implements OnInit {
   public static COMPONENT_ID: string = 'brew-choose-preparation-to-brew';
-
+  public settings: Settings;
   constructor(
     private readonly modalController: ModalController,
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiPreparationHelper: UIPreparationHelper,
-    private readonly uiHelper: UIHelper
-  ) {}
+    private readonly uiHelper: UIHelper,
+    private readonly uiSettings: UISettingsStorage
+  ) {
+    this.settings = this.uiSettings.getSettings();
+  }
 
   public ngOnInit() {}
 

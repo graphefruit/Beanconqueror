@@ -518,7 +518,10 @@ export class SettingsPage implements OnInit {
       this.settings.scale_id = scale.id;
       this.settings.scale_type = scale.type;
 
-      if (scale.type === ScaleType.DIFLUIDMICROBALANCE) {
+      if (
+        scale.type === ScaleType.DIFLUIDMICROBALANCE ||
+        scale.type === ScaleType.DIFLUIDMICROBALANCETI
+      ) {
         //If there are multiple commands, and also to reset the sclae, the difluid have issues with this, therefore set delay to 300ms
         this.settings.bluetooth_command_delay = 300;
       } else if (scale.type === ScaleType.FELICITA) {

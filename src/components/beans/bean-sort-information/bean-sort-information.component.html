@@ -2,9 +2,14 @@
   <ion-item  class="ion-padding-top" lines="none" tappable="">
     <span *ngIf="isBlend()" class="ion-title ion-no-padding-bottom" slot="start">{{i+1}}.&nbsp;{{"BEAN_SORT" | translate}}</span>
     <span *ngIf="!isBlend()" class="ion-title ion-no-padding-bottom" slot="start">{{"BEAN_SORT_INFORMATION" | translate}}</span>
+
+    <ion-button (click)="copyInformation(i);$event.stopPropagation()" *ngIf="isBlend()" fill="clear" slot="end" tappable>
+      <ion-icon color="accent" name="copy-outline" slot="icon-only"></ion-icon>
+    </ion-button>
     <ion-button (click)="deleteSortInformation(i);$event.stopPropagation()" *ngIf="!first" fill="clear" slot="end" tappable>
       <ion-icon color="accent" name="close-outline" slot="icon-only"></ion-icon>
     </ion-button>
+
 
   </ion-item>
 

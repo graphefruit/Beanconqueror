@@ -374,7 +374,9 @@ export class Brew implements IBrew {
   }
 
   public formateDate(_format?: string): string {
-    let format: string = 'DD.MM.YYYY, HH:mm:ss';
+    const settingsDateFormat: string =
+      this.getSettingsStorageInstance().getSettings().date_format;
+    let format: string = settingsDateFormat + ', HH:mm:ss';
     if (_format) {
       format = _format;
     }

@@ -73,6 +73,7 @@
               <ion-select-option value="es">{{"PAGE_SETTINGS_LANGUAGE_SPANISH" | translate}}</ion-select-option>
               <ion-select-option value="tr">{{"PAGE_SETTINGS_LANGUAGE_TURKISH" | translate}}</ion-select-option>
               <ion-select-option value="zh">{{"PAGE_SETTINGS_LANGUAGE_CHINESE" | translate}}</ion-select-option>
+              <ion-select-option value="fr">{{"PAGE_SETTINGS_LANGUAGE_FRANCE" | translate}}</ion-select-option>
             </ion-select>
           </ion-item>
           <ion-item>
@@ -83,6 +84,16 @@
               <ion-select-option value="{{STARTUP_VIEW.BREW_PAGE}}">{{"NAV_BREWS" | translate}}</ion-select-option>
               <ion-select-option value="{{STARTUP_VIEW.ADD_BREW}}">{{"ADD_BREW" | translate}}</ion-select-option>
               <ion-select-option value="{{STARTUP_VIEW.BEANS_PAGE}}">{{"NAV_BEANS" | translate}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.date_format"
+                        cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
+              <div slot="label">{{"PAGE_SETTINGS_DATE_FORMAT" | translate}}</div>
+              <ion-select-option value="DD.MM.YYYY">DD.MM.YYYY</ion-select-option>
+              <ion-select-option value="MM-DD-YYYY">MM-DD-YYYY</ion-select-option>
+              <ion-select-option value="YYYY-MM-DD">YYYY-MM-DD</ion-select-option>
+              <ion-select-option value="MM/DD/YYYY">MM/DD/YYYY</ion-select-option>
             </ion-select>
           </ion-item>
           <ion-item lines="none">

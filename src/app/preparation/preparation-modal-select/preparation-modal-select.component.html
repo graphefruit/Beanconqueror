@@ -30,7 +30,7 @@
 
             <ion-checkbox justify="start" label-placement="end"  [(ngModel)]="multipleSelection[prep.config.uuid]"> <h6>{{prep.name}}</h6>
               <p>{{"LAST_USE" | translate}}:
-                <span  *ngIf="getBrewsCount(prep)> 0">{{lastUsed(prep) | formatDate:["DD.MM.YYYY"]}}</span>
+                <span  *ngIf="getBrewsCount(prep)> 0">{{lastUsed(prep) | formatDate:[settings?.date_format]}}</span>
                 <span *ngIf="getBrewsCount(prep) <= 0">-</span>
               </p>
             </ion-checkbox>
@@ -49,7 +49,7 @@
             <ion-checkbox justify="start" label-placement="end"  [(ngModel)]="multipleSelection[prep.config.uuid]">
               <h6>{{prep.name}}</h6>
               <p>{{"LAST_USE" | translate}}:
-                <span  *ngIf="getBrewsCount(prep)> 0">{{lastUsed(prep) | formatDate:["DD.MM.YYYY"]}}</span>
+                <span  *ngIf="getBrewsCount(prep)> 0">{{lastUsed(prep) | formatDate:[settings?.date_format]}}</span>
                 <span *ngIf="getBrewsCount(prep) <= 0">-</span>
               </p>
             </ion-checkbox>
@@ -74,7 +74,7 @@
             <ion-item *ngFor="let prep of getOpenPreparations()" lines="none" tappable>
               <ion-radio justify="start" label-placement="end" value="{{prep.config.uuid}}"> <h6>{{prep.name}}</h6>
                 <p>{{"LAST_USE" | translate}}:
-                  <span  *ngIf="getBrewsCount(prep)> 0">{{lastUsed(prep) | formatDate:["DD.MM.YYYY"]}}</span>
+                  <span  *ngIf="getBrewsCount(prep)> 0">{{lastUsed(prep) | formatDate:[settings?.date_format]}}</span>
                   <span *ngIf="getBrewsCount(prep) <= 0">-</span>
                 </p>
               </ion-radio>
@@ -93,7 +93,7 @@
               <ion-radio justify="start" label-placement="end" value="{{prep.config.uuid}}">
                 <h6>{{prep.name}}</h6>
                 <p>{{"LAST_USE" | translate}}:
-                  <span  *ngIf="getBrewsCount(prep)> 0">{{lastUsed(prep) | formatDate:["DD.MM.YYYY"]}}</span>
+                  <span  *ngIf="getBrewsCount(prep)> 0">{{lastUsed(prep) | formatDate:[settings?.date_format]}}</span>
                   <span *ngIf="getBrewsCount(prep) <= 0">-</span>
                 </p>
               </ion-radio>
