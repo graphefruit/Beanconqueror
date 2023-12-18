@@ -127,7 +127,11 @@ export class MillModalSelectComponent implements OnInit {
     );
     if (relatedBrews.length > 0) {
       relatedBrews = UIBrewHelper.sortBrews(relatedBrews);
-      return relatedBrews[0].grind_size;
+      if (relatedBrews[0].mill_speed > 0) {
+        return relatedBrews[0].grind_size + ' @ ' + relatedBrews[0].mill_speed;
+      } else {
+        return relatedBrews[0].grind_size;
+      }
     }
     return '-';
   }
