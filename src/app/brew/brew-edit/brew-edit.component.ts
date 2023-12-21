@@ -135,8 +135,8 @@ export class BrewEditComponent implements OnInit {
   }
 
   public async updateBrew() {
-    if (this.brewBrewing.timer.isTimerRunning()) {
-      this.brewBrewing.timer.pauseTimer('click');
+    if (this.brewBrewing?.timer?.isTimerRunning()) {
+      this.brewBrewing?.timer?.pauseTimer('click');
 
       await new Promise(async (resolve) => {
         setTimeout(() => {

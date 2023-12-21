@@ -232,7 +232,7 @@ export class BrewAddComponent implements OnInit {
   public async finish() {
     await this.uiAlert.showLoadingSpinner();
     try {
-      if (this.brewBrewing.timer.isTimerRunning()) {
+      if (this.brewBrewing?.timer?.isTimerRunning()) {
         this.brewBrewing.timer.pauseTimer('click');
 
         await new Promise(async (resolve) => {
