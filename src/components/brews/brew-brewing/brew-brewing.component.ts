@@ -481,7 +481,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
       this.instancePreparationDevice();
 
-      if (this.timer.isTimerRunning() === false) {
+      if (this.timer?.isTimerRunning() === false) {
         this.initializeFlowChart();
       }
     }, 150);
@@ -2559,7 +2559,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           });
         }
       }
-      if (this.timer.isTimerRunning() === true && _firstStart === false) {
+      if (this.timer?.isTimerRunning() === true && _firstStart === false) {
         this.attachToScaleWeightChange();
       }
       // Always attach flow.

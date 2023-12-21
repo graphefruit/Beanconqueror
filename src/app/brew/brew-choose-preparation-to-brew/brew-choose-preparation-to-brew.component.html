@@ -1,6 +1,8 @@
 <ion-header translucent>
 </ion-header>
 <ion-content>
+  <!--Div element is needed, else you can't scroll -->
+  <div>
   <ion-item lines="none" class="ion-no-margin">
     <span class="ion-title ion-padding-top">{{"PRESET_BREW_TITLE" | translate }}</span>
   </ion-item>
@@ -11,5 +13,5 @@
     <span *ngIf="getBrewsCount(prep) <= 0">-</span>)
   </span>
   </ion-item>
-
+  </div>
 </ion-content>
