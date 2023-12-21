@@ -16,6 +16,8 @@ import { UIHelper } from '../../../services/uiHelper';
 export class BrewChoosePreparationToBrewComponent implements OnInit {
   public static COMPONENT_ID: string = 'brew-choose-preparation-to-brew';
 
+  public preparationMethods: Array<Preparation> = [];
+
   constructor(
     private readonly modalController: ModalController,
     private readonly uiBrewStorage: UIBrewStorage,
@@ -24,7 +26,9 @@ export class BrewChoosePreparationToBrewComponent implements OnInit {
     private readonly uiHelper: UIHelper
   ) {}
 
-  public ngOnInit() {}
+  public ngOnInit() {
+    this.preparationMethods = this.getPreparationMethods();
+  }
 
   public getPreparationMethods(): Array<Preparation> {
     const allEntries = this.uiPreparationStorage
