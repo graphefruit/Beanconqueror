@@ -432,7 +432,7 @@
                       data.getPreparation().use_custom_parameters)" lines="inset">
     <ion-row style="width:100%">
       <ion-col class="ion-no-padding" size="10">
-        <ion-item class="ion-no-margin-important">
+        <ion-item class="ion-no-margin-important" lines='none'>
           <ion-label id='brew_quantity' position="stacked">
             <h2>{{"BREW_DATA_BREW_QUANTITY" | translate}}</h2>
             <p style="top: -7px; position: relative;">({{data.getBrewRatio()}} , {{data.getGramsPerLiter()}})</p>
@@ -443,7 +443,7 @@
         </ion-item>
       </ion-col>
       <ion-col class="ion-no-padding ion-align-self-end" size="2">
-        <ion-item class="ion-no-margin-important">
+        <ion-item class="ion-no-margin-important" lines='none'>
           <ion-select #brewQuantityType="ngModel" [(ngModel)]="data.brew_quantity_type"
             cancelText="{{'CANCEL'| translate }}" name="brewQuantityType" okText="{{'CHOOSE'| translate }}"
             style="max-width:100%;">
@@ -487,14 +487,14 @@
     </ion-label>
   </ion-item>
 
-  <ion-item style="top:-10px;" *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.rating,
+  <ion-item style="" *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.rating,
                       data.getPreparation().manage_parameters.rating,
                       data.getPreparation().use_custom_parameters)" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.after.rating,
                       data.getPreparation().brew_order.after.rating,
                       data.getPreparation().use_custom_parameters)" lines="inset">
 
-    <ion-range style='padding-left:20px;padding-right:10px;padding-top:0px;padding-bottom:0px;' (ionChange)="changedRating()" [(ngModel)]="data.rating" [max]="maxBrewRating" min="-1" snaps="true"
-      [step]="settings.brew_rating_steps">
+    <ion-range  [pinFormatter]="pinFormatter" [pin]="true" style='padding-left:15px;padding-right:15px;ppadding-bottom:0px;' (ionChange)="changedRating()" [(ngModel)]="data.rating" [max]="maxBrewRating" min="-1" snaps="true"
+      [step]="settings.brew_rating_steps" >
       <div slot="end" *ngIf="maxBrewRating=== 5 && settings.brew_rating_steps === 1">
         <ngx-stars #brewStars [color]="'#BFB9B0'" [initialStars]="data.rating" [maxStars]="5" [readonly]="true"
           [wholeStars]="true" class="ion-float-right brew-stars"></ngx-stars>
@@ -522,7 +522,7 @@
 
       <ion-row style="width:100%">
         <ion-col class="ion-no-padding" size="10">
-          <ion-item class="ion-no-margin-important">
+          <ion-item class="ion-no-margin-important" lines='none'>
             <ion-label id='brew_beverage_quantity' position="stacked">
               <h2>{{"BREW_DATA_BREW_BEVERAGE_QUANTITY" | translate}}</h2>
               <p style="top: -7px; position: relative;"
@@ -535,7 +535,7 @@
           </ion-item>
         </ion-col>
         <ion-col class="ion-no-padding ion-align-self-end" size="2">
-          <ion-item class="ion-no-margin-important">
+          <ion-item class="ion-no-margin-important" lines='none'>
             <ion-select #brewBeverageQuantityType="ngModel" [(ngModel)]="data.brew_beverage_quantity_type"
               cancelText="{{'CANCEL'| translate }}" name="brewQuantityType" okText="{{'CHOOSE'| translate }}"
               style="max-width:100%;">

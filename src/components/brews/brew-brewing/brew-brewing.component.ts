@@ -207,7 +207,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiWaterStorage: UIWaterStorage,
     private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly uiHelper: UIHelper,
+    public readonly uiHelper: UIHelper,
     private readonly uiExcel: UIExcel,
     private readonly uiFileHelper: UIFileHelper,
     private readonly screenOrientation: ScreenOrientation,
@@ -218,7 +218,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     private readonly uiLog: UILog,
     private readonly eventQueue: EventQueueService
   ) {}
-
+  public pinFormatter(value: any) {
+    const parsedFloat = parseFloat(value);
+    if (isNaN(parsedFloat)) {
+      return `${0}`;
+    }
+    const newValue = +parsedFloat.toFixed(2);
+    return `${newValue}`;
+  }
   private writeExecutionTimeToNotes(
     _message: string,
     _scriptId: number,
@@ -2036,6 +2043,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public changedRating() {
+    console.log('changed rating');
     if (typeof this.brewStars !== 'undefined') {
       this.brewStars.setRating(this.data.rating);
     }
