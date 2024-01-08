@@ -1,8 +1,14 @@
 :host {
+  .brew-title {
 
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+  }
   ion-item {
     margin-left: 16px;
-    margin-right: 16px;
+    margin-right: 0px;
     line-height: 12px;
     font-size: 12px;
   }
@@ -19,8 +25,8 @@
     z-index: -1;
     margin-top:0px;
     margin-bottom:0px;
-    margin-left:10px;
-    margin-right:10px;
+    margin-left:0px;
+    margin-right:0px;
 
   }
 }

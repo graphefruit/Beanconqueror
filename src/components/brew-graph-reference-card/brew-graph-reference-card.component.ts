@@ -12,6 +12,7 @@ import { PREPARATION_STYLE_TYPE } from '../../enums/preparations/preparationStyl
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
 import { Graph } from '../../classes/graph/graph';
+import { UIHelper } from '../../services/uiHelper';
 
 @Component({
   selector: 'brew-graph-reference-card',
@@ -34,7 +35,8 @@ export class BrewGraphReferenceCardComponent implements OnInit {
 
   constructor(
     private readonly uiSettingsStorage: UISettingsStorage,
-    protected readonly uiBrewHelper: UIBrewHelper
+    protected readonly uiBrewHelper: UIBrewHelper,
+    protected readonly uiHelper: UIHelper
   ) {}
 
   public getElementOffsetWidth() {
@@ -51,6 +53,17 @@ export class BrewGraphReferenceCardComponent implements OnInit {
   public isGraphType() {
     if (this.graph !== null && this.graph !== undefined) {
       return true;
+    }
+    return false;
+  }
+  public hasCustomRatingRange(): boolean {
+    if (this.settings) {
+      // #379
+      if (Number(this.settings.brew_rating) !== 5) {
+        return true;
+      } else if (Number(this.settings.brew_rating_steps) !== 1) {
+        return true;
+      }
     }
     return false;
   }

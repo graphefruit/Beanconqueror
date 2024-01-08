@@ -91,9 +91,12 @@
                         cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
               <div slot="label">{{"PAGE_SETTINGS_DATE_FORMAT" | translate}}</div>
               <ion-select-option value="DD.MM.YYYY">DD.MM.YYYY</ion-select-option>
+              <ion-select-option value="DD/MM/YYYY">DD.MM.YYYY</ion-select-option>
               <ion-select-option value="MM-DD-YYYY">MM-DD-YYYY</ion-select-option>
-              <ion-select-option value="YYYY-MM-DD">YYYY-MM-DD</ion-select-option>
               <ion-select-option value="MM/DD/YYYY">MM/DD/YYYY</ion-select-option>
+              <ion-select-option value="YYYY-MM-DD">YYYY-MM-DD</ion-select-option>
+              <ion-select-option value="YYYY/MM/DD">YYYY-MM-DD</ion-select-option>
+
             </ion-select>
           </ion-item>
           <ion-item lines="none">
@@ -668,7 +671,7 @@
               </ion-label>
             </ion-item>
             <ion-item style="top:-10px;">
-              <ion-range [disabled]='isScrolling'  min="0" dualKnobs="true" snaps="true" [max]="300" step="1" [(ngModel)]="settings.graph_weight.FILTER">
+              <ion-range [disabled]='isScrolling' (ngModelChange)="saveSettings();"  min="0" dualKnobs="true" snaps="true" [max]="300" step="1" [(ngModel)]="settings.graph_weight.FILTER">
               </ion-range>
             </ion-item>
             <ion-item lines="none">
@@ -677,7 +680,7 @@
               </ion-label>
             </ion-item>
             <ion-item style="top:-10px;">
-              <ion-range [disabled]='isScrolling'  min="0" dualKnobs="true" snaps="true" [max]="20" step="0.1" [(ngModel)]="settings.graph_flow.FILTER">
+              <ion-range [disabled]='isScrolling' (ngModelChange)="saveSettings();"  min="0" dualKnobs="true" snaps="true" [max]="20" step="0.1" [(ngModel)]="settings.graph_flow.FILTER">
               </ion-range>
             </ion-item>
             <ion-item lines="none">
@@ -686,7 +689,7 @@
               </ion-label>
             </ion-item>
             <ion-item style="top:-10px;">
-              <ion-range [disabled]='isScrolling' min="0" dualKnobs="true" snaps="true" [max]="70" step="1" [(ngModel)]="settings.graph_weight.ESPRESSO">
+              <ion-range [disabled]='isScrolling' (ngModelChange)="saveSettings();" min="0" dualKnobs="true" snaps="true" [max]="70" step="1" [(ngModel)]="settings.graph_weight.ESPRESSO">
               </ion-range>
             </ion-item>
             <ion-item lines="none">
@@ -695,7 +698,53 @@
               </ion-label>
             </ion-item>
             <ion-item style="top:-10px;">
-              <ion-range [disabled]='isScrolling'  min="0" dualKnobs="true" snaps="true" [max]="10" step="0.1" [(ngModel)]="settings.graph_flow.ESPRESSO">
+              <ion-range [disabled]='isScrolling' (ngModelChange)="saveSettings();"  min="0" dualKnobs="true" snaps="true" [max]="10" step="0.1" [(ngModel)]="settings.graph_flow.ESPRESSO">
+              </ion-range>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+      <ion-card>
+        <ion-card-content>
+          <ion-card-title>
+            {{"PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_AXIS" | translate }}
+            <p>{{"PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_DESCRIPTION" | translate}}</p>
+          </ion-card-title>
+          <ion-list>
+            <ion-item lines="none">
+              <ion-label>{{"PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_FILTER_AXIS_NORMAL_SCREEN" | translate}}&nbsp;<ion-badge
+                style="vertical-align: top;">{{settings.graph_time.FILTER.NORMAL_SCREEN}}</ion-badge>
+              </ion-label>
+            </ion-item>
+            <ion-item style="top:-10px;">
+              <ion-range [disabled]='isScrolling' (ngModelChange)="saveSettings();" min="20"  snaps="true" [max]="40" step="1" [(ngModel)]="settings.graph_time.FILTER.NORMAL_SCREEN">
+              </ion-range>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label>{{"PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_FILTER_AXIS_FULL_SCREEN_SCREEN" | translate}}&nbsp;<ion-badge
+                style="vertical-align: top;">{{settings.graph_time.FILTER.FULL_SCREEN}}</ion-badge>
+              </ion-label>
+            </ion-item>
+            <ion-item style="top:-10px;">
+              <ion-range [disabled]='isScrolling' min="30" (ngModelChange)="saveSettings();"  snaps="true" [max]="60" step="1" [(ngModel)]="settings.graph_time.FILTER.FULL_SCREEN">
+              </ion-range>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label>{{"PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_ESPRESSO_AXIS_NORMAL_SCREEN" | translate}}&nbsp;<ion-badge
+                style="vertical-align: top;">{{settings.graph_time.ESPRESSO.NORMAL_SCREEN}}</ion-badge>
+              </ion-label>
+            </ion-item>
+            <ion-item style="top:-10px;">
+              <ion-range [disabled]='isScrolling' (ngModelChange)="saveSettings();" min="20"  snaps="true" [max]="40" step="1" [(ngModel)]="settings.graph_time.ESPRESSO.NORMAL_SCREEN">
+              </ion-range>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label>{{"PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_ESPRESSO_AXIS_FULL_SCREEN_SCREEN" | translate}}&nbsp;<ion-badge
+                style="vertical-align: top;">{{settings.graph_time.ESPRESSO.FULL_SCREEN}}</ion-badge>
+              </ion-label>
+            </ion-item>
+            <ion-item style="top:-10px;">
+              <ion-range [disabled]='isScrolling' min="30" (ngModelChange)="saveSettings();"  snaps="true" [max]="60" step="1" [(ngModel)]="settings.graph_time.ESPRESSO.FULL_SCREEN">
               </ion-range>
             </ion-item>
           </ion-list>

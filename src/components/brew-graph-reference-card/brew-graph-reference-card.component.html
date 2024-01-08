@@ -1,8 +1,32 @@
 <ion-item #ionItemEl tappable>
 <ion-radio #radioEl justify="start" label-placement="end"  value='{{isGraphType()===false?"BREW-" + this.brew.config.uuid:"GRAPH-" + this.graph.config.uuid}}'>
-<div class='brew-layout'>
+<div class='brew-layout'  [style.width]='getElementOffsetWidth() + "px"'>
 
   <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow"  *ngIf='isGraphType()===false'>
+    <ion-row>
+      <ion-col size="12">
+        <ion-icon *ngIf="brew.best_brew" name="trophy" style="top: 3px;position: relative;margin-right:5px;"></ion-icon><ion-icon *ngIf="brew.favourite" name="heart" style="top: 3px;position: relative;margin-right:5px;"></ion-icon><ion-icon *ngIf="brew?.flow_profile" name="analytics-outline" style="top: 3px;position: relative;margin-right:5px;"></ion-icon><strong>{{brew.config.unix_timestamp | formatDate:[settings?.date_format]}}</strong><span class="ion-padding-start">{{brew.config.unix_timestamp | formatDate:["HH:mm"]}}</span>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col [size]="brew?.rating>0 ? (hasCustomRatingRange()? 10:8) :12"><div class="ion-no-padding font-size-20 ion-title brew-title">{{brew.getBean().name}}<span class="font-size-16" *ngIf="brew.getBean().roaster">&nbsp;({{brew.getBean().roaster}})</span></div></ion-col>
+      <ion-col *ngIf="uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.rating,
+                      brew.getPreparation().visible_list_view_parameters.rating,
+                      brew.getPreparation().use_custom_parameters) && (brew?.rating > 0 && hasCustomRatingRange() === false)" size="4">
+        <ngx-stars #brewStars [color]="'#BFB9B0'" [initialStars]="brew.rating" [maxStars]="5"  [readonly]="true"  [wholeStars]="true" class="ion-float-right brew-stars" >
+        </ngx-stars>
+      </ion-col>
+      <ion-col *ngIf="uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.rating,
+                      brew.getPreparation().visible_list_view_parameters.rating,
+                      brew.getPreparation().use_custom_parameters) && (brew?.rating > 0  && hasCustomRatingRange() === true)" size="2" class="ion-text-right">
+        <ion-badge>{{this.uiHelper.toFixedIfNecessary(brew.rating,2)}}</ion-badge>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <hr />
+      </ion-col>
+    </ion-row>
     <ion-row class="ion-padding-bottom-half">
       <ion-col size="6" *ngIf="uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.method_of_preparation,
                       brew.getPreparation().visible_list_view_parameters.method_of_preparation,

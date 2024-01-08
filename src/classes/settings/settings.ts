@@ -94,6 +94,17 @@ export class Settings implements ISettings {
     FILTER: IBrewGraphs;
   };
 
+  public graph_time: {
+    ESPRESSO: {
+      NORMAL_SCREEN: number;
+      FULL_SCREEN: number;
+    };
+    FILTER: {
+      NORMAL_SCREEN: number;
+      FULL_SCREEN: number;
+    };
+  };
+
   public graph_weight: {
     ESPRESSO: {
       upper: number;
@@ -290,6 +301,17 @@ export class Settings implements ISettings {
     this.graph.ESPRESSO = this.GET_BREW_GRAPHS();
     this.graph.FILTER = this.GET_BREW_GRAPHS();
     this.graph.FILTER.realtime_flow = false;
+
+    this.graph_time = {
+      ESPRESSO: {
+        NORMAL_SCREEN: 20,
+        FULL_SCREEN: 60,
+      },
+      FILTER: {
+        NORMAL_SCREEN: 20,
+        FULL_SCREEN: 60,
+      },
+    };
 
     this.graph_weight = {
       ESPRESSO: {

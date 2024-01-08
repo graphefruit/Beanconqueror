@@ -87,6 +87,18 @@ export interface ISettings {
     ESPRESSO: IBrewGraphs;
     FILTER: IBrewGraphs;
   };
+
+  graph_time: {
+    ESPRESSO: {
+      NORMAL_SCREEN: number;
+      FULL_SCREEN: number;
+    };
+    FILTER: {
+      NORMAL_SCREEN: number;
+      FULL_SCREEN: number;
+    };
+  };
+
   graph_weight: {
     ESPRESSO: {
       upper: number;

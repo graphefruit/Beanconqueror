@@ -37,7 +37,7 @@
             <ng-container *ngIf='graphOpenView?.length > 0'>
               <ion-radio-group  [(ngModel)]="radioSelection">
                 <ag-virtual-scroll #graphOpenScroll [items]="graphOpenView" height="100vh" min-row-height="180">
-                  <brew-graph-reference-card  *ngFor="let graph of graphOpenScroll.items" [graph]="graph"></brew-graph-reference-card>
+                  <brew-graph-reference-card *ngFor="let graph of graphOpenScroll.items" [graph]="graph"></brew-graph-reference-card>
                 </ag-virtual-scroll>
               </ion-radio-group>
             </ng-container>

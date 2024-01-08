@@ -6,7 +6,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { Brew } from '../../../classes/brew/brew';
 import { IBrewPageFilter } from '../../../interfaces/brew/iBrewPageFilter';
@@ -75,7 +75,8 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
     private readonly uiGraphStorage: UIGraphStorage,
     private readonly uiGraphHelper: UIGraphHelper,
     private readonly uiAlert: UIAlert,
-    private readonly uiHelper: UIHelper
+    private readonly uiHelper: UIHelper,
+    private readonly platform: Platform
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     this.archivedBrewsFilter = this.settings.GET_BREW_FILTER();
@@ -285,12 +286,14 @@ export class BrewChooseGraphReferenceComponent implements OnInit {
       );
     }
 
-    brewsFilters = brewsFilters.filter(
-      (b) =>
-        b.flow_profile !== undefined &&
-        b.flow_profile !== null &&
-        b.flow_profile !== ''
-    );
+    if (this.platform.is('cordova')) {
+      brewsFilters = brewsFilters.filter(
+        (b) =>
+          b.flow_profile !== undefined &&
+          b.flow_profile !== null &&
+          b.flow_profile !== ''
+      );
+    }
 
     if (isOpen) {
       this.brewsOpen = brewsFilters;

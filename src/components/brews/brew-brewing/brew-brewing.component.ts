@@ -283,7 +283,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       const tool = this.data
         .getPreparation()
         .tools.find((e) => e.config.uuid === id);
-      if (tool.archived === true) {
+      if (tool?.archived === true) {
         tools.push(tool);
       }
     }
@@ -1921,10 +1921,29 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             let newLayoutIsNeeded: boolean = false;
             /**Timeout is needed, because on mobile devices, the trace and the relayout bothers each other, which results into not refreshing the graph*/
             let newRenderingInstance = 0;
-            if (this.maximizeFlowGraphIsShown === true) {
-              newRenderingInstance = Math.floor(this.timer.getSeconds() / 60);
+
+            let normalScreenTime: number;
+            let fullScreenTime: number;
+            if (
+              this.getPreparation().style_type ===
+              PREPARATION_STYLE_TYPE.ESPRESSO
+            ) {
+              normalScreenTime =
+                this.settings.graph_time.ESPRESSO.NORMAL_SCREEN;
+              fullScreenTime = this.settings.graph_time.ESPRESSO.FULL_SCREEN;
             } else {
-              newRenderingInstance = Math.floor(this.timer.getSeconds() / 20);
+              normalScreenTime = this.settings.graph_time.FILTER.NORMAL_SCREEN;
+              fullScreenTime = this.settings.graph_time.FILTER.FULL_SCREEN;
+            }
+
+            if (this.maximizeFlowGraphIsShown === true) {
+              newRenderingInstance = Math.floor(
+                this.timer.getSeconds() / fullScreenTime
+              );
+            } else {
+              newRenderingInstance = Math.floor(
+                this.timer.getSeconds() / normalScreenTime
+              );
             }
 
             if (
@@ -1932,9 +1951,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               this.lastChartRenderingInstance === -1
             ) {
               let subtractTime: number = this.maximizeFlowGraphIsShown
-                ? 40
-                : 10;
-              const addTime: number = this.maximizeFlowGraphIsShown ? 70 : 30;
+                ? fullScreenTime - 20
+                : normalScreenTime - 10;
+              const addTime: number = this.maximizeFlowGraphIsShown
+                ? fullScreenTime + 10
+                : normalScreenTime + 10;
               if (this.data.brew_time <= 10) {
                 subtractTime = 0;
               }
@@ -3265,10 +3286,21 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     const suggestedMaxWeight: number = graph_weight_settings.upper;
 
     const startRange = moment(new Date()).startOf('day').toDate().getTime();
-    let addSecondsOfEndRange = 30;
+
+    let normalScreenTime: number;
+    let fullScreenTime: number;
+    if (this.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
+      normalScreenTime = this.settings.graph_time.ESPRESSO.NORMAL_SCREEN;
+      fullScreenTime = this.settings.graph_time.ESPRESSO.FULL_SCREEN;
+    } else {
+      normalScreenTime = this.settings.graph_time.FILTER.NORMAL_SCREEN;
+      fullScreenTime = this.settings.graph_time.FILTER.FULL_SCREEN;
+    }
+    let addSecondsOfEndRange = normalScreenTime + 10;
+
     // When reset is triggered, we maybe are already in the maximized screen, so we go for the 70sec directly.
     if (this.maximizeFlowGraphIsShown === true) {
-      addSecondsOfEndRange = 70;
+      addSecondsOfEndRange = fullScreenTime + 10;
     }
     const endRange: number = moment(new Date())
       .startOf('day')
@@ -4383,7 +4415,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         const tool = this.data
           .getPreparation()
           .tools.find((e) => e.config.uuid === id);
-        if (tool.archived === false) {
+        if (tool?.archived === false) {
           this.data.method_of_preparation_tools.push(tool.config.uuid);
         }
       }
