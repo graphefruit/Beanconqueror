@@ -68,6 +68,14 @@ export class BrewFilterComponent implements OnInit {
     }
     return true;
   }
+  public pinFormatter(value: any) {
+    const parsedFloat = parseFloat(value);
+    if (isNaN(parsedFloat)) {
+      return `${0}`;
+    }
+    const newValue = +parsedFloat.toFixed(2);
+    return `${newValue}`;
+  }
   public getMaxBrewRating() {
     const maxSettingsRating = this.settings.brew_rating;
     const isOpen = this.segment === 'open';
