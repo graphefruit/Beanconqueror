@@ -158,6 +158,30 @@
       <ion-row style="width:100%">
         <ion-col class="ion-no-padding" size="8">
           <ion-item class="ion-no-margin-important">
+            <ion-input label-placement="stacked" label='{{"WATER_SECTION.WATER.POTASSIUM" | translate}}' [(ngModel)]="data.potassium" inputmode="decimal"
+                       placeholder="{{'WATER_SECTION.WATER.PLACE_HOLDER.POTASSIUM' | translate}}" prevent-characters
+                       remove-empty-number
+                       type="text"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col class="ion-no-padding ion-align-self-end" size="4">
+          <ion-item class="ion-no-margin-important">
+            <ion-select #brewQuantityType="ngModel" [(ngModel)]="data.potassium_type"
+                        cancelText="{{'CANCEL'| translate }}" name="brewQuantityType"
+                        okText="{{'CHOOSE'| translate }}"
+                        style="max-width:100%;">
+              <ion-select-option *ngFor="let key of waterPropertyEnum | keys" value="{{key}}">
+                {{"WATER_SECTION.WATER.WATER_UNIT." + key | translate}}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-item>
+    <ion-item lines="inset">
+      <ion-row style="width:100%">
+        <ion-col class="ion-no-padding" size="8">
+          <ion-item class="ion-no-margin-important">
             <ion-input label-placement="stacked" label='{{"WATER_SECTION.WATER.TDS" | translate}}' [(ngModel)]="data.tds" inputmode="decimal"
                        placeholder="{{'WATER_SECTION.WATER.PLACE_HOLDER.TDS' | translate}}" prevent-characters
                        remove-empty-number

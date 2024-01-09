@@ -20,6 +20,8 @@ export interface IWaterVisualizer {
   magnesium_type: WATER_UNIT;
   sodium: number;
   sodium_type: WATER_UNIT;
+  potassium: number;
+  potassium_type: WATER_UNIT;
   tds: number;
   tds_type: WATER_UNIT_TDS;
 }
