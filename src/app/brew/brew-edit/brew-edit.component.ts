@@ -134,6 +134,27 @@ export class BrewEditComponent implements OnInit {
     }
   }
 
+  public smartScaleConnected() {
+    try {
+      return this.bleManager.getScale() !== null;
+    } catch (ex) {
+      return false;
+    }
+  }
+
+  public smartScaleSupportsTaring() {
+    try {
+      return this.bleManager.getScale().supportsTaring;
+    } catch (ex) {
+      return false;
+    }
+  }
+  public async tareScale() {
+    const scale: BluetoothScale = this.bleManager.getScale();
+    if (scale) {
+      scale.tare();
+    }
+  }
   public async updateBrew() {
     if (this.brewBrewing?.timer?.isTimerRunning()) {
       this.brewBrewing?.timer?.pauseTimer('click');
