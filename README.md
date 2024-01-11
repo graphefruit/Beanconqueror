@@ -145,6 +145,8 @@ I welcome pull requests, but you will be required to sign the Beanconqueror CLA 
 
 ![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=graphefruit&theme=dark)
 
+[![Star History Chart](https://api.star-history.com/svg?repos=graphefruit/Beanconqueror&type=Date)](https://star-history.com/#graphefruit/Beanconqueror&Date)
+
 ## Third Party Apps
 
 Beanconqueror Universe is growing outside :)
