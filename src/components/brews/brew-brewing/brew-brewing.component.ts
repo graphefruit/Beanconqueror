@@ -1387,7 +1387,22 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         });
       } else if (_event === 'AUTO_LISTEN_SCALE') {
         // Don't use awaits.
-        scale.setTimer(SCALE_TIMER_COMMAND.START);
+        const scaleType = this.bleManager.getScale()?.getScaleType();
+
+        if (
+          scaleType === ScaleType.DIFLUIDMICROBALANCETI ||
+          scaleType === ScaleType.DIFLUIDMICROBALANCE
+        ) {
+          //The microbalance has somehow an firmware issue, that when starting on autolistening mode and don't delay the start commando, the scale goes corrupt.
+          await new Promise((resolve) => {
+            scale.setTimer(SCALE_TIMER_COMMAND.START);
+            setTimeout(async () => {
+              resolve(undefined);
+            }, 250);
+          });
+        } else {
+          scale.setTimer(SCALE_TIMER_COMMAND.START);
+        }
       }
       if (
         pressureDevice &&
