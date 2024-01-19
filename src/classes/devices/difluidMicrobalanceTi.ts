@@ -1,5 +1,10 @@
 import { PeripheralData } from './ble.types';
-import { BluetoothScale, SCALE_TIMER_COMMAND, Weight } from './bluetoothDevice';
+import {
+  BluetoothScale,
+  SCALE_TIMER_COMMAND,
+  TimerEvent,
+  Weight,
+} from './bluetoothDevice';
 import { Logger } from './common/logger';
 import { ScaleType } from './index';
 
@@ -148,7 +153,11 @@ export class DifluidMicrobalanceTi extends BluetoothScale {
       difluidRawStatus[5] === 2
     ) {
       // left button pressed - starting timer
-      this.timerEvent.emit(null);
+
+      this.timerEvent.emit({
+        command: SCALE_TIMER_COMMAND.START,
+        data: undefined,
+      });
     }
     if (difluidRawStatus.length >= 19 && difluidRawStatus[3] === 0) {
       const weight = await this.getInt(difluidRawStatus.slice(5, 9));
