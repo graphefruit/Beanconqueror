@@ -2,14 +2,14 @@
 </ion-header>
 <ion-content>
   <ion-item lines="inset">
-        <ion-input label-placement="stacked" label='{{"TOTAL_WEIGHT" | translate}}' [(ngModel)]="totalWeight" (ionInput)="calculateWeight()" inputmode="decimal"
+        <ion-input label-placement="stacked" label='{{"TOTAL_WEIGHT" | translate}}' [(ngModel)]="totalWeight" (ionBlur)='calculateWeight()' (ionInput)="calculateWeight()" inputmode="decimal"
                    placeholder="{{'TOTAL_WEIGHT' | translate}}" prevent-characters
                    remove-empty-number
                    type="text"></ion-input>
   </ion-item>
   <ion-item lines="inset">
 
-        <ion-input label-placement="stacked" label='{{"BREW_DATA_VESSEL_WEIGHT" | translate}}' [(ngModel)]="vesselWeight"  (ionInput)="calculateWeight()" placeholder="{{'BREW_DATA_VESSEL_WEIGHT' | translate}}"
+        <ion-input label-placement="stacked" label='{{"BREW_DATA_VESSEL_WEIGHT" | translate}}' [(ngModel)]="vesselWeight" (ionBlur)='calculateWeight()' (ionInput)="calculateWeight()" placeholder="{{'BREW_DATA_VESSEL_WEIGHT' | translate}}"
                    inputmode="decimal" prevent-characters remove-empty-number type="text"></ion-input>
   </ion-item>
   <ion-item lines="inset">
