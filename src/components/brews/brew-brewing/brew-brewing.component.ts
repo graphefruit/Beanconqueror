@@ -1394,12 +1394,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           scaleType === ScaleType.DIFLUIDMICROBALANCE
         ) {
           //The microbalance has somehow an firmware issue, that when starting on autolistening mode and don't delay the start commando, the scale goes corrupt.
-          await new Promise((resolve) => {
-            scale.setTimer(SCALE_TIMER_COMMAND.START);
-            setTimeout(async () => {
-              resolve(undefined);
-            }, 250);
-          });
+          scale.setTimer(SCALE_TIMER_COMMAND.START);
         } else {
           scale.setTimer(SCALE_TIMER_COMMAND.START);
         }
@@ -2217,6 +2212,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       if (
         scaleType === ScaleType.SMARTCHEF ||
         scaleType === ScaleType.BLACKCOFFEE ||
+        scaleType === ScaleType.DIFLUIDMICROBALANCE ||
+        scaleType === ScaleType.DIFLUIDMICROBALANCETI ||
         this.data.getPreparation().style_type ===
           PREPARATION_STYLE_TYPE.ESPRESSO
       ) {
@@ -2239,6 +2236,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           scaleType === ScaleType.BLACKCOFFEE
         ) {
           subtractLength = 2;
+        } else if (
+          scaleType === ScaleType.DIFLUIDMICROBALANCE ||
+          scaleType === ScaleType.DIFLUIDMICROBALANCETI
+        ) {
+          return this.uiHelper.toFixedIfNecessary(
+            this.flow_profile_raw.realtimeFlow[
+              this.flow_profile_raw.realtimeFlow.length - 1
+            ].flow_value,
+            2
+          );
         } else {
           if (this.flow_profile_raw.weight.length >= 11) {
             // We got a better scale, so atleast subtract 10
@@ -2519,8 +2526,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           if (event) {
             switch (event.command) {
               case SCALE_TIMER_COMMAND.START:
-                this.timer.startTimer();
-                this.checkChanges();
+                if (this.timer.isTimerRunning() === false) {
+                  this.timer.startTimer();
+                  this.checkChanges();
+                }
                 break;
               case SCALE_TIMER_COMMAND.STOP:
                 this.timer.pauseTimer();
@@ -4005,7 +4014,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         this.flow_profile_raw.realtimeFlow[realtimeFlowLength - 1]
           .smoothed_weight;
     }
-    const newSmoothedWeight = oldRealtimeSmoothedValue * 0.9 + weight * 0.1;
+    let newSmoothedWeight = oldRealtimeSmoothedValue * 0.9 + weight * 0.1;
 
     const realtimeWaterFlow: IBrewRealtimeWaterFlow =
       {} as IBrewRealtimeWaterFlow;
@@ -4015,9 +4024,41 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     realtimeWaterFlow.smoothed_weight = newSmoothedWeight;
 
     if (
-      scaleType === ScaleType.SMARTCHEF ||
-      scaleType === ScaleType.BLACKCOFFEE
+      scaleType === ScaleType.BLACKCOFFEE ||
+      scaleType === ScaleType.DIFLUIDMICROBALANCE ||
+      scaleType === ScaleType.DIFLUIDMICROBALANCETI
     ) {
+      //Take the scale smoothed weight
+      newSmoothedWeight = flowObj.smoothedWeight;
+      realtimeWaterFlow.smoothed_weight = newSmoothedWeight;
+
+      let timeStampDelta: any = 0;
+      let n: any = 4;
+      if (scaleType === ScaleType.BLACKCOFFEE) {
+        n = 3;
+      }
+
+      // After the flowProfileTempAll will be stored directly, we'd have one entry at start already, but we need to wait for another one
+      if (this.flowProfileTempAll.length > 1) {
+        timeStampDelta =
+          flowObj.unixTime -
+          this.flowProfileTempAll[this.flowProfileTempAll.length - n].unixTime;
+      }
+
+      realtimeWaterFlow.timestampdelta = timeStampDelta;
+      realtimeWaterFlow.unixtimeold =
+        this.flowProfileTempAll[this.flowProfileTempAll.length - n].unixTime;
+      realtimeWaterFlow.beforesmoothedvalue =
+        this.flowProfileTempAll[
+          this.flowProfileTempAll.length - n
+        ].smoothedWeight;
+
+      realtimeWaterFlow.flow_value =
+        (newSmoothedWeight -
+          this.flowProfileTempAll[this.flowProfileTempAll.length - n]
+            .smoothedWeight) *
+        (1000 / timeStampDelta);
+    } else if (scaleType === ScaleType.SMARTCHEF) {
       let timeStampDelta: any = 0;
       // After the flowProfileTempAll will be stored directly, we'd have one entry at start already, but we need to wait for another one
       if (this.flowProfileTempAll.length > 1) {

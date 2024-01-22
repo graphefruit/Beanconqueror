@@ -33,6 +33,9 @@ export interface IBrewRealtimeWaterFlow {
   brew_time: string;
   timestamp: string;
   smoothed_weight: number;
+  timestampdelta: number;
+  beforesmoothedvalue: number;
+  unixtimeold: number;
 }
 
 export interface IBrewRealtimeWaterFlow {
