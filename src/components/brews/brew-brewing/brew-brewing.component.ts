@@ -2207,86 +2207,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public getActualSmoothedWeightPerSecond(): number {
     try {
-      const scaleType = this.bleManager.getScale()?.getScaleType();
-
-      if (
-        scaleType === ScaleType.SMARTCHEF ||
-        scaleType === ScaleType.BLACKCOFFEE ||
-        scaleType === ScaleType.DIFLUIDMICROBALANCE ||
-        scaleType === ScaleType.DIFLUIDMICROBALANCETI ||
-        this.data.getPreparation().style_type ===
-          PREPARATION_STYLE_TYPE.ESPRESSO
-      ) {
-        if (this.flow_profile_raw.weight.length <= 3) {
-          return 0;
-        }
-        const lastSecond = moment(
-          this.flow_profile_raw.weight[this.flow_profile_raw.weight.length - 1]
-            .timestamp,
-          'HH:mm:ss'
-        ).seconds();
-        const lastWeight =
-          this.flow_profile_raw.weight[this.flow_profile_raw.weight.length - 1]
-            .actual_weight;
-        let lastSubtractWeight: number = 0;
-
-        let subtractLength = 2;
-        if (
-          scaleType === ScaleType.SMARTCHEF ||
-          scaleType === ScaleType.BLACKCOFFEE
-        ) {
-          subtractLength = 2;
-        } else if (
-          scaleType === ScaleType.DIFLUIDMICROBALANCE ||
-          scaleType === ScaleType.DIFLUIDMICROBALANCETI
-        ) {
-          return this.uiHelper.toFixedIfNecessary(
-            this.flow_profile_raw.realtimeFlow[
-              this.flow_profile_raw.realtimeFlow.length - 1
-            ].flow_value,
-            2
-          );
-        } else {
-          if (this.flow_profile_raw.weight.length >= 11) {
-            // We got a better scale, so atleast subtract 10
-            subtractLength = 10;
-          }
-        }
-
-        for (
-          let i = this.flow_profile_raw.weight.length - subtractLength;
-          i >= 0;
-          i--
-        ) {
-          const newSecond = moment(
-            this.flow_profile_raw.weight[i].timestamp,
-            'HH:mm:ss'
-          ).seconds();
-          if (lastSecond === newSecond) {
-            // Still the same range
-            lastSubtractWeight = this.flow_profile_raw.weight[i].actual_weight;
-          } else {
-            // Break
-            // If we didn't found one value in range, we take the second before.
-            if (lastSubtractWeight === 0) {
-              lastSubtractWeight =
-                this.flow_profile_raw.weight[i].actual_weight;
-            }
-            break;
-          }
-        }
-        return this.uiHelper.toFixedIfNecessary(
-          lastWeight - lastSubtractWeight,
-          2
-        );
-      } else {
-        const lastflow =
-          this.flow_profile_raw.weight[this.flow_profile_raw.weight.length - 1];
-        const smoothedWeight = lastflow.actual_smoothed_weight;
-        const oldSmoothedWeight = lastflow.old_smoothed_weight;
-        const flowValue: number = (smoothedWeight - oldSmoothedWeight) * 10;
-        return this.uiHelper.toFixedIfNecessary(flowValue, 2);
-      }
+      return this.uiHelper.toFixedIfNecessary(
+        this.flow_profile_raw.realtimeFlow[
+          this.flow_profile_raw.realtimeFlow.length - 1
+        ].flow_value,
+        2
+      );
     } catch (ex) {
       return 0;
     }
@@ -3915,6 +3841,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             calculatedFlowWeight = 0;
           }*/
         } else {
+          /* for (let i=0;i<this.flowProfileArrCalculated.length;i++){
+            this.flowprofile
+          }*/
           calculatedFlowWeight =
             (calculatedFlowWeight / this.flowProfileArrCalculated.length) * 10;
         }
@@ -4014,7 +3943,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         this.flow_profile_raw.realtimeFlow[realtimeFlowLength - 1]
           .smoothed_weight;
     }
-    let newSmoothedWeight = oldRealtimeSmoothedValue * 0.9 + weight * 0.1;
+    let newSmoothedWeight = flowObj.smoothedWeight;
 
     const realtimeWaterFlow: IBrewRealtimeWaterFlow =
       {} as IBrewRealtimeWaterFlow;
@@ -4023,57 +3952,29 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     realtimeWaterFlow.timestamp = flowObj.flowTimestamp;
     realtimeWaterFlow.smoothed_weight = newSmoothedWeight;
 
-    if (
-      scaleType === ScaleType.BLACKCOFFEE ||
-      scaleType === ScaleType.DIFLUIDMICROBALANCE ||
-      scaleType === ScaleType.DIFLUIDMICROBALANCETI
-    ) {
-      //Take the scale smoothed weight
-      newSmoothedWeight = flowObj.smoothedWeight;
-      realtimeWaterFlow.smoothed_weight = newSmoothedWeight;
+    let timeStampDelta: any = 0;
+    let n: any = 3;
 
-      let timeStampDelta: any = 0;
-      let n: any = 4;
-      if (scaleType === ScaleType.BLACKCOFFEE) {
-        n = 3;
-      }
-
-      // After the flowProfileTempAll will be stored directly, we'd have one entry at start already, but we need to wait for another one
-      if (this.flowProfileTempAll.length > 1) {
-        timeStampDelta =
-          flowObj.unixTime -
-          this.flowProfileTempAll[this.flowProfileTempAll.length - n].unixTime;
-      }
-
-      realtimeWaterFlow.timestampdelta = timeStampDelta;
-      realtimeWaterFlow.unixtimeold =
+    // After the flowProfileTempAll will be stored directly, we'd have one entry at start already, but we need to wait for another one
+    if (this.flowProfileTempAll.length > 1) {
+      timeStampDelta =
+        flowObj.unixTime -
         this.flowProfileTempAll[this.flowProfileTempAll.length - n].unixTime;
-      realtimeWaterFlow.beforesmoothedvalue =
-        this.flowProfileTempAll[
-          this.flowProfileTempAll.length - n
-        ].smoothedWeight;
-
-      realtimeWaterFlow.flow_value =
-        (newSmoothedWeight -
-          this.flowProfileTempAll[this.flowProfileTempAll.length - n]
-            .smoothedWeight) *
-        (1000 / timeStampDelta);
-    } else if (scaleType === ScaleType.SMARTCHEF) {
-      let timeStampDelta: any = 0;
-      // After the flowProfileTempAll will be stored directly, we'd have one entry at start already, but we need to wait for another one
-      if (this.flowProfileTempAll.length > 1) {
-        timeStampDelta =
-          flowObj.unixTime -
-          this.flowProfileTempAll[this.flowProfileTempAll.length - 2].unixTime;
-      }
-
-      realtimeWaterFlow.flow_value =
-        (newSmoothedWeight - oldRealtimeSmoothedValue) *
-        (1000 / timeStampDelta);
-    } else {
-      realtimeWaterFlow.flow_value =
-        (newSmoothedWeight - oldRealtimeSmoothedValue) * 10;
     }
+
+    realtimeWaterFlow.timestampdelta = timeStampDelta;
+    realtimeWaterFlow.unixtimeold =
+      this.flowProfileTempAll[this.flowProfileTempAll.length - n].unixTime;
+    realtimeWaterFlow.beforesmoothedvalue =
+      this.flowProfileTempAll[
+        this.flowProfileTempAll.length - n
+      ].smoothedWeight;
+
+    realtimeWaterFlow.flow_value =
+      (newSmoothedWeight -
+        this.flowProfileTempAll[this.flowProfileTempAll.length - n]
+          .smoothedWeight) *
+      (1000 / timeStampDelta);
 
     this.realtimeFlowTrace.x.push(flowObj.dateUnixTime);
     this.realtimeFlowTrace.y.push(realtimeWaterFlow.flow_value);
