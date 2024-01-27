@@ -3640,21 +3640,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       let sameFlowPerTenHerzCounter: number = 0;
 
       let flowHasSomeMinusValueInIt: boolean = false;
-      /**if (scaleType === ScaleType.LUNAR) {
-        // Fix weight values :O
-        for (let i = 0; i < this.flowProfileArr.length; i++) {
-          const theProfileTempEntry = this.flowProfileTempAll[this.flowProfileTempAll.length - (i+1)];
-          if (theProfileTempEntry.actual_weight > 3000) {
-            // Wrong scale values reported. - Fix it back
-            theProfileTempEntry.actual_weight = theProfileTempEntry.old_weight;
-            this.flowProfileArr[i] = theProfileTempEntry.actual_weight;
-          } else if (theProfileTempEntry.actual_weight <= 0 && theProfileTempEntry.old_weight >= 10) {
-            // I don't know if old_weight could just be bigger then 0
-            theProfileTempEntry.actual_weight = theProfileTempEntry.old_weight;
-            this.flowProfileArr[i] = theProfileTempEntry.actual_weight;
-          }
-        }
-      }*/
 
       for (let i = 0; i < this.flowProfileArr.length; i++) {
         const val: number = this.flowProfileArr[i];
@@ -3778,75 +3763,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           calculatedFlowWeight += flowWeight;
         }
 
-        if (
-          scaleType === ScaleType.SMARTCHEF ||
-          scaleType === ScaleType.BLACKCOFFEE
-        ) {
-          if (this.flowProfileArrCalculated.length > 1) {
-            /*On the poor scales, we know that the realtime flow value is pretty "accurate" with the new math formular,
-               thats why we take the realtime flow value, look back for 2 seconds in the timestamp, and if we don'T have enough values, we just use
-               the values which are given*/
-            const time2StampDelta =
-              flowObj.unixTime -
-              this.flowProfileTempAll[this.flowProfileTempAll.length - 2]
-                .unixTime;
-            let twoSecondsLookBack: any = 0;
-
-            twoSecondsLookBack = 2 * Math.floor(1000 / time2StampDelta);
-            if (
-              this.flow_profile_raw.realtimeFlow.length < twoSecondsLookBack
-            ) {
-              twoSecondsLookBack = this.flow_profile_raw.realtimeFlow.length;
-            }
-            let totalflow = 0;
-            for (let i = 0; i < twoSecondsLookBack; i++) {
-              totalflow =
-                totalflow +
-                this.flow_profile_raw.realtimeFlow[
-                  this.flow_profile_raw.realtimeFlow.length - 1 - i
-                ].flow_value;
-            }
-
-            calculatedFlowWeight = totalflow / twoSecondsLookBack;
-          }
-          /*  Old solution, don't know if we'll ever need it again, but lets stay it here
-          let avgWeight = 0;
-            let avgTimeDelta: number = 0;
-
-            //Don't get the last one, because this is already one new entry
-            const avgEntries = this.flowProfileTempAll.slice(
-              this.flowProfileTempAll.length -
-                1 -
-                this.flowProfileArrCalculated.length,
-              this.flowProfileTempAll.length - 1
-            );
-            for (let i = 0; i < this.flowProfileArrCalculated.length - 1; i++) {
-              avgWeight =
-                avgWeight +
-                (this.flowProfileArrCalculated[i + 1] -
-                  this.flowProfileArrCalculated[i]);
-            }
-            for (let i = 0; i < avgEntries.length - 1; i++) {
-              avgTimeDelta =
-                avgTimeDelta +
-                (avgEntries[i + 1].unixTime - avgEntries[i].unixTime);
-            }
-            avgTimeDelta = avgTimeDelta / avgEntries.length;
-
-            calculatedFlowWeight =
-              (avgWeight / this.flowProfileArrCalculated.length) *
-              ((1000 - avgTimeDelta) / avgTimeDelta);
-          } else {
-            //Saftey when somehow just one value was provided.
-            calculatedFlowWeight = 0;
-          }*/
-        } else {
-          /* for (let i=0;i<this.flowProfileArrCalculated.length;i++){
-            this.flowprofile
-          }*/
-          calculatedFlowWeight =
-            (calculatedFlowWeight / this.flowProfileArrCalculated.length) * 10;
+        const realtimeFlowSplit: Array<IBrewRealtimeWaterFlow> =
+          this.flow_profile_raw.realtimeFlow.slice(
+            -this.flowProfileArrCalculated.length
+          );
+        const slopeWeight = 1 / realtimeFlowSplit.length;
+        let avgCalculation: number = 0;
+        for (const entry of realtimeFlowSplit) {
+          avgCalculation = avgCalculation + slopeWeight * entry.flow_value;
         }
+        calculatedFlowWeight = avgCalculation;
 
         // Ignore flowing weight when we're below zero
         if (calculatedFlowWeight < 0) {
@@ -3936,15 +3862,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.flowProfileArrCalculated.push(weight - oldWeight);
 
     /* Realtime flow start**/
-    let oldRealtimeSmoothedValue = 0;
-    const realtimeFlowLength = this.flow_profile_raw.realtimeFlow.length;
-    if (realtimeFlowLength > 0) {
-      oldRealtimeSmoothedValue =
-        this.flow_profile_raw.realtimeFlow[realtimeFlowLength - 1]
-          .smoothed_weight;
-    }
-    let newSmoothedWeight = flowObj.smoothedWeight;
 
+    const newSmoothedWeight = flowObj.smoothedWeight;
     const realtimeWaterFlow: IBrewRealtimeWaterFlow =
       {} as IBrewRealtimeWaterFlow;
 
@@ -3956,19 +3875,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     let n: any = 3;
 
     // After the flowProfileTempAll will be stored directly, we'd have one entry at start already, but we need to wait for another one
-    if (this.flowProfileTempAll.length > 1) {
+    if (this.flowProfileTempAll.length > 2) {
       timeStampDelta =
         flowObj.unixTime -
         this.flowProfileTempAll[this.flowProfileTempAll.length - n].unixTime;
+    } else {
+      //Fallback if N cant be 3
+      n = this.flowProfileTempAll.length;
     }
 
     realtimeWaterFlow.timestampdelta = timeStampDelta;
-    realtimeWaterFlow.unixtimeold =
-      this.flowProfileTempAll[this.flowProfileTempAll.length - n].unixTime;
-    realtimeWaterFlow.beforesmoothedvalue =
-      this.flowProfileTempAll[
-        this.flowProfileTempAll.length - n
-      ].smoothedWeight;
 
     realtimeWaterFlow.flow_value =
       (newSmoothedWeight -

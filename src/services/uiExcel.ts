@@ -119,8 +119,6 @@ export class UIExcel {
       header_flow_realtime.push('Smoothed weight');
 
       header_flow_realtime.push('Timestamp delta');
-      header_flow_realtime.push('Beforesmoothedvalue');
-      header_flow_realtime.push('unixtimeold');
 
       const wsDataFlowRealtime: any[][] = [header_flow_realtime];
       for (const entry of _flow.realtimeFlow) {
@@ -130,8 +128,6 @@ export class UIExcel {
           entry.flow_value,
           entry.smoothed_weight,
           entry.timestampdelta,
-          entry.beforesmoothedvalue,
-          entry.unixtimeold,
         ];
         wsDataFlowRealtime.push(wbEntry);
       }
