@@ -378,6 +378,9 @@ export class AppComponent implements AfterViewInit {
         try {
           await this.uiExportImportHelper.checkBackup();
         } catch (ex) {}
+        if (this.uiAlert.isLoadingSpinnerShown()) {
+          this.uiAlert.hideLoadingSpinner();
+        }
       }
 
       try {
