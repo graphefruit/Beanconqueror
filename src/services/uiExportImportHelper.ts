@@ -237,50 +237,24 @@ export class UIExportImportHelper {
   public async checkBackup() {
     try {
       const promise = new Promise(async (resolve, reject) => {
-        if (this.platform.is('cordova')) {
-          this.uiLog.log('Check Backup');
-          const hasData = await this.uiStorage.hasData();
-          this.uiLog.log('Check Backup - Has data ' + hasData);
-          if (!hasData) {
-            this.uiLog.log(
-              'Check  Backup - No data are stored yet inside the app, so we try to find a backup file'
-            );
-            // If we don't got any data, we check now if there is a Beanconqueror.zip saved.
-            this.uiFileHelper.getZIPFile('Beanconqueror.zip').then(
-              async (_arrayBuffer) => {
-                await this.uiAlert.showLoadingSpinner();
-                try {
-                  this.uiLog.log(' We found a backup, try to import');
-                  const parsedJSON =
-                    await this.getJSONFromZIPArrayBufferContent(_arrayBuffer);
-                  this.uiStorage.import(parsedJSON).then(
-                    async () => {
-                      this.uiLog.log('Sucessfully imported  Backup');
-                      setTimeout(() => {
-                        this.uiAlert.hideLoadingSpinner();
-                      }, 150);
-                      resolve(null);
-                    },
-                    () => {
-                      this.uiLog.error('Could not import  Backup');
-                      setTimeout(() => {
-                        this.uiAlert.hideLoadingSpinner();
-                      }, 150);
-                      resolve(null);
-                    }
-                  );
-                } catch (ex) {}
-              },
-              () => {
-                this.uiLog.log(
-                  'Check Backup - We couldnt retrieve any zip file - try the old JSON Way.'
-                );
-
-                this.uiFileHelper.getJSONFile('Beanconqueror.json').then(
-                  async (_json) => {
-                    await this.uiAlert.showLoadingSpinner();
-                    this.uiLog.log('We found an backup, try to import');
-                    this.uiStorage.import(_json).then(
+        try {
+          if (this.platform.is('cordova')) {
+            this.uiLog.log('Check Backup');
+            const hasData = await this.uiStorage.hasData();
+            this.uiLog.log('Check Backup - Has data ' + hasData);
+            if (!hasData) {
+              this.uiLog.log(
+                'Check  Backup - No data are stored yet inside the app, so we try to find a backup file'
+              );
+              // If we don't got any data, we check now if there is a Beanconqueror.zip saved.
+              this.uiFileHelper.getZIPFile('Beanconqueror.zip').then(
+                async (_arrayBuffer) => {
+                  await this.uiAlert.showLoadingSpinner();
+                  try {
+                    this.uiLog.log(' We found a backup, try to import');
+                    const parsedJSON =
+                      await this.getJSONFromZIPArrayBufferContent(_arrayBuffer);
+                    this.uiStorage.import(parsedJSON).then(
                       async () => {
                         this.uiLog.log('Sucessfully imported  Backup');
                         setTimeout(() => {
@@ -296,23 +270,63 @@ export class UIExportImportHelper {
                         resolve(null);
                       }
                     );
-                  },
-                  () => {
+                  } catch (ex) {
                     setTimeout(() => {
                       this.uiAlert.hideLoadingSpinner();
                     }, 150);
-                    this.uiLog.log(
-                      'Check Backup - We couldnt retrieve any JSON file'
-                    );
-                    resolve(null);
                   }
-                );
-              }
-            );
+                },
+                () => {
+                  this.uiLog.log(
+                    'Check Backup - We couldnt retrieve any zip file - try the old JSON Way.'
+                  );
+
+                  this.uiFileHelper.getJSONFile('Beanconqueror.json').then(
+                    async (_json) => {
+                      await this.uiAlert.showLoadingSpinner();
+                      try {
+                        this.uiLog.log('We found an backup, try to import');
+                        this.uiStorage.import(_json).then(
+                          async () => {
+                            this.uiLog.log('Sucessfully imported  Backup');
+                            setTimeout(() => {
+                              this.uiAlert.hideLoadingSpinner();
+                            }, 150);
+                            resolve(null);
+                          },
+                          () => {
+                            this.uiLog.error('Could not import  Backup');
+                            setTimeout(() => {
+                              this.uiAlert.hideLoadingSpinner();
+                            }, 150);
+                            resolve(null);
+                          }
+                        );
+                      } catch (ex) {
+                        setTimeout(() => {
+                          this.uiAlert.hideLoadingSpinner();
+                        }, 150);
+                      }
+                    },
+                    () => {
+                      setTimeout(() => {
+                        this.uiAlert.hideLoadingSpinner();
+                      }, 150);
+                      this.uiLog.log(
+                        'Check Backup - We couldnt retrieve any JSON file'
+                      );
+                      resolve(null);
+                    }
+                  );
+                }
+              );
+            } else {
+              resolve(null);
+            }
           } else {
             resolve(null);
           }
-        } else {
+        } catch (ex) {
           resolve(null);
         }
       });
