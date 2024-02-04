@@ -1017,6 +1017,42 @@
           "<b>Other</b>",
           "Minor bug fixes"
         ]
+      },
+      "7.1.0": {
+        "TITLE": "Version 7.1.0: What's new",
+        "DESCRIPTION": [
+          "<b>More languages</b>",
+          "Support of French - Thanks to Yannick",
+          "",
+          "<b>Bluetooth Scales</b>",
+          "Supporting a new DIY-Bluetooth-Scale (Rust & Python Firmware)",
+          "Support of DiFluid Microbalance Ti",
+          "Improving the flow calculation for all scales",
+          "",
+          "<b>Graph Area</b>",
+          "Added more information to the choosing reference card",
+          "",
+          "<b>Brews</b>",
+          "Bluetooth-Scales - Added a taring button to the top of the toolbar",
+          "",
+          "<b>Beans</b>",
+          "Support of copying a variety information",
+          "",
+          "<b>Water section</b>",
+          "Added potassium parameter",
+          "",
+          "<b>Grinders</b>",
+          "RPM parameter now visible in the list view and selection view",
+          "",
+          "<b>Xenia</b>",
+          "Bug fix: Deactivated scripts are no longer executed",
+          "",
+          "<b>Settings</b>",
+          "Define your own time axis for filter or espresso with connected bluetooth devices",
+          "",
+          "<b>Other</b>",
+          "Minor bug fixes"
+        ]
       }
     },
     "CUSTOM_PARAMETERS": "Customize parameters",
@@ -1340,6 +1376,7 @@
             "SODIUM": "Sodium (Na)",
             "TDS": "Total dissolved solids (TDS)",
             "UNITS": "Units",
+            "POTASSIUM": "Potassium (K)",
             "PLACE_HOLDER": {
                 "GENERAL_HARDNESS": "General hardness",
                 "TOTAL_ALKALINITY": "Total alkalinity",
@@ -1348,7 +1385,8 @@
                 "SODIUM": "Sodium (Na)",
                 "TDS": "Total dissolved solids (TDS)",
                 "NAME": "Add water name",
-                "NOTES": "Add some notes for your water"
+                "NOTES": "Add some notes for your water",
+                "POTASSIUM": "Potassium (K)"
             },
             "WATER_UNIT": {
                 "UNKNOWN": "Unknown",
@@ -1728,5 +1766,11 @@
     },
     "SHOW_VISUALIZER": "Show Visualizer",
     "NO_BREWS_FOUND": "No brews found",
-    "NO_GRAPHS_FOUND": "No graphs found"
+    "NO_GRAPHS_FOUND": "No graphs found",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_AXIS": "Define the maximum time axis of the graph",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_DESCRIPTION": "Set the maximum seconds of the time axis for both filter and espresso.",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_FILTER_AXIS_NORMAL_SCREEN": "Filter - Normal Screen",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_FILTER_AXIS_FULL_SCREEN_SCREEN": "Filter - Full Screen",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_ESPRESSO_AXIS_NORMAL_SCREEN": "Espresso - Normal Screen",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_ESPRESSO_AXIS_FULL_SCREEN_SCREEN": "Espresso - Full Screen"
 }
