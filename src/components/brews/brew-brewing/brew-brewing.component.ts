@@ -2074,7 +2074,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public changedRating() {
-    console.log('changed rating');
     if (typeof this.brewStars !== 'undefined') {
       this.brewStars.setRating(this.data.rating);
     }
