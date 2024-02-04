@@ -35,6 +35,7 @@ import { UIToast } from '../uiToast';
 import { BlackcoffeeScale } from 'src/classes/devices/blackcoffeeScale';
 import { DifluidMicrobalanceTi } from '../../classes/devices/difluidMicrobalanceTi';
 import { DiyPythonCoffeeScale } from '../../classes/devices/diyPythonCoffeeScale';
+import { DiyRustCoffeeScale } from '../../classes/devices/diyRustCoffeeScale';
 
 declare var device: any;
 declare var ble: any;
@@ -255,7 +256,8 @@ export class CoffeeBluetoothDevicesService {
             DifluidMicrobalance.test(scanDevice) ||
             DifluidMicrobalanceTi.test(scanDevice) ||
             BlackcoffeeScale.test(scanDevice) ||
-            DiyPythonCoffeeScale.test(scanDevice)
+            DiyPythonCoffeeScale.test(scanDevice) ||
+            DiyRustCoffeeScale.test(scanDevice)
           ) {
             // We found all needed devices.
             promiseResolved = true;
@@ -774,6 +776,14 @@ export class CoffeeBluetoothDevicesService {
             });
             return;
           }
+          if (DiyRustCoffeeScale.test(deviceScale)) {
+            this.logger.log('BleManager - We found a diy rust coffee scale');
+            resolve({
+              id: deviceScale.id,
+              type: ScaleType.DIYRUSTCOFFEESCALE,
+            });
+            return;
+          }
         }
         resolve(undefined);
       }
@@ -862,6 +872,13 @@ export class CoffeeBluetoothDevicesService {
             supportedDevices.push({
               id: deviceScale.id,
               type: ScaleType.DIYPYTHONCOFFEESCALE,
+            });
+          }
+          if (DiyRustCoffeeScale.test(deviceScale)) {
+            this.logger.log('BleManager - We found a diy rust coffee scale');
+            supportedDevices.push({
+              id: deviceScale.id,
+              type: ScaleType.DIYRUSTCOFFEESCALE,
             });
           }
         }
