@@ -1044,12 +1044,9 @@
           "<b>Grinders</b>",
           "RPM parameter now visible in the list view and selection view",
           "",
-          "<b>Xenia</b>",
-          "Bug fix: Deactivated scripts are no longer executed",
-          "",
           "<b>Settings</b>",
           "Define your own time axis for filter or espresso with connected bluetooth devices",
-          "Adding different time formats to also match American format",
+          "Adding different date formats to also match American format",
           "",
           "<b>Other</b>",
           "Minor bug fixes"
