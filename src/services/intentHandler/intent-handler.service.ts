@@ -159,7 +159,11 @@ export class IntentHandlerService {
           }
         });
       }
-    } catch (ex) {}
+    } catch (ex) {
+      if (this.uiAlert.isLoadingSpinnerShown()) {
+        this.uiAlert.hideLoadingSpinner();
+      }
+    }
   }
 
   private async addBeanFromServer(_qrCodeId: string) {
