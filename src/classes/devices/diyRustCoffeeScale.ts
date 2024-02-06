@@ -36,11 +36,25 @@ export class DiyRustCoffeeScale extends BluetoothScale {
    * @returns boolean If support is provided for device.
    */
   public static test(device: any): boolean {
-    return (
-      device &&
-      device.name &&
-      device.name.toLowerCase().includes(this.DEVICE_NAME)
-    );
+    try {
+      if (
+        device &&
+        device.name &&
+        device.name.toLowerCase().includes(this.DEVICE_NAME)
+      ) {
+        return true;
+      } else if (
+        device &&
+        device.advertising &&
+        device.advertising.kCBAdvDataLocalName &&
+        device.advertising.kCBAdvDataLocalName
+          .toLowerCase()
+          .includes(this.DEVICE_NAME)
+      ) {
+        return true;
+      }
+    } catch (ex) {}
+    return false;
   }
 
   public override getWeight() {

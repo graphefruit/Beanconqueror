@@ -108,7 +108,7 @@
           </ion-item>
           <ion-item style="top:-10px;">
             <ion-range  [disabled]='isScrolling' style="padding-left:20px;padding-top:0;padding-bottom:15px;padding-right:0px;" min="50" snaps="true" max="100"
-              step="1" (ionBlur)="saveSettings()" [(ngModel)]="settings.image_quality">
+              step="1" (ngModelChange)="saveSettings()" [(ngModel)]="settings.image_quality">
               <div class='ion-label' slot="end">{{settings.image_quality}}%</div>
             </ion-range>
           </ion-item>
@@ -121,7 +121,7 @@
           </ion-item>
           <ion-item style="top:-10px;" lines="none">
             <ion-range [disabled]='isScrolling' style="padding-left:20px;padding-top:0;padding-bottom:15px;padding-right:0px;" min="5" snaps="true" max="100"
-              step="1" (ionBlur)="changeBrewRating()" [(ngModel)]="settings.brew_rating">
+              step="1" (ngModelChange)="changeBrewRating()" [(ngModel)]="settings.brew_rating">
               <div class='ion-label' slot="end">{{settings.brew_rating}}</div>
             </ion-range>
 
@@ -156,7 +156,7 @@
           </ion-item>
           <ion-item style="top:-10px;" lines="none">
             <ion-range [disabled]='isScrolling' style="padding-left:20px;padding-top:0;padding-bottom:15px;padding-right:0px;" min="5" snaps="true" max="100"
-              step="1" (ionBlur)="changeBeanRating()" [(ngModel)]="settings.bean_rating">
+              step="1" (ngModelChange)="changeBeanRating()" [(ngModel)]="settings.bean_rating">
               <div class='ion-label' slot="end">{{settings.bean_rating}}</div>
             </ion-range>
 
@@ -514,7 +514,7 @@
             </ion-item>
             <ion-item *ngIf="settings.bluetooth_scale_listening_threshold_active">
               <ion-range [disabled]='isScrolling' style="padding-left:20px;padding-top:0;padding-bottom:15px;padding-right:0px;" min="0.1" snaps="true" max="5"
-                         step="0.1" (ionBlur)="saveSettings()" [(ngModel)]="settings.bluetooth_scale_listening_threshold_start">
+                         step="0.1" (ngModelChange)="saveSettings()" [(ngModel)]="settings.bluetooth_scale_listening_threshold_start">
                 <div class='ion-label'
                      slot="end">{{this.uiHelper.toFixedIfNecessary(settings.bluetooth_scale_listening_threshold_start,1)}}</div>
               </ion-range>
@@ -536,7 +536,7 @@
             </ion-item>
             <ion-item style="top:-10px;" *ngIf="settings?.bluetooth_scale_espresso_stop_on_no_weight_change===true">
               <ion-range [disabled]='isScrolling' style="padding-left:20px;padding-top:0;padding-bottom:0px;padding-right:0px;" min="0.05" snaps="true" max="1"
-                         step="0.01" (ionBlur)="fixWeightChangeMinFlowNumber();saveSettings()" [(ngModel)]="settings.bluetooth_scale_espresso_stop_on_no_weight_change_min_flow">
+                         step="0.01" (ngModelChange)="fixWeightChangeMinFlowNumber();saveSettings()" [(ngModel)]="settings.bluetooth_scale_espresso_stop_on_no_weight_change_min_flow">
                 <div class='ion-label' slot="end">{{settings.bluetooth_scale_espresso_stop_on_no_weight_change_min_flow | number : '.0-2'}} g/s</div>
               </ion-range>
             </ion-item>
@@ -573,7 +573,7 @@
             </ion-item>
             <ion-item style="top:-10px;">
               <ion-range [disabled]='isScrolling' style="padding-left:20px;padding-top:0;padding-bottom:15px;padding-right:0px;" min="50" snaps="true" max="1000"
-                step="1" (ionBlur)="saveSettings()" [(ngModel)]="settings.bluetooth_command_delay">
+                step="1" (ngModelChange)="saveSettings()" [(ngModel)]="settings.bluetooth_command_delay">
                 <div class='ion-label' slot="end">{{settings.bluetooth_command_delay}} ms</div>
               </ion-range>
             </ion-item>
@@ -587,12 +587,12 @@
             </ion-item>
             <ion-item style="top:-10px;">
               <ion-range [disabled]='isScrolling' style="padding-left:20px;padding-top:0;padding-bottom:15px;padding-right:0px;" min="200" snaps="true" max="1000"
-                         step="1" (ionBlur)="saveSettings()" [(ngModel)]="settings.acaia_heartbeat_command_delay">
+                         step="1" (ngModelChange)="saveSettings()" [(ngModel)]="settings.acaia_heartbeat_command_delay">
                 <div class='ion-label' slot="end">{{settings.acaia_heartbeat_command_delay}} ms</div>
               </ion-range>
             </ion-item>
             <ion-item>
-              <ion-checkbox label-placement='start' (ionBlur)="toggleLog();" [(ngModel)]="settings.scale_log">
+              <ion-checkbox label-placement='start' (ionChange)="toggleLog();" [(ngModel)]="settings.scale_log">
                 <div class="ion-label" style="white-space: normal;">
                   <h2>{{"SMART_SCALE_LOG" | translate}}</h2>
                 </div>
@@ -796,7 +796,7 @@
                 <h2>{{"PRESSURE_THRESHOLD_BAR" | translate}}</h2>
               </div>
               <ion-range [disabled]='isScrolling' style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="0.1" snaps="true" max="12"
-                step="0.1" (ionBlur)="saveSettings()" [(ngModel)]="settings.pressure_threshold_bar">
+                step="0.1" (ngModelChange)="saveSettings()" [(ngModel)]="settings.pressure_threshold_bar">
                 <div class='ion-label'
                   slot="end">{{this.uiHelper.toFixedIfNecessary(settings.pressure_threshold_bar,1)}}</div>
               </ion-range>
@@ -874,7 +874,7 @@
                 <h2>{{"TEMPERATURE.THRESHOLD_TEMP" | translate}}</h2>
               </div>
               <ion-range [disabled]='isScrolling' style="padding-top:0;padding-bottom:0px;padding-right:0px;" min="60" snaps="true" max="100"
-                step="0.1" (ionBlur)="saveSettings()" [(ngModel)]="settings.temperature_threshold_temp">
+                step="0.1" (ngModelChange)="saveSettings()" [(ngModel)]="settings.temperature_threshold_temp">
                 <div class='ion-label'
                   slot="end">{{this.uiHelper.toFixedIfNecessary(settings.temperature_threshold_temp,1)}}</div>
               </ion-range>
