@@ -6,8 +6,8 @@ import { Logger } from './common/logger';
 declare var ble: any;
 export class DiyRustCoffeeScale extends BluetoothScale {
   public static DEVICE_NAME = 'coffee-scale';
-  public static DATA_SERVICE = '0x181D';
-  public static DATA_CHARACTERISTIC = '0x2A9D';
+  public static DATA_SERVICE = '181D';
+  public static DATA_CHARACTERISTIC = '2A9D';
   // Constructor
 
   // Class Members

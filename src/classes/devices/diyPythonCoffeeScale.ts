@@ -6,8 +6,8 @@ import { Logger } from './common/logger';
 declare var ble: any;
 export class DiyPythonCoffeeScale extends BluetoothScale {
   public static DEVICE_NAME = 'mpy-coffee';
-  public static DATA_SERVICE = '0x1815';
-  public static DATA_CHARACTERISTIC = '0x2A59';
+  public static DATA_SERVICE = '1815';
+  public static DATA_CHARACTERISTIC = '2A59';
   // Constructor
 
   // Class Members
