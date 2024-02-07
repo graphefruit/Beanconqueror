@@ -186,7 +186,7 @@
       tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only"></ion-icon>
     </ion-button>
-    <ion-button (click)="__tareScale()" *ngIf="brewComponent.smartScaleConnected()" class="big-icon-only" fill="clear"
+    <ion-button (click)="__tareScale()" *ngIf="brewComponent.smartScaleConnected() && brewComponent.smartScaleSupportsTaring()" class="big-icon-only" fill="clear"
       tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-scale-tare" slot="icon-only"></ion-icon>
     </ion-button>

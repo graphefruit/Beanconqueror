@@ -854,6 +854,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     const scale: BluetoothScale = this.bleManager.getScale();
     return !!scale;
   }
+  public smartScaleSupportsTaring() {
+    try {
+      return this.bleManager.getScale().supportsTaring;
+    } catch (ex) {
+      return false;
+    }
+  }
 
   public pressureDeviceConnected() {
     if (!this.platform.is('cordova')) {
