@@ -82,9 +82,11 @@ export class WelcomePopoverComponent implements OnInit {
   }
 
   public next() {
-    this.slide++;
-    this.welcomeSlider?.nativeElement.swiper.slideNext();
-    this.__triggerUpdate();
+    setTimeout(() => {
+      this.slide++;
+      this.welcomeSlider?.nativeElement.swiper.slideNext();
+      this.__triggerUpdate();
+    }, 500);
   }
 
   public async addBean() {
