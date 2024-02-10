@@ -55,6 +55,10 @@ export class VisualizerService {
         vS.mapPreparation(_brew.getPreparation());
         vS.mapMill(_brew.getMill());
         vS.brewFlow = await this.readFlowProfile(_brew);
+        // Put the actual visualizer id into the request if we stored one
+        if (_brew.customInformation && _brew.customInformation.visualizer_id) {
+          vS.visualizerId = _brew.customInformation.visualizer_id;
+        }
       } catch (ex) {}
       if (vS.brewFlow === null || vS.brewFlow === undefined) {
         this.uiLog.log('Upload visualizer shot - We did not find any brewflow');

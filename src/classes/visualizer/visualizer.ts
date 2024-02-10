@@ -20,6 +20,7 @@ export class Visualizer implements IVisualizer {
 
   public brewFlow: BrewFlow;
   public application: string;
+  public visualizerId: string;
 
   constructor() {
     this.application = 'BEANCONQUEROR';
@@ -29,6 +30,7 @@ export class Visualizer implements IVisualizer {
     this.preparation = new PreparationVisualizer();
     this.water = new WaterVisualizer();
     this.brewFlow = new BrewFlow();
+    this.visualizerId = '';
   }
 
   public mapBrew(brew: Brew) {
