@@ -278,6 +278,7 @@ export class UIExcel {
     header.push(this.translate.instant('BEAN_DATA_URL'));
     header.push(this.translate.instant('BEAN_DATA_EAN'));
     header.push(this.translate.instant('NOTES'));
+    header.push(this.translate.instant('BREW_DATA_RATING'));
     header.push(this.translate.instant('EXCEL.BEAN.CREATION_DATE'));
     header.push(this.translate.instant('EXCEL.BEAN.ID'));
     header.push(this.translate.instant('ARCHIVED'));
@@ -304,6 +305,7 @@ export class UIExcel {
         bean.url,
         bean.ean_article_number,
         bean.note,
+        bean.rating,
         this.uiHelper.formateDate(
           bean.config.unix_timestamp,
           this.settings.date_format + ' HH:mm:ss'
