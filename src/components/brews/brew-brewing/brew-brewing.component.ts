@@ -235,7 +235,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
     let timestamp: string = this.data.brew_time + '';
     if (this.settings.brew_milliseconds) {
-      timestamp = '.' + this.data.brew_time_milliseconds;
+      timestamp = timestamp + '.' + this.data.brew_time_milliseconds;
     }
     scriptInformation =
       timestamp +
