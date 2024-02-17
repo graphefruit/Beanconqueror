@@ -198,6 +198,12 @@ export class SettingsPage implements OnInit {
   }
 
   public async findAndConnectRefractometerDevice(_retry: boolean = false) {
+    if (this.platform.is('ios')) {
+      await this.uiAlert.showLoadingSpinner();
+      await this.bleManager.enableIOSBluetooth();
+      await this.uiAlert.hideLoadingSpinner();
+    }
+
     const hasLocationPermission: boolean =
       await this.bleManager.hasLocationPermission();
     if (!hasLocationPermission) {
@@ -295,6 +301,12 @@ export class SettingsPage implements OnInit {
   }
 
   public async findAndConnectTemperatureDevice(_retry: boolean = false) {
+    if (this.platform.is('ios')) {
+      await this.uiAlert.showLoadingSpinner();
+      await this.bleManager.enableIOSBluetooth();
+      await this.uiAlert.hideLoadingSpinner();
+    }
+
     const hasLocationPermission: boolean =
       await this.bleManager.hasLocationPermission();
     if (!hasLocationPermission) {
@@ -367,6 +379,12 @@ export class SettingsPage implements OnInit {
   }
 
   public async findAndConnectPressureDevice(_retry: boolean = false) {
+    if (this.platform.is('ios')) {
+      await this.uiAlert.showLoadingSpinner();
+      await this.bleManager.enableIOSBluetooth();
+      await this.uiAlert.hideLoadingSpinner();
+    }
+
     const hasLocationPermission: boolean =
       await this.bleManager.hasLocationPermission();
     if (!hasLocationPermission) {
@@ -438,6 +456,11 @@ export class SettingsPage implements OnInit {
   }
 
   public async findAndConnectScale(_retry: boolean = false) {
+    if (this.platform.is('ios')) {
+      await this.uiAlert.showLoadingSpinner();
+      await this.bleManager.enableIOSBluetooth();
+      await this.uiAlert.hideLoadingSpinner();
+    }
     const hasLocationPermission: boolean =
       await this.bleManager.hasLocationPermission();
     if (!hasLocationPermission) {
