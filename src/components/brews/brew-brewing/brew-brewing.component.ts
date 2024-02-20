@@ -1401,6 +1401,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           scaleType === ScaleType.DIFLUIDMICROBALANCE
         ) {
           //The microbalance has somehow an firmware issue, that when starting on autolistening mode and don't delay the start commando, the scale goes corrupt.
+
           scale.setTimer(SCALE_TIMER_COMMAND.START);
         } else {
           scale.setTimer(SCALE_TIMER_COMMAND.START);
@@ -3612,6 +3613,17 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             // We checked that we're not going to degreese
             if (weAreDecreasing === false) {
               // I don't know if old_weight could just be bigger then 0
+              weight = oldWeight;
+            }
+          }
+        } else {
+          //Check if the weight before this actual weight is less then factor 2.
+          //like we got jumps weight 25.8 grams, next was 259 grams.
+          if (this.flowProfileTempAll.length >= 2) {
+            if (oldWeight * 2 >= weight) {
+              //All good factor is matched
+            } else {
+              //Nothing good, somehow we got spikes.
               weight = oldWeight;
             }
           }

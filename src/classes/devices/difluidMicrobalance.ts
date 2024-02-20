@@ -147,7 +147,10 @@ export class DifluidMicrobalance extends BluetoothScale {
       difluidRawStatus[5] === 2
     ) {
       // left button pressed - starting timer
-      this.timerEvent.emit(null);
+      this.timerEvent.emit({
+        command: SCALE_TIMER_COMMAND.START,
+        data: undefined,
+      });
     }
     if (difluidRawStatus.length >= 19 && difluidRawStatus[3] === 0) {
       const weight = await this.getInt(difluidRawStatus.slice(5, 9));
