@@ -1,4 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Brew } from 'src/classes/brew/brew';
 
@@ -13,12 +20,31 @@ export class BrewPopoverExtractionComponent implements OnInit {
   public static COMPONENT_ID = 'brew-extraction';
   @Input() public brew: Brew;
 
+  @ViewChild('extractionChartContent', { read: ElementRef })
+  public extractionChartContent: ElementRef;
+
+  protected heightInformationBlock: number = 50;
+  protected widthInformationBlock: number = 50;
+
   constructor(private readonly modalController: ModalController) {}
 
-  ngOnInit() {
+  public ngOnInit() {}
+  public ionViewDidEnter(): void {
     if (this.brew) {
-      this.initializeExtractionChart();
+      setTimeout(() => {
+        this.initializeExtractionChart();
+      }, 50);
     }
+  }
+
+  @HostListener('window:resize')
+  @HostListener('window:orientationchange', ['$event'])
+  public onOrientationChange() {
+    setTimeout(() => {
+      try {
+        this.initializeExtractionChart();
+      } catch (ex) {}
+    }, 50);
   }
 
   public initializeExtractionChart(): void {
@@ -36,7 +62,7 @@ export class BrewPopoverExtractionComponent implements OnInit {
         },
         {
           x: [17, 21.5, 26, 17, 21.5, 26, 17, 21.5, 26],
-          y: [1.75, 1.75, 1.75, 1.4, 1.4, 1.4, 1.15, 1.15, 1.15],
+          y: [1.72, 1.72, 1.72, 1.4, 1.4, 1.4, 1.15, 1.15, 1.15],
           mode: 'text',
           text: [
             'STRONG<br>underextracted',
@@ -54,11 +80,13 @@ export class BrewPopoverExtractionComponent implements OnInit {
           type: 'scatter',
         },
       ];
+      const el = this.extractionChartContent.nativeElement;
 
-      const chartWidth: number = document.getElementById(
-        'canvasContainerExtraction'
-      ).offsetWidth;
-      const chartHeight: number = 500;
+      this.heightInformationBlock = el.offsetHeight - 40;
+      this.widthInformationBlock = el.offsetWidth;
+
+      const chartWidth: number = this.widthInformationBlock;
+      const chartHeight: number = this.heightInformationBlock;
       const extractionChartLayout = {
         width: chartWidth,
         height: chartHeight,

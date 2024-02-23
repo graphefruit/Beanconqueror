@@ -991,7 +991,6 @@ export class BrewDetailComponent implements OnInit {
       BREW_TRACKING.TITLE,
       BREW_TRACKING.ACTIONS.EXTRACTION_GRAPH
     );
-    //Animated false, else backdrop would sometimes not disappear and stay until user touches again.
     const popover = await this.modalController.create({
       component: BrewPopoverExtractionComponent,
       animated: true,
