@@ -153,7 +153,7 @@
     "BREW_DATA_ATTACHMENTS": "Attachments \/ Photos",
     "BREW_DATA_RATING": "Rating",
     "BREW_DATA_CALCULATED_COFFEE_BREW_TIME": "Coffee Brew Time",
-    "BREW_DATA_TDS": "Total dissolved solids",
+    "BREW_DATA_TDS": "Total dissolved solids %",
     "BREW_DATA_CALCULATED_EXTRACTION_YIELD": "Extraction Yield %",
     "BREW_INFORMATION_BREW_RATIO": "Brew Ratio",
     "BREW_INFORMATION_BEAN_AGE": "Bean Age",
@@ -1773,5 +1773,6 @@
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_ESPRESSO_AXIS_FULL_SCREEN_SCREEN": "Espresso - Full Screen",
     "PAGE_SETTINGS_DATE_FORMAT": "Date format",
     "PAGE_SETTINGS_LANGUAGE_FRANCE": "France",
-    "PAGE_SETTINGS_LANGUAGE_INDONESIA": "Indonesian"
+    "PAGE_SETTINGS_LANGUAGE_INDONESIA": "Indonesian",
+    "EXTRACTION_CHART_TITLE": "Extraction Chart"
 }

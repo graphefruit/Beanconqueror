@@ -7,7 +7,10 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ModalController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import { Brew } from 'src/classes/brew/brew';
+import { Preparation } from 'src/classes/preparation/preparation';
+import { PREPARATION_STYLE_TYPE } from 'src/enums/preparations/preparationStyleTypes';
 
 declare var Plotly;
 
@@ -26,13 +29,16 @@ export class BrewPopoverExtractionComponent implements OnInit {
   protected heightInformationBlock: number = 50;
   protected widthInformationBlock: number = 50;
 
-  constructor(private readonly modalController: ModalController) {}
+  constructor(
+    private readonly modalController: ModalController,
+    private translate: TranslateService
+  ) {}
 
   public ngOnInit() {}
   public ionViewDidEnter(): void {
     if (this.brew) {
       setTimeout(() => {
-        this.initializeExtractionChart();
+        this.initializeExtractionChart(this.brew.getPreparation());
       }, 50);
     }
   }
@@ -42,14 +48,14 @@ export class BrewPopoverExtractionComponent implements OnInit {
   public onOrientationChange() {
     setTimeout(() => {
       try {
-        this.initializeExtractionChart();
+        this.initializeExtractionChart(this.brew.getPreparation());
       } catch (ex) {}
     }, 50);
   }
 
-  public initializeExtractionChart(): void {
+  public initializeExtractionChart(preparation: Preparation): void {
     try {
-      const extractionChartData = [
+      let extractionChartData = [
         {
           x: [19, 24, 24, 19, 19],
           y: [1.25, 1.25, 1.5, 1.5, 1.25],
@@ -105,19 +111,37 @@ export class BrewPopoverExtractionComponent implements OnInit {
         extendiciclecolors: false,
         xaxis: {
           title: {
-            text: 'Extraction Yield (%)',
+            text: this.translate.instant(
+              'BREW_DATA_CALCULATED_EXTRACTION_YIELD'
+            ),
           },
           fixedrange: true,
           range: [14, 28],
         },
         yaxis: {
           title: {
-            text: 'TDS (%)',
+            text: this.translate.instant('BREW_DATA_TDS'),
           },
           fixedrange: true,
           range: [1.1, 1.8],
         },
       };
+
+      if (preparation.style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
+        extractionChartData = [
+          {
+            x: [18, 22, 22, 18, 18],
+            y: [8, 8, 12, 12, 8],
+            line: { color: '#CDC2AC' },
+          },
+          {
+            x: [this.brew.getExtractionYield()],
+            y: [this.brew.tds],
+            marker: { color: '#CDC2AC', size: 15 },
+          },
+        ];
+        extractionChartLayout.yaxis.range = [4, 16];
+      }
 
       Plotly.newPlot(
         'extractionChart',
