@@ -33,6 +33,8 @@ import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UIMillStorage } from '../../../services/uiMillStorage';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIWaterStorage } from '../../../services/uiWaterStorage';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import BREW_TRACKING from '../../../data/tracking/brewTracking';
 import { BrewBrixCalculatorComponent } from '../../../app/brew/brew-brix-calculator/brew-brix-calculator.component';
 import { BrewBeverageQuantityCalculatorComponent } from '../../../app/brew/brew-beverage-quantity-calculator/brew-beverage-quantity-calculator.component';
 
@@ -84,6 +86,7 @@ import { ReferenceGraph } from '../../../classes/brew/referenceGraph';
 import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
 import { AppEventType } from '../../../enums/appEvent/appEvent';
 import { EventQueueService } from '../../../services/queueService/queue-service.service';
+import { BrewPopoverExtractionComponent } from 'src/app/brew/brew-popover-extraction/brew-popover-extraction.component';
 
 declare var cordova;
 declare var Plotly;
@@ -208,6 +211,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     private readonly uiWaterStorage: UIWaterStorage,
     private readonly bleManager: CoffeeBluetoothDevicesService,
     public readonly uiHelper: UIHelper,
+    private readonly modalCtrl: ModalController,
+    private readonly uiAnalytics: UIAnalytics,
     private readonly uiExcel: UIExcel,
     private readonly uiFileHelper: UIFileHelper,
     private readonly screenOrientation: ScreenOrientation,
@@ -4338,5 +4343,25 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.data.reference_flow_profile = new ReferenceGraph();
 
     await this.instancePreparationDevice(brew);
+  }
+
+  public async showExtractionChart(event): Promise<void> {
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    this.uiAnalytics.trackEvent(
+      BREW_TRACKING.TITLE,
+      BREW_TRACKING.ACTIONS.EXTRACTION_GRAPH
+    );
+    //Animated false, else backdrop would sometimes not disappear and stay until user touches again.
+    const popover = await this.modalCtrl.create({
+      component: BrewPopoverExtractionComponent,
+      animated: true,
+      componentProps: { brew: this.data },
+      id: BrewPopoverExtractionComponent.COMPONENT_ID,
+      cssClass: 'popover-extraction',
+      initialBreakpoint: 1,
+    });
+    await popover.present();
+    const data = await popover.onWillDismiss();
   }
 }

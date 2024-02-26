@@ -182,6 +182,7 @@ import { GraphEditComponent } from '../graph-section/graph/graph-edit/graph-edit
 import { GraphAddComponent } from '../graph-section/graph/graph-add/graph-add.component';
 import { GraphDetailComponent } from '../graph-section/graph/graph-detail/graph-detail.component';
 import { GraphDisplayCardComponent } from '../../components/graph-display-card/graph-display-card.component';
+import { BrewPopoverExtractionComponent } from '../brew/brew-popover-extraction/brew-popover-extraction.component';
 
 @NgModule({
   declarations: [
@@ -340,6 +341,7 @@ import { GraphDisplayCardComponent } from '../../components/graph-display-card/g
     RoastingMachinePopoverActionsComponent,
     WaterAddComponent,
     BrewRatioCardComponent,
+    BrewPopoverExtractionComponent,
   ],
   imports: [
     CommonModule,
@@ -544,6 +546,7 @@ import { GraphDisplayCardComponent } from '../../components/graph-display-card/g
     RoastingMachinePopoverActionsComponent,
     WaterAddComponent,
     BrewRatioCardComponent,
+    BrewPopoverExtractionComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

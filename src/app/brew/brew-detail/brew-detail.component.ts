@@ -38,6 +38,7 @@ import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
 import { UIGraphStorage } from '../../../services/uiGraphStorage.service';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { Graph } from '../../../classes/graph/graph';
+import { BrewPopoverExtractionComponent } from '../brew-popover-extraction/brew-popover-extraction.component';
 
 declare var Plotly;
 @Component({
@@ -982,5 +983,23 @@ export class BrewDetailComponent implements OnInit {
 
       return 0;
     }
+  }
+  public async showExtractionChart(event): Promise<void> {
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    this.uiAnalytics.trackEvent(
+      BREW_TRACKING.TITLE,
+      BREW_TRACKING.ACTIONS.EXTRACTION_GRAPH
+    );
+    const popover = await this.modalController.create({
+      component: BrewPopoverExtractionComponent,
+      animated: true,
+      componentProps: { brew: this.data },
+      id: BrewPopoverExtractionComponent.COMPONENT_ID,
+      cssClass: 'popover-extraction',
+      initialBreakpoint: 1,
+    });
+    await popover.present();
+    const data = await popover.onWillDismiss();
   }
 }

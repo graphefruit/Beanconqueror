@@ -1,0 +1,19 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      {{brew.getPreparation().style_type === 'ESPRESSO' ? 
+      ("PREPARATION_STYLE_ESPRESSO" | translate) : ("PREPARATION_STYLE_POUR_OVER" | translate)}} - {{"EXTRACTION_CHART_TITLE" | translate}}
+      </ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()" class="big-icon-only">
+        <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content #extractionChartContent>
+  <ion-card style='padding:10px;'>
+      <div id="extractionChart"></div>
+  </ion-card>
+</ion-content>
+
