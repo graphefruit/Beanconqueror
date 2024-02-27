@@ -139,7 +139,7 @@
   <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.note,initialBeanData.note)">
     <ion-label id='note' position="stacked">{{"NOTES" | translate }}</ion-label>
     <ion-textarea style='margin-top:20px;' aria-labelledby='note' #note="ngModel" [(ngModel)]="data.note" autocapitalize="sentences" autocomplete="true"
-                  autocorrect="true"
+                  autocorrect="true" [autoGrow]="true"
                   name="note" placeholder="{{'BEAN.PLACE_HOLDER.NOTES' | translate}}" rows="5" spellcheck="true"></ion-textarea>
   </ion-item>
   <photo-add *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.attachments,initialBeanData.attachments)"  [(data)]="data" ></photo-add>
