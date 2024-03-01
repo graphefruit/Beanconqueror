@@ -7,7 +7,7 @@ declare var cordova;
 export class XeniaDevice extends PreparationDevice {
   public scriptList: Array<{ INDEX: number; TITLE: string }> = [];
 
-  private apiVersion: number = 2;
+  private apiVersion: number = 1;
   constructor(protected httpClient: HttpClient, _preparation: Preparation) {
     super(httpClient, _preparation);
 
