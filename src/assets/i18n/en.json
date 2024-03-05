@@ -1024,6 +1024,7 @@
             "DESCRIPTION": [
                 "<b>More languages<\/b>",
                 "Support of French - Thanks to Yannick",
+                "Support of Indonesian - Thanks to Bondan, Ganjar",
                 "",
                 "<b>Bluetooth Scales<\/b>",
                 "Supporting a new DIY-Bluetooth-Scale (Rust & Python Firmware)",

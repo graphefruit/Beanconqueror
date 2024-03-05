@@ -380,19 +380,22 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           this.initializeFlowChart();
           setTimeout(() => {
             // Fix that you also see the brew weight
-            const weightEl = this.smartScaleWeightEl.nativeElement;
-            if (
-              this.data.getPreparation().getPresetStyleType() ===
-              PREPARATION_STYLE_TYPE.ESPRESSO
-            ) {
-              weightEl.textContent = this.data.brew_beverage_quantity + ' g';
-            } else {
-              if (this.data.brew_beverage_quantity > 0) {
+            try {
+              const weightEl = this.smartScaleWeightEl.nativeElement;
+              if (
+                this.data.getPreparation().getPresetStyleType() ===
+                PREPARATION_STYLE_TYPE.ESPRESSO
+              ) {
                 weightEl.textContent = this.data.brew_beverage_quantity + ' g';
               } else {
-                weightEl.textContent = this.data.brew_quantity + ' g';
+                if (this.data.brew_beverage_quantity > 0) {
+                  weightEl.textContent =
+                    this.data.brew_beverage_quantity + ' g';
+                } else {
+                  weightEl.textContent = this.data.brew_quantity + ' g';
+                }
               }
-            }
+            } catch (ex) {}
           }, 350);
         }
       }
