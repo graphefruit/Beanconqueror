@@ -161,6 +161,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   private flowProfileTempAll = [];
   private flowTime: number = undefined;
   private flowSecondTick: number = 0;
+  private flowNCalculation: number = 0;
   private startingFlowTime: number = undefined;
   private brewFlowGraphSubject: EventEmitter<any> = new EventEmitter();
   private brewPressureGraphSubject: EventEmitter<any> = new EventEmitter();
@@ -1793,6 +1794,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
       this.flow_profile_raw = new BrewFlow();
       this.flowProfileTempAll = [];
+      this.flowNCalculation = 0;
 
       // We just initialize flow chart for the pressure sensor when the type is espresso
       if (
@@ -1821,6 +1823,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       // The pressure or weight went down and we need to reset the graph now still
       this.flow_profile_raw = new BrewFlow();
       this.flowProfileTempAll = [];
+      this.flowNCalculation = 0;
       this.initializeFlowChart(false);
       // Give the buttons a bit of time, 100ms won't be an issue for user flow
       await new Promise((resolve) => {
@@ -3877,9 +3880,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.flowTime = this.getTime();
       this.flowSecondTick = 0;
 
+      this.flowNCalculation = this.flowProfileArr.length;
+
       this.flowProfileArr = [];
       this.flowProfileArrObjs = [];
       this.flowProfileArrCalculated = [];
+
       this.updateChart();
     }
 
@@ -3908,6 +3914,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     } else {
       //Fallback if N cant be 3
       n = this.flowProfileTempAll.length;
+    }
+    if (this.flowNCalculation > 0 && this.flowNCalculation > 3) {
+      n = this.flowNCalculation;
     }
 
     realtimeWaterFlow.timestampdelta = timeStampDelta;
