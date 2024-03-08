@@ -1022,35 +1022,36 @@
         "7.1.0": {
             "TITLE": "Versi 7.1.0: Apa yang baru",
             "DESCRIPTION": [
-                "",
+                "<b>Lebih banyak bahasa<\/b>",
                 "Dukungan Perancis - Terima kasih kepada Yannick",
-                "",
+                "Dukungan Bahasa Indonesia - Terima kasih Bondan, Ganjar",
                 "",
                 "Mendukung timbangan Bluetooth DIY (Firmware Rust & Python)",
                 "Dukungan DiFluid Microbalance Ti",
                 "Meningkatkan perhitungan flow-rate untuk semua timbangan",
-                "",
+                "Meningkatkan perhitungan aliran untuk semua skala",
                 "",
                 "Menambahkan lebih banyak informasi ke kartu referensi pemilihan",
-                "",
+                "Menambahkan lebih banyak informasi ke kartu referensi pemilihan",
                 "",
                 "Bluetooth-Scales - Menambahkan tombol taring ke bagian atas toolbar",
-                "",
+                "Bluetooth-Scales - Menambahkan tombol taring ke bagian atas toolbar",
                 "",
                 "Dukungan menyalin berbagai informasi",
-                "",
+                "Dukungan menyalin berbagai informasi",
                 "",
                 "Parameter potassium telah ditambahkan",
-                "",
+                "Menambahkan parameter potasium",
                 "",
                 "Parameter RPM sekarang terlihat dalam tampilan daftar dan tampilan pilihan",
-                "",
+                "Parameter RPM kini terlihat di tampilan berderet dan tampilan pilihan",
                 "",
                 "Tentukan sumbu waktu Anda sendiri untuk filter atau espresso dengan perangkat bluetooth yang terhubung",
                 "Menambahkan format tanggal yang berbeda agar sesuai dengan format Amerika",
+                "Menambahkan format tanggal yang berbeda agar sesuai dengan format Amerika",
                 "",
-                "",
-                "Perbaikan bug minor"
+                "Perbaikan bug minor",
+                "Perbaikan bug kecil"
             ]
         }
     },
@@ -1428,7 +1429,7 @@
             "LOCATION": "Untuk mencari timbangan bluetooth, aplikasi perlu akses lokasi.",
             "BLUETOOTH": "Untuk mencari timbangan bluetooth, aplikasi perlu akses ke bluetooth"
         },
-        "INFORMATION_DESCRIPTION": "Timbangan yang didukung: Decent Scale, Acaia, Felicita, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale and Eureka Precisa. Catatan: Jika Eureka Precisa menerima nilai negatif, pengatur waktu akan berhenti."
+        "INFORMATION_DESCRIPTION": "Timbangan yang didukung: Decent Scale, Acaia, Felicita, Hiroia Jimmy, Skale 2, DiFluid Microbalance, DiFluid Microbalance Ti,Smartchef Scale and Eureka Precisa. Catatan: Jika Eureka Precisa menerima nilai negatif, pengatur waktu akan berhenti."
     },
     "QR": {
         "WRONG_QRCODE_DESCRIPTION": "Kode QR tidak valid atau konten tidak dikenal",
@@ -1690,11 +1691,11 @@
     "PAGE_SETTINGS_LANGUAGE_FRENCH": "Perancis",
     "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": "Data tidak dapat disimpan karena pembatasan Android",
     "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "Ponsel Android Anda tidak mendukung sistem file eksternal, jadi Anda perlu mengunduh file ZIP tanpa file media. Untuk informasi lebih lanjut, silakan kunjungi https:\/\/beanconqueror.com\/faq.",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK": "",
-    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK_DESCRIPTION": "",
-    "PAGE_BEANS_DISCARD_CONFIRM": "",
-    "PAGE_BREW_DISCARD_CONFIRM": "",
-    "NO_ENTRIES_FOUND": "",
+    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK": "Pesan keamanan sebelum keluar?",
+    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK_DESCRIPTION": "Periksa apakah data telah berubah saat menambah\/mengedit biji atau penyeduhan; jika ya, peringatan keamanan akan ditampilkan saat kembali.",
+    "PAGE_BEANS_DISCARD_CONFIRM": "Informasi penyeduhan telah diubah. Apakah Anda yakin ingin meninggalkan halaman tanpa menyimpan?",
+    "PAGE_BREW_DISCARD_CONFIRM": "Informasi penyeduhan telah dimodifikasi. Apakah Anda yakin ingin meninggalkan halaman tanpa menyimpan?",
+    "NO_ENTRIES_FOUND": "Tidak ada entri yang ditemukan",
     "POPOVER_BEANS_OPTION_REPEAT": "Ulangi seduhan terakhir",
     "REPEAT_LAST_BREW": "Ulangi seduhan terakhir",
     "REPEAT_BEST_BREW": "Ulangi seduhan terbaik",
@@ -1733,10 +1734,10 @@
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_FILTER_FLOW": "Filter - Flow",
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_WEIGHT": "Espresso - Berat",
     "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_FLOW": "Espresso - Flow",
-    "SMART_SCALE_IGNORE_INCOMING_WEIGHT": "",
-    "SMART_SCALE_IGNORE_INCOMING_WEIGHT_TOOLTIP": "",
-    "BREWS_ACTIVE": "",
-    "BREWS_ARCHIVED": "",
+    "SMART_SCALE_IGNORE_INCOMING_WEIGHT": "Abaikan berat transfer saat ini.",
+    "SMART_SCALE_IGNORE_INCOMING_WEIGHT_TOOLTIP": "Muncul tombol baru di bagian pembuatan kopi, yang akan mengabaikan nilai berat baru dari timbangan bluetooth.",
+    "BREWS_ACTIVE": "Seduh Aktif",
+    "BREWS_ARCHIVED": "Seduhan yang diarsipkan",
     "GRAPHS": "Grafik",
     "GRAPH_SECTION": {
         "NAV_GRAPH": "Grafik",
@@ -1775,5 +1776,5 @@
     "PAGE_SETTINGS_DATE_FORMAT": "Format tanggal",
     "PAGE_SETTINGS_LANGUAGE_FRANCE": "Perancis",
     "PAGE_SETTINGS_LANGUAGE_INDONESIA": "Indonesia",
-    "EXTRACTION_CHART_TITLE": ""
+    "EXTRACTION_CHART_TITLE": "Bagan Ekstraksi"
 }
