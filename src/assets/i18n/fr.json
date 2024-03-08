@@ -1024,6 +1024,7 @@
             "DESCRIPTION": [
                 "<b> Plus de langues <\/b>",
                 "Traduction française - Merci à Yannick",
+                "Soutien de l'Indonésien - Merci à Bondan, Ganjar",
                 "",
                 "<b>Balances Bluetooth<\/b>",
                 "Prise en charge d'une nouvelle balance DIY-Bluetooth (firmware Rust & Python)",
@@ -1428,7 +1429,7 @@
             "LOCATION": "Pour trouver des balances Bluetooth, l'application doit accéder à l'emplacement.",
             "BLUETOOTH": "Pour trouver des balances Bluetooth, l'application doit accéder à bluetooth."
         },
-        "INFORMATION_DESCRIPTION": "Les balances supportées sont : Decent Scale, Acaia, Felicita, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale, Blackcoffee.io et Eureka Precisa. Remarque : Si la Eureka Precisa reçoit une valeur négative, le minuteur s'arrête"
+        "INFORMATION_DESCRIPTION": "Les balances supportées sont : Decent Scale, Acaia, Felicita, Hiroia Jimmy, Skale 2, DiFluid Microbalance, DiFluid Microbalance Ti, Smartchef Scale, Blackcoffee.io et Eureka Precisa. Remarque : Si la Eureka Precisa reçoit une valeur négative, le minuteur s'arrête"
     },
     "QR": {
         "WRONG_QRCODE_DESCRIPTION": "Code QR invalide ou contenu non reconnu",
