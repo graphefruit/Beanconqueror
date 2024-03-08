@@ -1024,6 +1024,7 @@
             "DESCRIPTION": [
                 "<b>Weitere Sprachen<\/b>",
                 "Unterstützung von Französisch - Danke an Yannick",
+                "Unterstützung von Indonesisch – Danke an Bondan, Ganjar",
                 "",
                 "<b>Bluetooth Waagen<\/b>",
                 "Unterstützung einer neuen DIY-Bluetooth-Waage (Rust & Python Firmware)",
@@ -1428,7 +1429,7 @@
             "LOCATION": "Um Bluetooth-Waagen zu finden, muss der Standort freigegeben werden",
             "BLUETOOTH": "Um Bluetooth-Waagen zu finden, muss Bluetooth freigegeben werden"
         },
-        "INFORMATION_DESCRIPTION": "Unterstütze Waagen sind: Decent Scale sowie Acaia Scales, Felicita Scales, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale, Blackcoffee.io und Eureka Precisa. Achtung: Falls die Eureka Precisa einen negativen Wert bekommt, stoppt der Timer automatisch"
+        "INFORMATION_DESCRIPTION": "Unterstütze Waagen sind: Decent Scale sowie Acaia Scales, Felicita Scales, Hiroia Jimmy, Skale 2, DiFluid Microbalance, DiFluid Microbalance Ti, Smartchef Scale, Blackcoffee.io und Eureka Precisa. Achtung: Falls die Eureka Precisa einen negativen Wert bekommt, stoppt der Timer automatisch"
     },
     "QR": {
         "WRONG_QRCODE_DESCRIPTION": "Falscher QR-Code oder falscher Inhalt",

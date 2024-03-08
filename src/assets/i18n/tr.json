@@ -1024,6 +1024,7 @@
             "DESCRIPTION": [
                 "<b>Daha fazla dil<\/b>",
                 "Fransızca desteği - Yannick'e teşekkürler",
+                "Endonezya'nın Desteği - Bondan, Ganjar'a teşekkürler",
                 "",
                 "<b>Bluetooth Tartılar<\/b>",
                 "Yeni bir DIY-Bluetooth Tartısının Desteklenmesi (Rust & Python Firmware)",
@@ -1428,7 +1429,7 @@
             "LOCATION": "Bluetooth ile terazisiyi bulmak için uygulamanın konuma erişmesi gerekiyor.",
             "BLUETOOTH": "Bluetooth ile terazisiyi bulmak için uygulamanın bluetooth erişimi gerekiyor."
         },
-        "INFORMATION_DESCRIPTION": "Desteklenen tartılar: Decent Tartı, Acaia Tartı, Felicita Tartı, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale, Blackcoffee.io and Eureka Precisa. Care: If the Eureka Precisa recieves a negative value, the timer stops"
+        "INFORMATION_DESCRIPTION": "Desteklenen tartılar: Decent Tartı, Acaia Tartı, Felicita Tartı, Hiroia Jimmy, Skale 2, DiFluid Microbalance, DiFluid Microbalance Ti,Smartchef Scale, Blackcoffee.io and Eureka Precisa. Care: If the Eureka Precisa recieves a negative value, the timer stops"
     },
     "QR": {
         "WRONG_QRCODE_DESCRIPTION": "Yanlış qr kodu veya yanlış içerik",

@@ -1024,6 +1024,7 @@
             "DESCRIPTION": [
                 "<b>Más idiomas<\/b>",
                 "Añadida traducción al francés - Gracias a Yannick",
+                "Apoyo de Indonesia - Gracias a Bondan, Ganjar",
                 "",
                 "<b>Básculas Bluetooth<\/b>",
                 "Añadido soporte para una báscula Bluetooth DYI (Rust & Python Firmware)",
@@ -1428,7 +1429,7 @@
             "LOCATION": "Para encontrar básculas bluetooth, la aplicación necesita acceder a la ubicación.",
             "BLUETOOTH": "Para encontrar básculas bluetooth, la aplicación necesita acceso al bluetooth"
         },
-        "INFORMATION_DESCRIPTION": "Básculas compatibles: Decent, Acaia, Felicita, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale, Blackcoffee.io y Eureka Precise. Atención: Si la báscula Eureka Precise recibe un valor negativo, el temporizador se detiene"
+        "INFORMATION_DESCRIPTION": "Básculas compatibles: Decent, Acaia, Felicita, Hiroia Jimmy, Skale 2, DiFluid Microbalance, DiFluid Microbalance Ti, Smartchef Scale, Blackcoffee.io y Eureka Precise. Atención: Si la báscula Eureka Precise recibe un valor negativo, el temporizador se detiene"
     },
     "QR": {
         "WRONG_QRCODE_DESCRIPTION": "Código QR incorrecto o contenido incorrecto",
