@@ -3906,17 +3906,18 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     let timeStampDelta: any = 0;
     let n: any = 3;
 
+    if (this.flowNCalculation > 0 && this.flowNCalculation > 3) {
+      n = this.flowNCalculation;
+    } else {
+      //Fallback if N cant be 3
+      n = this.flowProfileTempAll.length;
+    }
+
     // After the flowProfileTempAll will be stored directly, we'd have one entry at start already, but we need to wait for another one
     if (this.flowProfileTempAll.length > 2) {
       timeStampDelta =
         flowObj.unixTime -
         this.flowProfileTempAll[this.flowProfileTempAll.length - n].unixTime;
-    } else {
-      //Fallback if N cant be 3
-      n = this.flowProfileTempAll.length;
-    }
-    if (this.flowNCalculation > 0 && this.flowNCalculation > 3) {
-      n = this.flowNCalculation;
     }
 
     realtimeWaterFlow.timestampdelta = timeStampDelta;
