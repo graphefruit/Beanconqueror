@@ -26,7 +26,7 @@ import { UIHelper } from './uiHelper';
 import { BEAN_MIX_ENUM } from '../enums/beans/mix';
 import { ROASTS_ENUM } from '../enums/beans/roasts';
 import { BEAN_ROASTING_TYPE_ENUM } from '../enums/beans/beanRoastingType';
-import { BeanAssociatedBrewsComponent } from '../app/beans/bean-associated-brews/bean-associated-brews.component';
+import { AssociatedBrewsComponent } from '../app/brew/associated-brews/associated-brews.component';
 import { BrewCuppingComponent } from '../app/brew/brew-cupping/brew-cupping.component';
 
 /**
@@ -204,16 +204,6 @@ export class UIBeanHelper {
     await modal.onWillDismiss();
   }
 
-  public async showAssociatedBrewsForBean(_bean: Bean) {
-    const modal = await this.modalController.create({
-      component: BeanAssociatedBrewsComponent,
-      id: BeanAssociatedBrewsComponent.COMPONENT_ID,
-      componentProps: { bean: _bean },
-    });
-    await modal.present();
-    await modal.onWillDismiss();
-  }
-
   public async repeatBean(_bean: Bean) {
     const modal = await this.modalController.create({
       component: BeansAddComponent,
@@ -348,7 +338,6 @@ export class UIBeanHelper {
       component: BeanArchivePopoverComponent,
       cssClass: 'popover-actions',
       id: BeanArchivePopoverComponent.COMPONENT_ID,
-      backdropDismiss: false,
       breakpoints: [0, 0.5, 0.75, 1],
       initialBreakpoint: 0.5,
       componentProps: {

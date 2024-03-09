@@ -26,7 +26,8 @@ export class BeanSortInformationComponent implements OnInit {
   constructor(
     private readonly uiSettingsStorage: UISettingsStorage,
     public readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiBeanStorage: UIBeanStorage
+    private readonly uiBeanStorage: UIBeanStorage,
+    private readonly uiHelper: UIHelper
   ) {}
 
   public ngOnInit() {
@@ -40,6 +41,14 @@ export class BeanSortInformationComponent implements OnInit {
 
   public deleteSortInformation(_index: number) {
     this.data.bean_information.splice(_index, 1);
+  }
+
+  public copyInformation(_index: number) {
+    const clonedData = this.uiHelper.cloneData(
+      this.data.bean_information[_index]
+    );
+    this.data.bean_information.push(clonedData);
+    // this.data.bean_information.splice(_index, 1);
   }
   public isBlend() {
     if (this.data instanceof Bean) {
@@ -65,7 +74,7 @@ export class BeanSortInformationComponent implements OnInit {
       .getAllEntries()
       .filter((e) =>
         e.bean_information.find((be) => {
-          if (be && be.hasOwnProperty(_type)) {
+          if (be && be.hasOwnProperty(_type) && be[_type]) {
             return be[_type].toLowerCase().includes(actualSearchValue);
           }
         })
@@ -73,7 +82,7 @@ export class BeanSortInformationComponent implements OnInit {
 
     for (const entry of filteredEntries) {
       const beanInfoList = entry.bean_information.filter((be) => {
-        if (be && be.hasOwnProperty(_type)) {
+        if (be && be.hasOwnProperty(_type) && be[_type]) {
           return be[_type].toLowerCase().includes(actualSearchValue);
         }
       });
@@ -82,7 +91,11 @@ export class BeanSortInformationComponent implements OnInit {
         if (beanInfoEntry && beanInfoEntry.hasOwnProperty(_type)) {
           const splittedInfos = beanInfoEntry[_type].split(/(?:,|; )+/);
           const filterSplittedInfos = splittedInfos.filter((be) => {
-            return be.toLowerCase().includes(actualSearchValue);
+            if (be) {
+              return be.toLowerCase().includes(actualSearchValue);
+            } else {
+              return false;
+            }
           });
 
           this.typeaheadSearch[_type + 'Results'].push(

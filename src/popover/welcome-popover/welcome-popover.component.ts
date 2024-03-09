@@ -1,15 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { IonSlides, ModalController, Platform } from '@ionic/angular';
-import { BeansAddComponent } from '../../app/beans/beans-add/beans-add.component';
-import { PreparationAddComponent } from '../../app/preparation/preparation-add/preparation-add.component';
-import { MillAddComponent } from '../../app/mill/mill-add/mill-add.component';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ModalController, Platform } from '@ionic/angular';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
 import { UIMillHelper } from '../../services/uiMillHelper';
 import { UIPreparationHelper } from '../../services/uiPreparationHelper';
-
 @Component({
   selector: 'welcome-popover',
   templateUrl: './welcome-popover.component.html',
@@ -23,7 +19,9 @@ export class WelcomePopoverComponent implements OnInit {
   };
 
   public slide: number = 1;
-  @ViewChild('slider', { static: false }) public welcomeSlider: IonSlides;
+  @ViewChild('slider', { static: false }) public welcomeSlider:
+    | ElementRef
+    | undefined;
 
   private settings: Settings;
 
@@ -37,14 +35,18 @@ export class WelcomePopoverComponent implements OnInit {
     private readonly uiMillHelper: UIMillHelper,
     private readonly uiPreparationHelper: UIPreparationHelper
   ) {}
-  private __triggerUpdate() {
-    // Fix, specialy on new devices which will see 2 update screens, the slider was white
-    setTimeout(() => {
-      this.welcomeSlider.update();
-    });
-  }
+
   public ngOnInit() {
     try {
+      setTimeout(() => {
+        try {
+          /** Somehow on android device, the swiper scrolled to the latest tile, and didn't show the first one.
+          This was repeatable on google pixel 4a5g, but not on pixel 2XL, and more funny,
+           this was just repeatable on a production build app **/
+          this.welcomeSlider?.nativeElement.swiper.slideTo(0);
+          this.welcomeSlider?.nativeElement.swiper.pagination.update(true);
+        } catch (ex) {}
+      }, 500);
       this.settings = this.uiSettingsStorage.getSettings();
       this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(
         9999,
@@ -60,8 +62,7 @@ export class WelcomePopoverComponent implements OnInit {
     this.uiAnalytics.disableTracking();
     await this.uiSettingsStorage.saveSettings(this.settings);
     this.slide++;
-    this.welcomeSlider.slideNext();
-    this.__triggerUpdate();
+    this.welcomeSlider?.nativeElement.swiper.slideNext();
   }
 
   public async understoodAnalytics() {
@@ -69,21 +70,19 @@ export class WelcomePopoverComponent implements OnInit {
     this.uiAnalytics.enableTracking();
     await this.uiSettingsStorage.saveSettings(this.settings);
     this.slide++;
-
-    this.welcomeSlider.slideNext();
-    this.__triggerUpdate();
+    this.welcomeSlider?.nativeElement.swiper.slideNext();
   }
 
   public async skip() {
     this.slide++;
-    this.welcomeSlider.slideNext();
-    this.__triggerUpdate();
+    this.welcomeSlider?.nativeElement.swiper.slideNext();
   }
 
   public next() {
-    this.slide++;
-    this.welcomeSlider.slideNext();
-    this.__triggerUpdate();
+    setTimeout(() => {
+      this.slide++;
+      this.welcomeSlider?.nativeElement.swiper.slideNext();
+    }, 500);
   }
 
   public async addBean() {

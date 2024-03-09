@@ -29,7 +29,7 @@
                 <ion-label class="card-headline">{{"BEAN_DATA_BUY_DATE" | translate}}</ion-label><br/>
 
                 <ion-text *ngIf="greenBean?.date">
-                  {{greenBean.date | formatDate:["DD.MM.YYYY"]}}</ion-text>
+                  {{greenBean.date | formatDate:[settings?.date_format]}}</ion-text>
                 <ion-text *ngIf="!greenBean?.date">
                   -
                 </ion-text>

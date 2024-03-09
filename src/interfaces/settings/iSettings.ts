@@ -10,16 +10,20 @@ import { IBeanPageSort } from '../bean/iBeanPageSort';
 import { IBeanPageFilter } from '../bean/iBeanPageFilter';
 import { IBrewGraphs } from '../brew/iBrewGraphs';
 import { IBeanParameter } from '../parameter/iBeanParameter';
-import {  PressureType,
+import {
+  PressureType,
   RefractometerType,
   ScaleType,
-  TemperatureType } from '../../classes/devices';
+  TemperatureType,
+} from '../../classes/devices';
 import { BeanListViewParameter } from '../../classes/parameter/beanListViewParameter';
+import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 
 export interface ISettings {
   // Properties
   brew_view: BREW_VIEW_ENUM;
   startup_view: STARTUP_VIEW_ENUM;
+  date_format: string;
 
   language: string;
   manage_parameters: IBrewParameter;
@@ -49,12 +53,14 @@ export interface ISettings {
   show_archived_preparations: boolean;
   show_archived_green_beans: boolean;
   show_archived_waters: boolean;
+  show_archived_graphs: boolean;
 
   track_caffeine_consumption: boolean;
 
   show_roasting_section: boolean;
   show_water_section: boolean;
   show_cupping_section: boolean;
+  show_graph_section: boolean;
   use_numeric_keyboard_for_grind_size: boolean;
 
   brew_filter: {
@@ -82,9 +88,42 @@ export interface ISettings {
     FILTER: IBrewGraphs;
   };
 
+  graph_time: {
+    ESPRESSO: {
+      NORMAL_SCREEN: number;
+      FULL_SCREEN: number;
+    };
+    FILTER: {
+      NORMAL_SCREEN: number;
+      FULL_SCREEN: number;
+    };
+  };
+
+  graph_weight: {
+    ESPRESSO: {
+      upper: number;
+      lower: number;
+    };
+    FILTER: {
+      upper: number;
+      lower: number;
+    };
+  };
+  graph_flow: {
+    ESPRESSO: {
+      upper: number;
+      lower: number;
+    };
+    FILTER: {
+      upper: number;
+      lower: number;
+    };
+  };
+
   welcome_page_showed: boolean;
 
   wake_lock: boolean;
+  security_check_when_going_back: boolean;
 
   config: IConfig;
 
@@ -103,6 +142,9 @@ export interface ISettings {
   acaia_heartbeat_command_delay: number;
   bluetooth_scale_espresso_stop_on_no_weight_change: boolean;
   bluetooth_scale_espresso_stop_on_no_weight_change_min_flow: number;
+  bluetooth_scale_listening_threshold_start: number;
+  bluetooth_scale_listening_threshold_active: boolean;
+  bluetooth_scale_ignore_weight_button_active: boolean;
 
   pressure_id: string;
   pressure_type: PressureType;
@@ -126,4 +168,11 @@ export interface ISettings {
   currency: string;
   brew_display_bean_image: boolean;
   best_brew: boolean;
+
+  visualizer_active: boolean;
+  visualizer_url: string;
+  visualizer_server: VISUALIZER_SERVER_ENUM;
+  visualizer_username: string;
+  visualizer_password: string;
+  visualizer_upload_automatic: boolean;
 }

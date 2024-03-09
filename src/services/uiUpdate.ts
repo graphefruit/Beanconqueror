@@ -14,12 +14,12 @@ import { UISettingsStorage } from './uiSettingsStorage';
 import { UILog } from './uiLog';
 import { UiVersionStorage } from './uiVersionStorage';
 import { Version } from '../classes/version/iVersion';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { ModalController, Platform } from '@ionic/angular';
 import { UpdatePopoverComponent } from '../popover/update-popover/update-popover.component';
 import { IBeanInformation } from '../interfaces/bean/iBeanInformation';
 import { UIFileHelper } from './uiFileHelper';
-import { File } from '@ionic-native/file/ngx';
+import { File } from '@awesome-cordova-plugins/file/ngx';
 import { UIAlert } from './uiAlert';
 import { TranslateService } from '@ngx-translate/core';
 import { UIStorage } from './uiStorage';
@@ -53,16 +53,25 @@ export class UIUpdate {
   public async checkUpdate() {
     this.uiLog.info('Check updates');
     const hasData: boolean = await this.uiStorage.hasData();
-    await this.__checkUpdateForDataVersion('UPDATE_1', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_2', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_3', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_4', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_5', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_6', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_7', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_8', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_9', !hasData);
-    await this.__checkUpdateForDataVersion('UPDATE_10', !hasData);
+    try {
+      await this.__checkUpdateForDataVersion('UPDATE_1', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_2', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_3', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_4', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_5', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_6', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_7', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_8', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_9', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_10', !hasData);
+    } catch (ex) {
+      if (this.uiAlert.isLoadingSpinnerShown()) {
+        await this.uiAlert.hideLoadingSpinner();
+      }
+    }
+    if (this.uiAlert.isLoadingSpinnerShown()) {
+      await this.uiAlert.hideLoadingSpinner();
+    }
   }
 
   private async __updateDataVersion(_version): Promise<boolean> {
@@ -558,6 +567,7 @@ export class UIUpdate {
           await this.uiAlert.hideLoadingSpinner();
         }
       } catch (ex) {
+        await this.uiAlert.hideLoadingSpinner();
         this.uiLog.error(
           'Data version ' + _dataVersion + ' - could not update ' + ex.message
         );
@@ -578,7 +588,7 @@ export class UIUpdate {
         versionCode = await this.appVersion.getVersionNumber();
       } else {
         // Hardcored for testing
-        versionCode = '6.6.2';
+        versionCode = '7.1.0';
       }
       const version: Version = this.uiVersionStorage.getVersion();
       const displayingVersions =
@@ -603,8 +613,6 @@ export class UIUpdate {
       component: UpdatePopoverComponent,
       id: 'update-popover',
       showBackdrop: true,
-      backdropDismiss: true,
-      swipeToClose: true,
       componentProps: { versions: showingVersions },
     });
     await modal.present();

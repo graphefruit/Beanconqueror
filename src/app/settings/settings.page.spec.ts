@@ -7,17 +7,16 @@ import { IonicStorageModule } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
 import { KeysPipe } from '../../pipes/keys';
-import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { NavParamsMock } from '../../classes/mock/NavParamsMock';
-import { File } from '@ionic-native/file/ngx';
-import { Camera } from '@ionic-native/camera/ngx';
-import { ImagePicker } from '@ionic-native/image-picker/ngx';
-import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { File } from '@awesome-cordova-plugins/file/ngx';
+import { Camera } from '@awesome-cordova-plugins/camera/ngx';
+import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
+import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Router } from '@angular/router';
-import { FileChooser } from '@ionic-native/file-chooser/ngx';
-import { FilePath } from '@ionic-native/file-path/ngx';
-import { IOSFilePicker } from '@ionic-native/file-picker/ngx';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
+import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 
 describe('SettingsPage', () => {
   let component: SettingsPage;
@@ -46,7 +45,6 @@ describe('SettingsPage', () => {
         { provide: Router },
         { provide: FileChooser },
         { provide: FilePath },
-        { provide: IOSFilePicker },
         { provide: SocialSharing },
       ],
     }).compileComponents();

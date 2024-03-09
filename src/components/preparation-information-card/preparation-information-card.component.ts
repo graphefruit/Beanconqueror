@@ -17,6 +17,8 @@ import { UIImage } from '../../services/uiImage';
 import PREPARATION_TRACKING from '../../data/tracking/preparationTracking';
 import { PreparationConnectedDeviceComponent } from '../../app/preparation/preparation-connected-device/preparation-connected-device.component';
 import { PreparationDeviceType } from '../../classes/preparationDevice';
+import { BEAN_ACTION } from '../../enums/beans/beanAction';
+import { UIBrewHelper } from '../../services/uiBrewHelper';
 
 @Component({
   selector: 'preparation-information-card',
@@ -37,7 +39,8 @@ export class PreparationInformationCardComponent implements OnInit {
     private readonly uiToast: UIToast,
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiBrewStorage: UIBrewStorage,
-    private readonly uiImage: UIImage
+    private readonly uiImage: UIImage,
+    private readonly uiBrewHelper: UIBrewHelper
   ) {}
 
   public ngOnInit() {}
@@ -172,7 +175,9 @@ export class PreparationInformationCardComponent implements OnInit {
       case PREPARATION_ACTION.EDIT_DEVICE_CONNECTION:
         await this.connectDevice();
         break;
-
+      case PREPARATION_ACTION.SHOW_BREWS:
+        await this.showBrews();
+        break;
       default:
         break;
     }
@@ -284,6 +289,12 @@ export class PreparationInformationCardComponent implements OnInit {
     return (
       this.preparation?.connectedPreparationDevice.type !==
       PreparationDeviceType.NONE
+    );
+  }
+  public async showBrews() {
+    await this.uiBrewHelper.showAssociatedBrews(
+      this.preparation.config.uuid,
+      'preparation'
     );
   }
 }

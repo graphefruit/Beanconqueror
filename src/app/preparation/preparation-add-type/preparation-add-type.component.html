@@ -6,15 +6,13 @@
 <ion-content>
   <form #addPreparationForm="ngForm" novalidate>
     <ion-item class="ion-margin-top">
-      <ion-label position="stacked">{{"PREPARATION_TYPE_NAME" | translate}}*</ion-label>
-      <ion-input #name="ngModel" [(ngModel)]="data.name" autocapitalize="sentences" name="name"
+      <ion-input label-placement="stacked" label='{{"PREPARATION_TYPE_NAME" | translate}}*' aria-labelledby='name' #name="ngModel" [(ngModel)]="data.name" autocapitalize="sentences" name="name"
                  placeholder="{{'PREPARATION.PLACE_HOLDER.PREPARATION_TYPE_NAME' | translate}}" required
                  spellcheck="false" type="text">
       </ion-input>
     </ion-item>
     <ion-item>
-      <ion-label position="stacked">{{"PREPARATION_TYPE_STYLE" | translate}}*</ion-label>
-      <ion-select #name="ngModel" [(ngModel)]="data.style_type" cancelText="{{'CANCEL'| translate }}"
+      <ion-select label-placement="stacked" label='{{"PREPARATION_TYPE_STYLE" | translate}}*' #name="ngModel" [(ngModel)]="data.style_type" cancelText="{{'CANCEL'| translate }}"
                   name="style_type" okText="{{'CHOOSE'| translate }}">
         <ion-select-option value="{{PREPARATION_STYLE_TYPE.POUR_OVER}}">{{"PREPARATION_STYLE_POUR_OVER" | translate}}</ion-select-option>
         <ion-select-option value="{{PREPARATION_STYLE_TYPE.ESPRESSO}}">{{"PREPARATION_STYLE_ESPRESSO" | translate}}</ion-select-option>
@@ -23,13 +21,13 @@
       </ion-select>
     </ion-item>
     <ion-item lines="none">
-      <ion-label>{{"PREPARATION_TOOLS" | translate}}</ion-label>
+      <ion-label id='preparationTools'>{{"PREPARATION_TOOLS" | translate}}</ion-label>
       <ion-icon name="information-outline" slot="end"
                 tooltip='{{"PREPARATION_TOOLS_INFORMATION" | translate}}'></ion-icon>
     </ion-item>
     <ion-item style="margin-top: -10px;">
 
-      <ion-input (keyup.enter)="addTool()" [(ngModel)]="nextToolName" name="nextToolName" placeholder='{{"PREPARATION_TOOLS_PLACEHOLDER" | translate}}' type="text"></ion-input>
+      <ion-input aria-labelledby='preparationTools' (keyup.enter)="addTool()" [(ngModel)]="nextToolName" name="nextToolName" placeholder='{{"PREPARATION_TOOLS_PLACEHOLDER" | translate}}' type="text"></ion-input>
 
       <ion-button (click)="addTool()" fill="clear" tappable>
         <ion-icon class="font-size-24" color="accent" name="beanconqueror-add" slot="icon-only"></ion-icon>

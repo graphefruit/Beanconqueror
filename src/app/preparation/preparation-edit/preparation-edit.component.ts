@@ -1,17 +1,17 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {ModalController, NavParams} from '@ionic/angular';
-import {Preparation} from '../../../classes/preparation/preparation';
-import {IPreparation} from '../../../interfaces/preparation/iPreparation';
-import {UIPreparationStorage} from '../../../services/uiPreparationStorage';
-import {UIHelper} from '../../../services/uiHelper';
-import {PREPARATION_TYPES} from '../../../enums/preparations/preparationTypes';
-import {UIToast} from '../../../services/uiToast';
-import {PREPARATION_STYLE_TYPE} from '../../../enums/preparations/preparationStyleTypes';
-import {PreparationTool} from '../../../classes/preparation/preparationTool';
-import {UIAlert} from '../../../services/uiAlert';
-import {UIPreparationHelper} from '../../../services/uiPreparationHelper';
-import {UIBrewStorage} from '../../../services/uiBrewStorage';
-import {UIAnalytics} from '../../../services/uiAnalytics';
+import { Component, Input, OnInit } from '@angular/core';
+import { ModalController, NavParams } from '@ionic/angular';
+import { Preparation } from '../../../classes/preparation/preparation';
+import { IPreparation } from '../../../interfaces/preparation/iPreparation';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { UIHelper } from '../../../services/uiHelper';
+import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
+import { UIToast } from '../../../services/uiToast';
+import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
+import { PreparationTool } from '../../../classes/preparation/preparationTool';
+import { UIAlert } from '../../../services/uiAlert';
+import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
+import { UIBrewStorage } from '../../../services/uiBrewStorage';
+import { UIAnalytics } from '../../../services/uiAnalytics';
 import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
 
 @Component({
@@ -25,32 +25,34 @@ export class PreparationEditComponent implements OnInit {
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   @Input() private preparation: IPreparation;
   public preparationTypeEnum = PREPARATION_TYPES;
-  public  nextToolName: string ='';
-  constructor (private readonly navParams: NavParams,
-               private readonly modalController: ModalController,
-               private readonly uiPreparationStorage: UIPreparationStorage,
-               private readonly uiHelper: UIHelper,
-               private readonly uiToast: UIToast,
-               private readonly uiAlert: UIAlert,
-               private readonly uiPreparationHelper: UIPreparationHelper,
-               private readonly uiBrewStorage: UIBrewStorage,
-               private readonly uiAnalytics: UIAnalytics) {
-
-  }
+  public nextToolName: string = '';
+  constructor(
+    private readonly navParams: NavParams,
+    private readonly modalController: ModalController,
+    private readonly uiPreparationStorage: UIPreparationStorage,
+    private readonly uiHelper: UIHelper,
+    private readonly uiToast: UIToast,
+    private readonly uiAlert: UIAlert,
+    private readonly uiPreparationHelper: UIPreparationHelper,
+    private readonly uiBrewStorage: UIBrewStorage,
+    private readonly uiAnalytics: UIAnalytics
+  ) {}
 
   public ionViewWillEnter(): void {
-    this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.EDIT);
+    this.uiAnalytics.trackEvent(
+      PREPARATION_TRACKING.TITLE,
+      PREPARATION_TRACKING.ACTIONS.EDIT
+    );
     if (this.preparation !== undefined) {
       this.data.initializeByObject(this.preparation);
     }
-
   }
 
   public getActiveTools() {
-    return this.data.tools.filter((e)=>e.archived === false);
+    return this.data.tools.filter((e) => e.archived === false);
   }
   public getArchivedTools() {
-    return this.data.tools.filter((e)=>e.archived === true);
+    return this.data.tools.filter((e) => e.archived === true);
   }
   public typeChanged(): void {
     this.data.style_type = this.data.getPresetStyleType();
@@ -72,19 +74,28 @@ export class PreparationEditComponent implements OnInit {
       this.data.manage_parameters.brew_quantity = false;
       this.data.default_last_coffee_parameters.brew_quantity = false;
     } else {
-      this.data.manage_parameters.coffee_first_drip_time = false;
-      this.data.default_last_coffee_parameters.coffee_first_drip_time = false;
+      // #598 - We don't need to reset here
+      //  this.data.manage_parameters.coffee_first_drip_time = false;
+      //this.data.default_last_coffee_parameters.coffee_first_drip_time = false;
     }
+
     await this.uiPreparationStorage.update(this.data);
     this.uiToast.showInfoToast('TOAST_PREPARATION_EDITED_SUCCESSFULLY');
-    this.uiAnalytics.trackEvent(PREPARATION_TRACKING.TITLE, PREPARATION_TRACKING.ACTIONS.EDIT_FINISH);
+    this.uiAnalytics.trackEvent(
+      PREPARATION_TRACKING.TITLE,
+      PREPARATION_TRACKING.ACTIONS.EDIT_FINISH
+    );
     this.dismiss();
   }
 
   public dismiss(): void {
-    this.modalController.dismiss({
-      dismissed: true
-    }, undefined, PreparationEditComponent.COMPONENT_ID);
+    this.modalController.dismiss(
+      {
+        dismissed: true,
+      },
+      undefined,
+      PreparationEditComponent.COMPONENT_ID
+    );
   }
   public addTool() {
     const added: boolean = this.data.addTool(this.nextToolName);
@@ -93,19 +104,12 @@ export class PreparationEditComponent implements OnInit {
     }
   }
 
-
-
   public async editTool(_tool: PreparationTool) {
-    await this.uiPreparationHelper.editPreparationTool(this.data,_tool);
+    await this.uiPreparationHelper.editPreparationTool(this.data, _tool);
     //Reinitialize
     const prep = this.uiPreparationStorage.getByUUID(this.data.config.uuid);
     this.data.initializeByObject(prep);
-
-
-
   }
 
   public ngOnInit() {}
-
-
 }

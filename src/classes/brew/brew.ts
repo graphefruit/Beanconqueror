@@ -27,6 +27,10 @@ import { Water } from '../water/water';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { IPreparationDeviceBrew } from '../../interfaces/brew/iPreparationDeviceBrew';
 import { PreparationDeviceBrew } from './preparationDeviceBrew';
+import { ICustomInformationBrew } from '../../interfaces/brew/ICustomInformationBrew';
+import { CustomInformationBrew } from './customInformationBrew';
+import { IReferenceGraph } from '../../interfaces/brew/iReferenceGraph';
+import { ReferenceGraph } from './referenceGraph';
 
 export class Brew implements IBrew {
   // tslint:disable-next-line
@@ -101,8 +105,11 @@ export class Brew implements IBrew {
   // Inherits the saved json path
   public flow_profile: string;
 
-  public preparationDeviceBrew: IPreparationDeviceBrew;
+  // Inherits the referenced saved json path
+  public reference_flow_profile: IReferenceGraph;
 
+  public preparationDeviceBrew: IPreparationDeviceBrew;
+  public customInformation: ICustomInformationBrew;
   constructor() {
     this.grind_size = '';
     this.grind_weight = 0;
@@ -172,8 +179,10 @@ export class Brew implements IBrew {
     this.vessel_weight = 0;
 
     this.flow_profile = '';
+    this.reference_flow_profile = new ReferenceGraph();
 
     this.preparationDeviceBrew = new PreparationDeviceBrew();
+    this.customInformation = new CustomInformationBrew();
   }
 
   public initializeByObject(brewObj: IBrew): void {
@@ -365,7 +374,9 @@ export class Brew implements IBrew {
   }
 
   public formateDate(_format?: string): string {
-    let format: string = 'DD.MM.YYYY, HH:mm:ss';
+    const settingsDateFormat: string =
+      this.getSettingsStorageInstance().getSettings().date_format;
+    let format: string = settingsDateFormat + ', HH:mm:ss';
     if (_format) {
       format = _format;
     }
@@ -675,5 +686,9 @@ export class Brew implements IBrew {
     }
 
     return fixNeeded;
+  }
+  public getGraphPath() {
+    const savingPath = 'brews/' + this.config.uuid + '_flow_profile.json';
+    return savingPath;
   }
 }

@@ -1,15 +1,20 @@
 /** Core */
 import { Injectable } from '@angular/core';
-import { DirectoryEntry, Entry, File, FileEntry } from '@ionic-native/file/ngx';
+import {
+  DirectoryEntry,
+  Entry,
+  File,
+  FileEntry,
+} from '@awesome-cordova-plugins/file/ngx';
 import { Platform } from '@ionic/angular';
 import { DomSanitizer } from '@angular/platform-browser';
 import { UILog } from './uiLog';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import moment from 'moment';
 import {
   FileTransfer,
   FileTransferObject,
-} from '@ionic-native/file-transfer/ngx';
+} from '@awesome-cordova-plugins/file-transfer/ngx';
 import { InstanceClass } from './instanceClass';
 /**
  * Handles every helping functionalities
@@ -52,28 +57,31 @@ export class UIFileHelper extends InstanceClass {
           'UILog - saveZIPFile - We could not create folders ' + _fileName
         );
       }
-
-      this.file.createFile(this.getFileDirectory(), _fileName, true).then(
-        (_fileEntry: FileEntry) => {
-          _fileEntry.createWriter((writer) => {
-            writer.onwriteend = () => {
-              resolve(undefined);
-              this.uiLog.info(
-                'UILog - saveZIPFile - File saved successfully - ' + _fileName
-              );
-            };
-            writer.onerror = () => {
-              reject();
-            };
-            writer.seek(0);
-            writer.write(blob); // You need to put the file, blob or base64 representation here.
-          });
-        },
-        () => {
-          reject();
-          this.uiLog.error('Could not save file');
-        }
-      );
+      try {
+        this.file.createFile(this.getFileDirectory(), _fileName, true).then(
+          (_fileEntry: FileEntry) => {
+            _fileEntry.createWriter((writer) => {
+              writer.onwriteend = () => {
+                resolve(undefined);
+                this.uiLog.info(
+                  'UILog - saveZIPFile - File saved successfully - ' + _fileName
+                );
+              };
+              writer.onerror = () => {
+                reject();
+              };
+              writer.seek(0);
+              writer.write(blob); // You need to put the file, blob or base64 representation here.
+            });
+          },
+          () => {
+            reject();
+            this.uiLog.error('Could not save file');
+          }
+        );
+      } catch (ex) {
+        reject();
+      }
     });
   }
 
@@ -94,27 +102,35 @@ export class UIFileHelper extends InstanceClass {
         );
       }
 
-      this.file.createFile(this.getFileDirectory(), _fileName, true).then(
-        (_fileEntry: FileEntry) => {
-          _fileEntry.createWriter((writer) => {
-            writer.onwriteend = () => {
-              resolve(undefined);
-              this.uiLog.info(
-                'UILog - saveJSONFile - File saved successfully - ' + _fileName
-              );
-            };
-            writer.onerror = () => {
-              reject();
-            };
-            writer.seek(0);
-            writer.write(blob); // You need to put the file, blob or base64 representation here.
-          });
-        },
-        () => {
-          reject();
-          this.uiLog.error('Could not save file');
-        }
-      );
+      try {
+        this.file.createFile(this.getFileDirectory(), _fileName, true).then(
+          (_fileEntry: FileEntry) => {
+            _fileEntry.createWriter((writer) => {
+              writer.onwriteend = () => {
+                resolve({
+                  NATIVE_URL: _fileEntry.nativeURL,
+                  FULL_PATH: _fileEntry.fullPath,
+                });
+                this.uiLog.info(
+                  'UILog - saveJSONFile - File saved successfully - ' +
+                    _fileName
+                );
+              };
+              writer.onerror = () => {
+                reject();
+              };
+              writer.seek(0);
+              writer.write(blob); // You need to put the file, blob or base64 representation here.
+            });
+          },
+          () => {
+            reject();
+            this.uiLog.error('Could not save file');
+          }
+        );
+      } catch (ex) {
+        reject();
+      }
     });
   }
 
@@ -589,23 +605,27 @@ export class UIFileHelper extends InstanceClass {
     const promise: Promise<FileEntry> = new Promise(async (resolve, reject) => {
       const folders = _path.split('/');
 
-      this.file.resolveDirectoryUrl(this.getFileDirectory()).then(
-        (_rootDir: DirectoryEntry) => {
-          this.createFolderInternal(
-            _rootDir,
-            folders,
-            () => {
-              resolve(undefined);
-            },
-            () => {
-              reject();
-            }
-          );
-        },
-        () => {
-          reject();
-        }
-      );
+      try {
+        this.file.resolveDirectoryUrl(this.getFileDirectory()).then(
+          (_rootDir: DirectoryEntry) => {
+            this.createFolderInternal(
+              _rootDir,
+              folders,
+              () => {
+                resolve(undefined);
+              },
+              () => {
+                reject();
+              }
+            );
+          },
+          () => {
+            reject();
+          }
+        );
+      } catch (ex) {
+        reject();
+      }
     });
 
     return promise;
@@ -876,6 +896,25 @@ export class UIFileHelper extends InstanceClass {
     });
   }
 
+  public async getBase64FileFromExternalAndroid(
+    _filePath: string
+  ): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      if (this.platform.is('cordova')) {
+        let path: string;
+        let fileName: string;
+        path = _filePath.substring(0, _filePath.lastIndexOf('/') + 1);
+        fileName = _filePath.substring(_filePath.lastIndexOf('/') + 1);
+
+        this.file.readAsDataURL(path, fileName).then((_dataUrl: string) => {
+          resolve(_dataUrl);
+        });
+      } else {
+        resolve('');
+      }
+    });
+  }
+
   public async getBase64File(_filePath: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       if (this.platform.is('cordova')) {
@@ -958,6 +997,7 @@ export class UIFileHelper extends InstanceClass {
 
       const newBlob = new Blob([ia], { type: mimeString });
       ia = null;
+      dataURI = null;
       return newBlob;
     } catch (ex) {
       return undefined;

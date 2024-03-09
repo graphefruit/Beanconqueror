@@ -1,54 +1,55 @@
 /** Core */
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 
-import {UIAnalytics} from './uiAnalytics';
-import {ModalController} from '@ionic/angular';
-import {WaterAddComponent} from '../app/water-section/water/water-add/water-add.component';
-import {WaterEditComponent} from '../app/water-section/water/water-edit/water-edit.component';
-import {Water} from '../classes/water/water';
-import {WaterDetailComponent} from '../app/water-section/water/water-detail/water-detail.component';
+import { UIAnalytics } from './uiAnalytics';
+import { ModalController } from '@ionic/angular';
+import { WaterAddComponent } from '../app/water-section/water/water-add/water-add.component';
+import { WaterEditComponent } from '../app/water-section/water/water-edit/water-edit.component';
+import { Water } from '../classes/water/water';
+import { WaterDetailComponent } from '../app/water-section/water/water-detail/water-detail.component';
 
 /**
  * Handles every helping functionalities
  */
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UIWaterHelper {
-
-
-  constructor(private readonly uiAnalytics: UIAnalytics,
-              private readonly modalController: ModalController) {
-
-  }
-
-
+  constructor(
+    private readonly uiAnalytics: UIAnalytics,
+    private readonly modalController: ModalController
+  ) {}
 
   public async addWater() {
-    const modal = await this.modalController.create({component:WaterAddComponent,
-      id:WaterAddComponent.COMPONENT_ID,
+    const modal = await this.modalController.create({
+      component: WaterAddComponent,
+      id: WaterAddComponent.COMPONENT_ID,
       cssClass: 'popover-actions',
-      breakpoints: [0, 0.35, 0.5, 0.75, 1],
-      initialBreakpoint: 0.35});
+      breakpoints: [0, 0.35, 0.5, 0.75],
+      initialBreakpoint: 0.35,
+    });
     await modal.present();
     await modal.onWillDismiss();
   }
 
   public async editWater(_water: Water) {
-
-    const modal = await this.modalController.create({component: WaterEditComponent, id: WaterEditComponent.COMPONENT_ID, componentProps: {water: _water}});
+    const modal = await this.modalController.create({
+      component: WaterEditComponent,
+      id: WaterEditComponent.COMPONENT_ID,
+      componentProps: { water: _water },
+    });
     await modal.present();
     await modal.onWillDismiss();
-
   }
-
 
   public async detailWater(_water: Water) {
-    const modal = await this.modalController.create({component: WaterDetailComponent, id: WaterDetailComponent.COMPONENT_ID, componentProps: {water: _water}});
+    const modal = await this.modalController.create({
+      component: WaterDetailComponent,
+      id: WaterDetailComponent.COMPONENT_ID,
+      componentProps: { water: _water },
+    });
     await modal.present();
     await modal.onWillDismiss();
-
   }
-
 }

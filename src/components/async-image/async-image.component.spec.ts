@@ -1,13 +1,13 @@
-import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import {AsyncImageComponent} from './async-image.component';
-import {TranslateModule} from '@ngx-translate/core';
-import {FormsModule} from '@angular/forms';
-import {IonicStorageModule} from '@ionic/storage';
-import {CommonModule} from '@angular/common';
-import {IonicModule} from '@ionic/angular';
-import {File} from '@ionic-native/file/ngx';
+import { AsyncImageComponent } from './async-image.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
+import { IonicStorageModule } from '@ionic/storage';
+import { CommonModule } from '@angular/common';
+import { IonicModule } from '@ionic/angular';
+import { File } from '@awesome-cordova-plugins/file/ngx';
 
 describe('AsyncImageComponent', () => {
   let component: AsyncImageComponent;
@@ -15,15 +15,17 @@ describe('AsyncImageComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [TranslateModule.forRoot(), FormsModule, IonicStorageModule.forRoot(), CommonModule, IonicModule],
-      declarations: [AsyncImageComponent],
-      providers: [
-        {provide: Storage},
-        {provide: File}
+      imports: [
+        TranslateModule.forRoot(),
+        FormsModule,
+        IonicStorageModule.forRoot(),
+        CommonModule,
+        IonicModule,
       ],
+      declarations: [AsyncImageComponent],
+      providers: [{ provide: Storage }, { provide: File }],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

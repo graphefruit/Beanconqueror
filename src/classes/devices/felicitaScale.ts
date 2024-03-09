@@ -54,7 +54,11 @@ export class FelicitaScale extends BluetoothScale {
    * @returns boolean If support is provided for device.
    */
   public static test(device: any): boolean {
-    return device && device.name && [DEVICE_NAME].includes(device.name);
+    return (
+      device &&
+      device.name &&
+      device.name.toLowerCase().includes(DEVICE_NAME.toLowerCase())
+    );
   }
 
   public override getWeight() {

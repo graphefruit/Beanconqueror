@@ -153,7 +153,7 @@
     "BREW_DATA_ATTACHMENTS": "Adjuntos \/ Imágenes",
     "BREW_DATA_RATING": "Puntuación",
     "BREW_DATA_CALCULATED_COFFEE_BREW_TIME": "Tiempo de preparación",
-    "BREW_DATA_TDS": "Total de sólidos disueltos ",
+    "BREW_DATA_TDS": "Total de sólidos disueltos (%)",
     "BREW_DATA_CALCULATED_EXTRACTION_YIELD": "Rendimiento de extracción %",
     "BREW_INFORMATION_BREW_RATIO": "Proporción (ratio)",
     "BREW_INFORMATION_BEAN_AGE": "Edad del café (días)",
@@ -403,7 +403,7 @@
             "BEAN_DATA_DECAFFEINATED": "¿Es descafeinado?",
             "BEAN_DATA_URL": "Agrega la página web",
             "BEAN_DATA_EAN": "Agrega el código EAN o código propietario del producto",
-            "BEAN_DATA_CUPPING_POINTS": "Agrega la puntuación de cata ",
+            "BEAN_DATA_CUPPING_POINTS": "Agrega la puntuación de cata",
             "BEAN_DATA_PURCHASING_PRICE": "Agrega el precio de compra",
             "BEAN_DATA_FOB_PRICE": "Agrega el precio FOB",
             "NOTES": "Agrega notas",
@@ -499,7 +499,7 @@
             "DESCRIPTION": [
                 "Nueva selección de tiempo para las preparaciones",
                 "En iOS se puede seleccionar nuevamente la fecha de tueste de los granos",
-                "En el iPad se pueden seleccionar nuevamente las imágenes ",
+                "En el iPad se pueden seleccionar nuevamente las imágenes",
                 "El cálculo de TDS es nuevamente visible en las preparaciones",
                 "Zonas seguras agregadas para dispositivos iOS"
             ]
@@ -515,7 +515,7 @@
                 "La lista de preparaciones recientes ahora también muestra preparaciones archivadas",
                 "",
                 "<b>Granos:<\/b>",
-                "En la descripción general se muestran las imágenes de granos  ",
+                "En la descripción general se muestran las imágenes de granos",
                 "Los granos pueden ser calificados",
                 "",
                 "<b>Interacciones:<\/b>",
@@ -596,7 +596,7 @@
                 "Apple HealthKit - la configuración no se guardaba",
                 "A veces, las estrellas de calificación de preparación no se llenaban (preparación  agregar \/ editar)",
                 "Editar con un toque largo, la pantalla no se podía desplazar",
-                "La importación de archivos grandes en iOS provocaba una mala conducta ",
+                "La importación de archivos grandes en iOS provocaba una mala conducta",
                 "El procedimiento de eliminación de granos\/ preparaciones o molinos no era consistente y daba lugar a problemas gráficos",
                 "Cálculo incorrecto de la cantidad de bebida en estadísticas y vistas de lista",
                 "",
@@ -733,7 +733,7 @@
                 "<b>Granos<\/b>",
                 "Buscar granos ahora en la selección",
                 "",
-                "<b>Corrección de errores\/b>",
+                "<b>Corrección de errores<\/b>",
                 "Después de tomar una foto, la rueda giratoria de carga no desapareció.",
                 "Pequeñas correcciones de errores"
             ]
@@ -940,25 +940,120 @@
                 "Corrección de errores menores"
             ]
         },
-      "6.6.1": {
-        "TITLE": "Versión 6.6.1: Novedades",
-        "DESCRIPTION": [
-          "<b>Otros<\/b>",
-          "Corrección de errores menores"
-        ]
-      },
-      "6.6.2": {
-        "TITLE": "Version 6.6.2: What's new",
-        "DESCRIPTION": [
-          "[ANDROID]<b>Android 13 - Filestorage permissions<\/b>",
-          "[ANDROID]Due to changes in the file system permissions in Android, the access paths for how files are backed up and imported had to be revised. In addition, camera and image access no longer worked on Android 13 devices and got fixed with this update.",
-          "[ANDROID]Due to these changes, the minimum requirement for this app also had to be raised to Android 7.0.",
-          "[ANDROID]You can find out how Import/Export works now here: https://beanconqueror.com/faq",
-          "",
-          "[IOS]<b>iOS - Updated libraries<\/b>",
-          "[IOS]Due to library changes in cordova, this is a release to match all these :)"
-        ]
-      }
+        "6.6.1": {
+            "TITLE": "Versión 6.6.1: Novedades",
+            "DESCRIPTION": [
+                "<b>Otros<\/b>",
+                "Corrección de errores menores"
+            ]
+        },
+        "6.6.2": {
+            "TITLE": "Version 6.6.2: Novedades",
+            "DESCRIPTION": [
+                "[ANDROID]<b>Android 13 - Permisos del sistema de almacenamiento de archivos<\/b>",
+                "[ANDROID]Modificadas las rutas de acceso a los ficheros debido a los recientes cambios en los permisos del sistema de almacenamiento de archivos de Android. Además, se ha solucionado un error con la cámara y el acceso a las imágenes derivado de este cambio de permisos de Android 13.",
+                "[ANDROID]Debido a estos cambios, los requisitos mínimos del sistema operativo pasan a ser Android 7.0",
+                "[ANDROID]Puedes ver cómo importar y exportar funciona ahora aquí: https:\/\/beanconqueror.com\/faq",
+                "",
+                "[IOS]<b>iOS - Actualización de librerías<\/b>",
+                "[IOS]Actualización para actualizar las librerías de Cordova"
+            ]
+        },
+        "7.0.0": {
+            "TITLE": "Version 7.0.0: Novedades",
+            "DESCRIPTION": [
+                "<b>Modos en básculas Bluetooth<\/b>",
+                "Inicia el temporizador automáticamente al detectar un cambio de peso - Activable en configuración (aparecerá un icono nuevo)",
+                "Ignora temporalmente la transferencia de peso - para, por ejemplo, menear, agitar o mover sin que el gráfico genere picos de manera intencionada - Activable en configuración (aparecerá un icono nuevo)",
+                "",
+                "<b>Básculas Bluetooth<\/b>",
+                "Añadido soporte para una báscula genérica",
+                "Al conectar una báscula DiFluid Microbalance o Felicita, el tiempo de espera entre comandos viene predefinido",
+                "",
+                "<b>Gráficos<\/b>",
+                "Activa la sección de gráficos en configuración",
+                "Elige un gráfico e intenta replicarlo en tu siguiente preparación",
+                "El gráfico a replicar puede ser de una preparación anterior o uno que hayas subido a la sección gráficos",
+                "Exporta tus gráficos en formato .JSON desde una preparación y súbelos a la sección gráficos",
+                "",
+                "<b>Visualizer<\/b>",
+                "Subida automática a Visualizer de todas aquellas preparaciones realizadas con una báscula conectada y que tengan gráfico de la extracción - Activable en configuración",
+                "Añadida la opción de subir cualquier preparación a Visualizer",
+                "Gracias a Miha",
+                "",
+                "<b>Preparaciones<\/b>",
+                "Repite una preparación desde la vista detallada",
+                "La opción 'primeras gotas de café' se puede activar para cualquier método de preparación (ejemplo: Pulsar)",
+                "Se muestra el ratio en la vista a pantalla completa si hay una báscula conectada",
+                "Los métodos de preparación se muestran alfabéticamente y se muestra la última fecha de uso",
+                "Si hay una báscula conectada, en espresso se mostrará el flujo en tiempo real inferior a 1 g\/s.",
+                "",
+                "<b>Cafés<\/b>",
+                "Repite la última o la mejor preparación desde la vista detallada de un café",
+                "",
+                "<b>Métodos de preparación<\/b>",
+                "Añadido buscador a las herramientas de preparación y ordenadas alfabéticamente",
+                "Añadida la fecha de último uso al seleccionar un método de preparación",
+                "",
+                "<b>Molinos<\/b>",
+                "Ahora se muestra el último ajuste y la fecha en que se usó por última vez",
+                "",
+                "<b>Xenia<\/b>",
+                "Corregido: Los scripts desactivados ya no se ejecutan",
+                "",
+                "<b>Configuración<\/b>",
+                "Muestra una ventana emergente de confirmación para evitar perder los cambios si has modificado una preparación o un café - Activable en configuración",
+                "Indica el rango de ambos ejes (X e Y) que quieras que se muestre cuando hay un dispositivo bluetooth conectado",
+                "",
+                "<b>Ionic 7<\/b>",
+                "Actualización de Ionic 6 a Ionic 7",
+                "[IOS]Versión mínima de iOS pasa a ser iOS 14",
+                "[ANDROID]Versión mínima de Android pasa a ser Android 7.1",
+                "",
+                "<b>Lokalise<\/b>",
+                "Migración a Lokalise para las traducciones - Gracias a Yannick",
+                "¿Quieres ayudarnos a traducir la aplicación? Con Lokalise es mucho más fácil. Contáctanos en info@beanconqueror.com",
+                "",
+                "<b>Otros<\/b>",
+                "Corrección de errores menores",
+                ""
+            ]
+        },
+        "7.1.0": {
+            "TITLE": "Versión 7.1.0: Novedades",
+            "DESCRIPTION": [
+                "<b>Más idiomas<\/b>",
+                "Añadida traducción al francés - Gracias a Yannick",
+                "Apoyo de Indonesia - Gracias a Bondan, Ganjar",
+                "",
+                "<b>Básculas Bluetooth<\/b>",
+                "Añadido soporte para una báscula Bluetooth DYI (Rust & Python Firmware)",
+                "Añadido soporte para DiFluid Microbalance Ti",
+                "Mejoras para todas las básculas en la forma en la que se calcula el flujo",
+                "",
+                "<b>Gráficos<\/b>",
+                "Añadida más información al seleccionar un gráfico a replicar",
+                "",
+                "<b>Preparaciones<\/b>",
+                "Básculas Bluetooth - Añadido un botón en la barra de herramientas para tarar la báscula",
+                "",
+                "<b>Cafés<\/b>",
+                "Support of copying a variety information",
+                "",
+                "<b>Sección de agua<\/b>",
+                "Añadido potasio",
+                "",
+                "<b>Molinos<\/b>",
+                "Ahora se muestran las RPM en la sección molinos y cuando se elige un molino en una preparación",
+                "",
+                "<b>Configuración<\/b>",
+                "Define los segundos que se muestran para filtro y espresso con un dispositivo bluetooth conectado",
+                "Añadidos distintos formatos de fecha",
+                "",
+                "<b>Otros<\/b>",
+                "Corrección de errores menores"
+            ]
+        }
     },
     "CUSTOM_PARAMETERS": "Personalizar parámetros",
     "CUSTOM_DEFAULT_PARAMETERS": "Predeterminado",
@@ -1143,7 +1238,7 @@
     "CUPPING_16": "Melón cantalupo \/ naranja",
     "CUPPING_17": "Uva",
     "CUPPING_18": "Uva blanca",
-    "CUPPING_19": "Uva verde ",
+    "CUPPING_19": "Uva verde",
     "CUPPING_20": "Uva roja",
     "CUPPING_21": "Uva concordia",
     "CUPPING_22": "Fruta tropical",
@@ -1256,7 +1351,7 @@
     "CUPPING_129": "Té negro",
     "CUPPING_130": "Lúpulo",
     "CUPPING_131": "Bergamota",
-    "CUPPING_132": "Florido",
+    "CUPPING_132": "Floral",
     "CUPPING_133": "Floral",
     "CUPPING_134": "Hibisco",
     "CUPPING_135": "Escaramujos \/ rosa mosqueta",
@@ -1290,7 +1385,8 @@
                 "SODIUM": "Sodio (Na)",
                 "TDS": "Sólidos disueltos totales (TDS)",
                 "NAME": "Agregar el nombre del agua",
-                "NOTES": "Agrega algunas notas a tu agua"
+                "NOTES": "Agrega algunas notas a tu agua",
+                "POTASSIUM": "Potasio (K)"
             },
             "WATER_UNIT": {
                 "UNKNOWN": "Desconocido",
@@ -1298,7 +1394,8 @@
                 "MG_L": "mg\/L",
                 "MMOL_L": "mmol\/L",
                 "DH": "°dH"
-            }
+            },
+            "POTASSIUM": "Potasio (K)"
         }
     },
     "BREW_BRIX_CALCULATION": "Grados Brix",
@@ -1332,7 +1429,7 @@
             "LOCATION": "Para encontrar básculas bluetooth, la aplicación necesita acceder a la ubicación.",
             "BLUETOOTH": "Para encontrar básculas bluetooth, la aplicación necesita acceso al bluetooth"
         },
-        "INFORMATION_DESCRIPTION": "Básculas compatibles: Decent, Acaia, Felicita, Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale (V1), Blackcoffee.io y Eureka Precise. Atención: Si la báscula Eureka Precise recibe un valor negativo, el temporizador se detiene"
+        "INFORMATION_DESCRIPTION": "Básculas compatibles: Decent, Acaia, Felicita, Hiroia Jimmy, Skale 2, DiFluid Microbalance, DiFluid Microbalance Ti, Smartchef Scale, Blackcoffee.io y Eureka Precise. Atención: Si la báscula Eureka Precise recibe un valor negativo, el temporizador se detiene"
     },
     "QR": {
         "WRONG_QRCODE_DESCRIPTION": "Código QR incorrecto o contenido incorrecto",
@@ -1352,11 +1449,11 @@
     "BREW_FLOW_WEIGHT": "Peso",
     "BREW_FLOW_WEIGHT_PER_SECOND": "Flujo",
     "ROAST_TYPE_UNKNOWN": "Desconocido",
-    "ROAST_TYPE_CINNAMON_ROAST": "Tueste canela (claro\/Cinnamon) ",
+    "ROAST_TYPE_CINNAMON_ROAST": "Tueste canela (claro\/Cinnamon)",
     "ROAST_TYPE_AMERICAN_ROAST": "Tueste americano",
     "ROAST_TYPE_NEW_ENGLAND_ROAST": "Tueste New England",
     "ROAST_TYPE_HALF_CITY_ROAST": "Tueste Half City",
-    "ROAST_TYPE_MODERATE_LIGHT_ROAST": "Tueste claro moderado (Moderate-Light) ",
+    "ROAST_TYPE_MODERATE_LIGHT_ROAST": "Tueste claro moderado (Moderate-Light)",
     "ROAST_TYPE_CITY_ROAST": "Tueste City",
     "ROAST_TYPE_CITY_PLUS_ROAST": "Tueste City+",
     "ROAST_TYPE_FULL_CITY_ROAST": "Tueste Full City",
@@ -1383,7 +1480,7 @@
     "CUSTOM_LIST_VIEW_PARAMETERS": "Parámetros de vista de lista",
     "NAV_LIST_VIEW_CUSTOM_PARAMETERS": "Parámetros de vista de lista",
     "PAGE_LIST_VIEW_CUSTOM_PARAMETERS_DESCRIPTION": "Decide qué parámetros de la preparación del café deben mostrarse en los mosaicos de vista de lista",
-    "BREW_DATA_VESSEL_NAME_WEIGHT": "Recipiente nombre\/peso",
+    "BREW_DATA_VESSEL_NAME_WEIGHT": "Nombre y peso de la jarra",
     "IGNORE_NEGATIVE_VALUES": "Ignorar valores de peso negativos",
     "IGNORE_ANOMALY_VALUES": "Ignorar valores anómalos",
     "IGNORE_ANOMALY_VALUES_TOOLTIP": "Por ejemplo: Revolver una taza en la báscula",
@@ -1591,6 +1688,93 @@
     },
     "COPIED_TO_CLIPBOARD_SUCCESSFULLY": "Copiado al portapapeles",
     "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "No se ha podido copiar al portapeles",
-    "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": "Data can't be saved due to Android restrictions",
-    "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "Your Android phone doesn't support external file systems, so you'll need to download the ZIP file without media files. For more information, please visit https://beanconqueror.com/faq."
+    "PAGE_SETTINGS_LANGUAGE_FRENCH": "Francés",
+    "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": "No se pueden guardar los datos debido a restricciones de Android",
+    "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "Tu dispositivo no es compatible con sistemas de almacenamiento externo de ficheros, por lo que tendrás que descargar el fichero .ZIP sin los recursos multimedia. Para más información, visita https:\/\/beanconqueror.com\/faq.",
+    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK": "¿Alerta de seguridad al salir?",
+    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK_DESCRIPTION": "Verifica si se ha modificado algún dato al preparar, añadir o editar un café o preparación; se mostrará una alerta al ir hacia atrás.",
+    "PAGE_BEANS_DISCARD_CONFIRM": "Se ha modificado la información del café. ¿Seguro que quieres salir sin guardar?",
+    "PAGE_BREW_DISCARD_CONFIRM": "Se ha modificado la información de la preparación. ¿Seguro que quieres salir sin guardar?",
+    "NO_ENTRIES_FOUND": "No se han encontrado coincidencias",
+    "POPOVER_BEANS_OPTION_REPEAT": "Repetir última preparación",
+    "REPEAT_LAST_BREW": "Repetir última preparación",
+    "REPEAT_BEST_BREW": "Repetir mejor preparación",
+    "PAGE_SETTINGS_VISUALIZER_SECTION": "Visualizer",
+    "VISUALIZER": {
+        "ACTIVATE": "Activar Visualizer",
+        "CHOOSE_SERVER": "Elegir servidor",
+        "CONNECTION": {
+            "UNSUCCESSFULLY": "No se ha podido conectar con el servidor",
+            "SUCCESSFULLY": "Conexión establecida con el servidor."
+        },
+        "SERVER": {
+            "VISUALIZER": "Servidor Visualizer",
+            "CUSTOM": "Servidor personalizado"
+        },
+        "SHOT": {
+            "UPLOAD_SUCCESSFULLY": "Preparación subida a Visualizer.",
+            "UPLOAD_UNSUCCESSFULLY": "No se ha podido subir la preparación a Visualizer."
+        },
+        "URL": "URL",
+        "USERNAME": "Usuario",
+        "PASSWORD": "Contraseña",
+        "UPLOAD_AUTOMATIC": "¿Subir automáticamente?",
+        "UPLOAD_AUTOMATIC_TOOLTIP": "Por favor, verifica que tienes conexión a internet cuando guardes una preparación.",
+        "UPLOAD_ALL": "Subir todas las preparaciones",
+        "NOT_ALL_SHOTS_UPLOADED": "No se han podido subir todas las preparaciones",
+        "ALL_SHOTS_UPLOADED": "Se han subido todas las preparaciones"
+    },
+    "SMART_SCALE_AUTO_START_LISTENING": "¿Iniciar temporizador automáticamente?",
+    "SMART_SCALE_AUTO_START_LISTENING_DESCRIPTION": "Iniciar automáticamente el temporizador al alcanzar el siguiente umbral de peso",
+    "CHOOSE_REFERENCE_GRAPH": "Elegir gráfico a replicar",
+    "RESET": "Reiniciar",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_AXIS": "Define los valores de los ejes del gráfico",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_AXIS_DESCRIPTION": "Elige qué valores mostrar por defecto en los ejes de los gráficos para filtro y espresso.",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_FILTER_WEIGHT": "Filter - Peso",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_FILTER_FLOW": "Filter - Flujo",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_WEIGHT": "Espresso - Peso",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_FLOW": "Espresso - Flujo",
+    "SMART_SCALE_IGNORE_INCOMING_WEIGHT": "Ignorar temporalmente la transferencia de peso.",
+    "SMART_SCALE_IGNORE_INCOMING_WEIGHT_TOOLTIP": "Aparecerá un nuevo botón en las preparaciones la cual ignorará temporalmente nuevo valores de la báscula bluetooth.",
+    "BREWS_ACTIVE": "Preparaciones activas",
+    "BREWS_ARCHIVED": "Preparaciones archivadas",
+    "GRAPHS": "Gráficos",
+    "GRAPH_SECTION": {
+        "NAV_GRAPH": "Gráficos",
+        "NO_ARCHIVED_ENTRIES": "No hay gráficos archivados",
+        "NO_ENTRIES": "No se ha añadido ningún gráfico",
+        "SECTION_HAS_BEEN_ACTIVATED": "Sección de gráficos activada"
+    },
+    "TOAST_GRAPH_ARCHIVED_SUCCESSFULLY": "Gráfico archivado",
+    "TOAST_GRAPH_DELETED_SUCCESSFULLY": "Gráfico eliminado",
+    "TOAST_GRAPH_EDITED_SUCCESSFULLY": "Gráfico editado",
+    "TOAST_GRAPH_ADD_SUCCESSFULLY": "Gráfico añadido",
+    "NAV_GRAPH_SECTION": "Gráficos",
+    "DELETE_GRAPH_QUESTION": "¿Quieres eliminar este gráfico?",
+    "PAGE_SETTINGS_SHOW_ARCHIVED_GRAPHS": "Mostrar gráficos archivados",
+    "PAGE_SETTINGS_SHOW_GRAPH_SECTION": "Activar sección de gráficos",
+    "EDIT_GRAPH": "Editar gráfico",
+    "ADD_GRAPH": "Añadir gráfico",
+    "GRAPH": {
+        "PLACE_HOLDER": {
+            "NAME": "Nombre del gráfico",
+            "NOTES": "Notas"
+        },
+        "UPLOAD": "Subir gráfico",
+        "DELETE": "Eliminar gráfico",
+        "UPLOAD_DESCRIPTION": "Importa un archivo .JSON previamente exportado desde la vista detallada de una preparación. También puedes importar un gráfico en formato .JSON que haya compartido otro usuario de la comunidad."
+    },
+    "SHOW_VISUALIZER": "Mostrar Visualizer",
+    "NO_BREWS_FOUND": "No se han encontrado preparaciones",
+    "NO_GRAPHS_FOUND": "No se han encontrado gráficos",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_AXIS": "Define los segundos que se muestran en el gráfico",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_DESCRIPTION": "Define los segundos que se muestran para filtro y espresso",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_FILTER_AXIS_NORMAL_SCREEN": "Filtro - Pantalla normal",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_FILTER_AXIS_FULL_SCREEN_SCREEN": "Filtro - Pantalla completa",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_ESPRESSO_AXIS_NORMAL_SCREEN": "Espresso - Pantalla normal",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_ESPRESSO_AXIS_FULL_SCREEN_SCREEN": "Espresso - Pantalla completa",
+    "PAGE_SETTINGS_DATE_FORMAT": "Formato de fecha",
+    "PAGE_SETTINGS_LANGUAGE_FRANCE": "Francés",
+    "PAGE_SETTINGS_LANGUAGE_INDONESIA": "Indonesio",
+    "EXTRACTION_CHART_TITLE": "Gráfico de extracción"
 }

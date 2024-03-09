@@ -22,6 +22,7 @@ import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDev
 })
 export class TimerComponent implements OnInit, OnDestroy {
   @Input() public label: string;
+  @Input('label-id') public labelId: string;
   @Input('hide-control-buttons') public hideControlButtons: boolean = false;
   @Output() public timerStarted = new EventEmitter();
   @Output() public timerPaused = new EventEmitter();

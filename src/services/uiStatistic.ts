@@ -69,7 +69,7 @@ export class UIStatistic {
     if (lastBrew !== undefined) {
       return this.uiHelper.formateDate(
         lastBrew.config.unix_timestamp,
-        'DD.MM.YYYY, HH:mm:ss'
+        this.uiSettings.getSettings().date_format + ', HH:mm:ss'
       );
     }
 

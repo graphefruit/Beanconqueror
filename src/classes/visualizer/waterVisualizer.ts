@@ -16,6 +16,8 @@ export class WaterVisualizer implements IWaterVisualizer {
   public magnesium_type: WATER_UNIT;
   public sodium: number;
   public sodium_type: WATER_UNIT;
+  public potassium: number;
+  public potassium_type: WATER_UNIT;
   public tds: number;
   public tds_type: WATER_UNIT_TDS;
 
@@ -26,6 +28,7 @@ export class WaterVisualizer implements IWaterVisualizer {
     this.calcium = 0;
     this.magnesium = 0;
     this.sodium = 0;
+    this.potassium = 0;
     this.tds = 0;
 
     this.general_hardness_type = 'UNKNOWN' as WATER_UNIT;
@@ -33,6 +36,7 @@ export class WaterVisualizer implements IWaterVisualizer {
     this.calcium_type = 'UNKNOWN' as WATER_UNIT;
     this.magnesium_type = 'UNKNOWN' as WATER_UNIT;
     this.sodium_type = 'UNKNOWN' as WATER_UNIT;
+    this.potassium_type = 'UNKNOWN' as WATER_UNIT;
     this.tds_type = 'PPM' as WATER_UNIT_TDS;
   }
 }

@@ -2,14 +2,15 @@
 </ion-header>
 <ion-content>
   <ion-item>
-    <ion-label position="stacked" style="top: -5px;position: relative;">{{"ONLY_FAVOURITES" | translate }}</ion-label>
-    <ion-toggle slot="end" [(ngModel)]="filter.favourite"></ion-toggle>
+    <ion-toggle label-placement='start' [(ngModel)]="filter.favourite">
+      <div class="ion-label">
+        <p>{{"ONLY_FAVOURITES" | translate}}</p>
+      </div>
+    </ion-toggle>
   </ion-item>
 
   <ion-item>
-    <ion-label position="stacked">{{"BEAN_DATA_ROASTING_TYPE" | translate}}</ion-label>
-
-    <ion-select #bean_roasting_type="ngModel" [(ngModel)]="filter.bean_roasting_type" cancelText="{{'CANCEL'| translate }}" name="bean_roasting_type"
+    <ion-select label-placement="stacked" label='{{"BEAN_DATA_ROASTING_TYPE" | translate}}' #bean_roasting_type="ngModel" [(ngModel)]="filter.bean_roasting_type" cancelText="{{'CANCEL'| translate }}" name="bean_roasting_type"
                 okText="{{'CHOOSE'| translate }}"
                 placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTING_TYPE' | translate}}"
                 style="padding-left:0px!important;width: 100%; min-width: 100%;"
@@ -18,8 +19,7 @@
     </ion-select>
   </ion-item>
   <ion-item>
-    <ion-label position="stacked">{{"BEAN_DATA_ROASTER" | translate}}</ion-label>
-    <ion-select #bean_roaster="ngModel" [(ngModel)]="filter.bean_roaster" cancelText="{{'CANCEL'| translate }}" name="bean_roaster"
+    <ion-select label-placement="stacked" label='{{"BEAN_DATA_ROASTER" | translate}}' #bean_roaster="ngModel" [(ngModel)]="filter.bean_roaster" cancelText="{{'CANCEL'| translate }}" name="bean_roaster"
                 okText="{{'CHOOSE'| translate }}"
                 placeholder="{{'BEAN.PLACE_HOLDER.CHOOSE_DATA_ROASTER' | translate}}"
                 style="padding-left:0px!important;width: 100%; min-width: 100%;"
@@ -27,36 +27,39 @@
       <ion-select-option *ngFor="let key of roasteries" value="{{key}}">{{key}}</ion-select-option>
     </ion-select>
   </ion-item>
+  <div class='ion-label' style='margin-left: 16px;margin-top: 5px;'>{{"BEAN_DATA_ROASTING_DATE" | translate}}</div>
   <ion-item>
-    <ion-label position="stacked">{{"BEAN_DATA_ROASTING_DATE" | translate}}</ion-label>
-    <ion-grid class="ion-no-padding margin-top-5" style="margin-left:0px;">
+    <ion-grid class="ion-no-padding" style="margin-left:0px;margin-top:-5px;">
       <ion-row>
         <ion-col size="5">
-          <ion-input readonly  choose-date-overlay [(data)]="filter.roastingDateStart"  [transform-date] displayFormat="DD.MM.YYYY" placeholder="dd.mm.yyyy"></ion-input>
+          <ion-input readonly  choose-date-overlay [(data)]="filter.roastingDateStart"  [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{settings?.date_format}}"></ion-input>
         </ion-col>
         <ion-col size="2" style="margin: auto 0;text-align:center">
           /
         </ion-col>
         <ion-col size="5">
-          <ion-input readonly  choose-date-overlay [(data)]="filter.roastingDateEnd"  [transform-date] displayFormat="DD.MM.YYYY" placeholder="dd.mm.yyyy"></ion-input>
+          <ion-input readonly  choose-date-overlay [(data)]="filter.roastingDateEnd"  [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{settings?.date_format}}"></ion-input>
         </ion-col>
       </ion-row>
     </ion-grid>
   </ion-item>
-
-  <ion-item>
-    <ion-label position="stacked" style="min-height:30px;">{{"BEAN_DATA_ROAST_NAME" | translate}}</ion-label>
+  <ion-item lines='none'>
+    <ion-label style="min-height:30px;">{{"BEAN_DATA_ROAST_NAME" | translate}}</ion-label>
+  </ion-item>
+  <ion-item style='margin-top:-10px;'>
     <ion-range min="0" dualKnobs="true" snaps="true" max="5" snaps="true" step="0.5" [(ngModel)]="filter.roast_range">
       <ion-icon size="small" slot="start" name="beanconqueror-bean-rating-empty"></ion-icon>
       <ion-icon slot="end" name="beanconqueror-bean-rating-full"></ion-icon>
     </ion-range>
   </ion-item>
 
-  <ion-item>
-    <ion-label position="stacked" style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
+  <ion-item lines='none'>
+    <ion-label  style="min-height:30px;">{{"BREW_DATA_RATING" | translate }}&nbsp;<ion-badge
       style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(filter.rating.lower,2)}}&nbsp;-&nbsp;{{this.uiHelper.toFixedIfNecessary(filter.rating.upper,2)}} </ion-badge>
     </ion-label>
-    <ion-range min="0" dualKnobs="true" snaps="true" [max]="getMaxBeanRating()" step="1" [(ngModel)]="filter.rating">
+  </ion-item>
+  <ion-item style='margin-top:-10px;'>
+    <ion-range min="0" dualKnobs="true" snaps="true" [pinFormatter]='pinFormatter' pin='true'  [max]="getMaxBeanRating()" [step]="settings?.bean_rating_steps" [(ngModel)]="filter.rating">
       <ion-icon size="small" slot="start" name="beanconqueror-brew-rating-empty"></ion-icon>
       <ion-icon slot="end" name="beanconqueror-brew-rating-full"></ion-icon>
     </ion-range>

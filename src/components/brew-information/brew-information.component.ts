@@ -39,6 +39,7 @@ import { UIFileHelper } from '../../services/uiFileHelper';
 import { BrewFlow } from '../../classes/brew/brewFlow';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
+import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
 declare var window;
 @Component({
   selector: 'brew-information',
@@ -80,7 +81,8 @@ export class BrewInformationComponent implements OnInit {
     private readonly platform: Platform,
     private readonly uiFileHelper: UIFileHelper,
     private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiBeanHelper: UIBeanHelper
+    private readonly uiBeanHelper: UIBeanHelper,
+    private readonly visualizerService: VisualizerService
   ) {}
 
   public ngOnInit() {
@@ -134,9 +136,10 @@ export class BrewInformationComponent implements OnInit {
       BREW_TRACKING.TITLE,
       BREW_TRACKING.ACTIONS.POPOVER_ACTIONS
     );
+    //Animated false, else backdrop would sometimes not disappear and stay until user touches again.
     const popover = await this.modalCtrl.create({
       component: BrewPopoverActionsComponent,
-
+      animated: true,
       componentProps: { brew: this.brew },
       id: BrewPopoverActionsComponent.COMPONENT_ID,
       cssClass: 'popover-actions',
@@ -151,8 +154,17 @@ export class BrewInformationComponent implements OnInit {
     }
   }
 
+  public async showVisualizerShot() {
+    this.uiHelper.openExternalWebpage(
+      'https://visualizer.coffee/shots/' +
+        this.brew.customInformation.visualizer_id
+    );
+  }
   public async shareToVisualizer() {
-    const vS: Visualizer = new Visualizer();
+    await this.uiAlert.showLoadingSpinner();
+    await this.visualizerService.uploadToVisualizer(this.brew);
+    await this.uiAlert.hideLoadingSpinner();
+    /** const vS: Visualizer = new Visualizer();
 
     vS.mapBrew(this.brew);
     vS.mapBean(this.brew.getBean());
@@ -161,13 +173,15 @@ export class BrewInformationComponent implements OnInit {
     vS.mapMill(this.brew.getMill());
     vS.brewFlow = await this.readFlowProfile();
 
+
+    this.uiFileHelper.saveJSONFile('TestJSONVisualizer.json', JSON.stringify(vS));
     try {
       await this.uiHelper.exportJSON(
         this.brew.config.uuid + '_visualizer.json',
         JSON.stringify(vS),
         true
       );
-    } catch (ex) {}
+    } catch (ex) {}**/
   }
 
   public async fastRepeatBrew() {
@@ -336,6 +350,9 @@ export class BrewInformationComponent implements OnInit {
         break;
       case BREW_ACTION.TOGGLE_BEST_BREW:
         await this.toggleBestBrew();
+        break;
+      case BREW_ACTION.SHOW_VISUALIZER:
+        await this.showVisualizerShot();
         break;
       default:
         break;

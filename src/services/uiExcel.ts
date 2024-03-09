@@ -6,7 +6,7 @@ import { UIHelper } from './uiHelper';
 import { UILog } from './uiLog';
 import { UIStorage } from './uiStorage';
 import * as XLSX from 'xlsx';
-import { File, FileEntry } from '@ionic-native/file/ngx';
+import { File, FileEntry } from '@awesome-cordova-plugins/file/ngx';
 import { AlertController, Platform } from '@ionic/angular';
 import { UIBrewStorage } from './uiBrewStorage';
 import { TranslateService } from '@ngx-translate/core';
@@ -15,17 +15,19 @@ import { BEAN_ROASTING_TYPE_ENUM } from '../enums/beans/beanRoastingType';
 import { BEAN_MIX_ENUM } from '../enums/beans/mix';
 import { UIPreparationStorage } from './uiPreparationStorage';
 import { UIAlert } from './uiAlert';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { UIFileHelper } from './uiFileHelper';
 import { UIMillStorage } from './uiMillStorage';
 import { BrewFlow } from '../classes/brew/brewFlow';
 import moment from 'moment';
 import { UISettingsStorage } from './uiSettingsStorage';
+import { Settings } from '../classes/settings/settings';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UIExcel {
+  private settings: Settings;
   constructor(
     protected uiStorage: UIStorage,
     protected uiHelper: UIHelper,
@@ -42,7 +44,9 @@ export class UIExcel {
     private readonly uiMillStorage: UIMillStorage,
     private readonly alertCtrl: AlertController,
     private readonly uiSettingsStorage: UISettingsStorage
-  ) {}
+  ) {
+    this.settings = this.uiSettingsStorage.getSettings();
+  }
   private write(): XLSX.WorkBook {
     /* generate worksheet */
     // const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(this.data);
@@ -114,6 +118,8 @@ export class UIExcel {
       header_flow_realtime.push('Flow value');
       header_flow_realtime.push('Smoothed weight');
 
+      header_flow_realtime.push('Timestamp delta');
+
       const wsDataFlowRealtime: any[][] = [header_flow_realtime];
       for (const entry of _flow.realtimeFlow) {
         const wbEntry: Array<any> = [
@@ -121,6 +127,7 @@ export class UIExcel {
           entry.brew_time,
           entry.flow_value,
           entry.smoothed_weight,
+          entry.timestampdelta,
         ];
         wsDataFlowRealtime.push(wbEntry);
       }
@@ -204,7 +211,7 @@ export class UIExcel {
         mill.finished,
         this.uiHelper.formateDate(
           mill.config.unix_timestamp,
-          'DD.MM.YYYY HH:mm:ss'
+          this.settings.date_format + ' HH:mm:ss'
         ),
         mill.config.uuid,
       ];
@@ -237,7 +244,7 @@ export class UIExcel {
         preparation.finished,
         this.uiHelper.formateDate(
           preparation.config.unix_timestamp,
-          'DD.MM.YYYY HH:mm:ss'
+          this.settings.date_format + ' HH:mm:ss'
         ),
         preparation.config.uuid,
       ];
@@ -271,6 +278,7 @@ export class UIExcel {
     header.push(this.translate.instant('BEAN_DATA_URL'));
     header.push(this.translate.instant('BEAN_DATA_EAN'));
     header.push(this.translate.instant('NOTES'));
+    header.push(this.translate.instant('BREW_DATA_RATING'));
     header.push(this.translate.instant('EXCEL.BEAN.CREATION_DATE'));
     header.push(this.translate.instant('EXCEL.BEAN.ID'));
     header.push(this.translate.instant('ARCHIVED'));
@@ -281,7 +289,10 @@ export class UIExcel {
       const entry: Array<any> = [
         bean.name,
         bean.roaster,
-        this.uiHelper.formateDatestr(bean.roastingDate, 'DD.MM.YYYY'),
+        this.uiHelper.formateDatestr(
+          bean.roastingDate,
+          this.settings.date_format
+        ),
         BEAN_ROASTING_TYPE_ENUM[bean.bean_roasting_type],
         bean.getRoastName(),
         bean.getCustomRoastName(),
@@ -294,9 +305,10 @@ export class UIExcel {
         bean.url,
         bean.ean_article_number,
         bean.note,
+        bean.rating,
         this.uiHelper.formateDate(
           bean.config.unix_timestamp,
-          'DD.MM.YYYY HH:mm:ss'
+          this.settings.date_format + ' HH:mm:ss'
         ),
         bean.config.uuid,
         bean.finished,
@@ -429,7 +441,7 @@ export class UIExcel {
         brew.getExtractionYield(),
         this.uiHelper.formateDate(
           brew.config.unix_timestamp,
-          'DD.MM.YYYY HH:mm:ss'
+          this.settings.date_format + ' HH:mm:ss'
         ),
         brew.getBrewRatio(),
         brew.getCalculatedBeanAge(),

@@ -24,6 +24,8 @@ export class BrewFilterComponent implements OnInit {
   public static COMPONENT_ID = 'brew-filter';
   public settings: Settings;
 
+  public hide_options: any = {};
+
   public filter: IBrewPageFilter;
   public method_of_preparations: Array<Preparation> = [];
   public beans: Array<Bean> = [];
@@ -51,9 +53,28 @@ export class BrewFilterComponent implements OnInit {
 
   public ngOnInit() {
     this.segment = this.navParams.get('segment');
+
     this.filter = this.uiHelper.copyData(this.navParams.get('brew_filter'));
+
+    this.hide_options = this.navParams.get('hide_options');
     this.__reloadFilterSettings();
     this.profiles = this.getProfiles();
+  }
+  public showOption(_option: string) {
+    if (_option === 'chart_data') {
+      if (this.hide_options && this.hide_options?.chart_data === true) {
+        return false;
+      }
+    }
+    return true;
+  }
+  public pinFormatter(value: any) {
+    const parsedFloat = parseFloat(value);
+    if (isNaN(parsedFloat)) {
+      return `${0}`;
+    }
+    const newValue = +parsedFloat.toFixed(2);
+    return `${newValue}`;
   }
   public getMaxBrewRating() {
     const maxSettingsRating = this.settings.brew_rating;

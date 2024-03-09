@@ -1,30 +1,28 @@
-import { AlertController, ModalController, Platform } from '@ionic/angular';
+import {
+  AlertController,
+  ModalController,
+  Platform,
+  ScrollDetail,
+} from '@ionic/angular';
 import BeanconquerorSettingsDummy from '../../assets/BeanconquerorTestData.json';
 import { Bean } from '../../classes/bean/bean';
 
 import { Brew } from '../../classes/brew/brew';
 import { BREW_VIEW_ENUM } from '../../enums/settings/brewView';
-import {
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { DirectoryEntry, FileEntry } from '@ionic-native/file';
-import { FileChooser } from '@ionic-native/file-chooser/ngx';
-import { File } from '@ionic-native/file/ngx';
-import { FilePath } from '@ionic-native/file-path/ngx';
+import { DirectoryEntry, FileEntry } from '@awesome-cordova-plugins/file';
+import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
+import { File } from '@awesome-cordova-plugins/file/ngx';
+import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
 import { IBean } from '../../interfaces/bean/iBean';
 import { IBrew } from '../../interfaces/brew/iBrew';
-import { IOSFilePicker } from '@ionic-native/file-picker/ngx';
 import { ISettings } from '../../interfaces/settings/iSettings';
 import { Mill } from '../../classes/mill/mill';
 import { Settings } from '../../classes/settings/settings';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { STARTUP_VIEW_ENUM } from '../../enums/settings/startupView';
-import { Subject, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { UIAlert } from '../../services/uiAlert';
 import { UIAnalytics } from '../../services/uiAnalytics';
@@ -39,7 +37,7 @@ import { UIStorage } from '../../services/uiStorage';
 
 /** Third party */
 import { AnalyticsPopoverComponent } from '../../popover/analytics-popover/analytics-popover.component';
-import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 
 import { CurrencyService } from '../../services/currencyService/currency.service';
 import { GreenBean } from '../../classes/green-bean/green-bean';
@@ -67,12 +65,17 @@ import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDev
 import { Logger } from '../../classes/devices/common/logger';
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { UIExportImportHelper } from '../../services/uiExportImportHelper';
+import { ScaleType } from '../../classes/devices';
+import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
+import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
+import { UIGraphStorage } from '../../services/uiGraphStorage.service';
+import { Graph } from '../../classes/graph/graph';
 
 declare var cordova: any;
 declare var device: any;
 
 declare var window: any;
-
+declare var FilePicker;
 @Component({
   selector: 'settings',
   templateUrl: './settings.page.html',
@@ -90,6 +93,10 @@ export class SettingsPage implements OnInit {
   public currencies = {};
 
   public settings_segment: string = 'general';
+
+  public visualizerServerEnum = VISUALIZER_SERVER_ENUM;
+
+  public isScrolling: boolean = false;
 
   private __cleanupAttachmentData(
     _data: Array<
@@ -131,8 +138,8 @@ export class SettingsPage implements OnInit {
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiBrewStorage: UIBrewStorage,
+    private readonly uiGraphStorage: UIGraphStorage,
     private readonly uiMillStorage: UIMillStorage,
-    private readonly iosFilePicker: IOSFilePicker,
     private readonly socialSharing: SocialSharing,
     private readonly uiLog: UILog,
     private readonly translate: TranslateService,
@@ -152,7 +159,8 @@ export class SettingsPage implements OnInit {
     private readonly currencyService: CurrencyService,
     private readonly eventQueue: EventQueueService,
     private readonly uiFileHelper: UIFileHelper,
-    private readonly uiExportImportHelper: UIExportImportHelper
+    private readonly uiExportImportHelper: UIExportImportHelper,
+    private readonly visualizerService: VisualizerService
   ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -175,7 +183,27 @@ export class SettingsPage implements OnInit {
 
   public async ngOnInit() {}
 
+  public handleScrollStart() {
+    this.isScrolling = true;
+  }
+
+  public handleScroll(ev: CustomEvent<ScrollDetail>) {
+    this.isScrolling = true;
+  }
+
+  public handleScrollEnd() {
+    setTimeout(() => {
+      this.isScrolling = false;
+    }, 1000);
+  }
+
   public async findAndConnectRefractometerDevice(_retry: boolean = false) {
+    if (this.platform.is('ios')) {
+      await this.uiAlert.showLoadingSpinner();
+      await this.bleManager.enableIOSBluetooth();
+      await this.uiAlert.hideLoadingSpinner();
+    }
+
     const hasLocationPermission: boolean =
       await this.bleManager.hasLocationPermission();
     if (!hasLocationPermission) {
@@ -273,6 +301,12 @@ export class SettingsPage implements OnInit {
   }
 
   public async findAndConnectTemperatureDevice(_retry: boolean = false) {
+    if (this.platform.is('ios')) {
+      await this.uiAlert.showLoadingSpinner();
+      await this.bleManager.enableIOSBluetooth();
+      await this.uiAlert.hideLoadingSpinner();
+    }
+
     const hasLocationPermission: boolean =
       await this.bleManager.hasLocationPermission();
     if (!hasLocationPermission) {
@@ -345,6 +379,12 @@ export class SettingsPage implements OnInit {
   }
 
   public async findAndConnectPressureDevice(_retry: boolean = false) {
+    if (this.platform.is('ios')) {
+      await this.uiAlert.showLoadingSpinner();
+      await this.bleManager.enableIOSBluetooth();
+      await this.uiAlert.hideLoadingSpinner();
+    }
+
     const hasLocationPermission: boolean =
       await this.bleManager.hasLocationPermission();
     if (!hasLocationPermission) {
@@ -416,6 +456,11 @@ export class SettingsPage implements OnInit {
   }
 
   public async findAndConnectScale(_retry: boolean = false) {
+    if (this.platform.is('ios')) {
+      await this.uiAlert.showLoadingSpinner();
+      await this.bleManager.enableIOSBluetooth();
+      await this.uiAlert.hideLoadingSpinner();
+    }
     const hasLocationPermission: boolean =
       await this.bleManager.hasLocationPermission();
     if (!hasLocationPermission) {
@@ -495,6 +540,16 @@ export class SettingsPage implements OnInit {
 
       this.settings.scale_id = scale.id;
       this.settings.scale_type = scale.type;
+
+      if (
+        scale.type === ScaleType.DIFLUIDMICROBALANCE ||
+        scale.type === ScaleType.DIFLUIDMICROBALANCETI
+      ) {
+        //If there are multiple commands, and also to reset the sclae, the difluid have issues with this, therefore set delay to 300ms
+        this.settings.bluetooth_command_delay = 300;
+      } else if (scale.type === ScaleType.FELICITA) {
+        this.settings.bluetooth_command_delay = 100;
+      }
 
       this.uiAnalytics.trackEvent(
         SETTINGS_TRACKING.TITLE,
@@ -749,6 +804,63 @@ export class SettingsPage implements OnInit {
     this.changeDetectorRef.detectChanges();
     await this.uiSettingsStorage.saveSettings(this.settings);
   }
+  public async visualizerServerHasChanged() {
+    if (this.settings.visualizer_server === VISUALIZER_SERVER_ENUM.VISUALIZER) {
+      this.settings.visualizer_url = 'https://visualizer.coffee/';
+    } else {
+      if (!this.settings.visualizer_url.endsWith('/')) {
+        this.settings.visualizer_url = this.settings.visualizer_url + '/';
+      }
+    }
+  }
+  public async checkVisualizerURL() {
+    if (this.settings.visualizer_url === '') {
+      this.settings.visualizer_url = 'https://visualizer.coffee/';
+    }
+    if (!this.settings.visualizer_url.endsWith('/')) {
+      this.settings.visualizer_url = this.settings.visualizer_url + '/';
+    }
+  }
+
+  public async uploadBrewsToVisualizer() {
+    const brewEntries = this.uiBrewStorage.getAllEntries();
+    const uploadShots = brewEntries.filter(
+      (b) => b.flow_profile && !b.customInformation.visualizer_id
+    );
+    let couldABrewNotBeUploaded: boolean = false;
+    await this.uiAlert.showLoadingSpinner();
+    for (const shot of uploadShots) {
+      try {
+        await this.visualizerService.uploadToVisualizer(shot, false);
+      } catch (ex) {
+        couldABrewNotBeUploaded = true;
+      }
+    }
+
+    await this.uiAlert.hideLoadingSpinner();
+
+    if (couldABrewNotBeUploaded) {
+      this.uiAlert.showMessage(
+        'VISUALIZER.NOT_ALL_SHOTS_UPLOADED',
+        undefined,
+        undefined,
+        true
+      );
+    } else {
+      this.uiAlert.showMessage(
+        'VISUALIZER.ALL_SHOTS_UPLOADED',
+        undefined,
+        undefined,
+        true
+      );
+    }
+  }
+  public howManyBrewsAreNotUploadedToVisualizer() {
+    const brewEntries = this.uiBrewStorage.getAllEntries();
+    return brewEntries.filter(
+      (b) => b.flow_profile && !b.customInformation.visualizer_id
+    ).length;
+  }
 
   public async resetFilter() {
     this.settings.resetFilter();
@@ -852,47 +964,50 @@ export class SettingsPage implements OnInit {
           }
         });
       } else {
-        this.iosFilePicker.pickFile().then((uri) => {
-          if (uri && (uri.endsWith('.zip') || uri.endsWith('.json'))) {
-            let path = uri.substring(0, uri.lastIndexOf('/'));
-            const file = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
-            if (path.indexOf('file://') !== 0) {
-              path = 'file://' + path;
-            }
+        FilePicker.pickFile(
+          (uri) => {
+            if (uri && (uri.endsWith('.zip') || uri.endsWith('.json'))) {
+              let path = uri.substring(0, uri.lastIndexOf('/'));
+              const file = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
+              if (path.indexOf('file://') !== 0) {
+                path = 'file://' + path;
+              }
 
-            if (uri.endsWith('.zip')) {
-              this.uiFileHelper.getZIPFileByPathAndFile(path, file).then(
-                async (_arrayBuffer) => {
-                  const parsedJSON =
-                    await this.uiExportImportHelper.getJSONFromZIPArrayBufferContent(
-                      _arrayBuffer
+              if (uri.endsWith('.zip')) {
+                this.uiFileHelper.getZIPFileByPathAndFile(path, file).then(
+                  async (_arrayBuffer) => {
+                    const parsedJSON =
+                      await this.uiExportImportHelper.getJSONFromZIPArrayBufferContent(
+                        _arrayBuffer
+                      );
+                    this.__importJSON(parsedJSON, path);
+                  },
+                  () => {
+                    // Backup, maybe it was a .JSON?
+                  }
+                );
+              } else {
+                this.__readJSONFile(path, file)
+                  .then(() => {
+                    // nothing todo
+                  })
+                  .catch((_err) => {
+                    this.uiAlert.showMessage(
+                      this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
+                        ' (' +
+                        JSON.stringify(_err) +
+                        ')'
                     );
-                  this.__importJSON(parsedJSON, path);
-                },
-                () => {
-                  // Backup, maybe it was a .JSON?
-                }
-              );
+                  });
+              }
             } else {
-              this.__readJSONFile(path, file)
-                .then(() => {
-                  // nothing todo
-                })
-                .catch((_err) => {
-                  this.uiAlert.showMessage(
-                    this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
-                      ' (' +
-                      JSON.stringify(_err) +
-                      ')'
-                  );
-                });
+              this.uiAlert.showMessage(
+                this.translate.instant('INVALID_FILE_FORMAT')
+              );
             }
-          } else {
-            this.uiAlert.showMessage(
-              this.translate.instant('INVALID_FILE_FORMAT')
-            );
-          }
-        });
+          },
+          () => {}
+        );
       }
     } else {
       this.__importDummyData();
@@ -921,6 +1036,10 @@ export class SettingsPage implements OnInit {
     const exportObjects: Array<any> = [...this.uiBrewStorage.getAllEntries()];
     await this._exportFlowProfiles(exportObjects);
   }
+  private async exportGraphProfiles() {
+    const exportObjects: Array<any> = [...this.uiGraphStorage.getAllEntries()];
+    await this._exportGraphProfiles(exportObjects);
+  }
 
   public async export() {
     await this.uiAlert.showLoadingSpinner();
@@ -947,7 +1066,6 @@ export class SettingsPage implements OnInit {
             reader.readAsDataURL(_blob);
             reader.onloadend = () => {
               let base64data = reader.result.toString();
-              console.log(base64data);
               base64data = base64data.replace(
                 'data:application/octet-stream;',
                 'data:application/zip;'
@@ -970,6 +1088,7 @@ export class SettingsPage implements OnInit {
           if (this.platform.is('android')) {
             await this.exportAttachments();
             await this.exportFlowProfiles();
+            await this.exportGraphProfiles();
           }
         }
         const file: FileEntry = await this.uiFileHelper.downloadFile(
@@ -995,6 +1114,7 @@ export class SettingsPage implements OnInit {
                     if (this.platform.is('android')) {
                       await this.exportAttachments();
                       await this.exportFlowProfiles();
+                      await this.exportGraphProfiles();
                       await this.uiAlert.hideLoadingSpinner();
 
                       const alert = await this.alertCtrl.create({
@@ -1068,27 +1188,30 @@ export class SettingsPage implements OnInit {
           }
         });
       } else {
-        this.iosFilePicker.pickFile().then((uri) => {
-          if (uri && uri.endsWith('.xlsx')) {
-            let path = uri.substring(0, uri.lastIndexOf('/'));
-            const file = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
-            if (path.indexOf('file://') !== 0) {
-              path = 'file://' + path;
-            }
-            this.uiFileHelper.readFileAsArrayBuffer(path, file).then(
-              async (_arrayBuffer) => {
-                this.uiExcel.importBeansByExcel(_arrayBuffer);
-              },
-              () => {
-                // Backup, maybe it was a .JSON?
+        FilePicker.pickFile(
+          (uri) => {
+            if (uri && uri.endsWith('.xlsx')) {
+              let path = uri.substring(0, uri.lastIndexOf('/'));
+              const file = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
+              if (path.indexOf('file://') !== 0) {
+                path = 'file://' + path;
               }
-            );
-          } else {
-            this.uiAlert.showMessage(
-              this.translate.instant('INVALID_FILE_FORMAT')
-            );
-          }
-        });
+              this.uiFileHelper.readFileAsArrayBuffer(path, file).then(
+                async (_arrayBuffer) => {
+                  this.uiExcel.importBeansByExcel(_arrayBuffer);
+                },
+                () => {
+                  // Backup, maybe it was a .JSON?
+                }
+              );
+            } else {
+              this.uiAlert.showMessage(
+                this.translate.instant('INVALID_FILE_FORMAT')
+              );
+            }
+          },
+          () => {}
+        );
       }
     } else {
       this.__importDummyData();
@@ -1113,6 +1236,14 @@ export class SettingsPage implements OnInit {
   }
 
   private async _exportFlowProfiles(_storedData: Array<Brew>) {
+    for (const entry of _storedData) {
+      if (entry.flow_profile && entry.flow_profile.length) {
+        await this._exportFlowProfileFile(entry.flow_profile);
+      }
+    }
+  }
+
+  private async _exportGraphProfiles(_storedData: Array<Graph>) {
     for (const entry of _storedData) {
       if (entry.flow_profile && entry.flow_profile.length) {
         await this._exportFlowProfileFile(entry.flow_profile);
@@ -1302,6 +1433,16 @@ export class SettingsPage implements OnInit {
 
   private async _importFlowProfileFiles(
     _storedData: Array<Brew>,
+    _importPath: string
+  ) {
+    for (const entry of _storedData) {
+      if (entry.flow_profile) {
+        await this._importFileFlowProfile(entry.flow_profile, _importPath);
+      }
+    }
+  }
+  private async _importGraphProfileFiles(
+    _storedData: Array<Graph>,
     _importPath: string
   ) {
     for (const entry of _storedData) {
@@ -1597,6 +1738,9 @@ export class SettingsPage implements OnInit {
       if (!parsedContent[this.uiVersionStorage.getDBPath()]) {
         parsedContent[this.uiVersionStorage.getDBPath()] = [];
       }
+      if (!parsedContent[this.uiGraphStorage.getDBPath()]) {
+        parsedContent[this.uiGraphStorage.getDBPath()] = [];
+      }
       if (
         parsedContent[this.uiPreparationStorage.getDBPath()] &&
         parsedContent[this.uiBeanStorage.getDBPath()] &&
@@ -1656,6 +1800,8 @@ export class SettingsPage implements OnInit {
                       this.uiRoastingMachineStorage.getAllEntries();
                     const waterData: Array<Water> =
                       this.uiWaterStorage.getAllEntries();
+                    const graphData: Array<Graph> =
+                      this.uiGraphStorage.getAllEntries();
 
                     await this._importFiles(brewsData, _importPath);
                     await this._importFiles(beansData, _importPath);
@@ -1673,6 +1819,11 @@ export class SettingsPage implements OnInit {
                     await this._importFlowProfileFiles(
                       brewsData,
                       _importPath + 'brews/'
+                    );
+
+                    await this._importGraphProfileFiles(
+                      graphData,
+                      _importPath + 'graphs/'
                     );
                   }
 
@@ -1761,6 +1912,7 @@ export class SettingsPage implements OnInit {
       await this.uiGreenBeanStorage.reinitializeStorage();
       await this.uiRoastingMachineStorage.reinitializeStorage();
       await this.uiWaterStorage.reinitializeStorage();
+      await this.uiGraphStorage.reinitializeStorage();
 
       // Wait for every necessary service to be ready before starting the app
       // Settings and version, will create a new object on start, so we need to wait for this in the end.
@@ -1776,6 +1928,7 @@ export class SettingsPage implements OnInit {
       const roastingMachineStorageCallback =
         this.uiRoastingMachineStorage.storageReady();
       const waterStorageCallback = this.uiWaterStorage.storageReady();
+      const graphStorageCallback = this.uiGraphStorage.storageReady();
 
       Promise.all([
         beanStorageReadyCallback,
@@ -1787,6 +1940,7 @@ export class SettingsPage implements OnInit {
         greenBeanStorageCallback,
         roastingMachineStorageCallback,
         waterStorageCallback,
+        graphStorageCallback,
       ]).then(
         async () => {
           await this.uiUpdate.checkUpdate();
@@ -1797,5 +1951,23 @@ export class SettingsPage implements OnInit {
         }
       );
     });
+  }
+
+  public checkVisualizerConnection() {
+    this.visualizerService.checkConnection().then(
+      () => {
+        //Works
+        this.uiToast.showInfoToastBottom('VISUALIZER.CONNECTION.SUCCESSFULLY');
+      },
+      () => {
+        // Didn't work
+        this.uiAlert.showMessage(
+          'VISUALIZER.CONNECTION.UNSUCCESSFULLY',
+          undefined,
+          undefined,
+          true
+        );
+      }
+    );
   }
 }

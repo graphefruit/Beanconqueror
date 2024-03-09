@@ -17,6 +17,9 @@ import { DifluidMicrobalance } from './difluidMicrobalance';
 import { RefractometerDevice } from './refractometerBluetoothDevice';
 import { DiFluidR2Refractometer } from './difluidR2Refractometer';
 import { BlackcoffeeScale } from './blackcoffeeScale';
+import { DifluidMicrobalanceTi } from './difluidMicrobalanceTi';
+import { DiyPythonCoffeeScale } from './diyPythonCoffeeScale';
+import { DiyRustCoffeeScale } from './diyRustCoffeeScale';
 export { BluetoothScale, SCALE_TIMER_COMMAND } from './bluetoothDevice';
 
 export enum ScaleType {
@@ -28,7 +31,10 @@ export enum ScaleType {
   SKALE = 'SKALE',
   SMARTCHEF = 'SMARTCHEF',
   DIFLUIDMICROBALANCE = 'DIFLUIDMIRCROBALANCE',
-  BLACKCOFFEE = 'BLACKCOFFEE'
+  DIFLUIDMICROBALANCETI = 'DIFLUIDMIRCROBALANCETI',
+  BLACKCOFFEE = 'BLACKCOFFEE',
+  DIYPYTHONCOFFEESCALE = 'DIYPYTHONCOFFEESCALE',
+  DIYRUSTCOFFEESCALE = 'DIYRUSTCOFFEESCALE',
 }
 
 export enum PressureType {
@@ -66,8 +72,14 @@ export function makeDevice(
       return new SmartchefScale(data, type);
     case ScaleType.DIFLUIDMICROBALANCE:
       return new DifluidMicrobalance(data, type);
-      case ScaleType.BLACKCOFFEE:
+    case ScaleType.DIFLUIDMICROBALANCETI:
+      return new DifluidMicrobalanceTi(data, type);
+    case ScaleType.BLACKCOFFEE:
       return new BlackcoffeeScale(data, type);
+    case ScaleType.DIYPYTHONCOFFEESCALE:
+      return new DiyPythonCoffeeScale(data, type);
+    case ScaleType.DIYRUSTCOFFEESCALE:
+      return new DiyRustCoffeeScale(data, type);
     default:
       return null;
   }

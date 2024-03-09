@@ -69,6 +69,14 @@ export class BeanFilterComponent implements OnInit {
     this.__reloadFilterSettings();
   }
 
+  public pinFormatter(value: any) {
+    const parsedFloat = parseFloat(value);
+    if (isNaN(parsedFloat)) {
+      return `${0}`;
+    }
+    const newValue = +parsedFloat.toFixed(2);
+    return `${newValue}`;
+  }
   public getMaxBeanRating() {
     const maxSettingsRating = this.settings.bean_rating;
     const isOpen = this.segment === 'open';

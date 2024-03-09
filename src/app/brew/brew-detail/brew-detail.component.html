@@ -7,6 +7,9 @@
       </ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
+      <ion-button class="big-icon-only" (click)="repeat()" tappable>
+        <ion-icon style='width: 32px;margin-top:5px;' name="beanconqueror-repeat" slot="icon-only"></ion-icon>
+      </ion-button>
       <ion-button class="big-icon-only" (click)="edit()" tappable>
         <ion-icon name="create" slot="icon-only"></ion-icon>
       </ion-button>
@@ -220,11 +223,11 @@
               <ng-template>
                 <ion-content style="--background:white;">
                   <ion-list style="padding:0;background:white;">
-                    <ion-item (click)="downloadFlowProfile()" [button]="true" [detail]="false"
+                    <ion-item (click)="downloadFlowProfile()" tappable [button]="true" [detail]="false"
                       class="ion-padding-horizontal">{{"DOWNLOAD_XLSX" | translate}}</ion-item>
-                    <ion-item (click)="downloadJSONProfile()" [button]="true" [detail]="false"
+                    <ion-item (click)="downloadJSONProfile()" tappable [button]="true" [detail]="false"
                       class="ion-padding-horizontal">{{"DOWNLOAD_JSON" | translate}}</ion-item>
-                    <ion-item (click)="downloadVisualizerProfile()" [button]="true" [detail]="false"
+                    <ion-item (click)="downloadVisualizerProfile()" tappable [button]="true" [detail]="false"
                               class="ion-padding-horizontal">{{"MANUAL_EXPORT_TO_VISUALIZER" | translate}}</ion-item>
                   </ion-list>
                 </ion-content>
@@ -284,9 +287,9 @@
       </ion-label>
     </ion-item>
     <ion-item
-      *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.brew_time && settings.manage_parameters.coffee_first_drip_time,
+      *ngIf="(uiBrewHelper.fieldVisible(settings.manage_parameters.brew_time && settings.manage_parameters.coffee_first_drip_time,
                       data.getPreparation().manage_parameters.brew_time && data.getPreparation().manage_parameters.coffee_first_drip_time,
-                      data.getPreparation().use_custom_parameters) &&  data.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
+                      data.getPreparation().use_custom_parameters) &&  data.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO) || (data.getPreparation().use_custom_parameters &&  data.getPreparation().manage_parameters.coffee_first_drip_time)"
       [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
                       data.getPreparation().brew_order.while.brew_time,
                       data.getPreparation().use_custom_parameters)" lines="full">
@@ -306,9 +309,9 @@
       </ion-label>
     </ion-item>
     <ion-item
-      *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_first_drip_time,
+      *ngIf="(uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_first_drip_time,
                       data.getPreparation().manage_parameters.coffee_first_drip_time,
-                      data.getPreparation().use_custom_parameters) && data.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
+                      data.getPreparation().use_custom_parameters) && data.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO) || (data.getPreparation().use_custom_parameters &&  data.getPreparation().manage_parameters.coffee_first_drip_time)"
       [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.coffee_first_drip_time,
                       data.getPreparation().brew_order.while.coffee_first_drip_time,
                       data.getPreparation().use_custom_parameters)">
@@ -395,11 +398,16 @@
                       data.getPreparation().manage_parameters.grind_weight && data.getPreparation().manage_parameters.brew_quantity && data.getPreparation().manage_parameters.tds,
                       data.getPreparation().use_custom_parameters)" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.after.tds,
                       data.getPreparation().brew_order.after.tds,
-                      data.getPreparation().use_custom_parameters)" disabled="true" lines="inset">
+                      data.getPreparation().use_custom_parameters)" lines="inset">
       <ion-label>
         <h2>{{"BREW_DATA_CALCULATED_EXTRACTION_YIELD" | translate }}:</h2>
         <h3>{{data.getExtractionYield()}}</h3>
       </ion-label>
+      <ion-button *ngIf="data.tds && data.getExtractionYield()" style="margin-left:0px;"
+      (click)="showExtractionChart($event)" tabIndex="1" class="big-icon-only" fill="clear" slot="end"
+      tappable>
+      <ion-icon class="ion-color-accent" name="beanconqueror-extraction-chart" slot="icon-only"></ion-icon>
+    </ion-button>
     </ion-item>
     <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.note,
                     data.getPreparation().manage_parameters.note,
@@ -410,7 +418,7 @@
         <h2>{{"BREW_DATA_NOTES" | translate }}:</h2>
         <pre>{{data.note}}</pre>
       </ion-label>
-      <ion-button (click)='copyNotesToClipboard()'
+      <ion-button *ngIf='data.note' (click)='copyNotesToClipboard()'
                   tabIndex="1" class="big-icon-only" fill="clear" slot="end" tappable>
         <ion-icon class="ion-color-accent" name="clipboard-outline" slot="icon-only"></ion-icon>
       </ion-button>

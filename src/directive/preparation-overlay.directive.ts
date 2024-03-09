@@ -11,6 +11,9 @@ import { ModalController } from '@ionic/angular';
 import { UIPreparationStorage } from '../services/uiPreparationStorage';
 import { Preparation } from '../classes/preparation/preparation';
 import { PreparationModalSelectComponent } from '../app/preparation/preparation-modal-select/preparation-modal-select.component';
+import { EventQueueService } from '../services/queueService/queue-service.service';
+import { AppEvent } from '../classes/appEvent/appEvent';
+import { AppEventType } from '../enums/appEvent/appEvent';
 
 @Directive({
   selector: '[ngModel][preparation-overlay]',
@@ -24,7 +27,8 @@ export class PreparationOverlayDirective {
     private readonly model: NgModel,
     private readonly modalController: ModalController,
     private el: ElementRef,
-    private uiPreparationStorage: UIPreparationStorage
+    private uiPreparationStorage: UIPreparationStorage,
+    private readonly eventQueue: EventQueueService
   ) {}
 
   @HostListener('click', ['$event', '$event.target'])
@@ -67,7 +71,11 @@ export class PreparationOverlayDirective {
         this.ngModelChange.emit(data.selected_values[0]);
         this.__generateOutputText(data.selected_values[0]);
       }
+
       _event.target.selectedText = data.selected_text;
+      this.eventQueue.dispatch(
+        new AppEvent(AppEventType.PREPARATION_SELECTION_CHANGED, undefined)
+      );
     }
   }
 

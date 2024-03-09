@@ -30,6 +30,7 @@ import { BrewFlowComponent } from '../app/brew/brew-flow/brew-flow.component';
 import { PreparationDeviceType } from '../classes/preparationDevice';
 import { UIHelper } from './uiHelper';
 import { BrewRatingComponent } from '../app/brew/brew-rating/brew-rating.component';
+import { AssociatedBrewsComponent } from '../app/brew/associated-brews/associated-brews.component';
 
 /**
  * Handles every helping functionalities
@@ -531,14 +532,14 @@ export class UIBrewHelper {
     if (this.canBrewIfNotShowMessage()) {
       const preparationCount = this.uiPreparationStorage.getAllEntries().length;
 
-      let initalBreakpoint = 0.35;
-      if (preparationCount > 10) {
+      let initalBreakpoint = 1;
+      /**if (preparationCount > 9) {
         initalBreakpoint = 1;
-      } else if (preparationCount > 6) {
+      } else if (preparationCount > 4) {
         initalBreakpoint = 0.75;
       } else if (preparationCount > 2) {
         initalBreakpoint = 0.5;
-      }
+      }**/
 
       this.uiAnalytics.trackEvent(
         BREW_TRACKING.TITLE,
@@ -549,9 +550,14 @@ export class UIBrewHelper {
         id: BrewChoosePreparationToBrewComponent.COMPONENT_ID,
         cssClass: 'popover-actions',
         backdropDismiss: false,
-        breakpoints: [0, 0.35, 0.5, 0.75, 1],
+        breakpoints: [0, 1],
         initialBreakpoint: initalBreakpoint,
       });
+      //A hack - when the user long-presses to upen op the modal, the backdrop would be "triggered" by removing the thumb, and the menu would dismiss directly.
+      //Therefore give some time and enable dismiss then again.
+      setTimeout(() => {
+        modal.backdropDismiss = true;
+      }, 3000);
       await modal.present();
 
       const { data } = await modal.onWillDismiss();
@@ -590,7 +596,7 @@ export class UIBrewHelper {
         component: BrewRatingComponent,
         id: BrewRatingComponent.COMPONENT_ID,
         componentProps: { brew: _brew },
-        breakpoints: [0, 0.35, 0.5, 0.75, 1],
+        breakpoints: [0, 0.35, 0.5, 0.75],
         initialBreakpoint: 0.35,
       });
       await modal.present();
@@ -618,6 +624,24 @@ export class UIBrewHelper {
       component: BrewCuppingComponent,
       id: BrewCuppingComponent.COMPONENT_ID,
       componentProps: { brew: _brew },
+    });
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+
+  /**
+   *
+   * @param _uuid - the uuid of the bean, preparation or mill
+   * @param type - bean, preparation, mill
+   */
+  public async showAssociatedBrews(_uuid: string, _type: string) {
+    const modal = await this.modalController.create({
+      component: AssociatedBrewsComponent,
+      id: AssociatedBrewsComponent.COMPONENT_ID,
+      componentProps: {
+        uuid: _uuid,
+        type: _type,
+      },
     });
     await modal.present();
     await modal.onWillDismiss();

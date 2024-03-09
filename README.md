@@ -40,7 +40,7 @@ Whether you're looking to track your coffee journey, optimise your brews, or sim
 
 ##### Follow me
 
-| [Website](#) | [Instagram](https://www.instagram.com/beanconqueror/) | [Facebook](https://www.facebook.com/Beanconqueror/) |
+| [Website](https://beanconqueror.com/) | [Instagram](https://www.instagram.com/beanconqueror/) | [Facebook](https://www.facebook.com/Beanconqueror/) |
 
 ## Sneak preview
 

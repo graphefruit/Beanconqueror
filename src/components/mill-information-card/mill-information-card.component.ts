@@ -17,6 +17,7 @@ import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIImage } from '../../services/uiImage';
 import MILL_TRACKING from '../../data/tracking/millTracking';
+import { PREPARATION_ACTION } from '../../enums/preparations/preparationAction';
 @Component({
   selector: 'mill-information-card',
   templateUrl: './mill-information-card.component.html',
@@ -26,7 +27,7 @@ export class MillInformationCardComponent implements OnInit {
   @Input() public mill: Mill;
 
   @Output() public millAction: EventEmitter<any> = new EventEmitter();
-
+  public settings: Settings;
   constructor(
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly modalController: ModalController,
@@ -36,8 +37,11 @@ export class MillInformationCardComponent implements OnInit {
     private readonly uiMillStorage: UIMillStorage,
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiAnalytics: UIAnalytics,
-    private readonly uiImage: UIImage
-  ) {}
+    private readonly uiImage: UIImage,
+    private readonly uiBrewHelper: UIBrewHelper
+  ) {
+    this.settings = this.uiSettingsStorage.getSettings();
+  }
 
   public ngOnInit() {}
 
@@ -86,7 +90,11 @@ export class MillInformationCardComponent implements OnInit {
     );
     if (relatedBrews.length > 0) {
       relatedBrews = UIBrewHelper.sortBrews(relatedBrews);
-      return relatedBrews[0].grind_size;
+      if (relatedBrews[0].mill_speed > 0) {
+        return relatedBrews[0].grind_size + ' @ ' + relatedBrews[0].mill_speed;
+      } else {
+        return relatedBrews[0].grind_size;
+      }
     }
     return '-';
   }
@@ -138,6 +146,9 @@ export class MillInformationCardComponent implements OnInit {
         break;
       case MILL_ACTION.PHOTO_GALLERY:
         await this.viewPhotos();
+        break;
+      case MILL_ACTION.SHOW_BREWS:
+        await this.showBrews();
         break;
       default:
         break;
@@ -233,5 +244,8 @@ export class MillInformationCardComponent implements OnInit {
       await this.internalMillAction(data.role as MILL_ACTION);
       this.millAction.emit([data.role as MILL_ACTION, this.mill]);
     }
+  }
+  public async showBrews() {
+    await this.uiBrewHelper.showAssociatedBrews(this.mill.config.uuid, 'mill');
   }
 }

@@ -5,15 +5,15 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { AppMinimize } from '@ionic-native/app-minimize/ngx';
-import { Globalization } from '@ionic-native/globalization/ngx';
-import { Keyboard } from '@ionic-native/keyboard/ngx';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
+
+import { Globalization } from '@awesome-cordova-plugins/globalization/ngx';
+import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
+import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
+import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
 import {
   ThreeDeeTouch,
   ThreeDeeTouchQuickAction,
-} from '@ionic-native/three-dee-touch/ngx';
+} from '@awesome-cordova-plugins/three-dee-touch/ngx';
 import {
   IonRouterOutlet,
   MenuController,
@@ -54,13 +54,9 @@ import { UISettingsStorage } from '../services/uiSettingsStorage';
 import { UIUpdate } from '../services/uiUpdate';
 import { UiVersionStorage } from '../services/uiVersionStorage';
 import { UIWaterStorage } from '../services/uiWaterStorage';
-import { Device } from '@ionic-native/device/ngx';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { Device } from '@awesome-cordova-plugins/device/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { Storage } from '@ionic/storage';
-import 'chartjs-adapter-luxon';
-import ChartStreaming from 'chartjs-plugin-streaming';
-import zoomPlugin from 'chartjs-plugin-zoom';
-import annotationPlugin from 'chartjs-plugin-annotation';
 
 import { UIToast } from '../services/uiToast';
 import {
@@ -78,6 +74,10 @@ import { UIExportImportHelper } from '../services/uiExportImportHelper';
 
 declare var AppRate;
 declare var window;
+import { register } from 'swiper/element/bundle';
+import { UIGraphStorage } from '../services/uiGraphStorage.service';
+
+register();
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -105,6 +105,11 @@ export class AppComponent implements AfterViewInit {
     water_section: {
       title: 'NAV_WATER_SECTION',
       url: '/water-section',
+      active: false,
+    },
+    graph_section: {
+      title: 'NAV_GRAPH_SECTION',
+      url: '/graph-section',
       active: false,
     },
     settings: {
@@ -220,7 +225,6 @@ export class AppComponent implements AfterViewInit {
     private readonly uiMillStorage: UIMillStorage,
     private readonly uiBrewHelper: UIBrewHelper,
     private readonly menuCtrl: MenuController,
-    private readonly appMinimize: AppMinimize,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly keyboard: Keyboard,
     private readonly threeDeeTouch: ThreeDeeTouch,
@@ -248,7 +252,8 @@ export class AppComponent implements AfterViewInit {
     private readonly appVersion: AppVersion,
     private readonly storage: Storage,
     private readonly uiToast: UIToast,
-    private readonly uiExportImportHelper: UIExportImportHelper
+    private readonly uiExportImportHelper: UIExportImportHelper,
+    private readonly uiGraphStorage: UIGraphStorage
   ) {
     // Dont remove androidPlatformService, we need to initialize it via constructor
     try {
@@ -267,9 +272,6 @@ export class AppComponent implements AfterViewInit {
     this.uiLog.log('Platform ready, init app');
 
     Chart.register(...registerables);
-    Chart.register(ChartStreaming);
-    Chart.register(zoomPlugin);
-    Chart.register(annotationPlugin);
     this.__appReady();
   }
 
@@ -376,6 +378,9 @@ export class AppComponent implements AfterViewInit {
         try {
           await this.uiExportImportHelper.checkBackup();
         } catch (ex) {}
+        if (this.uiAlert.isLoadingSpinnerShown()) {
+          this.uiAlert.hideLoadingSpinner();
+        }
       }
 
       try {
@@ -388,6 +393,7 @@ export class AppComponent implements AfterViewInit {
         await this.uiGreenBeanStorage.initializeStorage();
         await this.uiRoastingMachineStorage.initializeStorage();
         await this.uiWaterStorage.initializeStorage();
+        await this.uiGraphStorage.initializeStorage();
 
         // Wait for every necessary service to be ready before starting the app
         // Settings and version, will create a new object on start, so we need to wait for this in the end.
@@ -404,6 +410,7 @@ export class AppComponent implements AfterViewInit {
         const roastingMachineStorageCallback =
           this.uiRoastingMachineStorage.storageReady();
         const waterStorageCallback = this.uiWaterStorage.storageReady();
+        const graphStorageCallback = this.uiGraphStorage.storageReady();
 
         Promise.all([
           beanStorageReadyCallback,
@@ -415,6 +422,7 @@ export class AppComponent implements AfterViewInit {
           greenBeanStorageCallback,
           roastingMachineStorageCallback,
           waterStorageCallback,
+          graphStorageCallback,
         ]).then(
           async () => {
             this.uiLog.log('App finished loading');
@@ -456,6 +464,10 @@ export class AppComponent implements AfterViewInit {
     const settings: Settings = this.uiSettingsStorage.getSettings();
     return settings.show_water_section;
   }
+  public showGraphSection() {
+    const settings: Settings = this.uiSettingsStorage.getSettings();
+    return settings.show_graph_section;
+  }
 
   private async __setDeviceLanguage(): Promise<any> {
     return new Promise(async (resolve, reject) => {
@@ -488,6 +500,10 @@ export class AppComponent implements AfterViewInit {
                   settingLanguage = 'tr';
                 } else if (systemLanguage === 'zh') {
                   settingLanguage = 'zh';
+                } else if (systemLanguage === 'fr') {
+                  settingLanguage = 'fr';
+                } else if (systemLanguage === 'id') {
+                  settingLanguage = 'id';
                 } else {
                   settingLanguage = 'en';
                 }
@@ -929,7 +945,7 @@ export class AppComponent implements AfterViewInit {
       ) {
         this.routerOutlet.pop();
       } else if (this.router.url.indexOf('/home') >= 0) {
-        this.appMinimize.minimize();
+        window.plugins.appMinimize.minimize();
         // or if that doesn't work, try
         // navigator['app'].exitApp();
       } else {

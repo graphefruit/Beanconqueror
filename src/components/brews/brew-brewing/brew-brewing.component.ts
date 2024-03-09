@@ -33,6 +33,8 @@ import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UIMillStorage } from '../../../services/uiMillStorage';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIWaterStorage } from '../../../services/uiWaterStorage';
+import { UIAnalytics } from '../../../services/uiAnalytics';
+import BREW_TRACKING from '../../../data/tracking/brewTracking';
 import { BrewBrixCalculatorComponent } from '../../../app/brew/brew-brix-calculator/brew-brix-calculator.component';
 import { BrewBeverageQuantityCalculatorComponent } from '../../../app/brew/brew-beverage-quantity-calculator/brew-beverage-quantity-calculator.component';
 
@@ -50,7 +52,7 @@ import {
 } from '../../../classes/brew/brewFlow';
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { BrewFlowComponent } from '../../../app/brew/brew-flow/brew-flow.component';
-import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
+import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { PreparationTool } from '../../../classes/preparation/preparationTool';
 
 import { UIAlert } from '../../../services/uiAlert';
@@ -74,15 +76,21 @@ import {
 } from '../../../classes/preparationDevice/xenia/xeniaDevice';
 import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
-import {
-  RefractionResultEvent,
-  RefractometerDevice,
-} from 'src/classes/devices/refractometerBluetoothDevice';
+import { RefractometerDevice } from 'src/classes/devices/refractometerBluetoothDevice';
 import { UIToast } from '../../../services/uiToast';
 import { UILog } from '../../../services/uiLog';
+import { BrewMaximizeControlsComponent } from '../../../app/brew/brew-maximize-controls/brew-maximize-controls.component';
+import { BrewChooseGraphReferenceComponent } from '../../../app/brew/brew-choose-graph-reference/brew-choose-graph-reference.component';
+import BeanconquerorFlowTestDataDummy from '../../../assets/BeanconquerorFlowTestDataFifth.json';
+import { ReferenceGraph } from '../../../classes/brew/referenceGraph';
+import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
+import { AppEventType } from '../../../enums/appEvent/appEvent';
+import { EventQueueService } from '../../../services/queueService/queue-service.service';
+import { BrewPopoverExtractionComponent } from 'src/app/brew/brew-popover-extraction/brew-popover-extraction.component';
 
 declare var cordova;
 declare var Plotly;
+
 @Component({
   selector: 'brew-brewing',
   templateUrl: './brew-brewing.component.html',
@@ -126,8 +134,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public maxBrewRating: number = 5;
 
-  public preparationMethodHasBeenFocused: boolean = false;
-
   public profileResultsAvailable: boolean = false;
   public profileResults: string[] = [];
   public profileFocused: boolean = false;
@@ -141,16 +147,21 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public scaleFlowSubscription: Subscription = undefined;
   public bluetoothSubscription: Subscription = undefined;
   public flow_profile_raw: BrewFlow = new BrewFlow();
+  public reference_profile_raw: BrewFlow = new BrewFlow();
   public refractometerDeviceSubscription: Subscription = undefined;
   public pressureDeviceSubscription: Subscription = undefined;
   public temperatureDeviceSubscription: Subscription = undefined;
   private scaleFlowChangeSubscription: Subscription = undefined;
+  private scaleListeningSubscription: Subscription = undefined;
+  private preparationMethodFocusedSubscription: Subscription = undefined;
+
   private flowProfileArr = [];
   private flowProfileArrObjs = [];
   private flowProfileArrCalculated = [];
   private flowProfileTempAll = [];
   private flowTime: number = undefined;
   private flowSecondTick: number = 0;
+  private flowNCalculation: number = 0;
   private startingFlowTime: number = undefined;
   private brewFlowGraphSubject: EventEmitter<any> = new EventEmitter();
   private brewPressureGraphSubject: EventEmitter<any> = new EventEmitter();
@@ -163,7 +174,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public pressureTrace: any;
   public temperatureTrace: any;
 
-  public weightTraceNew: any;
+  public weightTraceReference: any;
+  public flowPerSecondTraceReference: any;
+  public realtimeFlowTraceReference: any;
+  public pressureTraceReference: any;
+  public temperatureTraceReference: any;
 
   private graphTimerTest: any = undefined;
 
@@ -181,6 +196,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   };
   private xeniaOverviewInterval: any = undefined;
 
+  public ignoreScaleWeight: boolean = false;
+
   constructor(
     private readonly platform: Platform,
     private readonly uiSettingsStorage: UISettingsStorage,
@@ -194,7 +211,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiWaterStorage: UIWaterStorage,
     private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly uiHelper: UIHelper,
+    public readonly uiHelper: UIHelper,
+    private readonly modalCtrl: ModalController,
+    private readonly uiAnalytics: UIAnalytics,
     private readonly uiExcel: UIExcel,
     private readonly uiFileHelper: UIFileHelper,
     private readonly screenOrientation: ScreenOrientation,
@@ -202,9 +221,17 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly ngZone: NgZone,
     private readonly uiToast: UIToast,
-    private readonly uiLog: UILog
+    private readonly uiLog: UILog,
+    private readonly eventQueue: EventQueueService
   ) {}
-
+  public pinFormatter(value: any) {
+    const parsedFloat = parseFloat(value);
+    if (isNaN(parsedFloat)) {
+      return `${0}`;
+    }
+    const newValue = +parsedFloat.toFixed(2);
+    return `${newValue}`;
+  }
   private writeExecutionTimeToNotes(
     _message: string,
     _scriptId: number,
@@ -214,7 +241,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
     let timestamp: string = this.data.brew_time + '';
     if (this.settings.brew_milliseconds) {
-      timestamp = '.' + this.data.brew_time_milliseconds;
+      timestamp = timestamp + '.' + this.data.brew_time_milliseconds;
     }
     scriptInformation =
       timestamp +
@@ -232,6 +259,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.data.note = scriptInformation;
     }
   }
+
   private getScriptName(_index: number) {
     try {
       if (_index <= 2) {
@@ -249,6 +277,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       return 'Script not found';
     }
   }
+
   public getActivePreparationTools() {
     return this.data.getPreparation().tools.filter((e) => e.archived === false);
   }
@@ -260,7 +289,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       const tool = this.data
         .getPreparation()
         .tools.find((e) => e.config.uuid === id);
-      if (tool.archived === true) {
+      if (tool?.archived === true) {
         tools.push(tool);
       }
     }
@@ -352,19 +381,22 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           this.initializeFlowChart();
           setTimeout(() => {
             // Fix that you also see the brew weight
-            const weightEl = this.smartScaleWeightEl.nativeElement;
-            if (
-              this.data.getPreparation().getPresetStyleType() ===
-              PREPARATION_STYLE_TYPE.ESPRESSO
-            ) {
-              weightEl.textContent = this.data.brew_beverage_quantity + ' g';
-            } else {
-              if (this.data.brew_beverage_quantity > 0) {
+            try {
+              const weightEl = this.smartScaleWeightEl.nativeElement;
+              if (
+                this.data.getPreparation().getPresetStyleType() ===
+                PREPARATION_STYLE_TYPE.ESPRESSO
+              ) {
                 weightEl.textContent = this.data.brew_beverage_quantity + ' g';
               } else {
-                weightEl.textContent = this.data.brew_quantity + ' g';
+                if (this.data.brew_beverage_quantity > 0) {
+                  weightEl.textContent =
+                    this.data.brew_beverage_quantity + ' g';
+                } else {
+                  weightEl.textContent = this.data.brew_quantity + ' g';
+                }
               }
-            }
+            } catch (ex) {}
           }, 350);
         }
       }
@@ -461,16 +493,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public resetPreparationTools() {
     setTimeout(() => {
-      // Wait for 150ms, so we get the new preparation
-      if (this.preparationMethodHasBeenFocused === true) {
-        this.data.method_of_preparation_tools = [];
-        this.preparationMethodHasBeenFocused = false;
+      this.data.method_of_preparation_tools = [];
 
-        this.instancePreparationDevice();
+      this.instancePreparationDevice();
 
-        if (this.timer.isTimerRunning() === false) {
-          this.initializeFlowChart();
-        }
+      if (this.timer?.isTimerRunning() === false) {
+        this.initializeFlowChart();
       }
     }, 150);
   }
@@ -490,6 +518,116 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         ).offsetWidth;
         Plotly.relayout('flowProfileChart', this.lastChartLayout);
       }, 50);
+    }
+  }
+
+  public async maximizeControlButtons() {
+    let actualOrientation;
+    try {
+      if (this.platform.is('cordova')) {
+        actualOrientation = this.screenOrientation.type;
+      }
+    } catch (ex) {}
+
+    await new Promise(async (resolve) => {
+      this.updateChart();
+      try {
+        if (this.platform.is('cordova')) {
+          await this.screenOrientation.lock(
+            this.screenOrientation.ORIENTATIONS.LANDSCAPE
+          );
+        }
+      } catch (ex) {}
+
+      resolve(undefined);
+    });
+
+    const modal = await this.modalController.create({
+      component: BrewMaximizeControlsComponent,
+
+      id: BrewMaximizeControlsComponent.COMPONENT_ID,
+      cssClass: 'popover-actions',
+      componentProps: {
+        brewComponent: this,
+        brew: this.data,
+      },
+    });
+
+    await modal.present();
+    await modal.onWillDismiss().then(async () => {
+      try {
+        if (this.platform.is('cordova')) {
+          if (
+            this.screenOrientation.type ===
+            this.screenOrientation.ORIENTATIONS.LANDSCAPE
+          ) {
+            if (
+              this.screenOrientation.ORIENTATIONS.LANDSCAPE ===
+              actualOrientation
+            ) {
+              // Get back to portrait
+              await new Promise((resolve) => {
+                setTimeout(async () => {
+                  await this.screenOrientation.lock(
+                    this.screenOrientation.ORIENTATIONS.PORTRAIT_PRIMARY
+                  );
+                  resolve(undefined);
+                }, 50);
+              });
+            }
+          }
+          setTimeout(() => {
+            this.screenOrientation.unlock();
+          }, 150);
+        }
+      } catch (ex) {}
+
+      await new Promise((resolve) => {
+        setTimeout(async () => {
+          this.onOrientationChange();
+          resolve(undefined);
+        }, 50);
+      });
+    });
+  }
+
+  public async chooseGraphToSetAsReference() {
+    const modal = await this.modalController.create({
+      component: BrewChooseGraphReferenceComponent,
+      id: BrewChooseGraphReferenceComponent.COMPONENT_ID,
+      componentProps: {
+        brew: this.data,
+      },
+    });
+
+    // will force rerender :D
+    this.lastChartRenderingInstance = -1;
+    await modal.present();
+    const rData = await modal.onWillDismiss();
+    if (rData?.data?.brew || rData?.data?.graph) {
+      let flowProfileRtr: string = '';
+      // Set the new reference flow profile
+      const refGraph: ReferenceGraph = new ReferenceGraph();
+
+      if (rData?.data?.brew) {
+        refGraph.type = REFERENCE_GRAPH_TYPE.BREW;
+        refGraph.uuid = rData?.data?.brew.config.uuid;
+        flowProfileRtr = rData?.data?.brew.flow_profile;
+      } else {
+        refGraph.uuid = rData?.data?.graph.config.uuid;
+        refGraph.type = REFERENCE_GRAPH_TYPE.GRAPH;
+        flowProfileRtr = rData?.data?.graph.flow_profile;
+      }
+      this.data.reference_flow_profile = refGraph;
+
+      const presetGraphData: any = await this.returnFlowProfile(flowProfileRtr);
+      this.reference_profile_raw = presetGraphData;
+      this.initializeFlowChart(true);
+    } else if (rData?.data?.reset) {
+      // Reset the reference flow profile
+      this.data.reference_flow_profile = new ReferenceGraph();
+      this.reference_profile_raw = new BrewFlow();
+      this.initializeFlowChart(true);
     }
   }
 
@@ -592,12 +730,20 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.deattachToScaleEvents();
     this.deattachToTemperatureChange();
     this.deattachToRefractometerChange();
+    this.deattachToScaleListening();
     this.stopFetchingAndSettingDataFromXenia();
+    this.deattachToPreparationMethodFocused();
   }
 
   public preparationMethodFocused() {
-    // Needs to set , because ion-change triggers on smartphones but not on websites, and therefore the value is overwritten when you use a brew template
-    this.preparationMethodHasBeenFocused = true;
+    this.deattachToPreparationMethodFocused();
+    const eventSubs = this.eventQueue.on(
+      AppEventType.PREPARATION_SELECTION_CHANGED
+    );
+    this.preparationMethodFocusedSubscription = eventSubs.subscribe((next) => {
+      this.resetPreparationTools();
+      this.deattachToPreparationMethodFocused();
+    });
   }
 
   public attachToScaleWeightChange() {
@@ -612,73 +758,99 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           this.preparationDeviceConnected() &&
           this.data.preparationDeviceBrew.params.scriptAtWeightReachedNumber > 0
         ) {
-          const weight: number = this.uiHelper.toFixedIfNecessary(
-            _val.actual,
-            1
-          );
-          if (
-            weight >=
-            this.data.preparationDeviceBrew.params.scriptAtWeightReachedNumber
-          ) {
-            if (xeniaScriptStopWasTriggered === false) {
-              if (
-                this.data.preparationDeviceBrew.params.scriptAtWeightReachedId >
-                0
-              ) {
-                this.uiLog.log(
-                  `Xenia Script - Weight Reached: ${weight} - Trigger custom script`
+          if (this.isFirstXeniaScriptSet()) {
+            let weight: number = this.uiHelper.toFixedIfNecessary(
+              _val.actual,
+              1
+            );
+            if (this.ignoreScaleWeight === true) {
+              if (this.flowProfileTempAll.length > 0) {
+                const oldFlowProfileTemp =
+                  this.flowProfileTempAll[this.flowProfileTempAll.length - 1];
+                weight = this.uiHelper.toFixedIfNecessary(
+                  oldFlowProfileTemp.weight,
+                  1
                 );
-                this.preparationDevice
-                  .startScript(
+              }
+            }
+            if (
+              weight >=
+              this.data.preparationDeviceBrew.params.scriptAtWeightReachedNumber
+            ) {
+              if (xeniaScriptStopWasTriggered === false) {
+                if (
+                  this.data.preparationDeviceBrew.params
+                    .scriptAtWeightReachedId > 0
+                ) {
+                  this.uiLog.log(
+                    `Xenia Script - Weight Reached: ${weight} - Trigger custom script`
+                  );
+                  this.preparationDevice
+                    .startScript(
+                      this.data.preparationDeviceBrew.params
+                        .scriptAtWeightReachedId
+                    )
+                    .catch((_msg) => {
+                      this.uiToast.showInfoToast(
+                        'We could not start script at weight: ' + _msg,
+                        false
+                      );
+                    });
+                  this.writeExecutionTimeToNotes(
+                    'Weight reached script',
                     this.data.preparationDeviceBrew.params
-                      .scriptAtWeightReachedId
-                  )
-                  .catch((_msg) => {
+                      .scriptAtWeightReachedId,
+                    this.getScriptName(
+                      this.data.preparationDeviceBrew.params
+                        .scriptAtWeightReachedId
+                    )
+                  );
+                } else {
+                  this.uiLog.log(
+                    `Xenia Script - Weight Reached - Trigger stop script`
+                  );
+                  // Instant stop!
+                  this.preparationDevice.stopScript().catch((_msg) => {
                     this.uiToast.showInfoToast(
-                      'We could not start script at weight: ' + _msg,
+                      'We could not stop script at weight: ' + _msg,
                       false
                     );
                   });
-                this.writeExecutionTimeToNotes(
-                  'Weight reached script',
-                  this.data.preparationDeviceBrew.params
-                    .scriptAtWeightReachedId,
-                  this.getScriptName(
-                    this.data.preparationDeviceBrew.params
-                      .scriptAtWeightReachedId
-                  )
-                );
-              } else {
-                this.uiLog.log(
-                  `Xenia Script - Weight Reached - Trigger stop script`
-                );
-                // Instant stop!
-                this.preparationDevice.stopScript().catch((_msg) => {
-                  this.uiToast.showInfoToast(
-                    'We could not stop script at weight: ' + _msg,
-                    false
+                  this.writeExecutionTimeToNotes(
+                    'Stop script',
+                    0,
+                    this.getScriptName(0)
                   );
-                });
-                this.writeExecutionTimeToNotes(
-                  'Stop script',
-                  0,
-                  this.getScriptName(0)
-                );
+                }
+                if (
+                  this.settings
+                    .bluetooth_scale_espresso_stop_on_no_weight_change === false
+                ) {
+                  this.stopFetchingAndSettingDataFromXenia();
+                  this.timer.pauseTimer('xenia');
+                } else {
+                  // We weight for the normal "setFlow" to stop the detection of the graph, there then aswell is the stop fetch of the xenia triggered.
+                }
+                xeniaScriptStopWasTriggered = true;
               }
-              if (
-                this.settings
-                  .bluetooth_scale_espresso_stop_on_no_weight_change === false
-              ) {
-                this.stopFetchingAndSettingDataFromXenia();
-                this.timer.pauseTimer('xenia');
-              } else {
-                // We weight for the normal "setFlow" to stop the detection of the graph, there then aswell is the stop fetch of the xenia triggered.
-              }
-              xeniaScriptStopWasTriggered = true;
             }
           }
         }
-        this.__setFlowProfile(_val);
+        if (this.ignoreScaleWeight === false) {
+          this.__setFlowProfile(_val);
+        } else {
+          if (this.flowProfileTempAll.length > 0) {
+            const oldFlowProfileTemp =
+              this.flowProfileTempAll[this.flowProfileTempAll.length - 1];
+            const passVal = {
+              actual: oldFlowProfileTemp.weight,
+              old: oldFlowProfileTemp.oldWeight,
+              smoothed: oldFlowProfileTemp.smoothedWeight,
+              oldSmoothed: oldFlowProfileTemp.oldSmoothedWeight,
+            };
+            this.__setFlowProfile(passVal);
+          }
+        }
       });
     }
   }
@@ -690,6 +862,13 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
     const scale: BluetoothScale = this.bleManager.getScale();
     return !!scale;
+  }
+  public smartScaleSupportsTaring() {
+    try {
+      return this.bleManager.getScale().supportsTaring;
+    } catch (ex) {
+      return false;
+    }
   }
 
   public pressureDeviceConnected() {
@@ -797,7 +976,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             ) {
               this.pressureThresholdWasHit = true;
               this.ngZone.run(() => {
-                this.timerStartPressed(true);
+                this.timerStartPressed('AUTO_START_PRESSURE');
+
+                //User can press both, so deattach to scale listening, because pressure will hit before then first drops normaly.
+                this.deattachToScaleListening();
 
                 setTimeout(() => {
                   this.changeDetectorRef.markForCheck();
@@ -831,7 +1013,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             ) {
               this.temperatureThresholdWasHit = true;
               this.ngZone.run(() => {
-                this.timerStartPressed(true);
+                this.timerStartPressed('AUTO_START_TEMPERATURE');
 
                 setTimeout(() => {
                   this.changeDetectorRef.markForCheck();
@@ -904,24 +1086,28 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.preparationDeviceConnected() &&
       this.data.preparationDeviceBrew.params.scriptAtFirstDripId > -1
     ) {
-      this.uiLog.log(
-        `Xenia Script - Script at first drip -  Trigger custom script`
-      );
-      this.preparationDevice
-        .startScript(this.data.preparationDeviceBrew.params.scriptAtFirstDripId)
-        .catch((_msg) => {
-          this.uiToast.showInfoToast(
-            'We could not start script at first drip: ' + _msg,
-            false
-          );
-        });
-      this.writeExecutionTimeToNotes(
-        'First drip script',
-        this.data.preparationDeviceBrew.params.scriptAtFirstDripId,
-        this.getScriptName(
-          this.data.preparationDeviceBrew.params.scriptAtFirstDripId
-        )
-      );
+      if (this.isFirstXeniaScriptSet()) {
+        this.uiLog.log(
+          `Xenia Script - Script at first drip -  Trigger custom script`
+        );
+        this.preparationDevice
+          .startScript(
+            this.data.preparationDeviceBrew.params.scriptAtFirstDripId
+          )
+          .catch((_msg) => {
+            this.uiToast.showInfoToast(
+              'We could not start script at first drip: ' + _msg,
+              false
+            );
+          });
+        this.writeExecutionTimeToNotes(
+          'First drip script',
+          this.data.preparationDeviceBrew.params.scriptAtFirstDripId,
+          this.getScriptName(
+            this.data.preparationDeviceBrew.params.scriptAtFirstDripId
+          )
+        );
+      }
     }
   }
 
@@ -984,6 +1170,19 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     if (this.refractometerDeviceSubscription) {
       this.refractometerDeviceSubscription.unsubscribe();
       this.refractometerDeviceSubscription = undefined;
+    }
+  }
+
+  public deattachToScaleListening() {
+    if (this.scaleListeningSubscription) {
+      this.scaleListeningSubscription.unsubscribe();
+      this.scaleListeningSubscription = undefined;
+    }
+  }
+  public deattachToPreparationMethodFocused() {
+    if (this.preparationMethodFocusedSubscription) {
+      this.preparationMethodFocusedSubscription.unsubscribe();
+      this.preparationMethodFocusedSubscription = undefined;
     }
   }
 
@@ -1063,7 +1262,63 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     return 0;
   }
 
+  public async startListeningToScaleChange($event) {
+    const scale: BluetoothScale = this.bleManager.getScale();
+
+    if (scale) {
+      this.deattachToScaleListening();
+      let scaleThresholdWasHit: boolean = false;
+      await this.uiAlert.showLoadingSpinner();
+
+      const pressureDevice: PressureDevice =
+        this.bleManager.getPressureDevice();
+      if (pressureDevice) {
+        // Just update to zero if there is no threshold active
+        pressureDevice.updateZero();
+      }
+
+      await this.timerReset(undefined);
+      await this.timer.resetWithoutEmit(false);
+
+      this.timer.checkChanges();
+      this.checkChanges();
+
+      await this.uiAlert.hideLoadingSpinner();
+
+      this.uiToast.showInfoToast('We started now listening to scale changes');
+      this.scaleListeningSubscription = scale.flowChange.subscribe((_val) => {
+        const weight: number = this.uiHelper.toFixedIfNecessary(_val.actual, 1);
+
+        if (this.timer.isTimerRunning()) {
+          // Ignore.
+        } else {
+          if (
+            scaleThresholdWasHit === false &&
+            this.settings.bluetooth_scale_listening_threshold_start &&
+            weight >= this.settings.bluetooth_scale_listening_threshold_start
+          ) {
+            scaleThresholdWasHit = true;
+            this.ngZone.run(() => {
+              this.timerStartPressed('AUTO_LISTEN_SCALE');
+              // Deattach now directly.
+              this.deattachToScaleListening();
+              setTimeout(() => {
+                this.changeDetectorRef.markForCheck();
+                this.timer.checkChanges();
+                this.checkChanges();
+              });
+            });
+          }
+        }
+      });
+    }
+  }
+
   public async timerStarted(_event) {
+    if (this.timer.isTimerRunning()) {
+      //Maybe we got temperature threshold, bar threshold, and weight threshold, it could be three triggers. so we ignore that one
+      return;
+    }
     const scale: BluetoothScale = this.bleManager.getScale();
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
     const temperatureDevice: TemperatureDevice =
@@ -1079,13 +1334,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       //IF brewtime has some seconds, we add this to the delay directly.
       if (this.data.brew_time > 0) {
         startingDay.add('seconds', this.data.brew_time);
-      }
-      let flowTime = startingDay.toDate().getTime();
-      for (var i = 0; i < 10000; i++) {
-        weight = weight + Math.floor(Math.random() * 11);
-        this.weightTraceNew.x.push(flowTime);
-        this.weightTraceNew.y.push(weight);
-        flowTime = flowTime + 10;
       }
 
       weight = 0;
@@ -1111,7 +1359,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           oldSmoothed: 1,
         });
         this.setActualSmartInformation();
-      }, 300);
+      }, 100);
     }
 
     if (scale || pressureDevice || temperatureDevice) {
@@ -1138,7 +1386,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         }
       }
 
-      if (scale) {
+      if (scale && _event !== 'AUTO_LISTEN_SCALE') {
         if (this.settings.bluetooth_scale_tare_on_start_timer === true) {
           await new Promise((resolve) => {
             scale.tare();
@@ -1153,8 +1401,26 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             resolve(undefined);
           }, this.settings.bluetooth_command_delay);
         });
+      } else if (_event === 'AUTO_LISTEN_SCALE') {
+        // Don't use awaits.
+        const scaleType = this.bleManager.getScale()?.getScaleType();
+
+        if (
+          scaleType === ScaleType.DIFLUIDMICROBALANCETI ||
+          scaleType === ScaleType.DIFLUIDMICROBALANCE
+        ) {
+          //The microbalance has somehow an firmware issue, that when starting on autolistening mode and don't delay the start commando, the scale goes corrupt.
+
+          scale.setTimer(SCALE_TIMER_COMMAND.START);
+        } else {
+          scale.setTimer(SCALE_TIMER_COMMAND.START);
+        }
       }
-      if (pressureDevice && this.settings.pressure_threshold_active === false) {
+      if (
+        pressureDevice &&
+        this.settings.pressure_threshold_active === false &&
+        _event !== 'AUTO_LISTEN_SCALE'
+      ) {
         // Just update to zero if there is no threshold active
         pressureDevice.updateZero();
       }
@@ -1174,14 +1440,15 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
       if (
         pressureDevice &&
-        (this.settings.pressure_threshold_active === false || _event !== true)
+        (this.settings.pressure_threshold_active === false ||
+          _event !== 'AUTO_START_PRESSURE')
       ) {
         this.attachToPressureChange();
       }
       if (
         temperatureDevice &&
         (this.settings.temperature_threshold_active === false ||
-          _event !== true)
+          _event !== 'AUTO_START_TEMPERATURE')
       ) {
         this.attachToTemperatureChange();
       }
@@ -1192,6 +1459,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         this.preparationDevice
           .startScript(this.data.preparationDeviceBrew.params.scriptStartId)
           .catch((_msg) => {
+            this.uiLog.log('We could not start script: ' + _msg);
             this.uiToast.showInfoToast(
               'We could not start script: ' + _msg,
               false
@@ -1207,6 +1475,15 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
       this.startFetchingAndSettingDataFromXenia();
     }
+  }
+
+  private isFirstXeniaScriptSet() {
+    if (this.preparationDeviceConnected()) {
+      if (this.data.preparationDeviceBrew.params.scriptStartId > 0) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public startFetchingAndSettingDataFromXenia() {
@@ -1314,6 +1591,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
     }, 50);
   }
+
   public coffeeFirstDripTimeChanged(_event): void {
     if (this.brewFirstDripTime) {
       this.data.coffee_first_drip_time = this.brewFirstDripTime.getSeconds();
@@ -1327,28 +1605,30 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
     if (!this.smartScaleConnected() && this.preparationDeviceConnected()) {
       // If scale is not connected but the device, we can now choose that still the script is executed if existing.
-      if (this.data.preparationDeviceBrew.params.scriptAtFirstDripId > 0) {
-        this.uiLog.log(
-          `Xenia Script - Script at first drip -  Trigger custom script`
-        );
-        this.preparationDevice
-          .startScript(
-            this.data.preparationDeviceBrew.params.scriptAtFirstDripId
-          )
-          .catch((_msg) => {
-            this.uiToast.showInfoToast(
-              'We could not start script at first drip - manual  triggered: ' +
-                _msg,
-              false
-            );
-          });
-        this.writeExecutionTimeToNotes(
-          'First drip script',
-          this.data.preparationDeviceBrew.params.scriptAtFirstDripId,
-          this.getScriptName(
-            this.data.preparationDeviceBrew.params.scriptAtFirstDripId
-          )
-        );
+      if (this.isFirstXeniaScriptSet()) {
+        if (this.data.preparationDeviceBrew.params.scriptAtFirstDripId > 0) {
+          this.uiLog.log(
+            `Xenia Script - Script at first drip -  Trigger custom script`
+          );
+          this.preparationDevice
+            .startScript(
+              this.data.preparationDeviceBrew.params.scriptAtFirstDripId
+            )
+            .catch((_msg) => {
+              this.uiToast.showInfoToast(
+                'We could not start script at first drip - manual  triggered: ' +
+                  _msg,
+                false
+              );
+            });
+          this.writeExecutionTimeToNotes(
+            'First drip script',
+            this.data.preparationDeviceBrew.params.scriptAtFirstDripId,
+            this.getScriptName(
+              this.data.preparationDeviceBrew.params.scriptAtFirstDripId
+            )
+          );
+        }
       }
     }
   }
@@ -1394,6 +1674,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         this.attachToTemperatureChange();
       }
     }
+  }
+
+  public ignoreWeightClicked() {
+    this.ignoreScaleWeight = true;
+  }
+
+  public unignoreWeightClicked() {
+    this.ignoreScaleWeight = false;
   }
 
   public async timerPaused(_event) {
@@ -1506,6 +1794,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
       this.flow_profile_raw = new BrewFlow();
       this.flowProfileTempAll = [];
+      this.flowNCalculation = 0;
 
       // We just initialize flow chart for the pressure sensor when the type is espresso
       if (
@@ -1531,9 +1820,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.flow_profile_raw?.temperatureFlow.length > 0
     ) {
       await this.uiAlert.showLoadingSpinner();
-      //The pressure or weight went down and we need to reset the graph now still
+      // The pressure or weight went down and we need to reset the graph now still
       this.flow_profile_raw = new BrewFlow();
       this.flowProfileTempAll = [];
+      this.flowNCalculation = 0;
       this.initializeFlowChart(false);
       // Give the buttons a bit of time, 100ms won't be an issue for user flow
       await new Promise((resolve) => {
@@ -1660,10 +1950,29 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             let newLayoutIsNeeded: boolean = false;
             /**Timeout is needed, because on mobile devices, the trace and the relayout bothers each other, which results into not refreshing the graph*/
             let newRenderingInstance = 0;
-            if (this.maximizeFlowGraphIsShown === true) {
-              newRenderingInstance = Math.floor(this.timer.getSeconds() / 60);
+
+            let normalScreenTime: number;
+            let fullScreenTime: number;
+            if (
+              this.getPreparation().style_type ===
+              PREPARATION_STYLE_TYPE.ESPRESSO
+            ) {
+              normalScreenTime =
+                this.settings.graph_time.ESPRESSO.NORMAL_SCREEN;
+              fullScreenTime = this.settings.graph_time.ESPRESSO.FULL_SCREEN;
             } else {
-              newRenderingInstance = Math.floor(this.timer.getSeconds() / 20);
+              normalScreenTime = this.settings.graph_time.FILTER.NORMAL_SCREEN;
+              fullScreenTime = this.settings.graph_time.FILTER.FULL_SCREEN;
+            }
+
+            if (this.maximizeFlowGraphIsShown === true) {
+              newRenderingInstance = Math.floor(
+                this.timer.getSeconds() / fullScreenTime
+              );
+            } else {
+              newRenderingInstance = Math.floor(
+                this.timer.getSeconds() / normalScreenTime
+              );
             }
 
             if (
@@ -1671,9 +1980,11 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               this.lastChartRenderingInstance === -1
             ) {
               let subtractTime: number = this.maximizeFlowGraphIsShown
-                ? 40
-                : 10;
-              const addTime: number = this.maximizeFlowGraphIsShown ? 70 : 30;
+                ? fullScreenTime - 20
+                : normalScreenTime - 10;
+              const addTime: number = this.maximizeFlowGraphIsShown
+                ? fullScreenTime + 10
+                : normalScreenTime + 10;
               if (this.data.brew_time <= 10) {
                 subtractTime = 0;
               }
@@ -1696,19 +2007,58 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
             if (this.weightTrace.y.length > 0) {
               const lastWeightData: number =
                 this.weightTrace.y[this.weightTrace.y.length - 1];
-              if (lastWeightData > this.lastChartLayout.yaxis.range[1]) {
+              // add some tolerance
+              let toleranceMinus = 10;
+              if (
+                this.data.getPreparation().style_type ===
+                PREPARATION_STYLE_TYPE.ESPRESSO
+              ) {
+                toleranceMinus = 1;
+              }
+              if (
+                lastWeightData >=
+                this.lastChartLayout.yaxis.range[1] - toleranceMinus
+              ) {
                 // Scale a bit up
-                this.lastChartLayout.yaxis.range[1] = lastWeightData * 1.5;
+                if (
+                  this.data.getPreparation().style_type ===
+                  PREPARATION_STYLE_TYPE.ESPRESSO
+                ) {
+                  this.lastChartLayout.yaxis.range[1] = lastWeightData * 1.25;
+                } else {
+                  this.lastChartLayout.yaxis.range[1] = lastWeightData * 1.5;
+                }
+
                 newLayoutIsNeeded = true;
               }
             }
             if (this.realtimeFlowTrace.y.length > 0) {
               const lastRealtimeFlowVal: number =
                 this.realtimeFlowTrace.y[this.realtimeFlowTrace.y.length - 1];
-              if (lastRealtimeFlowVal > this.lastChartLayout.yaxis2.range[1]) {
+              // add some tolerance
+              let toleranceMinus = 3;
+              if (
+                this.data.getPreparation().style_type ===
+                PREPARATION_STYLE_TYPE.ESPRESSO
+              ) {
+                toleranceMinus = 0.5;
+              }
+
+              if (
+                lastRealtimeFlowVal >=
+                this.lastChartLayout.yaxis2.range[1] - toleranceMinus
+              ) {
                 // Scale a bit up
-                this.lastChartLayout.yaxis2.range[1] =
-                  lastRealtimeFlowVal * 1.5;
+                if (
+                  this.data.getPreparation().style_type ===
+                  PREPARATION_STYLE_TYPE.ESPRESSO
+                ) {
+                  this.lastChartLayout.yaxis2.range[1] =
+                    lastRealtimeFlowVal * 1.25;
+                } else {
+                  this.lastChartLayout.yaxis2.range[1] =
+                    lastRealtimeFlowVal * 1.5;
+                }
                 newLayoutIsNeeded = true;
               }
             }
@@ -1756,6 +2106,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       component: DatetimePopoverComponent,
       id: 'datetime-popover',
       cssClass: 'popover-actions',
+      animated: true,
       breakpoints: [0, 0.5, 0.75, 1],
       initialBreakpoint: 0.5,
       componentProps: { displayingTime: this.displayingBrewTime },
@@ -1782,19 +2133,19 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
    * This function is triggered outside of add/edit component, because the uuid is not existing on adding at start
    * @param _uuid
    */
-  public saveFlowProfile(_uuid: string): string {
-    const random = Math.floor(Math.random() * 10) + 1;
-
-    const t = [];
-    for (let i = 0; i < random; i++) {
-      t.push(i);
-    }
-    const savingPath = 'brews/' + _uuid + '_flow_profile.json';
-    this.uiFileHelper.saveJSONFile(
-      savingPath,
-      JSON.stringify(this.flow_profile_raw)
-    );
-    return savingPath;
+  public async saveFlowProfile(_uuid: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const savingPath = 'brews/' + _uuid + '_flow_profile.json';
+        await this.uiFileHelper.saveJSONFile(
+          savingPath,
+          JSON.stringify(this.flow_profile_raw)
+        );
+        resolve(savingPath);
+      } catch (ex) {
+        resolve('');
+      }
+    });
   }
 
   public setActualSmartInformation() {
@@ -1824,6 +2175,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       } catch (ex) {}
     });
   }
+
   public setActualPressureInformation(_pressure) {
     this.ngZone.runOutsideAngular(() => {
       if (this.maximizeFlowGraphIsShown === true) {
@@ -1841,6 +2193,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       } catch (ex) {}
     });
   }
+
   public setActualTemperatureInformation(_temperature) {
     this.ngZone.runOutsideAngular(() => {
       if (this.maximizeFlowGraphIsShown === true) {
@@ -1858,6 +2211,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       } catch (ex) {}
     });
   }
+
   public getActualScaleWeight() {
     try {
       return this.uiHelper.toFixedIfNecessary(
@@ -1871,54 +2225,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public getActualSmoothedWeightPerSecond(): number {
     try {
-      const scaleType = this.bleManager.getScale()?.getScaleType();
-      if (
-        scaleType === ScaleType.SMARTCHEF ||
-        scaleType === ScaleType.BLACKCOFFEE
-      ) {
-        if (this.flow_profile_raw.weight.length <= 3) {
-          return 0;
-        }
-
-        const lastSecond = moment(
-          this.flow_profile_raw.weight[this.flow_profile_raw.weight.length - 1]
-            .timestamp,
-          'HH:mm:ss'
-        ).seconds();
-        const lastWeight =
-          this.flow_profile_raw.weight[this.flow_profile_raw.weight.length - 1]
-            .actual_weight;
-        let lastSubtractWeight: number = 0;
-        for (let i = this.flow_profile_raw.weight.length - 2; i >= 0; i--) {
-          const newSecond = moment(
-            this.flow_profile_raw.weight[i].timestamp,
-            'HH:mm:ss'
-          ).seconds();
-          if (lastSecond === newSecond) {
-            // Still the same range
-            lastSubtractWeight = this.flow_profile_raw.weight[i].actual_weight;
-          } else {
-            // Break
-            // If we didn't found one value in range, we take the second before.
-            if (lastSubtractWeight === 0) {
-              lastSubtractWeight =
-                this.flow_profile_raw.weight[i].actual_weight;
-            }
-            break;
-          }
-        }
-        return this.uiHelper.toFixedIfNecessary(
-          lastWeight - lastSubtractWeight,
-          2
-        );
-      } else {
-        const lastflow =
-          this.flow_profile_raw.weight[this.flow_profile_raw.weight.length - 1];
-        const smoothedWeight = lastflow.actual_smoothed_weight;
-        const oldSmoothedWeight = lastflow.old_smoothed_weight;
-        const flowValue: number = (smoothedWeight - oldSmoothedWeight) * 10;
-        return this.uiHelper.toFixedIfNecessary(flowValue, 2);
-      }
+      return this.uiHelper.toFixedIfNecessary(
+        this.flow_profile_raw.realtimeFlow[
+          this.flow_profile_raw.realtimeFlow.length - 1
+        ].flow_value,
+        2
+      );
     } catch (ex) {
       return 0;
     }
@@ -2063,8 +2375,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     const modal = await this.modalController.create({
       component: BrewRatioCalculatorComponent,
       cssClass: 'popover-actions',
-      breakpoints: [0, 1],
-      initialBreakpoint: 1,
+      breakpoints: [0, 0.75],
+      initialBreakpoint: 0.75,
       id: BrewRatioCalculatorComponent.COMPONENT_ID,
       componentProps: {
         grindWeight: this.data.grind_weight,
@@ -2158,8 +2470,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           if (event) {
             switch (event.command) {
               case SCALE_TIMER_COMMAND.START:
-                this.timer.startTimer();
-                this.checkChanges();
+                if (this.timer.isTimerRunning() === false) {
+                  this.timer.startTimer();
+                  this.checkChanges();
+                }
                 break;
               case SCALE_TIMER_COMMAND.STOP:
                 this.timer.pauseTimer();
@@ -2242,7 +2556,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           });
         }
       }
-      if (this.timer.isTimerRunning() === true && _firstStart === false) {
+      if (this.timer?.isTimerRunning() === true && _firstStart === false) {
         this.attachToScaleWeightChange();
       }
       // Always attach flow.
@@ -2321,14 +2635,37 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public toggleChartLines(_type: string) {
     if (_type === 'weight') {
       this.weightTrace.visible = !this.weightTrace.visible;
+      if (this.weightTraceReference) {
+        this.weightTraceReference.visible = !this.weightTraceReference.visible;
+      }
     } else if (_type === 'calc_flow') {
       this.flowPerSecondTrace.visible = !this.flowPerSecondTrace.visible;
+      if (this.flowPerSecondTraceReference) {
+        this.flowPerSecondTraceReference.visible =
+          !this.flowPerSecondTraceReference.visible;
+      }
     } else if (_type === 'realtime_flow') {
       this.realtimeFlowTrace.visible = !this.realtimeFlowTrace.visible;
+      if (this.realtimeFlowTraceReference) {
+        this.realtimeFlowTraceReference.visible =
+          !this.realtimeFlowTraceReference.visible;
+      }
     } else if (_type === 'pressure') {
       this.pressureTrace.visible = !this.pressureTrace.visible;
+      if (this.pressureTraceReference) {
+        this.pressureTraceReference.visible =
+          !this.pressureTraceReference.visible;
+      }
     } else if (_type === 'temperature') {
       this.temperatureTrace.visible = !this.temperatureTrace.visible;
+      if (this.temperatureTraceReference) {
+        this.temperatureTraceReference.visible =
+          !this.temperatureTraceReference.visible;
+      }
+    }
+    if (this.timer.isTimerRunning() === false || this.data.brew_time === 0) {
+      // Re render, else the lines would not be hidden/shown when having references graphs
+      Plotly.relayout('flowProfileChart', this.lastChartLayout);
     }
   }
 
@@ -2503,6 +2840,190 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           this.settings.graph.ESPRESSO
         );
       }
+      // Put the reference charts first, because they can then get overlayed from the other graphs
+      const chartData = [];
+
+      this.weightTraceReference = undefined;
+      this.flowPerSecondTraceReference = undefined;
+      this.realtimeFlowTraceReference = undefined;
+      this.pressureTraceReference = undefined;
+      this.temperatureTraceReference = undefined;
+      if (
+        this.reference_profile_raw.weight.length > 0 ||
+        this.reference_profile_raw.pressureFlow.length > 0 ||
+        this.reference_profile_raw.temperatureFlow.length > 0
+      ) {
+        this.weightTraceReference = {
+          x: [],
+          y: [],
+          name: this.translate.instant('BREW_FLOW_WEIGHT'),
+          yaxis: 'y',
+          type: 'scattergl',
+          mode: 'lines',
+          line: {
+            shape: 'linear',
+            color: '#ebe6dd',
+            width: 2,
+          },
+          visible: this.graphSettings.weight,
+          hoverinfo: 'skip',
+          showlegend: false,
+        };
+        this.flowPerSecondTraceReference = {
+          x: [],
+          y: [],
+          name: this.translate.instant('BREW_FLOW_WEIGHT_PER_SECOND'),
+          yaxis: 'y2',
+          type: 'scattergl',
+          mode: 'lines',
+          line: {
+            shape: 'linear',
+            color: '#cbd5d9',
+            width: 2,
+          },
+          visible: this.graphSettings.calc_flow,
+          hoverinfo: 'skip',
+          showlegend: false,
+        };
+
+        this.realtimeFlowTraceReference = {
+          x: [],
+          y: [],
+          name: this.translate.instant('BREW_FLOW_WEIGHT_REALTIME'),
+          yaxis: 'y2',
+          type: 'scattergl',
+          mode: 'lines',
+          line: {
+            shape: 'linear',
+            color: '#9cb5be',
+            width: 2,
+          },
+          visible: this.graphSettings.realtime_flow,
+          hoverinfo: 'skip',
+          showlegend: false,
+        };
+
+        this.pressureTraceReference = {
+          x: [],
+          y: [],
+          name: this.translate.instant('BREW_PRESSURE_FLOW'),
+          yaxis: 'y4',
+          type: 'scattergl',
+          mode: 'lines',
+          line: {
+            shape: 'linear',
+            color: '#9be8d3',
+            width: 2,
+          },
+          visible: this.graphSettings.pressure,
+          hoverinfo: 'skip',
+          showlegend: false,
+        };
+
+        this.temperatureTraceReference = {
+          x: [],
+          y: [],
+          name: this.translate.instant('BREW_TEMPERATURE_REALTIME'),
+          yaxis: 'y5',
+          type: 'scattergl',
+          mode: 'lines',
+          line: {
+            shape: 'linear',
+            color: '#eaad9f',
+            width: 2,
+          },
+          visible: this.graphSettings.temperature,
+          hoverinfo: 'skip',
+          showlegend: false,
+        };
+
+        const presetFlowProfile = this.reference_profile_raw;
+
+        if (
+          presetFlowProfile.weight.length > 0 ||
+          presetFlowProfile.pressureFlow.length > 0 ||
+          presetFlowProfile.temperatureFlow.length > 0
+        ) {
+          const startingDay = moment(new Date()).startOf('day');
+          // IF brewtime has some seconds, we add this to the delay directly.
+
+          let firstTimestamp;
+          if (presetFlowProfile.weight.length > 0) {
+            firstTimestamp = presetFlowProfile.weight[0].timestamp;
+          } else if (presetFlowProfile.pressureFlow.length > 0) {
+            firstTimestamp = presetFlowProfile.pressureFlow[0].timestamp;
+          } else if (presetFlowProfile.temperatureFlow.length > 0) {
+            firstTimestamp = presetFlowProfile.temperatureFlow[0].timestamp;
+          }
+          const delay =
+            moment(firstTimestamp, 'HH:mm:ss.SSS').toDate().getTime() -
+            startingDay.toDate().getTime();
+          if (presetFlowProfile.weight.length > 0) {
+            chartData.push(this.weightTraceReference);
+            chartData.push(this.flowPerSecondTraceReference);
+            chartData.push(this.realtimeFlowTraceReference);
+            for (const data of presetFlowProfile.weight) {
+              this.weightTraceReference.x.push(
+                new Date(
+                  moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
+                    delay
+                )
+              );
+              this.weightTraceReference.y.push(data.actual_weight);
+            }
+            for (const data of presetFlowProfile.waterFlow) {
+              this.flowPerSecondTraceReference.x.push(
+                new Date(
+                  moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
+                    delay
+                )
+              );
+              this.flowPerSecondTraceReference.y.push(data.value);
+            }
+            if (presetFlowProfile.realtimeFlow) {
+              for (const data of presetFlowProfile.realtimeFlow) {
+                this.realtimeFlowTraceReference.x.push(
+                  new Date(
+                    moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
+                      delay
+                  )
+                );
+                this.realtimeFlowTraceReference.y.push(data.flow_value);
+              }
+            }
+          }
+          if (
+            presetFlowProfile.pressureFlow &&
+            presetFlowProfile.pressureFlow.length > 0
+          ) {
+            chartData.push(this.pressureTraceReference);
+            for (const data of presetFlowProfile.pressureFlow) {
+              this.pressureTraceReference.x.push(
+                new Date(
+                  moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
+                    delay
+                )
+              );
+              this.pressureTraceReference.y.push(data.actual_pressure);
+            }
+          }
+          if (
+            presetFlowProfile.temperatureFlow &&
+            presetFlowProfile.temperatureFlow.length > 0
+          ) {
+            chartData.push(this.temperatureTraceReference);
+            for (const data of presetFlowProfile.temperatureFlow) {
+              this.temperatureTraceReference.x.push(
+                new Date(
+                  moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
+                    delay
+                )
+              );
+              this.temperatureTraceReference.y.push(data.actual_temperature);
+            }
+          }
+        }
+      }
 
       this.weightTrace = {
         x: [],
@@ -2588,21 +3109,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         showlegend: false,
       };
 
-      this.weightTraceNew = {
-        x: [],
-        y: [],
-        name: this.translate.instant('BREW_FLOW_WEIGHT'),
-        yaxis: 'y',
-        type: 'scattergl',
-        mode: 'lines',
-        line: {
-          shape: 'linear',
-          color: 'red',
-          width: 2,
-        },
-        visible: this.graphSettings.weight,
-      };
-
       if (
         this.flow_profile_raw.weight.length > 0 ||
         this.flow_profile_raw.pressureFlow.length > 0 ||
@@ -2683,11 +3189,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         }
       }
 
-      const chartData = [
-        this.weightTrace,
-        this.flowPerSecondTrace,
-        this.realtimeFlowTrace,
-      ];
+      chartData.push(this.weightTrace);
+      chartData.push(this.flowPerSecondTrace);
+      chartData.push(this.realtimeFlowTrace);
 
       this.lastChartLayout = this.getChartLayout();
       if (this.lastChartLayout['yaxis4']) {
@@ -2698,7 +3202,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         chartData.push(this.temperatureTrace);
       }
 
-      //chartData.push(this.weightTraceNew);
       try {
         Plotly.newPlot(
           'flowProfileChart',
@@ -2707,6 +3210,10 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           this.getChartConfig()
         );
         this.lastChartRenderingInstance = -1;
+        if (this.maximizeFlowGraphIsShown) {
+          //After we don't know how long all scale events take, dispatch the resize event, after the flow component will then grab on and stretch the canva.
+          window.dispatchEvent(new Event('resize'));
+        }
         setTimeout(() => {
           if (
             this.flow_profile_raw.weight.length > 0 ||
@@ -2728,24 +3235,40 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
     const tickFormat = '%M:%S';
 
-    const suggestedMinFlow: number = 0;
-    let suggestedMaxFlow: number = 20;
-
-    const suggestedMinWeight: number = 0;
-    let suggestedMaxWeight: number = 250;
-
+    let graph_weight_settings;
+    let graph_flow_settings;
     if (
       this.data.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO
     ) {
-      suggestedMaxFlow = 2.5;
-      suggestedMaxWeight = 50;
+      graph_weight_settings = this.settings.graph_weight.ESPRESSO;
+      graph_flow_settings = this.settings.graph_flow.ESPRESSO;
+    } else {
+      graph_weight_settings = this.settings.graph_weight.FILTER;
+      graph_flow_settings = this.settings.graph_flow.FILTER;
     }
 
+    const suggestedMinFlow: number = graph_flow_settings.lower;
+    const suggestedMaxFlow: number = graph_flow_settings.upper;
+
+    const suggestedMinWeight: number = graph_weight_settings.lower;
+    const suggestedMaxWeight: number = graph_weight_settings.upper;
+
     const startRange = moment(new Date()).startOf('day').toDate().getTime();
-    let addSecondsOfEndRange = 30;
+
+    let normalScreenTime: number;
+    let fullScreenTime: number;
+    if (this.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO) {
+      normalScreenTime = this.settings.graph_time.ESPRESSO.NORMAL_SCREEN;
+      fullScreenTime = this.settings.graph_time.ESPRESSO.FULL_SCREEN;
+    } else {
+      normalScreenTime = this.settings.graph_time.FILTER.NORMAL_SCREEN;
+      fullScreenTime = this.settings.graph_time.FILTER.FULL_SCREEN;
+    }
+    let addSecondsOfEndRange = normalScreenTime + 10;
+
     // When reset is triggered, we maybe are already in the maximized screen, so we go for the 70sec directly.
     if (this.maximizeFlowGraphIsShown === true) {
-      addSecondsOfEndRange = 70;
+      addSecondsOfEndRange = fullScreenTime + 10;
     }
     const endRange: number = moment(new Date())
       .startOf('day')
@@ -2908,6 +3431,24 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
   }
 
+  private async returnFlowProfile(_flowProfile: string) {
+    const promiseRtr = new Promise(async (resolve) => {
+      if (this.platform.is('cordova')) {
+        if (_flowProfile !== '') {
+          try {
+            const jsonParsed = await this.uiFileHelper.getJSONFile(
+              _flowProfile
+            );
+            resolve(jsonParsed);
+          } catch (ex) {}
+        }
+      } else {
+        resolve(BeanconquerorFlowTestDataDummy);
+      }
+    });
+    return promiseRtr;
+  }
+
   private async readFlowProfile() {
     const flowProfilePath =
       'brews/' + this.data.config.uuid + '_flow_profile.json';
@@ -3034,7 +3575,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   private __setFlowProfile(_scaleChange: any) {
-    const weight: number = this.uiHelper.toFixedIfNecessary(
+    let weight: number = this.uiHelper.toFixedIfNecessary(
       _scaleChange.actual,
       1
     );
@@ -3055,6 +3596,51 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.flowTime = this.getTime();
     }
     const scaleType = this.bleManager.getScale()?.getScaleType();
+    //Yeay yeay yeay, sometimes the lunar scale is reporting wrongly cause of closed api, therefore try to tackle this issues down with the lunar
+    if (scaleType === ScaleType.LUNAR) {
+      if (weight > 5000) {
+        // Wrong scale values reported. - Fix it back
+        weight = oldWeight;
+      } else {
+        if (weight <= 0) {
+          if (this.flowProfileTempAll.length >= 3) {
+            let weAreDecreasing: boolean = false;
+            for (
+              let i = this.flowProfileTempAll.length - 1;
+              i >= this.flowProfileTempAll.length - 2;
+              i--
+            ) {
+              if (
+                this.flowProfileTempAll[i].weight <
+                this.flowProfileTempAll[i - 1].weight
+              ) {
+                weAreDecreasing = true;
+              } else {
+                // We are decreasing, break directly, that the value is not overwritten again.
+                weAreDecreasing = false;
+                break;
+              }
+            }
+            // We checked that we're not going to degreese
+            if (weAreDecreasing === false) {
+              // I don't know if old_weight could just be bigger then 0
+              weight = oldWeight;
+            }
+          }
+        } else {
+          //Check if the weight before this actual weight is less then factor 2.
+          //like we got jumps weight 25.8 grams, next was 259 grams.
+          if (this.flowProfileTempAll.length >= 2) {
+            if (oldWeight * 2 >= weight) {
+              //All good factor is matched
+            } else {
+              //Nothing good, somehow we got spikes.
+              weight = oldWeight;
+            }
+          }
+        }
+      }
+    }
 
     const flowObj = {
       unixTime: moment(new Date())
@@ -3083,18 +3669,34 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       let sameFlowPerTenHerzCounter: number = 0;
 
       let flowHasSomeMinusValueInIt: boolean = false;
+
       for (let i = 0; i < this.flowProfileArr.length; i++) {
         const val: number = this.flowProfileArr[i];
 
         // We ignore the latest value in this check.
         if (i !== this.flowProfileArr.length - 1) {
           const nextVal = this.flowProfileArr[i + 1];
+
           if (val > nextVal || val < 0) {
             // The first value is taller then the second value... somethings is wrong
             // Also if the value is negative, something strange happend.
-            wrongFlow = true;
-            weightDidntChange = false;
-            break;
+
+            let skip = false;
+            if (scaleType === ScaleType.LUNAR) {
+              let overNextVal = val - 0.2;
+              if (i + 2 !== this.flowProfileArr.length - 1) {
+                overNextVal = this.flowProfileArr[i + 2];
+              }
+              if (overNextVal >= nextVal) {
+                skip = true;
+              }
+            }
+
+            if (skip === false) {
+              wrongFlow = true;
+              weightDidntChange = false;
+              break;
+            }
           }
 
           if (
@@ -3190,72 +3792,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           calculatedFlowWeight += flowWeight;
         }
 
-        if (
-          scaleType === ScaleType.SMARTCHEF ||
-          scaleType === ScaleType.BLACKCOFFEE
-        ) {
-          if (this.flowProfileArrCalculated.length > 1) {
-            /*On the poor scales, we know that the realtime flow value is pretty "accurate" with the new math formular,
-               thats why we take the realtime flow value, look back for 2 seconds in the timestamp, and if we don'T have enough values, we just use
-               the values which are given*/
-            const time2StampDelta =
-              flowObj.unixTime -
-              this.flowProfileTempAll[this.flowProfileTempAll.length - 2]
-                .unixTime;
-            let twoSecondsLookBack: any = 0;
-
-            twoSecondsLookBack = 2 * Math.floor(1000 / time2StampDelta);
-            if (
-              this.flow_profile_raw.realtimeFlow.length < twoSecondsLookBack
-            ) {
-              twoSecondsLookBack = this.flow_profile_raw.realtimeFlow.length;
-            }
-            let totalflow = 0;
-            for (let i = 0; i < twoSecondsLookBack; i++) {
-              totalflow =
-                totalflow +
-                this.flow_profile_raw.realtimeFlow[
-                  this.flow_profile_raw.realtimeFlow.length - 1 - i
-                ].flow_value;
-            }
-
-            calculatedFlowWeight = totalflow / twoSecondsLookBack;
-          }
-          /*  Old solution, don't know if we'll ever need it again, but lets stay it here
-          let avgWeight = 0;
-            let avgTimeDelta: number = 0;
-
-            //Don't get the last one, because this is already one new entry
-            const avgEntries = this.flowProfileTempAll.slice(
-              this.flowProfileTempAll.length -
-                1 -
-                this.flowProfileArrCalculated.length,
-              this.flowProfileTempAll.length - 1
-            );
-            for (let i = 0; i < this.flowProfileArrCalculated.length - 1; i++) {
-              avgWeight =
-                avgWeight +
-                (this.flowProfileArrCalculated[i + 1] -
-                  this.flowProfileArrCalculated[i]);
-            }
-            for (let i = 0; i < avgEntries.length - 1; i++) {
-              avgTimeDelta =
-                avgTimeDelta +
-                (avgEntries[i + 1].unixTime - avgEntries[i].unixTime);
-            }
-            avgTimeDelta = avgTimeDelta / avgEntries.length;
-
-            calculatedFlowWeight =
-              (avgWeight / this.flowProfileArrCalculated.length) *
-              ((1000 - avgTimeDelta) / avgTimeDelta);
-          } else {
-            //Saftey when somehow just one value was provided.
-            calculatedFlowWeight = 0;
-          }*/
-        } else {
-          calculatedFlowWeight =
-            (calculatedFlowWeight / this.flowProfileArrCalculated.length) * 10;
+        const realtimeFlowSplit: Array<IBrewRealtimeWaterFlow> =
+          this.flow_profile_raw.realtimeFlow.slice(
+            -this.flowProfileArrCalculated.length
+          );
+        const slopeWeight = 1 / realtimeFlowSplit.length;
+        let avgCalculation: number = 0;
+        for (const entry of realtimeFlowSplit) {
+          avgCalculation = avgCalculation + slopeWeight * entry.flow_value;
         }
+        calculatedFlowWeight = avgCalculation;
 
         // Ignore flowing weight when we're below zero
         if (calculatedFlowWeight < 0) {
@@ -3334,9 +3880,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.flowTime = this.getTime();
       this.flowSecondTick = 0;
 
+      this.flowNCalculation = this.flowProfileArr.length;
+
       this.flowProfileArr = [];
       this.flowProfileArrObjs = [];
       this.flowProfileArrCalculated = [];
+
       this.updateChart();
     }
 
@@ -3345,15 +3894,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.flowProfileArrCalculated.push(weight - oldWeight);
 
     /* Realtime flow start**/
-    let oldRealtimeSmoothedValue = 0;
-    const realtimeFlowLength = this.flow_profile_raw.realtimeFlow.length;
-    if (realtimeFlowLength > 0) {
-      oldRealtimeSmoothedValue =
-        this.flow_profile_raw.realtimeFlow[realtimeFlowLength - 1]
-          .smoothed_weight;
-    }
-    const newSmoothedWeight = oldRealtimeSmoothedValue * 0.9 + weight * 0.1;
 
+    const newSmoothedWeight = flowObj.smoothedWeight;
     const realtimeWaterFlow: IBrewRealtimeWaterFlow =
       {} as IBrewRealtimeWaterFlow;
 
@@ -3361,25 +3903,30 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     realtimeWaterFlow.timestamp = flowObj.flowTimestamp;
     realtimeWaterFlow.smoothed_weight = newSmoothedWeight;
 
-    if (
-      scaleType === ScaleType.SMARTCHEF ||
-      scaleType === ScaleType.BLACKCOFFEE
-    ) {
-      let timeStampDelta: any = 0;
-      // After the flowProfileTempAll will be stored directly, we'd have one entry at start already, but we need to wait for another one
-      if (this.flowProfileTempAll.length > 1) {
-        timeStampDelta =
-          flowObj.unixTime -
-          this.flowProfileTempAll[this.flowProfileTempAll.length - 2].unixTime;
-      }
+    let timeStampDelta: any = 0;
+    let n: any = 3;
 
-      realtimeWaterFlow.flow_value =
-        (newSmoothedWeight - oldRealtimeSmoothedValue) *
-        (1000 / timeStampDelta);
+    if (this.flowNCalculation > 0 && this.flowNCalculation > 3) {
+      n = this.flowNCalculation;
     } else {
-      realtimeWaterFlow.flow_value =
-        (newSmoothedWeight - oldRealtimeSmoothedValue) * 10;
+      //Fallback if N cant be 3
+      n = this.flowProfileTempAll.length;
     }
+
+    // After the flowProfileTempAll will be stored directly, we'd have one entry at start already, but we need to wait for another one
+    if (this.flowProfileTempAll.length > 2) {
+      timeStampDelta =
+        flowObj.unixTime -
+        this.flowProfileTempAll[this.flowProfileTempAll.length - n].unixTime;
+    }
+
+    realtimeWaterFlow.timestampdelta = timeStampDelta;
+
+    realtimeWaterFlow.flow_value =
+      (newSmoothedWeight -
+        this.flowProfileTempAll[this.flowProfileTempAll.length - n]
+          .smoothedWeight) *
+      (1000 / timeStampDelta);
 
     this.realtimeFlowTrace.x.push(flowObj.dateUnixTime);
     this.realtimeFlowTrace.y.push(realtimeWaterFlow.flow_value);
@@ -3777,7 +4324,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         const tool = this.data
           .getPreparation()
           .tools.find((e) => e.config.uuid === id);
-        if (tool.archived === false) {
+        if (tool?.archived === false) {
           this.data.method_of_preparation_tools.push(tool.config.uuid);
         }
       }
@@ -3806,7 +4353,28 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
 
     this.data.flow_profile = '';
+    this.data.reference_flow_profile = new ReferenceGraph();
 
     await this.instancePreparationDevice(brew);
+  }
+
+  public async showExtractionChart(event): Promise<void> {
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    this.uiAnalytics.trackEvent(
+      BREW_TRACKING.TITLE,
+      BREW_TRACKING.ACTIONS.EXTRACTION_GRAPH
+    );
+    //Animated false, else backdrop would sometimes not disappear and stay until user touches again.
+    const popover = await this.modalCtrl.create({
+      component: BrewPopoverExtractionComponent,
+      animated: true,
+      componentProps: { brew: this.data },
+      id: BrewPopoverExtractionComponent.COMPONENT_ID,
+      cssClass: 'popover-extraction',
+      initialBreakpoint: 1,
+    });
+    await popover.present();
+    const data = await popover.onWillDismiss();
   }
 }

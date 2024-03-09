@@ -33,6 +33,9 @@ import { UISettingsStorage } from '../uiSettingsStorage';
 import { TranslateService } from '@ngx-translate/core';
 import { UIToast } from '../uiToast';
 import { BlackcoffeeScale } from 'src/classes/devices/blackcoffeeScale';
+import { DifluidMicrobalanceTi } from '../../classes/devices/difluidMicrobalanceTi';
+import { DiyPythonCoffeeScale } from '../../classes/devices/diyPythonCoffeeScale';
+import { DiyRustCoffeeScale } from '../../classes/devices/diyRustCoffeeScale';
 
 declare var device: any;
 declare var ble: any;
@@ -251,7 +254,10 @@ export class CoffeeBluetoothDevicesService {
             SkaleScale.test(scanDevice) ||
             SmartchefScale.test(scanDevice) ||
             DifluidMicrobalance.test(scanDevice) ||
-            BlackcoffeeScale.test(scanDevice)
+            DifluidMicrobalanceTi.test(scanDevice) ||
+            BlackcoffeeScale.test(scanDevice) ||
+            DiyPythonCoffeeScale.test(scanDevice) ||
+            DiyRustCoffeeScale.test(scanDevice)
           ) {
             // We found all needed devices.
             promiseResolved = true;
@@ -748,10 +754,34 @@ export class CoffeeBluetoothDevicesService {
               type: ScaleType.DIFLUIDMICROBALANCE,
             });
             return;
-          } 
+          }
+          if (DifluidMicrobalanceTi.test(deviceScale)) {
+            this.logger.log('BleManager - We found a difluid ti scale');
+            resolve({
+              id: deviceScale.id,
+              type: ScaleType.DIFLUIDMICROBALANCETI,
+            });
+            return;
+          }
           if (BlackcoffeeScale.test(deviceScale)) {
             this.logger.log('BleManager - We found a blackcoffee scale');
             resolve({ id: deviceScale.id, type: ScaleType.BLACKCOFFEE });
+            return;
+          }
+          if (DiyPythonCoffeeScale.test(deviceScale)) {
+            this.logger.log('BleManager - We found a diy python coffee scale');
+            resolve({
+              id: deviceScale.id,
+              type: ScaleType.DIYPYTHONCOFFEESCALE,
+            });
+            return;
+          }
+          if (DiyRustCoffeeScale.test(deviceScale)) {
+            this.logger.log('BleManager - We found a diy rust coffee scale');
+            resolve({
+              id: deviceScale.id,
+              type: ScaleType.DIYRUSTCOFFEESCALE,
+            });
             return;
           }
         }
@@ -823,11 +853,32 @@ export class CoffeeBluetoothDevicesService {
               type: ScaleType.DIFLUIDMICROBALANCE,
             });
           }
+          if (DifluidMicrobalanceTi.test(deviceScale)) {
+            this.logger.log('BleManager - We found a difluid ti scale');
+            supportedDevices.push({
+              id: deviceScale.id,
+              type: ScaleType.DIFLUIDMICROBALANCETI,
+            });
+          }
           if (BlackcoffeeScale.test(deviceScale)) {
             this.logger.log('BleManager - We found a blackcoffee scale');
             supportedDevices.push({
               id: deviceScale.id,
               type: ScaleType.BLACKCOFFEE,
+            });
+          }
+          if (DiyPythonCoffeeScale.test(deviceScale)) {
+            this.logger.log('BleManager - We found a diy python coffee scale');
+            supportedDevices.push({
+              id: deviceScale.id,
+              type: ScaleType.DIYPYTHONCOFFEESCALE,
+            });
+          }
+          if (DiyRustCoffeeScale.test(deviceScale)) {
+            this.logger.log('BleManager - We found a diy rust coffee scale');
+            supportedDevices.push({
+              id: deviceScale.id,
+              type: ScaleType.DIYRUSTCOFFEESCALE,
             });
           }
         }

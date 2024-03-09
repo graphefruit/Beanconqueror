@@ -780,7 +780,7 @@
                 "旧的冲泡图现在可以再次导出",
                 "更新到 Ionic 6.3.0",
                 "小错误修复",
-                ""
+                "较小的错误修复"
             ]
         },
         "6.3.0": {
@@ -940,25 +940,120 @@
                 "一些小的错误修复"
             ]
         },
-      "6.6.1": {
-        "TITLE": "版本 6.4.1: 更新内容",
-        "DESCRIPTION": [
-          "<b>其他：<\/b>",
-          "修复了一些小错误"
-        ]
-      },
-      "6.6.2": {
-        "TITLE": "Version 6.6.2: What's new",
-        "DESCRIPTION": [
-          "[ANDROID]<b>Android 13 - Filestorage permissions<\/b>",
-          "[ANDROID]Due to changes in the file system permissions in Android, the access paths for how files are backed up and imported had to be revised. In addition, camera and image access no longer worked on Android 13 devices and got fixed with this update.",
-          "[ANDROID]Due to these changes, the minimum requirement for this app also had to be raised to Android 7.0.",
-          "[ANDROID]You can find out how Import/Export works now here: https://beanconqueror.com/faq",
-          "",
-          "[IOS]<b>iOS - Updated libraries<\/b>",
-          "[IOS]Due to library changes in cordova, this is a release to match all these :)"
-        ]
-      }
+        "6.6.1": {
+            "TITLE": "版本 6.4.1: 更新内容",
+            "DESCRIPTION": [
+                "<b>其他：<\/b>",
+                "修复了一些小错误"
+            ]
+        },
+        "6.6.2": {
+            "TITLE": "Version 6.6.2: What's new",
+            "DESCRIPTION": [
+                "[ANDROID]<b>Android 13 - Filestorage permissions<\/b>",
+                "[ANDROID]Due to changes in the file system permissions in Android, the access paths for how files are backed up and imported had to be revised. In addition, camera and image access no longer worked on Android 13 devices and got fixed with this update.",
+                "[ANDROID]Due to these changes, the minimum requirement for this app also had to be raised to Android 7.0.",
+                "[ANDROID]You can find out how Import\/Export works now here: https:\/\/beanconqueror.com\/faq",
+                "",
+                "[IOS]<b>iOS - Updated libraries<\/b>",
+                "[IOS]Due to library changes in cordova, this is a release to match all these :)"
+            ]
+        },
+        "7.0.0": {
+            "TITLE": "版本 7.00：新功能",
+            "DESCRIPTION": [
+                "<b>蓝牙秤模式<\/b>",
+                "在检测到重量的第一次变化时启动计时器 - 可在设置中激活（新按钮）",
+                "忽略当前传输的重量 - 例如，对于搅拌或去除重量而不改变图形 - 可在设置中激活（新按钮可见）",
+                "",
+                "<b>蓝牙秤<\/b>",
+                "支持无名蓝牙秤",
+                "连接DiFluid Microbalance或Felicita秤时，直接设置命令延迟",
+                "",
+                "<b>图形区<\/b>",
+                "在设置中激活图形区",
+                "为新的冲泡设置图形以便随时关注",
+                "图形可以来自冲泡或个别图形区",
+                "上传您自己的图形 - 从您的冲泡中导出一个.JSON文件",
+                "",
+                "<b>可视化器<\/b>",
+                "自动将每个具有连接图形的新冲泡上传到可视化器 - 可在设置中激活",
+                "如有需要，手动上传所有冲泡到可视化器",
+                "感谢Miha的支持！",
+                "",
+                "<b>冲泡<\/b>",
+                "从详细视图中重复一次冲泡",
+                "即使不是浓缩方法（例如，Pulsar），也可以激活准备方法的首滴",
+                "在最大化视图中，使用连接的秤显示冲泡速率",
+                "最后的冲泡现在按字母顺序排序，并显示上次使用的日期",
+                "使用连接的秤时，实时流速现在对于浓缩咖啡显示小于1g\/s的值",
+                "",
+                "<b>咖啡豆<\/b>",
+                "从咖啡豆视图卡片中重复上次冲泡或最佳冲泡",
+                "",
+                "<b>准备方法<\/b>",
+                "准备工具现在按字母顺序排序，并可进行过滤",
+                "选择时，显示准备方法的最后使用日期",
+                "",
+                "<b>磨豆机<\/b>",
+                "在选择磨豆机时，现在可以看到最后的磨豆尺寸和最后的使用",
+                "",
+                "<b>Xenia<\/b>",
+                "修复：停用的脚本不再执行",
+                "请更新到最新的固件以支持脚本",
+                "<b>设置<\/b>",
+                "<b>设置<\/b>",
+                "如果您对冲泡或咖啡豆进行了更改，则显示安全提示 - 可在设置中激活",
+                "现在为使用蓝牙设备的冲泡设置您个人的起始X和Y轴",
+                "<b>lonic 7<\/b>",
+                "<b>Ionic 7<\/b>",
+                "从Ionic 6升级到Ionic 7",
+                "[IOS]iOS的最低版本现在是iOS 14",
+                "[ANDROID]Android的最低版本现在是Android 7.1",
+                "<b>Lokalise<\/b>",
+                "<b>Lokalise<\/b>",
+                "使用Lokalise进行所有翻译 - 非常感谢Yannick",
+                "使用Localize进行翻译现在变得很容易。联系我们：info@beanconqueror.com",
+                "<b>其他<\/b>",
+                "<b>其他<\/b>",
+                "小bug修复"
+            ]
+        },
+        "7.1.0": {
+            "TITLE": "版本 7.1.0：新增内容",
+            "DESCRIPTION": [
+                "<b>更多语言<\/b>",
+                "支持法语 - 感谢 Yannick",
+                "印度尼西亚语的支持 - 感谢 Bondan, Ganjar",
+                "",
+                "<b>蓝牙秤<\/b>",
+                "支持新的 DIY 蓝牙秤（Rust 和 Python 固件）",
+                "支持 DiFluid Microbalance Ti",
+                "改进所有秤的流量计算",
+                "",
+                "<b>图形区<\/b>",
+                "在选择参考卡中添加了更多信息",
+                "",
+                "<b>冲泡<\/b>",
+                "蓝牙秤 - 在工具栏顶部添加了去皮按钮",
+                "",
+                "<b>咖啡豆<\/b>",
+                "支持复制品种信息",
+                "",
+                "<b>水质部分<\/b>",
+                "添加钾参数",
+                "",
+                "<b>磨豆机<\/b>",
+                "RPM 参数现在在列表视图和选择视图中可见",
+                "",
+                "设置",
+                "通过连接的蓝牙设备定义您自己的过滤器或浓缩咖啡的时间轴",
+                "添加不同的日期格式以匹配美国格式",
+                "",
+                "<b>其他<\/b>",
+                "修复小 bug "
+            ]
+        }
     },
     "CUSTOM_PARAMETERS": "自定义参数",
     "CUSTOM_DEFAULT_PARAMETERS": "默认",
@@ -967,7 +1062,7 @@
     "BREW_PARAMETER_CUSTOMIZE_TITLE": "自定义每种冲泡器具的参数",
     "BREW_PARAMETER_CUSTOMIZE_DESCRIPTION": "您想为每种冲泡器具选择自定义参数吗？跳转到“器具”，打开具体冲泡器具的选项，选择“自定义参数”。现在您可以选择将用于此准备的参数！",
     "BREW_DATA_BREW_QUANTITY_TOOLTIP": "不能用于意式浓缩咖啡的水量",
-    "BREW_DATA_COFFEE_FIRST_DRIP_TIME_TOOLTIP": "第一个可用于意式浓缩咖啡的滴漏咖啡o",
+    "BREW_DATA_COFFEE_FIRST_DRIP_TIME_TOOLTIP": "咖啡首滴时间（仅适用于浓缩咖啡或特定过滤方法）",
     "BREW_DATA_PREPARATION_METHOD_TOOLTIP": "冲泡活动时可自定义",
     "PAGE_SETTINGS_GENERAL": "常规设置",
     "EDIT_PREPARATION_CUSTOM_PARAMETERS": "自定义参数",
@@ -1290,7 +1385,8 @@
                 "SODIUM": "钠 (Na)",
                 "TDS": "总溶解固体 (TDS)",
                 "NAME": "添加水的名称",
-                "NOTES": "为水质添加注释"
+                "NOTES": "为水质添加注释",
+                "POTASSIUM": "钾 (K)"
             },
             "WATER_UNIT": {
                 "UNKNOWN": "不清楚",
@@ -1298,7 +1394,8 @@
                 "MG_L": "mg\/L",
                 "MMOL_L": "mmol\/L",
                 "DH": "°dH"
-            }
+            },
+            "POTASSIUM": "钾 (K)"
         }
     },
     "BREW_BRIX_CALCULATION": "白利糖度",
@@ -1332,7 +1429,7 @@
             "LOCATION": "软件需要位置权限来搜索电子秤",
             "BLUETOOTH": "软件需要蓝牙权限来搜索电子秤"
         },
-        "INFORMATION_DESCRIPTION": "支持的电子秤: Decent 电子秤, Acaia 电子秤, Felicita 电子秤以及 Hiroia Jimmy, Skale 2, DiFluid Microbalance, Smartchef Scale (V1), Blackcoffee.io and Eureka Precisa. Care: If the Eureka Precisa recieves a negative value, the timer stops"
+        "INFORMATION_DESCRIPTION": "支持的电子秤: Decent 电子秤, Acaia 电子秤, Felicita 电子秤以及 Hiroia Jimmy, Skale 2, DiFluid Microbalance, DiFluid Microbalance Ti, Smartchef Scale (V1), Blackcoffee.io and Eureka Precisa. Care: If the Eureka Precisa recieves a negative value, the timer stops"
     },
     "QR": {
         "WRONG_QRCODE_DESCRIPTION": "错误的二维码或错误的内容",
@@ -1591,6 +1688,93 @@
     },
     "COPIED_TO_CLIPBOARD_SUCCESSFULLY": "已复制到剪贴板",
     "COPIED_TO_CLIPBOARD_UNSUCCESSFULLY": "无法复制到剪贴板",
-    "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": "Data can't be saved due to Android restrictions",
-    "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "Your Android phone doesn't support external file systems, so you'll need to download the ZIP file without media files. For more information, please visit https://beanconqueror.com/faq."
+    "PAGE_SETTINGS_LANGUAGE_FRENCH": "法语",
+    "ANDROID_EXTERNAL_FILE_ACCESS_NOT_POSSIBLE_TITLE": "由于Android限制，无法保存数据",
+    "ANDROID_EXTERNAL_FILE_ACCESS_NEEDED_DESCRIPTION": "您的Android手机不支持外部文件系统，因此您需要下载不带媒体文件的ZIP文件。更多信息，请访问https:\/\/beanconqueror.com\/faq。",
+    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK": "退出前进行安全检查？",
+    "PAGE_SETTINGS_SECURITY_CHECK_WHEN_GOING_BACK_DESCRIPTION": "在冲泡\/添加\/编辑咖啡豆时检查数据是否已更改；如果是，则在返回时显示安全警告。",
+    "PAGE_BEANS_DISCARD_CONFIRM": "咖啡豆信息已更改。确定要在不保存的情况下离开页面吗？",
+    "PAGE_BREW_DISCARD_CONFIRM": "冲泡信息已修改。确定要在不保存的情况下离开页面吗？",
+    "NO_ENTRIES_FOUND": "未找到条目",
+    "POPOVER_BEANS_OPTION_REPEAT": "重复上次冲泡",
+    "REPEAT_LAST_BREW": "重复上次冲泡",
+    "REPEAT_BEST_BREW": "重复最佳冲泡",
+    "PAGE_SETTINGS_VISUALIZER_SECTION": "可视化器",
+    "VISUALIZER": {
+        "ACTIVATE": "激活可视化器",
+        "CHOOSE_SERVER": "选择服务器",
+        "CONNECTION": {
+            "UNSUCCESSFULLY": "无法建立连接。",
+            "SUCCESSFULLY": "连接成功建立。"
+        },
+        "SERVER": {
+            "VISUALIZER": "可视化器服务器",
+            "CUSTOM": "自定义服务器"
+        },
+        "SHOT": {
+            "UPLOAD_SUCCESSFULLY": "冲泡已上传到可视化器。",
+            "UPLOAD_UNSUCCESSFULLY": "无法将冲泡上传到可视化器。"
+        },
+        "URL": "服务器URL",
+        "USERNAME": "用户名",
+        "PASSWORD": "密码",
+        "UPLOAD_AUTOMATIC": "自动上传每次冲泡？",
+        "UPLOAD_AUTOMATIC_TOOLTIP": "保存冲泡时，请确保您有活动的互联网连接。",
+        "UPLOAD_ALL": "上传所有冲泡",
+        "NOT_ALL_SHOTS_UPLOADED": "无法上传所有冲泡",
+        "ALL_SHOTS_UPLOADED": "所有冲泡已上传"
+    },
+    "SMART_SCALE_AUTO_START_LISTENING": "自动启动计时器？",
+    "SMART_SCALE_AUTO_START_LISTENING_DESCRIPTION": "当达到以下重量值时自动启动计时器",
+    "CHOOSE_REFERENCE_GRAPH": "选择参考图",
+    "RESET": "重置",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_AXIS": "定义图的起始轴",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_AXIS_DESCRIPTION": "为过滤和浓缩设置轴的起始尺寸。",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_FILTER_WEIGHT": "过滤 - 重量",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_FILTER_FLOW": "过滤 - 流速",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_WEIGHT": "浓缩 - 重量",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_ESPRESSO_FLOW": "浓缩 - 流速",
+    "SMART_SCALE_IGNORE_INCOMING_WEIGHT": "忽略当前传输的重量。",
+    "SMART_SCALE_IGNORE_INCOMING_WEIGHT_TOOLTIP": "在冲泡部分会出现一个新按钮，它将忽略来自蓝牙秤的新重量值。",
+    "BREWS_ACTIVE": "激活的冲泡",
+    "BREWS_ARCHIVED": "已归档的冲泡",
+    "GRAPHS": "图形",
+    "GRAPH_SECTION": {
+        "NAV_GRAPH": "图形",
+        "NO_ARCHIVED_ENTRIES": "没有已归档的条目",
+        "NO_ENTRIES": "没有条目",
+        "SECTION_HAS_BEEN_ACTIVATED": "图形部分已激活"
+    },
+    "TOAST_GRAPH_ARCHIVED_SUCCESSFULLY": "图表已归档",
+    "TOAST_GRAPH_DELETED_SUCCESSFULLY": "图表已删除",
+    "TOAST_GRAPH_EDITED_SUCCESSFULLY": "图表已编辑",
+    "TOAST_GRAPH_ADD_SUCCESSFULLY": "图表已添加",
+    "NAV_GRAPH_SECTION": "图表",
+    "DELETE_GRAPH_QUESTION": "您要删除此图表吗？",
+    "PAGE_SETTINGS_SHOW_ARCHIVED_GRAPHS": "显示已归档的图表",
+    "PAGE_SETTINGS_SHOW_GRAPH_SECTION": "激活图表部分",
+    "EDIT_GRAPH": "编辑图表",
+    "ADD_GRAPH": "添加图表",
+    "GRAPH": {
+        "PLACE_HOLDER": {
+            "NAME": "图表名称",
+            "NOTES": "注释"
+        },
+        "UPLOAD": "上传图表",
+        "DELETE": "删除图表",
+        "UPLOAD_DESCRIPTION": "导入一个.JSON文件，您可以在冲泡详细视图中下载。或者，您还可以导入社区共享的.JSON类型的图形。"
+    },
+    "SHOW_VISUALIZER": "显示可视化器",
+    "NO_BREWS_FOUND": "未找到冲泡",
+    "NO_GRAPHS_FOUND": "未找到图表",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_AXIS": "定义图表的最大时间轴",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_DESCRIPTION": "设置过滤器和浓缩咖啡时间轴的最大秒数。",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_FILTER_AXIS_NORMAL_SCREEN": "过滤器 - 普通屏幕",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_FILTER_AXIS_FULL_SCREEN_SCREEN": "过滤器 - 全屏",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_ESPRESSO_AXIS_NORMAL_SCREEN": "浓缩咖啡 - 正常屏幕",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_SCALE_GRAPHS_TIME_ESPRESSO_AXIS_FULL_SCREEN_SCREEN": "浓缩咖啡 - 全屏",
+    "PAGE_SETTINGS_DATE_FORMAT": "日期格式",
+    "PAGE_SETTINGS_LANGUAGE_FRANCE": "法语",
+    "PAGE_SETTINGS_LANGUAGE_INDONESIA": "印度尼西亚语",
+    "EXTRACTION_CHART_TITLE": "Extraction Chart"
 }

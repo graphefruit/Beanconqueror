@@ -33,6 +33,9 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   @Output() public bloomTimer = new EventEmitter();
   @Output() public dripTimer = new EventEmitter();
   @Output() public tareScale = new EventEmitter();
+  @Output() public listeningToScaleChange = new EventEmitter();
+  @Output() public ignoreWeight = new EventEmitter();
+  @Output() public unignoreWeight = new EventEmitter();
 
   @Output() public timerStartPressed = new EventEmitter();
   @Output() public timerResumedPressed = new EventEmitter();
@@ -63,11 +66,36 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
   public showBloomTimer: boolean = true;
   public showDripTimer: boolean = true;
+  public showListeningButton: boolean = true;
+  public showIgnoreScaleWeightButtonVisible: boolean = true;
 
   @Input() set bloomTimerVisible(value: boolean) {
     this._bloomTimerVisible = value;
     this.showBloomTimer = this._bloomTimerVisible;
   }
+  private _listeningButtonVisible: boolean;
+  @Input() set listeningButtonVisible(value: boolean) {
+    this._listeningButtonVisible = value;
+    this.showListeningButton = this._listeningButtonVisible;
+  }
+
+  public get listeningButtonVisible(): boolean {
+    return this._listeningButtonVisible;
+  }
+
+  private _ignoreScaleWeightButtonVisible: boolean;
+  @Input() set ignoreScaleWeightButtonVisible(value: boolean) {
+    this._ignoreScaleWeightButtonVisible = value;
+    this.showIgnoreScaleWeightButtonVisible =
+      this._ignoreScaleWeightButtonVisible;
+  }
+
+  public get ignoreScaleWeightButtonVisible(): boolean {
+    return this._ignoreScaleWeightButtonVisible;
+  }
+
+  public ignoreWeightButtonActive: boolean = true;
+  public unignoreWeightButtonActive: boolean = false;
 
   public timer: ITimer;
   public settings: Settings;
@@ -83,7 +111,9 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   public smartScaleConnected() {
     try {
       return this.bleManager.getScale() !== null;
-    } catch (ex) {}
+    } catch (ex) {
+      return false;
+    }
   }
 
   public smartScaleSupportsTaring() {
@@ -139,7 +169,10 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     return this.timer.hasFinished;
   }
 
-  public initTimer(): void {
+  public initTimer(_resetButtons: boolean = true): void {
+    /**
+     * If Resetbuttons is false, we likely had the "listening" feature for the scale, so this button was presesd, but we don'T want to reset the buttons in the end
+     */
     // tslint:disable-next-line
     this.timer = {
       runTimer: false,
@@ -148,8 +181,12 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
       seconds: 0,
       milliseconds: 0,
     } as ITimer;
-    this.showBloomTimer = this.bloomTimerVisible;
-    this.showDripTimer = this.dripTimerVisible;
+
+    if (_resetButtons === true) {
+      this.showBloomTimer = this.bloomTimerVisible;
+      this.showDripTimer = this.dripTimerVisible;
+      this.showListeningButton = this.listeningButtonVisible;
+    }
 
     this.displayingTime = moment(this.displayingTime)
       .startOf('day')
@@ -221,6 +258,21 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     this.changeEvent();
   }
 
+  public ignoreScaleWeight() {
+    this.ignoreWeightButtonActive = false;
+    this.unignoreWeightButtonActive = true;
+    this.ignoreWeight.emit();
+  }
+  public unignoreScaleWeight() {
+    this.ignoreWeightButtonActive = true;
+    this.unignoreWeightButtonActive = false;
+    this.unignoreWeight.emit();
+  }
+
+  public startListening() {
+    this.showListeningButton = false;
+    this.listeningToScaleChange.emit();
+  }
   public bloomTime(): void {
     this.showBloomTimer = false;
     this.bloomTimer.emit(this.getSeconds());
@@ -299,9 +351,14 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     return this.timer.milliseconds;
   }
 
-  public reset() {
+  public reset(_resetButtons: boolean = true) {
     this.timerReset.emit();
-    this.initTimer();
+    this.initTimer(_resetButtons);
+    this.changeEvent();
+  }
+
+  public resetWithoutEmit(_resetButtons: boolean = true) {
+    this.initTimer(_resetButtons);
     this.changeEvent();
   }
 
@@ -357,6 +414,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
       component: DatetimePopoverComponent,
       id: 'datetime-popover',
       cssClass: 'popover-actions',
+      animated: true,
       breakpoints: [0, 0.5, 0.75, 1],
       initialBreakpoint: 0.5,
       componentProps: { displayingTime: this.displayingTime },

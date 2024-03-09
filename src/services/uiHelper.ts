@@ -1,6 +1,6 @@
 /** Core */
 import { Injectable } from '@angular/core';
-import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 /** Ionic */
 import { Platform } from '@ionic/angular';
 /** Third party */
@@ -8,7 +8,7 @@ import moment from 'moment';
 // tslint:disable-next-line
 import 'moment/locale/de';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { File, FileEntry } from '@ionic-native/file/ngx';
+import { File, FileEntry } from '@awesome-cordova-plugins/file/ngx';
 import { UIFileHelper } from './uiFileHelper';
 import { UILog } from './uiLog';
 import { UIAlert } from './uiAlert';
@@ -18,6 +18,7 @@ declare var device: any;
 declare var window: any;
 import { cloneDeep } from 'lodash';
 import { UIToast } from './uiToast';
+import { UISettingsStorage } from './uiSettingsStorage';
 /**
  * Handles every helping functionalities
  */
@@ -72,6 +73,13 @@ export class UIHelper {
     return clone;
   }
 
+  private getSettingsStorageInstance(): UISettingsStorage {
+    let uiSettingsStorage: UISettingsStorage;
+    uiSettingsStorage = UISettingsStorage.getInstance();
+
+    return uiSettingsStorage;
+  }
+
   /**
    * Copy (references may exist)
    * @param _value
@@ -124,7 +132,9 @@ export class UIHelper {
   }
 
   public formateDatestr(_unix: string, _format?: string): string {
-    let format: string = 'DD.MM.YYYY, HH:mm:ss';
+    let format: string =
+      this.getSettingsStorageInstance().getSettings().date_format +
+      ', HH:mm:ss';
     if (_format) {
       format = _format;
     }
@@ -149,7 +159,9 @@ export class UIHelper {
   }
 
   public formateDate(_unix: number, _format?: string): string {
-    let format: string = 'DD.MM.YYYY, HH:mm:ss';
+    let format: string =
+      this.getSettingsStorageInstance().getSettings().date_format +
+      ', HH:mm:ss';
     if (_format) {
       format = _format;
     }

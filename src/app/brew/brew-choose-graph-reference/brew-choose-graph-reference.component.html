@@ -1,0 +1,130 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{"CHOOSE_REFERENCE_GRAPH" | translate}}</ion-title>
+
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()" class="big-icon-only">
+        <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button tappable (click)="addOwnGraph()" class="big-add-icon" fill="clear">
+        <ion-icon class="ion-color-accent" name="beanconqueror-add" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content #brewContent>
+  <ion-segment scrollable="true"  (ionChange)="segmentChanged()" [(ngModel)]="brew_segment">
+    <ion-segment-button value="graphs-open" *ngIf='graphOpenView?.length > 0'>
+      <ion-label>{{"GRAPHS" | translate }}
+      </ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="brews-open">
+      <ion-label>{{"BREWS_ACTIVE" | translate }}
+      </ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="brews-archive">
+      <ion-label>{{"BREWS_ARCHIVED" | translate }}
+      </ion-label>
+
+    </ion-segment-button>
+  </ion-segment>
+    <ion-radio-group [(ngModel)]="radioSelection">
+      <div [ngSwitch]="brew_segment">
+        <div *ngSwitchCase="'graphs-open'">
+          <ion-card *ngIf="graphOpenView.length > 0">
+            <ng-container *ngIf='graphOpenView?.length > 0'>
+              <ion-radio-group  [(ngModel)]="radioSelection">
+                <ag-virtual-scroll #graphOpenScroll [items]="graphOpenView" height="100vh" min-row-height="180">
+                  <brew-graph-reference-card *ngFor="let graph of graphOpenScroll.items" [graph]="graph"></brew-graph-reference-card>
+                </ag-virtual-scroll>
+              </ion-radio-group>
+            </ng-container>
+            <div *ngIf="graphOpenView?.length == 0" class="ion-padding ion-text-center">
+              <div>
+                <ion-icon color="inactive" name="beanconqueror-cup" size="large"></ion-icon>
+              </div>
+              <div class="text-color-inactive ion-margin-top">
+                {{"NO_GRAPHS_FOUND" | translate}}
+              </div>
+            </div>
+          </ion-card>
+        </div>
+
+
+
+        <div *ngSwitchCase="'brews-open'">
+          <ion-card>
+            <div class="ion-justify-content-end container"  *ngIf="brewsOpen?.length > 0">
+              <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="openBrewsFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+              <ion-button (click)="showFilter('brews-open')" fill="clear" size="small" tappable>
+                <ion-icon *ngIf="isFilterActive('brews-open')"  name="beanconqueror-filter-active"
+                          slot="icon-only"></ion-icon>
+                <ion-icon *ngIf="!isFilterActive('brews-open')"  name="beanconqueror-filter-inactive"
+                          slot="icon-only"></ion-icon>
+              </ion-button>
+            </div>
+            <hr  *ngIf="brewsOpen?.length > 0" />
+
+            <ng-container *ngIf='openBrewsView?.length > 0'>
+              <ion-radio-group  [(ngModel)]="radioSelection">
+                <ag-virtual-scroll #openScroll [items]="openBrewsView" height="100vh" min-row-height="180">
+                  <brew-graph-reference-card  *ngFor="let brew of openScroll.items" [brew]="brew"></brew-graph-reference-card>
+                </ag-virtual-scroll>
+              </ion-radio-group>
+            </ng-container>
+            <div *ngIf="openBrewsView?.length == 0" class="ion-padding ion-text-center">
+              <div>
+                <ion-icon color="inactive" name="beanconqueror-cup" size="large"></ion-icon>
+              </div>
+              <div class="text-color-inactive ion-margin-top">
+                {{"NO_BREWS_FOUND" | translate}}
+              </div>
+            </div>
+          </ion-card>
+        </div>
+        <div *ngSwitchCase="'brews-archive'">
+          <ion-card>
+            <div class="ion-justify-content-end container"  *ngIf="archiveBrewsView.length > 0">
+              <ion-searchbar (ionChange)="research()" (ionInput)="research()" [(ngModel)]="archivedBrewsFilterText" class="ion-no-padding ion-no-margin" debounce="750" placeholder="{{'SEARCH' | translate}}" search-icon="beanconqueror-detail" showCancelButton="never"></ion-searchbar>
+              <ion-button (click)="showFilter('brews-archive')" fill="clear" size="small" tappable>
+                <ion-icon *ngIf="isFilterActive('brews-archive')"  name="beanconqueror-filter-active"
+                          slot="icon-only"></ion-icon>
+                <ion-icon *ngIf="!isFilterActive('brews-archive')"  name="beanconqueror-filter-inactive"
+                          slot="icon-only"></ion-icon>
+              </ion-button>
+            </div>
+            <hr  *ngIf="archiveBrewsView?.length > 0" />
+            <ng-container *ngIf='archiveBrewsView?.length > 0'>
+              <ion-radio-group  [(ngModel)]="radioSelection">
+                <ag-virtual-scroll #archivedScroll [items]="archiveBrewsView" height="100vh" min-row-height="385">
+                  <brew-graph-reference-card  *ngFor="let brew of archivedScroll.items" [brew]="brew"></brew-graph-reference-card>
+                </ag-virtual-scroll>
+              </ion-radio-group>
+            </ng-container>
+            <div *ngIf="archiveBrewsView?.length == 0" class="ion-padding ion-text-center">
+              <div>
+                <ion-icon color="inactive" name="beanconqueror-cup" size="large"></ion-icon>
+              </div>
+              <div class="text-color-inactive ion-margin-top">
+                {{"NO_BREWS_FOUND" | translate}}
+              </div>
+            </div>
+          </ion-card>
+        </div>
+      </div>
+    </ion-radio-group>
+</ion-content>
+<ion-footer #footerContent class="ion-no-border">
+  <ion-row>
+    <ion-col size="6">
+      <ion-button (click)="reset()" color="danger" expand="block" fill="outline"
+                  tappable>{{"RESET" | translate}}</ion-button>
+    </ion-col>
+    <ion-col size="6">
+      <ion-button (click)="choose()" [disabled]='!radioSelection' color="accent" expand="block" tappable
+                  type="submit">{{"CHOOSE" | translate}}</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>

@@ -13,41 +13,35 @@ import { AppEventType } from '../enums/appEvent/appEvent';
   providedIn: 'root',
 })
 export class UIStorage {
+  private _storage: Storage | null = null;
   constructor(
     private readonly storage: Storage,
     private eventQueue: EventQueueService
-  ) {}
+  ) {
+    this.init();
+  }
+  private async init() {
+    // If using, define drivers here: await this.storage.defineDriver(/*...*/);
+    const createdStorage = await this.storage.create();
+    this._storage = createdStorage;
+  }
 
   public async set(_key: string, _val: any): Promise<boolean> {
-    const promise = new Promise<boolean>((resolve, reject) => {
-      this.storage.ready().then(
-        async () => {
-          this.eventQueue.dispatch(
-            new AppEvent(AppEventType.STORAGE_CHANGED, undefined)
-          );
-          const data = await this.storage.set(_key, _val);
-          resolve(true);
-        },
-        (e) => {
-          reject(e);
-        }
+    const promise = new Promise<boolean>(async (resolve, reject) => {
+      this.eventQueue.dispatch(
+        new AppEvent(AppEventType.STORAGE_CHANGED, undefined)
       );
+      const data = await this.storage.set(_key, _val);
+      resolve(true);
     });
     return promise;
   }
 
   public async get(_key): Promise<any> {
-    const promise = new Promise((resolve, reject) => {
-      this.storage.ready().then(
-        async () => {
-          // We didn't wait here, maybe this will fix some issues :O?
-          const data = await this.storage.get(_key);
-          resolve(data);
-        },
-        (e) => {
-          reject(e);
-        }
-      );
+    const promise = new Promise(async (resolve, reject) => {
+      // We didn't wait here, maybe this will fix some issues :O?
+      const data = await this.storage.get(_key);
+      resolve(data);
     });
     return promise;
   }
@@ -61,6 +55,12 @@ export class UIStorage {
           exportObj[_key] = _value;
         })
         .then(() => {
+          // #520 - Remove username and password before export.
+          if (exportObj && 'SETTINGS' in exportObj) {
+            exportObj['SETTINGS'][0].visualizer_username = '';
+            exportObj['SETTINGS'][0].visualizer_password = '';
+          }
+
           resolve(exportObj);
         });
     });
@@ -76,10 +76,16 @@ export class UIStorage {
       let hasData: boolean = false;
       this.storage
         .forEach((_value, _key, _index) => {
-          if (_key === 'SETTINGS' || _key === 'VERSION') {
-            //Settings and version will be set realy early... so we don't relay on those
-          } else {
-            hasData = true;
+          if (_key === 'VERSION') {
+            try {
+              if (
+                _value?.length > 0 ||
+                _value['updatedDataVersions'].length > 0
+              ) {
+                hasData = true;
+                return true;
+              }
+            } catch (ex) {}
           }
         })
         .then(

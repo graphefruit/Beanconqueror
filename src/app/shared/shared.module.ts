@@ -27,21 +27,20 @@ import { LicencesComponent } from '../info/licences/licences.component';
 import { PrivacyComponent } from '../info/privacy/privacy.component';
 import { TermsComponent } from '../info/terms/terms.component';
 import { ThanksComponent } from '../info/thanks/thanks.component';
-import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
-import { File } from '@ionic-native/file/ngx';
-import { Device } from '@ionic-native/device/ngx';
-import { FileChooser } from '@ionic-native/file-chooser/ngx';
-import { FilePath } from '@ionic-native/file-path/ngx';
-import { IOSFilePicker } from '@ionic-native/file-picker/ngx';
-import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import { AppMinimize } from '@ionic-native/app-minimize/ngx';
-import { Keyboard } from '@ionic-native/keyboard/ngx';
-import { ThreeDeeTouch } from '@ionic-native/three-dee-touch/ngx';
-import { Camera } from '@ionic-native/camera/ngx';
-import { ImagePicker } from '@ionic-native/image-picker/ngx';
-import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
+import { File } from '@awesome-cordova-plugins/file/ngx';
+import { Device } from '@awesome-cordova-plugins/device/ngx';
+import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
+import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+
+import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
+import { ThreeDeeTouch } from '@awesome-cordova-plugins/three-dee-touch/ngx';
+import { Camera } from '@awesome-cordova-plugins/camera/ngx';
+import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
+import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
+import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
+import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { BeansPage } from '../beans/beans.page';
 import { BeansAddComponent } from '../beans/beans-add/beans-add.component';
 import { BeansEditComponent } from '../beans/beans-edit/beans-edit.component';
@@ -52,8 +51,8 @@ import { BrewPopoverActionsComponent } from '../brew/brew-popover-actions/brew-p
 import { LogComponent } from '../info/log/log.component';
 import { LogTextComponent } from '../info/log/log-text/log-text.component';
 import { TranslateModule } from '@ngx-translate/core';
-import { Globalization } from '@ionic-native/globalization/ngx';
-import { AppVersion } from '@ionic-native/app-version/ngx';
+import { Globalization } from '@awesome-cordova-plugins/globalization/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { EnumToArrayPipe } from '../../pipes/enumToArray';
 import { HelperPage } from '../helper/helper.page';
 import { BrewInformationComponent } from '../../components/brew-information/brew-information.component';
@@ -87,7 +86,7 @@ import { PreparationOverlayDirective } from '../../directive/preparation-overlay
 import { DisableDoubleClickDirective } from '../../directive/disable-double-click.directive';
 import { NgxStarsModule } from 'ngx-stars';
 import { BrewCuppingComponent } from '../brew/brew-cupping/brew-cupping.component';
-import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx';
 import { UpdatePopoverComponent } from '../../popover/update-popover/update-popover.component';
 import { PreparationCustomParametersComponent } from '../preparation/preparation-custom-parameters/preparation-custom-parameters.component';
 import { DefaultCustomParameterComponent } from '../../components/parameter/default-custom-parameter/default-custom-parameter.component';
@@ -106,7 +105,7 @@ import { GreenBeanEditComponent } from '../roasting-section/green-beans/green-be
 import { GreenBeanDetailComponent } from '../roasting-section/green-beans/green-bean-detail/green-bean-detail.component';
 import { GreenBeanPopoverActionsComponent } from '../roasting-section/green-beans/green-bean-popover-actions/green-bean-popover-actions.component';
 import { GreenBeanInformationComponent } from '../../components/green-bean-information/green-bean-information.component';
-import { Insomnia } from '@ionic-native/insomnia/ngx';
+import { Insomnia } from '@awesome-cordova-plugins/insomnia/ngx';
 import { PhotoPopoverComponent } from '../../popover/photo-popover/photo-popover.component';
 import { PhotoAddComponent } from '../../components/photo-add/photo-add.component';
 import { BeanRoastInformationComponent } from '../../components/beans/bean-roast-information/bean-roast-information.component';
@@ -130,7 +129,7 @@ import { ImpressumComponent } from '../info/impressum/impressum.component';
 import { CookieComponent } from '../info/cookie/cookie.component';
 import { FilesystemErrorPopoverComponent } from '../../popover/filesystem-error-popover/filesystem-error-popover.component';
 import { AnalyticsPopoverComponent } from '../../popover/analytics-popover/analytics-popover.component';
-import { Deeplinks } from '@ionic-native/deeplinks/ngx';
+import { Deeplinks } from '@awesome-cordova-plugins/deeplinks/ngx';
 import { BeanArchivePopoverComponent } from '../beans/bean-archive-popover/bean-archive-popover.component';
 import { CuppingFlavorsComponent } from '../../components/cupping-flavors/cupping-flavors.component';
 import { WaterSectionPage } from '../water-section/water-section.page';
@@ -147,13 +146,13 @@ import { BrewBeverageQuantityCalculatorComponent } from '../brew/brew-beverage-q
 import { BrewFlavorPickerComponent } from '../brew/brew-flavor-picker/brew-flavor-picker.component';
 import { BrewChoosePreparationToBrewComponent } from '../brew/brew-choose-preparation-to-brew/brew-choose-preparation-to-brew.component';
 import { ShortPressDirective } from '../../directive/short-press.directive';
-import { FileTransfer } from '@ionic-native/file-transfer/ngx';
+import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { TransformDateDirective } from '../../directive/transform-date';
 import { PreparationEditToolComponent } from '../preparation/preparation-edit-tool/preparation-edit-tool.component';
 import { ListViewParameterComponent } from '../brew-parameter/list-view-parameter/list-view-parameter.component';
 import { ListViewCustomParameterComponent } from '../../components/parameter/list-view-custom-parameter/list-view-custom-parameter.component';
 import { BrewFlowComponent } from '../brew/brew-flow/brew-flow.component';
-import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
+import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { BeanFilterComponent } from '../beans/bean-filter/bean-filter.component';
 import { ChooseDateOverlayDirective } from '../../directive/choose-date.directive';
 import { BeanPopoverAddComponent } from '../beans/bean-popover-add/bean-popover-add.component';
@@ -161,9 +160,8 @@ import { PhotoViewComponent } from '../../components/photo-view/photo-view.compo
 import { QrCodeScannerPopoverComponent } from '../../popover/qr-code-scanner-popover/qr-code-scanner-popover.component';
 import { PreparationToolModalSelectComponent } from '../preparation/preparation-tool-modal-select/preparation-tool-modal-select.component';
 import { PreparationToolOverlayDirective } from '../../directive/preparation-tool-overlay.directive';
-import { NgxGaugeModule } from 'ngx-gauge';
 import { SettingsPopoverBluetoothActionsComponent } from '../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
-import { BeanAssociatedBrewsComponent } from '../beans/bean-associated-brews/bean-associated-brews.component';
+import { AssociatedBrewsComponent } from '../brew/associated-brews/associated-brews.component';
 import { BeanParameterPage } from '../bean-parameter/bean-parameter.page';
 import { BeanListViewParameterComponent } from '../bean-parameter/bean-list-view-parameter/bean-list-view-parameter.component';
 import { BeanManageParameterComponent } from '../bean-parameter/bean-manage-parameter/bean-manage-parameter.component';
@@ -173,6 +171,18 @@ import { RepeatCustomParameterComponent } from '../../components/parameter/repea
 import { RepeatParameterComponent } from '../brew-parameter/repeat-parameter/repeat-parameter.component';
 import { PreparationConnectedDeviceComponent } from '../preparation/preparation-connected-device/preparation-connected-device.component';
 import { BrewRatingComponent } from '../brew/brew-rating/brew-rating.component';
+import { BrewMaximizeControlsComponent } from '../brew/brew-maximize-controls/brew-maximize-controls.component';
+import { BrewChooseGraphReferenceComponent } from '../brew/brew-choose-graph-reference/brew-choose-graph-reference.component';
+import { BrewGraphReferenceCardComponent } from '../../components/brew-graph-reference-card/brew-graph-reference-card.component';
+import { GraphInformationCardComponent } from '../../components/graph-information-card/graph-information-card.component';
+import { GraphPopoverActionsComponent } from '../graph-section/graph/graph-popover-actions/graph-popover-actions.component';
+import { GraphSectionPage } from '../graph-section/graph-section.page';
+import { GraphPage } from '../graph-section/graph/graph.page';
+import { GraphEditComponent } from '../graph-section/graph/graph-edit/graph-edit.component';
+import { GraphAddComponent } from '../graph-section/graph/graph-add/graph-add.component';
+import { GraphDetailComponent } from '../graph-section/graph/graph-detail/graph-detail.component';
+import { GraphDisplayCardComponent } from '../../components/graph-display-card/graph-display-card.component';
+import { BrewPopoverExtractionComponent } from '../brew/brew-popover-extraction/brew-popover-extraction.component';
 
 @NgModule({
   declarations: [
@@ -184,7 +194,9 @@ import { BrewRatingComponent } from '../brew/brew-rating/brew-rating.component';
     DashboardPage,
     RoastingSectionPage,
     WaterSectionPage,
+    GraphSectionPage,
     WaterPage,
+    GraphPage,
     GreenBeansPage,
     GreenBeanAddComponent,
     GreenBeanEditComponent,
@@ -195,6 +207,8 @@ import { BrewRatingComponent } from '../brew/brew-rating/brew-rating.component';
     HelperPage,
     BeansAddComponent,
     BrewFlowComponent,
+    BrewChooseGraphReferenceComponent,
+    BrewMaximizeControlsComponent,
     BeansEditComponent,
     BeansDetailComponent,
     BrewRatingComponent,
@@ -254,12 +268,18 @@ import { BrewRatingComponent } from '../brew/brew-rating/brew-rating.component';
     EnumToArrayPipe,
     AsyncImageComponent,
     BrewInformationComponent,
+    BrewGraphReferenceCardComponent,
+    GraphDisplayCardComponent,
     BeanInformationComponent,
     PreparationInformationCardComponent,
     MillInformationCardComponent,
     WaterInformationCardComponent,
+    GraphInformationCardComponent,
     WaterEditComponent,
     WaterDetailComponent,
+    GraphEditComponent,
+    GraphAddComponent,
+    GraphDetailComponent,
     CuppingRadarComponent,
     CuppingFlavorsComponent,
     RemoveEmptyNumberDirective,
@@ -283,6 +303,7 @@ import { BrewRatingComponent } from '../brew/brew-rating/brew-rating.component';
     BrewEditComponent,
     PhotoPopoverComponent,
     WaterPopoverActionsComponent,
+    GraphPopoverActionsComponent,
     BrewPopoverActionsComponent,
     SettingsPopoverBluetoothActionsComponent,
     BeanPopoverActionsComponent,
@@ -290,7 +311,7 @@ import { BrewRatingComponent } from '../brew/brew-rating/brew-rating.component';
     BeanArchivePopoverComponent,
     MillPopoverActionsComponent,
     BeanModalSelectComponent,
-    BeanAssociatedBrewsComponent,
+    AssociatedBrewsComponent,
     WaterModalSelectComponent,
     RoastingMachineModalSelectComponent,
     MillModalSelectComponent,
@@ -320,6 +341,7 @@ import { BrewRatingComponent } from '../brew/brew-rating/brew-rating.component';
     RoastingMachinePopoverActionsComponent,
     WaterAddComponent,
     BrewRatioCardComponent,
+    BrewPopoverExtractionComponent,
   ],
   imports: [
     CommonModule,
@@ -329,7 +351,6 @@ import { BrewRatingComponent } from '../brew/brew-rating/brew-rating.component';
     RouterModule,
     NgxStarsModule,
     AgVirtualScrollModule,
-    NgxGaugeModule,
   ],
   providers: [
     AppVersion,
@@ -358,9 +379,8 @@ import { BrewRatingComponent } from '../brew/brew-rating/brew-rating.component';
     Device,
     FileChooser,
     FilePath,
-    IOSFilePicker,
+
     SocialSharing,
-    AppMinimize,
     Keyboard,
     ThreeDeeTouch,
     Camera,
@@ -384,10 +404,14 @@ import { BrewRatingComponent } from '../brew/brew-rating/brew-rating.component';
     HelperPage,
     RoastingSectionPage,
     WaterSectionPage,
+    GraphSectionPage,
     WaterPage,
+    GraphPage,
     GreenBeansPage,
     BeansAddComponent,
     BrewFlowComponent,
+    BrewChooseGraphReferenceComponent,
+    BrewMaximizeControlsComponent,
     BeansEditComponent,
     BrewRatingComponent,
     GreenBeanAddComponent,
@@ -450,12 +474,18 @@ import { BrewRatingComponent } from '../brew/brew-rating/brew-rating.component';
     EnumToArrayPipe,
     AsyncImageComponent,
     BrewInformationComponent,
+    BrewGraphReferenceCardComponent,
+    GraphDisplayCardComponent,
     BeanInformationComponent,
     PreparationInformationCardComponent,
     MillInformationCardComponent,
     WaterInformationCardComponent,
+    GraphInformationCardComponent,
     WaterEditComponent,
     WaterDetailComponent,
+    GraphEditComponent,
+    GraphAddComponent,
+    GraphDetailComponent,
     CuppingRadarComponent,
     CuppingFlavorsComponent,
     RemoveEmptyNumberDirective,
@@ -480,11 +510,12 @@ import { BrewRatingComponent } from '../brew/brew-rating/brew-rating.component';
     BrewPopoverActionsComponent,
     SettingsPopoverBluetoothActionsComponent,
     WaterPopoverActionsComponent,
+    GraphPopoverActionsComponent,
     BeanPopoverActionsComponent,
     BeanPopoverAddComponent,
     BeanArchivePopoverComponent,
     BeanModalSelectComponent,
-    BeanAssociatedBrewsComponent,
+    AssociatedBrewsComponent,
     WaterModalSelectComponent,
     RoastingMachineModalSelectComponent,
     MillModalSelectComponent,
@@ -515,6 +546,7 @@ import { BrewRatingComponent } from '../brew/brew-rating/brew-rating.component';
     RoastingMachinePopoverActionsComponent,
     WaterAddComponent,
     BrewRatioCardComponent,
+    BrewPopoverExtractionComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

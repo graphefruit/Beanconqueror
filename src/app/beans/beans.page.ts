@@ -534,7 +534,6 @@ export class BeansPage implements OnInit {
     this.beans = this.uiBeanStorage
       .getAllEntries()
       .sort((a, b) => a.name.localeCompare(b.name));
-
     this.openBeansLength = this.beans.reduce(
       (n, e) => (!e.finished ? n + 1 : n),
       0

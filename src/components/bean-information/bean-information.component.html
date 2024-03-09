@@ -55,7 +55,7 @@
                 <br/>
 
                 <ion-text *ngIf="bean?.roastingDate">
-                  {{bean.roastingDate | formatDate:["DD.MM.YYYY"]}}</ion-text>
+                  {{bean.roastingDate | formatDate:[settings?.date_format]}}</ion-text>
                 <ion-text *ngIf="!bean?.roastingDate">
                   -
                 </ion-text>
@@ -109,7 +109,7 @@
               </ion-col>
               <ion-col *ngIf="bean?.buyDate !== '' &&uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.buyDate)" size="6">
                 <ion-label class="card-headline">{{'BEAN_DATA_BUY_DATE' | translate}}</ion-label><br/>
-                <ion-text>{{bean?.buyDate | formatDate:["DD.MM.YYYY"]}}</ion-text>
+                <ion-text>{{bean?.buyDate | formatDate:[settings?.date_format]}}</ion-text>
               </ion-col>
               <ion-col *ngIf="uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.beanMix)" size="6">
                 <ion-label class="card-headline">{{'BEAN_SORT_MIX' | translate}}</ion-label><br/>

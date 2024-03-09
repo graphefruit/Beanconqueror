@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UIHelper } from '../uiHelper';
-import { Deeplinks } from '@ionic-native/deeplinks/ngx';
+import { Deeplinks } from '@awesome-cordova-plugins/deeplinks/ngx';
 
 import { UILog } from '../uiLog';
 import { ServerCommunicationService } from '../serverCommunication/server-communication.service';
@@ -159,7 +159,11 @@ export class IntentHandlerService {
           }
         });
       }
-    } catch (ex) {}
+    } catch (ex) {
+      if (this.uiAlert.isLoadingSpinnerShown()) {
+        this.uiAlert.hideLoadingSpinner();
+      }
+    }
   }
 
   private async addBeanFromServer(_qrCodeId: string) {
