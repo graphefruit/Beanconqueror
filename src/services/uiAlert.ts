@@ -35,6 +35,7 @@ export class UIAlert {
       msg = this.translate.instant(message);
     }
     const loadingSpinner = await this.loadingController.create({
+      animated: false,
       message: msg,
     });
     this.existingLoadingSpinners.push(loadingSpinner);
@@ -60,6 +61,11 @@ export class UIAlert {
     if (this.existingLoadingSpinners.length > 0) {
       for (const spinner of this.existingLoadingSpinners) {
         spinner.dismiss();
+        await new Promise(async (resolve) => {
+          setTimeout(() => {
+            resolve(undefined);
+          }, 50);
+        });
       }
       this.existingLoadingSpinners = [];
     }
