@@ -71,11 +71,18 @@ export abstract class StorageClass {
   public async add(_entry): Promise<any> {
     const promise = new Promise(async (resolve, reject) => {
       const newEntry = this.uiHelper.cloneData(_entry);
-      newEntry.config.uuid = this.uiHelper.generateUUID();
-      newEntry.config.unix_timestamp = this.uiHelper.getUnixTimestamp();
-      this.storedData.push(newEntry);
-      await this.__save();
-      this.__sendEvent('ADD');
+      try {
+        newEntry.config.uuid = this.uiHelper.generateUUID();
+        newEntry.config.unix_timestamp = this.uiHelper.getUnixTimestamp();
+        this.storedData.push(newEntry);
+        await this.__save();
+        this.__sendEvent('ADD');
+      } catch (ex) {
+        this.uiLog.error(
+          `Storage - Add - Unsuccessfully - ${JSON.stringify(ex)}`
+        );
+        this.uiHelper.showAlert(ex.message, 'ADD CRITICAL ERROR');
+      }
       resolve(this.uiHelper.cloneData(newEntry));
     });
     return promise;
@@ -243,7 +250,7 @@ export abstract class StorageClass {
         this.uiLog.log('Storage - Save - Successfully');
       },
       (e) => {
-        this.uiLog.log(
+        this.uiLog.error(
           `Storage - Save - Unsuccessfully - ${JSON.stringify(e)}`
         );
         this.uiHelper.showAlert(e.message, 'CRITICAL ERROR');
