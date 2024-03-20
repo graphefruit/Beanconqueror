@@ -253,6 +253,11 @@ export class BrewAddComponent implements OnInit {
 
   public async finish() {
     await this.uiAlert.showLoadingSpinner();
+    await new Promise(async (resolve) => {
+      setTimeout(() => {
+        resolve(undefined);
+      }, 50);
+    });
     try {
       if (this.brewBrewing?.timer?.isTimerRunning()) {
         this.brewBrewing.timer.pauseTimer('click');
@@ -326,15 +331,33 @@ export class BrewAddComponent implements OnInit {
       }
 
       this.brewTracking.trackBrew(addedBrewObj);
+
+      await this.uiAlert.hideLoadingSpinner();
+      await new Promise(async (resolve) => {
+        setTimeout(() => {
+          resolve(undefined);
+        }, 100);
+      });
+
+      if (this.uiBrewHelper.checkIfBeanPackageIsConsumed(this.data.getBean())) {
+        await this.uiBrewHelper.checkIfBeanPackageIsConsumedTriggerMessageAndArchive(
+          this.data.getBean()
+        );
+      }
+
+      this.uiAnalytics.trackEvent(
+        BREW_TRACKING.TITLE,
+        BREW_TRACKING.ACTIONS.ADD_FINISH
+      );
     } catch (ex) {}
+
     await this.uiAlert.hideLoadingSpinner();
-    await this.uiBrewHelper.checkIfBeanPackageIsConsumedTriggerMessageAndArchive(
-      this.data.getBean()
-    );
-    this.uiAnalytics.trackEvent(
-      BREW_TRACKING.TITLE,
-      BREW_TRACKING.ACTIONS.ADD_FINISH
-    );
+    await new Promise(async (resolve) => {
+      setTimeout(() => {
+        resolve(undefined);
+      }, 100);
+    });
+
     this.dismiss();
   }
 
