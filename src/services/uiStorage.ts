@@ -31,8 +31,12 @@ export class UIStorage {
       this.eventQueue.dispatch(
         new AppEvent(AppEventType.STORAGE_CHANGED, undefined)
       );
-      const data = await this.storage.set(_key, _val);
-      resolve(true);
+      try {
+        const data = await this.storage.set(_key, _val);
+        resolve(true);
+      } catch (ex) {
+        resolve(true);
+      }
     });
     return promise;
   }
@@ -40,8 +44,12 @@ export class UIStorage {
   public async get(_key): Promise<any> {
     const promise = new Promise(async (resolve, reject) => {
       // We didn't wait here, maybe this will fix some issues :O?
-      const data = await this.storage.get(_key);
-      resolve(data);
+      try {
+        const data = await this.storage.get(_key);
+        resolve(data);
+      } catch (ex) {
+        resolve(null);
+      }
     });
     return promise;
   }
