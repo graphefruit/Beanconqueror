@@ -259,6 +259,7 @@ export class BrewAddComponent implements OnInit {
       }, 50);
     });
     try {
+      this.uiLog.log('Brew add - Step 1');
       if (this.brewBrewing?.timer?.isTimerRunning()) {
         this.brewBrewing.timer.pauseTimer('click');
 
@@ -268,15 +269,18 @@ export class BrewAddComponent implements OnInit {
           }, 100);
         });
       }
-
+      this.uiLog.log('Brew add - Step 2');
       this.uiBrewHelper.cleanInvisibleBrewData(this.data);
+      this.uiLog.log('Brew add - Step 3');
       const addedBrewObj: Brew = await this.uiBrewStorage.add(this.data);
+      this.uiLog.log('Brew add - Step 4');
 
       if (
         this.brewBrewing.flow_profile_raw.weight.length > 0 ||
         this.brewBrewing.flow_profile_raw.pressureFlow.length > 0 ||
         this.brewBrewing.flow_profile_raw.temperatureFlow.length > 0
       ) {
+        this.uiLog.log('Brew add - Step 5');
         const savedPath: string = await this.brewBrewing.saveFlowProfile(
           addedBrewObj.config.uuid
         );
@@ -294,6 +298,7 @@ export class BrewAddComponent implements OnInit {
       }
 
       if (checkData.manage_parameters.set_custom_brew_time) {
+        this.uiLog.log('Brew add - Step 6');
         addedBrewObj.config.unix_timestamp = moment(
           this.brewBrewing.customCreationDate
         ).unix();
@@ -315,7 +320,7 @@ export class BrewAddComponent implements OnInit {
           'Visualizer not active or upload automatic not activated'
         );
       }
-
+      this.uiLog.log('Brew add - Step 7');
       if (
         this.settings.track_caffeine_consumption &&
         this.data.grind_weight > 0 &&
@@ -329,9 +334,9 @@ export class BrewAddComponent implements OnInit {
       if (!this.hide_toast_message) {
         this.uiToast.showInfoToast('TOAST_BREW_ADDED_SUCCESSFULLY');
       }
-
+      this.uiLog.log('Brew add - Step 8');
       this.brewTracking.trackBrew(addedBrewObj);
-
+      this.uiLog.log('Brew add - Step 9');
       await this.uiAlert.hideLoadingSpinner();
       await new Promise(async (resolve) => {
         setTimeout(() => {
