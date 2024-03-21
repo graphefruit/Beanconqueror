@@ -1,9 +1,13 @@
 <ion-content>
-  <ion-spinner name="crescent"></ion-spinner>&nbsp; {{this.message}}
+  <div style='text-align:center;'>
+    <ion-spinner style="top:10px;" name="crescent"></ion-spinner><span>&nbsp; {{this.message}}</span>
+  </div>
 </ion-content>
 <ion-footer *ngIf='__showDismissButton' class="ion-no-border">
 
       <ion-button (click)="ok()" color="accent" expand="block"
                   type="submit">{{"CANCEL" | translate}}</ion-button>
+  <ion-button (click)="sendLogs()" color="accent" expand="block"
+              type="submit">{{"SEND_LOGS" | translate}}</ion-button>
 
 </ion-footer>
