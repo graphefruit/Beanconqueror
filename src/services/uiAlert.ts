@@ -7,8 +7,8 @@ import {
   ModalController,
 } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { CustomPopoverComponent } from '../popover/custom-popover/custom-popover.component';
 import { FilesystemErrorPopoverComponent } from '../popover/filesystem-error-popover/filesystem-error-popover.component';
+import { LoadingPopoverComponent } from '../popover/loading-popover/loading-popover.component';
 
 @Injectable({
   providedIn: 'root',
@@ -169,5 +169,31 @@ export class UIAlert {
     _okText: string
   ) {
     await this.showMessage(_description, _title, _okText, true);
+  }
+
+  public async showLoadingMessage(
+    message: string = 'PLEASE_WAIT',
+    translate: boolean = true,
+    showDismissAfterSpecificTimeout: boolean = false
+  ) {
+    if (this.existingLoadingSpinners.length > 0) {
+      await this.hideLoadingSpinner();
+    }
+    let msg = message;
+    if (translate) {
+      msg = this.translate.instant(message);
+    }
+    const modal = await this.modalController.create({
+      component: LoadingPopoverComponent,
+      cssClass: 'loading-modal',
+      animated: false,
+      backdropDismiss: false,
+      componentProps: {
+        showDismissAfterSpecificTimeout: showDismissAfterSpecificTimeout,
+        message: msg,
+      },
+    });
+    this.existingLoadingSpinners.push(modal);
+    modal.present();
   }
 }
