@@ -1014,7 +1014,7 @@ ion-modal.loading-modal {
   --max-width: 280px;
   --max-height: 90%;
   --spinner-color: var(--ion-color-primary, #3880ff);
-  --backdrop-opacity: var(--ion-backdrop-opacity, 0.32);
+  --backdrop-opacity: var(--ion-backdrop-opacity, 0.32)!important;
   color: var(--ion-color-step-850, #262626);
   font-size: 0.875rem;
   /**Overwrite**/

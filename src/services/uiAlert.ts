@@ -188,6 +188,7 @@ export class UIAlert {
       cssClass: 'loading-modal',
       animated: false,
       backdropDismiss: false,
+      showBackdrop: true,
       componentProps: {
         showDismissAfterSpecificTimeout: showDismissAfterSpecificTimeout,
         message: msg,
