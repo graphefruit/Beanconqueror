@@ -27,7 +27,8 @@ export class UIAlert {
     message: string = 'PLEASE_WAIT',
     translate: boolean = true
   ) {
-    if (this.existingLoadingSpinners.length > 0) {
+    await this.showLoadingMessage(message, translate, false);
+    /**if (this.existingLoadingSpinners.length > 0) {
       await this.hideLoadingSpinner();
     }
     let msg = message;
@@ -39,7 +40,7 @@ export class UIAlert {
       message: msg,
     });
     this.existingLoadingSpinners.push(loadingSpinner);
-    loadingSpinner.present();
+    loadingSpinner.present();**/
   }
 
   public setLoadingSpinnerMessage(message: string, translate: boolean = false) {
