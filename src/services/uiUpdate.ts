@@ -350,7 +350,7 @@ export class UIUpdate {
                         oldPath = oldPath.substr(1);
                       }
                       this.uiLog.log(
-                        `${_version} - Move file from ${this.file.dataDirectory} to ${this.file.syncedDataDirectory}; Name: ${oldPath}`
+                        `${_version} - Move file from ${this.file.dataDirectory} to ${this.file.documentsDirectory}; Name: ${oldPath}`
                       );
                       const newPath: string = await this.uiFileHelper.moveFile(
                         this.file.dataDirectory,
