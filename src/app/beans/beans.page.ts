@@ -354,79 +354,81 @@ export class BeansPage implements OnInit {
     const isOpen: boolean = _type === 'open';
     let sort: IBeanPageSort;
     let filterBeans: Array<Bean>;
-    if (isOpen) {
-      sort = this.openBeansSort;
-      filterBeans = beansCopy.filter((bean) => !bean.finished);
-    } else {
-      sort = this.archivedBeansSort;
-      filterBeans = beansCopy.filter((bean) => bean.finished);
-    }
+    sort = this.manageSortScope(isOpen);
+    filterBeans = this.manageFilterBeans(isOpen, beansCopy);
 
     let filter: IBeanPageFilter;
-    if (isOpen) {
-      filter = this.openBeansFilter;
-    } else {
-      filter = this.archivedBeansFilter;
-    }
+    filter = this.manageFilter(isOpen);
 
-    if (filter.favourite) {
-      filterBeans = filterBeans.filter((e) => e.favourite === true);
-    }
+    filterBeans = this.manageFavourites(filter, filterBeans);
 
     // Rating filter is always active
-    filterBeans = filterBeans.filter(
-      (e: Bean) =>
-        e.rating >= filter.rating.lower && e.rating <= filter.rating.upper
-    );
+    filterBeans = this.manageRating(filterBeans, filter);
 
-    if (filter.bean_roasting_type.length > 0) {
-      filterBeans = filterBeans.filter(
-        (e: Bean) =>
-          filter.bean_roasting_type.includes(e.bean_roasting_type) === true
-      );
-    }
+    filterBeans = this.manageRoastingType(filter, filterBeans);
 
-    filterBeans = filterBeans.filter(
-      (e: Bean) =>
-        e.roast_range >= filter.roast_range.lower &&
-        e.roast_range <= filter.roast_range.upper
-    );
+    filterBeans = this.manageRoastRange(filterBeans, filter);
 
-    if (filter.bean_roaster) {
-      filterBeans = filterBeans.filter(
-        (e: Bean) => filter.bean_roaster.includes(e.roaster) === true
-      );
-    }
+    filterBeans = this.manageRoaster(filter, filterBeans);
 
-    if (filter.roastingDateStart) {
-      const roastingStart = moment(filter.roastingDateStart)
-        .startOf('day')
-        .toDate();
-      filterBeans = filterBeans.filter((e: Bean) => {
-        if (e.roastingDate === undefined || e.roastingDate === '') {
-          return false;
-        }
+    filterBeans = this.manageRoastingDateStart(filter, filterBeans);
 
-        const beanRoastingDate = moment(e.roastingDate).startOf('day').toDate();
-        return beanRoastingDate >= roastingStart;
-      });
-    }
-
-    if (filter.roastingDateEnd) {
-      const roastingDateEnd = moment(filter.roastingDateEnd)
-        .startOf('day')
-        .toDate();
-      filterBeans = filterBeans.filter((e: Bean) => {
-        if (e.roastingDate === undefined || e.roastingDate === '') {
-          return false;
-        }
-
-        const beanRoastingDate = moment(e.roastingDate).startOf('day').toDate();
-        return beanRoastingDate <= roastingDateEnd;
-      });
-    }
+    filterBeans = this.manageRoastingDateEnd(filter, filterBeans);
 
     // Skip if something is unkown, because no filter is active then
+    filterBeans = this.manageSort(sort, filterBeans);
+
+    let searchText = this.manageSearchTextScope(isOpen);
+
+    filterBeans = this.manageSearchText(searchText, filterBeans);
+
+    if (isOpen) {
+      this.openBeans = filterBeans;
+    } else {
+      this.finishedBeans = filterBeans;
+    }
+    this.retriggerScroll();
+  }
+
+  private manageSearchText(searchText: string, filterBeans: Bean[]) {
+    if (searchText) {
+      const splittingSearch = searchText.split(',');
+      filterBeans = filterBeans.filter((e) => {
+        return splittingSearch.find((sc) => {
+          const searchStr = sc.toLowerCase().trim();
+          return (
+            e.note?.toLowerCase().includes(searchStr) ||
+            e.name?.toLowerCase().includes(searchStr) ||
+            e.roaster?.toLowerCase().includes(searchStr) ||
+            e.aromatics?.toLowerCase().includes(searchStr) ||
+            e.bean_information?.find((bi) => {
+              return (
+                bi?.variety?.toLowerCase().includes(searchStr) ||
+                bi?.country?.toLowerCase().includes(searchStr) ||
+                bi?.region?.toLowerCase().includes(searchStr) ||
+                bi?.farm?.toLowerCase().includes(searchStr) ||
+                bi?.farmer?.toLowerCase().includes(searchStr) ||
+                bi?.harvest_time?.toLowerCase().includes(searchStr) ||
+                bi?.elevation?.toLowerCase().includes(searchStr) ||
+                bi?.processing?.toLowerCase().includes(searchStr)
+              );
+            })
+          );
+        });
+      });
+    }
+    return filterBeans;
+  }
+
+  private manageSearchTextScope(isOpen: boolean) {
+    if (isOpen) {
+      return this.openBeansFilterText.toLowerCase();
+    } else {
+      return this.archivedBeansFilterText.toLowerCase();
+    }
+  }
+
+  private manageSort(sort: IBeanPageSort, filterBeans: Bean[]): Bean[] {
     if (
       sort.sort_order !== BEAN_SORT_ORDER.UNKOWN &&
       sort.sort_after !== BEAN_SORT_AFTER.UNKOWN
@@ -489,45 +491,117 @@ export class BeansPage implements OnInit {
         filterBeans.reverse();
       }
     }
-    let searchText: string = '';
-    if (isOpen) {
-      searchText = this.openBeansFilterText.toLowerCase();
-    } else {
-      searchText = this.archivedBeansFilterText.toLowerCase();
-    }
+    return filterBeans;
+  }
 
-    if (searchText) {
-      const splittingSearch = searchText.split(',');
-      filterBeans = filterBeans.filter((e) => {
-        return splittingSearch.find((sc) => {
-          const searchStr = sc.toLowerCase().trim();
-          return (
-            e.note?.toLowerCase().includes(searchStr) ||
-            e.name?.toLowerCase().includes(searchStr) ||
-            e.roaster?.toLowerCase().includes(searchStr) ||
-            e.aromatics?.toLowerCase().includes(searchStr) ||
-            e.bean_information?.find((bi) => {
-              return (
-                bi?.variety?.toLowerCase().includes(searchStr) ||
-                bi?.country?.toLowerCase().includes(searchStr) ||
-                bi?.region?.toLowerCase().includes(searchStr) ||
-                bi?.farm?.toLowerCase().includes(searchStr) ||
-                bi?.farmer?.toLowerCase().includes(searchStr) ||
-                bi?.harvest_time?.toLowerCase().includes(searchStr) ||
-                bi?.elevation?.toLowerCase().includes(searchStr) ||
-                bi?.processing?.toLowerCase().includes(searchStr)
-              );
-            })
-          );
-        });
+  private manageRoastingDateEnd(filter: IBeanPageFilter, filterBeans: Bean[]) {
+    if (filter.roastingDateEnd) {
+      const roastingDateEnd = moment(filter.roastingDateEnd)
+        .startOf('day')
+        .toDate();
+      filterBeans = filterBeans.filter((e: Bean) => {
+        if (e.roastingDate === undefined || e.roastingDate === '') {
+          return false;
+        }
+
+        const beanRoastingDate = moment(e.roastingDate).startOf('day').toDate();
+        return beanRoastingDate <= roastingDateEnd;
       });
     }
-    if (isOpen) {
-      this.openBeans = filterBeans;
-    } else {
-      this.finishedBeans = filterBeans;
+    return filterBeans;
+  }
+
+  private manageRoastingDateStart(
+    filter: IBeanPageFilter,
+    filterBeans: Bean[]
+  ): Bean[] {
+    if (filter.roastingDateStart) {
+      const roastingStart = moment(filter.roastingDateStart)
+        .startOf('day')
+        .toDate();
+      filterBeans = filterBeans.filter((e: Bean) => {
+        if (e.roastingDate === undefined || e.roastingDate === '') {
+          return false;
+        }
+
+        const beanRoastingDate = moment(e.roastingDate).startOf('day').toDate();
+        return beanRoastingDate >= roastingStart;
+      });
     }
-    this.retriggerScroll();
+    return filterBeans;
+  }
+
+  private manageRoaster(filter: IBeanPageFilter, filterBeans: Bean[]) {
+    if (filter.bean_roaster) {
+      filterBeans = filterBeans.filter(
+        (e: Bean) => filter.bean_roaster.includes(e.roaster) === true
+      );
+    }
+    return filterBeans;
+  }
+
+  private manageRoastRange(
+    filterBeans: Bean[],
+    filter: IBeanPageFilter
+  ): Bean[] {
+    return filterBeans.filter(
+      (e: Bean) =>
+        e.roast_range >= filter.roast_range.lower &&
+        e.roast_range <= filter.roast_range.upper
+    );
+  }
+
+  private manageRoastingType(
+    filter: IBeanPageFilter,
+    filterBeans: Bean[]
+  ): Bean[] {
+    if (filter.bean_roasting_type.length > 0) {
+      return filterBeans.filter(
+        (e: Bean) =>
+          filter.bean_roasting_type.includes(e.bean_roasting_type) === true
+      );
+    }
+    return filterBeans;
+  }
+
+  private manageRating(filterBeans: Bean[], filter: IBeanPageFilter): Bean[] {
+    return filterBeans.filter(
+      (e: Bean) =>
+        e.rating >= filter.rating.lower && e.rating <= filter.rating.upper
+    );
+  }
+
+  private manageFavourites(
+    filter: IBeanPageFilter,
+    filterBeans: Bean[]
+  ): Bean[] {
+    if (filter.favourite) {
+      return filterBeans.filter((e) => e.favourite === true);
+    }
+    return filterBeans;
+  }
+
+  private manageFilter(isOpen: boolean): IBeanPageFilter {
+    if (isOpen) {
+      return this.openBeansFilter;
+    } else {
+      return this.archivedBeansFilter;
+    }
+  }
+
+  private manageSortScope(isOpen: boolean): IBeanPageSort {
+    if (isOpen) {
+      return this.openBeansSort;
+    } else {
+      return this.archivedBeansSort;
+    }
+  }
+  private manageFilterBeans(isOpen: boolean, beansCopy: Bean[]): Bean[] {
+    if (isOpen) {
+      return beansCopy.filter((bean) => !bean.finished);
+    } else {
+      return beansCopy.filter((bean) => bean.finished);
+    }
   }
 
   private __initializeBeans(): void {
