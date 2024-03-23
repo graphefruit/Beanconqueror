@@ -260,7 +260,6 @@ export class BrewAddComponent implements OnInit {
     });
     try {
       this.uiLog.log('Brew add - Step 1');
-      await this.uiAlert.showLoadingMessage('Brew add - Step 1', false, true);
       if (this.brewBrewing?.timer?.isTimerRunning()) {
         this.brewBrewing.timer.pauseTimer('click');
 
@@ -271,21 +270,16 @@ export class BrewAddComponent implements OnInit {
         });
       }
       this.uiLog.log('Brew add - Step 2');
-      await this.uiAlert.showLoadingMessage('Brew add - Step 2', false, true);
       this.uiBrewHelper.cleanInvisibleBrewData(this.data);
-      await this.uiAlert.showLoadingMessage('Brew add - Step 3', false, true);
       this.uiLog.log('Brew add - Step 3');
       const addedBrewObj: Brew = await this.uiBrewStorage.add(this.data);
       this.uiLog.log('Brew add - Step 4');
-      await this.uiAlert.showLoadingMessage('Brew add - Step 4', false, true);
-
       if (
         this.brewBrewing.flow_profile_raw.weight.length > 0 ||
         this.brewBrewing.flow_profile_raw.pressureFlow.length > 0 ||
         this.brewBrewing.flow_profile_raw.temperatureFlow.length > 0
       ) {
         this.uiLog.log('Brew add - Step 5');
-        await this.uiAlert.showLoadingMessage('Brew add - Step 5', false, true);
         const savedPath: string = await this.brewBrewing.saveFlowProfile(
           addedBrewObj.config.uuid
         );
@@ -301,7 +295,6 @@ export class BrewAddComponent implements OnInit {
       } else {
         checkData = this.settings;
       }
-      await this.uiAlert.showLoadingMessage('Brew add - Step 6', false, true);
       if (checkData.manage_parameters.set_custom_brew_time) {
         this.uiLog.log('Brew add - Step 6');
         addedBrewObj.config.unix_timestamp = moment(
@@ -325,7 +318,6 @@ export class BrewAddComponent implements OnInit {
           'Visualizer not active or upload automatic not activated'
         );
       }
-      await this.uiAlert.showLoadingMessage('Brew add - Step 7', false, true);
       this.uiLog.log('Brew add - Step 7');
       if (
         this.settings.track_caffeine_consumption &&
@@ -340,10 +332,8 @@ export class BrewAddComponent implements OnInit {
       if (!this.hide_toast_message) {
         this.uiToast.showInfoToast('TOAST_BREW_ADDED_SUCCESSFULLY');
       }
-      await this.uiAlert.showLoadingMessage('Brew add - Step 8', false, true);
       this.uiLog.log('Brew add - Step 8');
       this.brewTracking.trackBrew(addedBrewObj);
-      await this.uiAlert.showLoadingMessage('Brew add - Step 9', false, true);
       this.uiLog.log('Brew add - Step 9');
       await this.uiAlert.hideLoadingSpinner();
       await new Promise(async (resolve) => {
