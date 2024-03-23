@@ -254,73 +254,19 @@ export class BrewAddComponent implements OnInit {
   public async finish() {
     await this.uiAlert.showLoadingSpinner();
     try {
-      if (this.brewBrewing?.timer?.isTimerRunning()) {
-        this.brewBrewing.timer.pauseTimer('click');
-
-        await new Promise(async (resolve) => {
-          setTimeout(() => {
-            resolve(undefined);
-          }, 100);
-        });
-      }
+      await this.manageBrewBrewingTimer();
 
       this.uiBrewHelper.cleanInvisibleBrewData(this.data);
       const addedBrewObj: Brew = await this.uiBrewStorage.add(this.data);
 
-      if (
-        this.brewBrewing.flow_profile_raw.weight.length > 0 ||
-        this.brewBrewing.flow_profile_raw.pressureFlow.length > 0 ||
-        this.brewBrewing.flow_profile_raw.temperatureFlow.length > 0
-      ) {
-        const savedPath: string = await this.brewBrewing.saveFlowProfile(
-          addedBrewObj.config.uuid
-        );
-        if (savedPath !== '') {
-          addedBrewObj.flow_profile = savedPath;
-          await this.uiBrewStorage.update(addedBrewObj);
-        }
-      }
+      await this.manageFlowProfile(addedBrewObj);
 
-      let checkData: Settings | Preparation;
-      if (this.getPreparation().use_custom_parameters === true) {
-        checkData = this.getPreparation();
-      } else {
-        checkData = this.settings;
-      }
+      await this.manageCustomBrewTime(addedBrewObj);
 
-      if (checkData.manage_parameters.set_custom_brew_time) {
-        addedBrewObj.config.unix_timestamp = moment(
-          this.brewBrewing.customCreationDate
-        ).unix();
-        await this.uiBrewStorage.update(addedBrewObj);
-      }
+      this.manageUploadToVisualizer(addedBrewObj);
 
-      if (
-        this.settings.visualizer_active &&
-        this.settings.visualizer_upload_automatic
-      ) {
-        if (addedBrewObj.flow_profile) {
-          this.uiLog.log('Upload shot to visualizer');
-          this.visualizerService.uploadToVisualizer(addedBrewObj);
-        } else {
-          this.uiLog.log('No flow profile given, dont upload');
-        }
-      } else {
-        this.uiLog.log(
-          'Visualizer not active or upload automatic not activated'
-        );
-      }
+      this.manageCaffeineConsumption();
 
-      if (
-        this.settings.track_caffeine_consumption &&
-        this.data.grind_weight > 0 &&
-        this.data.getBean().decaffeinated === false
-      ) {
-        this.uiHealthKit.trackCaffeineConsumption(
-          this.data.getCaffeineAmount(),
-          moment(this.brewBrewing.customCreationDate).toDate()
-        );
-      }
       if (!this.hide_toast_message) {
         this.uiToast.showInfoToast('TOAST_BREW_ADDED_SUCCESSFULLY');
       }
@@ -336,6 +282,86 @@ export class BrewAddComponent implements OnInit {
       BREW_TRACKING.ACTIONS.ADD_FINISH
     );
     this.dismiss();
+  }
+
+  private manageCaffeineConsumption(): void {
+    if (
+      this.settings.track_caffeine_consumption &&
+      this.data.grind_weight > 0 &&
+      this.data.getBean().decaffeinated === false
+    ) {
+      this.uiHealthKit.trackCaffeineConsumption(
+        this.data.getCaffeineAmount(),
+        moment(this.brewBrewing.customCreationDate).toDate()
+      );
+    }
+  }
+
+  private manageUploadToVisualizer(addedBrewObj: Brew): void {
+    if (
+      this.settings.visualizer_active &&
+      this.settings.visualizer_upload_automatic
+    ) {
+      if (addedBrewObj.flow_profile) {
+        this.uiLog.log('Upload shot to visualizer');
+        this.visualizerService.uploadToVisualizer(addedBrewObj);
+      } else {
+        this.uiLog.log('No flow profile given, dont upload');
+      }
+    } else {
+      this.uiLog.log('Visualizer not active or upload automatic not activated');
+    }
+  }
+
+  private async manageCustomBrewTime(addedBrewObj: Brew): Promise<void> {
+    const checkData = this.getSettingsOrPreparation();
+
+    if (checkData.manage_parameters.set_custom_brew_time) {
+      addedBrewObj.config.unix_timestamp = moment(
+        this.brewBrewing.customCreationDate
+      ).unix();
+      await this.uiBrewStorage.update(addedBrewObj);
+    }
+  }
+
+  private getSettingsOrPreparation(): Settings | Preparation {
+    if (this.getPreparation().use_custom_parameters === true) {
+      return this.getPreparation();
+    } else {
+      return this.settings;
+    }
+  }
+
+  private async manageFlowProfile(addedBrewObj: Brew) {
+    if (this.hasAnyFlowProfileRequisites()) {
+      const savedPath: string = await this.brewBrewing.saveFlowProfile(
+        addedBrewObj.config.uuid
+      );
+      if (savedPath !== '') {
+        addedBrewObj.flow_profile = savedPath;
+        await this.uiBrewStorage.update(addedBrewObj);
+      }
+    }
+  }
+
+  private hasAnyFlowProfileRequisites() {
+    return (
+      this.brewBrewing.flow_profile_raw.weight.length > 0 ||
+      this.brewBrewing.flow_profile_raw.pressureFlow.length > 0 ||
+      this.brewBrewing.flow_profile_raw.temperatureFlow.length > 0
+    );
+  }
+
+  private async manageBrewBrewingTimer() {
+    if (this.brewBrewing?.timer?.isTimerRunning()) {
+      this.brewBrewing.timer.pauseTimer('click');
+
+      await new Promise(async (resolve) => {
+        setTimeout(() => {
+          resolve(undefined);
+        }, 100);
+      });
+    }
   }
 
   public getPreparation(): Preparation {
