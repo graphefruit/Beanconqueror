@@ -1781,5 +1781,6 @@
     "PAGE_SETTINGS_SHOW_BACKUP_ISSUES_DESCRIPTION": "Display a popup if backups can't be wrote to the filesystem",
     "AUTOMATIC_BACKUP_DID_FAIL":"Auto Backup did not work, make sure to have working backups! This information can be turned off in the settings",
     "INTERNAL_BACKUP_DID_FAIL":"Internal Backup did not work, make sure to have working backups! This information can be turned off in the settings",
-    "ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD":"ZIP file could not be saved! This information can be turned off in the settings"
+    "ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD":"ZIP file could not be saved! This information can be turned off in the settings",
+    "SEND_LOGS": "Send logs"
 }
