@@ -87,7 +87,7 @@ export class UIStorage {
           if (_key === 'VERSION') {
             try {
               if (
-                _value?.length > 0 ||
+                _value?.length > 0 &&
                 _value['updatedDataVersions'].length > 0
               ) {
                 hasData = true;
