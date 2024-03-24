@@ -2,18 +2,12 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import {
-  LoadingController,
-  ModalController,
-  NavParams,
-  Platform,
-} from '@ionic/angular';
+import { ModalController, NavParams, Platform } from '@ionic/angular';
 import { UIMillStorage } from '../../../services/uiMillStorage';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { Brew } from '../../../classes/brew/brew';
 import moment from 'moment';
 import { UIToast } from '../../../services/uiToast';
-import { TranslateService } from '@ngx-translate/core';
 import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { UILog } from '../../../services/uiLog';
@@ -30,19 +24,18 @@ import { UIAnalytics } from '../../../services/uiAnalytics';
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
 import { BluetoothScale, SCALE_TIMER_COMMAND } from '../../../classes/devices';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { PreparationDeviceType } from '../../../classes/preparationDevice';
-import { UIHelper } from '../../../services/uiHelper';
 import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
 
 declare var Plotly;
 declare var window;
+
 @Component({
   selector: 'brew-add',
   templateUrl: './brew-add.component.html',
   styleUrls: ['./brew-add.component.scss'],
 })
 export class BrewAddComponent implements OnInit {
-  public static COMPONENT_ID: string = 'brew-add';
+  public static readonly COMPONENT_ID: string = 'brew-add';
   public brew_template: Brew;
   public data: Brew = new Brew();
   public settings: Settings;
@@ -57,6 +50,7 @@ export class BrewAddComponent implements OnInit {
   public showFooter: boolean = true;
   private initialBeanData: string = '';
   private disableHardwareBack;
+
   constructor(
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
@@ -66,10 +60,8 @@ export class BrewAddComponent implements OnInit {
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiMillStorage: UIMillStorage,
     private readonly uiToast: UIToast,
-    private readonly translate: TranslateService,
     private readonly platform: Platform,
     private readonly geolocation: Geolocation,
-    private readonly loadingController: LoadingController,
     private readonly uiLog: UILog,
     private readonly uiBrewHelper: UIBrewHelper,
     private readonly uiHealthKit: UIHealthKit,
@@ -78,7 +70,6 @@ export class BrewAddComponent implements OnInit {
     private readonly brewTracking: BrewTrackingService,
     private readonly uiAnalytics: UIAnalytics,
     private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly uiHelper: UIHelper,
     private readonly visualizerService: VisualizerService
   ) {
     // Initialize to standard in drop down
@@ -93,19 +84,19 @@ export class BrewAddComponent implements OnInit {
     this.data.bean = this.uiBeanStorage
       .getAllEntries()
       .filter((bean) => !bean.finished)
-      .sort((a, b) => a.name.localeCompare(b.name))[0].config.uuid;
+      .sort((a, b) => a.name.localeCompare(b.name))[0]?.config?.uuid;
 
     this.data.method_of_preparation = this.uiPreparationStorage
       .getAllEntries()
       .filter((e) => !e.finished)
-      .sort((a, b) => a.name.localeCompare(b.name))[0].config.uuid;
+      .sort((a, b) => a.name.localeCompare(b.name))[0]?.config?.uuid;
 
     this.data.mill = this.uiMillStorage
       .getAllEntries()
       .filter((e) => !e.finished)
-      .sort((a, b) => a.name.localeCompare(b.name))[0].config.uuid;
+      .sort((a, b) => a.name.localeCompare(b.name))[0]?.config?.uuid;
 
-    window.addEventListener('keyboardWillShow', (event) => {
+    window.addEventListener('keyboardWillShow', (_event) => {
       // Describe your logic which will be run each time when keyboard is about to be shown.
       this.showFooter = false;
     });
@@ -174,6 +165,7 @@ export class BrewAddComponent implements OnInit {
       return false;
     }
   }
+
   public async tareScale() {
     const scale: BluetoothScale = this.bleManager.getScale();
     if (scale) {
@@ -244,6 +236,7 @@ export class BrewAddComponent implements OnInit {
       BrewAddComponent.COMPONENT_ID
     );
   }
+
   private stopScaleTimer() {
     const scale: BluetoothScale = this.bleManager.getScale();
     if (scale) {
@@ -253,6 +246,7 @@ export class BrewAddComponent implements OnInit {
 
   public async finish() {
     await this.uiAlert.showLoadingMessage(undefined, undefined, true);
+    // TODO add a sleep because this doesn't do anything else
     await new Promise(async (resolve) => {
       setTimeout(() => {
         resolve(undefined);
@@ -263,6 +257,7 @@ export class BrewAddComponent implements OnInit {
       if (this.brewBrewing?.timer?.isTimerRunning()) {
         this.brewBrewing.timer.pauseTimer('click');
 
+        // TODO add a sleep because this doesn't do anything else
         await new Promise(async (resolve) => {
           setTimeout(() => {
             resolve(undefined);
@@ -336,6 +331,7 @@ export class BrewAddComponent implements OnInit {
       this.brewTracking.trackBrew(addedBrewObj);
       this.uiLog.log('Brew add - Step 9');
       await this.uiAlert.hideLoadingSpinner();
+      // TODO add a sleep because this doesn't do anything else
       await new Promise(async (resolve) => {
         setTimeout(() => {
           resolve(undefined);
@@ -355,6 +351,7 @@ export class BrewAddComponent implements OnInit {
     } catch (ex) {}
 
     await this.uiAlert.hideLoadingSpinner();
+    // TODO add a sleep because this doesn't do anything else
     await new Promise(async (resolve) => {
       setTimeout(() => {
         resolve(undefined);
@@ -372,7 +369,7 @@ export class BrewAddComponent implements OnInit {
     if (this.settings.security_check_when_going_back === true) {
       this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(
         9999,
-        (processNextHandler) => {
+        (_processNextHandler) => {
           // Don't do anything.
           this.confirmDismiss();
         }
