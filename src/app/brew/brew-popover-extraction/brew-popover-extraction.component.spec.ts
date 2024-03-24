@@ -2,17 +2,10 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { BrewPopoverExtractionComponent } from './brew-popover-extraction.component';
-import {
-  DefaultLangChangeEvent,
-  LangChangeEvent,
-  TranslatePipe,
-  TranslateService,
-  TranslationChangeEvent,
-} from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Brew } from '../../../classes/brew/brew';
 import { Preparation } from '../../../classes/preparation/preparation';
-import { NEVER, Observable } from 'rxjs';
-import { EventEmitter } from '@angular/core';
+import { TranslateServiceMock } from '../../../mocks/translate-service-mock';
 
 describe('BrewPopoverExtractionComponent', () => {
   let component: BrewPopoverExtractionComponent;
@@ -25,29 +18,7 @@ describe('BrewPopoverExtractionComponent', () => {
       providers: [
         {
           provide: TranslateService,
-          useValue: {
-            instant: (
-              _key: string | Array<string>,
-              _interpolateParams?: any
-            ) => {
-              return 'hello';
-            },
-            get(
-              _key: string | Array<string>,
-              _interpolateParams?: any
-            ): Observable<any> {
-              return NEVER;
-            },
-            get onTranslationChange(): EventEmitter<TranslationChangeEvent> {
-              return new EventEmitter();
-            },
-            get onLangChange(): EventEmitter<LangChangeEvent> {
-              return new EventEmitter<LangChangeEvent>();
-            },
-            get onDefaultLangChange(): EventEmitter<DefaultLangChangeEvent> {
-              return new EventEmitter();
-            },
-          } as TranslateService,
+          useValue: TranslateServiceMock,
         },
       ],
     }).compileComponents();

@@ -3,17 +3,9 @@ import { IonicModule } from '@ionic/angular';
 
 import { BeanListViewParameterComponent } from './bean-list-view-parameter.component';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import {
-  DefaultLangChangeEvent,
-  LangChangeEvent,
-  TranslatePipe,
-  TranslateService,
-  TranslationChangeEvent,
-} from '@ngx-translate/core';
-import { NEVER, Observable } from 'rxjs';
-import { EventEmitter } from '@angular/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Settings } from '../../../classes/settings/settings';
-import { BeanListViewParameter } from '../../../classes/parameter/beanListViewParameter';
+import { TranslateServiceMock } from '../../../mocks/translate-service-mock';
 
 describe('BeanListViewParameterComponent', () => {
   let component: BeanListViewParameterComponent;
@@ -40,29 +32,7 @@ describe('BeanListViewParameterComponent', () => {
         },
         {
           provide: TranslateService,
-          useValue: {
-            instant: (
-              _key: string | Array<string>,
-              _interpolateParams?: any
-            ) => {
-              return 'hello';
-            },
-            get(
-              _key: string | Array<string>,
-              _interpolateParams?: any
-            ): Observable<any> {
-              return NEVER;
-            },
-            get onTranslationChange(): EventEmitter<TranslationChangeEvent> {
-              return new EventEmitter();
-            },
-            get onLangChange(): EventEmitter<LangChangeEvent> {
-              return new EventEmitter<LangChangeEvent>();
-            },
-            get onDefaultLangChange(): EventEmitter<DefaultLangChangeEvent> {
-              return new EventEmitter();
-            },
-          } as TranslateService,
+          useValue: TranslateServiceMock,
         },
       ],
     }).compileComponents();
