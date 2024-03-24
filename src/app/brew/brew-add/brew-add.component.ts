@@ -1,4 +1,10 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -27,7 +33,6 @@ import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetooth
 import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
 
 declare var Plotly;
-declare var window;
 
 @Component({
   selector: 'brew-add',
@@ -95,18 +100,17 @@ export class BrewAddComponent implements OnInit {
       .getAllEntries()
       .filter((e) => !e.finished)
       .sort((a, b) => a.name.localeCompare(b.name))[0]?.config?.uuid;
-
-    window.addEventListener('keyboardWillShow', (_event: any) => {
-      // Describe your logic which will be run each time when keyboard is about to be shown.
-      this.showFooter = false;
-    });
-
-    window.addEventListener('keyboardWillHide', () => {
-      // Describe your logic which will be run each time when keyboard is about to be closed.
-      this.showFooter = true;
-    });
   }
-
+  @HostListener('keyboardWillShow')
+  private hideFooter() {
+    // Describe your logic which will be run each time when keyboard is about to be shown.
+    this.showFooter = false;
+  }
+  @HostListener('keyboardWillHide')
+  private showFooterAgain() {
+    // Describe your logic which will be run each time when keyboard is about to be closed.
+    this.showFooter = true;
+  }
   public ionViewDidEnter(): void {
     this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.ADD);
     if (this.settings.wake_lock) {
