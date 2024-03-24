@@ -1,10 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { GreenBean } from '../../../../classes/green-bean/green-bean';
 import { IGreenBean } from '../../../../interfaces/green-bean/iGreenBean';
-import { ModalController, NavParams } from '@ionic/angular';
-import { UIGreenBeanStorage } from '../../../../services/uiGreenBeanStorage';
-import { UIImage } from '../../../../services/uiImage';
-import { UIHelper } from '../../../../services/uiHelper';
+import { ModalController } from '@ionic/angular';
 import { Bean } from '../../../../classes/bean/bean';
 import { UIBeanHelper } from '../../../../services/uiBeanHelper';
 import { BEAN_ACTION } from '../../../../enums/beans/beanAction';
@@ -18,8 +15,8 @@ import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
   templateUrl: './green-bean-detail.component.html',
   styleUrls: ['./green-bean-detail.component.scss'],
 })
-export class GreenBeanDetailComponent implements OnInit {
-  public static COMPONENT_ID: string = 'green-bean-detail';
+export class GreenBeanDetailComponent {
+  public static readonly COMPONENT_ID = 'green-bean-detail';
   public data: GreenBean = new GreenBean();
   @Input() public greenBean: IGreenBean;
   public visibleIndex: any = {};
@@ -29,12 +26,9 @@ export class GreenBeanDetailComponent implements OnInit {
   public linkedRoasts: Array<Bean> = [];
 
   public settings: Settings;
+
   constructor(
     private readonly modalController: ModalController,
-    private readonly navParams: NavParams,
-    private readonly uiGreenBeanStorage: UIGreenBeanStorage,
-    private readonly uiImage: UIImage,
-    private readonly uiHelper: UIHelper,
     private uiBeanHelper: UIBeanHelper,
     private readonly uiAnalytics: UIAnalytics,
     private readonly uiSettings: UISettingsStorage
@@ -56,11 +50,13 @@ export class GreenBeanDetailComponent implements OnInit {
   private loadRelatedRoastedBeans() {
     this.linkedRoasts = this.getRelatedRoastedBeans();
   }
+
   private getRelatedRoastedBeans(): Array<Bean> {
     return this.uiBeanHelper.getAllRoastedBeansForThisGreenBean(
       this.greenBean.config.uuid
     );
   }
+
   public async beanAction(action: BEAN_ACTION, bean: Bean): Promise<void> {
     this.loadRelatedRoastedBeans();
   }
@@ -74,6 +70,4 @@ export class GreenBeanDetailComponent implements OnInit {
       GreenBeanDetailComponent.COMPONENT_ID
     );
   }
-
-  public ngOnInit() {}
 }
