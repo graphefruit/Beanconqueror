@@ -19,7 +19,7 @@
   </div>
 
   <ag-virtual-scroll #openScroll [items]="associatedBrews" height="100vh" min-row-height="180">
-    <brew-information (brewAction)="brewAction($event[0],$event[1])" *ngFor="let brew of openScroll.items"
+    <brew-information (brewAction)="brewAction()" *ngFor="let brew of openScroll.items"
                       [brew]="brew"></brew-information>
 
   </ag-virtual-scroll>

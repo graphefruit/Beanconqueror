@@ -3,19 +3,12 @@ import {
   ElementRef,
   HostListener,
   Input,
-  OnInit,
   ViewChild,
 } from '@angular/core';
 import { Bean } from '../../../classes/bean/bean';
-import { ModalController, NavParams, Platform } from '@ionic/angular';
-import { UIBeanStorage } from '../../../services/uiBeanStorage';
-import { UIImage } from '../../../services/uiImage';
-import { UIHelper } from '../../../services/uiHelper';
-import { UIFileHelper } from '../../../services/uiFileHelper';
-import { UIToast } from '../../../services/uiToast';
+import { ModalController } from '@ionic/angular';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 import BEAN_TRACKING from '../../../data/tracking/beanTracking';
-import { BREW_ACTION } from '../../../enums/brews/brewAction';
 import { Brew } from '../../../classes/brew/brew';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
@@ -28,8 +21,8 @@ import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
   templateUrl: './associated-brews.component.html',
   styleUrls: ['./associated-brews.component.scss'],
 })
-export class AssociatedBrewsComponent implements OnInit {
-  public static COMPONENT_ID = 'associated-brews';
+export class AssociatedBrewsComponent {
+  public static readonly COMPONENT_ID = 'associated-brews';
   public data: Bean = new Bean();
 
   @Input() private readonly uuid: string;
@@ -45,13 +38,7 @@ export class AssociatedBrewsComponent implements OnInit {
 
   constructor(
     private readonly modalController: ModalController,
-    private readonly navParams: NavParams,
-    private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiImage: UIImage,
-    private readonly uiHelper: UIHelper,
-    private readonly uiFileHelper: UIFileHelper,
-    private readonly uiToast: UIToast,
     private readonly uiAnalytics: UIAnalytics,
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly uiMillHelper: UIMillHelper
@@ -68,7 +55,7 @@ export class AssociatedBrewsComponent implements OnInit {
 
   @HostListener('window:resize')
   @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(event) {
+  public onOrientationChange(_event: any) {
     this.retriggerScroll();
   }
 
@@ -83,7 +70,7 @@ export class AssociatedBrewsComponent implements OnInit {
   }
 
   public loadBrews() {
-    let relatedBrews: Array<Brew> = [];
+    let relatedBrews: Array<Brew>;
 
     if (this.type === 'preparation') {
       relatedBrews = this.uiPreparationHelper.getAllBrewsForThisPreparation(
@@ -99,7 +86,7 @@ export class AssociatedBrewsComponent implements OnInit {
     this.retriggerScroll();
   }
 
-  public async brewAction(action: BREW_ACTION, brew: Brew): Promise<void> {
+  public async brewAction(): Promise<void> {
     this.loadBrews();
   }
 
@@ -112,6 +99,4 @@ export class AssociatedBrewsComponent implements OnInit {
       AssociatedBrewsComponent.COMPONENT_ID
     );
   }
-
-  public ngOnInit() {}
 }
