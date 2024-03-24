@@ -96,7 +96,7 @@ export class BrewAddComponent implements OnInit {
       .filter((e) => !e.finished)
       .sort((a, b) => a.name.localeCompare(b.name))[0]?.config?.uuid;
 
-    window.addEventListener('keyboardWillShow', (_event) => {
+    window.addEventListener('keyboardWillShow', (_event: any) => {
       // Describe your logic which will be run each time when keyboard is about to be shown.
       this.showFooter = false;
     });
@@ -194,7 +194,7 @@ export class BrewAddComponent implements OnInit {
               JSON.stringify(this.data.coordinates)
           );
         })
-        .catch((error) => {
+        .catch((_error) => {
           // Couldn't get coordinates sorry.
           this.uiLog.error('BREW - No Coordinates found');
           if (_highAccuracy === true) {
@@ -246,23 +246,13 @@ export class BrewAddComponent implements OnInit {
 
   public async finish() {
     await this.uiAlert.showLoadingMessage(undefined, undefined, true);
-    // TODO add a sleep because this doesn't do anything else
-    await new Promise(async (resolve) => {
-      setTimeout(() => {
-        resolve(undefined);
-      }, 50);
-    });
+    await this.sleep(50);
     try {
       this.uiLog.log('Brew add - Step 1');
       if (this.brewBrewing?.timer?.isTimerRunning()) {
         this.brewBrewing.timer.pauseTimer('click');
 
-        // TODO add a sleep because this doesn't do anything else
-        await new Promise(async (resolve) => {
-          setTimeout(() => {
-            resolve(undefined);
-          }, 100);
-        });
+        await this.sleep(100);
       }
       this.uiLog.log('Brew add - Step 2');
       this.uiBrewHelper.cleanInvisibleBrewData(this.data);
@@ -284,12 +274,10 @@ export class BrewAddComponent implements OnInit {
         }
       }
 
-      let checkData: Settings | Preparation;
-      if (this.getPreparation().use_custom_parameters === true) {
-        checkData = this.getPreparation();
-      } else {
-        checkData = this.settings;
-      }
+      const checkData = this.getPreparation().use_custom_parameters
+        ? this.getPreparation()
+        : this.settings;
+
       if (checkData.manage_parameters.set_custom_brew_time) {
         this.uiLog.log('Brew add - Step 6');
         addedBrewObj.config.unix_timestamp = moment(
@@ -331,12 +319,7 @@ export class BrewAddComponent implements OnInit {
       this.brewTracking.trackBrew(addedBrewObj);
       this.uiLog.log('Brew add - Step 9');
       await this.uiAlert.hideLoadingSpinner();
-      // TODO add a sleep because this doesn't do anything else
-      await new Promise(async (resolve) => {
-        setTimeout(() => {
-          resolve(undefined);
-        }, 100);
-      });
+      await this.sleep(100);
 
       if (this.uiBrewHelper.checkIfBeanPackageIsConsumed(this.data.getBean())) {
         await this.uiBrewHelper.checkIfBeanPackageIsConsumedTriggerMessageAndArchive(
@@ -351,12 +334,7 @@ export class BrewAddComponent implements OnInit {
     } catch (ex) {}
 
     await this.uiAlert.hideLoadingSpinner();
-    // TODO add a sleep because this doesn't do anything else
-    await new Promise(async (resolve) => {
-      setTimeout(() => {
-        resolve(undefined);
-      }, 100);
-    });
+    await this.sleep(100);
 
     this.dismiss();
   }
@@ -375,5 +353,8 @@ export class BrewAddComponent implements OnInit {
         }
       );
     }
+  }
+  private sleep(milliseconds: number) {
+    return new Promise((resolve) => setTimeout(resolve, milliseconds));
   }
 }
