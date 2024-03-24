@@ -330,8 +330,9 @@ export class BeansPage {
     const beansCopy: Array<Bean> = [...this.beans];
     const isOpen: boolean = _type === 'open';
     const sort = isOpen ? this.openBeansSort : this.archivedBeansSort;
-    let filterBeans = beansCopy.filter((bean) => bean.finished || isOpen);
-
+    let filterBeans = beansCopy.filter((bean) =>
+      isOpen ? !bean.finished : bean.finished
+    );
     const filter = isOpen ? this.openBeansFilter : this.archivedBeansFilter;
 
     if (filter.favourite) {
