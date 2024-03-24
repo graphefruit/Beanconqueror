@@ -1082,7 +1082,6 @@ export class SettingsPage implements OnInit {
     this.uiExportImportHelper.buildExportZIP().then(
       async (_blob) => {
         this.uiLog.log('New zip-export way');
-        const isIOS = this.platform.is('ios');
 
         if (this.platform.is('cordova')) {
           if (this.platform.is('android')) {

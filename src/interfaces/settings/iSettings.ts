@@ -175,4 +175,6 @@ export interface ISettings {
   visualizer_username: string;
   visualizer_password: string;
   visualizer_upload_automatic: boolean;
+
+  show_backup_issues: boolean;
 }

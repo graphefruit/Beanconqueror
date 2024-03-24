@@ -22,6 +22,7 @@ export class UIToast {
       message: message,
       duration: 2000,
       position: 'top',
+      animated: false,
       buttons: [
         {
           side: 'end',
@@ -39,6 +40,7 @@ export class UIToast {
       message: this.translate.instant(_message),
       duration: 2000,
       position: 'bottom',
+      animated: false,
       buttons: [
         {
           side: 'end',

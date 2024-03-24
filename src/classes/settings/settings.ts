@@ -184,6 +184,8 @@ export class Settings implements ISettings {
   public visualizer_password: string;
   public visualizer_upload_automatic: boolean;
 
+  public show_backup_issues: boolean;
+
   public GET_BEAN_FILTER(): IBeanPageFilter {
     const upperRating: number = this.bean_rating;
     return {
@@ -418,6 +420,8 @@ export class Settings implements ISettings {
     this.visualizer_username = '';
     this.visualizer_password = '';
     this.visualizer_upload_automatic = false;
+
+    this.show_backup_issues = true;
   }
 
   public initializeByObject(settingsObj: ISettings): void {
