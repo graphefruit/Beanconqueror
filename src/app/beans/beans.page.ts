@@ -10,7 +10,6 @@ import { ModalController, Platform } from '@ionic/angular';
 import { Bean } from '../../classes/bean/bean';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
-import { BEAN_ACTION } from '../../enums/beans/beanAction';
 import { BeanSortComponent } from './bean-sort/bean-sort.component';
 import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
 import { BEAN_SORT_AFTER } from '../../enums/beans/beanSortAfter';
@@ -331,12 +330,12 @@ export class BeansPage {
     const beansCopy: Array<Bean> = [...this.beans];
     const isOpen: boolean = _type === 'open';
     const sort = isOpen ? this.openBeansSort : this.archivedBeansSort;
-    let filterBeans = beansCopy.filter((bean) => bean.finished && !isOpen);
+    let filterBeans = beansCopy.filter((bean) => bean.finished || isOpen);
 
     const filter = isOpen ? this.openBeansFilter : this.archivedBeansFilter;
 
     if (filter.favourite) {
-      filterBeans = filterBeans.filter((e) => e.favourite);
+      filterBeans = filterBeans.filter((e) => e.favourite === true);
     }
 
     // Rating filter is always active
