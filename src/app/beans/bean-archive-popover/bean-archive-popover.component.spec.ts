@@ -8,7 +8,7 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
 import { UIHelper } from '../../../services/uiHelper';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { TranslateServiceMock } from '../../../mocks';
+import { TranslateServiceMock } from '../../../classes/mock';
 
 describe('BeanArchivePopoverComponent', () => {
   let component: BeanArchivePopoverComponent;

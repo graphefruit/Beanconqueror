@@ -10,7 +10,7 @@ import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIMillStorage } from '../../../services/uiMillStorage';
 import { IBeanPageFilter } from '../../../interfaces/bean/iBeanPageFilter';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { TranslateServiceMock } from '../../../mocks';
+import { TranslateServiceMock } from '../../../classes/mock';
 import { FormsModule } from '@angular/forms';
 import { KeysPipe } from '../../../pipes/keys';
 

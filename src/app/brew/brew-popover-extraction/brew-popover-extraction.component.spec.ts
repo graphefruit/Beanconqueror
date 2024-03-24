@@ -5,7 +5,7 @@ import { BrewPopoverExtractionComponent } from './brew-popover-extraction.compon
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Brew } from '../../../classes/brew/brew';
 import { Preparation } from '../../../classes/preparation/preparation';
-import { TranslateServiceMock } from '../../../mocks';
+import { TranslateServiceMock } from '../../../classes/mock';
 
 describe('BrewPopoverExtractionComponent', () => {
   let component: BrewPopoverExtractionComponent;

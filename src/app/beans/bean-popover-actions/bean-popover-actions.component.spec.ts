@@ -6,7 +6,7 @@ import { UIHelper } from '../../../services/uiHelper';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { IBean } from '../../../interfaces/bean/iBean';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { TranslateServiceMock } from '../../../mocks';
+import { TranslateServiceMock } from '../../../classes/mock';
 
 describe('BeanPopoverActionsComponent', () => {
   let component: BeanPopoverActionsComponent;

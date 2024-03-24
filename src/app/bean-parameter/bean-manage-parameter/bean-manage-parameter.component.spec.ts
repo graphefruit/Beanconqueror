@@ -5,7 +5,7 @@ import { BeanManageParameterComponent } from './bean-manage-parameter.component'
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { TranslateServiceMock } from '../../../mocks';
+import { TranslateServiceMock } from '../../../classes/mock';
 
 describe('BeanManageParameterComponent', () => {
   let component: BeanManageParameterComponent;

@@ -3,7 +3,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { BeanParameterPage } from './bean-parameter.page';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { TranslateServiceMock } from '../../mocks';
+import { TranslateServiceMock } from '../../classes/mock';
 
 describe('BeanParameterPage', () => {
   let component: BeanParameterPage;

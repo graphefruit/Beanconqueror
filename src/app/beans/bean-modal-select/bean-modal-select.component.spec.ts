@@ -9,7 +9,7 @@ import { Settings } from '../../../classes/settings/settings';
 import { Bean } from '../../../classes/bean/bean';
 import { IBeanPageFilter } from '../../../interfaces/bean/iBeanPageFilter';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { TranslateServiceMock } from '../../../mocks';
+import { TranslateServiceMock } from '../../../classes/mock';
 
 describe('BeanModalSelectComponent', () => {
   let component: BeanModalSelectComponent;

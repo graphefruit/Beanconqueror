@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import {IonicModule} from '@ionic/angular';
+import { IonicModule, NavParams } from '@ionic/angular';
 
-import {BeanSortComponent} from './bean-sort.component';
+import { BeanSortComponent } from './bean-sort.component';
+import { NavParamsMock } from '../../../classes/mock';
 
 describe('BeanSortComponent', () => {
   let component: BeanSortComponent;
@@ -9,8 +10,14 @@ describe('BeanSortComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ BeanSortComponent ],
-      imports: [IonicModule.forRoot()]
+      declarations: [BeanSortComponent],
+      imports: [IonicModule.forRoot()],
+      providers: [
+        {
+          provide: NavParams,
+          useClass: NavParamsMock,
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(BeanSortComponent);

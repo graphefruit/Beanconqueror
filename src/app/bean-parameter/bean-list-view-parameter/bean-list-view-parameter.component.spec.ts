@@ -5,7 +5,7 @@ import { BeanListViewParameterComponent } from './bean-list-view-parameter.compo
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Settings } from '../../../classes/settings/settings';
-import { TranslateServiceMock } from '../../../mocks';
+import { TranslateServiceMock } from '../../../classes/mock';
 
 describe('BeanListViewParameterComponent', () => {
   let component: BeanListViewParameterComponent;

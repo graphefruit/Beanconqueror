@@ -3,7 +3,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { BeanPopoverAddComponent } from './bean-popover-add.component';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { TranslateServiceMock } from '../../../mocks';
+import { TranslateServiceMock } from '../../../classes/mock';
 
 describe('BeanPopoverAddComponent', () => {
   let component: BeanPopoverAddComponent;

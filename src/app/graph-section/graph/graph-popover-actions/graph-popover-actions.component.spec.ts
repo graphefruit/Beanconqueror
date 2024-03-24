@@ -3,7 +3,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { GraphPopoverActionsComponent } from './graph-popover-actions.component';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { TranslateServiceMock } from '../../../../mocks';
+import { TranslateServiceMock } from '../../../../classes/mock';
 
 describe('GraphPopoverActionsComponent', () => {
   let component: GraphPopoverActionsComponent;
