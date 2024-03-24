@@ -1,10 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { GreenBean } from '../../../../classes/green-bean/green-bean';
 import { IGreenBean } from '../../../../interfaces/green-bean/iGreenBean';
 import { ModalController } from '@ionic/angular';
 import { Bean } from '../../../../classes/bean/bean';
 import { UIBeanHelper } from '../../../../services/uiBeanHelper';
-import { BEAN_ACTION } from '../../../../enums/beans/beanAction';
 import GREEN_BEAN_TRACKING from '../../../../data/tracking/greenBeanTracking';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
 import { Settings } from '../../../../classes/settings/settings';
@@ -57,7 +56,7 @@ export class GreenBeanDetailComponent {
     );
   }
 
-  public async beanAction(action: BEAN_ACTION, bean: Bean): Promise<void> {
+  public async beanAction(): Promise<void> {
     this.loadRelatedRoastedBeans();
   }
 
