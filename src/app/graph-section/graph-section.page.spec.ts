@@ -1,7 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { GraphSectionPage } from './graph-section.page';
-import { InfoComponent } from '../info/info.component';
-import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 
 describe('GraphSectionPage', () => {

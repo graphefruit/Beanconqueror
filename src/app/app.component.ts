@@ -59,25 +59,24 @@ import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { Storage } from '@ionic/storage';
 
 import { UIToast } from '../services/uiToast';
-import {
-  CoffeeBluetoothDevicesService,
-  CoffeeBluetoothServiceEvent,
-} from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { CoffeeBluetoothDevicesService } from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import {
   PressureType,
-  ScaleType,
-  TemperatureType,
   RefractometerType,
+  ScaleType,
+  sleep,
+  TemperatureType,
 } from '../classes/devices';
 import { Logger } from '../classes/devices/common/logger';
 import { UIExportImportHelper } from '../services/uiExportImportHelper';
-
-declare var AppRate;
-declare var window;
 import { register } from 'swiper/element/bundle';
 import { UIGraphStorage } from '../services/uiGraphStorage.service';
 
+declare var AppRate;
+declare var window;
+
 register();
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -449,6 +448,7 @@ export class AppComponent implements AfterViewInit {
       await this.uiUpdate.checkUpdate();
     } catch (ex) {}
   }
+
   private async __checkCleanup() {
     try {
       await this.cleanupService.cleanupOldBrewData();
@@ -464,6 +464,7 @@ export class AppComponent implements AfterViewInit {
     const settings: Settings = this.uiSettingsStorage.getSettings();
     return settings.show_water_section;
   }
+
   public showGraphSection() {
     const settings: Settings = this.uiSettingsStorage.getSettings();
     return settings.show_graph_section;
@@ -607,7 +608,7 @@ export class AppComponent implements AfterViewInit {
     // After we set the right device language, we check now if we can request external storage
     if (this.platform.is('cordova') && this.platform.is('android')) {
       try {
-        //TODO -  await this.androidPlatformService.checkHasExternalStorage();
+        // TODO -  await this.androidPlatformService.checkHasExternalStorage();
       } catch (ex) {}
     }
 
@@ -634,11 +635,7 @@ export class AppComponent implements AfterViewInit {
         // await this.bleManager.enableBLE();
       }
       await this.__checkBluetoothDevices();
-      await new Promise((resolve) => {
-        setTimeout(async () => {
-          resolve(undefined);
-        }, 500);
-      });
+      await sleep(500);
       this.__connectPressureDevice();
       this.__connectSmartScale();
       this.__connectTemperatureDevice();
@@ -700,6 +697,7 @@ export class AppComponent implements AfterViewInit {
       }
     } catch (ex) {}
   }
+
   private __connectSmartScale() {
     const settings = this.uiSettingsStorage.getSettings();
     const scale_id: string = settings.scale_id;
@@ -817,6 +815,7 @@ export class AppComponent implements AfterViewInit {
       }
     });
   }
+
   private __attachOnDeviceResume() {
     this.platform.resume.subscribe(async () => {
       const settings: Settings = this.uiSettingsStorage.getSettings();
@@ -964,6 +963,7 @@ export class AppComponent implements AfterViewInit {
       'https://github.com/graphefruit/Beanconqueror'
     );
   }
+
   public openDiscord() {
     this.uiAnalytics.trackEvent(
       LINK_TRACKING.TITLE,
@@ -981,6 +981,7 @@ export class AppComponent implements AfterViewInit {
       'https://www.instagram.com/beanconqueror/'
     );
   }
+
   public openFacebook() {
     this.uiAnalytics.trackEvent(
       LINK_TRACKING.TITLE,
@@ -1000,6 +1001,7 @@ export class AppComponent implements AfterViewInit {
       'https://www.paypal.com/paypalme/LarsSaalbach'
     );
   }
+
   public openGithubSponsor() {
     this.uiAnalytics.trackEvent(
       LINK_TRACKING.TITLE,
@@ -1009,6 +1011,7 @@ export class AppComponent implements AfterViewInit {
       'https://github.com/sponsors/graphefruit'
     );
   }
+
   public openDonatePage() {
     this.uiAnalytics.trackEvent(
       LINK_TRACKING.TITLE,

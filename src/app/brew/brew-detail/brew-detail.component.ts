@@ -39,6 +39,7 @@ import { UIGraphStorage } from '../../../services/uiGraphStorage.service';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { Graph } from '../../../classes/graph/graph';
 import { BrewPopoverExtractionComponent } from '../brew-popover-extraction/brew-popover-extraction.component';
+import { sleep } from '../../../classes/devices';
 
 declare var Plotly;
 @Component({
@@ -46,8 +47,8 @@ declare var Plotly;
   templateUrl: './brew-detail.component.html',
   styleUrls: ['./brew-detail.component.scss'],
 })
-export class BrewDetailComponent implements OnInit {
-  public static COMPONENT_ID = 'brew-detail';
+export class BrewDetailComponent {
+  public static readonly COMPONENT_ID = 'brew-detail';
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   public data: Brew = new Brew();
   public settings: Settings;
@@ -171,19 +172,13 @@ export class BrewDetailComponent implements OnInit {
     );
   }
 
-  public ngOnInit() {}
-
   public async repeat() {
     try {
       Plotly.purge('flowProfileChart');
     } catch (ex) {}
     this.editActive = true;
     //Wait 50ms, so the dom will be new rendered and the id will be removed from the flowprofilechart
-    await new Promise(async (resolve) => {
-      setTimeout(() => {
-        resolve(undefined);
-      }, 50);
-    });
+    await sleep(50);
     await this.uiBrewHelper.repeatBrew(this.data);
     this.editActive = false;
     await this.readFlowProfile();
@@ -194,12 +189,8 @@ export class BrewDetailComponent implements OnInit {
       Plotly.purge('flowProfileChart');
     } catch (ex) {}
     this.editActive = true;
-    //Wait 50ms, so the dom will be new rendered and the id will be removed from the flowprofilechart
-    await new Promise(async (resolve) => {
-      setTimeout(() => {
-        resolve(undefined);
-      }, 50);
-    });
+    // Wait 50ms, so the dom will be new rendered and the id will be removed from the flowprofilechart
+    await sleep(50);
 
     const returningBrew: Brew = await this.uiBrewHelper.editBrew(this.data);
     this.editActive = false;
@@ -227,7 +218,7 @@ export class BrewDetailComponent implements OnInit {
   }
 
   private __loadCuppingChart(): void {
-    const chartObj = new Chart(
+    new Chart(
       this.cuppingChart.nativeElement,
       this.uiBrewHelper.getCuppingChartData(this.data) as any
     );
@@ -1000,6 +991,6 @@ export class BrewDetailComponent implements OnInit {
       initialBreakpoint: 1,
     });
     await popover.present();
-    const data = await popover.onWillDismiss();
+    await popover.onWillDismiss();
   }
 }

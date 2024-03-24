@@ -28,7 +28,11 @@ import BREW_TRACKING from '../../../data/tracking/brewTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
-import { BluetoothScale, SCALE_TIMER_COMMAND } from '../../../classes/devices';
+import {
+  BluetoothScale,
+  SCALE_TIMER_COMMAND,
+  sleep,
+} from '../../../classes/devices';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
 
@@ -250,13 +254,12 @@ export class BrewAddComponent implements OnInit {
 
   public async finish() {
     await this.uiAlert.showLoadingMessage(undefined, undefined, true);
-    await this.sleep(50);
+    await sleep(50);
     try {
       this.uiLog.log('Brew add - Step 1');
       if (this.brewBrewing?.timer?.isTimerRunning()) {
         this.brewBrewing.timer.pauseTimer('click');
-
-        await this.sleep(100);
+        await sleep(100);
       }
       this.uiLog.log('Brew add - Step 2');
       this.uiBrewHelper.cleanInvisibleBrewData(this.data);
@@ -323,7 +326,7 @@ export class BrewAddComponent implements OnInit {
       this.brewTracking.trackBrew(addedBrewObj);
       this.uiLog.log('Brew add - Step 9');
       await this.uiAlert.hideLoadingSpinner();
-      await this.sleep(100);
+      await sleep(100);
 
       if (this.uiBrewHelper.checkIfBeanPackageIsConsumed(this.data.getBean())) {
         await this.uiBrewHelper.checkIfBeanPackageIsConsumedTriggerMessageAndArchive(
@@ -338,7 +341,7 @@ export class BrewAddComponent implements OnInit {
     } catch (ex) {}
 
     await this.uiAlert.hideLoadingSpinner();
-    await this.sleep(100);
+    await sleep(100);
 
     this.dismiss();
   }
@@ -357,8 +360,5 @@ export class BrewAddComponent implements OnInit {
         }
       );
     }
-  }
-  private sleep(milliseconds: number) {
-    return new Promise((resolve) => setTimeout(resolve, milliseconds));
   }
 }

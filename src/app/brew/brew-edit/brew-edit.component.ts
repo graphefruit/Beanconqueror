@@ -15,9 +15,12 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Insomnia } from '@awesome-cordova-plugins/insomnia/ngx';
 import { Settings } from '../../../classes/settings/settings';
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
-import { BluetoothScale, SCALE_TIMER_COMMAND } from '../../../classes/devices';
+import {
+  BluetoothScale,
+  SCALE_TIMER_COMMAND,
+  sleep,
+} from '../../../classes/devices';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { UIAlert } from '../../../services/uiAlert';
 import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
 declare var Plotly;
@@ -28,7 +31,7 @@ declare var window;
   styleUrls: ['./brew-edit.component.scss'],
 })
 export class BrewEditComponent implements OnInit {
-  public static COMPONENT_ID: string = 'brew-edit';
+  public static readonly COMPONENT_ID: string = 'brew-edit';
   @ViewChild('brewBrewing', { read: BrewBrewingComponent, static: false })
   public brewBrewing: BrewBrewingComponent;
   public data: Brew = new Brew();
@@ -159,11 +162,7 @@ export class BrewEditComponent implements OnInit {
     if (this.brewBrewing?.timer?.isTimerRunning()) {
       this.brewBrewing?.timer?.pauseTimer('click');
 
-      await new Promise(async (resolve) => {
-        setTimeout(() => {
-          resolve(undefined);
-        }, 100);
-      });
+      await sleep(100);
     }
 
     const newUnix = moment(this.brewBrewing.customCreationDate).unix();

@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { PreparationTool } from '../../../classes/preparation/preparationTool';
-import { ModalController, NavParams } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { UIHelper } from '../../../services/uiHelper';
 import { UIToast } from '../../../services/uiToast';
 import { UIAnalytics } from '../../../services/uiAnalytics';
@@ -21,8 +21,8 @@ import { IPreparation } from '../../../interfaces/preparation/iPreparation';
   templateUrl: './preparation-edit-tool.component.html',
   styleUrls: ['./preparation-edit-tool.component.scss'],
 })
-export class PreparationEditToolComponent implements OnInit {
-  public static COMPONENT_ID: string = 'preparation-edit-tool';
+export class PreparationEditToolComponent {
+  public static readonly COMPONENT_ID: string = 'preparation-edit-tool';
   public data: PreparationTool = new PreparationTool();
 
   @Input() private preparationTool: PreparationTool;
@@ -31,7 +31,6 @@ export class PreparationEditToolComponent implements OnInit {
   private clonedPreparation: Preparation = new Preparation();
 
   constructor(
-    private readonly navParams: NavParams,
     private readonly modalController: ModalController,
     private readonly uiHelper: UIHelper,
     private readonly uiToast: UIToast,
@@ -136,5 +135,4 @@ export class PreparationEditToolComponent implements OnInit {
       PreparationEditToolComponent.COMPONENT_ID
     );
   }
-  public ngOnInit() {}
 }

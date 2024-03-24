@@ -27,7 +27,6 @@ describe('SettingsPage', () => {
       imports: [
         TranslateModule.forRoot(),
         FormsModule,
-        Storage,
         CommonModule,
         IonicModule,
       ],

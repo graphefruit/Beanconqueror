@@ -81,7 +81,7 @@ declare var FilePicker;
   templateUrl: './settings.page.html',
   styleUrls: ['./settings.page.scss'],
 })
-export class SettingsPage implements OnInit {
+export class SettingsPage {
   public settings: Settings;
 
   public BREW_VIEWS = BREW_VIEW_ENUM;
@@ -110,8 +110,6 @@ export class SettingsPage implements OnInit {
     }
   }
 
-  public ngOnDestroy() {}
-
   private __cleanupImportSettingsData(_data: ISettings | any): void {
     // We need to remove the filter because of new data here.
     if (_data !== undefined) {
@@ -131,7 +129,6 @@ export class SettingsPage implements OnInit {
     public uiStorage: UIStorage,
     public uiHelper: UIHelper,
     private readonly fileChooser: FileChooser,
-    private readonly filePath: FilePath,
     private readonly file: File,
     private readonly alertCtrl: AlertController,
     private readonly uiAlert: UIAlert,
@@ -180,8 +177,6 @@ export class SettingsPage implements OnInit {
       }
     );
   }
-
-  public async ngOnInit() {}
 
   public handleScrollStart() {
     this.isScrolling = true;
