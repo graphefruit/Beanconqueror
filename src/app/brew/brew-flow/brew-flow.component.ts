@@ -13,19 +13,17 @@ import {
 import { ModalController, Platform } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { Brew } from '../../../classes/brew/brew';
-import { UIHelper } from '../../../services/uiHelper';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { Settings } from '../../../classes/settings/settings';
 import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
-import { TranslateService } from '@ngx-translate/core';
 import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
 import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { BluetoothScale } from '../../../classes/devices';
 import { UIAlert } from '../../../services/uiAlert';
+
 declare var Plotly;
 @Component({
   selector: 'brew-flow',
@@ -33,7 +31,7 @@ declare var Plotly;
   styleUrls: ['./brew-flow.component.scss'],
 })
 export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
-  public static COMPONENT_ID: string = 'brew-flow';
+  public static readonly COMPONENT_ID: string = 'brew-flow';
 
   public showBloomTimer: boolean = false;
   public showDripTimer: boolean = false;
@@ -73,11 +71,8 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
   protected heightInformationBlock: number = 50;
   constructor(
     private readonly modalController: ModalController,
-    private readonly screenOrientation: ScreenOrientation,
-    private readonly uiHelper: UIHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiBrewHelper: UIBrewHelper,
-    private readonly translate: TranslateService,
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly platform: Platform,
     private readonly ngZone: NgZone,
@@ -220,8 +215,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
           PREPARATION_STYLE_TYPE.ESPRESSO;
     }
     setTimeout(() => {
-      if (this.isDetail) {
-      } else {
+      if (!this.isDetail) {
         this.brewComponent.updateChart();
       }
     }, 150);
@@ -310,7 +304,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
   }
   private waitForPleaseWaitToBeFinished() {
     // #604
-    const promise = new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       let waitForPleaseWaitInterval = setInterval(async () => {
         if (this.uiAlert.isLoadingSpinnerShown() === true) {
           // wait another round
@@ -328,7 +322,6 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
         }
       }, 5000);
     });
-    return promise;
   }
   public async resetTimer() {
     this.brewComponent.timer.reset();
