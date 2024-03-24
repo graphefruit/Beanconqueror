@@ -88,7 +88,7 @@ export class UIStorage {
             try {
               if (
                 _value?.length > 0 &&
-                _value['updatedDataVersions'].length > 0
+                _value[0]['updatedDataVersions'].length > 0
               ) {
                 hasData = true;
                 return true;
