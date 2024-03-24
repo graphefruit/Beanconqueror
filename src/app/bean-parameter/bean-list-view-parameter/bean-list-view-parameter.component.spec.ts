@@ -23,8 +23,8 @@ describe('BeanListViewParameterComponent', () => {
     const settingsMock = {
       bean_visible_list_view_parameters: {
         name: true,
-      } as unknown as BeanListViewParameter,
-    } as unknown as Settings;
+      },
+    } as Settings;
 
     TestBed.configureTestingModule({
       declarations: [BeanListViewParameterComponent, TranslatePipe],
