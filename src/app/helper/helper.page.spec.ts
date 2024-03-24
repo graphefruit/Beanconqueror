@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import {IonicModule} from '@ionic/angular';
+import { IonicModule } from '@ionic/angular';
 
-import {HelperPage} from './helper.page';
-import {TranslateModule} from '@ngx-translate/core';
-import {FormsModule} from '@angular/forms';
-import {IonicStorageModule} from '@ionic/storage';
-import {CommonModule} from '@angular/common';
-import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import { HelperPage } from './helper.page';
+import { TranslateModule } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
+import { Storage } from '@ionic/storage';
+import { CommonModule } from '@angular/common';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 describe('HelperPage', () => {
   let component: HelperPage;
@@ -14,7 +14,13 @@ describe('HelperPage', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [TranslateModule.forRoot(), FormsModule, IonicStorageModule.forRoot(), CommonModule, IonicModule],
+      imports: [
+        TranslateModule.forRoot(),
+        FormsModule,
+        Storage,
+        CommonModule,
+        IonicModule,
+      ],
       declarations: [HelperPage],
       providers: [],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],

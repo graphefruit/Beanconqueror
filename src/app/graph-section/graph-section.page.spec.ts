@@ -5,11 +5,11 @@ describe('GraphSectionPage', () => {
   let component: GraphSectionPage;
   let fixture: ComponentFixture<GraphSectionPage>;
 
-  beforeEach(async(() => {
+  beforeEach(() => {
     fixture = TestBed.createComponent(GraphSectionPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  }));
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();

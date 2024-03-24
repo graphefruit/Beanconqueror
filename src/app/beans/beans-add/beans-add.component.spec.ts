@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { KeysPipe } from '../../../pipes/keys';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
-import { IonicStorageModule } from '@ionic/storage';
+import { Storage } from '@ionic/storage';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { Camera } from '@awesome-cordova-plugins/camera/ngx';
@@ -25,7 +25,7 @@ describe('BeansAddComponent', () => {
       imports: [
         TranslateModule.forRoot(),
         FormsModule,
-        IonicStorageModule.forRoot(),
+        Storage,
         CommonModule,
         IonicModule,
       ],

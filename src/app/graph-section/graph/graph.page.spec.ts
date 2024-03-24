@@ -1,15 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { GraphPage } from './graph.page';
+import { async } from 'rxjs';
 
 describe('GraphPage', () => {
   let component: GraphPage;
   let fixture: ComponentFixture<GraphPage>;
 
-  beforeEach(async(() => {
+  beforeEach(() => {
     fixture = TestBed.createComponent(GraphPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  }));
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();

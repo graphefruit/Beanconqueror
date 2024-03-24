@@ -4,7 +4,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { AsyncImageComponent } from './async-image.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
-import { IonicStorageModule } from '@ionic/storage';
+import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { File } from '@awesome-cordova-plugins/file/ngx';
@@ -18,7 +18,7 @@ describe('AsyncImageComponent', () => {
       imports: [
         TranslateModule.forRoot(),
         FormsModule,
-        IonicStorageModule.forRoot(),
+        Storage,
         CommonModule,
         IonicModule,
       ],
