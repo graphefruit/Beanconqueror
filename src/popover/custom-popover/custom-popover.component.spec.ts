@@ -1,7 +1,9 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import {IonicModule} from '@ionic/angular';
+import { IonicModule, NavParams } from '@ionic/angular';
 
-import {CustomPopoverComponent} from './custom-popover.component';
+import { CustomPopoverComponent } from './custom-popover.component';
+import { NavParamsMock } from '../../classes/mock';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('CustomPopoverComponent', () => {
   let component: CustomPopoverComponent;
@@ -10,7 +12,13 @@ describe('CustomPopoverComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [CustomPopoverComponent],
-      imports: [IonicModule.forRoot()]
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
+      providers: [
+        {
+          provide: NavParams,
+          useClass: NavParamsMock,
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CustomPopoverComponent);
