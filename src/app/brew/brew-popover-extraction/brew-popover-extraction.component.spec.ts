@@ -26,12 +26,15 @@ describe('BrewPopoverExtractionComponent', () => {
         {
           provide: TranslateService,
           useValue: {
-            instant: (key: string | Array<string>, interpolateParams?: any) => {
+            instant: (
+              _key: string | Array<string>,
+              _interpolateParams?: any
+            ) => {
               return 'hello';
             },
             get(
-              key: string | Array<string>,
-              interpolateParams?: any
+              _key: string | Array<string>,
+              _interpolateParams?: any
             ): Observable<any> {
               return NEVER;
             },
