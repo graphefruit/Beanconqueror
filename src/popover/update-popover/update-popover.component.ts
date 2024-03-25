@@ -1,7 +1,6 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { IonContent, ModalController } from '@ionic/angular';
+import { IonContent, ModalController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { Platform } from '@ionic/angular';
 
 @Component({
   selector: 'app-update-popover',
@@ -25,16 +24,10 @@ export class UpdatePopoverComponent implements OnInit {
   ) {}
 
   public isAndroid() {
-    if (this.platform.is('android')) {
-      return true;
-    }
-    return false;
+    return this.platform.is('android');
   }
   public isIOS() {
-    if (this.platform.is('ios')) {
-      return true;
-    }
-    return false;
+    return this.platform.is('ios');
   }
   public nextSlide() {
     this.updateContentElement.scrollToTop(250);
@@ -54,7 +47,7 @@ export class UpdatePopoverComponent implements OnInit {
   private __triggerUpdate() {
     // Fix, specialy on new devices which will see 2 update screens, the slider was white
     setTimeout(() => {
-      //TODO this.updateSlider.update();
+      // TODO this.updateSlider.update();
     });
   }
 
@@ -94,17 +87,9 @@ export class UpdatePopoverComponent implements OnInit {
 
   public canRenderDesc(_description: string): boolean {
     if (_description.startsWith('[ANDROID]')) {
-      if (this.isAndroid()) {
-        return true;
-      } else {
-        return false;
-      }
+      return this.isAndroid();
     } else if (_description.startsWith('[IOS]')) {
-      if (this.isIOS()) {
-        return true;
-      } else {
-        return false;
-      }
+      return this.isIOS();
     }
     return true;
   }

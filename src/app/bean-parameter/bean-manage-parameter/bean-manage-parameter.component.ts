@@ -1,10 +1,8 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Settings } from '../../../classes/settings/settings';
 
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
-import { UIAnalytics } from '../../../services/uiAnalytics';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
@@ -12,7 +10,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
   templateUrl: './bean-manage-parameter.component.html',
   styleUrls: ['./bean-manage-parameter.component.scss'],
 })
-export class BeanManageParameterComponent implements OnInit {
+export class BeanManageParameterComponent {
   public bean_segment = 'general';
   public debounceChanges: Subject<string> = new Subject<string>();
   public data: Settings;
@@ -20,8 +18,6 @@ export class BeanManageParameterComponent implements OnInit {
 
   constructor(
     public uiSettingsStorage: UISettingsStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiAnalytics: UIAnalytics,
     private readonly changeDetectorRef: ChangeDetectorRef
   ) {
     this.debounceChanges
@@ -31,8 +27,6 @@ export class BeanManageParameterComponent implements OnInit {
       });
     this.data = this.uiSettingsStorage.getSettings();
   }
-
-  public ngOnInit() {}
 
   public triggerChanges(_query): void {
     this.debounceChanges.next(this.numerator.toString());

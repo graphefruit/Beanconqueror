@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { BeanParameterPage } from './bean-parameter.page';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslateServiceMock } from '../../classes/mock';
 
 describe('BeanParameterPage', () => {
   let component: BeanParameterPage;
@@ -9,8 +11,14 @@ describe('BeanParameterPage', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [BeanParameterPage],
+      declarations: [BeanParameterPage, TranslatePipe],
       imports: [IonicModule.forRoot()],
+      providers: [
+        {
+          provide: TranslateService,
+          useValue: TranslateServiceMock,
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(BeanParameterPage);

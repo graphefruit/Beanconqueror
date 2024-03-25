@@ -1,19 +1,19 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
-import {
-  LoadingController,
-  ModalController,
-  NavParams,
-  Platform,
-} from '@ionic/angular';
+import { ModalController, NavParams, Platform } from '@ionic/angular';
 import { UIMillStorage } from '../../../services/uiMillStorage';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { Brew } from '../../../classes/brew/brew';
 import moment from 'moment';
 import { UIToast } from '../../../services/uiToast';
-import { TranslateService } from '@ngx-translate/core';
 import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { UILog } from '../../../services/uiLog';
@@ -28,21 +28,23 @@ import BREW_TRACKING from '../../../data/tracking/brewTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
-import { BluetoothScale, SCALE_TIMER_COMMAND } from '../../../classes/devices';
+import {
+  BluetoothScale,
+  SCALE_TIMER_COMMAND,
+  sleep,
+} from '../../../classes/devices';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { PreparationDeviceType } from '../../../classes/preparationDevice';
-import { UIHelper } from '../../../services/uiHelper';
 import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
 
 declare var Plotly;
-declare var window;
+
 @Component({
   selector: 'brew-add',
   templateUrl: './brew-add.component.html',
   styleUrls: ['./brew-add.component.scss'],
 })
 export class BrewAddComponent implements OnInit {
-  public static COMPONENT_ID: string = 'brew-add';
+  public static readonly COMPONENT_ID: string = 'brew-add';
   public brew_template: Brew;
   public data: Brew = new Brew();
   public settings: Settings;
@@ -57,6 +59,7 @@ export class BrewAddComponent implements OnInit {
   public showFooter: boolean = true;
   private initialBeanData: string = '';
   private disableHardwareBack;
+
   constructor(
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
@@ -66,10 +69,8 @@ export class BrewAddComponent implements OnInit {
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiMillStorage: UIMillStorage,
     private readonly uiToast: UIToast,
-    private readonly translate: TranslateService,
     private readonly platform: Platform,
     private readonly geolocation: Geolocation,
-    private readonly loadingController: LoadingController,
     private readonly uiLog: UILog,
     private readonly uiBrewHelper: UIBrewHelper,
     private readonly uiHealthKit: UIHealthKit,
@@ -78,7 +79,6 @@ export class BrewAddComponent implements OnInit {
     private readonly brewTracking: BrewTrackingService,
     private readonly uiAnalytics: UIAnalytics,
     private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly uiHelper: UIHelper,
     private readonly visualizerService: VisualizerService
   ) {
     // Initialize to standard in drop down
@@ -93,29 +93,28 @@ export class BrewAddComponent implements OnInit {
     this.data.bean = this.uiBeanStorage
       .getAllEntries()
       .filter((bean) => !bean.finished)
-      .sort((a, b) => a.name.localeCompare(b.name))[0].config.uuid;
+      .sort((a, b) => a.name.localeCompare(b.name))[0]?.config?.uuid;
 
     this.data.method_of_preparation = this.uiPreparationStorage
       .getAllEntries()
       .filter((e) => !e.finished)
-      .sort((a, b) => a.name.localeCompare(b.name))[0].config.uuid;
+      .sort((a, b) => a.name.localeCompare(b.name))[0]?.config?.uuid;
 
     this.data.mill = this.uiMillStorage
       .getAllEntries()
       .filter((e) => !e.finished)
-      .sort((a, b) => a.name.localeCompare(b.name))[0].config.uuid;
-
-    window.addEventListener('keyboardWillShow', (event) => {
-      // Describe your logic which will be run each time when keyboard is about to be shown.
-      this.showFooter = false;
-    });
-
-    window.addEventListener('keyboardWillHide', () => {
-      // Describe your logic which will be run each time when keyboard is about to be closed.
-      this.showFooter = true;
-    });
+      .sort((a, b) => a.name.localeCompare(b.name))[0]?.config?.uuid;
   }
-
+  @HostListener('keyboardWillShow')
+  private hideFooter() {
+    // Describe your logic which will be run each time when keyboard is about to be shown.
+    this.showFooter = false;
+  }
+  @HostListener('keyboardWillHide')
+  private showFooterAgain() {
+    // Describe your logic which will be run each time when keyboard is about to be closed.
+    this.showFooter = true;
+  }
   public ionViewDidEnter(): void {
     this.uiAnalytics.trackEvent(BREW_TRACKING.TITLE, BREW_TRACKING.ACTIONS.ADD);
     if (this.settings.wake_lock) {
@@ -174,6 +173,7 @@ export class BrewAddComponent implements OnInit {
       return false;
     }
   }
+
   public async tareScale() {
     const scale: BluetoothScale = this.bleManager.getScale();
     if (scale) {
@@ -202,7 +202,7 @@ export class BrewAddComponent implements OnInit {
               JSON.stringify(this.data.coordinates)
           );
         })
-        .catch((error) => {
+        .catch((_error) => {
           // Couldn't get coordinates sorry.
           this.uiLog.error('BREW - No Coordinates found');
           if (_highAccuracy === true) {
@@ -244,6 +244,7 @@ export class BrewAddComponent implements OnInit {
       BrewAddComponent.COMPONENT_ID
     );
   }
+
   private stopScaleTimer() {
     const scale: BluetoothScale = this.bleManager.getScale();
     if (scale) {
@@ -253,21 +254,12 @@ export class BrewAddComponent implements OnInit {
 
   public async finish() {
     await this.uiAlert.showLoadingMessage(undefined, undefined, true);
-    await new Promise(async (resolve) => {
-      setTimeout(() => {
-        resolve(undefined);
-      }, 50);
-    });
+    await sleep(50);
     try {
       this.uiLog.log('Brew add - Step 1');
       if (this.brewBrewing?.timer?.isTimerRunning()) {
         this.brewBrewing.timer.pauseTimer('click');
-
-        await new Promise(async (resolve) => {
-          setTimeout(() => {
-            resolve(undefined);
-          }, 100);
-        });
+        await sleep(100);
       }
       this.uiLog.log('Brew add - Step 2');
       this.uiBrewHelper.cleanInvisibleBrewData(this.data);
@@ -289,12 +281,10 @@ export class BrewAddComponent implements OnInit {
         }
       }
 
-      let checkData: Settings | Preparation;
-      if (this.getPreparation().use_custom_parameters === true) {
-        checkData = this.getPreparation();
-      } else {
-        checkData = this.settings;
-      }
+      const checkData = this.getPreparation().use_custom_parameters
+        ? this.getPreparation()
+        : this.settings;
+
       if (checkData.manage_parameters.set_custom_brew_time) {
         this.uiLog.log('Brew add - Step 6');
         addedBrewObj.config.unix_timestamp = moment(
@@ -336,11 +326,7 @@ export class BrewAddComponent implements OnInit {
       this.brewTracking.trackBrew(addedBrewObj);
       this.uiLog.log('Brew add - Step 9');
       await this.uiAlert.hideLoadingSpinner();
-      await new Promise(async (resolve) => {
-        setTimeout(() => {
-          resolve(undefined);
-        }, 100);
-      });
+      await sleep(100);
 
       if (this.uiBrewHelper.checkIfBeanPackageIsConsumed(this.data.getBean())) {
         await this.uiBrewHelper.checkIfBeanPackageIsConsumedTriggerMessageAndArchive(
@@ -355,11 +341,7 @@ export class BrewAddComponent implements OnInit {
     } catch (ex) {}
 
     await this.uiAlert.hideLoadingSpinner();
-    await new Promise(async (resolve) => {
-      setTimeout(() => {
-        resolve(undefined);
-      }, 100);
-    });
+    await sleep(100);
 
     this.dismiss();
   }
@@ -372,7 +354,7 @@ export class BrewAddComponent implements OnInit {
     if (this.settings.security_check_when_going_back === true) {
       this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(
         9999,
-        (processNextHandler) => {
+        (_processNextHandler) => {
           // Don't do anything.
           this.confirmDismiss();
         }

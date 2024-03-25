@@ -1,7 +1,11 @@
-import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import {BrewTimerComponent} from './brew-timer.component';
+import { BrewTimerComponent } from './brew-timer.component';
+import { ModalController } from '@ionic/angular';
+import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { Settings } from '../../classes/settings/settings';
 
 describe('BrewTimerComponent', () => {
   let component: BrewTimerComponent;
@@ -11,8 +15,25 @@ describe('BrewTimerComponent', () => {
     TestBed.configureTestingModule({
       declarations: [BrewTimerComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    })
-      .compileComponents();
+      providers: [
+        {
+          provide: ModalController,
+          useValue: {},
+        },
+        {
+          provide: CoffeeBluetoothDevicesService,
+          useValue: {},
+        },
+        {
+          provide: UISettingsStorage,
+          useValue: {
+            getSettings(): Settings {
+              return {} as unknown as Settings;
+            },
+          },
+        },
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

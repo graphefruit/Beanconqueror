@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import {IonicModule} from '@ionic/angular';
+import { IonicModule, NavParams } from '@ionic/angular';
 
-import {BrewCuppingComponent} from './brew-cupping.component';
+import { BrewCuppingComponent } from './brew-cupping.component';
+import { NavParamsMock } from '../../../classes/mock';
 
 describe('BrewCuppingComponent', () => {
   let component: BrewCuppingComponent;
@@ -10,7 +11,13 @@ describe('BrewCuppingComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [BrewCuppingComponent],
-      imports: [IonicModule.forRoot()]
+      imports: [IonicModule.forRoot()],
+      providers: [
+        {
+          provide: NavParams,
+          useClass: NavParamsMock,
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(BrewCuppingComponent);

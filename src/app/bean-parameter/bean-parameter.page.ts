@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -7,10 +6,8 @@ import { Router } from '@angular/router';
   templateUrl: './bean-parameter.page.html',
   styleUrls: ['./bean-parameter.page.scss'],
 })
-export class BeanParameterPage implements OnInit {
-  constructor(public navCtrl: NavController, private readonly router: Router) {}
-
-  public ngOnInit() {}
+export class BeanParameterPage {
+  constructor(private readonly router: Router) {}
 
   public openManageParameters(): void {
     this.router.navigate(['/bean-parameter/manage']);

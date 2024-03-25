@@ -1,18 +1,23 @@
-import {AfterViewInit, Component, EventEmitter, Output, ViewChild} from '@angular/core';
-import {Chart} from 'chart.js';
-import {ICupping} from '../../interfaces/cupping/iCupping';
-import {Subject} from 'rxjs';
-import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
-import {TranslateService} from '@ngx-translate/core';
-import {UIBrewHelper} from '../../services/uiBrewHelper';
+import {
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
+import { Chart } from 'chart.js';
+import { ICupping } from '../../interfaces/cupping/iCupping';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { UIBrewHelper } from '../../services/uiBrewHelper';
 
 @Component({
   selector: 'cupping-radar',
   templateUrl: './cupping-radar.component.html',
   styleUrls: ['./cupping-radar.component.scss'],
 })
-export class CuppingRadarComponent implements AfterViewInit {
-
+export class CuppingRadarComponent implements AfterViewInit, OnInit {
   private chartEl: any = undefined;
   public model: ICupping = {
     body: 0,
@@ -29,13 +34,12 @@ export class CuppingRadarComponent implements AfterViewInit {
     notes: '',
   };
   public debounceRadar: Subject<string> = new Subject<string>();
-  @ViewChild('cuppingChart', {static: false}) public cuppingChart;
+  @ViewChild('cuppingChart', { static: false }) public cuppingChart;
 
   @Output() public cuppingChanged: EventEmitter<any> = new EventEmitter();
 
   private debounceCounter: number = 0;
-  constructor(private readonly translate: TranslateService, private uiBrewHelper: UIBrewHelper) {
-  }
+  constructor(private uiBrewHelper: UIBrewHelper) {}
 
   public ngOnInit(): void {
     this.debounceRadar
@@ -43,12 +47,9 @@ export class CuppingRadarComponent implements AfterViewInit {
       .subscribe(() => {
         this.__loadCuppingChart();
       });
-
   }
 
   public ionViewDidEnter(): void {
-
-
     // If we don't have beans, we cant do a brew from now on, because of roasting degree and the age of beans.
   }
 
@@ -56,9 +57,7 @@ export class CuppingRadarComponent implements AfterViewInit {
     this.__loadCuppingChart();
   }
 
-
   public setCuppingValues(_values: ICupping) {
-
     this.model = _values;
     this.debounceRadar.next(this.debounceCounter.toString());
     this.debounceCounter++;
@@ -73,9 +72,9 @@ export class CuppingRadarComponent implements AfterViewInit {
     this.debounceRadar.next(_query);
   }
 
-
   public getScore() {
-    const score: number = this.model.dry_fragrance +
+    const score: number =
+      this.model.dry_fragrance +
       this.model.wet_aroma +
       this.model.brightness +
       this.model.flavor +
@@ -86,23 +85,20 @@ export class CuppingRadarComponent implements AfterViewInit {
       this.model.complexity +
       this.model.uniformity +
       this.model.cuppers_correction;
-    return this.toFixedIfNecessary(score,2);
-
+    return this.toFixedIfNecessary(score, 2);
   }
 
-  private toFixedIfNecessary( value, dp ){
+  private toFixedIfNecessary(value, dp) {
     const parsedFloat = parseFloat(value);
     if (isNaN(parsedFloat)) {
       return 0;
     }
-    return +parsedFloat.toFixed( dp );
+    return +parsedFloat.toFixed(dp);
   }
   private __loadCuppingChart(): void {
-
     if (this.chartEl !== undefined) {
-
-
-      this.chartEl.data.datasets[0].data = [this.model.dry_fragrance,
+      this.chartEl.data.datasets[0].data = [
+        this.model.dry_fragrance,
         this.model.wet_aroma,
         this.model.brightness,
         this.model.flavor,
@@ -111,19 +107,16 @@ export class CuppingRadarComponent implements AfterViewInit {
         this.model.sweetness,
         this.model.clean_cup,
         this.model.complexity,
-        this.model.uniformity];
+        this.model.uniformity,
+      ];
       this.chartEl.update();
-     // this.chartEl.destroy();
+      // this.chartEl.destroy();
       // this.chartEl = undefined;
     } else {
-      this.chartEl = new Chart(this.cuppingChart.nativeElement, this.uiBrewHelper.getCuppingChartData(this.model) as any);
+      this.chartEl = new Chart(
+        this.cuppingChart.nativeElement,
+        this.uiBrewHelper.getCuppingChartData(this.model) as any
+      );
     }
-
-
-
-
-
   }
-
-
 }

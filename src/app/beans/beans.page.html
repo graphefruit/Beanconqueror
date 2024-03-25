@@ -74,7 +74,7 @@
 
 
       <ag-virtual-scroll #openScroll [items]="openBeans" height="100vh" min-row-height="210">
-        <bean-information (beanAction)="beanAction($event[0],$event[1])" *ngFor="let bean of openScroll.items"
+        <bean-information (beanAction)="beanAction()" *ngFor="let bean of openScroll.items"
                           [bean]="bean"></bean-information>
 
       </ag-virtual-scroll>
@@ -107,7 +107,7 @@
           </div>
         </div>
         <ag-virtual-scroll #archivedScroll [items]="finishedBeans" height="100vh" min-row-height="210">
-          <bean-information (beanAction)="beanAction($event[0],$event[1])"  *ngFor="let bean of archivedScroll.items"
+          <bean-information (beanAction)="beanAction()"  *ngFor="let bean of archivedScroll.items"
                             [bean]="bean"></bean-information>
 
         </ag-virtual-scroll>
