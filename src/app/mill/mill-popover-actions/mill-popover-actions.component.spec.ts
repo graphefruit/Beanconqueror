@@ -5,6 +5,7 @@ import { MillPopoverActionsComponent } from './mill-popover-actions.component';
 import { NavParamsMock } from '../../../classes/mock';
 import { UIHelper } from '../../../services/uiHelper';
 import { TranslateModule } from '@ngx-translate/core';
+import { UIHelperMock } from '../../../classes/mock';
 
 describe('MillPopoverActionsComponent', () => {
   let component: MillPopoverActionsComponent;
@@ -21,11 +22,7 @@ describe('MillPopoverActionsComponent', () => {
         },
         {
           provide: UIHelper,
-          useValue: {
-            copyData(_value: any): any {
-              return _value;
-            },
-          },
+          useClass: UIHelperMock,
         },
       ],
     }).compileComponents();
