@@ -254,11 +254,16 @@ export class BrewAddComponent implements OnInit {
   public async finish() {
     await this.uiAlert.showLoadingSpinner();
     try {
+      this.uiLog.log('Brew add - Step 1');
       await this.manageBrewBrewingTimer();
 
+      this.uiLog.log('Brew add - Step 2');
       this.uiBrewHelper.cleanInvisibleBrewData(this.data);
+
+      this.uiLog.log('Brew add - Step 3');
       const addedBrewObj: Brew = await this.uiBrewStorage.add(this.data);
 
+      this.uiLog.log('Brew add - Step 4');
       await this.manageFlowProfile(addedBrewObj);
 
       await this.manageCustomBrewTime(addedBrewObj);
@@ -285,6 +290,7 @@ export class BrewAddComponent implements OnInit {
   }
 
   private manageCaffeineConsumption(): void {
+    this.uiLog.log('Brew add - Step 7');
     if (
       this.settings.track_caffeine_consumption &&
       this.data.grind_weight > 0 &&
@@ -317,6 +323,7 @@ export class BrewAddComponent implements OnInit {
     const checkData = this.getSettingsOrPreparation();
 
     if (checkData.manage_parameters.set_custom_brew_time) {
+      this.uiLog.log('Brew add - Step 6');
       addedBrewObj.config.unix_timestamp = moment(
         this.brewBrewing.customCreationDate
       ).unix();
@@ -334,6 +341,7 @@ export class BrewAddComponent implements OnInit {
 
   private async manageFlowProfile(addedBrewObj: Brew) {
     if (this.hasAnyFlowProfileRequisites()) {
+      this.uiLog.log('Brew add - Step 5');
       const savedPath: string = await this.brewBrewing.saveFlowProfile(
         addedBrewObj.config.uuid
       );
