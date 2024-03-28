@@ -1,7 +1,7 @@
-import {UIHelper} from '../services/uiHelper';
-import {UILog} from '../services/uiLog';
-import {UIStorage} from '../services/uiStorage';
-import {Observable, Subject} from 'rxjs';
+import { UIHelper } from '../services/uiHelper';
+import { UILog } from '../services/uiLog';
+import { UIStorage } from '../services/uiStorage';
+import { Observable, Subject } from 'rxjs';
 
 export abstract class StorageClass {
   private removeObjSubject = new Subject<any>();
@@ -16,23 +16,21 @@ export abstract class StorageClass {
    */
   private isInitialized: number = -1;
 
-  protected constructor (protected uiStorage: UIStorage,
-                         protected uiHelper: UIHelper,
-                         protected uiLog: UILog,
-                         protected dbPath: string,) {
-
-      this.DB_PATH = dbPath;
-
-
+  protected constructor(
+    protected uiStorage: UIStorage,
+    protected uiHelper: UIHelper,
+    protected uiLog: UILog,
+    protected dbPath: string
+  ) {
+    this.DB_PATH = dbPath;
   }
 
   public async initializeStorage() {
     await this.__initializeStorage();
   }
 
-  public async storageReady (): Promise<any> {
+  public async storageReady(): Promise<any> {
     const promise = new Promise((resolve, reject) => {
-
       if (this.isInitialized === -1) {
         const intV: any = setInterval(async () => {
           if (this.isInitialized === 1) {
@@ -54,7 +52,6 @@ export abstract class StorageClass {
           reject();
         }
       }
-
     });
 
     return promise;
@@ -74,40 +71,56 @@ export abstract class StorageClass {
   public async add(_entry): Promise<any> {
     const promise = new Promise(async (resolve, reject) => {
       const newEntry = this.uiHelper.cloneData(_entry);
-      newEntry.config.uuid = this.uiHelper.generateUUID();
-      newEntry.config.unix_timestamp = this.uiHelper.getUnixTimestamp();
-      this.storedData.push(newEntry);
-      await this.__save();
-      this.__sendEvent('ADD');
+      try {
+        newEntry.config.uuid = this.uiHelper.generateUUID();
+        newEntry.config.unix_timestamp = this.uiHelper.getUnixTimestamp();
+        this.storedData.push(newEntry);
+        await this.__save();
+        this.__sendEvent('ADD');
+      } catch (ex) {
+        this.uiLog.error(
+          `Storage - Add - Unsuccessfully - ${JSON.stringify(ex)}`
+        );
+        this.uiHelper.showAlert(ex.message, 'ADD CRITICAL ERROR');
+      }
       resolve(this.uiHelper.cloneData(newEntry));
     });
     return promise;
   }
 
-  public getAllEntries (): Array<any> {
+  public getAllEntries(): Array<any> {
     return this.storedData;
   }
 
   public async update(_obj): Promise<boolean> {
     const promise: Promise<any> = new Promise(async (resolve, reject) => {
-      let didUpdate: boolean = false;
-      for (let i = 0; i < this.storedData.length; i++) {
-        if (this.storedData[i].config.uuid === _obj.config.uuid) {
-          this.uiLog.log(`Storage - Update  - Successfully - ${_obj.config.uuid}`);
-          this.storedData[i] = _obj;
-          await this.__save();
-          this.__sendEvent('UPDATE');
-          didUpdate = true;
-          resolve(true);
-          return;
+      try {
+        let didUpdate: boolean = false;
+        for (let i = 0; i < this.storedData.length; i++) {
+          if (this.storedData[i].config.uuid === _obj.config.uuid) {
+            this.uiLog.log(
+              `Storage - Update  - Successfully - ${_obj.config.uuid}`
+            );
+            this.storedData[i] = _obj;
+            await this.__save();
+            this.__sendEvent('UPDATE');
+            didUpdate = true;
+            resolve(true);
+            return;
+          }
         }
+        if (didUpdate === false) {
+          this.uiLog.error(
+            `Storage - Update  - Unsucessfully - ${_obj.config.uuid} - not found`
+          );
+        }
+        resolve(false);
+      } catch (ex) {
+        this.uiLog.error(
+          `Storage - Update  - Unsucessfully - Execption occured- ${ex.message}`
+        );
+        resolve(false);
       }
-      if (didUpdate === false) {
-        this.uiLog.error(`Storage - Update  - Unsucessfully - ${_obj.config.uuid} - not found`);
-
-      }
-      resolve(false);
-
     });
     return promise;
   }
@@ -122,7 +135,6 @@ export abstract class StorageClass {
       } else {
         resolve(false);
       }
-
     });
     return promise;
   }
@@ -146,7 +158,6 @@ export abstract class StorageClass {
       } else {
         resolve(false);
       }
-
     });
     return promise;
   }
@@ -160,49 +171,52 @@ export abstract class StorageClass {
   }
 
   private __sendRemoveMessage(_id: string) {
-    this.removeObjSubject.next({id: _id});
+    this.removeObjSubject.next({ id: _id });
   }
 
   private __sendEvent(_type: string) {
-    this.eventSubject.next({type: _type});
+    this.eventSubject.next({ type: _type });
   }
 
-  public getDBPath (): string {
-
+  public getDBPath(): string {
     return this.DB_PATH;
   }
 
-  protected async __initializeStorage () {
+  protected async __initializeStorage() {
     this.storedData = [];
     this.isInitialized = -1;
     const promise = new Promise((resolve, reject) => {
       this.uiLog.log(`Initialize Storage - ${this.DB_PATH}`);
-      this.uiStorage.get(this.DB_PATH).then((_data) => {
+      this.uiStorage.get(this.DB_PATH).then(
+        (_data) => {
+          if (_data === null || _data === undefined) {
+            this.uiLog.log(`Storage empty but successfull - ${this.DB_PATH}`);
+            // No beans have been added yet
+            this.storedData = [];
+            this.isInitialized = 1;
+          } else {
+            this.uiLog.log(`Storage successfull - ${this.DB_PATH}`);
+            try {
+              this.uiLog.log(
+                `Storage successfull - ${this.DB_PATH} - Data amount: ${_data.length}`
+              );
+            } catch (ex) {}
 
-        if (_data === null || _data === undefined) {
-          this.uiLog.log(`Storage empty but successfull - ${this.DB_PATH}`);
-          // No beans have been added yet
-          this.storedData = [];
-          this.isInitialized = 1;
-        } else {
-          this.uiLog.log(`Storage successfull - ${this.DB_PATH}`);
-          try {
-            this.uiLog.log(`Storage successfull - ${this.DB_PATH} - Data amount: ${_data.length}`);
-          }catch (ex) {
-
+            this.storedData = _data;
+            this.isInitialized = 1;
           }
-
-          this.storedData = _data;
-          this.isInitialized = 1;
+          resolve(undefined);
+        },
+        (e) => {
+          // Error
+          this.uiLog.log(
+            `Storage error - ${this.DB_PATH} - ${JSON.stringify(e)}`
+          );
+          this.storedData = [];
+          this.isInitialized = 0;
+          reject();
         }
-        resolve(undefined);
-      }, (e) => {
-        // Error
-        this.uiLog.log(`Storage error - ${this.DB_PATH} - ${JSON.stringify(e)}`);
-        this.storedData = [];
-        this.isInitialized = 0;
-        reject();
-      });
+      );
     });
     return promise;
   }
@@ -231,14 +245,16 @@ export abstract class StorageClass {
   }
 
   private async __save() {
-    await this.uiStorage.set(this.DB_PATH, this.storedData).then((e) => {
+    await this.uiStorage.set(this.DB_PATH, this.storedData).then(
+      (e) => {
         this.uiLog.log('Storage - Save - Successfully');
-      }, (e) => {
-        this.uiLog.log(`Storage - Save - Unsuccessfully - ${JSON.stringify(e)}`);
-        this.uiHelper.showAlert(e.message,'CRITICAL ERROR');
-
+      },
+      (e) => {
+        this.uiLog.error(
+          `Storage - Save - Unsuccessfully - ${JSON.stringify(e)}`
+        );
+        this.uiHelper.showAlert(e.message, 'CRITICAL ERROR');
       }
     );
   }
-
 }

@@ -7,8 +7,8 @@ import {
   ModalController,
 } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { CustomPopoverComponent } from '../popover/custom-popover/custom-popover.component';
 import { FilesystemErrorPopoverComponent } from '../popover/filesystem-error-popover/filesystem-error-popover.component';
+import { LoadingPopoverComponent } from '../popover/loading-popover/loading-popover.component';
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +27,8 @@ export class UIAlert {
     message: string = 'PLEASE_WAIT',
     translate: boolean = true
   ) {
-    if (this.existingLoadingSpinners.length > 0) {
+    await this.showLoadingMessage(message, translate, false);
+    /**if (this.existingLoadingSpinners.length > 0) {
       await this.hideLoadingSpinner();
     }
     let msg = message;
@@ -35,10 +36,11 @@ export class UIAlert {
       msg = this.translate.instant(message);
     }
     const loadingSpinner = await this.loadingController.create({
+      animated: false,
       message: msg,
     });
     this.existingLoadingSpinners.push(loadingSpinner);
-    loadingSpinner.present();
+    loadingSpinner.present();**/
   }
 
   public setLoadingSpinnerMessage(message: string, translate: boolean = false) {
@@ -60,6 +62,11 @@ export class UIAlert {
     if (this.existingLoadingSpinners.length > 0) {
       for (const spinner of this.existingLoadingSpinners) {
         spinner.dismiss();
+        await new Promise(async (resolve) => {
+          setTimeout(() => {
+            resolve(undefined);
+          }, 50);
+        });
       }
       this.existingLoadingSpinners = [];
     }
@@ -163,5 +170,32 @@ export class UIAlert {
     _okText: string
   ) {
     await this.showMessage(_description, _title, _okText, true);
+  }
+
+  public async showLoadingMessage(
+    message: string = 'PLEASE_WAIT',
+    translate: boolean = true,
+    showDismissAfterSpecificTimeout: boolean = false
+  ) {
+    if (this.existingLoadingSpinners.length > 0) {
+      await this.hideLoadingSpinner();
+    }
+    let msg = message;
+    if (translate) {
+      msg = this.translate.instant(message);
+    }
+    const modal = await this.modalController.create({
+      component: LoadingPopoverComponent,
+      cssClass: 'loading-modal',
+      animated: false,
+      backdropDismiss: false,
+      showBackdrop: true,
+      componentProps: {
+        showDismissAfterSpecificTimeout: showDismissAfterSpecificTimeout,
+        message: msg,
+      },
+    });
+    this.existingLoadingSpinners.push(modal);
+    modal.present();
   }
 }
