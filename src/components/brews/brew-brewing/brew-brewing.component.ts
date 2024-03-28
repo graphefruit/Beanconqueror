@@ -1338,16 +1338,26 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
       weight = 0;
       const genRand = (min, max, decimalPlaces) => {
-        const rand = Math.random() * (max - min) + min;
+        const randomFloat =
+          crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8);
+        const rand = randomFloat * (max - min) + min;
         const power = Math.pow(10, decimalPlaces);
         return Math.floor(rand * power) / power;
       };
       this.graphTimerTest = setInterval(() => {
-        flow = Math.floor(Math.random() * 11);
-        realtime_flow = Math.floor(Math.random() * 11);
+        flow = Math.floor(
+          (crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8)) * 11
+        );
+        realtime_flow = Math.floor(
+          (crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8)) * 11
+        );
         weight = weight + genRand(0.1, 2, 2);
-        pressure = Math.floor(Math.random() * 11);
-        temperature = Math.floor(Math.random() * 90);
+        pressure = Math.floor(
+          (crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8)) * 11
+        );
+        temperature = Math.floor(
+          (crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8)) * 90
+        );
 
         this.__setPressureFlow({ actual: pressure, old: pressure });
 

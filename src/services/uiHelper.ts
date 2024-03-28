@@ -45,7 +45,10 @@ export class UIHelper {
   public static generateUUID(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
       // tslint:disable
-      const r = (Math.random() * 16) | 0,
+      const r =
+          ((crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8)) *
+            16) |
+          0,
         v = c === 'x' ? r : (r & 0x3) | 0x8;
       return v.toString(16);
     });
@@ -114,7 +117,10 @@ export class UIHelper {
   public generateUUID(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
       // tslint:disable
-      const r = (Math.random() * 16) | 0,
+      const r =
+          ((crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8)) *
+            16) |
+          0,
         v = c === 'x' ? r : (r & 0x3) | 0x8;
       return v.toString(16);
     });
