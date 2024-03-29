@@ -113,7 +113,7 @@
     "cordova-plugin-file": "^8.0.0",
     "cordova-plugin-file-transfer": "github:dpa99c/cordova-plugin-file-transfer",
     "cordova-plugin-filepath": "^1.6.0",
-    "cordova-plugin-geolocation": "^4.1.0",
+    "cordova-plugin-geolocation": "^5.0.0",
     "cordova-plugin-health": "^2.1.0",
     "cordova-plugin-inappbrowser": "^5.0.0",
     "cordova-plugin-insomnia": "^4.3.0",
@@ -159,9 +159,6 @@
       "cordova-plugin-ionic-keyboard": {},
       "cordova-sqlite-storage": {},
       "cordova-plugin-inappbrowser": {},
-      "cordova-plugin-geolocation": {
-        "GPS_REQUIRED": "true"
-      },
       "cordova-plugin-insomnia": {},
       "ionic-plugin-deeplinks": {
         "URL_SCHEME": "beanconqueror",
@@ -229,6 +226,9 @@
       "cordova-plugin-ionic-webview": {},
       "cordova-android-support-gradle-release": {
         "ANDROID_SUPPORT_VERSION": "27.+"
+      },
+      "cordova-plugin-geolocation": {
+        "GPS_REQUIRED": "false"
       }
     },
     "platforms": [
