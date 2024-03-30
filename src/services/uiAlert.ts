@@ -9,6 +9,7 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { FilesystemErrorPopoverComponent } from '../popover/filesystem-error-popover/filesystem-error-popover.component';
 import { LoadingPopoverComponent } from '../popover/loading-popover/loading-popover.component';
+import { UILog } from './uiLog';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +19,8 @@ export class UIAlert {
     private readonly alertController: AlertController,
     private readonly translate: TranslateService,
     private readonly modalController: ModalController,
-    private readonly loadingController: LoadingController
+    private readonly loadingController: LoadingController,
+    private readonly uiLog: UILog
   ) {}
 
   private existingLoadingSpinners = [];
@@ -177,6 +179,7 @@ export class UIAlert {
     translate: boolean = true,
     showDismissAfterSpecificTimeout: boolean = false
   ) {
+    this.uiLog.generateExceptionLineMessage('Loading-Spinner');
     if (this.existingLoadingSpinners.length > 0) {
       await this.hideLoadingSpinner();
     }
