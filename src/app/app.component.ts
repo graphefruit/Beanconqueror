@@ -604,12 +604,6 @@ export class AppComponent implements AfterViewInit {
   private async __initApp() {
     this.__registerBack();
     await this.__setDeviceLanguage();
-    // After we set the right device language, we check now if we can request external storage
-    if (this.platform.is('cordova') && this.platform.is('android')) {
-      try {
-        //TODO -  await this.androidPlatformService.checkHasExternalStorage();
-      } catch (ex) {}
-    }
 
     this.__setThreeDeeTouchActions();
     await this.uiAnalytics.initializeTracking();
@@ -837,31 +831,37 @@ export class AppComponent implements AfterViewInit {
 
   private __setThreeDeeTouchActions() {
     // Ignore for now
-    if (this.platform.is('ios')) {
-      const actions: ThreeDeeTouchQuickAction[] = [
-        {
-          type: 'Brew',
-          title: this._translate.instant('THREE_DEE_TOUCH_ACTION_BREW'),
-          iconType: 'Add',
-        },
-        {
-          type: 'Bean',
-          title: this._translate.instant('THREE_DEE_TOUCH_ACTION_BEAN'),
-          iconType: 'Add',
-        },
-        {
-          type: 'Preparation',
-          title: this._translate.instant('THREE_DEE_TOUCH_ACTION_PREPARATION'),
-          iconType: 'Add',
-        },
-        {
-          type: 'Mill',
-          title: this._translate.instant('THREE_DEE_TOUCH_ACTION_MILL'),
-          iconType: 'Add',
-        },
-      ];
+    try {
+      if (this.platform.is('ios')) {
+        const actions: ThreeDeeTouchQuickAction[] = [
+          {
+            type: 'Brew',
+            title: this._translate.instant('THREE_DEE_TOUCH_ACTION_BREW'),
+            iconType: 'Add',
+          },
+          {
+            type: 'Bean',
+            title: this._translate.instant('THREE_DEE_TOUCH_ACTION_BEAN'),
+            iconType: 'Add',
+          },
+          {
+            type: 'Preparation',
+            title: this._translate.instant(
+              'THREE_DEE_TOUCH_ACTION_PREPARATION'
+            ),
+            iconType: 'Add',
+          },
+          {
+            type: 'Mill',
+            title: this._translate.instant('THREE_DEE_TOUCH_ACTION_MILL'),
+            iconType: 'Add',
+          },
+        ];
 
-      this.threeDeeTouch.configureQuickActions(actions);
+        this.threeDeeTouch.configureQuickActions(actions);
+      }
+    } catch (ex) {
+      this.uiLog.error('Could not set three dee actions');
     }
   }
 
