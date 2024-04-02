@@ -357,8 +357,7 @@ export class BeansPage implements OnInit {
     sort = this.manageSortScope(isOpen);
     filterBeans = this.manageFilterBeans(isOpen, beansCopy);
 
-    let filter: IBeanPageFilter;
-    filter = this.manageFilter(isOpen);
+    const filter: IBeanPageFilter = this.manageFilter(isOpen);
 
     filterBeans = this.manageFavourites(filter, filterBeans);
 
@@ -378,7 +377,7 @@ export class BeansPage implements OnInit {
     // Skip if something is unkown, because no filter is active then
     filterBeans = this.manageSort(sort, filterBeans);
 
-    let searchText = this.manageSearchTextScope(isOpen);
+    const searchText = this.manageSearchTextScope(isOpen);
 
     filterBeans = this.manageSearchText(searchText, filterBeans);
 
