@@ -289,6 +289,14 @@
               </div>
             </ion-checkbox>
           </ion-item>
+          <ion-item>
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.show_backup_issues">
+              <div class="ion-label">
+                <h2>{{"PAGE_SETTINGS_SHOW_BACKUP_ISSUES" | translate}}</h2>
+                <p>{{"PAGE_SETTINGS_SHOW_BACKUP_ISSUES_DESCRIPTION" | translate}}</p>
+              </div>
+            </ion-checkbox>
+          </ion-item>
         </ion-card-content>
       </ion-card>
 

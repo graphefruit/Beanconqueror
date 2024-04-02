@@ -1082,7 +1082,6 @@ export class SettingsPage implements OnInit {
     this.uiExportImportHelper.buildExportZIP().then(
       async (_blob) => {
         this.uiLog.log('New zip-export way');
-        const isIOS = this.platform.is('ios');
 
         if (this.platform.is('cordova')) {
           if (this.platform.is('android')) {
@@ -1236,14 +1235,14 @@ export class SettingsPage implements OnInit {
   }
 
   private async _exportFlowProfiles(_storedData: Array<Brew>) {
-    for (const entry of _storedData) {
-      if (entry.flow_profile && entry.flow_profile.length) {
-        await this._exportFlowProfileFile(entry.flow_profile);
-      }
-    }
+    await this.exportStoredData(_storedData);
   }
 
   private async _exportGraphProfiles(_storedData: Array<Graph>) {
+    await this.exportStoredData(_storedData);
+  }
+
+  private async exportStoredData(_storedData: Array<Brew> | Array<Graph>) {
     for (const entry of _storedData) {
       if (entry.flow_profile && entry.flow_profile.length) {
         await this._exportFlowProfileFile(entry.flow_profile);

@@ -183,6 +183,7 @@ import { GraphAddComponent } from '../graph-section/graph/graph-add/graph-add.co
 import { GraphDetailComponent } from '../graph-section/graph/graph-detail/graph-detail.component';
 import { GraphDisplayCardComponent } from '../../components/graph-display-card/graph-display-card.component';
 import { BrewPopoverExtractionComponent } from '../brew/brew-popover-extraction/brew-popover-extraction.component';
+import { LoadingPopoverComponent } from '../../popover/loading-popover/loading-popover.component';
 
 @NgModule({
   declarations: [
@@ -219,6 +220,7 @@ import { BrewPopoverExtractionComponent } from '../brew/brew-popover-extraction/
     ImpressumComponent,
     PreparationAddTypeComponent,
     CustomPopoverComponent,
+    LoadingPopoverComponent,
     FilesystemErrorPopoverComponent,
     WelcomePopoverComponent,
     AnalyticsPopoverComponent,
@@ -427,6 +429,7 @@ import { BrewPopoverExtractionComponent } from '../brew/brew-popover-extraction/
     ImpressumComponent,
     PreparationAddTypeComponent,
     CustomPopoverComponent,
+    LoadingPopoverComponent,
     FilesystemErrorPopoverComponent,
     WelcomePopoverComponent,
     AnalyticsPopoverComponent,

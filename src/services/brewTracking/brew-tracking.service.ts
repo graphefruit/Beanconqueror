@@ -1,38 +1,44 @@
 import { Injectable } from '@angular/core';
-import {Brew} from '../../classes/brew/brew';
-import {ServerCommunicationService} from '../serverCommunication/server-communication.service';
-import {UIHelper} from '../uiHelper';
-import {ServerBrew} from '../../classes/server/brew/brew';
+import { Brew } from '../../classes/brew/brew';
+import { ServerCommunicationService } from '../serverCommunication/server-communication.service';
+import { UIHelper } from '../uiHelper';
+import { ServerBrew } from '../../classes/server/brew/brew';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class BrewTrackingService {
-
-  constructor(private readonly serverCommunication: ServerCommunicationService,
-              private readonly uiHelper: UIHelper) { }
+  constructor(
+    private readonly serverCommunication: ServerCommunicationService,
+    private readonly uiHelper: UIHelper
+  ) {}
 
   /**
    * This function is on the actual pattern: fire and forget, if the user doesn't have any internet or something like this we won't recgonize nor repeat it again
    */
   public trackBrew(_brew: Brew) {
-    const clonedBrew: Brew = this.uiHelper.cloneData(_brew);
-    // Remove personal data.
-    delete clonedBrew.coordinates;
-    delete clonedBrew.attachments;
+    try {
+      const clonedBrew: Brew = this.uiHelper.cloneData(_brew);
+      // Remove personal data.
+      delete clonedBrew.coordinates;
+      delete clonedBrew.attachments;
 
-    /**
-     * We just send data for the matched QR-Code, all other brews combined with beans are offline brews
-     */
-    if (clonedBrew.getBean().qr_code !== '') {
-      try {
-        const serverBrew: ServerBrew = this.mapBrewToServer(clonedBrew);
-        this.serverCommunication.trackBrew(serverBrew).then(()=> {},()=>{}).catch();
-      } catch (ex) {
-
+      /**
+       * We just send data for the matched QR-Code, all other brews combined with beans are offline brews
+       */
+      if (clonedBrew.getBean().qr_code !== '') {
+        try {
+          const serverBrew: ServerBrew = this.mapBrewToServer(clonedBrew);
+          this.serverCommunication
+            .trackBrew(serverBrew)
+            .then(
+              () => {},
+              () => {}
+            )
+            .catch(() => {});
+        } catch (ex) {}
       }
-    }
-
+    } catch (ex) {}
   }
 
   private mapBrewToServer(_brew: Brew): ServerBrew {
@@ -65,7 +71,9 @@ export class BrewTrackingService {
     serverBrew.brew_beverage_quantity_type = _brew.brew_beverage_quantity_type;
 
     for (const method of _brew.method_of_preparation_tools) {
-      serverBrew.method_of_preparation_tools.push(_brew.getPreparationToolName(method));
+      serverBrew.method_of_preparation_tools.push(
+        _brew.getPreparationToolName(method)
+      );
     }
 
     serverBrew.bean_weight_in = _brew.bean_weight_in;
