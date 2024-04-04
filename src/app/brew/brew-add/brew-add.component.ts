@@ -377,9 +377,11 @@ export class BrewAddComponent implements OnInit {
 
   private hasAnyFlowProfileRequisites() {
     return (
-      this.brewBrewing.flow_profile_raw.weight.length > 0 ||
-      this.brewBrewing.flow_profile_raw.pressureFlow.length > 0 ||
-      this.brewBrewing.flow_profile_raw.temperatureFlow.length > 0
+      this.brewBrewing.brewBrewingGraphEl?.flow_profile_raw.weight.length > 0 ||
+      this.brewBrewing.brewBrewingGraphEl?.flow_profile_raw.pressureFlow
+        .length > 0 ||
+      this.brewBrewing.brewBrewingGraphEl?.flow_profile_raw.temperatureFlow
+        .length > 0
     );
   }
 

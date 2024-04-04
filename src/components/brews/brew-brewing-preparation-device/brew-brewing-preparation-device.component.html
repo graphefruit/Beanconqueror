@@ -1,0 +1,60 @@
+<ion-card *ngIf="preparationDeviceConnected() && getPreparationDeviceType() === PREPARATION_DEVICE_TYPE_ENUM.XENIA" class="popover" style="display:flex; flex-direction: column;">
+  <ion-item lines="none">
+    <span class="ion-title ion-padding-top">{{"PREPARATION_DEVICE.TYPE_XENIA.TITLE" | translate }}</span>
+  </ion-item>
+  <ion-item lines="inset">
+    <ion-select label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_XENIA.PRESS_START_SCRIPT" | translate}}' [interfaceOptions]="customXeniaOptions" [(ngModel)]="data.preparationDeviceBrew?.params.scriptStartId" (ionChange)='checkXeniaScripts()'
+                placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
+      <ion-select-option [value]="0">
+        {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_0" | translate}}
+      </ion-select-option>
+      <ion-select-option [value]="1">
+        {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_1" | translate}}
+      </ion-select-option>
+      <ion-select-option [value]="2">
+        {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_2" | translate}}
+      </ion-select-option>
+      <ion-select-option *ngFor='let script of preparationDevice?.scriptList' [value]='script.INDEX'>
+        {{script.TITLE}}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-item lines="inset"
+            [disabled]="!(data.preparationDeviceBrew?.params.scriptStartId > 0 && (uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_first_drip_time,
+                      data.getPreparation().manage_parameters.coffee_first_drip_time,
+                      data.getPreparation().use_custom_parameters) && getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO))">
+    <ion-select label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_XENIA.FIRST_DRIP_SCRIPT" | translate}}' [interfaceOptions]="customXeniaOptions" [(ngModel)]="data.preparationDeviceBrew?.params.scriptAtFirstDripId"
+                placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
+      <ion-select-option [value]="0">
+        {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_0" | translate}}
+      </ion-select-option>
+      <ion-select-option [value]="1">
+        {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_1" | translate}}
+      </ion-select-option>
+      <ion-select-option [value]="2">
+        {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_2" | translate}}
+      </ion-select-option>
+      <ion-select-option *ngFor='let script of preparationDevice?.scriptList' [value]='script.INDEX'>
+        {{script.TITLE}}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-item [disabled]="!(data.preparationDeviceBrew?.params.scriptStartId > 0 && brewComponent?.brewBrewingGraphEl?.smartScaleConnected())" lines="none">
+    <ion-input label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_AT_WEIGHT" | translate}}' [(ngModel)]="data.preparationDeviceBrew?.params.scriptAtWeightReachedNumber" inputmode="decimal" prevent-characters
+               remove-empty-number tabIndex="1" type="text"></ion-input>
+  </ion-item>
+  <ion-item [disabled]="!(data.preparationDeviceBrew?.params.scriptStartId > 0 && brewComponent?.brewBrewingGraphEl?.smartScaleConnected() && data.preparationDeviceBrew?.params.scriptAtWeightReachedNumber>0)" lines="inset">
+    <ion-select label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_XENIA.CHOOSE_SCRIPT_AT_WEIGHT" | translate}}' [interfaceOptions]="customXeniaOptions" [(ngModel)]="data.preparationDeviceBrew?.params.scriptAtWeightReachedId"
+                placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
+      <ion-select-option [value]="0">
+        {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_STOP" | translate}}
+      </ion-select-option>
+      <ion-select-option *ngFor='let script of preparationDevice?.scriptList' [value]='script.INDEX'>
+        {{script.TITLE}}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+</ion-card>
+<ion-card *ngIf="preparationDeviceConnected() && getPreparationDeviceType() === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS" class="popover" style="display:flex; flex-direction: column;">
+THIS IS THE GREAT FIRST METICULOUS MESSAGE
+</ion-card>

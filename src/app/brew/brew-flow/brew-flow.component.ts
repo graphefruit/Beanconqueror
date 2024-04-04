@@ -222,7 +222,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
     setTimeout(() => {
       if (this.isDetail) {
       } else {
-        this.brewComponent.updateChart();
+        this.brewComponent.brewBrewingGraphEl.updateChart();
       }
     }, 150);
   }
@@ -244,12 +244,15 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
 
         this.heightInformationBlock = informationContainerHeight;
 
-        this.brewComponent.lastChartLayout.height =
+        this.brewComponent.brewBrewingGraphEl.lastChartLayout.height =
           flowHeight - informationContainerHeight;
 
-        this.brewComponent.lastChartLayout.width =
+        this.brewComponent.brewBrewingGraphEl.lastChartLayout.width =
           document.getElementById('brewFlowContainer').offsetWidth;
-        Plotly.relayout('flowProfileChart', this.brewComponent.lastChartLayout);
+        Plotly.relayout(
+          'flowProfileChart',
+          this.brewComponent.brewBrewingGraphEl.lastChartLayout
+        );
       } catch (ex) {}
     }, 50);
   }

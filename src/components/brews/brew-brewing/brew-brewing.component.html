@@ -27,7 +27,7 @@
       tabIndex="2" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-brew-ratio" slot="icon-only"></ion-icon>
     </ion-button>
-    <ion-button (click)="bluetoothScaleSetGrindWeight()" *ngIf="smartScaleConnected()" style="margin-left:0px;"
+    <ion-button (click)="bluetoothScaleSetGrindWeight()" *ngIf="brewBrewingGraphEl?.brewBrewingGraphEl?.smartScaleConnected()" style="margin-left:0px;"
       tabIndex="3" class="big-icon-only" fill="clear" slot="end" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only"></ion-icon>
     </ion-button>
@@ -146,7 +146,7 @@
     <ion-input label-placement="stacked" label='{{"BREW_DATA_BEAN_WEIGHT_IN" | translate}}' [(ngModel)]="data.bean_weight_in" inputmode="decimal"
       placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_BEAN_WEIGHT_IN' | translate}}" prevent-characters remove-empty-number
       type="text"></ion-input>
-    <ion-button *ngIf="smartScaleConnected()" style="margin-left:0px;" (click)="bluetoothScaleSetBeanWeightIn()"
+    <ion-button *ngIf="brewBrewingGraphEl?.smartScaleConnected()" style="margin-left:0px;" (click)="bluetoothScaleSetBeanWeightIn()"
       tabIndex="1" class="big-icon-only" fill="clear" slot="end" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only"></ion-icon>
     </ion-button>
@@ -186,63 +186,7 @@
 
   <div class="last-item"></div>
 </ion-card>
-<ion-card *ngIf="preparationDeviceConnected()" class="popover" style="display:flex; flex-direction: column;">
-  <ion-item lines="none">
-    <span class="ion-title ion-padding-top">{{"PREPARATION_DEVICE.TYPE_XENIA.TITLE" | translate }}</span>
-  </ion-item>
-  <ion-item lines="inset">
-    <ion-select label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_XENIA.PRESS_START_SCRIPT" | translate}}' [interfaceOptions]="customXeniaOptions" [(ngModel)]="data.preparationDeviceBrew?.params.scriptStartId" (ionChange)='checkXeniaScripts()'
-      placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
-      <ion-select-option [value]="0">
-        {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_0" | translate}}
-      </ion-select-option>
-      <ion-select-option [value]="1">
-        {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_1" | translate}}
-      </ion-select-option>
-      <ion-select-option [value]="2">
-        {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_2" | translate}}
-      </ion-select-option>
-      <ion-select-option *ngFor='let script of preparationDevice?.scriptList' [value]='script.INDEX'>
-        {{script.TITLE}}
-      </ion-select-option>
-    </ion-select>
-  </ion-item>
-  <ion-item lines="inset"
-    [disabled]="!(data.preparationDeviceBrew?.params.scriptStartId > 0 && (uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_first_drip_time,
-                      data.getPreparation().manage_parameters.coffee_first_drip_time,
-                      data.getPreparation().use_custom_parameters) && getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO))">
-    <ion-select label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_XENIA.FIRST_DRIP_SCRIPT" | translate}}' [interfaceOptions]="customXeniaOptions" [(ngModel)]="data.preparationDeviceBrew?.params.scriptAtFirstDripId"
-      placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
-      <ion-select-option [value]="0">
-        {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_0" | translate}}
-      </ion-select-option>
-      <ion-select-option [value]="1">
-        {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_1" | translate}}
-      </ion-select-option>
-      <ion-select-option [value]="2">
-        {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_2" | translate}}
-      </ion-select-option>
-      <ion-select-option *ngFor='let script of preparationDevice?.scriptList' [value]='script.INDEX'>
-        {{script.TITLE}}
-      </ion-select-option>
-    </ion-select>
-  </ion-item>
-  <ion-item [disabled]="!(data.preparationDeviceBrew?.params.scriptStartId > 0 && smartScaleConnected())" lines="none">
-    <ion-input label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_AT_WEIGHT" | translate}}' [(ngModel)]="data.preparationDeviceBrew?.params.scriptAtWeightReachedNumber" inputmode="decimal" prevent-characters
-      remove-empty-number tabIndex="1" type="text"></ion-input>
-  </ion-item>
-  <ion-item [disabled]="!(data.preparationDeviceBrew?.params.scriptStartId > 0 && smartScaleConnected() && data.preparationDeviceBrew?.params.scriptAtWeightReachedNumber>0)" lines="inset">
-    <ion-select label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_XENIA.CHOOSE_SCRIPT_AT_WEIGHT" | translate}}' [interfaceOptions]="customXeniaOptions" [(ngModel)]="data.preparationDeviceBrew?.params.scriptAtWeightReachedId"
-      placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
-      <ion-select-option [value]="0">
-        {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_STOP" | translate}}
-      </ion-select-option>
-      <ion-select-option *ngFor='let script of preparationDevice?.scriptList' [value]='script.INDEX'>
-        {{script.TITLE}}
-      </ion-select-option>
-    </ion-select>
-  </ion-item>
-</ion-card>
+<brew-brewing-preparation-device #brewBrewingPreparationDeviceEl [isEdit]='isEdit' [brewComponent]='this' [(data)]='data'></brew-brewing-preparation-device>
 <ion-card *ngIf="showSectionWhileBrew()" class="popover" style="display:flex; flex-direction: column;">
 
 
@@ -250,18 +194,18 @@
     <span class="ion-title ion-padding-top">{{"BREW_HEADER_WHILE_BREW" | translate }}</span>
 
     <ion-button (click)="downloadFlowProfile()"
-      *ngIf="flow_profile_raw?.weight.length > 0 || flow_profile_raw?.pressureFlow.length > 0 || flow_profile_raw?.temperatureFlow.length > 0"
+      *ngIf="brewBrewingGraphEl?.flow_profile_raw?.weight.length > 0 || brewBrewingGraphEl?.flow_profile_raw?.pressureFlow.length > 0 || brewBrewingGraphEl?.flow_profile_raw?.temperatureFlow.length > 0"
       fill="clear" slot="end" style="margin-top: -4px;" tappable>
       <ion-icon name="download" slot="icon-only"></ion-icon>
     </ion-button>
 
-    <ion-button (click)="chooseGraphToSetAsReference()" *ngIf="!shallFlowProfileBeHidden()" fill="clear" slot="end" tappable>
+    <ion-button (click)="chooseGraphToSetAsReference()" *ngIf="!this.brewBrewingGraphEl?.shallFlowProfileBeHidden()" fill="clear" slot="end" tappable>
       <ion-icon name="analytics-outline" slot="icon-only"></ion-icon>
     </ion-button>
-    <ion-button (click)="maximizeFlowGraph()" *ngIf="!shallFlowProfileBeHidden()" fill="clear" slot="end" tappable>
+    <ion-button (click)="maximizeFlowGraph()" *ngIf="!this.brewBrewingGraphEl?.shallFlowProfileBeHidden()" fill="clear" slot="end" tappable>
       <ion-icon name="expand-outline" slot="icon-only"></ion-icon>
     </ion-button>
-    <ion-button (click)="maximizeControlButtons()" *ngIf="shallFlowProfileBeHidden()" fill="clear" slot="end" tappable>
+    <ion-button (click)="maximizeControlButtons()" *ngIf="this.brewBrewingGraphEl?.shallFlowProfileBeHidden()" fill="clear" slot="end" tappable>
       <ion-icon name="expand-outline" slot="icon-only"></ion-icon>
     </ion-button>
   </ion-item>
@@ -273,89 +217,8 @@
     <timer #brewTemperatureTime (timerTicked)="temperatureTimeChanged($event)"
            label-id='brewTemperatureTime' label="{{'BREW_DATA_TEMPERATURE_TIME' | translate}}" timeInSeconds="0"></timer>
   </ion-item>
-  <ion-item [hidden]="shallFlowProfileBeHidden()" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
-                      data.getPreparation().brew_order.while.brew_time,
-                      data.getPreparation().use_custom_parameters)" class="ion-padding-bottom-half" lines="none">
-    <div class="ion-text-center" style="width:100%">
-      <ion-chip (click)="toggleChartLines('weight')" *ngIf="smartScaleConnected()"
-        [outline]="!this.weightTrace?.visible" class="weight">{{'BREW_FLOW_WEIGHT' | translate}}</ion-chip>
-      <ion-chip (click)="toggleChartLines('calc_flow')" *ngIf="smartScaleConnected()"
-        [outline]="!this.flowPerSecondTrace?.visible" class="flowcalculated">{{'BREW_FLOW_WEIGHT_PER_SECOND' |
-        translate}}</ion-chip>
-      <ion-chip (click)="toggleChartLines('realtime_flow')" *ngIf="smartScaleConnected()"
-        [outline]="!this.realtimeFlowTrace?.visible" class="flowreal">{{'BREW_FLOW_WEIGHT_REALTIME' |
-        translate}}</ion-chip>
-      <ion-chip (click)="toggleChartLines('pressure')" *ngIf="pressureDeviceConnected() && getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
-        [outline]="!this.pressureTrace?.visible" class="pressure">{{'BREW_PRESSURE_FLOW' | translate}}</ion-chip>
-      <ion-chip (click)="toggleChartLines('temperature')" *ngIf="temperatureDeviceConnected()"
-        [outline]="!this.temperatureTrace?.visible" class="temperature">{{'BREW_TEMPERATURE_REALTIME' |
-        translate}}</ion-chip>
-    </div>
-  </ion-item>
-  <ion-item [hidden]="shallFlowProfileBeHidden()" lines="none" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
-                      data.getPreparation().brew_order.while.brew_time,
-                      data.getPreparation().use_custom_parameters)">
-    <ion-grid class="ion-text-center ion-no-padding brew-information-panel">
-      <ion-row style="padding-bottom:5px;">
-        <ion-col *ngIf='smartScaleConnected()' size="{{this.getGraphIonColSize()}}"
-                 style="padding-right:5px;">
-          <ion-card class="flow-profile ion-text-center weight-card" style="height: 100%;">
-            <ion-card-header>
-              <div #smartScaleWeight>? g</div>
-              <div>({{data.getBrewRatio()}})</div>
-            </ion-card-header>
-            <ion-card-content>
-              <ion-icon name="beanconqueror-scale-outline"></ion-icon>
-            </ion-card-content>
-          </ion-card>
-        </ion-col>
-        <ion-col *ngIf='smartScaleConnected()' size="{{this.getGraphIonColSize()}}"
-                 style="padding-right:5px;">
-          <ion-card class="flow-profile ion-text-center flow-card" style="height: 100%;">
-            <ion-card-header>
-              <div #smartScaleWeightPerSecond>? g/s</div>
-              <div #smartScaleAvgFlowPerSecond>? g/s</div>
-            </ion-card-header>
-            <ion-card-content>
-              <ion-icon name="water-outline"></ion-icon>
-            </ion-card-content>
-          </ion-card>
-        </ion-col>
-        <ion-col (click)="resetPressure()" *ngIf="(pressureDeviceConnected() || preparationDeviceConnected()) && getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO" style="padding-right:5px;"
-                 size="{{this.getGraphIonColSize()}}">
-          <ion-card class="flow-profile ion-text-center pressure-card" style="height: 100%;">
-            <ion-card-header>
-              <div #pressure>? bar</div>
-            </ion-card-header>
-            <ion-card-content>
-              <ion-icon name="beanconqueror-pressure"></ion-icon>
-            </ion-card-content>
-          </ion-card>
-        </ion-col>
-        <ion-col *ngIf="temperatureDeviceConnected() ||  preparationDeviceConnected()"
-                 size="{{this.getGraphIonColSize()}}">
-          <ion-card class="flow-profile ion-text-center temperature-card" style="height: 100%;">
-            <ion-card-header>
-              <div #temperature>? °C</div>
-            </ion-card-header>
-            <ion-card-content>
-              <ion-icon name="thermometer-outline"></ion-icon>
-            </ion-card-content>
-          </ion-card>
-        </ion-col>
+  <brew-brewing-graph #brewBrewingGraphEl [isEdit]='isEdit' [brewComponent]='this' [(data)]='data'></brew-brewing-graph>
 
-      </ion-row>
-    </ion-grid>
-  </ion-item>
-  <ion-item class="ion-margin-top" [hidden]="shallFlowProfileBeHidden()" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
-                      data.getPreparation().brew_order.while.brew_time,
-                      data.getPreparation().use_custom_parameters)">
-
-
-    <div style="width:100%;height:100%;" id="canvasContainerBrew">
-      <div id="flowProfileChart"></div>
-    </div>
-  </ion-item>
   <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.brew_time,
                       data.getPreparation().manage_parameters.brew_time,
                       data.getPreparation().use_custom_parameters)" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
@@ -370,8 +233,8 @@
       (tareScale)="tareScale($event)" [bloomTimerVisible]="uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_blooming_time,
                       data.getPreparation().manage_parameters.coffee_blooming_time,
                       data.getPreparation().use_custom_parameters)"
-      [listeningButtonVisible]="settings.bluetooth_scale_listening_threshold_active && this.smartScaleConnected()"
-      [ignoreScaleWeightButtonVisible]="settings.bluetooth_scale_ignore_weight_button_active && this.smartScaleConnected()"
+      [listeningButtonVisible]="settings.bluetooth_scale_listening_threshold_active && this.brewBrewingGraphEl?.smartScaleConnected()"
+      [ignoreScaleWeightButtonVisible]="settings.bluetooth_scale_ignore_weight_button_active && this.brewBrewingGraphEl?.smartScaleConnected()"
       [dripTimerVisible]="(uiBrewHelper.fieldVisible(settings.manage_parameters.coffee_first_drip_time,
                       data.getPreparation().manage_parameters.coffee_first_drip_time,
                       data.getPreparation().use_custom_parameters) && getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO) || (data.getPreparation().use_custom_parameters &&  data.getPreparation().manage_parameters.coffee_first_drip_time)"
@@ -454,7 +317,7 @@
         </ion-item>
       </ion-col>
     </ion-row>
-    <ion-button *ngIf="smartScaleConnected()" style="margin-left:0px;" (click)="bluetoothScaleSetBrewQuantityWeight()"
+    <ion-button *ngIf="brewBrewingGraphEl?.smartScaleConnected()" style="margin-left:0px;" (click)="bluetoothScaleSetBrewQuantityWeight()"
       tabIndex="1" class="big-icon-only" fill="clear" slot="end" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only"></ion-icon>
     </ion-button>
@@ -551,7 +414,7 @@
       slot="end" tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-calculator" slot="icon-only"></ion-icon>
     </ion-button>
-    <ion-button *ngIf="smartScaleConnected()" style="margin-left:0px;"
+    <ion-button *ngIf="brewBrewingGraphEl?.smartScaleConnected()" style="margin-left:0px;"
       (click)="bluetoothScaleSetBrewBeverageQuantityWeight()" tabIndex="1" class="big-icon-only" fill="clear" slot="end"
       tappable>
       <ion-icon class="ion-color-accent" name="beanconqueror-smart-scale" slot="icon-only"></ion-icon>
