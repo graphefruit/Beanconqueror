@@ -55,6 +55,8 @@ import { BrewBrewingComponent } from '../brew-brewing/brew-brewing.component';
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UILog } from '../../../services/uiLog';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
+import { MeticulousDevice } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
+import { MeticulousShotData } from '../../../classes/preparationDevice/meticulous/meticulousShotData';
 
 declare var Plotly;
 
@@ -122,6 +124,7 @@ export class BrewBrewingGraphComponent implements OnInit {
   private pressureThresholdWasHit: boolean = false;
   private temperatureThresholdWasHit: boolean = false;
   private xeniaOverviewInterval: any = undefined;
+  private meticulousInterval: any = undefined;
 
   public lastChartLayout: any = undefined;
   public lastChartRenderingInstance: number = 0;
@@ -1188,9 +1191,13 @@ export class BrewBrewingGraphComponent implements OnInit {
     }
   }
 
-  public setActualSmartInformation() {
+  public setActualSmartInformation(_weight: number = null) {
     this.ngZone.runOutsideAngular(() => {
-      const actualScaleWeight = this.getActualScaleWeight();
+      let actualScaleWeight = this.getActualScaleWeight();
+
+      if (_weight !== null) {
+        actualScaleWeight = _weight;
+      }
       const actualSmoothedWeightPerSecond =
         this.getActualSmoothedWeightPerSecond();
       const avgFlow = this.uiHelper.toFixedIfNecessary(this.getAvgFlow(), 2);
@@ -1548,6 +1555,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       /**TODOthis.writeExecutionTimeToNotes('Stop script', 0, this.getScriptName(0));**/
       this.stopFetchingAndSettingDataFromXenia();
     }
+
     if (!this.platform.is('cordova')) {
       window.clearInterval(this.graphTimerTest);
     }
@@ -1590,7 +1598,68 @@ export class BrewBrewingGraphComponent implements OnInit {
       }
     }
   }
+  public startFetchingDataFromMeticulous() {
+    const prepDeviceCall: MeticulousDevice = this.brewComponent
+      .brewBrewingPreparationDeviceEl.preparationDevice as MeticulousDevice;
 
+    this.stopFetchingDataFromMeticulous();
+
+    let hasShotStarted: boolean = false;
+    prepDeviceCall.connectToSocket().then(
+      (_connected) => {
+        if (_connected) {
+          setInterval(() => {
+            const shotData: MeticulousShotData =
+              prepDeviceCall.getActualShotData();
+
+            if (shotData.shotTime >= 0 && hasShotStarted === false) {
+              hasShotStarted = true;
+              this.startingFlowTime = Date.now();
+              const startingDay = moment(new Date()).startOf('day');
+              //IF brewtime has some seconds, we add this to the delay directly.
+              this.data.brew_time = 0;
+              this.brewComponent.timer.initTimer(false);
+              this.brewComponent.timer.startTimer(false, false);
+              this.lastChartRenderingInstance = -1;
+              this.updateChart();
+            } else if (shotData.shotTime === -1 && hasShotStarted === true) {
+              hasShotStarted = false;
+              this.brewComponent.timer.pauseTimer('meticulous');
+
+              this.stopFetchingDataFromMeticulous();
+              this.updateChart();
+              return;
+            }
+            if (hasShotStarted) {
+              this.__setPressureFlow({
+                actual: shotData.pressure,
+                old: shotData.pressure,
+              });
+              this.__setTemperatureFlow({
+                actual: shotData.temperature,
+                old: shotData.temperature,
+              });
+
+              this.__setFlowProfile({
+                actual: shotData.weight,
+                old: shotData.oldWeight,
+                smoothed: shotData.smoothedWeight,
+                oldSmoothed: shotData.oldSmoothedWeight,
+              });
+
+              //this.__setMachineWeightFlow({ actual: shotData.weight, old: shotData.weight,smoothed:100,oldSmoothed:100 });
+              //this.__setMachineWaterFlow({ actual: shotData.flow, old: shotData.flow });
+
+              this.setActualSmartInformation(shotData.weight);
+            }
+          }, 100);
+        }
+      },
+      () => {
+        //Should never trigger
+      }
+    );
+  }
   public startFetchingAndSettingDataFromXenia() {
     const prepDeviceCall: XeniaDevice = this.brewComponent
       ?.brewBrewingPreparationDeviceEl?.preparationDevice as XeniaDevice;
@@ -1638,6 +1707,12 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.xeniaOverviewInterval = undefined;
     }
   }
+  public stopFetchingDataFromMeticulous() {
+    if (this.meticulousInterval !== undefined) {
+      clearInterval(this.meticulousInterval);
+      this.meticulousInterval = undefined;
+    }
+  }
 
   public async timerStarted(_event) {
     if (this.brewComponent.timer.isTimerRunning()) {
@@ -1648,7 +1723,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
     const temperatureDevice: TemperatureDevice =
       this.bleManager.getTemperatureDevice();
-    if (!this.platform.is('cordova')) {
+    if (false && !this.platform.is('cordova')) {
       let weight = 0;
       let realtime_flow = 0;
       let flow = 0;
@@ -1820,20 +1895,17 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
         PreparationDeviceType.METICULOUS
     ) {
-      this.uiLog.log(`Xenia Script - Script start -  Trigger script`);
-      const prepDeviceCall: XeniaDevice = this.brewComponent
-        .brewBrewingPreparationDeviceEl.preparationDevice as XeniaDevice;
-      prepDeviceCall
-        .startScript(this.data.preparationDeviceBrew.params.scriptStartId)
-        .catch((_msg) => {
-          this.uiLog.log('We could not start script: ' + _msg);
-          this.uiToast.showInfoToast(
-            'We could not start script: ' + _msg,
-            false
-          );
-        });
+      if (
+        this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
+        PreparationDeviceType.METICULOUS
+      ) {
+        const prepDeviceCall: MeticulousDevice = this.brewComponent
+          .brewBrewingPreparationDeviceEl.preparationDevice as MeticulousDevice;
 
-      this.startFetchingAndSettingDataFromXenia();
+        // prepDeviceCall.getProfileAndSendToMachine(this.data.preparationDeviceBrew.params.chosenProfile);
+
+        this.startFetchingDataFromMeticulous();
+      }
     }
   }
 
@@ -2240,6 +2312,90 @@ export class BrewBrewingGraphComponent implements OnInit {
     } catch (ex) {}
   }
 
+  private __setMachineWaterFlow(_flow: any) {
+    /* Realtime flow start**/
+
+    const actual: number = this.uiHelper.toFixedIfNecessary(_flow.actual, 2);
+    const old: number = this.uiHelper.toFixedIfNecessary(_flow.old, 2);
+
+    const actualUnixTime: number = moment(new Date())
+      .startOf('day')
+      .add('milliseconds', Date.now() - this.startingFlowTime)
+      .toDate()
+      .getTime();
+
+    const flowObj = {
+      unixTime: actualUnixTime,
+      actual: actual,
+      old: old,
+      flowTime: this.flowTime,
+      flowTimeSecond: this.flowTime + '.' + this.flowSecondTick,
+      flowTimestamp: this.uiHelper.getActualTimeWithMilliseconds(),
+    };
+
+    const realtimeWaterFlow: IBrewRealtimeWaterFlow =
+      {} as IBrewRealtimeWaterFlow;
+
+    realtimeWaterFlow.brew_time = flowObj.flowTimeSecond;
+    realtimeWaterFlow.timestamp = flowObj.flowTimestamp;
+    realtimeWaterFlow.smoothed_weight = 0;
+    realtimeWaterFlow.flow_value = flowObj.actual;
+
+    this.realtimeFlowTrace.x.push(new Date(flowObj.unixTime));
+    this.realtimeFlowTrace.y.push(realtimeWaterFlow.flow_value);
+
+    this.flow_profile_raw.realtimeFlow.push(realtimeWaterFlow);
+    /* Realtime flow End **/
+  }
+
+  private __setMachineWeightFlow(_weight: any) {
+    // Nothing for storing etc. is done here actually
+    const actual: number = this.uiHelper.toFixedIfNecessary(_weight.actual, 2);
+    const old: number = this.uiHelper.toFixedIfNecessary(_weight.old, 2);
+
+    if (this.flowTime === undefined) {
+      this.flowTime = this.brewComponent.getTime();
+      this.flowSecondTick = 0;
+    }
+
+    const flowObj = {
+      unixTime: moment(new Date())
+        .startOf('day')
+        .add('milliseconds', Date.now() - this.startingFlowTime)
+        .toDate()
+        .getTime(),
+      weight: actual,
+      oldWeight: old,
+      smoothedWeight: actual,
+      oldSmoothedWeight: old,
+      flowTime: this.flowTime,
+      flowTimeSecond: this.flowTime + '.' + this.flowSecondTick,
+      flowTimestamp: this.uiHelper.getActualTimeWithMilliseconds(),
+      dateUnixTime: undefined,
+    };
+    flowObj.dateUnixTime = new Date(flowObj.unixTime);
+
+    if (this.flowTime !== this.brewComponent.getTime()) {
+      this.flowTime = this.brewComponent.getTime();
+      this.flowSecondTick = 0;
+    }
+
+    this.weightTrace.x.push(flowObj.dateUnixTime);
+    this.weightTrace.y.push(flowObj.weight);
+
+    this.pushFlowProfile(
+      flowObj.flowTimestamp,
+      flowObj.flowTimeSecond,
+      flowObj.weight,
+      flowObj.oldWeight,
+      flowObj.smoothedWeight,
+      flowObj.oldSmoothedWeight
+    );
+    this.updateChart();
+
+    this.flowSecondTick++;
+  }
+
   private __setPressureFlow(_pressure: any) {
     // Nothing for storing etc. is done here actually
     const actual: number = this.uiHelper.toFixedIfNecessary(
@@ -2364,6 +2520,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       1
     );
 
+    console.log(_scaleChange);
     if (this.flowTime === undefined) {
       this.flowTime = this.brewComponent.getTime();
     }
@@ -2704,6 +2861,8 @@ export class BrewBrewingGraphComponent implements OnInit {
     this.realtimeFlowTrace.y.push(realtimeWaterFlow.flow_value);
 
     this.flow_profile_raw.realtimeFlow.push(realtimeWaterFlow);
+    console.log('Realtime');
+    console.log(realtimeWaterFlow);
     /* Realtime flow End **/
 
     if (

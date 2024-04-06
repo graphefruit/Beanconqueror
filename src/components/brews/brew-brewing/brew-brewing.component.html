@@ -217,7 +217,9 @@
     <timer #brewTemperatureTime (timerTicked)="temperatureTimeChanged($event)"
            label-id='brewTemperatureTime' label="{{'BREW_DATA_TEMPERATURE_TIME' | translate}}" timeInSeconds="0"></timer>
   </ion-item>
-  <brew-brewing-graph #brewBrewingGraphEl [isEdit]='isEdit' [brewComponent]='this' [(data)]='data'></brew-brewing-graph>
+  <brew-brewing-graph   [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
+                      data.getPreparation().brew_order.while.brew_time,
+                      data.getPreparation().use_custom_parameters)" #brewBrewingGraphEl [isEdit]='isEdit' [brewComponent]='this' [(data)]='data'></brew-brewing-graph>
 
   <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.brew_time,
                       data.getPreparation().manage_parameters.brew_time,

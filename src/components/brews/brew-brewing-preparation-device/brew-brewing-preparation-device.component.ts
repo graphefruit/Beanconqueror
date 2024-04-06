@@ -5,7 +5,10 @@ import {
   XeniaDevice,
   XeniaParams,
 } from '../../../classes/preparationDevice/xenia/xeniaDevice';
-import { MeticulousDevice } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
+import {
+  MeticulousDevice,
+  MeticulousParams,
+} from '../../../classes/preparationDevice/meticulous/meticulousDevice';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { BrewBrewingComponent } from '../brew-brewing/brew-brewing.component';
@@ -234,11 +237,13 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     _brew: Brew = null
   ) {
     this.data.preparationDeviceBrew.type = PreparationDeviceType.METICULOUS;
-    this.data.preparationDeviceBrew.params = undefined;
+    this.data.preparationDeviceBrew.params = new MeticulousParams();
+
     await connectedDevice.connectToSocket().then(
       (_connected) => {
         if (_connected) {
           this.preparationDevice = connectedDevice as MeticulousDevice;
+          this.preparationDevice.loadProfiles();
         }
       },
       () => {
