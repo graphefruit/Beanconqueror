@@ -1629,12 +1629,18 @@ export class BrewBrewingGraphComponent implements OnInit {
               this.lastChartRenderingInstance = -1;
               this.updateChart();
             } else if (shotData.shotTime === -1 && hasShotStarted === true) {
-              hasShotStarted = false;
-              this.brewComponent.timer.pauseTimer('meticulous');
-
-              this.stopFetchingDataFromMeticulous();
-              this.updateChart();
-              return;
+              if (
+                this.settings
+                  .bluetooth_scale_espresso_stop_on_no_weight_change === false
+              ) {
+                hasShotStarted = false;
+                this.brewComponent.timer.pauseTimer('meticulous');
+                this.stopFetchingDataFromMeticulous();
+                this.updateChart();
+                return;
+              } else {
+                // We weight for the normal "setFlow" to stop the detection of the graph, there then aswell is the stop fetch of the xenia triggered.
+              }
             }
             if (hasShotStarted) {
               this.__setPressureFlow({
@@ -2560,7 +2566,6 @@ export class BrewBrewingGraphComponent implements OnInit {
       1
     );
 
-    console.log(_scaleChange);
     if (this.flowTime === undefined) {
       this.flowTime = this.brewComponent.getTime();
     }
@@ -2959,6 +2964,12 @@ export class BrewBrewingGraphComponent implements OnInit {
           PreparationDeviceType.XENIA
       ) {
         this.stopFetchingAndSettingDataFromXenia();
+      } else if (
+        this.brewComponent.brewBrewingPreparationDeviceEl.preparationDeviceConnected() &&
+        this.brewComponent.brewBrewingPreparationDeviceEl.getPreparationDeviceType() ===
+          PreparationDeviceType.METICULOUS
+      ) {
+        this.stopFetchingDataFromMeticulous();
       }
       // We have found a written weight which is above 5 grams at least
       this.__setScaleWeight(weight, false, false);
