@@ -33,6 +33,7 @@ import {
   IBrewTemperatureFlow,
   IBrewWaterFlow,
   IBrewWeightFlow,
+  IFinalWeight,
 } from '../../../classes/brew/brewFlow';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
@@ -1416,7 +1417,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     if (
       this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()
     ) {
-      //If users rests, we reset also drip time, else the script would not recognize it.
+      // If users rests, we reset also drip time, else the script would not recognize it.
       this.data.coffee_first_drip_time = 0;
       this.data.coffee_first_drip_time_milliseconds = 0;
     }
@@ -1542,7 +1543,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       _event !== 'xenia'
     ) {
       // If the event is not xenia, we pressed buttons, if the event was triggerd by xenia, timer already stopped.
-      //If we press pause, stop scripts.
+      // If we press pause, stop scripts.
       this.uiLog.log(`Xenia Script - Pause button pressed, stop script`);
       const prepDeviceCall: XeniaDevice = this.brewComponent
         ?.brewBrewingPreparationDeviceEl?.preparationDevice as XeniaDevice;
@@ -1552,7 +1553,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           false
         );
       });
-      /**TODOthis.writeExecutionTimeToNotes('Stop script', 0, this.getScriptName(0));**/
+      this.writeExecutionTimeToNotes('Stop script', 0, this.getScriptName(0));
       this.stopFetchingAndSettingDataFromXenia();
     }
 
@@ -1608,11 +1609,16 @@ export class BrewBrewingGraphComponent implements OnInit {
     prepDeviceCall.connectToSocket().then(
       (_connected) => {
         if (_connected) {
+          this.uiAlert.showLoadingSpinner(
+            'Profile is loaded, shot is starting soon'
+          );
           setInterval(() => {
             const shotData: MeticulousShotData =
               prepDeviceCall.getActualShotData();
 
             if (shotData.shotTime >= 0 && hasShotStarted === false) {
+              this.uiAlert.hideLoadingSpinner();
+              this.uiToast.showInfoToast('shot started');
               hasShotStarted = true;
               this.startingFlowTime = Date.now();
               const startingDay = moment(new Date()).startOf('day');
@@ -1881,13 +1887,13 @@ export class BrewBrewingGraphComponent implements OnInit {
               false
             );
           });
-        /**TODOthis.writeExecutionTimeToNotes(
-         'Start script',
-         this.data.preparationDeviceBrew.params.scriptStartId,
-         this.getScriptName(
-         this.data.preparationDeviceBrew.params.scriptStartId
-         )
-         );**/
+        this.writeExecutionTimeToNotes(
+          'Start script',
+          this.data.preparationDeviceBrew.params.scriptStartId,
+          this.getScriptName(
+            this.data.preparationDeviceBrew.params.scriptStartId
+          )
+        );
       }
       this.startFetchingAndSettingDataFromXenia();
     } else if (
@@ -2177,21 +2183,28 @@ export class BrewBrewingGraphComponent implements OnInit {
               } else {
                 n = this.flowProfileTempAll.length;
               }
-              const time_to_stop = Math.max(1 / n, 0.5);
+              const lagTime = Math.max(1 / n, 0);
 
               const lastFlowValue =
                 this.flow_profile_raw.realtimeFlow[
                   this.flow_profile_raw.realtimeFlow.length - 1
                 ].flow_value;
 
-              console.log({
-                T: time_to_stop,
-                F: lastFlowValue,
-                W: weight,
-              });
+              this.pushFinalWeight(
+                this.data.preparationDeviceBrew.params
+                  .scriptAtWeightReachedNumber,
+                lagTime,
+                this.flowTime + '.' + this.flowSecondTick,
+                lastFlowValue,
+                weight,
+                lastFlowValue * lagTime,
+                weight + lastFlowValue * lagTime >=
+                  this.data.preparationDeviceBrew.params
+                    .scriptAtWeightReachedNumber
+              );
 
               if (
-                weight + lastFlowValue * time_to_stop >=
+                weight + lastFlowValue * lagTime >=
                 this.data.preparationDeviceBrew.params
                   .scriptAtWeightReachedNumber
               ) {
@@ -2878,18 +2891,20 @@ export class BrewBrewingGraphComponent implements OnInit {
 
     realtimeWaterFlow.timestampdelta = timeStampDelta;
 
-    realtimeWaterFlow.flow_value =
+    let calcFlowValue =
       (newSmoothedWeight -
         this.flowProfileTempAll[this.flowProfileTempAll.length - n]
           .smoothedWeight) *
       (1000 / timeStampDelta);
+    if (Number.isNaN(calcFlowValue)) {
+      calcFlowValue = 0;
+    }
+    realtimeWaterFlow.flow_value = calcFlowValue;
 
     this.realtimeFlowTrace.x.push(flowObj.dateUnixTime);
     this.realtimeFlowTrace.y.push(realtimeWaterFlow.flow_value);
 
     this.flow_profile_raw.realtimeFlow.push(realtimeWaterFlow);
-    console.log('Realtime');
-    console.log(realtimeWaterFlow);
     /* Realtime flow End **/
 
     if (
@@ -3055,6 +3070,28 @@ export class BrewBrewingGraphComponent implements OnInit {
     pressureFlow.old_pressure = _oldPressure;
 
     this.flow_profile_raw.pressureFlow.push(pressureFlow);
+  }
+
+  private pushFinalWeight(
+    target_weight: number,
+    lag_time: number,
+    brew_time: string,
+    last_flow_value: number,
+    actual_scale_weight: number,
+    calc_lastflow_lag_time: number,
+    calc_exceeds_weight: boolean
+  ) {
+    const weightFlow: IFinalWeight = {} as IFinalWeight;
+    weightFlow.timestamp = this.uiHelper.getActualTimeWithMilliseconds();
+    weightFlow.brew_time = brew_time;
+    weightFlow.target_weight = target_weight;
+    weightFlow.lag_time = lag_time;
+    weightFlow.last_flow_value = last_flow_value;
+    weightFlow.actual_scale_weight = actual_scale_weight;
+    weightFlow.calc_lastflow_lag_time = calc_lastflow_lag_time;
+    weightFlow.calc_exceeds_weight = calc_exceeds_weight;
+
+    this.flow_profile_raw.finalWeight.push(weightFlow);
   }
 
   private pushTemperatureProfile(

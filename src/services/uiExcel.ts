@@ -191,6 +191,42 @@ export class UIExcel {
         this.translate.instant('Flow temperature')
       );
     }
+
+    if (_flow.hasOwnProperty('finalWeight')) {
+      const header_final_weight: Array<string> = [];
+      header_final_weight.push('target_weight');
+      header_final_weight.push('lag_time');
+      header_final_weight.push('brew_time');
+      header_final_weight.push('timestamp');
+      header_final_weight.push('last_flow_value');
+      header_final_weight.push('actual_scale_weight');
+      header_final_weight.push('calc_lastflow_lag_time');
+      header_final_weight.push('calc_exceeds_weight');
+
+      const wsDatafinalWeightFlow: any[][] = [header_final_weight];
+      for (const entry of _flow.finalWeight) {
+        const wbEntry: Array<any> = [
+          entry.target_weight,
+          entry.lag_time,
+          entry.brew_time,
+          entry.timestamp,
+          entry.last_flow_value,
+          entry.actual_scale_weight,
+          entry.calc_lastflow_lag_time,
+          entry.calc_exceeds_weight,
+        ];
+        wsDatafinalWeightFlow.push(wbEntry);
+      }
+      const wsFinalWeight: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(
+        wsDatafinalWeightFlow
+      );
+      XLSX.utils.book_append_sheet(
+        wb,
+        wsFinalWeight,
+        this.translate.instant('Final Weight')
+      );
+    }
+
     return wb;
   }
 

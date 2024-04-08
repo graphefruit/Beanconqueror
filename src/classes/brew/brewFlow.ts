@@ -4,6 +4,7 @@ export class BrewFlow {
   public realtimeFlow: Array<IBrewRealtimeWaterFlow>;
   public pressureFlow: Array<IBrewPressureFlow>;
   public temperatureFlow: Array<IBrewTemperatureFlow>;
+  public finalWeight: Array<IFinalWeight>;
 
   constructor() {
     this.weight = [];
@@ -11,6 +12,7 @@ export class BrewFlow {
     this.realtimeFlow = [];
     this.pressureFlow = [];
     this.temperatureFlow = [];
+    this.finalWeight = [];
   }
 }
 
@@ -54,4 +56,16 @@ export interface IBrewTemperatureFlow {
   old_temperature: number;
   brew_time: string;
   timestamp: string;
+}
+
+export interface IFinalWeight {
+  target_weight: number;
+  lag_time: number;
+  brew_time: string;
+  timestamp: string;
+  last_flow_value: number;
+  actual_scale_weight: number;
+
+  calc_lastflow_lag_time: number;
+  calc_exceeds_weight: boolean;
 }
