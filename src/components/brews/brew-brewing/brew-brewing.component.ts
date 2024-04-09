@@ -659,6 +659,18 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
           true
         );
         return;
+      } else if (
+        this.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&
+        this.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
+          PreparationDeviceType.METICULOUS
+      ) {
+        this.uiAlert.showMessage(
+          'BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_GENERAL_DESCRIPTION',
+          'BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_TITLE',
+          undefined,
+          true
+        );
+        return;
       }
     }
     await this.timerStarted(_event);

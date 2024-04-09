@@ -1606,7 +1606,8 @@
     "PREPARATION_DEVICE": {
         "TYPE": {
             "NONE": "None",
-            "XENIA": "Xenia"
+            "XENIA": "Xenia",
+            "METICULOUS": "Meticulous"
         },
         "URL": "Url",
         "CHOOSE_DEVICE": "Choose device",
@@ -1628,6 +1629,13 @@
             "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "The connection to the xenia espresso machine could not be established. Please make sure you're on the right network (LAN), if you entered the right IP address, etc.",
             "CHECKING_CONNECTION_TO_PORTAFILTER": "Connection to Xenia is being checked",
             "GRABING_SCRIPTS": "Loading scripts from Xenia"
+        },
+        "TYPE_METICULOUS": {
+          "TITLE": "Meticulous Machine",
+          "NO_PROFILE": "No Profile",
+          "CHOOSE_PROFILE": "Choose profile",
+          "SHOT_STARTED": "Shot started",
+          "SHOT_ENDED": "Shot ended"
         }
     },
     "DEVICE_CONNECTION": "Device connection",
@@ -1782,5 +1790,6 @@
     "AUTOMATIC_BACKUP_DID_FAIL":"Auto Backup did not work, make sure to have working backups! This information can be turned off in the settings",
     "INTERNAL_BACKUP_DID_FAIL":"Internal Backup did not work, make sure to have working backups! This information can be turned off in the settings",
     "ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD":"ZIP file could not be saved! This information can be turned off in the settings",
-    "SEND_LOGS": "Send logs"
+    "SEND_LOGS": "Send logs",
+    "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_GENERAL_DESCRIPTION": "You need to reset your timer first before you can start"
 }

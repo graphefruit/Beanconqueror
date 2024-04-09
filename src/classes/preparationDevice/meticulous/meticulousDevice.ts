@@ -2,7 +2,11 @@ import { PreparationDevice } from '../preparationDevice';
 import { HttpClient } from '@angular/common/http';
 import { Preparation } from '../../preparation/preparation';
 import { MeticulousShotData } from './meticulousShotData';
-import Api, { ApiResponseError, ProfileIdent } from 'meticulous-api/dist/index';
+import Api, {
+  ApiResponseError,
+  ProfileIdent,
+  ActionType,
+} from 'meticulous-api';
 
 import { IMeticulousParams } from '../../../interfaces/preparationDevices/meticulous/iMeticulousParams';
 import { Profile } from 'meticulous-typescript-profile';
@@ -21,7 +25,10 @@ export class MeticulousDevice extends PreparationDevice {
   constructor(protected httpClient: HttpClient, _preparation: Preparation) {
     super(httpClient, _preparation);
     this.meticulousShotData = undefined;
-    this.metApi = new Api(_preparation.connectedPreparationDevice.url);
+    this.metApi = new Api(
+      undefined,
+      _preparation.connectedPreparationDevice.url
+    );
 
     if (typeof cordova !== 'undefined') {
     }
@@ -46,16 +53,36 @@ export class MeticulousDevice extends PreparationDevice {
     } catch (ex) {}
     return undefined;
   }
-  public async loadProfile(_profile: Profile) {
-    const profileResponse = await this.metApi.loadProfile(_profile);
+
+  public async loadProfileByID(_profileId: string) {
+    try {
+      const loadProfile = await this.metApi.loadProfileByID(_profileId);
+
+      if (loadProfile instanceof ApiResponseError) {
+      } else {
+        const profile = loadProfile.data as unknown as Profile;
+        return profile;
+      }
+    } catch (ex) {
+      console.log(ex.message);
+    }
+    return undefined;
   }
 
-  public async getProfileAndSendToMachine(_profileId: string) {
-    const profile: Profile = await this.getProfile(_profileId);
-    if (profile !== undefined) {
-      await this.loadProfile(profile);
-    }
+  public async startExecute() {
+    try {
+      const action: ActionType = 'start';
+      const execute = await this.metApi.executeAction(action);
+    } catch (ex) {}
   }
+
+  public async tareScale() {
+    try {
+      const action: ActionType = 'tare';
+      const tareResponse = await this.metApi.executeAction(action);
+    } catch (ex) {}
+  }
+
   public async loadProfiles() {
     try {
       if (this._profiles.length <= 0) {
@@ -168,6 +195,8 @@ export class MeticulousDevice extends PreparationDevice {
 }
 
 export class MeticulousParams implements IMeticulousParams {
-  public chosenProfile: ProfileIdent;
-  constructor() {}
+  public chosenProfileId: string;
+  constructor() {
+    this.chosenProfileId = '';
+  }
 }

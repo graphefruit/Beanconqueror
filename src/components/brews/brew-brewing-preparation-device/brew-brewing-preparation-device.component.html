@@ -54,14 +54,14 @@
   </ion-item>
 </ion-card>
 <ion-card *ngIf="preparationDeviceConnected() && getPreparationDeviceType() === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS" class="popover" style="display:flex; flex-direction: column;">
-  <ion-item lines="none">Meticulous
+  <ion-item lines="none">
     <span class="ion-title ion-padding-top">{{"PREPARATION_DEVICE.TYPE_METICULOUS.TITLE" | translate }}</span>
   </ion-item>
   <ion-item lines="inset">
-    <ion-select label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_METICULOUS.CHOOSE_PROFILE" | translate}}' [interfaceOptions]="customXeniaOptions" [(ngModel)]="data.preparationDeviceBrew?.params.chosenProfile"
+    <ion-select label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_METICULOUS.CHOOSE_PROFILE" | translate}}' [interfaceOptions]="customXeniaOptions" [(ngModel)]="data.preparationDeviceBrew?.params.chosenProfileId"
                 placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
-      <ion-select-option [value]="0">
-        {{"PREPARATION_DEVICE.TYPE_METICULOUS.NONE" | translate}}
+      <ion-select-option [value]="''">
+        {{"PREPARATION_DEVICE.TYPE_METICULOUS.NO_PROFILE" | translate}}
       </ion-select-option>
       <ion-select-option *ngFor='let profiles of preparationDevice?.getProfiles()' [value]='profiles.id'>
         {{profiles.name}}

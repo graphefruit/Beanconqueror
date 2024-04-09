@@ -1556,6 +1556,14 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.writeExecutionTimeToNotes('Stop script', 0, this.getScriptName(0));
       this.stopFetchingAndSettingDataFromXenia();
     }
+    if (
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
+        PreparationDeviceType.METICULOUS &&
+      _event !== 'meticulous'
+    ) {
+      this.stopFetchingDataFromMeticulous();
+    }
 
     if (!this.platform.is('cordova')) {
       window.clearInterval(this.graphTimerTest);
@@ -1612,35 +1620,40 @@ export class BrewBrewingGraphComponent implements OnInit {
           this.uiAlert.showLoadingSpinner(
             'Profile is loaded, shot is starting soon'
           );
-          setInterval(() => {
+          let lastState = '';
+          this.meticulousInterval = setInterval(() => {
             const shotData: MeticulousShotData =
               prepDeviceCall.getActualShotData();
 
             if (shotData.shotTime >= 0 && hasShotStarted === false) {
               this.uiAlert.hideLoadingSpinner();
-              this.uiToast.showInfoToast('shot started');
+              this.uiToast.showInfoToast(
+                'PREPARATION_DEVICE.TYPE_METICULOUS.SHOT_STARTED'
+              );
               hasShotStarted = true;
               this.startingFlowTime = Date.now();
               const startingDay = moment(new Date()).startOf('day');
-              //IF brewtime has some seconds, we add this to the delay directly.
+              // IF brewtime has some seconds, we add this to the delay directly.
               this.data.brew_time = 0;
               this.brewComponent.timer.initTimer(false);
               this.brewComponent.timer.startTimer(false, false);
               this.lastChartRenderingInstance = -1;
               this.updateChart();
-            } else if (shotData.shotTime === -1 && hasShotStarted === true) {
-              if (
-                this.settings
-                  .bluetooth_scale_espresso_stop_on_no_weight_change === false
-              ) {
-                hasShotStarted = false;
-                this.brewComponent.timer.pauseTimer('meticulous');
-                this.stopFetchingDataFromMeticulous();
-                this.updateChart();
-                return;
-              } else {
-                // We weight for the normal "setFlow" to stop the detection of the graph, there then aswell is the stop fetch of the xenia triggered.
-              }
+            } else if (
+              shotData.shotTime === -1 &&
+              hasShotStarted === true &&
+              lastState === 'retracting' &&
+              shotData.status !== 'retracting'
+            ) {
+              hasShotStarted = false;
+
+              this.brewComponent.timer.pauseTimer('meticulous');
+              this.stopFetchingDataFromMeticulous();
+              this.updateChart();
+              this.uiToast.showInfoToast(
+                'PREPARATION_DEVICE.TYPE_METICULOUS.SHOT_ENDED'
+              );
+              return;
             }
             if (hasShotStarted) {
               this.__setPressureFlow({
@@ -1664,6 +1677,7 @@ export class BrewBrewingGraphComponent implements OnInit {
 
               this.setActualSmartInformation(shotData.weight);
             }
+            lastState = shotData.status;
           }, 100);
         }
       },
@@ -1914,8 +1928,19 @@ export class BrewBrewingGraphComponent implements OnInit {
         const prepDeviceCall: MeticulousDevice = this.brewComponent
           .brewBrewingPreparationDeviceEl.preparationDevice as MeticulousDevice;
 
-        // prepDeviceCall.getProfileAndSendToMachine(this.data.preparationDeviceBrew.params.chosenProfile);
-
+        if (this.data.preparationDeviceBrew.params.chosenProfileId !== '') {
+          this.uiLog.log(
+            `A Meticulous profile was choosen, execute it - ${this.data.preparationDeviceBrew.params.chosenProfileId}`
+          );
+          await prepDeviceCall.loadProfileByID(
+            this.data.preparationDeviceBrew.params.chosenProfileId
+          );
+          await prepDeviceCall.startExecute();
+        } else {
+          this.uiLog.log(
+            'No Meticulous profile was selected, just listen for the start'
+          );
+        }
         this.startFetchingDataFromMeticulous();
       }
     }
@@ -2196,6 +2221,7 @@ export class BrewBrewingGraphComponent implements OnInit {
                   this.flow_profile_raw.realtimeFlow.length - 1
                 ].flow_value;
 
+              const overShootWeight: number = 3;
               this.pushFinalWeight(
                 this.data.preparationDeviceBrew.params
                   .scriptAtWeightReachedNumber,
@@ -2204,13 +2230,13 @@ export class BrewBrewingGraphComponent implements OnInit {
                 lastFlowValue,
                 weight,
                 lastFlowValue * lagTime,
-                weight + lastFlowValue * lagTime >=
+                weight + lastFlowValue * lagTime + overShootWeight >=
                   this.data.preparationDeviceBrew.params
                     .scriptAtWeightReachedNumber
               );
 
               if (
-                weight + lastFlowValue * lagTime >=
+                weight + lastFlowValue * lagTime + overShootWeight >=
                 this.data.preparationDeviceBrew.params
                   .scriptAtWeightReachedNumber
               ) {
@@ -2314,6 +2340,7 @@ export class BrewBrewingGraphComponent implements OnInit {
 
     this.deattachToScaleListening();
     this.stopFetchingAndSettingDataFromXenia();
+    this.stopFetchingDataFromMeticulous();
   }
 
   public ngOnDestroy() {
@@ -2964,19 +2991,27 @@ export class BrewBrewingGraphComponent implements OnInit {
           PreparationDeviceType.XENIA
       ) {
         this.stopFetchingAndSettingDataFromXenia();
-      } else if (
+      }
+
+      let isMeticulous: boolean = false;
+
+      if (
         this.brewComponent.brewBrewingPreparationDeviceEl.preparationDeviceConnected() &&
         this.brewComponent.brewBrewingPreparationDeviceEl.getPreparationDeviceType() ===
           PreparationDeviceType.METICULOUS
       ) {
-        this.stopFetchingDataFromMeticulous();
+        isMeticulous = true;
       }
-      // We have found a written weight which is above 5 grams at least
-      this.__setScaleWeight(weight, false, false);
-      this.brewComponent.timer.pauseTimer();
-      this.changeDetectorRef.markForCheck();
-      this.brewComponent.timer.checkChanges();
-      this.checkChanges();
+
+      // Meticulous is stopped by status, not by Beanconqueror logic
+      if (!isMeticulous) {
+        // We have found a written weight which is above 5 grams at least
+        this.__setScaleWeight(weight, false, false);
+        this.brewComponent.timer.pauseTimer();
+        this.changeDetectorRef.markForCheck();
+        this.brewComponent.timer.checkChanges();
+        this.checkChanges();
+      }
     }
 
     this.flowSecondTick = this.flowSecondTick + 1;
