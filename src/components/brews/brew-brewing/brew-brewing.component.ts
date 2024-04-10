@@ -42,14 +42,7 @@ import { Subscription } from 'rxjs';
 
 import { UIHelper } from '../../../services/uiHelper';
 import { UIExcel } from '../../../services/uiExcel';
-import {
-  BrewFlow,
-  IBrewPressureFlow,
-  IBrewRealtimeWaterFlow,
-  IBrewTemperatureFlow,
-  IBrewWaterFlow,
-  IBrewWeightFlow,
-} from '../../../classes/brew/brewFlow';
+
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { BrewFlowComponent } from '../../../app/brew/brew-flow/brew-flow.component';
 import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
@@ -60,30 +53,21 @@ import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
 } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
-import {
-  BluetoothScale,
-  SCALE_TIMER_COMMAND,
-  ScaleType,
-} from '../../../classes/devices';
-import { IBrewGraphs } from '../../../interfaces/brew/iBrewGraphs';
+import { BluetoothScale } from '../../../classes/devices';
+
 import { BrewRatioCalculatorComponent } from '../../../app/brew/brew-ratio-calculator/brew-ratio-calculator.component';
-import { PreparationDevice } from '../../../classes/preparationDevice/preparationDevice';
+
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
-import {
-  XeniaDevice,
-  XeniaParams,
-} from '../../../classes/preparationDevice/xenia/xeniaDevice';
-import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
+import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
+
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { RefractometerDevice } from 'src/classes/devices/refractometerBluetoothDevice';
 import { UIToast } from '../../../services/uiToast';
 import { UILog } from '../../../services/uiLog';
 import { BrewMaximizeControlsComponent } from '../../../app/brew/brew-maximize-controls/brew-maximize-controls.component';
-import { BrewChooseGraphReferenceComponent } from '../../../app/brew/brew-choose-graph-reference/brew-choose-graph-reference.component';
-import BeanconquerorFlowTestDataDummy from '../../../assets/BeanconquerorFlowTestDataFifth.json';
+
 import { ReferenceGraph } from '../../../classes/brew/referenceGraph';
-import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
+
 import { AppEventType } from '../../../enums/appEvent/appEvent';
 import { EventQueueService } from '../../../services/queueService/queue-service.service';
 import { BrewPopoverExtractionComponent } from 'src/app/brew/brew-popover-extraction/brew-popover-extraction.component';
@@ -92,7 +76,6 @@ import { BrewBrewingGraphComponent } from '../brew-brewing-graph/brew-brewing-gr
 import { BrewBrewingPreparationDeviceComponent } from '../brew-brewing-preparation-device/brew-brewing-preparation-device.component';
 
 declare var cordova;
-declare var Plotly;
 
 @Component({
   selector: 'brew-brewing',
@@ -748,24 +731,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.data.coffee_blooming_time = 0;
       this.data.coffee_blooming_time_milliseconds = 0;
     }
-  }
-
-  public preparationDeviceConnected(): boolean {
-    if (
-      this.preparationDevice &&
-      this.data.preparationDeviceBrew.type !== PreparationDeviceType.NONE
-    ) {
-      return true;
-    }
-    return false;
-  }
-  public getPreparationDeviceType() {
-    if (this.preparationDevice instanceof XeniaDevice) {
-      return PreparationDeviceType.XENIA;
-    } else if (this.preparationDevice instanceof MeticulousDevice) {
-      return PreparationDeviceType.METICULOUS;
-    }
-    return PreparationDeviceType.NONE;
   }
 
   public getPreparation(): Preparation {

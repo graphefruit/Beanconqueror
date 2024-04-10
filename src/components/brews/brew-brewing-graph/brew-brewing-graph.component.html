@@ -2,17 +2,17 @@
                       data.getPreparation().brew_order.while.brew_time,
                       data.getPreparation().use_custom_parameters)" class="ion-padding-bottom-half" lines="none">
   <div class="ion-text-center" style="width:100%">
-    <ion-chip (click)="toggleChartLines('weight')" *ngIf="smartScaleConnected()"
+    <ion-chip (click)="toggleChartLines('weight')" *ngIf="smartScaleConnected() || ( brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&  brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)"
               [outline]="!this.weightTrace?.visible" class="weight">{{'BREW_FLOW_WEIGHT' | translate}}</ion-chip>
-    <ion-chip (click)="toggleChartLines('calc_flow')" *ngIf="smartScaleConnected()"
+    <ion-chip (click)="toggleChartLines('calc_flow')" *ngIf="smartScaleConnected() || ( brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&  brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)"
               [outline]="!this.flowPerSecondTrace?.visible" class="flowcalculated">{{'BREW_FLOW_WEIGHT_PER_SECOND' |
       translate}}</ion-chip>
-    <ion-chip (click)="toggleChartLines('realtime_flow')" *ngIf="smartScaleConnected()"
+    <ion-chip (click)="toggleChartLines('realtime_flow')" *ngIf="smartScaleConnected() || ( brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&  brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)"
               [outline]="!this.realtimeFlowTrace?.visible" class="flowreal">{{'BREW_FLOW_WEIGHT_REALTIME' |
       translate}}</ion-chip>
-    <ion-chip (click)="toggleChartLines('pressure')" *ngIf="pressureDeviceConnected() && getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO"
+    <ion-chip (click)="toggleChartLines('pressure')" *ngIf="(pressureDeviceConnected() && getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO) || ( brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected())"
               [outline]="!this.pressureTrace?.visible" class="pressure">{{'BREW_PRESSURE_FLOW' | translate}}</ion-chip>
-    <ion-chip (click)="toggleChartLines('temperature')" *ngIf="temperatureDeviceConnected()"
+    <ion-chip (click)="toggleChartLines('temperature')" *ngIf="temperatureDeviceConnected() || ( brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected())"
               [outline]="!this.temperatureTrace?.visible" class="temperature">{{'BREW_TEMPERATURE_REALTIME' |
       translate}}</ion-chip>
   </div>

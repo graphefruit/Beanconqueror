@@ -185,6 +185,13 @@ export class BrewBrewingGraphComponent implements OnInit {
       await this.__connectTemperatureDevice(true);
       isSomethingConnected = true;
     }
+    if (
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
+        PreparationDeviceType.METICULOUS
+    ) {
+      isSomethingConnected = true;
+    }
     if (isSomethingConnected === true) {
       this.initializeFlowChart();
     }
@@ -320,6 +327,14 @@ export class BrewBrewingGraphComponent implements OnInit {
   }
 
   public getGraphIonColSize() {
+    if (
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
+        PreparationDeviceType.METICULOUS
+    ) {
+      return 3;
+    }
+
     let bluetoothDeviceConnections = 0;
     let smartScaleConnected: boolean = false;
     if (
