@@ -106,6 +106,40 @@
         <splash density="port-xxxhdpi" src="resources/android/splash/drawable-port-xxxhdpi-screen.png" />
     </platform>
     <platform name="ios">
+        <privacy-manifest>
+            <key>NSPrivacyTracking</key>
+            <true />
+            <key>NSPrivacyCollectedDataTypes</key>
+            <array>
+              <dict>
+                <key>NSPrivacyCollectedDataType</key>
+                <string>NSPrivacyCollectedDataTypeEmailAddress</string>
+                <key>NSPrivacyCollectedDataTypeLinked</key>
+                <false/>
+                <key>NSPrivacyCollectedDataTypeTracking</key>
+                <false/>
+                <key>NSPrivacyCollectedDataTypePurposes</key>
+                <array>
+                  <string>NSPrivacyCollectedDataTypePurposeAnalytics</string>
+                </array>
+              </dict>
+            </array>
+            <key>NSPrivacyAccessedAPITypes</key>
+            <array>
+                <dict>
+                    <key>NSPrivacyAccessedAPIType</key>
+                    <string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+                    <key>NSPrivacyAccessedAPITypeReasons</key>
+                    <array>
+                        <string>CA92.1</string>
+                    </array>
+                </dict>
+            </array>
+            <key>NSPrivacyTrackingDomains</key>
+            <array>
+                <string>analytics-beanconqueror.com</string>
+            </array>
+        </privacy-manifest>
         <preference name="deployment-target" value="14.0" />
         <preference name="BackupWebStorage" value="cloud" />
         <preference name="WKWebViewOnly" value="true" />

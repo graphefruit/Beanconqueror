@@ -113,11 +113,19 @@ export abstract class StorageClass {
           this.uiLog.error(
             `Storage - Update  - Unsucessfully - ${_obj.config.uuid} - not found`
           );
+          this.uiHelper.showAlert(
+            `Storage - Update  - Unsucessfully - ${_obj.config.uuid} - not found`,
+            'CRITICAL ERROR'
+          );
         }
         resolve(false);
       } catch (ex) {
         this.uiLog.error(
           `Storage - Update  - Unsucessfully - Execption occured- ${ex.message}`
+        );
+        this.uiHelper.showAlert(
+          `Storage - Update  - Unsucessfully - Execption occured- ${ex.message}`,
+          'CRITICAL ERROR'
         );
         resolve(false);
       }
