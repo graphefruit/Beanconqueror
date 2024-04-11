@@ -656,6 +656,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         return;
       }
     }
+    await this.brewBrewingGraphEl.timerStartPressed();
     await this.timerStarted(_event);
     this.timer.startTimer();
   }

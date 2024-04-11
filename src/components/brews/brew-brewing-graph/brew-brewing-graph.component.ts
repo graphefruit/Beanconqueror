@@ -101,6 +101,8 @@ export class BrewBrewingGraphComponent implements OnInit {
   public temperatureDeviceSubscription: Subscription = undefined;
   private scaleFlowChangeSubscription: Subscription = undefined;
   private scaleListeningSubscription: Subscription = undefined;
+  private scaleStartTareListeningSubscription: Subscription = undefined;
+
   private flowProfileArr = [];
   private flowProfileArrObjs = [];
   private flowProfileArrCalculated = [];
@@ -1755,6 +1757,42 @@ export class BrewBrewingGraphComponent implements OnInit {
     }
   }
 
+  public async timerStartPressed() {
+    const scale: BluetoothScale = this.bleManager.getScale();
+    if (scale) {
+      if (this.settings.bluetooth_scale_tare_on_start_timer === true) {
+        await new Promise(async (resolve) => {
+          await this.uiAlert.showLoadingSpinner();
+          scale.tare();
+          let minimumWeightNullReports = 0;
+          let weightReports = 0;
+          this.deattachToScaleStartTareListening();
+          this.scaleStartTareListeningSubscription = scale.flowChange.subscribe(
+            (_val) => {
+              const weight: number = this.uiHelper.toFixedIfNecessary(
+                _val.actual,
+                1
+              );
+              weightReports = weightReports + 1;
+              if (weight <= 0) {
+                minimumWeightNullReports = minimumWeightNullReports + 1;
+              }
+              if (minimumWeightNullReports >= 3) {
+                this.deattachToScaleStartTareListening();
+                resolve(undefined);
+              } else if (weightReports > 20) {
+                // We hope this should be never called?!
+                this.deattachToScaleStartTareListening();
+                resolve(undefined);
+              }
+            }
+          );
+        });
+        await this.uiAlert.hideLoadingSpinner();
+      }
+    }
+  }
+
   public async timerStarted(_event) {
     if (this.brewComponent.timer.isTimerRunning()) {
       //Maybe we got temperature threshold, bar threshold, and weight threshold, it could be three triggers. so we ignore that one
@@ -2044,6 +2082,12 @@ export class BrewBrewingGraphComponent implements OnInit {
     if (this.scaleListeningSubscription) {
       this.scaleListeningSubscription.unsubscribe();
       this.scaleListeningSubscription = undefined;
+    }
+  }
+  public deattachToScaleStartTareListening() {
+    if (this.scaleStartTareListeningSubscription) {
+      this.scaleStartTareListeningSubscription.unsubscribe();
+      this.scaleStartTareListeningSubscription = undefined;
     }
   }
 
@@ -2354,6 +2398,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     this.deattachToTemperatureChange();
 
     this.deattachToScaleListening();
+    this.deattachToScaleStartTareListening();
     this.stopFetchingAndSettingDataFromXenia();
     this.stopFetchingDataFromMeticulous();
   }
