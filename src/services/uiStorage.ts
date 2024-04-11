@@ -32,10 +32,10 @@ export class UIStorage {
         new AppEvent(AppEventType.STORAGE_CHANGED, undefined)
       );
       try {
-        const data = await this.storage.set(_key, _val);
+        await this.storage.set(_key, _val);
         resolve(true);
       } catch (ex) {
-        resolve(true);
+        resolve(false);
       }
     });
     return promise;

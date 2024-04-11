@@ -253,16 +253,31 @@ export abstract class StorageClass {
   }
 
   private async __save() {
-    await this.uiStorage.set(this.DB_PATH, this.storedData).then(
-      (e) => {
-        this.uiLog.log('Storage - Save - Successfully');
-      },
-      (e) => {
-        this.uiLog.error(
-          `Storage - Save - Unsuccessfully - ${JSON.stringify(e)}`
-        );
-        this.uiHelper.showAlert(e.message, 'CRITICAL ERROR');
-      }
-    );
+    try {
+      await this.uiStorage.set(this.DB_PATH, this.storedData).then(
+        (_saved) => {
+          if (_saved === true) {
+            this.uiLog.log('Storage - Save - Successfully');
+          } else {
+            this.uiLog.error(`Storage - Save - Unsuccessfully`);
+            this.uiHelper.showAlert(
+              'Storage - Save - Unsuccessfully',
+              'CRITICAL ERROR'
+            );
+          }
+        },
+        (e) => {
+          this.uiLog.error(
+            `Storage - Save - Unsuccessfully - ${JSON.stringify(e)}`
+          );
+          this.uiHelper.showAlert(e.message, 'CRITICAL ERROR');
+        }
+      );
+    } catch (ex) {
+      this.uiLog.error(
+        `Storage - Save - Unsuccessfully - ${JSON.stringify(ex)}`
+      );
+      this.uiHelper.showAlert(ex.message, 'CRITICAL ERROR');
+    }
   }
 }
