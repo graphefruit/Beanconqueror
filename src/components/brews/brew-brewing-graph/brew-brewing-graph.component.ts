@@ -1994,6 +1994,14 @@ export class BrewBrewingGraphComponent implements OnInit {
             'No Meticulous profile was selected, just listen for the start'
           );
         }
+
+        if (
+          this.settings.bluetooth_scale_maximize_on_start_timer === true &&
+          this.brewComponent.maximizeFlowGraphIsShown === false
+        ) {
+          this.brewComponent.maximizeFlowGraph();
+        }
+
         this.startFetchingDataFromMeticulous();
       }
     }
