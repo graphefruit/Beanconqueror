@@ -3010,7 +3010,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     if (
       this.data.getPreparation().style_type ===
         PREPARATION_STYLE_TYPE.ESPRESSO &&
-      flowObj.weight > 0
+      flowObj.weight >= this.settings.bluetooth_scale_first_drip_threshold
     ) {
       // If the drip timer is showing, we can set the first drip and not doing a reference to the normal weight.
       if (
