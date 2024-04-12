@@ -1791,5 +1791,10 @@
     "INTERNAL_BACKUP_DID_FAIL":"Internal Backup did not work, make sure to have working backups! This information can be turned off in the settings",
     "ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD":"ZIP file could not be saved! This information can be turned off in the settings",
     "SEND_LOGS": "Send logs",
-    "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_GENERAL_DESCRIPTION": "You need to reset your timer first before you can start"
+    "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_GENERAL_DESCRIPTION": "You need to reset your timer first before you can start",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD": "First drip threshold",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD_TOOLTIP": "At which scale weight, shall the first drip be count? Default: >= 0.1g",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE": "Start brew delay",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE_DESCRIPTION": "Set a delay time which will display a loading spinner until the brew will start",
+    "PLEASE_WAIT_TIME": "Please wait... {{time}}"
 }

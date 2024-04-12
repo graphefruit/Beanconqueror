@@ -10,6 +10,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { FilesystemErrorPopoverComponent } from '../popover/filesystem-error-popover/filesystem-error-popover.component';
 import { LoadingPopoverComponent } from '../popover/loading-popover/loading-popover.component';
 import { UILog } from './uiLog';
+import { EventQueueService } from './queueService/queue-service.service';
+import { AppEvent } from '../classes/appEvent/appEvent';
+import { AppEventType } from '../enums/appEvent/appEvent';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +23,8 @@ export class UIAlert {
     private readonly translate: TranslateService,
     private readonly modalController: ModalController,
     private readonly loadingController: LoadingController,
-    private readonly uiLog: UILog
+    private readonly uiLog: UILog,
+    private eventQueue: EventQueueService
   ) {}
 
   private existingLoadingSpinners = [];
@@ -47,13 +51,15 @@ export class UIAlert {
 
   public setLoadingSpinnerMessage(message: string, translate: boolean = false) {
     if (this.existingLoadingSpinners.length > 0) {
-      for (const spinner of this.existingLoadingSpinners) {
-        if (translate === false) {
-          spinner.message = message;
-        } else {
-          spinner.message = this.translate.instant(message);
-        }
+      let internMessage = '';
+      if (translate === false) {
+        internMessage = message;
+      } else {
+        internMessage = this.translate.instant(message);
       }
+      this.eventQueue.dispatch(
+        new AppEvent(AppEventType.UPDATE_LOADING_SPINNER_MESSAGE, internMessage)
+      );
     }
   }
 

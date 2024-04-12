@@ -657,6 +657,32 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
     }
     await this.brewBrewingGraphEl.timerStartPressed();
+
+    if (this.settings.brew_timer_start_delay_active) {
+      await new Promise((resolve) => {
+        let delayCounter = this.settings.brew_timer_start_delay_time;
+        this.uiAlert.showLoadingSpinner(
+          this.translate.instant('PLEASE_WAIT_TIME', {
+            time: delayCounter,
+          })
+        );
+        const delayIntv = setInterval(() => {
+          delayCounter = delayCounter - 1;
+          if (delayCounter <= 0) {
+            this.uiAlert.hideLoadingSpinner();
+            clearInterval(delayIntv);
+            resolve(undefined);
+          } else {
+            this.uiAlert.setLoadingSpinnerMessage(
+              this.translate.instant('PLEASE_WAIT_TIME', {
+                time: delayCounter,
+              }),
+              false
+            );
+          }
+        }, 1000);
+      });
+    }
     await this.timerStarted(_event);
     this.timer.startTimer();
   }
