@@ -120,7 +120,6 @@
     "cordova-plugin-inappbrowser": "^5.0.0",
     "cordova-plugin-insomnia": "^4.3.0",
     "cordova-plugin-ionic-webview": "^5.0.1",
-    "cordova-plugin-nativestorage": "^2.3.2",
     "cordova-plugin-screen-orientation": "^3.0.2",
     "cordova-plugin-splashscreen": "^6.0.1",
     "cordova-plugin-x-socialsharing": "^6.0.4",
@@ -129,6 +128,7 @@
     "es6-promise-plugin": "^4.2.2",
     "husky": "^8.0.1",
     "ionic-plugin-deeplinks": "^1.0.22",
+    "ischemaview-cordova-plugin-nativestorage": "github:ischemaview/cordova-plugin-nativestorage",
     "jasmine-core": "~3.8.0",
     "jasmine-spec-reporter": "~5.0.0",
     "karma": "^6.3.9",
@@ -232,7 +232,7 @@
       "cordova-plugin-geolocation": {
         "GPS_REQUIRED": "false"
       },
-      "cordova-plugin-nativestorage": {}
+      "ischemaview-cordova-plugin-nativestorage": {}
     },
     "platforms": [
       "android",

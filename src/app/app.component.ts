@@ -293,6 +293,7 @@ export class AppComponent implements AfterViewInit {
   private __appReady(): void {
     this.uiLog.log(`App Ready, wait for Platform ready`);
     this.platform.ready().then(async () => {
+      await this.uiStorage.init();
       try {
         // #285 - Add more device loggings
         this.uiLog.log(`Device-Model: ${this.device.model}`);
@@ -303,11 +304,12 @@ export class AppComponent implements AfterViewInit {
           const versionCode: string | number =
             await this.appVersion.getVersionNumber();
           this.uiLog.log(`App-Version: ${versionCode}`);
-          this.uiLog.log(`Storage-Driver: ${this.storage.driver}`);
+          this.uiLog.log(
+            `Storage-Driver: ${this.uiStorage.getStorage().driver}`
+          );
         }
       } catch (ex) {}
 
-      await this.uiStorage.init();
       try {
         Logger.attachOnLog().subscribe((_msg) => {
           if (_msg.type === 'LOG') {

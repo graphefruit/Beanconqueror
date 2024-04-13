@@ -137,6 +137,8 @@ export class BrewBrewingGraphComponent implements OnInit {
 
   public settings: Settings = undefined;
 
+  public machineStopScriptWasTriggered: boolean = false;
+
   constructor(
     private readonly platform: Platform,
     private readonly bleManager: CoffeeBluetoothDevicesService,
@@ -1554,11 +1556,12 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.updateChart();
     }
 
+    // If machineStopScriptWasTriggered would be true, we would already hit the weight mark, and therefore the stop was fired, and we don't fire it twice.
     if (
       this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&
       this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
         PreparationDeviceType.XENIA &&
-      _event !== 'xenia'
+      this.machineStopScriptWasTriggered === false
     ) {
       // If the event is not xenia, we pressed buttons, if the event was triggerd by xenia, timer already stopped.
       // If we press pause, stop scripts.
@@ -1571,7 +1574,13 @@ export class BrewBrewingGraphComponent implements OnInit {
           false
         );
       });
-      this.writeExecutionTimeToNotes('Stop script', 0, this.getScriptName(0));
+      this.writeExecutionTimeToNotes(
+        'Stop script',
+        0,
+        this.translate.instant(
+          'PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_STOP'
+        )
+      );
       this.stopFetchingAndSettingDataFromXenia();
     }
     if (
@@ -2259,7 +2268,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     if (scale) {
       this.deattachToWeightChange();
 
-      let xeniaScriptStopWasTriggered: boolean = false;
+      this.machineStopScriptWasTriggered = false;
       this.scaleFlowSubscription = scale.flowChange.subscribe((_val) => {
         if (
           this.brewComponent.timer.isTimerRunning() &&
@@ -2292,7 +2301,7 @@ export class BrewBrewingGraphComponent implements OnInit {
                 this.data.preparationDeviceBrew.params
                   .scriptAtWeightReachedNumber;
 
-              if (xeniaScriptStopWasTriggered === false) {
+              if (this.machineStopScriptWasTriggered === false) {
                 if (
                   this.data.preparationDeviceBrew.params
                     .scriptAtWeightReachedId > 0
@@ -2324,7 +2333,7 @@ export class BrewBrewingGraphComponent implements OnInit {
                           .scriptAtWeightReachedId
                       )
                     );
-                    xeniaScriptStopWasTriggered = true;
+                    this.machineStopScriptWasTriggered = true;
                   }
                 } else {
                   let n = 3;
@@ -2397,12 +2406,14 @@ export class BrewBrewingGraphComponent implements OnInit {
                     this.writeExecutionTimeToNotes(
                       'Stop script',
                       0,
-                      this.getScriptName(0)
+                      this.translate.instant(
+                        'PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_STOP'
+                      )
                     );
-                    xeniaScriptStopWasTriggered = true;
+                    this.machineStopScriptWasTriggered = true;
                   }
                 }
-                if (xeniaScriptStopWasTriggered === true) {
+                if (this.machineStopScriptWasTriggered === true) {
                   // This will be just called once, we stopped the shot and now we check if we directly shall stop or not
                   if (
                     this.settings

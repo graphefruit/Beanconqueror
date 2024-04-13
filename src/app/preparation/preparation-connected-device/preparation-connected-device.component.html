@@ -29,6 +29,13 @@
           <ion-icon class="ion-color-accent" name="checkmark-circle-outline" slot="icon-only"></ion-icon>
         </ion-button>
       </ion-item>
+      <ion-item  *ngIf="preparation.connectedPreparationDevice.type ===  PREPARATION_DEVICE_TYPE.XENIA">
+        <ion-select label-placement="stacked" label='{{"PREPARATION_DEVICE.API_VERSION" | translate}}'  (ngModelChange)="save()"  [(ngModel)]="preparation.connectedPreparationDevice.customParams.apiVersion" cancelText="{{'CANCEL'| translate }}"
+                    name="apiVersion" okText="{{'CHOOSE'| translate }}">
+          <ion-select-option value="V1">V1</ion-select-option>
+          <ion-select-option value="V2">V2</ion-select-option>
+        </ion-select>
+      </ion-item>
       <ion-item  *ngIf="preparation.connectedPreparationDevice.type ===  PREPARATION_DEVICE_TYPE.METICULOUS">
         <ion-label id='preparationURL'>{{"PREPARATION_DEVICE.URL" | translate}}</ion-label>
         <ion-input aria-labelledby='preparationURL' (ionBlur)="save()" [(ngModel)]="preparation.connectedPreparationDevice.url" placeholder="{{'PREPARATION_DEVICE.URL' | translate}}"

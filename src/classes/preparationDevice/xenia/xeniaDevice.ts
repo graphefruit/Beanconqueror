@@ -13,6 +13,17 @@ export class XeniaDevice extends PreparationDevice {
 
     if (typeof cordova !== 'undefined') {
     }
+    const connectedPreparationDevice =
+      this.getPreparation().connectedPreparationDevice;
+    if (
+      connectedPreparationDevice.customParams &&
+      connectedPreparationDevice.customParams.apiVersion
+    ) {
+      if (connectedPreparationDevice.customParams.apiVersion === 'V1') {
+        this.apiVersion = 1;
+      } else {
+      }
+    }
   }
 
   public override async deviceConnected(): Promise<boolean> {

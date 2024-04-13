@@ -75,6 +75,12 @@ export class PreparationConnectedDeviceComponent implements OnInit {
               'http://' + this.data.connectedPreparationDevice.url;
           }
         }
+        if (
+          this.data.connectedPreparationDevice.customParams.apiVersion ===
+          undefined
+        ) {
+          this.data.connectedPreparationDevice.customParams.apiVersion = 'V2';
+        }
       }
       await this.uiPreparationStorage.update(this.data);
     }, 150);
