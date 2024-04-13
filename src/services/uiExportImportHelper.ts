@@ -403,12 +403,11 @@ export class UIExportImportHelper {
     if (welcomePagedShowed === true && brewsAdded === true) {
       this.uiLog.log('Start to export automatic ZIP file');
       try {
-        const file: FileEntry = await this.uiFileHelper.downloadFile(
-          'Beanconqueror_automatic_export_' +
+        const file: FileEntry = await this.uiFileHelper.saveZIPFile(
+          'Download/Beanconqueror_export/Beanconqueror_automatic_export_' +
             this.getAutomatedBackupFilename() +
             '.zip',
-          _blob,
-          false
+          _blob
         );
       } catch (ex) {
         this.uiLog.error('Could not to export automatic ZIP file');
