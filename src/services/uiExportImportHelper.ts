@@ -384,6 +384,7 @@ export class UIExportImportHelper {
         _blob
       );
     } catch (ex) {
+      this.uiLog.error('Could not to export normal ZIP file');
       const settings = this.uiSettingsStorage.getSettings();
       if (settings.show_backup_issues) {
         this.uiAlert.showMessage(
@@ -410,6 +411,7 @@ export class UIExportImportHelper {
           false
         );
       } catch (ex) {
+        this.uiLog.error('Could not to export automatic ZIP file');
         if (settings.show_backup_issues) {
           this.uiAlert.showMessage(
             'AUTOMATIC_BACKUP_DID_FAIL',

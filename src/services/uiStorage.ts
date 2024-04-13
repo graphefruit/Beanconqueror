@@ -35,7 +35,7 @@ export class UIStorage {
         await this.storage.set(_key, _val);
         resolve(true);
       } catch (ex) {
-        resolve(false);
+        reject(ex);
       }
     });
     return promise;

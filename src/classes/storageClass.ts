@@ -238,7 +238,6 @@ export abstract class StorageClass {
             this.uiLog.log(`Storage - Delete - Successfully -${deleteUUID}`);
             this.storedData.splice(i, 1);
             await this.__save();
-
             this.__sendRemoveMessage(deleteUUID);
             this.__sendEvent('DELETE');
             resolve(true);
@@ -259,18 +258,26 @@ export abstract class StorageClass {
           if (_saved === true) {
             this.uiLog.log('Storage - Save - Successfully');
           } else {
-            this.uiLog.error(`Storage - Save - Unsuccessfully`);
+            this.uiLog.error(
+              `Storage - Save Set - Unsuccessfully - ` + JSON.stringify(_saved)
+            );
             this.uiHelper.showAlert(
-              'Storage - Save - Unsuccessfully',
+              'Storage - Save Set - Unsuccessfully  - ' +
+                JSON.stringify(_saved),
               'CRITICAL ERROR'
             );
           }
         },
         (e) => {
           this.uiLog.error(
-            `Storage - Save - Unsuccessfully - ${JSON.stringify(e)}`
+            `Storage - Save Set Exception - Unsuccessfully - ${JSON.stringify(
+              e
+            )}`
           );
-          this.uiHelper.showAlert(e.message, 'CRITICAL ERROR');
+          this.uiHelper.showAlert(
+            JSON.stringify(e),
+            'CRITICAL ERROR - SAVE SET'
+          );
         }
       );
     } catch (ex) {
