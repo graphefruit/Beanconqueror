@@ -343,6 +343,9 @@ export class UIExportImportHelper {
   private getAutomatedBackupFilename(): string {
     return moment().format('DD_MM_YYYY').toString();
   }
+  private getAutomatedBackupFilenameHours(): string {
+    return moment().format('DD_MM_YYYY_HH_mm').toString();
+  }
 
   public async saveAutomaticBackups() {
     this.buildExportZIP().then(
@@ -405,7 +408,7 @@ export class UIExportImportHelper {
       try {
         const file: FileEntry = await this.uiFileHelper.saveZIPFile(
           'Download/Beanconqueror_export/Beanconqueror_automatic_export_' +
-            this.getAutomatedBackupFilename() +
+            this.getAutomatedBackupFilenameHours() +
             '.zip',
           _blob
         );
