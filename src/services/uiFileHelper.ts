@@ -372,6 +372,8 @@ export class UIFileHelper extends InstanceClass {
   public async deleteZIPBackupsOlderThenSevenDays(): Promise<any> {
     const promise: Promise<any> = new Promise(async (resolve, reject) => {
       if (this.platform.is('cordova')) {
+        reject(undefined);
+        return;
         let storageLocation: string = '';
         if (this.platform.is('android')) {
           storageLocation = this.file.externalDataDirectory;
@@ -443,7 +445,9 @@ export class UIFileHelper extends InstanceClass {
                             }
                           }
                         },
-                        () => {}
+                        () => {
+                          reject();
+                        }
                       );
                     },
                     () => {
