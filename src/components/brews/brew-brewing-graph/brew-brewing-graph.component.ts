@@ -2285,7 +2285,13 @@ export class BrewBrewingGraphComponent implements OnInit {
               const residual_lag_time = 1.35;
 
               let average_flow_rate = 0;
+              let lastFlowValue = 0;
               try {
+                lastFlowValue =
+                  this.flow_profile_raw.realtimeFlow[
+                    this.flow_profile_raw.realtimeFlow.length - 1
+                  ].flow_value;
+
                 const avgFlowValCalc: Array<IBrewRealtimeWaterFlow> =
                   this.flow_profile_raw.realtimeFlow.slice(-n);
 
@@ -2312,13 +2318,14 @@ export class BrewBrewingGraphComponent implements OnInit {
                   .scriptAtWeightReachedNumber,
                 lag_time,
                 this.flowTime + '.' + this.flowSecondTick,
-                average_flow_rate,
+                lastFlowValue,
                 weight,
                 lag_time + residual_lag_time,
                 weight + average_flow_rate * (lag_time + residual_lag_time) >=
                   targetWeight,
                 average_flow_rate * (lag_time + residual_lag_time),
-                residual_lag_time
+                residual_lag_time,
+                average_flow_rate
               );
 
               if (
@@ -3213,7 +3220,8 @@ export class BrewBrewingGraphComponent implements OnInit {
     calc_lag_time: number,
     calc_exceeds_weight: boolean,
     avg_flow_lag_residual_time: number,
-    residual_lag_time: number
+    residual_lag_time: number,
+    average_flow_rate: number
   ) {
     const weightFlow: IFinalWeight = {} as IFinalWeight;
     weightFlow.timestamp = this.uiHelper.getActualTimeWithMilliseconds();
@@ -3226,6 +3234,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     weightFlow.calc_exceeds_weight = calc_exceeds_weight;
     weightFlow.avg_flow_lag_residual_time = avg_flow_lag_residual_time;
     weightFlow.residual_lag_time = residual_lag_time;
+    weightFlow.average_flow_rate = average_flow_rate;
 
     this.flow_profile_raw.finalWeight.push(weightFlow);
   }

@@ -204,6 +204,7 @@ export class UIExcel {
       header_final_weight.push('calc_exceeds_weight');
       header_final_weight.push('avg_flow_lag_residual_time');
       header_final_weight.push('residual_lag_time');
+      header_final_weight.push('average_flow_rate');
 
       const wsDatafinalWeightFlow: any[][] = [header_final_weight];
       for (const entry of _flow.finalWeight) {
@@ -218,6 +219,7 @@ export class UIExcel {
           entry.calc_exceeds_weight,
           entry.avg_flow_lag_residual_time,
           entry.residual_lag_time,
+          entry.average_flow_rate,
         ];
         wsDatafinalWeightFlow.push(wbEntry);
       }

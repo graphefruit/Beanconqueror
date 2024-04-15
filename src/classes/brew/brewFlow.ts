@@ -70,4 +70,5 @@ export interface IFinalWeight {
   calc_exceeds_weight: boolean;
   avg_flow_lag_residual_time: number;
   residual_lag_time: number;
+  average_flow_rate: number;
 }
