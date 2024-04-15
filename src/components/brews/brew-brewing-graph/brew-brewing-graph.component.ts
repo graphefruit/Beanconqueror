@@ -2281,31 +2281,49 @@ export class BrewBrewingGraphComponent implements OnInit {
               } else {
                 n = this.flowProfileTempAll.length;
               }
-              const lagTime = Math.max(1 / n, 0);
+              const lag_time = this.uiHelper.toFixedIfNecessary(1 / n, 2);
+              const residual_lag_time = 1.35;
 
-              const lastFlowValue =
-                this.flow_profile_raw.realtimeFlow[
-                  this.flow_profile_raw.realtimeFlow.length - 1
-                ].flow_value;
+              let average_flow_rate = 0;
+              try {
+                const avgFlowValCalc: Array<IBrewRealtimeWaterFlow> =
+                  this.flow_profile_raw.realtimeFlow.slice(-n);
 
-              const overShootWeight: number = 3;
+                for (let i = 0; i < avgFlowValCalc.length; i++) {
+                  if (avgFlowValCalc[i] && avgFlowValCalc[i].flow_value) {
+                    average_flow_rate =
+                      average_flow_rate + avgFlowValCalc[i].flow_value;
+                  }
+                }
+                if (average_flow_rate > 0) {
+                  average_flow_rate = this.uiHelper.toFixedIfNecessary(
+                    average_flow_rate / n,
+                    2
+                  );
+                }
+              } catch (ex) {}
+
+              const targetWeight =
+                this.data.preparationDeviceBrew.params
+                  .scriptAtWeightReachedNumber;
+
               this.pushFinalWeight(
                 this.data.preparationDeviceBrew.params
                   .scriptAtWeightReachedNumber,
-                lagTime,
+                lag_time,
                 this.flowTime + '.' + this.flowSecondTick,
-                lastFlowValue,
+                average_flow_rate,
                 weight,
-                lastFlowValue * lagTime,
-                weight + lastFlowValue * lagTime + overShootWeight >=
-                  this.data.preparationDeviceBrew.params
-                    .scriptAtWeightReachedNumber
+                lag_time + residual_lag_time,
+                weight + average_flow_rate * (lag_time + residual_lag_time) >=
+                  targetWeight,
+                average_flow_rate * (lag_time + residual_lag_time),
+                residual_lag_time
               );
 
               if (
-                weight + lastFlowValue * lagTime + overShootWeight >=
-                this.data.preparationDeviceBrew.params
-                  .scriptAtWeightReachedNumber
+                weight + average_flow_rate * (lag_time + residual_lag_time) >=
+                targetWeight
               ) {
                 if (xeniaScriptStopWasTriggered === false) {
                   if (
@@ -3192,8 +3210,10 @@ export class BrewBrewingGraphComponent implements OnInit {
     brew_time: string,
     last_flow_value: number,
     actual_scale_weight: number,
-    calc_lastflow_lag_time: number,
-    calc_exceeds_weight: boolean
+    calc_lag_time: number,
+    calc_exceeds_weight: boolean,
+    avg_flow_lag_residual_time: number,
+    residual_lag_time: number
   ) {
     const weightFlow: IFinalWeight = {} as IFinalWeight;
     weightFlow.timestamp = this.uiHelper.getActualTimeWithMilliseconds();
@@ -3202,8 +3222,10 @@ export class BrewBrewingGraphComponent implements OnInit {
     weightFlow.lag_time = lag_time;
     weightFlow.last_flow_value = last_flow_value;
     weightFlow.actual_scale_weight = actual_scale_weight;
-    weightFlow.calc_lastflow_lag_time = calc_lastflow_lag_time;
+    weightFlow.calc_lag_time = calc_lag_time;
     weightFlow.calc_exceeds_weight = calc_exceeds_weight;
+    weightFlow.avg_flow_lag_residual_time = avg_flow_lag_residual_time;
+    weightFlow.residual_lag_time = residual_lag_time;
 
     this.flow_profile_raw.finalWeight.push(weightFlow);
   }

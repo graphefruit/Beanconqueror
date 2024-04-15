@@ -66,6 +66,8 @@ export interface IFinalWeight {
   last_flow_value: number;
   actual_scale_weight: number;
 
-  calc_lastflow_lag_time: number;
+  calc_lag_time: number;
   calc_exceeds_weight: boolean;
+  avg_flow_lag_residual_time: number;
+  residual_lag_time: number;
 }
