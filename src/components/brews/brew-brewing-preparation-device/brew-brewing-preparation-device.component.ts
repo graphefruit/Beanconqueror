@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { Brew } from '../../../classes/brew/brew';
 import { PreparationDevice } from '../../../classes/preparationDevice/preparationDevice';
 import {
@@ -49,7 +56,8 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     private readonly uiToast: UIToast,
     private readonly uiBrewHelper: UIBrewHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage
+    private readonly uiPreparationStorage: UIPreparationStorage,
+    private readonly changeDetectorRef: ChangeDetectorRef
   ) {}
 
   public ngOnInit() {
@@ -75,6 +83,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       } else if (connectedDevice instanceof MeticulousDevice) {
         await this.instanceMeticulousPreparationDevice(connectedDevice, _brew);
       }
+      this.checkChanges();
     } else {
       this.preparationDevice = undefined;
     }
@@ -224,6 +233,14 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     } catch (ex) {}
 
     await this.uiAlert.hideLoadingSpinner();
+  }
+
+  public checkChanges() {
+    // #507 Wrapping check changes in set timeout so all values get checked
+    setTimeout(() => {
+      this.changeDetectorRef.detectChanges();
+      window.getComputedStyle(window.document.getElementsByTagName('body')[0]);
+    }, 15);
   }
 
   private async disconnectMeticulousPreparationDevice() {

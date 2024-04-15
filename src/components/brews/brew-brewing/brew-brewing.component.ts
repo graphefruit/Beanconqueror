@@ -263,8 +263,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         }
       }
 
-      await this.brewBrewingPreparationDeviceEl.instance();
-      await this.brewBrewingGraphEl.instance();
+      if (this.brewBrewingPreparationDeviceEl) {
+        await this.brewBrewingPreparationDeviceEl?.instance();
+      }
+
+      if (this.brewBrewingGraphEl) {
+        await this.brewBrewingGraphEl?.instance();
+      }
+
       this.bluetoothSubscription = this.bleManager
         .attachOnEvent()
         .subscribe((_type) => {
@@ -290,7 +296,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.data.method_of_preparation_tools = [];
 
-      this.brewBrewingPreparationDeviceEl.instancePreparationDevice();
+      if (this.brewBrewingPreparationDeviceEl) {
+        this.brewBrewingPreparationDeviceEl.instancePreparationDevice();
+      }
 
       if (this.timer?.isTimerRunning() === false) {
         this.brewBrewingGraphEl.initializeFlowChart();
@@ -1139,7 +1147,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
     if (!wasAnythingLoaded) {
       //If we didn't load any brew, we didn't fire instancePreparationDevice with a brew, so we need to fire it here in the end at all.
-      await this.brewBrewingPreparationDeviceEl.instancePreparationDevice();
+      if (this.brewBrewingPreparationDeviceEl) {
+        await this.brewBrewingPreparationDeviceEl.instancePreparationDevice();
+      }
     }
   }
 
@@ -1421,7 +1431,9 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     this.data.flow_profile = '';
     this.data.reference_flow_profile = new ReferenceGraph();
 
-    await this.brewBrewingPreparationDeviceEl.instancePreparationDevice(brew);
+    if (this.brewBrewingPreparationDeviceEl) {
+      await this.brewBrewingPreparationDeviceEl.instancePreparationDevice(brew);
+    }
   }
 
   public async showExtractionChart(event): Promise<void> {

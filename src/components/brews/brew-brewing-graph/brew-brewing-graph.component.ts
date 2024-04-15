@@ -249,6 +249,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         }
         // If scale disconnected, sometimes the timer run but the screen was not refreshed, so maybe it helpes to detect the change.
         this.checkChanges();
+        this.brewComponent?.brewBrewingPreparationDeviceEl?.checkChanges();
       });
   }
 
