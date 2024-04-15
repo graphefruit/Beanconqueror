@@ -371,13 +371,6 @@ export class UIStorage {
               );
               nativeStorageImportIssue = true;
             }
-            if (nativeStorageImportIssue === false) {
-              this.uiLog.log('UIStorage - Import backup all imported');
-              resolve(undefined);
-            } else {
-              this.uiLog.log('UIStorage - Import backup not all imported');
-              reject();
-            }
           } else {
             this.storage.set(key, _data[key]).then(
               () => {
@@ -392,6 +385,13 @@ export class UIStorage {
             );
           }
         }
+      }
+      if (this.useNativeStorage && nativeStorageImportIssue === false) {
+        this.uiLog.log('UIStorage - Import backup all imported');
+        resolve(undefined);
+      } else {
+        this.uiLog.log('UIStorage - Import backup not all imported');
+        reject();
       }
     });
 
