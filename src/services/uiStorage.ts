@@ -192,7 +192,6 @@ export class UIStorage {
             NativeStorage.getItem(
               'Beanconqueror' + _key,
               (_val) => {
-                console.log('RETRIEVE DATA' + _val);
                 dataNativeStorage = _val;
                 _interalResolve(true);
               },
@@ -354,31 +353,25 @@ export class UIStorage {
     const promise = new Promise(async (resolve, reject) => {
       const keysCount: number = Object.keys(_data).length;
       let finishedImport: number = 0;
+
+      let nativeStorageImportIssue: boolean = false;
       for (const key in _data) {
         if (_data.hasOwnProperty(key)) {
           if (this.useNativeStorage) {
             this.uiLog.log('UIStorage - Import backup');
-            await new Promise(async (_internalResolve, _internalReject) => {
-              NativeStorage.setItem(
-                'Beanconqueror' + key,
-                _data[key],
-                () => {
-                  this.uiLog.log(
-                    'UIStorage - Import backup Key ' + key + ' possible'
-                  );
-                  finishedImport++;
-                  resolve(true);
-                },
-                () => {
-                  this.uiLog.log(
-                    'UIStorage - Import backup Key ' + key + ' not possible'
-                  );
-                  resolve(false);
-                }
+            try {
+              this.uiLog.log('UIStorage - Import backup Key ' + key);
+              await this.set(key, _data[key]);
+              this.uiLog.log(
+                'UIStorage - Import backup Key ' + key + ' success'
               );
-            });
-
-            if (keysCount === finishedImport) {
+            } catch (ex) {
+              this.uiLog.error(
+                'UIStorage - Import backup Key ' + key + ' not possible'
+              );
+              nativeStorageImportIssue = true;
+            }
+            if (nativeStorageImportIssue === false) {
               this.uiLog.log('UIStorage - Import backup all imported');
               resolve(undefined);
             } else {
