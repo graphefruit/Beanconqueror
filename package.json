@@ -37,6 +37,7 @@
     "@awesome-cordova-plugins/in-app-browser": "^6.4.0",
     "@awesome-cordova-plugins/insomnia": "^6.4.0",
     "@awesome-cordova-plugins/keyboard": "^6.4.0",
+    "@awesome-cordova-plugins/native-storage": "^6.6.0",
     "@awesome-cordova-plugins/screen-orientation": "^6.4.0",
     "@awesome-cordova-plugins/social-sharing": "^6.4.0",
     "@awesome-cordova-plugins/splash-screen": "^6.4.0",
@@ -230,7 +231,8 @@
       },
       "cordova-plugin-geolocation": {
         "GPS_REQUIRED": "false"
-      }
+      },
+      "cordova-plugin-nativestorage": {}
     },
     "platforms": [
       "android",

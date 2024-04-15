@@ -76,6 +76,7 @@ declare var AppRate;
 declare var window;
 import { register } from 'swiper/element/bundle';
 import { UIGraphStorage } from '../services/uiGraphStorage.service';
+import { UIStorage } from '../services/uiStorage';
 
 register();
 @Component({
@@ -253,7 +254,8 @@ export class AppComponent implements AfterViewInit {
     private readonly storage: Storage,
     private readonly uiToast: UIToast,
     private readonly uiExportImportHelper: UIExportImportHelper,
-    private readonly uiGraphStorage: UIGraphStorage
+    private readonly uiGraphStorage: UIGraphStorage,
+    private readonly uiStorage: UIStorage
   ) {
     // Dont remove androidPlatformService, we need to initialize it via constructor
     try {
@@ -304,6 +306,8 @@ export class AppComponent implements AfterViewInit {
           this.uiLog.log(`Storage-Driver: ${this.storage.driver}`);
         }
       } catch (ex) {}
+
+      await this.uiStorage.init();
       try {
         Logger.attachOnLog().subscribe((_msg) => {
           if (_msg.type === 'LOG') {
