@@ -1783,6 +1783,7 @@
     "INTERNAL_BACKUP_DID_FAIL": "Wewnętrzna kopia zapasowa nie działała, upewnij się, że masz działające kopie zapasowe! ",
     "ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD": "Nie można zapisać pliku ZIP! ",
     "SEND_LOGS": "Wyślij logi",
-    "PAGE_SETTINGS_LANGUAGE_POLISH": "Polski"
+    "PAGE_SETTINGS_LANGUAGE_POLISH": "Polski",
+    "PAGE_SETTINGS_LANGUAGE_ITALIAN": "Włoski"
   }
   
