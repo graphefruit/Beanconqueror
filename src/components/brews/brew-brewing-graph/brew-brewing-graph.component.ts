@@ -1625,6 +1625,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       }
     }
   }
+
   public startFetchingDataFromMeticulous() {
     const prepDeviceCall: MeticulousDevice = this.brewComponent
       .brewBrewingPreparationDeviceEl.preparationDevice as MeticulousDevice;
@@ -1704,6 +1705,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       }
     );
   }
+
   public startFetchingAndSettingDataFromXenia() {
     const prepDeviceCall: XeniaDevice = this.brewComponent
       ?.brewBrewingPreparationDeviceEl?.preparationDevice as XeniaDevice;
@@ -1751,6 +1753,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.xeniaOverviewInterval = undefined;
     }
   }
+
   public stopFetchingDataFromMeticulous() {
     if (this.meticulousInterval !== undefined) {
       clearInterval(this.meticulousInterval);
@@ -1758,38 +1761,46 @@ export class BrewBrewingGraphComponent implements OnInit {
     }
   }
 
-  public async timerStartPressed() {
-    const scale: BluetoothScale = this.bleManager.getScale();
-    if (scale) {
-      if (this.settings.bluetooth_scale_tare_on_start_timer === true) {
-        await new Promise(async (resolve) => {
-          await this.uiAlert.showLoadingSpinner();
-          scale.tare();
-          let minimumWeightNullReports = 0;
-          let weightReports = 0;
-          this.deattachToScaleStartTareListening();
-          this.scaleStartTareListeningSubscription = scale.flowChange.subscribe(
-            (_val) => {
-              const weight: number = this.uiHelper.toFixedIfNecessary(
-                _val.actual,
-                1
-              );
-              weightReports = weightReports + 1;
-              if (weight <= 0) {
-                minimumWeightNullReports = minimumWeightNullReports + 1;
-              }
-              if (minimumWeightNullReports >= 3) {
-                this.deattachToScaleStartTareListening();
-                resolve(undefined);
-              } else if (weightReports > 20) {
-                // We hope this should be never called?!
-                this.deattachToScaleStartTareListening();
-                resolve(undefined);
-              }
-            }
-          );
-        });
-        await this.uiAlert.hideLoadingSpinner();
+  public async timerStartPressed(_event) {
+    if (
+      _event !== 'AUTO_LISTEN_SCALE' &&
+      _event !== 'AUTO_START_PRESSURE' &&
+      _event !== 'AUTO_START_TEMPERATURE'
+    ) {
+      const scale: BluetoothScale = this.bleManager.getScale();
+      if (scale) {
+        if (
+          this.settings.bluetooth_scale_tare_on_start_timer === true &&
+          scale.supportsTaring
+        ) {
+          await new Promise(async (resolve) => {
+            await this.uiAlert.showLoadingSpinner();
+            scale.tare();
+            let minimumWeightNullReports = 0;
+            let weightReports = 0;
+            this.deattachToScaleStartTareListening();
+            this.scaleStartTareListeningSubscription =
+              scale.flowChange.subscribe((_val) => {
+                const weight: number = this.uiHelper.toFixedIfNecessary(
+                  _val.actual,
+                  1
+                );
+                weightReports = weightReports + 1;
+                if (weight <= 0) {
+                  minimumWeightNullReports = minimumWeightNullReports + 1;
+                }
+                if (minimumWeightNullReports >= 3) {
+                  this.deattachToScaleStartTareListening();
+                  resolve(undefined);
+                } else if (weightReports > 20) {
+                  // We hope this should be never called?!
+                  this.deattachToScaleStartTareListening();
+                  resolve(undefined);
+                }
+              });
+          });
+          await this.uiAlert.hideLoadingSpinner();
+        }
       }
     }
   }
@@ -2093,6 +2104,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.scaleListeningSubscription = undefined;
     }
   }
+
   public deattachToScaleStartTareListening() {
     if (this.scaleStartTareListeningSubscription) {
       this.scaleStartTareListeningSubscription.unsubscribe();
@@ -2276,68 +2288,16 @@ export class BrewBrewingGraphComponent implements OnInit {
               this.flow_profile_raw.realtimeFlow &&
               this.flow_profile_raw.realtimeFlow.length > 0
             ) {
-              let n = 3;
-              if (this.flowNCalculation > 0) {
-                n = this.flowNCalculation;
-              } else {
-                n = this.flowProfileTempAll.length;
-              }
-              const lag_time = this.uiHelper.toFixedIfNecessary(1 / n, 2);
-              const residual_lag_time = 1.35;
-
-              let average_flow_rate = 0;
-              let lastFlowValue = 0;
-              try {
-                lastFlowValue =
-                  this.flow_profile_raw.realtimeFlow[
-                    this.flow_profile_raw.realtimeFlow.length - 1
-                  ].flow_value;
-
-                const avgFlowValCalc: Array<IBrewRealtimeWaterFlow> =
-                  this.flow_profile_raw.realtimeFlow.slice(-n);
-
-                for (let i = 0; i < avgFlowValCalc.length; i++) {
-                  if (avgFlowValCalc[i] && avgFlowValCalc[i].flow_value) {
-                    average_flow_rate =
-                      average_flow_rate + avgFlowValCalc[i].flow_value;
-                  }
-                }
-                if (average_flow_rate > 0) {
-                  average_flow_rate = this.uiHelper.toFixedIfNecessary(
-                    average_flow_rate / n,
-                    2
-                  );
-                }
-              } catch (ex) {}
-
               const targetWeight =
                 this.data.preparationDeviceBrew.params
                   .scriptAtWeightReachedNumber;
 
-              this.pushFinalWeight(
-                this.data.preparationDeviceBrew.params
-                  .scriptAtWeightReachedNumber,
-                lag_time,
-                this.flowTime + '.' + this.flowSecondTick,
-                lastFlowValue,
-                weight,
-                lag_time + residual_lag_time,
-                weight + average_flow_rate * (lag_time + residual_lag_time) >=
-                  targetWeight,
-                average_flow_rate * (lag_time + residual_lag_time),
-                residual_lag_time,
-                average_flow_rate
-              );
-
-              if (
-                weight + average_flow_rate * (lag_time + residual_lag_time) >=
-                targetWeight
-              ) {
-                if (xeniaScriptStopWasTriggered === false) {
-                  if (
-                    this.data.preparationDeviceBrew.params
-                      .scriptAtWeightReachedId > 0
-                  ) {
+              if (xeniaScriptStopWasTriggered === false) {
+                if (
+                  this.data.preparationDeviceBrew.params
+                    .scriptAtWeightReachedId > 0
+                ) {
+                  if (weight >= targetWeight) {
                     this.uiLog.log(
                       `Xenia Script - Weight Reached: ${weight} - Trigger custom script`
                     );
@@ -2364,7 +2324,63 @@ export class BrewBrewingGraphComponent implements OnInit {
                           .scriptAtWeightReachedId
                       )
                     );
+                    xeniaScriptStopWasTriggered = true;
+                  }
+                } else {
+                  let n = 3;
+                  if (this.flowNCalculation > 0) {
+                    n = this.flowNCalculation;
                   } else {
+                    n = this.flowProfileTempAll.length;
+                  }
+                  const lag_time = this.uiHelper.toFixedIfNecessary(1 / n, 2);
+                  const residual_lag_time = 1.35;
+
+                  let average_flow_rate = 0;
+                  let lastFlowValue = 0;
+                  try {
+                    lastFlowValue =
+                      this.flow_profile_raw.realtimeFlow[
+                        this.flow_profile_raw.realtimeFlow.length - 1
+                      ].flow_value;
+
+                    const avgFlowValCalc: Array<IBrewRealtimeWaterFlow> =
+                      this.flow_profile_raw.realtimeFlow.slice(-n);
+
+                    for (let i = 0; i < avgFlowValCalc.length; i++) {
+                      if (avgFlowValCalc[i] && avgFlowValCalc[i].flow_value) {
+                        average_flow_rate =
+                          average_flow_rate + avgFlowValCalc[i].flow_value;
+                      }
+                    }
+                    if (average_flow_rate > 0) {
+                      average_flow_rate = this.uiHelper.toFixedIfNecessary(
+                        average_flow_rate / n,
+                        2
+                      );
+                    }
+                  } catch (ex) {}
+
+                  this.pushFinalWeight(
+                    this.data.preparationDeviceBrew.params
+                      .scriptAtWeightReachedNumber,
+                    lag_time,
+                    this.flowTime + '.' + this.flowSecondTick,
+                    lastFlowValue,
+                    weight,
+                    lag_time + residual_lag_time,
+                    weight +
+                      average_flow_rate * (lag_time + residual_lag_time) >=
+                      targetWeight,
+                    average_flow_rate * (lag_time + residual_lag_time),
+                    residual_lag_time,
+                    average_flow_rate
+                  );
+                  if (
+                    weight +
+                      average_flow_rate * (lag_time + residual_lag_time) >=
+                    targetWeight
+                  ) {
                     this.uiLog.log(
                       `Xenia Script - Weight Reached - Trigger stop script`
                     );
@@ -2383,7 +2399,11 @@ export class BrewBrewingGraphComponent implements OnInit {
                       0,
                       this.getScriptName(0)
                     );
+                    xeniaScriptStopWasTriggered = true;
                   }
+                }
+                if (xeniaScriptStopWasTriggered === true) {
+                  // This will be just called once, we stopped the shot and now we check if we directly shall stop or not
                   if (
                     this.settings
                       .bluetooth_scale_espresso_stop_on_no_weight_change ===
@@ -2394,7 +2414,6 @@ export class BrewBrewingGraphComponent implements OnInit {
                   } else {
                     // We weight for the normal "setFlow" to stop the detection of the graph, there then aswell is the stop fetch of the xenia triggered.
                   }
-                  xeniaScriptStopWasTriggered = true;
                 }
               }
             }
