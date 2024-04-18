@@ -1575,7 +1575,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         );
       });
       this.writeExecutionTimeToNotes(
-        'Stop script',
+        'Stop script (Pause button)',
         0,
         this.translate.instant(
           'PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_STOP'
@@ -2301,41 +2301,11 @@ export class BrewBrewingGraphComponent implements OnInit {
                 this.data.preparationDeviceBrew.params
                   .scriptAtWeightReachedNumber;
 
+              const brewByWeightActive: boolean =
+                this.data.preparationDeviceBrew?.params?.brew_by_weight_active;
               if (this.machineStopScriptWasTriggered === false) {
-                if (
-                  this.data.preparationDeviceBrew.params
-                    .scriptAtWeightReachedId > 0
-                ) {
-                  if (weight >= targetWeight) {
-                    this.uiLog.log(
-                      `Xenia Script - Weight Reached: ${weight} - Trigger custom script`
-                    );
-                    const prepDeviceCall: XeniaDevice = this.brewComponent
-                      .brewBrewingPreparationDeviceEl
-                      .preparationDevice as XeniaDevice;
-                    prepDeviceCall
-                      .startScript(
-                        this.data.preparationDeviceBrew.params
-                          .scriptAtWeightReachedId
-                      )
-                      .catch((_msg) => {
-                        this.uiToast.showInfoToast(
-                          'We could not start script at weight: ' + _msg,
-                          false
-                        );
-                      });
-                    this.writeExecutionTimeToNotes(
-                      'Weight reached script',
-                      this.data.preparationDeviceBrew.params
-                        .scriptAtWeightReachedId,
-                      this.getScriptName(
-                        this.data.preparationDeviceBrew.params
-                          .scriptAtWeightReachedId
-                      )
-                    );
-                    this.machineStopScriptWasTriggered = true;
-                  }
-                } else {
+                let thresholdHit: boolean = false;
+                if (brewByWeightActive) {
                   let n = 3;
                   if (this.flowNCalculation > 0) {
                     n = this.flowNCalculation;
@@ -2385,18 +2355,50 @@ export class BrewBrewingGraphComponent implements OnInit {
                     residual_lag_time,
                     average_flow_rate
                   );
-                  if (
+                  thresholdHit =
                     weight +
                       average_flow_rate * (lag_time + residual_lag_time) >=
-                    targetWeight
+                    targetWeight;
+                } else {
+                  thresholdHit = weight >= targetWeight;
+                }
+
+                if (thresholdHit) {
+                  const prepDeviceCall: XeniaDevice = this.brewComponent
+                    .brewBrewingPreparationDeviceEl
+                    .preparationDevice as XeniaDevice;
+
+                  if (
+                    this.data.preparationDeviceBrew.params
+                      .scriptAtWeightReachedId > 0
                   ) {
+                    this.uiLog.log(
+                      `Xenia Script - Weight Reached: ${weight} - Trigger custom script`
+                    );
+                    prepDeviceCall
+                      .startScript(
+                        this.data.preparationDeviceBrew.params
+                          .scriptAtWeightReachedId
+                      )
+                      .catch((_msg) => {
+                        this.uiToast.showInfoToast(
+                          'We could not start script at weight: ' + _msg,
+                          false
+                        );
+                      });
+                    this.writeExecutionTimeToNotes(
+                      'Weight reached script',
+                      this.data.preparationDeviceBrew.params
+                        .scriptAtWeightReachedId,
+                      this.getScriptName(
+                        this.data.preparationDeviceBrew.params
+                          .scriptAtWeightReachedId
+                      )
+                    );
+                  } else {
                     this.uiLog.log(
                       `Xenia Script - Weight Reached - Trigger stop script`
                     );
-                    // Instant stop!
-                    const prepDeviceCall: XeniaDevice = this.brewComponent
-                      .brewBrewingPreparationDeviceEl
-                      .preparationDevice as XeniaDevice;
                     prepDeviceCall.stopScript().catch((_msg) => {
                       this.uiToast.showInfoToast(
                         'We could not stop script at weight: ' + _msg,
@@ -2404,16 +2406,14 @@ export class BrewBrewingGraphComponent implements OnInit {
                       );
                     });
                     this.writeExecutionTimeToNotes(
-                      'Stop script',
+                      'Stop script (Weight reached)',
                       0,
                       this.translate.instant(
                         'PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_STOP'
                       )
                     );
-                    this.machineStopScriptWasTriggered = true;
                   }
-                }
-                if (this.machineStopScriptWasTriggered === true) {
+                  this.machineStopScriptWasTriggered = true;
                   // This will be just called once, we stopped the shot and now we check if we directly shall stop or not
                   if (
                     this.settings

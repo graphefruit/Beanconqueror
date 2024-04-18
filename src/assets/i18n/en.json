@@ -1629,7 +1629,8 @@
             "ERROR_NOT_ALL_SCRIPTS_FOUND": "One or more scripts could not be found, they were reset",
             "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "The connection to the xenia espresso machine could not be established. Please make sure you're on the right network (LAN), if you entered the right IP address, etc.",
             "CHECKING_CONNECTION_TO_PORTAFILTER": "Connection to Xenia is being checked",
-            "GRABING_SCRIPTS": "Loading scripts from Xenia"
+            "GRABING_SCRIPTS": "Loading scripts from Xenia",
+            "BREW_BY_WEIGHT_ACTIVE": "Brew by weight active"
         },
         "TYPE_METICULOUS": {
           "TITLE": "Meticulous Machine",
@@ -1797,5 +1798,7 @@
     "SMART_SCALE_FIRST_DRIP_THRESHOLD_TOOLTIP": "At which scale weight, shall the first drip be count? Default: >= 0.1g",
     "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE": "Start brew delay",
     "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE_DESCRIPTION": "Set a delay time which will display a loading spinner until the brew will start",
-    "PLEASE_WAIT_TIME": "Please wait... {{time}}"
+    "PLEASE_WAIT_TIME": "Please wait... {{time}}",
+    "IOS_DATABASE_ISSUE_TITLE": "ATTENTION !!!!! - DATABASE CONNECTION LOST",
+    "IOS_DATABASE_ISSUE_DESCRIPTION": "We regret to inform you that we have encountered a loss of connection to the Database. This issue is a result of an unresolved bug in Apple's system, beyond the control of Beanconqueror. To prevent any potential data loss, we kindly ask you to immediately force-close the Beanconqueror application and reopen it."
 }

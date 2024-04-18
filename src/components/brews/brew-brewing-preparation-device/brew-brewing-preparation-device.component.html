@@ -54,6 +54,10 @@
       </ion-select-option>
     </ion-select>
   </ion-item>
+  <ion-item [disabled]="!(data.preparationDeviceBrew?.params.scriptStartId > 0 && brewComponent?.brewBrewingGraphEl?.smartScaleConnected() && data.preparationDeviceBrew?.params.scriptAtWeightReachedNumber>0)" lines="inset">
+    <ion-toggle label-placement="stacked" [(ngModel)]="data.preparationDeviceBrew?.params.brew_by_weight_active" [enableOnOffLabels]="true">{{"PREPARATION_DEVICE.TYPE_XENIA.BREW_BY_WEIGHT_ACTIVE" | translate}}</ion-toggle>
+
+  </ion-item>
 </ion-card>
 <ion-card *ngIf="preparationDeviceConnected() && getPreparationDeviceType() === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS" class="popover" style="display:flex; flex-direction: column;">
   <ion-item lines="none">

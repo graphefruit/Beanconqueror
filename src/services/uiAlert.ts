@@ -134,6 +134,30 @@ export class UIAlert {
 
     return promise;
   }
+  public async showMessageNoButton(
+    _message: string,
+    _title?: string,
+    _translate?: boolean
+  ): Promise<any> {
+    if (_translate === true) {
+      _message = this.translate.instant(_message);
+
+      if (_title) {
+        _title = this.translate.instant(_title);
+      }
+    }
+
+    const promise = new Promise(async (resolve, reject) => {
+      const alert = await this.alertController.create({
+        header: _title,
+        message: _message,
+        backdropDismiss: false,
+      });
+      await alert.present();
+    });
+
+    return promise;
+  }
   public async showConfirm(
     _message: string,
     _title?: string,

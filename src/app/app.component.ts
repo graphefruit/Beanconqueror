@@ -832,6 +832,14 @@ export class AppComponent implements AfterViewInit {
       if (settings.refractometer_stay_connected === false) {
         this.__connectRefractometerDevice();
       }
+
+      // IMPORTANT Why do we do this? Because the IndexedDB loses connection, and we just pull an entry which does not have many entries in the end
+      if (this.platform.is('ios')) {
+        this.uiStorage.get('MILL').then(
+          () => {},
+          () => {}
+        );
+      }
     });
   }
 
