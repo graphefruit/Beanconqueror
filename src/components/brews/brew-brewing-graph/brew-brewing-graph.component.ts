@@ -3403,7 +3403,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&
       this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
         PreparationDeviceType.XENIA &&
-      this.data.preparationDeviceBrew.params.scriptAtFirstDripId > -1
+      this.data.preparationDeviceBrew.params.scriptAtFirstDripId > 0
     ) {
       if (this.isFirstXeniaScriptSet()) {
         this.uiLog.log(
@@ -3441,7 +3441,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     ) {
       // If scale is not connected but the device, we can now choose that still the script is executed if existing.
       if (this.isFirstXeniaScriptSet()) {
-        if (this.data.preparationDeviceBrew.params.scriptAtFirstDripId > -1) {
+        if (this.data.preparationDeviceBrew.params.scriptAtFirstDripId > 0) {
           this.uiLog.log(
             `Xenia Script - Script at first drip -  Trigger custom script`
           );

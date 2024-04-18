@@ -1,6 +1,6 @@
 <ion-card *ngIf="preparationDeviceConnected() && getPreparationDeviceType() === PREPARATION_DEVICE_TYPE_ENUM.XENIA" class="popover" style="display:flex; flex-direction: column;">
   <ion-item lines="none">
-    <span class="ion-title ion-padding-top">{{"PREPARATION_DEVICE.TYPE_XENIA.TITLE" | translate }}</span>
+    <span class="ion-title ion-padding-top">{{"PREPARATION_DEVICE.TYPE_XENIA.TITLE" | translate }}&nbsp;-&nbsp;{{"PREPARATION_DEVICE.API_VERSION" | translate }}:&nbsp;{{this.data.getPreparation().connectedPreparationDevice.customParams.apiVersion}} </span>
   </ion-item>
   <ion-item lines="inset">
     <ion-select label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_XENIA.PRESS_START_SCRIPT" | translate}}' [interfaceOptions]="customXeniaOptions" [(ngModel)]="data.preparationDeviceBrew?.params.scriptStartId" (ionChange)='checkXeniaScripts()'
@@ -34,7 +34,9 @@
       <ion-select-option [value]="2">
         {{"PREPARATION_DEVICE.TYPE_XENIA.SCRIPT_LIST_GENERAL_2" | translate}}
       </ion-select-option>
-
+      <ion-select-option *ngFor='let script of preparationDevice?.scriptList' [value]='script.INDEX'>
+        {{script.TITLE}}
+      </ion-select-option>
     </ion-select>
   </ion-item>
   <ion-item [disabled]="!(data.preparationDeviceBrew?.params.scriptStartId > 0 && brewComponent?.brewBrewingGraphEl?.smartScaleConnected())" lines="none">

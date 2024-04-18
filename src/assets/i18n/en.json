@@ -1609,6 +1609,7 @@
             "XENIA": "Xenia",
             "METICULOUS": "Meticulous"
         },
+        "API_VERSION": "Api Version",
         "URL": "Url",
         "CHOOSE_DEVICE": "Choose device",
         "CONNECTION": {
