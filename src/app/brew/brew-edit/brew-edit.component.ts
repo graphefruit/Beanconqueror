@@ -173,9 +173,11 @@ export class BrewEditComponent implements OnInit {
     this.uiBrewHelper.cleanInvisibleBrewData(this.data);
 
     if (
-      this.brewBrewing.flow_profile_raw.weight.length > 0 ||
-      this.brewBrewing.flow_profile_raw.pressureFlow.length > 0 ||
-      this.brewBrewing.flow_profile_raw.temperatureFlow.length > 0
+      this.brewBrewing.brewBrewingGraphEl.flow_profile_raw.weight.length > 0 ||
+      this.brewBrewing.brewBrewingGraphEl.flow_profile_raw.pressureFlow.length >
+        0 ||
+      this.brewBrewing.brewBrewingGraphEl.flow_profile_raw.temperatureFlow
+        .length > 0
     ) {
       const savedPath: string = await this.brewBrewing.saveFlowProfile(
         this.data.config.uuid

@@ -76,6 +76,7 @@
               <ion-select-option value="zh">{{"PAGE_SETTINGS_LANGUAGE_CHINESE" | translate}}</ion-select-option>
               <ion-select-option value="fr">{{"PAGE_SETTINGS_LANGUAGE_FRANCE" | translate}}</ion-select-option>
               <ion-select-option value="id">{{"PAGE_SETTINGS_LANGUAGE_INDONESIA" | translate}}</ion-select-option>
+              <ion-select-option value="pl">{{"PAGE_SETTINGS_LANGUAGE_POLISH" | translate}}</ion-select-option>
             </ion-select>
           </ion-item>
           <ion-item>
@@ -297,6 +298,26 @@
                 <p>{{"PAGE_SETTINGS_SHOW_BACKUP_ISSUES_DESCRIPTION" | translate}}</p>
               </div>
             </ion-checkbox>
+          </ion-item>
+          <ion-item [lines]="settings.brew_timer_start_delay_active?'none':'full'">
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+                          [(ngModel)]="settings.brew_timer_start_delay_active">
+              <div class='ion-label' style="white-space: normal;">
+                <h2>{{"PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE" | translate}}</h2>
+              </div>
+            </ion-checkbox>
+          </ion-item>
+          <ion-item lines='none' *ngIf="settings.brew_timer_start_delay_active">
+            <ion-label class="ion-margin-end">
+              <p>{{"PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE_DESCRIPTION" | translate}}</p>
+            </ion-label>
+          </ion-item>
+          <ion-item *ngIf="settings.brew_timer_start_delay_active">
+            <ion-range [disabled]='isScrolling' style="padding-left:20px;padding-top:0;padding-bottom:15px;padding-right:0px;" min="1" snaps="true" max="10"
+                       step="1" (ngModelChange)="saveSettings()" [(ngModel)]="settings.brew_timer_start_delay_time">
+              <div class='ion-label'
+                   slot="end">{{this.uiHelper.toFixedIfNecessary(settings.brew_timer_start_delay_time,1)}}</div>
+            </ion-range>
           </ion-item>
         </ion-card-content>
       </ion-card>
@@ -572,6 +593,19 @@
                   <p>{{"SMART_SCALE_IGNORE_INCOMING_WEIGHT_TOOLTIP" | translate}}</p>
                 </div>
               </ion-checkbox>
+            </ion-item>
+
+            <ion-item lines="none">
+              <ion-label>
+                <h2>{{"SMART_SCALE_FIRST_DRIP_THRESHOLD" | translate}}</h2>
+                <p>{{"SMART_SCALE_FIRST_DRIP_THRESHOLD_TOOLTIP" | translate}}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item style="top:-10px;">
+              <ion-range [disabled]='isScrolling' style="padding-left:20px;padding-top:0;padding-bottom:15px;padding-right:0px;" min="0.1" snaps="true" max="2"
+                         step="0.1" (ngModelChange)="saveSettings()" [(ngModel)]="settings.bluetooth_scale_first_drip_threshold">
+                <div class='ion-label' slot="end">>= {{settings.bluetooth_scale_first_drip_threshold}}g</div>
+              </ion-range>
             </ion-item>
 
             <ion-item lines="none">

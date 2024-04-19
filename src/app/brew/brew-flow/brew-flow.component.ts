@@ -26,6 +26,7 @@ import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevic
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { BluetoothScale } from '../../../classes/devices';
 import { UIAlert } from '../../../services/uiAlert';
+import { PreparationDeviceType } from '../../../classes/preparationDevice';
 declare var Plotly;
 @Component({
   selector: 'brew-flow',
@@ -52,7 +53,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
   private brewTemperatureGraphSubscription: Subscription;
 
   public settings: Settings;
-
+  public PREPARATION_DEVICE_TYPE_ENUM = PreparationDeviceType;
   public gaugeType = 'semi';
   public gaugeValue = 0;
   public gaugeLabel = '';
@@ -126,18 +127,25 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   public getGraphIonColSize() {
+    if (
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
+        PreparationDeviceType.METICULOUS
+    ) {
+      return 2;
+    }
     let bluetoothDeviceConnections = 0;
     let smartScaleConnected: boolean = false;
     if (
       (this.pressureDeviceConnected() ||
-        this.brewComponent.preparationDeviceConnected()) &&
+        this.brewComponent.brewBrewingPreparationDeviceEl.preparationDeviceConnected()) &&
       this.brew.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO
     ) {
       bluetoothDeviceConnections += 1;
     }
     if (
       this.temperatureDeviceConnected() ||
-      this.brewComponent.preparationDeviceConnected()
+      this.brewComponent.brewBrewingPreparationDeviceEl.preparationDeviceConnected()
     ) {
       bluetoothDeviceConnections += 1;
     }
@@ -222,7 +230,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
     setTimeout(() => {
       if (this.isDetail) {
       } else {
-        this.brewComponent.updateChart();
+        this.brewComponent.brewBrewingGraphEl.updateChart();
       }
     }, 150);
   }
@@ -244,12 +252,15 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
 
         this.heightInformationBlock = informationContainerHeight;
 
-        this.brewComponent.lastChartLayout.height =
+        this.brewComponent.brewBrewingGraphEl.lastChartLayout.height =
           flowHeight - informationContainerHeight;
 
-        this.brewComponent.lastChartLayout.width =
+        this.brewComponent.brewBrewingGraphEl.lastChartLayout.width =
           document.getElementById('brewFlowContainer').offsetWidth;
-        Plotly.relayout('flowProfileChart', this.brewComponent.lastChartLayout);
+        Plotly.relayout(
+          'flowProfileChart',
+          this.brewComponent.brewBrewingGraphEl.lastChartLayout
+        );
       } catch (ex) {}
     }, 50);
   }
@@ -258,7 +269,13 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
     if (!this.platform.is('cordova')) {
       return true;
     }
-
+    if (
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
+        PreparationDeviceType.METICULOUS
+    ) {
+      return true;
+    }
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
     return !!pressureDevice;
   }
@@ -275,6 +292,13 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
 
   public smartScaleConnected() {
     if (!this.platform.is('cordova')) {
+      return true;
+    }
+    if (
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
+        PreparationDeviceType.METICULOUS
+    ) {
       return true;
     }
     const scale: BluetoothScale = this.bleManager.getScale();
