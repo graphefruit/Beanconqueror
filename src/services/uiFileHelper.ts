@@ -67,7 +67,11 @@ export class UIFileHelper extends InstanceClass {
                   'UILog - saveZIPFile - File saved successfully - ' + _fileName
                 );
               };
-              writer.onerror = () => {
+              writer.onerror = (_e) => {
+                this.uiLog.error(
+                  'UILog - saveZIPFile - File saved unsuccessfully - ' +
+                    _fileName
+                );
                 reject();
               };
               writer.seek(0);
@@ -368,6 +372,8 @@ export class UIFileHelper extends InstanceClass {
   public async deleteZIPBackupsOlderThenSevenDays(): Promise<any> {
     const promise: Promise<any> = new Promise(async (resolve, reject) => {
       if (this.platform.is('cordova')) {
+        reject(undefined);
+        return;
         let storageLocation: string = '';
         if (this.platform.is('android')) {
           storageLocation = this.file.externalDataDirectory;
@@ -439,7 +445,9 @@ export class UIFileHelper extends InstanceClass {
                             }
                           }
                         },
-                        () => {}
+                        () => {
+                          reject();
+                        }
                       );
                     },
                     () => {

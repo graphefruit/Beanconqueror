@@ -77,6 +77,9 @@ export class Preparation implements IPreparation {
     } else {
       this.connectedPreparationDevice = new ConnectedPreparationDevice();
     }
+    if (this.connectedPreparationDevice.customParams === undefined) {
+      this.connectedPreparationDevice.customParams = {};
+    }
   }
 
   public getPresetStyleType() {

@@ -1606,10 +1606,14 @@
     "PREPARATION_DEVICE": {
         "TYPE": {
             "NONE": "None",
-            "XENIA": "Xenia"
+            "XENIA": "Xenia",
+            "METICULOUS": "Meticulous"
         },
+        "API_VERSION": "Api Version",
         "URL": "Url",
         "CHOOSE_DEVICE": "Choose device",
+        "RESIDUAL_LAG_TIME": "Residual lag time",
+        "RESIDUAL_LAG_TIME_DESCRIPTION": "Set the time to match the remaining water. With a naked portafilter you'd need a lower time, with a spouted one a higher one. As slower your scale reports the weight, as more time change you need",
         "CONNECTION": {
             "UNSUCCESFULLY": "Connection could not be established to machine",
             "SUCCESFULLY": "Connection to machine was successful"
@@ -1627,7 +1631,15 @@
             "ERROR_NOT_ALL_SCRIPTS_FOUND": "One or more scripts could not be found, they were reset",
             "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "The connection to the xenia espresso machine could not be established. Please make sure you're on the right network (LAN), if you entered the right IP address, etc.",
             "CHECKING_CONNECTION_TO_PORTAFILTER": "Connection to Xenia is being checked",
-            "GRABING_SCRIPTS": "Loading scripts from Xenia"
+            "GRABING_SCRIPTS": "Loading scripts from Xenia",
+            "BREW_BY_WEIGHT_ACTIVE": "Brew by weight active"
+        },
+        "TYPE_METICULOUS": {
+          "TITLE": "Meticulous Machine",
+          "NO_PROFILE": "No Profile",
+          "CHOOSE_PROFILE": "Choose profile",
+          "SHOT_STARTED": "Shot started",
+          "SHOT_ENDED": "Shot ended"
         }
     },
     "DEVICE_CONNECTION": "Device connection",
@@ -1782,5 +1794,13 @@
     "AUTOMATIC_BACKUP_DID_FAIL":"Auto Backup did not work, make sure to have working backups! This information can be turned off in the settings",
     "INTERNAL_BACKUP_DID_FAIL":"Internal Backup did not work, make sure to have working backups! This information can be turned off in the settings",
     "ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD":"ZIP file could not be saved! This information can be turned off in the settings",
-    "SEND_LOGS": "Send logs"
+    "SEND_LOGS": "Send logs",
+    "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_GENERAL_DESCRIPTION": "You need to reset your timer first before you can start",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD": "First drip threshold",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD_TOOLTIP": "At which scale weight, shall the first drip be count? Default: >= 0.1g",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE": "Start brew delay",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE_DESCRIPTION": "Set a delay time which will display a loading spinner until the brew will start",
+    "STARTING_IN": "Starting in ... {{time}}",
+    "IOS_DATABASE_ISSUE_TITLE": "ATTENTION !!!!! - DATABASE CONNECTION LOST",
+    "IOS_DATABASE_ISSUE_DESCRIPTION": "We regret to inform you that we have encountered a loss of connection to the Database. This issue is a result of an unresolved bug in Apple's system, beyond the control of Beanconqueror. To prevent any potential data loss, we kindly ask you to immediately force-close the Beanconqueror application and reopen it."
 }

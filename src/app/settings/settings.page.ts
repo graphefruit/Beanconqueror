@@ -1810,11 +1810,6 @@ export class SettingsPage implements OnInit {
                     await this._importFiles(roastingMachineData, _importPath);
                     await this._importFiles(waterData, _importPath);
 
-                    /*** WAIT!!, before you try to understand whats going on here
-                     After the latest file system changes of android, we can't copy .JSON Files, or other types, but .PNG, and .JPG works.
-                     Thats why we exported all the raw-jsons as a .PNG Type (but with JSON-Data), and when reimporting them, we load the .PNG and save it as .JSON
-                     Therefore we can transfer the brew history, else this would not be possible
-                     */
                     await this._importFlowProfileFiles(
                       brewsData,
                       _importPath + 'brews/'
