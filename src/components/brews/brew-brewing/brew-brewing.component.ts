@@ -675,7 +675,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         await new Promise((resolve) => {
           let delayCounter = this.settings.brew_timer_start_delay_time;
           this.uiAlert.showLoadingSpinner(
-            this.translate.instant('PLEASE_WAIT_TIME', {
+            this.translate.instant('STARTING_IN', {
               time: delayCounter,
             })
           );
@@ -687,7 +687,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
               resolve(undefined);
             } else {
               this.uiAlert.setLoadingSpinnerMessage(
-                this.translate.instant('PLEASE_WAIT_TIME', {
+                this.translate.instant('STARTING_IN', {
                   time: delayCounter,
                 }),
                 false

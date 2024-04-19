@@ -1800,7 +1800,7 @@
     "SMART_SCALE_FIRST_DRIP_THRESHOLD_TOOLTIP": "At which scale weight, shall the first drip be count? Default: >= 0.1g",
     "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE": "Start brew delay",
     "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE_DESCRIPTION": "Set a delay time which will display a loading spinner until the brew will start",
-    "PLEASE_WAIT_TIME": "Please wait... {{time}}",
+    "STARTING_IN": "Starting in ... {{time}}",
     "IOS_DATABASE_ISSUE_TITLE": "ATTENTION !!!!! - DATABASE CONNECTION LOST",
     "IOS_DATABASE_ISSUE_DESCRIPTION": "We regret to inform you that we have encountered a loss of connection to the Database. This issue is a result of an unresolved bug in Apple's system, beyond the control of Beanconqueror. To prevent any potential data loss, we kindly ask you to immediately force-close the Beanconqueror application and reopen it."
 }
