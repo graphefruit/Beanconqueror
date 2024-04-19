@@ -1053,7 +1053,28 @@
                 "<b>Other<\/b>",
                 "Minor bug fixes"
             ]
-        }
+        },
+        "7.2.0": {
+        "TITLE": "Version 7.2.0: What's new",
+        "DESCRIPTION": [
+          "<b>More languages<\/b>",
+          "Support of Italian - Thanks to Cancercookie",
+          "Support of Polish - Thanks to MarcinSachs",
+          "",
+          "<b>Bluetooth Scales<\/b>",
+          "Time start will wait, till the scale realy reports 0 if it ",
+          "",
+          "<b>Xenia<\/b>",
+          "Adding toggle for V1 and V2",
+          "Adding a Brew By Weight Feature with automatic calculcation",
+          "",
+          "<b>Settings<\/b>",
+          "Define a threshold for the first drip to count",
+          "<b>Other<\/b>",
+          "Some technical changes in the code",
+          "[IOS]Showing popups if a database access could not be established."
+        ]
+      }
     },
     "CUSTOM_PARAMETERS": "Customize parameters",
     "CUSTOM_DEFAULT_PARAMETERS": "Default",
