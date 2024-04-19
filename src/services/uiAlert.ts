@@ -13,6 +13,7 @@ import { UILog } from './uiLog';
 import { EventQueueService } from './queueService/queue-service.service';
 import { AppEvent } from '../classes/appEvent/appEvent';
 import { AppEventType } from '../enums/appEvent/appEvent';
+import { LogTextComponent } from '../app/info/log/log-text/log-text.component';
 
 @Injectable({
   providedIn: 'root',
@@ -134,6 +135,14 @@ export class UIAlert {
 
     return promise;
   }
+  public async copyLogfiles(): Promise<any> {
+    const modal = await this.modalController.create({
+      component: LogTextComponent,
+    });
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+
   public async showMessageNoButton(
     _message: string,
     _title?: string,
@@ -152,6 +161,15 @@ export class UIAlert {
         header: _title,
         message: _message,
         backdropDismiss: false,
+        buttons: [
+          {
+            text: this.translate.instant('SEND_LOGS'),
+            handler: () => {
+              this.copyLogfiles();
+              return false;
+            },
+          },
+        ],
       });
       await alert.present();
     });
