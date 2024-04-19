@@ -1542,6 +1542,7 @@
     },
     "POPOVER_BLUETOOTH_ACTION_RECONNECT_SCALE": "Reconnect scale",
     "POPOVER_BLUETOOTH_ACTION_RECONNECT_PRESSURE_DEVICE": "Reconnect pressure device",
+    "POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER": "Reconnect refractometer device",
     "POPOVER_SHOW_BREWS": "Show brews",
     "LAST_USED_GRIND_SIZE_SETTING": "Last grind setting",
     "LAST_USED_BEAN": "Last bean",
