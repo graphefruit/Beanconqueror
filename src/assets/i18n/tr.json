@@ -1606,7 +1606,8 @@
     "PREPARATION_DEVICE": {
         "TYPE": {
             "NONE": "Hiçbiri",
-            "XENIA": "Xenia"
+            "XENIA": "Xenia",
+            "METICULOUS": ""
         },
         "URL": "Url",
         "CHOOSE_DEVICE": "Cihaz seç",
@@ -1627,7 +1628,18 @@
             "ERROR_NOT_ALL_SCRIPTS_FOUND": "Bir veya daha fazla betik bulunamadı, sıfırlandı",
             "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "Xenia portafilter makinesine bağlantı kurulamadı. Doğru ağda (WLAN) olduğunuzdan, doğru bağlantı adresini girdiğinizden veya diğer sorunları kontrol ettiğinizden emin olun.",
             "CHECKING_CONNECTION_TO_PORTAFILTER": "Xenia'ya bağlantı kontrol ediliyor",
-            "GRABING_SCRIPTS": "Betikler Xenia'dan yükleniyor"
+            "GRABING_SCRIPTS": "Betikler Xenia'dan yükleniyor",
+            "BREW_BY_WEIGHT_ACTIVE": ""
+        },
+        "API_VERSION": "",
+        "RESIDUAL_LAG_TIME": "",
+        "RESIDUAL_LAG_TIME_DESCRIPTION": "",
+        "TYPE_METICULOUS": {
+            "TITLE": "",
+            "NO_PROFILE": "",
+            "CHOOSE_PROFILE": "",
+            "SHOT_STARTED": "",
+            "SHOT_ENDED": ""
         }
     },
     "DEVICE_CONNECTION": "Cihaz bağlantısı",
@@ -1777,6 +1789,21 @@
     "PAGE_SETTINGS_LANGUAGE_FRANCE": "Fransızca",
     "PAGE_SETTINGS_LANGUAGE_INDONESIA": "Indonesian",
     "EXTRACTION_CHART_TITLE": "Extraction Chart",
+    "PAGE_SETTINGS_SHOW_BACKUP_ISSUES": "",
+    "PAGE_SETTINGS_SHOW_BACKUP_ISSUES_DESCRIPTION": "",
+    "AUTOMATIC_BACKUP_DID_FAIL": "",
+    "INTERNAL_BACKUP_DID_FAIL": "",
+    "ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD": "",
+    "SEND_LOGS": "",
+    "POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER": "",
     "PAGE_SETTINGS_LANGUAGE_ITALIAN": "Italiano",
-    "PAGE_SETTINGS_LANGUAGE_POLISH": "Lehçe"
+    "PAGE_SETTINGS_LANGUAGE_POLISH": "Lehçe",
+    "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_GENERAL_DESCRIPTION": "",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD": "",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD_TOOLTIP": "",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE": "",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE_DESCRIPTION": "",
+    "STARTING_IN": "",
+    "IOS_DATABASE_ISSUE_TITLE": "",
+    "IOS_DATABASE_ISSUE_DESCRIPTION": ""
 }

@@ -1606,7 +1606,8 @@
     "PREPARATION_DEVICE": {
         "TYPE": {
             "NONE": "Aucun",
-            "XENIA": "Xenia"
+            "XENIA": "Xenia",
+            "METICULOUS": ""
         },
         "URL": "Url",
         "CHOOSE_DEVICE": "Choisir l'appareil",
@@ -1627,7 +1628,18 @@
             "ERROR_NOT_ALL_SCRIPTS_FOUND": "Un ou plusieurs scripts n'ont pu être trouvés, ils ont été réinitialisés.",
             "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "La connexion à la machine à expresso xenia n'a pas pu être établie. Assure-toi que tu es sur le bon réseau (LAN), si tu as entré la bonne adresse IP, etc.",
             "CHECKING_CONNECTION_TO_PORTAFILTER": "La connexion à Xenia est en cours de vérification",
-            "GRABING_SCRIPTS": "Chargement de scripts de la Xenia"
+            "GRABING_SCRIPTS": "Chargement de scripts de la Xenia",
+            "BREW_BY_WEIGHT_ACTIVE": ""
+        },
+        "API_VERSION": "",
+        "RESIDUAL_LAG_TIME": "",
+        "RESIDUAL_LAG_TIME_DESCRIPTION": "",
+        "TYPE_METICULOUS": {
+            "TITLE": "",
+            "NO_PROFILE": "",
+            "CHOOSE_PROFILE": "",
+            "SHOT_STARTED": "",
+            "SHOT_ENDED": ""
         }
     },
     "DEVICE_CONNECTION": "Connexion de l'appareil",
@@ -1777,6 +1789,21 @@
     "PAGE_SETTINGS_LANGUAGE_FRANCE": "Français",
     "PAGE_SETTINGS_LANGUAGE_INDONESIA": "Indonésien",
     "EXTRACTION_CHART_TITLE": "Tableau d'extraction",
+    "PAGE_SETTINGS_SHOW_BACKUP_ISSUES": "",
+    "PAGE_SETTINGS_SHOW_BACKUP_ISSUES_DESCRIPTION": "",
+    "AUTOMATIC_BACKUP_DID_FAIL": "",
+    "INTERNAL_BACKUP_DID_FAIL": "",
+    "ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD": "",
+    "SEND_LOGS": "",
+    "POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER": "",
     "PAGE_SETTINGS_LANGUAGE_ITALIAN": "Italiano",
-    "PAGE_SETTINGS_LANGUAGE_POLISH": "Polonais"
+    "PAGE_SETTINGS_LANGUAGE_POLISH": "Polonais",
+    "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_GENERAL_DESCRIPTION": "",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD": "",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD_TOOLTIP": "",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE": "",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE_DESCRIPTION": "",
+    "STARTING_IN": "",
+    "IOS_DATABASE_ISSUE_TITLE": "",
+    "IOS_DATABASE_ISSUE_DESCRIPTION": ""
 }

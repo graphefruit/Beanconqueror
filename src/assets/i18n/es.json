@@ -136,7 +136,7 @@
     "BREW_DATA_TIME": "Tiempo",
     "BREW_DATA_GRIND_SIZE": "Ajuste de molienda",
     "BREW_DATA_GRIND_WEIGHT": "Café molido (g)",
-    "BREW_DATA_IN_OUT_BR": "Entada\/Salida (BR)",
+    "BREW_DATA_IN_OUT_BR": "Entrada\/Salida (BR)",
     "BREW_DATA_NOTES": "Notas",
     "BREW_DATA_PREPARATION_METHOD": "Método de preparación",
     "BREW_DATA_MILL": "Molino",
@@ -154,7 +154,7 @@
     "BREW_DATA_RATING": "Puntuación",
     "BREW_DATA_CALCULATED_COFFEE_BREW_TIME": "Tiempo de preparación",
     "BREW_DATA_TDS": "Total de sólidos disueltos (%)",
-    "BREW_DATA_CALCULATED_EXTRACTION_YIELD": "Rendimiento de extracción %",
+    "BREW_DATA_CALCULATED_EXTRACTION_YIELD": "Rendimiento de extracción (%)",
     "BREW_INFORMATION_BREW_RATIO": "Proporción (ratio)",
     "BREW_INFORMATION_BEAN_AGE": "Edad del café (días)",
     "BREW_INFORMATION_BREW_QUANTITY_TYPE_NAME": "Cantidad de preparaciones-métodos",
@@ -1606,7 +1606,8 @@
     "PREPARATION_DEVICE": {
         "TYPE": {
             "NONE": "Ninguno",
-            "XENIA": "Xenia"
+            "XENIA": "Xenia",
+            "METICULOUS": ""
         },
         "URL": "URL",
         "CHOOSE_DEVICE": "Seleccionar dispositivo",
@@ -1627,7 +1628,18 @@
             "ERROR_NOT_ALL_SCRIPTS_FOUND": "No se han encontrado todos los scripts, se han restablecido",
             "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "No se ha podido conectar con Xenia. Comprueba que estás en la WLAN correcta, si has introducido bien la URL de conexión u otros fallos.",
             "CHECKING_CONNECTION_TO_PORTAFILTER": "Comprobando conexión con Xenia",
-            "GRABING_SCRIPTS": "Cargando scripts desde Xenia"
+            "GRABING_SCRIPTS": "Cargando scripts desde Xenia",
+            "BREW_BY_WEIGHT_ACTIVE": ""
+        },
+        "API_VERSION": "",
+        "RESIDUAL_LAG_TIME": "",
+        "RESIDUAL_LAG_TIME_DESCRIPTION": "",
+        "TYPE_METICULOUS": {
+            "TITLE": "",
+            "NO_PROFILE": "",
+            "CHOOSE_PROFILE": "",
+            "SHOT_STARTED": "",
+            "SHOT_ENDED": ""
         }
     },
     "DEVICE_CONNECTION": "Conexión del dispositivo",
@@ -1777,6 +1789,21 @@
     "PAGE_SETTINGS_LANGUAGE_FRANCE": "Francés",
     "PAGE_SETTINGS_LANGUAGE_INDONESIA": "Indonesio",
     "EXTRACTION_CHART_TITLE": "Gráfico de extracción",
+    "PAGE_SETTINGS_SHOW_BACKUP_ISSUES": "Mostrar errores en copias de seguridad",
+    "PAGE_SETTINGS_SHOW_BACKUP_ISSUES_DESCRIPTION": "Muestra una ventana emergente si ha habido un error al realizar una copia de seguridad",
+    "AUTOMATIC_BACKUP_DID_FAIL": "La copia de seguridad automática ha fallado, ¡asegúrate de tener copias de seguridad que funcionen correctamente! Esta información se puede desactivar en la configuración",
+    "INTERNAL_BACKUP_DID_FAIL": "La copia de seguridad ha fallado, ¡asegúrate de tener copias de seguridad que funcionen correctamente! Esta información se puede desactivar en la configuración",
+    "ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD": "¡El archivo ZIP no se ha podido guardar! Esta información se puede desactivar en la configuración",
+    "SEND_LOGS": "Enviar registros",
+    "POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER": "",
     "PAGE_SETTINGS_LANGUAGE_ITALIAN": "Italiano",
-    "PAGE_SETTINGS_LANGUAGE_POLISH": "Polaco"
+    "PAGE_SETTINGS_LANGUAGE_POLISH": "Polaco",
+    "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_GENERAL_DESCRIPTION": "",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD": "",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD_TOOLTIP": "",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE": "",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE_DESCRIPTION": "",
+    "STARTING_IN": "",
+    "IOS_DATABASE_ISSUE_TITLE": "",
+    "IOS_DATABASE_ISSUE_DESCRIPTION": ""
 }
