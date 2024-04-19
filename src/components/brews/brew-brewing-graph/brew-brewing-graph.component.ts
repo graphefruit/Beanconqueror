@@ -2297,6 +2297,10 @@ export class BrewBrewingGraphComponent implements OnInit {
               this.flow_profile_raw.realtimeFlow &&
               this.flow_profile_raw.realtimeFlow.length > 0
             ) {
+              const prepDeviceCall: XeniaDevice = this.brewComponent
+                .brewBrewingPreparationDeviceEl
+                .preparationDevice as XeniaDevice;
+
               const targetWeight =
                 this.data.preparationDeviceBrew.params
                   .scriptAtWeightReachedNumber;
@@ -2313,7 +2317,7 @@ export class BrewBrewingGraphComponent implements OnInit {
                     n = this.flowProfileTempAll.length;
                   }
                   const lag_time = this.uiHelper.toFixedIfNecessary(1 / n, 2);
-                  const residual_lag_time = 1.35;
+                  const residual_lag_time = prepDeviceCall.getResidualLagTime();
 
                   let average_flow_rate = 0;
                   let lastFlowValue = 0;
@@ -2340,6 +2344,8 @@ export class BrewBrewingGraphComponent implements OnInit {
                     }
                   } catch (ex) {}
 
+                  const scaleType = scale.getScaleType();
+
                   this.pushFinalWeight(
                     this.data.preparationDeviceBrew.params
                       .scriptAtWeightReachedNumber,
@@ -2353,7 +2359,8 @@ export class BrewBrewingGraphComponent implements OnInit {
                       targetWeight,
                     average_flow_rate * (lag_time + residual_lag_time),
                     residual_lag_time,
-                    average_flow_rate
+                    average_flow_rate,
+                    scaleType
                   );
                   thresholdHit =
                     weight +
@@ -2364,10 +2371,6 @@ export class BrewBrewingGraphComponent implements OnInit {
                 }
 
                 if (thresholdHit) {
-                  const prepDeviceCall: XeniaDevice = this.brewComponent
-                    .brewBrewingPreparationDeviceEl
-                    .preparationDevice as XeniaDevice;
-
                   if (
                     this.data.preparationDeviceBrew.params
                       .scriptAtWeightReachedId > 0
@@ -3252,7 +3255,8 @@ export class BrewBrewingGraphComponent implements OnInit {
     calc_exceeds_weight: boolean,
     avg_flow_lag_residual_time: number,
     residual_lag_time: number,
-    average_flow_rate: number
+    average_flow_rate: number,
+    scaleType: string
   ) {
     const weightFlow: IFinalWeight = {} as IFinalWeight;
     weightFlow.timestamp = this.uiHelper.getActualTimeWithMilliseconds();
@@ -3266,6 +3270,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     weightFlow.avg_flow_lag_residual_time = avg_flow_lag_residual_time;
     weightFlow.residual_lag_time = residual_lag_time;
     weightFlow.average_flow_rate = average_flow_rate;
+    weightFlow.scaleType = scaleType;
 
     this.flow_profile_raw.finalWeight.push(weightFlow);
   }

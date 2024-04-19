@@ -71,4 +71,5 @@ export interface IFinalWeight {
   avg_flow_lag_residual_time: number;
   residual_lag_time: number;
   average_flow_rate: number;
+  scaleType: string;
 }

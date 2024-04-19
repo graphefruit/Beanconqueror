@@ -1612,6 +1612,8 @@
         "API_VERSION": "Api Version",
         "URL": "Url",
         "CHOOSE_DEVICE": "Choose device",
+        "RESIDUAL_LAG_TIME": "Residual lag time",
+        "RESIDUAL_LAG_TIME_DESCRIPTION": "Set the time to match the remaining water. With a naked portafilter you'd need a lower time, with a spouted one a higher one. As slower your scale reports the weight, as more time change you need",
         "CONNECTION": {
             "UNSUCCESFULLY": "Connection could not be established to machine",
             "SUCCESFULLY": "Connection to machine was successful"
