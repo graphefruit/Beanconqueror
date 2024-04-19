@@ -9,6 +9,11 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { FilesystemErrorPopoverComponent } from '../popover/filesystem-error-popover/filesystem-error-popover.component';
 import { LoadingPopoverComponent } from '../popover/loading-popover/loading-popover.component';
+import { UILog } from './uiLog';
+import { EventQueueService } from './queueService/queue-service.service';
+import { AppEvent } from '../classes/appEvent/appEvent';
+import { AppEventType } from '../enums/appEvent/appEvent';
+import { LogTextComponent } from '../app/info/log/log-text/log-text.component';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +23,9 @@ export class UIAlert {
     private readonly alertController: AlertController,
     private readonly translate: TranslateService,
     private readonly modalController: ModalController,
-    private readonly loadingController: LoadingController
+    private readonly loadingController: LoadingController,
+    private readonly uiLog: UILog,
+    private eventQueue: EventQueueService
   ) {}
 
   private existingLoadingSpinners = [];
@@ -45,13 +52,15 @@ export class UIAlert {
 
   public setLoadingSpinnerMessage(message: string, translate: boolean = false) {
     if (this.existingLoadingSpinners.length > 0) {
-      for (const spinner of this.existingLoadingSpinners) {
-        if (translate === false) {
-          spinner.message = message;
-        } else {
-          spinner.message = this.translate.instant(message);
-        }
+      let internMessage = '';
+      if (translate === false) {
+        internMessage = message;
+      } else {
+        internMessage = this.translate.instant(message);
       }
+      this.eventQueue.dispatch(
+        new AppEvent(AppEventType.UPDATE_LOADING_SPINNER_MESSAGE, internMessage)
+      );
     }
   }
 
@@ -126,6 +135,47 @@ export class UIAlert {
 
     return promise;
   }
+  public async copyLogfiles(): Promise<any> {
+    const modal = await this.modalController.create({
+      component: LogTextComponent,
+    });
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+
+  public async showMessageNoButton(
+    _message: string,
+    _title?: string,
+    _translate?: boolean
+  ): Promise<any> {
+    if (_translate === true) {
+      _message = this.translate.instant(_message);
+
+      if (_title) {
+        _title = this.translate.instant(_title);
+      }
+    }
+
+    const promise = new Promise(async (resolve, reject) => {
+      const alert = await this.alertController.create({
+        header: _title,
+        message: _message,
+        backdropDismiss: false,
+        buttons: [
+          {
+            text: this.translate.instant('SEND_LOGS'),
+            handler: () => {
+              this.copyLogfiles();
+              return false;
+            },
+          },
+        ],
+      });
+      await alert.present();
+    });
+
+    return promise;
+  }
   public async showConfirm(
     _message: string,
     _title?: string,
@@ -177,6 +227,7 @@ export class UIAlert {
     translate: boolean = true,
     showDismissAfterSpecificTimeout: boolean = false
   ) {
+    this.uiLog.generateExceptionLineMessage('Loading-Spinner');
     if (this.existingLoadingSpinners.length > 0) {
       await this.hideLoadingSpinner();
     }

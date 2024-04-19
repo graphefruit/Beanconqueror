@@ -2,8 +2,6 @@ import { Logger } from '../devices/common/logger';
 import { HttpClient } from '@angular/common/http';
 import { Preparation } from '../preparation/preparation';
 
-export type TareEvent = undefined;
-
 export class PreparationDevice {
   protected blueToothParentlogger: Logger;
 

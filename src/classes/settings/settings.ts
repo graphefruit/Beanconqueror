@@ -64,6 +64,8 @@ export class Settings implements ISettings {
   public show_archived_waters: boolean;
   public show_archived_brews_on_dashboard: boolean;
   public show_archived_graphs: boolean;
+  public brew_timer_start_delay_time: number;
+  public brew_timer_start_delay_active: boolean;
 
   public use_numeric_keyboard_for_grind_size: boolean;
 
@@ -153,6 +155,7 @@ export class Settings implements ISettings {
   public bluetooth_scale_listening_threshold_start: number;
   public bluetooth_scale_listening_threshold_active: boolean;
   public bluetooth_scale_ignore_weight_button_active: boolean;
+  public bluetooth_scale_first_drip_threshold: number;
 
   public pressure_id: string;
   public pressure_type: PressureType;
@@ -265,6 +268,8 @@ export class Settings implements ISettings {
     this.show_archived_waters = true;
     this.show_archived_brews_on_dashboard = true;
     this.show_archived_graphs = true;
+    this.brew_timer_start_delay_time = 1;
+    this.brew_timer_start_delay_active = false;
 
     this.track_caffeine_consumption = false;
 
@@ -387,6 +392,7 @@ export class Settings implements ISettings {
     this.bluetooth_scale_listening_threshold_start = 0.1;
     this.bluetooth_scale_listening_threshold_active = false;
     this.bluetooth_scale_ignore_weight_button_active = false;
+    this.bluetooth_scale_first_drip_threshold = 0.1;
 
     this.scale_log = false;
 

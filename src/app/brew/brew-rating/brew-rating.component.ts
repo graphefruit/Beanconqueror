@@ -37,6 +37,15 @@ export class BrewRatingComponent implements OnInit {
     }
   }
 
+  public pinFormatter(value: any) {
+    const parsedFloat = parseFloat(value);
+    if (isNaN(parsedFloat)) {
+      return `${0}`;
+    }
+    const newValue = +parsedFloat.toFixed(2);
+    return `${newValue}`;
+  }
+
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
 

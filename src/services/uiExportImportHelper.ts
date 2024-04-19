@@ -343,6 +343,9 @@ export class UIExportImportHelper {
   private getAutomatedBackupFilename(): string {
     return moment().format('DD_MM_YYYY').toString();
   }
+  private getAutomatedBackupFilenameHours(): string {
+    return moment().format('DD_MM_YYYY_HH_mm').toString();
+  }
 
   public async saveAutomaticBackups() {
     this.buildExportZIP().then(
@@ -384,6 +387,7 @@ export class UIExportImportHelper {
         _blob
       );
     } catch (ex) {
+      this.uiLog.error('Could not to export normal ZIP file');
       const settings = this.uiSettingsStorage.getSettings();
       if (settings.show_backup_issues) {
         this.uiAlert.showMessage(
@@ -402,14 +406,14 @@ export class UIExportImportHelper {
     if (welcomePagedShowed === true && brewsAdded === true) {
       this.uiLog.log('Start to export automatic ZIP file');
       try {
-        const file: FileEntry = await this.uiFileHelper.downloadFile(
-          'Beanconqueror_automatic_export_' +
-            this.getAutomatedBackupFilename() +
+        const file: FileEntry = await this.uiFileHelper.saveZIPFile(
+          'Download/Beanconqueror_export/Beanconqueror_automatic_export_' +
+            this.getAutomatedBackupFilenameHours() +
             '.zip',
-          _blob,
-          false
+          _blob
         );
       } catch (ex) {
+        this.uiLog.error('Could not to export automatic ZIP file');
         if (settings.show_backup_issues) {
           this.uiAlert.showMessage(
             'AUTOMATIC_BACKUP_DID_FAIL',
