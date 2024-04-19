@@ -1764,6 +1764,7 @@
       "DELETE": "Usuń wykres",
       "UPLOAD_DESCRIPTION": "Zaimportuj plik .JSON, który możesz pobrać w widoku szczegółów parzenia. "
     },
+    "PAGE_SETTINGS_LANGUAGE_ITALIAN": "Italiano",
     "SHOW_VISUALIZER": "Pokaż wizualizator",
     "NO_BREWS_FOUND": "Nie znaleziono naparów",
     "NO_GRAPHS_FOUND": "Nie znaleziono wykresów",
@@ -1786,4 +1787,3 @@
     "PAGE_SETTINGS_LANGUAGE_POLISH": "Polski",
     "PAGE_SETTINGS_LANGUAGE_ITALIAN": "Włoski"
   }
-  
