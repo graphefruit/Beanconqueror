@@ -12,10 +12,6 @@ import { UIBeanHelper } from '../../services/uiBeanHelper';
 
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 
-import { UIPreparationStorage } from '../../services/uiPreparationStorage';
-import { UIMillStorage } from '../../services/uiMillStorage';
-import { UIStorage } from '../../services/uiStorage';
-
 @Component({
   selector: 'dashboard',
   templateUrl: './dashboard.page.html',
@@ -36,10 +32,7 @@ export class DashboardPage implements OnInit {
     private readonly router: Router,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiMillStorage: UIMillStorage,
-    private readonly uiStorage: UIStorage
+    private readonly uiSettingsStorage: UISettingsStorage
   ) {}
 
   public ngOnInit() {
@@ -56,14 +49,6 @@ export class DashboardPage implements OnInit {
 
   public async ionViewWillEnter() {
     this.loadBrews();
-  }
-  public async addManyBrews() {
-    for (let i = 0; i < 10000; i++) {
-      let br = this.uiBrewStorage.getAllEntries()[0];
-      br.config.uuid = '';
-      br.config.unix_timestamp = 0;
-      await this.uiBrewStorage.add(br);
-    }
   }
 
   public loadBrews() {
