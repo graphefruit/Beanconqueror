@@ -1606,7 +1606,8 @@
     "PREPARATION_DEVICE": {
         "TYPE": {
             "NONE": "None",
-            "XENIA": "Xenia"
+            "XENIA": "Xenia",
+            "METICULOUS": ""
         },
         "URL": "Url",
         "CHOOSE_DEVICE": "选择设备",
@@ -1627,7 +1628,18 @@
             "ERROR_NOT_ALL_SCRIPTS_FOUND": "无法找到脚本，它们已被重置",
             "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "无法建立与 Xenia 的连接。请确保您在正确的网络 (WLAN) 中, 如果您排除了网络问题, 请检查其他问题。",
             "CHECKING_CONNECTION_TO_PORTAFILTER": "正在检查与 Xenia 的连接",
-            "GRABING_SCRIPTS": "已从 Xenia 加载脚本"
+            "GRABING_SCRIPTS": "已从 Xenia 加载脚本",
+            "BREW_BY_WEIGHT_ACTIVE": ""
+        },
+        "API_VERSION": "",
+        "RESIDUAL_LAG_TIME": "",
+        "RESIDUAL_LAG_TIME_DESCRIPTION": "",
+        "TYPE_METICULOUS": {
+            "TITLE": "",
+            "NO_PROFILE": "",
+            "CHOOSE_PROFILE": "",
+            "SHOT_STARTED": "",
+            "SHOT_ENDED": ""
         }
     },
     "DEVICE_CONNECTION": "设备连接",
@@ -1776,7 +1788,22 @@
     "PAGE_SETTINGS_DATE_FORMAT": "日期格式",
     "PAGE_SETTINGS_LANGUAGE_FRANCE": "法语",
     "PAGE_SETTINGS_LANGUAGE_INDONESIA": "印度尼西亚语",
+    "EXTRACTION_CHART_TITLE": "Extraction Chart",
+    "PAGE_SETTINGS_SHOW_BACKUP_ISSUES": "",
+    "PAGE_SETTINGS_SHOW_BACKUP_ISSUES_DESCRIPTION": "",
+    "AUTOMATIC_BACKUP_DID_FAIL": "",
+    "INTERNAL_BACKUP_DID_FAIL": "",
+    "ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD": "",
+    "SEND_LOGS": "",
+    "POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER": "",
     "PAGE_SETTINGS_LANGUAGE_ITALIAN": "Italiano",
-    "EXTRACTION_CHART_TITLE": "提取图表",
-    "PAGE_SETTINGS_LANGUAGE_POLISH": "波兰语"
+    "PAGE_SETTINGS_LANGUAGE_POLISH": "波兰语",
+    "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_GENERAL_DESCRIPTION": "",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD": "",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD_TOOLTIP": "",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE": "",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE_DESCRIPTION": "",
+    "STARTING_IN": "",
+    "IOS_DATABASE_ISSUE_TITLE": "",
+    "IOS_DATABASE_ISSUE_DESCRIPTION": ""
 }

@@ -1026,31 +1026,31 @@
                 "Dukungan Perancis - Terima kasih kepada Yannick",
                 "Dukungan Bahasa Indonesia - Terima kasih Bondan, Ganjar",
                 "",
-                "<b>Timbangan Bluetooth</b>",
                 "Mendukung timbangan Bluetooth DIY (Firmware Rust & Python)",
                 "Dukungan DiFluid Microbalance Ti",
+                "Meningkatkan perhitungan flow-rate untuk semua timbangan",
                 "Meningkatkan perhitungan aliran untuk semua skala",
                 "",
-                "<b>Area Grafik</b>",
+                "Menambahkan lebih banyak informasi ke kartu referensi pemilihan",
                 "Menambahkan lebih banyak informasi ke kartu referensi pemilihan",
                 "",
-                "<b>Minuman</b>",
+                "Bluetooth-Scales - Menambahkan tombol taring ke bagian atas toolbar",
                 "Bluetooth-Scales - Menambahkan tombol taring ke bagian atas toolbar",
                 "",
-                "<b>Biji kopi</b>",
+                "Dukungan menyalin berbagai informasi",
                 "Dukungan menyalin berbagai informasi",
                 "",
-                "<b>Bagian air</b>",
+                "Parameter potassium telah ditambahkan",
                 "Menambahkan parameter potasium",
                 "",
-                "<b>Penggiling</b>",
+                "Parameter RPM sekarang terlihat dalam tampilan daftar dan tampilan pilihan",
                 "Parameter RPM kini terlihat di tampilan berderet dan tampilan pilihan",
                 "",
-                "<b>Pengaturan</b>",
                 "Tentukan sumbu waktu Anda sendiri untuk filter atau espresso dengan perangkat bluetooth yang terhubung",
                 "Menambahkan format tanggal yang berbeda agar sesuai dengan format Amerika",
+                "Menambahkan format tanggal yang berbeda agar sesuai dengan format Amerika",
                 "",
-                "<b>Lainnya</b>",
+                "Perbaikan bug minor",
                 "Perbaikan bug kecil"
             ]
         }
@@ -1606,7 +1606,8 @@
     "PREPARATION_DEVICE": {
         "TYPE": {
             "NONE": "None",
-            "XENIA": "Xenia"
+            "XENIA": "Xenia",
+            "METICULOUS": ""
         },
         "URL": "Url",
         "CHOOSE_DEVICE": "Choose device",
@@ -1627,7 +1628,18 @@
             "ERROR_NOT_ALL_SCRIPTS_FOUND": "One or more scripts could not be found, they were reset",
             "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "The connection to the xenia espresso machine could not be established. Please make sure you're on the right network (LAN), if you entered the right IP address, etc.",
             "CHECKING_CONNECTION_TO_PORTAFILTER": "Connection to Xenia is being checked",
-            "GRABING_SCRIPTS": "Loading scripts from Xenia"
+            "GRABING_SCRIPTS": "Loading scripts from Xenia",
+            "BREW_BY_WEIGHT_ACTIVE": ""
+        },
+        "API_VERSION": "",
+        "RESIDUAL_LAG_TIME": "",
+        "RESIDUAL_LAG_TIME_DESCRIPTION": "",
+        "TYPE_METICULOUS": {
+            "TITLE": "",
+            "NO_PROFILE": "",
+            "CHOOSE_PROFILE": "",
+            "SHOT_STARTED": "",
+            "SHOT_ENDED": ""
         }
     },
     "DEVICE_CONNECTION": "Device connection",
@@ -1777,6 +1789,21 @@
     "PAGE_SETTINGS_LANGUAGE_FRANCE": "Perancis",
     "PAGE_SETTINGS_LANGUAGE_INDONESIA": "Indonesia",
     "EXTRACTION_CHART_TITLE": "Bagan Ekstraksi",
+    "PAGE_SETTINGS_SHOW_BACKUP_ISSUES": "",
+    "PAGE_SETTINGS_SHOW_BACKUP_ISSUES_DESCRIPTION": "",
+    "AUTOMATIC_BACKUP_DID_FAIL": "",
+    "INTERNAL_BACKUP_DID_FAIL": "",
+    "ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD": "",
+    "SEND_LOGS": "",
+    "POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER": "",
     "PAGE_SETTINGS_LANGUAGE_ITALIAN": "Italiano",
-    "PAGE_SETTINGS_LANGUAGE_POLISH": "Polandia"
+    "PAGE_SETTINGS_LANGUAGE_POLISH": "Polandia",
+    "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_GENERAL_DESCRIPTION": "",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD": "",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD_TOOLTIP": "",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE": "",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE_DESCRIPTION": "",
+    "STARTING_IN": "",
+    "IOS_DATABASE_ISSUE_TITLE": "",
+    "IOS_DATABASE_ISSUE_DESCRIPTION": ""
 }

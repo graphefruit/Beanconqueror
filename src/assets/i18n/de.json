@@ -1606,7 +1606,8 @@
     "PREPARATION_DEVICE": {
         "TYPE": {
             "NONE": "Keins",
-            "XENIA": "Xenia"
+            "XENIA": "Xenia",
+            "METICULOUS": ""
         },
         "URL": "Url",
         "CHOOSE_DEVICE": "Gerät auswählen",
@@ -1627,7 +1628,18 @@
             "ERROR_NOT_ALL_SCRIPTS_FOUND": "Ein oder mehrere Xenia-Scripte konnten nicht mehr gefunden werden, diese wurden auf Standard zurückgesetzt",
             "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "Die Verbindung zur Xenia-Siebträgermaschine konnte nicht hergestellt werden, bitte überprüfe ob du im richtigen Netz (WLAN) unterwegs bist, ob die Verbindung richtig hinterlegt wurde, oder ob andere Probleme vorhanden sind",
             "CHECKING_CONNECTION_TO_PORTAFILTER": "Verbindung zur Xenia wird überprüft",
-            "GRABING_SCRIPTS": "Scripte werden von der Xenia geholt"
+            "GRABING_SCRIPTS": "Scripte werden von der Xenia geholt",
+            "BREW_BY_WEIGHT_ACTIVE": ""
+        },
+        "API_VERSION": "",
+        "RESIDUAL_LAG_TIME": "",
+        "RESIDUAL_LAG_TIME_DESCRIPTION": "",
+        "TYPE_METICULOUS": {
+            "TITLE": "",
+            "NO_PROFILE": "",
+            "CHOOSE_PROFILE": "",
+            "SHOT_STARTED": "",
+            "SHOT_ENDED": ""
         }
     },
     "DEVICE_CONNECTION": "Geräteverbindung",
@@ -1777,6 +1789,21 @@
     "PAGE_SETTINGS_LANGUAGE_FRANCE": "Französisch",
     "PAGE_SETTINGS_LANGUAGE_INDONESIA": "Indonesisch",
     "EXTRACTION_CHART_TITLE": "Extraktionsdiagramm",
+    "PAGE_SETTINGS_SHOW_BACKUP_ISSUES": "",
+    "PAGE_SETTINGS_SHOW_BACKUP_ISSUES_DESCRIPTION": "",
+    "AUTOMATIC_BACKUP_DID_FAIL": "",
+    "INTERNAL_BACKUP_DID_FAIL": "",
+    "ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD": "",
+    "SEND_LOGS": "",
+    "POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER": "",
     "PAGE_SETTINGS_LANGUAGE_ITALIAN": "Italiano",
-    "PAGE_SETTINGS_LANGUAGE_POLISH": "Polnisch"
+    "PAGE_SETTINGS_LANGUAGE_POLISH": "Polnisch",
+    "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_GENERAL_DESCRIPTION": "",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD": "",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD_TOOLTIP": "",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE": "",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE_DESCRIPTION": "",
+    "STARTING_IN": "",
+    "IOS_DATABASE_ISSUE_TITLE": "",
+    "IOS_DATABASE_ISSUE_DESCRIPTION": ""
 }

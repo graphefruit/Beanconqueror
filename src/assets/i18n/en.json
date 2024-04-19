@@ -1542,7 +1542,6 @@
     },
     "POPOVER_BLUETOOTH_ACTION_RECONNECT_SCALE": "Reconnect scale",
     "POPOVER_BLUETOOTH_ACTION_RECONNECT_PRESSURE_DEVICE": "Reconnect pressure device",
-    "POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER": "Reconnect refractometer device",
     "POPOVER_SHOW_BREWS": "Show brews",
     "LAST_USED_GRIND_SIZE_SETTING": "Last grind setting",
     "LAST_USED_BEAN": "Last bean",
@@ -1610,11 +1609,8 @@
             "XENIA": "Xenia",
             "METICULOUS": "Meticulous"
         },
-        "API_VERSION": "Api Version",
         "URL": "Url",
         "CHOOSE_DEVICE": "Choose device",
-        "RESIDUAL_LAG_TIME": "Residual lag time",
-        "RESIDUAL_LAG_TIME_DESCRIPTION": "Set the time to match the remaining water. With a naked portafilter you'd need a lower time, with a spouted one a higher one. As slower your scale reports the weight, as more time change you need",
         "CONNECTION": {
             "UNSUCCESFULLY": "Connection could not be established to machine",
             "SUCCESFULLY": "Connection to machine was successful"
@@ -1635,12 +1631,15 @@
             "GRABING_SCRIPTS": "Loading scripts from Xenia",
             "BREW_BY_WEIGHT_ACTIVE": "Brew by weight active"
         },
+        "API_VERSION": "Api Version",
+        "RESIDUAL_LAG_TIME": "Residual lag time",
+        "RESIDUAL_LAG_TIME_DESCRIPTION": "Set the time to match the remaining water. With a naked portafilter you'd need a lower time, with a spouted one a higher one. As slower your scale reports the weight, as more time change you need",
         "TYPE_METICULOUS": {
-          "TITLE": "Meticulous Machine",
-          "NO_PROFILE": "No Profile",
-          "CHOOSE_PROFILE": "Choose profile",
-          "SHOT_STARTED": "Shot started",
-          "SHOT_ENDED": "Shot ended"
+            "TITLE": "Meticulous Machine",
+            "NO_PROFILE": "No Profile",
+            "CHOOSE_PROFILE": "Choose profile",
+            "SHOT_STARTED": "Shot started",
+            "SHOT_ENDED": "Shot ended"
         }
     },
     "DEVICE_CONNECTION": "Device connection",
@@ -1792,10 +1791,11 @@
     "EXTRACTION_CHART_TITLE": "Extraction Chart",
     "PAGE_SETTINGS_SHOW_BACKUP_ISSUES": "Show backup issues",
     "PAGE_SETTINGS_SHOW_BACKUP_ISSUES_DESCRIPTION": "Display a popup if backups can't be wrote to the filesystem",
-    "AUTOMATIC_BACKUP_DID_FAIL":"Auto Backup did not work, make sure to have working backups! This information can be turned off in the settings",
-    "INTERNAL_BACKUP_DID_FAIL":"Internal Backup did not work, make sure to have working backups! This information can be turned off in the settings",
-    "ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD":"ZIP file could not be saved! This information can be turned off in the settings",
+    "AUTOMATIC_BACKUP_DID_FAIL": "Auto Backup did not work, make sure to have working backups! This information can be turned off in the settings",
+    "INTERNAL_BACKUP_DID_FAIL": "Internal Backup did not work, make sure to have working backups! This information can be turned off in the settings",
+    "ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD": "ZIP file could not be saved! This information can be turned off in the settings",
     "SEND_LOGS": "Send logs",
+    "POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER": "Reconnect refractometer device",
     "PAGE_SETTINGS_LANGUAGE_ITALIAN": "Italiano",
     "PAGE_SETTINGS_LANGUAGE_POLISH": "Polish",
     "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_GENERAL_DESCRIPTION": "You need to reset your timer first before you can start",
