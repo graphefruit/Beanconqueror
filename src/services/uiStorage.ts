@@ -100,11 +100,12 @@ export class UIStorage {
   private async internalSet(_key: string, _val: any): Promise<boolean> {
     const promise: Promise<boolean> = new Promise<boolean>(
       async (resolve, reject) => {
-        this.eventQueue.dispatch(
-          new AppEvent(AppEventType.STORAGE_CHANGED, undefined)
-        );
         try {
           await this._storage.set(_key, _val);
+          // We just trigger storage change when the set was successfully.
+          this.eventQueue.dispatch(
+            new AppEvent(AppEventType.STORAGE_CHANGED, undefined)
+          );
           resolve(true);
         } catch (ex) {
           reject(ex);
