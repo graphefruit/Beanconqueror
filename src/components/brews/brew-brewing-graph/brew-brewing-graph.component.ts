@@ -2307,61 +2307,62 @@ export class BrewBrewingGraphComponent implements OnInit {
 
               const brewByWeightActive: boolean =
                 this.data.preparationDeviceBrew?.params?.brew_by_weight_active;
+
+              let n = 3;
+              if (this.flowNCalculation > 0) {
+                n = this.flowNCalculation;
+              } else {
+                n = this.flowProfileTempAll.length;
+              }
+              const lag_time = this.uiHelper.toFixedIfNecessary(1 / n, 2);
+              const residual_lag_time = prepDeviceCall.getResidualLagTime();
+
+              let average_flow_rate = 0;
+              let lastFlowValue = 0;
+              try {
+                lastFlowValue =
+                  this.flow_profile_raw.realtimeFlow[
+                    this.flow_profile_raw.realtimeFlow.length - 1
+                  ].flow_value;
+
+                const avgFlowValCalc: Array<IBrewRealtimeWaterFlow> =
+                  this.flow_profile_raw.realtimeFlow.slice(-n);
+
+                for (let i = 0; i < avgFlowValCalc.length; i++) {
+                  if (avgFlowValCalc[i] && avgFlowValCalc[i].flow_value) {
+                    average_flow_rate =
+                      average_flow_rate + avgFlowValCalc[i].flow_value;
+                  }
+                }
+                if (average_flow_rate > 0) {
+                  average_flow_rate = this.uiHelper.toFixedIfNecessary(
+                    average_flow_rate / n,
+                    2
+                  );
+                }
+              } catch (ex) {}
+
+              const scaleType = scale.getScaleType();
+
+              this.pushFinalWeight(
+                this.data.preparationDeviceBrew.params
+                  .scriptAtWeightReachedNumber,
+                lag_time,
+                this.flowTime + '.' + this.flowSecondTick,
+                lastFlowValue,
+                weight,
+                lag_time + residual_lag_time,
+                weight + average_flow_rate * (lag_time + residual_lag_time) >=
+                  targetWeight,
+                average_flow_rate * (lag_time + residual_lag_time),
+                residual_lag_time,
+                average_flow_rate,
+                scaleType
+              );
+
               if (this.machineStopScriptWasTriggered === false) {
                 let thresholdHit: boolean = false;
                 if (brewByWeightActive) {
-                  let n = 3;
-                  if (this.flowNCalculation > 0) {
-                    n = this.flowNCalculation;
-                  } else {
-                    n = this.flowProfileTempAll.length;
-                  }
-                  const lag_time = this.uiHelper.toFixedIfNecessary(1 / n, 2);
-                  const residual_lag_time = prepDeviceCall.getResidualLagTime();
-
-                  let average_flow_rate = 0;
-                  let lastFlowValue = 0;
-                  try {
-                    lastFlowValue =
-                      this.flow_profile_raw.realtimeFlow[
-                        this.flow_profile_raw.realtimeFlow.length - 1
-                      ].flow_value;
-
-                    const avgFlowValCalc: Array<IBrewRealtimeWaterFlow> =
-                      this.flow_profile_raw.realtimeFlow.slice(-n);
-
-                    for (let i = 0; i < avgFlowValCalc.length; i++) {
-                      if (avgFlowValCalc[i] && avgFlowValCalc[i].flow_value) {
-                        average_flow_rate =
-                          average_flow_rate + avgFlowValCalc[i].flow_value;
-                      }
-                    }
-                    if (average_flow_rate > 0) {
-                      average_flow_rate = this.uiHelper.toFixedIfNecessary(
-                        average_flow_rate / n,
-                        2
-                      );
-                    }
-                  } catch (ex) {}
-
-                  const scaleType = scale.getScaleType();
-
-                  this.pushFinalWeight(
-                    this.data.preparationDeviceBrew.params
-                      .scriptAtWeightReachedNumber,
-                    lag_time,
-                    this.flowTime + '.' + this.flowSecondTick,
-                    lastFlowValue,
-                    weight,
-                    lag_time + residual_lag_time,
-                    weight +
-                      average_flow_rate * (lag_time + residual_lag_time) >=
-                      targetWeight,
-                    average_flow_rate * (lag_time + residual_lag_time),
-                    residual_lag_time,
-                    average_flow_rate,
-                    scaleType
-                  );
                   thresholdHit =
                     weight +
                       average_flow_rate * (lag_time + residual_lag_time) >=
