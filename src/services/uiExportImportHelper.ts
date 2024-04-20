@@ -408,7 +408,7 @@ export class UIExportImportHelper {
       try {
         const file: FileEntry = await this.uiFileHelper.saveZIPFile(
           'Download/Beanconqueror_export/Beanconqueror_automatic_export_' +
-            this.getAutomatedBackupFilenameHours() +
+            this.getAutomatedBackupFilename() +
             '.zip',
           _blob
         );
