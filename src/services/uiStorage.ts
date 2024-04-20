@@ -83,7 +83,7 @@ export class UIStorage {
                 _key +
                 ' we stop to try getting data now 20 attempts are enough - show error'
             );
-            await this.uiAlert.showMessageNoButton(
+            await this.uiAlert.showIOSIndexedDBIssues(
               'IOS_DATABASE_ISSUE_DESCRIPTION',
               'IOS_DATABASE_ISSUE_TITLE',
               true
@@ -165,7 +165,7 @@ export class UIStorage {
                 _key +
                 ' we stop to try getting data now 20 attempts are enough - show error'
             );
-            await this.uiAlert.showMessageNoButton(
+            await this.uiAlert.showIOSIndexedDBIssues(
               'IOS_DATABASE_ISSUE_DESCRIPTION',
               'IOS_DATABASE_ISSUE_TITLE',
               true

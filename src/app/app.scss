@@ -1025,3 +1025,13 @@ loading-popover {
   height:150px!important;
   width:200px;
 }
+
+.ios-indexeddbissues {
+  --min-width: 100%;
+  --min-height: 100%;
+  .alert-wrapper {
+    .alert-message {
+      max-height:80%;
+    }
+  }
+}

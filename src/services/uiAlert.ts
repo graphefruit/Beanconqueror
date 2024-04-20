@@ -14,7 +14,7 @@ import { EventQueueService } from './queueService/queue-service.service';
 import { AppEvent } from '../classes/appEvent/appEvent';
 import { AppEventType } from '../enums/appEvent/appEvent';
 import { LogTextComponent } from '../app/info/log/log-text/log-text.component';
-
+declare var window;
 @Injectable({
   providedIn: 'root',
 })
@@ -143,7 +143,7 @@ export class UIAlert {
     await modal.onWillDismiss();
   }
 
-  public async showMessageNoButton(
+  public async showIOSIndexedDBIssues(
     _message: string,
     _title?: string,
     _translate?: boolean
@@ -160,8 +160,16 @@ export class UIAlert {
       const alert = await this.alertController.create({
         header: _title,
         message: _message,
+        cssClass: 'ios-indexeddbissues',
         backdropDismiss: false,
         buttons: [
+          {
+            text: this.translate.instant('RELOAD_APP'),
+            handler: () => {
+              window.location.reload();
+              return false;
+            },
+          },
           {
             text: this.translate.instant('SEND_LOGS'),
             handler: () => {

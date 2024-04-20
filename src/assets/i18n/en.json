@@ -1062,17 +1062,24 @@
           "Support of Polish - Thanks to MarcinSachs",
           "",
           "<b>Bluetooth Scales<\/b>",
-          "Time start will wait, till the scale realy reports 0 if it ",
+          "Time start will wait, until the scale is reporting several 0 weight reports",
           "",
           "<b>Xenia<\/b>",
           "Adding toggle for V1 and V2",
           "Adding a Brew By Weight Feature with automatic calculcation",
           "",
+          "<b>Meticulous<\/b>",
+          "First Meticulous integration",
+          "",
           "<b>Settings<\/b>",
           "Define a threshold for the first drip to count",
+          "",
           "<b>Other<\/b>",
           "Some technical changes in the code",
-          "[IOS]Showing popups if a database access could not be established."
+          "[IOS]Showing popups if a database access could not be established.",
+          "",
+          "<b>Thanks</b>",
+          "A big thank you to all translators who are putting in tremendous effort to make the app available in multiple languages."
         ]
       }
     },
@@ -1826,5 +1833,6 @@
     "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE_DESCRIPTION": "Set a delay time which will display a loading spinner until the brew will start",
     "STARTING_IN": "Starting in ... {{time}}",
     "IOS_DATABASE_ISSUE_TITLE": "ATTENTION !!!!! - DATABASE CONNECTION LOST",
-    "IOS_DATABASE_ISSUE_DESCRIPTION": "We regret to inform you that we have encountered a loss of connection to the Database. This issue is a result of an unresolved bug in Apple's system, beyond the control of Beanconqueror. To prevent any potential data loss, we kindly ask you to immediately force-close the Beanconqueror application and reopen it."
+    "IOS_DATABASE_ISSUE_DESCRIPTION": "We're sorry to inform you that we've experienced a loss of connection to the database. This problem stems from an unresolved bug within Apple's system, which is unfortunately beyond Beanconqueror's control. To safeguard against any potential data loss, we kindly request that you promptly force-close the Beanconqueror application and then reopen it. Alternatively, you can simply press the reload button that's displayed along with this alert. We realize that this is less than ideal, and we apologize for any inconvenience it may cause. For further assistance or information, please consult our Gitbook FAQ. Thank you for your understanding!",
+    "RELOAD_APP": "Reload app now"
 }
