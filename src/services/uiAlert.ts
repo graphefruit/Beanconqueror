@@ -235,7 +235,7 @@ export class UIAlert {
     translate: boolean = true,
     showDismissAfterSpecificTimeout: boolean = false
   ) {
-    this.uiLog.generateExceptionLineMessage('Loading-Spinner');
+    // this.uiLog.generateExceptionLineMessage('Loading-Spinner');
     if (this.existingLoadingSpinners.length > 0) {
       await this.hideLoadingSpinner();
     }
