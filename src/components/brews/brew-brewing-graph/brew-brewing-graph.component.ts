@@ -250,7 +250,9 @@ export class BrewBrewingGraphComponent implements OnInit {
           }
         }
         // If scale disconnected, sometimes the timer run but the screen was not refreshed, so maybe it helpes to detect the change.
-        this.checkChanges();
+        setTimeout(() => {
+          this.checkChanges();
+        }, 200);
         this.brewComponent?.brewBrewingPreparationDeviceEl?.checkChanges();
       });
   }
@@ -292,29 +294,33 @@ export class BrewBrewingGraphComponent implements OnInit {
   }
 
   public shallFlowProfileBeHidden(): boolean {
-    if (
-      this.smartScaleConnected() === true ||
-      this.temperatureDeviceConnected() === true ||
-      (this.pressureDeviceConnected() === true &&
-        this.data.getPreparation().style_type ===
-          PREPARATION_STYLE_TYPE.ESPRESSO) ||
-      this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDevice !==
-        undefined
-    ) {
-      return false;
-    }
-    if (this.isEdit === true && this.data.flow_profile !== '') {
-      return false;
-    }
-    if (
-      this.flow_profile_raw.weight.length > 0 ||
-      this.flow_profile_raw.pressureFlow.length > 0 ||
-      this.flow_profile_raw.temperatureFlow.length > 0
-    ) {
-      return false;
-    }
+    try {
+      if (
+        this.smartScaleConnected() === true ||
+        this.temperatureDeviceConnected() === true ||
+        (this.pressureDeviceConnected() === true &&
+          this.data.getPreparation()?.style_type ===
+            PREPARATION_STYLE_TYPE.ESPRESSO) ||
+        this.brewComponent?.brewBrewingPreparationDeviceEl
+          ?.preparationDevice !== undefined
+      ) {
+        return false;
+      }
+      if (this.isEdit === true && this.data.flow_profile !== '') {
+        return false;
+      }
+      if (
+        this.flow_profile_raw.weight.length > 0 ||
+        this.flow_profile_raw.pressureFlow.length > 0 ||
+        this.flow_profile_raw.temperatureFlow.length > 0
+      ) {
+        return false;
+      }
 
-    return true;
+      return true;
+    } catch (ex) {
+      return true;
+    }
   }
 
   public getPreparation(): Preparation {
@@ -415,6 +421,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       // Re render, else the lines would not be hidden/shown when having references graphs
       Plotly.relayout('flowProfileChart', this.lastChartLayout);
     }
+    this.checkChanges();
   }
 
   public initializeFlowChart(_wait: boolean = true): void {
