@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import {
   AlertController,
@@ -21,24 +21,18 @@ import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { UIMillHelper } from '../../../services/uiMillHelper';
 import { TranslateService } from '@ngx-translate/core';
-import { BrewFlow, IBrewWaterFlow } from '../../../classes/brew/brewFlow';
+import { IBrewWaterFlow } from '../../../classes/brew/brewFlow';
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UIAlert } from '../../../services/uiAlert';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { BrewFlowComponent } from '../brew-flow/brew-flow.component';
 import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import moment from 'moment';
-import BeanconquerorFlowTestDataDummy from '../../../assets/BeanconquerorFlowTestDataFourth.json';
-import BeanconquerorFlowTestDataDummySecond from '../../../assets/BeanconquerorFlowTestDataSecond.json';
 
 import { UILog } from '../../../services/uiLog';
-import { UIToast } from '../../../services/uiToast';
 import { Visualizer } from '../../../classes/visualizer/visualizer';
-import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
-import { UIGraphStorage } from '../../../services/uiGraphStorage.service';
-import { UIBrewStorage } from '../../../services/uiBrewStorage';
-import { Graph } from '../../../classes/graph/graph';
 import { BrewPopoverExtractionComponent } from '../brew-popover-extraction/brew-popover-extraction.component';
+import { BrewBrewingGraphComponent } from '../../../components/brews/brew-brewing-graph/brew-brewing-graph.component';
 
 declare var Plotly;
 @Component({
@@ -56,25 +50,11 @@ export class BrewDetailComponent implements OnInit {
   private brew: IBrew;
   public loaded: boolean = false;
 
-  public flow_profile_raw: BrewFlow = new BrewFlow();
-  public reference_profile_raw: BrewFlow = new BrewFlow();
-
-  private weightTrace: any;
-  private flowPerSecondTrace: any;
-  private realtimeFlowTrace: any;
-  private pressureTrace: any;
-  private temperatureTrace: any;
-
-  public weightTraceReference: any;
-  public flowPerSecondTraceReference: any;
-  public realtimeFlowTraceReference: any;
-  public pressureTraceReference: any;
-  public temperatureTraceReference: any;
-
   private maximizeFlowGraphIsShown: boolean = false;
-
-  public lastChartLayout: any = undefined;
   public editActive: boolean = false;
+
+  @ViewChild('brewBrewingGraphEl', { static: false })
+  public brewBrewingGraphEl: BrewBrewingGraphComponent;
   constructor(
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
@@ -93,15 +73,12 @@ export class BrewDetailComponent implements OnInit {
     private readonly platform: Platform,
     private readonly screenOrientation: ScreenOrientation,
     private readonly alertCtrl: AlertController,
-    private readonly uiLog: UILog,
-    private readonly uiToast: UIToast,
-    private readonly uiGraphStorage: UIGraphStorage,
-    private readonly uiBrewStorage: UIBrewStorage
+    private readonly uiLog: UILog
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
 
-  public async ionViewWillEnter() {
+  public async ionViewDidEnter() {
     this.uiAnalytics.trackEvent(
       BREW_TRACKING.TITLE,
       BREW_TRACKING.ACTIONS.DETAIL
@@ -117,17 +94,17 @@ export class BrewDetailComponent implements OnInit {
         this.__loadCuppingChart();
       }, 1000);
     }
-
-    await this.readFlowProfile();
-    if (this.data.reference_flow_profile) {
-      await this.readReferenceFlowProfile(this.data);
-    }
-
-    setTimeout(() => {
-      this.initializeFlowChart();
-    }, 150);
+    this.initializeFlowChartOnGraphEl();
 
     this.loaded = true;
+  }
+
+  private initializeFlowChartOnGraphEl() {
+    setTimeout(async () => {
+      if (this.brewBrewingGraphEl) {
+        await this.brewBrewingGraphEl?.instance();
+      }
+    }, 150);
   }
 
   public copyNotesToClipboard() {
@@ -186,8 +163,7 @@ export class BrewDetailComponent implements OnInit {
     });
     await this.uiBrewHelper.repeatBrew(this.data);
     this.editActive = false;
-    await this.readFlowProfile();
-    this.initializeFlowChart();
+    this.initializeFlowChartOnGraphEl();
   }
   public async edit() {
     try {
@@ -205,8 +181,7 @@ export class BrewDetailComponent implements OnInit {
     this.editActive = false;
     if (returningBrew) {
       this.data = returningBrew;
-      await this.readFlowProfile();
-      this.initializeFlowChart();
+      this.initializeFlowChartOnGraphEl();
     }
   }
   public formatSeconds(seconds: number, milliseconds) {
@@ -231,418 +206,6 @@ export class BrewDetailComponent implements OnInit {
       this.cuppingChart.nativeElement,
       this.uiBrewHelper.getCuppingChartData(this.data) as any
     );
-  }
-
-  public toggleChartLines(_type: string) {
-    if (_type === 'weight') {
-      this.weightTrace.visible = !this.weightTrace.visible;
-      if (this.weightTraceReference) {
-        this.weightTraceReference.visible = !this.weightTraceReference.visible;
-      }
-    } else if (_type === 'calc_flow') {
-      this.flowPerSecondTrace.visible = !this.flowPerSecondTrace.visible;
-      if (this.flowPerSecondTraceReference) {
-        this.flowPerSecondTraceReference.visible =
-          !this.flowPerSecondTraceReference.visible;
-      }
-    } else if (_type === 'realtime_flow') {
-      this.realtimeFlowTrace.visible = !this.realtimeFlowTrace.visible;
-      if (this.realtimeFlowTraceReference) {
-        this.realtimeFlowTraceReference.visible =
-          !this.realtimeFlowTraceReference.visible;
-      }
-    } else if (_type === 'pressure') {
-      this.pressureTrace.visible = !this.pressureTrace.visible;
-      if (this.pressureTraceReference) {
-        this.pressureTraceReference.visible =
-          !this.pressureTraceReference.visible;
-      }
-    } else if (_type === 'temperature') {
-      this.temperatureTrace.visible = !this.temperatureTrace.visible;
-      if (this.temperatureTraceReference) {
-        this.temperatureTraceReference.visible =
-          !this.temperatureTraceReference.visible;
-      }
-    }
-
-    Plotly.relayout('flowProfileChart', this.lastChartLayout);
-  }
-  @HostListener('window:resize')
-  @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange() {
-    if (this.data.flow_profile !== '') {
-      Plotly.relayout('flowProfileChart', this.getChartLayout());
-    }
-  }
-
-  public initializeFlowChart(): void {
-    if (
-      this.data.flow_profile === null ||
-      this.data.flow_profile === undefined ||
-      this.data.flow_profile === ''
-    ) {
-      return;
-    }
-
-    setTimeout(() => {
-      try {
-        Plotly.purge('flowProfileChart');
-      } catch (ex) {}
-      let graphSettings = this.settings.graph.FILTER;
-      if (
-        this.data.getPreparation().style_type ===
-        PREPARATION_STYLE_TYPE.ESPRESSO
-      ) {
-        graphSettings = this.settings.graph.ESPRESSO;
-      }
-
-      const chartData = [];
-
-      this.weightTraceReference = undefined;
-      this.flowPerSecondTraceReference = undefined;
-      this.realtimeFlowTraceReference = undefined;
-      this.pressureTraceReference = undefined;
-      this.temperatureTraceReference = undefined;
-      if (
-        this.reference_profile_raw.weight.length > 0 ||
-        this.reference_profile_raw.pressureFlow.length > 0 ||
-        this.reference_profile_raw.temperatureFlow.length > 0
-      ) {
-        this.weightTraceReference = {
-          x: [],
-          y: [],
-          name: this.translate.instant('BREW_FLOW_WEIGHT'),
-          yaxis: 'y',
-          type: 'scattergl',
-          mode: 'lines',
-          line: {
-            shape: 'linear',
-            color: '#ebe6dd',
-            width: 2,
-          },
-          visible: graphSettings.weight,
-
-          showlegend: false,
-        };
-        this.flowPerSecondTraceReference = {
-          x: [],
-          y: [],
-          name: this.translate.instant('BREW_FLOW_WEIGHT_PER_SECOND'),
-          yaxis: 'y2',
-          type: 'scattergl',
-          mode: 'lines',
-          line: {
-            shape: 'linear',
-            color: '#cbd5d9',
-            width: 2,
-          },
-          visible: graphSettings.calc_flow,
-
-          showlegend: false,
-        };
-
-        this.realtimeFlowTraceReference = {
-          x: [],
-          y: [],
-          name: this.translate.instant('BREW_FLOW_WEIGHT_REALTIME'),
-          yaxis: 'y2',
-          type: 'scattergl',
-          mode: 'lines',
-          line: {
-            shape: 'linear',
-            color: '#9cb5be',
-            width: 2,
-          },
-          visible: graphSettings.realtime_flow,
-
-          showlegend: false,
-        };
-
-        this.pressureTraceReference = {
-          x: [],
-          y: [],
-          name: this.translate.instant('BREW_PRESSURE_FLOW'),
-          yaxis: 'y4',
-          type: 'scattergl',
-          mode: 'lines',
-          line: {
-            shape: 'linear',
-            color: '#9be8d3',
-            width: 2,
-          },
-          visible: graphSettings.pressure,
-
-          showlegend: false,
-        };
-
-        this.temperatureTraceReference = {
-          x: [],
-          y: [],
-          name: this.translate.instant('BREW_TEMPERATURE_REALTIME'),
-          yaxis: 'y5',
-          type: 'scattergl',
-          mode: 'lines',
-          line: {
-            shape: 'linear',
-            color: '#eaad9f',
-            width: 2,
-          },
-          visible: graphSettings.temperature,
-
-          showlegend: false,
-        };
-
-        const presetFlowProfile = this.reference_profile_raw;
-
-        if (
-          presetFlowProfile.weight.length > 0 ||
-          presetFlowProfile.pressureFlow.length > 0 ||
-          presetFlowProfile.temperatureFlow.length > 0
-        ) {
-          const startingDay = moment(new Date()).startOf('day');
-          // IF brewtime has some seconds, we add this to the delay directly.
-
-          let firstTimestamp;
-          if (presetFlowProfile.weight.length > 0) {
-            firstTimestamp = presetFlowProfile.weight[0].timestamp;
-          } else if (presetFlowProfile.pressureFlow.length > 0) {
-            firstTimestamp = presetFlowProfile.pressureFlow[0].timestamp;
-          } else if (presetFlowProfile.temperatureFlow.length > 0) {
-            firstTimestamp = presetFlowProfile.temperatureFlow[0].timestamp;
-          }
-          const delay =
-            moment(firstTimestamp, 'HH:mm:ss.SSS').toDate().getTime() -
-            startingDay.toDate().getTime();
-
-          if (presetFlowProfile.weight.length > 0) {
-            chartData.push(this.weightTraceReference);
-            chartData.push(this.flowPerSecondTraceReference);
-            chartData.push(this.realtimeFlowTraceReference);
-            for (const data of presetFlowProfile.weight) {
-              this.weightTraceReference.x.push(
-                new Date(
-                  moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
-                    delay
-                )
-              );
-              this.weightTraceReference.y.push(data.actual_weight);
-            }
-            for (const data of presetFlowProfile.waterFlow) {
-              this.flowPerSecondTraceReference.x.push(
-                new Date(
-                  moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
-                    delay
-                )
-              );
-              this.flowPerSecondTraceReference.y.push(data.value);
-            }
-            if (presetFlowProfile.realtimeFlow) {
-              for (const data of presetFlowProfile.realtimeFlow) {
-                this.realtimeFlowTraceReference.x.push(
-                  new Date(
-                    moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
-                      delay
-                  )
-                );
-                this.realtimeFlowTraceReference.y.push(data.flow_value);
-              }
-            }
-          }
-          if (
-            presetFlowProfile.pressureFlow &&
-            presetFlowProfile.pressureFlow.length > 0
-          ) {
-            chartData.push(this.pressureTraceReference);
-            for (const data of presetFlowProfile.pressureFlow) {
-              this.pressureTraceReference.x.push(
-                new Date(
-                  moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
-                    delay
-                )
-              );
-              this.pressureTraceReference.y.push(data.actual_pressure);
-            }
-          }
-          if (
-            presetFlowProfile.temperatureFlow &&
-            presetFlowProfile.temperatureFlow.length > 0
-          ) {
-            chartData.push(this.temperatureTraceReference);
-            for (const data of presetFlowProfile.temperatureFlow) {
-              this.temperatureTraceReference.x.push(
-                new Date(
-                  moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
-                    delay
-                )
-              );
-              this.temperatureTraceReference.y.push(data.actual_temperature);
-            }
-          }
-        }
-      }
-
-      this.weightTrace = {
-        x: [],
-        y: [],
-        name: this.translate.instant('BREW_FLOW_WEIGHT'),
-        yaxis: 'y',
-        type: 'scattergl',
-        mode: 'lines',
-        line: {
-          shape: 'linear',
-          color: '#cdc2ac',
-          width: 2,
-        },
-        visible: graphSettings.weight,
-      };
-      this.flowPerSecondTrace = {
-        x: [],
-        y: [],
-        name: this.translate.instant('BREW_FLOW_WEIGHT_PER_SECOND'),
-        yaxis: 'y2',
-        type: 'scattergl',
-        mode: 'lines',
-        line: {
-          shape: 'linear',
-          color: '#7F97A2',
-          width: 2,
-        },
-        visible: graphSettings.calc_flow,
-      };
-
-      this.realtimeFlowTrace = {
-        x: [],
-        y: [],
-        name: this.translate.instant('BREW_FLOW_WEIGHT_REALTIME'),
-        yaxis: 'y2',
-        type: 'scattergl',
-        mode: 'lines',
-        line: {
-          shape: 'linear',
-          color: '#09485D',
-          width: 2,
-        },
-        visible: graphSettings.realtime_flow,
-      };
-
-      this.pressureTrace = {
-        x: [],
-        y: [],
-        name: this.translate.instant('BREW_PRESSURE_FLOW'),
-        yaxis: 'y4',
-        type: 'scattergl',
-        mode: 'lines',
-        line: {
-          shape: 'linear',
-          color: '#05C793',
-          width: 2,
-        },
-        visible: graphSettings.pressure,
-      };
-
-      this.temperatureTrace = {
-        x: [],
-        y: [],
-        name: this.translate.instant('BREW_TEMPERATURE_REALTIME'),
-        yaxis: 'y5',
-        type: 'scattergl',
-        mode: 'lines',
-        line: {
-          shape: 'linear',
-          color: '#CC3311',
-          width: 2,
-        },
-        visible: graphSettings.temperature,
-      };
-
-      const startingDay = moment(new Date()).startOf('day');
-      // IF brewtime has some seconds, we add this to the delay directly.
-
-      let firstTimestamp;
-      if (this.flow_profile_raw.weight?.length > 0) {
-        firstTimestamp = this.flow_profile_raw.weight[0].timestamp;
-      } else if (this.flow_profile_raw.pressureFlow?.length > 0) {
-        firstTimestamp = this.flow_profile_raw.pressureFlow[0].timestamp;
-      } else if (this.flow_profile_raw.temperatureFlow?.length > 0) {
-        firstTimestamp = this.flow_profile_raw.temperatureFlow[0].timestamp;
-      } else {
-        firstTimestamp = 0;
-      }
-      const delay =
-        moment(firstTimestamp, 'HH:mm:ss.SSS').toDate().getTime() -
-        startingDay.toDate().getTime();
-      if (this.flow_profile_raw.weight?.length > 0) {
-        for (const data of this.flow_profile_raw.weight) {
-          this.weightTrace.x.push(
-            new Date(
-              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay
-            )
-          );
-          this.weightTrace.y.push(data.actual_weight);
-        }
-        for (const data of this.flow_profile_raw.waterFlow) {
-          this.flowPerSecondTrace.x.push(
-            new Date(
-              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay
-            )
-          );
-          this.flowPerSecondTrace.y.push(data.value);
-        }
-        if (this.flow_profile_raw?.realtimeFlow) {
-          for (const data of this.flow_profile_raw.realtimeFlow) {
-            this.realtimeFlowTrace.x.push(
-              new Date(
-                moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
-                  delay
-              )
-            );
-            this.realtimeFlowTrace.y.push(data.flow_value);
-          }
-        }
-      }
-      if (
-        this.flow_profile_raw?.pressureFlow &&
-        this.flow_profile_raw.pressureFlow.length > 0
-      ) {
-        for (const data of this.flow_profile_raw.pressureFlow) {
-          this.pressureTrace.x.push(
-            new Date(
-              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay
-            )
-          );
-          this.pressureTrace.y.push(data.actual_pressure);
-        }
-      }
-      if (
-        this.flow_profile_raw?.temperatureFlow &&
-        this.flow_profile_raw.temperatureFlow.length > 0
-      ) {
-        for (const data of this.flow_profile_raw.temperatureFlow) {
-          this.temperatureTrace.x.push(
-            new Date(
-              moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() - delay
-            )
-          );
-          this.temperatureTrace.y.push(data.actual_temperature);
-        }
-      }
-
-      chartData.push(this.weightTrace);
-      chartData.push(this.flowPerSecondTrace);
-      chartData.push(this.realtimeFlowTrace);
-
-      const layout = this.getChartLayout();
-
-      chartData.push(this.pressureTrace);
-      chartData.push(this.temperatureTrace);
-
-      Plotly.newPlot(
-        'flowProfileChart',
-        chartData,
-        layout,
-        this.getChartConfig()
-      );
-    }, 100);
   }
 
   public async maximizeFlowGraph() {
@@ -700,15 +263,10 @@ export class BrewDetailComponent implements OnInit {
             this.screenOrientation.unlock();
           }, 150);
         }
+        setTimeout(() => {
+          this.brewBrewingGraphEl.onOrientationChange();
+        }, 150);
       } catch (ex) {}
-
-      await new Promise((resolve) => {
-        setTimeout(async () => {
-          // If we would not set the old height, the graph would explode to big.
-          this.initializeFlowChart();
-          resolve(undefined);
-        }, 50);
-      });
     });
   }
 
@@ -747,115 +305,6 @@ export class BrewDetailComponent implements OnInit {
     }
   }
 
-  private getChartLayout() {
-    const chartWidth: number = document.getElementById(
-      'canvasContainerBrew'
-    ).offsetWidth;
-    const chartHeight: number = 150;
-
-    let tickFormat = '%S';
-
-    if (this.data.brew_time > 59) {
-      tickFormat = '%M:' + tickFormat;
-    }
-    /*  yaxis3: {
-        title: '',
-        titlefont: {color: '#09485D'},
-        tickfont: {color: '#09485D'},
-        anchor: 'x',
-        overlaying: 'y',
-        side: 'right',
-        position: 1
-
-      },*/
-    const layout = {
-      width: chartWidth,
-      height: chartHeight,
-      margin: {
-        l: 20,
-        r: 20,
-        b: 20,
-        t: 20,
-        pad: 2,
-      },
-      showlegend: false,
-      xaxis: {
-        tickformat: tickFormat,
-        visible: true,
-        domain: [0, 1],
-        type: 'date',
-      },
-      yaxis: {
-        title: '',
-        titlefont: { color: '#cdc2ac' },
-        tickfont: { color: '#cdc2ac' },
-        side: 'left',
-        position: 0.05,
-        visible: true,
-      },
-      yaxis2: {
-        title: '',
-        titlefont: { color: '#7F97A2' },
-        tickfont: { color: '#7F97A2' },
-        anchor: 'x',
-        overlaying: 'y',
-        side: 'right',
-        position: 0.95,
-        showgrid: false,
-        visible: true,
-      },
-    };
-
-    layout['yaxis4'] = {
-      title: '',
-      titlefont: { color: '#05C793' },
-      tickfont: { color: '#05C793' },
-      anchor: 'free',
-      overlaying: 'y',
-      side: 'right',
-      showgrid: false,
-      position: 0.93,
-      range: [0, 12],
-      visible: true,
-    };
-
-    layout['yaxis5'] = {
-      title: '',
-      titlefont: { color: '#CC3311' },
-      tickfont: { color: '#CC3311' },
-      anchor: 'free',
-      overlaying: 'y',
-      side: 'right',
-      showgrid: false,
-      position: 0.8,
-      fixedrange: true,
-      range: [0, 100],
-      visible: true,
-    };
-
-    if (this.weightTrace.x && this.weightTrace.x.length > 0) {
-      layout['yaxis'].visible = true;
-      layout['yaxis2'].visible = true;
-    } else {
-      layout['yaxis'].visible = false;
-      layout['yaxis2'].visible = false;
-    }
-    if (this.pressureTrace.x && this.pressureTrace.x.length > 0) {
-      layout['yaxis4'].visible = true;
-    } else {
-      layout['yaxis4'].visible = false;
-    }
-
-    if (this.temperatureTrace.x && this.temperatureTrace.x.length > 0) {
-      layout['yaxis5'].visible = true;
-    } else {
-      layout['yaxis5'].visible = false;
-    }
-
-    this.lastChartLayout = layout;
-    return layout;
-  }
-
   public async downloadVisualizerProfile() {
     const vS: Visualizer = new Visualizer();
 
@@ -864,7 +313,7 @@ export class BrewDetailComponent implements OnInit {
     vS.mapWater(this.data.getWater());
     vS.mapPreparation(this.data.getPreparation());
     vS.mapMill(this.data.getMill());
-    vS.brewFlow = this.flow_profile_raw;
+    vS.brewFlow = this.brewBrewingGraphEl.flow_profile_raw;
 
     try {
       await this.uiHelper.exportJSON(
@@ -903,72 +352,18 @@ export class BrewDetailComponent implements OnInit {
     }
   }
   public async downloadFlowProfile() {
-    await this.uiExcel.exportBrewFlowProfile(this.flow_profile_raw);
-  }
-
-  private getChartConfig() {
-    const config = {
-      displayModeBar: false, // this is the line that hides the bar.
-      responsive: true,
-    };
-    return config;
-  }
-
-  private async readReferenceFlowProfile(_brew: Brew) {
-    if (this.platform.is('cordova')) {
-      if (_brew.reference_flow_profile.type !== REFERENCE_GRAPH_TYPE.NONE) {
-        let referencePath: string = '';
-        const uuid = _brew.reference_flow_profile.uuid;
-        let referenceObj: Brew | Graph = null;
-        if (_brew.reference_flow_profile.type === REFERENCE_GRAPH_TYPE.BREW) {
-          referenceObj = this.uiBrewStorage.getEntryByUUID(uuid);
-        } else {
-          referenceObj = this.uiGraphStorage.getEntryByUUID(uuid);
-        }
-        if (referenceObj) {
-          referencePath = referenceObj.getGraphPath();
-
-          await this.uiAlert.showLoadingSpinner();
-          try {
-            const jsonParsed = await this.uiFileHelper.getJSONFile(
-              referencePath
-            );
-            this.reference_profile_raw = jsonParsed;
-          } catch (ex) {
-            // Maybe the reference flow has been deleted.
-          }
-        }
-      }
-      await this.uiAlert.hideLoadingSpinner();
-    } else {
-      this.reference_profile_raw = BeanconquerorFlowTestDataDummySecond as any;
-    }
-  }
-
-  private async readFlowProfile() {
-    if (this.platform.is('cordova')) {
-      if (this.data.flow_profile !== '') {
-        await this.uiAlert.showLoadingSpinner();
-        try {
-          const jsonParsed = await this.uiFileHelper.getJSONFile(
-            this.data.flow_profile
-          );
-          this.flow_profile_raw = jsonParsed;
-        } catch (ex) {}
-
-        await this.uiAlert.hideLoadingSpinner();
-      }
-    } else {
-      this.flow_profile_raw = BeanconquerorFlowTestDataDummy as any;
-    }
+    await this.uiExcel.exportBrewFlowProfile(
+      this.brewBrewingGraphEl.flow_profile_raw
+    );
   }
 
   public getAvgFlow(): number {
     if (
-      this.flow_profile_raw?.waterFlow &&
-      this.flow_profile_raw.waterFlow.length > 0
+      this.brewBrewingGraphEl?.flow_profile_raw.waterFlow &&
+      this.brewBrewingGraphEl?.flow_profile_raw.waterFlow.length > 0
     ) {
-      const waterFlows: Array<IBrewWaterFlow> = this.flow_profile_raw.waterFlow;
+      const waterFlows: Array<IBrewWaterFlow> =
+        this.brewBrewingGraphEl?.flow_profile_raw.waterFlow;
       let calculatedFlow: number = 0;
       let foundEntries: number = 0;
       for (const water of waterFlows) {
