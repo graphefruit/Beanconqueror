@@ -2649,9 +2649,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     try {
       const jsonParsed = await this.uiFileHelper.getJSONFile(flowProfilePath);
       this.flow_profile_raw = jsonParsed;
-    } catch (ex) {
-      this.flow_profile_raw = BeanconquerorFlowTestDataDummySecondDummy as any;
-    }
+    } catch (ex) {}
   }
 
   private async deleteFlowProfile() {
