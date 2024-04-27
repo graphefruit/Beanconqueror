@@ -60,6 +60,7 @@ import { MeticulousDevice } from '../../../classes/preparationDevice/meticulous/
 import { MeticulousShotData } from '../../../classes/preparationDevice/meticulous/meticulousShotData';
 import { Graph } from '../../../classes/graph/graph';
 import { UIGraphStorage } from '../../../services/uiGraphStorage.service';
+import regression from 'regression';
 
 declare var Plotly;
 
@@ -2468,6 +2469,24 @@ export class BrewBrewingGraphComponent implements OnInit {
 
               let average_flow_rate = 0;
               let lastFlowValue = 0;
+
+              const linearArray = [];
+
+              const weightFlowCalc: Array<IBrewWeightFlow> =
+                this.flow_profile_raw.weight.slice(-(n - 1));
+
+              for (let i = 0; i < weightFlowCalc.length; i++) {
+                if (weightFlowCalc[i] && weightFlowCalc[i].actual_weight) {
+                  const linearArrayEntry = [i, weightFlowCalc[i].actual_weight];
+                  linearArray.push(linearArrayEntry);
+                }
+              }
+              linearArray.push([n - 1, weight]);
+
+              const linearRegressionCalc = regression.linear(linearArray);
+              average_flow_rate = linearRegressionCalc.equation[0] * n;
+
+              /** Old calculcation
               try {
                 lastFlowValue =
                   this.flow_profile_raw.realtimeFlow[
@@ -2489,7 +2508,7 @@ export class BrewBrewingGraphComponent implements OnInit {
                     2
                   );
                 }
-              } catch (ex) {}
+              } catch (ex) {}**/
 
               const scaleType = scale.getScaleType();
 
