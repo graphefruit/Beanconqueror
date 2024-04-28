@@ -101,8 +101,10 @@ export class BrewDetailComponent implements OnInit {
 
   private initializeFlowChartOnGraphEl() {
     setTimeout(async () => {
-      if (this.brewBrewingGraphEl) {
-        await this.brewBrewingGraphEl?.instance();
+      if (this.editActive === false) {
+        if (this.brewBrewingGraphEl) {
+          await this.brewBrewingGraphEl?.instance();
+        }
       }
     }, 150);
   }
@@ -159,11 +161,12 @@ export class BrewDetailComponent implements OnInit {
     await new Promise(async (resolve) => {
       setTimeout(() => {
         resolve(undefined);
-      }, 50);
+      }, 100);
     });
-    await this.uiBrewHelper.repeatBrew(this.data);
-    this.editActive = false;
-    this.initializeFlowChartOnGraphEl();
+    this.uiBrewHelper.repeatBrew(this.data).then(() => {
+      this.editActive = false;
+      this.initializeFlowChartOnGraphEl();
+    });
   }
   public async edit() {
     try {
