@@ -1317,11 +1317,9 @@ export class BrewBrewingGraphComponent implements OnInit {
   public setActualTemperatureInformation(_temperature) {
     this.ngZone.runOutsideAngular(() => {
       if (this.brewComponent.maximizeFlowGraphIsShown === true) {
-        //We don't need to update the tiles, if the maxed graph is shown
         this.brewComponent.brewTemperatureGraphSubject.next({
           temperature: _temperature,
         });
-        return;
       }
 
       try {
@@ -1338,8 +1336,6 @@ export class BrewBrewingGraphComponent implements OnInit {
         this.brewComponent.brewPressureGraphSubject.next({
           pressure: _pressure,
         });
-        //We don't need to update the tiles, if the maxed graph is shown
-        return;
       }
 
       try {
@@ -1377,8 +1373,6 @@ export class BrewBrewingGraphComponent implements OnInit {
           smoothedWeight: actualSmoothedWeightPerSecond,
           avgFlow: avgFlow,
         });
-        //We don't need to update the tiles, if the maxed graph is shown
-        return;
       }
 
       try {
