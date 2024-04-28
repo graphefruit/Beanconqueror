@@ -1,4 +1,10 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -29,10 +35,14 @@ import { UIAnalytics } from '../../../services/uiAnalytics';
 
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
 import { BluetoothScale, SCALE_TIMER_COMMAND } from '../../../classes/devices';
-import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import {
+  CoffeeBluetoothDevicesService,
+  CoffeeBluetoothServiceEvent,
+} from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { UIHelper } from '../../../services/uiHelper';
 import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
+import { Subscription } from 'rxjs';
 
 declare var Plotly;
 declare var window;
@@ -57,6 +67,7 @@ export class BrewAddComponent implements OnInit {
   public showFooter: boolean = true;
   private initialBeanData: string = '';
   private disableHardwareBack;
+  public bluetoothSubscription: Subscription = undefined;
   constructor(
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
@@ -79,7 +90,8 @@ export class BrewAddComponent implements OnInit {
     private readonly uiAnalytics: UIAnalytics,
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly uiHelper: UIHelper,
-    private readonly visualizerService: VisualizerService
+    private readonly visualizerService: VisualizerService,
+    private readonly changeDetectorRef: ChangeDetectorRef
   ) {
     // Initialize to standard in drop down
 
@@ -127,6 +139,25 @@ export class BrewAddComponent implements OnInit {
 
     this.getCoordinates(true);
     this.initialBeanData = JSON.stringify(this.data);
+
+    this.bluetoothSubscription = this.bleManager
+      .attachOnEvent()
+      .subscribe((_type) => {
+        if (
+          _type === CoffeeBluetoothServiceEvent.DISCONNECTED_SCALE ||
+          _type === CoffeeBluetoothServiceEvent.CONNECTED_SCALE
+        ) {
+          this.checkChanges();
+        }
+      });
+  }
+
+  private checkChanges() {
+    // #507 Wrapping check changes in set timeout so all values get checked
+    setTimeout(() => {
+      this.changeDetectorRef.detectChanges();
+      window.getComputedStyle(window.document.getElementsByTagName('body')[0]);
+    }, 15);
   }
 
   public confirmDismiss(): void {
@@ -410,6 +441,13 @@ export class BrewAddComponent implements OnInit {
           this.confirmDismiss();
         }
       );
+    }
+  }
+
+  public ngOnDestroy() {
+    if (this.bluetoothSubscription) {
+      this.bluetoothSubscription.unsubscribe();
+      this.bluetoothSubscription = undefined;
     }
   }
 }
