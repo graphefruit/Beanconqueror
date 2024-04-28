@@ -1957,6 +1957,13 @@ export class BrewBrewingGraphComponent implements OnInit {
                   resolve(undefined);
                 }
               });
+            /** Maybe we have issues with scale sending weight reports (like on the acaia), so we set an timeout, if after 3 seconds nothing happends, we just deatach and resolve**/
+            setTimeout(() => {
+              if (weightReports <= 0) {
+                this.deattachToScaleStartTareListening();
+                resolve(undefined);
+              }
+            }, 3000);
           });
           await this.uiAlert.hideLoadingSpinner();
         }
@@ -2487,7 +2494,7 @@ export class BrewBrewingGraphComponent implements OnInit {
               average_flow_rate = linearRegressionCalc.equation[0] * n;
 
               /** Old calculcation
-              try {
+               try {
                 lastFlowValue =
                   this.flow_profile_raw.realtimeFlow[
                     this.flow_profile_raw.realtimeFlow.length - 1
