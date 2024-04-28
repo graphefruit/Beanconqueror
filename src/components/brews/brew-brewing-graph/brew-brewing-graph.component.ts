@@ -28,12 +28,12 @@ import { Brew } from '../../../classes/brew/brew';
 import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
 import {
   BrewFlow,
+  IBrewByWeight,
   IBrewPressureFlow,
   IBrewRealtimeWaterFlow,
   IBrewTemperatureFlow,
   IBrewWaterFlow,
   IBrewWeightFlow,
-  IFinalWeight,
 } from '../../../classes/brew/brewFlow';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
@@ -2512,7 +2512,7 @@ export class BrewBrewingGraphComponent implements OnInit {
 
               const scaleType = scale.getScaleType();
 
-              this.pushFinalWeight(
+              this.pushBrewByWeight(
                 this.data.preparationDeviceBrew.params
                   .scriptAtWeightReachedNumber,
                 lag_time,
@@ -3414,7 +3414,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     this.flow_profile_raw.pressureFlow.push(pressureFlow);
   }
 
-  private pushFinalWeight(
+  private pushBrewByWeight(
     target_weight: number,
     lag_time: number,
     brew_time: string,
@@ -3427,7 +3427,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     average_flow_rate: number,
     scaleType: string
   ) {
-    const weightFlow: IFinalWeight = {} as IFinalWeight;
+    const weightFlow: IBrewByWeight = {} as IBrewByWeight;
     weightFlow.timestamp = this.uiHelper.getActualTimeWithMilliseconds();
     weightFlow.brew_time = brew_time;
     weightFlow.target_weight = target_weight;
@@ -3441,7 +3441,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     weightFlow.average_flow_rate = average_flow_rate;
     weightFlow.scaleType = scaleType;
 
-    this.flow_profile_raw.finalWeight.push(weightFlow);
+    this.flow_profile_raw.brewbyweight.push(weightFlow);
   }
 
   private pushTemperatureProfile(

@@ -192,7 +192,7 @@ export class UIExcel {
       );
     }
 
-    if (_flow.hasOwnProperty('finalWeight')) {
+    if (_flow.hasOwnProperty('brewbyweight')) {
       const header_final_weight: Array<string> = [];
       header_final_weight.push('target_weight');
       header_final_weight.push('lag_time');
@@ -208,7 +208,7 @@ export class UIExcel {
       header_final_weight.push('scaleType');
 
       const wsDatafinalWeightFlow: any[][] = [header_final_weight];
-      for (const entry of _flow.finalWeight) {
+      for (const entry of _flow.brewbyweight) {
         const wbEntry: Array<any> = [
           entry.target_weight,
           entry.lag_time,
@@ -228,11 +228,7 @@ export class UIExcel {
       const wsFinalWeight: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(
         wsDatafinalWeightFlow
       );
-      XLSX.utils.book_append_sheet(
-        wb,
-        wsFinalWeight,
-        this.translate.instant('Final Weight')
-      );
+      XLSX.utils.book_append_sheet(wb, wsFinalWeight, 'Brew by weight');
     }
 
     return wb;
