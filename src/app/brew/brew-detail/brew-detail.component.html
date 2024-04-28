@@ -198,7 +198,7 @@
         <h3>{{data?.getFormattedTotalCoffeeTemperatureTime()}}</h3>
       </ion-label>
     </ion-item>
-    <ion-item *ngIf="brewBrewingGraphEl?.flow_profile_raw !== '' || !this.platform.is('cordova')" lines="none" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
+    <ion-item *ngIf="data.flow_profile" lines="none" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
                       data.getPreparation().brew_order.while.brew_time,
                       data.getPreparation().use_custom_parameters)">
 
@@ -250,7 +250,7 @@
 
 
     </ion-item>
-    <brew-brewing-graph *ngIf='editActive===false' [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
+    <brew-brewing-graph *ngIf='editActive===false && data.flow_profile' [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
                       data.getPreparation().brew_order.while.brew_time,
                       data.getPreparation().use_custom_parameters)" #brewBrewingGraphEl [isDetail]='true' [brewComponent]='this' [(data)]='data'></brew-brewing-graph>
 

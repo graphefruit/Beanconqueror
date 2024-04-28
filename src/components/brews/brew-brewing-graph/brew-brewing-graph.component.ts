@@ -3468,11 +3468,13 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.isDetail
     ) {
       setTimeout(() => {
-        this.lastChartLayout.height = 150;
-        this.lastChartLayout.width = document.getElementById(
-          'canvasContainerBrew'
-        ).offsetWidth;
-        Plotly.relayout('flowProfileChart', this.lastChartLayout);
+        try {
+          this.lastChartLayout.height = 150;
+          this.lastChartLayout.width = document.getElementById(
+            'canvasContainerBrew'
+          ).offsetWidth;
+          Plotly.relayout('flowProfileChart', this.lastChartLayout);
+        } catch (ex) {}
       }, 50);
     }
   }
