@@ -139,7 +139,7 @@ export class BrewDetailComponent implements OnInit {
   }
   public dismiss(): void {
     try {
-      Plotly.purge('flowProfileChart');
+      Plotly.purge(this.brewBrewingGraphEl.profileDiv.nativeElement);
     } catch (ex) {}
     this.modalController.dismiss(
       {
@@ -285,13 +285,19 @@ export class BrewDetailComponent implements OnInit {
     );*/
     if (this.platform.is('ios')) {
       //#544 - we need to do it twice... don't know why, ios issue
-      Plotly.Snapshot.toImage(document.getElementById('flowProfileChart'), {
-        format: 'jpeg',
-      }).once('success', async (url) => {
+      Plotly.Snapshot.toImage(
+        this.brewBrewingGraphEl.profileDiv.nativeElement,
+        {
+          format: 'jpeg',
+        }
+      ).once('success', async (url) => {
         setTimeout(() => {
-          Plotly.Snapshot.toImage(document.getElementById('flowProfileChart'), {
-            format: 'jpeg',
-          }).once('success', async (urlNew) => {
+          Plotly.Snapshot.toImage(
+            this.brewBrewingGraphEl.profileDiv.nativeElement,
+            {
+              format: 'jpeg',
+            }
+          ).once('success', async (urlNew) => {
             try {
               this.socialSharing.share(null, null, urlNew, null);
             } catch (err) {
@@ -301,9 +307,12 @@ export class BrewDetailComponent implements OnInit {
         }, 750);
       });
     } else {
-      Plotly.Snapshot.toImage(document.getElementById('flowProfileChart'), {
-        format: 'jpeg',
-      }).once('success', async (url) => {
+      Plotly.Snapshot.toImage(
+        this.brewBrewingGraphEl.profileDiv.nativeElement,
+        {
+          format: 'jpeg',
+        }
+      ).once('success', async (url) => {
         try {
           this.socialSharing.share(null, null, url, null);
         } catch (err) {

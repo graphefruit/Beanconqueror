@@ -20,8 +20,6 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
 export class DashboardPage implements OnInit {
   public brews: Array<Brew> = [];
   private leftOverBeansWeight: number = undefined;
-  @ViewChild('flowProfileChart', { static: false }) public flowProfileChart;
-  public flowProfileChartEl: any = undefined;
 
   constructor(
     public uiStatistic: UIStatistic,

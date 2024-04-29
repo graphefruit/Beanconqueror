@@ -265,7 +265,9 @@ export class BrewAddComponent implements OnInit {
     } catch (ex) {}
     this.stopScaleTimer();
     try {
-      Plotly.purge('flowProfileChart');
+      Plotly.purge(
+        this.brewBrewing.brewBrewingGraphEl.profileDiv.nativeElement
+      );
     } catch (ex) {}
     this.modalController.dismiss(
       {

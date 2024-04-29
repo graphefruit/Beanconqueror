@@ -260,7 +260,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
         this.brewComponent.brewBrewingGraphEl.lastChartLayout.width =
           document.getElementById('brewFlowContainer').offsetWidth;
         Plotly.relayout(
-          'flowProfileChart',
+          this.brewComponent.brewBrewingGraphEl.profileDiv.nativeElement,
           this.brewComponent.brewBrewingGraphEl.lastChartLayout
         );
       } catch (ex) {}
