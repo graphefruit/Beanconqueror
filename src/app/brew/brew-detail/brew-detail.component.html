@@ -16,7 +16,8 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content *ngIf="loaded">
+<!--We need to set editActive here aswell, because this will destroy 'everything' else we sometimes have the issue on android that plotly does not render the lines on the first time -->
+<ion-content *ngIf="loaded && editActive === false">
 
   <ion-card *ngIf=" showSectionBeforeBrew()" class="popover"
     style="display:flex; flex-direction: column;">

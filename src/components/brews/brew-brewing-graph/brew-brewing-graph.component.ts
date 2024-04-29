@@ -143,6 +143,11 @@ export class BrewBrewingGraphComponent implements OnInit {
 
   public machineStopScriptWasTriggered: boolean = false;
 
+  @ViewChild('canvaContainer', { read: ElementRef, static: true })
+  public canvaContainer: ElementRef;
+  @ViewChild('profileDiv', { read: ElementRef, static: true })
+  public profileDiv: ElementRef;
+
   constructor(
     private readonly platform: Platform,
     private readonly bleManager: CoffeeBluetoothDevicesService,
@@ -302,7 +307,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     }
   }
 
-  private checkChanges() {
+  public checkChanges() {
     // #507 Wrapping check changes in set timeout so all values get checked
     setTimeout(() => {
       this.changeDetectorRef.detectChanges();
@@ -465,7 +470,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.isDetail === true
     ) {
       // Re render, else the lines would not be hidden/shown when having references graphs
-      Plotly.relayout('flowProfileChart', this.lastChartLayout);
+      Plotly.relayout(this.profileDiv.nativeElement, this.lastChartLayout);
     }
     this.checkChanges();
   }
@@ -477,7 +482,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     }
     setTimeout(() => {
       try {
-        Plotly.purge('flowProfileChart');
+        Plotly.purge(this.profileDiv.nativeElement);
       } catch (ex) {}
       this.graphSettings = this.uiHelper.cloneData(this.settings.graph.FILTER);
       if (
@@ -852,11 +857,12 @@ export class BrewBrewingGraphComponent implements OnInit {
 
       try {
         Plotly.newPlot(
-          'flowProfileChart',
+          this.profileDiv.nativeElement,
           chartData,
           this.lastChartLayout,
           this.getChartConfig()
         );
+
         this.lastChartRenderingInstance = -1;
         if (this.brewComponent.maximizeFlowGraphIsShown) {
           //After we don't know how long all scale events take, dispatch the resize event, after the flow component will then grab on and stretch the canva.
@@ -897,9 +903,10 @@ export class BrewBrewingGraphComponent implements OnInit {
   }
 
   private getChartLayout() {
-    const chartWidth: number = document.getElementById(
-      'canvasContainerBrew'
-    ).offsetWidth;
+    let chartWidth: number = 300;
+    try {
+      chartWidth = this.canvaContainer.nativeElement.offsetWidth;
+    } catch (ex) {}
     const chartHeight: number = 150;
 
     const tickFormat = '%M:%S';
@@ -1133,10 +1140,12 @@ export class BrewBrewingGraphComponent implements OnInit {
       const config = {
         displayModeBar: false, // this is the line that hides the bar.
         responsive: true,
+        plotGlPixelRatio: 1,
       };
       return config;
     } else {
       const config = {
+        plotGlPixelRatio: 1,
         responsive: false,
         scrollZoom: false,
         displayModeBar: false, // this is the line that hides the bar.
@@ -1416,7 +1425,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         }
 
         Plotly.extendTraces(
-          'flowProfileChart',
+          this.profileDiv.nativeElement,
           {
             x: xData,
             y: yData,
@@ -1551,7 +1560,10 @@ export class BrewBrewingGraphComponent implements OnInit {
               }
             }
             if (newLayoutIsNeeded) {
-              Plotly.relayout('flowProfileChart', this.lastChartLayout);
+              Plotly.relayout(
+                this.profileDiv.nativeElement,
+                this.lastChartLayout
+              );
             }
           }, 25);
         } else {
@@ -1566,7 +1578,7 @@ export class BrewBrewingGraphComponent implements OnInit {
             .toDate()
             .getTime();
           this.lastChartLayout.xaxis.range = [delay, delayedTime];
-          Plotly.relayout('flowProfileChart', this.lastChartLayout);
+          Plotly.relayout(this.profileDiv.nativeElement, this.lastChartLayout);
         }
       } catch (ex) {}
     });
@@ -1974,7 +1986,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
     const temperatureDevice: TemperatureDevice =
       this.bleManager.getTemperatureDevice();
-    if (false && !this.platform.is('cordova')) {
+    if (true && !this.platform.is('cordova')) {
       let weight = 0;
       let realtime_flow = 0;
       let flow = 0;
@@ -3220,11 +3232,14 @@ export class BrewBrewingGraphComponent implements OnInit {
 
     realtimeWaterFlow.timestampdelta = timeStampDelta;
 
-    let calcFlowValue =
-      (newSmoothedWeight -
-        this.flowProfileTempAll[this.flowProfileTempAll.length - n]
-          .smoothedWeight) *
-      (1000 / timeStampDelta);
+    let calcFlowValue = 0;
+    try {
+      calcFlowValue =
+        (newSmoothedWeight -
+          this.flowProfileTempAll[this.flowProfileTempAll.length - n]
+            .smoothedWeight) *
+        (1000 / timeStampDelta);
+    } catch (ex) {}
     if (Number.isNaN(calcFlowValue)) {
       calcFlowValue = 0;
     }
@@ -3471,10 +3486,9 @@ export class BrewBrewingGraphComponent implements OnInit {
       setTimeout(() => {
         try {
           this.lastChartLayout.height = 150;
-          this.lastChartLayout.width = document.getElementById(
-            'canvasContainerBrew'
-          ).offsetWidth;
-          Plotly.relayout('flowProfileChart', this.lastChartLayout);
+          this.lastChartLayout.width =
+            this.canvaContainer.nativeElement.offsetWidth;
+          Plotly.relayout(this.profileDiv.nativeElement, this.lastChartLayout);
         } catch (ex) {}
       }, 50);
     }

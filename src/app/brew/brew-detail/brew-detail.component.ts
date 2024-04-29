@@ -154,8 +154,11 @@ export class BrewDetailComponent implements OnInit {
 
   public async repeat() {
     try {
-      Plotly.purge('flowProfileChart');
+      Plotly.purge(this.brewBrewingGraphEl.profileDiv.nativeElement);
+      // Remove the element just to make sure...
+      document.getElementById('canvasContainerBrew').remove();
     } catch (ex) {}
+
     this.editActive = true;
     //Wait 50ms, so the dom will be new rendered and the id will be removed from the flowprofilechart
     await new Promise(async (resolve) => {
@@ -170,7 +173,9 @@ export class BrewDetailComponent implements OnInit {
   }
   public async edit() {
     try {
-      Plotly.purge('flowProfileChart');
+      Plotly.purge(this.brewBrewingGraphEl.profileDiv.nativeElement);
+      // Remove the element just to make sure...
+      document.getElementById('canvasContainerBrew').remove();
     } catch (ex) {}
     this.editActive = true;
     //Wait 50ms, so the dom will be new rendered and the id will be removed from the flowprofilechart

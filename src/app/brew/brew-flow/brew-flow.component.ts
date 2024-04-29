@@ -188,7 +188,9 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
       setTimeout(() => {
         document
           .getElementById('brewFlowContainer')
-          .append(document.getElementById('flowProfileChart'));
+          .append(
+            this.brewComponent.brewBrewingGraphEl.profileDiv.nativeElement
+          );
         resolve(undefined);
       }, 50);
     });
@@ -450,9 +452,9 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
     }
   }
   public dismiss() {
-    document
-      .getElementById('canvasContainerBrew')
-      .append(document.getElementById('flowProfileChart'));
+    this.brewComponent.brewBrewingGraphEl.canvaContainer.nativeElement.append(
+      this.brewComponent.brewBrewingGraphEl.profileDiv.nativeElement
+    );
     try {
       this.disableHardwareBack.unsubscribe();
     } catch (ex) {}
