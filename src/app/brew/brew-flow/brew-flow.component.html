@@ -44,9 +44,9 @@
     </ion-row>
   </ion-grid>
 </ion-header>
-<ion-content>
+<ion-content #brewFlowContent>
 
-  <div id="flowCard" style="height:100%">
+
 
     <div *ngIf="isDetail===false" id="informationContainer">
       <ion-grid class="ion-text-center ion-no-padding brew-information-panel">
@@ -134,10 +134,9 @@
 
     </div>
 
-    <div [ngStyle]="{'height': 'calc(100% - ' + heightInformationBlock + 'px)'}" id="brewFlowContainer"
-      style="display:block"></div>
+    <div id="brewFlowContainer"></div>
 
-  </div>
+
 </ion-content>
 <ion-footer *ngIf="isDetail===false" class="ion-no-border">
   <div class="ion-text-center flow-icon-buttons">

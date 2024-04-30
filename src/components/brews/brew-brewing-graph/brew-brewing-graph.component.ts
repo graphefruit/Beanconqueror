@@ -148,6 +148,7 @@ export class BrewBrewingGraphComponent implements OnInit {
   @ViewChild('profileDiv', { read: ElementRef, static: true })
   public profileDiv: ElementRef;
 
+  public chartData = [];
   constructor(
     private readonly platform: Platform,
     private readonly bleManager: CoffeeBluetoothDevicesService,
@@ -271,6 +272,7 @@ export class BrewBrewingGraphComponent implements OnInit {
             this.checkChanges();
           }, 200);
           this.brewComponent?.brewBrewingPreparationDeviceEl?.checkChanges();
+          this.brewComponent?.checkChanges();
         });
     }
   }
@@ -494,7 +496,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         );
       }
       // Put the reference charts first, because they can then get overlayed from the other graphs
-      const chartData = [];
+      this.chartData = [];
 
       this.weightTraceReference = undefined;
       this.flowPerSecondTraceReference = undefined;
@@ -511,7 +513,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           y: [],
           name: this.translate.instant('BREW_FLOW_WEIGHT'),
           yaxis: 'y',
-          type: 'scattergl',
+          type: 'scatter',
           mode: 'lines',
           line: {
             shape: 'linear',
@@ -527,7 +529,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           y: [],
           name: this.translate.instant('BREW_FLOW_WEIGHT_PER_SECOND'),
           yaxis: 'y2',
-          type: 'scattergl',
+          type: 'scatter',
           mode: 'lines',
           line: {
             shape: 'linear',
@@ -544,7 +546,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           y: [],
           name: this.translate.instant('BREW_FLOW_WEIGHT_REALTIME'),
           yaxis: 'y2',
-          type: 'scattergl',
+          type: 'scatter',
           mode: 'lines',
           line: {
             shape: 'linear',
@@ -561,7 +563,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           y: [],
           name: this.translate.instant('BREW_PRESSURE_FLOW'),
           yaxis: 'y4',
-          type: 'scattergl',
+          type: 'scatter',
           mode: 'lines',
           line: {
             shape: 'linear',
@@ -578,7 +580,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           y: [],
           name: this.translate.instant('BREW_TEMPERATURE_REALTIME'),
           yaxis: 'y5',
-          type: 'scattergl',
+          type: 'scatter',
           mode: 'lines',
           line: {
             shape: 'linear',
@@ -612,9 +614,9 @@ export class BrewBrewingGraphComponent implements OnInit {
             moment(firstTimestamp, 'HH:mm:ss.SSS').toDate().getTime() -
             startingDay.toDate().getTime();
           if (presetFlowProfile.weight.length > 0) {
-            chartData.push(this.weightTraceReference);
-            chartData.push(this.flowPerSecondTraceReference);
-            chartData.push(this.realtimeFlowTraceReference);
+            this.chartData.push(this.weightTraceReference);
+            this.chartData.push(this.flowPerSecondTraceReference);
+            this.chartData.push(this.realtimeFlowTraceReference);
             for (const data of presetFlowProfile.weight) {
               this.weightTraceReference.x.push(
                 new Date(
@@ -649,7 +651,7 @@ export class BrewBrewingGraphComponent implements OnInit {
             presetFlowProfile.pressureFlow &&
             presetFlowProfile.pressureFlow.length > 0
           ) {
-            chartData.push(this.pressureTraceReference);
+            this.chartData.push(this.pressureTraceReference);
             for (const data of presetFlowProfile.pressureFlow) {
               this.pressureTraceReference.x.push(
                 new Date(
@@ -664,7 +666,7 @@ export class BrewBrewingGraphComponent implements OnInit {
             presetFlowProfile.temperatureFlow &&
             presetFlowProfile.temperatureFlow.length > 0
           ) {
-            chartData.push(this.temperatureTraceReference);
+            this.chartData.push(this.temperatureTraceReference);
             for (const data of presetFlowProfile.temperatureFlow) {
               this.temperatureTraceReference.x.push(
                 new Date(
@@ -683,7 +685,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         y: [],
         name: this.translate.instant('BREW_FLOW_WEIGHT'),
         yaxis: 'y',
-        type: 'scattergl',
+        type: 'scatter',
         mode: 'lines',
         line: {
           shape: 'linear',
@@ -699,7 +701,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         y: [],
         name: this.translate.instant('BREW_FLOW_WEIGHT_PER_SECOND'),
         yaxis: 'y2',
-        type: 'scattergl',
+        type: 'scatter',
         mode: 'lines',
         line: {
           shape: 'linear',
@@ -716,7 +718,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         y: [],
         name: this.translate.instant('BREW_FLOW_WEIGHT_REALTIME'),
         yaxis: 'y2',
-        type: 'scattergl',
+        type: 'scatter',
         mode: 'lines',
         line: {
           shape: 'linear',
@@ -733,7 +735,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         y: [],
         name: this.translate.instant('BREW_PRESSURE_FLOW'),
         yaxis: 'y4',
-        type: 'scattergl',
+        type: 'scatter',
         mode: 'lines',
         line: {
           shape: 'linear',
@@ -750,7 +752,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         y: [],
         name: this.translate.instant('BREW_TEMPERATURE_REALTIME'),
         yaxis: 'y5',
-        type: 'scattergl',
+        type: 'scatter',
         mode: 'lines',
         line: {
           shape: 'linear',
@@ -842,23 +844,23 @@ export class BrewBrewingGraphComponent implements OnInit {
         }
       }
 
-      chartData.push(this.weightTrace);
-      chartData.push(this.flowPerSecondTrace);
-      chartData.push(this.realtimeFlowTrace);
+      this.chartData.push(this.weightTrace);
+      this.chartData.push(this.flowPerSecondTrace);
+      this.chartData.push(this.realtimeFlowTrace);
 
       this.lastChartLayout = this.getChartLayout();
       if (this.lastChartLayout['yaxis4']) {
-        chartData.push(this.pressureTrace);
+        this.chartData.push(this.pressureTrace);
       }
 
       if (this.lastChartLayout['yaxis5']) {
-        chartData.push(this.temperatureTrace);
+        this.chartData.push(this.temperatureTrace);
       }
 
       try {
         Plotly.newPlot(
           this.profileDiv.nativeElement,
-          chartData,
+          this.chartData,
           this.lastChartLayout,
           this.getChartConfig()
         );
@@ -1140,12 +1142,10 @@ export class BrewBrewingGraphComponent implements OnInit {
       const config = {
         displayModeBar: false, // this is the line that hides the bar.
         responsive: true,
-        plotGlPixelRatio: 1,
       };
       return config;
     } else {
       const config = {
-        plotGlPixelRatio: 1,
         responsive: false,
         scrollZoom: false,
         displayModeBar: false, // this is the line that hides the bar.

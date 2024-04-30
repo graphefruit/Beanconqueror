@@ -36,6 +36,9 @@ declare var Plotly;
 export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
   public static COMPONENT_ID: string = 'brew-flow';
 
+  @ViewChild('brewFlowContent', { read: ElementRef })
+  public brewFlowContent: ElementRef;
+
   public showBloomTimer: boolean = false;
   public showDripTimer: boolean = false;
   public gaugeVisible: boolean = false;
@@ -184,6 +187,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
 
       this.gaugeLabel = this.translate.instant('BREW_PRESSURE_FLOW');
     }*/
+
     await new Promise((resolve) => {
       setTimeout(() => {
         document
@@ -242,7 +246,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
   public onOrientationChange() {
     setTimeout(() => {
       try {
-        const flowHeight = document.getElementById('flowCard').offsetHeight;
+        const flowHeight = this.brewFlowContent.nativeElement.offsetHeight;
         let informationContainerHeight = 0;
         try {
           informationContainerHeight = document.getElementById(
