@@ -1124,7 +1124,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private checkChanges() {
+  public checkChanges() {
     // #507 Wrapping check changes in set timeout so all values get checked
     setTimeout(() => {
       this.changeDetectorRef.detectChanges();
