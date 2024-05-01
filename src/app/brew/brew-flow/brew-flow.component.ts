@@ -27,7 +27,9 @@ import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetooth
 import { BluetoothScale } from '../../../classes/devices';
 import { UIAlert } from '../../../services/uiAlert';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
+
 declare var Plotly;
+
 @Component({
   selector: 'brew-flow',
   templateUrl: './brew-flow.component.html',
@@ -75,6 +77,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
   private disableHardwareBack;
   protected readonly PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   protected heightInformationBlock: number = 50;
+
   constructor(
     private readonly modalController: ModalController,
     private readonly screenOrientation: ScreenOrientation,
@@ -87,6 +90,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
     private readonly ngZone: NgZone,
     private readonly uiAlert: UIAlert
   ) {}
+
   public ngOnInit() {
     try {
       this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(
@@ -195,6 +199,30 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
           .append(
             this.brewComponent.brewBrewingGraphEl.profileDiv.nativeElement
           );
+        resolve(undefined);
+      }, 50);
+    });
+
+    /**
+     * This logic was firstly in the brew-brewing before opening the screen, the issue with this was, that sometimes on android was
+     * that the lines where not drawed anymore, it turnes out, that somehow with the orientation change things messed up internally which I don't understand.
+     * Testing this, it worked... just let it be there.
+     * **/
+    await new Promise(async (resolve) => {
+      this.brewComponent.brewBrewingGraphEl.updateChart();
+      try {
+        if (this.platform.is('cordova')) {
+          await this.screenOrientation.lock(
+            this.screenOrientation.ORIENTATIONS.LANDSCAPE
+          );
+        }
+      } catch (ex) {}
+
+      resolve(undefined);
+    });
+
+    await new Promise((resolve) => {
+      setTimeout(() => {
         resolve(undefined);
       }, 50);
     });
@@ -326,9 +354,11 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
       } catch (ex) {}
     }, 250);
   }
+
   public pauseTimer() {
     this.brewComponent.timer.pauseTimer();
   }
+
   public async startListening() {
     this.brewComponent.timer.startListening();
 
@@ -338,6 +368,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
       this.onOrientationChange();
     }, 500);
   }
+
   private waitForPleaseWaitToBeFinished() {
     // #604
     const promise = new Promise((resolve, reject) => {
@@ -360,6 +391,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
     });
     return promise;
   }
+
   public async resetTimer() {
     this.brewComponent.timer.reset();
 
@@ -368,9 +400,11 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
       this.onOrientationChange();
     }, 500);
   }
+
   public resumeTimer() {
     this.brewComponent.timerResumedPressed(undefined);
   }
+
   public __tareScale() {
     this.brewComponent.timer.__tareScale();
   }
@@ -378,12 +412,12 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
   public setCoffeeDripTime(): void {
     this.brewComponent.setCoffeeDripTime(undefined);
     /**
-    this.brew.coffee_first_drip_time = this.brew.brew_time;
-    // Run first drip script
-    if (
-      !this.brewComponent.smartScaleConnected() &&
-      this.brewComponent.preparationDeviceConnected()
-    ) {
+     this.brew.coffee_first_drip_time = this.brew.brew_time;
+     // Run first drip script
+     if (
+     !this.brewComponent.smartScaleConnected() &&
+     this.brewComponent.preparationDeviceConnected()
+     ) {
       // If scale is not connected but the device, we can now choose that still the script is executed if existing.
       if (this.brew.preparationDeviceBrew.params.scriptAtFirstDripId > 0) {
         this.brewComponent.preparationDevice.startScript(
@@ -455,6 +489,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
       } catch (ex) {}
     }
   }
+
   public dismiss() {
     this.brewComponent.brewBrewingGraphEl.canvaContainer.nativeElement.append(
       this.brewComponent.brewBrewingGraphEl.profileDiv.nativeElement

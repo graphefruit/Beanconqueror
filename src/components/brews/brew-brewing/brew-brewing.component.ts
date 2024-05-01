@@ -393,19 +393,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       }
     } catch (ex) {}
 
-    await new Promise(async (resolve) => {
-      this.brewBrewingGraphEl.updateChart();
-      try {
-        if (this.platform.is('cordova')) {
-          await this.screenOrientation.lock(
-            this.screenOrientation.ORIENTATIONS.LANDSCAPE
-          );
-        }
-      } catch (ex) {}
-
-      resolve(undefined);
-    });
-
     const modal = await this.modalController.create({
       component: BrewFlowComponent,
 
