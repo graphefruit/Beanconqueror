@@ -121,7 +121,7 @@
     "cordova-plugin-inappbrowser": "^5.0.0",
     "cordova-plugin-insomnia": "^4.3.0",
     "cordova-plugin-ionic-webview": "^5.0.1",
-    "cordova-plugin-screen-orientation": "^3.0.2",
+    "cordova-plugin-screen-orientation": "github:apache/cordova-plugin-screen-orientation",
     "cordova-plugin-splashscreen": "^6.0.1",
     "cordova-plugin-x-socialsharing": "^6.0.4",
     "cordova-sqlite-storage": "^5.1.0",
@@ -182,7 +182,6 @@
         "DEEPLINK_5_HOST": " "
       },
       "cordova-plugin-file-transfer": {},
-      "cordova-plugin-screen-orientation": {},
       "cordova-plugin-filepath": {},
       "cordova-plugin-advanced-http": {
         "ANDROIDBLACKLISTSECURESOCKETPROTOCOLS": "SSLv3,TLSv1"
@@ -233,7 +232,8 @@
         "IOS_INIT_ON_LOAD": "false",
         "ACCESS_BACKGROUND_LOCATION": "false",
         "BLUETOOTH_RESTORE_STATE": "false"
-      }
+      },
+      "cordova-plugin-screen-orientation": {}
     },
     "platforms": [
       "android",
