@@ -1053,6 +1053,35 @@
                 "<b>其他<\/b>",
                 "修复小 bug "
             ]
+        },
+        "7.2.0": {
+            "TITLE": "",
+            "DESCRIPTION": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            ]
         }
     },
     "CUSTOM_PARAMETERS": "自定义参数",
@@ -1805,5 +1834,6 @@
     "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE_DESCRIPTION": "",
     "STARTING_IN": "",
     "IOS_DATABASE_ISSUE_TITLE": "",
-    "IOS_DATABASE_ISSUE_DESCRIPTION": ""
+    "IOS_DATABASE_ISSUE_DESCRIPTION": "",
+    "RELOAD_APP": ""
 }

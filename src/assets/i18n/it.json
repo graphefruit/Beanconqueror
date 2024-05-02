@@ -1053,6 +1053,35 @@
                 "<b>Altro<\/b>",
                 "Correzioni di bug minori"
             ]
+        },
+        "7.2.0": {
+            "TITLE": "Versione 7.2.0: Cosa c'è di nuovo",
+            "DESCRIPTION": [
+                "<b>Più lingue<\/b>",
+                "Supporto dell'italiano - Grazie a Cancercookie",
+                "Supporto del polacco - Grazie a MarcinSachs",
+                "",
+                "<b>Bilance Bluetooth<\/b>",
+                "Con \"Tara la bilancia all'avvio\", il timer aspetterà che tutti i valori siano azzerati per partire.",
+                "",
+                "<b>Xenia<\/b>",
+                "Aggiunta di un toggle per l'utilizzo delle API V1 e V2",
+                "Aggiunta della funzione \"estrazione in base al peso\" con stop automatico in base al peso desiderato.",
+                "",
+                "<b>Meticoloso<\/b>",
+                "Prima integrazione con Meticulous - Grazie a tutto il Team Meticulous!",
+                "",
+                "<b>Impostazioni<\/b>",
+                "Ora è possibile definire una soglia per avviare il timer alla prima goccia",
+                "",
+                "<b>Altro<\/b>",
+                "Alcune modifiche tecniche al codice",
+                "Migliorie minori",
+                "[IOS]Ora viene mostrato un avviso quando non è possibile stabilire una connessione al database locale.",
+                "",
+                "<b>Ringraziamenti<\/b>",
+                "Un grande ringraziamento a tutti i traduttori e al loro immenso impegno per rendere l'applicazione disponibile in più lingue."
+            ]
         }
     },
     "CUSTOM_PARAMETERS": "Personalizza parametri",
@@ -1517,7 +1546,7 @@
     "PAGE_SETTINGS_TAB_BLUETOOTH_TEMPERATURE": "Termometro",
     "PRESSURE_LOG": "Attiva i file di log per il manometro",
     "PRESSURE_THRESHOLD_ACTIVE": "Avvia il timer alla pressione stabilita",
-    "PRESSURE_THRESHOLD_BAR": "Limite di pressione",
+    "PRESSURE_THRESHOLD_BAR": "Soglia pressione",
     "TIMER_MILLISECONDS": "ms",
     "PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS": "Mostra millisecondi",
     "PAGE_SETTINGS_BREW_ENABLE_MILLISECONDS_DESCRIPTION": "Utilizza i millisecondi per analizzare ancora più accuratamente le tue preparazioni",
@@ -1607,7 +1636,7 @@
         "TYPE": {
             "NONE": "Nessuno",
             "XENIA": "Xenia",
-            "METICULOUS": ""
+            "METICULOUS": "Meticulous"
         },
         "URL": "URL",
         "CHOOSE_DEVICE": "Scegli dispositivo",
@@ -1629,17 +1658,17 @@
             "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "Non è stato possibile stabilire la connessione con la macchina per espresso Xenia. Assicurati di essere sulla rete (LAN) corretta, di aver inserito l'indirizzo IP corretto, ecc.",
             "CHECKING_CONNECTION_TO_PORTAFILTER": "È in corso la verifica della connessione a Xenia",
             "GRABING_SCRIPTS": "Caricando script da Xenia",
-            "BREW_BY_WEIGHT_ACTIVE": ""
+            "BREW_BY_WEIGHT_ACTIVE": "Attiva estrazione in base al peso"
         },
-        "API_VERSION": "",
-        "RESIDUAL_LAG_TIME": "",
-        "RESIDUAL_LAG_TIME_DESCRIPTION": "",
+        "API_VERSION": "Versione API",
+        "RESIDUAL_LAG_TIME": "Ritardo ultima goccia",
+        "RESIDUAL_LAG_TIME_DESCRIPTION": "Imposta il valore per farlo corrispondere al tempo di uscita dell'ultima goccia. Un portafiltro classico avrà bisogno di più tempo per svuotarsi, rispetto ad un naked. Calibra questo valore anche in base alla latenza della tua bilancia.",
         "TYPE_METICULOUS": {
-            "TITLE": "",
-            "NO_PROFILE": "",
-            "CHOOSE_PROFILE": "",
-            "SHOT_STARTED": "",
-            "SHOT_ENDED": ""
+            "TITLE": "Meticulous",
+            "NO_PROFILE": "Nessun profilo",
+            "CHOOSE_PROFILE": "Scegli profilo",
+            "SHOT_STARTED": "Estrazione iniziata",
+            "SHOT_ENDED": "Estrazione terminata"
         }
     },
     "DEVICE_CONNECTION": "Connessione dispositivi",
@@ -1661,7 +1690,7 @@
         },
         "LOG": "Attiva i file di log per il termometro",
         "THRESHOLD_ACTIVE": "Avvia il timer alla temperatura stabilita",
-        "THRESHOLD_TEMP": "Limite di temperatura"
+        "THRESHOLD_TEMP": "Soglia temperatura"
     },
     "POPOVER_BLUETOOTH_ACTION_RECONNECT_TEMPERATURE_DEVICE": "Riconnetti termometro",
     "PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO": "Il manometro è utilizzabile solo in modalità 'Espresso'",
@@ -1795,15 +1824,16 @@
     "INTERNAL_BACKUP_DID_FAIL": "Backup interno fallito, ricordati di sistemarlo! Quest'avviso può essere disattivato nelle impostazioni.",
     "ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD": "Non è stato possibile salvare lo ZIP. Quest'avviso può essere disattivato nelle impostazioni.",
     "SEND_LOGS": "Invia logs",
-    "POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER": "",
-    "PAGE_SETTINGS_LANGUAGE_ITALIAN": "",
-    "PAGE_SETTINGS_LANGUAGE_POLISH": "",
-    "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_GENERAL_DESCRIPTION": "",
-    "SMART_SCALE_FIRST_DRIP_THRESHOLD": "",
-    "SMART_SCALE_FIRST_DRIP_THRESHOLD_TOOLTIP": "",
-    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE": "",
-    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE_DESCRIPTION": "",
-    "STARTING_IN": "",
-    "IOS_DATABASE_ISSUE_TITLE": "",
-    "IOS_DATABASE_ISSUE_DESCRIPTION": ""
+    "POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER": "Riconnetti rifrattometro",
+    "PAGE_SETTINGS_LANGUAGE_ITALIAN": "Italiano",
+    "PAGE_SETTINGS_LANGUAGE_POLISH": "Polski",
+    "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_GENERAL_DESCRIPTION": "Prima d'iniziare, è necessario azzerare il timer.",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD": "Soglia prima goccia",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD_TOOLTIP": "Soglia dalla quale la bilancia inizia a pesare. Default: 0.1g",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE": "Attiva conto alla rovescia",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE_DESCRIPTION": "Imposta un conto alla rovescia, verrà innescato prima dell'inizio della preparazione",
+    "STARTING_IN": "Avvio in... {{time}}",
+    "IOS_DATABASE_ISSUE_TITLE": "ATTENZIONE! CONNESSIONE AL DATABASE LOCALE PERSA",
+    "IOS_DATABASE_ISSUE_DESCRIPTION": "Disconnessione dal database locale rilevata. Questo è dovuto ad un bug irrisolto in iOS, al di fuori del controllo di Beanconqueror. Per prevenire potenziali perdite di dati, ti suggeriamo di riavviare l'app al più presto.",
+    "RELOAD_APP": "Riavvia app"
 }
