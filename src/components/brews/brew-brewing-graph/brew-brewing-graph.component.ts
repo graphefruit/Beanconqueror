@@ -180,11 +180,10 @@ export class BrewBrewingGraphComponent implements OnInit {
         // We had a flow profile, so read data now.
         await this.readFlowProfile();
 
-        if (this.isDetail) {
-          if (this.data.reference_flow_profile) {
-            await this.readReferenceFlowProfile(this.data);
-          }
+        if (this.data.reference_flow_profile) {
+          await this.readReferenceFlowProfile(this.data);
         }
+
         this.initializeFlowChart();
       }
     }
