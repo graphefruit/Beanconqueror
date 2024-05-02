@@ -513,7 +513,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           y: [],
           name: this.translate.instant('BREW_FLOW_WEIGHT'),
           yaxis: 'y',
-          type: 'scatter',
+          type: 'scattergl',
           mode: 'lines',
           line: {
             shape: 'linear',
@@ -529,7 +529,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           y: [],
           name: this.translate.instant('BREW_FLOW_WEIGHT_PER_SECOND'),
           yaxis: 'y2',
-          type: 'scatter',
+          type: 'scattergl',
           mode: 'lines',
           line: {
             shape: 'linear',
@@ -546,7 +546,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           y: [],
           name: this.translate.instant('BREW_FLOW_WEIGHT_REALTIME'),
           yaxis: 'y2',
-          type: 'scatter',
+          type: 'scattergl',
           mode: 'lines',
           line: {
             shape: 'linear',
@@ -563,7 +563,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           y: [],
           name: this.translate.instant('BREW_PRESSURE_FLOW'),
           yaxis: 'y4',
-          type: 'scatter',
+          type: 'scattergl',
           mode: 'lines',
           line: {
             shape: 'linear',
@@ -580,7 +580,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           y: [],
           name: this.translate.instant('BREW_TEMPERATURE_REALTIME'),
           yaxis: 'y5',
-          type: 'scatter',
+          type: 'scattergl',
           mode: 'lines',
           line: {
             shape: 'linear',
@@ -685,7 +685,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         y: [],
         name: this.translate.instant('BREW_FLOW_WEIGHT'),
         yaxis: 'y',
-        type: 'scatter',
+        type: 'scattergl',
         mode: 'lines',
         line: {
           shape: 'linear',
@@ -701,7 +701,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         y: [],
         name: this.translate.instant('BREW_FLOW_WEIGHT_PER_SECOND'),
         yaxis: 'y2',
-        type: 'scatter',
+        type: 'scattergl',
         mode: 'lines',
         line: {
           shape: 'linear',
@@ -718,7 +718,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         y: [],
         name: this.translate.instant('BREW_FLOW_WEIGHT_REALTIME'),
         yaxis: 'y2',
-        type: 'scatter',
+        type: 'scattergl',
         mode: 'lines',
         line: {
           shape: 'linear',
@@ -735,7 +735,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         y: [],
         name: this.translate.instant('BREW_PRESSURE_FLOW'),
         yaxis: 'y4',
-        type: 'scatter',
+        type: 'scattergl',
         mode: 'lines',
         line: {
           shape: 'linear',
@@ -752,7 +752,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         y: [],
         name: this.translate.instant('BREW_TEMPERATURE_REALTIME'),
         yaxis: 'y5',
-        type: 'scatter',
+        type: 'scattergl',
         mode: 'lines',
         line: {
           shape: 'linear',
@@ -1647,6 +1647,12 @@ export class BrewBrewingGraphComponent implements OnInit {
       if (this.isEdit) {
         await this.deleteFlowProfile();
         this.data.flow_profile = '';
+
+        //Check if we have an reference flow, and when reset, preset it again
+
+        if (this.data.reference_flow_profile) {
+          await this.readReferenceFlowProfile(this.data);
+        }
       }
 
       this.flow_profile_raw = new BrewFlow();
@@ -1879,8 +1885,10 @@ export class BrewBrewingGraphComponent implements OnInit {
     const setTempAndPressure = () => {
       const temp = prepDeviceCall.getTemperature();
       const press = prepDeviceCall.getPressure();
+      console.log('set temp' + temp);
       this.__setPressureFlow({ actual: press, old: press });
       this.__setTemperatureFlow({ actual: temp, old: temp });
+      this.checkChanges();
     };
     prepDeviceCall.fetchPressureAndTemperature(() => {
       // before we start the interval, we fetch the data once to overwrite, and set them.

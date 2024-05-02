@@ -418,32 +418,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.brewBrewingGraphEl.lastChartRenderingInstance = -1;
       // If responsive would be true, the add of the container would result into 0 width 0 height, therefore the hack
       this.brewBrewingGraphEl.updateChart();
-      try {
-        if (this.platform.is('cordova')) {
-          if (
-            this.screenOrientation.type ===
-            this.screenOrientation.ORIENTATIONS.LANDSCAPE
-          ) {
-            if (
-              this.screenOrientation.ORIENTATIONS.LANDSCAPE ===
-              actualOrientation
-            ) {
-              // Get back to portrait
-              await new Promise((resolve) => {
-                setTimeout(async () => {
-                  await this.screenOrientation.lock(
-                    this.screenOrientation.ORIENTATIONS.PORTRAIT_PRIMARY
-                  );
-                  resolve(undefined);
-                }, 50);
-              });
-            }
-          }
-          setTimeout(() => {
-            this.screenOrientation.unlock();
-          }, 150);
-        }
-      } catch (ex) {}
 
       await new Promise((resolve) => {
         setTimeout(async () => {

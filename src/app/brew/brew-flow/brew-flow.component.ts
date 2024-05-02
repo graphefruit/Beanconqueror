@@ -177,21 +177,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
       }
     }
   }
-
-  public async ngAfterViewInit() {
-    this.settings = this.uiSettingsStorage.getSettings();
-
-    /*if (this.isDetail === false) {
-      setTimeout(() => {
-        const offsetWidth = document.getElementById('brewPanel').offsetWidth;
-
-        // -16 because of padding
-        this.gaugeSize = offsetWidth - 16;
-      }, 1000);
-
-      this.gaugeLabel = this.translate.instant('BREW_PRESSURE_FLOW');
-    }*/
-
+  public async ionViewDidEnter() {
     await new Promise((resolve) => {
       setTimeout(() => {
         document
@@ -199,30 +185,6 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
           .append(
             this.brewComponent.brewBrewingGraphEl.profileDiv.nativeElement
           );
-        resolve(undefined);
-      }, 50);
-    });
-
-    /**
-     * This logic was firstly in the brew-brewing before opening the screen, the issue with this was, that sometimes on android was
-     * that the lines where not drawed anymore, it turnes out, that somehow with the orientation change things messed up internally which I don't understand.
-     * Testing this, it worked... just let it be there.
-     * **/
-    await new Promise(async (resolve) => {
-      this.brewComponent.brewBrewingGraphEl.updateChart();
-      try {
-        if (this.platform.is('cordova')) {
-          await this.screenOrientation.lock(
-            this.screenOrientation.ORIENTATIONS.LANDSCAPE
-          );
-        }
-      } catch (ex) {}
-
-      resolve(undefined);
-    });
-
-    await new Promise((resolve) => {
-      setTimeout(() => {
         resolve(undefined);
       }, 50);
     });
@@ -244,17 +206,15 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
           this.setActualTemperatureInformation(_val);
         });
 
-      const settings: Settings = this.uiSettingsStorage.getSettings();
-
       this.showBloomTimer = this.uiBrewHelper.fieldVisible(
-        settings.manage_parameters.coffee_blooming_time,
+        this.settings.manage_parameters.coffee_blooming_time,
         this.brew.getPreparation().manage_parameters.coffee_blooming_time,
         this.brew.getPreparation().use_custom_parameters
       );
 
       this.showDripTimer =
         this.uiBrewHelper.fieldVisible(
-          settings.manage_parameters.coffee_first_drip_time,
+          this.settings.manage_parameters.coffee_first_drip_time,
           this.brew.getPreparation().manage_parameters.coffee_first_drip_time,
           this.brew.getPreparation().use_custom_parameters
         ) &&
@@ -267,6 +227,10 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
         this.brewComponent.brewBrewingGraphEl.updateChart();
       }
     }, 150);
+  }
+
+  public async ngAfterViewInit() {
+    this.settings = this.uiSettingsStorage.getSettings();
   }
 
   @HostListener('window:resize')
@@ -411,20 +375,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
 
   public setCoffeeDripTime(): void {
     this.brewComponent.setCoffeeDripTime(undefined);
-    /**
-     this.brew.coffee_first_drip_time = this.brew.brew_time;
-     // Run first drip script
-     if (
-     !this.brewComponent.smartScaleConnected() &&
-     this.brewComponent.preparationDeviceConnected()
-     ) {
-      // If scale is not connected but the device, we can now choose that still the script is executed if existing.
-      if (this.brew.preparationDeviceBrew.params.scriptAtFirstDripId > 0) {
-        this.brewComponent.preparationDevice.startScript(
-          this.brew.preparationDeviceBrew.params.scriptAtFirstDripId
-        );
-      }
-    }**/
+
     this.showDripTimer = false;
   }
 
