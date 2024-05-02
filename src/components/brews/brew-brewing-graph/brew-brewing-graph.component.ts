@@ -1885,10 +1885,8 @@ export class BrewBrewingGraphComponent implements OnInit {
     const setTempAndPressure = () => {
       const temp = prepDeviceCall.getTemperature();
       const press = prepDeviceCall.getPressure();
-      console.log('set temp' + temp);
       this.__setPressureFlow({ actual: press, old: press });
       this.__setTemperatureFlow({ actual: temp, old: temp });
-      this.checkChanges();
     };
     prepDeviceCall.fetchPressureAndTemperature(() => {
       // before we start the interval, we fetch the data once to overwrite, and set them.
