@@ -16,7 +16,8 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content *ngIf="loaded">
+<!--We need to set editActive here aswell, because this will destroy 'everything' else we sometimes have the issue on android that plotly does not render the lines on the first time -->
+<ion-content *ngIf="loaded && editActive === false">
 
   <ion-card *ngIf=" showSectionBeforeBrew()" class="popover"
     style="display:flex; flex-direction: column;">
@@ -198,7 +199,7 @@
         <h3>{{data?.getFormattedTotalCoffeeTemperatureTime()}}</h3>
       </ion-label>
     </ion-item>
-    <ion-item *ngIf="data.flow_profile !== '' || !this.platform.is('cordova')" lines="none" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
+    <ion-item *ngIf="data.flow_profile" lines="none" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
                       data.getPreparation().brew_order.while.brew_time,
                       data.getPreparation().use_custom_parameters)">
 
@@ -250,32 +251,10 @@
 
 
     </ion-item>
-    <ion-item [hidden]="data.flow_profile.length<=0 && this.platform.is('cordova')" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
+    <brew-brewing-graph *ngIf='editActive===false && data.flow_profile' [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
                       data.getPreparation().brew_order.while.brew_time,
-                      data.getPreparation().use_custom_parameters)"  class="ion-padding-bottom-half" lines="none">
-      <div class="ion-text-center" style="width:100%">
+                      data.getPreparation().use_custom_parameters)" #brewBrewingGraphEl [isDetail]='true' [brewComponent]='this' [(data)]='data'></brew-brewing-graph>
 
-
-        <ion-chip (click)="toggleChartLines('weight')"  *ngIf="this.weightTrace?.x.length > 0" [outline]="!this.weightTrace?.visible"
-          class="weight">{{'BREW_FLOW_WEIGHT' | translate}}</ion-chip>
-        <ion-chip (click)="toggleChartLines('calc_flow')"  *ngIf="this.flowPerSecondTrace?.x.length > 0"  [outline]="!this.flowPerSecondTrace?.visible"
-          class="flowcalculated">{{'BREW_FLOW_WEIGHT_PER_SECOND' | translate}}</ion-chip>
-        <ion-chip (click)="toggleChartLines('realtime_flow')" *ngIf="this.realtimeFlowTrace?.x.length > 0" [outline]="!this.realtimeFlowTrace?.visible"
-          class="flowreal">{{'BREW_FLOW_WEIGHT_REALTIME' | translate}}</ion-chip>
-        <ion-chip (click)="toggleChartLines('pressure')" *ngIf="this.pressureTrace?.x.length > 0"
-          [outline]="!this.pressureTrace?.visible" class="pressure">{{'BREW_PRESSURE_FLOW' | translate}}</ion-chip>
-        <ion-chip (click)="toggleChartLines('temperature')" *ngIf="this.temperatureTrace?.x.length > 0"
-          [outline]="!this.temperatureTrace?.visible" class="temperature">{{'BREW_TEMPERATURE_REALTIME' |
-          translate}}</ion-chip>
-      </div>
-    </ion-item>
-    <ion-item [hidden]="data.flow_profile.length<=0 && this.platform.is('cordova')" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,
-                      data.getPreparation().brew_order.while.brew_time,
-                      data.getPreparation().use_custom_parameters)">
-      <div *ngIf="editActive===false" id="canvasContainerBrew" style="width:100%;height:100%;">
-        <div id="flowProfileChart"></div>
-      </div>
-    </ion-item>
     <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.brew_time,
                       data.getPreparation().manage_parameters.brew_time,
                       data.getPreparation().use_custom_parameters)" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.while.brew_time,

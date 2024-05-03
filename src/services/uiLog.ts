@@ -94,4 +94,10 @@ export class UILog {
     logMessage.timestamp = moment().format('DD.MM.YYYY HH:mm:ss:SSS');
     this.logs.push(logMessage);
   }
+
+  public generateExceptionLineMessage(_message: string) {
+    try {
+      this.debug(_message + ' - Stacktrace: ' + new Error().stack.toString());
+    } catch (ex) {}
+  }
 }

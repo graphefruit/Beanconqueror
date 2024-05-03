@@ -30,7 +30,7 @@
 
   <div [ngSwitch]="segment">
     <div *ngSwitchCase="'open'">
-      <div *ngIf="getActiveMills()?.length == 0" class="ion-padding ion-text-center">
+      <div *ngIf="openMillsView?.length == 0" class="ion-padding ion-text-center">
         <div>
           <ion-icon color="inactive" name="beanconqueror-pepper-mill" size="large"></ion-icon>
         </div>
@@ -43,7 +43,7 @@
       </ag-virtual-scroll>
     </div>
     <div *ngSwitchCase="'archive'">
-      <div *ngIf="getArchivedMills()?.length == 0" class="ion-padding ion-text-center">
+      <div *ngIf="archiveMillsView?.length == 0" class="ion-padding ion-text-center">
         <div>
           <ion-icon color="inactive" name="beanconqueror-pepper-mill" size="large"></ion-icon>
         </div>

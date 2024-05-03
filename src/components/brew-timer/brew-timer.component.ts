@@ -210,7 +210,7 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     }, 15);
   }
 
-  public startTimer(_resumed: boolean = false): void {
+  public startTimer(_resumed: boolean = false, _emit: boolean = true): void {
     if (_resumed === false) {
       const startingDate = moment().toDate();
       this.startingDay = moment(startingDate).startOf('day');
@@ -240,7 +240,9 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
 
     if (_resumed === false) {
       if (this.timerStartPressed.observers.length <= 0) {
-        this.timerStarted.emit();
+        if (_emit) {
+          this.timerStarted.emit();
+        }
       }
     }
 

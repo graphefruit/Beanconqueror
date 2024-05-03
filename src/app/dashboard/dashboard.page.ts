@@ -12,9 +12,6 @@ import { UIBeanHelper } from '../../services/uiBeanHelper';
 
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 
-import { UIPreparationStorage } from '../../services/uiPreparationStorage';
-import { UIMillStorage } from '../../services/uiMillStorage';
-
 @Component({
   selector: 'dashboard',
   templateUrl: './dashboard.page.html',
@@ -23,8 +20,6 @@ import { UIMillStorage } from '../../services/uiMillStorage';
 export class DashboardPage implements OnInit {
   public brews: Array<Brew> = [];
   private leftOverBeansWeight: number = undefined;
-  @ViewChild('flowProfileChart', { static: false }) public flowProfileChart;
-  public flowProfileChartEl: any = undefined;
 
   constructor(
     public uiStatistic: UIStatistic,
@@ -35,9 +30,7 @@ export class DashboardPage implements OnInit {
     private readonly router: Router,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly uiMillStorage: UIMillStorage
+    private readonly uiSettingsStorage: UISettingsStorage
   ) {}
 
   public ngOnInit() {
@@ -52,7 +45,7 @@ export class DashboardPage implements OnInit {
     });
   }
 
-  public ionViewWillEnter() {
+  public async ionViewWillEnter() {
     this.loadBrews();
   }
 

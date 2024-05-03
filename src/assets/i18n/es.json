@@ -136,7 +136,7 @@
     "BREW_DATA_TIME": "Tiempo",
     "BREW_DATA_GRIND_SIZE": "Ajuste de molienda",
     "BREW_DATA_GRIND_WEIGHT": "Café molido (g)",
-    "BREW_DATA_IN_OUT_BR": "Entada\/Salida (BR)",
+    "BREW_DATA_IN_OUT_BR": "Entrada\/Salida (BR)",
     "BREW_DATA_NOTES": "Notas",
     "BREW_DATA_PREPARATION_METHOD": "Método de preparación",
     "BREW_DATA_MILL": "Molino",
@@ -154,7 +154,7 @@
     "BREW_DATA_RATING": "Puntuación",
     "BREW_DATA_CALCULATED_COFFEE_BREW_TIME": "Tiempo de preparación",
     "BREW_DATA_TDS": "Total de sólidos disueltos (%)",
-    "BREW_DATA_CALCULATED_EXTRACTION_YIELD": "Rendimiento de extracción %",
+    "BREW_DATA_CALCULATED_EXTRACTION_YIELD": "Rendimiento de extracción (%)",
     "BREW_INFORMATION_BREW_RATIO": "Proporción (ratio)",
     "BREW_INFORMATION_BEAN_AGE": "Edad del café (días)",
     "BREW_INFORMATION_BREW_QUANTITY_TYPE_NAME": "Cantidad de preparaciones-métodos",
@@ -436,7 +436,7 @@
             "BREW_DATA_PRESSURE_PROFILE": "Perfil de presión\/flujo, consejos de preparación",
             "BREW_DATA_TEMPERATURE_TIME": "Introduce el tiempo desde que la máquina calentó",
             "BREW_DATA_COFFEE_BLOOMING_TIME": "¿Cuánto tiempo duró la desgasificación (blooming)?",
-            "BREW_DATA_COFFEE_FIRST_DRIP_TIME": "¿Cuándo apareció la primera gota?",
+            "BREW_DATA_COFFEE_FIRST_DRIP_TIME": "¿Cuándo aparecieron las primeras gota?",
             "BREW_DATA_BREW_QUANTITY": "¿Cuánto café has preparado?",
             "BREW_DATA_COFFEE_TYPE": "Introduzca el tipo de café (por ejemplo, ristretto)",
             "BREW_DATA_COFFEE_CONCENTRATION": "Ingrese la concentración del café (rendimiento)",
@@ -1053,6 +1053,35 @@
                 "<b>Otros<\/b>",
                 "Corrección de errores menores"
             ]
+        },
+        "7.2.0": {
+            "TITLE": "Versión 7.2.0: Novedades",
+            "DESCRIPTION": [
+                "<b>Más idiomas<\/b>",
+                "Añadida traducción al italiano - Gracias a Cancercookie",
+                "Añadida traducción al polaco - Gracias a MarcinSachs",
+                "",
+                "<b>Básculas Bluetooth<\/b>",
+                "El temporizador de inicio esperará unos segundos hasta que la báscula reporte varios valores con peso 0 cuando la opción 'Tarar báscula al iniciar el temporizador' esté activada.",
+                "",
+                "<b>Xenia<\/b>",
+                "Añadida opción para el uso de la API v1 o v2",
+                "Añadida la opción 'brew by weight' para detener la preparación al llegar al peso deseado",
+                "",
+                "<b>Meticulous<\/b>",
+                "Primera integración con Meticulous - ¡Gracias a todo el equipo de Meticulous!",
+                "",
+                "<b>Configuración<\/b>",
+                "Define el umbral de peso a partir del cual se registrará cuando cayeron las primeras gotas",
+                "",
+                "<b>Otros<\/b>",
+                "Varias modificaciones técnicas en el código",
+                "Pequeñas mejoras",
+                "[IOS]Se mostrará una ventana emergente si hay una pérdida de conexión con la base de datos",
+                "",
+                "<b>Gracias<\/b>",
+                "Muchas gracias a todos los traductores por el esfuerzo que están haciendo para que la aplicación esté disponible en más idiomas"
+            ]
         }
     },
     "CUSTOM_PARAMETERS": "Personalizar parámetros",
@@ -1606,7 +1635,8 @@
     "PREPARATION_DEVICE": {
         "TYPE": {
             "NONE": "Ninguno",
-            "XENIA": "Xenia"
+            "XENIA": "Xenia",
+            "METICULOUS": "Meticulous"
         },
         "URL": "URL",
         "CHOOSE_DEVICE": "Seleccionar dispositivo",
@@ -1617,7 +1647,7 @@
         "TYPE_XENIA": {
             "TITLE": "Xenia",
             "PRESS_START_SCRIPT": "Iniciar script al inicio",
-            "FIRST_DRIP_SCRIPT": "Iniciar script con la primera gota",
+            "FIRST_DRIP_SCRIPT": "Iniciar script con las primeras gota",
             "SCRIPT_AT_WEIGHT": "Ejecutar script al pesar",
             "SCRIPT_LIST_GENERAL_0": "Ninguno",
             "SCRIPT_LIST_GENERAL_1": "Espresso, 25 segundos",
@@ -1627,7 +1657,18 @@
             "ERROR_NOT_ALL_SCRIPTS_FOUND": "No se han encontrado todos los scripts, se han restablecido",
             "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "No se ha podido conectar con Xenia. Comprueba que estás en la WLAN correcta, si has introducido bien la URL de conexión u otros fallos.",
             "CHECKING_CONNECTION_TO_PORTAFILTER": "Comprobando conexión con Xenia",
-            "GRABING_SCRIPTS": "Cargando scripts desde Xenia"
+            "GRABING_SCRIPTS": "Cargando scripts desde Xenia",
+            "BREW_BY_WEIGHT_ACTIVE": "Brew by weight activado"
+        },
+        "API_VERSION": "Versión de la API",
+        "RESIDUAL_LAG_TIME": "Retraso residual",
+        "RESIDUAL_LAG_TIME_DESCRIPTION": "Elige el retraso residual tras finalizar una preparación. Con un portafiltro sin fondo necesitarás un tiempo menor, con un portafiltro con vertederás uno mayor. Cuanto más tarde tu báscula en reportar el peso, mayor tiempo necesitarás.",
+        "TYPE_METICULOUS": {
+            "TITLE": "Meticulous",
+            "NO_PROFILE": "Sin perfil",
+            "CHOOSE_PROFILE": "Elegir perfil",
+            "SHOT_STARTED": "Preparación iniciada",
+            "SHOT_ENDED": "Preparación finalizada"
         }
     },
     "DEVICE_CONNECTION": "Conexión del dispositivo",
@@ -1776,5 +1817,23 @@
     "PAGE_SETTINGS_DATE_FORMAT": "Formato de fecha",
     "PAGE_SETTINGS_LANGUAGE_FRANCE": "Francés",
     "PAGE_SETTINGS_LANGUAGE_INDONESIA": "Indonesio",
-    "EXTRACTION_CHART_TITLE": "Gráfico de extracción"
+    "EXTRACTION_CHART_TITLE": "Gráfico de extracción",
+    "PAGE_SETTINGS_SHOW_BACKUP_ISSUES": "Mostrar errores en copias de seguridad",
+    "PAGE_SETTINGS_SHOW_BACKUP_ISSUES_DESCRIPTION": "Muestra una ventana emergente si ha habido un error al realizar una copia de seguridad",
+    "AUTOMATIC_BACKUP_DID_FAIL": "La copia de seguridad automática ha fallado, ¡asegúrate de tener copias de seguridad que funcionen correctamente! Esta información se puede desactivar en la configuración",
+    "INTERNAL_BACKUP_DID_FAIL": "La copia de seguridad ha fallado, ¡asegúrate de tener copias de seguridad que funcionen correctamente! Esta información se puede desactivar en la configuración",
+    "ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD": "¡El archivo ZIP no se ha podido guardar! Esta información se puede desactivar en la configuración",
+    "SEND_LOGS": "Enviar registros",
+    "POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER": "Reconectar refractómetro",
+    "PAGE_SETTINGS_LANGUAGE_ITALIAN": "Italiano",
+    "PAGE_SETTINGS_LANGUAGE_POLISH": "Polaco",
+    "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_GENERAL_DESCRIPTION": "Tienes que restablecer el temporizador antes de empezar",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD": "Umbral de peso de las primeras gotas",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD_TOOLTIP": "¿Con qué peso deberían empezar a contar las primeras gotas? Predeterminado: >= 0.1g",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE": "Retraso al inicio",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE_DESCRIPTION": "Elige el tiempo de retraso que quieres que se muestre al iniciar una preparación",
+    "STARTING_IN": "Iniciando en... {{time}}",
+    "IOS_DATABASE_ISSUE_TITLE": "¡ATENCIÓN! SE HA PERDIDO LA CONEXIÓN CON LA BASE DE DATOS",
+    "IOS_DATABASE_ISSUE_DESCRIPTION": "Lamentamos comunicarte que la conexión con la base de datos se ha perdido. Este problema es debido a un fallo no resuelto en el sistema operativo por parte de Apple, que va más allá del control de Beanconqueror. Para evitar que ser pierdan datos, cierra completamente la aplicación y ábrela de nuevo.",
+    "RELOAD_APP": "Recargar aplicación ahora"
 }

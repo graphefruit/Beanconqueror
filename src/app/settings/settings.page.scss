@@ -29,4 +29,13 @@
     }
 
   }
+
+  .ion-label {
+    white-space: break-spaces;
+
+    h2 {
+      text-overflow: clip;
+      white-space: break-spaces;
+    }
+  }
 }
