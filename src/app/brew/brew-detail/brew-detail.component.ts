@@ -217,23 +217,6 @@ export class BrewDetailComponent implements OnInit {
   }
 
   public async maximizeFlowGraph() {
-    let actualOrientation;
-    try {
-      if (this.platform.is('cordova')) {
-        actualOrientation = this.screenOrientation.type;
-      }
-    } catch (ex) {}
-    await new Promise(async (resolve) => {
-      try {
-        if (this.platform.is('cordova')) {
-          await this.screenOrientation.lock(
-            this.screenOrientation.ORIENTATIONS.LANDSCAPE
-          );
-        }
-      } catch (ex) {}
-      resolve(undefined);
-    });
-
     const modal = await this.modalController.create({
       component: BrewFlowComponent,
       id: BrewFlowComponent.COMPONENT_ID,
@@ -250,27 +233,6 @@ export class BrewDetailComponent implements OnInit {
       this.maximizeFlowGraphIsShown = false;
       // If responsive would be true, the add of the container would result into 0 width 0 height, therefore the hack
       try {
-        if (this.platform.is('cordova')) {
-          if (
-            this.screenOrientation.type ===
-            this.screenOrientation.ORIENTATIONS.LANDSCAPE
-          ) {
-            if (
-              this.screenOrientation.ORIENTATIONS.LANDSCAPE ===
-              actualOrientation
-            ) {
-              // Get back to portrait
-              setTimeout(async () => {
-                await this.screenOrientation.lock(
-                  this.screenOrientation.ORIENTATIONS.PORTRAIT_PRIMARY
-                );
-              }, 50);
-            }
-          }
-          setTimeout(() => {
-            this.screenOrientation.unlock();
-          }, 150);
-        }
         setTimeout(() => {
           this.brewBrewingGraphEl.onOrientationChange();
         }, 150);
