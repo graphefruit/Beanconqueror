@@ -974,6 +974,13 @@ export class BrewBrewingGraphComponent implements OnInit {
         clickmode: 'none',
         extendtreemapcolors: false,
         extendiciclecolors: false,
+        extendsunburstcolors: false,
+        extendfunnelareacolors: false,
+        extendpiecolors: false,
+        hidesources: true,
+        hoverdistance: 0,
+        spikedistance: 0,
+        autosize: false,
         xaxis: {
           tickformat: tickFormat,
           visible: true,
