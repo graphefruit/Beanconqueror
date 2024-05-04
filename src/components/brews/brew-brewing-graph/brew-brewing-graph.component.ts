@@ -3230,9 +3230,11 @@ export class BrewBrewingGraphComponent implements OnInit {
 
     // After the flowProfileTempAll will be stored directly, we'd have one entry at start already, but we need to wait for another one
     if (this.flowProfileTempAll.length > 2) {
-      timeStampDelta =
-        flowObj.unixTime -
-        this.flowProfileTempAll[this.flowProfileTempAll.length - n].unixTime;
+      try {
+        timeStampDelta =
+          flowObj.unixTime -
+          this.flowProfileTempAll[this.flowProfileTempAll.length - n].unixTime;
+      } catch (ex) {}
     }
 
     realtimeWaterFlow.timestampdelta = timeStampDelta;
