@@ -614,8 +614,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         });
       }
     }
+
+    // We changed to start the timer to here, before we start the normal brew timer.
+    await this.brewBrewingGraphEl.startBluetoothScaleTimer(_event);
     /** We need to do check changes, because the resolve with the timer start delay, destroys the angualr focus, so the graph does not update anymore when you come from the Detail-Repeat view (Don't ask me why) **/
     this.checkChanges();
+
     await this.timerStarted(_event);
     this.timer.startTimer();
   }

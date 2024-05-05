@@ -1938,6 +1938,19 @@ export class BrewBrewingGraphComponent implements OnInit {
     }
   }
 
+  public async startBluetoothScaleTimer(_event) {
+    if (_event !== 'AUTO_LISTEN_SCALE') {
+      const scale: BluetoothScale = this.bleManager.getScale();
+      if (scale) {
+        await new Promise((resolve) => {
+          scale.setTimer(SCALE_TIMER_COMMAND.START);
+          setTimeout(async () => {
+            resolve(undefined);
+          }, this.settings.bluetooth_command_delay);
+        });
+      }
+    }
+  }
   public async timerStartPressed(_event) {
     if (
       _event !== 'AUTO_LISTEN_SCALE' &&
@@ -1952,7 +1965,12 @@ export class BrewBrewingGraphComponent implements OnInit {
         ) {
           await new Promise(async (resolve) => {
             await this.uiAlert.showLoadingSpinner();
-            scale.tare();
+            await new Promise((_internalResolve) => {
+              scale.tare();
+              setTimeout(async () => {
+                _internalResolve(undefined);
+              }, this.settings.bluetooth_command_delay);
+            });
             let minimumWeightNullReports = 0;
             let weightReports = 0;
             this.deattachToScaleStartTareListening();
@@ -2072,20 +2090,6 @@ export class BrewBrewingGraphComponent implements OnInit {
       }
 
       if (scale && _event !== 'AUTO_LISTEN_SCALE') {
-        if (this.settings.bluetooth_scale_tare_on_start_timer === true) {
-          await new Promise((resolve) => {
-            scale.tare();
-            setTimeout(async () => {
-              resolve(undefined);
-            }, this.settings.bluetooth_command_delay);
-          });
-        }
-        await new Promise((resolve) => {
-          scale.setTimer(SCALE_TIMER_COMMAND.START);
-          setTimeout(async () => {
-            resolve(undefined);
-          }, this.settings.bluetooth_command_delay);
-        });
       } else if (_event === 'AUTO_LISTEN_SCALE') {
         // Don't use awaits.
         const scaleType = this.bleManager.getScale()?.getScaleType();
@@ -2111,12 +2115,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       }
 
       this.startingFlowTime = Date.now();
-      if (this.data.brew_time > 0) {
-        // IF brewtime has some seconds, we add this to the delay directly.
-        const startingDay = moment(new Date()).startOf('day');
-        startingDay.add('seconds', this.data.brew_time);
-        this.startingFlowTime = startingDay.toDate().getTime();
-      }
+
       this.updateChart();
 
       if (scale) {
