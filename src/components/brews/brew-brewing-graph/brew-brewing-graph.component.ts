@@ -958,6 +958,16 @@ export class BrewBrewingGraphComponent implements OnInit {
         .toDate()
         .getTime();
 
+      /***
+       *        Don't use this tags right now... we don't know what they do
+       *            extendsunburstcolors: false,
+       *         extendfunnelareacolors: false,
+       *         extendpiecolors: false,
+       *         hidesources: true,
+       *         hoverdistance: 0,
+       *         spikedistance: 0,
+       *         autosize: false,
+       */
       layout = {
         width: chartWidth,
         height: chartHeight,
@@ -974,13 +984,6 @@ export class BrewBrewingGraphComponent implements OnInit {
         clickmode: 'none',
         extendtreemapcolors: false,
         extendiciclecolors: false,
-        extendsunburstcolors: false,
-        extendfunnelareacolors: false,
-        extendpiecolors: false,
-        hidesources: true,
-        hoverdistance: 0,
-        spikedistance: 0,
-        autosize: false,
         xaxis: {
           tickformat: tickFormat,
           visible: true,
