@@ -26,28 +26,28 @@
               <ion-col size="6">
                 <ion-label class="card-headline">{{"PAGE_HOME_TOTAL_BREWS" | translate}}</ion-label><br/>
 
-                <ion-text>{{getBrewsCount()| number : '.0'}}</ion-text>
+                <ion-text>{{brewsCount}}</ion-text>
               </ion-col>
               <ion-col size="6">
                 <ion-label class="card-headline">{{"COFFEE_GRAMS_GRINDED" | translate}}</ion-label><br/>
-                <ion-text>{{getWeightCount()| number : '.0-2'}}</ion-text>
+                <ion-text>{{weightCount}}</ion-text>
               </ion-col>
               <ion-col size="6">
                 <ion-label class="card-headline">{{"BEANS_USED" | translate}}</ion-label><br/>
-                <ion-text>{{getBeansCount()| number : '.0'}}</ion-text>
+                <ion-text>{{beansCount}}</ion-text>
               </ion-col>
               <ion-col size="6">
                 <ion-label class="card-headline">{{"LAST_USE" | translate}}</ion-label><br/>
-                <ion-text *ngIf="getBrewsCount()> 0">{{lastUsed() | formatDate:[settings?.date_format]}}</ion-text>
-                <ion-text *ngIf="getBrewsCount() <= 0">-</ion-text>
+                <ion-text *ngIf="brewsCount> 0">{{lastUsed | formatDate:[settings?.date_format]}}</ion-text>
+                <ion-text *ngIf="brewsCount <= 0">-</ion-text>
               </ion-col>
               <ion-col size="6">
                 <ion-label class="card-headline">{{"LAST_USED_GRIND_SIZE_SETTING" | translate}}</ion-label><br/>
-                <ion-text>{{getLastUsedGrindSizeForBrew()}}</ion-text>
+                <ion-text>{{lastUsedGrindSizeForBrew}}</ion-text>
               </ion-col>
               <ion-col size="6">
                 <ion-label class="card-headline">{{"LAST_USED_BEAN" | translate}}</ion-label><br/>
-                <ion-text>{{getLastUsedBean()}}</ion-text>
+                <ion-text>{{lastUsedBean}}</ion-text>
               </ion-col>
               <ion-col *ngIf="mill?.note !== ''" size="12">
                 <ion-label class="card-headline">{{"NOTES" | translate}}</ion-label><br/>

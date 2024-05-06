@@ -17,8 +17,8 @@ import { UIImage } from '../../services/uiImage';
 import PREPARATION_TRACKING from '../../data/tracking/preparationTracking';
 import { PreparationConnectedDeviceComponent } from '../../app/preparation/preparation-connected-device/preparation-connected-device.component';
 import { PreparationDeviceType } from '../../classes/preparationDevice';
-import { BEAN_ACTION } from '../../enums/beans/beanAction';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
+import { UIHelper } from '../../services/uiHelper';
 
 @Component({
   selector: 'preparation-information-card',
@@ -30,6 +30,11 @@ export class PreparationInformationCardComponent implements OnInit {
 
   @Output() public preparationAction: EventEmitter<any> = new EventEmitter();
 
+  public brewsCount: number = 0;
+  public weightCount: number = 0;
+  public drunkenQuantity: number = 0;
+  public beansCount: number = 0;
+
   constructor(
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly modalController: ModalController,
@@ -40,10 +45,24 @@ export class PreparationInformationCardComponent implements OnInit {
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiImage: UIImage,
-    private readonly uiBrewHelper: UIBrewHelper
+    private readonly uiBrewHelper: UIBrewHelper,
+    private readonly uiHelper: UIHelper
   ) {}
 
-  public ngOnInit() {}
+  public ngOnInit() {
+    this.brewsCount = this.getBrewsCount();
+    this.weightCount = this.getWeightCount();
+    this.drunkenQuantity = this.getDrunkenQuantity();
+    this.beansCount = this.getBeansCount();
+
+    this.brewsCount = this.uiHelper.toFixedIfNecessary(this.brewsCount, 0);
+    this.weightCount = this.uiHelper.toFixedIfNecessary(this.weightCount, 2);
+    this.drunkenQuantity = this.uiHelper.toFixedIfNecessary(
+      this.drunkenQuantity,
+      2
+    );
+    this.beansCount = this.uiHelper.toFixedIfNecessary(this.beansCount, 0);
+  }
 
   public getBrewsCount(): number {
     const relatedBrews: Array<Brew> =

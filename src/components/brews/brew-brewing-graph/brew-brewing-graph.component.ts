@@ -1941,19 +1941,6 @@ export class BrewBrewingGraphComponent implements OnInit {
     }
   }
 
-  public async startBluetoothScaleTimer(_event) {
-    if (_event !== 'AUTO_LISTEN_SCALE') {
-      const scale: BluetoothScale = this.bleManager.getScale();
-      if (scale) {
-        await new Promise((resolve) => {
-          scale.setTimer(SCALE_TIMER_COMMAND.START);
-          setTimeout(async () => {
-            resolve(undefined);
-          }, this.settings.bluetooth_command_delay);
-        });
-      }
-    }
-  }
   public async timerStartPressed(_event) {
     if (
       _event !== 'AUTO_LISTEN_SCALE' &&
@@ -2004,6 +1991,8 @@ export class BrewBrewingGraphComponent implements OnInit {
               }
             }, 3000);
           });
+          this.brewComponent.checkChanges();
+          this.checkChanges();
           await this.uiAlert.hideLoadingSpinner();
         }
       }
@@ -2092,22 +2081,11 @@ export class BrewBrewingGraphComponent implements OnInit {
         }
       }
 
-      if (scale && _event !== 'AUTO_LISTEN_SCALE') {
-      } else if (_event === 'AUTO_LISTEN_SCALE') {
-        // Don't use awaits.
-        const scaleType = this.bleManager.getScale()?.getScaleType();
+      /** We don't need any delay here anymore, because all taring action was already done before, so just trigger the start
+       * This will also reduce the issue that the DiFluid reports the Start and we don't attach anymore to changes.
+       * **/
+      scale.setTimer(SCALE_TIMER_COMMAND.START);
 
-        if (
-          scaleType === ScaleType.DIFLUIDMICROBALANCETI ||
-          scaleType === ScaleType.DIFLUIDMICROBALANCE
-        ) {
-          //The microbalance has somehow an firmware issue, that when starting on autolistening mode and don't delay the start commando, the scale goes corrupt.
-
-          scale.setTimer(SCALE_TIMER_COMMAND.START);
-        } else {
-          scale.setTimer(SCALE_TIMER_COMMAND.START);
-        }
-      }
       if (
         pressureDevice &&
         this.settings.pressure_threshold_active === false &&
