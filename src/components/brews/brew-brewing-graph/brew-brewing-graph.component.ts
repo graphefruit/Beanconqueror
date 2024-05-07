@@ -2902,7 +2902,12 @@ export class BrewBrewingGraphComponent implements OnInit {
     if (scaleType === ScaleType.LUNAR) {
       if (weight > 5000) {
         // Wrong scale values reported. - Fix it back
-        weight = oldWeight;
+        if (this.flowProfileTempAll.length > 0) {
+          const lastEntry = this.flowProfileTempAll.slice(-1);
+          weight = lastEntry[0].weight;
+        } else {
+          weight = oldWeight;
+        }
       } else {
         if (weight <= 0) {
           if (this.flowProfileTempAll.length >= 3) {
