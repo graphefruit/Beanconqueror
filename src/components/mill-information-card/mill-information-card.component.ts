@@ -18,6 +18,7 @@ import { UIAnalytics } from '../../services/uiAnalytics';
 import { UIImage } from '../../services/uiImage';
 import MILL_TRACKING from '../../data/tracking/millTracking';
 import { PREPARATION_ACTION } from '../../enums/preparations/preparationAction';
+import { UIHelper } from '../../services/uiHelper';
 @Component({
   selector: 'mill-information-card',
   templateUrl: './mill-information-card.component.html',
@@ -28,6 +29,14 @@ export class MillInformationCardComponent implements OnInit {
 
   @Output() public millAction: EventEmitter<any> = new EventEmitter();
   public settings: Settings;
+
+  public brewsCount: number = 0;
+  public weightCount: number = 0;
+  public beansCount: number = 0;
+  public lastUsedGrindSizeForBrew: string = '';
+  public lastUsedBean: string = '';
+  public lastUsed: number = 0;
+
   constructor(
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly modalController: ModalController,
@@ -38,12 +47,24 @@ export class MillInformationCardComponent implements OnInit {
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiAnalytics: UIAnalytics,
     private readonly uiImage: UIImage,
-    private readonly uiBrewHelper: UIBrewHelper
+    private readonly uiBrewHelper: UIBrewHelper,
+    private readonly uiHelper: UIHelper
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
 
-  public ngOnInit() {}
+  public ngOnInit() {
+    this.brewsCount = this.getBrewsCount();
+    this.weightCount = this.getWeightCount();
+    this.beansCount = this.getBeansCount();
+    this.lastUsedBean = this.getLastUsedBean();
+    this.lastUsed = this.getLastUsed();
+    this.lastUsedGrindSizeForBrew = this.getLastUsedGrindSizeForBrew();
+
+    this.brewsCount = this.uiHelper.toFixedIfNecessary(this.brewsCount, 0);
+    this.weightCount = this.uiHelper.toFixedIfNecessary(this.weightCount, 2);
+    this.beansCount = this.uiHelper.toFixedIfNecessary(this.beansCount, 0);
+  }
 
   public getBrewsCount(): number {
     const relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(
@@ -73,7 +94,7 @@ export class MillInformationCardComponent implements OnInit {
 
     return distinctBeans.length;
   }
-  public lastUsed(): number {
+  public getLastUsed(): number {
     let relatedBrews: Array<Brew> = this.uiMillHelper.getAllBrewsForThisMill(
       this.mill.config.uuid
     );

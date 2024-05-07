@@ -958,6 +958,16 @@ export class BrewBrewingGraphComponent implements OnInit {
         .toDate()
         .getTime();
 
+      /***
+       *        Don't use this tags right now... we don't know what they do
+       *            extendsunburstcolors: false,
+       *         extendfunnelareacolors: false,
+       *         extendpiecolors: false,
+       *         hidesources: true,
+       *         hoverdistance: 0,
+       *         spikedistance: 0,
+       *         autosize: false,
+       */
       layout = {
         width: chartWidth,
         height: chartHeight,
@@ -1945,7 +1955,12 @@ export class BrewBrewingGraphComponent implements OnInit {
         ) {
           await new Promise(async (resolve) => {
             await this.uiAlert.showLoadingSpinner();
-            scale.tare();
+            await new Promise((_internalResolve) => {
+              scale.tare();
+              setTimeout(async () => {
+                _internalResolve(undefined);
+              }, this.settings.bluetooth_command_delay);
+            });
             let minimumWeightNullReports = 0;
             let weightReports = 0;
             this.deattachToScaleStartTareListening();
@@ -1976,6 +1991,8 @@ export class BrewBrewingGraphComponent implements OnInit {
               }
             }, 3000);
           });
+          this.brewComponent.checkChanges();
+          this.checkChanges();
           await this.uiAlert.hideLoadingSpinner();
         }
       }
@@ -2064,36 +2081,11 @@ export class BrewBrewingGraphComponent implements OnInit {
         }
       }
 
-      if (scale && _event !== 'AUTO_LISTEN_SCALE') {
-        if (this.settings.bluetooth_scale_tare_on_start_timer === true) {
-          await new Promise((resolve) => {
-            scale.tare();
-            setTimeout(async () => {
-              resolve(undefined);
-            }, this.settings.bluetooth_command_delay);
-          });
-        }
-        await new Promise((resolve) => {
-          scale.setTimer(SCALE_TIMER_COMMAND.START);
-          setTimeout(async () => {
-            resolve(undefined);
-          }, this.settings.bluetooth_command_delay);
-        });
-      } else if (_event === 'AUTO_LISTEN_SCALE') {
-        // Don't use awaits.
-        const scaleType = this.bleManager.getScale()?.getScaleType();
+      /** We don't need any delay here anymore, because all taring action was already done before, so just trigger the start
+       * This will also reduce the issue that the DiFluid reports the Start and we don't attach anymore to changes.
+       * **/
+      scale.setTimer(SCALE_TIMER_COMMAND.START);
 
-        if (
-          scaleType === ScaleType.DIFLUIDMICROBALANCETI ||
-          scaleType === ScaleType.DIFLUIDMICROBALANCE
-        ) {
-          //The microbalance has somehow an firmware issue, that when starting on autolistening mode and don't delay the start commando, the scale goes corrupt.
-
-          scale.setTimer(SCALE_TIMER_COMMAND.START);
-        } else {
-          scale.setTimer(SCALE_TIMER_COMMAND.START);
-        }
-      }
       if (
         pressureDevice &&
         this.settings.pressure_threshold_active === false &&
@@ -2104,12 +2096,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       }
 
       this.startingFlowTime = Date.now();
-      if (this.data.brew_time > 0) {
-        // IF brewtime has some seconds, we add this to the delay directly.
-        const startingDay = moment(new Date()).startOf('day');
-        startingDay.add('seconds', this.data.brew_time);
-        this.startingFlowTime = startingDay.toDate().getTime();
-      }
+
       this.updateChart();
 
       if (scale) {
@@ -2915,7 +2902,12 @@ export class BrewBrewingGraphComponent implements OnInit {
     if (scaleType === ScaleType.LUNAR) {
       if (weight > 5000) {
         // Wrong scale values reported. - Fix it back
-        weight = oldWeight;
+        if (this.flowProfileTempAll.length > 0) {
+          const lastEntry = this.flowProfileTempAll.slice(-1);
+          weight = lastEntry[0].weight;
+        } else {
+          weight = oldWeight;
+        }
       } else {
         if (weight <= 0) {
           if (this.flowProfileTempAll.length >= 3) {
@@ -3230,9 +3222,11 @@ export class BrewBrewingGraphComponent implements OnInit {
 
     // After the flowProfileTempAll will be stored directly, we'd have one entry at start already, but we need to wait for another one
     if (this.flowProfileTempAll.length > 2) {
-      timeStampDelta =
-        flowObj.unixTime -
-        this.flowProfileTempAll[this.flowProfileTempAll.length - n].unixTime;
+      try {
+        timeStampDelta =
+          flowObj.unixTime -
+          this.flowProfileTempAll[this.flowProfileTempAll.length - n].unixTime;
+      } catch (ex) {}
     }
 
     realtimeWaterFlow.timestampdelta = timeStampDelta;
