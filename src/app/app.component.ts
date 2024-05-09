@@ -74,6 +74,9 @@ import { UIGraphStorage } from '../services/uiGraphStorage.service';
 
 declare var AppRate;
 declare var window;
+import { register } from 'swiper/element/bundle';
+import { UIGraphStorage } from '../services/uiGraphStorage.service';
+import { UIStorage } from '../services/uiStorage';
 
 register();
 
@@ -252,7 +255,8 @@ export class AppComponent implements AfterViewInit {
     private readonly storage: Storage,
     private readonly uiToast: UIToast,
     private readonly uiExportImportHelper: UIExportImportHelper,
-    private readonly uiGraphStorage: UIGraphStorage
+    private readonly uiGraphStorage: UIGraphStorage,
+    private readonly uiStorage: UIStorage
   ) {
     // Dont remove androidPlatformService, we need to initialize it via constructor
     try {
@@ -290,6 +294,7 @@ export class AppComponent implements AfterViewInit {
   private __appReady(): void {
     this.uiLog.log(`App Ready, wait for Platform ready`);
     this.platform.ready().then(async () => {
+      await this.uiStorage.init();
       try {
         // #285 - Add more device loggings
         this.uiLog.log(`Device-Model: ${this.device.model}`);
@@ -300,9 +305,12 @@ export class AppComponent implements AfterViewInit {
           const versionCode: string | number =
             await this.appVersion.getVersionNumber();
           this.uiLog.log(`App-Version: ${versionCode}`);
-          this.uiLog.log(`Storage-Driver: ${this.storage.driver}`);
+          this.uiLog.log(
+            `Storage-Driver: ${this.uiStorage.getStorage().driver}`
+          );
         }
       } catch (ex) {}
+
       try {
         Logger.attachOnLog().subscribe((_msg) => {
           if (_msg.type === 'LOG') {
@@ -605,12 +613,6 @@ export class AppComponent implements AfterViewInit {
   private async __initApp() {
     this.__registerBack();
     await this.__setDeviceLanguage();
-    // After we set the right device language, we check now if we can request external storage
-    if (this.platform.is('cordova') && this.platform.is('android')) {
-      try {
-        // TODO -  await this.androidPlatformService.checkHasExternalStorage();
-      } catch (ex) {}
-    }
 
     this.__setThreeDeeTouchActions();
     await this.uiAnalytics.initializeTracking();
@@ -831,36 +833,50 @@ export class AppComponent implements AfterViewInit {
       if (settings.refractometer_stay_connected === false) {
         this.__connectRefractometerDevice();
       }
+
+      // IMPORTANT Why do we do this? Because the IndexedDB loses connection, and we just pull an entry which does not have many entries in the end
+      if (this.platform.is('ios')) {
+        this.uiStorage.get('MILL').then(
+          () => {},
+          () => {}
+        );
+      }
     });
   }
 
   private __setThreeDeeTouchActions() {
     // Ignore for now
-    if (this.platform.is('ios')) {
-      const actions: ThreeDeeTouchQuickAction[] = [
-        {
-          type: 'Brew',
-          title: this._translate.instant('THREE_DEE_TOUCH_ACTION_BREW'),
-          iconType: 'Add',
-        },
-        {
-          type: 'Bean',
-          title: this._translate.instant('THREE_DEE_TOUCH_ACTION_BEAN'),
-          iconType: 'Add',
-        },
-        {
-          type: 'Preparation',
-          title: this._translate.instant('THREE_DEE_TOUCH_ACTION_PREPARATION'),
-          iconType: 'Add',
-        },
-        {
-          type: 'Mill',
-          title: this._translate.instant('THREE_DEE_TOUCH_ACTION_MILL'),
-          iconType: 'Add',
-        },
-      ];
+    try {
+      if (this.platform.is('ios')) {
+        const actions: ThreeDeeTouchQuickAction[] = [
+          {
+            type: 'Brew',
+            title: this._translate.instant('THREE_DEE_TOUCH_ACTION_BREW'),
+            iconType: 'Add',
+          },
+          {
+            type: 'Bean',
+            title: this._translate.instant('THREE_DEE_TOUCH_ACTION_BEAN'),
+            iconType: 'Add',
+          },
+          {
+            type: 'Preparation',
+            title: this._translate.instant(
+              'THREE_DEE_TOUCH_ACTION_PREPARATION'
+            ),
+            iconType: 'Add',
+          },
+          {
+            type: 'Mill',
+            title: this._translate.instant('THREE_DEE_TOUCH_ACTION_MILL'),
+            iconType: 'Add',
+          },
+        ];
 
-      this.threeDeeTouch.configureQuickActions(actions);
+        this.threeDeeTouch.configureQuickActions(actions);
+      }
+    } catch (ex) {
+      this.uiLog.error('Could not set three dee actions');
     }
   }
 

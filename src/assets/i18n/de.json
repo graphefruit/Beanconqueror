@@ -1053,6 +1053,35 @@
                 "<b>Sonstiges<\/b>",
                 "Kleinere Fehlerbehebungen"
             ]
+        },
+        "7.2.0": {
+            "TITLE": "Version 7.2.0: Das ist neu",
+            "DESCRIPTION": [
+                "<b>Weitere Sprachen<\/b>",
+                "Unterstützung von Italienisch - Danke an Cancercookie",
+                "Unterstützung für Polnisch - Danke an MarcinSachs",
+                "",
+                "<b>Bluetooth Waagen<\/b>",
+                "Der Zeitstart wird abgewartet, bis die Waage mehrere 0-Gewichtsmeldungen ausgibt, wenn \"Waage beim Start des Timers tarieren\" eingestellt ist.",
+                "",
+                "<b>Xenia<\/b>",
+                "Hinzufügen einer Wechseloption für die Verwendung der V1- und V2-API",
+                "Hinzufügen einer Funktion \"Brew By Weight\" mit automatischer Berechnung, um den Shot beim gewünschten Gewicht zu stoppen",
+                "",
+                "<b>Meticulous<\/b>",
+                "Erste Meticulous-Integration – Danke an das gesamte Meticulous-Team!",
+                "",
+                "<b>Einstellungen<\/b>",
+                "Ein Schwellenwert für die Zählung des ersten Tropfens",
+                "",
+                "<b>Sonstiges<\/b>",
+                "Einige technische Änderungen im Code",
+                "Kleine Optimierungen",
+                "[IOS]Anzeige von Popups, wenn der Datenbankzugriff nicht hergestellt werden konnte.",
+                "",
+                "<b> Danke <\/b>",
+                "Ein großes Dankeschön an alle Übersetzer, die enorme Anstrengungen unternehmen, um die App in mehreren Sprachen verfügbar zu machen."
+            ]
         }
     },
     "CUSTOM_PARAMETERS": "Parameter individualisieren",
@@ -1606,7 +1635,8 @@
     "PREPARATION_DEVICE": {
         "TYPE": {
             "NONE": "Keins",
-            "XENIA": "Xenia"
+            "XENIA": "Xenia",
+            "METICULOUS": "Meticulous"
         },
         "URL": "Url",
         "CHOOSE_DEVICE": "Gerät auswählen",
@@ -1627,7 +1657,18 @@
             "ERROR_NOT_ALL_SCRIPTS_FOUND": "Ein oder mehrere Xenia-Scripte konnten nicht mehr gefunden werden, diese wurden auf Standard zurückgesetzt",
             "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "Die Verbindung zur Xenia-Siebträgermaschine konnte nicht hergestellt werden, bitte überprüfe ob du im richtigen Netz (WLAN) unterwegs bist, ob die Verbindung richtig hinterlegt wurde, oder ob andere Probleme vorhanden sind",
             "CHECKING_CONNECTION_TO_PORTAFILTER": "Verbindung zur Xenia wird überprüft",
-            "GRABING_SCRIPTS": "Scripte werden von der Xenia geholt"
+            "GRABING_SCRIPTS": "Scripte werden von der Xenia geholt",
+            "BREW_BY_WEIGHT_ACTIVE": "\"Brew by weight\" aktiv"
+        },
+        "API_VERSION": "API Version",
+        "RESIDUAL_LAG_TIME": "Restverzögerungszeit",
+        "RESIDUAL_LAG_TIME_DESCRIPTION": "Stelle die Zeit so ein, dass sie zum verbleibenden Wasser passt. Mit einem Bodenlosen Siebträger benötigst du eine kürzere Zeit, mit einem Auslass ausgestatteten eine längere. Je langsamer deine Waage das Gewicht anzeigt, desto mehr Zeitänderung benötigst du.",
+        "TYPE_METICULOUS": {
+            "TITLE": "Meticulous Maschine",
+            "NO_PROFILE": "Kein Profil",
+            "CHOOSE_PROFILE": "Profil wählen",
+            "SHOT_STARTED": "Shot gestartet",
+            "SHOT_ENDED": "Shot beendet"
         }
     },
     "DEVICE_CONNECTION": "Geräteverbindung",
@@ -1776,5 +1817,23 @@
     "PAGE_SETTINGS_DATE_FORMAT": "Datumsformat",
     "PAGE_SETTINGS_LANGUAGE_FRANCE": "Französisch",
     "PAGE_SETTINGS_LANGUAGE_INDONESIA": "Indonesisch",
-    "EXTRACTION_CHART_TITLE": "Extraktionsdiagramm"
+    "EXTRACTION_CHART_TITLE": "Extraktionsdiagramm",
+    "PAGE_SETTINGS_SHOW_BACKUP_ISSUES": "Backup-Probleme anzeigen",
+    "PAGE_SETTINGS_SHOW_BACKUP_ISSUES_DESCRIPTION": "Eine Warnung anzeigen, wenn Backups nicht ins Dateisystem geschrieben werden können.",
+    "AUTOMATIC_BACKUP_DID_FAIL": "Das automatische Backup hat nicht funktioniert. Stelle sicher, dass du funktionierende Backups hast! Diese Meldung kann in den Einstellungen deaktiviert werden.",
+    "INTERNAL_BACKUP_DID_FAIL": "Das interne Backup hat nicht funktioniert. Stelle sicher, dass du funktionierende Backups hast! Diese Meldung kann in den Einstellungen deaktiviert werden.",
+    "ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD": "ZIP-Datei konnte nicht gespeichert werden! Diese Meldung kann in den Einstellungen deaktiviert werden.",
+    "SEND_LOGS": "Logs senden",
+    "POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER": "Refraktometer neu verbinden",
+    "PAGE_SETTINGS_LANGUAGE_ITALIAN": "Italiano",
+    "PAGE_SETTINGS_LANGUAGE_POLISH": "Polnisch",
+    "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_GENERAL_DESCRIPTION": "Du musst zuerst deinen Timer zurücksetzen, bevor du starten kannst",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD": "Schwelle erste Tropfen",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD_TOOLTIP": "Bei welchem Gewicht der Waage soll der erste Tropfen gezählt werden? Standard: >= 0.1g",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE": "Verzögerung beim Start des Brühvorgangs",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE_DESCRIPTION": "Bestimme eine Verzögerungszeit, bei der eine Ladeanzeige angezeigt wird, bis der Brühvorgang beginnt.",
+    "STARTING_IN": "Beginnt in ... {{time}}",
+    "IOS_DATABASE_ISSUE_TITLE": "ACHTUNG !!!!! - DATENBANKVERBINDUNG VERLOREN",
+    "IOS_DATABASE_ISSUE_DESCRIPTION": "Wir bedauern, Ihnen mitteilen zu müssen, dass die Verbindung zur Datenbank unterbrochen wurde. Dieses Problem ist auf einen ungelösten Fehler im Apple-System zurückzuführen, der außerhalb der Kontrolle von Beanconqueror liegt. Um einen möglichen Datenverlust zu vermeiden, bitten wir Sie, die Beanconqueror-Anwendung sofort zu schließen und erneut zu öffnen.",
+    "RELOAD_APP": "Jetzt App neu laden"
 }

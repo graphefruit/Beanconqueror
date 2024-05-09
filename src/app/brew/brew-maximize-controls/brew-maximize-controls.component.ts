@@ -55,8 +55,7 @@ export class BrewMaximizeControlsComponent
     private readonly uiBrewHelper: UIBrewHelper,
     private readonly translate: TranslateService,
     private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly platform: Platform,
-    private readonly ngZone: NgZone
+    private readonly platform: Platform
   ) {}
   public ngOnInit() {
     try {

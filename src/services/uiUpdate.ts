@@ -54,6 +54,30 @@ export class UIUpdate {
     this.uiLog.info('Check updates');
     const hasData: boolean = await this.uiStorage.hasData();
     try {
+      const updateVersions: Array<string> = [
+        'UPDATE_1',
+        'UPDATE_2',
+        'UPDATE_3',
+        'UPDATE_4',
+        'UPDATE_5',
+        'UPDATE_6',
+        'UPDATE_7',
+        'UPDATE_8',
+        'UPDATE_9',
+        'UPDATE_10',
+      ];
+      const version: Version = this.uiVersionStorage.getVersion();
+      const _silentUpdate = hasData;
+      for (const updateVersion of updateVersions) {
+        if (version.checkIfDataVersionWasUpdated(updateVersion) === false) {
+          if (!_silentUpdate) {
+            // Something needs to be updated, so show loading spinner
+            await this.uiAlert.showLoadingSpinner();
+            break;
+          }
+        }
+      }
+
       await this.__checkUpdateForDataVersion('UPDATE_1', !hasData);
       await this.__checkUpdateForDataVersion('UPDATE_2', !hasData);
       await this.__checkUpdateForDataVersion('UPDATE_3', !hasData);
@@ -548,10 +572,6 @@ export class UIUpdate {
     this.uiLog.info('Check updates');
 
     if (version.checkIfDataVersionWasUpdated(_dataVersion) === false) {
-      if (!_silentUpdate) {
-        await this.uiAlert.showLoadingSpinner();
-      }
-
       this.uiLog.info('Data version ' + _dataVersion + ' - Update');
       try {
         const updated: boolean = await this.__updateDataVersion(_dataVersion);
@@ -563,11 +583,7 @@ export class UIUpdate {
             'Data version ' + _dataVersion + ' - could not update'
           );
         }
-        if (!_silentUpdate) {
-          await this.uiAlert.hideLoadingSpinner();
-        }
       } catch (ex) {
-        await this.uiAlert.hideLoadingSpinner();
         this.uiLog.error(
           'Data version ' + _dataVersion + ' - could not update ' + ex.message
         );
@@ -588,7 +604,7 @@ export class UIUpdate {
         versionCode = await this.appVersion.getVersionNumber();
       } else {
         // Hardcored for testing
-        versionCode = '7.1.0';
+        versionCode = '7.2.0';
       }
       const version: Version = this.uiVersionStorage.getVersion();
       const displayingVersions =

@@ -1053,6 +1053,35 @@
                 "<b> Autre <\/b>",
                 "Corrections de bugs mineurs"
             ]
+        },
+        "7.2.0": {
+            "TITLE": "Version 7.2.0: What's new",
+            "DESCRIPTION": [
+                "<b> Plus de langues <\/b>",
+                "Traction italienne - Merci à Cancercookie",
+                "Traduction polonaise - Merci à Marcin Sachs",
+                "",
+                "<b>Balances Bluetooth<\/b>",
+                "La minuterie attendra, jusqu’à ce que la balance signale plusieurs rapports de poids 0, lorsque vous réglez 'Balance de tare lors du démarrage de la minuterie'",
+                "",
+                "<b>Xenia<\/b>",
+                "Ajout d'une bascule pour l'utilisation des API V1 et V2",
+                "Ajout d'une fonction \"Brew By Weight\" avec calcul automatique pour arrêter le tir sur le poids souhaité",
+                "",
+                "<b>Meticulous<\/b>",
+                "Première intégration Meticulous - Merci à toute l'équipe Meticulous !",
+                "",
+                "<b>Paramètres<\/b>",
+                "Définir un seuil pour que la première goutte compte",
+                "",
+                "<b> Autre <\/b>",
+                "Quelques changements techniques dans le code",
+                "Petits ajustements",
+                "[IOS]Affichage de popups si l'accès à la base de données n'a pas pu être établi.",
+                "",
+                "<b> Merci <\/b>",
+                "Un grand merci à tous les traducteurs qui font des efforts considérables pour rendre l'application disponible dans plusieurs langues."
+            ]
         }
     },
     "CUSTOM_PARAMETERS": "Personnaliser les paramètres",
@@ -1606,7 +1635,8 @@
     "PREPARATION_DEVICE": {
         "TYPE": {
             "NONE": "Aucun",
-            "XENIA": "Xenia"
+            "XENIA": "Xenia",
+            "METICULOUS": "Meticulous"
         },
         "URL": "Url",
         "CHOOSE_DEVICE": "Choisir l'appareil",
@@ -1627,7 +1657,18 @@
             "ERROR_NOT_ALL_SCRIPTS_FOUND": "Un ou plusieurs scripts n'ont pu être trouvés, ils ont été réinitialisés.",
             "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "La connexion à la machine à expresso xenia n'a pas pu être établie. Assure-toi que tu es sur le bon réseau (LAN), si tu as entré la bonne adresse IP, etc.",
             "CHECKING_CONNECTION_TO_PORTAFILTER": "La connexion à Xenia est en cours de vérification",
-            "GRABING_SCRIPTS": "Chargement de scripts de la Xenia"
+            "GRABING_SCRIPTS": "Chargement de scripts de la Xenia",
+            "BREW_BY_WEIGHT_ACTIVE": "Brew by weight activé"
+        },
+        "API_VERSION": "Version de l’API",
+        "RESIDUAL_LAG_TIME": "Temps de latence résiduel",
+        "RESIDUAL_LAG_TIME_DESCRIPTION": "Règle la durée en fonction de l’eau restante. Avec un porte-filtre bottomless, vous auriez besoin d'une durée inférieure, avec un porte-filtre bottomless, un temps plus élevé. Plus votre balance indique le poids lentement, plus vous avez besoin de changement de durée.",
+        "TYPE_METICULOUS": {
+            "TITLE": "Machine Meticulous",
+            "NO_PROFILE": "Pas de profil",
+            "CHOOSE_PROFILE": "Choisir un profil",
+            "SHOT_STARTED": "L'infusion a commencé",
+            "SHOT_ENDED": "Infusion terminée"
         }
     },
     "DEVICE_CONNECTION": "Connexion de l'appareil",
@@ -1776,5 +1817,23 @@
     "PAGE_SETTINGS_DATE_FORMAT": "Format de date",
     "PAGE_SETTINGS_LANGUAGE_FRANCE": "Français",
     "PAGE_SETTINGS_LANGUAGE_INDONESIA": "Indonésien",
-    "EXTRACTION_CHART_TITLE": "Tableau d'extraction"
+    "EXTRACTION_CHART_TITLE": "Tableau d'extraction",
+    "PAGE_SETTINGS_SHOW_BACKUP_ISSUES": "Afficher les problèmes de sauvegarde",
+    "PAGE_SETTINGS_SHOW_BACKUP_ISSUES_DESCRIPTION": "Affichage d’une fenêtre contextuelle si les sauvegardes ne peuvent pas être écrites sur le système de fichiers",
+    "AUTOMATIC_BACKUP_DID_FAIL": "La sauvegarde automatique n'a pas fonctionné, assurez-vous d'avoir des sauvegardes fonctionnelles ! Cette information peut être désactivée dans les paramètres",
+    "INTERNAL_BACKUP_DID_FAIL": "La sauvegarde interne n'a pas fonctionné, assurez-vous d'avoir des sauvegardes fonctionnelles ! Cette information peut être désactivée dans les paramètres",
+    "ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD": "Le fichier ZIP n'a pas pu être enregistré ! Cette information peut être désactivée dans les paramètres",
+    "SEND_LOGS": "Envoyer les journaux",
+    "POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER": "Reconnecter le réfractomètre",
+    "PAGE_SETTINGS_LANGUAGE_ITALIAN": "Italienne",
+    "PAGE_SETTINGS_LANGUAGE_POLISH": "Polonais",
+    "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_GENERAL_DESCRIPTION": "Tu dois d'abord réinitialiser ton minuteur avant de pouvoir commencer",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD": "Seuil de la première goutte",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD_TOOLTIP": "À quel poids de balance la première goutte doit-elle être comptée ? Valeur par défaut : >= 0,1 g",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE": "Délai de démarrage de l’infusion",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE_DESCRIPTION": "Définir un délai pour l'affichage de l'essoreuse de chargement jusqu'à ce que l'infusion commence",
+    "STARTING_IN": "Partir à {{time}}",
+    "IOS_DATABASE_ISSUE_TITLE": "ATTENTION !!!!! - CONNEXION À LA BASE DE DONNÉES PERDUE",
+    "IOS_DATABASE_ISSUE_DESCRIPTION": "Nous avons le regret de vous informer que nous avons rencontré une perte de connexion à la base de données. Ce problème est le résultat d'un bug non résolu dans le système Apple, indépendant de la volonté de Beanconqueror. Pour éviter toute perte potentielle de données, nous vous demandons de bien vouloir fermer immédiatement de force l'application Beanconqueror et de la rouvrir.",
+    "RELOAD_APP": "Recharger l'application maintenant"
 }

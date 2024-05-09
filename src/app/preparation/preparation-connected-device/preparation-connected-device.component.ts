@@ -10,6 +10,7 @@ import { PreparationDevice } from '../../../classes/preparationDevice/preparatio
 import { UIToast } from '../../../services/uiToast';
 import { UIAlert } from '../../../services/uiAlert';
 import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
+import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
   selector: 'app-preparation-connected-device',
@@ -26,12 +27,21 @@ export class PreparationConnectedDeviceComponent {
 
   public scriptid: number = 11;
 
+  public pinFormatter(value: any) {
+    const parsedFloat = parseFloat(value);
+    if (isNaN(parsedFloat)) {
+      return `${0}`;
+    }
+    const newValue = +parsedFloat.toFixed(2);
+    return `${newValue}`;
+  }
   constructor(
     private readonly modalController: ModalController,
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly uiToast: UIToast,
-    private readonly uiAlert: UIAlert
+    private readonly uiAlert: UIAlert,
+    private readonly uiHelper: UIHelper
   ) {}
 
   public ionViewWillEnter(): void {
@@ -74,6 +84,18 @@ export class PreparationConnectedDeviceComponent {
             this.data.connectedPreparationDevice.url =
               'http://' + this.data.connectedPreparationDevice.url;
           }
+        }
+        if (
+          this.data.connectedPreparationDevice.customParams.apiVersion ===
+          undefined
+        ) {
+          this.data.connectedPreparationDevice.customParams.apiVersion = 'V2';
+        }
+        if (
+          this.data.connectedPreparationDevice.customParams.residualLagTime ===
+          undefined
+        ) {
+          this.data.connectedPreparationDevice.customParams.residualLagTime = 1.35;
         }
       }
       await this.uiPreparationStorage.update(this.data);
@@ -125,4 +147,5 @@ export class PreparationConnectedDeviceComponent {
       connectedDevice.stopScript();
     }
   }
+  public ngOnInit() {}
 }

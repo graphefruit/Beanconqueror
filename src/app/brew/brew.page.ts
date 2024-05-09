@@ -340,6 +340,16 @@ export class BrewPage implements OnInit {
           e.getPreparation().name.toLowerCase().includes(searchText) ||
           e.getBean().name.toLowerCase().includes(searchText) ||
           e.getBean().roaster.toLowerCase().includes(searchText) ||
+          e.getBean().bean_information?.find((bi) => {
+            return (
+              bi?.variety?.toLowerCase().includes(searchText) ||
+              bi?.country?.toLowerCase().includes(searchText) ||
+              bi?.region?.toLowerCase().includes(searchText) ||
+              bi?.farm?.toLowerCase().includes(searchText) ||
+              bi?.farmer?.toLowerCase().includes(searchText) ||
+              bi?.processing?.toLowerCase().includes(searchText)
+            );
+          }) ||
           e.coffee_type.toLowerCase().includes(searchText)
       );
     }

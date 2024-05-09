@@ -24,7 +24,10 @@ import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetooth
 import { BluetoothScale } from '../../../classes/devices';
 import { UIAlert } from '../../../services/uiAlert';
 
+import { PreparationDeviceType } from '../../../classes/preparationDevice';
+
 declare var Plotly;
+
 @Component({
   selector: 'brew-flow',
   templateUrl: './brew-flow.component.html',
@@ -32,6 +35,9 @@ declare var Plotly;
 })
 export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
   public static readonly COMPONENT_ID: string = 'brew-flow';
+
+  @ViewChild('brewFlowContent', { read: ElementRef })
+  public brewFlowContent: ElementRef;
 
   public showBloomTimer: boolean = false;
   public showDripTimer: boolean = false;
@@ -50,7 +56,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
   private brewTemperatureGraphSubscription: Subscription;
 
   public settings: Settings;
-
+  public PREPARATION_DEVICE_TYPE_ENUM = PreparationDeviceType;
   public gaugeType = 'semi';
   public gaugeValue = 0;
   public gaugeLabel = '';
@@ -69,6 +75,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
   private disableHardwareBack;
   protected readonly PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   protected heightInformationBlock: number = 50;
+
   constructor(
     private readonly modalController: ModalController,
     private readonly uiSettingsStorage: UISettingsStorage,
@@ -78,6 +85,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
     private readonly ngZone: NgZone,
     private readonly uiAlert: UIAlert
   ) {}
+
   public ngOnInit() {
     try {
       this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(
@@ -121,18 +129,25 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   public getGraphIonColSize() {
+    if (
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
+        PreparationDeviceType.METICULOUS
+    ) {
+      return 2;
+    }
     let bluetoothDeviceConnections = 0;
     let smartScaleConnected: boolean = false;
     if (
       (this.pressureDeviceConnected() ||
-        this.brewComponent.preparationDeviceConnected()) &&
+        this.brewComponent.brewBrewingPreparationDeviceEl.preparationDeviceConnected()) &&
       this.brew.getPreparation().style_type === PREPARATION_STYLE_TYPE.ESPRESSO
     ) {
       bluetoothDeviceConnections += 1;
     }
     if (
       this.temperatureDeviceConnected() ||
-      this.brewComponent.preparationDeviceConnected()
+      this.brewComponent.brewBrewingPreparationDeviceEl.preparationDeviceConnected()
     ) {
       bluetoothDeviceConnections += 1;
     }
@@ -157,25 +172,14 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
       }
     }
   }
-
-  public async ngAfterViewInit() {
-    this.settings = this.uiSettingsStorage.getSettings();
-
-    /*if (this.isDetail === false) {
-      setTimeout(() => {
-        const offsetWidth = document.getElementById('brewPanel').offsetWidth;
-
-        // -16 because of padding
-        this.gaugeSize = offsetWidth - 16;
-      }, 1000);
-
-      this.gaugeLabel = this.translate.instant('BREW_PRESSURE_FLOW');
-    }*/
+  public async ionViewDidEnter() {
     await new Promise((resolve) => {
       setTimeout(() => {
         document
           .getElementById('brewFlowContainer')
-          .append(document.getElementById('flowProfileChart'));
+          .append(
+            this.brewComponent.brewBrewingGraphEl.profileDiv.nativeElement
+          );
         resolve(undefined);
       }, 50);
     });
@@ -197,17 +201,15 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
           this.setActualTemperatureInformation(_val);
         });
 
-      const settings: Settings = this.uiSettingsStorage.getSettings();
-
       this.showBloomTimer = this.uiBrewHelper.fieldVisible(
-        settings.manage_parameters.coffee_blooming_time,
+        this.settings.manage_parameters.coffee_blooming_time,
         this.brew.getPreparation().manage_parameters.coffee_blooming_time,
         this.brew.getPreparation().use_custom_parameters
       );
 
       this.showDripTimer =
         this.uiBrewHelper.fieldVisible(
-          settings.manage_parameters.coffee_first_drip_time,
+          this.settings.manage_parameters.coffee_first_drip_time,
           this.brew.getPreparation().manage_parameters.coffee_first_drip_time,
           this.brew.getPreparation().use_custom_parameters
         ) &&
@@ -216,9 +218,13 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
     }
     setTimeout(() => {
       if (!this.isDetail) {
-        this.brewComponent.updateChart();
+        this.brewComponent.brewBrewingGraphEl.updateChart();
       }
     }, 150);
+  }
+
+  public async ngAfterViewInit() {
+    this.settings = this.uiSettingsStorage.getSettings();
   }
 
   @HostListener('window:resize')
@@ -226,7 +232,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
   public onOrientationChange() {
     setTimeout(() => {
       try {
-        const flowHeight = document.getElementById('flowCard').offsetHeight;
+        const flowHeight = this.brewFlowContent.nativeElement.offsetHeight;
         let informationContainerHeight = 0;
         try {
           informationContainerHeight = document.getElementById(
@@ -238,12 +244,15 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
 
         this.heightInformationBlock = informationContainerHeight;
 
-        this.brewComponent.lastChartLayout.height =
+        this.brewComponent.brewBrewingGraphEl.lastChartLayout.height =
           flowHeight - informationContainerHeight;
 
-        this.brewComponent.lastChartLayout.width =
+        this.brewComponent.brewBrewingGraphEl.lastChartLayout.width =
           document.getElementById('brewFlowContainer').offsetWidth;
-        Plotly.relayout('flowProfileChart', this.brewComponent.lastChartLayout);
+        Plotly.relayout(
+          this.brewComponent.brewBrewingGraphEl.profileDiv.nativeElement,
+          this.brewComponent.brewBrewingGraphEl.lastChartLayout
+        );
       } catch (ex) {}
     }, 50);
   }
@@ -252,7 +261,13 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
     if (!this.platform.is('cordova')) {
       return true;
     }
-
+    if (
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
+        PreparationDeviceType.METICULOUS
+    ) {
+      return true;
+    }
     const pressureDevice: PressureDevice = this.bleManager.getPressureDevice();
     return !!pressureDevice;
   }
@@ -269,6 +284,13 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
 
   public smartScaleConnected() {
     if (!this.platform.is('cordova')) {
+      return true;
+    }
+    if (
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() &&
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
+        PreparationDeviceType.METICULOUS
+    ) {
       return true;
     }
     const scale: BluetoothScale = this.bleManager.getScale();
@@ -290,9 +312,11 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
       } catch (ex) {}
     }, 250);
   }
+
   public pauseTimer() {
     this.brewComponent.timer.pauseTimer();
   }
+
   public async startListening() {
     this.brewComponent.timer.startListening();
 
@@ -302,6 +326,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
       this.onOrientationChange();
     }, 500);
   }
+
   private waitForPleaseWaitToBeFinished() {
     // #604
     return new Promise((resolve, reject) => {
@@ -323,6 +348,7 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
       }, 5000);
     });
   }
+
   public async resetTimer() {
     this.brewComponent.timer.reset();
 
@@ -331,29 +357,18 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
       this.onOrientationChange();
     }, 500);
   }
+
   public resumeTimer() {
     this.brewComponent.timerResumedPressed(undefined);
   }
+
   public __tareScale() {
     this.brewComponent.timer.__tareScale();
   }
 
   public setCoffeeDripTime(): void {
     this.brewComponent.setCoffeeDripTime(undefined);
-    /**
-    this.brew.coffee_first_drip_time = this.brew.brew_time;
-    // Run first drip script
-    if (
-      !this.brewComponent.smartScaleConnected() &&
-      this.brewComponent.preparationDeviceConnected()
-    ) {
-      // If scale is not connected but the device, we can now choose that still the script is executed if existing.
-      if (this.brew.preparationDeviceBrew.params.scriptAtFirstDripId > 0) {
-        this.brewComponent.preparationDevice.startScript(
-          this.brew.preparationDeviceBrew.params.scriptAtFirstDripId
-        );
-      }
-    }**/
+
     this.showDripTimer = false;
   }
 
@@ -418,10 +433,11 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
       } catch (ex) {}
     }
   }
+
   public dismiss() {
-    document
-      .getElementById('canvasContainerBrew')
-      .append(document.getElementById('flowProfileChart'));
+    this.brewComponent.brewBrewingGraphEl.canvaContainer.nativeElement.append(
+      this.brewComponent.brewBrewingGraphEl.profileDiv.nativeElement
+    );
     try {
       this.disableHardwareBack.unsubscribe();
     } catch (ex) {}

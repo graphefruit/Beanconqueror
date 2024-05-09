@@ -1230,14 +1230,14 @@ export class SettingsPage {
   }
 
   private async _exportFlowProfiles(_storedData: Array<Brew>) {
-    for (const entry of _storedData) {
-      if (entry.flow_profile && entry.flow_profile.length) {
-        await this._exportFlowProfileFile(entry.flow_profile);
-      }
-    }
+    await this.exportStoredData(_storedData);
   }
 
   private async _exportGraphProfiles(_storedData: Array<Graph>) {
+    await this.exportStoredData(_storedData);
+  }
+
+  private async exportStoredData(_storedData: Array<Brew> | Array<Graph>) {
     for (const entry of _storedData) {
       if (entry.flow_profile && entry.flow_profile.length) {
         await this._exportFlowProfileFile(entry.flow_profile);
@@ -1805,11 +1805,6 @@ export class SettingsPage {
                     await this._importFiles(roastingMachineData, _importPath);
                     await this._importFiles(waterData, _importPath);
 
-                    /*** WAIT!!, before you try to understand whats going on here
-                     After the latest file system changes of android, we can't copy .JSON Files, or other types, but .PNG, and .JPG works.
-                     Thats why we exported all the raw-jsons as a .PNG Type (but with JSON-Data), and when reimporting them, we load the .PNG and save it as .JSON
-                     Therefore we can transfer the brew history, else this would not be possible
-                     */
                     await this._importFlowProfileFiles(
                       brewsData,
                       _importPath + 'brews/'

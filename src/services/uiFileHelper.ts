@@ -67,7 +67,11 @@ export class UIFileHelper extends InstanceClass {
                   'UILog - saveZIPFile - File saved successfully - ' + _fileName
                 );
               };
-              writer.onerror = () => {
+              writer.onerror = (_e) => {
+                this.uiLog.error(
+                  'UILog - saveZIPFile - File saved unsuccessfully - ' +
+                    _fileName
+                );
                 reject();
               };
               writer.seek(0);
@@ -439,7 +443,9 @@ export class UIFileHelper extends InstanceClass {
                             }
                           }
                         },
-                        () => {}
+                        () => {
+                          reject();
+                        }
                       );
                     },
                     () => {
