@@ -16,6 +16,8 @@ import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions
 import { Router } from '@angular/router';
 import { BrewInformationComponent } from '../../components/brew-information/brew-information.component';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+import { UIHelper } from '../../services/uiHelper';
+import { UIHelperMock } from '../../classes/mock';
 
 describe('BrewPage', () => {
   let component: BrewPage;
@@ -26,7 +28,6 @@ describe('BrewPage', () => {
       imports: [
         TranslateModule.forRoot(),
         FormsModule,
-        Storage,
         CommonModule,
         IonicModule,
       ],
@@ -40,9 +41,9 @@ describe('BrewPage', () => {
         { provide: Camera },
         { provide: ImagePicker },
         { provide: AndroidPermissions },
-
         { provide: Router },
         { provide: SocialSharing },
+        { provide: UIHelper, useClass: UIHelperMock },
       ],
     }).compileComponents();
   }));

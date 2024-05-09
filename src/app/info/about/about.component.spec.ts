@@ -25,7 +25,6 @@ describe('AboutComponent', () => {
       imports: [
         TranslateModule.forRoot(),
         FormsModule,
-        Storage,
         CommonModule,
         IonicModule,
       ],

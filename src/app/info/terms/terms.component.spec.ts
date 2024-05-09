@@ -13,7 +13,9 @@ import { File } from '@awesome-cordova-plugins/file/ngx';
 import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
-import { Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+import { UIHelper } from '../../../services/uiHelper';
+import { UIHelperMock } from '../../../classes/mock';
 
 describe('TermsComponent', () => {
   let component: TermsComponent;
@@ -24,9 +26,9 @@ describe('TermsComponent', () => {
       imports: [
         TranslateModule.forRoot(),
         FormsModule,
-        Storage,
         CommonModule,
         IonicModule,
+        RouterTestingModule,
       ],
       declarations: [TermsComponent, KeysPipe],
       providers: [
@@ -38,8 +40,7 @@ describe('TermsComponent', () => {
         { provide: Camera },
         { provide: ImagePicker },
         { provide: AndroidPermissions },
-
-        { provide: Router },
+        { provide: UIHelper, useClass: UIHelperMock },
       ],
     }).compileComponents();
   }));

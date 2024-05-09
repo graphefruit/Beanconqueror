@@ -14,6 +14,8 @@ import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Router } from '@angular/router';
+import { UIHelper } from '../../../services/uiHelper';
+import { UIHelperMock } from '../../../classes/mock';
 
 describe('ContactComponent', () => {
   let component: ContactComponent;
@@ -24,7 +26,6 @@ describe('ContactComponent', () => {
       imports: [
         TranslateModule.forRoot(),
         FormsModule,
-        Storage,
         CommonModule,
         IonicModule,
       ],
@@ -38,7 +39,7 @@ describe('ContactComponent', () => {
         { provide: Camera },
         { provide: ImagePicker },
         { provide: AndroidPermissions },
-
+        { provide: UIHelper, useClass: UIHelperMock },
         { provide: Router },
       ],
     }).compileComponents();

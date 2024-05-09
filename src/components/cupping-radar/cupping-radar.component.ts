@@ -18,7 +18,7 @@ import { UIBrewHelper } from '../../services/uiBrewHelper';
   styleUrls: ['./cupping-radar.component.scss'],
 })
 export class CuppingRadarComponent implements AfterViewInit, OnInit {
-  private chartEl: any = undefined;
+  public chartEl: any = undefined;
   public model: ICupping = {
     body: 0,
     brightness: 0,

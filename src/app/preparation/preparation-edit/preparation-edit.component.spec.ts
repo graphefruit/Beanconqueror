@@ -8,12 +8,14 @@ import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
 import { KeysPipe } from '../../../pipes/keys';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
-import { NavParamsMock } from '../../../classes/mock/NavParamsMock';
+import { NavParamsMock, UIHelperMock } from '../../../classes/mock';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Router } from '@angular/router';
+import { UIHelper } from '../../../services/uiHelper';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('PreparationEditComponent', () => {
   let component: PreparationEditComponent;
@@ -24,9 +26,9 @@ describe('PreparationEditComponent', () => {
       imports: [
         TranslateModule.forRoot(),
         FormsModule,
-        Storage,
         CommonModule,
         IonicModule,
+        HttpClientTestingModule,
       ],
       declarations: [PreparationEditComponent, KeysPipe],
       providers: [
@@ -38,7 +40,7 @@ describe('PreparationEditComponent', () => {
         { provide: Camera },
         { provide: ImagePicker },
         { provide: AndroidPermissions },
-
+        { provide: UIHelper, useClass: UIHelperMock },
         { provide: Router },
       ],
     }).compileComponents();

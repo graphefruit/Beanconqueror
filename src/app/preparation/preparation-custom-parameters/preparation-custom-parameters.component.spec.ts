@@ -1,7 +1,11 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import {IonicModule} from '@ionic/angular';
+import { IonicModule, NavParams } from '@ionic/angular';
 
-import {PreparationCustomParametersComponent} from './preparation-custom-parameters.component';
+import { PreparationCustomParametersComponent } from './preparation-custom-parameters.component';
+import { NavParamsMock, UIHelperMock } from '../../../classes/mock';
+import { Storage } from '@ionic/storage';
+import { TranslateModule } from '@ngx-translate/core';
+import { UIHelper } from '../../../services/uiHelper';
 
 describe('PreparationCustomParametersComponent', () => {
   let component: PreparationCustomParametersComponent;
@@ -9,8 +13,16 @@ describe('PreparationCustomParametersComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ PreparationCustomParametersComponent ],
-      imports: [IonicModule.forRoot()]
+      declarations: [PreparationCustomParametersComponent],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
+      providers: [
+        { provide: NavParams, useClass: NavParamsMock },
+        { provide: Storage },
+        {
+          provide: UIHelper,
+          useClass: UIHelperMock,
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PreparationCustomParametersComponent);

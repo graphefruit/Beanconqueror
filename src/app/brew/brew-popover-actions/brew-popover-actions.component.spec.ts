@@ -13,18 +13,21 @@ import { File } from '@awesome-cordova-plugins/file/ngx';
 import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
-import { Router } from '@angular/router';
+import { UIHelperMock } from '../../../classes/mock';
+import { UIHelper } from '../../../services/uiHelper';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { Brew } from '../../../classes/brew/brew';
+import { Preparation } from '../../../classes/preparation/preparation';
 
 describe('BrewPopoverActionsComponent', () => {
   let component: BrewPopoverActionsComponent;
   let fixture: ComponentFixture<BrewPopoverActionsComponent>;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
         TranslateModule.forRoot(),
         FormsModule,
-        Storage,
         CommonModule,
         IonicModule,
       ],
@@ -38,15 +41,21 @@ describe('BrewPopoverActionsComponent', () => {
         { provide: Camera },
         { provide: ImagePicker },
         { provide: AndroidPermissions },
-
-        { provide: Router },
+        { provide: UIHelper, useClass: UIHelperMock },
+        { provide: UIPreparationStorage },
       ],
     }).compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(BrewPopoverActionsComponent);
     component = fixture.componentInstance;
+    component.data = {
+      getPreparation(): Preparation {
+        return new Preparation();
+      },
+      attachments: new Array<string>(),
+      customInformation: {
+        visualizer_id: '',
+      },
+    } as Brew;
     fixture.detectChanges();
   });
 

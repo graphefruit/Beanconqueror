@@ -12,6 +12,7 @@ import { UIHelper } from '../../services/uiHelper';
 import { ListViewBrewParameter } from '../parameter/listViewBrewParameter';
 import { RepeatBrewParameter } from '../parameter/repeatBrewParameter';
 import { ConnectedPreparationDevice } from '../preparationDevice/connectedPreparationDevice';
+import { setParseTemplateAsSourceFileForTest } from '@angular/compiler-cli/src/ngtsc/typecheck/diagnostics';
 
 export class Preparation implements IPreparation {
   public name: string;
@@ -60,6 +61,7 @@ export class Preparation implements IPreparation {
 
     // We need to reassign brew order here, else the class would be dismissed.
     this.brew_order = new OrderBrewParameter();
+    console.log(this.brew_order, preparationObj.brew_order);
     Object.assign(this.brew_order, preparationObj.brew_order);
 
     this.default_last_coffee_parameters = new DefaultBrewParameter();

@@ -2,7 +2,11 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { GraphPopoverActionsComponent } from './graph-popover-actions.component';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import {
+  TranslateModule,
+  TranslatePipe,
+  TranslateService,
+} from '@ngx-translate/core';
 import { TranslateServiceMock } from '../../../../classes/mock';
 
 describe('GraphPopoverActionsComponent', () => {
@@ -11,14 +15,8 @@ describe('GraphPopoverActionsComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [GraphPopoverActionsComponent, TranslatePipe],
-      imports: [IonicModule.forRoot()],
-      providers: [
-        {
-          provide: TranslateService,
-          useValue: TranslateServiceMock,
-        },
-      ],
+      declarations: [GraphPopoverActionsComponent],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(GraphPopoverActionsComponent);

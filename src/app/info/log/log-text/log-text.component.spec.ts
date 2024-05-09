@@ -17,7 +17,6 @@ describe('LogTextComponent', () => {
       imports: [
         FormsModule,
         TranslateModule.forRoot(),
-        Storage,
         CommonModule,
         IonicModule,
       ],

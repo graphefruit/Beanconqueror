@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
 import { KeysPipe } from '../../../pipes/keys';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
-import { NavParamsMock } from '../../../classes/mock';
+import { NavParamsMock, UIHelperMock } from '../../../classes/mock';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
@@ -32,6 +32,8 @@ import { Settings } from '../../../classes/settings/settings';
 import { Bean } from '../../../classes/bean/bean';
 import { Preparation } from '../../../classes/preparation/preparation';
 import { Mill } from '../../../classes/mill/mill';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+import { UIHelper } from '../../../services/uiHelper';
 
 describe('BrewAddComponent', () => {
   let component: BrewAddComponent;
@@ -102,6 +104,8 @@ describe('BrewAddComponent', () => {
         Geolocation,
         Insomnia,
         { provide: Router },
+        { provide: SocialSharing },
+        { provide: UIHelper, useClass: UIHelperMock },
       ],
     }).compileComponents();
   }));

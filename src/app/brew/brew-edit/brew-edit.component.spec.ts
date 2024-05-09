@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
 import { KeysPipe } from '../../../pipes/keys';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
-import { NavParamsMock } from '../../../classes/mock/NavParamsMock';
+import { NavParamsMock } from '../../../classes/mock';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
@@ -16,20 +16,24 @@ import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions
 import { Router } from '@angular/router';
 import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
 import { FormatDatePipe } from '../../../pipes/formatDate';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { Insomnia } from '@awesome-cordova-plugins/insomnia/ngx';
 
 describe('BrewEditComponent', () => {
   let component: BrewEditComponent;
   let fixture: ComponentFixture<BrewEditComponent>;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(() => {
     NavParamsMock.setParams(undefined);
     TestBed.configureTestingModule({
       imports: [
         TranslateModule.forRoot(),
         FormsModule,
-        Storage,
         CommonModule,
         IonicModule,
+        HttpClientTestingModule,
       ],
       declarations: [
         BrewEditComponent,
@@ -46,14 +50,17 @@ describe('BrewEditComponent', () => {
         { provide: Camera },
         { provide: ImagePicker },
         { provide: AndroidPermissions },
-
+        { provide: SocialSharing },
         { provide: Router },
+        { provide: FileTransfer },
+        { provide: Insomnia },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(BrewEditComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  }));
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });

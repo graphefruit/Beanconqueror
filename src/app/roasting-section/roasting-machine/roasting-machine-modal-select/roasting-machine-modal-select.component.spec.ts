@@ -2,6 +2,10 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { RoastingMachineModalSelectComponent } from './roasting-machine-modal-select.component';
+import { Storage } from '@ionic/storage';
+import { TranslateModule } from '@ngx-translate/core';
+import { UIHelper } from '../../../../services/uiHelper';
+import { UIHelperMock } from '../../../../classes/mock';
 
 describe('RoastingMachineModalSelectComponent', () => {
   let component: RoastingMachineModalSelectComponent;
@@ -9,8 +13,14 @@ describe('RoastingMachineModalSelectComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ RoastingMachineModalSelectComponent ],
-      imports: [IonicModule.forRoot()]
+      declarations: [RoastingMachineModalSelectComponent],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
+      providers: [
+        {
+          provide: Storage,
+        },
+        { provide: UIHelper, useClass: UIHelperMock },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(RoastingMachineModalSelectComponent);
