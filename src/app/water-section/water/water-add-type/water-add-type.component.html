@@ -1,0 +1,20 @@
+<ion-header translucent>
+</ion-header>
+<ion-content>
+  <ion-item class="ion-margin-bottom">
+    <ion-input label-placement="stacked" label='{{"NAME" | translate}}*' #name="ngModel" [(ngModel)]="data.name" name="name"
+               placeholder="{{'WATER_SECTION.WATER.PLACE_HOLDER.NAME' | translate}}" spellcheck="false" type="text"
+               autocapitalize="sentences" required>
+    </ion-input>
+  </ion-item>
+  <ion-row>
+    <ion-col>
+      <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
+                  tappable>{{"CANCEL" | translate}}</ion-button>
+    </ion-col>
+    <ion-col>
+      <ion-button (click)="add()" color="accent" disable-double-click expand="block" tappable
+                  type="submit">{{"SAVE" | translate}}</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-content>
