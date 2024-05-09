@@ -1,20 +1,38 @@
-<ion-header translucent>
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{"ADD_WATER" | translate}}</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()" class="big-icon-only">
+        <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-item class="ion-margin-bottom">
-    <ion-input label-placement="stacked" label='{{"NAME" | translate}}*' #name="ngModel" [(ngModel)]="data.name" name="name"
-               placeholder="{{'WATER_SECTION.WATER.PLACE_HOLDER.NAME' | translate}}" spellcheck="false" type="text"
-               autocapitalize="sentences" required>
-    </ion-input>
-  </ion-item>
-  <ion-row>
-    <ion-col>
-      <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"
-                  tappable>{{"CANCEL" | translate}}</ion-button>
-    </ion-col>
-    <ion-col>
-      <ion-button (click)="add()" color="accent" disable-double-click expand="block" tappable
-                  type="submit">{{"SAVE" | translate}}</ion-button>
-    </ion-col>
-  </ion-row>
+  <ion-grid>
+    <ion-row>
+      <ion-col *ngFor="let key of water_type_enums | keys" size="6">
+        <ion-card (click)="chooseWater(key)" class="water-add-card" tappable>
+          <ion-card-content *ngIf="key !== 'CUSTOM_WATER'">
+
+            <div class="ion-text-center">
+              <ion-icon name="{{data.getIcon(key)}}" slot="icon-only"></ion-icon>
+            </div>
+
+            <div class="ion-text-center">
+              {{'WATER_TYPE_' + key | translate}}
+            </div>
+          </ion-card-content>
+          <ion-card-content *ngIf="key === 'CUSTOM_WATER'">
+            <div class="ion-text-center">
+              <ion-icon name="water-outline" slot="icon-only"></ion-icon>
+            </div>
+            <div class="ion-text-center" style="line-height:initial;">
+              {{'WATER_TYPE_ADD_CUSTOM' | translate}}
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

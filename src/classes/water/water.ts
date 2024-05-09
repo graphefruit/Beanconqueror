@@ -8,6 +8,8 @@ import { IWater } from '../../interfaces/water/iWater';
 import { WATER_UNIT } from '../../enums/water/waterUnit';
 import { WATER_UNIT_TDS } from '../../enums/water/waterUnitTds';
 
+import { WATER_TYPES } from '../../enums/water/waterTypes';
+
 export class Water implements IWater {
   public name: string;
 
@@ -34,6 +36,7 @@ export class Water implements IWater {
 
   public tds: number;
   public tds_type: WATER_UNIT_TDS;
+  public type: WATER_TYPES;
 
   constructor() {
     this.name = '';
@@ -57,6 +60,8 @@ export class Water implements IWater {
     this.sodium_type = 'UNKNOWN' as WATER_UNIT;
     this.potassium_type = 'UNKNOWN' as WATER_UNIT;
     this.tds_type = 'PPM' as WATER_UNIT_TDS;
+
+    this.type = 'CUSTOM_WATER' as WATER_TYPES;
   }
 
   public initializeByObject(_obj: IWater): void {
@@ -65,5 +70,29 @@ export class Water implements IWater {
 
   public hasPhotos() {
     return this.attachments && this.attachments.length > 0;
+  }
+
+  public getIcon(_key?: WATER_TYPES): string {
+    if (_key === undefined) {
+      _key = this.type;
+    }
+    switch (_key) {
+      case WATER_TYPES.CUSTOM_WATER:
+        return 'water-outline';
+      case WATER_TYPES.THIRD_WAVE_WATER_CLASSIC_LIGHT_ROAST_PROFILE:
+        return 'beanconqueror-third-wave-water-classic-light-roast-profile';
+      case WATER_TYPES.THIRD_WAVE_WATER_MEDIUM_ROAST_PROFILE:
+        return 'beanconqueror-third-wave-water-medium-roast-profile';
+      case WATER_TYPES.THIRD_WAVE_WATER_DARK_ROAST_PROFILE:
+        return 'beanconqueror-third-wave-water-dark-roast-profile';
+      case WATER_TYPES.THIRD_WAVE_WATER_ESPRESSO_MACHINE_PROFILE:
+        return 'beanconqueror-third-wave-water-espresso-machine-profile';
+      case WATER_TYPES.THIRD_WAVE_WATER_COLD_BREW_PROFILE:
+        return 'beanconqueror-third-wave-water-cold-brew-profile';
+      case WATER_TYPES.THIRD_WAVE_WATER_LOW_ACID_PROFILE:
+        return 'beanconqueror-third-wave-water-low-acid-profile';
+      default:
+        return 'water-outline';
+    }
   }
 }
