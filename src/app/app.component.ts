@@ -67,16 +67,14 @@ import {
   sleep,
   TemperatureType,
 } from '../classes/devices';
-import { Logger } from '../classes/devices/common/logger';
+import { Logger } from '../classes/devices';
 import { UIExportImportHelper } from '../services/uiExportImportHelper';
 import { register } from 'swiper/element/bundle';
 import { UIGraphStorage } from '../services/uiGraphStorage.service';
+import { UIStorage } from '../services/uiStorage';
 
 declare var AppRate;
 declare var window;
-import { register } from 'swiper/element/bundle';
-import { UIGraphStorage } from '../services/uiGraphStorage.service';
-import { UIStorage } from '../services/uiStorage';
 
 register();
 
@@ -261,11 +259,11 @@ export class AppComponent implements AfterViewInit {
     // Dont remove androidPlatformService, we need to initialize it via constructor
     try {
       // Touch DB Factory to make sure, it is properly initialized even on iOS 14.6
-      const db = window.indexedDB;
+      const _db = window.indexedDB;
     } catch (ex) {}
     try {
       // Touch DB Factory to make sure, it is properly initialized even on iOS 14.6
-      const db = window.sqlitePlugin;
+      const _db = window.sqlitePlugin;
     } catch (ex) {}
   }
 
@@ -479,7 +477,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   private async __setDeviceLanguage(): Promise<any> {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve, _reject) => {
       const settings: Settings = this.uiSettingsStorage.getSettings();
       if (this.platform.is('cordova')) {
         try {
@@ -500,7 +498,7 @@ export class AppComponent implements AfterViewInit {
                   systemLanguage = systemLanguage.split('-')[0];
                 }
 
-                let settingLanguage: string = '';
+                let settingLanguage: string;
                 if (systemLanguage === 'de') {
                   settingLanguage = 'de';
                 } else if (systemLanguage === 'es') {
@@ -834,7 +832,10 @@ export class AppComponent implements AfterViewInit {
         this.__connectRefractometerDevice();
       }
 
-      // IMPORTANT Why do we do this? Because the IndexedDB loses connection, and we just pull an entry which does not have many entries in the end
+      /**
+       * IMPORTANT Why do we do this? Because the IndexedDB loses connection,
+       * and we just pull an entry which does not have many entries in the end
+       */
       if (this.platform.is('ios')) {
         this.uiStorage.get('MILL').then(
           () => {},
