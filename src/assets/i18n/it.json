@@ -1835,5 +1835,11 @@
     "STARTING_IN": "Avvio in... {{time}}",
     "IOS_DATABASE_ISSUE_TITLE": "ATTENZIONE! CONNESSIONE AL DATABASE LOCALE PERSA",
     "IOS_DATABASE_ISSUE_DESCRIPTION": "Disconnessione dal database locale rilevata. Questo è dovuto ad un bug irrisolto in iOS, al di fuori del controllo di Beanconqueror. Per prevenire potenziali perdite di dati, ti suggeriamo di riavviare l'app al più presto.",
-    "RELOAD_APP": "Riavvia app"
+    "RELOAD_APP": "Riavvia app",
+    "WATER_TYPE_THIRD_WAVE_WATER_CLASSIC_LIGHT_ROAST_PROFILE":"Third Wave Water - Classic Light Roast Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_MEDIUM_ROAST_PROFILE":"Third Wave Water - Medium Roast Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_DARK_ROAST_PROFILE":"Third Wave Water - Dark Roast Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_ESPRESSO_MACHINE_PROFILE":"Third Wave Water - Espresso Machine Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_COLD_BREW_PROFILE":"Third Wave Water -Cold Brew Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_LOW_ACID_PROFILE":"Third Wave Water - Low Acid Profile"
 }

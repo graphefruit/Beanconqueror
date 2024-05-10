@@ -1835,5 +1835,11 @@
     "STARTING_IN": "Başlayan ... {{time}}",
     "IOS_DATABASE_ISSUE_TITLE": "DİKKAT !!!!! - VERİTABANI BAĞLANTISI KAYBI",
     "IOS_DATABASE_ISSUE_DESCRIPTION": "Veritabanı ile bağlantı kaybıyla karşılaştığımızı size bildirmekten üzüntü duyuyoruz. Bu sorun, Beanconqueror'ın kontrolü dışında, Apple'ın sistemindeki çözülmemiş bir hatanın sonucudur. Olası bir veri kaybını önlemek için Beanconqueror uygulamasını derhal zorla kapatmanızı ve yeniden açmanızı rica ederiz.",
-    "RELOAD_APP": "Uygulamayı şimdi yeniden yükle"
+    "RELOAD_APP": "Uygulamayı şimdi yeniden yükle",
+    "WATER_TYPE_THIRD_WAVE_WATER_CLASSIC_LIGHT_ROAST_PROFILE":"Third Wave Water - Classic Light Roast Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_MEDIUM_ROAST_PROFILE":"Third Wave Water - Medium Roast Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_DARK_ROAST_PROFILE":"Third Wave Water - Dark Roast Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_ESPRESSO_MACHINE_PROFILE":"Third Wave Water - Espresso Machine Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_COLD_BREW_PROFILE":"Third Wave Water -Cold Brew Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_LOW_ACID_PROFILE":"Third Wave Water - Low Acid Profile"
 }
