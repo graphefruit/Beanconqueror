@@ -2423,6 +2423,11 @@ export class BrewBrewingGraphComponent implements OnInit {
     if (scale) {
       this.deattachToWeightChange();
 
+      //Sometimes the smoothed value is not zero, we try to fix this with this.
+      if (scale.getWeight() <= 0) {
+        scale.resetSmoothedValue();
+      }
+
       this.machineStopScriptWasTriggered = false;
       this.scaleFlowSubscription = scale.flowChange.subscribe((_val) => {
         if (
