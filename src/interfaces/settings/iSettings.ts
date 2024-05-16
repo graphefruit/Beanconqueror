@@ -190,4 +190,7 @@ export interface ISettings {
   haptic_feedback_brew_started: boolean;
   haptic_feedback_brew_stopped: boolean;
   haptic_feedback_tare: boolean;
+
+  brew_timer_show_hours: boolean;
+  brew_timer_show_minutes: boolean;
 }

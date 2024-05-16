@@ -1,18 +1,42 @@
 <ion-header translucent>
 </ion-header>
 <ion-content>
-  <ion-grid class="ion-no-padding">
+  <ion-grid  class="ion-no-padding">
     <ion-row>
-      <ion-col size="{{settings?.brew_milliseconds?3:4}}">{{"TIMER_HOUR" | translate}}</ion-col>
-      <ion-col size="{{settings?.brew_milliseconds?3:4}}">{{"TIMER_MINUTES" | translate}}</ion-col>
-      <ion-col size="{{settings?.brew_milliseconds?3:4}}">{{"TIMER_SECONDS" | translate}}</ion-col>
-      <ion-col *ngIf="settings?.brew_milliseconds" size="{{settings?.brew_milliseconds?3:4}}">{{"TIMER_MILLISECONDS" | translate}}</ion-col>
+      <ion-col size='6'>
+        <ion-item lines='none'>
+          <ion-checkbox label-placement='start' (ngModelChange)='saveSettings()' [(ngModel)]='settings.brew_timer_show_hours'>
+            <div class="ion-label">
+              <h2>{{"SHOW_HOURS" | translate}}</h2>
+            </div>
+          </ion-checkbox>
+        </ion-item>
+      </ion-col>
+      <ion-col size='6'>
+        <ion-item lines='none'>
+          <ion-checkbox label-placement='start' (ngModelChange)='saveSettings()' [(ngModel)]='settings.brew_timer_show_minutes'>
+            <div class="ion-label">
+              <h2>{{"SHOW_MINUTES" | translate}}</h2>
+            </div>
+          </ion-checkbox>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+
+  <ion-grid class="ion-no-padding ion-margin-top">
+    <ion-row>
+      <ion-col  *ngIf="settings?.brew_timer_show_hours" size="{{getColSize()}}">{{"TIMER_HOUR" | translate}}</ion-col>
+      <ion-col  *ngIf="settings?.brew_timer_show_minutes" size="{{getColSize()}}">{{"TIMER_MINUTES" | translate}}</ion-col>
+      <ion-col size="{{getColSize()}}">{{"TIMER_SECONDS" | translate}}</ion-col>
+      <ion-col *ngIf="settings?.brew_milliseconds" size="{{getColSize()}}">{{"TIMER_MILLISECONDS" | translate}}</ion-col>
     </ion-row>
     <ion-row>
-      <ion-col size="{{settings?.brew_milliseconds?3:4}}"><ion-input maxlength="2" [(ngModel)]="timer.HOURS" max-number-value="23" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
-      <ion-col size="{{settings?.brew_milliseconds?3:4}}"><ion-input maxlength="2" [(ngModel)]="timer.MINUTES" max-number-value="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
-      <ion-col size="{{settings?.brew_milliseconds?3:4}}"><ion-input maxlength="2" [(ngModel)]="timer.SECONDS" max-number-value="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
-      <ion-col  *ngIf="settings?.brew_milliseconds" size="{{settings?.brew_milliseconds?3:4}}"><ion-input maxlength="3" [(ngModel)]="timer.MILLISECONDS" [max-number-value]="getMaxMillisecondNumber()" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
+      <ion-col *ngIf="settings?.brew_timer_show_hours" size="{{getColSize()}}"><ion-input maxlength="2" [(ngModel)]="timer.HOURS" max-number-value="23" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
+      <ion-col  *ngIf="settings?.brew_timer_show_minutes" size="{{getColSize()}}"><ion-input maxlength="2" [(ngModel)]="timer.MINUTES" max-number-value="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
+      <ion-col size="{{getColSize()}}"><ion-input maxlength="2" [(ngModel)]="timer.SECONDS" max-number-value="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
+      <ion-col  *ngIf="settings?.brew_milliseconds" size="{{getColSize()}}"><ion-input maxlength="3" [(ngModel)]="timer.MILLISECONDS" [max-number-value]="getMaxMillisecondNumber()" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
     </ion-row>
 
   <ion-row>

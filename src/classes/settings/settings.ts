@@ -198,6 +198,9 @@ export class Settings implements ISettings {
   public haptic_feedback_brew_started: boolean;
   public haptic_feedback_brew_stopped: boolean;
   public haptic_feedback_tare: boolean;
+
+  public brew_timer_show_hours: boolean;
+  public brew_timer_show_minutes: boolean;
   public GET_BEAN_FILTER(): IBeanPageFilter {
     const upperRating: number = this.bean_rating;
     return {
@@ -447,6 +450,9 @@ export class Settings implements ISettings {
     this.haptic_feedback_brew_started = false;
     this.haptic_feedback_brew_stopped = false;
     this.haptic_feedback_tare = false;
+
+    this.brew_timer_show_hours = true;
+    this.brew_timer_show_minutes = true;
   }
 
   public initializeByObject(settingsObj: ISettings): void {

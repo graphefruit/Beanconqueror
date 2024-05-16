@@ -1859,5 +1859,7 @@
     },
     "CONNECTED": "Connected",
     "DISCONNECTED": "Disconnected",
-    "EXPERIMENTAL_FEATURE_DISCLAIMER": "This is an experimental feature"
+    "EXPERIMENTAL_FEATURE_DISCLAIMER": "This is an experimental feature",
+    "SHOW_HOURS": "Show hours",
+    "SHOW_MINUTES": "Show minutes"
 }
