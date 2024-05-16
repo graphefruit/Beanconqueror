@@ -41,6 +41,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
   @Input() public brewComponent: BrewBrewingComponent;
   public preparationDevice: XeniaDevice | MeticulousDevice = undefined;
 
+  public preparation: Preparation = undefined;
   public settings: Settings = undefined;
   public PREPARATION_DEVICE_TYPE_ENUM = PreparationDeviceType;
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
@@ -74,9 +75,21 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     }
   }
 
+  public hasAPreparationDeviceSet() {
+    return (
+      this.preparation?.connectedPreparationDevice.type !==
+      PreparationDeviceType.NONE
+    );
+  }
+
+  public getDataPreparationDeviceType() {
+    return this.preparation?.connectedPreparationDevice.type;
+  }
+
   public async instancePreparationDevice(_brew: Brew = null) {
+    this.preparation = this.data.getPreparation();
     const connectedDevice: PreparationDevice =
-      this.uiPreparationHelper.getConnectedDevice(this.data.getPreparation());
+      this.uiPreparationHelper.getConnectedDevice(this.preparation);
     if (connectedDevice) {
       if (connectedDevice instanceof XeniaDevice) {
         await this.instanceXeniaPreparationDevice(connectedDevice, _brew);

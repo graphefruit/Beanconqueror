@@ -61,6 +61,7 @@ import { MeticulousShotData } from '../../../classes/preparationDevice/meticulou
 import { Graph } from '../../../classes/graph/graph';
 import { UIGraphStorage } from '../../../services/uiGraphStorage.service';
 import regression from 'regression';
+import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
 
 declare var Plotly;
 
@@ -149,6 +150,9 @@ export class BrewBrewingGraphComponent implements OnInit {
   public profileDiv: ElementRef;
 
   public chartData = [];
+
+  public textToSpeechWeightInterval: any = undefined;
+  public textToSpeechTimerInterval: any = undefined;
   constructor(
     private readonly platform: Platform,
     private readonly bleManager: CoffeeBluetoothDevicesService,
@@ -166,11 +170,15 @@ export class BrewBrewingGraphComponent implements OnInit {
     private readonly modalController: ModalController,
     private readonly uiLog: UILog,
     public readonly uiBrewHelper: UIBrewHelper,
-    private readonly uiGraphStorage: UIGraphStorage
+    private readonly uiGraphStorage: UIGraphStorage,
+    private readonly textToSpeech: TextToSpeechService
   ) {}
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
+    if (this.settings.text_to_speech_active) {
+      this.textToSpeech.readAndSetTTLSettings();
+    }
   }
 
   public async instance() {
@@ -229,6 +237,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           } else if (_type === CoffeeBluetoothServiceEvent.DISCONNECTED_SCALE) {
             this.deattachToWeightChange();
             this.deattachToFlowChange();
+            this.deattachToTextToSpeedChange();
             this.deattachToScaleEvents();
             disconnectTriggered = true;
           } else if (_type === CoffeeBluetoothServiceEvent.CONNECTED_PRESSURE) {
@@ -1633,6 +1642,7 @@ export class BrewBrewingGraphComponent implements OnInit {
 
         this.deattachToWeightChange();
         this.deattachToFlowChange();
+        this.deattachToTextToSpeedChange();
         // 551 - Always attach to flow change, even when reset is triggerd
         this.attachToFlowChange();
       }
@@ -1717,6 +1727,13 @@ export class BrewBrewingGraphComponent implements OnInit {
         scale.setTimer(SCALE_TIMER_COMMAND.STOP);
         this.deattachToWeightChange();
         this.deattachToFlowChange();
+        this.deattachToTextToSpeedChange();
+        if (this.settings.text_to_speech_active) {
+          this.textToSpeech.speak(
+            this.translate.instant('TEXT_TO_SPEECH.BREW_ENDED'),
+            true
+          );
+        }
       }
       if (pressureDevice) {
         this.deattachToPressureChange();
@@ -2043,6 +2060,9 @@ export class BrewBrewingGraphComponent implements OnInit {
         temperature = Math.floor(
           (crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8)) * 90
         );
+        if (this.settings.text_to_speech_active) {
+          this.textToSpeech.speak(weight.toString());
+        }
 
         this.__setPressureFlow({ actual: pressure, old: pressure });
 
@@ -2102,6 +2122,13 @@ export class BrewBrewingGraphComponent implements OnInit {
       if (scale) {
         this.attachToScaleWeightChange();
         this.attachToFlowChange();
+        this.attachToTextToSpeechChange();
+
+        if (this.settings.text_to_speech_active) {
+          this.textToSpeech.speak(
+            this.translate.instant('TEXT_TO_SPEECH.BREW_STARTED')
+          );
+        }
       }
       if (
         pressureDevice &&
@@ -2290,6 +2317,17 @@ export class BrewBrewingGraphComponent implements OnInit {
     }
   }
 
+  public deattachToTextToSpeedChange() {
+    if (this.textToSpeechWeightInterval) {
+      clearInterval(this.textToSpeechWeightInterval);
+      this.textToSpeechWeightInterval = undefined;
+    }
+    if (this.textToSpeechTimerInterval) {
+      clearInterval(this.textToSpeechTimerInterval);
+      this.textToSpeechTimerInterval = undefined;
+    }
+  }
+
   public deattachToPressureChange() {
     if (this.pressureDeviceSubscription) {
       this.pressureDeviceSubscription.unsubscribe();
@@ -2327,6 +2365,48 @@ export class BrewBrewingGraphComponent implements OnInit {
           );
         }
       }, 2500);
+    }
+  }
+
+  public attachToTextToSpeechChange() {
+    this.deattachToTextToSpeedChange();
+    if (this.settings.text_to_speech_active === true) {
+      const isEspressoBrew: boolean =
+        this.data.getPreparation().style_type ===
+        PREPARATION_STYLE_TYPE.ESPRESSO;
+      this.textToSpeechWeightInterval = setInterval(() => {
+        this.ngZone.runOutsideAngular(() => {
+          if (this.flowProfileTempAll.length > 0) {
+            const actualScaleWeight =
+              this.flowProfileTempAll.slice(-1)[0].weight;
+            if (actualScaleWeight !== null && actualScaleWeight !== undefined) {
+              if (isEspressoBrew) {
+                this.textToSpeech.speak(
+                  this.uiHelper
+                    .toFixedIfNecessary(actualScaleWeight, 1)
+                    .toString()
+                );
+              } else {
+                this.textToSpeech.speak(
+                  this.uiHelper
+                    .toFixedIfNecessary(actualScaleWeight, 0)
+                    .toString()
+                );
+              }
+            }
+          }
+        });
+      }, this.settings.text_to_speech_interval_rate);
+
+      this.textToSpeechTimerInterval = setInterval(() => {
+        this.ngZone.runOutsideAngular(() => {
+          this.textToSpeech.speak(
+            this.translate.instant('TEXT_TO_SPEECH.TIME') +
+              ' ' +
+              this.data.brew_time
+          );
+        });
+      }, 5000);
     }
   }
 
@@ -2639,6 +2719,7 @@ export class BrewBrewingGraphComponent implements OnInit {
 
     this.deattachToWeightChange();
     this.deattachToFlowChange();
+    this.deattachToTextToSpeedChange();
     this.deattachToPressureChange();
     this.deattachToScaleEvents();
     this.deattachToTemperatureChange();
@@ -2647,6 +2728,10 @@ export class BrewBrewingGraphComponent implements OnInit {
     this.deattachToScaleStartTareListening();
     this.stopFetchingAndSettingDataFromXenia();
     this.stopFetchingDataFromMeticulous();
+
+    if (this.settings.text_to_speech_active) {
+      this.textToSpeech.end();
+    }
   }
 
   public ngOnDestroy() {

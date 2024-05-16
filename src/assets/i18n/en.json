@@ -1843,5 +1843,21 @@
     "WATER_TYPE_THIRD_WAVE_WATER_ESPRESSO_MACHINE_PROFILE":"Third Wave Water - Espresso Machine Profile",
     "WATER_TYPE_THIRD_WAVE_WATER_COLD_BREW_PROFILE":"Third Wave Water -Cold Brew Profile",
     "WATER_TYPE_THIRD_WAVE_WATER_LOW_ACID_PROFILE":"Third Wave Water - Low Acid Profile",
-    "ADD_WATER": "Add water"
+    "ADD_WATER": "Add water",
+    "PAGE_SETTINGS_TEXT_TO_SPEECH_SECTION": "Text to speech",
+    "TEXT_TO_SPEECH": {
+      "ACTIVATE": "Activate Text to speech",
+      "BREW_STARTED": "Brew started",
+      "BREW_ENDED": "Brew end",
+      "TIME": "Time",
+      "SPEAK_EVERY_MS": "Speak every selected millisecond",
+      "FOLLOWING_NUMBERS_WILL_BE_TEST_SPOKEN": "Following numbers will be test spoken"
+    },
+    "PAGE_SETTINGS_HAPTIC_FEEDBACK_SECTION": "Haptic feedback",
+    "HAPTIC_FEEDBACK": {
+      "ACTIVE": "Activate haptic feedback"
+    },
+    "CONNECTED": "Connected",
+    "DISCONNECTED": "Disconnected",
+    "EXPERIMENTAL_FEATURE_DISCLAIMER": "This is an experimental feature"
 }

@@ -112,4 +112,24 @@ export class PhotoAddComponent implements OnInit {
       }
     }
   }
+
+  public async sortLeft(_index: number) {
+    this.swap(_index - 1, _index);
+  }
+
+  public async sortRight(_index: number) {
+    this.swap(_index + 1, _index);
+  }
+
+  public swap(index1: number, index2: number) {
+    // Check if the indices are within the valid range
+
+    // Perform the swap using a temporary variable
+    const temp = this.data.attachments[index1];
+    this.data.attachments[index1] = this.data.attachments[index2];
+    this.data.attachments[index2] = temp;
+    this.emitChanges();
+
+    this.photoSlides.nativeElement.swiper.slideTo(index1, 200, false);
+  }
 }

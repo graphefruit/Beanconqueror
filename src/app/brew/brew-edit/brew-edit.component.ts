@@ -17,9 +17,10 @@ import { Settings } from '../../../classes/settings/settings';
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
 import { BluetoothScale, SCALE_TIMER_COMMAND } from '../../../classes/devices';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { UIAlert } from '../../../services/uiAlert';
 import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
+import { HapticService } from '../../../services/hapticService/haptic.service';
+import { PreparationDeviceType } from '../../../classes/preparationDevice';
 declare var Plotly;
 declare var window;
 @Component({
@@ -36,6 +37,7 @@ export class BrewEditComponent implements OnInit {
   public showFooter: boolean = true;
   private initialBeanData: string = '';
   private disableHardwareBack;
+  public readonly PreparationDeviceType = PreparationDeviceType;
   constructor(
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
@@ -50,7 +52,8 @@ export class BrewEditComponent implements OnInit {
     private readonly insomnia: Insomnia,
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly uiAlert: UIAlert,
-    private readonly visualizerService: VisualizerService
+    private readonly visualizerService: VisualizerService,
+    private readonly hapticService: HapticService
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
@@ -155,6 +158,12 @@ export class BrewEditComponent implements OnInit {
     const scale: BluetoothScale = this.bleManager.getScale();
     if (scale) {
       scale.tare();
+      if (
+        this.settings.haptic_feedback_active &&
+        this.settings.haptic_feedback_tare
+      ) {
+        this.hapticService.vibrate();
+      }
     }
   }
   public async updateBrew() {

@@ -74,6 +74,7 @@ import { BrewPopoverExtractionComponent } from 'src/app/brew/brew-popover-extrac
 import { MeticulousDevice } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
 import { BrewBrewingGraphComponent } from '../brew-brewing-graph/brew-brewing-graph.component';
 import { BrewBrewingPreparationDeviceComponent } from '../brew-brewing-preparation-device/brew-brewing-preparation-device.component';
+import { HapticService } from '../../../services/hapticService/haptic.service';
 
 declare var cordova;
 
@@ -132,7 +133,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public bluetoothSubscription: Subscription = undefined;
 
   public PREPARATION_DEVICE_TYPE_ENUM = PreparationDeviceType;
-
+  public readonly PreparationDeviceType = PreparationDeviceType;
   constructor(
     private readonly platform: Platform,
     private readonly uiSettingsStorage: UISettingsStorage,
@@ -157,7 +158,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     private readonly ngZone: NgZone,
     private readonly uiToast: UIToast,
     private readonly uiLog: UILog,
-    private readonly eventQueue: EventQueueService
+    private readonly eventQueue: EventQueueService,
+    private readonly hapticService: HapticService
   ) {}
 
   public pinFormatter(value: any) {
@@ -524,6 +526,12 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       return;
     }
     this.brewBrewingGraphEl.timerStarted(_event);
+    if (
+      this.settings.haptic_feedback_active &&
+      this.settings.haptic_feedback_brew_started
+    ) {
+      this.hapticService.vibrate();
+    }
   }
 
   public setCoffeeBloomingTime($event): void {
@@ -656,12 +664,24 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
 
   public async timerPaused(_event) {
     await this.brewBrewingGraphEl.timerPaused(_event);
+    if (
+      this.settings.haptic_feedback_active &&
+      this.settings.haptic_feedback_brew_stopped
+    ) {
+      this.hapticService.vibrate();
+    }
   }
 
   public async tareScale(_event) {
     const scale: BluetoothScale = this.bleManager.getScale();
     if (scale) {
       scale.tare();
+      if (
+        this.settings.haptic_feedback_active &&
+        this.settings.haptic_feedback_tare
+      ) {
+        this.hapticService.vibrate();
+      }
     }
   }
 

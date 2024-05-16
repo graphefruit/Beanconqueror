@@ -105,6 +105,7 @@ export class UIImage {
       }
     } catch (ex) {}
   }
+
   public async choosePhoto(): Promise<any> {
     const promise = new Promise(async (resolve, reject) => {
       this.__checkPermission(
@@ -126,7 +127,7 @@ export class UIImage {
                   .then(
                     async (results) => {
                       await this.uiAlert.showLoadingSpinner();
-                      for (const result of results) {
+                      for await (const result of results) {
                         if (
                           result &&
                           result.length > 0 &&
@@ -137,20 +138,18 @@ export class UIImage {
                         ) {
                           try {
                             const imageStr: string = `data:image/jpeg;base64,${result}`;
-                            await this.uiFileHelper
-                              .saveBase64File(
+                            const newURL =
+                              await this.uiFileHelper.saveBase64File(
                                 'beanconqueror_image',
                                 '.jpg',
                                 imageStr
-                              )
-                              .then(
-                                (_newURL) => {
-                                  fileurls.push(_newURL);
-                                },
-                                () => {}
                               );
-                          } catch (ex) {}
+                            fileurls.push(newURL);
+                          } catch (ex) {
+                            //nothing
+                          }
                         } else {
+                          //Nothing
                         }
                       }
                       setTimeout(() => {
@@ -185,7 +184,7 @@ export class UIImage {
                   async (_files) => {
                     await this.uiAlert.showLoadingSpinner();
 
-                    for (const file of _files) {
+                    for await (const file of _files) {
                       let newFileName = file;
                       try {
                         // We cant copy the file if it doesn't start with file:///,
@@ -209,27 +208,14 @@ export class UIImage {
                           imageStr = `data:image/jpeg;base64,${result}`;
                         }
 
-                        await this.uiFileHelper
-                          .saveBase64File(
+                        try {
+                          const newUrl = await this.uiFileHelper.saveBase64File(
                             'beanconqueror_image',
                             '.jpg',
                             imageStr
-                          )
-                          .then(
-                            (_newURL) => {
-                              fileurls.push(_newURL);
-                            },
-                            () => {}
                           );
-
-                        /**await this.uiFileHelper
-                          .copyFileWithSpecificName(newFileName)
-                          .then(
-                            async (_fullPath) => {
-                              fileurls.push(_fullPath);
-                            },
-                            () => {}
-                          );**/
+                          fileurls.push(newUrl);
+                        } catch (ex) {}
                       } catch (ex) {
                         setTimeout(() => {
                           this.uiAlert.hideLoadingSpinner();

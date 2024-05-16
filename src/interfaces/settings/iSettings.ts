@@ -181,4 +181,13 @@ export interface ISettings {
   visualizer_upload_automatic: boolean;
 
   show_backup_issues: boolean;
+
+  text_to_speech_active: boolean;
+  text_to_speech_rate: number;
+  text_to_speech_pitch: number;
+
+  haptic_feedback_active: boolean;
+  haptic_feedback_brew_started: boolean;
+  haptic_feedback_brew_stopped: boolean;
+  haptic_feedback_tare: boolean;
 }
