@@ -2438,7 +2438,22 @@ export class BrewBrewingGraphComponent implements OnInit {
               _val.actual >= this.settings.pressure_threshold_bar
             ) {
               this.pressureThresholdWasHit = true;
-              this.ngZone.run(() => {
+              this.ngZone.run(async () => {
+                if (
+                  this.settings.bluetooth_scale_tare_on_start_timer === true
+                ) {
+                  try {
+                    const scale: BluetoothScale = this.bleManager.getScale();
+                    if (scale) {
+                      await new Promise((resolve) => {
+                        scale.tare();
+                        setTimeout(async () => {
+                          resolve(undefined);
+                        }, this.settings.bluetooth_command_delay);
+                      });
+                    }
+                  } catch (ex) {}
+                }
                 this.brewComponent.timerStartPressed('AUTO_START_PRESSURE');
 
                 //User can press both, so deattach to scale listening, because pressure will hit before then first drops normaly.
@@ -2475,7 +2490,22 @@ export class BrewBrewingGraphComponent implements OnInit {
               _val.actual >= this.settings.temperature_threshold_temp
             ) {
               this.temperatureThresholdWasHit = true;
-              this.ngZone.run(() => {
+              this.ngZone.run(async () => {
+                if (
+                  this.settings.bluetooth_scale_tare_on_start_timer === true
+                ) {
+                  try {
+                    const scale: BluetoothScale = this.bleManager.getScale();
+                    if (scale) {
+                      await new Promise((resolve) => {
+                        scale.tare();
+                        setTimeout(async () => {
+                          resolve(undefined);
+                        }, this.settings.bluetooth_command_delay);
+                      });
+                    }
+                  } catch (ex) {}
+                }
                 this.brewComponent.timerStartPressed('AUTO_START_TEMPERATURE');
 
                 setTimeout(() => {
