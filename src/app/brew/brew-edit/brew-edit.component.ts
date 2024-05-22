@@ -120,9 +120,11 @@ export class BrewEditComponent implements OnInit {
     } catch (ex) {}
     this.stopScaleTimer();
     try {
-      Plotly.purge(
-        this.brewBrewing.brewBrewingGraphEl.profileDiv.nativeElement
-      );
+      if (this.brewBrewing.brewBrewingGraphEl) {
+        Plotly.purge(
+          this.brewBrewing.brewBrewingGraphEl.profileDiv.nativeElement
+        );
+      }
     } catch (ex) {}
     this.modalController.dismiss(
       {
@@ -184,10 +186,11 @@ export class BrewEditComponent implements OnInit {
     this.uiBrewHelper.cleanInvisibleBrewData(this.data);
 
     if (
-      this.brewBrewing.brewBrewingGraphEl.flow_profile_raw.weight.length > 0 ||
-      this.brewBrewing.brewBrewingGraphEl.flow_profile_raw.pressureFlow.length >
+      this.brewBrewing?.brewBrewingGraphEl?.flow_profile_raw.weight.length >
         0 ||
-      this.brewBrewing.brewBrewingGraphEl.flow_profile_raw.temperatureFlow
+      this.brewBrewing?.brewBrewingGraphEl?.flow_profile_raw.pressureFlow
+        .length > 0 ||
+      this.brewBrewing?.brewBrewingGraphEl?.flow_profile_raw.temperatureFlow
         .length > 0
     ) {
       const savedPath: string = await this.brewBrewing.saveFlowProfile(

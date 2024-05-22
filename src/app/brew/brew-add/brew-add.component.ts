@@ -273,9 +273,11 @@ export class BrewAddComponent implements OnInit {
     } catch (ex) {}
     this.stopScaleTimer();
     try {
-      Plotly.purge(
-        this.brewBrewing.brewBrewingGraphEl.profileDiv.nativeElement
-      );
+      if (this.brewBrewing.brewBrewingGraphEl) {
+        Plotly.purge(
+          this.brewBrewing.brewBrewingGraphEl.profileDiv.nativeElement
+        );
+      }
     } catch (ex) {}
     this.modalController.dismiss(
       {
