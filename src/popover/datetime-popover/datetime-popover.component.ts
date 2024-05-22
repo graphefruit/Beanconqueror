@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { IonInput, ModalController } from '@ionic/angular';
 import moment from 'moment';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
@@ -17,6 +17,8 @@ export class DatetimePopoverComponent implements OnInit {
     MILLISECONDS: 0,
   };
 
+  @ViewChild('secondInput', { static: false }) public secondInput: IonInput;
+
   @Input() public displayingTime: string;
   public settings: Settings;
   constructor(
@@ -32,6 +34,12 @@ export class DatetimePopoverComponent implements OnInit {
     this.timer.MINUTES = passedDisplayingTime.minutes();
     this.timer.SECONDS = passedDisplayingTime.seconds();
     this.timer.MILLISECONDS = passedDisplayingTime.milliseconds();
+  }
+  public ionViewDidEnter(): void {
+    setTimeout(() => {
+      //Give it a short time
+      this.secondInput.setFocus();
+    }, 250);
   }
 
   public saveSettings() {

@@ -35,7 +35,7 @@
     <ion-row>
       <ion-col *ngIf="settings?.brew_timer_show_hours" size="{{getColSize()}}"><ion-input maxlength="2" [(ngModel)]="timer.HOURS" max-number-value="23" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
       <ion-col  *ngIf="settings?.brew_timer_show_minutes" size="{{getColSize()}}"><ion-input maxlength="2" [(ngModel)]="timer.MINUTES" max-number-value="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
-      <ion-col size="{{getColSize()}}"><ion-input maxlength="2" [(ngModel)]="timer.SECONDS" max-number-value="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
+      <ion-col size="{{getColSize()}}"><ion-input #secondInput maxlength="2" [(ngModel)]="timer.SECONDS" max-number-value="59" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
       <ion-col  *ngIf="settings?.brew_milliseconds" size="{{getColSize()}}"><ion-input maxlength="3" [(ngModel)]="timer.MILLISECONDS" [max-number-value]="getMaxMillisecondNumber()" prevent-characters remove-empty-number type="text" pattern="\d*" inputmode="decimal"></ion-input></ion-col>
     </ion-row>
 
