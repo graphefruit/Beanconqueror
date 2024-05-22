@@ -1861,5 +1861,7 @@
     "DISCONNECTED": "Disconnected",
     "EXPERIMENTAL_FEATURE_DISCLAIMER": "This is an experimental feature",
     "SHOW_HOURS": "Show hours",
-    "SHOW_MINUTES": "Show minutes"
+    "SHOW_MINUTES": "Show minutes",
+    "BEANS_UNARCHIVE": "Unarchive",
+    "TOAST_BEAN_UNARCHIVED_SUCCESSFULLY": "Bean has been unarchived"
 }
