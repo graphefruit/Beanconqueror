@@ -1851,11 +1851,17 @@
       "BREW_ENDED": "Brew end",
       "TIME": "Time",
       "SPEAK_EVERY_MS": "Speak every selected millisecond",
-      "FOLLOWING_NUMBERS_WILL_BE_TEST_SPOKEN": "Following numbers will be test spoken"
+      "FOLLOWING_NUMBERS_WILL_BE_TEST_SPOKEN": "Following numbers will be test spoken",
+      "TEST_SPEAK": "Start test speak",
+      "PITCH": "Pitch",
+      "RATE": "Rate"
     },
     "PAGE_SETTINGS_HAPTIC_FEEDBACK_SECTION": "Haptic feedback",
     "HAPTIC_FEEDBACK": {
-      "ACTIVE": "Activate haptic feedback"
+      "ACTIVATE": "Activate haptic feedback",
+      "BREW_STARTED": "Vibrate on brew start",
+      "BREW_STOPPED": "Vibrate on brew stop",
+      "TARE": "Vibrate on scale tare"
     },
     "CONNECTED": "Connected",
     "DISCONNECTED": "Disconnected",
