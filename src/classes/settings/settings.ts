@@ -189,6 +189,18 @@ export class Settings implements ISettings {
 
   public show_backup_issues: boolean;
 
+  public text_to_speech_active: boolean;
+  public text_to_speech_rate: number;
+  public text_to_speech_pitch: number;
+  public text_to_speech_interval_rate: number;
+
+  public haptic_feedback_active: boolean;
+  public haptic_feedback_brew_started: boolean;
+  public haptic_feedback_brew_stopped: boolean;
+  public haptic_feedback_tare: boolean;
+
+  public brew_timer_show_hours: boolean;
+  public brew_timer_show_minutes: boolean;
   public GET_BEAN_FILTER(): IBeanPageFilter {
     const upperRating: number = this.bean_rating;
     return {
@@ -428,6 +440,19 @@ export class Settings implements ISettings {
     this.visualizer_upload_automatic = false;
 
     this.show_backup_issues = true;
+
+    this.text_to_speech_active = false;
+    this.text_to_speech_rate = 1;
+    this.text_to_speech_pitch = 3;
+    this.text_to_speech_interval_rate = 500;
+
+    this.haptic_feedback_active = false;
+    this.haptic_feedback_brew_started = false;
+    this.haptic_feedback_brew_stopped = false;
+    this.haptic_feedback_tare = false;
+
+    this.brew_timer_show_hours = true;
+    this.brew_timer_show_minutes = true;
   }
 
   public initializeByObject(settingsObj: ISettings): void {

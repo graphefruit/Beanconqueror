@@ -70,6 +70,7 @@ import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
 import { UIGraphStorage } from '../../services/uiGraphStorage.service';
 import { Graph } from '../../classes/graph/graph';
+import { TextToSpeechService } from '../../services/textToSpeech/text-to-speech.service';
 
 declare var cordova: any;
 declare var device: any;
@@ -160,7 +161,8 @@ export class SettingsPage implements OnInit {
     private readonly eventQueue: EventQueueService,
     private readonly uiFileHelper: UIFileHelper,
     private readonly uiExportImportHelper: UIExportImportHelper,
-    private readonly visualizerService: VisualizerService
+    private readonly visualizerService: VisualizerService,
+    private readonly textToSpeech: TextToSpeechService
   ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -820,6 +822,20 @@ export class SettingsPage implements OnInit {
     if (!this.settings.visualizer_url.endsWith('/')) {
       this.settings.visualizer_url = this.settings.visualizer_url + '/';
     }
+  }
+
+  public testSpeak() {
+    this.textToSpeech.readAndSetTTLSettings();
+    let speakTestCount: number = 0;
+    const testSpeakArray = ['182.5', '28', '1072', '1.2', '0.1', '203.5'];
+    const speakTestIntv = setInterval(() => {
+      this.textToSpeech.speak(testSpeakArray[speakTestCount]);
+
+      speakTestCount = speakTestCount + 1;
+      if (speakTestCount > 5) {
+        clearInterval(speakTestIntv);
+      }
+    }, this.settings.text_to_speech_interval_rate);
   }
 
   public async uploadBrewsToVisualizer() {

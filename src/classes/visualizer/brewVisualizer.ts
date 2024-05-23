@@ -55,6 +55,7 @@ export class BrewVisualizer implements IBrewVisualizer {
 
   public brew_beverage_quantity_type: BREW_QUANTITY_TYPES_ENUM;
 
+  public ey: number;
   constructor() {
     this.grind_size = '';
     this.grind_weight = 0;
@@ -86,5 +87,6 @@ export class BrewVisualizer implements IBrewVisualizer {
     this.vessel_name = '';
     this.vessel_weight = 0;
     this.config = new Config();
+    this.ey = 0;
   }
 }

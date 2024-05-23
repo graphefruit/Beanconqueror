@@ -186,6 +186,7 @@ import { BrewPopoverExtractionComponent } from '../brew/brew-popover-extraction/
 import { LoadingPopoverComponent } from '../../popover/loading-popover/loading-popover.component';
 import { BrewBrewingGraphComponent } from '../../components/brews/brew-brewing-graph/brew-brewing-graph.component';
 import { BrewBrewingPreparationDeviceComponent } from '../../components/brews/brew-brewing-preparation-device/brew-brewing-preparation-device.component';
+import { WaterAddTypeComponent } from '../water-section/water/water-add-type/water-add-type.component';
 
 @NgModule({
   declarations: [
@@ -346,6 +347,7 @@ import { BrewBrewingPreparationDeviceComponent } from '../../components/brews/br
     RoastingMachinePage,
     RoastingMachinePopoverActionsComponent,
     WaterAddComponent,
+    WaterAddTypeComponent,
     BrewRatioCardComponent,
     BrewPopoverExtractionComponent,
   ],
@@ -554,6 +556,7 @@ import { BrewBrewingPreparationDeviceComponent } from '../../components/brews/br
     RoastingMachinePage,
     RoastingMachinePopoverActionsComponent,
     WaterAddComponent,
+    WaterAddTypeComponent,
     BrewRatioCardComponent,
     BrewPopoverExtractionComponent,
   ],

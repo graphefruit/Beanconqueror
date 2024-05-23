@@ -39,10 +39,11 @@ import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
 } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { UIHelper } from '../../../services/uiHelper';
 import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
 import { Subscription } from 'rxjs';
+import { HapticService } from '../../../services/hapticService/haptic.service';
+import { PreparationDeviceType } from '../../../classes/preparationDevice';
 
 declare var Plotly;
 declare var window;
@@ -91,7 +92,8 @@ export class BrewAddComponent implements OnInit {
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly uiHelper: UIHelper,
     private readonly visualizerService: VisualizerService,
-    private readonly changeDetectorRef: ChangeDetectorRef
+    private readonly changeDetectorRef: ChangeDetectorRef,
+    private readonly hapticService: HapticService
   ) {
     // Initialize to standard in drop down
 
@@ -209,6 +211,12 @@ export class BrewAddComponent implements OnInit {
     const scale: BluetoothScale = this.bleManager.getScale();
     if (scale) {
       scale.tare();
+      if (
+        this.settings.haptic_feedback_active &&
+        this.settings.haptic_feedback_tare
+      ) {
+        this.hapticService.vibrate();
+      }
     }
   }
 
@@ -265,9 +273,11 @@ export class BrewAddComponent implements OnInit {
     } catch (ex) {}
     this.stopScaleTimer();
     try {
-      Plotly.purge(
-        this.brewBrewing.brewBrewingGraphEl.profileDiv.nativeElement
-      );
+      if (this.brewBrewing.brewBrewingGraphEl) {
+        Plotly.purge(
+          this.brewBrewing.brewBrewingGraphEl.profileDiv.nativeElement
+        );
+      }
     } catch (ex) {}
     this.modalController.dismiss(
       {
@@ -452,4 +462,6 @@ export class BrewAddComponent implements OnInit {
       this.bluetoothSubscription = undefined;
     }
   }
+
+  protected readonly PreparationDeviceType = PreparationDeviceType;
 }

@@ -70,6 +70,11 @@ export class BluetoothScale {
     return 0;
   }
 
+  public resetSmoothedValue() {
+    this.weight.smoothed = 0;
+    this.weight.oldSmoothed = 0;
+  }
+
   public getSmoothedWeight(): number {
     return 0;
   }

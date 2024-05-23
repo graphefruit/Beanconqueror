@@ -1835,5 +1835,11 @@
     "STARTING_IN": "Partir à {{time}}",
     "IOS_DATABASE_ISSUE_TITLE": "ATTENTION !!!!! - CONNEXION À LA BASE DE DONNÉES PERDUE",
     "IOS_DATABASE_ISSUE_DESCRIPTION": "Nous avons le regret de vous informer que nous avons rencontré une perte de connexion à la base de données. Ce problème est le résultat d'un bug non résolu dans le système Apple, indépendant de la volonté de Beanconqueror. Pour éviter toute perte potentielle de données, nous vous demandons de bien vouloir fermer immédiatement de force l'application Beanconqueror et de la rouvrir.",
-    "RELOAD_APP": "Recharger l'application maintenant"
+    "RELOAD_APP": "Recharger l'application maintenant",
+    "WATER_TYPE_THIRD_WAVE_WATER_CLASSIC_LIGHT_ROAST_PROFILE":"Third Wave Water - Classic Light Roast Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_MEDIUM_ROAST_PROFILE":"Third Wave Water - Medium Roast Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_DARK_ROAST_PROFILE":"Third Wave Water - Dark Roast Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_ESPRESSO_MACHINE_PROFILE":"Third Wave Water - Espresso Machine Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_COLD_BREW_PROFILE":"Third Wave Water -Cold Brew Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_LOW_ACID_PROFILE":"Third Wave Water - Low Acid Profile"
 }

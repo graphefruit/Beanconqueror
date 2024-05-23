@@ -1835,5 +1835,11 @@
   "STARTING_IN": "从 {{time}} 开始",
   "IOS_DATABASE_ISSUE_TITLE": "注意 !!!!! - 数据库连接丢失",
   "IOS_DATABASE_ISSUE_DESCRIPTION": "我们很遗憾地通知您，我们遇到了无法连接数据库的问题。这个问题是由于苹果系统中一个未解决的漏洞导致的，超出了Beanconqueror的控制范围。为了防止可能的数据丢失，我们恳请您立即强制关闭Beanconqueror应用程序，然后再重新打开它。",
-  "RELOAD_APP": "加载应用程序中"
+  "RELOAD_APP": "加载应用程序中",
+  "WATER_TYPE_THIRD_WAVE_WATER_CLASSIC_LIGHT_ROAST_PROFILE":"Third Wave Water - Classic Light Roast Profile",
+  "WATER_TYPE_THIRD_WAVE_WATER_MEDIUM_ROAST_PROFILE":"Third Wave Water - Medium Roast Profile",
+  "WATER_TYPE_THIRD_WAVE_WATER_DARK_ROAST_PROFILE":"Third Wave Water - Dark Roast Profile",
+  "WATER_TYPE_THIRD_WAVE_WATER_ESPRESSO_MACHINE_PROFILE":"Third Wave Water - Espresso Machine Profile",
+  "WATER_TYPE_THIRD_WAVE_WATER_COLD_BREW_PROFILE":"Third Wave Water -Cold Brew Profile",
+  "WATER_TYPE_THIRD_WAVE_WATER_LOW_ACID_PROFILE":"Third Wave Water - Low Acid Profile"
 }

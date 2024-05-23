@@ -1835,5 +1835,11 @@
     "STARTING_IN": "Mulai dari ... {{time}}",
     "IOS_DATABASE_ISSUE_TITLE": "PERHATIAN !!!!! - KONEKSI DATABASE TERPUTUS",
     "IOS_DATABASE_ISSUE_DESCRIPTION": "Dengan menyesal kami informasikan bahwa kami mengalami kehilangan koneksi ke Database. Masalah ini merupakan hasil dari bug yang belum terselesaikan di sistem Apple, di luar kendali Beanconqueror. Untuk mencegah potensi kehilangan data, kami meminta Anda untuk segera menutup paksa aplikasi Beanconqueror dan membukanya kembali.",
-    "RELOAD_APP": "Muat ulang aplikasi sekarang"
+    "RELOAD_APP": "Muat ulang aplikasi sekarang",
+    "WATER_TYPE_THIRD_WAVE_WATER_CLASSIC_LIGHT_ROAST_PROFILE":"Third Wave Water - Classic Light Roast Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_MEDIUM_ROAST_PROFILE":"Third Wave Water - Medium Roast Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_DARK_ROAST_PROFILE":"Third Wave Water - Dark Roast Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_ESPRESSO_MACHINE_PROFILE":"Third Wave Water - Espresso Machine Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_COLD_BREW_PROFILE":"Third Wave Water -Cold Brew Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_LOW_ACID_PROFILE":"Third Wave Water - Low Acid Profile"
 }

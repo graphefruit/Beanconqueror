@@ -1835,5 +1835,39 @@
     "STARTING_IN": "Starting in ... {{time}}",
     "IOS_DATABASE_ISSUE_TITLE": "ATTENTION !!!!! - DATABASE CONNECTION LOST",
     "IOS_DATABASE_ISSUE_DESCRIPTION": "We regret to inform you that we have encountered a loss of connection to the Database. This issue is a result of an unresolved bug in Apple's system, beyond the control of Beanconqueror. To prevent any potential data loss, we kindly ask you to immediately force-close the Beanconqueror application and reopen it.",
-    "RELOAD_APP": "Reload app now"
+    "RELOAD_APP": "Reload app now",
+    "WATER_TYPE_ADD_CUSTOM": "Custom water",
+    "WATER_TYPE_THIRD_WAVE_WATER_CLASSIC_LIGHT_ROAST_PROFILE":"Third Wave Water - Classic Light Roast Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_MEDIUM_ROAST_PROFILE":"Third Wave Water - Medium Roast Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_DARK_ROAST_PROFILE":"Third Wave Water - Dark Roast Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_ESPRESSO_MACHINE_PROFILE":"Third Wave Water - Espresso Machine Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_COLD_BREW_PROFILE":"Third Wave Water -Cold Brew Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_LOW_ACID_PROFILE":"Third Wave Water - Low Acid Profile",
+    "ADD_WATER": "Add water",
+    "PAGE_SETTINGS_TEXT_TO_SPEECH_SECTION": "Text to speech",
+    "TEXT_TO_SPEECH": {
+      "ACTIVATE": "Activate Text to speech",
+      "BREW_STARTED": "Brew started",
+      "BREW_ENDED": "Brew end",
+      "TIME": "Time",
+      "SPEAK_EVERY_MS": "Speak every selected millisecond",
+      "FOLLOWING_NUMBERS_WILL_BE_TEST_SPOKEN": "Following numbers will be test spoken",
+      "TEST_SPEAK": "Start test speak",
+      "PITCH": "Pitch",
+      "RATE": "Rate"
+    },
+    "PAGE_SETTINGS_HAPTIC_FEEDBACK_SECTION": "Haptic feedback",
+    "HAPTIC_FEEDBACK": {
+      "ACTIVATE": "Activate haptic feedback",
+      "BREW_STARTED": "Vibrate on brew start",
+      "BREW_STOPPED": "Vibrate on brew stop",
+      "TARE": "Vibrate on scale tare"
+    },
+    "CONNECTED": "Connected",
+    "DISCONNECTED": "Disconnected",
+    "EXPERIMENTAL_FEATURE_DISCLAIMER": "This is an experimental feature",
+    "SHOW_HOURS": "Show hours",
+    "SHOW_MINUTES": "Show minutes",
+    "BEANS_UNARCHIVE": "Unarchive",
+    "TOAST_BEAN_UNARCHIVED_SUCCESSFULLY": "Bean has been unarchived"
 }
