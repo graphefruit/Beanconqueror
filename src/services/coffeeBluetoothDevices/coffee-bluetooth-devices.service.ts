@@ -291,7 +291,8 @@ export class CoffeeBluetoothDevicesService {
           if (
             PrsPressure.test(scanDevice) ||
             PopsiclePressure.test(scanDevice) ||
-            TransducerDirectPressure.test(scanDevice)
+            TransducerDirectPressure.test(scanDevice) ||
+            BookooPressure.test(scanDevice)
           ) {
             // We found all needed devices.
             promiseResolved = true;
