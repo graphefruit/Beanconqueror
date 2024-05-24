@@ -130,7 +130,6 @@
     "es6-promise-plugin": "^4.2.2",
     "husky": "^8.0.1",
     "ionic-plugin-deeplinks": "^1.0.22",
-    "ischemaview-cordova-plugin-nativestorage": "github:ischemaview/cordova-plugin-nativestorage",
     "jasmine-core": "~3.8.0",
     "jasmine-spec-reporter": "~5.0.0",
     "karma": "^6.3.9",
@@ -227,7 +226,6 @@
       "cordova-plugin-geolocation": {
         "GPS_REQUIRED": "false"
       },
-      "ischemaview-cordova-plugin-nativestorage": {},
       "cordova-plugin-ble-central": {
         "BLUETOOTH_USAGE_DESCRIPTION": "Bluetooth access needed to connect smartscales",
         "IOS_INIT_ON_LOAD": "false",
@@ -235,7 +233,8 @@
         "BLUETOOTH_RESTORE_STATE": "false"
       },
       "cordova-plugin-screen-orientation": {},
-      "cordova-plugin-vibration": {}
+      "cordova-plugin-vibration": {},
+      "cordova-plugin-nativestorage": {}
     },
     "platforms": [
       "android",
