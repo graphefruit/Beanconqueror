@@ -40,7 +40,6 @@ import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
-import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { BeansPage } from '../beans/beans.page';
 import { BeansAddComponent } from '../beans/beans-add/beans-add.component';
 import { BeansEditComponent } from '../beans/beans-edit/beans-edit.component';
@@ -363,7 +362,6 @@ import { WaterAddTypeComponent } from '../water-section/water/water-add-type/wat
   providers: [
     AppVersion,
     StatusBar,
-    SplashScreen,
     RemoveEmptyNumberDirective,
     PreventCharacterDirective,
     MaxNumberValueDirective,
