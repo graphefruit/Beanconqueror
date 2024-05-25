@@ -514,6 +514,8 @@ node -v -> v18.15.0 -> works
 `ionic cordova platform add android@13.0.0`
 `jdk 17 needed`
 
+You need to remove <config>WRITE_EXTERNAL_STORAGE</config> on the x-socialshare plugin.xml
+
 ### Github Page Hosting
 
 https://stackoverflow.com/questions/60357663/do-apple-app-site-association-files-work-with-github-pages-i-e-site-github-io
