@@ -52,6 +52,13 @@ export class UIStatistic {
     return this.uiBrewStorage.getAllEntries().length;
   }
 
+  public getMoneySavedOnCoffee(): number {
+    const avg_cost_per_coffee_at_cafe = this.uiSettings.getSettings().avg_cost_per_coffee_at_cafe;
+    const numberOfCoffees = this.getBrewsDrunk();
+
+    return numberOfCoffees * avg_cost_per_coffee_at_cafe;
+  }
+
   public getBeansCount(): number {
     return this.uiBeanStorage.getAllEntries().length;
   }

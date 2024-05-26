@@ -266,6 +266,13 @@
             </ion-checkbox>
           </ion-item>
           <ion-item>
+            <ion-item>
+              <ion-label position="stacked">{{"PAGE_SETTINGS_AVG_COST_PER_COFFEE_AT_CAFE" | translate}}</ion-label>
+              <ion-input type="number" (ngModelChange)="saveSettings();" [(ngModel)]="settings.avg_cost_per_coffee_at_cafe"></ion-input>
+              <ion-note>{{"PAGE_SETTINGS_AVG_COST_PER_COFFEE_AT_CAFE_DESCRIPTION" | translate}}</ion-note>
+            </ion-item>
+          </ion-item>
+          <ion-item>
             <ion-select (ngModelChange)="saveSettings()" [(ngModel)]="settings.currency"
               cancelText="{{'CANCEL'| translate }}" okText="{{'CHOOSE'| translate }}">
               <div slot="label">{{"PAGE_SETTINGS_CURRENCY" | translate}}</div>

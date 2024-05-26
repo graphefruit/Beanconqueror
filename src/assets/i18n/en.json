@@ -74,6 +74,7 @@
     "PAGE_SETTINGS_CURRENCY": "Currency",
     "PAGE_STATISTICS_DIFFERENT_PREPARATION_METHOD": "Preparation Methods",
     "PAGE_STATISTICS_TOTAL_GROUND_BEANS": "Total beans ground",
+    "PAGE_STATISTICS_MONEY_SAVED_ON_COFFEE": "Money saved on coffee",
     "PAGE_STATISTICS_MONEY_SPENT_FOR_COFFEE": "Money spent on beans",
     "PAGE_STATISTICS_DRUNKEN_BREWS": "Total number of brews",
     "PAGE_STATISTICS_BREW_PROCESSES": "Total brews",
@@ -1632,6 +1633,8 @@
     "CUSTOM_REPEAT_PARAMETERS_DESCRIPTION": "Activate customized repeat?",
     "PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE": "Numeric keyboard for grind setting?",
     "PAGE_SETTINGS_USE_NUERMIC_KEYBOARD_FOR_GRIND_SIZE_DESCRIPTION": "Do you want use a numeric keyboard for the grind setting, instead of the using of the whole keyboard?",
+    "PAGE_SETTINGS_AVG_COST_PER_COFFEE_AT_CAFE": "Average cost per coffee at cafe",
+    "PAGE_SETTINGS_AVG_COST_PER_COFFEE_AT_CAFE_DESCRIPTION": "The average cost per coffee at a cafe",
     "PREPARATION_DEVICE": {
         "TYPE": {
             "NONE": "None",

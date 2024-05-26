@@ -176,6 +176,8 @@ export class Settings implements ISettings {
   public refractometer_stay_connected: boolean;
   public refractometer_log: boolean;
 
+  public avg_cost_per_coffee_at_cafe: number;
+
   public currency: string;
   public brew_display_bean_image: boolean;
   public best_brew: boolean;
@@ -414,6 +416,8 @@ export class Settings implements ISettings {
     this.refractometer_type = null;
     this.refractometer_stay_connected = false;
     this.refractometer_log = false;
+
+    this.avg_cost_per_coffee_at_cafe = 0;
 
     this.currency = 'EUR';
     this.brew_milliseconds_leading_digits = 3;
