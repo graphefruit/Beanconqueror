@@ -65,17 +65,6 @@ export class BookooScale extends BluetoothScale {
     }
   }
 
-  public async getInt(buffer: Uint8Array) {
-    const bytes = new DataView(new ArrayBuffer(buffer.length));
-    let i = 0;
-    const list = new Uint8Array(bytes.buffer);
-    for (const value of buffer) {
-      list[i] = buffer[i];
-      i++;
-    }
-    return bytes.getInt32(0, false);
-  }
-
   public override getWeight() {
     return this.weight.actual;
   }
