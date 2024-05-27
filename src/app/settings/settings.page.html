@@ -459,7 +459,7 @@
         </ion-card-content>
       </ion-card>
 
-      <ion-card class="margin-top-20">
+      <ion-card class="margin-top-20" *ngIf='isTextToSpeechSectionAvailable'>
         <ion-card-content>
           <ion-card-title>{{"PAGE_SETTINGS_TEXT_TO_SPEECH_SECTION" | translate}}</ion-card-title>
           <ion-item lines='none'>

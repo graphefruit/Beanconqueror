@@ -185,14 +185,14 @@ export class UIImage {
                     await this.uiAlert.showLoadingSpinner();
 
                     for await (const file of _files) {
-                      let newFileName = file;
+                      let newFileName = file.path;
                       try {
                         // We cant copy the file if it doesn't start with file:///,
-                        if (file.indexOf('file:') <= -1) {
-                          if (file.indexOf('/') === 0) {
-                            newFileName = 'file://' + file;
+                        if (file.path.indexOf('file:') <= -1) {
+                          if (file.path.indexOf('/') === 0) {
+                            newFileName = 'file://' + file.path;
                           } else {
-                            newFileName = 'file:///' + file;
+                            newFileName = 'file:///' + file.path;
                           }
                         }
 

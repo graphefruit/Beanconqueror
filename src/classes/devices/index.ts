@@ -20,6 +20,8 @@ import { BlackcoffeeScale } from './blackcoffeeScale';
 import { DifluidMicrobalanceTi } from './difluidMicrobalanceTi';
 import { DiyPythonCoffeeScale } from './diyPythonCoffeeScale';
 import { DiyRustCoffeeScale } from './diyRustCoffeeScale';
+import { BookooPressure } from './bookooPressure';
+import { BookooScale } from './bokooScale';
 export { BluetoothScale, SCALE_TIMER_COMMAND } from './bluetoothDevice';
 
 export enum ScaleType {
@@ -35,12 +37,14 @@ export enum ScaleType {
   BLACKCOFFEE = 'BLACKCOFFEE',
   DIYPYTHONCOFFEESCALE = 'DIYPYTHONCOFFEESCALE',
   DIYRUSTCOFFEESCALE = 'DIYRUSTCOFFEESCALE',
+  BOKOOSCALE = 'BOOKOOSCALE',
 }
 
 export enum PressureType {
   POPSICLE = 'POPSICLE',
   DIRECT = 'DIRECT',
   PRS = 'PRS',
+  BOKOOPRESSURE = 'BOKOOPRESSURE',
 }
 
 export enum TemperatureType {
@@ -80,6 +84,8 @@ export function makeDevice(
       return new DiyPythonCoffeeScale(data, type);
     case ScaleType.DIYRUSTCOFFEESCALE:
       return new DiyRustCoffeeScale(data, type);
+    case ScaleType.BOKOOSCALE:
+      return new BookooScale(data, type);
     default:
       return null;
   }
@@ -96,6 +102,8 @@ export function makePressureDevice(
       return new TransducerDirectPressure(data);
     case PressureType.PRS:
       return new PrsPressure(data);
+    case PressureType.BOKOOPRESSURE:
+      return new BookooPressure(data);
     default:
       return null;
   }

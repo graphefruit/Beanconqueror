@@ -2,7 +2,6 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ModalController, Platform } from '@ionic/angular';
-import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
 import { RouterTestingModule } from '@angular/router/testing';
 
@@ -16,11 +15,11 @@ import { ThreeDeeTouch } from '@awesome-cordova-plugins/three-dee-touch/ngx';
 import { Globalization } from '@awesome-cordova-plugins/globalization/ngx';
 
 describe('AppComponent', () => {
-  let statusBarSpy, splashScreenSpy, platformReadySpy, platformSpy;
+  let statusBarSpy, platformReadySpy, platformSpy;
 
   beforeEach(waitForAsync(() => {
     statusBarSpy = jasmine.createSpyObj('StatusBar', ['styleDefault']);
-    splashScreenSpy = jasmine.createSpyObj('SplashScreen', ['hide']);
+
     platformReadySpy = Promise.resolve(undefined);
     platformSpy = jasmine.createSpyObj('Platform', { ready: platformReadySpy });
 
@@ -29,7 +28,6 @@ describe('AppComponent', () => {
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         { provide: StatusBar, useValue: statusBarSpy },
-        { provide: SplashScreen, useValue: splashScreenSpy },
         { provide: Platform, useValue: platformSpy },
         { provide: Storage },
         { provide: InAppBrowser },

@@ -90,6 +90,7 @@ export class SettingsPage implements OnInit {
   public debounceLanguageFilter: Subject<string> = new Subject<string>();
 
   public isHealthSectionAvailable: boolean = false;
+  public isTextToSpeechSectionAvailable: boolean = false;
 
   public currencies = {};
 
@@ -181,6 +182,12 @@ export class SettingsPage implements OnInit {
         this.isHealthSectionAvailable = false;
       }
     );
+
+    if (this.platform.is('ios')) {
+      this.isTextToSpeechSectionAvailable = true;
+    } else {
+      this.isTextToSpeechSectionAvailable = false;
+    }
   }
 
   public async ngOnInit() {}
