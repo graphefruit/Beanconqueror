@@ -71,15 +71,19 @@ export class BrewPopoverExtractionComponent implements OnInit {
           y: [1.72, 1.72, 1.72, 1.4, 1.4, 1.4, 1.15, 1.15, 1.15],
           mode: 'text',
           text: [
-            'STRONG<br>underextracted',
-            'STRONG<br>',
-            'STRONG<br>harsh',
-            'underextracted',
-            'IDEAL',
-            'harsh',
-            'WEAK<br>underextracted',
-            'WEAK<br>',
-            'WEAK<br>harsh',
+            this.translate.instant(
+              'EXTRACTION_CHART_LABEL_STRONG_UNDEREXTRACTED'
+            ),
+            this.translate.instant('EXTRACTION_CHART_LABEL_STRONG'),
+            this.translate.instant('EXTRACTION_CHART_LABEL_STRONG_HARSH'),
+            this.translate.instant('EXTRACTION_CHART_LABEL_UNDEREXTRACTED'),
+            this.translate.instant('EXTRACTION_CHART_LABEL_IDEAL'),
+            this.translate.instant('EXTRACTION_CHART_LABEL_HARSH'),
+            this.translate.instant(
+              'EXTRACTION_CHART_LABEL_WEAK_UNDEREXTRACTED'
+            ),
+            this.translate.instant('EXTRACTION_CHART_LABEL_WEAK'),
+            this.translate.instant('EXTRACTION_CHART_LABEL_WEAK_HARSH'),
           ],
           textposition: 'center',
 
