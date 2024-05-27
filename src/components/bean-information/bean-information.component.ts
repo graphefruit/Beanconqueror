@@ -225,6 +225,9 @@ export class BeanInformationComponent implements OnInit {
       case BEAN_ACTION.REPEAT_LAST_OR_BEST_BREW:
         await this.repeatLastOrBestBrew();
         break;
+      case BEAN_ACTION.UNARCHIVE:
+        await this.unarchiveBean();
+        break;
       default:
         break;
     }
@@ -245,7 +248,6 @@ export class BeanInformationComponent implements OnInit {
   }
   public async beansConsumed() {
     await this.uiBeanHelper.archiveBeanWithRatingQuestion(this.bean);
-
     await this.resetSettings();
 
     /* this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ARCHIVE);
@@ -253,6 +255,17 @@ export class BeanInformationComponent implements OnInit {
     await this.uiBeanStorage.update(this.bean);
     this.uiToast.showInfoToast('TOAST_BEAN_ARCHIVED_SUCCESSFULLY');
     */
+  }
+
+  public async unarchiveBean() {
+    this.uiAnalytics.trackEvent(
+      BEAN_TRACKING.TITLE,
+      BEAN_TRACKING.ACTIONS.UNARCHIVE
+    );
+    this.bean.finished = false;
+    await this.uiBeanStorage.update(this.bean);
+    this.uiToast.showInfoToast('TOAST_BEAN_UNARCHIVED_SUCCESSFULLY');
+    await this.resetSettings();
   }
 
   public async toggleFavourite() {

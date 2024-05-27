@@ -1,4 +1,10 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
@@ -29,10 +35,15 @@ import { UIAnalytics } from '../../../services/uiAnalytics';
 
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
 import { BluetoothScale, SCALE_TIMER_COMMAND } from '../../../classes/devices';
-import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { PreparationDeviceType } from '../../../classes/preparationDevice';
+import {
+  CoffeeBluetoothDevicesService,
+  CoffeeBluetoothServiceEvent,
+} from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { UIHelper } from '../../../services/uiHelper';
 import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
+import { Subscription } from 'rxjs';
+import { HapticService } from '../../../services/hapticService/haptic.service';
+import { PreparationDeviceType } from '../../../classes/preparationDevice';
 
 declare var Plotly;
 declare var window;
@@ -57,6 +68,7 @@ export class BrewAddComponent implements OnInit {
   public showFooter: boolean = true;
   private initialBeanData: string = '';
   private disableHardwareBack;
+  public bluetoothSubscription: Subscription = undefined;
   constructor(
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
@@ -79,7 +91,9 @@ export class BrewAddComponent implements OnInit {
     private readonly uiAnalytics: UIAnalytics,
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly uiHelper: UIHelper,
-    private readonly visualizerService: VisualizerService
+    private readonly visualizerService: VisualizerService,
+    private readonly changeDetectorRef: ChangeDetectorRef,
+    private readonly hapticService: HapticService
   ) {
     // Initialize to standard in drop down
 
@@ -127,6 +141,25 @@ export class BrewAddComponent implements OnInit {
 
     this.getCoordinates(true);
     this.initialBeanData = JSON.stringify(this.data);
+
+    this.bluetoothSubscription = this.bleManager
+      .attachOnEvent()
+      .subscribe((_type) => {
+        if (
+          _type === CoffeeBluetoothServiceEvent.DISCONNECTED_SCALE ||
+          _type === CoffeeBluetoothServiceEvent.CONNECTED_SCALE
+        ) {
+          this.checkChanges();
+        }
+      });
+  }
+
+  private checkChanges() {
+    // #507 Wrapping check changes in set timeout so all values get checked
+    setTimeout(() => {
+      this.changeDetectorRef.detectChanges();
+      window.getComputedStyle(window.document.getElementsByTagName('body')[0]);
+    }, 15);
   }
 
   public confirmDismiss(): void {
@@ -178,6 +211,12 @@ export class BrewAddComponent implements OnInit {
     const scale: BluetoothScale = this.bleManager.getScale();
     if (scale) {
       scale.tare();
+      if (
+        this.settings.haptic_feedback_active &&
+        this.settings.haptic_feedback_tare
+      ) {
+        this.hapticService.vibrate();
+      }
     }
   }
 
@@ -234,7 +273,11 @@ export class BrewAddComponent implements OnInit {
     } catch (ex) {}
     this.stopScaleTimer();
     try {
-      Plotly.purge('flowProfileChart');
+      if (this.brewBrewing.brewBrewingGraphEl) {
+        Plotly.purge(
+          this.brewBrewing.brewBrewingGraphEl.profileDiv.nativeElement
+        );
+      }
     } catch (ex) {}
     this.modalController.dismiss(
       {
@@ -252,90 +295,149 @@ export class BrewAddComponent implements OnInit {
   }
 
   public async finish() {
-    await this.uiAlert.showLoadingSpinner();
+    await this.uiAlert.showLoadingMessage(undefined, undefined, true);
+    await new Promise(async (resolve) => {
+      setTimeout(() => {
+        resolve(undefined);
+      }, 50);
+    });
     try {
-      if (this.brewBrewing?.timer?.isTimerRunning()) {
-        this.brewBrewing.timer.pauseTimer('click');
+      this.uiLog.log('Brew add - Step 1');
+      await this.manageBrewBrewingTimer();
 
-        await new Promise(async (resolve) => {
-          setTimeout(() => {
-            resolve(undefined);
-          }, 100);
-        });
-      }
-
+      this.uiLog.log('Brew add - Step 2');
       this.uiBrewHelper.cleanInvisibleBrewData(this.data);
+
+      this.uiLog.log('Brew add - Step 3');
       const addedBrewObj: Brew = await this.uiBrewStorage.add(this.data);
 
-      if (
-        this.brewBrewing.flow_profile_raw.weight.length > 0 ||
-        this.brewBrewing.flow_profile_raw.pressureFlow.length > 0 ||
-        this.brewBrewing.flow_profile_raw.temperatureFlow.length > 0
-      ) {
-        const savedPath: string = await this.brewBrewing.saveFlowProfile(
-          addedBrewObj.config.uuid
-        );
-        if (savedPath !== '') {
-          addedBrewObj.flow_profile = savedPath;
-          await this.uiBrewStorage.update(addedBrewObj);
-        }
-      }
+      this.uiLog.log('Brew add - Step 4');
+      await this.manageFlowProfile(addedBrewObj);
 
-      let checkData: Settings | Preparation;
-      if (this.getPreparation().use_custom_parameters === true) {
-        checkData = this.getPreparation();
-      } else {
-        checkData = this.settings;
-      }
+      await this.manageCustomBrewTime(addedBrewObj);
 
-      if (checkData.manage_parameters.set_custom_brew_time) {
-        addedBrewObj.config.unix_timestamp = moment(
-          this.brewBrewing.customCreationDate
-        ).unix();
-        await this.uiBrewStorage.update(addedBrewObj);
-      }
+      this.manageUploadToVisualizer(addedBrewObj);
 
-      if (
-        this.settings.visualizer_active &&
-        this.settings.visualizer_upload_automatic
-      ) {
-        if (addedBrewObj.flow_profile) {
-          this.uiLog.log('Upload shot to visualizer');
-          this.visualizerService.uploadToVisualizer(addedBrewObj);
-        } else {
-          this.uiLog.log('No flow profile given, dont upload');
-        }
-      } else {
-        this.uiLog.log(
-          'Visualizer not active or upload automatic not activated'
-        );
-      }
+      this.manageCaffeineConsumption();
 
-      if (
-        this.settings.track_caffeine_consumption &&
-        this.data.grind_weight > 0 &&
-        this.data.getBean().decaffeinated === false
-      ) {
-        this.uiHealthKit.trackCaffeineConsumption(
-          this.data.getCaffeineAmount(),
-          moment(this.brewBrewing.customCreationDate).toDate()
-        );
-      }
       if (!this.hide_toast_message) {
         this.uiToast.showInfoToast('TOAST_BREW_ADDED_SUCCESSFULLY');
       }
-
+      this.uiLog.log('Brew add - Step 8');
       this.brewTracking.trackBrew(addedBrewObj);
+      this.uiLog.log('Brew add - Step 9');
+      await this.uiAlert.hideLoadingSpinner();
+      await new Promise(async (resolve) => {
+        setTimeout(() => {
+          resolve(undefined);
+        }, 100);
+      });
+
+      if (this.uiBrewHelper.checkIfBeanPackageIsConsumed(this.data.getBean())) {
+        await this.uiBrewHelper.checkIfBeanPackageIsConsumedTriggerMessageAndArchive(
+          this.data.getBean()
+        );
+      }
+
+      this.uiAnalytics.trackEvent(
+        BREW_TRACKING.TITLE,
+        BREW_TRACKING.ACTIONS.ADD_FINISH
+      );
     } catch (ex) {}
+
     await this.uiAlert.hideLoadingSpinner();
-    await this.uiBrewHelper.checkIfBeanPackageIsConsumedTriggerMessageAndArchive(
-      this.data.getBean()
-    );
-    this.uiAnalytics.trackEvent(
-      BREW_TRACKING.TITLE,
-      BREW_TRACKING.ACTIONS.ADD_FINISH
-    );
+    await new Promise(async (resolve) => {
+      setTimeout(() => {
+        resolve(undefined);
+      }, 100);
+    });
+
     this.dismiss();
+  }
+
+  private manageCaffeineConsumption(): void {
+    this.uiLog.log('Brew add - Step 7');
+    if (
+      this.settings.track_caffeine_consumption &&
+      this.data.grind_weight > 0 &&
+      this.data.getBean().decaffeinated === false
+    ) {
+      this.uiHealthKit.trackCaffeineConsumption(
+        this.data.getCaffeineAmount(),
+        moment(this.brewBrewing.customCreationDate).toDate()
+      );
+    }
+  }
+
+  private manageUploadToVisualizer(addedBrewObj: Brew): void {
+    if (
+      this.settings.visualizer_active &&
+      this.settings.visualizer_upload_automatic
+    ) {
+      if (addedBrewObj.flow_profile) {
+        this.uiLog.log('Upload shot to visualizer');
+        this.visualizerService.uploadToVisualizer(addedBrewObj);
+      } else {
+        this.uiLog.log('No flow profile given, dont upload');
+      }
+    } else {
+      this.uiLog.log('Visualizer not active or upload automatic not activated');
+    }
+  }
+
+  private async manageCustomBrewTime(addedBrewObj: Brew): Promise<void> {
+    const checkData = this.getSettingsOrPreparation();
+
+    if (checkData.manage_parameters.set_custom_brew_time) {
+      this.uiLog.log('Brew add - Step 6');
+      addedBrewObj.config.unix_timestamp = moment(
+        this.brewBrewing.customCreationDate
+      ).unix();
+      await this.uiBrewStorage.update(addedBrewObj);
+    }
+  }
+
+  private getSettingsOrPreparation(): Settings | Preparation {
+    if (this.getPreparation().use_custom_parameters === true) {
+      return this.getPreparation();
+    } else {
+      return this.settings;
+    }
+  }
+
+  private async manageFlowProfile(addedBrewObj: Brew) {
+    if (this.hasAnyFlowProfileRequisites()) {
+      this.uiLog.log('Brew add - Step 5');
+      const savedPath: string = await this.brewBrewing.saveFlowProfile(
+        addedBrewObj.config.uuid
+      );
+      if (savedPath !== '') {
+        addedBrewObj.flow_profile = savedPath;
+        await this.uiBrewStorage.update(addedBrewObj);
+      }
+    }
+  }
+
+  private hasAnyFlowProfileRequisites() {
+    return (
+      this.brewBrewing.brewBrewingGraphEl?.flow_profile_raw.weight.length > 0 ||
+      this.brewBrewing.brewBrewingGraphEl?.flow_profile_raw.pressureFlow
+        .length > 0 ||
+      this.brewBrewing.brewBrewingGraphEl?.flow_profile_raw.temperatureFlow
+        .length > 0
+    );
+  }
+
+  private async manageBrewBrewingTimer() {
+    if (this.brewBrewing?.timer?.isTimerRunning()) {
+      this.brewBrewing.timer.pauseTimer('click');
+
+      await new Promise(async (resolve) => {
+        setTimeout(() => {
+          resolve(undefined);
+        }, 100);
+      });
+    }
   }
 
   public getPreparation(): Preparation {
@@ -353,4 +455,13 @@ export class BrewAddComponent implements OnInit {
       );
     }
   }
+
+  public ngOnDestroy() {
+    if (this.bluetoothSubscription) {
+      this.bluetoothSubscription.unsubscribe();
+      this.bluetoothSubscription = undefined;
+    }
+  }
+
+  protected readonly PreparationDeviceType = PreparationDeviceType;
 }

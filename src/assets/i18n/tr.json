@@ -153,7 +153,7 @@
     "BREW_DATA_ATTACHMENTS": "Ekler \/ Fotoğraflar",
     "BREW_DATA_RATING": "Derecelendirme",
     "BREW_DATA_CALCULATED_COFFEE_BREW_TIME": "Kahve Demleme Süresi",
-    "BREW_DATA_TDS": "Toplam çözünmüş katılar",
+    "BREW_DATA_TDS": "Toplam çözünmüş katı madde %'si",
     "BREW_DATA_CALCULATED_EXTRACTION_YIELD": "Çözünme Miktarı %",
     "BREW_INFORMATION_BREW_RATIO": "Demleme Oranı",
     "BREW_INFORMATION_BEAN_AGE": "Çekirdek Yaşı",
@@ -1053,6 +1053,35 @@
                 "<b>Diğer<\/b>",
                 "Küçük hata düzeltmeleri"
             ]
+        },
+        "7.2.0": {
+            "TITLE": "Sürüm 7.2.0: Yenilikler",
+            "DESCRIPTION": [
+                "<b>Daha fazla dil<\/b>",
+                "İtalyanca Desteği - Cancercookie'ye Teşekkürler",
+                "Lehçe Desteği - MarcinSachs'a teşekkürler",
+                "",
+                "<b>Bluetooth Tartılar<\/b>",
+                "'Zamanlayıcı başlatılırken terazinin darasını al' ayarını yaptığınızda, terazi birkaç 0 ağırlık raporu bildirene kadar zaman başlangıcı bekleyecektir.",
+                "",
+                "<b>Xenia<\/b>",
+                "V1 ve V2 Api kullanımı için geçiş ekleme",
+                "İstenilen ağırlıkta akışı durdurmak için otomatik hesaplama ile \"Ağırlığa Göre Demleme Özelliği\" ekleme",
+                "",
+                "<b> Meticulous <\/b>",
+                "İlk Meticulous entegrasyonu - Tüm Meticulous Ekibine teşekkürler!",
+                "",
+                "Ayarlar",
+                "Sayılacak ilk damla için bir eşik tanımlayın",
+                "",
+                "<b>Diğer<\/b>",
+                "Koddaki bazı teknik değişiklikler",
+                "Küçük değişiklikler",
+                "[IOS]Veritabanı erişimi kurulamadığında açılır pencereler gösteriliyor.",
+                "",
+                "<b> Teşekkürler <\/b>",
+                "Uygulamayı birden fazla dilde kullanılabilir hale getirmek için büyük çaba sarf eden tüm çevirmenlere teşekkür ederiz."
+            ]
         }
     },
     "CUSTOM_PARAMETERS": "Parametreyi özelleştir",
@@ -1606,7 +1635,8 @@
     "PREPARATION_DEVICE": {
         "TYPE": {
             "NONE": "Hiçbiri",
-            "XENIA": "Xenia"
+            "XENIA": "Xenia",
+            "METICULOUS": "Meticulous"
         },
         "URL": "Url",
         "CHOOSE_DEVICE": "Cihaz seç",
@@ -1627,7 +1657,18 @@
             "ERROR_NOT_ALL_SCRIPTS_FOUND": "Bir veya daha fazla betik bulunamadı, sıfırlandı",
             "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "Xenia portafilter makinesine bağlantı kurulamadı. Doğru ağda (WLAN) olduğunuzdan, doğru bağlantı adresini girdiğinizden veya diğer sorunları kontrol ettiğinizden emin olun.",
             "CHECKING_CONNECTION_TO_PORTAFILTER": "Xenia'ya bağlantı kontrol ediliyor",
-            "GRABING_SCRIPTS": "Betikler Xenia'dan yükleniyor"
+            "GRABING_SCRIPTS": "Betikler Xenia'dan yükleniyor",
+            "BREW_BY_WEIGHT_ACTIVE": "Ağırlığa göre demleme aktif"
+        },
+        "API_VERSION": "Api Sürümü",
+        "RESIDUAL_LAG_TIME": "Kalan gecikme süresi",
+        "RESIDUAL_LAG_TIME_DESCRIPTION": "Kalan suyla eşleşecek süreyi ayarlayın. Dipsiz bir portafiltre ile daha düşük bir zamana, ağızlı bir portafiltre ile daha yüksek bir zamana ihtiyacınız olacaktır. Tartınız ağırlığı ne kadar yavaş bildirirse, o kadar fazla zamana ihtiyacınız olur",
+        "TYPE_METICULOUS": {
+            "TITLE": "Meticulous Cihazı",
+            "NO_PROFILE": "Profil yok",
+            "CHOOSE_PROFILE": "Profil seçin",
+            "SHOT_STARTED": "Akış başladı",
+            "SHOT_ENDED": "Akış sona erdi"
         }
     },
     "DEVICE_CONNECTION": "Cihaz bağlantısı",
@@ -1776,5 +1817,29 @@
     "PAGE_SETTINGS_DATE_FORMAT": "Tarih formatı",
     "PAGE_SETTINGS_LANGUAGE_FRANCE": "Fransızca",
     "PAGE_SETTINGS_LANGUAGE_INDONESIA": "Indonesian",
-    "EXTRACTION_CHART_TITLE": "Extraction Chart"
+    "EXTRACTION_CHART_TITLE": "Extraction Chart",
+    "PAGE_SETTINGS_SHOW_BACKUP_ISSUES": "Yedekleme sorunlarını göster",
+    "PAGE_SETTINGS_SHOW_BACKUP_ISSUES_DESCRIPTION": "Yedekler dosya sistemine yazılamazsa bir açılır pencere görüntüleyin",
+    "AUTOMATIC_BACKUP_DID_FAIL": "Otomatik Yedekleme çalışmadı, çalışan yedekleriniz olduğundan emin olun! Bu bilgi ayarlardan kapatılabilir",
+    "INTERNAL_BACKUP_DID_FAIL": "Dahili Yedekleme çalışmadı, çalışan yedekleriniz olduğundan emin olun! Bu bilgi ayarlardan kapatılabilir",
+    "ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD": "ZIP dosyası kaydedilemedi! Bu bilgi ayarlardan kapatılabilir",
+    "SEND_LOGS": "Günlükleri gönder",
+    "POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER": "Refraktometre cihazını yeniden bağlayın",
+    "PAGE_SETTINGS_LANGUAGE_ITALIAN": "Italiano",
+    "PAGE_SETTINGS_LANGUAGE_POLISH": "Lehçe",
+    "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_GENERAL_DESCRIPTION": "Başlamadan önce zamanlayıcınızı sıfırlamanız gerekir",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD": "İlk damlama eşiği",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD_TOOLTIP": "İlk damla hangi tartı ağırlığında sayılmalıdır? Varsayılan: >= 0,1 g",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE": "Demleme gecikmesini başlat",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE_DESCRIPTION": "Demleme başlayana kadar bir yükleme döndürücüsü gösterecek bir gecikme süresi ayarlayın",
+    "STARTING_IN": "Başlayan ... {{time}}",
+    "IOS_DATABASE_ISSUE_TITLE": "DİKKAT !!!!! - VERİTABANI BAĞLANTISI KAYBI",
+    "IOS_DATABASE_ISSUE_DESCRIPTION": "Veritabanı ile bağlantı kaybıyla karşılaştığımızı size bildirmekten üzüntü duyuyoruz. Bu sorun, Beanconqueror'ın kontrolü dışında, Apple'ın sistemindeki çözülmemiş bir hatanın sonucudur. Olası bir veri kaybını önlemek için Beanconqueror uygulamasını derhal zorla kapatmanızı ve yeniden açmanızı rica ederiz.",
+    "RELOAD_APP": "Uygulamayı şimdi yeniden yükle",
+    "WATER_TYPE_THIRD_WAVE_WATER_CLASSIC_LIGHT_ROAST_PROFILE":"Third Wave Water - Classic Light Roast Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_MEDIUM_ROAST_PROFILE":"Third Wave Water - Medium Roast Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_DARK_ROAST_PROFILE":"Third Wave Water - Dark Roast Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_ESPRESSO_MACHINE_PROFILE":"Third Wave Water - Espresso Machine Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_COLD_BREW_PROFILE":"Third Wave Water -Cold Brew Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_LOW_ACID_PROFILE":"Third Wave Water - Low Acid Profile"
 }

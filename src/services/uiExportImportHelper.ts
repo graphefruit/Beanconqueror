@@ -49,67 +49,73 @@ export class UIExportImportHelper {
   public async buildExportZIP(): Promise<any> {
     return new Promise(async (resolve, reject) => {
       this.uiStorage.export().then(async (_data) => {
-        const clonedData = this.uiHelper.cloneData(_data);
-        const brewChunks = [];
-        if (clonedData?.BREWS?.length > 0) {
-          const chunkSize = 500;
-          for (let i = 0; i < clonedData.BREWS.length; i += chunkSize) {
-            const chunk = clonedData.BREWS.slice(i, i + chunkSize);
-            brewChunks.push(chunk);
+        try {
+          const clonedData = this.uiHelper.cloneData(_data);
+          const brewChunks = [];
+          if (clonedData?.BREWS?.length > 0) {
+            const chunkSize = 500;
+            for (let i = 0; i < clonedData.BREWS.length; i += chunkSize) {
+              const chunk = clonedData.BREWS.slice(i, i + chunkSize);
+              brewChunks.push(chunk);
+            }
           }
-        }
 
-        const beanChunks = [];
-        if (clonedData?.BEANS?.length > 0) {
-          const chunkSize = 500;
-          for (let i = 0; i < clonedData.BEANS.length; i += chunkSize) {
-            const chunk = clonedData.BEANS.slice(i, i + chunkSize);
-            beanChunks.push(chunk);
+          const beanChunks = [];
+          if (clonedData?.BEANS?.length > 0) {
+            const chunkSize = 500;
+            for (let i = 0; i < clonedData.BEANS.length; i += chunkSize) {
+              const chunk = clonedData.BEANS.slice(i, i + chunkSize);
+              beanChunks.push(chunk);
+            }
           }
-        }
 
-        const originalJSON = this.uiHelper.cloneData(_data);
-        if (brewChunks.length > 0) {
-          originalJSON.BREWS = brewChunks[0];
-        }
-        if (beanChunks.length > 0) {
-          originalJSON.BEANS = beanChunks[0];
-        }
+          const originalJSON = this.uiHelper.cloneData(_data);
+          if (brewChunks.length > 0) {
+            originalJSON.BREWS = brewChunks[0];
+          }
+          if (beanChunks.length > 0) {
+            originalJSON.BEANS = beanChunks[0];
+          }
 
-        const zipFileWriter = new BlobWriter();
-        const beanconquerorJSON = new TextReader(JSON.stringify(originalJSON));
-        let zipWriter;
-        if (this.platform.is('ios')) {
-          // iOS got corrupt zip file, when compression is used, removing this, results into a bigger zip file, but leads into a working zip file again.
-          zip.configure({ useCompressionStream: false });
-          zipWriter = new ZipWriter(zipFileWriter);
-        } else {
-          zipWriter = new ZipWriter(zipFileWriter);
-        }
-
-        await zipWriter.add('Beanconqueror.json', beanconquerorJSON);
-
-        for (let i = 1; i < brewChunks.length; i++) {
-          const beanconquerorBrewJSON = new TextReader(
-            JSON.stringify(brewChunks[i])
+          const zipFileWriter = new BlobWriter();
+          const beanconquerorJSON = new TextReader(
+            JSON.stringify(originalJSON)
           );
-          await zipWriter.add(
-            'Beanconqueror_Brews_' + i + '.json',
-            beanconquerorBrewJSON
-          );
-        }
+          let zipWriter;
+          if (this.platform.is('ios')) {
+            // iOS got corrupt zip file, when compression is used, removing this, results into a bigger zip file, but leads into a working zip file again.
+            zip.configure({ useCompressionStream: false });
+            zipWriter = new ZipWriter(zipFileWriter);
+          } else {
+            zipWriter = new ZipWriter(zipFileWriter);
+          }
 
-        for (let i = 1; i < beanChunks.length; i++) {
-          const beanconquerorBeanJSON = new TextReader(
-            JSON.stringify(beanChunks[i])
-          );
-          await zipWriter.add(
-            'Beanconqueror_Beans_' + i + '.json',
-            beanconquerorBeanJSON
-          );
+          await zipWriter.add('Beanconqueror.json', beanconquerorJSON);
+
+          for (let i = 1; i < brewChunks.length; i++) {
+            const beanconquerorBrewJSON = new TextReader(
+              JSON.stringify(brewChunks[i])
+            );
+            await zipWriter.add(
+              'Beanconqueror_Brews_' + i + '.json',
+              beanconquerorBrewJSON
+            );
+          }
+
+          for (let i = 1; i < beanChunks.length; i++) {
+            const beanconquerorBeanJSON = new TextReader(
+              JSON.stringify(beanChunks[i])
+            );
+            await zipWriter.add(
+              'Beanconqueror_Beans_' + i + '.json',
+              beanconquerorBeanJSON
+            );
+          }
+          const zipFileBlob = await zipWriter.close();
+          resolve(zipFileBlob);
+        } catch (ex) {
+          reject();
         }
-        const zipFileBlob = await zipWriter.close();
-        resolve(zipFileBlob);
       });
     });
   }
@@ -337,6 +343,9 @@ export class UIExportImportHelper {
   private getAutomatedBackupFilename(): string {
     return moment().format('DD_MM_YYYY').toString();
   }
+  private getAutomatedBackupFilenameHours(): string {
+    return moment().format('DD_MM_YYYY_HH_mm').toString();
+  }
 
   public async saveAutomaticBackups() {
     this.buildExportZIP().then(
@@ -344,10 +353,30 @@ export class UIExportImportHelper {
         try {
           this.__saveInternalBeanconquerorDump(_blob);
           this.__saveAutomaticBeanconquerorDump(_blob);
-        } catch (ex) {}
+        } catch (ex) {
+          this.uiLog.error('ZIP file could not be saved');
+          const settings = this.uiSettingsStorage.getSettings();
+          if (settings.show_backup_issues) {
+            this.uiAlert.showMessage(
+              'ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD',
+              'CARE',
+              'OK',
+              true
+            );
+          }
+        }
       },
       () => {
         this.uiLog.error('ZIP file could not be saved');
+        const settings = this.uiSettingsStorage.getSettings();
+        if (settings.show_backup_issues) {
+          this.uiAlert.showMessage(
+            'ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD',
+            'CARE',
+            'OK',
+            true
+          );
+        }
       }
     );
   }
@@ -357,7 +386,18 @@ export class UIExportImportHelper {
         'Beanconqueror.zip',
         _blob
       );
-    } catch (ex) {}
+    } catch (ex) {
+      this.uiLog.error('Could not to export normal ZIP file');
+      const settings = this.uiSettingsStorage.getSettings();
+      if (settings.show_backup_issues) {
+        this.uiAlert.showMessage(
+          'INTERNAL_BACKUP_DID_FAIL',
+          'CARE',
+          'OK',
+          true
+        );
+      }
+    }
   }
   private async __saveAutomaticBeanconquerorDump(_blob) {
     const settings = this.uiSettingsStorage.getSettings();
@@ -366,14 +406,23 @@ export class UIExportImportHelper {
     if (welcomePagedShowed === true && brewsAdded === true) {
       this.uiLog.log('Start to export automatic ZIP file');
       try {
-        const file: FileEntry = await this.uiFileHelper.downloadFile(
-          'Beanconqueror_automatic_export_' +
+        const file: FileEntry = await this.uiFileHelper.saveZIPFile(
+          'Download/Beanconqueror_export/Beanconqueror_automatic_export_' +
             this.getAutomatedBackupFilename() +
             '.zip',
-          _blob,
-          false
+          _blob
         );
-      } catch (ex) {}
+      } catch (ex) {
+        this.uiLog.error('Could not to export automatic ZIP file');
+        if (settings.show_backup_issues) {
+          this.uiAlert.showMessage(
+            'AUTOMATIC_BACKUP_DID_FAIL',
+            'CARE',
+            'OK',
+            true
+          );
+        }
+      }
     }
   }
 }

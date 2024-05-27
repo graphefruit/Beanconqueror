@@ -11,6 +11,7 @@ import { PreparationDevice } from '../../../classes/preparationDevice/preparatio
 import { UIToast } from '../../../services/uiToast';
 import { UIAlert } from '../../../services/uiAlert';
 import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
+import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
   selector: 'app-preparation-connected-device',
@@ -26,15 +27,22 @@ export class PreparationConnectedDeviceComponent implements OnInit {
   public PREPARATION_DEVICE_TYPE = PreparationDeviceType;
   @Input() public preparation: IPreparation;
 
-  public scriptid: number = 11;
-
+  public pinFormatter(value: any) {
+    const parsedFloat = parseFloat(value);
+    if (isNaN(parsedFloat)) {
+      return `${0}`;
+    }
+    const newValue = +parsedFloat.toFixed(2);
+    return `${newValue}`;
+  }
   constructor(
     private readonly navParams: NavParams,
     private readonly modalController: ModalController,
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly uiToast: UIToast,
-    private readonly uiAlert: UIAlert
+    private readonly uiAlert: UIAlert,
+    private readonly uiHelper: UIHelper
   ) {}
 
   public ionViewWillEnter(): void {
@@ -75,6 +83,18 @@ export class PreparationConnectedDeviceComponent implements OnInit {
               'http://' + this.data.connectedPreparationDevice.url;
           }
         }
+        if (
+          this.data.connectedPreparationDevice.customParams.apiVersion ===
+          undefined
+        ) {
+          this.data.connectedPreparationDevice.customParams.apiVersion = 'V2';
+        }
+        if (
+          this.data.connectedPreparationDevice.customParams.residualLagTime ===
+          undefined
+        ) {
+          this.data.connectedPreparationDevice.customParams.residualLagTime = 1.35;
+        }
       }
       await this.uiPreparationStorage.update(this.data);
     }, 150);
@@ -102,26 +122,4 @@ export class PreparationConnectedDeviceComponent implements OnInit {
     }
   }
   public ngOnInit() {}
-
-  public getScripts() {
-    const connectedDevice: XeniaDevice =
-      this.uiPreparationHelper.getConnectedDevice(this.data) as XeniaDevice;
-    if (connectedDevice) {
-      connectedDevice.getScripts();
-    }
-  }
-  public startScript() {
-    const connectedDevice: XeniaDevice =
-      this.uiPreparationHelper.getConnectedDevice(this.data) as XeniaDevice;
-    if (connectedDevice) {
-      connectedDevice.startScript(this.scriptid);
-    }
-  }
-  public stopScript() {
-    const connectedDevice: XeniaDevice =
-      this.uiPreparationHelper.getConnectedDevice(this.data) as XeniaDevice;
-    if (connectedDevice) {
-      connectedDevice.stopScript();
-    }
-  }
 }

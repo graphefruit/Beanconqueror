@@ -64,6 +64,8 @@ export class Settings implements ISettings {
   public show_archived_waters: boolean;
   public show_archived_brews_on_dashboard: boolean;
   public show_archived_graphs: boolean;
+  public brew_timer_start_delay_time: number;
+  public brew_timer_start_delay_active: boolean;
 
   public use_numeric_keyboard_for_grind_size: boolean;
 
@@ -153,6 +155,7 @@ export class Settings implements ISettings {
   public bluetooth_scale_listening_threshold_start: number;
   public bluetooth_scale_listening_threshold_active: boolean;
   public bluetooth_scale_ignore_weight_button_active: boolean;
+  public bluetooth_scale_first_drip_threshold: number;
 
   public pressure_id: string;
   public pressure_type: PressureType;
@@ -184,6 +187,20 @@ export class Settings implements ISettings {
   public visualizer_password: string;
   public visualizer_upload_automatic: boolean;
 
+  public show_backup_issues: boolean;
+
+  public text_to_speech_active: boolean;
+  public text_to_speech_rate: number;
+  public text_to_speech_pitch: number;
+  public text_to_speech_interval_rate: number;
+
+  public haptic_feedback_active: boolean;
+  public haptic_feedback_brew_started: boolean;
+  public haptic_feedback_brew_stopped: boolean;
+  public haptic_feedback_tare: boolean;
+
+  public brew_timer_show_hours: boolean;
+  public brew_timer_show_minutes: boolean;
   public GET_BEAN_FILTER(): IBeanPageFilter {
     const upperRating: number = this.bean_rating;
     return {
@@ -263,6 +280,8 @@ export class Settings implements ISettings {
     this.show_archived_waters = true;
     this.show_archived_brews_on_dashboard = true;
     this.show_archived_graphs = true;
+    this.brew_timer_start_delay_time = 1;
+    this.brew_timer_start_delay_active = false;
 
     this.track_caffeine_consumption = false;
 
@@ -385,6 +404,7 @@ export class Settings implements ISettings {
     this.bluetooth_scale_listening_threshold_start = 0.1;
     this.bluetooth_scale_listening_threshold_active = false;
     this.bluetooth_scale_ignore_weight_button_active = false;
+    this.bluetooth_scale_first_drip_threshold = 0.1;
 
     this.scale_log = false;
 
@@ -418,6 +438,21 @@ export class Settings implements ISettings {
     this.visualizer_username = '';
     this.visualizer_password = '';
     this.visualizer_upload_automatic = false;
+
+    this.show_backup_issues = true;
+
+    this.text_to_speech_active = false;
+    this.text_to_speech_rate = 1;
+    this.text_to_speech_pitch = 3;
+    this.text_to_speech_interval_rate = 500;
+
+    this.haptic_feedback_active = false;
+    this.haptic_feedback_brew_started = false;
+    this.haptic_feedback_brew_stopped = false;
+    this.haptic_feedback_tare = false;
+
+    this.brew_timer_show_hours = true;
+    this.brew_timer_show_minutes = true;
   }
 
   public initializeByObject(settingsObj: ISettings): void {

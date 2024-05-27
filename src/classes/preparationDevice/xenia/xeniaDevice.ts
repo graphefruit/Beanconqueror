@@ -7,11 +7,22 @@ declare var cordova;
 export class XeniaDevice extends PreparationDevice {
   public scriptList: Array<{ INDEX: number; TITLE: string }> = [];
 
-  private apiVersion: number = 1;
+  private apiVersion: number = 2;
   constructor(protected httpClient: HttpClient, _preparation: Preparation) {
     super(httpClient, _preparation);
 
     if (typeof cordova !== 'undefined') {
+      const connectedPreparationDevice =
+        this.getPreparation().connectedPreparationDevice;
+      if (
+        connectedPreparationDevice.customParams &&
+        connectedPreparationDevice.customParams.apiVersion
+      ) {
+        if (connectedPreparationDevice.customParams.apiVersion === 'V1') {
+          this.apiVersion = 1;
+        } else {
+        }
+      }
     }
   }
 
@@ -53,6 +64,20 @@ export class XeniaDevice extends PreparationDevice {
 
   public getPressure() {
     return this.pressure;
+  }
+
+  public getResidualLagTime() {
+    const connectedPreparationDevice =
+      this.getPreparation().connectedPreparationDevice;
+    if (
+      connectedPreparationDevice.customParams &&
+      connectedPreparationDevice.customParams.residualLagTime
+    ) {
+      return connectedPreparationDevice.customParams.residualLagTime;
+    } else {
+      // Fixed value.
+      return 1.35;
+    }
   }
   public getTemperature() {
     return this.temperature;

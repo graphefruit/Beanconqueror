@@ -17,5 +17,6 @@ export default {
     SHARE_IMAGE: 'SHARE_IMAGE',
     SHOW_BREWS: 'SHOW_BREWS',
     CUPPING: 'CUPPING',
+    UNARCHIVE: 'UNARCHIVE',
   },
 };

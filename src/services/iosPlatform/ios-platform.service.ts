@@ -51,7 +51,13 @@ export class IosPlatformService {
         .subscribe((event) => {
           this.uiLog.log('iOS-Platform - Start to export ZIP file');
           try {
-            this.uiExportImportHelper.saveAutomaticBackups();
+            this.uiStorage.get('MILL').then(
+              () => {
+                // We just do an automatic export, if the data could be grabbed and the database connection is established.
+                this.uiExportImportHelper.saveAutomaticBackups();
+              },
+              () => {}
+            );
           } catch (ex) {}
         });
     }

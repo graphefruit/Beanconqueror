@@ -1053,6 +1053,35 @@
                 "<b>Other<\/b>",
                 "Minor bug fixes"
             ]
+        },
+        "7.2.0": {
+            "TITLE": "Version 7.2.0: What's new",
+            "DESCRIPTION": [
+                "<b>More languages<\/b>",
+                "Support of Italian - Thanks to Cancercookie",
+                "Support of Polish - Thanks to MarcinSachs",
+                "",
+                "<b>Bluetooth Scales<\/b>",
+                "Time start will wait, until the scale is reporting several 0 weight reports, when you set 'Tare scale when starting timer'",
+                "",
+                "<b>Xenia<\/b>",
+                "Adding toggle for V1 and V2 Api usage",
+                "Adding a Brew By Weight Feature with automatic calculcation to stop the shot on wished weight",
+                "",
+                "<b>Meticulous<\/b>",
+                "First Meticulous integration - Thanks to the whole Meticulous Team!",
+                "",
+                "<b>Settings<\/b>",
+                "Define a threshold for the first drip to count",
+                "",
+                "<b>Other<\/b>",
+                "Some technical changes in the code",
+                "Small tweaks",
+                "[IOS]Showing popups if the database access could not be established.",
+                "",
+                "<b>Thanks<\/b>",
+                "A big thank you to all translators who are putting in tremendous effort to make the app available in multiple languages."
+            ]
         }
     },
     "CUSTOM_PARAMETERS": "Customize parameters",
@@ -1606,7 +1635,8 @@
     "PREPARATION_DEVICE": {
         "TYPE": {
             "NONE": "None",
-            "XENIA": "Xenia"
+            "XENIA": "Xenia",
+            "METICULOUS": "Meticulous"
         },
         "URL": "Url",
         "CHOOSE_DEVICE": "Choose device",
@@ -1627,7 +1657,18 @@
             "ERROR_NOT_ALL_SCRIPTS_FOUND": "One or more scripts could not be found, they were reset",
             "ERROR_CONNECTION_COULD_NOT_BE_ESTABLISHED": "The connection to the xenia espresso machine could not be established. Please make sure you're on the right network (LAN), if you entered the right IP address, etc.",
             "CHECKING_CONNECTION_TO_PORTAFILTER": "Connection to Xenia is being checked",
-            "GRABING_SCRIPTS": "Loading scripts from Xenia"
+            "GRABING_SCRIPTS": "Loading scripts from Xenia",
+            "BREW_BY_WEIGHT_ACTIVE": "Brew by weight active"
+        },
+        "API_VERSION": "Api Version",
+        "RESIDUAL_LAG_TIME": "Residual lag time",
+        "RESIDUAL_LAG_TIME_DESCRIPTION": "Set the time to match the remaining water. With a naked portafilter you'd need a lower time, with a spouted one a higher one. As slower your scale reports the weight, as more time change you need",
+        "TYPE_METICULOUS": {
+            "TITLE": "Meticulous Machine",
+            "NO_PROFILE": "No Profile",
+            "CHOOSE_PROFILE": "Choose profile",
+            "SHOT_STARTED": "Shot started",
+            "SHOT_ENDED": "Shot ended"
         }
     },
     "DEVICE_CONNECTION": "Device connection",
@@ -1786,4 +1827,56 @@
     "EXTRACTION_CHART_LABEL_WEAK_UNDEREXTRACTED": "WEAK<br>underextracted",
     "EXTRACTION_CHART_LABEL_WEAK": "WEAK<br>",
     "EXTRACTION_CHART_LABEL_WEAK_HARSH": "WEAK<br>harsh"
+    "PAGE_SETTINGS_SHOW_BACKUP_ISSUES": "Show backup issues",
+    "PAGE_SETTINGS_SHOW_BACKUP_ISSUES_DESCRIPTION": "Display a popup if backups can't be wrote to the filesystem",
+    "AUTOMATIC_BACKUP_DID_FAIL": "Auto Backup did not work, make sure to have working backups! This information can be turned off in the settings",
+    "INTERNAL_BACKUP_DID_FAIL": "Internal Backup did not work, make sure to have working backups! This information can be turned off in the settings",
+    "ZIP_BACKUP_FILE_COULD_NOT_BE_BUILD": "ZIP file could not be saved! This information can be turned off in the settings",
+    "SEND_LOGS": "Send logs",
+    "POPOVER_BLUETOOTH_ACTION_RECONNECT_REFRACTOMETER": "Reconnect refractometer device",
+    "PAGE_SETTINGS_LANGUAGE_ITALIAN": "Italiano",
+    "PAGE_SETTINGS_LANGUAGE_POLISH": "Polish",
+    "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_GENERAL_DESCRIPTION": "You need to reset your timer first before you can start",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD": "First drip threshold",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD_TOOLTIP": "At which scale weight, shall the first drip be counted? Default: >= 0.1g",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE": "Start brew delay",
+    "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE_DESCRIPTION": "Set a delay time which will display a loading spinner until the brew will start",
+    "STARTING_IN": "Starting in ... {{time}}",
+    "IOS_DATABASE_ISSUE_TITLE": "ATTENTION !!!!! - DATABASE CONNECTION LOST",
+    "IOS_DATABASE_ISSUE_DESCRIPTION": "We regret to inform you that we have encountered a loss of connection to the Database. This issue is a result of an unresolved bug in Apple's system, beyond the control of Beanconqueror. To prevent any potential data loss, we kindly ask you to immediately force-close the Beanconqueror application and reopen it.",
+    "RELOAD_APP": "Reload app now",
+    "WATER_TYPE_ADD_CUSTOM": "Custom water",
+    "WATER_TYPE_THIRD_WAVE_WATER_CLASSIC_LIGHT_ROAST_PROFILE":"Third Wave Water - Classic Light Roast Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_MEDIUM_ROAST_PROFILE":"Third Wave Water - Medium Roast Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_DARK_ROAST_PROFILE":"Third Wave Water - Dark Roast Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_ESPRESSO_MACHINE_PROFILE":"Third Wave Water - Espresso Machine Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_COLD_BREW_PROFILE":"Third Wave Water -Cold Brew Profile",
+    "WATER_TYPE_THIRD_WAVE_WATER_LOW_ACID_PROFILE":"Third Wave Water - Low Acid Profile",
+    "ADD_WATER": "Add water",
+    "PAGE_SETTINGS_TEXT_TO_SPEECH_SECTION": "Text to speech",
+    "TEXT_TO_SPEECH": {
+      "ACTIVATE": "Activate Text to speech",
+      "BREW_STARTED": "Brew started",
+      "BREW_ENDED": "Brew end",
+      "TIME": "Time",
+      "SPEAK_EVERY_MS": "Speak every selected millisecond",
+      "FOLLOWING_NUMBERS_WILL_BE_TEST_SPOKEN": "Following numbers will be test spoken",
+      "TEST_SPEAK": "Start test speak",
+      "PITCH": "Pitch",
+      "RATE": "Rate"
+    },
+    "PAGE_SETTINGS_HAPTIC_FEEDBACK_SECTION": "Haptic feedback",
+    "HAPTIC_FEEDBACK": {
+      "ACTIVATE": "Activate haptic feedback",
+      "BREW_STARTED": "Vibrate on brew start",
+      "BREW_STOPPED": "Vibrate on brew stop",
+      "TARE": "Vibrate on scale tare"
+    },
+    "CONNECTED": "Connected",
+    "DISCONNECTED": "Disconnected",
+    "EXPERIMENTAL_FEATURE_DISCLAIMER": "This is an experimental feature",
+    "SHOW_HOURS": "Show hours",
+    "SHOW_MINUTES": "Show minutes",
+    "BEANS_UNARCHIVE": "Unarchive",
+    "TOAST_BEAN_UNARCHIVED_SUCCESSFULLY": "Bean has been unarchived"
 }

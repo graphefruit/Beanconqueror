@@ -57,6 +57,9 @@ export interface ISettings {
 
   track_caffeine_consumption: boolean;
 
+  brew_timer_start_delay_time: number;
+  brew_timer_start_delay_active: boolean;
+
   show_roasting_section: boolean;
   show_water_section: boolean;
   show_cupping_section: boolean;
@@ -145,6 +148,7 @@ export interface ISettings {
   bluetooth_scale_listening_threshold_start: number;
   bluetooth_scale_listening_threshold_active: boolean;
   bluetooth_scale_ignore_weight_button_active: boolean;
+  bluetooth_scale_first_drip_threshold: number;
 
   pressure_id: string;
   pressure_type: PressureType;
@@ -175,4 +179,18 @@ export interface ISettings {
   visualizer_username: string;
   visualizer_password: string;
   visualizer_upload_automatic: boolean;
+
+  show_backup_issues: boolean;
+
+  text_to_speech_active: boolean;
+  text_to_speech_rate: number;
+  text_to_speech_pitch: number;
+
+  haptic_feedback_active: boolean;
+  haptic_feedback_brew_started: boolean;
+  haptic_feedback_brew_stopped: boolean;
+  haptic_feedback_tare: boolean;
+
+  brew_timer_show_hours: boolean;
+  brew_timer_show_minutes: boolean;
 }

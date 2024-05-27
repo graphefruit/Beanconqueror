@@ -183,6 +183,10 @@ import { GraphAddComponent } from '../graph-section/graph/graph-add/graph-add.co
 import { GraphDetailComponent } from '../graph-section/graph/graph-detail/graph-detail.component';
 import { GraphDisplayCardComponent } from '../../components/graph-display-card/graph-display-card.component';
 import { BrewPopoverExtractionComponent } from '../brew/brew-popover-extraction/brew-popover-extraction.component';
+import { LoadingPopoverComponent } from '../../popover/loading-popover/loading-popover.component';
+import { BrewBrewingGraphComponent } from '../../components/brews/brew-brewing-graph/brew-brewing-graph.component';
+import { BrewBrewingPreparationDeviceComponent } from '../../components/brews/brew-brewing-preparation-device/brew-brewing-preparation-device.component';
+import { WaterAddTypeComponent } from '../water-section/water/water-add-type/water-add-type.component';
 
 @NgModule({
   declarations: [
@@ -219,6 +223,7 @@ import { BrewPopoverExtractionComponent } from '../brew/brew-popover-extraction/
     ImpressumComponent,
     PreparationAddTypeComponent,
     CustomPopoverComponent,
+    LoadingPopoverComponent,
     FilesystemErrorPopoverComponent,
     WelcomePopoverComponent,
     AnalyticsPopoverComponent,
@@ -331,6 +336,8 @@ import { BrewPopoverExtractionComponent } from '../brew/brew-popover-extraction/
     BeanSortInformationComponent,
     GreenBeanGeneralInformationComponent,
     BrewBrewingComponent,
+    BrewBrewingGraphComponent,
+    BrewBrewingPreparationDeviceComponent,
     BeanDetailSortInformationComponent,
     GreenBeanSortComponent,
     RoastingMachineInformationCardComponent,
@@ -340,6 +347,7 @@ import { BrewPopoverExtractionComponent } from '../brew/brew-popover-extraction/
     RoastingMachinePage,
     RoastingMachinePopoverActionsComponent,
     WaterAddComponent,
+    WaterAddTypeComponent,
     BrewRatioCardComponent,
     BrewPopoverExtractionComponent,
   ],
@@ -427,6 +435,7 @@ import { BrewPopoverExtractionComponent } from '../brew/brew-popover-extraction/
     ImpressumComponent,
     PreparationAddTypeComponent,
     CustomPopoverComponent,
+    LoadingPopoverComponent,
     FilesystemErrorPopoverComponent,
     WelcomePopoverComponent,
     AnalyticsPopoverComponent,
@@ -536,6 +545,8 @@ import { BrewPopoverExtractionComponent } from '../brew/brew-popover-extraction/
     BeanSortInformationComponent,
     GreenBeanGeneralInformationComponent,
     BrewBrewingComponent,
+    BrewBrewingGraphComponent,
+    BrewBrewingPreparationDeviceComponent,
     BeanDetailSortInformationComponent,
     GreenBeanSortComponent,
     RoastingMachineInformationCardComponent,
@@ -545,6 +556,7 @@ import { BrewPopoverExtractionComponent } from '../brew/brew-popover-extraction/
     RoastingMachinePage,
     RoastingMachinePopoverActionsComponent,
     WaterAddComponent,
+    WaterAddTypeComponent,
     BrewRatioCardComponent,
     BrewPopoverExtractionComponent,
   ],

@@ -70,6 +70,7 @@ import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
 import { UIGraphStorage } from '../../services/uiGraphStorage.service';
 import { Graph } from '../../classes/graph/graph';
+import { TextToSpeechService } from '../../services/textToSpeech/text-to-speech.service';
 
 declare var cordova: any;
 declare var device: any;
@@ -160,7 +161,8 @@ export class SettingsPage implements OnInit {
     private readonly eventQueue: EventQueueService,
     private readonly uiFileHelper: UIFileHelper,
     private readonly uiExportImportHelper: UIExportImportHelper,
-    private readonly visualizerService: VisualizerService
+    private readonly visualizerService: VisualizerService,
+    private readonly textToSpeech: TextToSpeechService
   ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -822,6 +824,20 @@ export class SettingsPage implements OnInit {
     }
   }
 
+  public testSpeak() {
+    this.textToSpeech.readAndSetTTLSettings();
+    let speakTestCount: number = 0;
+    const testSpeakArray = ['182.5', '28', '1072', '1.2', '0.1', '203.5'];
+    const speakTestIntv = setInterval(() => {
+      this.textToSpeech.speak(testSpeakArray[speakTestCount]);
+
+      speakTestCount = speakTestCount + 1;
+      if (speakTestCount > 5) {
+        clearInterval(speakTestIntv);
+      }
+    }, this.settings.text_to_speech_interval_rate);
+  }
+
   public async uploadBrewsToVisualizer() {
     const brewEntries = this.uiBrewStorage.getAllEntries();
     const uploadShots = brewEntries.filter(
@@ -1082,7 +1098,6 @@ export class SettingsPage implements OnInit {
     this.uiExportImportHelper.buildExportZIP().then(
       async (_blob) => {
         this.uiLog.log('New zip-export way');
-        const isIOS = this.platform.is('ios');
 
         if (this.platform.is('cordova')) {
           if (this.platform.is('android')) {
@@ -1236,14 +1251,14 @@ export class SettingsPage implements OnInit {
   }
 
   private async _exportFlowProfiles(_storedData: Array<Brew>) {
-    for (const entry of _storedData) {
-      if (entry.flow_profile && entry.flow_profile.length) {
-        await this._exportFlowProfileFile(entry.flow_profile);
-      }
-    }
+    await this.exportStoredData(_storedData);
   }
 
   private async _exportGraphProfiles(_storedData: Array<Graph>) {
+    await this.exportStoredData(_storedData);
+  }
+
+  private async exportStoredData(_storedData: Array<Brew> | Array<Graph>) {
     for (const entry of _storedData) {
       if (entry.flow_profile && entry.flow_profile.length) {
         await this._exportFlowProfileFile(entry.flow_profile);
@@ -1811,11 +1826,6 @@ export class SettingsPage implements OnInit {
                     await this._importFiles(roastingMachineData, _importPath);
                     await this._importFiles(waterData, _importPath);
 
-                    /*** WAIT!!, before you try to understand whats going on here
-                     After the latest file system changes of android, we can't copy .JSON Files, or other types, but .PNG, and .JPG works.
-                     Thats why we exported all the raw-jsons as a .PNG Type (but with JSON-Data), and when reimporting them, we load the .PNG and save it as .JSON
-                     Therefore we can transfer the brew history, else this would not be possible
-                     */
                     await this._importFlowProfileFiles(
                       brewsData,
                       _importPath + 'brews/'
