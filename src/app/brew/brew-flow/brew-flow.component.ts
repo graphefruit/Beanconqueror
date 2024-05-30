@@ -306,6 +306,10 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
   public async startTimer() {
     await this.brewComponent.timerStartPressed(undefined);
 
+    if (this.pressureDeviceConnected()) {
+      this.bleManager.getPressureDevice().enableValueTransmission();
+    }
+
     // Looks funny but we need. if we would not calculate and substract 25px, the actual time graph would not be displayed :<
     setTimeout(() => {
       try {
@@ -358,6 +362,10 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
 
   public async resetTimer() {
     this.brewComponent.timer.reset();
+
+    if (this.pressureDeviceConnected()) {
+      this.bleManager.getPressureDevice().disableValueTransmission();
+    }
 
     //await this.waitForPleaseWaitToBeFinished();
     setTimeout(() => {
