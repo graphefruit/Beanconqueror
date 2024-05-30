@@ -98,4 +98,11 @@ export class PrsPressure extends PressureDevice {
       (e: any) => {}
     );
   }
+
+  public enableValueTransmission(): void {
+    // not needed for this device
+  }
+  public disableValueTransmission(): void {
+    // not needed for this device
+  }
 }
