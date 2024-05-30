@@ -37,7 +37,7 @@ export class BookooPressure extends PressureDevice {
     const data = new Uint8Array([0x02, 0x0c, 0x01, 0x00, 0x00, 0x00, 0x0f]);
 
     return new Promise((resolve, reject) => {
-      ble.writeWithoutResponse(
+      ble.write(
         this.device_id,
         BookooPressure.PRESSURE_SERVICE_UUID,
         BookooPressure.PRESSURE_CMD_UUID,
@@ -56,7 +56,7 @@ export class BookooPressure extends PressureDevice {
     const data = new Uint8Array([0x02, 0x0c, 0x00, 0x00, 0x00, 0x00, 0x0e]);
 
     return new Promise((resolve, reject) => {
-      ble.writeWithoutResponse(
+      ble.write(
         this.device_id,
         BookooPressure.PRESSURE_SERVICE_UUID,
         BookooPressure.PRESSURE_CMD_UUID,
@@ -90,7 +90,7 @@ export class BookooPressure extends PressureDevice {
       BookooPressure.PRESSURE_SERVICE_UUID,
       BookooPressure.PRESSURE_PRESSURE_UUID,
       async (_data: any) => {
-        if (_data.length === 10) {
+        if (_data.byteLength === 10) {
           const pressureData = new Uint8Array(_data);
           const val = (pressureData[4] << 8) + pressureData[5];
           let actualPressure: any = 0;

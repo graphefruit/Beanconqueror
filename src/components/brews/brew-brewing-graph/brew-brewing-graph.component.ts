@@ -1648,6 +1648,8 @@ export class BrewBrewingGraphComponent implements OnInit {
       }
 
       if (pressureDevice) {
+        pressureDevice.disableValueTransmission();
+
         this.deattachToPressureChange();
         if (this.settings.pressure_threshold_active === true) {
           // After attaching attach again
@@ -2101,10 +2103,12 @@ export class BrewBrewingGraphComponent implements OnInit {
         }
       }
 
-      /** We don't need any delay here anymore, because all taring action was already done before, so just trigger the start
-       * This will also reduce the issue that the DiFluid reports the Start and we don't attach anymore to changes.
-       * **/
-      scale.setTimer(SCALE_TIMER_COMMAND.START);
+      if (scale) {
+        /** We don't need any delay here anymore, because all taring action was already done before, so just trigger the start
+         * This will also reduce the issue that the DiFluid reports the Start and we don't attach anymore to changes.
+         * **/
+        scale.setTimer(SCALE_TIMER_COMMAND.START);
+      }
 
       if (
         pressureDevice &&
@@ -2113,6 +2117,9 @@ export class BrewBrewingGraphComponent implements OnInit {
       ) {
         // Just update to zero if there is no threshold active
         pressureDevice.updateZero();
+      }
+      if (pressureDevice) {
+        pressureDevice.enableValueTransmission();
       }
 
       this.startingFlowTime = Date.now();
@@ -2422,6 +2429,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       if (!isEspressoBrew) {
         return;
       }
+
       this.pressureDeviceSubscription = pressureDevice.pressureChange.subscribe(
         (_val) => {
           const actual: number = _val.actual;
