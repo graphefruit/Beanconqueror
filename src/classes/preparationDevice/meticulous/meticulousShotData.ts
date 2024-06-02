@@ -11,6 +11,8 @@ export class MeticulousShotData implements IMeticulousShotData {
   public oldWeight: number;
   public smoothedWeight: number;
   public oldSmoothedWeight: number;
+
+  public extracting: boolean;
   constructor() {
     this.status = '';
     this.shotTime = 0;
@@ -21,6 +23,7 @@ export class MeticulousShotData implements IMeticulousShotData {
     this.oldWeight = 0;
     this.smoothedWeight = 0;
     this.oldSmoothedWeight = 0;
+    this.extracting = false;
   }
 
   protected calculateSmoothedWeight(

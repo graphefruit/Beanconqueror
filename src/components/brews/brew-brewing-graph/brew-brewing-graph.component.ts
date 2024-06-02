@@ -1843,7 +1843,7 @@ export class BrewBrewingGraphComponent implements OnInit {
             const shotData: MeticulousShotData =
               prepDeviceCall.getActualShotData();
 
-            if (shotData.shotTime >= 0 && hasShotStarted === false) {
+            if (shotData.extracting === true && hasShotStarted === false) {
               this.uiAlert.hideLoadingSpinner();
               this.uiToast.showInfoToast(
                 'PREPARATION_DEVICE.TYPE_METICULOUS.SHOT_STARTED'
@@ -1858,10 +1858,8 @@ export class BrewBrewingGraphComponent implements OnInit {
               this.lastChartRenderingInstance = -1;
               this.updateChart();
             } else if (
-              shotData.shotTime === -1 &&
-              hasShotStarted === true &&
-              lastState === 'retracting' &&
-              shotData.status !== 'retracting'
+              shotData.extracting === false &&
+              hasShotStarted === true
             ) {
               hasShotStarted = false;
 
