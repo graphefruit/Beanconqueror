@@ -1850,9 +1850,15 @@ export class BrewBrewingGraphComponent implements OnInit {
               );
               hasShotStarted = true;
               this.startingFlowTime = Date.now();
-              const startingDay = moment(new Date()).startOf('day');
               // IF brewtime has some seconds, we add this to the delay directly.
               this.data.brew_time = 0;
+              this.data.brew_time_milliseconds = 0;
+
+              this.data.coffee_first_drip_time = 0;
+              this.data.coffee_first_drip_time_milliseconds = 0;
+              this.data.coffee_blooming_time = 0;
+              this.data.coffee_blooming_time_milliseconds = 0;
+
               this.brewComponent.timer.initTimer(false);
               this.brewComponent.timer.startTimer(false, false);
               this.lastChartRenderingInstance = -1;
