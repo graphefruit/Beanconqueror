@@ -1898,6 +1898,9 @@ export class BrewBrewingGraphComponent implements OnInit {
               //this.__setMachineWaterFlow({ actual: shotData.flow, old: shotData.flow });
 
               this.setActualSmartInformation(shotData.weight);
+
+              // We have found a written weight which is above 5 grams at least
+              this.__setScaleWeight(shotData.weight, false, false);
             }
             lastState = shotData.status;
           }, 100);
