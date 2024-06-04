@@ -98,6 +98,7 @@
         <icon density="xxxhdpi" src="resources/android/icon/drawable-xxxhdpi-icon.png" />
         <icon density="mdpi" src="resources/android/icon/drawable-mdpi-icon.png" />
         <hook src="plugins/cordova-plugin-ble-central/stripDuplicatePermissions.js" type="after_prepare" />
+        <hook src="hooks/stripAndroidPermissions.js" type="after_prepare" />
     </platform>
     <platform name="ios">
         <privacy-manifest>

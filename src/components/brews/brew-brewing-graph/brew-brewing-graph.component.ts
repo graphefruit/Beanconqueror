@@ -1648,6 +1648,8 @@ export class BrewBrewingGraphComponent implements OnInit {
       }
 
       if (pressureDevice) {
+        pressureDevice.disableValueTransmission();
+
         this.deattachToPressureChange();
         if (this.settings.pressure_threshold_active === true) {
           // After attaching attach again
@@ -1841,25 +1843,29 @@ export class BrewBrewingGraphComponent implements OnInit {
             const shotData: MeticulousShotData =
               prepDeviceCall.getActualShotData();
 
-            if (shotData.shotTime >= 0 && hasShotStarted === false) {
+            if (shotData.extracting === true && hasShotStarted === false) {
               this.uiAlert.hideLoadingSpinner();
               this.uiToast.showInfoToast(
                 'PREPARATION_DEVICE.TYPE_METICULOUS.SHOT_STARTED'
               );
               hasShotStarted = true;
               this.startingFlowTime = Date.now();
-              const startingDay = moment(new Date()).startOf('day');
               // IF brewtime has some seconds, we add this to the delay directly.
               this.data.brew_time = 0;
+              this.data.brew_time_milliseconds = 0;
+
+              this.data.coffee_first_drip_time = 0;
+              this.data.coffee_first_drip_time_milliseconds = 0;
+              this.data.coffee_blooming_time = 0;
+              this.data.coffee_blooming_time_milliseconds = 0;
+
               this.brewComponent.timer.initTimer(false);
               this.brewComponent.timer.startTimer(false, false);
               this.lastChartRenderingInstance = -1;
               this.updateChart();
             } else if (
-              shotData.shotTime === -1 &&
-              hasShotStarted === true &&
-              lastState === 'retracting' &&
-              shotData.status !== 'retracting'
+              shotData.extracting === false &&
+              hasShotStarted === true
             ) {
               hasShotStarted = false;
 
@@ -1892,6 +1898,9 @@ export class BrewBrewingGraphComponent implements OnInit {
               //this.__setMachineWaterFlow({ actual: shotData.flow, old: shotData.flow });
 
               this.setActualSmartInformation(shotData.weight);
+
+              // We have found a written weight which is above 5 grams at least
+              this.__setScaleWeight(shotData.weight, false, false);
             }
             lastState = shotData.status;
           }, 100);
@@ -2101,10 +2110,12 @@ export class BrewBrewingGraphComponent implements OnInit {
         }
       }
 
-      /** We don't need any delay here anymore, because all taring action was already done before, so just trigger the start
-       * This will also reduce the issue that the DiFluid reports the Start and we don't attach anymore to changes.
-       * **/
-      scale.setTimer(SCALE_TIMER_COMMAND.START);
+      if (scale) {
+        /** We don't need any delay here anymore, because all taring action was already done before, so just trigger the start
+         * This will also reduce the issue that the DiFluid reports the Start and we don't attach anymore to changes.
+         * **/
+        scale.setTimer(SCALE_TIMER_COMMAND.START);
+      }
 
       if (
         pressureDevice &&
@@ -2113,6 +2124,9 @@ export class BrewBrewingGraphComponent implements OnInit {
       ) {
         // Just update to zero if there is no threshold active
         pressureDevice.updateZero();
+      }
+      if (pressureDevice) {
+        pressureDevice.enableValueTransmission();
       }
 
       this.startingFlowTime = Date.now();
@@ -2422,6 +2436,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       if (!isEspressoBrew) {
         return;
       }
+
       this.pressureDeviceSubscription = pressureDevice.pressureChange.subscribe(
         (_val) => {
           const actual: number = _val.actual;

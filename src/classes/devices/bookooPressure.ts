@@ -25,26 +25,19 @@ export class BookooPressure extends PressureDevice {
 
   public connect() {
     this.attachNotification();
-    //Wait after connection for updating to zero.
-    setTimeout(() => {
-      this.updateZero().catch(() => {});
-      this.enableNotifications().catch(() => {});
-    }, 1000);
   }
 
   public updateZero(): Promise<void> {
-    const data = new Uint8Array(1);
-
     return new Promise((resolve, reject) => {
       // not available
     });
   }
 
-  public enableNotifications(): Promise<void> {
+  public enableValueTransmission(): Promise<void> {
     const data = new Uint8Array([0x02, 0x0c, 0x01, 0x00, 0x00, 0x00, 0x0f]);
 
     return new Promise((resolve, reject) => {
-      ble.writeWithoutResponse(
+      ble.write(
         this.device_id,
         BookooPressure.PRESSURE_SERVICE_UUID,
         BookooPressure.PRESSURE_CMD_UUID,
@@ -59,11 +52,11 @@ export class BookooPressure extends PressureDevice {
     });
   }
 
-  public disableNotifications(): Promise<void> {
+  public disableValueTransmission(): Promise<void> {
     const data = new Uint8Array([0x02, 0x0c, 0x00, 0x00, 0x00, 0x00, 0x0e]);
 
     return new Promise((resolve, reject) => {
-      ble.writeWithoutResponse(
+      ble.write(
         this.device_id,
         BookooPressure.PRESSURE_SERVICE_UUID,
         BookooPressure.PRESSURE_CMD_UUID,
@@ -79,7 +72,7 @@ export class BookooPressure extends PressureDevice {
   }
 
   public disconnect() {
-    this.disableNotifications().catch(() => {});
+    this.disableValueTransmission().catch(() => {});
     this.deattachNotification();
   }
 
@@ -97,12 +90,13 @@ export class BookooPressure extends PressureDevice {
       BookooPressure.PRESSURE_SERVICE_UUID,
       BookooPressure.PRESSURE_PRESSURE_UUID,
       async (_data: any) => {
-        const pressureData = new Uint8Array(_data);
-        const val = (pressureData[4] << 8) + pressureData[5];
-        let actualPressure: any = 0;
-        actualPressure = actualPressure / 100;
-        actualPressure = this.toFixedIfNecessary(actualPressure, 1);
-        this.setPressure(actualPressure, _data, val);
+        if (_data.byteLength === 10) {
+          const pressureData = new Uint8Array(_data);
+          const val = (pressureData[4] << 8) + pressureData[5];
+          let actualPressure: any = 0;
+          actualPressure = this.toFixedIfNecessary(val, 1);
+          this.setPressure(actualPressure / 100, _data, val);
+        }
       },
       (_data: any) => {}
     );

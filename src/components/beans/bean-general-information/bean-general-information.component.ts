@@ -64,6 +64,15 @@ export class BeanGeneralInformationComponent implements OnInit {
     this.settings = this.uiSettingsStorage.getSettings();
   }
 
+  public pinFormatter(value: any) {
+    const parsedFloat = parseFloat(value);
+    if (isNaN(parsedFloat)) {
+      return `${0}`;
+    }
+    const newValue = +parsedFloat.toFixed(2);
+    return `${newValue}`;
+  }
+
   public ngOnInit() {
     this.maxBeanRating = this.settings.bean_rating;
     this.initialBeanData = this.uiHelper.cloneData(this.data);
