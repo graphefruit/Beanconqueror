@@ -128,16 +128,9 @@ export class UIImage {
                     async (results) => {
                       await this.uiAlert.showLoadingSpinner();
                       for await (const result of results) {
-                        if (
-                          result &&
-                          result.length > 0 &&
-                          result !== 0 &&
-                          result !== '' &&
-                          result !== 'OK' &&
-                          result.length > 5
-                        ) {
+                        if (result && result.path) {
                           try {
-                            const imageStr: string = `data:image/jpeg;base64,${result}`;
+                            const imageStr: string = `data:image/jpeg;base64,${result.path}`;
                             const newURL =
                               await this.uiFileHelper.saveBase64File(
                                 'beanconqueror_image',
