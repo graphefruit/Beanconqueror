@@ -1226,11 +1226,12 @@ export class SettingsPage implements OnInit {
       const allBrewFlows: Array<{ BREW: Brew; FLOW: BrewFlow }> = [];
       for await (const brew of allBrewsWithProfiles) {
         const flow: BrewFlow = await this.readFlowProfile(brew);
-
-        allBrewFlows.push({
-          BREW: brew,
-          FLOW: flow,
-        });
+        if (flow) {
+          allBrewFlows.push({
+            BREW: brew,
+            FLOW: flow,
+          });
+        }
       }
 
       this.uiExcel.exportBrewByWeights(allBrewFlows);
