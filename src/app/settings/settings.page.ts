@@ -71,12 +71,15 @@ import { VisualizerService } from '../../services/visualizerService/visualizer-s
 import { UIGraphStorage } from '../../services/uiGraphStorage.service';
 import { Graph } from '../../classes/graph/graph';
 import { TextToSpeechService } from '../../services/textToSpeech/text-to-speech.service';
+import { PreparationDeviceType } from '../../classes/preparationDevice';
+import { BrewFlow, IBrewWaterFlow } from '../../classes/brew/brewFlow';
 
 declare var cordova: any;
 declare var device: any;
 
 declare var window: any;
 declare var FilePicker;
+
 @Component({
   selector: 'settings',
   templateUrl: './settings.page.html',
@@ -813,6 +816,7 @@ export class SettingsPage implements OnInit {
     this.changeDetectorRef.detectChanges();
     await this.uiSettingsStorage.saveSettings(this.settings);
   }
+
   public async visualizerServerHasChanged() {
     if (this.settings.visualizer_server === VISUALIZER_SERVER_ENUM.VISUALIZER) {
       this.settings.visualizer_url = 'https://visualizer.coffee/';
@@ -822,6 +826,7 @@ export class SettingsPage implements OnInit {
       }
     }
   }
+
   public async checkVisualizerURL() {
     if (this.settings.visualizer_url === '') {
       this.settings.visualizer_url = 'https://visualizer.coffee/';
@@ -878,6 +883,7 @@ export class SettingsPage implements OnInit {
       );
     }
   }
+
   public howManyBrewsAreNotUploadedToVisualizer() {
     const brewEntries = this.uiBrewStorage.getAllEntries();
     return brewEntries.filter(
@@ -1059,6 +1065,7 @@ export class SettingsPage implements OnInit {
     const exportObjects: Array<any> = [...this.uiBrewStorage.getAllEntries()];
     await this._exportFlowProfiles(exportObjects);
   }
+
   private async exportGraphProfiles() {
     const exportObjects: Array<any> = [...this.uiGraphStorage.getAllEntries()];
     await this._exportGraphProfiles(exportObjects);
@@ -1175,6 +1182,71 @@ export class SettingsPage implements OnInit {
 
   public excelExport(): void {
     this.uiExcel.export();
+  }
+
+  public doWeHaveBrewByWeights(): boolean {
+    const allPreparations = this.uiPreparationStorage.getAllEntries();
+    for (const prep of allPreparations) {
+      if (
+        prep.connectedPreparationDevice.type === PreparationDeviceType.XENIA
+      ) {
+        return true;
+      }
+    }
+  }
+
+  public async exportBrewByWeight() {
+    await this.uiAlert.showLoadingSpinner();
+    try {
+      const allXeniaPreps = [];
+      const allPreparations = this.uiPreparationStorage.getAllEntries();
+      for (const prep of allPreparations) {
+        if (
+          prep.connectedPreparationDevice.type === PreparationDeviceType.XENIA
+        ) {
+          allXeniaPreps.push(prep);
+        }
+      }
+
+      const allBrewsWithProfiles = this.uiBrewStorage
+        .getAllEntries()
+        .filter(
+          (e) =>
+            e.flow_profile !== null &&
+            e.flow_profile !== undefined &&
+            e.flow_profile !== '' &&
+            allXeniaPreps.find(
+              (pr) => pr.config.uuid === e.method_of_preparation
+            ) &&
+            e.preparationDeviceBrew &&
+            e.preparationDeviceBrew.params &&
+            e.preparationDeviceBrew.params.brew_by_weight_active === true
+        );
+
+      const allBrewFlows: Array<{ BREW: Brew; FLOW: BrewFlow }> = [];
+      for await (const brew of allBrewsWithProfiles) {
+        const flow: BrewFlow = await this.readFlowProfile(brew);
+
+        allBrewFlows.push({
+          BREW: brew,
+          FLOW: flow,
+        });
+      }
+
+      this.uiExcel.exportBrewByWeights(allBrewFlows);
+    } catch (ex) {
+      this.uiAlert.hideLoadingSpinner();
+    }
+  }
+
+  public async readFlowProfile(_brew: Brew) {
+    const flowProfilePath = 'brews/' + _brew.config.uuid + '_flow_profile.json';
+    try {
+      const jsonParsed = await this.uiFileHelper.getJSONFile(flowProfilePath);
+      return jsonParsed as BrewFlow;
+    } catch (ex) {
+      return null;
+    }
   }
 
   public importBeansExcel(): void {
@@ -1463,6 +1535,7 @@ export class SettingsPage implements OnInit {
       }
     }
   }
+
   private async _importGraphProfileFiles(
     _storedData: Array<Graph>,
     _importPath: string

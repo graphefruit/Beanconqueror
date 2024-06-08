@@ -2177,6 +2177,35 @@ export class BrewBrewingGraphComponent implements OnInit {
               false
             );
           });
+
+        setTimeout(() => {
+          prepDeviceCall.getOverview().then(
+            (_jsonResp: any) => {
+              if (_jsonResp.MA_Status === 3) {
+                //Great we started.
+              } else {
+                //Oh no... lets try it again
+                this.uiToast.showInfoToast(
+                  'We tried to start the xenia script again'
+                );
+                prepDeviceCall
+                  .startScript(
+                    this.data.preparationDeviceBrew.params.scriptStartId
+                  )
+                  .catch((_msg) => {
+                    this.uiLog.log('We could not start script: ' + _msg);
+                    this.uiToast.showInfoToast(
+                      'We could not start script - second try: ' + _msg,
+                      false
+                    );
+                  });
+              }
+            },
+            () => {
+              //Error... ignore
+            }
+          );
+        }, 1000);
         this.writeExecutionTimeToNotes(
           'Start script',
           this.data.preparationDeviceBrew.params.scriptStartId,
