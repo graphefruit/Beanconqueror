@@ -126,4 +126,8 @@ export class DashboardPage implements OnInit {
     }
     return usedWeightCount;
   }
+
+  public getPricePerGram(_bean: Bean): number {
+    return _bean.weight / _bean.cost;
+  }
 }
