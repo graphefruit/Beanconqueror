@@ -171,6 +171,10 @@ export class BeanModalSelectComponent implements OnInit {
     return usedWeightCount;
   }
 
+  public getPricePerGram(_bean: Bean): number {
+    return _bean.weight / _bean.cost;
+  }
+
   public ngOnInit() {}
 
   public getOpenBeans(): Array<Bean> {

@@ -13,6 +13,7 @@ export class BeanListViewParameter implements IBeanParameter {
   public roast: boolean;
   public roast_range: boolean;
   public weight: boolean;
+  public priceWeightRatio: boolean;
   public cost: boolean;
   public attachments: boolean;
   public url: boolean;
@@ -48,6 +49,7 @@ export class BeanListViewParameter implements IBeanParameter {
     this.roast = true;
     this.roast_range = false;
     this.weight = true;
+    this.priceWeightRatio = true;
     this.cost = true;
     this.attachments = true;
     this.url = false;
@@ -83,6 +85,7 @@ export class BeanListViewParameter implements IBeanParameter {
     this.roast = true;
     this.roast_range = true;
     this.weight = true;
+    this.priceWeightRatio = true;
     this.cost = true;
     this.attachments = true;
     this.url = true;

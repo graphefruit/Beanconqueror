@@ -138,6 +138,10 @@ export class BeanInformationComponent implements OnInit {
     return usedWeightCount;
   }
 
+  public getPricePerGram(): number {
+    return this.bean.cost / this.bean.weight;
+  }
+
   public getRoastEnum(_key: ROASTS_ENUM) {
     for (const key in ROASTS_ENUM) {
       if (ROASTS_ENUM[key] === _key) {

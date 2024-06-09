@@ -84,6 +84,11 @@
                         [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount(bean) | number : '.0-2', gramTotal: bean?.weight,leftOver: bean?.weight - getUsedWeightCount(bean) | number : '.0-2'}"
                         style='margin: 0;padding: 0;display: inline;'></span>
                       </p>
+                      <p *ngIf='bean?.weight > 0'>
+                        {{"BEAN_PRICE_WEIGHT_RATIO" | translate}}:&nbsp;<span
+                        [innerHTML]="'BEAN_PRICE_WEIGHT_RATIO' | translate: {weightRatio: getPricePerGram() | number : '.0-2'}"
+                        style='margin: 0;padding: 0;display: inline;'></span>
+                      </p>
                     </div>
                   </ion-checkbox>
                 </ion-item>
@@ -158,6 +163,11 @@
                       <p *ngIf='bean?.weight > 0'>
                         {{"BEANS_AMOUNT_USED" | translate}}:&nbsp;<span
                         [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount(bean) | number : '.0-2', gramTotal: bean?.weight,leftOver: bean?.weight - getUsedWeightCount(bean)| number : '.0-2'}"
+                        style='margin: 0;padding: 0;display: inline;'></span>
+                      </p>
+                      <p *ngIf='bean?.weight > 0'>
+                        {{"BEAN_PRICE_WEIGHT_RATIO" | translate}}:&nbsp;<span
+                        [innerHTML]="'BEAN_PRICE_WEIGHT_RATIO' | translate: {weightRatio: getPricePerGram() | number : '.0-2'}"
                         style='margin: 0;padding: 0;display: inline;'></span>
                       </p>
                     </div>
@@ -244,6 +254,11 @@
                         [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount(bean) | number : '.0-2', gramTotal: bean?.weight, leftOver: bean?.weight - getUsedWeightCount(bean)| number : '.0-2'}"
                         style='margin: 0;padding: 0;display: inline;'></span>
                       </p>
+                      <p *ngIf='bean?.weight > 0'>
+                        {{"BEAN_PRICE_WEIGHT_RATIO" | translate}}:&nbsp;<span
+                        [innerHTML]="'BEAN_PRICE_WEIGHT_RATIO' | translate: {weightRatio: getPricePerGram() | number : '.0-2'}"
+                        style='margin: 0;padding: 0;display: inline;'></span>
+                      </p>
                     </ion-radio>
 
                   </ion-item>
@@ -320,6 +335,11 @@
                       <p *ngIf='bean?.weight > 0'>
                         {{"BEANS_AMOUNT_USED" | translate}}:&nbsp;<span
                         [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount(bean) | number : '.0-2', gramTotal: bean?.weight, leftOver: bean?.weight - getUsedWeightCount(bean)| number : '.0-2'}"
+                        style='margin: 0;padding: 0;display: inline;'></span>
+                      </p>
+                      <p *ngIf='bean?.weight > 0'>
+                        {{"BEAN_PRICE_WEIGHT_RATIO" | translate}}:&nbsp;<span
+                        [innerHTML]="'BEAN_PRICE_WEIGHT_RATIO' | translate: {weightRatio: getPricePerGram() | number : '.0-2'}"
                         style='margin: 0;padding: 0;display: inline;'></span>
                       </p>
                     </ion-radio>

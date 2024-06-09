@@ -103,6 +103,12 @@
                 <ion-text
                   [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount() | number : '.0-2', gramTotal: bean?.weight,leftOver: bean?.weight - getUsedWeightCount() | number : '.0-2'}">{{daysOld()}}</ion-text>
               </ion-col>
+              <ion-col *ngIf="uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.priceWeightRatio)" size="6">
+                <ion-label class="card-headline">{{"BEANS_PRICE_WEIGHT" | translate}}</ion-label>
+                <br/>
+                <ion-text
+                  [innerHTML]="'BEAN_PRICE_WEIGHT_RATIO' | translate: {weightRatio: getPricePerGram() | number : '.0-2'}">{{daysOld()}}</ion-text>
+              </ion-col>
               <ion-col *ngIf="(bean?.hasCustomFlavors() || bean?.hasPredefinedFlavors())" size="12">
                 <ion-label class="card-headline">{{'BREW_DATA_FLAVOR' | translate}}</ion-label><br/>
                 <ion-text class="ion-text-wrap">{{getCuppedBrewFlavors()}}</ion-text>

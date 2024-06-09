@@ -132,6 +132,15 @@
         </ion-item>
         <ion-item tappable>
           <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
+                        [(ngModel)]='data.bean_visible_list_view_parameters.priceWeightRatio'>
+            <div class='ion-label'>
+              <h2>{{"BEAN_PRICE_WEIGHT_RATIO" | translate}}</h2>
+              <p>{{"BEAN_PRICE_WEIGHT_TOOLTIP" | translate}}</p>
+            </div>
+          </ion-checkbox>
+        </ion-item>
+        <ion-item tappable>
+          <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
                         [(ngModel)]='data.bean_visible_list_view_parameters.aromatics'>
             <div class='ion-label'>
               <h2>{{"BEAN_DATA_AROMATICS" | translate}}</h2>
