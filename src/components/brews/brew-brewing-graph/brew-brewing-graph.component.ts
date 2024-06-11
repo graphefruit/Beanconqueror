@@ -2181,7 +2181,11 @@ export class BrewBrewingGraphComponent implements OnInit {
         setTimeout(() => {
           prepDeviceCall.getOverview().then(
             (_jsonResp: any) => {
-              if (_jsonResp.MA_Status === 3) {
+              this.uiLog.log(
+                'Check of xenia answer if script started MA_STATUS: ' +
+                  _jsonResp.MA_Status
+              );
+              if (_jsonResp.MA_STATUS === 3) {
                 //Great we started.
               } else {
                 //Oh no... lets try it again
@@ -2205,7 +2209,7 @@ export class BrewBrewingGraphComponent implements OnInit {
               //Error... ignore
             }
           );
-        }, 1000);
+        }, 2000);
         this.writeExecutionTimeToNotes(
           'Start script',
           this.data.preparationDeviceBrew.params.scriptStartId,
