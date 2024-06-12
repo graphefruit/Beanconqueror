@@ -1303,8 +1303,7 @@
                 "",
                 "<b>Other<\/b>",
                 "Some technical changes in the code",
-                "Small tweaks",
-                "[IOS]Showing popups if the database access could not be established."
+                "Small tweaks"
             ]
         }
     }
