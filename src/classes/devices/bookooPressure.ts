@@ -4,7 +4,7 @@ import { Pressure, PressureDevice, psiToBar } from './pressureBluetoothDevice';
 
 declare var ble: any;
 export class BookooPressure extends PressureDevice {
-  public static DEVICE_NAME = 'XXXX_bookoo_em';
+  public static DEVICE_NAME = 'bookoo_em';
   public static PRESSURE_SERVICE_UUID = '0FFF';
   public static PRESSURE_CMD_UUID = 'FF01';
   public static PRESSURE_PRESSURE_UUID = 'FF02';
