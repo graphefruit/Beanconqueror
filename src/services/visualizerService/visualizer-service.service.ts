@@ -50,6 +50,12 @@ export class VisualizerService {
       const vS: Visualizer = new Visualizer();
       try {
         vS.mapBrew(_brew);
+        try {
+          if (_brew.tds > 0) {
+            vS.brew.ey = Number(_brew.getExtractionYield());
+          }
+        } catch (ex) {}
+
         vS.mapBean(_brew.getBean());
         vS.mapWater(_brew.getWater());
         vS.mapPreparation(_brew.getPreparation());

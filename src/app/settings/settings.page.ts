@@ -70,12 +70,16 @@ import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
 import { UIGraphStorage } from '../../services/uiGraphStorage.service';
 import { Graph } from '../../classes/graph/graph';
+import { TextToSpeechService } from '../../services/textToSpeech/text-to-speech.service';
+import { PreparationDeviceType } from '../../classes/preparationDevice';
+import { BrewFlow, IBrewWaterFlow } from '../../classes/brew/brewFlow';
 
 declare var cordova: any;
 declare var device: any;
 
 declare var window: any;
 declare var FilePicker;
+
 @Component({
   selector: 'settings',
   templateUrl: './settings.page.html',
@@ -89,6 +93,7 @@ export class SettingsPage implements OnInit {
   public debounceLanguageFilter: Subject<string> = new Subject<string>();
 
   public isHealthSectionAvailable: boolean = false;
+  public isTextToSpeechSectionAvailable: boolean = false;
 
   public currencies = {};
 
@@ -160,7 +165,8 @@ export class SettingsPage implements OnInit {
     private readonly eventQueue: EventQueueService,
     private readonly uiFileHelper: UIFileHelper,
     private readonly uiExportImportHelper: UIExportImportHelper,
-    private readonly visualizerService: VisualizerService
+    private readonly visualizerService: VisualizerService,
+    private readonly textToSpeech: TextToSpeechService
   ) {
     this.__initializeSettings();
     this.debounceLanguageFilter
@@ -179,6 +185,12 @@ export class SettingsPage implements OnInit {
         this.isHealthSectionAvailable = false;
       }
     );
+
+    if (this.platform.is('ios')) {
+      this.isTextToSpeechSectionAvailable = true;
+    } else {
+      this.isTextToSpeechSectionAvailable = false;
+    }
   }
 
   public async ngOnInit() {}
@@ -804,6 +816,7 @@ export class SettingsPage implements OnInit {
     this.changeDetectorRef.detectChanges();
     await this.uiSettingsStorage.saveSettings(this.settings);
   }
+
   public async visualizerServerHasChanged() {
     if (this.settings.visualizer_server === VISUALIZER_SERVER_ENUM.VISUALIZER) {
       this.settings.visualizer_url = 'https://visualizer.coffee/';
@@ -813,6 +826,7 @@ export class SettingsPage implements OnInit {
       }
     }
   }
+
   public async checkVisualizerURL() {
     if (this.settings.visualizer_url === '') {
       this.settings.visualizer_url = 'https://visualizer.coffee/';
@@ -820,6 +834,20 @@ export class SettingsPage implements OnInit {
     if (!this.settings.visualizer_url.endsWith('/')) {
       this.settings.visualizer_url = this.settings.visualizer_url + '/';
     }
+  }
+
+  public testSpeak() {
+    this.textToSpeech.readAndSetTTLSettings();
+    let speakTestCount: number = 0;
+    const testSpeakArray = ['182.5', '28', '1072', '1.2', '0.1', '203.5'];
+    const speakTestIntv = setInterval(() => {
+      this.textToSpeech.speak(testSpeakArray[speakTestCount]);
+
+      speakTestCount = speakTestCount + 1;
+      if (speakTestCount > 5) {
+        clearInterval(speakTestIntv);
+      }
+    }, this.settings.text_to_speech_interval_rate);
   }
 
   public async uploadBrewsToVisualizer() {
@@ -855,6 +883,7 @@ export class SettingsPage implements OnInit {
       );
     }
   }
+
   public howManyBrewsAreNotUploadedToVisualizer() {
     const brewEntries = this.uiBrewStorage.getAllEntries();
     return brewEntries.filter(
@@ -1036,6 +1065,7 @@ export class SettingsPage implements OnInit {
     const exportObjects: Array<any> = [...this.uiBrewStorage.getAllEntries()];
     await this._exportFlowProfiles(exportObjects);
   }
+
   private async exportGraphProfiles() {
     const exportObjects: Array<any> = [...this.uiGraphStorage.getAllEntries()];
     await this._exportGraphProfiles(exportObjects);
@@ -1152,6 +1182,72 @@ export class SettingsPage implements OnInit {
 
   public excelExport(): void {
     this.uiExcel.export();
+  }
+
+  public doWeHaveBrewByWeights(): boolean {
+    const allPreparations = this.uiPreparationStorage.getAllEntries();
+    for (const prep of allPreparations) {
+      if (
+        prep.connectedPreparationDevice.type === PreparationDeviceType.XENIA
+      ) {
+        return true;
+      }
+    }
+  }
+
+  public async exportBrewByWeight() {
+    await this.uiAlert.showLoadingSpinner();
+    try {
+      const allXeniaPreps = [];
+      const allPreparations = this.uiPreparationStorage.getAllEntries();
+      for (const prep of allPreparations) {
+        if (
+          prep.connectedPreparationDevice.type === PreparationDeviceType.XENIA
+        ) {
+          allXeniaPreps.push(prep);
+        }
+      }
+
+      const allBrewsWithProfiles = this.uiBrewStorage
+        .getAllEntries()
+        .filter(
+          (e) =>
+            e.flow_profile !== null &&
+            e.flow_profile !== undefined &&
+            e.flow_profile !== '' &&
+            allXeniaPreps.find(
+              (pr) => pr.config.uuid === e.method_of_preparation
+            ) &&
+            e.preparationDeviceBrew &&
+            e.preparationDeviceBrew.params &&
+            e.preparationDeviceBrew.params.brew_by_weight_active === true
+        );
+
+      const allBrewFlows: Array<{ BREW: Brew; FLOW: BrewFlow }> = [];
+      for await (const brew of allBrewsWithProfiles) {
+        const flow: BrewFlow = await this.readFlowProfile(brew);
+        if (flow) {
+          allBrewFlows.push({
+            BREW: brew,
+            FLOW: flow,
+          });
+        }
+      }
+
+      this.uiExcel.exportBrewByWeights(allBrewFlows);
+    } catch (ex) {
+      this.uiAlert.hideLoadingSpinner();
+    }
+  }
+
+  public async readFlowProfile(_brew: Brew) {
+    const flowProfilePath = 'brews/' + _brew.config.uuid + '_flow_profile.json';
+    try {
+      const jsonParsed = await this.uiFileHelper.getJSONFile(flowProfilePath);
+      return jsonParsed as BrewFlow;
+    } catch (ex) {
+      return null;
+    }
   }
 
   public importBeansExcel(): void {
@@ -1440,6 +1536,7 @@ export class SettingsPage implements OnInit {
       }
     }
   }
+
   private async _importGraphProfileFiles(
     _storedData: Array<Graph>,
     _importPath: string

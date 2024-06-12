@@ -44,6 +44,8 @@ export abstract class PressureDevice {
   public abstract connect(): void;
   public abstract disconnect(): void;
   public abstract updateZero(): Promise<void>;
+  public abstract enableValueTransmission(): void;
+  public abstract disableValueTransmission(): void;
 
   public getPressure() {
     return this.pressure.actual;

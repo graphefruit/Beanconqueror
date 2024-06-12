@@ -40,7 +40,6 @@ import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
-import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { BeansPage } from '../beans/beans.page';
 import { BeansAddComponent } from '../beans/beans-add/beans-add.component';
 import { BeansEditComponent } from '../beans/beans-edit/beans-edit.component';
@@ -186,6 +185,7 @@ import { BrewPopoverExtractionComponent } from '../brew/brew-popover-extraction/
 import { LoadingPopoverComponent } from '../../popover/loading-popover/loading-popover.component';
 import { BrewBrewingGraphComponent } from '../../components/brews/brew-brewing-graph/brew-brewing-graph.component';
 import { BrewBrewingPreparationDeviceComponent } from '../../components/brews/brew-brewing-preparation-device/brew-brewing-preparation-device.component';
+import { WaterAddTypeComponent } from '../water-section/water/water-add-type/water-add-type.component';
 
 @NgModule({
   declarations: [
@@ -346,6 +346,7 @@ import { BrewBrewingPreparationDeviceComponent } from '../../components/brews/br
     RoastingMachinePage,
     RoastingMachinePopoverActionsComponent,
     WaterAddComponent,
+    WaterAddTypeComponent,
     BrewRatioCardComponent,
     BrewPopoverExtractionComponent,
   ],
@@ -361,7 +362,6 @@ import { BrewBrewingPreparationDeviceComponent } from '../../components/brews/br
   providers: [
     AppVersion,
     StatusBar,
-    SplashScreen,
     RemoveEmptyNumberDirective,
     PreventCharacterDirective,
     MaxNumberValueDirective,
@@ -554,6 +554,7 @@ import { BrewBrewingPreparationDeviceComponent } from '../../components/brews/br
     RoastingMachinePage,
     RoastingMachinePopoverActionsComponent,
     WaterAddComponent,
+    WaterAddTypeComponent,
     BrewRatioCardComponent,
     BrewPopoverExtractionComponent,
   ],

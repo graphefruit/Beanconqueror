@@ -105,6 +105,7 @@ export class UIImage {
       }
     } catch (ex) {}
   }
+
   public async choosePhoto(): Promise<any> {
     const promise = new Promise(async (resolve, reject) => {
       this.__checkPermission(
@@ -126,31 +127,22 @@ export class UIImage {
                   .then(
                     async (results) => {
                       await this.uiAlert.showLoadingSpinner();
-                      for (const result of results) {
-                        if (
-                          result &&
-                          result.length > 0 &&
-                          result !== 0 &&
-                          result !== '' &&
-                          result !== 'OK' &&
-                          result.length > 5
-                        ) {
+                      for await (const result of results) {
+                        if (result && result.path) {
                           try {
-                            const imageStr: string = `data:image/jpeg;base64,${result}`;
-                            await this.uiFileHelper
-                              .saveBase64File(
+                            const imageStr: string = `data:image/jpeg;base64,${result.path}`;
+                            const newURL =
+                              await this.uiFileHelper.saveBase64File(
                                 'beanconqueror_image',
                                 '.jpg',
                                 imageStr
-                              )
-                              .then(
-                                (_newURL) => {
-                                  fileurls.push(_newURL);
-                                },
-                                () => {}
                               );
-                          } catch (ex) {}
+                            fileurls.push(newURL);
+                          } catch (ex) {
+                            //nothing
+                          }
                         } else {
+                          //Nothing
                         }
                       }
                       setTimeout(() => {
@@ -185,15 +177,15 @@ export class UIImage {
                   async (_files) => {
                     await this.uiAlert.showLoadingSpinner();
 
-                    for (const file of _files) {
-                      let newFileName = file;
+                    for await (const file of _files) {
+                      let newFileName = file.path;
                       try {
                         // We cant copy the file if it doesn't start with file:///,
-                        if (file.indexOf('file:') <= -1) {
-                          if (file.indexOf('/') === 0) {
-                            newFileName = 'file://' + file;
+                        if (file.path.indexOf('file:') <= -1) {
+                          if (file.path.indexOf('/') === 0) {
+                            newFileName = 'file://' + file.path;
                           } else {
-                            newFileName = 'file:///' + file;
+                            newFileName = 'file:///' + file.path;
                           }
                         }
 
@@ -209,27 +201,14 @@ export class UIImage {
                           imageStr = `data:image/jpeg;base64,${result}`;
                         }
 
-                        await this.uiFileHelper
-                          .saveBase64File(
+                        try {
+                          const newUrl = await this.uiFileHelper.saveBase64File(
                             'beanconqueror_image',
                             '.jpg',
                             imageStr
-                          )
-                          .then(
-                            (_newURL) => {
-                              fileurls.push(_newURL);
-                            },
-                            () => {}
                           );
-
-                        /**await this.uiFileHelper
-                          .copyFileWithSpecificName(newFileName)
-                          .then(
-                            async (_fullPath) => {
-                              fileurls.push(_fullPath);
-                            },
-                            () => {}
-                          );**/
+                          fileurls.push(newUrl);
+                        } catch (ex) {}
                       } catch (ex) {
                         setTimeout(() => {
                           this.uiAlert.hideLoadingSpinner();

@@ -119,10 +119,6 @@
                 <ion-label class="card-headline">{{'BEAN_DATA_COST' | translate}}</ion-label><br/>
                 <ion-text>{{bean?.cost}}</ion-text>
               </ion-col>
-              <ion-col *ngIf="bean?.aromatics !== '' && uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.aromatics)" size="6">
-                <ion-label class="card-headline">{{'BEAN_DATA_AROMATICS' | translate}}</ion-label><br/>
-                <ion-text>{{bean?.aromatics}}</ion-text>
-              </ion-col>
               <ion-col *ngIf="bean?.cupping_points !== '' && uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.cupping_points)" size="6">
                 <ion-label class="card-headline">{{'BEAN_DATA_CUPPING_POINTS' | translate}}</ion-label><br/>
                 <ion-text>{{bean?.cupping_points}}</ion-text>
@@ -139,7 +135,11 @@
                 <ion-label class="card-headline">{{'BEAN_DATA_EAN' | translate}}</ion-label><br/>
                 <ion-text>{{bean?.ean_article_number}}</ion-text>
               </ion-col>
-              <ion-col *ngIf="bean?.note !== '' && uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.note)" size="6">
+              <ion-col *ngIf="bean?.aromatics !== '' && uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.aromatics)" size="12">
+                <ion-label class="card-headline">{{'BEAN_DATA_AROMATICS' | translate}}</ion-label><br/>
+                <ion-text class="ion-text-wrap">{{bean?.aromatics}}</ion-text>
+              </ion-col>
+              <ion-col *ngIf="bean?.note !== '' && uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.note)" size="12">
                 <ion-label class="card-headline">{{'NOTES' | translate}}</ion-label><br/>
                 <ion-text><pre>{{bean?.note}}</pre></ion-text>
               </ion-col>
