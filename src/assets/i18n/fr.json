@@ -1223,7 +1223,7 @@
     "IOS_DATABASE_ISSUE_TITLE": "ATTENTION !!!!! - CONNEXION À LA BASE DE DONNÉES PERDUE",
     "IOS_DATABASE_ISSUE_DESCRIPTION": "Nous avons le regret de vous informer que nous avons rencontré une perte de connexion à la base de données. Ce problème est le résultat d'un bug non résolu dans le système Apple, indépendant de la volonté de Beanconqueror. Pour éviter toute perte potentielle de données, nous vous demandons de bien vouloir fermer immédiatement de force l'application Beanconqueror et de la rouvrir.",
     "RELOAD_APP": "Recharger l'application maintenant",
-    "WATER_TYPE_ADD_CUSTOM": "",
+    "WATER_TYPE_ADD_CUSTOM": "Eau personnalisée",
     "WATER_TYPE_THIRD_WAVE_WATER_CLASSIC_LIGHT_ROAST_PROFILE": "Third Wave Water - Classic Light Roast Profile",
     "WATER_TYPE_THIRD_WAVE_WATER_MEDIUM_ROAST_PROFILE": "Third Wave Water - Medium Roast Profile",
     "WATER_TYPE_THIRD_WAVE_WATER_DARK_ROAST_PROFILE": "Third Wave Water - Dark Roast Profile",
@@ -1303,8 +1303,7 @@
                 "",
                 "<b> Autre <\/b>",
                 "Quelques changements techniques dans le code",
-                "Petits ajustements",
-                "[IOS]Affichage de popups si l'accès à la base de données n'a pas pu être établi."
+                "Petits ajustements"
             ]
         }
     }

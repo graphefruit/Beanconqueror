@@ -1303,8 +1303,7 @@
                 "",
                 "<b>Otros<\/b>",
                 "Cambios técnicos en el código",
-                "Correcciones menores",
-                "[iOS] Se muestra una ventana emergente si no se ha podido establecer la conexión con la base de datos"
+                "Correcciones menores"
             ]
         }
     }
