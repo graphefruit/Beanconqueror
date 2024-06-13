@@ -169,6 +169,8 @@ export interface ISettings {
   refractometer_stay_connected: boolean;
   refractometer_log: boolean;
 
+  avg_cost_per_coffee_at_cafe: number;
+
   currency: string;
   brew_display_bean_image: boolean;
   best_brew: boolean;
