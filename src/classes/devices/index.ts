@@ -22,6 +22,7 @@ import { DiyPythonCoffeeScale } from './diyPythonCoffeeScale';
 import { DiyRustCoffeeScale } from './diyRustCoffeeScale';
 import { BookooPressure } from './bookooPressure';
 import { BookooScale } from './bokooScale';
+import { BasicGrillThermometer } from './basicGrillThermometer';
 export { BluetoothScale, SCALE_TIMER_COMMAND } from './bluetoothDevice';
 
 export enum ScaleType {
@@ -49,6 +50,7 @@ export enum PressureType {
 
 export enum TemperatureType {
   ETI = 'ETI',
+  BASICGRILL = 'BASICGRILL',
 }
 
 export enum RefractometerType {
@@ -116,6 +118,8 @@ export function makeTemperatureDevice(
   switch (type) {
     case TemperatureType.ETI:
       return new ETITemperature(data);
+    case TemperatureType.BASICGRILL:
+      return new BasicGrillThermometer(data);
     default:
       return null;
   }
