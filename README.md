@@ -210,9 +210,11 @@ https://sonarcloud.io/dashboard?id=graphefruit_Beanconqueror
 
 ## Get Started
 
+```
 npm install -g cordova@12.0.0
 npm install -g @ionic/cli
 npm run prepare
+```
 
 ## Build iOS
 
