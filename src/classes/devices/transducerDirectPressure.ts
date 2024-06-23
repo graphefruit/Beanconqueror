@@ -79,6 +79,12 @@ export class TransducerDirectPressure extends PressureDevice {
       (e: any) => {}
     );
   }
+  public enableValueTransmission(): void {
+    // not needed for this device
+  }
+  public disableValueTransmission(): void {
+    // not needed for this device
+  }
 }
 
 function swap16(val: any) {

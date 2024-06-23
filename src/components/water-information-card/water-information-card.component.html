@@ -19,21 +19,24 @@
 
     <ion-grid class="no-ion-col-vertical-padding">
       <ion-row>
-        <ion-col [size]="hasPhotos()?9:12" class="ion-no-padding-right">
+        <ion-col [size]="9" class="ion-no-padding-right">
           <ion-grid class="ion-no-padding">
             <ion-row>
-              <ion-col size="6">
+              <ion-col size="12">
                 <ion-label class="card-headline">{{"WATER_SECTION.USED_TIMES" | translate}}</ion-label><br/>
 
                 <ion-text>{{getUsedTimes()}}</ion-text>
               </ion-col>
-              <ion-col size="6">
+              <ion-col size="12">
                 <ion-label class="card-headline">{{"WATER_SECTION.AMOUNT" | translate}}</ion-label><br/>
 
                 <ion-text>{{getAmount() | number : '.0-2'}}</ion-text>
               </ion-col>
             </ion-row>
           </ion-grid>
+        </ion-col>
+        <ion-col class="ion-justify-content-center ion-no-padding" size="3" *ngIf="!hasPhotos() && water.type !== WATER_TYPES.CUSTOM_WATER">
+          <ion-icon class="full-sized-icon" name="{{water.getIcon()}}"></ion-icon>
         </ion-col>
         <ion-col class="ion-no-padding" size="3" *ngIf="hasPhotos()" (click)="showPhoto($event)">
           <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>

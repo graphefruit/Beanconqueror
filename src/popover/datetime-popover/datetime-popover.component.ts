@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { IonInput, ModalController } from '@ionic/angular';
 import moment from 'moment';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
@@ -17,6 +17,8 @@ export class DatetimePopoverComponent implements OnInit {
     MILLISECONDS: 0,
   };
 
+  @ViewChild('secondInput', { static: false }) public secondInput: IonInput;
+
   @Input() public displayingTime: string;
   public settings: Settings;
   constructor(
@@ -32,6 +34,45 @@ export class DatetimePopoverComponent implements OnInit {
     this.timer.MINUTES = passedDisplayingTime.minutes();
     this.timer.SECONDS = passedDisplayingTime.seconds();
     this.timer.MILLISECONDS = passedDisplayingTime.milliseconds();
+  }
+  public ionViewDidEnter(): void {
+    setTimeout(() => {
+      //Give it a short time
+      this.secondInput.setFocus();
+    }, 250);
+  }
+
+  public saveSettings() {
+    this.uiSettingsStorage.saveSettings(this.settings);
+  }
+
+  public getColSize() {
+    const showMilliSeconds = this.settings?.brew_milliseconds;
+    const showHours: boolean = this.settings.brew_timer_show_hours;
+    const showMinutes: boolean = this.settings.brew_timer_show_minutes;
+
+    let sizeCounter = 0;
+    if (showMilliSeconds) {
+      sizeCounter = sizeCounter + 1;
+    }
+    if (showHours) {
+      sizeCounter = sizeCounter + 1;
+    }
+    if (showMinutes) {
+      sizeCounter = sizeCounter + 1;
+    }
+    if (sizeCounter === 0) {
+      //Just seconds are shown
+      return 12;
+    } else if (sizeCounter === 1) {
+      //Just seconds +1 is shown
+      return 6;
+    } else if (sizeCounter === 2) {
+      //seconds +2 are shown
+      return 4;
+    } else {
+      return 3;
+    }
   }
 
   public reset() {

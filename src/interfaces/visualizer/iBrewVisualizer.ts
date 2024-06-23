@@ -111,4 +111,7 @@ export interface IBrewVisualizer {
   vessel_name: string;
 
   config: IConfig;
+
+  /*** this is calculcated **/
+  ey: number;
 }

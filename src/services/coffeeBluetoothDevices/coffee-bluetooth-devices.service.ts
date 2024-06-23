@@ -36,6 +36,8 @@ import { BlackcoffeeScale } from 'src/classes/devices/blackcoffeeScale';
 import { DifluidMicrobalanceTi } from '../../classes/devices/difluidMicrobalanceTi';
 import { DiyPythonCoffeeScale } from '../../classes/devices/diyPythonCoffeeScale';
 import { DiyRustCoffeeScale } from '../../classes/devices/diyRustCoffeeScale';
+import { BookooScale } from 'src/classes/devices/bokooScale';
+import { BookooPressure } from 'src/classes/devices/bookooPressure';
 
 declare var device: any;
 declare var ble: any;
@@ -257,7 +259,8 @@ export class CoffeeBluetoothDevicesService {
             DifluidMicrobalanceTi.test(scanDevice) ||
             BlackcoffeeScale.test(scanDevice) ||
             DiyPythonCoffeeScale.test(scanDevice) ||
-            DiyRustCoffeeScale.test(scanDevice)
+            DiyRustCoffeeScale.test(scanDevice) ||
+            BookooScale.test(scanDevice)
           ) {
             // We found all needed devices.
             promiseResolved = true;
@@ -288,7 +291,8 @@ export class CoffeeBluetoothDevicesService {
           if (
             PrsPressure.test(scanDevice) ||
             PopsiclePressure.test(scanDevice) ||
-            TransducerDirectPressure.test(scanDevice)
+            TransducerDirectPressure.test(scanDevice) ||
+            BookooPressure.test(scanDevice)
           ) {
             // We found all needed devices.
             promiseResolved = true;
@@ -784,6 +788,14 @@ export class CoffeeBluetoothDevicesService {
             });
             return;
           }
+          if (BookooScale.test(deviceScale)) {
+            this.logger.log('BleManager - We found a Bokoo scale');
+            resolve({
+              id: deviceScale.id,
+              type: ScaleType.BOKOOSCALE,
+            });
+            return;
+          }
         }
         resolve(undefined);
       }
@@ -881,6 +893,13 @@ export class CoffeeBluetoothDevicesService {
               type: ScaleType.DIYRUSTCOFFEESCALE,
             });
           }
+          if (BookooScale.test(deviceScale)) {
+            this.logger.log('BleManager - We found a Bookoo scale');
+            supportedDevices.push({
+              id: deviceScale.id,
+              type: ScaleType.BOKOOSCALE,
+            });
+          }
         }
         resolve(supportedDevices);
       }
@@ -921,6 +940,15 @@ export class CoffeeBluetoothDevicesService {
               id: devicePressure.id,
               type: PressureType.DIRECT,
             });
+          } else if (BookooPressure.test(devicePressure)) {
+            this.logger.log(
+              'BleManager - We found a Bookoo pressure device ' +
+                JSON.stringify(devicePressure)
+            );
+            supportedDevices.push({
+              id: devicePressure.id,
+              type: PressureType.BOKOOPRESSURE,
+            });
           }
         }
         resolve(supportedDevices);
@@ -946,14 +974,18 @@ export class CoffeeBluetoothDevicesService {
             );
             resolve({ id: devicePressure.id, type: PressureType.DIRECT });
             return;
-          } else {
-          }
-
-          if (PrsPressure.test(devicePressure)) {
+          } else if (PrsPressure.test(devicePressure)) {
             this.logger.log(
               'BleManager - We found a PRS Direct pressure device '
             );
             resolve({ id: devicePressure.id, type: PressureType.PRS });
+            return;
+          } else if (BookooPressure.test(devicePressure)) {
+            this.logger.log('BleManager - We found a Bokoo pressure device ');
+            resolve({
+              id: devicePressure.id,
+              type: PressureType.BOKOOPRESSURE,
+            });
             return;
           }
         }

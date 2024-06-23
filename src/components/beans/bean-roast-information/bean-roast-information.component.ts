@@ -55,7 +55,7 @@ export class BeanRoastInformationComponent implements OnInit {
       cssClass: 'popover-actions',
       animated: true,
       breakpoints: [0, 0.5, 0.75, 1],
-      initialBreakpoint: 0.5,
+      initialBreakpoint: 0.75,
       componentProps: { displayingTime: this.displayingTime },
     });
     await modal.present();
