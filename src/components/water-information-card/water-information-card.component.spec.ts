@@ -8,6 +8,7 @@ import { UIHelper } from '../../services/uiHelper';
 import { UIHelperMock } from '../../classes/mock';
 import { UIImage } from '../../services/uiImage';
 import { Water } from '../../classes/water/water';
+import { WATER_TYPES } from 'src/enums/water/waterTypes';
 
 describe('WaterInformationCardComponent', () => {
   let component: WaterInformationCardComponent;
@@ -33,6 +34,7 @@ describe('WaterInformationCardComponent', () => {
     component = fixture.componentInstance;
     component.water = {
       name: '',
+      type: WATER_TYPES.CUSTOM_WATER, // For getIcon() to return
     } as Water;
     fixture.detectChanges();
   });

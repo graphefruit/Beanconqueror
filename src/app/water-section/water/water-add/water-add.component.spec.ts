@@ -7,6 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../../../services/uiHelper';
 import { UIHelperMock } from '../../../../classes/mock';
 import { FormsModule } from '@angular/forms';
+import { KeysPipe } from 'src/pipes/keys';
 
 describe('WaterAddComponent', () => {
   let component: WaterAddComponent;
@@ -14,7 +15,7 @@ describe('WaterAddComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [WaterAddComponent],
+      declarations: [WaterAddComponent, KeysPipe],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
       providers: [
         { provide: Storage },
