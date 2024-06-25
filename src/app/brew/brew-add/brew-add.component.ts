@@ -2,6 +2,7 @@ import {
   ChangeDetectorRef,
   Component,
   Input,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -52,7 +53,7 @@ declare var window;
   templateUrl: './brew-add.component.html',
   styleUrls: ['./brew-add.component.scss'],
 })
-export class BrewAddComponent implements OnInit {
+export class BrewAddComponent implements OnInit, OnDestroy {
   public static COMPONENT_ID: string = 'brew-add';
   public brew_template: Brew;
   public data: Brew = new Brew();
