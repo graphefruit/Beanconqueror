@@ -12,7 +12,6 @@ import { UIHelper } from '../../services/uiHelper';
 import { ListViewBrewParameter } from '../parameter/listViewBrewParameter';
 import { RepeatBrewParameter } from '../parameter/repeatBrewParameter';
 import { ConnectedPreparationDevice } from '../preparationDevice/connectedPreparationDevice';
-import { setParseTemplateAsSourceFileForTest } from '@angular/compiler-cli/src/ngtsc/typecheck/diagnostics';
 
 export class Preparation implements IPreparation {
   public name: string;
