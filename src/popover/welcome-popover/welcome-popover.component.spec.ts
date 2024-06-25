@@ -12,7 +12,7 @@ describe('WelcomePopoverComponent', () => {
   let component: WelcomePopoverComponent;
   let fixture: ComponentFixture<WelcomePopoverComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [WelcomePopoverComponent],
       imports: [
@@ -25,7 +25,9 @@ describe('WelcomePopoverComponent', () => {
         { provide: Storage },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(WelcomePopoverComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -16,7 +16,7 @@ describe('GraphInformationCardComponent', () => {
   let component: GraphInformationCardComponent;
   let fixture: ComponentFixture<GraphInformationCardComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [GraphInformationCardComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -32,7 +32,9 @@ describe('GraphInformationCardComponent', () => {
         { provide: FileTransfer },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(GraphInformationCardComponent);
     component = fixture.componentInstance;
     component.graph = {

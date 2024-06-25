@@ -11,7 +11,7 @@ describe('DashboardPage', () => {
   let component: DashboardPage;
   let fixture: ComponentFixture<DashboardPage>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [DashboardPage],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -25,7 +25,9 @@ describe('DashboardPage', () => {
         },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(DashboardPage);
     component = fixture.componentInstance;
     fixture.detectChanges();

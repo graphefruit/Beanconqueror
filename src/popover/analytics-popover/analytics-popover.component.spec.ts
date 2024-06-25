@@ -15,7 +15,7 @@ describe('AnalyticsPopoverComponent', () => {
   let component: AnalyticsPopoverComponent;
   let fixture: ComponentFixture<AnalyticsPopoverComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [AnalyticsPopoverComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -29,7 +29,9 @@ describe('AnalyticsPopoverComponent', () => {
         },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(AnalyticsPopoverComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

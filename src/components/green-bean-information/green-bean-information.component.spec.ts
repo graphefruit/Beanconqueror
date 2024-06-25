@@ -14,7 +14,7 @@ describe('GreenBeanInformationComponent', () => {
   let component: GreenBeanInformationComponent;
   let fixture: ComponentFixture<GreenBeanInformationComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [GreenBeanInformationComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -27,7 +27,9 @@ describe('GreenBeanInformationComponent', () => {
         },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(GreenBeanInformationComponent);
     component = fixture.componentInstance;
     component.greenBean = {

@@ -12,7 +12,7 @@ describe('PreparationAddTypeComponent', () => {
   let component: PreparationAddTypeComponent;
   let fixture: ComponentFixture<PreparationAddTypeComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [PreparationAddTypeComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
@@ -28,7 +28,9 @@ describe('PreparationAddTypeComponent', () => {
         },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(PreparationAddTypeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

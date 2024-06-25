@@ -12,7 +12,7 @@ describe('PreparationModalSelectComponent', () => {
   let component: PreparationModalSelectComponent;
   let fixture: ComponentFixture<PreparationModalSelectComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [PreparationModalSelectComponent],
       imports: [
@@ -30,7 +30,9 @@ describe('PreparationModalSelectComponent', () => {
         },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(PreparationModalSelectComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -13,7 +13,7 @@ describe('GreenBeanGeneralInformationComponent', () => {
   let component: GreenBeanGeneralInformationComponent;
   let fixture: ComponentFixture<GreenBeanGeneralInformationComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [GreenBeanGeneralInformationComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
@@ -22,7 +22,9 @@ describe('GreenBeanGeneralInformationComponent', () => {
         { provide: UIHelper, useClass: UIHelperMock },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(GreenBeanGeneralInformationComponent);
     component = fixture.componentInstance;
     component.data = {

@@ -16,7 +16,7 @@ describe('GraphAddComponent', () => {
   let component: GraphAddComponent;
   let fixture: ComponentFixture<GraphAddComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [GraphAddComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
@@ -32,7 +32,9 @@ describe('GraphAddComponent', () => {
         { provide: FileTransfer },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(GraphAddComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

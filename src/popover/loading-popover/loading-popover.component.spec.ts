@@ -12,7 +12,7 @@ describe('LoadingPopoverComponent', () => {
   let component: LoadingPopoverComponent;
   let fixture: ComponentFixture<LoadingPopoverComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [LoadingPopoverComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -22,7 +22,9 @@ describe('LoadingPopoverComponent', () => {
         { provide: Storage },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(LoadingPopoverComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -12,7 +12,7 @@ describe('SortCustomParameterComponent', () => {
   let component: SortCustomParameterComponent;
   let fixture: ComponentFixture<SortCustomParameterComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [SortCustomParameterComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -21,7 +21,9 @@ describe('SortCustomParameterComponent', () => {
         { provide: UIHelper, useClass: UIHelperMock },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(SortCustomParameterComponent);
     component = fixture.componentInstance;
     component.data = {

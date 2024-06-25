@@ -19,7 +19,7 @@ describe('GreenBeanAddComponent', () => {
   let component: GreenBeanAddComponent;
   let fixture: ComponentFixture<GreenBeanAddComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [GreenBeanAddComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -41,7 +41,9 @@ describe('GreenBeanAddComponent', () => {
         { provide: FileTransfer },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(GreenBeanAddComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

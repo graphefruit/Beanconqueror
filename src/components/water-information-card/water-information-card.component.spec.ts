@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { WaterInformationCardComponent } from './water-information-card.component';
@@ -14,7 +14,7 @@ describe('WaterInformationCardComponent', () => {
   let component: WaterInformationCardComponent;
   let fixture: ComponentFixture<WaterInformationCardComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [WaterInformationCardComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -29,7 +29,9 @@ describe('WaterInformationCardComponent', () => {
         },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(WaterInformationCardComponent);
     component = fixture.componentInstance;
     component.water = {

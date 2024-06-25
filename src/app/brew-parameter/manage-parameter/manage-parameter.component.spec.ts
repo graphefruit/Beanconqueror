@@ -11,7 +11,7 @@ describe('ManageParameterComponent', () => {
   let component: ManageParameterComponent;
   let fixture: ComponentFixture<ManageParameterComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ManageParameterComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -25,7 +25,9 @@ describe('ManageParameterComponent', () => {
         },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(ManageParameterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

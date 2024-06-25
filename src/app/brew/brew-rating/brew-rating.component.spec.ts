@@ -11,7 +11,7 @@ describe('BrewRatingComponent', () => {
   let component: BrewRatingComponent;
   let fixture: ComponentFixture<BrewRatingComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [BrewRatingComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -24,7 +24,9 @@ describe('BrewRatingComponent', () => {
         },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(BrewRatingComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

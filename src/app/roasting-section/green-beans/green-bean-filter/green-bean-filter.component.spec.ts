@@ -11,7 +11,7 @@ describe('GreenBeanFilterComponent', () => {
   let component: GreenBeanFilterComponent;
   let fixture: ComponentFixture<GreenBeanFilterComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [GreenBeanFilterComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -24,7 +24,9 @@ describe('GreenBeanFilterComponent', () => {
         },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(GreenBeanFilterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

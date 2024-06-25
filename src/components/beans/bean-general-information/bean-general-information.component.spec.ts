@@ -15,7 +15,7 @@ describe('BeanGeneralInformationComponent', () => {
   let component: BeanGeneralInformationComponent;
   let fixture: ComponentFixture<BeanGeneralInformationComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [BeanGeneralInformationComponent, KeysPipe],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
@@ -24,7 +24,9 @@ describe('BeanGeneralInformationComponent', () => {
         { provide: UIHelper, useClass: UIHelperMock },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(BeanGeneralInformationComponent);
     component = fixture.componentInstance;
     component.data = {

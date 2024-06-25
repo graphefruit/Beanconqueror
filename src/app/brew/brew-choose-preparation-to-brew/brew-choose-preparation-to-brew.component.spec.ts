@@ -12,7 +12,7 @@ describe('BrewChoosePreparationToBrewComponent', () => {
   let component: BrewChoosePreparationToBrewComponent;
   let fixture: ComponentFixture<BrewChoosePreparationToBrewComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [BrewChoosePreparationToBrewComponent],
       imports: [
@@ -25,7 +25,9 @@ describe('BrewChoosePreparationToBrewComponent', () => {
         { provide: UIHelper, useClass: UIHelperMock },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(BrewChoosePreparationToBrewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -14,7 +14,7 @@ describe('MillInformationCardComponent', () => {
   let component: MillInformationCardComponent;
   let fixture: ComponentFixture<MillInformationCardComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [MillInformationCardComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -27,7 +27,9 @@ describe('MillInformationCardComponent', () => {
         },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(MillInformationCardComponent);
     component = fixture.componentInstance;
     component.mill = {

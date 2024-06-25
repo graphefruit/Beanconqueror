@@ -11,7 +11,7 @@ describe('GreenBeansPage', () => {
   let component: GreenBeansPage;
   let fixture: ComponentFixture<GreenBeansPage>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [GreenBeansPage],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -20,7 +20,9 @@ describe('GreenBeansPage', () => {
         { provide: UIHelper, useClass: UIHelperMock },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(GreenBeansPage);
     component = fixture.componentInstance;
     fixture.detectChanges();

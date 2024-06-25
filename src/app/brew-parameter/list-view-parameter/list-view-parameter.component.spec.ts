@@ -11,7 +11,7 @@ describe('ListViewParameterComponent', () => {
   let component: ListViewParameterComponent;
   let fixture: ComponentFixture<ListViewParameterComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ListViewParameterComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -25,7 +25,9 @@ describe('ListViewParameterComponent', () => {
         },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(ListViewParameterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

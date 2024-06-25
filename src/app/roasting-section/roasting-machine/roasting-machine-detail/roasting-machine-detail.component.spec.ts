@@ -11,7 +11,7 @@ describe('RoastingMachineDetailComponent', () => {
   let component: RoastingMachineDetailComponent;
   let fixture: ComponentFixture<RoastingMachineDetailComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [RoastingMachineDetailComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -20,7 +20,9 @@ describe('RoastingMachineDetailComponent', () => {
         { provide: Storage },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(RoastingMachineDetailComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
