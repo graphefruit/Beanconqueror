@@ -384,7 +384,7 @@ export class BrewBrewingGraphComponent implements OnInit {
   }
 
   public getPreparation(): Preparation {
-    return this.uiPreparationStorage.getByUUID(this.data.method_of_preparation);
+    return this.data.getPreparation();
   }
 
   public resetPressure() {
