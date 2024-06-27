@@ -72,7 +72,6 @@ import { register } from 'swiper/element/bundle';
 import { UIGraphStorage } from '../services/uiGraphStorage.service';
 import { UIStorage } from '../services/uiStorage';
 
-declare var AppRate;
 declare var window;
 
 register();
@@ -878,7 +877,7 @@ export class AppComponent implements AfterViewInit {
 
   private __instanceAppRating() {
     if (this.platform.is('cordova')) {
-      const appLanguage = this.uiSettingsStorage.getSettings().language;
+      /** const appLanguage = this.uiSettingsStorage.getSettings().language;
       AppRate.setPreferences({
         usesUntilPrompt: 25,
         storeAppURL: {
@@ -893,7 +892,7 @@ export class AppComponent implements AfterViewInit {
         useLanguage: appLanguage,
       });
 
-      AppRate.promptForRating(false);
+      AppRate.promptForRating(false);**/
     }
   }
 
