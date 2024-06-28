@@ -16,7 +16,7 @@ describe('GraphEditComponent', () => {
   let component: GraphEditComponent;
   let fixture: ComponentFixture<GraphEditComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [GraphEditComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
@@ -39,7 +39,9 @@ describe('GraphEditComponent', () => {
         },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(GraphEditComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

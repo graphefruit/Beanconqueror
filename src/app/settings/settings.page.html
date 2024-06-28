@@ -48,6 +48,10 @@
             <ion-label>{{"EXPORT" | translate}}</ion-label>
             <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
           </ion-item>
+          <ion-item *ngIf='doWeHaveBrewByWeights()' (click)='exportBrewByWeight()'  button tappable>
+            <ion-label>Temp: Export Brew By Weight - Xenia</ion-label>
+            <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+          </ion-item>
           <ion-item (click)="excelExport()" button lines="none" tappable>
             <ion-label>{{"EXCEL_EXPORT" | translate}}</ion-label>
             <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
@@ -454,6 +458,97 @@
               <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
               <ion-label>{{"VISUALIZER.UPLOAD_ALL" | translate}}</ion-label>
               <ion-note slot="end">{{howManyBrewsAreNotUploadedToVisualizer()}}</ion-note>
+            </ion-item>
+          </ng-container>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card class="margin-top-20" *ngIf='isTextToSpeechSectionAvailable'>
+        <ion-card-content>
+          <ion-card-title>{{"PAGE_SETTINGS_TEXT_TO_SPEECH_SECTION" | translate}}</ion-card-title>
+          <ion-item lines='none'>
+            <p style="display: inline;">{{"EXPERIMENTAL_FEATURE_DISCLAIMER" | translate}}</p>
+          </ion-item>
+          <ion-item>
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.text_to_speech_active">
+              <div class='ion-label'>{{"TEXT_TO_SPEECH.ACTIVATE" | translate}}</div>
+            </ion-checkbox>
+          </ion-item>
+          <ng-container *ngIf='settings.text_to_speech_active'>
+            <ion-item lines='none'>
+              <ion-label class="ion-margin-end">
+                <p>{{"TEXT_TO_SPEECH.PITCH" | translate}}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item style="top:-10px;">
+              <ion-range [disabled]='isScrolling' style="padding-left:20px;padding-top:0;padding-bottom:0px;padding-right:0px;" min="0" snaps="true" max="2"
+                         step="0.1" (ngModelChange)="saveSettings()" [(ngModel)]="settings.text_to_speech_pitch">
+                <div class='ion-label' slot="end">{{settings.text_to_speech_pitch | number : '.0-1'}}</div>
+              </ion-range>
+            </ion-item>
+            <ion-item lines='none'>
+              <ion-label class="ion-margin-end">
+                <p>{{"TEXT_TO_SPEECH.RATE" | translate}}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item style="top:-10px;">
+              <ion-range [disabled]='isScrolling' style="padding-left:20px;padding-top:0;padding-bottom:0px;padding-right:0px;" min="0.1" snaps="true" max="10"
+                         step="0.1" (ngModelChange)="saveSettings()" [(ngModel)]="settings.text_to_speech_rate">
+                <div class='ion-label' slot="end">{{settings.text_to_speech_rate | number : '.0-1'}}</div>
+              </ion-range>
+            </ion-item>
+            <ion-item lines='none'>
+              <ion-label class="ion-margin-end">
+                <p>{{"TEXT_TO_SPEECH.SPEAK_EVERY_MS" | translate}}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item style="top:-10px;">
+              <ion-range [disabled]='isScrolling' style="padding-left:20px;padding-top:0;padding-bottom:0px;padding-right:0px;" min="250" snaps="true" max="1000"
+                         step="50" (ngModelChange)="saveSettings()" [(ngModel)]="settings.text_to_speech_interval_rate">
+                <div class='ion-label' slot="end">{{settings.text_to_speech_interval_rate | number : '.0'}}</div>
+              </ion-range>
+            </ion-item>
+
+            <ion-item (click)="testSpeak()" tappable button>
+              <ion-label>
+                <h2>{{"TEXT_TO_SPEECH.TEST_SPEAK" | translate}}</h2>
+                <p>{{"TEXT_TO_SPEECH.FOLLOWING_NUMBERS_WILL_BE_TEST_SPOKEN" | translate}}: 182.5, 28, 1072, 1.2, 0.1, 203.5</p>
+              </ion-label>
+              <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+            </ion-item>
+          </ng-container>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card class="margin-top-20">
+        <ion-card-content>
+          <ion-card-title>
+           {{"PAGE_SETTINGS_HAPTIC_FEEDBACK_SECTION" | translate}}
+        </ion-card-title>
+          <ion-item lines='none'>
+            <p style="display: inline;">{{"EXPERIMENTAL_FEATURE_DISCLAIMER" | translate}}</p>
+          </ion-item>
+          <ion-item>
+            <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.haptic_feedback_active">
+              <div class='ion-label'>{{"HAPTIC_FEEDBACK.ACTIVATE" | translate}}</div>
+            </ion-checkbox>
+          </ion-item>
+          <ng-container *ngIf='settings.haptic_feedback_active'>
+            <ion-item>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.haptic_feedback_brew_started">
+                <div class='ion-label'>{{"HAPTIC_FEEDBACK.BREW_STARTED" | translate}}</div>
+              </ion-checkbox>
+            </ion-item>
+            <ion-item>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.haptic_feedback_brew_stopped">
+                <div class='ion-label'>{{"HAPTIC_FEEDBACK.BREW_STOPPED" | translate}}</div>
+              </ion-checkbox>
+            </ion-item>
+
+            <ion-item>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.haptic_feedback_tare">
+                <div class='ion-label'>{{"HAPTIC_FEEDBACK.TARE" | translate}}</div>
+              </ion-checkbox>
             </ion-item>
           </ng-container>
         </ion-card-content>

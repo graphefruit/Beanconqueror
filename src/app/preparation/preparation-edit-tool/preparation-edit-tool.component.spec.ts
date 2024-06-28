@@ -13,7 +13,7 @@ describe('PreparationEditToolComponent', () => {
   let component: PreparationEditToolComponent;
   let fixture: ComponentFixture<PreparationEditToolComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [PreparationEditToolComponent],
       imports: [
@@ -27,7 +27,9 @@ describe('PreparationEditToolComponent', () => {
         { provide: Storage },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(PreparationEditToolComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

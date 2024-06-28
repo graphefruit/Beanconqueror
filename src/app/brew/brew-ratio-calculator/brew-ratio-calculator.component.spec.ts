@@ -11,7 +11,7 @@ describe('BrewRatioCalculatorComponent', () => {
   let component: BrewRatioCalculatorComponent;
   let fixture: ComponentFixture<BrewRatioCalculatorComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [BrewRatioCalculatorComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -20,7 +20,9 @@ describe('BrewRatioCalculatorComponent', () => {
         { provide: Storage },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(BrewRatioCalculatorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

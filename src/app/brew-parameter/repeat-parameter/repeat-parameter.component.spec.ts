@@ -11,7 +11,7 @@ describe('RepeatParameterComponent', () => {
   let component: RepeatParameterComponent;
   let fixture: ComponentFixture<RepeatParameterComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [RepeatParameterComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -25,7 +25,9 @@ describe('RepeatParameterComponent', () => {
         },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(RepeatParameterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

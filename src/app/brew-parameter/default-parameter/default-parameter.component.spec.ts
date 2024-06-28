@@ -11,7 +11,7 @@ describe('DefaultParameterComponent', () => {
   let component: DefaultParameterComponent;
   let fixture: ComponentFixture<DefaultParameterComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [DefaultParameterComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -25,7 +25,9 @@ describe('DefaultParameterComponent', () => {
         },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(DefaultParameterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

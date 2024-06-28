@@ -12,7 +12,7 @@ describe('DefaultCustomParameterComponent', () => {
   let component: DefaultCustomParameterComponent;
   let fixture: ComponentFixture<DefaultCustomParameterComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [DefaultCustomParameterComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -21,7 +21,9 @@ describe('DefaultCustomParameterComponent', () => {
         { provide: UIHelper, useClass: UIHelperMock },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(DefaultCustomParameterComponent);
     component = fixture.componentInstance;
     component.data = new Settings();

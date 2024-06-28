@@ -23,7 +23,7 @@ describe('BrewPopoverActionsComponent', () => {
   let component: BrewPopoverActionsComponent;
   let fixture: ComponentFixture<BrewPopoverActionsComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
         TranslateModule.forRoot(),
@@ -45,6 +45,9 @@ describe('BrewPopoverActionsComponent', () => {
         { provide: UIPreparationStorage },
       ],
     }).compileComponents();
+  }));
+
+  beforeEach(() => {
     fixture = TestBed.createComponent(BrewPopoverActionsComponent);
     component = fixture.componentInstance;
     component.data = {

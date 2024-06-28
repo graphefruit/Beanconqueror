@@ -273,6 +273,19 @@ ion-tab-button.tab-selected {
   position: absolute;
   top: 0;
   right: 10px;
+  background: rgba(255, 255, 255, 0.8);
+}
+.position-absolute-button-sort-left {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background: rgba(255, 255, 255, 0.8);
+}
+.position-absolute-button-sort-right {
+  position: absolute;
+  top: 0;
+  left: 70px;
+  background: rgba(255, 255, 255, 0.8);
 }
 
 
@@ -1034,4 +1047,13 @@ loading-popover {
       max-height:80%;
     }
   }
+}
+
+ion-chip.machine-connected {
+  background-color: rgba(5, 199, 147,0.4);
+}
+ion-chip.machine-disconnected {
+
+  background-color: rgba(204, 51, 17,0.4);
+
 }

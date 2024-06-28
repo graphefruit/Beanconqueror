@@ -17,7 +17,7 @@ describe('BrewChooseGraphReferenceComponent', () => {
   let component: BrewChooseGraphReferenceComponent;
   let fixture: ComponentFixture<BrewChooseGraphReferenceComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [BrewChooseGraphReferenceComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -43,7 +43,9 @@ describe('BrewChooseGraphReferenceComponent', () => {
         },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(BrewChooseGraphReferenceComponent);
     component = fixture.componentInstance;
     component.brew = new Brew();

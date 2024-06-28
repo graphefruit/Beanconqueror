@@ -11,7 +11,7 @@ describe('GreenBeanDetailComponent', () => {
   let component: GreenBeanDetailComponent;
   let fixture: ComponentFixture<GreenBeanDetailComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [GreenBeanDetailComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -20,7 +20,9 @@ describe('GreenBeanDetailComponent', () => {
         { provide: UIHelper, useClass: UIHelperMock },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(GreenBeanDetailComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

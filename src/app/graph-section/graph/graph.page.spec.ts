@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { GraphPage } from './graph.page';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
@@ -15,7 +15,7 @@ describe('GraphPage', () => {
   let component: GraphPage;
   let fixture: ComponentFixture<GraphPage>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [GraphPage],
       providers: [
@@ -31,6 +31,9 @@ describe('GraphPage', () => {
       ],
       imports: [IonicModule.forRoot(), CommonModule, TranslateModule.forRoot()],
     }).compileComponents();
+  }));
+
+  beforeEach(() => {
     fixture = TestBed.createComponent(GraphPage);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -11,7 +11,7 @@ describe('CookieComponent', () => {
   let component: CookieComponent;
   let fixture: ComponentFixture<CookieComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [CookieComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -20,7 +20,9 @@ describe('CookieComponent', () => {
         { provide: UIHelper, useClass: UIHelperMock },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(CookieComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

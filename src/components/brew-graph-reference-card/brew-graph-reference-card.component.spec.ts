@@ -17,7 +17,7 @@ describe('BrewGraphReferenceCardComponent', () => {
   let component: BrewGraphReferenceCardComponent;
   let fixture: ComponentFixture<BrewGraphReferenceCardComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [BrewGraphReferenceCardComponent, FormatDatePipe],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -26,7 +26,9 @@ describe('BrewGraphReferenceCardComponent', () => {
         { provide: UIHelper, useClass: UIHelperMock },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(BrewGraphReferenceCardComponent);
     component = fixture.componentInstance;
     component.brew = {

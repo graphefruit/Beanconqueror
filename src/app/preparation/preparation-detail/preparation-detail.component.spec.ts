@@ -11,7 +11,7 @@ describe('PreparationDetailComponent', () => {
   let component: PreparationDetailComponent;
   let fixture: ComponentFixture<PreparationDetailComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [PreparationDetailComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -24,7 +24,9 @@ describe('PreparationDetailComponent', () => {
         { provide: Storage },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(PreparationDetailComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -12,7 +12,7 @@ describe('BeanSortInformationComponent', () => {
   let component: BeanSortInformationComponent;
   let fixture: ComponentFixture<BeanSortInformationComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [BeanSortInformationComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -21,7 +21,9 @@ describe('BeanSortInformationComponent', () => {
         { provide: UIHelper, useClass: UIHelperMock },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(BeanSortInformationComponent);
     component = fixture.componentInstance;
     component.data = {

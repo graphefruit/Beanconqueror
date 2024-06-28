@@ -13,7 +13,7 @@ describe('RepeatCustomParameterComponent', () => {
   let component: RepeatCustomParameterComponent;
   let fixture: ComponentFixture<RepeatCustomParameterComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [RepeatCustomParameterComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -22,7 +22,9 @@ describe('RepeatCustomParameterComponent', () => {
         { provide: UIHelper, useClass: UIHelperMock },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(RepeatCustomParameterComponent);
     component = fixture.componentInstance;
     component.data = {

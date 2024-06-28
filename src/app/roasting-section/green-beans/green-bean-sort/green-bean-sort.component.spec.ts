@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule, NavParams } from '@ionic/angular';
 
 import { GreenBeanSortComponent } from './green-bean-sort.component';
@@ -13,7 +13,7 @@ describe('GreenBeanSortComponent', () => {
   let component: GreenBeanSortComponent;
   let fixture: ComponentFixture<GreenBeanSortComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [GreenBeanSortComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -26,6 +26,9 @@ describe('GreenBeanSortComponent', () => {
         },
       ],
     }).compileComponents();
+  }));
+
+  beforeEach(() => {
     NavParamsMock.setParams({
       sort_order: BEAN_SORT_ORDER.ASCENDING,
     } as IBeanPageSort);

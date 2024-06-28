@@ -15,7 +15,7 @@ describe('BeanInformationComponent', () => {
   let component: BeanInformationComponent;
   let fixture: ComponentFixture<BeanInformationComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [BeanInformationComponent],
       imports: [
@@ -33,7 +33,9 @@ describe('BeanInformationComponent', () => {
         { provide: SocialSharing },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(BeanInformationComponent);
     component = fixture.componentInstance;
     component.bean = new Bean();

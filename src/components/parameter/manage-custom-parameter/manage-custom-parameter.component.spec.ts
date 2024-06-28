@@ -13,7 +13,7 @@ describe('ManageCustomParameterComponent', () => {
   let component: ManageCustomParameterComponent;
   let fixture: ComponentFixture<ManageCustomParameterComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ManageCustomParameterComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -22,7 +22,9 @@ describe('ManageCustomParameterComponent', () => {
         { provide: UIHelper, useClass: UIHelperMock },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(ManageCustomParameterComponent);
     component = fixture.componentInstance;
     component.data = {

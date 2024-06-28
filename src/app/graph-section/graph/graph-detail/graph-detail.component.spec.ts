@@ -14,7 +14,7 @@ describe('GraphDetailComponent', () => {
   let component: GraphDetailComponent;
   let fixture: ComponentFixture<GraphDetailComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [GraphDetailComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -29,7 +29,9 @@ describe('GraphDetailComponent', () => {
         { provide: FileTransfer },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(GraphDetailComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

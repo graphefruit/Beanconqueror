@@ -12,7 +12,7 @@ describe('RoastingMachineEditComponent', () => {
   let component: RoastingMachineEditComponent;
   let fixture: ComponentFixture<RoastingMachineEditComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [RoastingMachineEditComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
@@ -30,7 +30,9 @@ describe('RoastingMachineEditComponent', () => {
         },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(RoastingMachineEditComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

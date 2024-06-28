@@ -11,7 +11,7 @@ describe('MillModalSelectComponent', () => {
   let component: MillModalSelectComponent;
   let fixture: ComponentFixture<MillModalSelectComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [MillModalSelectComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -25,7 +25,9 @@ describe('MillModalSelectComponent', () => {
         },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(MillModalSelectComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

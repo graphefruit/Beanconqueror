@@ -8,7 +8,6 @@ import { Router } from '@angular/router';
 
 import { Globalization } from '@awesome-cordova-plugins/globalization/ngx';
 import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
-import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
 import {
   ThreeDeeTouch,
@@ -73,7 +72,6 @@ import { register } from 'swiper/element/bundle';
 import { UIGraphStorage } from '../services/uiGraphStorage.service';
 import { UIStorage } from '../services/uiStorage';
 
-declare var AppRate;
 declare var window;
 
 register();
@@ -217,7 +215,6 @@ export class AppComponent implements AfterViewInit {
     private readonly router: Router,
     public platform: Platform,
     public statusBar: StatusBar,
-    public splashScreen: SplashScreen,
     private readonly uiLog: UILog,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiBrewStorage: UIBrewStorage,
@@ -331,9 +328,6 @@ export class AppComponent implements AfterViewInit {
       // #7
       this.statusBar.show();
       this.statusBar.styleDefault();
-      try {
-        this.splashScreen.hide();
-      } catch (ex) {}
 
       this.keyboard.hideFormAccessoryBar(false);
       if (environment.production === true) {
@@ -883,7 +877,7 @@ export class AppComponent implements AfterViewInit {
 
   private __instanceAppRating() {
     if (this.platform.is('cordova')) {
-      const appLanguage = this.uiSettingsStorage.getSettings().language;
+      /** const appLanguage = this.uiSettingsStorage.getSettings().language;
       AppRate.setPreferences({
         usesUntilPrompt: 25,
         storeAppURL: {
@@ -898,7 +892,7 @@ export class AppComponent implements AfterViewInit {
         useLanguage: appLanguage,
       });
 
-      AppRate.promptForRating(false);
+      AppRate.promptForRating(false);**/
     }
   }
 

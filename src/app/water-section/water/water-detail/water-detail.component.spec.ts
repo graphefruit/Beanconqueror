@@ -11,7 +11,7 @@ describe('WaterDetailComponent', () => {
   let component: WaterDetailComponent;
   let fixture: ComponentFixture<WaterDetailComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [WaterDetailComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -20,7 +20,9 @@ describe('WaterDetailComponent', () => {
         { provide: Storage },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(WaterDetailComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -12,7 +12,7 @@ describe('ListViewCustomParameterComponent', () => {
   let component: ListViewCustomParameterComponent;
   let fixture: ComponentFixture<ListViewCustomParameterComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ListViewCustomParameterComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -21,7 +21,9 @@ describe('ListViewCustomParameterComponent', () => {
         { provide: UIHelper, useClass: UIHelperMock },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(ListViewCustomParameterComponent);
     component = fixture.componentInstance;
     component.data = new Settings();

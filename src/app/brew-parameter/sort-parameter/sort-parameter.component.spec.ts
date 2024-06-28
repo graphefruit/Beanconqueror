@@ -11,7 +11,7 @@ describe('SortParameterComponent', () => {
   let component: SortParameterComponent;
   let fixture: ComponentFixture<SortParameterComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [SortParameterComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -20,7 +20,9 @@ describe('SortParameterComponent', () => {
         { provide: UIHelper, useClass: UIHelperMock },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(SortParameterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -12,7 +12,7 @@ describe('RoastingMachineAddComponent', () => {
   let component: RoastingMachineAddComponent;
   let fixture: ComponentFixture<RoastingMachineAddComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [RoastingMachineAddComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
@@ -21,7 +21,9 @@ describe('RoastingMachineAddComponent', () => {
         { provide: UIHelper, useClass: UIHelperMock },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(RoastingMachineAddComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

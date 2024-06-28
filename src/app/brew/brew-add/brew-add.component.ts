@@ -30,8 +30,6 @@ import BREW_TRACKING from '../../../data/tracking/brewTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
 
 import { SettingsPopoverBluetoothActionsComponent } from '../../settings/settings-popover-bluetooth-actions/settings-popover-bluetooth-actions.component';
-import { PreparationDeviceType } from '../../../classes/preparationDevice';
-import { UIHelper } from '../../../services/uiHelper';
 import {
   BluetoothScale,
   SCALE_TIMER_COMMAND,
@@ -41,8 +39,11 @@ import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
 } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { UIHelper } from '../../../services/uiHelper';
 import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
 import { Subscription } from 'rxjs';
+import { HapticService } from '../../../services/hapticService/haptic.service';
+import { PreparationDeviceType } from '../../../classes/preparationDevice';
 
 declare var Plotly;
 
@@ -90,7 +91,8 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly visualizerService: VisualizerService,
     private readonly uiHelper: UIHelper,
-    private readonly changeDetectorRef: ChangeDetectorRef
+    private readonly changeDetectorRef: ChangeDetectorRef,
+    private readonly hapticService: HapticService
   ) {
     // Initialize to standard in drop down
 
@@ -209,6 +211,12 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     const scale: BluetoothScale = this.bleManager.getScale();
     if (scale) {
       scale.tare();
+      if (
+        this.settings.haptic_feedback_active &&
+        this.settings.haptic_feedback_tare
+      ) {
+        this.hapticService.vibrate();
+      }
     }
   }
 
@@ -265,9 +273,11 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     } catch (ex) {}
     this.stopScaleTimer();
     try {
-      Plotly.purge(
-        this.brewBrewing.brewBrewingGraphEl.profileDiv.nativeElement
-      );
+      if (this.brewBrewing.brewBrewingGraphEl) {
+        Plotly.purge(
+          this.brewBrewing.brewBrewingGraphEl.profileDiv.nativeElement
+        );
+      }
     } catch (ex) {}
     this.modalController.dismiss(
       {
@@ -441,4 +451,6 @@ export class BrewAddComponent implements OnInit, OnDestroy {
       this.bluetoothSubscription = undefined;
     }
   }
+
+  protected readonly PreparationDeviceType = PreparationDeviceType;
 }

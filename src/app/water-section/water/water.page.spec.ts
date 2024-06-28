@@ -11,7 +11,7 @@ describe('WaterPage', () => {
   let component: WaterPage;
   let fixture: ComponentFixture<WaterPage>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [WaterPage],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -20,7 +20,9 @@ describe('WaterPage', () => {
         { provide: UIHelper, useClass: UIHelperMock },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(WaterPage);
     component = fixture.componentInstance;
     fixture.detectChanges();

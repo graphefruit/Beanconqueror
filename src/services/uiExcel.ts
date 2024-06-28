@@ -18,10 +18,11 @@ import { UIAlert } from './uiAlert';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { UIFileHelper } from './uiFileHelper';
 import { UIMillStorage } from './uiMillStorage';
-import { BrewFlow } from '../classes/brew/brewFlow';
+import { BrewFlow, IBrewWaterFlow } from '../classes/brew/brewFlow';
 import moment from 'moment';
 import { UISettingsStorage } from './uiSettingsStorage';
 import { Settings } from '../classes/settings/settings';
+import { Brew } from '../classes/brew/brew';
 
 @Injectable({
   providedIn: 'root',
@@ -542,6 +543,138 @@ export class UIExcel {
       }
     }
     await this.uiAlert.hideLoadingSpinner();
+  }
+
+  public async exportBrewByWeights(
+    _entry: Array<{ BREW: Brew; FLOW: BrewFlow }>
+  ) {
+    await this.uiAlert.showLoadingSpinner();
+
+    let counter: number = 0;
+
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    for (const exportEntry of _entry) {
+      const grindWeight = exportEntry.BREW.grind_weight;
+      const brewBeverageQuantity = exportEntry.BREW.brew_beverage_quantity;
+      const avgFlow: number = this.getAvgFlow(exportEntry.FLOW);
+      if (exportEntry.FLOW.hasOwnProperty('brewbyweight')) {
+        const header_final_weight: Array<string> = [];
+        header_final_weight.push('target_weight');
+        header_final_weight.push('lag_time');
+        header_final_weight.push('brew_time');
+        header_final_weight.push('timestamp');
+        header_final_weight.push('last_flow_value');
+        header_final_weight.push('actual_scale_weight');
+        header_final_weight.push('calc_lag_time');
+        header_final_weight.push('calc_exceeds_weight');
+        header_final_weight.push('avg_flow_lag_residual_time');
+        header_final_weight.push('residual_lag_time');
+        header_final_weight.push('average_flow_rate');
+        header_final_weight.push('scaleType');
+        header_final_weight.push('grindWeight');
+        header_final_weight.push('brewBeverageQuantity');
+        header_final_weight.push('avgFlow');
+        header_final_weight.push('offsetWeight');
+        header_final_weight.push('offsetWeightPercentage');
+
+        const wsDatafinalWeightFlow: any[][] = [header_final_weight];
+        for (const entry of exportEntry.FLOW.brewbyweight) {
+          let percentageOffset =
+            (Number(brewBeverageQuantity) * 100) / Number(entry.target_weight);
+          if (percentageOffset >= 100) {
+            percentageOffset = percentageOffset - 100;
+          } else {
+            percentageOffset = (percentageOffset - 100) * -1;
+          }
+          const wbEntry: Array<any> = [
+            entry.target_weight,
+            entry.lag_time,
+            entry.brew_time,
+            entry.timestamp,
+            entry.last_flow_value,
+            entry.actual_scale_weight,
+            entry.calc_lag_time,
+            entry.calc_exceeds_weight,
+            entry.avg_flow_lag_residual_time,
+            entry.residual_lag_time,
+            entry.average_flow_rate,
+            entry.scaleType,
+            grindWeight,
+            brewBeverageQuantity,
+            avgFlow,
+            Number(entry.target_weight) - Number(brewBeverageQuantity),
+            Number(percentageOffset),
+          ];
+          wsDatafinalWeightFlow.push(wbEntry);
+        }
+        const wsFinalWeight: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(
+          wsDatafinalWeightFlow
+        );
+        XLSX.utils.book_append_sheet(wb, wsFinalWeight, 'S-' + counter);
+        counter = counter + 1;
+      }
+    }
+
+    const filename: string =
+      'Beanconqueror_All_Brew_ByWeights_' +
+      moment().format('HH_mm_ss_DD_MM_YYYY').toString() +
+      '.xlsx';
+    try {
+      /* generate Blob */
+      const wbout: ArrayBuffer = XLSX.write(wb, {
+        bookType: 'xlsx',
+        type: 'array',
+      });
+      const blob: Blob = new Blob([wbout], {
+        type: 'application/octet-stream',
+      });
+      try {
+        const downloadFile: FileEntry = await this.uiFileHelper.downloadFile(
+          filename,
+          blob,
+          true
+        );
+        await this.uiAlert.hideLoadingSpinner();
+        // We share directly, so we don'T download into download folders.
+        /**if (this.platform.is('android')) {
+         const alert = await this.alertCtrl.create({
+         header: this.translate.instant('DOWNLOADED'),
+         subHeader: this.translate.instant('FILE_DOWNLOADED_SUCCESSFULLY', {
+         fileName: filename,
+         }),
+         buttons: ['OK'],
+         });
+         await alert.present();
+         }**/
+      } catch (ex) {}
+    } catch (e) {
+      if (e.message.match(/It was determined/)) {
+        /* in the browser, use writeFile */
+        XLSX.writeFile(wb, filename);
+      } else {
+        this.uiAlert.showMessage(e.message);
+        this.uiLog.log(`Excel export - Error occured: ${e.message}`);
+      }
+    }
+    await this.uiAlert.hideLoadingSpinner();
+  }
+  private getAvgFlow(_flow: BrewFlow): number {
+    if (_flow.waterFlow && _flow.waterFlow.length > 0) {
+      const waterFlows: Array<IBrewWaterFlow> = _flow.waterFlow;
+      let calculatedFlow: number = 0;
+      let foundEntries: number = 0;
+      for (const water of waterFlows) {
+        if (water.value > 0) {
+          calculatedFlow += water.value;
+          foundEntries += 1;
+        }
+      }
+      if (calculatedFlow > 0) {
+        return calculatedFlow / foundEntries;
+      }
+
+      return 0;
+    }
   }
 
   public async importBeansByExcel(_arrayBuffer) {

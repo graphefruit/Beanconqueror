@@ -250,11 +250,14 @@ node -v -> v18.15.0 -> works
 
 ### iOS-Version:
 
-`ionic cordova platform add ios@7.0.1`
+`ionic cordova platform add ios@7.1.0`
 
 ### Android-Version:
 
-`ionic cordova platform add android@12.0.0`
+`ionic cordova platform add android@13.0.0`
+`jdk 17 needed`
+
+You need to remove <config>WRITE_EXTERNAL_STORAGE</config> on the x-socialshare plugin.xml
 
 ### Github Page Hosting
 

@@ -280,6 +280,12 @@ export class BrewDetailComponent {
     const vS: Visualizer = new Visualizer();
 
     vS.mapBrew(this.data);
+    try {
+      if (this.data.tds > 0) {
+        vS.brew.ey = Number(this.data.getExtractionYield());
+      }
+    } catch (ex) {}
+
     vS.mapBean(this.data.getBean());
     vS.mapWater(this.data.getWater());
     vS.mapPreparation(this.data.getPreparation());

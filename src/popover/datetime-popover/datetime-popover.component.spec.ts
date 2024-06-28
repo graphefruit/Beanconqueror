@@ -11,7 +11,7 @@ describe('DatetimePopoverComponent', () => {
   let component: DatetimePopoverComponent;
   let fixture: ComponentFixture<DatetimePopoverComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [DatetimePopoverComponent],
       providers: [
@@ -20,7 +20,9 @@ describe('DatetimePopoverComponent', () => {
       ],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(DatetimePopoverComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

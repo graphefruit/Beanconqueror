@@ -35,7 +35,12 @@ export class Visualizer implements IVisualizer {
 
   public mapBrew(brew: Brew) {
     Object.keys(this.brew).map((_key) => {
-      this.brew[_key] = brew[_key];
+      if (brew.hasOwnProperty(_key)) {
+        // We added this, because we have one key - the "EY" field, which is not existing on the normal brew one.
+        this.brew[_key] = brew[_key];
+      } else {
+        // This should be the EY key ;)
+      }
     });
   }
   public mapBean(bean: Bean) {

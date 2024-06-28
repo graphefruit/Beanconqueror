@@ -14,7 +14,7 @@ describe('RoastingMachineInformationCardComponent', () => {
   let component: RoastingMachineInformationCardComponent;
   let fixture: ComponentFixture<RoastingMachineInformationCardComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [RoastingMachineInformationCardComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -35,7 +35,9 @@ describe('RoastingMachineInformationCardComponent', () => {
         },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(RoastingMachineInformationCardComponent);
     component = fixture.componentInstance;
     component.roastingMachine = {

@@ -11,7 +11,7 @@ describe('SettingsPopoverBluetoothActionsComponent', () => {
   let component: SettingsPopoverBluetoothActionsComponent;
   let fixture: ComponentFixture<SettingsPopoverBluetoothActionsComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [SettingsPopoverBluetoothActionsComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -24,7 +24,9 @@ describe('SettingsPopoverBluetoothActionsComponent', () => {
         { provide: Storage },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(SettingsPopoverBluetoothActionsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
