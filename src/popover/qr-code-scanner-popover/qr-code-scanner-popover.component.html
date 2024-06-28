@@ -14,9 +14,10 @@
 <ion-footer class="ion-no-border">
 
   <ion-item class="ion-padding-horizontal" lines="none">
-    <ion-label>{{"DONT_SHOW_AGAIN" | translate}}</ion-label>
     <ion-checkbox (ngModelChange)="saveSettings();"
-                  [(ngModel)]="settings.qr_scanner_information"></ion-checkbox>
+                  [(ngModel)]="settings.qr_scanner_information">
+      {{"DONT_SHOW_AGAIN" | translate}}
+    </ion-checkbox>
   </ion-item>
   <ion-row class="ion-padding-top">
 
