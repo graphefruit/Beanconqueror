@@ -2,46 +2,46 @@
 <ion-item  class="no-bottom-border item" lines="none">
 
 
-  <ion-input label-placement="stacked" label='{{label}}' (click)="showTimeOverlay($event);" [(data)]="displayingTime"  [transform-date]="'timer'"  displayFormat="{{returnWantedDisplayFormat()}}"></ion-input>
+  <ion-input label-placement="stacked" label='{{label}}' readonly (click)="showTimeOverlay($event);" [(data)]="displayingTime"  [transform-date]="'timer'"  displayFormat="{{returnWantedDisplayFormat()}}"></ion-input>
 
-  <ion-button (click)="startListening()" *ngIf="!timer.hasStarted && showListeningButton"
+  <ion-button (click)="startListening($event)" *ngIf="!timer.hasStarted && showListeningButton"
               class="big-icon-only" fill="clear" slot="end" tappable>
     <ion-icon class="ion-color-accent" name="beanconqueror-listening-start" slot="icon-only"></ion-icon>
   </ion-button>
-  <ion-button (click)="ignoreScaleWeight()" *ngIf="timer.hasStarted && timer.runTimer && showIgnoreScaleWeightButtonVisible && ignoreWeightButtonActive === true"
+  <ion-button (click)="ignoreScaleWeight($event)" *ngIf="timer.hasStarted && timer.runTimer && showIgnoreScaleWeightButtonVisible && ignoreWeightButtonActive === true"
               class="big-icon-only" fill="clear" slot="end" tappable>
     <ion-icon class="ion-color-accent" name="beanconqueror-scale-pause" slot="icon-only"></ion-icon>
   </ion-button>
-  <ion-button (click)="unignoreScaleWeight()" *ngIf="timer.hasStarted  && timer.runTimer &&  showIgnoreScaleWeightButtonVisible && unignoreWeightButtonActive === true"
+  <ion-button (click)="unignoreScaleWeight($event)" *ngIf="timer.hasStarted  && timer.runTimer &&  showIgnoreScaleWeightButtonVisible && unignoreWeightButtonActive === true"
               class="big-icon-only" fill="clear" slot="end" tappable>
     <ion-icon class="ion-color-accent" name="beanconqueror-scale-play" slot="icon-only"></ion-icon>
   </ion-button>
-  <ion-button (click)="bloomTime()" *ngIf="timer.runTimer && timer.hasStarted && !timer.hasFinished && showBloomTimer"
+  <ion-button (click)="bloomTime($event)" *ngIf="timer.runTimer && timer.hasStarted && !timer.hasFinished && showBloomTimer"
               class="big-icon-only" fill="clear" slot="end" tappable>
     <ion-icon class="ion-color-accent" name="beanconqueror-blooming" slot="icon-only"></ion-icon>
   </ion-button>
-  <ion-button (click)="dripTime()" *ngIf="timer.runTimer && timer.hasStarted && !timer.hasFinished && showDripTimer"
+  <ion-button (click)="dripTime($event)" *ngIf="timer.runTimer && timer.hasStarted && !timer.hasFinished && showDripTimer"
               class="big-icon-only" fill="clear" slot="end" tappable>
     <ion-icon class="ion-color-accent" name="beanconqueror-water-drop" slot="icon-only"></ion-icon>
   </ion-button>
-  <ion-button (click)="pauseTimer()" *ngIf="timer.runTimer && timer.hasStarted && !timer.hasFinished"
+  <ion-button (click)="pauseTimer('click',$event)" *ngIf="timer.runTimer && timer.hasStarted && !timer.hasFinished"
               class="big-icon-only" fill="clear" slot="end" tappable>
     <ion-icon class="ion-color-accent" name="beanconqueror-pause" slot="icon-only"></ion-icon>
 
   </ion-button>
-  <ion-button (click)="reset()" *ngIf="(!timer.hasStarted || !timer.runTimer && timer.hasStarted && !timer.hasFinished) && this.getSeconds()>0"
+  <ion-button (click)="reset(true,$event)" *ngIf="(!timer.hasStarted || !timer.runTimer && timer.hasStarted && !timer.hasFinished) && this.getSeconds()>0"
               class="big-icon-only" fill="clear" slot="end" tappable>
     <ion-icon class="ion-color-accent" name="beanconqueror-full-reset" slot="icon-only"></ion-icon>
   </ion-button>
 
-  <ion-button (click)="__resumeTimer()" *ngIf="!timer.runTimer && timer.hasStarted && !timer.hasFinished"
+  <ion-button (click)="__resumeTimer($event)" *ngIf="!timer.runTimer && timer.hasStarted && !timer.hasFinished"
               class="big-icon-only" fill="clear" slot="end" tappable>
     <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only"></ion-icon>
   </ion-button>
-  <ion-button (click)="__startTimer()" *ngIf="(showListeningButton === true && !timer.hasStarted) || ((settings.bluetooth_scale_listening_threshold_active === false || (smartScaleConnected() === false && settings.bluetooth_scale_listening_threshold_active === true)) && !timer.hasStarted)" class="big-icon-only" fill="clear" slot="end" tappable>
+  <ion-button (click)="__startTimer($event)" *ngIf="(showListeningButton === true && !timer.hasStarted) || ((settings.bluetooth_scale_listening_threshold_active === false || (smartScaleConnected() === false && settings.bluetooth_scale_listening_threshold_active === true)) && !timer.hasStarted)" class="big-icon-only" fill="clear" slot="end" tappable>
     <ion-icon class="ion-color-accent" name="beanconqueror-play" slot="icon-only"></ion-icon>
   </ion-button>
-  <ion-button (click)="__tareScale()" *ngIf="smartScaleConnected() && smartScaleSupportsTaring()"  class="big-icon-only" fill="clear" slot="end" tappable>
+  <ion-button (click)="__tareScale($event)" *ngIf="smartScaleConnected() && smartScaleSupportsTaring()"  class="big-icon-only" fill="clear" slot="end" tappable>
     <ion-icon class="ion-color-accent" name="beanconqueror-scale-tare" slot="icon-only"></ion-icon>
   </ion-button>
 

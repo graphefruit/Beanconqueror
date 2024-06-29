@@ -11,11 +11,12 @@ import {
 import { ITimer } from '../../interfaces/timer/iTimer';
 import moment from 'moment';
 import { DatetimePopoverComponent } from '../../popover/datetime-popover/datetime-popover.component';
-import { ModalController } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { Device } from '@awesome-cordova-plugins/device/ngx';
 
 @Component({
   selector: 'brew-timer',
@@ -103,7 +104,9 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     private readonly modalCtrl: ModalController,
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly changeDetectorRef: ChangeDetectorRef
+    private readonly changeDetectorRef: ChangeDetectorRef,
+    private readonly platform: Platform,
+    private readonly device: Device
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -195,7 +198,25 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
       .toISOString();
   }
 
-  public __startTimer() {
+  private __preventEventClickOnIos(_event) {
+    try {
+      //Just do this on iOS 16.X...
+      if (
+        _event &&
+        this.platform.is('ios') &&
+        this.device.version.indexOf('16.') >= 0
+      ) {
+        _event.cancelBubble = true;
+        _event.preventDefault();
+        _event.stopImmediatePropagation();
+        _event.stopPropagation();
+        _event.target.blur();
+      }
+    } catch (ex) {}
+  }
+
+  public __startTimer(_event) {
+    this.__preventEventClickOnIos(_event);
     if (this.timerStartPressed.observers.length > 0) {
       this.timerStartPressed.emit();
     } else {
@@ -249,43 +270,51 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     this.changeEvent();
   }
 
-  public __tareScale(): void {
+  public __tareScale(_event = null): void {
+    this.__preventEventClickOnIos(_event);
     this.tareScale.emit();
   }
 
-  public pauseTimer(_type = 'click'): void {
+  public pauseTimer(_type = 'click', _event = null): void {
+    this.__preventEventClickOnIos(_event);
     this.timer.runTimer = false;
     this.pausedTimer = moment(moment().toDate());
     this.timerPaused.emit(_type);
     this.changeEvent();
   }
 
-  public ignoreScaleWeight() {
+  public ignoreScaleWeight(_event = null) {
+    this.__preventEventClickOnIos(_event);
     this.ignoreWeightButtonActive = false;
     this.unignoreWeightButtonActive = true;
     this.ignoreWeight.emit();
   }
-  public unignoreScaleWeight() {
+  public unignoreScaleWeight(_event = null) {
+    this.__preventEventClickOnIos(_event);
     this.ignoreWeightButtonActive = true;
     this.unignoreWeightButtonActive = false;
     this.unignoreWeight.emit();
   }
 
-  public startListening() {
+  public startListening(_event = null) {
+    this.__preventEventClickOnIos(_event);
     this.showListeningButton = false;
     this.listeningToScaleChange.emit();
   }
-  public bloomTime(): void {
+  public bloomTime(_event = null): void {
+    this.__preventEventClickOnIos(_event);
     this.showBloomTimer = false;
     this.bloomTimer.emit(this.getSeconds());
   }
 
-  public dripTime(): void {
+  public dripTime(_event = null): void {
+    this.__preventEventClickOnIos(_event);
     this.showDripTimer = false;
     this.dripTimer.emit(this.getSeconds());
   }
 
-  public __resumeTimer() {
+  public __resumeTimer(_event = null) {
+    this.__preventEventClickOnIos(_event);
     if (this.timerResumedPressed.observers.length > 0) {
       this.timerResumedPressed.emit();
     } else {
@@ -353,7 +382,8 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
     return this.timer.milliseconds;
   }
 
-  public reset(_resetButtons: boolean = true) {
+  public reset(_resetButtons: boolean = true, _event = null) {
+    this.__preventEventClickOnIos(_event);
     this.timerReset.emit();
     this.initTimer(_resetButtons);
     this.changeEvent();
@@ -409,6 +439,22 @@ export class BrewTimerComponent implements OnInit, OnDestroy {
   }
 
   public async showTimeOverlay(_event) {
+    try {
+      //Just do this on iOS 16.X...
+      if (
+        _event &&
+        this.platform.is('ios') &&
+        this.device.version.indexOf('16.') >= 0
+      ) {
+        if (_event.target.outerHTML.indexOf('<ion-input') >= 0) {
+          /** If <ion-input is the start, the click was somehow done by the button, else just the "input" is clicked...
+           * Thats why we return here, and ignore the click.
+           */
+          return;
+        }
+      }
+    } catch (ex) {}
+
     _event.stopPropagation();
     _event.stopImmediatePropagation();
 
