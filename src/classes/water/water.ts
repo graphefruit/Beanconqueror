@@ -91,6 +91,8 @@ export class Water implements IWater {
         return 'beanconqueror-third-wave-water-cold-brew-profile';
       case WATER_TYPES.THIRD_WAVE_WATER_LOW_ACID_PROFILE:
         return 'beanconqueror-third-wave-water-low-acid-profile';
+      case WATER_TYPES.PURE_COFFEE_WATER:
+        return 'beanconqueror-pure-coffee-water';
       default:
         return 'water-outline';
     }

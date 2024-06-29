@@ -235,6 +235,11 @@ export class WaterAddTypeComponent implements OnInit {
         this.data.tds = 220;
         this.data.tds_type = 'PPM' as WATER_UNIT_TDS;
         break;
+
+      case WATER_TYPES.PURE_COFFEE_WATER:
+        this.data.note = 'https://www.purecoffeewater.com/';
+        break;
+
       default:
         break;
     }
