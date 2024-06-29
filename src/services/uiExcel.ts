@@ -433,6 +433,12 @@ export class UIExcel {
     header.push(this.translate.instant('EXCEL.PREPARATION.ID'));
     header.push(this.translate.instant('EXCEL.GRINDER.ID'));
 
+    const waterEnabled: boolean =
+      this.uiSettingsStorage.getSettings().show_water_section;
+    if (waterEnabled) {
+      header.push(this.translate.instant('BREW_DATA_WATER'));
+    }
+
     const millisecondsEnabled: boolean =
       this.uiSettingsStorage.getSettings().brew_milliseconds;
 
@@ -450,6 +456,7 @@ export class UIExcel {
         temperatureTime =
           temperatureTime + '.' + brew.brew_temperature_time_milliseconds;
       }
+
       const entry: Array<any> = [
         brew.grind_size,
         brew.grind_weight,
@@ -491,6 +498,15 @@ export class UIExcel {
         brew.getPreparation().config.uuid,
         brew.getMill().config.uuid,
       ];
+
+      if (waterEnabled) {
+        let waterName = '';
+        if (brew.water) {
+          waterName = brew.getWater().name;
+        }
+        entry.push(waterName);
+      }
+
       wsData.push(entry);
     }
     const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
