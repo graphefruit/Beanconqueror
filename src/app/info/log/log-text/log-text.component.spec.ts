@@ -4,7 +4,6 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { LogTextComponent } from './log-text.component';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 

@@ -60,13 +60,13 @@ import { Storage } from '@ionic/storage';
 import { UIToast } from '../services/uiToast';
 import { CoffeeBluetoothDevicesService } from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import {
+  Logger,
   PressureType,
   RefractometerType,
   ScaleType,
   sleep,
   TemperatureType,
 } from '../classes/devices';
-import { Logger } from '../classes/devices';
 import { UIExportImportHelper } from '../services/uiExportImportHelper';
 import { register } from 'swiper/element/bundle';
 import { UIGraphStorage } from '../services/uiGraphStorage.service';

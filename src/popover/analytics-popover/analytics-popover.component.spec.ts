@@ -2,12 +2,8 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { AnalyticsPopoverComponent } from './analytics-popover.component';
-import {
-  TranslateModule,
-  TranslatePipe,
-  TranslateService,
-} from '@ngx-translate/core';
-import { TranslateServiceMock, UIHelperMock } from '../../classes/mock';
+import { TranslateModule } from '@ngx-translate/core';
+import { UIHelperMock } from '../../classes/mock';
 import { UIHelper } from '../../services/uiHelper';
 import { Storage } from '@ionic/storage';
 

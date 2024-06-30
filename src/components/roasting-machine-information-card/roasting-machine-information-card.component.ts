@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { UIToast } from '../../services/uiToast';
 import { UIAnalytics } from '../../services/uiAnalytics';
@@ -19,7 +19,7 @@ import { UIRoastingMachineHelper } from '../../services/uiRoastingMachineHelper'
   templateUrl: './roasting-machine-information-card.component.html',
   styleUrls: ['./roasting-machine-information-card.component.scss'],
 })
-export class RoastingMachineInformationCardComponent implements OnInit {
+export class RoastingMachineInformationCardComponent {
   @Input() public roastingMachine: RoastingMachine;
   @Output() public roastingMachineAction: EventEmitter<any> =
     new EventEmitter();
@@ -36,8 +36,6 @@ export class RoastingMachineInformationCardComponent implements OnInit {
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiRoastingMachineHelper: UIRoastingMachineHelper
   ) {}
-
-  public ngOnInit() {}
 
   public async show() {
     await this.detail();

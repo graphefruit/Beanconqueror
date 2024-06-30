@@ -2,10 +2,9 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule, NavParams } from '@ionic/angular';
 
 import { MillPopoverActionsComponent } from './mill-popover-actions.component';
-import { NavParamsMock } from '../../../classes/mock';
 import { UIHelper } from '../../../services/uiHelper';
 import { TranslateModule } from '@ngx-translate/core';
-import { UIHelperMock } from '../../../classes/mock';
+import { NavParamsMock, UIHelperMock } from '../../../classes/mock';
 
 describe('MillPopoverActionsComponent', () => {
   let component: MillPopoverActionsComponent;

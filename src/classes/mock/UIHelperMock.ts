@@ -7,7 +7,9 @@ export class UIHelperMock {
     return _value;
   }
 
-  public showAlert(_message: string, title: string) {}
+  public showAlert(_message: string, title: string) {
+    // Intentionally left empty.
+  }
 
   public formatSeconds(_seconds: DurationConstructor, _format: string) {
     try {

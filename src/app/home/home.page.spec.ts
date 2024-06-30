@@ -8,13 +8,12 @@ import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
 import { KeysPipe } from '../../pipes/keys';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
-import { NavParamsMock } from '../../classes/mock';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { UIHelper } from '../../services/uiHelper';
-import { UIHelperMock } from '../../classes/mock';
+import { NavParamsMock, UIHelperMock } from '../../classes/mock';
 import { RouterTestingModule } from '@angular/router/testing';
 
 describe('HomePage', () => {
