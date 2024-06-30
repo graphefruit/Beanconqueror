@@ -5,13 +5,11 @@ import { BrewBrewingGraphComponent } from './brew-brewing-graph.component';
 import { Storage } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../../services/uiHelper';
-import { UIHelperMock } from '../../../classes/mock';
+import { BrewMock, UIHelperMock } from '../../../classes/mock';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
-import { Brew } from '../../../classes/brew/brew';
-import { Preparation } from '../../../classes/preparation/preparation';
 
 describe('BrewBrewingGraphComponent', () => {
   let component: BrewBrewingGraphComponent;
@@ -39,7 +37,7 @@ describe('BrewBrewingGraphComponent', () => {
     fixture = TestBed.createComponent(BrewBrewingGraphComponent);
     component = fixture.componentInstance;
 
-    component.data = new MockBrew();
+    component.data = new BrewMock();
     fixture.detectChanges();
   });
 
@@ -47,11 +45,3 @@ describe('BrewBrewingGraphComponent', () => {
     expect(component).toBeTruthy();
   });
 });
-
-class MockBrew extends Brew {
-  public _preparation: Preparation = new Preparation();
-
-  public getPreparation(): Preparation {
-    return this._preparation;
-  }
-}
