@@ -25,8 +25,6 @@ export class PreparationConnectedDeviceComponent {
   public PREPARATION_DEVICE_TYPE = PreparationDeviceType;
   @Input() public preparation: IPreparation;
 
-  public scriptid: number = 11;
-
   public pinFormatter(value: any) {
     const parsedFloat = parseFloat(value);
     if (isNaN(parsedFloat)) {
@@ -124,28 +122,5 @@ export class PreparationConnectedDeviceComponent {
     }
   }
 
-  public getScripts() {
-    const connectedDevice: XeniaDevice =
-      this.uiPreparationHelper.getConnectedDevice(this.data) as XeniaDevice;
-    if (connectedDevice) {
-      connectedDevice.getScripts();
-    }
-  }
-
-  public startScript() {
-    const connectedDevice: XeniaDevice =
-      this.uiPreparationHelper.getConnectedDevice(this.data) as XeniaDevice;
-    if (connectedDevice) {
-      connectedDevice.startScript(this.scriptid);
-    }
-  }
-
-  public stopScript() {
-    const connectedDevice: XeniaDevice =
-      this.uiPreparationHelper.getConnectedDevice(this.data) as XeniaDevice;
-    if (connectedDevice) {
-      connectedDevice.stopScript();
-    }
-  }
   public ngOnInit() {}
 }
