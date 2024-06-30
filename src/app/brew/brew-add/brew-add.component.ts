@@ -90,7 +90,6 @@ export class BrewAddComponent implements OnInit, OnDestroy {
     private readonly uiAnalytics: UIAnalytics,
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly visualizerService: VisualizerService,
-    private readonly uiHelper: UIHelper,
     private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly hapticService: HapticService
   ) {
