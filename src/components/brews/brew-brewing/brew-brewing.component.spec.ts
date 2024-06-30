@@ -11,8 +11,6 @@ import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { Brew } from '../../../classes/brew/brew';
-import { Preparation } from '../../../classes/preparation/preparation';
 import { BrewBrewingGraphComponent } from '../brew-brewing-graph/brew-brewing-graph.component';
 import { FormsModule } from '@angular/forms';
 import { KeysPipe } from 'src/pipes/keys';
