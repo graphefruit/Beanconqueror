@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import {IonicModule} from '@ionic/angular';
+import { IonicModule } from '@ionic/angular';
 
-import {BrewParameterPage} from './brew-parameter.page';
+import { BrewParameterPage } from './brew-parameter.page';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('BrewParameterPage', () => {
   let component: BrewParameterPage;
@@ -10,7 +11,7 @@ describe('BrewParameterPage', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [BrewParameterPage],
-      imports: [IonicModule.forRoot()]
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(BrewParameterPage);

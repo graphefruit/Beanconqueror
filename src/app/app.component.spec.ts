@@ -1,7 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed, waitForAsync } from '@angular/core/testing';
 
-import { ModalController, Platform } from '@ionic/angular';
+import { AngularDelegate, ModalController } from '@ionic/angular';
 import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
 import { RouterTestingModule } from '@angular/router/testing';
 
@@ -13,6 +13,13 @@ import { File } from '@awesome-cordova-plugins/file/ngx';
 import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
 import { ThreeDeeTouch } from '@awesome-cordova-plugins/three-dee-touch/ngx';
 import { Globalization } from '@awesome-cordova-plugins/globalization/ngx';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { IntentHandlerService } from 'src/services/intentHandler/intent-handler.service';
+import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
+import { UIPreparationHelper } from 'src/services/uiPreparationHelper';
+import { Device } from '@awesome-cordova-plugins/device/ngx';
 
 describe('AppComponent', () => {
   let statusBarSpy, platformReadySpy, platformSpy;
@@ -20,15 +27,11 @@ describe('AppComponent', () => {
   beforeEach(waitForAsync(() => {
     statusBarSpy = jasmine.createSpyObj('StatusBar', ['styleDefault']);
 
-    platformReadySpy = Promise.resolve(undefined);
-    platformSpy = jasmine.createSpyObj('Platform', { ready: platformReadySpy });
-
     TestBed.configureTestingModule({
       declarations: [AppComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         { provide: StatusBar, useValue: statusBarSpy },
-        { provide: Platform, useValue: platformSpy },
         { provide: Storage },
         { provide: InAppBrowser },
         { provide: File },
@@ -36,6 +39,14 @@ describe('AppComponent', () => {
         { provide: ThreeDeeTouch },
         { provide: ModalController },
         { provide: Globalization },
+        { provide: AngularDelegate },
+        { provide: SocialSharing },
+        { provide: FileTransfer },
+        { provide: AppVersion },
+        { provide: IntentHandlerService, useValue: {} },
+        { provide: AndroidPermissions },
+        { provide: UIPreparationHelper, useValue: {} },
+        { provide: Device },
       ],
       imports: [RouterTestingModule.withRoutes([]), TranslateModule.forRoot()],
     }).compileComponents();

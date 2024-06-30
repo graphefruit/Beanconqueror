@@ -2,6 +2,12 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { PhotoAddComponent } from './photo-add.component';
+import { UIImage } from '../../services/uiImage';
+import { UIImageMock } from '../../classes/mock';
+import { File } from '@awesome-cordova-plugins/file/ngx';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('PhotoAddComponent', () => {
   let component: PhotoAddComponent;
@@ -9,8 +15,17 @@ describe('PhotoAddComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ PhotoAddComponent ],
-      imports: [IonicModule.forRoot()]
+      declarations: [PhotoAddComponent],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
+      providers: [
+        {
+          provide: UIImage,
+          useClass: UIImageMock,
+        },
+        { provide: File },
+        { provide: SocialSharing },
+        { provide: FileTransfer },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PhotoAddComponent);

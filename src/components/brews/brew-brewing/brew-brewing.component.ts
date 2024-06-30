@@ -716,7 +716,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public getPreparation(): Preparation {
-    return this.uiPreparationStorage.getByUUID(this.data.method_of_preparation);
+    return this.data.getPreparation();
   }
 
   public chooseDateTime(_event) {

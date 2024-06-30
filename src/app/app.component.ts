@@ -58,25 +58,24 @@ import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { Storage } from '@ionic/storage';
 
 import { UIToast } from '../services/uiToast';
+import { CoffeeBluetoothDevicesService } from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import {
-  CoffeeBluetoothDevicesService,
-  CoffeeBluetoothServiceEvent,
-} from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import {
+  Logger,
   PressureType,
-  ScaleType,
-  TemperatureType,
   RefractometerType,
+  ScaleType,
+  sleep,
+  TemperatureType,
 } from '../classes/devices';
-import { Logger } from '../classes/devices/common/logger';
 import { UIExportImportHelper } from '../services/uiExportImportHelper';
-
-declare var window;
 import { register } from 'swiper/element/bundle';
 import { UIGraphStorage } from '../services/uiGraphStorage.service';
 import { UIStorage } from '../services/uiStorage';
 
+declare var window;
+
 register();
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -257,11 +256,11 @@ export class AppComponent implements AfterViewInit {
     // Dont remove androidPlatformService, we need to initialize it via constructor
     try {
       // Touch DB Factory to make sure, it is properly initialized even on iOS 14.6
-      const db = window.indexedDB;
+      const _db = window.indexedDB;
     } catch (ex) {}
     try {
       // Touch DB Factory to make sure, it is properly initialized even on iOS 14.6
-      const db = window.sqlitePlugin;
+      const _db = window.sqlitePlugin;
     } catch (ex) {}
   }
 
@@ -449,6 +448,7 @@ export class AppComponent implements AfterViewInit {
       await this.uiUpdate.checkUpdate();
     } catch (ex) {}
   }
+
   private async __checkCleanup() {
     try {
       await this.cleanupService.cleanupOldBrewData();
@@ -464,13 +464,14 @@ export class AppComponent implements AfterViewInit {
     const settings: Settings = this.uiSettingsStorage.getSettings();
     return settings.show_water_section;
   }
+
   public showGraphSection() {
     const settings: Settings = this.uiSettingsStorage.getSettings();
     return settings.show_graph_section;
   }
 
   private async __setDeviceLanguage(): Promise<any> {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve, _reject) => {
       const settings: Settings = this.uiSettingsStorage.getSettings();
       if (this.platform.is('cordova')) {
         try {
@@ -491,7 +492,7 @@ export class AppComponent implements AfterViewInit {
                   systemLanguage = systemLanguage.split('-')[0];
                 }
 
-                let settingLanguage: string = '';
+                let settingLanguage: string;
                 if (systemLanguage === 'de') {
                   settingLanguage = 'de';
                 } else if (systemLanguage === 'es') {
@@ -628,11 +629,7 @@ export class AppComponent implements AfterViewInit {
         // await this.bleManager.enableBLE();
       }
       await this.__checkBluetoothDevices();
-      await new Promise((resolve) => {
-        setTimeout(async () => {
-          resolve(undefined);
-        }, 500);
-      });
+      await sleep(500);
       this.__connectPressureDevice();
       this.__connectSmartScale();
       this.__connectTemperatureDevice();
@@ -694,6 +691,7 @@ export class AppComponent implements AfterViewInit {
       }
     } catch (ex) {}
   }
+
   private __connectSmartScale() {
     const settings = this.uiSettingsStorage.getSettings();
     const scale_id: string = settings.scale_id;
@@ -811,6 +809,7 @@ export class AppComponent implements AfterViewInit {
       }
     });
   }
+
   private __attachOnDeviceResume() {
     this.platform.resume.subscribe(async () => {
       const settings: Settings = this.uiSettingsStorage.getSettings();
@@ -827,7 +826,10 @@ export class AppComponent implements AfterViewInit {
         this.__connectRefractometerDevice();
       }
 
-      // IMPORTANT Why do we do this? Because the IndexedDB loses connection, and we just pull an entry which does not have many entries in the end
+      /**
+       * IMPORTANT Why do we do this? Because the IndexedDB loses connection,
+       * and we just pull an entry which does not have many entries in the end
+       */
       if (this.platform.is('ios')) {
         this.uiStorage.get('MILL').then(
           () => {},
@@ -972,6 +974,7 @@ export class AppComponent implements AfterViewInit {
       'https://github.com/graphefruit/Beanconqueror'
     );
   }
+
   public openDiscord() {
     this.uiAnalytics.trackEvent(
       LINK_TRACKING.TITLE,
@@ -989,6 +992,7 @@ export class AppComponent implements AfterViewInit {
       'https://www.instagram.com/beanconqueror/'
     );
   }
+
   public openFacebook() {
     this.uiAnalytics.trackEvent(
       LINK_TRACKING.TITLE,
@@ -1008,6 +1012,7 @@ export class AppComponent implements AfterViewInit {
       'https://www.paypal.com/paypalme/LarsSaalbach'
     );
   }
+
   public openGithubSponsor() {
     this.uiAnalytics.trackEvent(
       LINK_TRACKING.TITLE,
@@ -1017,6 +1022,7 @@ export class AppComponent implements AfterViewInit {
       'https://github.com/sponsors/graphefruit'
     );
   }
+
   public openDonatePage() {
     this.uiAnalytics.trackEvent(
       LINK_TRACKING.TITLE,

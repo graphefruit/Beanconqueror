@@ -60,6 +60,7 @@ export class Preparation implements IPreparation {
 
     // We need to reassign brew order here, else the class would be dismissed.
     this.brew_order = new OrderBrewParameter();
+
     Object.assign(this.brew_order, preparationObj.brew_order);
 
     this.default_last_coffee_parameters = new DefaultBrewParameter();

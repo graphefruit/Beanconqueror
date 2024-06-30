@@ -23,10 +23,10 @@ declare var Plotly;
   styleUrls: ['./graph-display-card.component.scss'],
 })
 export class GraphDisplayCardComponent implements OnInit {
-  @Input() private flowProfileData: any;
-  @Input() private flowProfilePath: any;
+  @Input() public flowProfileData: any;
+  @Input() public flowProfilePath: any;
 
-  @Input() private chartWidth: number;
+  @Input() public chartWidth: number;
 
   public flow_profile_raw: BrewFlow = new BrewFlow();
 

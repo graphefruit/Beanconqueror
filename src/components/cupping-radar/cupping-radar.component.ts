@@ -10,7 +10,6 @@ import { Chart } from 'chart.js';
 import { ICupping } from '../../interfaces/cupping/iCupping';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { TranslateService } from '@ngx-translate/core';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
 
 @Component({
@@ -19,7 +18,7 @@ import { UIBrewHelper } from '../../services/uiBrewHelper';
   styleUrls: ['./cupping-radar.component.scss'],
 })
 export class CuppingRadarComponent implements AfterViewInit, OnInit {
-  private chartEl: any = undefined;
+  public chartEl: any = undefined;
   public model: ICupping = {
     body: 0,
     brightness: 0,
@@ -40,10 +39,7 @@ export class CuppingRadarComponent implements AfterViewInit, OnInit {
   @Output() public cuppingChanged: EventEmitter<any> = new EventEmitter();
 
   private debounceCounter: number = 0;
-  constructor(
-    private readonly translate: TranslateService,
-    private uiBrewHelper: UIBrewHelper
-  ) {}
+  constructor(private uiBrewHelper: UIBrewHelper) {}
 
   public ngOnInit(): void {
     this.debounceRadar
