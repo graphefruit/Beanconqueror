@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   Component,
   ElementRef,
   EventEmitter,
@@ -25,6 +24,7 @@ import { BluetoothScale } from '../../../classes/devices';
 import { UIAlert } from '../../../services/uiAlert';
 
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
+import { UIHelper } from 'src/services/uiHelper';
 
 declare var Plotly;
 
@@ -33,7 +33,7 @@ declare var Plotly;
   templateUrl: './brew-flow.component.html',
   styleUrls: ['./brew-flow.component.scss'],
 })
-export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
+export class BrewFlowComponent implements OnDestroy, OnInit {
   public static readonly COMPONENT_ID: string = 'brew-flow';
 
   @ViewChild('brewFlowContent', { read: ElementRef })
@@ -78,13 +78,16 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
 
   constructor(
     private readonly modalController: ModalController,
+    private readonly uiHelper: UIHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiBrewHelper: UIBrewHelper,
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly platform: Platform,
     private readonly ngZone: NgZone,
     private readonly uiAlert: UIAlert
-  ) {}
+  ) {
+    this.settings = this.uiSettingsStorage.getSettings();
+  }
 
   public ngOnInit() {
     try {
@@ -221,10 +224,6 @@ export class BrewFlowComponent implements AfterViewInit, OnDestroy, OnInit {
         this.brewComponent.brewBrewingGraphEl.updateChart();
       }
     }, 150);
-  }
-
-  public async ngAfterViewInit() {
-    this.settings = this.uiSettingsStorage.getSettings();
   }
 
   @HostListener('window:resize')
