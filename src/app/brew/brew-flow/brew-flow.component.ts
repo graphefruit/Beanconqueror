@@ -78,7 +78,7 @@ export class BrewFlowComponent implements OnDestroy, OnInit {
 
   constructor(
     private readonly modalController: ModalController,
-    private readonly uiHelper: UIHelper,
+    public readonly uiHelper: UIHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiBrewHelper: UIBrewHelper,
     private readonly bleManager: CoffeeBluetoothDevicesService,
