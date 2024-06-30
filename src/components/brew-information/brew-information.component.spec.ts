@@ -24,7 +24,7 @@ describe('BrewInformationComponent', () => {
   let component: BrewInformationComponent;
   let fixture: ComponentFixture<BrewInformationComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [BrewInformationComponent, FormatDatePipe],
       imports: [
@@ -43,7 +43,9 @@ describe('BrewInformationComponent', () => {
         { provide: FileTransfer },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(BrewInformationComponent);
     component = fixture.componentInstance;
     component.brew = {

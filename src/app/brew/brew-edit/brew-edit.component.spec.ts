@@ -25,7 +25,7 @@ describe('BrewEditComponent', () => {
   let component: BrewEditComponent;
   let fixture: ComponentFixture<BrewEditComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     NavParamsMock.setParams(undefined);
     TestBed.configureTestingModule({
       imports: [
@@ -56,6 +56,9 @@ describe('BrewEditComponent', () => {
         { provide: Insomnia },
       ],
     }).compileComponents();
+  }));
+
+  beforeEach(() => {
     fixture = TestBed.createComponent(BrewEditComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -13,7 +13,7 @@ describe('BrewFilterComponent', () => {
   let component: BrewFilterComponent;
   let fixture: ComponentFixture<BrewFilterComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [BrewFilterComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
@@ -36,7 +36,9 @@ describe('BrewFilterComponent', () => {
         },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(BrewFilterComponent);
     component = fixture.componentInstance;
     NavParamsMock.setParams({
