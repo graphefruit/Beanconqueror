@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { UIHelper } from '../../../services/uiHelper';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { IBrew } from '../../../interfaces/brew/iBrew';
@@ -66,17 +66,18 @@ export class BrewEditComponent implements OnInit {
     if (brew !== undefined) {
       this.data.initializeByObject(brew);
     }
-    window.addEventListener('keyboardWillShow', (event) => {
-      // Describe your logic which will be run each time when keyboard is about to be shown.
-      this.showFooter = false;
-    });
-
-    window.addEventListener('keyboardWillHide', () => {
-      // Describe your logic which will be run each time when keyboard is about to be closed.
-      this.showFooter = true;
-    });
   }
 
+  @HostListener('window:keyboardWillShow')
+  private hideFooter() {
+    // Describe your logic which will be run each time when keyboard is about to be shown.
+    this.showFooter = false;
+  }
+  @HostListener('window:keyboardWillHide')
+  private showFooterAgain() {
+    // Describe your logic which will be run each time when keyboard is about to be closed.
+    this.showFooter = true;
+  }
   public ionViewDidEnter(): void {
     if (this.settings.wake_lock) {
       this.insomnia.keepAwake().then(
