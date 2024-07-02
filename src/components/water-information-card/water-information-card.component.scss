@@ -6,10 +6,12 @@
       padding-top: var(--padding-top);
     }
   }
-
+  .empirical-water {
+    width: 120px;
+    margin: 0 auto;
+  }
   [name='beanconqueror-pure-coffee-water'] {
     max-width: 120px;
-    width: 120px !important;
   }
   .full-sized-icon {
     width: 100%;

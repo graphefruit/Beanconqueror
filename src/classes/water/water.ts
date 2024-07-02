@@ -33,6 +33,10 @@ export class Water implements IWater {
   public sodium_type: WATER_UNIT;
   public potassium: number;
   public potassium_type: WATER_UNIT;
+  public chloride: number;
+  public chloride_type: WATER_UNIT;
+  public sulfate: number;
+  public sulfate_type: WATER_UNIT;
 
   public tds: number;
   public tds_type: WATER_UNIT_TDS;
@@ -51,6 +55,9 @@ export class Water implements IWater {
     this.magnesium = 0;
     this.sodium = 0;
     this.potassium = 0;
+    this.chloride = 0;
+    this.sulfate = 0;
+
     this.tds = 0;
 
     this.general_hardness_type = 'UNKNOWN' as WATER_UNIT;
@@ -59,6 +66,8 @@ export class Water implements IWater {
     this.magnesium_type = 'UNKNOWN' as WATER_UNIT;
     this.sodium_type = 'UNKNOWN' as WATER_UNIT;
     this.potassium_type = 'UNKNOWN' as WATER_UNIT;
+    this.chloride_type = 'UNKNOWN' as WATER_UNIT;
+    this.sulfate_type = 'UNKNOWN' as WATER_UNIT;
     this.tds_type = 'PPM' as WATER_UNIT_TDS;
 
     this.type = 'CUSTOM_WATER' as WATER_TYPES;

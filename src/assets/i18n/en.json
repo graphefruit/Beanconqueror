@@ -1307,5 +1307,7 @@
             ]
         }
     },
-    "WATER_TYPE_PURE_COFFEE_WATER": "Pure Coffee Water"
+    "WATER_TYPE_PURE_COFFEE_WATER": "Pure Coffee Water",
+  "WATER_TYPE_EMPIRICAL_WATER_GLACIAL": "empirical water GLACIAL",
+  "WATER_TYPE_EMPIRICAL_WATER_SPRING": "empirical water SPRING"
 }
