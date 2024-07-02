@@ -51,6 +51,7 @@ export enum PressureType {
 export enum TemperatureType {
   ETI = 'ETI',
   BASICGRILL = 'BASICGRILL',
+  MEATER = 'MEATER',
 }
 
 export enum RefractometerType {
