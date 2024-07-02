@@ -23,6 +23,7 @@ import { DiyRustCoffeeScale } from './diyRustCoffeeScale';
 import { BookooPressure } from './bookooPressure';
 import { BookooScale } from './bokooScale';
 import { BasicGrillThermometer } from './basicGrillThermometer';
+import { MeaterThermometer } from './meaterThermometer';
 export { BluetoothScale, SCALE_TIMER_COMMAND } from './bluetoothDevice';
 
 export enum ScaleType {
@@ -121,6 +122,8 @@ export function makeTemperatureDevice(
       return new ETITemperature(data);
     case TemperatureType.BASICGRILL:
       return new BasicGrillThermometer(data);
+    case TemperatureType.MEATER:
+      return new MeaterThermometer(data);
     default:
       return null;
   }
