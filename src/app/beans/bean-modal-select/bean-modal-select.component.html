@@ -7,6 +7,11 @@
         <ion-icon name='beanconqueror-back' slot='icon-only'></ion-icon>
       </ion-button>
     </ion-buttons>
+    <ion-buttons slot='end'>
+      <ion-button (click)="add()" tappable class="big-add-icon" fill="clear">
+        <ion-icon class="ion-color-accent" name="beanconqueror-add" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content #beanContent>

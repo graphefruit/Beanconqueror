@@ -69,6 +69,10 @@ export class BeanModalSelectComponent implements OnInit {
     private readonly uiSettingsStorage: UISettingsStorage
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
+    this.loadBeans();
+  }
+
+  public loadBeans() {
     this.objs = this.uiBeanStorage.getAllEntries();
     this.filter_open = this.settings.GET_BEAN_FILTER();
     this.filter_finished = this.settings.GET_BEAN_FILTER();
@@ -114,6 +118,13 @@ export class BeanModalSelectComponent implements OnInit {
         return 0;
       });
   }
+
+  public async add() {
+    await this.uiBeanHelper.addBean();
+    this.loadBeans();
+    this.research();
+  }
+
   @HostListener('window:resize')
   @HostListener('window:orientationchange', ['$event'])
   public onOrientationChange(event) {
