@@ -2,18 +2,9 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { PreparationAddComponent } from './preparation-add.component';
 import { TranslateModule } from '@ngx-translate/core';
-import { FormsModule } from '@angular/forms';
-import { IonicStorageModule } from '@ionic/storage';
-import { CommonModule } from '@angular/common';
-import { IonicModule, ModalController, NavParams } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { KeysPipe } from '../../../pipes/keys';
-import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
-import { NavParamsMock } from '../../../classes/mock/NavParamsMock';
-import { File } from '@awesome-cordova-plugins/file/ngx';
-import { Camera } from '@awesome-cordova-plugins/camera/ngx';
-import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
-import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
-import { Router } from '@angular/router';
+import { UIAnalytics } from '../../../services/uiAnalytics';
 
 describe('PreparationAddComponent', () => {
   let component: PreparationAddComponent;
@@ -21,25 +12,17 @@ describe('PreparationAddComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
-        TranslateModule.forRoot(),
-        FormsModule,
-        IonicStorageModule.forRoot(),
-        CommonModule,
-        IonicModule,
-      ],
+      imports: [TranslateModule.forRoot()],
       declarations: [PreparationAddComponent, KeysPipe],
       providers: [
-        { provide: InAppBrowser },
-        { provide: ModalController },
-        { provide: NavParams, useClass: NavParamsMock },
-        { provide: Storage },
-        { provide: File },
-        { provide: Camera },
-        { provide: ImagePicker },
-        { provide: AndroidPermissions },
-
-        { provide: Router },
+        {
+          provide: UIAnalytics,
+          useValue: {},
+        },
+        {
+          provide: ModalController,
+          useValue: {},
+        },
       ],
     }).compileComponents();
   }));

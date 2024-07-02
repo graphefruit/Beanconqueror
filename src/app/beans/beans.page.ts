@@ -3,35 +3,26 @@ import {
   Component,
   ElementRef,
   HostListener,
-  OnInit,
   ViewChild,
 } from '@angular/core';
-import { UIAlert } from '../../services/uiAlert';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
-import {
-  ActionSheetController,
-  ModalController,
-  Platform,
-} from '@ionic/angular';
-import { UIBrewStorage } from '../../services/uiBrewStorage';
+import { ModalController, Platform } from '@ionic/angular';
 import { Bean } from '../../classes/bean/bean';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
-import { BEAN_ACTION } from '../../enums/beans/beanAction';
 import { BeanSortComponent } from './bean-sort/bean-sort.component';
 import { IBeanPageSort } from '../../interfaces/bean/iBeanPageSort';
 import { BEAN_SORT_AFTER } from '../../enums/beans/beanSortAfter';
 import { BEAN_SORT_ORDER } from '../../enums/beans/beanSortOrder';
 import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
 import { UIAnalytics } from '../../services/uiAnalytics';
-import { TranslateService } from '@ngx-translate/core';
 import { QrScannerService } from '../../services/qrScanner/qr-scanner.service';
 import { IntentHandlerService } from '../../services/intentHandler/intent-handler.service';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
 import { IBeanPageFilter } from '../../interfaces/bean/iBeanPageFilter';
 import { BeanFilterComponent } from './bean-filter/bean-filter.component';
 import moment from 'moment';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import BEAN_TRACKING from '../../data/tracking/beanTracking';
 import { BeanPopoverAddComponent } from './bean-popover-add/bean-popover-add.component';
 import { BEAN_POPOVER_ADD_ACTION } from '../../enums/beans/beanPopoverAddAction';
@@ -41,7 +32,7 @@ import { BEAN_POPOVER_ADD_ACTION } from '../../enums/beans/beanPopoverAddAction'
   templateUrl: './beans.page.html',
   styleUrls: ['./beans.page.scss'],
 })
-export class BeansPage implements OnInit {
+export class BeansPage {
   public beans: Array<Bean> = [];
 
   public settings: Settings;
@@ -83,12 +74,8 @@ export class BeansPage implements OnInit {
     private readonly modalCtrl: ModalController,
     private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiAlert: UIAlert,
-    private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiAnalytics: UIAnalytics,
-    private readonly translate: TranslateService,
-    private readonly actionSheetController: ActionSheetController,
     private readonly qrScannerService: QrScannerService,
     private readonly intenthandler: IntentHandlerService,
     private readonly uiBeanHelper: UIBeanHelper,
@@ -116,13 +103,13 @@ export class BeansPage implements OnInit {
     this.retriggerScroll();
   }
 
-  public async beanAction(action: BEAN_ACTION, bean: Bean): Promise<void> {
+  public async beanAction(): Promise<void> {
     this.loadBeans();
   }
 
   @HostListener('window:resize')
   @HostListener('window:orientationchange', ['$event'])
-  public onOrientationChange(event) {
+  public onOrientationChange(_event: any) {
     this.retriggerScroll();
   }
 
@@ -144,11 +131,7 @@ export class BeansPage implements OnInit {
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
-    if (
-      modalData !== undefined &&
-      modalData.data &&
-      modalData.data.bean_sort !== undefined
-    ) {
+    if (modalData?.data?.bean_sort !== undefined) {
       if (this.bean_segment === 'open') {
         this.openBeansSort = modalData.data.bean_sort;
       } else {
@@ -227,12 +210,12 @@ export class BeansPage implements OnInit {
         checkingFilter
       );
       /** let didRatingFilterChanged: boolean = false;
-      if (isFilterActive === false && checkingFilter.rating) {
-        didRatingFilterChanged = (checkingFilter.rating.upper !== this.settings?.bean_rating || checkingFilter.rating.lower !== -1);
-      }
-      if (didRatingFilterChanged === true) {
-        isFilterActive = true;
-      } **/
+       if (isFilterActive === false && checkingFilter.rating) {
+       didRatingFilterChanged = (checkingFilter.rating.upper !== this.settings?.bean_rating || checkingFilter.rating.lower !== -1);
+       }
+       if (didRatingFilterChanged === true) {
+       isFilterActive = true;
+       } **/
     }
 
     return isFilterActive;
@@ -242,12 +225,9 @@ export class BeansPage implements OnInit {
     let shallBarDisplayed: boolean = false;
     if (this.settings) {
       const isOpenSegment = this.bean_segment === 'open';
-      let checkingEntries: Array<Bean> = [];
-      if (isOpenSegment) {
-        checkingEntries = this.openBeans;
-      } else {
-        checkingEntries = this.finishedBeans;
-      }
+      const checkingEntries = isOpenSegment
+        ? this.openBeans
+        : this.finishedBeans;
       if (checkingEntries.length <= 0) {
         const entriesExisting = this.uiBeanStorage
           .getAllEntries()
@@ -264,8 +244,6 @@ export class BeansPage implements OnInit {
   public research() {
     this.__initializeBeansView(this.bean_segment);
   }
-
-  public ngOnInit() {}
 
   public async add() {
     await this.uiBeanHelper.addBean();
@@ -309,10 +287,9 @@ export class BeansPage implements OnInit {
       );
     } else {
       // Test sample for development
-      //await this.intenthandler.handleQRCodeLink('https://beanconqueror.com/?qr=e7ada0a6');
+      // await this.intenthandler.handleQRCodeLink('https://beanconqueror.com/?qr=e7ada0a6');
     }
     this.loadBeans();
-    return;
   }
 
   public async longPressAdd(event) {

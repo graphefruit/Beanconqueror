@@ -10,10 +10,11 @@ import {
 import { ITimer } from '../../interfaces/timer/iTimer';
 import { DatetimePopoverComponent } from '../../popover/datetime-popover/datetime-popover.component';
 import moment from 'moment';
-import { ModalController } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 import { Settings } from '../../classes/settings/settings';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
+import { Device } from '@awesome-cordova-plugins/device/ngx';
 
 @Component({
   selector: 'timer',
@@ -42,9 +43,28 @@ export class TimerComponent implements OnInit, OnDestroy {
   constructor(
     private readonly modalCtrl: ModalController,
     private readonly bleManager: CoffeeBluetoothDevicesService,
-    private readonly uiSettingsStorage: UISettingsStorage
+    private readonly uiSettingsStorage: UISettingsStorage,
+    private readonly platform: Platform,
+    private readonly device: Device
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
+  }
+
+  private __preventEventClickOnIos(_event) {
+    try {
+      //Just do this on iOS 16.X...
+      if (
+        _event &&
+        this.platform.is('ios') &&
+        this.device.version.indexOf('16.') >= 0
+      ) {
+        _event.target.blur();
+        _event.cancelBubble = true;
+        _event.preventDefault();
+        _event.stopImmediatePropagation();
+        _event.stopPropagation();
+      }
+    } catch (ex) {}
   }
 
   public smartScaleConnected() {
@@ -116,7 +136,8 @@ export class TimerComponent implements OnInit, OnDestroy {
       .toISOString();
   }
 
-  public startTimer(_resumed: boolean = false): void {
+  public startTimer(_resumed: boolean = false, _event = null) {
+    this.__preventEventClickOnIos(_event);
     if (_resumed === false) {
       const startingDate = moment().toDate();
       this.startingDay = moment(startingDate).startOf('day');
@@ -150,7 +171,8 @@ export class TimerComponent implements OnInit, OnDestroy {
     this.changeEvent();
   }
 
-  public pauseTimer(): void {
+  public pauseTimer(_event = null) {
+    this.__preventEventClickOnIos(_event);
     this.pausedTimer = moment(moment().toDate());
     this.timerPaused.emit();
     this.timer.runTimer = false;
@@ -158,7 +180,8 @@ export class TimerComponent implements OnInit, OnDestroy {
     this.changeEvent();
   }
 
-  public resumeTimer(): void {
+  public resumeTimer(_event = null) {
+    this.__preventEventClickOnIos(_event);
     this.startTimer(true);
     this.timerResumed.emit();
   }
@@ -213,7 +236,8 @@ export class TimerComponent implements OnInit, OnDestroy {
     return this.timer.milliseconds;
   }
 
-  public reset() {
+  public reset(_event = null) {
+    this.__preventEventClickOnIos(_event);
     this.timerReset.emit();
     this.initTimer();
     this.changeEvent();
@@ -252,6 +276,21 @@ export class TimerComponent implements OnInit, OnDestroy {
   }
 
   public async showTimeOverlay(_event) {
+    try {
+      //Just do this on iOS 16.X...
+      if (
+        _event &&
+        this.platform.is('ios') &&
+        this.device.version.indexOf('16.') >= 0
+      ) {
+        if (_event.target.outerHTML.indexOf('<ion-input') >= 0) {
+          /** If <ion-input is the start, the click was somehow done by the button, else just the "input" is clicked...
+           * Thats why we return here, and ignore the click.
+           */
+          return;
+        }
+      }
+    } catch (ex) {}
     _event.stopPropagation();
     _event.stopImmediatePropagation();
 

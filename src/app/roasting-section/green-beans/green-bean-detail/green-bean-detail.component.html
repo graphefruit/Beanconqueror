@@ -10,7 +10,7 @@
 </ion-header>
 <ion-content>
 
-  <ion-segment scrollable="true" [(ngModel)]="bean_segment" class="ion-padding-vertical" style="padding-top:0px;">
+  <ion-segment scrollable="true" [(ngModel)]="bean_segment" class="ion-padding-vertical" style="padding-top:0;">
     <ion-segment-button value="general">
       <ion-label>{{"BEAN_TAB_GENERAL_INFORMATION" | translate }}
       </ion-label>
@@ -108,7 +108,7 @@
         </div>
       </div>
       <div *ngIf="linkedRoasts.length > 0">
-          <bean-information (beanAction)="beanAction($event[0],$event[1])" [showActions]="false" *ngFor="let bean of linkedRoasts"
+          <bean-information (beanAction)="beanAction()" [showActions]="false" *ngFor="let bean of linkedRoasts"
                             [bean]="bean"></bean-information>
       </div>
 

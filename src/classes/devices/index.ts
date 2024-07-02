@@ -25,6 +25,7 @@ import { BookooScale } from './bokooScale';
 import { BasicGrillThermometer } from './basicGrillThermometer';
 import { MeaterThermometer } from './meaterThermometer';
 export { BluetoothScale, SCALE_TIMER_COMMAND } from './bluetoothDevice';
+export * from './common';
 
 export enum ScaleType {
   DECENT = 'DECENT',
@@ -133,10 +134,6 @@ export function makeRefractometerDevice(
   type: RefractometerType,
   data: PeripheralData
 ): RefractometerDevice | null {
-  switch (type) {
-    case RefractometerType.R2:
-      return new DiFluidR2Refractometer(data);
-    default:
-      return null;
-  }
+  if (type == RefractometerType.R2) return new DiFluidR2Refractometer(data);
+  return null;
 }

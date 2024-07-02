@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import {IonicModule} from '@ionic/angular';
+import { IonicModule } from '@ionic/angular';
 
-import {InfoComponent} from './info.component';
+import { InfoComponent } from './info.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('InfoComponent', () => {
   let component: InfoComponent;
@@ -10,7 +11,7 @@ describe('InfoComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [InfoComponent],
-      imports: [IonicModule.forRoot()]
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(InfoComponent);

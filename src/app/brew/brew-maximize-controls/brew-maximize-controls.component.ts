@@ -1,18 +1,12 @@
 import {
   AfterViewInit,
   Component,
-  ElementRef,
-  EventEmitter,
-  HostListener,
   Input,
-  NgZone,
   OnDestroy,
   OnInit,
-  ViewChild,
 } from '@angular/core';
 import { Brew } from '../../../classes/brew/brew';
 import { BrewBrewingComponent } from '../../../components/brews/brew-brewing/brew-brewing.component';
-import { Subscription } from 'rxjs';
 import { Settings } from '../../../classes/settings/settings';
 import { ModalController, Platform } from '@ionic/angular';
 import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
@@ -22,8 +16,6 @@ import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { TranslateService } from '@ngx-translate/core';
 import { CoffeeBluetoothDevicesService } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import { PressureDevice } from '../../../classes/devices/pressureBluetoothDevice';
-import { TemperatureDevice } from '../../../classes/devices/temperatureBluetoothDevice';
-import { BluetoothScale } from '../../../classes/devices';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 
 @Component({
@@ -49,15 +41,15 @@ export class BrewMaximizeControlsComponent
 
   constructor(
     private readonly modalController: ModalController,
-    private readonly screenOrientation: ScreenOrientation,
-    private readonly uiHelper: UIHelper,
+    public readonly uiHelper: UIHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiBrewHelper: UIBrewHelper,
-    private readonly translate: TranslateService,
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly platform: Platform
   ) {}
   public ngOnInit() {
+    this.settings = this.uiSettingsStorage.getSettings();
+
     try {
       this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(
         9999,
@@ -100,8 +92,6 @@ export class BrewMaximizeControlsComponent
   }
 
   public async ngAfterViewInit() {
-    this.settings = this.uiSettingsStorage.getSettings();
-
     const settings: Settings = this.uiSettingsStorage.getSettings();
 
     this.showBloomTimer = this.uiBrewHelper.fieldVisible(

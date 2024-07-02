@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { BrewPage } from './brew.page';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
-import { IonicStorageModule } from '@ionic/storage';
+import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
 import { KeysPipe } from '../../pipes/keys';
@@ -16,6 +16,8 @@ import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions
 import { Router } from '@angular/router';
 import { BrewInformationComponent } from '../../components/brew-information/brew-information.component';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+import { UIHelper } from '../../services/uiHelper';
+import { UIHelperMock } from '../../classes/mock';
 
 describe('BrewPage', () => {
   let component: BrewPage;
@@ -26,7 +28,6 @@ describe('BrewPage', () => {
       imports: [
         TranslateModule.forRoot(),
         FormsModule,
-        IonicStorageModule.forRoot(),
         CommonModule,
         IonicModule,
       ],
@@ -40,9 +41,9 @@ describe('BrewPage', () => {
         { provide: Camera },
         { provide: ImagePicker },
         { provide: AndroidPermissions },
-
         { provide: Router },
         { provide: SocialSharing },
+        { provide: UIHelper, useClass: UIHelperMock },
       ],
     }).compileComponents();
   }));

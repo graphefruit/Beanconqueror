@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { SettingsPage } from './settings.page';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
-import { IonicStorageModule } from '@ionic/storage';
+import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
 import { KeysPipe } from '../../pipes/keys';
@@ -17,6 +17,10 @@ import { Router } from '@angular/router';
 import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
 import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+import { UIHelperMock } from '../../classes/mock';
+import { UIHelper } from '../../services/uiHelper';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 
 describe('SettingsPage', () => {
   let component: SettingsPage;
@@ -27,7 +31,6 @@ describe('SettingsPage', () => {
       imports: [
         TranslateModule.forRoot(),
         FormsModule,
-        IonicStorageModule.forRoot(),
         CommonModule,
         IonicModule,
       ],
@@ -41,11 +44,13 @@ describe('SettingsPage', () => {
         { provide: Camera },
         { provide: ImagePicker },
         { provide: AndroidPermissions },
-
+        { provide: UIHelper, useClass: UIHelperMock },
         { provide: Router },
         { provide: FileChooser },
+        { provide: FileTransfer },
         { provide: FilePath },
         { provide: SocialSharing },
+        { provide: AppVersion },
       ],
     }).compileComponents();
   }));

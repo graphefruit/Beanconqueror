@@ -21,7 +21,7 @@ import { UIBeanHelper } from '../../../services/uiBeanHelper';
   styleUrls: ['./beans-detail.component.scss'],
 })
 export class BeansDetailComponent implements OnInit {
-  public static COMPONENT_ID: string = 'bean-detail';
+  public static readonly COMPONENT_ID: string = 'bean-detail';
   public roast_enum = ROASTS_ENUM;
   public mixEnum = BEAN_MIX_ENUM;
   public beanRoastingTypeEnum = BEAN_ROASTING_TYPE_ENUM;
@@ -41,7 +41,6 @@ export class BeansDetailComponent implements OnInit {
     private readonly navParams: NavParams,
     public uiHelper: UIHelper,
     private readonly uiAnalytics: UIAnalytics,
-    private readonly uiSettings: UISettingsStorage,
     public readonly uiBeanHelper: UIBeanHelper,
     private readonly uiSettingsStorage: UISettingsStorage
   ) {}
@@ -58,12 +57,12 @@ export class BeansDetailComponent implements OnInit {
       this.data.initializeByObject(copy);
     }
     setTimeout(() => {
-      if (this.beanStars && this.beanStars?.setRating) {
+      if (this.beanStars?.setRating) {
         this.beanStars.setRating(this.data.roast_range);
       }
 
       if (this.hasCustomRatingRange() === false) {
-        if (this.beanRating && this.beanRating?.setRating) {
+        if (this.beanRating?.setRating) {
           this.beanRating.setRating(this.data.rating);
         }
       }
@@ -105,13 +104,8 @@ export class BeansDetailComponent implements OnInit {
       .format('HH:mm:ss');
   }
   public hasCustomRatingRange(): boolean {
-    if (this.settings) {
-      if (this.settings.bean_rating !== 5) {
-        return true;
-      } else if (this.settings.bean_rating_steps !== 1) {
-        return true;
-      }
-    }
-    return false;
+    return (
+      this.settings?.bean_rating !== 5 || this.settings.bean_rating_steps !== 1
+    );
   }
 }

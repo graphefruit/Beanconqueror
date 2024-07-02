@@ -235,6 +235,37 @@ export class WaterAddTypeComponent implements OnInit {
         this.data.tds = 220;
         this.data.tds_type = 'PPM' as WATER_UNIT_TDS;
         break;
+
+      case WATER_TYPES.PURE_COFFEE_WATER:
+        this.data.note = 'https://www.purecoffeewater.com/';
+
+        /**
+         * General Hardness (GH): 65 mg/l
+         * Total Alkalinity (KH): 45 mg/l
+         * Total Dissolved Solids (TDS): 110 mg/l
+         */
+        this.data.general_hardness = 65;
+        this.data.general_hardness_type = 'UNKNOWN' as WATER_UNIT;
+
+        this.data.total_alkalinity = 45;
+        this.data.total_alkalinity_type = 'UNKNOWN' as WATER_UNIT;
+
+        this.data.calcium = 0;
+        this.data.calcium_type = 'UNKNOWN' as WATER_UNIT;
+
+        this.data.magnesium = 0;
+        this.data.magnesium_type = 'UNKNOWN' as WATER_UNIT;
+
+        this.data.sodium = 0;
+        this.data.sodium_type = 'UNKNOWN' as WATER_UNIT;
+
+        this.data.potassium = 0;
+        this.data.potassium_type = 'UNKNOWN' as WATER_UNIT;
+
+        this.data.tds = 110;
+        this.data.tds_type = 'PPM' as WATER_UNIT_TDS;
+        break;
+
       default:
         break;
     }

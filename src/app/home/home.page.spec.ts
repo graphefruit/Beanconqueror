@@ -3,17 +3,18 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { HomePage } from './home.page';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
-import { IonicStorageModule } from '@ionic/storage';
-import { CommonModule, Location } from '@angular/common';
+import { Storage } from '@ionic/storage';
+import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
 import { KeysPipe } from '../../pipes/keys';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
-import { NavParamsMock } from '../../classes/mock/NavParamsMock';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
-import { Router, UrlSerializer } from '@angular/router';
+import { UIHelper } from '../../services/uiHelper';
+import { NavParamsMock, UIHelperMock } from '../../classes/mock';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('HomePage', () => {
   let component: HomePage;
@@ -24,9 +25,9 @@ describe('HomePage', () => {
       imports: [
         TranslateModule.forRoot(),
         FormsModule,
-        IonicStorageModule.forRoot(),
         CommonModule,
         IonicModule,
+        RouterTestingModule,
       ],
       declarations: [HomePage, KeysPipe],
       providers: [
@@ -38,10 +39,7 @@ describe('HomePage', () => {
         { provide: Camera },
         { provide: ImagePicker },
         { provide: AndroidPermissions },
-
-        { provide: Router },
-        { provide: Location },
-        { provide: UrlSerializer },
+        { provide: UIHelper, useClass: UIHelperMock },
       ],
     }).compileComponents();
   }));

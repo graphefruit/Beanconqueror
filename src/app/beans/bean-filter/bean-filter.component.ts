@@ -4,7 +4,6 @@ import { Preparation } from '../../../classes/preparation/preparation';
 import { Bean } from '../../../classes/bean/bean';
 import { Mill } from '../../../classes/mill/mill';
 import { ModalController, NavParams } from '@ionic/angular';
-import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
@@ -19,7 +18,7 @@ import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
   styleUrls: ['./bean-filter.component.scss'],
 })
 export class BeanFilterComponent implements OnInit {
-  public static COMPONENT_ID = 'bean-filter';
+  public static readonly COMPONENT_ID = 'bean-filter';
   public settings: Settings;
 
   public filter: IBeanPageFilter;
@@ -34,7 +33,6 @@ export class BeanFilterComponent implements OnInit {
 
   constructor(
     private readonly modalController: ModalController,
-    private readonly uiBrewHelper: UIBrewHelper,
     private readonly navParams: NavParams,
     public readonly uiHelper: UIHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
@@ -80,7 +78,7 @@ export class BeanFilterComponent implements OnInit {
   public getMaxBeanRating() {
     const maxSettingsRating = this.settings.bean_rating;
     const isOpen = this.segment === 'open';
-    let beansFiltered: Array<Bean> = [];
+    let beansFiltered: Array<Bean>;
 
     beansFiltered = this.uiBeanStorage
       .getAllEntries()

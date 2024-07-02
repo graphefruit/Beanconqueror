@@ -1,7 +1,11 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, NavParams } from '@ionic/angular';
 
 import { BrewRatingComponent } from './brew-rating.component';
+import { NavParamsMock, UIHelperMock } from '../../../classes/mock';
+import { UIHelper } from '../../../services/uiHelper';
+import { Storage } from '@ionic/storage';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('BrewRatingComponent', () => {
   let component: BrewRatingComponent;
@@ -10,13 +14,23 @@ describe('BrewRatingComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [BrewRatingComponent],
-      imports: [IonicModule.forRoot()],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
+      providers: [
+        { provide: UIHelper, useClass: UIHelperMock },
+        { provide: Storage },
+        {
+          provide: NavParams,
+          useClass: NavParamsMock,
+        },
+      ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(BrewRatingComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  }));
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();

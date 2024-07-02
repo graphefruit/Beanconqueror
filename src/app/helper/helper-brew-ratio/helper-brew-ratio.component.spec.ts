@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import {IonicModule} from '@ionic/angular';
+import { IonicModule } from '@ionic/angular';
 
-import {HelperBrewRatioComponent} from './helper-brew-ratio.component';
+import { HelperBrewRatioComponent } from './helper-brew-ratio.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('HelperBrewRatioComponent', () => {
   let component: HelperBrewRatioComponent;
@@ -10,7 +11,7 @@ describe('HelperBrewRatioComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [HelperBrewRatioComponent],
-      imports: [IonicModule.forRoot()]
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(HelperBrewRatioComponent);

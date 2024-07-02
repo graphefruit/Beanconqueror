@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { PreparationPage } from './preparation.page';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
-import { IonicStorageModule } from '@ionic/storage';
+import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
 import { KeysPipe } from '../../pipes/keys';
@@ -14,6 +14,9 @@ import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Router } from '@angular/router';
+import { UIHelper } from '../../services/uiHelper';
+import { UIHelperMock } from '../../classes/mock';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('PreparationPage', () => {
   let component: PreparationPage;
@@ -24,9 +27,9 @@ describe('PreparationPage', () => {
       imports: [
         TranslateModule.forRoot(),
         FormsModule,
-        IonicStorageModule.forRoot(),
         CommonModule,
         IonicModule,
+        HttpClientTestingModule,
       ],
       declarations: [PreparationPage, KeysPipe],
       providers: [
@@ -38,7 +41,7 @@ describe('PreparationPage', () => {
         { provide: Camera },
         { provide: ImagePicker },
         { provide: AndroidPermissions },
-
+        { provide: UIHelper, useClass: UIHelperMock },
         { provide: Router },
       ],
     }).compileComponents();

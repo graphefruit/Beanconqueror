@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import {
   AlertController,
@@ -33,6 +33,7 @@ import { UILog } from '../../../services/uiLog';
 import { Visualizer } from '../../../classes/visualizer/visualizer';
 import { BrewPopoverExtractionComponent } from '../brew-popover-extraction/brew-popover-extraction.component';
 import { BrewBrewingGraphComponent } from '../../../components/brews/brew-brewing-graph/brew-brewing-graph.component';
+import { sleep } from '../../../classes/devices';
 
 declare var Plotly;
 @Component({
@@ -40,8 +41,8 @@ declare var Plotly;
   templateUrl: './brew-detail.component.html',
   styleUrls: ['./brew-detail.component.scss'],
 })
-export class BrewDetailComponent implements OnInit {
-  public static COMPONENT_ID = 'brew-detail';
+export class BrewDetailComponent {
+  public static readonly COMPONENT_ID = 'brew-detail';
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
   public data: Brew = new Brew();
   public settings: Settings;
@@ -55,6 +56,7 @@ export class BrewDetailComponent implements OnInit {
 
   @ViewChild('brewBrewingGraphEl', { static: false })
   public brewBrewingGraphEl: BrewBrewingGraphComponent;
+
   constructor(
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
@@ -150,8 +152,6 @@ export class BrewDetailComponent implements OnInit {
     );
   }
 
-  public ngOnInit() {}
-
   public async repeat() {
     try {
       Plotly.purge(this.brewBrewingGraphEl.profileDiv.nativeElement);
@@ -160,12 +160,8 @@ export class BrewDetailComponent implements OnInit {
     } catch (ex) {}
 
     this.editActive = true;
-    //Wait 50ms, so the dom will be new rendered and the id will be removed from the flowprofilechart
-    await new Promise(async (resolve) => {
-      setTimeout(() => {
-        resolve(undefined);
-      }, 100);
-    });
+    //Wait 100ms, so the dom will be new rendered and the id will be removed from the flowprofilechart
+    await sleep(100);
     this.uiBrewHelper.repeatBrew(this.data).then(() => {
       this.editActive = false;
       this.initializeFlowChartOnGraphEl();
@@ -178,12 +174,8 @@ export class BrewDetailComponent implements OnInit {
       document.getElementById('canvasContainerBrew').remove();
     } catch (ex) {}
     this.editActive = true;
-    //Wait 50ms, so the dom will be new rendered and the id will be removed from the flowprofilechart
-    await new Promise(async (resolve) => {
-      setTimeout(() => {
-        resolve(undefined);
-      }, 50);
-    });
+    // Wait 50ms, so the dom will be new rendered and the id will be removed from the flowprofilechart
+    await sleep(50);
 
     const returningBrew: Brew = await this.uiBrewHelper.editBrew(this.data);
     this.editActive = false;
@@ -210,7 +202,7 @@ export class BrewDetailComponent implements OnInit {
   }
 
   private __loadCuppingChart(): void {
-    const chartObj = new Chart(
+    new Chart(
       this.cuppingChart.nativeElement,
       this.uiBrewHelper.getCuppingChartData(this.data) as any
     );
@@ -380,6 +372,6 @@ export class BrewDetailComponent implements OnInit {
       initialBreakpoint: 1,
     });
     await popover.present();
-    const data = await popover.onWillDismiss();
+    await popover.onWillDismiss();
   }
 }
