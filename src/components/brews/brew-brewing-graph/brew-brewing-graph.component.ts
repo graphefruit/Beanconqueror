@@ -2493,12 +2493,7 @@ export class BrewBrewingGraphComponent implements OnInit {
                   try {
                     const scale: BluetoothScale = this.bleManager.getScale();
                     if (scale) {
-                      await new Promise((resolve) => {
-                        scale.tare();
-                        setTimeout(async () => {
-                          resolve(undefined);
-                        }, this.settings.bluetooth_command_delay);
-                      });
+                      scale.tare();
                     }
                   } catch (ex) {}
                 }
