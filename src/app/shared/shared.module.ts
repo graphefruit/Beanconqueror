@@ -186,6 +186,7 @@ import { LoadingPopoverComponent } from '../../popover/loading-popover/loading-p
 import { BrewBrewingGraphComponent } from '../../components/brews/brew-brewing-graph/brew-brewing-graph.component';
 import { BrewBrewingPreparationDeviceComponent } from '../../components/brews/brew-brewing-preparation-device/brew-brewing-preparation-device.component';
 import { WaterAddTypeComponent } from '../water-section/water/water-add-type/water-add-type.component';
+import { PreparationSortToolsComponent } from '../preparation/preparation-sort-tools/preparation-sort-tools.component';
 
 @NgModule({
   declarations: [
@@ -321,6 +322,7 @@ import { WaterAddTypeComponent } from '../water-section/water/water-add-type/wat
     MillModalSelectComponent,
     PreparationModalSelectComponent,
     PreparationToolModalSelectComponent,
+    PreparationSortToolsComponent,
     PreparationPopoverActionsComponent,
     TimerComponent,
     DefaultCustomParameterComponent,
@@ -528,6 +530,7 @@ import { WaterAddTypeComponent } from '../water-section/water/water-add-type/wat
     MillModalSelectComponent,
     PreparationModalSelectComponent,
     PreparationToolModalSelectComponent,
+    PreparationSortToolsComponent,
     MillPopoverActionsComponent,
     PreparationPopoverActionsComponent,
     TimerComponent,

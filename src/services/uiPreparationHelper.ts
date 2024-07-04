@@ -22,6 +22,7 @@ import {
 import { HttpClient } from '@angular/common/http';
 import { XeniaDevice } from '../classes/preparationDevice/xenia/xeniaDevice';
 import { PreparationDevice } from '../classes/preparationDevice/preparationDevice';
+import { PreparationSortToolsComponent } from '../app/preparation/preparation-sort-tools/preparation-sort-tools.component';
 
 /**
  * Handles every helping functionalities
@@ -98,6 +99,16 @@ export class UIPreparationHelper {
       cssClass: 'popover-actions',
       breakpoints: [0, 0.5, 0.75, 1],
       initialBreakpoint: 0.75,
+    });
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+
+  public async sortPreparationTools(_preparation: Preparation) {
+    const modal = await this.modalController.create({
+      component: PreparationSortToolsComponent,
+      id: PreparationSortToolsComponent.COMPONENT_ID,
+      componentProps: { preparation: _preparation },
     });
     await modal.present();
     await modal.onWillDismiss();

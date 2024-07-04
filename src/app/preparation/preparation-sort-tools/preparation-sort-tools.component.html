@@ -1,0 +1,23 @@
+<ion-header>
+  <ion-toolbar>
+
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()" class="big-icon-only">
+        <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+<ion-card class="ion-padding" style="margin-top:30px;">
+<ion-title class="ion-no-padding">{{"SORT_PREPARATION_TOOLS" | translate  }}</ion-title>
+<ion-reorder-group (ionItemReorder)="reorder_tool($event)" disabled="false">
+  <ion-item *ngFor="let index of toolsOrders; let last = last" lines="{{last?'none':''}}" tappable>
+    <ion-label>
+      {{index.label}}
+    </ion-label>
+    <ion-reorder slot="end"></ion-reorder>
+  </ion-item>
+</ion-reorder-group>
+</ion-card>
+</ion-content>
