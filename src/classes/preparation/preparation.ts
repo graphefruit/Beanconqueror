@@ -161,6 +161,8 @@ export class Preparation implements IPreparation {
         return PREPARATION_STYLE_TYPE.POUR_OVER;
       case PREPARATION_TYPES.TRICOLATE:
         return PREPARATION_STYLE_TYPE.POUR_OVER;
+      case PREPARATION_TYPES.METICULOUS:
+        return PREPARATION_STYLE_TYPE.ESPRESSO;
       default:
         return PREPARATION_STYLE_TYPE.POUR_OVER;
     }
@@ -245,6 +247,8 @@ export class Preparation implements IPreparation {
         return 'beanconqueror-preparation-tornado-duo';
       case PREPARATION_TYPES.TRICOLATE:
         return 'beanconqueror-preparation-tricolate';
+      case PREPARATION_TYPES.METICULOUS:
+        return 'beanconqueror-preparation-meticulous';
       default:
         return 'beanconqueror-preparation-custom';
     }
