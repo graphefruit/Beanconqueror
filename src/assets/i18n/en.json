@@ -791,6 +791,8 @@
             "CALCIUM": "Calcium (Ca)",
             "MAGNESIUM": "Magnesium (Mg)",
             "SODIUM": "Sodium (Na)",
+            "CHLORIDE": "Chloride (CL)",
+            "SULFATE": "Sulfate (SO4)",
             "TDS": "Total dissolved solids (TDS)",
             "UNITS": "Units",
             "PLACE_HOLDER": {
@@ -802,7 +804,9 @@
                 "TDS": "Total dissolved solids (TDS)",
                 "NAME": "Add water name",
                 "NOTES": "Add some notes for your water",
-                "POTASSIUM": "Potassium (K)"
+                "POTASSIUM": "Potassium (K)",
+                "CHLORIDE": "Chloride (CL)",
+                "SULFATE": "Sulfate (SO4)"
             },
             "WATER_UNIT": {
                 "UNKNOWN": "Unknown",
