@@ -71,6 +71,7 @@ import { UIExportImportHelper } from '../services/uiExportImportHelper';
 import { register } from 'swiper/element/bundle';
 import { UIGraphStorage } from '../services/uiGraphStorage.service';
 import { UIStorage } from '../services/uiStorage';
+import { MeticulousHelpPopoverComponent } from '../popover/meticulous-help-popover/meticulous-help-popover.component';
 
 declare var window;
 
@@ -612,6 +613,8 @@ export class AppComponent implements AfterViewInit {
     await this.__checkAnalyticsInformationPage();
     await this.uiUpdate.checkUpdateScreen();
 
+    await this.__checkMeticulousHelpPage();
+
     // #281 - Connect smartscale before checking the startup view
     setTimeout(async () => {
       // Just connect after 5 seconds, to get some time, and maybe handle all the connection errors
@@ -914,6 +917,23 @@ export class AppComponent implements AfterViewInit {
       });
       await modal.present();
       await modal.onWillDismiss();
+    }
+  }
+  private async __checkMeticulousHelpPage() {
+    const settings = this.uiSettingsStorage.getSettings();
+
+    if (settings.meticulous_help_was_shown === false) {
+      if (
+        this.uiBrewStorage.getAllEntries().length > 10 ||
+        this.uiBeanStorage.getAllEntries().length > 5
+      ) {
+        const modal = await this.modalCtrl.create({
+          component: MeticulousHelpPopoverComponent,
+          id: MeticulousHelpPopoverComponent.POPOVER_ID,
+        });
+        await modal.present();
+        await modal.onWillDismiss();
+      }
     }
   }
 

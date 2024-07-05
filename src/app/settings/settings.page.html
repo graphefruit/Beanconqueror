@@ -45,7 +45,10 @@
             <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
           </ion-item>
           <ion-item (click)="export()" button tappable>
-            <ion-label>{{"EXPORT" | translate}}</ion-label>
+            <ion-label>
+              <h2>{{"EXPORT" | translate}}</h2>
+              <p>{{"EXPORT_CAUGHTION" | translate}}</p>
+            </ion-label>
             <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
           </ion-item>
           <ion-item *ngIf='doWeHaveBrewByWeights()' (click)='exportBrewByWeight()'  button tappable>

@@ -187,6 +187,7 @@ import { BrewBrewingGraphComponent } from '../../components/brews/brew-brewing-g
 import { BrewBrewingPreparationDeviceComponent } from '../../components/brews/brew-brewing-preparation-device/brew-brewing-preparation-device.component';
 import { WaterAddTypeComponent } from '../water-section/water/water-add-type/water-add-type.component';
 import { PreparationSortToolsComponent } from '../preparation/preparation-sort-tools/preparation-sort-tools.component';
+import { MeticulousHelpPopoverComponent } from '../../popover/meticulous-help-popover/meticulous-help-popover.component';
 
 @NgModule({
   declarations: [
@@ -227,6 +228,7 @@ import { PreparationSortToolsComponent } from '../preparation/preparation-sort-t
     FilesystemErrorPopoverComponent,
     WelcomePopoverComponent,
     AnalyticsPopoverComponent,
+    MeticulousHelpPopoverComponent,
     QrCodeScannerPopoverComponent,
     UpdatePopoverComponent,
     DatetimePopoverComponent,
@@ -439,6 +441,7 @@ import { PreparationSortToolsComponent } from '../preparation/preparation-sort-t
     FilesystemErrorPopoverComponent,
     WelcomePopoverComponent,
     AnalyticsPopoverComponent,
+    MeticulousHelpPopoverComponent,
     QrCodeScannerPopoverComponent,
     UpdatePopoverComponent,
     DatetimePopoverComponent,

@@ -35,6 +35,7 @@ export class Settings implements ISettings {
   public date_format: string;
 
   public matomo_analytics: boolean;
+  public meticulous_help_was_shown: boolean;
   public qr_scanner_information: boolean;
   public manage_parameters: ManageBrewParameter;
   public default_last_coffee_parameters: DefaultBrewParameter;
@@ -266,6 +267,7 @@ export class Settings implements ISettings {
 
     this.language = '';
     this.matomo_analytics = undefined;
+    this.meticulous_help_was_shown = false;
 
     this.qr_scanner_information = false;
 

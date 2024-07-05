@@ -36,10 +36,12 @@ export class DatetimePopoverComponent implements OnInit {
     this.timer.MILLISECONDS = passedDisplayingTime.milliseconds();
   }
   public ionViewDidEnter(): void {
-    setTimeout(() => {
+    /**
+     * To many "issues" on the user side, so we disable this feature for now.
+     * setTimeout(() => {
       //Give it a short time
       this.secondInput.setFocus();
-    }, 250);
+    }, 250);**/
   }
 
   public saveSettings() {

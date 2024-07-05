@@ -1311,5 +1311,6 @@
   "WATER_TYPE_EMPIRICAL_WATER_GLACIAL": "empirical water GLACIAL",
   "WATER_TYPE_EMPIRICAL_WATER_SPRING": "empirical water SPRING",
   "SORT_PREPARATION_TOOLS": "Sort preparation tools",
-  "PREPARATION_TYPE_METICULOUS": "Meticulous"
+  "PREPARATION_TYPE_METICULOUS": "Meticulous",
+  "EXPORT_CAUGHTION": "Export just exports the database, no images, no flow-profiles, if these ones are needed, please visit Gitbook for more information"
 }

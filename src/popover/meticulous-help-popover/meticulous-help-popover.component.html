@@ -1,0 +1,22 @@
+<ion-header>
+  <ion-title class="ion-text-center ion-margin-top">{{"METICULOUS_NEEDS_HELP_TITLE" | translate}}</ion-title>
+
+</ion-header>
+<ion-content>
+  <div class="ion-padding-top ion-margin-horizontal">
+    <div class="welcome-content-text">
+      <img style='height:300px;width:150px;' src='assets/img/meticulous-machine.png' /><br/>
+
+    </div>
+  </div>
+</ion-content>
+<ion-footer class="ion-no-border">
+
+  <ion-row class="ion-padding-top">
+    <ion-col size="12">
+      <ion-button [disabled]='finishButtonDisabled' (click)="finish()" color="accent" expand="block" tappable>{{"CLOSE" | translate}}<span *ngIf='delayCounter>0'>&nbsp;-&nbsp;{{delayCounter}}</span></ion-button>
+    </ion-col>
+  </ion-row>
+
+
+</ion-footer>
