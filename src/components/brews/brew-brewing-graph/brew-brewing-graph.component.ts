@@ -1763,6 +1763,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           'We could not stop script - manual triggered: ' + _msg,
           false
         );
+        this.uiLog.log('We could not stop script - manual triggered: ' + _msg);
       });
       this.writeExecutionTimeToNotes(
         'Stop script (Pause button)',
@@ -2720,6 +2721,9 @@ export class BrewBrewingGraphComponent implements OnInit {
                           'We could not start script at weight: ' + _msg,
                           false
                         );
+                        this.uiLog.log(
+                          'We could not start script at weight: ' + _msg
+                        );
                       });
                     this.writeExecutionTimeToNotes(
                       'Weight reached script',
@@ -2738,6 +2742,9 @@ export class BrewBrewingGraphComponent implements OnInit {
                       this.uiToast.showInfoToast(
                         'We could not stop script at weight: ' + _msg,
                         false
+                      );
+                      this.uiLog.log(
+                        'We could not stop script at weight: ' + _msg
                       );
                     });
                     this.writeExecutionTimeToNotes(
@@ -3774,6 +3781,7 @@ export class BrewBrewingGraphComponent implements OnInit {
               'We could not start script at first drip: ' + _msg,
               false
             );
+            this.uiLog.log('We could not start script at first drip: ' + _msg);
           });
         this.writeExecutionTimeToNotes(
           'First drip script',
@@ -3810,6 +3818,10 @@ export class BrewBrewingGraphComponent implements OnInit {
                 'We could not start script at first drip - manual  triggered: ' +
                   _msg,
                 false
+              );
+              this.uiLog.log(
+                'We could not start script at first drip - manual  triggered: ' +
+                  _msg
               );
             });
           this.writeExecutionTimeToNotes(
