@@ -39,9 +39,10 @@ export class BeansPage {
 
   public openBeans: Array<Bean> = [];
   public finishedBeans: Array<Bean> = [];
-
+  public frozenBeans: Array<Bean> = [];
   public finishedBeansLength: number = 0;
   public openBeansLength: number = 0;
+  public frozenBeansLength: number = 0;
 
   public openBeansSort: IBeanPageSort = {
     sort_after: BEAN_SORT_AFTER.UNKOWN,
@@ -55,21 +56,29 @@ export class BeansPage {
     static: false,
   })
   public archivedScroll: AgVirtualSrollComponent;
+  @ViewChild('frozenScroll', { read: AgVirtualSrollComponent, static: false })
+  public frozenScroll: AgVirtualSrollComponent;
+
   @ViewChild('beanContent', { read: ElementRef })
   public beanContent: ElementRef;
 
-  public bean_segment: 'open' | 'archive' = 'open';
+  public bean_segment: 'open' | 'archive' | 'frozen' = 'open';
   public archivedBeansSort: IBeanPageSort = {
+    sort_after: BEAN_SORT_AFTER.UNKOWN,
+    sort_order: BEAN_SORT_ORDER.UNKOWN,
+  };
+  public frozenBeansSort: IBeanPageSort = {
     sort_after: BEAN_SORT_AFTER.UNKOWN,
     sort_order: BEAN_SORT_ORDER.UNKOWN,
   };
 
   public archivedBeansFilterText: string = '';
   public openBeansFilterText: string = '';
+  public frozenBeansFilterText: string = '';
 
   public archivedBeansFilter: IBeanPageFilter;
   public openBeansFilter: IBeanPageFilter;
-
+  public frozenBeansFilter: IBeanPageFilter;
   constructor(
     private readonly modalCtrl: ModalController,
     private readonly changeDetectorRef: ChangeDetectorRef,
@@ -89,6 +98,7 @@ export class BeansPage {
     this.openBeansSort = this.settings.bean_sort.OPEN;
 
     this.archivedBeansFilter = this.settings.bean_filter.ARCHIVED;
+    this.frozenBeansFilter = this.settings.bean_filter.FROZEN;
     this.openBeansFilter = this.settings.bean_filter.OPEN;
     this.loadBeans();
   }
@@ -117,8 +127,10 @@ export class BeansPage {
     let beanSort: IBeanPageSort;
     if (this.bean_segment === 'open') {
       beanSort = { ...this.openBeansSort };
-    } else {
+    } else if (this.bean_segment === 'archive') {
       beanSort = { ...this.archivedBeansSort };
+    } else if (this.bean_segment === 'frozen') {
+      beanSort = { ...this.frozenBeansSort };
     }
 
     const modal = await this.modalCtrl.create({
@@ -134,8 +146,10 @@ export class BeansPage {
     if (modalData?.data?.bean_sort !== undefined) {
       if (this.bean_segment === 'open') {
         this.openBeansSort = modalData.data.bean_sort;
-      } else {
+      } else if (this.bean_segment === 'archive') {
         this.archivedBeansSort = modalData.data.bean_sort;
+      } else if (this.bean_segment === 'frozen') {
+        this.frozenBeansSort = modalData.data.bean_sort;
       }
     }
     await this.__saveBeanFilter();
@@ -147,8 +161,10 @@ export class BeansPage {
     let beanFilter: IBeanPageFilter;
     if (this.bean_segment === 'open') {
       beanFilter = { ...this.openBeansFilter };
-    } else {
+    } else if (this.bean_segment === 'archive') {
       beanFilter = { ...this.archivedBeansFilter };
+    } else if (this.bean_segment === 'frozen') {
+      beanFilter = { ...this.frozenBeansFilter };
     }
 
     const modal = await this.modalCtrl.create({
@@ -164,8 +180,10 @@ export class BeansPage {
     if (modalData !== undefined && modalData.data.bean_filter !== undefined) {
       if (this.bean_segment === 'open') {
         this.openBeansFilter = modalData.data.bean_filter;
-      } else {
+      } else if (this.bean_segment === 'archive') {
         this.archivedBeansFilter = modalData.data.bean_filter;
+      } else if (this.bean_segment === 'frozen') {
+        this.frozenBeansFilter = modalData.data.bean_filter;
       }
     }
     await this.__saveBeanFilter();
@@ -179,10 +197,15 @@ export class BeansPage {
         this.openBeansSort.sort_order !== BEAN_SORT_ORDER.UNKOWN &&
         this.openBeansSort.sort_after !== BEAN_SORT_AFTER.UNKOWN
       );
-    } else {
+    } else if (this.bean_segment === 'archive') {
       return (
         this.archivedBeansSort.sort_order !== BEAN_SORT_ORDER.UNKOWN &&
         this.archivedBeansSort.sort_after !== BEAN_SORT_AFTER.UNKOWN
+      );
+    } else if (this.bean_segment === 'frozen') {
+      return (
+        this.frozenBeansSort.sort_order !== BEAN_SORT_ORDER.UNKOWN &&
+        this.frozenBeansSort.sort_after !== BEAN_SORT_AFTER.UNKOWN
       );
     }
   }
@@ -190,8 +213,10 @@ export class BeansPage {
   public isTextSearchActive() {
     if (this.bean_segment === 'open') {
       return this.openBeansFilterText !== '';
-    } else {
+    } else if (this.bean_segment === 'archive') {
       return this.archivedBeansFilterText !== '';
+    } else if (this.bean_segment === 'frozen') {
+      return this.frozenBeansFilterText !== '';
     }
   }
 
@@ -306,8 +331,10 @@ export class BeansPage {
       let scrollComponent: AgVirtualSrollComponent;
       if (this.openScroll !== undefined) {
         scrollComponent = this.openScroll;
-      } else {
+      } else if (this.archivedScroll !== undefined) {
         scrollComponent = this.archivedScroll;
+      } else if (this.frozenScroll !== undefined) {
+        scrollComponent = this.frozenScroll;
       }
 
       scrollComponent.el.style.height =
@@ -319,22 +346,24 @@ export class BeansPage {
     const settings: Settings = this.uiSettingsStorage.getSettings();
     settings.bean_sort.OPEN = this.openBeansSort;
     settings.bean_sort.ARCHIVED = this.archivedBeansSort;
+    settings.bean_sort.FROZEN = this.frozenBeansSort;
 
     settings.bean_filter.OPEN = this.openBeansFilter;
     settings.bean_filter.ARCHIVED = this.archivedBeansFilter;
+    settings.bean_filter.FROZEN = this.frozenBeansFilter;
     await this.uiSettingsStorage.saveSettings(settings);
   }
 
   private __initializeBeansView(_type: string) {
     // sort latest to top.
     const beansCopy: Array<Bean> = [...this.beans];
-    const isOpen: boolean = _type === 'open';
+
     let sort: IBeanPageSort;
     let filterBeans: Array<Bean>;
-    sort = this.manageSortScope(isOpen);
-    filterBeans = this.manageFilterBeans(isOpen, beansCopy);
+    sort = this.manageSortScope(_type);
+    filterBeans = this.manageFilterBeans(_type, beansCopy);
 
-    const filter: IBeanPageFilter = this.manageFilter(isOpen);
+    const filter: IBeanPageFilter = this.manageFilter(_type);
 
     filterBeans = this.manageFavourites(filter, filterBeans);
 
@@ -354,15 +383,18 @@ export class BeansPage {
     // Skip if something is unkown, because no filter is active then
     filterBeans = this.manageSort(sort, filterBeans);
 
-    const searchText = this.manageSearchTextScope(isOpen);
+    const searchText = this.manageSearchTextScope(_type);
 
     filterBeans = this.manageSearchText(searchText, filterBeans);
 
-    if (isOpen) {
+    if (_type === 'open') {
       this.openBeans = filterBeans;
-    } else {
+    } else if (_type === 'archive') {
       this.finishedBeans = filterBeans;
+    } else if (_type === 'frozen') {
+      this.frozenBeans = filterBeans;
     }
+
     this.retriggerScroll();
   }
 
@@ -396,11 +428,13 @@ export class BeansPage {
     return filterBeans;
   }
 
-  private manageSearchTextScope(isOpen: boolean) {
-    if (isOpen) {
+  private manageSearchTextScope(_type: string) {
+    if (_type === 'open') {
       return this.openBeansFilterText.toLowerCase();
-    } else {
+    } else if (_type === 'archive') {
       return this.archivedBeansFilterText.toLowerCase();
+    } else if (_type === 'frozen') {
+      return this.frozenBeansFilterText.toLowerCase();
     }
   }
 
@@ -557,26 +591,36 @@ export class BeansPage {
     return filterBeans;
   }
 
-  private manageFilter(isOpen: boolean): IBeanPageFilter {
-    if (isOpen) {
+  private manageFilter(_type: string): IBeanPageFilter {
+    if (_type === 'open') {
       return this.openBeansFilter;
-    } else {
+    } else if (_type === 'archive') {
       return this.archivedBeansFilter;
+    } else if (_type === 'frozen') {
+      return this.frozenBeansFilter;
     }
   }
 
-  private manageSortScope(isOpen: boolean): IBeanPageSort {
-    if (isOpen) {
+  private manageSortScope(_type: string): IBeanPageSort {
+    if (_type === 'open') {
       return this.openBeansSort;
-    } else {
+    } else if (_type === 'archive') {
       return this.archivedBeansSort;
+    } else if (_type === 'frozen') {
+      return this.frozenBeansSort;
     }
   }
-  private manageFilterBeans(isOpen: boolean, beansCopy: Bean[]): Bean[] {
-    if (isOpen) {
-      return beansCopy.filter((bean) => !bean.finished);
-    } else {
+  private manageFilterBeans(_type: string, beansCopy: Bean[]): Bean[] {
+    if (_type === 'open') {
+      return beansCopy.filter(
+        (bean) => !bean.finished && bean.isFrozen() === false
+      );
+    } else if (_type === 'archive') {
       return beansCopy.filter((bean) => bean.finished);
+    } else if (_type === 'frozen') {
+      return beansCopy.filter(
+        (bean) => !bean.finished && bean.isFrozen() === true
+      );
     }
   }
 
@@ -585,14 +629,23 @@ export class BeansPage {
       .getAllEntries()
       .sort((a, b) => a.name.localeCompare(b.name));
     this.openBeansLength = this.beans.reduce(
-      (n, e) => (!e.finished ? n + 1 : n),
+      (n, e) => (!e.finished && e.isFrozen() === false ? n + 1 : n),
       0
     );
-    this.finishedBeansLength = this.beans.length - this.openBeansLength;
+    this.finishedBeansLength = this.beans.reduce(
+      (n, e) => (e.finished ? n + 1 : n),
+      0
+    );
+    this.frozenBeansLength = this.beans.reduce(
+      (n, e) => (!e.finished && e.isFrozen() === true ? n + 1 : n),
+      0
+    );
 
     this.openBeans = [];
     this.finishedBeans = [];
+    this.frozenBeans = [];
     this.__initializeBeansView('open');
     this.__initializeBeansView('archive');
+    this.__initializeBeansView('frozen');
   }
 }

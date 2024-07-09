@@ -57,6 +57,10 @@ export class Bean implements IBean {
 
   public cupped_flavor: IFlavor;
 
+  public frozenDate: string;
+  public unfrozenDate: string;
+  public frozenId: string;
+
   constructor() {
     this.name = '';
     this.buyDate = '';
@@ -106,6 +110,10 @@ export class Bean implements IBean {
       predefined_flavors: {},
       custom_flavors: [],
     } as IFlavor;
+
+    this.frozenDate = '';
+    this.unfrozenDate = '';
+    this.frozenId = '';
   }
 
   public getRoastName(): string {
@@ -116,6 +124,14 @@ export class Bean implements IBean {
       return this.roast_custom;
     }
     return '-';
+  }
+
+  public isFrozen() {
+    if (this.frozenDate && !this.unfrozenDate) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public initializeByObject(beanObj: IBean): void {

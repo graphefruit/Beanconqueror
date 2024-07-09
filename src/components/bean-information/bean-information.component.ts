@@ -39,6 +39,7 @@ import { TranslateService } from '@ngx-translate/core';
 import BREW_TRACKING from '../../data/tracking/brewTracking';
 import * as htmlToImage from 'html-to-image';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
+import moment from 'moment/moment';
 
 @Component({
   selector: 'bean-information',
@@ -228,6 +229,12 @@ export class BeanInformationComponent implements OnInit {
       case BEAN_ACTION.UNARCHIVE:
         await this.unarchiveBean();
         break;
+      case BEAN_ACTION.FREEZE:
+        await this.freezeBean();
+        break;
+      case BEAN_ACTION.UNFREEZE:
+        await this.unfreezeBean();
+        break;
       default:
         break;
     }
@@ -265,6 +272,16 @@ export class BeanInformationComponent implements OnInit {
     this.bean.finished = false;
     await this.uiBeanStorage.update(this.bean);
     this.uiToast.showInfoToast('TOAST_BEAN_UNARCHIVED_SUCCESSFULLY');
+    await this.resetSettings();
+  }
+
+  public async freezeBean() {
+    await this.uiBeanHelper.freezeBean(this.bean);
+  }
+
+  public async unfreezeBean() {
+    this.bean.unfrozenDate = moment(new Date()).toISOString();
+    await this.uiBeanStorage.update(this.bean);
     await this.resetSettings();
   }
 

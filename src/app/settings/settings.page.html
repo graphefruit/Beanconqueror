@@ -47,7 +47,7 @@
           <ion-item (click)="export()" button tappable>
             <ion-label>
               <h2>{{"EXPORT" | translate}}</h2>
-              <p>{{"EXPORT_CAUGHTION" | translate}}</p>
+              <p>{{"EXPORT_CAUTION" | translate}}</p>
             </ion-label>
             <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
           </ion-item>
@@ -347,6 +347,13 @@
             <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
                           [(ngModel)]="settings.show_graph_section">
               <div class='ion-label'>{{"PAGE_SETTINGS_SHOW_GRAPH_SECTION" | translate}}</div>
+            </ion-checkbox>
+          </ion-item>
+
+          <ion-item lines="none">
+            <ion-checkbox label-placement='start' (ngModelChange)="resetFilter();saveSettings();"
+                          [(ngModel)]="settings.freeze_coffee_beans">
+              <div class='ion-label'>{{"SHOW_FREEZING_SECTION" | translate}}</div>
             </ion-checkbox>
           </ion-item>
 

@@ -18,6 +18,10 @@
       <ion-label>{{"BEAN_TAB_GENERAL_INFORMATION" | translate }}
       </ion-label>
     </ion-segment-button>
+    <ion-segment-button value="frozen" *ngIf='settings.freeze_coffee_beans'>
+      <ion-label>{{"BEAN_TAB_FROZEN_INFORMATION" | translate }}
+      </ion-label>
+    </ion-segment-button>
     <ion-segment-button *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.bean_information)" value="sortinformation">
       <ion-label>{{"BEAN_TAB_SORT_INFORMATION" | translate }}
       </ion-label>
@@ -29,6 +33,9 @@
     </div>
     <div *ngSwitchCase="'general'">
       <bean-general-information *ngIf="data" [(data)]="data"></bean-general-information>
+    </div>
+    <div *ngSwitchCase="'frozen'">
+      <bean-freeze-information *ngIf="data" [(data)]="data"></bean-freeze-information>
     </div>
     <div *ngSwitchCase="'sortinformation'">
       <bean-sort-information *ngIf="data" [(data)]="data"></bean-sort-information>

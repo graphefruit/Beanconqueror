@@ -50,4 +50,8 @@ export interface IBean {
   shared: boolean;
   cupping: ICupping;
   cupped_flavor: IFlavor;
+
+  frozenDate: string;
+  unfrozenDate: string;
+  frozenId: string;
 }

@@ -1,0 +1,9 @@
+<ion-card class="popover" style="display:flex; flex-direction: column;">
+
+  <ion-item>
+    <ion-input label-placement="stacked" label='{{"BEAN_POPOVER_EDIT_FREEZE_DATE" | translate}}' readonly (click)="chooseDate($event,'freeze');" [(data)]="data.frozenDate"  [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROASTING_DATE' | translate}}"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-input label-placement="stacked" label='{{"BEAN_POPOVER_EDIT_UNFREEZE_DATE" | translate}}' readonly (click)="chooseDate($event,'unfreeze');" [(data)]="data.unfrozenDate"  [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROASTING_DATE' | translate}}"></ion-input>
+  </ion-item>
+</ion-card>

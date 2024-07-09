@@ -1316,5 +1316,15 @@
   "WATER_TYPE_EMPIRICAL_WATER_SPRING": "empirical water SPRING",
   "SORT_PREPARATION_TOOLS": "Sort preparation tools",
   "PREPARATION_TYPE_METICULOUS": "Meticulous",
-  "EXPORT_CAUGHTION": "Export just exports the database, no images, no flow-profiles, if these ones are needed, please visit Gitbook for more information"
+  "EXPORT_CAUTION": "Export just exports the database, no images, no flow-profiles, if these ones are needed, please visit Gitbook for more information",
+  "POPOVER_FREEZE_COFFEE_BEAN": "Freeze coffee bean",
+  "POPOVER_UNFREEZE_COFFEE_BEAN": "Unfreeze coffee bean",
+  "BEAN_POPOVER_EDIT_FREEZE_DATE": "Edit freeze date",
+  "BEAN_POPOVER_EDIT_UNFREEZE_DATE": "Edit unfreeze date",
+  "BEAN_POPOVER_LEFT_UNFROZEN": "Left unfrozen",
+  "BEAN_POPOVER_FREEZE_PARTIAL_BAG": "Freeze partial bag (g)",
+  "FROZEN_BEANS": "Frozen",
+  "BEAN_TAB_FROZEN_INFORMATION": "Frozen information",
+  "BEAN_POPOVER_FROZEN_BAGS": "Frozen bags",
+  "BEAN_POPOVER_FROZEN_DELETE_BEAN_MESSAGE": "You are going to freeze the whole bag, and we didn't find any brews done with it, do you want to delete to original bag?"
 }
