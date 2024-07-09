@@ -75,7 +75,7 @@
                   <ion-checkbox justify='start' label-placement='end' [(ngModel)]='multipleSelection[bean.config.uuid]'>
                     <div style='margin-top:5px;'>
                       <h6><ion-icon style="top: 3px;position: relative;margin-right:5px;" name="snow-outline"
-                                    *ngIf="bean.frozen"></ion-icon><span *ngIf='bean.frozen'>{{bean.frozenId}}&nbsp;-&nbsp;</span>{{bean.name}}</h6>
+                                    *ngIf="bean.isFrozen()"></ion-icon><span *ngIf='bean.isFrozen()'>{{bean.frozenId}}&nbsp;-&nbsp;</span>{{bean.name}}</h6>
                       <p *ngIf='bean?.roastingDate'>{{"BEAN_DATA_ROASTING_DATE" | translate}}
                         : {{bean.roastingDate | formatDate:[settings?.date_format]}}&nbsp;
                         ({{bean.beanAgeInDays()}}
@@ -152,7 +152,7 @@
                                 slot='start'>
                     <div style='margin-top:5px;'>
                       <h6><ion-icon style="top: 3px;position: relative;margin-right:5px;" name="snow-outline"
-                                    *ngIf="bean.frozen"></ion-icon><span *ngIf='bean.frozen'>{{bean.frozenId}}&nbsp;-&nbsp;</span>{{bean.name}}</h6>
+                                    *ngIf="bean.isFrozen()"></ion-icon><span *ngIf='bean.isFrozen()'>{{bean.frozenId}}&nbsp;-&nbsp;</span>{{bean.name}}</h6>
                       <p *ngIf='bean?.roastingDate'>{{"BEAN_DATA_ROASTING_DATE" | translate}}
                         : {{bean.roastingDate | formatDate:[settings?.date_format]}}&nbsp;
                         ({{bean.beanAgeInDays()}}
@@ -237,7 +237,7 @@
                     <ion-radio justify='start' label-placement='end' value='{{bean.config.uuid}}'>
 
                       <h6><ion-icon style="top: 3px;position: relative;margin-right:5px;" name="snow-outline"
-                                    *ngIf="bean.frozen"></ion-icon><span *ngIf='bean.frozen'>{{bean.frozenId}}&nbsp;-&nbsp;</span>{{bean.name}}</h6>
+                                    *ngIf="bean.isFrozen()"></ion-icon><span *ngIf='bean.isFrozen()'>{{bean.frozenId}}&nbsp;-&nbsp;</span>{{bean.name}}</h6>
                       <p *ngIf='bean?.roastingDate'>{{"BEAN_DATA_ROASTING_DATE" | translate}}
                         : {{bean.roastingDate | formatDate:[settings?.date_format]}}&nbsp;
                         ({{bean.beanAgeInDays()}}
@@ -316,7 +316,7 @@
                     <ion-radio justify='start' label-placement='end' value='{{bean.config.uuid}}'>
 
                       <h6><ion-icon style="top: 3px;position: relative;margin-right:5px;" name="snow-outline"
-                                    *ngIf="bean.frozen"></ion-icon><span *ngIf='bean.frozen'>{{bean.frozenId}}&nbsp;-&nbsp;</span>{{bean.name}}</h6>
+                                    *ngIf="bean.isFrozen()"></ion-icon><span *ngIf='bean.isFrozen()'>{{bean.frozenId}}&nbsp;-&nbsp;</span>{{bean.name}}</h6>
                       <p *ngIf='bean?.roastingDate'>{{"BEAN_DATA_ROASTING_DATE" | translate}}
                         : {{bean.roastingDate | formatDate:[settings?.date_format]}}&nbsp;
                         ({{bean.beanAgeInDays()}}

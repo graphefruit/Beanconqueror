@@ -44,8 +44,8 @@
                   tappable>{{"CANCEL" | translate}}</ion-button>
     </ion-col>
     <ion-col size='6'>
-      <ion-button [disabled]='addedBags.length<=0' (click)='save()' color='accent' expand='block' tappable
-                  type='submit'>{{"CHOOSE" | translate}}</ion-button>
+      <ion-button [disabled]='addedBags.length<=0 ||  this.frozenDate === ""' (click)='save()' color='accent' expand='block' tappable
+                  type='submit'>{{"CREATE_FROZEN_BEANS" | translate}}</ion-button>
     </ion-col>
 
   </ion-row>

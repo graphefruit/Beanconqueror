@@ -5,8 +5,8 @@
         <ion-col [size]="((bean?.roast_range!== 0 && uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.roast_range)) || (bean?.rating !== 0 &&  uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.rating)))?8:11" style="margin: auto 0;">
           <div class="ion-no-padding font-size-20 ion-title bean-title">
             <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="snow-outline"
-                      *ngIf="bean.frozen"></ion-icon>
-            <span *ngIf='bean.frozen === false && bean.frozenId' style='margin-right:5px;'>(<ion-icon style="top: 3px;position: relative;" name="snow-outline"></ion-icon>)</span>
+                      *ngIf="bean.isFrozen()"></ion-icon>
+            <span *ngIf='bean.isFrozen() === false && bean.frozenId' style='margin-right:5px;'>(<ion-icon style="top: 3px;position: relative;" name="snow-outline"></ion-icon>)</span>
             <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="flame-outline"
                       *ngIf="bean.isSelfRoasted()"></ion-icon>
             <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="qr-code-outline"

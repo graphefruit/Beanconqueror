@@ -920,6 +920,7 @@ export class AppComponent implements AfterViewInit {
     }
   }
   private async __checkMeticulousHelpPage() {
+    return;
     const settings = this.uiSettingsStorage.getSettings();
 
     if (settings.meticulous_help_was_shown === false) {

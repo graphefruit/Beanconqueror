@@ -24,7 +24,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
   public settings: Settings;
   @Input() public bean: Bean;
 
-  public frozenDate: string;
+  public frozenDate: string = '';
   public freezePartialBagGrams: number = 0;
 
   public addedBags: Array<number> = [];
@@ -101,7 +101,8 @@ export class BeanPopoverFreezeComponent implements OnInit {
         try {
           await this.uiAlert.showConfirm(
             'BEAN_POPOVER_FROZEN_DELETE_BEAN_MESSAGE',
-            'CARE'
+            'CARE',
+            true
           );
           //The bag doesn't have any brews, so just delete it.
           await this.uiBeanStorage.removeByUUID(this.bean.config.uuid);

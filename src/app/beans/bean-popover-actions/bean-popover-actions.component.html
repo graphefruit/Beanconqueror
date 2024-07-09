@@ -26,11 +26,11 @@
       <ion-icon name="beanconqueror-cupping" slot="start"></ion-icon>
       <span>{{"POPOVER_BREWS_OPTION_CUPPING" | translate}}</span>
     </ion-item>
-    <ion-item *ngIf='settings.freeze_coffee_beans === true && data.frozen === false' (click)="choose(getStaticActions().FREEZE)" button tappable>
+    <ion-item *ngIf='settings.freeze_coffee_beans === true && data.isFrozen() === false' (click)="choose(getStaticActions().FREEZE)" button tappable>
       <ion-icon name="snow-outline" slot='start'></ion-icon>
       <span>{{"POPOVER_FREEZE_COFFEE_BEAN" | translate}}</span>
     </ion-item>
-    <ion-item *ngIf='settings.freeze_coffee_beans === true && data.frozen === true' (click)="choose(getStaticActions().UNFREEZE)" button tappable>
+    <ion-item *ngIf='settings.freeze_coffee_beans === true && data.isFrozen() === true' (click)="choose(getStaticActions().UNFREEZE)" button tappable>
       <ion-icon name="thermometer-outline" slot='start'></ion-icon>
       <span>{{"POPOVER_UNFREEZE_COFFEE_BEAN" | translate}}</span>
     </ion-item>
