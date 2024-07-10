@@ -16,7 +16,7 @@
 
             <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="heart"
                       *ngIf="bean.favourite"></ion-icon>
-            <span *ngIf='bean.frozenId'>{{bean.frozenId}}&nbsp;-&nbsp;</span>{{bean.name}}&nbsp;<span
+            <span *ngIf='bean.frozenId'><ion-icon style='margin-bottom: -4px;' name="pricetag-outline"></ion-icon>&nbsp;[{{bean.frozenId}}]&nbsp;-&nbsp;</span>{{bean.name}}&nbsp;<span
             *ngIf="!isBeanRoastUnknown() && uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.bean_roasting_type)">({{"BEAN_ROASTING_TYPE_" + bean.bean_roasting_type | translate}})</span>
           </div>
         </ion-col>
