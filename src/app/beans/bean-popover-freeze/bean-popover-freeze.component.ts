@@ -30,6 +30,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
   public addedBags: Array<number> = [];
 
   public leftOverBeanBagWeight: number = 0;
+  public copyAttachments: boolean = false;
   constructor(
     private readonly modalController: ModalController,
     private readonly uiSettingsStorage: UISettingsStorage,
@@ -134,6 +135,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
     //Reset the data, because maybe we freeze an unfrozen bean again.
     clonedBean.unfrozenDate = '';
     clonedBean.attachments = [];
+
     if (this.bean.cost !== 0) {
       const newCost = (this.bean.cost * _freezingWeight) / this.bean.weight;
       clonedBean.cost = newCost;

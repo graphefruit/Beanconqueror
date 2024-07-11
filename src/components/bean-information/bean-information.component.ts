@@ -74,7 +74,7 @@ export class BeanInformationComponent implements OnInit {
     private readonly uiImage: UIImage,
     private readonly shareService: ShareService,
     private readonly serverCommunicationService: ServerCommunicationService,
-    private readonly uiHelper: UIHelper,
+    public readonly uiHelper: UIHelper,
     private readonly translate: TranslateService,
     private readonly platform: Platform,
     private readonly uiBrewHelper: UIBrewHelper,

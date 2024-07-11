@@ -52,6 +52,16 @@
       <ion-row class="ion-padding-bottom-half">
         <ion-col [size]="(bean.hasPhotos() && uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.attachments))?9:12" class="ion-no-padding-right">
           <ion-grid class="ion-no-padding">
+            <ion-row *ngIf='bean.hasFrozenInformation()'>
+              <ion-col *ngIf="bean.frozenDate" size="6">
+                <ion-label class="card-headline">{{"BEAN_DATA_FROZEN_DATE" | translate}}</ion-label>
+                <ion-text>{{bean.frozenDate | formatDate:[settings?.date_format]}}</ion-text>
+              </ion-col>
+              <ion-col *ngIf="bean.unfrozenDate" size="6">
+                <ion-label class="card-headline">{{"BEAN_DATA_UNFROZEN_DATE" | translate}}</ion-label>
+                <ion-text>{{bean.unfrozenDate | formatDate:[settings?.date_format]}}</ion-text>
+              </ion-col>
+            </ion-row>
             <ion-row>
               <ion-col *ngIf="uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.roastingDate)" size="6">
                 <ion-label class="card-headline">{{"BEAN_DATA_ROASTING_DATE" | translate}}</ion-label>

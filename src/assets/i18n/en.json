@@ -1327,5 +1327,9 @@
   "BEAN_TAB_FROZEN_INFORMATION": "Frozen information",
   "BEAN_POPOVER_FROZEN_BAGS": "Frozen bags",
   "BEAN_POPOVER_FROZEN_DELETE_BEAN_MESSAGE": "You are going to freeze the whole bag, and we didn't find any brews done with it, do you want to delete to original bag?",
-  "CREATE_FROZEN_BEANS": "Create beans"
+  "CREATE_FROZEN_BEANS": "Create beans",
+  "BEAN_POPOVER_COPY_ATTACHMENTS": "Copy attachments",
+  "BEAN_POPOVER_COPY_ATTACHMENTS_DESCRIPTION": "Copy attachments is deactivated in the beginning of this feature",
+  "BEAN_DATA_FROZEN_DATE": "Frozen date",
+  "BEAN_DATA_UNFROZEN_DATE": "Unfrozen date"
 }
