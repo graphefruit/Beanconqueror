@@ -12,6 +12,7 @@ import { UIHelper } from '../../../services/uiHelper';
 import { Config } from '../../../classes/objectConfig/objectConfig';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIAlert } from '../../../services/uiAlert';
+import { BeanPopoverFrozenListComponent } from '../bean-popover-frozen-list/bean-popover-frozen-list.component';
 
 declare var cordova;
 @Component({
@@ -31,6 +32,8 @@ export class BeanPopoverFreezeComponent implements OnInit {
 
   public leftOverBeanBagWeight: number = 0;
   public copyAttachments: boolean = false;
+
+  public allNewCreatedBeans: Array<Bean> = [];
   constructor(
     private readonly modalController: ModalController,
     private readonly uiSettingsStorage: UISettingsStorage,
@@ -126,6 +129,13 @@ export class BeanPopoverFreezeComponent implements OnInit {
     }
 
     this.dismiss();
+    const modal = await this.modalController.create({
+      component: BeanPopoverFrozenListComponent,
+      id: BeanPopoverFrozenListComponent.COMPONENT_ID,
+      componentProps: { frozenBeansList: this.allNewCreatedBeans },
+    });
+    await modal.present();
+    await modal.onWillDismiss();
   }
   private async __createNewFrozenBean(_freezingWeight: number, _index: number) {
     const clonedBean: Bean = this.uiHelper.cloneData(this.bean);
@@ -142,7 +152,10 @@ export class BeanPopoverFreezeComponent implements OnInit {
     }
     clonedBean.weight = _freezingWeight;
     clonedBean.config = new Config();
-    await this.uiBeanStorage.add(clonedBean);
+    const newClonedBean = await this.uiBeanStorage.add(clonedBean);
+    const newBean: Bean = new Bean();
+    newBean.initializeByObject(newClonedBean);
+    this.allNewCreatedBeans.push(newBean);
   }
 
   public chooseDate(_event) {

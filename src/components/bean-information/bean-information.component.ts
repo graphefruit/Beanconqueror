@@ -49,6 +49,7 @@ import moment from 'moment/moment';
 export class BeanInformationComponent implements OnInit {
   @Input() public bean: Bean;
   @Input() public showActions: boolean = true;
+  @Input() public disabled: boolean = false;
 
   @ViewChild('card', { read: ElementRef })
   public cardEl: ElementRef;
@@ -311,6 +312,10 @@ export class BeanInformationComponent implements OnInit {
   public async longPressEditBean(event) {
     event.stopPropagation();
     event.stopImmediatePropagation();
+    if (this.disabled) {
+      //Don#t edit
+      return;
+    }
     await this.editBean();
     this.beanAction.emit([BEAN_ACTION.EDIT, this.bean]);
   }
