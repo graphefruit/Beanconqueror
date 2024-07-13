@@ -6,7 +6,7 @@
       <ion-input label-placement="stacked" label='{{"BEAN_POPOVER_EDIT_FREEZE_DATE" | translate}}' readonly (click)="chooseDate($event);" [(data)]="frozenDate"  [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN_POPOVER_EDIT_FREEZE_DATE' | translate}}"></ion-input>
     </ion-item>
     <ion-item>
-      <ion-checkbox label-placement='start' [disabled] [(ngModel)]="copyAttachments">
+      <ion-checkbox label-placement='start' [disabled]='true' [(ngModel)]="copyAttachments">
         <div style='line-height: 14px;' class="ion-label">
           <div>{{"BEAN_POPOVER_COPY_ATTACHMENTS" | translate}}</div>
           <span>{{"BEAN_POPOVER_COPY_ATTACHMENTS_DESCRIPTION" | translate}}</span>
