@@ -1331,5 +1331,7 @@
   "BEAN_POPOVER_COPY_ATTACHMENTS": "Copy attachments",
   "BEAN_POPOVER_COPY_ATTACHMENTS_DESCRIPTION": "Copy attachments is deactivated in the beginning of this feature",
   "BEAN_DATA_FROZEN_DATE": "Frozen date",
-  "BEAN_DATA_UNFROZEN_DATE": "Unfrozen date"
+  "BEAN_DATA_UNFROZEN_DATE": "Unfrozen date",
+  "PAGE_BEANS_LIST_YOU_GOT_NO_FROZEN_BEANS": "You've got no frozen beans",
+  "BEAN_DATA_FROZEN_ID": "Frozen id"
 }
