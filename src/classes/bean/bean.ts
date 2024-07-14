@@ -15,6 +15,9 @@ import { IRoastingMachine } from '../../interfaces/roasting-machine/iRoastingMac
 import { BeanProto } from '../../generated/src/classes/bean/bean';
 import { ICupping } from '../../interfaces/cupping/iCupping';
 import { IFlavor } from '../../interfaces/flavor/iFlavor';
+import { UIBeanHelper } from '../../services/uiBeanHelper';
+import { Brew } from '../brew/brew';
+import { UIBrewHelper } from '../../services/uiBrewHelper';
 
 export class Bean implements IBean {
   public name: string;
@@ -216,7 +219,19 @@ export class Bean implements IBean {
       this.roastingDate !== undefined &&
       this.roastingDate !== ''
     ) {
-      const today = moment(Date.now()).startOf('day');
+      let today = moment(Date.now()).startOf('day');
+      if (this.finished) {
+        /** If the bean is archived, we search for all brews, and take the latest one, and stop the counting of bean age then
+         *
+         */
+        const beanHelper: UIBeanHelper = UIBeanHelper.getInstance();
+        const allBrews = beanHelper.getAllBrewsForThisBean(this.config.uuid);
+
+        if (allBrews.length > 0) {
+          const sortedBrews: Array<Brew> = UIBrewHelper.sortBrews(allBrews);
+          today = moment.unix(sortedBrews[0].config.unix_timestamp);
+        }
+      }
       const roastingDate = moment(this.roastingDate).startOf('day');
 
       let hasFrozenDate: boolean;
