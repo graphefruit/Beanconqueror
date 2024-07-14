@@ -219,7 +219,52 @@ export class Bean implements IBean {
       const today = moment(Date.now()).startOf('day');
       const roastingDate = moment(this.roastingDate).startOf('day');
 
-      return today.diff(roastingDate, 'days');
+      let hasFrozenDate: boolean;
+      if (this.frozenDate) {
+        hasFrozenDate = true;
+      }
+      let hasUnFrozenDate: boolean;
+      if (this.unfrozenDate) {
+        hasUnFrozenDate = true;
+      }
+
+      if (hasFrozenDate === false) {
+        // Normal calculcation as always
+        return today.diff(roastingDate, 'days');
+      } else {
+        // Something has been frozen, now its going down to the deep :)
+        let normalDaysToAdd: number = 0;
+        const frozenDate = moment(this.frozenDate);
+
+        const frozenDateDiff: number = frozenDate.diff(roastingDate, 'days');
+        // We add now the time between roasting and the first freezing.
+        normalDaysToAdd = normalDaysToAdd + frozenDateDiff;
+
+        if (hasUnFrozenDate) {
+          /**
+           * We did unfreeze the bean and maybe it was still there one day or more.
+           * We calculate now the unfreeze - freeze date and take into account that 90 days of freezing is one real day time.
+           */
+          const unfrozenDate = moment(this.unfrozenDate);
+          const freezingPeriodTime = unfrozenDate.diff(frozenDate, 'days');
+          const priorToNormalDays = Math.floor(freezingPeriodTime / 90);
+          normalDaysToAdd = normalDaysToAdd + priorToNormalDays;
+
+          /**
+           * After we've calculcated the time in between we check how much time has been gone after unfreezing
+           */
+          const diffOfBrewTime = today.diff(unfrozenDate, 'days');
+          normalDaysToAdd = normalDaysToAdd + diffOfBrewTime;
+        } else {
+          /** We didn't unfreeze the bean, and the bean was directly used.
+           * So the beans where actually taken directly in frozen state.
+           */
+          const diffOfBrewTime = today.diff(frozenDate, 'days');
+          const priorToNormalDays = Math.floor(diffOfBrewTime / 90);
+          normalDaysToAdd = normalDaysToAdd + priorToNormalDays;
+        }
+        return normalDaysToAdd;
+      }
     }
     return 0;
   }
