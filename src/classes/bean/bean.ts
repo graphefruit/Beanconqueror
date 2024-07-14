@@ -226,19 +226,21 @@ export class Bean implements IBean {
          */
         const beanHelper: UIBeanHelper = UIBeanHelper.getInstance();
         const allBrews = beanHelper.getAllBrewsForThisBean(this.config.uuid);
-
+        console.log('bla');
         if (allBrews.length > 0) {
           const sortedBrews: Array<Brew> = UIBrewHelper.sortBrews(allBrews);
-          today = moment.unix(sortedBrews[0].config.unix_timestamp);
+          today = moment
+            .unix(sortedBrews[0].config.unix_timestamp)
+            .startOf('day');
         }
       }
       const roastingDate = moment(this.roastingDate).startOf('day');
 
-      let hasFrozenDate: boolean;
+      let hasFrozenDate: boolean = false;
       if (this.frozenDate) {
         hasFrozenDate = true;
       }
-      let hasUnFrozenDate: boolean;
+      let hasUnFrozenDate: boolean = false;
       if (this.unfrozenDate) {
         hasUnFrozenDate = true;
       }
@@ -249,7 +251,7 @@ export class Bean implements IBean {
       } else {
         // Something has been frozen, now its going down to the deep :)
         let normalDaysToAdd: number = 0;
-        const frozenDate = moment(this.frozenDate);
+        const frozenDate = moment(this.frozenDate).startOf('day');
 
         const frozenDateDiff: number = frozenDate.diff(roastingDate, 'days');
         // We add now the time between roasting and the first freezing.
@@ -260,7 +262,7 @@ export class Bean implements IBean {
            * We did unfreeze the bean and maybe it was still there one day or more.
            * We calculate now the unfreeze - freeze date and take into account that 90 days of freezing is one real day time.
            */
-          const unfrozenDate = moment(this.unfrozenDate);
+          const unfrozenDate = moment(this.unfrozenDate).startOf('day');
           const freezingPeriodTime = unfrozenDate.diff(frozenDate, 'days');
           const priorToNormalDays = Math.floor(freezingPeriodTime / 90);
           normalDaysToAdd = normalDaysToAdd + priorToNormalDays;

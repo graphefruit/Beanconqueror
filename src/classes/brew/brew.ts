@@ -277,14 +277,14 @@ export class Brew implements IBrew {
     ) as IBean;
     if (bean) {
       if (bean.roastingDate) {
-        const roastingDate = moment(bean.roastingDate);
-        const brewTime = moment.unix(this.config.unix_timestamp);
+        const roastingDate = moment(bean.roastingDate).startOf('day');
+        const brewTime = moment.unix(this.config.unix_timestamp).startOf('day');
 
-        let hasFrozenDate: boolean;
+        let hasFrozenDate: boolean = false;
         if (bean.frozenDate) {
           hasFrozenDate = true;
         }
-        let hasUnFrozenDate: boolean;
+        let hasUnFrozenDate: boolean = false;
         if (bean.unfrozenDate) {
           hasUnFrozenDate = true;
         }
@@ -295,7 +295,7 @@ export class Brew implements IBrew {
         } else {
           // Something has been frozen, now its going down to the deep :)
           let normalDaysToAdd: number = 0;
-          const frozenDate = moment(bean.frozenDate);
+          const frozenDate = moment(bean.frozenDate).startOf('day');
 
           const frozenDateDiff: number = frozenDate.diff(roastingDate, 'days');
           // We add now the time between roasting and the first freezing.
@@ -306,7 +306,7 @@ export class Brew implements IBrew {
              * We did unfreeze the bean and maybe it was still there one day or more.
              * We calculate now the unfreeze - freeze date and take into account that 90 days of freezing is one real day time.
              */
-            const unfrozenDate = moment(bean.unfrozenDate);
+            const unfrozenDate = moment(bean.unfrozenDate).startOf('day');
             const freezingPeriodTime = unfrozenDate.diff(frozenDate, 'days');
             const priorToNormalDays = Math.floor(freezingPeriodTime / 90);
             normalDaysToAdd = normalDaysToAdd + priorToNormalDays;
