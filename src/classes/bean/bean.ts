@@ -226,7 +226,6 @@ export class Bean implements IBean {
          */
         const beanHelper: UIBeanHelper = UIBeanHelper.getInstance();
         const allBrews = beanHelper.getAllBrewsForThisBean(this.config.uuid);
-        console.log('bla');
         if (allBrews.length > 0) {
           const sortedBrews: Array<Brew> = UIBrewHelper.sortBrews(allBrews);
           today = moment
