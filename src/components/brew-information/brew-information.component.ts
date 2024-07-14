@@ -73,7 +73,7 @@ export class BrewInformationComponent implements OnInit {
     private readonly uiAlert: UIAlert,
     private readonly uiImage: UIImage,
     private readonly modalCtrl: ModalController,
-    private readonly uiHelper: UIHelper,
+    public readonly uiHelper: UIHelper,
     private readonly shareService: ShareService,
     private readonly translate: TranslateService,
     private readonly brewTracking: BrewTrackingService,

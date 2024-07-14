@@ -203,6 +203,8 @@ export class BeanGeneralInformationComponent implements OnInit {
         },
         error: () => {},
       });
+    } else {
+      this.data.roastingDate = moment(new Date()).toISOString();
     }
   }
 

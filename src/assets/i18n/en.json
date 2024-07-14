@@ -1336,5 +1336,7 @@
   "BEAN_DATA_FROZEN_ID": "Frozen id",
   "PAGE_SETTINGS_MANAGE_FEATURES": "Manage features",
   "ACTIVE_BEAN_FREEZING_FEATURE": "Activate bean freezing",
-  "NAV_FROZEN_BEANS_LIST": "Frozen beans list"
+  "NAV_FROZEN_BEANS_LIST": "Frozen beans list",
+  "BEAN_BREW_LIST_VIEW_PARAMETERS": "Bean information for brew",
+  "BEAN_AGE_BY_BREW_DATE": "Bean age by brew date"
 }

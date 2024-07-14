@@ -163,6 +163,12 @@
           <ion-label class="card-headline">{{"BREW_DATA_COFFEE_CONCENTRATION" | translate}}</ion-label><br/>
           <ion-text>{{brew?.coffee_concentration}}</ion-text>
         </ion-col>
+        <ion-col size="6" *ngIf="brew?.getBean()?.roastingDate && uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.bean_age_by_brew_date,
+                      preparation?.visible_list_view_parameters.bean_age_by_brew_date,
+                      preparation?.use_custom_parameters)">
+          <ion-label class="card-headline">{{"BREW_INFORMATION_BEAN_AGE" | translate}}</ion-label><br/>
+          <ion-text>{{brew?.getCalculatedBeanAge()}}</ion-text>
+        </ion-col>
         <ion-col size="12" *ngIf="brew?.method_of_preparation_tools.length > 0 && uiBrewHelper.fieldVisible(settings.visible_list_view_parameters.method_of_preparation_tool,
                       preparation?.visible_list_view_parameters.method_of_preparation_tool,
                       preparation?.use_custom_parameters)">
