@@ -54,4 +54,7 @@ export interface IBean {
   frozenDate: string;
   unfrozenDate: string;
   frozenId: string;
+  /**
+   * If there is a list of multiple bags, there will be an id to group them**/
+  frozenGroupId: string;
 }

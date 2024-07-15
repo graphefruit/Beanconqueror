@@ -63,6 +63,7 @@ export class Bean implements IBean {
   public frozenDate: string;
   public unfrozenDate: string;
   public frozenId: string;
+  public frozenGroupId: string;
 
   constructor() {
     this.name = '';
@@ -117,6 +118,7 @@ export class Bean implements IBean {
     this.frozenDate = '';
     this.unfrozenDate = '';
     this.frozenId = '';
+    this.frozenGroupId = '';
   }
 
   public getRoastName(): string {

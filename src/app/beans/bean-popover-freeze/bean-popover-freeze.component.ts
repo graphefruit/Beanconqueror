@@ -82,8 +82,10 @@ export class BeanPopoverFreezeComponent implements OnInit {
 
     let index = 1;
 
+    const groupBeanId = this.uiHelper.generateUUID();
+
     for await (const bag of this.addedBags) {
-      await this.__createNewFrozenBean(bag, index);
+      await this.__createNewFrozenBean(bag, index, groupBeanId);
       index = index + 1;
     }
 
@@ -99,8 +101,15 @@ export class BeanPopoverFreezeComponent implements OnInit {
         this.bean.cost = newCost;
 
         //Don't delete the bean, because we did brews with this
-        this.bean.finished = true;
+        this.bean.frozenGroupId = groupBeanId;
         await this.uiBeanStorage.update(this.bean);
+        await this.uiAlert.showMessage(
+          'BEAN_POPOVER_FROZEN_BEAN_WILL_BE_ARCHIVED_NOW_MESSAGE',
+          'INFORMATION',
+          'OK',
+          true
+        );
+        await this.uiBeanHelper.archiveBeanWithRatingQuestion(this.bean);
       } else {
         try {
           await this.uiAlert.showConfirm(
@@ -117,7 +126,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
         }
       }
     } else {
-      //We need to update our bean bag.
+      // We need to update our bean bag.
       /**
        * Because we had already maybe some brews, we take the bean weight, and subtract it with the spill over, because just using the spill over would not take previus brews into account
        */
@@ -125,6 +134,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
       this.bean.weight = this.bean.weight - this.getActualFreezingQuantity();
       const newCost = (this.bean.cost * this.bean.weight) / oldWeight;
       this.bean.cost = newCost;
+      this.bean.frozenGroupId = groupBeanId;
       await this.uiBeanStorage.update(this.bean);
     }
 
@@ -137,7 +147,11 @@ export class BeanPopoverFreezeComponent implements OnInit {
     await modal.present();
     await modal.onWillDismiss();
   }
-  private async __createNewFrozenBean(_freezingWeight: number, _index: number) {
+  private async __createNewFrozenBean(
+    _freezingWeight: number,
+    _index: number,
+    _groupBeanId: string
+  ) {
     const clonedBean: Bean = this.uiHelper.cloneData(this.bean);
 
     clonedBean.frozenId = this.uiBeanHelper.generateFrozenId();
@@ -145,6 +159,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
     //Reset the data, because maybe we freeze an unfrozen bean again.
     clonedBean.unfrozenDate = '';
     clonedBean.attachments = [];
+    clonedBean.frozenGroupId = _groupBeanId;
 
     if (this.bean.cost !== 0) {
       const newCost = (this.bean.cost * _freezingWeight) / this.bean.weight;
