@@ -1339,5 +1339,6 @@
   "NAV_FROZEN_BEANS_LIST": "Frozen beans list",
   "BEAN_BREW_LIST_VIEW_PARAMETERS": "Bean information for brew",
   "BEAN_AGE_BY_BREW_DATE": "Bean age by brew date",
-  "BEAN_POPOVER_FROZEN_BEAN_WILL_BE_ARCHIVED_NOW_MESSAGE": "Your frozen bags, will result that your original bag has no weight left but you did brews with it, so please rate it and send it to the archive now"
+  "BEAN_POPOVER_FROZEN_BEAN_WILL_BE_ARCHIVED_NOW_MESSAGE": "Your frozen bags, will result that your original bag has no weight left but you did brews with it, so please rate it and send it to the archive now",
+  "BEAN_POPOVER_YOU_CANT_FREEZE_WITH_ZERO_WEIGHT_LEFT": "You can't freeze, because the remaining weight of your bag is zero"
 }
