@@ -59,7 +59,6 @@
     "cordova-plugin-filepicker": "^1.1.6",
     "cordova-plugin-globalization": "^1.11.0",
     "cordova-plugin-ionic-keyboard": "^2.2.0",
-    "cordova-plugin-statusbar": "^2.4.3",
     "core-js": "^3.29.1",
     "currency-symbol-map": "^5.0.1",
     "html-to-image": "^1.10.8",
@@ -117,6 +116,7 @@
     "cordova-plugin-insomnia": "^4.3.0",
     "cordova-plugin-ionic-webview": "^5.0.1",
     "cordova-plugin-screen-orientation": "github:apache/cordova-plugin-screen-orientation",
+    "cordova-plugin-statusbar": "^4.0.0",
     "cordova-plugin-vibration": "^3.1.1",
     "cordova-plugin-x-socialsharing": "^6.0.4",
     "cordova-sqlite-storage": "^5.1.0",
@@ -146,7 +146,6 @@
   "description": "Beanconqueror",
   "cordova": {
     "plugins": {
-      "cordova-plugin-statusbar": {},
       "cordova-plugin-device": {},
       "cordova-plugin-filechooser": {},
       "cordova-plugin-filepicker": {},
@@ -181,7 +180,6 @@
       },
       "cordova-clipboard": {},
       "cordova-plugin-android-permissions": {},
-      "cordova-plugin-file": {},
       "@spoonconsulting/cordova-plugin-telerik-imagepicker": {
         "PHOTO_LIBRARY_USAGE_DESCRIPTION": "The app needs photo library access, so that you can choose from already taken pictures from coffee beans, coffee bags, your own coffee brews etc. This pictures are stored inside the app."
       },
@@ -218,7 +216,11 @@
         "BLUETOOTH_RESTORE_STATE": "false"
       },
       "cordova-plugin-inappbrowser": {},
-      "skwas-cordova-plugin-datetimepicker": {}
+      "skwas-cordova-plugin-datetimepicker": {},
+      "cordova-plugin-statusbar": {},
+      "cordova-plugin-file": {
+        "ANDROIDX_WEBKIT_VERSION": "1.4.0"
+      }
     },
     "platforms": [
       "ios",
