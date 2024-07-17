@@ -53,6 +53,7 @@ export class UIUpdate {
   public async checkUpdate() {
     this.uiLog.info('Check updates');
     const hasData: boolean = await this.uiStorage.hasData();
+
     try {
       const updateVersions: Array<string> = [
         'UPDATE_1',
