@@ -11,6 +11,8 @@ import { UIToast } from '../../../services/uiToast';
 import { UIAlert } from '../../../services/uiAlert';
 import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
 import { UIHelper } from '../../../services/uiHelper';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { Settings } from '../../../classes/settings/settings';
 
 @Component({
   selector: 'app-preparation-connected-device',
@@ -39,7 +41,8 @@ export class PreparationConnectedDeviceComponent {
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly uiToast: UIToast,
     private readonly uiAlert: UIAlert,
-    private readonly uiHelper: UIHelper
+    private readonly uiHelper: UIHelper,
+    private readonly uiSettingsStorage: UISettingsStorage
   ) {}
 
   public ionViewWillEnter(): void {
@@ -95,6 +98,17 @@ export class PreparationConnectedDeviceComponent {
         ) {
           this.data.connectedPreparationDevice.customParams.residualLagTime = 1.35;
         }
+      }
+
+      if (
+        this.data.connectedPreparationDevice.type !== PreparationDeviceType.NONE
+      ) {
+        /**
+         * Activiate the automatic stop when you connect a portafilter connection
+         */
+        const settings: Settings = this.uiSettingsStorage.getSettings();
+        settings.bluetooth_scale_espresso_stop_on_no_weight_change = true;
+        await this.uiSettingsStorage.update(settings);
       }
       await this.uiPreparationStorage.update(this.data);
     }, 150);
