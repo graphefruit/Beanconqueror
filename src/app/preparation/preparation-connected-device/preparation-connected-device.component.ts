@@ -9,7 +9,6 @@ import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { PreparationDevice } from '../../../classes/preparationDevice/preparationDevice';
 import { UIToast } from '../../../services/uiToast';
 import { UIAlert } from '../../../services/uiAlert';
-import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
