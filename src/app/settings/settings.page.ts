@@ -65,7 +65,7 @@ import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDev
 import { Logger } from '../../classes/devices/common/logger';
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { UIExportImportHelper } from '../../services/uiExportImportHelper';
-import { ScaleType } from '../../classes/devices';
+import { ScaleType, sleep } from '../../classes/devices';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
 import { UIGraphStorage } from '../../services/uiGraphStorage.service';
@@ -529,20 +529,21 @@ export class SettingsPage {
 
     const scale = await this.bleManager.tryToFindScale();
 
-    await new Promise(async (resolve) => {
-      // Give some time
-      setTimeout(async () => {
-        await this.uiAlert.hideLoadingSpinner();
-        resolve(undefined);
-      }, 50);
-    });
+    await sleep(500);
+    await this.uiAlert.hideLoadingSpinner();
 
     if (scale) {
       try {
         // We don't need to retry for iOS, because we just did scan before.
 
         // NEVER!!! Await here, else the bluetooth logic will get broken.
-        this.bleManager.autoConnectScale(scale.type, scale.id, false);
+        this.bleManager.autoConnectScale(
+          scale.type,
+          scale.id,
+          false,
+          () => {},
+          () => {}
+        );
       } catch (ex) {}
 
       this.settings.scale_id = scale.id;
