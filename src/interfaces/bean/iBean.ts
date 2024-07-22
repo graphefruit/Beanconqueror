@@ -10,6 +10,7 @@ import { IBeanInformation } from './iBeanInformation';
 import { IBeanRoastInformation } from './iBeanRoastInformation';
 import { IFlavor } from '../flavor/iFlavor';
 import { ICupping } from '../cupping/iCupping';
+import { BEAN_FREEZING_STORAGE_ENUM } from '../../enums/beans/beanFreezingStorage';
 
 export interface IBean {
   name: string;
@@ -57,4 +58,8 @@ export interface IBean {
   /**
    * If there is a list of multiple bags, there will be an id to group them**/
   frozenGroupId: string;
+  frozenStorageType: BEAN_FREEZING_STORAGE_ENUM;
+
+  bestDate: string;
+  openDate: string;
 }

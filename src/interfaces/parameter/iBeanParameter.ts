@@ -33,4 +33,7 @@ export interface IBeanParameter {
   purchasing_price: boolean;
   fob_price: boolean;
   rating: boolean;
+
+  bestDate: boolean;
+  openDate: boolean;
 }

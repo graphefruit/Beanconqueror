@@ -18,11 +18,19 @@
     </ion-list>
   </ion-item>
   <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.buyDate,initialBeanData.buyDate)">
-    <ion-input label-placement="stacked" label='{{"BEAN_DATA_BUY_DATE" | translate}}' readonly (click)="chooseBuyDate($event);" [(data)]="data.buyDate" [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_BUY_DATE' | translate}}"></ion-input>
+    <ion-input label-placement="stacked" label='{{"BEAN_DATA_BUY_DATE" | translate}}' readonly (click)="chooseDate($event,'buyDate');" [(data)]="data.buyDate" [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_BUY_DATE' | translate}}"></ion-input>
+
+  </ion-item>
+  <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.bestDate,initialBeanData.bestDate)">
+    <ion-input label-placement="stacked" label='{{"BEAN_DATA_BEST_DATE" | translate}}' readonly (click)="chooseDate($event,'bestDate');" [(data)]="data.bestDate" [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_BEST_DATE' | translate}}"></ion-input>
+
+  </ion-item>
+  <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.openDate,initialBeanData.openDate)">
+    <ion-input label-placement="stacked" label='{{"BEAN_DATA_OPEN_DATE" | translate}}' readonly (click)="chooseDate($event,'openDate');" [(data)]="data.openDate" [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_OPEN_DATE' | translate}}"></ion-input>
 
   </ion-item>
   <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.roastingDate,initialBeanData.roastingDate)">
-    <ion-input label-placement="stacked" label='{{"BEAN_DATA_ROASTING_DATE" | translate}}' readonly (click)="chooseDate($event);" [(data)]="data.roastingDate"  [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROASTING_DATE' | translate}}"></ion-input>
+    <ion-input label-placement="stacked" label='{{"BEAN_DATA_ROASTING_DATE" | translate}}' readonly (click)="chooseDate($event,'roastingDate');" [(data)]="data.roastingDate"  [transform-date] displayFormat="{{settings?.date_format}}" placeholder="{{'BEAN.PLACE_HOLDER.BEAN_DATA_ROASTING_DATE' | translate}}"></ion-input>
   </ion-item>
 
   <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.bean_roasting_type,initialBeanData.bean_roasting_type)">

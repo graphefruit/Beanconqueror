@@ -13,6 +13,8 @@ import { Config } from '../../../classes/objectConfig/objectConfig';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIAlert } from '../../../services/uiAlert';
 import { BeanPopoverFrozenListComponent } from '../bean-popover-frozen-list/bean-popover-frozen-list.component';
+import { BEAN_ROASTING_TYPE_ENUM } from '../../../enums/beans/beanRoastingType';
+import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
 
 declare var cordova;
 @Component({
@@ -26,14 +28,19 @@ export class BeanPopoverFreezeComponent implements OnInit {
   @Input() public bean: Bean;
 
   public frozenDate: string = '';
+  public frozenStorage: BEAN_FREEZING_STORAGE_ENUM;
   public freezePartialBagGrams: number = 0;
 
-  public addedBags: Array<number> = [];
+  public addedBags: Array<{
+    weight: number;
+    type: BEAN_FREEZING_STORAGE_ENUM;
+  }> = [];
 
   public leftOverBeanBagWeight: number = 0;
   public copyAttachments: boolean = false;
 
   public allNewCreatedBeans: Array<Bean> = [];
+  public readonly beanFreezingStorageEnum = BEAN_FREEZING_STORAGE_ENUM;
   constructor(
     private readonly modalController: ModalController,
     private readonly uiSettingsStorage: UISettingsStorage,
@@ -46,6 +53,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
     private readonly uiAlert: UIAlert
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
+    this.frozenStorage = 'UNKNOWN' as BEAN_FREEZING_STORAGE_ENUM;
   }
 
   public ngOnInit() {
@@ -85,7 +93,12 @@ export class BeanPopoverFreezeComponent implements OnInit {
     const groupBeanId = this.uiHelper.generateUUID();
 
     for await (const bag of this.addedBags) {
-      await this.__createNewFrozenBean(bag, index, groupBeanId);
+      await this.__createNewFrozenBean(
+        bag.weight,
+        bag.type,
+        index,
+        groupBeanId
+      );
       index = index + 1;
     }
 
@@ -149,6 +162,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
   }
   private async __createNewFrozenBean(
     _freezingWeight: number,
+    _freezingType: BEAN_FREEZING_STORAGE_ENUM,
     _index: number,
     _groupBeanId: string
   ) {
@@ -160,6 +174,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
     clonedBean.unfrozenDate = '';
     clonedBean.attachments = [];
     clonedBean.frozenGroupId = _groupBeanId;
+    clonedBean.frozenStorageType = _freezingType;
 
     if (this.bean.cost !== 0) {
       const newCost = (this.bean.cost * _freezingWeight) / this.bean.weight;
@@ -209,13 +224,16 @@ export class BeanPopoverFreezeComponent implements OnInit {
   public getActualFreezingQuantity() {
     let quantity: number = 0;
     for (const bag of this.addedBags) {
-      quantity += bag;
+      quantity += bag.weight;
     }
     return quantity;
   }
 
   public addOnePartialBag() {
-    this.addedBags.push(this.freezePartialBagGrams);
+    this.addedBags.push({
+      weight: this.freezePartialBagGrams,
+      type: this.frozenStorage,
+    });
 
     const leftFreezingCount =
       this.leftOverBeanBagWeight - this.getActualFreezingQuantity();
@@ -226,7 +244,10 @@ export class BeanPopoverFreezeComponent implements OnInit {
 
   public addMaxPartialBags() {
     while (true) {
-      this.addedBags.push(this.freezePartialBagGrams);
+      this.addedBags.push({
+        weight: this.freezePartialBagGrams,
+        type: this.frozenStorage,
+      });
 
       const leftFreezingCount =
         this.leftOverBeanBagWeight - this.getActualFreezingQuantity();

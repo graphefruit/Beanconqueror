@@ -13,6 +13,17 @@
         </div>
       </ion-checkbox>
     </ion-item>
+    <ion-item >
+      <ion-select label-placement='stacked' label='{{"BEAN_DATA_FROZEN_STORAGE_TYPE" | translate}}'
+                  [(ngModel)]='frozenStorage' cancelText="{{'CANCEL'| translate }}"
+                  name='frozenStorage'
+                  okText="{{'CHOOSE'| translate }}"
+                  style='padding-left:0px!important;width: 100%; min-width: 100%;'
+                  multiple='false'>
+        <ion-select-option *ngFor='let key of beanFreezingStorageEnum | keys'
+                           value='{{key}}'>{{"BEAN_FREEZING_STORAGE_TYPE_" + key | translate}}</ion-select-option>
+      </ion-select>
+    </ion-item>
     <ion-item [lines]="leftOverBeanBagWeight<=0?'none':'full'">
       <ion-label>{{"BEAN_POPOVER_LEFT_UNFROZEN" | translate}} - {{leftOverBeanBagWeight}}g / {{ getActualFreezingQuantity() }}g</ion-label>
     </ion-item>
@@ -41,8 +52,20 @@
       </ion-list-header>
 
       <ion-item *ngFor='let bag of addedBags;let i=index;'>
-        <ion-label>{{bag}}g</ion-label>
-        <ion-icon (click)="deleteBag(i)" tappable slot="end" name="trash-outline"></ion-icon>
+        <ion-label>{{bag.weight}}g</ion-label>
+        <ion-select slot='end'   tabIndex="1"
+                    [(ngModel)]='bag.type' cancelText="{{'CANCEL'| translate }}"
+                    name='frozenStorage'
+                    okText="{{'CHOOSE'| translate }}"
+                    multiple='false'>
+          <ion-select-option *ngFor='let key of beanFreezingStorageEnum | keys'
+                             value='{{key}}'>{{"BEAN_FREEZING_STORAGE_TYPE_" + key | translate}}</ion-select-option>
+        </ion-select>
+        <ion-button (click)="deleteBag(i)" fill="clear" size="small" slot="end" tappable>
+          <ion-icon  name="trash-outline"
+                    slot="icon-only"></ion-icon>
+        </ion-button>
+
       </ion-item>
     </ion-list>
   </ion-card>

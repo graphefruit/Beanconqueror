@@ -408,7 +408,9 @@
             "BEAN_DATA_FOB_PRICE": "Add the FOB price",
             "NOTES": "Add notes about these beans",
             "CHOOSE_DATA_ROASTER": "Choose roaster",
-            "CHOOSE_DATA_ROASTING_TYPE": "Choose roast type"
+            "CHOOSE_DATA_ROASTING_TYPE": "Choose roast type",
+            "BEAN_DATA_BEST_DATE": "When is the best date for the bean?",
+            "BEAN_DATA_OPEN_DATE": "When was the bean bag opend?"
         }
     },
     "PREPARATION": {
@@ -1340,5 +1342,16 @@
   "BEAN_BREW_LIST_VIEW_PARAMETERS": "Bean information for brew",
   "BEAN_AGE_BY_BREW_DATE": "Bean age by brew date",
   "BEAN_POPOVER_FROZEN_BEAN_WILL_BE_ARCHIVED_NOW_MESSAGE": "Your frozen bags, will result that your original bag has no weight left but you did brews with it, so please rate it and send it to the archive now",
-  "BEAN_POPOVER_YOU_CANT_FREEZE_WITH_ZERO_WEIGHT_LEFT": "You can't freeze, because the remaining weight of your bag is zero"
+  "BEAN_POPOVER_YOU_CANT_FREEZE_WITH_ZERO_WEIGHT_LEFT": "You can't freeze, because the remaining weight of your bag is zero",
+  "BEAN_DATA_BEST_DATE": "Best bean date",
+  "BEAN_DATA_BEST_DATE_TOOLTIP": "When is the best date to use the beans?",
+  "BEAN_DATA_OPEN_DATE": "Bag open date",
+  "BEAN_DATA_OPEN_DATE_TOOLTIP": "When did you open up the bag of beans?",
+  "BEAN_FREEZING_STORAGE_TYPE_UNKNOWN": "Unknown",
+  "BEAN_FREEZING_STORAGE_TYPE_COFFEE_BAG": "Coffee bag",
+  "BEAN_FREEZING_STORAGE_TYPE_COFFEE_JAR": "Coffee jar",
+  "BEAN_FREEZING_STORAGE_TYPE_ZIP_LOCK": "Zip lock",
+  "BEAN_FREEZING_STORAGE_TYPE_VACUUM_SEALED": "Vacuum sealed",
+  "BEAN_FREEZING_STORAGE_TYPE_TUBE": "Tube",
+  "BEAN_DATA_FROZEN_STORAGE_TYPE": "Freezing storage type"
 }

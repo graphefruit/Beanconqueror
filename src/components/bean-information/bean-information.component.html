@@ -61,6 +61,10 @@
                 <ion-label class="card-headline">{{"BEAN_DATA_UNFROZEN_DATE" | translate}}</ion-label>
                 <ion-text>{{bean.unfrozenDate | formatDate:[settings?.date_format]}}</ion-text>
               </ion-col>
+              <ion-col *ngIf="bean.frozenStorageType" size="6">
+                <ion-label class="card-headline">{{"BEAN_DATA_FROZEN_STORAGE_TYPE" | translate}}</ion-label>
+                <ion-text>{{"BEAN_FREEZING_STORAGE_TYPE_" + bean.frozenStorageType | translate}}</ion-text>
+              </ion-col>
             </ion-row>
             <ion-row>
               <ion-col *ngIf="uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.roastingDate)" size="6">
@@ -73,6 +77,27 @@
                   -
                 </ion-text>
               </ion-col>
+              <ion-col *ngIf="uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.bestDate)" size="6">
+                <ion-label class="card-headline">{{"BEAN_DATA_BEST_DATE" | translate}}</ion-label>
+                <br/>
+
+                <ion-text *ngIf="bean?.bestDate">
+                  {{bean.bestDate | formatDate:[settings?.date_format]}}</ion-text>
+                <ion-text *ngIf="!bean?.bestDate">
+                  -
+                </ion-text>
+              </ion-col>
+              <ion-col *ngIf="uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.openDate)" size="6">
+                <ion-label class="card-headline">{{"BEAN_DATA_OPEN_DATE" | translate}}</ion-label>
+                <br/>
+
+                <ion-text *ngIf="bean?.openDate">
+                  {{bean.openDate | formatDate:[settings?.date_format]}}</ion-text>
+                <ion-text *ngIf="!bean?.openDate">
+                  -
+                </ion-text>
+              </ion-col>
+
               <ion-col *ngIf="uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.roaster)" size="6">
                 <ion-label class="card-headline">{{"BEAN_DATA_ROASTER" | translate}}</ion-label>
                 <br/>

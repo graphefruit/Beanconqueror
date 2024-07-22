@@ -56,6 +56,24 @@
         </ion-item>
         <ion-item tappable>
           <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
+                        [(ngModel)]='data.bean_visible_list_view_parameters.bestDate'>
+            <div class='ion-label'>
+              <h2>{{"BEAN_DATA_BEST_DATE" | translate}}</h2>
+              <p>{{"BEAN_DATA_BEST_DATE_TOOLTIP" | translate}}</p>
+            </div>
+          </ion-checkbox>
+        </ion-item>
+        <ion-item tappable>
+          <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
+                        [(ngModel)]='data.bean_visible_list_view_parameters.openDate'>
+            <div class='ion-label'>
+              <h2>{{"BEAN_DATA_OPEN_DATE" | translate}}</h2>
+              <p>{{"BEAN_DATA_OPEN_DATE_TOOLTIP" | translate}}</p>
+            </div>
+          </ion-checkbox>
+        </ion-item>
+        <ion-item tappable>
+          <ion-checkbox label-placement='start' (ngModelChange)='triggerChanges($event)'
                         [(ngModel)]='data.bean_visible_list_view_parameters.roastingDate'>
             <div class='ion-label'>
               <h2>{{"BEAN_DATA_ROASTING_DATE" | translate}}</h2>

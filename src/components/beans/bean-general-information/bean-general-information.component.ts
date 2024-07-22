@@ -144,7 +144,7 @@ export class BeanGeneralInformationComponent implements OnInit {
     this.roasterFocused = false;
   }
 
-  public chooseBuyDate(_event) {
+  public chooseDate(_event, _keyIdentifier) {
     _event.target.blur();
     _event.cancelBubble = true;
     _event.preventDefault();
@@ -163,40 +163,9 @@ export class BeanGeneralInformationComponent implements OnInit {
         clearText: this.translate.instant('CLEAR'),
         success: (newDate) => {
           if (newDate === undefined) {
-            this.data.buyDate = '';
+            this.data[_keyIdentifier] = '';
           } else {
-            this.data.buyDate = moment(newDate).toISOString();
-          }
-
-          this.changeDetectorRef.detectChanges();
-        },
-        error: () => {},
-      });
-    }
-  }
-
-  public chooseDate(_event) {
-    _event.target.blur();
-    _event.cancelBubble = true;
-    _event.preventDefault();
-    _event.stopImmediatePropagation();
-    _event.stopPropagation();
-
-    if (this.platform.is('cordova')) {
-      const myDate = new Date(); // From model.
-
-      cordova.plugins.DateTimePicker.show({
-        mode: 'date',
-        date: myDate,
-        okText: this.translate.instant('CHOOSE'),
-        todayText: this.translate.instant('TODAY'),
-        cancelText: this.translate.instant('CANCEL'),
-        clearText: this.translate.instant('CLEAR'),
-        success: (newDate) => {
-          if (newDate === undefined) {
-            this.data.roastingDate = '';
-          } else {
-            this.data.roastingDate = moment(newDate).toISOString();
+            this.data[_keyIdentifier] = moment(newDate).toISOString();
           }
 
           this.changeDetectorRef.detectChanges();
@@ -204,7 +173,7 @@ export class BeanGeneralInformationComponent implements OnInit {
         error: () => {},
       });
     } else {
-      this.data.roastingDate = moment(new Date()).toISOString();
+      this.data[_keyIdentifier] = moment(new Date()).toISOString();
     }
   }
 

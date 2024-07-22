@@ -18,6 +18,7 @@ import { IFlavor } from '../../interfaces/flavor/iFlavor';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
 import { Brew } from '../brew/brew';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
+import { BEAN_FREEZING_STORAGE_ENUM } from '../../enums/beans/beanFreezingStorage';
 
 export class Bean implements IBean {
   public name: string;
@@ -64,6 +65,10 @@ export class Bean implements IBean {
   public unfrozenDate: string;
   public frozenId: string;
   public frozenGroupId: string;
+  public frozenStorageType: BEAN_FREEZING_STORAGE_ENUM;
+
+  public bestDate: string;
+  public openDate: string;
 
   constructor() {
     this.name = '';
@@ -119,6 +124,10 @@ export class Bean implements IBean {
     this.unfrozenDate = '';
     this.frozenId = '';
     this.frozenGroupId = '';
+    this.frozenStorageType = 'UNKNOWN' as BEAN_FREEZING_STORAGE_ENUM;
+
+    this.bestDate = '';
+    this.openDate = '';
   }
 
   public getRoastName(): string {
