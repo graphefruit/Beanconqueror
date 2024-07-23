@@ -134,3 +134,13 @@
   </ion-item>
 
 </ion-card>
+
+<ion-card class="ion-padding" style="margin-top:30px;">
+
+  <ion-title  class="ion-no-padding">{{"BEAN_BREW_LIST_VIEW_PARAMETERS" | translate  }}</ion-title>
+  <ion-item tappable>
+    <ion-checkbox label-placement='start' (ngModelChange)="save()"
+                  [(ngModel)]="data.visible_list_view_parameters.bean_age_by_brew_date"><div class='ion-label'>{{"BEAN_AGE_BY_BREW_DATE" | translate}}</div></ion-checkbox>
+  </ion-item>
+
+</ion-card>

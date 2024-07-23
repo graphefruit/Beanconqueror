@@ -142,6 +142,9 @@ export class BeansAddComponent implements OnInit {
   }
 
   public async __addBean() {
+    if (this.data.frozenDate && this.data.frozenId === '') {
+      this.data.frozenId = this.uiBeanHelper.generateFrozenId();
+    }
     await this.uiBeanStorage.add(this.data);
     this.uiAnalytics.trackEvent(
       BEAN_TRACKING.TITLE,

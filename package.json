@@ -59,7 +59,6 @@
     "cordova-plugin-filepicker": "^1.1.6",
     "cordova-plugin-globalization": "^1.11.0",
     "cordova-plugin-ionic-keyboard": "^2.2.0",
-    "cordova-plugin-statusbar": "^2.4.3",
     "core-js": "^3.29.1",
     "currency-symbol-map": "^5.0.1",
     "html-to-image": "^1.10.8",
@@ -105,7 +104,7 @@
     "cordova-plugin-androidx": "^3.0.0",
     "cordova-plugin-androidx-adapter": "^1.1.3",
     "cordova-plugin-app-version": "^0.1.14",
-    "cordova-plugin-ble-central": "^1.7.2",
+    "cordova-plugin-ble-central": "^1.7.4",
     "cordova-plugin-camera": "^7.0.0",
     "cordova-plugin-customurlscheme-ng": "^10.0.0",
     "cordova-plugin-file": "^8.0.0",
@@ -113,10 +112,11 @@
     "cordova-plugin-filepath": "^1.6.0",
     "cordova-plugin-geolocation": "^5.0.0",
     "cordova-plugin-health": "^2.1.0",
-    "cordova-plugin-inappbrowser": "^5.0.0",
+    "cordova-plugin-inappbrowser": "^6.0.0",
     "cordova-plugin-insomnia": "^4.3.0",
     "cordova-plugin-ionic-webview": "^5.0.1",
     "cordova-plugin-screen-orientation": "github:apache/cordova-plugin-screen-orientation",
+    "cordova-plugin-statusbar": "^4.0.0",
     "cordova-plugin-vibration": "^3.1.1",
     "cordova-plugin-x-socialsharing": "^6.0.4",
     "cordova-sqlite-storage": "^5.1.0",
@@ -146,7 +146,6 @@
   "description": "Beanconqueror",
   "cordova": {
     "plugins": {
-      "cordova-plugin-statusbar": {},
       "cordova-plugin-device": {},
       "cordova-plugin-filechooser": {},
       "cordova-plugin-filepicker": {},
@@ -155,7 +154,6 @@
       "cordova-plugin-globalization": {},
       "cordova-plugin-ionic-keyboard": {},
       "cordova-sqlite-storage": {},
-      "cordova-plugin-inappbrowser": {},
       "cordova-plugin-insomnia": {},
       "ionic-plugin-deeplinks": {
         "URL_SCHEME": "beanconqueror",
@@ -182,7 +180,6 @@
       },
       "cordova-clipboard": {},
       "cordova-plugin-android-permissions": {},
-      "cordova-plugin-file": {},
       "@spoonconsulting/cordova-plugin-telerik-imagepicker": {
         "PHOTO_LIBRARY_USAGE_DESCRIPTION": "The app needs photo library access, so that you can choose from already taken pictures from coffee beans, coffee bags, your own coffee brews etc. This pictures are stored inside the app."
       },
@@ -203,22 +200,27 @@
         "HEALTH_READ_PERMISSION": " ",
         "HEALTH_WRITE_PERMISSION": " "
       },
-      "skwas-cordova-plugin-datetimepicker": {},
       "cordova-plugin-ionic-webview": {},
       "cordova-plugin-geolocation": {
         "GPS_REQUIRED": "false"
       },
+      "cordova-plugin-screen-orientation": {},
+      "cordova-plugin-vibration": {},
+      "cordova-plugin-nativestorage": {},
+      "cordova-plugin-androidx": {},
+      "cordova-plugin-androidx-adapter": {},
       "cordova-plugin-ble-central": {
         "BLUETOOTH_USAGE_DESCRIPTION": "Bluetooth access needed to connect smartscales",
         "IOS_INIT_ON_LOAD": "false",
         "ACCESS_BACKGROUND_LOCATION": "false",
         "BLUETOOTH_RESTORE_STATE": "false"
       },
-      "cordova-plugin-screen-orientation": {},
-      "cordova-plugin-vibration": {},
-      "cordova-plugin-nativestorage": {},
-      "cordova-plugin-androidx": {},
-      "cordova-plugin-androidx-adapter": {}
+      "cordova-plugin-inappbrowser": {},
+      "skwas-cordova-plugin-datetimepicker": {},
+      "cordova-plugin-statusbar": {},
+      "cordova-plugin-file": {
+        "ANDROIDX_WEBKIT_VERSION": "1.4.0"
+      }
     },
     "platforms": [
       "ios",

@@ -1,6 +1,6 @@
 /** Interfacdes */
 
-import {IBrewParameter} from '../../interfaces/parameter/iBrewParameter';
+import { IBrewParameter } from '../../interfaces/parameter/iBrewParameter';
 
 export class ListViewBrewParameter implements IBrewParameter {
   public brew_time: boolean;
@@ -27,6 +27,8 @@ export class ListViewBrewParameter implements IBrewParameter {
   public water: boolean;
   public bean_weight_in: boolean;
   public vessel: boolean;
+
+  public bean_age_by_brew_date: boolean;
   constructor() {
     this.bean_type = true;
     this.brew_temperature_time = false;
@@ -55,5 +57,7 @@ export class ListViewBrewParameter implements IBrewParameter {
     this.water = false;
     this.bean_weight_in = false;
     this.vessel = false;
+
+    this.bean_age_by_brew_date = false;
   }
 }

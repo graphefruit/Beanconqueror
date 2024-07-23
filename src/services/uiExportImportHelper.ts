@@ -247,8 +247,13 @@ export class UIExportImportHelper {
           if (this.platform.is('cordova')) {
             this.uiLog.log('Check Backup');
             const hasData = await this.uiStorage.hasData();
+
+            let hasCorruptedData: boolean = false;
+            if (hasData) {
+              hasCorruptedData = await this.uiStorage.hasCorruptedData();
+            }
             this.uiLog.log('Check Backup - Has data ' + hasData);
-            if (!hasData) {
+            if (!hasData || hasCorruptedData) {
               this.uiLog.log(
                 'Check  Backup - No data are stored yet inside the app, so we try to find a backup file'
               );

@@ -56,6 +56,8 @@ export interface ISettings {
   show_archived_waters: boolean;
   show_archived_graphs: boolean;
 
+  freeze_coffee_beans: boolean;
+
   track_caffeine_consumption: boolean;
 
   brew_timer_start_delay_time: number;

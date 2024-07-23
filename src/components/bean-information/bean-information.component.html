@@ -1,9 +1,12 @@
-<ion-card class="long-card" tappable (click)="showBean()" (long-press)="longPressEditBean($event)">
+<ion-card  class="long-card" tappable (click)="showBean()" (long-press)="longPressEditBean($event)">
   <ion-card-content #card  class="no-ion-col-vertical-padding ion-padding-top">
     <ion-grid class="no-padding-bottom">
       <ion-row>
         <ion-col [size]="((bean?.roast_range!== 0 && uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.roast_range)) || (bean?.rating !== 0 &&  uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.rating)))?8:11" style="margin: auto 0;">
           <div class="ion-no-padding font-size-20 ion-title bean-title">
+            <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="snow-outline"
+                      *ngIf="bean.isFrozen()"></ion-icon>
+            <span *ngIf='bean.isFrozen() === false && bean.frozenId' style='margin-right:5px;'>(<ion-icon style="top: 3px;position: relative;" name="snow-outline"></ion-icon>)</span>
             <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="flame-outline"
                       *ngIf="bean.isSelfRoasted()"></ion-icon>
             <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="qr-code-outline"
@@ -13,7 +16,7 @@
 
             <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="heart"
                       *ngIf="bean.favourite"></ion-icon>
-            {{bean.name}}&nbsp;<span
+            <span *ngIf='bean.frozenId'><ion-icon style='margin-bottom: -4px;' name="pricetag-outline"></ion-icon>&nbsp;[{{bean.frozenId}}]&nbsp;-&nbsp;</span>{{bean.name}}&nbsp;<span
             *ngIf="!isBeanRoastUnknown() && uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.bean_roasting_type)">({{"BEAN_ROASTING_TYPE_" + bean.bean_roasting_type | translate}})</span>
           </div>
         </ion-col>
@@ -49,6 +52,20 @@
       <ion-row class="ion-padding-bottom-half">
         <ion-col [size]="(bean.hasPhotos() && uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.attachments))?9:12" class="ion-no-padding-right">
           <ion-grid class="ion-no-padding">
+            <ion-row *ngIf='bean.hasFrozenInformation()'>
+              <ion-col *ngIf="bean.frozenDate" size="6">
+                <ion-label class="card-headline">{{"BEAN_DATA_FROZEN_DATE" | translate}}</ion-label>
+                <ion-text>{{bean.frozenDate | formatDate:[settings?.date_format]}}</ion-text>
+              </ion-col>
+              <ion-col *ngIf="bean.unfrozenDate" size="6">
+                <ion-label class="card-headline">{{"BEAN_DATA_UNFROZEN_DATE" | translate}}</ion-label>
+                <ion-text>{{bean.unfrozenDate | formatDate:[settings?.date_format]}}</ion-text>
+              </ion-col>
+              <ion-col *ngIf="bean.frozenStorageType" size="6">
+                <ion-label class="card-headline">{{"BEAN_DATA_FROZEN_STORAGE_TYPE" | translate}}</ion-label>
+                <ion-text>{{"BEAN_FREEZING_STORAGE_TYPE_" + bean.frozenStorageType | translate}}</ion-text>
+              </ion-col>
+            </ion-row>
             <ion-row>
               <ion-col *ngIf="uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.roastingDate)" size="6">
                 <ion-label class="card-headline">{{"BEAN_DATA_ROASTING_DATE" | translate}}</ion-label>
@@ -60,6 +77,27 @@
                   -
                 </ion-text>
               </ion-col>
+              <ion-col *ngIf="uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.bestDate)" size="6">
+                <ion-label class="card-headline">{{"BEAN_DATA_BEST_DATE" | translate}}</ion-label>
+                <br/>
+
+                <ion-text *ngIf="bean?.bestDate">
+                  {{bean.bestDate | formatDate:[settings?.date_format]}}</ion-text>
+                <ion-text *ngIf="!bean?.bestDate">
+                  -
+                </ion-text>
+              </ion-col>
+              <ion-col *ngIf="uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.openDate)" size="6">
+                <ion-label class="card-headline">{{"BEAN_DATA_OPEN_DATE" | translate}}</ion-label>
+                <br/>
+
+                <ion-text *ngIf="bean?.openDate">
+                  {{bean.openDate | formatDate:[settings?.date_format]}}</ion-text>
+                <ion-text *ngIf="!bean?.openDate">
+                  -
+                </ion-text>
+              </ion-col>
+
               <ion-col *ngIf="uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.roaster)" size="6">
                 <ion-label class="card-headline">{{"BEAN_DATA_ROASTER" | translate}}</ion-label>
                 <br/>

@@ -20,7 +20,7 @@ import { memoize } from 'lodash';
 
 import { Logger } from '../common/logger';
 import { DEBUG } from '../common/constants';
-import { to128bitUUID } from '../common/util';
+import { sleep, to128bitUUID } from '../common/util';
 import { Decoder } from './decoder';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
@@ -227,6 +227,11 @@ export class AcaiaScale {
       }
     );
 
+    /**
+     * Maybe this sleep is game changer for the connection issue that no weight is send.
+     * After implementing this 150ms sleep, somehow the weight is always send afterwards - why? we don't know
+     */
+    await sleep(150);
     await this.write(new Uint8Array([0, 1]).buffer);
 
     await this.notificationsReady();

@@ -188,6 +188,9 @@ import { BrewBrewingPreparationDeviceComponent } from '../../components/brews/br
 import { WaterAddTypeComponent } from '../water-section/water/water-add-type/water-add-type.component';
 import { PreparationSortToolsComponent } from '../preparation/preparation-sort-tools/preparation-sort-tools.component';
 import { MeticulousHelpPopoverComponent } from '../../popover/meticulous-help-popover/meticulous-help-popover.component';
+import { BeanPopoverFreezeComponent } from '../beans/bean-popover-freeze/bean-popover-freeze.component';
+import { BeanFreezeInformationComponent } from '../../components/beans/bean-freeze-information/bean-freeze-information.component';
+import { BeanPopoverFrozenListComponent } from '../beans/bean-popover-frozen-list/bean-popover-frozen-list.component';
 
 @NgModule({
   declarations: [
@@ -315,6 +318,8 @@ import { MeticulousHelpPopoverComponent } from '../../popover/meticulous-help-po
     SettingsPopoverBluetoothActionsComponent,
     BeanPopoverActionsComponent,
     BeanPopoverAddComponent,
+    BeanPopoverFreezeComponent,
+    BeanPopoverFrozenListComponent,
     BeanArchivePopoverComponent,
     MillPopoverActionsComponent,
     BeanModalSelectComponent,
@@ -337,6 +342,7 @@ import { MeticulousHelpPopoverComponent } from '../../popover/meticulous-help-po
     BeanRoastInformationComponent,
     BeanGeneralInformationComponent,
     BeanSortInformationComponent,
+    BeanFreezeInformationComponent,
     GreenBeanGeneralInformationComponent,
     BrewBrewingComponent,
     BrewBrewingGraphComponent,
@@ -525,6 +531,8 @@ import { MeticulousHelpPopoverComponent } from '../../popover/meticulous-help-po
     GraphPopoverActionsComponent,
     BeanPopoverActionsComponent,
     BeanPopoverAddComponent,
+    BeanPopoverFreezeComponent,
+    BeanPopoverFrozenListComponent,
     BeanArchivePopoverComponent,
     BeanModalSelectComponent,
     AssociatedBrewsComponent,
@@ -547,6 +555,7 @@ import { MeticulousHelpPopoverComponent } from '../../popover/meticulous-help-po
     BeanRoastInformationComponent,
     BeanGeneralInformationComponent,
     BeanSortInformationComponent,
+    BeanFreezeInformationComponent,
     GreenBeanGeneralInformationComponent,
     BrewBrewingComponent,
     BrewBrewingGraphComponent,

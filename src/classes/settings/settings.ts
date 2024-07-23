@@ -80,11 +80,13 @@ export class Settings implements ISettings {
   public bean_filter: {
     OPEN: IBeanPageFilter;
     ARCHIVED: IBeanPageFilter;
+    FROZEN: IBeanPageFilter;
   };
 
   public bean_sort: {
     OPEN: IBeanPageSort;
     ARCHIVED: IBeanPageSort;
+    FROZEN: IBeanPageSort;
   };
 
   public green_bean_sort: {
@@ -136,6 +138,8 @@ export class Settings implements ISettings {
   public show_water_section: boolean;
   public show_cupping_section: boolean;
   public show_graph_section: boolean;
+
+  public freeze_coffee_beans: boolean;
 
   public scale_id: string;
   public scale_type: ScaleType;
@@ -292,6 +296,8 @@ export class Settings implements ISettings {
     this.show_cupping_section = false;
     this.show_graph_section = false;
 
+    this.freeze_coffee_beans = false;
+
     this.use_numeric_keyboard_for_grind_size = false;
 
     this.brew_filter = {
@@ -302,11 +308,13 @@ export class Settings implements ISettings {
     this.bean_filter = {
       OPEN: {} as IBeanPageFilter,
       ARCHIVED: {} as IBeanPageFilter,
+      FROZEN: {} as IBeanPageFilter,
     };
 
     this.bean_sort = {
       OPEN: {} as IBeanPageSort,
       ARCHIVED: {} as IBeanPageSort,
+      FROZEN: {} as IBeanPageSort,
     };
 
     this.green_bean_sort = {
@@ -365,12 +373,17 @@ export class Settings implements ISettings {
 
     this.bean_filter.OPEN = this.GET_BEAN_FILTER();
     this.bean_filter.ARCHIVED = this.GET_BEAN_FILTER();
+    this.bean_filter.FROZEN = this.GET_BEAN_FILTER();
 
     this.bean_sort.OPEN = {
       sort_after: BEAN_SORT_AFTER.UNKOWN,
       sort_order: BEAN_SORT_ORDER.UNKOWN,
     } as IBeanPageSort;
     this.bean_sort.ARCHIVED = {
+      sort_after: BEAN_SORT_AFTER.UNKOWN,
+      sort_order: BEAN_SORT_ORDER.UNKOWN,
+    } as IBeanPageSort;
+    this.bean_sort.FROZEN = {
       sort_after: BEAN_SORT_AFTER.UNKOWN,
       sort_order: BEAN_SORT_ORDER.UNKOWN,
     } as IBeanPageSort;
@@ -503,8 +516,28 @@ export class Settings implements ISettings {
     this.bean_filter = {
       OPEN: {} as IBeanPageFilter,
       ARCHIVED: {} as IBeanPageFilter,
+      FROZEN: {} as IBeanPageFilter,
     };
     this.bean_filter.OPEN = this.GET_BEAN_FILTER();
     this.bean_filter.ARCHIVED = this.GET_BEAN_FILTER();
+    this.bean_filter.FROZEN = this.GET_BEAN_FILTER();
+
+    this.bean_sort = {
+      OPEN: {} as IBeanPageSort,
+      ARCHIVED: {} as IBeanPageSort,
+      FROZEN: {} as IBeanPageSort,
+    };
+    this.bean_sort.OPEN = {
+      sort_after: BEAN_SORT_AFTER.UNKOWN,
+      sort_order: BEAN_SORT_ORDER.UNKOWN,
+    } as IBeanPageSort;
+    this.bean_sort.ARCHIVED = {
+      sort_after: BEAN_SORT_AFTER.UNKOWN,
+      sort_order: BEAN_SORT_ORDER.UNKOWN,
+    } as IBeanPageSort;
+    this.bean_sort.FROZEN = {
+      sort_after: BEAN_SORT_AFTER.UNKOWN,
+      sort_order: BEAN_SORT_ORDER.UNKOWN,
+    } as IBeanPageSort;
   }
 }

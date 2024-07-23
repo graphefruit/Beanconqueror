@@ -100,6 +100,9 @@ export class BeansEditComponent implements OnInit {
   }
 
   private async __editBean() {
+    if (this.data.frozenDate && this.data.frozenId === '') {
+      this.data.frozenId = this.uiBeanHelper.generateFrozenId();
+    }
     await this.uiBeanStorage.update(this.data);
     this.uiToast.showInfoToast('TOAST_BEAN_EDITED_SUCCESSFULLY');
     this.uiAnalytics.trackEvent(
