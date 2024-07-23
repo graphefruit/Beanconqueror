@@ -14,6 +14,7 @@ import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import moment from 'moment';
 import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
 
 declare var cordova;
 @Component({
@@ -25,7 +26,7 @@ export class BeanFreezeInformationComponent implements OnInit {
   @Input() public data: Bean;
   @Output() public dataChange = new EventEmitter<Bean>();
   public settings: Settings = undefined;
-
+  public readonly beanFreezingStorageEnum = BEAN_FREEZING_STORAGE_ENUM;
   constructor(
     private readonly uiSettingsStorage: UISettingsStorage,
     public readonly uiBeanHelper: UIBeanHelper,
