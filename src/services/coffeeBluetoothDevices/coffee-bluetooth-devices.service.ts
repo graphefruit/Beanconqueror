@@ -38,6 +38,8 @@ import { DiyPythonCoffeeScale } from '../../classes/devices/diyPythonCoffeeScale
 import { DiyRustCoffeeScale } from '../../classes/devices/diyRustCoffeeScale';
 import { BookooScale } from 'src/classes/devices/bokooScale';
 import { BookooPressure } from 'src/classes/devices/bookooPressure';
+import { BasicGrillThermometer } from 'src/classes/devices/basicGrillThermometer';
+import { MeaterThermometer } from 'src/classes/devices/meaterThermometer';
 
 declare var device: any;
 declare var ble: any;
@@ -539,7 +541,11 @@ export class CoffeeBluetoothDevicesService {
       let promiseResolved: boolean = false;
       this.scanAllBluetoothDevicesAndPassBack(
         (scanDevice) => {
-          if (ETITemperature.test(scanDevice)) {
+          if (
+            ETITemperature.test(scanDevice) ||
+            BasicGrillThermometer.test(scanDevice) ||
+            MeaterThermometer.test(scanDevice)
+          ) {
             // We found all needed devices.
             promiseResolved = true;
             this.clearScanAllBluetoothDevicesAndPassBackTimeout();
@@ -1011,6 +1017,24 @@ export class CoffeeBluetoothDevicesService {
             id: deviceTemperature.id,
             type: TemperatureType.ETI,
           });
+        } else if (BasicGrillThermometer.test(deviceTemperature)) {
+          this.logger.log(
+            'BleManager - We found a Basic Grill Thermometer device ' +
+              JSON.stringify(deviceTemperature)
+          );
+          supportedDevices.push({
+            id: deviceTemperature.id,
+            type: TemperatureType.BASICGRILL,
+          });
+        } else if (MeaterThermometer.test(deviceTemperature)) {
+          this.logger.log(
+            'BleManager - We found a Meater Grill Thermometer device ' +
+              JSON.stringify(deviceTemperature)
+          );
+          supportedDevices.push({
+            id: deviceTemperature.id,
+            type: TemperatureType.MEATER,
+          });
         }
       }
       resolve(supportedDevices);
@@ -1028,6 +1052,24 @@ export class CoffeeBluetoothDevicesService {
               'BleManager - We found a ETI Ltd Thermometer device '
             );
             resolve({ id: deviceTemperature.id, type: TemperatureType.ETI });
+            return;
+          } else if (BasicGrillThermometer.test(deviceTemperature)) {
+            this.logger.log(
+              'BleManager - We found a Basic Grill Thermometer device '
+            );
+            resolve({
+              id: deviceTemperature.id,
+              type: TemperatureType.BASICGRILL,
+            });
+            return;
+          } else if (MeaterThermometer.test(deviceTemperature)) {
+            this.logger.log(
+              'BleManager - We found a Meater Grill Thermometer device '
+            );
+            resolve({
+              id: deviceTemperature.id,
+              type: TemperatureType.MEATER,
+            });
             return;
           }
         }
