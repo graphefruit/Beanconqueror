@@ -40,6 +40,7 @@ import { BookooScale } from 'src/classes/devices/bokooScale';
 import { BookooPressure } from 'src/classes/devices/bookooPressure';
 import { BasicGrillThermometer } from 'src/classes/devices/basicGrillThermometer';
 import { MeaterThermometer } from 'src/classes/devices/meaterThermometer';
+import { CombustionThermometer } from '../../classes/devices/combustionThermometer';
 
 declare var device: any;
 declare var ble: any;
@@ -544,7 +545,8 @@ export class CoffeeBluetoothDevicesService {
           if (
             ETITemperature.test(scanDevice) ||
             BasicGrillThermometer.test(scanDevice) ||
-            MeaterThermometer.test(scanDevice)
+            MeaterThermometer.test(scanDevice) ||
+            CombustionThermometer.test(scanDevice)
           ) {
             // We found all needed devices.
             promiseResolved = true;
@@ -1035,6 +1037,15 @@ export class CoffeeBluetoothDevicesService {
             id: deviceTemperature.id,
             type: TemperatureType.MEATER,
           });
+        } else if (CombustionThermometer.test(deviceTemperature)) {
+          this.logger.log(
+            'BleManager - We found a Combustion Grill Thermometer device ' +
+              JSON.stringify(deviceTemperature)
+          );
+          supportedDevices.push({
+            id: deviceTemperature.id,
+            type: TemperatureType.COMBUSTION,
+          });
         }
       }
       resolve(supportedDevices);
@@ -1069,6 +1080,15 @@ export class CoffeeBluetoothDevicesService {
             resolve({
               id: deviceTemperature.id,
               type: TemperatureType.MEATER,
+            });
+            return;
+          } else if (CombustionThermometer.test(deviceTemperature)) {
+            this.logger.log(
+              'BleManager - We found a Combustion Grill Thermometer device '
+            );
+            resolve({
+              id: deviceTemperature.id,
+              type: TemperatureType.COMBUSTION,
             });
             return;
           }
