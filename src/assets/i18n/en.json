@@ -1353,5 +1353,7 @@
   "BEAN_FREEZING_STORAGE_TYPE_ZIP_LOCK": "Zip lock",
   "BEAN_FREEZING_STORAGE_TYPE_VACUUM_SEALED": "Vacuum sealed",
   "BEAN_FREEZING_STORAGE_TYPE_TUBE": "Tube",
-  "BEAN_DATA_FROZEN_STORAGE_TYPE": "Freezing storage type"
+  "BEAN_DATA_FROZEN_STORAGE_TYPE": "Freezing storage type",
+  "PAGE_SETTINGS_BREW_RATING_CHANGED_BREWS_NOT_VISIBLE": "You've changed your brew maximum rating, but you've already rated brews higher then your actual maximum, so they won't be displayed with the normal filter settings.",
+  "PAGE_SETTINGS_BEAN_RATING_CHANGED_BEANS_NOT_VISIBLE": "You've changed your bean maximum rating, but you've already rated beans higher then your actual maximum, so they won't be displayed with the normal filter settings."
 }
