@@ -1074,7 +1074,7 @@
         "DISCONNECTED_SUCCESSFULLY": "Temperature device disconnected",
         "DISCONNECTED_UNPLANNED": "Temperature device disconnected unexpectedly",
         "STAY_CONNECTED_ON_APP_MINIMIZE": "Keep thermometer connected even when app is in the background",
-        "INFORMATION_DESCRIPTION": "Supported devices are: ETI Ltd BLE Thermometers (ThermaQ Blue, BlueTherm, etc)",
+        "INFORMATION_DESCRIPTION": "Supported devices are: ETI Ltd BLE Thermometers (ThermaQ Blue, BlueTherm, etc), Combustion Inc., Meater (not Mater+ or Meater 2)",
         "BLUETOOTH_SCAN_RUNNING": "Searching for temperature device for up to 60s",
         "BLUETOOTH_NOT_ENABLED": "Bluetooth not activated, please activate to work properly",
         "REQUEST_PERMISSION": {
