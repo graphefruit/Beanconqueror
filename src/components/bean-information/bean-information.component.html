@@ -61,9 +61,13 @@
                 <ion-label class="card-headline">{{"BEAN_DATA_UNFROZEN_DATE" | translate}}</ion-label>
                 <ion-text>{{bean.unfrozenDate | formatDate:[settings?.date_format]}}</ion-text>
               </ion-col>
-              <ion-col *ngIf="bean.frozenStorageType" size="6">
+              <ion-col *ngIf="bean.frozenStorageType && bean.frozenStorageType !== beanFreezingStorageTypeEnum.UNKNOWN" size="6">
                 <ion-label class="card-headline">{{"BEAN_DATA_FROZEN_STORAGE_TYPE" | translate}}</ion-label>
                 <ion-text>{{"BEAN_FREEZING_STORAGE_TYPE_" + bean.frozenStorageType | translate}}</ion-text>
+              </ion-col>
+              <ion-col *ngIf="bean?.frozenNote !== ''" size="12">
+                <ion-label class="card-headline">{{'BEAN_DATA_FROZEN_NOTE' | translate}}</ion-label><br/>
+                <ion-text><pre>{{bean?.frozenNote}}</pre></ion-text>
               </ion-col>
             </ion-row>
             <ion-row>

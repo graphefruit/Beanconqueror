@@ -801,11 +801,39 @@ export class SettingsPage {
     // #379 - First save then reset filter ;)
     await this.saveSettings();
     this.settings.resetFilter();
+    setTimeout(() => {
+      const newRating = this.settings.brew_rating;
+
+      const allBrewEntries = this.uiBrewStorage.getAllEntries();
+      if (allBrewEntries.filter((e) => e.rating > newRating).length > 0) {
+        // We have brews which have a higher rating and would be not displayed.
+        this.uiAlert.showMessage(
+          'PAGE_SETTINGS_BREW_RATING_CHANGED_BREWS_NOT_VISIBLE',
+          'CARE',
+          'CLOSE',
+          true
+        );
+      }
+    }, 500);
   }
 
   public async changeBeanRating() {
     await this.saveSettings();
     this.settings.resetFilter();
+    setTimeout(() => {
+      const newRating = this.settings.bean_rating;
+
+      const allBeanEntries = this.uiBeanStorage.getAllEntries();
+      if (allBeanEntries.filter((e) => e.rating > newRating).length > 0) {
+        // We have brews which have a higher rating and would be not displayed.
+        this.uiAlert.showMessage(
+          'PAGE_SETTINGS_BEAN_RATING_CHANGED_BEANS_NOT_VISIBLE',
+          'CARE',
+          'CLOSE',
+          true
+        );
+      }
+    }, 500);
   }
 
   public async saveSettings() {

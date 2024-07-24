@@ -30,6 +30,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
   public frozenDate: string = '';
   public frozenStorage: BEAN_FREEZING_STORAGE_ENUM;
   public freezePartialBagGrams: number = 0;
+  public frozenNote: string = '';
 
   public addedBags: Array<{
     weight: number;
@@ -175,6 +176,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
     clonedBean.attachments = [];
     clonedBean.frozenGroupId = _groupBeanId;
     clonedBean.frozenStorageType = _freezingType;
+    clonedBean.frozenNote = this.frozenNote;
 
     if (this.bean.cost !== 0) {
       const newCost = (this.bean.cost * _freezingWeight) / this.bean.weight;
