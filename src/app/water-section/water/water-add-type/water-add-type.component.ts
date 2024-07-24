@@ -74,6 +74,7 @@ export class WaterAddTypeComponent implements OnInit {
 
         this.data.tds = 150;
         this.data.tds_type = 'PPM' as WATER_UNIT_TDS;
+        this.data.note = 'https://thirdwavewater.com/';
         break;
 
       case WATER_TYPES.THIRD_WAVE_WATER_MEDIUM_ROAST_PROFILE:
@@ -106,6 +107,7 @@ export class WaterAddTypeComponent implements OnInit {
 
         this.data.tds = 150;
         this.data.tds_type = 'PPM' as WATER_UNIT_TDS;
+        this.data.note = 'https://thirdwavewater.com/';
         break;
 
       case WATER_TYPES.THIRD_WAVE_WATER_DARK_ROAST_PROFILE:
@@ -138,6 +140,7 @@ export class WaterAddTypeComponent implements OnInit {
 
         this.data.tds = 180;
         this.data.tds_type = 'PPM' as WATER_UNIT_TDS;
+        this.data.note = 'https://thirdwavewater.com/';
         break;
 
       case WATER_TYPES.THIRD_WAVE_WATER_LOW_ACID_PROFILE:
@@ -170,6 +173,7 @@ export class WaterAddTypeComponent implements OnInit {
 
         this.data.tds = 220;
         this.data.tds_type = 'PPM' as WATER_UNIT_TDS;
+        this.data.note = 'https://thirdwavewater.com/';
         break;
 
       case WATER_TYPES.THIRD_WAVE_WATER_ESPRESSO_MACHINE_PROFILE:
@@ -202,6 +206,7 @@ export class WaterAddTypeComponent implements OnInit {
 
         this.data.tds = 150;
         this.data.tds_type = 'PPM' as WATER_UNIT_TDS;
+        this.data.note = 'https://thirdwavewater.com/';
         break;
 
       case WATER_TYPES.THIRD_WAVE_WATER_COLD_BREW_PROFILE:
@@ -234,6 +239,7 @@ export class WaterAddTypeComponent implements OnInit {
 
         this.data.tds = 220;
         this.data.tds_type = 'PPM' as WATER_UNIT_TDS;
+        this.data.note = 'https://thirdwavewater.com/';
         break;
 
       case WATER_TYPES.PURE_COFFEE_WATER:
@@ -305,6 +311,8 @@ export class WaterAddTypeComponent implements OnInit {
 
         this.data.tds = 156.7;
         this.data.tds_type = 'PPM' as WATER_UNIT_TDS;
+
+        this.data.note = 'https://empiricalwater.com/';
         break;
       case WATER_TYPES.EMPIRICAL_WATER_GLACIAL:
         /**
@@ -345,6 +353,7 @@ export class WaterAddTypeComponent implements OnInit {
 
         this.data.tds = 70.2;
         this.data.tds_type = 'PPM' as WATER_UNIT_TDS;
+        this.data.note = 'https://empiricalwater.com/';
         break;
       default:
         break;
