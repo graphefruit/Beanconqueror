@@ -66,6 +66,7 @@ export class Bean implements IBean {
   public frozenId: string;
   public frozenGroupId: string;
   public frozenStorageType: BEAN_FREEZING_STORAGE_ENUM;
+  public frozenNote: string;
 
   public bestDate: string;
   public openDate: string;
@@ -125,6 +126,7 @@ export class Bean implements IBean {
     this.frozenId = '';
     this.frozenGroupId = '';
     this.frozenStorageType = 'UNKNOWN' as BEAN_FREEZING_STORAGE_ENUM;
+    this.frozenNote = '';
 
     this.bestDate = '';
     this.openDate = '';

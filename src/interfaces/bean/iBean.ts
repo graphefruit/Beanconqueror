@@ -59,6 +59,7 @@ export interface IBean {
    * If there is a list of multiple bags, there will be an id to group them**/
   frozenGroupId: string;
   frozenStorageType: BEAN_FREEZING_STORAGE_ENUM;
+  frozenNote: string;
 
   bestDate: string;
   openDate: string;

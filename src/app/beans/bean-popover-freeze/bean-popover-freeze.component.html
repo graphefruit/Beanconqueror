@@ -24,6 +24,12 @@
                            value='{{key}}'>{{"BEAN_FREEZING_STORAGE_TYPE_" + key | translate}}</ion-select-option>
       </ion-select>
     </ion-item>
+    <ion-item>
+      <ion-label id='frozenNote' position="stacked">{{"BEAN_DATA_FROZEN_NOTE" | translate }}</ion-label>
+      <ion-textarea style='margin-top:20px;' aria-labelledby='frozenNote'  [(ngModel)]="frozenNote" autocapitalize="sentences" autocomplete="true"
+                    autocorrect="true" [autoGrow]="true"
+                    name="frozenNote" placeholder="{{'BEAN.PLACE_HOLDER.FROZEN_NOTES' | translate}}" rows="5" spellcheck="true"></ion-textarea>
+    </ion-item>
     <ion-item [lines]="leftOverBeanBagWeight<=0?'none':'full'">
       <ion-label>{{"BEAN_POPOVER_LEFT_UNFROZEN" | translate}} - {{leftOverBeanBagWeight}}g / {{ getActualFreezingQuantity() }}g</ion-label>
     </ion-item>
@@ -46,13 +52,15 @@
         <ion-icon  name="beanconqueror-add-list" slot='icon-only'></ion-icon>
       </ion-button>
     </ion-item>
+  </ion-card>
+  <ion-card>
     <ion-list *ngIf='addedBags?.length > 0'>
       <ion-list-header>
-        <ion-label>{{"BEAN_POPOVER_FROZEN_BAGS" | translate}}</ion-label>
+        <h4>{{"BEAN_POPOVER_FROZEN_BAGS" | translate}}</h4>
       </ion-list-header>
 
       <ion-item *ngFor='let bag of addedBags;let i=index;'>
-        <ion-label>{{bag.weight}}g</ion-label>
+        <div>{{bag.weight}}g</div>
         <ion-select slot='end'   tabIndex="1"
                     [(ngModel)]='bag.type' cancelText="{{'CANCEL'| translate }}"
                     name='frozenStorage'

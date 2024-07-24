@@ -410,7 +410,8 @@
             "CHOOSE_DATA_ROASTER": "Choose roaster",
             "CHOOSE_DATA_ROASTING_TYPE": "Choose roast type",
             "BEAN_DATA_BEST_DATE": "When is the best date for the bean?",
-            "BEAN_DATA_OPEN_DATE": "When was the bean bag opend?"
+            "BEAN_DATA_OPEN_DATE": "When was the bean bag opend?",
+            "FROZEN_NOTES": "Any notes to the frozen coffee? Like in which freezer you've stored it e.g."
         }
     },
     "PREPARATION": {
@@ -1355,5 +1356,6 @@
   "BEAN_FREEZING_STORAGE_TYPE_TUBE": "Tube",
   "BEAN_DATA_FROZEN_STORAGE_TYPE": "Freezing storage type",
   "PAGE_SETTINGS_BREW_RATING_CHANGED_BREWS_NOT_VISIBLE": "You've changed your brew maximum rating, but you've already rated brews higher then your actual maximum, so they won't be displayed with the normal filter settings.",
-  "PAGE_SETTINGS_BEAN_RATING_CHANGED_BEANS_NOT_VISIBLE": "You've changed your bean maximum rating, but you've already rated beans higher then your actual maximum, so they won't be displayed with the normal filter settings."
+  "PAGE_SETTINGS_BEAN_RATING_CHANGED_BEANS_NOT_VISIBLE": "You've changed your bean maximum rating, but you've already rated beans higher then your actual maximum, so they won't be displayed with the normal filter settings.",
+  "BEAN_DATA_FROZEN_NOTE": "Frozen notes"
 }

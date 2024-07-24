@@ -40,6 +40,7 @@ import BREW_TRACKING from '../../data/tracking/brewTracking';
 import * as htmlToImage from 'html-to-image';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
 import moment from 'moment/moment';
+import { BEAN_FREEZING_STORAGE_ENUM } from '../../enums/beans/beanFreezingStorage';
 
 @Component({
   selector: 'bean-information',
@@ -61,6 +62,7 @@ export class BeanInformationComponent implements OnInit {
   @Output() public beanAction: EventEmitter<any> = new EventEmitter();
 
   public beanRoastingTypeEnum = BEAN_ROASTING_TYPE_ENUM;
+  public beanFreezingStorageTypeEnum = BEAN_FREEZING_STORAGE_ENUM;
   public roast_enum = ROASTS_ENUM;
   public settings: Settings = null;
   constructor(
