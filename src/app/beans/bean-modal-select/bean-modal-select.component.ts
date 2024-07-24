@@ -16,6 +16,7 @@ import { IBeanPageFilter } from '../../../interfaces/bean/iBeanPageFilter';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
 import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
 
 @Component({
   selector: 'bean-modal-select',
@@ -69,6 +70,8 @@ export class BeanModalSelectComponent implements OnInit {
 
   @ViewChild('footerContent', { read: ElementRef })
   public footerContent: ElementRef;
+
+  public beanFreezingStorageTypeEnum = BEAN_FREEZING_STORAGE_ENUM;
 
   constructor(
     private readonly modalController: ModalController,

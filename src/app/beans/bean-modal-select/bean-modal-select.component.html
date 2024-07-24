@@ -83,6 +83,8 @@
                       <p *ngIf='bean?.frozenId'>{{"BEAN_DATA_FROZEN_ID" | translate}}: {{bean.frozenId}}</p>
                       <p *ngIf='bean?.frozenDate'>{{"BEAN_DATA_FROZEN_DATE" | translate}}: {{bean.frozenDate  | formatDate:[settings?.date_format]}}</p>
                       <p *ngIf='bean?.unfrozenDate'>{{"BEAN_DATA_UNFROZEN_DATE" | translate}}: {{bean.unfrozenDate  | formatDate:[settings?.date_format]}}</p>
+                      <p *ngIf='bean?.frozenStorageType && bean?.frozenStorageType !== beanFreezingStorageTypeEnum.UNKNOWN'>{{"BEAN_DATA_FROZEN_STORAGE_TYPE" | translate}}: {{"BEAN_FREEZING_STORAGE_TYPE_" + bean.frozenStorageType | translate}}</p>
+                      <div *ngIf='bean?.frozenNote'>{{"BEAN_DATA_FROZEN_NOTE" | translate}}: <pre style='margin-top:3px!important'>{{bean?.frozenNote}}</pre></div>
                       <p *ngIf='bean?.roastingDate'>{{"BEAN_DATA_ROASTING_DATE" | translate}}
                         : {{bean.roastingDate | formatDate:[settings?.date_format]}}&nbsp;
                         ({{bean.beanAgeInDays()}}
@@ -240,6 +242,8 @@
                       <p *ngIf='bean?.frozenId'>{{"BEAN_DATA_FROZEN_ID" | translate}}: {{bean.frozenId}}</p>
                       <p *ngIf='bean?.frozenDate'>{{"BEAN_DATA_FROZEN_DATE" | translate}}: {{bean.frozenDate  | formatDate:[settings?.date_format]}}</p>
                       <p *ngIf='bean?.unfrozenDate'>{{"BEAN_DATA_UNFROZEN_DATE" | translate}}: {{bean.unfrozenDate  | formatDate:[settings?.date_format]}}</p>
+                      <p *ngIf='bean?.frozenStorageType && bean?.frozenStorageType !== beanFreezingStorageTypeEnum.UNKNOWN'>{{"BEAN_DATA_FROZEN_STORAGE_TYPE" | translate}}: {{"BEAN_FREEZING_STORAGE_TYPE_" + bean.frozenStorageType | translate}}</p>
+                      <div *ngIf='bean?.frozenNote'>{{"BEAN_DATA_FROZEN_NOTE" | translate}}: <pre style='margin-top:3px!important'>{{bean?.frozenNote}}</pre></div>
                       <p *ngIf='bean?.roastingDate'>{{"BEAN_DATA_ROASTING_DATE" | translate}}
                         : {{bean.roastingDate | formatDate:[settings?.date_format]}}&nbsp;
                         ({{bean.beanAgeInDays()}}
@@ -327,6 +331,8 @@
                       <p *ngIf='bean?.frozenId'>{{"BEAN_DATA_FROZEN_ID" | translate}}: {{bean.frozenId}}</p>
                       <p *ngIf='bean?.frozenDate'>{{"BEAN_DATA_FROZEN_DATE" | translate}}: {{bean.frozenDate  | formatDate:[settings?.date_format]}}</p>
                       <p *ngIf='bean?.unfrozenDate'>{{"BEAN_DATA_UNFROZEN_DATE" | translate}}: {{bean.unfrozenDate  | formatDate:[settings?.date_format]}}</p>
+                      <p *ngIf='bean?.frozenStorageType && bean?.frozenStorageType !== beanFreezingStorageTypeEnum.UNKNOWN'>{{"BEAN_DATA_FROZEN_STORAGE_TYPE" | translate}}: {{"BEAN_FREEZING_STORAGE_TYPE_" + bean.frozenStorageType | translate}}</p>
+                      <div *ngIf='bean?.frozenNote'>{{"BEAN_DATA_FROZEN_NOTE" | translate}}: <pre style='margin-top:3px!important'>{{bean?.frozenNote}}</pre></div>
                       <p *ngIf='bean?.roastingDate'>{{"BEAN_DATA_ROASTING_DATE" | translate}}
                         : {{bean.roastingDate | formatDate:[settings?.date_format]}}&nbsp;
                         ({{bean.beanAgeInDays()}}
@@ -406,6 +412,8 @@
                       <p *ngIf='bean?.frozenId'>{{"BEAN_DATA_FROZEN_ID" | translate}}: {{bean.frozenId}}</p>
                       <p *ngIf='bean?.frozenDate'>{{"BEAN_DATA_FROZEN_DATE" | translate}}: {{bean.frozenDate  | formatDate:[settings?.date_format]}}</p>
                       <p *ngIf='bean?.unfrozenDate'>{{"BEAN_DATA_UNFROZEN_DATE" | translate}}: {{bean.unfrozenDate  | formatDate:[settings?.date_format]}}</p>
+                      <p *ngIf='bean?.frozenStorageType && bean?.frozenStorageType !== beanFreezingStorageTypeEnum.UNKNOWN'>{{"BEAN_DATA_FROZEN_STORAGE_TYPE" | translate}}: {{"BEAN_FREEZING_STORAGE_TYPE_" + bean.frozenStorageType | translate}}</p>
+                      <div *ngIf='bean?.frozenNote'>{{"BEAN_DATA_FROZEN_NOTE" | translate}}: <pre style='margin-top:3px!important'>{{bean?.frozenNote}}</pre></div>
                         <p *ngIf='bean?.roastingDate'>{{"BEAN_DATA_ROASTING_DATE" | translate}}
                           : {{bean.roastingDate | formatDate:[settings?.date_format]}}&nbsp;
                           ({{bean.beanAgeInDays()}}
@@ -486,6 +494,8 @@
                       <p *ngIf='bean?.frozenId'>{{"BEAN_DATA_FROZEN_ID" | translate}}: {{bean.frozenId}}</p>
                       <p *ngIf='bean?.frozenDate'>{{"BEAN_DATA_FROZEN_DATE" | translate}}: {{bean.frozenDate  | formatDate:[settings?.date_format]}}</p>
                       <p *ngIf='bean?.unfrozenDate'>{{"BEAN_DATA_UNFROZEN_DATE" | translate}}: {{bean.unfrozenDate  | formatDate:[settings?.date_format]}}</p>
+                      <p *ngIf='bean?.frozenStorageType && bean?.frozenStorageType !== beanFreezingStorageTypeEnum.UNKNOWN'>{{"BEAN_DATA_FROZEN_STORAGE_TYPE" | translate}}: {{"BEAN_FREEZING_STORAGE_TYPE_" + bean.frozenStorageType | translate}}</p>
+                      <div *ngIf='bean?.frozenNote'>{{"BEAN_DATA_FROZEN_NOTE" | translate}}: <pre style='margin-top:3px!important'>{{bean?.frozenNote}}</pre></div>
                       <p *ngIf='bean?.roastingDate'>{{"BEAN_DATA_ROASTING_DATE" | translate}}
                         : {{bean.roastingDate | formatDate:[settings?.date_format]}}&nbsp;
                         ({{bean.beanAgeInDays()}}
