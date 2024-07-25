@@ -684,6 +684,7 @@
               <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_ignore_negative_values">
                 <div class="ion-label" style="white-space: normal;">
                   <h2>{{"IGNORE_NEGATIVE_VALUES" | translate}}</h2>
+                  <p>{{"IGNORE_NEGATIVE_VALUES_DESCRIPTION" | translate}}</p>
                 </div>
               </ion-checkbox>
             </ion-item>
@@ -692,6 +693,7 @@
                 <div class='ion-label'>
                   <h2>{{"IGNORE_ANOMALY_VALUES" | translate}}</h2>
                   <p>{{"IGNORE_ANOMALY_VALUES_TOOLTIP" | translate}}</p>
+                  <p>{{"IGNORE_ANOMALY_VALUES_DESCRIPTION" | translate}}</p>
                 </div>
               </ion-checkbox>
             </ion-item>
