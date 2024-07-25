@@ -1390,5 +1390,6 @@
   "PAGE_SETTINGS_BEAN_RATING_CHANGED_BEANS_NOT_VISIBLE": "You've changed your bean maximum rating, but you've already rated beans higher then your actual maximum, so they won't be displayed with the normal filter settings.",
   "BEAN_DATA_FROZEN_NOTE": "Frozen notes",
   "IGNORE_NEGATIVE_VALUES_DESCRIPTION": "Activating this, results into a graph which will be one second behind",
-  "IGNORE_ANOMALY_VALUES_DESCRIPTION": "Activating this, results into a graph which will be one second behind"
+  "IGNORE_ANOMALY_VALUES_DESCRIPTION": "Activating this, results into a graph which will be one second behind",
+  "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": "Save the machine logs when saving a brew"
 }

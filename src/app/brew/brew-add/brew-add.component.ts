@@ -44,6 +44,7 @@ import { VisualizerService } from '../../../services/visualizerService/visualize
 import { Subscription } from 'rxjs';
 import { HapticService } from '../../../services/hapticService/haptic.service';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
+import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
 
 declare var Plotly;
 
@@ -69,7 +70,7 @@ export class BrewAddComponent implements OnInit, OnDestroy {
   private initialBeanData: string = '';
   private disableHardwareBack;
   public bluetoothSubscription: Subscription = undefined;
-
+  public readonly PreparationDeviceType = PreparationDeviceType;
   constructor(
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
@@ -335,6 +336,23 @@ export class BrewAddComponent implements OnInit, OnDestroy {
         BREW_TRACKING.TITLE,
         BREW_TRACKING.ACTIONS.ADD_FINISH
       );
+      if (
+        this.brewBrewing?.brewBrewingPreparationDeviceEl?.getDataPreparationDeviceType() ===
+        PreparationDeviceType.XENIA
+      ) {
+        const prepDeviceCall: XeniaDevice = this.brewBrewing
+          .brewBrewingPreparationDeviceEl.preparationDevice as XeniaDevice;
+        try {
+          const logs = await prepDeviceCall.getLogs();
+          addedBrewObj.note = addedBrewObj.note + '\r\n' + JSON.stringify(logs);
+          this.uiBrewStorage.update(addedBrewObj);
+        } catch (ex) {
+          this.uiToast.showInfoToast(
+            'We could not get the logs from xenia: ' + JSON.stringify(ex),
+            false
+          );
+        }
+      }
     } catch (ex) {}
 
     await this.uiAlert.hideLoadingSpinner();
@@ -450,6 +468,4 @@ export class BrewAddComponent implements OnInit, OnDestroy {
       this.bluetoothSubscription = undefined;
     }
   }
-
-  protected readonly PreparationDeviceType = PreparationDeviceType;
 }

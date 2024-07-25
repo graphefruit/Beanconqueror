@@ -40,7 +40,7 @@ export class PreparationConnectedDeviceComponent {
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly uiToast: UIToast,
     private readonly uiAlert: UIAlert,
-    private readonly uiHelper: UIHelper,
+    public readonly uiHelper: UIHelper,
     private readonly uiSettingsStorage: UISettingsStorage
   ) {}
 

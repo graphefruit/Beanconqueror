@@ -79,6 +79,21 @@ export class XeniaDevice extends PreparationDevice {
       return 1.35;
     }
   }
+
+  public getSaveLogfilesFromMachine() {
+    const connectedPreparationDevice =
+      this.getPreparation().connectedPreparationDevice;
+    if (
+      connectedPreparationDevice.customParams &&
+      connectedPreparationDevice.customParams.saveLogfilesFromMachine
+    ) {
+      return connectedPreparationDevice.customParams.saveLogfilesFromMachine;
+    } else {
+      // Fixed value.
+      return false;
+    }
+  }
+
   public getTemperature() {
     return this.temperature;
   }
@@ -181,6 +196,36 @@ export class XeniaDevice extends PreparationDevice {
       let urlAdding = '/scripts_list';
       if (this.apiVersion !== 1) {
         urlAdding = '/api/v2/scripts/list';
+      }
+      cordova.plugin.http.sendRequest(
+        this.getPreparation().connectedPreparationDevice.url + urlAdding,
+        options,
+        (response) => {
+          try {
+            const parsedJSON = JSON.parse(response.data);
+            resolve(parsedJSON);
+          } catch (e) {
+            reject(JSON.stringify(e));
+          }
+        },
+        (response) => {
+          // prints 403
+          reject(JSON.stringify(response));
+        }
+      );
+    });
+    return promise;
+  }
+
+  public getLogs() {
+    const promise = new Promise<any>((resolve, reject) => {
+      const options = {
+        method: 'get',
+      };
+      const urlAdding = '/api/v2/logs';
+      if (this.apiVersion === 1) {
+        //Was not supported in V1 at all
+        return;
       }
       cordova.plugin.http.sendRequest(
         this.getPreparation().connectedPreparationDevice.url + urlAdding,
