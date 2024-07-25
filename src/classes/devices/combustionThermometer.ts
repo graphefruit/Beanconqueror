@@ -39,8 +39,8 @@ export class CombustionThermometer extends TemperatureDevice {
         }
       } else {
         const decoder = new AdvertisementDecoder();
-        const parsed = decoder.decode(device.advertising);
-        if (parsed.advDataManufacturerId === 76) {
+        const parsed = decoder.decode(bleDevice.advertising);
+        if (parsed.advDataManufacturerId === 2503) {
           return true;
         }
       }
