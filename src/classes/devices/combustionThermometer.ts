@@ -4,7 +4,8 @@ import { Logger } from './common/logger';
 import { TemperatureDevice } from './temperatureBluetoothDevice';
 
 declare var ble: any;
-
+declare var device: any;
+import { AdvertisementDecoder } from 'ble-central-advertisements';
 export class CombustionThermometer extends TemperatureDevice {
   public static DEVICE_NAME = 'Combustion Inc';
   public static TEMPERATURE_SERVICE_UUID =
@@ -19,13 +20,32 @@ export class CombustionThermometer extends TemperatureDevice {
     this.logger = new Logger('CombustionTemperatureSensor');
   }
 
-  public static test(device: any): boolean {
-    return (
-      device &&
-      device.advertising.kCBAdvDataServiceUUIDs.indexOf(
-        '00000100-CAAB-3792-3D44-97AE51C1407A'
-      ) >= 0
-    );
+  public static test(bleDevice: any): boolean {
+    try {
+      if (device !== null && device.platform === 'iOS') {
+        try {
+          if (
+            bleDevice &&
+            bleDevice.advertising.kCBAdvDataServiceUUIDs.indexOf(
+              '00000100-CAAB-3792-3D44-97AE51C1407A'
+            ) >= 0
+          ) {
+            return true;
+          } else {
+            return false;
+          }
+        } catch (ex2) {
+          return false;
+        }
+      } else {
+        const decoder = new AdvertisementDecoder();
+        const parsed = decoder.decode(device.advertising);
+        if (parsed.advDataManufacturerId === 76) {
+          return true;
+        }
+      }
+    } catch (ex) {}
+    return false;
   }
 
   public connect() {
