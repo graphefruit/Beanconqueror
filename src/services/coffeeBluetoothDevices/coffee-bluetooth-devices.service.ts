@@ -1291,6 +1291,7 @@ export class CoffeeBluetoothDevicesService {
               });
             } else if (device !== null && device.platform === 'iOS') {
               if (settings?.scale_type === ScaleType.LUNAR) {
+                await this.enableIOSBluetooth();
                 await this.findDeviceWithDirectId(deviceId, 6000);
                 // Give it a short delay before reconnect
                 await new Promise((resolve) => {

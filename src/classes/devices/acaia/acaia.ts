@@ -229,9 +229,9 @@ export class AcaiaScale {
 
     /**
      * Maybe this sleep is game changer for the connection issue that no weight is send.
-     * After implementing this 150ms sleep, somehow the weight is always send afterwards - why? we don't know
+     * After implementing this 100ms sleep, somehow the weight is always send afterwards - why? we don't know
      */
-    await sleep(150);
+    await sleep(100);
     await this.write(new Uint8Array([0, 1]).buffer);
 
     await this.notificationsReady();
