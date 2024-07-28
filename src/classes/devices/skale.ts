@@ -20,6 +20,7 @@ export class SkaleScale extends BluetoothScale {
     old: 0,
     smoothed: 0,
     oldSmoothed: 0,
+    notMutatedWeight: 0,
   };
 
   constructor(data: PeripheralData, type: ScaleType) {

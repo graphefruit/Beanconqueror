@@ -72,8 +72,16 @@ export class UIExcel {
     header.push('Actual smoothed weight');
     header.push('Old smoothed weight');
 
+    let hasMutatedWeightEntry: boolean = false;
+    if (_flow.weight.length > 0 && 'not_mutated_weight' in _flow.weight[0]) {
+      header.push('Not mutated weight');
+      hasMutatedWeightEntry = true;
+    }
+
     const wsData: any[][] = [header];
     for (const entry of _flow.weight) {
+      const notMutatedWeight: number = 0;
+
       const wbEntry: Array<any> = [
         entry.timestamp,
         entry.brew_time,
@@ -82,6 +90,9 @@ export class UIExcel {
         entry.actual_smoothed_weight,
         entry.old_smoothed_weight,
       ];
+      if (hasMutatedWeightEntry) {
+        wbEntry.push(entry.not_mutated_weight);
+      }
       wsData.push(wbEntry);
     }
     const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsData);

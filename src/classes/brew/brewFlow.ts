@@ -24,6 +24,7 @@ export interface IBrewWeightFlow {
   actual_smoothed_weight: number;
   old_smoothed_weight: number;
   calculated_real_flow: number;
+  not_mutated_weight: number;
 }
 export interface IBrewWaterFlow {
   value: number;

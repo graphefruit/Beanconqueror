@@ -2892,54 +2892,6 @@ export class BrewBrewingGraphComponent implements OnInit {
     /* Realtime flow End **/
   }
 
-  private __setMachineWeightFlow(_weight: any) {
-    // Nothing for storing etc. is done here actually
-    const actual: number = this.uiHelper.toFixedIfNecessary(_weight.actual, 2);
-    const old: number = this.uiHelper.toFixedIfNecessary(_weight.old, 2);
-
-    if (this.flowTime === undefined) {
-      this.flowTime = this.brewComponent.getTime();
-      this.flowSecondTick = 0;
-    }
-
-    const flowObj = {
-      unixTime: moment(new Date())
-        .startOf('day')
-        .add('milliseconds', Date.now() - this.startingFlowTime)
-        .toDate()
-        .getTime(),
-      weight: actual,
-      oldWeight: old,
-      smoothedWeight: actual,
-      oldSmoothedWeight: old,
-      flowTime: this.flowTime,
-      flowTimeSecond: this.flowTime + '.' + this.flowSecondTick,
-      flowTimestamp: this.uiHelper.getActualTimeWithMilliseconds(),
-      dateUnixTime: undefined,
-    };
-    flowObj.dateUnixTime = new Date(flowObj.unixTime);
-
-    if (this.flowTime !== this.brewComponent.getTime()) {
-      this.flowTime = this.brewComponent.getTime();
-      this.flowSecondTick = 0;
-    }
-
-    this.weightTrace.x.push(flowObj.dateUnixTime);
-    this.weightTrace.y.push(flowObj.weight);
-
-    this.pushFlowProfile(
-      flowObj.flowTimestamp,
-      flowObj.flowTimeSecond,
-      flowObj.weight,
-      flowObj.oldWeight,
-      flowObj.smoothedWeight,
-      flowObj.oldSmoothedWeight
-    );
-    this.updateChart();
-
-    this.flowSecondTick++;
-  }
-
   private __setPressureFlow(_pressure: any) {
     // Nothing for storing etc. is done here actually
     const actual: number = this.uiHelper.toFixedIfNecessary(
@@ -3063,6 +3015,10 @@ export class BrewBrewingGraphComponent implements OnInit {
       _scaleChange.oldSmoothed,
       1
     );
+    const notMutatedWeight: number = this.uiHelper.toFixedIfNecessary(
+      _scaleChange.notMutatedWeight,
+      1
+    );
 
     if (this.flowTime === undefined) {
       this.flowTime = this.brewComponent.getTime();
@@ -3133,6 +3089,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       flowTimeSecond: this.flowTime + '.' + this.flowSecondTick,
       flowTimestamp: this.uiHelper.getActualTimeWithMilliseconds(),
       dateUnixTime: undefined,
+      notMutatedWeight: notMutatedWeight,
     };
     flowObj.dateUnixTime = new Date(flowObj.unixTime);
 
@@ -3335,7 +3292,8 @@ export class BrewBrewingGraphComponent implements OnInit {
             weightToAdd,
             item.oldWeight,
             item.smoothedWeight,
-            item.oldSmoothedWeight
+            item.oldSmoothedWeight,
+            item.not_mutated_weight
           );
         }
       }
@@ -3460,7 +3418,8 @@ export class BrewBrewingGraphComponent implements OnInit {
         flowObj.weight,
         flowObj.oldWeight,
         flowObj.smoothedWeight,
-        flowObj.oldSmoothedWeight
+        flowObj.oldSmoothedWeight,
+        flowObj.notMutatedWeight
       );
       this.updateChart();
     }
@@ -3573,7 +3532,8 @@ export class BrewBrewingGraphComponent implements OnInit {
     _actualWeight: number,
     _oldWeight: number,
     _actualSmoothedWeight: number,
-    _oldSmoothedWeight: number
+    _oldSmoothedWeight: number,
+    _notMutatedWeight: number
   ) {
     const brewFlow: IBrewWeightFlow = {} as IBrewWeightFlow;
     brewFlow.timestamp = _timestamp;
@@ -3582,6 +3542,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     brewFlow.old_weight = _oldWeight;
     brewFlow.actual_smoothed_weight = _actualSmoothedWeight;
     brewFlow.old_smoothed_weight = _oldSmoothedWeight;
+    brewFlow.not_mutated_weight = _notMutatedWeight;
     this.flow_profile_raw.weight.push(brewFlow);
   }
 
