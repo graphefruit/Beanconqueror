@@ -18,6 +18,11 @@
     </ion-range>
 
   </ion-item>
+  <ion-item lines="inset">
+    <ion-label id='note' position="stacked">{{"BREW_DATA_NOTES" | translate }}</ion-label>
+    <ion-textarea style='margin-top:20px;' [autoGrow]="true" aria-labelledby='note' [(ngModel)]="data.note" autocapitalize="sentences" autocomplete="true" autocorrect="true"
+                  placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_NOTES' | translate}}" rows="5" spellcheck="true"></ion-textarea>
+  </ion-item>
   <ion-row>
     <ion-col>
       <ion-button (click)="dismiss()" color="accent" expand="block" fill="outline"

@@ -349,8 +349,8 @@ export class UIBeanHelper {
       component: BeanArchivePopoverComponent,
       cssClass: 'popover-actions',
       id: BeanArchivePopoverComponent.COMPONENT_ID,
-      breakpoints: [0, 0.5, 0.75, 1],
-      initialBreakpoint: 0.5,
+      breakpoints: [0, 0.75, 1],
+      initialBreakpoint: 0.75,
       componentProps: {
         bean: _bean,
       },

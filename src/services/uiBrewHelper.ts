@@ -596,8 +596,8 @@ export class UIBrewHelper {
         component: BrewRatingComponent,
         id: BrewRatingComponent.COMPONENT_ID,
         componentProps: { brew: _brew },
-        breakpoints: [0, 0.35, 0.5, 0.75],
-        initialBreakpoint: 0.35,
+        breakpoints: [0, 0.75, 1],
+        initialBreakpoint: 0.75,
       });
       await modal.present();
       await modal.onWillDismiss();
