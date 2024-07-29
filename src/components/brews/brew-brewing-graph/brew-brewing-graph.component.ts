@@ -2572,6 +2572,92 @@ export class BrewBrewingGraphComponent implements OnInit {
     }
   }
 
+  private mutateWeightAndSeeAnomalys(_scaleChange: any) {
+    let weight: number = this.uiHelper.toFixedIfNecessary(
+      _scaleChange.actual,
+      1
+    );
+    const oldWeight: number = this.uiHelper.toFixedIfNecessary(
+      _scaleChange.old,
+      1
+    );
+    const smoothedWeight: number = this.uiHelper.toFixedIfNecessary(
+      _scaleChange.smoothed,
+      1
+    );
+    const oldSmoothedWeight: number = this.uiHelper.toFixedIfNecessary(
+      _scaleChange.oldSmoothed,
+      1
+    );
+    const notMutatedWeight: number = this.uiHelper.toFixedIfNecessary(
+      _scaleChange.notMutatedWeight,
+      1
+    );
+    const scaleType = this.bleManager.getScale()?.getScaleType();
+    //Yeay yeay yeay, sometimes the lunar scale is reporting wrongly cause of closed api, therefore try to tackle this issues down with the lunar
+    if (scaleType === ScaleType.LUNAR) {
+      if (weight > 5000) {
+        // Wrong scale values reported. - Fix it back
+        if (this.flowProfileTempAll.length > 0) {
+          const lastEntry = this.flowProfileTempAll.slice(-1);
+          weight = lastEntry[0].weight;
+        } else {
+          weight = oldWeight;
+        }
+      }
+    }
+    if (weight <= 0) {
+      if (this.flowProfileTempAll.length >= 3) {
+        let weAreDecreasing: boolean = false;
+        for (
+          let i = this.flowProfileTempAll.length - 1;
+          i >= this.flowProfileTempAll.length - 2;
+          i--
+        ) {
+          if (
+            this.flowProfileTempAll[i].weight <
+            this.flowProfileTempAll[i - 1].weight
+          ) {
+            weAreDecreasing = true;
+          } else {
+            // We are decreasing, break directly, that the value is not overwritten again.
+            weAreDecreasing = false;
+            break;
+          }
+        }
+        // We checked that we're not going to degreese
+        if (weAreDecreasing === false) {
+          // I don't know if old_weight could just be bigger then 0
+          weight = oldWeight;
+        }
+      }
+    } else {
+      let factor = 2;
+      if (weight <= 3) {
+        factor = 4;
+      }
+
+      //Check if the weight before this actual weight is less then factor X
+      //like we got jumps weight 25.8 grams, next was 259 grams.
+      if (this.flowProfileTempAll.length >= 2) {
+        if (oldWeight * factor >= weight) {
+          //All good factor is matched
+        } else {
+          //Nothing good, somehow we got spikes.
+          weight = oldWeight;
+        }
+      }
+    }
+
+    return {
+      actual: weight,
+      old: oldWeight,
+      smoothed: smoothedWeight,
+      oldSmoothed: oldSmoothedWeight,
+      notMutatedWeight: notMutatedWeight,
+    };
+  }
+
   public attachToScaleWeightChange() {
     const scale: BluetoothScale = this.bleManager.getScale();
     if (scale) {
@@ -2583,7 +2669,14 @@ export class BrewBrewingGraphComponent implements OnInit {
       }
 
       this.machineStopScriptWasTriggered = false;
-      this.scaleFlowSubscription = scale.flowChange.subscribe((_val) => {
+      this.scaleFlowSubscription = scale.flowChange.subscribe((_valChange) => {
+        let _val;
+        if (this.ignoreScaleWeight === false) {
+          _val = this.mutateWeightAndSeeAnomalys(_valChange);
+        } else {
+          _val = _valChange;
+        }
+
         if (
           this.brewComponent.timer.isTimerRunning() &&
           this.brewComponent.brewBrewingPreparationDeviceEl.preparationDeviceConnected() &&
@@ -2783,6 +2876,7 @@ export class BrewBrewingGraphComponent implements OnInit {
               old: oldFlowProfileTemp.oldWeight,
               smoothed: oldFlowProfileTemp.smoothedWeight,
               oldSmoothed: oldFlowProfileTemp.oldSmoothedWeight,
+              notMutatedWeight: _val.notMutatedWeight,
             };
             this.__setFlowProfile(passVal);
           }
@@ -3024,56 +3118,6 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.flowTime = this.brewComponent.getTime();
     }
     const scaleType = this.bleManager.getScale()?.getScaleType();
-    //Yeay yeay yeay, sometimes the lunar scale is reporting wrongly cause of closed api, therefore try to tackle this issues down with the lunar
-    if (scaleType === ScaleType.LUNAR) {
-      if (weight > 5000) {
-        // Wrong scale values reported. - Fix it back
-        if (this.flowProfileTempAll.length > 0) {
-          const lastEntry = this.flowProfileTempAll.slice(-1);
-          weight = lastEntry[0].weight;
-        } else {
-          weight = oldWeight;
-        }
-      } else {
-        if (weight <= 0) {
-          if (this.flowProfileTempAll.length >= 3) {
-            let weAreDecreasing: boolean = false;
-            for (
-              let i = this.flowProfileTempAll.length - 1;
-              i >= this.flowProfileTempAll.length - 2;
-              i--
-            ) {
-              if (
-                this.flowProfileTempAll[i].weight <
-                this.flowProfileTempAll[i - 1].weight
-              ) {
-                weAreDecreasing = true;
-              } else {
-                // We are decreasing, break directly, that the value is not overwritten again.
-                weAreDecreasing = false;
-                break;
-              }
-            }
-            // We checked that we're not going to degreese
-            if (weAreDecreasing === false) {
-              // I don't know if old_weight could just be bigger then 0
-              weight = oldWeight;
-            }
-          }
-        } else {
-          //Check if the weight before this actual weight is less then factor 2.
-          //like we got jumps weight 25.8 grams, next was 259 grams.
-          if (this.flowProfileTempAll.length >= 2) {
-            if (oldWeight * 2 >= weight) {
-              //All good factor is matched
-            } else {
-              //Nothing good, somehow we got spikes.
-              weight = oldWeight;
-            }
-          }
-        }
-      }
-    }
 
     const flowObj = {
       unixTime: moment(new Date())
