@@ -84,6 +84,10 @@ export class BluetoothScale {
     return 0;
   }
 
+  public setOldWeight(_weight: number) {
+    this.weight.old = _weight;
+  }
+
   /**
    * Disconnect is triggered because the scale was turned off, battery shutdown, or something went broken.
    */

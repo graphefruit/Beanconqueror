@@ -2572,20 +2572,24 @@ export class BrewBrewingGraphComponent implements OnInit {
     }
   }
 
-  private mutateWeightAndSeeAnomalys(_scaleChange: any) {
+  private mutateWeightAndSeeAnomalys(
+    _scaleChange: any,
+    _scale: BluetoothScale,
+    _styleType: PREPARATION_STYLE_TYPE
+  ) {
     let weight: number = this.uiHelper.toFixedIfNecessary(
       _scaleChange.actual,
       1
     );
-    const oldWeight: number = this.uiHelper.toFixedIfNecessary(
+    let oldWeight: number = this.uiHelper.toFixedIfNecessary(
       _scaleChange.old,
       1
     );
-    const smoothedWeight: number = this.uiHelper.toFixedIfNecessary(
+    let smoothedWeight: number = this.uiHelper.toFixedIfNecessary(
       _scaleChange.smoothed,
       1
     );
-    const oldSmoothedWeight: number = this.uiHelper.toFixedIfNecessary(
+    let oldSmoothedWeight: number = this.uiHelper.toFixedIfNecessary(
       _scaleChange.oldSmoothed,
       1
     );
@@ -2593,6 +2597,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       _scaleChange.notMutatedWeight,
       1
     );
+    const isEspresso = _styleType === PREPARATION_STYLE_TYPE.ESPRESSO;
     const scaleType = this.bleManager.getScale()?.getScaleType();
     //Yeay yeay yeay, sometimes the lunar scale is reporting wrongly cause of closed api, therefore try to tackle this issues down with the lunar
     if (scaleType === ScaleType.LUNAR) {
@@ -2606,7 +2611,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         }
       }
     }
-    if (weight <= 0) {
+    if (weight <= 0 && isEspresso) {
       if (this.flowProfileTempAll.length >= 3) {
         let weAreDecreasing: boolean = false;
         for (
@@ -2627,26 +2632,53 @@ export class BrewBrewingGraphComponent implements OnInit {
         }
         // We checked that we're not going to degreese
         if (weAreDecreasing === false) {
+          const entryBefore =
+            this.flowProfileTempAll[this.flowProfileTempAll.length - 1];
           // I don't know if old_weight could just be bigger then 0
-          weight = oldWeight;
+          weight = entryBefore.weight;
+          if (_scale) {
+            _scale.setOldWeight(weight);
+            oldWeight = weight;
+          }
         }
       }
     } else {
-      let factor = 2;
-      if (weight <= 3) {
-        factor = 4;
-      }
-
-      //Check if the weight before this actual weight is less then factor X
-      //like we got jumps weight 25.8 grams, next was 259 grams.
-      if (this.flowProfileTempAll.length >= 2) {
-        if (oldWeight * factor >= weight) {
-          //All good factor is matched
-        } else {
-          //Nothing good, somehow we got spikes.
-          weight = oldWeight;
+      if (isEspresso) {
+        //Check if the weight before this actual weight is less then factor X
+        //like we got jumps weight 25.8 grams, next was 259 grams.
+        if (this.flowProfileTempAll.length >= 2) {
+          const entryBefore =
+            this.flowProfileTempAll[this.flowProfileTempAll.length - 1];
+          const entryBeforeVal = entryBefore.weight;
+          let risingFactorOK: boolean = true;
+          if (entryBeforeVal <= 2) {
+            risingFactorOK = entryBeforeVal + 5 >= weight;
+          } else {
+            let factor = 2;
+            if (weight <= 3) {
+              factor = 4;
+            }
+            risingFactorOK = entryBeforeVal * factor >= weight;
+          }
+          if (risingFactorOK) {
+            //All good factor is matched
+          } else {
+            //Nothing good, somehow we got spikes.
+            weight = entryBeforeVal;
+            //Reset old weight.
+            if (_scale) {
+              _scale.setOldWeight(weight);
+              oldWeight = weight;
+            }
+          }
         }
       }
+    }
+
+    if (isEspresso && _scale && weight <= 0) {
+      _scale.resetSmoothedValue();
+      smoothedWeight = 0;
+      oldSmoothedWeight = 0;
     }
 
     return {
@@ -2660,6 +2692,7 @@ export class BrewBrewingGraphComponent implements OnInit {
 
   public attachToScaleWeightChange() {
     const scale: BluetoothScale = this.bleManager.getScale();
+    const preparationStyleType = this.data.getPreparation().style_type;
     if (scale) {
       this.deattachToWeightChange();
 
@@ -2672,7 +2705,11 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.scaleFlowSubscription = scale.flowChange.subscribe((_valChange) => {
         let _val;
         if (this.ignoreScaleWeight === false) {
-          _val = this.mutateWeightAndSeeAnomalys(_valChange);
+          _val = this.mutateWeightAndSeeAnomalys(
+            _valChange,
+            scale,
+            preparationStyleType
+          );
         } else {
           _val = _valChange;
         }
