@@ -63,7 +63,6 @@ export class CombustionThermometer extends TemperatureDevice {
       CombustionThermometer.TEMPERATURE_CHAR_UUID,
 
       async (_data: any) => {
-        console.log(_data);
         const data = new Uint8Array(_data);
 
         this.parseStatusUpdate(data);
