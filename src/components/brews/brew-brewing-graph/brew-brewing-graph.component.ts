@@ -2651,15 +2651,9 @@ export class BrewBrewingGraphComponent implements OnInit {
             this.flowProfileTempAll[this.flowProfileTempAll.length - 1];
           const entryBeforeVal = entryBefore.weight;
           let risingFactorOK: boolean = true;
-          if (entryBeforeVal <= 2) {
-            risingFactorOK = entryBeforeVal + 5 >= weight;
-          } else {
-            let factor = 2;
-            if (weight <= 3) {
-              factor = 4;
-            }
-            risingFactorOK = entryBeforeVal * factor >= weight;
-          }
+
+          risingFactorOK = entryBeforeVal + 5 >= weight;
+
           if (risingFactorOK) {
             //All good factor is matched
           } else {
