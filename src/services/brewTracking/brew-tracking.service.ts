@@ -20,6 +20,7 @@ export class BrewTrackingService {
     try {
       const clonedBrew: Brew = this.uiHelper.cloneData(_brew);
       // Remove personal data.
+      clonedBrew.grind_size = clonedBrew.grind_size.toString();
       delete clonedBrew.coordinates;
       delete clonedBrew.attachments;
 
