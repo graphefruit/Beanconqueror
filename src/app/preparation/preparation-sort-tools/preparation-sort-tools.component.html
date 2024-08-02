@@ -13,7 +13,7 @@
 <ion-reorder-group (ionItemReorder)="reorder_tool($event)" disabled="false">
   <ion-item *ngFor="let index of toolsOrders; let last = last" lines="{{last?'none':''}}" tappable>
     <ion-label>
-      {{index.label}}
+      <span *ngIf='index.archived'><i>({{"ARCHIVED" | translate}})</i>&nbsp;-&nbsp;</span>{{index.label}}
     </ion-label>
     <ion-reorder slot="end"></ion-reorder>
   </ion-item>

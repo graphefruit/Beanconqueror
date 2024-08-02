@@ -10,8 +10,12 @@ import { ModalController } from '@ionic/angular';
 })
 export class PreparationSortToolsComponent implements OnInit {
   public static COMPONENT_ID: string = 'preparation-sort-tools';
-  public toolsOrders: Array<{ number: number; label: string; enum: string }> =
-    [];
+  public toolsOrders: Array<{
+    number: number;
+    label: string;
+    enum: string;
+    archived: boolean;
+  }> = [];
 
   @Input() public preparation: Preparation;
   constructor(
@@ -55,12 +59,13 @@ export class PreparationSortToolsComponent implements OnInit {
   }
 
   private __initializeBrewOrders() {
-    const tools = this.preparation.tools.filter((e) => e.archived === false);
+    const tools = this.preparation.tools;
     for (let i = 0; i < tools.length; i++) {
       this.toolsOrders.push({
         number: i,
         label: tools[i].name,
         enum: tools[i].config.uuid,
+        archived: tools[i].archived,
       });
     }
 
