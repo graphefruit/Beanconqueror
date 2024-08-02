@@ -3,6 +3,7 @@ import {
   Component,
   ElementRef,
   HostListener,
+  OnDestroy,
   ViewChild,
 } from '@angular/core';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
@@ -26,13 +27,14 @@ import _ from 'lodash';
 import BEAN_TRACKING from '../../data/tracking/beanTracking';
 import { BeanPopoverAddComponent } from './bean-popover-add/bean-popover-add.component';
 import { BEAN_POPOVER_ADD_ACTION } from '../../enums/beans/beanPopoverAddAction';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'beans',
   templateUrl: './beans.page.html',
   styleUrls: ['./beans.page.scss'],
 })
-export class BeansPage {
+export class BeansPage implements OnDestroy {
   public beans: Array<Bean> = [];
 
   public settings: Settings;
@@ -79,6 +81,8 @@ export class BeansPage {
   public archivedBeansFilter: IBeanPageFilter;
   public openBeansFilter: IBeanPageFilter;
   public frozenBeansFilter: IBeanPageFilter;
+
+  private beanStorageChangeSubscription: Subscription;
   constructor(
     private readonly modalCtrl: ModalController,
     private readonly changeDetectorRef: ChangeDetectorRef,
@@ -101,8 +105,20 @@ export class BeansPage {
     this.frozenBeansFilter = this.settings.bean_filter.FROZEN;
     this.openBeansFilter = this.settings.bean_filter.OPEN;
     this.loadBeans();
-  }
 
+    this.beanStorageChangeSubscription = this.uiBeanStorage
+      .attachOnEvent()
+      .subscribe((_val) => {
+        // If an bean is added/deleted/changed we trigger this here, why we do this? Because when we import from the Beanconqueror website an bean, and we're actually on this page, this won't get shown.
+        this.loadBeans();
+      });
+  }
+  public async ngOnDestroy() {
+    if (this.beanStorageChangeSubscription) {
+      this.beanStorageChangeSubscription.unsubscribe();
+      this.beanStorageChangeSubscription = undefined;
+    }
+  }
   public loadBeans(): void {
     this.__initializeBeans();
     this.changeDetectorRef.detectChanges();
