@@ -31,7 +31,7 @@
                     name="frozenNote" placeholder="{{'BEAN.PLACE_HOLDER.FROZEN_NOTES' | translate}}" rows="5" spellcheck="true"></ion-textarea>
     </ion-item>
     <ion-item [lines]="leftOverBeanBagWeight<=0?'none':'full'">
-      <ion-label>{{"BEAN_POPOVER_LEFT_UNFROZEN" | translate}} - {{leftOverBeanBagWeight}}g / {{ getActualFreezingQuantity() }}g</ion-label>
+      <ion-label>{{"BEAN_POPOVER_LEFT_UNFROZEN" | translate}}: {{this.uiHelper.toFixedIfNecessary(leftOverBeanBagWeight,2)}}g / {{ this.uiHelper.toFixedIfNecessary(getActualFreezingQuantity(),2) }}g</ion-label>
     </ion-item>
     <ion-item lines='full' style='margin-top:-15px;' *ngIf='leftOverBeanBagWeight<=0'>
       <ion-icon color='warning' aria-hidden="true" name="warning-outline" slot="start"></ion-icon>

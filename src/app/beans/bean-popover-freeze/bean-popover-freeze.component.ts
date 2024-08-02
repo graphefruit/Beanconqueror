@@ -49,7 +49,7 @@ export class BeanPopoverFreezeComponent implements OnInit {
     private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly platform: Platform,
     private readonly uiBeanHelper: UIBeanHelper,
-    private readonly uiHelper: UIHelper,
+    public readonly uiHelper: UIHelper,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiAlert: UIAlert
   ) {
@@ -240,7 +240,10 @@ export class BeanPopoverFreezeComponent implements OnInit {
     const leftFreezingCount =
       this.leftOverBeanBagWeight - this.getActualFreezingQuantity();
     if (leftFreezingCount < this.freezePartialBagGrams) {
-      this.freezePartialBagGrams = leftFreezingCount;
+      this.freezePartialBagGrams = this.uiHelper.toFixedIfNecessary(
+        leftFreezingCount,
+        2
+      );
     }
   }
 
@@ -254,7 +257,10 @@ export class BeanPopoverFreezeComponent implements OnInit {
       const leftFreezingCount =
         this.leftOverBeanBagWeight - this.getActualFreezingQuantity();
       if (leftFreezingCount < this.freezePartialBagGrams) {
-        this.freezePartialBagGrams = leftFreezingCount;
+        this.freezePartialBagGrams = this.uiHelper.toFixedIfNecessary(
+          leftFreezingCount,
+          2
+        );
         break;
       }
     }
