@@ -55,11 +55,12 @@ export class PreparationSortToolsComponent implements OnInit {
   }
 
   private __initializeBrewOrders() {
-    for (let i = 0; i < this.preparation.tools.length; i++) {
+    const tools = this.preparation.tools.filter((e) => e.archived === false);
+    for (let i = 0; i < tools.length; i++) {
       this.toolsOrders.push({
         number: i,
-        label: this.preparation.tools[i].name,
-        enum: this.preparation.tools[i].config.uuid,
+        label: tools[i].name,
+        enum: tools[i].config.uuid,
       });
     }
 
