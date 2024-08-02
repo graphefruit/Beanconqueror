@@ -2652,7 +2652,14 @@ export class BrewBrewingGraphComponent implements OnInit {
           const entryBeforeVal = entryBefore.weight;
           let risingFactorOK: boolean = true;
 
-          risingFactorOK = entryBeforeVal + 5 >= weight;
+          /**
+           * We try to match also turbo-shots which are like 7-8 grams.
+           * Scales with just 3 values per second would be like 7 / 3 values per second = 2.33g increase each tick.
+           * So we won't get jump from like 1 to 10 gram, then to like 40 grams
+           */
+          const plausibleEspressoWeightIncreaseBound: number = 5;
+          risingFactorOK =
+            entryBeforeVal + plausibleEspressoWeightIncreaseBound >= weight;
 
           if (risingFactorOK) {
             //All good factor is matched
