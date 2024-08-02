@@ -177,7 +177,11 @@ export class BeansPage {
     });
     await modal.present();
     const modalData = await modal.onWillDismiss();
-    if (modalData !== undefined && modalData.data.bean_filter !== undefined) {
+    if (
+      modalData !== undefined &&
+      modalData.data &&
+      modalData.data.bean_filter !== undefined
+    ) {
       if (this.bean_segment === 'open') {
         this.openBeansFilter = modalData.data.bean_filter;
       } else if (this.bean_segment === 'archive') {
@@ -420,7 +424,9 @@ export class BeansPage {
                 bi?.elevation?.toLowerCase().includes(searchStr) ||
                 bi?.processing?.toLowerCase().includes(searchStr)
               );
-            })
+            }) ||
+            e.frozenId?.toLowerCase().includes(searchStr) ||
+            e.ean_article_number?.toLowerCase().includes(searchStr)
           );
         });
       });
