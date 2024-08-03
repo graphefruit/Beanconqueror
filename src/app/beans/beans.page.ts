@@ -247,9 +247,12 @@ export class BeansPage implements OnDestroy {
       let checkingFilter: IBeanPageFilter;
       if (this.bean_segment === 'open') {
         checkingFilter = this.openBeansFilter;
-      } else {
+      } else if (this.bean_segment === 'archive') {
         checkingFilter = this.archivedBeansFilter;
+      } else if (this.bean_segment === 'frozen') {
+        checkingFilter = this.frozenBeansFilter;
       }
+
       isFilterActive = !_.isEqual(
         this.settings?.GET_BEAN_FILTER(),
         checkingFilter
@@ -268,19 +271,13 @@ export class BeansPage implements OnDestroy {
 
   public shallBarBeDisplayed() {
     let shallBarDisplayed: boolean = false;
-    if (this.settings) {
-      const isOpenSegment = this.bean_segment === 'open';
-      const checkingEntries = isOpenSegment
-        ? this.openBeans
-        : this.finishedBeans;
-      if (checkingEntries.length <= 0) {
-        const entriesExisting = this.uiBeanStorage
-          .getAllEntries()
-          .filter((e) => e.finished !== isOpenSegment).length;
-        if (entriesExisting > 0) {
-          shallBarDisplayed = true;
-        }
-      }
+
+    if (this.bean_segment === 'open') {
+      shallBarDisplayed = this.openBeansLength > 0;
+    } else if (this.bean_segment === 'archive') {
+      shallBarDisplayed = this.finishedBeansLength > 0;
+    } else if (this.bean_segment === 'frozen') {
+      shallBarDisplayed = this.frozenBeansLength > 0;
     }
 
     return shallBarDisplayed;
