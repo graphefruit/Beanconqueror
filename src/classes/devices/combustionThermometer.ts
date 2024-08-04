@@ -40,7 +40,10 @@ export class CombustionThermometer extends TemperatureDevice {
       } else {
         const decoder = new AdvertisementDecoder();
         const parsed = decoder.decode(bleDevice.advertising);
-        if (parsed.advDataManufacturerId === 2503) {
+        if (
+          parsed.advDataManufacturerId === 2503 &&
+          parsed.advDataManufacturerPayload[0] === 1
+        ) {
           return true;
         }
       }
@@ -67,8 +70,9 @@ export class CombustionThermometer extends TemperatureDevice {
 
         this.parseStatusUpdate(data);
       },
-
-      (_data: any) => {}
+      async (_data: any) => {
+        console.log(_data);
+      }
     );
   }
 
