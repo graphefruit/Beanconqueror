@@ -521,7 +521,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           y: [],
           name: this.translate.instant('BREW_FLOW_WEIGHT'),
           yaxis: 'y',
-          type: 'scattergl',
+          type: 'scatter',
           mode: 'lines',
           line: {
             shape: 'linear',
@@ -537,7 +537,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           y: [],
           name: this.translate.instant('BREW_FLOW_WEIGHT_PER_SECOND'),
           yaxis: 'y2',
-          type: 'scattergl',
+          type: 'scatter',
           mode: 'lines',
           line: {
             shape: 'linear',
@@ -554,7 +554,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           y: [],
           name: this.translate.instant('BREW_FLOW_WEIGHT_REALTIME'),
           yaxis: 'y2',
-          type: 'scattergl',
+          type: 'scatter',
           mode: 'lines',
           line: {
             shape: 'linear',
@@ -571,7 +571,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           y: [],
           name: this.translate.instant('BREW_PRESSURE_FLOW'),
           yaxis: 'y4',
-          type: 'scattergl',
+          type: 'scatter',
           mode: 'lines',
           line: {
             shape: 'linear',
@@ -588,7 +588,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           y: [],
           name: this.translate.instant('BREW_TEMPERATURE_REALTIME'),
           yaxis: 'y5',
-          type: 'scattergl',
+          type: 'scatter',
           mode: 'lines',
           line: {
             shape: 'linear',
@@ -693,7 +693,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         y: [],
         name: this.translate.instant('BREW_FLOW_WEIGHT'),
         yaxis: 'y',
-        type: 'scattergl',
+        type: 'scatter',
         mode: 'lines',
         line: {
           shape: 'linear',
@@ -709,7 +709,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         y: [],
         name: this.translate.instant('BREW_FLOW_WEIGHT_PER_SECOND'),
         yaxis: 'y2',
-        type: 'scattergl',
+        type: 'scatter',
         mode: 'lines',
         line: {
           shape: 'linear',
@@ -726,7 +726,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         y: [],
         name: this.translate.instant('BREW_FLOW_WEIGHT_REALTIME'),
         yaxis: 'y2',
-        type: 'scattergl',
+        type: 'scatter',
         mode: 'lines',
         line: {
           shape: 'linear',
@@ -743,7 +743,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         y: [],
         name: this.translate.instant('BREW_PRESSURE_FLOW'),
         yaxis: 'y4',
-        type: 'scattergl',
+        type: 'scatter',
         mode: 'lines',
         line: {
           shape: 'linear',
@@ -760,7 +760,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         y: [],
         name: this.translate.instant('BREW_TEMPERATURE_REALTIME'),
         yaxis: 'y5',
-        type: 'scattergl',
+        type: 'scatter',
         mode: 'lines',
         line: {
           shape: 'linear',
