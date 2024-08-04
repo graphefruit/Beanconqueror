@@ -111,8 +111,12 @@ export class BeanPopoverFreezeComponent implements OnInit {
       if (brews.length > 0) {
         const oldWeight = this.bean.weight;
         this.bean.weight = this.bean.weight - this.getActualFreezingQuantity();
-        const newCost = (this.bean.cost * this.bean.weight) / oldWeight;
-        this.bean.cost = newCost;
+        try {
+          const newCost = (this.bean.cost * this.bean.weight) / oldWeight;
+          this.bean.cost = newCost;
+        } catch (ex) {
+          this.bean.cost = 0;
+        }
 
         //Don't delete the bean, because we did brews with this
         this.bean.frozenGroupId = groupBeanId;
@@ -146,8 +150,13 @@ export class BeanPopoverFreezeComponent implements OnInit {
        */
       const oldWeight = this.bean.weight;
       this.bean.weight = this.bean.weight - this.getActualFreezingQuantity();
-      const newCost = (this.bean.cost * this.bean.weight) / oldWeight;
-      this.bean.cost = newCost;
+      try {
+        const newCost = (this.bean.cost * this.bean.weight) / oldWeight;
+        this.bean.cost = newCost;
+      } catch (ex) {
+        this.bean.cost = 0;
+      }
+
       this.bean.frozenGroupId = groupBeanId;
       await this.uiBeanStorage.update(this.bean);
     }
@@ -179,8 +188,12 @@ export class BeanPopoverFreezeComponent implements OnInit {
     clonedBean.frozenNote = this.frozenNote;
 
     if (this.bean.cost !== 0) {
-      const newCost = (this.bean.cost * _freezingWeight) / this.bean.weight;
-      clonedBean.cost = newCost;
+      try {
+        const newCost = (this.bean.cost * _freezingWeight) / this.bean.weight;
+        clonedBean.cost = newCost;
+      } catch (ex) {
+        clonedBean.cost = 0;
+      }
     }
     clonedBean.weight = _freezingWeight;
     clonedBean.config = new Config();
