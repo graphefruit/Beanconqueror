@@ -62,7 +62,7 @@ export class BrewDetailComponent {
     private readonly navParams: NavParams,
     public uiHelper: UIHelper,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiBrewHelper: UIBrewHelper,
+    public readonly uiBrewHelper: UIBrewHelper,
     private readonly uiAnalytics: UIAnalytics,
     private readonly uiExcel: UIExcel,
     private readonly uiBeanHelper: UIBeanHelper,

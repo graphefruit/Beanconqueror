@@ -459,13 +459,28 @@ export class UIExcel {
       let bloomingTime: string = String(brew.coffee_blooming_time);
       let dripTime: string = String(brew.coffee_first_drip_time);
       let temperatureTime: string = String(brew.brew_temperature_time);
+      let millTime: string = String(brew.mill_timer);
       if (millisecondsEnabled) {
-        brewTime = brewTime + '.' + brew.brew_time_milliseconds;
-        bloomingTime =
-          bloomingTime + '.' + brew.coffee_blooming_time_milliseconds;
-        dripTime = dripTime + '.' + brew.coffee_first_drip_time_milliseconds;
-        temperatureTime =
-          temperatureTime + '.' + brew.brew_temperature_time_milliseconds;
+        if (brew.brew_time_milliseconds > 0) {
+          brewTime = brewTime + '.' + brew.brew_time_milliseconds;
+        }
+        if (brew.coffee_blooming_time_milliseconds) {
+          bloomingTime =
+            bloomingTime + '.' + brew.coffee_blooming_time_milliseconds;
+        }
+
+        if (brew.coffee_first_drip_time_milliseconds) {
+          dripTime = dripTime + '.' + brew.coffee_first_drip_time_milliseconds;
+        }
+
+        if (brew.brew_temperature_time_milliseconds) {
+          temperatureTime =
+            temperatureTime + '.' + brew.brew_temperature_time_milliseconds;
+        }
+
+        if (brew.mill_timer_milliseconds) {
+          millTime = millTime + '.' + brew.mill_timer_milliseconds;
+        }
       }
 
       const entry: Array<any> = [
@@ -476,7 +491,7 @@ export class UIExcel {
         brew.getBean().name,
         brew.getMill().name,
         brew.mill_speed,
-        brew.mill_timer,
+        millTime,
         brew.pressure_profile,
         brew
           .getPreparation()

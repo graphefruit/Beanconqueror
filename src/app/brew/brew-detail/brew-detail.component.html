@@ -118,7 +118,7 @@
                       data.getPreparation().use_custom_parameters)">
       <ion-label>
         <h2>{{"BREW_DATA_MILL_TIMER" | translate}}:</h2>
-        <h3>{{data.mill_timer}}</h3>
+        <h3>{{data?.getFormattedTotalMillTimerTime()}}</h3>
       </ion-label>
     </ion-item>
     <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.pressure_profile,

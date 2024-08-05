@@ -70,9 +70,7 @@ export class CombustionThermometer extends TemperatureDevice {
 
         this.parseStatusUpdate(data);
       },
-      async (_data: any) => {
-        console.log(_data);
-      }
+      async (_data: any) => {}
     );
   }
 

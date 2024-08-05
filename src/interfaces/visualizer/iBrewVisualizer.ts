@@ -24,6 +24,8 @@ export interface IBrewVisualizer {
    * Inherits the used timer settings (), default: 0
    */
   mill_timer: number;
+
+  mill_timer_milliseconds: number;
   /**
    * Inherits the actual used pressure profile (name and number)
    */

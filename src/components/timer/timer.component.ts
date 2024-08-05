@@ -196,6 +196,8 @@ export class TimerComponent implements OnInit, OnDestroy {
       );
 
       this.timer.milliseconds = milliSecondTimer.milliseconds();
+      const passedSeconds = milliSecondTimer.diff(this.startingDay, 'seconds');
+      this.timer.seconds = passedSeconds;
 
       this.displayingTime = moment(this.displayingTime)
         .startOf('day')
