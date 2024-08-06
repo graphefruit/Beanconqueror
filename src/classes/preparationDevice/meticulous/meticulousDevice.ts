@@ -1,5 +1,5 @@
 import { PreparationDevice } from '../preparationDevice';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Preparation } from '../../preparation/preparation';
 import { MeticulousShotData } from './meticulousShotData';
 import Api, {
@@ -10,6 +10,9 @@ import Api, {
 
 import { IMeticulousParams } from '../../../interfaces/preparationDevices/meticulous/iMeticulousParams';
 import { Profile } from 'meticulous-typescript-profile';
+import { UILog } from '../../../services/uiLog';
+import { catchError, timeout } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 declare var cordova;
 declare var io;
@@ -22,6 +25,8 @@ export class MeticulousDevice extends PreparationDevice {
 
   private _profiles: Array<ProfileIdent> = [];
 
+  private serverURL: string = '';
+
   constructor(protected httpClient: HttpClient, _preparation: Preparation) {
     super(httpClient, _preparation);
     this.meticulousShotData = undefined;
@@ -29,9 +34,52 @@ export class MeticulousDevice extends PreparationDevice {
       undefined,
       _preparation.connectedPreparationDevice.url
     );
+    this.serverURL = _preparation.connectedPreparationDevice.url;
 
     if (typeof cordova !== 'undefined') {
     }
+  }
+  public getHistory() {
+    const promise = new Promise<any>((resolve, reject) => {
+      const httpOptions = {
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json',
+        }),
+      };
+      this.httpClient
+        .post(
+          this.serverURL + 'api/v1/history',
+          {
+            sort: 'desc',
+            max_results: 20,
+          },
+          httpOptions
+        )
+        .pipe(
+          timeout(10000),
+          catchError((e) => {
+            return of(null);
+          })
+        )
+        .toPromise()
+        .then(
+          (data: any) => {
+            console.log(data);
+            if (data && data.history) {
+              resolve(data.history);
+            }
+          },
+          (error) => {
+            console.log(error);
+            reject();
+          }
+        )
+        .catch((error) => {
+          console.log(error);
+          reject();
+        });
+    });
+    return promise;
   }
 
   public getActualShotData() {
