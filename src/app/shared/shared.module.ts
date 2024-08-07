@@ -191,6 +191,7 @@ import { MeticulousHelpPopoverComponent } from '../../popover/meticulous-help-po
 import { BeanPopoverFreezeComponent } from '../beans/bean-popover-freeze/bean-popover-freeze.component';
 import { BeanFreezeInformationComponent } from '../../components/beans/bean-freeze-information/bean-freeze-information.component';
 import { BeanPopoverFrozenListComponent } from '../beans/bean-popover-frozen-list/bean-popover-frozen-list.component';
+import { BrewModalImportShotMeticulousComponent } from '../brew/brew-modal-import-shot-meticulous/brew-modal-import-shot-meticulous.component';
 
 @NgModule({
   declarations: [
@@ -216,6 +217,7 @@ import { BeanPopoverFrozenListComponent } from '../beans/bean-popover-frozen-lis
     BeansAddComponent,
     BrewFlowComponent,
     BrewChooseGraphReferenceComponent,
+    BrewModalImportShotMeticulousComponent,
     BrewMaximizeControlsComponent,
     BeansEditComponent,
     BeansDetailComponent,
@@ -427,6 +429,7 @@ import { BeanPopoverFrozenListComponent } from '../beans/bean-popover-frozen-lis
     BeansAddComponent,
     BrewFlowComponent,
     BrewChooseGraphReferenceComponent,
+    BrewModalImportShotMeticulousComponent,
     BrewMaximizeControlsComponent,
     BeansEditComponent,
     BrewRatingComponent,
