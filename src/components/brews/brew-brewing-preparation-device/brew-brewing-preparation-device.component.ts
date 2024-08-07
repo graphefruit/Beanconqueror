@@ -353,7 +353,6 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     }
 
     const lastEntry = newBrewFlow.weight[newBrewFlow.weight.length - 1];
-    const lastShotEntryTime = moment(lastEntry.timestamp);
 
     this.brewComponent.data.brew_beverage_quantity = lastEntry.actual_weight;
 
