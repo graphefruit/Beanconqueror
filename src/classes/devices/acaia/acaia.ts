@@ -213,8 +213,9 @@ export class AcaiaScale {
     this.connected = true;
     /**
      * Sometimes we can't cant connect on the notification, because we get the error "Could not find service with UUID", give it a bit of delay.
+     * This sleep has been removed again, it doesn't fix the issue on user side testing
      */
-    await sleep(150);
+    // await sleep(150);
     window.ble.startNotification(
       this.device_id,
       this.weight_uuid,
