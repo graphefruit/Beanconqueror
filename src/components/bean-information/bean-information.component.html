@@ -1,39 +1,41 @@
 <ion-card  class="long-card" tappable (click)="showBean()" (long-press)="longPressEditBean($event)">
   <ion-card-content #card  class="no-ion-col-vertical-padding ion-padding-top">
-    <ion-grid class="no-padding-bottom">
+    <ion-grid class="no-padding-bottom no-padding-top">
       <ion-row>
-        <ion-col [size]="((bean?.roast_range!== 0 && uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.roast_range)) || (bean?.rating !== 0 &&  uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.rating)))?8:11" style="margin: auto 0;">
-          <div class="ion-no-padding font-size-20 ion-title bean-title">
-            <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="snow-outline"
-                      *ngIf="bean.isFrozen()"></ion-icon>
-            <span *ngIf='bean.isFrozen() === false && bean.frozenId' style='margin-right:5px;'>(<ion-icon style="top: 3px;position: relative;" name="snow-outline"></ion-icon>)</span>
-            <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="flame-outline"
-                      *ngIf="bean.isSelfRoasted()"></ion-icon>
-            <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="qr-code-outline"
-                      *ngIf="bean.isScannedBean()"></ion-icon>
-            <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="share-social-outline"
-                      *ngIf="bean.shared"></ion-icon>
-
-            <ion-icon style="top: 3px;position: relative;margin-right:5px;" name="heart"
-                      *ngIf="bean.favourite"></ion-icon>
-            <span *ngIf='bean.frozenId'><ion-icon style='margin-bottom: -4px;' name="pricetag-outline"></ion-icon>&nbsp;[{{bean.frozenId}}]&nbsp;-&nbsp;</span>{{bean.name}}&nbsp;<span
-            *ngIf="!isBeanRoastUnknown() && uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.bean_roasting_type)">({{"BEAN_ROASTING_TYPE_" + bean.bean_roasting_type | translate}})</span>
+        <ion-col class="expand-fill-space" style="margin: auto 0;">
+          <div class="ion-no-padding font-size-20 ion-title no-overflow-ellipsis center-icons-to-text add-child-margin">
+            <ion-icon name="snow-outline" *ngIf="bean.isFrozen()">&nbsp;</ion-icon>
+            <div *ngIf='bean.isFrozen() === false && bean.frozenId' style="display: flex;">
+              (<ion-icon name="snow-outline"></ion-icon>)
+            </div>
+            <ion-icon name="flame-outline" *ngIf="bean.isSelfRoasted()"></ion-icon>
+            <ion-icon name="qr-code-outline" *ngIf="bean.isScannedBean()"></ion-icon>
+            <ion-icon name="share-social-outline" *ngIf="bean.shared"></ion-icon>
+            <ion-icon name="heart" *ngIf="bean.favourite"></ion-icon>
+            <div class="ion-justify-content-start center-icons-to-text expand-fill-space">
+              <div class="expand-fill-space no-overflow-ellipsis" style="margin-right:-5px;">
+                {{bean.name}}&nbsp;
+                <span *ngIf="!isBeanRoastUnknown() && uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.bean_roasting_type)">
+                  ({{"BEAN_ROASTING_TYPE_" + bean.bean_roasting_type | translate}})
+                </span>
+              </div>
+            </div>
           </div>
         </ion-col>
-        <ion-col *ngIf="((bean?.roast_range!== 0 && uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.roast_range)) || (bean?.rating !== 0 &&  uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.rating)))" size="3">
-
+        <ion-col size="auto" class="stacked-info children-force-newline hide-if-empty">
+          <div *ngIf='bean.frozenId' class="ion-justify-content-end center-icons-to-text frozen-id-label">
+            <ion-icon name="pricetag-outline"></ion-icon>
+            <div>
+              {{bean.frozenId}}
+            </div>
+          </div>
           <ngx-stars #beanStars *ngIf="bean?.roast_range !== 0 && uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.roast_range)" [initialStars]="bean.roast_range" [readonly]="true"
                      [size]="1" class="bean-display ion-float-right"></ngx-stars>
-          <div style="clear:both;" *ngIf="bean?.roast_range !== 0 && bean?.rating !== 0"></div>
-
           <ngx-stars #beanRating *ngIf="bean?.rating !== 0 && uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.rating) && hasCustomRatingRange() === false" [color]="'#BFB9B0'" [initialStars]="bean.rating"
-                     [maxStars]="5" [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars">
-          </ngx-stars>
-          <div  *ngIf="bean?.rating > 0 && uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.rating)  && hasCustomRatingRange() === true" class="ion-text-right">
+                     [maxStars]="5" [readonly]="true" [wholeStars]="true" class="ion-float-right brew-stars"></ngx-stars>
+          <div *ngIf="bean?.rating > 0 && uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.rating)  && hasCustomRatingRange() === true" class="ion-text-right">
               <ion-badge>{{this.uiHelper.toFixedIfNecessary(bean.rating,2)}}</ion-badge>
           </div>
-
-
         </ion-col>
         <ion-col size="1" *ngIf="showActions">
           <ion-button (click)="showBeanActions($event)" class="button-top-absolute" color="accent" fill="clear">

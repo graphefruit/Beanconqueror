@@ -13,12 +13,70 @@
       padding-top: var(--padding-top);
     }
   }
+  .no-overflow {
+    overflow: hidden;
+  }
 
-  .bean-title{
+  .no-overflow-ellipsis {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
   }
+
+  .add-child-margin {
+    > *:not(:last-child) {
+      margin-right: 5px;
+    }
+  }
+
+  .center-icons-to-text {
+    display: flex;
+    ion-icon {
+      flex: none;
+    }
+  }
+
+  .expand-fill-space {
+    flex-grow: 1;
+    min-width: 0;
+  }
+
+  .children-force-newline > * {
+    // you can override this for a specific child eg by `clear: none !important;`
+    clear: both;
+  }
+
+  .hide-if-empty:empty {
+    display: none;
+  }
+
+  .stacked-info {
+    margin-top: -10px;
+    padding-left: 0px;
+    line-height: normal;
+    align-items: center;
+    flex-wrap: wrap;
+    text-align: right;
+    > *:only-child {
+      margin-top: 12px;
+    }
+  }
+
+  .frozen-id-label {
+    font-size: 17px;
+    display: flex;
+    align-items: center;
+    text-align: right;
+    margin-bottom: 4px;
+    color: var(--ion-color-medium) !important;
+    > *{
+      color: inherit !important;
+    }
+    ion-icon {
+      max-width: 0.8rem;
+    }
+  }
+
   // Overwrite
   .button-top-absolute {
     position: absolute;
