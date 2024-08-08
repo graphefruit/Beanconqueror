@@ -417,6 +417,7 @@ export class BeansPage implements OnDestroy {
 
   private manageSearchText(searchText: string, filterBeans: Bean[]) {
     if (searchText) {
+      searchText = searchText.toLowerCase();
       const splittingSearch = searchText.split(',');
       filterBeans = filterBeans.filter((e) => {
         return splittingSearch.find((sc) => {
