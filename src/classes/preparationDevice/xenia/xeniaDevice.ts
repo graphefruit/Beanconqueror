@@ -80,7 +80,7 @@ export class XeniaDevice extends PreparationDevice {
     }
   }
 
-  public getSaveLogfilesFromMachine() {
+  public getSaveLogfilesFromMachine(): boolean {
     const connectedPreparationDevice =
       this.getPreparation().connectedPreparationDevice;
     if (
