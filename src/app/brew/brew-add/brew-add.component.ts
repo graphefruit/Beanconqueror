@@ -342,15 +342,18 @@ export class BrewAddComponent implements OnInit, OnDestroy {
       ) {
         const prepDeviceCall: XeniaDevice = this.brewBrewing
           .brewBrewingPreparationDeviceEl.preparationDevice as XeniaDevice;
-        try {
-          const logs = await prepDeviceCall.getLogs();
-          addedBrewObj.note = addedBrewObj.note + '\r\n' + JSON.stringify(logs);
-          this.uiBrewStorage.update(addedBrewObj);
-        } catch (ex) {
-          this.uiToast.showInfoToast(
-            'We could not get the logs from xenia: ' + JSON.stringify(ex),
-            false
-          );
+        if (prepDeviceCall.getSaveLogfilesFromMachine()) {
+          try {
+            const logs = await prepDeviceCall.getLogs();
+            addedBrewObj.note =
+              addedBrewObj.note + '\r\n' + JSON.stringify(logs);
+            await this.uiBrewStorage.update(addedBrewObj);
+          } catch (ex) {
+            this.uiToast.showInfoToast(
+              'We could not get the logs from xenia: ' + JSON.stringify(ex),
+              false
+            );
+          }
         }
       }
     } catch (ex) {}

@@ -133,6 +133,20 @@
             <h3 *ngIf="!data.buyDate">-</h3>
           </ion-label>
         </ion-item>
+        <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.bestDate)">
+          <ion-label>
+            <h2>{{"BEAN_DATA_BEST_DATE" | translate}}:</h2>
+            <h3 *ngIf="data.bestDate">{{data.bestDate | formatDate:[settings?.date_format]}}</h3>
+            <h3 *ngIf="!data.bestDate">-</h3>
+          </ion-label>
+        </ion-item>
+        <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.openDate)">
+          <ion-label>
+            <h2>{{"BEAN_DATA_OPEN_DATE" | translate}}:</h2>
+            <h3 *ngIf="data.openDate">{{data.openDate | formatDate:[settings?.date_format]}}</h3>
+            <h3 *ngIf="!data.openDate">-</h3>
+          </ion-label>
+        </ion-item>
         <ion-item *ngIf="uiBeanHelper.fieldVisible(settings.bean_manage_parameters.roastingDate)">
           <ion-label>
             <h2>{{"BEAN_DATA_ROASTING_DATE" | translate}}:</h2>

@@ -182,6 +182,9 @@ export class BeanModalSelectComponent implements OnInit {
       } else if (this.frozenScroll !== undefined) {
         scrollComponent = this.frozenScroll;
       }
+      if (!scrollComponent) {
+        return;
+      }
       const footerEl = this.footerContent.nativeElement;
       // right bracing
       scrollComponent.el.style.height =
