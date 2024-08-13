@@ -248,90 +248,36 @@ export class UIExportImportHelper {
             this.uiLog.log('Check Backup');
             const hasData = await this.uiStorage.hasData();
 
-            let hasCorruptedData: boolean = false;
+            let corruptedDataObjCheck: any;
             if (hasData) {
-              hasCorruptedData = await this.uiStorage.hasCorruptedData();
+              corruptedDataObjCheck = await this.uiStorage.hasCorruptedData();
             }
             this.uiLog.log('Check Backup - Has data ' + hasData);
-            if (!hasData || hasCorruptedData) {
-              this.uiLog.log(
-                'Check  Backup - No data are stored yet inside the app, so we try to find a backup file'
-              );
-              // If we don't got any data, we check now if there is a Beanconqueror.zip saved.
-              this.uiFileHelper.getZIPFile('Beanconqueror.zip').then(
-                async (_arrayBuffer) => {
-                  await this.uiAlert.showLoadingSpinner();
-                  try {
-                    this.uiLog.log(' We found a backup, try to import');
-                    const parsedJSON =
-                      await this.getJSONFromZIPArrayBufferContent(_arrayBuffer);
-                    this.uiStorage.import(parsedJSON).then(
-                      async () => {
-                        this.uiLog.log('Sucessfully imported  Backup');
-                        setTimeout(() => {
-                          this.uiAlert.hideLoadingSpinner();
-                        }, 150);
-                        resolve(null);
-                      },
-                      () => {
-                        this.uiLog.error('Could not import  Backup');
-                        setTimeout(() => {
-                          this.uiAlert.hideLoadingSpinner();
-                        }, 150);
-                        resolve(null);
-                      }
-                    );
-                  } catch (ex) {
-                    setTimeout(() => {
-                      this.uiAlert.hideLoadingSpinner();
-                    }, 150);
-                  }
-                },
-                () => {
-                  this.uiLog.log(
-                    'Check Backup - We couldnt retrieve any zip file - try the old JSON Way.'
-                  );
+            if (!hasData || corruptedDataObjCheck.CORRUPTED) {
+              if (!hasData) {
+                this.uiLog.log(
+                  'Check  Backup - We didnt found any data inside the app, so try to find a backup and import it'
+                );
+              } else {
+                this.uiLog.log(
+                  'Check  Backup - We found data but they where corrupted, so try to import a backup'
+                );
+              }
 
-                  this.uiFileHelper.getJSONFile('Beanconqueror.json').then(
-                    async (_json) => {
-                      await this.uiAlert.showLoadingSpinner();
-                      try {
-                        this.uiLog.log('We found an backup, try to import');
-                        this.uiStorage.import(_json).then(
-                          async () => {
-                            this.uiLog.log('Sucessfully imported  Backup');
-                            setTimeout(() => {
-                              this.uiAlert.hideLoadingSpinner();
-                            }, 150);
-                            resolve(null);
-                          },
-                          () => {
-                            this.uiLog.error('Could not import  Backup');
-                            setTimeout(() => {
-                              this.uiAlert.hideLoadingSpinner();
-                            }, 150);
-                            resolve(null);
-                          }
-                        );
-                      } catch (ex) {
-                        setTimeout(() => {
-                          this.uiAlert.hideLoadingSpinner();
-                        }, 150);
-                      }
-                    },
-                    () => {
-                      setTimeout(() => {
-                        this.uiAlert.hideLoadingSpinner();
-                      }, 150);
-                      this.uiLog.log(
-                        'Check Backup - We couldnt retrieve any JSON file'
-                      );
-                      resolve(null);
-                    }
-                  );
-                }
-              );
+              const parsedJSON = await this.readBackupZIPFile();
+              if (parsedJSON) {
+                await this.importBackupJSON(parsedJSON);
+              }
             } else {
+              /**
+               *   BREWS: number,
+               *   MILL: number,
+               *   PREPARATION: number,
+               *   BEANS: number,
+               */
+              const parsedJSON = await this.readBackupZIPFile();
+              console.log('BLAAA');
+              console.log(parsedJSON);
               resolve(null);
             }
           } else {
@@ -343,6 +289,67 @@ export class UIExportImportHelper {
       });
       return promise;
     } catch (ex) {}
+  }
+
+  private importBackupJSON(_parsedJSON) {
+    const promise = new Promise(async (resolve, reject) => {
+      await this.uiAlert.showLoadingSpinner();
+
+      this.uiStorage.import(_parsedJSON).then(
+        async () => {
+          this.uiLog.log('Sucessfully imported  Backup');
+          setTimeout(() => {
+            this.uiAlert.hideLoadingSpinner();
+          }, 150);
+          resolve(null);
+        },
+        () => {
+          this.uiLog.error('Could not import  Backup');
+          setTimeout(() => {
+            this.uiAlert.hideLoadingSpinner();
+          }, 150);
+          resolve(null);
+        }
+      );
+    });
+    return promise;
+  }
+
+  private readBackupZIPFile() {
+    // If we don't got any data, we check now if there is a Beanconqueror.zip saved.
+    const promise = new Promise(async (resolve, reject) => {
+      this.uiFileHelper.getZIPFile('Beanconqueror.zip').then(
+        async (_arrayBuffer) => {
+          try {
+            this.uiLog.log('Read ZIP-File, we found an zip-file');
+            const parsedJSON = await this.getJSONFromZIPArrayBufferContent(
+              _arrayBuffer
+            );
+            resolve(parsedJSON);
+          } catch (ex) {
+            resolve(null);
+          }
+        },
+        () => {
+          this.uiLog.log(
+            'Read ZIP-FILE failed, try to read an old Beanconqueror.json'
+          );
+          this.uiFileHelper.getJSONFile('Beanconqueror.json').then(
+            async (_json) => {
+              this.uiLog.log('Read ZIP-File, we found an json-file');
+              resolve(_json);
+            },
+            () => {
+              this.uiLog.log(
+                'Check Backup - We couldnt retrieve any JSON file'
+              );
+              resolve(null);
+            }
+          );
+        }
+      );
+    });
+    return promise;
   }
 
   private getAutomatedBackupFilename(): string {
