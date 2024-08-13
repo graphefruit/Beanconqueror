@@ -349,6 +349,9 @@ export class BrewAddComponent implements OnInit, OnDestroy {
               addedBrewObj.note + '\r\n' + JSON.stringify(logs);
             await this.uiBrewStorage.update(addedBrewObj);
           } catch (ex) {
+            this.uiLog.log(
+              'We could not get the logs from xenia: ' + JSON.stringify(ex)
+            );
             this.uiToast.showInfoToast(
               'We could not get the logs from xenia: ' + JSON.stringify(ex),
               false
