@@ -16,6 +16,7 @@ import { IBeanPageFilter } from '../../../interfaces/bean/iBeanPageFilter';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
 import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
+import { BEAN_FREEZING_STORAGE_ENUM } from '../../../enums/beans/beanFreezingStorage';
 
 @Component({
   selector: 'bean-modal-select',
@@ -36,10 +37,14 @@ export class BeanModalSelectComponent implements OnInit {
   public openBeans: Array<Bean> = [];
   public finishedBeansFilterText: string = '';
   public finishedBeans: Array<Bean> = [];
+  public frozenBeansFilterText: string = '';
+  public frozenBeans: Array<Bean> = [];
 
   public filter_open: IBeanPageFilter;
   public filter_finished: IBeanPageFilter;
+  public filter_frozen: IBeanPageFilter;
   public open_roasteries: Array<string> = undefined;
+  public frozen_roasteries: Array<string> = undefined;
 
   public finished_roasteries: Array<string> = undefined;
   public settings: Settings;
@@ -47,10 +52,14 @@ export class BeanModalSelectComponent implements OnInit {
   public filterVisible: any = {
     open: false,
     archived: false,
+    frozen: false,
   };
 
   @ViewChild('openScroll', { read: AgVirtualSrollComponent, static: false })
   public openScroll: AgVirtualSrollComponent;
+  @ViewChild('frozenScroll', { read: AgVirtualSrollComponent, static: false })
+  public frozenScroll: AgVirtualSrollComponent;
+
   @ViewChild('archivedScroll', {
     read: AgVirtualSrollComponent,
     static: false,
@@ -62,6 +71,8 @@ export class BeanModalSelectComponent implements OnInit {
   @ViewChild('footerContent', { read: ElementRef })
   public footerContent: ElementRef;
 
+  public beanFreezingStorageTypeEnum = BEAN_FREEZING_STORAGE_ENUM;
+
   constructor(
     private readonly modalController: ModalController,
     private readonly uiBeanStorage: UIBeanStorage,
@@ -69,13 +80,20 @@ export class BeanModalSelectComponent implements OnInit {
     private readonly uiSettingsStorage: UISettingsStorage
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
+    this.loadBeans();
+  }
+
+  public loadBeans() {
     this.objs = this.uiBeanStorage.getAllEntries();
     this.filter_open = this.settings.GET_BEAN_FILTER();
     this.filter_finished = this.settings.GET_BEAN_FILTER();
+    this.filter_frozen = this.settings.GET_BEAN_FILTER();
     const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
     this.open_roasteries = [
       ...new Set(
-        beans.filter((e) => e.finished === false).map((e: Bean) => e.roaster)
+        beans
+          .filter((e) => e.finished === false && !e.isFrozen())
+          .map((e: Bean) => e.roaster)
       ),
     ];
     this.open_roasteries = this.open_roasteries
@@ -93,6 +111,30 @@ export class BeanModalSelectComponent implements OnInit {
 
         return 0;
       });
+
+    this.frozen_roasteries = [
+      ...new Set(
+        beans
+          .filter((e) => e.finished === false && e.isFrozen())
+          .map((e: Bean) => e.roaster)
+      ),
+    ];
+    this.frozen_roasteries = this.frozen_roasteries
+      .filter((name: string) => name !== '')
+      .sort((a, b) => {
+        const nameA = a.toUpperCase();
+        const nameB = b.toUpperCase();
+
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+
+        return 0;
+      });
+
     this.finished_roasteries = [
       ...new Set(
         beans.filter((e) => e.finished === true).map((e: Bean) => e.roaster)
@@ -114,6 +156,13 @@ export class BeanModalSelectComponent implements OnInit {
         return 0;
       });
   }
+
+  public async add() {
+    await this.uiBeanHelper.addBean();
+    this.loadBeans();
+    this.research();
+  }
+
   @HostListener('window:resize')
   @HostListener('window:orientationchange', ['$event'])
   public onOrientationChange(event) {
@@ -128,8 +177,13 @@ export class BeanModalSelectComponent implements OnInit {
       let scrollComponent: AgVirtualSrollComponent;
       if (this.openScroll !== undefined) {
         scrollComponent = this.openScroll;
-      } else {
+      } else if (this.archivedScroll !== undefined) {
         scrollComponent = this.archivedScroll;
+      } else if (this.frozenScroll !== undefined) {
+        scrollComponent = this.frozenScroll;
+      }
+      if (!scrollComponent) {
+        return;
       }
       const footerEl = this.footerContent.nativeElement;
       // right bracing
@@ -257,30 +311,37 @@ export class BeanModalSelectComponent implements OnInit {
   public async showFilter(_type: string) {
     if (_type === 'open') {
       this.filterVisible.open = !this.filterVisible.open;
-    } else {
+    } else if (_type === 'archive') {
       this.filterVisible.archived = !this.filterVisible.archived;
+    } else if (_type === 'frozen') {
+      this.filterVisible.frozen = !this.filterVisible.frozen;
     }
     this.retriggerScroll();
   }
   public isFilterActive(_type: string) {
     if (_type === 'open') {
       return this.filterVisible.open;
+    } else if (_type === 'archive') {
+      return this.filterVisible.archived;
+    } else if (_type === 'frozen') {
+      return this.filterVisible.frozen;
     }
-    return this.filterVisible.archived;
   }
 
   public research() {
     this.__initializeBeansView('open');
-    this.__initializeBeansView('archiv');
+    this.__initializeBeansView('archive');
+    this.__initializeBeansView('frozen');
     this.retriggerScroll();
   }
   private __initializeBeansView(_type: string) {
     const beansCopy: Array<Bean> = [...this.objs];
-    const isOpen: boolean = _type === 'open';
 
     let filterBeans: Array<Bean>;
-    if (isOpen) {
-      filterBeans = beansCopy.filter((bean) => !bean.finished);
+    if (_type === 'open') {
+      filterBeans = beansCopy.filter(
+        (bean) => !bean.finished && !bean.isFrozen()
+      );
 
       if (this.filter_open.bean_roaster?.length > 0) {
         filterBeans = filterBeans.filter(
@@ -296,7 +357,7 @@ export class BeanModalSelectComponent implements OnInit {
             ) === true
         );
       }
-    } else {
+    } else if (_type === 'archive') {
       filterBeans = beansCopy.filter((bean) => bean.finished);
       if (this.filter_finished.bean_roaster?.length > 0) {
         filterBeans = filterBeans.filter(
@@ -312,13 +373,33 @@ export class BeanModalSelectComponent implements OnInit {
             ) === true
         );
       }
+    } else if (_type === 'frozen') {
+      filterBeans = beansCopy.filter(
+        (bean) => !bean.finished && bean.isFrozen()
+      );
+      if (this.filter_frozen.bean_roaster?.length > 0) {
+        filterBeans = filterBeans.filter(
+          (e: Bean) =>
+            this.filter_frozen.bean_roaster.includes(e.roaster) === true
+        );
+      }
+      if (this.filter_frozen.bean_roasting_type?.length > 0) {
+        filterBeans = filterBeans.filter(
+          (e: Bean) =>
+            this.filter_frozen.bean_roasting_type.includes(
+              e.bean_roasting_type
+            ) === true
+        );
+      }
     }
 
     let searchText: string = '';
-    if (isOpen) {
+    if (_type === 'open') {
       searchText = this.openBeansFilterText.toLowerCase();
-    } else {
+    } else if (_type === 'archive') {
       searchText = this.finishedBeansFilterText.toLowerCase();
+    } else if (_type === 'frozen') {
+      searchText = this.frozenBeansFilterText.toLowerCase();
     }
 
     if (searchText) {
@@ -327,13 +408,16 @@ export class BeanModalSelectComponent implements OnInit {
           e.note?.toLowerCase().includes(searchText) ||
           e.name?.toLowerCase().includes(searchText) ||
           e.roaster?.toLowerCase().includes(searchText) ||
-          e.aromatics?.toLowerCase().includes(searchText)
+          e.aromatics?.toLowerCase().includes(searchText) ||
+          e.frozenId?.toLowerCase().includes(searchText)
       );
     }
-    if (isOpen) {
+    if (_type === 'open') {
       this.openBeans = filterBeans;
-    } else {
+    } else if (_type === 'archive') {
       this.finishedBeans = filterBeans;
+    } else if (_type === 'frozen') {
+      this.frozenBeans = filterBeans;
     }
   }
 }

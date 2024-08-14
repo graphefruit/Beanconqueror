@@ -1,12 +1,35 @@
 import { TestBed } from '@angular/core/testing';
 
 import { ShareService } from './share-service.service';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+import { TranslateModule } from '@ngx-translate/core';
+import { UIHelper } from '../uiHelper';
+import { UIHelperMock } from '../../classes/mock';
+import { Storage } from '@ionic/storage';
+import { IonicModule, ModalController } from '@ionic/angular';
 
 describe('ShareService', () => {
   let service: ShareService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: SocialSharing,
+        },
+        {
+          provide: UIHelper,
+          useClass: UIHelperMock,
+        },
+        {
+          provide: Storage,
+        },
+        {
+          provide: ModalController,
+        },
+      ],
+      imports: [TranslateModule.forRoot(), IonicModule.forRoot()],
+    });
     service = TestBed.inject(ShareService);
   });
 

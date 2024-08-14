@@ -47,6 +47,8 @@ export class Brew implements IBrew {
   // tslint:disable-next-line
   public mill_timer: number;
   // tslint:disable-next-line
+  public mill_timer_milliseconds: number;
+  // tslint:disable-next-line
   public pressure_profile: string;
   // UUID
   public bean: string;
@@ -136,6 +138,7 @@ export class Brew implements IBrew {
     this.brew_beverage_quantity = 0;
     this.brew_beverage_quantity_type = 'GR' as BREW_QUANTITY_TYPES_ENUM;
 
+    this.mill_timer_milliseconds = 0;
     this.brew_time_milliseconds = 0;
     this.brew_temperature_time_milliseconds = 0;
     this.coffee_first_drip_time_milliseconds = 0;
@@ -277,10 +280,55 @@ export class Brew implements IBrew {
     ) as IBean;
     if (bean) {
       if (bean.roastingDate) {
-        const roastingDate = moment(bean.roastingDate);
-        const brewTime = moment.unix(this.config.unix_timestamp);
+        const roastingDate = moment(bean.roastingDate).startOf('day');
+        const brewTime = moment.unix(this.config.unix_timestamp).startOf('day');
 
-        return brewTime.diff(roastingDate, 'days');
+        let hasFrozenDate: boolean = false;
+        if (bean.frozenDate) {
+          hasFrozenDate = true;
+        }
+        let hasUnFrozenDate: boolean = false;
+        if (bean.unfrozenDate) {
+          hasUnFrozenDate = true;
+        }
+
+        if (hasFrozenDate === false) {
+          // Normal calculcation as always
+          return brewTime.diff(roastingDate, 'days');
+        } else {
+          // Something has been frozen, now its going down to the deep :)
+          let normalDaysToAdd: number = 0;
+          const frozenDate = moment(bean.frozenDate).startOf('day');
+
+          const frozenDateDiff: number = frozenDate.diff(roastingDate, 'days');
+          // We add now the time between roasting and the first freezing.
+          normalDaysToAdd = normalDaysToAdd + frozenDateDiff;
+
+          if (hasUnFrozenDate) {
+            /**
+             * We did unfreeze the bean and maybe it was still there one day or more.
+             * We calculate now the unfreeze - freeze date and take into account that 90 days of freezing is one real day time.
+             */
+            const unfrozenDate = moment(bean.unfrozenDate).startOf('day');
+            const freezingPeriodTime = unfrozenDate.diff(frozenDate, 'days');
+            const priorToNormalDays = Math.floor(freezingPeriodTime / 90);
+            normalDaysToAdd = normalDaysToAdd + priorToNormalDays;
+
+            /**
+             * After we've calculcated the time in between we check how much time has been gone after unfreezing
+             */
+            const diffOfBrewTime = brewTime.diff(unfrozenDate, 'days');
+            normalDaysToAdd = normalDaysToAdd + diffOfBrewTime;
+          } else {
+            /** We didn't unfreeze the bean, and the bean was directly used.
+             * So the beans where actually taken directly in frozen state.
+             */
+            const diffOfBrewTime = brewTime.diff(frozenDate, 'days');
+            const priorToNormalDays = Math.floor(diffOfBrewTime / 90);
+            normalDaysToAdd = normalDaysToAdd + priorToNormalDays;
+          }
+          return normalDaysToAdd;
+        }
       }
     }
 
@@ -430,6 +478,39 @@ export class Brew implements IBrew {
     return formatted;
   }
 
+  public getFormattedTotalMillTimerTime(): string {
+    const secs = this.mill_timer;
+
+    const millisecondsEnabled: boolean =
+      this.getSettingsStorageInstance().getSettings().brew_milliseconds;
+    let formatted = '';
+    if (millisecondsEnabled) {
+      formatted = moment
+        .utc(secs * 1000)
+        .add('milliseconds', this.mill_timer_milliseconds)
+        .format('mm:ss' + this.getMillisecondsFormat());
+    } else {
+      formatted = moment
+        .utc(secs * 1000)
+        .add('milliseconds', this.mill_timer_milliseconds)
+        .format('mm:ss');
+    }
+
+    if (moment.utc(secs * 1000).hours() > 0) {
+      if (millisecondsEnabled) {
+        formatted = moment
+          .utc(secs * 1000)
+          .add('milliseconds', this.mill_timer_milliseconds)
+          .format('HH:mm:ss' + this.getMillisecondsFormat());
+      } else {
+        formatted = moment
+          .utc(secs * 1000)
+          .add('milliseconds', this.mill_timer_milliseconds)
+          .format('HH:mm:ss');
+      }
+    }
+    return formatted;
+  }
   public getFormattedTotalCoffeeTemperatureTime(): string {
     const secs = this.brew_temperature_time;
 
@@ -690,5 +771,21 @@ export class Brew implements IBrew {
   public getGraphPath() {
     const savingPath = 'brews/' + this.config.uuid + '_flow_profile.json';
     return savingPath;
+  }
+
+  public getBeanAgeByBrewDate() {
+    const bean: IBean = this.getBeanStorageInstance().getByUUID(
+      this.bean
+    ) as IBean;
+    if (bean) {
+      if (bean.roastingDate) {
+        const roastingDate = moment(bean.roastingDate);
+        const brewTime = moment.unix(this.config.unix_timestamp);
+
+        return brewTime.diff(roastingDate, 'days');
+      }
+    }
+
+    return -1;
   }
 }

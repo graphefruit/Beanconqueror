@@ -17,6 +17,7 @@ export interface Weight {
   old: number;
   smoothed: number;
   oldSmoothed: number;
+  notMutatedWeight: number;
 }
 
 export interface WeightChangeEvent extends Weight {
@@ -83,6 +84,10 @@ export class BluetoothScale {
     return 0;
   }
 
+  public setOldWeight(_weight: number) {
+    this.weight.old = _weight;
+  }
+
   /**
    * Disconnect is triggered because the scale was turned off, battery shutdown, or something went broken.
    */
@@ -93,6 +98,8 @@ export class BluetoothScale {
     // Each value effect the current weight bei 10%.
     // (A3 * 03 + b2 * 0.7)
     //  Actual value * 03 + smoothed value * 0.7
+
+    this.weight.notMutatedWeight = _newWeight;
 
     this.blueToothParentlogger.log(
       'Bluetooth Scale - New weight recieved ' + _newWeight
@@ -119,6 +126,7 @@ export class BluetoothScale {
       stable: _stableWeight,
       old: this.weight.old,
       oldSmoothed: this.weight.oldSmoothed,
+      notMutatedWeight: this.weight.notMutatedWeight,
     });
     this.triggerFlow(_stableWeight);
     this.weight.old = _newWeight;
@@ -147,6 +155,7 @@ export class BluetoothScale {
       old: this.weight.old,
       oldSmoothed: this.weight.oldSmoothed,
       date: actualDate,
+      notMutatedWeight: this.weight.notMutatedWeight,
     });
   }
 }

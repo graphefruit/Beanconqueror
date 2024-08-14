@@ -20,7 +20,7 @@ import { memoize } from 'lodash';
 
 import { Logger } from '../common/logger';
 import { DEBUG } from '../common/constants';
-import { to128bitUUID } from '../common/util';
+import { sleep, to128bitUUID } from '../common/util';
 import { Decoder } from './decoder';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 
@@ -211,7 +211,11 @@ export class AcaiaScale {
 
     // We moved this line from notifications ready to here.
     this.connected = true;
-
+    /**
+     * Sometimes we can't cant connect on the notification, because we get the error "Could not find service with UUID", give it a bit of delay.
+     * This sleep has been removed again, it doesn't fix the issue on user side testing
+     */
+    // await sleep(150);
     window.ble.startNotification(
       this.device_id,
       this.weight_uuid,
@@ -227,6 +231,11 @@ export class AcaiaScale {
       }
     );
 
+    /**
+     * Maybe this sleep is game changer for the connection issue that no weight is send.
+     * After implementing this 150ms sleep, somehow the weight is always send afterwards - why? we don't know
+     */
+    await sleep(150);
     await this.write(new Uint8Array([0, 1]).buffer);
 
     await this.notificationsReady();

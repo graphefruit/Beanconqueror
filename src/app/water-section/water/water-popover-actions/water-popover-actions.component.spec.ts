@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { WaterPopoverActionsComponent } from './water-popover-actions.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('WaterPopoverActionsComponent', () => {
   let component: WaterPopoverActionsComponent;
@@ -9,8 +10,8 @@ describe('WaterPopoverActionsComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ WaterPopoverActionsComponent ],
-      imports: [IonicModule.forRoot()]
+      declarations: [WaterPopoverActionsComponent],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(WaterPopoverActionsComponent);

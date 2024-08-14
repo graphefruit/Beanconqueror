@@ -208,6 +208,7 @@ export class UIStorage {
   public async hasData(): Promise<boolean> {
     const promise: Promise<boolean> = new Promise((resolve, reject) => {
       let hasData: boolean = false;
+
       this._storage
         .forEach((_value, _key, _index) => {
           if (_key === 'VERSION') {
@@ -225,6 +226,55 @@ export class UIStorage {
         .then(
           () => {
             if (hasData) {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+          },
+          () => {
+            resolve(false);
+          }
+        );
+    });
+
+    return promise;
+  }
+
+  public async hasCorruptedData(): Promise<boolean> {
+    const promise: Promise<boolean> = new Promise((resolve, reject) => {
+      const hasDataObj = {
+        BREWS: false,
+        MILL: false,
+        PREPARATION: false,
+        BEANS: false,
+      };
+      this._storage
+        .forEach((_value, _key, _index) => {
+          if (
+            _key === 'BREWS' ||
+            _key === 'MILL' ||
+            _key === 'PREPARATION' ||
+            _key === 'BEANS'
+          ) {
+            try {
+              if (_value?.length > 0) {
+                hasDataObj[_key] = true;
+              }
+            } catch (ex) {}
+          }
+        })
+        .then(
+          () => {
+            if (
+              hasDataObj.BREWS === true &&
+              (hasDataObj.MILL === false ||
+                hasDataObj.PREPARATION === false ||
+                hasDataObj.BEANS === false)
+            ) {
+              /**
+               * If we got brews but not a mill / preparation / or bean something broke hard.
+               * We saw this issue on android that a user got brews but no beans anymore, they where lost
+               */
               resolve(true);
             } else {
               resolve(false);

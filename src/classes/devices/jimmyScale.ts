@@ -26,6 +26,7 @@ export class JimmyScale extends BluetoothScale {
     old: 0,
     smoothed: 0,
     oldSmoothed: 0,
+    notMutatedWeight: 0,
   };
   private unit?: JimmyUnit = undefined;
   private mode?: JimmyMode = undefined;

@@ -37,6 +37,9 @@ export class BeanListViewParameter implements IBeanParameter {
   public fob_price: boolean;
   public rating: boolean;
 
+  public bestDate: boolean;
+  public openDate: boolean;
+
   constructor() {
     this.name = true;
     this.buyDate = false;
@@ -70,6 +73,9 @@ export class BeanListViewParameter implements IBeanParameter {
     this.percentage = false;
     this.purchasing_price = false;
     this.fob_price = false;
+
+    this.bestDate = false;
+    this.openDate = false;
   }
 
   public activateAll() {
@@ -105,5 +111,7 @@ export class BeanListViewParameter implements IBeanParameter {
     this.percentage = true;
     this.purchasing_price = true;
     this.fob_price = true;
+    this.bestDate = true;
+    this.openDate = true;
   }
 }

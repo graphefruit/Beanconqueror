@@ -36,7 +36,11 @@
           </ion-grid>
         </ion-col>
         <ion-col class="ion-justify-content-center ion-no-padding" size="3" *ngIf="!hasPhotos() && water.type !== WATER_TYPES.CUSTOM_WATER">
-          <ion-icon class="full-sized-icon" name="{{water.getIcon()}}"></ion-icon>
+          <div style='width:100%;height:100%;text-align:center'>
+          <ion-icon  *ngIf="water.type.startsWith('EMPIRICAL') === false" class="full-sized-icon" name="{{water.getIcon()}}"></ion-icon>
+          <img class='empirical-water' src='assets/img/{{water.type.toLowerCase()}}.png' *ngIf="water.type.startsWith('EMPIRICAL') === true" />
+
+          </div>
         </ion-col>
         <ion-col class="ion-no-padding" size="3" *ngIf="hasPhotos()" (click)="showPhoto($event)">
           <div style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>

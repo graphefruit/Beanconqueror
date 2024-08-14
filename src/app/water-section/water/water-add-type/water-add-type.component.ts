@@ -74,6 +74,7 @@ export class WaterAddTypeComponent implements OnInit {
 
         this.data.tds = 150;
         this.data.tds_type = 'PPM' as WATER_UNIT_TDS;
+        this.data.note = 'https://thirdwavewater.com/';
         break;
 
       case WATER_TYPES.THIRD_WAVE_WATER_MEDIUM_ROAST_PROFILE:
@@ -106,6 +107,7 @@ export class WaterAddTypeComponent implements OnInit {
 
         this.data.tds = 150;
         this.data.tds_type = 'PPM' as WATER_UNIT_TDS;
+        this.data.note = 'https://thirdwavewater.com/';
         break;
 
       case WATER_TYPES.THIRD_WAVE_WATER_DARK_ROAST_PROFILE:
@@ -138,6 +140,7 @@ export class WaterAddTypeComponent implements OnInit {
 
         this.data.tds = 180;
         this.data.tds_type = 'PPM' as WATER_UNIT_TDS;
+        this.data.note = 'https://thirdwavewater.com/';
         break;
 
       case WATER_TYPES.THIRD_WAVE_WATER_LOW_ACID_PROFILE:
@@ -170,6 +173,7 @@ export class WaterAddTypeComponent implements OnInit {
 
         this.data.tds = 220;
         this.data.tds_type = 'PPM' as WATER_UNIT_TDS;
+        this.data.note = 'https://thirdwavewater.com/';
         break;
 
       case WATER_TYPES.THIRD_WAVE_WATER_ESPRESSO_MACHINE_PROFILE:
@@ -202,6 +206,7 @@ export class WaterAddTypeComponent implements OnInit {
 
         this.data.tds = 150;
         this.data.tds_type = 'PPM' as WATER_UNIT_TDS;
+        this.data.note = 'https://thirdwavewater.com/';
         break;
 
       case WATER_TYPES.THIRD_WAVE_WATER_COLD_BREW_PROFILE:
@@ -234,6 +239,121 @@ export class WaterAddTypeComponent implements OnInit {
 
         this.data.tds = 220;
         this.data.tds_type = 'PPM' as WATER_UNIT_TDS;
+        this.data.note = 'https://thirdwavewater.com/';
+        break;
+
+      case WATER_TYPES.PURE_COFFEE_WATER:
+        this.data.note = 'https://www.purecoffeewater.com/';
+
+        /**
+         * General Hardness (GH): 65 mg/l
+         * Total Alkalinity (KH): 45 mg/l
+         * Total Dissolved Solids (TDS): 110 mg/l
+         */
+        this.data.general_hardness = 65;
+        this.data.general_hardness_type = 'UNKNOWN' as WATER_UNIT;
+
+        this.data.total_alkalinity = 45;
+        this.data.total_alkalinity_type = 'UNKNOWN' as WATER_UNIT;
+
+        this.data.calcium = 0;
+        this.data.calcium_type = 'UNKNOWN' as WATER_UNIT;
+
+        this.data.magnesium = 0;
+        this.data.magnesium_type = 'UNKNOWN' as WATER_UNIT;
+
+        this.data.sodium = 0;
+        this.data.sodium_type = 'UNKNOWN' as WATER_UNIT;
+
+        this.data.potassium = 0;
+        this.data.potassium_type = 'UNKNOWN' as WATER_UNIT;
+
+        this.data.tds = 110;
+        this.data.tds_type = 'PPM' as WATER_UNIT_TDS;
+        break;
+
+      case WATER_TYPES.EMPIRICAL_WATER_SPRING:
+        /**
+         * empirical water SPRING
+         * GH: 65.2 mg/L
+         * KH: 64.1 mg/L
+         * Ca: 17.5 mg/L
+         * Mg: 5.2 mg/L
+         * Cl: 15.0 mg/L
+         * SO4: 20.7 mg/L
+         * Na: 17.8 mg/L
+         * K: 2.0 mg/L
+         * TDS: 156.7 mg/L
+         */
+        this.data.general_hardness = 65.2;
+        this.data.general_hardness_type = 'MG_L' as WATER_UNIT;
+
+        this.data.total_alkalinity = 64.1;
+        this.data.total_alkalinity_type = 'MG_L' as WATER_UNIT;
+
+        this.data.calcium = 17.5;
+        this.data.calcium_type = 'MG_L' as WATER_UNIT;
+
+        this.data.magnesium = 5.2;
+        this.data.magnesium_type = 'MG_L' as WATER_UNIT;
+
+        this.data.chloride = 15;
+        this.data.chloride_type = 'MG_L' as WATER_UNIT;
+
+        this.data.sulfate = 20.7;
+        this.data.sulfate_type = 'MG_L' as WATER_UNIT;
+
+        this.data.sodium = 17.8;
+        this.data.sodium_type = 'MG_L' as WATER_UNIT;
+
+        this.data.potassium = 2;
+        this.data.potassium_type = 'MG_L' as WATER_UNIT;
+
+        this.data.tds = 156.7;
+        this.data.tds_type = 'PPM' as WATER_UNIT_TDS;
+
+        this.data.note = 'https://empiricalwater.com/';
+        break;
+      case WATER_TYPES.EMPIRICAL_WATER_GLACIAL:
+        /**
+         * empirical water GLACIAL
+         * GH: 34.6
+         * KH: 29.4
+         * Ca: 9.3 mg/L
+         * Mg: 2.8 mg/L
+         * Cl: 6.9 mg/L
+         * SO4: 8.8 mg/L
+         * Na: 5.7 mg/L
+         * K: 1.0 mg/L
+         * TDS: 70.2 mg/L
+         */
+        this.data.general_hardness = 34.6;
+        this.data.general_hardness_type = 'MG_L' as WATER_UNIT;
+
+        this.data.total_alkalinity = 29.4;
+        this.data.total_alkalinity_type = 'MG_L' as WATER_UNIT;
+
+        this.data.calcium = 9.3;
+        this.data.calcium_type = 'MG_L' as WATER_UNIT;
+
+        this.data.magnesium = 2.8;
+        this.data.magnesium_type = 'MG_L' as WATER_UNIT;
+
+        this.data.chloride = 6.9;
+        this.data.chloride_type = 'MG_L' as WATER_UNIT;
+
+        this.data.sulfate = 8.8;
+        this.data.sulfate_type = 'MG_L' as WATER_UNIT;
+
+        this.data.sodium = 5.7;
+        this.data.sodium_type = 'MG_L' as WATER_UNIT;
+
+        this.data.potassium = 1;
+        this.data.potassium_type = 'MG_L' as WATER_UNIT;
+
+        this.data.tds = 70.2;
+        this.data.tds_type = 'PPM' as WATER_UNIT_TDS;
+        this.data.note = 'https://empiricalwater.com/';
         break;
       default:
         break;

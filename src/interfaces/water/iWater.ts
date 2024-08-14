@@ -27,6 +27,12 @@ export interface IWater {
   sodium_type: WATER_UNIT;
   potassium: number;
   potassium_type: WATER_UNIT;
+
+  chloride: number;
+  chloride_type: WATER_UNIT;
+  sulfate: number;
+  sulfate_type: WATER_UNIT;
+
   tds: number;
   tds_type: WATER_UNIT_TDS;
 }

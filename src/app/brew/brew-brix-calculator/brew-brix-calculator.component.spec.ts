@@ -2,6 +2,10 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { BrewBrixCalculatorComponent } from './brew-brix-calculator.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { UIHelper } from '../../../services/uiHelper';
+import { UIHelperMock } from '../../../classes/mock';
+import { Storage } from '@ionic/storage';
 
 describe('BrewBrixCalculatorComponent', () => {
   let component: BrewBrixCalculatorComponent;
@@ -9,14 +13,25 @@ describe('BrewBrixCalculatorComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ BrewBrixCalculatorComponent ],
-      imports: [IonicModule.forRoot()]
+      declarations: [BrewBrixCalculatorComponent],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
+      providers: [
+        {
+          provide: UIHelper,
+          useClass: UIHelperMock,
+        },
+        {
+          provide: Storage,
+        },
+      ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(BrewBrixCalculatorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  }));
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();

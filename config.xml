@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.beanconqueror.app" version="7.3.0" xmlns="http://www.w3.org/ns/widgets">
+<widget id="com.beanconqueror.app" version="7.4.0" xmlns="http://www.w3.org/ns/widgets">
     <name>Beanconqueror</name>
     <description />
     <author email="info@beanconqueror.com" href="https://github.com/graphefruit/beanconqueror">Lars Saalbach</author>
@@ -376,7 +376,6 @@
         <splash height="480" src="resources/ios/splash/Default~iphone.png" width="320" />
         <splash height="2732" src="resources/ios/splash/Default@2x~universal~anyany.png" width="2732" />
     </platform>
-    <plugin name="cordova-plugin-statusbar" spec="~2.4.2" />
     <plugin name="cordova-plugin-device" spec="~2.0.2" />
     <plugin name="cordova-plugin-filechooser" spec="~1.2.0" />
     <plugin name="cordova-plugin-filepicker" spec="~1.1.6" />

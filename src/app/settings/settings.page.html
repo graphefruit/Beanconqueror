@@ -45,7 +45,10 @@
             <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
           </ion-item>
           <ion-item (click)="export()" button tappable>
-            <ion-label>{{"EXPORT" | translate}}</ion-label>
+            <ion-label>
+              <h2>{{"EXPORT" | translate}}</h2>
+              <p>{{"EXPORT_CAUTION" | translate}}</p>
+            </ion-label>
             <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
           </ion-item>
           <ion-item *ngIf='doWeHaveBrewByWeights()' (click)='exportBrewByWeight()'  button tappable>
@@ -350,6 +353,17 @@
           <ion-item *ngIf="false">
             <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.show_cupping_section">
               <div class='ion-label'>{{"PAGE_SETTINGS_SHOW_CUPPING_SECTION" | translate}}</div>
+            </ion-checkbox>
+          </ion-item>
+        </ion-card-content>
+      </ion-card>
+      <ion-card class="margin-top-20">
+        <ion-card-content>
+          <ion-card-title>{{"PAGE_SETTINGS_MANAGE_FEATURES" | translate}}</ion-card-title>
+          <ion-item lines="none">
+            <ion-checkbox label-placement='start' (ngModelChange)="resetFilter();saveSettings();"
+                          [(ngModel)]="settings.freeze_coffee_beans">
+              <div class='ion-label'>{{"ACTIVE_BEAN_FREEZING_FEATURE" | translate}}</div>
             </ion-checkbox>
           </ion-item>
         </ion-card-content>
@@ -670,6 +684,7 @@
               <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();" [(ngModel)]="settings.bluetooth_ignore_negative_values">
                 <div class="ion-label" style="white-space: normal;">
                   <h2>{{"IGNORE_NEGATIVE_VALUES" | translate}}</h2>
+                  <p>{{"IGNORE_NEGATIVE_VALUES_DESCRIPTION" | translate}}</p>
                 </div>
               </ion-checkbox>
             </ion-item>
@@ -678,6 +693,7 @@
                 <div class='ion-label'>
                   <h2>{{"IGNORE_ANOMALY_VALUES" | translate}}</h2>
                   <p>{{"IGNORE_ANOMALY_VALUES_TOOLTIP" | translate}}</p>
+                  <p>{{"IGNORE_ANOMALY_VALUES_DESCRIPTION" | translate}}</p>
                 </div>
               </ion-checkbox>
             </ion-item>

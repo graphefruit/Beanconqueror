@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { ModalController, NavParams } from '@ionic/angular';
 import { Brew } from '../../../classes/brew/brew';
 import { Settings } from '../../../classes/settings/settings';
@@ -22,8 +22,8 @@ import BEAN_TRACKING from '../../../data/tracking/beanTracking';
   templateUrl: './brew-cupping.component.html',
   styleUrls: ['./brew-cupping.component.scss'],
 })
-export class BrewCuppingComponent implements OnInit {
-  public static COMPONENT_ID = 'brew-cup';
+export class BrewCuppingComponent {
+  public static readonly COMPONENT_ID = 'brew-cup';
   public segment: string = 'flavor';
 
   public data: Bean | Brew = undefined;
@@ -54,7 +54,6 @@ export class BrewCuppingComponent implements OnInit {
     setTimeout(() => {
       if (this.segment === 'cupping') {
         this.loadCupping();
-      } else {
       }
     }, 50);
   }
@@ -112,8 +111,6 @@ export class BrewCuppingComponent implements OnInit {
       this.data.initializeByObject(copyBean);
     }
   }
-
-  public ngOnInit(): void {}
 
   public async updateBrew() {
     if (this.data instanceof Brew) {

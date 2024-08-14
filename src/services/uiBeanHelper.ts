@@ -28,6 +28,7 @@ import { ROASTS_ENUM } from '../enums/beans/roasts';
 import { BEAN_ROASTING_TYPE_ENUM } from '../enums/beans/beanRoastingType';
 import { AssociatedBrewsComponent } from '../app/brew/associated-brews/associated-brews.component';
 import { BrewCuppingComponent } from '../app/brew/brew-cupping/brew-cupping.component';
+import { BeanPopoverFreezeComponent } from '../app/beans/bean-popover-freeze/bean-popover-freeze.component';
 
 /**
  * Handles every helping functionalities
@@ -204,6 +205,16 @@ export class UIBeanHelper {
     await modal.onWillDismiss();
   }
 
+  public async freezeBean(_bean: Bean) {
+    const modal = await this.modalController.create({
+      component: BeanPopoverFreezeComponent,
+      id: BeanPopoverFreezeComponent.COMPONENT_ID,
+      componentProps: { bean: _bean },
+    });
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+
   public async repeatBean(_bean: Bean) {
     const modal = await this.modalController.create({
       component: BeansAddComponent,
@@ -338,8 +349,8 @@ export class UIBeanHelper {
       component: BeanArchivePopoverComponent,
       cssClass: 'popover-actions',
       id: BeanArchivePopoverComponent.COMPONENT_ID,
-      breakpoints: [0, 0.5, 0.75, 1],
-      initialBreakpoint: 0.5,
+      breakpoints: [0, 0.75, 1],
+      initialBreakpoint: 0.75,
       componentProps: {
         bean: _bean,
       },
@@ -356,5 +367,9 @@ export class UIBeanHelper {
     });
     await modal.present();
     await modal.onWillDismiss();
+  }
+
+  public generateFrozenId() {
+    return Math.random().toString(20).substr(2, 6);
   }
 }

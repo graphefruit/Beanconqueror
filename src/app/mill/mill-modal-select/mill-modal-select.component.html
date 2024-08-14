@@ -40,6 +40,11 @@
                   </span>
               </p>
             </ion-checkbox>
+            <ion-thumbnail slot="end" *ngIf="mill.hasPhotos()">
+              <div  style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
+                <async-image [filePath]="mill.attachments[0]" class="bean-slider"></async-image>
+              </div>
+            </ion-thumbnail>
 
           </ion-item>
         </ion-card>
@@ -60,6 +65,11 @@
                   </span>
               </p>
             </ion-checkbox>
+            <ion-thumbnail slot="end" *ngIf="mill.hasPhotos()">
+              <div  style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
+                <async-image [filePath]="mill.attachments[0]" class="bean-slider"></async-image>
+              </div>
+            </ion-thumbnail>
           </ion-item>
         </ion-card>
       </div>
@@ -85,6 +95,11 @@
                   </span>
                 </p>
               </ion-radio>
+              <ion-thumbnail slot="end" *ngIf="mill.hasPhotos()">
+                <div  style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
+                  <async-image [filePath]="mill.attachments[0]" class="bean-slider"></async-image>
+                </div>
+              </ion-thumbnail>
             </ion-item>
           </ion-card>
         </div>
@@ -104,6 +119,11 @@
                   </span>
                 </p>
               </ion-radio>
+              <ion-thumbnail slot="end" *ngIf="mill.hasPhotos()">
+                <div  style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
+                  <async-image [filePath]="mill.attachments[0]" class="bean-slider"></async-image>
+                </div>
+              </ion-thumbnail>
             </ion-item>
           </ion-card>
         </div>

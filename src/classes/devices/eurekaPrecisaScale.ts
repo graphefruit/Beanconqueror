@@ -42,6 +42,7 @@ export class EurekaPrecisaScale extends BluetoothScale {
     old: 0,
     smoothed: 0,
     oldSmoothed: 0,
+    notMutatedWeight: 0,
   };
   private logger: Logger;
 

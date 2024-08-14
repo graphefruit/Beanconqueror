@@ -98,6 +98,8 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   public brewFirstDripTime: TimerComponent;
   @ViewChild('brewStars', { read: NgxStarsComponent, static: false })
   public brewStars: NgxStarsComponent;
+  @ViewChild('brewMillTimer', { static: false })
+  public brewMillTimer: TimerComponent;
 
   @Input() public data: Brew;
   @Input() public brewTemplate: Brew;
@@ -237,6 +239,14 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         } else {
           checkData = this.settings;
         }
+
+        if (this.brewMillTimer && checkData.manage_parameters.mill_timer) {
+          this.brewMillTimer.setTime(
+            this.data.mill_timer,
+            this.data.mill_timer_milliseconds
+          );
+        }
+
         if (
           this.brewTemperatureTime &&
           checkData.manage_parameters.brew_temperature_time
@@ -701,6 +711,18 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       this.data.brew_temperature_time_milliseconds = 0;
     }
   }
+  public millTimerChanged(_event): void {
+    if (this.brewMillTimer) {
+      this.data.mill_timer = this.brewMillTimer.getSeconds();
+      if (this.settings.brew_milliseconds) {
+        this.data.mill_timer_milliseconds =
+          this.brewMillTimer.getMilliseconds();
+      }
+    } else {
+      this.data.mill_timer = 0;
+      this.data.mill_timer_milliseconds = 0;
+    }
+  }
 
   public coffeeBloomingTimeChanged(_event): void {
     if (this.brewCoffeeBloomingTime) {
@@ -716,7 +738,7 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
   }
 
   public getPreparation(): Preparation {
-    return this.uiPreparationStorage.getByUUID(this.data.method_of_preparation);
+    return this.data.getPreparation();
   }
 
   public chooseDateTime(_event) {
@@ -1170,13 +1192,26 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
         }
       }
     }
-    if (
-      (_template === false &&
-        checkData.default_last_coffee_parameters.mill_timer) ||
-      (_template === true && checkData.repeat_coffee_parameters.mill_timer)
-    ) {
-      this.data.mill_timer = brew.mill_timer;
+
+    if (this.brewMillTimer) {
+      if (
+        (_template === false &&
+          checkData.default_last_coffee_parameters.mill_timer) ||
+        (_template === true && checkData.repeat_coffee_parameters.mill_timer)
+      ) {
+        this.data.mill_timer = brew.mill_timer;
+        if (this.settings.brew_milliseconds) {
+          this.data.mill_timer_milliseconds = brew.mill_timer_milliseconds;
+        }
+        setTimeout(() => {
+          this.brewMillTimer.setTime(
+            this.data.mill_timer,
+            this.data.mill_timer_milliseconds
+          );
+        }, 250);
+      }
     }
+
     if (
       (_template === false &&
         checkData.default_last_coffee_parameters.mill_speed) ||

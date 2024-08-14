@@ -11,6 +11,7 @@ import { Bean } from '../../classes/bean/bean';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
 
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { Settings } from '../../classes/settings/settings';
 
 @Component({
   selector: 'dashboard',
@@ -20,6 +21,8 @@ import { UISettingsStorage } from '../../services/uiSettingsStorage';
 export class DashboardPage implements OnInit {
   public brews: Array<Brew> = [];
   private leftOverBeansWeight: number = undefined;
+  private leftOverFrozenBeansWeight: number = undefined;
+  public settings: Settings;
 
   constructor(
     public uiStatistic: UIStatistic,
@@ -34,14 +37,17 @@ export class DashboardPage implements OnInit {
   ) {}
 
   public ngOnInit() {
+    this.settings = this.uiSettingsStorage.getSettings();
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
       // If an brew is deleted, we need to reset our array for the next call.
       this.leftOverBeansWeight = undefined;
+      this.leftOverFrozenBeansWeight = undefined;
     });
 
     this.uiBeanStorage.attachOnEvent().subscribe((_val) => {
       // If an brew is deleted, we need to reset our array for the next call.
       this.leftOverBeansWeight = undefined;
+      this.leftOverFrozenBeansWeight = undefined;
     });
   }
 
@@ -96,7 +102,7 @@ export class DashboardPage implements OnInit {
       let leftOverCount: number = 0;
       const openBeans: Array<Bean> = this.uiBeanStorage
         .getAllEntries()
-        .filter((bean) => !bean.finished);
+        .filter((bean) => !bean.finished && bean.isFrozen() === false);
       for (const bean of openBeans) {
         if (bean.weight > 0) {
           leftOverCount += bean.weight - this.getUsedWeightCount(bean);
@@ -109,6 +115,30 @@ export class DashboardPage implements OnInit {
       return Math.round(this.leftOverBeansWeight * 100) / 100 + ' g';
     } else {
       return Math.round((this.leftOverBeansWeight / 1000) * 100) / 100 + ' kg';
+    }
+  }
+
+  public openFrozenBeansLeftOverCount(): string {
+    // #183
+    if (this.leftOverFrozenBeansWeight === undefined) {
+      let leftOverCount: number = 0;
+      const openBeans: Array<Bean> = this.uiBeanStorage
+        .getAllEntries()
+        .filter((bean) => !bean.finished && bean.isFrozen() === true);
+      for (const bean of openBeans) {
+        if (bean.weight > 0) {
+          leftOverCount += bean.weight - this.getUsedWeightCount(bean);
+        }
+      }
+
+      this.leftOverFrozenBeansWeight = leftOverCount;
+    }
+    if (this.leftOverFrozenBeansWeight < 1000) {
+      return Math.round(this.leftOverFrozenBeansWeight * 100) / 100 + ' g';
+    } else {
+      return (
+        Math.round((this.leftOverFrozenBeansWeight / 1000) * 100) / 100 + ' kg'
+      );
     }
   }
 

@@ -35,6 +35,7 @@ export interface ISettings {
   bean_manage_parameters: IBeanParameter;
   bean_visible_list_view_parameters: IBeanParameter;
   matomo_analytics: boolean;
+  meticulous_help_was_shown: boolean;
   qr_scanner_information: boolean;
   track_brew_coordinates: boolean;
   fast_brew_repeat: boolean;
@@ -54,6 +55,8 @@ export interface ISettings {
   show_archived_green_beans: boolean;
   show_archived_waters: boolean;
   show_archived_graphs: boolean;
+
+  freeze_coffee_beans: boolean;
 
   track_caffeine_consumption: boolean;
 

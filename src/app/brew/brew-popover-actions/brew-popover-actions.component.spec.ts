@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { BrewPopoverActionsComponent } from './brew-popover-actions.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
-import { IonicStorageModule } from '@ionic/storage';
+import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
 import { KeysPipe } from '../../../pipes/keys';
@@ -13,7 +13,11 @@ import { File } from '@awesome-cordova-plugins/file/ngx';
 import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
-import { Router } from '@angular/router';
+import { UIHelperMock } from '../../../classes/mock';
+import { UIHelper } from '../../../services/uiHelper';
+import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
+import { Brew } from '../../../classes/brew/brew';
+import { Preparation } from '../../../classes/preparation/preparation';
 
 describe('BrewPopoverActionsComponent', () => {
   let component: BrewPopoverActionsComponent;
@@ -24,7 +28,6 @@ describe('BrewPopoverActionsComponent', () => {
       imports: [
         TranslateModule.forRoot(),
         FormsModule,
-        IonicStorageModule.forRoot(),
         CommonModule,
         IonicModule,
       ],
@@ -38,8 +41,8 @@ describe('BrewPopoverActionsComponent', () => {
         { provide: Camera },
         { provide: ImagePicker },
         { provide: AndroidPermissions },
-
-        { provide: Router },
+        { provide: UIHelper, useClass: UIHelperMock },
+        { provide: UIPreparationStorage },
       ],
     }).compileComponents();
   }));
@@ -47,6 +50,15 @@ describe('BrewPopoverActionsComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(BrewPopoverActionsComponent);
     component = fixture.componentInstance;
+    component.data = {
+      getPreparation(): Preparation {
+        return new Preparation();
+      },
+      attachments: new Array<string>(),
+      customInformation: {
+        visualizer_id: '',
+      },
+    } as Brew;
     fixture.detectChanges();
   });
 

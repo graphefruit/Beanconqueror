@@ -1,9 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIHelper } from '../../../services/uiHelper';
-import { UIImage } from '../../../services/uiImage';
 import { Bean } from '../../../classes/bean/bean';
-import { ModalController, NavParams, Platform } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { UIToast } from '../../../services/uiToast';
 import { IBeanInformation } from '../../../interfaces/bean/iBeanInformation';
@@ -24,7 +23,7 @@ import { Settings } from '../../../classes/settings/settings';
   styleUrls: ['./beans-add.component.scss'],
 })
 export class BeansAddComponent implements OnInit {
-  public static COMPONENT_ID = 'bean-add';
+  public static readonly COMPONENT_ID = 'bean-add';
   public data: Bean = new Bean();
   @Input() private readonly bean_template: Bean;
   @Input() private readonly server_bean: ServerBean;
@@ -38,11 +37,10 @@ export class BeansAddComponent implements OnInit {
 
   private initialBeanData: string = '';
   private disableHardwareBack;
+
   constructor(
     private readonly modalController: ModalController,
-    private readonly navParams: NavParams,
     private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiImage: UIImage,
     private readonly uiHelper: UIHelper,
     private readonly uiFileHelper: UIFileHelper,
     private readonly uiToast: UIToast,
@@ -58,7 +56,7 @@ export class BeansAddComponent implements OnInit {
     if (this.settings.security_check_when_going_back === true) {
       this.disableHardwareBack = this.platform.backButton.subscribeWithPriority(
         9999,
-        (processNextHandler) => {
+        (_processNextHandler) => {
           // Don't do anything.
           this.confirmDismiss();
         }
@@ -144,6 +142,9 @@ export class BeansAddComponent implements OnInit {
   }
 
   public async __addBean() {
+    if (this.data.frozenDate && this.data.frozenId === '') {
+      this.data.frozenId = this.uiBeanHelper.generateFrozenId();
+    }
     await this.uiBeanStorage.add(this.data);
     this.uiAnalytics.trackEvent(
       BEAN_TRACKING.TITLE,

@@ -1,0 +1,19 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{"NAV_FROZEN_BEANS_LIST" | translate}}</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()" class="big-icon-only">
+        <ion-icon name="beanconqueror-back" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content #beanContent>
+
+  <ag-virtual-scroll #openScroll [items]="frozenBeansList" height="100vh" min-row-height="180">
+    <bean-information [disabled]='true' [showActions]='false' *ngFor="let bean of openScroll.items"
+                      [bean]="bean"></bean-information>
+
+  </ag-virtual-scroll>
+
+</ion-content>

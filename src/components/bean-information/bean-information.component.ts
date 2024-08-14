@@ -39,6 +39,8 @@ import { TranslateService } from '@ngx-translate/core';
 import BREW_TRACKING from '../../data/tracking/brewTracking';
 import * as htmlToImage from 'html-to-image';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
+import moment from 'moment/moment';
+import { BEAN_FREEZING_STORAGE_ENUM } from '../../enums/beans/beanFreezingStorage';
 
 @Component({
   selector: 'bean-information',
@@ -48,6 +50,7 @@ import { UIBrewHelper } from '../../services/uiBrewHelper';
 export class BeanInformationComponent implements OnInit {
   @Input() public bean: Bean;
   @Input() public showActions: boolean = true;
+  @Input() public disabled: boolean = false;
 
   @ViewChild('card', { read: ElementRef })
   public cardEl: ElementRef;
@@ -59,6 +62,7 @@ export class BeanInformationComponent implements OnInit {
   @Output() public beanAction: EventEmitter<any> = new EventEmitter();
 
   public beanRoastingTypeEnum = BEAN_ROASTING_TYPE_ENUM;
+  public beanFreezingStorageTypeEnum = BEAN_FREEZING_STORAGE_ENUM;
   public roast_enum = ROASTS_ENUM;
   public settings: Settings = null;
   constructor(
@@ -73,7 +77,7 @@ export class BeanInformationComponent implements OnInit {
     private readonly uiImage: UIImage,
     private readonly shareService: ShareService,
     private readonly serverCommunicationService: ServerCommunicationService,
-    private readonly uiHelper: UIHelper,
+    public readonly uiHelper: UIHelper,
     private readonly translate: TranslateService,
     private readonly platform: Platform,
     private readonly uiBrewHelper: UIBrewHelper,
@@ -228,6 +232,12 @@ export class BeanInformationComponent implements OnInit {
       case BEAN_ACTION.UNARCHIVE:
         await this.unarchiveBean();
         break;
+      case BEAN_ACTION.FREEZE:
+        await this.freezeBean();
+        break;
+      case BEAN_ACTION.UNFREEZE:
+        await this.unfreezeBean();
+        break;
       default:
         break;
     }
@@ -268,6 +278,16 @@ export class BeanInformationComponent implements OnInit {
     await this.resetSettings();
   }
 
+  public async freezeBean() {
+    await this.uiBeanHelper.freezeBean(this.bean);
+  }
+
+  public async unfreezeBean() {
+    this.bean.unfrozenDate = moment(new Date()).toISOString();
+    await this.uiBeanStorage.update(this.bean);
+    await this.resetSettings();
+  }
+
   public async toggleFavourite() {
     if (!this.bean.favourite) {
       this.uiAnalytics.trackEvent(
@@ -294,6 +314,10 @@ export class BeanInformationComponent implements OnInit {
   public async longPressEditBean(event) {
     event.stopPropagation();
     event.stopImmediatePropagation();
+    if (this.disabled) {
+      //Don#t edit
+      return;
+    }
     await this.editBean();
     this.beanAction.emit([BEAN_ACTION.EDIT, this.bean]);
   }

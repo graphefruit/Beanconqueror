@@ -248,9 +248,10 @@ export class GreenBeansPage implements OnInit {
     if (searchText) {
       sortedBeans = sortedBeans.filter(
         (e) =>
-          e.note.toLowerCase().includes(searchText) ||
-          e.name.toLowerCase().includes(searchText) ||
-          e.aromatics.toLowerCase().includes(searchText)
+          e.note?.toLowerCase().includes(searchText) ||
+          e.name?.toLowerCase().includes(searchText) ||
+          e.aromatics?.toLowerCase().includes(searchText) ||
+          e.ean_article_number?.toLowerCase().includes(searchText)
       );
     }
     if (isOpen) {

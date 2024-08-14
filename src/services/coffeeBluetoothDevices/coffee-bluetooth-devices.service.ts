@@ -38,6 +38,9 @@ import { DiyPythonCoffeeScale } from '../../classes/devices/diyPythonCoffeeScale
 import { DiyRustCoffeeScale } from '../../classes/devices/diyRustCoffeeScale';
 import { BookooScale } from 'src/classes/devices/bokooScale';
 import { BookooPressure } from 'src/classes/devices/bookooPressure';
+import { BasicGrillThermometer } from 'src/classes/devices/basicGrillThermometer';
+import { MeaterThermometer } from 'src/classes/devices/meaterThermometer';
+import { CombustionThermometer } from '../../classes/devices/combustionThermometer';
 
 declare var device: any;
 declare var ble: any;
@@ -539,7 +542,12 @@ export class CoffeeBluetoothDevicesService {
       let promiseResolved: boolean = false;
       this.scanAllBluetoothDevicesAndPassBack(
         (scanDevice) => {
-          if (ETITemperature.test(scanDevice)) {
+          if (
+            ETITemperature.test(scanDevice) ||
+            BasicGrillThermometer.test(scanDevice) ||
+            MeaterThermometer.test(scanDevice) ||
+            CombustionThermometer.test(scanDevice)
+          ) {
             // We found all needed devices.
             promiseResolved = true;
             this.clearScanAllBluetoothDevicesAndPassBackTimeout();
@@ -1011,6 +1019,33 @@ export class CoffeeBluetoothDevicesService {
             id: deviceTemperature.id,
             type: TemperatureType.ETI,
           });
+        } else if (BasicGrillThermometer.test(deviceTemperature)) {
+          this.logger.log(
+            'BleManager - We found a Basic Grill Thermometer device ' +
+              JSON.stringify(deviceTemperature)
+          );
+          supportedDevices.push({
+            id: deviceTemperature.id,
+            type: TemperatureType.BASICGRILL,
+          });
+        } else if (MeaterThermometer.test(deviceTemperature)) {
+          this.logger.log(
+            'BleManager - We found a Meater Grill Thermometer device ' +
+              JSON.stringify(deviceTemperature)
+          );
+          supportedDevices.push({
+            id: deviceTemperature.id,
+            type: TemperatureType.MEATER,
+          });
+        } else if (CombustionThermometer.test(deviceTemperature)) {
+          this.logger.log(
+            'BleManager - We found a Combustion Grill Thermometer device ' +
+              JSON.stringify(deviceTemperature)
+          );
+          supportedDevices.push({
+            id: deviceTemperature.id,
+            type: TemperatureType.COMBUSTION,
+          });
         }
       }
       resolve(supportedDevices);
@@ -1028,6 +1063,33 @@ export class CoffeeBluetoothDevicesService {
               'BleManager - We found a ETI Ltd Thermometer device '
             );
             resolve({ id: deviceTemperature.id, type: TemperatureType.ETI });
+            return;
+          } else if (BasicGrillThermometer.test(deviceTemperature)) {
+            this.logger.log(
+              'BleManager - We found a Basic Grill Thermometer device '
+            );
+            resolve({
+              id: deviceTemperature.id,
+              type: TemperatureType.BASICGRILL,
+            });
+            return;
+          } else if (MeaterThermometer.test(deviceTemperature)) {
+            this.logger.log(
+              'BleManager - We found a Meater Grill Thermometer device '
+            );
+            resolve({
+              id: deviceTemperature.id,
+              type: TemperatureType.MEATER,
+            });
+            return;
+          } else if (CombustionThermometer.test(deviceTemperature)) {
+            this.logger.log(
+              'BleManager - We found a Combustion Grill Thermometer device '
+            );
+            resolve({
+              id: deviceTemperature.id,
+              type: TemperatureType.COMBUSTION,
+            });
             return;
           }
         }
@@ -1227,6 +1289,17 @@ export class CoffeeBluetoothDevicesService {
                   resolve(undefined);
                 }, 500);
               });
+            } else if (device !== null && device.platform === 'iOS') {
+              if (settings?.scale_type === ScaleType.LUNAR) {
+                await this.enableIOSBluetooth();
+                await this.findDeviceWithDirectId(deviceId, 6000);
+                // Give it a short delay before reconnect
+                await new Promise((resolve) => {
+                  setTimeout(async () => {
+                    resolve(undefined);
+                  }, 500);
+                });
+              }
             }
 
             await new Promise((resolve) => {

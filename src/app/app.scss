@@ -38,8 +38,8 @@ ion-title {
 }
 .font-size-20 {
   font-size: 20px!important;
-  /**Else umlaut will get missing**/
-  line-height: 22px!important;
+  /**Else umlaut or special characters will get missing**/
+  line-height: 26px!important;
 }
 .font-size-24{
   font-size:24px!important;

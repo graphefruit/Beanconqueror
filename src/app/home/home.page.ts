@@ -1,12 +1,11 @@
-import {Component} from '@angular/core';
-import {ModalController, NavController} from '@ionic/angular';
-import {Router} from '@angular/router';
-import {UIBeanStorage} from '../../services/uiBeanStorage';
-import {Bean} from '../../classes/bean/bean';
-import {UIPreparationStorage} from '../../services/uiPreparationStorage';
-import {Preparation} from '../../classes/preparation/preparation';
-import {UIMillStorage} from '../../services/uiMillStorage';
-import {Mill} from '../../classes/mill/mill';
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { UIBeanStorage } from '../../services/uiBeanStorage';
+import { Bean } from '../../classes/bean/bean';
+import { UIPreparationStorage } from '../../services/uiPreparationStorage';
+import { Preparation } from '../../classes/preparation/preparation';
+import { UIMillStorage } from '../../services/uiMillStorage';
+import { Mill } from '../../classes/mill/mill';
 
 @Component({
   selector: 'app-home',
@@ -14,23 +13,17 @@ import {Mill} from '../../classes/mill/mill';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
-
-
   /** Needed app minimize for android */
   public brews: number = 0;
   public beans: number = 0;
   public preparations: number = 0;
 
-  constructor (public navCtrl: NavController,
-               private readonly modalCtrl: ModalController,
-               private readonly router: Router,
-               private readonly uiBeanStorage: UIBeanStorage,
-               private readonly uiPreparationStorage: UIPreparationStorage,
-               private readonly uiMillStorage: UIMillStorage) {
-
-  }
-
-
+  constructor(
+    private readonly router: Router,
+    private readonly uiBeanStorage: UIBeanStorage,
+    private readonly uiPreparationStorage: UIPreparationStorage,
+    private readonly uiMillStorage: UIMillStorage
+  ) {}
 
   public showBeans() {
     this.router.navigate(['/beans']);
@@ -40,7 +33,6 @@ export class HomePage {
     this.router.navigate(['/brew']);
   }
 
-
   public showPreparation() {
     this.router.navigate(['/preparation']);
   }
@@ -49,14 +41,14 @@ export class HomePage {
     this.router.navigate(['/mill']);
   }
 
-
   public activeBeansExists(): boolean {
     const beans: Array<Bean> = this.uiBeanStorage.getAllEntries();
     return beans.filter((e) => e.finished === false).length > 0;
   }
 
   public activePreparationsExists(): boolean {
-    const preparations: Array<Preparation> = this.uiPreparationStorage.getAllEntries();
+    const preparations: Array<Preparation> =
+      this.uiPreparationStorage.getAllEntries();
     return preparations.filter((e) => e.finished === false).length > 0;
   }
 
@@ -65,5 +57,4 @@ export class HomePage {
 
     return mills.filter((e) => e.finished === false).length > 0;
   }
-
 }

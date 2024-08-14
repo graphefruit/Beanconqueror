@@ -72,8 +72,16 @@ export class UIExcel {
     header.push('Actual smoothed weight');
     header.push('Old smoothed weight');
 
+    let hasMutatedWeightEntry: boolean = false;
+    if (_flow.weight.length > 0 && 'not_mutated_weight' in _flow.weight[0]) {
+      header.push('Not mutated weight');
+      hasMutatedWeightEntry = true;
+    }
+
     const wsData: any[][] = [header];
     for (const entry of _flow.weight) {
+      const notMutatedWeight: number = 0;
+
       const wbEntry: Array<any> = [
         entry.timestamp,
         entry.brew_time,
@@ -82,6 +90,9 @@ export class UIExcel {
         entry.actual_smoothed_weight,
         entry.old_smoothed_weight,
       ];
+      if (hasMutatedWeightEntry) {
+        wbEntry.push(entry.not_mutated_weight);
+      }
       wsData.push(wbEntry);
     }
     const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
@@ -433,6 +444,12 @@ export class UIExcel {
     header.push(this.translate.instant('EXCEL.PREPARATION.ID'));
     header.push(this.translate.instant('EXCEL.GRINDER.ID'));
 
+    const waterEnabled: boolean =
+      this.uiSettingsStorage.getSettings().show_water_section;
+    if (waterEnabled) {
+      header.push(this.translate.instant('BREW_DATA_WATER'));
+    }
+
     const millisecondsEnabled: boolean =
       this.uiSettingsStorage.getSettings().brew_milliseconds;
 
@@ -442,14 +459,30 @@ export class UIExcel {
       let bloomingTime: string = String(brew.coffee_blooming_time);
       let dripTime: string = String(brew.coffee_first_drip_time);
       let temperatureTime: string = String(brew.brew_temperature_time);
+      let millTime: string = String(brew.mill_timer);
       if (millisecondsEnabled) {
-        brewTime = brewTime + '.' + brew.brew_time_milliseconds;
-        bloomingTime =
-          bloomingTime + '.' + brew.coffee_blooming_time_milliseconds;
-        dripTime = dripTime + '.' + brew.coffee_first_drip_time_milliseconds;
-        temperatureTime =
-          temperatureTime + '.' + brew.brew_temperature_time_milliseconds;
+        if (brew.brew_time_milliseconds > 0) {
+          brewTime = brewTime + '.' + brew.brew_time_milliseconds;
+        }
+        if (brew.coffee_blooming_time_milliseconds) {
+          bloomingTime =
+            bloomingTime + '.' + brew.coffee_blooming_time_milliseconds;
+        }
+
+        if (brew.coffee_first_drip_time_milliseconds) {
+          dripTime = dripTime + '.' + brew.coffee_first_drip_time_milliseconds;
+        }
+
+        if (brew.brew_temperature_time_milliseconds) {
+          temperatureTime =
+            temperatureTime + '.' + brew.brew_temperature_time_milliseconds;
+        }
+
+        if (brew.mill_timer_milliseconds) {
+          millTime = millTime + '.' + brew.mill_timer_milliseconds;
+        }
       }
+
       const entry: Array<any> = [
         brew.grind_size,
         brew.grind_weight,
@@ -458,7 +491,7 @@ export class UIExcel {
         brew.getBean().name,
         brew.getMill().name,
         brew.mill_speed,
-        brew.mill_timer,
+        millTime,
         brew.pressure_profile,
         brew
           .getPreparation()
@@ -491,6 +524,15 @@ export class UIExcel {
         brew.getPreparation().config.uuid,
         brew.getMill().config.uuid,
       ];
+
+      if (waterEnabled) {
+        let waterName = '';
+        if (brew.water) {
+          waterName = brew.getWater().name;
+        }
+        entry.push(waterName);
+      }
+
       wsData.push(entry);
     }
     const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsData);

@@ -3,9 +3,16 @@
   ion-label {
     font-family: 'Baloo', sans-serif;
   }
+  [name='beanconqueror-pure-coffee-water'] {
+    max-width: 130px;
+    width: 130px !important;
+  }
+  .empirical-water {
+    width:120px;
+  }
 
   ion-card {
-    min-height: 185px;
+    min-height: 205px;
 
     ion-icon {
       width: 128px;

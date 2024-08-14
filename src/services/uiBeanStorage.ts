@@ -1,23 +1,22 @@
 /** Core */
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 /** Classes */
-import {Bean} from '../classes/bean/bean';
+import { Bean } from '../classes/bean/bean';
 /** Interfaces */
-import {IBean} from '../interfaces/bean/iBean';
+import { IBean } from '../interfaces/bean/iBean';
 /** Services */
-import {StorageClass} from '../classes/storageClass';
-import {UIHelper} from './uiHelper';
-import {UILog} from './uiLog';
-import {UIStorage} from './uiStorage';
-import {TranslateService} from '@ngx-translate/core';
+import { StorageClass } from '../classes/storageClass';
+import { UIHelper } from './uiHelper';
+import { UILog } from './uiLog';
+import { UIStorage } from './uiStorage';
+import { TranslateService } from '@ngx-translate/core';
 
 /** Ionic native */
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UIBeanStorage extends StorageClass {
-
   /**
    * Singelton instance
    */
@@ -34,11 +33,12 @@ export class UIBeanStorage extends StorageClass {
     return undefined;
   }
 
-  constructor(protected uiStorage: UIStorage,
-              protected uiHelper: UIHelper,
-              protected uiLog: UILog,
-              private readonly translate: TranslateService) {
-
+  constructor(
+    protected uiStorage: UIStorage,
+    protected uiHelper: UIHelper,
+    protected uiLog: UILog,
+    private readonly translate: TranslateService
+  ) {
     super(uiStorage, uiHelper, uiLog, 'BEANS');
     if (UIBeanStorage.instance === undefined) {
       UIBeanStorage.instance = this;
@@ -75,11 +75,10 @@ export class UIBeanStorage extends StorageClass {
     return this.beans;
   }
 
-  public async add(_entry: Bean) {
+  public async add(_entry: Bean): Promise<any> {
     _entry.fixDataTypes();
-    await super.add(_entry);
+    return await super.add(_entry);
   }
-
 
   public async initializeStorage() {
     this.beans = [];
@@ -90,7 +89,7 @@ export class UIBeanStorage extends StorageClass {
     const promise: Promise<boolean> = new Promise(async (resolve, reject) => {
       _obj.fixDataTypes();
       const val = await super.update(_obj);
-      resolve(val)
+      resolve(val);
     });
     return promise;
   }

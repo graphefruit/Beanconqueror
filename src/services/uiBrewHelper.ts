@@ -221,6 +221,7 @@ export class UIBrewHelper {
       repeatBrew.mill = brewMill.config.uuid;
     }
     repeatBrew.mill_timer = _brewToCopy.mill_timer;
+    repeatBrew.mill_timer_milliseconds = _brewToCopy.mill_timer_milliseconds;
     repeatBrew.mill_speed = _brewToCopy.mill_speed;
     repeatBrew.pressure_profile = _brewToCopy.pressure_profile;
     repeatBrew.brew_temperature = _brewToCopy.brew_temperature;
@@ -294,6 +295,7 @@ export class UIBrewHelper {
 
     if (!checkData.manage_parameters.mill_timer) {
       brew.mill_timer = 0;
+      brew.mill_timer_milliseconds = 0;
     }
     if (!checkData.manage_parameters.mill_speed) {
       brew.mill_speed = 0;
@@ -306,9 +308,11 @@ export class UIBrewHelper {
     }
     if (!checkData.manage_parameters.brew_temperature_time) {
       brew.brew_temperature_time = 0;
+      brew.brew_temperature_time_milliseconds = 0;
     }
     if (!checkData.manage_parameters.brew_time) {
       brew.brew_time = 0;
+      brew.brew_time_milliseconds = 0;
     }
 
     if (!checkData.manage_parameters.brew_quantity) {
@@ -322,9 +326,11 @@ export class UIBrewHelper {
     }
     if (!checkData.manage_parameters.coffee_first_drip_time) {
       brew.coffee_first_drip_time = 0;
+      brew.coffee_first_drip_time_milliseconds = 0;
     }
     if (!checkData.manage_parameters.coffee_blooming_time) {
       brew.coffee_blooming_time = 0;
+      brew.coffee_blooming_time_milliseconds = 0;
     }
 
     if (!checkData.manage_parameters.rating) {
@@ -596,8 +602,8 @@ export class UIBrewHelper {
         component: BrewRatingComponent,
         id: BrewRatingComponent.COMPONENT_ID,
         componentProps: { brew: _brew },
-        breakpoints: [0, 0.35, 0.5, 0.75],
-        initialBreakpoint: 0.35,
+        breakpoints: [0, 0.75, 1],
+        initialBreakpoint: 0.75,
       });
       await modal.present();
       await modal.onWillDismiss();

@@ -53,6 +53,7 @@ export class UIUpdate {
   public async checkUpdate() {
     this.uiLog.info('Check updates');
     const hasData: boolean = await this.uiStorage.hasData();
+
     try {
       const updateVersions: Array<string> = [
         'UPDATE_1',
@@ -604,7 +605,7 @@ export class UIUpdate {
         versionCode = await this.appVersion.getVersionNumber();
       } else {
         // Hardcored for testing
-        versionCode = '7.3.0';
+        versionCode = '7.4.0';
       }
       const version: Version = this.uiVersionStorage.getVersion();
       const displayingVersions =

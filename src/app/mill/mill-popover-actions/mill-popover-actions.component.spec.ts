@@ -1,7 +1,10 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import {IonicModule} from '@ionic/angular';
+import { IonicModule, NavParams } from '@ionic/angular';
 
-import {MillPopoverActionsComponent} from './mill-popover-actions.component';
+import { MillPopoverActionsComponent } from './mill-popover-actions.component';
+import { UIHelper } from '../../../services/uiHelper';
+import { TranslateModule } from '@ngx-translate/core';
+import { NavParamsMock, UIHelperMock } from '../../../classes/mock';
 
 describe('MillPopoverActionsComponent', () => {
   let component: MillPopoverActionsComponent;
@@ -10,7 +13,17 @@ describe('MillPopoverActionsComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [MillPopoverActionsComponent],
-      imports: [IonicModule.forRoot()]
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
+      providers: [
+        {
+          provide: NavParams,
+          useClass: NavParamsMock,
+        },
+        {
+          provide: UIHelper,
+          useClass: UIHelperMock,
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MillPopoverActionsComponent);

@@ -15,6 +15,10 @@ import { IRoastingMachine } from '../../interfaces/roasting-machine/iRoastingMac
 import { BeanProto } from '../../generated/src/classes/bean/bean';
 import { ICupping } from '../../interfaces/cupping/iCupping';
 import { IFlavor } from '../../interfaces/flavor/iFlavor';
+import { UIBeanHelper } from '../../services/uiBeanHelper';
+import { Brew } from '../brew/brew';
+import { UIBrewHelper } from '../../services/uiBrewHelper';
+import { BEAN_FREEZING_STORAGE_ENUM } from '../../enums/beans/beanFreezingStorage';
 
 export class Bean implements IBean {
   public name: string;
@@ -56,6 +60,16 @@ export class Bean implements IBean {
   public cupping: ICupping;
 
   public cupped_flavor: IFlavor;
+
+  public frozenDate: string;
+  public unfrozenDate: string;
+  public frozenId: string;
+  public frozenGroupId: string;
+  public frozenStorageType: BEAN_FREEZING_STORAGE_ENUM;
+  public frozenNote: string;
+
+  public bestDate: string;
+  public openDate: string;
 
   constructor() {
     this.name = '';
@@ -106,6 +120,16 @@ export class Bean implements IBean {
       predefined_flavors: {},
       custom_flavors: [],
     } as IFlavor;
+
+    this.frozenDate = '';
+    this.unfrozenDate = '';
+    this.frozenId = '';
+    this.frozenGroupId = '';
+    this.frozenStorageType = 'UNKNOWN' as BEAN_FREEZING_STORAGE_ENUM;
+    this.frozenNote = '';
+
+    this.bestDate = '';
+    this.openDate = '';
   }
 
   public getRoastName(): string {
@@ -116,6 +140,21 @@ export class Bean implements IBean {
       return this.roast_custom;
     }
     return '-';
+  }
+
+  public isFrozen() {
+    if (this.frozenDate && !this.unfrozenDate) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  public hasFrozenInformation() {
+    if (this.frozenDate || this.unfrozenDate) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public initializeByObject(beanObj: IBean): void {
@@ -193,10 +232,68 @@ export class Bean implements IBean {
       this.roastingDate !== undefined &&
       this.roastingDate !== ''
     ) {
-      const today = moment(Date.now()).startOf('day');
+      let today = moment(Date.now()).startOf('day');
+      if (this.finished) {
+        /** If the bean is archived, we search for all brews, and take the latest one, and stop the counting of bean age then
+         *
+         */
+        const beanHelper: UIBeanHelper = UIBeanHelper.getInstance();
+        const allBrews = beanHelper.getAllBrewsForThisBean(this.config.uuid);
+        if (allBrews.length > 0) {
+          const sortedBrews: Array<Brew> = UIBrewHelper.sortBrews(allBrews);
+          today = moment
+            .unix(sortedBrews[0].config.unix_timestamp)
+            .startOf('day');
+        }
+      }
       const roastingDate = moment(this.roastingDate).startOf('day');
 
-      return today.diff(roastingDate, 'days');
+      let hasFrozenDate: boolean = false;
+      if (this.frozenDate) {
+        hasFrozenDate = true;
+      }
+      let hasUnFrozenDate: boolean = false;
+      if (this.unfrozenDate) {
+        hasUnFrozenDate = true;
+      }
+
+      if (hasFrozenDate === false) {
+        // Normal calculcation as always
+        return today.diff(roastingDate, 'days');
+      } else {
+        // Something has been frozen, now its going down to the deep :)
+        let normalDaysToAdd: number = 0;
+        const frozenDate = moment(this.frozenDate).startOf('day');
+
+        const frozenDateDiff: number = frozenDate.diff(roastingDate, 'days');
+        // We add now the time between roasting and the first freezing.
+        normalDaysToAdd = normalDaysToAdd + frozenDateDiff;
+
+        if (hasUnFrozenDate) {
+          /**
+           * We did unfreeze the bean and maybe it was still there one day or more.
+           * We calculate now the unfreeze - freeze date and take into account that 90 days of freezing is one real day time.
+           */
+          const unfrozenDate = moment(this.unfrozenDate).startOf('day');
+          const freezingPeriodTime = unfrozenDate.diff(frozenDate, 'days');
+          const priorToNormalDays = Math.floor(freezingPeriodTime / 90);
+          normalDaysToAdd = normalDaysToAdd + priorToNormalDays;
+
+          /**
+           * After we've calculcated the time in between we check how much time has been gone after unfreezing
+           */
+          const diffOfBrewTime = today.diff(unfrozenDate, 'days');
+          normalDaysToAdd = normalDaysToAdd + diffOfBrewTime;
+        } else {
+          /** We didn't unfreeze the bean, and the bean was directly used.
+           * So the beans where actually taken directly in frozen state.
+           */
+          const diffOfBrewTime = today.diff(frozenDate, 'days');
+          const priorToNormalDays = Math.floor(diffOfBrewTime / 90);
+          normalDaysToAdd = normalDaysToAdd + priorToNormalDays;
+        }
+        return normalDaysToAdd;
+      }
     }
     return 0;
   }

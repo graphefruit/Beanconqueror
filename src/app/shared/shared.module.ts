@@ -186,6 +186,11 @@ import { LoadingPopoverComponent } from '../../popover/loading-popover/loading-p
 import { BrewBrewingGraphComponent } from '../../components/brews/brew-brewing-graph/brew-brewing-graph.component';
 import { BrewBrewingPreparationDeviceComponent } from '../../components/brews/brew-brewing-preparation-device/brew-brewing-preparation-device.component';
 import { WaterAddTypeComponent } from '../water-section/water/water-add-type/water-add-type.component';
+import { PreparationSortToolsComponent } from '../preparation/preparation-sort-tools/preparation-sort-tools.component';
+import { MeticulousHelpPopoverComponent } from '../../popover/meticulous-help-popover/meticulous-help-popover.component';
+import { BeanPopoverFreezeComponent } from '../beans/bean-popover-freeze/bean-popover-freeze.component';
+import { BeanFreezeInformationComponent } from '../../components/beans/bean-freeze-information/bean-freeze-information.component';
+import { BeanPopoverFrozenListComponent } from '../beans/bean-popover-frozen-list/bean-popover-frozen-list.component';
 
 @NgModule({
   declarations: [
@@ -226,6 +231,7 @@ import { WaterAddTypeComponent } from '../water-section/water/water-add-type/wat
     FilesystemErrorPopoverComponent,
     WelcomePopoverComponent,
     AnalyticsPopoverComponent,
+    MeticulousHelpPopoverComponent,
     QrCodeScannerPopoverComponent,
     UpdatePopoverComponent,
     DatetimePopoverComponent,
@@ -312,6 +318,8 @@ import { WaterAddTypeComponent } from '../water-section/water/water-add-type/wat
     SettingsPopoverBluetoothActionsComponent,
     BeanPopoverActionsComponent,
     BeanPopoverAddComponent,
+    BeanPopoverFreezeComponent,
+    BeanPopoverFrozenListComponent,
     BeanArchivePopoverComponent,
     MillPopoverActionsComponent,
     BeanModalSelectComponent,
@@ -321,6 +329,7 @@ import { WaterAddTypeComponent } from '../water-section/water/water-add-type/wat
     MillModalSelectComponent,
     PreparationModalSelectComponent,
     PreparationToolModalSelectComponent,
+    PreparationSortToolsComponent,
     PreparationPopoverActionsComponent,
     TimerComponent,
     DefaultCustomParameterComponent,
@@ -333,6 +342,7 @@ import { WaterAddTypeComponent } from '../water-section/water/water-add-type/wat
     BeanRoastInformationComponent,
     BeanGeneralInformationComponent,
     BeanSortInformationComponent,
+    BeanFreezeInformationComponent,
     GreenBeanGeneralInformationComponent,
     BrewBrewingComponent,
     BrewBrewingGraphComponent,
@@ -437,6 +447,7 @@ import { WaterAddTypeComponent } from '../water-section/water/water-add-type/wat
     FilesystemErrorPopoverComponent,
     WelcomePopoverComponent,
     AnalyticsPopoverComponent,
+    MeticulousHelpPopoverComponent,
     QrCodeScannerPopoverComponent,
     UpdatePopoverComponent,
     DatetimePopoverComponent,
@@ -520,6 +531,8 @@ import { WaterAddTypeComponent } from '../water-section/water/water-add-type/wat
     GraphPopoverActionsComponent,
     BeanPopoverActionsComponent,
     BeanPopoverAddComponent,
+    BeanPopoverFreezeComponent,
+    BeanPopoverFrozenListComponent,
     BeanArchivePopoverComponent,
     BeanModalSelectComponent,
     AssociatedBrewsComponent,
@@ -528,6 +541,7 @@ import { WaterAddTypeComponent } from '../water-section/water/water-add-type/wat
     MillModalSelectComponent,
     PreparationModalSelectComponent,
     PreparationToolModalSelectComponent,
+    PreparationSortToolsComponent,
     MillPopoverActionsComponent,
     PreparationPopoverActionsComponent,
     TimerComponent,
@@ -541,6 +555,7 @@ import { WaterAddTypeComponent } from '../water-section/water/water-add-type/wat
     BeanRoastInformationComponent,
     BeanGeneralInformationComponent,
     BeanSortInformationComponent,
+    BeanFreezeInformationComponent,
     GreenBeanGeneralInformationComponent,
     BrewBrewingComponent,
     BrewBrewingGraphComponent,

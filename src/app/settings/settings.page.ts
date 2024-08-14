@@ -65,7 +65,7 @@ import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDev
 import { Logger } from '../../classes/devices/common/logger';
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { UIExportImportHelper } from '../../services/uiExportImportHelper';
-import { ScaleType } from '../../classes/devices';
+import { ScaleType, sleep } from '../../classes/devices';
 import { VISUALIZER_SERVER_ENUM } from '../../enums/settings/visualizerServer';
 import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
 import { UIGraphStorage } from '../../services/uiGraphStorage.service';
@@ -85,7 +85,7 @@ declare var FilePicker;
   templateUrl: './settings.page.html',
   styleUrls: ['./settings.page.scss'],
 })
-export class SettingsPage implements OnInit {
+export class SettingsPage {
   public settings: Settings;
 
   public BREW_VIEWS = BREW_VIEW_ENUM;
@@ -115,8 +115,6 @@ export class SettingsPage implements OnInit {
     }
   }
 
-  public ngOnDestroy() {}
-
   private __cleanupImportSettingsData(_data: ISettings | any): void {
     // We need to remove the filter because of new data here.
     if (_data !== undefined) {
@@ -136,7 +134,6 @@ export class SettingsPage implements OnInit {
     public uiStorage: UIStorage,
     public uiHelper: UIHelper,
     private readonly fileChooser: FileChooser,
-    private readonly filePath: FilePath,
     private readonly file: File,
     private readonly alertCtrl: AlertController,
     private readonly uiAlert: UIAlert,
@@ -192,8 +189,6 @@ export class SettingsPage implements OnInit {
       this.isTextToSpeechSectionAvailable = false;
     }
   }
-
-  public async ngOnInit() {}
 
   public handleScrollStart() {
     this.isScrolling = true;
@@ -534,20 +529,21 @@ export class SettingsPage implements OnInit {
 
     const scale = await this.bleManager.tryToFindScale();
 
-    await new Promise(async (resolve) => {
-      // Give some time
-      setTimeout(async () => {
-        await this.uiAlert.hideLoadingSpinner();
-        resolve(undefined);
-      }, 50);
-    });
+    await sleep(500);
+    await this.uiAlert.hideLoadingSpinner();
 
     if (scale) {
       try {
         // We don't need to retry for iOS, because we just did scan before.
 
         // NEVER!!! Await here, else the bluetooth logic will get broken.
-        this.bleManager.autoConnectScale(scale.type, scale.id, false);
+        this.bleManager.autoConnectScale(
+          scale.type,
+          scale.id,
+          false,
+          () => {},
+          () => {}
+        );
       } catch (ex) {}
 
       this.settings.scale_id = scale.id;
@@ -805,11 +801,39 @@ export class SettingsPage implements OnInit {
     // #379 - First save then reset filter ;)
     await this.saveSettings();
     this.settings.resetFilter();
+    setTimeout(() => {
+      const newRating = this.settings.brew_rating;
+
+      const allBrewEntries = this.uiBrewStorage.getAllEntries();
+      if (allBrewEntries.filter((e) => e.rating > newRating).length > 0) {
+        // We have brews which have a higher rating and would be not displayed.
+        this.uiAlert.showMessage(
+          'PAGE_SETTINGS_BREW_RATING_CHANGED_BREWS_NOT_VISIBLE',
+          'CARE',
+          'CLOSE',
+          true
+        );
+      }
+    }, 500);
   }
 
   public async changeBeanRating() {
     await this.saveSettings();
     this.settings.resetFilter();
+    setTimeout(() => {
+      const newRating = this.settings.bean_rating;
+
+      const allBeanEntries = this.uiBeanStorage.getAllEntries();
+      if (allBeanEntries.filter((e) => e.rating > newRating).length > 0) {
+        // We have brews which have a higher rating and would be not displayed.
+        this.uiAlert.showMessage(
+          'PAGE_SETTINGS_BEAN_RATING_CHANGED_BEANS_NOT_VISIBLE',
+          'CARE',
+          'CLOSE',
+          true
+        );
+      }
+    }, 500);
   }
 
   public async saveSettings() {

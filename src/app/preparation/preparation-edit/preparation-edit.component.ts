@@ -104,6 +104,10 @@ export class PreparationEditComponent implements OnInit {
     }
   }
 
+  public async sortPreparationTools() {
+    await this.uiPreparationHelper.sortPreparationTools(this.data);
+  }
+
   public async editTool(_tool: PreparationTool) {
     await this.uiPreparationHelper.editPreparationTool(this.data, _tool);
     //Reinitialize

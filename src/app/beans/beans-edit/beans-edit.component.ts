@@ -1,9 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, NavParams, Platform } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
-
-import { UIHelper } from '../../../services/uiHelper';
-import { UIImage } from '../../../services/uiImage';
 import { IBean } from '../../../interfaces/bean/iBean';
 import { Bean } from '../../../classes/bean/bean';
 import { UIToast } from '../../../services/uiToast';
@@ -13,6 +10,7 @@ import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { Settings } from '../../../classes/settings/settings';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIAlert } from '../../../services/uiAlert';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'beans-edit',
@@ -20,19 +18,17 @@ import { UIAlert } from '../../../services/uiAlert';
   styleUrls: ['./beans-edit.component.scss'],
 })
 export class BeansEditComponent implements OnInit {
-  public static COMPONENT_ID: string = 'bean-edit';
+  public static readonly COMPONENT_ID: string = 'bean-edit';
   public settings: Settings = undefined;
   public data: Bean;
   @Input() public bean: IBean;
   public bean_segment = 'general';
   private initialBeanData: string = '';
-  private disableHardwareBack;
+  private disableHardwareBack: Subscription;
+
   constructor(
-    private readonly navParams: NavParams,
     private readonly modalController: ModalController,
     private readonly uiBeanStorage: UIBeanStorage,
-    private readonly uiImage: UIImage,
-    private readonly uiHelper: UIHelper,
     private readonly uiToast: UIToast,
     private readonly uiAnalytics: UIAnalytics,
     public readonly uiBeanHelper: UIBeanHelper,
@@ -56,6 +52,7 @@ export class BeansEditComponent implements OnInit {
       await this.__editBean();
     }
   }
+
   public confirmDismiss(): void {
     if (this.settings.security_check_when_going_back === false) {
       this.dismiss();
@@ -101,7 +98,11 @@ export class BeansEditComponent implements OnInit {
 
     return valid;
   }
+
   private async __editBean() {
+    if (this.data.frozenDate && this.data.frozenId === '') {
+      this.data.frozenId = this.uiBeanHelper.generateFrozenId();
+    }
     await this.uiBeanStorage.update(this.data);
     this.uiToast.showInfoToast('TOAST_BEAN_EDITED_SUCCESSFULLY');
     this.uiAnalytics.trackEvent(

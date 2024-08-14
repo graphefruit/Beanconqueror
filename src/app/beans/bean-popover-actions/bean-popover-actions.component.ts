@@ -6,6 +6,8 @@ import { Bean } from '../../../classes/bean/bean';
 import { BEAN_ACTION } from '../../../enums/beans/beanAction';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { Brew } from '../../../classes/brew/brew';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { Settings } from '../../../classes/settings/settings';
 
 @Component({
   selector: 'bean-popover-actions',
@@ -16,16 +18,20 @@ export class BeanPopoverActionsComponent implements OnInit {
   public static COMPONENT_ID = 'bean-popover-actions';
   public data: Bean = new Bean();
 
+  public settings: Settings;
   constructor(
     private readonly modalController: ModalController,
     private readonly navParams: NavParams,
     private readonly uiHelper: UIHelper,
-    private readonly uiBeanHelper: UIBeanHelper
+    private readonly uiBeanHelper: UIBeanHelper,
+    private readonly uiSettingsStorage: UISettingsStorage
   ) {
     // Moved from ionViewDidEnter, because of Ionic issues with ion-range
     const bean: IBean = this.uiHelper.copyData(this.navParams.get('bean'));
 
     this.data.initializeByObject(bean);
+
+    this.settings = this.uiSettingsStorage.getSettings();
   }
 
   public ionViewDidEnter(): void {}

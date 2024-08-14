@@ -384,7 +384,7 @@ export class BrewBrewingGraphComponent implements OnInit {
   }
 
   public getPreparation(): Preparation {
-    return this.uiPreparationStorage.getByUUID(this.data.method_of_preparation);
+    return this.data.getPreparation();
   }
 
   public resetPressure() {
@@ -521,7 +521,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           y: [],
           name: this.translate.instant('BREW_FLOW_WEIGHT'),
           yaxis: 'y',
-          type: 'scattergl',
+          type: 'scatter',
           mode: 'lines',
           line: {
             shape: 'linear',
@@ -537,7 +537,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           y: [],
           name: this.translate.instant('BREW_FLOW_WEIGHT_PER_SECOND'),
           yaxis: 'y2',
-          type: 'scattergl',
+          type: 'scatter',
           mode: 'lines',
           line: {
             shape: 'linear',
@@ -554,7 +554,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           y: [],
           name: this.translate.instant('BREW_FLOW_WEIGHT_REALTIME'),
           yaxis: 'y2',
-          type: 'scattergl',
+          type: 'scatter',
           mode: 'lines',
           line: {
             shape: 'linear',
@@ -571,7 +571,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           y: [],
           name: this.translate.instant('BREW_PRESSURE_FLOW'),
           yaxis: 'y4',
-          type: 'scattergl',
+          type: 'scatter',
           mode: 'lines',
           line: {
             shape: 'linear',
@@ -588,7 +588,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           y: [],
           name: this.translate.instant('BREW_TEMPERATURE_REALTIME'),
           yaxis: 'y5',
-          type: 'scattergl',
+          type: 'scatter',
           mode: 'lines',
           line: {
             shape: 'linear',
@@ -693,7 +693,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         y: [],
         name: this.translate.instant('BREW_FLOW_WEIGHT'),
         yaxis: 'y',
-        type: 'scattergl',
+        type: 'scatter',
         mode: 'lines',
         line: {
           shape: 'linear',
@@ -709,7 +709,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         y: [],
         name: this.translate.instant('BREW_FLOW_WEIGHT_PER_SECOND'),
         yaxis: 'y2',
-        type: 'scattergl',
+        type: 'scatter',
         mode: 'lines',
         line: {
           shape: 'linear',
@@ -726,7 +726,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         y: [],
         name: this.translate.instant('BREW_FLOW_WEIGHT_REALTIME'),
         yaxis: 'y2',
-        type: 'scattergl',
+        type: 'scatter',
         mode: 'lines',
         line: {
           shape: 'linear',
@@ -743,7 +743,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         y: [],
         name: this.translate.instant('BREW_PRESSURE_FLOW'),
         yaxis: 'y4',
-        type: 'scattergl',
+        type: 'scatter',
         mode: 'lines',
         line: {
           shape: 'linear',
@@ -760,7 +760,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         y: [],
         name: this.translate.instant('BREW_TEMPERATURE_REALTIME'),
         yaxis: 'y5',
-        type: 'scattergl',
+        type: 'scatter',
         mode: 'lines',
         line: {
           shape: 'linear',
@@ -1763,6 +1763,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           'We could not stop script - manual triggered: ' + _msg,
           false
         );
+        this.uiLog.log('We could not stop script - manual triggered: ' + _msg);
       });
       this.writeExecutionTimeToNotes(
         'Stop script (Pause button)',
@@ -2493,12 +2494,7 @@ export class BrewBrewingGraphComponent implements OnInit {
                   try {
                     const scale: BluetoothScale = this.bleManager.getScale();
                     if (scale) {
-                      await new Promise((resolve) => {
-                        scale.tare();
-                        setTimeout(async () => {
-                          resolve(undefined);
-                        }, this.settings.bluetooth_command_delay);
-                      });
+                      scale.tare();
                     }
                   } catch (ex) {}
                 }
@@ -2576,8 +2572,128 @@ export class BrewBrewingGraphComponent implements OnInit {
     }
   }
 
+  private mutateWeightAndSeeAnomalys(
+    _scaleChange: any,
+    _scale: BluetoothScale,
+    _styleType: PREPARATION_STYLE_TYPE
+  ) {
+    let weight: number = this.uiHelper.toFixedIfNecessary(
+      _scaleChange.actual,
+      1
+    );
+    let oldWeight: number = this.uiHelper.toFixedIfNecessary(
+      _scaleChange.old,
+      1
+    );
+    let smoothedWeight: number = this.uiHelper.toFixedIfNecessary(
+      _scaleChange.smoothed,
+      1
+    );
+    let oldSmoothedWeight: number = this.uiHelper.toFixedIfNecessary(
+      _scaleChange.oldSmoothed,
+      1
+    );
+    const notMutatedWeight: number = this.uiHelper.toFixedIfNecessary(
+      _scaleChange.notMutatedWeight,
+      1
+    );
+    const isEspresso = _styleType === PREPARATION_STYLE_TYPE.ESPRESSO;
+    const scaleType = this.bleManager.getScale()?.getScaleType();
+    //Yeay yeay yeay, sometimes the lunar scale is reporting wrongly cause of closed api, therefore try to tackle this issues down with the lunar
+    if (scaleType === ScaleType.LUNAR) {
+      if (weight > 5000) {
+        // Wrong scale values reported. - Fix it back
+        if (this.flowProfileTempAll.length > 0) {
+          const lastEntry = this.flowProfileTempAll.slice(-1);
+          weight = lastEntry[0].weight;
+        } else {
+          weight = oldWeight;
+        }
+      }
+    }
+    if (weight <= 0 && isEspresso) {
+      if (this.flowProfileTempAll.length >= 3) {
+        let weAreDecreasing: boolean = false;
+        for (
+          let i = this.flowProfileTempAll.length - 1;
+          i >= this.flowProfileTempAll.length - 2;
+          i--
+        ) {
+          if (
+            this.flowProfileTempAll[i].weight <
+            this.flowProfileTempAll[i - 1].weight
+          ) {
+            weAreDecreasing = true;
+          } else {
+            // We are decreasing, break directly, that the value is not overwritten again.
+            weAreDecreasing = false;
+            break;
+          }
+        }
+        // We checked that we're not going to degreese
+        if (weAreDecreasing === false) {
+          const entryBefore =
+            this.flowProfileTempAll[this.flowProfileTempAll.length - 1];
+          // I don't know if old_weight could just be bigger then 0
+          weight = entryBefore.weight;
+          if (_scale) {
+            _scale.setOldWeight(weight);
+            oldWeight = weight;
+          }
+        }
+      }
+    } else {
+      if (isEspresso) {
+        //Check if the weight before this actual weight is less then factor X
+        //like we got jumps weight 25.8 grams, next was 259 grams.
+        if (this.flowProfileTempAll.length >= 2) {
+          const entryBefore =
+            this.flowProfileTempAll[this.flowProfileTempAll.length - 1];
+          const entryBeforeVal = entryBefore.weight;
+          let risingFactorOK: boolean = true;
+
+          /**
+           * We try to match also turbo-shots which are like 7-8 grams.
+           * Scales with just 3 values per second would be like 7 / 3 values per second = 2.33g increase each tick.
+           * So we won't get jump from like 1 to 10 gram, then to like 40 grams
+           */
+          const plausibleEspressoWeightIncreaseBound: number = 5;
+          risingFactorOK =
+            entryBeforeVal + plausibleEspressoWeightIncreaseBound >= weight;
+
+          if (risingFactorOK) {
+            //All good factor is matched
+          } else {
+            //Nothing good, somehow we got spikes.
+            weight = entryBeforeVal;
+            //Reset old weight.
+            if (_scale) {
+              _scale.setOldWeight(weight);
+              oldWeight = weight;
+            }
+          }
+        }
+      }
+    }
+
+    if (isEspresso && _scale && weight <= 0) {
+      _scale.resetSmoothedValue();
+      smoothedWeight = 0;
+      oldSmoothedWeight = 0;
+    }
+
+    return {
+      actual: weight,
+      old: oldWeight,
+      smoothed: smoothedWeight,
+      oldSmoothed: oldSmoothedWeight,
+      notMutatedWeight: notMutatedWeight,
+    };
+  }
+
   public attachToScaleWeightChange() {
     const scale: BluetoothScale = this.bleManager.getScale();
+    const preparationStyleType = this.data.getPreparation().style_type;
     if (scale) {
       this.deattachToWeightChange();
 
@@ -2587,7 +2703,18 @@ export class BrewBrewingGraphComponent implements OnInit {
       }
 
       this.machineStopScriptWasTriggered = false;
-      this.scaleFlowSubscription = scale.flowChange.subscribe((_val) => {
+      this.scaleFlowSubscription = scale.flowChange.subscribe((_valChange) => {
+        let _val;
+        if (this.ignoreScaleWeight === false) {
+          _val = this.mutateWeightAndSeeAnomalys(
+            _valChange,
+            scale,
+            preparationStyleType
+          );
+        } else {
+          _val = _valChange;
+        }
+
         if (
           this.brewComponent.timer.isTimerRunning() &&
           this.brewComponent.brewBrewingPreparationDeviceEl.preparationDeviceConnected() &&
@@ -2725,6 +2852,9 @@ export class BrewBrewingGraphComponent implements OnInit {
                           'We could not start script at weight: ' + _msg,
                           false
                         );
+                        this.uiLog.log(
+                          'We could not start script at weight: ' + _msg
+                        );
                       });
                     this.writeExecutionTimeToNotes(
                       'Weight reached script',
@@ -2743,6 +2873,9 @@ export class BrewBrewingGraphComponent implements OnInit {
                       this.uiToast.showInfoToast(
                         'We could not stop script at weight: ' + _msg,
                         false
+                      );
+                      this.uiLog.log(
+                        'We could not stop script at weight: ' + _msg
                       );
                     });
                     this.writeExecutionTimeToNotes(
@@ -2781,6 +2914,7 @@ export class BrewBrewingGraphComponent implements OnInit {
               old: oldFlowProfileTemp.oldWeight,
               smoothed: oldFlowProfileTemp.smoothedWeight,
               oldSmoothed: oldFlowProfileTemp.oldSmoothedWeight,
+              notMutatedWeight: _val.notMutatedWeight,
             };
             this.__setFlowProfile(passVal);
           }
@@ -2888,54 +3022,6 @@ export class BrewBrewingGraphComponent implements OnInit {
 
     this.flow_profile_raw.realtimeFlow.push(realtimeWaterFlow);
     /* Realtime flow End **/
-  }
-
-  private __setMachineWeightFlow(_weight: any) {
-    // Nothing for storing etc. is done here actually
-    const actual: number = this.uiHelper.toFixedIfNecessary(_weight.actual, 2);
-    const old: number = this.uiHelper.toFixedIfNecessary(_weight.old, 2);
-
-    if (this.flowTime === undefined) {
-      this.flowTime = this.brewComponent.getTime();
-      this.flowSecondTick = 0;
-    }
-
-    const flowObj = {
-      unixTime: moment(new Date())
-        .startOf('day')
-        .add('milliseconds', Date.now() - this.startingFlowTime)
-        .toDate()
-        .getTime(),
-      weight: actual,
-      oldWeight: old,
-      smoothedWeight: actual,
-      oldSmoothedWeight: old,
-      flowTime: this.flowTime,
-      flowTimeSecond: this.flowTime + '.' + this.flowSecondTick,
-      flowTimestamp: this.uiHelper.getActualTimeWithMilliseconds(),
-      dateUnixTime: undefined,
-    };
-    flowObj.dateUnixTime = new Date(flowObj.unixTime);
-
-    if (this.flowTime !== this.brewComponent.getTime()) {
-      this.flowTime = this.brewComponent.getTime();
-      this.flowSecondTick = 0;
-    }
-
-    this.weightTrace.x.push(flowObj.dateUnixTime);
-    this.weightTrace.y.push(flowObj.weight);
-
-    this.pushFlowProfile(
-      flowObj.flowTimestamp,
-      flowObj.flowTimeSecond,
-      flowObj.weight,
-      flowObj.oldWeight,
-      flowObj.smoothedWeight,
-      flowObj.oldSmoothedWeight
-    );
-    this.updateChart();
-
-    this.flowSecondTick++;
   }
 
   private __setPressureFlow(_pressure: any) {
@@ -3061,61 +3147,15 @@ export class BrewBrewingGraphComponent implements OnInit {
       _scaleChange.oldSmoothed,
       1
     );
+    const notMutatedWeight: number = this.uiHelper.toFixedIfNecessary(
+      _scaleChange.notMutatedWeight,
+      1
+    );
 
     if (this.flowTime === undefined) {
       this.flowTime = this.brewComponent.getTime();
     }
     const scaleType = this.bleManager.getScale()?.getScaleType();
-    //Yeay yeay yeay, sometimes the lunar scale is reporting wrongly cause of closed api, therefore try to tackle this issues down with the lunar
-    if (scaleType === ScaleType.LUNAR) {
-      if (weight > 5000) {
-        // Wrong scale values reported. - Fix it back
-        if (this.flowProfileTempAll.length > 0) {
-          const lastEntry = this.flowProfileTempAll.slice(-1);
-          weight = lastEntry[0].weight;
-        } else {
-          weight = oldWeight;
-        }
-      } else {
-        if (weight <= 0) {
-          if (this.flowProfileTempAll.length >= 3) {
-            let weAreDecreasing: boolean = false;
-            for (
-              let i = this.flowProfileTempAll.length - 1;
-              i >= this.flowProfileTempAll.length - 2;
-              i--
-            ) {
-              if (
-                this.flowProfileTempAll[i].weight <
-                this.flowProfileTempAll[i - 1].weight
-              ) {
-                weAreDecreasing = true;
-              } else {
-                // We are decreasing, break directly, that the value is not overwritten again.
-                weAreDecreasing = false;
-                break;
-              }
-            }
-            // We checked that we're not going to degreese
-            if (weAreDecreasing === false) {
-              // I don't know if old_weight could just be bigger then 0
-              weight = oldWeight;
-            }
-          }
-        } else {
-          //Check if the weight before this actual weight is less then factor 2.
-          //like we got jumps weight 25.8 grams, next was 259 grams.
-          if (this.flowProfileTempAll.length >= 2) {
-            if (oldWeight * 2 >= weight) {
-              //All good factor is matched
-            } else {
-              //Nothing good, somehow we got spikes.
-              weight = oldWeight;
-            }
-          }
-        }
-      }
-    }
 
     const flowObj = {
       unixTime: moment(new Date())
@@ -3131,6 +3171,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       flowTimeSecond: this.flowTime + '.' + this.flowSecondTick,
       flowTimestamp: this.uiHelper.getActualTimeWithMilliseconds(),
       dateUnixTime: undefined,
+      notMutatedWeight: notMutatedWeight,
     };
     flowObj.dateUnixTime = new Date(flowObj.unixTime);
 
@@ -3333,7 +3374,8 @@ export class BrewBrewingGraphComponent implements OnInit {
             weightToAdd,
             item.oldWeight,
             item.smoothedWeight,
-            item.oldSmoothedWeight
+            item.oldSmoothedWeight,
+            item.not_mutated_weight
           );
         }
       }
@@ -3458,7 +3500,8 @@ export class BrewBrewingGraphComponent implements OnInit {
         flowObj.weight,
         flowObj.oldWeight,
         flowObj.smoothedWeight,
-        flowObj.oldSmoothedWeight
+        flowObj.oldSmoothedWeight,
+        flowObj.notMutatedWeight
       );
       this.updateChart();
     }
@@ -3571,7 +3614,8 @@ export class BrewBrewingGraphComponent implements OnInit {
     _actualWeight: number,
     _oldWeight: number,
     _actualSmoothedWeight: number,
-    _oldSmoothedWeight: number
+    _oldSmoothedWeight: number,
+    _notMutatedWeight: number
   ) {
     const brewFlow: IBrewWeightFlow = {} as IBrewWeightFlow;
     brewFlow.timestamp = _timestamp;
@@ -3580,6 +3624,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     brewFlow.old_weight = _oldWeight;
     brewFlow.actual_smoothed_weight = _actualSmoothedWeight;
     brewFlow.old_smoothed_weight = _oldSmoothedWeight;
+    brewFlow.not_mutated_weight = _notMutatedWeight;
     this.flow_profile_raw.weight.push(brewFlow);
   }
 
@@ -3779,6 +3824,7 @@ export class BrewBrewingGraphComponent implements OnInit {
               'We could not start script at first drip: ' + _msg,
               false
             );
+            this.uiLog.log('We could not start script at first drip: ' + _msg);
           });
         this.writeExecutionTimeToNotes(
           'First drip script',
@@ -3815,6 +3861,10 @@ export class BrewBrewingGraphComponent implements OnInit {
                 'We could not start script at first drip - manual  triggered: ' +
                   _msg,
                 false
+              );
+              this.uiLog.log(
+                'We could not start script at first drip - manual  triggered: ' +
+                  _msg
               );
             });
           this.writeExecutionTimeToNotes(

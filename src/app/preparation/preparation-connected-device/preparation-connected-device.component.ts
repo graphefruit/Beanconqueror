@@ -1,8 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Preparation } from '../../../classes/preparation/preparation';
-import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
 import { IPreparation } from '../../../interfaces/preparation/iPreparation';
-import { ModalController, NavParams } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationStyleTypes';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
@@ -10,19 +9,19 @@ import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 import { PreparationDevice } from '../../../classes/preparationDevice/preparationDevice';
 import { UIToast } from '../../../services/uiToast';
 import { UIAlert } from '../../../services/uiAlert';
-import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
 import { UIHelper } from '../../../services/uiHelper';
+import { UISettingsStorage } from '../../../services/uiSettingsStorage';
+import { Settings } from '../../../classes/settings/settings';
 
 @Component({
   selector: 'app-preparation-connected-device',
   templateUrl: './preparation-connected-device.component.html',
   styleUrls: ['./preparation-connected-device.component.scss'],
 })
-export class PreparationConnectedDeviceComponent implements OnInit {
-  public static COMPONENT_ID: string = 'preparation-connected-device';
+export class PreparationConnectedDeviceComponent {
+  public static readonly COMPONENT_ID = 'preparation-connected-device';
   public data: Preparation = new Preparation();
   public PREPARATION_STYLE_TYPE = PREPARATION_STYLE_TYPE;
-  public preparationTypeEnum = PREPARATION_TYPES;
   public segment: string = 'manage';
   public PREPARATION_DEVICE_TYPE = PreparationDeviceType;
   @Input() public preparation: IPreparation;
@@ -36,13 +35,13 @@ export class PreparationConnectedDeviceComponent implements OnInit {
     return `${newValue}`;
   }
   constructor(
-    private readonly navParams: NavParams,
     private readonly modalController: ModalController,
     private readonly uiPreparationStorage: UIPreparationStorage,
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly uiToast: UIToast,
     private readonly uiAlert: UIAlert,
-    private readonly uiHelper: UIHelper
+    public readonly uiHelper: UIHelper,
+    private readonly uiSettingsStorage: UISettingsStorage
   ) {}
 
   public ionViewWillEnter(): void {
@@ -61,7 +60,10 @@ export class PreparationConnectedDeviceComponent implements OnInit {
     );
   }
 
-  public async setUrl() {}
+  public async setUrl() {
+    // IDK why this async method 'setUrl' is empty
+  }
+
   public async save() {
     setTimeout(async () => {
       if (
@@ -96,6 +98,17 @@ export class PreparationConnectedDeviceComponent implements OnInit {
           this.data.connectedPreparationDevice.customParams.residualLagTime = 1.35;
         }
       }
+
+      if (
+        this.data.connectedPreparationDevice.type !== PreparationDeviceType.NONE
+      ) {
+        /**
+         * Activiate the automatic stop when you connect a portafilter connection
+         */
+        const settings: Settings = this.uiSettingsStorage.getSettings();
+        settings.bluetooth_scale_espresso_stop_on_no_weight_change = true;
+        await this.uiSettingsStorage.update(settings);
+      }
       await this.uiPreparationStorage.update(this.data);
     }, 150);
   }
@@ -121,5 +134,6 @@ export class PreparationConnectedDeviceComponent implements OnInit {
       );
     }
   }
+
   public ngOnInit() {}
 }

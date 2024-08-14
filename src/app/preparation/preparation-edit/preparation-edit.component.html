@@ -36,6 +36,9 @@
         </ion-item>
         <ion-item lines="none">
           <ion-label id='preparationTools'>{{"PREPARATION_TOOLS" | translate}}</ion-label>
+          <ion-button [disabled]='data.tools.length <= 0' (click)="sortPreparationTools()" fill="clear" tappable>
+            <ion-icon class="font-size-24" color="accent" name="swap-vertical-outline" slot="icon-only"></ion-icon>
+          </ion-button>
           <ion-icon name="information-outline" slot="end"
                     tooltip='{{"PREPARATION_TOOLS_INFORMATION" | translate}}'></ion-icon>
         </ion-item>

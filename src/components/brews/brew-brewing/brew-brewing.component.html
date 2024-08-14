@@ -84,9 +84,8 @@
                       data.getPreparation().use_custom_parameters)" [style.order]="uiBrewHelper.fieldOrder(settings.brew_order.before.mill_timer,
                       data.getPreparation().brew_order.before.mill_timer,
                       data.getPreparation().use_custom_parameters)" lines="inset">
-    <ion-input label-placement="stacked" label='{{"BREW_DATA_MILL_TIMER" | translate}}' [(ngModel)]="data.mill_timer" inputmode="decimal"
-      placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_MILL_TIMER' | translate}}" prevent-characters remove-empty-number
-      type="text"></ion-input>
+    <timer #brewMillTimer (timerTicked)="millTimerChanged($event)"
+           label-id='brewMillTimer' label="{{'BREW_DATA_MILL_TIMER' | translate}}" timeInSeconds="0"></timer>
   </ion-item>
   <ion-item *ngIf="uiBrewHelper.fieldVisible(settings.manage_parameters.pressure_profile,
                       data.getPreparation().manage_parameters.pressure_profile,

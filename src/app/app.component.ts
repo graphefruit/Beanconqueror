@@ -58,26 +58,25 @@ import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { Storage } from '@ionic/storage';
 
 import { UIToast } from '../services/uiToast';
+import { CoffeeBluetoothDevicesService } from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
 import {
-  CoffeeBluetoothDevicesService,
-  CoffeeBluetoothServiceEvent,
-} from '../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import {
+  Logger,
   PressureType,
-  ScaleType,
-  TemperatureType,
   RefractometerType,
+  ScaleType,
+  sleep,
+  TemperatureType,
 } from '../classes/devices';
-import { Logger } from '../classes/devices/common/logger';
 import { UIExportImportHelper } from '../services/uiExportImportHelper';
-
-declare var AppRate;
-declare var window;
 import { register } from 'swiper/element/bundle';
 import { UIGraphStorage } from '../services/uiGraphStorage.service';
 import { UIStorage } from '../services/uiStorage';
+import { MeticulousHelpPopoverComponent } from '../popover/meticulous-help-popover/meticulous-help-popover.component';
+
+declare var window;
 
 register();
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -258,11 +257,11 @@ export class AppComponent implements AfterViewInit {
     // Dont remove androidPlatformService, we need to initialize it via constructor
     try {
       // Touch DB Factory to make sure, it is properly initialized even on iOS 14.6
-      const db = window.indexedDB;
+      const _db = window.indexedDB;
     } catch (ex) {}
     try {
       // Touch DB Factory to make sure, it is properly initialized even on iOS 14.6
-      const db = window.sqlitePlugin;
+      const _db = window.sqlitePlugin;
     } catch (ex) {}
   }
 
@@ -450,6 +449,7 @@ export class AppComponent implements AfterViewInit {
       await this.uiUpdate.checkUpdate();
     } catch (ex) {}
   }
+
   private async __checkCleanup() {
     try {
       await this.cleanupService.cleanupOldBrewData();
@@ -465,13 +465,14 @@ export class AppComponent implements AfterViewInit {
     const settings: Settings = this.uiSettingsStorage.getSettings();
     return settings.show_water_section;
   }
+
   public showGraphSection() {
     const settings: Settings = this.uiSettingsStorage.getSettings();
     return settings.show_graph_section;
   }
 
   private async __setDeviceLanguage(): Promise<any> {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve, _reject) => {
       const settings: Settings = this.uiSettingsStorage.getSettings();
       if (this.platform.is('cordova')) {
         try {
@@ -492,7 +493,7 @@ export class AppComponent implements AfterViewInit {
                   systemLanguage = systemLanguage.split('-')[0];
                 }
 
-                let settingLanguage: string = '';
+                let settingLanguage: string;
                 if (systemLanguage === 'de') {
                   settingLanguage = 'de';
                 } else if (systemLanguage === 'es') {
@@ -612,6 +613,8 @@ export class AppComponent implements AfterViewInit {
     await this.__checkAnalyticsInformationPage();
     await this.uiUpdate.checkUpdateScreen();
 
+    await this.__checkMeticulousHelpPage();
+
     // #281 - Connect smartscale before checking the startup view
     setTimeout(async () => {
       // Just connect after 5 seconds, to get some time, and maybe handle all the connection errors
@@ -629,11 +632,7 @@ export class AppComponent implements AfterViewInit {
         // await this.bleManager.enableBLE();
       }
       await this.__checkBluetoothDevices();
-      await new Promise((resolve) => {
-        setTimeout(async () => {
-          resolve(undefined);
-        }, 500);
-      });
+      await sleep(500);
       this.__connectPressureDevice();
       this.__connectSmartScale();
       this.__connectTemperatureDevice();
@@ -695,6 +694,7 @@ export class AppComponent implements AfterViewInit {
       }
     } catch (ex) {}
   }
+
   private __connectSmartScale() {
     const settings = this.uiSettingsStorage.getSettings();
     const scale_id: string = settings.scale_id;
@@ -812,6 +812,7 @@ export class AppComponent implements AfterViewInit {
       }
     });
   }
+
   private __attachOnDeviceResume() {
     this.platform.resume.subscribe(async () => {
       const settings: Settings = this.uiSettingsStorage.getSettings();
@@ -828,7 +829,10 @@ export class AppComponent implements AfterViewInit {
         this.__connectRefractometerDevice();
       }
 
-      // IMPORTANT Why do we do this? Because the IndexedDB loses connection, and we just pull an entry which does not have many entries in the end
+      /**
+       * IMPORTANT Why do we do this? Because the IndexedDB loses connection,
+       * and we just pull an entry which does not have many entries in the end
+       */
       if (this.platform.is('ios')) {
         this.uiStorage.get('MILL').then(
           () => {},
@@ -876,7 +880,7 @@ export class AppComponent implements AfterViewInit {
 
   private __instanceAppRating() {
     if (this.platform.is('cordova')) {
-      const appLanguage = this.uiSettingsStorage.getSettings().language;
+      /** const appLanguage = this.uiSettingsStorage.getSettings().language;
       AppRate.setPreferences({
         usesUntilPrompt: 25,
         storeAppURL: {
@@ -891,7 +895,7 @@ export class AppComponent implements AfterViewInit {
         useLanguage: appLanguage,
       });
 
-      AppRate.promptForRating(false);
+      AppRate.promptForRating(false);**/
     }
   }
 
@@ -913,6 +917,24 @@ export class AppComponent implements AfterViewInit {
       });
       await modal.present();
       await modal.onWillDismiss();
+    }
+  }
+  private async __checkMeticulousHelpPage() {
+    return;
+    const settings = this.uiSettingsStorage.getSettings();
+
+    if (settings.meticulous_help_was_shown === false) {
+      if (
+        this.uiBrewStorage.getAllEntries().length > 10 ||
+        this.uiBeanStorage.getAllEntries().length > 5
+      ) {
+        const modal = await this.modalCtrl.create({
+          component: MeticulousHelpPopoverComponent,
+          id: MeticulousHelpPopoverComponent.POPOVER_ID,
+        });
+        await modal.present();
+        await modal.onWillDismiss();
+      }
     }
   }
 
@@ -973,6 +995,7 @@ export class AppComponent implements AfterViewInit {
       'https://github.com/graphefruit/Beanconqueror'
     );
   }
+
   public openDiscord() {
     this.uiAnalytics.trackEvent(
       LINK_TRACKING.TITLE,
@@ -990,6 +1013,7 @@ export class AppComponent implements AfterViewInit {
       'https://www.instagram.com/beanconqueror/'
     );
   }
+
   public openFacebook() {
     this.uiAnalytics.trackEvent(
       LINK_TRACKING.TITLE,
@@ -1009,6 +1033,7 @@ export class AppComponent implements AfterViewInit {
       'https://www.paypal.com/paypalme/LarsSaalbach'
     );
   }
+
   public openGithubSponsor() {
     this.uiAnalytics.trackEvent(
       LINK_TRACKING.TITLE,
@@ -1018,6 +1043,7 @@ export class AppComponent implements AfterViewInit {
       'https://github.com/sponsors/graphefruit'
     );
   }
+
   public openDonatePage() {
     this.uiAnalytics.trackEvent(
       LINK_TRACKING.TITLE,

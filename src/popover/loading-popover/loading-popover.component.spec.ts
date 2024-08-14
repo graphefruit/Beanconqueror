@@ -2,6 +2,11 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { LoadingPopoverComponent } from './loading-popover.component';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+import { TranslateModule } from '@ngx-translate/core';
+import { UIHelper } from '../../services/uiHelper';
+import { UIHelperMock } from '../../classes/mock';
+import { Storage } from '@ionic/storage';
 
 describe('LoadingPopoverComponent', () => {
   let component: LoadingPopoverComponent;
@@ -10,13 +15,20 @@ describe('LoadingPopoverComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [LoadingPopoverComponent],
-      imports: [IonicModule.forRoot()],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
+      providers: [
+        { provide: SocialSharing },
+        { provide: UIHelper, useClass: UIHelperMock },
+        { provide: Storage },
+      ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(LoadingPopoverComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  }));
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();
