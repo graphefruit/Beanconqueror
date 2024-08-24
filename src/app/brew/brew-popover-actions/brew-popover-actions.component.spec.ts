@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
-import { KeysPipe } from '../../../pipes/keys';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { NavParamsMock } from '../../../classes/mock/NavParamsMock';
 import { File } from '@awesome-cordova-plugins/file/ngx';
@@ -18,6 +17,7 @@ import { UIHelper } from '../../../services/uiHelper';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { Brew } from '../../../classes/brew/brew';
 import { Preparation } from '../../../classes/preparation/preparation';
+import { PipesModule } from 'src/pipes/pipes.module';
 
 describe('BrewPopoverActionsComponent', () => {
   let component: BrewPopoverActionsComponent;
@@ -30,8 +30,9 @@ describe('BrewPopoverActionsComponent', () => {
         FormsModule,
         CommonModule,
         IonicModule,
+        PipesModule,
       ],
-      declarations: [BrewPopoverActionsComponent, KeysPipe],
+      declarations: [BrewPopoverActionsComponent],
       providers: [
         { provide: InAppBrowser },
         { provide: ModalController },

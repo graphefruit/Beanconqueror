@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController } from '@ionic/angular';
-import { KeysPipe } from '../../pipes/keys';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { Camera } from '@awesome-cordova-plugins/camera/ngx';
@@ -14,12 +13,12 @@ import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Router } from '@angular/router';
 import { AsyncImageComponent } from '../../components/async-image/async-image.component';
-import { FormatDatePipe } from '../../pipes/formatDate';
 import { UIBeanStorage } from '../../services/uiBeanStorage';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
 import { UIAnalytics } from '../../services/uiAnalytics';
 import { IntentHandlerService } from '../../services/intentHandler/intent-handler.service';
 import { UIBeanHelper } from '../../services/uiBeanHelper';
+import { PipesModule } from 'src/pipes/pipes.module';
 
 describe('BeansPage', () => {
   let component: BeansPage;
@@ -32,8 +31,9 @@ describe('BeansPage', () => {
         FormsModule,
         CommonModule,
         IonicModule,
+        PipesModule,
       ],
-      declarations: [BeansPage, KeysPipe, AsyncImageComponent, FormatDatePipe],
+      declarations: [BeansPage, AsyncImageComponent],
       providers: [
         { provide: InAppBrowser },
         { provide: ModalController },

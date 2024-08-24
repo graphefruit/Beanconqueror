@@ -2941,7 +2941,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     this.stopFetchingAndSettingDataFromXenia();
     this.stopFetchingDataFromMeticulous();
 
-    if (this.settings.text_to_speech_active) {
+    if (this.settings?.text_to_speech_active) {
       this.textToSpeech.end();
     }
   }

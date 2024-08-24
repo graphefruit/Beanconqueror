@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
-import { KeysPipe } from '../../../pipes/keys';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { NavParamsMock, UIHelperMock } from '../../../classes/mock';
 import { File } from '@awesome-cordova-plugins/file/ngx';
@@ -14,7 +13,6 @@ import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Router } from '@angular/router';
-import { FormatDatePipe } from '../../../pipes/formatDate';
 import { BrewTimerComponent } from '../../../components/brew-timer/brew-timer.component';
 import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
@@ -34,6 +32,7 @@ import { Preparation } from '../../../classes/preparation/preparation';
 import { Mill } from '../../../classes/mill/mill';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { UIHelper } from '../../../services/uiHelper';
+import { PipesModule } from 'src/pipes/pipes.module';
 
 describe('BrewAddComponent', () => {
   let component: BrewAddComponent;
@@ -47,14 +46,9 @@ describe('BrewAddComponent', () => {
         FormsModule,
         CommonModule,
         IonicModule,
+        PipesModule,
       ],
-      declarations: [
-        BrewAddComponent,
-        KeysPipe,
-        FormatDatePipe,
-        BrewTimerComponent,
-        AsyncImageComponent,
-      ],
+      declarations: [BrewAddComponent, BrewTimerComponent, AsyncImageComponent],
       providers: [
         { provide: InAppBrowser },
         { provide: ModalController },
