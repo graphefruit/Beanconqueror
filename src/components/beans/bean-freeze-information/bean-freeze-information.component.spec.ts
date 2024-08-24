@@ -6,7 +6,7 @@ import { IonicStorageModule } from '@ionic/storage-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from 'src/services/uiHelper';
 import { UIHelperMock } from 'src/classes/mock';
-import { PipesModule } from 'src/pipes/PipesModule';
+import { PipesModule } from 'src/pipes/pipes.module';
 import { Bean } from 'src/classes/bean/bean';
 
 describe('BeanFreezeInformationComponent', () => {
