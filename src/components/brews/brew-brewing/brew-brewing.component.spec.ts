@@ -13,8 +13,8 @@ import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/n
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { BrewBrewingGraphComponent } from '../brew-brewing-graph/brew-brewing-graph.component';
 import { FormsModule } from '@angular/forms';
-import { KeysPipe } from 'src/pipes/keys';
 import { BrewBrewingPreparationDeviceComponent } from '../brew-brewing-preparation-device/brew-brewing-preparation-device.component';
+import { PipesModule } from 'src/pipes/pipes.module';
 
 describe('BrewBrewingComponent', () => {
   let component: BrewBrewingComponent;
@@ -26,13 +26,13 @@ describe('BrewBrewingComponent', () => {
         BrewBrewingComponent,
         BrewBrewingGraphComponent,
         BrewBrewingPreparationDeviceComponent,
-        KeysPipe,
       ],
       imports: [
         IonicModule.forRoot(),
         TranslateModule.forRoot(),
         HttpClientTestingModule,
         FormsModule,
+        PipesModule,
       ],
       providers: [
         { provide: Storage },

@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
-import { KeysPipe } from '../../../pipes/keys';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { NavParamsMock, UIHelperMock } from '../../../classes/mock';
 import { File } from '@awesome-cordova-plugins/file/ngx';
@@ -16,6 +15,7 @@ import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions
 import { Router } from '@angular/router';
 import { UIHelper } from '../../../services/uiHelper';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { PipesModule } from 'src/pipes/pipes.module';
 
 describe('PreparationEditComponent', () => {
   let component: PreparationEditComponent;
@@ -29,8 +29,9 @@ describe('PreparationEditComponent', () => {
         CommonModule,
         IonicModule,
         HttpClientTestingModule,
+        PipesModule,
       ],
-      declarations: [PreparationEditComponent, KeysPipe],
+      declarations: [PreparationEditComponent],
       providers: [
         { provide: InAppBrowser },
         { provide: ModalController },

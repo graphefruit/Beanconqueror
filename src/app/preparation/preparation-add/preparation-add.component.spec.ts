@@ -3,8 +3,8 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { PreparationAddComponent } from './preparation-add.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { ModalController } from '@ionic/angular';
-import { KeysPipe } from '../../../pipes/keys';
 import { UIAnalytics } from '../../../services/uiAnalytics';
+import { PipesModule } from 'src/pipes/pipes.module';
 
 describe('PreparationAddComponent', () => {
   let component: PreparationAddComponent;
@@ -12,8 +12,8 @@ describe('PreparationAddComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [TranslateModule.forRoot()],
-      declarations: [PreparationAddComponent, KeysPipe],
+      imports: [TranslateModule.forRoot(), PipesModule],
+      declarations: [PreparationAddComponent],
       providers: [
         {
           provide: UIAnalytics,

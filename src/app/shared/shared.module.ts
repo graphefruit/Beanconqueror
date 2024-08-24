@@ -1,7 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 
-import { FormatDatePipe } from '../../pipes/formatDate';
-import { KeysPipe } from '../../pipes/keys';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { AsyncImageComponent } from '../../components/async-image/async-image.component';
@@ -52,7 +50,6 @@ import { LogTextComponent } from '../info/log/log-text/log-text.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { Globalization } from '@awesome-cordova-plugins/globalization/ngx';
 import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
-import { EnumToArrayPipe } from '../../pipes/enumToArray';
 import { HelperPage } from '../helper/helper.page';
 import { BrewInformationComponent } from '../../components/brew-information/brew-information.component';
 import { CuppingRadarComponent } from '../../components/cupping-radar/cupping-radar.component';
@@ -191,6 +188,7 @@ import { MeticulousHelpPopoverComponent } from '../../popover/meticulous-help-po
 import { BeanPopoverFreezeComponent } from '../beans/bean-popover-freeze/bean-popover-freeze.component';
 import { BeanFreezeInformationComponent } from '../../components/beans/bean-freeze-information/bean-freeze-information.component';
 import { BeanPopoverFrozenListComponent } from '../beans/bean-popover-frozen-list/bean-popover-frozen-list.component';
+import { PipesModule } from 'src/pipes/pipes.module';
 import { BrewModalImportShotMeticulousComponent } from '../brew/brew-modal-import-shot-meticulous/brew-modal-import-shot-meticulous.component';
 
 @NgModule({
@@ -275,9 +273,6 @@ import { BrewModalImportShotMeticulousComponent } from '../brew/brew-modal-impor
     BrewChoosePreparationToBrewComponent,
     BrewFlavorPickerComponent,
     BrewBeverageQuantityCalculatorComponent,
-    FormatDatePipe,
-    KeysPipe,
-    EnumToArrayPipe,
     AsyncImageComponent,
     BrewInformationComponent,
     BrewGraphReferenceCardComponent,
@@ -370,6 +365,7 @@ import { BrewModalImportShotMeticulousComponent } from '../brew/brew-modal-impor
     RouterModule,
     NgxStarsModule,
     AgVirtualScrollModule,
+    PipesModule,
   ],
   providers: [
     AppVersion,
@@ -389,9 +385,6 @@ import { BrewModalImportShotMeticulousComponent } from '../brew/brew-modal-impor
     TooltipDirective,
     TransformDateDirective,
     DisableDoubleClickDirective,
-    FormatDatePipe,
-    KeysPipe,
-    EnumToArrayPipe,
     InAppBrowser,
     File,
     Device,
@@ -490,9 +483,6 @@ import { BrewModalImportShotMeticulousComponent } from '../brew/brew-modal-impor
     BrewChoosePreparationToBrewComponent,
     BrewFlavorPickerComponent,
     BrewBeverageQuantityCalculatorComponent,
-    FormatDatePipe,
-    KeysPipe,
-    EnumToArrayPipe,
     AsyncImageComponent,
     BrewInformationComponent,
     BrewGraphReferenceCardComponent,

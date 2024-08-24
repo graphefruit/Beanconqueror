@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../../../services/uiHelper';
 import { UIHelperMock } from '../../../../classes/mock';
 import { FormsModule } from '@angular/forms';
-import { KeysPipe } from 'src/pipes/keys';
+import { PipesModule } from 'src/pipes/pipes.module';
 
 describe('WaterAddComponent', () => {
   let component: WaterAddComponent;
@@ -15,8 +15,13 @@ describe('WaterAddComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [WaterAddComponent, KeysPipe],
-      imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
+      declarations: [WaterAddComponent],
+      imports: [
+        IonicModule.forRoot(),
+        TranslateModule.forRoot(),
+        FormsModule,
+        PipesModule,
+      ],
       providers: [
         { provide: Storage },
         { provide: UIHelper, useClass: UIHelperMock },

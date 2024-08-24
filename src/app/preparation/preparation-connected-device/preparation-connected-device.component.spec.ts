@@ -32,7 +32,9 @@ describe('PreparationConnectedDeviceComponent', () => {
         },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(PreparationConnectedDeviceComponent);
     component = fixture.componentInstance;
     component.preparation = {
@@ -41,7 +43,7 @@ describe('PreparationConnectedDeviceComponent', () => {
       },
     } as Preparation;
     fixture.detectChanges();
-  }));
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();

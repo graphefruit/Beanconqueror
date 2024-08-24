@@ -5,8 +5,8 @@ import { BeanPopoverActionsComponent } from './bean-popover-actions.component';
 import { UIHelper } from '../../../services/uiHelper';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { IBean } from '../../../interfaces/bean/iBean';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { TranslateServiceMock } from '../../../classes/mock';
+import { IonicStorageModule } from '@ionic/storage-angular';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('BeanPopoverActionsComponent', () => {
   let component: BeanPopoverActionsComponent;
@@ -14,8 +14,13 @@ describe('BeanPopoverActionsComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [BeanPopoverActionsComponent, TranslatePipe],
-      imports: [IonicModule.forRoot()],
+      declarations: [BeanPopoverActionsComponent],
+      imports: [
+        IonicModule.forRoot(),
+        IonicStorageModule.forRoot(),
+        TranslateModule.forRoot(),
+        TranslateModule.forChild(),
+      ],
       providers: [
         {
           provide: NavParams,
@@ -39,17 +44,15 @@ describe('BeanPopoverActionsComponent', () => {
           provide: UIBeanHelper,
           useValue: {},
         },
-        {
-          provide: TranslateService,
-          useValue: TranslateServiceMock,
-        },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(BeanPopoverActionsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  }));
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();

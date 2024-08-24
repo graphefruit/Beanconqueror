@@ -7,8 +7,8 @@ import { UIToast } from '../../../services/uiToast';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
 import { UIHelper } from '../../../services/uiHelper';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { TranslateServiceMock } from '../../../classes/mock';
+import { TranslateModule } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
 
 describe('BeanArchivePopoverComponent', () => {
   let component: BeanArchivePopoverComponent;
@@ -18,8 +18,13 @@ describe('BeanArchivePopoverComponent', () => {
     const settingsMock = {} as Settings;
 
     TestBed.configureTestingModule({
-      declarations: [BeanArchivePopoverComponent, TranslatePipe],
-      imports: [IonicModule.forRoot()],
+      declarations: [BeanArchivePopoverComponent],
+      imports: [
+        IonicModule.forRoot(),
+        TranslateModule.forRoot(),
+        TranslateModule.forChild(),
+        FormsModule,
+      ],
       providers: [
         {
           provide: UIBeanStorage,
@@ -42,10 +47,6 @@ describe('BeanArchivePopoverComponent', () => {
           useValue: {
             toFixedIfNecessary: (_value, _dp): number => 0,
           } as UIHelper,
-        },
-        {
-          provide: TranslateService,
-          useValue: TranslateServiceMock,
         },
       ],
     }).compileComponents();

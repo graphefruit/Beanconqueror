@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
-import { KeysPipe } from '../../../pipes/keys';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { NavParamsMock } from '../../../classes/mock/NavParamsMock';
 import { File } from '@awesome-cordova-plugins/file/ngx';
@@ -15,6 +14,7 @@ import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Router } from '@angular/router';
 import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { PipesModule } from 'src/pipes/pipes.module';
 
 describe('AboutComponent', () => {
   let component: AboutComponent;
@@ -27,8 +27,9 @@ describe('AboutComponent', () => {
         FormsModule,
         CommonModule,
         IonicModule,
+        PipesModule,
       ],
-      declarations: [AboutComponent, KeysPipe],
+      declarations: [AboutComponent],
       providers: [
         { provide: InAppBrowser },
         { provide: ModalController },
