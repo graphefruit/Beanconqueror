@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
-import { KeysPipe } from '../../../pipes/keys';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { NavParamsMock } from '../../../classes/mock';
 import { File } from '@awesome-cordova-plugins/file/ngx';
@@ -15,11 +14,11 @@ import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Router } from '@angular/router';
 import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
-import { FormatDatePipe } from '../../../pipes/formatDate';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Insomnia } from '@awesome-cordova-plugins/insomnia/ngx';
+import { PipesModule } from 'src/pipes/pipes.module';
 
 describe('BrewEditComponent', () => {
   let component: BrewEditComponent;
@@ -34,13 +33,9 @@ describe('BrewEditComponent', () => {
         CommonModule,
         IonicModule,
         HttpClientTestingModule,
+        PipesModule,
       ],
-      declarations: [
-        BrewEditComponent,
-        KeysPipe,
-        AsyncImageComponent,
-        FormatDatePipe,
-      ],
+      declarations: [BrewEditComponent, AsyncImageComponent],
       providers: [
         { provide: InAppBrowser },
         { provide: ModalController },

@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
-import { KeysPipe } from '../../pipes/keys';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { NavParamsMock } from '../../classes/mock/NavParamsMock';
 import { File } from '@awesome-cordova-plugins/file/ngx';
@@ -17,6 +16,7 @@ import { Router } from '@angular/router';
 import { UIHelper } from '../../services/uiHelper';
 import { UIHelperMock } from '../../classes/mock';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { PipesModule } from 'src/pipes/pipes.module';
 
 describe('PreparationPage', () => {
   let component: PreparationPage;
@@ -30,8 +30,9 @@ describe('PreparationPage', () => {
         CommonModule,
         IonicModule,
         HttpClientTestingModule,
+        PipesModule,
       ],
-      declarations: [PreparationPage, KeysPipe],
+      declarations: [PreparationPage],
       providers: [
         { provide: InAppBrowser },
         { provide: ModalController },

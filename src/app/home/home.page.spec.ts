@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
-import { KeysPipe } from '../../pipes/keys';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { Camera } from '@awesome-cordova-plugins/camera/ngx';
@@ -15,6 +14,7 @@ import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions
 import { UIHelper } from '../../services/uiHelper';
 import { NavParamsMock, UIHelperMock } from '../../classes/mock';
 import { RouterTestingModule } from '@angular/router/testing';
+import { PipesModule } from 'src/pipes/pipes.module';
 
 describe('HomePage', () => {
   let component: HomePage;
@@ -28,8 +28,9 @@ describe('HomePage', () => {
         CommonModule,
         IonicModule,
         RouterTestingModule,
+        PipesModule,
       ],
-      declarations: [HomePage, KeysPipe],
+      declarations: [HomePage],
       providers: [
         { provide: InAppBrowser },
         { provide: ModalController },
