@@ -12,6 +12,8 @@ import { UIAlert } from '../../../services/uiAlert';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
+import { environment } from '../../../environments/environment';
+import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
 
 @Component({
   selector: 'app-preparation-connected-device',
@@ -25,6 +27,8 @@ export class PreparationConnectedDeviceComponent {
   public segment: string = 'manage';
   public PREPARATION_DEVICE_TYPE = PreparationDeviceType;
   @Input() public preparation: IPreparation;
+
+  public ENVIRONMENT_PARAMS = environment;
 
   public pinFormatter(value: any) {
     const parsedFloat = parseFloat(value);
@@ -48,6 +52,18 @@ export class PreparationConnectedDeviceComponent {
     if (this.preparation !== undefined) {
       this.data.initializeByObject(this.preparation);
     }
+    if (this.data.connectedPreparationDevice.type === PreparationDeviceType.NONE) {
+      if (this.data.type === PREPARATION_TYPES.METICULOUS) {
+        this.data.connectedPreparationDevice.type = PreparationDeviceType.METICULOUS;
+      }
+      if (this.data.type === PREPARATION_TYPES.XENIA) {
+        this.data.connectedPreparationDevice.type = PreparationDeviceType.XENIA;
+      }
+      if (this.data.type === PREPARATION_TYPES.SANREMO_YOU) {
+        this.data.connectedPreparationDevice.type = PreparationDeviceType.SANREMO_YOU;
+      }
+    }
+
   }
 
   public dismiss(): void {
@@ -98,7 +114,40 @@ export class PreparationConnectedDeviceComponent {
           this.data.connectedPreparationDevice.customParams.residualLagTime = 1.35;
         }
       }
-
+      if (
+        this.data.connectedPreparationDevice.type ===
+        PreparationDeviceType.METICULOUS
+      )
+      {
+        if (this.data.connectedPreparationDevice.url.endsWith('/') === true) {
+          this.data.connectedPreparationDevice.url =
+            this.data.connectedPreparationDevice.url.slice(0, -1);
+        }
+        if (
+          this.data.connectedPreparationDevice.url.startsWith('http') ===
+          false
+        ) {
+          this.data.connectedPreparationDevice.url =
+            'http://' + this.data.connectedPreparationDevice.url;
+        }
+      }
+      if (
+        this.data.connectedPreparationDevice.type ===
+        PreparationDeviceType.SANREMO_YOU
+      )
+      {
+        if (this.data.connectedPreparationDevice.url.endsWith('/') === true) {
+          this.data.connectedPreparationDevice.url =
+            this.data.connectedPreparationDevice.url.slice(0, -1);
+        }
+        if (
+          this.data.connectedPreparationDevice.url.startsWith('http') ===
+          false
+        ) {
+          this.data.connectedPreparationDevice.url =
+            'http://' + this.data.connectedPreparationDevice.url;
+        }
+      }
       if (
         this.data.connectedPreparationDevice.type !== PreparationDeviceType.NONE
       ) {
@@ -136,4 +185,6 @@ export class PreparationConnectedDeviceComponent {
   }
 
   public ngOnInit() {}
+
+
 }

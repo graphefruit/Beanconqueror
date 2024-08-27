@@ -43,6 +43,10 @@
       <ion-icon name="beanconqueror-brew-rating-empty" slot="start"></ion-icon>
       <ion-label>{{"BREW_DATA_RATING" | translate}}</ion-label>
     </ion-item>
+    <ion-item (click)="setSortAfter(beanSortAfterEnum.BEAN_AGE)" [class.active]="isSortActive(beanSortAfterEnum.BEAN_AGE)" class="ion-margin-top" lines="none" tappable>
+      <ion-icon name="beanconqueror-clock" slot="start"></ion-icon>
+      <ion-label>{{"BEAN_SORT_BEAN_AGE" | translate}}</ion-label>
+    </ion-item>
   </ion-list>
   <ion-list class="ion-no-padding ion-padding-top">
 

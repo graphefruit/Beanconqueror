@@ -88,6 +88,16 @@ export class Settings implements ISettings {
     ARCHIVED: IBeanPageSort;
     FROZEN: IBeanPageSort;
   };
+  public bean_collapsed: {
+    OPEN: boolean;
+    ARCHIVED: boolean;
+    FROZEN: boolean;
+  };
+  public brew_collapsed: {
+    OPEN: boolean;
+    ARCHIVED: boolean;
+  };
+
 
   public green_bean_sort: {
     OPEN: IBeanPageSort;
@@ -317,6 +327,15 @@ export class Settings implements ISettings {
       FROZEN: {} as IBeanPageSort,
     };
 
+    this.bean_collapsed = {
+      OPEN: false,
+      ARCHIVED: false,
+      FROZEN: false,
+    };
+    this.brew_collapsed = {
+      OPEN: false,
+      ARCHIVED: false,
+    };
     this.green_bean_sort = {
       OPEN: {} as IBeanPageSort,
       ARCHIVED: {} as IBeanPageSort,
@@ -505,14 +524,7 @@ export class Settings implements ISettings {
     );
   }
 
-  public resetFilter() {
-    this.brew_filter = {
-      OPEN: {} as IBrewPageFilter,
-      ARCHIVED: {} as IBrewPageFilter,
-    };
-    this.brew_filter.OPEN = this.GET_BREW_FILTER();
-    this.brew_filter.ARCHIVED = this.GET_BREW_FILTER();
-
+  public resetBeanFilter() {
     this.bean_filter = {
       OPEN: {} as IBeanPageFilter,
       ARCHIVED: {} as IBeanPageFilter,
@@ -521,7 +533,23 @@ export class Settings implements ISettings {
     this.bean_filter.OPEN = this.GET_BEAN_FILTER();
     this.bean_filter.ARCHIVED = this.GET_BEAN_FILTER();
     this.bean_filter.FROZEN = this.GET_BEAN_FILTER();
+  }
 
+  public resetBrewFilter() {
+    this.brew_filter = {
+      OPEN: {} as IBrewPageFilter,
+      ARCHIVED: {} as IBrewPageFilter,
+    };
+    this.brew_filter.OPEN = this.GET_BREW_FILTER();
+    this.brew_filter.ARCHIVED = this.GET_BREW_FILTER();
+  }
+
+  public resetFilter() {
+    this.resetBrewFilter();
+    this.resetBeanFilter();
+  }
+
+  public resetBeanSort() {
     this.bean_sort = {
       OPEN: {} as IBeanPageSort,
       ARCHIVED: {} as IBeanPageSort,

@@ -156,6 +156,13 @@ export class Bean implements IBean {
       return false;
     }
   }
+  public isUnfrozen() {
+    if (this.frozenDate && this.unfrozenDate) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   public initializeByObject(beanObj: IBean): void {
     Object.assign(this, beanObj);

@@ -74,6 +74,10 @@ export class BeansPage implements OnDestroy {
     sort_order: BEAN_SORT_ORDER.UNKOWN,
   };
 
+  public openBeansCollapsed: boolean = false;
+  public archivedBeansCollapsed: boolean = false;
+  public frozenBeansCollapsed: boolean = false;
+
   public archivedBeansFilterText: string = '';
   public openBeansFilterText: string = '';
   public frozenBeansFilterText: string = '';
@@ -100,10 +104,15 @@ export class BeansPage implements OnDestroy {
     this.settings = this.uiSettingsStorage.getSettings();
     this.archivedBeansSort = this.settings.bean_sort.ARCHIVED;
     this.openBeansSort = this.settings.bean_sort.OPEN;
+    this.frozenBeansSort = this.settings.bean_sort.FROZEN;
 
     this.archivedBeansFilter = this.settings.bean_filter.ARCHIVED;
     this.frozenBeansFilter = this.settings.bean_filter.FROZEN;
     this.openBeansFilter = this.settings.bean_filter.OPEN;
+
+    this.openBeansCollapsed =  this.settings.bean_collapsed.OPEN;
+    this.archivedBeansCollapsed = this.settings.bean_collapsed.ARCHIVED;
+    this.frozenBeansCollapsed = this.settings.bean_collapsed.FROZEN;
     this.loadBeans();
 
     this.beanStorageChangeSubscription = this.uiBeanStorage
@@ -119,6 +128,37 @@ export class BeansPage implements OnDestroy {
       this.beanStorageChangeSubscription = undefined;
     }
   }
+  public isCollapseActive() {
+    let collapsed: boolean =false;
+    if (this.bean_segment === 'open') {
+      collapsed = this.openBeansCollapsed;
+    } else if (this.bean_segment === 'archive') {
+      collapsed = this.archivedBeansCollapsed;
+    } else if (this.bean_segment === 'frozen') {
+      collapsed  = this.frozenBeansCollapsed;
+    }
+    return collapsed;
+  }
+
+  public toggleCollapseBeans() {
+    if (this.bean_segment === 'open') {
+      this.openBeansCollapsed = !this.openBeansCollapsed;
+    } else if (this.bean_segment === 'archive') {
+      this.archivedBeansCollapsed = !this.archivedBeansCollapsed;
+    } else if (this.bean_segment === 'frozen') {
+      this.frozenBeansCollapsed  = !this.frozenBeansCollapsed;
+    }
+    this.__saveCollapseFilter();
+    this.research();
+  }
+  private async __saveCollapseFilter() {
+    this.settings.bean_collapsed.OPEN = this.openBeansCollapsed;
+    this.settings.bean_collapsed.ARCHIVED = this.archivedBeansCollapsed;
+    this.settings.bean_collapsed.FROZEN = this.frozenBeansCollapsed;
+    await this.uiSettingsStorage.saveSettings(this.settings);
+  }
+
+
   public loadBeans(): void {
     this.__initializeBeans();
     this.changeDetectorRef.detectChanges();
@@ -495,10 +535,10 @@ export class BeansPage implements OnDestroy {
           break;
         case BEAN_SORT_AFTER.ROASTING_DATE:
           filterBeans = filterBeans.sort((a, b) => {
-            if (a.roastingDate > b.roastingDate) {
+            if (a.roastingDate < b.roastingDate) {
               return -1;
             }
-            if (a.roastingDate < b.roastingDate) {
+            if (a.roastingDate > b.roastingDate) {
               return 1;
             }
             return 0;
@@ -506,10 +546,21 @@ export class BeansPage implements OnDestroy {
           break;
         case BEAN_SORT_AFTER.RATING:
           filterBeans = filterBeans.sort((a, b) => {
-            if (a.rating > b.rating) {
+            if (a.rating < b.rating) {
               return -1;
             }
-            if (a.rating < b.rating) {
+            if (a.rating > b.rating) {
+              return 1;
+            }
+            return 0;
+          });
+          break;
+        case BEAN_SORT_AFTER.BEAN_AGE:
+          filterBeans = filterBeans.sort((a, b) => {
+            if (a.beanAgeInDays() < b.beanAgeInDays()) {
+              return -1;
+            }
+            if (a.beanAgeInDays() > b.beanAgeInDays()) {
               return 1;
             }
             return 0;

@@ -43,14 +43,15 @@
           </ion-button>
         </ion-col>
       </ion-row>
-      <ion-row>
+      <div *ngIf="collapsed" style='height:10px;'></div>
+      <ion-row *ngIf='!collapsed'>
         <ion-col>
           <hr/>
         </ion-col>
       </ion-row>
     </ion-grid>
 
-    <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow">
+    <ion-grid  *ngIf="!collapsed" class="no-ion-col-vertical-padding limit-grid-overflow">
       <ion-row class="ion-padding-bottom-half">
         <ion-col [size]="(bean.hasPhotos() && uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.attachments))?9:12" class="ion-no-padding-right">
           <ion-grid class="ion-no-padding">
@@ -144,7 +145,7 @@
               <ion-col *ngIf="uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.weight)" size="6">
                 <ion-label class="card-headline">{{"BEANS_AMOUNT_USED" | translate}}</ion-label>
                 <br/>
-                <ion-text
+                <ion-text class='break-whitespaces'
                   [innerHTML]="'BEAN_WEIGHT_ALREADY_USED' | translate: {gramUsed: getUsedWeightCount() | number : '.0-2', gramTotal: bean?.weight,leftOver: bean?.weight - getUsedWeightCount() | number : '.0-2'}">{{daysOld()}}</ion-text>
               </ion-col>
               <ion-col *ngIf="(bean?.hasCustomFlavors() || bean?.hasPredefinedFlavors())" size="12">

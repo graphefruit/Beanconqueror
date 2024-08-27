@@ -1030,7 +1030,8 @@
         "TYPE": {
             "NONE": "None",
             "XENIA": "Xenia",
-            "METICULOUS": "Meticulous"
+            "METICULOUS": "Meticulous",
+            "SANREMO_YOU": "Sanremo YOU"
         },
         "URL": "Url",
         "CHOOSE_DEVICE": "Choose device",
@@ -1063,6 +1064,10 @@
             "CHOOSE_PROFILE": "Choose profile",
             "SHOT_STARTED": "Shot started",
             "SHOT_ENDED": "Shot ended"
+        },
+        "TYPE_SANREMO_YOU": {
+          "TITLE": "Sanremo YOU Machine",
+          "STOP_AT_WEIGHT": "Stop at weight"
         }
     },
     "DEVICE_CONNECTION": "Device connection",
@@ -1352,5 +1357,18 @@
     "BEAN_DATA_FROZEN_NOTE": "Frozen notes",
     "IGNORE_NEGATIVE_VALUES_DESCRIPTION": "Activating this, results into a graph which will be one second behind",
     "IGNORE_ANOMALY_VALUES_DESCRIPTION": "Activating this, results into a graph which will be one second behind",
-    "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": "Save the machine logs when saving a brew"
+    "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": "Save the machine logs when saving a brew",
+    "IMPORT_SHOT_FROM_METICULOUS": "Import a shot",
+    "BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "All found entries in the excel list, have been transformed into new beans, enjoy a tasty brew!",
+    "IMPORT_UNSUCCESSFULLY": "Import not successful",
+    "BEAN_LIST": "Bean list",
+    "IMPORT_ROASTED_BEANS_EXCEL": "Import roasted beans via excel",
+    "IMPORT_GREEN_BEANS_EXCEL": "Import green beans via excel",
+    "BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE": "It looks like that the chosen excel file is corrupted, has wrong data, is wrong structured, or was wrongly chosen. Because of this no beans could be imported.",
+    "OK": "Ok",
+    "BEAN_SORT_BEAN_AGE": "Bean age",
+    "GREEN_BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "All found entries in the excel list, have been transformed into new green beans, have great roasts!",
+    "PREPARATION_TYPE_SANREMO_YOU": "Sanremo YOU",
+    "PREPARATION_TYPE_XENIA": "Xenia",
+    "BEAN_POPUP_YOU_DONT_SEE_EVERYTHING_DESCRIPTION": "You're adding a bean which has variety information in it, but those parameters are not activated. Do you want to activate them now?"
 }

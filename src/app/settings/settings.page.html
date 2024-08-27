@@ -55,12 +55,16 @@
             <ion-label>Temp: Export Brew By Weight - Xenia</ion-label>
             <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
           </ion-item>
-          <ion-item (click)="excelExport()" button lines="none" tappable>
+          <ion-item (click)="excelExport()" button tappable>
             <ion-label>{{"EXCEL_EXPORT" | translate}}</ion-label>
             <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
           </ion-item>
-          <ion-item *ngIf='false' (click)="importBeansExcel()" button lines="none" tappable>
-            <ion-label>{{"IMPORT_BEANS_EXCEL" | translate}}</ion-label>
+          <ion-item  (click)="importBeansExcel()" button [lines]="settings.show_roasting_section?'full':'none'" tappable>
+            <ion-label>{{"IMPORT_ROASTED_BEANS_EXCEL" | translate}}</ion-label>
+            <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+          </ion-item>
+          <ion-item *ngIf='settings.show_roasting_section'  (click)="importBeansExcel('green')" button lines="none" tappable>
+            <ion-label>{{"IMPORT_GREEN_BEANS_EXCEL" | translate}}</ion-label>
             <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
           </ion-item>
         </ion-card-content>
@@ -361,7 +365,7 @@
         <ion-card-content>
           <ion-card-title>{{"PAGE_SETTINGS_MANAGE_FEATURES" | translate}}</ion-card-title>
           <ion-item lines="none">
-            <ion-checkbox label-placement='start' (ngModelChange)="resetFilter();saveSettings();"
+            <ion-checkbox label-placement='start' (ngModelChange)="resetFilter();resetBeanSort();saveSettings();"
                           [(ngModel)]="settings.freeze_coffee_beans">
               <div class='ion-label'>{{"ACTIVE_BEAN_FREEZING_FEATURE" | translate}}</div>
             </ion-checkbox>

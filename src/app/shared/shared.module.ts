@@ -190,6 +190,8 @@ import { BeanFreezeInformationComponent } from '../../components/beans/bean-free
 import { BeanPopoverFrozenListComponent } from '../beans/bean-popover-frozen-list/bean-popover-frozen-list.component';
 import { PipesModule } from 'src/pipes/pipes.module';
 import { BrewModalImportShotMeticulousComponent } from '../brew/brew-modal-import-shot-meticulous/brew-modal-import-shot-meticulous.component';
+import { DataCorruptionFoundComponent } from '../../popover/data-corruption-found/data-corruption-found.component';
+import { BeanPopoverListComponent } from '../beans/bean-popover-list/bean-popover-list.component';
 
 @NgModule({
   declarations: [
@@ -232,6 +234,7 @@ import { BrewModalImportShotMeticulousComponent } from '../brew/brew-modal-impor
     WelcomePopoverComponent,
     AnalyticsPopoverComponent,
     MeticulousHelpPopoverComponent,
+    DataCorruptionFoundComponent,
     QrCodeScannerPopoverComponent,
     UpdatePopoverComponent,
     DatetimePopoverComponent,
@@ -317,6 +320,7 @@ import { BrewModalImportShotMeticulousComponent } from '../brew/brew-modal-impor
     BeanPopoverAddComponent,
     BeanPopoverFreezeComponent,
     BeanPopoverFrozenListComponent,
+    BeanPopoverListComponent,
     BeanArchivePopoverComponent,
     MillPopoverActionsComponent,
     BeanModalSelectComponent,
@@ -444,6 +448,7 @@ import { BrewModalImportShotMeticulousComponent } from '../brew/brew-modal-impor
     WelcomePopoverComponent,
     AnalyticsPopoverComponent,
     MeticulousHelpPopoverComponent,
+    DataCorruptionFoundComponent,
     QrCodeScannerPopoverComponent,
     UpdatePopoverComponent,
     DatetimePopoverComponent,
@@ -526,6 +531,7 @@ import { BrewModalImportShotMeticulousComponent } from '../brew/brew-modal-impor
     BeanPopoverAddComponent,
     BeanPopoverFreezeComponent,
     BeanPopoverFrozenListComponent,
+    BeanPopoverListComponent,
     BeanArchivePopoverComponent,
     BeanModalSelectComponent,
     AssociatedBrewsComponent,

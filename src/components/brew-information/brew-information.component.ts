@@ -33,7 +33,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { BrewTrackingService } from '../../services/brewTracking/brew-tracking.service';
 import { UIHealthKit } from '../../services/uiHealthKit';
 import * as htmlToImage from 'html-to-image';
-import { Visualizer } from '../../classes/visualizer/visualizer';
+
 
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { BrewFlow } from '../../classes/brew/brewFlow';
@@ -48,6 +48,7 @@ declare var window;
 })
 export class BrewInformationComponent implements OnInit {
   @Input() public brew: Brew;
+  @Input() public collapsed: boolean = false;
   @Input() public layout: string = 'brew';
   @ViewChild('card', { read: ElementRef })
   public cardEl: ElementRef;
@@ -80,7 +81,6 @@ export class BrewInformationComponent implements OnInit {
     private readonly uiHealthKit: UIHealthKit,
     private readonly platform: Platform,
     private readonly uiFileHelper: UIFileHelper,
-    private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiBeanHelper: UIBeanHelper,
     private readonly visualizerService: VisualizerService
   ) {}

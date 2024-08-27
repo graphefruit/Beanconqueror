@@ -55,6 +55,12 @@
           <ion-icon *ngIf="!isFilterActive()"  name="beanconqueror-filter-inactive"
                     slot="icon-only"></ion-icon>
         </ion-button>
+
+        <ion-button (click)="toggleCollapseBrews()" fill="clear" size="small" tappable>
+          <ion-icon *ngIf="isCollapseActive()" name="beanconqueror-expand-active"  slot="icon-only"></ion-icon>
+          <ion-icon *ngIf="!isCollapseActive()"  name="beanconqueror-expand-inactive"  slot="icon-only"></ion-icon>
+        </ion-button>
+
       </div>
       <div *ngIf="openBrewsView?.length == 0" class="ion-padding ion-text-center">
         <div>
@@ -65,8 +71,8 @@
         </div>
       </div>
 
-      <ag-virtual-scroll #openScroll [items]="openBrewsView" height="100vh" min-row-height="180">
-        <brew-information (brewAction)="brewAction($event[0],$event[1])" *ngFor="let brew of openScroll.items"
+      <ag-virtual-scroll #openScroll [items]="openBrewsView" height="100vh" [min-row-height]="isCollapseActive()?86:180">
+        <brew-information [collapsed]='isCollapseActive()' (brewAction)="brewAction($event[0],$event[1])" *ngFor="let brew of openScroll.items"
                           [brew]="brew"></brew-information>
 
       </ag-virtual-scroll>
@@ -84,6 +90,10 @@
             <ion-icon *ngIf="!isFilterActive()"  name="beanconqueror-filter-inactive"
                       slot="icon-only"></ion-icon>
           </ion-button>
+          <ion-button (click)="toggleCollapseBrews()" fill="clear" size="small" tappable>
+            <ion-icon *ngIf="isCollapseActive()" name="beanconqueror-expand-active"  slot="icon-only"></ion-icon>
+            <ion-icon *ngIf="!isCollapseActive()"  name="beanconqueror-expand-inactive"  slot="icon-only"></ion-icon>
+          </ion-button>
         </div>
         <div *ngIf="archiveBrewsView?.length == 0" class="ion-padding ion-text-center">
           <div>
@@ -94,8 +104,8 @@
           </div>
         </div>
 
-        <ag-virtual-scroll #archivedScroll [items]="archiveBrewsView" height="100vh" min-row-height="180">
-          <brew-information (brewAction)="brewAction($event[0],$event[1])" *ngFor="let brew of archivedScroll.items"
+        <ag-virtual-scroll #archivedScroll [items]="archiveBrewsView" height="100vh" [min-row-height]="isCollapseActive()?86:180">
+          <brew-information  [collapsed]='isCollapseActive()'  (brewAction)="brewAction($event[0],$event[1])" *ngFor="let brew of archivedScroll.items"
                             [brew]="brew"></brew-information>
 
         </ag-virtual-scroll>

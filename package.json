@@ -47,6 +47,8 @@
     "@ionic/cordova-builders": "^8.0.0",
     "@ionic/storage": "^4.0.0",
     "@ionic/storage-angular": "^4.0.0",
+    "@meticulous-home/espresso-api": "^0.3.1",
+    "@meticulous-home/espresso-profile": "^0.4.0",
     "@ngx-translate/core": "^15.0.0",
     "@ngx-translate/http-loader": "^4.0.0",
     "@zip.js/zip.js": "^2.7.14",
@@ -68,7 +70,6 @@
     "lodash": "^4.17.21",
     "long": "^5.2.0",
     "luxon": "^2.3.0",
-    "meticulous-api": "github:FFFuego/meticulous-typescript-api#dist",
     "moment": "^2.29.4",
     "ngx-stars": "^1.6.4",
     "postcss": "^8.3.5",
@@ -98,7 +99,7 @@
     "@wisdomgarden/cordova-plugin-filepath": "git+https://github.com/wisdom-garden/cordova-plugin-filepath.git",
     "cordova-android": "^13.0.0",
     "cordova-clipboard": "^1.3.0",
-    "cordova-ios": "^7.1.0",
+    "cordova-ios": "^7.1.1",
     "cordova-plugin-add-swift-support": "^2.0.2",
     "cordova-plugin-advanced-http": "^3.3.1",
     "cordova-plugin-android-permissions": "^1.1.5",
@@ -210,22 +211,22 @@
       "cordova-plugin-nativestorage": {},
       "cordova-plugin-androidx": {},
       "cordova-plugin-androidx-adapter": {},
-      "cordova-plugin-ble-central": {
-        "BLUETOOTH_USAGE_DESCRIPTION": "Bluetooth access needed to connect smartscales",
-        "IOS_INIT_ON_LOAD": "false",
-        "ACCESS_BACKGROUND_LOCATION": "false",
-        "BLUETOOTH_RESTORE_STATE": "false"
-      },
       "cordova-plugin-inappbrowser": {},
       "skwas-cordova-plugin-datetimepicker": {},
       "cordova-plugin-statusbar": {},
       "cordova-plugin-file": {
         "ANDROIDX_WEBKIT_VERSION": "1.4.0"
+      },
+      "cordova-plugin-ble-central": {
+        "BLUETOOTH_USAGE_DESCRIPTION": "Bluetooth access needed to connect smartscales",
+        "IOS_INIT_ON_LOAD": "false",
+        "ACCESS_BACKGROUND_LOCATION": "false",
+        "BLUETOOTH_RESTORE_STATE": "false"
       }
     },
     "platforms": [
-      "ios",
-      "android"
+      "android",
+      "ios"
     ]
   },
   "platforms": [

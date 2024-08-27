@@ -847,10 +847,10 @@ export class UIFileHelper extends InstanceClass {
   ): Promise<any> {
     return new Promise(async (resolve, reject) => {
       if (this.platform.is('cordova')) {
-        if (this.cachedInternalUrls[_filePath]) {
+        /** if (this.cachedInternalUrls[_filePath]) {
           //resolve(this.cachedInternalUrls[_filePath]);
           // return;
-        }
+        }**/
         // let filePath: string;
         // filePath = _filePath;
         // filePath.slice(0, filePath.lastIndexOf('/'));
@@ -884,8 +884,9 @@ export class UIFileHelper extends InstanceClass {
                   this.domSanitizer.bypassSecurityTrustResourceUrl(
                     convertedURL
                   );
-                this.cachedInternalUrls[_filePath] = convertedURL;
-                resolve(convertedURL);
+                const returningURL = convertedURL;
+                // this.cachedInternalUrls[_filePath] = convertedURL;
+                resolve(returningURL);
               },
               () => {
                 resolve('');

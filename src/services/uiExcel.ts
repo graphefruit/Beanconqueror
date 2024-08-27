@@ -15,7 +15,6 @@ import { BEAN_ROASTING_TYPE_ENUM } from '../enums/beans/beanRoastingType';
 import { BEAN_MIX_ENUM } from '../enums/beans/mix';
 import { UIPreparationStorage } from './uiPreparationStorage';
 import { UIAlert } from './uiAlert';
-import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { UIFileHelper } from './uiFileHelper';
 import { UIMillStorage } from './uiMillStorage';
 import { BrewFlow, IBrewWaterFlow } from '../classes/brew/brewFlow';
@@ -23,6 +22,11 @@ import moment from 'moment';
 import { UISettingsStorage } from './uiSettingsStorage';
 import { Settings } from '../classes/settings/settings';
 import { Brew } from '../classes/brew/brew';
+import { Bean } from '../classes/bean/bean';
+import { IBeanInformation } from '../interfaces/bean/iBeanInformation';
+import { UIBeanHelper } from './uiBeanHelper';
+import { GreenBean } from '../classes/green-bean/green-bean';
+import { UIGreenBeanStorage } from './uiGreenBeanStorage';
 
 @Injectable({
   providedIn: 'root',
@@ -37,14 +41,14 @@ export class UIExcel {
     private readonly platform: Platform,
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiBeanStorage: UIBeanStorage,
+    private readonly uiGreenBeanStorage: UIGreenBeanStorage,
     private readonly uiPreparationStoraage: UIPreparationStorage,
     private readonly translate: TranslateService,
     private readonly uiAlert: UIAlert,
-    private readonly socialsharing: SocialSharing,
     private readonly uiFileHelper: UIFileHelper,
     private readonly uiMillStorage: UIMillStorage,
-    private readonly alertCtrl: AlertController,
-    private readonly uiSettingsStorage: UISettingsStorage
+    private readonly uiSettingsStorage: UISettingsStorage,
+    private readonly uiBeanHelper: UIBeanHelper
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -80,8 +84,6 @@ export class UIExcel {
 
     const wsData: any[][] = [header];
     for (const entry of _flow.weight) {
-      const notMutatedWeight: number = 0;
-
       const wbEntry: Array<any> = [
         entry.timestamp,
         entry.brew_time,
@@ -719,18 +721,498 @@ export class UIExcel {
     }
   }
 
+
+  public async importGreenBeansByExcel(_arrayBuffer) {
+    try {
+      /* data is an ArrayBuffer */
+      const wb = XLSX.read(_arrayBuffer);
+      const data = XLSX.utils.sheet_to_json(wb.Sheets['Green Beans']);
+
+
+      let varietyInformationWhereAdded: boolean = false;
+      const addedBeans: Array<GreenBean> = [];
+      const toAddBeans: Array<GreenBean> = [];
+      for (const entry of data) {
+        /**
+         * 1. Bean certification: 14
+         * 1. Country: 5
+         * 1. Elevation: 9
+         * 1. Farm: 7
+         * 1. Farmer: 8
+         * 1. Harvested: 12
+         * 1. Percentage: 13
+         * 1. Processing: 11
+         * 1. Region: 6
+         * 1. Variety: 10
+         * 1. Fob Price
+         * 1. Purchasing Price
+         * Archived: false -
+         * Cost: 13 -
+         * Cupping points: 92 -
+         * Decaffeinated: false -
+         * EAN / Articlenumber: 2 -
+         * Flavour profile: "Red, whine, apple" -
+         * Name: 123 -
+         * Notes: 3
+         * Rating: 4
+         * Website: 1 -
+         * Weight: 250 -
+         * Buy Date
+         */
+
+        const bean: GreenBean = new GreenBean();
+
+        const nameEntry = entry['Name'];
+        if (nameEntry) {
+          bean.name = nameEntry.toString();
+        } else {
+          continue;
+        }
+
+        const weightEntry = entry['Weight'];
+        if (weightEntry && Number(weightEntry) > 0) {
+          bean.weight = Number(weightEntry);
+        }
+
+        const buyDateEntry = entry['Buy Date'];
+        if (buyDateEntry && Number(buyDateEntry) > 0) {
+          bean.date = this.getJsDateFromExcel(Number(buyDateEntry));
+        }
+
+        const websiteEntry = entry['Website'];
+        if (websiteEntry) {
+          bean.url = websiteEntry.toString();
+        }
+
+
+        const flavourProfileEntry = entry['Flavour profile'];
+        if (flavourProfileEntry) {
+          bean.aromatics = flavourProfileEntry.toString();
+        }
+
+        const eanArticleNumberEntry = entry['EAN / Articlenumber'];
+        if (eanArticleNumberEntry) {
+          bean.ean_article_number = eanArticleNumberEntry.toString();
+        }
+
+        const decaffeinatedEntry = entry['Decaffeinated'];
+        if (decaffeinatedEntry) {
+          bean.decaffeinated = decaffeinatedEntry;
+        }
+
+        const cuppingPointsEntry = entry['Cupping points'];
+        if (cuppingPointsEntry) {
+          bean.cupping_points = cuppingPointsEntry.toString();
+        }
+
+        const costEntry = entry['Cost'];
+        if (costEntry) {
+          bean.cost = Number(costEntry);
+        }
+
+        const archivedEntry = entry['Archived'];
+        if (archivedEntry) {
+          bean.finished = archivedEntry;
+        }
+
+        const beanInformation: IBeanInformation = {} as IBeanInformation;
+        let hasOneBeanInformation: boolean = false;
+
+        const informationCertificationEntry = entry['1. Bean certification'];
+        if (informationCertificationEntry) {
+          beanInformation.certification = informationCertificationEntry.toString();
+          hasOneBeanInformation=true;
+        }
+
+        const informationCountryEntry = entry['1. Country'];
+        if (informationCountryEntry) {
+          beanInformation.country = informationCountryEntry.toString();
+          hasOneBeanInformation=true;
+        }
+
+        const informationElevationEntry = entry['1. Elevation'];
+        if (informationElevationEntry) {
+          beanInformation.elevation = informationElevationEntry.toString();
+          hasOneBeanInformation=true;
+        }
+
+        const informationFarmEntry = entry['1. Farm'];
+        if (informationFarmEntry) {
+          beanInformation.farm = informationFarmEntry.toString();
+          hasOneBeanInformation=true;
+        }
+
+        const informationFarmerEntry = entry['1. Farmer'];
+        if (informationFarmerEntry) {
+          beanInformation.farmer = informationFarmerEntry.toString();
+          hasOneBeanInformation=true;
+        }
+
+        const informationHarvestedEntry = entry['1. Harvested'];
+        if (informationHarvestedEntry) {
+          beanInformation.harvest_time = informationHarvestedEntry.toString();
+          hasOneBeanInformation=true;
+        }
+
+        const informationPercentageEntry = entry['1. Percentage'];
+        if (informationPercentageEntry && Number(informationPercentageEntry) > 0) {
+          beanInformation.percentage = Number(informationPercentageEntry);
+          hasOneBeanInformation=true;
+        }
+
+        const informationProcessingEntry = entry['1. Processing'];
+        if (informationProcessingEntry) {
+          beanInformation.processing = informationProcessingEntry.toString();
+          hasOneBeanInformation=true;
+        }
+
+        const informationRegionEntry = entry['1. Region'];
+        if (informationRegionEntry) {
+          beanInformation.region = informationRegionEntry.toString();
+          hasOneBeanInformation=true;
+        }
+
+        const informationVarietyEntry = entry['1. Variety'];
+        if (informationVarietyEntry) {
+          beanInformation.variety = informationVarietyEntry.toString();
+          hasOneBeanInformation=true;
+        }
+
+        const informationFobPriceEntry = entry['1. Fob Price'];
+        if (informationFobPriceEntry && Number(informationFobPriceEntry) > 0) {
+          beanInformation.fob_price = Number(informationFobPriceEntry);
+          hasOneBeanInformation=true;
+        }
+
+        const informationPurchasingPriceEntry = entry['1. Purchasing Price'];
+        if (informationPurchasingPriceEntry && Number(informationPurchasingPriceEntry) > 0) {
+          beanInformation.purchasing_price = Number(informationPurchasingPriceEntry);
+          hasOneBeanInformation=true;
+        }
+
+        if (hasOneBeanInformation) {
+          varietyInformationWhereAdded = true;
+          bean.bean_information.push(beanInformation);
+        } else {
+          /** Add atleast one empty bean information**/
+          const emptyBeanInformation: IBeanInformation = {} as IBeanInformation;
+          bean.bean_information.push(emptyBeanInformation);
+        }
+
+        toAddBeans.push(bean);
+      }
+
+
+      if (varietyInformationWhereAdded) {
+        if (this.settings.bean_manage_parameters.bean_information === false) {
+          this.settings.bean_manage_parameters.bean_information = true;
+          await this.uiSettingsStorage.saveSettings(this.settings);
+        }
+      }
+
+
+      /**
+       * Add all beans afterwards to not have some added and then going into an exception
+       */
+      for await (const addBean of toAddBeans) {
+        try {
+          const newBean: GreenBean = await this.uiGreenBeanStorage.add(addBean);
+          addedBeans.push(newBean);
+        } catch(ex) {
+
+        }
+      }
+
+      if (addedBeans.length>0) {
+        try {
+          await this.uiAlert.showMessage('GREEN_BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION','IMPORT_SUCCESSFULLY',undefined,true);
+        }catch(ex) {
+
+        }
+
+      } else {
+        this.uiAlert.showMessage('BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE','IMPORT_UNSUCCESSFULLY','OK',false);
+      }
+
+    } catch (ex) {
+      this.uiAlert.showMessage(ex.message,this.translate.instant('IMPORT_UNSUCCESSFULLY'),this.translate.instant('OK'),false);
+    }
+  }
+
   public async importBeansByExcel(_arrayBuffer) {
     try {
       /* data is an ArrayBuffer */
       const wb = XLSX.read(_arrayBuffer);
       const data = XLSX.utils.sheet_to_json(wb.Sheets['Beans']);
+
+      let isOneEntryFrozen: boolean = false;
+      let varietyInformationWhereAdded: boolean = false;
+      const addedBeans: Array<Bean> = [];
+      const toAddBeans: Array<Bean> = [];
       for (const entry of data) {
-        //const bean: Bean = new Bean();
-        //bean.bean_information
+        /**
+         * 1. Bean certification: 14
+         * 1. Country: 5
+         * 1. Elevation: 9
+         * 1. Farm: 7
+         * 1. Farmer: 8
+         * 1. Harvested: 12
+         * 1. Percentage: 13
+         * 1. Processing: 11
+         * 1. Region: 6
+         * 1. Variety: 10
+         * 1. Fob Price
+         * 1. Purchasing Price
+         * Archived: false -
+         * Blend: "UNKNOWN" -
+         * Cost: 13 -
+         * Cupping points: 92 -
+         * Decaffeinated: false -
+         * Degree of Roast: "UNKNOWN" -
+         * EAN / Articlenumber: 2 -
+         * Flavour profile: "Red, whine, apple" -
+         * Name: 123 -
+         * Notes: 3
+         * Rating: 4
+         * Roast date: 44593
+         * Roast type: "FILTER" -
+         * Roaster: 123 -
+         * Website: 1 -
+         * Weight: 250 -
+         * Frozen Date
+         * Unfrozen Date
+         * Freezing Storage Type
+         * Frozen Note
+         */
+
+        const bean: Bean = new Bean();
+
+        const nameEntry = entry['Name'];
+        if (nameEntry) {
+          bean.name = nameEntry.toString();
+        } else {
+          continue;
+        }
+
+        const weightEntry = entry['Weight'];
+        if (weightEntry && Number(weightEntry) > 0) {
+          bean.weight = Number(weightEntry);
+        }
+
+        const roastDateEntry = entry['Roast date'];
+        if (roastDateEntry && Number(roastDateEntry) > 0) {
+          bean.roastingDate = this.getJsDateFromExcel(Number(roastDateEntry));
+        }
+
+        const websiteEntry = entry['Website'];
+        if (websiteEntry) {
+          bean.url = websiteEntry.toString();
+        }
+
+        const roasterEntry = entry['Roaster'];
+        if (roasterEntry) {
+          bean.roaster = roasterEntry.toString();
+        }
+
+        const roastTypeEntry = entry['Roast type'];
+        if (roastTypeEntry) {
+          bean.bean_roasting_type = roastTypeEntry;
+        }
+
+        const flavourProfileEntry = entry['Flavour profile'];
+        if (flavourProfileEntry) {
+          bean.aromatics = flavourProfileEntry.toString();
+        }
+
+        const eanArticleNumberEntry = entry['EAN / Articlenumber'];
+        if (eanArticleNumberEntry) {
+          bean.ean_article_number = eanArticleNumberEntry.toString();
+        }
+
+        const degreeOfRoastEntry = entry['Degree of Roast'];
+        if (degreeOfRoastEntry) {
+          bean.roast = degreeOfRoastEntry;
+        }
+        const decaffeinatedEntry = entry['Decaffeinated'];
+        if (decaffeinatedEntry) {
+          bean.decaffeinated = decaffeinatedEntry;
+        }
+
+        const cuppingPointsEntry = entry['Cupping points'];
+        if (cuppingPointsEntry) {
+          bean.cupping_points = cuppingPointsEntry.toString();
+        }
+
+        const costEntry = entry['Cost'];
+        if (costEntry) {
+          bean.cost = Number(costEntry);
+        }
+
+        const blendEntry = entry['Blend'];
+        if (blendEntry) {
+          bean.beanMix = blendEntry;
+        }
+
+        const archivedEntry = entry['Archived'];
+        if (archivedEntry) {
+          bean.finished = archivedEntry;
+        }
+
+        const beanInformation: IBeanInformation = {} as IBeanInformation;
+        let hasOneBeanInformation: boolean = false;
+
+        const informationCertificationEntry = entry['1. Bean certification'];
+        if (informationCertificationEntry) {
+          beanInformation.certification = informationCertificationEntry.toString();
+          hasOneBeanInformation=true;
+        }
+
+        const informationCountryEntry = entry['1. Country'];
+        if (informationCountryEntry) {
+          beanInformation.country = informationCountryEntry.toString();
+          hasOneBeanInformation=true;
+        }
+
+        const informationElevationEntry = entry['1. Elevation'];
+        if (informationElevationEntry) {
+          beanInformation.elevation = informationElevationEntry.toString();
+          hasOneBeanInformation=true;
+        }
+
+        const informationFarmEntry = entry['1. Farm'];
+        if (informationFarmEntry) {
+          beanInformation.farm = informationFarmEntry.toString();
+          hasOneBeanInformation=true;
+        }
+
+        const informationFarmerEntry = entry['1. Farmer'];
+        if (informationFarmerEntry) {
+          beanInformation.farmer = informationFarmerEntry.toString();
+          hasOneBeanInformation=true;
+        }
+
+        const informationHarvestedEntry = entry['1. Harvested'];
+        if (informationHarvestedEntry) {
+          beanInformation.harvest_time = informationHarvestedEntry.toString();
+          hasOneBeanInformation=true;
+        }
+
+        const informationPercentageEntry = entry['1. Percentage'];
+        if (informationPercentageEntry && Number(informationPercentageEntry) > 0) {
+          beanInformation.percentage = Number(informationPercentageEntry);
+          hasOneBeanInformation=true;
+        }
+
+        const informationProcessingEntry = entry['1. Processing'];
+        if (informationProcessingEntry) {
+          beanInformation.processing = informationProcessingEntry.toString();
+          hasOneBeanInformation=true;
+        }
+
+        const informationRegionEntry = entry['1. Region'];
+        if (informationRegionEntry) {
+          beanInformation.region = informationRegionEntry.toString();
+          hasOneBeanInformation=true;
+        }
+
+        const informationVarietyEntry = entry['1. Variety'];
+        if (informationVarietyEntry) {
+          beanInformation.variety = informationVarietyEntry.toString();
+          hasOneBeanInformation=true;
+        }
+
+        const informationFobPriceEntry = entry['1. Fob Price'];
+        if (informationFobPriceEntry && Number(informationFobPriceEntry) > 0) {
+          beanInformation.fob_price = Number(informationFobPriceEntry);
+          hasOneBeanInformation=true;
+        }
+
+        const informationPurchasingPriceEntry = entry['1. Purchasing Price'];
+        if (informationPurchasingPriceEntry && Number(informationPurchasingPriceEntry) > 0) {
+          beanInformation.purchasing_price = Number(informationPurchasingPriceEntry);
+          hasOneBeanInformation=true;
+        }
+
+        if (hasOneBeanInformation) {
+          varietyInformationWhereAdded = true;
+          bean.bean_information.push(beanInformation);
+        } else {
+          /** Add atleast one empty bean information**/
+          const emptyBeanInformation: IBeanInformation = {} as IBeanInformation;
+          bean.bean_information.push(emptyBeanInformation);
+        }
+
+        const freezingStorageTypeEntry = entry['Freezing Storage Type'];
+        if (freezingStorageTypeEntry) {
+          bean.frozenStorageType = freezingStorageTypeEntry;
+        }
+
+        const frozenNoteEntry = entry['Frozen Note'];
+        if (frozenNoteEntry) {
+          bean.frozenNote = frozenNoteEntry;
+        }
+
+        const frozenDateEntry = entry['Frozen Date'];
+        if (frozenDateEntry && Number(frozenDateEntry) > 0) {
+          isOneEntryFrozen = true;
+          bean.frozenDate = this.getJsDateFromExcel(Number(frozenDateEntry));
+          bean.frozenId = this.uiBeanHelper.generateFrozenId();
+        }
+
+        const unfrozenDateEntry = entry['Unfrozen Date'];
+        if (unfrozenDateEntry && Number(unfrozenDateEntry) > 0) {
+          isOneEntryFrozen = true;
+          bean.unfrozenDate = this.getJsDateFromExcel(Number(unfrozenDateEntry));
+        }
+        toAddBeans.push(bean);
       }
-      console.log(data);
-      console.log(wb);
-    } catch (ex) {}
+
+      if (isOneEntryFrozen) {
+        // Activate the frozen feature if not active
+        if (this.settings.freeze_coffee_beans === false) {
+          this.settings.freeze_coffee_beans = true;
+          await this.uiSettingsStorage.saveSettings(this.settings);
+        }
+      }
+      if (varietyInformationWhereAdded) {
+        if (this.settings.bean_manage_parameters.bean_information === false) {
+          this.settings.bean_manage_parameters.bean_information = true;
+          await this.uiSettingsStorage.saveSettings(this.settings);
+        }
+      }
+
+
+      /**
+       * Add all beans afterwards to not have some added and then going into an exception
+       */
+      for await (const addBean of toAddBeans) {
+        try {
+          const newBean: Bean = await this.uiBeanStorage.add(addBean);
+          addedBeans.push(newBean);
+        } catch(ex) {
+
+        }
+      }
+
+      if (addedBeans.length>0) {
+        try {
+          await this.uiAlert.showMessage('BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION','IMPORT_SUCCESSFULLY',undefined,true);
+        }catch(ex) {
+
+        }
+        this.uiBeanHelper.showBeans(addedBeans);
+      } else {
+        this.uiAlert.showMessage('BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE','IMPORT_UNSUCCESSFULLY','OK',false);
+      }
+
+    } catch (ex) {
+      this.uiAlert.showMessage(ex.message,this.translate.instant('IMPORT_UNSUCCESSFULLY'),this.translate.instant('OK'),false);
+    }
+  }
+
+  private getJsDateFromExcel(_dateNumber) {
+    return  new Date((_dateNumber - (25567+2))*86400*1000).toISOString();
+
   }
   /* Export button */
   public async export() {

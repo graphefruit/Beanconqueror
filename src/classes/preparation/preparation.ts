@@ -12,6 +12,7 @@ import { UIHelper } from '../../services/uiHelper';
 import { ListViewBrewParameter } from '../parameter/listViewBrewParameter';
 import { RepeatBrewParameter } from '../parameter/repeatBrewParameter';
 import { ConnectedPreparationDevice } from '../preparationDevice/connectedPreparationDevice';
+import { PreparationDeviceType } from '../preparationDevice';
 
 export class Preparation implements IPreparation {
   public name: string;
@@ -163,6 +164,10 @@ export class Preparation implements IPreparation {
         return PREPARATION_STYLE_TYPE.POUR_OVER;
       case PREPARATION_TYPES.METICULOUS:
         return PREPARATION_STYLE_TYPE.ESPRESSO;
+      case PREPARATION_TYPES.XENIA:
+        return PREPARATION_STYLE_TYPE.ESPRESSO;
+      case PREPARATION_TYPES.SANREMO_YOU:
+        return PREPARATION_STYLE_TYPE.ESPRESSO;
       default:
         return PREPARATION_STYLE_TYPE.POUR_OVER;
     }
@@ -305,4 +310,11 @@ export class Preparation implements IPreparation {
   public hasPhotos(): boolean {
     return this.attachments && this.attachments.length > 0;
   }
+  public hasDeviceConnection(): boolean {
+    return (
+      this.connectedPreparationDevice?.type !==
+      PreparationDeviceType.NONE
+    );
+  }
+
 }

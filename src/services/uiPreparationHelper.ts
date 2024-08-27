@@ -20,9 +20,13 @@ import {
   PreparationDeviceType,
 } from '../classes/preparationDevice';
 import { HttpClient } from '@angular/common/http';
-import { XeniaDevice } from '../classes/preparationDevice/xenia/xeniaDevice';
 import { PreparationDevice } from '../classes/preparationDevice/preparationDevice';
 import { PreparationSortToolsComponent } from '../app/preparation/preparation-sort-tools/preparation-sort-tools.component';
+import PREPARATION_TRACKING from '../data/tracking/preparationTracking';
+import {
+  PreparationConnectedDeviceComponent
+} from '../app/preparation/preparation-connected-device/preparation-connected-device.component';
+import { UIAnalytics } from './uiAnalytics';
 
 /**
  * Handles every helping functionalities
@@ -39,7 +43,8 @@ export class UIPreparationHelper {
     private readonly uiHelper: UIHelper,
     private readonly translate: TranslateService,
     private readonly uiPreparationStorage: UIPreparationStorage,
-    private readonly httpClient: HttpClient
+    private readonly httpClient: HttpClient,
+    private readonly uiAnalytics: UIAnalytics
   ) {
     this.uiBrewStorage.attachOnEvent().subscribe((_val) => {
       // If an brew is deleted, we need to reset our array for the next call.
@@ -84,6 +89,22 @@ export class UIPreparationHelper {
     await modal.present();
     await modal.onWillDismiss();
   }
+  public async connectDevice(_preparation: Preparation) {
+    this.uiAnalytics.trackEvent(
+      PREPARATION_TRACKING.TITLE,
+      PREPARATION_TRACKING.ACTIONS.CONNECT_DEVICE
+    );
+    const modal = await this.modalController.create({
+      component: PreparationConnectedDeviceComponent,
+      componentProps: { preparation: _preparation },
+      id: PreparationConnectedDeviceComponent.COMPONENT_ID,
+    });
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+
+
+
 
   public async editPreparationTool(
     _preparation: Preparation,

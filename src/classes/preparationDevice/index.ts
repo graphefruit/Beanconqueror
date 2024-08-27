@@ -3,11 +3,13 @@ import { PreparationDevice } from './preparationDevice';
 import { HttpClient } from '@angular/common/http';
 import { Preparation } from '../preparation/preparation';
 import { MeticulousDevice } from './meticulous/meticulousDevice';
+import { SanremoYOUDevice } from './sanremo/sanremoYOUDevice';
 
 export enum PreparationDeviceType {
   NONE = 'NONE',
   XENIA = 'XENIA',
   METICULOUS = 'METICULOUS',
+  SANREMO_YOU = 'SANREMO_YOU',
 }
 
 export function makePreparationDevice(
@@ -20,6 +22,8 @@ export function makePreparationDevice(
       return new XeniaDevice(_http, _preparation);
     case PreparationDeviceType.METICULOUS:
       return new MeticulousDevice(_http, _preparation);
+    case PreparationDeviceType.SANREMO_YOU:
+      return new SanremoYOUDevice(_http, _preparation);
     default:
       return null;
   }

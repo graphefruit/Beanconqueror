@@ -8,7 +8,8 @@
   </ion-item>
 
   <ion-item  *ngFor="let prep of preparationMethods;let last = last" detail="true" (click)="choosePreparation(prep)" lines="{{last?'none':''}}" tappable>
-    {{prep.name}}<span style='font-size: 12px; margin-top: 2px;'>&nbsp;({{"LAST_USE" | translate}}:
+    <ion-icon style="position: relative;margin-right:5px;" name="wifi-outline"
+              *ngIf='prep.hasDeviceConnection()'></ion-icon>{{prep.name}}<span style='font-size: 12px; margin-top: 2px;'>&nbsp;({{"LAST_USE" | translate}}:
     <span  *ngIf="getBrewsCount(prep)> 0">{{lastUsed(prep) | formatDate:[settings?.date_format]}}</span>
     <span *ngIf="getBrewsCount(prep) <= 0">-</span>)
   </span>

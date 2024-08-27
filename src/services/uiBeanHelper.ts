@@ -29,6 +29,8 @@ import { BEAN_ROASTING_TYPE_ENUM } from '../enums/beans/beanRoastingType';
 import { AssociatedBrewsComponent } from '../app/brew/associated-brews/associated-brews.component';
 import { BrewCuppingComponent } from '../app/brew/brew-cupping/brew-cupping.component';
 import { BeanPopoverFreezeComponent } from '../app/beans/bean-popover-freeze/bean-popover-freeze.component';
+import { BeanPopoverFrozenListComponent } from '../app/beans/bean-popover-frozen-list/bean-popover-frozen-list.component';
+import { BeanPopoverListComponent } from '../app/beans/bean-popover-list/bean-popover-list.component';
 
 /**
  * Handles every helping functionalities
@@ -314,6 +316,16 @@ export class UIBeanHelper {
       component: BeansAddComponent,
       id: BeansAddComponent.COMPONENT_ID,
       componentProps: { greenBean: _greenBean },
+    });
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+
+  public async showBeans(_beanList: Array<Bean>) {
+    const modal = await this.modalController.create({
+      component: BeanPopoverListComponent,
+      id: BeanPopoverListComponent.COMPONENT_ID,
+      componentProps: { beansList: _beanList },
     });
     await modal.present();
     await modal.onWillDismiss();

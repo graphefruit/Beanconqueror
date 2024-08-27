@@ -84,6 +84,16 @@ export interface ISettings {
     ARCHIVED: IBeanPageSort;
   };
 
+  bean_collapsed: {
+    OPEN: boolean;
+    ARCHIVED: boolean;
+    FROZEN: boolean;
+  };
+  brew_collapsed: {
+    OPEN: boolean;
+    ARCHIVED: boolean;
+  };
+
   green_bean_sort: {
     OPEN: IBeanPageSort;
     ARCHIVED: IBeanPageSort;

@@ -15,6 +15,8 @@ import { UIHelper } from '../../services/uiHelper';
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { Platform } from '@ionic/angular';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
+import { MeticulousDevice } from '../../classes/preparationDevice/meticulous/meticulousDevice';
 
 declare var Plotly;
 @Component({
@@ -25,6 +27,8 @@ declare var Plotly;
 export class GraphDisplayCardComponent implements OnInit {
   @Input() public flowProfileData: any;
   @Input() public flowProfilePath: any;
+
+  @Input() public meticulousHistoryData: HistoryListingEntry;
 
   @Input() public chartWidth: number;
 
@@ -56,8 +60,10 @@ export class GraphDisplayCardComponent implements OnInit {
     this.settings = this.uiSettingsStorage.getSettings();
     if (this.flowProfilePath) {
       await this.readFlowProfile();
-    } else {
+    } else if (this.flowProfileData) {
       this.flow_profile_raw = this.uiHelper.cloneData(this.flowProfileData);
+    } else if (this.meticulousHistoryData) {
+      this.flow_profile_raw = MeticulousDevice.returnBrewFlowForShotData(this.meticulousHistoryData.data);
     }
     setTimeout(() => {
       this.initializeFlowChart();

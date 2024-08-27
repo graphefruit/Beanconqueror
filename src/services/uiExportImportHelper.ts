@@ -20,11 +20,13 @@ import {
 import * as zip from '@zip.js/zip.js';
 import { FileEntry } from '@awesome-cordova-plugins/file';
 import { UILog } from './uiLog';
-import { Platform } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 import { UIFileHelper } from './uiFileHelper';
 import { UIAlert } from './uiAlert';
 import moment from 'moment';
 import { UIBrewStorage } from './uiBrewStorage';
+
+import { DataCorruptionFoundComponent } from '../popover/data-corruption-found/data-corruption-found.component';
 @Injectable({
   providedIn: 'root',
 })
@@ -43,7 +45,8 @@ export class UIExportImportHelper {
     private readonly uiFileHelper: UIFileHelper,
     private readonly uiAlert: UIAlert,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiBrewStorage: UIBrewStorage
+    private readonly uiBrewStorage: UIBrewStorage,
+    private readonly modalController: ModalController
   ) {}
 
   public async buildExportZIP(): Promise<any> {
@@ -239,6 +242,64 @@ export class UIExportImportHelper {
       });
     });
   }
+  private async checkBackupAndSeeIfDataAreCorrupted(_actualUIStorageDataObj) {
+
+    try {
+      this.uiLog.log("checkBackupAndSeeIfDataAreCorrupted - Check if we got a deep corruption");
+      const dataObj = _actualUIStorageDataObj.DATA;
+      const parsedJSON: any = await this.readBackupZIPFile();
+      if (parsedJSON) {
+        let somethingCorrupted = false;
+        if (parsedJSON.BEANS?.length > dataObj.BEANS) {
+          somethingCorrupted = true;
+        } else if (parsedJSON.BREWS?.length > dataObj.BREWS)
+        {
+          somethingCorrupted = true;
+        } else if (parsedJSON.PREPARATION?.length > dataObj.PREPARATION)
+        {
+          somethingCorrupted = true;
+        }
+        else if (parsedJSON.MILL?.length > dataObj.MILL)
+        {
+          somethingCorrupted = true;
+        }
+
+        this.uiLog.log("checkBackupAndSeeIfDataAreCorrupted- Check over - if we got a deep corruption - Result: " + somethingCorrupted);
+        if (somethingCorrupted) {
+          const importBackup = await this.showDataCorruptionPopover(dataObj,parsedJSON);
+          if (importBackup) {
+            await this.importBackupJSON(parsedJSON);
+          }
+        } else {
+          this.uiLog.log("checkBackupAndSeeIfDataAreCorrupted - Check over - we didn't find any corrupted data");
+        }
+      } else {
+        this.uiLog.log("checkBackupAndSeeIfDataAreCorrupted - We didn't found any json backup data so we can't do any checks");
+      }
+    } catch(ex) {
+      this.uiLog.log("Check over - if we got a deep corruption - Result exception: " + JSON.stringify(ex));
+    }
+
+  }
+
+  public async showDataCorruptionPopover(_actualUIStorageDataObj,_backupDataObj) {
+    const modal = await this.modalController.create({
+      component: DataCorruptionFoundComponent,
+      id: DataCorruptionFoundComponent.POPOVER_ID,
+      componentProps: {
+        actualUIStorageDataObj: _actualUIStorageDataObj,
+        backupDataObj: _backupDataObj,
+      },
+    });
+    await modal.present();
+    const returnData  = await modal.onWillDismiss();
+    this.uiLog.log('Data corruption, choose to import: ' + returnData?.data?.import);
+    if (returnData?.data?.import) {
+      //User choose to import backup, go
+      return true;
+    }
+    return false;
+  }
 
   public async checkBackup() {
     try {
@@ -248,12 +309,13 @@ export class UIExportImportHelper {
             this.uiLog.log('Check Backup');
             const hasData = await this.uiStorage.hasData();
 
-            let corruptedDataObjCheck: any;
+            let actualUIStorageDataObj: any;
             if (hasData) {
-              corruptedDataObjCheck = await this.uiStorage.hasCorruptedData();
+              actualUIStorageDataObj = await this.uiStorage.hasCorruptedData();
             }
+
             this.uiLog.log('Check Backup - Has data ' + hasData);
-            if (!hasData || corruptedDataObjCheck.CORRUPTED) {
+            if (!hasData || actualUIStorageDataObj.CORRUPTED) {
               if (!hasData) {
                 this.uiLog.log(
                   'Check  Backup - We didnt found any data inside the app, so try to find a backup and import it'
@@ -268,16 +330,9 @@ export class UIExportImportHelper {
               if (parsedJSON) {
                 await this.importBackupJSON(parsedJSON);
               }
+              resolve(null);
             } else {
-              /**
-               *   BREWS: number,
-               *   MILL: number,
-               *   PREPARATION: number,
-               *   BEANS: number,
-               */
-              const parsedJSON = await this.readBackupZIPFile();
-              console.log('BLAAA');
-              console.log(parsedJSON);
+              await this.checkBackupAndSeeIfDataAreCorrupted(actualUIStorageDataObj);
               resolve(null);
             }
           } else {

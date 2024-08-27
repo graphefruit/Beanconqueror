@@ -1,0 +1,69 @@
+<ion-header>
+  <ion-title class="ion-text-center ion-margin-top">Data corruption found</ion-title>
+
+</ion-header>
+<ion-content>
+  <ion-card>
+    <ion-card-content>
+      It somehow looks that your current data are corrupted, we've checked the backup file, in the following list you'll see how much data you've stored actually and how many are stored in your backup.<br/>
+      You can then choose to restore this backup or not. <br/>
+      If you don't feel save right now please make a screenshot of this screen, contact info@beanconqueror.com and close this app completely - any issues will be prevent with this
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-content>
+ <table>
+   <th>
+   Key</th>
+    <th>
+      Actual Storage
+   </th>
+   <th>
+     Backup
+   </th>
+
+   <tr>
+     <td>Beans</td>
+     <td>{{actualUIStorageDataObj?.BEANS}}</td>
+     <td>{{backupDataObj?.BEANS?.length}}</td>
+   </tr>
+   <tr>
+     <td>Brews</td>
+     <td>{{actualUIStorageDataObj?.BREWS}}</td>
+     <td>{{backupDataObj?.BREWS?.length}}</td>
+   </tr>
+
+   <tr>
+     <td>Preparation</td>
+     <td>{{actualUIStorageDataObj?.PREPARATION}}</td>
+     <td>{{backupDataObj?.PREPARATION?.length}}</td>
+   </tr>
+
+   <tr>
+     <td>Grinder</td>
+     <td>{{actualUIStorageDataObj?.MILL}}</td>
+     <td>{{backupDataObj?.MILL?.length}}</td>
+   </tr>
+
+
+
+ </table>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
+<ion-footer class="ion-no-border">
+
+  <ion-row class="ion-padding-top">
+    <ion-col size="6">
+      <ion-button (click)="dismiss()" color="danger" expand="block" fill="outline"
+                  tappable>Dont import backup</ion-button>
+    </ion-col>
+    <ion-col size="6">
+      <ion-button (click)="import()"  color="accent"  expand="block"
+                  tappable>Import backup</ion-button>
+    </ion-col>
+  </ion-row>
+
+
+</ion-footer>

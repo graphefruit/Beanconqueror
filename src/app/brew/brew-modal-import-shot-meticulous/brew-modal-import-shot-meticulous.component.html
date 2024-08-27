@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>{{"CHOOSE_REFERENCE_GRAPH" | translate}}</ion-title>
+    <ion-title>{{"IMPORT_SHOT_FROM_METICULOUS" | translate}}</ion-title>
 
     <ion-buttons slot="start">
       <ion-button (click)="dismiss()" class="big-icon-only">
@@ -9,16 +9,20 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content>
+<ion-content #historyShotContent>
   <ion-radio-group [(ngModel)]="radioSelection">
-
     <ion-card>
-
-          <ion-item  *ngFor='let entry of history' #ionItemEl tappable>
-            <ion-radio justify="start" label-placement="end"  value='{{entry.id}}'>
-              {{entry.profile.name}}
-            </ion-radio>
-          </ion-item>
+      <ag-virtual-scroll #shotDataScroll [items]="history" height="100vh" min-row-height="240">
+        <ion-item #ionItemEl *ngFor="let entry of shotDataScroll.items" tappable lines='full'>
+          <ion-radio justify="start" label-placement="end"  value='{{entry.id}}'>
+            <ion-grid class="no-ion-col-vertical-padding limit-grid-overflow">
+              <h2>{{entry.profile.name}}</h2>
+              <div class='font-size-16'>{{this.uiHelper.formatTimeNumber(entry.time * 1000)}}</div>
+            </ion-grid>
+            <graph-display-card [chartWidth]='getElementOffsetWidth()' [meticulousHistoryData]='entry'></graph-display-card>
+          </ion-radio>
+        </ion-item>
+      </ag-virtual-scroll>
     </ion-card>
 
 
@@ -27,8 +31,8 @@
 <ion-footer #footerContent class="ion-no-border">
   <ion-row>
     <ion-col size="6">
-      <ion-button (click)="reset()" color="danger" expand="block" fill="outline"
-                  tappable>{{"RESET" | translate}}</ion-button>
+      <ion-button (click)="dismiss()" color="danger" expand="block" fill="outline"
+                  tappable>{{"CANCEL" | translate}}</ion-button>
     </ion-col>
     <ion-col size="6">
       <ion-button (click)="choose()" [disabled]='!radioSelection' color="accent" expand="block" tappable

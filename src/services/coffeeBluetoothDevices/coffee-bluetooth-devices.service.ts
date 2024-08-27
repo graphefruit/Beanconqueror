@@ -41,6 +41,7 @@ import { BookooPressure } from 'src/classes/devices/bookooPressure';
 import { BasicGrillThermometer } from 'src/classes/devices/basicGrillThermometer';
 import { MeaterThermometer } from 'src/classes/devices/meaterThermometer';
 import { CombustionThermometer } from '../../classes/devices/combustionThermometer';
+import { ArgosThermometer } from '../../classes/devices/argosThermometer';
 
 declare var device: any;
 declare var ble: any;
@@ -546,7 +547,8 @@ export class CoffeeBluetoothDevicesService {
             ETITemperature.test(scanDevice) ||
             BasicGrillThermometer.test(scanDevice) ||
             MeaterThermometer.test(scanDevice) ||
-            CombustionThermometer.test(scanDevice)
+            CombustionThermometer.test(scanDevice) ||
+            ArgosThermometer.test(scanDevice)
           ) {
             // We found all needed devices.
             promiseResolved = true;
@@ -1047,6 +1049,17 @@ export class CoffeeBluetoothDevicesService {
             type: TemperatureType.COMBUSTION,
           });
         }
+        else if (ArgosThermometer.test(deviceTemperature)) {
+          this.logger.log(
+            'BleManager - We found a Argos Thermometer device ' +
+            JSON.stringify(deviceTemperature)
+          );
+          supportedDevices.push({
+            id: deviceTemperature.id,
+            type: TemperatureType.ARGOS,
+          });
+        }
+
       }
       resolve(supportedDevices);
     });
@@ -1089,6 +1102,16 @@ export class CoffeeBluetoothDevicesService {
             resolve({
               id: deviceTemperature.id,
               type: TemperatureType.COMBUSTION,
+            });
+            return;
+          }
+          else if (ArgosThermometer.test(deviceTemperature)) {
+            this.logger.log(
+              'BleManager - We found a Argos Thermometer device '
+            );
+            resolve({
+              id: deviceTemperature.id,
+              type: TemperatureType.ARGOS,
             });
             return;
           }
