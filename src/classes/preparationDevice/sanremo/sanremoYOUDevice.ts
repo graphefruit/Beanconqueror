@@ -7,12 +7,11 @@ declare var cordova;
 export class SanremoYOUDevice extends PreparationDevice {
   public scriptList: Array<{ INDEX: number; TITLE: string }> = [];
 
-
-  private connectionURL: string ='';
+  private connectionURL: string = '';
   constructor(protected httpClient: HttpClient, _preparation: Preparation) {
     super(httpClient, _preparation);
 
-    this.connectionURL =this.getPreparation().connectedPreparationDevice.url;
+    this.connectionURL = this.getPreparation().connectedPreparationDevice.url;
   }
 
   public async deviceConnected(): Promise<boolean> {
@@ -104,7 +103,7 @@ export class SanremoYOUDevice extends PreparationDevice {
           /**{"status":1,"description":"ON","statusPhase":0,"alarms":0,"warnings":2,"tempBoilerCoffe":82.1,"tempBolierServices":100.2,"pumpServicesPress":0.2,"pumpPress":0.0,"counterVol":0,"realtimeFlow":0,"setPressPaddle":0.0}**/
           const parsedJSON = JSON.parse(response.data);
           const temp = parsedJSON.tempBoilerCoffe;
-          const press = parsedJSON.pumpPress*10;
+          const press = parsedJSON.pumpPress * 10;
 
           this.temperature = temp;
           this.pressure = press;
@@ -118,9 +117,6 @@ export class SanremoYOUDevice extends PreparationDevice {
       }
     );
   }
-
-
-
 
   public startShot() {
     const promise = new Promise<boolean>((resolve, reject) => {

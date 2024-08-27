@@ -20,7 +20,7 @@ import { Settings } from '../../../classes/settings/settings';
 @Component({
   selector: 'beans-add',
   templateUrl: './beans-add.component.html',
-  styleUrls: ['./beans-add.component.scss']
+  styleUrls: ['./beans-add.component.scss'],
 })
 export class BeansAddComponent implements OnInit {
   public static readonly COMPONENT_ID = 'bean-add';
@@ -49,8 +49,7 @@ export class BeansAddComponent implements OnInit {
     private readonly platform: Platform,
     public readonly uiBeanHelper: UIBeanHelper,
     private readonly uiSettingsStorage: UISettingsStorage
-  ) {
-  }
+  ) {}
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
@@ -67,8 +66,6 @@ export class BeansAddComponent implements OnInit {
 
   private async checkIfInformationAreSetButNotDisplayed() {
     try {
-
-
       const params = this.settings.bean_manage_parameters;
       if (this.data.bean_information.length > 0) {
         const info: IBeanInformation = this.data.bean_information[0];
@@ -114,20 +111,20 @@ export class BeansAddComponent implements OnInit {
           //Woopsi doopsi, user hasn't enabled the bean_information, lets display him a popover
           //#623
           try {
-            const yes = await this.uiAlert.showConfirm('BEAN_POPUP_YOU_DONT_SEE_EVERYTHING_DESCRIPTION', 'INFORMATION', true);
+            const yes = await this.uiAlert.showConfirm(
+              'BEAN_POPUP_YOU_DONT_SEE_EVERYTHING_DESCRIPTION',
+              'INFORMATION',
+              true
+            );
             this.settings.bean_manage_parameters.bean_information = true;
             await this.uiSettingsStorage.update(this.settings);
             //Activate
           } catch (ex) {
             // Don't activate
           }
-
         }
-
       }
-    } catch (ex) {
-
-    }
+    } catch (ex) {}
   }
 
   public async ionViewWillEnter() {
@@ -228,11 +225,10 @@ export class BeansAddComponent implements OnInit {
       if (this.settings.security_check_when_going_back === true) {
         this.disableHardwareBack.unsubscribe();
       }
-    } catch (ex) {
-    }
+    } catch (ex) {}
     this.modalController.dismiss(
       {
-        dismissed: true
+        dismissed: true,
       },
       undefined,
       BeansAddComponent.COMPONENT_ID
@@ -270,8 +266,7 @@ export class BeansAddComponent implements OnInit {
       try {
         const newPath: string = await this.uiFileHelper.copyFile(attachment);
         copyAttachments.push(newPath);
-      } catch (ex) {
-      }
+      } catch (ex) {}
     }
     this.data.attachments = copyAttachments;
     if (_bean.cupped_flavor) {

@@ -1048,18 +1048,16 @@ export class CoffeeBluetoothDevicesService {
             id: deviceTemperature.id,
             type: TemperatureType.COMBUSTION,
           });
-        }
-        else if (ArgosThermometer.test(deviceTemperature)) {
+        } else if (ArgosThermometer.test(deviceTemperature)) {
           this.logger.log(
             'BleManager - We found a Argos Thermometer device ' +
-            JSON.stringify(deviceTemperature)
+              JSON.stringify(deviceTemperature)
           );
           supportedDevices.push({
             id: deviceTemperature.id,
             type: TemperatureType.ARGOS,
           });
         }
-
       }
       resolve(supportedDevices);
     });
@@ -1104,8 +1102,7 @@ export class CoffeeBluetoothDevicesService {
               type: TemperatureType.COMBUSTION,
             });
             return;
-          }
-          else if (ArgosThermometer.test(deviceTemperature)) {
+          } else if (ArgosThermometer.test(deviceTemperature)) {
             this.logger.log(
               'BleManager - We found a Argos Thermometer device '
             );

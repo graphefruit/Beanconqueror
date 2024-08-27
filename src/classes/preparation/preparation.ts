@@ -311,10 +311,6 @@ export class Preparation implements IPreparation {
     return this.attachments && this.attachments.length > 0;
   }
   public hasDeviceConnection(): boolean {
-    return (
-      this.connectedPreparationDevice?.type !==
-      PreparationDeviceType.NONE
-    );
+    return this.connectedPreparationDevice?.type !== PreparationDeviceType.NONE;
   }
-
 }

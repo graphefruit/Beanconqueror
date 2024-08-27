@@ -52,18 +52,21 @@ export class PreparationConnectedDeviceComponent {
     if (this.preparation !== undefined) {
       this.data.initializeByObject(this.preparation);
     }
-    if (this.data.connectedPreparationDevice.type === PreparationDeviceType.NONE) {
+    if (
+      this.data.connectedPreparationDevice.type === PreparationDeviceType.NONE
+    ) {
       if (this.data.type === PREPARATION_TYPES.METICULOUS) {
-        this.data.connectedPreparationDevice.type = PreparationDeviceType.METICULOUS;
+        this.data.connectedPreparationDevice.type =
+          PreparationDeviceType.METICULOUS;
       }
       if (this.data.type === PREPARATION_TYPES.XENIA) {
         this.data.connectedPreparationDevice.type = PreparationDeviceType.XENIA;
       }
       if (this.data.type === PREPARATION_TYPES.SANREMO_YOU) {
-        this.data.connectedPreparationDevice.type = PreparationDeviceType.SANREMO_YOU;
+        this.data.connectedPreparationDevice.type =
+          PreparationDeviceType.SANREMO_YOU;
       }
     }
-
   }
 
   public dismiss(): void {
@@ -117,15 +120,13 @@ export class PreparationConnectedDeviceComponent {
       if (
         this.data.connectedPreparationDevice.type ===
         PreparationDeviceType.METICULOUS
-      )
-      {
+      ) {
         if (this.data.connectedPreparationDevice.url.endsWith('/') === true) {
           this.data.connectedPreparationDevice.url =
             this.data.connectedPreparationDevice.url.slice(0, -1);
         }
         if (
-          this.data.connectedPreparationDevice.url.startsWith('http') ===
-          false
+          this.data.connectedPreparationDevice.url.startsWith('http') === false
         ) {
           this.data.connectedPreparationDevice.url =
             'http://' + this.data.connectedPreparationDevice.url;
@@ -134,15 +135,13 @@ export class PreparationConnectedDeviceComponent {
       if (
         this.data.connectedPreparationDevice.type ===
         PreparationDeviceType.SANREMO_YOU
-      )
-      {
+      ) {
         if (this.data.connectedPreparationDevice.url.endsWith('/') === true) {
           this.data.connectedPreparationDevice.url =
             this.data.connectedPreparationDevice.url.slice(0, -1);
         }
         if (
-          this.data.connectedPreparationDevice.url.startsWith('http') ===
-          false
+          this.data.connectedPreparationDevice.url.startsWith('http') === false
         ) {
           this.data.connectedPreparationDevice.url =
             'http://' + this.data.connectedPreparationDevice.url;
@@ -185,6 +184,4 @@ export class PreparationConnectedDeviceComponent {
   }
 
   public ngOnInit() {}
-
-
 }

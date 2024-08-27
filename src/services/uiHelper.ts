@@ -147,7 +147,7 @@ export class UIHelper {
     return moment(_unix).format(format);
   }
 
-  public formatTimeNumber(_time: number|string, _format?: string): string {
+  public formatTimeNumber(_time: number | string, _format?: string): string {
     let format: string =
       this.getSettingsStorageInstance().getSettings().date_format +
       ', HH:mm:ss';

@@ -11,14 +11,14 @@ describe('BeanPopoverListComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ BeanPopoverListComponent ],
+      declarations: [BeanPopoverListComponent],
       imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
       providers: [
         {
           provide: TranslateService,
           useValue: TranslateServiceMock,
         },
-      ]
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(BeanPopoverListComponent);

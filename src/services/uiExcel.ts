@@ -721,13 +721,11 @@ export class UIExcel {
     }
   }
 
-
   public async importGreenBeansByExcel(_arrayBuffer) {
     try {
       /* data is an ArrayBuffer */
       const wb = XLSX.read(_arrayBuffer);
       const data = XLSX.utils.sheet_to_json(wb.Sheets['Green Beans']);
-
 
       let varietyInformationWhereAdded: boolean = false;
       const addedBeans: Array<GreenBean> = [];
@@ -784,7 +782,6 @@ export class UIExcel {
           bean.url = websiteEntry.toString();
         }
 
-
         const flavourProfileEntry = entry['Flavour profile'];
         if (flavourProfileEntry) {
           bean.aromatics = flavourProfileEntry.toString();
@@ -820,74 +817,83 @@ export class UIExcel {
 
         const informationCertificationEntry = entry['1. Bean certification'];
         if (informationCertificationEntry) {
-          beanInformation.certification = informationCertificationEntry.toString();
-          hasOneBeanInformation=true;
+          beanInformation.certification =
+            informationCertificationEntry.toString();
+          hasOneBeanInformation = true;
         }
 
         const informationCountryEntry = entry['1. Country'];
         if (informationCountryEntry) {
           beanInformation.country = informationCountryEntry.toString();
-          hasOneBeanInformation=true;
+          hasOneBeanInformation = true;
         }
 
         const informationElevationEntry = entry['1. Elevation'];
         if (informationElevationEntry) {
           beanInformation.elevation = informationElevationEntry.toString();
-          hasOneBeanInformation=true;
+          hasOneBeanInformation = true;
         }
 
         const informationFarmEntry = entry['1. Farm'];
         if (informationFarmEntry) {
           beanInformation.farm = informationFarmEntry.toString();
-          hasOneBeanInformation=true;
+          hasOneBeanInformation = true;
         }
 
         const informationFarmerEntry = entry['1. Farmer'];
         if (informationFarmerEntry) {
           beanInformation.farmer = informationFarmerEntry.toString();
-          hasOneBeanInformation=true;
+          hasOneBeanInformation = true;
         }
 
         const informationHarvestedEntry = entry['1. Harvested'];
         if (informationHarvestedEntry) {
           beanInformation.harvest_time = informationHarvestedEntry.toString();
-          hasOneBeanInformation=true;
+          hasOneBeanInformation = true;
         }
 
         const informationPercentageEntry = entry['1. Percentage'];
-        if (informationPercentageEntry && Number(informationPercentageEntry) > 0) {
+        if (
+          informationPercentageEntry &&
+          Number(informationPercentageEntry) > 0
+        ) {
           beanInformation.percentage = Number(informationPercentageEntry);
-          hasOneBeanInformation=true;
+          hasOneBeanInformation = true;
         }
 
         const informationProcessingEntry = entry['1. Processing'];
         if (informationProcessingEntry) {
           beanInformation.processing = informationProcessingEntry.toString();
-          hasOneBeanInformation=true;
+          hasOneBeanInformation = true;
         }
 
         const informationRegionEntry = entry['1. Region'];
         if (informationRegionEntry) {
           beanInformation.region = informationRegionEntry.toString();
-          hasOneBeanInformation=true;
+          hasOneBeanInformation = true;
         }
 
         const informationVarietyEntry = entry['1. Variety'];
         if (informationVarietyEntry) {
           beanInformation.variety = informationVarietyEntry.toString();
-          hasOneBeanInformation=true;
+          hasOneBeanInformation = true;
         }
 
         const informationFobPriceEntry = entry['1. Fob Price'];
         if (informationFobPriceEntry && Number(informationFobPriceEntry) > 0) {
           beanInformation.fob_price = Number(informationFobPriceEntry);
-          hasOneBeanInformation=true;
+          hasOneBeanInformation = true;
         }
 
         const informationPurchasingPriceEntry = entry['1. Purchasing Price'];
-        if (informationPurchasingPriceEntry && Number(informationPurchasingPriceEntry) > 0) {
-          beanInformation.purchasing_price = Number(informationPurchasingPriceEntry);
-          hasOneBeanInformation=true;
+        if (
+          informationPurchasingPriceEntry &&
+          Number(informationPurchasingPriceEntry) > 0
+        ) {
+          beanInformation.purchasing_price = Number(
+            informationPurchasingPriceEntry
+          );
+          hasOneBeanInformation = true;
         }
 
         if (hasOneBeanInformation) {
@@ -902,14 +908,12 @@ export class UIExcel {
         toAddBeans.push(bean);
       }
 
-
       if (varietyInformationWhereAdded) {
         if (this.settings.bean_manage_parameters.bean_information === false) {
           this.settings.bean_manage_parameters.bean_information = true;
           await this.uiSettingsStorage.saveSettings(this.settings);
         }
       }
-
 
       /**
        * Add all beans afterwards to not have some added and then going into an exception
@@ -918,24 +922,33 @@ export class UIExcel {
         try {
           const newBean: GreenBean = await this.uiGreenBeanStorage.add(addBean);
           addedBeans.push(newBean);
-        } catch(ex) {
-
-        }
+        } catch (ex) {}
       }
 
-      if (addedBeans.length>0) {
+      if (addedBeans.length > 0) {
         try {
-          await this.uiAlert.showMessage('GREEN_BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION','IMPORT_SUCCESSFULLY',undefined,true);
-        }catch(ex) {
-
-        }
-
+          await this.uiAlert.showMessage(
+            'GREEN_BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION',
+            'IMPORT_SUCCESSFULLY',
+            undefined,
+            true
+          );
+        } catch (ex) {}
       } else {
-        this.uiAlert.showMessage('BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE','IMPORT_UNSUCCESSFULLY','OK',false);
+        this.uiAlert.showMessage(
+          'BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE',
+          'IMPORT_UNSUCCESSFULLY',
+          'OK',
+          false
+        );
       }
-
     } catch (ex) {
-      this.uiAlert.showMessage(ex.message,this.translate.instant('IMPORT_UNSUCCESSFULLY'),this.translate.instant('OK'),false);
+      this.uiAlert.showMessage(
+        ex.message,
+        this.translate.instant('IMPORT_UNSUCCESSFULLY'),
+        this.translate.instant('OK'),
+        false
+      );
     }
   }
 
@@ -1063,74 +1076,83 @@ export class UIExcel {
 
         const informationCertificationEntry = entry['1. Bean certification'];
         if (informationCertificationEntry) {
-          beanInformation.certification = informationCertificationEntry.toString();
-          hasOneBeanInformation=true;
+          beanInformation.certification =
+            informationCertificationEntry.toString();
+          hasOneBeanInformation = true;
         }
 
         const informationCountryEntry = entry['1. Country'];
         if (informationCountryEntry) {
           beanInformation.country = informationCountryEntry.toString();
-          hasOneBeanInformation=true;
+          hasOneBeanInformation = true;
         }
 
         const informationElevationEntry = entry['1. Elevation'];
         if (informationElevationEntry) {
           beanInformation.elevation = informationElevationEntry.toString();
-          hasOneBeanInformation=true;
+          hasOneBeanInformation = true;
         }
 
         const informationFarmEntry = entry['1. Farm'];
         if (informationFarmEntry) {
           beanInformation.farm = informationFarmEntry.toString();
-          hasOneBeanInformation=true;
+          hasOneBeanInformation = true;
         }
 
         const informationFarmerEntry = entry['1. Farmer'];
         if (informationFarmerEntry) {
           beanInformation.farmer = informationFarmerEntry.toString();
-          hasOneBeanInformation=true;
+          hasOneBeanInformation = true;
         }
 
         const informationHarvestedEntry = entry['1. Harvested'];
         if (informationHarvestedEntry) {
           beanInformation.harvest_time = informationHarvestedEntry.toString();
-          hasOneBeanInformation=true;
+          hasOneBeanInformation = true;
         }
 
         const informationPercentageEntry = entry['1. Percentage'];
-        if (informationPercentageEntry && Number(informationPercentageEntry) > 0) {
+        if (
+          informationPercentageEntry &&
+          Number(informationPercentageEntry) > 0
+        ) {
           beanInformation.percentage = Number(informationPercentageEntry);
-          hasOneBeanInformation=true;
+          hasOneBeanInformation = true;
         }
 
         const informationProcessingEntry = entry['1. Processing'];
         if (informationProcessingEntry) {
           beanInformation.processing = informationProcessingEntry.toString();
-          hasOneBeanInformation=true;
+          hasOneBeanInformation = true;
         }
 
         const informationRegionEntry = entry['1. Region'];
         if (informationRegionEntry) {
           beanInformation.region = informationRegionEntry.toString();
-          hasOneBeanInformation=true;
+          hasOneBeanInformation = true;
         }
 
         const informationVarietyEntry = entry['1. Variety'];
         if (informationVarietyEntry) {
           beanInformation.variety = informationVarietyEntry.toString();
-          hasOneBeanInformation=true;
+          hasOneBeanInformation = true;
         }
 
         const informationFobPriceEntry = entry['1. Fob Price'];
         if (informationFobPriceEntry && Number(informationFobPriceEntry) > 0) {
           beanInformation.fob_price = Number(informationFobPriceEntry);
-          hasOneBeanInformation=true;
+          hasOneBeanInformation = true;
         }
 
         const informationPurchasingPriceEntry = entry['1. Purchasing Price'];
-        if (informationPurchasingPriceEntry && Number(informationPurchasingPriceEntry) > 0) {
-          beanInformation.purchasing_price = Number(informationPurchasingPriceEntry);
-          hasOneBeanInformation=true;
+        if (
+          informationPurchasingPriceEntry &&
+          Number(informationPurchasingPriceEntry) > 0
+        ) {
+          beanInformation.purchasing_price = Number(
+            informationPurchasingPriceEntry
+          );
+          hasOneBeanInformation = true;
         }
 
         if (hasOneBeanInformation) {
@@ -1162,7 +1184,9 @@ export class UIExcel {
         const unfrozenDateEntry = entry['Unfrozen Date'];
         if (unfrozenDateEntry && Number(unfrozenDateEntry) > 0) {
           isOneEntryFrozen = true;
-          bean.unfrozenDate = this.getJsDateFromExcel(Number(unfrozenDateEntry));
+          bean.unfrozenDate = this.getJsDateFromExcel(
+            Number(unfrozenDateEntry)
+          );
         }
         toAddBeans.push(bean);
       }
@@ -1181,7 +1205,6 @@ export class UIExcel {
         }
       }
 
-
       /**
        * Add all beans afterwards to not have some added and then going into an exception
        */
@@ -1189,30 +1212,39 @@ export class UIExcel {
         try {
           const newBean: Bean = await this.uiBeanStorage.add(addBean);
           addedBeans.push(newBean);
-        } catch(ex) {
-
-        }
+        } catch (ex) {}
       }
 
-      if (addedBeans.length>0) {
+      if (addedBeans.length > 0) {
         try {
-          await this.uiAlert.showMessage('BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION','IMPORT_SUCCESSFULLY',undefined,true);
-        }catch(ex) {
-
-        }
+          await this.uiAlert.showMessage(
+            'BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION',
+            'IMPORT_SUCCESSFULLY',
+            undefined,
+            true
+          );
+        } catch (ex) {}
         this.uiBeanHelper.showBeans(addedBeans);
       } else {
-        this.uiAlert.showMessage('BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE','IMPORT_UNSUCCESSFULLY','OK',false);
+        this.uiAlert.showMessage(
+          'BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE',
+          'IMPORT_UNSUCCESSFULLY',
+          'OK',
+          false
+        );
       }
-
     } catch (ex) {
-      this.uiAlert.showMessage(ex.message,this.translate.instant('IMPORT_UNSUCCESSFULLY'),this.translate.instant('OK'),false);
+      this.uiAlert.showMessage(
+        ex.message,
+        this.translate.instant('IMPORT_UNSUCCESSFULLY'),
+        this.translate.instant('OK'),
+        false
+      );
     }
   }
 
   private getJsDateFromExcel(_dateNumber) {
-    return  new Date((_dateNumber - (25567+2))*86400*1000).toISOString();
-
+    return new Date((_dateNumber - (25567 + 2)) * 86400 * 1000).toISOString();
   }
   /* Export button */
   public async export() {

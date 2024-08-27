@@ -1,4 +1,11 @@
-import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 
 import { MeticulousDevice } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
 import { ModalController } from '@ionic/angular';
@@ -33,8 +40,10 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
   @ViewChild('footerContent', { read: ElementRef })
   public footerContent: ElementRef;
 
-  constructor(private readonly modalController: ModalController,
-              public readonly uiHelper: UIHelper) {}
+  constructor(
+    private readonly modalController: ModalController,
+    public readonly uiHelper: UIHelper
+  ) {}
 
   public ngOnInit() {
     this.readHistory();
@@ -43,7 +52,6 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
   private async readHistory() {
     this.history = await this.meticulousDevice?.getHistory();
     this.retriggerScroll();
-
   }
   @HostListener('window:resize')
   @HostListener('window:orientationchange', ['$event'])
@@ -51,17 +59,13 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
     this.retriggerScroll();
   }
 
-
   private retriggerScroll() {
     setTimeout(async () => {
       const el = this.historyShotContent.nativeElement;
       const scrollComponent: AgVirtualSrollComponent = this.shotDataScroll;
 
       if (scrollComponent) {
-        scrollComponent.el.style.height =
-          (el.offsetHeight -
-          20) +
-          'px';
+        scrollComponent.el.style.height = el.offsetHeight - 20 + 'px';
       }
     }, 150);
   }
@@ -72,8 +76,6 @@ export class BrewModalImportShotMeticulousComponent implements OnInit {
     }
     return 0;
   }
-
-
 
   public dismiss(): void {
     this.modalController.dismiss(

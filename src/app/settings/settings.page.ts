@@ -1227,7 +1227,7 @@ export class SettingsPage {
       const allXeniaPreps = [];
       let allPreparations = this.uiPreparationStorage.getAllEntries();
       // Just take 60, else the excel will be exploding.
-      allPreparations = allPreparations.reverse().slice(0,60);
+      allPreparations = allPreparations.reverse().slice(0, 60);
       for (const prep of allPreparations) {
         if (
           prep.connectedPreparationDevice.type === PreparationDeviceType.XENIA
@@ -1278,7 +1278,7 @@ export class SettingsPage {
     }
   }
 
-  public importBeansExcel(_type: string='roasted'): void {
+  public importBeansExcel(_type: string = 'roasted'): void {
     if (this.platform.is('cordova')) {
       this.uiAnalytics.trackEvent(
         SETTINGS_TRACKING.TITLE,
@@ -1295,12 +1295,11 @@ export class SettingsPage {
 
             this.uiFileHelper.readFileEntryAsArrayBuffer(fileEntry).then(
               async (_arrayBuffer) => {
-                if (_type ==='roasted') {
+                if (_type === 'roasted') {
                   this.uiExcel.importBeansByExcel(_arrayBuffer);
-                }else {
+                } else {
                   this.uiExcel.importGreenBeansByExcel(_arrayBuffer);
                 }
-
               },
               () => {
                 // Backup, maybe it was a .JSON?
@@ -1326,7 +1325,7 @@ export class SettingsPage {
               }
               this.uiFileHelper.readFileAsArrayBuffer(path, file).then(
                 async (_arrayBuffer) => {
-                  if (_type ==='roasted') {
+                  if (_type === 'roasted') {
                     this.uiExcel.importBeansByExcel(_arrayBuffer);
                   } else {
                     this.uiExcel.importGreenBeansByExcel(_arrayBuffer);

@@ -98,7 +98,6 @@ export class Settings implements ISettings {
     ARCHIVED: boolean;
   };
 
-
   public green_bean_sort: {
     OPEN: IBeanPageSort;
     ARCHIVED: IBeanPageSort;

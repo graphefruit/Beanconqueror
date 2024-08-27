@@ -9,8 +9,8 @@ describe('DataCorruptionFoundComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ DataCorruptionFoundComponent ],
-      imports: [IonicModule.forRoot()]
+      declarations: [DataCorruptionFoundComponent],
+      imports: [IonicModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(DataCorruptionFoundComponent);

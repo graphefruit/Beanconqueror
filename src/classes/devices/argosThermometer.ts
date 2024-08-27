@@ -23,7 +23,9 @@ export class ArgosThermometer extends TemperatureDevice {
     return (
       device &&
       device.name &&
-      device.name.toLowerCase().startsWith(ArgosThermometer.DEVICE_NAME.toLowerCase())
+      device.name
+        .toLowerCase()
+        .startsWith(ArgosThermometer.DEVICE_NAME.toLowerCase())
     );
   }
 
@@ -42,7 +44,7 @@ export class ArgosThermometer extends TemperatureDevice {
       ArgosThermometer.TEMPERATURE_CHAR_UUID,
 
       async (_data: any) => {
-        let newData = new Uint8Array(_data.slice(0,-1));
+        let newData = new Uint8Array(_data.slice(0, -1));
         this.parseStatusUpdate(newData);
       },
 
@@ -55,8 +57,9 @@ export class ArgosThermometer extends TemperatureDevice {
       'temperatureRawStatus received is: ' + temperatureRawStatus
     );
 
-    const temperature_in_f = temperatureRawStatus[-1] << 8 + temperatureRawStatus[-2];
-console.log("New temperature inc" + temperature_in_f);
+    const temperature_in_f =
+      temperatureRawStatus[-1] << (8 + temperatureRawStatus[-2]);
+    console.log('New temperature inc' + temperature_in_f);
     this.setTemperature(temperature_in_f, temperatureRawStatus);
   }
 

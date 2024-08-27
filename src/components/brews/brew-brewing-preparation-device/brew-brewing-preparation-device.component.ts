@@ -40,7 +40,10 @@ import {
 import { BrewModalImportShotMeticulousComponent } from '../../../app/brew/brew-modal-import-shot-meticulous/brew-modal-import-shot-meticulous.component';
 import { ModalController } from '@ionic/angular';
 import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
-import { SanremoYOUDevice, SanremoYOUParams } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
+import {
+  SanremoYOUDevice,
+  SanremoYOUParams,
+} from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
 @Component({
   selector: 'brew-brewing-preparation-device',
   templateUrl: './brew-brewing-preparation-device.component.html',
@@ -51,7 +54,8 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
   @Input() public isEdit: boolean = false;
   @Output() public dataChange = new EventEmitter<Brew>();
   @Input() public brewComponent: BrewBrewingComponent;
-  public preparationDevice: XeniaDevice | MeticulousDevice | SanremoYOUDevice = undefined;
+  public preparationDevice: XeniaDevice | MeticulousDevice | SanremoYOUDevice =
+    undefined;
 
   public preparation: Preparation = undefined;
   public settings: Settings = undefined;
@@ -72,8 +76,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly modalController: ModalController,
     public readonly uiBrewHelper: UIBrewHelper
-  ) {
-  }
+  ) {}
 
   public ngOnInit() {
     this.settings = this.uiSettingsStorage.getSettings();
@@ -109,8 +112,7 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
         await this.instanceXeniaPreparationDevice(connectedDevice, _brew);
       } else if (connectedDevice instanceof MeticulousDevice) {
         await this.instanceMeticulousPreparationDevice(connectedDevice, _brew);
-      }
-      else if (connectedDevice instanceof SanremoYOUDevice) {
+      } else if (connectedDevice instanceof SanremoYOUDevice) {
         await this.instanceSanremoYOUPreparationDevice(connectedDevice, _brew);
       }
       this.checkChanges();
@@ -305,12 +307,14 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
   ) {
     this.data.preparationDeviceBrew.type = PreparationDeviceType.SANREMO_YOU;
     this.data.preparationDeviceBrew.params = new SanremoYOUParams();
-    await connectedDevice.deviceConnected().then(() => {
-      this.preparationDevice = connectedDevice as SanremoYOUDevice;
-    }, () => {
-      //Not connected
-    });
-
+    await connectedDevice.deviceConnected().then(
+      () => {
+        this.preparationDevice = connectedDevice as SanremoYOUDevice;
+      },
+      () => {
+        //Not connected
+      }
+    );
   }
 
   public async importShotFromMeticulous() {
@@ -332,7 +336,6 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
   }
 
   private generateShotFlowProfileFromMeticulousData(_historyData) {
-
     const newMoment = moment(new Date()).startOf('day');
 
     let firstDripTimeSet: boolean = false;
@@ -399,7 +402,6 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
 
     this.brewComponent.brewBrewingGraphEl.flow_profile_raw = newBrewFlow;
     this.brewComponent.brewBrewingGraphEl.initializeFlowChart(true);
-
   }
 
   public getPreparationDeviceType() {

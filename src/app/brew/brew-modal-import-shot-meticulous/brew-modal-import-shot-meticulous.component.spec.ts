@@ -25,7 +25,7 @@ describe('BrewModalImportShotMeticulousComponent', () => {
           provide: TranslateService,
           useValue: TranslateServiceMock,
         },
-      ]
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(BrewModalImportShotMeticulousComponent);

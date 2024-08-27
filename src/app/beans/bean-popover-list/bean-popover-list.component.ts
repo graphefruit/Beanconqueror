@@ -1,4 +1,11 @@
-import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { Bean } from '../../../classes/bean/bean';
 import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
 import { ModalController } from '@ionic/angular';
@@ -9,7 +16,6 @@ import { ModalController } from '@ionic/angular';
   styleUrls: ['./bean-popover-list.component.scss'],
 })
 export class BeanPopoverListComponent {
-
   public static readonly COMPONENT_ID = 'bean-popover-list';
 
   @Input() public beansList: Array<Bean> = undefined;
@@ -20,9 +26,7 @@ export class BeanPopoverListComponent {
   @ViewChild('beanContent', { read: ElementRef })
   public beanContent: ElementRef;
 
-  constructor(
-    private readonly modalController: ModalController,
-  ) {}
+  constructor(private readonly modalController: ModalController) {}
 
   public async ionViewWillEnter() {
     this.loadBrews();
@@ -61,5 +65,4 @@ export class BeanPopoverListComponent {
       BeanPopoverListComponent.COMPONENT_ID
     );
   }
-
 }

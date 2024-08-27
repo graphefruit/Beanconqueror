@@ -39,7 +39,7 @@ export class PreparationAddComponent implements OnInit {
   }
 
   public individualPreparationVisible(_key) {
-    if (_key ==='SANREMO_YOU') {
+    if (_key === 'SANREMO_YOU') {
       if (this.ENVIRONMENT.FEATURES_ACTIVE.SANREMO_YOU === true) {
         return true;
       }

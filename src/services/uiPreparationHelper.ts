@@ -23,9 +23,7 @@ import { HttpClient } from '@angular/common/http';
 import { PreparationDevice } from '../classes/preparationDevice/preparationDevice';
 import { PreparationSortToolsComponent } from '../app/preparation/preparation-sort-tools/preparation-sort-tools.component';
 import PREPARATION_TRACKING from '../data/tracking/preparationTracking';
-import {
-  PreparationConnectedDeviceComponent
-} from '../app/preparation/preparation-connected-device/preparation-connected-device.component';
+import { PreparationConnectedDeviceComponent } from '../app/preparation/preparation-connected-device/preparation-connected-device.component';
 import { UIAnalytics } from './uiAnalytics';
 
 /**
@@ -102,9 +100,6 @@ export class UIPreparationHelper {
     await modal.present();
     await modal.onWillDismiss();
   }
-
-
-
 
   public async editPreparationTool(
     _preparation: Preparation,

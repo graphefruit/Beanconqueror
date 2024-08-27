@@ -63,7 +63,9 @@ export class GraphDisplayCardComponent implements OnInit {
     } else if (this.flowProfileData) {
       this.flow_profile_raw = this.uiHelper.cloneData(this.flowProfileData);
     } else if (this.meticulousHistoryData) {
-      this.flow_profile_raw = MeticulousDevice.returnBrewFlowForShotData(this.meticulousHistoryData.data);
+      this.flow_profile_raw = MeticulousDevice.returnBrewFlowForShotData(
+        this.meticulousHistoryData.data
+      );
     }
     setTimeout(() => {
       this.initializeFlowChart();

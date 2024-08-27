@@ -58,7 +58,7 @@ export class BrewPage implements OnInit {
     private readonly changeDetectorRef: ChangeDetectorRef,
     public uiHelper: UIHelper,
     public uiBrewHelper: UIBrewHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
+    private readonly uiSettingsStorage: UISettingsStorage
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     this.archivedBrewsFilter = this.settings.GET_BREW_FILTER();
@@ -69,7 +69,7 @@ export class BrewPage implements OnInit {
     this.archivedBrewsFilter = this.settings.brew_filter.ARCHIVED;
     this.openBrewsFilter = this.settings.brew_filter.OPEN;
     this.openBrewsCollapsed = this.settings.brew_collapsed.OPEN;
-    this.archivedBrewsCollapsed  = this.settings.brew_collapsed.ARCHIVED;
+    this.archivedBrewsCollapsed = this.settings.brew_collapsed.ARCHIVED;
     this.loadBrews();
 
     this.retriggerScroll();
@@ -124,7 +124,7 @@ export class BrewPage implements OnInit {
   }
 
   public isCollapseActive() {
-    let collapsed: boolean =false;
+    let collapsed: boolean = false;
     if (this.brew_segment === 'open') {
       collapsed = this.openBrewsCollapsed;
     } else {
@@ -217,8 +217,6 @@ export class BrewPage implements OnInit {
   public trackByUUID(index, instructor: Bean) {
     return instructor.config.uuid;
   }
-
-
 
   public async showFilter() {
     let brewFilter: IBrewPageFilter;

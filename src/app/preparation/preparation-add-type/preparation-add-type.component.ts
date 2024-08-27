@@ -78,7 +78,11 @@ export class PreparationAddTypeComponent implements OnInit {
       this.uiToast.showInfoToast('TOAST_PREPARATION_ADDED_SUCCESSFULLY');
     }
 
-    if (this.data.type === PREPARATION_TYPES.METICULOUS || this.data.type === PREPARATION_TYPES.XENIA || this.data.type === PREPARATION_TYPES.SANREMO_YOU) {
+    if (
+      this.data.type === PREPARATION_TYPES.METICULOUS ||
+      this.data.type === PREPARATION_TYPES.XENIA ||
+      this.data.type === PREPARATION_TYPES.SANREMO_YOU
+    ) {
       await this.uiPreparationHelper.connectDevice(newPreparation);
     }
   }

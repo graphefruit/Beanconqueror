@@ -10,7 +10,13 @@ import { catchError, timeout } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
 import moment from 'moment';
-import { BrewFlow, IBrewPressureFlow, IBrewRealtimeWaterFlow, IBrewTemperatureFlow, IBrewWeightFlow } from '../../brew/brewFlow';
+import {
+  BrewFlow,
+  IBrewPressureFlow,
+  IBrewRealtimeWaterFlow,
+  IBrewTemperatureFlow,
+  IBrewWeightFlow,
+} from '../../brew/brewFlow';
 
 declare var cordova;
 declare var io;
@@ -22,7 +28,6 @@ export class MeticulousDevice extends PreparationDevice {
   private metApi: Api = undefined;
 
   private _profiles: Array<ProfileIdent> = [];
-
 
   private serverURL: string = '';
 
@@ -141,7 +146,7 @@ export class MeticulousDevice extends PreparationDevice {
 
       const profile = profileResponse.data as unknown as Profile;
       return profile;
-    /*  if (profileResponse instanceof Profile) {
+      /*  if (profileResponse instanceof Profile) {
       } else {
 
       }*/
@@ -150,15 +155,11 @@ export class MeticulousDevice extends PreparationDevice {
   }
 
   public async getHistoryShortListing() {
-
     const response = await this.metApi.getHistoryShortListing();
-    if (response && response.data && response.data.history)
-    {
-        return response.data.history as Array<HistoryListingEntry>;
+    if (response && response.data && response.data.history) {
+      return response.data.history as Array<HistoryListingEntry>;
     }
   }
-
-
 
   public async searchHistory() {
     const response = await this.metApi.searchHistory({
@@ -167,12 +168,11 @@ export class MeticulousDevice extends PreparationDevice {
       start_date: '',
       end_date: '',
       order_by: ['date'],
-      sort:  'desc',
+      sort: 'desc',
       max_results: 10,
-      dump_data: true
-    } );
-    if (response && response.data && response.data.history)
-    {
+      dump_data: true,
+    });
+    if (response && response.data && response.data.history) {
       return response.data.history as Array<HistoryListingEntry>;
     }
   }
@@ -182,7 +182,6 @@ export class MeticulousDevice extends PreparationDevice {
       const loadProfile = await this.metApi.loadProfileByID(_profileId);
       const profile = loadProfile.data as unknown as Profile;
       return profile;
-
     } catch (ex) {
       console.log(ex.message);
     }
@@ -208,7 +207,6 @@ export class MeticulousDevice extends PreparationDevice {
       if (this._profiles.length <= 0) {
         const profiles = await this.metApi.listProfiles();
         this._profiles = profiles.data as Array<ProfileIdent>;
-
       }
     } catch (ex) {}
   }
@@ -218,7 +216,7 @@ export class MeticulousDevice extends PreparationDevice {
   }
 
   public override async deviceConnected(): Promise<boolean> {
-    const promise = new Promise<boolean>(async(resolve, reject) => {
+    const promise = new Promise<boolean>(async (resolve, reject) => {
       const settings: any = await this.metApi.getSettings();
       if (settings?.data?.config) {
         resolve(true);

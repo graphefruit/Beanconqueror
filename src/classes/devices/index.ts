@@ -57,7 +57,7 @@ export enum TemperatureType {
   BASICGRILL = 'BASICGRILL',
   MEATER = 'MEATER',
   COMBUSTION = 'COMBUSTION',
-  ARGOS = 'ARGOS'
+  ARGOS = 'ARGOS',
 }
 
 export enum RefractometerType {

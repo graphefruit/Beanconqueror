@@ -110,7 +110,7 @@ export class BeansPage implements OnDestroy {
     this.frozenBeansFilter = this.settings.bean_filter.FROZEN;
     this.openBeansFilter = this.settings.bean_filter.OPEN;
 
-    this.openBeansCollapsed =  this.settings.bean_collapsed.OPEN;
+    this.openBeansCollapsed = this.settings.bean_collapsed.OPEN;
     this.archivedBeansCollapsed = this.settings.bean_collapsed.ARCHIVED;
     this.frozenBeansCollapsed = this.settings.bean_collapsed.FROZEN;
     this.loadBeans();
@@ -129,13 +129,13 @@ export class BeansPage implements OnDestroy {
     }
   }
   public isCollapseActive() {
-    let collapsed: boolean =false;
+    let collapsed: boolean = false;
     if (this.bean_segment === 'open') {
       collapsed = this.openBeansCollapsed;
     } else if (this.bean_segment === 'archive') {
       collapsed = this.archivedBeansCollapsed;
     } else if (this.bean_segment === 'frozen') {
-      collapsed  = this.frozenBeansCollapsed;
+      collapsed = this.frozenBeansCollapsed;
     }
     return collapsed;
   }
@@ -146,7 +146,7 @@ export class BeansPage implements OnDestroy {
     } else if (this.bean_segment === 'archive') {
       this.archivedBeansCollapsed = !this.archivedBeansCollapsed;
     } else if (this.bean_segment === 'frozen') {
-      this.frozenBeansCollapsed  = !this.frozenBeansCollapsed;
+      this.frozenBeansCollapsed = !this.frozenBeansCollapsed;
     }
     this.__saveCollapseFilter();
     this.research();
@@ -157,7 +157,6 @@ export class BeansPage implements OnDestroy {
     this.settings.bean_collapsed.FROZEN = this.frozenBeansCollapsed;
     await this.uiSettingsStorage.saveSettings(this.settings);
   }
-
 
   public loadBeans(): void {
     this.__initializeBeans();

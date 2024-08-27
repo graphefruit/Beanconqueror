@@ -243,46 +243,58 @@ export class UIExportImportHelper {
     });
   }
   private async checkBackupAndSeeIfDataAreCorrupted(_actualUIStorageDataObj) {
-
     try {
-      this.uiLog.log("checkBackupAndSeeIfDataAreCorrupted - Check if we got a deep corruption");
+      this.uiLog.log(
+        'checkBackupAndSeeIfDataAreCorrupted - Check if we got a deep corruption'
+      );
       const dataObj = _actualUIStorageDataObj.DATA;
       const parsedJSON: any = await this.readBackupZIPFile();
       if (parsedJSON) {
         let somethingCorrupted = false;
         if (parsedJSON.BEANS?.length > dataObj.BEANS) {
           somethingCorrupted = true;
-        } else if (parsedJSON.BREWS?.length > dataObj.BREWS)
-        {
+        } else if (parsedJSON.BREWS?.length > dataObj.BREWS) {
           somethingCorrupted = true;
-        } else if (parsedJSON.PREPARATION?.length > dataObj.PREPARATION)
-        {
+        } else if (parsedJSON.PREPARATION?.length > dataObj.PREPARATION) {
           somethingCorrupted = true;
-        }
-        else if (parsedJSON.MILL?.length > dataObj.MILL)
-        {
+        } else if (parsedJSON.MILL?.length > dataObj.MILL) {
           somethingCorrupted = true;
         }
 
-        this.uiLog.log("checkBackupAndSeeIfDataAreCorrupted- Check over - if we got a deep corruption - Result: " + somethingCorrupted);
+        this.uiLog.log(
+          'checkBackupAndSeeIfDataAreCorrupted- Check over - if we got a deep corruption - Result: ' +
+            somethingCorrupted
+        );
         if (somethingCorrupted) {
-          const importBackup = await this.showDataCorruptionPopover(dataObj,parsedJSON);
+          const importBackup = await this.showDataCorruptionPopover(
+            dataObj,
+            parsedJSON
+          );
           if (importBackup) {
             await this.importBackupJSON(parsedJSON);
           }
         } else {
-          this.uiLog.log("checkBackupAndSeeIfDataAreCorrupted - Check over - we didn't find any corrupted data");
+          this.uiLog.log(
+            "checkBackupAndSeeIfDataAreCorrupted - Check over - we didn't find any corrupted data"
+          );
         }
       } else {
-        this.uiLog.log("checkBackupAndSeeIfDataAreCorrupted - We didn't found any json backup data so we can't do any checks");
+        this.uiLog.log(
+          "checkBackupAndSeeIfDataAreCorrupted - We didn't found any json backup data so we can't do any checks"
+        );
       }
-    } catch(ex) {
-      this.uiLog.log("Check over - if we got a deep corruption - Result exception: " + JSON.stringify(ex));
+    } catch (ex) {
+      this.uiLog.log(
+        'Check over - if we got a deep corruption - Result exception: ' +
+          JSON.stringify(ex)
+      );
     }
-
   }
 
-  public async showDataCorruptionPopover(_actualUIStorageDataObj,_backupDataObj) {
+  public async showDataCorruptionPopover(
+    _actualUIStorageDataObj,
+    _backupDataObj
+  ) {
     const modal = await this.modalController.create({
       component: DataCorruptionFoundComponent,
       id: DataCorruptionFoundComponent.POPOVER_ID,
@@ -292,8 +304,10 @@ export class UIExportImportHelper {
       },
     });
     await modal.present();
-    const returnData  = await modal.onWillDismiss();
-    this.uiLog.log('Data corruption, choose to import: ' + returnData?.data?.import);
+    const returnData = await modal.onWillDismiss();
+    this.uiLog.log(
+      'Data corruption, choose to import: ' + returnData?.data?.import
+    );
     if (returnData?.data?.import) {
       //User choose to import backup, go
       return true;
@@ -332,7 +346,9 @@ export class UIExportImportHelper {
               }
               resolve(null);
             } else {
-              await this.checkBackupAndSeeIfDataAreCorrupted(actualUIStorageDataObj);
+              await this.checkBackupAndSeeIfDataAreCorrupted(
+                actualUIStorageDataObj
+              );
               resolve(null);
             }
           } else {

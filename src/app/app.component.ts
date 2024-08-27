@@ -324,7 +324,6 @@ export class AppComponent implements AfterViewInit {
         });
       } catch (ex) {}
 
-
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       // #7
@@ -367,7 +366,6 @@ export class AppComponent implements AfterViewInit {
         });
       }
 
-
       if (this.platform.is('cordova')) {
         // Just support deeplinks on devices.
         this.intentHandlerService.attachOnHandleOpenUrl();
@@ -375,8 +373,6 @@ export class AppComponent implements AfterViewInit {
       // Before we update and show messages, we need atleast to set one default language.
       this._translate.setDefaultLang('en');
       await this._translate.use('en').toPromise();
-
-
 
       if (this.platform.is('cordova')) {
         try {
