@@ -1210,6 +1210,15 @@ export class SettingsPage {
     this.uiExcel.export();
   }
 
+  public pinFormatter(value: any) {
+    const parsedFloat = parseFloat(value);
+    if (isNaN(parsedFloat)) {
+      return `${0}`;
+    }
+    const newValue = +parsedFloat.toFixed(2);
+    return `${newValue}`;
+  }
+
   public doWeHaveBrewByWeights(): boolean {
     const allPreparations = this.uiPreparationStorage.getAllEntries();
     for (const prep of allPreparations) {

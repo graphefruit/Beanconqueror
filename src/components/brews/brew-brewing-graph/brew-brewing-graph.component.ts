@@ -928,6 +928,7 @@ export class BrewBrewingGraphComponent implements OnInit {
     if (this.isDetail === false) {
       let graph_weight_settings;
       let graph_flow_settings;
+
       if (
         this.data.getPreparation().style_type ===
         PREPARATION_STYLE_TYPE.ESPRESSO
@@ -1036,6 +1037,9 @@ export class BrewBrewingGraphComponent implements OnInit {
         this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() ||
         !this.platform.is('cordova')
       ) {
+        const graph_pressure_settings = this.settings.graph_pressure;
+        const suggestedMinPressure: number = graph_pressure_settings.lower;
+        const suggestedMaxPressure: number = graph_pressure_settings.upper;
         layout['yaxis4'] = {
           title: '',
           titlefont: { color: '#05C793' },
@@ -1046,7 +1050,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           showgrid: false,
           position: 0.91,
           fixedrange: true,
-          range: [0, 10],
+          range: [suggestedMinPressure, suggestedMaxPressure],
         };
       }
       const temperatureDevice = this.bleManager.getTemperatureDevice();

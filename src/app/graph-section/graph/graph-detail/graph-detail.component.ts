@@ -183,7 +183,6 @@ export class GraphDetailComponent implements OnInit {
       side: 'right',
       showgrid: false,
       position: 0.93,
-      range: [0, 10],
       visible: true,
     };
 

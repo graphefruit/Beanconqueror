@@ -135,6 +135,10 @@ export interface ISettings {
       lower: number;
     };
   };
+  graph_pressure: {
+    upper: number;
+    lower: number;
+  };
 
   welcome_page_showed: boolean;
 

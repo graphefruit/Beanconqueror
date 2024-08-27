@@ -140,6 +140,11 @@ export class Settings implements ISettings {
     };
   };
 
+  public graph_pressure: {
+    upper: number;
+    lower: number;
+  };
+
   public wake_lock: boolean;
   public security_check_when_going_back: boolean;
 
@@ -379,6 +384,11 @@ export class Settings implements ISettings {
         lower: 0,
         upper: 20,
       },
+    };
+
+    this.graph_pressure = {
+      upper: 0,
+      lower: 9,
     };
 
     this.brew_rating = 5;
