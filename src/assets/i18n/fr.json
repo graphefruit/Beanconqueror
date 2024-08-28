@@ -479,7 +479,7 @@
     "CUSTOM_MANAGE_PARAMETERS": "Gérer",
     "CUSTOM_SORT_PARAMETERS": "Trier",
     "BREW_PARAMETER_CUSTOMIZE_TITLE": "Paramètres personnalisés pour chaque méthode de préparation",
-    "BREW_PARAMETER_CUSTOMIZE_DESCRIPTION": "Tu veux choisir des paramètres personnalisés pour chaque méthode de préparation ? Navigues jusqu'à \"Méthodes\", ouvre le menu de la méthode de préparation spécifique et choisissez \"Personnaliser les paramètres\". Là, tu peux choisir quels paramètres seront utilisés pour cette préparation !",
+    "BREW_PARAMETER_CUSTOMIZE_DESCRIPTION": "Tu veux choisir des paramètres personnalisés pour chaque méthode de préparation ? Navigue jusqu'à \"Méthodes\", ouvre le menu de la méthode de préparation spécifique et choisissez \"Personnaliser les paramètres\". Là, tu peux choisir quels paramètres seront utilisés pour cette préparation !",
     "BREW_DATA_BREW_QUANTITY_TOOLTIP": "Quantité d'eau (non utilisable pour l'espresso)",
     "BREW_DATA_COFFEE_FIRST_DRIP_TIME_TOOLTIP": "Premier temps d'égouttage du café (espresso uniquement)",
     "BREW_DATA_PREPARATION_METHOD_TOOLTIP": "Préparation (uniquement personnalisable lorsqu'elle est active)",
@@ -1148,7 +1148,7 @@
         },
         "SHOT": {
             "UPLOAD_SUCCESSFULLY": "Infusion téléchargé sur Visualizer.",
-            "UPLOAD_UNSUCCESSFULLY": "L'infusion n'a pas pu être téléchargé sur Visualizer."
+            "UPLOAD_UNSUCCESSFULLY": "L'infusion n'a pas pu être téléchargée sur Visualizer."
         },
         "URL": "URL du serveur",
         "USERNAME": "Nom d'utilisateur",
@@ -1273,39 +1273,6 @@
     "SHOW_MINUTES": "Afficher les minutes",
     "BEANS_UNARCHIVE": "Désarchiver",
     "TOAST_BEAN_UNARCHIVED_SUCCESSFULLY": "Le grain a été désarchivé",
-    "UPDATE_TEXT_TITLE_TITLE": {
-        "7.4.0": {
-            "TITLE": "Version 7.4.0: c'est nouveau",
-            "DESCRIPTION": [
-                "<b>Grains<\/b>",
-                "Il est possible de congeler des grains de café. Active cette fonction dans les réglages",
-                "Ajout de la meilleure date et de la date d'ouverture pour les grains. Ces paramètres doivent être activés.",
-                "Les grains peuvent désormais être ajoutés directement à partir de l’aperçu de la sélection",
-                "",
-                "<b> Thermomètre <\/b>",
-                "Support pour les thermomètres de Combustion Inc. – Merci pour l'appareil !",
-                "Support du thermomètre Meater (pas Meater 2 ou Meater +) – Merci à Yannick !",
-                "",
-                "<b> Zone d'eau <\/b>",
-                "Ajouté Pure Coffee Water",
-                "Ajouté Empirical Water",
-                "",
-                "<b> Outils de méthode d'infusion <\/b>",
-                "Trier tes méthodes de préparation",
-                "",
-                "<b>Moulins<\/b>",
-                "Les images des moulins sont affichées dans l'aperçu",
-                "",
-                "<b>Paramètres<\/b>",
-                "Message de sécurité si tu as modifié l'évaluation des infusions ou des grains et que le maximum est inférieur à une entrée déjà évaluée.",
-                "",
-                "<b>Autres<\/b>",
-                "La mise au point directe en secondes lors de l'ouverture de la minuterie a été rétablie",
-                "Quelques changements techniques dans le code",
-                "Petites optimisations"
-            ]
-        }
-    },
     "WATER_TYPE_PURE_COFFEE_WATER": "Pure Coffee Water",
     "WATER_TYPE_EMPIRICAL_WATER_GLACIAL": "empirical water GLACIAL",
     "WATER_TYPE_EMPIRICAL_WATER_SPRING": "empirical water SPRING",
