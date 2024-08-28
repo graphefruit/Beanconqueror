@@ -401,7 +401,6 @@ export class BrewInformationComponent implements OnInit {
       htmlToImage
         .toPng(this.cardEl.nativeElement)
         .then((_dataURL) => {
-          console.log(_dataURL);
           // On iOS we need to do this a second time, because the rendering doesn't render everything (strange thing)
           setTimeout(() => {
             htmlToImage

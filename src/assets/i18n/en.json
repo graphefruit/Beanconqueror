@@ -1340,5 +1340,6 @@
     "BEAN_POPUP_YOU_DONT_SEE_EVERYTHING_DESCRIPTION": "You're adding a bean which has variety information in it, but those parameters are not activated. Do you want to activate them now?",
     "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS": "Define the axes for the pressure graph",
     "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_DESCRIPTION": "Set the starting and end size of the axes for pressure",
-    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_RANGE": "Pressure axes"
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_RANGE": "Pressure axes",
+    "PAGE_SETTINGS_LANGUAGE_DUTCH": "Dutch"
 }
