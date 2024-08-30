@@ -254,6 +254,8 @@ export class Preparation implements IPreparation {
         return 'beanconqueror-preparation-tricolate';
       case PREPARATION_TYPES.METICULOUS:
         return 'beanconqueror-preparation-meticulous';
+      case PREPARATION_TYPES.SANREMO_YOU:
+        return 'beanconqueror-preparation-sanremo-you';
       default:
         return 'beanconqueror-preparation-custom';
     }

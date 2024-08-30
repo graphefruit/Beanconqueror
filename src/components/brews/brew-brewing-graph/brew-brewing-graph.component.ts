@@ -63,6 +63,7 @@ import { UIGraphStorage } from '../../../services/uiGraphStorage.service';
 import regression from 'regression';
 import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
 import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
+import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
 
 declare var Plotly;
 
@@ -1052,6 +1053,9 @@ export class BrewBrewingGraphComponent implements OnInit {
           fixedrange: true,
           range: [suggestedMinPressure, suggestedMaxPressure],
         };
+        if (suggestedMaxPressure <= 10) {
+          layout['yaxis4']['dtick'] = 1;
+        }
       }
       const temperatureDevice = this.bleManager.getTemperatureDevice();
       if (
@@ -1787,7 +1791,9 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
         PreparationDeviceType.SANREMO_YOU &&
       _event !== 'sanremo_you' &&
-      this.machineStopScriptWasTriggered === false
+      this.machineStopScriptWasTriggered === false &&
+      this.data.preparationDeviceBrew.params.selectedMode ===
+        SanremoYOUMode.CONTROLLING
     ) {
       this.machineStopScriptWasTriggered = true;
       this.uiLog.log(`Sanremo YOU - Pause button pressed, stop shot`);
@@ -2320,13 +2326,19 @@ export class BrewBrewingGraphComponent implements OnInit {
     ) {
       const prepDeviceCall: SanremoYOUDevice = this.brewComponent
         .brewBrewingPreparationDeviceEl.preparationDevice as SanremoYOUDevice;
-      prepDeviceCall.startShot().catch((_msg) => {
-        this.uiLog.log('We could not start shot on sanremo: ' + _msg);
-        this.uiToast.showInfoToast(
-          'We could not start shot on sanremo: ' + _msg,
-          false
-        );
-      });
+
+      if (
+        this.data.preparationDeviceBrew?.params.selectedMode ===
+        SanremoYOUMode.CONTROLLING
+      ) {
+        prepDeviceCall.startShot().catch((_msg) => {
+          this.uiLog.log('We could not start shot on sanremo: ' + _msg);
+          this.uiToast.showInfoToast(
+            'We could not start shot on sanremo: ' + _msg,
+            false
+          );
+        });
+      }
 
       if (
         this.settings.bluetooth_scale_maximize_on_start_timer === true &&
@@ -3012,7 +3024,9 @@ export class BrewBrewingGraphComponent implements OnInit {
             }
           } else if (
             this.brewComponent.brewBrewingPreparationDeviceEl.getPreparationDeviceType() ===
-            PreparationDeviceType.SANREMO_YOU
+              PreparationDeviceType.SANREMO_YOU &&
+            this.data.preparationDeviceBrew.params.selectedMode ===
+              SanremoYOUMode.CONTROLLING
           ) {
             /**We call this function before the if, because we still log the data**/
             const thresholdHit = this.calculateBrewByWeight(

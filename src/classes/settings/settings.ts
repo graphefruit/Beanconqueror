@@ -387,8 +387,8 @@ export class Settings implements ISettings {
     };
 
     this.graph_pressure = {
-      upper: 0,
-      lower: 9,
+      lower: 0,
+      upper: 9,
     };
 
     this.brew_rating = 5;

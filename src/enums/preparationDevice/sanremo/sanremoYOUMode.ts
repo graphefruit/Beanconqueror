@@ -1,0 +1,4 @@
+export enum SanremoYOUMode {
+  LISTENING = 'LISTENING',
+  CONTROLLING = 'CONTROLLING',
+}

@@ -14,6 +14,9 @@ import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
 import { environment } from '../../../environments/environment';
 import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
+import { SanremoYOUParams } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
+import { MeticulousParams } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
+import { XeniaParams } from '../../../classes/preparationDevice/xenia/xeniaDevice';
 
 @Component({
   selector: 'app-preparation-connected-device',
@@ -58,13 +61,18 @@ export class PreparationConnectedDeviceComponent {
       if (this.data.type === PREPARATION_TYPES.METICULOUS) {
         this.data.connectedPreparationDevice.type =
           PreparationDeviceType.METICULOUS;
+        this.data.connectedPreparationDevice.customParams =
+          new MeticulousParams();
       }
       if (this.data.type === PREPARATION_TYPES.XENIA) {
         this.data.connectedPreparationDevice.type = PreparationDeviceType.XENIA;
+        this.data.connectedPreparationDevice.customParams = new XeniaParams();
       }
       if (this.data.type === PREPARATION_TYPES.SANREMO_YOU) {
         this.data.connectedPreparationDevice.type =
           PreparationDeviceType.SANREMO_YOU;
+        this.data.connectedPreparationDevice.customParams =
+          new SanremoYOUParams();
       }
     }
   }

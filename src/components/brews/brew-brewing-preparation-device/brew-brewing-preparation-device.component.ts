@@ -44,6 +44,7 @@ import {
   SanremoYOUDevice,
   SanremoYOUParams,
 } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
+import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
 @Component({
   selector: 'brew-brewing-preparation-device',
   templateUrl: './brew-brewing-preparation-device.component.html',
@@ -433,4 +434,6 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
       }
     }, 50);
   }
+
+  protected readonly SanremoYOUMode = SanremoYOUMode;
 }

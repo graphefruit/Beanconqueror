@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Preparation } from '../../preparation/preparation';
 
 import { ISanremoYOUParams } from '../../../interfaces/preparationDevices/sanremoYOU/iSanremoYOUParams';
+import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
 declare var cordova;
 export class SanremoYOUDevice extends PreparationDevice {
   public scriptList: Array<{ INDEX: number; TITLE: string }> = [];
@@ -176,8 +177,10 @@ export class SanremoYOUDevice extends PreparationDevice {
 
 export class SanremoYOUParams implements ISanremoYOUParams {
   public stopAtWeight: number = 0;
-  public residualLagTime: number = 1.35;
+  public residualLagTime: number = 0.9;
+  public selectedMode: SanremoYOUMode = SanremoYOUMode.LISTENING;
   constructor() {
-    this.residualLagTime = 1.35;
+    this.residualLagTime = 0.9;
+    this.selectedMode = SanremoYOUMode.LISTENING;
   }
 }

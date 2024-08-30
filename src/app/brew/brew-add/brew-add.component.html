@@ -21,11 +21,11 @@
         <ng-container *ngIf='brewBrewing?.brewBrewingPreparationDeviceEl?.getDataPreparationDeviceType() === PreparationDeviceType.SANREMO_YOU'>
           <ion-chip outline='true' class='machine-connected' *ngIf='brewBrewing?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()'>
             <ion-icon name="beanconqueror-sanremo-you-logo" size='large'></ion-icon>
-            <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-wifi"></ion-icon>
+            <ion-icon style='margin-left: 0px;' color="dark" name="beanconqueror-wifi"></ion-icon>
           </ion-chip>
           <ion-chip outline='true' class='machine-disconnected' *ngIf='!brewBrewing?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()'>
             <ion-icon name="beanconqueror-sanremo-you-logo" size='large'></ion-icon>
-            <ion-icon style='margin-left: -10px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
+            <ion-icon style='margin-left: 0px;' color="dark" name="beanconqueror-no-wifi"></ion-icon>
           </ion-chip>
         </ng-container>
         <ng-container *ngIf='brewBrewing?.brewBrewingPreparationDeviceEl?.getDataPreparationDeviceType() === PreparationDeviceType.XENIA'>

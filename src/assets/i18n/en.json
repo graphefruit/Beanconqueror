@@ -1067,7 +1067,11 @@
         },
         "TYPE_SANREMO_YOU": {
           "TITLE": "Sanremo YOU Machine",
-          "STOP_AT_WEIGHT": "Stop at weight"
+          "STOP_AT_WEIGHT": "Stop at weight",
+          "SELECT_MODE": "Select mode",
+          "MODE_LISTENING": "Listening",
+          "MODE_CONTROL": "Control"
+
         }
     },
     "DEVICE_CONNECTION": "Device connection",
