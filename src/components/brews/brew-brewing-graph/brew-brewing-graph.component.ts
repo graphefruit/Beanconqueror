@@ -1053,9 +1053,6 @@ export class BrewBrewingGraphComponent implements OnInit {
           fixedrange: true,
           range: [suggestedMinPressure, suggestedMaxPressure],
         };
-        if (suggestedMaxPressure <= 10) {
-          layout['yaxis4']['dtick'] = 1;
-        }
       }
       const temperatureDevice = this.bleManager.getTemperatureDevice();
       if (
@@ -1116,6 +1113,16 @@ export class BrewBrewingGraphComponent implements OnInit {
         },
       };
 
+      const graph_pressure_settings = this.settings.graph_pressure;
+      const suggestedMinPressure = graph_pressure_settings.lower;
+      let suggestedMaxPressure = graph_pressure_settings.upper;
+      try {
+        if (this.pressureTrace?.y.length > 0) {
+          suggestedMaxPressure = Math.max(...this.pressureTrace.y);
+          suggestedMaxPressure = Math.ceil(suggestedMaxPressure + 1);
+        }
+      } catch (ex) {}
+
       layout['yaxis4'] = {
         title: '',
         titlefont: { color: '#05C793' },
@@ -1125,7 +1132,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         side: 'right',
         showgrid: false,
         position: 0.93,
-        range: [0, 12],
+        range: [suggestedMinPressure, suggestedMaxPressure],
         visible: true,
       };
 
@@ -1588,6 +1595,18 @@ export class BrewBrewingGraphComponent implements OnInit {
                 newLayoutIsNeeded = true;
               }
             }
+            if (this.pressureTrace?.y?.length > 0) {
+              // #783
+              const lastPressureData: number =
+                this.pressureTrace.y[this.pressureTrace.y.length - 1];
+              if (lastPressureData > this.lastChartLayout.yaxis4.range[1]) {
+                this.lastChartLayout.yaxis4.range[1] = Math.ceil(
+                  lastPressureData + 1
+                );
+                newLayoutIsNeeded = true;
+              }
+            }
+
             if (newLayoutIsNeeded) {
               Plotly.relayout(
                 this.profileDiv.nativeElement,
@@ -1596,18 +1615,7 @@ export class BrewBrewingGraphComponent implements OnInit {
             }
           }, 25);
         } else {
-          const delay = moment(new Date())
-            .startOf('day')
-            .add('seconds', 0)
-            .toDate()
-            .getTime();
-          const delayedTime: number = moment(new Date())
-            .startOf('day')
-            .add('seconds', this.brewComponent.timer.getSeconds() + 5)
-            .toDate()
-            .getTime();
-          this.lastChartLayout.xaxis.range = [delay, delayedTime];
-          Plotly.relayout(this.profileDiv.nativeElement, this.lastChartLayout);
+          // Not needed anymore
         }
       } catch (ex) {}
     });
@@ -2134,7 +2142,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         );
         weight = weight + genRand(0.1, 2, 2);
         pressure = Math.floor(
-          (crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8)) * 11
+          (crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8)) * 16
         );
         temperature = Math.floor(
           (crypto.getRandomValues(new Uint8Array(1))[0] / Math.pow(2, 8)) * 90

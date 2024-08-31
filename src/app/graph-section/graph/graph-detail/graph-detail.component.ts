@@ -174,6 +174,16 @@ export class GraphDetailComponent implements OnInit {
       },
     };
 
+    const graph_pressure_settings = this.settings.graph_pressure;
+    const suggestedMinPressure: number = graph_pressure_settings.lower;
+    let suggestedMaxPressure = graph_pressure_settings.upper;
+    try {
+      if (this.pressureTrace?.y.length > 0) {
+        suggestedMaxPressure = Math.max(...this.pressureTrace.y);
+        suggestedMaxPressure = Math.ceil(suggestedMaxPressure + 1);
+      }
+    } catch (ex) {}
+
     layout['yaxis4'] = {
       title: '',
       titlefont: { color: '#05C793' },
@@ -183,6 +193,7 @@ export class GraphDetailComponent implements OnInit {
       side: 'right',
       showgrid: false,
       position: 0.93,
+      range: [suggestedMinPressure, suggestedMaxPressure],
       visible: true,
     };
 
@@ -348,6 +359,7 @@ export class GraphDetailComponent implements OnInit {
           }
         }
       }
+
       if (
         this.flow_profile_raw?.pressureFlow &&
         this.flow_profile_raw.pressureFlow.length > 0

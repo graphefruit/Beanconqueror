@@ -159,6 +159,16 @@ export class GraphDisplayCardComponent implements OnInit {
       },
     };
 
+    const graph_pressure_settings = this.settings.graph_pressure;
+    const suggestedMinPressure: number = graph_pressure_settings.lower;
+    let suggestedMaxPressure = graph_pressure_settings.upper;
+    try {
+      if (this.pressureTrace?.y.length > 0) {
+        suggestedMaxPressure = Math.max(...this.pressureTrace.y);
+        suggestedMaxPressure = Math.ceil(suggestedMaxPressure + 1);
+      }
+    } catch (ex) {}
+
     layout['yaxis4'] = {
       title: '',
       titlefont: { color: '#05C793' },
@@ -168,6 +178,7 @@ export class GraphDisplayCardComponent implements OnInit {
       side: 'right',
       fixedrange: true,
       showgrid: false,
+      range: [suggestedMinPressure, suggestedMaxPressure],
       position: 0.93,
       visible: true,
     };
