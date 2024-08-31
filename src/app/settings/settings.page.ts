@@ -1287,6 +1287,12 @@ export class SettingsPage {
     }
   }
 
+  public downloadImportExcelTemplates() {
+    this.uiHelper.openExternalWebpage(
+      'https://beanconqueror.gitbook.io/beanconqueror/resources/files'
+    );
+  }
+
   public importBeansExcel(_type: string = 'roasted'): void {
     if (this.platform.is('cordova')) {
       this.uiAnalytics.trackEvent(

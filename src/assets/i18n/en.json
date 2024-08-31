@@ -1345,5 +1345,6 @@
     "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS": "Define the axes for the pressure graph",
     "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_DESCRIPTION": "Set the starting and end size of the axes for pressure",
     "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_RANGE": "Pressure axes",
-    "PAGE_SETTINGS_LANGUAGE_DUTCH": "Dutch"
+    "PAGE_SETTINGS_LANGUAGE_DUTCH": "Dutch",
+    "DOWNLOAD_IMPORT_EXCEL_TEMPLATES": "Download import templates"
 }

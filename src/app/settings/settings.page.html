@@ -59,12 +59,16 @@
             <ion-label>{{"EXCEL_EXPORT" | translate}}</ion-label>
             <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
           </ion-item>
-          <ion-item  (click)="importBeansExcel()" button [lines]="settings.show_roasting_section?'full':'none'" tappable>
+          <ion-item  (click)="importBeansExcel()" button  tappable>
             <ion-label>{{"IMPORT_ROASTED_BEANS_EXCEL" | translate}}</ion-label>
             <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
           </ion-item>
-          <ion-item *ngIf='settings.show_roasting_section'  (click)="importBeansExcel('green')" button lines="none" tappable>
+          <ion-item *ngIf='settings.show_roasting_section'  (click)="importBeansExcel('green')" tappable>
             <ion-label>{{"IMPORT_GREEN_BEANS_EXCEL" | translate}}</ion-label>
+            <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+          </ion-item>
+          <ion-item (click)='downloadImportExcelTemplates()' lines="none">
+            <ion-label>{{"DOWNLOAD_IMPORT_EXCEL_TEMPLATES" | translate}}</ion-label>
             <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
           </ion-item>
         </ion-card-content>
