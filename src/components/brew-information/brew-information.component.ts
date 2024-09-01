@@ -51,6 +51,18 @@ export class BrewInformationComponent implements OnInit {
   @Input() public layout: string = 'brew';
   @ViewChild('card', { read: ElementRef })
   public cardEl: ElementRef;
+
+  @ViewChild('swiper', { static: false }) public brewInformationSlider:
+    | ElementRef
+    | undefined;
+
+  @ViewChild('ionCardParent', { static: false }) public ionCardParent:
+    | ElementRef
+    | any;
+
+  @ViewChild('brewInformationContainer', { read: ElementRef, static: false })
+  public brewInformationContainer: ElementRef;
+
   @ViewChild('brewStars', { read: NgxStarsComponent, static: false })
   public brewStars: NgxStarsComponent;
 
@@ -126,6 +138,32 @@ export class BrewInformationComponent implements OnInit {
   public async showBrew() {
     await this.detailBrew();
     this.brewAction.emit([BREW_ACTION.DETAIL, this.brew]);
+  }
+
+  public getElementOffsetWidth() {
+    if (this.brewInformationContainer?.nativeElement?.offsetWidth) {
+      return this.brewInformationContainer?.nativeElement?.offsetWidth - 50;
+    }
+    return 0;
+  }
+  public getElementOffsetHeight() {
+    if (this.brewInformationContainer?.nativeElement?.offsetHeight) {
+      return this.brewInformationContainer?.nativeElement?.offsetHeight - 50;
+    }
+    return 0;
+  }
+
+  public getElementHeight() {
+    if (this.ionCardParent?.el.offsetHeight) {
+      return this.ionCardParent?.el.offsetHeight;
+    }
+    return 200;
+  }
+  public getElementWidth() {
+    if (this.ionCardParent?.el.offsetWidth) {
+      return this.ionCardParent?.el.offsetWidth;
+    }
+    return 200;
   }
 
   public async showBrewActions(event): Promise<void> {

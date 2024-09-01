@@ -31,6 +31,7 @@ export class GraphDisplayCardComponent implements OnInit {
   @Input() public meticulousHistoryData: HistoryListingEntry;
 
   @Input() public chartWidth: number;
+  @Input() public chartHeight: number;
 
   public flow_profile_raw: BrewFlow = new BrewFlow();
 
@@ -97,7 +98,10 @@ export class GraphDisplayCardComponent implements OnInit {
       chartWidth = this.chartWidth;
     }
 
-    const chartHeight: number = 150;
+    let chartHeight: number = 150;
+    if (this.chartHeight) {
+      chartHeight = this.chartHeight;
+    }
 
     let tickFormat = '%S';
 
