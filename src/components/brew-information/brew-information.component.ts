@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { Brew } from '../../classes/brew/brew';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { ModalController, Platform } from '@ionic/angular';
+import { MenuController, ModalController, Platform } from '@ionic/angular';
 import { BREW_ACTION } from '../../enums/brews/brewAction';
 import { BrewPopoverActionsComponent } from '../../app/brew/brew-popover-actions/brew-popover-actions.component';
 import { Bean } from '../../classes/bean/bean';
@@ -53,13 +53,15 @@ export class BrewInformationComponent implements OnInit {
   @ViewChild('card', { read: ElementRef })
   public cardEl: ElementRef;
 
+  public slideOpts = {
+    allowTouchMove: false,
+    speed: 400,
+    slide: 4,
+  };
+
   @ViewChild('swiper', { static: false }) public brewInformationSlider:
     | ElementRef
     | undefined;
-
-  @ViewChild('ionCardParent', { static: false }) public ionCardParent:
-    | ElementRef
-    | any;
 
   @ViewChild('brewInformationContainer', { read: ElementRef, static: false })
   public brewInformationContainer: ElementRef;
@@ -76,6 +78,9 @@ export class BrewInformationComponent implements OnInit {
   public brewQuantityEnum = BREW_QUANTITY_TYPES_ENUM;
 
   public settings: Settings = null;
+
+  public informationContainerHeight: number = undefined;
+  public informationContainerWidth: number = undefined;
 
   constructor(
     private readonly uiSettingsStorage: UISettingsStorage,
@@ -95,7 +100,8 @@ export class BrewInformationComponent implements OnInit {
     private readonly uiFileHelper: UIFileHelper,
     private readonly uiBeanHelper: UIBeanHelper,
     private readonly visualizerService: VisualizerService,
-    private readonly uiGraphHelper: UIGraphHelper
+    private readonly uiGraphHelper: UIGraphHelper,
+    private readonly menu: MenuController
   ) {}
 
   public ngOnInit() {
@@ -104,6 +110,25 @@ export class BrewInformationComponent implements OnInit {
       this.bean = this.brew.getBean();
       this.preparation = this.brew.getPreparation();
       this.mill = this.brew.getMill();
+
+      setTimeout(() => {
+        /**We calculcate the information here, to avoid expression-changed in angular, because it always triggered while scrolling cause of calucation functions**/
+        this.informationContainerHeight =
+          this.brewInformationContainer?.nativeElement?.offsetHeight - 50;
+        this.informationContainerWidth =
+          this.brewInformationContainer?.nativeElement?.offsetWidth - 50;
+
+        /**If we slide on a bigger tablet, somehow ionic triggering the menu when sliding from right to left, thats why we need to attach us to touchstart/end and to ignore the slide...**/
+        this.brewInformationSlider?.nativeElement.swiper.on(
+          'touchStart',
+          () => {
+            this.menu.swipeGesture(false);
+          }
+        );
+        this.brewInformationSlider?.nativeElement.swiper.on('touchEnd', () => {
+          this.menu.swipeGesture(true);
+        });
+      }, 150);
     }
   }
 
@@ -144,32 +169,6 @@ export class BrewInformationComponent implements OnInit {
 
   public async showBrewGraph() {
     await this.uiGraphHelper.detailBrewGraph(this.brew);
-  }
-
-  public getElementOffsetWidth() {
-    if (this.brewInformationContainer?.nativeElement?.offsetWidth) {
-      return this.brewInformationContainer?.nativeElement?.offsetWidth - 50;
-    }
-    return 0;
-  }
-  public getElementOffsetHeight() {
-    if (this.brewInformationContainer?.nativeElement?.offsetHeight) {
-      return this.brewInformationContainer?.nativeElement?.offsetHeight - 50;
-    }
-    return 0;
-  }
-
-  public getElementHeight() {
-    if (this.ionCardParent?.el.offsetHeight) {
-      return this.ionCardParent?.el.offsetHeight;
-    }
-    return 200;
-  }
-  public getElementWidth() {
-    if (this.ionCardParent?.el.offsetWidth) {
-      return this.ionCardParent?.el.offsetWidth;
-    }
-    return 200;
   }
 
   public async showBrewActions(event): Promise<void> {
