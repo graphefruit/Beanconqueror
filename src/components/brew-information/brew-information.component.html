@@ -2,7 +2,7 @@
   <swiper-container #swiper  pager="true" [pagination]="{ draggable: true, clickable: true }">
     <swiper-slide>
       <ion-card #ionCardParent class='long-card brew-layout' tappable (click)='showBrew()' (long-press)='longPressEditBrew($event)'>
-        <ion-card-content #card class='no-ion-col-vertical-padding ion-padding-top'>
+        <ion-card-content #card class='no-ion-col-vertical-padding ion-padding-top' [ngClass]="brew.flow_profile?'add-bottom-spacing':''">
           <ion-grid class='no-padding-bottom' style='padding-top:0px;'>
             <ion-row style='height:60px;'>
               <ion-col size-xs='3' size-xl='1' size-sm='1' size-md='1' size-lg='1' class='ion-no-padding'
@@ -246,8 +246,8 @@
       </ion-card>
     </swiper-slide>
     <swiper-slide *ngIf='brew.flow_profile'>
-      <ion-card class='long-card brew-layout' [style.height.px]="getElementHeight()" [style.width.px]="getElementWidth()">
-        <ion-card-content class='no-ion-col-vertical-padding ion-padding-top'>
+      <ion-card class='long-card brew-layout graph-card' style='z-index:-9999' [style.height.px]="getElementHeight()" [style.width.px]="getElementWidth()">
+        <ion-card-content class='no-ion-col-vertical-padding ion-padding-top' >
           <graph-display-card [chartWidth]='getElementOffsetWidth()' [chartHeight]='getElementOffsetHeight()' [flowProfilePath]='brew.flow_profile'></graph-display-card>
         </ion-card-content>
       </ion-card>

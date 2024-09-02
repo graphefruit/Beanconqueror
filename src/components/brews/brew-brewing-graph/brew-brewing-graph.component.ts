@@ -64,6 +64,7 @@ import regression from 'regression';
 import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
 import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
 import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
+import { BookooScale } from '../../../classes/devices/bokooScale';
 
 declare var Plotly;
 
@@ -2392,6 +2393,11 @@ export class BrewBrewingGraphComponent implements OnInit {
 
       await this.timerReset(undefined);
       await this.brewComponent.timer.resetWithoutEmit(false);
+
+      if (scale.getScaleType() === ScaleType.BOKOOSCALE) {
+        //const bookooScale: BookooScale = scale as BookooScale;
+        //await bookooScale.tareAndStartTimerModeAuto();
+      }
 
       this.brewComponent.timer.checkChanges();
       this.checkChanges();

@@ -36,9 +36,10 @@ import * as htmlToImage from 'html-to-image';
 
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { BrewFlow } from '../../classes/brew/brewFlow';
-import { UIBeanStorage } from '../../services/uiBeanStorage';
+
 import { UIBeanHelper } from '../../services/uiBeanHelper';
 import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
+import { UIGraphHelper } from '../../services/uiGraphHelper';
 declare var window;
 @Component({
   selector: 'brew-information',
@@ -93,7 +94,8 @@ export class BrewInformationComponent implements OnInit {
     private readonly platform: Platform,
     private readonly uiFileHelper: UIFileHelper,
     private readonly uiBeanHelper: UIBeanHelper,
-    private readonly visualizerService: VisualizerService
+    private readonly visualizerService: VisualizerService,
+    private readonly uiGraphHelper: UIGraphHelper
   ) {}
 
   public ngOnInit() {
@@ -138,6 +140,10 @@ export class BrewInformationComponent implements OnInit {
   public async showBrew() {
     await this.detailBrew();
     this.brewAction.emit([BREW_ACTION.DETAIL, this.brew]);
+  }
+
+  public async showBrewGraph() {
+    await this.uiGraphHelper.detailBrewGraph(this.brew);
   }
 
   public getElementOffsetWidth() {
@@ -390,6 +396,9 @@ export class BrewInformationComponent implements OnInit {
         break;
       case BREW_ACTION.SHOW_VISUALIZER:
         await this.showVisualizerShot();
+        break;
+      case BREW_ACTION.SHOW_GRAPH:
+        await this.showBrewGraph();
         break;
       default:
         break;

@@ -227,7 +227,6 @@ export class GraphDisplayCardComponent implements OnInit {
       try {
         Plotly.purge(this.profileDiv.nativeElement);
       } catch (ex) {}
-      const graphSettings = this.settings.graph.FILTER;
 
       this.weightTrace = {
         x: [],
