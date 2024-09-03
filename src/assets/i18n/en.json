@@ -1347,5 +1347,42 @@
     "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_RANGE": "Pressure axes",
     "PAGE_SETTINGS_LANGUAGE_DUTCH": "Dutch",
     "DOWNLOAD_IMPORT_EXCEL_TEMPLATES": "Download import templates",
-    "SHOW_GRAPH": "Graph anzeigen"
+    "SHOW_GRAPH": "Show graph",
+    "UPDATE_TEXT_TITLE_TITLE": {
+      "7.5.0": {
+        "TITLE": "Version 7.5.0: What's new",
+        "DESCRIPTION": [
+          "<b>New language</b>",
+          "Dutch support - Thanks to Ygg",
+          "",
+          "<b>Brews</b>",
+          "Collapsing a brew-list is now possible",
+          "Displaying if a frozen bean was used",
+          "Bean image now visible on selection",
+          "Read and import a history shot from the Meticulous",
+          "Brew list entries are now swipe able when they have graph",
+          "",
+          "<b>Beans</b>",
+          "Collapsing the bean list is now possible",
+          "Beans are now sortable by bean age",
+          "Sorting are not reset anymore when archiving a bean",
+          "",
+          "<b>Green beans</b>",
+          "Green beans are now importable - See Settings",
+          "",
+          "<b>Settings</b>",
+          "Set the starting axis for the pressure",
+          "Import green beans or roasted beans",
+          "",
+          "<b>Data corruption detection</b>",
+          "Beanconqueror now checks if somehow a data corruption occured, and if yes, it shows you a popup to make it possible to import a backup",
+          "",
+          "<b>Other</b>",
+          "Fixing sorting of preparation tools",
+          "Fixing frozen bean calculation to fix rounding issues",
+          "Some technical changes in the code",
+          "Small tweaks"
+        ]
+      }
+    }
 }
