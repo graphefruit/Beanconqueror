@@ -1360,7 +1360,6 @@ export class SettingsPage {
         );
       }
     } else {
-      this.__importDummyData();
     }
   }
 
