@@ -240,13 +240,29 @@ export class UIStorage {
     return promise;
   }
 
-  public async hasCorruptedData(): Promise<boolean> {
-    const promise: Promise<boolean> = new Promise((resolve, reject) => {
+  public async hasCorruptedData(): Promise<{
+    CORRUPTED: boolean;
+    DATA: {
+      BREWS: number;
+      MILL: number;
+      PREPARATION: number;
+      BEANS: number;
+    };
+  }> {
+    const promise: Promise<{
+      CORRUPTED: boolean;
+      DATA: {
+        BREWS: number;
+        MILL: number;
+        PREPARATION: number;
+        BEANS: number;
+      };
+    }> = new Promise((resolve, reject) => {
       const hasDataObj = {
-        BREWS: false,
-        MILL: false,
-        PREPARATION: false,
-        BEANS: false,
+        BREWS: 0,
+        MILL: 0,
+        PREPARATION: 0,
+        BEANS: 0,
       };
       this._storage
         .forEach((_value, _key, _index) => {
@@ -258,7 +274,9 @@ export class UIStorage {
           ) {
             try {
               if (_value?.length > 0) {
-                hasDataObj[_key] = true;
+                hasDataObj[_key] = _value?.length;
+              } else {
+                hasDataObj[_key] = 0;
               }
             } catch (ex) {}
           }
@@ -266,22 +284,22 @@ export class UIStorage {
         .then(
           () => {
             if (
-              hasDataObj.BREWS === true &&
-              (hasDataObj.MILL === false ||
-                hasDataObj.PREPARATION === false ||
-                hasDataObj.BEANS === false)
+              hasDataObj.BREWS > 0 &&
+              (hasDataObj.MILL <= 0 ||
+                hasDataObj.PREPARATION <= 0 ||
+                hasDataObj.BEANS <= 0)
             ) {
               /**
                * If we got brews but not a mill / preparation / or bean something broke hard.
                * We saw this issue on android that a user got brews but no beans anymore, they where lost
                */
-              resolve(true);
+              resolve({ CORRUPTED: true, DATA: hasDataObj });
             } else {
-              resolve(false);
+              resolve({ CORRUPTED: false, DATA: hasDataObj });
             }
           },
           () => {
-            resolve(false);
+            resolve({ CORRUPTED: false, DATA: hasDataObj });
           }
         );
     });

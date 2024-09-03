@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { Brew } from '../../classes/brew/brew';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
-import { ModalController, Platform } from '@ionic/angular';
+import { MenuController, ModalController, Platform } from '@ionic/angular';
 import { BREW_ACTION } from '../../enums/brews/brewAction';
 import { BrewPopoverActionsComponent } from '../../app/brew/brew-popover-actions/brew-popover-actions.component';
 import { Bean } from '../../classes/bean/bean';
@@ -33,13 +33,13 @@ import { TranslateService } from '@ngx-translate/core';
 import { BrewTrackingService } from '../../services/brewTracking/brew-tracking.service';
 import { UIHealthKit } from '../../services/uiHealthKit';
 import * as htmlToImage from 'html-to-image';
-import { Visualizer } from '../../classes/visualizer/visualizer';
 
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { BrewFlow } from '../../classes/brew/brewFlow';
-import { UIBeanStorage } from '../../services/uiBeanStorage';
+
 import { UIBeanHelper } from '../../services/uiBeanHelper';
 import { VisualizerService } from '../../services/visualizerService/visualizer-service.service';
+import { UIGraphHelper } from '../../services/uiGraphHelper';
 declare var window;
 @Component({
   selector: 'brew-information',
@@ -48,9 +48,24 @@ declare var window;
 })
 export class BrewInformationComponent implements OnInit {
   @Input() public brew: Brew;
+  @Input() public collapsed: boolean = false;
   @Input() public layout: string = 'brew';
   @ViewChild('card', { read: ElementRef })
   public cardEl: ElementRef;
+
+  public slideOpts = {
+    allowTouchMove: false,
+    speed: 400,
+    slide: 4,
+  };
+
+  @ViewChild('swiper', { static: false }) public brewInformationSlider:
+    | ElementRef
+    | undefined;
+
+  @ViewChild('brewInformationContainer', { read: ElementRef, static: false })
+  public brewInformationContainer: ElementRef;
+
   @ViewChild('brewStars', { read: NgxStarsComponent, static: false })
   public brewStars: NgxStarsComponent;
 
@@ -63,6 +78,9 @@ export class BrewInformationComponent implements OnInit {
   public brewQuantityEnum = BREW_QUANTITY_TYPES_ENUM;
 
   public settings: Settings = null;
+
+  public informationContainerHeight: number = undefined;
+  public informationContainerWidth: number = undefined;
 
   constructor(
     private readonly uiSettingsStorage: UISettingsStorage,
@@ -80,9 +98,10 @@ export class BrewInformationComponent implements OnInit {
     private readonly uiHealthKit: UIHealthKit,
     private readonly platform: Platform,
     private readonly uiFileHelper: UIFileHelper,
-    private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiBeanHelper: UIBeanHelper,
-    private readonly visualizerService: VisualizerService
+    private readonly visualizerService: VisualizerService,
+    private readonly uiGraphHelper: UIGraphHelper,
+    private readonly menu: MenuController
   ) {}
 
   public ngOnInit() {
@@ -91,6 +110,25 @@ export class BrewInformationComponent implements OnInit {
       this.bean = this.brew.getBean();
       this.preparation = this.brew.getPreparation();
       this.mill = this.brew.getMill();
+
+      setTimeout(() => {
+        /**We calculcate the information here, to avoid expression-changed in angular, because it always triggered while scrolling cause of calucation functions**/
+        this.informationContainerHeight =
+          this.brewInformationContainer?.nativeElement?.offsetHeight - 50;
+        this.informationContainerWidth =
+          this.brewInformationContainer?.nativeElement?.offsetWidth - 50;
+
+        /**If we slide on a bigger tablet, somehow ionic triggering the menu when sliding from right to left, thats why we need to attach us to touchstart/end and to ignore the slide...**/
+        this.brewInformationSlider?.nativeElement.swiper.on(
+          'touchStart',
+          () => {
+            this.menu.swipeGesture(false);
+          }
+        );
+        this.brewInformationSlider?.nativeElement.swiper.on('touchEnd', () => {
+          this.menu.swipeGesture(true);
+        });
+      }, 150);
     }
   }
 
@@ -127,6 +165,10 @@ export class BrewInformationComponent implements OnInit {
   public async showBrew() {
     await this.detailBrew();
     this.brewAction.emit([BREW_ACTION.DETAIL, this.brew]);
+  }
+
+  public async showBrewGraph() {
+    await this.uiGraphHelper.detailBrewGraph(this.brew);
   }
 
   public async showBrewActions(event): Promise<void> {
@@ -354,6 +396,9 @@ export class BrewInformationComponent implements OnInit {
       case BREW_ACTION.SHOW_VISUALIZER:
         await this.showVisualizerShot();
         break;
+      case BREW_ACTION.SHOW_GRAPH:
+        await this.showBrewGraph();
+        break;
       default:
         break;
     }
@@ -400,12 +445,12 @@ export class BrewInformationComponent implements OnInit {
     await this.uiAlert.showLoadingSpinner();
     if (this.platform.is('ios')) {
       htmlToImage
-        .toJpeg(this.cardEl.nativeElement)
+        .toPng(this.cardEl.nativeElement)
         .then((_dataURL) => {
           // On iOS we need to do this a second time, because the rendering doesn't render everything (strange thing)
           setTimeout(() => {
             htmlToImage
-              .toJpeg(this.cardEl.nativeElement)
+              .toPng(this.cardEl.nativeElement)
               .then(async (_dataURLSecond) => {
                 await this.uiAlert.hideLoadingSpinner();
                 setTimeout(() => {
@@ -422,7 +467,7 @@ export class BrewInformationComponent implements OnInit {
         });
     } else {
       htmlToImage
-        .toJpeg(this.cardEl.nativeElement)
+        .toPng(this.cardEl.nativeElement)
         .then(async (_dataURL) => {
           await this.uiAlert.hideLoadingSpinner();
           setTimeout(() => {

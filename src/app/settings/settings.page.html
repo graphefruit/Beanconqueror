@@ -55,12 +55,20 @@
             <ion-label>Temp: Export Brew By Weight - Xenia</ion-label>
             <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
           </ion-item>
-          <ion-item (click)="excelExport()" button lines="none" tappable>
+          <ion-item (click)="excelExport()" button tappable>
             <ion-label>{{"EXCEL_EXPORT" | translate}}</ion-label>
             <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
           </ion-item>
-          <ion-item *ngIf='false' (click)="importBeansExcel()" button lines="none" tappable>
-            <ion-label>{{"IMPORT_BEANS_EXCEL" | translate}}</ion-label>
+          <ion-item  (click)="importBeansExcel()" button  tappable>
+            <ion-label>{{"IMPORT_ROASTED_BEANS_EXCEL" | translate}}</ion-label>
+            <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+          </ion-item>
+          <ion-item *ngIf='settings.show_roasting_section'  (click)="importBeansExcel('green')" tappable>
+            <ion-label>{{"IMPORT_GREEN_BEANS_EXCEL" | translate}}</ion-label>
+            <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+          </ion-item>
+          <ion-item (click)='downloadImportExcelTemplates()' lines="none">
+            <ion-label>{{"DOWNLOAD_IMPORT_EXCEL_TEMPLATES" | translate}}</ion-label>
             <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
           </ion-item>
         </ion-card-content>
@@ -84,6 +92,7 @@
               <ion-select-option value="fr">{{"PAGE_SETTINGS_LANGUAGE_FRANCE" | translate}}</ion-select-option>
               <ion-select-option value="id">{{"PAGE_SETTINGS_LANGUAGE_INDONESIA" | translate}}</ion-select-option>
               <ion-select-option value="pl">{{"PAGE_SETTINGS_LANGUAGE_POLISH" | translate}}</ion-select-option>
+              <ion-select-option value="nl">{{"PAGE_SETTINGS_LANGUAGE_DUTCH" | translate}}</ion-select-option>
             </ion-select>
           </ion-item>
           <ion-item>
@@ -361,7 +370,7 @@
         <ion-card-content>
           <ion-card-title>{{"PAGE_SETTINGS_MANAGE_FEATURES" | translate}}</ion-card-title>
           <ion-item lines="none">
-            <ion-checkbox label-placement='start' (ngModelChange)="resetFilter();saveSettings();"
+            <ion-checkbox label-placement='start' (ngModelChange)="resetFilter();resetBeanSort();saveSettings();"
                           [(ngModel)]="settings.freeze_coffee_beans">
               <div class='ion-label'>{{"ACTIVE_BEAN_FREEZING_FEATURE" | translate}}</div>
             </ion-checkbox>
@@ -980,6 +989,25 @@
             <ion-icon style="top: 3px; position: relative;" name="information-circle-outline"></ion-icon>
             <p style="display: inline;">{{"PRESSURE_DEVICE_JUST_VISIBLE_ON_ESPRESSO" | translate}}</p>
           </ion-label>
+        </ion-card-content>
+      </ion-card>
+      <ion-card>
+        <ion-card-content>
+          <ion-card-title>
+            {{"PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS" | translate }}
+            <p>{{"PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_DESCRIPTION" | translate}}</p>
+          </ion-card-title>
+          <ion-list>
+            <ion-item lines="none">
+              <ion-label>{{"PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_RANGE" | translate}}&nbsp;<ion-badge
+                style="vertical-align: top;">{{this.uiHelper.toFixedIfNecessary(settings.graph_pressure.lower,2)}}&nbsp;-&nbsp;{{this.uiHelper.toFixedIfNecessary(settings.graph_pressure.upper,2)}} </ion-badge>
+              </ion-label>
+            </ion-item>
+            <ion-item style="top:-10px;">
+              <ion-range [disabled]='isScrolling' (ngModelChange)="saveSettings();" [pinFormatter]="pinFormatter" [pin]="true"  min="0" dualKnobs="true" snaps="true" [max]="16" step="0.1" [(ngModel)]="settings.graph_pressure">
+              </ion-range>
+            </ion-item>
+          </ion-list>
         </ion-card-content>
       </ion-card>
     </div>

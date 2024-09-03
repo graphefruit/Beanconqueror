@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { Preparation } from '../../../classes/preparation/preparation';
 
 import { ModalController } from '@ionic/angular';
+import { UIHelper } from '../../../services/uiHelper';
 
 @Component({
   selector: 'app-preparation-sort-tools',
@@ -20,7 +21,8 @@ export class PreparationSortToolsComponent implements OnInit {
   @Input() public preparation: Preparation;
   constructor(
     private readonly modalController: ModalController,
-    private readonly changeDetectorRef: ChangeDetectorRef
+    private readonly changeDetectorRef: ChangeDetectorRef,
+    private readonly uiHelper: UIHelper
   ) {}
 
   public ngOnInit() {
@@ -40,13 +42,12 @@ export class PreparationSortToolsComponent implements OnInit {
 
     reorderVar.splice(ev.detail.to, 0, reorderVar.splice(ev.detail.from, 1)[0]);
 
-    const swapElements = (myArray, index1, index2) => {
-      [myArray[index1], myArray[index2]] = [myArray[index2], myArray[index1]];
-    };
+    this.preparation.tools.splice(
+      ev.detail.to,
+      0,
+      this.preparation.tools.splice(ev.detail.from, 1)[0]
+    );
 
-    swapElements(this.preparation.tools, ev.detail.from, ev.detail.to);
-
-    // console.log(this.settings.brew_order);
     // Finish the reorder and position the item in the DOM based on
     // where the gesture ended. This method can also be called directly
     // by the reorder group

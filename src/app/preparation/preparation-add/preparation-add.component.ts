@@ -7,6 +7,7 @@ import { NgForm } from '@angular/forms';
 import { PreparationAddTypeComponent } from '../preparation-add-type/preparation-add-type.component';
 import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
+import { environment } from '../../../environments/environment';
 @Component({
   selector: 'preparation-add',
   templateUrl: './preparation-add.component.html',
@@ -17,6 +18,8 @@ export class PreparationAddComponent implements OnInit {
   public data: Preparation = new Preparation();
 
   public preparation_types_enum = PREPARATION_TYPES;
+
+  public ENVIRONMENT = environment;
 
   @ViewChild('addPreparationForm', { static: false })
   public preparationForm: NgForm;
@@ -33,6 +36,16 @@ export class PreparationAddComponent implements OnInit {
       PREPARATION_TRACKING.TITLE,
       PREPARATION_TRACKING.ACTIONS.ADD
     );
+  }
+
+  public individualPreparationVisible(_key) {
+    if (_key === 'SANREMO_YOU') {
+      if (this.ENVIRONMENT.FEATURES_ACTIVE.SANREMO_YOU === true) {
+        return true;
+      }
+      return false;
+    }
+    return true;
   }
 
   public async choosePreparation(_prepType: PREPARATION_TYPES) {

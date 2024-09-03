@@ -84,6 +84,16 @@ export interface ISettings {
     ARCHIVED: IBeanPageSort;
   };
 
+  bean_collapsed: {
+    OPEN: boolean;
+    ARCHIVED: boolean;
+    FROZEN: boolean;
+  };
+  brew_collapsed: {
+    OPEN: boolean;
+    ARCHIVED: boolean;
+  };
+
   green_bean_sort: {
     OPEN: IBeanPageSort;
     ARCHIVED: IBeanPageSort;
@@ -124,6 +134,10 @@ export interface ISettings {
       upper: number;
       lower: number;
     };
+  };
+  graph_pressure: {
+    upper: number;
+    lower: number;
   };
 
   welcome_page_showed: boolean;

@@ -51,7 +51,7 @@ export class BeanInformationComponent implements OnInit {
   @Input() public bean: Bean;
   @Input() public showActions: boolean = true;
   @Input() public disabled: boolean = false;
-
+  @Input() public collapsed: boolean = false;
   @ViewChild('card', { read: ElementRef })
   public cardEl: ElementRef;
   @ViewChild('beanStars', { read: NgxStarsComponent, static: false })
@@ -498,7 +498,7 @@ export class BeanInformationComponent implements OnInit {
 
   private async resetSettings() {
     const settings: Settings = this.uiSettingsStorage.getSettings();
-    settings.resetFilter();
+    settings.resetBeanFilter();
     await this.uiSettingsStorage.saveSettings(settings);
   }
 

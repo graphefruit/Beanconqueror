@@ -64,6 +64,69 @@ export class BeansAddComponent implements OnInit {
     }
   }
 
+  private async checkIfInformationAreSetButNotDisplayed() {
+    try {
+      const params = this.settings.bean_manage_parameters;
+      if (this.data.bean_information.length > 0) {
+        const info: IBeanInformation = this.data.bean_information[0];
+        let hasDataSet: boolean = false;
+        if (info.country && info.country !== '') {
+          hasDataSet = true;
+        }
+        if (info.region && info.region !== '') {
+          hasDataSet = true;
+        }
+        if (info.farm && info.farm !== '') {
+          hasDataSet = true;
+        }
+        if (info.farmer && info.farmer !== '') {
+          hasDataSet = true;
+        }
+        if (info.elevation && info.elevation !== '') {
+          hasDataSet = true;
+        }
+        if (info.harvest_time && info.harvest_time !== '') {
+          hasDataSet = true;
+        }
+        if (info.variety && info.variety !== '') {
+          hasDataSet = true;
+        }
+        if (info.processing && info.processing !== '') {
+          hasDataSet = true;
+        }
+        if (info.certification && info.certification !== '') {
+          hasDataSet = true;
+        }
+        if (info.percentage && info.percentage > 0) {
+          hasDataSet = true;
+        }
+        if (info.purchasing_price && info.purchasing_price > 0) {
+          hasDataSet = true;
+        }
+        if (info.fob_price && info.fob_price > 0) {
+          hasDataSet = true;
+        }
+
+        if (params.bean_information === false && hasDataSet === true) {
+          //Woopsi doopsi, user hasn't enabled the bean_information, lets display him a popover
+          //#623
+          try {
+            const yes = await this.uiAlert.showConfirm(
+              'BEAN_POPUP_YOU_DONT_SEE_EVERYTHING_DESCRIPTION',
+              'INFORMATION',
+              true
+            );
+            this.settings.bean_manage_parameters.bean_information = true;
+            await this.uiSettingsStorage.update(this.settings);
+            //Activate
+          } catch (ex) {
+            // Don't activate
+          }
+        }
+      }
+    } catch (ex) {}
+  }
+
   public async ionViewWillEnter() {
     this.uiAnalytics.trackEvent(BEAN_TRACKING.TITLE, BEAN_TRACKING.ACTIONS.ADD);
 
@@ -71,6 +134,7 @@ export class BeansAddComponent implements OnInit {
     // TODO how to handle roasting beans which wil be repeated?
     if (this.bean_template) {
       await this.__loadBean(this.bean_template);
+      await this.checkIfInformationAreSetButNotDisplayed();
     }
 
     // Download images after loading the bean, else they would be copied :O

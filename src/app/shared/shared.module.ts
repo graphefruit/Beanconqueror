@@ -189,6 +189,9 @@ import { BeanPopoverFreezeComponent } from '../beans/bean-popover-freeze/bean-po
 import { BeanFreezeInformationComponent } from '../../components/beans/bean-freeze-information/bean-freeze-information.component';
 import { BeanPopoverFrozenListComponent } from '../beans/bean-popover-frozen-list/bean-popover-frozen-list.component';
 import { PipesModule } from 'src/pipes/pipes.module';
+import { BrewModalImportShotMeticulousComponent } from '../brew/brew-modal-import-shot-meticulous/brew-modal-import-shot-meticulous.component';
+import { DataCorruptionFoundComponent } from '../../popover/data-corruption-found/data-corruption-found.component';
+import { BeanPopoverListComponent } from '../beans/bean-popover-list/bean-popover-list.component';
 
 @NgModule({
   declarations: [
@@ -214,6 +217,7 @@ import { PipesModule } from 'src/pipes/pipes.module';
     BeansAddComponent,
     BrewFlowComponent,
     BrewChooseGraphReferenceComponent,
+    BrewModalImportShotMeticulousComponent,
     BrewMaximizeControlsComponent,
     BeansEditComponent,
     BeansDetailComponent,
@@ -230,6 +234,7 @@ import { PipesModule } from 'src/pipes/pipes.module';
     WelcomePopoverComponent,
     AnalyticsPopoverComponent,
     MeticulousHelpPopoverComponent,
+    DataCorruptionFoundComponent,
     QrCodeScannerPopoverComponent,
     UpdatePopoverComponent,
     DatetimePopoverComponent,
@@ -315,6 +320,7 @@ import { PipesModule } from 'src/pipes/pipes.module';
     BeanPopoverAddComponent,
     BeanPopoverFreezeComponent,
     BeanPopoverFrozenListComponent,
+    BeanPopoverListComponent,
     BeanArchivePopoverComponent,
     MillPopoverActionsComponent,
     BeanModalSelectComponent,
@@ -420,6 +426,7 @@ import { PipesModule } from 'src/pipes/pipes.module';
     BeansAddComponent,
     BrewFlowComponent,
     BrewChooseGraphReferenceComponent,
+    BrewModalImportShotMeticulousComponent,
     BrewMaximizeControlsComponent,
     BeansEditComponent,
     BrewRatingComponent,
@@ -441,6 +448,7 @@ import { PipesModule } from 'src/pipes/pipes.module';
     WelcomePopoverComponent,
     AnalyticsPopoverComponent,
     MeticulousHelpPopoverComponent,
+    DataCorruptionFoundComponent,
     QrCodeScannerPopoverComponent,
     UpdatePopoverComponent,
     DatetimePopoverComponent,
@@ -523,6 +531,7 @@ import { PipesModule } from 'src/pipes/pipes.module';
     BeanPopoverAddComponent,
     BeanPopoverFreezeComponent,
     BeanPopoverFrozenListComponent,
+    BeanPopoverListComponent,
     BeanArchivePopoverComponent,
     BeanModalSelectComponent,
     AssociatedBrewsComponent,

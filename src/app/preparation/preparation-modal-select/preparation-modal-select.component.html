@@ -28,7 +28,8 @@
         <ion-card *ngIf="getOpenPreparations().length > 0">
           <ion-item *ngFor="let prep of getOpenPreparations()" lines="none" tappable>
 
-            <ion-checkbox justify="start" label-placement="end"  [(ngModel)]="multipleSelection[prep.config.uuid]"> <h6>{{prep.name}}</h6>
+            <ion-checkbox justify="start" label-placement="end"  [(ngModel)]="multipleSelection[prep.config.uuid]"><h6><ion-icon style="top:2px;position: relative;margin-right:5px;" name="wifi-outline"
+                                                                                                                                  *ngIf='prep.hasDeviceConnection()'></ion-icon>{{prep.name}}</h6>
               <p>{{"LAST_USE" | translate}}:
                 <span  *ngIf="getBrewsCount(prep)> 0">{{lastUsed(prep) | formatDate:[settings?.date_format]}}</span>
                 <span *ngIf="getBrewsCount(prep) <= 0">-</span>
@@ -47,7 +48,8 @@
         <ion-card>
           <ion-item *ngFor="let prep of getArchivedPreparations()" lines="none" tappable>
             <ion-checkbox justify="start" label-placement="end"  [(ngModel)]="multipleSelection[prep.config.uuid]">
-              <h6>{{prep.name}}</h6>
+              <h6><ion-icon style="top:2px;position: relative;margin-right:5px;" name="wifi-outline"
+                            *ngIf='prep.hasDeviceConnection()'></ion-icon>{{prep.name}}</h6>
               <p>{{"LAST_USE" | translate}}:
                 <span  *ngIf="getBrewsCount(prep)> 0">{{lastUsed(prep) | formatDate:[settings?.date_format]}}</span>
                 <span *ngIf="getBrewsCount(prep) <= 0">-</span>
@@ -72,7 +74,8 @@
 
           <ion-card *ngIf="getOpenPreparations().length > 0">
             <ion-item *ngFor="let prep of getOpenPreparations()" lines="none" tappable>
-              <ion-radio justify="start" label-placement="end" value="{{prep.config.uuid}}"> <h6>{{prep.name}}</h6>
+              <ion-radio justify="start" label-placement="end" value="{{prep.config.uuid}}"><h6><ion-icon style="top:2px;position: relative;margin-right:5px;" name="wifi-outline"
+                                                                                                           *ngIf='prep.hasDeviceConnection()'></ion-icon>{{prep.name}}</h6>
                 <p>{{"LAST_USE" | translate}}:
                   <span  *ngIf="getBrewsCount(prep)> 0">{{lastUsed(prep) | formatDate:[settings?.date_format]}}</span>
                   <span *ngIf="getBrewsCount(prep) <= 0">-</span>
@@ -91,7 +94,8 @@
           <ion-card>
             <ion-item *ngFor="let prep of getArchivedPreparations()" lines="none" tappable>
               <ion-radio justify="start" label-placement="end" value="{{prep.config.uuid}}">
-                <h6>{{prep.name}}</h6>
+                <h6><ion-icon style="top:2px;position: relative;margin-right:5px;" name="wifi-outline"
+                              *ngIf='prep.hasDeviceConnection()'></ion-icon>{{prep.name}}</h6>
                 <p>{{"LAST_USE" | translate}}:
                   <span  *ngIf="getBrewsCount(prep)> 0">{{lastUsed(prep) | formatDate:[settings?.date_format]}}</span>
                   <span *ngIf="getBrewsCount(prep) <= 0">-</span>

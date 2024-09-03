@@ -73,6 +73,33 @@
       </ion-select-option>
     </ion-select>
   </ion-item>
+  <hr/>
+  <ion-item (click)="importShotFromMeticulous()" button tappable>
+    <ion-icon name="cloud-download-outline" slot='start'></ion-icon>
+    <span>{{"IMPORT_SHOT_FROM_METICULOUS" | translate}}</span>
+  </ion-item>
+</ion-card>
+<ion-card *ngIf="preparationDeviceConnected() && getPreparationDeviceType() === PREPARATION_DEVICE_TYPE_ENUM.SANREMO_YOU" class="popover" style="display:flex; flex-direction: column;">
+  <ion-item lines="none">
+    <span class="ion-title ion-padding-top">{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.TITLE" | translate }}</span>
+  </ion-item>
+  <ion-item lines="inset">
+    <ion-select label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.SELECT_MODE" | translate}}' [interfaceOptions]="customXeniaOptions" [(ngModel)]="data.preparationDeviceBrew?.params.selectedMode"
+                placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
+      <ion-select-option [value]="SanremoYOUMode.LISTENING">
+        {{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.MODE_LISTENING" | translate}}
+      </ion-select-option>
+      <ion-select-option [value]="SanremoYOUMode.CONTROLLING">
+        {{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.MODE_CONTROL" | translate}}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ng-container *ngIf='data.preparationDeviceBrew?.params.selectedMode === SanremoYOUMode.CONTROLLING'>
+  <ion-item [disabled]="!(brewComponent?.brewBrewingGraphEl?.smartScaleConnected())" lines="none">
+    <ion-input label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.STOP_AT_WEIGHT" | translate}}' [(ngModel)]="data.preparationDeviceBrew?.params.stopAtWeight" inputmode="decimal" prevent-characters
+               remove-empty-number tabIndex="1" type="text"></ion-input>
+  </ion-item>
+  </ng-container>
 </ion-card>
 
 

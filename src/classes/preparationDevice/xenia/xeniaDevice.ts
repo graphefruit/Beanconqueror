@@ -337,6 +337,7 @@ export class XeniaParams implements IXeniaParams {
   public scriptAtFirstDripId: number = 0;
   public scriptAtWeightReachedId: number = 0;
   public scriptAtWeightReachedNumber: number = 0;
+  public residualLagTime: number = 0;
 
   constructor() {}
 }

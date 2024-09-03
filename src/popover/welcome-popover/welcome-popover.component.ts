@@ -12,12 +12,6 @@ import { UIPreparationHelper } from '../../services/uiPreparationHelper';
   styleUrls: ['./welcome-popover.component.scss'],
 })
 export class WelcomePopoverComponent implements OnInit {
-  public slideOpts = {
-    allowTouchMove: false,
-    speed: 400,
-    slide: 4,
-  };
-
   public slide: number = 1;
   @ViewChild('slider', { static: false }) public welcomeSlider:
     | ElementRef

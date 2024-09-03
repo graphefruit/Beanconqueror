@@ -739,6 +739,7 @@ ion-menu:host .menu-inner {
     font-weight: bold;
   }
 
+
   .button-top-absolute {
     position: absolute;
     top: -20px;
@@ -943,23 +944,26 @@ swiper-container {
   --swiper-scrollbar-drag-bg-color: rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.5);
 }
 
-swiper-slide {
-  display: flex;
-  position: relative;
+swiper-container.swiper {
+  swiper-slide {
+    display: flex;
+    position: relative;
 
-  flex-direction: column;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
+    flex-direction: column;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
 
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
 
-  font-size: 18px;
+    font-size: 18px;
 
-  text-align: center;
-  box-sizing: border-box;
+    text-align: center;
+    box-sizing: border-box;
+  }
 }
+
 
 swiper-slide img {
   width: auto;

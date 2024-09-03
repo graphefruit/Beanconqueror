@@ -7,11 +7,9 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Bean } from '../../../classes/bean/bean';
-import { Brew } from '../../../classes/brew/brew';
 import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
 import { ModalController } from '@ionic/angular';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
-import { UIBrewHelper } from '../../../services/uiBrewHelper';
 
 @Component({
   selector: 'app-bean-popover-frozen-list',
