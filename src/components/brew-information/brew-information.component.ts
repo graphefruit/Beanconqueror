@@ -118,16 +118,24 @@ export class BrewInformationComponent implements OnInit {
         this.informationContainerWidth =
           this.brewInformationContainer?.nativeElement?.offsetWidth - 50;
 
-        /**If we slide on a bigger tablet, somehow ionic triggering the menu when sliding from right to left, thats why we need to attach us to touchstart/end and to ignore the slide...**/
-        this.brewInformationSlider?.nativeElement.swiper.on(
-          'touchStart',
-          () => {
-            this.menu.swipeGesture(false);
-          }
-        );
-        this.brewInformationSlider?.nativeElement.swiper.on('touchEnd', () => {
-          this.menu.swipeGesture(true);
-        });
+        if (this.brew.flow_profile) {
+          /**If we slide on a bigger tablet, somehow ionic triggering the menu when sliding from right to left, thats why we need to attach us to touchstart/end and to ignore the slide...**/
+          this.brewInformationSlider?.nativeElement.swiper.on(
+            'touchStart',
+            () => {
+              //We got two slides
+              this.menu.swipeGesture(false);
+            }
+          );
+          this.brewInformationSlider?.nativeElement.swiper.on(
+            'touchEnd',
+            () => {
+              this.menu.swipeGesture(true);
+            }
+          );
+        } else {
+          this.brewInformationSlider?.nativeElement.swiper.disable();
+        }
       }, 150);
     }
   }
