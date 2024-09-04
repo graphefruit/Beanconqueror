@@ -44,23 +44,27 @@ export class ArgosThermometer extends TemperatureDevice {
       ArgosThermometer.TEMPERATURE_CHAR_UUID,
 
       async (_data: any) => {
-        let newData = new Uint8Array(_data.slice(0, -1));
-        this.parseStatusUpdate(newData);
+        const rawData = _data; //new Uint8Array(_data.slice(0, -1));
+        this.parseStatusUpdate(rawData);
       },
 
       (_data: any) => {}
     );
   }
 
-  private parseStatusUpdate(temperatureRawStatus: Uint8Array) {
+  private parseStatusUpdate(temperatureRawStatus: any) {
     this.logger.log(
       'temperatureRawStatus received is: ' + temperatureRawStatus
     );
+    const formatNumber = new Intl.NumberFormat(undefined, {
+      minimumIntegerDigits: 2,
+    }).format;
 
-    const temperature_in_f =
-      temperatureRawStatus[-1] << (8 + temperatureRawStatus[-2]);
-    console.log('New temperature inc' + temperature_in_f);
-    this.setTemperature(temperature_in_f, temperatureRawStatus);
+    const setPoint =
+      ((temperatureRawStatus.getUint16(5, true) / 127) * 5) / 9 - 32; // Convert from F to C
+    const data = formatNumber(setPoint);
+
+    this.setTemperature(Number(data), temperatureRawStatus);
   }
 
   private deattachNotification() {

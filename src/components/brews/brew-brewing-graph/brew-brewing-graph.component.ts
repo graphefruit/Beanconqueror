@@ -1875,6 +1875,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       .brewBrewingPreparationDeviceEl.preparationDevice as SanremoYOUDevice;
 
     this.stopFetchingDataFromSanremoYOU();
+
     const setSanremoData = () => {
       const temp = prepDeviceCall.getTemperature();
       const press = prepDeviceCall.getPressure();
@@ -2529,8 +2530,8 @@ export class BrewBrewingGraphComponent implements OnInit {
       const isEspressoBrew: boolean =
         this.data.getPreparation().style_type ===
         PREPARATION_STYLE_TYPE.ESPRESSO;
-      this.textToSpeechWeightInterval = setInterval(() => {
-        this.ngZone.runOutsideAngular(() => {
+      this.ngZone.runOutsideAngular(() => {
+        this.textToSpeechWeightInterval = setInterval(() => {
           if (this.flowProfileTempAll.length > 0) {
             const actualScaleWeight =
               this.flowProfileTempAll.slice(-1)[0].weight;
@@ -2550,18 +2551,15 @@ export class BrewBrewingGraphComponent implements OnInit {
               }
             }
           }
-        });
-      }, this.settings.text_to_speech_interval_rate);
-
-      this.textToSpeechTimerInterval = setInterval(() => {
-        this.ngZone.runOutsideAngular(() => {
+        }, this.settings.text_to_speech_interval_rate);
+        this.textToSpeechTimerInterval = setInterval(() => {
           this.textToSpeech.speak(
             this.translate.instant('TEXT_TO_SPEECH.TIME') +
               ' ' +
               this.data.brew_time
           );
-        });
-      }, 5000);
+        }, 5000);
+      });
     }
   }
 

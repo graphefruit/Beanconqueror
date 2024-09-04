@@ -1219,46 +1219,79 @@ export class SettingsPage {
     return `${newValue}`;
   }
 
-  public doWeHaveBrewByWeights(): boolean {
+  public doWeHaveBrewByWeights(_type: string): boolean {
     const allPreparations = this.uiPreparationStorage.getAllEntries();
     for (const prep of allPreparations) {
       if (
+        _type === 'xenia' &&
         prep.connectedPreparationDevice.type === PreparationDeviceType.XENIA
+      ) {
+        return true;
+      } else if (
+        _type === 'sanremo' &&
+        prep.connectedPreparationDevice.type ===
+          PreparationDeviceType.SANREMO_YOU
       ) {
         return true;
       }
     }
   }
 
-  public async exportBrewByWeight() {
+  public async exportBrewByWeight(_type: string) {
     await this.uiAlert.showLoadingSpinner();
     try {
-      const allXeniaPreps = [];
+      const allPreps = [];
       let allPreparations = this.uiPreparationStorage.getAllEntries();
       // Just take 60, else the excel will be exploding.
       allPreparations = allPreparations.reverse().slice(0, 60);
       for (const prep of allPreparations) {
         if (
+          _type === 'xenia' &&
           prep.connectedPreparationDevice.type === PreparationDeviceType.XENIA
         ) {
-          allXeniaPreps.push(prep);
+          allPreps.push(prep);
+        } else if (
+          _type === 'sanremo' &&
+          prep.connectedPreparationDevice.type ===
+            PreparationDeviceType.SANREMO_YOU
+        ) {
+          allPreps.push(prep);
         }
       }
 
-      const allBrewsWithProfiles = this.uiBrewStorage
-        .getAllEntries()
-        .filter(
-          (e) =>
-            e.flow_profile !== null &&
-            e.flow_profile !== undefined &&
-            e.flow_profile !== '' &&
-            allXeniaPreps.find(
-              (pr) => pr.config.uuid === e.method_of_preparation
-            ) &&
-            e.preparationDeviceBrew &&
-            e.preparationDeviceBrew.params &&
-            e.preparationDeviceBrew.params.brew_by_weight_active === true
-        );
+      let allBrewsWithProfiles = [];
+
+      if (_type === 'xenia') {
+        allBrewsWithProfiles = this.uiBrewStorage
+          .getAllEntries()
+          .filter(
+            (e) =>
+              e.flow_profile !== null &&
+              e.flow_profile !== undefined &&
+              e.flow_profile !== '' &&
+              allPreps.find(
+                (pr) => pr.config.uuid === e.method_of_preparation
+              ) &&
+              e.preparationDeviceBrew &&
+              e.preparationDeviceBrew.params &&
+              e.preparationDeviceBrew.params.brew_by_weight_active === true
+          );
+      } else if (_type === 'sanremo') {
+        allBrewsWithProfiles = this.uiBrewStorage
+          .getAllEntries()
+          .filter(
+            (e) =>
+              e.flow_profile !== null &&
+              e.flow_profile !== undefined &&
+              e.flow_profile !== '' &&
+              allPreps.find(
+                (pr) => pr.config.uuid === e.method_of_preparation
+              ) &&
+              e.preparationDeviceBrew &&
+              e.preparationDeviceBrew.params &&
+              e.preparationDeviceBrew.params.stopAtWeight > 0
+          );
+      }
 
       const allBrewFlows: Array<{ BREW: Brew; FLOW: BrewFlow }> = [];
       for await (const brew of allBrewsWithProfiles) {
