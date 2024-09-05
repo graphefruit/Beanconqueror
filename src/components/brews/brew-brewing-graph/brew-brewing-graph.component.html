@@ -37,7 +37,7 @@
         <ion-card class="flow-profile ion-text-center weight-card" style="height: 100%;">
           <ion-card-header>
             <div #smartScaleWeight>? g</div>
-            <div>({{data.getBrewRatio()}})</div>
+            <div class='information-tile-no-overflow'>({{data.getBrewRatio()}})</div>
           </ion-card-header>
           <ion-card-content>
             <ion-icon name="beanconqueror-scale-outline"></ion-icon>
@@ -48,8 +48,8 @@
                style="padding-right:5px;">
         <ion-card class="flow-profile ion-text-center flow-card" style="height: 100%;">
           <ion-card-header>
-            <div #smartScaleWeightPerSecond>? g/s</div>
-            <div #smartScaleAvgFlowPerSecond>? g/s</div>
+            <div class='information-tile-no-overflow' #smartScaleWeightPerSecond>? g/s</div>
+            <div class='information-tile-no-overflow' #smartScaleAvgFlowPerSecond>? g/s</div>
           </ion-card-header>
           <ion-card-content>
             <ion-icon name="water-outline"></ion-icon>

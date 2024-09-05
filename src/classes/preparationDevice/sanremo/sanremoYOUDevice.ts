@@ -4,11 +4,13 @@ import { Preparation } from '../../preparation/preparation';
 
 import { ISanremoYOUParams } from '../../../interfaces/preparationDevices/sanremoYOU/iSanremoYOUParams';
 import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
+
 declare var cordova;
 export class SanremoYOUDevice extends PreparationDevice {
   public scriptList: Array<{ INDEX: number; TITLE: string }> = [];
 
   private connectionURL: string = '';
+  private statusPhase: number = 0;
   constructor(protected httpClient: HttpClient, _preparation: Preparation) {
     super(httpClient, _preparation);
 
@@ -105,9 +107,11 @@ export class SanremoYOUDevice extends PreparationDevice {
           const parsedJSON = JSON.parse(response.data);
           const temp = parsedJSON.tempBoilerCoffe;
           const press = parsedJSON.pumpPress * 10;
+          const statusPhase = parsedJSON.statusPhase;
 
           this.temperature = temp;
           this.pressure = press;
+          this.statusPhase = statusPhase;
           if (_callback) {
             _callback();
           }
@@ -119,13 +123,22 @@ export class SanremoYOUDevice extends PreparationDevice {
     );
   }
 
-  public startShot() {
+  public startShot(_mode: SanremoYOUMode) {
     const promise = new Promise<boolean>((resolve, reject) => {
       const options = {
         method: 'get',
       };
 
-      let urlAdding = '/api/action/man';
+      let urlAdding = '';
+      if (_mode === SanremoYOUMode.MANUAL_CONTROLLING) {
+        urlAdding = '/api/action/man';
+      } else if (_mode === SanremoYOUMode.PROFILE_P1_CONTROLLING) {
+        urlAdding = '/api/action/p1';
+      } else if (_mode === SanremoYOUMode.PROFILE_P2_CONTROLLING) {
+        urlAdding = '/api/action/p2';
+      } else if (_mode === SanremoYOUMode.PROFILE_P3_CONTROLLING) {
+        urlAdding = '/api/action/p3';
+      }
 
       cordova.plugin.http.sendRequest(
         this.getPreparation().connectedPreparationDevice.url + urlAdding,
@@ -146,13 +159,35 @@ export class SanremoYOUDevice extends PreparationDevice {
     });
     return promise;
   }
-  public stopShot() {
-    const promise = new Promise<boolean>((resolve, reject) => {
+  public stopShot(_mode: SanremoYOUMode) {
+    const promise = new Promise<boolean>(async (resolve, reject) => {
       const options = {
         method: 'get',
       };
 
-      let urlAdding = '/api/action/man';
+      let urlAdding = '';
+      if (_mode === SanremoYOUMode.MANUAL_CONTROLLING) {
+        urlAdding = '/api/action/man';
+      } else if (_mode === SanremoYOUMode.PROFILE_P1_CONTROLLING) {
+        urlAdding = '/api/action/p1';
+      } else if (_mode === SanremoYOUMode.PROFILE_P2_CONTROLLING) {
+        urlAdding = '/api/action/p2';
+      } else if (_mode === SanremoYOUMode.PROFILE_P3_CONTROLLING) {
+        urlAdding = '/api/action/p3';
+      }
+
+      if (_mode !== SanremoYOUMode.MANUAL_CONTROLLING) {
+        await new Promise((resolveIntern) => {
+          this.fetchRuntimeData(() => {
+            resolveIntern(undefined);
+          });
+        });
+        if (this.statusPhase === 0) {
+          //Machine has already stoped, skipp.
+          reject(undefined);
+          return;
+        }
+      }
 
       cordova.plugin.http.sendRequest(
         this.getPreparation().connectedPreparationDevice.url + urlAdding,

@@ -89,12 +89,21 @@
       <ion-select-option [value]="SanremoYOUMode.LISTENING">
         {{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.MODE_LISTENING" | translate}}
       </ion-select-option>
-      <ion-select-option [value]="SanremoYOUMode.CONTROLLING">
-        {{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.MODE_CONTROL" | translate}}
+      <ion-select-option [value]="SanremoYOUMode.MANUAL_CONTROLLING">
+        {{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.MANUAL_CONTROLLING" | translate}}
+      </ion-select-option>
+      <ion-select-option [value]="SanremoYOUMode.PROFILE_P1_CONTROLLING">
+        {{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.PROFILE_P1_CONTROLLING" | translate}}
+      </ion-select-option>
+      <ion-select-option [value]="SanremoYOUMode.PROFILE_P2_CONTROLLING">
+        {{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.PROFILE_P2_CONTROLLING" | translate}}
+      </ion-select-option>
+      <ion-select-option [value]="SanremoYOUMode.PROFILE_P3_CONTROLLING">
+        {{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.PROFILE_P3_CONTROLLING" | translate}}
       </ion-select-option>
     </ion-select>
   </ion-item>
-  <ng-container *ngIf='data.preparationDeviceBrew?.params.selectedMode === SanremoYOUMode.CONTROLLING'>
+  <ng-container *ngIf='data.preparationDeviceBrew?.params.selectedMode !== SanremoYOUMode.LISTENING'>
   <ion-item [disabled]="!(brewComponent?.brewBrewingGraphEl?.smartScaleConnected())" lines="none">
     <ion-input label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.STOP_AT_WEIGHT" | translate}}' [(ngModel)]="data.preparationDeviceBrew?.params.stopAtWeight" inputmode="decimal" prevent-characters
                remove-empty-number tabIndex="1" type="text"></ion-input>

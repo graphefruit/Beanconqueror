@@ -48,7 +48,7 @@ declare var window;
 })
 export class BrewInformationComponent implements OnInit {
   @Input() public brew: Brew;
-  @Input() public collapsed: boolean = false;
+  public _collapsed: boolean = undefined;
   @Input() public layout: string = 'brew';
   @ViewChild('card', { read: ElementRef })
   public cardEl: ElementRef;
@@ -104,6 +104,34 @@ export class BrewInformationComponent implements OnInit {
     private readonly menu: MenuController
   ) {}
 
+  @Input() set collapsed(value: boolean) {
+    let retrigger: boolean = false;
+    if (value !== this._collapsed && this._collapsed !== undefined) {
+      //Retrigger
+      retrigger = true;
+    }
+    this._collapsed = value;
+
+    if (retrigger) {
+      //When setting the container to undefined, the *ngIf removes the graph, and setting after that the new height, the element will be spawned correctly.
+      this.informationContainerWidth = undefined;
+      setTimeout(() => {
+        this.calculcationInformationContainer();
+      }, 50);
+    }
+  }
+
+  get collapsed(): boolean {
+    return this._collapsed;
+  }
+
+  private calculcationInformationContainer() {
+    /**We calculcate the information here, to avoid expression-changed in angular, because it always triggered while scrolling cause of calucation functions**/
+    this.informationContainerHeight =
+      this.brewInformationContainer?.nativeElement?.offsetHeight - 50;
+    this.informationContainerWidth =
+      this.brewInformationContainer?.nativeElement?.offsetWidth - 50;
+  }
   public ngOnInit() {
     if (this.brew) {
       this.settings = this.uiSettingsStorage.getSettings();
@@ -112,11 +140,7 @@ export class BrewInformationComponent implements OnInit {
       this.mill = this.brew.getMill();
 
       setTimeout(() => {
-        /**We calculcate the information here, to avoid expression-changed in angular, because it always triggered while scrolling cause of calucation functions**/
-        this.informationContainerHeight =
-          this.brewInformationContainer?.nativeElement?.offsetHeight - 50;
-        this.informationContainerWidth =
-          this.brewInformationContainer?.nativeElement?.offsetWidth - 50;
+        this.calculcationInformationContainer();
 
         if (this.brew.flow_profile) {
           /**If we slide on a bigger tablet, somehow ionic triggering the menu when sliding from right to left, thats why we need to attach us to touchstart/end and to ignore the slide...**/

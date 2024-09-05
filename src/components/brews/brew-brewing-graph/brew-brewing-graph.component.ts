@@ -1801,20 +1801,22 @@ export class BrewBrewingGraphComponent implements OnInit {
         PreparationDeviceType.SANREMO_YOU &&
       _event !== 'sanremo_you' &&
       this.machineStopScriptWasTriggered === false &&
-      this.data.preparationDeviceBrew.params.selectedMode ===
-        SanremoYOUMode.CONTROLLING
+      this.data.preparationDeviceBrew.params.selectedMode !==
+        SanremoYOUMode.LISTENING
     ) {
       this.machineStopScriptWasTriggered = true;
       this.uiLog.log(`Sanremo YOU - Pause button pressed, stop shot`);
       const prepDeviceCall: SanremoYOUDevice = this.brewComponent
         ?.brewBrewingPreparationDeviceEl?.preparationDevice as SanremoYOUDevice;
-      prepDeviceCall.stopShot().catch((_msg) => {
-        this.uiToast.showInfoToast(
-          'We could not stop - manual triggered: ' + _msg,
-          false
-        );
-        this.uiLog.log('We could not stop - manual triggered: ' + _msg);
-      });
+      prepDeviceCall
+        .stopShot(this.data.preparationDeviceBrew.params.selectedMode)
+        .catch((_msg) => {
+          this.uiToast.showInfoToast(
+            'We could not stop - manual triggered: ' + _msg,
+            false
+          );
+          this.uiLog.log('We could not stop - manual triggered: ' + _msg);
+        });
       this.stopFetchingDataFromSanremoYOU();
     }
 
@@ -2338,16 +2340,18 @@ export class BrewBrewingGraphComponent implements OnInit {
         .brewBrewingPreparationDeviceEl.preparationDevice as SanremoYOUDevice;
 
       if (
-        this.data.preparationDeviceBrew?.params.selectedMode ===
-        SanremoYOUMode.CONTROLLING
+        this.data.preparationDeviceBrew?.params.selectedMode !==
+        SanremoYOUMode.LISTENING
       ) {
-        prepDeviceCall.startShot().catch((_msg) => {
-          this.uiLog.log('We could not start shot on sanremo: ' + _msg);
-          this.uiToast.showInfoToast(
-            'We could not start shot on sanremo: ' + _msg,
-            false
-          );
-        });
+        prepDeviceCall
+          .startShot(this.data.preparationDeviceBrew?.params.selectedMode)
+          .catch((_msg) => {
+            this.uiLog.log('We could not start shot on sanremo: ' + _msg);
+            this.uiToast.showInfoToast(
+              'We could not start shot on sanremo: ' + _msg,
+              false
+            );
+          });
       }
 
       if (
@@ -2939,10 +2943,15 @@ export class BrewBrewingGraphComponent implements OnInit {
       .brewBrewingPreparationDeviceEl.preparationDevice as SanremoYOUDevice;
 
     this.uiLog.log(`Sanremo YOU Stop: ${_actualScaleWeight}`);
-    prepDeviceCall.stopShot().catch((_msg) => {
-      this.uiToast.showInfoToast('We could not stop at weight: ' + _msg, false);
-      this.uiLog.log('We could not start script at weight: ' + _msg);
-    });
+    prepDeviceCall
+      .stopShot(this.data.preparationDeviceBrew.params.selectedMode)
+      .catch((_msg) => {
+        this.uiToast.showInfoToast(
+          'We could not stop at weight: ' + _msg,
+          false
+        );
+        this.uiLog.log('We could not start script at weight: ' + _msg);
+      });
 
     // This will be just called once, we stopped the shot and now we check if we directly shall stop or not
     if (
@@ -3037,8 +3046,8 @@ export class BrewBrewingGraphComponent implements OnInit {
           } else if (
             this.brewComponent.brewBrewingPreparationDeviceEl.getPreparationDeviceType() ===
               PreparationDeviceType.SANREMO_YOU &&
-            this.data.preparationDeviceBrew.params.selectedMode ===
-              SanremoYOUMode.CONTROLLING
+            this.data.preparationDeviceBrew.params.selectedMode !==
+              SanremoYOUMode.LISTENING
           ) {
             /**We call this function before the if, because we still log the data**/
             const thresholdHit = this.calculateBrewByWeight(
