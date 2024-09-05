@@ -139,6 +139,11 @@ export class BrewInformationComponent implements OnInit {
       this.preparation = this.brew.getPreparation();
       this.mill = this.brew.getMill();
 
+      /**On Android we somehow need a bit more ms for the calc... specific on older once**/
+      let timeoutMS = 350;
+      if (this.platform.is('ios')) {
+        timeoutMS = 150;
+      }
       setTimeout(() => {
         this.calculcationInformationContainer();
 
@@ -160,7 +165,7 @@ export class BrewInformationComponent implements OnInit {
         } else {
           this.brewInformationSlider?.nativeElement.swiper.disable();
         }
-      }, 150);
+      }, timeoutMS);
     }
   }
 
