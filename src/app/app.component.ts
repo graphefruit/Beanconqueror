@@ -1026,31 +1026,9 @@ export class AppComponent implements AfterViewInit {
     );
   }
 
-  public openPaypal() {
-    this.uiAnalytics.trackEvent(
-      LINK_TRACKING.TITLE,
-      LINK_TRACKING.ACTIONS.PAYPAL
-    );
-    this.uiHelper.openExternalWebpage(
-      'https://www.paypal.com/paypalme/LarsSaalbach'
-    );
-  }
+  public openPaypal() {}
 
-  public openGithubSponsor() {
-    this.uiAnalytics.trackEvent(
-      LINK_TRACKING.TITLE,
-      LINK_TRACKING.ACTIONS.GITHUB_SPONSOR
-    );
-    this.uiHelper.openExternalWebpage(
-      'https://github.com/sponsors/graphefruit'
-    );
-  }
+  public openGithubSponsor() {}
 
-  public openDonatePage() {
-    this.uiAnalytics.trackEvent(
-      LINK_TRACKING.TITLE,
-      LINK_TRACKING.ACTIONS.BUY_ME_A_COFFEE
-    );
-    this.uiHelper.openExternalWebpage('https://ko-fi.com/beanconqueror');
-  }
+  public openDonatePage() {}
 }
