@@ -149,7 +149,10 @@ export class BeansPage implements OnDestroy {
       this.frozenBeansCollapsed = !this.frozenBeansCollapsed;
     }
     this.__saveCollapseFilter();
-    this.research();
+
+    this.__initializeBeans();
+    this.changeDetectorRef.detectChanges();
+    this.retriggerScroll();
   }
   private async __saveCollapseFilter() {
     this.settings.bean_collapsed.OPEN = this.openBeansCollapsed;
