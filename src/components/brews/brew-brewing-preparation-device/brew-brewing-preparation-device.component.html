@@ -84,7 +84,7 @@
     <span class="ion-title ion-padding-top">{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.TITLE" | translate }}</span>
   </ion-item>
   <ion-item lines="inset">
-    <ion-select label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.SELECT_MODE" | translate}}' [interfaceOptions]="customXeniaOptions" [(ngModel)]="data.preparationDeviceBrew?.params.selectedMode"
+    <ion-select label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.SELECT_MODE" | translate}}' (ionChange)='sanremoSelectedModeChange()' [interfaceOptions]="customXeniaOptions" [(ngModel)]="data.preparationDeviceBrew?.params.selectedMode"
                 placeholder="{{'BREW.PLACE_HOLDER.BREW_DATA_PREPARATION_METHOD' | translate}}">
       <ion-select-option [value]="SanremoYOUMode.LISTENING">
         {{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.MODE_LISTENING" | translate}}
@@ -105,9 +105,16 @@
   </ion-item>
   <ng-container *ngIf='data.preparationDeviceBrew?.params.selectedMode !== SanremoYOUMode.LISTENING'>
   <ion-item [disabled]="!(brewComponent?.brewBrewingGraphEl?.smartScaleConnected())" lines="none">
-    <ion-input label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.STOP_AT_WEIGHT" | translate}}' [(ngModel)]="data.preparationDeviceBrew?.params.stopAtWeight" inputmode="decimal" prevent-characters
+    <ion-input label-placement="stacked" label='{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.STOP_AT_WEIGHT" | translate}}' (ionBlur)='drawTargetWeight(data.preparationDeviceBrew?.params.stopAtWeight)' [(ngModel)]="data.preparationDeviceBrew?.params.stopAtWeight" inputmode="decimal" prevent-characters
                remove-empty-number tabIndex="1" type="text"></ion-input>
   </ion-item>
+
+    <ion-label class='ion-padding-horizontal' color="danger" *ngIf='!data.preparationDeviceBrew?.params.stopAtWeight'>
+      <ion-icon color='danger' style="top: 3px; position: relative;" name="information-circle-outline"></ion-icon>
+      <span style="display: inline;" *ngIf='data.preparationDeviceBrew?.params.selectedMode !== SanremoYOUMode.MANUAL_CONTROLLING'>{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.NO_PROFILE_TARGET_WEIGHT_INFORMATION" | translate}}</span>
+      <span style="display: inline;" *ngIf='data.preparationDeviceBrew?.params.selectedMode === SanremoYOUMode.MANUAL_CONTROLLING'>{{"PREPARATION_DEVICE.TYPE_SANREMO_YOU.NO_MANUAL_TARGET_WEIGHT_INFORMATION" | translate}}</span>
+    </ion-label>
+
   </ng-container>
 </ion-card>
 

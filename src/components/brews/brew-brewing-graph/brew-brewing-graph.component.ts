@@ -64,7 +64,6 @@ import regression from 'regression';
 import { TextToSpeechService } from '../../../services/textToSpeech/text-to-speech.service';
 import { SanremoYOUDevice } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
 import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
-import { BookooScale } from '../../../classes/devices/bokooScale';
 
 declare var Plotly;
 
@@ -878,6 +877,21 @@ export class BrewBrewingGraphComponent implements OnInit {
           this.getChartConfig()
         );
 
+        setTimeout(() => {
+          //Do this after the plot.
+          if (
+            this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected()
+          ) {
+            if (
+              this.brewComponent?.brewBrewingPreparationDeviceEl?.hasTargetWeightActive()
+            ) {
+              this.drawTargetWeight(
+                this.brewComponent?.brewBrewingPreparationDeviceEl?.getTargetWeight()
+              );
+            }
+          }
+        }, 50);
+
         this.lastChartRenderingInstance = -1;
         if (this.brewComponent.maximizeFlowGraphIsShown) {
           //After we don't know how long all scale events take, dispatch the resize event, after the flow component will then grab on and stretch the canva.
@@ -1172,6 +1186,52 @@ export class BrewBrewingGraphComponent implements OnInit {
     }
 
     return layout;
+  }
+
+  public drawTargetWeight(_targetWeight: number) {
+    if (
+      this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
+        PreparationDeviceType.SANREMO_YOU ||
+      true
+    ) {
+      if (!('shapes' in this.lastChartLayout)) {
+        this.lastChartLayout['shapes'] = [];
+      }
+      let didWeAlreadyHaveAshape: boolean = false;
+      for (const [index, shape] of this.lastChartLayout['shapes'].entries()) {
+        if (shape['customId'] === 'targetWeightLine') {
+          if (_targetWeight > 0) {
+            //We have already one shape.
+            shape['y0'] = _targetWeight;
+            shape['y1'] = _targetWeight;
+          } else {
+            this.lastChartLayout['shapes'].splice(index, 1);
+          }
+          didWeAlreadyHaveAshape = true;
+
+          break;
+        }
+      }
+      if (didWeAlreadyHaveAshape === false && _targetWeight > 0) {
+        this.lastChartLayout['shapes'].push({
+          type: 'line',
+          x0: 0, // Anfang der x-Achse (in Bezug auf die Daten)
+          x1: 1, // Ende der x-Achse (1 = 100% der Breite)
+          y0: _targetWeight, // Y-Position der Linie (auf der Datenachse)
+          y1: _targetWeight, // gleiche Y-Position, um eine horizontale Linie zu erzeugen
+          xref: 'paper', // Verweise auf das gesamte Diagramm (nicht nur den Datenbereich)
+          yref: 'y', // Y-Achse bezieht sich auf den Datenwert
+          line: {
+            color: 'rgb(193, 160, 80)',
+            width: 2,
+            dash: 'dot', // Stil der Linie (optional)
+          },
+          customId: 'targetWeightLine',
+        });
+      }
+
+      Plotly.relayout(this.profileDiv.nativeElement, this.lastChartLayout);
+    }
   }
 
   private getChartConfig() {
@@ -1634,6 +1694,16 @@ export class BrewBrewingGraphComponent implements OnInit {
       // If users rests, we reset also drip time, else the script would not recognize it.
       this.data.coffee_first_drip_time = 0;
       this.data.coffee_first_drip_time_milliseconds = 0;
+
+      const deviceType =
+        this.brewComponent?.brewBrewingPreparationDeviceEl?.getDataPreparationDeviceType();
+      if (deviceType === PreparationDeviceType.XENIA) {
+        this.stopFetchingDataFromSanremoYOU();
+      } else if (deviceType === PreparationDeviceType.METICULOUS) {
+        this.stopFetchingDataFromMeticulous();
+      } else if (deviceType === PreparationDeviceType.SANREMO_YOU) {
+        this.stopFetchingDataFromSanremoYOU();
+      }
     }
 
     if (scale || pressureDevice || temperatureDevice) {
@@ -1800,10 +1870,12 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
         PreparationDeviceType.SANREMO_YOU &&
       _event !== 'sanremo_you' &&
+      _event !== 'shot_ended' &&
       this.machineStopScriptWasTriggered === false &&
       this.data.preparationDeviceBrew.params.selectedMode !==
         SanremoYOUMode.LISTENING
     ) {
+      //User pressed the pause button, or the stopAtWeight is bigger then 0
       this.machineStopScriptWasTriggered = true;
       this.uiLog.log(`Sanremo YOU - Pause button pressed, stop shot`);
       const prepDeviceCall: SanremoYOUDevice = this.brewComponent
@@ -2950,7 +3022,7 @@ export class BrewBrewingGraphComponent implements OnInit {
           'We could not stop at weight: ' + _msg,
           false
         );
-        this.uiLog.log('We could not start script at weight: ' + _msg);
+        this.uiLog.log('We could not stop script at weight: ' + _msg);
       });
 
     // This will be just called once, we stopped the shot and now we check if we directly shall stop or not
@@ -3058,7 +3130,8 @@ export class BrewBrewingGraphComponent implements OnInit {
               scale
             );
             if (this.machineStopScriptWasTriggered === false) {
-              if (thresholdHit) {
+              //Don't stop the machine when the target weight is 0
+              if (thresholdHit && targetWeight > 0) {
                 this.machineStopScriptWasTriggered = true;
                 this.triggerStopShotOnSanremoYOU(_val.actual);
               }
@@ -3699,7 +3772,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       if (!isMeticulous) {
         // We have found a written weight which is above 5 grams at least
         this.__setScaleWeight(weight, false, false);
-        this.brewComponent.timer.pauseTimer();
+        this.brewComponent.timer.pauseTimer('shot_ended');
         this.changeDetectorRef.markForCheck();
         this.brewComponent.timer.checkChanges();
         this.checkChanges();

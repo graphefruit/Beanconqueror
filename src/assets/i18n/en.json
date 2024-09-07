@@ -1074,7 +1074,9 @@
           "MANUAL_CONTROLLING": "Manual Control",
           "PROFILE_P1_CONTROLLING": "Profile P1 Control",
           "PROFILE_P2_CONTROLLING":  "Profile P2 Control",
-          "PROFILE_P3_CONTROLLING":  "Profile P3 Control"
+          "PROFILE_P3_CONTROLLING":  "Profile P3 Control",
+          "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "You did not define a target weight, the chosen profile will be fully executed",
+          "NO_MANUAL_TARGET_WEIGHT_INFORMATION": "You did not define a target weight, please stop extraction manually"
         }
     },
     "DEVICE_CONNECTION": "Device connection",

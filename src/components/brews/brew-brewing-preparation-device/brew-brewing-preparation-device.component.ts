@@ -45,6 +45,7 @@ import {
   SanremoYOUParams,
 } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
 import { SanremoYOUMode } from '../../../enums/preparationDevice/sanremo/sanremoYOUMode';
+
 @Component({
   selector: 'brew-brewing-preparation-device',
   templateUrl: './brew-brewing-preparation-device.component.html',
@@ -93,6 +94,36 @@ export class BrewBrewingPreparationDeviceComponent implements OnInit {
     }
   }
 
+  public hasTargetWeightActive() {
+    return this.getTargetWeight() > 0;
+  }
+
+  public getTargetWeight(): number {
+    const connectedType = this.getDataPreparationDeviceType();
+    let targetWeight = 0;
+    if (connectedType === PreparationDeviceType.XENIA) {
+      targetWeight =
+        this.data.preparationDeviceBrew?.params.scriptAtWeightReachedNumber;
+    } else if (connectedType === PreparationDeviceType.SANREMO_YOU) {
+      targetWeight = this.data.preparationDeviceBrew?.params.stopAtWeight;
+    }
+    return targetWeight;
+  }
+
+  public sanremoSelectedModeChange() {
+    const selectedMode: SanremoYOUMode =
+      this.data.preparationDeviceBrew?.params.selectedMode;
+    if (selectedMode === SanremoYOUMode.LISTENING) {
+      (
+        this.data.preparationDeviceBrew?.params as SanremoYOUParams
+      ).stopAtWeight = 0;
+      this.drawTargetWeight(0);
+    }
+  }
+
+  public drawTargetWeight(_weight: number) {
+    this.brewComponent.brewBrewingGraphEl?.drawTargetWeight(_weight);
+  }
   public hasAPreparationDeviceSet() {
     return (
       this.preparation?.connectedPreparationDevice.type !==
