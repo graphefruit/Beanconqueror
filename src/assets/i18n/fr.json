@@ -153,7 +153,7 @@
     "BREW_DATA_ATTACHMENTS": "Fichiers jointes \/ Photos",
     "BREW_DATA_RATING": "Evaluation",
     "BREW_DATA_CALCULATED_COFFEE_BREW_TIME": "Temps d'infusion du café",
-    "BREW_DATA_TDS": "Total des solides dissous (TDS)",
+    "BREW_DATA_TDS": "Solides dissous totaux (SDT)",
     "BREW_DATA_CALCULATED_EXTRACTION_YIELD": "Rendement d’extraction %",
     "BREW_INFORMATION_BREW_RATIO": "Ratio d’infusion",
     "BREW_INFORMATION_BEAN_AGE": "Âge des grains",
@@ -1030,7 +1030,8 @@
         "TYPE": {
             "NONE": "Aucun",
             "XENIA": "Xenia",
-            "METICULOUS": "Meticulous"
+            "METICULOUS": "Meticulous",
+            "SANREMO_YOU": "Sanremo YOU"
         },
         "URL": "Url",
         "CHOOSE_DEVICE": "Choisir l'appareil",
@@ -1063,6 +1064,19 @@
             "CHOOSE_PROFILE": "Choisir un profil",
             "SHOT_STARTED": "L'infusion a commencé",
             "SHOT_ENDED": "Infusion terminée"
+        },
+        "TYPE_SANREMO_YOU": {
+            "TITLE": "Machine San Remo YOU",
+            "STOP_AT_WEIGHT": "Arrêt au poids",
+            "SELECT_MODE": "Sélectionner le mode",
+            "MODE_LISTENING": "Écouter",
+            "MODE_CONTROL": "Contrôle",
+            "MANUAL_CONTROLLING": "",
+            "PROFILE_P1_CONTROLLING": "",
+            "PROFILE_P2_CONTROLLING": "",
+            "PROFILE_P3_CONTROLLING": "",
+            "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "",
+            "NO_MANUAL_TARGET_WEIGHT_INFORMATION": ""
         }
     },
     "DEVICE_CONNECTION": "Connexion de l'appareil",
@@ -1148,7 +1162,7 @@
         },
         "SHOT": {
             "UPLOAD_SUCCESSFULLY": "Infusion téléchargé sur Visualizer.",
-            "UPLOAD_UNSUCCESSFULLY": "L'infusion n'a pas pu être téléchargée sur Visualizer."
+            "UPLOAD_UNSUCCESSFULLY": "La préparation n'a pas pu être téléchargée sur Visualizer."
         },
         "URL": "URL du serveur",
         "USERNAME": "Nom d'utilisateur",
@@ -1223,7 +1237,7 @@
     "PAGE_SETTINGS_LANGUAGE_POLISH": "Polonais",
     "BREW_CANT_START_BECAUSE_TIMER_NOT_RESETTED_GENERAL_DESCRIPTION": "Tu dois d'abord réinitialiser ton minuteur avant de pouvoir commencer",
     "SMART_SCALE_FIRST_DRIP_THRESHOLD": "Seuil de la première goutte",
-    "SMART_SCALE_FIRST_DRIP_THRESHOLD_TOOLTIP": "À quel poids de balance la première goutte doit-elle être comptée ? Valeur par défaut : >= 0,1 g",
+    "SMART_SCALE_FIRST_DRIP_THRESHOLD_TOOLTIP": "À quel poids au niveau de la balance la première goutte doit-elle être comptée ? Valeur par défaut : >= 0,1 g",
     "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE": "Délai de démarrage de l’infusion",
     "PAGE_SETTINGS_BREW_TIMER_START_DELAY_ACTIVE_DESCRIPTION": "Définir un délai pour l'affichage de l'essoreuse de chargement jusqu'à ce que l'infusion commence",
     "STARTING_IN": "Partir à {{time}}",
@@ -1319,5 +1333,61 @@
     "BEAN_DATA_FROZEN_NOTE": "Notes sur geler",
     "IGNORE_NEGATIVE_VALUES_DESCRIPTION": "En activant cette fonction, le graphique sera décalé d'une seconde.",
     "IGNORE_ANOMALY_VALUES_DESCRIPTION": "En activant cette fonction, le graphique sera décalé d'une seconde.",
-    "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": "Enregistrer les journaux de la machine lors de l’enregistrement d’une infusion"
+    "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": "Enregistrer les journaux de la machine lors de l’enregistrement d’une infusion",
+    "IMPORT_SHOT_FROM_METICULOUS": "Importer une infusion",
+    "BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "Toutes les entrées trouvées dans la liste Excel ont été transformées en nouveaux grains, savoure une infusion délicieuse!",
+    "IMPORT_UNSUCCESSFULLY": "L'importation n'a pas abouti",
+    "BEAN_LIST": "Liste des grains",
+    "IMPORT_ROASTED_BEANS_EXCEL": "Importer des grains torréfiés via Excel",
+    "IMPORT_GREEN_BEANS_EXCEL": "Importer des grains verts via Excel",
+    "BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE": "Il semble que le fichier Excel choisi soit corrompu, qu’il contienne des données incorrectes, qu’il soit mal structuré ou qu’il ait été mal choisi. Pour cette raison, aucun grain ne pouvait être importé.",
+    "OK": "Ok",
+    "BEAN_SORT_BEAN_AGE": "Âge des grains",
+    "GREEN_BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "Toutes les entrées trouvées dans la liste excel ont été transformées en nouveaux grains verts, happy roasting !",
+    "PREPARATION_TYPE_SANREMO_YOU": "Sanremo YOU",
+    "PREPARATION_TYPE_XENIA": "Xenia",
+    "BEAN_POPUP_YOU_DONT_SEE_EVERYTHING_DESCRIPTION": "Tu ajoutes un grain qui contient des informations de variété, mais ces paramètres ne sont pas activés. Veux-tu les activer maintenant ?",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS": "Définir les axes du graphique de pression",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_DESCRIPTION": "Définir la taille initiale et finale des axes de pression",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_RANGE": "Axes de pression",
+    "PAGE_SETTINGS_LANGUAGE_DUTCH": "Néerlandais",
+    "DOWNLOAD_IMPORT_EXCEL_TEMPLATES": "Télécharger les modèles d'importation",
+    "SHOW_GRAPH": "Afficher le graphique",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "7.5.0": {
+            "TITLE": "Version 7.5.0: What's new?",
+            "DESCRIPTION": [
+                "<b> Nouvelle langue <\/b>",
+                "Support néerlandais - Merci à Ygg",
+                "",
+                "<b>Infusions<\/b>",
+                "Il est possible de réduire une liste des infusions",
+                "Affichage si un grain congelé a été utilisé",
+                "L'image du grain est désormais visible lors de la sélection",
+                "Lisez et importez une infusion historique du Meticulous",
+                "Les entrées de la liste des infusions peuvent être balayées lorsqu’elles ont un graphique.",
+                "",
+                "<b>Grains<\/b>",
+                "Il est possible de réduire la liste des grains",
+                "Les grains peuvent maintenant être triés par âge",
+                "Les tris ne sont plus réinitialisés lors de l'archivage d'un grain",
+                "",
+                "<b>Grains verts<\/b>",
+                "Les haricots verts sont désormais importables - Voir les Paramètres",
+                "",
+                "<b>Paramètres<\/b>",
+                "Définir l'axe de départ pour la pression",
+                "Importer des grains verts ou des grains torréfiés",
+                "",
+                "<b>Détection de la corruption des données<\/b>",
+                "Beanconqueror vérifie maintenant si une corruption de données s'est produite, et si c'est le cas, il affiche une fenêtre contextuelle pour permettre l'importation d'une sauvegarde",
+                "",
+                "<b> Autre <\/b>",
+                "Correction du tri des outils de préparation",
+                "Correction du calcul des grains congelés pour résoudre les problèmes d'arrondi",
+                "Quelques changements techniques dans le code",
+                "Petits ajustements"
+            ]
+        }
+    }
 }

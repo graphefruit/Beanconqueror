@@ -1030,7 +1030,8 @@
         "TYPE": {
             "NONE": "Geen",
             "XENIA": "Xenia",
-            "METICULOUS": "Meticulous"
+            "METICULOUS": "Meticulous",
+            "SANREMO_YOU": ""
         },
         "URL": "URL-adres",
         "CHOOSE_DEVICE": "Kies apparaat",
@@ -1063,6 +1064,19 @@
             "CHOOSE_PROFILE": "Profiel kiezen",
             "SHOT_STARTED": "Brouwen gestart",
             "SHOT_ENDED": "Brouwen gestopt"
+        },
+        "TYPE_SANREMO_YOU": {
+            "TITLE": "",
+            "STOP_AT_WEIGHT": "",
+            "SELECT_MODE": "",
+            "MODE_LISTENING": "",
+            "MODE_CONTROL": "",
+            "MANUAL_CONTROLLING": "",
+            "PROFILE_P1_CONTROLLING": "",
+            "PROFILE_P2_CONTROLLING": "",
+            "PROFILE_P3_CONTROLLING": "",
+            "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "",
+            "NO_MANUAL_TARGET_WEIGHT_INFORMATION": ""
         }
     },
     "DEVICE_CONNECTION": "Apparaatverbinding",
@@ -1319,5 +1333,61 @@
     "BEAN_DATA_FROZEN_NOTE": "Bevroren notities",
     "IGNORE_NEGATIVE_VALUES_DESCRIPTION": "Als je dit activeert, loopt de grafiek één seconde achter",
     "IGNORE_ANOMALY_VALUES_DESCRIPTION": "Als je dit activeert, loopt de grafiek één seconde achter",
-    "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": "Bewaar de machine logs bij het opslaan van een brouwsel"
+    "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": "Bewaar de machine logs bij het opslaan van een brouwsel",
+    "IMPORT_SHOT_FROM_METICULOUS": "Importeer een shot",
+    "BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "Alle gevonden items in de Excel-lijst zijn omgezet in nieuwe bonen. Geniet van een smakelijk kopje koffie!",
+    "IMPORT_UNSUCCESSFULLY": "Importeren is niet gelukt",
+    "BEAN_LIST": "Bonenlijst",
+    "IMPORT_ROASTED_BEANS_EXCEL": "Gebrande bonen importeren via Excel",
+    "IMPORT_GREEN_BEANS_EXCEL": "Groene bonen importeren via excel",
+    "BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE": "Het lijkt erop dat het gekozen excel-bestand corrupt is, verkeerde gegevens bevat, verkeerd is gestructureerd of verkeerd is gekozen. Hierdoor konden er geen beans worden geïmporteerd.",
+    "OK": "OK",
+    "BEAN_SORT_BEAN_AGE": "Bonen leeftijd",
+    "GREEN_BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "Alle gevonden items in de Excel-lijst zijn omgezet in nieuwe groene bonen, success met koffie roosteren!",
+    "PREPARATION_TYPE_SANREMO_YOU": "",
+    "PREPARATION_TYPE_XENIA": "Xenia",
+    "BEAN_POPUP_YOU_DONT_SEE_EVERYTHING_DESCRIPTION": "Je voegt een bean toe die variëteitsinformatie bevat, maar die parameters zijn niet geactiveerd. Wil je ze nu activeren?",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS": "Definieer de assen voor de drukgrafiek",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_DESCRIPTION": "Stel de begin- en eindgrootte van de assen voor druk in",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_RANGE": "Druk assen",
+    "PAGE_SETTINGS_LANGUAGE_DUTCH": "Nederlands",
+    "DOWNLOAD_IMPORT_EXCEL_TEMPLATES": "Download importsjablonen",
+    "SHOW_GRAPH": "Grafiek weergeven",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "7.5.0": {
+            "TITLE": "Versie 7.5.0: Wat is er nieuw",
+            "DESCRIPTION": [
+                "<b>Nieuwe taal<\/b>",
+                "Nederlandse ondersteuning - Met dank aan Ygg",
+                "",
+                "<b> Brouwsels <\/b>",
+                "Het is nu mogelijk om een brouwlijst samen te vouwen",
+                "Weergeven of er een bevroren boon is gebruikt",
+                "Bonen afbeelding nu zichtbaar bij selectie",
+                "Lees en importeer een geschiedenisshot van de Meticulous",
+                "De vermeldingen in de brouwlijst zijn nu veegbaar als ze een grafiek hebben",
+                "",
+                "<b> Bonen <\/b>",
+                "Het is nu mogelijk om de bonenlijst in te klappen",
+                "Bonen kunnen nu worden gesorteerd op boonleeftijd",
+                "Sortering wordt niet meer gereset bij het archiveren van een boon",
+                "",
+                "<b> Groene bonen <\/b>",
+                "Groene bonen zijn nu importeerbaar - Zie Instellingen",
+                "",
+                "<b> Instellingen <\/b>",
+                "Stel de start-as voor de druk in",
+                "Importeer groene bonen of geroosterde bonen",
+                "",
+                "<b>Detectie van gegevenscorruptie<\/b>",
+                "Beanconqueror controleert nu of er op de een of andere manier een datacorruptie is opgetreden, en als dat zo is, toont het een pop-up waarmee u een back-up kunt importeren",
+                "",
+                "<b>Anders<\/b>",
+                "Het oplossen van de sortering van bereidingsgereedschappen",
+                "Berekening van bevroren bonen om afrondingsproblemen op te lossen",
+                "Enkele technische wijzigingen in de code",
+                "Kleine aanpassingen"
+            ]
+        }
+    }
 }
