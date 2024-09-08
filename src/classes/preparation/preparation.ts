@@ -257,7 +257,7 @@ export class Preparation implements IPreparation {
       case PREPARATION_TYPES.SANREMO_YOU:
         return 'beanconqueror-preparation-sanremo-you';
       case PREPARATION_TYPES.XENIA:
-        return 'beanconqueror-preparation-portafilter';
+        return 'beanconqueror-preparation-xenia';
       default:
         return 'beanconqueror-preparation-custom';
     }
