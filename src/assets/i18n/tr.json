@@ -1030,7 +1030,8 @@
         "TYPE": {
             "NONE": "Hiçbiri",
             "XENIA": "Xenia",
-            "METICULOUS": "Meticulous"
+            "METICULOUS": "Meticulous",
+            "SANREMO_YOU": ""
         },
         "URL": "Url",
         "CHOOSE_DEVICE": "Cihaz seç",
@@ -1063,6 +1064,19 @@
             "CHOOSE_PROFILE": "Profil seçin",
             "SHOT_STARTED": "Akış başladı",
             "SHOT_ENDED": "Akış sona erdi"
+        },
+        "TYPE_SANREMO_YOU": {
+            "TITLE": "",
+            "STOP_AT_WEIGHT": "",
+            "SELECT_MODE": "",
+            "MODE_LISTENING": "",
+            "MODE_CONTROL": "",
+            "MANUAL_CONTROLLING": "",
+            "PROFILE_P1_CONTROLLING": "",
+            "PROFILE_P2_CONTROLLING": "",
+            "PROFILE_P3_CONTROLLING": "",
+            "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "",
+            "NO_MANUAL_TARGET_WEIGHT_INFORMATION": ""
         }
     },
     "DEVICE_CONNECTION": "Cihaz bağlantısı",
@@ -1319,5 +1333,61 @@
     "BEAN_DATA_FROZEN_NOTE": "Dondurulmuş notlar",
     "IGNORE_NEGATIVE_VALUES_DESCRIPTION": "Bunu etkinleştirdiğinizde bir saniye geride olacak bir grafik ortaya çıkar",
     "IGNORE_ANOMALY_VALUES_DESCRIPTION": "Bunu etkinleştirdiğinizde bir saniye geride olacak bir grafik ortaya çıkar",
-    "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": "Bir demlemeyi kaydederken makine günlüklerini kaydedin"
+    "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": "Bir demlemeyi kaydederken makine günlüklerini kaydedin",
+    "IMPORT_SHOT_FROM_METICULOUS": "",
+    "BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "",
+    "IMPORT_UNSUCCESSFULLY": "",
+    "BEAN_LIST": "",
+    "IMPORT_ROASTED_BEANS_EXCEL": "",
+    "IMPORT_GREEN_BEANS_EXCEL": "",
+    "BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE": "",
+    "OK": "",
+    "BEAN_SORT_BEAN_AGE": "",
+    "GREEN_BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "",
+    "PREPARATION_TYPE_SANREMO_YOU": "",
+    "PREPARATION_TYPE_XENIA": "Xenia",
+    "BEAN_POPUP_YOU_DONT_SEE_EVERYTHING_DESCRIPTION": "",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS": "",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_DESCRIPTION": "",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_RANGE": "",
+    "PAGE_SETTINGS_LANGUAGE_DUTCH": "",
+    "DOWNLOAD_IMPORT_EXCEL_TEMPLATES": "",
+    "SHOW_GRAPH": "",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "7.5.0": {
+            "TITLE": "",
+            "DESCRIPTION": [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            ]
+        }
+    }
 }

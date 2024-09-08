@@ -1030,7 +1030,8 @@
         "TYPE": {
             "NONE": "Keins",
             "XENIA": "Xenia",
-            "METICULOUS": "Meticulous"
+            "METICULOUS": "Meticulous",
+            "SANREMO_YOU": "Sanremo YOU"
         },
         "URL": "Url",
         "CHOOSE_DEVICE": "Gerät auswählen",
@@ -1063,6 +1064,19 @@
             "CHOOSE_PROFILE": "Profil wählen",
             "SHOT_STARTED": "Shot gestartet",
             "SHOT_ENDED": "Shot beendet"
+        },
+        "TYPE_SANREMO_YOU": {
+            "TITLE": "Sanremo YOU Maschine",
+            "STOP_AT_WEIGHT": "Stopp bei Gewicht",
+            "SELECT_MODE": "Modus auswählen",
+            "MODE_LISTENING": "Hören",
+            "MODE_CONTROL": "Steuern",
+            "MANUAL_CONTROLLING": "",
+            "PROFILE_P1_CONTROLLING": "",
+            "PROFILE_P2_CONTROLLING": "",
+            "PROFILE_P3_CONTROLLING": "",
+            "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "",
+            "NO_MANUAL_TARGET_WEIGHT_INFORMATION": ""
         }
     },
     "DEVICE_CONNECTION": "Geräteverbindung",
@@ -1319,5 +1333,61 @@
     "BEAN_DATA_FROZEN_NOTE": "Notizen zum Einfrieren",
     "IGNORE_NEGATIVE_VALUES_DESCRIPTION": "Wenn diese Option aktiviert ist, wird ein Diagramm erstellt, das eine Sekunde zurückliegt",
     "IGNORE_ANOMALY_VALUES_DESCRIPTION": "Wenn diese Option aktiviert ist, wird ein Diagramm erstellt, das eine Sekunde zurückliegt",
-    "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": "Maschinenprotokolle speichern, wenn die Brühung gespeichert wird"
+    "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": "Maschinenprotokolle speichern, wenn die Brühung gespeichert wird",
+    "IMPORT_SHOT_FROM_METICULOUS": "Bezug importieren",
+    "BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "Alle gefundenen Einträge in der Excel-Liste wurden in neue Bohnen umgewandelt, genieße eine gute Brühung!",
+    "IMPORT_UNSUCCESSFULLY": "Import nicht erfolgreich",
+    "BEAN_LIST": "Bohnenliste",
+    "IMPORT_ROASTED_BEANS_EXCEL": "Geröstete Bohnen über Excel importieren",
+    "IMPORT_GREEN_BEANS_EXCEL": "Grüne Bohnen über Excel importieren",
+    "BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE": "Es sieht so aus, als ob die ausgewählte Excel-Datei beschädigt ist, falsche Daten enthält, falsch strukturiert ist oder falsch ausgewählt wurde. Aus diesem Grund konnten keine Bohnen importiert werden.",
+    "OK": "Ok",
+    "BEAN_SORT_BEAN_AGE": "Bohnenalter",
+    "GREEN_BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "Alle in der Excel-Liste gefundenen Einträge wurden in neue grüne Bohnen umgewandelt, happy Roasting!",
+    "PREPARATION_TYPE_SANREMO_YOU": "Sanremo YOU",
+    "PREPARATION_TYPE_XENIA": "Xenia",
+    "BEAN_POPUP_YOU_DONT_SEE_EVERYTHING_DESCRIPTION": "Du fügst eine Bohne hinzu, die Sorteninformationen enthält, aber diese Parameter sind nicht aktiviert. Möchtest du sie jetzt aktivieren?",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS": "Definieren der Achsen für den Druckgraph",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_DESCRIPTION": "Festlegen der Anfangs- und Endgröße der Achsen für den Druck",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_RANGE": "Druckachsen",
+    "PAGE_SETTINGS_LANGUAGE_DUTCH": "Holländisch",
+    "DOWNLOAD_IMPORT_EXCEL_TEMPLATES": "Importvorlagen herunterladen",
+    "SHOW_GRAPH": "Graph anzeigen",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "7.5.0": {
+            "TITLE": "Version 7.5.0: Das ist neu",
+            "DESCRIPTION": [
+                "<b> Neue Sprache <\/b>",
+                "Unterstützung von Niederländisch - Danke an Ygg",
+                "",
+                "<b>Brühungen<\/b>",
+                "Das Einklappen der Brühliste ist nun möglich",
+                "Anzeigen, ob eine gefrorene Bohne verwendet wurde",
+                "Bohnenbild jetzt in der Auswahl sichtbar",
+                "Lesen und importieren von alten Brühungen der Meticulous",
+                "Brühlisten-Einträge können jetzt gewischt werden, wenn sie ein Diagramm haben",
+                "",
+                "<b>Bohnen<\/b>",
+                "Das Einklappen der Bohnenliste ist jetzt möglich",
+                "Bohnen können jetzt nach Bohnenalter sortiert werden",
+                "Sortierungen werden beim Archivieren einer Bean nicht mehr zurückgesetzt",
+                "",
+                "<b>Rohkaffee<\/b>",
+                "Rohkaffee sind jetzt importierbar - siehe Einstellungen",
+                "",
+                "<b>Einstellungen<\/b>",
+                "Einstellen der Startachse für den Druck",
+                "Importieren von Rohbohnen und geröstetem Kaffee",
+                "",
+                "<b> Erkennung von Datenbeschädigungen <\/b>",
+                "Beanconqueror prüft nun, ob eine Datenbeschädigung aufgetreten ist und zeigt Ihnen in diesem Fall ein Popup an, um das Einspielen einer Sicherungskopie zu ermöglichen.",
+                "",
+                "<b>Sonstiges<\/b>",
+                "Buxfix zur Sortierung von Zubereitungsmethoden",
+                "Korrektur der Berechnung von gefrorenen Bohnen - Behebung von Rundungsproblemen",
+                "Einige technische Änderungen im Code",
+                "Kleine Optimierungen"
+            ]
+        }
+    }
 }
