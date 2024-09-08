@@ -36,11 +36,11 @@ import { BeanMapper } from '../../mapper/bean/beanMapper';
 import { ServerCommunicationService } from '../../services/serverCommunication/server-communication.service';
 import { UIHelper } from '../../services/uiHelper';
 import { TranslateService } from '@ngx-translate/core';
-import BREW_TRACKING from '../../data/tracking/brewTracking';
 import * as htmlToImage from 'html-to-image';
 import { UIBrewHelper } from '../../services/uiBrewHelper';
 import moment from 'moment/moment';
 import { BEAN_FREEZING_STORAGE_ENUM } from '../../enums/beans/beanFreezingStorage';
+import { CurrencyService } from '../../services/currencyService/currency.service';
 
 @Component({
   selector: 'bean-information',
@@ -81,7 +81,8 @@ export class BeanInformationComponent implements OnInit {
     private readonly translate: TranslateService,
     private readonly platform: Platform,
     private readonly uiBrewHelper: UIBrewHelper,
-    private actionSheetCtrl: ActionSheetController
+    private actionSheetCtrl: ActionSheetController,
+    private readonly currencyService: CurrencyService
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
   }
@@ -541,5 +542,33 @@ export class BeanInformationComponent implements OnInit {
       }
     }
     return false;
+  }
+
+  public showCostPerKG(): boolean {
+    if (
+      this.bean.weight &&
+      this.bean.weight > 0 &&
+      this.bean.weight !== 1000 &&
+      this.bean.cost &&
+      this.bean.cost > 0
+    ) {
+      return true;
+    }
+    return false;
+  }
+  public getCurrencySymbol() {
+    return this.currencyService.getActualCurrencySymbol();
+  }
+
+  public calculateCostPerKG() {
+    const beanWeight = this.bean.weight;
+    const beanCost = this.bean.cost;
+
+    const costPerGramm = this.uiHelper.toFixedIfNecessary(
+      beanCost / beanWeight,
+      2
+    );
+    const kgCost = costPerGramm * 1000;
+    return kgCost;
   }
 }
