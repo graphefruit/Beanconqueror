@@ -162,7 +162,7 @@
               </ion-col>
               <ion-col *ngIf="bean?.cost > 0 && uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.cost)" size="6">
                 <ion-label class="card-headline">{{'BEAN_DATA_COST' | translate}}</ion-label><br/>
-                <ion-text>{{bean?.cost}}<span *ngIf='showCostPerKG()'>&nbsp;({{calculateCostPerKG()}}{{getCurrencySymbol()}} / kg)</span></ion-text>
+                <ion-text>{{bean?.cost}}<span *ngIf='showCostPerKG()'>&nbsp;({{calculateCostPerKG()}}&nbsp;{{getCurrencySymbol()}}/kg)</span></ion-text>
               </ion-col>
               <ion-col *ngIf="bean?.cupping_points !== '' && uiBeanHelper.fieldVisible(settings.bean_visible_list_view_parameters.cupping_points)" size="6">
                 <ion-label class="card-headline">{{'BEAN_DATA_CUPPING_POINTS' | translate}}</ion-label><br/>
