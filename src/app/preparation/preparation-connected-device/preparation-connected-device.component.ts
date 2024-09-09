@@ -163,6 +163,8 @@ export class PreparationConnectedDeviceComponent {
          */
         const settings: Settings = this.uiSettingsStorage.getSettings();
         settings.bluetooth_scale_espresso_stop_on_no_weight_change = true;
+        settings.bluetooth_scale_stay_connected = true;
+        settings.wake_lock = true;
         await this.uiSettingsStorage.update(settings);
       }
       await this.uiPreparationStorage.update(this.data);
