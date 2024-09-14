@@ -4,7 +4,6 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { BeansAddComponent } from './beans-add.component';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { KeysPipe } from '../../../pipes/keys';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
@@ -21,6 +20,7 @@ import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
+import { PipesModule } from 'src/pipes/pipes.module';
 
 describe('BeansAddComponent', () => {
   let component: BeansAddComponent;
@@ -38,8 +38,9 @@ describe('BeansAddComponent', () => {
         FormsModule,
         CommonModule,
         IonicModule,
+        PipesModule,
       ],
-      declarations: [BeansAddComponent, KeysPipe],
+      declarations: [BeansAddComponent],
       providers: [
         { provide: InAppBrowser },
         { provide: ModalController },

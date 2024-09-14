@@ -9,6 +9,7 @@
     max-height:60px!important;
   }
   ion-card.brew-layout {
+    width:100%;
     margin-top:0px;
     margin-bottom:0px;
     margin-left:10px;
@@ -54,6 +55,7 @@
       top: -5px;
     }
   }
+
   ion-card.dashboard-layout {
 
 
@@ -143,6 +145,22 @@
     max-height: 60px;
     object-fit:cover;
   }
+
+  swiper-slide {
+    display: flex;
+    position: relative;
+
+    width: 100%;
+
+    height: auto;
+  }
+
+  .add-bottom-spacing{
+    margin-bottom:20px;
+  }
+
+
+
 }
 
 

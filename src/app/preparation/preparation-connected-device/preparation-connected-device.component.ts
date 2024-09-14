@@ -12,6 +12,11 @@ import { UIAlert } from '../../../services/uiAlert';
 import { UIHelper } from '../../../services/uiHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
+import { environment } from '../../../environments/environment';
+import { PREPARATION_TYPES } from '../../../enums/preparations/preparationTypes';
+import { SanremoYOUParams } from '../../../classes/preparationDevice/sanremo/sanremoYOUDevice';
+import { MeticulousParams } from '../../../classes/preparationDevice/meticulous/meticulousDevice';
+import { XeniaParams } from '../../../classes/preparationDevice/xenia/xeniaDevice';
 
 @Component({
   selector: 'app-preparation-connected-device',
@@ -25,6 +30,8 @@ export class PreparationConnectedDeviceComponent {
   public segment: string = 'manage';
   public PREPARATION_DEVICE_TYPE = PreparationDeviceType;
   @Input() public preparation: IPreparation;
+
+  public ENVIRONMENT_PARAMS = environment;
 
   public pinFormatter(value: any) {
     const parsedFloat = parseFloat(value);
@@ -47,6 +54,26 @@ export class PreparationConnectedDeviceComponent {
   public ionViewWillEnter(): void {
     if (this.preparation !== undefined) {
       this.data.initializeByObject(this.preparation);
+    }
+    if (
+      this.data.connectedPreparationDevice.type === PreparationDeviceType.NONE
+    ) {
+      if (this.data.type === PREPARATION_TYPES.METICULOUS) {
+        this.data.connectedPreparationDevice.type =
+          PreparationDeviceType.METICULOUS;
+        this.data.connectedPreparationDevice.customParams =
+          new MeticulousParams();
+      }
+      if (this.data.type === PREPARATION_TYPES.XENIA) {
+        this.data.connectedPreparationDevice.type = PreparationDeviceType.XENIA;
+        this.data.connectedPreparationDevice.customParams = new XeniaParams();
+      }
+      if (this.data.type === PREPARATION_TYPES.SANREMO_YOU) {
+        this.data.connectedPreparationDevice.type =
+          PreparationDeviceType.SANREMO_YOU;
+        this.data.connectedPreparationDevice.customParams =
+          new SanremoYOUParams();
+      }
     }
   }
 
@@ -98,7 +125,36 @@ export class PreparationConnectedDeviceComponent {
           this.data.connectedPreparationDevice.customParams.residualLagTime = 1.35;
         }
       }
-
+      if (
+        this.data.connectedPreparationDevice.type ===
+        PreparationDeviceType.METICULOUS
+      ) {
+        if (this.data.connectedPreparationDevice.url.endsWith('/') === true) {
+          this.data.connectedPreparationDevice.url =
+            this.data.connectedPreparationDevice.url.slice(0, -1);
+        }
+        if (
+          this.data.connectedPreparationDevice.url.startsWith('http') === false
+        ) {
+          this.data.connectedPreparationDevice.url =
+            'http://' + this.data.connectedPreparationDevice.url;
+        }
+      }
+      if (
+        this.data.connectedPreparationDevice.type ===
+        PreparationDeviceType.SANREMO_YOU
+      ) {
+        if (this.data.connectedPreparationDevice.url.endsWith('/') === true) {
+          this.data.connectedPreparationDevice.url =
+            this.data.connectedPreparationDevice.url.slice(0, -1);
+        }
+        if (
+          this.data.connectedPreparationDevice.url.startsWith('http') === false
+        ) {
+          this.data.connectedPreparationDevice.url =
+            'http://' + this.data.connectedPreparationDevice.url;
+        }
+      }
       if (
         this.data.connectedPreparationDevice.type !== PreparationDeviceType.NONE
       ) {
@@ -107,6 +163,8 @@ export class PreparationConnectedDeviceComponent {
          */
         const settings: Settings = this.uiSettingsStorage.getSettings();
         settings.bluetooth_scale_espresso_stop_on_no_weight_change = true;
+        settings.bluetooth_scale_stay_connected = true;
+        settings.wake_lock = true;
         await this.uiSettingsStorage.update(settings);
       }
       await this.uiPreparationStorage.update(this.data);

@@ -49,6 +49,16 @@ export class BookooScale extends BluetoothScale {
     await this.write(new Uint8Array([0x03, 0x0a, 0x01, 0x00, 0x00, 0x08]));
   }
 
+  public async tareAndStartTimerModeAuto() {
+    this.weight.smoothed = 0;
+    this.weight.actual = 0;
+    this.weight.oldSmoothed = 0;
+    this.weight.old = 0;
+    this.setWeight(0);
+
+    await this.write(new Uint8Array([0x03, 0x0a, 0x07, 0x00, 0x00, 0x00]));
+  }
+
   public override disconnectTriggered(): void {
     this.logger.log('Disconnecting...');
     this.deattachNotification();

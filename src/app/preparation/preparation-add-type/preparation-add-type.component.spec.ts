@@ -7,6 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../../services/uiHelper';
 import { NavParamsMock, UIHelperMock } from '../../../classes/mock';
 import { FormsModule } from '@angular/forms';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('PreparationAddTypeComponent', () => {
   let component: PreparationAddTypeComponent;
@@ -15,7 +16,12 @@ describe('PreparationAddTypeComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [PreparationAddTypeComponent],
-      imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
+      imports: [
+        IonicModule.forRoot(),
+        TranslateModule.forRoot(),
+        FormsModule,
+        HttpClientTestingModule,
+      ],
       providers: [
         { provide: Storage },
         {

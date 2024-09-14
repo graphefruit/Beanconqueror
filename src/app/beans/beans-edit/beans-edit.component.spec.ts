@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController } from '@ionic/angular';
-import { KeysPipe } from '../../../pipes/keys';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { Camera } from '@awesome-cordova-plugins/camera/ngx';
@@ -19,6 +18,7 @@ import { UIAnalytics } from '../../../services/uiAnalytics';
 import { UIBeanHelper } from '../../../services/uiBeanHelper';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { Settings } from '../../../classes/settings/settings';
+import { PipesModule } from 'src/pipes/pipes.module';
 
 describe('BeansEditComponent', () => {
   let component: BeansEditComponent;
@@ -32,8 +32,9 @@ describe('BeansEditComponent', () => {
         FormsModule,
         CommonModule,
         IonicModule,
+        PipesModule,
       ],
-      declarations: [BeansEditComponent, KeysPipe, AsyncImageComponent],
+      declarations: [BeansEditComponent, AsyncImageComponent],
       providers: [
         { provide: InAppBrowser },
         { provide: ModalController },

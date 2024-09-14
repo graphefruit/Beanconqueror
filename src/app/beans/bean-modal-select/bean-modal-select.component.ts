@@ -409,7 +409,8 @@ export class BeanModalSelectComponent implements OnInit {
           e.name?.toLowerCase().includes(searchText) ||
           e.roaster?.toLowerCase().includes(searchText) ||
           e.aromatics?.toLowerCase().includes(searchText) ||
-          e.frozenId?.toLowerCase().includes(searchText)
+          e.frozenId?.toLowerCase().includes(searchText) ||
+          e.ean_article_number?.toLowerCase().includes(searchText)
       );
     }
     if (_type === 'open') {

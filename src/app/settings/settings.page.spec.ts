@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
-import { KeysPipe } from '../../pipes/keys';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { NavParamsMock } from '../../classes/mock/NavParamsMock';
 import { File } from '@awesome-cordova-plugins/file/ngx';
@@ -21,6 +20,7 @@ import { UIHelperMock } from '../../classes/mock';
 import { UIHelper } from '../../services/uiHelper';
 import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
+import { PipesModule } from 'src/pipes/pipes.module';
 
 describe('SettingsPage', () => {
   let component: SettingsPage;
@@ -33,8 +33,9 @@ describe('SettingsPage', () => {
         FormsModule,
         CommonModule,
         IonicModule,
+        PipesModule,
       ],
-      declarations: [SettingsPage, KeysPipe],
+      declarations: [SettingsPage],
       providers: [
         { provide: InAppBrowser },
         { provide: ModalController },

@@ -1030,7 +1030,8 @@
         "TYPE": {
             "NONE": "None",
             "XENIA": "Xenia",
-            "METICULOUS": "Meticulous"
+            "METICULOUS": "Meticulous",
+            "SANREMO_YOU": "Sanremo YOU"
         },
         "URL": "Url",
         "CHOOSE_DEVICE": "Choose device",
@@ -1063,6 +1064,19 @@
             "CHOOSE_PROFILE": "Choose profile",
             "SHOT_STARTED": "Shot started",
             "SHOT_ENDED": "Shot ended"
+        },
+        "TYPE_SANREMO_YOU": {
+            "TITLE": "Sanremo YOU Machine",
+            "STOP_AT_WEIGHT": "Stop at weight",
+            "SELECT_MODE": "Select mode",
+            "MODE_LISTENING": "Listening",
+            "MODE_CONTROL": "Control",
+            "MANUAL_CONTROLLING": "Manual Control",
+            "PROFILE_P1_CONTROLLING": "Profile P1 Control",
+            "PROFILE_P2_CONTROLLING": "Profile P2 Control",
+            "PROFILE_P3_CONTROLLING": "Profile P3 Control",
+            "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "You did not define a target weight, the chosen profile will be fully executed",
+            "NO_MANUAL_TARGET_WEIGHT_INFORMATION": "You did not define a target weight, please stop extraction manually"
         }
     },
     "DEVICE_CONNECTION": "Device connection",
@@ -1273,39 +1287,6 @@
     "SHOW_MINUTES": "Show minutes",
     "BEANS_UNARCHIVE": "Unarchive",
     "TOAST_BEAN_UNARCHIVED_SUCCESSFULLY": "Bean has been unarchived",
-    "UPDATE_TEXT_TITLE_TITLE": {
-        "7.4.0": {
-            "TITLE": "Version 7.4.0: What's new",
-            "DESCRIPTION": [
-                "<b>Beans<\/b>",
-                "Its now possible to freeze your coffee beans, activate this feature in the settings",
-                "Added best and open date for beans, you need to activate this parameter",
-                "Beans can now be directly added from the select overview",
-                "",
-                "<b>Thermometer<\/b>",
-                "Support of the Combustion Inc. Thermometer - Thanks for the Device!",
-                "Support of the Meater Thermometer (not Meater 2 or Meater +) - Thanks to Yannick!",
-                "",
-                "<b>Water Section<\/b>",
-                "Added Pure Coffee Water",
-                "Added Empirical Water",
-                "",
-                "<b>Preparation Tools<\/b>",
-                "Sort now your preparation tools",
-                "",
-                "<b>Grinder<\/b>",
-                "Grinder images are now shown in the select overview",
-                "",
-                "<b>Settings<\/b>",
-                "Security message if you changed the rating for brews or beans, and the maximum is lower then an already rated entry",
-                "",
-                "<b>Other<\/b>",
-                "Reverted the direct seconds focus when opening the timer",
-                "Some technical changes in the code",
-                "Small tweaks"
-            ]
-        }
-    },
     "WATER_TYPE_PURE_COFFEE_WATER": "Pure Coffee Water",
     "WATER_TYPE_EMPIRICAL_WATER_GLACIAL": "empirical water GLACIAL",
     "WATER_TYPE_EMPIRICAL_WATER_SPRING": "empirical water SPRING",
@@ -1352,5 +1333,61 @@
     "BEAN_DATA_FROZEN_NOTE": "Frozen notes",
     "IGNORE_NEGATIVE_VALUES_DESCRIPTION": "Activating this, results into a graph which will be one second behind",
     "IGNORE_ANOMALY_VALUES_DESCRIPTION": "Activating this, results into a graph which will be one second behind",
-    "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": "Save the machine logs when saving a brew"
+    "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": "Save the machine logs when saving a brew",
+    "IMPORT_SHOT_FROM_METICULOUS": "Import a shot",
+    "BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "All found entries in the excel list, have been transformed into new beans, enjoy a tasty brew!",
+    "IMPORT_UNSUCCESSFULLY": "Import not successful",
+    "BEAN_LIST": "Bean list",
+    "IMPORT_ROASTED_BEANS_EXCEL": "Import roasted beans via excel",
+    "IMPORT_GREEN_BEANS_EXCEL": "Import green beans via excel",
+    "BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE": "It looks like that the chosen excel file is corrupted, has wrong data, is wrong structured, or was wrongly chosen. Because of this no beans could be imported.",
+    "OK": "Ok",
+    "BEAN_SORT_BEAN_AGE": "Bean age",
+    "GREEN_BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "All found entries in the excel list, have been transformed into new green beans, have great roasts!",
+    "PREPARATION_TYPE_SANREMO_YOU": "Sanremo YOU",
+    "PREPARATION_TYPE_XENIA": "Xenia",
+    "BEAN_POPUP_YOU_DONT_SEE_EVERYTHING_DESCRIPTION": "You're adding a bean which has variety information in it, but those parameters are not activated. Do you want to activate them now?",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS": "Define the axes for the pressure graph",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_DESCRIPTION": "Set the starting and end size of the axes for pressure",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_RANGE": "Pressure axes",
+    "PAGE_SETTINGS_LANGUAGE_DUTCH": "Dutch",
+    "DOWNLOAD_IMPORT_EXCEL_TEMPLATES": "Download import templates",
+    "SHOW_GRAPH": "Show graph",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "7.5.0": {
+            "TITLE": "Version 7.5.0: What's new",
+            "DESCRIPTION": [
+                "<b>New language<\/b>",
+                "Dutch support - Thanks to Ygg",
+                "",
+                "<b>Brews<\/b>",
+                "Collapsing a brew-list is now possible",
+                "Displaying if a frozen bean was used",
+                "Bean image now visible on selection",
+                "Read and import a history shot from the Meticulous",
+                "Brew list entries are now swipe able when they have graph",
+                "",
+                "<b>Beans<\/b>",
+                "Collapsing the bean list is now possible",
+                "Beans are now sortable by bean age",
+                "Sorting are not reset anymore when archiving a bean",
+                "",
+                "<b>Green beans<\/b>",
+                "Green beans are now importable - See Settings",
+                "",
+                "<b>Settings<\/b>",
+                "Set the starting axis for the pressure",
+                "Import green beans or roasted beans",
+                "",
+                "<b>Data corruption detection<\/b>",
+                "Beanconqueror now checks if somehow a data corruption occured, and if yes, it shows you a popup to make it possible to import a backup",
+                "",
+                "<b>Other<\/b>",
+                "Fixing sorting of preparation tools",
+                "Fixing frozen bean calculation to fix rounding issues",
+                "Some technical changes in the code",
+                "Small tweaks"
+            ]
+        }
+    }
 }

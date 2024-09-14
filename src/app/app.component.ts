@@ -329,6 +329,11 @@ export class AppComponent implements AfterViewInit {
       // #7
       this.statusBar.show();
       this.statusBar.styleDefault();
+      if (this.platform.is('android')) {
+        try {
+          this.statusBar.styleLightContent();
+        } catch (ex) {}
+      }
 
       this.keyboard.hideFormAccessoryBar(false);
       if (environment.production === true) {
@@ -506,6 +511,8 @@ export class AppComponent implements AfterViewInit {
                   settingLanguage = 'fr';
                 } else if (systemLanguage === 'id') {
                   settingLanguage = 'id';
+                } else if (systemLanguage === 'nl') {
+                  settingLanguage = 'nl';
                 } else {
                   settingLanguage = 'en';
                 }
@@ -1024,31 +1031,9 @@ export class AppComponent implements AfterViewInit {
     );
   }
 
-  public openPaypal() {
-    this.uiAnalytics.trackEvent(
-      LINK_TRACKING.TITLE,
-      LINK_TRACKING.ACTIONS.PAYPAL
-    );
-    this.uiHelper.openExternalWebpage(
-      'https://www.paypal.com/paypalme/LarsSaalbach'
-    );
-  }
+  public openPaypal() {}
 
-  public openGithubSponsor() {
-    this.uiAnalytics.trackEvent(
-      LINK_TRACKING.TITLE,
-      LINK_TRACKING.ACTIONS.GITHUB_SPONSOR
-    );
-    this.uiHelper.openExternalWebpage(
-      'https://github.com/sponsors/graphefruit'
-    );
-  }
+  public openGithubSponsor() {}
 
-  public openDonatePage() {
-    this.uiAnalytics.trackEvent(
-      LINK_TRACKING.TITLE,
-      LINK_TRACKING.ACTIONS.BUY_ME_A_COFFEE
-    );
-    this.uiHelper.openExternalWebpage('https://ko-fi.com/beanconqueror');
-  }
+  public openDonatePage() {}
 }

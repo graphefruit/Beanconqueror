@@ -11,7 +11,6 @@ import BeanconquerorFlowTestDataDummy from '../../../../assets/BeanconquerorFlow
 import { BrewFlow } from '../../../../classes/brew/brewFlow';
 import { Settings } from '../../../../classes/settings/settings';
 import { TranslateService } from '@ngx-translate/core';
-import { Graph } from '../../../../classes/graph/graph';
 import { IGraph } from '../../../../interfaces/graph/iGraph';
 import GRAPH_TRACKING from '../../../../data/tracking/graphTracking';
 import { UIAnalytics } from '../../../../services/uiAnalytics';
@@ -19,6 +18,7 @@ import { UIHelper } from '../../../../services/uiHelper';
 import { ModalController, Platform } from '@ionic/angular';
 import { UIFileHelper } from '../../../../services/uiFileHelper';
 import { UISettingsStorage } from '../../../../services/uiSettingsStorage';
+import { IBrew } from '../../../../interfaces/brew/iBrew';
 declare var Plotly;
 @Component({
   selector: 'app-graph-detail',
@@ -44,9 +44,9 @@ export class GraphDetailComponent implements OnInit {
   @ViewChild('profileDiv', { read: ElementRef, static: true })
   public profileDiv: ElementRef;
 
-  public data: Graph = new Graph();
-
   @Input() private graph: IGraph;
+  @Input() private brew: IBrew;
+
   @Input() private flowProfileData: any;
 
   constructor(
@@ -68,8 +68,9 @@ export class GraphDetailComponent implements OnInit {
       GRAPH_TRACKING.ACTIONS.DETAIL
     );
     if (this.graph) {
-      this.data = this.uiHelper.copyData(this.graph);
-      await this.readFlowProfile();
+      await this.readFlowProfile(this.graph.flow_profile);
+    } else if (this.brew) {
+      await this.readFlowProfile(this.brew.flow_profile);
     } else {
       this.flow_profile_raw = this.uiHelper.cloneData(this.flowProfileData);
     }
@@ -174,6 +175,16 @@ export class GraphDetailComponent implements OnInit {
       },
     };
 
+    const graph_pressure_settings = this.settings.graph_pressure;
+    const suggestedMinPressure: number = graph_pressure_settings.lower;
+    let suggestedMaxPressure = graph_pressure_settings.upper;
+    try {
+      if (this.pressureTrace?.y.length > 0) {
+        suggestedMaxPressure = Math.max(...this.pressureTrace.y);
+        suggestedMaxPressure = Math.ceil(suggestedMaxPressure + 1);
+      }
+    } catch (ex) {}
+
     layout['yaxis4'] = {
       title: '',
       titlefont: { color: '#05C793' },
@@ -183,7 +194,7 @@ export class GraphDetailComponent implements OnInit {
       side: 'right',
       showgrid: false,
       position: 0.93,
-      range: [0, 10],
+      range: [suggestedMinPressure, suggestedMaxPressure],
       visible: true,
     };
 
@@ -349,6 +360,7 @@ export class GraphDetailComponent implements OnInit {
           }
         }
       }
+
       if (
         this.flow_profile_raw?.pressureFlow &&
         this.flow_profile_raw.pressureFlow.length > 0
@@ -397,13 +409,11 @@ export class GraphDetailComponent implements OnInit {
     }, 100);
   }
 
-  private async readFlowProfile() {
+  private async readFlowProfile(_path) {
     if (this.platform.is('cordova')) {
-      if (this.graph.flow_profile !== '') {
+      if (_path !== '') {
         try {
-          const jsonParsed = await this.uiFileHelper.getJSONFile(
-            this.graph.flow_profile
-          );
+          const jsonParsed = await this.uiFileHelper.getJSONFile(_path);
           this.flow_profile_raw = jsonParsed;
         } catch (ex) {}
       }

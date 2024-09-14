@@ -7,11 +7,11 @@ import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../services/uiHelper';
 import { UIHelperMock } from '../../classes/mock';
 import { Brew } from '../../classes/brew/brew';
-import { FormatDatePipe } from '../../pipes/formatDate';
 import { IBrew } from '../../interfaces/brew/iBrew';
 import { Bean } from '../../classes/bean/bean';
 import { Preparation } from '../../classes/preparation/preparation';
 import { Mill } from '../../classes/mill/mill';
+import { PipesModule } from 'src/pipes/pipes.module';
 
 describe('BrewGraphReferenceCardComponent', () => {
   let component: BrewGraphReferenceCardComponent;
@@ -19,8 +19,8 @@ describe('BrewGraphReferenceCardComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [BrewGraphReferenceCardComponent, FormatDatePipe],
-      imports: [IonicModule.forRoot(), TranslateModule.forRoot()],
+      declarations: [BrewGraphReferenceCardComponent],
+      imports: [IonicModule.forRoot(), TranslateModule.forRoot(), PipesModule],
       providers: [
         { provide: Storage },
         { provide: UIHelper, useClass: UIHelperMock },

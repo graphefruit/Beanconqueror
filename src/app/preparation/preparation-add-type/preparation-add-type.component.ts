@@ -11,6 +11,7 @@ import { PREPARATION_STYLE_TYPE } from '../../../enums/preparations/preparationS
 import { PreparationTool } from '../../../classes/preparation/preparationTool';
 import PREPARATION_TRACKING from '../../../data/tracking/preparationTracking';
 import { UIAnalytics } from '../../../services/uiAnalytics';
+import { UIPreparationHelper } from '../../../services/uiPreparationHelper';
 
 @Component({
   selector: 'preparation-add-type',
@@ -34,9 +35,11 @@ export class PreparationAddTypeComponent implements OnInit {
     private readonly navParams: NavParams,
     private readonly uiToast: UIToast,
     private readonly translate: TranslateService,
-    private readonly uiAnalytics: UIAnalytics
+    private readonly uiAnalytics: UIAnalytics,
+    private readonly uiPreparationHelper: UIPreparationHelper
   ) {
     this.data.type = this.navParams.get('type');
+
     if (this.data.type !== PREPARATION_TYPES.CUSTOM_PREPARATION) {
       this.data.name = this.translate.instant(
         'PREPARATION_TYPE_' + this.data.type
@@ -69,10 +72,18 @@ export class PreparationAddTypeComponent implements OnInit {
       this.data.manage_parameters.coffee_first_drip_time = false;
       this.data.default_last_coffee_parameters.coffee_first_drip_time = false;
     }
-    await this.uiPreparationStorage.add(this.data);
+    const newPreparation = await this.uiPreparationStorage.add(this.data);
     this.dismiss(true);
     if (!this.hide_toast_message) {
       this.uiToast.showInfoToast('TOAST_PREPARATION_ADDED_SUCCESSFULLY');
+    }
+
+    if (
+      this.data.type === PREPARATION_TYPES.METICULOUS ||
+      this.data.type === PREPARATION_TYPES.XENIA ||
+      this.data.type === PREPARATION_TYPES.SANREMO_YOU
+    ) {
+      await this.uiPreparationHelper.connectDevice(newPreparation);
     }
   }
 

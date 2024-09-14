@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { Storage } from '@ionic/storage';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController, NavParams } from '@ionic/angular';
-import { KeysPipe } from '../../../pipes/keys';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { NavParamsMock } from '../../../classes/mock/NavParamsMock';
 import { File } from '@awesome-cordova-plugins/file/ngx';
@@ -18,6 +17,7 @@ import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
+import { PipesModule } from 'src/pipes/pipes.module';
 
 describe('BrewDetailComponent', () => {
   let component: BrewDetailComponent;
@@ -31,8 +31,9 @@ describe('BrewDetailComponent', () => {
         CommonModule,
         IonicModule,
         HttpClientTestingModule,
+        PipesModule,
       ],
-      declarations: [BrewDetailComponent, KeysPipe],
+      declarations: [BrewDetailComponent],
       providers: [
         { provide: InAppBrowser },
         { provide: ModalController },

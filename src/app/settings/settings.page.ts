@@ -14,7 +14,6 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { DirectoryEntry, FileEntry } from '@awesome-cordova-plugins/file';
 import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
 import { File } from '@awesome-cordova-plugins/file/ngx';
-import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
 import { IBean } from '../../interfaces/bean/iBean';
 import { IBrew } from '../../interfaces/brew/iBrew';
 import { ISettings } from '../../interfaces/settings/iSettings';
@@ -918,6 +917,9 @@ export class SettingsPage {
   public async resetFilter() {
     this.settings.resetFilter();
   }
+  public async resetBeanSort() {
+    this.settings.resetBeanSort();
+  }
 
   public async fixWeightChangeMinFlowNumber() {
     //We need to trigger this, because the slider sometimes procudes values like 0.60000001, and we need to fix this before saving
@@ -1208,44 +1210,88 @@ export class SettingsPage {
     this.uiExcel.export();
   }
 
-  public doWeHaveBrewByWeights(): boolean {
+  public pinFormatter(value: any) {
+    const parsedFloat = parseFloat(value);
+    if (isNaN(parsedFloat)) {
+      return `${0}`;
+    }
+    const newValue = +parsedFloat.toFixed(2);
+    return `${newValue}`;
+  }
+
+  public doWeHaveBrewByWeights(_type: string): boolean {
     const allPreparations = this.uiPreparationStorage.getAllEntries();
     for (const prep of allPreparations) {
       if (
+        _type === 'xenia' &&
         prep.connectedPreparationDevice.type === PreparationDeviceType.XENIA
+      ) {
+        return true;
+      } else if (
+        _type === 'sanremo' &&
+        prep.connectedPreparationDevice.type ===
+          PreparationDeviceType.SANREMO_YOU
       ) {
         return true;
       }
     }
   }
 
-  public async exportBrewByWeight() {
+  public async exportBrewByWeight(_type: string) {
     await this.uiAlert.showLoadingSpinner();
     try {
-      const allXeniaPreps = [];
-      const allPreparations = this.uiPreparationStorage.getAllEntries();
+      const allPreps = [];
+      let allPreparations = this.uiPreparationStorage.getAllEntries();
+      // Just take 60, else the excel will be exploding.
+      allPreparations = allPreparations.reverse().slice(0, 60);
       for (const prep of allPreparations) {
         if (
+          _type === 'xenia' &&
           prep.connectedPreparationDevice.type === PreparationDeviceType.XENIA
         ) {
-          allXeniaPreps.push(prep);
+          allPreps.push(prep);
+        } else if (
+          _type === 'sanremo' &&
+          prep.connectedPreparationDevice.type ===
+            PreparationDeviceType.SANREMO_YOU
+        ) {
+          allPreps.push(prep);
         }
       }
 
-      const allBrewsWithProfiles = this.uiBrewStorage
-        .getAllEntries()
-        .filter(
-          (e) =>
-            e.flow_profile !== null &&
-            e.flow_profile !== undefined &&
-            e.flow_profile !== '' &&
-            allXeniaPreps.find(
-              (pr) => pr.config.uuid === e.method_of_preparation
-            ) &&
-            e.preparationDeviceBrew &&
-            e.preparationDeviceBrew.params &&
-            e.preparationDeviceBrew.params.brew_by_weight_active === true
-        );
+      let allBrewsWithProfiles = [];
+
+      if (_type === 'xenia') {
+        allBrewsWithProfiles = this.uiBrewStorage
+          .getAllEntries()
+          .filter(
+            (e) =>
+              e.flow_profile !== null &&
+              e.flow_profile !== undefined &&
+              e.flow_profile !== '' &&
+              allPreps.find(
+                (pr) => pr.config.uuid === e.method_of_preparation
+              ) &&
+              e.preparationDeviceBrew &&
+              e.preparationDeviceBrew.params &&
+              e.preparationDeviceBrew.params.brew_by_weight_active === true
+          );
+      } else if (_type === 'sanremo') {
+        allBrewsWithProfiles = this.uiBrewStorage
+          .getAllEntries()
+          .filter(
+            (e) =>
+              e.flow_profile !== null &&
+              e.flow_profile !== undefined &&
+              e.flow_profile !== '' &&
+              allPreps.find(
+                (pr) => pr.config.uuid === e.method_of_preparation
+              ) &&
+              e.preparationDeviceBrew &&
+              e.preparationDeviceBrew.params &&
+              e.preparationDeviceBrew.params.stopAtWeight > 0
+          );
+      }
 
       const allBrewFlows: Array<{ BREW: Brew; FLOW: BrewFlow }> = [];
       for await (const brew of allBrewsWithProfiles) {
@@ -1274,7 +1320,13 @@ export class SettingsPage {
     }
   }
 
-  public importBeansExcel(): void {
+  public downloadImportExcelTemplates() {
+    this.uiHelper.openExternalWebpage(
+      'https://beanconqueror.gitbook.io/beanconqueror/resources/files'
+    );
+  }
+
+  public importBeansExcel(_type: string = 'roasted'): void {
     if (this.platform.is('cordova')) {
       this.uiAnalytics.trackEvent(
         SETTINGS_TRACKING.TITLE,
@@ -1291,7 +1343,11 @@ export class SettingsPage {
 
             this.uiFileHelper.readFileEntryAsArrayBuffer(fileEntry).then(
               async (_arrayBuffer) => {
-                this.uiExcel.importBeansByExcel(_arrayBuffer);
+                if (_type === 'roasted') {
+                  this.uiExcel.importBeansByExcel(_arrayBuffer);
+                } else {
+                  this.uiExcel.importGreenBeansByExcel(_arrayBuffer);
+                }
               },
               () => {
                 // Backup, maybe it was a .JSON?
@@ -1317,7 +1373,11 @@ export class SettingsPage {
               }
               this.uiFileHelper.readFileAsArrayBuffer(path, file).then(
                 async (_arrayBuffer) => {
-                  this.uiExcel.importBeansByExcel(_arrayBuffer);
+                  if (_type === 'roasted') {
+                    this.uiExcel.importBeansByExcel(_arrayBuffer);
+                  } else {
+                    this.uiExcel.importGreenBeansByExcel(_arrayBuffer);
+                  }
                 },
                 () => {
                   // Backup, maybe it was a .JSON?
@@ -1333,7 +1393,6 @@ export class SettingsPage {
         );
       }
     } else {
-      this.__importDummyData();
     }
   }
 

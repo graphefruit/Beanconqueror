@@ -13,12 +13,13 @@ import { UIImage } from '../../services/uiImage';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
-import { FormatDatePipe } from '../../pipes/formatDate';
 import { Brew } from '../../classes/brew/brew';
 import { IBrew } from '../../interfaces/brew/iBrew';
 import { Bean } from '../../classes/bean/bean';
 import { Preparation } from '../../classes/preparation/preparation';
 import { Mill } from '../../classes/mill/mill';
+import { PipesModule } from 'src/pipes/pipes.module';
+import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
 
 describe('BrewInformationComponent', () => {
   let component: BrewInformationComponent;
@@ -26,11 +27,12 @@ describe('BrewInformationComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [BrewInformationComponent, FormatDatePipe],
+      declarations: [BrewInformationComponent],
       imports: [
         IonicModule.forRoot(),
         TranslateModule.forRoot(),
         HttpClientTestingModule,
+        PipesModule,
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
@@ -41,6 +43,7 @@ describe('BrewInformationComponent', () => {
         { provide: UIImage, useClass: UIImageMock },
         { provide: SocialSharing },
         { provide: FileTransfer },
+        { provide: FileChooser },
       ],
     }).compileComponents();
   }));

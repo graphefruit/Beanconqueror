@@ -147,6 +147,16 @@ export class UIHelper {
     return moment(_unix).format(format);
   }
 
+  public formatTimeNumber(_time: number | string, _format?: string): string {
+    let format: string =
+      this.getSettingsStorageInstance().getSettings().date_format +
+      ', HH:mm:ss';
+    if (_format) {
+      format = _format;
+    }
+    return moment(_time).format(format);
+  }
+
   public toFixedIfNecessary(value, dp) {
     const parsedFloat = parseFloat(value);
     if (isNaN(parsedFloat)) {

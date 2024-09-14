@@ -8,8 +8,8 @@ import { UIHelper } from '../../../services/uiHelper';
 import { UIHelperMock } from '../../../classes/mock';
 import { Bean } from '../../../classes/bean/bean';
 import { FormsModule } from '@angular/forms';
-import { KeysPipe } from '../../../pipes/keys';
 import { Config } from '../../../classes/objectConfig/objectConfig';
+import { PipesModule } from 'src/pipes/pipes.module';
 
 describe('BeanGeneralInformationComponent', () => {
   let component: BeanGeneralInformationComponent;
@@ -17,8 +17,13 @@ describe('BeanGeneralInformationComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [BeanGeneralInformationComponent, KeysPipe],
-      imports: [IonicModule.forRoot(), TranslateModule.forRoot(), FormsModule],
+      declarations: [BeanGeneralInformationComponent],
+      imports: [
+        IonicModule.forRoot(),
+        TranslateModule.forRoot(),
+        FormsModule,
+        PipesModule,
+      ],
       providers: [
         { provide: Storage },
         { provide: UIHelper, useClass: UIHelperMock },

@@ -56,6 +56,10 @@
     <ion-icon name="beanconqueror-visualizer-logo" slot="start"></ion-icon>
     <span>{{"SHOW_VISUALIZER" | translate}}</span>
   </ion-item>
+  <ion-item (click)="choose(getStaticActions().SHOW_GRAPH)" *ngIf='data.flow_profile'  button tappable>
+    <ion-icon name="analytics-outline" slot="start"></ion-icon>
+    <span>{{"SHOW_GRAPH" | translate}}</span>
+  </ion-item>
     <ion-item (click)="choose(getStaticActions().DELETE)" button tappable>
       <ion-icon name="beanconqueror-delete" slot="start"></ion-icon>
       <span>{{"POPOVER_BREWS_OPTION_DELETE" | translate}}</span>

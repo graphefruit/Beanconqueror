@@ -66,6 +66,7 @@ export class UIUpdate {
         'UPDATE_8',
         'UPDATE_9',
         'UPDATE_10',
+        'UPDATE_11',
       ];
       const version: Version = this.uiVersionStorage.getVersion();
       const _silentUpdate = hasData;
@@ -89,6 +90,7 @@ export class UIUpdate {
       await this.__checkUpdateForDataVersion('UPDATE_8', !hasData);
       await this.__checkUpdateForDataVersion('UPDATE_9', !hasData);
       await this.__checkUpdateForDataVersion('UPDATE_10', !hasData);
+      await this.__checkUpdateForDataVersion('UPDATE_11', !hasData);
     } catch (ex) {
       if (this.uiAlert.isLoadingSpinnerShown()) {
         await this.uiAlert.hideLoadingSpinner();
@@ -549,7 +551,14 @@ export class UIUpdate {
           case 'UPDATE_10':
             const settings_v10: Settings = this.uiSettingsStorage.getSettings();
             settings_v10.resetFilter();
+            settings_v10.resetBeanSort();
             await this.uiSettingsStorage.saveSettings(settings_v10);
+            break;
+          case 'UPDATE_11':
+            //#776 - We added a new beansort, thats why we reset the bean sort here.
+            const settings_v11: Settings = this.uiSettingsStorage.getSettings();
+            settings_v11.resetBeanSort();
+            await this.uiSettingsStorage.saveSettings(settings_v11);
             break;
           default:
             break;
@@ -605,7 +614,7 @@ export class UIUpdate {
         versionCode = await this.appVersion.getVersionNumber();
       } else {
         // Hardcored for testing
-        versionCode = '7.4.0';
+        versionCode = '7.5.0';
       }
       const version: Version = this.uiVersionStorage.getVersion();
       const displayingVersions =

@@ -1030,7 +1030,8 @@
         "TYPE": {
             "NONE": "Hiçbiri",
             "XENIA": "Xenia",
-            "METICULOUS": "Meticulous"
+            "METICULOUS": "Meticulous",
+            "SANREMO_YOU": ""
         },
         "URL": "Url",
         "CHOOSE_DEVICE": "Cihaz seç",
@@ -1063,6 +1064,19 @@
             "CHOOSE_PROFILE": "Profil seçin",
             "SHOT_STARTED": "Akış başladı",
             "SHOT_ENDED": "Akış sona erdi"
+        },
+        "TYPE_SANREMO_YOU": {
+            "TITLE": "",
+            "STOP_AT_WEIGHT": "",
+            "SELECT_MODE": "",
+            "MODE_LISTENING": "",
+            "MODE_CONTROL": "",
+            "MANUAL_CONTROLLING": "",
+            "PROFILE_P1_CONTROLLING": "",
+            "PROFILE_P2_CONTROLLING": "",
+            "PROFILE_P3_CONTROLLING": "",
+            "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "",
+            "NO_MANUAL_TARGET_WEIGHT_INFORMATION": ""
         }
     },
     "DEVICE_CONNECTION": "Cihaz bağlantısı",
@@ -1273,39 +1287,6 @@
     "SHOW_MINUTES": "Dakikayı göster",
     "BEANS_UNARCHIVE": "Arşivden çıkar",
     "TOAST_BEAN_UNARCHIVED_SUCCESSFULLY": "Çekirdek arşivden çıkarıldı",
-    "UPDATE_TEXT_TITLE_TITLE": {
-        "7.4.0": {
-            "TITLE": "Sürüm 7.4.0: Yenilikler",
-            "DESCRIPTION": [
-                "<b> Fasulye <\/b>",
-                "Artık kahve çekirdeklerinizi dondurmak mümkün, bu özelliği ayarlardan etkinleştirin",
-                "Çekirdek için en iyi ve açık tarih eklendi, bu parametreyi etkinleştirmeniz gerekir",
-                "Çekirdekler artık doğrudan seçime genel bakıştan eklenebilir",
-                "",
-                "<b>Termometre<\/b>",
-                "Combustion Inc. Termometre Desteği - Cihaz için teşekkürler!",
-                "Meater Termometre desteği (Meater 2 veya Meater + değil) - Yannick'e teşekkürler!",
-                "",
-                "<b>Su Bölümü<\/b>",
-                "Saf Kahve Suyu Eklendi",
-                "Ampirik su eklendi",
-                "",
-                "<b>Hazırlık Araçları<\/b>",
-                "Hazırlık araçlarınızı şimdi sıralayın",
-                "",
-                "<b>Öğütücü<\/b>",
-                "Öğütücü görüntüleri artık seçim genel görünümünde gösteriliyor",
-                "",
-                "<b>Ayarlar<\/b>",
-                "Demleme veya çekirdek derecelendirmesini değiştirdiyseniz ve maksimum değer, halihazırda derecelendirilmiş bir girişten düşükse güvenlik mesajı",
-                "",
-                "<b>Diğer<\/b>",
-                "Zamanlayıcıyı açarken doğrudan saniye odağı geri döndürüldü",
-                "Koddaki bazı teknik değişiklikler",
-                "Küçük değişiklikler"
-            ]
-        }
-    },
     "WATER_TYPE_PURE_COFFEE_WATER": "Saf Kahve Suyu",
     "WATER_TYPE_EMPIRICAL_WATER_GLACIAL": "ampirik su GLACIAL",
     "WATER_TYPE_EMPIRICAL_WATER_SPRING": "ampirik su SPRING",
@@ -1352,5 +1333,61 @@
     "BEAN_DATA_FROZEN_NOTE": "Dondurulmuş notlar",
     "IGNORE_NEGATIVE_VALUES_DESCRIPTION": "Bunu etkinleştirdiğinizde bir saniye geride olacak bir grafik ortaya çıkar",
     "IGNORE_ANOMALY_VALUES_DESCRIPTION": "Bunu etkinleştirdiğinizde bir saniye geride olacak bir grafik ortaya çıkar",
-    "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": "Bir demlemeyi kaydederken makine günlüklerini kaydedin"
+    "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": "Bir demlemeyi kaydederken makine günlüklerini kaydedin",
+    "IMPORT_SHOT_FROM_METICULOUS": "Çekimi içe aktar",
+    "BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "Excel listesinde bulunan tüm girişler yeni çekirdeklere dönüştürüldü, lezzetli bir demlemenin tadını çıkarın!",
+    "IMPORT_UNSUCCESSFULLY": "İçe aktarma başarısız oldu",
+    "BEAN_LIST": "Çekirdek listesi",
+    "IMPORT_ROASTED_BEANS_EXCEL": "Kavrulmuş çekirdekleri excel ile içe aktarın",
+    "IMPORT_GREEN_BEANS_EXCEL": "Yeşil çekirdekleri excel ile içe aktarın",
+    "BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE": "Seçilen excel dosyasının bozuk, yanlış veri içerdiği, yanlış yapılandırılmış olduğu veya yanlış seçildiği anlaşılıyor. Bu nedenle hiçbir çekirdek içe aktarılamadı.",
+    "OK": "Tamam",
+    "BEAN_SORT_BEAN_AGE": "Çekirdek yaşı",
+    "GREEN_BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "Excel listesinde bulunan tüm girdiler yeni yeşil çekirdeklere dönüştürüldü, harika kavrulmuşlar!",
+    "PREPARATION_TYPE_SANREMO_YOU": "",
+    "PREPARATION_TYPE_XENIA": "Xenia",
+    "BEAN_POPUP_YOU_DONT_SEE_EVERYTHING_DESCRIPTION": "İçinde çeşitlilik bilgisi olan bir çekirdek ekliyorsunuz, ancak bu parametreler etkinleştirilmemiş. Bunları şimdi etkinleştirmek ister misiniz?",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS": "Basınç grafiği için eksenleri tanımlayın",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_DESCRIPTION": "Basınç için eksenlerin başlangıç ve bitiş boyutunu ayarlayın",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_RANGE": "Basınç eksenleri",
+    "PAGE_SETTINGS_LANGUAGE_DUTCH": "Hollandaca",
+    "DOWNLOAD_IMPORT_EXCEL_TEMPLATES": "İçe aktarma şablonlarını indirin",
+    "SHOW_GRAPH": "Grafiği göster",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "7.5.0": {
+            "TITLE": "Sürüm 7.5.0: Yenilikler",
+            "DESCRIPTION": [
+                "<b>Yeni dil<\/b>",
+                "Hollandaca desteği için - Ygg'ye teşekkürler",
+                "",
+                "<b>Demlemeler<\/b>",
+                "Bir demleme listesini daraltmak artık mümkün",
+                "Dondurulmuş çekirdeğin kullanılıp kullanılmadığının görüntülenmesi",
+                "Çekirdek görüntüsü artık seçimde görünür",
+                "Meticulous'tan bir geçmiş görüntüsünü okuyun ve içe aktarın",
+                "Demleme listesi girişleri artık grafikleri olduğunda kaydırılabilir",
+                "",
+                "<b>Çekirdekler<\/b>",
+                "Çekirdek listesini daraltmak artık mümkün",
+                "Çekirdekler artık çekirdek yaşına göre sıralanabiliyor",
+                "Bir çekirdeği arşivlerken sıralama artık sıfırlanmıyor",
+                "",
+                "<b>Yeşil çekirdek<\/b>",
+                "Yeşil çekirdek artık içe aktarılabilir - Ayarlara Bakın",
+                "",
+                "<b> Ayarlar <\/b>",
+                "Basınç için başlangıç eksenini ayarlayın",
+                "Yeşil çekirdek veya kavrulmuş çekirdek içe aktarın",
+                "",
+                "<b>Veri bozulması tespiti<\/b>",
+                "Beanconqueror şimdi bir şekilde bir veri bozulması olup olmadığını kontrol ediyor ve evet ise, bir yedeği içe aktarmayı mümkün kılmak için size bir açılır pencere gösteriyor",
+                "",
+                "<b>Diğerleri<\/b>",
+                "Hazırlık araçlarının sıralamasının düzeltilmesi",
+                "Yuvarlama sorunlarını gidermek için dondurulmuş çekirdek hesaplamasının düzeltilmesi",
+                "Koddaki bazı teknik değişiklikler",
+                "Küçük değişiklikler"
+            ]
+        }
+    }
 }

@@ -74,6 +74,10 @@
           <ion-icon *ngIf="!isSortActive()"  name="beanconqueror-sort-inactive"
                     slot="icon-only"></ion-icon>
         </ion-button>
+        <ion-button (click)="toggleCollapseBeans()" fill="clear" size="small" tappable>
+          <ion-icon *ngIf="isCollapseActive()" name="beanconqueror-expand-active"  slot="icon-only"></ion-icon>
+          <ion-icon *ngIf="!isCollapseActive()"  name="beanconqueror-expand-inactive"  slot="icon-only"></ion-icon>
+        </ion-button>
       </div>
       <div *ngIf="openBeans.length == 0" class="ion-padding ion-text-center">
         <div>
@@ -85,8 +89,8 @@
       </div>
 
 
-      <ag-virtual-scroll #openScroll [items]="openBeans" height="100vh" min-row-height="210">
-        <bean-information (beanAction)="beanAction()" *ngFor="let bean of openScroll.items"
+      <ag-virtual-scroll #openScroll [items]="openBeans" height="100vh" [min-row-height]="isCollapseActive()?60:210">
+        <bean-information [collapsed]='isCollapseActive()' (beanAction)="beanAction()" *ngFor="let bean of openScroll.items"
                           [bean]="bean"></bean-information>
 
       </ag-virtual-scroll>
@@ -109,6 +113,10 @@
             <ion-icon *ngIf="!isSortActive()"  name="beanconqueror-sort-inactive"
                       slot="icon-only"></ion-icon>
           </ion-button>
+          <ion-button (click)="toggleCollapseBeans()" fill="clear" size="small" tappable>
+            <ion-icon *ngIf="isCollapseActive()" name="beanconqueror-expand-active"  slot="icon-only"></ion-icon>
+            <ion-icon *ngIf="!isCollapseActive()"  name="beanconqueror-expand-inactive"  slot="icon-only"></ion-icon>
+          </ion-button>
         </div>
         <div *ngIf="frozenBeans.length == 0" class="ion-padding ion-text-center">
           <div>
@@ -118,8 +126,8 @@
             {{"PAGE_BEANS_LIST_YOU_GOT_NO_FROZEN_BEANS" | translate}}
           </div>
         </div>
-        <ag-virtual-scroll #frozenScroll [items]="frozenBeans" height="100vh" min-row-height="210">
-          <bean-information (beanAction)="beanAction()"  *ngFor="let bean of frozenScroll.items"
+        <ag-virtual-scroll #frozenScroll [items]="frozenBeans" height="100vh" [min-row-height]="isCollapseActive()?60:210">
+          <bean-information [collapsed]='isCollapseActive()' (beanAction)="beanAction()"  *ngFor="let bean of frozenScroll.items"
                             [bean]="bean"></bean-information>
 
         </ag-virtual-scroll>
@@ -142,6 +150,10 @@
             <ion-icon *ngIf="!isSortActive()"  name="beanconqueror-sort-inactive"
                       slot="icon-only"></ion-icon>
           </ion-button>
+          <ion-button (click)="toggleCollapseBeans()" fill="clear" size="small" tappable>
+            <ion-icon *ngIf="isCollapseActive()" name="beanconqueror-expand-active"  slot="icon-only"></ion-icon>
+            <ion-icon *ngIf="!isCollapseActive()"  name="beanconqueror-expand-inactive"  slot="icon-only"></ion-icon>
+          </ion-button>
         </div>
         <div *ngIf="finishedBeans.length == 0" class="ion-padding ion-text-center">
           <div>
@@ -151,8 +163,8 @@
             {{"PAGE_BEANS_LIST_YOU_GOT_NO_FINISHED_BEANS" | translate}}
           </div>
         </div>
-        <ag-virtual-scroll #archivedScroll [items]="finishedBeans" height="100vh" min-row-height="210">
-          <bean-information (beanAction)="beanAction()"  *ngFor="let bean of archivedScroll.items"
+        <ag-virtual-scroll #archivedScroll [items]="finishedBeans" height="100vh" [min-row-height]="isCollapseActive()?60:210">
+          <bean-information [collapsed]='isCollapseActive()' (beanAction)="beanAction()"  *ngFor="let bean of archivedScroll.items"
                             [bean]="bean"></bean-information>
 
         </ag-virtual-scroll>

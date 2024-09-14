@@ -9,10 +9,10 @@ import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
 import { UIMillStorage } from '../../../services/uiMillStorage';
 import { IBeanPageFilter } from '../../../interfaces/bean/iBeanPageFilter';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateServiceMock } from '../../../classes/mock';
 import { FormsModule } from '@angular/forms';
-import { KeysPipe } from '../../../pipes/keys';
+import { PipesModule } from 'src/pipes/pipes.module';
 
 describe('BeanFilterComponent', () => {
   let component: BeanFilterComponent;
@@ -39,8 +39,13 @@ describe('BeanFilterComponent', () => {
       },
     } as Settings;
     TestBed.configureTestingModule({
-      declarations: [BeanFilterComponent, TranslatePipe, KeysPipe],
-      imports: [IonicModule.forRoot(), FormsModule],
+      declarations: [BeanFilterComponent],
+      imports: [
+        IonicModule.forRoot(),
+        FormsModule,
+        PipesModule,
+        TranslateModule.forChild(),
+      ],
       providers: [
         {
           provide: UIHelper,

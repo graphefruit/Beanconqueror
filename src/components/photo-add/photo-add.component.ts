@@ -3,6 +3,7 @@ import {
   ElementRef,
   EventEmitter,
   Input,
+  OnDestroy,
   OnInit,
   Output,
   ViewChild,
@@ -24,7 +25,7 @@ import { TranslateService } from '@ngx-translate/core';
   templateUrl: './photo-add.component.html',
   styleUrls: ['./photo-add.component.scss'],
 })
-export class PhotoAddComponent implements OnInit {
+export class PhotoAddComponent implements OnInit, OnDestroy {
   @Input() public data: Brew | Bean | GreenBean | Mill | Preparation;
   @Output() public dataChange = new EventEmitter<
     Brew | Bean | GreenBean | Mill | Preparation
@@ -47,7 +48,7 @@ export class PhotoAddComponent implements OnInit {
       this.updateSlider();
     }, 250);
   }
-
+  public ngOnDestroy() {}
   public addImage(): void {
     this.uiImage.showOptionChooser().then((_option) => {
       if (_option === 'CHOOSE') {

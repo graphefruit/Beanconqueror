@@ -101,6 +101,11 @@
                       </p>
                     </div>
                   </ion-checkbox>
+                  <ion-thumbnail slot="end" *ngIf="bean.hasPhotos()">
+                    <div  style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
+                      <async-image [filePath]="bean.attachments[0]" class="bean-slider"></async-image>
+                    </div>
+                  </ion-thumbnail>
                 </ion-item>
               </ng-element>
             </ag-virtual-scroll>
@@ -178,6 +183,11 @@
                       </p>
                     </div>
                   </ion-checkbox>
+                  <ion-thumbnail slot="end" *ngIf="bean.hasPhotos()">
+                    <div  style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
+                      <async-image [filePath]="bean.attachments[0]" class="bean-slider"></async-image>
+                    </div>
+                  </ion-thumbnail>
                 </ion-item>
               </ng-element>
             </ag-virtual-scroll>
@@ -260,6 +270,11 @@
                       </p>
                     </div>
                   </ion-checkbox>
+                  <ion-thumbnail slot="end" *ngIf="bean.hasPhotos()">
+                    <div  style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
+                      <async-image [filePath]="bean.attachments[0]" class="bean-slider"></async-image>
+                    </div>
+                  </ion-thumbnail>
                 </ion-item>
               </ng-element>
             </ag-virtual-scroll>
@@ -348,7 +363,11 @@
                         style='margin: 0;padding: 0;display: inline;'></span>
                       </p>
                     </ion-radio>
-
+                    <ion-thumbnail slot="end" *ngIf="bean.hasPhotos()">
+                      <div  style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
+                        <async-image [filePath]="bean.attachments[0]" class="bean-slider"></async-image>
+                      </div>
+                    </ion-thumbnail>
                   </ion-item>
                 </ng-element>
               </ag-virtual-scroll>
@@ -430,6 +449,11 @@
                         </p>
 
                     </ion-radio>
+                    <ion-thumbnail slot="end" *ngIf="bean.hasPhotos()">
+                      <div  style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
+                        <async-image [filePath]="bean.attachments[0]" class="bean-slider"></async-image>
+                      </div>
+                    </ion-thumbnail>
                   </ion-item>
                 </ng-element>
               </ag-virtual-scroll>
@@ -511,7 +535,11 @@
                         style='margin: 0;padding: 0;display: inline;'></span>
                       </p>
                     </ion-radio>
-
+                    <ion-thumbnail slot="end" *ngIf="bean.hasPhotos()">
+                      <div  style="margin: 0 auto;height: 100%;display: flex;align-items: center;" tappable>
+                        <async-image [filePath]="bean.attachments[0]" class="bean-slider"></async-image>
+                      </div>
+                    </ion-thumbnail>
                   </ion-item>
                 </ng-element>
               </ag-virtual-scroll>

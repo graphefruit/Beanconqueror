@@ -6,8 +6,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { ModalController, Platform } from '@ionic/angular';
-import { UIAlert } from '../../services/uiAlert';
+import { ModalController } from '@ionic/angular';
 import { UIHelper } from '../../services/uiHelper';
 import { UIBrewStorage } from '../../services/uiBrewStorage';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
@@ -19,7 +18,6 @@ import { Bean } from '../../classes/bean/bean';
 import { BrewFilterComponent } from './brew-filter/brew-filter.component';
 import { Settings } from '../../classes/settings/settings';
 import { AgVirtualSrollComponent } from 'ag-virtual-scroll';
-import { UIAnalytics } from '../../services/uiAnalytics';
 
 @Component({
   selector: 'brew',
@@ -49,18 +47,18 @@ export class BrewPage implements OnInit {
   public archivedBrewsFilter: IBrewPageFilter;
   public openBrewsFilter: IBrewPageFilter;
 
+  public openBrewsCollapsed: boolean = false;
+  public archivedBrewsCollapsed: boolean = false;
+
   public settings: Settings;
 
   constructor(
     private readonly modalCtrl: ModalController,
-    private readonly platform: Platform,
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly uiAlert: UIAlert,
     public uiHelper: UIHelper,
     public uiBrewHelper: UIBrewHelper,
-    private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiAnalytics: UIAnalytics
+    private readonly uiSettingsStorage: UISettingsStorage
   ) {
     this.settings = this.uiSettingsStorage.getSettings();
     this.archivedBrewsFilter = this.settings.GET_BREW_FILTER();
@@ -70,6 +68,8 @@ export class BrewPage implements OnInit {
   public ionViewWillEnter(): void {
     this.archivedBrewsFilter = this.settings.brew_filter.ARCHIVED;
     this.openBrewsFilter = this.settings.brew_filter.OPEN;
+    this.openBrewsCollapsed = this.settings.brew_collapsed.OPEN;
+    this.archivedBrewsCollapsed = this.settings.brew_collapsed.ARCHIVED;
     this.loadBrews();
 
     this.retriggerScroll();
@@ -121,6 +121,26 @@ export class BrewPage implements OnInit {
 
     this.__initializeBrewView('open');
     this.__initializeBrewView('archiv');
+  }
+
+  public isCollapseActive() {
+    let collapsed: boolean = false;
+    if (this.brew_segment === 'open') {
+      collapsed = this.openBrewsCollapsed;
+    } else {
+      collapsed = this.archivedBrewsCollapsed;
+    }
+    return collapsed;
+  }
+
+  public toggleCollapseBrews() {
+    if (this.brew_segment === 'open') {
+      this.openBrewsCollapsed = !this.openBrewsCollapsed;
+    } else {
+      this.archivedBrewsCollapsed = !this.archivedBrewsCollapsed;
+    }
+    this.__saveCollapseFilter();
+    this.research();
   }
 
   public isFilterActive(): boolean {
@@ -235,6 +255,11 @@ export class BrewPage implements OnInit {
   private async __saveBrewFilter() {
     this.settings.brew_filter.OPEN = this.openBrewsFilter;
     this.settings.brew_filter.ARCHIVED = this.archivedBrewsFilter;
+    await this.uiSettingsStorage.saveSettings(this.settings);
+  }
+  private async __saveCollapseFilter() {
+    this.settings.brew_collapsed.OPEN = this.openBrewsCollapsed;
+    this.settings.brew_collapsed.ARCHIVED = this.archivedBrewsCollapsed;
     await this.uiSettingsStorage.saveSettings(this.settings);
   }
 

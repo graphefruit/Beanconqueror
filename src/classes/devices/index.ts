@@ -25,6 +25,7 @@ import { BookooScale } from './bokooScale';
 import { BasicGrillThermometer } from './basicGrillThermometer';
 import { MeaterThermometer } from './meaterThermometer';
 import { CombustionThermometer } from './combustionThermometer';
+import { ArgosThermometer } from './argosThermometer';
 export { BluetoothScale, SCALE_TIMER_COMMAND } from './bluetoothDevice';
 export * from './common';
 
@@ -56,6 +57,7 @@ export enum TemperatureType {
   BASICGRILL = 'BASICGRILL',
   MEATER = 'MEATER',
   COMBUSTION = 'COMBUSTION',
+  ARGOS = 'ARGOS',
 }
 
 export enum RefractometerType {
@@ -129,6 +131,8 @@ export function makeTemperatureDevice(
       return new MeaterThermometer(data);
     case TemperatureType.COMBUSTION:
       return new CombustionThermometer(data);
+    case TemperatureType.ARGOS:
+      return new ArgosThermometer(data);
     default:
       return null;
   }

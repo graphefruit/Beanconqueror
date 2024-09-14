@@ -59,7 +59,10 @@ export class BeanPopoverFreezeComponent implements OnInit {
 
   public ngOnInit() {
     // cant be done in constructor, else the bean object is not known
-    this.leftOverBeanBagWeight = this.bean.weight - this.getUsedWeightCount();
+    this.leftOverBeanBagWeight = this.uiHelper.toFixedIfNecessary(
+      this.bean.weight - this.getUsedWeightCount(),
+      1
+    );
   }
 
   public getUsedWeightCount(): number {
@@ -86,8 +89,10 @@ export class BeanPopoverFreezeComponent implements OnInit {
   }
 
   public async save() {
-    const spillOver =
-      this.leftOverBeanBagWeight - this.getActualFreezingQuantity();
+    const spillOver = this.uiHelper.toFixedIfNecessary(
+      this.leftOverBeanBagWeight - this.getActualFreezingQuantity(),
+      1
+    );
 
     let index = 1;
 
@@ -109,10 +114,16 @@ export class BeanPopoverFreezeComponent implements OnInit {
         this.bean.config.uuid
       );
       if (brews.length > 0) {
-        const oldWeight = this.bean.weight;
-        this.bean.weight = this.bean.weight - this.getActualFreezingQuantity();
+        const oldWeight = this.uiHelper.toFixedIfNecessary(this.bean.weight, 1);
+        this.bean.weight = this.uiHelper.toFixedIfNecessary(
+          this.bean.weight - this.getActualFreezingQuantity(),
+          1
+        );
         try {
-          const newCost = (this.bean.cost * this.bean.weight) / oldWeight;
+          const newCost = this.uiHelper.toFixedIfNecessary(
+            (this.bean.cost * this.bean.weight) / oldWeight,
+            2
+          );
           this.bean.cost = newCost;
         } catch (ex) {
           this.bean.cost = 0;
@@ -148,10 +159,16 @@ export class BeanPopoverFreezeComponent implements OnInit {
       /**
        * Because we had already maybe some brews, we take the bean weight, and subtract it with the spill over, because just using the spill over would not take previus brews into account
        */
-      const oldWeight = this.bean.weight;
-      this.bean.weight = this.bean.weight - this.getActualFreezingQuantity();
+      const oldWeight = this.uiHelper.toFixedIfNecessary(this.bean.weight, 1);
+      this.bean.weight = this.uiHelper.toFixedIfNecessary(
+        this.bean.weight - this.getActualFreezingQuantity(),
+        1
+      );
       try {
-        const newCost = (this.bean.cost * this.bean.weight) / oldWeight;
+        const newCost = this.uiHelper.toFixedIfNecessary(
+          (this.bean.cost * this.bean.weight) / oldWeight,
+          2
+        );
         this.bean.cost = newCost;
       } catch (ex) {
         this.bean.cost = 0;
@@ -189,13 +206,16 @@ export class BeanPopoverFreezeComponent implements OnInit {
 
     if (this.bean.cost !== 0) {
       try {
-        const newCost = (this.bean.cost * _freezingWeight) / this.bean.weight;
+        const newCost = this.uiHelper.toFixedIfNecessary(
+          (this.bean.cost * _freezingWeight) / this.bean.weight,
+          2
+        );
         clonedBean.cost = newCost;
       } catch (ex) {
         clonedBean.cost = 0;
       }
     }
-    clonedBean.weight = _freezingWeight;
+    clonedBean.weight = this.uiHelper.toFixedIfNecessary(_freezingWeight, 1);
     clonedBean.config = new Config();
     const newClonedBean = await this.uiBeanStorage.add(clonedBean);
     const newBean: Bean = new Bean();
@@ -244,18 +264,35 @@ export class BeanPopoverFreezeComponent implements OnInit {
     return quantity;
   }
 
+  public isAddingBagDisabled() {
+    if (this.freezePartialBagGrams <= 0) {
+      return true;
+    }
+    if (
+      this.uiHelper.toFixedIfNecessary(
+        Number(this.freezePartialBagGrams) + this.getActualFreezingQuantity(),
+        1
+      ) > this.leftOverBeanBagWeight
+    ) {
+      return true;
+    }
+    return false;
+  }
+
   public addOnePartialBag() {
     this.addedBags.push({
-      weight: this.freezePartialBagGrams,
+      weight: Number(this.freezePartialBagGrams),
       type: this.frozenStorage,
     });
 
-    const leftFreezingCount =
-      this.leftOverBeanBagWeight - this.getActualFreezingQuantity();
+    const leftFreezingCount = this.uiHelper.toFixedIfNecessary(
+      this.leftOverBeanBagWeight - this.getActualFreezingQuantity(),
+      1
+    );
     if (leftFreezingCount < this.freezePartialBagGrams) {
       this.freezePartialBagGrams = this.uiHelper.toFixedIfNecessary(
         leftFreezingCount,
-        2
+        1
       );
     }
   }
@@ -263,16 +300,18 @@ export class BeanPopoverFreezeComponent implements OnInit {
   public addMaxPartialBags() {
     while (true) {
       this.addedBags.push({
-        weight: this.freezePartialBagGrams,
+        weight: Number(this.freezePartialBagGrams),
         type: this.frozenStorage,
       });
 
-      const leftFreezingCount =
-        this.leftOverBeanBagWeight - this.getActualFreezingQuantity();
+      const leftFreezingCount = this.uiHelper.toFixedIfNecessary(
+        this.leftOverBeanBagWeight - this.getActualFreezingQuantity(),
+        1
+      );
       if (leftFreezingCount < this.freezePartialBagGrams) {
         this.freezePartialBagGrams = this.uiHelper.toFixedIfNecessary(
           leftFreezingCount,
-          2
+          1
         );
         break;
       }
@@ -281,8 +320,10 @@ export class BeanPopoverFreezeComponent implements OnInit {
 
   public deleteBag(_index) {
     this.addedBags.splice(_index, 1);
-    const leftFreezingCount =
-      this.leftOverBeanBagWeight - this.getActualFreezingQuantity();
+    const leftFreezingCount = this.uiHelper.toFixedIfNecessary(
+      this.leftOverBeanBagWeight - this.getActualFreezingQuantity(),
+      1
+    );
     if (leftFreezingCount < this.freezePartialBagGrams) {
       this.freezePartialBagGrams = leftFreezingCount;
     }

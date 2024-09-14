@@ -217,17 +217,7 @@ export class PreparationInformationCardComponent implements OnInit {
   }
 
   public async connectDevice() {
-    this.uiAnalytics.trackEvent(
-      PREPARATION_TRACKING.TITLE,
-      PREPARATION_TRACKING.ACTIONS.CONNECT_DEVICE
-    );
-    const modal = await this.modalController.create({
-      component: PreparationConnectedDeviceComponent,
-      componentProps: { preparation: this.preparation },
-      id: PreparationConnectedDeviceComponent.COMPONENT_ID,
-    });
-    await modal.present();
-    await modal.onWillDismiss();
+    await this.uiPreparationHelper.connectDevice(this.preparation);
   }
 
   public async longPressEditPreparation(event) {

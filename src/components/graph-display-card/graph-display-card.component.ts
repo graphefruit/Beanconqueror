@@ -15,6 +15,8 @@ import { UIHelper } from '../../services/uiHelper';
 import { UIFileHelper } from '../../services/uiFileHelper';
 import { Platform } from '@ionic/angular';
 import { UISettingsStorage } from '../../services/uiSettingsStorage';
+import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
+import { MeticulousDevice } from '../../classes/preparationDevice/meticulous/meticulousDevice';
 
 declare var Plotly;
 @Component({
@@ -26,7 +28,10 @@ export class GraphDisplayCardComponent implements OnInit {
   @Input() public flowProfileData: any;
   @Input() public flowProfilePath: any;
 
+  @Input() public meticulousHistoryData: HistoryListingEntry;
+
   @Input() public chartWidth: number;
+  @Input() public chartHeight: number;
 
   public flow_profile_raw: BrewFlow = new BrewFlow();
 
@@ -56,8 +61,12 @@ export class GraphDisplayCardComponent implements OnInit {
     this.settings = this.uiSettingsStorage.getSettings();
     if (this.flowProfilePath) {
       await this.readFlowProfile();
-    } else {
+    } else if (this.flowProfileData) {
       this.flow_profile_raw = this.uiHelper.cloneData(this.flowProfileData);
+    } else if (this.meticulousHistoryData) {
+      this.flow_profile_raw = MeticulousDevice.returnBrewFlowForShotData(
+        this.meticulousHistoryData.data
+      );
     }
     setTimeout(() => {
       this.initializeFlowChart();
@@ -89,7 +98,10 @@ export class GraphDisplayCardComponent implements OnInit {
       chartWidth = this.chartWidth;
     }
 
-    const chartHeight: number = 150;
+    let chartHeight: number = 150;
+    if (this.chartHeight) {
+      chartHeight = this.chartHeight;
+    }
 
     let tickFormat = '%S';
 
@@ -151,6 +163,16 @@ export class GraphDisplayCardComponent implements OnInit {
       },
     };
 
+    const graph_pressure_settings = this.settings.graph_pressure;
+    const suggestedMinPressure: number = graph_pressure_settings.lower;
+    let suggestedMaxPressure = graph_pressure_settings.upper;
+    try {
+      if (this.pressureTrace?.y.length > 0) {
+        suggestedMaxPressure = Math.max(...this.pressureTrace.y);
+        suggestedMaxPressure = Math.ceil(suggestedMaxPressure + 1);
+      }
+    } catch (ex) {}
+
     layout['yaxis4'] = {
       title: '',
       titlefont: { color: '#05C793' },
@@ -160,8 +182,8 @@ export class GraphDisplayCardComponent implements OnInit {
       side: 'right',
       fixedrange: true,
       showgrid: false,
+      range: [suggestedMinPressure, suggestedMaxPressure],
       position: 0.93,
-      range: [0, 10],
       visible: true,
     };
 
@@ -205,7 +227,6 @@ export class GraphDisplayCardComponent implements OnInit {
       try {
         Plotly.purge(this.profileDiv.nativeElement);
       } catch (ex) {}
-      const graphSettings = this.settings.graph.FILTER;
 
       this.weightTrace = {
         x: [],

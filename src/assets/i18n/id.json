@@ -1030,7 +1030,8 @@
         "TYPE": {
             "NONE": "None",
             "XENIA": "Xenia",
-            "METICULOUS": "Meticulous"
+            "METICULOUS": "Meticulous",
+            "SANREMO_YOU": ""
         },
         "URL": "Url",
         "CHOOSE_DEVICE": "Choose device",
@@ -1063,6 +1064,19 @@
             "CHOOSE_PROFILE": "Pilih profil",
             "SHOT_STARTED": "Shot dimulai",
             "SHOT_ENDED": "Shot selesai"
+        },
+        "TYPE_SANREMO_YOU": {
+            "TITLE": "",
+            "STOP_AT_WEIGHT": "",
+            "SELECT_MODE": "",
+            "MODE_LISTENING": "",
+            "MODE_CONTROL": "",
+            "MANUAL_CONTROLLING": "",
+            "PROFILE_P1_CONTROLLING": "",
+            "PROFILE_P2_CONTROLLING": "",
+            "PROFILE_P3_CONTROLLING": "",
+            "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "",
+            "NO_MANUAL_TARGET_WEIGHT_INFORMATION": ""
         }
     },
     "DEVICE_CONNECTION": "Device connection",
@@ -1273,39 +1287,6 @@
     "SHOW_MINUTES": "Tampilkan menit",
     "BEANS_UNARCHIVE": "Tidak diarsipkan",
     "TOAST_BEAN_UNARCHIVED_SUCCESSFULLY": "Bean tidak diarsipkan",
-    "UPDATE_TEXT_TITLE_TITLE": {
-        "7.4.0": {
-            "TITLE": "Versi 7.4.0: Apa yang baru",
-            "DESCRIPTION": [
-                "<b>Biji<\/b>",
-                "Sekarang dimungkinkan untuk mencatat pembekuan biji kopi Anda, aktifkan fitur ini di pengaturan",
-                "Menambahkan tanggal terbaik dan tanggal membuka kopi, Anda perlu mengaktifkan parameter ini",
-                "Biji sekarang dapat langsung ditambahkan dari pilihan",
-                "",
-                "<b>Thermometer<\/b>",
-                "Dukungan Termometer Combustion Inc. - Terima kasih untuk Perangkatnya!",
-                "Dukungan Termometer Meater (bukan Meater 2 atau Meater +) - Terima kasih kepada Yannick!",
-                "",
-                "<b>Water Section<\/b>",
-                "Penambahan Pure Coffee Water",
-                "Penambahan Empirical Water",
-                "",
-                "<b>Preparation Tools<\/b>",
-                "Jenis alat-alat seduhan dapat diurutkan",
-                "",
-                "<b>Grinder<\/b>",
-                "Gambar grinder sekarang ditampilkan dalam pilihan",
-                "",
-                "<b>Pengaturan<\/b>",
-                "Pesan keamanan jika Anda mengubah peringkat untuk seduhan atau biji kopi, dan nilai maksimumnya lebih rendah dari entri yang sudah diberi peringkat",
-                "",
-                "<b>Lain-lain<\/b>",
-                "Mengembalikan fokus detik langsung saat membuka pengatur waktu",
-                "Beberapa perubahan teknis pada kode",
-                "Perubahan kecil"
-            ]
-        }
-    },
     "WATER_TYPE_PURE_COFFEE_WATER": "Pure Coffee Water",
     "WATER_TYPE_EMPIRICAL_WATER_GLACIAL": "empirical water GLACIAL",
     "WATER_TYPE_EMPIRICAL_WATER_SPRING": "empirical water SPRING",
@@ -1352,5 +1333,61 @@
     "BEAN_DATA_FROZEN_NOTE": "Notes beku",
     "IGNORE_NEGATIVE_VALUES_DESCRIPTION": "Mengaktifkannya akan menghasilkan grafik yang tertinggal satu detik",
     "IGNORE_ANOMALY_VALUES_DESCRIPTION": "Mengaktifkannya akan menghasilkan grafik yang tertinggal satu detik",
-    "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": "Simpan log mesin saat menyimpan seduhan"
+    "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": "Simpan log mesin saat menyimpan seduhan",
+    "IMPORT_SHOT_FROM_METICULOUS": "Mengimpor seduhan",
+    "BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "Semua entri yang ditemukan dalam daftar Excel, telah diubah menjadi entri biji baru, selamat menikmati!",
+    "IMPORT_UNSUCCESSFULLY": "Impor tidak berhasil",
+    "BEAN_LIST": "Daftar kopi",
+    "IMPORT_ROASTED_BEANS_EXCEL": "Impor kopi menggunakan Excel",
+    "IMPORT_GREEN_BEANS_EXCEL": "Impor green beans menggunakan Excel",
+    "BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE": "Tampaknya file excel yang dipilih rusak, memiliki data yang salah, terstruktur salah, atau dipilih secara salah. Oleh karena itu, tidak ada data biji kopi yang dapat diimpor.",
+    "OK": "Ok",
+    "BEAN_SORT_BEAN_AGE": "Umur biji",
+    "GREEN_BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "Semua entri yang ditemukan dalam daftar excel, telah diubah menjadi entrti green beans baru, selamat meroasting!",
+    "PREPARATION_TYPE_SANREMO_YOU": "",
+    "PREPARATION_TYPE_XENIA": "Xenia",
+    "BEAN_POPUP_YOU_DONT_SEE_EVERYTHING_DESCRIPTION": "Anda menambahkan kopi yang berisi informasi varietas, tetapi parameter tersebut tidak diaktifkan. Apakah Anda ingin mengaktifkannya sekarang?",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS": "Tentukan sumbu untuk grafik tekanan",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_DESCRIPTION": "Atur ukuran awal dan akhir sumbu untuk tekanan",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_RANGE": "Sumbu untuk tekanan",
+    "PAGE_SETTINGS_LANGUAGE_DUTCH": "Belanda",
+    "DOWNLOAD_IMPORT_EXCEL_TEMPLATES": "Unduh templat impor",
+    "SHOW_GRAPH": "Tampilkan grafik",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "7.5.0": {
+            "TITLE": "Versi 7.5.0: Apa yang baru?",
+            "DESCRIPTION": [
+                "<b>Bahasa baru<\/b>",
+                "Dukungan bahasa Belanda - Terima kasih kepada Ygg",
+                "",
+                "<b>Seduhan<\/b>",
+                "Sekarang dimungkinkan untuk menutup daftar seduhan",
+                "Menampilkan jika biji kopi beku digunakan",
+                "Foto biji kopi sekarang terlihat pada pilihan",
+                "Membaca dan mengimpor riwayat penyeduhan dari Meticulous",
+                "Entri daftar brew sekarang dapat digeser ketika memiliki grafik",
+                "",
+                "<b>Beans<\/b>",
+                "Sekarang dimungkinkan untuk menutup daftar kopi",
+                "Kopi sekarang dapat diurutkan berdasarkan umur",
+                "Penyortiran tidak ter-reset lagi saat mengarsipkan kacang",
+                "",
+                "<b>Green beans<\/b>",
+                "Green bean sekarang dapat diimpor - Lihat Pengaturan",
+                "",
+                "<b>Pengaturan<\/b>",
+                "Atur sumbu awal untuk tekanan",
+                "Impor green beans atau kopi matang",
+                "",
+                "<b>Kerusakan data terdeteksi<\/b>",
+                "Beanconqueror sekarang memeriksa apakah ada kerusakan data yang terjadi, dan jika ya, ini akan menampilkan popup untuk memungkinkan impor cadangan",
+                "",
+                "<b>Lainnya<\/b>",
+                "Memperbaiki penyortiran alat seduh",
+                "Memperbaiki perhitungan (masalah pembulatan) biji kopi beku",
+                "Beberapa perubahan kecil dalam kode",
+                "Perubahan kecil"
+            ]
+        }
+    }
 }

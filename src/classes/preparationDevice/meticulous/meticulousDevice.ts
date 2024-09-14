@@ -1,15 +1,22 @@
 import { PreparationDevice } from '../preparationDevice';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Preparation } from '../../preparation/preparation';
 import { MeticulousShotData } from './meticulousShotData';
-import Api, {
-  ApiResponseError,
-  ProfileIdent,
-  ActionType,
-} from 'meticulous-api';
+import Api, { ActionType, ProfileIdent } from '@meticulous-home/espresso-api';
 
 import { IMeticulousParams } from '../../../interfaces/preparationDevices/meticulous/iMeticulousParams';
 import { Profile } from 'meticulous-typescript-profile';
+import { catchError, timeout } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { HistoryListingEntry } from '@meticulous-home/espresso-api/dist/types';
+import moment from 'moment';
+import {
+  BrewFlow,
+  IBrewPressureFlow,
+  IBrewRealtimeWaterFlow,
+  IBrewTemperatureFlow,
+  IBrewWeightFlow,
+} from '../../brew/brewFlow';
 
 declare var cordova;
 declare var io;
@@ -22,6 +29,55 @@ export class MeticulousDevice extends PreparationDevice {
 
   private _profiles: Array<ProfileIdent> = [];
 
+  private serverURL: string = '';
+
+  public static returnBrewFlowForShotData(_shotData) {
+    const newMoment = moment(new Date()).startOf('day');
+    const newBrewFlow = new BrewFlow();
+
+    for (const entry of _shotData as any) {
+      const shotEntry: any = entry.shot;
+      const shotEntryTime = newMoment.clone().add('milliseconds', entry.time);
+      const timestamp = shotEntryTime.format('HH:mm:ss.SSS');
+
+      const realtimeWaterFlow: IBrewRealtimeWaterFlow =
+        {} as IBrewRealtimeWaterFlow;
+
+      realtimeWaterFlow.brew_time = '';
+      realtimeWaterFlow.timestamp = timestamp;
+      realtimeWaterFlow.smoothed_weight = 0;
+      realtimeWaterFlow.flow_value = shotEntry.flow;
+      realtimeWaterFlow.timestampdelta = 0;
+
+      newBrewFlow.realtimeFlow.push(realtimeWaterFlow);
+
+      const brewFlow: IBrewWeightFlow = {} as IBrewWeightFlow;
+      brewFlow.timestamp = timestamp;
+      brewFlow.brew_time = '';
+      brewFlow.actual_weight = shotEntry.weight;
+      brewFlow.old_weight = 0;
+      brewFlow.actual_smoothed_weight = 0;
+      brewFlow.old_smoothed_weight = 0;
+      brewFlow.not_mutated_weight = 0;
+      newBrewFlow.weight.push(brewFlow);
+
+      const pressureFlow: IBrewPressureFlow = {} as IBrewPressureFlow;
+      pressureFlow.timestamp = timestamp;
+      pressureFlow.brew_time = '';
+      pressureFlow.actual_pressure = shotEntry.pressure;
+      pressureFlow.old_pressure = 0;
+      newBrewFlow.pressureFlow.push(pressureFlow);
+
+      const temperatureFlow: IBrewTemperatureFlow = {} as IBrewTemperatureFlow;
+      temperatureFlow.timestamp = timestamp;
+      temperatureFlow.brew_time = '';
+      temperatureFlow.actual_temperature = shotEntry.temperature;
+      temperatureFlow.old_temperature = 0;
+      newBrewFlow.temperatureFlow.push(temperatureFlow);
+    }
+    return newBrewFlow;
+  }
+
   constructor(protected httpClient: HttpClient, _preparation: Preparation) {
     super(httpClient, _preparation);
     this.meticulousShotData = undefined;
@@ -29,9 +85,52 @@ export class MeticulousDevice extends PreparationDevice {
       undefined,
       _preparation.connectedPreparationDevice.url
     );
+    this.serverURL = _preparation.connectedPreparationDevice.url;
 
     if (typeof cordova !== 'undefined') {
     }
+  }
+  public getHistory() {
+    const promise = new Promise<any>((resolve, reject) => {
+      const httpOptions = {
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json',
+        }),
+      };
+      this.httpClient
+        .post(
+          this.serverURL + '/api/v1/history',
+          {
+            sort: 'desc',
+            max_results: 20,
+          },
+          httpOptions
+        )
+        .pipe(
+          timeout(10000),
+          catchError((e) => {
+            return of(null);
+          })
+        )
+        .toPromise()
+        .then(
+          (data: any) => {
+            console.log(data);
+            if (data && data.history) {
+              resolve(data.history);
+            }
+          },
+          (error) => {
+            console.log(error);
+            reject();
+          }
+        )
+        .catch((error) => {
+          console.log(error);
+          reject();
+        });
+    });
+    return promise;
   }
 
   public getActualShotData() {
@@ -45,24 +144,44 @@ export class MeticulousDevice extends PreparationDevice {
     try {
       const profileResponse = await this.metApi.getProfile(_profileId);
 
-      if (profileResponse instanceof ApiResponseError) {
+      const profile = profileResponse.data as unknown as Profile;
+      return profile;
+      /*  if (profileResponse instanceof Profile) {
       } else {
-        const profile = profileResponse.data as unknown as Profile;
-        return profile;
-      }
+
+      }*/
     } catch (ex) {}
     return undefined;
+  }
+
+  public async getHistoryShortListing() {
+    const response = await this.metApi.getHistoryShortListing();
+    if (response && response.data && response.data.history) {
+      return response.data.history as Array<HistoryListingEntry>;
+    }
+  }
+
+  public async searchHistory() {
+    const response = await this.metApi.searchHistory({
+      query: '',
+      ids: [],
+      start_date: '',
+      end_date: '',
+      order_by: ['date'],
+      sort: 'desc',
+      max_results: 10,
+      dump_data: true,
+    });
+    if (response && response.data && response.data.history) {
+      return response.data.history as Array<HistoryListingEntry>;
+    }
   }
 
   public async loadProfileByID(_profileId: string) {
     try {
       const loadProfile = await this.metApi.loadProfileByID(_profileId);
-
-      if (loadProfile instanceof ApiResponseError) {
-      } else {
-        const profile = loadProfile.data as unknown as Profile;
-        return profile;
-      }
+      const profile = loadProfile.data as unknown as Profile;
+      return profile;
     } catch (ex) {
       console.log(ex.message);
     }
@@ -87,11 +206,7 @@ export class MeticulousDevice extends PreparationDevice {
     try {
       if (this._profiles.length <= 0) {
         const profiles = await this.metApi.listProfiles();
-
-        if (profiles instanceof ApiResponseError) {
-        } else {
-          this._profiles = profiles.data as Array<ProfileIdent>;
-        }
+        this._profiles = profiles.data as Array<ProfileIdent>;
       }
     } catch (ex) {}
   }
@@ -101,8 +216,9 @@ export class MeticulousDevice extends PreparationDevice {
   }
 
   public override async deviceConnected(): Promise<boolean> {
-    const promise = new Promise<boolean>((resolve, reject) => {
-      if (this.socket !== undefined) {
+    const promise = new Promise<boolean>(async (resolve, reject) => {
+      const settings: any = await this.metApi.getSettings();
+      if (settings?.data?.config) {
         resolve(true);
       } else {
         resolve(false);

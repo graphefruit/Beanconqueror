@@ -1030,7 +1030,8 @@
         "TYPE": {
             "NONE": "Nic",
             "XENIA": "Xenia",
-            "METICULOUS": "Meticulous"
+            "METICULOUS": "Meticulous",
+            "SANREMO_YOU": ""
         },
         "URL": "Adres URL",
         "CHOOSE_DEVICE": "Wybierz urządzenie",
@@ -1063,6 +1064,19 @@
             "CHOOSE_PROFILE": "Wybierz profil",
             "SHOT_STARTED": "Strzał rozpoczęty",
             "SHOT_ENDED": "Strzał zakończony"
+        },
+        "TYPE_SANREMO_YOU": {
+            "TITLE": "",
+            "STOP_AT_WEIGHT": "",
+            "SELECT_MODE": "",
+            "MODE_LISTENING": "",
+            "MODE_CONTROL": "",
+            "MANUAL_CONTROLLING": "",
+            "PROFILE_P1_CONTROLLING": "",
+            "PROFILE_P2_CONTROLLING": "",
+            "PROFILE_P3_CONTROLLING": "",
+            "NO_PROFILE_TARGET_WEIGHT_INFORMATION": "",
+            "NO_MANUAL_TARGET_WEIGHT_INFORMATION": ""
         }
     },
     "DEVICE_CONNECTION": "Połączenie urządzenia",
@@ -1273,39 +1287,6 @@
     "SHOW_MINUTES": "Pokaż minuty",
     "BEANS_UNARCHIVE": "Cofnij archiwizację",
     "TOAST_BEAN_UNARCHIVED_SUCCESSFULLY": "Ziarno nie zostało zarchiwizowane",
-    "UPDATE_TEXT_TITLE_TITLE": {
-        "7.4.0": {
-            "TITLE": "Wersja 7.4.0: Co nowego",
-            "DESCRIPTION": [
-                "<b>Ziarna<\/b>",
-                "Teraz możliwe jest zamrożenie ziaren kawy, aktywując tę funkcję w ustawieniach.",
-                "Dodano najlepszą i otwartą datę dla fasoli, należy aktywować ten parametr",
-                "Ziarna można teraz dodawać bezpośrednio z przeglądu wyboru.",
-                "",
-                "<b>Termometr<\/b>",
-                "Wsparcie Combustion Inc. Termometr - Dziękujemy za urządzenie!",
-                "Wsparcie dla termometru Meater (nie Meater 2 lub Meater +) - dzięki Yannick!",
-                "",
-                "<b>Sekcja wodna<\/b>",
-                "Dodano czystą wodę kawową",
-                "Dodana woda empiryczna",
-                "",
-                "<b>Narzędzia przygotowawcze<\/b>",
-                "Posortuj teraz swoje narzędzia przygotowawcze",
-                "",
-                "<b>Młynek<\/b>",
-                "Obrazy młynka są teraz wyświetlane w przeglądzie wyboru",
-                "",
-                "<b>Ustawienia<\/b>",
-                "Komunikat bezpieczeństwa, jeśli zmieniono ocenę dla naparów lub ziaren, a maksymalna ocena jest niższa niż już oceniony wpis.",
-                "",
-                "<b>Inne<\/b>",
-                "Przywrócono bezpośrednie ustawianie ostrości w sekundach podczas otwierania timera.",
-                "Kilka zmian technicznych w kodzie",
-                "Drobne poprawki"
-            ]
-        }
-    },
     "WATER_TYPE_PURE_COFFEE_WATER": "Czysta woda kawowa",
     "WATER_TYPE_EMPIRICAL_WATER_GLACIAL": "woda empiryczna GLACIAL",
     "WATER_TYPE_EMPIRICAL_WATER_SPRING": "woda empiryczna SPRING",
@@ -1352,5 +1333,61 @@
     "BEAN_DATA_FROZEN_NOTE": "Zamrożone notatki",
     "IGNORE_NEGATIVE_VALUES_DESCRIPTION": "Aktywacja tej opcji spowoduje, że wykres będzie opóźniony o jedną sekundę.",
     "IGNORE_ANOMALY_VALUES_DESCRIPTION": "Aktywacja tej opcji spowoduje, że wykres będzie opóźniony o jedną sekundę.",
-    "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": "Zapisywanie dzienników urządzenia podczas zapisywania parzenia"
+    "SAVE_LOGFILES_TO_NOTES_FROM_MACHINE": "Zapisywanie dzienników urządzenia podczas zapisywania parzenia",
+    "IMPORT_SHOT_FROM_METICULOUS": "Importuj strzał",
+    "BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "Wszystkie znalezione wpisy na liście w pliku Excel zostały przekształcone w nowe ziarna. Ciesz się smacznym naparem!",
+    "IMPORT_UNSUCCESSFULLY": "Import nie powiódł się",
+    "BEAN_LIST": "Lista ziaren",
+    "IMPORT_ROASTED_BEANS_EXCEL": "Importuj wyrażone ziarna z pliku Excel",
+    "IMPORT_GREEN_BEANS_EXCEL": "Importuj zielone ziarna z pliku Excel",
+    "BEANS_IMPORTED_UNSUCCESSFULLY_WRONG_EXCELFILE": "Wygląda na to, że wybrany plik Excel jest uszkodzony, ma złe dane, jest źle ustrukturyzowany lub został źle wybrany. Z tego powodu nie można było zaimportować żadnych ziaren.",
+    "OK": "Ok",
+    "BEAN_SORT_BEAN_AGE": "Wiek ziarna",
+    "GREEN_BEANS_IMPORTED_SUCCESSFULLY_DESCRIPTION": "Wszystkie znalezione pozycje na liście excel, zostały przekształcone w nowe zielone ziarna, mają świetne pieczenie!",
+    "PREPARATION_TYPE_SANREMO_YOU": "",
+    "PREPARATION_TYPE_XENIA": "Xenia",
+    "BEAN_POPUP_YOU_DONT_SEE_EVERYTHING_DESCRIPTION": "Dodajesz ziarno, które zawiera informacje o odmianie, ale te parametry nie są aktywowane. Czy chcesz je teraz aktywować?",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS": "Zdefiniuj osie wykresu ciśnienia",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_DESCRIPTION": "Ustaw początkowy i końcowy rozmiar osi dla ciśnienia",
+    "PAGE_SETTINGS_TAB_BLUETOOTH_PRESSURE_GRAPHS_AXIS_RANGE": "Osie ciśnienia",
+    "PAGE_SETTINGS_LANGUAGE_DUTCH": "Holenderski",
+    "DOWNLOAD_IMPORT_EXCEL_TEMPLATES": "Pobierz szablony importu",
+    "SHOW_GRAPH": "Pokaż wykres",
+    "UPDATE_TEXT_TITLE_TITLE": {
+        "7.5.0": {
+            "TITLE": "Wersja 7.5.0: Co nowego",
+            "DESCRIPTION": [
+                "<b>Nowy język<\/b>",
+                "Wsparcie języka holenderskiego - podziękowania dla Ygg",
+                "",
+                "<b>Napary<\/b>",
+                "Zwinięcie listy naparów jest teraz możliwe",
+                "Wyświetlanie, czy użyto zamrożonego ziarna",
+                "Obraz ziarna jest teraz widoczny po zaznaczeniu.",
+                "Odczytywanie i importowanie ujęcia historii z Meticulous",
+                "Wpisy na liście na parów można teraz przesuwać, jeśli mają wykres",
+                "",
+                "<b>Ziarna<\/b>",
+                "Zwijanie listy fasoli jest teraz możliwe",
+                "Ziarna można teraz sortować według ich wieku",
+                "Sortowanie nie jest już resetowane podczas archiwizowania ziarna",
+                "",
+                "<b>Zielone ziarna<\/b>",
+                "Zielone ziarna można teraz importować - patrz Ustawienia",
+                "",
+                "<b>Ustawienia<\/b>",
+                "Ustaw oś początkową dla ciśnienia",
+                "Importuj zielone ziarna lub wypalone",
+                "",
+                "<b>Wykrywanie uszkodzeń danych<\/b>",
+                "Beanconqueror sprawdza teraz, czy w jakiś sposób nie doszło do uszkodzenia danych i jeśli tak, wyświetla okno podręczne umożliwiające zaimportowanie kopii zapasowej",
+                "",
+                "<b>Inne<\/b>",
+                "Naprawianie sortowania narzędzi przygotowawczych",
+                "Naprawa obliczeń zamrożonej fasoli w celu usunięcia problemów z zaokrąglaniem",
+                "Kilka zmian technicznych w kodzie",
+                "Drobne poprawki"
+            ]
+        }
+    }
 }

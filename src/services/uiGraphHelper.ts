@@ -16,6 +16,7 @@ import { FileEntry } from '@awesome-cordova-plugins/file';
 import { UILog } from './uiLog';
 import { UIFileHelper } from './uiFileHelper';
 import BeanconquerorFlowTestDataDummy from '../assets/BeanconquerorFlowTestDataFourth.json';
+import { Brew } from '../classes/brew/brew';
 
 /**
  * Handles every helping functionalities
@@ -66,6 +67,15 @@ export class UIGraphHelper {
       component: GraphDetailComponent,
       id: GraphDetailComponent.COMPONENT_ID,
       componentProps: { graph: _graph },
+    });
+    await modal.present();
+    await modal.onWillDismiss();
+  }
+  public async detailBrewGraph(_brew: Brew) {
+    const modal = await this.modalController.create({
+      component: GraphDetailComponent,
+      id: GraphDetailComponent.COMPONENT_ID,
+      componentProps: { brew: _brew },
     });
     await modal.present();
     await modal.onWillDismiss();
