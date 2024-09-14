@@ -1,9 +1,13 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.beanconqueror',
-  appName: 'beanconqueror',
+  appId: 'com.beanconqueror.app',
+  appName: 'Beanconqueror',
   webDir: 'www',
+  // TODO Capacitor migration: This might be required to retain local storage on android
+  // server: {
+  //   androidScheme: "http"
+  // },
   cordova: {
     preferences: {
       ScrollEnabled: 'false',
