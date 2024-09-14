@@ -40,7 +40,6 @@
     "@awesome-cordova-plugins/native-storage": "^6.6.0",
     "@awesome-cordova-plugins/screen-orientation": "^6.4.0",
     "@awesome-cordova-plugins/social-sharing": "^6.4.0",
-    "@awesome-cordova-plugins/status-bar": "^6.4.0",
     "@awesome-cordova-plugins/three-dee-touch": "^6.4.0",
     "@capacitor/android": "6.1.2",
     "@capacitor/app": "6.0.1",
@@ -118,7 +117,6 @@
     "cordova-plugin-inappbrowser": "^6.0.0",
     "cordova-plugin-insomnia": "^4.3.0",
     "cordova-plugin-screen-orientation": "github:apache/cordova-plugin-screen-orientation",
-    "cordova-plugin-statusbar": "^4.0.0",
     "cordova-plugin-vibration": "^3.1.1",
     "cordova-plugin-x-socialsharing": "^6.0.4",
     "cordova-sqlite-storage": "^5.1.0",
@@ -209,7 +207,6 @@
       "cordova-plugin-androidx-adapter": {},
       "cordova-plugin-inappbrowser": {},
       "skwas-cordova-plugin-datetimepicker": {},
-      "cordova-plugin-statusbar": {},
       "cordova-plugin-file": {
         "ANDROIDX_WEBKIT_VERSION": "1.4.0"
       },

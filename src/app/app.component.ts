@@ -6,10 +6,10 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { App } from '@capacitor/app';
+import { Animation, StatusBar } from '@capacitor/status-bar';
 
 import { Globalization } from '@awesome-cordova-plugins/globalization/ngx';
 import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
-import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
 import {
   ThreeDeeTouch,
   ThreeDeeTouchQuickAction,
@@ -216,7 +216,6 @@ export class AppComponent implements AfterViewInit {
   constructor(
     private readonly router: Router,
     public platform: Platform,
-    public statusBar: StatusBar,
     private readonly uiLog: UILog,
     private readonly uiBeanStorage: UIBeanStorage,
     private readonly uiBrewStorage: UIBrewStorage,
@@ -328,8 +327,7 @@ export class AppComponent implements AfterViewInit {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       // #7
-      this.statusBar.show();
-      this.statusBar.styleDefault();
+      StatusBar.show({ animation: Animation.None });
 
       this.keyboard.hideFormAccessoryBar(false);
       if (environment.production === true) {
