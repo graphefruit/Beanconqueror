@@ -4,6 +4,7 @@ import {
   Platform,
   ScrollDetail,
 } from '@ionic/angular';
+import { Filesystem } from '@capacitor/filesystem';
 import BeanconquerorSettingsDummy from '../../assets/BeanconquerorTestData.json';
 import { Bean } from '../../classes/bean/bean';
 
@@ -970,54 +971,27 @@ export class SettingsPage {
     moment.locale(this.settings.language);
   }
 
-  public import(): void {
-    if (this.platform.is('cordova')) {
+  public async import(): Promise<void> {
+    if (!this.platform.is('cordova') || this.platform.is('android')) {
       this.uiAnalytics.trackEvent(
         SETTINGS_TRACKING.TITLE,
         SETTINGS_TRACKING.ACTIONS.IMPORT
       );
       this.uiLog.log('Import real data');
-      if (this.platform.is('android')) {
-        this.fileChooser.open().then(async (uri) => {
-          try {
-            const fileEntry: any = await new Promise(
-              async (resolve) =>
-                await window.resolveLocalFileSystemURL(uri, resolve, () => {})
-            );
-
-            // After the new API-Changes we just can support this download path
-            const importPath =
-              this.file.externalDataDirectory +
-              'Download/Beanconqueror_export/';
-            this.__readZipFile(fileEntry).then(
-              (_importData) => {
-                this.__importJSON(_importData, importPath);
-              },
-              (_err) => {
-                this.__readAndroidJSONFile(fileEntry, importPath).then(
-                  () => {
-                    // nothing todo
-                  },
-                  (_err2) => {
-                    this.uiAlert.showMessage(
-                      this.translate.instant('ERROR_ON_FILE_READING') +
-                        ' (' +
-                        JSON.stringify(_err2) +
-                        ')'
-                    );
-                  }
-                );
-              }
-            );
-          } catch (ex) {
-            this.uiAlert.showMessage(
-              this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
-                ' (' +
-                JSON.stringify(ex) +
-                ')'
-            );
-          }
-        });
+      if (true || this.platform.is('android')) {
+        try {
+          const uri = await this.fileChooser.open();
+          const file = await Filesystem.readFile({ path: uri });
+          // TODO Capacitor migration: Fallback to __readAndroidJSONFile
+          await this.uiExportImportHelper.importZIPFile(file.data);
+        } catch (ex) {
+          this.uiAlert.showMessage(
+            this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
+              ' (' +
+              JSON.stringify(ex) +
+              ')'
+          );
+        }
       } else {
         FilePicker.pickFile(
           (uri) => {
@@ -1844,10 +1818,6 @@ export class SettingsPage {
         }
       });
     });
-  }
-
-  private async __readZipFile(_fileEntry: FileEntry): Promise<any> {
-    return this.uiExportImportHelper.importZIPFile(_fileEntry);
   }
 
   /* tslint:enable */

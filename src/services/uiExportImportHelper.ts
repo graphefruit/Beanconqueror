@@ -216,32 +216,20 @@ export class UIExportImportHelper {
     });
   }
 
-  public async importZIPFile(_fileEntry: FileEntry): Promise<any> {
-    return new Promise((resolve, reject) => {
-      _fileEntry.file(async (file) => {
-        try {
-          const reader = new FileReader();
-          reader.onloadend = async (event: Event) => {
-            try {
-              const parsedJSON = await this.getJSONFromZIPArrayBufferContent(
-                reader.result as any
-              );
-              resolve(parsedJSON);
-            } catch (ex) {
-              reject();
-            }
-          };
-          reader.onerror = (event: Event) => {
-            reject();
-          };
-
-          reader.readAsArrayBuffer(file);
-        } catch (ex) {
-          reject();
-        }
-      });
-    });
+  public async importZIPFile(fileData: string | Blob): Promise<void> {
+    let arrayBuffer: ArrayBuffer;
+    if (fileData instanceof Blob) {
+      arrayBuffer = await fileData.arrayBuffer();
+    } else {
+      // fileData is a base64 string
+      arrayBuffer = Uint8Array.from(atob(fileData), (c) =>
+        c.charCodeAt(0)
+      ).buffer;
+    }
+    const json = await this.getJSONFromZIPArrayBufferContent(arrayBuffer);
+    await this.importBackupJSON(json);
   }
+
   private async checkBackupAndSeeIfDataAreCorrupted(_actualUIStorageDataObj) {
     try {
       this.uiLog.log(
@@ -292,8 +280,8 @@ export class UIExportImportHelper {
   }
 
   public async showDataCorruptionPopover(
-    _actualUIStorageDataObj,
-    _backupDataObj
+    _actualUIStorageDataObj: any,
+    _backupDataObj: any
   ) {
     const modal = await this.modalController.create({
       component: DataCorruptionFoundComponent,
@@ -362,7 +350,7 @@ export class UIExportImportHelper {
     } catch (ex) {}
   }
 
-  private importBackupJSON(_parsedJSON) {
+  private importBackupJSON(_parsedJSON: unknown) {
     const promise = new Promise(async (resolve, reject) => {
       await this.uiAlert.showLoadingSpinner();
 
@@ -463,7 +451,7 @@ export class UIExportImportHelper {
       }
     );
   }
-  private async __saveInternalBeanconquerorDump(_blob) {
+  private async __saveInternalBeanconquerorDump(_blob: string) {
     try {
       const file: FileEntry = await this.uiFileHelper.saveZIPFile(
         'Beanconqueror.zip',
@@ -482,7 +470,7 @@ export class UIExportImportHelper {
       }
     }
   }
-  private async __saveAutomaticBeanconquerorDump(_blob) {
+  private async __saveAutomaticBeanconquerorDump(_blob: string) {
     const settings = this.uiSettingsStorage.getSettings();
     const welcomePagedShowed: boolean = settings.welcome_page_showed;
     const brewsAdded: boolean = this.uiBrewStorage.getAllEntries().length > 0;
