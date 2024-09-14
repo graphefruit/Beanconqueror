@@ -5,6 +5,7 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { App } from '@capacitor/app';
 
 import { Globalization } from '@awesome-cordova-plugins/globalization/ngx';
 import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
@@ -979,9 +980,7 @@ export class AppComponent implements AfterViewInit {
       ) {
         this.routerOutlet.pop();
       } else if (this.router.url.indexOf('/home') >= 0) {
-        window.plugins.appMinimize.minimize();
-        // or if that doesn't work, try
-        // navigator['app'].exitApp();
+        App.minimizeApp();
       } else {
         this.router.navigate(['/home/dashboard'], { replaceUrl: true });
         // this.generic.showAlert("Exit", "Do you want to exit the app?", this.onYesHandler, this.onNoHandler, "backPress");
