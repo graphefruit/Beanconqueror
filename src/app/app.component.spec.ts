@@ -18,7 +18,6 @@ import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { IntentHandlerService } from 'src/services/intentHandler/intent-handler.service';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { UIPreparationHelper } from 'src/services/uiPreparationHelper';
-import { Device } from '@awesome-cordova-plugins/device/ngx';
 
 describe('AppComponent', () => {
   let statusBarSpy, platformReadySpy, platformSpy;
@@ -42,7 +41,6 @@ describe('AppComponent', () => {
         { provide: IntentHandlerService, useValue: {} },
         { provide: AndroidPermissions },
         { provide: UIPreparationHelper, useValue: {} },
-        { provide: Device },
       ],
       imports: [RouterTestingModule.withRoutes([]), TranslateModule.forRoot()],
     }).compileComponents();

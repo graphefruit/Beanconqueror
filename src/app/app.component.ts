@@ -6,6 +6,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { App } from '@capacitor/app';
+import { Device } from '@capacitor/device';
 import { Animation, StatusBar } from '@capacitor/status-bar';
 
 import { Globalization } from '@awesome-cordova-plugins/globalization/ngx';
@@ -54,7 +55,6 @@ import { UISettingsStorage } from '../services/uiSettingsStorage';
 import { UIUpdate } from '../services/uiUpdate';
 import { UiVersionStorage } from '../services/uiVersionStorage';
 import { UIWaterStorage } from '../services/uiWaterStorage';
-import { Device } from '@awesome-cordova-plugins/device/ngx';
 import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { Storage } from '@ionic/storage';
 
@@ -246,7 +246,6 @@ export class AppComponent implements AfterViewInit {
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly cleanupService: CleanupService,
-    private readonly device: Device,
     private readonly appVersion: AppVersion,
     private readonly storage: Storage,
     private readonly uiToast: UIToast,
@@ -292,11 +291,12 @@ export class AppComponent implements AfterViewInit {
     this.platform.ready().then(async () => {
       await this.uiStorage.init();
       try {
+        const deviceInfo = await Device.getInfo();
         // #285 - Add more device loggings
-        this.uiLog.log(`Device-Model: ${this.device.model}`);
-        this.uiLog.log(`Manufacturer: ${this.device.manufacturer}`);
-        this.uiLog.log(`Platform: ${this.device.platform}`);
-        this.uiLog.log(`Version: ${this.device.version}`);
+        this.uiLog.log(`Device-Model: ${deviceInfo.model}`);
+        this.uiLog.log(`Manufacturer: ${deviceInfo.manufacturer}`);
+        this.uiLog.log(`Platform: ${deviceInfo.platform}`);
+        this.uiLog.log(`Version: ${deviceInfo.osVersion}`);
         if (this.platform.is('cordova')) {
           const versionCode: string | number =
             await this.appVersion.getVersionNumber();

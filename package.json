@@ -26,7 +26,6 @@
     "@awesome-cordova-plugins/camera": "^6.4.0",
     "@awesome-cordova-plugins/core": "^6.4.0",
     "@awesome-cordova-plugins/deeplinks": "^6.4.0",
-    "@awesome-cordova-plugins/device": "^6.4.0",
     "@awesome-cordova-plugins/file": "^6.4.0",
     "@awesome-cordova-plugins/file-chooser": "^6.4.0",
     "@awesome-cordova-plugins/file-path": "^6.4.0",
@@ -45,6 +44,7 @@
     "@capacitor/app": "6.0.1",
     "@capacitor/barcode-scanner": "^1.0.1",
     "@capacitor/core": "6.1.2",
+    "@capacitor/device": "^6.0.1",
     "@capacitor/filesystem": "^6.0.1",
     "@capacitor/haptics": "6.0.1",
     "@capacitor/keyboard": "6.0.2",
@@ -63,7 +63,6 @@
     "ble-central-advertisements": "^1.1.0",
     "chart.js": "^3.9.1",
     "cordova-plugin-3dtouch": "^1.3.8",
-    "cordova-plugin-device": "^2.0.3",
     "cordova-plugin-filechooser": "^1.2.0",
     "cordova-plugin-filepicker": "^1.1.6",
     "cordova-plugin-globalization": "^1.11.0",
@@ -146,7 +145,6 @@
   "description": "Beanconqueror",
   "cordova": {
     "plugins": {
-      "cordova-plugin-device": {},
       "cordova-plugin-filechooser": {},
       "cordova-plugin-filepicker": {},
       "cordova-plugin-3dtouch": {},

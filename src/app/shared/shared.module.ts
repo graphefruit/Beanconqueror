@@ -27,7 +27,6 @@ import { TermsComponent } from '../info/terms/terms.component';
 import { ThanksComponent } from '../info/thanks/thanks.component';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { File } from '@awesome-cordova-plugins/file/ngx';
-import { Device } from '@awesome-cordova-plugins/device/ngx';
 import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
 import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
@@ -389,7 +388,6 @@ import { BeanPopoverListComponent } from '../beans/bean-popover-list/bean-popove
     DisableDoubleClickDirective,
     InAppBrowser,
     File,
-    Device,
     FileChooser,
     FilePath,
 
