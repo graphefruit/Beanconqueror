@@ -18,7 +18,6 @@ import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { UIHelperMock } from '../../classes/mock';
 import { UIHelper } from '../../services/uiHelper';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { PipesModule } from 'src/pipes/pipes.module';
 
@@ -51,7 +50,6 @@ describe('SettingsPage', () => {
         { provide: FileTransfer },
         { provide: FilePath },
         { provide: SocialSharing },
-        { provide: AppVersion },
       ],
     }).compileComponents();
   }));

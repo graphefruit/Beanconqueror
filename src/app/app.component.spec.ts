@@ -14,7 +14,6 @@ import { ThreeDeeTouch } from '@awesome-cordova-plugins/three-dee-touch/ngx';
 import { Globalization } from '@awesome-cordova-plugins/globalization/ngx';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { IntentHandlerService } from 'src/services/intentHandler/intent-handler.service';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { UIPreparationHelper } from 'src/services/uiPreparationHelper';
@@ -37,7 +36,6 @@ describe('AppComponent', () => {
         { provide: AngularDelegate },
         { provide: SocialSharing },
         { provide: FileTransfer },
-        { provide: AppVersion },
         { provide: IntentHandlerService, useValue: {} },
         { provide: AndroidPermissions },
         { provide: UIPreparationHelper, useValue: {} },

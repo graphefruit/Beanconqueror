@@ -55,7 +55,6 @@ import { UISettingsStorage } from '../services/uiSettingsStorage';
 import { UIUpdate } from '../services/uiUpdate';
 import { UiVersionStorage } from '../services/uiVersionStorage';
 import { UIWaterStorage } from '../services/uiWaterStorage';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { Storage } from '@ionic/storage';
 
 import { UIToast } from '../services/uiToast';
@@ -246,7 +245,6 @@ export class AppComponent implements AfterViewInit {
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly bleManager: CoffeeBluetoothDevicesService,
     private readonly cleanupService: CleanupService,
-    private readonly appVersion: AppVersion,
     private readonly storage: Storage,
     private readonly uiToast: UIToast,
     private readonly uiExportImportHelper: UIExportImportHelper,
@@ -298,8 +296,7 @@ export class AppComponent implements AfterViewInit {
         this.uiLog.log(`Platform: ${deviceInfo.platform}`);
         this.uiLog.log(`Version: ${deviceInfo.osVersion}`);
         if (this.platform.is('cordova')) {
-          const versionCode: string | number =
-            await this.appVersion.getVersionNumber();
+          const versionCode = (await App.getInfo()).version;
           this.uiLog.log(`App-Version: ${versionCode}`);
           this.uiLog.log(
             `Storage-Driver: ${this.uiStorage.getStorage().driver}`

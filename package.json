@@ -22,7 +22,6 @@
     "@angular/platform-browser-dynamic": "^16.2.7",
     "@angular/router": "^16.2.7",
     "@awesome-cordova-plugins/android-permissions": "^6.4.0",
-    "@awesome-cordova-plugins/app-version": "^6.4.0",
     "@awesome-cordova-plugins/camera": "^6.4.0",
     "@awesome-cordova-plugins/core": "^6.4.0",
     "@awesome-cordova-plugins/deeplinks": "^6.4.0",
@@ -106,7 +105,6 @@
     "cordova-ios": "^7.1.1",
     "cordova-plugin-advanced-http": "^3.3.1",
     "cordova-plugin-android-permissions": "^1.1.5",
-    "cordova-plugin-app-version": "^0.1.14",
     "cordova-plugin-ble-central": "^1.7.4",
     "cordova-plugin-camera": "^7.0.0",
     "cordova-plugin-file": "^8.0.0",
@@ -187,7 +185,6 @@
         "PHOTO_LIBRARY_ADD_USAGE_DESCRIPTION": "This app requires photo library access to function properly.",
         "PHOTO_LIBRARY_USAGE_DESCRIPTION": "This app requires photo library access to function properly."
       },
-      "cordova-plugin-app-version": {},
       "cordova-plugin-health": {
         "FIT_API_VERSION": "21.1.0",
         "PLAY_AUTH_VERSION": "20.2.0",

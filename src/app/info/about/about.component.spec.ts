@@ -13,7 +13,6 @@ import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Router } from '@angular/router';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { PipesModule } from 'src/pipes/pipes.module';
 
 describe('AboutComponent', () => {
@@ -41,7 +40,6 @@ describe('AboutComponent', () => {
         { provide: AndroidPermissions },
 
         { provide: Router },
-        { provide: AppVersion },
       ],
     }).compileComponents();
   }));

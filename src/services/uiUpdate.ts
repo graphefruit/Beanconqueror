@@ -14,7 +14,6 @@ import { UISettingsStorage } from './uiSettingsStorage';
 import { UILog } from './uiLog';
 import { UiVersionStorage } from './uiVersionStorage';
 import { Version } from '../classes/version/iVersion';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { ModalController, Platform } from '@ionic/angular';
 import { UpdatePopoverComponent } from '../popover/update-popover/update-popover.component';
 import { IBeanInformation } from '../interfaces/bean/iBeanInformation';
@@ -26,6 +25,7 @@ import { UIStorage } from './uiStorage';
 import { maxBy, keys } from 'lodash';
 import { UIHelper } from './uiHelper';
 import { RepeatBrewParameter } from '../classes/parameter/repeatBrewParameter';
+import { App } from '@capacitor/app';
 
 @Injectable({
   providedIn: 'root',
@@ -39,7 +39,6 @@ export class UIUpdate {
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiLog: UILog,
     private readonly uiVersionStorage: UiVersionStorage,
-    private readonly appVersion: AppVersion,
     private readonly platform: Platform,
     private readonly modalCtrl: ModalController,
     private readonly uiFileHelper: UIFileHelper,
@@ -611,7 +610,7 @@ export class UIUpdate {
     const promise = new Promise(async (resolve, reject) => {
       let versionCode: string;
       if (this.platform.is('cordova')) {
-        versionCode = await this.appVersion.getVersionNumber();
+        versionCode = (await App.getInfo()).version;
       } else {
         // Hardcored for testing
         versionCode = '7.4.0';
