@@ -329,6 +329,11 @@ export class AppComponent implements AfterViewInit {
       // #7
       this.statusBar.show();
       this.statusBar.styleDefault();
+      if (this.platform.is('android')) {
+        try {
+          this.statusBar.styleLightContent();
+        } catch (ex) {}
+      }
 
       this.keyboard.hideFormAccessoryBar(false);
       if (environment.production === true) {

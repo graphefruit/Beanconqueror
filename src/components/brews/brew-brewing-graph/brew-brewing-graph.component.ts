@@ -1191,8 +1191,7 @@ export class BrewBrewingGraphComponent implements OnInit {
   public drawTargetWeight(_targetWeight: number) {
     if (
       this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
-        PreparationDeviceType.SANREMO_YOU ||
-      true
+      PreparationDeviceType.SANREMO_YOU
     ) {
       if (!('shapes' in this.lastChartLayout)) {
         this.lastChartLayout['shapes'] = [];
