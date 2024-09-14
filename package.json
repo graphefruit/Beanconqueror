@@ -43,6 +43,7 @@
     "@awesome-cordova-plugins/status-bar": "^6.4.0",
     "@awesome-cordova-plugins/three-dee-touch": "^6.4.0",
     "@capacitor/app": "6.0.1",
+    "@capacitor/barcode-scanner": "^1.0.1",
     "@capacitor/core": "6.1.2",
     "@capacitor/haptics": "6.0.1",
     "@capacitor/keyboard": "6.0.2",
@@ -95,7 +96,6 @@
     "@angular/language-service": "^16.2.7",
     "@capacitor/cli": "6.1.2",
     "@ionic/angular-toolkit": "^9.0.0",
-    "@red-mobile/cordova-plugin-barcodescanner": "^9.1.0",
     "@spoonconsulting/cordova-plugin-telerik-imagepicker": "github:spoonconsulting/cordova-plugin-telerik-imagepicker",
     "@types/jasmine": "~3.6.0",
     "@types/jasminewd2": "~2.0.8",
@@ -192,9 +192,6 @@
       "cordova-plugin-x-socialsharing": {
         "PHOTO_LIBRARY_ADD_USAGE_DESCRIPTION": "This app requires photo library access to function properly.",
         "PHOTO_LIBRARY_USAGE_DESCRIPTION": "This app requires photo library access to function properly."
-      },
-      "@red-mobile/cordova-plugin-barcodescanner": {
-        "ANDROIDX_LEGACY_SUPPORT_V4_VERSION": "1.0.0"
       },
       "cordova-plugin-app-version": {},
       "cordova-plugin-health": {
