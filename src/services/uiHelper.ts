@@ -1,6 +1,7 @@
 /** Core */
 import { Injectable } from '@angular/core';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
+import { Clipboard } from '@capacitor/clipboard';
 /** Ionic */
 import { Platform } from '@ionic/angular';
 /** Third party */
@@ -98,20 +99,13 @@ export class UIHelper {
     return undefined;
   }
 
-  public copyToClipboard(_text: string) {
+  public async copyToClipboard(_text: string): Promise<void> {
     try {
-      window.cordova.plugins.clipboard.copy(
-        _text,
-        () => {
-          this.uiToast.showInfoToastBottom('COPIED_TO_CLIPBOARD_SUCCESSFULLY');
-        },
-        () => {
-          this.uiToast.showInfoToastBottom(
-            'COPIED_TO_CLIPBOARD_UNSUCCESSFULLY'
-          );
-        }
-      );
-    } catch (ex) {}
+      await Clipboard.write({ string: _text });
+      this.uiToast.showInfoToastBottom('COPIED_TO_CLIPBOARD_SUCCESSFULLY');
+    } catch (error) {
+      this.uiToast.showInfoToastBottom('COPIED_TO_CLIPBOARD_UNSUCCESSFULLY');
+    }
   }
 
   public generateUUID(): string {
