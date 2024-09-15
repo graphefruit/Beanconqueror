@@ -4,6 +4,7 @@ import {
   Platform,
   ScrollDetail,
 } from '@ionic/angular';
+import { Capacitor } from '@capacitor/core';
 import { Filesystem } from '@capacitor/filesystem';
 import BeanconquerorSettingsDummy from '../../assets/BeanconquerorTestData.json';
 import { Bean } from '../../classes/bean/bean';
@@ -75,7 +76,6 @@ import { PreparationDeviceType } from '../../classes/preparationDevice';
 import { BrewFlow, IBrewWaterFlow } from '../../classes/brew/brewFlow';
 
 declare var cordova: any;
-declare var device: any;
 
 declare var window: any;
 declare var FilePicker;
@@ -1413,13 +1413,15 @@ export class SettingsPage {
     }
     let storageLocation: string = '';
 
-    switch (device.platform) {
-      case 'Android':
+    switch (Capacitor.getPlatform()) {
+      case 'android':
         storageLocation = cordova.file.externalDataDirectory;
         break;
-      case 'iOS':
+      case 'ios':
         storageLocation = cordova.file.documentsDirectory;
         break;
+      default:
+        throw new Error('Unsupported platform, this should never be reached.');
     }
 
     try {
@@ -1494,13 +1496,15 @@ export class SettingsPage {
     }
     let storageLocation: string = '';
 
-    switch (device.platform) {
-      case 'Android':
+    switch (Capacitor.getPlatform()) {
+      case 'android':
         storageLocation = cordova.file.externalDataDirectory;
         break;
-      case 'iOS':
+      case 'ios':
         storageLocation = cordova.file.documentsDirectory;
         break;
+      default:
+        throw new Error('Unsupported platform, this should never be reached.');
     }
 
     try {
@@ -1632,13 +1636,15 @@ export class SettingsPage {
     }
     let storageLocation: string = '';
 
-    switch (device.platform) {
-      case 'Android':
+    switch (Capacitor.getPlatform()) {
+      case 'android':
         storageLocation = _importPath;
         break;
-      case 'iOS':
+      case 'ios':
         storageLocation = cordova.file.documentsDirectory;
         break;
+      default:
+        throw new Error('Unsupported platform, this should never be reached.');
     }
 
     try {
@@ -1723,13 +1729,15 @@ export class SettingsPage {
     }
     let storageLocation: string = '';
 
-    switch (device.platform) {
-      case 'Android':
+    switch (Capacitor.getPlatform()) {
+      case 'android':
         storageLocation = _importPath;
         break;
-      case 'iOS':
+      case 'ios':
         storageLocation = cordova.file.documentsDirectory;
         break;
+      default:
+        throw new Error('Unsupported platform, this should never be reached.');
     }
 
     try {

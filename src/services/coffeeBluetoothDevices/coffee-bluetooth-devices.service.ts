@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
 import { BluetoothScale } from 'src/classes/devices/bluetoothDevice';
 import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
 import { ETITemperature } from 'src/classes/devices/etiTemperature';
@@ -43,7 +44,6 @@ import { MeaterThermometer } from 'src/classes/devices/meaterThermometer';
 import { CombustionThermometer } from '../../classes/devices/combustionThermometer';
 import { ArgosThermometer } from '../../classes/devices/argosThermometer';
 
-declare var device: any;
 declare var ble: any;
 declare var cordova: any;
 
@@ -83,12 +83,7 @@ export class CoffeeBluetoothDevicesService {
     this.failed = false;
     this.ready = true;
 
-    if (
-      typeof cordova !== 'undefined' &&
-      typeof device !== 'undefined' &&
-      device !== null &&
-      device.platform === 'Android'
-    ) {
+    if (Capacitor.getPlatform() === 'android') {
       this.androidPermissions = cordova.plugins.permissions;
     }
   }
@@ -100,7 +95,7 @@ export class CoffeeBluetoothDevicesService {
   public async hasLocationPermission(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       try {
-        if (device !== null && device.platform === 'Android') {
+        if (Capacitor.getPlatform() === 'android') {
           this.androidPermissions.hasPermission(
             this.androidPermissions.ACCESS_FINE_LOCATION,
             (_status: any) => {
@@ -126,7 +121,7 @@ export class CoffeeBluetoothDevicesService {
   public async hasBluetoothPermission(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       try {
-        if (device !== null && device.platform === 'Android') {
+        if (Capacitor.getPlatform() === 'android') {
           this.androidPermissions.hasPermission(
             this.androidPermissions.BLUETOOTH_ADMIN,
             (_status: any) => {
@@ -218,7 +213,7 @@ export class CoffeeBluetoothDevicesService {
     let searchOptions: any = {
       reportDuplicates: true,
     };
-    if (device !== null && device.platform === 'Android') {
+    if (Capacitor.getPlatform() === 'android') {
       searchOptions = {
         reportDuplicates: true,
       };
@@ -1301,7 +1296,7 @@ export class CoffeeBluetoothDevicesService {
 
           const settings = this.uiStettingsStorage.getSettings();
           if (settings.scale_id && settings.scale_id === deviceId) {
-            if (device !== null && device.platform === 'Android') {
+            if (Capacitor.getPlatform() === 'android') {
               await this.findDeviceWithDirectId(deviceId, 6000);
               // Give it a short delay before reconnect
               await new Promise((resolve) => {
@@ -1309,7 +1304,7 @@ export class CoffeeBluetoothDevicesService {
                   resolve(undefined);
                 }, 500);
               });
-            } else if (device !== null && device.platform === 'iOS') {
+            } else if (Capacitor.getPlatform() === 'ios') {
               if (settings?.scale_type === ScaleType.LUNAR) {
                 await this.enableIOSBluetooth();
                 await this.findDeviceWithDirectId(deviceId, 6000);
@@ -1404,7 +1399,7 @@ export class CoffeeBluetoothDevicesService {
 
           const settings = this.uiStettingsStorage.getSettings();
           if (settings.pressure_id && settings.pressure_id === deviceId) {
-            if (device !== null && device.platform === 'Android') {
+            if (Capacitor.getPlatform() === 'android') {
               await this.findDeviceWithDirectId(deviceId, 6000);
               // Give it a short delay before reconnect
               await new Promise((resolve) => {
@@ -1571,7 +1566,7 @@ export class CoffeeBluetoothDevicesService {
 
   private async __scanAutoConnectScaleIOS() {
     return new Promise<boolean>(async (resolve, reject) => {
-      if (device !== null && device.platform === 'iOS') {
+      if (Capacitor.getPlatform() === 'ios') {
         // We just need to scan, then we can auto connect for iOS (lol)
         this.logger.log('Try to find scale on iOS');
         const deviceScale = await this.tryToFindScale();
@@ -1598,7 +1593,7 @@ export class CoffeeBluetoothDevicesService {
 
   private async __scanAutoConnectPressureDeviceIOS() {
     return new Promise<boolean>(async (resolve, reject) => {
-      if (device !== null && device.platform === 'iOS') {
+      if (Capacitor.getPlatform() === 'ios') {
         // We just need to scan, then we can auto connect for iOS (lol)
         this.logger.log('Try to find pressure on iOS');
         const devicePressure = await this.tryToFindPressureDevice();
@@ -1625,7 +1620,7 @@ export class CoffeeBluetoothDevicesService {
 
   private async __scanAutoConnectTemperatureDeviceIOS() {
     return new Promise<boolean>(async (resolve, reject) => {
-      if (device !== null && device.platform === 'iOS') {
+      if (Capacitor.getPlatform() === 'ios') {
         // We just need to scan, then we can auto connect for iOS (lol)
         this.logger.log('Try to find temperature on iOS');
         const deviceTemperature = await this.tryToFindTemperatureDevice();
@@ -1652,7 +1647,7 @@ export class CoffeeBluetoothDevicesService {
 
   private async __scanAutoConnectRefractometerDeviceIOS() {
     return new Promise<boolean>(async (resolve, reject) => {
-      if (device !== null && device.platform === 'iOS') {
+      if (Capacitor.getPlatform() === 'ios') {
         // We just need to scan, then we can auto connect for iOS (lol)
         this.logger.log('Try to find refractometer on iOS');
         const deviceRefractometer = await this.tryToFindRefractometerDevice();

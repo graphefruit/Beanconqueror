@@ -14,9 +14,6 @@ import { UIFileHelper } from './uiFileHelper';
 import { UILog } from './uiLog';
 import { UIAlert } from './uiAlert';
 
-declare var cordova: any;
-declare var device: any;
-declare var window: any;
 import { cloneDeep } from 'lodash';
 import { UIToast } from './uiToast';
 import { UISettingsStorage } from './uiSettingsStorage';
