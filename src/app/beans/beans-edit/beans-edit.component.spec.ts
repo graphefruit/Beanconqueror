@@ -9,7 +9,6 @@ import { IonicModule, ModalController } from '@ionic/angular';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
-import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Router } from '@angular/router';
 import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
 import { UIBeanStorage } from '../../../services/uiBeanStorage';
@@ -40,7 +39,6 @@ describe('BeansEditComponent', () => {
         { provide: Storage },
         { provide: File },
         { provide: ImagePicker },
-        { provide: AndroidPermissions },
         { provide: UIAnalytics, useValue: {} },
         { provide: UIBeanStorage, useValue: {} },
         { provide: UIBeanHelper, useValue: {} },

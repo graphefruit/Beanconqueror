@@ -9,7 +9,6 @@ import { File } from '@awesome-cordova-plugins/file/ngx';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { UIHelper } from '../uiHelper';
-import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 
 describe('AndroidPlatformService', () => {
   let service: AndroidPlatformService;
@@ -37,9 +36,6 @@ describe('AndroidPlatformService', () => {
         {
           provide: UIHelper,
           useClass: UIHelperMock,
-        },
-        {
-          provide: AndroidPermissions,
         },
       ],
     });

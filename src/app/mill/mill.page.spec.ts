@@ -10,7 +10,6 @@ import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { NavParamsMock } from '../../classes/mock/NavParamsMock';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
-import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Router } from '@angular/router';
 import { UIHelper } from '../../services/uiHelper';
 import { UIHelperMock } from '../../classes/mock';
@@ -37,7 +36,6 @@ describe('MillPage', () => {
         { provide: Storage },
         { provide: File },
         { provide: ImagePicker },
-        { provide: AndroidPermissions },
         { provide: UIHelper, useClass: UIHelperMock },
         { provide: Router },
       ],

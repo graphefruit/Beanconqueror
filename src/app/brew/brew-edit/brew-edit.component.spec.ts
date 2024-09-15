@@ -10,7 +10,6 @@ import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { NavParamsMock } from '../../../classes/mock';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
-import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Router } from '@angular/router';
 import { AsyncImageComponent } from '../../../components/async-image/async-image.component';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
@@ -42,7 +41,6 @@ describe('BrewEditComponent', () => {
         { provide: Storage },
         { provide: File },
         { provide: ImagePicker },
-        { provide: AndroidPermissions },
         { provide: SocialSharing },
         { provide: Router },
         { provide: FileTransfer },

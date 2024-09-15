@@ -10,7 +10,6 @@ import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { NavParamsMock } from '../../../classes/mock/NavParamsMock';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
-import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Router } from '@angular/router';
 import { PipesModule } from 'src/pipes/pipes.module';
 
@@ -35,7 +34,6 @@ describe('ThanksComponent', () => {
         { provide: Storage },
         { provide: File },
         { provide: ImagePicker },
-        { provide: AndroidPermissions },
 
         { provide: Router },
       ],

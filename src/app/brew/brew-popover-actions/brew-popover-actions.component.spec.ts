@@ -10,7 +10,6 @@ import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { NavParamsMock } from '../../../classes/mock/NavParamsMock';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
-import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { UIHelperMock } from '../../../classes/mock';
 import { UIHelper } from '../../../services/uiHelper';
 import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
@@ -39,7 +38,6 @@ describe('BrewPopoverActionsComponent', () => {
         { provide: Storage },
         { provide: File },
         { provide: ImagePicker },
-        { provide: AndroidPermissions },
         { provide: UIHelper, useClass: UIHelperMock },
         { provide: UIPreparationStorage },
       ],
