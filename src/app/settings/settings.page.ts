@@ -6,6 +6,7 @@ import {
 } from '@ionic/angular';
 import { Capacitor } from '@capacitor/core';
 import { Filesystem } from '@capacitor/filesystem';
+import { Geolocation } from '@capacitor/geolocation';
 import BeanconquerorSettingsDummy from '../../assets/BeanconquerorTestData.json';
 import { Bean } from '../../classes/bean/bean';
 
@@ -781,19 +782,20 @@ export class SettingsPage {
       return;
     }
 
-    const permission = this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION;
     try {
-      const currentStatus = await this.androidPermissions.checkPermission(
-        permission
-      );
-      if (currentStatus.hasPermission) {
+      const currentPermissions = await Geolocation.checkPermissions();
+      if (currentPermissions.location === 'granted') {
         this.uiLog.info('Location permission is already granted.');
         return;
       }
-      const requestResult = await this.androidPermissions.requestPermission(
-        permission
-      );
-      if (!requestResult.hasPermission) {
+      // TODO Capacitor migration: We should also handle the other possible
+      // outcomes, see https://capacitorjs.com/docs/plugins/web#aliases
+      // At the very least, we should display a message to the user.
+
+      const requestResult = await Geolocation.requestPermissions({
+        permissions: ['location'],
+      });
+      if (requestResult.location !== 'granted') {
         throw new Error(
           'Permission request did not work, maybe the user declined?'
         );

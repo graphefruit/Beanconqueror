@@ -18,7 +18,6 @@ import { UIPreparationStorage } from '../../../services/uiPreparationStorage';
 import { UIBrewStorage } from '../../../services/uiBrewStorage';
 import { UISettingsStorage } from '../../../services/uiSettingsStorage';
 import { UIMillStorage } from '../../../services/uiMillStorage';
-import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx';
 import { UIBrewHelper } from '../../../services/uiBrewHelper';
 import { Insomnia } from '@awesome-cordova-plugins/insomnia/ngx';
 import { BrewTrackingService } from '../../../services/brewTracking/brew-tracking.service';
@@ -91,7 +90,6 @@ describe('BrewAddComponent', () => {
         { provide: UIAnalytics, useValue: {} },
         { provide: BrewTrackingService, useValue: {} },
         { provide: VisualizerService, useValue: {} },
-        Geolocation,
         Insomnia,
         { provide: Router },
         { provide: SocialSharing },

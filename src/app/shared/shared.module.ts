@@ -77,7 +77,6 @@ import { PreparationOverlayDirective } from '../../directive/preparation-overlay
 import { DisableDoubleClickDirective } from '../../directive/disable-double-click.directive';
 import { NgxStarsModule } from 'ngx-stars';
 import { BrewCuppingComponent } from '../brew/brew-cupping/brew-cupping.component';
-import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx';
 import { UpdatePopoverComponent } from '../../popover/update-popover/update-popover.component';
 import { PreparationCustomParametersComponent } from '../preparation/preparation-custom-parameters/preparation-custom-parameters.component';
 import { DefaultCustomParameterComponent } from '../../components/parameter/default-custom-parameter/default-custom-parameter.component';
@@ -392,7 +391,6 @@ import { BeanPopoverListComponent } from '../beans/bean-popover-list/bean-popove
     AndroidPermissions,
     InAppBrowser,
     Globalization,
-    Geolocation,
     Insomnia,
     Deeplinks,
     FileTransfer,
