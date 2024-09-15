@@ -33,7 +33,6 @@
     "@awesome-cordova-plugins/image-picker": "^6.4.0",
     "@awesome-cordova-plugins/in-app-browser": "^6.4.0",
     "@awesome-cordova-plugins/insomnia": "^6.4.0",
-    "@awesome-cordova-plugins/keyboard": "^6.4.0",
     "@awesome-cordova-plugins/native-storage": "^6.6.0",
     "@awesome-cordova-plugins/screen-orientation": "^6.4.0",
     "@awesome-cordova-plugins/social-sharing": "^6.4.0",
@@ -146,7 +145,6 @@
       "cordova-plugin-filepicker": {},
       "cordova-plugin-3dtouch": {},
       "cordova-plugin-globalization": {},
-      "cordova-plugin-ionic-keyboard": {},
       "cordova-sqlite-storage": {},
       "cordova-plugin-insomnia": {},
       "ionic-plugin-deeplinks": {

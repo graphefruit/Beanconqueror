@@ -8,9 +8,9 @@ import { Router } from '@angular/router';
 import { App } from '@capacitor/app';
 import { Device } from '@capacitor/device';
 import { Animation, StatusBar, Style } from '@capacitor/status-bar';
+import { Keyboard } from '@capacitor/keyboard';
 
 import { Globalization } from '@awesome-cordova-plugins/globalization/ngx';
-import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
 import {
   ThreeDeeTouch,
   ThreeDeeTouchQuickAction,
@@ -223,7 +223,6 @@ export class AppComponent implements AfterViewInit {
     private readonly uiBrewHelper: UIBrewHelper,
     private readonly menuCtrl: MenuController,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly keyboard: Keyboard,
     private readonly threeDeeTouch: ThreeDeeTouch,
     private readonly modalCtrl: ModalController,
     private readonly uiHelper: UIHelper,
@@ -330,7 +329,7 @@ export class AppComponent implements AfterViewInit {
         : Style.Default;
       await StatusBar.setStyle({ style: statusBarStyle });
 
-      this.keyboard.hideFormAccessoryBar(false);
+      Keyboard.setAccessoryBarVisible({ isVisible: true });
       if (environment.production === true) {
         // When we're in cordova, disable the log messages
         this.uiLog.disable();

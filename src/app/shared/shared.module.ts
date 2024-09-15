@@ -31,7 +31,6 @@ import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
 import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 
-import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
 import { ThreeDeeTouch } from '@awesome-cordova-plugins/three-dee-touch/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
@@ -389,7 +388,6 @@ import { BeanPopoverListComponent } from '../beans/bean-popover-list/bean-popove
     FilePath,
 
     SocialSharing,
-    Keyboard,
     ThreeDeeTouch,
     ImagePicker,
     AndroidPermissions,
