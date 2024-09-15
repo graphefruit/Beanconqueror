@@ -774,26 +774,32 @@ export class SettingsPage {
     }
   }
 
-  public checkCoordinates() {
-    if (this.platform.is('android')) {
-      // Request permission,
-      this.androidPermissions
-        .checkPermission(
-          this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION
-        )
-        .then(
-          (_status) => {
-            this.androidPermissions
-              .requestPermission(
-                this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION
-              )
-              .then(
-                (_status) => {},
-                () => {}
-              );
-          },
-          () => {}
+  public async checkCoordinates() {
+    // Only ask for permissions when the geolocation feature is turned on and
+    // the current platform is android.
+    if (!this.settings.track_brew_coordinates || !this.platform.is('android')) {
+      return;
+    }
+
+    const permission = this.androidPermissions.PERMISSION.ACCESS_FINE_LOCATION;
+    try {
+      const currentStatus = await this.androidPermissions.checkPermission(
+        permission
+      );
+      if (currentStatus.hasPermission) {
+        this.uiLog.info('Location permission is already granted.');
+        return;
+      }
+      const requestResult = await this.androidPermissions.requestPermission(
+        permission
+      );
+      if (!requestResult.hasPermission) {
+        throw new Error(
+          'Permission request did not work, maybe the user declined?'
         );
+      }
+    } catch (error) {
+      this.uiLog.warn('Error obtaining location permission:', error);
     }
   }
 

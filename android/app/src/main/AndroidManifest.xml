@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<manifest xmlns:tools="http://schemas.android.com/tools"
-  xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools">
 
   <!-- Permissions -->
   <uses-permission android:name="android.permission.INTERNET" />
+  <!-- Capacitor Geolocation plugin / cordova-plugin-geolocation -->
+  <!-- (see https://capacitorjs.com/docs/apis/geolocation#android) -->
+  <!-- Removing the maxSdkVersion is required, as otherwise the manifest merging algorithm
+       will add that attribute from the Bluetooth LE plugin. -->
+  <uses-permission
+    android:name="android.permission.ACCESS_COARSE_LOCATION"
+    tools:remove="android:maxSdkVersion" />
+  <uses-permission
+    android:name="android.permission.ACCESS_FINE_LOCATION"
+    tools:remove="android:maxSdkVersion" />
+  <!-- Capacitor Geolocation plugin / cordova-plugin-geolocation end -->
 
   <application
     android:allowBackup="true"
