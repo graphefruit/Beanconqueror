@@ -33,7 +33,6 @@ import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 
 import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
 import { ThreeDeeTouch } from '@awesome-cordova-plugins/three-dee-touch/ngx';
-import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { BeansPage } from '../beans/beans.page';
@@ -392,7 +391,6 @@ import { BeanPopoverListComponent } from '../beans/bean-popover-list/bean-popove
     SocialSharing,
     Keyboard,
     ThreeDeeTouch,
-    Camera,
     ImagePicker,
     AndroidPermissions,
     InAppBrowser,

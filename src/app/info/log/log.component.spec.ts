@@ -9,7 +9,6 @@ import { IonicModule, ModalController, NavParams } from '@ionic/angular';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { NavParamsMock, UIHelperMock } from '../../../classes/mock';
 import { File } from '@awesome-cordova-plugins/file/ngx';
-import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { Router } from '@angular/router';
@@ -38,7 +37,6 @@ describe('LogComponent', () => {
         { provide: Storage },
         { provide: File },
         { provide: UIHelper, useClass: UIHelperMock },
-        { provide: Camera },
         { provide: ImagePicker },
         { provide: AndroidPermissions },
         { provide: SocialSharing },

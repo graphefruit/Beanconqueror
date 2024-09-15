@@ -74,12 +74,12 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
         // TAKE
         this.uiImage.takePhoto().then(
           (_path) => {
-            this.data.attachments.push(_path.toString());
+            this.data.attachments.push(_path);
             this.emitChanges();
           },
           (_error) => {
             this.uiAlert.showMessage(
-              JSON.stringify(_error),
+              _error.toString(),
               this.translate.instant('ERROR_OCCURED')
             );
           }

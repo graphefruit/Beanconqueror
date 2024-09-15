@@ -341,7 +341,7 @@ export class UIFileHelper extends InstanceClass {
     _fileName: string,
     _fileExtension: string,
     _base64: string
-  ): Promise<any> {
+  ): Promise<string> {
     return new Promise(async (resolve, reject) => {
       this.generateFileName(
         this.getFileDirectory(),

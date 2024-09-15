@@ -6,7 +6,6 @@ import { Storage } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { UIHelper } from '../../services/uiHelper';
 import { UIHelperMock, UIImageMock } from '../../classes/mock';
-import { Camera } from '@awesome-cordova-plugins/camera/ngx';
 import { UIImage } from '../../services/uiImage';
 import { RoastingMachine } from '../../classes/roasting-machine/roasting-machine';
 
@@ -25,9 +24,6 @@ describe('RoastingMachineInformationCardComponent', () => {
         {
           provide: UIHelper,
           useClass: UIHelperMock,
-        },
-        {
-          provide: Camera,
         },
         {
           provide: UIImage,

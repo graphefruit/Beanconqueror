@@ -1,8 +1,12 @@
 /** Core */
 import { Injectable } from '@angular/core';
+import {
+  Camera,
+  CameraDirection,
+  CameraResultType,
+  CameraSource,
+} from '@capacitor/camera';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
-/** Ionic native  */
-import { Camera, CameraOptions } from '@awesome-cordova-plugins/camera/ngx';
 import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
 /** Ionic */
 import { AlertController, ModalController, Platform } from '@ionic/angular';
@@ -29,7 +33,6 @@ import { UILog } from './uiLog';
 })
 export class UIImage {
   constructor(
-    private readonly camera: Camera,
     private readonly imagePicker: ImagePicker,
     private readonly alertController: AlertController,
     private readonly platform: Platform,
@@ -44,66 +47,27 @@ export class UIImage {
     private readonly uiLog: UILog
   ) {}
 
-  private getImageQuality() {
+  private getImageQuality(): number {
     const settings: Settings = this.uiSettingsStorage.getSettings();
     return settings.image_quality;
   }
 
-  public async takePhoto(): Promise<any> {
-    const promise = new Promise((resolve, reject) => {
-      // const isIos: boolean = this.platform.is('ios');
-      const options: CameraOptions = {
-        quality: this.getImageQuality(),
-        destinationType: this.camera.DestinationType.DATA_URL,
-        encodingType: this.camera.EncodingType.JPEG,
-        mediaType: this.camera.MediaType.PICTURE,
-        sourceType: this.camera.PictureSourceType.CAMERA,
-        saveToPhotoAlbum: false,
-        correctOrientation: true,
-        cameraDirection: this.camera.Direction.BACK,
-      };
-
-      this.camera.getPicture(options).then(
-        (imageData) => {
-          const imageStr: string = `data:image/jpeg;base64,${imageData}`;
-          this.uiFileHelper
-            .saveBase64File('beanconqueror_image', '.jpg', imageStr)
-            .then(
-              (_newURL) => {
-                // const filePath = _newURL.replace(/^file:\/\//, '');
-                resolve(_newURL);
-                // this.__cleanupCamera();
-              },
-              (_error) => {
-                reject(_error);
-              }
-            );
-        },
-        (_error: any) => {
-          reject(_error);
-        }
-      );
+  public async takePhoto(): Promise<string> {
+    const imageData = await Camera.getPhoto({
+      correctOrientation: true,
+      direction: CameraDirection.Rear,
+      quality: this.getImageQuality(),
+      resultType: CameraResultType.DataUrl, // starts with 'data:image/jpeg;base64,'
+      saveToGallery: false,
+      source: CameraSource.Camera,
     });
 
-    return promise;
-  }
-
-  private __cleanupCamera() {
-    try {
-      const isCordova: boolean = this.platform.is('cordova');
-      const isIOS: boolean = this.platform.is('ios');
-      if (isCordova && isIOS) {
-        this.uiLog.log('Cleanup camera');
-        this.camera.cleanup().then(
-          () => {
-            this.uiLog.log('Cleanup camera - sucessfully');
-          },
-          () => {
-            this.uiLog.error('Cleanup camera - error');
-          }
-        );
-      }
-    } catch (ex) {}
+    const _newURL = await this.uiFileHelper.saveBase64File(
+      'beanconqueror_image',
+      '.jpg',
+      imageData.dataUrl
+    );
+    return _newURL;
   }
 
   public async choosePhoto(): Promise<any> {
