@@ -4,10 +4,13 @@ const config: CapacitorConfig = {
   appId: 'com.beanconqueror.app',
   appName: 'Beanconqueror',
   webDir: 'www',
-  // TODO Capacitor migration: This might be required to retain local storage on android
-  // server: {
-  //   androidScheme: "http"
-  // },
+  server: {
+    // Using this hostname and scheme is required to retain access
+    // to the __baristaDB on Android when updating from Cordova builds
+    hostname: 'beanconqueror.com',
+    androidScheme: 'https',
+    // TODO Capacitor migration: Find out the correct settings to retain data on iOS
+  },
   cordova: {
     preferences: {
       ScrollEnabled: 'false',
