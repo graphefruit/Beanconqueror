@@ -176,19 +176,6 @@ export class SanremoYOUDevice extends PreparationDevice {
         urlAdding = '/api/action/p3';
       }
 
-      if (_mode !== SanremoYOUMode.MANUAL_CONTROLLING) {
-        await new Promise((resolveIntern) => {
-          this.fetchRuntimeData(() => {
-            resolveIntern(undefined);
-          });
-        });
-        if (this.statusPhase === 0) {
-          //Machine has already stoped, skipp.
-          reject(undefined);
-          return;
-        }
-      }
-
       cordova.plugin.http.sendRequest(
         this.getPreparation().connectedPreparationDevice.url + urlAdding,
         options,

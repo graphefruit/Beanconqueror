@@ -1191,8 +1191,7 @@ export class BrewBrewingGraphComponent implements OnInit {
   public drawTargetWeight(_targetWeight: number) {
     if (
       this.brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() ===
-        PreparationDeviceType.SANREMO_YOU ||
-      true
+      PreparationDeviceType.SANREMO_YOU
     ) {
       if (!('shapes' in this.lastChartLayout)) {
         this.lastChartLayout['shapes'] = [];
@@ -2837,9 +2836,9 @@ export class BrewBrewingGraphComponent implements OnInit {
            * We try to match also turbo-shots which are like 7-8 grams.
            * Scales with just 3 values per second would be like 7 / 3 values per second = 2.33g increase each tick.
            * So we won't get jump from like 1 to 10 gram, then to like 40 grams
-           * Update 26.08.24 - We change from 5 to 7, because we had one shot where the value jumped from 0 to 5,5 and we didn't track anymore
+           * Update 26.08.24 - We change from 5 to 10, because we had one shot where the value jumped from 0 to 5,5 and we didn't track anymore
            */
-          const plausibleEspressoWeightIncreaseBound: number = 7;
+          const plausibleEspressoWeightIncreaseBound: number = 10;
           risingFactorOK =
             entryBeforeVal + plausibleEspressoWeightIncreaseBound >= weight;
 

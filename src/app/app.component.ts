@@ -7,7 +7,7 @@ import {
 import { Router } from '@angular/router';
 import { App } from '@capacitor/app';
 import { Device } from '@capacitor/device';
-import { Animation, StatusBar } from '@capacitor/status-bar';
+import { Animation, StatusBar, Style } from '@capacitor/status-bar';
 
 import { Globalization } from '@awesome-cordova-plugins/globalization/ngx';
 import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
@@ -324,7 +324,11 @@ export class AppComponent implements AfterViewInit {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       // #7
-      StatusBar.show({ animation: Animation.None });
+      await StatusBar.show({ animation: Animation.None });
+      const statusBarStyle = this.platform.is('android')
+        ? Style.Light
+        : Style.Default;
+      await StatusBar.setStyle({ style: statusBarStyle });
 
       this.keyboard.hideFormAccessoryBar(false);
       if (environment.production === true) {
