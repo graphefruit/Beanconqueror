@@ -45,7 +45,6 @@ import { UIExcel } from '../../../services/uiExcel';
 
 import { UIFileHelper } from '../../../services/uiFileHelper';
 import { BrewFlowComponent } from '../../../app/brew/brew-flow/brew-flow.component';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { PreparationTool } from '../../../classes/preparation/preparationTool';
 
 import { UIAlert } from '../../../services/uiAlert';
@@ -154,7 +153,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     private readonly uiAnalytics: UIAnalytics,
     private readonly uiExcel: UIExcel,
     private readonly uiFileHelper: UIFileHelper,
-    private readonly screenOrientation: ScreenOrientation,
     private readonly uiAlert: UIAlert,
     private readonly uiPreparationHelper: UIPreparationHelper,
     private readonly ngZone: NgZone,
@@ -351,13 +349,6 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
       return;
     }
     this.maximizeFlowGraphIsShown = true;
-
-    let actualOrientation;
-    try {
-      if (this.platform.is('cordova')) {
-        actualOrientation = this.screenOrientation.type;
-      }
-    } catch (ex) {}
 
     const modal = await this.modalController.create({
       component: BrewFlowComponent,

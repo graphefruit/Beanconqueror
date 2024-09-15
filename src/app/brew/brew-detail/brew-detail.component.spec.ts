@@ -15,7 +15,6 @@ import { Router } from '@angular/router';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { PipesModule } from 'src/pipes/pipes.module';
 
 describe('BrewDetailComponent', () => {
@@ -44,7 +43,6 @@ describe('BrewDetailComponent', () => {
         { provide: SocialSharing },
         { provide: Router },
         { provide: FileTransfer },
-        { provide: ScreenOrientation },
       ],
     }).compileComponents();
   }));

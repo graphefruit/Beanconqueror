@@ -34,7 +34,6 @@
     "@awesome-cordova-plugins/in-app-browser": "^6.4.0",
     "@awesome-cordova-plugins/insomnia": "^6.4.0",
     "@awesome-cordova-plugins/native-storage": "^6.6.0",
-    "@awesome-cordova-plugins/screen-orientation": "^6.4.0",
     "@awesome-cordova-plugins/social-sharing": "^6.4.0",
     "@awesome-cordova-plugins/three-dee-touch": "^6.4.0",
     "@capacitor/android": "6.1.2",
@@ -111,7 +110,6 @@
     "cordova-plugin-health": "^2.1.0",
     "cordova-plugin-inappbrowser": "^6.0.0",
     "cordova-plugin-insomnia": "^4.3.0",
-    "cordova-plugin-screen-orientation": "github:apache/cordova-plugin-screen-orientation",
     "cordova-plugin-x-socialsharing": "^6.0.4",
     "cordova-sqlite-storage": "^5.1.0",
     "elliptic": ">=6.5.4",
@@ -188,7 +186,6 @@
       "cordova-plugin-geolocation": {
         "GPS_REQUIRED": "false"
       },
-      "cordova-plugin-screen-orientation": {},
       "cordova-plugin-nativestorage": {},
       "cordova-plugin-androidx": {},
       "cordova-plugin-androidx-adapter": {},

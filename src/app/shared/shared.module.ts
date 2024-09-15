@@ -143,7 +143,6 @@ import { PreparationEditToolComponent } from '../preparation/preparation-edit-to
 import { ListViewParameterComponent } from '../brew-parameter/list-view-parameter/list-view-parameter.component';
 import { ListViewCustomParameterComponent } from '../../components/parameter/list-view-custom-parameter/list-view-custom-parameter.component';
 import { BrewFlowComponent } from '../brew/brew-flow/brew-flow.component';
-import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { BeanFilterComponent } from '../beans/bean-filter/bean-filter.component';
 import { ChooseDateOverlayDirective } from '../../directive/choose-date.directive';
 import { BeanPopoverAddComponent } from '../beans/bean-popover-add/bean-popover-add.component';
@@ -397,7 +396,6 @@ import { BeanPopoverListComponent } from '../beans/bean-popover-list/bean-popove
     Insomnia,
     Deeplinks,
     FileTransfer,
-    ScreenOrientation,
   ],
   exports: [
     SettingsPage,
