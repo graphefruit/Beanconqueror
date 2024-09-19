@@ -595,7 +595,7 @@
               </ion-label>
               <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
             </ion-item>
-            <ion-item *ngIf="settings.scale_id !== '' && isScaleConnected() === false" (click)="retryConnectScale()"
+            <ion-item *ngIf="false" (click)="retryConnectScale()"
               tappable button>
               <ion-label>
                 <h2>{{"RETRY_CONNECT" | translate}}</h2>
@@ -932,7 +932,7 @@
               </ion-label>
               <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
             </ion-item>
-            <ion-item *ngIf="settings.pressure_id !== '' && isPressureDeviceConnected() === false"
+            <ion-item *ngIf="false"
               (click)="retryConnectPressureDevice()" tappable button>
               <ion-label>
                 <h2>{{"RETRY_CONNECT" | translate}}</h2>
@@ -1029,7 +1029,7 @@
               </ion-label>
               <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
             </ion-item>
-            <ion-item *ngIf="settings.temperature_id !== '' && isTemperatureDeviceConnected() === false"
+            <ion-item *ngIf="false"
               (click)="retryConnectTemperatureDevice()" tappable button>
               <ion-label>
                 <h2>{{"RETRY_CONNECT" | translate}}</h2>
@@ -1098,7 +1098,7 @@
               </ion-label>
               <ion-icon name="bluetooth-outline" slot="end"></ion-icon>
             </ion-item>
-            <ion-item *ngIf="settings.refractometer_id !== '' && isRefractometerDeviceConnected() === false"
+            <ion-item *ngIf="false"
               (click)="retryConnectRefractometerDevice()" tappable button>
               <ion-label>
                 <h2>{{"RETRY_CONNECT" | translate}}</h2>

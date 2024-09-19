@@ -29,6 +29,13 @@ import { ArgosThermometer } from './argosThermometer';
 export { BluetoothScale, SCALE_TIMER_COMMAND } from './bluetoothDevice';
 export * from './common';
 
+export enum BluetoothTypes {
+  SCALE = 'SCALE',
+  PRESSURE = 'PRESSURE',
+  TEMPERATURE = 'TEMPERATURE',
+  TDS = 'TDS',
+}
+
 export enum ScaleType {
   DECENT = 'DECENT',
   LUNAR = 'LUNAR',

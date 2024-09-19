@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title class="ion-text-center ion-margin-top">{{"SEARCH_BLUETOOTH_DEVICES" | translate}}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="research()" tappable fill="clear">
+        <ion-icon class="ion-color-accent" name="refresh-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+</ion-header>
+<ion-content>
+  <ng-container *ngIf='foundDevices.length > 0'>
+  <ion-card>
+    <ion-card-content>
+      <ion-radio-group [(ngModel)]="deviceSelection" (ngModelChange)='checkChanges()'>
+        <ion-item lines='none' *ngFor='let device of foundDevices' tappable>
+          <ion-radio justify='start' label-placement='end' value='{{device.id}}'>
+            <ng-container *ngIf='device.name'>{{device.name}}</ng-container>
+            <ng-container *ngIf='!device.name'>?&nbsp;&nbsp;{{device.type}}</ng-container>
+          </ion-radio>
+        </ion-item>
+      </ion-radio-group>
+    </ion-card-content>
+  </ion-card>
+  </ng-container>
+</ion-content>
+<ion-footer class="ion-no-border">
+
+  <ion-row class="ion-padding-top">
+    <ion-col size="6">
+      <ion-button (click)="close()" fill="outline" color="accent" expand="block" tappable>{{"CLOSE  " | translate}}</ion-button>
+    </ion-col>
+    <ion-col size="6">
+      <ion-button (click)="connect()" [disabled]='deviceSelection==="" || deviceSelection === undefined' color="accent" expand="block" tappable>{{"CONNECT" | translate}}</ion-button>
+    </ion-col>
+  </ion-row>
+
+
+</ion-footer>

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { BluetoothScale } from 'src/classes/devices/bluetoothDevice';
 import { TemperatureDevice } from 'src/classes/devices/temperatureBluetoothDevice';
 import { ETITemperature } from 'src/classes/devices/etiTemperature';
@@ -7,14 +7,15 @@ import { PressureDevice } from 'src/classes/devices/pressureBluetoothDevice';
 import { PrsPressure } from 'src/classes/devices/prsPressure';
 import { EurekaPrecisaScale } from '../../classes/devices/eurekaPrecisaScale';
 import {
+  BluetoothTypes,
   makeDevice,
   makePressureDevice,
-  makeTemperatureDevice,
   makeRefractometerDevice,
+  makeTemperatureDevice,
   PressureType,
+  RefractometerType,
   ScaleType,
   TemperatureType,
-  RefractometerType,
 } from '../../classes/devices';
 import { DecentScale } from '../../classes/devices/decentScale';
 import { TransducerDirectPressure } from '../../classes/devices/transducerDirectPressure';
@@ -70,6 +71,7 @@ export class CoffeeBluetoothDevicesService {
   public ready: boolean;
   private readonly logger: Logger;
   private eventSubject = new Subject<CoffeeBluetoothServiceEvent>();
+  private deviceFoundSubject = new Subject<any>();
   private androidPermissions: any = null;
 
   private scanBluetoothTimeout: any = null;
@@ -95,6 +97,10 @@ export class CoffeeBluetoothDevicesService {
 
   public attachOnEvent(): Observable<CoffeeBluetoothServiceEvent> {
     return this.eventSubject.asObservable();
+  }
+
+  public attachOnDeviceFoundEvent(): Observable<any> {
+    return this.deviceFoundSubject.asObservable();
   }
 
   public async hasLocationPermission(): Promise<boolean> {
@@ -246,104 +252,93 @@ export class CoffeeBluetoothDevicesService {
       stopScanningAndFinish();
     }, _timeout);
   }
-  public async scanDevices(): Promise<Array<any>> {
-    return new Promise<Array<any>>((resolve, reject) => {
-      let promiseResolved: boolean = false;
-      this.scanAllBluetoothDevicesAndPassBack(
-        (scanDevice) => {
-          if (
-            DecentScale.test(scanDevice) ||
-            LunarScale.test(scanDevice) ||
-            JimmyScale.test(scanDevice) ||
-            FelicitaScale.test(scanDevice) ||
-            EurekaPrecisaScale.test(scanDevice) ||
-            SkaleScale.test(scanDevice) ||
-            SmartchefScale.test(scanDevice) ||
-            DifluidMicrobalance.test(scanDevice) ||
-            DifluidMicrobalanceTi.test(scanDevice) ||
-            BlackcoffeeScale.test(scanDevice) ||
-            DiyPythonCoffeeScale.test(scanDevice) ||
-            DiyRustCoffeeScale.test(scanDevice) ||
-            BookooScale.test(scanDevice)
-          ) {
-            // We found all needed devices.
-            promiseResolved = true;
-            this.clearScanAllBluetoothDevicesAndPassBackTimeout();
-            this.stopScanning();
-            const devices = [scanDevice];
-            resolve(devices);
-            this.logger.log(
-              'Supported Scale found ' + JSON.stringify(scanDevice)
-            );
-          }
-        },
-        (_devices: Array<any>) => {
-          if (promiseResolved === false) {
-            // If we didn't resolve, we didn't find a matching one.
-            resolve([]);
-          }
-        }
-      );
-    });
+
+  private isSupportedScale(_scanDevice) {
+    if (
+      DecentScale.test(_scanDevice) ||
+      LunarScale.test(_scanDevice) ||
+      JimmyScale.test(_scanDevice) ||
+      FelicitaScale.test(_scanDevice) ||
+      EurekaPrecisaScale.test(_scanDevice) ||
+      SkaleScale.test(_scanDevice) ||
+      SmartchefScale.test(_scanDevice) ||
+      DifluidMicrobalance.test(_scanDevice) ||
+      DifluidMicrobalanceTi.test(_scanDevice) ||
+      BlackcoffeeScale.test(_scanDevice) ||
+      DiyPythonCoffeeScale.test(_scanDevice) ||
+      DiyRustCoffeeScale.test(_scanDevice) ||
+      BookooScale.test(_scanDevice)
+    ) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  public async scanPressureDevices(): Promise<Array<any>> {
-    return new Promise<Array<any>>((resolve, reject) => {
-      let promiseResolved: boolean = false;
-      this.scanAllBluetoothDevicesAndPassBack(
-        (scanDevice) => {
-          if (
-            PrsPressure.test(scanDevice) ||
-            PopsiclePressure.test(scanDevice) ||
-            TransducerDirectPressure.test(scanDevice) ||
-            BookooPressure.test(scanDevice)
-          ) {
-            // We found all needed devices.
-            promiseResolved = true;
-            this.clearScanAllBluetoothDevicesAndPassBackTimeout();
-            this.stopScanning();
-            const devices = [scanDevice];
-            resolve(devices);
-            this.logger.log(
-              'Supported Presure found ' + JSON.stringify(scanDevice)
-            );
-          }
-        },
-        (_devices: Array<any>) => {
-          if (promiseResolved === false) {
-            // If we didn't resolve, we didn't find a matching one.
-            resolve([]);
-          }
-        }
-      );
-    });
+  private isSupportedPressure(_scanDevice) {
+    if (
+      PrsPressure.test(_scanDevice) ||
+      PopsiclePressure.test(_scanDevice) ||
+      TransducerDirectPressure.test(_scanDevice) ||
+      BookooPressure.test(_scanDevice)
+    ) {
+      return true;
+    } else {
+      return false;
+    }
   }
+  private isSupportedTemperature(_scanDevice) {
+    if (
+      ETITemperature.test(_scanDevice) ||
+      BasicGrillThermometer.test(_scanDevice) ||
+      MeaterThermometer.test(_scanDevice) ||
+      CombustionThermometer.test(_scanDevice) ||
+      ArgosThermometer.test(_scanDevice)
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  private isSupportedTDS(_scanDevice) {
+    if (DiFluidR2Refractometer.test(_scanDevice)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  public scanForDevicesAndReport(_searchingType: BluetoothTypes) {
+    const foundDevices = [];
+    this.scanAllBluetoothDevicesAndPassBack(
+      (scanDevice) => {
+        let type;
+        if (_searchingType === BluetoothTypes.SCALE) {
+          type = this.getScaleDeviceType(scanDevice);
+        } else if (_searchingType === BluetoothTypes.PRESSURE) {
+          type = this.getPressureDeviceType(scanDevice);
+        } else if (_searchingType === BluetoothTypes.TEMPERATURE) {
+          type = this.getTemperatureDeviceType(scanDevice);
+        } else if (_searchingType === BluetoothTypes.TDS) {
+          type = this.getRefractometerDeviceType(scanDevice);
+        }
 
-  public async scanRefractometerDevices(): Promise<Array<any>> {
-    return new Promise<Array<any>>((resolve, reject) => {
-      let promiseResolved: boolean = false;
-      this.scanAllBluetoothDevicesAndPassBack(
-        (scanDevice) => {
-          if (DiFluidR2Refractometer.test(scanDevice)) {
-            // We found all needed devices.
-            promiseResolved = true;
-            this.clearScanAllBluetoothDevicesAndPassBackTimeout();
-            this.stopScanning();
-            const devices = [scanDevice];
-            resolve(devices);
+        if (type) {
+          if (scanDevice && scanDevice.name) {
+            type.name = scanDevice.name;
+          } else {
+            type.name = '';
+          }
+          if (foundDevices.indexOf(type.id) === -1) {
+            foundDevices.push(type.id);
+            this.deviceFoundSubject.next(type);
             this.logger.log(
-              'Supported Refractometer found ' + JSON.stringify(scanDevice)
+              'Supported device found ' + JSON.stringify(scanDevice)
             );
           }
-        },
-        (_devices: Array<any>) => {
-          if (promiseResolved === false) {
-            // If we didn't resolve, we didn't find a matching one.
-            resolve([]);
-          }
         }
-      );
-    });
+      },
+      (_devices: Array<any>) => {}
+    );
   }
 
   public async findDeviceWithDirectIds(
@@ -719,444 +714,146 @@ export class CoffeeBluetoothDevicesService {
     }
   }
 
-  public async tryToFindScale() {
-    return new Promise<{ id: string; type: ScaleType } | undefined>(
-      async (resolve, reject) => {
-        this.logger.log('BleManager - Start looping through devices');
-        const devices: Array<any> = await this.scanDevices();
-        this.logger.log('BleManager - Ended looping through devices');
-        for (const deviceScale of devices) {
-          if (DecentScale.test(deviceScale)) {
-            this.logger.log('BleManager - We found a decent scale');
-            resolve({ id: deviceScale.id, type: ScaleType.DECENT });
-            return;
-          }
-          if (LunarScale.test(deviceScale)) {
-            this.logger.log('BleManager - We found a lunar/acaia scale');
-            resolve({ id: deviceScale.id, type: ScaleType.LUNAR });
-            return;
-          }
-          if (JimmyScale.test(deviceScale)) {
-            this.logger.log('BleManager - We found a jimmy scale');
-            resolve({ id: deviceScale.id, type: ScaleType.JIMMY });
-            return;
-          }
-          if (FelicitaScale.test(deviceScale)) {
-            this.logger.log('BleManager - We found a felicita scale');
-            resolve({ id: deviceScale.id, type: ScaleType.FELICITA });
-            return;
-          }
-          if (EurekaPrecisaScale.test(deviceScale)) {
-            this.logger.log('BleManager - We found a eureka scale');
-            resolve({ id: deviceScale.id, type: ScaleType.EUREKAPRECISA });
-            return;
-          }
-          if (SkaleScale.test(deviceScale)) {
-            this.logger.log('BleManager - We found a skale scale');
-            resolve({ id: deviceScale.id, type: ScaleType.SKALE });
-            return;
-          }
-          if (SmartchefScale.test(deviceScale)) {
-            this.logger.log('BleManager - We found a smartchef scale');
-            resolve({ id: deviceScale.id, type: ScaleType.SMARTCHEF });
-            return;
-          }
-          if (DifluidMicrobalance.test(deviceScale)) {
-            this.logger.log('BleManager - We found a difluid scale');
-            resolve({
-              id: deviceScale.id,
-              type: ScaleType.DIFLUIDMICROBALANCE,
-            });
-            return;
-          }
-          if (DifluidMicrobalanceTi.test(deviceScale)) {
-            this.logger.log('BleManager - We found a difluid ti scale');
-            resolve({
-              id: deviceScale.id,
-              type: ScaleType.DIFLUIDMICROBALANCETI,
-            });
-            return;
-          }
-          if (BlackcoffeeScale.test(deviceScale)) {
-            this.logger.log('BleManager - We found a blackcoffee scale');
-            resolve({ id: deviceScale.id, type: ScaleType.BLACKCOFFEE });
-            return;
-          }
-          if (DiyPythonCoffeeScale.test(deviceScale)) {
-            this.logger.log('BleManager - We found a diy python coffee scale');
-            resolve({
-              id: deviceScale.id,
-              type: ScaleType.DIYPYTHONCOFFEESCALE,
-            });
-            return;
-          }
-          if (DiyRustCoffeeScale.test(deviceScale)) {
-            this.logger.log('BleManager - We found a diy rust coffee scale');
-            resolve({
-              id: deviceScale.id,
-              type: ScaleType.DIYRUSTCOFFEESCALE,
-            });
-            return;
-          }
-          if (BookooScale.test(deviceScale)) {
-            this.logger.log('BleManager - We found a Bokoo scale');
-            resolve({
-              id: deviceScale.id,
-              type: ScaleType.BOKOOSCALE,
-            });
-            return;
-          }
-        }
-        resolve(undefined);
-      }
-    );
+  public getScaleDeviceType(deviceScale) {
+    if (DecentScale.test(deviceScale)) {
+      this.logger.log('BleManager - We found a decent scale');
+      return { id: deviceScale.id, type: ScaleType.DECENT };
+    }
+    if (LunarScale.test(deviceScale)) {
+      this.logger.log('BleManager - We found a lunar/acaia scale');
+      return { id: deviceScale.id, type: ScaleType.LUNAR };
+    }
+    if (JimmyScale.test(deviceScale)) {
+      this.logger.log('BleManager - We found a jimmy scale');
+      return { id: deviceScale.id, type: ScaleType.JIMMY };
+    }
+    if (FelicitaScale.test(deviceScale)) {
+      this.logger.log('BleManager - We found a felicita scale');
+      return { id: deviceScale.id, type: ScaleType.FELICITA };
+    }
+    if (EurekaPrecisaScale.test(deviceScale)) {
+      this.logger.log('BleManager - We found a eureka scale');
+      return { id: deviceScale.id, type: ScaleType.EUREKAPRECISA };
+    }
+    if (SkaleScale.test(deviceScale)) {
+      this.logger.log('BleManager - We found a skale scale');
+      return { id: deviceScale.id, type: ScaleType.SKALE };
+    }
+    if (SmartchefScale.test(deviceScale)) {
+      this.logger.log('BleManager - We found a smartchef scale');
+      return { id: deviceScale.id, type: ScaleType.SMARTCHEF };
+    }
+    if (DifluidMicrobalance.test(deviceScale)) {
+      this.logger.log('BleManager - We found a difluid scale');
+      return {
+        id: deviceScale.id,
+        type: ScaleType.DIFLUIDMICROBALANCE,
+      };
+    }
+    if (DifluidMicrobalanceTi.test(deviceScale)) {
+      this.logger.log('BleManager - We found a difluid ti scale');
+      return {
+        id: deviceScale.id,
+        type: ScaleType.DIFLUIDMICROBALANCETI,
+      };
+    }
+    if (BlackcoffeeScale.test(deviceScale)) {
+      this.logger.log('BleManager - We found a blackcoffee scale');
+      return { id: deviceScale.id, type: ScaleType.BLACKCOFFEE };
+    }
+    if (DiyPythonCoffeeScale.test(deviceScale)) {
+      this.logger.log('BleManager - We found a diy python coffee scale');
+      return {
+        id: deviceScale.id,
+        type: ScaleType.DIYPYTHONCOFFEESCALE,
+      };
+    }
+    if (DiyRustCoffeeScale.test(deviceScale)) {
+      this.logger.log('BleManager - We found a diy rust coffee scale');
+      return {
+        id: deviceScale.id,
+        type: ScaleType.DIYRUSTCOFFEESCALE,
+      };
+    }
+    if (BookooScale.test(deviceScale)) {
+      this.logger.log('BleManager - We found a Bokoo scale');
+      return {
+        id: deviceScale.id,
+        type: ScaleType.BOKOOSCALE,
+      };
+    }
+
+    return undefined;
   }
 
-  public async tryToFindScales() {
-    return new Promise<Array<{ id: string; type: ScaleType }> | undefined>(
-      async (resolve, reject) => {
-        const devices: Array<any> = await this.scanDevices();
-        this.logger.log('BleManager - Loop through devices');
-        const supportedDevices: Array<{ id: string; type: ScaleType }> = [];
-        for (const deviceScale of devices) {
-          if (DecentScale.test(deviceScale)) {
-            this.logger.log('BleManager - We found a decent scale');
-            supportedDevices.push({
-              id: deviceScale.id,
-              type: ScaleType.DECENT,
-            });
-          }
-          if (LunarScale.test(deviceScale)) {
-            this.logger.log('BleManager - We found a lunar/acaia scale');
-            supportedDevices.push({
-              id: deviceScale.id,
-              type: ScaleType.LUNAR,
-            });
-          }
-          if (JimmyScale.test(deviceScale)) {
-            this.logger.log('BleManager - We found a jimmy scale');
-            supportedDevices.push({
-              id: deviceScale.id,
-              type: ScaleType.JIMMY,
-            });
-          }
-          if (FelicitaScale.test(deviceScale)) {
-            this.logger.log('BleManager - We found a felicita scale');
-            supportedDevices.push({
-              id: deviceScale.id,
-              type: ScaleType.FELICITA,
-            });
-          }
-          if (EurekaPrecisaScale.test(deviceScale)) {
-            this.logger.log('BleManager - We found a eureka scale');
-            supportedDevices.push({
-              id: deviceScale.id,
-              type: ScaleType.EUREKAPRECISA,
-            });
-          }
-          if (SkaleScale.test(deviceScale)) {
-            this.logger.log('BleManager - We found a skale scale');
-            supportedDevices.push({
-              id: deviceScale.id,
-              type: ScaleType.SKALE,
-            });
-          }
-          if (SmartchefScale.test(deviceScale)) {
-            this.logger.log('BleManager - We found a smartchef scale');
-            supportedDevices.push({
-              id: deviceScale.id,
-              type: ScaleType.SMARTCHEF,
-            });
-          }
-          if (DifluidMicrobalance.test(deviceScale)) {
-            this.logger.log('BleManager - We found a difluid scale');
-            supportedDevices.push({
-              id: deviceScale.id,
-              type: ScaleType.DIFLUIDMICROBALANCE,
-            });
-          }
-          if (DifluidMicrobalanceTi.test(deviceScale)) {
-            this.logger.log('BleManager - We found a difluid ti scale');
-            supportedDevices.push({
-              id: deviceScale.id,
-              type: ScaleType.DIFLUIDMICROBALANCETI,
-            });
-          }
-          if (BlackcoffeeScale.test(deviceScale)) {
-            this.logger.log('BleManager - We found a blackcoffee scale');
-            supportedDevices.push({
-              id: deviceScale.id,
-              type: ScaleType.BLACKCOFFEE,
-            });
-          }
-          if (DiyPythonCoffeeScale.test(deviceScale)) {
-            this.logger.log('BleManager - We found a diy python coffee scale');
-            supportedDevices.push({
-              id: deviceScale.id,
-              type: ScaleType.DIYPYTHONCOFFEESCALE,
-            });
-          }
-          if (DiyRustCoffeeScale.test(deviceScale)) {
-            this.logger.log('BleManager - We found a diy rust coffee scale');
-            supportedDevices.push({
-              id: deviceScale.id,
-              type: ScaleType.DIYRUSTCOFFEESCALE,
-            });
-          }
-          if (BookooScale.test(deviceScale)) {
-            this.logger.log('BleManager - We found a Bookoo scale');
-            supportedDevices.push({
-              id: deviceScale.id,
-              type: ScaleType.BOKOOSCALE,
-            });
-          }
-        }
-        resolve(supportedDevices);
-      }
-    );
+  public getPressureDeviceType(devicePressure) {
+    if (PopsiclePressure.test(devicePressure)) {
+      this.logger.log('BleManager - We found a popsicle pressure device ');
+      return { id: devicePressure.id, type: PressureType.POPSICLE };
+    } else if (TransducerDirectPressure.test(devicePressure)) {
+      this.logger.log(
+        'BleManager - We found a Transducer Direct pressure device '
+      );
+      return { id: devicePressure.id, type: PressureType.DIRECT };
+    } else if (PrsPressure.test(devicePressure)) {
+      this.logger.log('BleManager - We found a PRS Direct pressure device ');
+      return { id: devicePressure.id, type: PressureType.PRS };
+    } else if (BookooPressure.test(devicePressure)) {
+      this.logger.log('BleManager - We found a Bokoo pressure device ');
+      return {
+        id: devicePressure.id,
+        type: PressureType.BOKOOPRESSURE,
+      };
+    }
+
+    return undefined;
   }
 
-  public async tryToFindPressureDevices() {
-    return new Promise<Array<{ id: string; type: PressureType }> | undefined>(
-      async (resolve, reject) => {
-        const devices: Array<any> = await this.scanPressureDevices();
-        this.logger.log('BleManager - Loop through pressure devices');
-        const supportedDevices: Array<{ id: string; type: PressureType }> = [];
-        for (const devicePressure of devices) {
-          if (PrsPressure.test(devicePressure)) {
-            this.logger.log(
-              'BleManager - We found a PRS Direct pressure device ' +
-                JSON.stringify(devicePressure)
-            );
-            supportedDevices.push({
-              id: devicePressure.id,
-              type: PressureType.PRS,
-            });
-          } else if (PopsiclePressure.test(devicePressure)) {
-            this.logger.log(
-              'BleManager - We found a popsicle pressure device ' +
-                JSON.stringify(devicePressure)
-            );
-            supportedDevices.push({
-              id: devicePressure.id,
-              type: PressureType.POPSICLE,
-            });
-          } else if (TransducerDirectPressure.test(devicePressure)) {
-            this.logger.log(
-              'BleManager - We found a Transducer Direct pressure device ' +
-                JSON.stringify(devicePressure)
-            );
-            supportedDevices.push({
-              id: devicePressure.id,
-              type: PressureType.DIRECT,
-            });
-          } else if (BookooPressure.test(devicePressure)) {
-            this.logger.log(
-              'BleManager - We found a Bookoo pressure device ' +
-                JSON.stringify(devicePressure)
-            );
-            supportedDevices.push({
-              id: devicePressure.id,
-              type: PressureType.BOKOOPRESSURE,
-            });
-          }
-        }
-        resolve(supportedDevices);
-      }
-    );
-  }
+  public getTemperatureDeviceType(deviceTemperature) {
+    if (ETITemperature.test(deviceTemperature)) {
+      this.logger.log('BleManager - We found a ETI Ltd Thermometer device ');
+      return { id: deviceTemperature.id, type: TemperatureType.ETI };
+    } else if (BasicGrillThermometer.test(deviceTemperature)) {
+      this.logger.log(
+        'BleManager - We found a Basic Grill Thermometer device '
+      );
+      return {
+        id: deviceTemperature.id,
+        type: TemperatureType.BASICGRILL,
+      };
+    } else if (MeaterThermometer.test(deviceTemperature)) {
+      this.logger.log(
+        'BleManager - We found a Meater Grill Thermometer device '
+      );
+      return {
+        id: deviceTemperature.id,
+        type: TemperatureType.MEATER,
+      };
+    } else if (CombustionThermometer.test(deviceTemperature)) {
+      this.logger.log(
+        'BleManager - We found a Combustion Grill Thermometer device '
+      );
+      return {
+        id: deviceTemperature.id,
+        type: TemperatureType.COMBUSTION,
+      };
+    } else if (ArgosThermometer.test(deviceTemperature)) {
+      this.logger.log('BleManager - We found a Argos Thermometer device ');
+      return {
+        id: deviceTemperature.id,
+        type: TemperatureType.ARGOS,
+      };
+    }
 
-  public async tryToFindPressureDevice() {
-    return new Promise<{ id: string; type: PressureType } | undefined>(
-      async (resolve, reject) => {
-        const devices: Array<any> = await this.scanPressureDevices();
-        this.logger.log('BleManager - Loop through pressure devices');
-        for (const devicePressure of devices) {
-          if (PopsiclePressure.test(devicePressure)) {
-            this.logger.log(
-              'BleManager - We found a popsicle pressure device '
-            );
-            resolve({ id: devicePressure.id, type: PressureType.POPSICLE });
-            return;
-          } else if (TransducerDirectPressure.test(devicePressure)) {
-            this.logger.log(
-              'BleManager - We found a Transducer Direct pressure device '
-            );
-            resolve({ id: devicePressure.id, type: PressureType.DIRECT });
-            return;
-          } else if (PrsPressure.test(devicePressure)) {
-            this.logger.log(
-              'BleManager - We found a PRS Direct pressure device '
-            );
-            resolve({ id: devicePressure.id, type: PressureType.PRS });
-            return;
-          } else if (BookooPressure.test(devicePressure)) {
-            this.logger.log('BleManager - We found a Bokoo pressure device ');
-            resolve({
-              id: devicePressure.id,
-              type: PressureType.BOKOOPRESSURE,
-            });
-            return;
-          }
-        }
-        resolve(undefined);
-      }
-    );
+    return undefined;
   }
+  public getRefractometerDeviceType(deviceRefractometer) {
+    if (DiFluidR2Refractometer.test(deviceRefractometer)) {
+      this.logger.log('BleManager - We found a Difluid R2 device ');
+      return { id: deviceRefractometer.id, type: RefractometerType.R2 };
+    }
 
-  public async tryToFindTemperatureDevices() {
-    return new Promise<
-      Array<{ id: string; type: TemperatureType }> | undefined
-    >(async (resolve, reject) => {
-      const devices: Array<any> = await this.scanTemperatureDevices();
-      this.logger.log('BleManager - Loop through temperature devices');
-      const supportedDevices: Array<{ id: string; type: TemperatureType }> = [];
-      for (const deviceTemperature of devices) {
-        if (ETITemperature.test(deviceTemperature)) {
-          this.logger.log(
-            'BleManager - We found a ETI Ltd Thermometer device ' +
-              JSON.stringify(deviceTemperature)
-          );
-          supportedDevices.push({
-            id: deviceTemperature.id,
-            type: TemperatureType.ETI,
-          });
-        } else if (BasicGrillThermometer.test(deviceTemperature)) {
-          this.logger.log(
-            'BleManager - We found a Basic Grill Thermometer device ' +
-              JSON.stringify(deviceTemperature)
-          );
-          supportedDevices.push({
-            id: deviceTemperature.id,
-            type: TemperatureType.BASICGRILL,
-          });
-        } else if (MeaterThermometer.test(deviceTemperature)) {
-          this.logger.log(
-            'BleManager - We found a Meater Grill Thermometer device ' +
-              JSON.stringify(deviceTemperature)
-          );
-          supportedDevices.push({
-            id: deviceTemperature.id,
-            type: TemperatureType.MEATER,
-          });
-        } else if (CombustionThermometer.test(deviceTemperature)) {
-          this.logger.log(
-            'BleManager - We found a Combustion Grill Thermometer device ' +
-              JSON.stringify(deviceTemperature)
-          );
-          supportedDevices.push({
-            id: deviceTemperature.id,
-            type: TemperatureType.COMBUSTION,
-          });
-        } else if (ArgosThermometer.test(deviceTemperature)) {
-          this.logger.log(
-            'BleManager - We found a Argos Thermometer device ' +
-              JSON.stringify(deviceTemperature)
-          );
-          supportedDevices.push({
-            id: deviceTemperature.id,
-            type: TemperatureType.ARGOS,
-          });
-        }
-      }
-      resolve(supportedDevices);
-    });
-  }
-
-  public async tryToFindTemperatureDevice() {
-    return new Promise<{ id: string; type: TemperatureType } | undefined>(
-      async (resolve, reject) => {
-        const devices: Array<any> = await this.scanTemperatureDevices();
-        this.logger.log('BleManager - Loop through temperature devices');
-        for (const deviceTemperature of devices) {
-          if (ETITemperature.test(deviceTemperature)) {
-            this.logger.log(
-              'BleManager - We found a ETI Ltd Thermometer device '
-            );
-            resolve({ id: deviceTemperature.id, type: TemperatureType.ETI });
-            return;
-          } else if (BasicGrillThermometer.test(deviceTemperature)) {
-            this.logger.log(
-              'BleManager - We found a Basic Grill Thermometer device '
-            );
-            resolve({
-              id: deviceTemperature.id,
-              type: TemperatureType.BASICGRILL,
-            });
-            return;
-          } else if (MeaterThermometer.test(deviceTemperature)) {
-            this.logger.log(
-              'BleManager - We found a Meater Grill Thermometer device '
-            );
-            resolve({
-              id: deviceTemperature.id,
-              type: TemperatureType.MEATER,
-            });
-            return;
-          } else if (CombustionThermometer.test(deviceTemperature)) {
-            this.logger.log(
-              'BleManager - We found a Combustion Grill Thermometer device '
-            );
-            resolve({
-              id: deviceTemperature.id,
-              type: TemperatureType.COMBUSTION,
-            });
-            return;
-          } else if (ArgosThermometer.test(deviceTemperature)) {
-            this.logger.log(
-              'BleManager - We found a Argos Thermometer device '
-            );
-            resolve({
-              id: deviceTemperature.id,
-              type: TemperatureType.ARGOS,
-            });
-            return;
-          }
-        }
-        resolve(undefined);
-      }
-    );
-  }
-
-  public async tryToFindRefractometerDevices() {
-    return new Promise<
-      Array<{ id: string; type: RefractometerType }> | undefined
-    >(async (resolve, reject) => {
-      const devices: Array<any> = await this.scanRefractometerDevices();
-      this.logger.log('BleManager - Loop through refractometer devices');
-      const supportedDevices: Array<{ id: string; type: RefractometerType }> =
-        [];
-      for (const deviceRefractometer of devices) {
-        if (DiFluidR2Refractometer.test(deviceRefractometer)) {
-          this.logger.log(
-            'BleManager - We found a DiFLuid R2 device ' +
-              JSON.stringify(deviceRefractometer)
-          );
-          supportedDevices.push({
-            id: deviceRefractometer.id,
-            type: RefractometerType.R2,
-          });
-        }
-      }
-      resolve(supportedDevices);
-    });
-  }
-
-  public async tryToFindRefractometerDevice() {
-    return new Promise<{ id: string; type: RefractometerType } | undefined>(
-      async (resolve, reject) => {
-        const devices: Array<any> = await this.scanRefractometerDevices();
-        this.logger.log('BleManager - Loop through refractometer devices');
-        for (const deviceRefractometer of devices) {
-          if (DiFluidR2Refractometer.test(deviceRefractometer)) {
-            this.logger.log('BleManager - We found a Difluid R2 device ');
-            resolve({ id: deviceRefractometer.id, type: RefractometerType.R2 });
-            return;
-          }
-        }
-        resolve(undefined);
-      }
-    );
+    return undefined;
   }
 
   public async reconnectScale(
@@ -1546,7 +1243,7 @@ export class CoffeeBluetoothDevicesService {
     } catch (ex) {}
   }
 
-  private stopScanning() {
+  public stopScanning() {
     return new Promise(async (resolve, reject) => {
       try {
         await ble.withPromises.stopScan();
@@ -1567,173 +1264,6 @@ export class CoffeeBluetoothDevicesService {
       return 0;
     }
     return +parsedFloat.toFixed(dp);
-  }
-
-  private async __scanAutoConnectScaleIOS() {
-    return new Promise<boolean>(async (resolve, reject) => {
-      if (device !== null && device.platform === 'iOS') {
-        // We just need to scan, then we can auto connect for iOS (lol)
-        this.logger.log('Try to find scale on iOS');
-        const deviceScale = await this.tryToFindScale();
-        if (deviceScale === undefined) {
-          this.logger.log('Scale not found, retry');
-          // Try every 11 seconds, because the search algorythm goes 10 seconds at all.
-          const intV = setInterval(async () => {
-            const scaleStub = await this.tryToFindScale();
-            if (scaleStub !== undefined) {
-              resolve(true);
-              clearInterval(intV);
-            } else {
-              this.logger.log('Scale not found, retry');
-            }
-          }, 61000);
-        } else {
-          resolve(true);
-        }
-      } else {
-        resolve(true);
-      }
-    });
-  }
-
-  private async __scanAutoConnectPressureDeviceIOS() {
-    return new Promise<boolean>(async (resolve, reject) => {
-      if (device !== null && device.platform === 'iOS') {
-        // We just need to scan, then we can auto connect for iOS (lol)
-        this.logger.log('Try to find pressure on iOS');
-        const devicePressure = await this.tryToFindPressureDevice();
-        if (devicePressure === undefined) {
-          this.logger.log('Pressure device not found, retry');
-          // Try every 61 seconds, because the search algorythm goes 60 seconds at all.
-          const intV = setInterval(async () => {
-            const pressureStub = await this.tryToFindPressureDevice();
-            if (pressureStub !== undefined) {
-              resolve(true);
-              clearInterval(intV);
-            } else {
-              this.logger.log('Pressure device not found, retry');
-            }
-          }, 61000);
-        } else {
-          resolve(true);
-        }
-      } else {
-        resolve(true);
-      }
-    });
-  }
-
-  private async __scanAutoConnectTemperatureDeviceIOS() {
-    return new Promise<boolean>(async (resolve, reject) => {
-      if (device !== null && device.platform === 'iOS') {
-        // We just need to scan, then we can auto connect for iOS (lol)
-        this.logger.log('Try to find temperature on iOS');
-        const deviceTemperature = await this.tryToFindTemperatureDevice();
-        if (deviceTemperature === undefined) {
-          this.logger.log('Temperature device not found, retry');
-          // Try every 61 seconds, because the search algorythm goes 60 seconds at all.
-          const intV = setInterval(async () => {
-            const temperatureStub = await this.tryToFindTemperatureDevice();
-            if (temperatureStub !== undefined) {
-              resolve(true);
-              clearInterval(intV);
-            } else {
-              this.logger.log('Temperature device not found, retry');
-            }
-          }, 61000);
-        } else {
-          resolve(true);
-        }
-      } else {
-        resolve(true);
-      }
-    });
-  }
-
-  private async __scanAutoConnectRefractometerDeviceIOS() {
-    return new Promise<boolean>(async (resolve, reject) => {
-      if (device !== null && device.platform === 'iOS') {
-        // We just need to scan, then we can auto connect for iOS (lol)
-        this.logger.log('Try to find refractometer on iOS');
-        const deviceRefractometer = await this.tryToFindRefractometerDevice();
-        if (deviceRefractometer === undefined) {
-          this.logger.log('Refractometer device not found, retry');
-          // Try every 61 seconds, because the search algorythm goes 60 seconds at all.
-          const intV = setInterval(async () => {
-            const refractometerStub = await this.tryToFindRefractometerDevice();
-            if (refractometerStub !== undefined) {
-              resolve(true);
-              clearInterval(intV);
-            } else {
-              this.logger.log('Refractometer device not found, retry');
-            }
-          }, 61000);
-        } else {
-          resolve(true);
-        }
-      } else {
-        resolve(true);
-      }
-    });
-  }
-
-  private async __iOSAccessBleStackAndAutoConnect(
-    _findSpecificDevice: string = 'scale'
-  ) {
-    return await new Promise((resolve) => {
-      let counter: number = 1;
-      const iOSScanInterval = setInterval(async () => {
-        try {
-          this.logger.log(
-            '__iOSAccessBleStackAndAutoConnect - Try to get bluetooth state'
-          );
-          const enabled: boolean = await this.isBleEnabled();
-          if (enabled === true) {
-            clearInterval(iOSScanInterval);
-            if (_findSpecificDevice === 'scale') {
-              await this.__scanAutoConnectScaleIOS();
-              this.logger.log(
-                '__iOSAccessBleStackAndAutoConnect - Scale for iOS found, resolve now'
-              );
-            } else if (_findSpecificDevice === 'pressure') {
-              await this.__scanAutoConnectPressureDeviceIOS();
-              this.logger.log(
-                '__iOSAccessBleStackAndAutoConnect - Pressure devices for iOS found, resolve now'
-              );
-            } else if (_findSpecificDevice === 'temperature') {
-              await this.__scanAutoConnectTemperatureDeviceIOS();
-              this.logger.log(
-                '__iOSAccessBleStackAndAutoConnect - Thermometer device for iOS found, resolve now'
-              );
-            } else if (_findSpecificDevice === 'refractometer') {
-              await this.__scanAutoConnectRefractometerDeviceIOS();
-              this.logger.log(
-                '__iOSAccessBleStackAndAutoConnect - Refractometer device for iOS found, resolve now'
-              );
-            }
-
-            resolve(null);
-          } else {
-            this.logger.log(
-              '__iOSAccessBleStackAndAutoConnect - Bluetooth not enabled, try again'
-            );
-          }
-        } catch (ex) {
-          this.logger.log(
-            '__iOSAccessBleStackAndAutoConnect - Bluetooth error occured ' +
-              JSON.stringify(ex)
-          );
-        }
-        counter++;
-        if (counter > 10) {
-          this.logger.log(
-            '__iOSAccessBleStackAndAutoConnect - iOS - Stop after 10 tries'
-          );
-          clearInterval(iOSScanInterval);
-          resolve(null);
-        }
-      }, 1000);
-    });
   }
 
   private connectCallback(deviceType: ScaleType, data: PeripheralData) {

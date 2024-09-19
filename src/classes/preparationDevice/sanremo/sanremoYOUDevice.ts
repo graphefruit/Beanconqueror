@@ -131,13 +131,13 @@ export class SanremoYOUDevice extends PreparationDevice {
 
       let urlAdding = '';
       if (_mode === SanremoYOUMode.MANUAL_CONTROLLING) {
-        urlAdding = '/api/action/man';
+        urlAdding = '/api/action/man/start';
       } else if (_mode === SanremoYOUMode.PROFILE_P1_CONTROLLING) {
-        urlAdding = '/api/action/p1';
+        urlAdding = '/api/action/p1/start';
       } else if (_mode === SanremoYOUMode.PROFILE_P2_CONTROLLING) {
-        urlAdding = '/api/action/p2';
+        urlAdding = '/api/action/p2/start';
       } else if (_mode === SanremoYOUMode.PROFILE_P3_CONTROLLING) {
-        urlAdding = '/api/action/p3';
+        urlAdding = '/api/action/p3/start';
       }
 
       cordova.plugin.http.sendRequest(
@@ -167,13 +167,13 @@ export class SanremoYOUDevice extends PreparationDevice {
 
       let urlAdding = '';
       if (_mode === SanremoYOUMode.MANUAL_CONTROLLING) {
-        urlAdding = '/api/action/man';
+        urlAdding = '/api/action/man/stop';
       } else if (_mode === SanremoYOUMode.PROFILE_P1_CONTROLLING) {
-        urlAdding = '/api/action/p1';
+        urlAdding = '/api/action/p1/stop';
       } else if (_mode === SanremoYOUMode.PROFILE_P2_CONTROLLING) {
-        urlAdding = '/api/action/p2';
+        urlAdding = '/api/action/p2/stop';
       } else if (_mode === SanremoYOUMode.PROFILE_P3_CONTROLLING) {
-        urlAdding = '/api/action/p3';
+        urlAdding = '/api/action/p3/stop';
       }
 
       cordova.plugin.http.sendRequest(

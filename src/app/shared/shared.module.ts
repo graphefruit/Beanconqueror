@@ -192,6 +192,7 @@ import { PipesModule } from 'src/pipes/pipes.module';
 import { BrewModalImportShotMeticulousComponent } from '../brew/brew-modal-import-shot-meticulous/brew-modal-import-shot-meticulous.component';
 import { DataCorruptionFoundComponent } from '../../popover/data-corruption-found/data-corruption-found.component';
 import { BeanPopoverListComponent } from '../beans/bean-popover-list/bean-popover-list.component';
+import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
 
 @NgModule({
   declarations: [
@@ -228,6 +229,7 @@ import { BeanPopoverListComponent } from '../beans/bean-popover-list/bean-popove
     CookieComponent,
     ImpressumComponent,
     PreparationAddTypeComponent,
+    BluetoothDeviceChooserPopoverComponent,
     CustomPopoverComponent,
     LoadingPopoverComponent,
     FilesystemErrorPopoverComponent,
@@ -442,6 +444,7 @@ import { BeanPopoverListComponent } from '../beans/bean-popover-list/bean-popove
     CookieComponent,
     ImpressumComponent,
     PreparationAddTypeComponent,
+    BluetoothDeviceChooserPopoverComponent,
     CustomPopoverComponent,
     LoadingPopoverComponent,
     FilesystemErrorPopoverComponent,
