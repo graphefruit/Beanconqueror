@@ -253,60 +253,6 @@ export class CoffeeBluetoothDevicesService {
     }, _timeout);
   }
 
-  private isSupportedScale(_scanDevice) {
-    if (
-      DecentScale.test(_scanDevice) ||
-      LunarScale.test(_scanDevice) ||
-      JimmyScale.test(_scanDevice) ||
-      FelicitaScale.test(_scanDevice) ||
-      EurekaPrecisaScale.test(_scanDevice) ||
-      SkaleScale.test(_scanDevice) ||
-      SmartchefScale.test(_scanDevice) ||
-      DifluidMicrobalance.test(_scanDevice) ||
-      DifluidMicrobalanceTi.test(_scanDevice) ||
-      BlackcoffeeScale.test(_scanDevice) ||
-      DiyPythonCoffeeScale.test(_scanDevice) ||
-      DiyRustCoffeeScale.test(_scanDevice) ||
-      BookooScale.test(_scanDevice)
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  private isSupportedPressure(_scanDevice) {
-    if (
-      PrsPressure.test(_scanDevice) ||
-      PopsiclePressure.test(_scanDevice) ||
-      TransducerDirectPressure.test(_scanDevice) ||
-      BookooPressure.test(_scanDevice)
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-  private isSupportedTemperature(_scanDevice) {
-    if (
-      ETITemperature.test(_scanDevice) ||
-      BasicGrillThermometer.test(_scanDevice) ||
-      MeaterThermometer.test(_scanDevice) ||
-      CombustionThermometer.test(_scanDevice) ||
-      ArgosThermometer.test(_scanDevice)
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-  private isSupportedTDS(_scanDevice) {
-    if (DiFluidR2Refractometer.test(_scanDevice)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
   public scanForDevicesAndReport(_searchingType: BluetoothTypes) {
     const foundDevices = [];
     this.scanAllBluetoothDevicesAndPassBack(
