@@ -596,18 +596,6 @@ export class CoffeeBluetoothDevicesService {
     });
   }
 
-  public enableBLE(): Promise<boolean> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        // Or using await with promises
-        ble.withPromises.enable();
-        resolve(undefined);
-      } catch (ex) {
-        resolve(undefined);
-      }
-    });
-  }
-
   public getScale() {
     return this.scale;
   }
