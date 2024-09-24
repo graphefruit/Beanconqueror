@@ -39,12 +39,12 @@ import {
   CoffeeBluetoothDevicesService,
   CoffeeBluetoothServiceEvent,
 } from '../../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { UIHelper } from '../../../services/uiHelper';
 import { VisualizerService } from '../../../services/visualizerService/visualizer-service.service';
 import { Subscription } from 'rxjs';
 import { HapticService } from '../../../services/hapticService/haptic.service';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
+import { BrewFlow } from '../../../classes/brew/brewFlow';
 
 declare var Plotly;
 
@@ -58,6 +58,8 @@ export class BrewAddComponent implements OnInit, OnDestroy {
   public brew_template: Brew;
   public data: Brew = new Brew();
   public settings: Settings;
+
+  @Input() public brew_flow_preset: BrewFlow;
 
   public loadSpecificLastPreparation: Preparation;
 

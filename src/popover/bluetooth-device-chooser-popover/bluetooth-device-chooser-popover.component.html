@@ -10,26 +10,33 @@
 
 </ion-header>
 <ion-content>
-  <ng-container *ngIf='foundDevices.length > 0'>
+
   <ion-card>
     <ion-card-content>
+
+      <ng-container *ngIf='foundDevices.length <=0 && searchRunning === false'>
+        <h2>{{'NO_DEVICES_FOUND_PLEASE_TRY_AGAIN' |translate}}</h2>
+      </ng-container>
       <ion-radio-group [(ngModel)]="deviceSelection" (ngModelChange)='checkChanges()'>
         <ion-item lines='none' *ngFor='let device of foundDevices' tappable>
           <ion-radio justify='start' label-placement='end' value='{{device.id}}'>
-            <ng-container *ngIf='device.name'>{{device.name}}</ng-container>
-            <ng-container *ngIf='!device.name'>?&nbsp;&nbsp;{{device.type}}</ng-container>
+            <span *ngIf='device.name'>{{device.name}}</span>
+            <span *ngIf='!device.name'>?&nbsp;&nbsp;{{device.type}}</span>
           </ion-radio>
         </ion-item>
       </ion-radio-group>
+      <ng-container *ngIf='searchRunning === true'>
+        <ion-spinner name="dots"></ion-spinner>
+      </ng-container>
     </ion-card-content>
   </ion-card>
-  </ng-container>
+
 </ion-content>
 <ion-footer class="ion-no-border">
 
   <ion-row class="ion-padding-top">
     <ion-col size="6">
-      <ion-button (click)="close()" fill="outline" color="accent" expand="block" tappable>{{"CLOSE  " | translate}}</ion-button>
+      <ion-button (click)="close()" fill="outline" color="accent" expand="block" tappable>{{"CLOSE" | translate}}</ion-button>
     </ion-col>
     <ion-col size="6">
       <ion-button (click)="connect()" [disabled]='deviceSelection==="" || deviceSelection === undefined' color="accent" expand="block" tappable>{{"CONNECT" | translate}}</ion-button>

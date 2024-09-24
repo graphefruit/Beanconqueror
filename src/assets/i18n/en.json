@@ -1392,5 +1392,14 @@
         }
     },
   "BLUETOOTH_NOT_ENABLED": "Bluetooth not activated, please activate to work properly",
-  "SEARCH_BLUETOOTH_DEVICES": "Search Bluetooth Devices"
+  "SEARCH_BLUETOOTH_DEVICES": "Search Bluetooth Devices",
+  "CONNECT_SCALE": "Connect scale",
+  "CONNECT_PRESSURE": "Connect pressure",
+  "CONNECT_TEMPERATURE": "Connect temperature",
+  "CONNECT_REFRACTOMETER": "Connect refractometer",
+  "DISCONNECT_SCALE": "Disconnect scale",
+  "DISCONNECT_PRESSURE": "Disconnect pressure",
+  "DISCONNECT_TEMPERATURE": "Disconnect temperature",
+  "DISCONNECT_REFRACTOMETER": "Disconnect refractometer",
+  "NO_DEVICES_FOUND_PLEASE_TRY_AGAIN": "We didn't find any supported bluetooth devices, please try again"
 }

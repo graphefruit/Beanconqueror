@@ -515,6 +515,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.realtimeFlowTraceReference = undefined;
       this.pressureTraceReference = undefined;
       this.temperatureTraceReference = undefined;
+
       if (
         this.reference_profile_raw.weight.length > 0 ||
         this.reference_profile_raw.pressureFlow.length > 0 ||
@@ -1759,7 +1760,6 @@ export class BrewBrewingGraphComponent implements OnInit {
         this.data.flow_profile = '';
 
         //Check if we have an reference flow, and when reset, preset it again
-
         if (this.data.reference_flow_profile) {
           await this.readReferenceFlowProfile(this.data);
         }
@@ -1962,13 +1962,20 @@ export class BrewBrewingGraphComponent implements OnInit {
 
     this.sanremoYOUFetchingInterval = setInterval(async () => {
       try {
+        //const apiThirdCallDelayStart = moment(); // create a moment with the current time
+        //let apiDelayEnd;
+
         // We don't use the callback function to make sure we don't have to many performance issues
         prepDeviceCall.fetchRuntimeData(() => {
+          //apiDelayEnd = moment();
+
           //before we start the interval, we fetch the data once to overwrite, and set them.
+          //const delta = apiDelayEnd.diff(apiThirdCallDelayStart, 'milliseconds'); // get the millisecond difference
+          //console.log(delta);
           setSanremoData();
         });
       } catch (ex) {}
-    }, 100);
+    }, 250);
   }
 
   public startFetchingDataFromMeticulous() {

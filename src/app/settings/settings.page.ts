@@ -212,6 +212,7 @@ export class SettingsPage {
     });
     await modal.present();
     await modal.onWillDismiss();
+    this.settings = this.uiSettingsStorage.getSettings();
   }
 
   public async findAndConnectRefractometerDevice(_retry: boolean = false) {
@@ -230,117 +231,87 @@ export class SettingsPage {
     this.showBluetoothPopover(BluetoothTypes.SCALE);
   }
 
-  public async disconnectRefractometerDevice() {
-    this.eventQueue.dispatch(
-      new AppEvent(
-        AppEventType.BLUETOOTH_REFRACTOMETER_DEVICE_DISCONNECT,
-        undefined
-      )
-    );
+  public async disconnectDevice(_type: BluetoothTypes) {
+    /** Its true, because we try to disconnect, and if this is not possible, we just still forgot the device**/
     let disconnected: boolean = true;
 
-    if (
-      this.settings.refractometer_id !== '' &&
-      this.bleManager.getRefractometerDevice()
-    ) {
-      disconnected = await this.bleManager.disconnectRefractometerDevice(
-        this.settings.refractometer_id
+    if (_type === BluetoothTypes.SCALE) {
+      this.eventQueue.dispatch(
+        new AppEvent(AppEventType.BLUETOOTH_SCALE_DISCONNECT, undefined)
       );
-    }
-
-    if (disconnected) {
-      this.settings.refractometer_id = '';
-      this.settings.refractometer_type = null;
-      await this.saveSettings();
-    }
-  }
-
-  public async disconnectTemperatureDevice() {
-    this.eventQueue.dispatch(
-      new AppEvent(
-        AppEventType.BLUETOOTH_TEMPERATURE_DEVICE_DISCONNECT,
-        undefined
-      )
-    );
-    let disconnected: boolean = true;
-
-    //if scale is connected, we try to disconnect, if scale is not connected, we just forget scale :)
-    if (
-      this.settings.temperature_id !== '' &&
-      this.bleManager.getTemperatureDevice()
-    ) {
-      disconnected = await this.bleManager.disconnectTemperatureDevice(
-        this.settings.temperature_id
+      if (this.settings.scale_id !== '' && this.bleManager.getScale()) {
+        disconnected = await this.bleManager.disconnect(this.settings.scale_id);
+      }
+      if (disconnected) {
+        this.settings.scale_id = '';
+        this.settings.scale_type = null;
+      }
+    } else if (_type === BluetoothTypes.PRESSURE) {
+      this.eventQueue.dispatch(
+        new AppEvent(
+          AppEventType.BLUETOOTH_PRESSURE_DEVICE_DISCONNECT,
+          undefined
+        )
       );
-    }
+      if (
+        this.settings.pressure_id !== '' &&
+        this.bleManager.getPressureDevice()
+      ) {
+        disconnected = await this.bleManager.disconnectPressureDevice(
+          this.settings.pressure_id
+        );
+      }
 
-    if (disconnected) {
-      this.settings.temperature_id = '';
-      this.settings.temperature_type = null;
-      await this.saveSettings();
-    }
-  }
-
-  public async disconnectScale() {
-    this.eventQueue.dispatch(
-      new AppEvent(AppEventType.BLUETOOTH_SCALE_DISCONNECT, undefined)
-    );
-    let disconnected: boolean = true;
-
-    //if scale is connected, we try to disconnect, if scale is not connected, we just forget scale :)
-    if (this.settings.scale_id !== '' && this.bleManager.getScale()) {
-      disconnected = await this.bleManager.disconnect(this.settings.scale_id);
-    }
-
-    if (disconnected) {
-      this.settings.scale_id = '';
-      this.settings.scale_type = null;
-      await this.saveSettings();
-    }
-  }
-
-  public async disconnectPressureDevice() {
-    this.eventQueue.dispatch(
-      new AppEvent(AppEventType.BLUETOOTH_PRESSURE_DEVICE_DISCONNECT, undefined)
-    );
-    let disconnected: boolean = true;
-
-    //if scale is connected, we try to disconnect, if scale is not connected, we just forget scale :)
-    if (
-      this.settings.pressure_id !== '' &&
-      this.bleManager.getPressureDevice()
-    ) {
-      disconnected = await this.bleManager.disconnectPressureDevice(
-        this.settings.pressure_id
+      if (disconnected) {
+        this.settings.pressure_id = '';
+        this.settings.pressure_type = null;
+      }
+    } else if (_type === BluetoothTypes.TEMPERATURE) {
+      this.eventQueue.dispatch(
+        new AppEvent(
+          AppEventType.BLUETOOTH_TEMPERATURE_DEVICE_DISCONNECT,
+          undefined
+        )
       );
+      if (
+        this.settings.temperature_id !== '' &&
+        this.bleManager.getTemperatureDevice()
+      ) {
+        disconnected = await this.bleManager.disconnectTemperatureDevice(
+          this.settings.temperature_id
+        );
+      }
+
+      if (disconnected) {
+        this.settings.temperature_id = '';
+        this.settings.temperature_type = null;
+      }
+    } else if (_type === BluetoothTypes.TDS) {
+      this.eventQueue.dispatch(
+        new AppEvent(
+          AppEventType.BLUETOOTH_REFRACTOMETER_DEVICE_DISCONNECT,
+          undefined
+        )
+      );
+
+      if (
+        this.settings.refractometer_id !== '' &&
+        this.bleManager.getRefractometerDevice()
+      ) {
+        disconnected = await this.bleManager.disconnectRefractometerDevice(
+          this.settings.refractometer_id
+        );
+      }
+
+      if (disconnected) {
+        this.settings.refractometer_id = '';
+        this.settings.refractometer_type = null;
+      }
     }
 
     if (disconnected) {
-      this.settings.pressure_id = '';
-      this.settings.pressure_type = null;
       await this.saveSettings();
     }
-  }
-
-  public async retryConnectRefractometerDevice() {
-    await this.findAndConnectRefractometerDevice(true);
-  }
-
-  public async retryConnectTemperatureDevice() {
-    await this.findAndConnectTemperatureDevice(true);
-  }
-
-  public async retryConnectPressureDevice() {
-    await this.findAndConnectPressureDevice(true);
-  }
-
-  public async retryConnectScale() {
-    if (this.isScaleConnected() === false) {
-      await this.findAndConnectScale(true);
-    }
-  }
-  public isScaleConnected(): boolean {
-    return this.bleManager.getScale() !== null;
   }
 
   public async checkWaterSection() {
@@ -690,10 +661,6 @@ export class SettingsPage {
     } else {
       this.__importDummyData();
     }
-  }
-
-  public isMobile(): boolean {
-    return this.platform.is('android') || this.platform.is('ios');
   }
 
   private async exportAttachments() {
@@ -1767,4 +1734,6 @@ export class SettingsPage {
       }
     );
   }
+
+  protected readonly BluetoothTypes = BluetoothTypes;
 }

@@ -9,6 +9,7 @@ import { ServerBean } from '../../models/bean/serverBean';
 import { UIAlert } from '../uiAlert';
 import QR_TRACKING from '../../data/tracking/qrTracking';
 import { UIAnalytics } from '../uiAnalytics';
+import { VisualizerService } from '../visualizerService/visualizer-service.service';
 
 declare var window;
 declare var IonicDeeplink;
@@ -27,7 +28,8 @@ export class IntentHandlerService {
     private readonly serverCommunicationService: ServerCommunicationService,
     private readonly uiBeanHelper: UIBeanHelper,
     private readonly uiAlert: UIAlert,
-    private readonly uiAnalytics: UIAnalytics
+    private readonly uiAnalytics: UIAnalytics,
+    private readonly visualizerService: VisualizerService
   ) {}
 
   public attachOnHandleOpenUrl() {
@@ -149,6 +151,27 @@ export class IntentHandlerService {
             if (userBeanJSON) {
               await this.addBeanFromUser(userBeanJSON);
             }
+          } else if (url.indexOf('beanconqueror://VISUALIZER_SHARE?') === 0) {
+            const visualizerShareCode: string = String(
+              this.findGetParameter(_matchLink.queryString, 'code')
+            );
+            this.importVisualizerShot(visualizerShareCode);
+          } else if (
+            url.indexOf('https://beanconqueror.com/?visualizerShare=') === 0 ||
+            url.indexOf('https://beanconqueror.com?visualizerShare=') === 0 ||
+            url.indexOf('?visualizerShare=') >= 0
+          ) {
+            let shareCode: string = '';
+
+            //  const regex = /((visualizerShare=)[a-zA-Z]+)/gi;
+            // const foundJSONParams = url.match(regex);
+
+            shareCode = this.findGetParameter(
+              _matchLink.queryString,
+              'visualizerShare'
+            );
+
+            this.importVisualizerShot(shareCode);
           } else {
             this.uiAlert.showMessage(
               'QR.WRONG_LINK_DESCRIPTION',
@@ -166,6 +189,9 @@ export class IntentHandlerService {
     }
   }
 
+  private importVisualizerShot(_shareCode) {
+    this.visualizerService.importShotWithSharedCode(_shareCode);
+  }
   private async addBeanFromServer(_qrCodeId: string) {
     this.uiLog.log('Load bean information from server: ' + _qrCodeId);
 

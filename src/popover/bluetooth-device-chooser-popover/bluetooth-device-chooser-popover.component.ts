@@ -2,12 +2,13 @@ import {
   ChangeDetectorRef,
   Component,
   Input,
+  NgZone,
   OnDestroy,
   OnInit,
 } from '@angular/core';
 import { BluetoothTypes, ScaleType } from '../../classes/devices';
 import { CoffeeBluetoothDevicesService } from '../../services/coffeeBluetoothDevices/coffee-bluetooth-devices.service';
-import { Subscription } from 'rxjs';
+import { finalize, Subscription } from 'rxjs';
 import { ModalController, Platform } from '@ionic/angular';
 import { UIAlert } from '../../services/uiAlert';
 import SETTINGS_TRACKING from '../../data/tracking/settingsTracking';
@@ -32,6 +33,7 @@ export class BluetoothDeviceChooserPopoverComponent
   public deviceSelection: string;
   public foundDevices = [];
   private settings: Settings;
+  public searchRunning: boolean = undefined;
 
   constructor(
     private readonly bleManager: CoffeeBluetoothDevicesService,
@@ -41,7 +43,8 @@ export class BluetoothDeviceChooserPopoverComponent
     private readonly uiSettingsStorage: UISettingsStorage,
     private readonly uiAnalytics: UIAnalytics,
     private readonly changeDetector: ChangeDetectorRef,
-    private readonly uiPreparationStorage: UIPreparationStorage
+    private readonly uiPreparationStorage: UIPreparationStorage,
+    private ngZone: NgZone
   ) {}
 
   public ngOnInit() {
@@ -113,8 +116,14 @@ export class BluetoothDeviceChooserPopoverComponent
       connectedId = this.settings.refractometer_id;
     }
 
+    this.searchRunning = true;
     this.subscriptionToSearchDevices = this.bleManager
-      .attachOnDeviceFoundEvent()
+      .scanForDevicesAndReport(this.bluetoothTypeSearch)
+      .pipe(
+        finalize(() => {
+          this.searchRunning = false;
+        })
+      )
       .subscribe((_device) => {
         /**Don't show a device which is currently connected**/
         let skipDevice: boolean = false;
@@ -128,8 +137,6 @@ export class BluetoothDeviceChooserPopoverComponent
           this.checkChanges();
         }
       });
-
-    this.bleManager.scanForDevicesAndReport(this.bluetoothTypeSearch);
   }
 
   private async destroySearchSubscription() {
@@ -172,6 +179,7 @@ export class BluetoothDeviceChooserPopoverComponent
         }
       }
       if (choosenDevice) {
+        await this.uiAlert.showLoadingSpinner();
         if (this.bluetoothTypeSearch === BluetoothTypes.SCALE) {
           await this.connectScale(choosenDevice);
         } else if (this.bluetoothTypeSearch === BluetoothTypes.PRESSURE) {
@@ -181,6 +189,7 @@ export class BluetoothDeviceChooserPopoverComponent
         } else if (this.bluetoothTypeSearch === BluetoothTypes.TDS) {
           await this.connectRefractometer(choosenDevice);
         }
+        await this.uiAlert.hideLoadingSpinner();
       }
     }
     this.modalController.dismiss(
@@ -230,22 +239,25 @@ export class BluetoothDeviceChooserPopoverComponent
 
       await this.saveSettings();
 
-      let skipLoop = 0;
-      for (let i = 0; i < 5; i++) {
-        await new Promise((resolve) => {
-          setTimeout(async () => {
-            const connectedScale = this.bleManager.getScale();
-            if (connectedScale !== null && connectedScale !== undefined) {
-              skipLoop = 1;
-              try {
-                connectedScale.setLed(true, true);
-              } catch (ex) {}
-            }
-            resolve(undefined);
-          }, 1000);
-        });
-        if (skipLoop === 1) {
-          break;
+      if (scale.type === ScaleType.SKALE || scale.type === ScaleType.DECENT) {
+        // Just skale and decent has an LED.
+        let skipLoop = 0;
+        for (let i = 0; i < 5; i++) {
+          await new Promise((resolve) => {
+            setTimeout(async () => {
+              const connectedScale = this.bleManager.getScale();
+              if (connectedScale !== null && connectedScale !== undefined) {
+                skipLoop = 1;
+                try {
+                  connectedScale.setLed(true, true);
+                } catch (ex) {}
+              }
+              resolve(undefined);
+            }, 1000);
+          });
+          if (skipLoop === 1) {
+            break;
+          }
         }
       }
     } else {

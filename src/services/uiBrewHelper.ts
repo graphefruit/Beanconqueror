@@ -31,6 +31,7 @@ import { PreparationDeviceType } from '../classes/preparationDevice';
 import { UIHelper } from './uiHelper';
 import { BrewRatingComponent } from '../app/brew/brew-rating/brew-rating.component';
 import { AssociatedBrewsComponent } from '../app/brew/associated-brews/associated-brews.component';
+import { BrewFlow } from '../classes/brew/brewFlow';
 
 /**
  * Handles every helping functionalities
@@ -511,6 +512,18 @@ export class UIBrewHelper {
       const modal = await this.modalController.create({
         component: BrewAddComponent,
         id: BrewAddComponent.COMPONENT_ID,
+      });
+      await modal.present();
+      await modal.onWillDismiss();
+    }
+  }
+
+  public async addBrewFromVisualizerWithGraph(_brewFlow: BrewFlow) {
+    if (this.canBrewIfNotShowMessage()) {
+      const modal = await this.modalController.create({
+        component: BrewAddComponent,
+        id: BrewAddComponent.COMPONENT_ID,
+        componentProps: { brew_flow_preset: _brewFlow },
       });
       await modal.present();
       await modal.onWillDismiss();

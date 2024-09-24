@@ -8,6 +8,7 @@ import { UIBrewStorage } from '../uiBrewStorage';
 import { UISettingsStorage } from '../uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
 import { UILog } from '../uiLog';
+import { UIBrewHelper } from '../uiBrewHelper';
 
 declare var cordova;
 
@@ -20,7 +21,8 @@ export class VisualizerService {
     private readonly uiToast: UIToast,
     private readonly uiBrewStorage: UIBrewStorage,
     private readonly uiSettingsStorage: UISettingsStorage,
-    private readonly uiLog: UILog
+    private readonly uiLog: UILog,
+    private readonly uiBrewHelper: UIBrewHelper
   ) {}
 
   private async readFlowProfile(_brew: Brew): Promise<BrewFlow> {
@@ -35,6 +37,40 @@ export class VisualizerService {
     } catch (ex) {
       return null;
     }
+  }
+
+  public async importShotWithSharedCode(_shareCode: string) {
+    const retrieveURL =
+      'https://visualizer.coffee/api/shots/shared?code=' +
+      _shareCode +
+      '&with_data=1';
+
+    this.uiLog.log('Get SHOT-Data from visualizer ' + retrieveURL);
+    const options = {
+      method: 'get',
+    };
+
+    cordova.plugin.http.sendRequest(
+      retrieveURL,
+      options,
+      (response) => {
+        try {
+          const parsedJSON = JSON.parse(response.data);
+          if ('brewdata' in parsedJSON) {
+            if (
+              parsedJSON['brewdata'].application === 'BEANCONQUEROR' &&
+              parsedJSON['brewdata'].brewFlow
+            ) {
+              const brewFlow = parsedJSON['brewdata'].brewFlow;
+              this.uiBrewHelper.addBrewFromVisualizerWithGraph(brewFlow);
+            }
+          }
+        } catch (e) {}
+      },
+      (response) => {
+        // prints 403
+      }
+    );
   }
 
   public async uploadToVisualizer(_brew: Brew, _showToast: boolean = true) {

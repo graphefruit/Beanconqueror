@@ -71,7 +71,6 @@ export class CoffeeBluetoothDevicesService {
   public ready: boolean;
   private readonly logger: Logger;
   private eventSubject = new Subject<CoffeeBluetoothServiceEvent>();
-  private deviceFoundSubject = new Subject<any>();
   private androidPermissions: any = null;
 
   private scanBluetoothTimeout: any = null;
@@ -97,10 +96,6 @@ export class CoffeeBluetoothDevicesService {
 
   public attachOnEvent(): Observable<CoffeeBluetoothServiceEvent> {
     return this.eventSubject.asObservable();
-  }
-
-  public attachOnDeviceFoundEvent(): Observable<any> {
-    return this.deviceFoundSubject.asObservable();
   }
 
   public async hasLocationPermission(): Promise<boolean> {
@@ -254,37 +249,43 @@ export class CoffeeBluetoothDevicesService {
   }
 
   public scanForDevicesAndReport(_searchingType: BluetoothTypes) {
-    const foundDevices = [];
-    this.scanAllBluetoothDevicesAndPassBack(
-      (scanDevice) => {
-        let type;
-        if (_searchingType === BluetoothTypes.SCALE) {
-          type = this.getScaleDeviceType(scanDevice);
-        } else if (_searchingType === BluetoothTypes.PRESSURE) {
-          type = this.getPressureDeviceType(scanDevice);
-        } else if (_searchingType === BluetoothTypes.TEMPERATURE) {
-          type = this.getTemperatureDeviceType(scanDevice);
-        } else if (_searchingType === BluetoothTypes.TDS) {
-          type = this.getRefractometerDeviceType(scanDevice);
-        }
+    const observable: Observable<any> = new Observable((subscriber) => {
+      const foundDevices = [];
+      this.scanAllBluetoothDevicesAndPassBack(
+        (scanDevice) => {
+          let type;
+          if (_searchingType === BluetoothTypes.SCALE) {
+            type = this.getScaleDeviceType(scanDevice);
+          } else if (_searchingType === BluetoothTypes.PRESSURE) {
+            type = this.getPressureDeviceType(scanDevice);
+          } else if (_searchingType === BluetoothTypes.TEMPERATURE) {
+            type = this.getTemperatureDeviceType(scanDevice);
+          } else if (_searchingType === BluetoothTypes.TDS) {
+            type = this.getRefractometerDeviceType(scanDevice);
+          }
 
-        if (type) {
-          if (scanDevice && scanDevice.name) {
-            type.name = scanDevice.name;
-          } else {
-            type.name = '';
+          if (type) {
+            if (scanDevice && scanDevice.name) {
+              type.name = scanDevice.name;
+            } else {
+              type.name = '';
+            }
+            if (foundDevices.indexOf(type.id) === -1) {
+              foundDevices.push(type.id);
+              subscriber.next(type);
+
+              this.logger.log(
+                'Supported device found ' + JSON.stringify(scanDevice)
+              );
+            }
           }
-          if (foundDevices.indexOf(type.id) === -1) {
-            foundDevices.push(type.id);
-            this.deviceFoundSubject.next(type);
-            this.logger.log(
-              'Supported device found ' + JSON.stringify(scanDevice)
-            );
-          }
+        },
+        (_devices: Array<any>) => {
+          subscriber.complete();
         }
-      },
-      (_devices: Array<any>) => {}
-    );
+      );
+    });
+    return observable;
   }
 
   public async findDeviceWithDirectIds(
