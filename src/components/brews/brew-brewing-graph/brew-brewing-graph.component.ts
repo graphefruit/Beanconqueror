@@ -664,30 +664,48 @@ export class BrewBrewingGraphComponent implements OnInit {
             presetFlowProfile.pressureFlow &&
             presetFlowProfile.pressureFlow.length > 0
           ) {
-            this.chartData.push(this.pressureTraceReference);
-            for (const data of presetFlowProfile.pressureFlow) {
-              this.pressureTraceReference.x.push(
-                new Date(
-                  moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
-                    delay
-                )
-              );
-              this.pressureTraceReference.y.push(data.actual_pressure);
+            const pressureDevice = this.bleManager.getPressureDevice();
+            if (
+              (pressureDevice != null &&
+                this.getPreparation().style_type ===
+                  PREPARATION_STYLE_TYPE.ESPRESSO) ||
+              this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() ||
+              !this.platform.is('cordova')
+            ) {
+              /** We just push the data, if we also got an pressure device connected**/
+              this.chartData.push(this.pressureTraceReference);
+              for (const data of presetFlowProfile.pressureFlow) {
+                this.pressureTraceReference.x.push(
+                  new Date(
+                    moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
+                      delay
+                  )
+                );
+                this.pressureTraceReference.y.push(data.actual_pressure);
+              }
             }
           }
           if (
             presetFlowProfile.temperatureFlow &&
             presetFlowProfile.temperatureFlow.length > 0
           ) {
-            this.chartData.push(this.temperatureTraceReference);
-            for (const data of presetFlowProfile.temperatureFlow) {
-              this.temperatureTraceReference.x.push(
-                new Date(
-                  moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
-                    delay
-                )
-              );
-              this.temperatureTraceReference.y.push(data.actual_temperature);
+            const temperatureDevice = this.bleManager.getTemperatureDevice();
+            if (
+              temperatureDevice != null ||
+              this.brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() ||
+              !this.platform.is('cordova')
+            ) {
+              /** We just push the data, if we also got an temperature device connected**/
+              this.chartData.push(this.temperatureTraceReference);
+              for (const data of presetFlowProfile.temperatureFlow) {
+                this.temperatureTraceReference.x.push(
+                  new Date(
+                    moment(data.timestamp, 'HH:mm:ss.SSS').toDate().getTime() -
+                      delay
+                  )
+                );
+                this.temperatureTraceReference.y.push(data.actual_temperature);
+              }
             }
           }
         }
