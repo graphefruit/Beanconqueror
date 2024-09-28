@@ -152,7 +152,7 @@ Therefore some users did third party apps, where I don't have any stakes in it.
 Important: Beanconqueror doesn't take any warranty here.
 
 Add beans to share directly from a webform:
-https://beanstats.vercel.app/beanconqueror/share/create
+https://beanstats.vercel.app/beanconqueror/create
 (Uses the minify-logic of the add.beanl.ink aswell)
 
 Minify your shared bean-link:
