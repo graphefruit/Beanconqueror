@@ -644,6 +644,14 @@
                 </div>
               </ion-checkbox>
             </ion-item>
+            <ion-item>
+              <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
+                            [(ngModel)]="settings.maximize_hide_value_cards_on_maximize_screen">
+                <div class='ion-label' style="white-space: normal;">
+                  <h2>{{"HIDE_VALUE_CARDS_ON_MAXIMIZED_SCREEN" | translate}}</h2>
+                </div>
+              </ion-checkbox>
+            </ion-item>
             <ion-item [lines]="settings.bluetooth_scale_listening_threshold_active?'none':'full'">
               <ion-checkbox label-placement='start' (ngModelChange)="saveSettings();"
                             [(ngModel)]="settings.bluetooth_scale_listening_threshold_active">

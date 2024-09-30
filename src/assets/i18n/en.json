@@ -1401,5 +1401,6 @@
   "DISCONNECT_PRESSURE": "Disconnect pressure",
   "DISCONNECT_TEMPERATURE": "Disconnect temperature",
   "DISCONNECT_REFRACTOMETER": "Disconnect refractometer",
-  "NO_DEVICES_FOUND_PLEASE_TRY_AGAIN": "We didn't find any supported bluetooth devices, please try again"
+  "NO_DEVICES_FOUND_PLEASE_TRY_AGAIN": "We didn't find any supported bluetooth devices, please try again",
+  "HIDE_VALUE_CARDS_ON_MAXIMIZED_SCREEN": "Hide value cards on maximized screen"
 }

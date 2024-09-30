@@ -48,7 +48,7 @@
 
 
 
-    <div *ngIf="isDetail===false" id="informationContainer">
+    <div *ngIf="isDetail===false" id="informationContainer" [hidden]="settings.maximize_hide_value_cards_on_maximize_screen">
       <ion-grid class="ion-text-center ion-no-padding brew-information-panel">
         <ion-row style="padding-bottom:5px;">
           <ion-col  *ngIf="smartScaleConnected() || ( brewComponent?.brewBrewingPreparationDeviceEl?.preparationDeviceConnected() && brewComponent?.brewBrewingPreparationDeviceEl?.getPreparationDeviceType() === PREPARATION_DEVICE_TYPE_ENUM.METICULOUS)"
