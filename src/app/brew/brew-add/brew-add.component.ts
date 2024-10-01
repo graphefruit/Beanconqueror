@@ -45,6 +45,8 @@ import { HapticService } from '../../../services/hapticService/haptic.service';
 import { PreparationDeviceType } from '../../../classes/preparationDevice';
 import { XeniaDevice } from '../../../classes/preparationDevice/xenia/xeniaDevice';
 import { BrewFlow } from '../../../classes/brew/brewFlow';
+import { REFERENCE_GRAPH_TYPE } from '../../../enums/brews/referenceGraphType';
+import { ReferenceGraph } from '../../../classes/brew/referenceGraph';
 
 declare var Plotly;
 
@@ -427,6 +429,29 @@ export class BrewAddComponent implements OnInit, OnDestroy {
       );
       if (savedPath !== '') {
         addedBrewObj.flow_profile = savedPath;
+        await this.uiBrewStorage.update(addedBrewObj);
+      }
+
+      /**
+       * if this is true, it means we have a brew flow preset, aswell as having a loaded reference profile, but the choosen reference profile is empty, that means it wasn't stored anywhere **/
+      if (
+        this.brew_flow_preset &&
+        (this.brewBrewing.brewBrewingGraphEl.reference_profile_raw?.weight
+          ?.length > 0 ||
+          this.brewBrewing.brewBrewingGraphEl.reference_profile_raw
+            ?.pressureFlow?.length > 0 ||
+          this.brewBrewing.brewBrewingGraphEl.reference_profile_raw
+            ?.temperatureFlow?.length > 0) &&
+        addedBrewObj.reference_flow_profile.type === REFERENCE_GRAPH_TYPE.NONE
+      ) {
+        const path = await this.brewBrewing.saveReferenceFlowProfile(
+          addedBrewObj.config.uuid
+        );
+
+        addedBrewObj.reference_flow_profile = new ReferenceGraph();
+        addedBrewObj.reference_flow_profile.type =
+          REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH;
+        addedBrewObj.reference_flow_profile.uuid = addedBrewObj.config.uuid;
         await this.uiBrewStorage.update(addedBrewObj);
       }
     }

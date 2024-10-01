@@ -73,6 +73,7 @@ import { TextToSpeechService } from '../../services/textToSpeech/text-to-speech.
 import { PreparationDeviceType } from '../../classes/preparationDevice';
 import { BrewFlow } from '../../classes/brew/brewFlow';
 import { BluetoothDeviceChooserPopoverComponent } from '../../popover/bluetooth-device-chooser-popover/bluetooth-device-chooser-popover.component';
+import { REFERENCE_GRAPH_TYPE } from '../../enums/brews/referenceGraphType';
 
 declare var cordova: any;
 declare var device: any;
@@ -1201,11 +1202,25 @@ export class SettingsPage {
 
   private async _importFlowProfileFiles(
     _storedData: Array<Brew>,
-    _importPath: string
+    _importPath: string,
+    _rootImportPath: string
   ) {
     for (const entry of _storedData) {
       if (entry.flow_profile) {
         await this._importFileFlowProfile(entry.flow_profile, _importPath);
+      }
+      if (entry.reference_flow_profile) {
+        if (
+          entry.reference_flow_profile.type ===
+          REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
+        ) {
+          /*If we have an imported graph, the uuid, is used with the importedGraph folder, because else we would not been able to store those graphs coming from e.g. visualizer.*/
+          /** Making a new object for this seems to be like totaly overdrived **/
+          await this._importFileFlowProfile(
+            entry.getGraphPath(),
+            _rootImportPath + 'importedGraph/'
+          );
+        }
       }
     }
   }
@@ -1582,7 +1597,8 @@ export class SettingsPage {
 
                     await this._importFlowProfileFiles(
                       brewsData,
-                      _importPath + 'brews/'
+                      _importPath + 'brews/',
+                      _importPath
                     );
 
                     await this._importGraphProfileFiles(

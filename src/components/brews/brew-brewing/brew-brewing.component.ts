@@ -846,6 +846,25 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
     });
   }
 
+  /**
+   * This function is triggered outside of add/edit component, because the uuid is not existing on adding at start
+   * @param _uuid
+   */
+  public async saveReferenceFlowProfile(_uuid: string): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const savingPath = 'importedGraph/' + _uuid + '_flow_profile.json';
+        await this.uiFileHelper.saveJSONFile(
+          savingPath,
+          JSON.stringify(this.brewBrewingGraphEl.reference_profile_raw)
+        );
+        resolve(savingPath);
+      } catch (ex) {
+        resolve('');
+      }
+    });
+  }
+
   public getActualScaleWeight() {
     try {
       return this.uiHelper.toFixedIfNecessary(

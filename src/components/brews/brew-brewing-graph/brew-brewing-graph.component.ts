@@ -295,7 +295,11 @@ export class BrewBrewingGraphComponent implements OnInit {
         let referencePath: string = '';
         const uuid = _brew.reference_flow_profile.uuid;
         let referenceObj: Brew | Graph = null;
-        if (_brew.reference_flow_profile.type === REFERENCE_GRAPH_TYPE.BREW) {
+        if (
+          _brew.reference_flow_profile.type === REFERENCE_GRAPH_TYPE.BREW ||
+          _brew.reference_flow_profile.type ===
+            REFERENCE_GRAPH_TYPE.IMPORTED_GRAPH
+        ) {
           referenceObj = this.uiBrewStorage.getEntryByUUID(uuid);
         } else {
           referenceObj = this.uiGraphStorage.getEntryByUUID(uuid);
