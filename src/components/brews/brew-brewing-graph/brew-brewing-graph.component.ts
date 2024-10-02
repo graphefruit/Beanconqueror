@@ -2703,7 +2703,10 @@ export class BrewBrewingGraphComponent implements OnInit {
                   try {
                     const scale: BluetoothScale = this.bleManager.getScale();
                     if (scale) {
-                      scale.tare();
+                      if (scale.getWeight() !== 0) {
+                        //Just tare if the scale is not zero yet.
+                        scale.tare();
+                      }
                     }
                   } catch (ex) {}
                 }
