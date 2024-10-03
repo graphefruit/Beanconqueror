@@ -193,7 +193,7 @@ export class GraphInformationCardComponent implements OnInit {
     if (this.graph.flow_profile) {
       try {
         // Could be after importing that the storage path is given, but the file is not existing.
-        await this.uiFileHelper.deleteFile(this.graph.flow_profile);
+        await this.uiFileHelper.deleteInternalFile(this.graph.flow_profile);
       } catch (ex) {}
     }
     await this.uiGraphStorage.removeByObject(this.graph);

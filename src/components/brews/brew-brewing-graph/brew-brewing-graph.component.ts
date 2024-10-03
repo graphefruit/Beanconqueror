@@ -3218,7 +3218,7 @@ export class BrewBrewingGraphComponent implements OnInit {
       if (this.data.flow_profile !== '') {
         const flowProfilePath =
           'brews/' + this.data.config.uuid + '_flow_profile.json';
-        await this.uiFileHelper.deleteFile(flowProfilePath);
+        await this.uiFileHelper.deleteInternalFile(flowProfilePath);
       }
     } catch (ex) {}
   }

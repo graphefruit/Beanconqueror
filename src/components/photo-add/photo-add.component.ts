@@ -105,7 +105,7 @@ export class PhotoAddComponent implements OnInit, OnDestroy {
     const splicedPaths: Array<string> = this.data.attachments.splice(_index, 1);
     for (const path of splicedPaths) {
       try {
-        await this.uiFileHelper.deleteFile(path);
+        await this.uiFileHelper.deleteInternalFile(path);
         this.emitChanges();
         this.uiToast.showInfoToast('IMAGE_DELETED');
       } catch (ex) {

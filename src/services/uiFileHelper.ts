@@ -344,6 +344,26 @@ export class UIFileHelper extends InstanceClass {
     return generatedFileName;
   }
 
+  public async deleteFile(path: string, directory?: Directory): Promise<void> {
+    this.uiLog.debug('deleteFile for path', path, 'in directory', directory);
+
+    if (!this.platform.is('cordova')) {
+      throw new Error(
+        'File system operations are only supported on native platforms.'
+      );
+    }
+
+    await Filesystem.deleteFile({
+      path: path,
+      directory: directory,
+    });
+  }
+
+  public async deleteInternalFile(path: string): Promise<void> {
+    this.uiLog.debug('deleteInternalFile for path', path);
+    await this.deleteFile(path, this.getDataDirectory());
+  }
+
   public async deleteZIPBackupsOlderThanSevenDays(): Promise<void> {
     this.uiLog.debug('deleteZIPBackupsOlderThanSevenDays starting');
 
@@ -488,47 +508,6 @@ export class UIFileHelper extends InstanceClass {
       path: path,
       directory: this.getDataDirectory(),
       recursive: true,
-    });
-  }
-
-  // TODO Capacitor migration: Re-implement using Capacitor APIs
-  public async deleteFile(_filePath): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      if (this.platform.is('cordova')) {
-        const fileObj = this.__splitFilePath(_filePath);
-        let filePath = this.getFileDirectory();
-
-        if (filePath.endsWith('/') === false) {
-          filePath = filePath + '/';
-        }
-        if (fileObj.FILE_PATH.startsWith('/')) {
-          fileObj.FILE_PATH = fileObj.FILE_PATH.substr(1);
-        }
-        if (fileObj.FILE_PATH.endsWith('/')) {
-          fileObj.FILE_PATH = fileObj.FILE_PATH.substr(
-            0,
-            fileObj.FILE_PATH.length - 1
-          );
-        }
-        if (fileObj.FILE_PATH.length > 0) {
-          filePath = filePath + fileObj.FILE_PATH;
-        }
-
-        this.file
-          .removeFile(filePath, fileObj.FILE_NAME + fileObj.EXTENSION)
-          .then(
-            () => {
-              this.uiLog.log('Deleted file: ' + _filePath);
-              resolve(undefined);
-            },
-            (e) => {
-              this.uiLog.error('Cant delete file: ' + JSON.stringify(e));
-              reject();
-            }
-          );
-      } else {
-        resolve(undefined);
-      }
     });
   }
 

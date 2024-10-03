@@ -112,10 +112,10 @@ export class VisualizerService {
           'file',
           async (_successData) => {
             try {
-              await Filesystem.deleteFile({
-                path: savedFilePath,
-                directory: Directory.Cache,
-              });
+              await this.uiFileHelper.deleteFile(
+                savedFilePath,
+                Directory.Cache
+              );
             } catch (ex) {
               this.uiLog.error(
                 'Could not delete cache file',
