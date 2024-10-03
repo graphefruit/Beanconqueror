@@ -1132,11 +1132,7 @@ export class SettingsPage {
             await this.exportGraphProfiles();
           }
         }
-        const file: FileEntry = await this.uiFileHelper.downloadFile(
-          'Beanconqueror.zip',
-          _blob,
-          true
-        );
+        await this.uiFileHelper.exportFile('Beanconqueror.zip', _blob, true);
 
         await this.uiAlert.hideLoadingSpinner();
       },
@@ -1150,7 +1146,7 @@ export class SettingsPage {
             this.uiHelper
               .exportJSON('Beanconqueror.json', JSON.stringify(_data), isIOS)
               .then(
-                async (_fileEntry: FileEntry) => {
+                async () => {
                   if (this.platform.is('cordova')) {
                     if (this.platform.is('android')) {
                       await this.exportAttachments();
@@ -1162,7 +1158,7 @@ export class SettingsPage {
                         header: this.translate.instant('DOWNLOADED'),
                         subHeader: this.translate.instant(
                           'FILE_DOWNLOADED_SUCCESSFULLY',
-                          { fileName: _fileEntry.name }
+                          { fileName: 'Beanconqueror.json' }
                         ),
                         buttons: ['OK'],
                       });
@@ -1656,7 +1652,7 @@ export class SettingsPage {
     }
 
     try {
-      await this.uiFileHelper.createFolder(_filePath);
+      await this.uiFileHelper.mkdirsInternal(_filePath);
     } catch (ex) {
       this.uiLog.error(
         'Settings - import file - We could not create folders ' + _filePath
@@ -1749,7 +1745,7 @@ export class SettingsPage {
     }
 
     try {
-      await this.uiFileHelper.createFolder(_filePath);
+      await this.uiFileHelper.mkdirsInternal(_filePath);
     } catch (ex) {
       this.uiLog.error(
         'Settings - import file - We could not create folders ' + _filePath

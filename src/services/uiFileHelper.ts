@@ -417,218 +417,81 @@ export class UIFileHelper extends InstanceClass {
   }
 
   public async downloadExternalFile(
-    _url: string,
-    _fileName: string = 'beanconqueror_image',
-    _fileExtension: string = '.png'
+    url: string,
+    fileName: string = 'beanconqueror_image',
+    fileExtension: string = '.png'
   ): Promise<string> {
-    const promise: Promise<string> = new Promise(async (resolve, reject) => {
-      const url: string = _url;
-      const fileTransferObj: FileTransferObject = this.fileTransfer.create();
-      await this.generateInternalPath(_fileName, _fileExtension).then(
-        async (_newName) => {
-          fileTransferObj
-            .download(url, this.getFileDirectory() + _newName)
-            .then(
-              async (_entry) => {
-                this.uiLog.log('File download completed: ' + _entry.fullPath);
-                resolve(_entry.fullPath);
-              },
-              (error) => {
-                // handle error
-                resolve(undefined);
-              }
-            );
+    const path = await this.generateInternalPath(fileName, fileExtension);
+    const directory = this.getDataDirectory();
+    const result = await Filesystem.downloadFile({ url, path, directory });
+
+    this.uiLog.debug(
+      'downloadExternalFile successful for url',
+      url,
+      'to path',
+      path,
+      'in directory',
+      directory,
+      '; Result path is',
+      result.path
+    );
+
+    // return the relative path we used to write the file instead of the
+    // absolute path returned in result.path for backwards compatibility
+    // with cordova-plugin-file.
+    return path;
+  }
+
+  // TODO Capacitor migration: Give this a better name
+  public async exportFile(
+    fileName: string,
+    blob: Blob,
+    share: boolean = true
+  ): Promise<string | undefined> {
+    if (this.platform.is('cordova')) {
+      const path = `Download/Beanconqueror_export/${fileName}`;
+      await this.writeFileFromBlob(blob, path, Directory.External);
+      const { uri: exportUri } = await Filesystem.getUri({
+        path,
+        directory: Directory.External,
+      });
+      if (share === true) {
+        this.socialSharing.share(undefined, undefined, exportUri);
+      }
+      return path;
+    } else {
+      // We are in a browser
+      setTimeout(() => {
+        if (navigator.msSaveBlob) {
+          // IE 10+
+          navigator.msSaveBlob(blob, fileName);
+        } else {
+          const link = document.createElement('a');
+          if (link.download !== undefined) {
+            // feature detection
+            // Browsers that support HTML5 download attribute
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', fileName);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          }
         }
-      );
+      }, 250);
+      return fileName;
+    }
+  }
+
+  public mkdirsInternal(path: string): Promise<void> {
+    return Filesystem.mkdir({
+      path: path,
+      directory: this.getDataDirectory(),
+      recursive: true,
     });
-    return promise;
   }
 
   // TODO Capacitor migration: Re-implement using Capacitor APIs
-  public async downloadFile(
-    _filename,
-    _blob,
-    _share: boolean = true
-  ): Promise<FileEntry> {
-    const promise: Promise<FileEntry> = new Promise(async (resolve, reject) => {
-      if (this.platform.is('cordova')) {
-        let storageLocation: string = '';
-        if (this.platform.is('android')) {
-          storageLocation = this.file.externalDataDirectory;
-        } else {
-          storageLocation = this.file.documentsDirectory;
-        }
-        if (storageLocation !== null && storageLocation !== undefined) {
-          window.resolveLocalFileSystemURL(
-            storageLocation,
-            (fileSystem) => {
-              fileSystem.getDirectory(
-                'Download',
-                {
-                  create: true,
-                  exclusive: false,
-                },
-                (directory) => {
-                  directory.getDirectory(
-                    'Beanconqueror_export',
-                    {
-                      create: true,
-                      exclusive: false,
-                    },
-                    (directory_export) => {
-                      // You need to put the name you would like to use for the file here.
-                      directory_export.getFile(
-                        _filename,
-                        {
-                          create: true,
-                          exclusive: false,
-                        },
-                        (fileEntry: FileEntry) => {
-                          fileEntry.createWriter(
-                            (writer) => {
-                              writer.onwriteend = () => {
-                                if (_share === true) {
-                                  this.socialSharing.share(
-                                    undefined,
-                                    undefined,
-                                    fileEntry.nativeURL
-                                  );
-                                }
-                                resolve(fileEntry);
-                              };
-
-                              writer.seek(0);
-                              writer.write(_blob); // You need to put the file, blob or base64 representation here.
-                            },
-                            () => {
-                              reject();
-                            }
-                          );
-                        },
-                        () => {
-                          reject();
-                        }
-                      );
-                    },
-                    () => {
-                      reject();
-                    }
-                  );
-                },
-                () => {
-                  reject();
-                }
-              );
-            },
-            () => {
-              reject();
-            }
-          );
-        } else {
-          reject();
-        }
-      } else {
-        resolve(undefined);
-        setTimeout(() => {
-          if (navigator.msSaveBlob) {
-            // IE 10+
-            navigator.msSaveBlob(_blob, _filename);
-          } else {
-            const link = document.createElement('a');
-            if (link.download !== undefined) {
-              // feature detection
-              // Browsers that support HTML5 download attribute
-              const url = URL.createObjectURL(_blob);
-              link.setAttribute('href', url);
-              link.setAttribute('download', _filename);
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-            }
-          }
-        }, 250);
-      }
-    });
-    return promise;
-  }
-
-  // TODO Capacitor migration: Re-implement using Capacitor APIs if still needed
-  public createFolder(_path) {
-    const promise: Promise<FileEntry> = new Promise(async (resolve, reject) => {
-      const folders = _path.split('/');
-
-      try {
-        this.file.resolveDirectoryUrl(this.getFileDirectory()).then(
-          (_rootDir: DirectoryEntry) => {
-            this.createFolderInternal(
-              _rootDir,
-              folders,
-              () => {
-                resolve(undefined);
-              },
-              () => {
-                reject();
-              }
-            );
-          },
-          () => {
-            reject();
-          }
-        );
-      } catch (ex) {
-        reject();
-      }
-    });
-
-    return promise;
-  }
-
-  private createFolderInternal(
-    _rootDirEntry: DirectoryEntry,
-    _folders,
-    _resolve,
-    _reject
-  ) {
-    // Throw out './' or '/' and move on to prevent something like '/foo/.//bar'.
-    if (_folders[0] === '.' || _folders[0] === '') {
-      _folders = _folders.slice(1);
-    }
-    if (
-      _folders === undefined ||
-      _folders.length === 0 ||
-      _folders[0].indexOf('.') >= 0
-    ) {
-      //  _folders[0].indexOf('.')  -> Means we got a file with a extension.
-      _resolve(undefined);
-    } else {
-      this.file
-        .getDirectory(_rootDirEntry, _folders[0], {
-          create: true,
-          exclusive: false,
-        })
-        .then(
-          (dirEntry) => {
-            // Recursively add the new subfolder (if we still have another to create).
-
-            if (_folders.length) {
-              this.createFolderInternal(
-                dirEntry,
-                _folders.slice(1),
-                _resolve,
-                _reject
-              );
-            } else {
-              // All folders were created
-              _resolve(undefined);
-            }
-          },
-          () => {
-            _reject();
-          }
-        );
-    }
-  }
-
   public async deleteFile(_filePath): Promise<any> {
     return new Promise(async (resolve, reject) => {
       if (this.platform.is('cordova')) {
@@ -669,6 +532,7 @@ export class UIFileHelper extends InstanceClass {
     });
   }
 
+  // TODO Capacitor migration: Re-implement using Capacitor APIs
   public async copyFile(_filePath: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       if (this.platform.is('cordova')) {

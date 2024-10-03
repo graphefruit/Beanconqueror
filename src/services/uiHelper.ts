@@ -9,7 +9,6 @@ import moment from 'moment';
 // tslint:disable-next-line
 import 'moment/locale/de';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { File, FileEntry } from '@awesome-cordova-plugins/file/ngx';
 import { UIFileHelper } from './uiFileHelper';
 import { UILog } from './uiLog';
 import { UIAlert } from './uiAlert';
@@ -33,7 +32,6 @@ export class UIHelper {
     private readonly platform: Platform,
     private readonly inAppBrowser: InAppBrowser,
     private readonly sanitizer: DomSanitizer,
-    private readonly file: File,
     private readonly uiFileHelper: UIFileHelper,
     private readonly uiLog: UILog,
     private readonly uiAlert: UIAlert,
@@ -276,24 +274,12 @@ export class UIHelper {
     fileName: string,
     jsonContent: string,
     _share: boolean = false
-  ): Promise<any> {
-    const promise = new Promise(async (resolve, reject) => {
-      // Fixed umlaut issue
-      // Thanks to: https://stackoverflow.com/questions/31959487/utf-8-encoidng-issue-when-exporting-csv-file-javascript
-      const blob = new Blob([jsonContent], {
-        type: 'application/json;charset=UTF-8;',
-      });
-      try {
-        const file: FileEntry = await this.uiFileHelper.downloadFile(
-          fileName,
-          blob,
-          _share
-        );
-        resolve(file);
-      } catch (ex) {
-        reject();
-      }
+  ): Promise<void> {
+    // Fixed umlaut issue
+    // Thanks to: https://stackoverflow.com/questions/31959487/utf-8-encoidng-issue-when-exporting-csv-file-javascript
+    const blob = new Blob([jsonContent], {
+      type: 'application/json;charset=UTF-8;',
     });
-    return promise;
+    await this.uiFileHelper.exportFile(fileName, blob, _share);
   }
 }
