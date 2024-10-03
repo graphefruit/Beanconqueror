@@ -206,7 +206,7 @@ export class UIExportImportHelper {
         }
       } else {
         this.uiLog.log(
-          "checkBackupAndSeeIfDataAreCorrupted - We didn't found any json backup data so we can't do any checks"
+          "checkBackupAndSeeIfDataAreCorrupted - We didn't find any json backup data so we can't do any checks"
         );
       }
     } catch (ex) {
@@ -241,51 +241,44 @@ export class UIExportImportHelper {
     return false;
   }
 
-  public async checkBackup() {
+  public async checkBackup(): Promise<void> {
+    if (!this.platform.is('cordova')) {
+      return;
+    }
+
     try {
-      const promise = new Promise(async (resolve, reject) => {
-        try {
-          if (this.platform.is('cordova')) {
-            this.uiLog.log('Check Backup');
-            const hasData = await this.uiStorage.hasData();
+      this.uiLog.log('Check Backup');
+      const hasData = await this.uiStorage.hasData();
 
-            let actualUIStorageDataObj: any;
-            if (hasData) {
-              actualUIStorageDataObj = await this.uiStorage.hasCorruptedData();
-            }
+      let actualUIStorageDataObj;
+      if (hasData) {
+        actualUIStorageDataObj = await this.uiStorage.hasCorruptedData();
+      }
 
-            this.uiLog.log('Check Backup - Has data ' + hasData);
-            if (!hasData || actualUIStorageDataObj.CORRUPTED) {
-              if (!hasData) {
-                this.uiLog.log(
-                  'Check  Backup - We didnt found any data inside the app, so try to find a backup and import it'
-                );
-              } else {
-                this.uiLog.log(
-                  'Check  Backup - We found data but they where corrupted, so try to import a backup'
-                );
-              }
-
-              const parsedJSON = await this.readBackupZIPFile();
-              if (parsedJSON) {
-                await this.importBackupJSON(parsedJSON);
-              }
-              resolve(null);
-            } else {
-              await this.checkBackupAndSeeIfDataAreCorrupted(
-                actualUIStorageDataObj
-              );
-              resolve(null);
-            }
-          } else {
-            resolve(null);
-          }
-        } catch (ex) {
-          resolve(null);
+      this.uiLog.log('Check Backup - Has data ' + hasData);
+      if (!hasData || actualUIStorageDataObj.CORRUPTED) {
+        if (!hasData) {
+          this.uiLog.log(
+            'Check  Backup - We did not find any data inside the app, so try to find a backup and import it'
+          );
+        } else {
+          this.uiLog.log(
+            'Check  Backup - We found data but they where corrupted, so try to import a backup'
+          );
         }
-      });
-      return promise;
-    } catch (ex) {}
+
+        const parsedJSON = await this.readBackupZIPFile();
+        if (parsedJSON) {
+          await this.importBackupJSON(parsedJSON);
+        }
+        return;
+      }
+
+      // hasData == true && actualUIStorageDataObj.CORRUPTED == false
+      await this.checkBackupAndSeeIfDataAreCorrupted(actualUIStorageDataObj);
+    } catch (error) {
+      this.uiLog.error('Error while checking for backup data:', error);
+    }
   }
 
   private importBackupJSON(_parsedJSON: unknown) {

@@ -373,15 +373,14 @@ export class AppComponent implements AfterViewInit {
       this._translate.setDefaultLang('en');
       await this._translate.use('en').toPromise();
 
-      // TODO Capacitor migration: Sort out automatic backup checking
-      // if (this.platform.is('cordova')) {
-      //   try {
-      //     await this.uiExportImportHelper.checkBackup();
-      //   } catch (ex) {}
-      //   if (this.uiAlert.isLoadingSpinnerShown()) {
-      //     this.uiAlert.hideLoadingSpinner();
-      //   }
-      // }
+      if (this.platform.is('cordova')) {
+        try {
+          await this.uiExportImportHelper.checkBackup();
+        } catch (ex) {}
+        if (this.uiAlert.isLoadingSpinnerShown()) {
+          this.uiAlert.hideLoadingSpinner();
+        }
+      }
 
       try {
         await this.uiBeanStorage.initializeStorage();
