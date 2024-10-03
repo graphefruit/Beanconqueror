@@ -1,11 +1,5 @@
 /** Core */
 import { Injectable } from '@angular/core';
-import {
-  DirectoryEntry,
-  Entry,
-  File,
-  FileEntry,
-} from '@awesome-cordova-plugins/file/ngx';
 import { Capacitor } from '@capacitor/core';
 import {
   Filesystem,
@@ -18,38 +12,23 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { UILog } from './uiLog';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 import moment from 'moment';
-import {
-  FileTransfer,
-  FileTransferObject,
-} from '@awesome-cordova-plugins/file-transfer/ngx';
 import { InstanceClass } from './instanceClass';
+
 /**
  * Handles every helping functionalities
  */
 declare var navigator: any;
-declare var window;
 @Injectable({
   providedIn: 'root',
 })
 export class UIFileHelper extends InstanceClass {
   constructor(
-    private readonly file: File,
     private readonly uiLog: UILog,
     private readonly platform: Platform,
     private readonly domSanitizer: DomSanitizer,
-    private readonly socialSharing: SocialSharing,
-    private readonly fileTransfer: FileTransfer
+    private readonly socialSharing: SocialSharing
   ) {
     super();
-  }
-
-  // TODO Capacitor migration: Remove this method once Cordova file plugin is no longer needed
-  private getFileDirectory(): string {
-    if (this.platform.is('ios') && this.platform.is('cordova')) {
-      return this.file.documentsDirectory;
-    } else {
-      return this.file.dataDirectory;
-    }
   }
 
   public getDataDirectory(): Directory {
@@ -511,36 +490,40 @@ export class UIFileHelper extends InstanceClass {
     });
   }
 
-  // TODO Capacitor migration: Re-implement using Capacitor APIs
-  public async copyFile(_filePath: string): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      if (this.platform.is('cordova')) {
-        const fileObj = this.__splitFilePath(_filePath);
-        this.generateInternalPath(fileObj.FILE_NAME, fileObj.EXTENSION).then(
-          (_newName) => {
-            // console.log('New Filename' + _newName);
+  public async duplicateInternalFile(path: string): Promise<string> {
+    this.uiLog.debug('duplicateInternalFile for path', path);
 
-            this.file
-              .copyFile(
-                this.getFileDirectory(),
-                fileObj.FILE_NAME + fileObj.EXTENSION,
-                this.getFileDirectory(),
-                _newName
-              )
-              .then(
-                (_t) => {
-                  resolve(_t.fullPath);
-                },
-                (e) => {
-                  reject();
-                }
-              );
-          }
-        );
-      } else {
-        reject();
-      }
+    if (!this.platform.is('cordova')) {
+      throw new Error(
+        'File system operations are only supported on native platforms.'
+      );
+    }
+
+    const fileObj = this.__splitFilePath(path);
+    const newPath = await this.generateInternalPath(
+      fileObj.FILE_NAME,
+      fileObj.EXTENSION
+    );
+    const result = await Filesystem.copy({
+      from: path,
+      directory: this.getDataDirectory(),
+      to: newPath,
+      toDirectory: this.getDataDirectory(),
     });
+
+    this.uiLog.debug(
+      'duplicateInternalFile successful for original path',
+      path,
+      'duplicated to new path',
+      newPath,
+      '; Result uri is',
+      result.uri
+    );
+
+    // return the relative path we used to write the file instead of the
+    // absolute path returned in result.path for backwards compatibility
+    // with cordova-plugin-file.
+    return newPath;
   }
 
   private __splitFilePath(_filePath: string): {

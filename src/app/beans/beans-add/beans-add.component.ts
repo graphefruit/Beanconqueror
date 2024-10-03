@@ -264,7 +264,9 @@ export class BeansAddComponent implements OnInit {
     const copyAttachments = [];
     for (const attachment of _bean.attachments) {
       try {
-        const newPath: string = await this.uiFileHelper.copyFile(attachment);
+        const newPath: string = await this.uiFileHelper.duplicateInternalFile(
+          attachment
+        );
         copyAttachments.push(newPath);
       } catch (ex) {}
     }
