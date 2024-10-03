@@ -2113,21 +2113,16 @@ export class SettingsPage {
     });
   }
 
-  public checkVisualizerConnection() {
-    this.visualizerService.checkConnection().then(
-      () => {
-        //Works
-        this.uiToast.showInfoToastBottom('VISUALIZER.CONNECTION.SUCCESSFULLY');
-      },
-      () => {
-        // Didn't work
-        this.uiAlert.showMessage(
-          'VISUALIZER.CONNECTION.UNSUCCESSFULLY',
-          undefined,
-          undefined,
-          true
-        );
-      }
-    );
+  public async checkVisualizerConnection() {
+    if (await this.visualizerService.checkConnection()) {
+      this.uiToast.showInfoToastBottom('VISUALIZER.CONNECTION.SUCCESSFULLY');
+    } else {
+      this.uiAlert.showMessage(
+        'VISUALIZER.CONNECTION.UNSUCCESSFULLY',
+        undefined,
+        undefined,
+        true
+      );
+    }
   }
 }

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { CapacitorHttp } from '@capacitor/core';
 import { UIFileHelper } from '../uiFileHelper';
 import { Visualizer } from '../../classes/visualizer/visualizer';
 import { Brew } from '../../classes/brew/brew';
@@ -35,6 +36,15 @@ export class VisualizerService {
     } catch (ex) {
       return null;
     }
+  }
+
+  private getAuthHeaders(settings: Settings) {
+    const username = settings.visualizer_username;
+    const password = settings.visualizer_password;
+    const credentials = btoa(username + ':' + password);
+    return {
+      Authorization: 'Basic ' + credentials,
+    };
   }
 
   public async uploadToVisualizer(_brew: Brew, _showToast: boolean = true) {
@@ -79,14 +89,6 @@ export class VisualizerService {
           JSON.stringify(vS)
         );
 
-        // Define HTTP basic authentication credentials
-        const username = settings.visualizer_username;
-        const password = settings.visualizer_password;
-        const credentials = btoa(username + ':' + password);
-        const headers = {
-          Authorization: 'Basic ' + credentials,
-        };
-
         const url = settings.visualizer_url + 'api/shots/upload'; // 'https://visualizer.coffee/api/shots/upload';
 
         this.uiLog.log(
@@ -98,7 +100,7 @@ export class VisualizerService {
         cordova.plugin.http.uploadFile(
           url,
           undefined,
-          headers,
+          this.getAuthHeaders(settings),
           fileData.NATIVE_URL,
           'file',
           async (_successData) => {
@@ -147,47 +149,34 @@ export class VisualizerService {
     return promise;
   }
 
-  public async checkConnection() {
-    const promise: Promise<boolean> = new Promise(async (resolve, reject) => {
-      const settings: Settings = this.uiSettingsStorage.getSettings();
-      const username = settings.visualizer_username;
-      const password = settings.visualizer_password;
-      const credentials = btoa(username + ':' + password);
+  public async checkConnection(): Promise<boolean> {
+    const settings: Settings = this.uiSettingsStorage.getSettings();
 
-      const url = settings.visualizer_url + 'api/me'; // 'https://visualizer.coffee/api/shots/upload';
-      const options = {
-        method: 'get',
-        headers: { Authorization: 'Basic ' + credentials },
-      };
-      cordova.plugin.http.sendRequest(
-        url,
-        options,
-        (response) => {
-          try {
-            if (response && 'data' in response) {
-              resolve(undefined);
-            } else {
-              this.uiLog.error(
-                'Visualizer check connection, no data object given - ' +
-                  JSON.stringify(response)
-              );
-              reject();
-            }
-          } catch (e) {
-            this.uiLog.error(
-              'Visualizer check connection, try catch triggered - ' +
-                JSON.stringify(response)
-            );
-            reject();
-          }
-        },
-        (response) => {
-          // prints 403
-          this.uiLog.error(JSON.stringify(response));
-          reject();
-        }
+    try {
+      const response = await CapacitorHttp.get({
+        url: settings.visualizer_url + 'api/me', // https://visualizer.coffee/api/me
+        headers: this.getAuthHeaders(settings),
+      });
+      if (response.status === 200 && response.data) {
+        this.uiLog.info(
+          'Visualizer connection check successful, got data:',
+          response.data
+        );
+        return true;
+      }
+
+      this.uiLog.error(
+        'Visualizer connection check did not return data:',
+        JSON.stringify(response)
       );
-    });
-    return promise;
+      return false;
+    } catch (errorResponse) {
+      // Typical case that ends up here: wrong credentials, 401 status code
+      this.uiLog.error(
+        'Visualizer connection check errored:',
+        JSON.stringify(errorResponse)
+      );
+      return false;
+    }
   }
 }
