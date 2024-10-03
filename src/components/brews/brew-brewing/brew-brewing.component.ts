@@ -815,18 +815,16 @@ export class BrewBrewingComponent implements OnInit, AfterViewInit {
    * @param _uuid
    */
   public async saveFlowProfile(_uuid: string): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const savingPath = 'brews/' + _uuid + '_flow_profile.json';
-        await this.uiFileHelper.saveJSONFile(
-          savingPath,
-          JSON.stringify(this.brewBrewingGraphEl.flow_profile_raw)
-        );
-        resolve(savingPath);
-      } catch (ex) {
-        resolve('');
-      }
-    });
+    try {
+      const savingPath = 'brews/' + _uuid + '_flow_profile.json';
+      await this.uiFileHelper.writeInternalFileFromText(
+        JSON.stringify(this.brewBrewingGraphEl.flow_profile_raw),
+        savingPath
+      );
+      return savingPath;
+    } catch (ex) {
+      return '';
+    }
   }
 
   public getActualScaleWeight() {

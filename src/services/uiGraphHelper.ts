@@ -165,19 +165,13 @@ export class UIGraphHelper {
     });
   }
 
-  public saveGraph(_uuid: string, _jsonObj): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      const savingPath = 'graphs/' + _uuid + '_flow_profile.json';
-      try {
-        await this.uiFileHelper.saveJSONFile(
-          savingPath,
-          JSON.stringify(_jsonObj)
-        );
-        resolve(savingPath);
-      } catch (ex) {
-        reject();
-      }
-    });
+  public async saveGraph(_uuid: string, _jsonObj): Promise<string> {
+    const savingPath = 'graphs/' + _uuid + '_flow_profile.json';
+    await this.uiFileHelper.writeInternalFileFromText(
+      JSON.stringify(_jsonObj),
+      savingPath
+    );
+    return savingPath;
   }
 
   public async readFlowProfile(_flowProfilePath: string) {

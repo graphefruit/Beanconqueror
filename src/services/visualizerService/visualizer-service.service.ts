@@ -9,6 +9,7 @@ import { UIBrewStorage } from '../uiBrewStorage';
 import { UISettingsStorage } from '../uiSettingsStorage';
 import { Settings } from '../../classes/settings/settings';
 import { UILog } from '../uiLog';
+import { Directory, Filesystem } from '@capacitor/filesystem';
 
 declare var cordova;
 
@@ -84,10 +85,16 @@ export class VisualizerService {
       }
 
       try {
-        const fileData = await this.uiFileHelper.saveJSONFile(
+        const savedFilePath = await this.uiFileHelper.writeFileFromText(
+          JSON.stringify(vS),
           'VisualizerUploadShotTemp_' + _brew.config.uuid + '.json',
-          JSON.stringify(vS)
+          Directory.Cache
         );
+        const { uri: fileUri } = await Filesystem.getUri({
+          path: savedFilePath,
+          directory: Directory.Cache,
+        });
+        this.uiLog.debug('Uploading visualizer data from URI ', fileUri);
 
         const url = settings.visualizer_url + 'api/shots/upload'; // 'https://visualizer.coffee/api/shots/upload';
 
@@ -101,12 +108,22 @@ export class VisualizerService {
           url,
           undefined,
           this.getAuthHeaders(settings),
-          fileData.NATIVE_URL,
+          fileUri,
           'file',
           async (_successData) => {
             try {
-              await this.uiFileHelper.deleteFile(fileData.FULL_PATH);
-            } catch (ex) {}
+              await Filesystem.deleteFile({
+                path: savedFilePath,
+                directory: Directory.Cache,
+              });
+            } catch (ex) {
+              this.uiLog.error(
+                'Could not delete cache file',
+                savedFilePath,
+                '; error',
+                ex
+              );
+            }
 
             if (_successData && 'data' in _successData) {
               this.uiLog.log('Upload visualizer shot successfully');
@@ -140,9 +157,7 @@ export class VisualizerService {
           }
         );
       } catch (ex) {
-        this.uiLog.log(
-          'Upload visualizer shot excpection occured' + ex.message
-        );
+        this.uiLog.log('Upload visualizer shot exception occurred', ex.message);
         reject();
       }
     });

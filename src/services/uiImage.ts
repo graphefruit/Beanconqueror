@@ -52,22 +52,30 @@ export class UIImage {
     return settings.image_quality;
   }
 
+  private async saveBase64Photo(base64: string): Promise<string> {
+    const fileName = await this.uiFileHelper.generateInternalPath(
+      'beanconqueror_image',
+      '.jpg'
+    );
+    const fileUri = await this.uiFileHelper.writeInternalFileFromBase64(
+      base64,
+      fileName
+    );
+    return fileUri;
+  }
+
   public async takePhoto(): Promise<string> {
     const imageData = await Camera.getPhoto({
       correctOrientation: true,
       direction: CameraDirection.Rear,
       quality: this.getImageQuality(),
-      resultType: CameraResultType.DataUrl, // starts with 'data:image/jpeg;base64,'
+      resultType: CameraResultType.Base64, // starts with 'data:image/jpeg;base64,'
       saveToGallery: false,
       source: CameraSource.Camera,
     });
 
-    const _newURL = await this.uiFileHelper.saveBase64File(
-      'beanconqueror_image',
-      '.jpg',
-      imageData.dataUrl
-    );
-    return _newURL;
+    const fileUri = await this.saveBase64Photo(imageData.base64String);
+    return fileUri;
   }
 
   public async choosePhoto(): Promise<any> {
@@ -94,14 +102,10 @@ export class UIImage {
                       for await (const result of results) {
                         if (result && result.path) {
                           try {
-                            const imageStr: string = `data:image/jpeg;base64,${result.path}`;
-                            const newURL =
-                              await this.uiFileHelper.saveBase64File(
-                                'beanconqueror_image',
-                                '.jpg',
-                                imageStr
-                              );
-                            fileurls.push(newURL);
+                            const newUri = await this.saveBase64Photo(
+                              result.path
+                            );
+                            fileurls.push(newUri);
                           } catch (ex) {
                             //nothing
                           }
@@ -153,18 +157,14 @@ export class UIImage {
                           }
                         }
 
-                        let imageStr = await this.uiFileHelper.readFileAsBase64(
-                          newFileName
-                        );
-                        imageStr = `data:image/jpeg;base64,${imageStr}`;
+                        let imageBase64 =
+                          await this.uiFileHelper.readFileAsBase64(newFileName);
 
                         try {
-                          const newUrl = await this.uiFileHelper.saveBase64File(
-                            'beanconqueror_image',
-                            '.jpg',
-                            imageStr
+                          const newUri = await this.saveBase64Photo(
+                            imageBase64
                           );
-                          fileurls.push(newUrl);
+                          fileurls.push(newUri);
                         } catch (ex) {}
                       } catch (ex) {
                         setTimeout(() => {

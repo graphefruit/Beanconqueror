@@ -7,7 +7,12 @@ import {
   FileEntry,
 } from '@awesome-cordova-plugins/file/ngx';
 import { Capacitor } from '@capacitor/core';
-import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import {
+  Filesystem,
+  Directory,
+  Encoding,
+  StatOptions,
+} from '@capacitor/filesystem';
 import { Platform } from '@ionic/angular';
 import { DomSanitizer } from '@angular/platform-browser';
 import { UILog } from './uiLog';
@@ -47,7 +52,7 @@ export class UIFileHelper extends InstanceClass {
     }
   }
 
-  private getDataDirectory(): Directory {
+  public getDataDirectory(): Directory {
     if (this.platform.is('ios') && this.platform.is('cordova')) {
       return Directory.Documents;
     } else if (this.platform.is('android') && this.platform.is('cordova')) {
@@ -173,97 +178,6 @@ export class UIFileHelper extends InstanceClass {
     );
   }
 
-  public async saveZIPFile(_fileName: string, _blob: Blob): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      const blob = _blob;
-      try {
-        await this.createFolder(_fileName);
-      } catch (ex) {
-        this.uiLog.error(
-          'UILog - saveZIPFile - We could not create folders ' + _fileName
-        );
-      }
-      try {
-        this.file.createFile(this.getFileDirectory(), _fileName, true).then(
-          (_fileEntry: FileEntry) => {
-            _fileEntry.createWriter((writer) => {
-              writer.onwriteend = () => {
-                resolve(undefined);
-                this.uiLog.info(
-                  'UILog - saveZIPFile - File saved successfully - ' + _fileName
-                );
-              };
-              writer.onerror = (_e) => {
-                this.uiLog.error(
-                  'UILog - saveZIPFile - File saved unsuccessfully - ' +
-                    _fileName
-                );
-                reject();
-              };
-              writer.seek(0);
-              writer.write(blob); // You need to put the file, blob or base64 representation here.
-            });
-          },
-          () => {
-            reject();
-            this.uiLog.error('Could not save file');
-          }
-        );
-      } catch (ex) {
-        reject();
-      }
-    });
-  }
-
-  public async saveJSONFile(
-    _fileName: string,
-    _jsonContent: string
-  ): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      const blob = new Blob([_jsonContent], {
-        type: 'application/json;charset=UTF-8;',
-      });
-
-      try {
-        await this.createFolder(_fileName);
-      } catch (ex) {
-        this.uiLog.error(
-          'UILog - saveJSONFile - We could not create folders ' + _fileName
-        );
-      }
-
-      try {
-        this.file.createFile(this.getFileDirectory(), _fileName, true).then(
-          (_fileEntry: FileEntry) => {
-            _fileEntry.createWriter((writer) => {
-              writer.onwriteend = () => {
-                resolve({
-                  NATIVE_URL: _fileEntry.nativeURL,
-                  FULL_PATH: _fileEntry.fullPath,
-                });
-                this.uiLog.info(
-                  'UILog - saveJSONFile - File saved successfully - ' +
-                    _fileName
-                );
-              };
-              writer.onerror = () => {
-                reject();
-              };
-              writer.seek(0);
-              writer.write(blob); // You need to put the file, blob or base64 representation here.
-            });
-          },
-          () => {
-            reject();
-            this.uiLog.error('Could not save file');
-          }
-        );
-      } catch (ex) {
-        reject();
-      }
-    });
-  }
-
   public async getJSONFile(fileName: string): Promise<any> {
     try {
       const fileContent = await this.readInternalFileAsText(fileName);
@@ -275,36 +189,159 @@ export class UIFileHelper extends InstanceClass {
     }
   }
 
-  public async saveBase64File(
-    _fileName: string,
-    _fileExtension: string,
-    _base64: string
+  public async writeFileFromBase64(
+    base64: string,
+    path: string,
+    directory?: Directory
   ): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      this.generateFileName(
-        this.getFileDirectory(),
-        _fileName,
-        _fileExtension
-      ).then((_newName) => {
-        // console.log('New Filename' + _newName);
-        let newBlob: Blob = this.dataURItoBlob(_base64);
-        if (newBlob === undefined) {
-          reject();
-        } else {
-          this.file.writeFile(this.getFileDirectory(), _newName, newBlob).then(
-            (_t) => {
-              newBlob = null;
-              this.uiLog.log('Save file below: ' + _t.fullPath);
-              resolve(_t.fullPath);
-            },
-            (e) => {
-              this.uiLog.error('Cant save file: ' + JSON.stringify(e));
-              reject();
-            }
-          );
-        }
-      });
+    this.uiLog.debug(
+      'writeFileFromBase64 for path',
+      path,
+      'in directory',
+      directory
+    );
+
+    if (!this.platform.is('cordova')) {
+      throw new Error(
+        'File system operations are only supported on native platforms.'
+      );
+    }
+
+    const writeResult = await Filesystem.writeFile({
+      data: base64,
+      path: path,
+      directory: directory,
+      recursive: true, // create parent directories
     });
+
+    this.uiLog.debug(
+      'writeFileFromBase64 successful for path',
+      path,
+      'in directory',
+      directory,
+      '; Result URI is',
+      writeResult.uri
+    );
+
+    // return the relative path we used to write the file instead of the
+    // absolute path returned in writeResult.uri for backwards compatibility
+    // with cordova-plugin-file.
+    return path;
+  }
+
+  public async writeInternalFileFromBase64(
+    base64: string,
+    path: string
+  ): Promise<string> {
+    this.uiLog.debug('writeInternalFileFromBase64 for path', path);
+    return this.writeFileFromBase64(base64, path, this.getDataDirectory());
+  }
+
+  public async writeFileFromBlob(
+    blob: Blob,
+    path: string,
+    directory?: Directory
+  ): Promise<string> {
+    this.uiLog.debug(
+      'writeFileFromBlob for path',
+      path,
+      'in directory',
+      directory
+    );
+
+    const base64 = await this.blobToBase64(blob);
+    return this.writeFileFromBase64(base64, path, directory);
+  }
+
+  public async writeInternalFileFromBlob(
+    blob: Blob,
+    path: string
+  ): Promise<string> {
+    this.uiLog.debug('writeInternalFileFromBlob for path', path);
+    return this.writeFileFromBlob(blob, path, this.getDataDirectory());
+  }
+
+  public async writeFileFromText(
+    text: string,
+    path: string,
+    directory?: Directory
+  ): Promise<string> {
+    this.uiLog.debug(
+      'writeFileFromText for path',
+      path,
+      'in directory',
+      directory
+    );
+
+    if (!this.platform.is('cordova')) {
+      throw new Error(
+        'File system operations are only supported on native platforms.'
+      );
+    }
+
+    const writeResult = await Filesystem.writeFile({
+      data: text,
+      path: path,
+      directory: directory,
+      encoding: Encoding.UTF8, // text mode
+      recursive: true, // create parent directories
+    });
+
+    this.uiLog.debug(
+      'writeFileFromText successful for path',
+      path,
+      'in directory',
+      directory,
+      '; Result URI is',
+      writeResult.uri
+    );
+
+    // return the relative path we used to write the file instead of the
+    // absolute path returned in writeResult.uri for backwards compatibility
+    // with cordova-plugin-file.
+    return path;
+  }
+
+  public async writeInternalFileFromText(
+    text: string,
+    path: string
+  ): Promise<string> {
+    this.uiLog.debug('writeInternalFileFromText for path', path);
+    return this.writeFileFromText(text, path, this.getDataDirectory());
+  }
+
+  public async generateInternalPath(
+    fileName: string,
+    fileExtension: string
+  ): Promise<string> {
+    this.uiLog.debug(
+      'generateInternalPath for fileName',
+      fileName,
+      'and extension',
+      fileExtension
+    );
+    let generatedFileName = `${fileName}${fileExtension}`;
+    let fileExists = await this.fileExists({
+      path: generatedFileName,
+      directory: this.getDataDirectory(),
+    });
+    if (!fileExists) {
+      this.uiLog.debug(generatedFileName, 'does not exist yet, using that');
+      return generatedFileName;
+    }
+
+    let counter = 0;
+    do {
+      counter++;
+      generatedFileName = `${fileName}${counter}${fileExtension}`;
+
+      fileExists = await this.fileExists({
+        path: generatedFileName,
+        directory: this.getDataDirectory(),
+      });
+    } while (fileExists);
+    this.uiLog.debug(generatedFileName, 'does not exist yet, using that');
+    return generatedFileName;
   }
 
   public async deleteZIPBackupsOlderThenSevenDays(): Promise<any> {
@@ -418,22 +455,22 @@ export class UIFileHelper extends InstanceClass {
     const promise: Promise<string> = new Promise(async (resolve, reject) => {
       const url: string = _url;
       const fileTransferObj: FileTransferObject = this.fileTransfer.create();
-      await this.generateFileName(
-        this.getFileDirectory(),
-        _fileName,
-        _fileExtension
-      ).then(async (_newName) => {
-        fileTransferObj.download(url, this.getFileDirectory() + _newName).then(
-          async (_entry) => {
-            this.uiLog.log('File download completed: ' + _entry.fullPath);
-            resolve(_entry.fullPath);
-          },
-          (error) => {
-            // handle error
-            resolve(undefined);
-          }
-        );
-      });
+      await this.generateInternalPath(_fileName, _fileExtension).then(
+        async (_newName) => {
+          fileTransferObj
+            .download(url, this.getFileDirectory() + _newName)
+            .then(
+              async (_entry) => {
+                this.uiLog.log('File download completed: ' + _entry.fullPath);
+                resolve(_entry.fullPath);
+              },
+              (error) => {
+                // handle error
+                resolve(undefined);
+              }
+            );
+        }
+      );
     });
     return promise;
   }
@@ -661,69 +698,31 @@ export class UIFileHelper extends InstanceClass {
     });
   }
 
-  public async copyFileWithSpecificName(
-    _filePath: string,
-    _fileName: string = 'beanconqueror_image'
-  ): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      if (this.platform.is('cordova')) {
-        const fileObj = this.__splitFilePath(_filePath);
-        this.generateFileName(
-          this.getFileDirectory(),
-          _fileName,
-          fileObj.EXTENSION
-        ).then(async (_newName) => {
-          // console.log('New Filename' + _newName);
-
-          this.file
-            .copyFile(
-              fileObj.FILE_PATH,
-              fileObj.FILE_NAME + fileObj.EXTENSION,
-              this.getFileDirectory(),
-              _newName
-            )
-            .then(
-              async (_t) => {
-                resolve(_t.fullPath);
-              },
-              (e) => {
-                reject();
-              }
-            );
-        });
-      } else {
-        reject();
-      }
-    });
-  }
-
   public async copyFile(_filePath: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       if (this.platform.is('cordova')) {
         const fileObj = this.__splitFilePath(_filePath);
-        this.generateFileName(
-          this.getFileDirectory(),
-          fileObj.FILE_NAME,
-          fileObj.EXTENSION
-        ).then((_newName) => {
-          // console.log('New Filename' + _newName);
+        this.generateInternalPath(fileObj.FILE_NAME, fileObj.EXTENSION).then(
+          (_newName) => {
+            // console.log('New Filename' + _newName);
 
-          this.file
-            .copyFile(
-              this.getFileDirectory(),
-              fileObj.FILE_NAME + fileObj.EXTENSION,
-              this.getFileDirectory(),
-              _newName
-            )
-            .then(
-              (_t) => {
-                resolve(_t.fullPath);
-              },
-              (e) => {
-                reject();
-              }
-            );
-        });
+            this.file
+              .copyFile(
+                this.getFileDirectory(),
+                fileObj.FILE_NAME + fileObj.EXTENSION,
+                this.getFileDirectory(),
+                _newName
+              )
+              .then(
+                (_t) => {
+                  resolve(_t.fullPath);
+                },
+                (e) => {
+                  reject();
+                }
+              );
+          }
+        );
       } else {
         reject();
       }
@@ -802,61 +801,12 @@ export class UIFileHelper extends InstanceClass {
     }
   }
 
-  private async generateFileName(
-    _path: string,
-    _fileName: string,
-    _fileExtension: string
-  ): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      let counter: number = 1;
-      let doesExist: boolean = false;
-      const passedFilename: string = _fileName;
-      const passedExtension: string = _fileExtension;
-      const passedPath: string = _path;
-      let fileName: string = `${passedFilename}${passedExtension}`;
-      do {
-        try {
-          const ret = await this.file.checkFile(passedPath, fileName);
-          doesExist = ret;
-
-          if (!doesExist) {
-            resolve(fileName);
-            doesExist = false;
-          } else {
-            fileName = `${passedFilename}${counter}${passedExtension}`;
-            counter++;
-            doesExist = true;
-          }
-        } catch (ex) {
-          resolve(fileName);
-          doesExist = false;
-        }
-      } while (doesExist);
-    });
-  }
-
-  private dataURItoBlob(dataURI: any): any {
+  private async fileExists(options: StatOptions): Promise<boolean> {
     try {
-      // convert base64/URLEncoded data component to raw binary data held in a string
-      let byteString;
-      const base64TagExists: boolean = dataURI.split(',')[0].indexOf('base64');
-      if (base64TagExists) {
-        byteString = atob(dataURI.split(',')[1]);
-      } else {
-        byteString = window.unescape(dataURI.split(',')[1]);
-      }
-
-      // separate out the mime component
-      const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-      // write the bytes of the string to a typed array
-      let ia = this.binaryStringToUint8Array(byteString);
-
-      const newBlob = new Blob([ia], { type: mimeString });
-      ia = null;
-      dataURI = null;
-      return newBlob;
-    } catch (ex) {
-      return undefined;
+      await Filesystem.stat(options);
+      return true;
+    } catch (error) {
+      return false;
     }
   }
 
@@ -866,5 +816,17 @@ export class UIFileHelper extends InstanceClass {
       array[i] = binaryString.charCodeAt(i);
     }
     return array;
+  }
+
+  private blobToBase64(blob: Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const dataUrl = reader.result as string;
+        const base64 = dataUrl.replace('data:*/*;base64', '');
+        resolve(base64);
+      };
+      reader.readAsDataURL(blob);
+    });
   }
 }

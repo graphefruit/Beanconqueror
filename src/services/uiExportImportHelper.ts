@@ -384,9 +384,9 @@ export class UIExportImportHelper {
   }
   private async __saveInternalBeanconquerorDump(_blob: Blob) {
     try {
-      const file: FileEntry = await this.uiFileHelper.saveZIPFile(
-        'Beanconqueror.zip',
-        _blob
+      await this.uiFileHelper.writeInternalFileFromBlob(
+        _blob,
+        'Beanconqueror.zip'
       );
     } catch (ex) {
       this.uiLog.error('Could not to export normal ZIP file');
@@ -408,11 +408,11 @@ export class UIExportImportHelper {
     if (welcomePagedShowed === true && brewsAdded === true) {
       this.uiLog.log('Start to export automatic ZIP file');
       try {
-        const file: FileEntry = await this.uiFileHelper.saveZIPFile(
+        await this.uiFileHelper.writeInternalFileFromBlob(
+          _blob,
           'Download/Beanconqueror_export/Beanconqueror_automatic_export_' +
             this.getAutomatedBackupFilename() +
-            '.zip',
-          _blob
+            '.zip'
         );
       } catch (ex) {
         this.uiLog.error('Could not to export automatic ZIP file');
