@@ -344,107 +344,83 @@ export class UIFileHelper extends InstanceClass {
     return generatedFileName;
   }
 
-  public async deleteZIPBackupsOlderThenSevenDays(): Promise<any> {
-    const promise: Promise<any> = new Promise(async (resolve, reject) => {
-      if (this.platform.is('cordova')) {
-        let storageLocation: string = '';
-        if (this.platform.is('android')) {
-          storageLocation = this.file.externalDataDirectory;
-        } else {
-          storageLocation = this.file.documentsDirectory;
+  public async deleteZIPBackupsOlderThanSevenDays(): Promise<void> {
+    this.uiLog.debug('deleteZIPBackupsOlderThanSevenDays starting');
+
+    if (!this.platform.is('cordova')) {
+      throw new Error(
+        'File system operations are only supported on native platforms.'
+      );
+    }
+
+    let storageDirectory: Directory;
+    if (this.platform.is('android')) {
+      storageDirectory = Directory.External;
+    } else {
+      storageDirectory = Directory.Documents;
+    }
+
+    const lastSevenDays: string[] = [];
+    for (let i = 0; i < 8; i++) {
+      const day: string = moment().subtract(i, 'days').format('DD_MM_YYYY');
+      const automatedBackupFileName: string =
+        'Beanconqueror_automatic_export_' + day + '.zip';
+      lastSevenDays.push(automatedBackupFileName);
+    }
+
+    try {
+      const exportDir = await Filesystem.readdir({
+        path: 'Download/Beanconqueror_export/',
+        directory: storageDirectory,
+      });
+
+      for (const directoryEntry of exportDir.files) {
+        if (directoryEntry.type !== 'file') {
+          continue;
         }
 
-        if (storageLocation !== null && storageLocation !== undefined) {
-          const lastSevenDays: Array<string> = [];
-          for (let i = 0; i < 8; i++) {
-            const day: string = moment()
-              .subtract(i, 'days')
-              .format('DD_MM_YYYY');
-            const automatedBackupFileName: string =
-              'Beanconqueror_automatic_export_' + day + '.zip';
-            lastSevenDays.push(automatedBackupFileName);
-          }
+        if (
+          !directoryEntry.name.startsWith('Beanconqueror_automatic_export_')
+        ) {
+          // If the file does not start with our prefix then don't touch it
+          continue;
+        }
 
-          window.resolveLocalFileSystemURL(
-            storageLocation,
-            (fileSystem) => {
-              fileSystem.getDirectory(
-                'Download',
-                {
-                  create: true,
-                  exclusive: false,
-                },
-                (directory) => {
-                  directory.getDirectory(
-                    'Beanconqueror_export',
-                    {
-                      create: true,
-                      exclusive: false,
-                    },
-                    (directory_export: DirectoryEntry) => {
-                      const directoryReader = directory_export.createReader();
-                      directoryReader.readEntries(
-                        (entries: Entry[]) => {
-                          for (const entry of entries) {
-                            if (entry.isFile) {
-                              if (
-                                lastSevenDays.indexOf(entry.name) === -1 &&
-                                entry.name.indexOf(
-                                  'Beanconqueror_automatic_export_'
-                                ) === 0
-                              ) {
-                                const filename: string = entry.name;
-                                entry.remove(
-                                  () => {
-                                    this.uiLog.log(
-                                      'Removed automated backup file ' +
-                                        filename
-                                    );
-                                  },
-                                  () => {
-                                    this.uiLog.log(
-                                      'Could not remove automated backup file ' +
-                                        filename
-                                    );
-                                  }
-                                );
-                              } else if (
-                                lastSevenDays.indexOf(entry.name) > -1
-                              ) {
-                                this.uiLog.log(
-                                  'We found a backup file not older then 7 days, so dont delete it'
-                                );
-                              }
-                            }
-                          }
-                        },
-                        () => {
-                          reject();
-                        }
-                      );
-                    },
-                    () => {
-                      reject();
-                    }
-                  );
-                },
-                () => {
-                  reject();
-                }
-              );
-            },
-            () => {
-              reject();
-            }
+        if (lastSevenDays.indexOf(directoryEntry.name) > -1) {
+          this.uiLog.info(
+            'Backup file ',
+            directoryEntry.name,
+            'is not older than 7 days, so we will keep it'
           );
-        } else {
-          reject();
+          continue;
         }
-      } else {
-        reject(undefined);
+
+        try {
+          this.uiLog.info(
+            'Deleting outdated backup file',
+            directoryEntry.name,
+            'at URI',
+            directoryEntry.uri
+          );
+          await Filesystem.deleteFile({ path: directoryEntry.uri });
+        } catch (error) {
+          this.uiLog.error(
+            'Could not remove automated backup file at',
+            directoryEntry.uri,
+            '; Error:',
+            error
+          );
+          // don't rethrow, continue with all the other files instead
+          continue;
+        }
       }
-    });
-    return promise;
+    } catch (error) {
+      this.uiLog.error(
+        'Error occured in deleteZIPBackupsOlderThanSevenDays',
+        error
+      );
+      throw error;
+    }
   }
 
   public async downloadExternalFile(
@@ -475,6 +451,7 @@ export class UIFileHelper extends InstanceClass {
     return promise;
   }
 
+  // TODO Capacitor migration: Re-implement using Capacitor APIs
   public async downloadFile(
     _filename,
     _blob,
@@ -582,6 +559,7 @@ export class UIFileHelper extends InstanceClass {
     return promise;
   }
 
+  // TODO Capacitor migration: Re-implement using Capacitor APIs if still needed
   public createFolder(_path) {
     const promise: Promise<FileEntry> = new Promise(async (resolve, reject) => {
       const folders = _path.split('/');
