@@ -986,12 +986,14 @@ export class SettingsPage {
         SETTINGS_TRACKING.ACTIONS.IMPORT
       );
       this.uiLog.log('Import real data');
-      if (true || this.platform.is('android')) {
+      if (this.platform.is('android')) {
         try {
           const uri = await this.fileChooser.open();
           const file = await Filesystem.readFile({ path: uri });
-          // TODO Capacitor migration: Fallback to __readAndroidJSONFile
           await this.uiExportImportHelper.importZIPFile(file.data);
+          // TODO Capacitor migration: Fallback to __readAndroidJSONFile
+          // I don't quite know what it was supposed to do, but it seems like
+          // that codepath would never run in current Android versions.
         } catch (ex) {
           this.uiAlert.showMessage(
             this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
