@@ -980,76 +980,78 @@ export class SettingsPage {
   }
 
   public async import(): Promise<void> {
-    if (!this.platform.is('cordova') || this.platform.is('android')) {
-      this.uiAnalytics.trackEvent(
-        SETTINGS_TRACKING.TITLE,
-        SETTINGS_TRACKING.ACTIONS.IMPORT
-      );
-      this.uiLog.log('Import real data');
-      if (this.platform.is('android')) {
-        try {
-          const uri = await this.fileChooser.open();
-          const file = await Filesystem.readFile({ path: uri });
-          await this.uiExportImportHelper.importZIPFile(file.data);
-          // TODO Capacitor migration: Fallback to __readAndroidJSONFile
-          // I don't quite know what it was supposed to do, but it seems like
-          // that codepath would never run in current Android versions.
-        } catch (ex) {
-          this.uiAlert.showMessage(
-            this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
-              ' (' +
-              JSON.stringify(ex) +
-              ')'
-          );
-        }
-      } else {
-        FilePicker.pickFile(
-          (uri) => {
-            if (uri && (uri.endsWith('.zip') || uri.endsWith('.json'))) {
-              let path = uri.substring(0, uri.lastIndexOf('/'));
-              const file = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
-              if (path.indexOf('file://') !== 0) {
-                path = 'file://' + path;
-              }
+    if (!this.platform.is('cordova')) {
+      this.__importDummyData();
+    }
 
-              if (uri.endsWith('.zip')) {
-                this.uiFileHelper.getZIPFileByPathAndFile(path, file).then(
-                  async (_arrayBuffer) => {
-                    const parsedJSON =
-                      await this.uiExportImportHelper.getJSONFromZIPArrayBufferContent(
-                        _arrayBuffer
-                      );
-                    this.__importJSON(parsedJSON, path);
-                  },
-                  () => {
-                    // Backup, maybe it was a .JSON?
-                  }
-                );
-              } else {
-                this.__readJSONFile(path, file)
-                  .then(() => {
-                    // nothing todo
-                  })
-                  .catch((_err) => {
-                    this.uiAlert.showMessage(
-                      this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
-                        ' (' +
-                        JSON.stringify(_err) +
-                        ')'
-                    );
-                  });
-              }
-            } else {
-              this.uiAlert.showMessage(
-                this.translate.instant('INVALID_FILE_FORMAT')
-              );
-            }
-          },
-          () => {}
+    this.uiAnalytics.trackEvent(
+      SETTINGS_TRACKING.TITLE,
+      SETTINGS_TRACKING.ACTIONS.IMPORT
+    );
+    this.uiLog.log('Import real data');
+
+    if (this.platform.is('android')) {
+      try {
+        const uri = await this.fileChooser.open();
+        const fileContent = await this.uiFileHelper.readFileAsUint8Array(uri);
+        await this.uiExportImportHelper.importZIPFile(fileContent);
+        // TODO Capacitor migration: Fallback to __readAndroidJSONFile
+        // I don't quite know what it was supposed to do, but it seems like
+        // that codepath would never run in current Android versions.
+      } catch (ex) {
+        this.uiAlert.showMessage(
+          this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
+            ' (' +
+            JSON.stringify(ex) +
+            ')'
         );
       }
     } else {
-      this.__importDummyData();
+      FilePicker.pickFile(
+        (uri) => {
+          if (uri && (uri.endsWith('.zip') || uri.endsWith('.json'))) {
+            let path = uri.substring(0, uri.lastIndexOf('/'));
+            const file = uri.substring(uri.lastIndexOf('/') + 1, uri.length);
+            if (path.indexOf('file://') !== 0) {
+              path = 'file://' + path;
+            }
+
+            if (uri.endsWith('.zip')) {
+              // TODO Capacitor migration: Check if this works on iOS
+              this.uiFileHelper.readFileAsUint8Array(path + '/' + file).then(
+                async (zipContent) => {
+                  const parsedJSON =
+                    await this.uiExportImportHelper.getJSONFromZIPArrayBufferContent(
+                      zipContent
+                    );
+                  this.__importJSON(parsedJSON, path);
+                },
+                () => {
+                  // Backup, maybe it was a .JSON?
+                }
+              );
+            } else {
+              this.__readJSONFile(path, file)
+                .then(() => {
+                  // nothing todo
+                })
+                .catch((_err) => {
+                  this.uiAlert.showMessage(
+                    this.translate.instant('FILE_NOT_FOUND_INFORMATION') +
+                      ' (' +
+                      JSON.stringify(_err) +
+                      ')'
+                  );
+                });
+            }
+          } else {
+            this.uiAlert.showMessage(
+              this.translate.instant('INVALID_FILE_FORMAT')
+            );
+          }
+        },
+        () => {}
+      );
     }
   }
 
@@ -1320,12 +1322,7 @@ export class SettingsPage {
       if (this.platform.is('android')) {
         this.fileChooser.open().then(async (uri) => {
           try {
-            const fileEntry: any = await new Promise(
-              async (resolve) =>
-                await window.resolveLocalFileSystemURL(uri, resolve, () => {})
-            );
-
-            this.uiFileHelper.readFileEntryAsArrayBuffer(fileEntry).then(
+            this.uiFileHelper.readFileAsUint8Array(uri).then(
               async (_arrayBuffer) => {
                 if (_type === 'roasted') {
                   this.uiExcel.importBeansByExcel(_arrayBuffer);
@@ -1355,7 +1352,8 @@ export class SettingsPage {
               if (path.indexOf('file://') !== 0) {
                 path = 'file://' + path;
               }
-              this.uiFileHelper.readFileAsArrayBuffer(path, file).then(
+              // TODO Capacitor migration: Check if this works on iOS
+              this.uiFileHelper.readFileAsUint8Array(path + '/' + file).then(
                 async (_arrayBuffer) => {
                   if (_type === 'roasted') {
                     this.uiExcel.importBeansByExcel(_arrayBuffer);

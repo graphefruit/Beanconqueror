@@ -6,6 +6,7 @@ import {
   File,
   FileEntry,
 } from '@awesome-cordova-plugins/file/ngx';
+import { Capacitor } from '@capacitor/core';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Platform } from '@ionic/angular';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -40,6 +41,7 @@ export class UIFileHelper extends InstanceClass {
     super();
   }
 
+  // TODO Capacitor migration: Remove this method once Cordova file plugin is no longer needed
   private getFileDirectory(): string {
     if (this.platform.is('ios') && this.platform.is('cordova')) {
       return this.file.documentsDirectory;
@@ -56,6 +58,122 @@ export class UIFileHelper extends InstanceClass {
     } else {
       throw new Error(`Unsupported platform: ${this.platform.platforms()}`);
     }
+  }
+
+  private normalizeFileName(fileName: string): string {
+    if (fileName.startsWith('/')) {
+      return fileName.slice(1);
+    }
+    return fileName;
+  }
+
+  public async readFileAsText(
+    path: string,
+    directory?: Directory
+  ): Promise<string> {
+    this.uiLog.debug(
+      'readFileAsText for path',
+      path,
+      'in directory',
+      directory
+    );
+
+    if (!this.platform.is('cordova')) {
+      throw new Error(
+        'File system operations are only supported on native platforms.'
+      );
+    }
+
+    const readResult = await Filesystem.readFile({
+      path: path,
+      directory: directory,
+      encoding: Encoding.UTF8,
+    });
+
+    if (readResult.data instanceof Blob) {
+      throw new Error(
+        'Filesystem.readFile() returned a Blob, this is not ' +
+          'supposed to happen on Capacitor platforms according to the ' +
+          'documentation!'
+      );
+    }
+    // returned data is a plain text string because we set the encoding
+    return readResult.data as string;
+  }
+
+  public async readInternalFileAsText(fileName: string): Promise<string> {
+    this.uiLog.debug('readInternalFileAsText for fileName', fileName);
+    return this.readFileAsText(
+      this.normalizeFileName(fileName),
+      this.getDataDirectory()
+    );
+  }
+
+  public async readFileAsBase64(
+    path: string,
+    directory?: Directory
+  ): Promise<string> {
+    this.uiLog.debug(
+      'readFileAsBase64 for path',
+      path,
+      'in directory',
+      directory
+    );
+
+    if (!this.platform.is('cordova')) {
+      throw new Error(
+        'File system operations are only supported on native platforms.'
+      );
+    }
+
+    const readResult = await Filesystem.readFile({
+      path: path,
+      directory: directory,
+    });
+
+    if (readResult.data instanceof Blob) {
+      throw new Error(
+        'Filesystem.readFile() returned a Blob, this is not ' +
+          'supposed to happen on Capacitor platforms according to the ' +
+          'documentation!'
+      );
+    }
+    // returned data is a base64 string of the file contents
+    return readResult.data as string;
+  }
+
+  public async readInternalFileAsBase64(fileName: string): Promise<string> {
+    this.uiLog.debug('readInternalFileAsBase64 for fileName:', fileName);
+    return this.readFileAsBase64(
+      this.normalizeFileName(fileName),
+      this.getDataDirectory()
+    );
+  }
+
+  public async readFileAsUint8Array(
+    path: string,
+    directory?: Directory
+  ): Promise<Uint8Array> {
+    this.uiLog.debug(
+      'readFileAsUint8Array for path',
+      path,
+      'in directory',
+      directory
+    );
+
+    const base64 = await this.readFileAsBase64(path, directory);
+    return this.binaryStringToUint8Array(atob(base64));
+  }
+
+  public async readInternalFileAsUint8Array(
+    fileName: string
+  ): Promise<Uint8Array> {
+    this.uiLog.debug('readInternalFileAsUint8Array for fileName:', fileName);
+
+    return this.readFileAsUint8Array(
+      this.normalizeFileName(fileName),
+      this.getDataDirectory()
+    );
   }
 
   public async saveZIPFile(_fileName: string, _blob: Blob): Promise<any> {
@@ -149,197 +267,15 @@ export class UIFileHelper extends InstanceClass {
     });
   }
 
-  public async getJSONFile(_fileName: string): Promise<any> {
-    if (!this.platform.is('cordova')) {
-      throw new Error(
-        'File system operations are only supported on native platforms.'
-      );
-    }
-
-    this.uiLog.debug('getJSONFile for fileName:', _fileName);
-    let fileName = _fileName;
-    if (fileName.startsWith('/')) {
-      fileName = fileName.slice(1);
-    }
-
+  public async getJSONFile(fileName: string): Promise<any> {
     try {
-      const fileContent = await Filesystem.readFile({
-        path: fileName,
-        directory: this.getDataDirectory(),
-        encoding: Encoding.UTF8,
-      });
-
-      const parsedJSON = JSON.parse(fileContent.data as string);
+      const fileContent = await this.readInternalFileAsText(fileName);
+      const parsedJSON = JSON.parse(fileContent);
       return parsedJSON;
     } catch (ex) {
-      this.uiLog.error(`We could not read json file ${_fileName}` + ex.message);
+      this.uiLog.error(`We could not read json file ${fileName}` + ex.message);
       throw ex;
     }
-  }
-
-  public async getZIPFile(_fileName: string): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      if (this.platform.is('cordova')) {
-        // let filePath: string;
-        // filePath = _filePath;
-        // filePath.slice(0, filePath.lastIndexOf('/'));
-        let path: string;
-        let fileName: string;
-        path = this.getFileDirectory();
-        fileName = _fileName;
-        if (fileName.startsWith('/')) {
-          fileName = fileName.slice(1);
-        }
-
-        this.file.readAsArrayBuffer(path, fileName).then(
-          (result) => {
-            try {
-              resolve(result as any);
-            } catch (ex) {
-              this.uiLog.error('We could not read zip file ' + ex.message);
-              reject();
-            }
-          },
-          () => {
-            reject();
-          }
-        );
-      } else {
-        reject();
-      }
-    });
-  }
-  public async readFileEntryAsArrayBuffer(_fileEntry: FileEntry): Promise<any> {
-    return new Promise((resolve, reject) => {
-      _fileEntry.file(async (file) => {
-        try {
-          const reader = new FileReader();
-          reader.onloadend = async (event: Event) => {
-            try {
-              resolve(reader.result);
-            } catch (ex) {
-              reject();
-            }
-          };
-          reader.onerror = (event: Event) => {
-            reject();
-          };
-
-          reader.readAsArrayBuffer(file);
-        } catch (ex) {
-          reject();
-        }
-      });
-    });
-  }
-  public async readFileAsArrayBuffer(
-    _path: string,
-    _fileName: string
-  ): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      if (this.platform.is('cordova')) {
-        this.file.readAsArrayBuffer(_path, _fileName).then(
-          (result) => {
-            try {
-              resolve(result as any);
-            } catch (ex) {
-              this.uiLog.error('We could not read  file ' + ex.message);
-              reject();
-            }
-          },
-          () => {
-            reject();
-          }
-        );
-      } else {
-        reject();
-      }
-    });
-  }
-  public async readFileAsBinaryString(_filePath: string): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      if (this.platform.is('cordova')) {
-        let path: string;
-        let fileName: string;
-        path = this.getFileDirectory();
-        fileName = _filePath;
-        if (fileName.startsWith('/')) {
-          fileName = fileName.slice(1);
-        }
-
-        this.file.readAsBinaryString(path, fileName).then(
-          (result) => {
-            try {
-              resolve(result as any);
-            } catch (ex) {
-              this.uiLog.error('We could not read  file ' + ex.message);
-              reject();
-            }
-          },
-          (ex) => {
-            reject();
-          }
-        );
-      } else {
-        reject();
-      }
-    });
-  }
-  public async getZIPFileByPathAndFile(
-    _path: string,
-    _fileName: string
-  ): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      if (this.platform.is('cordova')) {
-        this.file.readAsArrayBuffer(_path, _fileName).then(
-          (result) => {
-            try {
-              resolve(result as any);
-            } catch (ex) {
-              this.uiLog.error('We could not read zip file ' + ex.message);
-              reject();
-            }
-          },
-          () => {
-            reject();
-          }
-        );
-      } else {
-        reject();
-      }
-    });
-  }
-
-  public async saveBlob(
-    _fileName: string,
-    _fileExtension: string,
-    _blob: any
-  ): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      this.generateFileName(
-        this.getFileDirectory(),
-        _fileName,
-        _fileExtension
-      ).then((_newName) => {
-        // console.log('New Filename' + _newName);
-        let newBlob: Blob = _blob;
-        if (newBlob === undefined) {
-          reject();
-        } else {
-          this.file.writeFile(this.getFileDirectory(), _newName, newBlob).then(
-            (_t) => {
-              newBlob = null;
-              this.uiLog.log('Save file below: ' + _t.fullPath);
-              resolve(_t.fullPath);
-            },
-            (e) => {
-              this.uiLog.error('Cant save file: ' + JSON.stringify(e));
-              reject();
-            }
-          );
-        }
-      });
-    });
   }
 
   public async saveBase64File(
@@ -850,109 +786,41 @@ export class UIFileHelper extends InstanceClass {
     _filePath: string,
     _addTimeStamp: boolean = false
   ): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      if (this.platform.is('cordova')) {
-        /** if (this.cachedInternalUrls[_filePath]) {
-          //resolve(this.cachedInternalUrls[_filePath]);
-          // return;
-        }**/
-        // let filePath: string;
-        // filePath = _filePath;
-        // filePath.slice(0, filePath.lastIndexOf('/'));
-        let path: string;
-        let fileName: string;
-        path = this.getFileDirectory();
-        fileName = _filePath;
-        if (fileName.startsWith('/')) {
-          fileName = fileName.slice(1);
-        }
+    if (!this.platform.is('cordova')) {
+      return '';
+    }
+    try {
+      let fileName = this.normalizeFileName(_filePath);
 
-        if (this.platform.is('ios')) {
-          // After switching to iOS cloud, the fullPath saves the Cloud path actualy with, so we need to delete this one :)
-          const searchForCloud: string = 'Cloud/';
-          if (fileName.startsWith(searchForCloud)) {
-            fileName = fileName.substring(searchForCloud.length);
-          }
+      if (this.platform.is('ios')) {
+        // After switching to iOS cloud, the fullPath saves the Cloud path actualy with, so we need to delete this one :)
+        const searchForCloud: string = 'Cloud/';
+        if (fileName.startsWith(searchForCloud)) {
+          fileName = fileName.substring(searchForCloud.length);
         }
-
-        this.file.resolveLocalFilesystemUrl(path + fileName).then(
-          (fileEntry: FileEntry) => {
-            fileEntry.file(
-              (meta) => {
-                let convertedURL = window.Ionic.WebView.convertFileSrc(
-                  fileEntry.nativeURL
-                );
-                if (_addTimeStamp) {
-                  convertedURL += '?' + moment().unix();
-                }
-                convertedURL =
-                  this.domSanitizer.bypassSecurityTrustResourceUrl(
-                    convertedURL
-                  );
-                const returningURL = convertedURL;
-                // this.cachedInternalUrls[_filePath] = convertedURL;
-                resolve(returningURL);
-              },
-              () => {
-                resolve('');
-              }
-            );
-          },
-          () => {
-            resolve('');
-          }
-        );
-      } else {
-        resolve('');
       }
-    });
-  }
 
-  public async getBase64FileFromExternalAndroid(
-    _filePath: string
-  ): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      if (this.platform.is('cordova')) {
-        let path: string;
-        let fileName: string;
-        path = _filePath.substring(0, _filePath.lastIndexOf('/') + 1);
-        fileName = _filePath.substring(_filePath.lastIndexOf('/') + 1);
-
-        this.file.readAsDataURL(path, fileName).then((_dataUrl: string) => {
-          resolve(_dataUrl);
-        });
-      } else {
-        resolve('');
+      const fileOptions = {
+        path: fileName,
+        directory: this.getDataDirectory(),
+      };
+      // Check if file exists; stat() will throw if it does not exist
+      await Filesystem.stat(fileOptions);
+      const { uri } = await Filesystem.getUri(fileOptions);
+      let fileSrcUri = Capacitor.convertFileSrc(uri);
+      if (_addTimeStamp) {
+        fileSrcUri += '?' + moment().unix();
       }
-    });
-  }
-
-  public async getBase64File(_filePath: string): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      if (this.platform.is('cordova')) {
-        if (this.cachedBase64[_filePath]) {
-          resolve(this.cachedBase64[_filePath]);
-          return;
-        }
-        // let filePath: string;
-        // filePath = _filePath;
-        // filePath.slice(0, filePath.lastIndexOf('/'));
-        let path: string;
-        let fileName: string;
-        path = this.getFileDirectory();
-        fileName = _filePath;
-        if (fileName.startsWith('/')) {
-          fileName = fileName.slice(1);
-        }
-
-        this.file.readAsDataURL(path, fileName).then((_dataUrl: string) => {
-          this.cachedBase64[_filePath] = _dataUrl;
-          resolve(_dataUrl);
-        });
-      } else {
-        resolve('');
-      }
-    });
+      return this.domSanitizer.bypassSecurityTrustResourceUrl(fileSrcUri);
+    } catch (error) {
+      this.uiLog.error(
+        'Error in getInternalFileSrc for path',
+        _filePath,
+        ':',
+        error
+      );
+      return '';
+    }
   }
 
   private async generateFileName(
@@ -1002,10 +870,7 @@ export class UIFileHelper extends InstanceClass {
       // separate out the mime component
       const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
       // write the bytes of the string to a typed array
-      let ia = new Uint8Array(byteString.length);
-      for (let i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
-      }
+      let ia = this.binaryStringToUint8Array(byteString);
 
       const newBlob = new Blob([ia], { type: mimeString });
       ia = null;
@@ -1014,5 +879,13 @@ export class UIFileHelper extends InstanceClass {
     } catch (ex) {
       return undefined;
     }
+  }
+
+  private binaryStringToUint8Array(binaryString: string): Uint8Array {
+    const array = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      array[i] = binaryString.charCodeAt(i);
+    }
+    return array;
   }
 }

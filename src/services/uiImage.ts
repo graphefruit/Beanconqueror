@@ -153,17 +153,10 @@ export class UIImage {
                           }
                         }
 
-                        const result =
-                          await this.uiFileHelper.getBase64FileFromExternalAndroid(
-                            newFileName
-                          );
-                        let imageStr: string = '';
-                        if (result.indexOf('data:image') >= 0) {
-                          // All good
-                          imageStr = result;
-                        } else {
-                          imageStr = `data:image/jpeg;base64,${result}`;
-                        }
+                        let imageStr = await this.uiFileHelper.readFileAsBase64(
+                          newFileName
+                        );
+                        imageStr = `data:image/jpeg;base64,${imageStr}`;
 
                         try {
                           const newUrl = await this.uiFileHelper.saveBase64File(

@@ -113,7 +113,9 @@ export class UIExportImportHelper {
     return zipFileBlob;
   }
 
-  public async getJSONFromZIPArrayBufferContent(_arrayBuffer): Promise<any> {
+  public async getJSONFromZIPArrayBufferContent(
+    _arrayBuffer: Uint8Array | ArrayBuffer
+  ): Promise<any> {
     const readBlob = new Blob([_arrayBuffer], {
       type: 'application/zip',
     });
@@ -161,17 +163,8 @@ export class UIExportImportHelper {
     return importJSONData;
   }
 
-  public async importZIPFile(fileData: string | Blob): Promise<void> {
-    let arrayBuffer: ArrayBuffer;
-    if (fileData instanceof Blob) {
-      arrayBuffer = await fileData.arrayBuffer();
-    } else {
-      // fileData is a base64 string
-      arrayBuffer = Uint8Array.from(atob(fileData), (c) =>
-        c.charCodeAt(0)
-      ).buffer;
-    }
-    const json = await this.getJSONFromZIPArrayBufferContent(arrayBuffer);
+  public async importZIPFile(fileContent: Uint8Array): Promise<void> {
+    const json = await this.getJSONFromZIPArrayBufferContent(fileContent);
     await this.importBackupJSON(json);
   }
 
@@ -322,7 +315,7 @@ export class UIExportImportHelper {
   private readBackupZIPFile() {
     // If we don't got any data, we check now if there is a Beanconqueror.zip saved.
     const promise = new Promise(async (resolve, reject) => {
-      this.uiFileHelper.getZIPFile('Beanconqueror.zip').then(
+      this.uiFileHelper.readInternalFileAsUint8Array('Beanconqueror.zip').then(
         async (_arrayBuffer) => {
           try {
             this.uiLog.log('Read ZIP-File, we found an zip-file');

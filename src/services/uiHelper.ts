@@ -272,14 +272,6 @@ export class UIHelper {
     // window.open(_url, "_system");
   }
 
-  public sanitizeImagePath(imagePath: string): SafeUrl {
-    return this.sanitizer.bypassSecurityTrustUrl(imagePath);
-  }
-
-  public getBase64Data(imagePath: string) {
-    return this.uiFileHelper.getBase64File(imagePath);
-  }
-
   public async exportJSON(
     fileName: string,
     jsonContent: string,
