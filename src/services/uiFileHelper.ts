@@ -353,13 +353,6 @@ export class UIFileHelper extends InstanceClass {
       );
     }
 
-    let storageDirectory: Directory;
-    if (this.platform.is('android')) {
-      storageDirectory = Directory.External;
-    } else {
-      storageDirectory = Directory.Documents;
-    }
-
     const lastSevenDays: string[] = [];
     for (let i = 0; i < 8; i++) {
       const day: string = moment().subtract(i, 'days').format('DD_MM_YYYY');
@@ -371,7 +364,7 @@ export class UIFileHelper extends InstanceClass {
     try {
       const exportDir = await Filesystem.readdir({
         path: 'Download/Beanconqueror_export/',
-        directory: storageDirectory,
+        directory: Directory.External,
       });
 
       for (const directoryEntry of exportDir.files) {

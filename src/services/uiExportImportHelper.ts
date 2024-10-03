@@ -15,7 +15,7 @@ import {
   ZipWriter,
 } from '@zip.js/zip.js';
 import * as zip from '@zip.js/zip.js';
-import { FileEntry } from '@awesome-cordova-plugins/file';
+import { Directory } from '@capacitor/filesystem';
 import { UILog } from './uiLog';
 import { ModalController, Platform } from '@ionic/angular';
 import { UIFileHelper } from './uiFileHelper';
@@ -408,11 +408,12 @@ export class UIExportImportHelper {
     if (welcomePagedShowed === true && brewsAdded === true) {
       this.uiLog.log('Start to export automatic ZIP file');
       try {
-        await this.uiFileHelper.writeInternalFileFromBlob(
+        await this.uiFileHelper.writeFileFromBlob(
           _blob,
           'Download/Beanconqueror_export/Beanconqueror_automatic_export_' +
             this.getAutomatedBackupFilename() +
-            '.zip'
+            '.zip',
+          Directory.External
         );
       } catch (ex) {
         this.uiLog.error('Could not to export automatic ZIP file');
