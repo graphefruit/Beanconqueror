@@ -27,9 +27,6 @@ declare var window;
   providedIn: 'root',
 })
 export class UIFileHelper extends InstanceClass {
-  private cachedBase64: any = {};
-  private cachedInternalUrls: any = {};
-
   constructor(
     private readonly file: File,
     private readonly uiLog: UILog,
@@ -661,24 +658,6 @@ export class UIFileHelper extends InstanceClass {
       } else {
         resolve(undefined);
       }
-    });
-  }
-
-  public moveFile(
-    _oldPath,
-    _newPath,
-    _oldFilename,
-    _newFilename
-  ): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      this.file.moveFile(_oldPath, _oldFilename, _newPath, _newFilename).then(
-        (_entry) => {
-          resolve(_entry.fullPath);
-        },
-        () => {
-          reject();
-        }
-      );
     });
   }
 
