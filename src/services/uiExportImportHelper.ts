@@ -9,11 +9,8 @@ import { UIHelper } from './uiHelper';
 import {
   BlobReader,
   BlobWriter,
-  EntryMetaData,
   TextReader,
   TextWriter,
-  ZipEntry,
-  ZipFileEntry,
   ZipReader,
   ZipWriter,
 } from '@zip.js/zip.js';
@@ -27,6 +24,25 @@ import moment from 'moment';
 import { UIBrewStorage } from './uiBrewStorage';
 
 import { DataCorruptionFoundComponent } from '../popover/data-corruption-found/data-corruption-found.component';
+
+const EXPORT_MAIN_FILE_NAME = 'Beanconqueror.json';
+const EXPORT_CHUNKING_CONFIG = [
+  {
+    propertyName: 'BREWS',
+    fileName: 'Brews',
+    chunkSize: 500,
+  },
+  {
+    propertyName: 'BEANS',
+    fileName: 'Beans',
+    chunkSize: 500,
+  },
+];
+
+function chunkFileName(fileName: string, index: number): string {
+  return `Beanconqueror_${fileName}_${index}.json`;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -49,171 +65,100 @@ export class UIExportImportHelper {
     private readonly modalController: ModalController
   ) {}
 
-  public async buildExportZIP(): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      this.uiStorage.export().then(async (_data) => {
-        try {
-          const clonedData = this.uiHelper.cloneData(_data);
-          const brewChunks = [];
-          if (clonedData?.BREWS?.length > 0) {
-            const chunkSize = 500;
-            for (let i = 0; i < clonedData.BREWS.length; i += chunkSize) {
-              const chunk = clonedData.BREWS.slice(i, i + chunkSize);
-              brewChunks.push(chunk);
-            }
-          }
+  public async buildExportZIP(): Promise<Blob> {
+    const _data = await this.uiStorage.export();
 
-          const beanChunks = [];
-          if (clonedData?.BEANS?.length > 0) {
-            const chunkSize = 500;
-            for (let i = 0; i < clonedData.BEANS.length; i += chunkSize) {
-              const chunk = clonedData.BEANS.slice(i, i + chunkSize);
-              beanChunks.push(chunk);
-            }
-          }
+    const mainJsonData = this.uiHelper.cloneData(_data);
 
-          const originalJSON = this.uiHelper.cloneData(_data);
-          if (brewChunks.length > 0) {
-            originalJSON.BREWS = brewChunks[0];
-          }
-          if (beanChunks.length > 0) {
-            originalJSON.BEANS = beanChunks[0];
-          }
-
-          const zipFileWriter = new BlobWriter();
-          const beanconquerorJSON = new TextReader(
-            JSON.stringify(originalJSON)
-          );
-          let zipWriter;
-          if (this.platform.is('ios')) {
-            // iOS got corrupt zip file, when compression is used, removing this, results into a bigger zip file, but leads into a working zip file again.
-            zip.configure({ useCompressionStream: false });
-            zipWriter = new ZipWriter(zipFileWriter);
+    const chunkedData: { fileName: string; content: unknown }[] = [];
+    for (const c of EXPORT_CHUNKING_CONFIG) {
+      const entry = _data?.[c.propertyName];
+      if (entry?.length > 0) {
+        let chunkIndex = 0;
+        for (let i = 0; i < entry.length; i += c.chunkSize) {
+          const chunk = entry.slice(i, i + c.chunkSize);
+          if (chunkIndex == 0) {
+            // store the first chunk in the main file
+            mainJsonData[c.propertyName] = chunk;
           } else {
-            zipWriter = new ZipWriter(zipFileWriter);
+            chunkedData.push({
+              fileName: chunkFileName(c.fileName, chunkIndex),
+              content: chunk,
+            });
           }
-
-          await zipWriter.add('Beanconqueror.json', beanconquerorJSON);
-
-          for (let i = 1; i < brewChunks.length; i++) {
-            const beanconquerorBrewJSON = new TextReader(
-              JSON.stringify(brewChunks[i])
-            );
-            await zipWriter.add(
-              'Beanconqueror_Brews_' + i + '.json',
-              beanconquerorBrewJSON
-            );
-          }
-
-          for (let i = 1; i < beanChunks.length; i++) {
-            const beanconquerorBeanJSON = new TextReader(
-              JSON.stringify(beanChunks[i])
-            );
-            await zipWriter.add(
-              'Beanconqueror_Beans_' + i + '.json',
-              beanconquerorBeanJSON
-            );
-          }
-          const zipFileBlob = await zipWriter.close();
-          resolve(zipFileBlob);
-        } catch (ex) {
-          reject();
+          chunkIndex++;
         }
-      });
-    });
+      }
+    }
+
+    if (this.platform.is('ios')) {
+      // iOS got corrupt zip file, when compression is used, removing this, results into a bigger zip file, but leads into a working zip file again.
+      zip.configure({ useCompressionStream: false });
+    }
+    const zipWriter = new ZipWriter(new BlobWriter());
+
+    await zipWriter.add(
+      EXPORT_MAIN_FILE_NAME,
+      new TextReader(JSON.stringify(mainJsonData))
+    );
+
+    for (const chunk of chunkedData) {
+      await zipWriter.add(
+        chunk.fileName,
+        new TextReader(JSON.stringify(chunk.content))
+      );
+    }
+
+    const zipFileBlob = await zipWriter.close();
+    return zipFileBlob;
   }
 
   public async getJSONFromZIPArrayBufferContent(_arrayBuffer): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const readBlob = new Blob([_arrayBuffer], {
-          type: 'application/zip',
-        });
-
-        const zipFileReader = new BlobReader(readBlob);
-
-        // Creates a ZipReader object reading the zip content via `zipFileReader`,
-        // retrieves metadata (name, dates, etc.) of the first entry, retrieves its
-        // content via `helloWorldWriter`, and closes the reader.
-        const zipReader = new ZipReader(zipFileReader);
-
-        const entries: Array<any> = await zipReader.getEntries();
-        const entriesLength = entries.length;
-
-        let importJSONData = undefined;
-
-        if (entriesLength > 0) {
-          const foundGeneralEntry = entries.find(
-            (e) => e.filename === 'Beanconqueror.json'
-          );
-          if (foundGeneralEntry === undefined) {
-            await zipReader.close();
-            reject();
-            return;
-          }
-
-          const generalWriter = new TextWriter();
-          const generalImportText = await foundGeneralEntry.getData(
-            generalWriter
-          );
-          importJSONData = JSON.parse(generalImportText);
-
-          if (
-            importJSONData &&
-            importJSONData?.BREWS &&
-            importJSONData.BREWS?.length > 0
-          ) {
-          } else {
-            importJSONData.BREWS = [];
-          }
-          //We just iterate through all the lengths, even tho, its splitted
-          // between brews and beans, but we always start from 1, so even when we don't find a 7 or 8, we found them on the beans
-          for (let i = 1; i < entriesLength; i++) {
-            const brewEntry = entries.find(
-              (e) => e.filename === 'Beanconqueror_Brews_' + i + '.json'
-            );
-            if (brewEntry) {
-              this.uiLog.log(
-                'Found - Beanconqueror_Brews_' + i + '.json - Import'
-              );
-              const brewWriter = new TextWriter();
-              const brewImportText = await brewEntry.getData(brewWriter);
-              const parsedBrews = JSON.parse(brewImportText);
-              importJSONData.BREWS.push(...parsedBrews);
-            }
-          }
-
-          if (
-            importJSONData &&
-            importJSONData?.BEANS &&
-            importJSONData.BEANS?.length > 0
-          ) {
-          } else {
-            importJSONData.BEANS = [];
-          }
-
-          for (let i = 1; i < entriesLength; i++) {
-            const beanEntry = entries.find(
-              (e) => e.filename === 'Beanconqueror_Beans_' + i + '.json'
-            );
-            if (beanEntry) {
-              this.uiLog.log(
-                'Found - Beanconqueror_Beans_' + i + '.json - Import'
-              );
-              const beanWriter = new TextWriter();
-              const beanImportText = await beanEntry.getData(beanWriter);
-              const parsedBeans = JSON.parse(beanImportText);
-              importJSONData.BEANS.push(...parsedBeans);
-            }
-          }
-
-          await zipReader.close();
-          resolve(importJSONData);
-        }
-      } catch (ex) {
-        reject();
-      }
+    const readBlob = new Blob([_arrayBuffer], {
+      type: 'application/zip',
     });
+    const zipFileReader = new BlobReader(readBlob);
+    const zipReader = new ZipReader(zipFileReader);
+
+    const entries = await zipReader.getEntries();
+    if (entries.length == 0) {
+      throw new Error('Attempted to import empty zip file');
+    }
+    const foundGeneralEntry = entries.find(
+      (e) => e.filename === EXPORT_MAIN_FILE_NAME
+    );
+    if (foundGeneralEntry === undefined) {
+      await zipReader.close();
+      throw new Error(
+        `ZIP file does not contain a ${EXPORT_MAIN_FILE_NAME} file`
+      );
+    }
+
+    const generalWriter = new TextWriter();
+    const generalImportText = await foundGeneralEntry.getData(generalWriter);
+    let importJSONData = JSON.parse(generalImportText);
+
+    // handle chunked import data
+    for (const c of EXPORT_CHUNKING_CONFIG) {
+      // start at index 1 because chunk 0 is always in the main file
+      let i = 1;
+      let entry: zip.Entry;
+      while (
+        (entry = entries.find(
+          (e) => e.filename === chunkFileName(c.fileName, i)
+        )) !== undefined
+      ) {
+        this.uiLog.log(`Found ${entry.filename} - Import`);
+        const textWriter = new TextWriter();
+        const chunkJSON = await entry.getData(textWriter);
+        const chunk = JSON.parse(chunkJSON);
+        importJSONData[c.propertyName].push(...chunk);
+        i++;
+      }
+    }
+
+    await zipReader.close();
+    return importJSONData;
   }
 
   public async importZIPFile(fileData: string | Blob): Promise<void> {
@@ -391,9 +336,9 @@ export class UIExportImportHelper {
         },
         () => {
           this.uiLog.log(
-            'Read ZIP-FILE failed, try to read an old Beanconqueror.json'
+            `Read ZIP-FILE failed, try to read an old ${EXPORT_MAIN_FILE_NAME}`
           );
-          this.uiFileHelper.getJSONFile('Beanconqueror.json').then(
+          this.uiFileHelper.getJSONFile(EXPORT_MAIN_FILE_NAME).then(
             async (_json) => {
               this.uiLog.log('Read ZIP-File, we found an json-file');
               resolve(_json);
@@ -451,7 +396,7 @@ export class UIExportImportHelper {
       }
     );
   }
-  private async __saveInternalBeanconquerorDump(_blob: string) {
+  private async __saveInternalBeanconquerorDump(_blob: Blob) {
     try {
       const file: FileEntry = await this.uiFileHelper.saveZIPFile(
         'Beanconqueror.zip',
@@ -470,7 +415,7 @@ export class UIExportImportHelper {
       }
     }
   }
-  private async __saveAutomaticBeanconquerorDump(_blob: string) {
+  private async __saveAutomaticBeanconquerorDump(_blob: Blob) {
     const settings = this.uiSettingsStorage.getSettings();
     const welcomePagedShowed: boolean = settings.welcome_page_showed;
     const brewsAdded: boolean = this.uiBrewStorage.getAllEntries().length > 0;

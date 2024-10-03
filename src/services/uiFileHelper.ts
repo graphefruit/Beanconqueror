@@ -58,7 +58,7 @@ export class UIFileHelper extends InstanceClass {
     }
   }
 
-  public async saveZIPFile(_fileName: string, _blob: string): Promise<any> {
+  public async saveZIPFile(_fileName: string, _blob: Blob): Promise<any> {
     return new Promise(async (resolve, reject) => {
       const blob = _blob;
       try {
