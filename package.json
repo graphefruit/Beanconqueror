@@ -11,7 +11,8 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "prepare": "husky install",
-    "generate_proto": "protoc --plugin=node_modules/ts-proto/protoc-gen-ts_proto  --ts_proto_opt=snakeToCamel=false --ts_proto_out ./src/generated ./src/classes/bean/bean.proto"
+    "generate_proto": "protoc --plugin=node_modules/ts-proto/protoc-gen-ts_proto  --ts_proto_opt=snakeToCamel=false --ts_proto_out ./src/generated ./src/classes/bean/bean.proto",
+    "capsync": "capacitor sync android"
   },
   "private": true,
   "dependencies": {
