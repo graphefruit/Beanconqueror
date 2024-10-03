@@ -27,7 +27,6 @@
     "@awesome-cordova-plugins/deeplinks": "^6.4.0",
     "@awesome-cordova-plugins/file": "^6.4.0",
     "@awesome-cordova-plugins/file-chooser": "^6.4.0",
-    "@awesome-cordova-plugins/file-path": "^6.4.0",
     "@awesome-cordova-plugins/file-transfer": "^6.4.0",
     "@awesome-cordova-plugins/globalization": "^6.4.0",
     "@awesome-cordova-plugins/image-picker": "^6.4.0",
@@ -99,7 +98,6 @@
     "@types/jasminewd2": "~2.0.8",
     "@types/lodash": "^4.14.178",
     "@types/node": "^20.12.7",
-    "@wisdomgarden/cordova-plugin-filepath": "git+https://github.com/wisdom-garden/cordova-plugin-filepath.git",
     "cordova-android": "^13.0.0",
     "cordova-ios": "^7.1.1",
     "cordova-plugin-advanced-http": "^3.3.1",
@@ -163,7 +161,6 @@
         "DEEPLINK_5_HOST": " "
       },
       "cordova-plugin-file-transfer": {},
-      "cordova-plugin-filepath": {},
       "cordova-plugin-advanced-http": {
         "ANDROIDBLACKLISTSECURESOCKETPROTOCOLS": "SSLv3,TLSv1"
       },

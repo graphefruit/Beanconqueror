@@ -14,7 +14,6 @@ import { UIHelper } from './uiHelper';
 import { UIFileHelper } from './uiFileHelper';
 import { TranslateService } from '@ngx-translate/core';
 import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
-import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
 import { UIAlert } from './uiAlert';
 import { PhotoPopoverComponent } from '../popover/photo-popover/photo-popover.component';
 import { Brew } from '../classes/brew/brew';
@@ -40,7 +39,6 @@ export class UIImage {
     private readonly uiHelper: UIHelper,
     private readonly uiFileHelper: UIFileHelper,
     private readonly translate: TranslateService,
-    private readonly filePath: FilePath,
     private readonly uiAlert: UIAlert,
     private readonly modalCtrl: ModalController,
     private readonly uiSettingsStorage: UISettingsStorage,
