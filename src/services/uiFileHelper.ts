@@ -6,6 +6,7 @@ import {
   File,
   FileEntry,
 } from '@awesome-cordova-plugins/file/ngx';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Platform } from '@ionic/angular';
 import { DomSanitizer } from '@angular/platform-browser';
 import { UILog } from './uiLog';
@@ -44,6 +45,16 @@ export class UIFileHelper extends InstanceClass {
       return this.file.documentsDirectory;
     } else {
       return this.file.dataDirectory;
+    }
+  }
+
+  private getDataDirectory(): Directory {
+    if (this.platform.is('ios') && this.platform.is('cordova')) {
+      return Directory.Documents;
+    } else if (this.platform.is('android') && this.platform.is('cordova')) {
+      return Directory.Data;
+    } else {
+      throw new Error(`Unsupported platform: ${this.platform.platforms()}`);
     }
   }
 
@@ -139,37 +150,31 @@ export class UIFileHelper extends InstanceClass {
   }
 
   public async getJSONFile(_fileName: string): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      if (this.platform.is('cordova')) {
-        // let filePath: string;
-        // filePath = _filePath;
-        // filePath.slice(0, filePath.lastIndexOf('/'));
-        let path: string;
-        let fileName: string;
-        path = this.getFileDirectory();
-        fileName = _fileName;
-        if (fileName.startsWith('/')) {
-          fileName = fileName.slice(1);
-        }
+    if (!this.platform.is('cordova')) {
+      throw new Error(
+        'File system operations are only supported on native platforms.'
+      );
+    }
 
-        this.file.readAsText(path, fileName).then(
-          (_text: string) => {
-            try {
-              const parsedJSON: any = JSON.parse(_text);
-              resolve(parsedJSON);
-            } catch (ex) {
-              this.uiLog.error('We could not read json file ' + ex.message);
-              reject();
-            }
-          },
-          (ex) => {
-            reject();
-          }
-        );
-      } else {
-        reject();
-      }
-    });
+    this.uiLog.debug('getJSONFile for fileName:', _fileName);
+    let fileName = _fileName;
+    if (fileName.startsWith('/')) {
+      fileName = fileName.slice(1);
+    }
+
+    try {
+      const fileContent = await Filesystem.readFile({
+        path: fileName,
+        directory: this.getDataDirectory(),
+        encoding: Encoding.UTF8,
+      });
+
+      const parsedJSON = JSON.parse(fileContent.data as string);
+      return parsedJSON;
+    } catch (ex) {
+      this.uiLog.error(`We could not read json file ${_fileName}` + ex.message);
+      throw ex;
+    }
   }
 
   public async getZIPFile(_fileName: string): Promise<any> {
