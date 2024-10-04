@@ -48,7 +48,6 @@
     "@capacitor/status-bar": "6.0.1",
     "@ionic/angular": "^7.5.7",
     "@ionic/cli": "7.2.0",
-    "@ionic/cordova-builders": "^8.0.0",
     "@ionic/storage": "^4.0.0",
     "@ionic/storage-angular": "^4.0.0",
     "@meticulous-home/espresso-api": "^0.3.1",
@@ -97,8 +96,6 @@
     "@types/jasminewd2": "~2.0.8",
     "@types/lodash": "^4.14.178",
     "@types/node": "^20.12.7",
-    "cordova-android": "^13.0.0",
-    "cordova-ios": "^7.1.1",
     "cordova-plugin-android-permissions": "^1.1.5",
     "cordova-plugin-ble-central": "^1.7.4",
     "cordova-plugin-health": "^2.1.0",
@@ -130,64 +127,6 @@
     "webpack-subresource-integrity": "^1.5.2"
   },
   "description": "Beanconqueror",
-  "cordova": {
-    "plugins": {
-      "cordova-plugin-filechooser": {},
-      "cordova-plugin-filepicker": {},
-      "cordova-plugin-3dtouch": {},
-      "cordova-plugin-globalization": {},
-      "cordova-sqlite-storage": {},
-      "cordova-plugin-insomnia": {},
-      "ionic-plugin-deeplinks": {
-        "URL_SCHEME": "beanconqueror",
-        "DEEPLINK_SCHEME": "https",
-        "DEEPLINK_HOST": "beanconqueror.com",
-        "ANDROID_PATH_PREFIX": "/app/roaster/bean",
-        "ANDROID_2_PATH_PREFIX": "/",
-        "ANDROID_3_PATH_PREFIX": "/",
-        "ANDROID_4_PATH_PREFIX": "/",
-        "ANDROID_5_PATH_PREFIX": "/",
-        "DEEPLINK_2_SCHEME": " ",
-        "DEEPLINK_2_HOST": " ",
-        "DEEPLINK_3_SCHEME": " ",
-        "DEEPLINK_3_HOST": " ",
-        "DEEPLINK_4_SCHEME": " ",
-        "DEEPLINK_4_HOST": " ",
-        "DEEPLINK_5_SCHEME": " ",
-        "DEEPLINK_5_HOST": " "
-      },
-      "cordova-plugin-android-permissions": {},
-      "@spoonconsulting/cordova-plugin-telerik-imagepicker": {
-        "PHOTO_LIBRARY_USAGE_DESCRIPTION": "The app needs photo library access, so that you can choose from already taken pictures from coffee beans, coffee bags, your own coffee brews etc. This pictures are stored inside the app."
-      },
-      "cordova-plugin-x-socialsharing": {
-        "PHOTO_LIBRARY_ADD_USAGE_DESCRIPTION": "This app requires photo library access to function properly.",
-        "PHOTO_LIBRARY_USAGE_DESCRIPTION": "This app requires photo library access to function properly."
-      },
-      "cordova-plugin-health": {
-        "FIT_API_VERSION": "21.1.0",
-        "PLAY_AUTH_VERSION": "20.2.0",
-        "HEALTH_READ_PERMISSION": " ",
-        "HEALTH_WRITE_PERMISSION": " "
-      },
-      "cordova-plugin-ionic-webview": {},
-      "cordova-plugin-nativestorage": {},
-      "cordova-plugin-androidx": {},
-      "cordova-plugin-androidx-adapter": {},
-      "cordova-plugin-inappbrowser": {},
-      "skwas-cordova-plugin-datetimepicker": {},
-      "cordova-plugin-ble-central": {
-        "BLUETOOTH_USAGE_DESCRIPTION": "Bluetooth access needed to connect smartscales",
-        "IOS_INIT_ON_LOAD": "false",
-        "ACCESS_BACKGROUND_LOCATION": "false",
-        "BLUETOOTH_RESTORE_STATE": "false"
-      }
-    },
-    "platforms": [
-      "android",
-      "ios"
-    ]
-  },
   "platforms": [
     "android",
     "ios"
