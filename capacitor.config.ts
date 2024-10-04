@@ -1,6 +1,22 @@
 import type { CapacitorConfig } from '@capacitor/cli';
+import { platform } from 'os';
+import { argv, env } from 'process';
 
 type Platform = 'android' | 'ios';
+const PlatformOverrideEnvVariable = 'CAPACITOR_PLATFORM_OVERRIDE';
+
+const validatePlatformString: (
+  platformString: string
+) => Platform | undefined = (platformString) => {
+  switch (platformString) {
+    case 'android':
+      return 'android';
+    case 'ios':
+      return 'ios';
+    default:
+      return undefined;
+  }
+};
 
 const getPlatform: () => Platform = () => {
   /* This is slightly hacky, but it is build-time configuration and we can
@@ -10,27 +26,34 @@ const getPlatform: () => Platform = () => {
    * https://github.com/ionic-team/capacitor/issues/3976 would be a much better
    * solution if it is ever implemented, but for now this has to suffice.
    */
-  const platform = process.argv[3];
-  switch (platform) {
-    case 'android':
-      return 'android';
-    case 'ios':
-      return 'ios';
-    case undefined:
-      const errorMessage =
-        '==================================================================\n' +
-        'Cannot determine platform from arguments.\n' +
-        'Please run platform configuration seperately, for example ' +
-        '"npx cap sync android" and "npx cap sync ios" ' +
-        'instead of just "npx cap sync".\n' +
-        'If you just want to sync all platforms, run "npm run capsync" as a ' +
-        'convenient shorcut.\n' +
-        '==================================================================\n';
-      console.error(errorMessage);
-      throw new Error('\n' + errorMessage);
-    default:
-      throw new Error(`Unexpected platform argument: ${platform}`);
+
+  const platformFromEnv = validatePlatformString(
+    env[PlatformOverrideEnvVariable]
+  );
+  if (platformFromEnv) {
+    return platformFromEnv;
   }
+
+  const platformFromArgv = validatePlatformString(process.argv[3]);
+  if (platformFromArgv) {
+    return platformFromArgv;
+  }
+
+  const errorMessage =
+    '==================================================================\n' +
+    'Cannot determine platform from environment or arguments.\n' +
+    `${PlatformOverrideEnvVariable} = '${env[PlatformOverrideEnvVariable]}'; ` +
+    `argv[3]='${argv[3]}'\n\n` +
+    'Please run platform configuration seperately, for example ' +
+    '"npx cap sync android" and "npx cap sync ios" ' +
+    'instead of just "npx cap sync".\n' +
+    'If you just want to sync all platforms, run "npm run capsync" as a ' +
+    'convenient shorcut.\n' +
+    'If you really need to, you can override the platform using the ' +
+    `environment variable ${PlatformOverrideEnvVariable}\n` +
+    '==================================================================\n';
+  console.error(errorMessage);
+  throw new Error('\n' + errorMessage);
 };
 
 const createConfig = () => {
