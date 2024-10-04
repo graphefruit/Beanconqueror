@@ -1977,7 +1977,10 @@ export class BrewBrewingGraphComponent implements OnInit {
       this.__setPressureFlow({ actual: press, old: press });
       this.__setTemperatureFlow({ actual: temp, old: temp });
     };
-    prepDeviceCall.fetchRuntimeData(() => {
+
+    // TODO Capacitor migration: The callback was not awaited before, so I kept
+    // it that way. Maybe it should be awaited.
+    prepDeviceCall.fetchRuntimeData().then(() => {
       // before we start the interval, we fetch the data once to overwrite, and set them.
       setSanremoData();
     });
@@ -1988,7 +1991,7 @@ export class BrewBrewingGraphComponent implements OnInit {
         //let apiDelayEnd;
 
         // We don't use the callback function to make sure we don't have to many performance issues
-        prepDeviceCall.fetchRuntimeData(() => {
+        prepDeviceCall.fetchRuntimeData().then(() => {
           //apiDelayEnd = moment();
 
           //before we start the interval, we fetch the data once to overwrite, and set them.
