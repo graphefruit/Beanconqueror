@@ -664,7 +664,7 @@ export class UIFileHelper extends InstanceClass {
 
   private blobToBase64(blob: Blob): Promise<string> {
     return new Promise((resolve, reject) => {
-      const reader = this.getFileReader();
+      const reader = new FileReader();
       reader.onloadend = () => {
         const dataUrl = reader.result as string;
         const base64 = dataUrl.replace('data:*/*;base64', '');
@@ -672,15 +672,5 @@ export class UIFileHelper extends InstanceClass {
       };
       reader.readAsDataURL(blob);
     });
-  }
-
-  // TODO Capacitor migration: Remove this hack once the cordova-plugin-file is removed
-  // see https://github.com/ionic-team/capacitor/issues/1564#issuecomment-538200971
-  public getFileReader(): FileReader {
-    const fileReader = new FileReader();
-    const zoneOriginalInstance = (fileReader as any)[
-      '__zone_symbol__originalInstance'
-    ];
-    return zoneOriginalInstance || fileReader;
   }
 }

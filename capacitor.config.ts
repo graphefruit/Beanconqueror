@@ -44,6 +44,16 @@ const createConfig = () => {
     ios: {
       // Will be set in platform section below
     },
+    plugins: {
+      CapacitorHttp: {
+        // Enabling this will patch fetch() to use CapacitorHttp instead of the
+        // native fetch() in the WebView. This is required as functionality
+        // such as mulipart file upload is only available using the patched
+        // fetch() API and is not available using the CapacitorHttp API.
+        // See https://capacitorjs.com/docs/apis/http#configuration
+        enabled: true,
+      },
+    },
     cordova: {
       preferences: {
         ScrollEnabled: 'false',

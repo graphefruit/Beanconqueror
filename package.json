@@ -25,7 +25,6 @@
     "@awesome-cordova-plugins/android-permissions": "^6.4.0",
     "@awesome-cordova-plugins/core": "^6.4.0",
     "@awesome-cordova-plugins/deeplinks": "^6.4.0",
-    "@awesome-cordova-plugins/file": "^6.4.0",
     "@awesome-cordova-plugins/file-chooser": "^6.4.0",
     "@awesome-cordova-plugins/globalization": "^6.4.0",
     "@awesome-cordova-plugins/image-picker": "^6.4.0",
@@ -99,10 +98,8 @@
     "@types/node": "^20.12.7",
     "cordova-android": "^13.0.0",
     "cordova-ios": "^7.1.1",
-    "cordova-plugin-advanced-http": "^3.3.1",
     "cordova-plugin-android-permissions": "^1.1.5",
     "cordova-plugin-ble-central": "^1.7.4",
-    "cordova-plugin-file": "^8.0.0",
     "cordova-plugin-health": "^2.1.0",
     "cordova-plugin-inappbrowser": "^6.0.0",
     "cordova-plugin-insomnia": "^4.3.0",
@@ -158,9 +155,6 @@
         "DEEPLINK_5_SCHEME": " ",
         "DEEPLINK_5_HOST": " "
       },
-      "cordova-plugin-advanced-http": {
-        "ANDROIDBLACKLISTSECURESOCKETPROTOCOLS": "SSLv3,TLSv1"
-      },
       "cordova-plugin-android-permissions": {},
       "@spoonconsulting/cordova-plugin-telerik-imagepicker": {
         "PHOTO_LIBRARY_USAGE_DESCRIPTION": "The app needs photo library access, so that you can choose from already taken pictures from coffee beans, coffee bags, your own coffee brews etc. This pictures are stored inside the app."
@@ -181,9 +175,6 @@
       "cordova-plugin-androidx-adapter": {},
       "cordova-plugin-inappbrowser": {},
       "skwas-cordova-plugin-datetimepicker": {},
-      "cordova-plugin-file": {
-        "ANDROIDX_WEBKIT_VERSION": "1.4.0"
-      },
       "cordova-plugin-ble-central": {
         "BLUETOOTH_USAGE_DESCRIPTION": "Bluetooth access needed to connect smartscales",
         "IOS_INIT_ON_LOAD": "false",
